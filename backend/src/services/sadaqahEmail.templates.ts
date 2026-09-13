@@ -32,9 +32,13 @@ const greeting = (donorName: string | null) =>
 const plainGreeting = (donorName: string | null) =>
   donorName ? `Assalamu Alaikum ${donorName},` : 'Assalamu Alaikum,';
 
-// Fixed — every reply in a donation's thread reuses this via "Re: ..." so
-// email clients (Gmail, Outlook) group all three messages as one conversation.
-export const RECEIVED_SUBJECT = 'We received your sadaqah — JazakAllahu khayran';
+// Fixed and deliberately outcome-neutral — every reply in a donation's
+// thread reuses this via "Re: ..." so email clients (Gmail, Outlook) group
+// the received/verified/rejected messages as one conversation. It used to
+// read "We received your sadaqah — JazakAllahu khayran", which looked wrong
+// as the subject line on a REJECTED notice; the thank-you wording now lives
+// only in the received email's body, where it's actually true.
+export const RECEIVED_SUBJECT = 'Your sadaqah submission — Bustandeen';
 export const REPLY_SUBJECT = `Re: ${RECEIVED_SUBJECT}`;
 
 export const donationReceivedEmail = (d: DonationEmailData): Omit<SendMailOptions, 'to'> => ({
