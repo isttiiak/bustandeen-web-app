@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth, requireAdminEmail } from '../middleware/auth.js';
+import { requireAuth, requireAdminEmail, requireAdminSession } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import {
   adminListQuerySchema,
@@ -16,7 +16,7 @@ const router = Router();
 
 // Every route in this file is admin-only — enforced once here rather than
 // per-route, so a new endpoint added later can't accidentally skip the gate.
-router.use(requireAuth, requireAdminEmail);
+router.use(requireAuth, requireAdminEmail, requireAdminSession);
 
 router.get('/pending', adminSadaqahController.listPendingHandler);
 router.get('/all', validate(adminListQuerySchema), adminSadaqahController.listAllHandler);

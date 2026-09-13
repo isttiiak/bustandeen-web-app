@@ -13,6 +13,7 @@ import { clearSalatOutbox } from './utils/salatOutbox.js';
 import { setDayStartModeLocal, type DayStartMode } from './utils/trackingDay.js';
 import { idbRemove } from './utils/idbCache.js';
 import Navbar from './components/Navbar.js';
+import AdminGate from './components/AdminGate.js';
 import Home from './pages/Home.js';
 import ZikrCounter from './pages/ZikrCounter.js';
 import Footer from './components/Footer.js';
@@ -74,6 +75,7 @@ const Sadaqah = lazy(() => import('./pages/Sadaqah.js'));
 const SadaqahDonate = lazy(() => import('./pages/SadaqahDonate.js'));
 const SadaqahThankYou = lazy(() => import('./pages/SadaqahThankYou.js'));
 const AdminSadaqah = lazy(() => import('./pages/AdminSadaqah.js'));
+const AdminZikrRequests = lazy(() => import('./pages/AdminZikrRequests.js'));
 
 // Programmatic-SEO static pages (prayer-times/qibla/ramadan-calendar by
 // city, du'a library, adhkar, Hijri converter) — pre-rendered at build time
@@ -282,7 +284,7 @@ const Protected = ({ children }: ProtectedProps) => {
  * (the bot-only /connect preview, noindex on it in vercel.json). */
 const AdminProtected = ({ children }: ProtectedProps) => {
   const { user } = useAuthStore();
-  return <Protected>{user?.isAdmin ? children : <NotFound />}</Protected>;
+  return <Protected>{user?.isAdmin ? <AdminGate>{children}</AdminGate> : <NotFound />}</Protected>;
 };
 
 export default function App() {
@@ -835,6 +837,14 @@ export default function App() {
                   element={
                     <AdminProtected>
                       <AdminSadaqah />
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/zikr-requests"
+                  element={
+                    <AdminProtected>
+                      <AdminZikrRequests />
                     </AdminProtected>
                   }
                 />

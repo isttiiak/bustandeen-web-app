@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import { createHmac, timingSafeEqual } from 'crypto';
 import {
   verifyFirebaseToken,
   isFirebaseInitialized,
@@ -65,6 +66,67 @@ export const isAdminEmail = (email: string | null | undefined): boolean => {
 export const requireAdminEmail = (req: Request, res: Response, next: NextFunction): void => {
   if (!isAdminEmail(req.user?.email)) {
     res.status(403).json({ ok: false, error: 'Forbidden' });
+    return;
+  }
+  next();
+};
+
+const ADMIN_SESSION_TTL_SECONDS = 12 * 60 * 60; // 12h — re-enter the password after that
+
+/**
+ * Second factor for the admin panel: a Firebase-authenticated admin-allowlist
+ * user (requireAdminEmail) still can't act on any /api/admin/* route until
+ * they've separately entered ADMIN_PANEL_PASSWORD via POST
+ * /api/admin/auth/verify-password. That endpoint mints this token; every
+ * other admin route requires it via requireAdminSession below. Stateless
+ * (HMAC-signed uid+expiry, no server-side session store) so it works the same
+ * way across Vercel's serverless invocations.
+ */
+export const signAdminSessionToken = (uid: string): { token: string; expiresIn: number } => {
+  const secret = process.env.ADMIN_SESSION_SECRET ?? '';
+  const exp = Math.floor(Date.now() / 1000) + ADMIN_SESSION_TTL_SECONDS;
+  const payload = Buffer.from(JSON.stringify({ uid, exp })).toString('base64url');
+  const sig = createHmac('sha256', secret).update(payload).digest('base64url');
+  return { token: `${payload}.${sig}`, expiresIn: ADMIN_SESSION_TTL_SECONDS };
+};
+
+const verifyAdminSessionToken = (token: string, uid: string): boolean => {
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  if (!secret) return false;
+  const [payload, sig] = token.split('.');
+  if (!payload || !sig) return false;
+  const expectedSig = createHmac('sha256', secret).update(payload).digest('base64url');
+  const sigBuf = Buffer.from(sig);
+  const expectedBuf = Buffer.from(expectedSig);
+  if (sigBuf.length !== expectedBuf.length || !timingSafeEqual(sigBuf, expectedBuf)) return false;
+  try {
+    const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as {
+      uid: string;
+      exp: number;
+    };
+    return data.uid === uid && data.exp > Math.floor(Date.now() / 1000);
+  } catch {
+    return false;
+  }
+};
+
+export const verifyAdminPassword = (password: string): boolean => {
+  const expected = process.env.ADMIN_PANEL_PASSWORD ?? '';
+  if (!expected || !password) return false;
+  const a = Buffer.from(password);
+  const b = Buffer.from(expected);
+  // Different lengths never match — comparing anyway would throw inside
+  // timingSafeEqual, which requires equal-length buffers.
+  if (a.length !== b.length) return false;
+  return timingSafeEqual(a, b);
+};
+
+/** Must run after requireAuth + requireAdminEmail on every /api/admin/* route. */
+export const requireAdminSession = (req: Request, res: Response, next: NextFunction): void => {
+  const header = req.headers['x-admin-token'];
+  const token = Array.isArray(header) ? header[0] : header;
+  if (!token || !verifyAdminSessionToken(token, req.user?.uid ?? '')) {
+    res.status(401).json({ ok: false, error: 'admin_session_required' });
     return;
   }
   next();

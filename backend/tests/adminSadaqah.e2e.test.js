@@ -15,6 +15,7 @@ const adminToken = fakeJwt({ uid: 'admin-uid', email: ADMIN_EMAIL });
 const nonAdminToken = fakeJwt({ uid: 'regular-uid', email: 'nobody@test.dev' });
 
 let mongo;
+let adminSessionToken;
 
 const validDonation = (overrides = {}) => ({
   donorName: 'Test Donor',
@@ -31,7 +32,8 @@ const submitAndFindPending = async (donation) => {
   await request(app).post('/api/sadaqah/submit').send(donation);
   const pending = await request(app)
     .get('/api/admin/sadaqah/pending')
-    .set('Authorization', `Bearer ${adminToken}`);
+    .set('Authorization', `Bearer ${adminToken}`)
+    .set('X-Admin-Token', adminSessionToken);
   return pending.body.donations.find(
     (d) => d.transactionId === donation.transactionId.toUpperCase()
   );
@@ -40,9 +42,17 @@ const submitAndFindPending = async (donation) => {
 describe('Sadaqah admin API', () => {
   beforeAll(async () => {
     process.env.ADMIN_EMAILS = ADMIN_EMAIL;
+    process.env.ADMIN_PANEL_PASSWORD = 'test-admin-password';
+    process.env.ADMIN_SESSION_SECRET = 'test-admin-session-secret';
     mongo = await MongoMemoryServer.create();
     await mongoose.connect(mongo.getUri(), { dbName: 'ihsan_test' });
     await Donation.init();
+
+    const sessionRes = await request(app)
+      .post('/api/admin/auth/verify-password')
+      .set('Authorization', `Bearer ${adminToken}`)
+      .send({ password: 'test-admin-password' });
+    adminSessionToken = sessionRes.body.token;
   });
 
   afterAll(async () => {
@@ -80,7 +90,8 @@ describe('Sadaqah admin API', () => {
     const verifiedDraft = await request(app)
       .get(`/api/admin/sadaqah/${found._id}/email-draft`)
       .query({ type: 'verified' })
-      .set('Authorization', `Bearer ${adminToken}`);
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken);
     expect(verifiedDraft.status).toBe(200);
     expect(verifiedDraft.body.subject).toMatch(/^Re: /);
     expect(verifiedDraft.body.body).toContain(donation.transactionId.toUpperCase());
@@ -90,7 +101,8 @@ describe('Sadaqah admin API', () => {
     const rejectedDraft = await request(app)
       .get(`/api/admin/sadaqah/${found._id}/email-draft`)
       .query({ type: 'rejected' })
-      .set('Authorization', `Bearer ${adminToken}`);
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken);
     expect(rejectedDraft.status).toBe(200);
     expect(rejectedDraft.body.body).toMatch(/\[Let the donor know/i);
   });
@@ -100,6 +112,7 @@ describe('Sadaqah admin API', () => {
     const res = await request(app)
       .patch(`/api/admin/sadaqah/${found._id}/verify`)
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ emailBody: '' });
     expect(res.status).toBe(400);
   });
@@ -112,6 +125,7 @@ describe('Sadaqah admin API', () => {
     const verify = await request(app)
       .patch(`/api/admin/sadaqah/${found._id}/verify`)
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ emailBody: 'JazakAllahu khayran, your sadaqah has been verified.' });
     expect(verify.status).toBe(200);
     expect(verify.body.donation.status).toBe('verified');
@@ -128,12 +142,14 @@ describe('Sadaqah admin API', () => {
     const first = await request(app)
       .patch(`/api/admin/sadaqah/${found._id}/verify`)
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ emailBody: 'Verified.' });
     expect(first.status).toBe(200);
 
     const second = await request(app)
       .patch(`/api/admin/sadaqah/${found._id}/verify`)
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ emailBody: 'Verified.' });
     expect(second.status).toBe(409);
   });
@@ -145,6 +161,7 @@ describe('Sadaqah admin API', () => {
     const reject = await request(app)
       .patch(`/api/admin/sadaqah/${found._id}/reject`)
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ emailBody: 'No matching bKash transaction found for this ID.' });
     expect(reject.status).toBe(200);
     expect(reject.body.donation.status).toBe('rejected');
@@ -160,6 +177,7 @@ describe('Sadaqah admin API', () => {
     const res = await request(app)
       .patch(`/api/admin/sadaqah/${found._id}/reject`)
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ emailBody: '   ' });
     expect(res.status).toBe(400);
   });
@@ -171,6 +189,7 @@ describe('Sadaqah admin API', () => {
     await request(app)
       .patch(`/api/admin/sadaqah/${found._id}/reject`)
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ emailBody: 'Amount mismatch.' });
 
     // Same transactionId, corrected amount — should be accepted, not 409,
@@ -196,6 +215,7 @@ describe('Sadaqah admin API', () => {
     const upsert1 = await request(app)
       .patch('/api/admin/sadaqah/quarterly/2026-Q3')
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ received: 1000, spent: 200, notes: 'Server costs' });
     expect(upsert1.status).toBe(200);
     expect(
@@ -205,6 +225,7 @@ describe('Sadaqah admin API', () => {
     const upsert2 = await request(app)
       .patch('/api/admin/sadaqah/quarterly/2026-Q3')
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ spent: 350 });
     expect(
       upsert2.body.stats.quarterlyBreakdown.find((q) => q.quarter === '2026-Q3')
@@ -212,7 +233,8 @@ describe('Sadaqah admin API', () => {
 
     const del = await request(app)
       .delete('/api/admin/sadaqah/quarterly/2026-Q3')
-      .set('Authorization', `Bearer ${adminToken}`);
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken);
     expect(del.status).toBe(200);
     expect(del.body.stats.quarterlyBreakdown.find((q) => q.quarter === '2026-Q3')).toBeUndefined();
   });
@@ -221,6 +243,7 @@ describe('Sadaqah admin API', () => {
     const res = await request(app)
       .patch('/api/admin/sadaqah/quarterly/not-a-quarter')
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ received: 100 });
     expect(res.status).toBe(400);
   });
@@ -235,6 +258,7 @@ describe('Sadaqah admin API', () => {
       await request(app)
         .patch(`/api/admin/sadaqah/${found._id}/verify`)
         .set('Authorization', `Bearer ${adminToken}`)
+        .set('X-Admin-Token', adminSessionToken)
         .send({ emailBody: 'Verified.' });
     }
 
@@ -252,11 +276,13 @@ describe('Sadaqah admin API', () => {
     await request(app)
       .patch(`/api/admin/sadaqah/${found._id}/verify`)
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ emailBody: 'Verified.' });
 
     const del = await request(app)
       .delete(`/api/admin/sadaqah/${found._id}`)
-      .set('Authorization', `Bearer ${adminToken}`);
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken);
     expect(del.status).toBe(200);
 
     const after = await request(app).get('/api/sadaqah/stats');
@@ -265,7 +291,8 @@ describe('Sadaqah admin API', () => {
 
     const all = await request(app)
       .get('/api/admin/sadaqah/all')
-      .set('Authorization', `Bearer ${adminToken}`);
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken);
     expect(all.body.donations.find((d) => d._id === found._id)).toBeUndefined();
   });
 
@@ -274,12 +301,14 @@ describe('Sadaqah admin API', () => {
     await request(app)
       .patch(`/api/admin/sadaqah/${found._id}/reject`)
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ emailBody: 'Rejected.' });
 
     const before = await request(app).get('/api/sadaqah/stats');
     const del = await request(app)
       .delete(`/api/admin/sadaqah/${found._id}`)
-      .set('Authorization', `Bearer ${adminToken}`);
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken);
     expect(del.status).toBe(200);
     const after = await request(app).get('/api/sadaqah/stats');
     expect(after.body.totalVerifiedAmount).toBe(before.body.totalVerifiedAmount);
@@ -289,6 +318,7 @@ describe('Sadaqah admin API', () => {
     const add = await request(app)
       .post('/api/admin/sadaqah/expenses')
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ date: '2026-09-01', amount: 1500, description: 'Server hosting — September' });
     expect(add.status).toBe(200);
     expect(add.body.expense.amount).toBe(1500);
@@ -296,18 +326,21 @@ describe('Sadaqah admin API', () => {
 
     const list = await request(app)
       .get('/api/admin/sadaqah/expenses')
-      .set('Authorization', `Bearer ${adminToken}`);
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken);
     expect(list.status).toBe(200);
     expect(list.body.expenses.find((e) => e._id === add.body.expense._id)).toBeTruthy();
 
     const del = await request(app)
       .delete(`/api/admin/sadaqah/expenses/${add.body.expense._id}`)
-      .set('Authorization', `Bearer ${adminToken}`);
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken);
     expect(del.status).toBe(200);
 
     const listAfter = await request(app)
       .get('/api/admin/sadaqah/expenses')
-      .set('Authorization', `Bearer ${adminToken}`);
+      .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken);
     expect(listAfter.body.expenses.find((e) => e._id === add.body.expense._id)).toBeUndefined();
   });
 
@@ -315,12 +348,14 @@ describe('Sadaqah admin API', () => {
     const badAmount = await request(app)
       .post('/api/admin/sadaqah/expenses')
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ date: '2026-09-01', amount: -5, description: 'Bad' });
     expect(badAmount.status).toBe(400);
 
     const badDesc = await request(app)
       .post('/api/admin/sadaqah/expenses')
       .set('Authorization', `Bearer ${adminToken}`)
+      .set('X-Admin-Token', adminSessionToken)
       .send({ date: '2026-09-01', amount: 100, description: '' });
     expect(badDesc.status).toBe(400);
   });

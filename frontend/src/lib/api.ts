@@ -3,6 +3,7 @@ import type { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 import toast from 'react-hot-toast';
 import { auth } from '../firebase.js';
 import { useAuthStore } from '../store/useAuthStore.js';
+import { useAdminStore } from '../store/useAdminStore.js';
 import { getDemoResponse } from '../utils/demoData.js';
 import i18n from '../i18n.js';
 
@@ -68,6 +69,14 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
+// Admin panel's second-factor session token — harmless on non-admin routes
+// (the backend only ever checks this header under /api/admin/*).
+api.interceptors.request.use((config) => {
+  const adminToken = useAdminStore.getState().token;
+  if (adminToken) config.headers['X-Admin-Token'] = adminToken;
+  return config;
+});
+
 // Tell the backend which language the UI is currently showing — used by
 // Naseeh (AI) replies so a Bengali-reading user doesn't get an English reply
 // glued into an otherwise-translated page. Not personal data, no consent gate
@@ -89,6 +98,15 @@ api.interceptors.response.use(
       if (hadSession && auth.currentUser === null) {
         window.location.href = '/login';
       }
+    }
+    // Admin session token missing/expired — drop it so AdminGate re-prompts
+    // for the panel password instead of the request just failing silently.
+    if (
+      axios.isAxiosError(err) &&
+      err.response?.status === 401 &&
+      (err.response.data as { error?: string } | undefined)?.error === 'admin_session_required'
+    ) {
+      useAdminStore.getState().setToken(null);
     }
     // Rate limited — tell the user instead of failing silently.
     // Fixed toast id so a burst of 429s shows a single message.
