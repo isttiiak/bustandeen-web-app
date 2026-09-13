@@ -29,6 +29,7 @@ import EditZikrModal from '../components/EditZikrModal.js';
 import ArabicKeyboard from '../components/ArabicKeyboard.js';
 import ReportReference from '../components/ReportReference.js';
 import ZikrSettings from '../components/ZikrSettings.js';
+import ZikrRequestApprovedNotice from '../components/ZikrRequestApprovedNotice.js';
 import Seo from '../components/Seo.js';
 import { useZikrAudio } from '../hooks/useZikrAudio.js';
 import {
@@ -786,6 +787,8 @@ export default function ZikrCounter() {
         </div>
         <ZikrSettings open={showSettings} onClose={() => setShowSettings(false)} />
 
+        <ZikrRequestApprovedNotice />
+
         {/* Motivational subtitle */}
         <motion.p
           initial={{ opacity: 0 }}
@@ -814,46 +817,40 @@ export default function ZikrCounter() {
           {/* Separator */}
           <span className="text-white/25 select-none flex-shrink-0">|</span>
 
-          {/* Change dropdown — selected zikr is the bold label to the left,
-              so the native select only lists the OTHER types to switch to. */}
-          <select
-            value=""
-            onChange={(e) => {
-              if (e.target.value) selectType(e.target.value);
-            }}
-            className="flex-1 min-w-0 bg-transparent border-none text-white/60 text-xs focus:outline-none cursor-pointer appearance-none"
-            style={{ backgroundImage: 'none' }}
-          >
-            <option value="" disabled className="bg-brand-deep text-white/40">
-              {t('zikr.change')}
-            </option>
-            {types
-              .filter((typ) => typ !== selected)
-              .map((typ) => (
-                <option key={typ} value={typ} className="bg-brand-deep text-white">
-                  {zikrDisplayName(typ, i18n.language)}
-                </option>
-              ))}
-          </select>
-          {/* Custom caret */}
-          <svg
-            className="w-3.5 h-3.5 text-white/40 flex-shrink-0 -ml-4 pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
+          {/* Change zikr type — icon-only caret button. The native <select>
+              stays for accessibility/keyboard support; its own text is
+              invisible (text-transparent) and a bigger caret is overlaid,
+              so tapping anywhere on the circle opens the type list without
+              a "Change" label taking up space next to the title. */}
+          <div className="relative flex-shrink-0 w-9 h-9">
+            <select
+              value=""
+              onChange={(e) => {
+                if (e.target.value) selectType(e.target.value);
+              }}
+              className="absolute inset-0 w-full h-full rounded-full bg-white/10 hover:bg-white/20 border border-brand-emerald/20 text-transparent focus:outline-none cursor-pointer appearance-none transition-colors"
+              style={{ backgroundImage: 'none' }}
+              title={t('zikr.change')}
+              aria-label={t('zikr.change')}
+            >
+              <option value="" disabled className="bg-brand-deep text-white/40">
+                {t('zikr.change')}
+              </option>
+              {types
+                .filter((typ) => typ !== selected)
+                .map((typ) => (
+                  <option key={typ} value={typ} className="bg-brand-deep text-white">
+                    {zikrDisplayName(typ, i18n.language)}
+                  </option>
+                ))}
+            </select>
+            <ChevronDownIcon className="w-5 h-5 text-white/70 absolute inset-0 m-auto pointer-events-none" />
+          </div>
 
           {/* Manage my list (delete) */}
           <button
             onClick={() => setShowManage(true)}
-            className="flex-shrink-0 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 border border-brand-emerald/20 text-white/70 hover:text-white flex items-center justify-center transition-all"
+            className="ml-auto flex-shrink-0 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 border border-brand-emerald/20 text-white/70 hover:text-white flex items-center justify-center transition-all"
             title={t('zikr.manageList')}
             aria-label={t('zikr.manageList')}
           >
