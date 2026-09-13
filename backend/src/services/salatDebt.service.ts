@@ -205,17 +205,25 @@ export async function ensureCaughtUp(userId: string, today?: string): Promise<vo
   const dirtyLogs: typeof logs = [];
 
   for (let day = cursor; day < t; day = shiftDateStr(day, 1)) {
-    const log = logMap.get(day);
+    let log = logMap.get(day);
     let logChanged = false;
     for (const pid of PRAYER_IDS) {
       const status = log?.prayers[pid]?.status ?? 'pending';
       if (status === 'pending') {
         totals[pid]++;
         events.push({ userId, prayer: pid, delta: 1, date: day });
-        if (log) {
-          log.prayers[pid].status = 'missed';
-          logChanged = true;
+        // A day the user never opened has no SalatLog row at all — the debt
+        // counter still needs incrementing, but without persisting 'missed'
+        // here, later marking that day's prayer "done" starts from a fresh
+        // 'pending' row (wasMissed=false), so updatePrayerStatus's
+        // missed<->non-missed transition never fires and the debt never
+        // decrements. Create the row now so that later edit sees 'missed'.
+        if (!log) {
+          log = new SalatLog({ userId, date: day });
+          logMap.set(day, log);
         }
+        log.prayers[pid].status = 'missed';
+        logChanged = true;
       }
     }
     if (log && logChanged) dirtyLogs.push(log);

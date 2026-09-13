@@ -257,14 +257,31 @@ describe('Salat API', () => {
     expect(logDoc.prayers.dhuhr.status).toBe('missed');
     expect(logDoc.prayers.fajr.status).toBe('completed');
 
-    // A day with no log at all stays lazy — no row gets created for it.
+    // A day with no log at all now gets one created, every fard 'missed' —
+    // otherwise later marking that day's prayer "done" starts from a fresh
+    // 'pending' row and the debt never decrements (see salatDebt.service.ts).
     const yesterdayLog = await SalatLogModel.findOne({ userId: 'sal7', date: yesterday });
-    expect(yesterdayLog).toBeNull();
+    expect(yesterdayLog).not.toBeNull();
+    expect(yesterdayLog.prayers.fajr.status).toBe('missed');
+    expect(yesterdayLog.prayers.isha.status).toBe('missed');
 
     // Idempotent: a second read must not double-count the same days.
     const debtRes2 = await auth7(request(app).get('/api/salat/debt'));
     expect(debtRes2.body.owed.fajr).toBe(1);
     expect(debtRes2.body.totalOwed).toBe(9);
+
+    // The actual bug this fix addresses: marking yesterday's swept-missed
+    // fajr as completed (prayed late, just never logged in time) must now
+    // decrement the debt counter instead of leaving it stuck.
+    const markDone = await auth7(
+      request(app)
+        .patch('/api/salat/prayer')
+        .send({ prayer: 'fajr', status: 'completed', date: yesterday })
+    );
+    expect(markDone.status).toBe(200);
+    const debtRes3 = await auth7(request(app).get('/api/salat/debt'));
+    expect(debtRes3.body.owed.fajr).toBe(0);
+    expect(debtRes3.body.totalOwed).toBe(8);
   });
 
   test('ensureCaughtUp respects an explicit ?today= (Fajr-tracking day) instead of the server civil clock', async () => {
