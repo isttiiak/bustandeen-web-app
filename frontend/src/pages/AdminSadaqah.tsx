@@ -5,6 +5,8 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 import DonationStatusBadge from '../components/DonationStatusBadge.js';
 import { useSadaqahStats } from '../hooks/useSadaqah.js';
+import { useAdminStore } from '../store/useAdminStore.js';
+import { useWelcomeBackfillStatus, useSendWelcomeBackfill } from '../hooks/useAdminUsers.js';
 import {
   usePendingDonations,
   useAllDonations,
@@ -177,8 +179,46 @@ function PendingCard({ donation }: { donation: Donation }) {
   );
 }
 
+/** Owner-only — triggering a batch send of real emails to real users is
+ *  exactly the kind of bulk/override action reserved for the owner, and it's
+ *  deliberately a manual button press, never automatic. */
+function WelcomeBackfillCard() {
+  const { t } = useTranslation();
+  const { data } = useWelcomeBackfillStatus();
+  const send = useSendWelcomeBackfill();
+
+  if (!data || data.missing === 0) return null;
+
+  return (
+    <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/5 p-4 flex items-center justify-between gap-3">
+      <div>
+        <p className="text-white font-bold text-sm">
+          {t('adminSadaqah.welcomeBackfillTitle', 'Users missing the welcome email')}
+        </p>
+        <p className="text-white/40 text-xs mt-0.5">
+          {t(
+            'adminSadaqah.welcomeBackfillDesc',
+            '{{count}} account(s) predate the welcome email — sends once each, never repeats.',
+            { count: data.missing }
+          )}
+        </p>
+      </div>
+      <button
+        onClick={() => send.mutate()}
+        disabled={send.isPending}
+        className="btn btn-sm shrink-0 bg-brand-gold/20 hover:bg-brand-gold/30 border border-brand-gold/40 text-brand-gold disabled:opacity-40"
+      >
+        {send.isPending
+          ? t('common.loading', 'Loading…')
+          : t('adminSadaqah.welcomeBackfillSend', 'Send now')}
+      </button>
+    </div>
+  );
+}
+
 export default function AdminSadaqah() {
   const { t } = useTranslation();
+  const isOwner = useAdminStore((s) => s.isOwner);
   const { data: stats } = useSadaqahStats();
   const { data: pending, isLoading: pendingLoading } = usePendingDonations();
   const { data: verifiedRecent } = useAllDonations('verified', 1, 100);
@@ -292,6 +332,8 @@ export default function AdminSadaqah() {
           </div>
         </div>
 
+        {isOwner && <WelcomeBackfillCard />}
+
         {/* Pending queue */}
         <section className="space-y-3">
           <h2 className="text-white font-bold text-sm uppercase tracking-widest text-brand-gold">
@@ -345,13 +387,13 @@ export default function AdminSadaqah() {
                     </th>
                     <th className="text-left px-3 py-2">{t('adminSadaqah.colTrxId', 'Trx ID')}</th>
                     <th className="text-left px-3 py-2">{t('adminSadaqah.colStatus', 'Status')}</th>
-                    <th className="px-3 py-2" />
+                    {isOwner && <th className="px-3 py-2" />}
                   </tr>
                 </thead>
                 <tbody>
                   {allLoading && (
                     <tr>
-                      <td colSpan={6} className="text-center text-white/30 py-4">
+                      <td colSpan={isOwner ? 6 : 5} className="text-center text-white/30 py-4">
                         {t('common.loading', 'Loading…')}
                       </td>
                     </tr>
@@ -373,21 +415,23 @@ export default function AdminSadaqah() {
                       <td className="px-3 py-2">
                         <DonationStatusBadge status={d.status} />
                       </td>
-                      <td className="px-3 py-2 text-right whitespace-nowrap">
-                        <button
-                          onClick={() => clickDelete(d._id)}
-                          title={t('adminSadaqah.deleteEntry', 'Permanently delete this entry')}
-                          className={
-                            confirmDeleteId === d._id
-                              ? 'text-red-400 text-xs font-bold'
-                              : 'text-white/20 hover:text-red-400 text-xs'
-                          }
-                        >
-                          {confirmDeleteId === d._id
-                            ? t('adminSadaqah.confirmDelete', 'Confirm?')
-                            : '✕'}
-                        </button>
-                      </td>
+                      {isOwner && (
+                        <td className="px-3 py-2 text-right whitespace-nowrap">
+                          <button
+                            onClick={() => clickDelete(d._id)}
+                            title={t('adminSadaqah.deleteEntry', 'Permanently delete this entry')}
+                            className={
+                              confirmDeleteId === d._id
+                                ? 'text-red-400 text-xs font-bold'
+                                : 'text-white/20 hover:text-red-400 text-xs'
+                            }
+                          >
+                            {confirmDeleteId === d._id
+                              ? t('adminSadaqah.confirmDelete', 'Confirm?')
+                              : '✕'}
+                          </button>
+                        </td>
+                      )}
                     </tr>
                   ))}
                 </tbody>
@@ -445,74 +489,78 @@ export default function AdminSadaqah() {
                     {q.notes ? ` — ${q.notes}` : ''}
                   </p>
                 </div>
-                <div className="flex gap-2 shrink-0">
-                  <button
-                    onClick={() =>
-                      setQForm({
-                        quarter: q.quarter,
-                        received: String(q.received),
-                        spent: String(q.spent),
-                        notes: q.notes,
-                      })
-                    }
-                    className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
-                  >
-                    {t('adminSadaqah.edit', 'Edit')}
-                  </button>
-                  <button
-                    onClick={() => deleteQuarterly.mutate(q.quarter)}
-                    className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300"
-                  >
-                    {t('adminSadaqah.delete', 'Delete')}
-                  </button>
-                </div>
+                {isOwner && (
+                  <div className="flex gap-2 shrink-0">
+                    <button
+                      onClick={() =>
+                        setQForm({
+                          quarter: q.quarter,
+                          received: String(q.received),
+                          spent: String(q.spent),
+                          notes: q.notes,
+                        })
+                      }
+                      className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
+                    >
+                      {t('adminSadaqah.edit', 'Edit')}
+                    </button>
+                    <button
+                      onClick={() => deleteQuarterly.mutate(q.quarter)}
+                      className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300"
+                    >
+                      {t('adminSadaqah.delete', 'Delete')}
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
 
-          <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2">
-            <p className="text-white/70 text-xs font-bold">
-              {t('adminSadaqah.addEditQuarter', 'Add / edit a quarter')}
-            </p>
-            <div className="grid grid-cols-3 gap-2">
+          {isOwner && (
+            <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2">
+              <p className="text-white/70 text-xs font-bold">
+                {t('adminSadaqah.addEditQuarter', 'Add / edit a quarter')}
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                <input
+                  value={qForm.quarter}
+                  onChange={(e) => setQForm((f) => ({ ...f, quarter: e.target.value }))}
+                  placeholder="2026-Q3"
+                  className="input input-sm bg-white/5 border-brand-emerald/15 text-white col-span-1"
+                />
+                <input
+                  type="number"
+                  value={qForm.received}
+                  onChange={(e) => setQForm((f) => ({ ...f, received: e.target.value }))}
+                  placeholder={t('adminSadaqah.received', 'Received')}
+                  className="input input-sm bg-white/5 border-brand-emerald/15 text-white col-span-1"
+                />
+                <input
+                  type="number"
+                  value={qForm.spent}
+                  onChange={(e) => setQForm((f) => ({ ...f, spent: e.target.value }))}
+                  placeholder={t('adminSadaqah.spent', 'Spent')}
+                  className="input input-sm bg-white/5 border-brand-emerald/15 text-white col-span-1"
+                />
+              </div>
               <input
-                value={qForm.quarter}
-                onChange={(e) => setQForm((f) => ({ ...f, quarter: e.target.value }))}
-                placeholder="2026-Q3"
-                className="input input-sm bg-white/5 border-brand-emerald/15 text-white col-span-1"
+                value={qForm.notes}
+                onChange={(e) => setQForm((f) => ({ ...f, notes: e.target.value }))}
+                placeholder={t(
+                  'adminSadaqah.notesPlaceholder',
+                  'Notes (e.g. server costs, qari recording)'
+                )}
+                className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
               />
-              <input
-                type="number"
-                value={qForm.received}
-                onChange={(e) => setQForm((f) => ({ ...f, received: e.target.value }))}
-                placeholder={t('adminSadaqah.received', 'Received')}
-                className="input input-sm bg-white/5 border-brand-emerald/15 text-white col-span-1"
-              />
-              <input
-                type="number"
-                value={qForm.spent}
-                onChange={(e) => setQForm((f) => ({ ...f, spent: e.target.value }))}
-                placeholder={t('adminSadaqah.spent', 'Spent')}
-                className="input input-sm bg-white/5 border-brand-emerald/15 text-white col-span-1"
-              />
+              <button
+                onClick={saveQuarterly}
+                disabled={!/^\d{4}-Q[1-4]$/.test(qForm.quarter) || upsertQuarterly.isPending}
+                className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white disabled:opacity-40"
+              >
+                {t('adminSadaqah.save', 'Save')}
+              </button>
             </div>
-            <input
-              value={qForm.notes}
-              onChange={(e) => setQForm((f) => ({ ...f, notes: e.target.value }))}
-              placeholder={t(
-                'adminSadaqah.notesPlaceholder',
-                'Notes (e.g. server costs, qari recording)'
-              )}
-              className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
-            />
-            <button
-              onClick={saveQuarterly}
-              disabled={!/^\d{4}-Q[1-4]$/.test(qForm.quarter) || upsertQuarterly.isPending}
-              className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white disabled:opacity-40"
-            >
-              {t('adminSadaqah.save', 'Save')}
-            </button>
-          </div>
+          )}
         </section>
 
         {/* Internal cost ledger — itemized record behind the quarterly
@@ -546,14 +594,16 @@ export default function AdminSadaqah() {
                     {e.date.slice(0, 10)} — {e.description}
                   </p>
                 </div>
-                <button
-                  onClick={() => clickDeleteExpense(e._id)}
-                  className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300 shrink-0"
-                >
-                  {confirmDeleteExpenseId === e._id
-                    ? t('adminSadaqah.confirmDelete', 'Confirm?')
-                    : t('adminSadaqah.delete', 'Delete')}
-                </button>
+                {isOwner && (
+                  <button
+                    onClick={() => clickDeleteExpense(e._id)}
+                    className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300 shrink-0"
+                  >
+                    {confirmDeleteExpenseId === e._id
+                      ? t('adminSadaqah.confirmDelete', 'Confirm?')
+                      : t('adminSadaqah.delete', 'Delete')}
+                  </button>
+                )}
               </div>
             ))}
             {!!expenses?.length && (

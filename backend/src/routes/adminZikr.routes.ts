@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth, requireAdminEmail, requireAdminSession } from '../middleware/auth.js';
+import { requireAdminAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import {
   adminListZikrRequestsQuerySchema,
@@ -11,7 +11,8 @@ import * as adminZikrController from '../controllers/adminZikr.controller.js';
 
 const router = Router();
 
-router.use(requireAuth, requireAdminEmail, requireAdminSession);
+// Approve/reject is the core review job here too — open to any admin.
+router.use(requireAdminAuth);
 
 router.get('/', validate(adminListZikrRequestsQuerySchema), adminZikrController.listHandler);
 router.get(

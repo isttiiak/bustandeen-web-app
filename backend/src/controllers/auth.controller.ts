@@ -6,8 +6,7 @@ import {
 } from '../config/firebaseAdmin.js';
 import User from '../models/User.js';
 import { isAdminEmail } from '../middleware/auth.js';
-import { sendMail } from '../services/email.service.js';
-import { welcomeEmail } from '../services/welcomeEmail.templates.js';
+import { sendWelcomeEmail } from '../services/welcomeEmail.service.js';
 
 export const verifyHandler = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -74,7 +73,7 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
     );
 
     if (isNewUser && email) {
-      await sendMail({ to: email, ...welcomeEmail({ name: displayName || undefined }) });
+      await sendWelcomeEmail(uid, email, displayName || undefined);
     }
 
     res.json({ ok: true, user, isAdmin: isAdminEmail(email) });

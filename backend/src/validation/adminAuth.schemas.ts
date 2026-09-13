@@ -1,7 +1,8 @@
 import { z } from 'zod';
 
-export const verifyAdminPasswordSchema = z.object({
+export const adminLoginSchema = z.object({
   body: z.object({
+    email: z.string().trim().email().max(200),
     password: z.string().min(1).max(200),
   }),
 });

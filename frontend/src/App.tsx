@@ -278,14 +278,15 @@ const Protected = ({ children }: ProtectedProps) => {
   return <>{children}</>;
 };
 
-/** Admin-only pages: sign-in/verification handled by Protected, then a
- * signed-in non-admin gets NotFound rather than a "forbidden" message —
- * consistent with this app not advertising admin/internal routes elsewhere
- * (the bot-only /connect preview, noindex on it in vercel.json). */
-const AdminProtected = ({ children }: ProtectedProps) => {
-  const { user } = useAuthStore();
-  return <Protected>{user?.isAdmin ? <AdminGate>{children}</AdminGate> : <NotFound />}</Protected>;
-};
+/**
+ * Admin-only pages: gated entirely by AdminGate's own direct email+password
+ * login (POST /api/admin/auth/login) — deliberately NOT wrapped in Protected,
+ * since an admin should never need a Firebase account/sign-in of any kind to
+ * reach the admin panel. Real enforcement is server-side (requireAdminAuth on
+ * every /api/admin/* route); this route being reachable while signed out is
+ * expected, not a hole.
+ */
+const AdminProtected = ({ children }: ProtectedProps) => <AdminGate>{children}</AdminGate>;
 
 export default function App() {
   const { setUser, init, setAuthLoading } = useAuthStore();

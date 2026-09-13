@@ -106,7 +106,7 @@ api.interceptors.response.use(
       err.response?.status === 401 &&
       (err.response.data as { error?: string } | undefined)?.error === 'admin_session_required'
     ) {
-      useAdminStore.getState().setToken(null);
+      useAdminStore.getState().logout();
     }
     // Rate limited — tell the user instead of failing silently.
     // Fixed toast id so a burst of 429s shows a single message.

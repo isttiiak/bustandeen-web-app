@@ -50,6 +50,12 @@ export interface IUser extends Document {
    * actually stored, without ever re-exposing the key itself. Cleared
    * alongside groqApiKeyEnc. */
   groqApiKeySetAt?: Date | null;
+  /** Set once the one-time welcome email has been attempted for this account
+   * (auth.controller.ts, on the very first /api/auth/verify). Unset on every
+   * account that existed before that feature shipped — used to find
+   * candidates for the admin's one-time backfill send (adminUsers.service.ts),
+   * not to guarantee delivery (email.service.ts never throws either way). */
+  welcomeEmailSentAt?: Date | null;
   salatResetDate?: string;
   salatResetHistory: ISalatResetEntry[];
   totalCount: number;
@@ -97,6 +103,7 @@ const userSchema = new Schema(
     aiEnabled: { type: Boolean, default: false },
     groqApiKeyEnc: { type: String, default: null },
     groqApiKeySetAt: { type: Date, default: null },
+    welcomeEmailSentAt: { type: Date, default: null },
     salatResetDate: { type: String, default: undefined },
     salatResetHistory: {
       type: [

@@ -10,7 +10,7 @@ const fakeJwt = (payload) => {
 };
 
 const ADMIN_EMAIL = 'zikr-admin@test.dev';
-const adminToken = fakeJwt({ uid: 'zikr-admin-uid', email: ADMIN_EMAIL });
+const PASSWORD = 'zikr-test-password';
 const userToken = fakeJwt({ uid: 'zikr-req-u1', email: 'u1@test.dev' });
 const otherUserToken = fakeJwt({ uid: 'zikr-req-u2', email: 'u2@test.dev' });
 
@@ -29,20 +29,19 @@ const validRequestBody = (overrides = {}) => ({
 describe('Zikr request API', () => {
   beforeAll(async () => {
     process.env.ADMIN_EMAILS = ADMIN_EMAIL;
-    process.env.ADMIN_PANEL_PASSWORD = 'zikr-test-password';
+    process.env.ADMIN_OWNER_EMAILS = ADMIN_EMAIL;
+    process.env.ADMIN_PANEL_PASSWORD = PASSWORD;
     process.env.ADMIN_SESSION_SECRET = 'zikr-test-session-secret';
     mongo = await MongoMemoryServer.create();
     await mongoose.connect(mongo.getUri(), { dbName: 'ihsan_test_zikr_requests' });
 
-    await request(app).post('/api/auth/verify').send({ idToken: adminToken });
     await request(app).post('/api/auth/verify').send({ idToken: userToken });
     await request(app).post('/api/auth/verify').send({ idToken: otherUserToken });
 
-    const sessionRes = await request(app)
-      .post('/api/admin/auth/verify-password')
-      .set('Authorization', `Bearer ${adminToken}`)
-      .send({ password: 'zikr-test-password' });
-    adminSessionToken = sessionRes.body.token;
+    const login = await request(app)
+      .post('/api/admin/auth/login')
+      .send({ email: ADMIN_EMAIL, password: PASSWORD });
+    adminSessionToken = login.body.token;
   });
 
   afterAll(async () => {
@@ -53,40 +52,29 @@ describe('Zikr request API', () => {
     if (mongo) await mongo.stop();
   });
 
-  test('submitting a request requires auth', async () => {
+  test('submitting a request requires the user to be signed in', async () => {
     const res = await request(app).post('/api/zikr/requests').send(validRequestBody());
     expect(res.status).toBe(401);
   });
 
-  test('admin request routes reject a signed-in non-admin', async () => {
-    const res = await request(app)
-      .get('/api/admin/zikr-requests')
-      .set('Authorization', `Bearer ${userToken}`);
-    expect(res.status).toBe(403);
-  });
-
-  test('admin request routes reject an admin who has not entered the panel password', async () => {
-    const res = await request(app)
-      .get('/api/admin/zikr-requests')
-      .set('Authorization', `Bearer ${adminToken}`);
+  test('admin request routes require the admin session token', async () => {
+    const res = await request(app).get('/api/admin/zikr-requests');
     expect(res.status).toBe(401);
     expect(res.body.error).toBe('admin_session_required');
   });
 
-  test('wrong admin panel password is rejected', async () => {
+  test('admin login rejects an email not on ADMIN_EMAILS', async () => {
     const res = await request(app)
-      .post('/api/admin/auth/verify-password')
-      .set('Authorization', `Bearer ${adminToken}`)
-      .send({ password: 'not-the-password' });
+      .post('/api/admin/auth/login')
+      .send({ email: 'u1@test.dev', password: PASSWORD });
     expect(res.status).toBe(401);
   });
 
-  test('a signed-in non-admin cannot even attempt the admin panel password', async () => {
+  test('admin login rejects the wrong password', async () => {
     const res = await request(app)
-      .post('/api/admin/auth/verify-password')
-      .set('Authorization', `Bearer ${userToken}`)
-      .send({ password: 'zikr-test-password' });
-    expect(res.status).toBe(403);
+      .post('/api/admin/auth/login')
+      .send({ email: ADMIN_EMAIL, password: 'not-the-password' });
+    expect(res.status).toBe(401);
   });
 
   let requestId;
@@ -114,10 +102,9 @@ describe('Zikr request API', () => {
     expect(other.body.requests.some((r) => r._id === requestId)).toBe(false);
   });
 
-  test('admin (with a verified session) sees it in the pending queue', async () => {
+  test('admin (with a valid session) sees it in the pending queue', async () => {
     const res = await request(app)
       .get('/api/admin/zikr-requests?status=pending')
-      .set('Authorization', `Bearer ${adminToken}`)
       .set('X-Admin-Token', adminSessionToken);
     expect(res.status).toBe(200);
     expect(res.body.requests.some((r) => r._id === requestId)).toBe(true);
@@ -126,7 +113,6 @@ describe('Zikr request API', () => {
   test('email draft is returned for the approve/reject textarea', async () => {
     const res = await request(app)
       .get(`/api/admin/zikr-requests/${requestId}/email-draft?type=approved`)
-      .set('Authorization', `Bearer ${adminToken}`)
       .set('X-Admin-Token', adminSessionToken);
     expect(res.status).toBe(200);
     expect(res.body.body).toContain('Rabbi zidni ilma');
@@ -135,7 +121,6 @@ describe('Zikr request API', () => {
   test('approving creates a global library item and marks the request approved', async () => {
     const res = await request(app)
       .post(`/api/admin/zikr-requests/${requestId}/approve`)
-      .set('Authorization', `Bearer ${adminToken}`)
       .set('X-Admin-Token', adminSessionToken)
       .send({
         name: 'Rabbi zidni ilma',
@@ -156,7 +141,6 @@ describe('Zikr request API', () => {
   test('approving an already-approved request is rejected with 409', async () => {
     const res = await request(app)
       .post(`/api/admin/zikr-requests/${requestId}/approve`)
-      .set('Authorization', `Bearer ${adminToken}`)
       .set('X-Admin-Token', adminSessionToken)
       .send({
         name: 'x',
@@ -204,7 +188,6 @@ describe('Zikr request API', () => {
 
     const res = await request(app)
       .post(`/api/admin/zikr-requests/${id}/reject`)
-      .set('Authorization', `Bearer ${adminToken}`)
       .set('X-Admin-Token', adminSessionToken)
       .send({ adminNote: 'Could not verify the source' });
     expect(res.status).toBe(200);

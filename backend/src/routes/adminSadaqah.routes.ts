@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAuth, requireAdminEmail, requireAdminSession } from '../middleware/auth.js';
+import { requireAdminAuth, requireOwnerAdmin } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import {
   adminListQuerySchema,
@@ -16,7 +16,7 @@ const router = Router();
 
 // Every route in this file is admin-only — enforced once here rather than
 // per-route, so a new endpoint added later can't accidentally skip the gate.
-router.use(requireAuth, requireAdminEmail, requireAdminSession);
+router.use(requireAdminAuth);
 
 router.get('/pending', adminSadaqahController.listPendingHandler);
 router.get('/all', validate(adminListQuerySchema), adminSadaqahController.listAllHandler);
@@ -29,24 +29,31 @@ router.get(
   validate(emailDraftQuerySchema),
   adminSadaqahController.emailDraftHandler
 );
+// Verify/reject is the core day-to-day review job (mostly done by
+// ansar@bustandeen.com) — open to any admin, not owner-restricted.
 router.patch('/:id/verify', validate(verifyDonationSchema), adminSadaqahController.verifyHandler);
 router.patch('/:id/reject', validate(rejectDonationSchema), adminSadaqahController.rejectHandler);
 
 // Erroneous/test entries only — not a donor-facing action. Reverses the
-// stats impact first if the donation had been verified.
-router.delete('/:id', adminSadaqahController.deleteDonationHandler);
+// stats impact first if the donation had been verified. Owner-only: a
+// permanent delete of a financial record.
+router.delete('/:id', requireOwnerAdmin, adminSadaqahController.deleteDonationHandler);
 
 router.get('/expenses', adminSadaqahController.listExpensesHandler);
 router.post('/expenses', validate(addExpenseSchema), adminSadaqahController.addExpenseHandler);
-router.delete('/expenses/:id', adminSadaqahController.deleteExpenseHandler);
+router.delete('/expenses/:id', requireOwnerAdmin, adminSadaqahController.deleteExpenseHandler);
 
+// Owner-only: directly edits the published financial totals, outside the
+// normal donation review flow.
 router.patch(
   '/quarterly/:quarter',
+  requireOwnerAdmin,
   validate(quarterlyUpsertSchema),
   adminSadaqahController.upsertQuarterlyHandler
 );
 router.delete(
   '/quarterly/:quarter',
+  requireOwnerAdmin,
   validate(quarterlyParamSchema),
   adminSadaqahController.deleteQuarterlyHandler
 );

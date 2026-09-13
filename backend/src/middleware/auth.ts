@@ -48,10 +48,11 @@ const REAUTH_MAX_AGE_SECONDS = 5 * 60;
 /**
  * Admin allowlist check — a comma-separated ADMIN_EMAILS env var rather than
  * a DB role field, since this app's user model has no role/permission
- * concept yet and there's only ever a couple of admin accounts. Exported
- * standalone (not just as the requireAdminEmail middleware below) so
- * controllers can also expose `isAdmin` on user-profile responses for the
- * frontend to gate its own UI, without duplicating the parsing logic.
+ * concept yet and there's only ever a couple of admin accounts. Used by the
+ * admin panel's own login (adminAuth.controller.ts) and, separately, to set
+ * `isAdmin` on a normal Firebase user's profile response purely so the
+ * frontend can show a convenience nav link — that flag grants no API access
+ * on its own.
  */
 export const isAdminEmail = (email: string | null | undefined): boolean => {
   if (typeof email !== 'string' || !email) return false;
@@ -62,52 +63,19 @@ export const isAdminEmail = (email: string | null | undefined): boolean => {
   return adminEmails.includes(email.toLowerCase());
 };
 
-/** Must run after requireAuth (needs req.user populated). */
-export const requireAdminEmail = (req: Request, res: Response, next: NextFunction): void => {
-  if (!isAdminEmail(req.user?.email)) {
-    res.status(403).json({ ok: false, error: 'Forbidden' });
-    return;
-  }
-  next();
-};
-
-const ADMIN_SESSION_TTL_SECONDS = 12 * 60 * 60; // 12h — re-enter the password after that
-
 /**
- * Second factor for the admin panel: a Firebase-authenticated admin-allowlist
- * user (requireAdminEmail) still can't act on any /api/admin/* route until
- * they've separately entered ADMIN_PANEL_PASSWORD via POST
- * /api/admin/auth/verify-password. That endpoint mints this token; every
- * other admin route requires it via requireAdminSession below. Stateless
- * (HMAC-signed uid+expiry, no server-side session store) so it works the same
- * way across Vercel's serverless invocations.
+ * Owner allowlist — a subset of ADMIN_EMAILS (see role note on
+ * requireOwnerAdmin below). Same comma-separated-env-var shape as
+ * isAdminEmail, deliberately not derived FROM ADMIN_EMAILS so an owner who
+ * isn't (yet) a general admin, or vice versa, is representable.
  */
-export const signAdminSessionToken = (uid: string): { token: string; expiresIn: number } => {
-  const secret = process.env.ADMIN_SESSION_SECRET ?? '';
-  const exp = Math.floor(Date.now() / 1000) + ADMIN_SESSION_TTL_SECONDS;
-  const payload = Buffer.from(JSON.stringify({ uid, exp })).toString('base64url');
-  const sig = createHmac('sha256', secret).update(payload).digest('base64url');
-  return { token: `${payload}.${sig}`, expiresIn: ADMIN_SESSION_TTL_SECONDS };
-};
-
-const verifyAdminSessionToken = (token: string, uid: string): boolean => {
-  const secret = process.env.ADMIN_SESSION_SECRET;
-  if (!secret) return false;
-  const [payload, sig] = token.split('.');
-  if (!payload || !sig) return false;
-  const expectedSig = createHmac('sha256', secret).update(payload).digest('base64url');
-  const sigBuf = Buffer.from(sig);
-  const expectedBuf = Buffer.from(expectedSig);
-  if (sigBuf.length !== expectedBuf.length || !timingSafeEqual(sigBuf, expectedBuf)) return false;
-  try {
-    const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as {
-      uid: string;
-      exp: number;
-    };
-    return data.uid === uid && data.exp > Math.floor(Date.now() / 1000);
-  } catch {
-    return false;
-  }
+export const isOwnerAdmin = (email: string | null | undefined): boolean => {
+  if (typeof email !== 'string' || !email) return false;
+  const ownerEmails = (process.env.ADMIN_OWNER_EMAILS ?? '')
+    .split(',')
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  return ownerEmails.includes(email.toLowerCase());
 };
 
 export const verifyAdminPassword = (password: string): boolean => {
@@ -121,12 +89,94 @@ export const verifyAdminPassword = (password: string): boolean => {
   return timingSafeEqual(a, b);
 };
 
-/** Must run after requireAuth + requireAdminEmail on every /api/admin/* route. */
-export const requireAdminSession = (req: Request, res: Response, next: NextFunction): void => {
+const ADMIN_SESSION_TTL_SECONDS = 12 * 60 * 60; // 12h — re-enter the password after that
+
+/**
+ * The admin panel's ENTIRE auth: a direct email+password login
+ * (POST /api/admin/auth/login, adminAuth.controller.ts) completely separate
+ * from the app's own Firebase user accounts — an admin never needs to sign
+ * in as a normal user first. This mints the resulting session token.
+ *
+ * Deliberately throws when ADMIN_SESSION_SECRET is unset rather than signing
+ * with a fallback empty-string key: a previous version did that, which let
+ * login "succeed" with a token that verifyAdminSessionToken (below) would
+ * then always reject as soon as the FIRST admin API call was made — a
+ * confusing "briefly see the dashboard, then get kicked back to the login
+ * screen" bug. Failing loudly here surfaces the real misconfiguration
+ * immediately instead.
+ */
+export const signAdminSessionToken = (
+  email: string
+): { token: string; expiresIn: number; isOwner: boolean } => {
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  if (!secret) throw new Error('ADMIN_SESSION_SECRET is not configured');
+  const isOwner = isOwnerAdmin(email);
+  const exp = Math.floor(Date.now() / 1000) + ADMIN_SESSION_TTL_SECONDS;
+  const payload = Buffer.from(JSON.stringify({ email, isOwner, exp })).toString('base64url');
+  const sig = createHmac('sha256', secret).update(payload).digest('base64url');
+  return { token: `${payload}.${sig}`, expiresIn: ADMIN_SESSION_TTL_SECONDS, isOwner };
+};
+
+interface AdminSessionPayload {
+  email: string;
+  isOwner: boolean;
+  exp: number;
+}
+
+const verifyAdminSessionToken = (token: string): AdminSessionPayload | null => {
+  const secret = process.env.ADMIN_SESSION_SECRET;
+  if (!secret) return null;
+  const [payload, sig] = token.split('.');
+  if (!payload || !sig) return null;
+  const expectedSig = createHmac('sha256', secret).update(payload).digest('base64url');
+  const sigBuf = Buffer.from(sig);
+  const expectedBuf = Buffer.from(expectedSig);
+  if (sigBuf.length !== expectedBuf.length || !timingSafeEqual(sigBuf, expectedBuf)) return null;
+  try {
+    const data = JSON.parse(Buffer.from(payload, 'base64url').toString('utf8')) as
+      AdminSessionPayload | Record<string, unknown>;
+    if (
+      typeof data.email !== 'string' ||
+      typeof data.exp !== 'number' ||
+      data.exp <= Math.floor(Date.now() / 1000)
+    ) {
+      return null;
+    }
+    return data as AdminSessionPayload;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * The ONLY gate on every /api/admin/* route — no Firebase requireAuth
+ * involved. Re-uses req.user's shape (uid/email) purely so existing
+ * controller code that reads req.user.email for reviewedBy/verifiedBy needs
+ * no changes; `uid` here is the admin's email, not a Firebase uid.
+ */
+export const requireAdminAuth = (req: Request, res: Response, next: NextFunction): void => {
   const header = req.headers['x-admin-token'];
   const token = Array.isArray(header) ? header[0] : header;
-  if (!token || !verifyAdminSessionToken(token, req.user?.uid ?? '')) {
+  const data = token ? verifyAdminSessionToken(token) : null;
+  if (!data) {
     res.status(401).json({ ok: false, error: 'admin_session_required' });
+    return;
+  }
+  req.user = { uid: data.email, email: data.email, isOwner: data.isOwner };
+  next();
+};
+
+/**
+ * Second role tier, for the owner (istiak@bustandeen.com) only — delete,
+ * financial-record edits, and bulk/override operations. The day-to-day
+ * review workflow (verify/reject a donation, approve/reject a zikr request)
+ * stays open to every admin, since that's the actual job the non-owner admin
+ * (ansar@bustandeen.com) does; this only covers actions explicitly requested
+ * to be owner-restricted. Must run after requireAdminAuth.
+ */
+export const requireOwnerAdmin = (req: Request, res: Response, next: NextFunction): void => {
+  if (!req.user?.isOwner) {
+    res.status(403).json({ ok: false, error: 'Owner-only action' });
     return;
   }
   next();

@@ -82,3 +82,11 @@ export const sadaqahSubmitLimiter = makeLimit(60 * 60 * 1000, 5, {
   ok: false,
   error: 'Too many donation submissions. Please try again in an hour.',
 });
+
+/** Admin login: 10 per 15 min per IP — this endpoint has no prior auth of any
+ *  kind (that's the whole point, see adminAuth.controller.ts), so it's the
+ *  only thing standing between a brute-force attempt and ADMIN_PANEL_PASSWORD. */
+export const adminLoginLimiter = makeLimit(15 * 60 * 1000, 10, {
+  ok: false,
+  error: 'Too many login attempts. Please try again later.',
+});
