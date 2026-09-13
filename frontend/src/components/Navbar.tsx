@@ -21,6 +21,7 @@ import {
   GlobeAltIcon,
   BanknotesIcon,
   HeartIcon,
+  InboxStackIcon,
 } from '@heroicons/react/24/outline';
 import i18n from '../i18n.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
@@ -416,6 +417,17 @@ export default function Navbar() {
                         >
                           <BanknotesIcon className="w-4 h-4 text-brand-gold/70" />
                           {t('nav.sadaqahAdmin', 'Sadaqah Admin')}
+                        </Link>
+                      )}
+
+                      {user.isAdmin && (
+                        <Link
+                          to="/admin/zikr-requests"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-gold/10 text-sm transition-colors"
+                        >
+                          <InboxStackIcon className="w-4 h-4 text-brand-gold/70" />
+                          {t('nav.zikrRequestsAdmin', 'Zikr Requests Admin')}
                         </Link>
                       )}
 
