@@ -6,6 +6,8 @@ import {
 } from '../config/firebaseAdmin.js';
 import User from '../models/User.js';
 import { isAdminEmail } from '../middleware/auth.js';
+import { sendMail } from '../services/email.service.js';
+import { welcomeEmail } from '../services/welcomeEmail.templates.js';
 
 export const verifyHandler = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -42,6 +44,12 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
     const validGenders = ['male', 'female', 'other', 'prefer_not_say'];
     const genderOnInsert = gender && validGenders.includes(gender) ? gender : undefined;
 
+    // Checked BEFORE the upsert below — findOneAndUpdate's upsert doesn't
+    // tell the caller whether it inserted vs. updated, and this is the only
+    // reliable way to know "is this account's very first sign-in" for the
+    // one-time welcome email.
+    const isNewUser = !(await User.exists({ uid }));
+
     // Always update email (can change in Firebase).
     // Only set displayName and photoUrl on first creation — never overwrite values
     // the user has manually edited in their Profile page.
@@ -64,6 +72,10 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
         projection: 'uid email displayName photoUrl gender hijriOffset dayStartMode',
       }
     );
+
+    if (isNewUser && email) {
+      await sendMail({ to: email, ...welcomeEmail({ name: displayName || undefined }) });
+    }
 
     res.json({ ok: true, user, isAdmin: isAdminEmail(email) });
   } catch (err) {
