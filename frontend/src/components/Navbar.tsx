@@ -19,9 +19,8 @@ import {
   ShieldCheckIcon,
   ChatBubbleLeftRightIcon,
   GlobeAltIcon,
-  BanknotesIcon,
   HeartIcon,
-  InboxStackIcon,
+  LockClosedIcon,
 } from '@heroicons/react/24/outline';
 import i18n from '../i18n.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
@@ -409,25 +408,17 @@ export default function Navbar() {
                         </Link>
                       )}
 
+                      {/* One link, not one per admin section — the admin panel has its
+                          own separate Servant/Ansar sign-in either way (see AdminGate),
+                          so a deep link here would only look like a shortcut it isn't. */}
                       {user.isAdmin && (
                         <Link
-                          to="/admin/sadaqah"
+                          to="/admin"
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-gold/10 text-sm transition-colors"
                         >
-                          <BanknotesIcon className="w-4 h-4 text-brand-gold/70" />
-                          {t('nav.sadaqahAdmin', 'Sadaqah Admin')}
-                        </Link>
-                      )}
-
-                      {user.isAdmin && (
-                        <Link
-                          to="/admin/zikr-requests"
-                          onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-gold/10 text-sm transition-colors"
-                        >
-                          <InboxStackIcon className="w-4 h-4 text-brand-gold/70" />
-                          {t('nav.zikrRequestsAdmin', 'Zikr Requests Admin')}
+                          <LockClosedIcon className="w-4 h-4 text-brand-gold/70" />
+                          {t('nav.adminPanel', 'Admin Panel')}
                         </Link>
                       )}
 

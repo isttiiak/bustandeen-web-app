@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, browserSessionPersistence, setPersistence } from 'firebase/auth';
+import { getAuth, browserLocalPersistence, setPersistence } from 'firebase/auth';
 
 /**
  * A SECOND, named Firebase app instance — same project as the main app's
@@ -13,9 +13,12 @@ import { getAuth, browserSessionPersistence, setPersistence } from 'firebase/aut
  * or be affected by, the main app's `auth.currentUser` (firebase.ts), even
  * in the same tab.
  *
- * Session-only persistence (not the default local/indexedDB) deliberately
- * matches the old admin panel's choice to not outlive the tab — signing into
- * the admin panel is a per-session action, not a "stay logged in forever."
+ * Local (not session-only) persistence deliberately: a Servant/Ansar
+ * reasonably expects to open the admin panel in a new tab, or reload, without
+ * re-entering a password every time — the isolation above is what actually
+ * keeps this separate from a regular account, not how long the session lives.
+ * The session still ends on an explicit Log out (useAdminLogout), same as
+ * the main app.
  */
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -29,4 +32,4 @@ const firebaseConfig = {
 const adminApp = initializeApp(firebaseConfig, 'admin');
 export const adminAuth = getAuth(adminApp);
 
-void setPersistence(adminAuth, browserSessionPersistence);
+void setPersistence(adminAuth, browserLocalPersistence);

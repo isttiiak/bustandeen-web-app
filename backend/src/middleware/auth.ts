@@ -97,8 +97,11 @@ export const requireAdminAuth = async (
     }
 
     let uid: string;
+    let verifiedEmail: string | undefined;
     if (isFirebaseInitialized()) {
-      uid = (await verifyFirebaseToken(token)).uid;
+      const decoded = await verifyFirebaseToken(token);
+      uid = decoded.uid;
+      if (decoded.email && decoded.email_verified) verifiedEmail = decoded.email.toLowerCase();
     } else if (process.env.NODE_ENV !== 'production' && process.env.DEV_AUTH_BYPASS === '1') {
       const payload = decodeUnverifiedJwt(token);
       if (typeof payload?.['uid'] !== 'string') {
@@ -111,7 +114,25 @@ export const requireAdminAuth = async (
       return;
     }
 
-    const account = await AdminAccount.findOne({ firebaseUid: uid, active: true });
+    let account = await AdminAccount.findOne({ firebaseUid: uid, active: true });
+
+    // Self-heal a stale link: someone deleted and recreated an admin's
+    // Firebase account (same email, new uid under the hood — Firebase never
+    // reuses uids). The OLD uid then matches nothing here even though the
+    // email is still a legitimate, verified admin identity. Re-point the
+    // existing (still-active) row at the new uid instead of locking the
+    // Servant/Ansar out until someone manually fixes the database — this is
+    // safe because `verifiedEmail` only comes from a Firebase-verified,
+    // email_verified token, never from the unverified dev-bypass path.
+    if (!account && verifiedEmail) {
+      const staleMatch = await AdminAccount.findOne({ email: verifiedEmail, active: true });
+      if (staleMatch) {
+        staleMatch.firebaseUid = uid;
+        await staleMatch.save();
+        account = staleMatch;
+      }
+    }
+
     if (!account) {
       res.status(401).json({ ok: false, error: 'admin_session_required' });
       return;
