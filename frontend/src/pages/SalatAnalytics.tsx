@@ -27,6 +27,7 @@ import { PRAYER_META, translateSalatName } from '../utils/prayerTimes.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import KazaDebtChart from '../components/analytics/KazaDebtChart.js';
 import MosqueTrendChart from '../components/analytics/MosqueTrendChart.js';
+import ChartInfoModal, { InfoButton } from '../components/ChartInfoModal.js';
 
 const PERIOD_OPTIONS = [
   { label: '30d', value: 30 },
@@ -104,6 +105,62 @@ export default function SalatAnalytics() {
   }, [selectedMonth, days, civilToday]);
 
   const [activeView, setActiveView] = useState<'stats' | 'journey'>('stats');
+  const [infoTopic, setInfoTopic] = useState<string | null>(null);
+
+  // "How to read this" content for the ⓘ button on each trend/chart below —
+  // requested directly: users looking at raw percentages/bars with no
+  // explanation of what they mean or how the window is bucketed.
+  const CHART_INFO: Record<string, { title: string; body: string }> = {
+    byWeekday: {
+      title: t('salatAnalytics.info.byWeekdayTitle', 'By Day of Week'),
+      body: t(
+        'salatAnalytics.info.byWeekdayBody',
+        'Your completion rate for each day of the week, added up across the whole period you\'re viewing — not a timeline. It answers "which day am I weakest on," e.g. Friday afternoons or Monday Fajr. A day with no bar yet just has no data in this window.'
+      ),
+    },
+    prayerTiming: {
+      title: t('salatAnalytics.info.prayerTimingTitle', 'Prayer Timing'),
+      body: t(
+        'salatAnalytics.info.prayerTimingBody',
+        "Of the prayers you've marked done, how far into that prayer's valid time window you tended to pray it — early, mid, or late. Only counts prayers where your location was set at the time (the window itself is calculated from prayer times, which need a location)."
+      ),
+    },
+    kazaDebtChart: {
+      title: t('salatAnalytics.info.kazaDebtChartTitle', 'Kaza Debt Chart'),
+      body: t(
+        'salatAnalytics.info.kazaDebtChartBody',
+        'How many missed prayers you added to your kaza debt (red) vs paid back by completing a make-up prayer (green), bucketed by day for a short window or by week for a longer one. The rightmost bar always covers the period ending today — hover it (or check its label) to see the exact date range, including today.'
+      ),
+    },
+    correlation: {
+      title: t('salatAnalytics.info.correlationTitle', 'Isha & Fajr Connection'),
+      body: t(
+        'salatAnalytics.info.correlationBody',
+        "Compares how often you catch Fajr on time the morning after praying Isha before 11pm vs after 11pm — a purely personal pattern from your own last 90 days, not a religious ruling. It only appears once there's enough data in BOTH categories (at least 5 days each) — a 2-day sample would just be noise dressed up as a percentage."
+      ),
+    },
+    mosqueTrend: {
+      title: t('salatAnalytics.info.mosqueTrendTitle', 'Mosque Attendance Trend'),
+      body: t(
+        'salatAnalytics.info.mosqueTrendBody',
+        'What share of your prayers were prayed at the mosque (in jama’ah), tracked day by day for a short window or week by week for a longer one. The rightmost point always includes today’s prayers so far — its label shows the exact date (or date range, for a weekly bucket) it covers.'
+      ),
+    },
+    prayerCalendar: {
+      title: t('salatAnalytics.info.prayerCalendarTitle', 'Prayer Calendar'),
+      body: t(
+        'salatAnalytics.info.prayerCalendarBody',
+        "Every day in the window, colored by how many of your 5 daily prayers were completed that day — from red (0) to bright green (all 5). Today is ringed in green. A faint, near-invisible cell means no data at all for that day (nothing logged, or it hasn't happened yet), which is different from a red cell (logged, but nothing done)."
+      ),
+    },
+    journey: {
+      title: t('salatAnalytics.info.journeyTitle', 'Journey'),
+      body: t(
+        'salatAnalytics.info.journeyBody',
+        "Your tracking history split into phases — a new phase starts each time you reset your kaza debt count. Each phase shows how many days it covered and your completion rate across them. The current (ongoing) phase's numbers update live and already include today's progress so far."
+      ),
+    },
+  };
 
   const { data, isLoading, isError } = useSalatAnalytics(analyticsDays, analyticsToday);
   const { data: debt } = useSalatDebt();
@@ -644,6 +701,10 @@ export default function SalatAnalytics() {
                         <h2 className="text-white font-black text-sm flex items-center gap-2">
                           <ChartBarIcon className="w-4 h-4 text-brand-emerald" />{' '}
                           {t('salatAnalytics.byWeekday', 'By Day of Week')}
+                          <InfoButton
+                            onClick={() => setInfoTopic('byWeekday')}
+                            label={CHART_INFO.byWeekday!.title}
+                          />
                         </h2>
                         <div className="flex items-end justify-between gap-2 h-24">
                           {FRI_FIRST_JS_DAYS.map((jsDay, idx) => {
@@ -699,6 +760,10 @@ export default function SalatAnalytics() {
                               <h2 className="text-white font-black text-sm flex items-center gap-2">
                                 <ChartBarIcon className="w-4 h-4 text-brand-emerald" />{' '}
                                 {t('salatAnalytics.prayerTiming', 'Prayer Timing')}
+                                <InfoButton
+                                  onClick={() => setInfoTopic('prayerTiming')}
+                                  label={CHART_INFO.prayerTiming!.title}
+                                />
                               </h2>
                               {(() => {
                                 const { early, mid, late } = data.timeOfWindow;
@@ -810,6 +875,10 @@ export default function SalatAnalytics() {
                       <h2 className="text-white font-black text-sm flex items-center gap-2">
                         <ChartBarIcon className="w-4 h-4 text-brand-emerald" />{' '}
                         {t('salatAnalytics.kazaDebtChart')}
+                        <InfoButton
+                          onClick={() => setInfoTopic('kazaDebtChart')}
+                          label={CHART_INFO.kazaDebtChart!.title}
+                        />
                       </h2>
                       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                         <KazaDebtChart data={debtHistory} />
@@ -926,6 +995,10 @@ export default function SalatAnalytics() {
                         <h2 className="text-white font-black text-sm flex items-center gap-2">
                           <ChartBarIcon className="w-4 h-4 text-brand-emerald" />{' '}
                           {t('salatAnalytics.correlationTitle', 'Isha & Fajr connection')}
+                          <InfoButton
+                            onClick={() => setInfoTopic('correlation')}
+                            label={CHART_INFO.correlation!.title}
+                          />
                         </h2>
                         <p className="text-white/40 text-xs">
                           {t(
@@ -977,6 +1050,10 @@ export default function SalatAnalytics() {
                       <h2 className="text-white font-black text-sm flex items-center gap-2">
                         <ChartBarIcon className="w-4 h-4 text-brand-emerald" />{' '}
                         {t('salatAnalytics.mosqueTrend')}
+                        <InfoButton
+                          onClick={() => setInfoTopic('mosqueTrend')}
+                          label={CHART_INFO.mosqueTrend!.title}
+                        />
                       </h2>
                       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                         <MosqueTrendChart data={data.weeklyMosqueTrend} />
@@ -986,10 +1063,14 @@ export default function SalatAnalytics() {
 
                   {/* Prayer Calendar — horizontal (weeks flow left→right, days top→bottom) */}
                   <div className="space-y-3">
-                    <div className="flex items-center gap-3 flex-wrap">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h2 className="text-white font-black text-sm">
                         {t('salatAnalytics.prayerCalendar')}
                       </h2>
+                      <InfoButton
+                        onClick={() => setInfoTopic('prayerCalendar')}
+                        label={CHART_INFO.prayerCalendar!.title}
+                      />
                       <span className="text-white/25 text-xs">
                         {t('salatAnalytics.lastDays', {
                           count: formatLocaleNumber(data.calendarData.length),
@@ -1038,9 +1119,14 @@ export default function SalatAnalytics() {
                               <div key={wi} className="flex flex-col gap-1">
                                 {week.map((cell, di) => {
                                   if (!cell) return <div key={di} className="w-7 h-7" />;
-                                  const isLogged = data.calendarData.some(
-                                    (c) => c.date === cell.date
-                                  );
+                                  // Was `data.calendarData.some((c) => c.date === cell.date)` —
+                                  // a tautology, since `cell` is itself drawn from that same
+                                  // array, so it was always true. That made every day with NO
+                                  // log row at all (including every future day) render as a
+                                  // bright-red "0 completed" cell, indistinguishable from a day
+                                  // actually logged with nothing done. `cell.logged` comes from
+                                  // the backend's own SalatLog existence check.
+                                  const isLogged = cell.logged;
                                   const isPerfect = cell.completed === 5;
                                   const isToday = cell.date === todayStr;
                                   const isFuture = cell.date > todayStr;
@@ -1137,6 +1223,15 @@ export default function SalatAnalytics() {
           {/* ── Journey view ── */}
           {activeView === 'journey' && (
             <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <h2 className="text-white font-black text-sm">
+                  {t('salatAnalytics.journeyTabTitle', 'Your Journey')}
+                </h2>
+                <InfoButton
+                  onClick={() => setInfoTopic('journey')}
+                  label={CHART_INFO.journey!.title}
+                />
+              </div>
               {journeyLoading && (
                 <div className="flex justify-center py-20">
                   <span className="loading loading-spinner loading-lg text-brand-emerald" />
@@ -1293,6 +1388,12 @@ export default function SalatAnalytics() {
           )}
         </div>
       </div>
+
+      <ChartInfoModal
+        title={infoTopic ? (CHART_INFO[infoTopic]?.title ?? null) : null}
+        body={infoTopic ? CHART_INFO[infoTopic]?.body : undefined}
+        onClose={() => setInfoTopic(null)}
+      />
     </AnimatedBackground>
   );
 }

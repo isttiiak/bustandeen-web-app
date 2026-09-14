@@ -216,7 +216,12 @@ export interface SalatAnalyticsResult {
     }
   >;
   last7Days: Array<{ date: string; completed: number; total: number }>;
-  calendarData: Array<{ date: string; completed: number; total: number }>;
+  /** `logged` is false when no SalatLog row exists for that date at all —
+   * distinct from a row that exists with 0 prayers completed. The frontend
+   * calendar heatmap uses this to render "no data" days differently from
+   * "logged, nothing done" days (previously indistinguishable — both showed
+   * the same 0-completed red cell). */
+  calendarData: Array<{ date: string; completed: number; total: number; logged: boolean }>;
   weeklyMosqueTrend: Array<{
     weekStart: string;
     weekEnd: string;
@@ -513,7 +518,12 @@ export async function getSalatAnalytics(
   const calendarData = [];
   for (let i = calendarDays - 1; i >= 0; i--) {
     const dateStr = shiftDateStr(today, -i);
-    calendarData.push({ date: dateStr, completed: countDone(dateStr), total: 5 });
+    calendarData.push({
+      date: dateStr,
+      completed: countDone(dateStr),
+      total: 5,
+      logged: logMap.has(dateStr),
+    });
   }
 
   const completionRate =

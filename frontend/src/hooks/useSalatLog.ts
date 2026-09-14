@@ -313,7 +313,7 @@ export interface SalatAnalytics {
     }
   >;
   last7Days: Array<{ date: string; completed: number; total: number }>;
-  calendarData: Array<{ date: string; completed: number; total: number }>;
+  calendarData: Array<{ date: string; completed: number; total: number; logged: boolean }>;
   weeklyMosqueTrend: Array<{
     weekStart: string;
     weekEnd: string;

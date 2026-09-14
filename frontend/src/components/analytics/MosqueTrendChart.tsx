@@ -94,6 +94,19 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
   const { rows, pts, line, area, ticks } = model;
   const active = hover != null ? rows[hover] : null;
   const labelEvery = Math.max(1, Math.ceil(rows.length / 8));
+  // In weekly-bucket mode weekStart !== weekEnd — a bare weekStart label
+  // (e.g. "Sep 8") never showed the date the window actually ends on, which
+  // made the last point's own day (today) look entirely absent from the
+  // chart (reported directly: "today is Sep 14 and none of the trends have
+  // anything for it"). In daily mode weekStart === weekEnd, so this is just
+  // the one date, same as before.
+  const weekLabel = (r: MosqueWeek): string =>
+    r.weekStart === r.weekEnd
+      ? formatLocaleDate(new Date(r.weekStart + 'T12:00:00'), { month: 'short', day: 'numeric' })
+      : `${formatLocaleDate(new Date(r.weekStart + 'T12:00:00'), { month: 'short', day: 'numeric' })} – ${formatLocaleDate(
+          new Date(r.weekEnd + 'T12:00:00'),
+          { month: 'short', day: 'numeric' }
+        )}`;
 
   return (
     <div className="card bg-brand-deep/80 border border-brand-border rounded-2xl overflow-x-auto">
@@ -101,12 +114,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
         <div className="min-h-[18px] mb-1">
           {active ? (
             <p className="text-xs text-white/70 tabular-nums">
-              <span className="text-white/40">
-                {formatLocaleDate(new Date(active.weekStart + 'T12:00:00'), {
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </span>{' '}
+              <span className="text-white/40">{weekLabel(active)}</span>{' '}
               <span className="font-bold text-brand-emerald">
                 {formatLocaleNumber(active.rate)}%
               </span>{' '}
@@ -211,8 +219,10 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
             </g>
           )}
 
-          {rows.map((r, i) =>
-            i % labelEvery === 0 ? (
+          {rows.map((r, i) => {
+            const isLast = i === rows.length - 1;
+            if (!isLast && i % labelEvery !== 0) return null;
+            return (
               <text
                 key={`${r.weekStart}-${i}`}
                 x={pts[i]!.x}
@@ -221,13 +231,15 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
                 className="fill-white/40"
                 style={{ fontSize: 10 }}
               >
-                {formatLocaleDate(new Date(r.weekStart + 'T12:00:00'), {
-                  month: 'short',
-                  day: 'numeric',
-                })}
+                {isLast
+                  ? weekLabel(r)
+                  : formatLocaleDate(new Date(r.weekStart + 'T12:00:00'), {
+                      month: 'short',
+                      day: 'numeric',
+                    })}
               </text>
-            ) : null
-          )}
+            );
+          })}
 
           {rows.map((r, i) => (
             <rect
