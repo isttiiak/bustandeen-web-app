@@ -179,6 +179,19 @@ export async function resetDebt(userId: string, date?: string): Promise<SalatDeb
  * as `since`/`lastAccrualDate` instead of scanning backwards — the feature
  * must never surprise an existing user with years of back-dated debt the
  * first time it ships.
+ *
+ * CONCURRENCY: this is called on every GET of salat data (log/history/
+ * analytics/debt), and the frontend fires several of those in parallel on a
+ * single page load. Without the atomic claim below, every one of those
+ * parallel calls would read the SAME `lastAccrualDate`, independently
+ * compute the SAME "days to sweep," and each apply its OWN $inc — silently
+ * multiplying the debt by however many requests happened to race together
+ * (reported directly: 2 real missed Maghrib showing as 4, 1 missed Isha
+ * showing as 3). The findOneAndUpdate below is a compare-and-swap: it only
+ * matches (and advances `lastAccrualDate`) for the FIRST caller to reach it;
+ * every other concurrent caller's condition then fails to match, it gets
+ * `null` back, and returns having touched nothing. Exactly one caller ever
+ * proceeds to actually sweep a given window, no matter how many raced for it.
  */
 export async function ensureCaughtUp(userId: string, today?: string): Promise<void> {
   const t = today ?? todayDateString();
@@ -189,14 +202,28 @@ export async function ensureCaughtUp(userId: string, today?: string): Promise<vo
   );
 
   if (!doc.lastAccrualDate) {
-    doc.since = doc.since ?? t;
-    doc.lastAccrualDate = shiftDateStr(t, -1);
-    await doc.save();
+    // Same compare-and-swap idea for the one-time "adopt today" legacy path —
+    // only the winner sets it; a racing loser's condition just won't match.
+    await SalatDebt.updateOne(
+      { userId, lastAccrualDate: { $exists: false } },
+      { $set: { since: doc.since ?? t, lastAccrualDate: shiftDateStr(t, -1) } }
+    );
     return;
   }
 
-  const cursor = shiftDateStr(doc.lastAccrualDate, 1);
-  if (cursor >= t) return;
+  const staleCursor = doc.lastAccrualDate;
+  if (shiftDateStr(staleCursor, 1) >= t) return;
+
+  // Atomic claim — see CONCURRENCY note above. Must happen BEFORE any of the
+  // work below, not after, or concurrent callers would all still do (and
+  // double-count) the work before any of them got around to writing back.
+  const claimed = await SalatDebt.findOneAndUpdate(
+    { userId, lastAccrualDate: staleCursor },
+    { $set: { lastAccrualDate: shiftDateStr(t, -1) } }
+  );
+  if (!claimed) return; // lost the race — another call already claimed this window
+
+  const cursor = shiftDateStr(staleCursor, 1);
 
   const logs = await SalatLog.find({ userId, date: { $gte: cursor, $lt: t } });
   const logMap = new Map(logs.map((l) => [l.date, l]));
@@ -251,12 +278,16 @@ export async function ensureCaughtUp(userId: string, today?: string): Promise<vo
     });
   }
 
+  // lastAccrualDate was already advanced atomically by the claim above — this
+  // is now just the totals. No other caller can reach this line for the same
+  // window (they'd have lost the claim and returned already), so a plain
+  // $inc here is race-free.
   const inc = Object.fromEntries(
     PRAYER_IDS.filter((id) => totals[id] > 0).map((id) => [`owed.${id}`, totals[id]])
   );
-  const update: Record<string, unknown> = { $set: { lastAccrualDate: shiftDateStr(t, -1) } };
-  if (Object.keys(inc).length) update['$inc'] = inc;
-  await SalatDebt.updateOne({ userId }, update);
+  if (Object.keys(inc).length) {
+    await SalatDebt.updateOne({ userId }, { $inc: inc });
+  }
 }
 
 /** Shift a YYYY-MM-DD date string by `delta` days (pure string math, no TZ). */

@@ -131,6 +131,26 @@ describe('Salat API', () => {
     expect(typeof res.body.currentStreak).toBe('number');
   });
 
+  test('GET /analytics calendarData.logged distinguishes "no row" from "logged, 0 done"', async () => {
+    const token11 = fakeJwt({ uid: 'sal11', email: 'sal11@test.dev', name: 'Sal11' });
+    const auth11 = (r) => r.set('Authorization', `Bearer ${token11}`);
+    await request(app).post('/api/auth/verify').send({ idToken: token11 });
+
+    const twoDaysAgo = shiftDateStr(today, -2);
+    // twoDaysAgo: a real log row exists, but nothing on it was marked done —
+    // must still read logged:true, not be confused with a day with no row.
+    await SalatLogModel.create({ userId: 'sal11', date: twoDaysAgo });
+    // yesterday: never opened at all — no row.
+
+    const res = await auth11(request(app).get('/api/salat/analytics?days=7'));
+    expect(res.status).toBe(200);
+    const loggedDay = res.body.calendarData.find((c) => c.date === twoDaysAgo);
+    const unloggedYesterday = res.body.calendarData.find((c) => c.date === shiftDateStr(today, -1));
+    expect(loggedDay.logged).toBe(true);
+    expect(loggedDay.completed).toBe(0);
+    expect(unloggedYesterday.logged).toBe(false);
+  });
+
   test('GET /debt/history returns weeks array', async () => {
     const res = await auth(request(app).get('/api/salat/debt/history?days=30'));
     expect(res.status).toBe(200);
@@ -282,6 +302,50 @@ describe('Salat API', () => {
     const debtRes3 = await auth7(request(app).get('/api/salat/debt'));
     expect(debtRes3.body.owed.fajr).toBe(0);
     expect(debtRes3.body.totalOwed).toBe(8);
+  });
+
+  test('ensureCaughtUp is race-safe: concurrent requests must not multiply the debt', async () => {
+    // Reproduces exactly the reported bug: the frontend fires several GET
+    // endpoints in parallel on one page load (summary/analytics/debt/salat
+    // all call ensureCaughtUp), and without an atomic claim each one reads
+    // the same stale lastAccrualDate, independently computes the same "days
+    // to sweep," and each applies its own $inc — 1 real missed prayer was
+    // showing as 2-4x, depending on how many requests happened to race.
+    const token10 = fakeJwt({ uid: 'sal10', email: 'sal10@test.dev', name: 'Sal10' });
+    const auth10 = (r) => r.set('Authorization', `Bearer ${token10}`);
+    await request(app).post('/api/auth/verify').send({ idToken: token10 });
+
+    const fiveDaysAgo = shiftDateStr(today, -5);
+
+    // Debt doc last swept 5 days ago — 4 whole days (fiveDaysAgo+1 .. today-1)
+    // with no log rows at all need catching up, each contributing exactly 1
+    // to every prayer's count.
+    await SalatDebtModel.create({
+      userId: 'sal10',
+      owed: {},
+      since: fiveDaysAgo,
+      lastAccrualDate: fiveDaysAgo,
+    });
+
+    const CONCURRENCY = 8;
+    const results = await Promise.all(
+      Array.from({ length: CONCURRENCY }, () => auth10(request(app).get('/api/salat/debt')))
+    );
+    for (const res of results) expect(res.status).toBe(200);
+
+    // From fiveDaysAgo+1 up to (not including) today = 4 days owed per prayer,
+    // regardless of how many of the 8 concurrent requests raced for it.
+    const expectedPerPrayer = 4;
+    const final = await auth10(request(app).get('/api/salat/debt'));
+    expect(final.body.owed.fajr).toBe(expectedPerPrayer);
+    expect(final.body.owed.isha).toBe(expectedPerPrayer);
+    expect(final.body.totalOwed).toBe(expectedPerPrayer * 5);
+
+    // Also assert directly against every individual concurrent response —
+    // none of them should have observed (or caused) a higher count either.
+    for (const res of results) {
+      expect(res.body.totalOwed).toBeLessThanOrEqual(expectedPerPrayer * 5);
+    }
   });
 
   test('ensureCaughtUp respects an explicit ?today= (Fajr-tracking day) instead of the server civil clock', async () => {
