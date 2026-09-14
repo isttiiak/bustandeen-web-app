@@ -1,6 +1,6 @@
 import { useState, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
+import { ArrowRightOnRectangleIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from './AnimatedBackground.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminLogin } from '../hooks/useAdminAuth.js';
@@ -17,6 +17,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const { token, email, isOwner, logout } = useAdminStore();
   const [form, setForm] = useState({ email: '', password: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const login = useAdminLogin();
 
   if (token) {
@@ -75,15 +76,33 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
             aria-label={t('adminGate.emailPlaceholder', 'Admin email')}
             className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
           />
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={form.password}
-            onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-            placeholder={t('adminGate.passwordPlaceholder', 'Admin password')}
-            aria-label={t('adminGate.passwordPlaceholder', 'Admin password')}
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
-          />
+          <div className="relative">
+            <input
+              type={showPassword ? 'text' : 'password'}
+              autoComplete="current-password"
+              value={form.password}
+              onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
+              placeholder={t('adminGate.passwordPlaceholder', 'Admin password')}
+              aria-label={t('adminGate.passwordPlaceholder', 'Admin password')}
+              className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl pr-10"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={
+                showPassword
+                  ? t('adminGate.hidePassword', 'Hide password')
+                  : t('adminGate.showPassword', 'Show password')
+              }
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
+            >
+              {showPassword ? (
+                <EyeSlashIcon className="w-4 h-4" />
+              ) : (
+                <EyeIcon className="w-4 h-4" />
+              )}
+            </button>
+          </div>
           {login.isError && (
             <p className="text-red-400 text-xs">
               {t('adminGate.incorrect', 'Incorrect email or password — try again.')}
