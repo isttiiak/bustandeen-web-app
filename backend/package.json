@@ -29,7 +29,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^22",
+    "@types/node": "^26",
     "@types/nodemailer": "^8.0.1",
     "cross-env": "^10.1.0",
     "dotenv": "^16.4.5",
