@@ -1,55 +1,28 @@
 import { create } from 'zustand';
 
-const ADMIN_TOKEN_KEY = 'bustandeen_adminToken';
-const ADMIN_EMAIL_KEY = 'bustandeen_adminEmail';
-const ADMIN_OWNER_KEY = 'bustandeen_adminIsOwner';
-
-const readString = (key: string): string | null => {
-  try {
-    return sessionStorage.getItem(key);
-  } catch {
-    return null;
-  }
-};
+export type AdminRole = 'servant' | 'ansar';
 
 interface AdminState {
-  /** Session token from POST /api/admin/auth/login — required by every
-   * /api/admin/* route. This IS the admin panel's entire authentication;
-   * no Firebase account is involved at any point. Kept in sessionStorage
-   * (not localStorage) so it doesn't outlive the tab — logging into the
-   * admin panel is a deliberate, per-session action. */
-  token: string | null;
-  /** The admin email that logged in — shown in the UI and used to decide
-   * whether to render owner-only controls (a UX nicety only; the real
-   * enforcement is server-side via requireOwnerAdmin). */
+  /** 'checking' — Firebase is restoring/verifying the admin-app session on
+   *  mount (see AdminGate's onAuthStateChanged listener). 'signedOut' — no
+   *  admin Firebase session, show the sign-in form (also the state right
+   *  after a Firebase identity was rejected — AdminGate signs it back out of
+   *  the admin Firebase app rather than leaving a "logged in but not
+   *  authorized" session hanging around, and shows its own local error
+   *  banner alongside the form instead of storing that here). 'ready' — a
+   *  Firebase session exists AND the backend confirmed it's an active
+   *  AdminAccount; email/role are populated. */
+  status: 'checking' | 'signedOut' | 'ready';
   email: string | null;
-  isOwner: boolean;
-  login: (token: string, email: string, isOwner: boolean) => void;
-  logout: () => void;
+  role: AdminRole | null;
+  setSignedOut: () => void;
+  setSession: (email: string, role: AdminRole) => void;
 }
 
 export const useAdminStore = create<AdminState>((set) => ({
-  token: readString(ADMIN_TOKEN_KEY),
-  email: readString(ADMIN_EMAIL_KEY),
-  isOwner: readString(ADMIN_OWNER_KEY) === '1',
-  login: (token, email, isOwner) => {
-    try {
-      sessionStorage.setItem(ADMIN_TOKEN_KEY, token);
-      sessionStorage.setItem(ADMIN_EMAIL_KEY, email);
-      sessionStorage.setItem(ADMIN_OWNER_KEY, isOwner ? '1' : '0');
-    } catch {
-      /* private-browsing storage block — session just won't persist a reload */
-    }
-    set({ token, email, isOwner });
-  },
-  logout: () => {
-    try {
-      sessionStorage.removeItem(ADMIN_TOKEN_KEY);
-      sessionStorage.removeItem(ADMIN_EMAIL_KEY);
-      sessionStorage.removeItem(ADMIN_OWNER_KEY);
-    } catch {
-      /* ignore */
-    }
-    set({ token: null, email: null, isOwner: false });
-  },
+  status: 'checking',
+  email: null,
+  role: null,
+  setSignedOut: () => set({ status: 'signedOut', email: null, role: null }),
+  setSession: (email, role) => set({ status: 'ready', email, role }),
 }));

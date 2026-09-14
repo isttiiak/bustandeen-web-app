@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAdminAuth, requireOwnerAdmin } from '../middleware/auth.js';
+import { requireAdminAuth, requireServant } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import {
   adminListQuerySchema,
@@ -37,23 +37,23 @@ router.patch('/:id/reject', validate(rejectDonationSchema), adminSadaqahControll
 // Erroneous/test entries only — not a donor-facing action. Reverses the
 // stats impact first if the donation had been verified. Owner-only: a
 // permanent delete of a financial record.
-router.delete('/:id', requireOwnerAdmin, adminSadaqahController.deleteDonationHandler);
+router.delete('/:id', requireServant, adminSadaqahController.deleteDonationHandler);
 
 router.get('/expenses', adminSadaqahController.listExpensesHandler);
 router.post('/expenses', validate(addExpenseSchema), adminSadaqahController.addExpenseHandler);
-router.delete('/expenses/:id', requireOwnerAdmin, adminSadaqahController.deleteExpenseHandler);
+router.delete('/expenses/:id', requireServant, adminSadaqahController.deleteExpenseHandler);
 
 // Owner-only: directly edits the published financial totals, outside the
 // normal donation review flow.
 router.patch(
   '/quarterly/:quarter',
-  requireOwnerAdmin,
+  requireServant,
   validate(quarterlyUpsertSchema),
   adminSadaqahController.upsertQuarterlyHandler
 );
 router.delete(
   '/quarterly/:quarter',
-  requireOwnerAdmin,
+  requireServant,
   validate(quarterlyParamSchema),
   adminSadaqahController.deleteQuarterlyHandler
 );

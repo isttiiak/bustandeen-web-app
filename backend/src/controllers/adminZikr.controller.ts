@@ -51,7 +51,8 @@ export const approveHandler = async (
     const request = await zikrRequestService.approveRequest(
       paramString(req.params.id),
       req.user.email ?? '',
-      req.body
+      req.body,
+      req.admin?.role === 'ansar' ? 'ansar' : 'sadaqah'
     );
     res.json({ ok: true, request });
   } catch (err) {
@@ -70,7 +71,8 @@ export const rejectHandler = async (
       paramString(req.params.id),
       req.user.email ?? '',
       adminNote,
-      emailBody
+      emailBody,
+      req.admin?.role === 'ansar' ? 'ansar' : 'sadaqah'
     );
     res.json({ ok: true, request });
   } catch (err) {

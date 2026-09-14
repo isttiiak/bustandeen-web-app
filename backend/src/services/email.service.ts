@@ -1,24 +1,34 @@
 import nodemailer, { Transporter } from 'nodemailer';
 
 /**
- * Two named senders on the same Zoho org (bustandeen.com), each with its own
- * mailbox login — Zoho (like most providers) only lets a mailbox send "From"
- * itself, so a distinct sender needs distinct SMTP credentials, not just a
- * different `from` header on the same transporter.
+ * Named senders — the mailbox (SMTP credentials) a send authenticates as,
+ * paired with the display name shown in the recipient's inbox. Zoho only
+ * requires the "From" ADDRESS to match the authenticated mailbox; the
+ * display name portion is free-form, so 'ansar' reuses the same
+ * sadaqah@bustandeen.com mailbox/credentials as 'sadaqah' but shows a
+ * different name — the donor sees exactly who (Servant vs Ansar) is
+ * actually handling their review, without needing a whole separate mailbox.
  *
- * - 'sadaqah' (sadaqah@bustandeen.com) — donation received/verified/rejected
- *   threads, and the zikr-request review pipeline's admin notification.
+ * - 'sadaqah' (sadaqah@bustandeen.com, displayed "Bustandeen") — the
+ *   Servant's/system default for donation and zikr-request review threads.
+ * - 'ansar' — same mailbox, displayed "Bustandeen Ansar" — used whenever the
+ *   acting admin is the Ansar role (see adminSadaqah/adminZikr controllers).
  * - 'istiak' (istiak@bustandeen.com) — the founder's personal address, used
  *   for the one-time welcome email so it reads as a real person reaching out,
  *   not an automated system mailbox.
  */
-export type EmailSender = 'sadaqah' | 'istiak';
+export type EmailSender = 'sadaqah' | 'ansar' | 'istiak';
 
 const SENDER_ENV: Record<EmailSender, { user: string; pass: string; displayName: string }> = {
   sadaqah: {
     user: 'ZOHO_SMTP_USER',
     pass: 'ZOHO_SMTP_PASS',
     displayName: 'Bustandeen',
+  },
+  ansar: {
+    user: 'ZOHO_SMTP_USER',
+    pass: 'ZOHO_SMTP_PASS',
+    displayName: 'Bustandeen Ansar',
   },
   istiak: {
     user: 'ISTIAK_SMTP_USER',

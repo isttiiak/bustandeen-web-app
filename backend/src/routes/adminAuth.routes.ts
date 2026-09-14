@@ -1,19 +1,14 @@
 import { Router } from 'express';
-import { validate } from '../middleware/validate.js';
-import { adminLoginLimiter } from '../middleware/rateLimiter.js';
-import { adminLoginSchema } from '../validation/adminAuth.schemas.js';
-import * as adminAuthController from '../controllers/adminAuth.controller.js';
+import { requireAdminAuth } from '../middleware/auth.js';
+import { adminSessionLimiter } from '../middleware/rateLimiter.js';
+import { sessionHandler } from '../controllers/adminAccount.controller.js';
 
 const router = Router();
 
-// Public and unauthenticated on purpose — this IS the admin login, entirely
-// separate from the app's Firebase user accounts. adminLoginLimiter is the
-// only thing standing between this and a brute-force attempt.
-router.post(
-  '/login',
-  adminLoginLimiter,
-  validate(adminLoginSchema),
-  adminAuthController.loginHandler
-);
+// Firebase sign-in itself happens client-side (a secondary Firebase app
+// instance, isolated from the main app's own auth). This just confirms that
+// identity is an active AdminAccount and reports which role it holds — the
+// frontend calls it once right after sign-in.
+router.get('/session', adminSessionLimiter, requireAdminAuth, sessionHandler);
 
 export default router;

@@ -2,18 +2,25 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../src/app.js';
 import Donation from '../src/models/Donation.js';
+import AdminAccount from '../src/models/AdminAccount.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-const ADMIN_EMAIL = 'admin@test.dev'; // owner — in ADMIN_OWNER_EMAILS
-const STAFF_EMAIL = 'staff@test.dev'; // regular admin — routine review only
-const PASSWORD = 'test-admin-password';
+const ADMIN_EMAIL = 'admin@test.dev'; // servant — full access
+const STAFF_EMAIL = 'staff@test.dev'; // ansar — routine review only
+
+// Same dev-bypass fake-JWT shape as auth.e2e.test.js — requireAdminAuth
+// decodes this uid/email without real Firebase verification when
+// DEV_AUTH_BYPASS=1 (set globally in setupTests.js) and Firebase Admin isn't
+// configured, but it still requires a matching, active AdminAccount row.
+const fakeJwt = (payload) => {
+  const header = Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url');
+  const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  return `${header}.${body}.`;
+};
 
 let mongo;
 let ownerToken;
 let staffToken;
-
-const login = async (email, password = PASSWORD) =>
-  request(app).post('/api/admin/auth/login').send({ email, password });
 
 const validDonation = (overrides = {}) => ({
   donorName: 'Test Donor',
@@ -38,16 +45,24 @@ const submitAndFindPending = async (donation) => {
 
 describe('Sadaqah admin API', () => {
   beforeAll(async () => {
-    process.env.ADMIN_EMAILS = `${ADMIN_EMAIL},${STAFF_EMAIL}`;
-    process.env.ADMIN_OWNER_EMAILS = ADMIN_EMAIL;
-    process.env.ADMIN_PANEL_PASSWORD = PASSWORD;
-    process.env.ADMIN_SESSION_SECRET = 'test-admin-session-secret';
     mongo = await MongoMemoryServer.create();
     await mongoose.connect(mongo.getUri(), { dbName: 'ihsan_test' });
     await Donation.init();
 
-    ownerToken = (await login(ADMIN_EMAIL)).body.token;
-    staffToken = (await login(STAFF_EMAIL)).body.token;
+    await AdminAccount.create({
+      firebaseUid: 'admin-uid-owner',
+      email: ADMIN_EMAIL,
+      role: 'servant',
+      createdBy: 'test-seed',
+    });
+    await AdminAccount.create({
+      firebaseUid: 'admin-uid-staff',
+      email: STAFF_EMAIL,
+      role: 'ansar',
+      createdBy: 'test-seed',
+    });
+    ownerToken = fakeJwt({ uid: 'admin-uid-owner', email: ADMIN_EMAIL });
+    staffToken = fakeJwt({ uid: 'admin-uid-staff', email: STAFF_EMAIL });
   });
 
   afterAll(async () => {
@@ -63,28 +78,28 @@ describe('Sadaqah admin API', () => {
     expect(res.status).toBe(401);
   });
 
-  test('login rejects an email that is not on ADMIN_EMAILS', async () => {
-    const res = await login('nobody@test.dev');
+  test('a Firebase identity with no matching AdminAccount row is rejected', async () => {
+    const res = await request(app)
+      .get('/api/admin/sadaqah/pending')
+      .set('X-Admin-Token', fakeJwt({ uid: 'not-an-admin', email: 'nobody@test.dev' }));
     expect(res.status).toBe(401);
   });
 
-  test('login rejects the wrong password', async () => {
-    const res = await login(ADMIN_EMAIL, 'wrong-password');
+  test('a deactivated AdminAccount is rejected even with a well-formed identity', async () => {
+    await AdminAccount.create({
+      firebaseUid: 'admin-uid-deactivated',
+      email: 'deactivated@test.dev',
+      role: 'ansar',
+      active: false,
+      createdBy: 'test-seed',
+    });
+    const res = await request(app)
+      .get('/api/admin/sadaqah/pending')
+      .set(
+        'X-Admin-Token',
+        fakeJwt({ uid: 'admin-uid-deactivated', email: 'deactivated@test.dev' })
+      );
     expect(res.status).toBe(401);
-  });
-
-  test('login succeeds with no prior Firebase session of any kind — this IS the whole login', async () => {
-    const res = await login(ADMIN_EMAIL);
-    expect(res.status).toBe(200);
-    expect(res.body.token).toBeTruthy();
-    expect(res.body.email).toBe(ADMIN_EMAIL);
-    expect(res.body.isOwner).toBe(true);
-  });
-
-  test('a non-owner admin logs in fine but is not flagged as owner', async () => {
-    const res = await login(STAFF_EMAIL);
-    expect(res.status).toBe(200);
-    expect(res.body.isOwner).toBe(false);
   });
 
   test('submitting a donation assigns a thread message id for later replies', async () => {

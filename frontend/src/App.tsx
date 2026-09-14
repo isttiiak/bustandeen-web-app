@@ -7,6 +7,7 @@ import { onAuthStateChanged, sendEmailVerification } from 'firebase/auth';
 import { auth } from './firebase.js';
 import { API_BASE } from './lib/api.js';
 import { useAuthStore } from './store/useAuthStore.js';
+import { useAdminStore } from './store/useAdminStore.js';
 import { useZikrStore, flushZikrLocalPersistence } from './store/useZikrStore.js';
 import { replaySalatOutbox } from './hooks/useSalatLog.js';
 import { clearSalatOutbox } from './utils/salatOutbox.js';
@@ -14,6 +15,7 @@ import { setDayStartModeLocal, type DayStartMode } from './utils/trackingDay.js'
 import { idbRemove } from './utils/idbCache.js';
 import Navbar from './components/Navbar.js';
 import AdminGate from './components/AdminGate.js';
+import AdminLayout from './components/AdminLayout.js';
 import Home from './pages/Home.js';
 import ZikrCounter from './pages/ZikrCounter.js';
 import Footer from './components/Footer.js';
@@ -76,6 +78,9 @@ const SadaqahDonate = lazy(() => import('./pages/SadaqahDonate.js'));
 const SadaqahThankYou = lazy(() => import('./pages/SadaqahThankYou.js'));
 const AdminSadaqah = lazy(() => import('./pages/AdminSadaqah.js'));
 const AdminZikrRequests = lazy(() => import('./pages/AdminZikrRequests.js'));
+const AdminHome = lazy(() => import('./pages/AdminHome.js'));
+const AdminUsers = lazy(() => import('./pages/AdminUsers.js'));
+const AdminAccounts = lazy(() => import('./pages/AdminAccounts.js'));
 
 // Programmatic-SEO static pages (prayer-times/qibla/ramadan-calendar by
 // city, du'a library, adhkar, Hijri converter) — pre-rendered at build time
@@ -279,14 +284,39 @@ const Protected = ({ children }: ProtectedProps) => {
 };
 
 /**
- * Admin-only pages: gated entirely by AdminGate's own direct email+password
- * login (POST /api/admin/auth/login) — deliberately NOT wrapped in Protected,
- * since an admin should never need a Firebase account/sign-in of any kind to
- * reach the admin panel. Real enforcement is server-side (requireAdminAuth on
- * every /api/admin/* route); this route being reachable while signed out is
+ * Admin-only pages: gated by AdminGate's own real Firebase sign-in (a second,
+ * isolated Firebase app — see adminFirebase.ts) confirmed against the
+ * backend's AdminAccount collection — deliberately NOT wrapped in the main
+ * app's Protected/Firebase account, since a Servant/Ansar should never need
+ * a REGULAR app account to reach the admin panel, and the two identities
+ * must never be conflated (see AdminLayout.tsx's doc comment for the
+ * incident that motivated this separation). AdminLayout renders the admin
+ * panel's own chrome — never the main app's Navbar (see isAdminPage below).
+ * Real enforcement is always server-side (requireAdminAuth on every
+ * /api/admin/* route); this route being reachable while signed out is
  * expected, not a hole.
  */
-const AdminProtected = ({ children }: ProtectedProps) => <AdminGate>{children}</AdminGate>;
+const AdminProtected = ({ children }: ProtectedProps) => (
+  <AdminGate>
+    <AdminLayout>{children}</AdminLayout>
+  </AdminGate>
+);
+
+/** Servant-only pages (user directory, managing Ansars) — the backend
+ *  already 403s an Ansar's API calls, this just avoids rendering a page that
+ *  can't do anything for that role. Must be nested INSIDE AdminProtected so
+ *  useAdminStore's role is populated by the time this checks it. */
+const ServantProtected = ({ children }: ProtectedProps) => {
+  const role = useAdminStore((s) => s.role);
+  if (role !== 'servant') {
+    return (
+      <div className="max-w-md mx-auto px-4 py-16 text-center text-white/60">
+        Servant-only page.
+      </div>
+    );
+  }
+  return <>{children}</>;
+};
 
 export default function App() {
   const { setUser, init, setAuthLoading } = useAuthStore();
@@ -605,6 +635,16 @@ export default function App() {
     /^\/(bn\/|ar\/)?(prayer-times\/|qibla\/|ramadan-calendar\/|duas(\/|$)|adhkar\/|hijri-date-converter)/.test(
       location.pathname
     );
+  // The admin panel (AdminProtected, above) has its OWN chrome — AdminLayout
+  // — and must never render underneath the main app's Navbar/Footer/
+  // DemoBanner/GenderGate. This is the actual fix for a real incident: the
+  // main Navbar used to render on top of /admin pages too, and its "Home"
+  // logo went to "/" — RootRoute below, which shows whichever REGULAR app
+  // account happens to be cached in this browser, nothing to do with which
+  // admin is signed into the panel. An admin clicking what looked like
+  // "Home" landed on a different person's dashboard. Full isolation (this
+  // gating, plus AdminGate's own separate Firebase app) closes that gap.
+  const isAdminPage = location.pathname.startsWith('/admin');
   const noFooterPrefixes = [
     '/zikr',
     '/salat',
@@ -617,13 +657,14 @@ export default function App() {
   const showFooter =
     !isAuthPage &&
     !isSeoPage &&
+    !isAdminPage &&
     !noFooterPrefixes.some((p) => location.pathname === p || location.pathname.startsWith(p + '/'));
 
   return (
     <div className="min-h-screen flex flex-col bg-base-100">
       {/* Single app-wide toaster — pages must not mount their own */}
       <Toaster />
-      {authLoading ? (
+      {authLoading && !isAdminPage ? (
         <div className="flex-1 grid place-items-center bg-brand-void">
           <div className="flex flex-col items-center gap-4">
             <span className="loading loading-spinner loading-lg text-brand-emerald" />
@@ -632,10 +673,10 @@ export default function App() {
         </div>
       ) : (
         <>
-          {!isSeoPage && <DemoBanner />}
-          {!isAuthPage && !isSeoPage && <Navbar />}
-          {!isAuthPage && !isSeoPage && <UnsavedWarning />}
-          {!isAuthPage && !isSeoPage && <GenderGate />}
+          {!isSeoPage && !isAdminPage && <DemoBanner />}
+          {!isAuthPage && !isSeoPage && !isAdminPage && <Navbar />}
+          {!isAuthPage && !isSeoPage && !isAdminPage && <UnsavedWarning />}
+          {!isAuthPage && !isSeoPage && !isAdminPage && <GenderGate />}
           <div className="flex-1">
             <Suspense fallback={<RouteFallback />}>
               <Routes>
@@ -834,6 +875,14 @@ export default function App() {
                 <Route path="/sadaqah/donate" element={<SadaqahDonate />} />
                 <Route path="/sadaqah/thank-you" element={<SadaqahThankYou />} />
                 <Route
+                  path="/admin"
+                  element={
+                    <AdminProtected>
+                      <AdminHome />
+                    </AdminProtected>
+                  }
+                />
+                <Route
                   path="/admin/sadaqah"
                   element={
                     <AdminProtected>
@@ -846,6 +895,26 @@ export default function App() {
                   element={
                     <AdminProtected>
                       <AdminZikrRequests />
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/users"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminUsers />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/accounts"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminAccounts />
+                      </ServantProtected>
                     </AdminProtected>
                   }
                 />

@@ -72,7 +72,8 @@ export const verifyHandler = async (
     const donation = await sadaqahService.verifyDonation(
       paramString(req.params.id),
       req.user.email ?? '',
-      emailBody
+      emailBody,
+      req.admin?.role === 'ansar' ? 'ansar' : 'sadaqah'
     );
     res.json({ ok: true, donation });
   } catch (err) {
@@ -90,7 +91,8 @@ export const rejectHandler = async (
     const donation = await sadaqahService.rejectDonation(
       paramString(req.params.id),
       req.user.email ?? '',
-      emailBody
+      emailBody,
+      req.admin?.role === 'ansar' ? 'ansar' : 'sadaqah'
     );
     res.json({ ok: true, donation });
   } catch (err) {

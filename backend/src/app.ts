@@ -21,6 +21,7 @@ import adminSadaqahRoutes from './routes/adminSadaqah.routes.js';
 import adminZikrRoutes from './routes/adminZikr.routes.js';
 import adminAuthRoutes from './routes/adminAuth.routes.js';
 import adminUsersRoutes from './routes/adminUsers.routes.js';
+import adminAccountRoutes from './routes/adminAccount.routes.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
 
@@ -142,6 +143,7 @@ app.use('/api/admin/sadaqah', adminSadaqahRoutes);
 app.use('/api/admin/zikr-requests', adminZikrRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/users', adminUsersRoutes);
+app.use('/api/admin/accounts', adminAccountRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

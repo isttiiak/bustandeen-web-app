@@ -1,53 +1,79 @@
-import { useState, FormEvent } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowRightOnRectangleIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import axios from 'axios';
+import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from './AnimatedBackground.js';
-import { useAdminStore } from '../store/useAdminStore.js';
+import { adminAuth } from '../adminFirebase.js';
+import { API_BASE } from '../lib/api.js';
+import { useAdminStore, AdminRole } from '../store/useAdminStore.js';
 import { useAdminLogin } from '../hooks/useAdminAuth.js';
 
 /**
- * The ENTIRE gate on every admin page — a direct email+password login with
- * no dependency on the app's own Firebase user accounts at all. An admin
- * never needs to sign in as a normal user first (see
- * requireAdminAuth/adminAuth.controller.ts on the backend). The resulting
- * session lives only in sessionStorage, so logging in is a deliberate,
- * per-tab action each time.
+ * The ENTIRE gate on every admin page — real Firebase sign-in against a
+ * second, isolated Firebase app instance (adminFirebase.ts), confirmed
+ * against the backend's AdminAccount collection (which admin, which role)
+ * before anything behind this gate renders. A Firebase identity that isn't a
+ * registered, active admin is signed straight back out — it never gets a
+ * chance to poke at an /api/admin/* route with a "logged in but not
+ * authorized" session hanging around.
  */
 export default function AdminGate({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
-  const { token, email, isOwner, logout } = useAdminStore();
+  const status = useAdminStore((s) => s.status);
+  const setSession = useAdminStore((s) => s.setSession);
+  const setSignedOut = useAdminStore((s) => s.setSignedOut);
   const [form, setForm] = useState({ email: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
+  const [rejectedError, setRejectedError] = useState<string | null>(null);
   const login = useAdminLogin();
 
-  if (token) {
+  useEffect(() => {
+    const unsub = onAuthStateChanged(adminAuth, async (user) => {
+      if (!user) {
+        setSignedOut();
+        return;
+      }
+      try {
+        const idToken = await user.getIdToken();
+        const res = await axios.get<{ email: string; role: AdminRole }>(
+          `${API_BASE}/api/admin/auth/session`,
+          { headers: { 'X-Admin-Token': idToken } }
+        );
+        setRejectedError(null);
+        setSession(res.data.email, res.data.role);
+      } catch {
+        setRejectedError(
+          t('adminGate.notRegistered', 'This account is not registered as a Bustandeen admin.')
+        );
+        await signOut(adminAuth);
+      }
+    });
+    return unsub;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- subscribe once on mount only; t/setSession/setSignedOut are stable
+  }, []);
+
+  if (status === 'checking') {
     return (
-      <div>
-        <div className="max-w-3xl mx-auto px-4 pt-4 flex items-center justify-end gap-2 text-xs text-white/40">
-          <span>
-            {t('adminGate.signedInAs', 'Signed in as {{email}}', { email })}
-            {isOwner && (
-              <span className="ml-1.5 px-1.5 py-0.5 rounded-full bg-brand-gold/15 text-brand-gold text-[10px] font-bold uppercase tracking-wide">
-                {t('adminGate.owner', 'Owner')}
-              </span>
-            )}
-          </span>
-          <button
-            onClick={logout}
-            className="flex items-center gap-1 hover:text-white transition-colors"
-          >
-            <ArrowRightOnRectangleIcon className="w-3.5 h-3.5" />
-            {t('adminGate.logOut', 'Log out')}
-          </button>
+      <AnimatedBackground variant="dark">
+        <div className="max-w-sm mx-auto px-4 py-24 grid place-items-center">
+          <span className="loading loading-spinner loading-lg text-brand-emerald" />
         </div>
-        {children}
-      </div>
+      </AnimatedBackground>
     );
+  }
+
+  if (status === 'ready') {
+    // AdminLayout (rendered by AdminProtected, App.tsx) owns the actual
+    // chrome — role badge, nav, logout — this gate's only job past this
+    // point is to have proven the session, not to render anything itself.
+    return <>{children}</>;
   }
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!form.email || !form.password) return;
+    setRejectedError(null);
     login.mutate(form, { onError: () => setForm((f) => ({ ...f, password: '' })) });
   };
 
@@ -63,7 +89,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
               {t('adminGate.title', 'Admin sign-in')}
             </h1>
             <p className="text-white/40 text-xs mt-1">
-              {t('adminGate.subtitle', 'Direct admin login — no app account needed.')}
+              {t('adminGate.subtitle', 'Servant and Ansar accounts only.')}
             </p>
           </div>
           <input
@@ -82,8 +108,8 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
               autoComplete="current-password"
               value={form.password}
               onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-              placeholder={t('adminGate.passwordPlaceholder', 'Admin password')}
-              aria-label={t('adminGate.passwordPlaceholder', 'Admin password')}
+              placeholder={t('adminGate.passwordPlaceholder', 'Password')}
+              aria-label={t('adminGate.passwordPlaceholder', 'Password')}
               className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl pr-10"
             />
             <button
@@ -103,9 +129,10 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
               )}
             </button>
           </div>
-          {login.isError && (
+          {(login.isError || rejectedError) && (
             <p className="text-red-400 text-xs">
-              {t('adminGate.incorrect', 'Incorrect email or password — try again.')}
+              {rejectedError ??
+                t('adminGate.incorrect', 'Incorrect email or password — try again.')}
             </p>
           )}
           <button

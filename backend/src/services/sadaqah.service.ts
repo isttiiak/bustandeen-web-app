@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import Donation, { IDonation } from '../models/Donation.js';
 import DonationStats, { IDonationStats, IQuarterlyEntry } from '../models/DonationStats.js';
 import SadaqahExpense, { ISadaqahExpense } from '../models/SadaqahExpense.js';
-import { sendMail } from './email.service.js';
+import { sendMail, EmailSender } from './email.service.js';
 import {
   donationReceivedEmail,
   donationVerifiedDraft,
@@ -187,7 +187,8 @@ export const getEmailDraft = async (
 export const verifyDonation = async (
   id: string,
   adminEmail: string,
-  emailBody: string
+  emailBody: string,
+  sender: EmailSender = 'sadaqah'
 ): Promise<IDonation> => {
   const donation = await findPendingOrThrow(id);
 
@@ -210,6 +211,7 @@ export const verifyDonation = async (
     subject: REPLY_SUBJECT,
     text: emailBody,
     html: toSimpleHtml(emailBody),
+    from: sender,
     inReplyTo: donation.emailMessageId ?? undefined,
     references: donation.emailMessageId ?? undefined,
   });
@@ -220,7 +222,8 @@ export const verifyDonation = async (
 export const rejectDonation = async (
   id: string,
   adminEmail: string,
-  emailBody: string
+  emailBody: string,
+  sender: EmailSender = 'sadaqah'
 ): Promise<IDonation> => {
   const donation = await findPendingOrThrow(id);
 
@@ -236,6 +239,7 @@ export const rejectDonation = async (
     subject: REPLY_SUBJECT,
     text: emailBody,
     html: toSimpleHtml(emailBody),
+    from: sender,
     inReplyTo: donation.emailMessageId ?? undefined,
     references: donation.emailMessageId ?? undefined,
   });

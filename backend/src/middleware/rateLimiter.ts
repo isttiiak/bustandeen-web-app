@@ -83,10 +83,11 @@ export const sadaqahSubmitLimiter = makeLimit(60 * 60 * 1000, 5, {
   error: 'Too many donation submissions. Please try again in an hour.',
 });
 
-/** Admin login: 10 per 15 min per IP — this endpoint has no prior auth of any
- *  kind (that's the whole point, see adminAuth.controller.ts), so it's the
- *  only thing standing between a brute-force attempt and ADMIN_PANEL_PASSWORD. */
-export const adminLoginLimiter = makeLimit(15 * 60 * 1000, 10, {
+/** Admin session confirm: 20 per 15 min per IP — the first admin-panel call
+ *  after a Firebase sign-in (adminAccount.controller.ts's sessionHandler).
+ *  Firebase itself throttles password guesses; this just stops someone with
+ *  an unrelated Firebase ID token from hammering the AdminAccount lookup. */
+export const adminSessionLimiter = makeLimit(15 * 60 * 1000, 20, {
   ok: false,
-  error: 'Too many login attempts. Please try again later.',
+  error: 'Too many attempts. Please try again later.',
 });

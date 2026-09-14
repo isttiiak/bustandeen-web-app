@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import app from '../backend/src/app.js';
 import { connectDB } from '../backend/src/config/mongo.js';
 import { initFirebaseAdmin } from '../backend/src/config/firebaseAdmin.js';
+import { bootstrapAdminAccounts } from '../backend/src/services/adminAccount.service.js';
 
 /**
  * Vercel serverless entry — the WHOLE Express backend runs as one function.
@@ -31,6 +32,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     // /api/health doesn't touch the DB, so a Mongo outage must not block it —
     // log and let mongoose buffer (and time out) any queries that do need it.
     await connectDB();
+    await bootstrapAdminAccounts();
   } catch (err) {
     console.error('MongoDB connection failed', err);
   }

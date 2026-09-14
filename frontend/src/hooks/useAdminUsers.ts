@@ -1,6 +1,42 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 
+export interface AdminUserListItem {
+  uid: string;
+  email: string;
+  displayName?: string;
+  firstName?: string;
+  lastName?: string;
+  gender?: string;
+  country?: string;
+  city?: string;
+  createdAt: string;
+  aiEnabled: boolean;
+  welcomeEmailSentAt?: string | null;
+}
+
+interface AdminUserListResult {
+  users: AdminUserListItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+/** Servant-only user directory — a simple paginated list with optional
+ *  email/name search, not a full analytics view (see TODO-v3.md). */
+export function useAdminUserList(search: string, page: number, limit = 25) {
+  return useQuery<AdminUserListResult>({
+    queryKey: ['admin', 'users', 'list', search, page, limit],
+    queryFn: async () => {
+      const res = await api.get<AdminUserListResult>('/api/admin/users', {
+        params: { search: search || undefined, page, limit },
+      });
+      return res.data;
+    },
+    staleTime: 15_000,
+  });
+}
+
 export function useWelcomeBackfillStatus() {
   return useQuery<{ missing: number }>({
     queryKey: ['admin', 'users', 'welcome-backfill'],

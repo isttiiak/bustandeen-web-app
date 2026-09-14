@@ -6,7 +6,6 @@ import Seo from '../components/Seo.js';
 import DonationStatusBadge from '../components/DonationStatusBadge.js';
 import { useSadaqahStats } from '../hooks/useSadaqah.js';
 import { useAdminStore } from '../store/useAdminStore.js';
-import { useWelcomeBackfillStatus, useSendWelcomeBackfill } from '../hooks/useAdminUsers.js';
 import {
   usePendingDonations,
   useAllDonations,
@@ -179,46 +178,9 @@ function PendingCard({ donation }: { donation: Donation }) {
   );
 }
 
-/** Owner-only — triggering a batch send of real emails to real users is
- *  exactly the kind of bulk/override action reserved for the owner, and it's
- *  deliberately a manual button press, never automatic. */
-function WelcomeBackfillCard() {
-  const { t } = useTranslation();
-  const { data } = useWelcomeBackfillStatus();
-  const send = useSendWelcomeBackfill();
-
-  if (!data || data.missing === 0) return null;
-
-  return (
-    <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/5 p-4 flex items-center justify-between gap-3">
-      <div>
-        <p className="text-white font-bold text-sm">
-          {t('adminSadaqah.welcomeBackfillTitle', 'Users missing the welcome email')}
-        </p>
-        <p className="text-white/40 text-xs mt-0.5">
-          {t(
-            'adminSadaqah.welcomeBackfillDesc',
-            '{{count}} account(s) predate the welcome email — sends once each, never repeats.',
-            { count: data.missing }
-          )}
-        </p>
-      </div>
-      <button
-        onClick={() => send.mutate()}
-        disabled={send.isPending}
-        className="btn btn-sm shrink-0 bg-brand-gold/20 hover:bg-brand-gold/30 border border-brand-gold/40 text-brand-gold disabled:opacity-40"
-      >
-        {send.isPending
-          ? t('common.loading', 'Loading…')
-          : t('adminSadaqah.welcomeBackfillSend', 'Send now')}
-      </button>
-    </div>
-  );
-}
-
 export default function AdminSadaqah() {
   const { t } = useTranslation();
-  const isOwner = useAdminStore((s) => s.isOwner);
+  const isServant = useAdminStore((s) => s.role === 'servant');
   const { data: stats } = useSadaqahStats();
   const { data: pending, isLoading: pendingLoading } = usePendingDonations();
   const { data: verifiedRecent } = useAllDonations('verified', 1, 100);
@@ -332,8 +294,6 @@ export default function AdminSadaqah() {
           </div>
         </div>
 
-        {isOwner && <WelcomeBackfillCard />}
-
         {/* Pending queue */}
         <section className="space-y-3">
           <h2 className="text-white font-bold text-sm uppercase tracking-widest text-brand-gold">
@@ -387,13 +347,13 @@ export default function AdminSadaqah() {
                     </th>
                     <th className="text-left px-3 py-2">{t('adminSadaqah.colTrxId', 'Trx ID')}</th>
                     <th className="text-left px-3 py-2">{t('adminSadaqah.colStatus', 'Status')}</th>
-                    {isOwner && <th className="px-3 py-2" />}
+                    {isServant && <th className="px-3 py-2" />}
                   </tr>
                 </thead>
                 <tbody>
                   {allLoading && (
                     <tr>
-                      <td colSpan={isOwner ? 6 : 5} className="text-center text-white/30 py-4">
+                      <td colSpan={isServant ? 6 : 5} className="text-center text-white/30 py-4">
                         {t('common.loading', 'Loading…')}
                       </td>
                     </tr>
@@ -415,7 +375,7 @@ export default function AdminSadaqah() {
                       <td className="px-3 py-2">
                         <DonationStatusBadge status={d.status} />
                       </td>
-                      {isOwner && (
+                      {isServant && (
                         <td className="px-3 py-2 text-right whitespace-nowrap">
                           <button
                             onClick={() => clickDelete(d._id)}
@@ -489,7 +449,7 @@ export default function AdminSadaqah() {
                     {q.notes ? ` — ${q.notes}` : ''}
                   </p>
                 </div>
-                {isOwner && (
+                {isServant && (
                   <div className="flex gap-2 shrink-0">
                     <button
                       onClick={() =>
@@ -516,7 +476,7 @@ export default function AdminSadaqah() {
             ))}
           </div>
 
-          {isOwner && (
+          {isServant && (
             <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2">
               <p className="text-white/70 text-xs font-bold">
                 {t('adminSadaqah.addEditQuarter', 'Add / edit a quarter')}
@@ -594,7 +554,7 @@ export default function AdminSadaqah() {
                     {e.date.slice(0, 10)} — {e.description}
                   </p>
                 </div>
-                {isOwner && (
+                {isServant && (
                   <button
                     onClick={() => clickDeleteExpense(e._id)}
                     className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300 shrink-0"

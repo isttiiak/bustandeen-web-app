@@ -1,6 +1,6 @@
 import ZikrRequest, { IZikrRequest, ZikrRequestStatus } from '../models/ZikrRequest.js';
 import GlobalZikrLibraryItem, { IGlobalZikrLibraryItem } from '../models/GlobalZikrLibraryItem.js';
-import { sendMail } from './email.service.js';
+import { sendMail, EmailSender } from './email.service.js';
 import {
   zikrRequestNotifyAdminEmail,
   zikrRequestApprovedDraft,
@@ -109,7 +109,8 @@ export interface ApproveZikrRequestInput {
 export const approveRequest = async (
   id: string,
   adminEmail: string,
-  input: ApproveZikrRequestInput
+  input: ApproveZikrRequestInput,
+  sender: EmailSender = 'sadaqah'
 ): Promise<IZikrRequest> => {
   const request = await findPendingOrThrow(id);
 
@@ -137,6 +138,7 @@ export const approveRequest = async (
       subject: APPROVED_SUBJECT,
       text: input.emailBody,
       html: toSimpleHtml(input.emailBody),
+      from: sender,
     });
   }
 
@@ -148,7 +150,8 @@ export const rejectRequest = async (
   id: string,
   adminEmail: string,
   adminNote: string | undefined,
-  emailBody: string | undefined
+  emailBody: string | undefined,
+  sender: EmailSender = 'sadaqah'
 ): Promise<IZikrRequest> => {
   const request = await findPendingOrThrow(id);
 
@@ -164,6 +167,7 @@ export const rejectRequest = async (
       subject: REJECTED_SUBJECT,
       text: emailBody,
       html: toSimpleHtml(emailBody),
+      from: sender,
     });
   }
 

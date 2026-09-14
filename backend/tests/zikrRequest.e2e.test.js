@@ -1,6 +1,7 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../src/app.js';
+import AdminAccount from '../src/models/AdminAccount.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 const fakeJwt = (payload) => {
@@ -10,7 +11,6 @@ const fakeJwt = (payload) => {
 };
 
 const ADMIN_EMAIL = 'zikr-admin@test.dev';
-const PASSWORD = 'zikr-test-password';
 const userToken = fakeJwt({ uid: 'zikr-req-u1', email: 'u1@test.dev' });
 const otherUserToken = fakeJwt({ uid: 'zikr-req-u2', email: 'u2@test.dev' });
 
@@ -28,20 +28,19 @@ const validRequestBody = (overrides = {}) => ({
 
 describe('Zikr request API', () => {
   beforeAll(async () => {
-    process.env.ADMIN_EMAILS = ADMIN_EMAIL;
-    process.env.ADMIN_OWNER_EMAILS = ADMIN_EMAIL;
-    process.env.ADMIN_PANEL_PASSWORD = PASSWORD;
-    process.env.ADMIN_SESSION_SECRET = 'zikr-test-session-secret';
     mongo = await MongoMemoryServer.create();
     await mongoose.connect(mongo.getUri(), { dbName: 'ihsan_test_zikr_requests' });
 
     await request(app).post('/api/auth/verify').send({ idToken: userToken });
     await request(app).post('/api/auth/verify').send({ idToken: otherUserToken });
 
-    const login = await request(app)
-      .post('/api/admin/auth/login')
-      .send({ email: ADMIN_EMAIL, password: PASSWORD });
-    adminSessionToken = login.body.token;
+    await AdminAccount.create({
+      firebaseUid: 'zikr-admin-uid',
+      email: ADMIN_EMAIL,
+      role: 'servant',
+      createdBy: 'test-seed',
+    });
+    adminSessionToken = fakeJwt({ uid: 'zikr-admin-uid', email: ADMIN_EMAIL });
   });
 
   afterAll(async () => {
@@ -63,17 +62,10 @@ describe('Zikr request API', () => {
     expect(res.body.error).toBe('admin_session_required');
   });
 
-  test('admin login rejects an email not on ADMIN_EMAILS', async () => {
+  test('a Firebase identity with no matching AdminAccount row is rejected', async () => {
     const res = await request(app)
-      .post('/api/admin/auth/login')
-      .send({ email: 'u1@test.dev', password: PASSWORD });
-    expect(res.status).toBe(401);
-  });
-
-  test('admin login rejects the wrong password', async () => {
-    const res = await request(app)
-      .post('/api/admin/auth/login')
-      .send({ email: ADMIN_EMAIL, password: 'not-the-password' });
+      .get('/api/admin/zikr-requests')
+      .set('X-Admin-Token', fakeJwt({ uid: 'u1', email: 'u1@test.dev' }));
     expect(res.status).toBe(401);
   });
 

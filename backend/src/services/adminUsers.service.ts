@@ -1,7 +1,64 @@
-import User from '../models/User.js';
+import User, { IUser } from '../models/User.js';
 import { sendWelcomeEmail } from './welcomeEmail.service.js';
 
 const MISSING_WELCOME_FILTER = { welcomeEmailSentAt: { $exists: false } };
+
+const USER_LIST_FIELDS =
+  'uid email displayName firstName lastName gender country city createdAt aiEnabled welcomeEmailSentAt';
+
+export interface UserListResult {
+  users: Pick<
+    IUser,
+    | 'uid'
+    | 'email'
+    | 'displayName'
+    | 'firstName'
+    | 'lastName'
+    | 'gender'
+    | 'country'
+    | 'city'
+    | 'createdAt'
+    | 'aiEnabled'
+    | 'welcomeEmailSentAt'
+  >[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+/**
+ * Servant-only user directory — a simple paginated list with an optional
+ * email/name search, not a full analytics view (that's future work, see
+ * TODO-v3.md). Never returns anything encrypted (groqApiKeyEnc) or otherwise
+ * sensitive beyond what's already shown in this field list.
+ */
+const escapeRegex = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+export const listUsers = async (
+  search: string | undefined,
+  page: number,
+  limit: number
+): Promise<UserListResult> => {
+  const filter = search
+    ? {
+        $or: [
+          { email: { $regex: escapeRegex(search), $options: 'i' } },
+          { displayName: { $regex: escapeRegex(search), $options: 'i' } },
+        ],
+      }
+    : {};
+
+  const [users, total] = await Promise.all([
+    User.find(filter)
+      .select(USER_LIST_FIELDS)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit),
+    User.countDocuments(filter),
+  ]);
+
+  return { users, total, page, limit };
+};
 
 export const countMissingWelcomeEmail = async (): Promise<number> =>
   User.countDocuments(MISSING_WELCOME_FILTER);
