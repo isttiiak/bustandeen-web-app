@@ -81,8 +81,8 @@ export default function Privacy() {
           >
             <p className="text-white/40 text-xs">
               {t('privacy.contactText')}{' '}
-              <a href="mailto:isttiiak@gmail.com" className="text-brand-emerald underline">
-                isttiiak@gmail.com
+              <a href="mailto:ansar@bustandeen.com" className="text-brand-emerald underline">
+                ansar@bustandeen.com
               </a>
             </p>
             <Link to="/about" className="text-white/30 text-xs underline hover:text-white/60">

@@ -39,6 +39,7 @@ interface PrayerTLEntry {
   icon: string;
   time: Date;
   endTime?: Date;
+  finalEndTime?: Date; // Isha only: absolute window close (Fajr) when showing dual end times
   isTrackable: boolean;
 }
 interface EventTLEntry {
@@ -76,12 +77,32 @@ function entryTime(e: TLEntry): number {
 
 function buildTimeline(
   times: PrayerTimesResult,
-  t: (k: string, fallback: string) => string
+  t: (k: string, fallback: string) => string,
+  now: Date,
+  location: StoredLocation | null
 ): TLEntry[] {
   const MIN = 60_000;
-  const fajrNext = new Date(times.fajr.getTime() + 24 * 60 * MIN);
-  const nightDuration = fajrNext.getTime() - times.isha.getTime();
-  const tahajjudStart = new Date(times.isha.getTime() + (nightDuration * 2) / 3);
+
+  // Before today's Fajr we are still in last night's Isha/Tahajjud window.
+  // Compute yesterday's prayer times so the Isha entry and Tahajjud window
+  // reflect the night that has just passed, not tonight's future schedule.
+  const isBeforeFajr = now < times.fajr;
+  let ishaTime: Date;
+  let nightEnd: Date; // Fajr that closes this night
+  if (isBeforeFajr && location) {
+    const yesterday = new Date(now.getTime() - 86_400_000);
+    const yTimes = calcPrayerTimes(location.latitude, location.longitude, yesterday);
+    ishaTime = yTimes.isha;
+    nightEnd = times.fajr;
+  } else {
+    ishaTime = times.isha;
+    nightEnd = new Date(times.fajr.getTime() + 24 * 60 * MIN);
+  }
+
+  const nightDuration = nightEnd.getTime() - ishaTime.getTime();
+  const tahajjudStart = new Date(ishaTime.getTime() + (nightDuration * 2) / 3);
+  // Islamic midnight — "best" Isha end. Final window closes at Fajr.
+  const ishaIslamicMidnight = new Date((ishaTime.getTime() + nightEnd.getTime()) / 2);
 
   const entries: TLEntry[] = [
     // ── Fajr ──────────────────────────────────────────────────────────────
@@ -239,8 +260,9 @@ function buildTimeline(
       name: t('prayerTimes.isha', 'Isha'),
       icon: '🌙',
       isTrackable: true,
-      time: times.isha,
-      endTime: getPrayerEndTime('isha' as PrayerKey, times),
+      time: ishaTime,
+      endTime: ishaIslamicMidnight, // best: Islamic midnight
+      finalEndTime: isBeforeFajr ? nightEnd : undefined, // final window: Fajr (shown when pre-dawn)
     },
 
     // ── Nafl: Tahajjud (last third of night) ─────────────────────────────
@@ -259,7 +281,7 @@ function buildTimeline(
       hadithUrl: 'https://sunnah.com/bukhari:1145',
       icon: '🌙',
       start: tahajjudStart,
-      end: fajrNext,
+      end: nightEnd,
     },
   ];
 
@@ -347,7 +369,9 @@ function LiveClockCard({
                       ? t('prayerTimes.current', 'Current')
                       : t('prayerTimes.after', 'After')}
                   </p>
-                  <p className="text-white font-bold text-base leading-none">{currentMeta.name}</p>
+                  <p className="text-white font-bold text-base leading-none">
+                    {t(`prayerTimes.${currentMeta.id}`, currentMeta.name)}
+                  </p>
                 </div>
               </div>
               <div className="text-right">
@@ -384,7 +408,7 @@ function LiveClockCard({
                     {t('prayerTimes.next', 'Next')}
                   </p>
                   <p className="text-brand-emerald/80 font-bold text-base leading-none">
-                    {nextMeta.name}
+                    {t(`prayerTimes.${nextMeta.id}`, nextMeta.name)}
                   </p>
                 </div>
               </div>
@@ -535,7 +559,11 @@ export default function PrayerTimes() {
 
   const info = times ? getCurrentAndNextPrayer(times, now) : null;
 
-  const timeline = useMemo(() => (times ? buildTimeline(times, t) : []), [times, t]);
+  const timeline = useMemo(
+    () => (times ? buildTimeline(times, t, now, location) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- now.toDateString() is the correct granularity; finer ticks would unnecessarily rebuild the ~20-entry list
+    [times, t, now.toDateString(), now < (times?.fajr ?? new Date(0)), location]
+  );
 
   return (
     <AnimatedBackground variant="dark">
@@ -704,9 +732,23 @@ export default function PrayerTimes() {
                               {formatTime(entry.time)}
                             </p>
                             {entry.endTime && entry.isTrackable && (
-                              <p className="text-white/25 text-xs leading-none mt-0.5">
-                                → {formatTime(entry.endTime)}
-                              </p>
+                              <div className="mt-0.5 space-y-0.5">
+                                <p className="text-white/25 text-xs leading-none">
+                                  → {formatTime(entry.endTime)}
+                                  {entry.finalEndTime && (
+                                    <span className="text-white/15 text-[10px]">
+                                      {' '}
+                                      ({t('prayerTimes.best', 'best')})
+                                    </span>
+                                  )}
+                                </p>
+                                {entry.finalEndTime && (
+                                  <p className="text-white/15 text-[10px] leading-none">
+                                    {t('prayerTimes.ishaWindowUntil', 'window → ')}
+                                    {formatTime(entry.finalEndTime)}
+                                  </p>
+                                )}
+                              </div>
                             )}
                           </div>
                         </div>
