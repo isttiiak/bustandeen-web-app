@@ -40,6 +40,10 @@ router.patch('/:id/reject', validate(rejectDonationSchema), adminSadaqahControll
 // permanent delete of a financial record.
 router.delete('/:id', requireServant, adminSadaqahController.deleteDonationHandler);
 
+// Financial cross-referencing (which donors are engaged app users, repeat
+// patterns, month-over-month trend) — owner-only per TODO-v3.md.
+router.get('/donor-analytics', requireServant, adminSadaqahController.donorAnalyticsHandler);
+
 router.get('/expenses', adminSadaqahController.listExpensesHandler);
 router.post('/expenses', validate(addExpenseSchema), adminSadaqahController.addExpenseHandler);
 router.delete('/expenses/:id', requireServant, adminSadaqahController.deleteExpenseHandler);

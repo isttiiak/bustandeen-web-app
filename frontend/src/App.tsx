@@ -23,6 +23,7 @@ import NotFound from './pages/NotFound.js';
 import UnsavedWarning from './components/UnsavedWarning.js';
 import GenderGate from './components/GenderGate.js';
 import DemoBanner from './components/DemoBanner.js';
+import AnnouncementBanner from './components/AnnouncementBanner.js';
 import type { AuthUser } from './types/api.js';
 
 // `body { overflow-x: hidden }` (styles/global.css, added to stop mobile
@@ -81,6 +82,12 @@ const AdminZikrRequests = lazy(() => import('./pages/AdminZikrRequests.js'));
 const AdminHome = lazy(() => import('./pages/AdminHome.js'));
 const AdminUsers = lazy(() => import('./pages/AdminUsers.js'));
 const AdminAccounts = lazy(() => import('./pages/AdminAccounts.js'));
+const AdminAuditLog = lazy(() => import('./pages/AdminAuditLog.js'));
+const AdminFeedback = lazy(() => import('./pages/AdminFeedback.js'));
+const AdminZikrAudio = lazy(() => import('./pages/AdminZikrAudio.js'));
+const AdminUserDetail = lazy(() => import('./pages/AdminUserDetail.js'));
+const AdminOpsHealth = lazy(() => import('./pages/AdminOpsHealth.js'));
+const AdminBroadcast = lazy(() => import('./pages/AdminBroadcast.js'));
 
 // Programmatic-SEO static pages (prayer-times/qibla/ramadan-calendar by
 // city, du'a library, adhkar, Hijri converter) — pre-rendered at build time
@@ -673,6 +680,7 @@ export default function App() {
         </div>
       ) : (
         <>
+          {!isSeoPage && !isAdminPage && <AnnouncementBanner />}
           {!isSeoPage && !isAdminPage && <DemoBanner />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <Navbar />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <UnsavedWarning />}
@@ -909,11 +917,67 @@ export default function App() {
                   }
                 />
                 <Route
+                  path="/admin/users/:uid"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminUserDetail />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
+                <Route
                   path="/admin/accounts"
                   element={
                     <AdminProtected>
                       <ServantProtected>
                         <AdminAccounts />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/feedback"
+                  element={
+                    <AdminProtected>
+                      <AdminFeedback />
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/zikr-audio"
+                  element={
+                    <AdminProtected>
+                      <AdminZikrAudio />
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/audit-log"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminAuditLog />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/ops-health"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminOpsHealth />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/broadcast"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminBroadcast />
                       </ServantProtected>
                     </AdminProtected>
                   }

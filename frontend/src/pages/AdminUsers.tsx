@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
@@ -6,6 +7,7 @@ import { useAdminUserList } from '../hooks/useAdminUsers.js';
 
 export default function AdminUsers() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const limit = 25;
@@ -69,7 +71,11 @@ export default function AdminUsers() {
                 </tr>
               )}
               {data?.users.map((u) => (
-                <tr key={u.uid} className="border-b border-base-300/60 last:border-0">
+                <tr
+                  key={u.uid}
+                  onClick={() => navigate(`/admin/users/${u.uid}`)}
+                  className="border-b border-base-300/60 last:border-0 hover:bg-white/[0.03] cursor-pointer"
+                >
                   <td className="px-3 py-2 text-white/80">{u.email}</td>
                   <td className="px-3 py-2 text-white/60">
                     {u.displayName || [u.firstName, u.lastName].filter(Boolean).join(' ') || '—'}

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import AdminAccount from '../models/AdminAccount.js';
 import * as adminAccountService from '../services/adminAccount.service.js';
+import { logAdminAction } from '../services/adminAudit.service.js';
 
 const handleServiceError = (err: unknown, res: Response, next: NextFunction): void => {
   const status = (err as { status?: number }).status;
@@ -89,6 +90,14 @@ export const createHandler = async (
       ansarDomain,
       createdBy: req.admin!.email,
     });
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'account.create',
+      targetType: 'AdminAccount',
+      targetId: String(account._id),
+      metadata: { email: account.email, role: account.role, ansarDomain: account.ansarDomain },
+    });
     res.status(201).json({
       ok: true,
       account: {
@@ -117,6 +126,13 @@ export const setActiveHandler = async (
       active,
       req.admin!.email
     );
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: active ? 'account.activate' : 'account.deactivate',
+      targetType: 'AdminAccount',
+      targetId: String(account._id),
+    });
     res.json({ ok: true, account: { id: account._id, active: account.active } });
   } catch (err) {
     handleServiceError(err, res, next);

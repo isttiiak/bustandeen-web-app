@@ -260,8 +260,7 @@ export const listGlobalLibrary = async (): Promise<IGlobalZikrLibraryItem[]> =>
 
 /** Servant-only, minimal edit: re-categorize an already-published library
  * item (e.g. fix a typo'd category, or move an old uncategorized item into
- * one of the curated buckets). Not full CRUD — see TODO-v3.md for the
- * deferred "Global Zikr library management" item covering the rest. */
+ * one of the curated buckets). */
 export const updateLibraryItemCategory = async (
   id: string,
   category: GlobalZikrCategory
@@ -269,6 +268,53 @@ export const updateLibraryItemCategory = async (
   const item = await GlobalZikrLibraryItem.findById(id);
   if (!item) throw httpError(404, 'Library item not found');
   item.category = category;
+  await item.save();
+  return item;
+};
+
+export interface LibraryItemEditInput {
+  name?: string;
+  arabic?: string;
+  transliteration?: string;
+  meaning?: string;
+  source?: string;
+  sourceUrl?: string;
+  grade?: string;
+  virtue?: string;
+}
+
+/** Servant-only full-field edit — fixing a typo in a translation, correcting
+ * a grading, retiring a near-duplicate's wording. Every field is optional so
+ * the admin can patch just what needs fixing. */
+export const updateLibraryItem = async (
+  id: string,
+  patch: LibraryItemEditInput
+): Promise<IGlobalZikrLibraryItem> => {
+  const item = await GlobalZikrLibraryItem.findById(id);
+  if (!item) throw httpError(404, 'Library item not found');
+  Object.assign(item, patch);
+  await item.save();
+  return item;
+};
+
+/** Servant-only — retires a duplicate/bad entry. Permanent; the request that
+ * originally created it (if any) is left alone, only the published library
+ * entry is removed. */
+export const deleteLibraryItem = async (id: string): Promise<void> => {
+  const result = await GlobalZikrLibraryItem.findByIdAndDelete(id);
+  if (!result) throw httpError(404, 'Library item not found');
+};
+
+/** Sets/updates a library item's own audioUrl field directly (it's already a
+ * live DB document, unlike the curated static list — see
+ * ZikrAudioAsset.ts for that side). */
+export const setLibraryItemAudio = async (
+  id: string,
+  audioUrl: string
+): Promise<IGlobalZikrLibraryItem> => {
+  const item = await GlobalZikrLibraryItem.findById(id);
+  if (!item) throw httpError(404, 'Library item not found');
+  item.audioUrl = audioUrl;
   await item.save();
   return item;
 };

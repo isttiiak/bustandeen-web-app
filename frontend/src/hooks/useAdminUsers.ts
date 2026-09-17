@@ -48,6 +48,42 @@ export function useWelcomeBackfillStatus() {
   });
 }
 
+export interface AdminUserDetail extends AdminUserListItem {
+  updatedAt: string;
+  totalCount: number;
+  zikrTypes: { name: string }[];
+  salatResetDate?: string;
+}
+
+/** Servant-only single-user profile summary — not a full data editor. */
+export function useAdminUserDetail(uid: string) {
+  return useQuery<AdminUserDetail>({
+    queryKey: ['admin', 'users', 'detail', uid],
+    queryFn: async () => {
+      const res = await api.get<{ user: AdminUserDetail }>(`/api/admin/users/${uid}`);
+      return res.data.user;
+    },
+    enabled: !!uid,
+  });
+}
+
+export function useResendWelcomeEmail() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (uid: string) => api.post(`/api/admin/users/${uid}/resend-welcome`),
+    onSuccess: (_data, uid) => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'detail', uid] });
+    },
+  });
+}
+
+/** Single-UID only, explicit confirm required in the UI — no bulk variant. */
+export function useDeleteUser() {
+  return useMutation({
+    mutationFn: (uid: string) => api.delete(`/api/admin/users/${uid}`),
+  });
+}
+
 /** Owner-only, deliberately manual — sending a batch of real emails is
  *  something the admin should trigger on purpose, never a side effect. */
 export function useSendWelcomeBackfill() {

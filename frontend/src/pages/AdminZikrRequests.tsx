@@ -3,11 +3,16 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { useAdminStore } from '../store/useAdminStore.js';
 import {
   useAdminZikrRequests,
   useZikrRequestEmailDraft,
   useApproveZikrRequest,
   useRejectZikrRequest,
+  useAdminZikrLibrary,
+  useUpdateLibraryItem,
+  useDeleteLibraryItem,
+  type GlobalLibraryItem,
 } from '../hooks/useAdminZikr.js';
 import type {
   GlobalZikrCategory,
@@ -318,8 +323,161 @@ function RequestCard({ request }: { request: ZikrRequest }) {
   );
 }
 
+function LibraryItemRow({ item }: { item: GlobalLibraryItem }) {
+  const { t } = useTranslation();
+  const update = useUpdateLibraryItem();
+  const del = useDeleteLibraryItem();
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    name: item.name,
+    arabic: item.arabic,
+    transliteration: item.transliteration ?? '',
+    meaning: item.meaning,
+    source: item.source,
+    sourceUrl: item.sourceUrl,
+    grade: item.grade ?? '',
+    virtue: item.virtue ?? '',
+  });
+
+  const save = () => {
+    update.mutate({ id: item._id, ...form }, { onSuccess: () => setEditing(false) });
+  };
+
+  if (!editing) {
+    return (
+      <div className="flex items-start justify-between gap-3 border-b border-white/5 pb-3 last:border-0 last:pb-0">
+        <div className="min-w-0">
+          <p className="text-white font-bold text-sm">{item.name}</p>
+          <p className="text-white/40 text-xs truncate">{item.meaning}</p>
+          <p className="text-white/25 text-[10px] mt-0.5">{item.category}</p>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <button
+            onClick={() => setEditing(true)}
+            className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
+          >
+            {t('adminSadaqah.edit', 'Edit')}
+          </button>
+          <button
+            onClick={() => {
+              if (
+                confirm(
+                  t('adminZikrLibrary.confirmDelete', 'Delete this library entry permanently?')
+                )
+              )
+                del.mutate(item._id);
+            }}
+            className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300"
+          >
+            {t('adminSadaqah.delete', 'Delete')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2 border-b border-white/5 pb-3 last:border-0 last:pb-0">
+      <input
+        className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+        placeholder="Name"
+        value={form.name}
+        onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+      />
+      <input
+        dir="rtl"
+        className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg font-serif"
+        placeholder="Arabic"
+        value={form.arabic}
+        onChange={(e) => setForm((f) => ({ ...f, arabic: e.target.value }))}
+      />
+      <input
+        className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+        placeholder="Transliteration"
+        value={form.transliteration}
+        onChange={(e) => setForm((f) => ({ ...f, transliteration: e.target.value }))}
+      />
+      <textarea
+        className="textarea textarea-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+        rows={2}
+        placeholder="Meaning"
+        value={form.meaning}
+        onChange={(e) => setForm((f) => ({ ...f, meaning: e.target.value }))}
+      />
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          placeholder="Source"
+          value={form.source}
+          onChange={(e) => setForm((f) => ({ ...f, source: e.target.value }))}
+        />
+        <input
+          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          placeholder="Source URL"
+          value={form.sourceUrl}
+          onChange={(e) => setForm((f) => ({ ...f, sourceUrl: e.target.value }))}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          placeholder="Grade"
+          value={form.grade}
+          onChange={(e) => setForm((f) => ({ ...f, grade: e.target.value }))}
+        />
+        <input
+          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          placeholder="Virtue"
+          value={form.virtue}
+          onChange={(e) => setForm((f) => ({ ...f, virtue: e.target.value }))}
+        />
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={save}
+          disabled={update.isPending}
+          className="btn btn-xs rounded-lg bg-brand-emerald border-brand-emerald text-white font-bold"
+        >
+          {update.isPending ? '…' : t('adminSadaqah.save', 'Save')}
+        </button>
+        <button
+          onClick={() => setEditing(false)}
+          className="btn btn-xs btn-ghost rounded-lg text-white/50"
+        >
+          {t('adminZikr.cancel', 'Cancel')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ManageLibrarySection() {
+  const { t } = useTranslation();
+  const { data: items, isLoading } = useAdminZikrLibrary();
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+        {t('adminZikrLibrary.title', 'Manage library')}
+      </h2>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
+        {isLoading && <p className="text-white/30 text-sm">{t('common.loading', 'Loading…')}</p>}
+        {!isLoading && items?.length === 0 && (
+          <p className="text-white/30 text-sm">
+            {t('adminZikrLibrary.empty', 'No published library entries yet.')}
+          </p>
+        )}
+        {items?.map((item) => (
+          <LibraryItemRow key={item._id} item={item} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function AdminZikrRequests() {
   const { t } = useTranslation();
+  const isServant = useAdminStore((s) => s.role) === 'servant';
   const [filter, setFilter] = useState<ZikrRequestStatus | 'all'>('pending');
   const { data: requests, isLoading } = useAdminZikrRequests(filter === 'all' ? undefined : filter);
 
@@ -357,6 +515,8 @@ export default function AdminZikrRequests() {
             <RequestCard key={r._id} request={r} />
           ))}
         </div>
+
+        {isServant && <ManageLibrarySection />}
       </div>
     </AnimatedBackground>
   );

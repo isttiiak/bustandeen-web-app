@@ -1,4 +1,5 @@
 import nodemailer, { Transporter } from 'nodemailer';
+import EmailFailureLog from '../models/EmailFailureLog.js';
 
 /**
  * Named senders — the mailbox (SMTP credentials) a send authenticates as,
@@ -139,6 +140,20 @@ export const sendMail = async (opts: SendMailOptions): Promise<string | null> =>
     return info.messageId ?? null;
   } catch (err) {
     console.error('Failed to send email:', err);
+    // Best-effort durable record so a silent SMTP failure (e.g. the Sadaqah
+    // system's past Zoho 535 auth error) shows up on the ops-health page
+    // instead of only ever being visible in server logs. Never let a logging
+    // failure mask the original send error.
+    try {
+      await EmailFailureLog.create({
+        sender,
+        to: opts.to,
+        subject: opts.subject,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    } catch (logErr) {
+      console.error('Failed to write email failure log:', logErr);
+    }
     return null;
   }
 };

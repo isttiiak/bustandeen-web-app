@@ -7,6 +7,11 @@ import {
   ShieldCheckIcon,
   ArrowRightOnRectangleIcon,
   ArrowTopRightOnSquareIcon,
+  ClipboardDocumentListIcon,
+  EnvelopeIcon,
+  SpeakerWaveIcon,
+  HeartIcon,
+  MegaphoneIcon,
 } from '@heroicons/react/24/outline';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminLogout } from '../hooks/useAdminAuth.js';
@@ -60,6 +65,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {t('adminLayout.zikrRequests', 'Zikr Requests')}
                 </NavLink>
               )}
+              {canSeeZikrRequests && (
+                <NavLink to="/admin/feedback" className={navItemClass}>
+                  <EnvelopeIcon className="w-4 h-4" />
+                  {t('adminLayout.feedback', 'Feedback')}
+                </NavLink>
+              )}
+              {canSeeZikrRequests && (
+                <NavLink to="/admin/zikr-audio" className={navItemClass}>
+                  <SpeakerWaveIcon className="w-4 h-4" />
+                  {t('adminLayout.zikrAudio', 'Zikr Audio')}
+                </NavLink>
+              )}
               {isServant && (
                 <NavLink to="/admin/users" className={navItemClass}>
                   <UsersIcon className="w-4 h-4" />
@@ -70,6 +87,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <NavLink to="/admin/accounts" className={navItemClass}>
                   <ShieldCheckIcon className="w-4 h-4" />
                   {t('adminLayout.accounts', 'Manage Ansars')}
+                </NavLink>
+              )}
+              {isServant && (
+                <NavLink to="/admin/audit-log" className={navItemClass}>
+                  <ClipboardDocumentListIcon className="w-4 h-4" />
+                  {t('adminLayout.auditLog', 'Audit Log')}
+                </NavLink>
+              )}
+              {isServant && (
+                <NavLink to="/admin/ops-health" className={navItemClass}>
+                  <HeartIcon className="w-4 h-4" />
+                  {t('adminLayout.opsHealth', 'Ops Health')}
+                </NavLink>
+              )}
+              {isServant && (
+                <NavLink to="/admin/broadcast" className={navItemClass}>
+                  <MegaphoneIcon className="w-4 h-4" />
+                  {t('adminLayout.broadcast', 'Broadcast')}
                 </NavLink>
               )}
             </nav>

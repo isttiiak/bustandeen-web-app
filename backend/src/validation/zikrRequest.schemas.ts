@@ -65,3 +65,45 @@ export const updateLibraryItemCategorySchema = z.object({
     category: zikrCategorySchema,
   }),
 });
+
+export const updateLibraryItemSchema = z.object({
+  params: z.object({
+    id: z.string().min(1),
+  }),
+  body: z.object({
+    name: z.string().trim().min(1).max(100).optional(),
+    arabic: z.string().trim().min(1).max(2000).optional(),
+    transliteration: z.string().trim().max(500).optional(),
+    meaning: z.string().trim().min(1).max(2000).optional(),
+    source: z.string().trim().min(1).max(200).optional(),
+    sourceUrl: z.string().trim().min(1).max(500).optional(),
+    grade: z.string().trim().max(200).optional(),
+    virtue: z.string().trim().max(1000).optional(),
+  }),
+});
+
+export const libraryItemIdParamSchema = z.object({
+  params: z.object({
+    id: z.string().min(1),
+  }),
+});
+
+const audioUrlField = z.string().trim().min(1).max(500).url();
+
+export const setCuratedAudioSchema = z.object({
+  params: z.object({
+    name: z.string().trim().min(1).max(100),
+  }),
+  body: z.object({
+    audioUrl: audioUrlField,
+  }),
+});
+
+export const setLibraryItemAudioSchema = z.object({
+  params: z.object({
+    id: z.string().min(1),
+  }),
+  body: z.object({
+    audioUrl: audioUrlField,
+  }),
+});

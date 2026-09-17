@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as sadaqahService from '../services/sadaqah.service.js';
+import * as adminDonorAnalyticsService from '../services/adminDonorAnalytics.service.js';
+import { logAdminAction } from '../services/adminAudit.service.js';
 
 // req.params values are typed string | string[] (Express 5) — none of these
 // routes use repeated-param patterns, so just take the first value, matching
@@ -72,12 +74,20 @@ export const verifyHandler = async (
     // This whole route file is domain-scoped to 'sadaqah' (requireDomain in
     // adminSadaqah.routes.ts) — the sender identity is fixed by that domain,
     // not by which admin (Servant or the sadaqah Ansar) happens to click.
+    const id = paramString(req.params.id);
     const donation = await sadaqahService.verifyDonation(
-      paramString(req.params.id),
+      id,
       req.user.email ?? '',
       emailBody,
       'sadaqah'
     );
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'donation.verify',
+      targetType: 'Donation',
+      targetId: id,
+    });
     res.json({ ok: true, donation });
   } catch (err) {
     handleServiceError(err, res, next);
@@ -91,12 +101,20 @@ export const rejectHandler = async (
 ): Promise<void> => {
   try {
     const { emailBody } = req.body as { emailBody: string };
+    const id = paramString(req.params.id);
     const donation = await sadaqahService.rejectDonation(
-      paramString(req.params.id),
+      id,
       req.user.email ?? '',
       emailBody,
       'sadaqah'
     );
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'donation.reject',
+      targetType: 'Donation',
+      targetId: id,
+    });
     res.json({ ok: true, donation });
   } catch (err) {
     handleServiceError(err, res, next);
@@ -109,7 +127,15 @@ export const deleteDonationHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    await sadaqahService.deleteDonation(paramString(req.params.id));
+    const id = paramString(req.params.id);
+    await sadaqahService.deleteDonation(id);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'donation.delete',
+      targetType: 'Donation',
+      targetId: id,
+    });
     res.json({ ok: true });
   } catch (err) {
     handleServiceError(err, res, next);
@@ -148,6 +174,14 @@ export const addExpenseHandler = async (
       description,
       req.user.email ?? ''
     );
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'expense.add',
+      targetType: 'SadaqahExpense',
+      targetId: String(expense._id),
+      metadata: { amount, description },
+    });
     res.json({ ok: true, expense });
   } catch (err) {
     next(err);
@@ -160,7 +194,15 @@ export const deleteExpenseHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    await sadaqahService.deleteExpense(paramString(req.params.id));
+    const id = paramString(req.params.id);
+    await sadaqahService.deleteExpense(id);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'expense.delete',
+      targetType: 'SadaqahExpense',
+      targetId: id,
+    });
     res.json({ ok: true });
   } catch (err) {
     handleServiceError(err, res, next);
@@ -173,8 +215,30 @@ export const upsertQuarterlyHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const stats = await sadaqahService.upsertQuarterly(paramString(req.params.quarter), req.body);
+    const quarter = paramString(req.params.quarter);
+    const stats = await sadaqahService.upsertQuarterly(quarter, req.body);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'quarterly.upsert',
+      targetType: 'DonationStats',
+      targetId: quarter,
+      metadata: req.body,
+    });
     res.json({ ok: true, stats });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const donorAnalyticsHandler = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const analytics = await adminDonorAnalyticsService.getDonorAnalytics();
+    res.json({ ok: true, ...analytics });
   } catch (err) {
     next(err);
   }
@@ -186,7 +250,15 @@ export const deleteQuarterlyHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const stats = await sadaqahService.deleteQuarterly(paramString(req.params.quarter));
+    const quarter = paramString(req.params.quarter);
+    const stats = await sadaqahService.deleteQuarterly(quarter);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'quarterly.delete',
+      targetType: 'DonationStats',
+      targetId: quarter,
+    });
     res.json({ ok: true, stats });
   } catch (err) {
     next(err);

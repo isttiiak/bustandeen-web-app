@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.29.0 — Rich admin panel: audit log, feedback inbox, donor analytics, ops health, broadcast — 2026-09-17
+
+### Added
+
+- **Admin audit log.** New `AdminAuditLog` collection records every mutating `/api/admin/*` action (actor email/role, action, target, small metadata) — donation verify/reject/delete, expenses, quarterly edits, zikr approve/reject, library edits, account create/activate/deactivate, feedback reply/archive/delete, user resend-welcome/delete, announcement publish/deactivate. Servant-only viewer at `/admin/audit-log`.
+- **Feedback/Contact inbox.** `/feedback` and `/contact` now POST to our own `POST /api/feedback` (own rate limiter) instead of Web3Forms — stored in a new `FeedbackMessage` collection and still emails the review inbox. Admin inbox at `/admin/feedback`: general-domain Ansar reads/replies (threaded)/archives; Servant additionally deletes. Web3Forms env var and client plumbing removed entirely.
+- **Donor analytics.** New section inside `/admin/sadaqah` (Servant-only): repeat vs. one-off donor counts, month-over-month verified-amount trend, and a top-50 donor table cross-referencing verified donations against app `User` accounts.
+- **Real dashboard numbers + role-specific landing.** `GET /api/admin/stats/overview` returns a different shape per caller's role/domain (never computes cross-domain numbers server-side). `/admin` now shows a Servant a stats hub (pending counts, verified total, new users this week); a sadaqah-domain Ansar a pending-donations hero CTA; a general-domain Ansar a pending-zikr + open-feedback hero CTA.
+- **Global Zikr library management.** `PATCH /library/:id` (full-field edit) and `DELETE /library/:id`, alongside the existing category-only patch — a "Manage library" section in `/admin/zikr-requests` with inline edit/delete (Servant-only).
+- **Zikr audio tracker.** New `/admin/zikr-audio` (general-domain Ansar + Servant): lists every curated and community-library zikr with audio status, and a paste-a-URL action per entry (`ZikrAudioAsset` for the curated static list, a new `audioUrl` field on `GlobalZikrLibraryItem` for community entries). Sourcing/tracking only — playback wiring into the counter is separate, unbuilt work.
+- **User detail view.** `/admin/users/:uid` (Servant-only): profile summary, `updatedAt` as a free "last active" proxy, and a resend-welcome-email action.
+- **User cleanup endpoint.** `DELETE /api/admin/users/:uid` (Servant-only) delegates to the existing full-purge `deleteAccount()` — single-UID only, two-click confirm in the UI, no bulk variant.
+- **System/ops health page.** `/admin/ops-health` (Servant-only): a new `EmailFailureLog` (written from `email.service.ts`'s existing catch block) surfaces recent send failures per sender, plus Mongo/Firebase-Admin connectivity and per-sender SMTP-configured status.
+- **Rate-limit / abuse monitoring.** A new `RateLimitHit` collection is written only when a request is actually throttled (event-driven, since Vercel serverless spreads `express-rate-limit`'s in-memory store across instances) — aggregated by limiter+path over the last 24h in `/admin/ops-health`'s second section.
+- **Broadcast/announcement tool.** `/admin/broadcast` (Servant-only) publishes a single active announcement; public `GET /api/announcements/active` feeds a new dismissible `AnnouncementBanner` in the main app (per-viewer localStorage dismissal).
+
 ## v5.27.0 — Admin domain split, zikr request overhaul, new-user zero-states — 2026-09-17
 
 ### Added

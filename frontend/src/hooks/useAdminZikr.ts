@@ -72,6 +72,69 @@ export function useRejectZikrRequest() {
   });
 }
 
+export interface GlobalLibraryItem {
+  _id: string;
+  name: string;
+  arabic: string;
+  transliteration?: string;
+  meaning: string;
+  source: string;
+  sourceUrl: string;
+  grade?: string;
+  virtue?: string;
+  category: GlobalZikrCategory;
+  audioUrl?: string;
+  createdAt: string;
+}
+
+/** Servant-only full library list — for the "Manage library" edit/remove UI. */
+export function useAdminZikrLibrary() {
+  return useQuery<GlobalLibraryItem[]>({
+    queryKey: ['admin', 'zikr-library'],
+    queryFn: async () => {
+      const res = await api.get<{ items: GlobalLibraryItem[] }>('/api/admin/zikr-requests/library');
+      return res.data.items;
+    },
+    staleTime: 15_000,
+  });
+}
+
+export interface LibraryItemEditInput {
+  name?: string;
+  arabic?: string;
+  transliteration?: string;
+  meaning?: string;
+  source?: string;
+  sourceUrl?: string;
+  grade?: string;
+  virtue?: string;
+}
+
+/** Servant-only — full-field edit of an already-published library item. */
+export function useUpdateLibraryItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...patch }: LibraryItemEditInput & { id: string }) =>
+      api.patch(`/api/admin/zikr-requests/library/${id}`, patch),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'zikr-library'] });
+      void queryClient.invalidateQueries({ queryKey: ['zikr', 'library', 'global'] });
+    },
+  });
+}
+
+/** Servant-only — retire a duplicate/bad library entry. */
+export function useDeleteLibraryItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/api/admin/zikr-requests/library/${id}`),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'zikr-library'] });
+      void queryClient.invalidateQueries({ queryKey: ['zikr', 'library', 'global'] });
+    },
+  });
+}
+
 /** Servant-only — re-categorize an already-published library item. */
 export function useUpdateLibraryItemCategory() {
   const queryClient = useQueryClient();

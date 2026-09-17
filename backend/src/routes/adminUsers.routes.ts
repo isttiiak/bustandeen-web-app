@@ -11,5 +11,10 @@ router.use(requireAdminAuth, requireServant);
 router.get('/', adminUsersController.listHandler);
 router.get('/welcome-backfill', adminUsersController.welcomeBackfillStatusHandler);
 router.post('/welcome-backfill', adminUsersController.welcomeBackfillSendHandler);
+router.get('/:uid', adminUsersController.detailHandler);
+router.post('/:uid/resend-welcome', adminUsersController.resendWelcomeHandler);
+// Single-UID only, explicit confirm required client-side — no bulk-delete
+// variant, per TODO-v3.md's explicit note.
+router.delete('/:uid', adminUsersController.deleteUserHandler);
 
 export default router;

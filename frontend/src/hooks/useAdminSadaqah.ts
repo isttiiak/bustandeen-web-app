@@ -146,3 +146,27 @@ export function useDeleteQuarterly() {
     },
   });
 }
+
+export interface DonorAnalytics {
+  topDonors: { email: string; donationCount: number; totalAmount: number; isAppUser: boolean }[];
+  repeatDonorCount: number;
+  oneOffDonorCount: number;
+  monthlyTrend: { month: string; amount: number; count: number }[];
+}
+
+/** Servant-only — cross-references verified donors against app User accounts.
+ *  `enabled` defaults true but should be passed `isServant` by the caller so
+ *  an Ansar's browser never even fires the request (it would just 403). */
+export function useDonorAnalytics(enabled = true) {
+  return useQuery<DonorAnalytics>({
+    queryKey: ['admin', 'sadaqah', 'donor-analytics'],
+    queryFn: async () => {
+      const res = await api.get<{ ok: boolean } & DonorAnalytics>(
+        '/api/admin/sadaqah/donor-analytics'
+      );
+      return res.data;
+    },
+    enabled,
+    staleTime: 60_000,
+  });
+}
