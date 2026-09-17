@@ -3,41 +3,6 @@ import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 import { useAdminUserList } from '../hooks/useAdminUsers.js';
-import { useWelcomeBackfillStatus, useSendWelcomeBackfill } from '../hooks/useAdminUsers.js';
-
-function WelcomeBackfillCard() {
-  const { t } = useTranslation();
-  const status = useWelcomeBackfillStatus();
-  const send = useSendWelcomeBackfill();
-
-  return (
-    <div className="rounded-2xl bg-base-200 border border-base-300 p-4 space-y-2">
-      <div className="font-bold text-white text-sm">
-        {t('adminUsers.backfillTitle', 'Welcome-email backfill')}
-      </div>
-      <p className="text-xs text-white/50">
-        {t(
-          'adminUsers.backfillDesc',
-          'Accounts created before the welcome-email feature shipped, missing that one-time send.'
-        )}
-      </p>
-      <div className="flex items-center gap-3">
-        <span className="text-sm text-white/70">
-          {t('adminUsers.backfillMissing', '{{count}} missing', {
-            count: status.data?.missing ?? 0,
-          })}
-        </span>
-        <button
-          onClick={() => send.mutate()}
-          disabled={send.isPending || !status.data?.missing}
-          className="btn btn-xs rounded-lg border-0 bg-brand-emerald text-white disabled:opacity-40"
-        >
-          {send.isPending ? '…' : t('adminUsers.backfillSend', 'Send batch')}
-        </button>
-      </div>
-    </div>
-  );
-}
 
 export default function AdminUsers() {
   const { t } = useTranslation();
@@ -59,8 +24,6 @@ export default function AdminUsers() {
         <h1 className="text-2xl font-black text-white">
           {t('adminUsers.title', 'User management')}
         </h1>
-
-        <WelcomeBackfillCard />
 
         <div className="flex items-center gap-2">
           <input

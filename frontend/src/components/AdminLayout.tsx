@@ -25,9 +25,11 @@ import { useAdminLogout } from '../hooks/useAdminAuth.js';
  */
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
-  const { email, role } = useAdminStore();
+  const { email, role, ansarDomain } = useAdminStore();
   const logout = useAdminLogout();
   const isServant = role === 'servant';
+  const canSeeSadaqah = isServant || ansarDomain === 'sadaqah';
+  const canSeeZikrRequests = isServant || ansarDomain === 'general';
 
   const navItemClass = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm transition-colors ${
@@ -46,14 +48,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               {t('adminLayout.brand', 'Bustandeen Admin')}
             </NavLink>
             <nav className="flex items-center gap-1 flex-wrap">
-              <NavLink to="/admin/sadaqah" className={navItemClass}>
-                <BanknotesIcon className="w-4 h-4" />
-                {t('adminLayout.sadaqah', 'Sadaqah')}
-              </NavLink>
-              <NavLink to="/admin/zikr-requests" className={navItemClass}>
-                <InboxStackIcon className="w-4 h-4" />
-                {t('adminLayout.zikrRequests', 'Zikr Requests')}
-              </NavLink>
+              {canSeeSadaqah && (
+                <NavLink to="/admin/sadaqah" className={navItemClass}>
+                  <BanknotesIcon className="w-4 h-4" />
+                  {t('adminLayout.sadaqah', 'Sadaqah')}
+                </NavLink>
+              )}
+              {canSeeZikrRequests && (
+                <NavLink to="/admin/zikr-requests" className={navItemClass}>
+                  <InboxStackIcon className="w-4 h-4" />
+                  {t('adminLayout.zikrRequests', 'Zikr Requests')}
+                </NavLink>
+              )}
               {isServant && (
                 <NavLink to="/admin/users" className={navItemClass}>
                   <UsersIcon className="w-4 h-4" />
