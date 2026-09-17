@@ -38,6 +38,7 @@ const donationStatsSchema = new Schema<IDonationStats>({
         received: { type: Number, default: 0 },
         spent: { type: Number, default: 0 },
         notes: { type: String, default: '' },
+        published: { type: Boolean, default: true },
       },
     ],
     default: [],

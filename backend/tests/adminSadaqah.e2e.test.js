@@ -242,49 +242,89 @@ describe('Sadaqah admin API', () => {
     expect(found.showNamePublicly).toBe(false);
   });
 
-  test('quarterly breakdown: upsert creates then updates an entry, delete removes it (owner only)', async () => {
-    const upsert1 = await request(app)
-      .patch('/api/admin/sadaqah/quarterly/2026-Q3')
+  // 2026-Q1 is used deliberately — every other test in this file verifies
+  // donations dated "today" (whatever quarter the suite happens to run in),
+  // so a quarter nobody else touches keeps these sum assertions exact rather
+  // than depending on how many other tests ran first.
+  test('quarterly: preview computes fresh from verified donations + expenses, publish stores it, unpublish/delete work (owner only)', async () => {
+    const quarter = '2026-Q1';
+    const donation = validDonation({ transactionDate: '2026-02-15', amount: 1000 });
+    const found = await submitAndFindPending(donation);
+    await request(app)
+      .patch(`/api/admin/sadaqah/${found._id}/verify`)
       .set('X-Admin-Token', ownerToken)
-      .send({ received: 1000, spent: 200, notes: 'Server costs' });
-    expect(upsert1.status).toBe(200);
-    expect(
-      upsert1.body.stats.quarterlyBreakdown.find((q) => q.quarter === '2026-Q3')
-    ).toMatchObject({ received: 1000, spent: 200, notes: 'Server costs' });
+      .send({ emailBody: 'Verified.' });
+    await request(app)
+      .post('/api/admin/sadaqah/expenses')
+      .set('X-Admin-Token', ownerToken)
+      .send({ date: '2026-02-20', amount: 200, description: 'Test quarter expense' });
 
-    const upsert2 = await request(app)
-      .patch('/api/admin/sadaqah/quarterly/2026-Q3')
+    const preview = await request(app)
+      .get(`/api/admin/sadaqah/quarterly/${quarter}/preview`)
+      .set('X-Admin-Token', ownerToken);
+    expect(preview.status).toBe(200);
+    expect(preview.body.received).toBe(1000);
+    expect(preview.body.spent).toBe(200);
+
+    const publish = await request(app)
+      .post(`/api/admin/sadaqah/quarterly/${quarter}/publish`)
       .set('X-Admin-Token', ownerToken)
-      .send({ spent: 350 });
+      .send({ notes: 'Server costs' });
+    expect(publish.status).toBe(200);
+    expect(publish.body.stats.quarterlyBreakdown.find((q) => q.quarter === quarter)).toMatchObject({
+      received: 1000,
+      spent: 200,
+      notes: 'Server costs',
+      published: true,
+    });
+
+    const publicStats = await request(app).get('/api/sadaqah/stats');
+    expect(publicStats.body.quarterlyBreakdown.find((q) => q.quarter === quarter)).toBeTruthy();
+
+    const unpublish = await request(app)
+      .patch(`/api/admin/sadaqah/quarterly/${quarter}/unpublish`)
+      .set('X-Admin-Token', ownerToken);
+    expect(unpublish.status).toBe(200);
+
+    const publicStatsAfterUnpublish = await request(app).get('/api/sadaqah/stats');
     expect(
-      upsert2.body.stats.quarterlyBreakdown.find((q) => q.quarter === '2026-Q3')
-    ).toMatchObject({ received: 1000, spent: 350, notes: 'Server costs' });
+      publicStatsAfterUnpublish.body.quarterlyBreakdown.find((q) => q.quarter === quarter)
+    ).toBeUndefined();
 
     const del = await request(app)
-      .delete('/api/admin/sadaqah/quarterly/2026-Q3')
+      .delete(`/api/admin/sadaqah/quarterly/${quarter}`)
       .set('X-Admin-Token', ownerToken);
     expect(del.status).toBe(200);
-    expect(del.body.stats.quarterlyBreakdown.find((q) => q.quarter === '2026-Q3')).toBeUndefined();
+    expect(del.body.stats.quarterlyBreakdown.find((q) => q.quarter === quarter)).toBeUndefined();
   });
 
-  test('a non-owner admin cannot edit or delete quarterly stats', async () => {
-    const upsert = await request(app)
-      .patch('/api/admin/sadaqah/quarterly/2026-Q4')
+  test('a non-owner admin cannot preview, publish, unpublish, or delete quarterly stats', async () => {
+    const preview = await request(app)
+      .get('/api/admin/sadaqah/quarterly/2026-Q1/preview')
+      .set('X-Admin-Token', staffToken);
+    expect(preview.status).toBe(403);
+
+    const publish = await request(app)
+      .post('/api/admin/sadaqah/quarterly/2026-Q1/publish')
       .set('X-Admin-Token', staffToken)
-      .send({ received: 100 });
-    expect(upsert.status).toBe(403);
+      .send({});
+    expect(publish.status).toBe(403);
+
+    const unpublish = await request(app)
+      .patch('/api/admin/sadaqah/quarterly/2026-Q1/unpublish')
+      .set('X-Admin-Token', staffToken);
+    expect(unpublish.status).toBe(403);
 
     const del = await request(app)
-      .delete('/api/admin/sadaqah/quarterly/2026-Q4')
+      .delete('/api/admin/sadaqah/quarterly/2026-Q1')
       .set('X-Admin-Token', staffToken);
     expect(del.status).toBe(403);
   });
 
   test('rejects a malformed quarter key', async () => {
     const res = await request(app)
-      .patch('/api/admin/sadaqah/quarterly/not-a-quarter')
-      .set('X-Admin-Token', ownerToken)
-      .send({ received: 100 });
+      .get('/api/admin/sadaqah/quarterly/not-a-quarter/preview')
+      .set('X-Admin-Token', ownerToken);
     expect(res.status).toBe(400);
   });
 

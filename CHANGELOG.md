@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.32.1 — Fix: `published` field on quarterly Sadaqah entries was never actually persisted — 2026-09-17
+
+### Fixed
+
+- **The `published` flag on `quarterlyBreakdown` entries was declared on the TypeScript interface but never added to the actual Mongoose schema**, so `strict: true` silently dropped it on every save — publishing or unpublishing a quarter never wrote the field to the database at all (not `false`, entirely absent). v5.32.0's `published !== false` check masked the symptom on read (a missing field correctly read as "published"), but the field genuinely never persisted, which meant `listQuarterly()`'s admin badge and any future explicit `unpublish` would have been unreliable. Added `published: { type: Boolean, default: true }` to the schema's inline `quarterlyBreakdown` subdocument definition. Caught via the backend test suite (`npm test`), which had not been run before the v5.32.0 push — 3 tests for the old quarterly-report endpoint shape were also failing after that release's API redesign (`/preview`, `/publish`, `/unpublish` replacing the old manual-entry `PATCH`); rewrote them to match the new endpoints. All 213 backend tests now pass.
+
 ## v5.32.0 — Admin panel: layout/UX fixes, Sadaqah publish workflow, donor & re-engagement email, user inactivity — 2026-09-17
 
 Follow-up batch after a hands-on review of v5.29–v5.31 surfaced several real bugs and requested a Sadaqah workflow redesign.
