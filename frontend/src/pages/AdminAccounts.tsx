@@ -14,16 +14,18 @@ function AddAnsarForm() {
   const { t } = useTranslation();
   const create = useCreateAdminAccount();
   const [form, setForm] = useState({ email: '', password: '', displayName: '' });
+  const [ansarDomain, setAnsarDomain] = useState<'sadaqah' | 'general'>('general');
   const [open, setOpen] = useState(false);
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!form.email || form.password.length < 8) return;
     create.mutate(
-      { ...form, role: 'ansar' },
+      { ...form, role: 'ansar', ansarDomain },
       {
         onSuccess: () => {
           setForm({ email: '', password: '', displayName: '' });
+          setAnsarDomain('general');
           setOpen(false);
         },
       }
@@ -69,6 +71,31 @@ function AddAnsarForm() {
         placeholder={t('adminAccounts.passwordPlaceholder', 'Temporary password (min 8 chars)')}
         className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
       />
+      <div>
+        <p className="text-xs text-white/40 mb-1">
+          {t('adminAccounts.domainLabel', 'Which area does this Ansar manage?')}
+        </p>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setAnsarDomain('general')}
+            className={`btn btn-sm rounded-xl flex-1 border-0 ${
+              ansarDomain === 'general' ? 'bg-brand-emerald text-white' : 'bg-white/5 text-white/50'
+            }`}
+          >
+            {t('adminAccounts.domainGeneral', 'General (zikr review, etc.)')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setAnsarDomain('sadaqah')}
+            className={`btn btn-sm rounded-xl flex-1 border-0 ${
+              ansarDomain === 'sadaqah' ? 'bg-brand-emerald text-white' : 'bg-white/5 text-white/50'
+            }`}
+          >
+            {t('adminAccounts.domainSadaqah', 'Sadaqah only')}
+          </button>
+        </div>
+      </div>
       {create.isError && (
         <p className="text-red-400 text-xs">
           {t(
@@ -118,6 +145,13 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
             ? t('adminGate.servant', 'Servant')
             : t('adminGate.ansar', 'Ansar')}
         </span>
+        {account.role === 'ansar' && account.ansarDomain && (
+          <span className="ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-white/10 text-white/50">
+            {account.ansarDomain === 'sadaqah'
+              ? t('adminAccounts.domainSadaqahBadge', 'Sadaqah')
+              : t('adminAccounts.domainGeneralBadge', 'General')}
+          </span>
+        )}
       </td>
       <td className="px-3 py-2 text-white/60">
         {account.active

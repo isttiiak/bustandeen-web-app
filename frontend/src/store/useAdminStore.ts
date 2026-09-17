@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 export type AdminRole = 'servant' | 'ansar';
+export type AnsarDomain = 'sadaqah' | 'general';
 
 interface AdminState {
   /** 'checking' — Firebase is restoring/verifying the admin-app session on

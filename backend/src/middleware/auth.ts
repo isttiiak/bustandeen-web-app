@@ -6,6 +6,19 @@ import {
 } from '../config/firebaseAdmin.js';
 import AdminAccount from '../models/AdminAccount.js';
 
+/**
+ * Whether the dev-bypass auth path may run at all. Requires BOTH an explicit
+ * opt-in (DEV_AUTH_BYPASS=1) AND that this isn't NODE_ENV=production, but
+ * NODE_ENV is just a string env var a misconfigured preview/staging deploy
+ * could fail to set correctly — `VERCEL` is set automatically by Vercel on
+ * every deployed environment (prod, preview, branch), so it's a second,
+ * independent signal that can't be defeated by the same misconfiguration.
+ */
+const devAuthBypassAllowed = (): boolean =>
+  process.env.NODE_ENV !== 'production' &&
+  process.env.DEV_AUTH_BYPASS === '1' &&
+  !process.env.VERCEL;
+
 export const requireAuth = async (
   req: Request,
   res: Response,
@@ -26,8 +39,7 @@ export const requireAuth = async (
     }
 
     // Dev bypass: only in non-production environments
-    const isProd = process.env.NODE_ENV === 'production';
-    if (!isProd && process.env.DEV_AUTH_BYPASS === '1') {
+    if (devAuthBypassAllowed()) {
       const payload = decodeUnverifiedJwt(token);
       if (!payload?.['uid']) {
         res.status(401).json({ ok: false, error: 'Invalid token' });
@@ -102,7 +114,7 @@ export const requireAdminAuth = async (
       const decoded = await verifyFirebaseToken(token);
       uid = decoded.uid;
       if (decoded.email && decoded.email_verified) verifiedEmail = decoded.email.toLowerCase();
-    } else if (process.env.NODE_ENV !== 'production' && process.env.DEV_AUTH_BYPASS === '1') {
+    } else if (devAuthBypassAllowed()) {
       const payload = decodeUnverifiedJwt(token);
       if (typeof payload?.['uid'] !== 'string') {
         res.status(401).json({ ok: false, error: 'admin_session_required' });
@@ -137,7 +149,7 @@ export const requireAdminAuth = async (
       res.status(401).json({ ok: false, error: 'admin_session_required' });
       return;
     }
-    req.admin = { uid, email: account.email, role: account.role };
+    req.admin = { uid, email: account.email, role: account.role, ansarDomain: account.ansarDomain };
     req.user = { uid, email: account.email, isOwner: account.role === 'servant' };
     next();
   } catch {
@@ -160,6 +172,25 @@ export const requireServant = (req: Request, res: Response, next: NextFunction):
   }
   next();
 };
+
+/**
+ * Scopes an Ansar to exactly one operational area (sadaqah review vs.
+ * everything else) — the Servant bypasses this entirely, since the Servant's
+ * whole point is unrestricted access. Must run after requireAdminAuth. Apply
+ * this to any admin route file that isn't already Servant-only, so a future
+ * non-sadaqah, non-account-management admin surface follows the same
+ * 'general' convention as adminZikr.routes.ts.
+ */
+export const requireDomain =
+  (domain: 'sadaqah' | 'general') =>
+  (req: Request, res: Response, next: NextFunction): void => {
+    if (req.admin?.role === 'servant') return next();
+    if (req.admin?.ansarDomain !== domain) {
+      res.status(403).json({ ok: false, error: 'wrong_domain' });
+      return;
+    }
+    next();
+  };
 
 /**
  * Gate for irreversible operations (account deletion): rejects unless the

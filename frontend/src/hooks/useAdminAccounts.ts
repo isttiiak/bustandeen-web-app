@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
-import type { AdminRole } from '../store/useAdminStore.js';
+import type { AdminRole, AnsarDomain } from '../store/useAdminStore.js';
 
 export interface AdminAccountListItem {
   id: string;
   email: string;
   displayName?: string;
   role: AdminRole;
+  ansarDomain: AnsarDomain | null;
   active: boolean;
   createdBy: string;
   createdAt: string;
@@ -36,6 +37,7 @@ export function useCreateAdminAccount() {
       password: string;
       displayName?: string;
       role: AdminRole;
+      ansarDomain?: AnsarDomain;
     }) => api.post('/api/admin/accounts', input),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });

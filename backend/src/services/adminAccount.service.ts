@@ -1,5 +1,5 @@
 import admin from 'firebase-admin';
-import AdminAccount, { AdminRole, IAdminAccount } from '../models/AdminAccount.js';
+import AdminAccount, { AdminRole, AnsarDomain, IAdminAccount } from '../models/AdminAccount.js';
 import { isFirebaseInitialized } from '../config/firebaseAdmin.js';
 
 class AdminAccountError extends Error {
@@ -27,20 +27,32 @@ export const bootstrapAdminAccounts = async (): Promise<void> => {
   if (bootstrapAttempted || !isFirebaseInitialized()) return;
   bootstrapAttempted = true;
 
-  const candidates: { email?: string; password?: string; role: AdminRole }[] = [
+  const candidates: {
+    email?: string;
+    password?: string;
+    role: AdminRole;
+    ansarDomain: AnsarDomain | null;
+  }[] = [
     {
       email: process.env.SERVANT_EMAIL,
       password: process.env.SERVANT_BOOTSTRAP_PASSWORD,
       role: 'servant',
+      ansarDomain: null,
     },
     {
+      // The original single Ansar — its real-world job has always been the
+      // "everything except sadaqah" queue (it's the default
+      // ZIKR_REQUEST_REVIEW_EMAIL), so it bootstraps straight into 'general'.
+      // sadaqah@bustandeen.com is a separate account added later via the
+      // Servant-only "add Ansar" UI, never through env vars.
       email: process.env.ANSAR_EMAIL,
       password: process.env.ANSAR_BOOTSTRAP_PASSWORD,
       role: 'ansar',
+      ansarDomain: 'general',
     },
   ];
 
-  for (const { email, password, role } of candidates) {
+  for (const { email, password, role, ansarDomain } of candidates) {
     if (!email) continue;
     const normalizedEmail = email.trim().toLowerCase();
     const existing = await AdminAccount.findOne({ email: normalizedEmail });
@@ -68,6 +80,7 @@ export const bootstrapAdminAccounts = async (): Promise<void> => {
         firebaseUid: firebaseUser.uid,
         email: normalizedEmail,
         role,
+        ansarDomain,
         active: true,
         createdBy: 'bootstrap',
       });
@@ -75,6 +88,36 @@ export const bootstrapAdminAccounts = async (): Promise<void> => {
     } catch (err) {
       console.error(`[adminAccount] Failed to bootstrap ${normalizedEmail}:`, err);
     }
+  }
+};
+
+let ansarDomainBackfillAttempted = false;
+
+/**
+ * One-time migration for accounts created before ansarDomain existed: any
+ * pre-existing 'ansar' row with no domain set is the original
+ * ansar@bustandeen.com, whose real job has always been "everything except
+ * sadaqah" — see the bootstrap comment above. Must complete before
+ * requireDomain starts enforcing scoping, otherwise that account would fail
+ * every domain check. Idempotent the same way bootstrapAdminAccounts is (a
+ * process-level flag on warm instances; the $set below is also a no-op once
+ * every row already has a domain).
+ */
+export const backfillAnsarDomains = async (): Promise<void> => {
+  if (ansarDomainBackfillAttempted) return;
+  ansarDomainBackfillAttempted = true;
+  try {
+    const result = await AdminAccount.updateMany(
+      { role: 'ansar', ansarDomain: null },
+      { $set: { ansarDomain: 'general' } }
+    );
+    if (result.modifiedCount > 0) {
+      console.log(
+        `[adminAccount] Backfilled ansarDomain:'general' on ${result.modifiedCount} account(s)`
+      );
+    }
+  } catch (err) {
+    console.error('[adminAccount] Failed to backfill ansarDomain', err);
   }
 };
 
@@ -92,6 +135,7 @@ export const createAdminAccount = async (input: {
   password: string;
   displayName?: string;
   role: AdminRole;
+  ansarDomain?: AnsarDomain | null;
   createdBy: string;
 }): Promise<IAdminAccount> => {
   const email = input.email.trim().toLowerCase();
@@ -115,6 +159,7 @@ export const createAdminAccount = async (input: {
     email,
     displayName: input.displayName,
     role: input.role,
+    ansarDomain: input.role === 'ansar' ? (input.ansarDomain ?? null) : null,
     active: true,
     createdBy: input.createdBy,
   });

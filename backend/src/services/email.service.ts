@@ -2,32 +2,48 @@ import nodemailer, { Transporter } from 'nodemailer';
 
 /**
  * Named senders — the mailbox (SMTP credentials) a send authenticates as,
- * paired with the display name shown in the recipient's inbox. Zoho only
- * requires the "From" ADDRESS to match the authenticated mailbox; the
- * display name portion is free-form, so 'ansar' reuses the same
- * sadaqah@bustandeen.com mailbox/credentials as 'sadaqah' but shows a
- * different name — the donor sees exactly who (Servant vs Ansar) is
- * actually handling their review, without needing a whole separate mailbox.
+ * paired with the display name shown in the recipient's inbox. 'sadaqah' and
+ * 'ansar' now correspond to two real, separately-scoped Ansar accounts
+ * (sadaqah@bustandeen.com and ansar@bustandeen.com — see AdminAccount's
+ * ansarDomain), but a dedicated Zoho mailbox for each may not exist yet.
+ * Each sender therefore checks for an OPTIONAL dedicated env-var pair first
+ * (`dedicatedUser`/`dedicatedPass` below) and falls back to the shared
+ * `ZOHO_SMTP_USER`/`PASS` mailbox if either is unset — so this works
+ * immediately, and upgrades to a real separate inbox with no code change
+ * once the user provisions one and sets the matching env vars.
  *
- * - 'sadaqah' (sadaqah@bustandeen.com, displayed "Bustandeen") — the
- *   Servant's/system default for donation and zikr-request review threads.
- * - 'ansar' — same mailbox, displayed "Bustandeen Ansar" — used whenever the
- *   acting admin is the Ansar role (see adminSadaqah/adminZikr controllers).
+ * - 'sadaqah' (sadaqah@bustandeen.com, displayed "Bustandeen") — donation
+ *   review threads.
+ * - 'ansar' (ansar@bustandeen.com, displayed "Bustandeen Ansar") — zikr
+ *   request review threads and anything else outside the sadaqah domain.
  * - 'istiak' (istiak@bustandeen.com) — the founder's personal address, used
  *   for the one-time welcome email so it reads as a real person reaching out,
  *   not an automated system mailbox.
  */
 export type EmailSender = 'sadaqah' | 'ansar' | 'istiak';
 
-const SENDER_ENV: Record<EmailSender, { user: string; pass: string; displayName: string }> = {
+const SENDER_ENV: Record<
+  EmailSender,
+  {
+    user: string;
+    pass: string;
+    dedicatedUser?: string;
+    dedicatedPass?: string;
+    displayName: string;
+  }
+> = {
   sadaqah: {
     user: 'ZOHO_SMTP_USER',
     pass: 'ZOHO_SMTP_PASS',
+    dedicatedUser: 'SADAQAH_SMTP_USER',
+    dedicatedPass: 'SADAQAH_SMTP_PASS',
     displayName: 'Bustandeen',
   },
   ansar: {
     user: 'ZOHO_SMTP_USER',
     pass: 'ZOHO_SMTP_PASS',
+    dedicatedUser: 'ANSAR_SMTP_USER',
+    dedicatedPass: 'ANSAR_SMTP_PASS',
     displayName: 'Bustandeen Ansar',
   },
   istiak: {
@@ -37,19 +53,27 @@ const SENDER_ENV: Record<EmailSender, { user: string; pass: string; displayName:
   },
 };
 
+/** Resolves the actual mailbox credentials for a sender: dedicated env vars
+ *  if both are set, otherwise the shared Zoho mailbox. */
+const resolveSenderCreds = (sender: EmailSender): { user?: string; pass?: string } => {
+  const cfg = SENDER_ENV[sender];
+  const dedicatedUser = cfg.dedicatedUser ? process.env[cfg.dedicatedUser] : undefined;
+  const dedicatedPass = cfg.dedicatedPass ? process.env[cfg.dedicatedPass] : undefined;
+  if (dedicatedUser && dedicatedPass) return { user: dedicatedUser, pass: dedicatedPass };
+  return { user: process.env[cfg.user], pass: process.env[cfg.pass] };
+};
+
 const transporters: Partial<Record<EmailSender, Transporter | null>> = {};
 
 const getTransporter = (sender: EmailSender): Transporter | null => {
   if (sender in transporters) return transporters[sender] ?? null;
 
   const { ZOHO_SMTP_HOST, ZOHO_SMTP_PORT } = process.env;
-  const { user: userVar, pass: passVar } = SENDER_ENV[sender];
-  const user = process.env[userVar];
-  const pass = process.env[passVar];
+  const { user, pass } = resolveSenderCreds(sender);
 
   if (!ZOHO_SMTP_HOST || !ZOHO_SMTP_PORT || !user || !pass) {
     console.warn(
-      `Email not configured for sender "${sender}" (${userVar}/${passVar} missing) — emails will be skipped.`
+      `Email not configured for sender "${sender}" (credentials missing) — emails will be skipped.`
     );
     transporters[sender] = null;
     return null;
@@ -99,10 +123,8 @@ export const sendMail = async (opts: SendMailOptions): Promise<string | null> =>
   const sender = opts.from ?? 'sadaqah';
   const t = getTransporter(sender);
   if (!t) return null;
-  const { user, displayName } = {
-    user: process.env[SENDER_ENV[sender].user],
-    displayName: SENDER_ENV[sender].displayName,
-  };
+  const { user } = resolveSenderCreds(sender);
+  const { displayName } = SENDER_ENV[sender];
   try {
     const info = await t.sendMail({
       from: `"${displayName}" <${user}>`,

@@ -31,7 +31,12 @@ export const sessionHandler = async (
       { firebaseUid: req.admin.uid },
       { $set: { lastLoginAt: new Date() } }
     );
-    res.json({ ok: true, email: req.admin.email, role: req.admin.role });
+    res.json({
+      ok: true,
+      email: req.admin.email,
+      role: req.admin.role,
+      ansarDomain: req.admin.ansarDomain,
+    });
   } catch (err) {
     next(err);
   }
@@ -51,6 +56,7 @@ export const listHandler = async (
         email: a.email,
         displayName: a.displayName,
         role: a.role,
+        ansarDomain: a.ansarDomain,
         active: a.active,
         createdBy: a.createdBy,
         createdAt: a.createdAt,
@@ -68,17 +74,19 @@ export const createHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { email, password, displayName, role } = req.body as {
+    const { email, password, displayName, role, ansarDomain } = req.body as {
       email: string;
       password: string;
       displayName?: string;
       role: 'servant' | 'ansar';
+      ansarDomain?: 'sadaqah' | 'general';
     };
     const account = await adminAccountService.createAdminAccount({
       email,
       password,
       displayName,
       role,
+      ansarDomain,
       createdBy: req.admin!.email,
     });
     res.status(201).json({
@@ -88,6 +96,7 @@ export const createHandler = async (
         email: account.email,
         displayName: account.displayName,
         role: account.role,
+        ansarDomain: account.ansarDomain,
         active: account.active,
       },
     });

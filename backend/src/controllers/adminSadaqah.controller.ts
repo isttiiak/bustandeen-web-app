@@ -69,11 +69,14 @@ export const verifyHandler = async (
 ): Promise<void> => {
   try {
     const { emailBody } = req.body as { emailBody: string };
+    // This whole route file is domain-scoped to 'sadaqah' (requireDomain in
+    // adminSadaqah.routes.ts) — the sender identity is fixed by that domain,
+    // not by which admin (Servant or the sadaqah Ansar) happens to click.
     const donation = await sadaqahService.verifyDonation(
       paramString(req.params.id),
       req.user.email ?? '',
       emailBody,
-      req.admin?.role === 'ansar' ? 'ansar' : 'sadaqah'
+      'sadaqah'
     );
     res.json({ ok: true, donation });
   } catch (err) {
@@ -92,7 +95,7 @@ export const rejectHandler = async (
       paramString(req.params.id),
       req.user.email ?? '',
       emailBody,
-      req.admin?.role === 'ansar' ? 'ansar' : 'sadaqah'
+      'sadaqah'
     );
     res.json({ ok: true, donation });
   } catch (err) {
