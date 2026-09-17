@@ -224,21 +224,20 @@ export default function ZikrSettings({ open, onClose }: { open: boolean; onClose
                 <div className="flex items-center gap-2 mb-2">
                   <ArrowPathIcon className="w-4 h-4 text-brand-gold" />
                   <h3 className="text-brand-gold font-bold text-sm">
-                    {t('zikr.resetCounters', 'Reset counters')}
+                    {t('zikr.resetCounters', 'Start fresh')}
                   </h3>
                 </div>
                 <p className="text-white/40 text-xs leading-relaxed mb-3">
                   {t(
                     'zikr.resetDesc',
-                    'Zero all running counts, streak and goal progress. Your daily history stays intact — you can still see it in analytics. Use this for a fresh start.'
+                    'Zero your counts, streak and goal to begin again — your daily history stays saved in Analytics, nothing is deleted.'
                   )}
                 </p>
                 <button
                   onClick={() => setConfirmReset(true)}
                   className="btn btn-sm border border-brand-gold/30 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 gap-1.5"
                 >
-                  <ArrowPathIcon className="w-3.5 h-3.5" />{' '}
-                  {t('zikr.resetCounters', 'Reset counters')}
+                  <ArrowPathIcon className="w-3.5 h-3.5" /> {t('zikr.resetCounters', 'Start fresh')}
                 </button>
               </section>
 
@@ -257,13 +256,15 @@ export default function ZikrSettings({ open, onClose }: { open: boolean; onClose
 
           <ConfirmDialog
             open={confirmReset}
-            title={t('zikr.resetAllConfirmTitle', 'Reset zikr counters?')}
+            title={t('zikr.resetAllConfirmTitle', 'Start fresh?')}
             message={t(
               'zikr.resetConfirmMsg',
-              'All running counts, streak and goal progress will be zeroed. Your daily history will not be touched.'
+              'Your counts, streak and goal progress will be zeroed. Your daily history will not be touched.'
             )}
             confirmLabel={
-              resetting ? t('zikr.resetting', 'Resetting…') : t('zikr.resetConfirm', 'Yes, reset')
+              resetting
+                ? t('zikr.resetting', 'Resetting…')
+                : t('zikr.resetConfirm', 'Yes, start fresh')
             }
             onConfirm={() => void handleReset()}
             onCancel={() => setConfirmReset(false)}

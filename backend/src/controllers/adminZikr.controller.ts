@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as zikrRequestService from '../services/zikrRequest.service.js';
 import { ZikrRequestStatus } from '../models/ZikrRequest.js';
+import { GlobalZikrCategory } from '../models/GlobalZikrLibraryItem.js';
 
 const paramString = (v: string | string[] | undefined): string =>
   (Array.isArray(v) ? v[0] : v) ?? '';
@@ -48,11 +49,15 @@ export const approveHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // This whole route file is domain-scoped to 'general' (requireDomain in
+    // adminZikr.routes.ts) — the sender identity is fixed to the
+    // ansar@bustandeen.com domain, not by which admin (Servant or the
+    // general Ansar) happens to click.
     const request = await zikrRequestService.approveRequest(
       paramString(req.params.id),
       req.user.email ?? '',
       req.body,
-      req.admin?.role === 'ansar' ? 'ansar' : 'sadaqah'
+      'ansar'
     );
     res.json({ ok: true, request });
   } catch (err) {
@@ -72,9 +77,28 @@ export const rejectHandler = async (
       req.user.email ?? '',
       adminNote,
       emailBody,
-      req.admin?.role === 'ansar' ? 'ansar' : 'sadaqah'
+      'ansar'
     );
     res.json({ ok: true, request });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
+/** Servant-only (see adminZikr.routes.ts) — re-categorize an already-
+ * published library item. Not full CRUD, just this one field. */
+export const updateLibraryCategoryHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { category } = req.body as { category: GlobalZikrCategory };
+    const item = await zikrRequestService.updateLibraryItemCategory(
+      paramString(req.params.id),
+      category
+    );
+    res.json({ ok: true, item });
   } catch (err) {
     handleServiceError(err, res, next);
   }

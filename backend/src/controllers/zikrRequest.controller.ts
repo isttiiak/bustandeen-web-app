@@ -10,12 +10,13 @@ export const submitHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { name, arabic, meaning, source, sourceUrl } = req.body as {
+    const { name, arabic, meaning, source, sourceUrl, wantsAudio } = req.body as {
       name: string;
       arabic?: string;
-      meaning: string;
+      meaning?: string;
       source?: string;
       sourceUrl?: string;
+      wantsAudio?: boolean;
     };
     const request = await zikrRequestService.submitRequest(req.user.uid, req.user.email, {
       name,
@@ -23,6 +24,7 @@ export const submitHandler = async (
       meaning,
       source,
       sourceUrl,
+      wantsAudio,
     });
     res.json({ ok: true, request });
   } catch (err) {

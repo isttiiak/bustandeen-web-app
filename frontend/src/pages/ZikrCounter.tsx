@@ -8,7 +8,8 @@ import toast from 'react-hot-toast';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore } from '../store/useUiStore.js';
-import { useZikrTypes, useAddZikrType, useDeleteZikrType } from '../hooks/useZikrTypes.js';
+import { useZikrTypes, useDeleteZikrType } from '../hooks/useZikrTypes.js';
+import { useSubmitZikrRequest } from '../hooks/useZikrRequests.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
@@ -42,8 +43,6 @@ import {
   PencilSquareIcon,
   ChevronDownIcon,
   Cog6ToothIcon,
-  ArrowDownTrayIcon,
-  ArrowUpTrayIcon,
   SpeakerWaveIcon,
   PlayIcon,
   StopIcon,
@@ -307,7 +306,6 @@ export default function ZikrCounter() {
     reset,
     scheduleFlush,
     setTypes,
-    setCustomMeaning,
     removeType,
     addCounts,
   } = useZikrStore();
@@ -324,7 +322,7 @@ export default function ZikrCounter() {
   const [autoPlayTarget, setAutoPlayTarget] = useState('50');
   const [hiddenTypes, setHiddenTypes] = useState<string[]>(getHiddenZikr);
   const { data: fetchedTypes } = useZikrTypes();
-  const addZikrType = useAddZikrType();
+  const submitZikrRequest = useSubmitZikrRequest();
   const deleteZikrType = useDeleteZikrType();
   const { data: analyticsData } = useAnalytics(1);
 
@@ -333,10 +331,10 @@ export default function ZikrCounter() {
   const [showAddCustom, setShowAddCustom] = useState(false);
   const [customName, setCustomName] = useState('');
   const [customArabic, setCustomArabic] = useState('');
-  const [customTranslit, setCustomTranslit] = useState('');
   const [customMeaningText, setCustomMeaningText] = useState('');
   const [customSource, setCustomSource] = useState('');
   const [customSourceUrl, setCustomSourceUrl] = useState('');
+  const [customWantsAudio, setCustomWantsAudio] = useState(false);
   const [showGuestDialog, setShowGuestDialog] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
   const [showManage, setShowManage] = useState(false);
@@ -344,7 +342,6 @@ export default function ZikrCounter() {
   const [editZikr, setEditZikr] = useState<string | null>(null);
   const [showSetCount, setShowSetCount] = useState(false);
   const [setCountValue, setSetCountValue] = useState('');
-  const importInputRef = useRef<HTMLInputElement>(null);
   const [showArabicKb, setShowArabicKb] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [refExpanded, setRefExpanded] = useState(false);
@@ -613,70 +610,6 @@ export default function ZikrCounter() {
     );
   };
 
-  const exportCustomZikr = () => {
-    const customTypes = types.filter(
-      (typ) =>
-        !PREDEFINED_TYPES.some((p) => p.toLowerCase() === typ.toLowerCase()) &&
-        !findLibraryZikr(typ)
-    );
-    if (!customTypes.length) {
-      toast(t('zikr.toast.exportNone', 'No custom dhikr to export'));
-      return;
-    }
-    const data = customTypes.map((name) => ({ name, ...customMeanings[name] }));
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'bustandeen-custom-zikr.json';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  };
-
-  const importCustomZikr = async (file: File) => {
-    try {
-      const parsed = JSON.parse(await file.text()) as Array<{
-        name?: string;
-        arabic?: string;
-        transliteration?: string;
-        meaning?: string;
-        source?: string;
-        sourceUrl?: string;
-      }>;
-      if (!Array.isArray(parsed)) throw new Error('bad format');
-      const existing = new Set(useZikrStore.getState().types.map((n) => n.toLowerCase()));
-      const added: string[] = [];
-      for (const item of parsed) {
-        const name = (item?.name ?? '').trim();
-        const meaning = (item?.meaning ?? '').trim();
-        if (!name || !meaning || existing.has(name.toLowerCase())) continue;
-        await addZikrType.mutateAsync(name);
-        setCustomMeaning(name, {
-          arabic: item.arabic?.trim() || undefined,
-          transliteration: item.transliteration?.trim() || undefined,
-          meaning,
-          source: item.source?.trim() || undefined,
-          sourceUrl: item.sourceUrl?.trim() || undefined,
-        });
-        added.push(name);
-        existing.add(name.toLowerCase());
-      }
-      if (added.length) {
-        setTypes([...useZikrStore.getState().types, ...added]);
-        toast.success(t('zikr.toast.imported', { count: added.length }), {
-          icon: '📥',
-          duration: 3000,
-        });
-      } else {
-        toast(t('zikr.toast.importNone', 'Nothing new to import'));
-      }
-    } catch {
-      toast.error(t('zikr.toast.importFailed', 'Could not import — check the file format'));
-    }
-  };
-
   const submitSetCount = () => {
     const target = Number(setCountValue);
     if (!Number.isFinite(target) || target < 0 || !Number.isInteger(target)) return;
@@ -693,32 +626,38 @@ export default function ZikrCounter() {
     setSetCountValue('');
   };
 
+  // Submits for admin review rather than adding directly — see
+  // zikrRequest.service.ts. Only the name is required; an Ansar fills in and
+  // verifies the rest before it joins the shared library.
   const submitCustomZikr = () => {
     const name = customName.trim();
-    const meaning = customMeaningText.trim();
-    if (!name || !meaning) return;
-    addZikrType.mutate(name, {
-      onSuccess: () => {
-        setCustomMeaning(name, {
-          arabic: customArabic.trim() || undefined,
-          transliteration: customTranslit.trim() || undefined,
-          meaning,
-          source: customSource.trim() || undefined,
-          sourceUrl: customSourceUrl.trim() || undefined,
-        });
-        setTypes([...types, name]);
-        selectType(name);
-        setCustomName('');
-        setCustomArabic('');
-        setCustomTranslit('');
-        setCustomMeaningText('');
-        setCustomSource('');
-        setCustomSourceUrl('');
-        setShowAddCustom(false);
-        toast.success(t('zikr.toast.added', { name }), { icon: '✨', duration: 3000 });
+    if (!name) return;
+    submitZikrRequest.mutate(
+      {
+        name,
+        arabic: customArabic.trim() || undefined,
+        meaning: customMeaningText.trim() || undefined,
+        source: customSource.trim() || undefined,
+        sourceUrl: customSourceUrl.trim() || undefined,
+        wantsAudio: customWantsAudio,
       },
-      onError: () => toast.error(t('zikr.toast.addFailed'), { duration: 3000 }),
-    });
+      {
+        onSuccess: () => {
+          setCustomName('');
+          setCustomArabic('');
+          setCustomMeaningText('');
+          setCustomSource('');
+          setCustomSourceUrl('');
+          setCustomWantsAudio(false);
+          setShowAddCustom(false);
+          toast.success(t('zikr.toast.requestSubmitted', 'Submitted for review'), {
+            icon: '🌱',
+            duration: 3000,
+          });
+        },
+        onError: () => toast.error(t('zikr.toast.addFailed'), { duration: 3000 }),
+      }
+    );
   };
 
   // Remove a zikr from MY list. Locally it's hidden immediately; if it was a
@@ -1709,15 +1648,15 @@ export default function ZikrCounter() {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 40, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25 }}
-                className="bg-brand-surface rounded-3xl p-6 w-full max-w-md shadow-2xl border border-brand-border"
+                className="bg-brand-surface rounded-3xl p-6 w-full max-w-md shadow-2xl border border-brand-border max-h-[85vh] flex flex-col"
               >
                 <h3 className="text-xl font-bold text-brand-emerald mb-1">
-                  {t('zikr.addCustom', 'Add Custom Dhikr')}
+                  {t('zikr.addCustom', 'Suggest a Dhikr')}
                 </h3>
                 <p className="text-white/40 text-xs mb-2">
                   {t(
                     'zikr.addCustomNote',
-                    'Name and meaning are required. Arabic is optional but recommended.'
+                    'Only the name is required — an Ansar reviews every suggestion (with a scholar if needed) before it joins the shared library.'
                   )}
                 </p>
                 <p className="text-xs mb-4">
@@ -1740,7 +1679,7 @@ export default function ZikrCounter() {
                   </span>
                 </p>
 
-                <div className="space-y-3">
+                <div className="space-y-3 overflow-y-auto flex-1 pr-1">
                   {/* Name */}
                   <div>
                     <label className="text-xs text-white/60 uppercase tracking-wider mb-1 block">
@@ -1788,25 +1727,11 @@ export default function ZikrCounter() {
                     )}
                   </div>
 
-                  {/* Transliteration */}
-                  <div>
-                    <label className="text-xs text-white/60 uppercase tracking-wider mb-1 block">
-                      {t('zikr.pronunciation', 'Pronunciation')}{' '}
-                      <span className="text-white/30">({t('zikr.optional', 'optional')})</span>
-                    </label>
-                    <input
-                      value={customTranslit}
-                      onChange={(e) => setCustomTranslit(e.target.value)}
-                      placeholder="Astaghfiru-llāh"
-                      className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-base italic"
-                    />
-                  </div>
-
                   {/* Meaning */}
                   <div>
                     <label className="text-xs text-white/60 uppercase tracking-wider mb-1 block">
                       {t('zikr.englishMeaning', 'English Meaning')}{' '}
-                      <span className="text-red-400">{t('zikr.required', '*')}</span>
+                      <span className="text-white/30">({t('zikr.optional', 'optional')})</span>
                     </label>
                     <input
                       value={customMeaningText}
@@ -1844,6 +1769,16 @@ export default function ZikrCounter() {
                       className="input input-sm input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-xs"
                     />
                   </div>
+
+                  <label className="flex items-center gap-2 text-white/50 text-xs">
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-xs"
+                      checked={customWantsAudio}
+                      onChange={(e) => setCustomWantsAudio(e.target.checked)}
+                    />
+                    {t('zikr.wantsAudio', "Want an audio recitation for this, if it's added?")}
+                  </label>
                 </div>
 
                 <div className="flex gap-3 mt-6">
@@ -1852,8 +1787,8 @@ export default function ZikrCounter() {
                       setShowAddCustom(false);
                       setCustomName('');
                       setCustomArabic('');
-                      setCustomTranslit('');
                       setCustomMeaningText('');
+                      setCustomWantsAudio(false);
                     }}
                     className="btn flex-1 btn-ghost text-white/60 border-brand-border"
                   >
@@ -1861,15 +1796,13 @@ export default function ZikrCounter() {
                   </button>
                   <button
                     onClick={submitCustomZikr}
-                    disabled={
-                      !customName.trim() || !customMeaningText.trim() || addZikrType.isPending
-                    }
+                    disabled={!customName.trim() || submitZikrRequest.isPending}
                     className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold"
                   >
-                    {addZikrType.isPending ? (
+                    {submitZikrRequest.isPending ? (
                       <span className="loading loading-spinner loading-sm" />
                     ) : (
-                      t('zikr.addDhikr', 'Add Dhikr')
+                      t('zikr.addDhikr', 'Submit for review')
                     )}
                   </button>
                 </div>
@@ -2038,31 +1971,6 @@ export default function ZikrCounter() {
                 >
                   <PlusIcon className="w-4 h-4" /> {t('zikr.addNewZikr', 'Add a new zikr')}
                 </button>
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={exportCustomZikr}
-                    className="btn btn-xs flex-1 btn-ghost border border-brand-border text-white/50 hover:text-white gap-1"
-                  >
-                    <ArrowDownTrayIcon className="w-3.5 h-3.5" /> {t('zikr.exportCustom', 'Export')}
-                  </button>
-                  <button
-                    onClick={() => importInputRef.current?.click()}
-                    className="btn btn-xs flex-1 btn-ghost border border-brand-border text-white/50 hover:text-white gap-1"
-                  >
-                    <ArrowUpTrayIcon className="w-3.5 h-3.5" /> {t('zikr.importCustom', 'Import')}
-                  </button>
-                  <input
-                    ref={importInputRef}
-                    type="file"
-                    accept="application/json"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) void importCustomZikr(file);
-                      e.target.value = '';
-                    }}
-                  />
-                </div>
               </motion.div>
             </motion.div>
           )}

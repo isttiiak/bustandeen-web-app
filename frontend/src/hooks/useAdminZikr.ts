@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
-import type { ZikrRequest, ZikrRequestStatus } from './useZikrRequests.js';
+import type { GlobalZikrCategory, ZikrRequest, ZikrRequestStatus } from './useZikrRequests.js';
 
 export function useAdminZikrRequests(status?: ZikrRequestStatus) {
   return useQuery<ZikrRequest[]>({
@@ -20,7 +20,7 @@ export function useAdminZikrRequests(status?: ZikrRequestStatus) {
 export function useZikrRequestEmailDraft() {
   return useMutation({
     mutationFn: async ({ id, type }: { id: string; type: 'approved' | 'rejected' }) => {
-      const res = await api.get<{ subject: string; body: string }>(
+      const res = await api.get<{ subject: string; body: string; isDuplicate: boolean }>(
         `/api/admin/zikr-requests/${id}/email-draft`,
         { params: { type } }
       );
@@ -38,6 +38,7 @@ export interface ApproveZikrRequestInput {
   sourceUrl: string;
   grade?: string;
   virtue?: string;
+  category?: GlobalZikrCategory;
   emailBody: string;
 }
 
@@ -67,6 +68,18 @@ export function useRejectZikrRequest() {
     }) => api.post(`/api/admin/zikr-requests/${id}/reject`, { adminNote, emailBody }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'zikr-requests'] });
+    },
+  });
+}
+
+/** Servant-only — re-categorize an already-published library item. */
+export function useUpdateLibraryItemCategory() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, category }: { id: string; category: GlobalZikrCategory }) =>
+      api.patch(`/api/admin/zikr-requests/library/${id}/category`, { category }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['zikr', 'library', 'global'] });
     },
   });
 }

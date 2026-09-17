@@ -3,19 +3,33 @@ import api from '../lib/api.js';
 
 export type ZikrRequestStatus = 'pending' | 'approved' | 'rejected';
 
+export type GlobalZikrCategory =
+  'tasbih' | 'istighfar' | 'salawat' | 'kalimat' | 'asma' | 'protection' | 'uncategorized';
+
+/** Populated shape of a possible-duplicate match — only `_id`/`name` are
+ * needed for the admin UI, which both GlobalZikrLibraryItem and ZikrRequest
+ * (the two possible referenced models) have in common. */
+export interface PossibleDuplicateRef {
+  _id: string;
+  name: string;
+}
+
 export interface ZikrRequest {
   _id: string;
   userId: string;
   userEmail?: string;
   name: string;
   arabic?: string;
-  meaning: string;
+  meaning?: string;
   source?: string;
   sourceUrl?: string;
+  wantsAudio?: boolean;
   status: ZikrRequestStatus;
   adminNote?: string;
   reviewedAt?: string;
   reviewedBy?: string;
+  possibleDuplicateOf?: PossibleDuplicateRef | null;
+  possibleDuplicateOfModel?: 'GlobalZikrLibraryItem' | 'ZikrRequest' | null;
   userAcknowledged: boolean;
   createdAt: string;
 }
@@ -30,15 +44,17 @@ export interface GlobalZikrLibraryItem {
   sourceUrl: string;
   grade?: string;
   virtue?: string;
+  category: GlobalZikrCategory;
   createdAt: string;
 }
 
 export interface SubmitZikrRequestInput {
   name: string;
   arabic?: string;
-  meaning: string;
+  meaning?: string;
   source?: string;
   sourceUrl?: string;
+  wantsAudio?: boolean;
 }
 
 export function useSubmitZikrRequest() {

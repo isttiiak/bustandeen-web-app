@@ -89,9 +89,17 @@ export default function Home() {
   // Show max(local, server) so the capsule never lags behind live taps
   const effectiveToday = Math.max(totalToday, analyticsData?.today?.total ?? 0);
   const goalCompleted = analyticsGoal !== null ? effectiveToday >= analyticsGoal : false;
-  const zikrGoalPct = analyticsGoal
-    ? Math.min(100, Math.round((effectiveToday / analyticsGoal) * 100))
-    : null;
+  // Confirmed zero LIFETIME zikr count (not "zero today") — strict equality
+  // against 0 means this stays false while analyticsData hasn't loaded yet,
+  // so an existing user never sees a flash of the brand-new-user treatment.
+  const isNewZikrUser = analyticsData?.allTime?.totalCount === 0;
+  const zikrGoalPct =
+    analyticsGoal && !isNewZikrUser
+      ? Math.min(100, Math.round((effectiveToday / analyticsGoal) * 100))
+      : null;
+  // Bounded to the same 90-day window already fetched for the streak tag
+  // below — an accepted approximation of "brand new," not true lifetime.
+  const isNewSalatUser = salatAnalytics?.prayedTotal === 0;
 
   // Salat completed count for today
   const salatCompletedToday = useMemo(() => {
@@ -180,13 +188,15 @@ export default function Home() {
       title: t('home.salatTitle'),
       stats: cycleActive
         ? { label: t('home.rayhanah'), value: `🌸 ${t('home.excused')}` }
-        : {
-            label: t('home.today'),
-            value:
-              salatCompletedToday !== null
-                ? `${formatLocaleNumber(salatCompletedToday)}/${formatLocaleNumber(5)}`
-                : `—/${formatLocaleNumber(5)}`,
-          },
+        : isNewSalatUser
+          ? { label: t('home.today'), value: t('home.salatStart', 'Tap to begin') }
+          : {
+              label: t('home.today'),
+              value:
+                salatCompletedToday !== null
+                  ? `${formatLocaleNumber(salatCompletedToday)}/${formatLocaleNumber(5)}`
+                  : `—/${formatLocaleNumber(5)}`,
+            },
       link: '/salat',
       accent: 'brand-info',
       border: 'border-brand-info/15',

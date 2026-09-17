@@ -923,6 +923,7 @@ export default function ZikrAnalytics() {
               chartData={last7Days}
               dailyGoal={goal?.dailyTarget}
               todayTotal={todayTotal}
+              isNewUser={allTime?.totalCount === 0}
             />
             <GoalCard
               goal={goal}
@@ -1062,7 +1063,18 @@ export default function ZikrAnalytics() {
                 ))}
               </div>
             </div>
-            <TrendChart data={chartData} period={selectedPeriod} />
+            {allTime?.totalCount === 0 ? (
+              <div className="rounded-2xl bg-brand-deep/60 border border-brand-border/60 p-6 text-center">
+                <p className="text-white/40 text-sm">
+                  {t(
+                    'zikrAnalytics.newUserTrend',
+                    'Your trend will appear here once you start counting zikr. 🌱'
+                  )}
+                </p>
+              </div>
+            ) : (
+              <TrendChart data={chartData} period={selectedPeriod} />
+            )}
           </div>
 
           {/* ── Per-type trend lines ─────────────────────────────────────────── */}
@@ -1127,7 +1139,16 @@ export default function ZikrAnalytics() {
                   {t('zikrAnalytics.heatmapSub', 'last 365 days')}
                 </span>
               </h2>
-              <HeatmapCalendar data={yearData.chartData} />
+              {allTime?.totalCount === 0 ? (
+                <p className="text-white/40 text-sm text-center py-6">
+                  {t(
+                    'zikrAnalytics.newUserHeatmap',
+                    'Not enough activity yet — this fills in as you go. 🌱'
+                  )}
+                </p>
+              ) : (
+                <HeatmapCalendar data={yearData.chartData} />
+              )}
             </div>
           )}
 

@@ -1,4 +1,4 @@
-import { useMemo, useState, useRef } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
@@ -11,7 +11,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useAddZikrType, useDeleteZikrType, useZikrTypes } from '../hooks/useZikrTypes.js';
-import { useSubmitZikrRequest, useGlobalZikrLibrary } from '../hooks/useZikrRequests.js';
+import {
+  useSubmitZikrRequest,
+  useGlobalZikrLibrary,
+  type GlobalZikrCategory,
+  type GlobalZikrLibraryItem,
+} from '../hooks/useZikrRequests.js';
 import {
   ZIKR_LIBRARY,
   PREDEFINED_TYPES,
@@ -32,6 +37,30 @@ import EditZikrModal from './EditZikrModal.js';
  * same full form as the counter's add modal (arabic/meaning/reference) and
  * can be edited afterwards — including renaming.
  */
+
+/** Category label/emoji lookup for the community-suggested library, reusing
+ * the curated ZIKR_LIBRARY's own category metadata so both lists present the
+ * same taxonomy — plus an explicit 'uncategorized' bucket for admin-approved
+ * items that were never assigned one. */
+const COMMUNITY_CATEGORY_META: Record<
+  GlobalZikrCategory,
+  { emoji: string; title: string; titleBn?: string }
+> = {
+  ...Object.fromEntries(
+    ZIKR_LIBRARY.map((c) => [c.id, { emoji: c.emoji, title: c.title, titleBn: c.titleBn }])
+  ),
+  uncategorized: { emoji: '📎', title: 'Uncategorized' },
+} as Record<GlobalZikrCategory, { emoji: string; title: string; titleBn?: string }>;
+
+const COMMUNITY_CATEGORY_ORDER: GlobalZikrCategory[] = [
+  'tasbih',
+  'istighfar',
+  'salawat',
+  'kalimat',
+  'asma',
+  'protection',
+  'uncategorized',
+];
 
 /** Names that belong to the app (curated catalog + counter predefined +
  * legacy renamed entries) — everything else on the server is user-custom. */
@@ -115,8 +144,48 @@ export default function ZikrLibrarySection() {
   const [reqMeaning, setReqMeaning] = useState('');
   const [reqSource, setReqSource] = useState('');
   const [reqSourceUrl, setReqSourceUrl] = useState('');
+  const [reqWantsAudio, setReqWantsAudio] = useState(false);
 
   const inList = (name: string) => types.some((n) => n.toLowerCase() === name.toLowerCase());
+
+  // Group the admin-approved community library by category (falling back to
+  // an explicit "Uncategorized" bucket) instead of one flat list, matching
+  // the curated library's own categorized presentation.
+  const groupedGlobalItems = useMemo(() => {
+    const groups = new Map<GlobalZikrCategory, GlobalZikrLibraryItem[]>();
+    for (const item of globalLibraryItems ?? []) {
+      const key = item.category ?? 'uncategorized';
+      const list = groups.get(key) ?? [];
+      list.push(item);
+      groups.set(key, list);
+    }
+    return COMMUNITY_CATEGORY_ORDER.map((cat) => ({ cat, items: groups.get(cat) ?? [] })).filter(
+      (g) => g.items.length > 0
+    );
+  }, [globalLibraryItems]);
+
+  // Scroll-and-highlight a community item when the URL hash points at it —
+  // makes the approved-request email's library link land somewhere real.
+  const [highlightedItem, setHighlightedItem] = useState<string | null>(null);
+  useEffect(() => {
+    const hash = window.location.hash;
+    const match = /^#zikr-lib-([a-f0-9]{24})$/.exec(hash);
+    if (!match || !globalLibraryItems?.some((i) => i._id === match[1])) return;
+    const targetId = match[1];
+    setOpenCat('community');
+    setHighlightedItem(targetId);
+    const timer = setTimeout(() => {
+      document.getElementById(`zikr-lib-${targetId}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }, 300);
+    const clearHighlight = setTimeout(() => setHighlightedItem(null), 4000);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(clearHighlight);
+    };
+  }, [globalLibraryItems]);
 
   // "Custom" = server-stored types the user typed themselves — NOT the
   // counter's predefined defaults and NOT curated library items.
@@ -176,15 +245,15 @@ export default function ZikrLibrarySection() {
 
   const submitRequest = () => {
     const name = reqName.trim();
-    const meaning = reqMeaning.trim();
-    if (!name || !meaning) return;
+    if (!name) return;
     submitZikrRequest.mutate(
       {
         name,
         arabic: reqArabic.trim() || undefined,
-        meaning,
+        meaning: reqMeaning.trim() || undefined,
         source: reqSource.trim() || undefined,
         sourceUrl: reqSourceUrl.trim() || undefined,
+        wantsAudio: reqWantsAudio,
       },
       {
         onSuccess: () => {
@@ -201,6 +270,7 @@ export default function ZikrLibrarySection() {
           setReqMeaning('');
           setReqSource('');
           setReqSourceUrl('');
+          setReqWantsAudio(false);
         },
         onError: () =>
           toast.error(t('zikrLibrary.requestFail', 'Could not submit — try again.'), {
@@ -367,67 +437,84 @@ export default function ZikrLibrarySection() {
                 exit={{ height: 0, opacity: 0 }}
                 className="overflow-hidden"
               >
-                <div className="px-4 pb-3 space-y-2">
+                <div className="px-4 pb-3 space-y-3">
                   <p className="text-white/30 text-[11px] italic">
                     {t(
                       'zikrLibrary.communityBlurb',
                       'Suggested by the community and verified by our team.'
                     )}
                   </p>
-                  {globalLibraryItems.map((item) => {
-                    const added = inList(item.name);
+                  {groupedGlobalItems.map(({ cat, items }) => {
+                    const meta = COMMUNITY_CATEGORY_META[cat];
                     return (
-                      <div
-                        key={item._id}
-                        className="rounded-xl bg-white/5 border border-brand-emerald/10 p-3"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="flex-1 min-w-0">
-                            <p className="text-white/80 text-sm font-bold flex items-center gap-1.5">
-                              {item.name}
-                              <AudioPreviewButton
-                                name={item.name}
-                                playing={previewPlaying === item.name}
-                                onToggle={() => togglePreview(item.name)}
-                              />
-                            </p>
-                            <p
-                              dir="rtl"
-                              lang="ar"
-                              className="text-brand-emerald/80 font-serif text-base leading-loose mt-0.5"
+                      <div key={cat} className="space-y-2">
+                        <p className="text-white/50 text-[11px] font-bold">
+                          {meta.emoji}{' '}
+                          {i18n.language === 'bn' && meta.titleBn ? meta.titleBn : meta.title}
+                        </p>
+                        {items.map((item) => {
+                          const added = inList(item.name);
+                          const isHighlighted = highlightedItem === item._id;
+                          return (
+                            <div
+                              key={item._id}
+                              id={`zikr-lib-${item._id}`}
+                              className={`rounded-xl bg-white/5 border p-3 transition-colors ${
+                                isHighlighted
+                                  ? 'border-brand-gold/60 ring-2 ring-brand-gold/30'
+                                  : 'border-brand-emerald/10'
+                              }`}
                             >
-                              {item.arabic}
-                            </p>
-                            <p className="text-white/40 text-[11px] mt-1 leading-relaxed">
-                              {item.meaning}
-                            </p>
-                            {item.virtue && (
-                              <p className="text-brand-gold/60 text-[11px] mt-1 leading-relaxed">
-                                ✨ {item.virtue}
-                              </p>
-                            )}
-                            <a
-                              className="text-white/30 text-[10px] underline"
-                              href={item.sourceUrl}
-                              target="_blank"
-                              rel="noreferrer"
-                            >
-                              {item.source}
-                              {item.grade ? ` · ${item.grade}` : ''}
-                            </a>
-                          </div>
-                          <button
-                            className={`btn btn-xs rounded-lg shrink-0 ${added ? 'bg-brand-emerald border-brand-emerald text-white font-bold cursor-default !opacity-100' : 'bg-white/5 border-brand-emerald/20 text-white/70 hover:border-brand-emerald/50'}`}
-                            disabled={added || adding === item.name}
-                            onClick={() => addFromLibrary(item)}
-                          >
-                            {added
-                              ? t('zikrLibrary.inList', '✓ In your list')
-                              : adding === item.name
-                                ? '…'
-                                : t('zikrLibrary.addToList', '＋ Add to list')}
-                          </button>
-                        </div>
+                              <div className="flex items-start gap-3">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-white/80 text-sm font-bold flex items-center gap-1.5">
+                                    {item.name}
+                                    <AudioPreviewButton
+                                      name={item.name}
+                                      playing={previewPlaying === item.name}
+                                      onToggle={() => togglePreview(item.name)}
+                                    />
+                                  </p>
+                                  <p
+                                    dir="rtl"
+                                    lang="ar"
+                                    className="text-brand-emerald/80 font-serif text-base leading-loose mt-0.5"
+                                  >
+                                    {item.arabic}
+                                  </p>
+                                  <p className="text-white/40 text-[11px] mt-1 leading-relaxed">
+                                    {item.meaning}
+                                  </p>
+                                  {item.virtue && (
+                                    <p className="text-brand-gold/60 text-[11px] mt-1 leading-relaxed">
+                                      ✨ {item.virtue}
+                                    </p>
+                                  )}
+                                  <a
+                                    className="text-white/30 text-[10px] underline"
+                                    href={item.sourceUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  >
+                                    {item.source}
+                                    {item.grade ? ` · ${item.grade}` : ''}
+                                  </a>
+                                </div>
+                                <button
+                                  className={`btn btn-xs rounded-lg shrink-0 ${added ? 'bg-brand-emerald border-brand-emerald text-white font-bold cursor-default !opacity-100' : 'bg-white/5 border-brand-emerald/20 text-white/70 hover:border-brand-emerald/50'}`}
+                                  disabled={added || adding === item.name}
+                                  onClick={() => addFromLibrary(item)}
+                                >
+                                  {added
+                                    ? t('zikrLibrary.inList', '✓ In your list')
+                                    : adding === item.name
+                                      ? '…'
+                                      : t('zikrLibrary.addToList', '＋ Add to list')}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   })}
@@ -447,7 +534,7 @@ export default function ZikrLibrarySection() {
         <p className="text-white/30 text-[11px] mb-3">
           {t(
             'zikrLibrary.requestOwnHint',
-            'We review every suggestion against an authentic source before adding it — name and meaning are required, a reference helps us verify it faster.'
+            'Only the name is required — an Ansar will review it (with a scholar if needed) and fill in the rest before it joins the library. Anything else you can tell us helps verify it faster.'
           )}
         </p>
         <div className="space-y-2">
@@ -473,7 +560,7 @@ export default function ZikrLibrarySection() {
             type="text"
             placeholder={t(
               'zikrLibrary.meaningPlaceholder',
-              'Meaning — e.g. My Lord, increase me in knowledge *'
+              'Meaning — e.g. My Lord, increase me in knowledge (optional)'
             )}
             aria-label={t('zikrLibrary.meaningLabel', 'Meaning')}
             className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
@@ -498,9 +585,18 @@ export default function ZikrLibrarySection() {
               onChange={(e) => setReqSourceUrl(e.target.value)}
             />
           </div>
+          <label className="flex items-center gap-2 text-white/50 text-xs px-1">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-xs"
+              checked={reqWantsAudio}
+              onChange={(e) => setReqWantsAudio(e.target.checked)}
+            />
+            {t('zikrLibrary.wantsAudio', "Want an audio recitation for this, if it's added?")}
+          </label>
           <button
             className="btn btn-sm w-full rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald to-brand-info"
-            disabled={!reqName.trim() || !reqMeaning.trim() || submitZikrRequest.isPending}
+            disabled={!reqName.trim() || submitZikrRequest.isPending}
             onClick={submitRequest}
           >
             {submitZikrRequest.isPending ? '…' : t('zikrLibrary.makeRequest', 'Make request')}

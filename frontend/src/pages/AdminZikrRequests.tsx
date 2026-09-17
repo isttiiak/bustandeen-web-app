@@ -9,9 +9,23 @@ import {
   useApproveZikrRequest,
   useRejectZikrRequest,
 } from '../hooks/useAdminZikr.js';
-import type { ZikrRequest, ZikrRequestStatus } from '../hooks/useZikrRequests.js';
+import type {
+  GlobalZikrCategory,
+  ZikrRequest,
+  ZikrRequestStatus,
+} from '../hooks/useZikrRequests.js';
 
 type ReviewMode = 'idle' | 'approving' | 'rejecting';
+
+const CATEGORY_OPTIONS: { value: GlobalZikrCategory; label: string }[] = [
+  { value: 'uncategorized', label: 'Uncategorized' },
+  { value: 'tasbih', label: 'Tasbīḥ & praise' },
+  { value: 'istighfar', label: 'Istighfār — seeking forgiveness' },
+  { value: 'salawat', label: 'Ṣalawāt upon the Prophet ﷺ' },
+  { value: 'kalimat', label: 'The weighty words' },
+  { value: 'asma', label: 'Calling on His Names' },
+  { value: 'protection', label: 'Morning · evening · protection' },
+];
 
 function RequestCard({ request }: { request: ZikrRequest }) {
   const { t } = useTranslation();
@@ -29,11 +43,12 @@ function RequestCard({ request }: { request: ZikrRequest }) {
     name: request.name,
     arabic: request.arabic ?? '',
     transliteration: '',
-    meaning: request.meaning,
+    meaning: request.meaning ?? '',
     source: request.source ?? '',
     sourceUrl: request.sourceUrl ?? '',
     grade: '',
     virtue: '',
+    category: 'uncategorized' as GlobalZikrCategory,
   });
 
   const startReview = (type: 'approving' | 'rejecting') => {
@@ -101,7 +116,9 @@ function RequestCard({ request }: { request: ZikrRequest }) {
           {request.arabic}
         </p>
       )}
-      <p className="text-white/60 text-xs leading-relaxed">{request.meaning}</p>
+      {request.meaning && (
+        <p className="text-white/60 text-xs leading-relaxed">{request.meaning}</p>
+      )}
       {(request.source || request.sourceUrl) && (
         <a
           className="text-white/30 text-[10px] underline block"
@@ -111,6 +128,37 @@ function RequestCard({ request }: { request: ZikrRequest }) {
         >
           {request.source || request.sourceUrl}
         </a>
+      )}
+      {request.wantsAudio && (
+        <p className="text-white/30 text-[10px]">
+          {t('adminZikr.wantsAudio', '🔊 Requester would like an audio recitation for this')}
+        </p>
+      )}
+
+      {isPending && request.possibleDuplicateOf && (
+        <div className="rounded-xl bg-brand-gold/10 border border-brand-gold/20 px-3 py-2">
+          <p className="text-brand-gold text-[11px] font-bold">
+            {t('adminZikr.possibleDuplicate', 'Possible duplicate')}
+          </p>
+          <p className="text-white/50 text-[11px] mt-0.5">
+            {t('adminZikr.possibleDuplicateOf', 'Looks similar to an existing entry: "{{name}}"', {
+              name: request.possibleDuplicateOf.name,
+            })}
+            {request.possibleDuplicateOfModel === 'GlobalZikrLibraryItem' && (
+              <>
+                {' '}
+                <a
+                  className="underline"
+                  href={`/settings#zikr-lib-${request.possibleDuplicateOf._id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t('adminZikr.viewExisting', 'View')}
+                </a>
+              </>
+            )}
+          </p>
+        </div>
       )}
 
       {!isPending && request.adminNote && (
@@ -129,7 +177,9 @@ function RequestCard({ request }: { request: ZikrRequest }) {
             onClick={() => startReview('rejecting')}
             className="btn btn-xs btn-ghost rounded-lg text-red-400/70 hover:text-red-400"
           >
-            {t('adminZikr.reject', 'Reject')}
+            {request.possibleDuplicateOf
+              ? t('adminZikr.rejectAsDuplicate', 'Reject as duplicate')
+              : t('adminZikr.reject', 'Reject')}
           </button>
         </div>
       )}
@@ -193,6 +243,19 @@ function RequestCard({ request }: { request: ZikrRequest }) {
               onChange={(e) => setForm((f) => ({ ...f, virtue: e.target.value }))}
             />
           </div>
+          <select
+            className="select select-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+            value={form.category}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, category: e.target.value as GlobalZikrCategory }))
+            }
+          >
+            {CATEGORY_OPTIONS.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
           <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold pt-1">
             {t('adminZikr.emailToUser', 'Email to the requester (editable)')}
           </p>
