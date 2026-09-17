@@ -59,6 +59,7 @@ describe('Sadaqah admin API', () => {
       firebaseUid: 'admin-uid-staff',
       email: STAFF_EMAIL,
       role: 'ansar',
+      ansarDomain: 'sadaqah',
       createdBy: 'test-seed',
     });
     ownerToken = fakeJwt({ uid: 'admin-uid-owner', email: ADMIN_EMAIL });
