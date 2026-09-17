@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.27.0 — Admin domain split, zikr request overhaul, new-user zero-states — 2026-09-17
+
+### Added
+
+- **Admin panel: Servant + 2 domain-scoped Ansars.** `AdminAccount.ansarDomain` (`'sadaqah' | 'general'`) plus a new `requireDomain` middleware scopes each Ansar to exactly one operational area — `sadaqah@bustandeen.com` for donation review, `ansar@bustandeen.com` for everything else (zikr requests, etc.). The Servant bypasses domain checks entirely. The existing `ansar@bustandeen.com` account is auto-backfilled to `ansarDomain: 'general'` on deploy. Manage Ansars UI now has a domain picker when creating a new Ansar. Email sender identity (`sadaqah` vs `ansar` "from" name) is now fixed per route/domain instead of derived from the acting admin's role — fixes a bug where a Servant approving a zikr request sent under the wrong identity. Each sender can optionally read dedicated `SADAQAH_SMTP_USER/PASS` / `ANSAR_SMTP_USER/PASS` env vars if real separate mailboxes are provisioned later, falling back to the shared mailbox otherwise.
+- **Zikr: self-add replaced with admin-reviewed requests.** Users can no longer add a zikr straight to their own practice list unreviewed — the ZikrCounter page's "Add Custom Dhikr" now submits to the existing `ZikrRequest` review pipeline (same as Settings), with only the name required. Added a simple "want audio recitation?" yes/no signal (`ZikrRequest.wantsAudio`), non-blocking duplicate detection (normalize + Levenshtein match against the library and other pending requests, surfaced as a warning + "reject as duplicate" quick action on the admin review card), and a `category` field on `GlobalZikrLibraryItem` reusing the curated library's own 6 categories (defaults to "Uncategorized"). Settings' Community-suggested section now groups by category instead of one flat list.
+- **Zikr request email threading.** A new submission-confirmation email now goes to the requester immediately (previously only an internal admin-notify email existed). Approve/reject emails thread against it via `In-Reply-To`/`References` (mirrors the existing Donation email threading), and the approval email links directly to the requester's new library entry.
+- **New-user zero-states.** Home badges, the zikr StreakCard, the trend chart, and the 365-day heatmap now show encouraging placeholder copy instead of raw zeros/flat charts for a confirmed brand-new user (zero lifetime zikr count) — an existing user's honest "0 done today" is untouched.
+
+### Fixed
+
+- **`DEV_AUTH_BYPASS` hardened** with a second independent guard (`!process.env.VERCEL`) so a misconfigured preview/staging deploy can't silently disable auth via one bad env var alone.
+- **ZikrCounter "Add Custom Dhikr" modal no longer clips on mobile** — the card now has a max-height with internal scroll, matching the page's own "Manage my list" modal, so Save/Cancel can no longer be pushed off-screen.
+- Removed the Import/Export buttons from the zikr "Manage my list" modal — they only ever served the free-form self-add path that's now gone.
+
+### Changed
+
+- Zikr Settings' non-destructive "Reset counters" relabeled **"Start fresh"** with clearer copy; the hard-delete danger-zone entry in Settings deliberately keeps its sober "All zikr data" label.
+
 ## v5.26.0 — Prayer UX polish: Bengali names, dual Isha window, kaza shortcuts, end times — 2026-09-16
 
 ### Added
