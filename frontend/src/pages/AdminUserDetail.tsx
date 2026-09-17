@@ -6,10 +6,16 @@ import Seo from '../components/Seo.js';
 import {
   useAdminUserDetail,
   useResendWelcomeEmail,
+  useReengagementDraft,
+  useSendReengagementEmail,
   useDeleteUser,
   useDisableUser,
   useEnableUser,
 } from '../hooks/useAdminUsers.js';
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+const daysInactive = (updatedAt: string): number =>
+  Math.max(0, Math.floor((Date.now() - new Date(updatedAt).getTime()) / DAY_MS));
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -29,9 +35,28 @@ export default function AdminUserDetail() {
   const deleteUser = useDeleteUser();
   const disableUser = useDisableUser();
   const enableUser = useEnableUser();
+  const reengagementDraft = useReengagementDraft();
+  const sendReengagement = useSendReengagementEmail();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [disableReason, setDisableReason] = useState('');
   const [showDisableForm, setShowDisableForm] = useState(false);
+  const [reengagementForm, setReengagementForm] = useState<{
+    subject: string;
+    body: string;
+  } | null>(null);
+
+  const startReengagementDraft = () => {
+    reengagementDraft.mutate(uid, {
+      onSuccess: (d) => setReengagementForm(d),
+    });
+  };
+  const confirmSendReengagement = () => {
+    if (!reengagementForm) return;
+    sendReengagement.mutate(
+      { uid, subject: reengagementForm.subject, body: reengagementForm.body },
+      { onSuccess: () => setReengagementForm(null) }
+    );
+  };
 
   const clickDelete = () => {
     if (!confirmDelete) {
@@ -50,7 +75,7 @@ export default function AdminUserDetail() {
         path="/admin/users"
         index={false}
       />
-      <div className="max-w-2xl mx-auto px-4 py-6 sm:py-10 space-y-6">
+      <div className="max-w-4xl mx-auto px-6 py-6 sm:py-10 space-y-6">
         <button
           onClick={() => navigate('/admin/users')}
           className="text-white/40 text-sm hover:text-white"
@@ -78,7 +103,7 @@ export default function AdminUserDetail() {
               )}
             </div>
 
-            <div className="rounded-2xl bg-base-200 border border-base-300 p-4 grid grid-cols-2 gap-4">
+            <div className="rounded-2xl bg-base-200 border border-base-300 p-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
               <Field
                 label={t('adminUserDetail.location', 'Location')}
                 value={[user.city, user.country].filter(Boolean).join(', ') || '—'}
@@ -89,7 +114,11 @@ export default function AdminUserDetail() {
               />
               <Field
                 label={t('adminUserDetail.lastActive', 'Last active (approx.)')}
-                value={new Date(user.updatedAt).toLocaleString()}
+                value={`${new Date(user.updatedAt).toLocaleDateString()} · ${t(
+                  'adminUserDetail.daysAgo',
+                  '{{count}} days ago',
+                  { count: daysInactive(user.updatedAt) }
+                )}`}
               />
               <Field
                 label={t('adminUserDetail.totalZikr', 'Lifetime zikr count')}
@@ -136,6 +165,75 @@ export default function AdminUserDetail() {
                   </button>
                 </div>
                 {resendWelcome.isSuccess && (
+                  <p className="text-brand-emerald text-xs">
+                    {t('adminUserDetail.resendSent', 'Sent.')}
+                  </p>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-brand-info/20 bg-brand-info/[0.04] p-4 space-y-3">
+                {!reengagementForm ? (
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-white/60 text-sm">
+                      {t(
+                        'adminUserDetail.reengagementDesc',
+                        "It's been {{count}} days since this person was last active. Draft a gentle re-engagement email — you'll see and can edit the exact text before anything sends.",
+                        { count: daysInactive(user.updatedAt) }
+                      )}
+                    </p>
+                    <button
+                      onClick={startReengagementDraft}
+                      disabled={reengagementDraft.isPending}
+                      className="btn btn-sm bg-brand-info hover:opacity-90 border-0 text-white shrink-0"
+                    >
+                      {reengagementDraft.isPending
+                        ? '…'
+                        : t('adminUserDetail.draftReengagement', 'Draft re-engagement email')}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold">
+                      {t(
+                        'adminUserDetail.reengagementEditable',
+                        'Editable draft — review and change anything before sending'
+                      )}
+                    </p>
+                    <input
+                      value={reengagementForm.subject}
+                      onChange={(e) =>
+                        setReengagementForm((f) => (f ? { ...f, subject: e.target.value } : f))
+                      }
+                      className="input input-sm w-full bg-white/5 border-brand-info/15 text-white rounded-xl"
+                    />
+                    <textarea
+                      value={reengagementForm.body}
+                      onChange={(e) =>
+                        setReengagementForm((f) => (f ? { ...f, body: e.target.value } : f))
+                      }
+                      rows={7}
+                      className="textarea textarea-sm w-full bg-white/5 border-brand-info/15 text-white rounded-xl font-mono"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={confirmSendReengagement}
+                        disabled={sendReengagement.isPending}
+                        className="btn btn-sm bg-brand-info hover:opacity-90 border-0 text-white"
+                      >
+                        {sendReengagement.isPending
+                          ? '…'
+                          : t('adminUserDetail.confirmSend', 'Send this email')}
+                      </button>
+                      <button
+                        onClick={() => setReengagementForm(null)}
+                        className="btn btn-sm btn-ghost text-white/50"
+                      >
+                        {t('adminZikr.cancel', 'Cancel')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {sendReengagement.isSuccess && (
                   <p className="text-brand-emerald text-xs">
                     {t('adminUserDetail.resendSent', 'Sent.')}
                   </p>

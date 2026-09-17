@@ -136,7 +136,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-brand-void">
       <header className="border-b border-brand-border/60 bg-brand-deep/90 backdrop-blur-xl sticky top-0 z-20">
-        <div className="max-w-6xl mx-auto px-4">
+        <div className="max-w-[1600px] mx-auto px-6">
           {/* Row 1: brand ↔ identity/logout — two independent clusters so
               wrapping (narrow screens only) never interleaves them. */}
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 py-3 border-b border-white/5">
@@ -185,32 +185,40 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Row 2: primary review-queue tabs, scoped strictly to what this
               admin's role/domain can access — must match AdminHome.tsx's own
               card-grid gating exactly, or a domain-scoped Ansar sees a tab
-              for a section the API will 403 them out of. */}
-          <nav className="flex items-center gap-1 py-2 overflow-x-auto">
-            {canSeeSadaqah && (
-              <NavLink to="/admin/sadaqah" className={navItemClass}>
-                <BanknotesIcon className="w-4 h-4" />
-                {t('adminLayout.sadaqah', 'Sadaqah')}
-              </NavLink>
-            )}
-            {canSeeZikrRequests && (
-              <NavLink to="/admin/zikr-requests" className={navItemClass}>
-                <InboxStackIcon className="w-4 h-4" />
-                {t('adminLayout.zikrRequests', 'Zikr Requests')}
-              </NavLink>
-            )}
-            {canSeeZikrRequests && (
-              <NavLink to="/admin/feedback" className={navItemClass}>
-                <EnvelopeIcon className="w-4 h-4" />
-                {t('adminLayout.feedback', 'Feedback')}
-              </NavLink>
-            )}
-            {canSeeZikrRequests && (
-              <NavLink to="/admin/zikr-audio" className={navItemClass}>
-                <SpeakerWaveIcon className="w-4 h-4" />
-                {t('adminLayout.zikrAudio', 'Zikr Audio')}
-              </NavLink>
-            )}
+              for a section the API will 403 them out of.
+              ToolsMenu is a SIBLING of the overflow-x-auto tab strip, not a
+              child of it — CSS gives an element `overflow-x: auto` an
+              implicit `overflow-y: auto` too (an axis left `visible` while
+              the other is set to anything else computes to `auto`), which
+              was silently clipping the dropdown's vertical overflow whenever
+              it lived inside that scroll container. */}
+          <nav className="flex items-center gap-1 py-2">
+            <div className="flex items-center gap-1 overflow-x-auto">
+              {canSeeSadaqah && (
+                <NavLink to="/admin/sadaqah" className={navItemClass}>
+                  <BanknotesIcon className="w-4 h-4" />
+                  {t('adminLayout.sadaqah', 'Sadaqah')}
+                </NavLink>
+              )}
+              {canSeeZikrRequests && (
+                <NavLink to="/admin/zikr-requests" className={navItemClass}>
+                  <InboxStackIcon className="w-4 h-4" />
+                  {t('adminLayout.zikrRequests', 'Zikr Requests')}
+                </NavLink>
+              )}
+              {canSeeZikrRequests && (
+                <NavLink to="/admin/feedback" className={navItemClass}>
+                  <EnvelopeIcon className="w-4 h-4" />
+                  {t('adminLayout.feedback', 'Feedback')}
+                </NavLink>
+              )}
+              {canSeeZikrRequests && (
+                <NavLink to="/admin/zikr-audio" className={navItemClass}>
+                  <SpeakerWaveIcon className="w-4 h-4" />
+                  {t('adminLayout.zikrAudio', 'Zikr Audio')}
+                </NavLink>
+              )}
+            </div>
             {isServant && (
               <>
                 <span className="w-px h-5 bg-white/10 mx-1 shrink-0" aria-hidden />

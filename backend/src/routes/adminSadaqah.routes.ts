@@ -6,8 +6,10 @@ import {
   verifyDonationSchema,
   rejectDonationSchema,
   emailDraftQuerySchema,
-  quarterlyUpsertSchema,
   quarterlyParamSchema,
+  publishQuarterlySchema,
+  donorEmailDraftQuerySchema,
+  donorEmailSendSchema,
   addExpenseSchema,
 } from '../validation/sadaqah.schemas.js';
 import * as adminSadaqahController from '../controllers/adminSadaqah.controller.js';
@@ -43,18 +45,45 @@ router.delete('/:id', requireServant, adminSadaqahController.deleteDonationHandl
 // Financial cross-referencing (which donors are engaged app users, repeat
 // patterns, month-over-month trend) — owner-only per TODO-v3.md.
 router.get('/donor-analytics', requireServant, adminSadaqahController.donorAnalyticsHandler);
+router.get(
+  '/donor-email-draft',
+  requireServant,
+  validate(donorEmailDraftQuerySchema),
+  adminSadaqahController.donorEmailDraftHandler
+);
+router.post(
+  '/donor-email-send',
+  requireServant,
+  validate(donorEmailSendSchema),
+  adminSadaqahController.donorEmailSendHandler
+);
 
 router.get('/expenses', adminSadaqahController.listExpensesHandler);
 router.post('/expenses', validate(addExpenseSchema), adminSadaqahController.addExpenseHandler);
 router.delete('/expenses/:id', requireServant, adminSadaqahController.deleteExpenseHandler);
 
-// Owner-only: directly edits the published financial totals, outside the
-// normal donation review flow.
-router.patch(
-  '/quarterly/:quarter',
+// Owner-only: quarterly numbers are always recomputed fresh from verified
+// donations + the expense ledger (never manually typed) — publishing is
+// what makes a quarter visible on the public page; unpublish/delete are the
+// reversible/permanent ways to take one back down.
+router.get('/quarterly', requireServant, adminSadaqahController.listQuarterlyHandler);
+router.get(
+  '/quarterly/:quarter/preview',
   requireServant,
-  validate(quarterlyUpsertSchema),
-  adminSadaqahController.upsertQuarterlyHandler
+  validate(quarterlyParamSchema),
+  adminSadaqahController.quarterlyPreviewHandler
+);
+router.post(
+  '/quarterly/:quarter/publish',
+  requireServant,
+  validate(publishQuarterlySchema),
+  adminSadaqahController.publishQuarterlyHandler
+);
+router.patch(
+  '/quarterly/:quarter/unpublish',
+  requireServant,
+  validate(quarterlyParamSchema),
+  adminSadaqahController.unpublishQuarterlyHandler
 );
 router.delete(
   '/quarterly/:quarter',

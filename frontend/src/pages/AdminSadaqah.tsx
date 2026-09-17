@@ -13,12 +13,17 @@ import {
   useVerifyDonation,
   useRejectDonation,
   useDeleteDonation,
-  useUpsertQuarterly,
+  useAdminQuarterlyList,
+  useQuarterlyPreview,
+  usePublishQuarterly,
+  useUnpublishQuarterly,
   useDeleteQuarterly,
   useExpenses,
   useAddExpense,
   useDeleteExpense,
   useDonorAnalytics,
+  useDonorEmailDraft,
+  useSendDonorEmail,
 } from '../hooks/useAdminSadaqah.js';
 import type { Donation, DonationStatus } from '../types/api.js';
 
@@ -32,6 +37,14 @@ function isThisMonth(iso: string | null): boolean {
   const d = new Date(iso);
   const now = new Date();
   return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+}
+
+/** Current quarter as 'YYYY-Qn' — the default starting point for the
+ *  publish flow, since publishing last quarter's final numbers is the most
+ *  common action but any quarter string can be typed in. */
+function currentQuarter(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-Q${Math.floor(now.getMonth() / 3) + 1}`;
 }
 
 function PendingCard({ donation }: { donation: Donation }) {
@@ -179,9 +192,8 @@ function PendingCard({ donation }: { donation: Donation }) {
   );
 }
 
-export default function AdminSadaqah() {
+function SubmissionsTab({ isServant }: { isServant: boolean }) {
   const { t } = useTranslation();
-  const isServant = useAdminStore((s) => s.role === 'servant');
   const { data: stats } = useSadaqahStats();
   const { data: pending, isLoading: pendingLoading } = usePendingDonations();
   const { data: verifiedRecent } = useAllDonations('verified', 1, 100);
@@ -193,10 +205,6 @@ export default function AdminSadaqah() {
     page
   );
   const deleteDonation = useDeleteDonation();
-  // Two-click confirm inline (click once to arm, again to actually delete)
-  // rather than a native window.confirm() — consistent with this app's own
-  // preference for in-UI confirmation (see Navbar's sign-out modal) and
-  // avoids the cross-browser quirks of native dialogs.
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const clickDelete = (id: string) => {
     if (confirmDeleteId !== id) {
@@ -211,12 +219,165 @@ export default function AdminSadaqah() {
   const verifiedThisMonth =
     verifiedRecent?.donations.filter((d) => isThisMonth(d.verifiedAt)) ?? [];
 
-  const [qForm, setQForm] = useState({ quarter: '', received: '', spent: '', notes: '' });
-  const upsertQuarterly = useUpsertQuarterly();
-  const deleteQuarterly = useDeleteQuarterly();
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-3 gap-3">
+        <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/5 p-4 text-center">
+          <p className="text-white text-2xl font-black">{pending?.length ?? '—'}</p>
+          <p className="text-white/40 text-xs mt-1">{t('adminSadaqah.statPending', 'Pending')}</p>
+        </div>
+        <div className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/5 p-4 text-center">
+          <p className="text-white text-2xl font-black">{verifiedThisMonth.length}</p>
+          <p className="text-white/40 text-xs mt-1">
+            {t('adminSadaqah.statThisMonth', 'Verified this month')}
+          </p>
+        </div>
+        <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-4 text-center">
+          <p className="text-white text-2xl font-black">
+            {stats?.totalVerifiedAmount.toLocaleString() ?? '—'}
+          </p>
+          <p className="text-white/40 text-xs mt-1">
+            {t('adminSadaqah.statLifetime', 'Lifetime BDT')}
+          </p>
+        </div>
+      </div>
 
-  const { data: donorAnalytics } = useDonorAnalytics(isServant);
+      <section className="space-y-3">
+        <h2 className="text-white font-bold text-sm uppercase tracking-widest text-brand-gold">
+          {t('adminSadaqah.pendingQueue', 'Pending queue')}
+        </h2>
+        {pendingLoading && (
+          <p className="text-white/40 text-sm">{t('common.loading', 'Loading…')}</p>
+        )}
+        {!pendingLoading && pending?.length === 0 && (
+          <p className="text-white/30 text-sm">
+            {t('adminSadaqah.noPending', 'Nothing waiting — all caught up.')}
+          </p>
+        )}
+        <div className="grid lg:grid-cols-2 gap-3">
+          {pending?.map((d) => (
+            <PendingCard key={d._id} donation={d} />
+          ))}
+        </div>
+      </section>
 
+      <section className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+            {t('adminSadaqah.allSubmissions', 'All submissions')}
+          </h2>
+          <select
+            value={filterStatus}
+            onChange={(e) => {
+              setFilterStatus(e.target.value as DonationStatus | 'all');
+              setPage(1);
+            }}
+            className="select select-sm bg-white/5 border-brand-emerald/15 text-white"
+          >
+            <option value="all">{t('adminSadaqah.filterAll', 'All')}</option>
+            <option value="pending">{t('adminSadaqah.statusPending', 'Pending')}</option>
+            <option value="verified">{t('adminSadaqah.statusVerified', 'Verified')}</option>
+            <option value="rejected">{t('adminSadaqah.statusRejected', 'Rejected')}</option>
+          </select>
+        </div>
+
+        <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-white/40 text-xs border-b border-white/10">
+                  <th className="text-left px-3 py-2">{t('adminSadaqah.colDate', 'Date')}</th>
+                  <th className="text-left px-3 py-2">{t('adminSadaqah.colDonor', 'Donor')}</th>
+                  <th className="text-right px-3 py-2">{t('adminSadaqah.colAmount', 'Amount')}</th>
+                  <th className="text-left px-3 py-2">{t('adminSadaqah.colTrxId', 'Trx ID')}</th>
+                  <th className="text-left px-3 py-2">{t('adminSadaqah.colStatus', 'Status')}</th>
+                  <th className="text-left px-3 py-2">
+                    {t('adminSadaqah.colHandledBy', 'Handled by')}
+                  </th>
+                  {isServant && <th className="px-3 py-2" />}
+                </tr>
+              </thead>
+              <tbody>
+                {allLoading && (
+                  <tr>
+                    <td colSpan={isServant ? 7 : 6} className="text-center text-white/30 py-4">
+                      {t('common.loading', 'Loading…')}
+                    </td>
+                  </tr>
+                )}
+                {allResult?.donations.map((d) => (
+                  <tr key={d._id} className="border-b border-white/5 last:border-0">
+                    <td className="px-3 py-2 text-white/50 whitespace-nowrap">
+                      {d.createdAt.slice(0, 10)}
+                    </td>
+                    <td className="px-3 py-2 text-white/80 truncate max-w-[160px]">
+                      {donorLabel(d)}
+                    </td>
+                    <td className="px-3 py-2 text-white text-right font-bold whitespace-nowrap">
+                      {d.amount.toLocaleString()}
+                    </td>
+                    <td className="px-3 py-2 text-white/50 font-mono text-xs">{d.transactionId}</td>
+                    <td className="px-3 py-2">
+                      <DonationStatusBadge status={d.status} />
+                    </td>
+                    <td className="px-3 py-2 text-white/40 text-xs truncate max-w-[180px]">
+                      {d.verifiedBy ?? '—'}
+                    </td>
+                    {isServant && (
+                      <td className="px-3 py-2 text-right whitespace-nowrap">
+                        <button
+                          onClick={() => clickDelete(d._id)}
+                          title={t('adminSadaqah.deleteEntry', 'Permanently delete this entry')}
+                          className={
+                            confirmDeleteId === d._id
+                              ? 'text-red-400 text-xs font-bold'
+                              : 'text-white/20 hover:text-red-400 text-xs'
+                          }
+                        >
+                          {confirmDeleteId === d._id
+                            ? t('adminSadaqah.confirmDelete', 'Confirm?')
+                            : '✕'}
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {allResult && allResult.total > allResult.limit && (
+          <div className="flex items-center justify-center gap-3 text-sm">
+            <button
+              disabled={page <= 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="btn btn-sm bg-white/5 border border-white/10 text-white/60 disabled:opacity-30"
+            >
+              {t('adminSadaqah.prevPage', 'Prev')}
+            </button>
+            <span className="text-white/40">
+              {t('adminSadaqah.pageOf', 'Page {{page}} of {{total}}', {
+                page,
+                total: Math.ceil(allResult.total / allResult.limit),
+              })}
+            </span>
+            <button
+              disabled={page >= Math.ceil(allResult.total / allResult.limit)}
+              onClick={() => setPage((p) => p + 1)}
+              className="btn btn-sm bg-white/5 border border-white/10 text-white/60 disabled:opacity-30"
+            >
+              {t('adminSadaqah.nextPage', 'Next')}
+            </button>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+function ExpensesTab({ isServant }: { isServant: boolean }) {
+  const { t } = useTranslation();
   const { data: expenses } = useExpenses();
   const [expForm, setExpForm] = useState({
     date: new Date().toISOString().slice(0, 10),
@@ -249,18 +410,454 @@ export default function AdminSadaqah() {
     deleteExpense.mutate(id);
   };
 
-  const saveQuarterly = () => {
-    if (!/^\d{4}-Q[1-4]$/.test(qForm.quarter)) return;
-    upsertQuarterly.mutate(
-      {
-        quarter: qForm.quarter,
-        received: qForm.received === '' ? undefined : Number(qForm.received),
-        spent: qForm.spent === '' ? undefined : Number(qForm.spent),
-        notes: qForm.notes || undefined,
-      },
-      { onSuccess: () => setQForm({ quarter: '', received: '', spent: '', notes: '' }) }
+  return (
+    <section className="space-y-3">
+      <div>
+        <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+          {t('adminSadaqah.expensesTitle', 'Project costs')}
+        </h2>
+        <p className="text-white/25 text-xs mt-0.5">
+          {t(
+            'adminSadaqah.expensesNote',
+            'Internal record only — never shown publicly. This is also what the Analytics tab sums to auto-calculate a quarter\'s "spent" figure.'
+          )}
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-2">
+          {expenses?.length === 0 && (
+            <p className="text-white/30 text-sm">
+              {t('adminSadaqah.noExpenses', 'No costs recorded yet.')}
+            </p>
+          )}
+          {expenses?.map((e) => (
+            <div
+              key={e._id}
+              className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
+            >
+              <div className="min-w-0">
+                <p className="text-white font-bold text-sm">
+                  {e.amount.toLocaleString()} <span className="text-xs text-white/40">BDT</span>
+                </p>
+                <p className="text-white/40 text-xs truncate">
+                  {e.date.slice(0, 10)} — {e.description}
+                </p>
+              </div>
+              {isServant && (
+                <button
+                  onClick={() => clickDeleteExpense(e._id)}
+                  className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300 shrink-0"
+                >
+                  {confirmDeleteExpenseId === e._id
+                    ? t('adminSadaqah.confirmDelete', 'Confirm?')
+                    : t('adminSadaqah.delete', 'Delete')}
+                </button>
+              )}
+            </div>
+          ))}
+          {!!expenses?.length && (
+            <p className="text-white/50 text-xs font-bold pt-1">
+              {t('adminSadaqah.totalCosts', 'Total: {{amount}} BDT', {
+                amount: totalExpenses.toLocaleString(),
+              })}
+            </p>
+          )}
+        </div>
+
+        <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2 h-fit">
+          <p className="text-white/70 text-xs font-bold">
+            {t('adminSadaqah.addExpense', 'Record a cost')}
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              type="date"
+              value={expForm.date}
+              onChange={(e) => setExpForm((f) => ({ ...f, date: e.target.value }))}
+              className="input input-sm bg-white/5 border-brand-emerald/15 text-white"
+            />
+            <input
+              type="number"
+              value={expForm.amount}
+              onChange={(e) => setExpForm((f) => ({ ...f, amount: e.target.value }))}
+              placeholder={t('adminSadaqah.amountBdt', 'Amount (BDT)')}
+              className="input input-sm bg-white/5 border-brand-emerald/15 text-white"
+            />
+          </div>
+          <input
+            value={expForm.description}
+            onChange={(e) => setExpForm((f) => ({ ...f, description: e.target.value }))}
+            placeholder={t(
+              'adminSadaqah.expenseDescPlaceholder',
+              'e.g. Server hosting — September'
+            )}
+            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
+          />
+          <button
+            onClick={saveExpense}
+            disabled={
+              !expForm.date ||
+              !expForm.description.trim() ||
+              !(Number(expForm.amount) >= 0) ||
+              addExpense.isPending
+            }
+            className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white disabled:opacity-40"
+          >
+            {t('adminSadaqah.save', 'Save')}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function QuarterlyPublisher() {
+  const { t } = useTranslation();
+  const { data: quarterlyList } = useAdminQuarterlyList();
+  const preview = useQuarterlyPreview();
+  const publish = usePublishQuarterly();
+  const unpublish = useUnpublishQuarterly();
+  const deleteQuarterly = useDeleteQuarterly();
+
+  const [quarter, setQuarter] = useState(currentQuarter());
+  const [notes, setNotes] = useState('');
+  const [previewData, setPreviewData] = useState<{ received: number; spent: number } | null>(null);
+
+  const runPreview = () => {
+    if (!/^\d{4}-Q[1-4]$/.test(quarter)) return;
+    setPreviewData(null);
+    preview.mutate(quarter, { onSuccess: (d) => setPreviewData(d) });
+  };
+
+  const confirmPublish = () => {
+    publish.mutate(
+      { quarter, notes: notes.trim() || undefined },
+      { onSuccess: () => setPreviewData(null) }
     );
   };
+
+  return (
+    <section className="space-y-3">
+      <div>
+        <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+          {t('adminSadaqah.quarterlyTitle', 'Quarterly public report')}
+        </h2>
+        <p className="text-white/25 text-xs mt-0.5">
+          {t(
+            'adminSadaqah.quarterlyNote',
+            'Received and spent are always computed fresh from verified donations and the expense ledger — nothing here is typed in by hand. Nothing shows on the public page until you publish.'
+          )}
+        </p>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-2">
+          <p className="text-white/50 text-xs font-bold uppercase tracking-wide">
+            {t('adminSadaqah.publishedQuarters', 'Quarters')}
+          </p>
+          {quarterlyList?.length === 0 && (
+            <p className="text-white/30 text-sm">{t('adminSadaqah.noQuarters', 'None yet.')}</p>
+          )}
+          {quarterlyList?.map((q) => (
+            <div
+              key={q.quarter}
+              className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
+            >
+              <div className="min-w-0">
+                <p className="text-white font-bold text-sm">
+                  {q.quarter}{' '}
+                  <span
+                    className={`text-[10px] font-black uppercase tracking-wide ml-1 ${
+                      q.published ? 'text-brand-emerald' : 'text-white/30'
+                    }`}
+                  >
+                    {q.published
+                      ? t('adminSadaqah.published', 'published')
+                      : t('adminSadaqah.draft', 'draft')}
+                  </span>
+                </p>
+                <p className="text-white/40 text-xs truncate">
+                  +{q.received.toLocaleString()} / -{q.spent.toLocaleString()}
+                  {q.notes ? ` — ${q.notes}` : ''}
+                </p>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                {q.published ? (
+                  <button
+                    onClick={() => unpublish.mutate(q.quarter)}
+                    className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
+                  >
+                    {t('adminSadaqah.unpublish', 'Unpublish')}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => publish.mutate({ quarter: q.quarter })}
+                    className="btn btn-xs bg-brand-emerald/20 border border-brand-emerald/30 text-brand-emerald"
+                  >
+                    {t('adminSadaqah.publish', 'Publish')}
+                  </button>
+                )}
+                <button
+                  onClick={() => deleteQuarterly.mutate(q.quarter)}
+                  className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300"
+                >
+                  {t('adminSadaqah.delete', 'Delete')}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2 h-fit">
+          <p className="text-white/70 text-xs font-bold">
+            {t('adminSadaqah.previewPublish', 'Preview & publish a quarter')}
+          </p>
+          <input
+            value={quarter}
+            onChange={(e) => {
+              setQuarter(e.target.value);
+              setPreviewData(null);
+            }}
+            placeholder="2026-Q3"
+            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
+          />
+          <button
+            onClick={runPreview}
+            disabled={!/^\d{4}-Q[1-4]$/.test(quarter) || preview.isPending}
+            className="btn btn-sm bg-white/5 border border-white/10 text-white/70 disabled:opacity-40"
+          >
+            {preview.isPending ? '…' : t('adminSadaqah.calculate', 'Calculate')}
+          </button>
+
+          {previewData && (
+            <div className="rounded-xl bg-black/20 px-3 py-2 text-sm">
+              <p className="text-white">
+                {t('adminSadaqah.received', 'Received')}:{' '}
+                <span className="font-bold text-brand-emerald">
+                  {previewData.received.toLocaleString()}
+                </span>
+              </p>
+              <p className="text-white">
+                {t('adminSadaqah.spent', 'Spent')}:{' '}
+                <span className="font-bold text-brand-gold">
+                  {previewData.spent.toLocaleString()}
+                </span>
+              </p>
+            </div>
+          )}
+
+          <input
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder={t(
+              'adminSadaqah.notesPlaceholder',
+              'Notes (e.g. server costs, qari recording)'
+            )}
+            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
+          />
+          <button
+            onClick={confirmPublish}
+            disabled={!previewData || publish.isPending}
+            className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white disabled:opacity-40"
+          >
+            {publish.isPending ? '…' : t('adminSadaqah.publish', 'Publish')}
+          </button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function DonorEmailAction({ email }: { email: string }) {
+  const { t } = useTranslation();
+  const draft = useDonorEmailDraft();
+  const send = useSendDonorEmail();
+  const [form, setForm] = useState<{ subject: string; body: string } | null>(null);
+
+  const start = () => {
+    draft.mutate(email, { onSuccess: (d) => setForm(d) });
+  };
+  const confirmSend = () => {
+    if (!form) return;
+    send.mutate(
+      { email, subject: form.subject, body: form.body },
+      { onSuccess: () => setForm(null) }
+    );
+  };
+
+  if (!form) {
+    return (
+      <button
+        onClick={start}
+        disabled={draft.isPending}
+        className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
+      >
+        {draft.isPending ? '…' : t('adminSadaqah.sendEmail', 'Send email')}
+      </button>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+      <div className="w-full max-w-lg rounded-2xl border border-brand-emerald/20 bg-brand-deep p-5 space-y-3">
+        <p className="text-white font-bold text-sm">
+          {t('adminSadaqah.emailTo', 'Email to')} {email}
+        </p>
+        <p className="text-white/40 text-xs">
+          {t(
+            'adminSadaqah.emailEditableNote',
+            'Prefilled — edit anything before sending. This is exactly what the donor receives.'
+          )}
+        </p>
+        <input
+          value={form.subject}
+          onChange={(e) => setForm((f) => (f ? { ...f, subject: e.target.value } : f))}
+          className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+        />
+        <textarea
+          value={form.body}
+          onChange={(e) => setForm((f) => (f ? { ...f, body: e.target.value } : f))}
+          rows={9}
+          className="textarea textarea-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl font-mono"
+        />
+        <div className="flex gap-2">
+          <button
+            onClick={confirmSend}
+            disabled={send.isPending}
+            className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white"
+          >
+            {send.isPending ? '…' : t('adminSadaqah.confirmSendEmail', 'Send this email')}
+          </button>
+          <button onClick={() => setForm(null)} className="btn btn-sm btn-ghost text-white/50">
+            {t('adminZikr.cancel', 'Cancel')}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AnalyticsTab({ isServant }: { isServant: boolean }) {
+  const { t } = useTranslation();
+  const { data: donorAnalytics } = useDonorAnalytics(isServant);
+
+  if (!isServant) {
+    return (
+      <p className="text-white/40 text-sm">
+        {t(
+          'adminSadaqah.analyticsServantOnly',
+          'Servant-only — financial analytics and reporting.'
+        )}
+      </p>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <QuarterlyPublisher />
+
+      {donorAnalytics && (
+        <section className="space-y-3">
+          <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+            {t('adminSadaqah.donorAnalyticsTitle', 'Donor analytics')}
+          </h2>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/5 p-4 text-center">
+              <p className="text-white text-2xl font-black">{donorAnalytics.repeatDonorCount}</p>
+              <p className="text-white/40 text-xs mt-1">
+                {t('adminSadaqah.repeatDonors', 'Repeat donors')}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
+              <p className="text-white text-2xl font-black">{donorAnalytics.oneOffDonorCount}</p>
+              <p className="text-white/40 text-xs mt-1">
+                {t('adminSadaqah.oneOffDonors', 'One-off donors')}
+              </p>
+            </div>
+          </div>
+
+          {donorAnalytics.monthlyTrend.length > 0 && (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <p className="text-white/50 text-xs font-bold mb-2">
+                {t('adminSadaqah.monthlyTrend', 'Month-over-month (verified)')}
+              </p>
+              <div className="space-y-1.5">
+                {donorAnalytics.monthlyTrend.map((m) => {
+                  const max = Math.max(...donorAnalytics.monthlyTrend.map((x) => x.amount), 1);
+                  return (
+                    <div key={m.month} className="flex items-center gap-2 text-xs">
+                      <span className="text-white/40 w-16 shrink-0">{m.month}</span>
+                      <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+                        <div
+                          className="h-full bg-brand-emerald rounded-full"
+                          style={{ width: `${(m.amount / max) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-white/70 font-bold w-20 text-right shrink-0">
+                        {m.amount.toLocaleString()}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-white/40 text-xs border-b border-white/10">
+                    <th className="text-left px-3 py-2">{t('adminSadaqah.colEmail', 'Email')}</th>
+                    <th className="text-right px-3 py-2">
+                      {t('adminSadaqah.colDonations', 'Donations')}
+                    </th>
+                    <th className="text-right px-3 py-2">{t('adminSadaqah.colTotal', 'Total')}</th>
+                    <th className="text-left px-3 py-2">
+                      {t('adminSadaqah.colAppUser', 'App user?')}
+                    </th>
+                    <th className="px-3 py-2" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {donorAnalytics.topDonors.map((d) => (
+                    <tr key={d.email} className="border-b border-white/5 last:border-0">
+                      <td className="px-3 py-2 text-white/80 truncate max-w-[200px]">{d.email}</td>
+                      <td className="px-3 py-2 text-white text-right font-bold">
+                        {d.donationCount}
+                      </td>
+                      <td className="px-3 py-2 text-white text-right font-bold">
+                        {d.totalAmount.toLocaleString()}
+                      </td>
+                      <td className="px-3 py-2">{d.isAppUser ? '✓' : '—'}</td>
+                      <td className="px-3 py-2 text-right">
+                        <DonorEmailAction email={d.email} />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      )}
+    </div>
+  );
+}
+
+type Tab = 'submissions' | 'expenses' | 'analytics';
+
+export default function AdminSadaqah() {
+  const { t } = useTranslation();
+  const isServant = useAdminStore((s) => s.role === 'servant');
+  const [tab, setTab] = useState<Tab>('submissions');
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: 'submissions', label: t('adminSadaqah.tabSubmissions', 'All submissions') },
+    { id: 'expenses', label: t('adminSadaqah.tabExpenses', 'Expenses') },
+    { id: 'analytics', label: t('adminSadaqah.tabAnalytics', 'Analytics') },
+  ];
 
   return (
     <AnimatedBackground variant="dark">
@@ -270,445 +867,30 @@ export default function AdminSadaqah() {
         path="/admin/sadaqah"
         index={false}
       />
-      <div className="max-w-3xl mx-auto px-4 py-6 sm:py-10 space-y-6">
+      <div className="max-w-6xl mx-auto px-6 py-6 sm:py-10 space-y-6">
         <h1 className="text-2xl font-black text-white">
           {t('adminSadaqah.title', 'Sadaqah Admin')}
         </h1>
 
-        {/* Top stats */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/5 p-4 text-center">
-            <p className="text-white text-2xl font-black">{pending?.length ?? '—'}</p>
-            <p className="text-white/40 text-xs mt-1">{t('adminSadaqah.statPending', 'Pending')}</p>
-          </div>
-          <div className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/5 p-4 text-center">
-            <p className="text-white text-2xl font-black">{verifiedThisMonth.length}</p>
-            <p className="text-white/40 text-xs mt-1">
-              {t('adminSadaqah.statThisMonth', 'Verified this month')}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-4 text-center">
-            <p className="text-white text-2xl font-black">
-              {stats?.totalVerifiedAmount.toLocaleString() ?? '—'}
-            </p>
-            <p className="text-white/40 text-xs mt-1">
-              {t('adminSadaqah.statLifetime', 'Lifetime BDT')}
-            </p>
-          </div>
+        <div className="flex gap-2 border-b border-white/10 pb-px">
+          {tabs.map((tb) => (
+            <button
+              key={tb.id}
+              onClick={() => setTab(tb.id)}
+              className={`px-4 py-2 text-sm font-bold rounded-t-lg transition-colors ${
+                tab === tb.id
+                  ? 'bg-brand-emerald/15 text-brand-emerald border-b-2 border-brand-emerald'
+                  : 'text-white/50 hover:text-white'
+              }`}
+            >
+              {tb.label}
+            </button>
+          ))}
         </div>
 
-        {/* Pending queue */}
-        <section className="space-y-3">
-          <h2 className="text-white font-bold text-sm uppercase tracking-widest text-brand-gold">
-            {t('adminSadaqah.pendingQueue', 'Pending queue')}
-          </h2>
-          {pendingLoading && (
-            <p className="text-white/40 text-sm">{t('common.loading', 'Loading…')}</p>
-          )}
-          {!pendingLoading && pending?.length === 0 && (
-            <p className="text-white/30 text-sm">
-              {t('adminSadaqah.noPending', 'Nothing waiting — all caught up.')}
-            </p>
-          )}
-          <div className="space-y-3">
-            {pending?.map((d) => (
-              <PendingCard key={d._id} donation={d} />
-            ))}
-          </div>
-        </section>
-
-        {/* All submissions */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
-              {t('adminSadaqah.allSubmissions', 'All submissions')}
-            </h2>
-            <select
-              value={filterStatus}
-              onChange={(e) => {
-                setFilterStatus(e.target.value as DonationStatus | 'all');
-                setPage(1);
-              }}
-              className="select select-sm bg-white/5 border-brand-emerald/15 text-white"
-            >
-              <option value="all">{t('adminSadaqah.filterAll', 'All')}</option>
-              <option value="pending">{t('adminSadaqah.statusPending', 'Pending')}</option>
-              <option value="verified">{t('adminSadaqah.statusVerified', 'Verified')}</option>
-              <option value="rejected">{t('adminSadaqah.statusRejected', 'Rejected')}</option>
-            </select>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="text-white/40 text-xs border-b border-white/10">
-                    <th className="text-left px-3 py-2">{t('adminSadaqah.colDate', 'Date')}</th>
-                    <th className="text-left px-3 py-2">{t('adminSadaqah.colDonor', 'Donor')}</th>
-                    <th className="text-right px-3 py-2">
-                      {t('adminSadaqah.colAmount', 'Amount')}
-                    </th>
-                    <th className="text-left px-3 py-2">{t('adminSadaqah.colTrxId', 'Trx ID')}</th>
-                    <th className="text-left px-3 py-2">{t('adminSadaqah.colStatus', 'Status')}</th>
-                    {isServant && <th className="px-3 py-2" />}
-                  </tr>
-                </thead>
-                <tbody>
-                  {allLoading && (
-                    <tr>
-                      <td colSpan={isServant ? 6 : 5} className="text-center text-white/30 py-4">
-                        {t('common.loading', 'Loading…')}
-                      </td>
-                    </tr>
-                  )}
-                  {allResult?.donations.map((d) => (
-                    <tr key={d._id} className="border-b border-white/5 last:border-0">
-                      <td className="px-3 py-2 text-white/50 whitespace-nowrap">
-                        {d.createdAt.slice(0, 10)}
-                      </td>
-                      <td className="px-3 py-2 text-white/80 truncate max-w-[140px]">
-                        {donorLabel(d)}
-                      </td>
-                      <td className="px-3 py-2 text-white text-right font-bold whitespace-nowrap">
-                        {d.amount.toLocaleString()}
-                      </td>
-                      <td className="px-3 py-2 text-white/50 font-mono text-xs">
-                        {d.transactionId}
-                      </td>
-                      <td className="px-3 py-2">
-                        <DonationStatusBadge status={d.status} />
-                      </td>
-                      {isServant && (
-                        <td className="px-3 py-2 text-right whitespace-nowrap">
-                          <button
-                            onClick={() => clickDelete(d._id)}
-                            title={t('adminSadaqah.deleteEntry', 'Permanently delete this entry')}
-                            className={
-                              confirmDeleteId === d._id
-                                ? 'text-red-400 text-xs font-bold'
-                                : 'text-white/20 hover:text-red-400 text-xs'
-                            }
-                          >
-                            {confirmDeleteId === d._id
-                              ? t('adminSadaqah.confirmDelete', 'Confirm?')
-                              : '✕'}
-                          </button>
-                        </td>
-                      )}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {allResult && allResult.total > allResult.limit && (
-            <div className="flex items-center justify-center gap-3 text-sm">
-              <button
-                disabled={page <= 1}
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                className="btn btn-sm bg-white/5 border border-white/10 text-white/60 disabled:opacity-30"
-              >
-                {t('adminSadaqah.prevPage', 'Prev')}
-              </button>
-              <span className="text-white/40">
-                {t('adminSadaqah.pageOf', 'Page {{page}} of {{total}}', {
-                  page,
-                  total: Math.ceil(allResult.total / allResult.limit),
-                })}
-              </span>
-              <button
-                disabled={page >= Math.ceil(allResult.total / allResult.limit)}
-                onClick={() => setPage((p) => p + 1)}
-                className="btn btn-sm bg-white/5 border border-white/10 text-white/60 disabled:opacity-30"
-              >
-                {t('adminSadaqah.nextPage', 'Next')}
-              </button>
-            </div>
-          )}
-        </section>
-
-        {/* Quarterly breakdown manager */}
-        <section className="space-y-3">
-          <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
-            {t('adminSadaqah.quarterlyTitle', 'Quarterly breakdown')}
-          </h2>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-2">
-            {stats?.quarterlyBreakdown.length === 0 && (
-              <p className="text-white/30 text-sm">
-                {t('adminSadaqah.noQuarters', 'No quarters recorded yet.')}
-              </p>
-            )}
-            {stats?.quarterlyBreakdown.map((q) => (
-              <div
-                key={q.quarter}
-                className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
-              >
-                <div className="min-w-0">
-                  <p className="text-white font-bold text-sm">{q.quarter}</p>
-                  <p className="text-white/40 text-xs truncate">
-                    +{q.received.toLocaleString()} / -{q.spent.toLocaleString()}
-                    {q.notes ? ` — ${q.notes}` : ''}
-                  </p>
-                </div>
-                {isServant && (
-                  <div className="flex gap-2 shrink-0">
-                    <button
-                      onClick={() =>
-                        setQForm({
-                          quarter: q.quarter,
-                          received: String(q.received),
-                          spent: String(q.spent),
-                          notes: q.notes,
-                        })
-                      }
-                      className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
-                    >
-                      {t('adminSadaqah.edit', 'Edit')}
-                    </button>
-                    <button
-                      onClick={() => deleteQuarterly.mutate(q.quarter)}
-                      className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300"
-                    >
-                      {t('adminSadaqah.delete', 'Delete')}
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {isServant && (
-            <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2">
-              <p className="text-white/70 text-xs font-bold">
-                {t('adminSadaqah.addEditQuarter', 'Add / edit a quarter')}
-              </p>
-              <div className="grid grid-cols-3 gap-2">
-                <input
-                  value={qForm.quarter}
-                  onChange={(e) => setQForm((f) => ({ ...f, quarter: e.target.value }))}
-                  placeholder="2026-Q3"
-                  className="input input-sm bg-white/5 border-brand-emerald/15 text-white col-span-1"
-                />
-                <input
-                  type="number"
-                  value={qForm.received}
-                  onChange={(e) => setQForm((f) => ({ ...f, received: e.target.value }))}
-                  placeholder={t('adminSadaqah.received', 'Received')}
-                  className="input input-sm bg-white/5 border-brand-emerald/15 text-white col-span-1"
-                />
-                <input
-                  type="number"
-                  value={qForm.spent}
-                  onChange={(e) => setQForm((f) => ({ ...f, spent: e.target.value }))}
-                  placeholder={t('adminSadaqah.spent', 'Spent')}
-                  className="input input-sm bg-white/5 border-brand-emerald/15 text-white col-span-1"
-                />
-              </div>
-              <input
-                value={qForm.notes}
-                onChange={(e) => setQForm((f) => ({ ...f, notes: e.target.value }))}
-                placeholder={t(
-                  'adminSadaqah.notesPlaceholder',
-                  'Notes (e.g. server costs, qari recording)'
-                )}
-                className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
-              />
-              <button
-                onClick={saveQuarterly}
-                disabled={!/^\d{4}-Q[1-4]$/.test(qForm.quarter) || upsertQuarterly.isPending}
-                className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white disabled:opacity-40"
-              >
-                {t('adminSadaqah.save', 'Save')}
-              </button>
-            </div>
-          )}
-        </section>
-
-        {/* Internal cost ledger — itemized record behind the quarterly
-            "spent" figure above; admin-only, never shown publicly. */}
-        <section className="space-y-3">
-          <div>
-            <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
-              {t('adminSadaqah.expensesTitle', 'Project costs')}
-            </h2>
-            <p className="text-white/25 text-xs mt-0.5">
-              {t('adminSadaqah.expensesNote', 'Internal record only — never shown publicly.')}
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-2">
-            {expenses?.length === 0 && (
-              <p className="text-white/30 text-sm">
-                {t('adminSadaqah.noExpenses', 'No costs recorded yet.')}
-              </p>
-            )}
-            {expenses?.map((e) => (
-              <div
-                key={e._id}
-                className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
-              >
-                <div className="min-w-0">
-                  <p className="text-white font-bold text-sm">
-                    {e.amount.toLocaleString()} <span className="text-xs text-white/40">BDT</span>
-                  </p>
-                  <p className="text-white/40 text-xs truncate">
-                    {e.date.slice(0, 10)} — {e.description}
-                  </p>
-                </div>
-                {isServant && (
-                  <button
-                    onClick={() => clickDeleteExpense(e._id)}
-                    className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300 shrink-0"
-                  >
-                    {confirmDeleteExpenseId === e._id
-                      ? t('adminSadaqah.confirmDelete', 'Confirm?')
-                      : t('adminSadaqah.delete', 'Delete')}
-                  </button>
-                )}
-              </div>
-            ))}
-            {!!expenses?.length && (
-              <p className="text-white/50 text-xs font-bold pt-1">
-                {t('adminSadaqah.totalCosts', 'Total: {{amount}} BDT', {
-                  amount: totalExpenses.toLocaleString(),
-                })}
-              </p>
-            )}
-          </div>
-
-          <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2">
-            <p className="text-white/70 text-xs font-bold">
-              {t('adminSadaqah.addExpense', 'Record a cost')}
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                type="date"
-                value={expForm.date}
-                onChange={(e) => setExpForm((f) => ({ ...f, date: e.target.value }))}
-                className="input input-sm bg-white/5 border-brand-emerald/15 text-white"
-              />
-              <input
-                type="number"
-                value={expForm.amount}
-                onChange={(e) => setExpForm((f) => ({ ...f, amount: e.target.value }))}
-                placeholder={t('adminSadaqah.amountBdt', 'Amount (BDT)')}
-                className="input input-sm bg-white/5 border-brand-emerald/15 text-white"
-              />
-            </div>
-            <input
-              value={expForm.description}
-              onChange={(e) => setExpForm((f) => ({ ...f, description: e.target.value }))}
-              placeholder={t(
-                'adminSadaqah.expenseDescPlaceholder',
-                'e.g. Server hosting — September'
-              )}
-              className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
-            />
-            <button
-              onClick={saveExpense}
-              disabled={
-                !expForm.date ||
-                !expForm.description.trim() ||
-                !(Number(expForm.amount) >= 0) ||
-                addExpense.isPending
-              }
-              className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white disabled:opacity-40"
-            >
-              {t('adminSadaqah.save', 'Save')}
-            </button>
-          </div>
-        </section>
-
-        {/* Donor analytics — Servant-only (financial), cross-references
-            verified donors against app User accounts. */}
-        {isServant && donorAnalytics && (
-          <section className="space-y-3">
-            <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
-              {t('adminSadaqah.donorAnalyticsTitle', 'Donor analytics')}
-            </h2>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/5 p-4 text-center">
-                <p className="text-white text-2xl font-black">{donorAnalytics.repeatDonorCount}</p>
-                <p className="text-white/40 text-xs mt-1">
-                  {t('adminSadaqah.repeatDonors', 'Repeat donors')}
-                </p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
-                <p className="text-white text-2xl font-black">{donorAnalytics.oneOffDonorCount}</p>
-                <p className="text-white/40 text-xs mt-1">
-                  {t('adminSadaqah.oneOffDonors', 'One-off donors')}
-                </p>
-              </div>
-            </div>
-
-            {donorAnalytics.monthlyTrend.length > 0 && (
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-white/50 text-xs font-bold mb-2">
-                  {t('adminSadaqah.monthlyTrend', 'Month-over-month (verified)')}
-                </p>
-                <div className="space-y-1.5">
-                  {donorAnalytics.monthlyTrend.map((m) => {
-                    const max = Math.max(...donorAnalytics.monthlyTrend.map((x) => x.amount), 1);
-                    return (
-                      <div key={m.month} className="flex items-center gap-2 text-xs">
-                        <span className="text-white/40 w-16 shrink-0">{m.month}</span>
-                        <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
-                          <div
-                            className="h-full bg-brand-emerald rounded-full"
-                            style={{ width: `${(m.amount / max) * 100}%` }}
-                          />
-                        </div>
-                        <span className="text-white/70 font-bold w-20 text-right shrink-0">
-                          {m.amount.toLocaleString()}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="text-white/40 text-xs border-b border-white/10">
-                      <th className="text-left px-3 py-2">{t('adminSadaqah.colEmail', 'Email')}</th>
-                      <th className="text-right px-3 py-2">
-                        {t('adminSadaqah.colDonations', 'Donations')}
-                      </th>
-                      <th className="text-right px-3 py-2">
-                        {t('adminSadaqah.colTotal', 'Total')}
-                      </th>
-                      <th className="text-left px-3 py-2">
-                        {t('adminSadaqah.colAppUser', 'App user?')}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {donorAnalytics.topDonors.map((d) => (
-                      <tr key={d.email} className="border-b border-white/5 last:border-0">
-                        <td className="px-3 py-2 text-white/80 truncate max-w-[160px]">
-                          {d.email}
-                        </td>
-                        <td className="px-3 py-2 text-white text-right font-bold">
-                          {d.donationCount}
-                        </td>
-                        <td className="px-3 py-2 text-white text-right font-bold">
-                          {d.totalAmount.toLocaleString()}
-                        </td>
-                        <td className="px-3 py-2">{d.isAppUser ? '✓' : '—'}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </section>
-        )}
+        {tab === 'submissions' && <SubmissionsTab isServant={isServant} />}
+        {tab === 'expenses' && <ExpensesTab isServant={isServant} />}
+        {tab === 'analytics' && <AnalyticsTab isServant={isServant} />}
       </div>
     </AnimatedBackground>
   );

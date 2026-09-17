@@ -1,6 +1,8 @@
 import User, { IUser } from '../models/User.js';
 import { sendWelcomeEmail } from './welcomeEmail.service.js';
 import { deleteAccount } from './user.service.js';
+import { sendMail } from './email.service.js';
+import { REENGAGEMENT_SUBJECT, reengagementDraft, toSimpleHtml } from './userEmail.templates.js';
 
 const httpError = (status: number, message: string): Error & { status: number } => {
   const err = new Error(message) as Error & { status: number };
@@ -11,7 +13,7 @@ const httpError = (status: number, message: string): Error & { status: number } 
 const MISSING_WELCOME_FILTER = { welcomeEmailSentAt: { $exists: false } };
 
 const USER_LIST_FIELDS =
-  'uid email displayName firstName lastName gender country city createdAt aiEnabled welcomeEmailSentAt disabled';
+  'uid email displayName firstName lastName gender country city createdAt updatedAt aiEnabled welcomeEmailSentAt disabled';
 
 export interface UserListResult {
   users: Pick<
@@ -25,6 +27,7 @@ export interface UserListResult {
     | 'country'
     | 'city'
     | 'createdAt'
+    | 'updatedAt'
     | 'aiEnabled'
     | 'welcomeEmailSentAt'
     | 'disabled'
@@ -42,10 +45,13 @@ export interface UserListResult {
  */
 const escapeRegex = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
+export type UserListSort = 'newest' | 'inactive';
+
 export const listUsers = async (
   search: string | undefined,
   page: number,
-  limit: number
+  limit: number,
+  sortBy: UserListSort = 'newest'
 ): Promise<UserListResult> => {
   const filter = search
     ? {
@@ -55,11 +61,15 @@ export const listUsers = async (
         ],
       }
     : {};
+  // 'inactive' sorts oldest-updatedAt-first — the least-recently-active
+  // users surface at the top, using the same `updatedAt` "last active" proxy
+  // as the user detail view (see getUserDetail's comment).
+  const sort: Record<string, 1 | -1> = sortBy === 'inactive' ? { updatedAt: 1 } : { createdAt: -1 };
 
   const [users, total] = await Promise.all([
     User.find(filter)
       .select(USER_LIST_FIELDS)
-      .sort({ createdAt: -1 })
+      .sort(sort)
       .skip((page - 1) * limit)
       .limit(limit),
     User.countDocuments(filter),
@@ -132,6 +142,40 @@ export const enableUser = async (uid: string): Promise<void> => {
     { $set: { disabled: false, disabledAt: null, disabledReason: null } }
   );
   if (result.matchedCount === 0) throw httpError(404, 'User not found');
+};
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** `updatedAt` doubles as the "last active" proxy app-wide (see
+ * getUserDetail's comment) — days-inactive is just today minus that. */
+export const getDaysInactive = (updatedAt: Date): number =>
+  Math.max(0, Math.floor((Date.now() - updatedAt.getTime()) / DAY_MS));
+
+/** Servant-only — drafts a gentle re-engagement email personalized with the
+ * user's name and how long they've been away. Never sent from here: the
+ * admin reviews/edits the draft first, then calls sendReengagementEmail
+ * with the (possibly edited) text, matching the same draft-then-confirm
+ * pattern already used for donation/zikr review emails. */
+export const getReengagementDraft = async (
+  uid: string
+): Promise<{ subject: string; body: string }> => {
+  const user = await User.findOne({ uid }).select('uid email displayName firstName updatedAt');
+  if (!user) throw httpError(404, 'User not found');
+  const name = user.displayName || user.firstName || 'there';
+  const daysInactive = getDaysInactive(user.updatedAt);
+  return { subject: REENGAGEMENT_SUBJECT, body: reengagementDraft({ name, daysInactive }) };
+};
+
+export const sendReengagementEmail = async (
+  uid: string,
+  subject: string,
+  body: string
+): Promise<void> => {
+  if (!subject?.trim() || !body?.trim()) throw httpError(400, 'Subject and body are required');
+  const user = await User.findOne({ uid }).select('uid email');
+  if (!user) throw httpError(404, 'User not found');
+  if (!user.email) throw httpError(400, 'User has no email on file');
+  await sendMail({ to: user.email, subject, text: body, html: toSimpleHtml(body), from: 'ansar' });
 };
 
 /** Delegates to the same full cross-collection purge + Firebase deleteUser

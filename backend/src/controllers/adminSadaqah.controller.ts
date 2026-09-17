@@ -209,25 +209,73 @@ export const deleteExpenseHandler = async (
   }
 };
 
-export const upsertQuarterlyHandler = async (
+export const listQuarterlyHandler = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const quarterlyBreakdown = await sadaqahService.listQuarterly();
+    res.json({ ok: true, quarterlyBreakdown });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const quarterlyPreviewHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const quarter = paramString(req.params.quarter);
-    const stats = await sadaqahService.upsertQuarterly(quarter, req.body);
+    const preview = await sadaqahService.calculateQuarterlyPreview(quarter);
+    res.json({ ok: true, ...preview });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const publishQuarterlyHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const quarter = paramString(req.params.quarter);
+    const { notes } = req.body as { notes?: string };
+    const stats = await sadaqahService.publishQuarterly(quarter, notes);
     await logAdminAction({
       actorEmail: req.admin!.email,
       actorRole: req.admin!.role,
-      action: 'quarterly.upsert',
+      action: 'quarterly.publish',
       targetType: 'DonationStats',
       targetId: quarter,
-      metadata: req.body,
     });
     res.json({ ok: true, stats });
   } catch (err) {
     next(err);
+  }
+};
+
+export const unpublishQuarterlyHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const quarter = paramString(req.params.quarter);
+    const stats = await sadaqahService.unpublishQuarterly(quarter);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'quarterly.unpublish',
+      targetType: 'DonationStats',
+      targetId: quarter,
+    });
+    res.json({ ok: true, stats });
+  } catch (err) {
+    handleServiceError(err, res, next);
   }
 };
 
@@ -241,6 +289,41 @@ export const donorAnalyticsHandler = async (
     res.json({ ok: true, ...analytics });
   } catch (err) {
     next(err);
+  }
+};
+
+export const donorEmailDraftHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const email = typeof req.query.email === 'string' ? req.query.email : '';
+    const draft = await adminDonorAnalyticsService.getDonorEmailDraft(email);
+    res.json({ ok: true, ...draft });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
+export const donorEmailSendHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email, subject, body } = req.body as { email: string; subject: string; body: string };
+    await adminDonorAnalyticsService.sendDonorEmail(email, subject, body);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'donor.email',
+      targetType: 'Donation',
+      targetId: email,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    handleServiceError(err, res, next);
   }
 };
 

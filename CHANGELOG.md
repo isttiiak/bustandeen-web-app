@@ -2,6 +2,34 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.32.0 — Admin panel: layout/UX fixes, Sadaqah publish workflow, donor & re-engagement email, user inactivity — 2026-09-17
+
+Follow-up batch after a hands-on review of v5.29–v5.31 surfaced several real bugs and requested a Sadaqah workflow redesign.
+
+### Fixed
+
+- **Zikr audio tracker showed 13 already-live recitations as "missing."** It only checked the new admin-managed `ZikrAudioAsset` collection, never cross-referencing the pre-existing bundled-file map (`utils/zikrAudio.ts`) the counter's playback already uses. Now correctly shows those as "bundled in app" and only flags the real gap (8 remaining, matching the known content backlog).
+- **Admin "Tools" dropdown menu was invisible (clipped).** `overflow-x: auto` on the tab row implicitly set `overflow-y: auto` too (an unset axis computes to `auto` once the other axis isn't `visible`), silently clipping the dropdown panel's vertical overflow. Moved the dropdown to a sibling of the scrollable tab strip instead of a child of it.
+- **Ops Health page could hard-crash** on a stale cached bundle calling into a changed API response shape. Every field read now defaults defensively (`?? []`, `?? {}`) instead of assuming the shape.
+- **Every `<select>` dropdown app-wide rendered white-on-white until hovered** (Settings, qari picker, ayat picker, admin domain pickers, etc.) — Chromium/Windows renders a `<select>`'s native option list with OS-light styling regardless of the closed box's Tailwind/DaisyUI theming. Added `color-scheme: dark` globally (this app has only one theme, never light) plus explicit `select option` colors as a fallback.
+- **Real regression caught before shipping**: normalizing quarterly-report visibility around a new `published` field initially relied on Mongoose backfilling old documents' missing field via schema defaults — confirmed via direct DB inspection that this does NOT reliably happen for array-subdocuments, which would have hidden the site's only existing public "Where it has gone" entry the moment this deployed. Fixed by checking `published !== false` everywhere (treats "field absent" as published, matching every pre-existing entry's actual prior visibility) instead of a truthy check.
+
+### Changed
+
+- **Sadaqah admin page split into tabs** (All submissions / Expenses / Analytics) — it had grown into one very long scroll.
+- **Quarterly public reporting is now compute-then-publish, not manual entry.** "Received" and "spent" are always calculated fresh from verified donations and the itemized expense ledger (`/quarterly/:quarter/preview`, read-only) — nothing is ever typed in by hand, so a published figure can't drift out of sync with the underlying records. Nothing appears on the public `/sadaqah` page until an explicit "Publish" action; "Unpublish" reversibly hides a quarter without discarding its numbers, "Delete" removes it outright.
+- **Admin panel is no longer designed mobile-first.** Every `/admin/*` page's container widened (up to `max-w-[1600px]` on the shell) to use real desktop screen space — this surface is explicitly a laptop/desktop tool, not a phone one.
+- Donation/zikr-request/feedback admin lists now show a **"Handled by"** actor tag using each record's existing `verifiedBy`/`reviewedBy`/`repliedBy` field.
+- Servant dashboard splits **Total users** out as its own tile, next to New users this week (both were already computed server-side).
+- About page: removed the GitHub repo link, replaced with a short founder note and `mailto:istiak@bustandeen.com`.
+
+### Added
+
+- **Donor appreciation email** (Servant-only, inside Sadaqah → Analytics): drafts a personalized thank-you for a top donor (name, total given, donation count), editable before sending — same draft-then-confirm pattern as donation verify/reject.
+- **User re-engagement email** (Servant-only, on a user's detail page): drafts a gentle, non-guilting "we miss you" email mentioning how many days they've been inactive, editable before sending.
+- **User inactivity sort**: `/admin/users` can now sort by "most inactive first" (server-side, across the whole user base, not just the current page) using each user's `updatedAt` as the existing "last active" proxy; the list also shows a "Last active" column.
+- **Broadcast admin page** now shows a live preview of the banner plus explicit copy on exactly where it appears (top of every public page, never inside the admin panel).
+
 ## v5.31.0 — SMTP env vars standardized to one dedicated pair per sender — 2026-09-17
 
 ### Changed

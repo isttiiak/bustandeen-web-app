@@ -23,7 +23,8 @@ export const listHandler = async (
     const search = typeof req.query.search === 'string' ? req.query.search.trim() : undefined;
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 25));
-    const result = await adminUsersService.listUsers(search || undefined, page, limit);
+    const sortBy = req.query.sort === 'inactive' ? 'inactive' : 'newest';
+    const result = await adminUsersService.listUsers(search || undefined, page, limit, sortBy);
     res.json({ ok: true, ...result });
   } catch (err) {
     next(err);
@@ -82,6 +83,41 @@ export const resendWelcomeHandler = async (
       actorEmail: req.admin!.email,
       actorRole: req.admin!.role,
       action: 'user.resendWelcome',
+      targetType: 'User',
+      targetId: uid,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
+export const reengagementDraftHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const draft = await adminUsersService.getReengagementDraft(paramString(req.params.uid));
+    res.json({ ok: true, ...draft });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
+export const reengagementSendHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const uid = paramString(req.params.uid);
+    const { subject, body } = req.body as { subject: string; body: string };
+    await adminUsersService.sendReengagementEmail(uid, subject, body);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'user.reengagementEmail',
       targetType: 'User',
       targetId: uid,
     });

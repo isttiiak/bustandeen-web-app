@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 import { ZIKR_LIBRARY } from '../utils/zikrLibrary.js';
+import { hasZikrAudio } from '../utils/zikrAudio.js';
 import {
   useZikrAudioStatus,
   useSetCuratedAudio,
@@ -13,6 +14,10 @@ interface Row {
   key: string;
   name: string;
   audioUrl?: string;
+  /** Already live via a bundled file in the app's own audio playback map —
+   *  not something an admin-pasted URL here would change, so it's shown as
+   *  done but not editable from this page. */
+  bundled: boolean;
   kind: 'curated' | 'library';
   libraryId?: string;
 }
@@ -52,7 +57,11 @@ function AudioRow({ row }: { row: Row }) {
           {row.kind}
         </span>
       </div>
-      {!editing ? (
+      {row.bundled ? (
+        <span className="text-brand-emerald text-xs font-bold shrink-0">
+          {t('adminZikrAudio.bundled', '✓ bundled in app')}
+        </span>
+      ) : !editing ? (
         <div className="flex items-center gap-2 shrink-0">
           {row.audioUrl ? (
             <span className="text-brand-emerald text-xs font-bold">
@@ -111,19 +120,22 @@ export default function AdminZikrAudio() {
       key: `curated:${name}`,
       name,
       audioUrl: curatedByName.get(name),
+      bundled: hasZikrAudio(name),
       kind: 'curated' as const,
     })),
     ...(data?.libraryItems ?? []).map((item) => ({
       key: `library:${item._id}`,
       name: item.name,
       audioUrl: item.audioUrl,
+      bundled: false,
       kind: 'library' as const,
       libraryId: item._id,
     })),
   ];
 
-  const visibleRows = onlyMissing ? rows.filter((r) => !r.audioUrl) : rows;
-  const missingCount = rows.filter((r) => !r.audioUrl).length;
+  const isDone = (r: Row) => r.bundled || !!r.audioUrl;
+  const visibleRows = onlyMissing ? rows.filter((r) => !isDone(r)) : rows;
+  const missingCount = rows.filter((r) => !isDone(r)).length;
 
   return (
     <AnimatedBackground variant="dark">
@@ -133,7 +145,7 @@ export default function AdminZikrAudio() {
         path="/admin/zikr-audio"
         index={false}
       />
-      <div className="max-w-2xl mx-auto px-4 py-6 sm:py-10 space-y-6">
+      <div className="max-w-3xl mx-auto px-6 py-6 sm:py-10 space-y-6">
         <div>
           <h1 className="text-2xl font-black text-white">
             {t('adminZikrAudio.title', 'Zikr audio tracker')}
@@ -143,6 +155,12 @@ export default function AdminZikrAudio() {
               'adminZikrAudio.subtitle',
               'Paste an audio recitation URL for a curated or community zikr — {{count}} still missing.',
               { count: missingCount }
+            )}
+          </p>
+          <p className="text-xs text-white/30 mt-1">
+            {t(
+              'adminZikrAudio.bundledNote',
+              '"Bundled in app" means the recitation already plays live in the zikr counter — nothing to do there. Everything else here is a URL suggestion for future sourcing, not yet wired into playback.'
             )}
           </p>
         </div>

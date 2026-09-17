@@ -10,8 +10,10 @@ const ACTION_LABELS: Record<string, string> = {
   'donation.delete': 'Deleted donation',
   'expense.add': 'Added expense',
   'expense.delete': 'Deleted expense',
-  'quarterly.upsert': 'Edited quarterly stats',
+  'quarterly.publish': 'Published quarterly stats',
+  'quarterly.unpublish': 'Unpublished quarterly stats',
   'quarterly.delete': 'Deleted quarterly stats',
+  'donor.email': 'Sent donor appreciation email',
   'zikrRequest.approve': 'Approved zikr request',
   'zikrRequest.reject': 'Rejected zikr request',
   'library.updateCategory': 'Re-categorized library item',
@@ -23,6 +25,7 @@ const ACTION_LABELS: Record<string, string> = {
   'account.setDomain': "Changed an Ansar's domain",
   'user.disable': 'Disabled user account',
   'user.enable': 'Re-enabled user account',
+  'user.reengagementEmail': 'Sent re-engagement email',
   'feedback.reply': 'Replied to feedback',
   'feedback.archive': 'Archived feedback',
   'feedback.delete': 'Deleted feedback',
@@ -48,7 +51,7 @@ export default function AdminAuditLog() {
         path="/admin/audit-log"
         index={false}
       />
-      <div className="max-w-4xl mx-auto px-4 py-6 sm:py-10 space-y-6">
+      <div className="max-w-6xl mx-auto px-6 py-6 sm:py-10 space-y-6">
         <div>
           <h1 className="text-2xl font-black text-white">
             {t('adminAuditLog.title', 'Audit log')}

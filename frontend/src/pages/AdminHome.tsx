@@ -77,7 +77,7 @@ export default function AdminHome() {
   const { data: stats } = useAdminStats();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+    <div className="max-w-[1600px] mx-auto px-6 py-8 space-y-6">
       <Seo
         title={t('adminHome.seoTitle', 'Admin Overview')}
         description="Internal dashboard."
@@ -101,7 +101,7 @@ export default function AdminHome() {
           renders a number from outside the caller's own domain — the
           endpoint itself only computes what the caller's role can see. */}
       {isServant && stats?.servant && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           <StatTile
             label={t('adminHome.pendingSadaqah', 'Pending donations')}
             value={stats.pendingSadaqah ?? 0}
@@ -115,6 +115,10 @@ export default function AdminHome() {
           <StatTile
             label={t('adminHome.verifiedTotal', 'Verified donations (৳)')}
             value={stats.servant.totalVerifiedAmount.toLocaleString()}
+          />
+          <StatTile
+            label={t('adminHome.totalUsers', 'Total users')}
+            value={stats.servant.totalUsers.toLocaleString()}
           />
           <StatTile
             label={t('adminHome.newUsers', 'New users this week')}
@@ -160,7 +164,7 @@ export default function AdminHome() {
         </div>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {canSeeSadaqah && (
           <AdminCard
             to="/admin/sadaqah"

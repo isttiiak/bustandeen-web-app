@@ -56,7 +56,11 @@ function FeedbackCard({ message }: { message: AdminFeedbackMessage }) {
       </div>
 
       <p className="text-white/60 text-sm leading-relaxed whitespace-pre-wrap">{message.message}</p>
-      <p className="text-white/25 text-[11px]">{new Date(message.createdAt).toLocaleString()}</p>
+      <p className="text-white/25 text-[11px]">
+        {new Date(message.createdAt).toLocaleString()}
+        {message.repliedBy &&
+          ` — ${t('adminFeedback.repliedBy', 'replied by')} ${message.repliedBy}`}
+      </p>
 
       {!replying && (
         <div className="flex gap-2 pt-1">
@@ -133,7 +137,7 @@ export default function AdminFeedback() {
         path="/admin/feedback"
         index={false}
       />
-      <div className="max-w-2xl mx-auto px-4 py-6 sm:py-10 space-y-6">
+      <div className="max-w-5xl mx-auto px-6 py-6 sm:py-10 space-y-6">
         <h1 className="text-2xl font-black text-white">
           {t('adminFeedback.title', 'Feedback & contact inbox')}
         </h1>

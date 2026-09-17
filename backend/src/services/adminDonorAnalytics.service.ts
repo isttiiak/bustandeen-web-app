@@ -1,5 +1,13 @@
 import Donation from '../models/Donation.js';
 import User from '../models/User.js';
+import { sendMail } from './email.service.js';
+import { toSimpleHtml } from './sadaqahEmail.templates.js';
+
+const httpError = (status: number, message: string): Error & { status: number } => {
+  const err = new Error(message) as Error & { status: number };
+  err.status = status;
+  return err;
+};
 
 export interface DonorAnalytics {
   /** Verified donations grouped by normalized donor email — repeat donors
@@ -69,4 +77,46 @@ export const getDonorAnalytics = async (): Promise<DonorAnalytics> => {
     .map(([month, v]) => ({ month, amount: v.amount, count: v.count }));
 
   return { topDonors, repeatDonorCount, oneOffDonorCount, monthlyTrend };
+};
+
+const APPRECIATION_SUBJECT = 'JazakAllahu khayran — Bustandeen';
+
+/**
+ * Editable draft for a personal thank-you to a donor — the admin always
+ * reviews/edits the exact text before anything sends, matching the same
+ * draft-then-confirm pattern as donation verify/reject. Not thread-linked to
+ * any single donation's emailMessageId: this is a fresh appreciation note
+ * about their overall giving, not a reply to one transaction.
+ */
+export const getDonorEmailDraft = async (
+  email: string
+): Promise<{ subject: string; body: string }> => {
+  const normalized = email.trim().toLowerCase();
+  const donations = await Donation.find({ email: normalized, status: 'verified' }).sort({
+    transactionDate: -1,
+  });
+  if (donations.length === 0) throw httpError(404, 'No verified donations found for this email');
+
+  const totalAmount = donations.reduce((sum, d) => sum + d.amount, 0);
+  const named = donations.find((d) => !d.isAnonymous && d.donorName);
+  const name = named?.donorName ?? 'there';
+
+  const body = `Assalamu Alaikum ${name},\n\nJazakAllahu khayran for your generous support of Bustandeen — your contributions have totaled ${totalAmount.toLocaleString()} BDT across ${donations.length} donation${donations.length > 1 ? 's' : ''} so far. May Allah accept it from you and make it a continuous source of reward, even after you've moved on to other things.\n\n[Add anything specific you'd like to say here before sending]\n\n— Bustandeen`;
+
+  return { subject: APPRECIATION_SUBJECT, body };
+};
+
+export const sendDonorEmail = async (
+  email: string,
+  subject: string,
+  body: string
+): Promise<void> => {
+  if (!subject?.trim() || !body?.trim()) throw httpError(400, 'Subject and body are required');
+  await sendMail({
+    to: email.trim(),
+    subject,
+    text: body,
+    html: toSimpleHtml(body),
+    from: 'sadaqah',
+  });
 };

@@ -11,6 +11,9 @@ export interface AdminUserListItem {
   country?: string;
   city?: string;
   createdAt: string;
+  /** Free "last active" proxy — bumped by every zikr increment's $inc on
+   *  User.totalCount (see zikr.service.ts), not a dedicated activity log. */
+  updatedAt: string;
   aiEnabled: boolean;
   welcomeEmailSentAt?: string | null;
   disabled: boolean;
@@ -23,14 +26,24 @@ interface AdminUserListResult {
   limit: number;
 }
 
+export type UserListSort = 'newest' | 'inactive';
+
 /** Servant-only user directory — a simple paginated list with optional
- *  email/name search, not a full analytics view (see TODO-v3.md). */
-export function useAdminUserList(search: string, page: number, limit = 25) {
+ *  email/name search, not a full analytics view (see TODO-v3.md).
+ *  `sort: 'inactive'` surfaces the least-recently-active users first
+ *  (oldest `updatedAt`), server-side across the whole user base — not just
+ *  a client-side filter on the current page. */
+export function useAdminUserList(
+  search: string,
+  page: number,
+  limit = 25,
+  sort: UserListSort = 'newest'
+) {
   return useQuery<AdminUserListResult>({
-    queryKey: ['admin', 'users', 'list', search, page, limit],
+    queryKey: ['admin', 'users', 'list', search, page, limit, sort],
     queryFn: async () => {
       const res = await api.get<AdminUserListResult>('/api/admin/users', {
-        params: { search: search || undefined, page, limit },
+        params: { search: search || undefined, page, limit, sort },
       });
       return res.data;
     },
@@ -50,7 +63,6 @@ export function useWelcomeBackfillStatus() {
 }
 
 export interface AdminUserDetail extends AdminUserListItem {
-  updatedAt: string;
   totalCount: number;
   zikrTypes: { name: string }[];
   salatResetDate?: string;
@@ -85,6 +97,26 @@ export function useResendWelcomeEmail() {
 export function useDeleteUser() {
   return useMutation({
     mutationFn: (uid: string) => api.delete(`/api/admin/users/${uid}`),
+  });
+}
+
+/** Draft-then-confirm, same pattern as the donation/zikr review emails — the
+ *  admin always sees and can edit the text before anything sends. */
+export function useReengagementDraft() {
+  return useMutation({
+    mutationFn: async (uid: string) => {
+      const res = await api.get<{ subject: string; body: string }>(
+        `/api/admin/users/${uid}/reengagement-draft`
+      );
+      return res.data;
+    },
+  });
+}
+
+export function useSendReengagementEmail() {
+  return useMutation({
+    mutationFn: ({ uid, subject, body }: { uid: string; subject: string; body: string }) =>
+      api.post(`/api/admin/users/${uid}/reengagement-send`, { subject, body }),
   });
 }
 

@@ -119,19 +119,68 @@ export function useDeleteExpense() {
   });
 }
 
-interface QuarterlyPatch {
+export interface AdminQuarterlyEntry {
   quarter: string;
-  received?: number;
-  spent?: number;
-  notes?: string;
+  received: number;
+  spent: number;
+  notes: string;
+  published: boolean;
 }
 
-export function useUpsertQuarterly() {
+/** Servant-only — every quarter including unpublished drafts, unlike the
+ *  public /api/sadaqah/stats endpoint which only ever returns published
+ *  ones. This is what the admin Analytics tab reads, not useSadaqahStats. */
+export function useAdminQuarterlyList() {
+  return useQuery<AdminQuarterlyEntry[]>({
+    queryKey: ['admin', 'sadaqah', 'quarterly'],
+    queryFn: async () => {
+      const res = await api.get<{ quarterlyBreakdown: AdminQuarterlyEntry[] }>(
+        '/api/admin/sadaqah/quarterly'
+      );
+      return res.data.quarterlyBreakdown;
+    },
+  });
+}
+
+/** Read-only, on-demand — never writes anything, just shows what a quarter
+ *  WOULD publish as (computed fresh from verified donations + expenses). */
+export function useQuarterlyPreview() {
+  return useMutation({
+    mutationFn: async (quarter: string) => {
+      const res = await api.get<{ received: number; spent: number }>(
+        `/api/admin/sadaqah/quarterly/${quarter}/preview`
+      );
+      return res.data;
+    },
+  });
+}
+
+/** Recomputes received/spent fresh every time — publishing an
+ *  already-published quarter again is how you refresh its numbers or edit
+ *  its notes, never a manually-typed amount. */
+export function usePublishQuarterly() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ quarter, ...patch }: QuarterlyPatch) =>
-      api.patch<{ stats: DonationStatsResponse }>(`/api/admin/sadaqah/quarterly/${quarter}`, patch),
+    mutationFn: ({ quarter, notes }: { quarter: string; notes?: string }) =>
+      api.post<{ stats: DonationStatsResponse }>(
+        `/api/admin/sadaqah/quarterly/${quarter}/publish`,
+        { notes }
+      ),
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'sadaqah', 'quarterly'] });
+      void queryClient.invalidateQueries({ queryKey: ['sadaqah', 'stats'] });
+    },
+  });
+}
+
+/** Reversible — hides a quarter from the public page without discarding its
+ *  stored notes/numbers, unlike useDeleteQuarterly below. */
+export function useUnpublishQuarterly() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (quarter: string) => api.patch(`/api/admin/sadaqah/quarterly/${quarter}/unpublish`),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'sadaqah', 'quarterly'] });
       void queryClient.invalidateQueries({ queryKey: ['sadaqah', 'stats'] });
     },
   });
@@ -142,6 +191,7 @@ export function useDeleteQuarterly() {
   return useMutation({
     mutationFn: (quarter: string) => api.delete(`/api/admin/sadaqah/quarterly/${quarter}`),
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'sadaqah', 'quarterly'] });
       void queryClient.invalidateQueries({ queryKey: ['sadaqah', 'stats'] });
     },
   });
@@ -168,5 +218,25 @@ export function useDonorAnalytics(enabled = true) {
     },
     enabled,
     staleTime: 60_000,
+  });
+}
+
+/** Draft-then-confirm, same pattern as the donation verify/reject emails. */
+export function useDonorEmailDraft() {
+  return useMutation({
+    mutationFn: async (email: string) => {
+      const res = await api.get<{ subject: string; body: string }>(
+        '/api/admin/sadaqah/donor-email-draft',
+        { params: { email } }
+      );
+      return res.data;
+    },
+  });
+}
+
+export function useSendDonorEmail() {
+  return useMutation({
+    mutationFn: (input: { email: string; subject: string; body: string }) =>
+      api.post('/api/admin/sadaqah/donor-email-send', input),
   });
 }

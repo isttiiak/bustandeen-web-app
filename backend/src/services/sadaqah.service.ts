@@ -24,6 +24,19 @@ const httpError = (status: number, message: string): Error & { status: number } 
   return err;
 };
 
+/** 'YYYY-Qn' → the calendar-quarter date range, end exclusive. Validated by
+ *  the zod schema (`^\d{4}-Q[1-4]$`) before this ever runs. */
+const quarterDateRange = (quarter: string): { start: Date; end: Date } => {
+  const [yearStr, qStr] = quarter.split('-Q');
+  const year = Number(yearStr);
+  const q = Number(qStr);
+  const startMonth = (q - 1) * 3;
+  return {
+    start: new Date(Date.UTC(year, startMonth, 1)),
+    end: new Date(Date.UTC(year, startMonth + 3, 1)),
+  };
+};
+
 /**
  * Atomic upsert — avoids the classic "find, if null then create" race where
  * two concurrent requests both see no doc and both try to insert (the second
@@ -118,7 +131,14 @@ export const getPublicStats = async (): Promise<{
     totalVerifiedCount: stats.totalVerifiedCount,
     totalContributors: contributorEmails.length,
     lastUpdated: stats.lastUpdated,
-    quarterlyBreakdown: stats.quarterlyBreakdown,
+    // Never leak a draft/unpublished quarter to the public endpoint. Checked
+    // as `!== false` rather than a truthy check: a quarter entry saved
+    // before this field existed has no `published` key in the raw stored
+    // document, and Mongoose's schema default does NOT reliably backfill it
+    // on every read path for array subdocuments — treating "missing" as
+    // published (only an explicit `false` from unpublishQuarterly hides it)
+    // is what actually preserves every pre-existing entry's visibility.
+    quarterlyBreakdown: stats.quarterlyBreakdown.filter((q) => q.published !== false),
   };
 };
 
@@ -272,24 +292,92 @@ export const deleteDonation = async (id: string): Promise<void> => {
   await donation.deleteOne();
 };
 
-export const upsertQuarterly = async (
+/** Servant-only, admin view — every quarter including unpublished drafts,
+ *  unlike getPublicStats which excludes published:false ones. Normalizes a
+ *  legacy entry's missing `published` key to `true` here too (see that
+ *  field's doc comment) — the admin UI's published/draft badge must agree
+ *  with what the public endpoint actually does with the same entry. */
+export const listQuarterly = async (): Promise<IQuarterlyEntry[]> => {
+  const stats = await getOrCreateStats();
+  return [...stats.quarterlyBreakdown]
+    .map((q) => ({
+      quarter: q.quarter,
+      received: q.received,
+      spent: q.spent,
+      notes: q.notes,
+      published: q.published !== false,
+    }))
+    .sort((a, b) => b.quarter.localeCompare(a.quarter));
+};
+
+/**
+ * Read-only preview of what a quarter WOULD publish as — never writes
+ * anything. `received` sums verified donations by `transactionDate` in the
+ * quarter; `spent` sums the itemized "Project costs" ledger by `date` in the
+ * quarter, so both figures are always derived from the same records an
+ * admin already keeps day-to-day, never re-typed by hand.
+ */
+export const calculateQuarterlyPreview = async (
+  quarter: string
+): Promise<{ received: number; spent: number }> => {
+  const { start, end } = quarterDateRange(quarter);
+  const [receivedAgg, spentAgg] = await Promise.all([
+    Donation.aggregate<{ total: number }>([
+      { $match: { status: 'verified', transactionDate: { $gte: start, $lt: end } } },
+      { $group: { _id: null, total: { $sum: '$amount' } } },
+    ]),
+    SadaqahExpense.aggregate<{ total: number }>([
+      { $match: { date: { $gte: start, $lt: end } } },
+      { $group: { _id: null, total: { $sum: '$amount' } } },
+    ]),
+  ]);
+  return {
+    received: receivedAgg[0]?.total ?? 0,
+    spent: spentAgg[0]?.total ?? 0,
+  };
+};
+
+/**
+ * Publishes (or re-publishes) a quarter: recomputes received/spent fresh
+ * from source data every time, so a published figure can never drift stale
+ * — there's no manually-typed amount to fall out of sync. `notes` is the
+ * only free-text field, since it's context a number can't capture (e.g.
+ * "includes December server renewal"). Publishing an already-published
+ * quarter again is just how you refresh its numbers or edit its notes.
+ */
+export const publishQuarterly = async (
   quarter: string,
-  patch: { received?: number; spent?: number; notes?: string }
+  notes: string | undefined
 ): Promise<IDonationStats> => {
+  const { received, spent } = await calculateQuarterlyPreview(quarter);
   const stats = await getOrCreateStats();
   const existing = stats.quarterlyBreakdown.find((q) => q.quarter === quarter);
   if (existing) {
-    if (patch.received !== undefined) existing.received = patch.received;
-    if (patch.spent !== undefined) existing.spent = patch.spent;
-    if (patch.notes !== undefined) existing.notes = patch.notes;
+    existing.received = received;
+    existing.spent = spent;
+    existing.published = true;
+    if (notes !== undefined) existing.notes = notes;
   } else {
     stats.quarterlyBreakdown.push({
       quarter,
-      received: patch.received ?? 0,
-      spent: patch.spent ?? 0,
-      notes: patch.notes ?? '',
+      received,
+      spent,
+      notes: notes ?? '',
+      published: true,
     });
   }
+  await stats.save();
+  return stats;
+};
+
+/** Reversible — hides a quarter from the public page without discarding its
+ *  stored notes/numbers, unlike deleteQuarterly below. Publishing again
+ *  (which recomputes fresh) is how you bring it back. */
+export const unpublishQuarterly = async (quarter: string): Promise<IDonationStats> => {
+  const stats = await getOrCreateStats();
+  const existing = stats.quarterlyBreakdown.find((q) => q.quarter === quarter);
+  if (!existing) throw httpError(404, 'Quarter not found');
+  existing.published = false;
   await stats.save();
   return stats;
 };

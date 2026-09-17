@@ -87,17 +87,27 @@ export const emailDraftQuerySchema = z.object({
 // DonationStats.quarterlyBreakdown's `quarter` field.
 const quarterField = z.string().regex(/^\d{4}-Q[1-4]$/, "Quarter must look like '2026-Q3'");
 
-export const quarterlyUpsertSchema = z.object({
+export const quarterlyParamSchema = z.object({
+  params: z.object({ quarter: quarterField }),
+});
+
+export const publishQuarterlySchema = z.object({
   params: z.object({ quarter: quarterField }),
   body: z.object({
-    received: z.number().min(0).optional(),
-    spent: z.number().min(0).optional(),
     notes: z.string().trim().max(500).optional(),
   }),
 });
 
-export const quarterlyParamSchema = z.object({
-  params: z.object({ quarter: quarterField }),
+export const donorEmailDraftQuerySchema = z.object({
+  query: z.object({ email: z.string().trim().email() }),
+});
+
+export const donorEmailSendSchema = z.object({
+  body: z.object({
+    email: z.string().trim().email(),
+    subject: z.string().trim().min(1).max(200),
+    body: z.string().trim().min(1).max(4000),
+  }),
 });
 
 // Generous but bounded the same way transactionDateField is — catches a

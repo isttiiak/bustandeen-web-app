@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 import {
@@ -31,7 +32,7 @@ export default function AdminBroadcast() {
         path="/admin/broadcast"
         index={false}
       />
-      <div className="max-w-2xl mx-auto px-4 py-6 sm:py-10 space-y-6">
+      <div className="max-w-4xl mx-auto px-6 py-6 sm:py-10 space-y-6">
         <div>
           <h1 className="text-2xl font-black text-white">
             {t('adminBroadcast.title', 'Broadcast announcement')}
@@ -39,12 +40,12 @@ export default function AdminBroadcast() {
           <p className="text-sm text-white/50 mt-1">
             {t(
               'adminBroadcast.subtitle',
-              'Pushes a dismissible banner to every visitor — no code deploy needed. Only one can be active at a time; publishing a new one replaces it.'
+              "Shows a dismissible banner at the top of every page on the public site (bustandeen.com) — signed-in and guest visitors alike. It never appears inside the admin panel itself. No code deploy needed. Only one can be active at a time; publishing a new one replaces it. Each visitor who dismisses it won't see it again on that device (their own browser remembers, nothing is sent back to us)."
             )}
           </p>
         </div>
 
-        <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2">
+        <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-3">
           <input
             value={form.title}
             onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
@@ -58,6 +59,26 @@ export default function AdminBroadcast() {
             placeholder={t('adminBroadcast.bodyPlaceholder', 'Details shown next to the title…')}
             className="textarea textarea-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
           />
+
+          {(form.title.trim() || form.body.trim()) && (
+            <div>
+              <p className="text-white/30 text-[10px] uppercase tracking-wide font-bold mb-1.5">
+                {t(
+                  'adminBroadcast.previewLabel',
+                  'Live preview — how it appears on the public site'
+                )}
+              </p>
+              <div className="flex items-center justify-center gap-3 px-4 py-2 bg-brand-emerald/15 border border-brand-emerald/20 rounded-xl text-sm">
+                <span className="text-white/90 font-semibold truncate">
+                  {form.title.trim() ||
+                    t('adminBroadcast.titlePlaceholder', 'e.g. Ramadan hours changed')}
+                </span>
+                <span className="text-white/50 truncate">{form.body.trim()}</span>
+                <XMarkIcon className="w-4 h-4 text-white/60 shrink-0" />
+              </div>
+            </div>
+          )}
+
           <button
             onClick={publish}
             disabled={!form.title.trim() || !form.body.trim() || create.isPending}
