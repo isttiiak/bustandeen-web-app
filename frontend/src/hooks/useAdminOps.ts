@@ -3,7 +3,6 @@ import api from '../lib/api.js';
 
 export interface SenderDiagnostics {
   configured: boolean;
-  usingDedicated: boolean;
   resolvedUser: string | null;
 }
 

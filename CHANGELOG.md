@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.31.0 — SMTP env vars standardized to one dedicated pair per sender — 2026-09-17
+
+### Changed
+
+- **Every email sender now has its own dedicated `<SENDER>_SMTP_USER`/`<SENDER>_SMTP_PASS` pair — no more shared/legacy fallback.** `ZOHO_SMTP_USER`/`ZOHO_SMTP_PASS` was originally sadaqah's own credential reused as a generic "shared mailbox" fallback for any sender without its own pair (see v5.30.0's sender-collision fix) — confusing and exactly how `ansar` ended up silently sending as `sadaqah@bustandeen.com`. Renamed to `SADAQAH_SMTP_USER`/`SADAQAH_SMTP_PASS`, matching the convention `ANSAR_SMTP_USER`/`PASS` and `ISTIAK_SMTP_USER`/`PASS` already used. `ZOHO_SMTP_HOST`/`PORT` remain shared (same Zoho server for the whole org). `email.service.ts`'s `getSenderDiagnostics()` and `/admin/ops-health` simplified accordingly — dropped the now-meaningless "dedicated vs. shared fallback" distinction, kept the collision check (now purely a safety net against two pairs pointing at the same address by mistake). All three real mailbox credentials verified via a live (non-destructive) SMTP `.verify()` handshake before this change shipped — no new app passwords needed, `ansar@bustandeen.com` already had one, it just wasn't paired with `ANSAR_SMTP_USER`.
+
 ## v5.30.0 — Admin panel: domain-leak fixes, sender-collision detection, navbar redesign, account disable — 2026-09-17
 
 Follow-up to v5.29.0 after a live review surfaced real bugs in the rich-admin-panel batch.

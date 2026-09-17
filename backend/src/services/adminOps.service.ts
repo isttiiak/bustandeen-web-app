@@ -8,10 +8,10 @@ const SENDERS: EmailSender[] = ['sadaqah', 'ansar', 'istiak'];
 
 export interface OpsHealth {
   emailSenders: Record<EmailSender, SenderDiagnostics>;
-  /** Senders that resolve to the identical mailbox address — e.g. 'ansar'
-   *  silently falling back to the same shared credential 'sadaqah' already
-   *  uses. Each entry is the shared address plus which senders collide on
-   *  it; empty when every configured sender has its own distinct mailbox. */
+  /** Senders that resolve to the identical mailbox address — each sender has
+   *  its own dedicated env-var pair now, so this should only ever be
+   *  non-empty if two pairs were mistakenly set to the same address. Each
+   *  entry is the shared address plus which senders collide on it. */
   senderCollisions: { resolvedUser: string; senders: EmailSender[] }[];
   recentEmailFailures: {
     sender: string;

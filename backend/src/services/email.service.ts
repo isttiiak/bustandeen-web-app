@@ -2,16 +2,11 @@ import nodemailer, { Transporter } from 'nodemailer';
 import EmailFailureLog from '../models/EmailFailureLog.js';
 
 /**
- * Named senders — the mailbox (SMTP credentials) a send authenticates as,
- * paired with the display name shown in the recipient's inbox. 'sadaqah' and
- * 'ansar' now correspond to two real, separately-scoped Ansar accounts
- * (sadaqah@bustandeen.com and ansar@bustandeen.com — see AdminAccount's
- * ansarDomain), but a dedicated Zoho mailbox for each may not exist yet.
- * Each sender therefore checks for an OPTIONAL dedicated env-var pair first
- * (`dedicatedUser`/`dedicatedPass` below) and falls back to the shared
- * `ZOHO_SMTP_USER`/`PASS` mailbox if either is unset — so this works
- * immediately, and upgrades to a real separate inbox with no code change
- * once the user provisions one and sets the matching env vars.
+ * Named senders — each is a real, separately-scoped mailbox with its own
+ * dedicated `<SENDER>_SMTP_USER`/`<SENDER>_SMTP_PASS` env-var pair (same
+ * naming convention for all three, no shared/legacy fallback). Only
+ * `ZOHO_SMTP_HOST`/`ZOHO_SMTP_PORT` are shared — that's just the one Zoho
+ * server every mailbox in this org connects through.
  *
  * - 'sadaqah' (sadaqah@bustandeen.com, displayed "Bustandeen") — donation
  *   review threads.
@@ -23,73 +18,45 @@ import EmailFailureLog from '../models/EmailFailureLog.js';
  */
 export type EmailSender = 'sadaqah' | 'ansar' | 'istiak';
 
-const SENDER_ENV: Record<
-  EmailSender,
-  {
-    user: string;
-    pass: string;
-    dedicatedUser?: string;
-    dedicatedPass?: string;
-    displayName: string;
-  }
-> = {
+const SENDER_ENV: Record<EmailSender, { userVar: string; passVar: string; displayName: string }> = {
   sadaqah: {
-    user: 'ZOHO_SMTP_USER',
-    pass: 'ZOHO_SMTP_PASS',
-    dedicatedUser: 'SADAQAH_SMTP_USER',
-    dedicatedPass: 'SADAQAH_SMTP_PASS',
+    userVar: 'SADAQAH_SMTP_USER',
+    passVar: 'SADAQAH_SMTP_PASS',
     displayName: 'Bustandeen',
   },
   ansar: {
-    user: 'ZOHO_SMTP_USER',
-    pass: 'ZOHO_SMTP_PASS',
-    dedicatedUser: 'ANSAR_SMTP_USER',
-    dedicatedPass: 'ANSAR_SMTP_PASS',
+    userVar: 'ANSAR_SMTP_USER',
+    passVar: 'ANSAR_SMTP_PASS',
     displayName: 'Bustandeen Ansar',
   },
   istiak: {
-    user: 'ISTIAK_SMTP_USER',
-    pass: 'ISTIAK_SMTP_PASS',
+    userVar: 'ISTIAK_SMTP_USER',
+    passVar: 'ISTIAK_SMTP_PASS',
     displayName: 'Istiak from Bustandeen',
   },
 };
 
-/** Resolves the actual mailbox credentials for a sender: dedicated env vars
- *  if both are set, otherwise the shared Zoho mailbox. */
 const resolveSenderCreds = (sender: EmailSender): { user?: string; pass?: string } => {
   const cfg = SENDER_ENV[sender];
-  const dedicatedUser = cfg.dedicatedUser ? process.env[cfg.dedicatedUser] : undefined;
-  const dedicatedPass = cfg.dedicatedPass ? process.env[cfg.dedicatedPass] : undefined;
-  if (dedicatedUser && dedicatedPass) return { user: dedicatedUser, pass: dedicatedPass };
-  return { user: process.env[cfg.user], pass: process.env[cfg.pass] };
+  return { user: process.env[cfg.userVar], pass: process.env[cfg.passVar] };
 };
 
 export interface SenderDiagnostics {
-  /** Whether SMTP host/port + a usable user/pass are present at all. */
+  /** Whether SMTP host/port + this sender's own user/pass are all present. */
   configured: boolean;
-  /** True only when this sender's OWN dedicated env-var pair is set — false
-   *  means it's silently falling back to the shared ZOHO_SMTP_USER mailbox,
-   *  which is easy to miss (nothing errors; mail just goes out under the
-   *  wrong "From" address with the right-looking display name). */
-  usingDedicated: boolean;
   /** The mailbox address actually used (safe to show — it's the public
    *  "From" address every recipient already sees), or null if unconfigured. */
   resolvedUser: string | null;
 }
 
-/** Exposed for the ops-health page — never returns the password, only which
- *  mailbox address a sender resolves to and whether that's its own dedicated
- *  one. Two senders resolving to the SAME resolvedUser (most commonly
- *  'ansar' and 'sadaqah' both silently landing on the shared ZOHO_SMTP_USER)
- *  is the exact bug class this exists to catch. */
+/** Exposed for the ops-health page. Two senders resolving to the SAME
+ *  resolvedUser means their env vars were set to the same mailbox by
+ *  mistake — each sender's pair is independent now, so this should never
+ *  happen unless someone copy-pasted the wrong value. */
 export const getSenderDiagnostics = (sender: EmailSender): SenderDiagnostics => {
-  const cfg = SENDER_ENV[sender];
-  const dedicatedUser = cfg.dedicatedUser ? process.env[cfg.dedicatedUser] : undefined;
-  const dedicatedPass = cfg.dedicatedPass ? process.env[cfg.dedicatedPass] : undefined;
-  const usingDedicated = !!(dedicatedUser && dedicatedPass);
   const { user, pass } = resolveSenderCreds(sender);
   const configured = !!(process.env.ZOHO_SMTP_HOST && process.env.ZOHO_SMTP_PORT && user && pass);
-  return { configured, usingDedicated, resolvedUser: configured ? (user ?? null) : null };
+  return { configured, resolvedUser: configured ? (user ?? null) : null };
 };
 
 const transporters: Partial<Record<EmailSender, Transporter | null>> = {};

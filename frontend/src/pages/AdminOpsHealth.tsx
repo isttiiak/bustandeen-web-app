@@ -45,7 +45,7 @@ export default function AdminOpsHealth() {
                 <p className="text-white/50 text-xs leading-relaxed">
                   {t(
                     'adminOpsHealth.collisionDesc',
-                    'These senders don\'t have their own dedicated mailbox yet, so they\'re silently falling back to the same shared credential — mail shows the right display name but the wrong "From" address. Set the missing dedicated SMTP env vars (e.g. ANSAR_SMTP_USER/PASS) in the backend deployment to fix.'
+                    'These senders\' env vars were set to the same mailbox address — mail shows the right display name but the wrong "From" address. Each sender needs its own <SENDER>_SMTP_USER/PASS pair pointing at its own address.'
                   )}
                 </p>
                 {health.senderCollisions.map((c) => (
@@ -82,26 +82,14 @@ export default function AdminOpsHealth() {
                         {diag.resolvedUser ?? t('adminOpsHealth.notConfigured', 'not configured')}
                       </p>
                     </div>
-                    <div className="flex gap-1.5 shrink-0">
-                      <StatusPill
-                        ok={diag.configured}
-                        label={
-                          diag.configured
-                            ? t('adminOpsHealth.configured', 'configured')
-                            : t('adminOpsHealth.missing', 'missing')
-                        }
-                      />
-                      {diag.configured && sender !== 'istiak' && (
-                        <StatusPill
-                          ok={diag.usingDedicated}
-                          label={
-                            diag.usingDedicated
-                              ? t('adminOpsHealth.dedicated', 'dedicated mailbox')
-                              : t('adminOpsHealth.sharedFallback', 'shared fallback')
-                          }
-                        />
-                      )}
-                    </div>
+                    <StatusPill
+                      ok={diag.configured}
+                      label={
+                        diag.configured
+                          ? t('adminOpsHealth.configured', 'configured')
+                          : t('adminOpsHealth.missing', 'missing')
+                      }
+                    />
                   </div>
                 ))}
               </div>
