@@ -55,6 +55,19 @@ export function useReplyFeedback() {
   });
 }
 
+export function useMarkRepliedExternal() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const res = await api.patch<{ message: AdminFeedbackMessage }>(
+        `/api/admin/feedback/${id}/mark-replied-external`
+      );
+      return res.data.message;
+    },
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: KEY }),
+  });
+}
+
 export function useArchiveFeedback() {
   const queryClient = useQueryClient();
   return useMutation({

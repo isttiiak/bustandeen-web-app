@@ -14,6 +14,7 @@ import {
   HeartIcon,
   MegaphoneIcon,
   ChevronDownIcon,
+  PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminLogout } from '../hooks/useAdminAuth.js';
@@ -131,6 +132,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     },
     { to: '/admin/ops-health', icon: HeartIcon, label: t('adminLayout.opsHealth', 'Ops Health') },
     { to: '/admin/broadcast', icon: MegaphoneIcon, label: t('adminLayout.broadcast', 'Broadcast') },
+    {
+      to: '/admin/compose-email',
+      icon: PaperAirplaneIcon,
+      label: t('adminLayout.composeEmail', 'Email Istiak'),
+    },
   ];
 
   return (

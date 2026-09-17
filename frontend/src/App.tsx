@@ -88,6 +88,7 @@ const AdminZikrAudio = lazy(() => import('./pages/AdminZikrAudio.js'));
 const AdminUserDetail = lazy(() => import('./pages/AdminUserDetail.js'));
 const AdminOpsHealth = lazy(() => import('./pages/AdminOpsHealth.js'));
 const AdminBroadcast = lazy(() => import('./pages/AdminBroadcast.js'));
+const AdminComposeEmail = lazy(() => import('./pages/AdminComposeEmail.js'));
 
 // Programmatic-SEO static pages (prayer-times/qibla/ramadan-calendar by
 // city, du'a library, adhkar, Hijri converter) — pre-rendered at build time
@@ -984,6 +985,16 @@ export default function App() {
                     <AdminProtected>
                       <ServantProtected>
                         <AdminBroadcast />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/compose-email"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminComposeEmail />
                       </ServantProtected>
                     </AdminProtected>
                   }

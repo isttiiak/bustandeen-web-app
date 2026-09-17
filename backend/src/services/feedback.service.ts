@@ -118,6 +118,25 @@ export const replyToFeedback = async (
   return doc;
 };
 
+/**
+ * For when the admin actually replied from the Zoho mail app directly
+ * instead of this panel — no email is sent here (it already went out), this
+ * only syncs the tracked status so the item stops showing as open.
+ */
+export const markRepliedExternally = async (
+  id: string,
+  repliedBy: string
+): Promise<IFeedbackMessage> => {
+  const doc = await FeedbackMessage.findById(id);
+  if (!doc) throw httpError(404, 'Feedback message not found');
+
+  doc.status = 'replied';
+  doc.repliedAt = new Date();
+  doc.repliedBy = repliedBy;
+  await doc.save();
+  return doc;
+};
+
 export const archiveFeedback = async (id: string): Promise<IFeedbackMessage> => {
   const doc = await FeedbackMessage.findByIdAndUpdate(id, { status: 'archived' }, { new: true });
   if (!doc) throw httpError(404, 'Feedback message not found');

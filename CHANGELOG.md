@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.33.0 — Compose-to-founder tool, external-reply status sync — 2026-09-18
+
+### Added
+
+- **"Email Istiak" compose tool** (Servant-only, under Tools): a free-form send-to-anyone form that always goes out from `istiak@bustandeen.com`, for anything that needs the founder's own name attached instead of a system mailbox (`sadaqah@`/`ansar@`). Unlike the app's other draft-then-confirm emails there's no auto-generated text — the compose form itself is the editable draft — but it still has an explicit "Review & send" step showing exactly the To/Subject/Body before the irreversible send, and every send is written to the Audit Log with the sending admin's tag, which a reply sent directly from the Zoho mail app never is.
+- **"Mark replied (sent via Zoho)" on Feedback**: an open feedback/contact message can now be marked `replied` without the app sending anything — for when you've already answered someone directly from the Zoho mail app instead of this panel. Only changes the tracked status (+ `repliedBy`/`repliedAt`, logged to the Audit Log as `feedback.markRepliedExternal`); does not apply to donation verify/reject or zikr-request approve/reject, since those actions change real underlying state (a verified amount, an approved library entry) that only happens by using the panel — there's nothing to "sync" there regardless of which mailbox you replied from.
+
+### Fixed
+
+- Diagnosed the `ansar@bustandeen.com` sender showing "missing" on System & ops health: `ANSAR_SMTP_USER`/`ANSAR_SMTP_PASS` are not set on the production environment (no code defect — `sadaqah` and `istiak` are both configured and working). Needs the two env vars set in Vercel to the mailbox's address and Zoho app password.
+
 ## v5.32.1 — Fix: `published` field on quarterly Sadaqah entries was never actually persisted — 2026-09-17
 
 ### Fixed

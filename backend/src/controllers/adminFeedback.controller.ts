@@ -53,6 +53,27 @@ export const replyHandler = async (
   }
 };
 
+export const markRepliedExternalHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const id = paramString(req.params.id);
+    const message = await feedbackService.markRepliedExternally(id, req.admin!.email);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'feedback.markRepliedExternal',
+      targetType: 'FeedbackMessage',
+      targetId: id,
+    });
+    res.json({ ok: true, message });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
 export const archiveHandler = async (
   req: Request,
   res: Response,

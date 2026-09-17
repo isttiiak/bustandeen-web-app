@@ -13,6 +13,7 @@ router.use(requireAdminAuth, requireDomain('general'));
 router.get('/', adminFeedbackController.listHandler);
 router.post('/:id/reply', validate(replyFeedbackSchema), adminFeedbackController.replyHandler);
 router.patch('/:id/archive', adminFeedbackController.archiveHandler);
+router.patch('/:id/mark-replied-external', adminFeedbackController.markRepliedExternalHandler);
 
 // Delete is Servant-only per TODO-v3.md's "Servant: full CRUD, Ansar:
 // read+reply, no delete" spec — unlike reply/archive above.

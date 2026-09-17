@@ -7,6 +7,7 @@ import { useAdminStore } from '../store/useAdminStore.js';
 import {
   useAdminFeedback,
   useReplyFeedback,
+  useMarkRepliedExternal,
   useArchiveFeedback,
   useDeleteFeedback,
   type AdminFeedbackMessage,
@@ -17,6 +18,7 @@ function FeedbackCard({ message }: { message: AdminFeedbackMessage }) {
   const { t } = useTranslation();
   const isServant = useAdminStore((s) => s.role) === 'servant';
   const reply = useReplyFeedback();
+  const markRepliedExternal = useMarkRepliedExternal();
   const archive = useArchiveFeedback();
   const del = useDeleteFeedback();
   const [replying, setReplying] = useState(false);
@@ -70,6 +72,28 @@ function FeedbackCard({ message }: { message: AdminFeedbackMessage }) {
               className="btn btn-xs rounded-lg bg-brand-emerald border-brand-emerald text-white font-bold"
             >
               {t('adminFeedback.reply', 'Reply')}
+            </button>
+          )}
+          {message.status === 'open' && (
+            <button
+              onClick={() => {
+                if (
+                  confirm(
+                    t(
+                      'adminFeedback.confirmMarkReplied',
+                      'Mark as replied? Only do this if you already sent a reply yourself (e.g. via the Zoho mail app) — this does not send anything.'
+                    )
+                  )
+                )
+                  markRepliedExternal.mutate(message._id);
+              }}
+              className="btn btn-xs btn-ghost rounded-lg text-white/50"
+              title={t(
+                'adminFeedback.markRepliedTitle',
+                'Use this if you already replied outside the admin panel'
+              )}
+            >
+              {t('adminFeedback.markReplied', 'Mark replied (sent via Zoho)')}
             </button>
           )}
           {message.status !== 'archived' && (
