@@ -56,6 +56,13 @@ export interface IUser extends Document {
    * candidates for the admin's one-time backfill send (adminUsers.service.ts),
    * not to guarantee delivery (email.service.ts never throws either way). */
   welcomeEmailSentAt?: Date | null;
+  /** Servant-only abuse control (adminUsers.service.ts) — blocks sign-in at
+   * both requireAuth (every other authenticated route) and /api/auth/verify
+   * itself. Never a substitute for account deletion: the account and its
+   * data stay intact, just inaccessible, so it's reversible. */
+  disabled: boolean;
+  disabledAt?: Date | null;
+  disabledReason?: string | null;
   salatResetDate?: string;
   salatResetHistory: ISalatResetEntry[];
   totalCount: number;
@@ -104,6 +111,9 @@ const userSchema = new Schema(
     groqApiKeyEnc: { type: String, default: null },
     groqApiKeySetAt: { type: Date, default: null },
     welcomeEmailSentAt: { type: Date, default: null },
+    disabled: { type: Boolean, default: false },
+    disabledAt: { type: Date, default: null },
+    disabledReason: { type: String, default: null, maxlength: 500 },
     salatResetDate: { type: String, default: undefined },
     salatResetHistory: {
       type: [

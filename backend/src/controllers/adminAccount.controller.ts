@@ -114,6 +114,31 @@ export const createHandler = async (
   }
 };
 
+export const setDomainHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { ansarDomain } = req.body as { ansarDomain: 'sadaqah' | 'general' };
+    const account = await adminAccountService.setAdminAccountDomain(
+      req.params.id as string,
+      ansarDomain
+    );
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'account.setDomain',
+      targetType: 'AdminAccount',
+      targetId: String(account._id),
+      metadata: { ansarDomain },
+    });
+    res.json({ ok: true, account: { id: account._id, ansarDomain: account.ansarDomain } });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
 export const setActiveHandler = async (
   req: Request,
   res: Response,

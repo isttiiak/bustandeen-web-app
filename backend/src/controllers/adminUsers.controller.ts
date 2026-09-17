@@ -91,6 +91,50 @@ export const resendWelcomeHandler = async (
   }
 };
 
+export const disableHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const uid = paramString(req.params.uid);
+    const { reason } = req.body as { reason?: string };
+    await adminUsersService.disableUser(uid, reason);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'user.disable',
+      targetType: 'User',
+      targetId: uid,
+      metadata: reason ? { reason } : undefined,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
+export const enableHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const uid = paramString(req.params.uid);
+    await adminUsersService.enableUser(uid);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'user.enable',
+      targetType: 'User',
+      targetId: uid,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
 export const deleteUserHandler = async (
   req: Request,
   res: Response,

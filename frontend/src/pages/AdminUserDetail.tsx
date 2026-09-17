@@ -7,6 +7,8 @@ import {
   useAdminUserDetail,
   useResendWelcomeEmail,
   useDeleteUser,
+  useDisableUser,
+  useEnableUser,
 } from '../hooks/useAdminUsers.js';
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
@@ -25,7 +27,11 @@ export default function AdminUserDetail() {
   const { data: user, isLoading } = useAdminUserDetail(uid);
   const resendWelcome = useResendWelcomeEmail();
   const deleteUser = useDeleteUser();
+  const disableUser = useDisableUser();
+  const enableUser = useEnableUser();
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [disableReason, setDisableReason] = useState('');
+  const [showDisableForm, setShowDisableForm] = useState(false);
 
   const clickDelete = () => {
     if (!confirmDelete) {
@@ -56,13 +62,20 @@ export default function AdminUserDetail() {
 
         {user && (
           <>
-            <div>
-              <h1 className="text-2xl font-black text-white">
-                {user.displayName ||
-                  [user.firstName, user.lastName].filter(Boolean).join(' ') ||
-                  user.email}
-              </h1>
-              <p className="text-white/40 text-sm mt-0.5">{user.email}</p>
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h1 className="text-2xl font-black text-white">
+                  {user.displayName ||
+                    [user.firstName, user.lastName].filter(Boolean).join(' ') ||
+                    user.email}
+                </h1>
+                <p className="text-white/40 text-sm mt-0.5">{user.email}</p>
+              </div>
+              {user.disabled && (
+                <span className="shrink-0 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wide bg-red-500/15 text-red-400">
+                  {t('adminUserDetail.disabledBadge', 'Disabled')}
+                </span>
+              )}
             </div>
 
             <div className="rounded-2xl bg-base-200 border border-base-300 p-4 grid grid-cols-2 gap-4">
@@ -126,6 +139,75 @@ export default function AdminUserDetail() {
                   <p className="text-brand-emerald text-xs">
                     {t('adminUserDetail.resendSent', 'Sent.')}
                   </p>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/[0.04] p-4 space-y-3">
+                <p className="text-white/60 text-sm">
+                  {user.disabled
+                    ? t(
+                        'adminUserDetail.disabledDesc',
+                        'This account is disabled — sign-in is blocked everywhere, but no data was touched. Re-enabling restores access immediately.'
+                      )
+                    : t(
+                        'adminUserDetail.disableDesc',
+                        'Blocks sign-in immediately without deleting any data — reversible, unlike the permanent delete below. Use for abuse, not routine cleanup.'
+                      )}
+                </p>
+                {user.disabled && user.disabledReason && (
+                  <p className="text-white/40 text-xs italic">
+                    {t('adminUserDetail.disabledReasonLabel', 'Reason:')} {user.disabledReason}
+                  </p>
+                )}
+                {user.disabled ? (
+                  <button
+                    onClick={() => enableUser.mutate(uid)}
+                    disabled={enableUser.isPending}
+                    className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white shrink-0"
+                  >
+                    {enableUser.isPending ? '…' : t('adminUserDetail.enable', 'Re-enable account')}
+                  </button>
+                ) : !showDisableForm ? (
+                  <button
+                    onClick={() => setShowDisableForm(true)}
+                    className="btn btn-sm bg-brand-gold/20 hover:bg-brand-gold/30 border-0 text-brand-gold shrink-0"
+                  >
+                    {t('adminUserDetail.disable', 'Disable account')}
+                  </button>
+                ) : (
+                  <div className="space-y-2">
+                    <input
+                      value={disableReason}
+                      onChange={(e) => setDisableReason(e.target.value)}
+                      placeholder={t(
+                        'adminUserDetail.disableReasonPlaceholder',
+                        'Reason (internal note, optional)'
+                      )}
+                      className="input input-sm w-full bg-white/5 border-brand-gold/15 text-white rounded-xl"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          disableUser.mutate(
+                            { uid, reason: disableReason.trim() || undefined },
+                            { onSuccess: () => setShowDisableForm(false) }
+                          )
+                        }
+                        disabled={disableUser.isPending}
+                        className="btn btn-sm bg-brand-gold/80 hover:bg-brand-gold border-0 text-black font-bold"
+                      >
+                        {disableUser.isPending
+                          ? '…'
+                          : t('adminUserDetail.confirmDisable', 'Confirm disable')}
+                      </button>
+                      <button
+                        onClick={() => setShowDisableForm(false)}
+                        className="btn btn-sm btn-ghost text-white/50"
+                      >
+                        {t('adminZikr.cancel', 'Cancel')}
+                      </button>
+                    </div>
+                  </div>
                 )}
               </div>
 

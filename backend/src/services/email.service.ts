@@ -64,6 +64,34 @@ const resolveSenderCreds = (sender: EmailSender): { user?: string; pass?: string
   return { user: process.env[cfg.user], pass: process.env[cfg.pass] };
 };
 
+export interface SenderDiagnostics {
+  /** Whether SMTP host/port + a usable user/pass are present at all. */
+  configured: boolean;
+  /** True only when this sender's OWN dedicated env-var pair is set — false
+   *  means it's silently falling back to the shared ZOHO_SMTP_USER mailbox,
+   *  which is easy to miss (nothing errors; mail just goes out under the
+   *  wrong "From" address with the right-looking display name). */
+  usingDedicated: boolean;
+  /** The mailbox address actually used (safe to show — it's the public
+   *  "From" address every recipient already sees), or null if unconfigured. */
+  resolvedUser: string | null;
+}
+
+/** Exposed for the ops-health page — never returns the password, only which
+ *  mailbox address a sender resolves to and whether that's its own dedicated
+ *  one. Two senders resolving to the SAME resolvedUser (most commonly
+ *  'ansar' and 'sadaqah' both silently landing on the shared ZOHO_SMTP_USER)
+ *  is the exact bug class this exists to catch. */
+export const getSenderDiagnostics = (sender: EmailSender): SenderDiagnostics => {
+  const cfg = SENDER_ENV[sender];
+  const dedicatedUser = cfg.dedicatedUser ? process.env[cfg.dedicatedUser] : undefined;
+  const dedicatedPass = cfg.dedicatedPass ? process.env[cfg.dedicatedPass] : undefined;
+  const usingDedicated = !!(dedicatedUser && dedicatedPass);
+  const { user, pass } = resolveSenderCreds(sender);
+  const configured = !!(process.env.ZOHO_SMTP_HOST && process.env.ZOHO_SMTP_PORT && user && pass);
+  return { configured, usingDedicated, resolvedUser: configured ? (user ?? null) : null };
+};
+
 const transporters: Partial<Record<EmailSender, Transporter | null>> = {};
 
 const getTransporter = (sender: EmailSender): Transporter | null => {

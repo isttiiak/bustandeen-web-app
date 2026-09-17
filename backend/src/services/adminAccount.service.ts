@@ -166,6 +166,26 @@ export const createAdminAccount = async (input: {
 };
 
 /**
+ * Servant-only — reassigns an existing Ansar to a different operational area
+ * (e.g. sadaqah → general or vice versa). Never valid for a 'servant' row
+ * (the Servant always bypasses domain scoping entirely, so it has no
+ * meaningful domain to set) — enforced here rather than trusting the caller.
+ */
+export const setAdminAccountDomain = async (
+  id: string,
+  ansarDomain: AnsarDomain
+): Promise<IAdminAccount> => {
+  const account = await AdminAccount.findById(id);
+  if (!account) throw new AdminAccountError('Admin account not found', 404);
+  if (account.role !== 'ansar') {
+    throw new AdminAccountError('Only an Ansar account has a reassignable domain', 400);
+  }
+  account.ansarDomain = ansarDomain;
+  await account.save();
+  return account;
+};
+
+/**
  * Activate/deactivate — the normal way to remove an Ansar's access. Does not
  * delete the Firebase account itself (nothing else in the app depends on
  * that identity, but there's no reason to destroy it either); it just stops

@@ -6,6 +6,10 @@ import {
   UsersIcon,
   ShieldCheckIcon,
   EnvelopeIcon,
+  SpeakerWaveIcon,
+  ClipboardDocumentListIcon,
+  HeartIcon,
+  MegaphoneIcon,
 } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
 import { useAdminStore } from '../store/useAdminStore.js';
@@ -65,6 +69,11 @@ export default function AdminHome() {
   const { t } = useTranslation();
   const { role, ansarDomain } = useAdminStore();
   const isServant = role === 'servant';
+  // Same domain-visibility rule AdminLayout.tsx's top nav uses — this card
+  // grid must match it exactly, otherwise a domain-scoped Ansar sees a card
+  // for a section the API will 403 them out of the moment they click it.
+  const canSeeSadaqah = isServant || ansarDomain === 'sadaqah';
+  const canSeeZikrRequests = isServant || ansarDomain === 'general';
   const { data: stats } = useAdminStats();
 
   return (
@@ -152,30 +161,47 @@ export default function AdminHome() {
       )}
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <AdminCard
-          to="/admin/sadaqah"
-          icon={BanknotesIcon}
-          title={t('adminHome.sadaqahTitle', 'Sadaqah management')}
-          description={t(
-            'adminHome.sadaqahDesc',
-            'Review donations, expenses, and quarterly financial stats.'
-          )}
-        />
-        <AdminCard
-          to="/admin/zikr-requests"
-          icon={InboxStackIcon}
-          title={t('adminHome.zikrTitle', 'Zikr requests')}
-          description={t(
-            'adminHome.zikrDesc',
-            'Approve or reject user-submitted zikr/dua suggestions.'
-          )}
-        />
-        <AdminCard
-          to="/admin/feedback"
-          icon={EnvelopeIcon}
-          title={t('adminHome.feedbackTitle', 'Feedback & contact')}
-          description={t('adminHome.feedbackDesc', 'Read and reply to user messages.')}
-        />
+        {canSeeSadaqah && (
+          <AdminCard
+            to="/admin/sadaqah"
+            icon={BanknotesIcon}
+            title={t('adminHome.sadaqahTitle', 'Sadaqah management')}
+            description={t(
+              'adminHome.sadaqahDesc',
+              'Review donations, expenses, and quarterly financial stats.'
+            )}
+          />
+        )}
+        {canSeeZikrRequests && (
+          <AdminCard
+            to="/admin/zikr-requests"
+            icon={InboxStackIcon}
+            title={t('adminHome.zikrTitle', 'Zikr requests')}
+            description={t(
+              'adminHome.zikrDesc',
+              'Approve or reject user-submitted zikr/dua suggestions.'
+            )}
+          />
+        )}
+        {canSeeZikrRequests && (
+          <AdminCard
+            to="/admin/feedback"
+            icon={EnvelopeIcon}
+            title={t('adminHome.feedbackTitle', 'Feedback & contact')}
+            description={t('adminHome.feedbackDesc', 'Read and reply to user messages.')}
+          />
+        )}
+        {canSeeZikrRequests && (
+          <AdminCard
+            to="/admin/zikr-audio"
+            icon={SpeakerWaveIcon}
+            title={t('adminHome.zikrAudioTitle', 'Zikr audio tracker')}
+            description={t(
+              'adminHome.zikrAudioDesc',
+              'Track and source recitation audio for the zikr library.'
+            )}
+          />
+        )}
         {isServant && (
           <AdminCard
             to="/admin/users"
@@ -192,7 +218,40 @@ export default function AdminHome() {
             to="/admin/accounts"
             icon={ShieldCheckIcon}
             title={t('adminHome.accountsTitle', 'Manage Ansars')}
-            description={t('adminHome.accountsDesc', 'Add or deactivate Ansar admin accounts.')}
+            description={t(
+              'adminHome.accountsDesc',
+              'Add, deactivate, or change the domain of an Ansar account.'
+            )}
+          />
+        )}
+        {isServant && (
+          <AdminCard
+            to="/admin/audit-log"
+            icon={ClipboardDocumentListIcon}
+            title={t('adminHome.auditLogTitle', 'Audit log')}
+            description={t('adminHome.auditLogDesc', 'Every mutating admin action, who and when.')}
+          />
+        )}
+        {isServant && (
+          <AdminCard
+            to="/admin/ops-health"
+            icon={HeartIcon}
+            title={t('adminHome.opsHealthTitle', 'System & ops health')}
+            description={t(
+              'adminHome.opsHealthDesc',
+              'Email failures, DB/Firebase status, rate-limit hits.'
+            )}
+          />
+        )}
+        {isServant && (
+          <AdminCard
+            to="/admin/broadcast"
+            icon={MegaphoneIcon}
+            title={t('adminHome.broadcastTitle', 'Broadcast')}
+            description={t(
+              'adminHome.broadcastDesc',
+              'Push a dismissible banner to every visitor.'
+            )}
           />
         )}
       </div>

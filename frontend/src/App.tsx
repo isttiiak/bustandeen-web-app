@@ -1,5 +1,5 @@
 ﻿import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -565,6 +565,12 @@ export default function App() {
             console.error('Verify failed:', { status: verifyRes.status, body: errorText });
             // Only sign out on genuine auth failures — not rate limits (429) or server errors (5xx)
             if (verifyRes.status === 401 || verifyRes.status === 403) {
+              if (errorText.includes('account_disabled')) {
+                toast.error(
+                  'This account has been disabled. Contact ansar@bustandeen.com if this seems wrong.',
+                  { duration: 8000 }
+                );
+              }
               await auth.signOut();
               return;
             }

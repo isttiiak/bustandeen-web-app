@@ -23,3 +23,12 @@ export const setAdminAccountActiveSchema = z.object({
     active: z.boolean(),
   }),
 });
+
+export const setAdminAccountDomainSchema = z.object({
+  params: z.object({
+    id: z.string().min(1),
+  }),
+  body: z.object({
+    ansarDomain: z.enum(['sadaqah', 'general']),
+  }),
+});

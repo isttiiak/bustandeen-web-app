@@ -7,8 +7,10 @@ import {
   useAdminAccounts,
   useCreateAdminAccount,
   useSetAdminAccountActive,
+  useSetAdminAccountDomain,
   AdminAccountListItem,
 } from '../hooks/useAdminAccounts.js';
+import type { AnsarDomain } from '../store/useAdminStore.js';
 
 function AddAnsarForm() {
   const { t } = useTranslation();
@@ -128,6 +130,7 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
   const { t } = useTranslation();
   const myEmail = useAdminStore((s) => s.email);
   const setActive = useSetAdminAccountActive();
+  const setDomain = useSetAdminAccountDomain();
   const isSelf = account.email === myEmail;
 
   return (
@@ -145,11 +148,23 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
             ? t('adminGate.servant', 'Servant')
             : t('adminGate.ansar', 'Ansar')}
         </span>
-        {account.role === 'ansar' && account.ansarDomain && (
-          <span className="ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-white/10 text-white/50">
-            {account.ansarDomain === 'sadaqah'
-              ? t('adminAccounts.domainSadaqahBadge', 'Sadaqah')
-              : t('adminAccounts.domainGeneralBadge', 'General')}
+      </td>
+      <td className="px-3 py-2">
+        {account.role === 'ansar' ? (
+          <select
+            value={account.ansarDomain ?? 'general'}
+            onChange={(e) =>
+              setDomain.mutate({ id: account.id, ansarDomain: e.target.value as AnsarDomain })
+            }
+            disabled={setDomain.isPending}
+            className="select select-xs bg-white/5 border-brand-emerald/15 text-white/70 rounded-lg disabled:opacity-40"
+          >
+            <option value="general">{t('adminAccounts.domainGeneralBadge', 'General')}</option>
+            <option value="sadaqah">{t('adminAccounts.domainSadaqahBadge', 'Sadaqah')}</option>
+          </select>
+        ) : (
+          <span className="text-white/25 text-xs">
+            {t('adminAccounts.allAccess', 'All access')}
           </span>
         )}
       </td>
@@ -202,7 +217,7 @@ export default function AdminAccounts() {
           <p className="text-sm text-white/50 mt-1">
             {t(
               'adminAccounts.subtitle',
-              'Servant-only. Add a new Ansar or revoke an existing one — deactivating takes effect immediately.'
+              'Servant-only. Add a new Ansar, change which area they manage, or revoke an existing one — every change takes effect immediately.'
             )}
           </p>
         </div>
@@ -215,6 +230,7 @@ export default function AdminAccounts() {
               <tr className="text-left text-white/40 text-xs uppercase tracking-wide border-b border-base-300">
                 <th className="px-3 py-2">{t('adminAccounts.colEmail', 'Email')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colRole', 'Role')}</th>
+                <th className="px-3 py-2">{t('adminAccounts.colDomain', 'Domain')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colStatus', 'Status')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colLastLogin', 'Last login')}</th>
                 <th className="px-3 py-2" />
@@ -223,7 +239,7 @@ export default function AdminAccounts() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={5} className="text-center text-white/30 py-6">
+                  <td colSpan={6} className="text-center text-white/30 py-6">
                     {t('common.loading', 'Loading…')}
                   </td>
                 </tr>

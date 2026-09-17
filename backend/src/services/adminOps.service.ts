@@ -2,34 +2,17 @@ import mongoose from 'mongoose';
 import EmailFailureLog from '../models/EmailFailureLog.js';
 import RateLimitHit from '../models/RateLimitHit.js';
 import { isFirebaseInitialized } from '../config/firebaseAdmin.js';
-import type { EmailSender } from './email.service.js';
+import { getSenderDiagnostics, EmailSender, SenderDiagnostics } from './email.service.js';
 
 const SENDERS: EmailSender[] = ['sadaqah', 'ansar', 'istiak'];
 
-/** Whether each named sender has usable SMTP credentials configured — never
- *  returns the credential values themselves, just a boolean per sender.
- *  Mirrors resolveSenderCreds's env-var lookup in email.service.ts without
- *  exporting that internal helper. */
-const senderConfigured = (sender: EmailSender): boolean => {
-  const dedicated =
-    sender === 'sadaqah'
-      ? ['SADAQAH_SMTP_USER', 'SADAQAH_SMTP_PASS']
-      : sender === 'ansar'
-        ? ['ANSAR_SMTP_USER', 'ANSAR_SMTP_PASS']
-        : null;
-  if (dedicated && process.env[dedicated[0]] && process.env[dedicated[1]]) return true;
-  const fallbackUser = sender === 'istiak' ? 'ISTIAK_SMTP_USER' : 'ZOHO_SMTP_USER';
-  const fallbackPass = sender === 'istiak' ? 'ISTIAK_SMTP_PASS' : 'ZOHO_SMTP_PASS';
-  return !!(
-    process.env.ZOHO_SMTP_HOST &&
-    process.env.ZOHO_SMTP_PORT &&
-    process.env[fallbackUser] &&
-    process.env[fallbackPass]
-  );
-};
-
 export interface OpsHealth {
-  emailSendersConfigured: Record<EmailSender, boolean>;
+  emailSenders: Record<EmailSender, SenderDiagnostics>;
+  /** Senders that resolve to the identical mailbox address — e.g. 'ansar'
+   *  silently falling back to the same shared credential 'sadaqah' already
+   *  uses. Each entry is the shared address plus which senders collide on
+   *  it; empty when every configured sender has its own distinct mailbox. */
+  senderCollisions: { resolvedUser: string; senders: EmailSender[] }[];
   recentEmailFailures: {
     sender: string;
     to: string;
@@ -47,12 +30,23 @@ export const getOpsHealth = async (): Promise<OpsHealth> => {
     .limit(20)
     .select('sender to subject error createdAt');
 
-  const emailSendersConfigured = Object.fromEntries(
-    SENDERS.map((s) => [s, senderConfigured(s)])
-  ) as Record<EmailSender, boolean>;
+  const emailSenders = Object.fromEntries(
+    SENDERS.map((s) => [s, getSenderDiagnostics(s)])
+  ) as Record<EmailSender, SenderDiagnostics>;
+
+  const byAddress = new Map<string, EmailSender[]>();
+  for (const s of SENDERS) {
+    const addr = emailSenders[s].resolvedUser;
+    if (!addr) continue;
+    byAddress.set(addr, [...(byAddress.get(addr) ?? []), s]);
+  }
+  const senderCollisions = [...byAddress.entries()]
+    .filter(([, senders]) => senders.length > 1)
+    .map(([resolvedUser, senders]) => ({ resolvedUser, senders }));
 
   return {
-    emailSendersConfigured,
+    emailSenders,
+    senderCollisions,
     recentEmailFailures,
     mongoConnected: mongoose.connection.readyState === 1,
     firebaseInitialized: isFirebaseInitialized(),

@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.30.0 — Admin panel: domain-leak fixes, sender-collision detection, navbar redesign, account disable — 2026-09-17
+
+Follow-up to v5.29.0 after a live review surfaced real bugs in the rich-admin-panel batch.
+
+### Fixed
+
+- **Cross-domain nav leak on `/admin` itself.** `AdminHome.tsx`'s card grid (and stat CTAs) rendered a Sadaqah card to a general-domain Ansar and a Zikr Requests/Feedback card to a sadaqah-domain Ansar — the top nav (`AdminLayout.tsx`) was already domain-scoped correctly, but the home page's own card grid never was, going all the way back to the original v5.27.0 domain split. Every card now uses the exact same `canSeeSadaqah`/`canSeeZikrRequests` gate the nav uses.
+- **Email sender collision — `ansar`-sent mail was silently going out as `sadaqah@bustandeen.com`.** Root cause: `ansar` has no dedicated `ANSAR_SMTP_USER`/`PASS` set, so it falls back to the shared `ZOHO_SMTP_USER` credential — which turns out to be `sadaqah@bustandeen.com`'s own mailbox. The display name ("Bustandeen Ansar") was correct; the actual "From" address wasn't. `email.service.ts` now exposes `getSenderDiagnostics()` (configured / using-its-own-dedicated-mailbox / resolved address), and `/admin/ops-health` shows an explicit collision warning naming exactly which senders share a mailbox and what env vars to set to fix it — this can't be fixed in code alone, it needs `ANSAR_SMTP_USER`/`ANSAR_SMTP_PASS` set in the deployment.
+
+### Added
+
+- **Manage Ansars: domain reassignment.** `PATCH /api/admin/accounts/:id/domain` (Servant-only) lets a Servant move an existing Ansar between `sadaqah` and `general` after creation — previously this was create-time-only. New "Domain" column with an inline selector in `/admin/accounts`.
+- **Account disable/enable (Servant-only).** New `User.disabled` field, checked in `requireAuth` (every authenticated route) and `/api/auth/verify` itself — blocks sign-in immediately without touching any data, fully reversible. New actions on `/admin/users/:uid`; the frontend shows a clear "account disabled" toast and signs the user out if they're already mid-session.
+- **Admin navbar redesign.** Identity/logout now sits in its own row, never wrapping into the tab row. Servant-only secondary tools (Users, Manage Ansars, Audit Log, Ops Health, Broadcast) collapsed into a single "Tools" dropdown instead of 5 extra flat tabs — an Ansar's nav now shows only what their domain can access (1–4 tabs), a Servant sees the review tabs plus one Tools menu.
+- **About page:** removed the GitHub repo link at the bottom; replaced with a short founder note and a direct `mailto:istiak@bustandeen.com` link.
+
 ## v5.29.0 — Rich admin panel: audit log, feedback inbox, donor analytics, ops health, broadcast — 2026-09-17
 
 ### Added

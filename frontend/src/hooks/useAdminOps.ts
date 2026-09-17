@@ -1,8 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api.js';
 
+export interface SenderDiagnostics {
+  configured: boolean;
+  usingDedicated: boolean;
+  resolvedUser: string | null;
+}
+
 export interface OpsHealth {
-  emailSendersConfigured: Record<'sadaqah' | 'ansar' | 'istiak', boolean>;
+  emailSenders: Record<'sadaqah' | 'ansar' | 'istiak', SenderDiagnostics>;
+  senderCollisions: { resolvedUser: string; senders: string[] }[];
   recentEmailFailures: {
     sender: string;
     to: string;

@@ -5,6 +5,7 @@ import {
   decodeUnverifiedJwt,
 } from '../config/firebaseAdmin.js';
 import AdminAccount from '../models/AdminAccount.js';
+import User from '../models/User.js';
 
 /**
  * Whether the dev-bypass auth path may run at all. Requires BOTH an explicit
@@ -18,6 +19,20 @@ const devAuthBypassAllowed = (): boolean =>
   process.env.NODE_ENV !== 'production' &&
   process.env.DEV_AUTH_BYPASS === '1' &&
   !process.env.VERCEL;
+
+/**
+ * A single indexed, projection-only lookup (User.uid is unique-indexed) —
+ * runs on every authenticated request, which is a real but small added cost
+ * accepted deliberately so a Servant-disabled account is actually locked out
+ * everywhere, not just wherever a developer remembered to add the check.
+ * Returns false (never blocks) when no User doc exists yet — a brand-new
+ * sign-in's first-ever call may race ahead of /api/auth/verify's upsert, and
+ * "not yet provisioned" must never be confused with "disabled".
+ */
+const isUserDisabled = async (uid: string): Promise<boolean> => {
+  const user = await User.findOne({ uid }).select('disabled').lean();
+  return user?.disabled === true;
+};
 
 export const requireAuth = async (
   req: Request,
@@ -34,6 +49,10 @@ export const requireAuth = async (
 
     if (isFirebaseInitialized()) {
       const decoded = await verifyFirebaseToken(token);
+      if (await isUserDisabled(decoded.uid)) {
+        res.status(403).json({ ok: false, error: 'account_disabled' });
+        return;
+      }
       req.user = { ...(decoded as Record<string, unknown>), uid: decoded.uid };
       return next();
     }
@@ -43,6 +62,10 @@ export const requireAuth = async (
       const payload = decodeUnverifiedJwt(token);
       if (!payload?.['uid']) {
         res.status(401).json({ ok: false, error: 'Invalid token' });
+        return;
+      }
+      if (await isUserDisabled(payload['uid'] as string)) {
+        res.status(403).json({ ok: false, error: 'account_disabled' });
         return;
       }
       req.user = { uid: payload['uid'] as string, ...payload };

@@ -11,7 +11,7 @@ const httpError = (status: number, message: string): Error & { status: number } 
 const MISSING_WELCOME_FILTER = { welcomeEmailSentAt: { $exists: false } };
 
 const USER_LIST_FIELDS =
-  'uid email displayName firstName lastName gender country city createdAt aiEnabled welcomeEmailSentAt';
+  'uid email displayName firstName lastName gender country city createdAt aiEnabled welcomeEmailSentAt disabled';
 
 export interface UserListResult {
   users: Pick<
@@ -27,6 +27,7 @@ export interface UserListResult {
     | 'createdAt'
     | 'aiEnabled'
     | 'welcomeEmailSentAt'
+    | 'disabled'
   >[];
   total: number;
   page: number;
@@ -71,7 +72,7 @@ export const countMissingWelcomeEmail = async (): Promise<number> =>
   User.countDocuments(MISSING_WELCOME_FILTER);
 
 const USER_DETAIL_FIELDS =
-  'uid email displayName firstName lastName gender country city createdAt updatedAt aiEnabled welcomeEmailSentAt totalCount zikrTypes salatResetDate';
+  'uid email displayName firstName lastName gender country city createdAt updatedAt aiEnabled welcomeEmailSentAt totalCount zikrTypes salatResetDate disabled disabledAt disabledReason';
 
 export type UserDetail = Pick<
   IUser,
@@ -90,6 +91,9 @@ export type UserDetail = Pick<
   | 'totalCount'
   | 'zikrTypes'
   | 'salatResetDate'
+  | 'disabled'
+  | 'disabledAt'
+  | 'disabledReason'
 >;
 
 /** Single-user profile summary for the Servant-only detail view — not a full
@@ -109,6 +113,25 @@ export const resendWelcomeEmail = async (uid: string): Promise<void> => {
   if (!user) throw httpError(404, 'User not found');
   if (!user.email) throw httpError(400, 'User has no email on file');
   await sendWelcomeEmail(user.uid, user.email, user.displayName || undefined);
+};
+
+/** Servant-only — blocks sign-in without touching the account's data (see
+ *  User.disabled, requireAuth, and /api/auth/verify). Reversible: use
+ *  enableUser to restore access. */
+export const disableUser = async (uid: string, reason: string | undefined): Promise<void> => {
+  const result = await User.updateOne(
+    { uid },
+    { $set: { disabled: true, disabledAt: new Date(), disabledReason: reason ?? null } }
+  );
+  if (result.matchedCount === 0) throw httpError(404, 'User not found');
+};
+
+export const enableUser = async (uid: string): Promise<void> => {
+  const result = await User.updateOne(
+    { uid },
+    { $set: { disabled: false, disabledAt: null, disabledReason: null } }
+  );
+  if (result.matchedCount === 0) throw httpError(404, 'User not found');
 };
 
 /** Delegates to the same full cross-collection purge + Firebase deleteUser

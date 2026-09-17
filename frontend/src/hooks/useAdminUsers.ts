@@ -13,6 +13,7 @@ export interface AdminUserListItem {
   createdAt: string;
   aiEnabled: boolean;
   welcomeEmailSentAt?: string | null;
+  disabled: boolean;
 }
 
 interface AdminUserListResult {
@@ -53,6 +54,9 @@ export interface AdminUserDetail extends AdminUserListItem {
   totalCount: number;
   zikrTypes: { name: string }[];
   salatResetDate?: string;
+  disabled: boolean;
+  disabledAt?: string | null;
+  disabledReason?: string | null;
 }
 
 /** Servant-only single-user profile summary — not a full data editor. */
@@ -81,6 +85,27 @@ export function useResendWelcomeEmail() {
 export function useDeleteUser() {
   return useMutation({
     mutationFn: (uid: string) => api.delete(`/api/admin/users/${uid}`),
+  });
+}
+
+export function useDisableUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ uid, reason }: { uid: string; reason?: string }) =>
+      api.post(`/api/admin/users/${uid}/disable`, { reason }),
+    onSuccess: (_data, { uid }) => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'detail', uid] });
+    },
+  });
+}
+
+export function useEnableUser() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (uid: string) => api.post(`/api/admin/users/${uid}/enable`),
+    onSuccess: (_data, uid) => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'detail', uid] });
+    },
   });
 }
 

@@ -86,7 +86,17 @@ export default function AdminUsers() {
                   <td className="px-3 py-2 text-white/60">
                     {new Date(u.createdAt).toLocaleDateString()}
                   </td>
-                  <td className="px-3 py-2">{u.welcomeEmailSentAt ? '✓' : '—'}</td>
+                  <td className="px-3 py-2">
+                    {u.disabled ? (
+                      <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-red-500/15 text-red-400">
+                        {t('adminUsers.disabled', 'Disabled')}
+                      </span>
+                    ) : u.welcomeEmailSentAt ? (
+                      '✓'
+                    ) : (
+                      '—'
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -37,6 +37,25 @@ export default function AdminOpsHealth() {
 
         {health && (
           <>
+            {health.senderCollisions.length > 0 && (
+              <div className="rounded-2xl border border-red-500/30 bg-red-500/[0.06] p-4 space-y-2">
+                <p className="text-red-300 font-bold text-sm">
+                  ⚠️ {t('adminOpsHealth.collisionTitle', 'Email senders sharing one mailbox')}
+                </p>
+                <p className="text-white/50 text-xs leading-relaxed">
+                  {t(
+                    'adminOpsHealth.collisionDesc',
+                    'These senders don\'t have their own dedicated mailbox yet, so they\'re silently falling back to the same shared credential — mail shows the right display name but the wrong "From" address. Set the missing dedicated SMTP env vars (e.g. ANSAR_SMTP_USER/PASS) in the backend deployment to fix.'
+                  )}
+                </p>
+                {health.senderCollisions.map((c) => (
+                  <p key={c.resolvedUser} className="text-white/70 text-xs font-mono">
+                    {c.senders.join(' + ')} → <span className="text-red-300">{c.resolvedUser}</span>
+                  </p>
+                ))}
+              </div>
+            )}
+
             <section className="space-y-2">
               <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
                 {t('adminOpsHealth.infra', 'Infrastructure')}
@@ -44,8 +63,46 @@ export default function AdminOpsHealth() {
               <div className="flex flex-wrap gap-2">
                 <StatusPill ok={health.mongoConnected} label="MongoDB" />
                 <StatusPill ok={health.firebaseInitialized} label="Firebase Admin" />
-                {Object.entries(health.emailSendersConfigured).map(([sender, ok]) => (
-                  <StatusPill key={sender} ok={ok} label={`SMTP: ${sender}`} />
+              </div>
+            </section>
+
+            <section className="space-y-2">
+              <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+                {t('adminOpsHealth.emailSenders', 'Email senders')}
+              </h2>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-2">
+                {Object.entries(health.emailSenders).map(([sender, diag]) => (
+                  <div
+                    key={sender}
+                    className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
+                  >
+                    <div>
+                      <p className="text-white/80 text-sm font-bold">{sender}</p>
+                      <p className="text-white/40 text-xs font-mono">
+                        {diag.resolvedUser ?? t('adminOpsHealth.notConfigured', 'not configured')}
+                      </p>
+                    </div>
+                    <div className="flex gap-1.5 shrink-0">
+                      <StatusPill
+                        ok={diag.configured}
+                        label={
+                          diag.configured
+                            ? t('adminOpsHealth.configured', 'configured')
+                            : t('adminOpsHealth.missing', 'missing')
+                        }
+                      />
+                      {diag.configured && sender !== 'istiak' && (
+                        <StatusPill
+                          ok={diag.usingDedicated}
+                          label={
+                            diag.usingDedicated
+                              ? t('adminOpsHealth.dedicated', 'dedicated mailbox')
+                              : t('adminOpsHealth.sharedFallback', 'shared fallback')
+                          }
+                        />
+                      )}
+                    </div>
+                  </div>
                 ))}
               </div>
             </section>

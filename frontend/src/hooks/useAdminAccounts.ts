@@ -58,3 +58,16 @@ export function useSetAdminAccountActive() {
     },
   });
 }
+
+/** Servant-only — reassigns an existing Ansar's operational area. Only ever
+ *  valid for role:'ansar' rows; the backend rejects it for a Servant row. */
+export function useSetAdminAccountDomain() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ansarDomain }: { id: string; ansarDomain: AnsarDomain }) =>
+      api.patch(`/api/admin/accounts/${id}/domain`, { ansarDomain }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
+    },
+  });
+}
