@@ -74,6 +74,23 @@ export interface AyahShareCardProps {
 }
 
 /**
+ * 1.0 = the original hand-tuned sizes below, for a short ayah. Scales down
+ * for longer content so the fixed 1080×1080 capture frame doesn't overflow —
+ * html-to-image has no scroll or reflow-to-fit, so anything that doesn't fit
+ * the frame is just clipped or overlaps the footer. Anchored on the Quran's
+ * actual longest ayah (2:282, ~1300 combined characters with a translation)
+ * landing near the bottom of the range rather than falling off it entirely.
+ */
+function fontScale(charCount: number): number {
+  const SHORT = 150;
+  const LONG = 1100;
+  const MIN_SCALE = 0.5;
+  if (charCount <= SHORT) return 1;
+  if (charCount >= LONG) return MIN_SCALE;
+  return 1 - ((charCount - SHORT) / (LONG - SHORT)) * (1 - MIN_SCALE);
+}
+
+/**
  * The rasterized image itself (1080×1080, fixed px — no Tailwind/viewport
  * units) — captured via html-to-image. Kept a plain inline-styled node
  * because html-to-image clones computed styles, and fixed px avoids any
@@ -85,6 +102,20 @@ const AyahShareCard = forwardRef<HTMLDivElement, AyahShareCardProps>(function Ay
 ) {
   const arabicFont = getArabicFont();
   const ayahRef = ayah ? `${surahNo}:${ayah.numberInSurah}` : `${surahNo}`;
+
+  // Arabic glyphs (with diacritics) run visually "heavier" per character than
+  // Latin/Bengali text at the same font size, hence the 1.4x weighting.
+  const contentLength =
+    (ayah?.arabic?.length ?? 0) * 1.4 +
+    (showTransliteration ? (ayah?.transliteration?.length ?? 0) : 0) +
+    (ayah?.translations?.reduce((sum, tr) => sum + tr.length, 0) ?? 0);
+  const scale = fontScale(contentLength);
+
+  const arabicSize = Math.round(52 * scale);
+  const arabicLineHeight = 1.5 + 0.4 * scale;
+  const translitSize = Math.round(24 * scale);
+  const translationSize = Math.round(26 * scale);
+  const bodyGap = Math.round(36 * scale);
 
   return (
     <div
@@ -100,6 +131,11 @@ const AyahShareCard = forwardRef<HTMLDivElement, AyahShareCardProps>(function Ay
         background: theme.background,
         border: `1px solid ${theme.border}`,
         fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
+        // Last-resort safety net, not the primary fix (that's the scaling
+        // above) — guarantees a rare extreme case clips cleanly at the
+        // frame's own edge instead of overlapping the footer or bleeding
+        // past the 1080×1080 capture bounds.
+        overflow: 'hidden',
       }}
     >
       {/* header */}
@@ -116,8 +152,10 @@ const AyahShareCard = forwardRef<HTMLDivElement, AyahShareCardProps>(function Ay
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 36,
+          gap: bodyGap,
           textAlign: 'center',
+          minHeight: 0,
+          overflow: 'hidden',
         }}
       >
         <p
@@ -125,8 +163,8 @@ const AyahShareCard = forwardRef<HTMLDivElement, AyahShareCardProps>(function Ay
           lang="ar"
           style={{
             fontFamily: arabicFont.stack,
-            fontSize: 52,
-            lineHeight: 1.9,
+            fontSize: arabicSize,
+            lineHeight: arabicLineHeight,
             color: '#f1f5f9',
             margin: 0,
           }}
@@ -138,10 +176,14 @@ const AyahShareCard = forwardRef<HTMLDivElement, AyahShareCardProps>(function Ay
             style={{
               color: 'rgba(245,158,11,0.8)',
               fontStyle: 'italic',
-              fontSize: 24,
+              fontSize: translitSize,
               lineHeight: 1.6,
               margin: 0,
               maxWidth: 820,
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
             }}
           >
             {ayah.transliteration}
@@ -153,9 +195,13 @@ const AyahShareCard = forwardRef<HTMLDivElement, AyahShareCardProps>(function Ay
               key={i}
               style={{
                 color: i === 0 ? 'rgba(241,245,249,0.8)' : '#94a3b8',
-                fontSize: 26,
+                fontSize: translationSize,
                 lineHeight: 1.65,
                 margin: 0,
+                display: '-webkit-box',
+                WebkitLineClamp: 5,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
               }}
             >
               {tr}

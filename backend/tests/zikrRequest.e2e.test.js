@@ -124,6 +124,11 @@ describe('Zikr request API', () => {
       });
     expect(res.status).toBe(200);
     expect(res.body.request.status).toBe('approved');
+    // SMTP is unconfigured in the test env, so the notification to
+    // u1@test.dev fails to send — but approving (creating the library item)
+    // is a real editorial decision independent of that notification, so it
+    // must still go through; the failed send only shows up in this flag.
+    expect(res.body.emailSent).toBe(false);
 
     const lib = await request(app).get('/api/zikr/library');
     expect(lib.status).toBe(200);
@@ -184,6 +189,10 @@ describe('Zikr request API', () => {
       .send({ adminNote: 'Could not verify the source' });
     expect(res.status).toBe(200);
     expect(res.body.request.status).toBe('rejected');
+    // No emailBody was sent, so nothing was even attempted — emailSent stays
+    // true (there's nothing to report as failed), distinct from the
+    // approve case above where a send was attempted and failed.
+    expect(res.body.emailSent).toBe(true);
 
     const lib = await request(app).get('/api/zikr/library');
     expect(lib.body.items.some((i) => i.name === 'A rejected suggestion')).toBe(false);

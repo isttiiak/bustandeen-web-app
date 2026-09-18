@@ -154,6 +154,12 @@ describe('Sadaqah admin API', () => {
     expect(verify.status).toBe(200);
     expect(verify.body.donation.status).toBe('verified');
     expect(verify.body.donation.verifiedBy).toBe(ADMIN_EMAIL);
+    // SMTP is unconfigured in the test env (see adminComposeEmail.e2e's
+    // equivalent note) — sendMail no-ops and returns null. Verifying is a
+    // real administrative fact independent of the notification email, so
+    // the status change must still go through; the failed send is only
+    // surfaced via this flag, never by rolling back the verification.
+    expect(verify.body.emailSent).toBe(false);
 
     const stats = await request(app).get('/api/sadaqah/stats');
     expect(stats.body.totalVerifiedAmount).toBe(donation.amount);
@@ -199,6 +205,9 @@ describe('Sadaqah admin API', () => {
     expect(reject.status).toBe(200);
     expect(reject.body.donation.status).toBe('rejected');
     expect(reject.body.donation.rejectionReason).toMatch(/no matching/i);
+    // Same as verify above — the rejection itself must persist regardless of
+    // whether the notification email actually sent.
+    expect(reject.body.emailSent).toBe(false);
 
     const after = await request(app).get('/api/sadaqah/stats');
     expect(after.body.totalVerifiedAmount).toBe(before.body.totalVerifiedAmount);

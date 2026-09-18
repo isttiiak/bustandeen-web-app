@@ -173,12 +173,26 @@ export interface ApproveZikrRequestInput {
   emailBody: string;
 }
 
+export interface ZikrRequestActionResult {
+  request: IZikrRequest;
+  /** Whether the approval/rejection email actually went out. `approved`/
+   *  `rejected` is a real administrative fact (the library entry was
+   *  created, or the reviewer decided against it) independent of whether the
+   *  requester got notified — so a failed send does NOT undo the review the
+   *  way a failed feedback reply does (there, replying IS the entire
+   *  action). Defaults to `true` when there was nothing to send (no
+   *  userEmail, or — for reject — no emailBody), since nothing failed. This
+   *  flag exists so an actual send failure is surfaced to the admin instead
+   *  of silently swallowed. */
+  emailSent: boolean;
+}
+
 export const approveRequest = async (
   id: string,
   adminEmail: string,
   input: ApproveZikrRequestInput,
   sender: EmailSender = 'ansar'
-): Promise<IZikrRequest> => {
+): Promise<ZikrRequestActionResult> => {
   const request = await findPendingOrThrow(id);
 
   const libraryItem = await GlobalZikrLibraryItem.create({
@@ -200,12 +214,13 @@ export const approveRequest = async (
   request.reviewedBy = adminEmail;
   await request.save();
 
+  let emailSent = true;
   if (request.userEmail) {
     // The library link isn't known until the item above was just created, so
     // it's appended after the admin's (possibly edited) draft text rather
     // than being part of the editable draft itself.
     const finalText = input.emailBody + zikrLibraryLinkLine(libraryItem.id as string);
-    await sendMail({
+    const messageId = await sendMail({
       to: request.userEmail,
       subject: APPROVED_SUBJECT(request.id as string),
       text: finalText,
@@ -214,9 +229,10 @@ export const approveRequest = async (
       inReplyTo: request.emailMessageId ?? undefined,
       references: request.emailMessageId ?? undefined,
     });
+    emailSent = messageId !== null;
   }
 
-  return request;
+  return { request, emailSent };
 };
 
 export const rejectRequest = async (
@@ -225,7 +241,7 @@ export const rejectRequest = async (
   adminNote: string | undefined,
   emailBody: string | undefined,
   sender: EmailSender = 'ansar'
-): Promise<IZikrRequest> => {
+): Promise<ZikrRequestActionResult> => {
   const request = await findPendingOrThrow(id);
 
   request.status = 'rejected';
@@ -234,8 +250,9 @@ export const rejectRequest = async (
   request.adminNote = adminNote?.trim() || undefined;
   await request.save();
 
+  let emailSent = true;
   if (request.userEmail && emailBody?.trim()) {
-    await sendMail({
+    const messageId = await sendMail({
       to: request.userEmail,
       subject: REJECTED_SUBJECT(request.id as string),
       text: emailBody,
@@ -244,9 +261,10 @@ export const rejectRequest = async (
       inReplyTo: request.emailMessageId ?? undefined,
       references: request.emailMessageId ?? undefined,
     });
+    emailSent = messageId !== null;
   }
 
-  return request;
+  return { request, emailSent };
 };
 
 /** Ownership-checked — a user may only acknowledge their own request. */

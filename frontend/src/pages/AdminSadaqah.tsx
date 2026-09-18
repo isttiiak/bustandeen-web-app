@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
@@ -70,8 +71,23 @@ function PendingCard({ donation }: { donation: Donation }) {
   const confirm = () => {
     const emailBody = emailText.trim();
     if (!emailBody) return;
-    if (mode === 'verified') verify.mutate({ id: donation._id, emailBody });
-    if (mode === 'rejected') reject.mutate({ id: donation._id, emailBody });
+    // The status change always goes through regardless of the email — this
+    // only warns the admin that the donor was never actually notified, so
+    // they know to follow up (see sadaqah.service.ts's DonationActionResult).
+    const warnIfEmailFailed = (res: { emailSent: boolean }) => {
+      if (!res.emailSent) {
+        toast.error(
+          t(
+            'adminSadaqah.emailFailedWarning',
+            'Saved — but the email to the donor failed to send. Check System & ops health.'
+          )
+        );
+      }
+    };
+    if (mode === 'verified')
+      verify.mutate({ id: donation._id, emailBody }, { onSuccess: warnIfEmailFailed });
+    if (mode === 'rejected')
+      reject.mutate({ id: donation._id, emailBody }, { onSuccess: warnIfEmailFailed });
   };
   const sending = verify.isPending || reject.isPending;
 

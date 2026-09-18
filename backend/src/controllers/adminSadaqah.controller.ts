@@ -75,7 +75,7 @@ export const verifyHandler = async (
     // adminSadaqah.routes.ts) — the sender identity is fixed by that domain,
     // not by which admin (Servant or the sadaqah Ansar) happens to click.
     const id = paramString(req.params.id);
-    const donation = await sadaqahService.verifyDonation(
+    const { donation, emailSent } = await sadaqahService.verifyDonation(
       id,
       req.user.email ?? '',
       emailBody,
@@ -87,8 +87,9 @@ export const verifyHandler = async (
       action: 'donation.verify',
       targetType: 'Donation',
       targetId: id,
+      metadata: emailSent ? undefined : { emailFailed: true },
     });
-    res.json({ ok: true, donation });
+    res.json({ ok: true, donation, emailSent });
   } catch (err) {
     handleServiceError(err, res, next);
   }
@@ -102,7 +103,7 @@ export const rejectHandler = async (
   try {
     const { emailBody } = req.body as { emailBody: string };
     const id = paramString(req.params.id);
-    const donation = await sadaqahService.rejectDonation(
+    const { donation, emailSent } = await sadaqahService.rejectDonation(
       id,
       req.user.email ?? '',
       emailBody,
@@ -114,8 +115,9 @@ export const rejectHandler = async (
       action: 'donation.reject',
       targetType: 'Donation',
       targetId: id,
+      metadata: emailSent ? undefined : { emailFailed: true },
     });
-    res.json({ ok: true, donation });
+    res.json({ ok: true, donation, emailSent });
   } catch (err) {
     handleServiceError(err, res, next);
   }

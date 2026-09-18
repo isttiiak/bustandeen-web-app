@@ -205,12 +205,23 @@ export const getEmailDraft = async (
   return { subject: REPLY_SUBJECT(donation._id.toString()), body };
 };
 
+export interface DonationActionResult {
+  donation: IDonation;
+  /** Whether the confirmation/rejection email actually went out. `verified`/
+   *  `rejected` is a real administrative fact (the admin checked the bank
+   *  records) independent of whether the donor got notified — so a failed
+   *  send does NOT roll back the status the way a failed feedback reply
+   *  does (there, replying IS the entire action). This flag exists so the
+   *  failure is surfaced to the admin instead of silently swallowed. */
+  emailSent: boolean;
+}
+
 export const verifyDonation = async (
   id: string,
   adminEmail: string,
   emailBody: string,
   sender: EmailSender = 'sadaqah'
-): Promise<IDonation> => {
+): Promise<DonationActionResult> => {
   const donation = await findPendingOrThrow(id);
 
   donation.status = 'verified';
@@ -227,7 +238,7 @@ export const verifyDonation = async (
     }
   );
 
-  await sendMail({
+  const messageId = await sendMail({
     to: donation.email,
     subject: REPLY_SUBJECT(donation._id.toString()),
     text: emailBody,
@@ -237,7 +248,7 @@ export const verifyDonation = async (
     references: donation.emailMessageId ?? undefined,
   });
 
-  return donation;
+  return { donation, emailSent: messageId !== null };
 };
 
 export const rejectDonation = async (
@@ -245,7 +256,7 @@ export const rejectDonation = async (
   adminEmail: string,
   emailBody: string,
   sender: EmailSender = 'sadaqah'
-): Promise<IDonation> => {
+): Promise<DonationActionResult> => {
   const donation = await findPendingOrThrow(id);
 
   donation.status = 'rejected';
@@ -255,7 +266,7 @@ export const rejectDonation = async (
   donation.rejectionReason = emailBody;
   await donation.save();
 
-  await sendMail({
+  const messageId = await sendMail({
     to: donation.email,
     subject: REPLY_SUBJECT(donation._id.toString()),
     text: emailBody,
@@ -265,7 +276,7 @@ export const rejectDonation = async (
     references: donation.emailMessageId ?? undefined,
   });
 
-  return donation;
+  return { donation, emailSent: messageId !== null };
 };
 
 /**

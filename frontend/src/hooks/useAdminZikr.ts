@@ -42,11 +42,26 @@ export interface ApproveZikrRequestInput {
   emailBody: string;
 }
 
+export interface ZikrRequestActionResult {
+  request: ZikrRequest;
+  /** False when the approval/rejection email failed to send (e.g. SMTP
+   *  misconfigured), or when nothing was sent at all (no userEmail, or no
+   *  emailBody for a reject) — that "nothing to send" case is `true` since
+   *  nothing actually failed. The review decision itself still went
+   *  through either way; this only flags a real, silent notification gap. */
+  emailSent: boolean;
+}
+
 export function useApproveZikrRequest() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, ...input }: ApproveZikrRequestInput & { id: string }) =>
-      api.post(`/api/admin/zikr-requests/${id}/approve`, input),
+    mutationFn: async ({ id, ...input }: ApproveZikrRequestInput & { id: string }) => {
+      const res = await api.post<ZikrRequestActionResult>(
+        `/api/admin/zikr-requests/${id}/approve`,
+        input
+      );
+      return res.data;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'zikr-requests'] });
       void queryClient.invalidateQueries({ queryKey: ['zikr', 'library', 'global'] });
@@ -57,7 +72,7 @@ export function useApproveZikrRequest() {
 export function useRejectZikrRequest() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       id,
       adminNote,
       emailBody,
@@ -65,7 +80,13 @@ export function useRejectZikrRequest() {
       id: string;
       adminNote?: string;
       emailBody?: string;
-    }) => api.post(`/api/admin/zikr-requests/${id}/reject`, { adminNote, emailBody }),
+    }) => {
+      const res = await api.post<ZikrRequestActionResult>(`/api/admin/zikr-requests/${id}/reject`, {
+        adminNote,
+        emailBody,
+      });
+      return res.data;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'zikr-requests'] });
     },

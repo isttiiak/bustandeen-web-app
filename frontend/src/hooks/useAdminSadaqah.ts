@@ -52,11 +52,23 @@ export function useEmailDraft() {
   });
 }
 
+export interface DonationActionResult {
+  donation: Donation;
+  /** False when the confirmation/rejection email failed to send (e.g. SMTP
+   *  misconfigured) — the status change itself still went through, since
+   *  that's a real administrative fact independent of the notification. */
+  emailSent: boolean;
+}
+
 export function useVerifyDonation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, emailBody }: { id: string; emailBody: string }) =>
-      api.patch(`/api/admin/sadaqah/${id}/verify`, { emailBody }),
+    mutationFn: async ({ id, emailBody }: { id: string; emailBody: string }) => {
+      const res = await api.patch<DonationActionResult>(`/api/admin/sadaqah/${id}/verify`, {
+        emailBody,
+      });
+      return res.data;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'sadaqah'] });
       void queryClient.invalidateQueries({ queryKey: ['sadaqah', 'stats'] });
@@ -67,8 +79,12 @@ export function useVerifyDonation() {
 export function useRejectDonation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, emailBody }: { id: string; emailBody: string }) =>
-      api.patch(`/api/admin/sadaqah/${id}/reject`, { emailBody }),
+    mutationFn: async ({ id, emailBody }: { id: string; emailBody: string }) => {
+      const res = await api.patch<DonationActionResult>(`/api/admin/sadaqah/${id}/reject`, {
+        emailBody,
+      });
+      return res.data;
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'sadaqah'] });
     },

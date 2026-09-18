@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.33.3 — Fix: silent email failures on donation/zikr review actions; āyah photo-card overflow — 2026-09-18
+
+### Fixed
+
+- **Verifying/rejecting a donation, or approving/rejecting a zikr suggestion, could silently mark it done even when the notification email failed to send** (SMTP misconfigured, etc.) — `sendMail`'s return value was ignored, same underlying gap as the feedback-reply bug fixed in v5.33.1. Unlike feedback (where replying IS the entire action), a verify/reject/approve is a real administrative fact independent of whether the recipient got notified — verifying a donation the admin actually checked, or adding an approved item to the zikr library, shouldn't get rolled back just because an email bounced. So instead of throwing and blocking the action, `verifyDonation`/`rejectDonation`/`approveRequest`/`rejectRequest` now return an `emailSent` flag alongside the record; the admin panel shows a toast warning ("Saved — but the email failed to send") when it's `false`, and it's logged on the audit-log entry (`metadata.emailFailed`), so a real send failure is surfaced instead of silently swallowed, without blocking the real decision. Covered by new assertions in the existing e2e suites.
+- **Long āyah share cards could overflow their fixed 1080×1080 frame.** `AyahShareCard.tsx` used hardcoded font sizes with no overflow handling — a long āyah (e.g. 2:282, the Qur'an's longest) combined with a translation could exceed the frame, and `html-to-image` (the capture library) has no scroll/reflow to compensate. Font sizes now scale down based on total content length, and translations get a line-clamp safety cap (the Arabic verse itself is never truncated). Not visually verified in-browser this session — see `TODO-v3.md`'s "Ayat sharing" section for the follow-up note and a list of separate design-improvement ideas (verse-number badge, background pattern, per-language typography, story-ratio variant) queued for a future pass, not built.
+
 ## v5.33.2 — Fix: same Gmail-thread-merge bug in sadaqah and zikr-suggestion emails — 2026-09-18
 
 ### Fixed

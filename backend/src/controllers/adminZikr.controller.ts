@@ -56,7 +56,7 @@ export const approveHandler = async (
     // ansar@bustandeen.com domain, not by which admin (Servant or the
     // general Ansar) happens to click.
     const id = paramString(req.params.id);
-    const request = await zikrRequestService.approveRequest(
+    const { request, emailSent } = await zikrRequestService.approveRequest(
       id,
       req.user.email ?? '',
       req.body,
@@ -68,8 +68,9 @@ export const approveHandler = async (
       action: 'zikrRequest.approve',
       targetType: 'ZikrRequest',
       targetId: id,
+      metadata: emailSent ? undefined : { emailFailed: true },
     });
-    res.json({ ok: true, request });
+    res.json({ ok: true, request, emailSent });
   } catch (err) {
     handleServiceError(err, res, next);
   }
@@ -83,7 +84,7 @@ export const rejectHandler = async (
   try {
     const { adminNote, emailBody } = req.body as { adminNote?: string; emailBody?: string };
     const id = paramString(req.params.id);
-    const request = await zikrRequestService.rejectRequest(
+    const { request, emailSent } = await zikrRequestService.rejectRequest(
       id,
       req.user.email ?? '',
       adminNote,
@@ -96,8 +97,9 @@ export const rejectHandler = async (
       action: 'zikrRequest.reject',
       targetType: 'ZikrRequest',
       targetId: id,
+      metadata: emailSent ? undefined : { emailFailed: true },
     });
-    res.json({ ok: true, request });
+    res.json({ ok: true, request, emailSent });
   } catch (err) {
     handleServiceError(err, res, next);
   }

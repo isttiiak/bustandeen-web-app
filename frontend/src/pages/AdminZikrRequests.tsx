@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
@@ -70,6 +71,20 @@ function RequestCard({ request }: { request: ZikrRequest }) {
     setAdminNote('');
   };
 
+  // The review decision (approve/reject) always goes through regardless of
+  // the email — this only warns the admin that the requester was never
+  // actually notified, so they know to follow up.
+  const warnIfEmailFailed = (res: { emailSent: boolean }) => {
+    if (!res.emailSent) {
+      toast.error(
+        t(
+          'adminZikr.emailFailedWarning',
+          'Saved — but the email to the requester failed to send. Check System & ops health.'
+        )
+      );
+    }
+  };
+
   const confirmApprove = () => {
     if (
       !form.name.trim() ||
@@ -79,14 +94,20 @@ function RequestCard({ request }: { request: ZikrRequest }) {
       !form.sourceUrl.trim()
     )
       return;
-    approve.mutate({ id: request._id, ...form, emailBody: emailText.trim() });
+    approve.mutate(
+      { id: request._id, ...form, emailBody: emailText.trim() },
+      { onSuccess: warnIfEmailFailed }
+    );
   };
   const confirmReject = () => {
-    reject.mutate({
-      id: request._id,
-      adminNote: adminNote.trim() || undefined,
-      emailBody: emailText.trim() || undefined,
-    });
+    reject.mutate(
+      {
+        id: request._id,
+        adminNote: adminNote.trim() || undefined,
+        emailBody: emailText.trim() || undefined,
+      },
+      { onSuccess: warnIfEmailFailed }
+    );
   };
 
   const sending = approve.isPending || reject.isPending;
