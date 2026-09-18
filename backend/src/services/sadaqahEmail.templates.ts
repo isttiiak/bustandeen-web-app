@@ -32,17 +32,31 @@ const greeting = (donorName: string | null) =>
 const plainGreeting = (donorName: string | null) =>
   donorName ? `Assalamu Alaikum ${donorName},` : 'Assalamu Alaikum,';
 
-// Fixed and deliberately outcome-neutral — every reply in a donation's
-// thread reuses this via "Re: ..." so email clients (Gmail, Outlook) group
-// the received/verified/rejected messages as one conversation. It used to
-// read "We received your sadaqah — JazakAllahu khayran", which looked wrong
-// as the subject line on a REJECTED notice; the thank-you wording now lives
-// only in the received email's body, where it's actually true.
-export const RECEIVED_SUBJECT = 'Your sadaqah submission — Bustandeen';
-export const REPLY_SUBJECT = `Re: ${RECEIVED_SUBJECT}`;
+/**
+ * Short, human-visible discriminator derived from the donation's own
+ * ObjectId. Without this, every donation used a byte-identical subject —
+ * Gmail/Outlook group conversations by (normalized subject + participants)
+ * when there's no References chain linking them elsewhere, so a donor who
+ * submits a second, unrelated donation would have it silently merge into the
+ * first one's thread even though each has its own Message-ID. Same fix as
+ * feedbackEmail.templates.ts's feedbackRef.
+ */
+export const sadaqahRef = (id: string): string => id.slice(-6).toUpperCase();
 
-export const donationReceivedEmail = (d: DonationEmailData): Omit<SendMailOptions, 'to'> => ({
-  subject: RECEIVED_SUBJECT,
+// Deliberately outcome-neutral — every reply in a donation's thread reuses
+// this via "Re: ..." so email clients (Gmail, Outlook) group the
+// received/verified/rejected messages as one conversation. It used to read
+// "We received your sadaqah — JazakAllahu khayran", which looked wrong as
+// the subject line on a REJECTED notice; the thank-you wording now lives
+// only in the received email's body, where it's actually true.
+export const RECEIVED_SUBJECT = (id: string): string =>
+  `Your sadaqah submission — Bustandeen [#${sadaqahRef(id)}]`;
+export const REPLY_SUBJECT = (id: string): string => `Re: ${RECEIVED_SUBJECT(id)}`;
+
+export const donationReceivedEmail = (
+  d: DonationEmailData & { id: string }
+): Omit<SendMailOptions, 'to'> => ({
+  subject: RECEIVED_SUBJECT(d.id),
   text: `${greeting(d.donorName)}\n\nWe've received your sadaqah submission of ${d.amount} BDT (transaction ${d.transactionId}). We'll verify it against our records within 24-48 hours and follow up once it's confirmed.\n\nMay Allah accept it from you and make it a means of ongoing reward, in sha Allah.\n\n— Bustandeen`,
   html: `<p>${greeting(d.donorName)}</p><p>We've received your sadaqah submission of <b>${d.amount} BDT</b> (transaction ${escapeHtml(d.transactionId)}). We'll verify it against our records within 24-48 hours and follow up once it's confirmed.</p><p>May Allah accept it from you and make it a means of ongoing reward, in sha Allah.</p><p>— Bustandeen</p>`,
 });

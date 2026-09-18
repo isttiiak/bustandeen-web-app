@@ -12,6 +12,17 @@ interface RequestData {
   userEmail?: string;
 }
 
+/**
+ * Short, human-visible discriminator derived from the request's own
+ * ObjectId. Without this, every suggestion used a byte-identical subject —
+ * Gmail/Outlook group conversations by (normalized subject + participants)
+ * when there's no References chain linking them elsewhere, so a user who
+ * submits a second, unrelated suggestion would have it silently merge into
+ * the first one's thread even though each has its own Message-ID. Same fix
+ * as feedbackEmail.templates.ts's feedbackRef.
+ */
+export const zikrRequestRef = (id: string): string => id.slice(-6).toUpperCase();
+
 /** Fixed notification sent to the review inbox the moment a user submits a
  * suggestion — not editable, since nobody sees it but the admin team. */
 export const zikrRequestNotifyAdminEmail = (
@@ -32,7 +43,7 @@ export const zikrRequestNotifyAdminEmail = (
   ].filter((l): l is string => l !== null);
 
   return {
-    subject: `New zikr suggestion: "${d.name}"`,
+    subject: `New zikr suggestion: "${d.name}" [#${zikrRequestRef(requestId)}]`,
     text: lines.join('\n'),
     html: lines.map((l) => `<p>${escapeHtml(l)}</p>`).join(''),
     messageId: `<zikr-request-admin-${requestId}@bustandeen.com>`,
@@ -43,15 +54,19 @@ export const zikrRequestNotifyAdminEmail = (
 // zikrRequest.service.ts submitRequest); APPROVED/REJECTED reuse "Re: " on
 // the same subject so Gmail/Outlook group all three as one conversation,
 // matching the sadaqah thread's RECEIVED_SUBJECT/REPLY_SUBJECT convention.
-export const RECEIVED_SUBJECT = 'We received your zikr suggestion — Bustandeen';
-export const APPROVED_SUBJECT = `Re: ${RECEIVED_SUBJECT}`;
-export const REJECTED_SUBJECT = `Re: ${RECEIVED_SUBJECT}`;
+export const RECEIVED_SUBJECT = (id: string): string =>
+  `We received your zikr suggestion — Bustandeen [#${zikrRequestRef(id)}]`;
+export const APPROVED_SUBJECT = (id: string): string => `Re: ${RECEIVED_SUBJECT(id)}`;
+export const REJECTED_SUBJECT = (id: string): string => `Re: ${RECEIVED_SUBJECT(id)}`;
 
 /** Sent immediately on submission — fixed wording (not admin-edited, since
  * this fires before any human has looked at the request). Establishes the
  * Message-ID the later approve/reject email threads against. */
-export const zikrRequestReceivedEmail = (d: { name: string }): Omit<SendMailOptions, 'to'> => ({
-  subject: RECEIVED_SUBJECT,
+export const zikrRequestReceivedEmail = (d: {
+  id: string;
+  name: string;
+}): Omit<SendMailOptions, 'to'> => ({
+  subject: RECEIVED_SUBJECT(d.id),
   text: `Assalamu Alaikum,\n\nJazakAllahu khayran for suggesting "${d.name}" to the Bustandeen zikr library. An Ansar will review it — checking the wording and source carefully, with a scholar if needed — and follow up here once it's decided.\n\nMay Allah reward you for wanting to share this with others.\n\n— Bustandeen`,
   html: `<p>Assalamu Alaikum,</p><p>JazakAllahu khayran for suggesting "${escapeHtml(d.name)}" to the Bustandeen zikr library. An Ansar will review it — checking the wording and source carefully, with a scholar if needed — and follow up here once it's decided.</p><p>May Allah reward you for wanting to share this with others.</p><p>— Bustandeen</p>`,
 });

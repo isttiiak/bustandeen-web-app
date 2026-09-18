@@ -103,6 +103,7 @@ export const submitDonation = async (
     to: donation.email,
     messageId: donation.emailMessageId ?? undefined,
     ...donationReceivedEmail({
+      id: donation._id.toString(),
       donorName: donation.donorName,
       amount: donation.amount,
       transactionId: donation.transactionId,
@@ -201,7 +202,7 @@ export const getEmailDraft = async (
           transactionId: donation.transactionId,
         });
 
-  return { subject: REPLY_SUBJECT, body };
+  return { subject: REPLY_SUBJECT(donation._id.toString()), body };
 };
 
 export const verifyDonation = async (
@@ -228,7 +229,7 @@ export const verifyDonation = async (
 
   await sendMail({
     to: donation.email,
-    subject: REPLY_SUBJECT,
+    subject: REPLY_SUBJECT(donation._id.toString()),
     text: emailBody,
     html: toSimpleHtml(emailBody),
     from: sender,
@@ -256,7 +257,7 @@ export const rejectDonation = async (
 
   await sendMail({
     to: donation.email,
-    subject: REPLY_SUBJECT,
+    subject: REPLY_SUBJECT(donation._id.toString()),
     text: emailBody,
     html: toSimpleHtml(emailBody),
     from: sender,

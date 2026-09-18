@@ -106,7 +106,7 @@ export const submitRequest = async (
       to: userEmail,
       from: 'ansar',
       messageId: emailMessageId ?? undefined,
-      ...zikrRequestReceivedEmail({ name: request.name }),
+      ...zikrRequestReceivedEmail({ id: request.id as string, name: request.name }),
     });
   }
 
@@ -152,7 +152,10 @@ export const getEmailDraft = async (
             existingLibraryItemId: request.possibleDuplicateOf?.toString(),
           })
         : zikrRequestRejectedDraft({ name: request.name });
-  const subject = type === 'approved' ? APPROVED_SUBJECT : REJECTED_SUBJECT;
+  const subject =
+    type === 'approved'
+      ? APPROVED_SUBJECT(request.id as string)
+      : REJECTED_SUBJECT(request.id as string);
 
   return { subject, body, isDuplicate };
 };
@@ -204,7 +207,7 @@ export const approveRequest = async (
     const finalText = input.emailBody + zikrLibraryLinkLine(libraryItem.id as string);
     await sendMail({
       to: request.userEmail,
-      subject: APPROVED_SUBJECT,
+      subject: APPROVED_SUBJECT(request.id as string),
       text: finalText,
       html: toSimpleHtml(finalText),
       from: sender,
@@ -234,7 +237,7 @@ export const rejectRequest = async (
   if (request.userEmail && emailBody?.trim()) {
     await sendMail({
       to: request.userEmail,
-      subject: REJECTED_SUBJECT,
+      subject: REJECTED_SUBJECT(request.id as string),
       text: emailBody,
       html: toSimpleHtml(emailBody),
       from: sender,

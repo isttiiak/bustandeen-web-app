@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.33.2 — Fix: same Gmail-thread-merge bug in sadaqah and zikr-suggestion emails — 2026-09-18
+
+### Fixed
+
+- **Follow-up to v5.33.1**: the identical fixed-subject design existed in `sadaqahEmail.templates.ts` and `zikrRequestEmail.templates.ts` — a donor submitting multiple separate donations, or a user submitting multiple separate zikr/dua suggestions, would have had each new submission's emails silently merge into the previous one's Gmail/Outlook thread, for the same reason feedback did. Every subject (received, the verify/reject reply, approved/rejected, and the admin-notify copies) now embeds a short ref derived from the record's own id (e.g. `[#A1B2C3]`), same convention as feedback's `feedbackRef`. Covered by two new unit test files (`sadaqahEmail.templates.unit.test.js`, `zikrRequestEmail.templates.unit.test.js`) asserting distinct subjects per record id, including the identical-donor/identical-name case that used to collide. All 240 backend tests pass.
+
 ## v5.33.1 — Fix: feedback threads merging in Gmail; compose tool can now reply from the inbox — 2026-09-18
 
 ### Fixed
