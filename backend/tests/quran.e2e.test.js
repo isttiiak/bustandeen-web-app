@@ -349,6 +349,101 @@ describe('Quran API', () => {
     expect(res.status).toBe(400);
   });
 
+  test('sessions default to source "read" when omitted, and "listen" is tagged and returned', async () => {
+    const readRes = await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'sess-read0001',
+      date: '2026-07-09',
+      startedAt: new Date('2026-07-09T09:00:00.000Z').toISOString(),
+      endedAt: new Date('2026-07-09T09:05:00.000Z').toISOString(),
+      activeDurationSec: 60,
+      ayahCount: 2,
+      pagesRead: 0,
+      surahs: [1],
+    });
+    expect(readRes.status).toBe(200);
+
+    const listenRes = await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'sess-listen001',
+      date: '2026-07-09',
+      startedAt: new Date('2026-07-09T10:00:00.000Z').toISOString(),
+      endedAt: new Date('2026-07-09T10:05:00.000Z').toISOString(),
+      activeDurationSec: 90,
+      ayahCount: 4,
+      pagesRead: 0,
+      surahs: [36],
+      source: 'listen',
+    });
+    expect(listenRes.status).toBe(200);
+
+    const list = await auth(request(app).get(`/api/quran/sessions?date=2026-07-09`));
+    expect(list.body.sessions).toHaveLength(2);
+    const bySource = Object.fromEntries(list.body.sessions.map((s) => [s.source, s]));
+    expect(bySource.read.surahs).toEqual([1]);
+    expect(bySource.listen.surahs).toEqual([36]);
+  });
+
+  test('sessions rejects an invalid source value', async () => {
+    const res = await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'sess-badsource1',
+      date: '2026-07-09',
+      startedAt: new Date().toISOString(),
+      endedAt: new Date().toISOString(),
+      activeDurationSec: 5,
+      source: 'background-music',
+    });
+    expect(res.status).toBe(400);
+  });
+
+  test('time-of-day requires auth', async () => {
+    const res = await request(app).get(`/api/quran/time-of-day`);
+    expect(res.status).toBe(401);
+  });
+
+  test('time-of-day buckets active minutes by local hour-of-day, combining read+listen', async () => {
+    // Uses real Date.now() (like zikr's own getTimeOfDayDistribution), so
+    // fixtures are hours-ago-from-now rather than fixed 2026 dates — keeps
+    // this independent of whatever real clock the suite runs under.
+    const tzOffsetMin = 360; // UTC+6
+    const now = Date.now();
+    const started1 = new Date(now - 4 * 60 * 60 * 1000);
+    const started2 = new Date(now - 3 * 60 * 60 * 1000);
+    const localHourOf = (d) => new Date(d.getTime() + tzOffsetMin * 60 * 1000).getUTCHours();
+    const hour1 = localHourOf(started1);
+    const hour2 = localHourOf(started2); // always differs from hour1 by exactly 1
+
+    await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'sess-tod-read01',
+      date: '2026-07-09',
+      startedAt: started1.toISOString(),
+      endedAt: new Date(started1.getTime() + 60_000).toISOString(),
+      activeDurationSec: 60,
+      ayahCount: 1,
+      pagesRead: 0,
+      surahs: [1],
+    });
+    await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'sess-tod-listen01',
+      date: '2026-07-09',
+      startedAt: started2.toISOString(),
+      endedAt: new Date(started2.getTime() + 90_000).toISOString(),
+      activeDurationSec: 90,
+      ayahCount: 4,
+      pagesRead: 0,
+      surahs: [36],
+      source: 'listen',
+    });
+
+    const res = await auth(
+      request(app).get(`/api/quran/time-of-day?days=1&timezoneOffset=${tzOffsetMin}`)
+    );
+    expect(res.status).toBe(200);
+    expect(res.body.hours).toHaveLength(24);
+    const bucket1 = res.body.hours.find((h) => h.hour === hour1);
+    const bucket2 = res.body.hours.find((h) => h.hour === hour2);
+    expect(bucket1.total).toBe(1); // 60s -> 1 minute
+    expect(bucket2.total).toBe(2); // 90s -> rounds to 2 minutes
+  });
+
   test('DELETE /api/quran/all wipes reading sessions along with everything else', async () => {
     const del = await auth(request(app).delete(`/api/quran/all`));
     expect(del.status).toBe(200);

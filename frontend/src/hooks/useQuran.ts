@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+import { getUserTimezoneOffset } from '../utils/timezone.js';
 
 export const QURAN_TOTAL_AYAT = 6236;
 
@@ -260,6 +261,7 @@ export interface QuranSession {
   ayahCount: number;
   pagesRead: number;
   surahs: number[];
+  source: 'read' | 'listen';
 }
 
 /** Sessions logged for a given tracking day — mirrors useZikrSessions. */
@@ -276,5 +278,24 @@ export function useQuranSessions(dateStr: string) {
     },
     enabled: !!user && !!dateStr,
     staleTime: 30_000,
+  });
+}
+
+/** When during the day time is spent with the Quran (read + listen combined)
+ * over the last `days` — mirrors useZikrTimeOfDay. */
+export function useQuranTimeOfDay(days = 30) {
+  const user = useAuthStore((s) => s.user);
+  const timezoneOffset = getUserTimezoneOffset();
+  return useQuery({
+    queryKey: ['quran', 'time-of-day', days, timezoneOffset],
+    queryFn: async () => {
+      const { data } = await api.get<{
+        ok: boolean;
+        hours: Array<{ hour: number; total: number }>;
+      }>('/api/quran/time-of-day', { params: { days, timezoneOffset } });
+      return data.hours;
+    },
+    enabled: !!user,
+    staleTime: 60_000,
   });
 }

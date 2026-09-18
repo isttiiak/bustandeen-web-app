@@ -14,6 +14,7 @@ import {
   quranDuaBookmarkSchema,
   quranSessionSaveSchema,
   quranSessionsQuerySchema,
+  quranTimeOfDaySchema,
 } from '../validation/quran.schemas.js';
 
 const router = Router();
@@ -47,6 +48,14 @@ router.get(
   requireAuth,
   validate(quranSessionsQuerySchema),
   quranController.getSessions
+);
+
+// GET /api/quran/time-of-day?days=&timezoneOffset= — when engagement happens
+router.get(
+  '/time-of-day',
+  requireAuth,
+  validate(quranTimeOfDaySchema),
+  quranController.getTimeOfDay
 );
 
 // GET /api/quran/summary?today= — profile, streak, khatm progress, pace

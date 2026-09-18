@@ -5,6 +5,7 @@ import QuranProfile, {
   QURAN_TOTAL_AYAT,
 } from '../models/QuranProfile.js';
 import QuranReadingSession from '../models/QuranReadingSession.js';
+import { DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
 
 /** Unit math: 1 mushaf page ≈ 10 ayat (6236/604). Units = ayat-equivalents. */
 const AYAT_PER_PAGE = 10;
@@ -544,6 +545,7 @@ export interface QuranSessionSavePayload {
   ayahCount: number;
   pagesRead: number;
   surahs: number[];
+  source: 'read' | 'listen';
 }
 
 /**
@@ -575,6 +577,7 @@ export async function saveReadingSession(
         userId,
         clientSessionId: payload.clientSessionId,
         startedAt: payload.startedAt,
+        source: payload.source,
       },
       $set: {
         date: payload.date,
@@ -606,17 +609,20 @@ export interface QuranReadingSessionSummary {
   ayahCount: number;
   pagesRead: number;
   surahs: number[];
+  source: 'read' | 'listen';
 }
 
 /** Sessions for a given tracking day — a date-picker driven history list,
- * mirroring zikr.service.ts's getSessionsForDay. */
+ * mirroring zikr.service.ts's getSessionsForDay. Reading and listening
+ * sessions share one collection and are returned together, tagged by
+ * `source`, so nothing is missing from the history — just distinguishable. */
 export async function getReadingSessionsForDay(
   userId: string,
   dateStr: string
 ): Promise<QuranReadingSessionSummary[]> {
   const sessions = await QuranReadingSession.find({ userId, date: dateStr })
     .sort({ startedAt: 1 })
-    .select('startedAt endedAt activeDurationSec ayahCount pagesRead surahs');
+    .select('startedAt endedAt activeDurationSec ayahCount pagesRead surahs source');
 
   return sessions
     .filter((s) => s.activeDurationSec >= MIN_SESSION_SEC_TO_LIST)
@@ -627,5 +633,43 @@ export async function getReadingSessionsForDay(
       ayahCount: s.ayahCount,
       pagesRead: s.pagesRead,
       surahs: s.surahs,
+      source: s.source ?? 'read',
     }));
+}
+
+function offsetToUtcTzString(offsetMinutes: number): string {
+  const sign = offsetMinutes >= 0 ? '+' : '-';
+  const abs = Math.abs(offsetMinutes);
+  const hh = String(Math.floor(abs / 60)).padStart(2, '0');
+  const mm = String(abs % 60).padStart(2, '0');
+  return `${sign}${hh}:${mm}`;
+}
+
+/** Total ACTIVE MINUTES by local hour-of-day (0-23) over the last `days`,
+ * across both reading and listening sessions — "when during the day do I
+ * spend time with the Quran?" mirrors zikr.service.ts's
+ * getTimeOfDayDistribution. A session's whole duration is attributed to the
+ * hour it STARTED in (not split across the hours it spans) — a deliberate
+ * simplification, fine for typical session lengths. */
+export async function getQuranTimeOfDayDistribution(
+  userId: string,
+  days: number = 30,
+  timezoneOffset: number = DEFAULT_TIMEZONE_OFFSET
+): Promise<Array<{ hour: number; total: number }>> {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const rows = (await QuranReadingSession.aggregate([
+    { $match: { userId, startedAt: { $gte: since } } },
+    {
+      $group: {
+        _id: { $hour: { date: '$startedAt', timezone: offsetToUtcTzString(timezoneOffset) } },
+        totalSec: { $sum: '$activeDurationSec' },
+      },
+    },
+  ])) as Array<{ _id: number; totalSec: number }>;
+
+  const hours = Array.from({ length: 24 }, (_, hour) => ({ hour, total: 0 }));
+  for (const r of rows) {
+    if (r._id >= 0 && r._id < 24) hours[r._id]!.total = Math.round(r.totalSec / 60);
+  }
+  return hours;
 }

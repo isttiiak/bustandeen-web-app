@@ -117,12 +117,21 @@ export const quranSessionSaveSchema = z.object({
     ayahCount: z.number().int().min(0).max(7000).default(0),
     pagesRead: z.number().int().min(0).max(700).default(0),
     surahs: z.array(z.number().int().min(1).max(114)).max(50).default([]),
+    source: z.enum(['read', 'listen']).default('read'),
   }),
 });
 
 export const quranSessionsQuerySchema = z.object({
   query: z.object({
     date: dateStr,
+  }),
+  body: z.object({}).optional(),
+});
+
+export const quranTimeOfDaySchema = z.object({
+  query: z.object({
+    days: z.coerce.number().int().min(1).max(90).optional(),
+    timezoneOffset: z.coerce.number().min(-720).max(840).optional(),
   }),
   body: z.object({}).optional(),
 });

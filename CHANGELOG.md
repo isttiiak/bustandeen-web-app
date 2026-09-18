@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.36.0 — Quran time-of-day chart; listening now tracked as sessions too — 2026-09-18
+
+### Added
+
+- **Follow-up to v5.35.0**: Quran Analytics gained a "Time of day" chart (reusing the zikr counter's own `TimeOfDayChart` component) — a 24-hour bar chart of when active Quran time (reading + listening combined) actually happens, aggregated from session data over the last 30 days. A session's whole duration is attributed to the local hour it started in.
+- **Listening now creates sessions too**, not just reading — the audio player (`QuranAudioPlayer.tsx`) tracks its own session the whole time the Listen page is open, tagged `source: 'listen'` in the same `QuranReadingSession` collection the Reader already writes to (`source: 'read'`), so the "Quran sessions" history list (renamed from "Reading sessions") now shows everything in one place — nothing is left out. A listening session's active/paused state is driven by whether audio is actually PLAYING, not tab visibility or interaction — unlike reading, background/screen-off playback still counts as active listening, and pausing the audio (even with the tab in the foreground) correctly stops the clock. A small ⏱/⏸ badge on the Listen page mirrors the Reader's timer. Ayāt already credited by listening (the existing "count listening as āyāt" feature) now also register on the session, so listened surahs/āyāt show up in that session's history row.
+- New `GET /api/quran/time-of-day?days=&timezoneOffset=` endpoint (mirrors `zikr.service.ts`'s `getTimeOfDayDistribution`) and a `source: 'read' | 'listen'` field on `QuranReadingSession` (defaults `'read'` — existing rows unaffected).
+
 ## v5.35.0 — Quran reading sessions: live timer + session history — 2026-09-18
 
 ### Added

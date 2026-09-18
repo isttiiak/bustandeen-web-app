@@ -4,11 +4,13 @@ import { ClockIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import QuranTabNav from '../components/QuranTabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
+import TimeOfDayChart from '../components/analytics/TimeOfDayChart.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import {
   useQuranSummary,
   useQuranHistory,
   useQuranSessions,
+  useQuranTimeOfDay,
   QURAN_TOTAL_AYAT,
 } from '../hooks/useQuran.js';
 import { loadSurahList, surahDisplayName, type SurahMeta } from '../utils/quranData.js';
@@ -24,6 +26,7 @@ export default function QuranAnalytics() {
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
   const [sessionsDate, setSessionsDate] = useState(() => getTrackingDay());
   const { data: sessions, isLoading: sessionsLoading } = useQuranSessions(sessionsDate);
+  const { data: timeOfDay } = useQuranTimeOfDay(30);
 
   useEffect(() => {
     let alive = true;
@@ -193,12 +196,15 @@ export default function QuranAnalytics() {
           </p>
         </div>
 
+        {/* time of day */}
+        <TimeOfDayChart data={timeOfDay} />
+
         {/* reading session history */}
         <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
           <div className="flex items-center justify-between gap-3 mb-3">
             <h2 className="text-white font-black text-sm flex items-center gap-2">
               <ClockIcon className="w-4 h-4 text-brand-info" />
-              {t('quranAnalytics.sessions.title', 'Reading sessions')}
+              {t('quranAnalytics.sessions.title', 'Quran sessions')}
             </h2>
             <input
               type="date"
@@ -227,6 +233,16 @@ export default function QuranAnalytics() {
                   >
                     <div className="min-w-0">
                       <p className="text-white/80 text-sm font-semibold tabular-nums">
+                        <span
+                          className="mr-1"
+                          title={
+                            s.source === 'listen'
+                              ? t('quranAnalytics.sessions.sourceListen', 'Listening')
+                              : t('quranAnalytics.sessions.sourceRead', 'Reading')
+                          }
+                        >
+                          {s.source === 'listen' ? '🎧' : '📖'}
+                        </span>
                         {formatLocaleTime(new Date(s.start), {
                           hour: 'numeric',
                           minute: '2-digit',
@@ -261,7 +277,7 @@ export default function QuranAnalytics() {
             </div>
           ) : (
             <p className="text-white/30 text-xs text-center py-4">
-              {t('quranAnalytics.sessions.empty', 'No reading sessions logged for this day')}
+              {t('quranAnalytics.sessions.empty', 'No sessions logged for this day')}
             </p>
           )}
         </div>

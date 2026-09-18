@@ -1343,8 +1343,10 @@
       "ayahCount": "{{n}} āyāt",
       "durationHm": "{{h}}h {{m}}m",
       "durationM": "{{m}}m",
-      "empty": "No reading sessions logged for this day",
-      "title": "Reading sessions"
+      "empty": "No sessions logged for this day",
+      "sourceListen": "Listening",
+      "sourceRead": "Reading",
+      "title": "Quran sessions"
     },
     "title": "Quran Analytics",
     "topSurahsEmpty": "Read a few surahs and they'll appear here",
@@ -1445,7 +1447,9 @@
     "andStreak": "and streak",
     "signInToSave": "(sign in to save it)",
     "loggedTail": "— counted from each surah's own length. Recitation streamed free from the Islamic Network CDN.",
-    "rayhanahNote": "During Rayhanah days, listening keeps your Quran connection — and your Noor — alive."
+    "rayhanahNote": "During Rayhanah days, listening keeps your Quran connection — and your Noor — alive.",
+    "timerActive": "Active listening time this visit",
+    "timerPaused": "Paused — press play to keep counting"
   },
   "quranListen": {
     "listeningCounts": "Listening to ayah counts toward your daily ayat goal.",

@@ -19,6 +19,10 @@ export interface IQuranReadingSession extends Document {
   ayahCount: number;
   pagesRead: number;
   surahs: number[];
+  /** 'read' (the ayah-by-ayah Reader) or 'listen' (the audio player) — same
+   * collection so both show up together in session history, distinguished
+   * only by this tag. Defaults 'read' so pre-existing rows stay valid. */
+  source: 'read' | 'listen';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,6 +38,7 @@ const quranReadingSessionSchema = new Schema<IQuranReadingSession>(
     ayahCount: { type: Number, default: 0, min: 0, max: 7000 },
     pagesRead: { type: Number, default: 0, min: 0, max: 700 },
     surahs: { type: [Number], default: [] },
+    source: { type: String, enum: ['read', 'listen'], default: 'read' },
   },
   { timestamps: true }
 );

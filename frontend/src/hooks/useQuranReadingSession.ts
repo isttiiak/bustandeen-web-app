@@ -28,6 +28,7 @@ interface SessionSavePayload {
   ayahCount: number;
   pagesRead: number;
   surahs: number[];
+  source: 'read' | 'listen';
 }
 
 /** Mirrors useZikrStore's flush(): a plain `fetch` (not the axios instance)
@@ -50,10 +51,19 @@ async function postSession(payload: SessionSavePayload, keepalive: boolean): Pro
 }
 
 export interface UseQuranReadingSessionOptions {
-  /** Extends the idle grace period — pass true while the tafsir panel is open. */
+  /** Extends the idle grace period — pass true while the tafsir panel is open.
+   * Ignored when `isActiveOverride` is set. */
   extendedIdle?: boolean;
   /** Set false to stop tracking entirely (guests, demo mode). */
   enabled?: boolean;
+  /** Tag stored with the session so read/listen sessions stay distinguishable
+   * in shared session history. Defaults to 'read'. */
+  source?: 'read' | 'listen';
+  /** When provided, THIS drives active/paused state directly instead of the
+   * idle/visibility heuristic — e.g. the Listen page passes whether audio is
+   * currently playing, since background/screen-off playback should still
+   * count as active (visibility/idle detection would wrongly pause it). */
+  isActiveOverride?: boolean;
 }
 
 export interface QuranReadingSessionHandle {
@@ -75,7 +85,8 @@ export interface QuranReadingSessionHandle {
 export function useQuranReadingSession(
   options: UseQuranReadingSessionOptions = {}
 ): QuranReadingSessionHandle {
-  const { extendedIdle = false, enabled = true } = options;
+  const { extendedIdle = false, enabled = true, source = 'read', isActiveOverride } = options;
+  const usesOverride = isActiveOverride !== undefined;
 
   const [activeSec, setActiveSec] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -89,6 +100,8 @@ export function useQuranReadingSession(
   const surahsRef = useRef<Set<number>>(new Set());
   const extendedIdleRef = useRef(extendedIdle);
   extendedIdleRef.current = extendedIdle;
+  const activeOverrideRef = useRef(isActiveOverride);
+  activeOverrideRef.current = isActiveOverride;
 
   const registerAyahRead = useCallback((count: number) => {
     ayahCountRef.current += count;
@@ -98,31 +111,38 @@ export function useQuranReadingSession(
     surahsRef.current.add(surah);
   }, []);
 
-  const save = useCallback((keepalive: boolean) => {
-    if (activeSecRef.current < MIN_SESSION_SEC_TO_SAVE) return;
-    if (activeSecRef.current === lastSavedSecRef.current && !keepalive) return;
-    lastSavedSecRef.current = activeSecRef.current;
-    void postSession(
-      {
-        clientSessionId: clientSessionIdRef.current,
-        // The CURRENT tracking day, not the day the session started — a
-        // session that spans a Fajr/midnight rollover gets its time split
-        // correctly across both days' totals this way.
-        date: getTrackingDay(),
-        startedAt: startedAtRef.current.toISOString(),
-        endedAt: new Date().toISOString(),
-        activeDurationSec: activeSecRef.current,
-        ayahCount: ayahCountRef.current,
-        pagesRead: 0,
-        surahs: [...surahsRef.current],
-      },
-      keepalive
-    );
-  }, []);
+  const save = useCallback(
+    (keepalive: boolean) => {
+      if (activeSecRef.current < MIN_SESSION_SEC_TO_SAVE) return;
+      if (activeSecRef.current === lastSavedSecRef.current && !keepalive) return;
+      lastSavedSecRef.current = activeSecRef.current;
+      void postSession(
+        {
+          clientSessionId: clientSessionIdRef.current,
+          // The CURRENT tracking day, not the day the session started — a
+          // session that spans a Fajr/midnight rollover gets its time split
+          // correctly across both days' totals this way.
+          date: getTrackingDay(),
+          startedAt: startedAtRef.current.toISOString(),
+          endedAt: new Date().toISOString(),
+          activeDurationSec: activeSecRef.current,
+          ayahCount: ayahCountRef.current,
+          pagesRead: 0,
+          surahs: [...surahsRef.current],
+          source,
+        },
+        keepalive
+      );
+    },
+    [source]
+  );
 
-  // Interactions reset the idle clock. Passive + no re-renders (refs only).
+  // Interactions reset the idle clock. Only meaningful in idle/visibility
+  // mode — skipped entirely when an active-state override drives things
+  // (e.g. Listen, where scrolling/tapping has nothing to do with whether
+  // audio is actually playing).
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled || usesOverride) return;
     const markActive = () => {
       lastInteractionRef.current = Date.now();
     };
@@ -136,16 +156,23 @@ export function useQuranReadingSession(
       window.removeEventListener('keydown', markActive);
       window.removeEventListener('touchmove', markActive);
     };
-  }, [enabled]);
+  }, [enabled, usesOverride]);
 
-  // The clock: advances once per second while visible AND recently active.
+  // The clock: advances once per second while active. "Active" is either the
+  // caller's own override (Listen: audio is playing) or, by default, the
+  // idle/visibility heuristic (Reader: tab visible AND recently interacted with).
   useEffect(() => {
     if (!enabled) return;
     const id = window.setInterval(() => {
-      const idleTimeout = extendedIdleRef.current ? IDLE_TIMEOUT_TAFSIR_MS : IDLE_TIMEOUT_MS;
-      const idle = Date.now() - lastInteractionRef.current > idleTimeout;
-      const hidden = document.visibilityState !== 'visible';
-      const paused = idle || hidden;
+      let paused: boolean;
+      if (activeOverrideRef.current !== undefined) {
+        paused = !activeOverrideRef.current;
+      } else {
+        const idleTimeout = extendedIdleRef.current ? IDLE_TIMEOUT_TAFSIR_MS : IDLE_TIMEOUT_MS;
+        const idle = Date.now() - lastInteractionRef.current > idleTimeout;
+        const hidden = document.visibilityState !== 'visible';
+        paused = idle || hidden;
+      }
       setIsPaused(paused);
       if (!paused) {
         activeSecRef.current += 1;

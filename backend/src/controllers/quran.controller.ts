@@ -189,6 +189,7 @@ export const saveSession = async (
       ayahCount,
       pagesRead,
       surahs,
+      source,
     } = req.body as {
       clientSessionId: string;
       date: string;
@@ -198,6 +199,7 @@ export const saveSession = async (
       ayahCount: number;
       pagesRead: number;
       surahs: number[];
+      source: 'read' | 'listen';
     };
     const result = await quranService.saveReadingSession(req.user.uid, {
       clientSessionId,
@@ -208,6 +210,7 @@ export const saveSession = async (
       ayahCount,
       pagesRead,
       surahs,
+      source,
     });
     res.json({ ok: true, ...result });
   } catch (err) {
@@ -215,7 +218,7 @@ export const saveSession = async (
   }
 };
 
-// GET /api/quran/sessions?date= — reading sessions for a day (history list)
+// GET /api/quran/sessions?date= — reading + listening sessions for a day
 export const getSessions = async (
   req: Request,
   res: Response,
@@ -225,6 +228,27 @@ export const getSessions = async (
     const date = req.query.date as string;
     const sessions = await quranService.getReadingSessionsForDay(req.user.uid, date);
     res.json({ ok: true, sessions });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// GET /api/quran/time-of-day?days=&timezoneOffset= — when engagement happens
+export const getTimeOfDay = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const days = req.query.days !== undefined ? Number(req.query.days) : undefined;
+    const timezoneOffset =
+      req.query.timezoneOffset !== undefined ? Number(req.query.timezoneOffset) : undefined;
+    const hours = await quranService.getQuranTimeOfDayDistribution(
+      req.user.uid,
+      days,
+      timezoneOffset
+    );
+    res.json({ ok: true, hours });
   } catch (err) {
     next(err);
   }

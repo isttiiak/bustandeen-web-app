@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { PlayIcon, PauseIcon, ForwardIcon, BackwardIcon } from '@heroicons/react/24/solid';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useReadAyat } from '../hooks/useQuran.js';
+import { useQuranReadingSession } from '../hooks/useQuranReadingSession.js';
 import {
   loadSurahList,
   surahDisplayName,
@@ -12,6 +13,14 @@ import {
   type SurahMeta,
 } from '../utils/quranData.js';
 import { listenCountsAsAyat } from '../utils/quranPrefs.js';
+
+function formatListeningTime(totalSec: number): string {
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
 
 /**
  * 🎧 Audio Quran — all 114 surahs, streamed from the free Islamic Network CDN
@@ -77,6 +86,7 @@ function fmtClock(sec: number): string {
 export default function QuranAudioPlayer() {
   const { t, i18n } = useTranslation();
   const user = useAuthStore((s) => s.user);
+  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const readAyat = useReadAyat();
 
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
@@ -99,6 +109,20 @@ export default function QuranAudioPlayer() {
     return raw !== null && Number.isFinite(v) && v >= 0 && v <= 1 ? v : 0.4;
   });
   const [muted, setMuted] = useState(false);
+
+  // A listening session runs for as long as this component is mounted
+  // (the whole Listen page visit), driven by whether audio is ACTUALLY
+  // playing — not tab visibility/idle (background/screen-off playback should
+  // still count, unlike the Reader where those signal "walked away").
+  const readingSession = useQuranReadingSession({
+    source: 'listen',
+    isActiveOverride: playing,
+    enabled: !!user && !isDemoMode,
+  });
+  const { registerSurah, registerAyahRead } = readingSession;
+  useEffect(() => {
+    registerSurah(surahNo);
+  }, [registerSurah, surahNo]);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   // Listening accumulators — survive pause, reset when the surah changes.
@@ -139,6 +163,7 @@ export default function QuranAudioPlayer() {
         const diff = target - loggedAyatRef.current;
         if (diff >= 1) {
           loggedAyatRef.current = target;
+          registerAyahRead(diff);
           readAyat.mutate({ count: diff });
           toast.success(
             t('quranAudioPlayer.ayahLogged', {
@@ -256,6 +281,22 @@ export default function QuranAudioPlayer() {
             {surah && (
               <p className="text-center text-2xl text-brand-info/90 font-serif" dir="rtl">
                 {surah.name}
+              </p>
+            )}
+
+            {!!user && !isDemoMode && (
+              <p className="text-center">
+                <span
+                  title={
+                    readingSession.isPaused
+                      ? t('quranAudioPlayer.timerPaused', 'Paused — press play to keep counting')
+                      : t('quranAudioPlayer.timerActive', 'Active listening time this visit')
+                  }
+                  className="inline-block px-2.5 py-1 rounded-full border border-brand-info/10 bg-white/5 text-white/40 text-[11px] font-bold tabular-nums"
+                >
+                  {readingSession.isPaused ? '⏸' : '⏱'}{' '}
+                  {formatListeningTime(readingSession.activeSec)}
+                </span>
               </p>
             )}
 
