@@ -56,6 +56,28 @@
     "dua": "May Allah accept it from you and make it a means of ongoing reward.",
     "backToApp": "Back to Bustandeen"
   },
+  "sadaqahVirtue": {
+    "friday": {
+      "title": "It's Jumu'ah — a blessed day to give",
+      "desc": "Ibn al-Qayyim taught that charity on Friday carries the same extra merit over other days that charity in Ramadan carries over other months — and charity itself never decreases wealth."
+    },
+    "ramadan": {
+      "title": "It's Ramadan — the most generous month",
+      "desc": "The Prophet ﷺ was already the most generous of people, and became even more generous every night of Ramadan."
+    },
+    "dhul_hijjah_first10": {
+      "title": "The first 10 days of Dhul Ḥijjah — give generously",
+      "desc": "No days are more beloved to Allah for righteous deeds than these ten — charity given now is counted among the best deeds of the entire year."
+    },
+    "arafah": {
+      "title": "Day of Arafah — the best day of the year",
+      "desc": "Arafah falls within the ten days most beloved to Allah for righteous deeds — charity given today shares in that same virtue."
+    },
+    "laylat_qadr": {
+      "title": "Laylat al-Qadr — a night better than 1,000 months",
+      "desc": "Any charity given tonight is multiplied beyond a thousand months of ordinary worship."
+    }
+  },
   "adminSadaqah": {
     "seoTitle": "Sadaqah Admin",
     "title": "Sadaqah Admin",
@@ -883,8 +905,6 @@
     "fridayHourNow": "The hour of response — now",
     "fridayHourTitle": "Friday: the hour of response",
     "fridayKahf": "It's Friday — read Sūrat al-Kahf",
-    "fridaySadaqahTitle": "It's Jumu'ah — a blessed day to give",
-    "fridaySadaqahDesc": "Sadaqah given on Friday is especially recommended. If you can, consider giving today.",
     "friendsSubtitle": "Race each other to good deeds — Quran 2:148",
     "friendsTitle": "Friends & Leaderboard",
     "goalAchieved": "Goal Achieved!",

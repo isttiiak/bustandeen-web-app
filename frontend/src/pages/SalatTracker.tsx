@@ -58,7 +58,7 @@ import {
   getShowNaflGuide,
 } from '../utils/salatPrefs.js';
 import { recitationsFor, recitationHref } from '../utils/postSalatQuran.js';
-import { SUNNAH_GUIDE, type SunnahSlot } from '../utils/sunnahGuide.js';
+import { SUNNAH_GUIDE, JUMUAH_SUNNAH_GUIDE, type SunnahSlot } from '../utils/sunnahGuide.js';
 import { getFridayHour, FRIDAY_HOUR_REF } from '../utils/fridayHour.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
@@ -1602,7 +1602,13 @@ export default function SalatTracker() {
                             toggleable per emphasis (Salat settings). */}
                         {isCurrent &&
                           (() => {
-                            const guide = SUNNAH_GUIDE[prayerId];
+                            // Friday's Dhuhr slot IS Jumu'ah — its sunnah
+                            // guidance is genuinely different, not a fallback
+                            // to Dhuhr's own rawātib (see sunnahGuide.ts).
+                            const guide =
+                              prayerId === 'dhuhr' && isCivilFriday
+                                ? JUMUAH_SUNNAH_GUIDE
+                                : SUNNAH_GUIDE[prayerId];
                             if (!guide) return null;
                             const showMuakkadah = getShowSunnahGuide();
                             const showNafl = getShowNaflGuide();

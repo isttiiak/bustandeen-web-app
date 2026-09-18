@@ -15,7 +15,7 @@ import MuhasabahReport from '../components/ai/MuhasabahReport.js';
 import NaturalLogEntry from '../components/ai/NaturalLogEntry.js';
 import StreakCoaching from '../components/ai/StreakCoaching.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
-import SadaqahFridayReminder from '../components/SadaqahFridayReminder.js';
+import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import {
   calcPrayerTimes,
   formatTime,
@@ -26,6 +26,7 @@ import {
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import { isFriday, getTodaySpecialDays } from '../utils/islamicCalendar.js';
+import { getTodaySadaqahVirtueDay } from '../utils/sadaqahVirtueDays.js';
 import { useCycleActive, useCycleSummary } from '../hooks/useCycle.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
@@ -119,6 +120,7 @@ export default function Home() {
   }, []);
 
   const todaySpecialDays = useMemo(() => getTodaySpecialDays(), []);
+  const sadaqahVirtueDay = useMemo(() => getTodaySadaqahVirtueDay(), []);
 
   const prayerWidgetData = useMemo(() => {
     const stored = localStorage.getItem('bustandeen_location');
@@ -570,8 +572,10 @@ export default function Home() {
           </motion.div>
         )}
 
-        {/* Friday: sadaqah nudge — once a day, auto-dismisses on its own */}
-        <SadaqahFridayReminder />
+        {/* Days with extra sadaqah virtue (Friday, Ramadan, first 10 days of
+            Dhul Hijjah, Arafah, Laylat al-Qadr) — persistent, unlike the old
+            30s-auto-dismissing Friday-only reminder this replaces. */}
+        {sadaqahVirtueDay && <SadaqahVirtueCard day={sadaqahVirtueDay} />}
 
         {/* Friday: hour of response (Abū Dāwūd 1048, ṣaḥīḥ) */}
         {fridayHour.active && (
@@ -707,13 +711,20 @@ export default function Home() {
                             <GoalBadge pct={zikrGoalPct} met={goalCompleted} size="sm" />
                           </>
                         )}
-                        {a.id === 'quran' && quranSummary && (
-                          <StreakBadge
-                            streak={quranSummary.streak}
-                            state={quranSummary.streak > 0 ? 'active' : 'none'}
-                            size="sm"
-                          />
-                        )}
+                        {/* A streak is only meaningful against a goal the user
+                            actually set — with none, "streak" would just be
+                            "days read at all," which isn't what this badge
+                            communicates elsewhere (zikr/salat always have an
+                            implicit goal). */}
+                        {a.id === 'quran' &&
+                          quranSummary &&
+                          quranSummary.profile.dailyGoalAyat > 0 && (
+                            <StreakBadge
+                              streak={quranSummary.streak}
+                              state={quranSummary.streak > 0 ? 'active' : 'none'}
+                              size="sm"
+                            />
+                          )}
                         {a.tag && (
                           <StreakBadge
                             streak={salatAnalytics?.currentStreak ?? 0}

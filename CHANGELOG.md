@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.34.0 — Sadaqah virtue days on the homepage; Jumu'ah sunnah citation fix; Quran settings sync — 2026-09-18
+
+### Added
+
+- **Sadaqah virtue day card on the homepage.** A persistent card (styled like the existing Islamic special-day widget, not auto-dismissing like the reminder it replaces) surfaces on Friday, Ramadan, the first 10 days of Dhul Ḥijjah, Arafah, and Laylat al-Qadr — each with its own heading, short explanation, and a citation, linking straight to `/sadaqah`. Friday's copy is explicitly attributed to Ibn al-Qayyim's own teaching in *Zād al-Maʿād* (paired with the authentic "charity does not decrease wealth" ḥadīth, Ṣaḥīḥ Muslim 2588) rather than presented as a standalone Prophetic ḥadīth, since it isn't one. Replaces `SadaqahFridayReminder.tsx`, which only covered Friday and auto-hid after 30 seconds. New `frontend/src/utils/sadaqahVirtueDays.ts`, `frontend/src/components/SadaqahVirtueCard.tsx`.
+- **Quran settings now sync across devices.** `arabicFont`, all four text-size sliders, the transliteration toggle, "count listening as āyāt," default reciter, and translation picks were localStorage-only — a genuinely different phone and laptop always looked different. `QuranProfile` (backend) gained these fields plus a `displayPrefsSet` flag; opening Quran settings for the first time after this update either pushes that device's existing local prefs up (if nothing has synced yet) or pulls the already-synced values down (if another device got there first) — never silently overwrites a real prior customization with factory defaults. Every subsequent change (debounced for the sliders) pushes to the server. `PATCH /api/quran/profile` extended accordingly; localStorage stays the fast synchronous read path everywhere else in the reader, now backed by the server instead of being the only copy.
+
+### Fixed
+
+- **Jumu'ah's sunnah prayer guidance cited the wrong ḥadīth entirely.** Friday's Dhuhr slot (Jumu'ah replaces Dhuhr, tracked internally as the same `PrayerId`) was falling back to Ẓuhr's own rawātib guidance — "4 rakʿah before / 2 rakʿah after, Ṣaḥīḥ Muslim 728" — but hadith 728 is Umm Ḥabībah's narration about Ẓuhr's daily rawātib and says nothing about Jumu'ah. Verified against sunnah.com and added a dedicated `JUMUAH_SUNNAH_GUIDE`: the 2-rakʿah-after figure is correctly Ibn ʿUmar's report of the Prophet's ﷺ own practice of praying 2 at home after Jumu'ah (Ṣaḥīḥ Muslim 882 / Ṣaḥīḥ al-Bukhārī 937) — distinct from Abū Hurayrah's 4-rakʿah-anywhere ḥadīth (Ṣaḥīḥ Muslim 881), which the note now mentions as the alternative. The 4-rakʿah-before figure is relabeled from "confirmed" to "recommended," since (unlike Ẓuhr's) no ṣaḥīḥ ḥadīth prescribes a specific rakʿah count before Jumu'ah itself — it's Ḥanafī tradition via a companion's practice and qiyās with Ẓuhr, not a direct Prophetic sunnah.
+- **On small screens, Quran settings were buried inside the room-picker dropdown** instead of being reachable in one tap like the desktop pill row's gear icon. `QuranTabNav.tsx` now shows the gear icon beside the menu button at every width.
+- **The Quran streak badge showed on the homepage even with no daily goal set,** where a "streak" isn't really meaningful (it would just mean "read at all that day"). Now hidden until `dailyGoalAyat > 0`, matching zikr/salat's badges, which always have an implicit goal.
+
 ## v5.33.3 — Fix: silent email failures on donation/zikr review actions; āyah photo-card overflow — 2026-09-18
 
 ### Fixed

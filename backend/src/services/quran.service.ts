@@ -183,7 +183,28 @@ export interface QuranProfileUpdate {
   currentPage?: number;
   dailyGoalAyat?: number;
   currentAyah?: number;
+  arabicFont?: 'clean' | 'naskh' | 'uthmani';
+  fontArabicPx?: number;
+  fontTranslationPx?: number;
+  fontTranslitPx?: number;
+  fontTafsirPx?: number;
+  translitEnabled?: boolean;
+  listenCountsAsAyat?: boolean;
+  reciterId?: string;
+  translations?: string[];
 }
+
+const DISPLAY_PREF_KEYS = [
+  'arabicFont',
+  'fontArabicPx',
+  'fontTranslationPx',
+  'fontTranslitPx',
+  'fontTafsirPx',
+  'translitEnabled',
+  'listenCountsAsAyat',
+  'reciterId',
+  'translations',
+] as const satisfies ReadonlyArray<keyof QuranProfileUpdate>;
 
 export async function updateProfile(
   userId: string,
@@ -200,6 +221,16 @@ export async function updateProfile(
       Math.floor(input.currentAyah / (QURAN_TOTAL_AYAT / QURAN_TOTAL_PAGES))
     );
   }
+  if (input.arabicFont !== undefined) profile.arabicFont = input.arabicFont;
+  if (input.fontArabicPx !== undefined) profile.fontArabicPx = input.fontArabicPx;
+  if (input.fontTranslationPx !== undefined) profile.fontTranslationPx = input.fontTranslationPx;
+  if (input.fontTranslitPx !== undefined) profile.fontTranslitPx = input.fontTranslitPx;
+  if (input.fontTafsirPx !== undefined) profile.fontTafsirPx = input.fontTafsirPx;
+  if (input.translitEnabled !== undefined) profile.translitEnabled = input.translitEnabled;
+  if (input.listenCountsAsAyat !== undefined) profile.listenCountsAsAyat = input.listenCountsAsAyat;
+  if (input.reciterId !== undefined) profile.reciterId = input.reciterId;
+  if (input.translations !== undefined) profile.translations = input.translations;
+  if (DISPLAY_PREF_KEYS.some((k) => input[k] !== undefined)) profile.displayPrefsSet = true;
   await profile.save();
   return profile;
 }
@@ -267,6 +298,16 @@ export interface QuranSummary {
     khatamStartedAt: string | null;
     readerPos: Record<string, number>;
     savedDuas: string[];
+    arabicFont: 'clean' | 'naskh' | 'uthmani';
+    fontArabicPx: number;
+    fontTranslationPx: number;
+    fontTranslitPx: number;
+    fontTafsirPx: number;
+    translitEnabled: boolean;
+    listenCountsAsAyat: boolean;
+    reciterId: string;
+    translations: string[];
+    displayPrefsSet: boolean;
   };
   todayPages: number;
   /** Today's ayat-equivalents (ayat + pages·10) — the v4 goal/streak unit */
@@ -386,6 +427,16 @@ export async function getSummary(userId: string, today?: string): Promise<QuranS
       khatamStartedAt: profile.khatamStartedAt ? profile.khatamStartedAt.toISOString() : null,
       readerPos: Object.fromEntries(profile.readerPos ?? new Map()),
       savedDuas: profile.savedDuas ?? [],
+      arabicFont: profile.arabicFont,
+      fontArabicPx: profile.fontArabicPx,
+      fontTranslationPx: profile.fontTranslationPx,
+      fontTranslitPx: profile.fontTranslitPx,
+      fontTafsirPx: profile.fontTafsirPx,
+      translitEnabled: profile.translitEnabled,
+      listenCountsAsAyat: profile.listenCountsAsAyat,
+      reciterId: profile.reciterId,
+      translations: profile.translations,
+      displayPrefsSet: profile.displayPrefsSet,
     },
     todayPages,
     todayAyat,

@@ -31,6 +31,18 @@ export interface QuranSummary {
     readerPos: Record<string, number>;
     /** Saved curated dua ids */
     savedDuas: string[];
+    /** Display/reading preferences — cross-device (see quranPrefs.ts) */
+    arabicFont: 'clean' | 'naskh' | 'uthmani';
+    fontArabicPx: number;
+    fontTranslationPx: number;
+    fontTranslitPx: number;
+    fontTafsirPx: number;
+    translitEnabled: boolean;
+    listenCountsAsAyat: boolean;
+    reciterId: string;
+    translations: string[];
+    /** False until any display pref above has ever been saved from a device */
+    displayPrefsSet: boolean;
   };
   todayPages: number;
   /** Today's ayat-equivalents (ayat + pages·10) — the v4 goal/streak unit */
@@ -75,6 +87,15 @@ export function useUpdateQuranProfile() {
       currentPage?: number;
       dailyGoalAyat?: number;
       currentAyah?: number;
+      arabicFont?: 'clean' | 'naskh' | 'uthmani';
+      fontArabicPx?: number;
+      fontTranslationPx?: number;
+      fontTranslitPx?: number;
+      fontTafsirPx?: number;
+      translitEnabled?: boolean;
+      listenCountsAsAyat?: boolean;
+      reciterId?: string;
+      translations?: string[];
     }) => {
       const { data } = await api.patch('/api/quran/profile', vars);
       return data;

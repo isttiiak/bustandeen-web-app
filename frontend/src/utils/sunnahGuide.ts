@@ -105,3 +105,47 @@ export const SUNNAH_GUIDE: Partial<Record<PrayerId, PrayerSunnahGuide>> = {
     },
   },
 };
+
+/**
+ * Jumu'ah replaces Ẓuhr on Friday (still tracked internally as `PrayerId`
+ * 'dhuhr' — see useSalatLog.ts), but its sunnah guidance is genuinely
+ * different and must NOT fall back to SUNNAH_GUIDE.dhuhr above: that entry's
+ * citation (Ṣaḥīḥ Muslim 728, Umm Ḥabībah's 12-rawātib hadith) is specifically
+ * about Ẓuhr and says nothing about Jumu'ah at all. Verified against
+ * sunnah.com before writing:
+ *
+ * - BEFORE: no ṣaḥīḥ hadith prescribes a specific rak'ah count before Jumu'ah
+ *   itself (unlike Ẓuhr's clearly-established 4-before from the same
+ *   12-rawātib hadith). The 4-rak'ah practice is Ḥanafī tradition, based on
+ *   the companion Ibn Mas'ūd's practice + qiyās with Ẓuhr — genuinely
+ *   scholarly-disputed, not a confirmed Prophetic sunnah, so graded
+ *   'ghairMuakkadah' here rather than 'muakkadah'.
+ * - AFTER: TWO distinct authentic narrations exist, for two different
+ *   contexts — Abū Hurayrah's ḥadīth (pray 4, general/anywhere — Ṣaḥīḥ
+ *   Muslim 881) vs. Ibn 'Umar's report of the Prophet's ﷺ own practice (he
+ *   never prayed after Jumu'ah until he returned home, then prayed 2 there —
+ *   Ṣaḥīḥ Muslim 882 / Ṣaḥīḥ al-Bukhārī 937). The previous version of this
+ *   guide cited "Ṣaḥīḥ Muslim 728" for a fixed 2 rak'ah — that hadith number
+ *   doesn't exist for this narration at all (728 is Ẓuhr's), so both the
+ *   rak'ah count and the source were wrong together.
+ */
+export const JUMUAH_SUNNAH_GUIDE: PrayerSunnahGuide = {
+  fardRakat: 2,
+  before: {
+    rakat: 4,
+    emphasis: 'ghairMuakkadah',
+    note: "Widely practiced (especially in the Ḥanafī tradition, by analogy with Ẓuhr) while waiting for the khuṭbah — but unlike Ẓuhr's rawātib, no ṣaḥīḥ hadith prescribes a specific rak'ah count before Jumu'ah itself. General nafl prayer before the khuṭbah begins is always encouraged.",
+    source: 'Ṣaḥīḥ al-Bukhārī 627',
+    sourceUrl: 'https://sunnah.com/bukhari:627',
+    grade:
+      'Muttafaqun ʿalayhi — general principle ("between every two adhans there is a prayer"), no fixed rakʿah count specified for Jumuʿah',
+  },
+  after: {
+    rakat: 2,
+    emphasis: 'muakkadah',
+    note: "The Prophet ﷺ never prayed after Jumu'ah until he returned home, then prayed 2 rak'ahs there. If praying anywhere other than home (e.g. staying in the mosque), 4 rak'ahs is the alternative sunnah instead.",
+    source: 'Ṣaḥīḥ Muslim 882',
+    sourceUrl: 'https://sunnah.com/muslim:882',
+    grade: 'Ṣaḥīḥ — the 4-rakʿah alternative is also Ṣaḥīḥ (Muslim 881)',
+  },
+};

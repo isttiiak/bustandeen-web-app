@@ -25,6 +25,17 @@ export const quranProfileSchema = z.object({
     // 0 = no goal (opt-in habit, Istiak's spec)
     dailyGoalAyat: z.number().int().min(0).max(6236).optional(),
     currentAyah: z.number().int().min(0).max(6235).optional(),
+    // Display/reading preferences — cross-device sync (ranges mirror
+    // frontend/src/utils/quranPrefs.ts's FONT_RANGES exactly).
+    arabicFont: z.enum(['clean', 'naskh', 'uthmani']).optional(),
+    fontArabicPx: z.number().int().min(22).max(52).optional(),
+    fontTranslationPx: z.number().int().min(12).max(26).optional(),
+    fontTranslitPx: z.number().int().min(11).max(24).optional(),
+    fontTafsirPx: z.number().int().min(13).max(28).optional(),
+    translitEnabled: z.boolean().optional(),
+    listenCountsAsAyat: z.boolean().optional(),
+    reciterId: z.string().trim().min(1).max(40).optional(),
+    translations: z.array(z.string().trim().min(1).max(20)).max(2).optional(),
   }),
 });
 
@@ -38,7 +49,11 @@ export const quranResumeSchema = z.object({
 
 export const quranDuaBookmarkSchema = z.object({
   body: z.object({
-    duaId: z.string().min(1).max(60).regex(/^[a-z0-9-]+$/),
+    duaId: z
+      .string()
+      .min(1)
+      .max(60)
+      .regex(/^[a-z0-9-]+$/),
   }),
 });
 
