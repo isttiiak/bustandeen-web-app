@@ -97,7 +97,7 @@ export default function AdminUsers() {
                 </tr>
               )}
               {data?.users.map((u) => {
-                const inactiveDays = daysAgo(u.updatedAt);
+                const inactiveDays = daysAgo(u.lastActiveAt || u.createdAt);
                 return (
                   <tr
                     key={u.uid}

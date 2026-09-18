@@ -78,7 +78,10 @@ async function applyIncrements(
   }
 
   if (totalAdded !== 0 || Object.keys(userInc).length) {
-    await User.updateOne({ uid: userId }, { $inc: { ...userInc, totalCount: totalAdded } });
+    await User.updateOne(
+      { uid: userId },
+      { $inc: { ...userInc, totalCount: totalAdded }, $set: { lastActiveAt: new Date() } }
+    );
   }
   if (events.length) {
     // Best-effort — never let analytics logging fail the actual increment.

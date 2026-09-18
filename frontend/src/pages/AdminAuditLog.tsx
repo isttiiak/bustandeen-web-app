@@ -32,7 +32,8 @@ const ACTION_LABELS: Record<string, string> = {
   'feedback.delete': 'Deleted feedback',
   'email.compose.send': 'Sent a composed email',
   'user.delete': 'Deleted user account',
-  'user.resendWelcome': 'Resent welcome email',
+  'user.resendWelcome': 'Sent welcome email',
+  'user.customEmail': 'Sent custom email to user',
   'announcement.create': 'Published announcement',
   'announcement.deactivate': 'Deactivated announcement',
 };

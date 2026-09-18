@@ -5,17 +5,19 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 import {
   useAdminUserDetail,
-  useResendWelcomeEmail,
+  useWelcomeDraft,
+  useSendWelcomeEmail,
   useReengagementDraft,
   useSendReengagementEmail,
+  useSendCustomEmail,
   useDeleteUser,
   useDisableUser,
   useEnableUser,
 } from '../hooks/useAdminUsers.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-const daysInactive = (updatedAt: string): number =>
-  Math.max(0, Math.floor((Date.now() - new Date(updatedAt).getTime()) / DAY_MS));
+const daysInactive = (lastActiveAt: string | null | undefined, createdAt: string): number =>
+  Math.max(0, Math.floor((Date.now() - new Date(lastActiveAt || createdAt).getTime()) / DAY_MS));
 
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -31,19 +33,39 @@ export default function AdminUserDetail() {
   const navigate = useNavigate();
   const { uid = '' } = useParams<{ uid: string }>();
   const { data: user, isLoading } = useAdminUserDetail(uid);
-  const resendWelcome = useResendWelcomeEmail();
+  const welcomeDraft = useWelcomeDraft();
+  const sendWelcome = useSendWelcomeEmail();
   const deleteUser = useDeleteUser();
   const disableUser = useDisableUser();
   const enableUser = useEnableUser();
   const reengagementDraft = useReengagementDraft();
   const sendReengagement = useSendReengagementEmail();
+  const sendCustomEmail = useSendCustomEmail();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [disableReason, setDisableReason] = useState('');
   const [showDisableForm, setShowDisableForm] = useState(false);
+  const [welcomeForm, setWelcomeForm] = useState<{ subject: string; body: string } | null>(null);
   const [reengagementForm, setReengagementForm] = useState<{
     subject: string;
     body: string;
   } | null>(null);
+  const [customEmailForm, setCustomEmailForm] = useState<{
+    subject: string;
+    body: string;
+  } | null>(null);
+
+  const startWelcomeDraft = () => {
+    welcomeDraft.mutate(uid, {
+      onSuccess: (d) => setWelcomeForm(d),
+    });
+  };
+  const confirmSendWelcome = () => {
+    if (!welcomeForm) return;
+    sendWelcome.mutate(
+      { uid, subject: welcomeForm.subject, body: welcomeForm.body },
+      { onSuccess: () => setWelcomeForm(null) }
+    );
+  };
 
   const startReengagementDraft = () => {
     reengagementDraft.mutate(uid, {
@@ -55,6 +77,21 @@ export default function AdminUserDetail() {
     sendReengagement.mutate(
       { uid, subject: reengagementForm.subject, body: reengagementForm.body },
       { onSuccess: () => setReengagementForm(null) }
+    );
+  };
+
+  const startCustomEmail = () => {
+    const name = user?.displayName || user?.firstName || 'there';
+    setCustomEmailForm({
+      subject: '',
+      body: `Assalamu Alaikum ${name},\n\n\n\n— Bustandeen`,
+    });
+  };
+  const confirmSendCustomEmail = () => {
+    if (!customEmailForm) return;
+    sendCustomEmail.mutate(
+      { uid, subject: customEmailForm.subject, body: customEmailForm.body },
+      { onSuccess: () => setCustomEmailForm(null) }
     );
   };
 
@@ -114,10 +151,10 @@ export default function AdminUserDetail() {
               />
               <Field
                 label={t('adminUserDetail.lastActive', 'Last active (approx.)')}
-                value={`${new Date(user.updatedAt).toLocaleDateString()} · ${t(
+                value={`${new Date(user.lastActiveAt || user.createdAt).toLocaleDateString()} · ${t(
                   'adminUserDetail.daysAgo',
                   '{{count}} days ago',
-                  { count: daysInactive(user.updatedAt) }
+                  { count: daysInactive(user.lastActiveAt, user.createdAt) }
                 )}`}
               />
               <Field
@@ -125,12 +162,23 @@ export default function AdminUserDetail() {
                 value={user.totalCount.toLocaleString()}
               />
               <Field
-                label={t('adminUserDetail.zikrTypesCount', 'Zikr types tracked')}
-                value={user.zikrTypes.length}
+                label={t('adminUserDetail.welcomeEmail', 'Welcome email sent')}
+                value={
+                  user.welcomeEmailSentAt
+                    ? new Date(user.welcomeEmailSentAt).toLocaleDateString()
+                    : '—'
+                }
               />
               <Field
-                label={t('adminUserDetail.welcomeEmail', 'Welcome email sent')}
-                value={user.welcomeEmailSentAt ? '✓' : '—'}
+                label={t('adminUserDetail.reengagementSent', 'Re-engagement emails sent')}
+                value={
+                  user.reengagementEmailCount > 0
+                    ? t('adminUserDetail.reengagementSentValue', '{{count}}× · last {{date}}', {
+                        count: user.reengagementEmailCount,
+                        date: new Date(user.reengagementEmailSentAt!).toLocaleDateString(),
+                      })
+                    : '—'
+                }
               />
               <Field
                 label={t('adminUserDetail.aiEnabled', 'AI companion enabled')}
@@ -147,24 +195,69 @@ export default function AdminUserDetail() {
                 {t('adminUserDetail.actions', 'Actions')}
               </h2>
               <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-white/60 text-sm">
-                    {t(
-                      'adminUserDetail.resendWelcomeDesc',
-                      'Resend the one-time welcome email to this person.'
-                    )}
-                  </p>
-                  <button
-                    onClick={() => resendWelcome.mutate(uid)}
-                    disabled={resendWelcome.isPending}
-                    className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white shrink-0"
-                  >
-                    {resendWelcome.isPending
-                      ? '…'
-                      : t('adminUserDetail.resendWelcome', 'Resend welcome email')}
-                  </button>
-                </div>
-                {resendWelcome.isSuccess && (
+                {!welcomeForm ? (
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-white/60 text-sm">
+                      {t(
+                        'adminUserDetail.welcomeDesc',
+                        "Welcome email is sent manually — you'll see and can edit the predefined text (e.g. to call out something specific to this person) before anything sends."
+                      )}
+                    </p>
+                    <button
+                      onClick={startWelcomeDraft}
+                      disabled={welcomeDraft.isPending}
+                      className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white shrink-0"
+                    >
+                      {welcomeDraft.isPending
+                        ? '…'
+                        : user.welcomeEmailSentAt
+                          ? t('adminUserDetail.resendWelcome', 'Resend welcome email')
+                          : t('adminUserDetail.sendWelcome', 'Send welcome email')}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold">
+                      {t(
+                        'adminUserDetail.welcomeEditable',
+                        'Editable draft — review and change anything before sending'
+                      )}
+                    </p>
+                    <input
+                      value={welcomeForm.subject}
+                      onChange={(e) =>
+                        setWelcomeForm((f) => (f ? { ...f, subject: e.target.value } : f))
+                      }
+                      className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+                    />
+                    <textarea
+                      value={welcomeForm.body}
+                      onChange={(e) =>
+                        setWelcomeForm((f) => (f ? { ...f, body: e.target.value } : f))
+                      }
+                      rows={9}
+                      className="textarea textarea-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl font-mono"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={confirmSendWelcome}
+                        disabled={sendWelcome.isPending}
+                        className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white"
+                      >
+                        {sendWelcome.isPending
+                          ? '…'
+                          : t('adminUserDetail.confirmSend', 'Send this email')}
+                      </button>
+                      <button
+                        onClick={() => setWelcomeForm(null)}
+                        className="btn btn-sm btn-ghost text-white/50"
+                      >
+                        {t('adminZikr.cancel', 'Cancel')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {sendWelcome.isSuccess && (
                   <p className="text-brand-emerald text-xs">
                     {t('adminUserDetail.resendSent', 'Sent.')}
                   </p>
@@ -174,13 +267,27 @@ export default function AdminUserDetail() {
               <div className="rounded-2xl border border-brand-info/20 bg-brand-info/[0.04] p-4 space-y-3">
                 {!reengagementForm ? (
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-white/60 text-sm">
-                      {t(
-                        'adminUserDetail.reengagementDesc',
-                        "It's been {{count}} days since this person was last active. Draft a gentle re-engagement email — you'll see and can edit the exact text before anything sends.",
-                        { count: daysInactive(user.updatedAt) }
+                    <div className="space-y-1">
+                      <p className="text-white/60 text-sm">
+                        {t(
+                          'adminUserDetail.reengagementDesc',
+                          "It's been {{count}} days since this person was last active. Draft a gentle re-engagement email — you'll see and can edit the exact text before anything sends.",
+                          { count: daysInactive(user.lastActiveAt, user.createdAt) }
+                        )}
+                      </p>
+                      {user.reengagementEmailCount > 0 && (
+                        <p className="text-white/30 text-xs">
+                          {t(
+                            'adminUserDetail.reengagementHistory',
+                            "Already sent {{count}}× — most recently {{date}}. That doesn't mean they came back, so it's fine to send again.",
+                            {
+                              count: user.reengagementEmailCount,
+                              date: new Date(user.reengagementEmailSentAt!).toLocaleDateString(),
+                            }
+                          )}
+                        </p>
                       )}
-                    </p>
+                    </div>
                     <button
                       onClick={startReengagementDraft}
                       disabled={reengagementDraft.isPending}
@@ -234,6 +341,66 @@ export default function AdminUserDetail() {
                   </div>
                 )}
                 {sendReengagement.isSuccess && (
+                  <p className="text-brand-emerald text-xs">
+                    {t('adminUserDetail.resendSent', 'Sent.')}
+                  </p>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-brand-magenta/20 bg-brand-magenta/[0.04] p-4 space-y-3">
+                {!customEmailForm ? (
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-white/60 text-sm">
+                      {t(
+                        'adminUserDetail.customEmailDesc',
+                        'Write a fully custom, one-off email to this person — not the welcome or re-engagement template.'
+                      )}
+                    </p>
+                    <button
+                      onClick={startCustomEmail}
+                      className="btn btn-sm bg-brand-magenta hover:opacity-90 border-0 text-white shrink-0"
+                    >
+                      {t('adminUserDetail.composeCustom', 'Compose custom email')}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <input
+                      value={customEmailForm.subject}
+                      onChange={(e) =>
+                        setCustomEmailForm((f) => (f ? { ...f, subject: e.target.value } : f))
+                      }
+                      placeholder={t('adminUserDetail.customEmailSubject', 'Subject')}
+                      className="input input-sm w-full bg-white/5 border-brand-magenta/15 text-white rounded-xl"
+                    />
+                    <textarea
+                      value={customEmailForm.body}
+                      onChange={(e) =>
+                        setCustomEmailForm((f) => (f ? { ...f, body: e.target.value } : f))
+                      }
+                      rows={9}
+                      className="textarea textarea-sm w-full bg-white/5 border-brand-magenta/15 text-white rounded-xl font-mono"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={confirmSendCustomEmail}
+                        disabled={sendCustomEmail.isPending}
+                        className="btn btn-sm bg-brand-magenta hover:opacity-90 border-0 text-white"
+                      >
+                        {sendCustomEmail.isPending
+                          ? '…'
+                          : t('adminUserDetail.confirmSend', 'Send this email')}
+                      </button>
+                      <button
+                        onClick={() => setCustomEmailForm(null)}
+                        className="btn btn-sm btn-ghost text-white/50"
+                      >
+                        {t('adminZikr.cancel', 'Cancel')}
+                      </button>
+                    </div>
+                  </div>
+                )}
+                {sendCustomEmail.isSuccess && (
                   <p className="text-brand-emerald text-xs">
                     {t('adminUserDetail.resendSent', 'Sent.')}
                   </p>

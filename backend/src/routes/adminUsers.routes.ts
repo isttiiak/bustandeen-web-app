@@ -12,9 +12,11 @@ router.get('/', adminUsersController.listHandler);
 router.get('/welcome-backfill', adminUsersController.welcomeBackfillStatusHandler);
 router.post('/welcome-backfill', adminUsersController.welcomeBackfillSendHandler);
 router.get('/:uid', adminUsersController.detailHandler);
-router.post('/:uid/resend-welcome', adminUsersController.resendWelcomeHandler);
+router.get('/:uid/welcome-draft', adminUsersController.welcomeDraftHandler);
+router.post('/:uid/welcome-send', adminUsersController.welcomeSendHandler);
 router.get('/:uid/reengagement-draft', adminUsersController.reengagementDraftHandler);
 router.post('/:uid/reengagement-send', adminUsersController.reengagementSendHandler);
+router.post('/:uid/custom-email', adminUsersController.customEmailSendHandler);
 router.post('/:uid/disable', adminUsersController.disableHandler);
 router.post('/:uid/enable', adminUsersController.enableHandler);
 // Single-UID only, explicit confirm required client-side — no bulk-delete

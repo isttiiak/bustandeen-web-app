@@ -71,18 +71,54 @@ export const detailHandler = async (
   }
 };
 
-export const resendWelcomeHandler = async (
+export const welcomeDraftHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const draft = await adminUsersService.getWelcomeDraft(paramString(req.params.uid));
+    res.json({ ok: true, ...draft });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
+export const welcomeSendHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const uid = paramString(req.params.uid);
-    await adminUsersService.resendWelcomeEmail(uid);
+    const { subject, body } = req.body as { subject: string; body: string };
+    await adminUsersService.sendWelcomeEmailEdited(uid, subject, body);
     await logAdminAction({
       actorEmail: req.admin!.email,
       actorRole: req.admin!.role,
       action: 'user.resendWelcome',
+      targetType: 'User',
+      targetId: uid,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
+export const customEmailSendHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const uid = paramString(req.params.uid);
+    const { subject, body } = req.body as { subject: string; body: string };
+    await adminUsersService.sendCustomEmail(uid, subject, body);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'user.customEmail',
       targetType: 'User',
       targetId: uid,
     });

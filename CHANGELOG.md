@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.37.0 — Admin user management: manual welcome email, fixed inactivity tracking, custom email — 2026-09-18
+
+### Changed
+
+- **Welcome email is no longer sent automatically on first sign-in.** It's now fully admin-triggered from the user detail page: click "Send welcome email," review/edit the predefined subject and body (e.g. to call out something specific to that person — a first international user, etc.), then confirm — same draft-then-confirm pattern the re-engagement email already used. The old one-click "resend welcome email" is replaced by this editable flow (`GET/POST /api/admin/users/:uid/welcome-draft|welcome-send`). The existing bulk "welcome backfill" tool (for accounts that predate the welcome-email feature entirely) still exists but is now scoped to accounts created before this change, so it can't sweep up new signups with the generic template.
+- **Fixed a real "days inactive" bug**: it was computed from Mongoose's generic `updatedAt`, which several admin actions (resending welcome email, disabling/enabling a user) unintentionally bumped — so doing any of those made an inactive user falsely look active again, resetting the re-engagement counter to 0. Added a dedicated `User.lastActiveAt`, set only by genuine activity (zikr increments, sign-in) and never by admin writes. `getDaysInactive`, the user list's "most inactive first" sort, and the detail page's "Last active" all now read from it.
+- **User summary no longer shows "zikr types tracked."** That was a bare count of the user's own custom zikr types — their data, not something the admin needs for a journey overview.
+- Re-engagement emails now include the app URL (`bustandeen.com`) in the body.
+
+### Added
+
+- **Re-engagement send tracking**: `User.reengagementEmailSentAt`/`reengagementEmailCount`, shown on the user detail page (last-sent date + total count) so the admin isn't drafting blind — sending one is explicitly noted as not meaning the user came back.
+- **Custom email section** on the user detail page — a fully free-form subject/body email to one user, for anything outside the welcome/re-engagement templates (`POST /api/admin/users/:uid/custom-email`).
+
+### Notes
+
+- The founder-email request (seeing/replying to emails sent directly to istiak@bustandeen.com from the admin panel) turned out to need a real Zoho mailbox sync that doesn't exist yet — the current "Feedback & Contact" panel only shows in-app form submissions, never real inbox mail. Deferred to its own session; full scope logged in `TODO-v3.md`.
+
 ## v5.36.0 — Quran time-of-day chart; listening now tracked as sessions too — 2026-09-18
 
 ### Added
