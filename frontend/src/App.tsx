@@ -62,6 +62,7 @@ const About = lazy(() => import('./pages/About.js'));
 const DuaLibrary = lazy(() => import('./pages/DuaLibrary.js'));
 const AdhkarLibrary = lazy(() => import('./pages/AdhkarLibrary.js'));
 const AsmaUlHusnaLibrary = lazy(() => import('./pages/AsmaUlHusnaLibrary.js'));
+const ZakatCalculatorLibrary = lazy(() => import('./pages/ZakatCalculatorLibrary.js'));
 const Privacy = lazy(() => import('./pages/Privacy.js'));
 const Feedback = lazy(() => import('./pages/Feedback.js'));
 const Contact = lazy(() => import('./pages/Contact.js'));
@@ -1030,6 +1031,7 @@ export default function App() {
                 <Route path="/library/duas" element={<DuaLibrary />} />
                 <Route path="/library/adhkar" element={<AdhkarLibrary />} />
                 <Route path="/library/asma-ul-husna" element={<AsmaUlHusnaLibrary />} />
+                <Route path="/library/zakat-calculator" element={<ZakatCalculatorLibrary />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/contact" element={<Contact />} />

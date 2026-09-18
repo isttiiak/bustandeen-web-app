@@ -976,7 +976,9 @@
     "asmaSourceNote": "The Prophet ﷺ said Allah has 99 names and whoever preserves them will enter Paradise (Sahih al-Bukhari 7392, Sahih Muslim 2677). This list, commonly cited from Jami' at-Tirmidhi 3507, is the one in widest circulation; many hadith scholars note the specific enumeration is a later addition, though the names themselves are drawn from the Quran and Sunnah.",
     "searchPlaceholder": "Search...",
     "noResults": "No results found.",
-    "sourceLabel": "Source"
+    "sourceLabel": "Source",
+    "zakatSeoTitle": "Zakat Calculator",
+    "zakatSeoDescription": "Work out your zakat: nisab by gold or silver standard, your assets and debts, and when your hawl is due."
   },
   "landing": {
     "seoTitle": "Bustandeen - Nourish Your Deen",

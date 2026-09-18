@@ -828,7 +828,7 @@ export default function Home() {
               },
               {
                 icon: '🧮',
-                to: '/zakat-calculator',
+                to: '/library/zakat-calculator',
                 title: t('home.libraryZakatTitle'),
                 subtitle: t('home.libraryZakatSubtitle'),
               },

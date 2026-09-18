@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.40.1 - Fix: Home page Zakat Calculator used the wrong UI - 2026-09-18
+
+### Fixed
+
+- The Home page's "Islamic Library" row linked its Zakat Calculator card straight to the public `/zakat-calculator` SEO page, so it rendered with that page's own SEO-tree chrome (different header/footer, different styling) instead of the app's normal UI - inconsistent with the other three cards, which already had proper in-app versions. Added `/library/zakat-calculator`, an app-chrome page (`ZikrLibrary`-style `Navbar`/`Footer`/`AnimatedBackground`, `noindex`) with the exact same calculator logic and the same vetted copy (reused directly from `seo/locales/chrome.ts`'s `zakat` object, not re-translated) - same content, right chrome. Home page card now points there instead.
+
 ## v5.40.0 - SEO fixes from real GSC/GA4 query data - 2026-09-18
 
 ### Added
