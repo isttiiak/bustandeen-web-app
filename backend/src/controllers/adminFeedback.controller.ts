@@ -8,7 +8,7 @@ const paramString = (v: string | string[] | undefined): string =>
 
 const handleServiceError = (err: unknown, res: Response, next: NextFunction): void => {
   const status = (err as { status?: number }).status;
-  if (status === 404) {
+  if (status === 404 || status === 502) {
     res.status(status).json({ ok: false, error: (err as Error).message });
     return;
   }

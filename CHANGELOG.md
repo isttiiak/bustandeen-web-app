@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.33.1 — Fix: feedback threads merging in Gmail; compose tool can now reply from the inbox — 2026-09-18
+
+### Fixed
+
+- **Multiple feedback/contact submissions from the same person collapsed into one Gmail thread.** Every submission's confirmation email used the exact same subject line per `kind` (e.g. always "We received your feedback — Bustandeen"), and the admin-notify copy used the same fixed pattern per category. Gmail/Outlook group conversations by (normalized subject + participants) whenever there's no `In-Reply-To`/`References` linking them elsewhere, so a second unrelated submission from the same email address silently merged into the first one's thread even though each submission already had its own unique Message-ID under the hood. Every subject (received, reply, and the admin-notify copy) now includes a short ref derived from the submission's own id (e.g. `[#A1B2C3]`), so each submission gets its own thread end to end.
+- **A reply from the Feedback inbox (or the compose tool, see below) could mark a message "replied" even when the email silently failed to send** (e.g. SMTP credentials unset) — `sendMail` never throws, it just returns `null` on failure, and that return value was previously ignored. Both reply paths now check it and return a loud `502` instead, leaving the message `open` so it isn't lost.
+
+### Changed
+
+- **"Email Istiak" compose tool now has a "Reply to someone who wrote in" mode** instead of only a free-form "type any address" box. It lists everyone who's submitted feedback/contact (searchable, filterable by status), and picking one opens a reply that's threaded onto that exact submission — same Message-ID chain and ref-tagged subject as the Feedback inbox's own Reply button, just sent under the founder's own name (`istiak@bustandeen.com`) instead of the system `ansar@` mailbox. The original free-form "custom recipient" mode is still available as a separate tab for anyone not already in that list. Sending a threaded reply here also flips that submission's status in the Feedback inbox, same as replying from there directly.
+
 ## v5.33.0 — Compose-to-founder tool, external-reply status sync — 2026-09-18
 
 ### Added

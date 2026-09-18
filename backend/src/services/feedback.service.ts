@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import FeedbackMessage, { IFeedbackMessage, FeedbackStatus } from '../models/FeedbackMessage.js';
-import { sendMail } from './email.service.js';
+import { sendMail, EmailSender } from './email.service.js';
 import {
   feedbackNotifyAdminEmail,
   RECEIVED_SUBJECT,
@@ -54,7 +54,7 @@ export const submitFeedback = async (
       : `Assalamu Alaikum,\n\nWe received your message and will get back to you here soon.\n\n— Bustandeen`;
   await sendMail({
     to: doc.email,
-    subject: RECEIVED_SUBJECT(doc.kind),
+    subject: RECEIVED_SUBJECT(doc.kind, doc._id.toString()),
     text: receivedText,
     html: toSimpleHtml(receivedText),
     from: 'ansar',
@@ -96,20 +96,24 @@ export const listFeedback = async (
 export const replyToFeedback = async (
   id: string,
   body: string,
-  repliedBy: string
+  repliedBy: string,
+  sender: EmailSender = 'ansar'
 ): Promise<IFeedbackMessage> => {
   const doc = await FeedbackMessage.findById(id);
   if (!doc) throw httpError(404, 'Feedback message not found');
 
-  await sendMail({
+  const messageId = await sendMail({
     to: doc.email,
-    subject: REPLY_SUBJECT(doc.kind),
+    subject: REPLY_SUBJECT(doc.kind, doc._id.toString()),
     text: body,
     html: toSimpleHtml(body),
-    from: 'ansar',
+    from: sender,
     inReplyTo: doc.emailMessageId ?? undefined,
     references: doc.emailMessageId ?? undefined,
   });
+  if (!messageId) {
+    throw httpError(502, 'Send failed — check System & ops health for the logged error.');
+  }
 
   doc.status = 'replied';
   doc.repliedAt = new Date();

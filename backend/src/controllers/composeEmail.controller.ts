@@ -8,20 +8,28 @@ export const sendHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { to, subject, body } = req.body as { to: string; subject: string; body: string };
-    await composeEmailService.sendComposedEmail({ to, subject, body });
+    const { feedbackId, to, subject, body } = req.body as {
+      feedbackId?: string;
+      to?: string;
+      subject?: string;
+      body: string;
+    };
+    const result = await composeEmailService.sendComposedEmail(
+      { feedbackId, to, subject, body },
+      req.admin!.email
+    );
     await logAdminAction({
       actorEmail: req.admin!.email,
       actorRole: req.admin!.role,
-      action: 'email.compose.send',
-      targetType: 'Email',
-      targetId: to,
-      metadata: { subject },
+      action: feedbackId ? 'email.compose.reply' : 'email.compose.send',
+      targetType: feedbackId ? 'FeedbackMessage' : 'Email',
+      targetId: feedbackId ?? result.to,
+      metadata: { subject: result.subject },
     });
     res.json({ ok: true });
   } catch (err) {
     const status = (err as { status?: number }).status;
-    if (status === 502) {
+    if (status === 502 || status === 404) {
       res.status(status).json({ ok: false, error: (err as Error).message });
       return;
     }

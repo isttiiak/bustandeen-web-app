@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import app from '../src/app.js';
 import AdminAccount from '../src/models/AdminAccount.js';
 import AdminAuditLog from '../src/models/AdminAuditLog.js';
+import FeedbackMessage from '../src/models/FeedbackMessage.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 const SERVANT_EMAIL = 'servant@compose-test.dev';
@@ -97,5 +98,46 @@ describe('Admin compose-email (servant only, always sends as istiak)', () => {
 
     const entries = await AdminAuditLog.find({ action: 'email.compose.send' });
     expect(entries).toHaveLength(0);
+  });
+
+  test('rejects a payload with neither feedbackId nor to+subject', async () => {
+    const res = await request(app)
+      .post('/api/admin/compose-email/send')
+      .set('X-Admin-Token', servantToken)
+      .send({ body: 'Missing everything else.' });
+    expect(res.status).toBe(400);
+  });
+
+  test('a feedbackId-only payload is valid shape-wise but still fails loudly with SMTP unconfigured, and does not mark the thread replied', async () => {
+    const msg = await FeedbackMessage.create({
+      name: 'A user',
+      email: 'a-user@example.com',
+      message: 'Something worth reading, at least ten characters.',
+      category: [],
+      kind: 'feedback',
+      userId: null,
+      ipAddress: '127.0.0.1',
+    });
+
+    const res = await request(app)
+      .post('/api/admin/compose-email/send')
+      .set('X-Admin-Token', servantToken)
+      .send({ feedbackId: msg._id.toString(), body: 'Assalamu Alaikum, replying as the founder.' });
+    expect(res.status).toBe(502);
+    expect(res.body.ok).toBe(false);
+
+    const fresh = await FeedbackMessage.findById(msg._id);
+    expect(fresh.status).toBe('open');
+
+    const entries = await AdminAuditLog.find({ action: 'email.compose.reply' });
+    expect(entries).toHaveLength(0);
+  });
+
+  test('a feedbackId that does not exist returns 404', async () => {
+    const res = await request(app)
+      .post('/api/admin/compose-email/send')
+      .set('X-Admin-Token', servantToken)
+      .send({ feedbackId: new mongoose.Types.ObjectId().toString(), body: 'Hello.' });
+    expect(res.status).toBe(404);
   });
 });

@@ -109,4 +109,29 @@ describe('Admin feedback: mark replied externally', () => {
       .set('X-Admin-Token', servantToken);
     expect(res.status).toBe(404);
   });
+
+  test('sending a reply fails loudly (not silently) when SMTP is unconfigured, and does not mark the message replied', async () => {
+    // Test env has no ANSAR_SMTP_USER/PASS set (see adminComposeEmail.e2e's
+    // equivalent test) — sendMail no-ops and returns null, which must now
+    // stop the status flip rather than silently claiming a reply went out.
+    const msg = await makeMessage();
+    const res = await request(app)
+      .post(`/api/admin/feedback/${msg._id}/reply`)
+      .set('X-Admin-Token', generalAnsarToken)
+      .send({ body: 'Assalamu Alaikum, thanks for writing in.' });
+    expect(res.status).toBe(502);
+    expect(res.body.ok).toBe(false);
+
+    const fresh = await FeedbackMessage.findById(msg._id);
+    expect(fresh.status).toBe('open');
+    expect(fresh.repliedAt).toBeFalsy();
+  });
+
+  test('reply to a non-existent message id returns 404', async () => {
+    const res = await request(app)
+      .post(`/api/admin/feedback/${new mongoose.Types.ObjectId()}/reply`)
+      .set('X-Admin-Token', generalAnsarToken)
+      .send({ body: 'Assalamu Alaikum.' });
+    expect(res.status).toBe(404);
+  });
 });
