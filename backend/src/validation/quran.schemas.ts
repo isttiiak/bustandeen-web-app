@@ -93,3 +93,36 @@ export const quranTafsirSchema = z.object({
   }),
   body: z.object({}).optional(),
 });
+
+// POST /api/quran/session — periodic upsert of the in-progress reading
+// session (idempotent by clientSessionId; safe to retry on flaky networks).
+export const quranSessionSaveSchema = z.object({
+  body: z.object({
+    clientSessionId: z
+      .string()
+      .min(8)
+      .max(64)
+      .regex(/^[a-zA-Z0-9-]+$/),
+    date: dateStr,
+    startedAt: z.coerce.date(),
+    endedAt: z.coerce.date(),
+    // Bounded generously above the client's own idle/tafsir caps — this is a
+    // last-resort backstop, not the primary defense (that's clamping to
+    // wall-clock elapsed time in the service).
+    activeDurationSec: z
+      .number()
+      .int()
+      .min(0)
+      .max(6 * 3600),
+    ayahCount: z.number().int().min(0).max(7000).default(0),
+    pagesRead: z.number().int().min(0).max(700).default(0),
+    surahs: z.array(z.number().int().min(1).max(114)).max(50).default([]),
+  }),
+});
+
+export const quranSessionsQuerySchema = z.object({
+  query: z.object({
+    date: dateStr,
+  }),
+  body: z.object({}).optional(),
+});

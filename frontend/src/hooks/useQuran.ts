@@ -250,3 +250,31 @@ export function useQuranHistory(days = 30, enabled = true) {
     staleTime: 60_000,
   });
 }
+
+// ── Reading sessions (live timer + session history) ────────────────────────
+
+export interface QuranSession {
+  start: string;
+  end: string;
+  activeDurationSec: number;
+  ayahCount: number;
+  pagesRead: number;
+  surahs: number[];
+}
+
+/** Sessions logged for a given tracking day — mirrors useZikrSessions. */
+export function useQuranSessions(dateStr: string) {
+  const user = useAuthStore((s) => s.user);
+  return useQuery({
+    queryKey: ['quran', 'sessions', dateStr],
+    queryFn: async () => {
+      const { data } = await api.get<{ ok: boolean; sessions: QuranSession[] }>(
+        '/api/quran/sessions',
+        { params: { date: dateStr } }
+      );
+      return data.sessions;
+    },
+    enabled: !!user && !!dateStr,
+    staleTime: 30_000,
+  });
+}

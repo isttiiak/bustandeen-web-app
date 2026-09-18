@@ -1,12 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { ClockIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import QuranTabNav from '../components/QuranTabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
 import { useAuthStore } from '../store/useAuthStore.js';
-import { useQuranSummary, useQuranHistory, QURAN_TOTAL_AYAT } from '../hooks/useQuran.js';
+import {
+  useQuranSummary,
+  useQuranHistory,
+  useQuranSessions,
+  QURAN_TOTAL_AYAT,
+} from '../hooks/useQuran.js';
 import { loadSurahList, surahDisplayName, type SurahMeta } from '../utils/quranData.js';
-import { formatLocaleNumber } from '../utils/localeDate.js';
+import { formatLocaleNumber, formatLocaleTime } from '../utils/localeDate.js';
+import { getTrackingDay } from '../utils/trackingDay.js';
 
 /** The whole Quran journey in numbers — reading, listening, khatam, favourites. */
 export default function QuranAnalytics() {
@@ -15,6 +22,8 @@ export default function QuranAnalytics() {
   const { data: summary } = useQuranSummary();
   const { data: history } = useQuranHistory(30, true);
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
+  const [sessionsDate, setSessionsDate] = useState(() => getTrackingDay());
+  const { data: sessions, isLoading: sessionsLoading } = useQuranSessions(sessionsDate);
 
   useEffect(() => {
     let alive = true;
@@ -182,6 +191,79 @@ export default function QuranAnalytics() {
                 })
               : t('quranAnalytics.paceEmpty')}
           </p>
+        </div>
+
+        {/* reading session history */}
+        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <h2 className="text-white font-black text-sm flex items-center gap-2">
+              <ClockIcon className="w-4 h-4 text-brand-info" />
+              {t('quranAnalytics.sessions.title', 'Reading sessions')}
+            </h2>
+            <input
+              type="date"
+              value={sessionsDate}
+              max={getTrackingDay()}
+              onChange={(e) => setSessionsDate(e.target.value)}
+              className="input input-xs input-bordered bg-brand-surface border-brand-border text-white/80 text-xs"
+            />
+          </div>
+          {sessionsLoading ? (
+            <p className="text-white/30 text-xs text-center py-4">{t('common.loading')}</p>
+          ) : sessions && sessions.length > 0 ? (
+            <div className="space-y-2">
+              {sessions.map((s, i) => {
+                const totalMin = Math.max(1, Math.round(s.activeDurationSec / 60));
+                const h = Math.floor(totalMin / 60);
+                const m = totalMin % 60;
+                const duration =
+                  h > 0
+                    ? t('quranAnalytics.sessions.durationHm', { h, m })
+                    : t('quranAnalytics.sessions.durationM', { m });
+                return (
+                  <div
+                    key={i}
+                    className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-brand-border p-3"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-white/80 text-sm font-semibold tabular-nums">
+                        {formatLocaleTime(new Date(s.start), {
+                          hour: 'numeric',
+                          minute: '2-digit',
+                        })}
+                        {' – '}
+                        {formatLocaleTime(new Date(s.end), { hour: 'numeric', minute: '2-digit' })}
+                      </p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {s.surahs.map((surahNo) => (
+                          <span
+                            key={surahNo}
+                            className="px-1.5 py-0.5 rounded-md bg-black/30 border border-brand-border text-[10px] text-white/50"
+                          >
+                            {nameOf(surahNo)}
+                          </span>
+                        ))}
+                        {s.ayahCount > 0 && (
+                          <span className="px-1.5 py-0.5 rounded-md bg-black/30 border border-brand-border text-[10px] text-white/50">
+                            {t('quranAnalytics.sessions.ayahCount', {
+                              n: formatLocaleNumber(s.ayahCount),
+                            })}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <p className="text-brand-emerald font-black text-lg shrink-0 whitespace-nowrap">
+                      {duration}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-white/30 text-xs text-center py-4">
+              {t('quranAnalytics.sessions.empty', 'No reading sessions logged for this day')}
+            </p>
+          )}
         </div>
       </div>
     </AnimatedBackground>

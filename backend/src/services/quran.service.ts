@@ -4,6 +4,7 @@ import QuranProfile, {
   QURAN_TOTAL_PAGES,
   QURAN_TOTAL_AYAT,
 } from '../models/QuranProfile.js';
+import QuranReadingSession from '../models/QuranReadingSession.js';
 
 /** Unit math: 1 mushaf page ≈ 10 ayat (6236/604). Units = ayat-equivalents. */
 const AYAT_PER_PAGE = 10;
@@ -524,5 +525,107 @@ export async function getTafsir(
 export async function deleteAllUserQuranData(userId: string): Promise<{ deletedCount: number }> {
   const result = await QuranLog.deleteMany({ userId });
   await QuranProfile.deleteOne({ userId });
+  await QuranReadingSession.deleteMany({ userId });
   return { deletedCount: result.deletedCount ?? 0 };
+}
+
+const MAX_SESSION_SEC = 6 * 3600;
+// Sessions below this are hidden from the history list (accidental taps into
+// the reader, or a page mounted for a moment while navigating through) —
+// their credited seconds still count toward the daily total either way.
+const MIN_SESSION_SEC_TO_LIST = 10;
+
+export interface QuranSessionSavePayload {
+  clientSessionId: string;
+  date: string;
+  startedAt: Date;
+  endedAt: Date;
+  activeDurationSec: number;
+  ayahCount: number;
+  pagesRead: number;
+  surahs: number[];
+}
+
+/**
+ * Upserts the client's in-progress (or just-finished) reading session by
+ * `clientSessionId` — called periodically while reading and once more on
+ * teardown, so it's idempotent-safe on retries. `activeDurationSec` is the
+ * SESSION'S RUNNING TOTAL, not a delta; the delta since the last save is what
+ * gets credited to that day's QuranLog, so a crediting bug here can't double
+ * count even if the client resends the same total.
+ */
+export async function saveReadingSession(
+  userId: string,
+  payload: QuranSessionSavePayload
+): Promise<{ activeDurationSec: number }> {
+  const elapsedSec = Math.max(0, (payload.endedAt.getTime() - payload.startedAt.getTime()) / 1000);
+  const activeDurationSec = Math.min(payload.activeDurationSec, elapsedSec, MAX_SESSION_SEC);
+
+  const existing = await QuranReadingSession.findOne({
+    userId,
+    clientSessionId: payload.clientSessionId,
+  }).select('activeDurationSec');
+  const prevDuration = existing?.activeDurationSec ?? 0;
+  const delta = Math.max(0, activeDurationSec - prevDuration);
+
+  await QuranReadingSession.findOneAndUpdate(
+    { userId, clientSessionId: payload.clientSessionId },
+    {
+      $setOnInsert: {
+        userId,
+        clientSessionId: payload.clientSessionId,
+        startedAt: payload.startedAt,
+      },
+      $set: {
+        date: payload.date,
+        endedAt: payload.endedAt,
+        activeDurationSec,
+        ayahCount: payload.ayahCount,
+        pagesRead: payload.pagesRead,
+        surahs: payload.surahs.slice(0, 50),
+      },
+    },
+    { upsert: true, setDefaultsOnInsert: true }
+  );
+
+  if (delta > 0) {
+    await QuranLog.findOneAndUpdate(
+      { userId, date: payload.date },
+      { $inc: { durationSec: delta } },
+      { upsert: true, setDefaultsOnInsert: true }
+    );
+  }
+
+  return { activeDurationSec };
+}
+
+export interface QuranReadingSessionSummary {
+  start: Date;
+  end: Date;
+  activeDurationSec: number;
+  ayahCount: number;
+  pagesRead: number;
+  surahs: number[];
+}
+
+/** Sessions for a given tracking day — a date-picker driven history list,
+ * mirroring zikr.service.ts's getSessionsForDay. */
+export async function getReadingSessionsForDay(
+  userId: string,
+  dateStr: string
+): Promise<QuranReadingSessionSummary[]> {
+  const sessions = await QuranReadingSession.find({ userId, date: dateStr })
+    .sort({ startedAt: 1 })
+    .select('startedAt endedAt activeDurationSec ayahCount pagesRead surahs');
+
+  return sessions
+    .filter((s) => s.activeDurationSec >= MIN_SESSION_SEC_TO_LIST)
+    .map((s) => ({
+      start: s.startedAt,
+      end: s.endedAt,
+      activeDurationSec: s.activeDurationSec,
+      ayahCount: s.ayahCount,
+      pagesRead: s.pagesRead,
+      surahs: s.surahs,
+    }));
 }

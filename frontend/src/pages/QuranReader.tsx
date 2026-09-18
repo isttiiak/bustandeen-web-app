@@ -31,6 +31,7 @@ import {
   useSetResume,
 } from '../hooks/useQuran.js';
 import { useTafsir } from '../hooks/useQuran.js';
+import { useQuranReadingSession } from '../hooks/useQuranReadingSession.js';
 import { TAFSIRS, getPreferredTafsir, setPreferredTafsir } from '../utils/tafsir.js';
 import { QURANIC_DUAS } from '../utils/quranMeta.js';
 import { getArabicFont, getFontPx, translitEnabled } from '../utils/quranPrefs.js';
@@ -95,6 +96,13 @@ function saveResume(surah: number, ayah: number): void {
   m[String(surah)] = ayah;
   localStorage.setItem(RESUME_KEY, JSON.stringify(m));
 }
+function formatReadingTime(totalSec: number): string {
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
 function clearResume(surah: number): void {
   const m = readResumeMap();
   delete m[String(surah)];
@@ -108,6 +116,7 @@ export default function QuranReader() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
+  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const { t, i18n } = useTranslation();
 
   const surahNo = Math.min(114, Math.max(1, Number(surahParam) || 1));
@@ -129,6 +138,10 @@ export default function QuranReader() {
   const resumeSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resumePromptDoneRef = useRef(false);
   const [tafsirOpen, setTafsirOpen] = useState(false);
+  const readingSession = useQuranReadingSession({
+    extendedIdle: tafsirOpen,
+    enabled: !!user && !isDemoMode,
+  });
   const [tafsirEdition, setTafsirEdition] = useState<number>(getPreferredTafsir);
   const [splitTafsir, setSplitTafsir] = useState(false); // fullscreen 2-pane reading
   // Draggable split (Istiak: a short āyah can pair with a LONG tafsir — the
@@ -207,6 +220,12 @@ export default function QuranReader() {
     () => surahs.find((s) => s.number === surahNo) ?? null,
     [surahs, surahNo]
   );
+
+  const { registerSurah, registerAyahRead } = readingSession;
+  useEffect(() => {
+    registerSurah(surahNo);
+  }, [registerSurah, surahNo]);
+
   const current = ayat[idx] ?? null;
   const lastIdx = endAyah ? Math.min(ayat.length - 1, endAyah - 1) : ayat.length - 1;
   const firstIdx = mode === 'bundle' ? startAyah - 1 : 0;
@@ -297,12 +316,13 @@ export default function QuranReader() {
       if (!a || seenRef.current.has(a.number)) return;
       seenRef.current.add(a.number);
       pendingRef.current += 1;
+      registerAyahRead(1);
       const before = (summary?.todayAyat ?? 0) + pendingRef.current - 1;
       const goal = summary?.profile.dailyGoalAyat ?? 1;
       if (before < goal && before + 1 >= goal) celebrateGoal();
       if (pendingRef.current >= 5) flush();
     },
-    [ayat, flush, summary, countsGoal]
+    [ayat, flush, summary, countsGoal, registerAyahRead]
   );
 
   // ── audio: play ONLY the current ayah, highlight words while it runs ──
@@ -657,6 +677,22 @@ export default function QuranReader() {
                 surah: khatamPos.surah,
                 ayah: khatamPos.ayah,
               })}
+            </span>
+          )}
+          {!!user && !isDemoMode && (
+            <span
+              title={
+                readingSession.isPaused
+                  ? t('quranReader.timerPaused', "Paused — timer resumes when you're back")
+                  : t('quranReader.timerActive', 'Active reading time this visit')
+              }
+              className={`px-2.5 py-1 rounded-full border font-bold tabular-nums transition-colors ${
+                readingSession.isPaused
+                  ? 'bg-white/5 border-brand-emerald/10 text-white/30'
+                  : 'bg-white/5 border-brand-emerald/10 text-white/50'
+              }`}
+            >
+              {readingSession.isPaused ? '⏸' : '⏱'} {formatReadingTime(readingSession.activeSec)}
             </span>
           )}
         </div>

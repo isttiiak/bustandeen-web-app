@@ -251,4 +251,108 @@ describe('Quran API', () => {
     expect(sum.body.profile.currentAyah).toBe(0);
     expect(sum.body.profile.currentPage).toBe(0);
   });
+
+  test('reading sessions require auth', async () => {
+    const res = await request(app).get(`/api/quran/sessions?date=2026-07-05`);
+    expect(res.status).toBe(401);
+  });
+
+  test('session upsert is idempotent by clientSessionId and credits the daily total once per delta', async () => {
+    const started = new Date('2026-07-05T10:00:00.000Z').toISOString();
+    const mid = new Date('2026-07-05T10:03:00.000Z').toISOString();
+    const end = new Date('2026-07-05T10:05:00.000Z').toISOString();
+
+    const first = await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'sess-aaaaaaaa',
+      date: '2026-07-05',
+      startedAt: started,
+      endedAt: mid,
+      activeDurationSec: 120,
+      ayahCount: 3,
+      pagesRead: 0,
+      surahs: [1],
+    });
+    expect(first.status).toBe(200);
+    expect(first.body.activeDurationSec).toBe(120);
+
+    // Same session, more time accumulated — only the DELTA (180-120=60s)
+    // should be added to the daily total, not the full 180s again.
+    const second = await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'sess-aaaaaaaa',
+      date: '2026-07-05',
+      startedAt: started,
+      endedAt: end,
+      activeDurationSec: 180,
+      ayahCount: 5,
+      pagesRead: 0,
+      surahs: [1, 2],
+    });
+    expect(second.status).toBe(200);
+    expect(second.body.activeDurationSec).toBe(180);
+
+    const history = await auth(request(app).get(`/api/quran/history?days=3&today=2026-07-05`));
+    // durationSec isn't in the history payload, so check via the sessions list.
+    const list = await auth(request(app).get(`/api/quran/sessions?date=2026-07-05`));
+    expect(list.status).toBe(200);
+    expect(list.body.sessions).toHaveLength(1);
+    expect(list.body.sessions[0].activeDurationSec).toBe(180);
+    expect(list.body.sessions[0].ayahCount).toBe(5);
+    expect(list.body.sessions[0].surahs).toEqual([1, 2]);
+    expect(history.status).toBe(200);
+  });
+
+  test('session activeDurationSec is clamped to elapsed wall-clock time', async () => {
+    const started = new Date('2026-07-06T08:00:00.000Z').toISOString();
+    const end = new Date('2026-07-06T08:00:10.000Z').toISOString(); // only 10s elapsed
+
+    const res = await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'sess-bbbbbbbb',
+      date: '2026-07-06',
+      startedAt: started,
+      endedAt: end,
+      activeDurationSec: 999, // implausible — more active time than wall-clock time
+      ayahCount: 1,
+      pagesRead: 0,
+      surahs: [1],
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.activeDurationSec).toBe(10);
+  });
+
+  test('sessions under the noise floor are hidden from the day list', async () => {
+    const started = new Date('2026-07-07T08:00:00.000Z').toISOString();
+    const end = new Date('2026-07-07T08:00:03.000Z').toISOString();
+
+    await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'sess-cccccccc',
+      date: '2026-07-07',
+      startedAt: started,
+      endedAt: end,
+      activeDurationSec: 3,
+      ayahCount: 0,
+      pagesRead: 0,
+      surahs: [],
+    });
+
+    const list = await auth(request(app).get(`/api/quran/sessions?date=2026-07-07`));
+    expect(list.body.sessions).toHaveLength(0);
+  });
+
+  test('sessions rejects a malformed clientSessionId', async () => {
+    const res = await auth(request(app).post(`/api/quran/session`)).send({
+      clientSessionId: 'a b/c', // spaces + slash not allowed
+      date: '2026-07-05',
+      startedAt: new Date().toISOString(),
+      endedAt: new Date().toISOString(),
+      activeDurationSec: 5,
+    });
+    expect(res.status).toBe(400);
+  });
+
+  test('DELETE /api/quran/all wipes reading sessions along with everything else', async () => {
+    const del = await auth(request(app).delete(`/api/quran/all`));
+    expect(del.status).toBe(200);
+    const list = await auth(request(app).get(`/api/quran/sessions?date=2026-07-05`));
+    expect(list.body.sessions).toHaveLength(0);
+  });
 });

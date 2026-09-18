@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.35.0 — Quran reading sessions: live timer + session history — 2026-09-18
+
+### Added
+
+- **A live reading timer on the Quran Reader**, and a session-history list on Quran Analytics — the same "session history" concept the zikr counter already has, applied to Quran reading. A small ⏱/⏸ chip next to the surah/juz/today-count chips shows active reading time for the current visit; it pauses (⏸) the instant the tab is hidden or backgrounded, and after 2 minutes with no scroll/tap/key interaction — so leaving the app open on a screen doesn't inflate the number. That idle grace period widens to 5 minutes while the tafsir panel is open, since reading tafsir often means minutes of stillness while genuinely still reading. Time resumes counting the moment you interact again; nothing is lost, it just stops padding the clock while you're away.
+- One continuous visit to the Reader is tracked as a single session (surah navigation within that visit doesn't split it), checkpointed to the backend roughly every 20 seconds and finalized on tab-hide/close (`pagehide`, mirroring the zikr counter's own `keepalive`-flush pattern) or on leaving the page — so a crash or force-close loses at most ~20 seconds, not the whole session. New `QuranReadingSession` collection (backend) upserted idempotently by a client-generated session id, `POST /api/quran/session` + `GET /api/quran/sessions?date=`; `QuranLog` gained a `durationSec` rollup field for daily totals. Sessions under 10s are hidden from the history list (accidental taps into the reader) but still contribute their seconds to the daily total.
+- **Quran Analytics** gained a "Reading sessions" section — a date picker plus a list of that day's sessions (time range, duration, surahs touched, āyāt read), directly mirroring the zikr counter's existing session-history UI.
+
+### Notes
+
+- Scoped to the ayah-by-ayah Reader only (not the audio Listen tab) and to the timer/session-history pair — kept intentionally smaller than full parity with the zikr counter's analytics page (no reading-time trend chart or time-of-day chart yet); the existing āyāt/khatm streak is unchanged, reading time is a new, separate metric alongside it.
+
 ## v5.34.0 — Sadaqah virtue days on the homepage; Jumu'ah sunnah citation fix; Quran settings sync — 2026-09-18
 
 ### Added

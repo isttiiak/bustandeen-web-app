@@ -1339,6 +1339,13 @@
     "last30Title": "Last 30 days",
     "paceEmpty": "Read for a few days and we'll project your finish date",
     "paceEstimate": "At {{pace}} ayat/day → finish in ~{{days}} days",
+    "sessions": {
+      "ayahCount": "{{n}} āyāt",
+      "durationHm": "{{h}}h {{m}}m",
+      "durationM": "{{m}}m",
+      "empty": "No reading sessions logged for this day",
+      "title": "Reading sessions"
+    },
     "title": "Quran Analytics",
     "topSurahsEmpty": "Read a few surahs and they'll appear here",
     "topSurahsTitle": "Top surahs"
@@ -1501,6 +1508,8 @@
     "tafsirLoadErrorLong": "Couldn't load this tafsir — check your connection or try another edition.",
     "tafsirLoadErrorShort": "Couldn't load this tafsir — try another edition.",
     "thisSurah": "this surah",
+    "timerActive": "Active reading time this visit",
+    "timerPaused": "Paused — timer resumes when you're back",
     "todayCount": "{{count}} āyāt today",
     "volume": "Volume",
     "volumeOff": "Volume off",
