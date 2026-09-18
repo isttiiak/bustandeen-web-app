@@ -795,6 +795,55 @@ export default function Home() {
           </Link>
         </motion.div>
 
+        {/* ── Islamic Library / one-stop utilities ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="mb-10"
+        >
+          <div className="mb-3">
+            <h2 className="text-sm font-black text-white">{t('home.libraryTitle')}</h2>
+            <p className="text-white/30 text-xs">{t('home.librarySubtitle')}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              {
+                icon: '🤲',
+                to: '/library/duas',
+                title: t('home.libraryDuaTitle'),
+                subtitle: t('home.libraryDuaSubtitle'),
+              },
+              {
+                icon: '🌅',
+                to: '/library/adhkar',
+                title: t('home.libraryAdhkarTitle'),
+                subtitle: t('home.libraryAdhkarSubtitle'),
+              },
+              {
+                icon: '✨',
+                to: '/library/asma-ul-husna',
+                title: t('home.libraryAsmaTitle'),
+                subtitle: t('home.libraryAsmaSubtitle'),
+              },
+              {
+                icon: '🧮',
+                to: '/zakat-calculator',
+                title: t('home.libraryZakatTitle'),
+                subtitle: t('home.libraryZakatSubtitle'),
+              },
+            ].map((u) => (
+              <Link key={u.to} to={u.to} className="block group">
+                <div className="rounded-2xl border border-brand-border bg-white/[0.04] hover:bg-white/[0.07] backdrop-blur-md p-4 transition-all h-full">
+                  <span className="text-2xl leading-none">{u.icon}</span>
+                  <h3 className="text-sm font-bold text-white mt-2 truncate">{u.title}</h3>
+                  <p className="text-white/30 text-xs mt-0.5 truncate">{u.subtitle}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </motion.div>
+
         <div className="text-center text-xs text-white/30 pb-4">{t('home.footer')}</div>
       </div>
     </AnimatedBackground>

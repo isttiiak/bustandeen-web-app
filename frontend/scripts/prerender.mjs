@@ -54,6 +54,8 @@ function routePath(kind, params, lang) {
       return `${p}/qibla/${params.citySlug}`;
     case 'ramadan-calendar':
       return `${p}/ramadan-calendar/${params.citySlug}/${params.gregorianYear}`;
+    case 'ramadan-calendar-index':
+      return `${p}/ramadan-calendar`;
     case 'dua':
       return `${p}/duas/${params.duaId}`;
     case 'duas-index':
@@ -62,6 +64,10 @@ function routePath(kind, params, lang) {
       return `${p}/adhkar/${params.period}`;
     case 'hijri-converter':
       return `${p}/hijri-date-converter`;
+    case 'asma-ul-husna':
+      return `${p}/asma-ul-husna`;
+    case 'zakat-calculator':
+      return `${p}/zakat-calculator`;
     default:
       throw new Error(`Unknown route kind: ${kind}`);
   }
@@ -150,6 +156,7 @@ const gregorianYear = ssr.ramadanGregorianYear(hijriYear);
 for (const city of ssr.CITIES) {
   routes.push({ kind: 'ramadan-calendar', params: { citySlug: city.slug, hijriYear, gregorianYear } });
 }
+routes.push({ kind: 'ramadan-calendar-index', params: {} });
 for (const duaId of ssr.DUA_IDS) {
   routes.push({ kind: 'dua', params: { duaId } });
 }
@@ -157,15 +164,26 @@ routes.push({ kind: 'duas-index', params: {} });
 routes.push({ kind: 'adhkar', params: { period: 'morning' } });
 routes.push({ kind: 'adhkar', params: { period: 'evening' } });
 routes.push({ kind: 'hijri-converter', params: {} });
+routes.push({ kind: 'asma-ul-husna', params: {} });
+routes.push({ kind: 'zakat-calculator', params: {} });
 
 console.error(`Prerendering ${routes.length} routes × ${LANGS.length} languages = ${routes.length * LANGS.length} pages...`);
 
-const sitemapEntries = { pages: [], 'prayer-times': [], qibla: [], ramadan: [], duas: [], adhkar: [] };
+const sitemapEntries = {
+  pages: [],
+  'prayer-times': [],
+  qibla: [],
+  ramadan: [],
+  duas: [],
+  adhkar: [],
+  utilities: [],
+};
 const sitemapBucket = (kind) => {
   if (kind === 'prayer-times') return 'prayer-times';
   if (kind === 'qibla') return 'qibla';
-  if (kind === 'ramadan-calendar') return 'ramadan';
+  if (kind === 'ramadan-calendar' || kind === 'ramadan-calendar-index') return 'ramadan';
   if (kind === 'dua' || kind === 'duas-index') return 'duas';
+  if (kind === 'asma-ul-husna' || kind === 'zakat-calculator') return 'utilities';
   return 'adhkar';
 };
 
@@ -180,7 +198,11 @@ for (const { kind, params } of routes) {
           ? { kind, period: params.period }
           : kind === 'dua'
             ? { kind, duaId: params.duaId }
-            : kind === 'duas-index' || kind === 'hijri-converter'
+            : kind === 'duas-index' ||
+                kind === 'hijri-converter' ||
+                kind === 'asma-ul-husna' ||
+                kind === 'zakat-calculator' ||
+                kind === 'ramadan-calendar-index'
               ? { kind }
               : { kind, citySlug: params.citySlug };
 
@@ -190,7 +212,15 @@ for (const { kind, params } of routes) {
     writePage(path, pageHtml);
 
     if (lang === 'en') {
-      sitemapEntries[sitemapBucket(kind)].push({ path, priority: kind === 'duas-index' ? '0.5' : '0.6' });
+      sitemapEntries[sitemapBucket(kind)].push({
+        path,
+        priority:
+          kind === 'duas-index' || kind === 'ramadan-calendar-index'
+            ? '0.5'
+            : kind === 'zakat-calculator' || kind === 'asma-ul-husna'
+              ? '0.7'
+              : '0.6',
+      });
     }
     count++;
   }
@@ -231,6 +261,7 @@ const sitemapFiles = {
   'sitemap-ramadan.xml': sitemapEntries.ramadan,
   'sitemap-duas.xml': sitemapEntries.duas,
   'sitemap-adhkar.xml': sitemapEntries.adhkar,
+  'sitemap-utilities.xml': sitemapEntries.utilities,
 };
 
 for (const [filename, entries] of Object.entries(sitemapFiles)) {

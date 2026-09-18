@@ -58,7 +58,7 @@ function ActionLayout({ children }: { children: React.ReactNode }) {
           <span className="text-3xl font-black tracking-tight text-brand-emerald">
             🌱 Bustandeen
           </span>
-          <p className="text-white/30 text-xs mt-1">Grow your garden of good deeds</p>
+          <p className="text-white/30 text-xs mt-1">Nourish your deen</p>
         </div>
         {children}
       </div>

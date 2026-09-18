@@ -48,11 +48,11 @@ export default function About() {
             <p className="text-white/50 text-sm leading-relaxed max-w-lg mx-auto">
               {t(
                 'about.bustandeenDefinition',
-                'A name born of بستان (bustān, garden) and دين (dīn, religion/faith) — a garden of faith, tended daily.'
+                'A name born of بستان (bustān, garden) and دين (dīn, religion/faith) - a garden of faith, tended daily.'
               )}
             </p>
             <p className="text-brand-emerald/80 text-sm font-semibold italic">
-              "Grow your garden of good deeds."
+              "Nourish your deen."
             </p>
             <p className="text-white/25 text-xs max-w-sm mx-auto">
               {t('about.hadithQuote')}{' '}

@@ -41,7 +41,7 @@ describe('GET /connect/:code — bot-only invite-link preview', () => {
     expect(res.status).toBe(200);
     expect(res.headers['content-type']).toMatch(/text\/html/);
     expect(res.headers['x-robots-tag']).toBe('noindex, nofollow');
-    expect(res.text).toContain('Bustandeen — Grow Your Garden of Good Deeds');
+    expect(res.text).toContain('Bustandeen - Nourish Your Deen');
     expect(res.text).toContain('og:image');
   });
 

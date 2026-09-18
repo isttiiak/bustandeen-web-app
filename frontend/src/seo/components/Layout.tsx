@@ -96,7 +96,7 @@ export default function Layout({ lang, barePath, breadcrumbs, children }: Layout
         <footer className="border-t border-[#1e2d42] mt-12">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 text-xs text-[#94a3b8] space-y-2">
             <p>
-              {t.siteName} — {t.tagline}
+              {t.siteName} - {t.tagline}
             </p>
             <p className="flex flex-wrap gap-x-4 gap-y-1">
               <a
@@ -107,6 +107,12 @@ export default function Layout({ lang, barePath, breadcrumbs, children }: Layout
               </a>
               <a href={langPath(lang, '/qibla')} className="hover:text-[#10b981] no-underline">
                 {t.breadcrumbQibla}
+              </a>
+              <a
+                href={langPath(lang, '/ramadan-calendar')}
+                className="hover:text-[#10b981] no-underline"
+              >
+                {t.breadcrumbRamadan}
               </a>
               <a href={langPath(lang, '/duas')} className="hover:text-[#10b981] no-underline">
                 {t.breadcrumbDuas}
@@ -122,6 +128,18 @@ export default function Layout({ lang, barePath, breadcrumbs, children }: Layout
                 className="hover:text-[#10b981] no-underline"
               >
                 {t.breadcrumbHijri}
+              </a>
+              <a
+                href={langPath(lang, '/asma-ul-husna')}
+                className="hover:text-[#10b981] no-underline"
+              >
+                {t.breadcrumbAsmaUlHusna}
+              </a>
+              <a
+                href={langPath(lang, '/zakat-calculator')}
+                className="hover:text-[#10b981] no-underline"
+              >
+                {t.breadcrumbZakat}
               </a>
             </p>
           </div>

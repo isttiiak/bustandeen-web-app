@@ -84,10 +84,10 @@ export default function Landing() {
     <AnimatedBackground variant="dark">
       <InstallPwaBanner />
       <Seo
-        title={t('landing.seoTitle', 'Bustandeen — Grow Your Garden of Good Deeds')}
+        title={t('landing.seoTitle', 'Bustandeen - Nourish Your Deen')}
         description={t(
           'landing.seoDescription',
-          'Track your zikr, salat, fasting and Quran reading — with authentic references, streaks, prayer times and a friends leaderboard. Free, private, and built for the Muslim community.'
+          'Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a friends leaderboard. Free, private, and built for the Muslim community.'
         )}
         path="/"
       />

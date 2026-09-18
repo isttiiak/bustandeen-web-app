@@ -2,7 +2,51 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
-## v5.37.0 — Admin user management: manual welcome email, fixed inactivity tracking, custom email — 2026-09-18
+## v5.40.0 - SEO fixes from real GSC/GA4 query data - 2026-09-18
+
+### Added
+
+- **`/ramadan-calendar` index page** (en/bn/ar) - a proper hub for the broad "ramadan calendar {year}" search term, which Search Console showed getting real impressions (15 in the last 28 days) with nowhere good to land - every existing page was a specific city, none of them a sensible match for a bare "ramadan calendar 2027" query. Search box (client-side, filters the same 1,445-city dataset the per-city pages use) plus a curated popular-cities shortlist. Own sitemap entry, hreflang, JSON-LD.
+- **Qibla FAQ entry on "What is a Qibla compass"** (en/bn/ar) - the Performance report showed real impressions for `qibla compass`, `kaaba compass`, `mecca compass`, `kaaba direction`, `direction kaaba compass` etc., all landing around position 70-99 (page 7-10) despite the page already targeting "Qibla direction" reasonably well. Added an explicit FAQ answer using those synonyms so the page has a direct on-page match for that query family, on every `/qibla` and `/qibla/{city}` page.
+- **Ramadan Calendar added to the SEO footer nav** (`Layout.tsx`) - it was missing entirely from the cross-link row every other SEO page has (prayer times, qibla, du'as, adhkar, hijri converter, asma ul husna, zakat calculator all linked each other; ramadan-calendar pages linked nowhere). Better internal linking helps Google discover and re-crawl the ~4,300 ramadan-calendar city pages faster.
+
+### Notes
+
+- Full read of the GSC Performance/Coverage exports and the GA4 landing-page cut: see `archive/seo-live-links.md` note and project memory for the complete findings (country/device split, which queries are actually landing clicks, why most of the "not indexed" bulk is just new-domain patience, and what's NOT fixable by a content change - competitive broad terms like "qibla compass" need authority/backlinks over time, not more on-page tweaks).
+
+## v5.39.0 - In-app Du'a/Adhkar/Asma ul Husna library + home page utilities row - 2026-09-18
+
+### Added
+
+- **`/library/duas`, `/library/adhkar`, `/library/asma-ul-husna`** - authenticated-app-chrome versions of the public SEO content (`Navbar`/`Footer`/`AnimatedBackground`, not the SEO tree's standalone `Layout.tsx`), reusing the exact same verified data (`seo/content/duas.ts`, `adhkar.ts`, `asmaUlHusna.ts`) so there's a single source of truth for the content itself. All three are search-friendly-free (`noindex` via `<Seo index={false} />`) - the public `/duas`, `/adhkar/*`, `/asma-ul-husna` pages stay the only ones meant to rank.
+  - Du'a Library: search + accordion, expands to Arabic/transliteration/translation/source per situation.
+  - Adhkar: morning/evening toggle, plus a tap-to-count badge per item (local session state only, not persisted or wired into the zikr pipeline - that's the separate, bigger "guided adhkar session" item still open in TODO-v3.md).
+  - 99 Names of Allah: search + card grid, same content and sourcing note as the public page.
+- **Home page "Islamic Library" section** - a new 2x2 card row (Du'a Library, Adhkar, 99 Names of Allah, Zakat Calculator) placed directly after the existing Friends & Leaderboard card, per the user's requested placement. The Zakat Calculator card links straight to the existing public `/zakat-calculator` (already fully interactive - no need for a second in-app copy).
+
+### Notes
+
+- Closes out the "in-app hub" + "one-stop utilities row" work deferred from v5.38.0.
+
+## v5.38.0 - New tagline, Zakat calculator and Asma ul Husna SEO pages - 2026-09-18
+
+### Changed
+
+- **New tagline: "Nourish Your Deen"**, replacing "Grow Your Garden of Good Deeds" across every surface that carried it (page `<title>`, OG/Twitter meta, JSON-LD, the generated OG image, both `en`/`bn` locale files, the SEO tree's own chrome strings in all three languages, About/AuthAction copy, and the `connectPreview` fallback + its test). Bengali/Arabic translations use nurture-oriented verbs (`সমৃদ্ধ করুন` / `نمِّ دينك`) rather than a literal "garden" translation.
+- **No more em dashes in new copy** - going forward, user-facing text uses a plain hyphen or no dash at all. Applied across everything touched this session; the ~2,268 pre-existing em dashes elsewhere in the app are a separate, deliberately out-of-scope cleanup (see TODO-v3.md).
+
+### Added
+
+- **`/zakat-calculator`** (en/bn/ar) - nisab by gold or silver standard (reader's choice, with the Hanafi-vs-majority reasoning spelled out), a personal-use-jewelry disclosure toggle, an assets/debts form (cash, gold, silver, business inventory, receivables, liabilities), and a ḥawl tracker that computes the actual Hijri-calendar anniversary of a given start date (reusing `toHijri`/`hijriToGregorian` from the SEO tree's `calc.ts`) rather than a rough 354-day approximation. Metal prices are a static, dated snapshot (not a live feed - no metals-price API exists in this app) with a visible "last checked" date. Explicitly excludes any inheritance/farāʾiḍ (Mirath) calculation - out of scope per the liability concern already logged in TODO-v3.md.
+- **`/asma-ul-husna`** (en/bn/ar) - the 99 Names of Allah, Arabic + transliteration + meaning, with live search/filter. Sourcing note distinguishes the authentic core hadith (Sahih al-Bukhari 7392, Sahih Muslim 2677) from the specific enumerated list commonly cited via Jami' at-Tirmidhi 3507, which a number of hadith scholars (Ibn Taymiyyah among them) hold to be a later addition rather than the Prophet's ﷺ own wording.
+- Both pages follow the existing programmatic-SEO pattern exactly: static pre-rendered routes via `scripts/prerender.mjs`, their own `sitemap-utilities.xml`, hreflang alternates, breadcrumb + WebPage/FAQPage JSON-LD, and cross-links from every other SEO page's footer.
+
+### Notes
+
+- Bengali/Arabic strings in the new pages (asma ul husna meanings, zakat calculator copy) are working translations, not yet reviewed by a native speaker - same standing caution as the rest of the app's non-English content.
+- An in-app (authenticated, interactive) Du'a library/Adhkar/Asma ul Husna hub, plus a "one-stop utilities" home page section, was scoped in this session but deliberately deferred - see TODO-v3.md.
+
+## v5.37.0 - Admin user management: manual welcome email, fixed inactivity tracking, custom email - 2026-09-18
 
 ### Changed
 

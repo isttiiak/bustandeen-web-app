@@ -57,9 +57,9 @@ const svg = `
   <circle cx="450" cy="120" r="9" fill="#f59e0b"/>
 
   <text x="475" y="270" class="title" font-size="92" fill="#f1f5f9">Bustandeen</text>
-  <text x="478" y="330" class="sub" font-size="34" fill="#10b981">Grow Your Garden of Good Deeds</text>
+  <text x="478" y="330" class="sub" font-size="34" fill="#10b981">Nourish Your Deen</text>
   <text x="478" y="388" class="feat" font-size="27" fill="#94a3b8">Zikr &#183; Salat &#183; Fasting &#183; Quran &#183; Prayer Times &#183; Friends</text>
-  <text x="478" y="448" class="quote" font-size="24" fill="#f59e0b">"So compete with one another in doing good" &#8212; Quran 2:148</text>
+  <text x="478" y="448" class="quote" font-size="24" fill="#f59e0b">"So compete with one another in doing good" - Quran 2:148</text>
 </svg>
 `.trim();
 

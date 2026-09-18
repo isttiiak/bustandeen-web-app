@@ -59,6 +59,9 @@ const IslamicSpecialDay = lazy(() => import('./pages/IslamicSpecialDay.js'));
 const Friends = lazy(() => import('./pages/Friends.js'));
 const ConnectFriend = lazy(() => import('./pages/ConnectFriend.js'));
 const About = lazy(() => import('./pages/About.js'));
+const DuaLibrary = lazy(() => import('./pages/DuaLibrary.js'));
+const AdhkarLibrary = lazy(() => import('./pages/AdhkarLibrary.js'));
+const AsmaUlHusnaLibrary = lazy(() => import('./pages/AsmaUlHusnaLibrary.js'));
 const Privacy = lazy(() => import('./pages/Privacy.js'));
 const Feedback = lazy(() => import('./pages/Feedback.js'));
 const Contact = lazy(() => import('./pages/Contact.js'));
@@ -104,6 +107,9 @@ const SeoQiblaCity = lazy(() =>
 const SeoRamadanCalendar = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.RamadanCalendarRoute }))
 );
+const SeoRamadanCalendarIndex = lazy(() =>
+  import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.RamadanCalendarIndexRoute }))
+);
 const SeoDuaSituation = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.DuaSituationRoute }))
 );
@@ -118,6 +124,12 @@ const SeoAdhkarEvening = lazy(() =>
 );
 const SeoHijriConverter = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.HijriConverterRoute }))
+);
+const SeoAsmaUlHusna = lazy(() =>
+  import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.AsmaUlHusnaRoute }))
+);
+const SeoZakatCalculator = lazy(() =>
+  import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.ZakatCalculatorRoute }))
 );
 
 /**
@@ -646,7 +658,7 @@ export default function App() {
   // excludes the bare `/prayer-times` and `/qibla` paths (the live, on-device
   // tracker pages), which keep the normal app chrome.
   const isSeoPage =
-    /^\/(bn\/|ar\/)?(prayer-times\/|qibla\/|ramadan-calendar\/|duas(\/|$)|adhkar\/|hijri-date-converter)/.test(
+    /^\/(bn\/|ar\/)?(prayer-times\/|qibla\/|ramadan-calendar(\/|$)|duas(\/|$)|adhkar\/|hijri-date-converter|asma-ul-husna|zakat-calculator)/.test(
       location.pathname
     );
   // The admin panel (AdminProtected, above) has its OWN chrome — AdminLayout
@@ -727,6 +739,15 @@ export default function App() {
                 <Route path="/qibla/:city" element={<SeoQiblaCity lang="en" />} />
                 <Route path="/bn/qibla/:city" element={<SeoQiblaCity lang="bn" />} />
                 <Route path="/ar/qibla/:city" element={<SeoQiblaCity lang="ar" />} />
+                <Route path="/ramadan-calendar" element={<SeoRamadanCalendarIndex lang="en" />} />
+                <Route
+                  path="/bn/ramadan-calendar"
+                  element={<SeoRamadanCalendarIndex lang="bn" />}
+                />
+                <Route
+                  path="/ar/ramadan-calendar"
+                  element={<SeoRamadanCalendarIndex lang="ar" />}
+                />
                 <Route
                   path="/ramadan-calendar/:city/:year"
                   element={<SeoRamadanCalendar lang="en" />}
@@ -754,6 +775,12 @@ export default function App() {
                 <Route path="/hijri-date-converter" element={<SeoHijriConverter lang="en" />} />
                 <Route path="/bn/hijri-date-converter" element={<SeoHijriConverter lang="bn" />} />
                 <Route path="/ar/hijri-date-converter" element={<SeoHijriConverter lang="ar" />} />
+                <Route path="/asma-ul-husna" element={<SeoAsmaUlHusna lang="en" />} />
+                <Route path="/bn/asma-ul-husna" element={<SeoAsmaUlHusna lang="bn" />} />
+                <Route path="/ar/asma-ul-husna" element={<SeoAsmaUlHusna lang="ar" />} />
+                <Route path="/zakat-calculator" element={<SeoZakatCalculator lang="en" />} />
+                <Route path="/bn/zakat-calculator" element={<SeoZakatCalculator lang="bn" />} />
+                <Route path="/ar/zakat-calculator" element={<SeoZakatCalculator lang="ar" />} />
                 <Route
                   path="/quran"
                   element={
@@ -1000,6 +1027,9 @@ export default function App() {
                   }
                 />
                 <Route path="/about" element={<About />} />
+                <Route path="/library/duas" element={<DuaLibrary />} />
+                <Route path="/library/adhkar" element={<AdhkarLibrary />} />
+                <Route path="/library/asma-ul-husna" element={<AsmaUlHusnaLibrary />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/contact" element={<Contact />} />

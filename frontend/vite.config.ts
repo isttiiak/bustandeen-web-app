@@ -45,10 +45,10 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
       },
       manifest: {
-        name: 'Bustandeen — Grow Your Garden of Good Deeds',
+        name: 'Bustandeen - Nourish Your Deen',
         short_name: 'Bustandeen',
         description:
-          'Track your zikr, salat, fasting and Quran reading — with authentic references, streaks, prayer times and a friends leaderboard. Free, private, ad-free.',
+          'Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a friends leaderboard. Free, private, ad-free.',
         theme_color: '#0a1a0d',
         background_color: '#030609',
         display: 'standalone',
