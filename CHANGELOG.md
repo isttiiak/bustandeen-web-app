@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.42.2 - Āyah share card: long āyahs fit the frame - 2026-09-19
+
+### Fixed
+
+- **Long āyahs (e.g. 2:282) no longer end up tiny, cut off and lost in empty space.** The card now measures its own text and fits it to the frame instead of guessing from character counts. The Arabic is always shown in full and as large as fits. If everything can't fit, it keeps the Arabic plus the first translation (dropping transliteration and extra translations), and only then trims the translation with a fade. Translations keep a readable minimum size even when the Arabic has to shrink. Short and medium āyahs are unchanged.
+
 ## v5.42.1 - Founder mailbox moved to Email Istiak, sync paused - 2026-09-19
 
 ### Changed
