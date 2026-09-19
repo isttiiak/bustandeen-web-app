@@ -128,6 +128,45 @@ function daysBetween(a: string, b: string): number {
   );
 }
 
+// ─── Body-stats unit converters ──────────────────────────────────────────────
+// Parse height input (string) to cm. Supports "1.63" / "163" in meters,
+// and "5'4\"" / "5.33" / "64" in feet (interpreted as total inches when > 12).
+function parseHeightToCm(val: string, unit: 'm' | 'ft'): number | null {
+  const s = val.trim();
+  if (!s) return null;
+  if (unit === 'm') {
+    const n = parseFloat(s);
+    if (!n || n <= 0) return null;
+    const cm = n < 10 ? n * 100 : n; // "1.63" → 163, "163" → 163
+    return cm >= 50 && cm <= 300 ? Math.round(cm) : null;
+  }
+  // Feet: accept "5'4\"", "5'4", "5.33", or raw inches like "64"
+  const feetInch = s.match(/^(\d+(?:\.\d+)?)'?\s*(\d+(?:\.\d+)?)"?$/);
+  if (feetInch) {
+    const cm = Math.round(parseFloat(feetInch[1]!) * 30.48 + parseFloat(feetInch[2]!) * 2.54);
+    return cm >= 50 && cm <= 300 ? cm : null;
+  }
+  const n = parseFloat(s);
+  if (!n || n <= 0) return null;
+  const totalIn = n > 12 ? n : n * 12; // "5.33" feet or "64" inches
+  const cm = Math.round(totalIn * 2.54);
+  return cm >= 50 && cm <= 300 ? cm : null;
+}
+
+function parseWeightToKg(val: string, unit: 'kg' | 'lbs'): number | null {
+  const n = parseFloat(val.trim());
+  if (!n || n <= 0) return null;
+  const kg = unit === 'kg' ? n : n / 2.20462;
+  return kg >= 20 && kg <= 500 ? Math.round(kg * 10) / 10 : null;
+}
+
+function cmToFtStr(cm: number): string {
+  const totalIn = cm / 2.54;
+  const feet = Math.floor(totalIn / 12);
+  const inches = Math.round(totalIn % 12);
+  return `${feet}'${inches}"`;
+}
+
 // ─── Curated du'a/adhkar for excused days (verified references) ──────────────
 const EXCUSED_ADHKAR = [
   {
@@ -236,7 +275,9 @@ export default function RayhanahCycle() {
   // Settings drawer (BMI + body stats)
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [heightInput, setHeightInput] = useState('');
+  const [heightUnit, setHeightUnit] = useState<'m' | 'ft'>('m');
   const [weightInput, setWeightInput] = useState('');
+  const [weightUnit, setWeightUnit] = useState<'kg' | 'lbs'>('kg');
   // Edit an episode (dates) or reopen the most recent one ("I'm not done yet")
   const editCycle = useEditCycleLog();
   const [editTarget, setEditTarget] = useState<{
@@ -427,7 +468,14 @@ export default function RayhanahCycle() {
           </div>
           <button
             onClick={() => {
-              setHeightInput(bodyStats?.heightCm != null ? String(bodyStats.heightCm) : '');
+              // Pre-fill in currently selected units (default m/kg)
+              setHeightUnit('m');
+              setWeightUnit('kg');
+              setHeightInput(
+                bodyStats?.heightCm != null
+                  ? String(Math.round((bodyStats.heightCm / 100) * 100) / 100)
+                  : ''
+              );
               setWeightInput(bodyStats?.weightKg != null ? String(bodyStats.weightKg) : '');
               setSettingsOpen(true);
             }}
@@ -1591,132 +1639,195 @@ export default function RayhanahCycle() {
         </div>
       </div>
 
-      {/* ── Body stats / BMI drawer ──────────────────────────────────────────── */}
+      {/* ── Body stats / BMI right-side drawer ──────────────────────────────── */}
       <AnimatePresence>
         {settingsOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-end sm:place-items-center p-0 sm:p-4"
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
             onClick={() => setSettingsOpen(false)}
           >
             <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl bg-brand-deep border border-brand-pink/20 p-6 space-y-5"
+              className="absolute inset-y-0 right-0 w-80 max-w-[90vw] bg-brand-deep border-l border-brand-pink/20 flex flex-col overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between">
-                <h3 className="text-white font-black text-lg">
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 pt-5 pb-3 border-b border-brand-border/60">
+                <h3 className="text-white font-black text-base">
                   {t('rayhanah.settingsTitle', 'Body Stats')}
                 </h3>
                 <button
                   onClick={() => setSettingsOpen(false)}
-                  className="p-2 rounded-xl text-white/40 hover:text-white hover:bg-white/10"
+                  className="p-1.5 rounded-xl text-white/40 hover:text-white hover:bg-white/10"
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex-1 px-5 py-5 space-y-5">
+                {/* Height */}
                 <div>
-                  <label className="text-white/50 text-xs font-bold block mb-1.5">
-                    {t('rayhanah.heightCm', 'Height (cm)')}
+                  <label className="text-white/50 text-xs font-bold block mb-2">
+                    {t('rayhanah.heightLabel', 'Height')}
                   </label>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    placeholder={t('rayhanah.heightPlaceholder', 'e.g. 163')}
-                    value={heightInput}
-                    onChange={(e) => setHeightInput(e.target.value)}
-                    className="input input-sm w-full bg-white/5 border-brand-border text-white placeholder:text-white/20"
-                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      placeholder={heightUnit === 'm' ? '1.63' : '5\'4"'}
+                      value={heightInput}
+                      onChange={(e) => setHeightInput(e.target.value)}
+                      className="input input-sm flex-1 bg-white/5 border-brand-border text-white placeholder:text-white/20"
+                    />
+                    <select
+                      value={heightUnit}
+                      onChange={(e) => {
+                        const next = e.target.value as 'm' | 'ft';
+                        if (next === heightUnit) return;
+                        // Convert existing input to new unit
+                        const cmNow = parseHeightToCm(heightInput, heightUnit);
+                        if (cmNow) {
+                          setHeightInput(
+                            next === 'm'
+                              ? String(Math.round((cmNow / 100) * 100) / 100)
+                              : cmToFtStr(cmNow)
+                          );
+                        } else {
+                          setHeightInput('');
+                        }
+                        setHeightUnit(next);
+                      }}
+                      className="select select-sm w-20 bg-white/5 border-brand-border text-white"
+                    >
+                      <option value="m">m</option>
+                      <option value="ft">ft</option>
+                    </select>
+                  </div>
+                  <p className="text-white/20 text-[10px] mt-1">
+                    {heightUnit === 'm'
+                      ? t('rayhanah.heightHintM', 'e.g. 1.63 (meters)')
+                      : t('rayhanah.heightHintFt', 'e.g. 5\'4" or 5.33')}
+                  </p>
                 </div>
-                <div>
-                  <label className="text-white/50 text-xs font-bold block mb-1.5">
-                    {t('rayhanah.weightKg', 'Weight (kg)')}
-                  </label>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    placeholder={t('rayhanah.weightPlaceholder', 'e.g. 58')}
-                    value={weightInput}
-                    onChange={(e) => setWeightInput(e.target.value)}
-                    className="input input-sm w-full bg-white/5 border-brand-border text-white placeholder:text-white/20"
-                  />
-                </div>
-              </div>
 
-              {/* Live BMI preview */}
-              {(() => {
-                const h = parseFloat(heightInput);
-                const w = parseFloat(weightInput);
-                if (!h || !w || h < 50 || w < 20) return null;
-                const bmi = Math.round((w / ((h / 100) * (h / 100))) * 10) / 10;
-                const cat =
-                  bmi < 18.5
-                    ? { key: 'bmiUnder', label: 'Underweight', color: 'text-brand-info' }
-                    : bmi < 25
-                      ? { key: 'bmiNormal', label: 'Normal', color: 'text-brand-emerald' }
-                      : bmi < 30
-                        ? { key: 'bmiOver', label: 'Overweight', color: 'text-brand-gold' }
-                        : { key: 'bmiObese', label: 'Obese', color: 'text-red-400' };
-                return (
-                  <div className="space-y-1.5">
-                    <div className="rounded-2xl bg-white/5 border border-brand-border p-4 flex items-center justify-between">
-                      <div>
-                        <p className="text-white/40 text-xs font-bold uppercase tracking-wide">
-                          {t('rayhanah.bmi', 'BMI')}
-                        </p>
-                        <p className={`text-2xl font-black ${cat.color}`}>{bmi}</p>
+                {/* Weight */}
+                <div>
+                  <label className="text-white/50 text-xs font-bold block mb-2">
+                    {t('rayhanah.weightLabel', 'Weight')}
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      placeholder={weightUnit === 'kg' ? '58' : '128'}
+                      value={weightInput}
+                      onChange={(e) => setWeightInput(e.target.value)}
+                      className="input input-sm flex-1 bg-white/5 border-brand-border text-white placeholder:text-white/20"
+                    />
+                    <select
+                      value={weightUnit}
+                      onChange={(e) => {
+                        const next = e.target.value as 'kg' | 'lbs';
+                        if (next === weightUnit) return;
+                        const kgNow = parseWeightToKg(weightInput, weightUnit);
+                        if (kgNow) {
+                          setWeightInput(
+                            next === 'kg'
+                              ? String(Math.round(kgNow * 10) / 10)
+                              : String(Math.round(kgNow * 2.20462 * 10) / 10)
+                          );
+                        } else {
+                          setWeightInput('');
+                        }
+                        setWeightUnit(next);
+                      }}
+                      className="select select-sm w-20 bg-white/5 border-brand-border text-white"
+                    >
+                      <option value="kg">kg</option>
+                      <option value="lbs">lbs</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Live BMI preview */}
+                {(() => {
+                  const cmH = parseHeightToCm(heightInput, heightUnit);
+                  const kgW = parseWeightToKg(weightInput, weightUnit);
+                  if (!cmH || !kgW || cmH < 50 || kgW < 20) return null;
+                  const bmi = Math.round((kgW / ((cmH / 100) * (cmH / 100))) * 10) / 10;
+                  const cat =
+                    bmi < 18.5
+                      ? { key: 'bmiUnder', label: 'Underweight', color: 'text-sky-400' }
+                      : bmi < 25
+                        ? { key: 'bmiNormal', label: 'Normal', color: 'text-brand-emerald' }
+                        : bmi < 30
+                          ? { key: 'bmiOver', label: 'Overweight', color: 'text-brand-gold' }
+                          : { key: 'bmiObese', label: 'Obese', color: 'text-red-400' };
+                  return (
+                    <div className="space-y-2">
+                      <div className="rounded-2xl bg-white/5 border border-brand-border p-4 flex items-center justify-between">
+                        <div>
+                          <p className="text-white/40 text-xs font-bold uppercase tracking-wide">
+                            {t('rayhanah.bmi', 'BMI')}
+                          </p>
+                          <p className={`text-3xl font-black ${cat.color}`}>{bmi}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className={`text-sm font-black ${cat.color}`}>
+                            {t(`rayhanah.${cat.key}`, cat.label)}
+                          </p>
+                          <p className="text-white/30 text-[10px] mt-0.5">
+                            {cmH} cm · {Math.round(kgW * 10) / 10} kg
+                          </p>
+                        </div>
                       </div>
-                      <p className={`text-sm font-bold ${cat.color}`}>
-                        {t(`rayhanah.${cat.key}`, cat.label)}
+                      <p className="text-white/20 text-[10px] leading-relaxed">
+                        {t(
+                          'rayhanah.bmiNote',
+                          'BMI is a general guide — not a medical diagnosis. Your doctor knows your full picture.'
+                        )}
                       </p>
                     </div>
-                    <p className="text-white/20 text-[10px] leading-relaxed">
-                      {t(
-                        'rayhanah.bmiNote',
-                        'BMI is a general guide — not a medical diagnosis. Your doctor knows your full picture.'
-                      )}
-                    </p>
-                  </div>
-                );
-              })()}
-
-              <button
-                className="w-full btn rounded-2xl bg-brand-pink/20 border-brand-pink/30 text-brand-pink hover:bg-brand-pink/30 font-black disabled:opacity-40"
-                disabled={updateBodyStats.isPending}
-                onClick={() => {
-                  const h = parseFloat(heightInput) || undefined;
-                  const w = parseFloat(weightInput) || undefined;
-                  if (!h && !w) return;
-                  updateBodyStats.mutate(
-                    { heightCm: h, weightKg: w },
-                    {
-                      onSuccess: () => {
-                        toast.success(t('rayhanah.bodyStatsSaved', 'Body stats saved 🌸'), {
-                          id: 'body-stats',
-                        });
-                        setSettingsOpen(false);
-                      },
-                    }
                   );
-                }}
-              >
-                {updateBodyStats.isPending ? (
-                  <span className="loading loading-spinner" />
-                ) : (
-                  t('rayhanah.saveBodyStats', 'Save')
-                )}
-              </button>
+                })()}
 
-              <p className="text-white/20 text-[10px] text-center leading-relaxed">
-                {t('rayhanah.bodyStatsNote', '🔒 Encrypted — visible only to you.')}
-              </p>
+                <button
+                  className="w-full btn rounded-2xl bg-brand-pink/20 border-brand-pink/30 text-brand-pink hover:bg-brand-pink/30 font-black disabled:opacity-40"
+                  disabled={updateBodyStats.isPending}
+                  onClick={() => {
+                    const cmH = parseHeightToCm(heightInput, heightUnit);
+                    const kgW = parseWeightToKg(weightInput, weightUnit);
+                    if (!cmH && !kgW) return;
+                    updateBodyStats.mutate(
+                      { heightCm: cmH ?? undefined, weightKg: kgW ?? undefined },
+                      {
+                        onSuccess: () => {
+                          toast.success(t('rayhanah.bodyStatsSaved', 'Body stats saved 🌸'), {
+                            id: 'body-stats',
+                          });
+                          setSettingsOpen(false);
+                        },
+                      }
+                    );
+                  }}
+                >
+                  {updateBodyStats.isPending ? (
+                    <span className="loading loading-spinner" />
+                  ) : (
+                    t('rayhanah.saveBodyStats', 'Save')
+                  )}
+                </button>
+
+                <p className="text-white/20 text-[10px] text-center leading-relaxed">
+                  {t('rayhanah.bodyStatsNote', '🔒 Encrypted — visible only to you.')}
+                </p>
+              </div>
             </motion.div>
           </motion.div>
         )}

@@ -10,10 +10,6 @@ import { useFastingSummary } from '../hooks/useFasting.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
 import { StreakBadge, GoalBadge } from '../components/StatusBadges.js';
 import ComebackNudge from '../components/ComebackNudge.js';
-import NaseehInsights from '../components/ai/NaseehInsights.js';
-import MuhasabahReport from '../components/ai/MuhasabahReport.js';
-import NaturalLogEntry from '../components/ai/NaturalLogEntry.js';
-import StreakCoaching from '../components/ai/StreakCoaching.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import {
@@ -246,15 +242,6 @@ export default function Home() {
         {/* Welcome back after a quiet stretch — the gentlest possible restart */}
         <div className="mb-6 empty:mb-0">
           <ComebackNudge />
-        </div>
-
-        {/* AI streak coaching — fires on milestone or break */}
-        <div className="mb-6 empty:mb-0">
-          <StreakCoaching
-            zikrStreak={streakCount}
-            quranStreak={quranSummary?.streak ?? null}
-            salatStreak={salatAnalytics?.currentStreak ?? null}
-          />
         </div>
 
         {/* Pre-period heads-up — predicted start within 3 days */}
@@ -756,22 +743,6 @@ export default function Home() {
               </motion.div>
             );
           })}
-        </div>
-
-        {/* Natural-language quick log (Naseeh) */}
-        <div className="mb-4 empty:mb-0">
-          <NaturalLogEntry />
-        </div>
-
-        {/* AI weekly reflection + monthly patterns (Naseeh) */}
-        <div className="mb-4 empty:mb-0">
-          <NaseehInsights />
-        </div>
-
-        {/* Weekly muhāsabah — distinct from NaseehInsights above: a dedicated
-            self-accounting report paired with a verified (never AI-written) āyah/hadith */}
-        <div className="mb-8 empty:mb-0">
-          <MuhasabahReport />
         </div>
 
         {/* ── Friends / Share activities ── */}
