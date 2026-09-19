@@ -207,7 +207,10 @@ export const updateBodyStats = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { heightCm, weightKg } = req.body as { heightCm?: number; weightKg?: number };
+    const { heightCm, weightKg } = req.body as {
+      heightCm?: number | null;
+      weightKg?: number | null;
+    };
     const stats = await cycleService.updateBodyStats(req.user.uid, { heightCm, weightKg });
     res.json({ ok: true, ...stats });
   } catch (err) {

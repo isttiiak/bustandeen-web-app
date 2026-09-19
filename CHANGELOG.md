@@ -2,6 +2,39 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.46.0 - Audit of the v5.43-5.45 batch: analytics ranges, session history, Rayhanah settings, quick log - 2026-09-20
+
+A second pass over everything added in v5.43.0 to v5.45.0 (whose changelog entries were never written; that work is summarised at the bottom). Logic errors found and fixed:
+
+### Fixed
+
+- **Salat analytics range now behaves like a real window.**
+  - Debt chart followed "today" instead of the selected period, so a past month charted the wrong days. It now ends on the period's last day.
+  - New accounts were graded on days before they existed (a fresh account looked like hundreds of missed prayers on 1y). Analytics now start at account creation, first log or last reset, whichever is latest.
+  - The 90d / 1y views only ever showed their last 12 weeks. Trend charts now use up to 12 buckets that cover the whole window.
+  - Added 7d and All time (the server accepted at most 365 days). The reset note showed raw `{{actual}}` placeholders and is now filled in.
+- **Quran analytics "All time" returned an error** (the request asked for 3650 days, the API allowed 365). The page now asks for an explicit from/to window, so a past month is that month and all-time is charted per month. The "Time of day" card no longer carries the "Quran sessions" title.
+- **Listening session showed 7:06 AM to 10:30 AM for 4 minutes** after falling asleep with audio playing. The end time was the moment the page was left, not the last moment audio actually played. Sessions now end at the last active second.
+- **Zikr session history and manual logs.**
+  - "Log missed counts" no longer pretends to happen at 12:00 pm. Those counts are stored as untimed manual entries: they count for the day and appear as one "Manual log" row, but never as a clock time and never in the time-of-day chart.
+  - Tasbih and Ayatul Kursi added automatically by the salat tracker (and "set count" corrections) count toward totals but are no longer logged as a zikr session, so ticking 303 zikr after salat no longer looks like a burst of counting.
+  - Sessions record when tapping really began and ended instead of when the request was sent, and a failed sync retries on its own and when the app returns to the foreground (installed full-screen use could leave taps unsent until the next tap).
+- **Quick log accuracy.** Counts land in the tracking day the note is about (Fajr-aware), duplicate dhikr lines merge, names match the user's existing dhikr case-insensitively, and a brand-new name is flagged "new dhikr" in the preview. Re-marking a prayer already done no longer wipes its tasbih / Ayatul Kursi ticks or timing. "Yesterday" / "last night" is understood (with a Today / Yesterday switch in the preview), "1 juz" is about 208 ayat instead of 1 page, and "half a page" is 5 ayat instead of 10. The floating button is hidden on the zikr counter so it can't be hit mid-count.
+- **Missing translations.** About 30 strings had no entry in either language and fell back to English (zikr analytics stat cards and headings, Naseeh page, BMI card, salat journey title). Salat chart info text updated for the new bucketing, in Bengali too.
+
+### Added
+
+- **Rayhanah settings drawer** (shared by the Cycle and Analytics pages): height and weight (metric or ft/lbs, remembered), remove-my-data button, madhab, and a switch to hide the BMI card. Height and weight stay AES-256-GCM encrypted; clearing removes the ciphertext. BMI card notes that BMI isn't reliable in pregnancy, and its category wording is gentler.
+- **Quran analytics KPIs:** time reading, time listening, sessions (read / listen) and active days for the selected range. The range picker (this month by default, last 30 days, all time, any month) now drives the chart and the KPIs.
+- **Zikr session history note** explaining what is and isn't a timed session.
+- New regression tests for session/manual rules, salat range floor and all-time window, Quran range totals and quick-log commit/parse.
+
+### Summary of v5.43.0 - v5.45.0 (previously unlogged)
+
+- v5.43.0: Rayhanah back/forward day navigation for "How are you today?" during an active period; encrypted height/weight (BMI) storage; Quran range picker and idle-session note.
+- v5.44.0: dedicated Naseeh AI page, floating quick-log button, ⓘ explanations on Salat, Zikr and Quran charts with Bengali translations.
+- v5.45.0: right-side drawer for BMI, BMI card in Rayhanah analytics, Naseeh moved to the profile menu and removed from Home.
+
 ## v5.42.3 - Reading timer pauses while the share modal is open - 2026-09-19
 
 ### Changed

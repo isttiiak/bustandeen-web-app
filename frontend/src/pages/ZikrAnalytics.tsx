@@ -93,7 +93,7 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
       d.setDate(d.getDate() - daysBack);
       const ts = d.getTime();
       await api.post('/api/zikr/increment/batch', {
-        increments: [{ zikrType: selectedType, amount: parsedAmount, ts }],
+        increments: [{ zikrType: selectedType, amount: parsedAmount, ts, manual: true }],
         timezoneOffset: getUserTimezoneOffset(),
         today: getTrackingDay(),
       });
@@ -1313,16 +1313,17 @@ export default function ZikrAnalytics() {
             ) : sessionsData && sessionsData.length > 0 ? (
               <div className="space-y-2">
                 {sessionsData.map((s, i) => {
-                  // Batch manual entries are anchored to the tracking day's
-                  // midday (12:00:00) — detect them by checking if both start
-                  // and end fall within 1 minute of noon; real tapping sessions
-                  // almost never align there.
+                  // Manual entries carry an explicit flag. Older ones (logged
+                  // before the flag existed) were anchored to the tracking
+                  // day's midday, so still detect those by both start and end
+                  // falling within 1 minute of noon.
                   const startMs = new Date(s.start).getTime();
                   const endMs = new Date(s.end).getTime();
                   const startHour = new Date(s.start).getHours();
                   const startMin = new Date(s.start).getMinutes();
                   const isManualEntry =
-                    endMs - startMs < 60_000 && startHour === 12 && startMin === 0;
+                    s.manual === true ||
+                    (endMs - startMs < 60_000 && startHour === 12 && startMin === 0);
                   return (
                     <div
                       key={i}
@@ -1371,6 +1372,12 @@ export default function ZikrAnalytics() {
                 {t('zikrAnalytics.sessions.empty', 'No sessions logged for this day')}
               </p>
             )}
+            <p className="text-white/25 text-[10px] leading-relaxed">
+              {t(
+                'zikrAnalytics.sessions.note',
+                "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
+              )}
+            </p>
           </div>
         </div>
 

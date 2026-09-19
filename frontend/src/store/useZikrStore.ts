@@ -5,6 +5,8 @@ import { getTrackingDay, getTrackingDayMiddayTs } from '../utils/trackingDay.js'
 import { API_BASE, getIdToken } from '../lib/api.js';
 
 const FLUSH_DELAY = 800; // ms
+const RETRY_DELAY = 20_000; // ms: retry a failed flush without waiting for another tap
+let retryTimer: ReturnType<typeof setTimeout> | undefined;
 
 // Timezone offset is stable for the whole session — compute once.
 const SESSION_TZ_OFFSET = getUserTimezoneOffset();
@@ -71,6 +73,14 @@ interface ZikrState {
   counts: Record<string, number>;
   lifetimeTotals: Record<string, number>;
   pending: Record<string, number>;
+  /** Portion of `pending` that was NOT tapped in real time (salat-tracker
+   * tasbih, set-count corrections). Counted in totals, never logged as a
+   * timed session. Negative when such a count was reversed. */
+  untimed: Record<string, number>;
+  /** Real clock time of the first/last tap in the current pending batch, per
+   * type, so a debounced flush (or a retry after being offline) still records
+   * when the counting actually happened, not when the request finally went out. */
+  tapSpan: Record<string, { first: number; last: number }>;
   total: number;
   isFlushing: boolean;
   lastResetDate: string | null;
@@ -104,6 +114,8 @@ export const useZikrStore = create<ZikrState>()(
       counts: {},
       lifetimeTotals: {},
       pending: {},
+      untimed: {},
+      tapSpan: {},
       total: 0,
       isFlushing: false,
       lastResetDate: null,
@@ -113,14 +125,21 @@ export const useZikrStore = create<ZikrState>()(
         const today = getTrackingDay();
         const lastReset = get().lastResetDate;
         if (lastReset !== today) {
-          set({ counts: {}, pending: {}, lastResetDate: today });
+          set({ counts: {}, pending: {}, untimed: {}, tapSpan: {}, lastResetDate: today });
         }
       },
 
       setTypes: (types) => set({ types }),
 
       replaceTypes: (types) =>
-        set({ types, counts: {}, pending: {}, selected: types[0] ?? 'SubhanAllah' }),
+        set({
+          types,
+          counts: {},
+          pending: {},
+          untimed: {},
+          tapSpan: {},
+          selected: types[0] ?? 'SubhanAllah',
+        }),
 
       removeType: (name) =>
         set((s) => {
@@ -148,6 +167,8 @@ export const useZikrStore = create<ZikrState>()(
             types,
             counts: move(s.counts),
             pending: move(s.pending),
+            untimed: move(s.untimed),
+            tapSpan: move(s.tapSpan),
             lifetimeTotals: move(s.lifetimeTotals),
             customMeanings: move(s.customMeanings),
             selected: s.selected === oldName ? newName : s.selected,
@@ -163,6 +184,8 @@ export const useZikrStore = create<ZikrState>()(
         set({
           counts: {},
           pending: {},
+          untimed: {},
+          tapSpan: {},
           lifetimeTotals: {},
           total: 0,
           selected: 'SubhanAllah',
@@ -225,7 +248,10 @@ export const useZikrStore = create<ZikrState>()(
         // mount/focus/visibility. Calling it on every tap added unnecessary work per count.
         set((s) => {
           const type = s.selected;
+          const now = Date.now();
+          const span = s.tapSpan[type];
           return {
+            tapSpan: { ...s.tapSpan, [type]: { first: span?.first ?? now, last: now } },
             counts: { ...s.counts, [type]: (s.counts[type] ?? 0) + 1 },
             lifetimeTotals: { ...s.lifetimeTotals, [type]: (s.lifetimeTotals[type] ?? 0) + 1 },
             pending: { ...s.pending, [type]: (s.pending[type] ?? 0) + 1 },
@@ -260,6 +286,10 @@ export const useZikrStore = create<ZikrState>()(
           return {
             counts: { ...s.counts, [s.selected]: 0 },
             pending: { ...s.pending, [s.selected]: 0 },
+            untimed: { ...s.untimed, [s.selected]: 0 },
+            tapSpan: Object.fromEntries(
+              Object.entries(s.tapSpan).filter(([k]) => k !== s.selected)
+            ),
             total: Math.max(0, s.total - cleared),
           };
         }),
@@ -283,6 +313,7 @@ export const useZikrStore = create<ZikrState>()(
           const counts = { ...s.counts };
           const lifetimeTotals = { ...s.lifetimeTotals };
           const pending = { ...s.pending };
+          const untimed = { ...s.untimed };
           let total = s.total;
           for (const [type, amount] of Object.entries(entries)) {
             if (!amount) continue;
@@ -293,23 +324,33 @@ export const useZikrStore = create<ZikrState>()(
             counts[type] = after;
             lifetimeTotals[type] = Math.max(0, (lifetimeTotals[type] ?? 0) + applied);
             pending[type] = (pending[type] ?? 0) + applied;
+            // Everything added through here is automatic/corrective (salat
+            // tasbih, "set count"), so it must not show up as a zikr session.
+            untimed[type] = (untimed[type] ?? 0) + applied;
             total = Math.max(0, total + applied);
           }
-          return { counts, lifetimeTotals, pending, total };
+          return { counts, lifetimeTotals, pending, untimed, total };
         }),
 
       scheduleFlush: () => {
         clearTimeout(get()._flushTimer);
+        clearTimeout(retryTimer);
         const t = setTimeout(() => void get().flush(), FLUSH_DELAY);
         set({ _flushTimer: t });
       },
 
       flush: async (opts) => {
+        const scheduleRetry = () => {
+          clearTimeout(retryTimer);
+          retryTimer = setTimeout(() => void get().flush(), RETRY_DELAY);
+        };
         // Prevent concurrent flushes
         if (get().isFlushing) return;
 
         // Snapshot pending at this moment — any taps during the request stay safe
         const snapshot = { ...get().pending };
+        const untimedSnap = { ...get().untimed };
+        const spanSnap = { ...get().tapSpan };
         const entries = Object.entries(snapshot).filter(([, a]) => a !== 0);
         if (!entries.length) return;
 
@@ -327,16 +368,23 @@ export const useZikrStore = create<ZikrState>()(
         // bucket — Date.now() would land it in the next civil day.
         const anchorTs = getTrackingDayMiddayTs();
         const flushedAt = Date.now();
-        const payload = entries.map(([zikrType, amount]) => ({
-          zikrType,
-          amount,
-          ts: anchorTs,
-          // Real wall-clock moment (for time-of-day/session analytics) — `ts`
-          // above is anchored to the tracking day's midday and can't tell us
-          // when during the day this actually happened.
-          realTs: flushedAt,
-          timezoneOffset: resolvedOffset,
-        }));
+        const payload = entries.map(([zikrType, amount]) => {
+          const span = spanSnap[zikrType];
+          return {
+            zikrType,
+            amount,
+            ts: anchorTs,
+            // Real wall-clock moment of the LAST tap (for time-of-day/session
+            // analytics): `ts` above is anchored to the tracking day's midday
+            // and can't tell us when during the day this actually happened.
+            // Not the flush time, since a retry after being offline, or a
+            // debounced flush after a long run of taps, would misplace it.
+            realTs: Math.min(span?.last ?? flushedAt, flushedAt),
+            startTs: span?.first,
+            untimedAmount: untimedSnap[zikrType] ?? 0,
+            timezoneOffset: resolvedOffset,
+          };
+        });
 
         set({ isFlushing: true });
         try {
@@ -356,6 +404,7 @@ export const useZikrStore = create<ZikrState>()(
           if (!res.ok) {
             // Keep pending intact — counts will be retried on next flush
             console.warn(`Batch flush returned ${res.status} — pending preserved for retry`);
+            scheduleRetry();
             return;
           }
 
@@ -364,13 +413,31 @@ export const useZikrStore = create<ZikrState>()(
           // legitimately be negative (queued decrements).
           set((s) => {
             const newPending = { ...s.pending };
+            const newUntimed = { ...s.untimed };
+            const newSpan = { ...s.tapSpan };
             for (const [type, amount] of entries) {
               newPending[type] = (newPending[type] ?? 0) - amount;
+              newUntimed[type] = (newUntimed[type] ?? 0) - (untimedSnap[type] ?? 0);
+              // Keep the span only if more taps arrived while the request was
+              // in flight; those start where the flushed run ended.
+              const flushedLast = spanSnap[type]?.last;
+              const cur = newSpan[type];
+              if (cur && flushedLast !== undefined && cur.last > flushedLast) {
+                newSpan[type] = { first: cur.last, last: cur.last };
+              } else {
+                delete newSpan[type];
+              }
             }
-            return { pending: newPending };
+            // A type whose taps and corrections cancelled out (pending 0) has
+            // nothing left to time.
+            for (const type of Object.keys(newSpan)) {
+              if (!newPending[type]) delete newSpan[type];
+            }
+            return { pending: newPending, untimed: newUntimed, tapSpan: newSpan };
           });
         } catch (e) {
           console.error('Flush error — pending preserved:', e);
+          scheduleRetry();
         } finally {
           set({ isFlushing: false });
         }
@@ -385,6 +452,8 @@ export const useZikrStore = create<ZikrState>()(
         counts: state.counts,
         lifetimeTotals: state.lifetimeTotals,
         pending: state.pending,
+        untimed: state.untimed,
+        tapSpan: state.tapSpan,
         total: state.total,
         lastResetDate: state.lastResetDate,
         customMeanings: state.customMeanings,

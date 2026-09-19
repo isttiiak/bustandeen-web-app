@@ -388,6 +388,11 @@ export default function App() {
     const onVisibility = () => {
       if (!document.hidden) {
         checkAndResetIfNewDay();
+        // Taps made just before the phone locked (or the installed app was
+        // backgrounded mid full-screen) may not have reached the server, since
+        // the keepalive flush at that moment can't refresh an expired token.
+        // Retry now that there's a live page and a fresh token available.
+        void useZikrStore.getState().flush();
         // A device waking from sleep/lock can leave the network stack briefly
         // unready while this tab's mount-time queries fire — they fail with a
         // connection error (net::ERR_CONNECTION_*), and since
@@ -1045,12 +1050,15 @@ export default function App() {
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
-            {/* Floating ✨ quick-log button — visible on all app pages except /naseeh itself */}
+            {/* Floating ✨ quick-log button — visible on app pages except /naseeh (it has its own) and the zikr counter */}
             {aiEnabled &&
               !isAdminPage &&
               !isSeoPage &&
               !isAuthPage &&
-              location.pathname !== '/naseeh' && (
+              location.pathname !== '/naseeh' &&
+              // The zikr counter is a tap-anywhere surface; a floating button in the
+              // corner would get hit by accident mid-count.
+              location.pathname !== '/zikr' && (
                 <>
                   <button
                     onClick={() => setQuickLogOpen(true)}

@@ -744,6 +744,9 @@ export interface ParsedZikrEntry {
   /** Copied verbatim from the user's existing zikr type list when it matches — never invented. */
   typeName: string;
   count: number;
+  /** Set by the controller after parsing: true when no existing zikr type matches, so
+   * confirming would create a brand-new type. Shown in the preview so it isn't a surprise. */
+  isNew?: boolean;
 }
 export interface ParsedQuranEntry {
   ayat: number;
@@ -755,14 +758,25 @@ export interface ParsedLogResult {
   salat: ParsedSalatEntry[];
   zikr: ParsedZikrEntry[];
   quran: ParsedQuranEntry | null;
+  /** Which day the note is about. "yesterday" only when the note clearly says so
+   * (yesterday / last night); everything else is today. */
+  day: 'today' | 'yesterday';
   provider?: string;
 }
 
-const EMPTY_PARSE: ParsedLogResult = { ok: false, salat: [], zikr: [], quran: null };
+const EMPTY_PARSE: ParsedLogResult = {
+  ok: false,
+  salat: [],
+  zikr: [],
+  quran: null,
+  day: 'today',
+};
 // The Hafs mushaf averages ~6236 ayat over 604 pages — used only when the
 // user's note gives a page count instead of an ayah count.
 const AVG_AYAT_PER_PAGE = 10;
 const QURAN_TOTAL_AYAT = 6236;
+// 6236 ayat / 30 juz. Also only an average (juz lengths vary by a few dozen ayat).
+const AVG_AYAT_PER_JUZ = 208;
 
 export async function parseNaturalLog(
   text: string,
@@ -779,9 +793,10 @@ export async function parseNaturalLog(
     `Extract a worship log from the user's short note into STRICT JSON. Rules:
 - "salat": array of {"prayer": one of fajr|dhuhr|asr|maghrib|isha, "status": "completed"|"kaza", "location": one of home|mosque|jamat (omit if not mentioned)}. Only include prayers explicitly mentioned as prayed/done/kaza. "in jamaah"/"in congregation"/"at the mosque" -> location "jamat" unless a masjid is named without any congregation wording, then "mosque". Never guess a prayer that wasn't mentioned.
 - "zikr": array of {"typeName": string, "count": number}. typeName MUST be copied EXACTLY (same spelling/case) from this user's existing list when it clearly matches: [${typesList}]. Map common synonyms to the closest one in that list (e.g. "istighfar" -> whichever exact string in the list means Astaghfirullah; "tasbih" -> whichever exact string means SubhanAllah). If nothing in the list is a reasonable match, return your own best short transliterated name instead — never a translation or a citation.
-- "quran": null, or {"amount": number, "unit": "count"|"pages"} — "unit":"pages" when the user said pages/juz rather than a direct verse count, otherwise "unit":"count". Report the raw number the user stated with the correct unit; do not do any conversion yourself. Never write the Arabic transliterated words for "verse" or "chapter" anywhere in your reply — use only "count"/"pages" as shown.
+- "quran": null, or {"amount": number, "unit": "count"|"pages"|"juz"} — "unit":"pages" when the user said pages, "unit":"juz" when they said juz/para/sipara, otherwise "unit":"count" for a direct verse count. Report the raw number the user stated (fractions like 0.5 for "half a page" are fine) with the correct unit; do not do any conversion yourself. Never write the Arabic transliterated words for "verse" or "chapter" anywhere in your reply — use only "count"/"pages"/"juz" as shown.
+- "day": "yesterday" ONLY if the note clearly says the activity was yesterday or last night, otherwise "today".
 - Ignore anything not about salat, zikr, or Quran reading — never invent an entry that wasn't mentioned.
-- Output ONLY this JSON shape, nothing else: {"salat": [...], "zikr": [...], "quran": {"amount": number, "unit": "count"|"pages"} | null}`,
+- Output ONLY this JSON shape, nothing else: {"day": "today"|"yesterday", "salat": [...], "zikr": [...], "quran": {"amount": number, "unit": "count"|"pages"|"juz"} | null}`,
     asUntrustedData('Their worship note', clean),
     // Generous budget: gpt-oss-120b is a reasoning model that spends part of
     // its completion tokens on hidden reasoning before the final JSON — too
@@ -795,6 +810,7 @@ export async function parseNaturalLog(
     salat?: Array<{ prayer?: unknown; status?: unknown; location?: unknown }>;
     zikr?: Array<{ typeName?: unknown; count?: unknown }>;
     quran?: { amount?: unknown; unit?: unknown } | null;
+    day?: unknown;
   }>(out.text);
   if (!parsed) return { ...EMPTY_PARSE, provider: out.provider };
 
@@ -828,14 +844,22 @@ export async function parseNaturalLog(
   let quran: ParsedQuranEntry | null = null;
   const q = parsed.quran;
   if (q && typeof q.amount === 'number' && Number.isFinite(q.amount) && q.amount > 0) {
-    const n = Math.round(q.amount);
-    quran =
-      q.unit === 'pages'
-        ? { ayat: Math.min(n * AVG_AYAT_PER_PAGE, QURAN_TOTAL_AYAT), approximate: true }
-        : { ayat: Math.min(n, QURAN_TOTAL_AYAT), approximate: false };
+    // Convert from the RAW amount so "half a page" (0.5) is 5 ayat, not a
+    // rounded-up 1 page = 10.
+    const perUnit =
+      q.unit === 'pages' ? AVG_AYAT_PER_PAGE : q.unit === 'juz' ? AVG_AYAT_PER_JUZ : null;
+    const ayat = Math.max(1, Math.round(perUnit ? q.amount * perUnit : q.amount));
+    quran = { ayat: Math.min(ayat, QURAN_TOTAL_AYAT), approximate: perUnit !== null };
   }
 
-  return { ok: true, salat, zikr, quran, provider: out.provider };
+  return {
+    ok: true,
+    salat,
+    zikr,
+    quran,
+    day: parsed.day === 'yesterday' ? 'yesterday' : 'today',
+    provider: out.provider,
+  };
 }
 
 // ── Feature 9: weekly muhāsabah report ───────────────────────────────────────

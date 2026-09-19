@@ -482,21 +482,28 @@ export async function getBodyStats(userId: string): Promise<BodyStats> {
 
 export async function updateBodyStats(
   userId: string,
-  input: { heightCm?: number; weightKg?: number }
+  input: { heightCm?: number | null; weightKg?: number | null }
 ): Promise<BodyStats> {
   const profile = await getOrCreateProfile(userId);
   const existing = profile.bodyStatsEncrypted
     ? (decryptJson<{ heightCm?: number; weightKg?: number }>(profile.bodyStatsEncrypted) ?? {})
     : {};
-  const merged = {
-    ...existing,
-    ...(input.heightCm !== undefined ? { heightCm: input.heightCm } : {}),
-    ...(input.weightKg !== undefined ? { weightKg: input.weightKg } : {}),
-  };
-  profile.bodyStatsEncrypted = encryptJson(merged);
+  const merged: { heightCm?: number; weightKg?: number } = { ...existing };
+  // A number sets the value, null removes it, undefined leaves it untouched.
+  if (input.heightCm !== undefined) {
+    if (input.heightCm === null) delete merged.heightCm;
+    else merged.heightCm = input.heightCm;
+  }
+  if (input.weightKg !== undefined) {
+    if (input.weightKg === null) delete merged.weightKg;
+    else merged.weightKg = input.weightKg;
+  }
+  // Nothing left to store: drop the ciphertext entirely rather than keep an
+  // encrypted empty object.
+  profile.bodyStatsEncrypted = Object.keys(merged).length ? encryptJson(merged) : undefined;
   await profile.save();
   const h = merged.heightCm ?? null;
   const w = merged.weightKg ?? null;
   const bmi = h && w ? Math.round((w / ((h / 100) * (h / 100))) * 10) / 10 : null;
-  return { heightCm: h ?? null, weightKg: w ?? null, bmi };
+  return { heightCm: h, weightKg: w, bmi };
 }

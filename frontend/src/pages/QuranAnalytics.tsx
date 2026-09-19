@@ -14,7 +14,7 @@ import ChartInfoModal, { InfoButton } from '../components/ChartInfoModal.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import {
   useQuranSummary,
-  useQuranHistory,
+  useQuranRange,
   useQuranSessions,
   useQuranTimeOfDay,
   QURAN_TOTAL_AYAT,
@@ -27,6 +27,14 @@ type RangePeriod = 'month' | 'last30' | 'alltime';
 interface MonthSel {
   year: number;
   month: number;
+}
+
+/** Shift a YYYY-MM-DD string by whole days (pure string math, no timezone). */
+function shiftDate(dateStr: string, delta: number): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1));
+  dt.setUTCDate(dt.getUTCDate() + delta);
+  return dt.toISOString().slice(0, 10);
 }
 
 /** The whole Quran journey in numbers — reading, listening, khatam, favourites. */
@@ -46,17 +54,27 @@ export default function QuranAnalytics() {
 
   const civilToday = getTrackingDay();
 
-  const historyDays = useMemo(() => {
-    if (rangePeriod === 'alltime') return 3650;
-    if (rangePeriod === 'last30') return 30;
-    // current month
+  // The selected window as an explicit from/to (inclusive). A past month is
+  // that whole month, the current month runs up to today, and "all time" starts
+  // long before any account existed, since the server only returns days with
+  // activity anyway.
+  const { rangeFrom, rangeTo } = useMemo(() => {
+    if (rangePeriod === 'alltime') return { rangeFrom: '2000-01-01', rangeTo: civilToday };
+    if (rangePeriod === 'last30')
+      return { rangeFrom: shiftDate(civilToday, -29), rangeTo: civilToday };
     const { year, month } = selectedMonth;
+    const mm = String(month).padStart(2, '0');
     const daysInMonth = new Date(year, month, 0).getDate();
-    const isCurrentMonth = civilToday.startsWith(`${year}-${String(month).padStart(2, '0')}`);
-    return isCurrentMonth ? parseInt(civilToday.slice(8), 10) : daysInMonth;
+    const isCurrentMonth = civilToday.startsWith(`${year}-${mm}`);
+    return {
+      rangeFrom: `${year}-${mm}-01`,
+      rangeTo: isCurrentMonth
+        ? civilToday
+        : `${year}-${mm}-${String(daysInMonth).padStart(2, '0')}`,
+    };
   }, [rangePeriod, selectedMonth, civilToday]);
 
-  const { data: history } = useQuranHistory(historyDays, true);
+  const { data: range } = useQuranRange(rangeFrom, rangeTo);
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
   const [sessionsDate, setSessionsDate] = useState(() => getTrackingDay());
   const { data: sessions, isLoading: sessionsLoading } = useQuranSessions(sessionsDate);
@@ -105,19 +123,50 @@ export default function QuranAnalytics() {
   };
 
   const chart = useMemo(() => {
-    const byDate = new Map((history ?? []).map((h) => [h.date, h.units]));
-    const days: Array<{ date: string; units: number }> = [];
-    const today = new Date();
-    for (let i = Math.min(historyDays - 1, 89); i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(d.getDate() - i);
-      const k = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      days.push({ date: k, units: byDate.get(k) ?? 0 });
+    const byDate = new Map((range?.history ?? []).map((h) => [h.date, h.units]));
+    const bars: Array<{ key: string; label: string; units: number }> = [];
+    if (rangePeriod === 'alltime') {
+      // Monthly buckets from the first month with any activity through this
+      // month (a per-day chart of years would be unreadable).
+      const byMonth = new Map<string, number>();
+      for (const [date, units] of byDate) {
+        const k = date.slice(0, 7);
+        byMonth.set(k, (byMonth.get(k) ?? 0) + units);
+      }
+      const first = [...byMonth.keys()].sort()[0];
+      if (first) {
+        let [y, m] = first.split('-').map(Number) as [number, number];
+        const [ey, em] = rangeTo.slice(0, 7).split('-').map(Number) as [number, number];
+        while (y < ey || (y === ey && m <= em)) {
+          const k = `${y}-${String(m).padStart(2, '0')}`;
+          bars.push({ key: k, label: k, units: byMonth.get(k) ?? 0 });
+          m++;
+          if (m > 12) {
+            m = 1;
+            y++;
+          }
+        }
+      }
+    } else {
+      for (let d = rangeFrom; d <= rangeTo; d = shiftDate(d, 1)) {
+        bars.push({ key: d, label: d, units: byDate.get(d) ?? 0 });
+      }
     }
-    const max = Math.max(1, ...days.map((d) => d.units));
-    const activeDays = days.filter((d) => d.units > 0).length;
-    return { days, max, activeDays };
-  }, [history, historyDays]);
+    const max = Math.max(1, ...bars.map((d) => d.units));
+    return { bars, max, monthly: rangePeriod === 'alltime' };
+  }, [range, rangePeriod, rangeFrom, rangeTo]);
+
+  const fmtDuration = (sec: number): string => {
+    const totalMin = sec > 0 ? Math.max(1, Math.round(sec / 60)) : 0;
+    const h = Math.floor(totalMin / 60);
+    const m = totalMin % 60;
+    return h > 0
+      ? t('quranAnalytics.sessions.durationHm', {
+          h: formatLocaleNumber(h),
+          m: formatLocaleNumber(m),
+        })
+      : t('quranAnalytics.sessions.durationM', { m: formatLocaleNumber(m) });
+  };
 
   const khatmPct = summary ? (summary.profile.currentAyah / QURAN_TOTAL_AYAT) * 100 : 0;
   const maxTop = Math.max(1, ...(summary?.topSurahs ?? []).map((t) => t.completions));
@@ -284,31 +333,90 @@ export default function QuranAnalytics() {
             );
           })()}
 
+        {/* range KPIs: time spent reading vs listening in the selected window */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
+            <p className="text-xl font-black text-brand-emerald">
+              📖 {range ? fmtDuration(range.stats.readSec) : '—'}
+            </p>
+            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+              {t('quranAnalytics.kpi_readTime', 'Time reading')}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
+            <p className="text-xl font-black text-brand-info">
+              🎧 {range ? fmtDuration(range.stats.listenSec) : '—'}
+            </p>
+            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+              {t('quranAnalytics.kpi_listenTime', 'Time listening')}
+            </p>
+          </div>
+          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
+            <p className="text-xl font-black text-brand-gold">
+              {range
+                ? formatLocaleNumber(range.stats.readSessions + range.stats.listenSessions)
+                : '—'}
+            </p>
+            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+              {t('quranAnalytics.kpi_sessions', 'Sessions')}
+            </p>
+            {range && (
+              <p className="text-white/25 text-[10px] mt-0.5">
+                📖 {formatLocaleNumber(range.stats.readSessions)} · 🎧{' '}
+                {formatLocaleNumber(range.stats.listenSessions)}
+              </p>
+            )}
+          </div>
+          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
+            <p className="text-xl font-black text-brand-warm">
+              {range ? formatLocaleNumber(range.stats.activeDays) : '—'}
+            </p>
+            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+              {t('quranAnalytics.kpi_activeDays', 'Active days')}
+            </p>
+            {range && (
+              <p className="text-white/25 text-[10px] mt-0.5">
+                {t('quranAnalytics.kpi_ayatInRange', '{{n}} āyāt', {
+                  n: formatLocaleNumber(range.stats.totalUnits),
+                })}
+              </p>
+            )}
+          </div>
+        </div>
+
         {/* chart header */}
         <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
             <h2 className="text-white font-black flex items-center gap-2">
-              {t('quranAnalytics.last30Title')}
+              {chart.monthly
+                ? t('quranAnalytics.chartTitleMonthly', 'Āyāt per month')
+                : t('quranAnalytics.chartTitle', 'Āyāt per day')}
               <span className="text-white/30 text-xs font-normal">· {rangeLabel}</span>
               <InfoButton onClick={() => setInfoTopic('chart')} label={CHART_INFO.chart!.title} />
             </h2>
             <span className="text-white/30 text-xs">
-              {t('quranAnalytics.daysWithQuran', { active: formatLocaleNumber(chart.activeDays) })}
+              {t('quranAnalytics.daysWithQuran', {
+                active: formatLocaleNumber(range?.stats.activeDays ?? 0),
+              })}
             </span>
           </div>
           <div className="flex items-end gap-[3px] h-28">
-            {chart.days.map((d) => (
+            {chart.bars.map((d) => (
               <div
-                key={d.date}
-                title={`${d.date}: ${d.units} āyāt`}
+                key={d.key}
+                title={`${d.label}: ${formatLocaleNumber(d.units)} āyāt`}
                 className={`flex-1 rounded-t ${d.units > 0 ? 'bg-gradient-to-t from-brand-emerald-dim/70 to-brand-info/70' : 'bg-white/5'}`}
                 style={{ height: `${Math.max(4, (d.units / chart.max) * 100)}%` }}
               />
             ))}
           </div>
           <div className="flex justify-between text-[9px] text-white/25 mt-1">
-            <span>{chart.days[0]?.date.slice(5)}</span>
-            <span>{t('common.today')}</span>
+            <span>{chart.bars[0]?.label.slice(chart.monthly ? 0 : 5)}</span>
+            <span>
+              {rangeTo === civilToday
+                ? t('common.today')
+                : chart.bars[chart.bars.length - 1]?.label.slice(chart.monthly ? 0 : 5)}
+            </span>
           </div>
         </div>
 
@@ -362,7 +470,10 @@ export default function QuranAnalytics() {
         {/* time of day */}
         <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5 space-y-3">
           <h2 className="text-white font-black flex items-center gap-2">
-            {t('quranAnalytics.sessions.title', 'Quran sessions')}
+            {t('quranAnalytics.timeOfDayTitle', 'Time of day')}
+            <span className="text-white/25 text-[10px] font-normal">
+              {t('quranAnalytics.timeOfDaySubtitle', 'last 30 days')}
+            </span>
             <InfoButton
               onClick={() => setInfoTopic('timeOfDay')}
               label={CHART_INFO.timeOfDay!.title}

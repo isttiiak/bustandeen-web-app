@@ -449,7 +449,8 @@
     "trendLonger": "↗ Getting longer",
     "trendShorter": "↘ Getting shorter",
     "trendStable": "→ Stable",
-    "yourProfile": "your profile"
+    "yourProfile": "your profile",
+    "bmiRange": "18.5–24.9 = Normal"
   },
   "cycleCalendar": {
     "estimatedOvulation": "Estimated ovulation",
@@ -1045,7 +1046,13 @@
     "disclaimer": "✨ A companion's words — not medical or religious advice.",
     "findingWords": "Finding the right words…",
     "forYouToday": "Naseeh · for you today",
-    "resourceNote": "If this feeling sits heavy for more than today, please reach out to someone you trust or a mental health professional — you deserve real support, not just words."
+    "resourceNote": "If this feeling sits heavy for more than today, please reach out to someone you trust or a mental health professional — you deserve real support, not just words.",
+    "pageTitle": "Naseeh, AI Companion",
+    "pageHeading": "Naseeh",
+    "pageSubheading": "Your personal Islamic productivity companion",
+    "disabledTitle": "Naseeh AI is off",
+    "disabledDesc": "Turn on Naseeh in Settings to get personal weekly insights, muhāsabah reports and quick logging.",
+    "openSettings": "Open Settings"
   },
   "naseehInsights": {
     "badgeLabel": "Naseeh · your week",
@@ -1077,7 +1084,11 @@
     "back": "Back",
     "confirmButton": "Confirm & log",
     "logging": "Logging…",
-    "successMessage": "Logged — well done for keeping track."
+    "successMessage": "Logged — well done for keeping track.",
+    "dayLabel": "For",
+    "dayToday": "Today",
+    "dayYesterday": "Yesterday",
+    "newDhikr": "(new dhikr)"
   },
   "nav": {
     "aboutUs": "About Us",
@@ -1398,7 +1409,16 @@
       "timeOfDayBody": "When during the day you spend time with the Quran, averaged over the last 30 days — reading and listening combined. Helps you find your best time and build a consistent habit.",
       "sessionsTitle": "Quran Sessions",
       "sessionsBody": "Sessions logged for the selected day — 📖 for reading, 🎧 for listening. The time shown is the wall-clock start and end. The duration is active time only — if you fell asleep or left audio playing, the active count will be much less than the time gap shown."
-    }
+    },
+    "kpi_readTime": "Time reading",
+    "kpi_listenTime": "Time listening",
+    "kpi_sessions": "Sessions",
+    "kpi_activeDays": "Active days",
+    "kpi_ayatInRange": "{{n}} āyāt",
+    "chartTitle": "Āyāt per day",
+    "chartTitleMonthly": "Āyāt per month",
+    "timeOfDayTitle": "Time of day",
+    "timeOfDaySubtitle": "last 30 days"
   },
   "quranBookmarks": {
     "ayahNo": "Āyah {{n}} →",
@@ -1950,10 +1970,10 @@
     "dayNavBack": "Previous day",
     "dayNavForward": "Next day",
     "editingDay": "🌷 {{date}}",
-    "editingDayNote": "Editing {{date}} — changes are saved immediately.",
+    "editingDayNote": "Editing {{date}}. Changes are saved right away.",
     "backToToday": "Back to today",
-    "settings": "Body stats",
-    "settingsTitle": "Body Stats",
+    "settings": "Settings",
+    "settingsTitle": "Rayhanah settings",
     "bodyStats": "Body measurements",
     "heightCm": "Height (cm)",
     "weightKg": "Weight (kg)",
@@ -1961,13 +1981,29 @@
     "bmiNormal": "Healthy weight",
     "bmiUnder": "Underweight",
     "bmiOver": "Overweight",
-    "bmiObese": "Obese",
-    "bmiNote": "BMI is a general guide — not a medical diagnosis. Your doctor knows your full picture.",
-    "bodyStatsNote": "🔒 Encrypted — visible only to you.",
+    "bmiObese": "Well above range",
+    "bmiNote": "BMI is a general guide, not a medical diagnosis. Your doctor knows your full picture.",
+    "bodyStatsNote": "🔒 Encrypted. Visible only to you.",
     "heightPlaceholder": "e.g. 162",
     "weightPlaceholder": "e.g. 58",
     "saveBodyStats": "Save",
-    "bodyStatsSaved": "Body stats saved 🌸"
+    "bodyStatsSaved": "Body stats saved 🌸",
+    "heightLabel": "Height",
+    "weightLabel": "Weight",
+    "heightHintM": "e.g. 1.63 (meters)",
+    "heightHintFt": "e.g. 5'4\" or 5.33",
+    "bodyStatsSection": "Height and weight",
+    "preferencesSection": "Preferences",
+    "bmiPregnancyNote": "BMI is not a reliable measure during pregnancy. Your midwife or doctor will guide you on healthy weight gain.",
+    "bodyStatsInvalid": "Please check the height and weight you entered.",
+    "bodyStatsCleared": "Height and weight removed",
+    "clearBodyStats": "Remove my saved height and weight",
+    "hideBmi": "Hide BMI in analytics",
+    "hideBmiHint": "Keeps your height and weight saved but stops showing the BMI card. Stored on this device only.",
+    "bmiUnderDesc": "Below the healthy weight range.",
+    "bmiNormalDesc": "Within the healthy weight range.",
+    "bmiOverDesc": "Above the healthy weight range.",
+    "bmiObeseDesc": "Well above the healthy weight range."
   },
   "reportRef": {
     "cardBody": "If you believe a verse number, hadith reference, or grading is incorrect, please let us know — we take this seriously.",
@@ -2023,7 +2059,7 @@
     "mosque": "Mosque",
     "missedNote": "Missed includes prayers left unmarked on past days — not only those explicitly tapped \"missed\".",
     "monthPicker": "Month",
-    "resetNote": "Showing {{actual}} days — your tracking was reset within the {{requested}}-day window. Analytics count from the reset date.",
+    "resetNote": "Showing {{actual}} of {{requested}} days: analytics count only from when you started tracking or last reset.",
     "mosqueJamatNote": "Mosque and Jamat overlap — a prayer at the mosque is usually also in jamat.",
     "mosqueStat": "{{count}} at mosque",
     "naflDays": "Nafl Days",
@@ -2059,6 +2095,8 @@
     "onTimeStat": "{{count}} on time",
     "overallBreakdown": "Overall Breakdown",
     "perPrayer": "Per Prayer",
+    "period7": "7d",
+    "period3650": "All",
     "period30": "30d",
     "period365": "1y",
     "period90": "90d",
@@ -2098,18 +2136,19 @@
       "prayerTimingTitle": "Prayer Timing",
       "prayerTimingBody": "Of the prayers you've marked done, how far into that prayer's valid time window you tended to pray it — early, mid, or late. Only counts prayers where your location was set at the time (the window itself is calculated from prayer times, which need a location).",
       "kazaDebtChartTitle": "Kaza Debt Chart",
-      "kazaDebtChartBody": "How many missed prayers you added to your kaza debt (red) vs paid back by completing a make-up prayer (green), bucketed by day for a short window or by week for a longer one. The rightmost bar always covers the period ending today — hover it (or check its label) to see the exact date range, including today.",
+      "kazaDebtChartBody": "How many missed prayers you added to your kaza debt (red) vs paid back by completing a make-up prayer (green), grouped by day for a short window, or into up to 12 equal bars (weekly, wider for a year or all time) that together cover the whole period. The rightmost bar always ends on the last day of the period, and hovering any bar shows its exact date range.",
       "correlationTitle": "Isha & Fajr Connection",
       "correlationBody": "Compares how often you catch Fajr on time the morning after praying Isha before 11pm vs after 11pm — a purely personal pattern from your own last 90 days, not a religious ruling. It only appears once there's enough data in BOTH categories (at least 5 days each) — a 2-day sample would just be noise dressed up as a percentage.",
       "mosqueTrendTitle": "Mosque Attendance Trend",
-      "mosqueTrendBody": "What share of your prayers were prayed at the mosque (in jamā'ah), tracked day by day for a short window or week by week for a longer one. The rightmost point always includes today's prayers so far — its label shows the exact date (or date range, for a weekly bucket) it covers.",
+      "mosqueTrendBody": "What share of your prayers were prayed at the mosque (in jama’ah), tracked day by day for a short window, or in up to 12 equal steps (weekly, wider for a year or all time) that together cover the whole period. The rightmost point ends on the last day of the period, and its label shows the exact date range it covers.",
       "prayerCalendarTitle": "Prayer Calendar",
       "prayerCalendarBody": "Every day in the window, colored by how many of your 5 daily prayers were completed that day — from red (0) to bright green (all 5). Today is ringed in green. A faint, near-invisible cell means no data at all for that day (nothing logged, or it hasn't happened yet), which is different from a red cell (logged, but nothing done).",
       "journeyTitle": "Journey",
       "journeyBody": "Your tracking history split into phases — a new phase starts each time you reset your kaza debt count. Each phase shows how many days it covered and your completion rate across them. The current (ongoing) phase's numbers update live and already include today's progress so far.",
       "kazaInsightsTitle": "Kaza Insights",
       "kazaInsightsBody": "A closer look at your makeup prayer patterns — which missed prayers you've been carrying longest, how quickly you typically pay them back, and which prayer tends to linger. Only counts prayers the tracker knows an exact missed date for."
-    }
+    },
+    "journeyTabTitle": "Your Journey"
   },
   "salatSettings": {
     "asrDesc": "Madhabs differ on when ʿAṣr begins. Because Ẓuhr lasts until ʿAṣr starts, this moves both. Follow your local mosque.",
@@ -3073,7 +3112,10 @@
       "howItWorks1": "Complete your daily zikr goal to continue your streak",
       "howItWorks2": "Miss 1 day? No problem! You get a 24-hour grace period",
       "howItWorks3": "Pause anytime to preserve your streak safely",
-      "howItWorks4": "Note: Missing 2+ days in a row will reset your streak"
+      "howItWorks4": "Note: Missing 2+ days in a row will reset your streak",
+      "howStreaksInfo": "How streaks & grace days work",
+      "newUserTitle": "🌱 Start your first streak today",
+      "newUserHint": "Meet your daily goal once to light the fire. Every streak starts at day one."
     },
     "goalCard": {
       "goalTitle": "Goal",
@@ -3095,7 +3137,8 @@
     "sessions": {
       "title": "Session history",
       "empty": "No sessions logged for this day",
-      "manualLog": "Manual log"
+      "manualLog": "Manual log",
+      "note": "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
     },
     "noZikrToday": "No zikr logged today yet",
     "noZikrAllTime": "No zikr logged yet",
@@ -3108,7 +3151,18 @@
       "timeOfDayBody": "When during the day you do your dhikr, averaged over the last 30 days — morning (Fajr to Dhuhr), afternoon (Dhuhr to Asr), evening (Asr to Isha), night (Isha onwards). Helps you see your natural rhythm.",
       "heatmapTitle": "Activity Heatmap",
       "heatmapBody": "Every day of the last year, colored by how much zikr you did — the darker the green, the more you counted. A white/grey cell means no zikr that day. Hover a cell to see the date and count."
-    }
+    },
+    "avgActiveDay": "Avg on active days",
+    "bestDayRecord": "Best day",
+    "longestStreak": "Longest streak",
+    "mostActiveDay": "Most active day",
+    "personalRecords": "Personal records",
+    "exportCsv": "Export CSV",
+    "heatmap": "Activity heatmap",
+    "heatmapSub": "last 365 days",
+    "perTypeTrend": "Per-type trends",
+    "newUserHeatmap": "Not enough activity yet. This fills in as you go. 🌱",
+    "newUserTrend": "Your trend will appear here once you start counting zikr. 🌱"
   },
   "zikrLibrary": {
     "addFail": "Could not add — try again.",

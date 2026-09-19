@@ -71,6 +71,18 @@ export const getHistory = async (
   }
 };
 
+// GET /api/quran/range?from=&to= — daily units + read/listen totals for a window
+export const getRange = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const from = req.query.from as string;
+    const to = req.query.to as string;
+    const range = await quranService.getRange(req.user.uid, from, to);
+    res.json({ ok: true, ...range });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getSummary = async (
   req: Request,
   res: Response,

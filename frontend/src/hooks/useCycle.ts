@@ -267,7 +267,8 @@ export function useBodyStats() {
 export function useUpdateBodyStats() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (vars: { heightCm?: number; weightKg?: number }) => {
+    // null clears that value ("remove my height/weight")
+    mutationFn: async (vars: { heightCm?: number | null; weightKg?: number | null }) => {
       const { data } = await api.patch<BodyStats & { ok: boolean }>('/api/cycle/body-stats', vars);
       return data;
     },

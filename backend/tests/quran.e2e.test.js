@@ -301,6 +301,38 @@ describe('Quran API', () => {
     expect(history.status).toBe(200);
   });
 
+  test('range returns daily units plus read/listen time and session totals', async () => {
+    const t0 = new Date('2026-08-10T08:00:00.000Z');
+    const send = (id, source, mins, date) =>
+      auth(request(app).post(`/api/quran/session`)).send({
+        clientSessionId: id,
+        date,
+        startedAt: t0.toISOString(),
+        endedAt: new Date(t0.getTime() + mins * 60_000).toISOString(),
+        activeDurationSec: mins * 60,
+        ayahCount: 0,
+        pagesRead: 0,
+        surahs: [67],
+        source,
+      });
+    await send('range-read-1', 'read', 10, '2026-08-10');
+    await send('range-listen-1', 'listen', 20, '2026-08-11');
+
+    const res = await auth(request(app).get('/api/quran/range?from=2026-08-01&to=2026-08-31'));
+    expect(res.status).toBe(200);
+    expect(res.body.stats.readSec).toBe(600);
+    expect(res.body.stats.listenSec).toBe(1200);
+    expect(res.body.stats.readSessions).toBe(1);
+    expect(res.body.stats.listenSessions).toBe(1);
+
+    // A window that excludes those days sees none of it
+    const empty = await auth(request(app).get('/api/quran/range?from=2026-01-01&to=2026-01-31'));
+    expect(empty.body.stats.readSec + empty.body.stats.listenSec).toBe(0);
+
+    const bad = await auth(request(app).get('/api/quran/range?from=2026-09-01&to=2026-08-01'));
+    expect(bad.status).toBe(400);
+  });
+
   test('session activeDurationSec is clamped to elapsed wall-clock time', async () => {
     const started = new Date('2026-07-06T08:00:00.000Z').toISOString();
     const end = new Date('2026-07-06T08:00:10.000Z').toISOString(); // only 10s elapsed

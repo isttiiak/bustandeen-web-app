@@ -29,10 +29,15 @@ import KazaDebtChart from '../components/analytics/KazaDebtChart.js';
 import MosqueTrendChart from '../components/analytics/MosqueTrendChart.js';
 import ChartInfoModal, { InfoButton } from '../components/ChartInfoModal.js';
 
+// 3650 = "All time": the backend clamps the window to when tracking began (or
+// the last reset), so an oversized window is safe and just means "everything".
+const ALL_TIME_DAYS = 3650;
 const PERIOD_OPTIONS = [
+  { label: '7d', value: 7 },
   { label: '30d', value: 30 },
   { label: '90d', value: 90 },
   { label: '1y', value: 365 },
+  { label: 'All', value: ALL_TIME_DAYS },
 ];
 
 interface MonthSel {
@@ -129,7 +134,7 @@ export default function SalatAnalytics() {
       title: t('salatAnalytics.info.kazaDebtChartTitle', 'Kaza Debt Chart'),
       body: t(
         'salatAnalytics.info.kazaDebtChartBody',
-        'How many missed prayers you added to your kaza debt (red) vs paid back by completing a make-up prayer (green), bucketed by day for a short window or by week for a longer one. The rightmost bar always covers the period ending today — hover it (or check its label) to see the exact date range, including today.'
+        'How many missed prayers you added to your kaza debt (red) vs paid back by completing a make-up prayer (green), grouped by day for a short window, or into up to 12 equal bars (weekly, wider for a year or all time) that together cover the whole period. The rightmost bar always ends on the last day of the period, and hovering any bar shows its exact date range.'
       ),
     },
     correlation: {
@@ -143,7 +148,7 @@ export default function SalatAnalytics() {
       title: t('salatAnalytics.info.mosqueTrendTitle', 'Mosque Attendance Trend'),
       body: t(
         'salatAnalytics.info.mosqueTrendBody',
-        'What share of your prayers were prayed at the mosque (in jama’ah), tracked day by day for a short window or week by week for a longer one. The rightmost point always includes today’s prayers so far — its label shows the exact date (or date range, for a weekly bucket) it covers.'
+        'What share of your prayers were prayed at the mosque (in jama’ah), tracked day by day for a short window, or in up to 12 equal steps (weekly, wider for a year or all time) that together cover the whole period. The rightmost point ends on the last day of the period, and its label shows the exact date range it covers.'
       ),
     },
     prayerCalendar: {
@@ -171,7 +176,7 @@ export default function SalatAnalytics() {
 
   const { data, isLoading, isError } = useSalatAnalytics(analyticsDays, analyticsToday);
   const { data: debt } = useSalatDebt();
-  const { data: debtHistory } = useSalatDebtHistory(analyticsDays);
+  const { data: debtHistory } = useSalatDebtHistory(analyticsDays, analyticsToday);
   const { data: kazaInsights } = useSalatDebtInsights();
   const { data: journeyPhases, isLoading: journeyLoading } = useSalatJourney(civilToday);
   const { data: correlation } = useSalatCorrelation();
@@ -406,15 +411,17 @@ export default function SalatAnalytics() {
 
               {data && !isLoading && (
                 <>
-                  {/* Period note — only shown when a reset shortened the window */}
-                  {data.totalDays < data.periodDays && (
+                  {/* Period note — shown when tracking start or a reset shortened the window (not for "All time", which is expected to) */}
+                  {data.totalDays < data.periodDays && days !== ALL_TIME_DAYS && (
                     <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-emerald/10 border border-brand-emerald/20">
                       <span className="text-lg shrink-0">🔄</span>
                       <p className="text-sm text-white/50">
-                        {t(
-                          'salatAnalytics.resetNote',
-                          `Showing ${formatLocaleNumber(data.totalDays)} days — your tracking was reset within the ${formatLocaleNumber(data.periodDays)}-day window. Analytics count from the reset date.`
-                        )}
+                        {t('salatAnalytics.resetNote', {
+                          actual: formatLocaleNumber(data.totalDays),
+                          requested: formatLocaleNumber(data.periodDays),
+                          defaultValue:
+                            'Showing {{actual}} of {{requested}} days: analytics count only from when you started tracking or last reset.',
+                        })}
                       </p>
                     </div>
                   )}

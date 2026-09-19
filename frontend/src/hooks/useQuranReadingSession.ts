@@ -103,6 +103,12 @@ export function useQuranReadingSession(
 
   const clientSessionIdRef = useRef<string>(randomSessionId());
   const startedAtRef = useRef<Date>(new Date());
+  // The last moment the clock actually advanced. A session's end time must be
+  // this, not "whenever it happened to be saved": teardown/visibility saves
+  // fire when the user comes back (e.g. wakes up hours after falling asleep
+  // with audio playing), and stamping THAT moment made a 4-minute listen read
+  // as 7:06 AM to 10:30 AM in session history.
+  const lastActiveAtRef = useRef<number>(Date.now());
   const lastInteractionRef = useRef<number>(Date.now());
   const activeSecRef = useRef(0);
   const lastSavedSecRef = useRef(0);
@@ -136,7 +142,9 @@ export function useQuranReadingSession(
           // correctly across both days' totals this way.
           date: getTrackingDay(),
           startedAt: startedAtRef.current.toISOString(),
-          endedAt: new Date().toISOString(),
+          endedAt: new Date(
+            Math.max(lastActiveAtRef.current, startedAtRef.current.getTime())
+          ).toISOString(),
           activeDurationSec: activeSecRef.current,
           ayahCount: ayahCountRef.current,
           pagesRead: 0,
@@ -189,6 +197,7 @@ export function useQuranReadingSession(
       }
       setIsPaused(paused);
       if (!paused) {
+        lastActiveAtRef.current = Date.now();
         activeSecRef.current += 1;
         setActiveSec(activeSecRef.current);
       }
