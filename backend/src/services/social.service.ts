@@ -366,7 +366,11 @@ export interface FriendStats {
  * Fixed-hour thresholds are a fair global approximation; actual adhan times
  * vary by location and season, but give a consistent ranking basis.
  */
-function prayersDueNow(timezoneOffset: number): number {
+function prayersDueNow(timezoneOffset: number, today?: string): number {
+  // `today` is the tracking day being scored. Between midnight and Fajr it is
+  // still YESTERDAY's date, so all five of its prayers have long since opened:
+  // reading the clock alone said 0 due and produced chips like "5/0 prayers".
+  if (today && today < getTodayString(timezoneOffset)) return 5;
   const nowUtc = new Date();
   const localMinutes =
     (((nowUtc.getUTCHours() * 60 + nowUtc.getUTCMinutes() + timezoneOffset) % 1440) + 1440) % 1440;
@@ -488,7 +492,7 @@ async function statsForUser(
     cursor = shiftDateStr(cursor, -1);
   }
 
-  const prayersDue = prayersDueNow(timezoneOffset);
+  const prayersDue = prayersDueNow(timezoneOffset, today);
 
   const base = {
     isMe: uid === viewerUid,
@@ -532,13 +536,7 @@ async function statsForUser(
     // a dead giveaway that the number was synthetic (defeating the privacy
     // goal). Coarse fixed windows; friends overwhelmingly share a locale.
     // timezoneOffset is POSITIVE EAST here (frontend sends -getTimezoneOffset())
-    const nowUtc = new Date();
-    const localMinutes =
-      (((nowUtc.getUTCHours() * 60 + nowUtc.getUTCMinutes() + timezoneOffset) % 1440) + 1440) %
-      1440;
-    const h = localMinutes / 60;
-    const prayersElapsed =
-      h >= 20 ? 5 : h >= 18.5 ? 4 : h >= 16 ? 3 : h >= 12.5 ? 2 : h >= 5 ? 1 : 0;
+    const prayersElapsed = prayersDue;
     base.salatToday = Math.min(prayersElapsed, Math.round(5 * Math.min(1, score / 100)));
     base.fastedToday = base.zikrGoalMet;
   }

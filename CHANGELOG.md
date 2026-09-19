@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.47.0 - Offline listening timer, Rayhanah cycle page tidy-up, leaderboard chips - 2026-09-20
+
+### Fixed
+
+- **Listening offline no longer runs the session timer.** In the installed app with no connection, pressing Play left the button buffering forever but the session clock kept counting and a session appeared in history. Time now only counts while sound is actually playing (not while buffering, stalled, errored or after a rejected play).
+- **"5/0 prayers" on the leaderboard.** Between midnight and Fajr the tracking day is still yesterday, but the clock said no prayer was due yet. All five are now due for that day, and the chip can no longer show fewer prayers due than done.
+- **Friends who share their cycle status** no longer show the prayer and fasting chips (they were paused/synthetic for her and only confusing).
+
+### Changed
+
+- **Rayhanah Cycle page**: madhab choice and discreet mode moved into the settings drawer; the cycle history list and the three average/period/cycles KPI cards were removed (Analytics has them); "Your fiqh companion" is now at the bottom of the page.
+- **Cycle history on Analytics** gained the edit button (adjust dates, or clear the end date to reopen a cycle) beside delete. The edit dialog is now a shared component.
+
 ## v5.46.0 - Audit of the v5.43-5.45 batch: analytics ranges, session history, Rayhanah settings, quick log - 2026-09-20
 
 A second pass over everything added in v5.43.0 to v5.45.0 (whose changelog entries were never written; that work is summarised at the bottom). Logic errors found and fixed:

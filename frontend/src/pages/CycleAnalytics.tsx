@@ -18,6 +18,7 @@ import { useFastingSummary } from '../hooks/useFasting.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { computeBmi, cmToFtStr } from '../utils/bodyStats.js';
+import CycleEditModal, { type CycleEditTarget } from '../components/CycleEditModal.js';
 import RayhanahSettingsDrawer from '../components/RayhanahSettingsDrawer.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
@@ -75,6 +76,7 @@ export default function CycleAnalytics() {
   const [pastStart, setPastStart] = useState('');
   const [pastEnd, setPastEnd] = useState('');
   const [pastType, setPastType] = useState<'hayd' | 'nifas'>('hayd');
+  const [editTarget, setEditTarget] = useState<CycleEditTarget | null>(null);
   const [pendingDelete, setPendingDelete] = useState<{ id: string; label: string } | null>(null);
 
   const stats = useMemo(() => {
@@ -967,6 +969,19 @@ export default function CycleAnalytics() {
                         )}
                       </span>
                       <button
+                        aria-label={t('rayhanah.editEntry', 'Edit entry')}
+                        className="text-white/25 hover:text-brand-pink"
+                        onClick={() =>
+                          setEditTarget({
+                            _id: l._id,
+                            startDate: l.startDate,
+                            endDate: l.endDate,
+                          })
+                        }
+                      >
+                        ✏️
+                      </button>
+                      <button
                         aria-label={t('cycleAnalytics.deleteEntry', 'Delete entry')}
                         className="text-white/25 hover:text-red-300"
                         onClick={() =>
@@ -1073,6 +1088,7 @@ export default function CycleAnalytics() {
         </div>
       )}
 
+      <CycleEditModal target={editTarget} today={today} onClose={() => setEditTarget(null)} />
       <RayhanahSettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       <ConfirmDialog

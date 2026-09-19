@@ -746,13 +746,19 @@ export default function Friends() {
                     </div>
                     {/* Stat chips — prayer, zikr streak, today's zikr, fasted today, quran pages */}
                     <div className="flex flex-wrap gap-1.5 mt-2.5 pl-10">
-                      <span className="px-2 py-0.5 rounded-full bg-white/10 border border-brand-emerald/10 text-[10px] font-bold text-white/60">
-                        🕌 {formatLocaleNumber(f.salatToday)}
-                        {f.prayersDue !== undefined && f.prayersDue < 5 ? (
-                          <span className="text-white/35">/{formatLocaleNumber(f.prayersDue)}</span>
-                        ) : null}{' '}
-                        {t('friends.prayers')}
-                      </span>
+                      {/* Someone who shares her cycle status: prayer and fasting are
+                          paused for her, so those two chips would only confuse. */}
+                      {!f.onCycle && (
+                        <span className="px-2 py-0.5 rounded-full bg-white/10 border border-brand-emerald/10 text-[10px] font-bold text-white/60">
+                          🕌 {formatLocaleNumber(f.salatToday)}
+                          {f.prayersDue !== undefined && f.prayersDue < 5 ? (
+                            <span className="text-white/35">
+                              /{formatLocaleNumber(Math.max(f.prayersDue, f.salatToday))}
+                            </span>
+                          ) : null}{' '}
+                          {t('friends.prayers')}
+                        </span>
+                      )}
                       <span
                         className={`px-2 py-0.5 rounded-full border text-[10px] font-bold text-white/70 ${sv.cls}`}
                       >
@@ -762,15 +768,17 @@ export default function Friends() {
                       <span className="px-2 py-0.5 rounded-full bg-white/10 border border-brand-emerald/10 text-[10px] font-bold text-white/60">
                         📿 {t('friends.zikrTodayStat', { count: formatLocaleNumber(f.zikrToday) })}
                       </span>
-                      <span
-                        className={`px-2 py-0.5 rounded-full border text-[10px] font-bold ${
-                          f.fastedToday
-                            ? 'bg-brand-gold/15 border-brand-gold/40 text-brand-gold'
-                            : 'bg-white/10 border-brand-emerald/10 text-white/30'
-                        }`}
-                      >
-                        🌙 {f.fastedToday ? t('friends.fastingToday') : t('friends.notFasting')}
-                      </span>
+                      {!f.onCycle && (
+                        <span
+                          className={`px-2 py-0.5 rounded-full border text-[10px] font-bold ${
+                            f.fastedToday
+                              ? 'bg-brand-gold/15 border-brand-gold/40 text-brand-gold'
+                              : 'bg-white/10 border-brand-emerald/10 text-white/30'
+                          }`}
+                        >
+                          🌙 {f.fastedToday ? t('friends.fastingToday') : t('friends.notFasting')}
+                        </span>
+                      )}
                       <span className="px-2 py-0.5 rounded-full bg-white/10 border border-brand-emerald/10 text-[10px] font-bold text-white/60">
                         📖{' '}
                         {t('friends.quranPagesStat', {

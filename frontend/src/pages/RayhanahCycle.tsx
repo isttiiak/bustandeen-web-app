@@ -7,13 +7,10 @@ import { ChevronLeftIcon, ChevronRightIcon, Cog6ToothIcon } from '@heroicons/rea
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import RayhanahSettingsDrawer from '../components/RayhanahSettingsDrawer.js';
 import { useAuthStore } from '../store/useAuthStore.js';
-import { useUiStore } from '../store/useUiStore.js';
 import {
   useCycleSummary,
   useStartCycle,
   useEndCycle,
-  useSetMadhab,
-  useDeleteCycleLog,
   useIsFemale,
   useUpsertCycleDay,
   useEditCycleLog,
@@ -24,7 +21,6 @@ import {
 } from '../hooks/useCycle.js';
 import { useFriendsList } from '../hooks/useSocial.js';
 import CycleCalendar from '../components/CycleCalendar.js';
-import ConfirmDialog from '../components/ConfirmDialog.js';
 import TabNav from '../components/TabNav.js';
 import { useFastingSummary, useUpdateFastingProfile } from '../hooks/useFasting.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
@@ -193,8 +189,6 @@ export default function RayhanahCycle() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
-  const discreetMode = useUiStore((s) => s.discreetMode);
-  const setDiscreetMode = useUiStore((s) => s.setDiscreetMode);
   const isFemale = useIsFemale();
   const today = getTrackingDay();
 
@@ -202,8 +196,6 @@ export default function RayhanahCycle() {
   const { data: fastingSummary } = useFastingSummary();
   const startCycle = useStartCycle();
   const endCycle = useEndCycle();
-  const setMadhab = useSetMadhab();
-  const deleteLog = useDeleteCycleLog();
   const updateFastingProfile = useUpdateFastingProfile();
   const upsertDay = useUpsertCycleDay();
   const partnerSync = usePartnerSync();
@@ -221,21 +213,12 @@ export default function RayhanahCycle() {
   const [ghuslOpen, setGhuslOpen] = useState(false);
   const [ghuslChecked, setGhuslChecked] = useState<boolean[]>(GHUSL_STEPS.map(() => false));
   const [qadaPrompt, setQadaPrompt] = useState<{ days: number } | null>(null);
-  const [historyOpen, setHistoryOpen] = useState(false);
-  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   // Day navigation for "How are you today?" — allows editing past days within the active period
   const [viewDay, setViewDay] = useState(today);
   // Settings drawer (body stats + preferences), shared with Analytics
   const [settingsOpen, setSettingsOpen] = useState(false);
   // Edit an episode (dates) or reopen the most recent one ("I'm not done yet")
   const editCycle = useEditCycleLog();
-  const [editTarget, setEditTarget] = useState<{
-    _id: string;
-    startDate: string;
-    endDate: string | null;
-  } | null>(null);
-  const [editStart, setEditStart] = useState('');
-  const [editEnd, setEditEnd] = useState('');
 
   const active = summary?.active ?? null;
   const todayNote = summary?.days?.find((d) => d.date === today) ?? null;
@@ -294,12 +277,6 @@ export default function RayhanahCycle() {
     );
     return diffDays >= 0 && diffDays <= 3 ? latest : null;
   }, [summary, active, today]);
-
-  const openEdit = (l: { _id: string; startDate: string; endDate: string | null }) => {
-    setEditTarget(l);
-    setEditStart(l.startDate);
-    setEditEnd(l.endDate ?? '');
-  };
 
   const setFlow = (flow: CycleFlow) =>
     upsertDay.mutate({ date: viewDay, flow: viewDayNote?.flow === flow ? null : flow });
@@ -1080,34 +1057,156 @@ export default function RayhanahCycle() {
 
         {/* ── Cycle calendar + stats ────────────────────────────────────────── */}
         {summary && <CycleCalendar summary={summary} today={today} />}
-        {summary && (summary.prediction?.basedOnCycles ?? 0) > 0 && (
-          <div className="grid grid-cols-3 gap-3">
-            <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-              <p className="text-2xl font-black text-brand-pink">
-                {formatLocaleNumber(summary.prediction?.avgCycleDays ?? 0)}
-              </p>
-              <p className="text-white/30 text-[10px] font-bold uppercase tracking-wide mt-1">
-                {t('rayhanah.avgCycleDays', 'avg cycle days')}
-              </p>
+
+        {/* ── Settings + history ─────────────────────────────────────────────── */}
+        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5 space-y-4">
+          {/* ── Partner sync — opt-in, revocable, status-only ── */}
+          <div className="pt-3 border-t border-brand-border/50">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-white font-bold text-sm">
+                  🤝 {t('rayhanah.partnerSyncTitle', 'Share cycle status')}
+                </p>
+                <p className="text-white/30 text-xs leading-relaxed">
+                  {t(
+                    'rayhanah.partnerSyncDesc',
+                    'One friend sees only "on her cycle" / "not" — never dates, symptoms, or notes. Turn off anytime.'
+                  )}
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                className="toggle toggle-sm border-brand-pink/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-pink checked:border-brand-pink shrink-0"
+                checked={summary?.partnerSync.enabled ?? false}
+                disabled={partnerSync.isPending}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setPartnerPickerOpen(true);
+                  } else {
+                    partnerSync.mutate({ enabled: false });
+                    setPartnerPickerOpen(false);
+                  }
+                }}
+              />
             </div>
-            <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-              <p className="text-2xl font-black text-brand-pink">
-                {formatLocaleNumber(summary.prediction?.avgPeriodDays ?? 0)}
+
+            {summary?.partnerSync.enabled && summary.partnerSync.partnerUid && (
+              <p className="text-brand-emerald/70 text-xs mt-2">
+                {t('rayhanah.sharingWith', 'Currently sharing with {{name}}', {
+                  name:
+                    friends?.find((f) => f.uid === summary.partnerSync.partnerUid)?.displayName ??
+                    t('rayhanah.aFriend', 'a friend'),
+                })}
               </p>
-              <p className="text-white/30 text-[10px] font-bold uppercase tracking-wide mt-1">
-                {t('rayhanah.avgPeriodDays', 'avg period days')}
-              </p>
-            </div>
-            <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-              <p className="text-2xl font-black text-brand-pink">
-                {formatLocaleNumber((summary.prediction?.basedOnCycles ?? 0) + 1)}
-              </p>
-              <p className="text-white/30 text-[10px] font-bold uppercase tracking-wide mt-1">
-                {t('rayhanah.cyclesLearned', 'cycles learned')}
-              </p>
-            </div>
+            )}
+
+            {partnerPickerOpen && !summary?.partnerSync.enabled && (
+              <div className="mt-2 space-y-1.5">
+                {!friends?.length ? (
+                  <p className="text-white/25 text-xs">
+                    {t(
+                      'rayhanah.partnerSyncNoFriends',
+                      'Connect with a friend first — Friends page — then come back here.'
+                    )}
+                  </p>
+                ) : (
+                  friends.map((f) => (
+                    <button
+                      key={f.uid}
+                      className="w-full flex items-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 px-3 py-2 text-xs text-white/70 text-left transition-colors"
+                      onClick={() => {
+                        partnerSync.mutate({ enabled: true, partnerUid: f.uid });
+                        setPartnerPickerOpen(false);
+                      }}
+                    >
+                      <span>👤</span>
+                      <span className="truncate">{f.displayName}</span>
+                    </button>
+                  ))
+                )}
+                <button
+                  className="text-white/25 text-xs hover:text-white/50"
+                  onClick={() => setPartnerPickerOpen(false)}
+                >
+                  {t('common.cancel', 'Cancel')}
+                </button>
+              </div>
+            )}
           </div>
-        )}
+
+          {/* ── Pregnancy — pauses hayd predictions only; salat/fasting unaffected ── */}
+          <div className="pt-3 border-t border-brand-border/50">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-white font-bold text-sm">
+                  🤰 {t('rayhanah.pregnancyToggleTitle', "I'm currently pregnant")}
+                </p>
+                <p className="text-white/30 text-xs leading-relaxed">
+                  {t(
+                    'rayhanah.pregnancyToggleDesc',
+                    'Pauses period predictions and shows a week count instead. Does not change your salat or fasting tracking.'
+                  )}
+                </p>
+              </div>
+              <input
+                type="checkbox"
+                className="toggle toggle-sm border-brand-emerald/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-emerald checked:border-brand-emerald shrink-0"
+                checked={summary?.pregnancy.active ?? false}
+                disabled={setPregnancy.isPending}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setDueDateInput(summary?.pregnancy.dueDate ?? '');
+                    setPregnancyFormOpen(true);
+                  } else {
+                    setPregnancy.mutate({ active: false });
+                    setPregnancyFormOpen(false);
+                  }
+                }}
+              />
+            </div>
+
+            {pregnancyFormOpen && !summary?.pregnancy.active && (
+              <div className="mt-2 flex items-center gap-2">
+                <input
+                  type="date"
+                  className="input input-sm bg-white/5 border-brand-border text-white/80 flex-1"
+                  value={dueDateInput}
+                  onChange={(e) => setDueDateInput(e.target.value)}
+                />
+                <button
+                  className="btn btn-sm bg-brand-emerald/20 border-brand-emerald/30 text-brand-emerald disabled:opacity-40"
+                  disabled={!dueDateInput || setPregnancy.isPending}
+                  onClick={() => {
+                    setPregnancy.mutate({ active: true, dueDate: dueDateInput });
+                    setPregnancyFormOpen(false);
+                  }}
+                >
+                  {t('rayhanah.pregnancySave', 'Save')}
+                </button>
+                <button
+                  className="text-white/25 text-xs hover:text-white/50"
+                  onClick={() => setPregnancyFormOpen(false)}
+                >
+                  {t('common.cancel', 'Cancel')}
+                </button>
+              </div>
+            )}
+            {!pregnancyFormOpen && summary?.pregnancy.active && summary.pregnancy.dueDate && (
+              <p className="text-brand-emerald/70 text-xs mt-2">
+                {t('rayhanah.pregnancyDueDate', 'Expected due date: {{date}}', {
+                  date: formatDay(summary.pregnancy.dueDate),
+                })}
+              </p>
+            )}
+          </div>
+
+          <p className="text-white/25 text-[10px] leading-relaxed border-t border-brand-emerald/5 pt-3">
+            {t(
+              'rayhanah.privacyNote',
+              '🔒 Your cycle data is visible only to you. It is never shown to friends — on the leaderboard your Noor simply flows from the dhikr, Quran and ṣalawāt you do, exactly like any other day.'
+            )}
+          </p>
+        </div>
 
         {/* ── What changes / what stays (education) ─────────────────────────── */}
         <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5 space-y-4">
@@ -1318,263 +1417,6 @@ export default function RayhanahCycle() {
             </div>
           </details>
         </div>
-
-        {/* ── Settings + history ─────────────────────────────────────────────── */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-white font-bold text-sm">
-                {t('rayhanah.haydMaximumTitle', 'Hayd maximum (madhab)')}
-              </p>
-              <p className="text-white/30 text-xs">
-                {t(
-                  'rayhanah.haydMaximumDesc',
-                  'Ḥanafī: 10 days · Majority (Shāfiʿī/Ḥanbalī/Mālikī): 15 days'
-                )}
-              </p>
-            </div>
-            <div className="join">
-              {(['hanafi', 'majority'] as const).map((m) => (
-                <button
-                  key={m}
-                  className={`join-item btn btn-xs ${summary?.madhab === m ? 'bg-brand-pink/30 border-brand-pink/40 text-brand-pink' : 'bg-white/5 border-brand-emerald/10 text-white/50'}`}
-                  onClick={() => setMadhab.mutate(m)}
-                >
-                  {m === 'hanafi'
-                    ? t('rayhanah.madhabHanafi', 'Ḥanafī')
-                    : t('rayhanah.madhabMajority', 'Majority')}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Partner sync — opt-in, revocable, status-only ── */}
-          <div className="pt-3 border-t border-brand-border/50">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-white font-bold text-sm">
-                  🤝 {t('rayhanah.partnerSyncTitle', 'Share cycle status')}
-                </p>
-                <p className="text-white/30 text-xs leading-relaxed">
-                  {t(
-                    'rayhanah.partnerSyncDesc',
-                    'One friend sees only "on her cycle" / "not" — never dates, symptoms, or notes. Turn off anytime.'
-                  )}
-                </p>
-              </div>
-              <input
-                type="checkbox"
-                className="toggle toggle-sm border-brand-pink/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-pink checked:border-brand-pink shrink-0"
-                checked={summary?.partnerSync.enabled ?? false}
-                disabled={partnerSync.isPending}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setPartnerPickerOpen(true);
-                  } else {
-                    partnerSync.mutate({ enabled: false });
-                    setPartnerPickerOpen(false);
-                  }
-                }}
-              />
-            </div>
-
-            {summary?.partnerSync.enabled && summary.partnerSync.partnerUid && (
-              <p className="text-brand-emerald/70 text-xs mt-2">
-                {t('rayhanah.sharingWith', 'Currently sharing with {{name}}', {
-                  name:
-                    friends?.find((f) => f.uid === summary.partnerSync.partnerUid)?.displayName ??
-                    t('rayhanah.aFriend', 'a friend'),
-                })}
-              </p>
-            )}
-
-            {partnerPickerOpen && !summary?.partnerSync.enabled && (
-              <div className="mt-2 space-y-1.5">
-                {!friends?.length ? (
-                  <p className="text-white/25 text-xs">
-                    {t(
-                      'rayhanah.partnerSyncNoFriends',
-                      'Connect with a friend first — Friends page — then come back here.'
-                    )}
-                  </p>
-                ) : (
-                  friends.map((f) => (
-                    <button
-                      key={f.uid}
-                      className="w-full flex items-center gap-2 rounded-xl bg-white/5 hover:bg-white/10 px-3 py-2 text-xs text-white/70 text-left transition-colors"
-                      onClick={() => {
-                        partnerSync.mutate({ enabled: true, partnerUid: f.uid });
-                        setPartnerPickerOpen(false);
-                      }}
-                    >
-                      <span>👤</span>
-                      <span className="truncate">{f.displayName}</span>
-                    </button>
-                  ))
-                )}
-                <button
-                  className="text-white/25 text-xs hover:text-white/50"
-                  onClick={() => setPartnerPickerOpen(false)}
-                >
-                  {t('common.cancel', 'Cancel')}
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* ── Pregnancy — pauses hayd predictions only; salat/fasting unaffected ── */}
-          <div className="pt-3 border-t border-brand-border/50">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-white font-bold text-sm">
-                  🤰 {t('rayhanah.pregnancyToggleTitle', "I'm currently pregnant")}
-                </p>
-                <p className="text-white/30 text-xs leading-relaxed">
-                  {t(
-                    'rayhanah.pregnancyToggleDesc',
-                    'Pauses period predictions and shows a week count instead. Does not change your salat or fasting tracking.'
-                  )}
-                </p>
-              </div>
-              <input
-                type="checkbox"
-                className="toggle toggle-sm border-brand-emerald/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-emerald checked:border-brand-emerald shrink-0"
-                checked={summary?.pregnancy.active ?? false}
-                disabled={setPregnancy.isPending}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setDueDateInput(summary?.pregnancy.dueDate ?? '');
-                    setPregnancyFormOpen(true);
-                  } else {
-                    setPregnancy.mutate({ active: false });
-                    setPregnancyFormOpen(false);
-                  }
-                }}
-              />
-            </div>
-
-            {pregnancyFormOpen && !summary?.pregnancy.active && (
-              <div className="mt-2 flex items-center gap-2">
-                <input
-                  type="date"
-                  className="input input-sm bg-white/5 border-brand-border text-white/80 flex-1"
-                  value={dueDateInput}
-                  onChange={(e) => setDueDateInput(e.target.value)}
-                />
-                <button
-                  className="btn btn-sm bg-brand-emerald/20 border-brand-emerald/30 text-brand-emerald disabled:opacity-40"
-                  disabled={!dueDateInput || setPregnancy.isPending}
-                  onClick={() => {
-                    setPregnancy.mutate({ active: true, dueDate: dueDateInput });
-                    setPregnancyFormOpen(false);
-                  }}
-                >
-                  {t('rayhanah.pregnancySave', 'Save')}
-                </button>
-                <button
-                  className="text-white/25 text-xs hover:text-white/50"
-                  onClick={() => setPregnancyFormOpen(false)}
-                >
-                  {t('common.cancel', 'Cancel')}
-                </button>
-              </div>
-            )}
-            {!pregnancyFormOpen && summary?.pregnancy.active && summary.pregnancy.dueDate && (
-              <p className="text-brand-emerald/70 text-xs mt-2">
-                {t('rayhanah.pregnancyDueDate', 'Expected due date: {{date}}', {
-                  date: formatDay(summary.pregnancy.dueDate),
-                })}
-              </p>
-            )}
-          </div>
-
-          {/* ── Discreet mode — neutralizes the home screen + nav wording ── */}
-          <div className="pt-3 border-t border-brand-border/50">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-white font-bold text-sm">
-                  🍃 {t('rayhanah.discreetModeTitle', 'Discreet mode')}
-                </p>
-                <p className="text-white/30 text-xs leading-relaxed">
-                  {t(
-                    'rayhanah.discreetModeDesc',
-                    'Hides "Rayhanah"/cycle-day wording from the home screen and menu — for a shared device. This page itself is unchanged once you open it.'
-                  )}
-                </p>
-              </div>
-              <input
-                type="checkbox"
-                className="toggle toggle-sm border-brand-pink/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-pink checked:border-brand-pink shrink-0"
-                checked={discreetMode}
-                onChange={(e) => setDiscreetMode(e.target.checked)}
-              />
-            </div>
-          </div>
-
-          <button
-            className="w-full text-left text-sm text-white/60 hover:text-white flex items-center justify-between"
-            onClick={() => setHistoryOpen((v) => !v)}
-          >
-            <span>
-              {t('rayhanah.cycleHistoryCount', '🗓️ Cycle history ({{count, number}})', {
-                count: summary?.logs.length ?? 0,
-              })}
-            </span>
-            <span className="text-white/30">{historyOpen ? '▴' : '▾'}</span>
-          </button>
-          <AnimatePresence>
-            {historyOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                {(summary?.logs ?? []).length === 0 ? (
-                  <p className="text-white/30 text-xs py-2">
-                    {t('rayhanah.noCyclesLogged', 'No cycles logged yet.')}
-                  </p>
-                ) : (
-                  <div className="space-y-1.5 pt-1">
-                    {(summary?.logs ?? []).map((l) => (
-                      <div
-                        key={l._id}
-                        className="flex items-center gap-3 rounded-xl bg-white/5 px-3 py-2 text-xs"
-                      >
-                        <span>{l.type === 'nifas' ? '🤱' : '🌸'}</span>
-                        <span className="text-white/70 flex-1">
-                          {formatDay(l.startDate)} —{' '}
-                          {l.endDate ? formatDay(l.endDate) : t('rayhanah.ongoing', 'ongoing')}
-                        </span>
-                        <button
-                          aria-label={t('rayhanah.editEntry', 'Edit entry')}
-                          className="text-white/25 hover:text-brand-pink"
-                          onClick={() => openEdit(l)}
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          aria-label={t('rayhanah.deleteEntry', 'Delete entry')}
-                          className="text-white/25 hover:text-red-300"
-                          onClick={() => setConfirmDelete(l._id)}
-                        >
-                          🗑
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <p className="text-white/25 text-[10px] leading-relaxed border-t border-brand-emerald/5 pt-3">
-            {t(
-              'rayhanah.privacyNote',
-              '🔒 Your cycle data is visible only to you. It is never shown to friends — on the leaderboard your Noor simply flows from the dhikr, Quran and ṣalawāt you do, exactly like any other day.'
-            )}
-          </p>
-        </div>
       </div>
 
       <RayhanahSettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
@@ -1727,143 +1569,6 @@ export default function RayhanahCycle() {
               >
                 {t('rayhanah.alhamdulillah', 'Alhamdulillah 🤲')}
               </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Second confirmation for deletes (app-wide rule) */}
-      <ConfirmDialog
-        open={!!confirmDelete}
-        title={t('rayhanah.removeCycleTitle', 'Remove this cycle?')}
-        message={t(
-          'rayhanah.removeCycleMessage',
-          'This entry will be removed from your history and predictions.'
-        )}
-        onConfirm={() => {
-          if (confirmDelete) deleteLog.mutate(confirmDelete);
-          setConfirmDelete(null);
-        }}
-        onCancel={() => setConfirmDelete(null)}
-      />
-
-      {/* ── Edit a cycle's dates / reopen it ────────────────────────────────── */}
-      <AnimatePresence>
-        {editTarget && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm grid place-items-center p-4"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setEditTarget(null);
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.95, y: 10 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 10 }}
-              className="w-full max-w-sm rounded-3xl bg-brand-deep border border-brand-pink/25 p-6 space-y-4"
-              role="dialog"
-              aria-label={t('rayhanah.editCycleAriaLabel', 'Edit cycle')}
-            >
-              <div>
-                <h3 className="text-white font-black">
-                  {t('rayhanah.editThisCycle', '✏️ Edit this cycle')}
-                </h3>
-                <p className="text-white/40 text-xs mt-1 leading-relaxed">
-                  {t(
-                    'rayhanah.editCycleDesc',
-                    "Adjust the dates, or clear the end date if it hasn't truly finished. Your daily notes belong to their days — they are never lost."
-                  )}
-                </p>
-              </div>
-              <div className="space-y-2.5">
-                <div>
-                  <label className="text-white/50 text-xs font-bold" htmlFor="edit-cycle-start">
-                    {t('rayhanah.startDate', 'Start date')}
-                  </label>
-                  <input
-                    id="edit-cycle-start"
-                    type="date"
-                    value={editStart}
-                    max={today}
-                    onChange={(e) => setEditStart(e.target.value)}
-                    className="input input-sm w-full mt-1 bg-white/5 border-brand-pink/20 text-white rounded-xl"
-                  />
-                </div>
-                <div>
-                  <label className="text-white/50 text-xs font-bold" htmlFor="edit-cycle-end">
-                    {t('rayhanah.endDate', 'End date')}
-                  </label>
-                  <input
-                    id="edit-cycle-end"
-                    type="date"
-                    value={editEnd}
-                    min={editStart}
-                    max={today}
-                    onChange={(e) => setEditEnd(e.target.value)}
-                    className="input input-sm w-full mt-1 bg-white/5 border-brand-pink/20 text-white rounded-xl"
-                  />
-                  {editTarget.endDate && (
-                    <button
-                      className="mt-1.5 text-brand-pink/70 hover:text-brand-pink text-[11px] underline"
-                      onClick={() => setEditEnd('')}
-                    >
-                      {t(
-                        'rayhanah.clearEndDate',
-                        'Clear the end date — this cycle is still ongoing'
-                      )}
-                    </button>
-                  )}
-                  {editEnd === '' && (
-                    <p className="text-brand-pink/60 text-[11px] mt-1">
-                      {t(
-                        'rayhanah.savingReopensCycle',
-                        '🌸 Saving without an end date reopens the cycle.'
-                      )}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  className="flex-1 btn btn-sm rounded-xl bg-white/5 border-white/20 text-white/60"
-                  onClick={() => setEditTarget(null)}
-                >
-                  {t('rayhanah.cancel', 'Cancel')}
-                </button>
-                <button
-                  className="flex-1 btn btn-sm rounded-xl border-0 text-white font-bold bg-brand-pink/80 hover:bg-brand-pink"
-                  disabled={editCycle.isPending || !editStart}
-                  onClick={() =>
-                    editCycle.mutate(
-                      {
-                        logId: editTarget._id,
-                        startDate: editStart,
-                        endDate: editEnd === '' ? null : editEnd,
-                      },
-                      {
-                        onSuccess: () => {
-                          toast.success(
-                            editEnd === ''
-                              ? t('rayhanah.cycleReopenedShort', 'Cycle reopened 🌸')
-                              : t('rayhanah.cycleUpdated', 'Cycle updated ✏️'),
-                            { id: 'cycle-edit' }
-                          );
-                          setEditTarget(null);
-                        },
-                      }
-                    )
-                  }
-                >
-                  {editCycle.isPending ? (
-                    <span className="loading loading-spinner loading-xs" />
-                  ) : (
-                    t('rayhanah.save', 'Save')
-                  )}
-                </button>
-              </div>
             </motion.div>
           </motion.div>
         )}

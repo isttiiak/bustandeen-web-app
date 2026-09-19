@@ -45,6 +45,8 @@ export default function RayhanahSettingsDrawer({ open, onClose }: Props) {
   const setHeightUnit = useUiStore((s) => s.setCycleHeightUnit);
   const setWeightUnit = useUiStore((s) => s.setCycleWeightUnit);
   const setHideBmi = useUiStore((s) => s.setHideBmi);
+  const discreetMode = useUiStore((s) => s.discreetMode);
+  const setDiscreetMode = useUiStore((s) => s.setDiscreetMode);
 
   const [heightInput, setHeightInput] = useState('');
   const [weightInput, setWeightInput] = useState('');
@@ -277,6 +279,12 @@ export default function RayhanahSettingsDrawer({ open, onClose }: Props) {
                   <p className="text-white/50 text-xs font-bold mb-2">
                     {t('rayhanah.haydMaximumTitle', 'Hayd maximum (madhab)')}
                   </p>
+                  <p className="text-white/25 text-[10px] leading-relaxed mb-2">
+                    {t(
+                      'rayhanah.haydMaximumDesc',
+                      'Ḥanafī: 10 days · Majority (Shāfiʿī/Ḥanbalī/Mālikī): 15 days'
+                    )}
+                  </p>
                   <div className="join">
                     {(['majority', 'hanafi'] as const).map((m) => (
                       <button
@@ -292,6 +300,26 @@ export default function RayhanahSettingsDrawer({ open, onClose }: Props) {
                     ))}
                   </div>
                 </div>
+
+                <label className="flex items-start justify-between gap-3 cursor-pointer">
+                  <span>
+                    <span className="block text-white/60 text-xs font-bold">
+                      🍃 {t('rayhanah.discreetModeTitle', 'Discreet mode')}
+                    </span>
+                    <span className="block text-white/25 text-[10px] leading-relaxed mt-0.5">
+                      {t(
+                        'rayhanah.discreetModeDesc',
+                        'Hides "Rayhanah"/cycle-day wording from the home screen and menu, for a shared device. This page itself is unchanged once you open it.'
+                      )}
+                    </span>
+                  </span>
+                  <input
+                    type="checkbox"
+                    className="toggle toggle-sm toggle-secondary mt-0.5"
+                    checked={discreetMode}
+                    onChange={(e) => setDiscreetMode(e.target.checked)}
+                  />
+                </label>
 
                 <label className="flex items-start justify-between gap-3 cursor-pointer">
                   <span>
