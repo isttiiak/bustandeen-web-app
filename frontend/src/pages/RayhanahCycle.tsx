@@ -416,13 +416,27 @@ export default function RayhanahCycle() {
     <AnimatedBackground variant="dark">
       <h1 className="sr-only">{t('rayhanah.title', 'Rayhanah Cycle')}</h1>
       <div className="px-4 pt-3">
-        <div className="max-w-2xl mx-auto">
-          <TabNav
-            items={[
-              { label: `🌸 ${t('rayhanah.tabCycle', 'Cycle')}`, to: '/cycle', active: true },
-              { label: `📊 ${t('rayhanah.tabAnalytics', 'Analytics')}`, to: '/cycle/analytics' },
-            ]}
-          />
+        <div className="max-w-2xl mx-auto flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <TabNav
+              items={[
+                { label: `🌸 ${t('rayhanah.tabCycle', 'Cycle')}`, to: '/cycle', active: true },
+                { label: `📊 ${t('rayhanah.tabAnalytics', 'Analytics')}`, to: '/cycle/analytics' },
+              ]}
+            />
+          </div>
+          <button
+            onClick={() => {
+              setHeightInput(bodyStats?.heightCm != null ? String(bodyStats.heightCm) : '');
+              setWeightInput(bodyStats?.weightKg != null ? String(bodyStats.weightKg) : '');
+              setSettingsOpen(true);
+            }}
+            aria-label={t('rayhanah.settings', 'Body stats')}
+            title={t('rayhanah.settings', 'Body stats')}
+            className="shrink-0 p-2 rounded-xl border border-brand-pink/20 bg-white/5 text-white/50 hover:text-brand-pink hover:border-brand-pink/40 transition-colors"
+          >
+            <Cog6ToothIcon className="w-5 h-5" />
+          </button>
         </div>
       </div>
       <div className="relative max-w-2xl mx-auto px-4 pt-4 pb-16 space-y-5">
@@ -1321,22 +1335,6 @@ export default function RayhanahCycle() {
 
         {/* ── Settings + history ─────────────────────────────────────────────── */}
         <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5 space-y-4">
-          <div className="flex items-center justify-between mb-1">
-            <p className="text-white/40 text-xs font-bold uppercase tracking-widest">
-              {t('rayhanah.settingsTitle', 'Rayhanah Settings')}
-            </p>
-            <button
-              onClick={() => {
-                setHeightInput(bodyStats?.heightCm != null ? String(bodyStats.heightCm) : '');
-                setWeightInput(bodyStats?.weightKg != null ? String(bodyStats.weightKg) : '');
-                setSettingsOpen(true);
-              }}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs text-white/50 hover:text-brand-pink hover:bg-brand-pink/10 border border-transparent hover:border-brand-pink/20 transition-all"
-            >
-              <Cog6ToothIcon className="w-4 h-4" />
-              {t('rayhanah.settings', 'Body stats')}
-            </button>
-          </div>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white font-bold text-sm">

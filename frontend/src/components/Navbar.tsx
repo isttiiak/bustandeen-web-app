@@ -40,6 +40,7 @@ const PAGE_KEYS: Record<string, string> = {
   '/friends': 'nav.friends',
   '/settings': 'nav.settings',
   '/profile': 'nav.myProfile',
+  '/naseeh': 'nav.naseeh',
 };
 const PAGE_META: Record<string, { title: string; emoji: string }> = {
   '/zikr': { title: 'Zikr Counter', emoji: '📿' },
@@ -58,6 +59,7 @@ const PAGE_META: Record<string, { title: string; emoji: string }> = {
   '/feedback': { title: 'Feedback', emoji: '💬' },
   '/contact': { title: 'Contact Us', emoji: '📨' },
   '/profile': { title: 'My Profile', emoji: '👤' },
+  '/naseeh': { title: 'Naseeh', emoji: '✨' },
 };
 
 // Maps each page to its logical parent for the back button
@@ -78,6 +80,7 @@ const PARENT_ROUTES: Record<string, string> = {
   '/feedback': '/',
   '/contact': '/',
   '/profile': '/',
+  '/naseeh': '/',
 };
 
 // ── Typewriter greeting ───────────────────────────────────────────────────────

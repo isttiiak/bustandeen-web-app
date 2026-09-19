@@ -24,6 +24,7 @@ import UnsavedWarning from './components/UnsavedWarning.js';
 import GenderGate from './components/GenderGate.js';
 import DemoBanner from './components/DemoBanner.js';
 import AnnouncementBanner from './components/AnnouncementBanner.js';
+import NaturalLogModal from './components/ai/NaturalLogModal.js';
 import type { AuthUser } from './types/api.js';
 
 // `body { overflow-x: hidden }` (styles/global.css, added to stop mobile
@@ -93,6 +94,7 @@ const AdminUserDetail = lazy(() => import('./pages/AdminUserDetail.js'));
 const AdminOpsHealth = lazy(() => import('./pages/AdminOpsHealth.js'));
 const AdminBroadcast = lazy(() => import('./pages/AdminBroadcast.js'));
 const AdminComposeEmail = lazy(() => import('./pages/AdminComposeEmail.js'));
+const NaseehPage = lazy(() => import('./pages/NaseehPage.js'));
 
 // Programmatic-SEO static pages (prayer-times/qibla/ramadan-calendar by
 // city, du'a library, adhkar, Hijri converter) — pre-rendered at build time
@@ -650,7 +652,8 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
   }, [setUser, init, resetAll, hydrate, setAuthLoading]);
 
-  const { authLoading } = useAuthStore();
+  const { authLoading, aiEnabled } = useAuthStore();
+  const [quickLogOpen, setQuickLogOpen] = useState(false);
   const isAuthPage = ['/login', '/signup', '/auth/action'].includes(location.pathname);
   // Programmatic-SEO static pages (src/seo/) ship their own self-contained
   // header/breadcrumb/footer (see src/seo/components/Layout.tsx) — the app
@@ -1038,9 +1041,27 @@ export default function App() {
                 <Route path="/login" element={<AuthSignIn />} />
                 <Route path="/signup" element={<AuthSignUp />} />
                 <Route path="/auth/action" element={<AuthAction />} />
+                <Route path="/naseeh" element={<NaseehPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
+            {/* Floating ✨ quick-log button — visible on all app pages except /naseeh itself */}
+            {aiEnabled &&
+              !isAdminPage &&
+              !isSeoPage &&
+              !isAuthPage &&
+              location.pathname !== '/naseeh' && (
+                <>
+                  <button
+                    onClick={() => setQuickLogOpen(true)}
+                    aria-label="Quick log with a sentence"
+                    className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-brand-emerald shadow-lg shadow-brand-emerald/30 flex items-center justify-center text-xl hover:scale-110 active:scale-95 transition-transform"
+                  >
+                    ✨
+                  </button>
+                  {quickLogOpen && <NaturalLogModal onClose={() => setQuickLogOpen(false)} />}
+                </>
+              )}
           </div>
           {showFooter && <Footer />}
         </>
