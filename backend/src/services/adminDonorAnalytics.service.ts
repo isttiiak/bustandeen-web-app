@@ -2,6 +2,7 @@ import Donation from '../models/Donation.js';
 import User from '../models/User.js';
 import { sendMail } from './email.service.js';
 import { toSimpleHtml } from './sadaqahEmail.templates.js';
+import { SIGN_OFF } from './emailBrand.js';
 
 const httpError = (status: number, message: string): Error & { status: number } => {
   const err = new Error(message) as Error & { status: number };
@@ -79,7 +80,7 @@ export const getDonorAnalytics = async (): Promise<DonorAnalytics> => {
   return { topDonors, repeatDonorCount, oneOffDonorCount, monthlyTrend };
 };
 
-const APPRECIATION_SUBJECT = 'JazakAllahu khayran — Bustandeen';
+const APPRECIATION_SUBJECT = 'JazakAllahu khayran from Bustandeen';
 
 /**
  * Editable draft for a personal thank-you to a donor — the admin always
@@ -101,7 +102,13 @@ export const getDonorEmailDraft = async (
   const named = donations.find((d) => !d.isAnonymous && d.donorName);
   const name = named?.donorName ?? 'there';
 
-  const body = `Assalamu Alaikum ${name},\n\nJazakAllahu khayran for your generous support of Bustandeen — your contributions have totaled ${totalAmount.toLocaleString()} BDT across ${donations.length} donation${donations.length > 1 ? 's' : ''} so far. May Allah accept it from you and make it a continuous source of reward, even after you've moved on to other things.\n\n[Add anything specific you'd like to say here before sending]\n\n— Bustandeen`;
+  const body = `Assalamu Alaikum ${name},
+
+JazakAllahu khayran for your generous support of Bustandeen. Your contributions so far total ${totalAmount.toLocaleString()} BDT across ${donations.length} donation${donations.length > 1 ? 's' : ''}, and we are truly grateful. May Allah accept it from you and make it a continuous source of reward, long after the day you gave it.
+
+[Add anything specific you'd like to say here before sending]
+
+${SIGN_OFF}`;
 
   return { subject: APPRECIATION_SUBJECT, body };
 };

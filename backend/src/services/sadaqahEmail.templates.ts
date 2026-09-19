@@ -1,4 +1,5 @@
 import type { SendMailOptions } from './email.service.js';
+import { SIGN_OFF } from './emailBrand.js';
 
 // Donor-supplied strings (name, transaction ID) land inside HTML here with no
 // framework escaping the way JSX would on the frontend — escape manually so
@@ -24,10 +25,7 @@ interface DonationEmailData {
   transactionId: string;
 }
 
-const greeting = (donorName: string | null) =>
-  donorName ? `Assalamu Alaikum ${escapeHtml(donorName)},` : 'Assalamu Alaikum,';
-
-// Same wording, no HTML-escaping — for the plain-text drafts below, escaping
+// Plain text on purpose: toSimpleHtml escapes at send time, so escaping here
 // would literally insert "&amp;" etc. into text a human is about to read/edit.
 const plainGreeting = (donorName: string | null) =>
   donorName ? `Assalamu Alaikum ${donorName},` : 'Assalamu Alaikum,';
@@ -43,26 +41,23 @@ const plainGreeting = (donorName: string | null) =>
  */
 export const sadaqahRef = (id: string): string => id.slice(-6).toUpperCase();
 
-// Deliberately outcome-neutral — every reply in a donation's thread reuses
+// Deliberately outcome-neutral. Every reply in a donation's thread reuses
 // this via "Re: ..." so email clients (Gmail, Outlook) group the
-// received/verified/rejected messages as one conversation. It used to read
-// "We received your sadaqah — JazakAllahu khayran", which looked wrong as
-// the subject line on a REJECTED notice; the thank-you wording now lives
-// only in the received email's body, where it's actually true.
+// received/verified/rejected messages as one conversation. The thank-you
+// wording lives only in the received email's body, where it is actually true.
 export const RECEIVED_SUBJECT = (id: string): string =>
-  `Your sadaqah submission — Bustandeen [#${sadaqahRef(id)}]`;
+  `Your sadaqah submission to Bustandeen [#${sadaqahRef(id)}]`;
 export const REPLY_SUBJECT = (id: string): string => `Re: ${RECEIVED_SUBJECT(id)}`;
 
 export const donationReceivedEmail = (
   d: DonationEmailData & { id: string }
-): Omit<SendMailOptions, 'to'> => ({
-  subject: RECEIVED_SUBJECT(d.id),
-  text: `${greeting(d.donorName)}\n\nWe've received your sadaqah submission of ${d.amount} BDT (transaction ${d.transactionId}). We'll verify it against our records within 24-48 hours and follow up once it's confirmed.\n\nMay Allah accept it from you and make it a means of ongoing reward, in sha Allah.\n\n— Bustandeen`,
-  html: `<p>${greeting(d.donorName)}</p><p>We've received your sadaqah submission of <b>${d.amount} BDT</b> (transaction ${escapeHtml(d.transactionId)}). We'll verify it against our records within 24-48 hours and follow up once it's confirmed.</p><p>May Allah accept it from you and make it a means of ongoing reward, in sha Allah.</p><p>— Bustandeen</p>`,
-});
+): Omit<SendMailOptions, 'to'> => {
+  const text = `${plainGreeting(d.donorName)}\n\nJazakAllahu khayran for your sadaqah of ${d.amount} BDT (transaction ${d.transactionId}). It has reached us safely.\n\nWe will check it against our records within 24 to 48 hours. There is nothing more you need to do, and we will write back here as soon as it is confirmed.\n\nMay Allah accept it from you and let it be a source of lasting reward, in sha Allah.\n\n${SIGN_OFF}`;
+  return { subject: RECEIVED_SUBJECT(d.id), text, html: toSimpleHtml(text) };
+};
 
 /**
- * Draft body for the admin's editable verify email (plain text only — the
+ * Draft body for the admin's editable verify email (plain text only; the
  * admin dashboard shows this in a textarea, HTML is generated from whatever
  * they end up sending via toSimpleHtml). Includes a payment-details block as
  * a lightweight stand-in for the signed PDF receipt planned for later.
@@ -75,10 +70,10 @@ export const donationVerifiedDraft = (
 ): string => {
   const method = d.paymentMethod === 'bkash' ? 'bKash' : 'Nagad';
   const date = d.transactionDate.toISOString().slice(0, 10);
-  return `${plainGreeting(d.donorName)}\n\nYour sadaqah of ${d.amount} BDT (transaction ${d.transactionId}) has been verified. JazakAllahu khayran for your generosity — may Allah make it a sadaqah jariyah, a continuing charity that keeps benefiting you.\n\nPayment details:\nAmount: ${d.amount} BDT\nTransaction ID: ${d.transactionId}\nPayment method: ${method}\nDate: ${date}\n\nYou can see how contributions are being used at https://bustandeen.com/sadaqah\n\n— Bustandeen`;
+  return `${plainGreeting(d.donorName)}\n\nAlhamdulillah, your sadaqah of ${d.amount} BDT has been verified. JazakAllahu khayran for your kindness. May Allah make it a sadaqah jariyah, a charity whose reward keeps flowing long after the moment you gave it.\n\nFor your records:\nAmount: ${d.amount} BDT\nTransaction ID: ${d.transactionId}\nPayment method: ${method}\nDate: ${date}\n\nIf you would like to see how contributions are being used, you can read about it here: https://bustandeen.com/sadaqah\n\n${SIGN_OFF}`;
 };
 
-/** Draft body for the admin's editable reject email — reason is left as a
+/** Draft body for the admin's editable reject email. The reason is left as a
  *  clear placeholder the admin is expected to fill in before sending. */
 export const donationRejectedDraft = (d: DonationEmailData): string =>
-  `${plainGreeting(d.donorName)}\n\nWe weren't able to match your submission of ${d.amount} BDT (transaction ${d.transactionId}) against our records.\n\n[Let the donor know what didn't match — e.g. wrong amount, transaction ID not found]\n\nThis is usually just a mismatched detail — please double-check the transaction ID and amount from your bKash SMS and resubmit at https://bustandeen.com/sadaqah/donate. If you believe this is a mistake, just reply to this email and we'll sort it out.\n\n— Bustandeen`;
+  `${plainGreeting(d.donorName)}\n\nThank you for your sadaqah submission of ${d.amount} BDT (transaction ${d.transactionId}). We tried to match it with our records, but could not find it just yet.\n\n[Tell the donor what did not match, for example the amount, or a transaction ID we could not find]\n\nThis is usually just a small detail, like a single digit in the transaction ID. If you check it against your bKash SMS, you are very welcome to submit it again at https://bustandeen.com/sadaqah/donate. And if you feel we have got this wrong, simply reply to this email and we will look into it together.\n\nYour intention to give is already a beautiful thing, and we are grateful for it.\n\n${SIGN_OFF}`;

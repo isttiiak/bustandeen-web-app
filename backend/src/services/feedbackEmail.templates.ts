@@ -1,5 +1,6 @@
 import type { SendMailOptions } from './email.service.js';
 import { escapeHtml, toSimpleHtml } from './sadaqahEmail.templates.js';
+import { SIGN_OFF } from './emailBrand.js';
 
 export { toSimpleHtml };
 
@@ -49,8 +50,14 @@ export const feedbackNotifyAdminEmail = (
 
 export const RECEIVED_SUBJECT = (kind: 'feedback' | 'contact', id: string): string =>
   kind === 'feedback'
-    ? `We received your feedback — Bustandeen [#${feedbackRef(id)}]`
-    : `We received your message — Bustandeen [#${feedbackRef(id)}]`;
+    ? `Your feedback to Bustandeen [#${feedbackRef(id)}]`
+    : `Your message to Bustandeen [#${feedbackRef(id)}]`;
 
 export const REPLY_SUBJECT = (kind: 'feedback' | 'contact', id: string): string =>
   `Re: ${RECEIVED_SUBJECT(kind, id)}`;
+
+/** Confirmation to the sender. Establishes the thread every later reply hangs on. */
+export const feedbackReceivedText = (kind: 'feedback' | 'contact'): string =>
+  kind === 'feedback'
+    ? `Assalamu Alaikum,\n\nJazakAllahu khayran for taking the time to share your feedback. Every note is read by a real person, and it genuinely shapes what Bustandeen becomes next.\n\nIf it needs a reply, we will write back to you right here.\n\n${SIGN_OFF}`
+    : `Assalamu Alaikum,\n\nThank you for writing to us. Your message has reached us safely, and we will get back to you here as soon as we can, in sha Allah.\n\n${SIGN_OFF}`;

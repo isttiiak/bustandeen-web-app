@@ -5,6 +5,7 @@ import GlobalZikrLibraryItem, {
   IGlobalZikrLibraryItem,
 } from '../models/GlobalZikrLibraryItem.js';
 import { sendMail, EmailSender } from './email.service.js';
+import { insertAboveSignOff } from './emailBrand.js';
 import { findPossibleDuplicate } from '../utils/zikrDuplicateMatch.js';
 import {
   zikrRequestNotifyAdminEmail,
@@ -218,8 +219,11 @@ export const approveRequest = async (
   if (request.userEmail) {
     // The library link isn't known until the item above was just created, so
     // it's appended after the admin's (possibly edited) draft text rather
-    // than being part of the editable draft itself.
-    const finalText = input.emailBody + zikrLibraryLinkLine(libraryItem.id as string);
+    // than being part of the editable draft itself, above the sign-off.
+    const finalText = insertAboveSignOff(
+      input.emailBody,
+      zikrLibraryLinkLine(libraryItem.id as string)
+    );
     const messageId = await sendMail({
       to: request.userEmail,
       subject: APPROVED_SUBJECT(request.id as string),

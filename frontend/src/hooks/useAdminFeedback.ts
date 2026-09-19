@@ -90,3 +90,83 @@ export function useDeleteFeedback() {
     onSuccess: () => void queryClient.invalidateQueries({ queryKey: KEY }),
   });
 }
+
+// ---- Founder mailbox (Servant-only; istiak@bustandeen.com via IMAP sync) ----
+
+export interface MailboxSyncStatus {
+  configured: boolean;
+  lastSyncAt: string | null;
+  lastError: string | null;
+}
+
+export interface AdminMailboxMessage {
+  _id: string;
+  fromName: string;
+  fromEmail: string;
+  subject: string;
+  text: string;
+  receivedAt: string;
+  status: FeedbackStatus;
+  feedbackId: string | null;
+  repliedAt?: string | null;
+  repliedBy?: string | null;
+}
+
+interface MailboxListResult {
+  messages: AdminMailboxMessage[];
+  total: number;
+  page: number;
+  limit: number;
+  sync: MailboxSyncStatus;
+}
+
+const MAILBOX_KEY = ['admin', 'mailbox'] as const;
+
+export function useAdminMailbox(status: FeedbackStatus | 'all', enabled: boolean) {
+  return useQuery<MailboxListResult>({
+    queryKey: [...MAILBOX_KEY, 'list', status],
+    queryFn: async () => {
+      const res = await api.get<MailboxListResult>('/api/admin/feedback/mailbox', {
+        params: { status: status === 'all' ? undefined : status, limit: 50 },
+      });
+      return res.data;
+    },
+    enabled,
+    staleTime: 10_000,
+  });
+}
+
+/** Pulls new mail from the real mailbox; refreshes the list when done. */
+export function useSyncMailbox() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const res = await api.post<{ ok: boolean; added: number; error?: string }>(
+        '/api/admin/feedback/mailbox/sync'
+      );
+      return res.data;
+    },
+    onSettled: () => void queryClient.invalidateQueries({ queryKey: MAILBOX_KEY }),
+  });
+}
+
+const useMailboxAction = <V>(run: (v: V) => Promise<unknown>) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: run,
+    onSuccess: () => void queryClient.invalidateQueries({ queryKey: MAILBOX_KEY }),
+  });
+};
+
+export const useReplyMailbox = () =>
+  useMailboxAction(({ id, body }: { id: string; body: string }) =>
+    api.post(`/api/admin/feedback/mailbox/${id}/reply`, { body })
+  );
+export const useMarkMailboxRepliedExternal = () =>
+  useMailboxAction((id: string) =>
+    api.patch(`/api/admin/feedback/mailbox/${id}/mark-replied-external`)
+  );
+export const useArchiveMailbox = () =>
+  useMailboxAction((id: string) => api.patch(`/api/admin/feedback/mailbox/${id}/archive`));
+export const useDeleteMailbox = () =>
+  useMailboxAction((id: string) => api.delete(`/api/admin/feedback/mailbox/${id}`));

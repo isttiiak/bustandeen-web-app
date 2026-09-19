@@ -26,6 +26,7 @@ import adminUsersRoutes from './routes/adminUsers.routes.js';
 import adminAccountRoutes from './routes/adminAccount.routes.js';
 import adminAuditRoutes from './routes/adminAudit.routes.js';
 import adminFeedbackRoutes from './routes/adminFeedback.routes.js';
+import adminMailboxRoutes from './routes/adminMailbox.routes.js';
 import adminStatsRoutes from './routes/adminStats.routes.js';
 import adminOpsRoutes from './routes/adminOps.routes.js';
 import adminAnnouncementRoutes from './routes/adminAnnouncement.routes.js';
@@ -155,6 +156,8 @@ app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/users', adminUsersRoutes);
 app.use('/api/admin/accounts', adminAccountRoutes);
 app.use('/api/admin/audit-log', adminAuditRoutes);
+// Must precede /api/admin/feedback so 'mailbox' is never read as a feedback :id.
+app.use('/api/admin/feedback/mailbox', adminMailboxRoutes);
 app.use('/api/admin/feedback', adminFeedbackRoutes);
 app.use('/api/admin/stats', adminStatsRoutes);
 app.use('/api/admin/ops', adminOpsRoutes);

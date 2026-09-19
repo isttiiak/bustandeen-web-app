@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.42.0 - Founder mailbox sync + calmer email copy - 2026-09-19
+
+### Added
+
+- **Founder mailbox sync.** Mail sent to istiak@bustandeen.com from any outside client now shows up in the admin Feedback panel under a new Servant-only "Founder mailbox" tab. New mail is pulled over IMAP when the tab opens or on "Sync now", deduplicated by Message-ID, with quoted reply history trimmed. Replies are sent from istiak@ and thread correctly in the sender's mail client; Archive, Mark replied and Delete (panel copy only) work as on app forms. Mail that replies inside one of our own feedback threads is flagged. Needs IMAP enabled on the Zoho account; uses `ISTIAK_IMAP_USER`/`ISTIAK_IMAP_PASS` (falls back to the `ISTIAK_SMTP_*` pair) and optional `ZOHO_IMAP_HOST`.
+
+### Changed
+
+- **All predefined emails rewritten** in a calmer, warmer, more personal voice (donation received/verified/rejected, donor appreciation, zikr request received/approved/rejected/duplicate, feedback/contact received, welcome, re-engagement). No em dashes, and every one now closes with "Nourish Your Deen". The zikr library link is inserted above the sign-off so the tagline stays last. Subjects lost their dashes too (existing threads are unaffected, they thread by headers).
+
 ## v5.41.0 - Āyah share card: design studio - 2026-09-19
 
 ### Added

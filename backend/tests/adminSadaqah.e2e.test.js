@@ -123,14 +123,14 @@ describe('Sadaqah admin API', () => {
     expect(verifiedDraft.body.subject).toMatch(/^Re: /);
     expect(verifiedDraft.body.body).toContain(donation.transactionId.toUpperCase());
     expect(verifiedDraft.body.body).toContain(String(donation.amount));
-    expect(verifiedDraft.body.body).toMatch(/Payment details/i);
+    expect(verifiedDraft.body.body).toMatch(/For your records/i);
 
     const rejectedDraft = await request(app)
       .get(`/api/admin/sadaqah/${found._id}/email-draft`)
       .query({ type: 'rejected' })
       .set('X-Admin-Token', ownerToken);
     expect(rejectedDraft.status).toBe(200);
-    expect(rejectedDraft.body.body).toMatch(/\[Let the donor know/i);
+    expect(rejectedDraft.body.body).toMatch(/\[Tell the donor/i);
   });
 
   test('verify requires a non-empty emailBody', async () => {

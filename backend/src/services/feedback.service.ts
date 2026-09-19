@@ -3,6 +3,7 @@ import FeedbackMessage, { IFeedbackMessage, FeedbackStatus } from '../models/Fee
 import { sendMail, EmailSender } from './email.service.js';
 import {
   feedbackNotifyAdminEmail,
+  feedbackReceivedText,
   RECEIVED_SUBJECT,
   REPLY_SUBJECT,
   toSimpleHtml,
@@ -48,10 +49,7 @@ export const submitFeedback = async (
   // Confirmation to the sender establishes the thread; admin-notify is a
   // separate, fixed internal email — both best-effort, never block the
   // submission response on either.
-  const receivedText =
-    doc.kind === 'feedback'
-      ? `Assalamu Alaikum,\n\nJazakAllahu khayran for your feedback. Every note genuinely shapes what Bustandeen becomes next — we'll write back here if it needs a reply.\n\n— Bustandeen`
-      : `Assalamu Alaikum,\n\nWe received your message and will get back to you here soon.\n\n— Bustandeen`;
+  const receivedText = feedbackReceivedText(doc.kind);
   await sendMail({
     to: doc.email,
     subject: RECEIVED_SUBJECT(doc.kind, doc._id.toString()),
