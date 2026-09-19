@@ -94,6 +94,8 @@ export function useDeleteFeedback() {
 // ---- Founder mailbox (Servant-only; istiak@bustandeen.com via IMAP sync) ----
 
 export interface MailboxSyncStatus {
+  /** Master switch (server env MAILBOX_SYNC_ENABLED). Off = paused, no Zoho calls. */
+  enabled: boolean;
   configured: boolean;
   lastSyncAt: string | null;
   lastError: string | null;

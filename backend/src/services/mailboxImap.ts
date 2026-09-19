@@ -37,7 +37,12 @@ export type MailFetcher = (
 const MAX_PER_RUN = 40;
 const FIRST_RUN_DAYS = 30;
 
+/** Master switch, off by default: Zoho's free plan has no IMAP, so nothing
+ *  may connect until MAILBOX_SYNC_ENABLED=1 is set (after a paid plan). */
+export const isMailboxSyncEnabled = (): boolean => process.env.MAILBOX_SYNC_ENABLED === '1';
+
 export const getImapConfig = (): { host: string; user: string; pass: string } | null => {
+  if (!isMailboxSyncEnabled()) return null;
   // Falls back to the founder's SMTP pair: it is the very same mailbox, so
   // one Zoho app-password works for both once IMAP is enabled on the account.
   const user = process.env.ISTIAK_IMAP_USER ?? process.env.ISTIAK_SMTP_USER;

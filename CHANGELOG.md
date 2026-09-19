@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.42.1 - Founder mailbox moved to Email Istiak, sync paused - 2026-09-19
+
+### Changed
+
+- **Founder mailbox moved** from the Feedback page to the Email Istiak (compose) page as a "Founder mailbox" tab. The Feedback page is back to app-form messages only.
+- **Mailbox sync is now off by default.** Zoho's free plan has no IMAP, so nothing connects to Zoho unless `MAILBOX_SYNC_ENABLED=1` is set on the server. While off, the tab shows a "paused" notice and lists only what was already synced. To be enabled once a paid Zoho plan is added.
+
 ## v5.42.0 - Founder mailbox sync + calmer email copy - 2026-09-19
 
 ### Added
