@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.40.2 - PWA polish: colours, iOS home-screen support, service-worker file fallback - 2026-09-19
+
+### Fixed
+
+- **Mismatched PWA colours.** The manifest's `theme_color`/`background_color` were leftovers from an older design (dark green / near-black) while the app itself paints `#1a1812`, so installed users saw the wrong colour on the install splash screen and standalone title bar. Both now use `#1a1812`.
+- **iOS "Add to Home Screen".** Added the apple-touch-icon, standalone/web-app meta tags, app title and an opaque status bar. Without them iOS used a page screenshot as the icon and opened in a browser-like frame.
+- **Service worker returned the app shell for real static files.** For anyone with the worker installed, opening `sitemap.xml`, `robots.txt`, `llms.txt` or the Search Console verification file in a browser showed the app instead of the file. Navigations to any path with a file extension now bypass the SPA fallback. Crawlers don't run service workers, so search indexing was never affected.
+
+### Notes
+
+- A responsive audit of ~45 pages at 320px (public and signed-in) found no horizontal overflow or clipped layouts; no layout changes were needed.
+
 ## v5.40.1 - Fix: Home page Zakat Calculator used the wrong UI - 2026-09-18
 
 ### Fixed

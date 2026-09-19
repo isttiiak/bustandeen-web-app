@@ -49,8 +49,12 @@ export default defineConfig({
         short_name: 'Bustandeen',
         description:
           'Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a friends leaderboard. Free, private, ad-free.',
-        theme_color: '#0a1a0d',
-        background_color: '#030609',
+        // Match the app's real background (index.html's theme-color meta,
+        // #1a1812). The old green/near-black values predated the current
+        // design and flashed a mismatched colour on the install splash screen
+        // and the standalone title bar.
+        theme_color: '#1a1812',
+        background_color: '#1a1812',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',

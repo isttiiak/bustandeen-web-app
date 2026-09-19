@@ -23,6 +23,15 @@
     <meta name="author" content="Istiak Islam" />
     <meta name="theme-color" content="#1a1812" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- iOS "Add to Home Screen": without these, iOS falls back to a page
+         screenshot for the icon and opens in a browser-like frame with a
+         mismatched status bar. "black" keeps the status bar opaque so page
+         content never slides under it (no safe-area handling needed). -->
+    <link rel="apple-touch-icon" href="/pwa-192.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Bustandeen" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
     <link rel="canonical" href="https://bustandeen.com/" />
 
     <!-- Open Graph (Facebook, WhatsApp, Messenger, LinkedIn…) -->
