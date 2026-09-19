@@ -2228,6 +2228,30 @@
     "copied": "Copied — paste it anywhere",
     "copyError": "Couldn't copy the image — try downloading instead.",
     "captureError": "Couldn't generate the image — try again.",
+    "shuffle": "Surprise me",
+    "customColor": "Custom color",
+    "shape": "Shape",
+    "ratio": { "square": "Square", "portrait": "Portrait", "story": "Story" },
+    "pattern": "Background pattern",
+    "patterns": {
+      "none": "None",
+      "star": "Star",
+      "lattice": "Lattice",
+      "dots": "Dots",
+      "waves": "Waves",
+      "rays": "Rays"
+    },
+    "ornament": "Decoration",
+    "ornaments": {
+      "none": "None",
+      "frame": "Frame",
+      "corners": "Corners",
+      "arch": "Arch",
+      "skyline": "Mosque",
+      "crescent": "Crescent"
+    },
+    "intensity": "Graphics strength",
+    "intensities": { "subtle": "Subtle", "medium": "Medium", "bold": "Bold" },
     "shareButton": "Share as image"
   },
   "settings": {

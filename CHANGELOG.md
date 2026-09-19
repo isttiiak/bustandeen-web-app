@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.41.0 - Āyah share card: design studio - 2026-09-19
+
+### Added
+
+- **Background graphics.** Six tiled/radiating patterns (Star, Lattice, Dots, Waves, Rays, None) and six decorations (Frame, Corners, Arch, Mosque skyline, Crescent and stars, None), each independent, with a Subtle/Medium/Bold strength control. Drawn as inline SVG in the theme accent so image capture stays faithful.
+- **More themes and a custom colour.** Four new themes (Ocean, Rose, Forest and a light Ivory) plus a colour picker that builds a dark theme from any accent.
+- **Card shapes.** Square (1080×1080), Portrait (1080×1350) and Story (1080×1920). Font sizing and line limits adapt to the frame so long āyahs still fit.
+- **"Surprise me"** picks a random theme, pattern, decoration and strength.
+- **Remembered design.** The whole combination is saved on the device (the old theme-only setting is carried over).
+
+### Changed
+
+- The āyah reference is now a pill badge in the theme accent.
+- Bengali translations use a Bengali-first font stack with slightly larger text and looser line height.
+- A translation that gets cut off now fades out on its last line instead of ending in a bare ellipsis.
+
 ## v5.40.2 - PWA polish: colours, iOS home-screen support, service-worker file fallback - 2026-09-19
 
 ### Fixed
