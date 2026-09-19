@@ -11,6 +11,9 @@ const FEATURE_KEYS = [
   { emoji: '🕐', key: 'prayerTimes' },
   { emoji: '🌙', key: 'fastingTracker' },
   { emoji: '📖', key: 'quranHabit' },
+  { emoji: '🧠', key: 'hifzTracker' },
+  { emoji: '🌸', key: 'rayhanah' },
+  { emoji: '✨', key: 'naseeh' },
   { emoji: '🤝', key: 'friends' },
 ];
 

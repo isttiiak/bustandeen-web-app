@@ -19,6 +19,7 @@ import {
 } from '@heroicons/react/24/outline';
 import {
   useSocialSummary,
+  type FriendStats,
   useUnfriend,
   useFriendsList,
   usePendingRequests,
@@ -574,9 +575,19 @@ export default function Friends() {
     }
   };
 
-  const leaderboard = data?.leaderboard ?? [];
+  // "Today" is the live daily Noor; "This week" is the Friday-to-Thursday
+  // average, so someone who started late (or had a quiet day) can still climb.
+  const [board, setBoard] = useState<'today' | 'week'>('today');
+  const shownScore = (f: FriendStats): number =>
+    board === 'week' ? (f.weekScore ?? f.score) : f.score;
+  const leaderboard = [...(data?.leaderboard ?? [])].sort(
+    (a, b) =>
+      shownScore(b) - shownScore(a) ||
+      (b.actsToday ?? 0) - (a.actsToday ?? 0) ||
+      a.displayName.localeCompare(b.displayName)
+  );
   const friendsCount = Math.max(0, leaderboard.length - 1);
-  const maxScore = Math.max(1, ...leaderboard.map((f) => f.score));
+  const maxScore = Math.max(1, ...leaderboard.map(shownScore));
 
   return (
     <AnimatedBackground variant="dark">
@@ -681,6 +692,25 @@ export default function Friends() {
                   </button>
                 </div>
               </div>
+              <div className="flex gap-1.5 px-1" role="tablist">
+                {(['today', 'week'] as const).map((b) => (
+                  <button
+                    key={b}
+                    role="tab"
+                    aria-selected={board === b}
+                    onClick={() => setBoard(b)}
+                    className={`px-3 py-1 rounded-full text-[11px] font-bold border transition-colors ${
+                      board === b
+                        ? 'bg-brand-emerald/20 border-brand-emerald/40 text-brand-emerald'
+                        : 'bg-white/5 border-brand-emerald/10 text-white/40 hover:text-white/70'
+                    }`}
+                  >
+                    {b === 'today'
+                      ? t('friends.boardToday', 'Today')
+                      : t('friends.boardWeek', 'This week')}
+                  </button>
+                ))}
+              </div>
               {leaderboard.map((f, i) => {
                 const sv = streakVisual(f.zikrState, f.zikrStreak, t);
                 return (
@@ -729,7 +759,7 @@ export default function Friends() {
                           <div className="flex-1 bg-white/10 rounded-full h-1.5 overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
-                              animate={{ width: `${(f.score / maxScore) * 100}%` }}
+                              animate={{ width: `${(shownScore(f) / maxScore) * 100}%` }}
                               transition={{
                                 duration: 0.7,
                                 delay: 0.15 + i * 0.06,
@@ -739,9 +769,24 @@ export default function Friends() {
                             />
                           </div>
                           <span className="text-white/70 text-xs font-black tabular-nums w-10 text-right">
-                            ✨{formatLocaleNumber(f.score)}
+                            ✨{formatLocaleNumber(shownScore(f))}
                           </span>
                         </div>
+                        {board === 'today' && f.usualScore != null && (
+                          <p
+                            className={`text-[10px] mt-1 ${
+                              f.score > f.usualScore ? 'text-brand-emerald/80' : 'text-white/25'
+                            }`}
+                          >
+                            {f.score > f.usualScore
+                              ? t('friends.aboveUsual', '▲ {{n}} above their usual', {
+                                  n: formatLocaleNumber(f.score - f.usualScore),
+                                })
+                              : t('friends.usualNoor', 'usually ✨{{n}}', {
+                                  n: formatLocaleNumber(f.usualScore),
+                                })}
+                          </p>
+                        )}
                       </div>
                     </div>
                     {/* Stat chips — prayer, zikr streak, today's zikr, fasted today, quran pages */}
@@ -816,36 +861,66 @@ export default function Friends() {
                 >
                   <div className="px-4 pb-4 pt-1 space-y-1.5 text-xs text-white/40 border-t border-brand-emerald/5">
                     <p>
-                      {t('friends.noorPrefix')}
-                      <span className="text-white/60">نور</span>
-                      {t('friends.noorSuffix')}
-                      <b className="text-white/70">{formatLocaleNumber(100)}</b>:
+                      {t(
+                        'friends.noorIntro',
+                        'Your Noor starts at 0 every day and only ever goes up. Up to 100:'
+                      )}
                     </p>
                     <p>
-                      🕌 <b className="text-white/60">{formatLocaleNumber(50)}</b> —{' '}
-                      {t('friends.noorPrayers')}{' '}
-                      <span className="text-white/25">
-                        (optimistic: full score if all elapsed prayers are done)
-                      </span>
+                      🕌 <b className="text-white/60">{formatLocaleNumber(50)}</b>{' '}
+                      {t(
+                        'friends.noorPrayersV2',
+                        'Prayers: 10 for each of the five fard (kaza counts)'
+                      )}
                     </p>
                     <p>
-                      🔥 <b className="text-white/60">{formatLocaleNumber(20)}</b> —{' '}
-                      {t('friends.noorZikr')}
+                      📿 <b className="text-white/60">{formatLocaleNumber(15)}</b>{' '}
+                      {t('friends.noorZikrV2', "Dhikr: today's count against your own daily goal")}
                     </p>
                     <p>
-                      📖 <b className="text-white/60">{formatLocaleNumber(20)}</b> —{' '}
-                      {t('friends.noorQuran')}
+                      📖 <b className="text-white/60">{formatLocaleNumber(15)}</b>{' '}
+                      {t(
+                        'friends.noorQuranV2',
+                        'Quran: reading or listening against your own daily goal'
+                      )}
                     </p>
                     <p>
-                      🌙 <b className="text-white/60">{formatLocaleNumber(10)}</b> —{' '}
-                      {t('friends.noorFasting')}
+                      🌱 <b className="text-white/60">{formatLocaleNumber(10)}</b>{' '}
+                      {t(
+                        'friends.noorSteady',
+                        'Steadiness: 1 for each day in a row you show up, up to 10, once you have done something today'
+                      )}
                     </p>
-                    <p className="pt-1">🌸 {t('friends.noorExcused')}</p>
+                    <p>
+                      🌙 <b className="text-white/60">{formatLocaleNumber(10)}</b>{' '}
+                      {t(
+                        'friends.noorExtras',
+                        'Extras, 5 each (best two): a completed fast, nafl prayer, hifz review, ṣalawāt or istighfār'
+                      )}
+                    </p>
                     <p className="pt-1">
-                      <b className="text-white/60">{t('friends.noorTodayLabel')}</b>{' '}
+                      🌸{' '}
+                      {t(
+                        'friends.noorExcusedV2',
+                        'Rayhanah days (for sisters): prayer and fasting are excused, not lost. Dhikr and Quran count for more, and Noor still reaches 100.'
+                      )}
+                    </p>
+                    <p className="pt-1">
+                      <b className="text-white/60">{t('friends.boardToday', 'Today')}</b>{' '}
                       {t('friends.noorTodayDesc')}{' '}
+                      <b className="text-white/60">{t('friends.boardWeek', 'This week')}</b>{' '}
+                      {t(
+                        'friends.noorWeekDesc',
+                        '= your average daily Noor since Friday; a day with nothing counts 0.'
+                      )}{' '}
                       <b className="text-white/60">{t('friends.noorAllTimeLabel')}</b>{' '}
                       {t('friends.noorAllTimeDesc')}
+                    </p>
+                    <p>
+                      {t(
+                        'friends.noorUsualDesc',
+                        '"Above their usual" compares today with the average of their recent active days, so everyone races their own best.'
+                      )}
                     </p>
                     <p className="text-white/25 pt-1 italic">{t('friends.noorDisclaimer')}</p>
                   </div>

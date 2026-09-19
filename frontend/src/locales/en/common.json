@@ -134,7 +134,7 @@
     "authenticityOr": "or",
     "authenticityText1": "Every verse and hadith in this app links to its exact source on",
     "authenticityText2": "with the grading shown where it matters. Nothing is quoted from memory — verify everything yourself, always. For personal rulings, please consult a qualified scholar.",
-    "dataDesc": "Export or delete everything, feature by feature, anytime.",
+    "dataDesc": "Export or delete everything, feature by feature, anytime. Available in English and Bengali, and installable on your phone.",
     "dataTitle": "Your data stays yours",
     "developedBy": "Developed with love by",
     "feature": {
@@ -143,24 +143,36 @@
         "title": "Fasting Tracker"
       },
       "friends": {
-        "desc": "Connect with one link and encourage each other with Noor — a calm daily measure of worship.",
-        "title": "Friends"
+        "title": "Friends",
+        "desc": "Connect with one link and encourage each other with Noor, a calm daily and weekly measure that only ever goes up during the day."
       },
       "prayerTimes": {
         "desc": "Calculated entirely on your device from your location — nothing is sent to any server.",
         "title": "Prayer Times"
       },
       "quranHabit": {
-        "desc": "A gentle daily-minimum goal, reading streaks, and a khatm journey across the whole muṣḥaf.",
-        "title": "Quran Habit"
+        "title": "Quran Habit",
+        "desc": "A reader, audio listening, a gentle daily goal, reading and listening time, and a khatm journey across the whole muṣḥaf."
       },
       "salatTracker": {
-        "desc": "All five prayers with on-time/qaḍā states, congregation tracking, nafl prayers, and honest analytics.",
-        "title": "Salat Tracker"
+        "title": "Salat Tracker",
+        "desc": "All five prayers with on-time and qaḍā states, congregation tracking, nafl prayers, an automatic kaza ledger and honest analytics."
       },
       "zikrCounter": {
-        "desc": "A local-first tasbih with daily goals and a forgiving streak — miss a day and you still get a chance to recover it.",
-        "title": "Zikr Counter"
+        "title": "Zikr Counter",
+        "desc": "A local-first tasbih with daily goals and a forgiving streak. Miss a day and you still get a chance to recover it."
+      },
+      "hifzTracker": {
+        "title": "Hifz Tracker",
+        "desc": "Memorise the Quran with spaced-repetition reviews that bring each āyah back just before you would forget it."
+      },
+      "rayhanah": {
+        "title": "Rayhanah Cycle",
+        "desc": "A private, encrypted companion for sisters: predictions, gentle guidance for excused days, and fasting makeup, kept out of everyone else's sight."
+      },
+      "naseeh": {
+        "title": "Naseeh (optional AI)",
+        "desc": "Off by default. A kind companion for weekly reflections and quick logging from one sentence. It encourages, and never gives religious rulings."
       }
     },
     "founderNote": "Have a question only the founder can answer, or want to talk directly? Reach out any time.",
@@ -169,7 +181,7 @@
     "conceptDefinition": "is to worship Allah as though you see Him — and though you do not see Him, He surely sees you",
     "conceptPurpose": "This app exists to help you bring that awareness into every day.",
     "intentionLabel": "Our intention",
-    "intentionText": "Worship deserves better than noisy, gamified apps. Bustandeen is calm by design: it counts what you ask it to count, reminds you gently, celebrates sincerely, and never turns your dīn into a game. It is free, has no ads, and never sells your data — built simply in the hope of being a ṣadaqah jāriyah.",
+    "intentionText": "Worship deserves better than noisy, gamified apps. Bustandeen is calm by design: it counts what you ask it to count, reminds you gently, celebrates sincerely, and never turns your dīn into a game. It is free, has no ads, and never sells your data. Built simply in the hope of being a ṣadaqah jāriyah.",
     "privacyLink": "Privacy →",
     "srTitle": "About Bustandeen",
     "bustandeenDefinition": "A name born of بستان (bustān, garden) and دين (dīn, religion/faith) — a garden of faith, tended daily."
@@ -858,7 +870,20 @@
     "you": "You",
     "yourFriends": "Your Friends",
     "zikrStreakStat": "{{count}}-day streak",
-    "zikrTodayStat": "{{count}} today"
+    "zikrTodayStat": "{{count}} today",
+    "boardToday": "Today",
+    "boardWeek": "This week",
+    "aboveUsual": "▲ {{n}} above their usual",
+    "usualNoor": "usually ✨{{n}}",
+    "noorIntro": "Your Noor starts at 0 every day and only ever goes up. Up to 100:",
+    "noorPrayersV2": "Prayers: 10 for each of the five fard (kaza counts)",
+    "noorZikrV2": "Dhikr: today's count against your own daily goal",
+    "noorQuranV2": "Quran: reading or listening against your own daily goal",
+    "noorSteady": "Steadiness: 1 for each day in a row you show up, up to 10, once you have done something today",
+    "noorExtras": "Extras, 5 each (best two): a completed fast, nafl prayer, hifz review, ṣalawāt or istighfār",
+    "noorExcusedV2": "Rayhanah days (for sisters): prayer and fasting are excused, not lost. Dhikr and Quran count for more, and Noor still reaches 100.",
+    "noorWeekDesc": "= your average daily Noor since Friday; a day with nothing counts 0.",
+    "noorUsualDesc": "\"Above their usual\" compares today with the average of their recent active days, so everyone races their own best."
   },
   "genderGate": {
     "asBrother": "As a brother",
@@ -1210,52 +1235,73 @@
   },
   "privacy": {
     "seoTitle": "Privacy Policy",
-    "seoDescription": "How Bustandeen stores and protects your data: what we collect, what stays on your device, what friends can see, and your control over deletion.",
+    "seoDescription": "How Bustandeen stores and protects your data: what we collect, what stays on your device, what friends can see, how the optional AI works, and your control over deletion.",
     "aboutLink": "About Bustandeen",
-    "analytics": {
-      "body0": "We use Google Analytics 4 (GA4) for page-view counts and anonymous usage patterns.",
-      "body1": "No personal worship data is ever sent to GA4.",
-      "title": "Analytics"
-    },
     "contactText": "Have a question or concern about your privacy? We'd love to help.",
-    "deviceOnly": {
-      "body0": "Prayer-times location (latitude/longitude) — used for calculation, never sent to our servers.",
-      "body1": "UI preferences, cached Quran text, and the Hijri offset.",
-      "title": "Stays on your device only"
-    },
-    "friendsSee": {
-      "body0": "Your display name and today's Noor score (a single number).",
-      "body1": "Noor reflects worship consistency but reveals no specifics — no one can tell whether you prayed, fasted, or which dhikr you did.",
-      "body2": "Rayhanah (cycle) data is always invisible to friends — the Noor formula masks excused days.",
-      "title": "What friends can see"
-    },
     "heading": "Privacy",
-    "lastUpdated": "Last updated: July 2025",
-    "neverDo": {
-      "body0": "Sell, share, or monetise your data. There are no ads, no third-party trackers beyond GA4, and no affiliate links.",
-      "body1": "Store passwords — authentication is handled entirely by Firebase (Google).",
-      "title": "What we never do"
-    },
-    "protected": {
-      "body0": "All data in transit is encrypted (HTTPS/TLS).",
-      "body1": "Database access is restricted by Firebase Auth tokens — only your own requests can read or write your data.",
-      "body2": "The server runs on Vercel's infrastructure (SOC 2 Type II compliant).",
-      "title": "How it's protected"
-    },
-    "srTitle": "Privacy Policy — Bustandeen",
+    "lastUpdated": "Last updated: September 2026",
+    "srTitle": "Privacy Policy, Bustandeen",
     "subtitle": "Short, honest, no legalese.",
     "whatWeStore": {
-      "body0": "Your email (from Firebase sign-in) and an optional display name.",
-      "body1": "Worship logs: zikr counts, salat statuses, fasting logs, Quran progress, and Ramadan data. These are tied to your user ID — never to your device fingerprint.",
-      "body2": "Rayhanah Cycle data (if you use it) — start/end dates, daily flow and symptom notes — stored in the same database, same encryption, same access rules.",
-      "body3": "Friends: mutual connections and your daily Noor score (visible only to confirmed friends).",
-      "title": "What we store"
+      "title": "What we store",
+      "body0": "Your email and sign-in details (from Firebase, using email or Google), a display name, and a profile photo and country if you add them. We never store your password.",
+      "body1": "Worship logs: zikr counts, salat statuses (including home or mosque, and your kaza ledger), fasting, Quran progress, hifz progress and Ramadan data. These are tied to your user ID, never to your device fingerprint.",
+      "body2": "Timing details: when you count zikr (kept for 90 days, to power session history and the time-of-day chart) and when you read or listen to the Quran (start, end and active minutes of each session).",
+      "body3": "Rayhanah Cycle data, if you use it: start and end dates, daily flow, symptom and mood notes, and the height and weight you choose to add. Notes and body stats are encrypted (AES-256-GCM) before they reach the database.",
+      "body4": "Friends: mutual connections, and the Noor scores worked out from your own activity.",
+      "body5": "Messages you send us: feedback and contact forms, zikr requests, and sadaqah donation details (optional name, email, phone, payment method, transaction ID, amount, date, message, and an IP address to prevent abuse).",
+      "body6": "The time you were last active, and the service emails we send: a welcome, replies to your messages, donation status, and occasionally a gentle note after a long break."
+    },
+    "deviceOnly": {
+      "title": "Stays on your device only",
+      "body0": "Your prayer-times location (latitude and longitude). It is used to calculate times on your device and is never sent to our servers.",
+      "body1": "If you search for a city by name, the search text goes to OpenStreetMap's Nominatim service to find its coordinates.",
+      "body2": "Preferences (language, units, discreet mode, hide BMI), cached Quran text, counts waiting to sync while you are offline, and your sign-in token."
+    },
+    "friendsSee": {
+      "title": "What friends can see",
+      "body0": "Only confirmed friends see your row: display name, photo, country flag, and your Noor (today and this week).",
+      "body1": "A few small chips: prayers done today, zikr streak, today's zikr count, whether you are fasting, and Quran āyāt against your goal. Never times, notes, places, or which dhikr you did.",
+      "body2": "You can hide from every friend's leaderboard at any time with the invisible setting in Friends.",
+      "body3": "Rayhanah data is never visible to friends. On your excused days the numbers are filled from what you actually did, so nothing reveals it.",
+      "body4": "The one exception is opt-in: if you choose to share your cycle status with a friend, she sees only a yes or no (never a date, symptom or note), and her view of your row hides the prayer and fasting chips. You can turn this off at any moment."
+    },
+    "naseeh": {
+      "title": "Naseeh (optional AI)",
+      "body0": "Naseeh is off unless you turn it on in Settings. It uses an AI service (Groq) to phrase encouragement, weekly reflections, and to read the sentence you type in quick log.",
+      "body1": "What is sent: short summaries such as counts, streaks and percentages, and the sentence you type into quick log. Your name, email, Rayhanah notes, dates and body stats are never sent.",
+      "body2": "Two Rayhanah touches, only when Naseeh is on: the gentle comfort line may send the mood or symptom words you chose that day, and cycle guidance sends only the phase and day number.",
+      "body3": "We do not use your data to train any model, and Naseeh gives encouragement, never religious rulings. You can use your own Groq key (stored encrypted) and turn Naseeh off at any time."
+    },
+    "thirdParty": {
+      "title": "Services we rely on",
+      "body0": "Google Analytics 4 counts page views and anonymous usage patterns (with IP anonymised). No worship data is ever sent to it.",
+      "body1": "Firebase (Google) handles sign-in, Vercel hosts the app, and MongoDB Atlas stores the database.",
+      "body2": "Quran text, tafsir and recitation audio come from quran.com, alquran.cloud, the Islamic Network and mp3quran; flags come from flagcdn and fonts from Google Fonts. Like any website, those services can see your IP address when your device loads their files."
+    },
+    "neverDo": {
+      "title": "What we never do",
+      "body0": "Sell, share, or monetise your data. There are no ads, no trackers beyond Google Analytics, and no affiliate links.",
+      "body1": "Store passwords. Sign-in is handled entirely by Firebase (Google).",
+      "body2": "Show your worship details to anyone, or turn your dīn into a competition where a quiet day is shamed. Noor is only ever encouragement."
     },
     "yourControl": {
+      "title": "Your control",
       "body0": "Export everything as a JSON backup or Excel file from Settings.",
-      "body1": "Delete any feature's data independently from the Settings danger zone.",
-      "body2": "Delete your entire account (and all server-side data) from your Profile page.",
-      "title": "Your control"
+      "body1": "Delete any feature's data separately from the Settings danger zone.",
+      "body2": "Delete your entire account and all server-side data from your Profile page.",
+      "body3": "Go invisible to friends, turn Naseeh off, remove your saved height and weight, or use discreet mode, each with a tap."
+    },
+    "protected": {
+      "title": "How it's protected",
+      "body0": "All data in transit is encrypted (HTTPS/TLS).",
+      "body1": "Access is restricted by Firebase Auth tokens, so only your own requests can read or write your data.",
+      "body2": "Rayhanah notes, body stats and your own AI key are encrypted at rest with AES-256-GCM before they are stored.",
+      "body3": "The server runs on Vercel's infrastructure (SOC 2 Type II compliant), with the database on MongoDB Atlas."
+    },
+    "changes": {
+      "title": "Changes to this page",
+      "body0": "We update this page whenever a feature changes what we collect, and refresh the date above. This version replaces the one from July 2025, written before Rayhanah encryption, session history, hifz and Naseeh existed."
     }
   },
   "profile": {
@@ -1927,7 +1973,7 @@
     "pregnancyToggleTitle": "I'm currently pregnant",
     "pregnancyToggleDesc": "Pauses period predictions and shows a week count instead. Does not change your salat or fasting tracking.",
     "pregnancySave": "Save",
-    "privacyNote": "🔒 Your cycle data is visible only to you. It is never shown to friends — on the leaderboard your Noor simply flows from the dhikr, Quran and ṣalawāt you do, exactly like any other day.",
+    "privacyNote": "🔒 Your cycle data is visible only to you. It is never shown to friends, unless you choose to share a simple yes or no with one friend. On the leaderboard your Noor simply flows from the dhikr, Quran and ṣalawāt you do, like any other day.",
     "privateNote": "private — only you can see this",
     "qadaAddedToast": "{{count, number}} qaḍā day(s) added — the tracker will guide you 🌸",
     "qadaPromptCount": "{{count, number}} day(s) of this cycle fell in Ramadan.",

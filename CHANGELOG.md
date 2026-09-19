@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.48.0 - Noor v2, weekly leaderboard, updated Privacy and About - 2026-09-20
+
+### Changed
+
+- **Noor v2** (one formula for today, past days, the weekly view and the all-time total). A day now starts at 0 for everyone and only goes up.
+  - Prayers 50 (10 per fard, not pro-rated by the clock, so the score no longer falls as prayer times pass), zikr 15 and Quran 15 (against your own daily goals), steadiness 10, extras 10.
+  - Steadiness is 1 per day of your active run up to 10, and only once you have done something today, so a long streak is no longer a free head start. Extras are 5 each, best two of: a completed fast, nafl prayer, hifz review, ṣalawāt/istighfār. 100 is reachable without fasting; an "intended" fast no longer scores.
+  - Excused (Rayhanah) days move the prayer weight to zikr 40, Quran 40, steadiness 10, extras 10 (privacy behaviour unchanged).
+  - Ties are broken by acts done today, not by streak. All-time Noor is recomputed with the same formula, so numbers shift once.
+- **Leaderboard:** new Today / This week toggle (week = average daily Noor since Friday, a day with nothing counts 0), and each row shows "above their usual" (or their usual) so everyone races their own best.
+- **Privacy Policy rewritten** (the last version was July 2025): what is stored now (timing data, Rayhanah encryption and body stats, sadaqah details), what friends see (the chips, the opt-in cycle yes/no), the optional Naseeh AI and exactly what it sends, third-party services, retention, and your controls. English and Bengali.
+- **About page** lists Hifz, Rayhanah and Naseeh and the current Noor description.
+
 ## v5.47.0 - Offline listening timer, Rayhanah cycle page tidy-up, leaderboard chips - 2026-09-20
 
 ### Fixed

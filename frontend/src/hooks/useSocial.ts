@@ -26,6 +26,12 @@ export interface FriendStats {
   quranPagesToday: number;
   quranGoal: number;
   score: number;
+  /** Average daily Noor this Friday-to-Thursday week so far */
+  weekScore?: number;
+  /** The friend's usual daily Noor (average of recent active days); null while there is too little history */
+  usualScore?: number | null;
+  /** Distinct good acts today (leaderboard tie-break) */
+  actsToday?: number;
   /** Present ONLY for the one friend who has opted in to share her cycle
    * status with you specifically — see Rayhanah's partner-sync setting. */
   onCycle?: boolean;
