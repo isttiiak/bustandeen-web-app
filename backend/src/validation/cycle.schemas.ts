@@ -56,6 +56,13 @@ export const partnerSyncSchema = z.object({
   }),
 });
 
+export const bodyStatsSchema = z.object({
+  body: z.object({
+    heightCm: z.number().min(50).max(300).optional(),
+    weightKg: z.number().min(20).max(500).optional(),
+  }),
+});
+
 export const cycleDaySchema = z.object({
   body: z.object({
     date: dateField,

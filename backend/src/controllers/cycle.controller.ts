@@ -187,3 +187,30 @@ export const deleteAll = async (req: Request, res: Response, next: NextFunction)
     next(err);
   }
 };
+
+export const getBodyStats = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const stats = await cycleService.getBodyStats(req.user.uid);
+    res.json({ ok: true, ...stats });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateBodyStats = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { heightCm, weightKg } = req.body as { heightCm?: number; weightKg?: number };
+    const stats = await cycleService.updateBodyStats(req.user.uid, { heightCm, weightKg });
+    res.json({ ok: true, ...stats });
+  } catch (err) {
+    next(err);
+  }
+};

@@ -3,6 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  Cog6ToothIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore } from '../store/useUiStore.js';
@@ -17,6 +23,8 @@ import {
   useEditCycleLog,
   usePartnerSync,
   useSetPregnancy,
+  useBodyStats,
+  useUpdateBodyStats,
   type CycleFlow,
   type CycleMood,
 } from '../hooks/useCycle.js';
@@ -206,6 +214,8 @@ export default function RayhanahCycle() {
   const upsertDay = useUpsertCycleDay();
   const partnerSync = usePartnerSync();
   const setPregnancy = useSetPregnancy();
+  const { data: bodyStats } = useBodyStats();
+  const updateBodyStats = useUpdateBodyStats();
 
   const [partnerPickerOpen, setPartnerPickerOpen] = useState(false);
   const { data: friends } = useFriendsList(partnerPickerOpen || !!summary?.partnerSync.enabled);
@@ -221,6 +231,12 @@ export default function RayhanahCycle() {
   const [qadaPrompt, setQadaPrompt] = useState<{ days: number } | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  // Day navigation for "How are you today?" — allows editing past days within the active period
+  const [viewDay, setViewDay] = useState(today);
+  // Settings drawer (BMI + body stats)
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [heightInput, setHeightInput] = useState('');
+  const [weightInput, setWeightInput] = useState('');
   // Edit an episode (dates) or reopen the most recent one ("I'm not done yet")
   const editCycle = useEditCycleLog();
   const [editTarget, setEditTarget] = useState<{
@@ -233,6 +249,11 @@ export default function RayhanahCycle() {
 
   const active = summary?.active ?? null;
   const todayNote = summary?.days?.find((d) => d.date === today) ?? null;
+  const viewDayNote = summary?.days?.find((d) => d.date === viewDay) ?? null;
+  // Reset viewDay to today whenever active period changes (e.g. period ends)
+  useEffect(() => {
+    if (!active) setViewDay(today);
+  }, [active, today]);
 
   // Garden of Light checklist — server-synced (see useUpsertCycleDay), so
   // progress survives a device switch or cache clear instead of living only
@@ -291,19 +312,19 @@ export default function RayhanahCycle() {
   };
 
   const setFlow = (flow: CycleFlow) =>
-    upsertDay.mutate({ date: today, flow: todayNote?.flow === flow ? null : flow });
+    upsertDay.mutate({ date: viewDay, flow: viewDayNote?.flow === flow ? null : flow });
   const toggleSymptom = (id: string) => {
-    const cur = todayNote?.symptoms ?? [];
+    const cur = viewDayNote?.symptoms ?? [];
     upsertDay.mutate({
-      date: today,
+      date: viewDay,
       symptoms: cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id],
     });
   };
   // Moods are multi-select — a day can hold several feelings (Istiak).
   const toggleMood = (mood: CycleMood) => {
-    const cur = todayNote?.moods ?? [];
+    const cur = viewDayNote?.moods ?? [];
     upsertDay.mutate({
-      date: today,
+      date: viewDay,
       moods: cur.includes(mood) ? cur.filter((m) => m !== mood) : [...cur, mood],
     });
   };
@@ -695,14 +716,56 @@ export default function RayhanahCycle() {
         {/* ── How are you today? (private wellness note) ────────────────────── */}
         {active && (
           <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5 space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <h2 className="text-white font-black">
-                {t('rayhanah.howAreYouToday', '🌷 How are you today?')}
+                {viewDay === today
+                  ? t('rayhanah.howAreYouToday', '🌷 How are you today?')
+                  : t('rayhanah.editingDay', '🌷 {{date}}', { date: formatDay(viewDay) })}
               </h2>
               <span className="text-[10px] text-white/25">
                 {t('rayhanah.privateNote', 'private — only you can see this')}
               </span>
             </div>
+
+            {/* Day navigation — only shown during an active period */}
+            <div className="flex items-center gap-2">
+              <button
+                aria-label={t('rayhanah.dayNavBack', 'Previous day')}
+                disabled={viewDay <= active.startDate}
+                onClick={() => setViewDay((d) => shiftStr(d, -1))}
+                className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeftIcon className="w-4 h-4" />
+              </button>
+              <span className="flex-1 text-center text-xs text-white/50 font-semibold">
+                {viewDay === today ? t('common.today', 'Today') : formatDay(viewDay)}
+              </span>
+              <button
+                aria-label={t('rayhanah.dayNavForward', 'Next day')}
+                disabled={viewDay >= today}
+                onClick={() => setViewDay((d) => shiftStr(d, 1))}
+                className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRightIcon className="w-4 h-4" />
+              </button>
+              {viewDay !== today && (
+                <button
+                  onClick={() => setViewDay(today)}
+                  className="text-[10px] text-brand-pink/70 hover:text-brand-pink font-semibold px-2 py-1 rounded-lg hover:bg-brand-pink/10 transition-colors"
+                >
+                  {t('rayhanah.backToToday', 'Back to today')}
+                </button>
+              )}
+            </div>
+
+            {viewDay !== today && (
+              <p className="text-white/30 text-[11px] leading-relaxed">
+                {t('rayhanah.editingDayNote', 'Editing {{date}} — changes are saved immediately.', {
+                  date: formatDay(viewDay),
+                })}
+              </p>
+            )}
+
             <div>
               <p className="text-white/40 text-[11px] font-bold uppercase tracking-wide mb-1.5">
                 {t('rayhanah.flowLabel', 'Flow')}{' '}
@@ -712,7 +775,7 @@ export default function RayhanahCycle() {
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {FLOW_OPTIONS.map((f) => {
-                  const on = todayNote?.flow === f.id;
+                  const on = viewDayNote?.flow === f.id;
                   return (
                     <button
                       key={f.id}
@@ -736,7 +799,7 @@ export default function RayhanahCycle() {
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {SYMPTOM_OPTIONS.map((sy) => {
-                  const on = !!todayNote?.symptoms?.includes(sy.id);
+                  const on = !!viewDayNote?.symptoms?.includes(sy.id);
                   return (
                     <button
                       key={sy.id}
@@ -760,7 +823,7 @@ export default function RayhanahCycle() {
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {MOOD_OPTIONS.map((mo) => {
-                  const on = !!todayNote?.moods?.includes(mo.id);
+                  const on = !!viewDayNote?.moods?.includes(mo.id);
                   return (
                     <button
                       key={mo.id}
@@ -776,14 +839,16 @@ export default function RayhanahCycle() {
               </div>
             </div>
 
-            {/* A gentle line tuned to exactly the feelings she named */}
-            <MoodComfort
-              day={today}
-              moods={todayNote?.moods ?? []}
-              symptoms={todayNote?.symptoms}
-            />
+            {/* A gentle line tuned to exactly the feelings she named (today only) */}
+            {viewDay === today && (
+              <MoodComfort
+                day={today}
+                moods={todayNote?.moods ?? []}
+                symptoms={todayNote?.symptoms}
+              />
+            )}
 
-            {(todayNote?.symptoms?.length ?? 0) > 0 && (
+            {(viewDayNote?.symptoms?.length ?? 0) > 0 && (
               <p className="text-brand-pink/70 text-xs leading-relaxed border-t border-brand-emerald/5 pt-2.5">
                 {t(
                   'rayhanah.easeHadith',
@@ -1256,6 +1321,22 @@ export default function RayhanahCycle() {
 
         {/* ── Settings + history ─────────────────────────────────────────────── */}
         <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5 space-y-4">
+          <div className="flex items-center justify-between mb-1">
+            <p className="text-white/40 text-xs font-bold uppercase tracking-widest">
+              {t('rayhanah.settingsTitle', 'Rayhanah Settings')}
+            </p>
+            <button
+              onClick={() => {
+                setHeightInput(bodyStats?.heightCm != null ? String(bodyStats.heightCm) : '');
+                setWeightInput(bodyStats?.weightKg != null ? String(bodyStats.weightKg) : '');
+                setSettingsOpen(true);
+              }}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs text-white/50 hover:text-brand-pink hover:bg-brand-pink/10 border border-transparent hover:border-brand-pink/20 transition-all"
+            >
+              <Cog6ToothIcon className="w-4 h-4" />
+              {t('rayhanah.settings', 'Body stats')}
+            </button>
+          </div>
           <div className="flex items-center justify-between">
             <div>
               <p className="text-white font-bold text-sm">
@@ -1511,6 +1592,137 @@ export default function RayhanahCycle() {
           </p>
         </div>
       </div>
+
+      {/* ── Body stats / BMI drawer ──────────────────────────────────────────── */}
+      <AnimatePresence>
+        {settingsOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-end sm:place-items-center p-0 sm:p-4"
+            onClick={() => setSettingsOpen(false)}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl bg-brand-deep border border-brand-pink/20 p-6 space-y-5"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-white font-black text-lg">
+                  {t('rayhanah.settingsTitle', 'Body Stats')}
+                </h3>
+                <button
+                  onClick={() => setSettingsOpen(false)}
+                  className="p-2 rounded-xl text-white/40 hover:text-white hover:bg-white/10"
+                >
+                  <XMarkIcon className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-white/50 text-xs font-bold block mb-1.5">
+                    {t('rayhanah.heightCm', 'Height (cm)')}
+                  </label>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    placeholder={t('rayhanah.heightPlaceholder', 'e.g. 163')}
+                    value={heightInput}
+                    onChange={(e) => setHeightInput(e.target.value)}
+                    className="input input-sm w-full bg-white/5 border-brand-border text-white placeholder:text-white/20"
+                  />
+                </div>
+                <div>
+                  <label className="text-white/50 text-xs font-bold block mb-1.5">
+                    {t('rayhanah.weightKg', 'Weight (kg)')}
+                  </label>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    placeholder={t('rayhanah.weightPlaceholder', 'e.g. 58')}
+                    value={weightInput}
+                    onChange={(e) => setWeightInput(e.target.value)}
+                    className="input input-sm w-full bg-white/5 border-brand-border text-white placeholder:text-white/20"
+                  />
+                </div>
+              </div>
+
+              {/* Live BMI preview */}
+              {(() => {
+                const h = parseFloat(heightInput);
+                const w = parseFloat(weightInput);
+                if (!h || !w || h < 50 || w < 20) return null;
+                const bmi = Math.round((w / ((h / 100) * (h / 100))) * 10) / 10;
+                const cat =
+                  bmi < 18.5
+                    ? { key: 'bmiUnder', label: 'Underweight', color: 'text-brand-info' }
+                    : bmi < 25
+                      ? { key: 'bmiNormal', label: 'Normal', color: 'text-brand-emerald' }
+                      : bmi < 30
+                        ? { key: 'bmiOver', label: 'Overweight', color: 'text-brand-gold' }
+                        : { key: 'bmiObese', label: 'Obese', color: 'text-red-400' };
+                return (
+                  <div className="space-y-1.5">
+                    <div className="rounded-2xl bg-white/5 border border-brand-border p-4 flex items-center justify-between">
+                      <div>
+                        <p className="text-white/40 text-xs font-bold uppercase tracking-wide">
+                          {t('rayhanah.bmi', 'BMI')}
+                        </p>
+                        <p className={`text-2xl font-black ${cat.color}`}>{bmi}</p>
+                      </div>
+                      <p className={`text-sm font-bold ${cat.color}`}>
+                        {t(`rayhanah.${cat.key}`, cat.label)}
+                      </p>
+                    </div>
+                    <p className="text-white/20 text-[10px] leading-relaxed">
+                      {t(
+                        'rayhanah.bmiNote',
+                        'BMI is a general guide — not a medical diagnosis. Your doctor knows your full picture.'
+                      )}
+                    </p>
+                  </div>
+                );
+              })()}
+
+              <button
+                className="w-full btn rounded-2xl bg-brand-pink/20 border-brand-pink/30 text-brand-pink hover:bg-brand-pink/30 font-black disabled:opacity-40"
+                disabled={updateBodyStats.isPending}
+                onClick={() => {
+                  const h = parseFloat(heightInput) || undefined;
+                  const w = parseFloat(weightInput) || undefined;
+                  if (!h && !w) return;
+                  updateBodyStats.mutate(
+                    { heightCm: h, weightKg: w },
+                    {
+                      onSuccess: () => {
+                        toast.success(t('rayhanah.bodyStatsSaved', 'Body stats saved 🌸'), {
+                          id: 'body-stats',
+                        });
+                        setSettingsOpen(false);
+                      },
+                    }
+                  );
+                }}
+              >
+                {updateBodyStats.isPending ? (
+                  <span className="loading loading-spinner" />
+                ) : (
+                  t('rayhanah.saveBodyStats', 'Save')
+                )}
+              </button>
+
+              <p className="text-white/20 text-[10px] text-center leading-relaxed">
+                {t('rayhanah.bodyStatsNote', '🔒 Encrypted — visible only to you.')}
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ── Start modal ──────────────────────────────────────────────────────── */}
       <AnimatePresence>

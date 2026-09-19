@@ -243,3 +243,37 @@ export function useDeleteCycleLog() {
     onError: () => toast.error('Could not delete entry.', { id: 'cycle-del' }),
   });
 }
+
+export interface BodyStats {
+  heightCm: number | null;
+  weightKg: number | null;
+  bmi: number | null;
+}
+
+export function useBodyStats() {
+  const user = useAuthStore((s) => s.user);
+  const isFemale = useIsFemale();
+  return useQuery({
+    queryKey: ['cycle', 'bodyStats'],
+    queryFn: async () => {
+      const { data } = await api.get<BodyStats & { ok: boolean }>('/api/cycle/body-stats');
+      return data;
+    },
+    enabled: !!user && isFemale,
+    staleTime: 300_000,
+  });
+}
+
+export function useUpdateBodyStats() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { heightCm?: number; weightKg?: number }) => {
+      const { data } = await api.patch<BodyStats & { ok: boolean }>('/api/cycle/body-stats', vars);
+      return data;
+    },
+    onSuccess: (data) => {
+      qc.setQueryData(['cycle', 'bodyStats'], data);
+    },
+    onError: () => toast.error('Could not save body stats — try again.', { id: 'cycle-body' }),
+  });
+}

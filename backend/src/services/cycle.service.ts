@@ -463,3 +463,40 @@ export async function getPartnerShareSet(uids: string[], viewerUid: string): Pro
   }).select('userId');
   return new Set(rows.map((r) => r.userId));
 }
+
+export interface BodyStats {
+  heightCm: number | null;
+  weightKg: number | null;
+  bmi: number | null;
+}
+
+export async function getBodyStats(userId: string): Promise<BodyStats> {
+  const profile = await CycleProfile.findOne({ userId }).select('bodyStatsEncrypted');
+  if (!profile?.bodyStatsEncrypted) return { heightCm: null, weightKg: null, bmi: null };
+  const raw = decryptJson<{ heightCm?: number; weightKg?: number }>(profile.bodyStatsEncrypted);
+  const h = raw?.heightCm ?? null;
+  const w = raw?.weightKg ?? null;
+  const bmi = h && w ? Math.round((w / ((h / 100) * (h / 100))) * 10) / 10 : null;
+  return { heightCm: h, weightKg: w, bmi };
+}
+
+export async function updateBodyStats(
+  userId: string,
+  input: { heightCm?: number; weightKg?: number }
+): Promise<BodyStats> {
+  const profile = await getOrCreateProfile(userId);
+  const existing = profile.bodyStatsEncrypted
+    ? (decryptJson<{ heightCm?: number; weightKg?: number }>(profile.bodyStatsEncrypted) ?? {})
+    : {};
+  const merged = {
+    ...existing,
+    ...(input.heightCm !== undefined ? { heightCm: input.heightCm } : {}),
+    ...(input.weightKg !== undefined ? { weightKg: input.weightKg } : {}),
+  };
+  profile.bodyStatsEncrypted = encryptJson(merged);
+  await profile.save();
+  const h = merged.heightCm ?? null;
+  const w = merged.weightKg ?? null;
+  const bmi = h && w ? Math.round((w / ((h / 100) * (h / 100))) * 10) / 10 : null;
+  return { heightCm: h ?? null, weightKg: w ?? null, bmi };
+}

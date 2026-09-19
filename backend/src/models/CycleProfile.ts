@@ -25,6 +25,8 @@ export interface ICycleProfile extends Document {
     /** Expected due date (YYYY-MM-DD), used only to show a week count. */
     dueDate?: string;
   };
+  /** AES-256-GCM encrypted JSON: {heightCm?: number, weightKg?: number} */
+  bodyStatsEncrypted?: string;
 }
 
 const CycleProfileSchema = new Schema<ICycleProfile>(
@@ -44,6 +46,7 @@ const CycleProfileSchema = new Schema<ICycleProfile>(
       required: false,
       default: undefined,
     },
+    bodyStatsEncrypted: { type: String },
   },
   { timestamps: true }
 );
