@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.42.3 - Reading timer pauses while the share modal is open - 2026-09-19
+
+### Changed
+
+- **Designing an āyah share card no longer counts as reading time.** The Quran Reader's session timer now pauses while the share modal is open and resumes when it closes. The reading-session hook gained a `paused` option for this.
+
 ## v5.42.2 - Āyah share card: long āyahs fit the frame - 2026-09-19
 
 ### Fixed
