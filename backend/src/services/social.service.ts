@@ -527,7 +527,14 @@ export async function getSummary(
 
   stats.sort(
     (a, b) =>
-      b.score - a.score || b.actsToday - a.actsToday || a.displayName.localeCompare(b.displayName)
+      b.score - a.score ||
+      b.actsToday - a.actsToday ||
+      // At the start of a day everyone is 0: fall back to who is usually
+      // higher, then the longer streak, so a 72-day streak never sits below
+      // someone who has just begun.
+      (b.usualScore ?? 0) - (a.usualScore ?? 0) ||
+      b.zikrStreak - a.zikrStreak ||
+      a.displayName.localeCompare(b.displayName)
   );
 
   return {

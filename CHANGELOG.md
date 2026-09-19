@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.49.0 - Update emails from the admin panel, persistent broadcast banner, Noor tweaks - 2026-09-20
+
+### Added
+
+- **Update emails (admin > Broadcast > "Update emails" tab, Servant only).** Send an update from ansar@bustandeen.com to brothers, sisters or all, with a choice for accounts that have no gender set (skip, include all, or pick from a list). Templates fill the audience, subject and a bilingual message (Noor v2 for brothers and for sisters); the shared closing lines and "Nourish Your Deen" are added automatically and `{name}` becomes each person's first name. Sending happens in small chunks with a progress bar, and every send is kept in a history with per-recipient status, the full text and a "Retry failed" button. Disabled accounts are never emailed.
+
+### Changed
+
+- **Broadcast banner no longer disappears forever on one tap.** Crossing it hides it only until the next reload; after three crossings it rests for 24 hours and comes back. It now shows the heading, a couple of fading lines of the message and a "See details" link that opens the full text with **Cancel** and **Close permanently** (the only way to remove it for good, per device). Works on the installed mobile app where only the heading used to fit.
+- **Noor:** hifz review is removed from every calculation (extras are now a completed fast, nafl prayer, ṣalawāt/istighfār; on excused days ṣalawāt/istighfār is worth 10). Ties (everyone is 0 at the start of a day) are now broken by usual Noor and then streak, so a 72-day streak no longer sits below someone who has just begun. The prayer chip reads x/5.
+- **"What is Noor" and the About page no longer mention Rayhanah to brothers** (the public Privacy page still explains it).
+
 ## v5.48.0 - Noor v2, weekly leaderboard, updated Privacy and About - 2026-09-20
 
 ### Changed

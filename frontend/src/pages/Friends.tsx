@@ -31,6 +31,7 @@ import {
   useSetInvisible,
 } from '../hooks/useSocial.js';
 import { useAuthStore } from '../store/useAuthStore.js';
+import { useIsFemale } from '../hooks/useCycle.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 
 const COUNTRY_CODES: Record<string, string> = {
@@ -578,12 +579,18 @@ export default function Friends() {
   // "Today" is the live daily Noor; "This week" is the Friday-to-Thursday
   // average, so someone who started late (or had a quiet day) can still climb.
   const [board, setBoard] = useState<'today' | 'week'>('today');
+  // Cycle wording is only ever shown to sisters (the public Privacy page aside).
+  const isFemale = useIsFemale();
   const shownScore = (f: FriendStats): number =>
     board === 'week' ? (f.weekScore ?? f.score) : f.score;
   const leaderboard = [...(data?.leaderboard ?? [])].sort(
     (a, b) =>
       shownScore(b) - shownScore(a) ||
       (b.actsToday ?? 0) - (a.actsToday ?? 0) ||
+      // Everyone is 0 at the start of a day: rank by usual Noor, then streak,
+      // so a long-standing streak never sits below someone who just began.
+      (b.usualScore ?? 0) - (a.usualScore ?? 0) ||
+      b.zikrStreak - a.zikrStreak ||
       a.displayName.localeCompare(b.displayName)
   );
   const friendsCount = Math.max(0, leaderboard.length - 1);
@@ -796,11 +803,7 @@ export default function Friends() {
                       {!f.onCycle && (
                         <span className="px-2 py-0.5 rounded-full bg-white/10 border border-brand-emerald/10 text-[10px] font-bold text-white/60">
                           🕌 {formatLocaleNumber(f.salatToday)}
-                          {f.prayersDue !== undefined && f.prayersDue < 5 ? (
-                            <span className="text-white/35">
-                              /{formatLocaleNumber(Math.max(f.prayersDue, f.salatToday))}
-                            </span>
-                          ) : null}{' '}
+                          <span className="text-white/35">/{formatLocaleNumber(5)}</span>{' '}
                           {t('friends.prayers')}
                         </span>
                       )}
@@ -895,16 +898,18 @@ export default function Friends() {
                       🌙 <b className="text-white/60">{formatLocaleNumber(10)}</b>{' '}
                       {t(
                         'friends.noorExtras',
-                        'Extras, 5 each (best two): a completed fast, nafl prayer, hifz review, ṣalawāt or istighfār'
+                        'Extras, 5 each (best two): a completed fast, nafl prayer, ṣalawāt or istighfār'
                       )}
                     </p>
-                    <p className="pt-1">
-                      🌸{' '}
-                      {t(
-                        'friends.noorExcusedV2',
-                        'Rayhanah days (for sisters): prayer and fasting are excused, not lost. Dhikr and Quran count for more, and Noor still reaches 100.'
-                      )}
-                    </p>
+                    {isFemale && (
+                      <p className="pt-1">
+                        🌸{' '}
+                        {t(
+                          'friends.noorExcusedV2',
+                          'Rayhanah days (for sisters): prayer and fasting are excused, not lost. Dhikr and Quran count for more, and Noor still reaches 100.'
+                        )}
+                      </p>
+                    )}
                     <p className="pt-1">
                       <b className="text-white/60">{t('friends.boardToday', 'Today')}</b>{' '}
                       {t('friends.noorTodayDesc')}{' '}

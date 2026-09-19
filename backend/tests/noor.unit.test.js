@@ -8,7 +8,6 @@ const day = (over = {}) => ({
   quranGoal: 20,
   fasted: false,
   nafl: false,
-  hifz: false,
   salawat: false,
   excused: false,
   ...over,
@@ -29,16 +28,16 @@ describe('Noor v2 daily score', () => {
     expect(computeDayNoor(day({ salatDone: 5 }), 1).base).toBe(50);
   });
 
-  test('100 is reachable without fasting (nafl + hifz fill the extras)', () => {
+  test('100 is reachable without fasting (nafl + salawat fill the extras)', () => {
     const r = computeDayNoor(
-      day({ salatDone: 5, zikr: 500, quran: 50, nafl: true, hifz: true }),
+      day({ salatDone: 5, zikr: 500, quran: 50, nafl: true, salawat: true }),
       12
     );
     expect(r.score).toBe(100);
   });
 
   test('extras cap at two (10 points)', () => {
-    const r = computeDayNoor(day({ fasted: true, nafl: true, hifz: true, salawat: true }), 1);
+    const r = computeDayNoor(day({ fasted: true, nafl: true, salawat: true }), 1);
     expect(r.base).toBe(10);
   });
 
@@ -49,10 +48,7 @@ describe('Noor v2 daily score', () => {
   });
 
   test('excused day redistributes prayer weight to zikr and quran, max 100', () => {
-    const r = computeDayNoor(
-      day({ excused: true, zikr: 100, quran: 20, salawat: true, hifz: true }),
-      10
-    );
+    const r = computeDayNoor(day({ excused: true, zikr: 100, quran: 20, salawat: true }), 10);
     expect(r.score).toBe(100);
     // prayers are ignored while excused
     expect(computeDayNoor(day({ excused: true, salatDone: 5 }), 1).score).toBe(0);

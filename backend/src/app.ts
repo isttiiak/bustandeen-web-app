@@ -30,6 +30,7 @@ import adminMailboxRoutes from './routes/adminMailbox.routes.js';
 import adminStatsRoutes from './routes/adminStats.routes.js';
 import adminOpsRoutes from './routes/adminOps.routes.js';
 import adminAnnouncementRoutes from './routes/adminAnnouncement.routes.js';
+import updateEmailRoutes from './routes/updateEmail.routes.js';
 import composeEmailRoutes from './routes/composeEmail.routes.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
@@ -163,6 +164,7 @@ app.use('/api/admin/stats', adminStatsRoutes);
 app.use('/api/admin/ops', adminOpsRoutes);
 app.use('/api/admin/announcements', adminAnnouncementRoutes);
 app.use('/api/admin/compose-email', composeEmailRoutes);
+app.use('/api/admin/update-emails', updateEmailRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

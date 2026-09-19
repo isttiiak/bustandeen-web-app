@@ -334,7 +334,9 @@
     "streak": "Streak",
     "time": "time",
     "today": "Today",
-    "until": "until"
+    "until": "until",
+    "seeDetails": "See details",
+    "closePermanently": "Close permanently"
   },
   "confirmDialog": {
     "yesDelete": "Yes, delete"
@@ -880,7 +882,7 @@
     "noorZikrV2": "Dhikr: today's count against your own daily goal",
     "noorQuranV2": "Quran: reading or listening against your own daily goal",
     "noorSteady": "Steadiness: 1 for each day in a row you show up, up to 10, once you have done something today",
-    "noorExtras": "Extras, 5 each (best two): a completed fast, nafl prayer, hifz review, ṣalawāt or istighfār",
+    "noorExtras": "Extras, 5 each (best two): a completed fast, nafl prayer, ṣalawāt or istighfār",
     "noorExcusedV2": "Rayhanah days (for sisters): prayer and fasting are excused, not lost. Dhikr and Quran count for more, and Noor still reaches 100.",
     "noorWeekDesc": "= your average daily Noor since Friday; a day with nothing counts 0.",
     "noorUsualDesc": "\"Above their usual\" compares today with the average of their recent active days, so everyone races their own best."

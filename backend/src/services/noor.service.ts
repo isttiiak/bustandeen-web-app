@@ -4,7 +4,6 @@ import QuranLog from '../models/QuranLog.js';
 import QuranProfile from '../models/QuranProfile.js';
 import ZikrGoal from '../models/ZikrGoal.js';
 import ZikrDaily from '../models/ZikrDaily.js';
-import HifzLog from '../models/HifzLog.js';
 import { getExcusedIntervals } from './cycle.service.js';
 
 /**
@@ -22,11 +21,11 @@ import { getExcusedIntervals } from './cycle.service.js';
  *     10  steadiness: 1 per day of your run of active days, up to 10, and only
  *         once you have done something TODAY (no head start for a long streak)
  *     10  extras, 5 each, best two of: fasting (completed), nafl prayer,
- *         hifz review, salawat/istighfar
+ *         salawat/istighfar
  *
  *   Excused day (Rayhanah, max 100) - prayer and fasting are paused, so:
  *     40  zikr vs goal   40  Quran (listening counts) vs goal
- *     10  steadiness     10  extras: salawat/istighfar 5, hifz review 5
+ *     10  steadiness     10  salawat/istighfar
  *
  * An "active day" (for steadiness) is any day with a non-zero base score.
  */
@@ -36,7 +35,7 @@ export const NOOR_WEIGHTS = {
   quran: 15,
   steadyMax: 10,
   extraEach: 5,
-  excused: { zikr: 40, quran: 40, extraEach: 5 },
+  excused: { zikr: 40, quran: 40, salawat: 10 },
 } as const;
 
 export interface DayInputs {
@@ -47,7 +46,6 @@ export interface DayInputs {
   quranGoal: number;
   fasted: boolean;
   nafl: boolean;
-  hifz: boolean;
   salawat: boolean;
   excused: boolean;
 }
@@ -67,14 +65,13 @@ export function computeDayNoor(i: DayInputs, activeRun: number): DayNoor {
   let base: number;
   let extrasCount: number;
   if (i.excused) {
-    extrasCount = (i.salawat ? 1 : 0) + (i.hifz ? 1 : 0);
+    extrasCount = i.salawat ? 1 : 0;
     base =
       Math.round(ratio(i.zikr, i.zikrGoal) * NOOR_WEIGHTS.excused.zikr) +
       Math.round(ratio(i.quran, i.quranGoal) * NOOR_WEIGHTS.excused.quran) +
-      extrasCount * NOOR_WEIGHTS.excused.extraEach;
+      extrasCount * NOOR_WEIGHTS.excused.salawat;
   } else {
-    const candidates =
-      (i.fasted ? 1 : 0) + (i.nafl ? 1 : 0) + (i.hifz ? 1 : 0) + (i.salawat ? 1 : 0);
+    const candidates = (i.fasted ? 1 : 0) + (i.nafl ? 1 : 0) + (i.salawat ? 1 : 0);
     extrasCount = Math.min(2, candidates);
     base =
       Math.min(5, i.salatDone) * NOOR_WEIGHTS.salatEach +
@@ -111,7 +108,7 @@ export async function loadNoorSeries(
   to: string
 ): Promise<Map<string, DayNoor>> {
   const loadFrom = shift(from, -NOOR_WEIGHTS.steadyMax);
-  const [salatLogs, zikrRows, quranLogs, fastLogs, hifzLogs, zikrGoalDoc, quranProfile, intervals] =
+  const [salatLogs, zikrRows, quranLogs, fastLogs, zikrGoalDoc, quranProfile, intervals] =
     await Promise.all([
       SalatLog.find({ userId, date: { $gte: loadFrom, $lte: to } }).select('date prayers nafl'),
       ZikrDaily.aggregate([
@@ -146,7 +143,6 @@ export async function loadNoorSeries(
       FastingLog.find({ userId, status: 'completed', date: { $gte: loadFrom, $lte: to } }).select(
         'date'
       ),
-      HifzLog.find({ userId, date: { $gte: loadFrom, $lte: to } }).select('date revisionCount'),
       ZikrGoal.findOne({ userId }),
       QuranProfile.findOne({ userId }).select('dailyGoalAyat'),
       getExcusedIntervals(userId),
@@ -178,7 +174,6 @@ export async function loadNoorSeries(
     quranLogs.map((l) => [l.date, Math.round((l.ayat ?? 0) + (l.pages ?? 0) * 10)])
   );
   const fastDays = new Set(fastLogs.map((l) => l.date));
-  const hifzDays = new Set(hifzLogs.filter((h) => (h.revisionCount ?? 0) > 0).map((h) => h.date));
 
   const isExcused = (day: string): boolean =>
     intervals.some((iv) => iv.start <= day && (iv.end === null ? day <= to : day <= iv.end));
@@ -194,7 +189,6 @@ export async function loadNoorSeries(
       quranGoal,
       fasted: fastDays.has(day),
       nafl: naflDays.has(day),
-      hifz: hifzDays.has(day),
       salawat: salawatDays.has(day),
       excused: isExcused(day),
     };
