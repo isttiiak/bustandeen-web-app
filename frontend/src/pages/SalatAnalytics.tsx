@@ -160,6 +160,13 @@ export default function SalatAnalytics() {
         "Your tracking history split into phases — a new phase starts each time you reset your kaza debt count. Each phase shows how many days it covered and your completion rate across them. The current (ongoing) phase's numbers update live and already include today's progress so far."
       ),
     },
+    kazaInsights: {
+      title: t('salatAnalytics.info.kazaInsightsTitle', 'Kaza Insights'),
+      body: t(
+        'salatAnalytics.info.kazaInsightsBody',
+        "A closer look at your makeup prayer patterns — which missed prayers you've been carrying longest, how quickly you typically pay them back, and which prayer tends to linger. Only counts prayers the tracker knows an exact missed date for."
+      ),
+    },
   };
 
   const { data, isLoading, isError } = useSalatAnalytics(analyticsDays, analyticsToday);
@@ -900,6 +907,10 @@ export default function SalatAnalytics() {
                           <h2 className="text-white font-black text-sm flex items-center gap-2">
                             <ChartBarIcon className="w-4 h-4 text-brand-emerald" />{' '}
                             {t('salatAnalytics.kazaInsightsTitle', 'Kaza insights')}
+                            <InfoButton
+                              onClick={() => setInfoTopic('kazaInsights')}
+                              label={CHART_INFO.kazaInsights!.title}
+                            />
                           </h2>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {kazaInsights.oldestOwed && (

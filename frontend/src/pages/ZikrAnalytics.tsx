@@ -9,6 +9,7 @@ import TabNav from '../components/TabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { ChartBarIcon, PlusCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import ChartInfoModal, { InfoButton } from '../components/ChartInfoModal.js';
 import StreakCard from '../components/analytics/StreakCard.js';
 import GoalCard from '../components/analytics/GoalCard.js';
 import TrendChart from '../components/analytics/TrendChart.js';
@@ -764,6 +765,38 @@ export default function ZikrAnalytics() {
   const [newGraceDays, setNewGraceDays] = useState(1);
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [sessionsDate, setSessionsDate] = useState(() => getTrackingDay());
+  const [infoTopic, setInfoTopic] = useState<string | null>(null);
+
+  const CHART_INFO: Record<string, { title: string; body: string }> = {
+    trend: {
+      title: t('zikrAnalytics.info.trendTitle', 'Zikr Trend'),
+      body: t(
+        'zikrAnalytics.info.trendBody',
+        "Your total zikr count day by day over the selected period. Hover (or tap) any bar to see that day's total. The bar height is relative to the highest day in the window, so a quiet day looks shorter even if the count is still meaningful."
+      ),
+    },
+    perTypeTrend: {
+      title: t('zikrAnalytics.info.perTypeTrendTitle', 'Per-Type Trends'),
+      body: t(
+        'zikrAnalytics.info.perTypeTrendBody',
+        "How each of your top 5 dhikr types has moved over the same period — each line is one type. Only shows types you've counted in this window."
+      ),
+    },
+    timeOfDay: {
+      title: t('zikrAnalytics.info.timeOfDayTitle', 'Time of Day'),
+      body: t(
+        'zikrAnalytics.info.timeOfDayBody',
+        'When during the day you do your dhikr, averaged over the last 30 days — morning (Fajr to Dhuhr), afternoon (Dhuhr to Asr), evening (Asr to Isha), night (Isha onwards). Helps you see your natural rhythm.'
+      ),
+    },
+    heatmap: {
+      title: t('zikrAnalytics.info.heatmapTitle', 'Activity Heatmap'),
+      body: t(
+        'zikrAnalytics.info.heatmapBody',
+        'Every day of the last year, colored by how much zikr you did — the darker the green, the more you counted. A white/grey cell means no zikr that day. Hover a cell to see the date and count.'
+      ),
+    },
+  };
 
   const { counts: localCounts } = useZikrStore();
   const { data: analyticsData, isLoading, isError, error, refetch } = useAnalytics(selectedPeriod);
@@ -1050,6 +1083,7 @@ export default function ZikrAnalytics() {
             <div className="flex items-center justify-between flex-wrap gap-3">
               <h2 className="text-white font-black text-sm flex items-center gap-2">
                 <ChartBarIcon className="w-4 h-4 text-brand-emerald" /> {t('zikrAnalytics.trend')}
+                <InfoButton onClick={() => setInfoTopic('trend')} label={CHART_INFO.trend!.title} />
               </h2>
               <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border">
                 {periods.map((p) => (
@@ -1094,6 +1128,10 @@ export default function ZikrAnalytics() {
                 <h2 className="text-white font-black text-sm flex items-center gap-2">
                   <ChartBarIcon className="w-4 h-4 text-brand-info" />
                   {t('zikrAnalytics.perTypeTrend', 'Per-type trends')}
+                  <InfoButton
+                    onClick={() => setInfoTopic('perTypeTrend')}
+                    label={CHART_INFO.perTypeTrend!.title}
+                  />
                 </h2>
                 <div className="flex flex-wrap gap-3 mb-1">
                   {topTypes.map((type, si) => (
@@ -1125,6 +1163,10 @@ export default function ZikrAnalytics() {
               <span className="text-white/25 text-[10px] font-normal">
                 {t('zikrAnalytics.timeOfDay.subtitle', 'last 30 days')}
               </span>
+              <InfoButton
+                onClick={() => setInfoTopic('timeOfDay')}
+                label={CHART_INFO.timeOfDay!.title}
+              />
             </h2>
             <TimeOfDayChart data={timeOfDayData} />
           </div>
@@ -1138,6 +1180,10 @@ export default function ZikrAnalytics() {
                 <span className="text-white/25 text-[10px] font-normal">
                   {t('zikrAnalytics.heatmapSub', 'last 365 days')}
                 </span>
+                <InfoButton
+                  onClick={() => setInfoTopic('heatmap')}
+                  label={CHART_INFO.heatmap!.title}
+                />
               </h2>
               {allTime?.totalCount === 0 ? (
                 <p className="text-white/40 text-sm text-center py-6">
@@ -1266,36 +1312,59 @@ export default function ZikrAnalytics() {
               </p>
             ) : sessionsData && sessionsData.length > 0 ? (
               <div className="space-y-2">
-                {sessionsData.map((s, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-brand-border p-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-white/80 text-sm font-semibold tabular-nums">
-                        {formatLocaleTime(new Date(s.start), {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                        })}
-                        {' – '}
-                        {formatLocaleTime(new Date(s.end), { hour: 'numeric', minute: '2-digit' })}
-                      </p>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {Object.entries(s.perType).map(([type, count]) => (
-                          <span
-                            key={type}
-                            className="px-1.5 py-0.5 rounded-md bg-black/30 border border-brand-border text-[10px] text-white/50"
-                          >
-                            {zikrDisplayName(type, i18n.language)} ×{formatLocaleNumber(count)}
-                          </span>
-                        ))}
+                {sessionsData.map((s, i) => {
+                  // Batch manual entries are anchored to the tracking day's
+                  // midday (12:00:00) — detect them by checking if both start
+                  // and end fall within 1 minute of noon; real tapping sessions
+                  // almost never align there.
+                  const startMs = new Date(s.start).getTime();
+                  const endMs = new Date(s.end).getTime();
+                  const startHour = new Date(s.start).getHours();
+                  const startMin = new Date(s.start).getMinutes();
+                  const isManualEntry =
+                    endMs - startMs < 60_000 && startHour === 12 && startMin === 0;
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-brand-border p-3"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-white/80 text-sm font-semibold tabular-nums">
+                          {isManualEntry ? (
+                            <span className="text-white/40 text-xs font-medium italic">
+                              {t('zikrAnalytics.sessions.manualLog', 'Manual log')}
+                            </span>
+                          ) : (
+                            <>
+                              {formatLocaleTime(new Date(s.start), {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                              })}
+                              {' – '}
+                              {formatLocaleTime(new Date(s.end), {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                              })}
+                            </>
+                          )}
+                        </p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {Object.entries(s.perType).map(([type, count]) => (
+                            <span
+                              key={type}
+                              className="px-1.5 py-0.5 rounded-md bg-black/30 border border-brand-border text-[10px] text-white/50"
+                            >
+                              {zikrDisplayName(type, i18n.language)} ×{formatLocaleNumber(count)}
+                            </span>
+                          ))}
+                        </div>
                       </div>
+                      <p className="text-brand-emerald font-black text-lg shrink-0">
+                        {formatLocaleNumber(s.total)}
+                      </p>
                     </div>
-                    <p className="text-brand-emerald font-black text-lg shrink-0">
-                      {formatLocaleNumber(s.total)}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="text-white/30 text-xs text-center py-4">
@@ -1388,6 +1457,12 @@ export default function ZikrAnalytics() {
           />
         )}
       </AnimatePresence>
+
+      <ChartInfoModal
+        title={infoTopic ? (CHART_INFO[infoTopic]?.title ?? null) : null}
+        body={infoTopic ? CHART_INFO[infoTopic]?.body : undefined}
+        onClose={() => setInfoTopic(null)}
+      />
     </AnimatedBackground>
   );
 }
