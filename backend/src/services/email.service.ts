@@ -1,40 +1,62 @@
 import nodemailer, { Transporter } from 'nodemailer';
+import EmailFailureLog from '../models/EmailFailureLog.js';
 
 /**
- * Named senders — the mailbox (SMTP credentials) a send authenticates as,
- * paired with the display name shown in the recipient's inbox. Zoho only
- * requires the "From" ADDRESS to match the authenticated mailbox; the
- * display name portion is free-form, so 'ansar' reuses the same
- * sadaqah@bustandeen.com mailbox/credentials as 'sadaqah' but shows a
- * different name — the donor sees exactly who (Servant vs Ansar) is
- * actually handling their review, without needing a whole separate mailbox.
+ * Named senders — each is a real, separately-scoped mailbox with its own
+ * dedicated `<SENDER>_SMTP_USER`/`<SENDER>_SMTP_PASS` env-var pair (same
+ * naming convention for all three, no shared/legacy fallback). Only
+ * `ZOHO_SMTP_HOST`/`ZOHO_SMTP_PORT` are shared — that's just the one Zoho
+ * server every mailbox in this org connects through.
  *
- * - 'sadaqah' (sadaqah@bustandeen.com, displayed "Bustandeen") — the
- *   Servant's/system default for donation and zikr-request review threads.
- * - 'ansar' — same mailbox, displayed "Bustandeen Ansar" — used whenever the
- *   acting admin is the Ansar role (see adminSadaqah/adminZikr controllers).
+ * - 'sadaqah' (sadaqah@bustandeen.com, displayed "Bustandeen") — donation
+ *   review threads.
+ * - 'ansar' (ansar@bustandeen.com, displayed "Bustandeen Ansar") — zikr
+ *   request review threads and anything else outside the sadaqah domain.
  * - 'istiak' (istiak@bustandeen.com) — the founder's personal address, used
  *   for the one-time welcome email so it reads as a real person reaching out,
  *   not an automated system mailbox.
  */
 export type EmailSender = 'sadaqah' | 'ansar' | 'istiak';
 
-const SENDER_ENV: Record<EmailSender, { user: string; pass: string; displayName: string }> = {
+const SENDER_ENV: Record<EmailSender, { userVar: string; passVar: string; displayName: string }> = {
   sadaqah: {
-    user: 'ZOHO_SMTP_USER',
-    pass: 'ZOHO_SMTP_PASS',
+    userVar: 'SADAQAH_SMTP_USER',
+    passVar: 'SADAQAH_SMTP_PASS',
     displayName: 'Bustandeen',
   },
   ansar: {
-    user: 'ZOHO_SMTP_USER',
-    pass: 'ZOHO_SMTP_PASS',
+    userVar: 'ANSAR_SMTP_USER',
+    passVar: 'ANSAR_SMTP_PASS',
     displayName: 'Bustandeen Ansar',
   },
   istiak: {
-    user: 'ISTIAK_SMTP_USER',
-    pass: 'ISTIAK_SMTP_PASS',
+    userVar: 'ISTIAK_SMTP_USER',
+    passVar: 'ISTIAK_SMTP_PASS',
     displayName: 'Istiak from Bustandeen',
   },
+};
+
+const resolveSenderCreds = (sender: EmailSender): { user?: string; pass?: string } => {
+  const cfg = SENDER_ENV[sender];
+  return { user: process.env[cfg.userVar], pass: process.env[cfg.passVar] };
+};
+
+export interface SenderDiagnostics {
+  /** Whether SMTP host/port + this sender's own user/pass are all present. */
+  configured: boolean;
+  /** The mailbox address actually used (safe to show — it's the public
+   *  "From" address every recipient already sees), or null if unconfigured. */
+  resolvedUser: string | null;
+}
+
+/** Exposed for the ops-health page. Two senders resolving to the SAME
+ *  resolvedUser means their env vars were set to the same mailbox by
+ *  mistake — each sender's pair is independent now, so this should never
+ *  happen unless someone copy-pasted the wrong value. */
+export const getSenderDiagnostics = (sender: EmailSender): SenderDiagnostics => {
+  const { user, pass } = resolveSenderCreds(sender);
+  const configured = !!(process.env.ZOHO_SMTP_HOST && process.env.ZOHO_SMTP_PORT && user && pass);
+  return { configured, resolvedUser: configured ? (user ?? null) : null };
 };
 
 const transporters: Partial<Record<EmailSender, Transporter | null>> = {};
@@ -43,13 +65,11 @@ const getTransporter = (sender: EmailSender): Transporter | null => {
   if (sender in transporters) return transporters[sender] ?? null;
 
   const { ZOHO_SMTP_HOST, ZOHO_SMTP_PORT } = process.env;
-  const { user: userVar, pass: passVar } = SENDER_ENV[sender];
-  const user = process.env[userVar];
-  const pass = process.env[passVar];
+  const { user, pass } = resolveSenderCreds(sender);
 
   if (!ZOHO_SMTP_HOST || !ZOHO_SMTP_PORT || !user || !pass) {
     console.warn(
-      `Email not configured for sender "${sender}" (${userVar}/${passVar} missing) — emails will be skipped.`
+      `Email not configured for sender "${sender}" (credentials missing) — emails will be skipped.`
     );
     transporters[sender] = null;
     return null;
@@ -82,6 +102,8 @@ export interface SendMailOptions {
    *  one conversation instead of three separate ones. */
   inReplyTo?: string;
   references?: string;
+  /** Files attached to the message (e.g. the signed sadaqah receipt PDF). */
+  attachments?: Array<{ filename: string; content: Buffer; contentType: string }>;
 }
 
 /**
@@ -99,10 +121,8 @@ export const sendMail = async (opts: SendMailOptions): Promise<string | null> =>
   const sender = opts.from ?? 'sadaqah';
   const t = getTransporter(sender);
   if (!t) return null;
-  const { user, displayName } = {
-    user: process.env[SENDER_ENV[sender].user],
-    displayName: SENDER_ENV[sender].displayName,
-  };
+  const { user } = resolveSenderCreds(sender);
+  const { displayName } = SENDER_ENV[sender];
   try {
     const info = await t.sendMail({
       from: `"${displayName}" <${user}>`,
@@ -113,10 +133,25 @@ export const sendMail = async (opts: SendMailOptions): Promise<string | null> =>
       messageId: opts.messageId,
       inReplyTo: opts.inReplyTo,
       references: opts.references,
+      attachments: opts.attachments,
     });
     return info.messageId ?? null;
   } catch (err) {
     console.error('Failed to send email:', err);
+    // Best-effort durable record so a silent SMTP failure (e.g. the Sadaqah
+    // system's past Zoho 535 auth error) shows up on the ops-health page
+    // instead of only ever being visible in server logs. Never let a logging
+    // failure mask the original send error.
+    try {
+      await EmailFailureLog.create({
+        sender,
+        to: opts.to,
+        subject: opts.subject,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    } catch (logErr) {
+      console.error('Failed to write email failure log:', logErr);
+    }
     return null;
   }
 };

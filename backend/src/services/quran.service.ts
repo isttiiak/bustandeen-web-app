@@ -4,6 +4,8 @@ import QuranProfile, {
   QURAN_TOTAL_PAGES,
   QURAN_TOTAL_AYAT,
 } from '../models/QuranProfile.js';
+import QuranReadingSession from '../models/QuranReadingSession.js';
+import { DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
 
 /** Unit math: 1 mushaf page ≈ 10 ayat (6236/604). Units = ayat-equivalents. */
 const AYAT_PER_PAGE = 10;
@@ -178,12 +180,96 @@ export async function getHistory(
   }));
 }
 
+export interface QuranRangeResult {
+  history: Array<{ date: string; ayat: number; pages: number; units: number }>;
+  stats: {
+    readSec: number;
+    listenSec: number;
+    readSessions: number;
+    listenSessions: number;
+    activeDays: number;
+    totalUnits: number;
+  };
+}
+
+/** Everything the Quran analytics page shows for one date range (inclusive
+ * `from`..`to`): the daily units (only days with activity are returned) plus
+ * time and session totals split into reading vs listening. Unlike getHistory
+ * this takes an explicit start AND end, so a past month or "all time" is a real
+ * window rather than "the last N days ending today". */
+export async function getRange(
+  userId: string,
+  from: string,
+  to: string
+): Promise<QuranRangeResult> {
+  const logs = await QuranLog.find({ userId, date: { $gte: from, $lte: to } })
+    .select('date pages ayat')
+    .sort({ date: 1 });
+  const history = logs.map((l) => ({
+    date: l.date,
+    ayat: l.ayat ?? 0,
+    pages: l.pages ?? 0,
+    units: unitsOf(l),
+  }));
+
+  const rows = (await QuranReadingSession.aggregate([
+    {
+      $match: {
+        userId,
+        date: { $gte: from, $lte: to },
+        activeDurationSec: { $gte: MIN_SESSION_SEC_TO_LIST },
+      },
+    },
+    {
+      $group: {
+        _id: { $ifNull: ['$source', 'read'] },
+        totalSec: { $sum: '$activeDurationSec' },
+        sessions: { $sum: 1 },
+      },
+    },
+  ])) as Array<{ _id: string; totalSec: number; sessions: number }>;
+  const bySource = (src: string) => rows.find((r) => r._id === src);
+
+  return {
+    history,
+    stats: {
+      readSec: Math.round(bySource('read')?.totalSec ?? 0),
+      listenSec: Math.round(bySource('listen')?.totalSec ?? 0),
+      readSessions: bySource('read')?.sessions ?? 0,
+      listenSessions: bySource('listen')?.sessions ?? 0,
+      activeDays: history.filter((h) => h.units > 0).length,
+      totalUnits: history.reduce((sum, h) => sum + h.units, 0),
+    },
+  };
+}
+
 export interface QuranProfileUpdate {
   dailyGoalPages?: number;
   currentPage?: number;
   dailyGoalAyat?: number;
   currentAyah?: number;
+  arabicFont?: 'clean' | 'naskh' | 'uthmani';
+  fontArabicPx?: number;
+  fontTranslationPx?: number;
+  fontTranslitPx?: number;
+  fontTafsirPx?: number;
+  translitEnabled?: boolean;
+  listenCountsAsAyat?: boolean;
+  reciterId?: string;
+  translations?: string[];
 }
+
+const DISPLAY_PREF_KEYS = [
+  'arabicFont',
+  'fontArabicPx',
+  'fontTranslationPx',
+  'fontTranslitPx',
+  'fontTafsirPx',
+  'translitEnabled',
+  'listenCountsAsAyat',
+  'reciterId',
+  'translations',
+] as const satisfies ReadonlyArray<keyof QuranProfileUpdate>;
 
 export async function updateProfile(
   userId: string,
@@ -200,6 +286,16 @@ export async function updateProfile(
       Math.floor(input.currentAyah / (QURAN_TOTAL_AYAT / QURAN_TOTAL_PAGES))
     );
   }
+  if (input.arabicFont !== undefined) profile.arabicFont = input.arabicFont;
+  if (input.fontArabicPx !== undefined) profile.fontArabicPx = input.fontArabicPx;
+  if (input.fontTranslationPx !== undefined) profile.fontTranslationPx = input.fontTranslationPx;
+  if (input.fontTranslitPx !== undefined) profile.fontTranslitPx = input.fontTranslitPx;
+  if (input.fontTafsirPx !== undefined) profile.fontTafsirPx = input.fontTafsirPx;
+  if (input.translitEnabled !== undefined) profile.translitEnabled = input.translitEnabled;
+  if (input.listenCountsAsAyat !== undefined) profile.listenCountsAsAyat = input.listenCountsAsAyat;
+  if (input.reciterId !== undefined) profile.reciterId = input.reciterId;
+  if (input.translations !== undefined) profile.translations = input.translations;
+  if (DISPLAY_PREF_KEYS.some((k) => input[k] !== undefined)) profile.displayPrefsSet = true;
   await profile.save();
   return profile;
 }
@@ -267,6 +363,16 @@ export interface QuranSummary {
     khatamStartedAt: string | null;
     readerPos: Record<string, number>;
     savedDuas: string[];
+    arabicFont: 'clean' | 'naskh' | 'uthmani';
+    fontArabicPx: number;
+    fontTranslationPx: number;
+    fontTranslitPx: number;
+    fontTafsirPx: number;
+    translitEnabled: boolean;
+    listenCountsAsAyat: boolean;
+    reciterId: string;
+    translations: string[];
+    displayPrefsSet: boolean;
   };
   todayPages: number;
   /** Today's ayat-equivalents (ayat + pages·10) — the v4 goal/streak unit */
@@ -386,6 +492,16 @@ export async function getSummary(userId: string, today?: string): Promise<QuranS
       khatamStartedAt: profile.khatamStartedAt ? profile.khatamStartedAt.toISOString() : null,
       readerPos: Object.fromEntries(profile.readerPos ?? new Map()),
       savedDuas: profile.savedDuas ?? [],
+      arabicFont: profile.arabicFont,
+      fontArabicPx: profile.fontArabicPx,
+      fontTranslationPx: profile.fontTranslationPx,
+      fontTranslitPx: profile.fontTranslitPx,
+      fontTafsirPx: profile.fontTafsirPx,
+      translitEnabled: profile.translitEnabled,
+      listenCountsAsAyat: profile.listenCountsAsAyat,
+      reciterId: profile.reciterId,
+      translations: profile.translations,
+      displayPrefsSet: profile.displayPrefsSet,
     },
     todayPages,
     todayAyat,
@@ -473,5 +589,150 @@ export async function getTafsir(
 export async function deleteAllUserQuranData(userId: string): Promise<{ deletedCount: number }> {
   const result = await QuranLog.deleteMany({ userId });
   await QuranProfile.deleteOne({ userId });
+  await QuranReadingSession.deleteMany({ userId });
   return { deletedCount: result.deletedCount ?? 0 };
+}
+
+const MAX_SESSION_SEC = 6 * 3600;
+// Sessions below this are hidden from the history list (accidental taps into
+// the reader, or a page mounted for a moment while navigating through) —
+// their credited seconds still count toward the daily total either way.
+const MIN_SESSION_SEC_TO_LIST = 10;
+
+export interface QuranSessionSavePayload {
+  clientSessionId: string;
+  date: string;
+  startedAt: Date;
+  endedAt: Date;
+  activeDurationSec: number;
+  ayahCount: number;
+  pagesRead: number;
+  surahs: number[];
+  source: 'read' | 'listen';
+}
+
+/**
+ * Upserts the client's in-progress (or just-finished) reading session by
+ * `clientSessionId` — called periodically while reading and once more on
+ * teardown, so it's idempotent-safe on retries. `activeDurationSec` is the
+ * SESSION'S RUNNING TOTAL, not a delta; the delta since the last save is what
+ * gets credited to that day's QuranLog, so a crediting bug here can't double
+ * count even if the client resends the same total.
+ */
+export async function saveReadingSession(
+  userId: string,
+  payload: QuranSessionSavePayload
+): Promise<{ activeDurationSec: number }> {
+  const elapsedSec = Math.max(0, (payload.endedAt.getTime() - payload.startedAt.getTime()) / 1000);
+  const activeDurationSec = Math.min(payload.activeDurationSec, elapsedSec, MAX_SESSION_SEC);
+
+  const existing = await QuranReadingSession.findOne({
+    userId,
+    clientSessionId: payload.clientSessionId,
+  }).select('activeDurationSec');
+  const prevDuration = existing?.activeDurationSec ?? 0;
+  const delta = Math.max(0, activeDurationSec - prevDuration);
+
+  await QuranReadingSession.findOneAndUpdate(
+    { userId, clientSessionId: payload.clientSessionId },
+    {
+      $setOnInsert: {
+        userId,
+        clientSessionId: payload.clientSessionId,
+        startedAt: payload.startedAt,
+        source: payload.source,
+      },
+      $set: {
+        date: payload.date,
+        endedAt: payload.endedAt,
+        activeDurationSec,
+        ayahCount: payload.ayahCount,
+        pagesRead: payload.pagesRead,
+        surahs: payload.surahs.slice(0, 50),
+      },
+    },
+    { upsert: true, setDefaultsOnInsert: true }
+  );
+
+  if (delta > 0) {
+    await QuranLog.findOneAndUpdate(
+      { userId, date: payload.date },
+      { $inc: { durationSec: delta } },
+      { upsert: true, setDefaultsOnInsert: true }
+    );
+  }
+
+  return { activeDurationSec };
+}
+
+export interface QuranReadingSessionSummary {
+  start: Date;
+  end: Date;
+  activeDurationSec: number;
+  ayahCount: number;
+  pagesRead: number;
+  surahs: number[];
+  source: 'read' | 'listen';
+}
+
+/** Sessions for a given tracking day — a date-picker driven history list,
+ * mirroring zikr.service.ts's getSessionsForDay. Reading and listening
+ * sessions share one collection and are returned together, tagged by
+ * `source`, so nothing is missing from the history — just distinguishable. */
+export async function getReadingSessionsForDay(
+  userId: string,
+  dateStr: string
+): Promise<QuranReadingSessionSummary[]> {
+  const sessions = await QuranReadingSession.find({ userId, date: dateStr })
+    .sort({ startedAt: 1 })
+    .select('startedAt endedAt activeDurationSec ayahCount pagesRead surahs source');
+
+  return sessions
+    .filter((s) => s.activeDurationSec >= MIN_SESSION_SEC_TO_LIST)
+    .map((s) => ({
+      start: s.startedAt,
+      end: s.endedAt,
+      activeDurationSec: s.activeDurationSec,
+      ayahCount: s.ayahCount,
+      pagesRead: s.pagesRead,
+      surahs: s.surahs,
+      source: s.source ?? 'read',
+    }));
+}
+
+function offsetToUtcTzString(offsetMinutes: number): string {
+  const sign = offsetMinutes >= 0 ? '+' : '-';
+  const abs = Math.abs(offsetMinutes);
+  const hh = String(Math.floor(abs / 60)).padStart(2, '0');
+  const mm = String(abs % 60).padStart(2, '0');
+  return `${sign}${hh}:${mm}`;
+}
+
+/** Total ACTIVE MINUTES by local hour-of-day (0-23) over the last `days`,
+ * across both reading and listening sessions — "when during the day do I
+ * spend time with the Quran?" mirrors zikr.service.ts's
+ * getTimeOfDayDistribution. A session's whole duration is attributed to the
+ * hour it STARTED in (not split across the hours it spans) — a deliberate
+ * simplification, fine for typical session lengths. */
+export async function getQuranTimeOfDayDistribution(
+  userId: string,
+  days: number = 30,
+  timezoneOffset: number = DEFAULT_TIMEZONE_OFFSET
+): Promise<Array<{ hour: number; total: number }>> {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  const rows = (await QuranReadingSession.aggregate([
+    { $match: { userId, startedAt: { $gte: since } } },
+    {
+      $group: {
+        _id: { $hour: { date: '$startedAt', timezone: offsetToUtcTzString(timezoneOffset) } },
+        totalSec: { $sum: '$activeDurationSec' },
+      },
+    },
+  ])) as Array<{ _id: number; totalSec: number }>;
+
+  const hours = Array.from({ length: 24 }, (_, hour) => ({ hour, total: 0 }));
+  for (const r of rows) {
+    if (r._id >= 0 && r._id < 24) hours[r._id]!.total = Math.round(r.totalSec / 60);
+  }
+  return hours;
 }

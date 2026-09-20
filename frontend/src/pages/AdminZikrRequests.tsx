@@ -1,17 +1,37 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { useAdminStore } from '../store/useAdminStore.js';
 import {
   useAdminZikrRequests,
   useZikrRequestEmailDraft,
   useApproveZikrRequest,
   useRejectZikrRequest,
+  useAdminZikrLibrary,
+  useUpdateLibraryItem,
+  useDeleteLibraryItem,
+  type GlobalLibraryItem,
 } from '../hooks/useAdminZikr.js';
-import type { ZikrRequest, ZikrRequestStatus } from '../hooks/useZikrRequests.js';
+import type {
+  GlobalZikrCategory,
+  ZikrRequest,
+  ZikrRequestStatus,
+} from '../hooks/useZikrRequests.js';
 
 type ReviewMode = 'idle' | 'approving' | 'rejecting';
+
+const CATEGORY_OPTIONS: { value: GlobalZikrCategory; label: string }[] = [
+  { value: 'uncategorized', label: 'Uncategorized' },
+  { value: 'tasbih', label: 'Tasbīḥ & praise' },
+  { value: 'istighfar', label: 'Istighfār — seeking forgiveness' },
+  { value: 'salawat', label: 'Ṣalawāt upon the Prophet ﷺ' },
+  { value: 'kalimat', label: 'The weighty words' },
+  { value: 'asma', label: 'Calling on His Names' },
+  { value: 'protection', label: 'Morning · evening · protection' },
+];
 
 function RequestCard({ request }: { request: ZikrRequest }) {
   const { t } = useTranslation();
@@ -29,12 +49,14 @@ function RequestCard({ request }: { request: ZikrRequest }) {
     name: request.name,
     arabic: request.arabic ?? '',
     transliteration: '',
-    meaning: request.meaning,
+    meaning: request.meaning ?? '',
     source: request.source ?? '',
     sourceUrl: request.sourceUrl ?? '',
     grade: '',
     virtue: '',
+    category: 'uncategorized' as GlobalZikrCategory,
   });
+  const [audioAdded, setAudioAdded] = useState(false);
 
   const startReview = (type: 'approving' | 'rejecting') => {
     setMode(type);
@@ -48,6 +70,21 @@ function RequestCard({ request }: { request: ZikrRequest }) {
     setMode('idle');
     setEmailText('');
     setAdminNote('');
+    setAudioAdded(false);
+  };
+
+  // The review decision (approve/reject) always goes through regardless of
+  // the email — this only warns the admin that the requester was never
+  // actually notified, so they know to follow up.
+  const warnIfEmailFailed = (res: { emailSent: boolean }) => {
+    if (!res.emailSent) {
+      toast.error(
+        t(
+          'adminZikr.emailFailedWarning',
+          'Saved — but the email to the requester failed to send. Check System & ops health.'
+        )
+      );
+    }
   };
 
   const confirmApprove = () => {
@@ -59,14 +96,20 @@ function RequestCard({ request }: { request: ZikrRequest }) {
       !form.sourceUrl.trim()
     )
       return;
-    approve.mutate({ id: request._id, ...form, emailBody: emailText.trim() });
+    approve.mutate(
+      { id: request._id, ...form, audioAdded, emailBody: emailText.trim() },
+      { onSuccess: warnIfEmailFailed }
+    );
   };
   const confirmReject = () => {
-    reject.mutate({
-      id: request._id,
-      adminNote: adminNote.trim() || undefined,
-      emailBody: emailText.trim() || undefined,
-    });
+    reject.mutate(
+      {
+        id: request._id,
+        adminNote: adminNote.trim() || undefined,
+        emailBody: emailText.trim() || undefined,
+      },
+      { onSuccess: warnIfEmailFailed }
+    );
   };
 
   const sending = approve.isPending || reject.isPending;
@@ -101,7 +144,9 @@ function RequestCard({ request }: { request: ZikrRequest }) {
           {request.arabic}
         </p>
       )}
-      <p className="text-white/60 text-xs leading-relaxed">{request.meaning}</p>
+      {request.meaning && (
+        <p className="text-white/60 text-xs leading-relaxed">{request.meaning}</p>
+      )}
       {(request.source || request.sourceUrl) && (
         <a
           className="text-white/30 text-[10px] underline block"
@@ -112,9 +157,49 @@ function RequestCard({ request }: { request: ZikrRequest }) {
           {request.source || request.sourceUrl}
         </a>
       )}
+      {request.wantsAudio && (
+        <p className="text-brand-gold/70 text-[11px] font-bold">
+          {t('adminZikr.wantsAudio', '🔊 Requester would like an audio recitation for this')}
+          {request.status === 'approved' &&
+            (request.audioAdded
+              ? ` · ${t('adminZikr.audioDone', 'audio added')}`
+              : ` · ${t('adminZikr.audioNotYet', 'audio not added yet')}`)}
+        </p>
+      )}
+
+      {isPending && request.possibleDuplicateOf && (
+        <div className="rounded-xl bg-brand-gold/10 border border-brand-gold/20 px-3 py-2">
+          <p className="text-brand-gold text-[11px] font-bold">
+            {t('adminZikr.possibleDuplicate', 'Possible duplicate')}
+          </p>
+          <p className="text-white/50 text-[11px] mt-0.5">
+            {t('adminZikr.possibleDuplicateOf', 'Looks similar to an existing entry: "{{name}}"', {
+              name: request.possibleDuplicateOf.name,
+            })}
+            {request.possibleDuplicateOfModel === 'GlobalZikrLibraryItem' && (
+              <>
+                {' '}
+                <a
+                  className="underline"
+                  href={`/settings#zikr-lib-${request.possibleDuplicateOf._id}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {t('adminZikr.viewExisting', 'View')}
+                </a>
+              </>
+            )}
+          </p>
+        </div>
+      )}
 
       {!isPending && request.adminNote && (
         <p className="text-white/30 text-[11px] italic">Note: {request.adminNote}</p>
+      )}
+      {!isPending && request.reviewedBy && (
+        <p className="text-white/25 text-[11px]">
+          {t('adminZikr.reviewedBy', 'Reviewed by')} {request.reviewedBy}
+        </p>
       )}
 
       {isPending && mode === 'idle' && (
@@ -129,7 +214,9 @@ function RequestCard({ request }: { request: ZikrRequest }) {
             onClick={() => startReview('rejecting')}
             className="btn btn-xs btn-ghost rounded-lg text-red-400/70 hover:text-red-400"
           >
-            {t('adminZikr.reject', 'Reject')}
+            {request.possibleDuplicateOf
+              ? t('adminZikr.rejectAsDuplicate', 'Reject as duplicate')
+              : t('adminZikr.reject', 'Reject')}
           </button>
         </div>
       )}
@@ -193,6 +280,45 @@ function RequestCard({ request }: { request: ZikrRequest }) {
               onChange={(e) => setForm((f) => ({ ...f, virtue: e.target.value }))}
             />
           </div>
+          <select
+            className="select select-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+            value={form.category}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, category: e.target.value as GlobalZikrCategory }))
+            }
+          >
+            {CATEGORY_OPTIONS.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+          <label className="flex items-start gap-2 text-white/60 text-xs pt-1">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-xs mt-0.5"
+              checked={audioAdded}
+              onChange={(e) => setAudioAdded(e.target.checked)}
+            />
+            <span>
+              {t(
+                'adminZikr.audioAddedCheck',
+                'Audio recitation has been added to the app for this zikr'
+              )}
+              {request.wantsAudio && (
+                <span className="text-brand-gold/70">
+                  {' '}
+                  ({t('adminZikr.audioRequested', 'requested')})
+                </span>
+              )}
+              <span className="block text-white/30 text-[10px]">
+                {t(
+                  'adminZikr.audioAddedHint',
+                  'Adds one line about the audio above the sign-off of the email.'
+                )}
+              </span>
+            </span>
+          </label>
           <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold pt-1">
             {t('adminZikr.emailToUser', 'Email to the requester (editable)')}
           </p>
@@ -255,8 +381,161 @@ function RequestCard({ request }: { request: ZikrRequest }) {
   );
 }
 
+function LibraryItemRow({ item }: { item: GlobalLibraryItem }) {
+  const { t } = useTranslation();
+  const update = useUpdateLibraryItem();
+  const del = useDeleteLibraryItem();
+  const [editing, setEditing] = useState(false);
+  const [form, setForm] = useState({
+    name: item.name,
+    arabic: item.arabic,
+    transliteration: item.transliteration ?? '',
+    meaning: item.meaning,
+    source: item.source,
+    sourceUrl: item.sourceUrl,
+    grade: item.grade ?? '',
+    virtue: item.virtue ?? '',
+  });
+
+  const save = () => {
+    update.mutate({ id: item._id, ...form }, { onSuccess: () => setEditing(false) });
+  };
+
+  if (!editing) {
+    return (
+      <div className="flex items-start justify-between gap-3 border-b border-white/5 pb-3 last:border-0 last:pb-0">
+        <div className="min-w-0">
+          <p className="text-white font-bold text-sm">{item.name}</p>
+          <p className="text-white/40 text-xs truncate">{item.meaning}</p>
+          <p className="text-white/25 text-[10px] mt-0.5">{item.category}</p>
+        </div>
+        <div className="flex gap-2 shrink-0">
+          <button
+            onClick={() => setEditing(true)}
+            className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
+          >
+            {t('adminSadaqah.edit', 'Edit')}
+          </button>
+          <button
+            onClick={() => {
+              if (
+                confirm(
+                  t('adminZikrLibrary.confirmDelete', 'Delete this library entry permanently?')
+                )
+              )
+                del.mutate(item._id);
+            }}
+            className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300"
+          >
+            {t('adminSadaqah.delete', 'Delete')}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2 border-b border-white/5 pb-3 last:border-0 last:pb-0">
+      <input
+        className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+        placeholder="Name"
+        value={form.name}
+        onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+      />
+      <input
+        dir="rtl"
+        className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg font-serif"
+        placeholder="Arabic"
+        value={form.arabic}
+        onChange={(e) => setForm((f) => ({ ...f, arabic: e.target.value }))}
+      />
+      <input
+        className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+        placeholder="Transliteration"
+        value={form.transliteration}
+        onChange={(e) => setForm((f) => ({ ...f, transliteration: e.target.value }))}
+      />
+      <textarea
+        className="textarea textarea-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+        rows={2}
+        placeholder="Meaning"
+        value={form.meaning}
+        onChange={(e) => setForm((f) => ({ ...f, meaning: e.target.value }))}
+      />
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          placeholder="Source"
+          value={form.source}
+          onChange={(e) => setForm((f) => ({ ...f, source: e.target.value }))}
+        />
+        <input
+          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          placeholder="Source URL"
+          value={form.sourceUrl}
+          onChange={(e) => setForm((f) => ({ ...f, sourceUrl: e.target.value }))}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-2">
+        <input
+          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          placeholder="Grade"
+          value={form.grade}
+          onChange={(e) => setForm((f) => ({ ...f, grade: e.target.value }))}
+        />
+        <input
+          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          placeholder="Virtue"
+          value={form.virtue}
+          onChange={(e) => setForm((f) => ({ ...f, virtue: e.target.value }))}
+        />
+      </div>
+      <div className="flex gap-2">
+        <button
+          onClick={save}
+          disabled={update.isPending}
+          className="btn btn-xs rounded-lg bg-brand-emerald border-brand-emerald text-white font-bold"
+        >
+          {update.isPending ? '…' : t('adminSadaqah.save', 'Save')}
+        </button>
+        <button
+          onClick={() => setEditing(false)}
+          className="btn btn-xs btn-ghost rounded-lg text-white/50"
+        >
+          {t('adminZikr.cancel', 'Cancel')}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ManageLibrarySection() {
+  const { t } = useTranslation();
+  const { data: items, isLoading } = useAdminZikrLibrary();
+
+  return (
+    <section className="space-y-3">
+      <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+        {t('adminZikrLibrary.title', 'Manage library')}
+      </h2>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
+        {isLoading && <p className="text-white/30 text-sm">{t('common.loading', 'Loading…')}</p>}
+        {!isLoading && items?.length === 0 && (
+          <p className="text-white/30 text-sm">
+            {t('adminZikrLibrary.empty', 'No published library entries yet.')}
+          </p>
+        )}
+        {items?.map((item) => (
+          <LibraryItemRow key={item._id} item={item} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function AdminZikrRequests() {
   const { t } = useTranslation();
+  const isServant = useAdminStore((s) => s.role) === 'servant';
   const [filter, setFilter] = useState<ZikrRequestStatus | 'all'>('pending');
   const { data: requests, isLoading } = useAdminZikrRequests(filter === 'all' ? undefined : filter);
 
@@ -268,7 +547,7 @@ export default function AdminZikrRequests() {
         path="/admin/zikr-requests"
         index={false}
       />
-      <div className="max-w-2xl mx-auto px-4 py-6 sm:py-10 space-y-6">
+      <div className="max-w-5xl mx-auto px-6 py-6 sm:py-10 space-y-6">
         <h1 className="text-2xl font-black text-white">{t('adminZikr.title', 'Zikr Requests')}</h1>
 
         <div className="flex gap-2">
@@ -294,6 +573,8 @@ export default function AdminZikrRequests() {
             <RequestCard key={r._id} request={r} />
           ))}
         </div>
+
+        {isServant && <ManageLibrarySection />}
       </div>
     </AnimatedBackground>
   );

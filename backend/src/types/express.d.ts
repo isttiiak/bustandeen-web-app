@@ -1,4 +1,4 @@
-import type { AdminRole } from '../models/AdminAccount.js';
+import type { AdminRole, AnsarDomain } from '../models/AdminAccount.js';
 
 export {};
 
@@ -16,6 +16,10 @@ declare global {
         uid: string;
         email: string;
         role: AdminRole;
+        /** Only meaningful for role:'ansar' — which single operational area
+         * this account may touch (null for servant, which bypasses domain
+         * checks entirely via requireDomain). */
+        ansarDomain: AnsarDomain | null;
       };
     }
   }

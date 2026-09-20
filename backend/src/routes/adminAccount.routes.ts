@@ -4,6 +4,7 @@ import { validate } from '../middleware/validate.js';
 import {
   createAdminAccountSchema,
   setAdminAccountActiveSchema,
+  setAdminAccountDomainSchema,
 } from '../validation/adminAccount.schemas.js';
 import * as adminAccountController from '../controllers/adminAccount.controller.js';
 
@@ -20,6 +21,11 @@ router.patch(
   '/:id/active',
   validate(setAdminAccountActiveSchema),
   adminAccountController.setActiveHandler
+);
+router.patch(
+  '/:id/domain',
+  validate(setAdminAccountDomainSchema),
+  adminAccountController.setDomainHandler
 );
 
 export default router;

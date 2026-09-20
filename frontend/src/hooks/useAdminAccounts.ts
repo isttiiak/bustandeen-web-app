@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
-import type { AdminRole } from '../store/useAdminStore.js';
+import type { AdminRole, AnsarDomain } from '../store/useAdminStore.js';
 
 export interface AdminAccountListItem {
   id: string;
   email: string;
   displayName?: string;
   role: AdminRole;
+  ansarDomain: AnsarDomain | null;
   active: boolean;
   createdBy: string;
   createdAt: string;
@@ -36,6 +37,7 @@ export function useCreateAdminAccount() {
       password: string;
       displayName?: string;
       role: AdminRole;
+      ansarDomain?: AnsarDomain;
     }) => api.post('/api/admin/accounts', input),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
@@ -51,6 +53,19 @@ export function useSetAdminAccountActive() {
   return useMutation({
     mutationFn: ({ id, active }: { id: string; active: boolean }) =>
       api.patch(`/api/admin/accounts/${id}/active`, { active }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
+    },
+  });
+}
+
+/** Servant-only — reassigns an existing Ansar's operational area. Only ever
+ *  valid for role:'ansar' rows; the backend rejects it for a Servant row. */
+export function useSetAdminAccountDomain() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ansarDomain }: { id: string; ansarDomain: AnsarDomain }) =>
+      api.patch(`/api/admin/accounts/${id}/domain`, { ansarDomain }),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
     },

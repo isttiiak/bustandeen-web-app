@@ -9,6 +9,14 @@ import mongoose, { Document, Schema } from 'mongoose';
  * these via GET /api/zikr/library and renders them as an extra category
  * alongside the curated ZIKR_LIBRARY.
  */
+/** Same 6 category ids as the curated `frontend/src/utils/zikrLibrary.ts`
+ * (`ZIKR_LIBRARY`'s category `id`s) so the admin-managed library and the
+ * curated one share one taxonomy instead of inventing a second. An enum
+ * (not free text) avoids category-name drift between admin sessions.
+ * 'uncategorized' is the explicit bucket for anything that doesn't fit. */
+export type GlobalZikrCategory =
+  'tasbih' | 'istighfar' | 'salawat' | 'kalimat' | 'asma' | 'protection' | 'uncategorized';
+
 export interface IGlobalZikrLibraryItem extends Document {
   name: string;
   arabic: string;
@@ -18,6 +26,7 @@ export interface IGlobalZikrLibraryItem extends Document {
   sourceUrl: string;
   grade?: string;
   virtue?: string;
+  category: GlobalZikrCategory;
   requestId?: mongoose.Types.ObjectId;
   addedBy?: string;
   createdAt: Date;
@@ -33,6 +42,11 @@ const globalZikrLibraryItemSchema = new Schema<IGlobalZikrLibraryItem>(
     sourceUrl: { type: String, required: true, maxlength: 500 },
     grade: { type: String, maxlength: 200 },
     virtue: { type: String, maxlength: 1000 },
+    category: {
+      type: String,
+      enum: ['tasbih', 'istighfar', 'salawat', 'kalimat', 'asma', 'protection', 'uncategorized'],
+      default: 'uncategorized',
+    },
     requestId: { type: Schema.Types.ObjectId, ref: 'ZikrRequest' },
     addedBy: { type: String },
   },

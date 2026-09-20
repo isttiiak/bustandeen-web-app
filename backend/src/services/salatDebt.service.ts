@@ -341,11 +341,14 @@ export async function getDebtHistory(
     return buckets;
   }
 
-  const totalWeeks = Math.min(12, Math.ceil(days / 7));
+  // Up to 12 buckets covering the whole window (7-day weeks up to 12 weeks,
+  // wider buckets beyond that) — see the same logic in getSalatAnalytics.
+  const bucketDays = Math.max(7, Math.ceil(days / 12));
+  const totalWeeks = Math.ceil(days / bucketDays);
   const weeks: SalatDebtHistoryWeek[] = [];
   for (let w = totalWeeks - 1; w >= 0; w--) {
-    const weekEnd = shiftDateStr(end, -(w * 7));
-    const weekStartRaw = shiftDateStr(weekEnd, -6);
+    const weekEnd = shiftDateStr(end, -(w * bucketDays));
+    const weekStartRaw = shiftDateStr(weekEnd, -(bucketDays - 1));
     const weekStart = weekStartRaw < start ? start : weekStartRaw;
     let accumulated = 0;
     let paidBack = 0;

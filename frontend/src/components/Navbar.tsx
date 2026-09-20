@@ -40,6 +40,7 @@ const PAGE_KEYS: Record<string, string> = {
   '/friends': 'nav.friends',
   '/settings': 'nav.settings',
   '/profile': 'nav.myProfile',
+  '/naseeh': 'nav.naseeh',
 };
 const PAGE_META: Record<string, { title: string; emoji: string }> = {
   '/zikr': { title: 'Zikr Counter', emoji: '📿' },
@@ -58,6 +59,7 @@ const PAGE_META: Record<string, { title: string; emoji: string }> = {
   '/feedback': { title: 'Feedback', emoji: '💬' },
   '/contact': { title: 'Contact Us', emoji: '📨' },
   '/profile': { title: 'My Profile', emoji: '👤' },
+  '/naseeh': { title: 'Naseeh', emoji: '✨' },
 };
 
 // Maps each page to its logical parent for the back button
@@ -78,6 +80,7 @@ const PARENT_ROUTES: Record<string, string> = {
   '/feedback': '/',
   '/contact': '/',
   '/profile': '/',
+  '/naseeh': '/',
 };
 
 // ── Typewriter greeting ───────────────────────────────────────────────────────
@@ -119,7 +122,7 @@ export default function Navbar() {
   /** translated page title with English fallback */
   const pageTitle = (path: string, fallback: string) =>
     PAGE_KEYS[path] ? t(PAGE_KEYS[path]!, { defaultValue: fallback }) : fallback;
-  const { user, setUser } = useAuthStore();
+  const { user, setUser, aiEnabled } = useAuthStore();
   const resetAll = useZikrStore((s) => s.resetAll);
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -378,6 +381,18 @@ export default function Navbar() {
                         <Cog6ToothIcon className="w-4 h-4 text-white/40" />
                         {t('nav.settings')}
                       </Link>
+                      {aiEnabled && (
+                        <Link
+                          to="/naseeh"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-emerald/10 text-sm transition-colors"
+                        >
+                          <span className="w-4 h-4 grid place-items-center text-sm leading-none">
+                            ✨
+                          </span>
+                          {t('nav.naseeh', 'Naseeh')}
+                        </Link>
+                      )}
                       <Link
                         to="/about"
                         onClick={() => setDropdownOpen(false)}

@@ -11,6 +11,7 @@ import {
   editCycleLogSchema,
   partnerSyncSchema,
   pregnancySchema,
+  bodyStatsSchema,
 } from '../validation/cycle.schemas.js';
 
 const router = Router();
@@ -52,6 +53,17 @@ router.patch('/pregnancy', requireAuth, validate(pregnancySchema), cycleControll
 router.patch('/logs/:logId', requireAuth, validate(editCycleLogSchema), cycleController.editLog);
 
 router.delete('/logs/:logId', requireAuth, cycleController.deleteLog);
+
+// GET /api/cycle/body-stats — encrypted height/weight + computed BMI
+router.get('/body-stats', requireAuth, cycleController.getBodyStats);
+
+// PATCH /api/cycle/body-stats — save height and/or weight (encrypted at rest)
+router.patch(
+  '/body-stats',
+  requireAuth,
+  validate(bodyStatsSchema),
+  cycleController.updateBodyStats
+);
 
 // DELETE /api/cycle/all — remove everything (Settings "Your data")
 router.delete('/all', requireAuth, cycleController.deleteAll);

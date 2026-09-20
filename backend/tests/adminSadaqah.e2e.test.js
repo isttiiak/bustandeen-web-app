@@ -59,6 +59,7 @@ describe('Sadaqah admin API', () => {
       firebaseUid: 'admin-uid-staff',
       email: STAFF_EMAIL,
       role: 'ansar',
+      ansarDomain: 'sadaqah',
       createdBy: 'test-seed',
     });
     ownerToken = fakeJwt({ uid: 'admin-uid-owner', email: ADMIN_EMAIL });
@@ -110,7 +111,7 @@ describe('Sadaqah admin API', () => {
     expect(found).toBeTruthy();
   });
 
-  test('email draft: verified draft includes payment details, rejected draft has a reason placeholder', async () => {
+  test('email draft: verified draft points to the attached receipt, rejected draft has a reason placeholder', async () => {
     const donation = validDonation();
     const found = await submitAndFindPending(donation);
 
@@ -120,16 +121,17 @@ describe('Sadaqah admin API', () => {
       .set('X-Admin-Token', ownerToken);
     expect(verifiedDraft.status).toBe(200);
     expect(verifiedDraft.body.subject).toMatch(/^Re: /);
-    expect(verifiedDraft.body.body).toContain(donation.transactionId.toUpperCase());
     expect(verifiedDraft.body.body).toContain(String(donation.amount));
-    expect(verifiedDraft.body.body).toMatch(/Payment details/i);
+    // Payment details now live on the attached signed PDF, not in the body.
+    expect(verifiedDraft.body.body).toMatch(/signed receipt is attached/i);
+    expect(verifiedDraft.body.body).not.toMatch(/For your records/i);
 
     const rejectedDraft = await request(app)
       .get(`/api/admin/sadaqah/${found._id}/email-draft`)
       .query({ type: 'rejected' })
       .set('X-Admin-Token', ownerToken);
     expect(rejectedDraft.status).toBe(200);
-    expect(rejectedDraft.body.body).toMatch(/\[Let the donor know/i);
+    expect(rejectedDraft.body.body).toMatch(/\[Tell the donor/i);
   });
 
   test('verify requires a non-empty emailBody', async () => {
@@ -153,6 +155,12 @@ describe('Sadaqah admin API', () => {
     expect(verify.status).toBe(200);
     expect(verify.body.donation.status).toBe('verified');
     expect(verify.body.donation.verifiedBy).toBe(ADMIN_EMAIL);
+    // SMTP is unconfigured in the test env (see adminComposeEmail.e2e's
+    // equivalent note) — sendMail no-ops and returns null. Verifying is a
+    // real administrative fact independent of the notification email, so
+    // the status change must still go through; the failed send is only
+    // surfaced via this flag, never by rolling back the verification.
+    expect(verify.body.emailSent).toBe(false);
 
     const stats = await request(app).get('/api/sadaqah/stats');
     expect(stats.body.totalVerifiedAmount).toBe(donation.amount);
@@ -198,6 +206,9 @@ describe('Sadaqah admin API', () => {
     expect(reject.status).toBe(200);
     expect(reject.body.donation.status).toBe('rejected');
     expect(reject.body.donation.rejectionReason).toMatch(/no matching/i);
+    // Same as verify above — the rejection itself must persist regardless of
+    // whether the notification email actually sent.
+    expect(reject.body.emailSent).toBe(false);
 
     const after = await request(app).get('/api/sadaqah/stats');
     expect(after.body.totalVerifiedAmount).toBe(before.body.totalVerifiedAmount);
@@ -241,49 +252,89 @@ describe('Sadaqah admin API', () => {
     expect(found.showNamePublicly).toBe(false);
   });
 
-  test('quarterly breakdown: upsert creates then updates an entry, delete removes it (owner only)', async () => {
-    const upsert1 = await request(app)
-      .patch('/api/admin/sadaqah/quarterly/2026-Q3')
+  // 2026-Q1 is used deliberately — every other test in this file verifies
+  // donations dated "today" (whatever quarter the suite happens to run in),
+  // so a quarter nobody else touches keeps these sum assertions exact rather
+  // than depending on how many other tests ran first.
+  test('quarterly: preview computes fresh from verified donations + expenses, publish stores it, unpublish/delete work (owner only)', async () => {
+    const quarter = '2026-Q1';
+    const donation = validDonation({ transactionDate: '2026-02-15', amount: 1000 });
+    const found = await submitAndFindPending(donation);
+    await request(app)
+      .patch(`/api/admin/sadaqah/${found._id}/verify`)
       .set('X-Admin-Token', ownerToken)
-      .send({ received: 1000, spent: 200, notes: 'Server costs' });
-    expect(upsert1.status).toBe(200);
-    expect(
-      upsert1.body.stats.quarterlyBreakdown.find((q) => q.quarter === '2026-Q3')
-    ).toMatchObject({ received: 1000, spent: 200, notes: 'Server costs' });
+      .send({ emailBody: 'Verified.' });
+    await request(app)
+      .post('/api/admin/sadaqah/expenses')
+      .set('X-Admin-Token', ownerToken)
+      .send({ date: '2026-02-20', amount: 200, description: 'Test quarter expense' });
 
-    const upsert2 = await request(app)
-      .patch('/api/admin/sadaqah/quarterly/2026-Q3')
+    const preview = await request(app)
+      .get(`/api/admin/sadaqah/quarterly/${quarter}/preview`)
+      .set('X-Admin-Token', ownerToken);
+    expect(preview.status).toBe(200);
+    expect(preview.body.received).toBe(1000);
+    expect(preview.body.spent).toBe(200);
+
+    const publish = await request(app)
+      .post(`/api/admin/sadaqah/quarterly/${quarter}/publish`)
       .set('X-Admin-Token', ownerToken)
-      .send({ spent: 350 });
+      .send({ notes: 'Server costs' });
+    expect(publish.status).toBe(200);
+    expect(publish.body.stats.quarterlyBreakdown.find((q) => q.quarter === quarter)).toMatchObject({
+      received: 1000,
+      spent: 200,
+      notes: 'Server costs',
+      published: true,
+    });
+
+    const publicStats = await request(app).get('/api/sadaqah/stats');
+    expect(publicStats.body.quarterlyBreakdown.find((q) => q.quarter === quarter)).toBeTruthy();
+
+    const unpublish = await request(app)
+      .patch(`/api/admin/sadaqah/quarterly/${quarter}/unpublish`)
+      .set('X-Admin-Token', ownerToken);
+    expect(unpublish.status).toBe(200);
+
+    const publicStatsAfterUnpublish = await request(app).get('/api/sadaqah/stats');
     expect(
-      upsert2.body.stats.quarterlyBreakdown.find((q) => q.quarter === '2026-Q3')
-    ).toMatchObject({ received: 1000, spent: 350, notes: 'Server costs' });
+      publicStatsAfterUnpublish.body.quarterlyBreakdown.find((q) => q.quarter === quarter)
+    ).toBeUndefined();
 
     const del = await request(app)
-      .delete('/api/admin/sadaqah/quarterly/2026-Q3')
+      .delete(`/api/admin/sadaqah/quarterly/${quarter}`)
       .set('X-Admin-Token', ownerToken);
     expect(del.status).toBe(200);
-    expect(del.body.stats.quarterlyBreakdown.find((q) => q.quarter === '2026-Q3')).toBeUndefined();
+    expect(del.body.stats.quarterlyBreakdown.find((q) => q.quarter === quarter)).toBeUndefined();
   });
 
-  test('a non-owner admin cannot edit or delete quarterly stats', async () => {
-    const upsert = await request(app)
-      .patch('/api/admin/sadaqah/quarterly/2026-Q4')
+  test('a non-owner admin cannot preview, publish, unpublish, or delete quarterly stats', async () => {
+    const preview = await request(app)
+      .get('/api/admin/sadaqah/quarterly/2026-Q1/preview')
+      .set('X-Admin-Token', staffToken);
+    expect(preview.status).toBe(403);
+
+    const publish = await request(app)
+      .post('/api/admin/sadaqah/quarterly/2026-Q1/publish')
       .set('X-Admin-Token', staffToken)
-      .send({ received: 100 });
-    expect(upsert.status).toBe(403);
+      .send({});
+    expect(publish.status).toBe(403);
+
+    const unpublish = await request(app)
+      .patch('/api/admin/sadaqah/quarterly/2026-Q1/unpublish')
+      .set('X-Admin-Token', staffToken);
+    expect(unpublish.status).toBe(403);
 
     const del = await request(app)
-      .delete('/api/admin/sadaqah/quarterly/2026-Q4')
+      .delete('/api/admin/sadaqah/quarterly/2026-Q1')
       .set('X-Admin-Token', staffToken);
     expect(del.status).toBe(403);
   });
 
   test('rejects a malformed quarter key', async () => {
     const res = await request(app)
-      .patch('/api/admin/sadaqah/quarterly/not-a-quarter')
-      .set('X-Admin-Token', ownerToken)
-      .send({ received: 100 });
+      .get('/api/admin/sadaqah/quarterly/not-a-quarter/preview')
+      .set('X-Admin-Token', ownerToken);
     expect(res.status).toBe(400);
   });
 

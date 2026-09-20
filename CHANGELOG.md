@@ -2,6 +2,432 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.52.0 - Signed sadaqah receipts and "Download all my data" - 2026-09-20
+
+### Added
+
+- **Signed PDF receipt for every verified sadaqah.** When a donation is verified, the confirmation email now carries a colour, vector-drawn receipt (amount, who gave, on behalf of, transaction ID, dates, verified seal) set in the same El Messiri title font as the app, with `sadaqah@bustandeen.com` and "Dhaka, Bangladesh" in the footer. The email text no longer repeats the payment details; it points to the attachment.
+- **Tamper-evident signature and QR check.** Each receipt carries a signature over its amount, transaction ID and verification time, and a QR code to a public page (`/sadaqah/verify/...`) that says whether the receipt is genuine. A changed amount or ID no longer verifies. It shows only the receipt number, amount and date, never the name or transaction ID.
+- **Admins can download a receipt** from the Sadaqah admin submissions table ("Receipt PDF" on verified rows).
+- **Settings > "Download all my data".** One JSON with everything held about you across every feature (profile, zikr, salat and kaza, fasting, Quran, hifz, Rayhanah, friends as counts, messages you sent us, your sadaqah submissions). It is a read-only copy for your own records; the existing "Full backup" is still the one to restore from.
+
+### Notes
+
+- New optional env var `RECEIPT_SIGNING_KEY`. If unset, the key is derived from `FIELD_ENCRYPTION_KEY`, so nothing needs to be set for this to work. Once receipts are sent, do not change it or older receipts stop verifying.
+- This is an HMAC signature checked by Bustandeen, not a certificate signature that a PDF reader marks as "signed".
+
+## v5.51.2 - Friends: honest Noor bars and clearer explanation - 2026-09-20
+
+### Fixed
+
+- **Noor bars now show Noor out of 100.** They were scaled to the leader, so the top friend always had a full bar even at 33 Noor (Today and This week).
+
+## v5.51.4 - Friends: Noor explanation - 2026-09-20
+
+### Changed
+
+- **"What is Noor" explains the weekly average and "usually".** The week line says days with nothing count 0 and what "active X of Y days" means. The "usually" line says it is the average of the last 14 active days (shown from 3) and that bars show Noor out of 100.
+
+_v5.51.3 was a version bump only, with no code change._
+
+## v5.51.1 - Friends: the "This week" board now shows week numbers - 2026-09-20
+
+### Fixed
+
+- **"This week" no longer shows today's chips under a weekly Noor.** The score was the Friday-to-now daily average but the row still showed today's prayers, dhikr and fasting, which made the number look random. On "This week" each row now shows the week so far: prayers done, dhikr total, fasts, āyāt read, plus "daily average · active X of Y days" under the bar. The streak chip is unchanged. "Today" is unchanged.
+- Sisters whose days were excused by the cycle still look like any other active day in the weekly totals (same substitution as today's chips).
+
+## v5.51.0 - Zikr: own-list consent, audio tracker removed, istighfar sources fixed - 2026-09-20
+
+### Added
+
+- **Two ways to add a zikr in Settings.** The request form now has "Request for the library" (reviewed, shared with everyone) and "Add to my list only". The second opens a consent box: the zikr is added privately, nobody reviews it, and the user takes responsibility for it. The box also offers "Make request for review" instead, and a red-bordered cross to back out.
+- **Audio status on approval.** When approving a zikr request the admin sees whether the user asked for audio and can tick "audio has been added". If ticked, the approval email gets one extra line saying so. Approved requests show whether audio was added. The admin notification also says when audio was requested.
+- **Custom zikr deletions now sync across devices.** The server's list is the source of truth for non-built-in zikr, so a custom type removed on one device no longer comes back on another.
+
+### Changed
+
+- **The counter's "+" form is now the same form as Settings.** Same fields, same "Request for the library" / "Add to my list only" buttons and the same consent box (one shared component).
+- **Counter header row fits small screens.** The name truncates, and the dropdown, "+" and audio buttons stay on one line at 320px. The edit/remove list moved to the top of the counter's settings drawer.
+- **"Log missed counts" no longer lets you create a new zikr.** Pick from your existing list only.
+- **Two istighfar entries corrected.** "Astaghfirullahal-Azim" used the wording of Tirmidhi 3577 under the Abu Dawud 1517 reference (which has no "al-Azim"). There are now two entries: Abu Dawud 1517 without "al-Azim" (Sahih), and the full "Astaghfirullahal-Azim alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh" from Tirmidhi 3577 (Hasan). Anyone who had the old name keeps it and sees the new card.
+
+### Removed
+
+- **Admin "Zikr audio tracker"**, its API routes, model and the `audioUrl` fields. The wrong link stored for Astaghfirullahal-Azim was deleted from the database (`npx tsx src/scripts/removeZikrAudioLinks.ts`, already run once). Audio stays bundled in the app.
+
+## v5.50.1 - Update emails greet everyone, not one name - 2026-09-21
+
+### Changed
+
+- **Update emails no longer use `{name}`.** A bulk update goes to a whole group, so every recipient gets the same message, starting from "Assalamu alaikum, Bustandeen family," followed by the shared closing lines.
+
+## v5.50.0 - Custom recipients for update emails, Broadcast open to Ansars - 2026-09-21
+
+### Added
+
+- **Custom recipients** on the Update emails tab: switch from "Choose a group" to "Custom recipients" and type addresses separated by commas (handy for test sends and one-off mails). Addresses are checked and de-duplicated, an address that belongs to an account borrows its first name for `{name}`, and the send is recorded in the history like any other.
+
+### Changed
+
+- **Broadcast is now open to both Servant and Ansar accounts** (the in-app banner and the update emails, including the nav link and the admin home card).
+- **Removed the template dropdown** from Update emails. Every message now starts from the standard greeting and closing lines instead, which is all a one-off update needs.
+
+## v5.49.0 - Update emails from the admin panel, persistent broadcast banner, Noor tweaks - 2026-09-20
+
+### Added
+
+- **Update emails (admin > Broadcast > "Update emails" tab, Servant only).** Send an update from ansar@bustandeen.com to brothers, sisters or all, with a choice for accounts that have no gender set (skip, include all, or pick from a list). Templates fill the audience, subject and a bilingual message (Noor v2 for brothers and for sisters); the shared closing lines and "Nourish Your Deen" are added automatically and `{name}` becomes each person's first name. Sending happens in small chunks with a progress bar, and every send is kept in a history with per-recipient status, the full text and a "Retry failed" button. Disabled accounts are never emailed.
+
+### Changed
+
+- **Broadcast banner no longer disappears forever on one tap.** Crossing it hides it only until the next reload; after three crossings it rests for 24 hours and comes back. It now shows the heading, a couple of fading lines of the message and a "See details" link that opens the full text with **Cancel** and **Close permanently** (the only way to remove it for good, per device). Works on the installed mobile app where only the heading used to fit.
+- **Noor:** hifz review is removed from every calculation (extras are now a completed fast, nafl prayer, ṣalawāt/istighfār; on excused days ṣalawāt/istighfār is worth 10). Ties (everyone is 0 at the start of a day) are now broken by usual Noor and then streak, so a 72-day streak no longer sits below someone who has just begun. The prayer chip reads x/5.
+- **"What is Noor" and the About page no longer mention Rayhanah to brothers** (the public Privacy page still explains it).
+
+## v5.48.0 - Noor v2, weekly leaderboard, updated Privacy and About - 2026-09-20
+
+### Changed
+
+- **Noor v2** (one formula for today, past days, the weekly view and the all-time total). A day now starts at 0 for everyone and only goes up.
+  - Prayers 50 (10 per fard, not pro-rated by the clock, so the score no longer falls as prayer times pass), zikr 15 and Quran 15 (against your own daily goals), steadiness 10, extras 10.
+  - Steadiness is 1 per day of your active run up to 10, and only once you have done something today, so a long streak is no longer a free head start. Extras are 5 each, best two of: a completed fast, nafl prayer, hifz review, ṣalawāt/istighfār. 100 is reachable without fasting; an "intended" fast no longer scores.
+  - Excused (Rayhanah) days move the prayer weight to zikr 40, Quran 40, steadiness 10, extras 10 (privacy behaviour unchanged).
+  - Ties are broken by acts done today, not by streak. All-time Noor is recomputed with the same formula, so numbers shift once.
+- **Leaderboard:** new Today / This week toggle (week = average daily Noor since Friday, a day with nothing counts 0), and each row shows "above their usual" (or their usual) so everyone races their own best.
+- **Privacy Policy rewritten** (the last version was July 2025): what is stored now (timing data, Rayhanah encryption and body stats, sadaqah details), what friends see (the chips, the opt-in cycle yes/no), the optional Naseeh AI and exactly what it sends, third-party services, retention, and your controls. English and Bengali.
+- **About page** lists Hifz, Rayhanah and Naseeh and the current Noor description.
+
+## v5.47.0 - Offline listening timer, Rayhanah cycle page tidy-up, leaderboard chips - 2026-09-20
+
+### Fixed
+
+- **Listening offline no longer runs the session timer.** In the installed app with no connection, pressing Play left the button buffering forever but the session clock kept counting and a session appeared in history. Time now only counts while sound is actually playing (not while buffering, stalled, errored or after a rejected play).
+- **"5/0 prayers" on the leaderboard.** Between midnight and Fajr the tracking day is still yesterday, but the clock said no prayer was due yet. All five are now due for that day, and the chip can no longer show fewer prayers due than done.
+- **Friends who share their cycle status** no longer show the prayer and fasting chips (they were paused/synthetic for her and only confusing).
+
+### Changed
+
+- **Rayhanah Cycle page**: madhab choice and discreet mode moved into the settings drawer; the cycle history list and the three average/period/cycles KPI cards were removed (Analytics has them); "Your fiqh companion" is now at the bottom of the page.
+- **Cycle history on Analytics** gained the edit button (adjust dates, or clear the end date to reopen a cycle) beside delete. The edit dialog is now a shared component.
+
+## v5.46.0 - Audit of the v5.43-5.45 batch: analytics ranges, session history, Rayhanah settings, quick log - 2026-09-20
+
+A second pass over everything added in v5.43.0 to v5.45.0 (whose changelog entries were never written; that work is summarised at the bottom). Logic errors found and fixed:
+
+### Fixed
+
+- **Salat analytics range now behaves like a real window.**
+  - Debt chart followed "today" instead of the selected period, so a past month charted the wrong days. It now ends on the period's last day.
+  - New accounts were graded on days before they existed (a fresh account looked like hundreds of missed prayers on 1y). Analytics now start at account creation, first log or last reset, whichever is latest.
+  - The 90d / 1y views only ever showed their last 12 weeks. Trend charts now use up to 12 buckets that cover the whole window.
+  - Added 7d and All time (the server accepted at most 365 days). The reset note showed raw `{{actual}}` placeholders and is now filled in.
+- **Quran analytics "All time" returned an error** (the request asked for 3650 days, the API allowed 365). The page now asks for an explicit from/to window, so a past month is that month and all-time is charted per month. The "Time of day" card no longer carries the "Quran sessions" title.
+- **Listening session showed 7:06 AM to 10:30 AM for 4 minutes** after falling asleep with audio playing. The end time was the moment the page was left, not the last moment audio actually played. Sessions now end at the last active second.
+- **Zikr session history and manual logs.**
+  - "Log missed counts" no longer pretends to happen at 12:00 pm. Those counts are stored as untimed manual entries: they count for the day and appear as one "Manual log" row, but never as a clock time and never in the time-of-day chart.
+  - Tasbih and Ayatul Kursi added automatically by the salat tracker (and "set count" corrections) count toward totals but are no longer logged as a zikr session, so ticking 303 zikr after salat no longer looks like a burst of counting.
+  - Sessions record when tapping really began and ended instead of when the request was sent, and a failed sync retries on its own and when the app returns to the foreground (installed full-screen use could leave taps unsent until the next tap).
+- **Quick log accuracy.** Counts land in the tracking day the note is about (Fajr-aware), duplicate dhikr lines merge, names match the user's existing dhikr case-insensitively, and a brand-new name is flagged "new dhikr" in the preview. Re-marking a prayer already done no longer wipes its tasbih / Ayatul Kursi ticks or timing. "Yesterday" / "last night" is understood (with a Today / Yesterday switch in the preview), "1 juz" is about 208 ayat instead of 1 page, and "half a page" is 5 ayat instead of 10. The floating button is hidden on the zikr counter so it can't be hit mid-count.
+- **Missing translations.** About 30 strings had no entry in either language and fell back to English (zikr analytics stat cards and headings, Naseeh page, BMI card, salat journey title). Salat chart info text updated for the new bucketing, in Bengali too.
+
+### Added
+
+- **Rayhanah settings drawer** (shared by the Cycle and Analytics pages): height and weight (metric or ft/lbs, remembered), remove-my-data button, madhab, and a switch to hide the BMI card. Height and weight stay AES-256-GCM encrypted; clearing removes the ciphertext. BMI card notes that BMI isn't reliable in pregnancy, and its category wording is gentler.
+- **Quran analytics KPIs:** time reading, time listening, sessions (read / listen) and active days for the selected range. The range picker (this month by default, last 30 days, all time, any month) now drives the chart and the KPIs.
+- **Zikr session history note** explaining what is and isn't a timed session.
+- New regression tests for session/manual rules, salat range floor and all-time window, Quran range totals and quick-log commit/parse.
+
+### Summary of v5.43.0 - v5.45.0 (previously unlogged)
+
+- v5.43.0: Rayhanah back/forward day navigation for "How are you today?" during an active period; encrypted height/weight (BMI) storage; Quran range picker and idle-session note.
+- v5.44.0: dedicated Naseeh AI page, floating quick-log button, ⓘ explanations on Salat, Zikr and Quran charts with Bengali translations.
+- v5.45.0: right-side drawer for BMI, BMI card in Rayhanah analytics, Naseeh moved to the profile menu and removed from Home.
+
+## v5.42.3 - Reading timer pauses while the share modal is open - 2026-09-19
+
+### Changed
+
+- **Designing an āyah share card no longer counts as reading time.** The Quran Reader's session timer now pauses while the share modal is open and resumes when it closes. The reading-session hook gained a `paused` option for this.
+
+## v5.42.2 - Āyah share card: long āyahs fit the frame - 2026-09-19
+
+### Fixed
+
+- **Long āyahs (e.g. 2:282) no longer end up tiny, cut off and lost in empty space.** The card now measures its own text and fits it to the frame instead of guessing from character counts. The Arabic is always shown in full and as large as fits. If everything can't fit, it keeps the Arabic plus the first translation (dropping transliteration and extra translations), and only then trims the translation with a fade. Translations keep a readable minimum size even when the Arabic has to shrink. Short and medium āyahs are unchanged.
+
+## v5.42.1 - Founder mailbox moved to Email Istiak, sync paused - 2026-09-19
+
+### Changed
+
+- **Founder mailbox moved** from the Feedback page to the Email Istiak (compose) page as a "Founder mailbox" tab. The Feedback page is back to app-form messages only.
+- **Mailbox sync is now off by default.** Zoho's free plan has no IMAP, so nothing connects to Zoho unless `MAILBOX_SYNC_ENABLED=1` is set on the server. While off, the tab shows a "paused" notice and lists only what was already synced. To be enabled once a paid Zoho plan is added.
+
+## v5.42.0 - Founder mailbox sync + calmer email copy - 2026-09-19
+
+### Added
+
+- **Founder mailbox sync.** Mail sent to istiak@bustandeen.com from any outside client now shows up in the admin Feedback panel under a new Servant-only "Founder mailbox" tab. New mail is pulled over IMAP when the tab opens or on "Sync now", deduplicated by Message-ID, with quoted reply history trimmed. Replies are sent from istiak@ and thread correctly in the sender's mail client; Archive, Mark replied and Delete (panel copy only) work as on app forms. Mail that replies inside one of our own feedback threads is flagged. Needs IMAP enabled on the Zoho account; uses `ISTIAK_IMAP_USER`/`ISTIAK_IMAP_PASS` (falls back to the `ISTIAK_SMTP_*` pair) and optional `ZOHO_IMAP_HOST`.
+
+### Changed
+
+- **All predefined emails rewritten** in a calmer, warmer, more personal voice (donation received/verified/rejected, donor appreciation, zikr request received/approved/rejected/duplicate, feedback/contact received, welcome, re-engagement). No em dashes, and every one now closes with "Nourish Your Deen". The zikr library link is inserted above the sign-off so the tagline stays last. Subjects lost their dashes too (existing threads are unaffected, they thread by headers).
+
+## v5.41.0 - Āyah share card: design studio - 2026-09-19
+
+### Added
+
+- **Background graphics.** Six tiled/radiating patterns (Star, Lattice, Dots, Waves, Rays, None) and six decorations (Frame, Corners, Arch, Mosque skyline, Crescent and stars, None), each independent, with a Subtle/Medium/Bold strength control. Drawn as inline SVG in the theme accent so image capture stays faithful.
+- **More themes and a custom colour.** Four new themes (Ocean, Rose, Forest and a light Ivory) plus a colour picker that builds a dark theme from any accent.
+- **Card shapes.** Square (1080×1080), Portrait (1080×1350) and Story (1080×1920). Font sizing and line limits adapt to the frame so long āyahs still fit.
+- **"Surprise me"** picks a random theme, pattern, decoration and strength.
+- **Remembered design.** The whole combination is saved on the device (the old theme-only setting is carried over).
+
+### Changed
+
+- The āyah reference is now a pill badge in the theme accent.
+- Bengali translations use a Bengali-first font stack with slightly larger text and looser line height.
+- A translation that gets cut off now fades out on its last line instead of ending in a bare ellipsis.
+
+## v5.40.2 - PWA polish: colours, iOS home-screen support, service-worker file fallback - 2026-09-19
+
+### Fixed
+
+- **Mismatched PWA colours.** The manifest's `theme_color`/`background_color` were leftovers from an older design (dark green / near-black) while the app itself paints `#1a1812`, so installed users saw the wrong colour on the install splash screen and standalone title bar. Both now use `#1a1812`.
+- **iOS "Add to Home Screen".** Added the apple-touch-icon, standalone/web-app meta tags, app title and an opaque status bar. Without them iOS used a page screenshot as the icon and opened in a browser-like frame.
+- **Service worker returned the app shell for real static files.** For anyone with the worker installed, opening `sitemap.xml`, `robots.txt`, `llms.txt` or the Search Console verification file in a browser showed the app instead of the file. Navigations to any path with a file extension now bypass the SPA fallback. Crawlers don't run service workers, so search indexing was never affected.
+
+### Notes
+
+- A responsive audit of ~45 pages at 320px (public and signed-in) found no horizontal overflow or clipped layouts; no layout changes were needed.
+
+## v5.40.1 - Fix: Home page Zakat Calculator used the wrong UI - 2026-09-18
+
+### Fixed
+
+- The Home page's "Islamic Library" row linked its Zakat Calculator card straight to the public `/zakat-calculator` SEO page, so it rendered with that page's own SEO-tree chrome (different header/footer, different styling) instead of the app's normal UI - inconsistent with the other three cards, which already had proper in-app versions. Added `/library/zakat-calculator`, an app-chrome page (`ZikrLibrary`-style `Navbar`/`Footer`/`AnimatedBackground`, `noindex`) with the exact same calculator logic and the same vetted copy (reused directly from `seo/locales/chrome.ts`'s `zakat` object, not re-translated) - same content, right chrome. Home page card now points there instead.
+
+## v5.40.0 - SEO fixes from real GSC/GA4 query data - 2026-09-18
+
+### Added
+
+- **`/ramadan-calendar` index page** (en/bn/ar) - a proper hub for the broad "ramadan calendar {year}" search term, which Search Console showed getting real impressions (15 in the last 28 days) with nowhere good to land - every existing page was a specific city, none of them a sensible match for a bare "ramadan calendar 2027" query. Search box (client-side, filters the same 1,445-city dataset the per-city pages use) plus a curated popular-cities shortlist. Own sitemap entry, hreflang, JSON-LD.
+- **Qibla FAQ entry on "What is a Qibla compass"** (en/bn/ar) - the Performance report showed real impressions for `qibla compass`, `kaaba compass`, `mecca compass`, `kaaba direction`, `direction kaaba compass` etc., all landing around position 70-99 (page 7-10) despite the page already targeting "Qibla direction" reasonably well. Added an explicit FAQ answer using those synonyms so the page has a direct on-page match for that query family, on every `/qibla` and `/qibla/{city}` page.
+- **Ramadan Calendar added to the SEO footer nav** (`Layout.tsx`) - it was missing entirely from the cross-link row every other SEO page has (prayer times, qibla, du'as, adhkar, hijri converter, asma ul husna, zakat calculator all linked each other; ramadan-calendar pages linked nowhere). Better internal linking helps Google discover and re-crawl the ~4,300 ramadan-calendar city pages faster.
+
+### Notes
+
+- Full read of the GSC Performance/Coverage exports and the GA4 landing-page cut: see `archive/seo-live-links.md` note and project memory for the complete findings (country/device split, which queries are actually landing clicks, why most of the "not indexed" bulk is just new-domain patience, and what's NOT fixable by a content change - competitive broad terms like "qibla compass" need authority/backlinks over time, not more on-page tweaks).
+
+## v5.39.0 - In-app Du'a/Adhkar/Asma ul Husna library + home page utilities row - 2026-09-18
+
+### Added
+
+- **`/library/duas`, `/library/adhkar`, `/library/asma-ul-husna`** - authenticated-app-chrome versions of the public SEO content (`Navbar`/`Footer`/`AnimatedBackground`, not the SEO tree's standalone `Layout.tsx`), reusing the exact same verified data (`seo/content/duas.ts`, `adhkar.ts`, `asmaUlHusna.ts`) so there's a single source of truth for the content itself. All three are search-friendly-free (`noindex` via `<Seo index={false} />`) - the public `/duas`, `/adhkar/*`, `/asma-ul-husna` pages stay the only ones meant to rank.
+  - Du'a Library: search + accordion, expands to Arabic/transliteration/translation/source per situation.
+  - Adhkar: morning/evening toggle, plus a tap-to-count badge per item (local session state only, not persisted or wired into the zikr pipeline - that's the separate, bigger "guided adhkar session" item still open in TODO-v3.md).
+  - 99 Names of Allah: search + card grid, same content and sourcing note as the public page.
+- **Home page "Islamic Library" section** - a new 2x2 card row (Du'a Library, Adhkar, 99 Names of Allah, Zakat Calculator) placed directly after the existing Friends & Leaderboard card, per the user's requested placement. The Zakat Calculator card links straight to the existing public `/zakat-calculator` (already fully interactive - no need for a second in-app copy).
+
+### Notes
+
+- Closes out the "in-app hub" + "one-stop utilities row" work deferred from v5.38.0.
+
+## v5.38.0 - New tagline, Zakat calculator and Asma ul Husna SEO pages - 2026-09-18
+
+### Changed
+
+- **New tagline: "Nourish Your Deen"**, replacing "Grow Your Garden of Good Deeds" across every surface that carried it (page `<title>`, OG/Twitter meta, JSON-LD, the generated OG image, both `en`/`bn` locale files, the SEO tree's own chrome strings in all three languages, About/AuthAction copy, and the `connectPreview` fallback + its test). Bengali/Arabic translations use nurture-oriented verbs (`সমৃদ্ধ করুন` / `نمِّ دينك`) rather than a literal "garden" translation.
+- **No more em dashes in new copy** - going forward, user-facing text uses a plain hyphen or no dash at all. Applied across everything touched this session; the ~2,268 pre-existing em dashes elsewhere in the app are a separate, deliberately out-of-scope cleanup (see TODO-v3.md).
+
+### Added
+
+- **`/zakat-calculator`** (en/bn/ar) - nisab by gold or silver standard (reader's choice, with the Hanafi-vs-majority reasoning spelled out), a personal-use-jewelry disclosure toggle, an assets/debts form (cash, gold, silver, business inventory, receivables, liabilities), and a ḥawl tracker that computes the actual Hijri-calendar anniversary of a given start date (reusing `toHijri`/`hijriToGregorian` from the SEO tree's `calc.ts`) rather than a rough 354-day approximation. Metal prices are a static, dated snapshot (not a live feed - no metals-price API exists in this app) with a visible "last checked" date. Explicitly excludes any inheritance/farāʾiḍ (Mirath) calculation - out of scope per the liability concern already logged in TODO-v3.md.
+- **`/asma-ul-husna`** (en/bn/ar) - the 99 Names of Allah, Arabic + transliteration + meaning, with live search/filter. Sourcing note distinguishes the authentic core hadith (Sahih al-Bukhari 7392, Sahih Muslim 2677) from the specific enumerated list commonly cited via Jami' at-Tirmidhi 3507, which a number of hadith scholars (Ibn Taymiyyah among them) hold to be a later addition rather than the Prophet's ﷺ own wording.
+- Both pages follow the existing programmatic-SEO pattern exactly: static pre-rendered routes via `scripts/prerender.mjs`, their own `sitemap-utilities.xml`, hreflang alternates, breadcrumb + WebPage/FAQPage JSON-LD, and cross-links from every other SEO page's footer.
+
+### Notes
+
+- Bengali/Arabic strings in the new pages (asma ul husna meanings, zakat calculator copy) are working translations, not yet reviewed by a native speaker - same standing caution as the rest of the app's non-English content.
+- An in-app (authenticated, interactive) Du'a library/Adhkar/Asma ul Husna hub, plus a "one-stop utilities" home page section, was scoped in this session but deliberately deferred - see TODO-v3.md.
+
+## v5.37.0 - Admin user management: manual welcome email, fixed inactivity tracking, custom email - 2026-09-18
+
+### Changed
+
+- **Welcome email is no longer sent automatically on first sign-in.** It's now fully admin-triggered from the user detail page: click "Send welcome email," review/edit the predefined subject and body (e.g. to call out something specific to that person — a first international user, etc.), then confirm — same draft-then-confirm pattern the re-engagement email already used. The old one-click "resend welcome email" is replaced by this editable flow (`GET/POST /api/admin/users/:uid/welcome-draft|welcome-send`). The existing bulk "welcome backfill" tool (for accounts that predate the welcome-email feature entirely) still exists but is now scoped to accounts created before this change, so it can't sweep up new signups with the generic template.
+- **Fixed a real "days inactive" bug**: it was computed from Mongoose's generic `updatedAt`, which several admin actions (resending welcome email, disabling/enabling a user) unintentionally bumped — so doing any of those made an inactive user falsely look active again, resetting the re-engagement counter to 0. Added a dedicated `User.lastActiveAt`, set only by genuine activity (zikr increments, sign-in) and never by admin writes. `getDaysInactive`, the user list's "most inactive first" sort, and the detail page's "Last active" all now read from it.
+- **User summary no longer shows "zikr types tracked."** That was a bare count of the user's own custom zikr types — their data, not something the admin needs for a journey overview.
+- Re-engagement emails now include the app URL (`bustandeen.com`) in the body.
+
+### Added
+
+- **Re-engagement send tracking**: `User.reengagementEmailSentAt`/`reengagementEmailCount`, shown on the user detail page (last-sent date + total count) so the admin isn't drafting blind — sending one is explicitly noted as not meaning the user came back.
+- **Custom email section** on the user detail page — a fully free-form subject/body email to one user, for anything outside the welcome/re-engagement templates (`POST /api/admin/users/:uid/custom-email`).
+
+### Notes
+
+- The founder-email request (seeing/replying to emails sent directly to istiak@bustandeen.com from the admin panel) turned out to need a real Zoho mailbox sync that doesn't exist yet — the current "Feedback & Contact" panel only shows in-app form submissions, never real inbox mail. Deferred to its own session; full scope logged in `TODO-v3.md`.
+
+## v5.36.0 — Quran time-of-day chart; listening now tracked as sessions too — 2026-09-18
+
+### Added
+
+- **Follow-up to v5.35.0**: Quran Analytics gained a "Time of day" chart (reusing the zikr counter's own `TimeOfDayChart` component) — a 24-hour bar chart of when active Quran time (reading + listening combined) actually happens, aggregated from session data over the last 30 days. A session's whole duration is attributed to the local hour it started in.
+- **Listening now creates sessions too**, not just reading — the audio player (`QuranAudioPlayer.tsx`) tracks its own session the whole time the Listen page is open, tagged `source: 'listen'` in the same `QuranReadingSession` collection the Reader already writes to (`source: 'read'`), so the "Quran sessions" history list (renamed from "Reading sessions") now shows everything in one place — nothing is left out. A listening session's active/paused state is driven by whether audio is actually PLAYING, not tab visibility or interaction — unlike reading, background/screen-off playback still counts as active listening, and pausing the audio (even with the tab in the foreground) correctly stops the clock. A small ⏱/⏸ badge on the Listen page mirrors the Reader's timer. Ayāt already credited by listening (the existing "count listening as āyāt" feature) now also register on the session, so listened surahs/āyāt show up in that session's history row.
+- New `GET /api/quran/time-of-day?days=&timezoneOffset=` endpoint (mirrors `zikr.service.ts`'s `getTimeOfDayDistribution`) and a `source: 'read' | 'listen'` field on `QuranReadingSession` (defaults `'read'` — existing rows unaffected).
+
+## v5.35.0 — Quran reading sessions: live timer + session history — 2026-09-18
+
+### Added
+
+- **A live reading timer on the Quran Reader**, and a session-history list on Quran Analytics — the same "session history" concept the zikr counter already has, applied to Quran reading. A small ⏱/⏸ chip next to the surah/juz/today-count chips shows active reading time for the current visit; it pauses (⏸) the instant the tab is hidden or backgrounded, and after 2 minutes with no scroll/tap/key interaction — so leaving the app open on a screen doesn't inflate the number. That idle grace period widens to 5 minutes while the tafsir panel is open, since reading tafsir often means minutes of stillness while genuinely still reading. Time resumes counting the moment you interact again; nothing is lost, it just stops padding the clock while you're away.
+- One continuous visit to the Reader is tracked as a single session (surah navigation within that visit doesn't split it), checkpointed to the backend roughly every 20 seconds and finalized on tab-hide/close (`pagehide`, mirroring the zikr counter's own `keepalive`-flush pattern) or on leaving the page — so a crash or force-close loses at most ~20 seconds, not the whole session. New `QuranReadingSession` collection (backend) upserted idempotently by a client-generated session id, `POST /api/quran/session` + `GET /api/quran/sessions?date=`; `QuranLog` gained a `durationSec` rollup field for daily totals. Sessions under 10s are hidden from the history list (accidental taps into the reader) but still contribute their seconds to the daily total.
+- **Quran Analytics** gained a "Reading sessions" section — a date picker plus a list of that day's sessions (time range, duration, surahs touched, āyāt read), directly mirroring the zikr counter's existing session-history UI.
+
+### Notes
+
+- Scoped to the ayah-by-ayah Reader only (not the audio Listen tab) and to the timer/session-history pair — kept intentionally smaller than full parity with the zikr counter's analytics page (no reading-time trend chart or time-of-day chart yet); the existing āyāt/khatm streak is unchanged, reading time is a new, separate metric alongside it.
+
+## v5.34.0 — Sadaqah virtue days on the homepage; Jumu'ah sunnah citation fix; Quran settings sync — 2026-09-18
+
+### Added
+
+- **Sadaqah virtue day card on the homepage.** A persistent card (styled like the existing Islamic special-day widget, not auto-dismissing like the reminder it replaces) surfaces on Friday, Ramadan, the first 10 days of Dhul Ḥijjah, Arafah, and Laylat al-Qadr — each with its own heading, short explanation, and a citation, linking straight to `/sadaqah`. Friday's copy is explicitly attributed to Ibn al-Qayyim's own teaching in *Zād al-Maʿād* (paired with the authentic "charity does not decrease wealth" ḥadīth, Ṣaḥīḥ Muslim 2588) rather than presented as a standalone Prophetic ḥadīth, since it isn't one. Replaces `SadaqahFridayReminder.tsx`, which only covered Friday and auto-hid after 30 seconds. New `frontend/src/utils/sadaqahVirtueDays.ts`, `frontend/src/components/SadaqahVirtueCard.tsx`.
+- **Quran settings now sync across devices.** `arabicFont`, all four text-size sliders, the transliteration toggle, "count listening as āyāt," default reciter, and translation picks were localStorage-only — a genuinely different phone and laptop always looked different. `QuranProfile` (backend) gained these fields plus a `displayPrefsSet` flag; opening Quran settings for the first time after this update either pushes that device's existing local prefs up (if nothing has synced yet) or pulls the already-synced values down (if another device got there first) — never silently overwrites a real prior customization with factory defaults. Every subsequent change (debounced for the sliders) pushes to the server. `PATCH /api/quran/profile` extended accordingly; localStorage stays the fast synchronous read path everywhere else in the reader, now backed by the server instead of being the only copy.
+
+### Fixed
+
+- **Jumu'ah's sunnah prayer guidance cited the wrong ḥadīth entirely.** Friday's Dhuhr slot (Jumu'ah replaces Dhuhr, tracked internally as the same `PrayerId`) was falling back to Ẓuhr's own rawātib guidance — "4 rakʿah before / 2 rakʿah after, Ṣaḥīḥ Muslim 728" — but hadith 728 is Umm Ḥabībah's narration about Ẓuhr's daily rawātib and says nothing about Jumu'ah. Verified against sunnah.com and added a dedicated `JUMUAH_SUNNAH_GUIDE`: the 2-rakʿah-after figure is correctly Ibn ʿUmar's report of the Prophet's ﷺ own practice of praying 2 at home after Jumu'ah (Ṣaḥīḥ Muslim 882 / Ṣaḥīḥ al-Bukhārī 937) — distinct from Abū Hurayrah's 4-rakʿah-anywhere ḥadīth (Ṣaḥīḥ Muslim 881), which the note now mentions as the alternative. The 4-rakʿah-before figure is relabeled from "confirmed" to "recommended," since (unlike Ẓuhr's) no ṣaḥīḥ ḥadīth prescribes a specific rakʿah count before Jumu'ah itself — it's Ḥanafī tradition via a companion's practice and qiyās with Ẓuhr, not a direct Prophetic sunnah.
+- **On small screens, Quran settings were buried inside the room-picker dropdown** instead of being reachable in one tap like the desktop pill row's gear icon. `QuranTabNav.tsx` now shows the gear icon beside the menu button at every width.
+- **The Quran streak badge showed on the homepage even with no daily goal set,** where a "streak" isn't really meaningful (it would just mean "read at all that day"). Now hidden until `dailyGoalAyat > 0`, matching zikr/salat's badges, which always have an implicit goal.
+
+## v5.33.3 — Fix: silent email failures on donation/zikr review actions; āyah photo-card overflow — 2026-09-18
+
+### Fixed
+
+- **Verifying/rejecting a donation, or approving/rejecting a zikr suggestion, could silently mark it done even when the notification email failed to send** (SMTP misconfigured, etc.) — `sendMail`'s return value was ignored, same underlying gap as the feedback-reply bug fixed in v5.33.1. Unlike feedback (where replying IS the entire action), a verify/reject/approve is a real administrative fact independent of whether the recipient got notified — verifying a donation the admin actually checked, or adding an approved item to the zikr library, shouldn't get rolled back just because an email bounced. So instead of throwing and blocking the action, `verifyDonation`/`rejectDonation`/`approveRequest`/`rejectRequest` now return an `emailSent` flag alongside the record; the admin panel shows a toast warning ("Saved — but the email failed to send") when it's `false`, and it's logged on the audit-log entry (`metadata.emailFailed`), so a real send failure is surfaced instead of silently swallowed, without blocking the real decision. Covered by new assertions in the existing e2e suites.
+- **Long āyah share cards could overflow their fixed 1080×1080 frame.** `AyahShareCard.tsx` used hardcoded font sizes with no overflow handling — a long āyah (e.g. 2:282, the Qur'an's longest) combined with a translation could exceed the frame, and `html-to-image` (the capture library) has no scroll/reflow to compensate. Font sizes now scale down based on total content length, and translations get a line-clamp safety cap (the Arabic verse itself is never truncated). Not visually verified in-browser this session — see `TODO-v3.md`'s "Ayat sharing" section for the follow-up note and a list of separate design-improvement ideas (verse-number badge, background pattern, per-language typography, story-ratio variant) queued for a future pass, not built.
+
+## v5.33.2 — Fix: same Gmail-thread-merge bug in sadaqah and zikr-suggestion emails — 2026-09-18
+
+### Fixed
+
+- **Follow-up to v5.33.1**: the identical fixed-subject design existed in `sadaqahEmail.templates.ts` and `zikrRequestEmail.templates.ts` — a donor submitting multiple separate donations, or a user submitting multiple separate zikr/dua suggestions, would have had each new submission's emails silently merge into the previous one's Gmail/Outlook thread, for the same reason feedback did. Every subject (received, the verify/reject reply, approved/rejected, and the admin-notify copies) now embeds a short ref derived from the record's own id (e.g. `[#A1B2C3]`), same convention as feedback's `feedbackRef`. Covered by two new unit test files (`sadaqahEmail.templates.unit.test.js`, `zikrRequestEmail.templates.unit.test.js`) asserting distinct subjects per record id, including the identical-donor/identical-name case that used to collide. All 240 backend tests pass.
+
+## v5.33.1 — Fix: feedback threads merging in Gmail; compose tool can now reply from the inbox — 2026-09-18
+
+### Fixed
+
+- **Multiple feedback/contact submissions from the same person collapsed into one Gmail thread.** Every submission's confirmation email used the exact same subject line per `kind` (e.g. always "We received your feedback — Bustandeen"), and the admin-notify copy used the same fixed pattern per category. Gmail/Outlook group conversations by (normalized subject + participants) whenever there's no `In-Reply-To`/`References` linking them elsewhere, so a second unrelated submission from the same email address silently merged into the first one's thread even though each submission already had its own unique Message-ID under the hood. Every subject (received, reply, and the admin-notify copy) now includes a short ref derived from the submission's own id (e.g. `[#A1B2C3]`), so each submission gets its own thread end to end.
+- **A reply from the Feedback inbox (or the compose tool, see below) could mark a message "replied" even when the email silently failed to send** (e.g. SMTP credentials unset) — `sendMail` never throws, it just returns `null` on failure, and that return value was previously ignored. Both reply paths now check it and return a loud `502` instead, leaving the message `open` so it isn't lost.
+
+### Changed
+
+- **"Email Istiak" compose tool now has a "Reply to someone who wrote in" mode** instead of only a free-form "type any address" box. It lists everyone who's submitted feedback/contact (searchable, filterable by status), and picking one opens a reply that's threaded onto that exact submission — same Message-ID chain and ref-tagged subject as the Feedback inbox's own Reply button, just sent under the founder's own name (`istiak@bustandeen.com`) instead of the system `ansar@` mailbox. The original free-form "custom recipient" mode is still available as a separate tab for anyone not already in that list. Sending a threaded reply here also flips that submission's status in the Feedback inbox, same as replying from there directly.
+
+## v5.33.0 — Compose-to-founder tool, external-reply status sync — 2026-09-18
+
+### Added
+
+- **"Email Istiak" compose tool** (Servant-only, under Tools): a free-form send-to-anyone form that always goes out from `istiak@bustandeen.com`, for anything that needs the founder's own name attached instead of a system mailbox (`sadaqah@`/`ansar@`). Unlike the app's other draft-then-confirm emails there's no auto-generated text — the compose form itself is the editable draft — but it still has an explicit "Review & send" step showing exactly the To/Subject/Body before the irreversible send, and every send is written to the Audit Log with the sending admin's tag, which a reply sent directly from the Zoho mail app never is.
+- **"Mark replied (sent via Zoho)" on Feedback**: an open feedback/contact message can now be marked `replied` without the app sending anything — for when you've already answered someone directly from the Zoho mail app instead of this panel. Only changes the tracked status (+ `repliedBy`/`repliedAt`, logged to the Audit Log as `feedback.markRepliedExternal`); does not apply to donation verify/reject or zikr-request approve/reject, since those actions change real underlying state (a verified amount, an approved library entry) that only happens by using the panel — there's nothing to "sync" there regardless of which mailbox you replied from.
+
+### Fixed
+
+- Diagnosed the `ansar@bustandeen.com` sender showing "missing" on System & ops health: `ANSAR_SMTP_USER`/`ANSAR_SMTP_PASS` are not set on the production environment (no code defect — `sadaqah` and `istiak` are both configured and working). Needs the two env vars set in Vercel to the mailbox's address and Zoho app password.
+
+## v5.32.1 — Fix: `published` field on quarterly Sadaqah entries was never actually persisted — 2026-09-17
+
+### Fixed
+
+- **The `published` flag on `quarterlyBreakdown` entries was declared on the TypeScript interface but never added to the actual Mongoose schema**, so `strict: true` silently dropped it on every save — publishing or unpublishing a quarter never wrote the field to the database at all (not `false`, entirely absent). v5.32.0's `published !== false` check masked the symptom on read (a missing field correctly read as "published"), but the field genuinely never persisted, which meant `listQuarterly()`'s admin badge and any future explicit `unpublish` would have been unreliable. Added `published: { type: Boolean, default: true }` to the schema's inline `quarterlyBreakdown` subdocument definition. Caught via the backend test suite (`npm test`), which had not been run before the v5.32.0 push — 3 tests for the old quarterly-report endpoint shape were also failing after that release's API redesign (`/preview`, `/publish`, `/unpublish` replacing the old manual-entry `PATCH`); rewrote them to match the new endpoints. All 213 backend tests now pass.
+
+## v5.32.0 — Admin panel: layout/UX fixes, Sadaqah publish workflow, donor & re-engagement email, user inactivity — 2026-09-17
+
+Follow-up batch after a hands-on review of v5.29–v5.31 surfaced several real bugs and requested a Sadaqah workflow redesign.
+
+### Fixed
+
+- **Zikr audio tracker showed 13 already-live recitations as "missing."** It only checked the new admin-managed `ZikrAudioAsset` collection, never cross-referencing the pre-existing bundled-file map (`utils/zikrAudio.ts`) the counter's playback already uses. Now correctly shows those as "bundled in app" and only flags the real gap (8 remaining, matching the known content backlog).
+- **Admin "Tools" dropdown menu was invisible (clipped).** `overflow-x: auto` on the tab row implicitly set `overflow-y: auto` too (an unset axis computes to `auto` once the other axis isn't `visible`), silently clipping the dropdown panel's vertical overflow. Moved the dropdown to a sibling of the scrollable tab strip instead of a child of it.
+- **Ops Health page could hard-crash** on a stale cached bundle calling into a changed API response shape. Every field read now defaults defensively (`?? []`, `?? {}`) instead of assuming the shape.
+- **Every `<select>` dropdown app-wide rendered white-on-white until hovered** (Settings, qari picker, ayat picker, admin domain pickers, etc.) — Chromium/Windows renders a `<select>`'s native option list with OS-light styling regardless of the closed box's Tailwind/DaisyUI theming. Added `color-scheme: dark` globally (this app has only one theme, never light) plus explicit `select option` colors as a fallback.
+- **Real regression caught before shipping**: normalizing quarterly-report visibility around a new `published` field initially relied on Mongoose backfilling old documents' missing field via schema defaults — confirmed via direct DB inspection that this does NOT reliably happen for array-subdocuments, which would have hidden the site's only existing public "Where it has gone" entry the moment this deployed. Fixed by checking `published !== false` everywhere (treats "field absent" as published, matching every pre-existing entry's actual prior visibility) instead of a truthy check.
+
+### Changed
+
+- **Sadaqah admin page split into tabs** (All submissions / Expenses / Analytics) — it had grown into one very long scroll.
+- **Quarterly public reporting is now compute-then-publish, not manual entry.** "Received" and "spent" are always calculated fresh from verified donations and the itemized expense ledger (`/quarterly/:quarter/preview`, read-only) — nothing is ever typed in by hand, so a published figure can't drift out of sync with the underlying records. Nothing appears on the public `/sadaqah` page until an explicit "Publish" action; "Unpublish" reversibly hides a quarter without discarding its numbers, "Delete" removes it outright.
+- **Admin panel is no longer designed mobile-first.** Every `/admin/*` page's container widened (up to `max-w-[1600px]` on the shell) to use real desktop screen space — this surface is explicitly a laptop/desktop tool, not a phone one.
+- Donation/zikr-request/feedback admin lists now show a **"Handled by"** actor tag using each record's existing `verifiedBy`/`reviewedBy`/`repliedBy` field.
+- Servant dashboard splits **Total users** out as its own tile, next to New users this week (both were already computed server-side).
+- About page: removed the GitHub repo link, replaced with a short founder note and `mailto:istiak@bustandeen.com`.
+
+### Added
+
+- **Donor appreciation email** (Servant-only, inside Sadaqah → Analytics): drafts a personalized thank-you for a top donor (name, total given, donation count), editable before sending — same draft-then-confirm pattern as donation verify/reject.
+- **User re-engagement email** (Servant-only, on a user's detail page): drafts a gentle, non-guilting "we miss you" email mentioning how many days they've been inactive, editable before sending.
+- **User inactivity sort**: `/admin/users` can now sort by "most inactive first" (server-side, across the whole user base, not just the current page) using each user's `updatedAt` as the existing "last active" proxy; the list also shows a "Last active" column.
+- **Broadcast admin page** now shows a live preview of the banner plus explicit copy on exactly where it appears (top of every public page, never inside the admin panel).
+
+## v5.31.0 — SMTP env vars standardized to one dedicated pair per sender — 2026-09-17
+
+### Changed
+
+- **Every email sender now has its own dedicated `<SENDER>_SMTP_USER`/`<SENDER>_SMTP_PASS` pair — no more shared/legacy fallback.** `ZOHO_SMTP_USER`/`ZOHO_SMTP_PASS` was originally sadaqah's own credential reused as a generic "shared mailbox" fallback for any sender without its own pair (see v5.30.0's sender-collision fix) — confusing and exactly how `ansar` ended up silently sending as `sadaqah@bustandeen.com`. Renamed to `SADAQAH_SMTP_USER`/`SADAQAH_SMTP_PASS`, matching the convention `ANSAR_SMTP_USER`/`PASS` and `ISTIAK_SMTP_USER`/`PASS` already used. `ZOHO_SMTP_HOST`/`PORT` remain shared (same Zoho server for the whole org). `email.service.ts`'s `getSenderDiagnostics()` and `/admin/ops-health` simplified accordingly — dropped the now-meaningless "dedicated vs. shared fallback" distinction, kept the collision check (now purely a safety net against two pairs pointing at the same address by mistake). All three real mailbox credentials verified via a live (non-destructive) SMTP `.verify()` handshake before this change shipped — no new app passwords needed, `ansar@bustandeen.com` already had one, it just wasn't paired with `ANSAR_SMTP_USER`.
+
+## v5.30.0 — Admin panel: domain-leak fixes, sender-collision detection, navbar redesign, account disable — 2026-09-17
+
+Follow-up to v5.29.0 after a live review surfaced real bugs in the rich-admin-panel batch.
+
+### Fixed
+
+- **Cross-domain nav leak on `/admin` itself.** `AdminHome.tsx`'s card grid (and stat CTAs) rendered a Sadaqah card to a general-domain Ansar and a Zikr Requests/Feedback card to a sadaqah-domain Ansar — the top nav (`AdminLayout.tsx`) was already domain-scoped correctly, but the home page's own card grid never was, going all the way back to the original v5.27.0 domain split. Every card now uses the exact same `canSeeSadaqah`/`canSeeZikrRequests` gate the nav uses.
+- **Email sender collision — `ansar`-sent mail was silently going out as `sadaqah@bustandeen.com`.** Root cause: `ansar` has no dedicated `ANSAR_SMTP_USER`/`PASS` set, so it falls back to the shared `ZOHO_SMTP_USER` credential — which turns out to be `sadaqah@bustandeen.com`'s own mailbox. The display name ("Bustandeen Ansar") was correct; the actual "From" address wasn't. `email.service.ts` now exposes `getSenderDiagnostics()` (configured / using-its-own-dedicated-mailbox / resolved address), and `/admin/ops-health` shows an explicit collision warning naming exactly which senders share a mailbox and what env vars to set to fix it — this can't be fixed in code alone, it needs `ANSAR_SMTP_USER`/`ANSAR_SMTP_PASS` set in the deployment.
+
+### Added
+
+- **Manage Ansars: domain reassignment.** `PATCH /api/admin/accounts/:id/domain` (Servant-only) lets a Servant move an existing Ansar between `sadaqah` and `general` after creation — previously this was create-time-only. New "Domain" column with an inline selector in `/admin/accounts`.
+- **Account disable/enable (Servant-only).** New `User.disabled` field, checked in `requireAuth` (every authenticated route) and `/api/auth/verify` itself — blocks sign-in immediately without touching any data, fully reversible. New actions on `/admin/users/:uid`; the frontend shows a clear "account disabled" toast and signs the user out if they're already mid-session.
+- **Admin navbar redesign.** Identity/logout now sits in its own row, never wrapping into the tab row. Servant-only secondary tools (Users, Manage Ansars, Audit Log, Ops Health, Broadcast) collapsed into a single "Tools" dropdown instead of 5 extra flat tabs — an Ansar's nav now shows only what their domain can access (1–4 tabs), a Servant sees the review tabs plus one Tools menu.
+- **About page:** removed the GitHub repo link at the bottom; replaced with a short founder note and a direct `mailto:istiak@bustandeen.com` link.
+
+## v5.29.0 — Rich admin panel: audit log, feedback inbox, donor analytics, ops health, broadcast — 2026-09-17
+
+### Added
+
+- **Admin audit log.** New `AdminAuditLog` collection records every mutating `/api/admin/*` action (actor email/role, action, target, small metadata) — donation verify/reject/delete, expenses, quarterly edits, zikr approve/reject, library edits, account create/activate/deactivate, feedback reply/archive/delete, user resend-welcome/delete, announcement publish/deactivate. Servant-only viewer at `/admin/audit-log`.
+- **Feedback/Contact inbox.** `/feedback` and `/contact` now POST to our own `POST /api/feedback` (own rate limiter) instead of Web3Forms — stored in a new `FeedbackMessage` collection and still emails the review inbox. Admin inbox at `/admin/feedback`: general-domain Ansar reads/replies (threaded)/archives; Servant additionally deletes. Web3Forms env var and client plumbing removed entirely.
+- **Donor analytics.** New section inside `/admin/sadaqah` (Servant-only): repeat vs. one-off donor counts, month-over-month verified-amount trend, and a top-50 donor table cross-referencing verified donations against app `User` accounts.
+- **Real dashboard numbers + role-specific landing.** `GET /api/admin/stats/overview` returns a different shape per caller's role/domain (never computes cross-domain numbers server-side). `/admin` now shows a Servant a stats hub (pending counts, verified total, new users this week); a sadaqah-domain Ansar a pending-donations hero CTA; a general-domain Ansar a pending-zikr + open-feedback hero CTA.
+- **Global Zikr library management.** `PATCH /library/:id` (full-field edit) and `DELETE /library/:id`, alongside the existing category-only patch — a "Manage library" section in `/admin/zikr-requests` with inline edit/delete (Servant-only).
+- **Zikr audio tracker.** New `/admin/zikr-audio` (general-domain Ansar + Servant): lists every curated and community-library zikr with audio status, and a paste-a-URL action per entry (`ZikrAudioAsset` for the curated static list, a new `audioUrl` field on `GlobalZikrLibraryItem` for community entries). Sourcing/tracking only — playback wiring into the counter is separate, unbuilt work.
+- **User detail view.** `/admin/users/:uid` (Servant-only): profile summary, `updatedAt` as a free "last active" proxy, and a resend-welcome-email action.
+- **User cleanup endpoint.** `DELETE /api/admin/users/:uid` (Servant-only) delegates to the existing full-purge `deleteAccount()` — single-UID only, two-click confirm in the UI, no bulk variant.
+- **System/ops health page.** `/admin/ops-health` (Servant-only): a new `EmailFailureLog` (written from `email.service.ts`'s existing catch block) surfaces recent send failures per sender, plus Mongo/Firebase-Admin connectivity and per-sender SMTP-configured status.
+- **Rate-limit / abuse monitoring.** A new `RateLimitHit` collection is written only when a request is actually throttled (event-driven, since Vercel serverless spreads `express-rate-limit`'s in-memory store across instances) — aggregated by limiter+path over the last 24h in `/admin/ops-health`'s second section.
+- **Broadcast/announcement tool.** `/admin/broadcast` (Servant-only) publishes a single active announcement; public `GET /api/announcements/active` feeds a new dismissible `AnnouncementBanner` in the main app (per-viewer localStorage dismissal).
+
+## v5.27.0 — Admin domain split, zikr request overhaul, new-user zero-states — 2026-09-17
+
+### Added
+
+- **Admin panel: Servant + 2 domain-scoped Ansars.** `AdminAccount.ansarDomain` (`'sadaqah' | 'general'`) plus a new `requireDomain` middleware scopes each Ansar to exactly one operational area — `sadaqah@bustandeen.com` for donation review, `ansar@bustandeen.com` for everything else (zikr requests, etc.). The Servant bypasses domain checks entirely. The existing `ansar@bustandeen.com` account is auto-backfilled to `ansarDomain: 'general'` on deploy. Manage Ansars UI now has a domain picker when creating a new Ansar. Email sender identity (`sadaqah` vs `ansar` "from" name) is now fixed per route/domain instead of derived from the acting admin's role — fixes a bug where a Servant approving a zikr request sent under the wrong identity. Each sender can optionally read dedicated `SADAQAH_SMTP_USER/PASS` / `ANSAR_SMTP_USER/PASS` env vars if real separate mailboxes are provisioned later, falling back to the shared mailbox otherwise.
+- **Zikr: self-add replaced with admin-reviewed requests.** Users can no longer add a zikr straight to their own practice list unreviewed — the ZikrCounter page's "Add Custom Dhikr" now submits to the existing `ZikrRequest` review pipeline (same as Settings), with only the name required. Added a simple "want audio recitation?" yes/no signal (`ZikrRequest.wantsAudio`), non-blocking duplicate detection (normalize + Levenshtein match against the library and other pending requests, surfaced as a warning + "reject as duplicate" quick action on the admin review card), and a `category` field on `GlobalZikrLibraryItem` reusing the curated library's own 6 categories (defaults to "Uncategorized"). Settings' Community-suggested section now groups by category instead of one flat list.
+- **Zikr request email threading.** A new submission-confirmation email now goes to the requester immediately (previously only an internal admin-notify email existed). Approve/reject emails thread against it via `In-Reply-To`/`References` (mirrors the existing Donation email threading), and the approval email links directly to the requester's new library entry.
+- **New-user zero-states.** Home badges, the zikr StreakCard, the trend chart, and the 365-day heatmap now show encouraging placeholder copy instead of raw zeros/flat charts for a confirmed brand-new user (zero lifetime zikr count) — an existing user's honest "0 done today" is untouched.
+
+### Fixed
+
+- **`DEV_AUTH_BYPASS` hardened** with a second independent guard (`!process.env.VERCEL`) so a misconfigured preview/staging deploy can't silently disable auth via one bad env var alone.
+- **ZikrCounter "Add Custom Dhikr" modal no longer clips on mobile** — the card now has a max-height with internal scroll, matching the page's own "Manage my list" modal, so Save/Cancel can no longer be pushed off-screen.
+- Removed the Import/Export buttons from the zikr "Manage my list" modal — they only ever served the free-form self-add path that's now gone.
+
+### Changed
+
+- Zikr Settings' non-destructive "Reset counters" relabeled **"Start fresh"** with clearer copy; the hard-delete danger-zone entry in Settings deliberately keeps its sober "All zikr data" label.
+
 ## v5.26.0 — Prayer UX polish: Bengali names, dual Isha window, kaza shortcuts, end times — 2026-09-16
 
 ### Added

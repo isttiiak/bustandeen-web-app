@@ -83,3 +83,71 @@ export function listenCountsAsAyat(): boolean {
 export function setListenCountsAsAyat(on: boolean): void {
   localStorage.setItem(LISTEN_COUNTS_KEY, on ? '1' : '0');
 }
+
+// ── Reciter + translations (also read directly by quranData.ts) ────────────
+
+const RECITER_KEY = 'bustandeen_reciter';
+const TRANSLATIONS_KEY = 'bustandeen_quran_translations';
+
+export function getReciterId(): string {
+  return localStorage.getItem(RECITER_KEY) || 'dossari';
+}
+export function setReciterId(id: string): void {
+  localStorage.setItem(RECITER_KEY, id);
+}
+
+// ── Cross-device sync ────────────────────────────────────────────────────────
+// Every getter/setter above stays a plain synchronous localStorage read/write
+// — callers throughout the reader (AyahShareCard, QuranReader, etc.) read
+// these inline on every render with no React Query involved, so keeping them
+// synchronous avoids a much larger refactor. Cross-device sync instead layers
+// on top: QuranSettings.tsx pulls the server's values into localStorage via
+// applyServerQuranPrefs() once per session (mirroring server → local, same
+// direction as goal/readerPos), then every local change is also pushed to
+// the server via useUpdateQuranProfile so the next device to open Settings
+// pulls the same values.
+
+export interface ServerQuranPrefs {
+  arabicFont: 'clean' | 'naskh' | 'uthmani';
+  fontArabicPx: number;
+  fontTranslationPx: number;
+  fontTranslitPx: number;
+  fontTafsirPx: number;
+  translitEnabled: boolean;
+  listenCountsAsAyat: boolean;
+  reciterId: string;
+  translations: string[];
+}
+
+/** Overwrites local prefs with the server's — call only when the server is
+ *  the known-authoritative source (see displayPrefsSet's doc comment on the
+ *  backend model for why "already synced" vs "never synced" matters here). */
+export function applyServerQuranPrefs(prefs: ServerQuranPrefs): void {
+  setArabicFont(prefs.arabicFont);
+  setFontPx('arabic', prefs.fontArabicPx);
+  setFontPx('translation', prefs.fontTranslationPx);
+  setFontPx('translit', prefs.fontTranslitPx);
+  setFontPx('tafsir', prefs.fontTafsirPx);
+  setTranslitEnabled(prefs.translitEnabled);
+  setListenCountsAsAyat(prefs.listenCountsAsAyat);
+  setReciterId(prefs.reciterId);
+  if (prefs.translations.length) {
+    localStorage.setItem(TRANSLATIONS_KEY, JSON.stringify(prefs.translations));
+  }
+}
+
+/** This device's current local prefs, shaped for the PATCH /api/quran/profile
+ *  body — used for the one-time "push local up" side of the sync above. */
+export function getLocalQuranPrefsForSync(): ServerQuranPrefs {
+  return {
+    arabicFont: getArabicFont().id as 'clean' | 'naskh' | 'uthmani',
+    fontArabicPx: getFontPx('arabic'),
+    fontTranslationPx: getFontPx('translation'),
+    fontTranslitPx: getFontPx('translit'),
+    fontTafsirPx: getFontPx('tafsir'),
+    translitEnabled: translitEnabled(),
+    listenCountsAsAyat: listenCountsAsAyat(),
+    reciterId: getReciterId(),
+    translations: JSON.parse(localStorage.getItem(TRANSLATIONS_KEY) ?? '["en.sahih"]'),
+  };
+}

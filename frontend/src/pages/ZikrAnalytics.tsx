@@ -9,6 +9,7 @@ import TabNav from '../components/TabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { ChartBarIcon, PlusCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import ChartInfoModal, { InfoButton } from '../components/ChartInfoModal.js';
 import StreakCard from '../components/analytics/StreakCard.js';
 import GoalCard from '../components/analytics/GoalCard.js';
 import TrendChart from '../components/analytics/TrendChart.js';
@@ -21,7 +22,7 @@ import {
   useZikrTimeOfDay,
   useZikrSessions,
 } from '../hooks/useAnalytics.js';
-import { useZikrTypes, useAddZikrType } from '../hooks/useZikrTypes.js';
+import { useZikrTypes } from '../hooks/useZikrTypes.js';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { zikrDisplayName } from '../utils/zikrLibrary.js';
@@ -42,9 +43,8 @@ interface ManualEntryModalProps {
 function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryModalProps) {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
-  const { types, addConfirmedCounts, setTypes, setCustomMeaning } = useZikrStore();
+  const { types, addConfirmedCounts } = useZikrStore();
   const { data: fetchedTypes } = useZikrTypes();
-  const addZikrType = useAddZikrType();
 
   // Merge store types + server types deduplicated
   const allTypes = [...new Set([...types, ...(fetchedTypes ?? []).map((ft) => ft.name)])];
@@ -65,14 +65,6 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
     return formatLocaleDate(d, { weekday: 'short', month: 'short', day: 'numeric' });
   };
 
-  // Add-new-type sub-form
-  const [showAddNew, setShowAddNew] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newArabic, setNewArabic] = useState('');
-  const [newMeaning, setNewMeaning] = useState('');
-  const [newSource, setNewSource] = useState('');
-  const [newSourceUrl, setNewSourceUrl] = useState('');
-
   // Existing count for the selected type today
   const serverCount = todayPerType.find((tp) => tp.zikrType === selectedType)?.total ?? 0;
   const localCount = localCounts[selectedType] ?? 0;
@@ -92,7 +84,7 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
       d.setDate(d.getDate() - daysBack);
       const ts = d.getTime();
       await api.post('/api/zikr/increment/batch', {
-        increments: [{ zikrType: selectedType, amount: parsedAmount, ts }],
+        increments: [{ zikrType: selectedType, amount: parsedAmount, ts, manual: true }],
         timezoneOffset: getUserTimezoneOffset(),
         today: getTrackingDay(),
       });
@@ -112,32 +104,6 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const handleAddNewType = () => {
-    const name = newName.trim();
-    const meaning = newMeaning.trim();
-    if (!name || !meaning) return;
-    addZikrType.mutate(name, {
-      onSuccess: () => {
-        setCustomMeaning(name, {
-          arabic: newArabic.trim() || undefined,
-          meaning,
-          source: newSource.trim() || undefined,
-          sourceUrl: newSourceUrl.trim() || undefined,
-        });
-        setTypes([...types, name]);
-        setSelectedType(name);
-        setShowAddNew(false);
-        setNewName('');
-        setNewArabic('');
-        setNewMeaning('');
-        setNewSource('');
-        setNewSourceUrl('');
-        setSubmitError('');
-      },
-      onError: () => setSubmitError(t('zikrAnalytics.addTypeError')),
-    });
   };
 
   // Portaled to <body>: rendering inside the page's transformed/animated
@@ -177,254 +143,141 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
         </div>
 
         <div className="p-6 space-y-5">
-          {!showAddNew ? (
-            <>
-              {/* Which day — today or up to 2 days back (streak grace window) */}
-              <div className="space-y-1.5">
-                <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
-                  {t('zikrAnalytics.whichDay')}
-                </label>
-                <div className="flex gap-1.5">
-                  {([0, 1, 2] as const).map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => {
-                        setDaysBack(n);
-                        setSubmitError('');
-                      }}
-                      className={`flex-1 px-2 py-1.5 rounded-xl text-xs font-bold border transition-all ${
-                        daysBack === n
-                          ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
-                          : 'bg-brand-deep border-brand-border text-white/40 hover:text-white/70'
-                      }`}
-                    >
-                      {dayLabel(n)}
-                    </button>
-                  ))}
-                </div>
-                {daysBack > 0 && (
-                  <p className="text-brand-info/70 text-[11px]">
-                    🧊 {t('zikrAnalytics.backfillNote')}
-                  </p>
-                )}
+          <>
+            {/* Which day — today or up to 2 days back (streak grace window) */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
+                {t('zikrAnalytics.whichDay')}
+              </label>
+              <div className="flex gap-1.5">
+                {([0, 1, 2] as const).map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => {
+                      setDaysBack(n);
+                      setSubmitError('');
+                    }}
+                    className={`flex-1 px-2 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                      daysBack === n
+                        ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
+                        : 'bg-brand-deep border-brand-border text-white/40 hover:text-white/70'
+                    }`}
+                  >
+                    {dayLabel(n)}
+                  </button>
+                ))}
               </div>
-
-              {/* Type selector */}
-              <div className="space-y-1.5">
-                <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
-                  {t('zikrAnalytics.zikrType')}
-                </label>
-                <select
-                  value={selectedType}
-                  onChange={(e) => {
-                    setSelectedType(e.target.value);
-                    setAmount('');
-                    setSubmitError('');
-                  }}
-                  className="select select-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
-                >
-                  {allTypes.map((tn) => (
-                    <option key={tn} value={tn} className="bg-brand-deep">
-                      {zikrDisplayName(tn, i18n.language)}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={() => {
-                    setShowAddNew(true);
-                    setSubmitError('');
-                  }}
-                  className="flex items-center gap-1.5 text-brand-emerald/70 hover:text-brand-emerald text-xs font-semibold transition-colors"
-                >
-                  <PlusCircleIcon className="w-3.5 h-3.5" />
-                  {t('zikrAnalytics.addNewDhikrType')}
-                </button>
-              </div>
-
-              {/* Amount FIRST (Istiak: type → save, fastest path), context after */}
-              <div className="space-y-1.5">
-                <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
-                  {t('zikrAnalytics.countsToAdd')}
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={amount}
-                  onChange={(e) => {
-                    setAmount(e.target.value);
-                    setSubmitError('');
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') void handleSubmit();
-                  }}
-                  placeholder={t('zikrAnalytics.egAmount')}
-                  className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-lg font-bold"
-                  autoFocus
-                />
-              </div>
-
-              {/* Today's existing count (only meaningful for today) */}
-              {daysBack === 0 && (
-                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-brand-emerald/10">
-                  <span className="text-white/50 text-sm">
-                    {t('zikrAnalytics.todaysCountSoFar')}
-                  </span>
-                  <span className="text-white font-black text-lg tabular-nums">
-                    {formatLocaleNumber(existingCount)}
-                  </span>
-                </div>
+              {daysBack > 0 && (
+                <p className="text-brand-info/70 text-[11px]">
+                  🧊 {t('zikrAnalytics.backfillNote')}
+                </p>
               )}
+            </div>
 
-              {/* Total preview */}
-              {parsedAmount > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-between px-4 py-3 rounded-xl bg-brand-emerald/10 border border-brand-emerald/30"
-                >
-                  {daysBack === 0 ? (
-                    <>
-                      <span className="text-brand-emerald/80 text-sm font-semibold">
-                        {formatLocaleNumber(existingCount)} + {formatLocaleNumber(parsedAmount)}
-                      </span>
-                      <span className="text-brand-emerald font-black text-xl tabular-nums">
-                        = {formatLocaleNumber(newTotal)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-brand-emerald font-bold text-sm">
-                      {t('zikrAnalytics.backfillPreview', {
-                        amount: formatLocaleNumber(parsedAmount),
-                        day: dayLabel(daysBack),
-                      })}
+            {/* Type selector */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
+                {t('zikrAnalytics.zikrType')}
+              </label>
+              <select
+                value={selectedType}
+                onChange={(e) => {
+                  setSelectedType(e.target.value);
+                  setAmount('');
+                  setSubmitError('');
+                }}
+                className="select select-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
+              >
+                {allTypes.map((tn) => (
+                  <option key={tn} value={tn} className="bg-brand-deep">
+                    {zikrDisplayName(tn, i18n.language)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Amount FIRST (Istiak: type → save, fastest path), context after */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
+                {t('zikrAnalytics.countsToAdd')}
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={amount}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                  setSubmitError('');
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') void handleSubmit();
+                }}
+                placeholder={t('zikrAnalytics.egAmount')}
+                className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-lg font-bold"
+                autoFocus
+              />
+            </div>
+
+            {/* Today's existing count (only meaningful for today) */}
+            {daysBack === 0 && (
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-brand-emerald/10">
+                <span className="text-white/50 text-sm">{t('zikrAnalytics.todaysCountSoFar')}</span>
+                <span className="text-white font-black text-lg tabular-nums">
+                  {formatLocaleNumber(existingCount)}
+                </span>
+              </div>
+            )}
+
+            {/* Total preview */}
+            {parsedAmount > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center justify-between px-4 py-3 rounded-xl bg-brand-emerald/10 border border-brand-emerald/30"
+              >
+                {daysBack === 0 ? (
+                  <>
+                    <span className="text-brand-emerald/80 text-sm font-semibold">
+                      {formatLocaleNumber(existingCount)} + {formatLocaleNumber(parsedAmount)}
                     </span>
-                  )}
-                </motion.div>
-              )}
+                    <span className="text-brand-emerald font-black text-xl tabular-nums">
+                      = {formatLocaleNumber(newTotal)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-brand-emerald font-bold text-sm">
+                    {t('zikrAnalytics.backfillPreview', {
+                      amount: formatLocaleNumber(parsedAmount),
+                      day: dayLabel(daysBack),
+                    })}
+                  </span>
+                )}
+              </motion.div>
+            )}
 
-              {submitError && <p className="text-red-400 text-xs">{submitError}</p>}
+            {submitError && <p className="text-red-400 text-xs">{submitError}</p>}
 
-              {/* Actions */}
-              <div className="flex gap-3 pt-1">
-                <button
-                  onClick={onClose}
-                  className="btn flex-1 btn-ghost text-white/60 border-brand-border"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  onClick={() => void handleSubmit()}
-                  disabled={parsedAmount <= 0 || submitting}
-                  className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold disabled:opacity-40"
-                >
-                  {submitting ? (
-                    <span className="loading loading-spinner loading-sm" />
-                  ) : (
-                    t('zikrAnalytics.saveCounts')
-                  )}
-                </button>
-              </div>
-            </>
-          ) : (
-            // ── Add new dhikr sub-form ─────────────────────────────────────────
-            <>
-              <div className="flex items-center gap-2 mb-1">
-                <button
-                  onClick={() => {
-                    setShowAddNew(false);
-                    setSubmitError('');
-                  }}
-                  className="text-white/40 hover:text-white text-xs transition-colors flex items-center gap-1"
-                >
-                  ← {t('common.back')}
-                </button>
-                <span className="text-white/25 text-xs">{t('zikrAnalytics.newDhikrType')}</span>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs text-white/50 uppercase tracking-wider mb-1 block">
-                    {t('zikrAnalytics.nameLabel')} <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder={t('zikrAnalytics.egName')}
-                    className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
-                    autoFocus
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 uppercase tracking-wider mb-1 block">
-                    {t('zikrAnalytics.arabicLabel')}{' '}
-                    <span className="text-white/25">({t('common.optional')})</span>
-                  </label>
-                  <input
-                    value={newArabic}
-                    onChange={(e) => setNewArabic(e.target.value)}
-                    placeholder="حَسْبُنَا اللَّهُ"
-                    dir="rtl"
-                    className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-base"
-                    style={{ fontFamily: "'Amiri', serif" }}
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 uppercase tracking-wider mb-1 block">
-                    {t('zikrAnalytics.englishMeaning')} <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    value={newMeaning}
-                    onChange={(e) => setNewMeaning(e.target.value)}
-                    placeholder={t('zikrAnalytics.egMeaning')}
-                    className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
-                  />
-                </div>
-                <div className="border-t border-brand-border/60 pt-3 space-y-2">
-                  <p className="text-white/25 text-[10px] uppercase tracking-wider">
-                    {t('zikrAnalytics.sourceLabel')}{' '}
-                    <span className="normal-case text-white/20">({t('common.optional')})</span>
-                  </p>
-                  <input
-                    value={newSource}
-                    onChange={(e) => setNewSource(e.target.value)}
-                    placeholder={t('zikrAnalytics.egSource')}
-                    className="input input-sm input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-xs"
-                  />
-                  <input
-                    value={newSourceUrl}
-                    onChange={(e) => setNewSourceUrl(e.target.value)}
-                    placeholder="https://quran.com/3/173"
-                    className="input input-sm input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-xs"
-                  />
-                </div>
-              </div>
-
-              {submitError && <p className="text-red-400 text-xs">{submitError}</p>}
-
-              <div className="flex gap-3 pt-1">
-                <button
-                  onClick={() => {
-                    setShowAddNew(false);
-                    setSubmitError('');
-                  }}
-                  className="btn flex-1 btn-ghost text-white/60 border-brand-border"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  onClick={handleAddNewType}
-                  disabled={!newName.trim() || !newMeaning.trim() || addZikrType.isPending}
-                  className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold disabled:opacity-40"
-                >
-                  {addZikrType.isPending ? (
-                    <span className="loading loading-spinner loading-sm" />
-                  ) : (
-                    t('zikr.addDhikr')
-                  )}
-                </button>
-              </div>
-            </>
-          )}
+            {/* Actions */}
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={onClose}
+                className="btn flex-1 btn-ghost text-white/60 border-brand-border"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={() => void handleSubmit()}
+                disabled={parsedAmount <= 0 || submitting}
+                className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold disabled:opacity-40"
+              >
+                {submitting ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : (
+                  t('zikrAnalytics.saveCounts')
+                )}
+              </button>
+            </div>
+          </>
         </div>
       </motion.div>
     </motion.div>,
@@ -764,6 +617,38 @@ export default function ZikrAnalytics() {
   const [newGraceDays, setNewGraceDays] = useState(1);
   const [showManualEntry, setShowManualEntry] = useState(false);
   const [sessionsDate, setSessionsDate] = useState(() => getTrackingDay());
+  const [infoTopic, setInfoTopic] = useState<string | null>(null);
+
+  const CHART_INFO: Record<string, { title: string; body: string }> = {
+    trend: {
+      title: t('zikrAnalytics.info.trendTitle', 'Zikr Trend'),
+      body: t(
+        'zikrAnalytics.info.trendBody',
+        "Your total zikr count day by day over the selected period. Hover (or tap) any bar to see that day's total. The bar height is relative to the highest day in the window, so a quiet day looks shorter even if the count is still meaningful."
+      ),
+    },
+    perTypeTrend: {
+      title: t('zikrAnalytics.info.perTypeTrendTitle', 'Per-Type Trends'),
+      body: t(
+        'zikrAnalytics.info.perTypeTrendBody',
+        "How each of your top 5 dhikr types has moved over the same period — each line is one type. Only shows types you've counted in this window."
+      ),
+    },
+    timeOfDay: {
+      title: t('zikrAnalytics.info.timeOfDayTitle', 'Time of Day'),
+      body: t(
+        'zikrAnalytics.info.timeOfDayBody',
+        'When during the day you do your dhikr, averaged over the last 30 days — morning (Fajr to Dhuhr), afternoon (Dhuhr to Asr), evening (Asr to Isha), night (Isha onwards). Helps you see your natural rhythm.'
+      ),
+    },
+    heatmap: {
+      title: t('zikrAnalytics.info.heatmapTitle', 'Activity Heatmap'),
+      body: t(
+        'zikrAnalytics.info.heatmapBody',
+        'Every day of the last year, colored by how much zikr you did — the darker the green, the more you counted. A white/grey cell means no zikr that day. Hover a cell to see the date and count.'
+      ),
+    },
+  };
 
   const { counts: localCounts } = useZikrStore();
   const { data: analyticsData, isLoading, isError, error, refetch } = useAnalytics(selectedPeriod);
@@ -923,6 +808,7 @@ export default function ZikrAnalytics() {
               chartData={last7Days}
               dailyGoal={goal?.dailyTarget}
               todayTotal={todayTotal}
+              isNewUser={allTime?.totalCount === 0}
             />
             <GoalCard
               goal={goal}
@@ -1049,6 +935,7 @@ export default function ZikrAnalytics() {
             <div className="flex items-center justify-between flex-wrap gap-3">
               <h2 className="text-white font-black text-sm flex items-center gap-2">
                 <ChartBarIcon className="w-4 h-4 text-brand-emerald" /> {t('zikrAnalytics.trend')}
+                <InfoButton onClick={() => setInfoTopic('trend')} label={CHART_INFO.trend!.title} />
               </h2>
               <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border">
                 {periods.map((p) => (
@@ -1062,7 +949,18 @@ export default function ZikrAnalytics() {
                 ))}
               </div>
             </div>
-            <TrendChart data={chartData} period={selectedPeriod} />
+            {allTime?.totalCount === 0 ? (
+              <div className="rounded-2xl bg-brand-deep/60 border border-brand-border/60 p-6 text-center">
+                <p className="text-white/40 text-sm">
+                  {t(
+                    'zikrAnalytics.newUserTrend',
+                    'Your trend will appear here once you start counting zikr. 🌱'
+                  )}
+                </p>
+              </div>
+            ) : (
+              <TrendChart data={chartData} period={selectedPeriod} />
+            )}
           </div>
 
           {/* ── Per-type trend lines ─────────────────────────────────────────── */}
@@ -1082,6 +980,10 @@ export default function ZikrAnalytics() {
                 <h2 className="text-white font-black text-sm flex items-center gap-2">
                   <ChartBarIcon className="w-4 h-4 text-brand-info" />
                   {t('zikrAnalytics.perTypeTrend', 'Per-type trends')}
+                  <InfoButton
+                    onClick={() => setInfoTopic('perTypeTrend')}
+                    label={CHART_INFO.perTypeTrend!.title}
+                  />
                 </h2>
                 <div className="flex flex-wrap gap-3 mb-1">
                   {topTypes.map((type, si) => (
@@ -1113,6 +1015,10 @@ export default function ZikrAnalytics() {
               <span className="text-white/25 text-[10px] font-normal">
                 {t('zikrAnalytics.timeOfDay.subtitle', 'last 30 days')}
               </span>
+              <InfoButton
+                onClick={() => setInfoTopic('timeOfDay')}
+                label={CHART_INFO.timeOfDay!.title}
+              />
             </h2>
             <TimeOfDayChart data={timeOfDayData} />
           </div>
@@ -1126,8 +1032,21 @@ export default function ZikrAnalytics() {
                 <span className="text-white/25 text-[10px] font-normal">
                   {t('zikrAnalytics.heatmapSub', 'last 365 days')}
                 </span>
+                <InfoButton
+                  onClick={() => setInfoTopic('heatmap')}
+                  label={CHART_INFO.heatmap!.title}
+                />
               </h2>
-              <HeatmapCalendar data={yearData.chartData} />
+              {allTime?.totalCount === 0 ? (
+                <p className="text-white/40 text-sm text-center py-6">
+                  {t(
+                    'zikrAnalytics.newUserHeatmap',
+                    'Not enough activity yet — this fills in as you go. 🌱'
+                  )}
+                </p>
+              ) : (
+                <HeatmapCalendar data={yearData.chartData} />
+              )}
             </div>
           )}
 
@@ -1245,42 +1164,72 @@ export default function ZikrAnalytics() {
               </p>
             ) : sessionsData && sessionsData.length > 0 ? (
               <div className="space-y-2">
-                {sessionsData.map((s, i) => (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-brand-border p-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-white/80 text-sm font-semibold tabular-nums">
-                        {formatLocaleTime(new Date(s.start), {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                        })}
-                        {' – '}
-                        {formatLocaleTime(new Date(s.end), { hour: 'numeric', minute: '2-digit' })}
-                      </p>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {Object.entries(s.perType).map(([type, count]) => (
-                          <span
-                            key={type}
-                            className="px-1.5 py-0.5 rounded-md bg-black/30 border border-brand-border text-[10px] text-white/50"
-                          >
-                            {zikrDisplayName(type, i18n.language)} ×{formatLocaleNumber(count)}
-                          </span>
-                        ))}
+                {sessionsData.map((s, i) => {
+                  // Manual entries carry an explicit flag. Older ones (logged
+                  // before the flag existed) were anchored to the tracking
+                  // day's midday, so still detect those by both start and end
+                  // falling within 1 minute of noon.
+                  const startMs = new Date(s.start).getTime();
+                  const endMs = new Date(s.end).getTime();
+                  const startHour = new Date(s.start).getHours();
+                  const startMin = new Date(s.start).getMinutes();
+                  const isManualEntry =
+                    s.manual === true ||
+                    (endMs - startMs < 60_000 && startHour === 12 && startMin === 0);
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-brand-border p-3"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-white/80 text-sm font-semibold tabular-nums">
+                          {isManualEntry ? (
+                            <span className="text-white/40 text-xs font-medium italic">
+                              {t('zikrAnalytics.sessions.manualLog', 'Manual log')}
+                            </span>
+                          ) : (
+                            <>
+                              {formatLocaleTime(new Date(s.start), {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                              })}
+                              {' – '}
+                              {formatLocaleTime(new Date(s.end), {
+                                hour: 'numeric',
+                                minute: '2-digit',
+                              })}
+                            </>
+                          )}
+                        </p>
+                        <div className="flex flex-wrap gap-1 mt-1">
+                          {Object.entries(s.perType).map(([type, count]) => (
+                            <span
+                              key={type}
+                              className="px-1.5 py-0.5 rounded-md bg-black/30 border border-brand-border text-[10px] text-white/50"
+                            >
+                              {zikrDisplayName(type, i18n.language)} ×{formatLocaleNumber(count)}
+                            </span>
+                          ))}
+                        </div>
                       </div>
+                      <p className="text-brand-emerald font-black text-lg shrink-0">
+                        {formatLocaleNumber(s.total)}
+                      </p>
                     </div>
-                    <p className="text-brand-emerald font-black text-lg shrink-0">
-                      {formatLocaleNumber(s.total)}
-                    </p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ) : (
               <p className="text-white/30 text-xs text-center py-4">
                 {t('zikrAnalytics.sessions.empty', 'No sessions logged for this day')}
               </p>
             )}
+            <p className="text-white/25 text-[10px] leading-relaxed">
+              {t(
+                'zikrAnalytics.sessions.note',
+                "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
+              )}
+            </p>
           </div>
         </div>
 
@@ -1367,6 +1316,12 @@ export default function ZikrAnalytics() {
           />
         )}
       </AnimatePresence>
+
+      <ChartInfoModal
+        title={infoTopic ? (CHART_INFO[infoTopic]?.title ?? null) : null}
+        body={infoTopic ? CHART_INFO[infoTopic]?.body : undefined}
+        onClose={() => setInfoTopic(null)}
+      />
     </AnimatedBackground>
   );
 }

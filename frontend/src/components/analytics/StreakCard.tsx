@@ -28,6 +28,10 @@ interface StreakCardProps {
   chartData?: ChartDataPoint[];
   dailyGoal?: number | null;
   todayTotal?: number;
+  /** True only for a confirmed zero-LIFETIME-total user (not "zero today") —
+   * swaps the bare 0/0 headline for an inviting first-timer message instead
+   * of implying they've already failed at something. */
+  isNewUser?: boolean;
 }
 
 function heatmapColor(total: number, goal: number | null | undefined): string {
@@ -53,6 +57,7 @@ export default function StreakCard({
   chartData,
   dailyGoal,
   todayTotal = 0,
+  isNewUser = false,
 }: StreakCardProps) {
   const { t } = useTranslation();
   const { currentStreak, longestStreak, isPaused } = streak || {};
@@ -182,63 +187,77 @@ export default function StreakCard({
         )}
 
         {/* Current / Best row */}
-        <div className="grid grid-cols-2 gap-3 mb-3">
-          <div className="text-center">
-            <motion.div className="text-8xl sm:text-5xl font-black drop-shadow-[0_6px_24px_rgba(0,0,0,0.35)] bg-gradient-to-tr from-brand-gold via-brand-gold to-brand-warm bg-clip-text text-transparent">
-              {formatLocaleNumber(currentStreak || 0)}
-            </motion.div>
-            <p className="text-xs font-bold text-white/80">
-              {t('zikrAnalytics.streakCard.dayStreak', 'Day Streak')}
+        {isNewUser ? (
+          <div className="text-center py-3 mb-3 border-y border-brand-emerald/10">
+            <p className="text-sm font-bold text-white/80">
+              {t('zikrAnalytics.streakCard.newUserTitle', '🌱 Start your first streak today')}
             </p>
-          </div>
-
-          <div className="text-center border-l border-brand-emerald/10">
-            <motion.div
-              className="relative inline-block px-2 py-1"
-              whileHover={!prefersReducedMotion ? { scale: 1.02 } : {}}
-            >
-              <span className="absolute -inset-3 rounded-full bg-gradient-radial from-brand-gold/25 to-transparent blur-md" />
-              {!prefersReducedMotion && (
-                <>
-                  {[...Array(3)].map((_, i) => (
-                    <motion.span
-                      key={i}
-                      className="absolute rounded-full blur-xl opacity-30"
-                      style={{
-                        width: `${18 + (i % 3) * 8}px`,
-                        height: `${18 + (i % 3) * 8}px`,
-                        left: ['-18%', '35%', '110%'][i],
-                        top: ['-10%', '-15%', '0%'][i],
-                        background:
-                          i % 2 === 0
-                            ? 'radial-gradient(circle, rgba(214,197,43,0.3) 0%, rgba(214,197,43,0) 70%)'
-                            : 'radial-gradient(circle, rgba(199,87,171,0.25) 0%, rgba(199,87,171,0) 70%)',
-                      }}
-                      initial={{ scale: 0.9, opacity: 0.3 }}
-                      animate={{ scale: [0.9, 1.05, 0.95, 1], opacity: [0.3, 0.5, 0.35, 0.4] }}
-                      transition={{ duration: 6 + i * 0.3, repeat: Infinity, ease: 'easeInOut' }}
-                    />
-                  ))}
-                </>
+            <p className="text-xs text-white/40 mt-1">
+              {t(
+                'zikrAnalytics.streakCard.newUserHint',
+                'Meet your daily goal once to light the fire — every streak starts at day one.'
               )}
-              <span
-                className="relative text-6xl sm:text-4xl font-black"
-                style={{
-                  background: 'linear-gradient(180deg,#fff,#f5f3c4)',
-                  WebkitBackgroundClip: 'text',
-                  backgroundClip: 'text',
-                  color: 'transparent',
-                  WebkitTextFillColor: 'transparent',
-                }}
-              >
-                {formatLocaleNumber(longestStreak || 0)}
-              </span>
-            </motion.div>
-            <p className="text-sm font-bold text-white/70 flex items-center justify-center gap-1">
-              {t('zikrAnalytics.streakCard.best', 'Best')} <TrophyIcon className="w-3 h-3" />
             </p>
           </div>
-        </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-3 mb-3">
+            <div className="text-center">
+              <motion.div className="text-8xl sm:text-5xl font-black drop-shadow-[0_6px_24px_rgba(0,0,0,0.35)] bg-gradient-to-tr from-brand-gold via-brand-gold to-brand-warm bg-clip-text text-transparent">
+                {formatLocaleNumber(currentStreak || 0)}
+              </motion.div>
+              <p className="text-xs font-bold text-white/80">
+                {t('zikrAnalytics.streakCard.dayStreak', 'Day Streak')}
+              </p>
+            </div>
+
+            <div className="text-center border-l border-brand-emerald/10">
+              <motion.div
+                className="relative inline-block px-2 py-1"
+                whileHover={!prefersReducedMotion ? { scale: 1.02 } : {}}
+              >
+                <span className="absolute -inset-3 rounded-full bg-gradient-radial from-brand-gold/25 to-transparent blur-md" />
+                {!prefersReducedMotion && (
+                  <>
+                    {[...Array(3)].map((_, i) => (
+                      <motion.span
+                        key={i}
+                        className="absolute rounded-full blur-xl opacity-30"
+                        style={{
+                          width: `${18 + (i % 3) * 8}px`,
+                          height: `${18 + (i % 3) * 8}px`,
+                          left: ['-18%', '35%', '110%'][i],
+                          top: ['-10%', '-15%', '0%'][i],
+                          background:
+                            i % 2 === 0
+                              ? 'radial-gradient(circle, rgba(214,197,43,0.3) 0%, rgba(214,197,43,0) 70%)'
+                              : 'radial-gradient(circle, rgba(199,87,171,0.25) 0%, rgba(199,87,171,0) 70%)',
+                        }}
+                        initial={{ scale: 0.9, opacity: 0.3 }}
+                        animate={{ scale: [0.9, 1.05, 0.95, 1], opacity: [0.3, 0.5, 0.35, 0.4] }}
+                        transition={{ duration: 6 + i * 0.3, repeat: Infinity, ease: 'easeInOut' }}
+                      />
+                    ))}
+                  </>
+                )}
+                <span
+                  className="relative text-6xl sm:text-4xl font-black"
+                  style={{
+                    background: 'linear-gradient(180deg,#fff,#f5f3c4)',
+                    WebkitBackgroundClip: 'text',
+                    backgroundClip: 'text',
+                    color: 'transparent',
+                    WebkitTextFillColor: 'transparent',
+                  }}
+                >
+                  {formatLocaleNumber(longestStreak || 0)}
+                </span>
+              </motion.div>
+              <p className="text-sm font-bold text-white/70 flex items-center justify-center gap-1">
+                {t('zikrAnalytics.streakCard.best', 'Best')} <TrophyIcon className="w-3 h-3" />
+              </p>
+            </div>
+          </div>
+        )}
 
         {/* 7-day heatmap with streak-status tags */}
         {last7.length > 0 && (

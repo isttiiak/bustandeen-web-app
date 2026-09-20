@@ -7,23 +7,27 @@ import {
   useAdminAccounts,
   useCreateAdminAccount,
   useSetAdminAccountActive,
+  useSetAdminAccountDomain,
   AdminAccountListItem,
 } from '../hooks/useAdminAccounts.js';
+import type { AnsarDomain } from '../store/useAdminStore.js';
 
 function AddAnsarForm() {
   const { t } = useTranslation();
   const create = useCreateAdminAccount();
   const [form, setForm] = useState({ email: '', password: '', displayName: '' });
+  const [ansarDomain, setAnsarDomain] = useState<'sadaqah' | 'general'>('general');
   const [open, setOpen] = useState(false);
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!form.email || form.password.length < 8) return;
     create.mutate(
-      { ...form, role: 'ansar' },
+      { ...form, role: 'ansar', ansarDomain },
       {
         onSuccess: () => {
           setForm({ email: '', password: '', displayName: '' });
+          setAnsarDomain('general');
           setOpen(false);
         },
       }
@@ -69,6 +73,31 @@ function AddAnsarForm() {
         placeholder={t('adminAccounts.passwordPlaceholder', 'Temporary password (min 8 chars)')}
         className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
       />
+      <div>
+        <p className="text-xs text-white/40 mb-1">
+          {t('adminAccounts.domainLabel', 'Which area does this Ansar manage?')}
+        </p>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setAnsarDomain('general')}
+            className={`btn btn-sm rounded-xl flex-1 border-0 ${
+              ansarDomain === 'general' ? 'bg-brand-emerald text-white' : 'bg-white/5 text-white/50'
+            }`}
+          >
+            {t('adminAccounts.domainGeneral', 'General (zikr review, etc.)')}
+          </button>
+          <button
+            type="button"
+            onClick={() => setAnsarDomain('sadaqah')}
+            className={`btn btn-sm rounded-xl flex-1 border-0 ${
+              ansarDomain === 'sadaqah' ? 'bg-brand-emerald text-white' : 'bg-white/5 text-white/50'
+            }`}
+          >
+            {t('adminAccounts.domainSadaqah', 'Sadaqah only')}
+          </button>
+        </div>
+      </div>
       {create.isError && (
         <p className="text-red-400 text-xs">
           {t(
@@ -101,6 +130,7 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
   const { t } = useTranslation();
   const myEmail = useAdminStore((s) => s.email);
   const setActive = useSetAdminAccountActive();
+  const setDomain = useSetAdminAccountDomain();
   const isSelf = account.email === myEmail;
 
   return (
@@ -118,6 +148,25 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
             ? t('adminGate.servant', 'Servant')
             : t('adminGate.ansar', 'Ansar')}
         </span>
+      </td>
+      <td className="px-3 py-2">
+        {account.role === 'ansar' ? (
+          <select
+            value={account.ansarDomain ?? 'general'}
+            onChange={(e) =>
+              setDomain.mutate({ id: account.id, ansarDomain: e.target.value as AnsarDomain })
+            }
+            disabled={setDomain.isPending}
+            className="select select-xs bg-white/5 border-brand-emerald/15 text-white/70 rounded-lg disabled:opacity-40"
+          >
+            <option value="general">{t('adminAccounts.domainGeneralBadge', 'General')}</option>
+            <option value="sadaqah">{t('adminAccounts.domainSadaqahBadge', 'Sadaqah')}</option>
+          </select>
+        ) : (
+          <span className="text-white/25 text-xs">
+            {t('adminAccounts.allAccess', 'All access')}
+          </span>
+        )}
       </td>
       <td className="px-3 py-2 text-white/60">
         {account.active
@@ -160,7 +209,7 @@ export default function AdminAccounts() {
         path="/admin/accounts"
         index={false}
       />
-      <div className="max-w-3xl mx-auto px-4 py-6 sm:py-10 space-y-6">
+      <div className="max-w-5xl mx-auto px-6 py-6 sm:py-10 space-y-6">
         <div>
           <h1 className="text-2xl font-black text-white">
             {t('adminAccounts.title', 'Manage Ansars')}
@@ -168,7 +217,7 @@ export default function AdminAccounts() {
           <p className="text-sm text-white/50 mt-1">
             {t(
               'adminAccounts.subtitle',
-              'Servant-only. Add a new Ansar or revoke an existing one — deactivating takes effect immediately.'
+              'Servant-only. Add a new Ansar, change which area they manage, or revoke an existing one — every change takes effect immediately.'
             )}
           </p>
         </div>
@@ -181,6 +230,7 @@ export default function AdminAccounts() {
               <tr className="text-left text-white/40 text-xs uppercase tracking-wide border-b border-base-300">
                 <th className="px-3 py-2">{t('adminAccounts.colEmail', 'Email')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colRole', 'Role')}</th>
+                <th className="px-3 py-2">{t('adminAccounts.colDomain', 'Domain')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colStatus', 'Status')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colLastLogin', 'Last login')}</th>
                 <th className="px-3 py-2" />
@@ -189,7 +239,7 @@ export default function AdminAccounts() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={5} className="text-center text-white/30 py-6">
+                  <td colSpan={6} className="text-center text-white/30 py-6">
                     {t('common.loading', 'Loading…')}
                   </td>
                 </tr>

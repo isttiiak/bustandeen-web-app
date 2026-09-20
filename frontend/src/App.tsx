@@ -1,5 +1,5 @@
 ﻿import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
@@ -23,6 +23,8 @@ import NotFound from './pages/NotFound.js';
 import UnsavedWarning from './components/UnsavedWarning.js';
 import GenderGate from './components/GenderGate.js';
 import DemoBanner from './components/DemoBanner.js';
+import AnnouncementBanner from './components/AnnouncementBanner.js';
+import NaturalLogModal from './components/ai/NaturalLogModal.js';
 import type { AuthUser } from './types/api.js';
 
 // `body { overflow-x: hidden }` (styles/global.css, added to stop mobile
@@ -58,6 +60,10 @@ const IslamicSpecialDay = lazy(() => import('./pages/IslamicSpecialDay.js'));
 const Friends = lazy(() => import('./pages/Friends.js'));
 const ConnectFriend = lazy(() => import('./pages/ConnectFriend.js'));
 const About = lazy(() => import('./pages/About.js'));
+const DuaLibrary = lazy(() => import('./pages/DuaLibrary.js'));
+const AdhkarLibrary = lazy(() => import('./pages/AdhkarLibrary.js'));
+const AsmaUlHusnaLibrary = lazy(() => import('./pages/AsmaUlHusnaLibrary.js'));
+const ZakatCalculatorLibrary = lazy(() => import('./pages/ZakatCalculatorLibrary.js'));
 const Privacy = lazy(() => import('./pages/Privacy.js'));
 const Feedback = lazy(() => import('./pages/Feedback.js'));
 const Contact = lazy(() => import('./pages/Contact.js'));
@@ -76,11 +82,19 @@ const Landing = lazy(() => import('./pages/Landing.js'));
 const Sadaqah = lazy(() => import('./pages/Sadaqah.js'));
 const SadaqahDonate = lazy(() => import('./pages/SadaqahDonate.js'));
 const SadaqahThankYou = lazy(() => import('./pages/SadaqahThankYou.js'));
+const SadaqahVerify = lazy(() => import('./pages/SadaqahVerify.js'));
 const AdminSadaqah = lazy(() => import('./pages/AdminSadaqah.js'));
 const AdminZikrRequests = lazy(() => import('./pages/AdminZikrRequests.js'));
 const AdminHome = lazy(() => import('./pages/AdminHome.js'));
 const AdminUsers = lazy(() => import('./pages/AdminUsers.js'));
 const AdminAccounts = lazy(() => import('./pages/AdminAccounts.js'));
+const AdminAuditLog = lazy(() => import('./pages/AdminAuditLog.js'));
+const AdminFeedback = lazy(() => import('./pages/AdminFeedback.js'));
+const AdminUserDetail = lazy(() => import('./pages/AdminUserDetail.js'));
+const AdminOpsHealth = lazy(() => import('./pages/AdminOpsHealth.js'));
+const AdminBroadcast = lazy(() => import('./pages/AdminBroadcast.js'));
+const AdminComposeEmail = lazy(() => import('./pages/AdminComposeEmail.js'));
+const NaseehPage = lazy(() => import('./pages/NaseehPage.js'));
 
 // Programmatic-SEO static pages (prayer-times/qibla/ramadan-calendar by
 // city, du'a library, adhkar, Hijri converter) — pre-rendered at build time
@@ -96,6 +110,9 @@ const SeoQiblaCity = lazy(() =>
 const SeoRamadanCalendar = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.RamadanCalendarRoute }))
 );
+const SeoRamadanCalendarIndex = lazy(() =>
+  import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.RamadanCalendarIndexRoute }))
+);
 const SeoDuaSituation = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.DuaSituationRoute }))
 );
@@ -110,6 +127,12 @@ const SeoAdhkarEvening = lazy(() =>
 );
 const SeoHijriConverter = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.HijriConverterRoute }))
+);
+const SeoAsmaUlHusna = lazy(() =>
+  import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.AsmaUlHusnaRoute }))
+);
+const SeoZakatCalculator = lazy(() =>
+  import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.ZakatCalculatorRoute }))
 );
 
 /**
@@ -365,6 +388,11 @@ export default function App() {
     const onVisibility = () => {
       if (!document.hidden) {
         checkAndResetIfNewDay();
+        // Taps made just before the phone locked (or the installed app was
+        // backgrounded mid full-screen) may not have reached the server, since
+        // the keepalive flush at that moment can't refresh an expired token.
+        // Retry now that there's a live page and a fresh token available.
+        void useZikrStore.getState().flush();
         // A device waking from sleep/lock can leave the network stack briefly
         // unready while this tab's mount-time queries fire — they fail with a
         // connection error (net::ERR_CONNECTION_*), and since
@@ -558,6 +586,12 @@ export default function App() {
             console.error('Verify failed:', { status: verifyRes.status, body: errorText });
             // Only sign out on genuine auth failures — not rate limits (429) or server errors (5xx)
             if (verifyRes.status === 401 || verifyRes.status === 403) {
+              if (errorText.includes('account_disabled')) {
+                toast.error(
+                  'This account has been disabled. Contact ansar@bustandeen.com if this seems wrong.',
+                  { duration: 8000 }
+                );
+              }
               await auth.signOut();
               return;
             }
@@ -623,7 +657,8 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
   }, [setUser, init, resetAll, hydrate, setAuthLoading]);
 
-  const { authLoading } = useAuthStore();
+  const { authLoading, aiEnabled } = useAuthStore();
+  const [quickLogOpen, setQuickLogOpen] = useState(false);
   const isAuthPage = ['/login', '/signup', '/auth/action'].includes(location.pathname);
   // Programmatic-SEO static pages (src/seo/) ship their own self-contained
   // header/breadcrumb/footer (see src/seo/components/Layout.tsx) — the app
@@ -632,7 +667,7 @@ export default function App() {
   // excludes the bare `/prayer-times` and `/qibla` paths (the live, on-device
   // tracker pages), which keep the normal app chrome.
   const isSeoPage =
-    /^\/(bn\/|ar\/)?(prayer-times\/|qibla\/|ramadan-calendar\/|duas(\/|$)|adhkar\/|hijri-date-converter)/.test(
+    /^\/(bn\/|ar\/)?(prayer-times\/|qibla\/|ramadan-calendar(\/|$)|duas(\/|$)|adhkar\/|hijri-date-converter|asma-ul-husna|zakat-calculator)/.test(
       location.pathname
     );
   // The admin panel (AdminProtected, above) has its OWN chrome — AdminLayout
@@ -673,6 +708,7 @@ export default function App() {
         </div>
       ) : (
         <>
+          {!isSeoPage && !isAdminPage && <AnnouncementBanner />}
           {!isSeoPage && !isAdminPage && <DemoBanner />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <Navbar />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <UnsavedWarning />}
@@ -712,6 +748,15 @@ export default function App() {
                 <Route path="/qibla/:city" element={<SeoQiblaCity lang="en" />} />
                 <Route path="/bn/qibla/:city" element={<SeoQiblaCity lang="bn" />} />
                 <Route path="/ar/qibla/:city" element={<SeoQiblaCity lang="ar" />} />
+                <Route path="/ramadan-calendar" element={<SeoRamadanCalendarIndex lang="en" />} />
+                <Route
+                  path="/bn/ramadan-calendar"
+                  element={<SeoRamadanCalendarIndex lang="bn" />}
+                />
+                <Route
+                  path="/ar/ramadan-calendar"
+                  element={<SeoRamadanCalendarIndex lang="ar" />}
+                />
                 <Route
                   path="/ramadan-calendar/:city/:year"
                   element={<SeoRamadanCalendar lang="en" />}
@@ -739,6 +784,12 @@ export default function App() {
                 <Route path="/hijri-date-converter" element={<SeoHijriConverter lang="en" />} />
                 <Route path="/bn/hijri-date-converter" element={<SeoHijriConverter lang="bn" />} />
                 <Route path="/ar/hijri-date-converter" element={<SeoHijriConverter lang="ar" />} />
+                <Route path="/asma-ul-husna" element={<SeoAsmaUlHusna lang="en" />} />
+                <Route path="/bn/asma-ul-husna" element={<SeoAsmaUlHusna lang="bn" />} />
+                <Route path="/ar/asma-ul-husna" element={<SeoAsmaUlHusna lang="ar" />} />
+                <Route path="/zakat-calculator" element={<SeoZakatCalculator lang="en" />} />
+                <Route path="/bn/zakat-calculator" element={<SeoZakatCalculator lang="bn" />} />
+                <Route path="/ar/zakat-calculator" element={<SeoZakatCalculator lang="ar" />} />
                 <Route
                   path="/quran"
                   element={
@@ -874,6 +925,7 @@ export default function App() {
                 <Route path="/sadaqah" element={<Sadaqah />} />
                 <Route path="/sadaqah/donate" element={<SadaqahDonate />} />
                 <Route path="/sadaqah/thank-you" element={<SadaqahThankYou />} />
+                <Route path="/sadaqah/verify/:id" element={<SadaqahVerify />} />
                 <Route
                   path="/admin"
                   element={
@@ -909,6 +961,16 @@ export default function App() {
                   }
                 />
                 <Route
+                  path="/admin/users/:uid"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminUserDetail />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
+                <Route
                   path="/admin/accounts"
                   element={
                     <AdminProtected>
@@ -918,16 +980,87 @@ export default function App() {
                     </AdminProtected>
                   }
                 />
+                <Route
+                  path="/admin/feedback"
+                  element={
+                    <AdminProtected>
+                      <AdminFeedback />
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/audit-log"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminAuditLog />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/ops-health"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminOpsHealth />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/broadcast"
+                  element={
+                    <AdminProtected>
+                      <AdminBroadcast />
+                    </AdminProtected>
+                  }
+                />
+                <Route
+                  path="/admin/compose-email"
+                  element={
+                    <AdminProtected>
+                      <ServantProtected>
+                        <AdminComposeEmail />
+                      </ServantProtected>
+                    </AdminProtected>
+                  }
+                />
                 <Route path="/about" element={<About />} />
+                <Route path="/library/duas" element={<DuaLibrary />} />
+                <Route path="/library/adhkar" element={<AdhkarLibrary />} />
+                <Route path="/library/asma-ul-husna" element={<AsmaUlHusnaLibrary />} />
+                <Route path="/library/zakat-calculator" element={<ZakatCalculatorLibrary />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/feedback" element={<Feedback />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<AuthSignIn />} />
                 <Route path="/signup" element={<AuthSignUp />} />
                 <Route path="/auth/action" element={<AuthAction />} />
+                <Route path="/naseeh" element={<NaseehPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
+            {/* Floating ✨ quick-log button — visible on app pages except /naseeh (it has its own) and the zikr counter */}
+            {aiEnabled &&
+              !isAdminPage &&
+              !isSeoPage &&
+              !isAuthPage &&
+              location.pathname !== '/naseeh' &&
+              // The zikr counter is a tap-anywhere surface; a floating button in the
+              // corner would get hit by accident mid-count.
+              location.pathname !== '/zikr' && (
+                <>
+                  <button
+                    onClick={() => setQuickLogOpen(true)}
+                    aria-label="Quick log with a sentence"
+                    className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-brand-emerald shadow-lg shadow-brand-emerald/30 flex items-center justify-center text-xl hover:scale-110 active:scale-95 transition-transform"
+                  >
+                    ✨
+                  </button>
+                  {quickLogOpen && <NaturalLogModal onClose={() => setQuickLogOpen(false)} />}
+                </>
+              )}
           </div>
           {showFooter && <Footer />}
         </>

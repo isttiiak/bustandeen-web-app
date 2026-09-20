@@ -41,11 +41,16 @@ precacheAndRoute(self.__WB_MANIFEST);
 
 // SPA offline routing: serve the cached index.html for any navigation that
 // misses the precache (e.g. /zikr while offline) — except the API, which must
-// always hit the network (worship logs must never be stale-served).
+// always hit the network (worship logs must never be stale-served). Anything
+// with a file extension (sitemap.xml, robots.txt, llms.txt, the Search Console
+// verification .html) is a real static file, not an SPA route, so it must
+// also bypass the fallback — otherwise opening one of them in a browser that
+// already has this worker installed returns the app shell instead of the file.
+// (Workbox tests these against pathname + search, hence the `(\?|$)` tail.)
 const navigationHandler = createHandlerBoundToURL('index.html');
 registerRoute(
   new NavigationRoute(navigationHandler, {
-    denylist: [/^\/api\//],
+    denylist: [/^\/api\//, /^\/[^?]*\.[A-Za-z0-9]+(\?|$)/],
   })
 );
 

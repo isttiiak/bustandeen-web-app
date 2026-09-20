@@ -14,7 +14,7 @@ function escapeHtml(s: string): string {
 
 const SITE_URL = 'https://bustandeen.com';
 const FALLBACK_IMAGE = `${SITE_URL}/og-image.jpg`;
-const FALLBACK_TITLE = 'Bustandeen — Grow Your Garden of Good Deeds';
+const FALLBACK_TITLE = 'Bustandeen - Nourish Your Deen';
 const FALLBACK_DESCRIPTION =
   "Zikr, salat, fasting, Quran and prayer times — with streaks, authentic references, and friends to race toward good. 'So compete with one another in doing good' (Quran 2:148).";
 

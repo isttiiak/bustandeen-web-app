@@ -6,7 +6,7 @@ import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from './AnimatedBackground.js';
 import { adminAuth } from '../adminFirebase.js';
 import { API_BASE } from '../lib/api.js';
-import { useAdminStore, AdminRole } from '../store/useAdminStore.js';
+import { useAdminStore, AdminRole, AnsarDomain } from '../store/useAdminStore.js';
 import { useAdminLogin } from '../hooks/useAdminAuth.js';
 
 /**
@@ -36,12 +36,13 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
       }
       try {
         const idToken = await user.getIdToken();
-        const res = await axios.get<{ email: string; role: AdminRole }>(
-          `${API_BASE}/api/admin/auth/session`,
-          { headers: { 'X-Admin-Token': idToken } }
-        );
+        const res = await axios.get<{
+          email: string;
+          role: AdminRole;
+          ansarDomain: AnsarDomain | null;
+        }>(`${API_BASE}/api/admin/auth/session`, { headers: { 'X-Admin-Token': idToken } });
         setRejectedError(null);
-        setSession(res.data.email, res.data.role);
+        setSession(res.data.email, res.data.role, res.data.ansarDomain ?? null);
       } catch {
         setRejectedError(
           t('adminGate.notRegistered', 'This account is not registered as a Bustandeen admin.')

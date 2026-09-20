@@ -17,11 +17,21 @@ import insightsRoutes from './routes/insights.routes.js';
 import naturalLogRoutes from './routes/naturalLog.routes.js';
 import connectPreviewRoutes from './routes/connectPreview.routes.js';
 import sadaqahRoutes from './routes/sadaqah.routes.js';
+import feedbackRoutes from './routes/feedback.routes.js';
+import announcementRoutes from './routes/announcement.routes.js';
 import adminSadaqahRoutes from './routes/adminSadaqah.routes.js';
 import adminZikrRoutes from './routes/adminZikr.routes.js';
 import adminAuthRoutes from './routes/adminAuth.routes.js';
 import adminUsersRoutes from './routes/adminUsers.routes.js';
 import adminAccountRoutes from './routes/adminAccount.routes.js';
+import adminAuditRoutes from './routes/adminAudit.routes.js';
+import adminFeedbackRoutes from './routes/adminFeedback.routes.js';
+import adminMailboxRoutes from './routes/adminMailbox.routes.js';
+import adminStatsRoutes from './routes/adminStats.routes.js';
+import adminOpsRoutes from './routes/adminOps.routes.js';
+import adminAnnouncementRoutes from './routes/adminAnnouncement.routes.js';
+import updateEmailRoutes from './routes/updateEmail.routes.js';
+import composeEmailRoutes from './routes/composeEmail.routes.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
 
@@ -139,11 +149,22 @@ app.use('/api/cycle', cycleRoutes);
 app.use('/api/insights', insightsRoutes);
 app.use('/api/natural-log', aiLimiter, naturalLogRoutes);
 app.use('/api/sadaqah', sadaqahRoutes);
+app.use('/api/feedback', feedbackRoutes);
+app.use('/api/announcements', announcementRoutes);
 app.use('/api/admin/sadaqah', adminSadaqahRoutes);
 app.use('/api/admin/zikr-requests', adminZikrRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);
 app.use('/api/admin/users', adminUsersRoutes);
 app.use('/api/admin/accounts', adminAccountRoutes);
+app.use('/api/admin/audit-log', adminAuditRoutes);
+// Must precede /api/admin/feedback so 'mailbox' is never read as a feedback :id.
+app.use('/api/admin/feedback/mailbox', adminMailboxRoutes);
+app.use('/api/admin/feedback', adminFeedbackRoutes);
+app.use('/api/admin/stats', adminStatsRoutes);
+app.use('/api/admin/ops', adminOpsRoutes);
+app.use('/api/admin/announcements', adminAnnouncementRoutes);
+app.use('/api/admin/compose-email', composeEmailRoutes);
+app.use('/api/admin/update-emails', updateEmailRoutes);
 
 // 404 handler
 app.use((_req: Request, res: Response) => {

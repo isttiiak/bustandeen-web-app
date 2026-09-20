@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import AdminAccount from '../models/AdminAccount.js';
 import * as adminAccountService from '../services/adminAccount.service.js';
+import { logAdminAction } from '../services/adminAudit.service.js';
 
 const handleServiceError = (err: unknown, res: Response, next: NextFunction): void => {
   const status = (err as { status?: number }).status;
@@ -31,7 +32,12 @@ export const sessionHandler = async (
       { firebaseUid: req.admin.uid },
       { $set: { lastLoginAt: new Date() } }
     );
-    res.json({ ok: true, email: req.admin.email, role: req.admin.role });
+    res.json({
+      ok: true,
+      email: req.admin.email,
+      role: req.admin.role,
+      ansarDomain: req.admin.ansarDomain,
+    });
   } catch (err) {
     next(err);
   }
@@ -51,6 +57,7 @@ export const listHandler = async (
         email: a.email,
         displayName: a.displayName,
         role: a.role,
+        ansarDomain: a.ansarDomain,
         active: a.active,
         createdBy: a.createdBy,
         createdAt: a.createdAt,
@@ -68,18 +75,28 @@ export const createHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { email, password, displayName, role } = req.body as {
+    const { email, password, displayName, role, ansarDomain } = req.body as {
       email: string;
       password: string;
       displayName?: string;
       role: 'servant' | 'ansar';
+      ansarDomain?: 'sadaqah' | 'general';
     };
     const account = await adminAccountService.createAdminAccount({
       email,
       password,
       displayName,
       role,
+      ansarDomain,
       createdBy: req.admin!.email,
+    });
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'account.create',
+      targetType: 'AdminAccount',
+      targetId: String(account._id),
+      metadata: { email: account.email, role: account.role, ansarDomain: account.ansarDomain },
     });
     res.status(201).json({
       ok: true,
@@ -88,9 +105,35 @@ export const createHandler = async (
         email: account.email,
         displayName: account.displayName,
         role: account.role,
+        ansarDomain: account.ansarDomain,
         active: account.active,
       },
     });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
+export const setDomainHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { ansarDomain } = req.body as { ansarDomain: 'sadaqah' | 'general' };
+    const account = await adminAccountService.setAdminAccountDomain(
+      req.params.id as string,
+      ansarDomain
+    );
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'account.setDomain',
+      targetType: 'AdminAccount',
+      targetId: String(account._id),
+      metadata: { ansarDomain },
+    });
+    res.json({ ok: true, account: { id: account._id, ansarDomain: account.ansarDomain } });
   } catch (err) {
     handleServiceError(err, res, next);
   }
@@ -108,6 +151,13 @@ export const setActiveHandler = async (
       active,
       req.admin!.email
     );
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: active ? 'account.activate' : 'account.deactivate',
+      targetType: 'AdminAccount',
+      targetId: String(account._id),
+    });
     res.json({ ok: true, account: { id: account._id, active: account.active } });
   } catch (err) {
     handleServiceError(err, res, next);

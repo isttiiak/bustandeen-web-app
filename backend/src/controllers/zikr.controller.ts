@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as zikrService from '../services/zikr.service.js';
 import * as streakService from '../services/streak.service.js';
 import { DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
+import type { ZikrIncrementItem } from '../types/api.types.js';
 
 export const incrementHandler = async (
   req: Request,
@@ -57,7 +58,7 @@ export const batchIncrementHandler = async (
   try {
     const userId = req.user.uid;
     const { increments, timezoneOffset, today } = req.body as {
-      increments: Array<{ zikrType: string; amount?: number; ts?: number; realTs?: number }>;
+      increments: ZikrIncrementItem[];
       timezoneOffset?: number;
       today?: string;
     };

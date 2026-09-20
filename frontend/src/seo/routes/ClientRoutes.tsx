@@ -6,14 +6,21 @@ import { useParams } from 'react-router-dom';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import { cityBySlug } from '../data/cities.js';
 import { DUAS } from '../content/duas.js';
-import { hijriYearForRamadanGregorianYear } from '../utils/calc.js';
+import {
+  hijriYearForRamadanGregorianYear,
+  currentHijriYear,
+  ramadanRangeForHijriYear,
+} from '../utils/calc.js';
 import PrayerTimesCityPage from '../templates/PrayerTimesCityPage.js';
 import QiblaCityPage from '../templates/QiblaCityPage.js';
 import RamadanCalendarPage from '../templates/RamadanCalendarPage.js';
+import RamadanCalendarIndexPage from '../templates/RamadanCalendarIndexPage.js';
 import DuaSituationPage from '../templates/DuaSituationPage.js';
 import DuasIndexPage from '../templates/DuasIndexPage.js';
 import AdhkarPage from '../templates/AdhkarPage.js';
 import HijriConverterPage from '../templates/HijriConverterPage.js';
+import AsmaUlHusnaPage from '../templates/AsmaUlHusnaPage.js';
+import ZakatCalculatorPage from '../templates/ZakatCalculatorPage.js';
 
 function NotFoundInline({ lang }: { lang: SeoLang }) {
   return (
@@ -40,6 +47,11 @@ export function QiblaCityRoute({ lang }: { lang: SeoLang }) {
   const city = citySlug ? cityBySlug(citySlug) : undefined;
   if (!city) return <NotFoundInline lang={lang} />;
   return <QiblaCityPage lang={lang} city={city} />;
+}
+
+export function RamadanCalendarIndexRoute({ lang }: { lang: SeoLang }) {
+  const gregorianYear = ramadanRangeForHijriYear(currentHijriYear()).start.getUTCFullYear();
+  return <RamadanCalendarIndexPage lang={lang} gregorianYear={gregorianYear} />;
 }
 
 export function RamadanCalendarRoute({ lang }: { lang: SeoLang }) {
@@ -77,4 +89,12 @@ export function AdhkarEveningRoute({ lang }: { lang: SeoLang }) {
 
 export function HijriConverterRoute({ lang }: { lang: SeoLang }) {
   return <HijriConverterPage lang={lang} buildDate={new Date()} />;
+}
+
+export function AsmaUlHusnaRoute({ lang }: { lang: SeoLang }) {
+  return <AsmaUlHusnaPage lang={lang} />;
+}
+
+export function ZakatCalculatorRoute({ lang }: { lang: SeoLang }) {
+  return <ZakatCalculatorPage lang={lang} />;
 }
