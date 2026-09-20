@@ -126,7 +126,7 @@ export default function AdminUpdateEmails() {
   // Start every message from the standard greeting and closing lines.
   useEffect(() => {
     if (trailer && !body)
-      setBody(`Assalamu alaikum {name},
+      setBody(`Assalamu alaikum, Bustandeen family,
 
 
 
@@ -207,8 +207,7 @@ ${trailer}`);
         Sends an update email from{' '}
         <b className="text-white/70">{audience?.sender ?? 'ansar@bustandeen.com'}</b> to the
         accounts you choose. Choose a group or type custom addresses (handy for a test send), then
-        write the message. <code className="text-white/60">{'{name}'}</code> becomes each
-        person&apos;s first name.
+        write the message. Everyone receives the same text.
       </p>
 
       <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-4">

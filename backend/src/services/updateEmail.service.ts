@@ -114,13 +114,6 @@ export function withTrailer(body: string): string {
   return trimmed.endsWith(EMAIL_TAGLINE) ? trimmed : `${trimmed}\n\n${SIGN_OFF}`;
 }
 
-/** {name} becomes the first name; with no name the greeting just loses it
- * ("Assalamu alaikum {name}," becomes "Assalamu alaikum,"). */
-export function personalise(body: string, name: string): string {
-  if (name) return body.replace(/\{name\}/gi, () => name);
-  return body.replace(/[ \t]*\{name\}/gi, '');
-}
-
 /** Lower-cased, de-duplicated addresses from the custom list. */
 export function normaliseEmails(emails: string[]): string[] {
   return [...new Set(emails.map((e) => e.trim().toLowerCase()).filter(Boolean))];
@@ -134,7 +127,7 @@ export async function createCampaign(
   const custom = normaliseEmails(input.customEmails ?? []);
   if (custom.length > 0) {
     // Special or test send: exactly these addresses. When one belongs to an
-    // account, borrow its first name so {name} still works.
+    // account, its first name is kept only so the history reads well.
     const byEmail = new Map(users.map((u) => [u.email.toLowerCase(), u]));
     return UpdateEmailCampaign.create({
       subject: input.subject,
@@ -175,7 +168,8 @@ export async function sendNextChunk(id: string): Promise<IUpdateEmailCampaign> {
 
   const batch = campaign.recipients.filter((r) => r.status === 'pending').slice(0, CHUNK_SIZE);
   const sendOne = async (r: IUpdateEmailRecipient): Promise<void> => {
-    const text = personalise(campaign.body, r.name);
+    // One shared message for everyone: bulk updates address the whole community.
+    const text = campaign.body;
     const messageId = await sendMail({
       to: r.email,
       subject: campaign.subject,

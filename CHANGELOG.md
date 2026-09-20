@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.50.1 - Update emails greet everyone, not one name - 2026-09-21
+
+### Changed
+
+- **Update emails no longer use `{name}`.** A bulk update goes to a whole group, so every recipient gets the same message, starting from "Assalamu alaikum, Bustandeen family," followed by the shared closing lines.
+
 ## v5.50.0 - Custom recipients for update emails, Broadcast open to Ansars - 2026-09-21
 
 ### Added

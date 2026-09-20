@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import app from '../src/app.js';
 import AdminAccount from '../src/models/AdminAccount.js';
 import User from '../src/models/User.js';
-import { selectRecipients, personalise, withTrailer } from '../src/services/updateEmail.service.js';
+import { selectRecipients, withTrailer } from '../src/services/updateEmail.service.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 const fakeJwt = (payload) => {
@@ -92,9 +92,7 @@ describe('Admin update emails', () => {
     expect(ids('all', 'selected', ['n2'])).toEqual(['b', 's', 'n2']);
   });
 
-  test('personalise and trailer helpers', () => {
-    expect(personalise('Assalamu alaikum {name},', 'Amina')).toBe('Assalamu alaikum Amina,');
-    expect(personalise('Assalamu alaikum {name},', '')).toBe('Assalamu alaikum,');
+  test('trailer helper always closes with the tagline, once', () => {
     expect(withTrailer('Hello')).toMatch(/Nourish Your Deen$/);
     const once = withTrailer('Hello');
     expect(withTrailer(once)).toBe(once);
@@ -103,7 +101,7 @@ describe('Admin update emails', () => {
   test('sending creates a history entry with one row per recipient', async () => {
     const res = await asServant(request(app).post('/api/admin/update-emails')).send({
       subject: 'Noor update',
-      body: 'Assalamu alaikum {name}, a small update.',
+      body: 'Assalamu alaikum, a small update.',
       audience: 'sister',
       notSetMode: 'selected',
       selectedUids: ['n1'],
@@ -132,7 +130,7 @@ describe('Admin update emails', () => {
   test('custom recipients: exactly those addresses, de-duplicated, names borrowed from accounts', async () => {
     const res = await asServant(request(app).post('/api/admin/update-emails')).send({
       subject: 'Test send',
-      body: 'Assalamu alaikum {name}, this is a test.',
+      body: 'Assalamu alaikum, this is a test.',
       customEmails: ['someone@example.com', 'SOMEONE@example.com', 'b1@t.dev'],
     });
     expect(res.status).toBe(200);
