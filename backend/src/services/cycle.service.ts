@@ -133,7 +133,10 @@ export async function getStatus(userId: string, today: string): Promise<CycleSta
     .sort((a, b) => a.startDate.localeCompare(b.startDate));
   const gaps: number[] = [];
   for (let i = 1; i < hayd.length; i++) {
-    const g = daysBetween(hayd[i - 1]!.startDate, hayd[i]!.startDate);
+    const prev = hayd.at(i - 1);
+    const cur = hayd.at(i);
+    if (!prev || !cur) continue;
+    const g = daysBetween(prev.startDate, cur.startDate);
     if (g >= 15 && g <= 60) gaps.push(g); // ignore data-entry outliers
   }
   const lengths = hayd

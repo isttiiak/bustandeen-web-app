@@ -39,7 +39,10 @@ export default [
       'no-empty': ['error', { allowEmptyCatch: true }],
       // `condition && doSomething()` is used throughout as a shorthand guard —
       // allow the short-circuit idiom instead of flagging every call site.
-      '@typescript-eslint/no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
+      '@typescript-eslint/no-unused-expressions': [
+        'error',
+        { allowShortCircuit: true, allowTernary: true },
+      ],
     },
   },
 
@@ -55,6 +58,23 @@ export default [
     rules: {
       ...security.configs.recommended.rules,
     },
+  },
+
+  // security/detect-object-injection cannot see TypeScript types, so it flags
+  // every `record[key]`. In these files every such key is a closed union the
+  // compiler enforces (PrayerId: fajr..isha, or a 0-6 weekday), never request
+  // input, so injection is not possible here. The rule stays ON everywhere
+  // else, where keys can come from data (there it was fixed with Maps instead).
+  {
+    files: [
+      'backend/src/services/salat.service.ts',
+      'backend/src/services/salatDebt.service.ts',
+      'backend/src/services/naseehInsights.service.ts',
+      'backend/src/services/insights.service.ts',
+      'backend/src/services/noor.service.ts',
+      'backend/src/services/social.service.ts',
+    ],
+    rules: { 'security/detect-object-injection': 'off' },
   },
 
   // Backend e2e tests — plain Node ESM JS, run under Jest

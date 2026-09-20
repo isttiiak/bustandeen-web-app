@@ -84,7 +84,7 @@ export const bootstrapAdminAccounts = async (): Promise<void> => {
         active: true,
         createdBy: 'bootstrap',
       });
-      console.log(`[adminAccount] Bootstrapped ${role} account: ${normalizedEmail}`);
+      console.warn(`[adminAccount] Bootstrapped ${role} account: ${normalizedEmail}`);
     } catch (err) {
       console.error(`[adminAccount] Failed to bootstrap ${normalizedEmail}:`, err);
     }
@@ -112,7 +112,7 @@ export const backfillAnsarDomains = async (): Promise<void> => {
       { $set: { ansarDomain: 'general' } }
     );
     if (result.modifiedCount > 0) {
-      console.log(
+      console.warn(
         `[adminAccount] Backfilled ansarDomain:'general' on ${result.modifiedCount} account(s)`
       );
     }

@@ -115,13 +115,13 @@ async function verifyGroqKey(apiKey: string): Promise<boolean> {
  * silently falling back to static text on every future AI call. */
 export async function setGroqKey(
   userId: string,
-  apiKey: string | null
+  newKey: string | null
 ): Promise<{ ok: boolean; hasOwnKey: boolean; setAt: Date | null; error?: string }> {
-  if (apiKey === null) {
+  if (newKey === null) {
     await User.updateOne({ uid: userId }, { $set: { groqApiKeyEnc: null, groqApiKeySetAt: null } });
     return { ok: true, hasOwnKey: false, setAt: null };
   }
-  const valid = await verifyGroqKey(apiKey);
+  const valid = await verifyGroqKey(newKey);
   if (!valid) {
     return {
       ok: false,
@@ -133,7 +133,7 @@ export async function setGroqKey(
   const setAt = new Date();
   await User.updateOne(
     { uid: userId },
-    { $set: { groqApiKeyEnc: encryptJson(apiKey), groqApiKeySetAt: setAt } }
+    { $set: { groqApiKeyEnc: encryptJson(newKey), groqApiKeySetAt: setAt } }
   );
   return { ok: true, hasOwnKey: true, setAt };
 }
@@ -208,8 +208,12 @@ const GUARDRAIL_VIOLATION_PATTERNS: Array<{ name: string; pattern: RegExp }> = [
   {
     name: 'hadith-citation',
     pattern:
-      /\bhadith\b|\bbukhari\b|\btirmidhi\b|\babu\s+dawud\b|\bibn\s+majah\b|\bmusnad\b|\bisnad\b|\bnarrated\b|\bsah[iī]h\b|\bda'?[iī]f\b|\bgraded?\s+(as\s+)?(sahih|hasan|da'?if)\b/i,
+      /\bhadith\b|\bbukhari\b|\btirmidhi\b|\babu\s+dawud\b|\bibn\s+majah\b|\bmusnad\b|\bisnad\b|\bnarrated\b|\bsah[iī]h\b|\bda'?[iī]f\b/i,
   },
+  // Grading phrases ("graded sahih", "graded as hasan"), kept as a separate
+  // simple pattern so no single regex carries nested optional groups.
+  { name: 'hadith-citation', pattern: /\bgraded?\s+(?:sahih|hasan|da'?if)\b/i },
+  { name: 'hadith-citation', pattern: /\bgraded?\s+as\s+(?:sahih|hasan|da'?if)\b/i },
   // Prescriptive ruling language.
   {
     name: 'ruling-language',
@@ -267,19 +271,30 @@ function logAiCall(entry: {
 // Strips control characters and common prompt-delimiter/instruction-override
 // sequences from user-influenced text before it's interpolated into a prompt,
 // then wraps it so the model is told explicitly to treat it as inert data.
-const INJECTION_MARKERS =
-  /```|"""|<\|.*?\|>|\b(ignore|disregard)\s+(all\s+|the\s+)?(previous|prior|above)\s+(instructions?|rules?)\b|\bsystem\s*:|\bassistant\s*:|\byou\s+are\s+now\b/gi;
+const INJECTION_MARKERS = [
+  /```/g,
+  /"""/g,
+  /<\|[^|]*\|>/g,
+  /\b(?:ignore|disregard)\s+(?:previous|prior|above)\s+(?:instructions?|rules?)\b/gi,
+  /\b(?:ignore|disregard)\s+all\s+(?:previous|prior|above)\s+(?:instructions?|rules?)\b/gi,
+  /\b(?:ignore|disregard)\s+the\s+(?:previous|prior|above)\s+(?:instructions?|rules?)\b/gi,
+  /system\s*:/gi,
+  /assistant\s*:/gi,
+  /\byou\s+are\s+now\b/gi,
+];
 
 export function sanitizeForPrompt(input: string, maxLen: number): string {
-  return (
-    input
-      // eslint-disable-next-line no-control-regex -- deliberately stripping control chars
-      .replace(/[\x00-\x1F\x7F]/g, ' ')
-      .replace(INJECTION_MARKERS, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-      .slice(0, maxLen)
-  );
+  // eslint-disable-next-line no-control-regex -- deliberately stripping control chars
+  const noControl = input.replace(/[\x00-\x1F\x7F]/g, ' ');
+  // Repeat until stable: removing one marker can splice its neighbours into a
+  // new one (e.g. "syst```em:"), which a single pass would leave behind.
+  let stripped = noControl;
+  for (let round = 0; round < 5; round++) {
+    const next = INJECTION_MARKERS.reduce((text, marker) => text.replace(marker, ''), stripped);
+    if (next === stripped) break;
+    stripped = next;
+  }
+  return stripped.replace(/\s+/g, ' ').trim().slice(0, maxLen);
 }
 
 /** Wrap untrusted, user-influenced text as inert data for the prompt. */

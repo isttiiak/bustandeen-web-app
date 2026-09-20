@@ -9,7 +9,7 @@ export const SURAH_AYAH_COUNTS: readonly number[] = [
 ];
 
 export function ayahCountOf(surah: number): number {
-  return SURAH_AYAH_COUNTS[surah] ?? 0;
+  return (surah >= 0 ? SURAH_AYAH_COUNTS.at(surah) : undefined) ?? 0;
 }
 
 /** Advance one ayah forward through the mushaf, wrapping surah→surah and

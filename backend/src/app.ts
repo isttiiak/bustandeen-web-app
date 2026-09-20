@@ -102,15 +102,27 @@ const allowedOrigins = String(rawOrigins)
 
 // Matches only ihsan-web-app-main under the isttiiak Vercel account.
 // Drops the old permissive regex that matched any project starting with the name.
-const vercelPreviewRegex =
-  /^https:\/\/ihsan-web-app-main(?:-(?:git-)?[a-z0-9][a-z0-9-]*-isttiiak)?\.vercel\.app$/i;
+const isVercelPreviewOrigin = (origin: string): boolean => {
+  const scheme = 'https://';
+  const domain = '.vercel.app';
+  const o = origin.toLowerCase();
+  if (!o.startsWith(scheme) || !o.endsWith(domain)) return false;
+  const host = o.slice(scheme.length, o.length - domain.length);
+  const base = 'ihsan-web-app-main';
+  if (host === base) return true;
+  const owner = '-isttiiak';
+  if (!host.startsWith(`${base}-`) || !host.endsWith(owner)) return false;
+  let slug = host.slice(base.length + 1, host.length - owner.length);
+  if (slug.startsWith('git-')) slug = slug.slice(4);
+  return /^[a-z0-9][a-z0-9-]*$/.test(slug);
+};
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
       const normalized = origin.replace(/\/$/, '');
-      const ok = allowedOrigins.includes(normalized) || vercelPreviewRegex.test(normalized);
+      const ok = allowedOrigins.includes(normalized) || isVercelPreviewOrigin(normalized);
       return callback(null, ok);
     },
     // Auth uses Bearer tokens, not cookies — credentials false is correct here.

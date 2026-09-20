@@ -180,8 +180,11 @@ export async function importAll(uid: string, data: BackupFile): Promise<ImportCo
   // ── User + zikr lifetime state ──
   const userSet: PlainDoc = {};
   if (data.user && typeof data.user === 'object') {
-    for (const k of ['displayName', 'gender', 'birthDate', 'country'] as const) {
-      if (data.user[k] !== undefined && data.user[k] !== null) userSet[k] = data.user[k];
+    const copyableFields: readonly string[] = ['displayName', 'gender', 'birthDate', 'country'];
+    for (const [k, v] of Object.entries(data.user)) {
+      if (copyableFields.includes(k) && v !== undefined && v !== null) {
+        Object.assign(userSet, { [k]: v });
+      }
     }
     // Validate photoUrl from backup — reject data:text/* and other non-image MIMEs.
     if (data.user.photoUrl !== undefined && data.user.photoUrl !== null) {

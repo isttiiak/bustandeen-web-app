@@ -190,33 +190,33 @@ export function classifyDays(
   graceDays: number = 1
 ): Record<string, 'met' | 'pending' | 'grace' | 'missed'> {
   const met = (k: string): boolean => (totals.get(k) ?? 0) >= goal;
-  const out: Record<string, 'met' | 'pending' | 'grace' | 'missed'> = {};
+  const out = new Map<string, 'met' | 'pending' | 'grace' | 'missed'>();
 
   const sorted = [...keys].sort();
   let run: string[] = [];
   const flushRun = () => {
     if (!run.length) return;
     const tag = run.length <= graceDays ? 'grace' : 'missed';
-    for (const d of run) out[d] = tag;
+    for (const d of run) out.set(d, tag);
     run = [];
   };
 
   for (const k of sorted) {
     if (met(k)) {
       flushRun();
-      out[k] = 'met';
+      out.set(k, 'met');
       continue;
     }
     if (k >= todayKey) {
       flushRun(); // a run ending right at today is still within its own budget check
-      out[k] = 'pending';
+      out.set(k, 'pending');
       continue;
     }
     run.push(k);
   }
   flushRun(); // trailing run with no todayKey in `keys` (shouldn't normally happen)
 
-  return out;
+  return Object.fromEntries(out);
 }
 
 // ─── Wrappers kept for existing callers ───────────────────────────────────────

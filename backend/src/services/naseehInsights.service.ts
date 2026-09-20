@@ -106,13 +106,13 @@ Reply ONLY as JSON: {"lines": string[${lines.length}]}.`,
   if (!Array.isArray(got) || got.length !== lines.length) return null;
   const clean: string[] = [];
   for (let i = 0; i < lines.length; i++) {
-    const s = got[i];
+    const s = got.at(i);
     if (typeof s !== 'string') return null;
     const t = s.trim();
     if (!t || t.length > 260) return null;
-    const a = numbersIn(lines[i] as string);
+    const a = numbersIn(lines.at(i) ?? '');
     const b = numbersIn(t);
-    if (a.length !== b.length || a.some((v, k) => v !== b[k])) return null;
+    if (a.length !== b.length || a.some((v, k) => v !== b.at(k))) return null;
     clean.push(t);
   }
   return clean;
@@ -323,7 +323,7 @@ export async function getPatternInsights(
     );
     if (worded) {
       worded.forEach((text, i) => {
-        const f = findings[i];
+        const f = findings.at(i);
         if (f) {
           f.original = f.text;
           f.text = text;

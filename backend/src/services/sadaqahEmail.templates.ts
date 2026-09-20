@@ -4,11 +4,15 @@ import { SIGN_OFF } from './emailBrand.js';
 // Donor-supplied strings (name, transaction ID) land inside HTML here with no
 // framework escaping the way JSX would on the frontend — escape manually so
 // a stray "<" or "&" in donor input can't break the email markup.
+const HTML_ESCAPES = new Map([
+  ['&', '&amp;'],
+  ['<', '&lt;'],
+  ['>', '&gt;'],
+  ['"', '&quot;'],
+  ["'", '&#39;'],
+]);
 export const escapeHtml = (s: string): string =>
-  s.replace(
-    /[&<>"']/g,
-    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c] as string
-  );
+  s.replace(/[&<>"']/g, (c) => HTML_ESCAPES.get(c) ?? c);
 
 /** Turns admin-edited plain text (paragraphs separated by a blank line) into
  *  the same shape as the rest of this app's emails, for the verify/reject

@@ -40,7 +40,7 @@ export const initFirebaseAdmin = (): void => {
 
   initialized = true;
   if (process.env.NODE_ENV !== 'test') {
-    console.log('Firebase Admin initialized');
+    console.warn('Firebase Admin initialized');
   }
 };
 

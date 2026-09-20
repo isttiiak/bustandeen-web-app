@@ -18,7 +18,10 @@ import EmailFailureLog from '../models/EmailFailureLog.js';
  */
 export type EmailSender = 'sadaqah' | 'ansar' | 'istiak';
 
-const SENDER_ENV: Record<EmailSender, { userVar: string; passVar: string; displayName: string }> = {
+const SENDER_ENV_TABLE: Record<
+  EmailSender,
+  { userVar: string; passVar: string; displayName: string }
+> = {
   sadaqah: {
     userVar: 'SADAQAH_SMTP_USER',
     passVar: 'SADAQAH_SMTP_PASS',
@@ -36,8 +39,18 @@ const SENDER_ENV: Record<EmailSender, { userVar: string; passVar: string; displa
   },
 };
 
+const SENDER_ENV = new Map(
+  Object.entries(SENDER_ENV_TABLE) as Array<[EmailSender, (typeof SENDER_ENV_TABLE)[EmailSender]]>
+);
+
+const senderConfig = (sender: EmailSender): (typeof SENDER_ENV_TABLE)[EmailSender] => {
+  const cfg = SENDER_ENV.get(sender);
+  if (!cfg) throw new Error(`Unknown email sender "${sender}"`);
+  return cfg;
+};
+
 const resolveSenderCreds = (sender: EmailSender): { user?: string; pass?: string } => {
-  const cfg = SENDER_ENV[sender];
+  const cfg = senderConfig(sender);
   return { user: process.env[cfg.userVar], pass: process.env[cfg.passVar] };
 };
 
@@ -59,10 +72,10 @@ export const getSenderDiagnostics = (sender: EmailSender): SenderDiagnostics => 
   return { configured, resolvedUser: configured ? (user ?? null) : null };
 };
 
-const transporters: Partial<Record<EmailSender, Transporter | null>> = {};
+const transporters = new Map<EmailSender, Transporter | null>();
 
 const getTransporter = (sender: EmailSender): Transporter | null => {
-  if (sender in transporters) return transporters[sender] ?? null;
+  if (transporters.has(sender)) return transporters.get(sender) ?? null;
 
   const { ZOHO_SMTP_HOST, ZOHO_SMTP_PORT } = process.env;
   const { user, pass } = resolveSenderCreds(sender);
@@ -71,7 +84,7 @@ const getTransporter = (sender: EmailSender): Transporter | null => {
     console.warn(
       `Email not configured for sender "${sender}" (credentials missing) — emails will be skipped.`
     );
-    transporters[sender] = null;
+    transporters.set(sender, null);
     return null;
   }
 
@@ -81,7 +94,7 @@ const getTransporter = (sender: EmailSender): Transporter | null => {
     secure: Number(ZOHO_SMTP_PORT) === 465,
     auth: { user, pass },
   });
-  transporters[sender] = transporter;
+  transporters.set(sender, transporter);
   return transporter;
 };
 
@@ -122,7 +135,7 @@ export const sendMail = async (opts: SendMailOptions): Promise<string | null> =>
   const t = getTransporter(sender);
   if (!t) return null;
   const { user } = resolveSenderCreds(sender);
-  const { displayName } = SENDER_ENV[sender];
+  const { displayName } = senderConfig(sender);
   try {
     const info = await t.sendMail({
       from: `"${displayName}" <${user}>`,

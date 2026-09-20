@@ -22,15 +22,15 @@ async function run(): Promise<void> {
   if (assets.length > 0) {
     const n = await db.collection('zikraudioassets').countDocuments();
     await db.collection('zikraudioassets').drop();
-    console.log(`Dropped zikraudioassets (${n} documents)`);
+    process.stdout.write(`Dropped zikraudioassets (${n} documents)\n`);
   } else {
-    console.log('zikraudioassets not present — nothing to drop');
+    process.stdout.write('zikraudioassets not present — nothing to drop\n');
   }
 
   const res = await db
     .collection('globalzikrlibraryitems')
     .updateMany({ audioUrl: { $exists: true } }, { $unset: { audioUrl: '' } });
-  console.log(`Unset audioUrl on ${res.modifiedCount} library item(s)`);
+  process.stdout.write(`Unset audioUrl on ${res.modifiedCount} library item(s)\n`);
 
   await mongoose.disconnect();
 }

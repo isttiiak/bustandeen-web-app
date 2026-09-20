@@ -44,19 +44,15 @@ export async function getAnalyticsData(
     date: { $gte: startDate, $lte: today },
   }).sort({ date: 1 });
 
-  const dailyTotals: Record<string, number> = {};
-  const dailyBreakdown: Record<string, Record<string, number>> = {};
+  const dailyTotals = new Map<string, number>();
+  const dailyBreakdown = new Map<string, Record<string, number>>();
 
   records.forEach((r) => {
     const dateStr = dateKey(r.date);
-    if (!dailyTotals[dateStr]) {
-      dailyTotals[dateStr] = 0;
-      dailyBreakdown[dateStr] = {};
-    }
-    dailyTotals[dateStr] = (dailyTotals[dateStr] ?? 0) + r.count;
-    const bd = dailyBreakdown[dateStr] ?? {};
+    dailyTotals.set(dateStr, (dailyTotals.get(dateStr) ?? 0) + r.count);
+    const bd = dailyBreakdown.get(dateStr) ?? {};
     bd[r.zikrType] = (bd[r.zikrType] ?? 0) + r.count;
-    dailyBreakdown[dateStr] = bd;
+    dailyBreakdown.set(dateStr, bd);
   });
 
   // Per-day streak status (met / pending / grace / missed) for heatmap tags —
@@ -66,8 +62,8 @@ export async function getAnalyticsData(
     const dateStr = dateKey(new Date(startDate.getTime() + i * DAY_MS));
     chartData.push({
       date: dateStr,
-      total: dailyTotals[dateStr] ?? 0,
-      breakdown: dailyBreakdown[dateStr] ?? {},
+      total: dailyTotals.get(dateStr) ?? 0,
+      breakdown: dailyBreakdown.get(dateStr) ?? {},
     });
   }
 

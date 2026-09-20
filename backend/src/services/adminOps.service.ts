@@ -30,13 +30,12 @@ export const getOpsHealth = async (): Promise<OpsHealth> => {
     .limit(20)
     .select('sender to subject error createdAt');
 
-  const emailSenders = Object.fromEntries(
-    SENDERS.map((s) => [s, getSenderDiagnostics(s)])
-  ) as Record<EmailSender, SenderDiagnostics>;
+  const diagnostics = SENDERS.map((s) => [s, getSenderDiagnostics(s)] as const);
+  const emailSenders = Object.fromEntries(diagnostics) as Record<EmailSender, SenderDiagnostics>;
 
   const byAddress = new Map<string, EmailSender[]>();
-  for (const s of SENDERS) {
-    const addr = emailSenders[s].resolvedUser;
+  for (const [s, diag] of diagnostics) {
+    const addr = diag.resolvedUser;
     if (!addr) continue;
     byAddress.set(addr, [...(byAddress.get(addr) ?? []), s]);
   }

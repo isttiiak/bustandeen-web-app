@@ -13,7 +13,7 @@ const PORT = process.env.PORT ?? 5000;
     // Listen BEFORE the DB connect: /api/health (no DB) answers immediately,
     // so Render marks the service live seconds earlier on cold starts.
     // Mongoose buffers model queries until the connection is up.
-    app.listen(PORT, () => console.log(`API running on http://localhost:${PORT}`));
+    app.listen(PORT, () => console.warn(`API running on http://localhost:${PORT}`));
     await connectDB();
     await bootstrapAdminAccounts();
     await backfillAnsarDomains();

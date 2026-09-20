@@ -35,7 +35,11 @@ async function getOrCreateLog(userId: string, date: string): Promise<IHifzLog> {
 
 // ── SM-2 (adapted to a 3-choice self-assessment) ────────────────────────────
 // easy → quality 5, hesitant → quality 3, forgot → quality 0 (fail).
-const QUALITY: Record<HifzResult, number> = { easy: 5, hesitant: 3, forgot: 0 };
+const QUALITY = new Map<HifzResult, number>([
+  ['easy', 5],
+  ['hesitant', 3],
+  ['forgot', 0],
+]);
 
 /** State is derived from the SM-2 interval after a review — `new` is reserved
  * for an entry that has NEVER been reviewed (set at creation, never produced
@@ -48,7 +52,7 @@ function deriveState(interval: number): HifzState {
 }
 
 function applySm2(entry: IHifzEntry, result: HifzResult, today: string): void {
-  const quality = QUALITY[result];
+  const quality = QUALITY.get(result) ?? 0;
   if (quality < 3) {
     entry.lapses += 1;
     entry.reps = 0;

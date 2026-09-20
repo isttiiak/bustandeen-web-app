@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.54.1 - Backend lint at zero warnings, sturdier prompt sanitizer - 2026-09-21
+
+### Fixed
+
+- **Backend lint went from 99 warnings to 0** (frontend was already clean). Real fixes, no blanket silencing:
+  - Lookups keyed by data (dates, email sender, tafsir edition, HTML escapes, hifz result, backup fields) now use `Map`s or explicit allow-lists instead of plain-object indexing. A prayer-log reason check now uses `Object.hasOwn`, so odd keys like `constructor` cannot pass.
+  - Startup and script messages follow the project's logging rule (`console.warn`, or plain stdout for the one-off script).
+  - The CORS check for Vercel preview URLs is now a small explicit function instead of a long regex.
+  - The two long safety regexes are split into simple ones, and a secret-named comparison was renamed.
+  - The one remaining rule (object-injection) is switched off only for six services whose keys are closed TypeScript unions (the five prayers, weekdays 0-6), with the reason written in `eslint.config.js`. It stays on everywhere else.
+- **Prompt sanitizer is stricter.** It now repeats until nothing changes, so a marker split by another marker (for example `syst` + backticks + `em:`) can no longer be rebuilt after cleaning. A new test covers it.
+
 ## v5.54.0 - Rayhanah data never reaches AI, English-only Naseeh, one weekly card, lint clean - 2026-09-21
 
 ### Changed

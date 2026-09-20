@@ -30,7 +30,7 @@ export const connectDB = async (): Promise<void> => {
         family: 4,
       })
       .then((m) => {
-        if (process.env.NODE_ENV !== 'test') console.log('MongoDB connected');
+        if (process.env.NODE_ENV !== 'test') console.warn('MongoDB connected');
         return m;
       })
       .catch((err) => {

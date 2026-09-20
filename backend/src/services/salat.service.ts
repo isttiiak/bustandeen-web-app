@@ -364,7 +364,7 @@ export async function getSalatAnalytics(
         byWeekday[weekday]!.missed++;
         byWeekday[weekday]!.total++;
         const reason = entry?.missedReason;
-        if (reason && reason in missedReasons) missedReasons[reason]!++;
+        if (reason && Object.hasOwn(missedReasons, reason)) missedReasons[reason]!++;
       } else {
         perPrayer[pid].pending++;
       }
@@ -598,8 +598,9 @@ export async function getSalatJourney(
 
   const phases: JourneyPhase[] = [];
   for (let i = 0; i < boundaries.length; i++) {
-    const from = boundaries[i]!;
-    const to = i < boundaries.length - 1 ? shiftDateStr(boundaries[i + 1]!, -1) : null;
+    const from = boundaries.at(i);
+    if (!from) continue;
+    const to = i < boundaries.length - 1 ? shiftDateStr(boundaries.at(i + 1) ?? from, -1) : null;
     const phaseEnd = to ?? today;
     if (from > today) continue; // skip future phases
 
@@ -613,7 +614,7 @@ export async function getSalatJourney(
 
     // Reuse existing analytics — pass `from` as the resetDate so it acts as cutoff
     const stats = await getSalatAnalytics(userId, Math.max(1, dayCount), phaseEnd, from);
-    const resetNote = i < resets.length ? resets[i]!.note || null : null;
+    const resetNote = i < resets.length ? resets.at(i)?.note || null : null;
 
     phases.push({
       index: i,

@@ -295,7 +295,10 @@ export async function updateProfile(
   if (input.listenCountsAsAyat !== undefined) profile.listenCountsAsAyat = input.listenCountsAsAyat;
   if (input.reciterId !== undefined) profile.reciterId = input.reciterId;
   if (input.translations !== undefined) profile.translations = input.translations;
-  if (DISPLAY_PREF_KEYS.some((k) => input[k] !== undefined)) profile.displayPrefsSet = true;
+  const prefKeys: readonly string[] = DISPLAY_PREF_KEYS;
+  if (Object.entries(input).some(([k, v]) => prefKeys.includes(k) && v !== undefined)) {
+    profile.displayPrefsSet = true;
+  }
   await profile.save();
   return profile;
 }
@@ -569,7 +572,7 @@ export async function getTafsir(
   ayah: number,
   editionId: number
 ): Promise<TafsirResult> {
-  const meta = TAFSIR_EDITIONS[editionId];
+  const meta = new Map(Object.entries(TAFSIR_EDITIONS)).get(String(editionId));
   if (!meta) throw Object.assign(new Error('Unknown tafsir edition'), { status: 400 });
   const res = await fetch(
     `https://api.quran.com/api/v4/tafsirs/${editionId}/by_ayah/${surah}:${ayah}`
