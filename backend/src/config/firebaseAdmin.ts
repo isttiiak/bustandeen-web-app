@@ -1,5 +1,4 @@
-import { initializeApp, getApps, cert } from 'firebase-admin/app';
-import { getAuth, type DecodedIdToken } from 'firebase-admin/auth';
+import admin from 'firebase-admin';
 
 let initialized = false;
 
@@ -17,7 +16,7 @@ const normalizePrivateKey = (raw: string): string => {
 export const initFirebaseAdmin = (): void => {
   if (initialized) return;
   // Guard against double-init across hot-reloads (module cache may persist)
-  if (getApps().length > 0) {
+  if (admin.apps.length > 0) {
     initialized = true;
     return;
   }
@@ -31,8 +30,8 @@ export const initFirebaseAdmin = (): void => {
     return;
   }
 
-  initializeApp({
-    credential: cert({
+  admin.initializeApp({
+    credential: admin.credential.cert({
       projectId: FIREBASE_PROJECT_ID,
       clientEmail: FIREBASE_CLIENT_EMAIL,
       privateKey: normalizePrivateKey(FIREBASE_PRIVATE_KEY),
@@ -47,9 +46,9 @@ export const initFirebaseAdmin = (): void => {
 
 export const isFirebaseInitialized = (): boolean => initialized;
 
-export const verifyFirebaseToken = async (idToken: string): Promise<DecodedIdToken> => {
+export const verifyFirebaseToken = async (idToken: string): Promise<admin.auth.DecodedIdToken> => {
   if (!initialized) throw new Error('Firebase Admin not initialized');
-  return getAuth().verifyIdToken(idToken);
+  return admin.auth().verifyIdToken(idToken);
 };
 
 export const decodeUnverifiedJwt = (jwt: string): Record<string, unknown> | null => {
