@@ -14,6 +14,7 @@ import {
   useVerifyDonation,
   useRejectDonation,
   useDeleteDonation,
+  useDownloadReceipt,
   useAdminQuarterlyList,
   useQuarterlyPreview,
   usePublishQuarterly,
@@ -221,6 +222,7 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
     page
   );
   const deleteDonation = useDeleteDonation();
+  const downloadReceipt = useDownloadReceipt();
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const clickDelete = (id: string) => {
     if (confirmDeleteId !== id) {
@@ -336,8 +338,21 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
                     <td className="px-3 py-2">
                       <DonationStatusBadge status={d.status} />
                     </td>
-                    <td className="px-3 py-2 text-white/40 text-xs truncate max-w-[180px]">
-                      {d.verifiedBy ?? '—'}
+                    <td className="px-3 py-2 text-white/40 text-xs max-w-[220px]">
+                      <span className="truncate">{d.verifiedBy ?? '—'}</span>
+                      {d.status === 'verified' && (
+                        <button
+                          onClick={() => downloadReceipt.mutate(d._id)}
+                          disabled={downloadReceipt.isPending}
+                          title={t(
+                            'adminSadaqah.downloadReceipt',
+                            'Download the signed receipt PDF'
+                          )}
+                          className="ml-2 text-brand-emerald hover:underline disabled:opacity-40"
+                        >
+                          {t('adminSadaqah.receiptPdf', 'Receipt PDF')}
+                        </button>
+                      )}
                     </td>
                     {isServant && (
                       <td className="px-3 py-2 text-right whitespace-nowrap">

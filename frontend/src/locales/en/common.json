@@ -56,6 +56,18 @@
     "dua": "May Allah accept it from you and make it a means of ongoing reward.",
     "backToApp": "Back to Bustandeen"
   },
+  "sadaqahVerify": {
+    "seoTitle": "Check a receipt",
+    "seoDescription": "Check that a sadaqah receipt is genuine.",
+    "validTitle": "This receipt is genuine",
+    "validBody": "Bustandeen verified this sadaqah and signed the receipt.",
+    "receiptNo": "Receipt no.",
+    "amount": "Amount",
+    "verifiedOn": "Verified on",
+    "invalidTitle": "We could not confirm this receipt",
+    "invalidBody": "The link may be incomplete, or the receipt may have been changed. If you think this is a mistake, write to sadaqah@bustandeen.com and we will help.",
+    "errorBody": "Something went wrong while checking. Please try again in a moment."
+  },
   "sadaqahVirtue": {
     "friday": {
       "title": "It's Jumu'ah — a blessed day to give",
@@ -2442,6 +2454,10 @@
     "enableNaseehDetail": "Weekly reflections, streak coaching and fasting companion",
     "exportExcel": "Export as Excel (.xlsx)",
     "fullBackup": "Full backup (.json)",
+    "downloadAllData": "Download all my data",
+    "downloadAllDataDone": "Your data was downloaded",
+    "downloadAllDataFailed": "Could not download your data. Check your connection and try again.",
+    "downloadAllDataNote": "\"Download all my data\" gives you a copy of everything Bustandeen holds about you: profile, zikr, salat, fasting, Quran, hifz, Rayhanah, friends (as counts only), messages you sent us and your sadaqah submissions. It is for your own records and cannot be restored. Use the full backup above to restore.",
     "groqKeyActive": "Using your own key",
     "groqKeyAddedOn": "Added on",
     "groqKeyChange": "Change",

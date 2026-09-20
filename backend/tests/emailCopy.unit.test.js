@@ -24,11 +24,7 @@ const donation = { donorName: 'Amina', amount: 500, transactionId: 'TX123' };
 
 const bodies = {
   donationReceived: donationReceivedEmail({ ...donation, id: ID }).text,
-  donationVerified: donationVerifiedDraft({
-    ...donation,
-    paymentMethod: 'bkash',
-    transactionDate: new Date('2026-09-01T00:00:00Z'),
-  }),
+  donationVerified: donationVerifiedDraft({ ...donation, id: ID }),
   donationRejected: donationRejectedDraft(donation),
   zikrReceived: zikrRequestReceivedEmail({ id: ID, name: 'Ayat al-Kursi' }).text,
   zikrApproved: zikrRequestApprovedDraft({ name: 'Ayat al-Kursi' }),

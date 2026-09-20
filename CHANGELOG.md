@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.52.0 - Signed sadaqah receipts and "Download all my data" - 2026-09-20
+
+### Added
+
+- **Signed PDF receipt for every verified sadaqah.** When a donation is verified, the confirmation email now carries a colour, vector-drawn receipt (amount, who gave, on behalf of, transaction ID, dates, verified seal) set in the same El Messiri title font as the app, with `sadaqah@bustandeen.com` and "Dhaka, Bangladesh" in the footer. The email text no longer repeats the payment details; it points to the attachment.
+- **Tamper-evident signature and QR check.** Each receipt carries a signature over its amount, transaction ID and verification time, and a QR code to a public page (`/sadaqah/verify/...`) that says whether the receipt is genuine. A changed amount or ID no longer verifies. It shows only the receipt number, amount and date, never the name or transaction ID.
+- **Admins can download a receipt** from the Sadaqah admin submissions table ("Receipt PDF" on verified rows).
+- **Settings > "Download all my data".** One JSON with everything held about you across every feature (profile, zikr, salat and kaza, fasting, Quran, hifz, Rayhanah, friends as counts, messages you sent us, your sadaqah submissions). It is a read-only copy for your own records; the existing "Full backup" is still the one to restore from.
+
+### Notes
+
+- New optional env var `RECEIPT_SIGNING_KEY`. If unset, the key is derived from `FIELD_ENCRYPTION_KEY`, so nothing needs to be set for this to work. Once receipts are sent, do not change it or older receipts stop verifying.
+- This is an HMAC signature checked by Bustandeen, not a certificate signature that a PDF reader marks as "signed".
+
 ## v5.51.2 - Friends: honest Noor bars and clearer explanation - 2026-09-20
 
 ### Fixed

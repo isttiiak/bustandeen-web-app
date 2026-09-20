@@ -59,18 +59,12 @@ export const donationReceivedEmail = (
 /**
  * Draft body for the admin's editable verify email (plain text only; the
  * admin dashboard shows this in a textarea, HTML is generated from whatever
- * they end up sending via toSimpleHtml). Includes a payment-details block as
- * a lightweight stand-in for the signed PDF receipt planned for later.
+ * they end up sending via toSimpleHtml). The payment details live on the
+ * signed PDF receipt attached at send time (sadaqahReceipt.service.ts), so the
+ * body only points to it.
  */
-export const donationVerifiedDraft = (
-  d: DonationEmailData & {
-    paymentMethod: 'bkash' | 'nagad';
-    transactionDate: Date;
-  }
-): string => {
-  const method = d.paymentMethod === 'bkash' ? 'bKash' : 'Nagad';
-  const date = d.transactionDate.toISOString().slice(0, 10);
-  return `${plainGreeting(d.donorName)}\n\nAlhamdulillah, your sadaqah of ${d.amount} BDT has been verified. JazakAllahu khayran for your kindness. May Allah make it a sadaqah jariyah, a charity whose reward keeps flowing long after the moment you gave it.\n\nFor your records:\nAmount: ${d.amount} BDT\nTransaction ID: ${d.transactionId}\nPayment method: ${method}\nDate: ${date}\n\nIf you would like to see how contributions are being used, you can read about it here: https://bustandeen.com/sadaqah\n\n${SIGN_OFF}`;
+export const donationVerifiedDraft = (d: DonationEmailData & { id: string }): string => {
+  return `${plainGreeting(d.donorName)}\n\nAlhamdulillah, your sadaqah of ${d.amount} BDT has been verified. JazakAllahu khayran for your kindness. May Allah make it a sadaqah jariyah, a charity whose reward keeps flowing long after the moment you gave it.\n\nYour signed receipt is attached to this email as a PDF (receipt no. #${sadaqahRef(d.id)}). It lists the amount, transaction ID and dates, and its QR code lets anyone confirm it is genuine.\n\nIf you would like to see how contributions are being used, you can read about it here: https://bustandeen.com/sadaqah\n\n${SIGN_OFF}`;
 };
 
 /** Draft body for the admin's editable reject email. The reason is left as a

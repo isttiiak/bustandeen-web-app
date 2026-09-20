@@ -82,6 +82,7 @@ const Landing = lazy(() => import('./pages/Landing.js'));
 const Sadaqah = lazy(() => import('./pages/Sadaqah.js'));
 const SadaqahDonate = lazy(() => import('./pages/SadaqahDonate.js'));
 const SadaqahThankYou = lazy(() => import('./pages/SadaqahThankYou.js'));
+const SadaqahVerify = lazy(() => import('./pages/SadaqahVerify.js'));
 const AdminSadaqah = lazy(() => import('./pages/AdminSadaqah.js'));
 const AdminZikrRequests = lazy(() => import('./pages/AdminZikrRequests.js'));
 const AdminHome = lazy(() => import('./pages/AdminHome.js'));
@@ -924,6 +925,7 @@ export default function App() {
                 <Route path="/sadaqah" element={<Sadaqah />} />
                 <Route path="/sadaqah/donate" element={<SadaqahDonate />} />
                 <Route path="/sadaqah/thank-you" element={<SadaqahThankYou />} />
+                <Route path="/sadaqah/verify/:id" element={<SadaqahVerify />} />
                 <Route
                   path="/admin"
                   element={

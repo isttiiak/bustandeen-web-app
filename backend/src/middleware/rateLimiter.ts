@@ -116,6 +116,24 @@ export const sadaqahSubmitLimiter = makeLimit(
   'sadaqahSubmit'
 );
 
+/** Full data export: 10 per hour per UID - it reads ~20 collections, so this
+ *  keeps a script from hammering it. */
+export const dataExportLimiter = makeUidLimit(
+  60 * 60 * 1000,
+  10,
+  { ok: false, error: 'Too many data exports. Try again in an hour.' },
+  'dataExport'
+);
+
+/** Public receipt-verification lookups (the QR target): 60 per 15 min per IP —
+ *  generous for real scans, tight enough that guessing signatures is pointless. */
+export const sadaqahVerifyLimiter = makeLimit(
+  15 * 60 * 1000,
+  60,
+  { ok: false, error: 'Too many verification attempts. Please try again later.' },
+  'sadaqahVerify'
+);
+
 /** Feedback/contact submissions: own limiter, same shape as
  *  sadaqahSubmitLimiter — a shared instance would conflate two unrelated
  *  quotas (a donor rate-limited on donations shouldn't also be blocked from
