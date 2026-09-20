@@ -80,6 +80,9 @@ export const batchIncrementSchema = z.object({
           amount: amountField,
           ts: tsField,
           realTs: realTsField,
+          startTs: realTsField,
+          untimedAmount: z.number().int().min(-10_000).max(10_000).optional(),
+          manual: z.boolean().optional(),
         })
       )
       .min(1)

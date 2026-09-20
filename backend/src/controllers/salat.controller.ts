@@ -111,12 +111,31 @@ export const getAnalytics = async (
     const today = req.query['today'] as string | undefined;
     await salatDebtService.ensureCaughtUp(req.user.uid, today);
     const User = (await import('../models/User.js')).default;
-    const user = await User.findOne({ uid: req.user.uid }).select('salatResetDate').lean();
+    const user = await User.findOne({ uid: req.user.uid })
+      .select('salatResetDate createdAt')
+      .lean();
+    // Tracking began at account creation, or at the first log if that's
+    // earlier (restored backups / back-dated entries) — see getSalatAnalytics.
+    const SalatLog = (await import('../models/SalatLog.js')).default;
+    const firstLog = await SalatLog.findOne({ userId: req.user.uid })
+      .sort({ date: 1 })
+      .select('date')
+      .lean();
+    const createdDate = user?.createdAt
+      ? new Date(user.createdAt).toISOString().slice(0, 10)
+      : undefined;
+    const trackingStart =
+      createdDate && firstLog?.date
+        ? createdDate < firstLog.date
+          ? createdDate
+          : firstLog.date
+        : (firstLog?.date ?? createdDate);
     const analytics = await salatService.getSalatAnalytics(
       req.user.uid,
       days,
       today,
-      user?.salatResetDate
+      user?.salatResetDate,
+      trackingStart
     );
     res.json({ ok: true, ...analytics });
   } catch (err) {

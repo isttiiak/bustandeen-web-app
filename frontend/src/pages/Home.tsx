@@ -10,11 +10,8 @@ import { useFastingSummary } from '../hooks/useFasting.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
 import { StreakBadge, GoalBadge } from '../components/StatusBadges.js';
 import ComebackNudge from '../components/ComebackNudge.js';
-import NaseehInsights from '../components/ai/NaseehInsights.js';
-import MuhasabahReport from '../components/ai/MuhasabahReport.js';
-import NaturalLogEntry from '../components/ai/NaturalLogEntry.js';
-import StreakCoaching from '../components/ai/StreakCoaching.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import {
   calcPrayerTimes,
   formatTime,
@@ -25,6 +22,7 @@ import {
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import { isFriday, getTodaySpecialDays } from '../utils/islamicCalendar.js';
+import { getTodaySadaqahVirtueDay } from '../utils/sadaqahVirtueDays.js';
 import { useCycleActive, useCycleSummary } from '../hooks/useCycle.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
@@ -88,9 +86,17 @@ export default function Home() {
   // Show max(local, server) so the capsule never lags behind live taps
   const effectiveToday = Math.max(totalToday, analyticsData?.today?.total ?? 0);
   const goalCompleted = analyticsGoal !== null ? effectiveToday >= analyticsGoal : false;
-  const zikrGoalPct = analyticsGoal
-    ? Math.min(100, Math.round((effectiveToday / analyticsGoal) * 100))
-    : null;
+  // Confirmed zero LIFETIME zikr count (not "zero today") — strict equality
+  // against 0 means this stays false while analyticsData hasn't loaded yet,
+  // so an existing user never sees a flash of the brand-new-user treatment.
+  const isNewZikrUser = analyticsData?.allTime?.totalCount === 0;
+  const zikrGoalPct =
+    analyticsGoal && !isNewZikrUser
+      ? Math.min(100, Math.round((effectiveToday / analyticsGoal) * 100))
+      : null;
+  // Bounded to the same 90-day window already fetched for the streak tag
+  // below — an accepted approximation of "brand new," not true lifetime.
+  const isNewSalatUser = salatAnalytics?.prayedTotal === 0;
 
   // Salat completed count for today
   const salatCompletedToday = useMemo(() => {
@@ -110,6 +116,7 @@ export default function Home() {
   }, []);
 
   const todaySpecialDays = useMemo(() => getTodaySpecialDays(), []);
+  const sadaqahVirtueDay = useMemo(() => getTodaySadaqahVirtueDay(), []);
 
   const prayerWidgetData = useMemo(() => {
     const stored = localStorage.getItem('bustandeen_location');
@@ -179,13 +186,15 @@ export default function Home() {
       title: t('home.salatTitle'),
       stats: cycleActive
         ? { label: t('home.rayhanah'), value: `🌸 ${t('home.excused')}` }
-        : {
-            label: t('home.today'),
-            value:
-              salatCompletedToday !== null
-                ? `${formatLocaleNumber(salatCompletedToday)}/${formatLocaleNumber(5)}`
-                : `—/${formatLocaleNumber(5)}`,
-          },
+        : isNewSalatUser
+          ? { label: t('home.today'), value: t('home.salatStart', 'Tap to begin') }
+          : {
+              label: t('home.today'),
+              value:
+                salatCompletedToday !== null
+                  ? `${formatLocaleNumber(salatCompletedToday)}/${formatLocaleNumber(5)}`
+                  : `—/${formatLocaleNumber(5)}`,
+            },
       link: '/salat',
       accent: 'brand-info',
       border: 'border-brand-info/15',
@@ -233,15 +242,6 @@ export default function Home() {
         {/* Welcome back after a quiet stretch — the gentlest possible restart */}
         <div className="mb-6 empty:mb-0">
           <ComebackNudge />
-        </div>
-
-        {/* AI streak coaching — fires on milestone or break */}
-        <div className="mb-6 empty:mb-0">
-          <StreakCoaching
-            zikrStreak={streakCount}
-            quranStreak={quranSummary?.streak ?? null}
-            salatStreak={salatAnalytics?.currentStreak ?? null}
-          />
         </div>
 
         {/* Pre-period heads-up — predicted start within 3 days */}
@@ -559,6 +559,11 @@ export default function Home() {
           </motion.div>
         )}
 
+        {/* Days with extra sadaqah virtue (Friday, Ramadan, first 10 days of
+            Dhul Hijjah, Arafah, Laylat al-Qadr) — persistent, unlike the old
+            30s-auto-dismissing Friday-only reminder this replaces. */}
+        {sadaqahVirtueDay && <SadaqahVirtueCard day={sadaqahVirtueDay} />}
+
         {/* Friday: hour of response (Abū Dāwūd 1048, ṣaḥīḥ) */}
         {fridayHour.active && (
           <motion.div
@@ -693,13 +698,20 @@ export default function Home() {
                             <GoalBadge pct={zikrGoalPct} met={goalCompleted} size="sm" />
                           </>
                         )}
-                        {a.id === 'quran' && quranSummary && (
-                          <StreakBadge
-                            streak={quranSummary.streak}
-                            state={quranSummary.streak > 0 ? 'active' : 'none'}
-                            size="sm"
-                          />
-                        )}
+                        {/* A streak is only meaningful against a goal the user
+                            actually set — with none, "streak" would just be
+                            "days read at all," which isn't what this badge
+                            communicates elsewhere (zikr/salat always have an
+                            implicit goal). */}
+                        {a.id === 'quran' &&
+                          quranSummary &&
+                          quranSummary.profile.dailyGoalAyat > 0 && (
+                            <StreakBadge
+                              streak={quranSummary.streak}
+                              state={quranSummary.streak > 0 ? 'active' : 'none'}
+                              size="sm"
+                            />
+                          )}
                         {a.tag && (
                           <StreakBadge
                             streak={salatAnalytics?.currentStreak ?? 0}
@@ -733,22 +745,6 @@ export default function Home() {
           })}
         </div>
 
-        {/* Natural-language quick log (Naseeh) */}
-        <div className="mb-4 empty:mb-0">
-          <NaturalLogEntry />
-        </div>
-
-        {/* AI weekly reflection + monthly patterns (Naseeh) */}
-        <div className="mb-4 empty:mb-0">
-          <NaseehInsights />
-        </div>
-
-        {/* Weekly muhāsabah — distinct from NaseehInsights above: a dedicated
-            self-accounting report paired with a verified (never AI-written) āyah/hadith */}
-        <div className="mb-8 empty:mb-0">
-          <MuhasabahReport />
-        </div>
-
         {/* ── Friends / Share activities ── */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -768,6 +764,55 @@ export default function Home() {
               </span>
             </div>
           </Link>
+        </motion.div>
+
+        {/* ── Islamic Library / one-stop utilities ── */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="mb-10"
+        >
+          <div className="mb-3">
+            <h2 className="text-sm font-black text-white">{t('home.libraryTitle')}</h2>
+            <p className="text-white/30 text-xs">{t('home.librarySubtitle')}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              {
+                icon: '🤲',
+                to: '/library/duas',
+                title: t('home.libraryDuaTitle'),
+                subtitle: t('home.libraryDuaSubtitle'),
+              },
+              {
+                icon: '🌅',
+                to: '/library/adhkar',
+                title: t('home.libraryAdhkarTitle'),
+                subtitle: t('home.libraryAdhkarSubtitle'),
+              },
+              {
+                icon: '✨',
+                to: '/library/asma-ul-husna',
+                title: t('home.libraryAsmaTitle'),
+                subtitle: t('home.libraryAsmaSubtitle'),
+              },
+              {
+                icon: '🧮',
+                to: '/library/zakat-calculator',
+                title: t('home.libraryZakatTitle'),
+                subtitle: t('home.libraryZakatSubtitle'),
+              },
+            ].map((u) => (
+              <Link key={u.to} to={u.to} className="block group">
+                <div className="rounded-2xl border border-brand-border bg-white/[0.04] hover:bg-white/[0.07] backdrop-blur-md p-4 transition-all h-full">
+                  <span className="text-2xl leading-none">{u.icon}</span>
+                  <h3 className="text-sm font-bold text-white mt-2 truncate">{u.title}</h3>
+                  <p className="text-white/30 text-xs mt-0.5 truncate">{u.subtitle}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </motion.div>
 
         <div className="text-center text-xs text-white/30 pb-4">{t('home.footer')}</div>

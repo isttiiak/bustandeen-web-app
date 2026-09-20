@@ -5,6 +5,15 @@ export interface IQuarterlyEntry {
   received: number;
   spent: number;
   notes: string;
+  /** Gates public visibility — the public /api/sadaqah/stats endpoint only
+   * ever excludes an entry when this is explicitly `false` (see
+   * sadaqah.service.ts getPublicStats, checked as `!== false`, not a truthy
+   * check). A pre-existing entry saved before this field existed has no
+   * `published` key in the raw stored document at all — Mongoose's schema
+   * `default` below does NOT reliably backfill that on every read path for
+   * array subdocuments, so code must never assume a missing key reads back
+   * as `true`. Only `unpublishQuarterly` ever explicitly sets `false`. */
+  published: boolean;
 }
 
 export interface IDonationStats extends Document<string> {
@@ -29,6 +38,7 @@ const donationStatsSchema = new Schema<IDonationStats>({
         received: { type: Number, default: 0 },
         spent: { type: Number, default: 0 },
         notes: { type: String, default: '' },
+        published: { type: Boolean, default: true },
       },
     ],
     default: [],

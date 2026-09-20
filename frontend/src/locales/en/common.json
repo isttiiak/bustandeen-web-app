@@ -7,8 +7,8 @@
     "seoDescription": "Support Bustandeen with sadaqah — ongoing charity that helps keep the app free and growing for the community.",
     "heroTitle": "Sadaqah",
     "heroDesc": "Bustandeen stays free for everyone. If it has helped you, you can support the community that keeps it running — server costs, qari recordings, and features still to come — as an ongoing charity, sadaqah jariyah.",
-    "receivedLabel": "Received so far",
-    "fromCount": "from {{count}} contributions",
+    "contributorsLabel": "Donations given",
+    "jazakAllahLine": "JazākAllāhu khayran to everyone who has given so far",
     "whereTitle": "Where it has gone",
     "jariyahLabel": "Sadaqah jariyah",
     "jariyahText": "In the Islamic tradition, sadaqah jariyah is charity whose reward keeps flowing long after it's given — like a well someone dug that keeps giving people water. Every contribution here goes toward keeping this app free and improving it for the community, not toward any individual.",
@@ -56,6 +56,40 @@
     "dua": "May Allah accept it from you and make it a means of ongoing reward.",
     "backToApp": "Back to Bustandeen"
   },
+  "sadaqahVerify": {
+    "seoTitle": "Check a receipt",
+    "seoDescription": "Check that a sadaqah receipt is genuine.",
+    "validTitle": "This receipt is genuine",
+    "validBody": "Bustandeen verified this sadaqah and signed the receipt.",
+    "receiptNo": "Receipt no.",
+    "amount": "Amount",
+    "verifiedOn": "Verified on",
+    "invalidTitle": "We could not confirm this receipt",
+    "invalidBody": "The link may be incomplete, or the receipt may have been changed. If you think this is a mistake, write to sadaqah@bustandeen.com and we will help.",
+    "errorBody": "Something went wrong while checking. Please try again in a moment."
+  },
+  "sadaqahVirtue": {
+    "friday": {
+      "title": "It's Jumu'ah — a blessed day to give",
+      "desc": "Ibn al-Qayyim taught that charity on Friday carries the same extra merit over other days that charity in Ramadan carries over other months — and charity itself never decreases wealth."
+    },
+    "ramadan": {
+      "title": "It's Ramadan — the most generous month",
+      "desc": "The Prophet ﷺ was already the most generous of people, and became even more generous every night of Ramadan."
+    },
+    "dhul_hijjah_first10": {
+      "title": "The first 10 days of Dhul Ḥijjah — give generously",
+      "desc": "No days are more beloved to Allah for righteous deeds than these ten — charity given now is counted among the best deeds of the entire year."
+    },
+    "arafah": {
+      "title": "Day of Arafah — the best day of the year",
+      "desc": "Arafah falls within the ten days most beloved to Allah for righteous deeds — charity given today shares in that same virtue."
+    },
+    "laylat_qadr": {
+      "title": "Laylat al-Qadr — a night better than 1,000 months",
+      "desc": "Any charity given tonight is multiplied beyond a thousand months of ordinary worship."
+    }
+  },
   "adminSadaqah": {
     "seoTitle": "Sadaqah Admin",
     "title": "Sadaqah Admin",
@@ -70,8 +104,9 @@
     "date": "Date",
     "verify": "Verify",
     "reject": "Reject",
-    "reasonPlaceholder": "Reason (sent to the donor, kindly worded)",
-    "confirmReject": "Confirm reject",
+    "emailEditableNote": "Prefilled — edit anything before sending. This is exactly what the donor receives.",
+    "sendVerify": "Send verification email",
+    "sendReject": "Send rejection email",
     "allSubmissions": "All submissions",
     "filterAll": "All",
     "statusPending": "Pending",
@@ -93,7 +128,16 @@
     "received": "Received",
     "spent": "Spent",
     "notesPlaceholder": "Notes (e.g. server costs, qari recording)",
-    "save": "Save"
+    "save": "Save",
+    "deleteEntry": "Permanently delete this entry",
+    "confirmDelete": "Confirm?",
+    "expensesTitle": "Project costs",
+    "expensesNote": "Internal record only — never shown publicly.",
+    "noExpenses": "No costs recorded yet.",
+    "totalCosts": "Total: {{amount}} BDT",
+    "addExpense": "Record a cost",
+    "amountBdt": "Amount (BDT)",
+    "expenseDescPlaceholder": "e.g. Server hosting — September"
   },
   "about": {
     "seoTitle": "About Bustandeen — Our Mission",
@@ -102,7 +146,7 @@
     "authenticityOr": "or",
     "authenticityText1": "Every verse and hadith in this app links to its exact source on",
     "authenticityText2": "with the grading shown where it matters. Nothing is quoted from memory — verify everything yourself, always. For personal rulings, please consult a qualified scholar.",
-    "dataDesc": "Export or delete everything, feature by feature, anytime.",
+    "dataDesc": "Export or delete everything, feature by feature, anytime. Available in English and Bengali, and installable on your phone.",
     "dataTitle": "Your data stays yours",
     "developedBy": "Developed with love by",
     "feature": {
@@ -111,33 +155,45 @@
         "title": "Fasting Tracker"
       },
       "friends": {
-        "desc": "Connect with one link and encourage each other with Noor — a calm daily measure of worship.",
-        "title": "Friends"
+        "title": "Friends",
+        "desc": "Connect with one link and encourage each other with Noor, a calm daily and weekly measure that only ever goes up during the day."
       },
       "prayerTimes": {
         "desc": "Calculated entirely on your device from your location — nothing is sent to any server.",
         "title": "Prayer Times"
       },
       "quranHabit": {
-        "desc": "A gentle daily-minimum goal, reading streaks, and a khatm journey across the whole muṣḥaf.",
-        "title": "Quran Habit"
+        "title": "Quran Habit",
+        "desc": "A reader, audio listening, a gentle daily goal, reading and listening time, and a khatm journey across the whole muṣḥaf."
       },
       "salatTracker": {
-        "desc": "All five prayers with on-time/qaḍā states, congregation tracking, nafl prayers, and honest analytics.",
-        "title": "Salat Tracker"
+        "title": "Salat Tracker",
+        "desc": "All five prayers with on-time and qaḍā states, congregation tracking, nafl prayers, an automatic kaza ledger and honest analytics."
       },
       "zikrCounter": {
-        "desc": "A local-first tasbih with daily goals and a forgiving streak — miss a day and you still get a chance to recover it.",
-        "title": "Zikr Counter"
+        "title": "Zikr Counter",
+        "desc": "A local-first tasbih with daily goals and a forgiving streak. Miss a day and you still get a chance to recover it."
+      },
+      "hifzTracker": {
+        "title": "Hifz Tracker",
+        "desc": "Memorise the Quran with spaced-repetition reviews that bring each āyah back just before you would forget it."
+      },
+      "rayhanah": {
+        "title": "Rayhanah Cycle",
+        "desc": "A private, encrypted companion for sisters: predictions, gentle guidance for excused days, and fasting makeup, kept out of everyone else's sight."
+      },
+      "naseeh": {
+        "title": "Naseeh (optional AI)",
+        "desc": "Off by default. A kind companion for weekly reflections and quick logging from one sentence. It encourages, and never gives religious rulings."
       }
     },
-    "githubAriaLabel": "Bustandeen on GitHub",
+    "founderNote": "Have a question only the founder can answer, or want to talk directly? Reach out any time.",
     "hadithQuote": "\"The most beloved deeds to Allah are those most consistent, even if small.\"",
     "heading": "About Bustandeen",
     "conceptDefinition": "is to worship Allah as though you see Him — and though you do not see Him, He surely sees you",
     "conceptPurpose": "This app exists to help you bring that awareness into every day.",
     "intentionLabel": "Our intention",
-    "intentionText": "Worship deserves better than noisy, gamified apps. Bustandeen is calm by design: it counts what you ask it to count, reminds you gently, celebrates sincerely, and never turns your dīn into a game. It is free, has no ads, and never sells your data — built simply in the hope of being a ṣadaqah jāriyah.",
+    "intentionText": "Worship deserves better than noisy, gamified apps. Bustandeen is calm by design: it counts what you ask it to count, reminds you gently, celebrates sincerely, and never turns your dīn into a game. It is free, has no ads, and never sells your data. Built simply in the hope of being a ṣadaqah jāriyah.",
     "privacyLink": "Privacy →",
     "srTitle": "About Bustandeen",
     "bustandeenDefinition": "A name born of بستان (bustān, garden) and دين (dīn, religion/faith) — a garden of faith, tended daily."
@@ -170,8 +226,8 @@
     "goToApp": "Go to App",
     "goToAppNow": "Go to App Now",
     "home": "Home",
-    "invalidLink": "Invalid Link",
-    "invalidLinkDesc": "This link is missing required parameters. Please use the link from your email.",
+    "noActionCode": "This link didn't carry the details we need",
+    "noActionCodeDesc": "If you just clicked a verification or password reset link, it may have already gone through. Try signing in — if it didn't work, request a new link and use it directly from your email.",
     "linkExpired": "Link Expired",
     "linkExpiredDesc": "This password reset link has expired or already been used. Please request a new one from the sign-in page.",
     "newPassword": "New Password",
@@ -290,7 +346,9 @@
     "streak": "Streak",
     "time": "time",
     "today": "Today",
-    "until": "until"
+    "until": "until",
+    "seeDetails": "See details",
+    "closePermanently": "Close permanently"
   },
   "confirmDialog": {
     "yesDelete": "Yes, delete"
@@ -417,7 +475,8 @@
     "trendLonger": "↗ Getting longer",
     "trendShorter": "↘ Getting shorter",
     "trendStable": "→ Stable",
-    "yourProfile": "your profile"
+    "yourProfile": "your profile",
+    "bmiRange": "18.5–24.9 = Normal"
   },
   "cycleCalendar": {
     "estimatedOvulation": "Estimated ovulation",
@@ -825,7 +884,25 @@
     "you": "You",
     "yourFriends": "Your Friends",
     "zikrStreakStat": "{{count}}-day streak",
-    "zikrTodayStat": "{{count}} today"
+    "zikrTodayStat": "{{count}} today",
+    "boardToday": "Today",
+    "boardWeek": "This week",
+    "prayersWeekStat": "{{n}} prayers this week",
+    "zikrWeekStat": "{{n}} this week",
+    "fastsWeekStat": "{{n}} fasts",
+    "quranWeekStat": "{{n}} āyāt this week",
+    "weekActiveDays": "daily average · active {{active}} of {{days}} days",
+    "aboveUsual": "▲ {{n}} above their usual",
+    "usualNoor": "usually ✨{{n}}",
+    "noorIntro": "Your Noor starts at 0 every day and only ever goes up. Up to 100:",
+    "noorPrayersV2": "Prayers: 10 for each of the five fard (kaza counts)",
+    "noorZikrV2": "Dhikr: today's count against your own daily goal",
+    "noorQuranV2": "Quran: reading or listening against your own daily goal",
+    "noorSteady": "Steadiness: 1 for each day in a row you show up, up to 10, once you have done something today",
+    "noorExtras": "Extras, 5 each (best two): a completed fast, nafl prayer, ṣalawāt or istighfār",
+    "noorExcusedV2": "Rayhanah days (for sisters): prayer and fasting are excused, not lost. Dhikr and Quran count for more, and Noor still reaches 100.",
+    "noorWeekDesc": "= your average daily Noor since Friday, counting today so far. A day with nothing counts 0. \"Active X of Y days\" means days with at least one prayer, dhikr, Quran or extra.",
+    "noorUsualDesc": "\"Usually\" is your average Noor on the active days of the last 14 days (shown once you have 3). \"Above their usual\" means today is already higher, so everyone races their own best. Bars show Noor out of 100."
   },
   "genderGate": {
     "asBrother": "As a brother",
@@ -913,11 +990,44 @@
     "daySuffix": "d",
     "all5": "all 5",
     "fridayHourQuote": "\"{{text}}\" Keep asking until the sun sets — for yourself, your parents, and the ummah.",
-    "fridayKahfQuote": "A light will shine for him between the two Fridays."
+    "fridayKahfQuote": "A light will shine for him between the two Fridays.",
+    "libraryTitle": "Islamic Library",
+    "librarySubtitle": "Du'a, Adhkar, Asma ul Husna and more",
+    "libraryDuaTitle": "Du'a Library",
+    "libraryDuaSubtitle": "For every situation",
+    "libraryAdhkarTitle": "Adhkar",
+    "libraryAdhkarSubtitle": "Morning and evening",
+    "libraryAsmaTitle": "99 Names of Allah",
+    "libraryAsmaSubtitle": "Reflect and remember",
+    "libraryZakatTitle": "Zakat Calculator",
+    "libraryZakatSubtitle": "Work out what you owe"
+  },
+  "library": {
+    "duaTitle": "Du'a Library",
+    "duaSubtitle": "Authentic du'as for everyday situations, with source and grading for every entry.",
+    "duaSeoTitle": "Du'a Library",
+    "duaSeoDescription": "Authentic du'as for everyday situations, with source and grading for every entry.",
+    "adhkarTitle": "Adhkar",
+    "adhkarSubtitle": "Morning and evening remembrance from the Sunnah - tap a count badge to track your repeats.",
+    "adhkarSeoTitle": "Adhkar",
+    "adhkarSeoDescription": "Morning and evening adhkar - the Prophet's ﷺ remembrances for the start and end of the day.",
+    "adhkarMorning": "Morning",
+    "adhkarEvening": "Evening",
+    "tapToCount": "Tap to count",
+    "asmaTitle": "99 Names of Allah",
+    "asmaSubtitle": "Al-Asma al-Husna - the Most Beautiful Names, with Arabic, transliteration and meaning.",
+    "asmaSeoTitle": "99 Names of Allah",
+    "asmaSeoDescription": "Al-Asma al-Husna: the Most Beautiful Names, with Arabic, transliteration and meaning.",
+    "asmaSourceNote": "The Prophet ﷺ said Allah has 99 names and whoever preserves them will enter Paradise (Sahih al-Bukhari 7392, Sahih Muslim 2677). This list, commonly cited from Jami' at-Tirmidhi 3507, is the one in widest circulation; many hadith scholars note the specific enumeration is a later addition, though the names themselves are drawn from the Quran and Sunnah.",
+    "searchPlaceholder": "Search...",
+    "noResults": "No results found.",
+    "sourceLabel": "Source",
+    "zakatSeoTitle": "Zakat Calculator",
+    "zakatSeoDescription": "Work out your zakat: nisab by gold or silver standard, your assets and debts, and when your hawl is due."
   },
   "landing": {
-    "seoTitle": "Bustandeen — Grow Your Garden of Good Deeds",
-    "seoDescription": "Track your zikr, salat, fasting and Quran reading — with authentic references, streaks, prayer times and a friends leaderboard. Free, private, and built for the Muslim community.",
+    "seoTitle": "Bustandeen - Nourish Your Deen",
+    "seoDescription": "Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a friends leaderboard. Free, private, and built for the Muslim community.",
     "brother": "Brother",
     "cta": "Begin your journey — free",
     "ctaCounter": "Try the counter first",
@@ -956,6 +1066,9 @@
     "rayhanahPrivate": " no friend can ever tell.",
     "rayhanahTitle": "Rayhanah Cycle — for our sisters",
     "readOurStory": "Read our story",
+    "sadaqahTitle": "Support Bustandeen with sadaqah",
+    "sadaqahDesc": "Bustandeen stays free for everyone. If you'd like to help keep it running — server costs, qari recordings, features still to come — you can give as an ongoing charity, never a requirement.",
+    "sadaqahCta": "Learn more →",
     "sister": "Sister",
     "tryIt": "Try it →",
     "verifiedDesc": "Each Quran verse and hadith in Bustandeen links to quran.com or sunnah.com with its exact number, and grades are shown where they matter. No fabricated virtues, no folklore — if we can't verify it, we don't say it.",
@@ -977,7 +1090,13 @@
     "disclaimer": "✨ A companion's words — not medical or religious advice.",
     "findingWords": "Finding the right words…",
     "forYouToday": "Naseeh · for you today",
-    "resourceNote": "If this feeling sits heavy for more than today, please reach out to someone you trust or a mental health professional — you deserve real support, not just words."
+    "resourceNote": "If this feeling sits heavy for more than today, please reach out to someone you trust or a mental health professional — you deserve real support, not just words.",
+    "pageTitle": "Naseeh, AI Companion",
+    "pageHeading": "Naseeh",
+    "pageSubheading": "Your personal Islamic productivity companion",
+    "disabledTitle": "Naseeh AI is off",
+    "disabledDesc": "Turn on Naseeh in Settings to get personal weekly insights, muhāsabah reports and quick logging.",
+    "openSettings": "Open Settings"
   },
   "naseehInsights": {
     "badgeLabel": "Naseeh · your week",
@@ -1009,7 +1128,11 @@
     "back": "Back",
     "confirmButton": "Confirm & log",
     "logging": "Logging…",
-    "successMessage": "Logged — well done for keeping track."
+    "successMessage": "Logged — well done for keeping track.",
+    "dayLabel": "For",
+    "dayToday": "Today",
+    "dayYesterday": "Yesterday",
+    "newDhikr": "(new dhikr)"
   },
   "nav": {
     "aboutUs": "About Us",
@@ -1021,11 +1144,13 @@
     "friends": "Friends",
     "home": "Home",
     "myProfile": "My Profile",
+    "naseeh": "Naseeh",
     "prayerTimes": "Prayer Times",
     "privacy": "Privacy",
     "qibla": "Qibla Compass",
     "quranHabit": "Quran Habit",
     "rayhanahCycle": "Rayhanah Cycle",
+    "sadaqah": "Sadaqah",
     "sadaqahAdmin": "Sadaqah Admin",
     "salatAnalytics": "Salat Analytics",
     "salatTracker": "Salat Tracker",
@@ -1113,6 +1238,8 @@
     "sourcesPrayerTimesLabel": "Prayer times",
     "sourcesTahajjudLabel": "Tahajjud",
     "sourcesTitle": "Sources",
+    "best": "best",
+    "ishaWindowUntil": "window → ",
     "startsAt": "starts at",
     "sunsetEvent": "Sunset — Forbidden Window Ends",
     "sunsetEventNote": "Sun sets. The sunset forbidden window ends. Maghrib begins shortly after.",
@@ -1127,52 +1254,73 @@
   },
   "privacy": {
     "seoTitle": "Privacy Policy",
-    "seoDescription": "How Bustandeen stores and protects your data: what we collect, what stays on your device, what friends can see, and your control over deletion.",
+    "seoDescription": "How Bustandeen stores and protects your data: what we collect, what stays on your device, what friends can see, how the optional AI works, and your control over deletion.",
     "aboutLink": "About Bustandeen",
-    "analytics": {
-      "body0": "We use Google Analytics 4 (GA4) for page-view counts and anonymous usage patterns.",
-      "body1": "No personal worship data is ever sent to GA4.",
-      "title": "Analytics"
-    },
-    "contactText": "Questions? Reach us on the Feedback & Contact page.",
-    "deviceOnly": {
-      "body0": "Prayer-times location (latitude/longitude) — used for calculation, never sent to our servers.",
-      "body1": "UI preferences, cached Quran text, and the Hijri offset.",
-      "title": "Stays on your device only"
-    },
-    "friendsSee": {
-      "body0": "Your display name and today's Noor score (a single number).",
-      "body1": "Noor reflects worship consistency but reveals no specifics — no one can tell whether you prayed, fasted, or which dhikr you did.",
-      "body2": "Rayhanah (cycle) data is always invisible to friends — the Noor formula masks excused days.",
-      "title": "What friends can see"
-    },
+    "contactText": "Have a question or concern about your privacy? We'd love to help.",
     "heading": "Privacy",
-    "lastUpdated": "Last updated: July 2025",
-    "neverDo": {
-      "body0": "Sell, share, or monetise your data. There are no ads, no third-party trackers beyond GA4, and no affiliate links.",
-      "body1": "Store passwords — authentication is handled entirely by Firebase (Google).",
-      "title": "What we never do"
-    },
-    "protected": {
-      "body0": "All data in transit is encrypted (HTTPS/TLS).",
-      "body1": "Database access is restricted by Firebase Auth tokens — only your own requests can read or write your data.",
-      "body2": "The server runs on Vercel's infrastructure (SOC 2 Type II compliant).",
-      "title": "How it's protected"
-    },
-    "srTitle": "Privacy Policy — Bustandeen",
+    "lastUpdated": "Last updated: September 2026",
+    "srTitle": "Privacy Policy, Bustandeen",
     "subtitle": "Short, honest, no legalese.",
     "whatWeStore": {
-      "body0": "Your email (from Firebase sign-in) and an optional display name.",
-      "body1": "Worship logs: zikr counts, salat statuses, fasting logs, Quran progress, and Ramadan data. These are tied to your user ID — never to your device fingerprint.",
-      "body2": "Rayhanah Cycle data (if you use it) — start/end dates, daily flow and symptom notes — stored in the same database, same encryption, same access rules.",
-      "body3": "Friends: mutual connections and your daily Noor score (visible only to confirmed friends).",
-      "title": "What we store"
+      "title": "What we store",
+      "body0": "Your email and sign-in details (from Firebase, using email or Google), a display name, and a profile photo and country if you add them. We never store your password.",
+      "body1": "Worship logs: zikr counts, salat statuses (including home or mosque, and your kaza ledger), fasting, Quran progress, hifz progress and Ramadan data. These are tied to your user ID, never to your device fingerprint.",
+      "body2": "Timing details: when you count zikr (kept for 90 days, to power session history and the time-of-day chart) and when you read or listen to the Quran (start, end and active minutes of each session).",
+      "body3": "Rayhanah Cycle data, if you use it: start and end dates, daily flow, symptom and mood notes, and the height and weight you choose to add. Notes and body stats are encrypted (AES-256-GCM) before they reach the database.",
+      "body4": "Friends: mutual connections, and the Noor scores worked out from your own activity.",
+      "body5": "Messages you send us: feedback and contact forms, zikr requests, and sadaqah donation details (optional name, email, phone, payment method, transaction ID, amount, date, message, and an IP address to prevent abuse).",
+      "body6": "The time you were last active, and the service emails we send: a welcome, replies to your messages, donation status, and occasionally a gentle note after a long break."
+    },
+    "deviceOnly": {
+      "title": "Stays on your device only",
+      "body0": "Your prayer-times location (latitude and longitude). It is used to calculate times on your device and is never sent to our servers.",
+      "body1": "If you search for a city by name, the search text goes to OpenStreetMap's Nominatim service to find its coordinates.",
+      "body2": "Preferences (language, units, discreet mode, hide BMI), cached Quran text, counts waiting to sync while you are offline, and your sign-in token."
+    },
+    "friendsSee": {
+      "title": "What friends can see",
+      "body0": "Only confirmed friends see your row: display name, photo, country flag, and your Noor (today and this week).",
+      "body1": "A few small chips: prayers done today, zikr streak, today's zikr count, whether you are fasting, and Quran āyāt against your goal. Never times, notes, places, or which dhikr you did.",
+      "body2": "You can hide from every friend's leaderboard at any time with the invisible setting in Friends.",
+      "body3": "Rayhanah data is never visible to friends. On your excused days the numbers are filled from what you actually did, so nothing reveals it.",
+      "body4": "The one exception is opt-in: if you choose to share your cycle status with a friend, she sees only a yes or no (never a date, symptom or note), and her view of your row hides the prayer and fasting chips. You can turn this off at any moment."
+    },
+    "naseeh": {
+      "title": "Naseeh (optional AI)",
+      "body0": "Naseeh is off unless you turn it on in Settings. It uses an AI service (Groq) to phrase encouragement, weekly reflections, and to read the sentence you type in quick log.",
+      "body1": "What is sent: short summaries such as counts, streaks and percentages, and the sentence you type into quick log. Your name, email, Rayhanah notes, dates and body stats are never sent.",
+      "body2": "Two Rayhanah touches, only when Naseeh is on: the gentle comfort line may send the mood or symptom words you chose that day, and cycle guidance sends only the phase and day number.",
+      "body3": "We do not use your data to train any model, and Naseeh gives encouragement, never religious rulings. You can use your own Groq key (stored encrypted) and turn Naseeh off at any time."
+    },
+    "thirdParty": {
+      "title": "Services we rely on",
+      "body0": "Google Analytics 4 counts page views and anonymous usage patterns (with IP anonymised). No worship data is ever sent to it.",
+      "body1": "Firebase (Google) handles sign-in, Vercel hosts the app, and MongoDB Atlas stores the database.",
+      "body2": "Quran text, tafsir and recitation audio come from quran.com, alquran.cloud, the Islamic Network and mp3quran; flags come from flagcdn and fonts from Google Fonts. Like any website, those services can see your IP address when your device loads their files."
+    },
+    "neverDo": {
+      "title": "What we never do",
+      "body0": "Sell, share, or monetise your data. There are no ads, no trackers beyond Google Analytics, and no affiliate links.",
+      "body1": "Store passwords. Sign-in is handled entirely by Firebase (Google).",
+      "body2": "Show your worship details to anyone, or turn your dīn into a competition where a quiet day is shamed. Noor is only ever encouragement."
     },
     "yourControl": {
+      "title": "Your control",
       "body0": "Export everything as a JSON backup or Excel file from Settings.",
-      "body1": "Delete any feature's data independently from the Settings danger zone.",
-      "body2": "Delete your entire account (and all server-side data) from your Profile page.",
-      "title": "Your control"
+      "body1": "Delete any feature's data separately from the Settings danger zone.",
+      "body2": "Delete your entire account and all server-side data from your Profile page.",
+      "body3": "Go invisible to friends, turn Naseeh off, remove your saved height and weight, or use discreet mode, each with a tap."
+    },
+    "protected": {
+      "title": "How it's protected",
+      "body0": "All data in transit is encrypted (HTTPS/TLS).",
+      "body1": "Access is restricted by Firebase Auth tokens, so only your own requests can read or write your data.",
+      "body2": "Rayhanah notes, body stats and your own AI key are encrypted at rest with AES-256-GCM before they are stored.",
+      "body3": "The server runs on Vercel's infrastructure (SOC 2 Type II compliant), with the database on MongoDB Atlas."
+    },
+    "changes": {
+      "title": "Changes to this page",
+      "body0": "We update this page whenever a feature changes what we collect, and refresh the date above. This version replaces the one from July 2025, written before Rayhanah encryption, session history, hifz and Naseeh existed."
     }
   },
   "profile": {
@@ -1301,9 +1449,41 @@
     "last30Title": "Last 30 days",
     "paceEmpty": "Read for a few days and we'll project your finish date",
     "paceEstimate": "At {{pace}} ayat/day → finish in ~{{days}} days",
+    "periodCurrentMonth": "This month",
+    "periodLast30": "Last 30d",
+    "periodAllTime": "All time",
+    "periodMonth": "Month",
+    "sessions": {
+      "ayahCount": "{{n}} āyāt",
+      "durationHm": "{{h}}h {{m}}m",
+      "durationM": "{{m}}m",
+      "empty": "No sessions logged for this day",
+      "sourceListen": "Listening",
+      "sourceRead": "Reading",
+      "title": "Quran sessions",
+      "idleNote": "Active: {{duration}}",
+      "idleHint": "Audio kept playing while idle"
+    },
     "title": "Quran Analytics",
     "topSurahsEmpty": "Read a few surahs and they'll appear here",
-    "topSurahsTitle": "Top surahs"
+    "topSurahsTitle": "Top surahs",
+    "info": {
+      "chartTitle": "Daily Quran Chart",
+      "chartBody": "How many āyāt you read or listened to each day over the selected period. Each bar is one day — taller means more āyāt. Days you skipped show as empty. Hover a bar to see the date and count.",
+      "timeOfDayTitle": "Time of Day",
+      "timeOfDayBody": "When during the day you spend time with the Quran, averaged over the last 30 days — reading and listening combined. Helps you find your best time and build a consistent habit.",
+      "sessionsTitle": "Quran Sessions",
+      "sessionsBody": "Sessions logged for the selected day — 📖 for reading, 🎧 for listening. The time shown is the wall-clock start and end. The duration is active time only — if you fell asleep or left audio playing, the active count will be much less than the time gap shown."
+    },
+    "kpi_readTime": "Time reading",
+    "kpi_listenTime": "Time listening",
+    "kpi_sessions": "Sessions",
+    "kpi_activeDays": "Active days",
+    "kpi_ayatInRange": "{{n}} āyāt",
+    "chartTitle": "Āyāt per day",
+    "chartTitleMonthly": "Āyāt per month",
+    "timeOfDayTitle": "Time of day",
+    "timeOfDaySubtitle": "last 30 days"
   },
   "quranBookmarks": {
     "ayahNo": "Āyah {{n}} →",
@@ -1400,7 +1580,9 @@
     "andStreak": "and streak",
     "signInToSave": "(sign in to save it)",
     "loggedTail": "— counted from each surah's own length. Recitation streamed free from the Islamic Network CDN.",
-    "rayhanahNote": "During Rayhanah days, listening keeps your Quran connection — and your Noor — alive."
+    "rayhanahNote": "During Rayhanah days, listening keeps your Quran connection — and your Noor — alive.",
+    "timerActive": "Active listening time this visit",
+    "timerPaused": "Paused — press play to keep counting"
   },
   "quranListen": {
     "listeningCounts": "Listening to ayah counts toward your daily ayat goal.",
@@ -1463,6 +1645,8 @@
     "tafsirLoadErrorLong": "Couldn't load this tafsir — check your connection or try another edition.",
     "tafsirLoadErrorShort": "Couldn't load this tafsir — try another edition.",
     "thisSurah": "this surah",
+    "timerActive": "Active reading time this visit",
+    "timerPaused": "Paused — timer resumes when you're back",
     "todayCount": "{{count}} āyāt today",
     "volume": "Volume",
     "volumeOff": "Volume off",
@@ -1808,7 +1992,7 @@
     "pregnancyToggleTitle": "I'm currently pregnant",
     "pregnancyToggleDesc": "Pauses period predictions and shows a week count instead. Does not change your salat or fasting tracking.",
     "pregnancySave": "Save",
-    "privacyNote": "🔒 Your cycle data is visible only to you. It is never shown to friends — on the leaderboard your Noor simply flows from the dhikr, Quran and ṣalawāt you do, exactly like any other day.",
+    "privacyNote": "🔒 Your cycle data is visible only to you. It is never shown to friends, unless you choose to share a simple yes or no with one friend. On the leaderboard your Noor simply flows from the dhikr, Quran and ṣalawāt you do, like any other day.",
     "privateNote": "private — only you can see this",
     "qadaAddedToast": "{{count, number}} qaḍā day(s) added — the tracker will guide you 🌸",
     "qadaPromptCount": "{{count, number}} day(s) of this cycle fell in Ramadan.",
@@ -1847,7 +2031,44 @@
     "title": "Rayhanah Cycle",
     "tryAgain": "Try again",
     "welcomeBackShort": "Welcome back 🌸",
-    "welcomeBackToSalat": "🕊️ Welcome back to salat"
+    "welcomeBackToSalat": "🕊️ Welcome back to salat",
+    "dayNavBack": "Previous day",
+    "dayNavForward": "Next day",
+    "editingDay": "🌷 {{date}}",
+    "editingDayNote": "Editing {{date}}. Changes are saved right away.",
+    "backToToday": "Back to today",
+    "settings": "Settings",
+    "settingsTitle": "Rayhanah settings",
+    "bodyStats": "Body measurements",
+    "heightCm": "Height (cm)",
+    "weightKg": "Weight (kg)",
+    "bmi": "BMI",
+    "bmiNormal": "Healthy weight",
+    "bmiUnder": "Underweight",
+    "bmiOver": "Overweight",
+    "bmiObese": "Well above range",
+    "bmiNote": "BMI is a general guide, not a medical diagnosis. Your doctor knows your full picture.",
+    "bodyStatsNote": "🔒 Encrypted. Visible only to you.",
+    "heightPlaceholder": "e.g. 162",
+    "weightPlaceholder": "e.g. 58",
+    "saveBodyStats": "Save",
+    "bodyStatsSaved": "Body stats saved 🌸",
+    "heightLabel": "Height",
+    "weightLabel": "Weight",
+    "heightHintM": "e.g. 1.63 (meters)",
+    "heightHintFt": "e.g. 5'4\" or 5.33",
+    "bodyStatsSection": "Height and weight",
+    "preferencesSection": "Preferences",
+    "bmiPregnancyNote": "BMI is not a reliable measure during pregnancy. Your midwife or doctor will guide you on healthy weight gain.",
+    "bodyStatsInvalid": "Please check the height and weight you entered.",
+    "bodyStatsCleared": "Height and weight removed",
+    "clearBodyStats": "Remove my saved height and weight",
+    "hideBmi": "Hide BMI in analytics",
+    "hideBmiHint": "Keeps your height and weight saved but stops showing the BMI card. Stored on this device only.",
+    "bmiUnderDesc": "Below the healthy weight range.",
+    "bmiNormalDesc": "Within the healthy weight range.",
+    "bmiOverDesc": "Above the healthy weight range.",
+    "bmiObeseDesc": "Well above the healthy weight range."
   },
   "reportRef": {
     "cardBody": "If you believe a verse number, hadith reference, or grading is incorrect, please let us know — we take this seriously.",
@@ -1903,7 +2124,7 @@
     "mosque": "Mosque",
     "missedNote": "Missed includes prayers left unmarked on past days — not only those explicitly tapped \"missed\".",
     "monthPicker": "Month",
-    "resetNote": "Showing {{actual}} days — your tracking was reset within the {{requested}}-day window. Analytics count from the reset date.",
+    "resetNote": "Showing {{actual}} of {{requested}} days: analytics count only from when you started tracking or last reset.",
     "mosqueJamatNote": "Mosque and Jamat overlap — a prayer at the mosque is usually also in jamat.",
     "mosqueStat": "{{count}} at mosque",
     "naflDays": "Nafl Days",
@@ -1939,6 +2160,8 @@
     "onTimeStat": "{{count}} on time",
     "overallBreakdown": "Overall Breakdown",
     "perPrayer": "Per Prayer",
+    "period7": "7d",
+    "period3650": "All",
     "period30": "30d",
     "period365": "1y",
     "period90": "90d",
@@ -1971,7 +2194,26 @@
     "journeyPhase": "Phase {{n}}",
     "journeyNow": "now",
     "journeyDays": "{{n}} days",
-    "journeyNote": "Missed includes prayers left unmarked on past days."
+    "journeyNote": "Missed includes prayers left unmarked on past days.",
+    "info": {
+      "byWeekdayTitle": "By Day of Week",
+      "byWeekdayBody": "Your completion rate for each day of the week, added up across the whole period you're viewing — not a timeline. It answers \"which day am I weakest on,\" e.g. Friday afternoons or Monday Fajr. A day with no bar yet just has no data in this window.",
+      "prayerTimingTitle": "Prayer Timing",
+      "prayerTimingBody": "Of the prayers you've marked done, how far into that prayer's valid time window you tended to pray it — early, mid, or late. Only counts prayers where your location was set at the time (the window itself is calculated from prayer times, which need a location).",
+      "kazaDebtChartTitle": "Kaza Debt Chart",
+      "kazaDebtChartBody": "How many missed prayers you added to your kaza debt (red) vs paid back by completing a make-up prayer (green), grouped by day for a short window, or into up to 12 equal bars (weekly, wider for a year or all time) that together cover the whole period. The rightmost bar always ends on the last day of the period, and hovering any bar shows its exact date range.",
+      "correlationTitle": "Isha & Fajr Connection",
+      "correlationBody": "Compares how often you catch Fajr on time the morning after praying Isha before 11pm vs after 11pm — a purely personal pattern from your own last 90 days, not a religious ruling. It only appears once there's enough data in BOTH categories (at least 5 days each) — a 2-day sample would just be noise dressed up as a percentage.",
+      "mosqueTrendTitle": "Mosque Attendance Trend",
+      "mosqueTrendBody": "What share of your prayers were prayed at the mosque (in jama’ah), tracked day by day for a short window, or in up to 12 equal steps (weekly, wider for a year or all time) that together cover the whole period. The rightmost point ends on the last day of the period, and its label shows the exact date range it covers.",
+      "prayerCalendarTitle": "Prayer Calendar",
+      "prayerCalendarBody": "Every day in the window, colored by how many of your 5 daily prayers were completed that day — from red (0) to bright green (all 5). Today is ringed in green. A faint, near-invisible cell means no data at all for that day (nothing logged, or it hasn't happened yet), which is different from a red cell (logged, but nothing done).",
+      "journeyTitle": "Journey",
+      "journeyBody": "Your tracking history split into phases — a new phase starts each time you reset your kaza debt count. Each phase shows how many days it covered and your completion rate across them. The current (ongoing) phase's numbers update live and already include today's progress so far.",
+      "kazaInsightsTitle": "Kaza Insights",
+      "kazaInsightsBody": "A closer look at your makeup prayer patterns — which missed prayers you've been carrying longest, how quickly you typically pay them back, and which prayer tends to linger. Only counts prayers the tracker knows an exact missed date for."
+    },
+    "journeyTabTitle": "Your Journey"
   },
   "salatSettings": {
     "asrDesc": "Madhabs differ on when ʿAṣr begins. Because Ẓuhr lasts until ʿAṣr starts, this moves both. Follow your local mosque.",
@@ -2063,6 +2305,7 @@
     "legendAutoCountInfo": "🔕 Prefer to count by hand? Turn off <1>Auto-count dhikr</1> in salat settings — tags still mark as done, and Tasbih mode on the Zikr counter becomes your manual way to count them.",
     "legendReadNowInfo": "📖 <1>Read now</1> under each prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd 1523, ṣaḥīḥ).",
     "legendTasbeehInfo": "📿 Tapping <1>Tasbeeh</1> adds the full after-ṣalāh count to your dhikr automatically — no more logging 33s by hand. Ayatul Kursi adds one. Un-tap to undo.",
+    "legendAyatulKursiAutoInfo": "📖 Tapping <1>Ayatul Kursi</1> (in ▾ Details) also auto-counts 1 recitation in your dhikr log — the same rule as Tasbeeh. Un-tap to undo.",
     "legendTasbihModeInfo": "⚙️ Choose <1>33·33·33 + tahlīl</1> (Muslim 597a) or <3>33·33·34</3> (Muslim 596a) in salat settings — both are authentic. Your ʿAṣr school lives there too.",
     "less": "▲ Less",
     "locHome": "At Home",
@@ -2108,6 +2351,11 @@
     "nowTag": "now",
     "selectDay": "Select {{day}}",
     "overdueTag": "window closed",
+    "best": "best",
+    "ishaFinalWindow": "window → {{time}}",
+    "kazaJumpTitle": "Quick-mark kaza",
+    "kazaJumpMore": "▾ Show more dates ({{count}} more)",
+    "kazaJumpLess": "▲ Show fewer dates",
     "ishaLateTag": "better before midnight",
     "kazaDebtTitle": "Kaza Debt",
     "kazaDebtOwed": "{{count}} prayers owed",
@@ -2138,6 +2386,30 @@
     "copied": "Copied — paste it anywhere",
     "copyError": "Couldn't copy the image — try downloading instead.",
     "captureError": "Couldn't generate the image — try again.",
+    "shuffle": "Surprise me",
+    "customColor": "Custom color",
+    "shape": "Shape",
+    "ratio": { "square": "Square", "portrait": "Portrait", "story": "Story" },
+    "pattern": "Background pattern",
+    "patterns": {
+      "none": "None",
+      "star": "Star",
+      "lattice": "Lattice",
+      "dots": "Dots",
+      "waves": "Waves",
+      "rays": "Rays"
+    },
+    "ornament": "Decoration",
+    "ornaments": {
+      "none": "None",
+      "frame": "Frame",
+      "corners": "Corners",
+      "arch": "Arch",
+      "skyline": "Mosque",
+      "crescent": "Crescent"
+    },
+    "intensity": "Graphics strength",
+    "intensities": { "subtle": "Subtle", "medium": "Medium", "bold": "Bold" },
     "shareButton": "Share as image"
   },
   "settings": {
@@ -2182,6 +2454,10 @@
     "enableNaseehDetail": "Weekly reflections, streak coaching and fasting companion",
     "exportExcel": "Export as Excel (.xlsx)",
     "fullBackup": "Full backup (.json)",
+    "downloadAllData": "Download all my data",
+    "downloadAllDataDone": "Your data was downloaded",
+    "downloadAllDataFailed": "Could not download your data. Check your connection and try again.",
+    "downloadAllDataNote": "\"Download all my data\" gives you a copy of everything Bustandeen holds about you: profile, zikr, salat, fasting, Quran, hifz, Rayhanah, friends (as counts only), messages you sent us and your sadaqah submissions. It is for your own records and cannot be restored. Use the full backup above to restore.",
     "groqKeyActive": "Using your own key",
     "groqKeyAddedOn": "Added on",
     "groqKeyChange": "Change",
@@ -2694,10 +2970,10 @@
       "closeSettings": "Close zikr settings",
       "settings": "Zikr settings"
     },
-    "addCustom": "Add Custom Dhikr",
+    "addCustom": "Suggest a Dhikr",
     "addCustomDhikr": "Add custom dhikr",
-    "addCustomNote": "Name and meaning are required. Arabic is optional but recommended.",
-    "addDhikr": "Add Dhikr",
+    "addCustomNote": "Only the name is required — an Ansar reviews every suggestion (with a scholar if needed) before it joins the shared library.",
+    "addDhikr": "Submit for review",
     "addNewZikr": "Add a new zikr",
     "alwaysOn": "Always on",
     "analytics": "Analytics",
@@ -2726,7 +3002,6 @@
     "enterFocusMode": "Enter full-screen focus mode",
     "exitFocus": "Exit focus mode (Esc)",
     "exitFocusAriaLabel": "Exit full-screen focus mode",
-    "exportCustom": "Export",
     "focusMode": "Focus mode (full screen)",
     "fullTextRef": "Full text & reference",
     "goalAchieved": "Goal Achieved!",
@@ -2744,10 +3019,10 @@
       "subhanallahWaBihamdihi": "\"Whoever says 'SubhanAllahi wa bihamdihi' 100 times, his sins will be forgiven even if they were as much as the foam of the sea.\""
     },
     "hadithRef": "Hadith Reference",
-    "importCustom": "Import",
     "keepCounting": "Keep counting",
     "leaveWithout": "Leave without saving",
     "lockedTitle": "Your salat tracker adds counts to this dhikr, so it stays in your list.",
+    "manageListDesc": "Edit your own zikr, or remove ones you no longer want in the dropdown.",
     "manageList": "Manage my zikr list",
     "manageNote": "Custom zikr can be edited (✏️) — renaming keeps all your counts. Removing only takes it out of your dropdown; saved counts stay in analytics.",
     "meaningPlaceholder": "e.g. I seek forgiveness from Allah",
@@ -2777,12 +3052,12 @@
     "required": "*",
     "resetAriaLabel": "Reset counter",
     "resetBtn": "Reset",
-    "resetConfirm": "Yes, reset",
-    "resetConfirmMsg": "All running counts, streak and goal progress will be zeroed. Your daily history will not be touched.",
+    "resetConfirm": "Yes, start fresh",
+    "resetConfirmMsg": "Your counts, streak and goal progress will be zeroed. Your daily history will not be touched.",
     "resetConfirmNote": "Server-confirmed analytics won't be affected.",
     "resetConfirmTitle": "Reset {{name}} counter?",
-    "resetCounters": "Reset counters",
-    "resetDesc": "Zero all running counts, streak and goal progress. Your daily history stays intact — you can still see it in analytics. Use this for a fresh start.",
+    "resetCounters": "Start fresh",
+    "resetDesc": "Zero your counts, streak and goal to begin again — your daily history stays saved in Analytics, nothing is deleted.",
     "resetting": "Resetting…",
     "setCountBtn": "Set",
     "setCountDesc": "Jump straight to a number — start from 33, 99, or wherever you left off.",
@@ -2804,14 +3079,10 @@
     "tasbihSetComplete": "{{count}} done — set complete",
     "tasbihTargetLabel": "Target",
     "toast": {
-      "addFailed": "Could not add — try again",
-      "added": "Added to your list",
+      "addFailed": "Could not submit — try again",
+      "requestSubmitted": "Submitted for review",
       "coreLinked": "This is a core dhikr — it stays in your list",
       "countSet": "Count set to {{count}}",
-      "exportNone": "No custom dhikr to export",
-      "imported": "Imported {{count}} custom dhikr",
-      "importFailed": "Could not import — check the file format",
-      "importNone": "Nothing new to import",
       "removed": "Removed from your list",
       "resetDone": "Counters reset — your history is still there",
       "resetFail": "Could not reset — try again",
@@ -2832,7 +3103,8 @@
     },
     "unsavedCounts": "You have {{count}} unsaved zikr counts. Sign in to save your progress and track your streaks.",
     "yesRemove": "Yes, remove",
-    "resetAllConfirmTitle": "Reset zikr counters?"
+    "resetAllConfirmTitle": "Start fresh?",
+    "wantsAudio": "Want an audio recitation for this, if it's added?"
   },
   "zikrAnalytics": {
     "addNewDhikrType": "+ Add a new dhikr type",
@@ -2910,7 +3182,10 @@
       "howItWorks1": "Complete your daily zikr goal to continue your streak",
       "howItWorks2": "Miss 1 day? No problem! You get a 24-hour grace period",
       "howItWorks3": "Pause anytime to preserve your streak safely",
-      "howItWorks4": "Note: Missing 2+ days in a row will reset your streak"
+      "howItWorks4": "Note: Missing 2+ days in a row will reset your streak",
+      "howStreaksInfo": "How streaks & grace days work",
+      "newUserTitle": "🌱 Start your first streak today",
+      "newUserHint": "Meet your daily goal once to light the fire. Every streak starts at day one."
     },
     "goalCard": {
       "goalTitle": "Goal",
@@ -2931,12 +3206,44 @@
     },
     "sessions": {
       "title": "Session history",
-      "empty": "No sessions logged for this day"
+      "empty": "No sessions logged for this day",
+      "manualLog": "Manual log",
+      "note": "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
     },
     "noZikrToday": "No zikr logged today yet",
-    "noZikrAllTime": "No zikr logged yet"
+    "noZikrAllTime": "No zikr logged yet",
+    "info": {
+      "trendTitle": "Zikr Trend",
+      "trendBody": "Your total zikr count day by day over the selected period. Hover (or tap) any bar to see that day's total. The bar height is relative to the highest day in the window, so a quiet day looks shorter even if the count is still meaningful.",
+      "perTypeTrendTitle": "Per-Type Trends",
+      "perTypeTrendBody": "How each of your top 5 dhikr types has moved over the same period — each line is one type. Only shows types you've counted in this window.",
+      "timeOfDayTitle": "Time of Day",
+      "timeOfDayBody": "When during the day you do your dhikr, averaged over the last 30 days — morning (Fajr to Dhuhr), afternoon (Dhuhr to Asr), evening (Asr to Isha), night (Isha onwards). Helps you see your natural rhythm.",
+      "heatmapTitle": "Activity Heatmap",
+      "heatmapBody": "Every day of the last year, colored by how much zikr you did — the darker the green, the more you counted. A white/grey cell means no zikr that day. Hover a cell to see the date and count."
+    },
+    "avgActiveDay": "Avg on active days",
+    "bestDayRecord": "Best day",
+    "longestStreak": "Longest streak",
+    "mostActiveDay": "Most active day",
+    "personalRecords": "Personal records",
+    "exportCsv": "Export CSV",
+    "heatmap": "Activity heatmap",
+    "heatmapSub": "last 365 days",
+    "perTypeTrend": "Per-type trends",
+    "newUserHeatmap": "Not enough activity yet. This fills in as you go. 🌱",
+    "newUserTrend": "Your trend will appear here once you start counting zikr. 🌱"
   },
   "zikrLibrary": {
+    "makeRequest": "Request for the library",
+    "addOwnOnly": "Add to my list only",
+    "addedOwn": "\"{{name}}\" added to your own list 📿",
+    "twoWaysHint": "The library request is reviewed and shared with everyone. \"My list only\" stays private to you and is not reviewed.",
+    "consentTitle": "Before you add this",
+    "consentBody": "\"{{name}}\" will only be added to your own list. Nobody on our team will check its wording or source. If it is not a correct or authentic practice, that is your responsibility.",
+    "consentAlt": "You can send it to our team for review instead, and it may join the library for everyone.",
+    "consentRequest": "Make request for review",
+    "consentYes": "Yes, add it, I take responsibility",
     "addFail": "Could not add — try again.",
     "addOwn": "➕ Add your own zikr",
     "addOwnHint": "Name and meaning are required — Arabic and a reference make it complete.",
@@ -2960,7 +3267,7 @@
     "linkLabel": "Custom zikr reference link",
     "linkPlaceholder": "Link — https://quran.com/20/114",
     "meaningLabel": "Custom zikr meaning",
-    "meaningPlaceholder": "Meaning — e.g. My Lord, increase me in knowledge *",
+    "meaningPlaceholder": "Meaning — e.g. My Lord, increase me in knowledge (optional)",
     "nameLabel": "Custom zikr name",
     "namePlaceholder": "Name — e.g. Rabbi zidni ilma *",
     "refLabel": "Custom zikr reference",

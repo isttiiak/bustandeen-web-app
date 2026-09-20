@@ -6,9 +6,10 @@ Disallow: /profile
 Disallow: /quran
 Disallow: /friends
 Disallow: /cycle
-Disallow: /ramadan
+Disallow: /ramadan$
+Disallow: /ramadan/
 Disallow: /zikr/analytics
 Disallow: /salat/analytics
 Disallow: /fasting/analytics
 
-Sitemap: https://bustandeen.com/sitemap.xml
+Sitemap: https://bustandeen.com/sitemap-index.xml

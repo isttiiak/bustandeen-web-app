@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { translateReference } from '../utils/localeReference.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { useAuthStore } from '../store/useAuthStore.js';
 
 const FEATURE_KEYS = [
   { emoji: '📿', key: 'zikrCounter' },
@@ -11,13 +12,18 @@ const FEATURE_KEYS = [
   { emoji: '🕐', key: 'prayerTimes' },
   { emoji: '🌙', key: 'fastingTracker' },
   { emoji: '📖', key: 'quranHabit' },
+  { emoji: '🧠', key: 'hifzTracker' },
+  { emoji: '🌸', key: 'rayhanah' },
+  { emoji: '✨', key: 'naseeh' },
   { emoji: '🤝', key: 'friends' },
 ];
 
 export default function About() {
   const { t, i18n } = useTranslation();
 
-  const features = FEATURE_KEYS.map((f) => ({
+  // Rayhanah is never surfaced to a brother's account; the public Privacy page is the exception.
+  const isMale = useAuthStore((s) => s.user?.gender === 'male');
+  const features = FEATURE_KEYS.filter((f) => !(isMale && f.key === 'rayhanah')).map((f) => ({
     emoji: f.emoji,
     title: t(`about.feature.${f.key}.title`),
     desc: t(`about.feature.${f.key}.desc`),
@@ -48,11 +54,11 @@ export default function About() {
             <p className="text-white/50 text-sm leading-relaxed max-w-lg mx-auto">
               {t(
                 'about.bustandeenDefinition',
-                'A name born of بستان (bustān, garden) and دين (dīn, religion/faith) — a garden of faith, tended daily.'
+                'A name born of بستان (bustān, garden) and دين (dīn, religion/faith) - a garden of faith, tended daily.'
               )}
             </p>
             <p className="text-brand-emerald/80 text-sm font-semibold italic">
-              "Grow your garden of good deeds."
+              "Nourish your deen."
             </p>
             <p className="text-white/25 text-xs max-w-sm mx-auto">
               {t('about.hadithQuote')}{' '}
@@ -159,17 +165,14 @@ export default function About() {
             <p className="text-white/40 text-sm">
               {t('about.developedBy')} <span className="text-brand-emerald font-bold">Istiak</span>
             </p>
+            <p className="text-white/30 text-xs max-w-sm mx-auto leading-relaxed">
+              {t('about.founderNote')}
+            </p>
             <a
-              href="https://github.com/isttiiak/bustandeen-web-app"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={t('about.githubAriaLabel')}
+              href="mailto:istiak@bustandeen.com"
               className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-brand-emerald/10 text-white/60 hover:text-white hover:border-brand-emerald/30 transition-all text-xs font-bold"
             >
-              <svg viewBox="0 0 16 16" className="w-4 h-4 fill-current" aria-hidden="true">
-                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
-              </svg>
-              github.com/isttiiak/bustandeen-web-app
+              ✉️ istiak@bustandeen.com
             </a>
           </motion.div>
         </div>

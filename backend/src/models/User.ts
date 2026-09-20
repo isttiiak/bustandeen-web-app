@@ -50,6 +50,33 @@ export interface IUser extends Document {
    * actually stored, without ever re-exposing the key itself. Cleared
    * alongside groqApiKeyEnc. */
   groqApiKeySetAt?: Date | null;
+  /** Set once the one-time welcome email has been attempted for this account
+   * (auth.controller.ts, on the very first /api/auth/verify). Unset on every
+   * account that existed before that feature shipped — used to find
+   * candidates for the admin's one-time backfill send (adminUsers.service.ts),
+   * not to guarantee delivery (email.service.ts never throws either way). */
+  welcomeEmailSentAt?: Date | null;
+  /** Dedicated "real activity" signal, decoupled from Mongoose's generic
+   * `updatedAt` — set only by genuine usage (zikr increments, zikr.service.ts;
+   * sign-in, auth.controller.ts), never by admin writes (disable/enable,
+   * welcome/re-engagement email sends). `updatedAt` used to double as this
+   * proxy, but admin actions bumping it made "days inactive" reset falsely
+   * (see adminUsers.service.ts's getDaysInactive). Null for accounts that
+   * existed before this field shipped, until their next real activity. */
+  lastActiveAt?: Date | null;
+  /** Set every time an admin sends a re-engagement email (adminUsers.service.ts)
+   * — never implies the user actually came back, only that one was sent.
+   * Paired with reengagementEmailCount so the admin can see "already emailed
+   * 2 times, most recently 4 days ago" instead of re-drafting blind. */
+  reengagementEmailSentAt?: Date | null;
+  reengagementEmailCount: number;
+  /** Servant-only abuse control (adminUsers.service.ts) — blocks sign-in at
+   * both requireAuth (every other authenticated route) and /api/auth/verify
+   * itself. Never a substitute for account deletion: the account and its
+   * data stay intact, just inaccessible, so it's reversible. */
+  disabled: boolean;
+  disabledAt?: Date | null;
+  disabledReason?: string | null;
   salatResetDate?: string;
   salatResetHistory: ISalatResetEntry[];
   totalCount: number;
@@ -97,6 +124,13 @@ const userSchema = new Schema(
     aiEnabled: { type: Boolean, default: false },
     groqApiKeyEnc: { type: String, default: null },
     groqApiKeySetAt: { type: Date, default: null },
+    welcomeEmailSentAt: { type: Date, default: null },
+    lastActiveAt: { type: Date, default: null },
+    reengagementEmailSentAt: { type: Date, default: null },
+    reengagementEmailCount: { type: Number, default: 0 },
+    disabled: { type: Boolean, default: false },
+    disabledAt: { type: Date, default: null },
+    disabledReason: { type: String, default: null, maxlength: 500 },
     salatResetDate: { type: String, default: undefined },
     salatResetHistory: {
       type: [

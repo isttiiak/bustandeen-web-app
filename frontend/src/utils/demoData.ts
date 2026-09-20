@@ -97,7 +97,7 @@ function buildCalendarData(days: number) {
   const data = [];
   for (let i = days - 1; i >= 0; i--) {
     const v = seedInt(i + 200, 0, 6);
-    data.push({ date: dateStr(i), completed: Math.min(v, 5), total: 5 });
+    data.push({ date: dateStr(i), completed: Math.min(v, 5), total: 5, logged: true });
   }
   return data;
 }

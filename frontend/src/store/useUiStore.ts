@@ -26,6 +26,14 @@ interface UiState {
    * shared device or over-the-shoulder scenario. Purely cosmetic/local; the
    * underlying data and page are unaffected once she's actually on /cycle. */
   discreetMode: boolean;
+  /** Rayhanah body-stats display units (values are always stored metric) */
+  cycleHeightUnit: 'm' | 'ft';
+  cycleWeightUnit: 'kg' | 'lbs';
+  /** Hide the BMI card on Rayhanah analytics (local preference) */
+  hideBmi: boolean;
+  setCycleHeightUnit: (val: 'm' | 'ft') => void;
+  setCycleWeightUnit: (val: 'kg' | 'lbs') => void;
+  setHideBmi: (val: boolean) => void;
   setReduceMotion: (val: boolean) => void;
   setHighContrast: (val: boolean) => void;
   setShowNoorAllTime: (val: boolean) => void;
@@ -54,6 +62,24 @@ export const useUiStore = create<UiState>((set) => ({
   zikrAudioEnabled: localStorage.getItem('bustandeen_zikr_audio') !== '0',
   zikrAudioVolume: parseFloat(localStorage.getItem('bustandeen_zikr_volume') || '0.7'),
   discreetMode: localStorage.getItem('bustandeen_discreet_mode') === '1',
+  cycleHeightUnit: localStorage.getItem('bustandeen_cycle_height_unit') === 'ft' ? 'ft' : 'm',
+  cycleWeightUnit: localStorage.getItem('bustandeen_cycle_weight_unit') === 'lbs' ? 'lbs' : 'kg',
+  hideBmi: localStorage.getItem('bustandeen_hide_bmi') === '1',
+
+  setCycleHeightUnit: (val) => {
+    localStorage.setItem('bustandeen_cycle_height_unit', val);
+    set({ cycleHeightUnit: val });
+  },
+
+  setCycleWeightUnit: (val) => {
+    localStorage.setItem('bustandeen_cycle_weight_unit', val);
+    set({ cycleWeightUnit: val });
+  },
+
+  setHideBmi: (val) => {
+    localStorage.setItem('bustandeen_hide_bmi', val ? '1' : '0');
+    set({ hideBmi: !!val });
+  },
 
   setReduceMotion: (val) => {
     localStorage.setItem('bustandeen_reduce_motion', val ? '1' : '0');

@@ -4,6 +4,35 @@ import {
   isFirebaseInitialized,
   decodeUnverifiedJwt,
 } from '../config/firebaseAdmin.js';
+import AdminAccount from '../models/AdminAccount.js';
+import User from '../models/User.js';
+
+/**
+ * Whether the dev-bypass auth path may run at all. Requires BOTH an explicit
+ * opt-in (DEV_AUTH_BYPASS=1) AND that this isn't NODE_ENV=production, but
+ * NODE_ENV is just a string env var a misconfigured preview/staging deploy
+ * could fail to set correctly — `VERCEL` is set automatically by Vercel on
+ * every deployed environment (prod, preview, branch), so it's a second,
+ * independent signal that can't be defeated by the same misconfiguration.
+ */
+const devAuthBypassAllowed = (): boolean =>
+  process.env.NODE_ENV !== 'production' &&
+  process.env.DEV_AUTH_BYPASS === '1' &&
+  !process.env.VERCEL;
+
+/**
+ * A single indexed, projection-only lookup (User.uid is unique-indexed) —
+ * runs on every authenticated request, which is a real but small added cost
+ * accepted deliberately so a Servant-disabled account is actually locked out
+ * everywhere, not just wherever a developer remembered to add the check.
+ * Returns false (never blocks) when no User doc exists yet — a brand-new
+ * sign-in's first-ever call may race ahead of /api/auth/verify's upsert, and
+ * "not yet provisioned" must never be confused with "disabled".
+ */
+const isUserDisabled = async (uid: string): Promise<boolean> => {
+  const user = await User.findOne({ uid }).select('disabled').lean();
+  return user?.disabled === true;
+};
 
 export const requireAuth = async (
   req: Request,
@@ -20,16 +49,23 @@ export const requireAuth = async (
 
     if (isFirebaseInitialized()) {
       const decoded = await verifyFirebaseToken(token);
+      if (await isUserDisabled(decoded.uid)) {
+        res.status(403).json({ ok: false, error: 'account_disabled' });
+        return;
+      }
       req.user = { ...(decoded as Record<string, unknown>), uid: decoded.uid };
       return next();
     }
 
     // Dev bypass: only in non-production environments
-    const isProd = process.env.NODE_ENV === 'production';
-    if (!isProd && process.env.DEV_AUTH_BYPASS === '1') {
+    if (devAuthBypassAllowed()) {
       const payload = decodeUnverifiedJwt(token);
       if (!payload?.['uid']) {
         res.status(401).json({ ok: false, error: 'Invalid token' });
+        return;
+      }
+      if (await isUserDisabled(payload['uid'] as string)) {
+        res.status(403).json({ ok: false, error: 'account_disabled' });
         return;
       }
       req.user = { uid: payload['uid'] as string, ...payload };
@@ -45,12 +81,12 @@ export const requireAuth = async (
 const REAUTH_MAX_AGE_SECONDS = 5 * 60;
 
 /**
- * Admin allowlist check — a comma-separated ADMIN_EMAILS env var rather than
- * a DB role field, since this app's user model has no role/permission
- * concept yet and there's only ever a couple of admin accounts. Exported
- * standalone (not just as the requireAdminEmail middleware below) so
- * controllers can also expose `isAdmin` on user-profile responses for the
- * frontend to gate its own UI, without duplicating the parsing logic.
+ * Comma-separated ADMIN_EMAILS allowlist — used ONLY to set `isAdmin` on a
+ * normal Firebase user's own profile response, purely so the main app's
+ * Navbar can show a convenience "Admin" link. Grants no API access on its
+ * own and has nothing to do with the admin panel's real gate: that's
+ * requireAdminAuth/AdminAccount below, a completely separate identity and
+ * role system from a user's regular app account.
  */
 export const isAdminEmail = (email: string | null | undefined): boolean => {
   if (typeof email !== 'string' || !email) return false;
@@ -61,14 +97,123 @@ export const isAdminEmail = (email: string | null | undefined): boolean => {
   return adminEmails.includes(email.toLowerCase());
 };
 
-/** Must run after requireAuth (needs req.user populated). */
-export const requireAdminEmail = (req: Request, res: Response, next: NextFunction): void => {
-  if (!isAdminEmail(req.user?.email)) {
-    res.status(403).json({ ok: false, error: 'Forbidden' });
+/**
+ * The ONLY gate on every /api/admin/* route. Verifies a real Firebase ID
+ * token (sent via X-Admin-Token — a separate header from the app's own
+ * Authorization header, since a signed-in regular user browsing into /admin
+ * must not have their normal-account token silently treated as an admin
+ * credential, and vice versa) and then requires a matching, active row in
+ * AdminAccount. Firebase alone only proves WHO signed in; AdminAccount is
+ * the sole source of truth for WHETHER that identity is an admin and WHICH
+ * role it holds — deactivating a row here revokes access immediately, even
+ * though the person's Firebase ID token itself stays valid until it expires.
+ *
+ * Same dev-bypass shape as requireAuth above (only reachable when Firebase
+ * Admin isn't configured AND DEV_AUTH_BYPASS=1 outside production) so tests
+ * can exercise the admin panel without a real Firebase project — the
+ * AdminAccount lookup still has to succeed either way, so a bypass token
+ * alone is never sufficient.
+ *
+ * Sets both req.admin (the real shape) and req.user (uid/email only, so
+ * existing controller code that reads req.user.email for reviewedBy/
+ * verifiedBy needs no changes).
+ */
+export const requireAdminAuth = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const header = req.headers['x-admin-token'];
+    const token = Array.isArray(header) ? header[0] : header;
+    if (!token) {
+      res.status(401).json({ ok: false, error: 'admin_session_required' });
+      return;
+    }
+
+    let uid: string;
+    let verifiedEmail: string | undefined;
+    if (isFirebaseInitialized()) {
+      const decoded = await verifyFirebaseToken(token);
+      uid = decoded.uid;
+      if (decoded.email && decoded.email_verified) verifiedEmail = decoded.email.toLowerCase();
+    } else if (devAuthBypassAllowed()) {
+      const payload = decodeUnverifiedJwt(token);
+      if (typeof payload?.['uid'] !== 'string') {
+        res.status(401).json({ ok: false, error: 'admin_session_required' });
+        return;
+      }
+      uid = payload['uid'];
+    } else {
+      res.status(500).json({ ok: false, error: 'Auth not configured' });
+      return;
+    }
+
+    let account = await AdminAccount.findOne({ firebaseUid: uid, active: true });
+
+    // Self-heal a stale link: someone deleted and recreated an admin's
+    // Firebase account (same email, new uid under the hood — Firebase never
+    // reuses uids). The OLD uid then matches nothing here even though the
+    // email is still a legitimate, verified admin identity. Re-point the
+    // existing (still-active) row at the new uid instead of locking the
+    // Servant/Ansar out until someone manually fixes the database — this is
+    // safe because `verifiedEmail` only comes from a Firebase-verified,
+    // email_verified token, never from the unverified dev-bypass path.
+    if (!account && verifiedEmail) {
+      const staleMatch = await AdminAccount.findOne({ email: verifiedEmail, active: true });
+      if (staleMatch) {
+        staleMatch.firebaseUid = uid;
+        await staleMatch.save();
+        account = staleMatch;
+      }
+    }
+
+    if (!account) {
+      res.status(401).json({ ok: false, error: 'admin_session_required' });
+      return;
+    }
+    req.admin = { uid, email: account.email, role: account.role, ansarDomain: account.ansarDomain };
+    req.user = { uid, email: account.email, isOwner: account.role === 'servant' };
+    next();
+  } catch {
+    res.status(401).json({ ok: false, error: 'admin_session_required' });
+  }
+};
+
+/**
+ * Servant-only tier — delete, financial-record edits, bulk/override
+ * operations, user-list access, and managing AdminAccount itself (adding or
+ * deactivating an Ansar). The day-to-day review workflow (verify/reject a
+ * donation, approve/reject a zikr request) stays open to every admin, since
+ * that's the actual job an Ansar does; this only covers actions explicitly
+ * scoped to the Servant. Must run after requireAdminAuth.
+ */
+export const requireServant = (req: Request, res: Response, next: NextFunction): void => {
+  if (req.admin?.role !== 'servant') {
+    res.status(403).json({ ok: false, error: 'servant_only' });
     return;
   }
   next();
 };
+
+/**
+ * Scopes an Ansar to exactly one operational area (sadaqah review vs.
+ * everything else) — the Servant bypasses this entirely, since the Servant's
+ * whole point is unrestricted access. Must run after requireAdminAuth. Apply
+ * this to any admin route file that isn't already Servant-only, so a future
+ * non-sadaqah, non-account-management admin surface follows the same
+ * 'general' convention as adminZikr.routes.ts.
+ */
+export const requireDomain =
+  (domain: 'sadaqah' | 'general') =>
+  (req: Request, res: Response, next: NextFunction): void => {
+    if (req.admin?.role === 'servant') return next();
+    if (req.admin?.ansarDomain !== domain) {
+      res.status(403).json({ ok: false, error: 'wrong_domain' });
+      return;
+    }
+    next();
+  };
 
 /**
  * Gate for irreversible operations (account deletion): rejects unless the

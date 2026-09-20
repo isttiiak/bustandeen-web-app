@@ -50,7 +50,9 @@ export default function QuranTabNav({ active }: { active: QuranTab }) {
 
   return (
     <div className="relative">
-      {/* ── Mobile: one menu button ── */}
+      {/* ── Mobile: menu button + settings, always both visible so settings
+          is reachable in one tap from every Quran page, not buried inside
+          the room-picker sheet. ── */}
       <div className="sm:hidden flex items-center gap-2">
         <button
           onClick={() => setMenuOpen((v) => !v)}
@@ -60,6 +62,13 @@ export default function QuranTabNav({ active }: { active: QuranTab }) {
         >
           <span className="truncate">{activeTab.label}</span>
           <Bars3Icon className="w-5 h-5 text-white/50 shrink-0" />
+        </button>
+        <button
+          aria-label={t('quranSettings.title', 'Quran settings')}
+          className="p-2.5 rounded-xl bg-white/5 border border-brand-emerald/10 text-white/50 hover:text-white shrink-0"
+          onClick={() => setSettingsOpen(true)}
+        >
+          <Cog6ToothIcon className="w-5 h-5" />
         </button>
       </div>
 
@@ -130,17 +139,6 @@ export default function QuranTabNav({ active }: { active: QuranTab }) {
                   {t.id === active && <CheckIcon className="w-4 h-4" />}
                 </Link>
               ))}
-              <button
-                role="menuitem"
-                onClick={() => {
-                  setMenuOpen(false);
-                  setSettingsOpen(true);
-                }}
-                className="w-full flex items-center gap-2 px-4 py-3 text-sm text-white/70 active:bg-white/5 border-t border-brand-emerald/10"
-              >
-                <Cog6ToothIcon className="w-4 h-4 text-white/50" />
-                {t('quranSettings.title', 'Quran settings')}
-              </button>
             </motion.div>
           </>
         )}

@@ -67,25 +67,64 @@ export const adminListQuerySchema = z.object({
   }),
 });
 
+// Verify/reject now send a full, admin-edited email body (prefilled from a
+// draft, always reviewed before sending) rather than a short fixed reason.
+const emailBodyField = z.string().trim().min(1).max(5000);
+
+export const verifyDonationSchema = z.object({
+  body: z.object({ emailBody: emailBodyField }),
+});
+
 export const rejectDonationSchema = z.object({
-  body: z.object({
-    reason: z.string().trim().min(1).max(500),
-  }),
+  body: z.object({ emailBody: emailBodyField }),
+});
+
+export const emailDraftQuerySchema = z.object({
+  query: z.object({ type: z.enum(['verified', 'rejected']) }),
 });
 
 // 'YYYY-Qn' e.g. '2026-Q3' — sortable as a plain string, matches
 // DonationStats.quarterlyBreakdown's `quarter` field.
 const quarterField = z.string().regex(/^\d{4}-Q[1-4]$/, "Quarter must look like '2026-Q3'");
 
-export const quarterlyUpsertSchema = z.object({
+export const quarterlyParamSchema = z.object({
+  params: z.object({ quarter: quarterField }),
+});
+
+export const publishQuarterlySchema = z.object({
   params: z.object({ quarter: quarterField }),
   body: z.object({
-    received: z.number().min(0).optional(),
-    spent: z.number().min(0).optional(),
     notes: z.string().trim().max(500).optional(),
   }),
 });
 
-export const quarterlyParamSchema = z.object({
-  params: z.object({ quarter: quarterField }),
+export const donorEmailDraftQuerySchema = z.object({
+  query: z.object({ email: z.string().trim().email() }),
+});
+
+export const donorEmailSendSchema = z.object({
+  body: z.object({
+    email: z.string().trim().email(),
+    subject: z.string().trim().min(1).max(200),
+    body: z.string().trim().min(1).max(4000),
+  }),
+});
+
+// Generous but bounded the same way transactionDateField is — catches a
+// fat-fingered year without rejecting a genuinely backdated cost entry.
+const expenseDateField = z.coerce
+  .date()
+  .refine(
+    (d) =>
+      d.getTime() <= Date.now() + 24 * 60 * 60 * 1000 &&
+      d.getTime() >= Date.now() - 5 * 365 * 24 * 60 * 60 * 1000,
+    { message: 'Date must be within the past 5 years and not in the future' }
+  );
+
+export const addExpenseSchema = z.object({
+  body: z.object({
+    date: expenseDateField,
+    amount: z.number().min(0).max(10_000_000),
+    description: z.string().trim().min(1).max(300),
+  }),
 });

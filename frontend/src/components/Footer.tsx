@@ -30,13 +30,6 @@ export default function Footer() {
             </Link>
             <span className="text-white/20">•</span>
             <Link
-              to="/sadaqah"
-              className="text-white/60 hover:text-brand-gold underline underline-offset-2 transition-colors"
-            >
-              {t('footer.sadaqah', 'Sadaqah')}
-            </Link>
-            <span className="text-white/20">•</span>
-            <Link
               to="/privacy"
               className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
             >

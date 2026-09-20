@@ -4,14 +4,17 @@ import { PaperAirplaneIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { celebrateSmall } from '../utils/celebrate.js';
+import api from '../lib/api.js';
 
 /**
  * Shared interactive form for /feedback and /contact.
  *
- * Delivery uses Web3Forms — a free, backend-less form API: the browser POSTs
- * straight to their endpoint and they email the submission on. The access key
- * is a PUBLIC form identifier (not a secret), read from
- * VITE_WEB3FORMS_ACCESS_KEY. A honeypot field blocks the usual spam bots.
+ * Delivery goes through our own backend (POST /api/feedback) — stored in
+ * FeedbackMessage so it's manageable from /admin/feedback (read/reply/
+ * archive/delete), and still emails the review inbox so nothing regresses if
+ * the inbox isn't checked. Previously posted straight to Web3Forms, which
+ * never stored anything in our own DB. A honeypot field blocks the usual
+ * spam bots (checked server-side now, not by Web3Forms).
  */
 
 export interface FormType {
@@ -22,13 +25,6 @@ export interface FormType {
   active: string;
   hint: string;
 }
-
-const ENDPOINT = 'https://api.web3forms.com/submit';
-
-// Web3Forms access keys are PUBLIC form identifiers (they ship in the client
-// bundle by design) — not secrets. Shared with the portfolio site; the subject
-// line is prefixed "[Bustandeen …]" so submissions are easy to tell apart.
-const DEFAULT_ACCESS_KEY = '9ea1dea7-c9e9-428f-ad38-4dc061d2e057';
 
 export default function FeedbackForm({
   kind,
@@ -41,8 +37,6 @@ export default function FeedbackForm({
 }) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
-  const accessKey =
-    (import.meta.env.VITE_WEB3FORMS_ACCESS_KEY as string | undefined) || DEFAULT_ACCESS_KEY;
   const resolvedSubmitLabel = submitLabel ?? t('feedbackForm.send', 'Send');
 
   const [name, setName] = useState(user?.displayName ?? '');
@@ -69,36 +63,18 @@ export default function FeedbackForm({
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!canSend) return;
-    if (!accessKey) {
-      setError(
-        t(
-          'feedbackForm.notConnected',
-          "The form isn't connected yet — please email us directly for now."
-        )
-      );
-      return;
-    }
     setSending(true);
     setError(null);
     try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          access_key: accessKey,
-          from_name: 'Bustandeen app',
-          to_email: 'ansar@bustandeen.com',
-          subject: `[Bustandeen ${kind}] ${selectedLabels.join(', ') || 'Message'}`,
-          name: name.trim(),
-          email: email.trim(),
-          message: message.trim(),
-          category: selectedLabels.join(', '),
-          signed_in: user ? 'yes' : 'guest',
-          botcheck,
-        }),
+      const res = await api.post<{ ok: boolean; error?: string }>('/api/feedback', {
+        name: name.trim(),
+        email: email.trim(),
+        message: message.trim(),
+        category: selectedLabels,
+        kind,
+        botcheck,
       });
-      const data = (await res.json()) as { success?: boolean; message?: string };
-      if (!res.ok || !data.success) throw new Error(data.message ?? 'Failed');
+      if (!res.data.ok) throw new Error(res.data.error ?? 'Failed');
       setSent(true);
       celebrateSmall();
     } catch {
@@ -303,14 +279,6 @@ export default function FeedbackForm({
           </motion.p>
         )}
       </AnimatePresence>
-
-      {!accessKey && (
-        <p className="text-brand-gold/70 text-xs rounded-xl border border-brand-gold/25 bg-brand-gold/5 p-3">
-          ⚠️ {t('feedbackForm.notConfigured', 'This form needs')}{' '}
-          <code className="text-white/70">VITE_WEB3FORMS_ACCESS_KEY</code>{' '}
-          {t('feedbackForm.notConfiguredSuffix', 'set before it can send.')}
-        </p>
-      )}
 
       <motion.button
         type="submit"

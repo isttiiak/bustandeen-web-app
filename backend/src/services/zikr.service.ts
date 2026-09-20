@@ -29,11 +29,18 @@ async function applyIncrements(
 ): Promise<IncrementResult> {
   const userInc: Record<string, number> = {};
   const newTypeNames = new Set<string>();
-  const events: { userId: string; zikrType: string; amount: number; ts: Date }[] = [];
+  const events: {
+    userId: string;
+    zikrType: string;
+    amount: number;
+    ts: Date;
+    startTs?: Date;
+    manual?: boolean;
+  }[] = [];
   let totalAdded = 0;
 
   for (const item of increments) {
-    const { zikrType, amount = 1, ts, realTs } = item;
+    const { zikrType, amount = 1, ts, realTs, startTs, untimedAmount = 0, manual } = item;
     if (!zikrType || !Number.isFinite(amount) || amount === 0) continue;
 
     const date = truncateToTimezone(ts ?? Date.now(), timezoneOffset);
@@ -73,12 +80,34 @@ async function applyIncrements(
       // Log the real tap moment for time-of-day/session analytics — `ts`
       // above is anchored to the tracking day's midday and can't tell us when
       // during the day this actually happened.
-      events.push({ userId, zikrType, amount, ts: new Date(realTs ?? ts ?? Date.now()) });
+      if (manual) {
+        // Typed in afterwards: keep it (so the day's history is complete) but
+        // with no clock time — `ts` is just the day anchor.
+        events.push({ userId, zikrType, amount, ts: new Date(ts ?? Date.now()), manual: true });
+      } else {
+        // Only the tapped part is a real-time event; the untimed part (salat
+        // tracker tasbīḥ etc.) counts toward totals but is not a session.
+        const tapped = amount - untimedAmount;
+        if (tapped > 0) {
+          const end = new Date(realTs ?? ts ?? Date.now());
+          const start = startTs && startTs < end.getTime() ? new Date(startTs) : undefined;
+          events.push({
+            userId,
+            zikrType,
+            amount: tapped,
+            ts: end,
+            ...(start ? { startTs: start } : {}),
+          });
+        }
+      }
     }
   }
 
   if (totalAdded !== 0 || Object.keys(userInc).length) {
-    await User.updateOne({ uid: userId }, { $inc: { ...userInc, totalCount: totalAdded } });
+    await User.updateOne(
+      { uid: userId },
+      { $inc: { ...userInc, totalCount: totalAdded }, $set: { lastActiveAt: new Date() } }
+    );
   }
   if (events.length) {
     // Best-effort — never let analytics logging fail the actual increment.
@@ -183,7 +212,7 @@ export async function getTimeOfDayDistribution(
 ): Promise<Array<{ hour: number; total: number }>> {
   const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   const rows = (await ZikrEvent.aggregate([
-    { $match: { userId, ts: { $gte: since } } },
+    { $match: { userId, ts: { $gte: since }, manual: { $ne: true } } },
     {
       $group: {
         _id: { $hour: { date: '$ts', timezone: offsetToUtcTzString(timezoneOffset) } },
@@ -206,6 +235,8 @@ export interface ZikrSession {
   end: Date;
   total: number;
   perType: Record<string, number>;
+  /** Counts typed in afterwards ("Log missed counts") — no real clock time. */
+  manual?: boolean;
 }
 
 /** Groups the day's raw taps into sessions (a run of taps with no gap longer
@@ -230,23 +261,40 @@ export async function getSessionsForDay(
 
   const events = await ZikrEvent.find({ userId, ts: { $gte: start, $lt: end } })
     .sort({ ts: 1 })
-    .select('zikrType amount ts');
+    .select('zikrType amount ts startTs manual');
 
   const sessions: ZikrSession[] = [];
   let current: ZikrSession | null = null;
-  let lastTs = 0;
+  let lastEnd = 0;
+  const manualEntry: ZikrSession = {
+    start: start,
+    end: start,
+    total: 0,
+    perType: {},
+    manual: true,
+  };
 
   for (const e of events) {
-    const t = e.ts.getTime();
-    if (!current || t - lastTs > SESSION_GAP_MS) {
-      current = { start: e.ts, end: e.ts, total: 0, perType: {} };
+    if (e.manual) {
+      manualEntry.total += e.amount;
+      manualEntry.perType[e.zikrType] = (manualEntry.perType[e.zikrType] ?? 0) + e.amount;
+      continue;
+    }
+    const evStart = e.startTs && e.startTs < e.ts ? e.startTs : e.ts;
+    if (!current || evStart.getTime() - lastEnd > SESSION_GAP_MS) {
+      current = { start: evStart, end: e.ts, total: 0, perType: {} };
       sessions.push(current);
     }
-    current.end = e.ts;
+    if (evStart < current.start) current.start = evStart;
+    if (e.ts > current.end) current.end = e.ts;
     current.total += e.amount;
     current.perType[e.zikrType] = (current.perType[e.zikrType] ?? 0) + e.amount;
-    lastTs = t;
+    lastEnd = Math.max(lastEnd, e.ts.getTime());
   }
+
+  // Manually logged counts have no clock time, so they sit after the timed
+  // sessions as a single "logged manually" row for the day.
+  if (manualEntry.total > 0) sessions.push(manualEntry);
 
   return sessions;
 }

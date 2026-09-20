@@ -70,10 +70,22 @@ export default [
   {
     files: [
       'frontend/vite.config.ts',
+      'frontend/vite.ssr.config.ts',
       'frontend/tailwind.config.js',
       'frontend/postcss.config.js',
       'eslint.config.js',
     ],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: globals.node,
+    },
+  },
+
+  // Build-time Node scripts (city dataset, OG image, SSG prerender) — not
+  // shipped to the browser.
+  {
+    files: ['frontend/scripts/**/*.mjs'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',

@@ -100,6 +100,7 @@ describe('Sadaqah public API', () => {
     expect(res.body.ok).toBe(true);
     expect(res.body.totalVerifiedAmount).toBe(0);
     expect(res.body.totalVerifiedCount).toBe(0);
+    expect(res.body.totalContributors).toBe(0);
     expect(Array.isArray(res.body.quarterlyBreakdown)).toBe(true);
     expect(res.body.email).toBeUndefined();
     expect(res.body.donations).toBeUndefined();

@@ -84,10 +84,10 @@ export default function Landing() {
     <AnimatedBackground variant="dark">
       <InstallPwaBanner />
       <Seo
-        title={t('landing.seoTitle', 'Bustandeen — Grow Your Garden of Good Deeds')}
+        title={t('landing.seoTitle', 'Bustandeen - Nourish Your Deen')}
         description={t(
           'landing.seoDescription',
-          'Track your zikr, salat, fasting and Quran reading — with authentic references, streaks, prayer times and a friends leaderboard. Free, private, and built for the Muslim community.'
+          'Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a friends leaderboard. Free, private, and built for the Muslim community.'
         )}
         path="/"
       />
@@ -284,6 +284,23 @@ export default function Landing() {
               {t('landing.fajrDesc')}
             </p>
           </div>
+        </motion.section>
+
+        {/* ── Sadaqah — support the project, near the very bottom, low-key ── */}
+        <motion.section {...fadeUp} className="mb-12">
+          <Link
+            to="/sadaqah"
+            className="block rounded-3xl border border-brand-gold/25 bg-gradient-to-br from-brand-gold/10 to-brand-emerald/5 p-6 sm:p-8 text-center transition-transform hover:scale-[1.01] hover:shadow-lg"
+          >
+            <div className="text-4xl mb-2">🤲</div>
+            <h3 className="text-white font-black text-lg">{t('landing.sadaqahTitle')}</h3>
+            <p className="text-white/50 text-sm mt-2 max-w-xl mx-auto leading-relaxed">
+              {t('landing.sadaqahDesc')}
+            </p>
+            <span className="inline-block mt-3 text-xs font-semibold text-brand-gold/80">
+              {t('landing.sadaqahCta')}
+            </span>
+          </Link>
         </motion.section>
 
         {/* ── Final CTA ── */}

@@ -18,6 +18,10 @@ export interface IDonation extends Document {
   verifiedBy: string | null;
   rejectionReason: string | null;
   ipAddress: string | null;
+  /** Message-ID of the first (received) email, so verify/reject replies can
+   *  thread against it — otherwise a donor sees 3 separate email threads for
+   *  one donation instead of one conversation. */
+  emailMessageId: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -46,6 +50,7 @@ const donationSchema = new Schema<IDonation>(
     // response (public or admin) unless a future query explicitly opts in
     // with .select('+ipAddress').
     ipAddress: { type: String, default: null, select: false },
+    emailMessageId: { type: String, default: null },
   },
   { timestamps: true }
 );

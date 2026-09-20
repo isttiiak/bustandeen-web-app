@@ -460,6 +460,7 @@ export default function Settings() {
   });
   const [exporting, setExporting] = useState(false);
   const [exportingXlsx, setExportingXlsx] = useState(false);
+  const [exportingAll, setExportingAll] = useState(false);
   const [importing, setImporting] = useState(false);
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
@@ -503,6 +504,26 @@ export default function Settings() {
       toast.error('Export failed. Check your connection and try again.');
     } finally {
       setExporting(false);
+    }
+  };
+
+  // ── Everything I have in the app, every feature (read-only copy) ───────────
+  const exportEverything = async () => {
+    setExportingAll(true);
+    try {
+      const { data } = await api.get<{ ok: boolean; data: unknown }>('/api/user/export/all');
+      const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `bustandeen-all-my-data-${new Date().toISOString().substring(0, 10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success(t('settings.downloadAllDataDone'));
+    } catch {
+      toast.error(t('settings.downloadAllDataFailed'));
+    } finally {
+      setExportingAll(false);
     }
   };
 
@@ -993,6 +1014,18 @@ export default function Settings() {
                 )}
                 {t('settings.exportExcel')}
               </button>
+              <button
+                className="btn btn-sm bg-brand-deep border border-brand-border text-white/70 hover:text-white gap-2"
+                onClick={() => void exportEverything()}
+                disabled={exportingAll}
+              >
+                {exportingAll ? (
+                  <span className="loading loading-spinner loading-xs" />
+                ) : (
+                  <ArrowDownTrayIcon className="w-4 h-4" />
+                )}
+                {t('settings.downloadAllData')}
+              </button>
               <label
                 className={`btn btn-sm bg-brand-deep border border-brand-border text-white/70 hover:text-white gap-2 cursor-pointer ${importing ? 'pointer-events-none opacity-60' : ''}`}
               >
@@ -1013,6 +1046,9 @@ export default function Settings() {
             <p className="text-white/30 text-[11px] mb-4 leading-relaxed">
               {t('settings.backupNote')}
               {user?.gender === 'female' ? t('settings.backupNoteCycle') : ''}
+            </p>
+            <p className="text-white/30 text-[11px] mb-4 leading-relaxed">
+              {t('settings.downloadAllDataNote')}
             </p>
 
             {/* Saved prayer location (stored only in this browser) */}

@@ -24,6 +24,20 @@ export const submitHandler = async (
   }
 };
 
+export const verifyReceiptHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const id = String(req.params.id ?? '');
+    const sig = typeof req.query.s === 'string' ? req.query.s : '';
+    res.json({ ok: true, ...(await sadaqahService.checkReceipt(id, sig)) });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const getStatsHandler = async (
   _req: Request,
   res: Response,

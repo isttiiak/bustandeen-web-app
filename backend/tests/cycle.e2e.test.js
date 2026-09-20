@@ -90,8 +90,8 @@ describe('Rayhanah Cycle API', () => {
     expect(sum.status).toBe(200);
     const me = sum.body.leaderboard.find((f) => f.isMe);
 
-    // Substituted score: zikr goal met 40 + streak 1*2 + quran 0 + salawat 10 = 52
-    expect(me.score).toBe(52);
+    // Excused score: zikr goal met 40 + quran 0 + salawat 10 + steadiness 1 = 51
+    expect(me.score).toBe(51);
     // The masked salat chip is capped by prayers plausibly elapsed at the
     // viewer's local clock (a 4/5 at Dhuhr was a synthetic-number giveaway) —
     // mirror the service's coarse windows so this test is stable at any hour.
@@ -121,7 +121,8 @@ describe('Rayhanah Cycle API', () => {
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=${TZ}`)
     );
     const zaid = sumZ.body.leaderboard.find((f) => f.isMe);
-    expect(zaid.score).toBe(2); // streak only — salat/fast/quran all 0
+    // zikr goal met 15 + istighfar extra 5 + steadiness 1; salat/fast/quran all 0
+    expect(zaid.score).toBe(21);
   });
 
   test('all-time Noor uses the excused formula on cycle days', async () => {
@@ -129,9 +130,9 @@ describe('Rayhanah Cycle API', () => {
       request(app).get(`/api/social/noor?today=${TODAY}&timezoneOffset=${TZ}`)
     );
     expect(noor.status).toBe(200);
-    expect(noor.body.today).toBe(52);
-    // Historical excused day: zikr 50 + quran 0 + salawat 10 = 60
-    expect(noor.body.allTime).toBe(60);
+    expect(noor.body.today).toBe(51);
+    // Same formula for every day, so with one active day all-time equals today
+    expect(noor.body.allTime).toBe(51);
   });
 
   test('end cycle; ending again rejected; end before start rejected', async () => {

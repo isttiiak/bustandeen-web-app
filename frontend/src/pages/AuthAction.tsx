@@ -58,7 +58,7 @@ function ActionLayout({ children }: { children: React.ReactNode }) {
           <span className="text-3xl font-black tracking-tight text-brand-emerald">
             🌱 Bustandeen
           </span>
-          <p className="text-white/30 text-xs mt-1">Grow your garden of good deeds</p>
+          <p className="text-white/30 text-xs mt-1">Nourish your deen</p>
         </div>
         {children}
       </div>
@@ -516,25 +516,38 @@ export default function AuthAction() {
   const oobCode = searchParams.get('oobCode');
 
   if (!oobCode) {
+    // Firebase's own hosted action page (firebaseapp.com/__/auth/action) can
+    // intercept the email link before this one ever sees mode/oobCode — its
+    // "Continue" link forwards only continueUrl, not the action params. If
+    // that happened, the action already completed there; this is reassurance,
+    // not a real dead end, so it deliberately avoids alarming "invalid" wording.
     return (
       <ActionLayout>
         <div className="bg-brand-surface/80 backdrop-blur-2xl rounded-3xl p-10 shadow-2xl border border-brand-border/60 text-center space-y-5">
-          <ExclamationCircleIcon className="w-12 h-12 text-red-400 mx-auto" />
+          <ExclamationCircleIcon className="w-12 h-12 text-brand-gold mx-auto" />
           <h2 className="text-2xl font-black text-white">
-            {t('authAction.invalidLink', 'Invalid Link')}
+            {t('authAction.noActionCode', "This link didn't carry the details we need")}
           </h2>
-          <p className="text-white/50 text-sm">
+          <p className="text-white/50 text-sm leading-relaxed">
             {t(
-              'authAction.invalidLinkDesc',
-              'This link is missing required parameters. Please use the link from your email.'
+              'authAction.noActionCodeDesc',
+              "If you just clicked a verification or password reset link, it may have already gone through. Try signing in — if it didn't work, request a new link and use it directly from your email."
             )}
           </p>
-          <button
-            onClick={() => navigate('/')}
-            className="w-full py-3 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold transition-all"
-          >
-            {t('authAction.goHome', 'Go Home')}
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={() => navigate('/login')}
+              className="flex-1 py-3 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold transition-all"
+            >
+              {t('common.signIn')}
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="flex-1 py-3 bg-brand-surface border border-brand-border hover:border-brand-emerald/40 text-white/60 hover:text-white rounded-xl font-semibold transition-all text-sm"
+            >
+              {t('authAction.goHome', 'Go Home')}
+            </button>
+          </div>
         </div>
       </ActionLayout>
     );

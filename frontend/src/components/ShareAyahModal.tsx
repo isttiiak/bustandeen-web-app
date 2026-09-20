@@ -9,14 +9,21 @@ import {
   ArrowDownTrayIcon,
   ShareIcon,
   ClipboardDocumentIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
-import AyahShareCard, {
-  SHARE_CARD_SIZE,
+import AyahShareCard from './AyahShareCard.js';
+import {
   SHARE_CARD_THEMES,
-  DEFAULT_SHARE_CARD_THEME,
-  getShareCardTheme,
-  setShareCardTheme,
-} from './AyahShareCard.js';
+  SHARE_CARD_RATIOS,
+  SHARE_CARD_PATTERNS,
+  SHARE_CARD_ORNAMENTS,
+  SHARE_CARD_INTENSITIES,
+  CUSTOM_THEME_ID,
+  getShareCardPrefs,
+  setShareCardPrefs,
+  resolveShareCardTheme,
+  type ShareCardPrefs,
+} from '../utils/shareCardDesign.js';
 import { loadSurahText, TRANSLATIONS, type SurahMeta, type AyahText } from '../utils/quranData.js';
 
 interface ShareAyahModalProps {
@@ -29,9 +36,19 @@ interface ShareAyahModalProps {
   initialTranslit: boolean;
 }
 
-// Preview scales the fixed 1080×1080 capture node down to fit the modal —
-// the DOM node stays full-resolution so html-to-image captures it 1:1.
-const PREVIEW_PX = 320;
+// Preview scales the fixed-size capture node down to fit the modal, the DOM
+// node stays full-resolution so html-to-image captures it 1:1.
+const PREVIEW_MAX_W = 320;
+const PREVIEW_MAX_H = 400;
+
+const chipClass = (active: boolean) =>
+  `px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all ${
+    active
+      ? 'bg-brand-emerald/15 border-brand-emerald/40 text-brand-emerald'
+      : 'bg-white/5 border-brand-emerald/10 text-white/50 hover:text-white'
+  }`;
+
+const pickRandom = <T,>(items: readonly T[]): T => items[Math.floor(Math.random() * items.length)]!;
 
 export default function ShareAyahModal({
   open,
@@ -46,25 +63,36 @@ export default function ShareAyahModal({
   const cardRef = useRef<HTMLDivElement>(null);
   const [editions, setEditions] = useState<string[]>(initialEditions.slice(0, 2));
   const [translitOn, setTranslitOn] = useState(initialTranslit);
-  const [themeId, setThemeId] = useState<string>(DEFAULT_SHARE_CARD_THEME.id);
+  const [prefs, setPrefs] = useState<ShareCardPrefs>(getShareCardPrefs);
   const [ayah, setAyah] = useState<AyahText | null>(null);
   const [loading, setLoading] = useState(false);
   const [busyAction, setBusyAction] = useState<'copy' | 'download' | 'share' | null>(null);
 
-  const theme = SHARE_CARD_THEMES.find((th) => th.id === themeId) ?? DEFAULT_SHARE_CARD_THEME;
+  const theme = resolveShareCardTheme(prefs);
+  const ratio = SHARE_CARD_RATIOS.find((r) => r.id === prefs.ratio) ?? SHARE_CARD_RATIOS[0]!;
+  const previewScale = Math.min(PREVIEW_MAX_W / ratio.width, PREVIEW_MAX_H / ratio.height);
 
   useEffect(() => {
     if (!open) return;
     setEditions(initialEditions.slice(0, 2));
     setTranslitOn(initialTranslit);
-    setThemeId(getShareCardTheme().id);
+    setPrefs(getShareCardPrefs());
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when the modal opens
   }, [open]);
 
-  const selectTheme = (id: string) => {
-    setThemeId(id);
-    setShareCardTheme(id);
+  const updatePrefs = (patch: Partial<ShareCardPrefs>) => {
+    const next = { ...prefs, ...patch };
+    setPrefs(next);
+    setShareCardPrefs(next);
   };
+
+  const shuffleDesign = () =>
+    updatePrefs({
+      themeId: pickRandom(SHARE_CARD_THEMES).id,
+      pattern: pickRandom(SHARE_CARD_PATTERNS.filter((p) => p.id !== 'none')).id,
+      ornament: pickRandom(SHARE_CARD_ORNAMENTS).id,
+      intensity: pickRandom(SHARE_CARD_INTENSITIES).id,
+    });
 
   useEffect(() => {
     if (!open || editions.length === 0) return;
@@ -95,8 +123,8 @@ export default function ShareAyahModal({
   const capture = async (): Promise<Blob | null> => {
     if (!cardRef.current) return null;
     return toBlob(cardRef.current, {
-      width: SHARE_CARD_SIZE,
-      height: SHARE_CARD_SIZE,
+      width: ratio.width,
+      height: ratio.height,
       pixelRatio: 1,
       cacheBust: true,
     });
@@ -218,16 +246,16 @@ export default function ShareAyahModal({
             {/* scaled preview of the fixed-size capture node */}
             <div
               className="mx-auto rounded-xl overflow-hidden border border-brand-emerald/10 grid place-items-center bg-black/20"
-              style={{ width: PREVIEW_PX, height: PREVIEW_PX }}
+              style={{ width: ratio.width * previewScale, height: ratio.height * previewScale }}
             >
               {loading || !ayah ? (
                 <span className="loading loading-spinner text-brand-emerald" />
               ) : (
                 <div
                   style={{
-                    width: SHARE_CARD_SIZE,
-                    height: SHARE_CARD_SIZE,
-                    transform: `scale(${PREVIEW_PX / SHARE_CARD_SIZE})`,
+                    width: ratio.width,
+                    height: ratio.height,
+                    transform: `scale(${previewScale})`,
                     transformOrigin: 'top left',
                   }}
                 >
@@ -239,6 +267,10 @@ export default function ShareAyahModal({
                     showTransliteration={translitOn}
                     lang={i18n.language}
                     theme={theme}
+                    ratio={ratio}
+                    pattern={prefs.pattern}
+                    ornament={prefs.ornament}
+                    intensity={prefs.intensity}
                   />
                 </div>
               )}
@@ -247,28 +279,140 @@ export default function ShareAyahModal({
             {/* options */}
             <div className="mt-4 space-y-3">
               <div>
-                <p className="text-white/40 text-[11px] font-bold mb-1.5">
-                  {t('shareAyah.theme', 'Card style')}
-                </p>
-                <div className="flex gap-2">
+                <div className="flex items-center justify-between mb-1.5">
+                  <p className="text-white/40 text-[11px] font-bold">
+                    {t('shareAyah.theme', 'Card style')}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={shuffleDesign}
+                    className="flex items-center gap-1 text-[11px] font-bold text-brand-emerald hover:text-white transition-colors"
+                  >
+                    <SparklesIcon className="w-3.5 h-3.5" />
+                    {t('shareAyah.shuffle', 'Surprise me')}
+                  </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
                   {SHARE_CARD_THEMES.map((th) => (
                     <button
                       key={th.id}
                       type="button"
                       aria-label={th.label}
-                      aria-pressed={themeId === th.id}
+                      aria-pressed={prefs.themeId === th.id}
                       title={th.label}
-                      onClick={() => selectTheme(th.id)}
+                      onClick={() => updatePrefs({ themeId: th.id })}
                       className={`w-8 h-8 rounded-full border-2 transition-all ${
-                        themeId === th.id
+                        prefs.themeId === th.id
                           ? 'border-white scale-110'
                           : 'border-white/15 hover:border-white/40'
                       }`}
                       style={{ background: th.background }}
                     />
                   ))}
+                  <label
+                    title={t('shareAyah.customColor', 'Custom color')}
+                    className={`relative w-8 h-8 rounded-full border-2 cursor-pointer overflow-hidden transition-all ${
+                      prefs.themeId === CUSTOM_THEME_ID
+                        ? 'border-white scale-110'
+                        : 'border-white/15 hover:border-white/40'
+                    }`}
+                    style={{
+                      background:
+                        prefs.themeId === CUSTOM_THEME_ID
+                          ? prefs.customAccent
+                          : 'conic-gradient(#f43f5e, #f59e0b, #84cc16, #10b981, #38bdf8, #a855f7, #f43f5e)',
+                    }}
+                  >
+                    <input
+                      type="color"
+                      aria-label={t('shareAyah.customColor', 'Custom color')}
+                      value={prefs.customAccent}
+                      onChange={(e) =>
+                        updatePrefs({ themeId: CUSTOM_THEME_ID, customAccent: e.target.value })
+                      }
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    />
+                  </label>
                 </div>
               </div>
+
+              <div>
+                <p className="text-white/40 text-[11px] font-bold mb-1.5">
+                  {t('shareAyah.shape', 'Shape')}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SHARE_CARD_RATIOS.map((x) => (
+                    <button
+                      key={x.id}
+                      type="button"
+                      aria-pressed={prefs.ratio === x.id}
+                      onClick={() => updatePrefs({ ratio: x.id })}
+                      className={chipClass(prefs.ratio === x.id)}
+                    >
+                      {t(`shareAyah.ratio.${x.id}`, x.label)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-white/40 text-[11px] font-bold mb-1.5">
+                  {t('shareAyah.pattern', 'Background pattern')}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SHARE_CARD_PATTERNS.map((x) => (
+                    <button
+                      key={x.id}
+                      type="button"
+                      aria-pressed={prefs.pattern === x.id}
+                      onClick={() => updatePrefs({ pattern: x.id })}
+                      className={chipClass(prefs.pattern === x.id)}
+                    >
+                      {t(`shareAyah.patterns.${x.id}`, x.label)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-white/40 text-[11px] font-bold mb-1.5">
+                  {t('shareAyah.ornament', 'Decoration')}
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {SHARE_CARD_ORNAMENTS.map((x) => (
+                    <button
+                      key={x.id}
+                      type="button"
+                      aria-pressed={prefs.ornament === x.id}
+                      onClick={() => updatePrefs({ ornament: x.id })}
+                      className={chipClass(prefs.ornament === x.id)}
+                    >
+                      {t(`shareAyah.ornaments.${x.id}`, x.label)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {(prefs.pattern !== 'none' || prefs.ornament !== 'none') && (
+                <div>
+                  <p className="text-white/40 text-[11px] font-bold mb-1.5">
+                    {t('shareAyah.intensity', 'Graphics strength')}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {SHARE_CARD_INTENSITIES.map((x) => (
+                      <button
+                        key={x.id}
+                        type="button"
+                        aria-pressed={prefs.intensity === x.id}
+                        onClick={() => updatePrefs({ intensity: x.id })}
+                        className={chipClass(prefs.intensity === x.id)}
+                      >
+                        {t(`shareAyah.intensities.${x.id}`, x.label)}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div>
                 <p className="text-white/40 text-[11px] font-bold mb-1.5">

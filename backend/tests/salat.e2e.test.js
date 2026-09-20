@@ -131,6 +131,49 @@ describe('Salat API', () => {
     expect(typeof res.body.currentStreak).toBe('number');
   });
 
+  test('GET /analytics calendarData.logged distinguishes "no row" from "logged, 0 done"', async () => {
+    const token11 = fakeJwt({ uid: 'sal11', email: 'sal11@test.dev', name: 'Sal11' });
+    const auth11 = (r) => r.set('Authorization', `Bearer ${token11}`);
+    await request(app).post('/api/auth/verify').send({ idToken: token11 });
+
+    const twoDaysAgo = shiftDateStr(today, -2);
+    // twoDaysAgo: a real log row exists, but nothing on it was marked done —
+    // must still read logged:true, not be confused with a day with no row.
+    await SalatLogModel.create({ userId: 'sal11', date: twoDaysAgo });
+    // yesterday: never opened at all — no row.
+
+    const res = await auth11(request(app).get('/api/salat/analytics?days=7'));
+    expect(res.status).toBe(200);
+    const loggedDay = res.body.calendarData.find((c) => c.date === twoDaysAgo);
+    const unloggedYesterday = res.body.calendarData.find((c) => c.date === shiftDateStr(today, -1));
+    expect(loggedDay.logged).toBe(true);
+    expect(loggedDay.completed).toBe(0);
+    expect(unloggedYesterday.logged).toBe(false);
+  });
+
+  test('GET /analytics does not grade days before tracking began as missed', async () => {
+    const tokenN = fakeJwt({ uid: 'salNew', email: 'salnew@test.dev', name: 'SalNew' });
+    const authN = (r) => r.set('Authorization', `Bearer ${tokenN}`);
+    await request(app).post('/api/auth/verify').send({ idToken: tokenN });
+
+    // Account was created just now, so a year-long window must collapse to
+    // "since signup" rather than count ~360 days nobody could have logged.
+    const res = await authN(request(app).get(`/api/salat/analytics?days=365&today=${today}`));
+    expect(res.status).toBe(200);
+    expect(res.body.periodDays).toBe(365);
+    expect(res.body.totalDays).toBeLessThanOrEqual(2);
+    expect(res.body.missedCount).toBeLessThanOrEqual(10);
+  });
+
+  test('GET /analytics and /debt/history accept an all-time window', async () => {
+    const a = await auth(request(app).get(`/api/salat/analytics?days=3650&today=${today}`));
+    expect(a.status).toBe(200);
+    const h = await auth(request(app).get(`/api/salat/debt/history?days=3650&today=${today}`));
+    expect(h.status).toBe(200);
+    // buckets cover the whole window in at most 12 bars
+    expect(h.body.weeks.length).toBeLessThanOrEqual(12);
+  });
+
   test('GET /debt/history returns weeks array', async () => {
     const res = await auth(request(app).get('/api/salat/debt/history?days=30'));
     expect(res.status).toBe(200);
@@ -257,14 +300,75 @@ describe('Salat API', () => {
     expect(logDoc.prayers.dhuhr.status).toBe('missed');
     expect(logDoc.prayers.fajr.status).toBe('completed');
 
-    // A day with no log at all stays lazy — no row gets created for it.
+    // A day with no log at all now gets one created, every fard 'missed' —
+    // otherwise later marking that day's prayer "done" starts from a fresh
+    // 'pending' row and the debt never decrements (see salatDebt.service.ts).
     const yesterdayLog = await SalatLogModel.findOne({ userId: 'sal7', date: yesterday });
-    expect(yesterdayLog).toBeNull();
+    expect(yesterdayLog).not.toBeNull();
+    expect(yesterdayLog.prayers.fajr.status).toBe('missed');
+    expect(yesterdayLog.prayers.isha.status).toBe('missed');
 
     // Idempotent: a second read must not double-count the same days.
     const debtRes2 = await auth7(request(app).get('/api/salat/debt'));
     expect(debtRes2.body.owed.fajr).toBe(1);
     expect(debtRes2.body.totalOwed).toBe(9);
+
+    // The actual bug this fix addresses: marking yesterday's swept-missed
+    // fajr as completed (prayed late, just never logged in time) must now
+    // decrement the debt counter instead of leaving it stuck.
+    const markDone = await auth7(
+      request(app)
+        .patch('/api/salat/prayer')
+        .send({ prayer: 'fajr', status: 'completed', date: yesterday })
+    );
+    expect(markDone.status).toBe(200);
+    const debtRes3 = await auth7(request(app).get('/api/salat/debt'));
+    expect(debtRes3.body.owed.fajr).toBe(0);
+    expect(debtRes3.body.totalOwed).toBe(8);
+  });
+
+  test('ensureCaughtUp is race-safe: concurrent requests must not multiply the debt', async () => {
+    // Reproduces exactly the reported bug: the frontend fires several GET
+    // endpoints in parallel on one page load (summary/analytics/debt/salat
+    // all call ensureCaughtUp), and without an atomic claim each one reads
+    // the same stale lastAccrualDate, independently computes the same "days
+    // to sweep," and each applies its own $inc — 1 real missed prayer was
+    // showing as 2-4x, depending on how many requests happened to race.
+    const token10 = fakeJwt({ uid: 'sal10', email: 'sal10@test.dev', name: 'Sal10' });
+    const auth10 = (r) => r.set('Authorization', `Bearer ${token10}`);
+    await request(app).post('/api/auth/verify').send({ idToken: token10 });
+
+    const fiveDaysAgo = shiftDateStr(today, -5);
+
+    // Debt doc last swept 5 days ago — 4 whole days (fiveDaysAgo+1 .. today-1)
+    // with no log rows at all need catching up, each contributing exactly 1
+    // to every prayer's count.
+    await SalatDebtModel.create({
+      userId: 'sal10',
+      owed: {},
+      since: fiveDaysAgo,
+      lastAccrualDate: fiveDaysAgo,
+    });
+
+    const CONCURRENCY = 8;
+    const results = await Promise.all(
+      Array.from({ length: CONCURRENCY }, () => auth10(request(app).get('/api/salat/debt')))
+    );
+    for (const res of results) expect(res.status).toBe(200);
+
+    // From fiveDaysAgo+1 up to (not including) today = 4 days owed per prayer,
+    // regardless of how many of the 8 concurrent requests raced for it.
+    const expectedPerPrayer = 4;
+    const final = await auth10(request(app).get('/api/salat/debt'));
+    expect(final.body.owed.fajr).toBe(expectedPerPrayer);
+    expect(final.body.owed.isha).toBe(expectedPerPrayer);
+    expect(final.body.totalOwed).toBe(expectedPerPrayer * 5);
+
+    // Also assert directly against every individual concurrent response —
+    // none of them should have observed (or caused) a higher count either.
+    for (const res of results) {
+      expect(res.body.totalOwed).toBeLessThanOrEqual(expectedPerPrayer * 5);
+    }
   });
 
   test('ensureCaughtUp respects an explicit ?today= (Fajr-tracking day) instead of the server civil clock', async () => {

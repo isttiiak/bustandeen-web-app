@@ -47,10 +47,13 @@ export default function Sadaqah() {
             </div>
           </motion.div>
 
-          {/* Only shown once something has actually been verified — an
-              empty "0 BDT received" box before the first donation reads worse
-              than just not showing it yet. */}
-          {!!stats && stats.totalVerifiedAmount > 0 && (
+          {/* A donation count, not a money figure — showing amounts raised
+              isn't the right framing for sadaqah. Counts every verified
+              donation (not unique donors) since one person can give more
+              than once, or give on behalf of others. Only shown once
+              someone has actually given, same reasoning as before for an
+              empty state. */}
+          {!!stats && stats.totalVerifiedCount > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -58,16 +61,16 @@ export default function Sadaqah() {
               className="rounded-2xl border border-brand-gold/25 bg-brand-gold/5 p-5 text-center"
             >
               <p className="text-brand-gold font-black text-sm uppercase tracking-widest">
-                {t('sadaqah.receivedLabel', 'Received so far')}
+                {t('sadaqah.contributorsLabel', 'Donations given')}
               </p>
               <p className="text-white text-3xl font-black mt-1.5">
-                {stats.totalVerifiedAmount.toLocaleString()}{' '}
-                <span className="text-lg text-white/50">BDT</span>
+                {stats.totalVerifiedCount.toLocaleString()}
               </p>
               <p className="text-white/40 text-xs mt-1">
-                {t('sadaqah.fromCount', 'from {{count}} contributions', {
-                  count: stats.totalVerifiedCount,
-                })}
+                {t(
+                  'sadaqah.jazakAllahLine',
+                  'JazākAllāhu khayran to everyone who has given so far'
+                )}
               </p>
             </motion.div>
           )}

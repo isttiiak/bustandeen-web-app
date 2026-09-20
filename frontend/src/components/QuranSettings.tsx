@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, type CSSProperties } from 'react';
+﻿import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -21,7 +21,19 @@ import {
   setTranslitEnabled,
   listenCountsAsAyat,
   setListenCountsAsAyat,
+  getReciterId,
+  setReciterId,
+  applyServerQuranPrefs,
+  getLocalQuranPrefsForSync,
 } from '../utils/quranPrefs.js';
+
+/** FontKind → the PATCH /api/quran/profile field it syncs to. */
+const FONT_SYNC_FIELD = {
+  arabic: 'fontArabicPx',
+  translation: 'fontTranslationPx',
+  translit: 'fontTranslitPx',
+  tafsir: 'fontTafsirPx',
+} as const satisfies Record<FontKind, string>;
 
 /**
  * Quran settings — a right-side DRAWER (Istiak's spec), available from every
@@ -39,41 +51,46 @@ const RECITER_OPTIONS = [
 ];
 
 /** Free-range px slider (Istiak's spec: full flexibility, not 3 steps).
- * Writes straight to localStorage — the reader picks it up on next open. */
+ * Writes straight to localStorage for instant feedback — the parent also
+ * gets `onCommit` on every change so it can push the value to the server
+ * (debounced, since a drag fires this continuously) for cross-device sync. */
 function SizeSlider({
   label,
   kind,
   sample,
   sampleStyle,
+  value,
+  onCommit,
 }: {
   label: string;
   kind: FontKind;
   sample?: string;
   sampleStyle?: CSSProperties;
+  value: number;
+  onCommit: (px: number) => void;
 }) {
   const { min, max } = FONT_RANGES[kind];
-  const [v, setV] = useState<number>(() => getFontPx(kind));
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
         <p className="text-white/50 text-xs font-bold">{label}</p>
-        <span className="text-white/30 text-[10px] tabular-nums">{v}px</span>
+        <span className="text-white/30 text-[10px] tabular-nums">{value}px</span>
       </div>
       <input
         type="range"
         min={min}
         max={max}
-        value={v}
+        value={value}
         aria-label={`${label} size`}
         onChange={(e) => {
           const n = Number(e.target.value);
-          setV(n);
           setFontPx(kind, n);
+          onCommit(n);
         }}
         className="range range-xs w-full [--range-shdw:theme(colors.brand.emerald)]"
       />
       {sample && (
-        <p className="text-white/60 mt-1 truncate" style={{ fontSize: v, ...sampleStyle }}>
+        <p className="text-white/60 mt-1 truncate" style={{ fontSize: value, ...sampleStyle }}>
           {sample}
         </p>
       )}
@@ -94,18 +111,71 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
 
   const savedGoal = summary?.profile.dailyGoalAyat ?? 0;
   const [goal, setGoal] = useState<number>(savedGoal);
-  const [reciter, setReciter] = useState(
-    () => localStorage.getItem('bustandeen_reciter') || 'dossari'
-  );
+  const [reciter, setReciter] = useState(getReciterId);
   const [translations, setTranslations] = useState<string[]>(selectedTranslations);
   const [arabicFontId, setArabicFontId] = useState(() => getArabicFont().id);
   const [translit, setTranslit] = useState(translitEnabled);
   const [listenCounts, setListenCounts] = useState(listenCountsAsAyat);
+  const [fontSizes, setFontSizes] = useState<Record<FontKind, number>>({
+    arabic: getFontPx('arabic'),
+    translation: getFontPx('translation'),
+    translit: getFontPx('translit'),
+    tafsir: getFontPx('tafsir'),
+  });
 
   // Keep the local goal field in sync when the drawer (re)opens with fresh data
   useEffect(() => {
     if (open) setGoal(summary?.profile.dailyGoalAyat ?? 0);
   }, [open, summary?.profile.dailyGoalAyat]);
+
+  // Cross-device sync — runs once per drawer-open per device, when the
+  // server profile first arrives. `displayPrefsSet` tells apart "nobody has
+  // ever synced these fields" (push this device's current local values up,
+  // so an existing single-device customization survives the migration)
+  // from "already synced elsewhere" (pull those down instead, overwriting
+  // whatever this device had locally). See QuranProfile.ts's doc comment.
+  const syncedRef = useRef(false);
+  useEffect(() => {
+    if (!open || !summary || syncedRef.current) return;
+    syncedRef.current = true;
+    const { profile } = summary;
+    if (profile.displayPrefsSet) {
+      applyServerQuranPrefs(profile);
+      setReciter(profile.reciterId);
+      setTranslations(profile.translations.length ? profile.translations : ['en.sahih']);
+      setArabicFontId(profile.arabicFont);
+      setTranslit(profile.translitEnabled);
+      setListenCounts(profile.listenCountsAsAyat);
+      setFontSizes({
+        arabic: profile.fontArabicPx,
+        translation: profile.fontTranslationPx,
+        translit: profile.fontTranslitPx,
+        tafsir: profile.fontTafsirPx,
+      });
+    } else {
+      updateProfile.mutate(getLocalQuranPrefsForSync());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- updateProfile is a stable useMutation reference; excluding it avoids re-running this on every unrelated summary refetch
+  }, [open, summary]);
+  // Re-arm the one-time sync for the next time the drawer opens (e.g. after
+  // another device changed something in between).
+  useEffect(() => {
+    if (!open) syncedRef.current = false;
+  }, [open]);
+
+  // Debounced push to the server — a slider drag fires onCommit continuously;
+  // this coalesces it into one PATCH per ~600ms of inactivity, per field.
+  const syncTimers = useRef<Partial<Record<string, ReturnType<typeof setTimeout>>>>({});
+  const syncField = (key: string, payload: Record<string, unknown>) => {
+    if (syncTimers.current[key]) clearTimeout(syncTimers.current[key]);
+    syncTimers.current[key] = setTimeout(() => updateProfile.mutate(payload), 600);
+  };
+  useEffect(() => {
+    const timers = syncTimers.current;
+    return () => {
+      Object.values(timers).forEach((id) => id && clearTimeout(id));
+    };
+  }, []);
 
   const primary = translations[0] ?? 'en.sahih';
   const secondary = translations[1] ?? 'none';
@@ -114,8 +184,10 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
   // Every field below saves the instant it changes — no separate "save
   // reading settings" button. persistTranslations keeps localStorage in
   // sync with whatever selectedTranslations() will read back next time.
-  const persistTranslations = (next: string[]) =>
+  const persistTranslations = (next: string[]) => {
     localStorage.setItem('bustandeen_quran_translations', JSON.stringify(next));
+    updateProfile.mutate({ translations: next });
+  };
 
   const setPrimary = (id: string) => {
     setTranslations((prev) => {
@@ -279,7 +351,8 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                   value={reciter}
                   onChange={(e) => {
                     setReciter(e.target.value);
-                    localStorage.setItem('bustandeen_reciter', e.target.value);
+                    setReciterId(e.target.value);
+                    updateProfile.mutate({ reciterId: e.target.value });
                   }}
                 >
                   {RECITER_OPTIONS.map((r) => (
@@ -354,6 +427,9 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                   onChange={(e) => {
                     setArabicFontId(e.target.value);
                     setArabicFont(e.target.value);
+                    updateProfile.mutate({
+                      arabicFont: e.target.value as 'clean' | 'naskh' | 'uthmani',
+                    });
                   }}
                 >
                   {ARABIC_FONTS.map((f) => (
@@ -393,6 +469,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                     onChange={(e) => {
                       setTranslit(e.target.checked);
                       setTranslitEnabled(e.target.checked);
+                      updateProfile.mutate({ translitEnabled: e.target.checked });
                     }}
                   />
                 </label>
@@ -419,6 +496,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                     onChange={(e) => {
                       setListenCounts(e.target.checked);
                       setListenCountsAsAyat(e.target.checked);
+                      updateProfile.mutate({ listenCountsAsAyat: e.target.checked });
                     }}
                   />
                 </label>
@@ -432,19 +510,47 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 <SizeSlider
                   label="Arabic"
                   kind="arabic"
+                  value={fontSizes.arabic}
+                  onCommit={(px) => {
+                    setFontSizes((s) => ({ ...s, arabic: px }));
+                    syncField(FONT_SYNC_FIELD.arabic, { [FONT_SYNC_FIELD.arabic]: px });
+                  }}
                   sample="بِسْمِ اللَّهِ"
                   sampleStyle={{
                     fontFamily: ARABIC_FONTS.find((f) => f.id === arabicFontId)?.stack,
                     direction: 'rtl',
                   }}
                 />
-                <SizeSlider label="Translation" kind="translation" sample="In the name of Allah…" />
+                <SizeSlider
+                  label="Translation"
+                  kind="translation"
+                  value={fontSizes.translation}
+                  onCommit={(px) => {
+                    setFontSizes((s) => ({ ...s, translation: px }));
+                    syncField(FONT_SYNC_FIELD.translation, { [FONT_SYNC_FIELD.translation]: px });
+                  }}
+                  sample="In the name of Allah…"
+                />
                 <SizeSlider
                   label="Transliteration"
                   kind="translit"
+                  value={fontSizes.translit}
+                  onCommit={(px) => {
+                    setFontSizes((s) => ({ ...s, translit: px }));
+                    syncField(FONT_SYNC_FIELD.translit, { [FONT_SYNC_FIELD.translit]: px });
+                  }}
                   sample="Bismillāhir-raḥmānir-raḥīm"
                 />
-                <SizeSlider label="Tafsir" kind="tafsir" sample="The scholars explain…" />
+                <SizeSlider
+                  label="Tafsir"
+                  kind="tafsir"
+                  value={fontSizes.tafsir}
+                  onCommit={(px) => {
+                    setFontSizes((s) => ({ ...s, tafsir: px }));
+                    syncField(FONT_SYNC_FIELD.tafsir, { [FONT_SYNC_FIELD.tafsir]: px });
+                  }}
+                  sample="The scholars explain…"
+                />
               </div>
 
               {/* ── Reset options ── */}

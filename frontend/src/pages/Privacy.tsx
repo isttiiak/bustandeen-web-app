@@ -5,13 +5,15 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 
 const SECTION_KEYS = [
-  { emoji: '📥', key: 'whatWeStore', bodyCount: 4 },
-  { emoji: '📍', key: 'deviceOnly', bodyCount: 2 },
-  { emoji: '🤝', key: 'friendsSee', bodyCount: 3 },
-  { emoji: '📊', key: 'analytics', bodyCount: 2 },
-  { emoji: '🚫', key: 'neverDo', bodyCount: 2 },
-  { emoji: '🗑️', key: 'yourControl', bodyCount: 3 },
-  { emoji: '🔐', key: 'protected', bodyCount: 3 },
+  { emoji: '📥', key: 'whatWeStore', bodyCount: 7 },
+  { emoji: '📍', key: 'deviceOnly', bodyCount: 3 },
+  { emoji: '🤝', key: 'friendsSee', bodyCount: 5 },
+  { emoji: '✨', key: 'naseeh', bodyCount: 4 },
+  { emoji: '🌐', key: 'thirdParty', bodyCount: 3 },
+  { emoji: '🚫', key: 'neverDo', bodyCount: 3 },
+  { emoji: '🗑️', key: 'yourControl', bodyCount: 4 },
+  { emoji: '🔐', key: 'protected', bodyCount: 4 },
+  { emoji: '📝', key: 'changes', bodyCount: 1 },
 ];
 
 export default function Privacy() {
@@ -81,8 +83,8 @@ export default function Privacy() {
           >
             <p className="text-white/40 text-xs">
               {t('privacy.contactText')}{' '}
-              <a href="mailto:isttiiak@gmail.com" className="text-brand-emerald underline">
-                isttiiak@gmail.com
+              <a href="mailto:ansar@bustandeen.com" className="text-brand-emerald underline">
+                ansar@bustandeen.com
               </a>
             </p>
             <Link to="/about" className="text-white/30 text-xs underline hover:text-white/60">

@@ -20,6 +20,8 @@ export interface ParsedSalatEntry {
 export interface ParsedZikrEntry {
   typeName: string;
   count: number;
+  /** No existing dhikr matches this name, so confirming creates a new one. */
+  isNew?: boolean;
 }
 export interface ParsedQuranEntry {
   ayat: number;
@@ -30,6 +32,8 @@ export interface ParsedLogResult {
   salat: ParsedSalatEntry[];
   zikr: ParsedZikrEntry[];
   quran: ParsedQuranEntry | null;
+  /** The day the note is about ("yesterday" only when it clearly said so). */
+  day: 'today' | 'yesterday';
 }
 
 export function useParseNaturalLog() {

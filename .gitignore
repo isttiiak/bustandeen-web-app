@@ -12,6 +12,7 @@ node_modules/
 
 # Build outputs
 dist/
+dist-ssr/
 build/
 *.tsbuildinfo
 
@@ -66,3 +67,4 @@ ihsan-feature-audit-2026.md
 # changelogs, session notes and internal docs stay local-only.
 *.md
 !README.md
+archive/* 

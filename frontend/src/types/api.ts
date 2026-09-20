@@ -81,6 +81,8 @@ export interface ZikrSession {
   end: string;
   total: number;
   perType: Record<string, number>;
+  /** Counts typed in afterwards ("Log missed counts"): no real clock time. */
+  manual?: boolean;
 }
 
 export interface ZikrSessionsResponse {
@@ -152,8 +154,22 @@ export interface DonationStatsResponse {
   ok: boolean;
   totalVerifiedAmount: number;
   totalVerifiedCount: number;
+  /** Distinct people who have given at least once verified donation — not
+   *  distinct donations, so a repeat donor counts once. Shown publicly
+   *  instead of a money figure. */
+  totalContributors: number;
   lastUpdated: string;
   quarterlyBreakdown: QuarterlyEntry[];
+}
+
+export interface SadaqahExpense {
+  _id: string;
+  date: string;
+  amount: number;
+  description: string;
+  createdBy: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface SadaqahConfigResponse {

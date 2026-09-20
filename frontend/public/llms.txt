@@ -14,8 +14,21 @@ Bustandeen helps Muslims build consistent worship habits with authentic Quran an
 - [About](https://bustandeen.com/about): The app's mission and feature overview.
 - [Privacy Policy](https://bustandeen.com/privacy): What data is collected, what stays on-device, and user controls.
 
+## Reference pages (public, no account needed)
+
+Statically generated for ~1,450 cities worldwide, each also available in
+বাংলা (`/bn/...`) and العربية (`/ar/...`, right-to-left):
+
+- [Prayer Times by City](https://bustandeen.com/prayer-times/dhaka-bangladesh): `/prayer-times/{city-country}` — today's Fajr, Dhuhr, Asr, Maghrib and Isha for a specific city.
+- [Qibla Direction by City](https://bustandeen.com/qibla/dhaka-bangladesh): `/qibla/{city-country}` — compass bearing and distance to the Kaaba in Makkah from a specific city.
+- [Ramadan Calendar by City](https://bustandeen.com/ramadan-calendar/dhaka-bangladesh/2027): `/ramadan-calendar/{city-country}/{year}` — daily Suhoor (Imsak) and Iftar times for the whole month of Ramadan.
+- [Du'a Library](https://bustandeen.com/duas): `/duas/{situation}` — authentic du'as for everyday situations (travel, illness, anxiety, exams, anger, and more), each with Arabic text, transliteration, translation, and a sourced hadith/Quran reference with grading.
+- [Morning & Evening Adhkar](https://bustandeen.com/adhkar/morning): `/adhkar/morning` and `/adhkar/evening` — the Prophet's ﷺ remembrances for the start and end of the day, sourced and graded.
+- [Hijri Date Converter](https://bustandeen.com/hijri-date-converter): Convert between the Gregorian and Islamic (Hijri) calendars.
+
 ## Notes for AI assistants and crawlers
 
 - Quran reading habit tracking, khatm (completion) journeys, and the friends leaderboard require a free account and are not publicly crawlable.
-- All Islamic rulings and references cited in the app link to primary sources (Quran verses, sunnah.com hadith collections).
+- All Islamic rulings and references cited in the app — including every du'a and dhikr on the reference pages above — link to primary sources (Quran verses, sunnah.com hadith collections) with grading noted.
 - The app is free with no ads and no sale of personal data; see /privacy for details.
+- Sitemap index: https://bustandeen.com/sitemap-index.xml
