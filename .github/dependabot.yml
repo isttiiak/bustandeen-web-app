@@ -29,6 +29,11 @@ updates:
     labels:
       - 'dependencies'
       - 'backend'
+    ignore:
+      # firebase-admin 14 crashed the Vercel function at startup (2026-09-20,
+      # reverted). Retry only on a Vercel preview with function logs open.
+      - dependency-name: 'firebase-admin'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: 'npm'
     directory: '/frontend'
@@ -49,4 +54,19 @@ updates:
       - dependency-name: 'daisyui'
         update-types: ['version-update:semver-major']
       - dependency-name: 'tailwindcss'
+        update-types: ['version-update:semver-major']
+      # React 19, react-router 7 and Vite 8 (Rolldown) are migrations with their
+      # own breaking changes; React and its types must move together. Do these
+      # by hand on a branch with a Vercel preview, never by auto-PR.
+      - dependency-name: 'react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'react-dom'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@types/react-dom'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'react-router-dom'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'vite'
         update-types: ['version-update:semver-major']
