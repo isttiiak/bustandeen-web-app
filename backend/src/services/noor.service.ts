@@ -56,6 +56,15 @@ export interface DayNoor {
   acts: number;
   /** Score before the steadiness bonus; > 0 means an active day. */
   base: number;
+  /** Raw inputs of the day, kept for the weekly totals on the leaderboard. */
+  detail?: {
+    salat: number;
+    zikr: number;
+    quran: number;
+    fasted: boolean;
+    goalMet: boolean;
+    excused: boolean;
+  };
 }
 
 const ratio = (n: number, goal: number): number => Math.min(1, goal > 0 ? n / goal : n > 0 ? 1 : 0);
@@ -197,7 +206,19 @@ export async function loadNoorSeries(
     const probe = computeDayNoor(inputs, 1);
     run = probe.base > 0 ? run + 1 : 0;
     const result = computeDayNoor(inputs, run);
-    if (day >= from) out.set(day, result);
+    if (day >= from) {
+      out.set(day, {
+        ...result,
+        detail: {
+          salat: inputs.salatDone,
+          zikr: inputs.zikr,
+          quran: inputs.quran,
+          fasted: inputs.fasted,
+          goalMet: inputs.zikrGoal > 0 && inputs.zikr >= inputs.zikrGoal,
+          excused: inputs.excused,
+        },
+      });
+    }
   }
   return out;
 }
@@ -208,8 +229,20 @@ export function weekStartFriday(day: string): string {
   return shift(day, -((dow + 2) % 7));
 }
 
+/** Totals for the days of this Fri-Thu week BEFORE today (today's chips are added by the caller). */
+export interface WeekTotals {
+  salat: number;
+  zikr: number;
+  quran: number;
+  fasts: number;
+  activeDays: number;
+  /** Days of the week so far, including today. */
+  days: number;
+}
+
 export interface NoorSummary {
   today: DayNoor;
+  weekPast: WeekTotals;
   /** Average daily Noor this Fri-Thu week so far (days with nothing count 0). */
   week: number;
   /** Average of the user's active days in the previous 14, or null with fewer than 3. */
@@ -224,10 +257,22 @@ export async function getNoorSummary(userId: string, today: string): Promise<Noo
 
   let weekSum = 0;
   let weekDays = 0;
+  const weekPast: WeekTotals = { salat: 0, zikr: 0, quran: 0, fasts: 0, activeDays: 0, days: 0 };
   for (let d = weekStart; d <= today; d = shift(d, 1)) {
-    weekSum += series.get(d)?.score ?? 0;
+    const day = series.get(d);
+    weekSum += day?.score ?? 0;
     weekDays++;
+    if (d === today || !day?.detail) continue;
+    const x = day.detail;
+    // A day excused by the cycle is shown like any other active day (privacy):
+    // prayer and fasting are filled in from the real effort, as for today.
+    weekPast.salat += x.excused ? Math.round(5 * Math.min(1, day.score / 100)) : x.salat;
+    weekPast.fasts += (x.excused ? x.goalMet : x.fasted) ? 1 : 0;
+    weekPast.zikr += x.zikr;
+    weekPast.quran += x.quran;
+    if (day.base > 0) weekPast.activeDays++;
   }
+  weekPast.days = weekDays;
 
   const past: number[] = [];
   for (let d = from; d < today; d = shift(d, 1)) {
@@ -236,7 +281,7 @@ export async function getNoorSummary(userId: string, today: string): Promise<Noo
   }
   const usual = past.length >= 3 ? Math.round(past.reduce((a, b) => a + b, 0) / past.length) : null;
 
-  return { today: todayNoor, week: weekDays ? Math.round(weekSum / weekDays) : 0, usual };
+  return { today: todayNoor, weekPast, week: weekDays ? Math.round(weekSum / weekDays) : 0, usual };
 }
 
 /** Sum of daily Noor over the last 365 days (only ever grows). */

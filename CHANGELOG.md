@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.51.1 - Friends: the "This week" board now shows week numbers - 2026-09-20
+
+### Fixed
+
+- **"This week" no longer shows today's chips under a weekly Noor.** The score was the Friday-to-now daily average but the row still showed today's prayers, dhikr and fasting, which made the number look random. On "This week" each row now shows the week so far: prayers done, dhikr total, fasts, āyāt read, plus "daily average · active X of Y days" under the bar. The streak chip is unchanged. "Today" is unchanged.
+- Sisters whose days were excused by the cycle still look like any other active day in the weekly totals (same substitution as today's chips).
+
 ## v5.51.0 - Zikr: own-list consent, audio tracker removed, istighfar sources fixed - 2026-09-20
 
 ### Added

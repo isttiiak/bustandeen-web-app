@@ -28,6 +28,15 @@ export interface FriendStats {
   score: number;
   /** Average daily Noor this Friday-to-Thursday week so far */
   weekScore?: number;
+  /** Week-so-far totals behind the "This week" chips */
+  week?: {
+    salat: number;
+    zikr: number;
+    quran: number;
+    fasts: number;
+    activeDays: number;
+    days: number;
+  };
   /** The friend's usual daily Noor (average of recent active days); null while there is too little history */
   usualScore?: number | null;
   /** Distinct good acts today (leaderboard tie-break) */

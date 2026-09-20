@@ -347,6 +347,15 @@ export interface FriendStats {
   score: number; // Noor today, 0..100 (see noor.service.ts for the formula)
   /** Average daily Noor this Fri-Thu week so far */
   weekScore: number;
+  /** Week-so-far totals (Fri-Thu, including today) behind the "This week" chips */
+  week: {
+    salat: number;
+    zikr: number;
+    quran: number;
+    fasts: number;
+    activeDays: number;
+    days: number;
+  };
   /** The friend's usual daily Noor (average of recent active days), or null while there is too little history */
   usualScore: number | null;
   /** Distinct good acts today - the leaderboard tie-break */
@@ -474,6 +483,14 @@ async function statsForUser(
     ...base,
     score,
     weekScore: noor.week,
+    week: {
+      salat: noor.weekPast.salat + base.salatToday,
+      zikr: noor.weekPast.zikr + base.zikrToday,
+      quran: noor.weekPast.quran + base.quranPagesToday,
+      fasts: noor.weekPast.fasts + (base.fastedToday ? 1 : 0),
+      activeDays: noor.weekPast.activeDays + (noor.today.base > 0 ? 1 : 0),
+      days: noor.weekPast.days,
+    },
     usualScore: noor.usual,
     actsToday: noor.today.acts,
     ...(sharesCycleWithViewer ? { onCycle: excusedToday } : {}),

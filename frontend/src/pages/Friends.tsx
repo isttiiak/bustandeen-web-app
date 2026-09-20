@@ -779,6 +779,18 @@ export default function Friends() {
                             ✨{formatLocaleNumber(shownScore(f))}
                           </span>
                         </div>
+                        {board === 'week' && f.week && (
+                          <p className="text-[10px] mt-1 text-white/25">
+                            {t(
+                              'friends.weekActiveDays',
+                              'daily average · active {{active}} of {{days}} days',
+                              {
+                                active: formatLocaleNumber(f.week.activeDays),
+                                days: formatLocaleNumber(f.week.days),
+                              }
+                            )}
+                          </p>
+                        )}
                         {board === 'today' && f.usualScore != null && (
                           <p
                             className={`text-[10px] mt-1 ${
@@ -796,15 +808,25 @@ export default function Friends() {
                         )}
                       </div>
                     </div>
-                    {/* Stat chips — prayer, zikr streak, today's zikr, fasted today, quran pages */}
+                    {/* Stat chips: today's numbers on "Today", week-so-far totals on
+                        "This week", so the chips always explain the Noor shown. */}
                     <div className="flex flex-wrap gap-1.5 mt-2.5 pl-10">
                       {/* Someone who shares her cycle status: prayer and fasting are
                           paused for her, so those two chips would only confuse. */}
                       {!f.onCycle && (
                         <span className="px-2 py-0.5 rounded-full bg-white/10 border border-brand-emerald/10 text-[10px] font-bold text-white/60">
-                          🕌 {formatLocaleNumber(f.salatToday)}
-                          <span className="text-white/35">/{formatLocaleNumber(5)}</span>{' '}
-                          {t('friends.prayers')}
+                          🕌{' '}
+                          {board === 'week' && f.week ? (
+                            t('friends.prayersWeekStat', '{{count}} prayers this week', {
+                              n: formatLocaleNumber(f.week.salat),
+                            })
+                          ) : (
+                            <>
+                              {formatLocaleNumber(f.salatToday)}
+                              <span className="text-white/35">/{formatLocaleNumber(5)}</span>{' '}
+                              {t('friends.prayers')}
+                            </>
+                          )}
                         </span>
                       )}
                       <span
@@ -814,25 +836,41 @@ export default function Friends() {
                         {t('friends.zikrStreakStat', { count: formatLocaleNumber(f.zikrStreak) })}
                       </span>
                       <span className="px-2 py-0.5 rounded-full bg-white/10 border border-brand-emerald/10 text-[10px] font-bold text-white/60">
-                        📿 {t('friends.zikrTodayStat', { count: formatLocaleNumber(f.zikrToday) })}
+                        📿{' '}
+                        {board === 'week' && f.week
+                          ? t('friends.zikrWeekStat', '{{count}} this week', {
+                              n: formatLocaleNumber(f.week.zikr),
+                            })
+                          : t('friends.zikrTodayStat', { count: formatLocaleNumber(f.zikrToday) })}
                       </span>
                       {!f.onCycle && (
                         <span
                           className={`px-2 py-0.5 rounded-full border text-[10px] font-bold ${
-                            f.fastedToday
+                            (board === 'week' && f.week ? f.week.fasts > 0 : f.fastedToday)
                               ? 'bg-brand-gold/15 border-brand-gold/40 text-brand-gold'
                               : 'bg-white/10 border-brand-emerald/10 text-white/30'
                           }`}
                         >
-                          🌙 {f.fastedToday ? t('friends.fastingToday') : t('friends.notFasting')}
+                          🌙{' '}
+                          {board === 'week' && f.week
+                            ? t('friends.fastsWeekStat', '{{count}} fasts', {
+                                n: formatLocaleNumber(f.week.fasts),
+                              })
+                            : f.fastedToday
+                              ? t('friends.fastingToday')
+                              : t('friends.notFasting')}
                         </span>
                       )}
                       <span className="px-2 py-0.5 rounded-full bg-white/10 border border-brand-emerald/10 text-[10px] font-bold text-white/60">
                         📖{' '}
-                        {t('friends.quranPagesStat', {
-                          current: formatLocaleNumber(f.quranPagesToday),
-                          goal: formatLocaleNumber(f.quranGoal),
-                        })}
+                        {board === 'week' && f.week
+                          ? t('friends.quranWeekStat', '{{count}} āyāt this week', {
+                              n: formatLocaleNumber(f.week.quran),
+                            })
+                          : t('friends.quranPagesStat', {
+                              current: formatLocaleNumber(f.quranPagesToday),
+                              goal: formatLocaleNumber(f.quranGoal),
+                            })}
                       </span>
                     </div>
                   </motion.div>
