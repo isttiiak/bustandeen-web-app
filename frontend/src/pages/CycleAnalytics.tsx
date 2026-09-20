@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import TabNav from '../components/TabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
@@ -11,9 +12,14 @@ import {
   useAddPastCycle,
   useDeleteCycleLog,
   useIsFemale,
+  useBodyStats,
 } from '../hooks/useCycle.js';
 import { useFastingSummary } from '../hooks/useFasting.js';
 import { useAuthStore } from '../store/useAuthStore.js';
+import { useUiStore } from '../store/useUiStore.js';
+import { computeBmi, cmToFtStr } from '../utils/bodyStats.js';
+import CycleEditModal, { type CycleEditTarget } from '../components/CycleEditModal.js';
+import RayhanahSettingsDrawer from '../components/RayhanahSettingsDrawer.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
@@ -59,13 +65,18 @@ export default function CycleAnalytics() {
 
   const { data: summary, isLoading } = useCycleSummary();
   const { data: fastingSummary } = useFastingSummary();
+  const { data: bodyStats } = useBodyStats();
+  const hideBmi = useUiStore((s) => s.hideBmi);
   const addPast = useAddPastCycle();
   const deleteLog = useDeleteCycleLog();
+
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [pastOpen, setPastOpen] = useState(false);
   const [pastStart, setPastStart] = useState('');
   const [pastEnd, setPastEnd] = useState('');
   const [pastType, setPastType] = useState<'hayd' | 'nifas'>('hayd');
+  const [editTarget, setEditTarget] = useState<CycleEditTarget | null>(null);
   const [pendingDelete, setPendingDelete] = useState<{ id: string; label: string } | null>(null);
 
   const stats = useMemo(() => {
@@ -326,17 +337,27 @@ export default function CycleAnalytics() {
     <AnimatedBackground variant="dark">
       <h1 className="sr-only">{t('cycleAnalytics.srTitle', 'Rayhanah Analytics')}</h1>
       <div className="px-4 pt-3">
-        <div className="max-w-2xl mx-auto">
-          <TabNav
-            items={[
-              { label: t('cycleAnalytics.tabCycle', '🌸 Cycle'), to: '/cycle' },
-              {
-                label: t('cycleAnalytics.tabAnalytics', '📊 Analytics'),
-                to: '/cycle/analytics',
-                active: true,
-              },
-            ]}
-          />
+        <div className="max-w-2xl mx-auto flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <TabNav
+              items={[
+                { label: t('cycleAnalytics.tabCycle', '🌸 Cycle'), to: '/cycle' },
+                {
+                  label: t('cycleAnalytics.tabAnalytics', '📊 Analytics'),
+                  to: '/cycle/analytics',
+                  active: true,
+                },
+              ]}
+            />
+          </div>
+          <button
+            onClick={() => setSettingsOpen(true)}
+            aria-label={t('rayhanah.settings', 'Settings')}
+            title={t('rayhanah.settings', 'Settings')}
+            className="shrink-0 p-2 rounded-xl border border-brand-pink/20 bg-white/5 text-white/50 hover:text-brand-pink hover:border-brand-pink/40 transition-colors"
+          >
+            <Cog6ToothIcon className="w-5 h-5" />
+          </button>
         </div>
       </div>
       <div className="max-w-2xl mx-auto px-4 pt-4 pb-16 space-y-5">
@@ -382,6 +403,129 @@ export default function CycleAnalytics() {
                 </p>
               </div>
             </div>
+
+            {/* BMI card — shown when height + weight are saved */}
+            {(() => {
+              const cm = bodyStats?.heightCm ?? null;
+              const kg = bodyStats?.weightKg ?? null;
+              const bmi = cm && kg ? computeBmi(cm, kg) : null;
+              if (!bmi || !cm || !kg || hideBmi) return null;
+              const cat =
+                bmi < 18.5
+                  ? {
+                      key: 'bmiUnder',
+                      label: 'Underweight',
+                      color: 'text-sky-400',
+                      desc: 'Below the healthy weight range.',
+                    }
+                  : bmi < 25
+                    ? {
+                        key: 'bmiNormal',
+                        label: 'Normal weight',
+                        color: 'text-brand-emerald',
+                        desc: 'Within the healthy weight range.',
+                      }
+                    : bmi < 30
+                      ? {
+                          key: 'bmiOver',
+                          label: 'Overweight',
+                          color: 'text-brand-gold',
+                          desc: 'Above the healthy weight range.',
+                        }
+                      : {
+                          key: 'bmiObese',
+                          label: 'Well above range',
+                          color: 'text-red-400',
+                          desc: 'Significantly above the healthy weight range.',
+                        };
+              const pct = Math.min(100, Math.max(0, ((bmi - 10) / (45 - 10)) * 100));
+              const ftStr = cmToFtStr(cm);
+
+              return (
+                <div className="rounded-2xl bg-brand-deep/80 border border-brand-pink/20 p-5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-white/40 text-xs font-bold uppercase tracking-wide">
+                        {t('rayhanah.bmi', 'BMI')}
+                      </p>
+                      <p className={`text-4xl font-black ${cat.color}`}>{bmi}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className={`text-lg font-black ${cat.color}`}>
+                        {t(`rayhanah.${cat.key}`, cat.label)}
+                      </p>
+                      <p className="text-white/30 text-xs mt-0.5">
+                        {t(`rayhanah.${cat.key}Desc`, cat.desc)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* BMI scale bar */}
+                  <div className="space-y-1.5">
+                    <div className="relative h-2 rounded-full overflow-hidden">
+                      <div className="absolute inset-0 bg-gradient-to-r from-sky-400 via-brand-emerald via-brand-gold to-red-400 opacity-30" />
+                      <div
+                        className="absolute inset-y-0 left-0 bg-gradient-to-r from-sky-400 via-brand-emerald via-brand-gold to-red-400 rounded-full"
+                        style={{ width: `${pct}%` }}
+                      />
+                      <div
+                        className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white border-2 border-brand-deep shadow"
+                        style={{ left: `calc(${pct}% - 6px)` }}
+                      />
+                    </div>
+                    <div className="flex justify-between text-[9px] text-white/20 font-bold">
+                      <span>10</span>
+                      <span>18.5</span>
+                      <span>25</span>
+                      <span>30</span>
+                      <span>45</span>
+                    </div>
+                  </div>
+
+                  {/* Stats row */}
+                  <div className="grid grid-cols-3 gap-3 pt-1">
+                    <div className="rounded-xl bg-white/5 p-3 text-center">
+                      <p className="text-white font-black text-sm">{cm} cm</p>
+                      <p className="text-white/30 text-[10px] mt-0.5">{ftStr}</p>
+                      <p className="text-white/20 text-[9px] font-bold uppercase mt-1">
+                        {t('rayhanah.heightLabel', 'Height')}
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-white/5 p-3 text-center">
+                      <p className="text-white font-black text-sm">{kg} kg</p>
+                      <p className="text-white/30 text-[10px] mt-0.5">
+                        {Math.round(kg * 2.20462 * 10) / 10} lbs
+                      </p>
+                      <p className="text-white/20 text-[9px] font-bold uppercase mt-1">
+                        {t('rayhanah.weightLabel', 'Weight')}
+                      </p>
+                    </div>
+                    <div className="rounded-xl bg-white/5 p-3 text-center">
+                      <p className={`font-black text-sm ${cat.color}`}>{bmi}</p>
+                      <p className="text-white/30 text-[10px] mt-0.5">
+                        {t('cycleAnalytics.bmiRange', '18.5–24.9 = Normal')}
+                      </p>
+                      <p className="text-white/20 text-[9px] font-bold uppercase mt-1">BMI</p>
+                    </div>
+                  </div>
+
+                  <p className="text-white/20 text-[10px] leading-relaxed">
+                    {t(
+                      'rayhanah.bmiNote',
+                      'BMI is a general guide, not a medical diagnosis. Your doctor knows your full picture.'
+                    )}
+                  </p>
+                  {summary?.pregnancy?.active && (
+                    <p className="text-brand-pink/60 text-[10px] leading-relaxed">
+                      {t(
+                        'rayhanah.bmiPregnancyNote',
+                        'BMI is not a reliable measure during pregnancy. Your midwife or doctor will guide you on healthy weight gain.'
+                      )}
+                    </p>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Cycle insights — extended stats */}
             {stats.gaps.length > 0 && (
@@ -825,6 +969,19 @@ export default function CycleAnalytics() {
                         )}
                       </span>
                       <button
+                        aria-label={t('rayhanah.editEntry', 'Edit entry')}
+                        className="text-white/25 hover:text-brand-pink"
+                        onClick={() =>
+                          setEditTarget({
+                            _id: l._id,
+                            startDate: l.startDate,
+                            endDate: l.endDate,
+                          })
+                        }
+                      >
+                        ✏️
+                      </button>
+                      <button
                         aria-label={t('cycleAnalytics.deleteEntry', 'Delete entry')}
                         className="text-white/25 hover:text-red-300"
                         onClick={() =>
@@ -930,6 +1087,9 @@ export default function CycleAnalytics() {
           </div>
         </div>
       )}
+
+      <CycleEditModal target={editTarget} today={today} onClose={() => setEditTarget(null)} />
+      <RayhanahSettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       <ConfirmDialog
         open={!!pendingDelete}

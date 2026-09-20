@@ -85,6 +85,24 @@ export function currentHijriYear(): number {
   return toHijri(new Date()).year;
 }
 
+/**
+ * Reverse of toHijri: finds the Gregorian date for a given Hijri
+ * year/month/day. Same "no closed-form formula, scan outward from an
+ * estimate" approach as ramadanRangeForHijriYear — the Umm al-Qura calendar's
+ * month lengths (29 or 30 days, not a fixed pattern) rule out simple math.
+ */
+export function hijriToGregorian(hijriYear: number, hijriMonth: number, hijriDay: number): Date {
+  const approxGregorianYear = hijriYear + 579;
+  const dayOfHijriYear = (hijriMonth - 1) * 29.53 + hijriDay;
+  const guess = new Date(Date.UTC(approxGregorianYear, 0, 1) + dayOfHijriYear * 86_400_000);
+  for (let i = -400; i <= 400; i++) {
+    const d = new Date(guess.getTime() + i * 86_400_000);
+    const h = toHijri(d);
+    if (h.year === hijriYear && h.month === hijriMonth && h.day === hijriDay) return d;
+  }
+  return guess; // shouldn't happen for any real Hijri date — avoid throwing
+}
+
 /** The Hijri year whose Ramadan (month 9) starts within the given
  * Gregorian calendar year — the reverse of ramadanRangeForHijriYear's
  * `.start.getUTCFullYear()`, used to resolve the `:year` route param

@@ -156,6 +156,21 @@ export const exportAllHandler = async (
   }
 };
 
+/** Read-only "download all my data" - broader than the restorable backup. */
+export const exportEverythingHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { exportEverything } = await import('../services/dataExport.service.js');
+    const data = await exportEverything(req.user.uid);
+    res.json({ ok: true, data });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const importAllHandler = async (
   req: Request,
   res: Response,

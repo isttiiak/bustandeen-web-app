@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validate.js';
 import { submitDonationSchema } from '../validation/sadaqah.schemas.js';
-import { sadaqahSubmitLimiter } from '../middleware/rateLimiter.js';
+import { sadaqahSubmitLimiter, sadaqahVerifyLimiter } from '../middleware/rateLimiter.js';
 import * as sadaqahController from '../controllers/sadaqah.controller.js';
 
 const router = Router();
@@ -14,6 +14,7 @@ router.post(
   sadaqahController.submitHandler
 );
 
+router.get('/verify/:id', sadaqahVerifyLimiter, sadaqahController.verifyReceiptHandler);
 router.get('/stats', sadaqahController.getStatsHandler);
 router.get('/config', sadaqahController.getConfigHandler);
 

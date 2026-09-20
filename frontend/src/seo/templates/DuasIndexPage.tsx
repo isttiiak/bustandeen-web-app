@@ -14,7 +14,11 @@ export default function DuasIndexPage({ lang }: Props) {
   return (
     <Layout
       lang={lang}
-      breadcrumbs={[{ label: t.home, path: langPath(lang, '/') }, { label: t.breadcrumbDuas }]}
+      barePath="/duas"
+      breadcrumbs={[
+        { label: t.home, path: 'https://bustandeen.com/' },
+        { label: t.breadcrumbDuas },
+      ]}
     >
       <h1 className="text-2xl sm:text-3xl font-black text-[#f1f5f9]">{t.duas.heading}</h1>
       <p className="text-[#94a3b8] mt-2">{t.duas.subheading}</p>

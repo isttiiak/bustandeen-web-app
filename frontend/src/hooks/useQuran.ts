@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+import { getUserTimezoneOffset } from '../utils/timezone.js';
 
 export const QURAN_TOTAL_AYAT = 6236;
 
@@ -31,6 +32,18 @@ export interface QuranSummary {
     readerPos: Record<string, number>;
     /** Saved curated dua ids */
     savedDuas: string[];
+    /** Display/reading preferences — cross-device (see quranPrefs.ts) */
+    arabicFont: 'clean' | 'naskh' | 'uthmani';
+    fontArabicPx: number;
+    fontTranslationPx: number;
+    fontTranslitPx: number;
+    fontTafsirPx: number;
+    translitEnabled: boolean;
+    listenCountsAsAyat: boolean;
+    reciterId: string;
+    translations: string[];
+    /** False until any display pref above has ever been saved from a device */
+    displayPrefsSet: boolean;
   };
   todayPages: number;
   /** Today's ayat-equivalents (ayat + pages·10) — the v4 goal/streak unit */
@@ -75,6 +88,15 @@ export function useUpdateQuranProfile() {
       currentPage?: number;
       dailyGoalAyat?: number;
       currentAyah?: number;
+      arabicFont?: 'clean' | 'naskh' | 'uthmani';
+      fontArabicPx?: number;
+      fontTranslationPx?: number;
+      fontTranslitPx?: number;
+      fontTafsirPx?: number;
+      translitEnabled?: boolean;
+      listenCountsAsAyat?: boolean;
+      reciterId?: string;
+      translations?: string[];
     }) => {
       const { data } = await api.patch('/api/quran/profile', vars);
       return data;
@@ -226,6 +248,83 @@ export function useQuranHistory(days = 30, enabled = true) {
       return data.history;
     },
     enabled: !!user && enabled,
+    staleTime: 60_000,
+  });
+}
+
+export interface QuranRange {
+  history: Array<{ date: string; ayat: number; pages: number; units: number }>;
+  stats: {
+    readSec: number;
+    listenSec: number;
+    readSessions: number;
+    listenSessions: number;
+    activeDays: number;
+    totalUnits: number;
+  };
+}
+
+/** Daily units + reading/listening time totals for an explicit date window
+ * (inclusive), e.g. a calendar month, the last 30 days, or all time. */
+export function useQuranRange(from: string, to: string) {
+  const user = useAuthStore((s) => s.user);
+  return useQuery({
+    queryKey: ['quran', 'range', from, to],
+    queryFn: async () => {
+      const { data } = await api.get<QuranRange & { ok: boolean }>('/api/quran/range', {
+        params: { from, to },
+      });
+      return { history: data.history, stats: data.stats } as QuranRange;
+    },
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+}
+
+// ── Reading sessions (live timer + session history) ────────────────────────
+
+export interface QuranSession {
+  start: string;
+  end: string;
+  activeDurationSec: number;
+  ayahCount: number;
+  pagesRead: number;
+  surahs: number[];
+  source: 'read' | 'listen';
+}
+
+/** Sessions logged for a given tracking day — mirrors useZikrSessions. */
+export function useQuranSessions(dateStr: string) {
+  const user = useAuthStore((s) => s.user);
+  return useQuery({
+    queryKey: ['quran', 'sessions', dateStr],
+    queryFn: async () => {
+      const { data } = await api.get<{ ok: boolean; sessions: QuranSession[] }>(
+        '/api/quran/sessions',
+        { params: { date: dateStr } }
+      );
+      return data.sessions;
+    },
+    enabled: !!user && !!dateStr,
+    staleTime: 30_000,
+  });
+}
+
+/** When during the day time is spent with the Quran (read + listen combined)
+ * over the last `days` — mirrors useZikrTimeOfDay. */
+export function useQuranTimeOfDay(days = 30) {
+  const user = useAuthStore((s) => s.user);
+  const timezoneOffset = getUserTimezoneOffset();
+  return useQuery({
+    queryKey: ['quran', 'time-of-day', days, timezoneOffset],
+    queryFn: async () => {
+      const { data } = await api.get<{
+        ok: boolean;
+        hours: Array<{ hour: number; total: number }>;
+      }>('/api/quran/time-of-day', { params: { days, timezoneOffset } });
+      return data.hours;
+    },
+    enabled: !!user,
     staleTime: 60_000,
   });
 }

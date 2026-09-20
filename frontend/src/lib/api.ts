@@ -2,7 +2,9 @@
 import type { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 import toast from 'react-hot-toast';
 import { auth } from '../firebase.js';
+import { adminAuth } from '../adminFirebase.js';
 import { useAuthStore } from '../store/useAuthStore.js';
+import { useAdminStore } from '../store/useAdminStore.js';
 import { getDemoResponse } from '../utils/demoData.js';
 import i18n from '../i18n.js';
 
@@ -68,6 +70,25 @@ api.interceptors.request.use(async (config) => {
   return config;
 });
 
+// Admin panel's own identity — a real Firebase ID token from the SEPARATE
+// admin Firebase app (adminFirebase.ts), sent via its own header so it can
+// never be confused with the main app's own Authorization token above (a
+// signed-in regular user browsing into /admin must not have their normal
+// account silently treated as an admin credential, or vice versa). Harmless
+// on non-admin routes — the backend only ever checks this header under
+// /api/admin/*.
+api.interceptors.request.use(async (config) => {
+  const adminUser = adminAuth.currentUser;
+  if (adminUser) {
+    try {
+      config.headers['X-Admin-Token'] = await adminUser.getIdToken();
+    } catch {
+      /* no admin token this request — the backend will 401 as usual */
+    }
+  }
+  return config;
+});
+
 // Tell the backend which language the UI is currently showing — used by
 // Naseeh (AI) replies so a Bengali-reading user doesn't get an English reply
 // glued into an otherwise-translated page. Not personal data, no consent gate
@@ -89,6 +110,15 @@ api.interceptors.response.use(
       if (hadSession && auth.currentUser === null) {
         window.location.href = '/login';
       }
+    }
+    // Admin session rejected/expired — drop it so AdminGate re-prompts for
+    // sign-in instead of admin requests just failing silently.
+    if (
+      axios.isAxiosError(err) &&
+      err.response?.status === 401 &&
+      (err.response.data as { error?: string } | undefined)?.error === 'admin_session_required'
+    ) {
+      useAdminStore.getState().setSignedOut();
     }
     // Rate limited — tell the user instead of failing silently.
     // Fixed toast id so a burst of 429s shows a single message.

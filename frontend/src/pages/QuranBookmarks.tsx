@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import QuranTabNav from '../components/QuranTabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
@@ -45,6 +46,10 @@ export default function QuranBookmarks() {
   const [pendingRemoveDua, setPendingRemoveDua] = useState<string | null>(null);
   const [tab, setTab] = useState<'ayat' | 'duas'>('ayat');
   const [sharing, setSharing] = useState<QuranBookmark | null>(null);
+  // Collapsed by default — a surah card shows only its saved count until
+  // opened, so a long list (20 from al-Baqarah + 10 from al-Kahf + ...)
+  // doesn't force scrolling past every earlier surah to reach the last one.
+  const [openSurah, setOpenSurah] = useState<number | null>(null);
 
   const savedDuas = useMemo(
     () =>
@@ -78,22 +83,21 @@ export default function QuranBookmarks() {
     };
   }, []);
 
-  // Load the Arabic text for each bookmarked surah (cached per surah)
+  // Load the Arabic text only for the currently OPENED surah (cached per
+  // surah once fetched) — collapsed cards need nothing but their count.
   useEffect(() => {
+    if (openSurah == null || texts[openSurah]) return;
     let alive = true;
-    for (const g of groups) {
-      if (texts[g.surah]) continue;
-      loadSurahText(g.surah)
-        .then((t) => {
-          if (alive) setTexts((prev) => ({ ...prev, [g.surah]: t }));
-        })
-        .catch(() => {});
-    }
+    loadSurahText(openSurah)
+      .then((t) => {
+        if (alive) setTexts((prev) => ({ ...prev, [openSurah]: t }));
+      })
+      .catch(() => {});
     return () => {
       alive = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, [groups]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- texts intentionally omitted; it's only read, adding it would retrigger this on every fetch
+  }, [openSurah]);
 
   const metaOf = (n: number) => surahs.find((s) => s.number === n);
   const ayahText = (surah: number, ayah: number) =>
@@ -234,15 +238,20 @@ export default function QuranBookmarks() {
         ) : (
           groups.map((g, gi) => {
             const meta = metaOf(g.surah);
+            const isOpen = openSurah === g.surah;
             return (
               <motion.div
                 key={g.surah}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: gi * 0.05 }}
-                className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5"
+                className="rounded-3xl bg-brand-deep/80 border border-brand-border overflow-hidden"
               >
-                <div className="flex items-center justify-between mb-3">
+                <button
+                  onClick={() => setOpenSurah(isOpen ? null : g.surah)}
+                  aria-expanded={isOpen}
+                  className="w-full p-5 flex items-center justify-between gap-3 text-left"
+                >
                   <h2 className="text-white font-black text-sm">
                     {g.surah}. {meta ? surahDisplayName(meta, i18n.language) : `Surah ${g.surah}`}
                     <span className="text-white/30 font-normal">
@@ -251,66 +260,83 @@ export default function QuranBookmarks() {
                       {t('quranBookmarks.savedCount', '{{count}} saved', { count: g.items.length })}
                     </span>
                   </h2>
-                  <span className="text-lg text-white/60 font-serif" dir="rtl">
-                    {meta?.name}
-                  </span>
-                </div>
-                <div className="space-y-2">
-                  {g.items.map((b) => {
-                    const a = ayahText(b.surah, b.ayah);
-                    return (
-                      <div
-                        key={`${b.surah}:${b.ayah}`}
-                        className="rounded-2xl bg-white/5 border border-brand-emerald/10 p-3.5 hover:border-brand-emerald/30 transition-all"
-                      >
-                        <button
-                          className="w-full text-left"
-                          onClick={() => navigate(`/quran/read/${b.surah}?start=${b.ayah}`)}
-                        >
-                          <p className="text-brand-emerald text-[11px] font-black mb-1.5">
-                            {t('quranBookmarks.ayahNo', 'Āyah {{n}} →', { n: b.ayah })}
-                          </p>
-                          {a ? (
-                            <p
-                              dir="rtl"
-                              lang="ar"
-                              className="text-white/80 font-serif leading-[1.9] text-lg line-clamp-2"
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-lg text-white/60 font-serif" dir="rtl">
+                      {meta?.name}
+                    </span>
+                    <ChevronDownIcon
+                      className={`w-4 h-4 text-white/30 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    />
+                  </div>
+                </button>
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-5 pb-5 space-y-2">
+                        {g.items.map((b) => {
+                          const a = ayahText(b.surah, b.ayah);
+                          return (
+                            <div
+                              key={`${b.surah}:${b.ayah}`}
+                              className="rounded-2xl bg-white/5 border border-brand-emerald/10 p-3.5 hover:border-brand-emerald/30 transition-all"
                             >
-                              {a.arabic}
-                            </p>
-                          ) : (
-                            <span className="loading loading-dots loading-xs text-white/30" />
-                          )}
-                          {a?.translations?.[0] && (
-                            <p className="text-white/40 text-xs mt-1.5 line-clamp-2">
-                              {a.translations[0]}
-                            </p>
-                          )}
-                        </button>
-                        <div className="flex justify-end items-center gap-3 mt-1">
-                          <button
-                            aria-label={t('shareAyah.shareButton', 'Share as image')}
-                            className="text-white/25 hover:text-brand-emerald text-xs flex items-center gap-1"
-                            onClick={() => setSharing(b)}
-                          >
-                            <ShareIcon className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            aria-label={t(
-                              'quranBookmarks.removeBookmarkAria',
-                              'Remove bookmark {{ref}}',
-                              { ref: `${b.surah}:${b.ayah}` }
-                            )}
-                            className="text-white/25 hover:text-red-300 text-xs"
-                            onClick={() => setPendingRemove(b)}
-                          >
-                            🗑 {t('quranBookmarks.remove', 'remove')}
-                          </button>
-                        </div>
+                              <button
+                                className="w-full text-left"
+                                onClick={() => navigate(`/quran/read/${b.surah}?start=${b.ayah}`)}
+                              >
+                                <p className="text-brand-emerald text-[11px] font-black mb-1.5">
+                                  {t('quranBookmarks.ayahNo', 'Āyah {{n}} →', { n: b.ayah })}
+                                </p>
+                                {a ? (
+                                  <p
+                                    dir="rtl"
+                                    lang="ar"
+                                    className="text-white/80 font-serif leading-[1.9] text-lg line-clamp-2"
+                                  >
+                                    {a.arabic}
+                                  </p>
+                                ) : (
+                                  <span className="loading loading-dots loading-xs text-white/30" />
+                                )}
+                                {a?.translations?.[0] && (
+                                  <p className="text-white/40 text-xs mt-1.5 line-clamp-2">
+                                    {a.translations[0]}
+                                  </p>
+                                )}
+                              </button>
+                              <div className="flex justify-end items-center gap-3 mt-1">
+                                <button
+                                  aria-label={t('shareAyah.shareButton', 'Share as image')}
+                                  className="text-white/25 hover:text-brand-emerald text-xs flex items-center gap-1"
+                                  onClick={() => setSharing(b)}
+                                >
+                                  <ShareIcon className="w-3.5 h-3.5" />
+                                </button>
+                                <button
+                                  aria-label={t(
+                                    'quranBookmarks.removeBookmarkAria',
+                                    'Remove bookmark {{ref}}',
+                                    { ref: `${b.surah}:${b.ayah}` }
+                                  )}
+                                  className="text-white/25 hover:text-red-300 text-xs"
+                                  onClick={() => setPendingRemove(b)}
+                                >
+                                  🗑 {t('quranBookmarks.remove', 'remove')}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
-                </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             );
           })

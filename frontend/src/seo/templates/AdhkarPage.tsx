@@ -18,8 +18,9 @@ export default function AdhkarPage({ lang, period }: Props) {
   return (
     <Layout
       lang={lang}
+      barePath={`/adhkar/${period}`}
       breadcrumbs={[
-        { label: t.home, path: langPath(lang, '/') },
+        { label: t.home, path: 'https://bustandeen.com/' },
         { label: t.breadcrumbAdhkar, path: langPath(lang, '/adhkar/morning') },
         { label: title },
       ]}

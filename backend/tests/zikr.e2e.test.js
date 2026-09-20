@@ -343,6 +343,58 @@ describe('Zikr API', () => {
       expect(res.body.sessions[1].perType['Allahu Akbar']).toBe(34);
     });
 
+    test('manual and untimed counts never become timed sessions or time-of-day data', async () => {
+      const token = fakeJwt({ uid: 'sess3', email: 'sess3@test.dev', name: 'Sess3' });
+      await request(app).post(`/api/auth/verify`).send({ idToken: token });
+
+      const todayStr = new Date(Date.now() + tz * 60 * 1000).toISOString().slice(0, 10);
+      const localNoonMs = new Date(`${todayStr}T12:00:00.000Z`).getTime() - tz * 60 * 1000;
+      const evening = localNoonMs + 6 * 60 * 60 * 1000;
+
+      await request(app)
+        .post(`/api/zikr/increment/batch`)
+        .set('Authorization', `Bearer ${token}`)
+        .send({
+          increments: [
+            // 40 tapped in a run that began 3 minutes earlier
+            { zikrType: 'SubhanAllah', amount: 40, realTs: evening, startTs: evening - 3 * 60_000 },
+            // salat-tracker tasbih: 33 of these 73 were added automatically
+            { zikrType: 'Alhamdulillah', amount: 73, realTs: evening, untimedAmount: 33 },
+            // typed in afterwards via "Log missed counts"
+            { zikrType: 'Allahu Akbar', amount: 100, ts: localNoonMs, manual: true },
+          ],
+          timezoneOffset: tz,
+        });
+
+      const res = await request(app)
+        .get(`/api/zikr/sessions?date=${todayStr}&timezoneOffset=${tz}`)
+        .set('Authorization', `Bearer ${token}`);
+      expect(res.status).toBe(200);
+      const timed = res.body.sessions.filter((s) => !s.manual);
+      const manual = res.body.sessions.filter((s) => s.manual);
+      expect(timed).toHaveLength(1);
+      // 40 + (73 - 33): the auto-added tasbih is not part of the session
+      expect(timed[0].total).toBe(80);
+      expect(timed[0].perType['Alhamdulillah']).toBe(40);
+      // the session starts when the tapping really began, not at the flush
+      expect(new Date(timed[0].end) - new Date(timed[0].start)).toBe(3 * 60_000);
+      expect(manual).toHaveLength(1);
+      expect(manual[0].perType['Allahu Akbar']).toBe(100);
+
+      // Everything still counts toward the day's totals...
+      const summary = await request(app)
+        .get(`/api/zikr/summary`)
+        .set('Authorization', `Bearer ${token}`);
+      const total = (summary.body.perType ?? []).reduce((n, t) => n + t.total, 0);
+      expect(total).toBe(40 + 73 + 100);
+
+      // ...but the manual 100 doesn't invent a noon spike in time-of-day.
+      const tod = await request(app)
+        .get(`/api/zikr/time-of-day?timezoneOffset=${tz}&days=7`)
+        .set('Authorization', `Bearer ${token}`);
+      expect(tod.body.hours.reduce((n, h) => n + h.total, 0)).toBe(80);
+    });
+
     test('sessions endpoint requires a date query param', async () => {
       const token = fakeJwt({ uid: 'sess2', email: 'sess2@test.dev', name: 'Sess2' });
       await request(app).post(`/api/auth/verify`).send({ idToken: token });

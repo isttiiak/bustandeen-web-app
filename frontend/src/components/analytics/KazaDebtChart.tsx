@@ -200,8 +200,10 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
             />
           ))}
 
-          {groups.map((g, i) =>
-            i % Math.max(1, Math.ceil(groups.length / 8)) === 0 ? (
+          {groups.map((g, i) => {
+            const isLast = i === groups.length - 1;
+            if (!isLast && i % Math.max(1, Math.ceil(groups.length / 8)) !== 0) return null;
+            return (
               <text
                 key={`lbl-${i}`}
                 x={g.cx}
@@ -210,13 +212,21 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
                 className="fill-white/40"
                 style={{ fontSize: 10 }}
               >
-                {formatLocaleDate(new Date(g.weekStart + 'T12:00:00'), {
-                  month: 'short',
-                  day: 'numeric',
-                })}
+                {/* The LAST bucket always gets the full range (or, in daily
+                    mode, its one date) rather than just weekStart — it's the
+                    bucket whose window ends TODAY, and a bare "Sep 8" label
+                    made today's data look absent (reported directly: "today
+                    is Sep 14 and none of the trends have anything for it" —
+                    the bucket's own end date just never rendered anywhere). */}
+                {isLast
+                  ? weekLabel(g)
+                  : formatLocaleDate(new Date(g.weekStart + 'T12:00:00'), {
+                      month: 'short',
+                      day: 'numeric',
+                    })}
               </text>
-            ) : null
-          )}
+            );
+          })}
         </svg>
 
         <p className="text-white/25 text-[10px] mt-2">{t('salatAnalytics.kazaDebtChartHint')}</p>

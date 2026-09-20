@@ -1,31 +1,87 @@
 import nodemailer, { Transporter } from 'nodemailer';
+import EmailFailureLog from '../models/EmailFailureLog.js';
 
 /**
- * Generic SMTP transport — the app's first backend-originated email
- * capability (Feedback/Contact send client-side via Web3Forms, which can't
- * be triggered from an admin action). No-ops with a warning if ZOHO_SMTP_*
- * is unset, so a missing/misconfigured mail setup degrades gracefully
- * instead of blocking the feature that triggered it — same tolerance this
- * app already gives an unset GROQ_API_KEY.
+ * Named senders — each is a real, separately-scoped mailbox with its own
+ * dedicated `<SENDER>_SMTP_USER`/`<SENDER>_SMTP_PASS` env-var pair (same
+ * naming convention for all three, no shared/legacy fallback). Only
+ * `ZOHO_SMTP_HOST`/`ZOHO_SMTP_PORT` are shared — that's just the one Zoho
+ * server every mailbox in this org connects through.
+ *
+ * - 'sadaqah' (sadaqah@bustandeen.com, displayed "Bustandeen") — donation
+ *   review threads.
+ * - 'ansar' (ansar@bustandeen.com, displayed "Bustandeen Ansar") — zikr
+ *   request review threads and anything else outside the sadaqah domain.
+ * - 'istiak' (istiak@bustandeen.com) — the founder's personal address, used
+ *   for the one-time welcome email so it reads as a real person reaching out,
+ *   not an automated system mailbox.
  */
-let transporter: Transporter | null | undefined;
+export type EmailSender = 'sadaqah' | 'ansar' | 'istiak';
 
-const getTransporter = (): Transporter | null => {
-  if (transporter !== undefined) return transporter;
+const SENDER_ENV: Record<EmailSender, { userVar: string; passVar: string; displayName: string }> = {
+  sadaqah: {
+    userVar: 'SADAQAH_SMTP_USER',
+    passVar: 'SADAQAH_SMTP_PASS',
+    displayName: 'Bustandeen',
+  },
+  ansar: {
+    userVar: 'ANSAR_SMTP_USER',
+    passVar: 'ANSAR_SMTP_PASS',
+    displayName: 'Bustandeen Ansar',
+  },
+  istiak: {
+    userVar: 'ISTIAK_SMTP_USER',
+    passVar: 'ISTIAK_SMTP_PASS',
+    displayName: 'Istiak from Bustandeen',
+  },
+};
 
-  const { ZOHO_SMTP_HOST, ZOHO_SMTP_PORT, ZOHO_SMTP_USER, ZOHO_SMTP_PASS } = process.env;
-  if (!ZOHO_SMTP_HOST || !ZOHO_SMTP_PORT || !ZOHO_SMTP_USER || !ZOHO_SMTP_PASS) {
-    console.warn('Email not configured (ZOHO_SMTP_* env vars missing) — emails will be skipped.');
-    transporter = null;
+const resolveSenderCreds = (sender: EmailSender): { user?: string; pass?: string } => {
+  const cfg = SENDER_ENV[sender];
+  return { user: process.env[cfg.userVar], pass: process.env[cfg.passVar] };
+};
+
+export interface SenderDiagnostics {
+  /** Whether SMTP host/port + this sender's own user/pass are all present. */
+  configured: boolean;
+  /** The mailbox address actually used (safe to show — it's the public
+   *  "From" address every recipient already sees), or null if unconfigured. */
+  resolvedUser: string | null;
+}
+
+/** Exposed for the ops-health page. Two senders resolving to the SAME
+ *  resolvedUser means their env vars were set to the same mailbox by
+ *  mistake — each sender's pair is independent now, so this should never
+ *  happen unless someone copy-pasted the wrong value. */
+export const getSenderDiagnostics = (sender: EmailSender): SenderDiagnostics => {
+  const { user, pass } = resolveSenderCreds(sender);
+  const configured = !!(process.env.ZOHO_SMTP_HOST && process.env.ZOHO_SMTP_PORT && user && pass);
+  return { configured, resolvedUser: configured ? (user ?? null) : null };
+};
+
+const transporters: Partial<Record<EmailSender, Transporter | null>> = {};
+
+const getTransporter = (sender: EmailSender): Transporter | null => {
+  if (sender in transporters) return transporters[sender] ?? null;
+
+  const { ZOHO_SMTP_HOST, ZOHO_SMTP_PORT } = process.env;
+  const { user, pass } = resolveSenderCreds(sender);
+
+  if (!ZOHO_SMTP_HOST || !ZOHO_SMTP_PORT || !user || !pass) {
+    console.warn(
+      `Email not configured for sender "${sender}" (credentials missing) — emails will be skipped.`
+    );
+    transporters[sender] = null;
     return null;
   }
 
-  transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     host: ZOHO_SMTP_HOST,
     port: Number(ZOHO_SMTP_PORT),
     secure: Number(ZOHO_SMTP_PORT) === 465,
-    auth: { user: ZOHO_SMTP_USER, pass: ZOHO_SMTP_PASS },
+    auth: { user, pass },
   });
+  transporters[sender] = transporter;
   return transporter;
 };
 
@@ -34,6 +90,9 @@ export interface SendMailOptions {
   subject: string;
   html: string;
   text: string;
+  /** Which mailbox sends this — defaults to 'sadaqah' so every existing
+   *  caller (written before 'istiak' existed) keeps its current behavior. */
+  from?: EmailSender;
   /** Explicit Message-ID for this send (angle-bracket form, e.g.
    *  "<sadaqah-<id>@bustandeen.com>") — set on the FIRST email in a thread so
    *  later replies can reference it via inReplyTo/references. */
@@ -43,6 +102,8 @@ export interface SendMailOptions {
    *  one conversation instead of three separate ones. */
   inReplyTo?: string;
   references?: string;
+  /** Files attached to the message (e.g. the signed sadaqah receipt PDF). */
+  attachments?: Array<{ filename: string; content: Buffer; contentType: string }>;
 }
 
 /**
@@ -57,11 +118,14 @@ export interface SendMailOptions {
  * caller can store this to thread later replies against it.
  */
 export const sendMail = async (opts: SendMailOptions): Promise<string | null> => {
-  const t = getTransporter();
+  const sender = opts.from ?? 'sadaqah';
+  const t = getTransporter(sender);
   if (!t) return null;
+  const { user } = resolveSenderCreds(sender);
+  const { displayName } = SENDER_ENV[sender];
   try {
     const info = await t.sendMail({
-      from: `"Bustandeen" <${process.env.ZOHO_SMTP_USER}>`,
+      from: `"${displayName}" <${user}>`,
       to: opts.to,
       subject: opts.subject,
       html: opts.html,
@@ -69,10 +133,25 @@ export const sendMail = async (opts: SendMailOptions): Promise<string | null> =>
       messageId: opts.messageId,
       inReplyTo: opts.inReplyTo,
       references: opts.references,
+      attachments: opts.attachments,
     });
     return info.messageId ?? null;
   } catch (err) {
     console.error('Failed to send email:', err);
+    // Best-effort durable record so a silent SMTP failure (e.g. the Sadaqah
+    // system's past Zoho 535 auth error) shows up on the ops-health page
+    // instead of only ever being visible in server logs. Never let a logging
+    // failure mask the original send error.
+    try {
+      await EmailFailureLog.create({
+        sender,
+        to: opts.to,
+        subject: opts.subject,
+        error: err instanceof Error ? err.message : String(err),
+      });
+    } catch (logErr) {
+      console.error('Failed to write email failure log:', logErr);
+    }
     return null;
   }
 };

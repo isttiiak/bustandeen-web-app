@@ -54,9 +54,10 @@ export default function QiblaCityPage({ lang, city }: Props) {
   return (
     <Layout
       lang={lang}
+      barePath={`/qibla/${city.slug}`}
       breadcrumbs={[
-        { label: t.home, path: langPath(lang, '/') },
-        { label: t.breadcrumbQibla, path: langPath(lang, '/qibla') },
+        { label: t.home, path: 'https://bustandeen.com/' },
+        { label: t.breadcrumbQibla, path: 'https://bustandeen.com/qibla' },
         { label: `${city.name}, ${city.country}` },
       ]}
     >
@@ -121,7 +122,7 @@ export default function QiblaCityPage({ lang, city }: Props) {
       <JsonLd
         data={breadcrumbJsonLd([
           { name: t.home, url: 'https://bustandeen.com/' },
-          { name: t.breadcrumbQibla, url: `https://bustandeen.com${langPath(lang, '/qibla')}` },
+          { name: t.breadcrumbQibla, url: 'https://bustandeen.com/qibla' },
           { name: `${city.name}, ${city.country}`, url },
         ])}
       />

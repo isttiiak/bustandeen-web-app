@@ -216,7 +216,12 @@ export interface SalatAnalyticsResult {
     }
   >;
   last7Days: Array<{ date: string; completed: number; total: number }>;
-  calendarData: Array<{ date: string; completed: number; total: number }>;
+  /** `logged` is false when no SalatLog row exists for that date at all —
+   * distinct from a row that exists with 0 prayers completed. The frontend
+   * calendar heatmap uses this to render "no data" days differently from
+   * "logged, nothing done" days (previously indistinguishable — both showed
+   * the same 0-completed red cell). */
+  calendarData: Array<{ date: string; completed: number; total: number; logged: boolean }>;
   weeklyMosqueTrend: Array<{
     weekStart: string;
     weekEnd: string;
@@ -242,14 +247,27 @@ export async function getSalatAnalytics(
   userId: string,
   days: number,
   clientToday?: string,
-  resetDate?: string
+  resetDate?: string,
+  trackingStart?: string
 ): Promise<SalatAnalyticsResult> {
   const today = clientToday ?? todayDateString();
-  const calendarDays = Math.max(days, 90);
-  const logs = await getSalatHistory(userId, calendarDays, today);
+  // The heatmap is a fixed at-most-a-year view even when the stats window is
+  // "all time" (thousands of days), so its cells and log fetch stay bounded.
+  const calendarDays = Math.min(365, Math.max(days, 90));
+  const logs = await getSalatHistory(userId, Math.max(calendarDays, days), today);
 
   const rawCutoff = shiftDateStr(today, -(days - 1));
-  const statsCutoff = resetDate && resetDate > rawCutoff ? resetDate : rawCutoff;
+  // Never count days before the user started tracking (account creation or
+  // their first log, whichever is earlier) or before a reset: a day nobody
+  // could have logged isn't a "missed" day, and a new user picking "this
+  // month" or "1y" would otherwise be graded on a past they never had here.
+  let statsCutoff = rawCutoff;
+  if (resetDate && resetDate > statsCutoff) statsCutoff = resetDate;
+  if (trackingStart && trackingStart > statsCutoff) statsCutoff = trackingStart;
+  // A window that lies wholly before tracking began (e.g. a past month picked
+  // before signup) collapses to the single day `today` rather than going
+  // negative; the frontend shows "no data" for it via totalDays/logged flags.
+  if (statsCutoff > today) statsCutoff = today;
 
   // Full window: all dates from statsCutoff to today (inclusive), whether or
   // not the user created a log row for them. A day with no row = 5 pending
@@ -464,12 +482,14 @@ export async function getSalatAnalytics(
   // the identical fix in salatDebt.service.ts's getDebtHistory).
   const weeklyMosqueTrend: SalatAnalyticsResult['weeklyMosqueTrend'] = [];
   const mosqueBucketIsDaily = effectiveDays < 14;
-  const totalWeeks = mosqueBucketIsDaily
-    ? effectiveDays
-    : Math.min(12, Math.ceil(effectiveDays / 7));
+  // Up to 12 buckets that together cover the WHOLE window: 7-day weeks for
+  // windows up to 12 weeks, wider buckets beyond that (e.g. ~31 days for a
+  // year) so a 90d/1y/all-time view isn't silently just its last 12 weeks.
+  const bucketDays = mosqueBucketIsDaily ? 1 : Math.max(7, Math.ceil(effectiveDays / 12));
+  const totalWeeks = mosqueBucketIsDaily ? effectiveDays : Math.ceil(effectiveDays / bucketDays);
   for (let w = totalWeeks - 1; w >= 0; w--) {
-    const weekEnd = mosqueBucketIsDaily ? shiftDateStr(today, -w) : shiftDateStr(today, -(w * 7));
-    const weekStart = mosqueBucketIsDaily ? weekEnd : shiftDateStr(weekEnd, -6);
+    const weekEnd = shiftDateStr(today, -(w * bucketDays));
+    const weekStart = mosqueBucketIsDaily ? weekEnd : shiftDateStr(weekEnd, -(bucketDays - 1));
     const clampedStart = weekStart < statsCutoff ? statsCutoff : weekStart;
     let weekMosque = 0;
     let weekPrayed = 0;
@@ -513,7 +533,12 @@ export async function getSalatAnalytics(
   const calendarData = [];
   for (let i = calendarDays - 1; i >= 0; i--) {
     const dateStr = shiftDateStr(today, -i);
-    calendarData.push({ date: dateStr, completed: countDone(dateStr), total: 5 });
+    calendarData.push({
+      date: dateStr,
+      completed: countDone(dateStr),
+      total: 5,
+      logged: logMap.has(dateStr),
+    });
   }
 
   const completionRate =

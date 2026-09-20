@@ -8,7 +8,7 @@ import {
   unlinkGoogleSchema,
   setPrimaryEmailSchema,
 } from '../validation/user.schemas.js';
-import { importLimiter } from '../middleware/rateLimiter.js';
+import { importLimiter, dataExportLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
@@ -42,6 +42,8 @@ router.delete('/me', requireAuth, requireRecentAuth, userController.deleteAccoun
 
 // Full-account backup (one JSON of every domain) + merge-restore of that file
 router.get('/export', requireAuth, userController.exportAllHandler);
+// Read-only copy of everything held about the user, across every feature
+router.get('/export/all', requireAuth, dataExportLimiter, userController.exportEverythingHandler);
 // UID-keyed limiter after requireAuth — prevents backup-flood abuse
 router.post('/import', requireAuth, importLimiter, userController.importAllHandler);
 

@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore } from '../store/useUiStore.js';
-import { useZikrTypes, useAddZikrType, useDeleteZikrType } from '../hooks/useZikrTypes.js';
+import { useZikrTypes, useDeleteZikrType } from '../hooks/useZikrTypes.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
@@ -26,9 +26,10 @@ import {
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import EditZikrModal from '../components/EditZikrModal.js';
-import ArabicKeyboard from '../components/ArabicKeyboard.js';
 import ReportReference from '../components/ReportReference.js';
 import ZikrSettings from '../components/ZikrSettings.js';
+import ZikrSuggestForm from '../components/ZikrSuggestForm.js';
+import ZikrRequestApprovedNotice from '../components/ZikrRequestApprovedNotice.js';
 import Seo from '../components/Seo.js';
 import { useZikrAudio } from '../hooks/useZikrAudio.js';
 import {
@@ -41,8 +42,6 @@ import {
   PencilSquareIcon,
   ChevronDownIcon,
   Cog6ToothIcon,
-  ArrowDownTrayIcon,
-  ArrowUpTrayIcon,
   SpeakerWaveIcon,
   PlayIcon,
   StopIcon,
@@ -306,7 +305,6 @@ export default function ZikrCounter() {
     reset,
     scheduleFlush,
     setTypes,
-    setCustomMeaning,
     removeType,
     addCounts,
   } = useZikrStore();
@@ -323,19 +321,12 @@ export default function ZikrCounter() {
   const [autoPlayTarget, setAutoPlayTarget] = useState('50');
   const [hiddenTypes, setHiddenTypes] = useState<string[]>(getHiddenZikr);
   const { data: fetchedTypes } = useZikrTypes();
-  const addZikrType = useAddZikrType();
   const deleteZikrType = useDeleteZikrType();
   const { data: analyticsData } = useAnalytics(1);
 
   const currentCount = counts?.[selected] ?? 0;
   const [colorIdx, setColorIdx] = useState(0);
   const [showAddCustom, setShowAddCustom] = useState(false);
-  const [customName, setCustomName] = useState('');
-  const [customArabic, setCustomArabic] = useState('');
-  const [customTranslit, setCustomTranslit] = useState('');
-  const [customMeaningText, setCustomMeaningText] = useState('');
-  const [customSource, setCustomSource] = useState('');
-  const [customSourceUrl, setCustomSourceUrl] = useState('');
   const [showGuestDialog, setShowGuestDialog] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
   const [showManage, setShowManage] = useState(false);
@@ -343,8 +334,6 @@ export default function ZikrCounter() {
   const [editZikr, setEditZikr] = useState<string | null>(null);
   const [showSetCount, setShowSetCount] = useState(false);
   const [setCountValue, setSetCountValue] = useState('');
-  const importInputRef = useRef<HTMLInputElement>(null);
-  const [showArabicKb, setShowArabicKb] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [refExpanded, setRefExpanded] = useState(false);
 
@@ -480,14 +469,22 @@ export default function ZikrCounter() {
     // tracker writes into. Anyone who hid one before it became core gets it
     // back here, otherwise their tasbīḥ taps would post to a missing counter.
     const hidden = new Set(hiddenTypes);
-    const merged = [...new Set([...PREDEFINED_TYPES, ...serverNames, ...types])].filter(
+    // Once the server list has loaded it is authoritative for non-built-in
+    // names: a custom type removed on another device must drop out of this
+    // device's persisted list too, instead of being re-added by the union.
+    const serverLower = fetchedTypes ? new Set(serverNames.map((n) => n.toLowerCase())) : null;
+    const builtInLower = new Set(PREDEFINED_TYPES.map((n) => n.toLowerCase()));
+    const localKept = serverLower
+      ? types.filter((n) => builtInLower.has(n.toLowerCase()) || serverLower.has(n.toLowerCase()))
+      : types;
+    const merged = [...new Set([...PREDEFINED_TYPES, ...serverNames, ...localKept])].filter(
       (name) => !hidden.has(name) || isCoreZikr(name)
     );
     if (merged.length !== types.length || merged.some((name, i) => name !== types[i])) {
       setTypes(merged);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, [fetchedTypes?.length, hiddenTypes]);
+  }, [fetchedTypes?.map((item) => item.name).join('|'), hiddenTypes]);
 
   // Tasbih mode: a SESSION-scoped countdown, independent of the dhikr's
   // lifetime total. `segmentStart` is the lifetime count at the moment the
@@ -612,70 +609,6 @@ export default function ZikrCounter() {
     );
   };
 
-  const exportCustomZikr = () => {
-    const customTypes = types.filter(
-      (typ) =>
-        !PREDEFINED_TYPES.some((p) => p.toLowerCase() === typ.toLowerCase()) &&
-        !findLibraryZikr(typ)
-    );
-    if (!customTypes.length) {
-      toast(t('zikr.toast.exportNone', 'No custom dhikr to export'));
-      return;
-    }
-    const data = customTypes.map((name) => ({ name, ...customMeanings[name] }));
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'bustandeen-custom-zikr.json';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  };
-
-  const importCustomZikr = async (file: File) => {
-    try {
-      const parsed = JSON.parse(await file.text()) as Array<{
-        name?: string;
-        arabic?: string;
-        transliteration?: string;
-        meaning?: string;
-        source?: string;
-        sourceUrl?: string;
-      }>;
-      if (!Array.isArray(parsed)) throw new Error('bad format');
-      const existing = new Set(useZikrStore.getState().types.map((n) => n.toLowerCase()));
-      const added: string[] = [];
-      for (const item of parsed) {
-        const name = (item?.name ?? '').trim();
-        const meaning = (item?.meaning ?? '').trim();
-        if (!name || !meaning || existing.has(name.toLowerCase())) continue;
-        await addZikrType.mutateAsync(name);
-        setCustomMeaning(name, {
-          arabic: item.arabic?.trim() || undefined,
-          transliteration: item.transliteration?.trim() || undefined,
-          meaning,
-          source: item.source?.trim() || undefined,
-          sourceUrl: item.sourceUrl?.trim() || undefined,
-        });
-        added.push(name);
-        existing.add(name.toLowerCase());
-      }
-      if (added.length) {
-        setTypes([...useZikrStore.getState().types, ...added]);
-        toast.success(t('zikr.toast.imported', { count: added.length }), {
-          icon: '📥',
-          duration: 3000,
-        });
-      } else {
-        toast(t('zikr.toast.importNone', 'Nothing new to import'));
-      }
-    } catch {
-      toast.error(t('zikr.toast.importFailed', 'Could not import — check the file format'));
-    }
-  };
-
   const submitSetCount = () => {
     const target = Number(setCountValue);
     if (!Number.isFinite(target) || target < 0 || !Number.isInteger(target)) return;
@@ -690,34 +623,6 @@ export default function ZikrCounter() {
     });
     setShowSetCount(false);
     setSetCountValue('');
-  };
-
-  const submitCustomZikr = () => {
-    const name = customName.trim();
-    const meaning = customMeaningText.trim();
-    if (!name || !meaning) return;
-    addZikrType.mutate(name, {
-      onSuccess: () => {
-        setCustomMeaning(name, {
-          arabic: customArabic.trim() || undefined,
-          transliteration: customTranslit.trim() || undefined,
-          meaning,
-          source: customSource.trim() || undefined,
-          sourceUrl: customSourceUrl.trim() || undefined,
-        });
-        setTypes([...types, name]);
-        selectType(name);
-        setCustomName('');
-        setCustomArabic('');
-        setCustomTranslit('');
-        setCustomMeaningText('');
-        setCustomSource('');
-        setCustomSourceUrl('');
-        setShowAddCustom(false);
-        toast.success(t('zikr.toast.added', { name }), { icon: '✨', duration: 3000 });
-      },
-      onError: () => toast.error(t('zikr.toast.addFailed'), { duration: 3000 }),
-    });
   };
 
   // Remove a zikr from MY list. Locally it's hidden immediately; if it was a
@@ -784,7 +689,16 @@ export default function ZikrCounter() {
             </button>
           )}
         </div>
-        <ZikrSettings open={showSettings} onClose={() => setShowSettings(false)} />
+        <ZikrSettings
+          open={showSettings}
+          onClose={() => setShowSettings(false)}
+          onManageList={() => {
+            setShowSettings(false);
+            setShowManage(true);
+          }}
+        />
+
+        <ZikrRequestApprovedNotice />
 
         {/* Motivational subtitle */}
         <motion.p
@@ -805,65 +719,46 @@ export default function ZikrCounter() {
         >
           {/* Selected name — glowing accent */}
           <span
-            className="font-bold text-sm truncate flex-shrink-0 max-w-[140px] sm:max-w-[180px]"
+            className="font-bold text-sm truncate min-w-0"
             style={{ color: color.glow, textShadow: `0 0 12px ${color.glow}60` }}
           >
             {zikrDisplayName(selected, i18n.language)}
           </span>
 
-          {/* Separator */}
-          <span className="text-white/25 select-none flex-shrink-0">|</span>
-
-          {/* Change dropdown — selected zikr is the bold label to the left,
-              so the native select only lists the OTHER types to switch to. */}
-          <select
-            value=""
-            onChange={(e) => {
-              if (e.target.value) selectType(e.target.value);
-            }}
-            className="flex-1 min-w-0 bg-transparent border-none text-white/60 text-xs focus:outline-none cursor-pointer appearance-none"
-            style={{ backgroundImage: 'none' }}
-          >
-            <option value="" disabled className="bg-brand-deep text-white/40">
-              {t('zikr.change')}
-            </option>
-            {types
-              .filter((typ) => typ !== selected)
-              .map((typ) => (
-                <option key={typ} value={typ} className="bg-brand-deep text-white">
-                  {zikrDisplayName(typ, i18n.language)}
-                </option>
-              ))}
-          </select>
-          {/* Custom caret */}
-          <svg
-            className="w-3.5 h-3.5 text-white/40 flex-shrink-0 -ml-4 pointer-events-none"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-
-          {/* Manage my list (delete) */}
-          <button
-            onClick={() => setShowManage(true)}
-            className="flex-shrink-0 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 border border-brand-emerald/20 text-white/70 hover:text-white flex items-center justify-center transition-all"
-            title={t('zikr.manageList')}
-            aria-label={t('zikr.manageList')}
-          >
-            <PencilSquareIcon className="w-3.5 h-3.5" />
-          </button>
+          {/* Change zikr type — icon-only caret button. The native <select>
+              stays for accessibility/keyboard support; its own text is
+              invisible (text-transparent) and a bigger caret is overlaid,
+              so tapping anywhere on the circle opens the type list without
+              a "Change" label taking up space next to the title. */}
+          <div className="relative flex-shrink-0 w-8 h-8 ml-auto">
+            <select
+              value=""
+              onChange={(e) => {
+                if (e.target.value) selectType(e.target.value);
+              }}
+              className="absolute inset-0 w-full h-full rounded-full bg-white/10 hover:bg-white/20 border border-brand-emerald/20 text-transparent focus:outline-none cursor-pointer appearance-none transition-colors"
+              style={{ backgroundImage: 'none' }}
+              title={t('zikr.change')}
+              aria-label={t('zikr.change')}
+            >
+              <option value="" disabled className="bg-brand-deep text-white/40">
+                {t('zikr.change')}
+              </option>
+              {types
+                .filter((typ) => typ !== selected)
+                .map((typ) => (
+                  <option key={typ} value={typ} className="bg-brand-deep text-white">
+                    {zikrDisplayName(typ, i18n.language)}
+                  </option>
+                ))}
+            </select>
+            <ChevronDownIcon className="w-5 h-5 text-white/70 absolute inset-0 m-auto pointer-events-none" />
+          </div>
 
           {/* Add custom */}
           <button
             onClick={() => setShowAddCustom(true)}
-            className="flex-shrink-0 w-7 h-7 rounded-full bg-white/10 hover:bg-white/20 border border-brand-emerald/20 text-white/70 hover:text-white flex items-center justify-center transition-all"
+            className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-brand-emerald/20 text-white/70 hover:text-white flex items-center justify-center transition-all"
             title={t('zikr.addCustom', 'Add custom dhikr')}
             aria-label={t('zikr.addCustom', 'Add custom dhikr')}
           >
@@ -1712,18 +1607,21 @@ export default function ZikrCounter() {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 40, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25 }}
-                className="bg-brand-surface rounded-3xl p-6 w-full max-w-md shadow-2xl border border-brand-border"
+                className="bg-brand-surface rounded-3xl p-6 w-full max-w-md shadow-2xl border border-brand-border max-h-[85vh] flex flex-col"
               >
-                <h3 className="text-xl font-bold text-brand-emerald mb-1">
-                  {t('zikr.addCustom', 'Add Custom Dhikr')}
-                </h3>
-                <p className="text-white/40 text-xs mb-2">
-                  {t(
-                    'zikr.addCustomNote',
-                    'Name and meaning are required. Arabic is optional but recommended.'
-                  )}
-                </p>
-                <p className="text-xs mb-4">
+                <div className="flex items-center justify-between mb-1">
+                  <h3 className="text-xl font-bold text-brand-emerald">
+                    {t('zikr.addCustom', 'Suggest a Dhikr')}
+                  </h3>
+                  <button
+                    onClick={() => setShowAddCustom(false)}
+                    aria-label={t('common.close', 'Close')}
+                    className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
+                  >
+                    <XMarkIcon className="w-5 h-5" />
+                  </button>
+                </div>
+                <p className="text-xs mb-3">
                   <button
                     className="text-brand-gold/80 underline"
                     onClick={() => {
@@ -1735,146 +1633,15 @@ export default function ZikrCounter() {
                   </button>
                   <span className="text-white/30">
                     {' '}
-                    —{' '}
+                    -{' '}
                     {t(
                       'zikr.checkLibraryNote',
                       'ṣalawāt, istighfār & more, already verified with references.'
                     )}
                   </span>
                 </p>
-
-                <div className="space-y-3">
-                  {/* Name */}
-                  <div>
-                    <label className="text-xs text-white/60 uppercase tracking-wider mb-1 block">
-                      {t('zikr.dhikrName', 'Dhikr Name')}{' '}
-                      <span className="text-red-400">{t('zikr.required', '*')}</span>
-                    </label>
-                    <input
-                      value={customName}
-                      onChange={(e) => setCustomName(e.target.value)}
-                      placeholder={t('zikr.dhikrNamePlaceholder', 'e.g. Astaghfirullah')}
-                      className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
-                      autoFocus
-                    />
-                  </div>
-
-                  {/* Arabic */}
-                  <div>
-                    <div className="flex items-center justify-between mb-1">
-                      <label className="text-xs text-white/60 uppercase tracking-wider block">
-                        {t('zikr.arabicText', 'Arabic Text')}{' '}
-                        <span className="text-white/30">({t('zikr.optional', 'optional')})</span>
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => setShowArabicKb((v) => !v)}
-                        className="text-[11px] text-brand-emerald/70 hover:text-brand-emerald underline underline-offset-2"
-                      >
-                        {t('zikr.arabicKeyboard', 'Arabic keyboard')}
-                      </button>
-                    </div>
-                    <input
-                      value={customArabic}
-                      onChange={(e) => setCustomArabic(e.target.value)}
-                      placeholder="أَسْتَغْفِرُ اللَّهَ"
-                      dir="rtl"
-                      className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-base"
-                      style={{ fontFamily: "'Amiri', serif" }}
-                    />
-                    {showArabicKb && (
-                      <ArabicKeyboard
-                        value={customArabic}
-                        onChange={setCustomArabic}
-                        onClose={() => setShowArabicKb(false)}
-                      />
-                    )}
-                  </div>
-
-                  {/* Transliteration */}
-                  <div>
-                    <label className="text-xs text-white/60 uppercase tracking-wider mb-1 block">
-                      {t('zikr.pronunciation', 'Pronunciation')}{' '}
-                      <span className="text-white/30">({t('zikr.optional', 'optional')})</span>
-                    </label>
-                    <input
-                      value={customTranslit}
-                      onChange={(e) => setCustomTranslit(e.target.value)}
-                      placeholder="Astaghfiru-llāh"
-                      className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-base italic"
-                    />
-                  </div>
-
-                  {/* Meaning */}
-                  <div>
-                    <label className="text-xs text-white/60 uppercase tracking-wider mb-1 block">
-                      {t('zikr.englishMeaning', 'English Meaning')}{' '}
-                      <span className="text-red-400">{t('zikr.required', '*')}</span>
-                    </label>
-                    <input
-                      value={customMeaningText}
-                      onChange={(e) => setCustomMeaningText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') submitCustomZikr();
-                        if (e.key === 'Escape') setShowAddCustom(false);
-                      }}
-                      placeholder={t(
-                        'zikr.meaningPlaceholder',
-                        'e.g. I seek forgiveness from Allah'
-                      )}
-                      className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
-                    />
-                  </div>
-
-                  {/* Hadith reference (optional) */}
-                  <div className="border-t border-brand-border/60 pt-3 space-y-2">
-                    <p className="text-white/30 text-[10px] uppercase tracking-wider">
-                      {t('zikr.hadithRef', 'Hadith Reference')}{' '}
-                      <span className="normal-case text-white/20">
-                        ({t('zikr.optional', 'optional')})
-                      </span>
-                    </p>
-                    <input
-                      value={customSource}
-                      onChange={(e) => setCustomSource(e.target.value)}
-                      placeholder="e.g. Ṣaḥīḥ al-Bukhārī 6307"
-                      className="input input-sm input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-xs"
-                    />
-                    <input
-                      value={customSourceUrl}
-                      onChange={(e) => setCustomSourceUrl(e.target.value)}
-                      placeholder="https://sunnah.com/..."
-                      className="input input-sm input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-xs"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex gap-3 mt-6">
-                  <button
-                    onClick={() => {
-                      setShowAddCustom(false);
-                      setCustomName('');
-                      setCustomArabic('');
-                      setCustomTranslit('');
-                      setCustomMeaningText('');
-                    }}
-                    className="btn flex-1 btn-ghost text-white/60 border-brand-border"
-                  >
-                    {t('common.cancel')}
-                  </button>
-                  <button
-                    onClick={submitCustomZikr}
-                    disabled={
-                      !customName.trim() || !customMeaningText.trim() || addZikrType.isPending
-                    }
-                    className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold"
-                  >
-                    {addZikrType.isPending ? (
-                      <span className="loading loading-spinner loading-sm" />
-                    ) : (
-                      t('zikr.addDhikr', 'Add Dhikr')
-                    )}
-                  </button>
+                <div className="overflow-y-auto flex-1 pr-1">
+                  <ZikrSuggestForm onDone={() => setShowAddCustom(false)} />
                 </div>
               </motion.div>
             </motion.div>
@@ -2041,31 +1808,6 @@ export default function ZikrCounter() {
                 >
                   <PlusIcon className="w-4 h-4" /> {t('zikr.addNewZikr', 'Add a new zikr')}
                 </button>
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={exportCustomZikr}
-                    className="btn btn-xs flex-1 btn-ghost border border-brand-border text-white/50 hover:text-white gap-1"
-                  >
-                    <ArrowDownTrayIcon className="w-3.5 h-3.5" /> {t('zikr.exportCustom', 'Export')}
-                  </button>
-                  <button
-                    onClick={() => importInputRef.current?.click()}
-                    className="btn btn-xs flex-1 btn-ghost border border-brand-border text-white/50 hover:text-white gap-1"
-                  >
-                    <ArrowUpTrayIcon className="w-3.5 h-3.5" /> {t('zikr.importCustom', 'Import')}
-                  </button>
-                  <input
-                    ref={importInputRef}
-                    type="file"
-                    accept="application/json"
-                    className="hidden"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) void importCustomZikr(file);
-                      e.target.value = '';
-                    }}
-                  />
-                </div>
               </motion.div>
             </motion.div>
           )}

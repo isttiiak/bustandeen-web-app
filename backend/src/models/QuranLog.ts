@@ -8,6 +8,8 @@ export interface IQuranLog extends Document {
   pages: number;
   /** Ayat read that day (v4 ayah engine; 1 page ≈ 10 ayat for unit math) */
   ayat: number;
+  /** Active reading seconds that day, rolled up from QuranReadingSession */
+  durationSec: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,6 +20,7 @@ const quranLogSchema = new Schema<IQuranLog>(
     date: { type: String, required: true },
     pages: { type: Number, default: 0, min: 0, max: 700 },
     ayat: { type: Number, default: 0, min: 0, max: 7000 },
+    durationSec: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true }
 );

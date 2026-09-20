@@ -35,6 +35,27 @@ h1, h2, h3, h4, h5, h6,
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  /* This app has a single dark theme, never a light one — telling the
+     browser that up front makes it render native form-control chrome
+     (a <select>'s own dropdown listbox, date/time pickers, etc.) in dark
+     colors automatically. Without this, Chromium/Windows in particular
+     renders a <select>'s OPTION LIST using OS-native light styling
+     regardless of any Tailwind/DaisyUI classes on the <select> itself —
+     the closed box looks themed, but opening it shows white-on-white
+     text until you hover. */
+  color-scheme: dark;
+}
+
+/* Explicit fallback for the option-list colors — color-scheme alone
+   doesn't guarantee every browser/OS combination picks readable option
+   colors, so state them directly too. Applies to every <select> in the
+   app (DaisyUI's .select and plain native selects alike). */
+select {
+  color-scheme: dark;
+}
+select option {
+  background-color: var(--brand-deep);
+  color: var(--text-primary);
 }
 
 /* Prevent text selection on counter buttons */

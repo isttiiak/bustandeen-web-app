@@ -128,6 +128,38 @@ describe('parseNaturalLog', () => {
   });
 });
 
+describe('parseNaturalLog units and day', () => {
+  const originalFetch = global.fetch;
+  const originalKey = process.env.GROQ_API_KEY;
+  beforeEach(() => {
+    process.env.GROQ_API_KEY = 'test-key';
+  });
+  afterEach(() => {
+    global.fetch = originalFetch;
+    process.env.GROQ_API_KEY = originalKey;
+    jest.restoreAllMocks();
+  });
+
+  test('converts juz and half pages from the raw amount, and reads "yesterday"', async () => {
+    mockGroqReply(
+      JSON.stringify({
+        day: 'yesterday',
+        salat: [],
+        zikr: [],
+        quran: { amount: 0.5, unit: 'pages' },
+      })
+    );
+    const half = await aiService.parseNaturalLog('read half a page yesterday', [], AI_UID);
+    expect(half.quran).toEqual({ ayat: 5, approximate: true });
+    expect(half.day).toBe('yesterday');
+
+    mockGroqReply(JSON.stringify({ salat: [], zikr: [], quran: { amount: 1, unit: 'juz' } }));
+    const juz = await aiService.parseNaturalLog('read one juz', [], AI_UID);
+    expect(juz.quran).toEqual({ ayat: 208, approximate: true });
+    expect(juz.day).toBe('today');
+  });
+});
+
 describe('commitNaturalLog', () => {
   test('applies salat, zikr and quran writes in one call', async () => {
     const result = await naturalLogService.commitNaturalLog(COMMIT_UID, {
@@ -159,6 +191,55 @@ describe('commitNaturalLog', () => {
     });
     const user = await User.findOne({ uid: COMMIT_UID });
     expect(user.zikrTypes.some((t) => t.name === 'Ya Rahman')).toBe(true);
+  });
+
+  test('re-marking a prayer already done keeps its tasbih and Ayatul Kursi ticks', async () => {
+    await SalatLog.create({
+      userId: COMMIT_UID,
+      date: '2026-05-04',
+      prayers: {
+        fajr: { status: 'completed', location: 'home', tasbeeh: true, ayatulKursi: true },
+      },
+    });
+    const result = await naturalLogService.commitNaturalLog(COMMIT_UID, {
+      salat: [{ prayer: 'fajr', status: 'completed' }],
+      zikr: [],
+      quranAyat: null,
+      date: '2026-05-04',
+    });
+    // Nothing to change on an already-done prayer with no new location
+    expect(result.salatApplied).toBe(0);
+    const log = await SalatLog.findOne({ userId: COMMIT_UID, date: '2026-05-04' });
+    expect(log.prayers.fajr.tasbeeh).toBe(true);
+    expect(log.prayers.fajr.ayatulKursi).toBe(true);
+
+    // A differing location updates only the location
+    await naturalLogService.commitNaturalLog(COMMIT_UID, {
+      salat: [{ prayer: 'fajr', status: 'completed', location: 'jamat' }],
+      zikr: [],
+      quranAyat: null,
+      date: '2026-05-04',
+    });
+    const after = await SalatLog.findOne({ userId: COMMIT_UID, date: '2026-05-04' });
+    expect(after.prayers.fajr.location).toBe('jamat');
+    expect(after.prayers.fajr.tasbeeh).toBe(true);
+  });
+
+  test('dhikr counts land in the day the note names bucket and merge duplicate lines', async () => {
+    await naturalLogService.commitNaturalLog(COMMIT_UID, {
+      salat: [],
+      zikr: [
+        { typeName: 'Astaghfirullah', count: 30 },
+        { typeName: 'Astaghfirullah', count: 20 },
+      ],
+      quranAyat: null,
+      date: '2026-05-05',
+      timezoneOffset: 360,
+    });
+    const ZikrDaily = (await import('../src/models/ZikrDaily.js')).default;
+    const rows = await ZikrDaily.find({ userId: COMMIT_UID, zikrType: 'Astaghfirullah' });
+    const may5 = rows.find((r) => r.date.toISOString().startsWith('2026-05-05'));
+    expect(may5?.count).toBe(50);
   });
 
   test('no quran entry when quranAyat is null', async () => {

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { PlayIcon, PauseIcon, ForwardIcon, BackwardIcon } from '@heroicons/react/24/solid';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useReadAyat } from '../hooks/useQuran.js';
+import { useQuranReadingSession } from '../hooks/useQuranReadingSession.js';
 import {
   loadSurahList,
   surahDisplayName,
@@ -12,6 +13,14 @@ import {
   type SurahMeta,
 } from '../utils/quranData.js';
 import { listenCountsAsAyat } from '../utils/quranPrefs.js';
+
+function formatListeningTime(totalSec: number): string {
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
+}
 
 /**
  * 🎧 Audio Quran — all 114 surahs, streamed from the free Islamic Network CDN
@@ -77,6 +86,7 @@ function fmtClock(sec: number): string {
 export default function QuranAudioPlayer() {
   const { t, i18n } = useTranslation();
   const user = useAuthStore((s) => s.user);
+  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const readAyat = useReadAyat();
 
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
@@ -99,6 +109,23 @@ export default function QuranAudioPlayer() {
     return raw !== null && Number.isFinite(v) && v >= 0 && v <= 1 ? v : 0.4;
   });
   const [muted, setMuted] = useState(false);
+
+  // A listening session runs for as long as this component is mounted
+  // (the whole Listen page visit), driven by whether audio is ACTUALLY
+  // playing — not tab visibility/idle (background/screen-off playback should
+  // still count, unlike the Reader where those signal "walked away").
+  const readingSession = useQuranReadingSession({
+    source: 'listen',
+    // `playing` alone turns true the instant Play is pressed, even if nothing
+    // ever loads (offline PWA: the CDN stream can't start and the button just
+    // buffers). Only count time while sound is really coming out.
+    isActiveOverride: playing && !buffering,
+    enabled: !!user && !isDemoMode,
+  });
+  const { registerSurah, registerAyahRead } = readingSession;
+  useEffect(() => {
+    registerSurah(surahNo);
+  }, [registerSurah, surahNo]);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   // Listening accumulators — survive pause, reset when the surah changes.
@@ -139,6 +166,7 @@ export default function QuranAudioPlayer() {
         const diff = target - loggedAyatRef.current;
         if (diff >= 1) {
           loggedAyatRef.current = target;
+          registerAyahRead(diff);
           readAyat.mutate({ count: diff });
           toast.success(
             t('quranAudioPlayer.ayahLogged', {
@@ -172,7 +200,12 @@ export default function QuranAudioPlayer() {
     if (playing) {
       a.pause();
     } else {
-      void a.play();
+      // Offline / blocked: play() rejects and no 'play' progress follows, so
+      // make sure we don't stay in a "playing" state that would run the timer.
+      a.play().catch(() => {
+        setPlaying(false);
+        setBuffering(false);
+      });
     }
   };
 
@@ -256,6 +289,22 @@ export default function QuranAudioPlayer() {
             {surah && (
               <p className="text-center text-2xl text-brand-info/90 font-serif" dir="rtl">
                 {surah.name}
+              </p>
+            )}
+
+            {!!user && !isDemoMode && (
+              <p className="text-center">
+                <span
+                  title={
+                    readingSession.isPaused
+                      ? t('quranAudioPlayer.timerPaused', 'Paused — press play to keep counting')
+                      : t('quranAudioPlayer.timerActive', 'Active listening time this visit')
+                  }
+                  className="inline-block px-2.5 py-1 rounded-full border border-brand-info/10 bg-white/5 text-white/40 text-[11px] font-bold tabular-nums"
+                >
+                  {readingSession.isPaused ? '⏸' : '⏱'}{' '}
+                  {formatListeningTime(readingSession.activeSec)}
+                </span>
               </p>
             )}
 
@@ -346,12 +395,22 @@ export default function QuranAudioPlayer() {
               ref={audioRef}
               src={src}
               preload="none"
-              onPlay={() => {
+              onPlay={(e) => {
                 setPlaying(true);
+                // 'play' fires when playback is requested, before any data has
+                // arrived; only 'playing' below confirms audio is running.
+                setBuffering((e.target as HTMLAudioElement).readyState < 3);
+              }}
+              onPause={() => {
+                setPlaying(false);
                 setBuffering(false);
               }}
-              onPause={() => setPlaying(false)}
               onWaiting={() => setBuffering(true)}
+              onStalled={() => setBuffering(true)}
+              onError={() => {
+                setPlaying(false);
+                setBuffering(false);
+              }}
               onPlaying={() => setBuffering(false)}
               onTimeUpdate={onTimeUpdate}
               onLoadedMetadata={(e) => setDuration((e.target as HTMLAudioElement).duration)}

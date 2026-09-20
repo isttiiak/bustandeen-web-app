@@ -58,7 +58,7 @@ import {
   getShowNaflGuide,
 } from '../utils/salatPrefs.js';
 import { recitationsFor, recitationHref } from '../utils/postSalatQuran.js';
-import { SUNNAH_GUIDE, type SunnahSlot } from '../utils/sunnahGuide.js';
+import { SUNNAH_GUIDE, JUMUAH_SUNNAH_GUIDE, type SunnahSlot } from '../utils/sunnahGuide.js';
 import { getFridayHour, FRIDAY_HOUR_REF } from '../utils/fridayHour.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
@@ -227,6 +227,78 @@ const STATUS_STYLE: Record<
     emoji: '⬜',
   },
 };
+
+// ─── MissedDayChips ──────────────────────────────────────────────────────────
+// Clickable date chips inside the kaza debt panel. Shows recent days that had
+// at least one missed prayer (completed < 5). First row is always visible;
+// extra rows expand on demand.
+
+const CHIPS_PER_ROW = 5;
+const INITIAL_ROWS = 1;
+const MAX_EXPANDED_ROWS = 3;
+
+function MissedDayChips({
+  calendarDataMap,
+  t,
+  setSelectedDate,
+  setExpandedPrayer,
+  setCalendarOpen,
+}: {
+  calendarDataMap: Map<string, number>;
+  t: (key: string, fallback: string, opts?: Record<string, unknown>) => string;
+  setSelectedDate: (d: string) => void;
+  setExpandedPrayer: (p: PrayerId | null) => void;
+  setCalendarOpen: (v: boolean) => void;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const today = todayStr();
+  const missedDays = Array.from(calendarDataMap.entries())
+    .filter(([d, c]) => d < today && c < 5)
+    .sort(([a], [b]) => b.localeCompare(a)); // newest first
+
+  if (missedDays.length === 0) return null;
+
+  const visibleCount = expanded
+    ? Math.min(missedDays.length, CHIPS_PER_ROW * MAX_EXPANDED_ROWS)
+    : CHIPS_PER_ROW * INITIAL_ROWS;
+  const visible = missedDays.slice(0, visibleCount);
+  const hasMore = missedDays.length > CHIPS_PER_ROW * INITIAL_ROWS;
+
+  return (
+    <div className="pt-2.5 mt-1 border-t border-brand-emerald/5 space-y-2">
+      <p className="text-white/20 text-[11px] font-semibold uppercase tracking-wide">
+        {t('salatTracker.kazaJumpTitle', '⚡ Quick-mark kaza')}
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {visible.map(([d]) => (
+          <button
+            key={d}
+            onClick={() => {
+              setSelectedDate(d);
+              setExpandedPrayer(null);
+              setCalendarOpen(false);
+            }}
+            className="px-2 py-1 rounded-lg bg-brand-deep border border-brand-gold/25 text-brand-gold/70 hover:border-brand-gold/60 hover:text-brand-gold text-[11px] font-semibold transition-all"
+          >
+            {friendlyDate(d, t)}
+          </button>
+        ))}
+      </div>
+      {hasMore && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="text-white/25 hover:text-white/50 text-[11px] underline underline-offset-2 transition-colors"
+        >
+          {expanded
+            ? t('salatTracker.kazaJumpLess', '▲ Show fewer dates')
+            : t('salatTracker.kazaJumpMore', '▾ Show more dates ({{count}})', {
+                count: missedDays.length - visibleCount,
+              })}
+        </button>
+      )}
+    </div>
+  );
+}
 
 // ─── component ───────────────────────────────────────────────────────────────
 
@@ -1119,6 +1191,16 @@ export default function SalatTracker() {
                       todayPrayerTimes?.times[prayerId] instanceof Date
                         ? formatTime(todayPrayerTimes.times[prayerId])
                         : null;
+                    // End times — only shown for today
+                    const prayerEndTime =
+                      todayPrayerTimes?.full && isToday
+                        ? formatTime(getPrayerEndTime(prayerId, todayPrayerTimes.full))
+                        : null;
+                    // Isha has a secondary "final window" end (tomorrow's Fajr)
+                    const ishaFinalEndTime =
+                      prayerId === 'isha' && todayPrayerTimes?.full && isToday
+                        ? formatTime(new Date(todayPrayerTimes.full.fajr.getTime() + 86_400_000))
+                        : null;
 
                     return (
                       <motion.div
@@ -1168,7 +1250,30 @@ export default function SalatTracker() {
                                 )}
                               </p>
                               {prayerStartTime && isToday && (
-                                <p className="text-white/30 text-xs mt-0.5">{prayerStartTime}</p>
+                                <div className="mt-0.5 space-y-px">
+                                  <p className="text-white/30 text-xs leading-none">
+                                    {prayerStartTime}
+                                    {prayerEndTime && (
+                                      <>
+                                        <span className="text-white/15"> → </span>
+                                        <span className="text-white/25">{prayerEndTime}</span>
+                                        {ishaFinalEndTime && (
+                                          <span className="text-white/15 text-[10px]">
+                                            {' '}
+                                            ({t('salatTracker.best', 'best')})
+                                          </span>
+                                        )}
+                                      </>
+                                    )}
+                                  </p>
+                                  {ishaFinalEndTime && (
+                                    <p className="text-white/20 text-[10px] leading-none">
+                                      {t('salatTracker.ishaFinalWindow', 'window → {{time}}', {
+                                        time: ishaFinalEndTime,
+                                      })}
+                                    </p>
+                                  )}
+                                </div>
                               )}
                               {prayerId === 'dhuhr' && isCivilFriday && (
                                 <p className="text-brand-emerald/50 text-xs mt-0.5">
@@ -1497,7 +1602,13 @@ export default function SalatTracker() {
                             toggleable per emphasis (Salat settings). */}
                         {isCurrent &&
                           (() => {
-                            const guide = SUNNAH_GUIDE[prayerId];
+                            // Friday's Dhuhr slot IS Jumu'ah — its sunnah
+                            // guidance is genuinely different, not a fallback
+                            // to Dhuhr's own rawātib (see sunnahGuide.ts).
+                            const guide =
+                              prayerId === 'dhuhr' && isCivilFriday
+                                ? JUMUAH_SUNNAH_GUIDE
+                                : SUNNAH_GUIDE[prayerId];
                             if (!guide) return null;
                             const showMuakkadah = getShowSunnahGuide();
                             const showNafl = getShowNaflGuide();
@@ -1937,6 +2048,24 @@ export default function SalatTracker() {
                               </div>
                             );
                           })}
+                          {/* Shortcut: clickable missed-day chips so the user can
+                              jump straight to a past day and mark kaza, without
+                              multiple nav clicks. Uses the 90-day calendar data
+                              already fetched (completed < 5 = at least one gap). */}
+                          <MissedDayChips
+                            calendarDataMap={calendarDataMap}
+                            t={
+                              t as (
+                                key: string,
+                                fallback: string,
+                                opts?: Record<string, unknown>
+                              ) => string
+                            }
+                            setSelectedDate={setSelectedDate}
+                            setExpandedPrayer={setExpandedPrayer}
+                            setCalendarOpen={setCalendarOpen}
+                          />
+
                           {(debt?.totalOwed ?? 0) > 0 && (
                             <div className="pt-2.5 mt-1 border-t border-brand-emerald/5">
                               <button
@@ -2057,6 +2186,17 @@ export default function SalatTracker() {
                               📿 Tapping <span className="text-white/70 font-medium">Tasbeeh</span>{' '}
                               adds the full after-ṣalāh count to your dhikr automatically — no more
                               logging 33s by hand. Ayatul Kursi adds one. Un-tap to undo.
+                            </Trans>
+                          </p>
+                          <p>
+                            <Trans
+                              i18nKey="salatTracker.legendAyatulKursiAutoInfo"
+                              defaults="📖 Tapping <1>Ayatul Kursi</1> (in ▾ Details) also auto-counts 1 recitation in your dhikr log — the same rule as Tasbeeh. Un-tap to undo."
+                            >
+                              📖 Tapping{' '}
+                              <span className="text-white/70 font-medium">Ayatul Kursi</span> (in ▾
+                              Details) also auto-counts 1 recitation in your dhikr log — the same
+                              rule as Tasbeeh. Un-tap to undo.
                             </Trans>
                           </p>
                           <p>

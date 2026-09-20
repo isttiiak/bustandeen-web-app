@@ -16,8 +16,9 @@ export default function DuaSituationPage({ lang, dua }: Props) {
   return (
     <Layout
       lang={lang}
+      barePath={`/duas/${dua.id}`}
       breadcrumbs={[
-        { label: t.home, path: langPath(lang, '/') },
+        { label: t.home, path: 'https://bustandeen.com/' },
         { label: t.breadcrumbDuas, path: langPath(lang, '/duas') },
         { label: situationName },
       ]}

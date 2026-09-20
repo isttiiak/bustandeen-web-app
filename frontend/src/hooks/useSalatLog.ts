@@ -313,7 +313,7 @@ export interface SalatAnalytics {
     }
   >;
   last7Days: Array<{ date: string; completed: number; total: number }>;
-  calendarData: Array<{ date: string; completed: number; total: number }>;
+  calendarData: Array<{ date: string; completed: number; total: number; logged: boolean }>;
   weeklyMosqueTrend: Array<{
     weekStart: string;
     weekEnd: string;
@@ -563,13 +563,16 @@ export function useResetSalatDebt() {
   });
 }
 
-export function useSalatDebtHistory(days = 30) {
+export function useSalatDebtHistory(days = 30, todayOverride?: string) {
   const user = useAuthStore((s) => s.user);
+  // The window's END date — must follow the selected period (e.g. the last day
+  // of a past month), not always today, or a past-month view charts the wrong days.
+  const endDate = todayOverride ?? localTodayStr();
   return useQuery({
-    queryKey: ['salat', 'debtHistory', days],
+    queryKey: ['salat', 'debtHistory', days, endDate],
     queryFn: async () => {
       const { data } = await api.get<{ ok: boolean; weeks: SalatDebtHistoryWeek[] }>(
-        `/api/salat/debt/history?days=${days}&today=${localTodayStr()}`
+        `/api/salat/debt/history?days=${days}&today=${endDate}`
       );
       return data.weeks;
     },

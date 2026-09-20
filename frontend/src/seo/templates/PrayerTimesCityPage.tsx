@@ -44,9 +44,10 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
   return (
     <Layout
       lang={lang}
+      barePath={`/prayer-times/${city.slug}`}
       breadcrumbs={[
-        { label: t.home, path: langPath(lang, '/') },
-        { label: t.breadcrumbPrayerTimes, path: langPath(lang, '/prayer-times') },
+        { label: t.home, path: 'https://bustandeen.com/' },
+        { label: t.breadcrumbPrayerTimes, path: 'https://bustandeen.com/prayer-times' },
         { label: `${city.name}, ${city.country}` },
       ]}
     >
@@ -111,7 +112,7 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
           { name: t.home, url: 'https://bustandeen.com/' },
           {
             name: t.breadcrumbPrayerTimes,
-            url: `https://bustandeen.com${langPath(lang, '/prayer-times')}`,
+            url: 'https://bustandeen.com/prayer-times',
           },
           { name: `${city.name}, ${city.country}`, url },
         ])}

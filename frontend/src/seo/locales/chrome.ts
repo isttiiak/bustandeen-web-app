@@ -19,6 +19,8 @@ export interface ChromeStrings {
   breadcrumbDuas: string;
   breadcrumbAdhkar: string;
   breadcrumbHijri: string;
+  breadcrumbAsmaUlHusna: string;
+  breadcrumbZakat: string;
 
   prayerTimes: {
     heading: (city: string) => string;
@@ -48,6 +50,11 @@ export interface ChromeStrings {
   };
 
   ramadan: {
+    indexHeading: (year: number) => string;
+    indexSubheading: string;
+    searchPlaceholder: string;
+    popularCitiesLabel: string;
+    noResults: string;
     heading: (city: string, year: number) => string;
     subheading: (city: string, country: string) => string;
     imsakLabel: string;
@@ -89,12 +96,63 @@ export interface ChromeStrings {
     hijriLabel: string;
     todayLabel: string;
     convertHint: string;
+    adjustmentLabel: string;
+    adjustmentNone: string;
+    adjustmentNote: string;
+  };
+
+  asmaUlHusna: {
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+    noResults: string;
+    sourceNote: string;
+    liveAppCta: string;
+  };
+
+  zakat: {
+    title: string;
+    subtitle: string;
+    nisabTitle: string;
+    nisabGoldLabel: string;
+    nisabSilverLabel: string;
+    nisabStandardHint: string;
+    madhabTitle: string;
+    madhabNote: string;
+    jewelryLabel: string;
+    jewelryNote: string;
+    assetsTitle: string;
+    cashLabel: string;
+    goldValueLabel: string;
+    silverValueLabel: string;
+    businessLabel: string;
+    receivablesLabel: string;
+    liabilitiesLabel: string;
+    totalLabel: string;
+    netZakatableLabel: string;
+    belowNisabMsg: string;
+    aboveNisabMsg: (amount: string) => string;
+    zakatDueLabel: string;
+    rateNote: string;
+    hawlTitle: string;
+    hawlStartLabel: string;
+    hawlNote: string;
+    hawlNotSetMsg: string;
+    hawlDaysLeftMsg: (n: number) => string;
+    hawlPastDueMsg: (date: string) => string;
+    hawlDueDateLabel: string;
+    pricesAsOfLabel: (date: string) => string;
+    disclaimerTitle: string;
+    disclaimer: string;
+    liveAppCta: string;
+    faqTitle: string;
+    faq: { q: string; a: string }[];
   };
 }
 
 const en: ChromeStrings = {
   siteName: 'Bustandeen',
-  tagline: 'Grow Your Garden of Good Deeds',
+  tagline: 'Nourish Your Deen',
   home: 'Home',
   backToLiveApp: 'Open the live, on-device calculator in the app',
   languageLabel: 'Language',
@@ -104,6 +162,8 @@ const en: ChromeStrings = {
   breadcrumbDuas: "Du'a Library",
   breadcrumbAdhkar: 'Adhkar',
   breadcrumbHijri: 'Hijri Date Converter',
+  breadcrumbAsmaUlHusna: '99 Names of Allah',
+  breadcrumbZakat: 'Zakat Calculator',
   prayerTimes: {
     heading: (city) => `Prayer Times in ${city} Today`,
     subheading: (city, country) =>
@@ -154,9 +214,19 @@ const en: ChromeStrings = {
         q: 'Why does the Qibla direction not point toward Makkah on a flat map?',
         a: 'Because the Earth is a sphere, the shortest path (great-circle route) often looks like a curve on a flat map projection — the bearing shown here is the correct compass direction to face, not a straight line on a 2D map.',
       },
+      {
+        q: 'What is a Qibla compass and how is it different from this bearing?',
+        a: 'A Qibla compass (also called a Kaaba compass or Mecca compass) is a physical or app-based compass marked with the Qibla direction for your location. The bearing shown on this page is that same direction, in degrees from true North - enter it into any standard compass, or open the Bustandeen app for a live Qibla compass that points automatically using your device.',
+      },
     ],
   },
   ramadan: {
+    indexHeading: (year) => `Ramadan ${year} Calendar`,
+    indexSubheading:
+      'Suhoor (Imsak) and Iftar times for Ramadan, for any city worldwide. Search for your city or pick one below.',
+    searchPlaceholder: 'Search for a city or country...',
+    popularCitiesLabel: 'Popular cities',
+    noResults: 'No cities match your search.',
     heading: (city, year) => `Ramadan ${year} Calendar for ${city}`,
     subheading: (city, country) =>
       `Suhoor (Imsak) and Iftar times for every day of Ramadan in ${city}, ${country}.`,
@@ -195,13 +265,89 @@ const en: ChromeStrings = {
     gregorianLabel: 'Gregorian date',
     hijriLabel: 'Hijri date',
     todayLabel: "Today's date",
-    convertHint: 'Open the app for an interactive date-by-date converter.',
+    convertHint: 'Open Bustandeen for prayer times, fasting tracking and more',
+    adjustmentLabel: 'Moon-sighting adjustment',
+    adjustmentNone: 'Standard',
+    adjustmentNote:
+      "The Hijri month's start can genuinely differ by a day between regions depending on local moon-sighting announcements — adjust here if your local authority differs from the standard calculation.",
+  },
+  asmaUlHusna: {
+    title: '99 Names of Allah',
+    subtitle:
+      'Al-Asma al-Husna: the Most Beautiful Names, with Arabic, transliteration and meaning.',
+    searchPlaceholder: 'Search a name or meaning...',
+    noResults: 'No names match your search.',
+    sourceNote:
+      "The Prophet ﷺ said Allah has 99 names and whoever preserves them will enter Paradise (Sahih al-Bukhari 7392, Sahih Muslim 2677 - authentic). This specific 99-name list, commonly cited from Jami' at-Tirmidhi 3507, is the list in widest circulation today; many hadith scholars, including Ibn Taymiyyah, note the enumerated list itself is a later addition rather than the Prophet's ﷺ own wording, though the names themselves are all drawn from the Quran and authentic Sunnah. Different reputable compilations order or spell a handful of names slightly differently.",
+    liveAppCta: 'Open Bustandeen for zikr, salat and Quran tracking',
+  },
+  zakat: {
+    title: 'Zakat Calculator',
+    subtitle:
+      'Work out your zakat: nisab by gold or silver standard, your assets and debts, and when your hawl is due.',
+    nisabTitle: 'Nisab threshold',
+    nisabGoldLabel: 'Gold standard (87.48g)',
+    nisabSilverLabel: 'Silver standard (612.36g)',
+    nisabStandardHint: 'Pick which nisab standard to use - see the madhab note below.',
+    madhabTitle: 'Which standard should I use?',
+    madhabNote:
+      "Scholars differ. The silver standard gives a lower threshold, so more people qualify to pay - this is the view many Hanafi scholars favour, since it benefits more of the poor. The gold standard gives a higher threshold and is what many other contemporary scholars and zakat bodies recommend for cash savings, so as not to obligate people with modest means. This calculator lets you choose; if you're unsure, ask a local scholar you trust.",
+    jewelryLabel: 'Include personal-use gold/silver jewelry?',
+    jewelryNote:
+      "Hanafi view: zakat is due on gold/silver jewelry regardless of use. Majority view (Shafi'i, Maliki, Hanbali): jewelry worn/used within customary limits is exempt. Toggle this only if you're following the view that includes it.",
+    assetsTitle: 'Your assets and debts',
+    cashLabel: 'Cash and bank balances',
+    goldValueLabel: 'Gold value (market price)',
+    silverValueLabel: 'Silver value (market price)',
+    businessLabel: 'Business/trade assets (inventory at current value)',
+    receivablesLabel: 'Money owed to you (expected to be repaid)',
+    liabilitiesLabel: 'Debts you owe (due now)',
+    totalLabel: 'Total assets',
+    netZakatableLabel: 'Net zakatable wealth',
+    belowNisabMsg:
+      'Your net wealth is below the nisab threshold - no zakat is due this year, but keep tracking in case it grows.',
+    aboveNisabMsg: (amount) =>
+      `Your net wealth is above the nisab threshold. Estimated zakat due (2.5%): ${amount}`,
+    zakatDueLabel: 'Zakat due (2.5%)',
+    rateNote:
+      'Zakat on cash, gold, silver, business and receivable wealth is 2.5% (1/40th) of the net zakatable amount, once a full lunar year (ḥawl) has passed above nisab.',
+    hawlTitle: 'Ḥawl tracker',
+    hawlStartLabel: 'Date your wealth first reached nisab',
+    hawlNote:
+      'Zakat becomes due after one full Hijri (lunar) year of your wealth staying at or above nisab - not the Gregorian calendar year.',
+    hawlNotSetMsg: 'Enter a start date to see your hawl anniversary.',
+    hawlDaysLeftMsg: (n) =>
+      n === 1 ? '1 day until your hawl completes.' : `${n} days until your hawl completes.`,
+    hawlPastDueMsg: (date) =>
+      `Your hawl completed on ${date}. If your wealth has stayed above nisab since, zakat is due now.`,
+    hawlDueDateLabel: 'Hawl completes on',
+    pricesAsOfLabel: (date) =>
+      `Gold/silver prices last checked ${date} - not live, for estimation only.`,
+    disclaimerTitle: 'Important',
+    disclaimer:
+      'This calculator gives an estimate to help you plan, not a fatwa. Nisab weights, jewelry rulings and asset treatment genuinely differ between madhabs, and getting zakat wrong is a real responsibility - please verify your specific situation with a qualified local scholar or a trusted zakat organization before paying, especially for business assets, debts, or unusual holdings.',
+    liveAppCta: 'Open Bustandeen for zikr, salat and Quran tracking',
+    faqTitle: 'Common questions',
+    faq: [
+      {
+        q: 'Is this calculator a fatwa or religious ruling?',
+        a: 'No. It is a calculation aid using commonly cited nisab figures and the standard 2.5% rate. For your specific situation - especially business assets, debts, or mixed-madhab households - confirm with a qualified scholar.',
+      },
+      {
+        q: 'Why do gold-standard and silver-standard nisab give different answers?',
+        a: "The two metals' market values have drifted apart over time, so the silver nisab (612.36g) is usually a much lower cash threshold than the gold nisab (87.48g) today. Scholars differ on which to apply to cash and mixed wealth - see the note above.",
+      },
+      {
+        q: 'What if my wealth drops below nisab before a full year passes?',
+        a: 'Most scholars hold that the hawl resets - you would need to reach nisab again and complete a fresh lunar year before zakat becomes due on that wealth.',
+      },
+    ],
   },
 };
 
 const bn: ChromeStrings = {
   siteName: 'Bustandeen',
-  tagline: 'আপনার নেক আমলের বাগান গড়ে তুলুন',
+  tagline: 'আপনার দ্বীনকে সমৃদ্ধ করুন',
   home: 'হোম',
   backToLiveApp: 'অ্যাপে লাইভ, অন-ডিভাইস ক্যালকুলেটর খুলুন',
   languageLabel: 'ভাষা',
@@ -211,6 +357,8 @@ const bn: ChromeStrings = {
   breadcrumbDuas: 'দোয়া সংকলন',
   breadcrumbAdhkar: 'আযকার',
   breadcrumbHijri: 'হিজরি তারিখ কনভার্টার',
+  breadcrumbAsmaUlHusna: 'আল্লাহর ৯৯ নাম',
+  breadcrumbZakat: 'যাকাত ক্যালকুলেটর',
   prayerTimes: {
     heading: (city) => `${city}-এ আজকের নামাজের সময়`,
     subheading: (city, country) =>
@@ -260,9 +408,19 @@ const bn: ChromeStrings = {
         q: 'ফ্ল্যাট মানচিত্রে কিবলার দিক মক্কার দিকে কেন সোজা দেখায় না?',
         a: 'পৃথিবী গোলাকার হওয়ায়, সবচেয়ে সংক্ষিপ্ত পথ (গ্রেট-সার্কেল রুট) সমতল মানচিত্রে বাঁকা দেখাতে পারে — এখানে দেখানো দিকটিই সঠিক কম্পাস দিক, ২ডি মানচিত্রে সরলরেখা নয়।',
       },
+      {
+        q: 'কিবলা কম্পাস কী এবং এই দিক থেকে এটি কীভাবে আলাদা?',
+        a: 'কিবলা কম্পাস (কাবা কম্পাস বা মক্কা কম্পাস নামেও পরিচিত) হলো একটি বাস্তব বা অ্যাপ-ভিত্তিক কম্পাস, যাতে আপনার অবস্থানের জন্য কিবলার দিক চিহ্নিত থাকে। এই পৃষ্ঠায় দেখানো দিকটিই একই দিক, সত্যিকারের উত্তর থেকে ডিগ্রিতে - যেকোনো সাধারণ কম্পাসে এটি প্রবেশ করান, অথবা Bustandeen অ্যাপে লাইভ কিবলা কম্পাস খুলুন যা আপনার ডিভাইস ব্যবহার করে স্বয়ংক্রিয়ভাবে দিক দেখায়।',
+      },
     ],
   },
   ramadan: {
+    indexHeading: (year) => `রমজান ${year} ক্যালেন্ডার`,
+    indexSubheading:
+      'বিশ্বের যেকোনো শহরের জন্য রমজানের সেহরি (ইমসাক) ও ইফতারের সময়। আপনার শহর খুঁজুন বা নিচে থেকে বেছে নিন।',
+    searchPlaceholder: 'শহর বা দেশ খুঁজুন...',
+    popularCitiesLabel: 'জনপ্রিয় শহর',
+    noResults: 'আপনার অনুসন্ধানের সাথে মিলে এমন কোনো শহর নেই।',
     heading: (city, year) => `${city}-এর রমজান ${year} ক্যালেন্ডার`,
     subheading: (city, country) =>
       `${city}, ${country}-এ রমজানের প্রতিটি দিনের সেহরি (ইমসাক) ও ইফতারের সময়।`,
@@ -301,13 +459,87 @@ const bn: ChromeStrings = {
     gregorianLabel: 'গ্রেগরিয়ান তারিখ',
     hijriLabel: 'হিজরি তারিখ',
     todayLabel: 'আজকের তারিখ',
-    convertHint: 'ইন্টারেক্টিভ তারিখ-ভিত্তিক কনভার্টারের জন্য অ্যাপ খুলুন।',
+    convertHint: 'নামাজের সময়, রোজা ট্র্যাকিং ও আরও অনেক কিছুর জন্য Bustandeen অ্যাপ খুলুন',
+    adjustmentLabel: 'চাঁদ দেখা সমন্বয়',
+    adjustmentNone: 'আদর্শ',
+    adjustmentNote:
+      'স্থানীয় চাঁদ দেখার ঘোষণার উপর নির্ভর করে হিজরি মাসের শুরু বিভিন্ন অঞ্চলে সত্যিই এক দিন কমবেশি হতে পারে — আপনার স্থানীয় কর্তৃপক্ষ আদর্শ হিসাব থেকে ভিন্ন হলে এখানে সমন্বয় করুন।',
+  },
+  asmaUlHusna: {
+    title: 'আল্লাহর ৯৯টি নাম',
+    subtitle: 'আসমাউল হুসনা: আল্লাহর সবচেয়ে সুন্দর নামসমূহ, আরবি, উচ্চারণ ও অর্থসহ।',
+    searchPlaceholder: 'নাম বা অর্থ খুঁজুন...',
+    noResults: 'আপনার অনুসন্ধানের সাথে মিলে এমন কোনো নাম নেই।',
+    sourceNote:
+      "নবী ﷺ বলেছেন, আল্লাহর ৯৯টি নাম আছে, যে ব্যক্তি এগুলো সংরক্ষণ করবে সে জান্নাতে প্রবেশ করবে (সহীহ বুখারী ৭৩৯২, সহীহ মুসলিম ২৬৭৭ - সহীহ)। জামি' আত-তিরমিযী ৩৫০৭-এ উল্লেখিত এই নির্দিষ্ট ৯৯টি নামের তালিকাটি বর্তমানে সর্বাধিক প্রচলিত; ইবনে তাইমিয়াসহ অনেক হাদীসবিশারদ উল্লেখ করেছেন যে এই তালিকাটি নবী ﷺ-এর নিজের বাক্য নয়, বরং পরবর্তী সংযোজন - যদিও নামগুলো কুরআন ও সহীহ সুন্নাহ থেকে নেওয়া। বিভিন্ন নির্ভরযোগ্য সংকলনে কিছু নামের ক্রম বা বানান সামান্য ভিন্ন হতে পারে।",
+    liveAppCta: 'যিকর, সালাত ও কুরআন ট্র্যাকিংয়ের জন্য Bustandeen অ্যাপ খুলুন',
+  },
+  zakat: {
+    title: 'যাকাত ক্যালকুলেটর',
+    subtitle:
+      'আপনার যাকাত হিসাব করুন: স্বর্ণ বা রৌপ্যের মানদণ্ডে নিসাব, আপনার সম্পদ ও ঋণ, এবং কবে আপনার হাওল পূর্ণ হবে।',
+    nisabTitle: 'নিসাবের পরিমাণ',
+    nisabGoldLabel: 'স্বর্ণের মানদণ্ড (৮৭.৪৮ গ্রাম)',
+    nisabSilverLabel: 'রৌপ্যের মানদণ্ড (৬১২.৩৬ গ্রাম)',
+    nisabStandardHint: 'কোন নিসাব মানদণ্ড ব্যবহার করবেন বেছে নিন - নিচে মাযহাবভিত্তিক নোট দেখুন।',
+    madhabTitle: 'কোন মানদণ্ড ব্যবহার করব?',
+    madhabNote:
+      'আলেমদের মধ্যে মতভেদ রয়েছে। রৌপ্যের মানদণ্ডে নিসাবের পরিমাণ কম হয়, ফলে বেশি মানুষ যাকাত দেওয়ার আওতায় আসেন - অনেক হানাফি আলেম এই মতকেই প্রাধান্য দেন, কারণ এতে গরীবদের বেশি উপকার হয়। স্বর্ণের মানদণ্ডে নিসাবের পরিমাণ বেশি হয়, এবং অনেক সমসাময়িক আলেম ও যাকাত প্রতিষ্ঠান নগদ সঞ্চয়ের ক্ষেত্রে এটিই সুপারিশ করেন, যাতে সীমিত সামর্থ্যের মানুষের উপর অহেতুক দায় না পড়ে। এই ক্যালকুলেটরে আপনি বেছে নিতে পারবেন; নিশ্চিত না হলে আপনার এলাকার বিশ্বস্ত আলেমের পরামর্শ নিন।',
+    jewelryLabel: 'ব্যক্তিগত ব্যবহারের স্বর্ণ/রৌপ্য গহনা অন্তর্ভুক্ত করবেন?',
+    jewelryNote:
+      'হানাফি মত: ব্যবহার নির্বিশেষে স্বর্ণ/রৌপ্য গহনার উপর যাকাত ফরজ। সংখ্যাগরিষ্ঠ মত (শাফেয়ী, মালেকী, হাম্বলী): প্রচলিত মাত্রায় ব্যবহৃত গহনা যাকাতমুক্ত। আপনি যে মত অনুসরণ করেন তা গহনা অন্তর্ভুক্ত করলে তবেই এটি চালু করুন।',
+    assetsTitle: 'আপনার সম্পদ ও ঋণ',
+    cashLabel: 'নগদ ও ব্যাংক জমা',
+    goldValueLabel: 'স্বর্ণের মূল্য (বাজারদর)',
+    silverValueLabel: 'রৌপ্যের মূল্য (বাজারদর)',
+    businessLabel: 'ব্যবসায়িক সম্পদ (বর্তমান মূল্যে মজুদ)',
+    receivablesLabel: 'আপনার পাওনা টাকা (ফেরত পাওয়ার প্রত্যাশিত)',
+    liabilitiesLabel: 'আপনার দেনা (এখনই পরিশোধযোগ্য)',
+    totalLabel: 'মোট সম্পদ',
+    netZakatableLabel: 'নিট যাকাতযোগ্য সম্পদ',
+    belowNisabMsg:
+      'আপনার নিট সম্পদ নিসাবের নিচে - এ বছর যাকাত ফরজ নয়, তবে বৃদ্ধি পেলে খেয়াল রাখুন।',
+    aboveNisabMsg: (amount) => `আপনার নিট সম্পদ নিসাবের বেশি। আনুমানিক যাকাত (২.৫%): ${amount}`,
+    zakatDueLabel: 'প্রদেয় যাকাত (২.৫%)',
+    rateNote:
+      'নগদ, স্বর্ণ, রৌপ্য, ব্যবসায়িক ও পাওনা সম্পদের উপর যাকাতের হার নিট যাকাতযোগ্য পরিমাণের ২.৫% (৪০ ভাগের ১ ভাগ), যখন নিসাবের উপরে পূর্ণ এক হিজরি (চন্দ্র) বছর অতিবাহিত হয়।',
+    hawlTitle: 'হাওল ট্র্যাকার',
+    hawlStartLabel: 'যে তারিখে আপনার সম্পদ প্রথম নিসাবে পৌঁছেছে',
+    hawlNote:
+      'নিসাবের উপরে সম্পদ পূর্ণ এক হিজরি (চন্দ্র) বছর অবস্থান করলে যাকাত ফরজ হয় - গ্রেগরিয়ান ক্যালেন্ডার বছর নয়।',
+    hawlNotSetMsg: 'আপনার হাওলের বার্ষিকী দেখতে একটি শুরুর তারিখ দিন।',
+    hawlDaysLeftMsg: (n) =>
+      n === 1 ? 'আপনার হাওল পূর্ণ হতে আর ১ দিন বাকি।' : `আপনার হাওল পূর্ণ হতে আর ${n} দিন বাকি।`,
+    hawlPastDueMsg: (date) =>
+      `আপনার হাওল ${date}-এ পূর্ণ হয়েছে। এরপর থেকে সম্পদ নিসাবের উপরে থাকলে এখন যাকাত ফরজ।`,
+    hawlDueDateLabel: 'হাওল পূর্ণ হবে',
+    pricesAsOfLabel: (date) =>
+      `স্বর্ণ/রৌপ্যের মূল্য সর্বশেষ যাচাই করা হয়েছে ${date} তারিখে - লাইভ নয়, শুধু আনুমানিক হিসাবের জন্য।`,
+    disclaimerTitle: 'গুরুত্বপূর্ণ',
+    disclaimer:
+      'এই ক্যালকুলেটরটি পরিকল্পনায় সহায়তার জন্য একটি আনুমানিক হিসাব দেয়, এটি কোনো ফতোয়া নয়। নিসাবের পরিমাণ, গহনার বিধান ও সম্পদের হিসাব মাযহাবভেদে সত্যিই ভিন্ন হয়, আর যাকাতে ভুল হওয়া একটি বড় দায়িত্বের বিষয় - তাই পরিশোধের আগে, বিশেষত ব্যবসায়িক সম্পদ, ঋণ বা অস্বাভাবিক সম্পদের ক্ষেত্রে, দয়া করে যোগ্য স্থানীয় আলেম বা বিশ্বস্ত যাকাত প্রতিষ্ঠানের সাথে আপনার নির্দিষ্ট পরিস্থিতি যাচাই করুন।',
+    liveAppCta: 'যিকর, সালাত ও কুরআন ট্র্যাকিংয়ের জন্য Bustandeen অ্যাপ খুলুন',
+    faqTitle: 'সাধারণ প্রশ্ন',
+    faq: [
+      {
+        q: 'এই ক্যালকুলেটর কি কোনো ফতোয়া বা শরীয়াহ রায়?',
+        a: 'না। এটি প্রচলিতভাবে উল্লেখিত নিসাবের পরিমাণ ও মানক ২.৫% হার ব্যবহার করে একটি হিসাব-সহায়ক টুল। আপনার নির্দিষ্ট পরিস্থিতির জন্য - বিশেষত ব্যবসায়িক সম্পদ, ঋণ বা মিশ্র-মাযহাব পরিবারের ক্ষেত্রে - একজন যোগ্য আলেমের সাথে নিশ্চিত করুন।',
+      },
+      {
+        q: 'স্বর্ণ-মানদণ্ড ও রৌপ্য-মানদণ্ড ভিন্ন উত্তর দেয় কেন?',
+        a: 'সময়ের সাথে দুই ধাতুর বাজারমূল্য অনেকটা আলাদা হয়ে গেছে, তাই আজকের দিনে রৌপ্য নিসাব (৬১২.৩৬ গ্রাম) সাধারণত স্বর্ণ নিসাবের (৮৭.৪৮ গ্রাম) চেয়ে অনেক কম নগদ-সীমা দেয়। নগদ ও মিশ্র সম্পদের ক্ষেত্রে কোনটি প্রযোজ্য তা নিয়ে আলেমদের মধ্যে মতভেদ আছে - উপরের নোট দেখুন।',
+      },
+      {
+        q: 'পূর্ণ এক বছর হওয়ার আগেই যদি সম্পদ নিসাবের নিচে নেমে যায়?',
+        a: 'অধিকাংশ আলেমের মতে হাওল পুনরায় শুরু হয় - সেই সম্পদের উপর যাকাত ফরজ হওয়ার জন্য আবার নিসাবে পৌঁছাতে হবে এবং নতুন করে এক পূর্ণ হিজরি বছর পার করতে হবে।',
+      },
+    ],
   },
 };
 
 const ar: ChromeStrings = {
   siteName: 'Bustandeen',
-  tagline: 'ازرع حديقة حسناتك',
+  tagline: 'نمِّ دينك',
   home: 'الرئيسية',
   backToLiveApp: 'افتح الحاسبة المباشرة في التطبيق',
   languageLabel: 'اللغة',
@@ -317,6 +549,8 @@ const ar: ChromeStrings = {
   breadcrumbDuas: 'مكتبة الأدعية',
   breadcrumbAdhkar: 'الأذكار',
   breadcrumbHijri: 'محول التاريخ الهجري',
+  breadcrumbAsmaUlHusna: 'أسماء الله الحسنى',
+  breadcrumbZakat: 'حاسبة الزكاة',
   prayerTimes: {
     heading: (city) => `مواقيت الصلاة اليوم في ${city}`,
     subheading: (city, country) =>
@@ -367,9 +601,19 @@ const ar: ChromeStrings = {
         q: 'لماذا لا يشير اتجاه القبلة مباشرة نحو مكة على خريطة مسطحة؟',
         a: 'لأن الأرض كروية الشكل، غالبًا ما يبدو أقصر مسار (مسار الدائرة العظمى) منحنيًا على إسقاط خريطة مسطحة — والزاوية الموضحة هنا هي اتجاه البوصلة الصحيح الذي يجب استقباله، وليست خطًا مستقيمًا على خريطة ثنائية الأبعاد.',
       },
+      {
+        q: 'ما هي بوصلة القبلة وكيف تختلف عن هذه الزاوية؟',
+        a: 'بوصلة القبلة (تُعرف أيضًا ببوصلة الكعبة أو بوصلة مكة) هي بوصلة حقيقية أو تطبيق يُظهر اتجاه القبلة من موقعك. الزاوية الموضحة في هذه الصفحة هي نفس الاتجاه، بالدرجات من الشمال الحقيقي - أدخلها في أي بوصلة عادية، أو افتح تطبيق Bustandeen للحصول على بوصلة قبلة مباشرة تشير تلقائيًا باستخدام جهازك.',
+      },
     ],
   },
   ramadan: {
+    indexHeading: (year) => `تقويم رمضان ${year}`,
+    indexSubheading:
+      'مواقيت الإمساك (السحور) والإفطار لرمضان، لأي مدينة في العالم. ابحث عن مدينتك أو اختر من القائمة أدناه.',
+    searchPlaceholder: 'ابحث عن مدينة أو دولة...',
+    popularCitiesLabel: 'مدن شائعة',
+    noResults: 'لا توجد مدن مطابقة لبحثك.',
     heading: (city, year) => `تقويم رمضان ${year} لمدينة ${city}`,
     subheading: (city, country) =>
       `مواقيت الإمساك (السحور) والإفطار لكل يوم من رمضان في ${city}, ${country}.`,
@@ -408,7 +652,80 @@ const ar: ChromeStrings = {
     gregorianLabel: 'التاريخ الميلادي',
     hijriLabel: 'التاريخ الهجري',
     todayLabel: 'تاريخ اليوم',
-    convertHint: 'افتح التطبيق لمحول تفاعلي بين التواريخ.',
+    convertHint: 'افتح تطبيق Bustandeen لمواقيت الصلاة وتتبع الصيام والمزيد',
+    adjustmentLabel: 'تعديل رؤية الهلال',
+    adjustmentNone: 'قياسي',
+    adjustmentNote:
+      'قد يختلف بداية الشهر الهجري فعليًا بيوم واحد بين المناطق حسب إعلانات رؤية الهلال المحلية — عدّل هنا إذا اختلفت جهتك المحلية عن الحساب القياسي.',
+  },
+  asmaUlHusna: {
+    title: 'أسماء الله الحسنى',
+    subtitle: 'الأسماء الحسنى: أجمل أسماء الله، مع النص العربي والنطق والمعنى.',
+    searchPlaceholder: 'ابحث عن اسم أو معنى...',
+    noResults: 'لا توجد أسماء مطابقة لبحثك.',
+    sourceNote:
+      "قال النبي ﷺ: 'إن لله تسعة وتسعين اسمًا، من أحصاها دخل الجنة' (صحيح البخاري 7392، صحيح مسلم 2677 - حديث صحيح). أما هذه القائمة المحددة المكوّنة من 99 اسمًا، المنقولة غالبًا عن جامع الترمذي 3507، فهي الأكثر تداولًا اليوم؛ وقد نبّه عدد من علماء الحديث، منهم ابن تيمية، إلى أن سرد الأسماء بهذا الترتيب زيادة من الرواة وليس من لفظ النبي ﷺ نفسه، مع أن الأسماء ذاتها كلها واردة في القرآن والسنة الصحيحة. وتختلف بعض المصادر الموثوقة قليلًا في ترتيب أو تهجئة بعض الأسماء.",
+    liveAppCta: 'افتح تطبيق Bustandeen للأذكار والصلاة وتتبع القرآن',
+  },
+  zakat: {
+    title: 'حاسبة الزكاة',
+    subtitle: 'احسب زكاتك: النصاب بمعيار الذهب أو الفضة، أموالك وديونك، وموعد اكتمال حولك.',
+    nisabTitle: 'نصاب الزكاة',
+    nisabGoldLabel: 'معيار الذهب (87.48 جرام)',
+    nisabSilverLabel: 'معيار الفضة (612.36 جرام)',
+    nisabStandardHint: 'اختر معيار النصاب الذي تريد استخدامه - راجع ملاحظة المذاهب أدناه.',
+    madhabTitle: 'أي معيار أستخدم؟',
+    madhabNote:
+      'يختلف العلماء في ذلك. معيار الفضة يعطي حدًا أدنى أقل، فيشمل عددًا أكبر ممن تجب عليهم الزكاة - وهو ما يفضله كثير من علماء الحنفية لما فيه من نفع أوسع للفقراء. أما معيار الذهب فيعطي حدًا أعلى، وهو ما يوصي به كثير من العلماء المعاصرين وهيئات الزكاة بالنسبة للمدخرات النقدية، حتى لا يُلزَم أصحاب الدخل المحدود. تتيح لك هذه الحاسبة الاختيار؛ وإن لم تكن متأكدًا فاسأل عالمًا موثوقًا في منطقتك.',
+    jewelryLabel: 'هل تُدرِج الحلي الذهبية/الفضية المستخدمة شخصيًا؟',
+    jewelryNote:
+      'مذهب الحنفية: تجب الزكاة في حلي الذهب والفضة بغض النظر عن الاستخدام. مذهب الجمهور (الشافعية والمالكية والحنابلة): الحلي المستخدمة ضمن الحدود المعتادة معفاة. فعّل هذا الخيار فقط إن كنت تتبع الرأي القائل بوجوبها.',
+    assetsTitle: 'أموالك وديونك',
+    cashLabel: 'النقد والأرصدة البنكية',
+    goldValueLabel: 'قيمة الذهب (سعر السوق)',
+    silverValueLabel: 'قيمة الفضة (سعر السوق)',
+    businessLabel: 'أصول تجارية (البضاعة بسعرها الحالي)',
+    receivablesLabel: 'أموال مستحقة لك (يُتوقع تحصيلها)',
+    liabilitiesLabel: 'ديون عليك (مستحقة الآن)',
+    totalLabel: 'إجمالي الأصول',
+    netZakatableLabel: 'صافي المال الزكوي',
+    belowNisabMsg: 'صافي مالك أقل من النصاب - لا زكاة عليك هذا العام، لكن تابع المتابعة إن زاد.',
+    aboveNisabMsg: (amount) =>
+      `صافي مالك يتجاوز النصاب. الزكاة التقديرية المستحقة (2.5%): ${amount}`,
+    zakatDueLabel: 'الزكاة المستحقة (2.5%)',
+    rateNote:
+      'زكاة النقد والذهب والفضة والأصول التجارية والديون المستحقة لك هي 2.5% (ربع العشر) من صافي المال الزكوي، بعد مرور حول هجري كامل فوق النصاب.',
+    hawlTitle: 'متتبع الحول',
+    hawlStartLabel: 'تاريخ بلوغ مالك النصاب لأول مرة',
+    hawlNote:
+      'تجب الزكاة بعد مرور حول هجري (قمري) كامل يبقى فيه مالك عند النصاب أو أعلى منه - وليس السنة الميلادية.',
+    hawlNotSetMsg: 'أدخل تاريخ البداية لمعرفة موعد اكتمال حولك.',
+    hawlDaysLeftMsg: (n) =>
+      n === 1 ? 'يتبقى يوم واحد لاكتمال حولك.' : `يتبقى ${n} يومًا لاكتمال حولك.`,
+    hawlPastDueMsg: (date) =>
+      `اكتمل حولك في ${date}. إذا بقي مالك فوق النصاب منذ ذلك الحين، فالزكاة مستحقة الآن.`,
+    hawlDueDateLabel: 'يكتمل الحول في',
+    pricesAsOfLabel: (date) =>
+      `آخر تحقق من أسعار الذهب/الفضة كان في ${date} - ليست أسعارًا مباشرة، للتقدير فقط.`,
+    disclaimerTitle: 'تنبيه مهم',
+    disclaimer:
+      'تقدم هذه الحاسبة تقديرًا يساعدك على التخطيط، وليست فتوى. تختلف أوزان النصاب وأحكام الحلي ومعاملة الأصول فعليًا بين المذاهب، والخطأ في الزكاة مسؤولية حقيقية - لذا يُرجى التحقق من وضعك الخاص مع عالم موثوق أو جهة زكاة موثوقة قبل الدفع، خصوصًا في الأصول التجارية والديون والممتلكات غير المعتادة.',
+    liveAppCta: 'افتح تطبيق Bustandeen للأذكار والصلاة وتتبع القرآن',
+    faqTitle: 'أسئلة شائعة',
+    faq: [
+      {
+        q: 'هل هذه الحاسبة فتوى أو حكم شرعي؟',
+        a: 'لا. هي أداة حسابية تستخدم أرقام النصاب الشائعة ونسبة 2.5% المعتادة. لوضعك الخاص - خصوصًا الأصول التجارية أو الديون أو الأسر متعددة المذاهب - تأكد من عالم مؤهل.',
+      },
+      {
+        q: 'لماذا يعطي معيار الذهب ومعيار الفضة إجابتين مختلفتين؟',
+        a: 'تباعدت القيمة السوقية للمعدنين بمرور الوقت، فأصبح نصاب الفضة (612.36 جرام) اليوم غالبًا حدًا نقديًا أقل بكثير من نصاب الذهب (87.48 جرام). يختلف العلماء في أيهما يُطبَّق على النقد والمال المختلط - راجع الملاحظة أعلاه.',
+      },
+      {
+        q: 'ماذا لو انخفض مالي عن النصاب قبل اكتمال السنة؟',
+        a: 'يرى معظم العلماء أن الحول ينقطع عندئذ - فتحتاج إلى بلوغ النصاب من جديد وإتمام حول هجري كامل قبل أن تجب الزكاة على ذلك المال.',
+      },
+    ],
   },
 };
 

@@ -13,9 +13,17 @@ import {
 import { AiBadge, AiThinking, AiDisclaimer } from './AiFlair.js';
 import { PRAYER_META, translateSalatName } from '../../utils/prayerTimes.js';
 import { getTrackingDay } from '../../utils/trackingDay.js';
+import { useZikrStore } from '../../store/useZikrStore.js';
 import { getUserTimezoneOffset } from '../../utils/timezone.js';
 
 type Phase = 'input' | 'preview' | 'success' | 'empty';
+
+function shiftDate(dateStr: string, delta: number): string {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dt = new Date(Date.UTC(y ?? 1970, (m ?? 1) - 1, d ?? 1));
+  dt.setUTCDate(dt.getUTCDate() + delta);
+  return dt.toISOString().slice(0, 10);
+}
 
 const EXAMPLES_KEYS = [
   'naturalLog.example1',
@@ -30,6 +38,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
   const [salat, setSalat] = useState<ParsedSalatEntry[]>([]);
   const [zikr, setZikr] = useState<ParsedZikrEntry[]>([]);
   const [quran, setQuran] = useState<ParsedQuranEntry | null>(null);
+  const [day, setDay] = useState<'today' | 'yesterday'>('today');
 
   const parseMut = useParseNaturalLog();
   const commitMut = useCommitNaturalLog();
@@ -45,6 +54,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
         setSalat(r.salat);
         setZikr(r.zikr);
         setQuran(r.quran);
+        setDay(r.day === 'yesterday' ? 'yesterday' : 'today');
         setPhase('preview');
       },
       onError: () => setPhase('empty'),
@@ -52,15 +62,29 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
   };
 
   const handleConfirm = () => {
+    // The tracking day (Fajr-aware), or the one before it when the note said
+    // "yesterday" / "last night".
+    const trackingToday = getTrackingDay();
+    const date = day === 'yesterday' ? shiftDate(trackingToday, -1) : trackingToday;
     commitMut.mutate(
       {
         salat,
         zikr,
         quranAyat: quran?.ayat ?? null,
-        date: getTrackingDay(),
+        date,
         timezoneOffset: getUserTimezoneOffset(),
       },
-      { onSuccess: () => setPhase('success') }
+      {
+        onSuccess: () => {
+          // The counter page keeps its own local copy of today's counts;
+          // fold these in so it doesn't show stale numbers until the next sync.
+          if (day === 'today') {
+            const { addConfirmedCounts } = useZikrStore.getState();
+            for (const z of zikr) addConfirmedCounts(z.typeName, z.count);
+          }
+          setPhase('success');
+        },
+      }
     );
   };
 
@@ -161,6 +185,25 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                 )}
               </p>
 
+              <div className="flex items-center gap-2">
+                <span className="text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                  {t('naturalLog.dayLabel', 'For')}
+                </span>
+                <div className="join">
+                  {(['today', 'yesterday'] as const).map((d) => (
+                    <button
+                      key={d}
+                      onClick={() => setDay(d)}
+                      className={`join-item btn btn-xs ${day === d ? 'bg-brand-emerald/25 border-brand-emerald/40 text-brand-emerald' : 'bg-white/5 border-brand-border text-white/50'}`}
+                    >
+                      {d === 'today'
+                        ? t('naturalLog.dayToday', 'Today')
+                        : t('naturalLog.dayYesterday', 'Yesterday')}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {salat.length > 0 && (
                 <div className="space-y-1.5">
                   <p className="text-white/30 text-[10px] font-bold uppercase tracking-widest">
@@ -207,7 +250,14 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                       key={i}
                       className="flex items-center justify-between gap-2 rounded-xl bg-brand-deep border border-brand-border px-3 py-2 text-sm"
                     >
-                      <span className="text-white/80 truncate">{z.typeName}</span>
+                      <span className="text-white/80 truncate">
+                        {z.typeName}
+                        {z.isNew && (
+                          <span className="ml-1.5 text-[10px] text-brand-gold/80">
+                            {t('naturalLog.newDhikr', '(new dhikr)')}
+                          </span>
+                        )}
+                      </span>
                       <div className="flex items-center gap-2 shrink-0">
                         <input
                           type="number"

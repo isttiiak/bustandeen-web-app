@@ -6,19 +6,25 @@ import { currentHijriYear, ramadanRangeForHijriYear } from './utils/calc.js';
 import PrayerTimesCityPage from './templates/PrayerTimesCityPage.js';
 import QiblaCityPage from './templates/QiblaCityPage.js';
 import RamadanCalendarPage from './templates/RamadanCalendarPage.js';
+import RamadanCalendarIndexPage from './templates/RamadanCalendarIndexPage.js';
 import DuaSituationPage from './templates/DuaSituationPage.js';
 import DuasIndexPage from './templates/DuasIndexPage.js';
 import AdhkarPage from './templates/AdhkarPage.js';
 import HijriConverterPage from './templates/HijriConverterPage.js';
+import AsmaUlHusnaPage from './templates/AsmaUlHusnaPage.js';
+import ZakatCalculatorPage from './templates/ZakatCalculatorPage.js';
 
 export type RouteKind =
   | { kind: 'prayer-times'; citySlug: string }
   | { kind: 'qibla'; citySlug: string }
   | { kind: 'ramadan-calendar'; citySlug: string; hijriYear: number }
+  | { kind: 'ramadan-calendar-index' }
   | { kind: 'dua'; duaId: string }
   | { kind: 'duas-index' }
   | { kind: 'adhkar'; period: 'morning' | 'evening' }
-  | { kind: 'hijri-converter' };
+  | { kind: 'hijri-converter' }
+  | { kind: 'asma-ul-husna' }
+  | { kind: 'zakat-calculator' };
 
 export interface RenderInput {
   route: RouteKind;
@@ -82,6 +88,14 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
         description: t.ramadan.subheading(city.name, city.country),
       };
     }
+    case 'ramadan-calendar-index': {
+      const gYear = ramadanRangeForHijriYear(currentHijriYear()).start.getUTCFullYear();
+      return {
+        html: renderToStaticMarkup(<RamadanCalendarIndexPage lang={lang} gregorianYear={gYear} />),
+        title: `${t.ramadan.indexHeading(gYear)} | ${t.siteName}`,
+        description: t.ramadan.indexSubheading,
+      };
+    }
     case 'dua': {
       const dua = DUAS.find((d) => d.id === route.duaId);
       if (!dua) throw new Error(`Unknown dua id: ${route.duaId}`);
@@ -112,6 +126,18 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
         html: renderToStaticMarkup(<HijriConverterPage lang={lang} buildDate={date} />),
         title: `${t.hijri.title} | ${t.siteName}`,
         description: t.hijri.subtitle,
+      };
+    case 'asma-ul-husna':
+      return {
+        html: renderToStaticMarkup(<AsmaUlHusnaPage lang={lang} />),
+        title: `${t.asmaUlHusna.title} | ${t.siteName}`,
+        description: t.asmaUlHusna.subtitle,
+      };
+    case 'zakat-calculator':
+      return {
+        html: renderToStaticMarkup(<ZakatCalculatorPage lang={lang} />),
+        title: `${t.zakat.title} | ${t.siteName}`,
+        description: t.zakat.subtitle,
       };
   }
 }

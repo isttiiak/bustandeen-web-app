@@ -38,9 +38,10 @@ export default function RamadanCalendarPage({ lang, city, hijriYear }: Props) {
   return (
     <Layout
       lang={lang}
+      barePath={`/ramadan-calendar/${city.slug}/${gregorianYear}`}
       breadcrumbs={[
-        { label: t.home, path: langPath(lang, '/') },
-        { label: t.breadcrumbRamadan, path: langPath(lang, '/ramadan-calendar') },
+        { label: t.home, path: 'https://bustandeen.com/' },
+        { label: t.breadcrumbRamadan },
         { label: `${city.name}, ${city.country}` },
       ]}
     >
@@ -110,10 +111,6 @@ export default function RamadanCalendarPage({ lang, city, hijriYear }: Props) {
       <JsonLd
         data={breadcrumbJsonLd([
           { name: t.home, url: 'https://bustandeen.com/' },
-          {
-            name: t.breadcrumbRamadan,
-            url: `https://bustandeen.com${langPath(lang, '/ramadan-calendar')}`,
-          },
           { name: `${city.name}, ${city.country}`, url },
         ])}
       />

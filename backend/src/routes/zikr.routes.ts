@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import * as zikrController from '../controllers/zikr.controller.js';
+import * as zikrRequestController from '../controllers/zikrRequest.controller.js';
 import {
   incrementSchema,
   batchIncrementSchema,
@@ -10,6 +11,7 @@ import {
   timeOfDaySchema,
   sessionsSchema,
 } from '../validation/zikr.schemas.js';
+import { submitZikrRequestSchema } from '../validation/zikrRequest.schemas.js';
 
 const router = Router();
 
@@ -42,5 +44,18 @@ router.delete('/types/:name', requireAuth, zikrController.removeTypeHandler);
 router.post('/reset', requireAuth, zikrController.resetZikrCounters);
 // DELETE /api/zikr/all — delete all zikr data for the authenticated user
 router.delete('/all', requireAuth, zikrController.deleteAllZikrData);
+
+// Community-suggested zikr/dua — submitted for admin review rather than
+// added directly, so the library stays hadith-verified (see zikrRequest.service.ts).
+router.post(
+  '/requests',
+  requireAuth,
+  validate(submitZikrRequestSchema),
+  zikrRequestController.submitHandler
+);
+router.get('/requests/mine', requireAuth, zikrRequestController.listMineHandler);
+router.post('/requests/:id/ack', requireAuth, zikrRequestController.ackHandler);
+// Public — admin-approved suggestions merged into the curated library display.
+router.get('/library', zikrRequestController.libraryHandler);
 
 export default router;
