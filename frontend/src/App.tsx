@@ -24,6 +24,7 @@ import UnsavedWarning from './components/UnsavedWarning.js';
 import GenderGate from './components/GenderGate.js';
 import DemoBanner from './components/DemoBanner.js';
 import AnnouncementBanner from './components/AnnouncementBanner.js';
+import NaturalLogModal from './components/ai/NaturalLogModal.js';
 import type { AuthUser } from './types/api.js';
 
 // `body { overflow-x: hidden }` (styles/global.css, added to stop mobile
@@ -81,6 +82,7 @@ const Landing = lazy(() => import('./pages/Landing.js'));
 const Sadaqah = lazy(() => import('./pages/Sadaqah.js'));
 const SadaqahDonate = lazy(() => import('./pages/SadaqahDonate.js'));
 const SadaqahThankYou = lazy(() => import('./pages/SadaqahThankYou.js'));
+const SadaqahVerify = lazy(() => import('./pages/SadaqahVerify.js'));
 const AdminSadaqah = lazy(() => import('./pages/AdminSadaqah.js'));
 const AdminZikrRequests = lazy(() => import('./pages/AdminZikrRequests.js'));
 const AdminHome = lazy(() => import('./pages/AdminHome.js'));
@@ -88,11 +90,11 @@ const AdminUsers = lazy(() => import('./pages/AdminUsers.js'));
 const AdminAccounts = lazy(() => import('./pages/AdminAccounts.js'));
 const AdminAuditLog = lazy(() => import('./pages/AdminAuditLog.js'));
 const AdminFeedback = lazy(() => import('./pages/AdminFeedback.js'));
-const AdminZikrAudio = lazy(() => import('./pages/AdminZikrAudio.js'));
 const AdminUserDetail = lazy(() => import('./pages/AdminUserDetail.js'));
 const AdminOpsHealth = lazy(() => import('./pages/AdminOpsHealth.js'));
 const AdminBroadcast = lazy(() => import('./pages/AdminBroadcast.js'));
 const AdminComposeEmail = lazy(() => import('./pages/AdminComposeEmail.js'));
+const NaseehPage = lazy(() => import('./pages/NaseehPage.js'));
 
 // Programmatic-SEO static pages (prayer-times/qibla/ramadan-calendar by
 // city, du'a library, adhkar, Hijri converter) — pre-rendered at build time
@@ -386,6 +388,11 @@ export default function App() {
     const onVisibility = () => {
       if (!document.hidden) {
         checkAndResetIfNewDay();
+        // Taps made just before the phone locked (or the installed app was
+        // backgrounded mid full-screen) may not have reached the server, since
+        // the keepalive flush at that moment can't refresh an expired token.
+        // Retry now that there's a live page and a fresh token available.
+        void useZikrStore.getState().flush();
         // A device waking from sleep/lock can leave the network stack briefly
         // unready while this tab's mount-time queries fire — they fail with a
         // connection error (net::ERR_CONNECTION_*), and since
@@ -650,7 +657,8 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
   }, [setUser, init, resetAll, hydrate, setAuthLoading]);
 
-  const { authLoading } = useAuthStore();
+  const { authLoading, aiEnabled } = useAuthStore();
+  const [quickLogOpen, setQuickLogOpen] = useState(false);
   const isAuthPage = ['/login', '/signup', '/auth/action'].includes(location.pathname);
   // Programmatic-SEO static pages (src/seo/) ship their own self-contained
   // header/breadcrumb/footer (see src/seo/components/Layout.tsx) — the app
@@ -917,6 +925,7 @@ export default function App() {
                 <Route path="/sadaqah" element={<Sadaqah />} />
                 <Route path="/sadaqah/donate" element={<SadaqahDonate />} />
                 <Route path="/sadaqah/thank-you" element={<SadaqahThankYou />} />
+                <Route path="/sadaqah/verify/:id" element={<SadaqahVerify />} />
                 <Route
                   path="/admin"
                   element={
@@ -980,14 +989,6 @@ export default function App() {
                   }
                 />
                 <Route
-                  path="/admin/zikr-audio"
-                  element={
-                    <AdminProtected>
-                      <AdminZikrAudio />
-                    </AdminProtected>
-                  }
-                />
-                <Route
                   path="/admin/audit-log"
                   element={
                     <AdminProtected>
@@ -1011,9 +1012,7 @@ export default function App() {
                   path="/admin/broadcast"
                   element={
                     <AdminProtected>
-                      <ServantProtected>
-                        <AdminBroadcast />
-                      </ServantProtected>
+                      <AdminBroadcast />
                     </AdminProtected>
                   }
                 />
@@ -1038,9 +1037,30 @@ export default function App() {
                 <Route path="/login" element={<AuthSignIn />} />
                 <Route path="/signup" element={<AuthSignUp />} />
                 <Route path="/auth/action" element={<AuthAction />} />
+                <Route path="/naseeh" element={<NaseehPage />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
+            {/* Floating ✨ quick-log button — visible on app pages except /naseeh (it has its own) and the zikr counter */}
+            {aiEnabled &&
+              !isAdminPage &&
+              !isSeoPage &&
+              !isAuthPage &&
+              location.pathname !== '/naseeh' &&
+              // The zikr counter is a tap-anywhere surface; a floating button in the
+              // corner would get hit by accident mid-count.
+              location.pathname !== '/zikr' && (
+                <>
+                  <button
+                    onClick={() => setQuickLogOpen(true)}
+                    aria-label="Quick log with a sentence"
+                    className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-brand-emerald shadow-lg shadow-brand-emerald/30 flex items-center justify-center text-xl hover:scale-110 active:scale-95 transition-transform"
+                  >
+                    ✨
+                  </button>
+                  {quickLogOpen && <NaturalLogModal onClose={() => setQuickLogOpen(false)} />}
+                </>
+              )}
           </div>
           {showFooter && <Footer />}
         </>

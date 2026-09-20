@@ -32,6 +32,7 @@ router.get(
   validate(emailDraftQuerySchema),
   adminSadaqahController.emailDraftHandler
 );
+router.get('/:id/receipt', adminSadaqahController.receiptHandler);
 // Verify/reject is the core day-to-day review job (mostly done by
 // ansar@bustandeen.com) — open to any admin, not owner-restricted.
 router.patch('/:id/verify', validate(verifyDonationSchema), adminSadaqahController.verifyHandler);

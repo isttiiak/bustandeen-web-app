@@ -102,6 +102,8 @@ export interface SendMailOptions {
    *  one conversation instead of three separate ones. */
   inReplyTo?: string;
   references?: string;
+  /** Files attached to the message (e.g. the signed sadaqah receipt PDF). */
+  attachments?: Array<{ filename: string; content: Buffer; contentType: string }>;
 }
 
 /**
@@ -131,6 +133,7 @@ export const sendMail = async (opts: SendMailOptions): Promise<string | null> =>
       messageId: opts.messageId,
       inReplyTo: opts.inReplyTo,
       references: opts.references,
+      attachments: opts.attachments,
     });
     return info.messageId ?? null;
   } catch (err) {

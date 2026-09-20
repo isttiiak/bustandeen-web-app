@@ -24,6 +24,7 @@ export interface ZikrRequest {
   source?: string;
   sourceUrl?: string;
   wantsAudio?: boolean;
+  audioAdded?: boolean;
   status: ZikrRequestStatus;
   adminNote?: string;
   reviewedAt?: string;

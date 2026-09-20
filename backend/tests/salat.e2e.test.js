@@ -151,6 +151,29 @@ describe('Salat API', () => {
     expect(unloggedYesterday.logged).toBe(false);
   });
 
+  test('GET /analytics does not grade days before tracking began as missed', async () => {
+    const tokenN = fakeJwt({ uid: 'salNew', email: 'salnew@test.dev', name: 'SalNew' });
+    const authN = (r) => r.set('Authorization', `Bearer ${tokenN}`);
+    await request(app).post('/api/auth/verify').send({ idToken: tokenN });
+
+    // Account was created just now, so a year-long window must collapse to
+    // "since signup" rather than count ~360 days nobody could have logged.
+    const res = await authN(request(app).get(`/api/salat/analytics?days=365&today=${today}`));
+    expect(res.status).toBe(200);
+    expect(res.body.periodDays).toBe(365);
+    expect(res.body.totalDays).toBeLessThanOrEqual(2);
+    expect(res.body.missedCount).toBeLessThanOrEqual(10);
+  });
+
+  test('GET /analytics and /debt/history accept an all-time window', async () => {
+    const a = await auth(request(app).get(`/api/salat/analytics?days=3650&today=${today}`));
+    expect(a.status).toBe(200);
+    const h = await auth(request(app).get(`/api/salat/debt/history?days=3650&today=${today}`));
+    expect(h.status).toBe(200);
+    // buckets cover the whole window in at most 12 bars
+    expect(h.body.weeks.length).toBeLessThanOrEqual(12);
+  });
+
   test('GET /debt/history returns weeks array', async () => {
     const res = await auth(request(app).get('/api/salat/debt/history?days=30'));
     expect(res.status).toBe(200);

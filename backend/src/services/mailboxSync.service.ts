@@ -1,6 +1,12 @@
 import MailboxMessage from '../models/MailboxMessage.js';
 import MailboxSyncState from '../models/MailboxSyncState.js';
-import { fetchFromImap, getImapConfig, type FetchedMail, type MailFetcher } from './mailboxImap.js';
+import {
+  fetchFromImap,
+  getImapConfig,
+  isMailboxSyncEnabled,
+  type FetchedMail,
+  type MailFetcher,
+} from './mailboxImap.js';
 
 const STATE_KEY = 'inbox';
 const LOCK_MS = 60_000;
@@ -49,6 +55,7 @@ export interface SyncResult {
 }
 
 export interface SyncStatus {
+  enabled: boolean;
   configured: boolean;
   lastSyncAt: Date | null;
   lastError: string | null;
@@ -57,6 +64,7 @@ export interface SyncStatus {
 export const getSyncStatus = async (): Promise<SyncStatus> => {
   const state = await MailboxSyncState.findOne({ key: STATE_KEY });
   return {
+    enabled: isMailboxSyncEnabled(),
     configured: !!getImapConfig(),
     lastSyncAt: state?.lastSyncAt ?? null,
     lastError: state?.lastError ?? null,

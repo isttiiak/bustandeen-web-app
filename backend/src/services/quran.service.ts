@@ -180,6 +180,69 @@ export async function getHistory(
   }));
 }
 
+export interface QuranRangeResult {
+  history: Array<{ date: string; ayat: number; pages: number; units: number }>;
+  stats: {
+    readSec: number;
+    listenSec: number;
+    readSessions: number;
+    listenSessions: number;
+    activeDays: number;
+    totalUnits: number;
+  };
+}
+
+/** Everything the Quran analytics page shows for one date range (inclusive
+ * `from`..`to`): the daily units (only days with activity are returned) plus
+ * time and session totals split into reading vs listening. Unlike getHistory
+ * this takes an explicit start AND end, so a past month or "all time" is a real
+ * window rather than "the last N days ending today". */
+export async function getRange(
+  userId: string,
+  from: string,
+  to: string
+): Promise<QuranRangeResult> {
+  const logs = await QuranLog.find({ userId, date: { $gte: from, $lte: to } })
+    .select('date pages ayat')
+    .sort({ date: 1 });
+  const history = logs.map((l) => ({
+    date: l.date,
+    ayat: l.ayat ?? 0,
+    pages: l.pages ?? 0,
+    units: unitsOf(l),
+  }));
+
+  const rows = (await QuranReadingSession.aggregate([
+    {
+      $match: {
+        userId,
+        date: { $gte: from, $lte: to },
+        activeDurationSec: { $gte: MIN_SESSION_SEC_TO_LIST },
+      },
+    },
+    {
+      $group: {
+        _id: { $ifNull: ['$source', 'read'] },
+        totalSec: { $sum: '$activeDurationSec' },
+        sessions: { $sum: 1 },
+      },
+    },
+  ])) as Array<{ _id: string; totalSec: number; sessions: number }>;
+  const bySource = (src: string) => rows.find((r) => r._id === src);
+
+  return {
+    history,
+    stats: {
+      readSec: Math.round(bySource('read')?.totalSec ?? 0),
+      listenSec: Math.round(bySource('listen')?.totalSec ?? 0),
+      readSessions: bySource('read')?.sessions ?? 0,
+      listenSessions: bySource('listen')?.sessions ?? 0,
+      activeDays: history.filter((h) => h.units > 0).length,
+      totalUnits: history.reduce((sum, h) => sum + h.units, 0),
+    },
+  };
+}
+
 export interface QuranProfileUpdate {
   dailyGoalPages?: number;
   currentPage?: number;

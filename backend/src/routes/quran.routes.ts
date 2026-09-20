@@ -14,6 +14,7 @@ import {
   quranDuaBookmarkSchema,
   quranSessionSaveSchema,
   quranSessionsQuerySchema,
+  quranRangeSchema,
   quranTimeOfDaySchema,
 } from '../validation/quran.schemas.js';
 
@@ -35,6 +36,9 @@ router.post(
 
 // GET /api/quran/history?days=&today= — daily units for analytics
 router.get('/history', requireAuth, validate(quranHistorySchema), quranController.getHistory);
+
+// GET /api/quran/range?from=&to= — analytics window: daily units + read/listen time totals
+router.get('/range', requireAuth, validate(quranRangeSchema), quranController.getRange);
 
 // GET /api/quran/tafsir?surah=&ayah=&editionId= — authentic tafsir (quran.com)
 router.get('/tafsir', requireAuth, validate(quranTafsirSchema), quranController.getTafsir);

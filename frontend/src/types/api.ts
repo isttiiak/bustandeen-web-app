@@ -81,6 +81,8 @@ export interface ZikrSession {
   end: string;
   total: number;
   perType: Record<string, number>;
+  /** Counts typed in afterwards ("Log missed counts"): no real clock time. */
+  manual?: boolean;
 }
 
 export interface ZikrSessionsResponse {

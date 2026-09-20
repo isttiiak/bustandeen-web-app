@@ -104,6 +104,24 @@ export function useDeleteDonation() {
   });
 }
 
+/** Fetches the signed receipt PDF with the admin's auth header (a plain link
+ *  can't carry it) and hands it to the browser as a download. */
+export function useDownloadReceipt() {
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const res = await api.get<Blob>(`/api/admin/sadaqah/${id}/receipt`, {
+        responseType: 'blob',
+      });
+      const url = URL.createObjectURL(res.data);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Bustandeen-Sadaqah-Receipt-${id.slice(-6).toUpperCase()}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+  });
+}
+
 export function useExpenses() {
   return useQuery<SadaqahExpense[]>({
     queryKey: ['admin', 'sadaqah', 'expenses'],

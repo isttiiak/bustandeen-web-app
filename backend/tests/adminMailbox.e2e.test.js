@@ -43,6 +43,7 @@ let ansarToken;
 
 describe('Founder mailbox sync', () => {
   beforeAll(async () => {
+    process.env.MAILBOX_SYNC_ENABLED = '1';
     process.env.ISTIAK_IMAP_USER = 'founder@bustandeen.test';
     process.env.ISTIAK_IMAP_PASS = 'x';
     process.env.ZOHO_IMAP_HOST = 'imap.example.test';
@@ -88,6 +89,25 @@ describe('Founder mailbox sync', () => {
     expect(state.lastUid).toBe(5);
     expect(state.uidValidity).toBe('7');
     expect(state.lastError).toBeNull();
+  });
+
+  test('sync is off unless MAILBOX_SYNC_ENABLED=1, and never calls the fetcher', async () => {
+    process.env.MAILBOX_SYNC_ENABLED = '0';
+    try {
+      let called = false;
+      const res = await syncMailbox(async () => {
+        called = true;
+        return { uidValidity: '1', mails: [], maxUid: 0 };
+      });
+      expect(res.skipped).toBe('not-configured');
+      expect(called).toBe(false);
+      const list = await request(app)
+        .get('/api/admin/feedback/mailbox')
+        .set('X-Admin-Token', servantToken);
+      expect(list.body.sync.enabled).toBe(false);
+    } finally {
+      process.env.MAILBOX_SYNC_ENABLED = '1';
+    }
   });
 
   test('a failing fetch is recorded, not thrown, and releases the lock', async () => {

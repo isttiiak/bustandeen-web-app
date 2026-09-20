@@ -2,6 +2,167 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.52.0 - Signed sadaqah receipts and "Download all my data" - 2026-09-20
+
+### Added
+
+- **Signed PDF receipt for every verified sadaqah.** When a donation is verified, the confirmation email now carries a colour, vector-drawn receipt (amount, who gave, on behalf of, transaction ID, dates, verified seal) set in the same El Messiri title font as the app, with `sadaqah@bustandeen.com` and "Dhaka, Bangladesh" in the footer. The email text no longer repeats the payment details; it points to the attachment.
+- **Tamper-evident signature and QR check.** Each receipt carries a signature over its amount, transaction ID and verification time, and a QR code to a public page (`/sadaqah/verify/...`) that says whether the receipt is genuine. A changed amount or ID no longer verifies. It shows only the receipt number, amount and date, never the name or transaction ID.
+- **Admins can download a receipt** from the Sadaqah admin submissions table ("Receipt PDF" on verified rows).
+- **Settings > "Download all my data".** One JSON with everything held about you across every feature (profile, zikr, salat and kaza, fasting, Quran, hifz, Rayhanah, friends as counts, messages you sent us, your sadaqah submissions). It is a read-only copy for your own records; the existing "Full backup" is still the one to restore from.
+
+### Notes
+
+- New optional env var `RECEIPT_SIGNING_KEY`. If unset, the key is derived from `FIELD_ENCRYPTION_KEY`, so nothing needs to be set for this to work. Once receipts are sent, do not change it or older receipts stop verifying.
+- This is an HMAC signature checked by Bustandeen, not a certificate signature that a PDF reader marks as "signed".
+
+## v5.51.2 - Friends: honest Noor bars and clearer explanation - 2026-09-20
+
+### Fixed
+
+- **Noor bars now show Noor out of 100.** They were scaled to the leader, so the top friend always had a full bar even at 33 Noor (Today and This week).
+
+## v5.51.4 - Friends: Noor explanation - 2026-09-20
+
+### Changed
+
+- **"What is Noor" explains the weekly average and "usually".** The week line says days with nothing count 0 and what "active X of Y days" means. The "usually" line says it is the average of the last 14 active days (shown from 3) and that bars show Noor out of 100.
+
+_v5.51.3 was a version bump only, with no code change._
+
+## v5.51.1 - Friends: the "This week" board now shows week numbers - 2026-09-20
+
+### Fixed
+
+- **"This week" no longer shows today's chips under a weekly Noor.** The score was the Friday-to-now daily average but the row still showed today's prayers, dhikr and fasting, which made the number look random. On "This week" each row now shows the week so far: prayers done, dhikr total, fasts, āyāt read, plus "daily average · active X of Y days" under the bar. The streak chip is unchanged. "Today" is unchanged.
+- Sisters whose days were excused by the cycle still look like any other active day in the weekly totals (same substitution as today's chips).
+
+## v5.51.0 - Zikr: own-list consent, audio tracker removed, istighfar sources fixed - 2026-09-20
+
+### Added
+
+- **Two ways to add a zikr in Settings.** The request form now has "Request for the library" (reviewed, shared with everyone) and "Add to my list only". The second opens a consent box: the zikr is added privately, nobody reviews it, and the user takes responsibility for it. The box also offers "Make request for review" instead, and a red-bordered cross to back out.
+- **Audio status on approval.** When approving a zikr request the admin sees whether the user asked for audio and can tick "audio has been added". If ticked, the approval email gets one extra line saying so. Approved requests show whether audio was added. The admin notification also says when audio was requested.
+- **Custom zikr deletions now sync across devices.** The server's list is the source of truth for non-built-in zikr, so a custom type removed on one device no longer comes back on another.
+
+### Changed
+
+- **The counter's "+" form is now the same form as Settings.** Same fields, same "Request for the library" / "Add to my list only" buttons and the same consent box (one shared component).
+- **Counter header row fits small screens.** The name truncates, and the dropdown, "+" and audio buttons stay on one line at 320px. The edit/remove list moved to the top of the counter's settings drawer.
+- **"Log missed counts" no longer lets you create a new zikr.** Pick from your existing list only.
+- **Two istighfar entries corrected.** "Astaghfirullahal-Azim" used the wording of Tirmidhi 3577 under the Abu Dawud 1517 reference (which has no "al-Azim"). There are now two entries: Abu Dawud 1517 without "al-Azim" (Sahih), and the full "Astaghfirullahal-Azim alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh" from Tirmidhi 3577 (Hasan). Anyone who had the old name keeps it and sees the new card.
+
+### Removed
+
+- **Admin "Zikr audio tracker"**, its API routes, model and the `audioUrl` fields. The wrong link stored for Astaghfirullahal-Azim was deleted from the database (`npx tsx src/scripts/removeZikrAudioLinks.ts`, already run once). Audio stays bundled in the app.
+
+## v5.50.1 - Update emails greet everyone, not one name - 2026-09-21
+
+### Changed
+
+- **Update emails no longer use `{name}`.** A bulk update goes to a whole group, so every recipient gets the same message, starting from "Assalamu alaikum, Bustandeen family," followed by the shared closing lines.
+
+## v5.50.0 - Custom recipients for update emails, Broadcast open to Ansars - 2026-09-21
+
+### Added
+
+- **Custom recipients** on the Update emails tab: switch from "Choose a group" to "Custom recipients" and type addresses separated by commas (handy for test sends and one-off mails). Addresses are checked and de-duplicated, an address that belongs to an account borrows its first name for `{name}`, and the send is recorded in the history like any other.
+
+### Changed
+
+- **Broadcast is now open to both Servant and Ansar accounts** (the in-app banner and the update emails, including the nav link and the admin home card).
+- **Removed the template dropdown** from Update emails. Every message now starts from the standard greeting and closing lines instead, which is all a one-off update needs.
+
+## v5.49.0 - Update emails from the admin panel, persistent broadcast banner, Noor tweaks - 2026-09-20
+
+### Added
+
+- **Update emails (admin > Broadcast > "Update emails" tab, Servant only).** Send an update from ansar@bustandeen.com to brothers, sisters or all, with a choice for accounts that have no gender set (skip, include all, or pick from a list). Templates fill the audience, subject and a bilingual message (Noor v2 for brothers and for sisters); the shared closing lines and "Nourish Your Deen" are added automatically and `{name}` becomes each person's first name. Sending happens in small chunks with a progress bar, and every send is kept in a history with per-recipient status, the full text and a "Retry failed" button. Disabled accounts are never emailed.
+
+### Changed
+
+- **Broadcast banner no longer disappears forever on one tap.** Crossing it hides it only until the next reload; after three crossings it rests for 24 hours and comes back. It now shows the heading, a couple of fading lines of the message and a "See details" link that opens the full text with **Cancel** and **Close permanently** (the only way to remove it for good, per device). Works on the installed mobile app where only the heading used to fit.
+- **Noor:** hifz review is removed from every calculation (extras are now a completed fast, nafl prayer, ṣalawāt/istighfār; on excused days ṣalawāt/istighfār is worth 10). Ties (everyone is 0 at the start of a day) are now broken by usual Noor and then streak, so a 72-day streak no longer sits below someone who has just begun. The prayer chip reads x/5.
+- **"What is Noor" and the About page no longer mention Rayhanah to brothers** (the public Privacy page still explains it).
+
+## v5.48.0 - Noor v2, weekly leaderboard, updated Privacy and About - 2026-09-20
+
+### Changed
+
+- **Noor v2** (one formula for today, past days, the weekly view and the all-time total). A day now starts at 0 for everyone and only goes up.
+  - Prayers 50 (10 per fard, not pro-rated by the clock, so the score no longer falls as prayer times pass), zikr 15 and Quran 15 (against your own daily goals), steadiness 10, extras 10.
+  - Steadiness is 1 per day of your active run up to 10, and only once you have done something today, so a long streak is no longer a free head start. Extras are 5 each, best two of: a completed fast, nafl prayer, hifz review, ṣalawāt/istighfār. 100 is reachable without fasting; an "intended" fast no longer scores.
+  - Excused (Rayhanah) days move the prayer weight to zikr 40, Quran 40, steadiness 10, extras 10 (privacy behaviour unchanged).
+  - Ties are broken by acts done today, not by streak. All-time Noor is recomputed with the same formula, so numbers shift once.
+- **Leaderboard:** new Today / This week toggle (week = average daily Noor since Friday, a day with nothing counts 0), and each row shows "above their usual" (or their usual) so everyone races their own best.
+- **Privacy Policy rewritten** (the last version was July 2025): what is stored now (timing data, Rayhanah encryption and body stats, sadaqah details), what friends see (the chips, the opt-in cycle yes/no), the optional Naseeh AI and exactly what it sends, third-party services, retention, and your controls. English and Bengali.
+- **About page** lists Hifz, Rayhanah and Naseeh and the current Noor description.
+
+## v5.47.0 - Offline listening timer, Rayhanah cycle page tidy-up, leaderboard chips - 2026-09-20
+
+### Fixed
+
+- **Listening offline no longer runs the session timer.** In the installed app with no connection, pressing Play left the button buffering forever but the session clock kept counting and a session appeared in history. Time now only counts while sound is actually playing (not while buffering, stalled, errored or after a rejected play).
+- **"5/0 prayers" on the leaderboard.** Between midnight and Fajr the tracking day is still yesterday, but the clock said no prayer was due yet. All five are now due for that day, and the chip can no longer show fewer prayers due than done.
+- **Friends who share their cycle status** no longer show the prayer and fasting chips (they were paused/synthetic for her and only confusing).
+
+### Changed
+
+- **Rayhanah Cycle page**: madhab choice and discreet mode moved into the settings drawer; the cycle history list and the three average/period/cycles KPI cards were removed (Analytics has them); "Your fiqh companion" is now at the bottom of the page.
+- **Cycle history on Analytics** gained the edit button (adjust dates, or clear the end date to reopen a cycle) beside delete. The edit dialog is now a shared component.
+
+## v5.46.0 - Audit of the v5.43-5.45 batch: analytics ranges, session history, Rayhanah settings, quick log - 2026-09-20
+
+A second pass over everything added in v5.43.0 to v5.45.0 (whose changelog entries were never written; that work is summarised at the bottom). Logic errors found and fixed:
+
+### Fixed
+
+- **Salat analytics range now behaves like a real window.**
+  - Debt chart followed "today" instead of the selected period, so a past month charted the wrong days. It now ends on the period's last day.
+  - New accounts were graded on days before they existed (a fresh account looked like hundreds of missed prayers on 1y). Analytics now start at account creation, first log or last reset, whichever is latest.
+  - The 90d / 1y views only ever showed their last 12 weeks. Trend charts now use up to 12 buckets that cover the whole window.
+  - Added 7d and All time (the server accepted at most 365 days). The reset note showed raw `{{actual}}` placeholders and is now filled in.
+- **Quran analytics "All time" returned an error** (the request asked for 3650 days, the API allowed 365). The page now asks for an explicit from/to window, so a past month is that month and all-time is charted per month. The "Time of day" card no longer carries the "Quran sessions" title.
+- **Listening session showed 7:06 AM to 10:30 AM for 4 minutes** after falling asleep with audio playing. The end time was the moment the page was left, not the last moment audio actually played. Sessions now end at the last active second.
+- **Zikr session history and manual logs.**
+  - "Log missed counts" no longer pretends to happen at 12:00 pm. Those counts are stored as untimed manual entries: they count for the day and appear as one "Manual log" row, but never as a clock time and never in the time-of-day chart.
+  - Tasbih and Ayatul Kursi added automatically by the salat tracker (and "set count" corrections) count toward totals but are no longer logged as a zikr session, so ticking 303 zikr after salat no longer looks like a burst of counting.
+  - Sessions record when tapping really began and ended instead of when the request was sent, and a failed sync retries on its own and when the app returns to the foreground (installed full-screen use could leave taps unsent until the next tap).
+- **Quick log accuracy.** Counts land in the tracking day the note is about (Fajr-aware), duplicate dhikr lines merge, names match the user's existing dhikr case-insensitively, and a brand-new name is flagged "new dhikr" in the preview. Re-marking a prayer already done no longer wipes its tasbih / Ayatul Kursi ticks or timing. "Yesterday" / "last night" is understood (with a Today / Yesterday switch in the preview), "1 juz" is about 208 ayat instead of 1 page, and "half a page" is 5 ayat instead of 10. The floating button is hidden on the zikr counter so it can't be hit mid-count.
+- **Missing translations.** About 30 strings had no entry in either language and fell back to English (zikr analytics stat cards and headings, Naseeh page, BMI card, salat journey title). Salat chart info text updated for the new bucketing, in Bengali too.
+
+### Added
+
+- **Rayhanah settings drawer** (shared by the Cycle and Analytics pages): height and weight (metric or ft/lbs, remembered), remove-my-data button, madhab, and a switch to hide the BMI card. Height and weight stay AES-256-GCM encrypted; clearing removes the ciphertext. BMI card notes that BMI isn't reliable in pregnancy, and its category wording is gentler.
+- **Quran analytics KPIs:** time reading, time listening, sessions (read / listen) and active days for the selected range. The range picker (this month by default, last 30 days, all time, any month) now drives the chart and the KPIs.
+- **Zikr session history note** explaining what is and isn't a timed session.
+- New regression tests for session/manual rules, salat range floor and all-time window, Quran range totals and quick-log commit/parse.
+
+### Summary of v5.43.0 - v5.45.0 (previously unlogged)
+
+- v5.43.0: Rayhanah back/forward day navigation for "How are you today?" during an active period; encrypted height/weight (BMI) storage; Quran range picker and idle-session note.
+- v5.44.0: dedicated Naseeh AI page, floating quick-log button, ⓘ explanations on Salat, Zikr and Quran charts with Bengali translations.
+- v5.45.0: right-side drawer for BMI, BMI card in Rayhanah analytics, Naseeh moved to the profile menu and removed from Home.
+
+## v5.42.3 - Reading timer pauses while the share modal is open - 2026-09-19
+
+### Changed
+
+- **Designing an āyah share card no longer counts as reading time.** The Quran Reader's session timer now pauses while the share modal is open and resumes when it closes. The reading-session hook gained a `paused` option for this.
+
+## v5.42.2 - Āyah share card: long āyahs fit the frame - 2026-09-19
+
+### Fixed
+
+- **Long āyahs (e.g. 2:282) no longer end up tiny, cut off and lost in empty space.** The card now measures its own text and fits it to the frame instead of guessing from character counts. The Arabic is always shown in full and as large as fits. If everything can't fit, it keeps the Arabic plus the first translation (dropping transliteration and extra translations), and only then trims the translation with a fade. Translations keep a readable minimum size even when the Arabic has to shrink. Short and medium āyahs are unchanged.
+
+## v5.42.1 - Founder mailbox moved to Email Istiak, sync paused - 2026-09-19
+
+### Changed
+
+- **Founder mailbox moved** from the Feedback page to the Email Istiak (compose) page as a "Founder mailbox" tab. The Feedback page is back to app-form messages only.
+- **Mailbox sync is now off by default.** Zoho's free plan has no IMAP, so nothing connects to Zoho unless `MAILBOX_SYNC_ENABLED=1` is set on the server. While off, the tab shows a "paused" notice and lists only what was already synced. To be enabled once a paid Zoho plan is added.
+
 ## v5.42.0 - Founder mailbox sync + calmer email copy - 2026-09-19
 
 ### Added

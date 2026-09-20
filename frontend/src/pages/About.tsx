@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { translateReference } from '../utils/localeReference.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { useAuthStore } from '../store/useAuthStore.js';
 
 const FEATURE_KEYS = [
   { emoji: '📿', key: 'zikrCounter' },
@@ -11,13 +12,18 @@ const FEATURE_KEYS = [
   { emoji: '🕐', key: 'prayerTimes' },
   { emoji: '🌙', key: 'fastingTracker' },
   { emoji: '📖', key: 'quranHabit' },
+  { emoji: '🧠', key: 'hifzTracker' },
+  { emoji: '🌸', key: 'rayhanah' },
+  { emoji: '✨', key: 'naseeh' },
   { emoji: '🤝', key: 'friends' },
 ];
 
 export default function About() {
   const { t, i18n } = useTranslation();
 
-  const features = FEATURE_KEYS.map((f) => ({
+  // Rayhanah is never surfaced to a brother's account; the public Privacy page is the exception.
+  const isMale = useAuthStore((s) => s.user?.gender === 'male');
+  const features = FEATURE_KEYS.filter((f) => !(isMale && f.key === 'rayhanah')).map((f) => ({
     emoji: f.emoji,
     title: t(`about.feature.${f.key}.title`),
     desc: t(`about.feature.${f.key}.desc`),

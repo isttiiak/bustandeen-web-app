@@ -64,6 +64,21 @@ export const emailDraftHandler = async (
   }
 };
 
+export const receiptHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { pdf, filename } = await sadaqahService.getReceiptById(paramString(req.params.id));
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(Buffer.from(pdf));
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};
+
 export const verifyHandler = async (
   req: Request,
   res: Response,

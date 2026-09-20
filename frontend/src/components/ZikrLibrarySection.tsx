@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useAddZikrType, useDeleteZikrType, useZikrTypes } from '../hooks/useZikrTypes.js';
 import {
-  useSubmitZikrRequest,
   useGlobalZikrLibrary,
   type GlobalZikrCategory,
   type GlobalZikrLibraryItem,
@@ -21,6 +20,7 @@ import {
   ZIKR_LIBRARY,
   PREDEFINED_TYPES,
   LEGACY_LIBRARY_NAMES,
+  LEGACY_NAME_ALIASES,
   zikrDisplayName,
   type LibraryZikr,
 } from '../utils/zikrLibrary.js';
@@ -29,6 +29,7 @@ import { formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import EditZikrModal from './EditZikrModal.js';
+import ZikrSuggestForm from './ZikrSuggestForm.js';
 
 /**
  * 📿 The zikr library (Istiak's plan) — a curated, categorized, hadith-
@@ -108,7 +109,6 @@ export default function ZikrLibrarySection() {
   const deleteZikrType = useDeleteZikrType();
   const { data: fetchedTypes } = useZikrTypes();
   const { data: globalLibraryItems } = useGlobalZikrLibrary();
-  const submitZikrRequest = useSubmitZikrRequest();
   // Start fully collapsed — pre-opening 'salawat' made the section land
   // half-scrolled with one category already sprawling.
   const [openCat, setOpenCat] = useState<string | null>(null);
@@ -137,16 +137,14 @@ export default function ZikrLibrarySection() {
     setPreviewPlaying(name);
   };
 
-  // Request-a-zikr form — same fields as before, but submits for admin
-  // review instead of adding directly (see zikrRequest.service.ts).
-  const [reqName, setReqName] = useState('');
-  const [reqArabic, setReqArabic] = useState('');
-  const [reqMeaning, setReqMeaning] = useState('');
-  const [reqSource, setReqSource] = useState('');
-  const [reqSourceUrl, setReqSourceUrl] = useState('');
-  const [reqWantsAudio, setReqWantsAudio] = useState(false);
-
-  const inList = (name: string) => types.some((n) => n.toLowerCase() === name.toLowerCase());
+  const inList = (name: string) =>
+    types.some((n) => {
+      const lower = n.toLowerCase();
+      return (
+        lower === name.toLowerCase() ||
+        LEGACY_NAME_ALIASES[lower]?.toLowerCase() === name.toLowerCase()
+      );
+    });
 
   // Group the admin-approved community library by category (falling back to
   // an explicit "Uncategorized" bucket) instead of one flat list, matching
@@ -241,43 +239,6 @@ export default function ZikrLibrarySection() {
         setAdding(null);
       },
     });
-  };
-
-  const submitRequest = () => {
-    const name = reqName.trim();
-    if (!name) return;
-    submitZikrRequest.mutate(
-      {
-        name,
-        arabic: reqArabic.trim() || undefined,
-        meaning: reqMeaning.trim() || undefined,
-        source: reqSource.trim() || undefined,
-        sourceUrl: reqSourceUrl.trim() || undefined,
-        wantsAudio: reqWantsAudio,
-      },
-      {
-        onSuccess: () => {
-          toast.success(
-            t(
-              'zikrLibrary.requestSubmitted',
-              'Thank you — we’ll review "{{name}}" and add it soon, in shā’ Allāh. 🌱',
-              { name }
-            ),
-            { id: 'lib-request', duration: 5000 }
-          );
-          setReqName('');
-          setReqArabic('');
-          setReqMeaning('');
-          setReqSource('');
-          setReqSourceUrl('');
-          setReqWantsAudio(false);
-        },
-        onError: () =>
-          toast.error(t('zikrLibrary.requestFail', 'Could not submit — try again.'), {
-            id: 'lib-request',
-          }),
-      }
-    );
   };
 
   return (
@@ -528,80 +489,7 @@ export default function ZikrLibrarySection() {
       {/* Request a new zikr — submitted for admin review, not added directly,
           so the library stays hadith-verified. */}
       <div className="rounded-2xl border border-brand-emerald/10 bg-white/5 p-4">
-        <p className="text-white/60 text-xs font-bold mb-1">
-          {t('zikrLibrary.requestOwn', '🌱 Suggest a zikr or dua')}
-        </p>
-        <p className="text-white/30 text-[11px] mb-3">
-          {t(
-            'zikrLibrary.requestOwnHint',
-            'Only the name is required — an Ansar will review it (with a scholar if needed) and fill in the rest before it joins the library. Anything else you can tell us helps verify it faster.'
-          )}
-        </p>
-        <div className="space-y-2">
-          <input
-            type="text"
-            placeholder={t('zikrLibrary.namePlaceholder', 'Name — e.g. Rabbi zidni ilma *')}
-            aria-label={t('zikrLibrary.nameLabel', 'Zikr name')}
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
-            value={reqName}
-            maxLength={100}
-            onChange={(e) => setReqName(e.target.value)}
-          />
-          <input
-            type="text"
-            dir="rtl"
-            placeholder={t('zikrLibrary.arabicPlaceholder', 'Arabic — رَبِّ زِدْنِي عِلْمًا')}
-            aria-label={t('zikrLibrary.arabicLabel', 'Arabic text')}
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl font-serif"
-            value={reqArabic}
-            onChange={(e) => setReqArabic(e.target.value)}
-          />
-          <input
-            type="text"
-            placeholder={t(
-              'zikrLibrary.meaningPlaceholder',
-              'Meaning — e.g. My Lord, increase me in knowledge (optional)'
-            )}
-            aria-label={t('zikrLibrary.meaningLabel', 'Meaning')}
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
-            value={reqMeaning}
-            onChange={(e) => setReqMeaning(e.target.value)}
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <input
-              type="text"
-              placeholder={t('zikrLibrary.refPlaceholder', 'Reference — e.g. Quran 20:114')}
-              aria-label={t('zikrLibrary.refLabel', 'Reference')}
-              className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl text-xs"
-              value={reqSource}
-              onChange={(e) => setReqSource(e.target.value)}
-            />
-            <input
-              type="text"
-              placeholder={t('zikrLibrary.linkPlaceholder', 'Link — https://quran.com/20/114')}
-              aria-label={t('zikrLibrary.linkLabel', 'Reference link')}
-              className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl text-xs"
-              value={reqSourceUrl}
-              onChange={(e) => setReqSourceUrl(e.target.value)}
-            />
-          </div>
-          <label className="flex items-center gap-2 text-white/50 text-xs px-1">
-            <input
-              type="checkbox"
-              className="checkbox checkbox-xs"
-              checked={reqWantsAudio}
-              onChange={(e) => setReqWantsAudio(e.target.checked)}
-            />
-            {t('zikrLibrary.wantsAudio', "Want an audio recitation for this, if it's added?")}
-          </label>
-          <button
-            className="btn btn-sm w-full rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald to-brand-info"
-            disabled={!reqName.trim() || submitZikrRequest.isPending}
-            onClick={submitRequest}
-          >
-            {submitZikrRequest.isPending ? '…' : t('zikrLibrary.makeRequest', 'Make request')}
-          </button>
-        </div>
+        <ZikrSuggestForm />
 
         {/* Your own custom tracker labels (from the counter's "+" add) —
             personal to your counter, unrelated to the shared library above. */}

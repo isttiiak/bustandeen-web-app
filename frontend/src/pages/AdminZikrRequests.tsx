@@ -56,6 +56,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
     virtue: '',
     category: 'uncategorized' as GlobalZikrCategory,
   });
+  const [audioAdded, setAudioAdded] = useState(false);
 
   const startReview = (type: 'approving' | 'rejecting') => {
     setMode(type);
@@ -69,6 +70,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
     setMode('idle');
     setEmailText('');
     setAdminNote('');
+    setAudioAdded(false);
   };
 
   // The review decision (approve/reject) always goes through regardless of
@@ -95,7 +97,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
     )
       return;
     approve.mutate(
-      { id: request._id, ...form, emailBody: emailText.trim() },
+      { id: request._id, ...form, audioAdded, emailBody: emailText.trim() },
       { onSuccess: warnIfEmailFailed }
     );
   };
@@ -156,8 +158,12 @@ function RequestCard({ request }: { request: ZikrRequest }) {
         </a>
       )}
       {request.wantsAudio && (
-        <p className="text-white/30 text-[10px]">
+        <p className="text-brand-gold/70 text-[11px] font-bold">
           {t('adminZikr.wantsAudio', '🔊 Requester would like an audio recitation for this')}
+          {request.status === 'approved' &&
+            (request.audioAdded
+              ? ` · ${t('adminZikr.audioDone', 'audio added')}`
+              : ` · ${t('adminZikr.audioNotYet', 'audio not added yet')}`)}
         </p>
       )}
 
@@ -287,6 +293,32 @@ function RequestCard({ request }: { request: ZikrRequest }) {
               </option>
             ))}
           </select>
+          <label className="flex items-start gap-2 text-white/60 text-xs pt-1">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-xs mt-0.5"
+              checked={audioAdded}
+              onChange={(e) => setAudioAdded(e.target.checked)}
+            />
+            <span>
+              {t(
+                'adminZikr.audioAddedCheck',
+                'Audio recitation has been added to the app for this zikr'
+              )}
+              {request.wantsAudio && (
+                <span className="text-brand-gold/70">
+                  {' '}
+                  ({t('adminZikr.audioRequested', 'requested')})
+                </span>
+              )}
+              <span className="block text-white/30 text-[10px]">
+                {t(
+                  'adminZikr.audioAddedHint',
+                  'Adds one line about the audio above the sign-off of the email.'
+                )}
+              </span>
+            </span>
+          </label>
           <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold pt-1">
             {t('adminZikr.emailToUser', 'Email to the requester (editable)')}
           </p>

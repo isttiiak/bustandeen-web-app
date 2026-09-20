@@ -11,6 +11,7 @@ interface RequestData {
   source?: string;
   sourceUrl?: string;
   userEmail?: string;
+  wantsAudio?: boolean;
 }
 
 /**
@@ -38,6 +39,7 @@ export const zikrRequestNotifyAdminEmail = (
     d.meaning ? `Meaning: ${d.meaning}` : null,
     d.source ? `Source: ${d.source}` : null,
     d.sourceUrl ? `Link: ${d.sourceUrl}` : null,
+    d.wantsAudio ? `Audio recitation: requested` : null,
     d.userEmail ? `Submitted by: ${d.userEmail}` : null,
     ``,
     `Review it at https://bustandeen.com/admin/zikr-requests`,
@@ -84,6 +86,11 @@ export const zikrRequestApprovedDraft = (d: { name: string }): string =>
  * id/link isn't known) until approval actually runs. */
 export const zikrLibraryLinkLine = (libraryItemId: string): string =>
   `You can see it here: https://bustandeen.com/settings#zikr-lib-${libraryItemId}`;
+
+/** Added above the sign-off only when the admin marked the audio as done on
+ * approval. Not editable in the draft, for the same reason as the link line. */
+export const zikrAudioAddedLine = (): string =>
+  'A recitation audio has also been added for this zikr, so you can listen to it in the app.';
 
 /** Editable draft for the rejection case. Kept gentle: authenticity checks
  * on religious text are a real reason to say no, not a judgement on intent. */

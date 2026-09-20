@@ -46,6 +46,7 @@ export const approveZikrRequestSchema = z.object({
     grade: z.string().trim().max(200).optional(),
     virtue: z.string().trim().max(1000).optional(),
     category: zikrCategorySchema.optional(),
+    audioAdded: z.boolean().optional(),
     emailBody: z.string().trim().min(1).max(5000),
   }),
 });
@@ -85,25 +86,5 @@ export const updateLibraryItemSchema = z.object({
 export const libraryItemIdParamSchema = z.object({
   params: z.object({
     id: z.string().min(1),
-  }),
-});
-
-const audioUrlField = z.string().trim().min(1).max(500).url();
-
-export const setCuratedAudioSchema = z.object({
-  params: z.object({
-    name: z.string().trim().min(1).max(100),
-  }),
-  body: z.object({
-    audioUrl: audioUrlField,
-  }),
-});
-
-export const setLibraryItemAudioSchema = z.object({
-  params: z.object({
-    id: z.string().min(1),
-  }),
-  body: z.object({
-    audioUrl: audioUrlField,
   }),
 });

@@ -111,7 +111,7 @@ describe('Sadaqah admin API', () => {
     expect(found).toBeTruthy();
   });
 
-  test('email draft: verified draft includes payment details, rejected draft has a reason placeholder', async () => {
+  test('email draft: verified draft points to the attached receipt, rejected draft has a reason placeholder', async () => {
     const donation = validDonation();
     const found = await submitAndFindPending(donation);
 
@@ -121,9 +121,10 @@ describe('Sadaqah admin API', () => {
       .set('X-Admin-Token', ownerToken);
     expect(verifiedDraft.status).toBe(200);
     expect(verifiedDraft.body.subject).toMatch(/^Re: /);
-    expect(verifiedDraft.body.body).toContain(donation.transactionId.toUpperCase());
     expect(verifiedDraft.body.body).toContain(String(donation.amount));
-    expect(verifiedDraft.body.body).toMatch(/For your records/i);
+    // Payment details now live on the attached signed PDF, not in the body.
+    expect(verifiedDraft.body.body).toMatch(/signed receipt is attached/i);
+    expect(verifiedDraft.body.body).not.toMatch(/For your records/i);
 
     const rejectedDraft = await request(app)
       .get(`/api/admin/sadaqah/${found._id}/email-draft`)

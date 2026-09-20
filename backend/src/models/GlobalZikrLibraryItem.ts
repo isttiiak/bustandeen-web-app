@@ -29,11 +29,6 @@ export interface IGlobalZikrLibraryItem extends Document {
   category: GlobalZikrCategory;
   requestId?: mongoose.Types.ObjectId;
   addedBy?: string;
-  /** Optional audio recitation URL — paste-a-link only (matches the existing
-   * sourceUrl/photoUrl convention app-wide), not a binary upload widget.
-   * Wiring this into zikr-counter playback is separate, unbuilt work — this
-   * field only supports the admin "which clips are missing" tracker. */
-  audioUrl?: string;
   createdAt: Date;
 }
 
@@ -54,7 +49,6 @@ const globalZikrLibraryItemSchema = new Schema<IGlobalZikrLibraryItem>(
     },
     requestId: { type: Schema.Types.ObjectId, ref: 'ZikrRequest' },
     addedBy: { type: String },
-    audioUrl: { type: String, maxlength: 500 },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

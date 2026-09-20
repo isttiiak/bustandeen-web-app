@@ -59,7 +59,7 @@ verse and hadith links to quran.com or sunnah.com with its exact number and grad
 ### 🤝 Friends — "So compete with one another in doing good" _(Quran 2:148)_
 
 - Connect via a single invite link; see each other's streaks and today's worship
-- A calm daily measure called **Noor** (max 100: prayers 50 · zikr streak 20 · Quran goal 20 · fasting 10) — today's Noor resets at midnight, all-time Noor only ever grows
+- A calm daily measure called **Noor** (max 100: prayers 50 · zikr 15 · Quran 15 · steadiness 10 · extras 10; starts at 0 each day and only goes up, with a weekly view) - all-time Noor only ever grows
 
 ### 🌸 Rayhanah Cycle — for our sisters
 

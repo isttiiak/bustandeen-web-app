@@ -116,7 +116,10 @@ export default function QuranAudioPlayer() {
   // still count, unlike the Reader where those signal "walked away").
   const readingSession = useQuranReadingSession({
     source: 'listen',
-    isActiveOverride: playing,
+    // `playing` alone turns true the instant Play is pressed, even if nothing
+    // ever loads (offline PWA: the CDN stream can't start and the button just
+    // buffers). Only count time while sound is really coming out.
+    isActiveOverride: playing && !buffering,
     enabled: !!user && !isDemoMode,
   });
   const { registerSurah, registerAyahRead } = readingSession;
@@ -197,7 +200,12 @@ export default function QuranAudioPlayer() {
     if (playing) {
       a.pause();
     } else {
-      void a.play();
+      // Offline / blocked: play() rejects and no 'play' progress follows, so
+      // make sure we don't stay in a "playing" state that would run the timer.
+      a.play().catch(() => {
+        setPlaying(false);
+        setBuffering(false);
+      });
     }
   };
 
@@ -387,12 +395,22 @@ export default function QuranAudioPlayer() {
               ref={audioRef}
               src={src}
               preload="none"
-              onPlay={() => {
+              onPlay={(e) => {
                 setPlaying(true);
+                // 'play' fires when playback is requested, before any data has
+                // arrived; only 'playing' below confirms audio is running.
+                setBuffering((e.target as HTMLAudioElement).readyState < 3);
+              }}
+              onPause={() => {
+                setPlaying(false);
                 setBuffering(false);
               }}
-              onPause={() => setPlaying(false)}
               onWaiting={() => setBuffering(true)}
+              onStalled={() => setBuffering(true)}
+              onError={() => {
+                setPlaying(false);
+                setBuffering(false);
+              }}
               onPlaying={() => setBuffering(false)}
               onTimeUpdate={onTimeUpdate}
               onLoadedMetadata={(e) => setDuration((e.target as HTMLAudioElement).duration)}

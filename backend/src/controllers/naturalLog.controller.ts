@@ -25,7 +25,16 @@ export const parseHandler = async (
       req.user.uid,
       requestLanguage(req)
     );
-    res.json({ ok: result.ok, salat: result.salat, zikr: result.zikr, quran: result.quran });
+    // Resolve each dhikr name against the user's own list, case-insensitively,
+    // so "subhanallah" lands on their existing "SubhanAllah" instead of
+    // splitting the count under a second spelling; a name with no match is
+    // flagged so the preview can say a new dhikr will be created.
+    const byLower = new Map(typeNames.map((n) => [n.toLowerCase(), n]));
+    const zikr = result.zikr.map((z) => {
+      const existing = byLower.get(z.typeName.toLowerCase());
+      return existing ? { ...z, typeName: existing, isNew: false } : { ...z, isNew: true };
+    });
+    res.json({ ok: result.ok, salat: result.salat, zikr, quran: result.quran, day: result.day });
   } catch (err) {
     next(err);
   }

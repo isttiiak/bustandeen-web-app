@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import FounderMailbox from '../components/FounderMailbox.js';
 import { useSendComposedEmail } from '../hooks/useComposeEmail.js';
 import {
   useAdminFeedback,
@@ -11,7 +12,7 @@ import {
   type FeedbackStatus,
 } from '../hooks/useAdminFeedback.js';
 
-type Mode = 'inbox' | 'custom';
+type Mode = 'inbox' | 'custom' | 'mailbox';
 
 function InboxPicker({ onPick }: { onPick: (message: AdminFeedbackMessage) => void }) {
   const { t } = useTranslation();
@@ -168,7 +169,7 @@ export default function AdminComposeEmail() {
           </p>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             onClick={() => switchMode('inbox')}
             className={`btn btn-sm rounded-lg ${mode === 'inbox' ? 'bg-brand-emerald border-brand-emerald text-white' : 'btn-ghost text-white/50'}`}
@@ -181,6 +182,12 @@ export default function AdminComposeEmail() {
           >
             {t('adminCompose.modeCustom', 'Custom recipient')}
           </button>
+          <button
+            onClick={() => switchMode('mailbox')}
+            className={`btn btn-sm rounded-lg ${mode === 'mailbox' ? 'bg-brand-emerald border-brand-emerald text-white' : 'btn-ghost text-white/50'}`}
+          >
+            {t('adminCompose.modeMailbox', 'Founder mailbox')}
+          </button>
         </div>
 
         {sentOk && !reviewing && (
@@ -188,6 +195,8 @@ export default function AdminComposeEmail() {
             {t('adminCompose.sent', 'Email sent.')}
           </div>
         )}
+
+        {mode === 'mailbox' && <FounderMailbox />}
 
         {mode === 'inbox' && !reviewing && !selected && (
           <InboxPicker

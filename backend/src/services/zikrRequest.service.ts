@@ -14,6 +14,7 @@ import {
   zikrRequestRejectedDraft,
   zikrRequestDuplicateRejectedDraft,
   zikrLibraryLinkLine,
+  zikrAudioAddedLine,
   APPROVED_SUBJECT,
   REJECTED_SUBJECT,
   toSimpleHtml,
@@ -94,6 +95,7 @@ export const submitRequest = async (
         meaning: request.meaning,
         source: request.source,
         sourceUrl: request.sourceUrl,
+        wantsAudio: request.wantsAudio,
         userEmail,
       },
       request.id as string
@@ -171,6 +173,8 @@ export interface ApproveZikrRequestInput {
   grade?: string;
   virtue?: string;
   category?: GlobalZikrCategory;
+  /** Admin confirmed the recitation for this zikr is now in the app. */
+  audioAdded?: boolean;
   emailBody: string;
 }
 
@@ -211,6 +215,7 @@ export const approveRequest = async (
   });
 
   request.status = 'approved';
+  request.audioAdded = input.audioAdded ?? false;
   request.reviewedAt = new Date();
   request.reviewedBy = adminEmail;
   await request.save();
@@ -220,10 +225,9 @@ export const approveRequest = async (
     // The library link isn't known until the item above was just created, so
     // it's appended after the admin's (possibly edited) draft text rather
     // than being part of the editable draft itself, above the sign-off.
-    const finalText = insertAboveSignOff(
-      input.emailBody,
-      zikrLibraryLinkLine(libraryItem.id as string)
-    );
+    const extraLines = [zikrLibraryLinkLine(libraryItem.id as string)];
+    if (request.audioAdded) extraLines.push(zikrAudioAddedLine());
+    const finalText = insertAboveSignOff(input.emailBody, extraLines.join('\n\n'));
     const messageId = await sendMail({
       to: request.userEmail,
       subject: APPROVED_SUBJECT(request.id as string),
@@ -328,18 +332,4 @@ export const updateLibraryItem = async (
 export const deleteLibraryItem = async (id: string): Promise<void> => {
   const result = await GlobalZikrLibraryItem.findByIdAndDelete(id);
   if (!result) throw httpError(404, 'Library item not found');
-};
-
-/** Sets/updates a library item's own audioUrl field directly (it's already a
- * live DB document, unlike the curated static list — see
- * ZikrAudioAsset.ts for that side). */
-export const setLibraryItemAudio = async (
-  id: string,
-  audioUrl: string
-): Promise<IGlobalZikrLibraryItem> => {
-  const item = await GlobalZikrLibraryItem.findById(id);
-  if (!item) throw httpError(404, 'Library item not found');
-  item.audioUrl = audioUrl;
-  await item.save();
-  return item;
 };

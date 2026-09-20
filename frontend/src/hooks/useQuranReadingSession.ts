@@ -64,6 +64,10 @@ export interface UseQuranReadingSessionOptions {
    * currently playing, since background/screen-off playback should still
    * count as active (visibility/idle detection would wrongly pause it). */
   isActiveOverride?: boolean;
+  /** Hard pause: time doesn't accrue while true, whatever else is going on
+   * (e.g. the āyah share modal is open, so card-designing isn't counted as
+   * reading). Resumes on its own when it goes back to false. */
+  paused?: boolean;
 }
 
 export interface QuranReadingSessionHandle {
@@ -85,7 +89,13 @@ export interface QuranReadingSessionHandle {
 export function useQuranReadingSession(
   options: UseQuranReadingSessionOptions = {}
 ): QuranReadingSessionHandle {
-  const { extendedIdle = false, enabled = true, source = 'read', isActiveOverride } = options;
+  const {
+    extendedIdle = false,
+    enabled = true,
+    source = 'read',
+    isActiveOverride,
+    paused: forcedPause = false,
+  } = options;
   const usesOverride = isActiveOverride !== undefined;
 
   const [activeSec, setActiveSec] = useState(0);
@@ -93,6 +103,12 @@ export function useQuranReadingSession(
 
   const clientSessionIdRef = useRef<string>(randomSessionId());
   const startedAtRef = useRef<Date>(new Date());
+  // The last moment the clock actually advanced. A session's end time must be
+  // this, not "whenever it happened to be saved": teardown/visibility saves
+  // fire when the user comes back (e.g. wakes up hours after falling asleep
+  // with audio playing), and stamping THAT moment made a 4-minute listen read
+  // as 7:06 AM to 10:30 AM in session history.
+  const lastActiveAtRef = useRef<number>(Date.now());
   const lastInteractionRef = useRef<number>(Date.now());
   const activeSecRef = useRef(0);
   const lastSavedSecRef = useRef(0);
@@ -102,6 +118,8 @@ export function useQuranReadingSession(
   extendedIdleRef.current = extendedIdle;
   const activeOverrideRef = useRef(isActiveOverride);
   activeOverrideRef.current = isActiveOverride;
+  const forcedPauseRef = useRef(forcedPause);
+  forcedPauseRef.current = forcedPause;
 
   const registerAyahRead = useCallback((count: number) => {
     ayahCountRef.current += count;
@@ -124,7 +142,9 @@ export function useQuranReadingSession(
           // correctly across both days' totals this way.
           date: getTrackingDay(),
           startedAt: startedAtRef.current.toISOString(),
-          endedAt: new Date().toISOString(),
+          endedAt: new Date(
+            Math.max(lastActiveAtRef.current, startedAtRef.current.getTime())
+          ).toISOString(),
           activeDurationSec: activeSecRef.current,
           ayahCount: ayahCountRef.current,
           pagesRead: 0,
@@ -165,7 +185,9 @@ export function useQuranReadingSession(
     if (!enabled) return;
     const id = window.setInterval(() => {
       let paused: boolean;
-      if (activeOverrideRef.current !== undefined) {
+      if (forcedPauseRef.current) {
+        paused = true;
+      } else if (activeOverrideRef.current !== undefined) {
         paused = !activeOverrideRef.current;
       } else {
         const idleTimeout = extendedIdleRef.current ? IDLE_TIMEOUT_TAFSIR_MS : IDLE_TIMEOUT_MS;
@@ -175,6 +197,7 @@ export function useQuranReadingSession(
       }
       setIsPaused(paused);
       if (!paused) {
+        lastActiveAtRef.current = Date.now();
         activeSecRef.current += 1;
         setActiveSec(activeSecRef.current);
       }

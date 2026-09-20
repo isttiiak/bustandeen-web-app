@@ -252,6 +252,35 @@ export function useQuranHistory(days = 30, enabled = true) {
   });
 }
 
+export interface QuranRange {
+  history: Array<{ date: string; ayat: number; pages: number; units: number }>;
+  stats: {
+    readSec: number;
+    listenSec: number;
+    readSessions: number;
+    listenSessions: number;
+    activeDays: number;
+    totalUnits: number;
+  };
+}
+
+/** Daily units + reading/listening time totals for an explicit date window
+ * (inclusive), e.g. a calendar month, the last 30 days, or all time. */
+export function useQuranRange(from: string, to: string) {
+  const user = useAuthStore((s) => s.user);
+  return useQuery({
+    queryKey: ['quran', 'range', from, to],
+    queryFn: async () => {
+      const { data } = await api.get<QuranRange & { ok: boolean }>('/api/quran/range', {
+        params: { from, to },
+      });
+      return { history: data.history, stats: data.stats } as QuranRange;
+    },
+    enabled: !!user,
+    staleTime: 60_000,
+  });
+}
+
 // ── Reading sessions (live timer + session history) ────────────────────────
 
 export interface QuranSession {

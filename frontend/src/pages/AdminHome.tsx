@@ -6,7 +6,6 @@ import {
   UsersIcon,
   ShieldCheckIcon,
   EnvelopeIcon,
-  SpeakerWaveIcon,
   ClipboardDocumentListIcon,
   HeartIcon,
   MegaphoneIcon,
@@ -195,17 +194,6 @@ export default function AdminHome() {
             description={t('adminHome.feedbackDesc', 'Read and reply to user messages.')}
           />
         )}
-        {canSeeZikrRequests && (
-          <AdminCard
-            to="/admin/zikr-audio"
-            icon={SpeakerWaveIcon}
-            title={t('adminHome.zikrAudioTitle', 'Zikr audio tracker')}
-            description={t(
-              'adminHome.zikrAudioDesc',
-              'Track and source recitation audio for the zikr library.'
-            )}
-          />
-        )}
         {isServant && (
           <AdminCard
             to="/admin/users"
@@ -247,17 +235,15 @@ export default function AdminHome() {
             )}
           />
         )}
-        {isServant && (
-          <AdminCard
-            to="/admin/broadcast"
-            icon={MegaphoneIcon}
-            title={t('adminHome.broadcastTitle', 'Broadcast')}
-            description={t(
-              'adminHome.broadcastDesc',
-              'Push a dismissible banner to every visitor.'
-            )}
-          />
-        )}
+        <AdminCard
+          to="/admin/broadcast"
+          icon={MegaphoneIcon}
+          title={t('adminHome.broadcastTitle', 'Broadcast')}
+          description={t(
+            'adminHome.broadcastDesc',
+            'Push a banner to every visitor, or send an update email.'
+          )}
+        />
       </div>
     </div>
   );

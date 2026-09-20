@@ -85,6 +85,13 @@ export const quranHistorySchema = z.object({
   body: z.object({}).optional(),
 });
 
+export const quranRangeSchema = z.object({
+  query: z.object({ from: dateStr, to: dateStr }).refine((q) => q.from <= q.to, {
+    message: 'from must not be after to',
+  }),
+  body: z.object({}).optional(),
+});
+
 export const quranTafsirSchema = z.object({
   query: z.object({
     surah: z.coerce.number().int().min(1).max(114),

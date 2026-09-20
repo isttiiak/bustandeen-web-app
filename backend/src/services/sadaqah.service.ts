@@ -9,7 +9,13 @@ import {
   donationRejectedDraft,
   toSimpleHtml,
   REPLY_SUBJECT,
+  sadaqahRef,
 } from './sadaqahEmail.templates.js';
+import {
+  buildReceiptPdf,
+  receiptFilename,
+  verifyReceiptSignature,
+} from './sadaqahReceipt.service.js';
 
 const STATS_ID = 'current';
 
@@ -190,11 +196,10 @@ export const getEmailDraft = async (
   const body =
     type === 'verified'
       ? donationVerifiedDraft({
+          id: donation._id.toString(),
           donorName: donation.donorName,
           amount: donation.amount,
           transactionId: donation.transactionId,
-          paymentMethod: donation.paymentMethod,
-          transactionDate: donation.transactionDate,
         })
       : donationRejectedDraft({
           donorName: donation.donorName,
@@ -238,6 +243,13 @@ export const verifyDonation = async (
     }
   );
 
+  // Best-effort: verification is already recorded, so a PDF failure (missing
+  // signing key, font problem) must not block the confirmation email.
+  const receipt = await generateReceipt(donation).catch((err) => {
+    console.error('Failed to build sadaqah receipt PDF:', err);
+    return null;
+  });
+
   const messageId = await sendMail({
     to: donation.email,
     subject: REPLY_SUBJECT(donation._id.toString()),
@@ -246,9 +258,75 @@ export const verifyDonation = async (
     from: sender,
     inReplyTo: donation.emailMessageId ?? undefined,
     references: donation.emailMessageId ?? undefined,
+    attachments: receipt
+      ? [
+          {
+            filename: receiptFilename(donation._id.toString()),
+            content: Buffer.from(receipt),
+            contentType: 'application/pdf',
+          },
+        ]
+      : undefined,
   });
 
   return { donation, emailSent: messageId !== null };
+};
+
+/** Signed PDF receipt for a verified donation. Only verified ones have one. */
+export const generateReceipt = async (donation: IDonation): Promise<Uint8Array> => {
+  if (donation.status !== 'verified' || !donation.verifiedAt) {
+    throw httpError(409, 'A receipt exists only for a verified donation');
+  }
+  return buildReceiptPdf({
+    id: donation._id.toString(),
+    donorName: donation.isAnonymous ? null : donation.donorName,
+    onBehalfOf: donation.onBehalfOf,
+    amount: donation.amount,
+    transactionId: donation.transactionId,
+    paymentMethod: donation.paymentMethod,
+    transactionDate: donation.transactionDate,
+    verifiedAt: donation.verifiedAt,
+  });
+};
+
+export const getReceiptById = async (
+  id: string
+): Promise<{ pdf: Uint8Array; filename: string }> => {
+  const donation = await Donation.findById(id);
+  if (!donation) throw httpError(404, 'Donation not found');
+  return { pdf: await generateReceipt(donation), filename: receiptFilename(id) };
+};
+
+export interface ReceiptCheck {
+  valid: boolean;
+  receiptNo?: string;
+  amount?: number;
+  verifiedAt?: Date;
+}
+
+/** Public check behind the receipt's QR code. Reveals only headline facts (no
+ *  name, no transaction ID), and gives an unknown id and a wrong signature
+ *  the identical answer. */
+export const checkReceipt = async (id: string, sig: string): Promise<ReceiptCheck> => {
+  if (!mongoose.isValidObjectId(id) || !sig) return { valid: false };
+  const donation = await Donation.findById(id);
+  if (!donation || donation.status !== 'verified' || !donation.verifiedAt) return { valid: false };
+  const ok = verifyReceiptSignature(
+    {
+      id,
+      amount: donation.amount,
+      transactionId: donation.transactionId,
+      verifiedAt: donation.verifiedAt,
+    },
+    sig
+  );
+  if (!ok) return { valid: false };
+  return {
+    valid: true,
+    receiptNo: sadaqahRef(id),
+    amount: donation.amount,
+    verifiedAt: donation.verifiedAt,
+  };
 };
 
 export const rejectDonation = async (

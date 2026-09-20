@@ -138,8 +138,11 @@ export default function QuranReader() {
   const resumeSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resumePromptDoneRef = useRef(false);
   const [tafsirOpen, setTafsirOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const readingSession = useQuranReadingSession({
     extendedIdle: tafsirOpen,
+    // Designing a share card isn't reading time.
+    paused: shareOpen,
     enabled: !!user && !isDemoMode,
   });
   const [tafsirEdition, setTafsirEdition] = useState<number>(getPreferredTafsir);
@@ -160,7 +163,6 @@ export default function QuranReader() {
   const [playing, setPlaying] = useState(false);
   const [wordIdx, setWordIdx] = useState(-1);
   const [resumeAyah, setResumeAyah] = useState<number | null>(null); // continue-or-restart prompt
-  const [shareOpen, setShareOpen] = useState(false);
   const [volume, setVolume] = useState<number>(() => {
     const raw = localStorage.getItem('bustandeen_quran_volume');
     const v = Number(raw);
