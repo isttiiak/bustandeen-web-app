@@ -14,6 +14,9 @@ export interface IZikrRequest extends Document {
   /** Simple yes/no signal of intent, not a file or upload — "does this user
    * want an audio recitation for this zikr, if/when it's added." */
   wantsAudio: boolean;
+  /** Set by the admin on approval once the recitation for this zikr has been
+   * added to the app's bundled audio — adds a line to the approval email. */
+  audioAdded: boolean;
   status: ZikrRequestStatus;
   adminNote?: string;
   reviewedAt?: Date;
@@ -50,6 +53,7 @@ const zikrRequestSchema = new Schema<IZikrRequest>(
     source: { type: String, maxlength: 200 },
     sourceUrl: { type: String, maxlength: 500 },
     wantsAudio: { type: Boolean, default: false },
+    audioAdded: { type: Boolean, default: false },
     status: {
       type: String,
       enum: ['pending', 'approved', 'rejected'],

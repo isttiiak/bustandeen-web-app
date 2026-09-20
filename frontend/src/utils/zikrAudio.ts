@@ -14,7 +14,7 @@ const ZIKR_AUDIO_MAP: Record<string, string> = {
   'La hawla wa la quwwata illa billah': '/audio/zikr/la-hawla.mp3',
   'Ayatul Kursi': '/audio/zikr/ayatul-kursi.mp3',
   'Durud Ibrahim': '/audio/zikr/durud-e-brahim.mp3',
-  // 'Astaghfirullahal-Azim' and the old "four beloved words" audio were
+  // The old 'Astaghfirullahal-Azim' and the old "four beloved words" audio were
   // pulled — both were confirmed to be the wrong recitation for their
   // text. Re-add once a correct recording exists (see zikr.audio memory).
 };

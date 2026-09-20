@@ -39,6 +39,7 @@ export interface ApproveZikrRequestInput {
   grade?: string;
   virtue?: string;
   category?: GlobalZikrCategory;
+  audioAdded?: boolean;
   emailBody: string;
 }
 
@@ -104,7 +105,6 @@ export interface GlobalLibraryItem {
   grade?: string;
   virtue?: string;
   category: GlobalZikrCategory;
-  audioUrl?: string;
   createdAt: string;
 }
 

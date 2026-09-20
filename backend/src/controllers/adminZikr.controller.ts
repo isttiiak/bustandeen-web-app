@@ -3,7 +3,6 @@ import * as zikrRequestService from '../services/zikrRequest.service.js';
 import { ZikrRequestStatus } from '../models/ZikrRequest.js';
 import { GlobalZikrCategory } from '../models/GlobalZikrLibraryItem.js';
 import { logAdminAction } from '../services/adminAudit.service.js';
-import * as zikrAudioService from '../services/zikrAudio.service.js';
 
 const paramString = (v: string | string[] | undefined): string =>
   (Array.isArray(v) ? v[0] : v) ?? '';
@@ -124,58 +123,6 @@ export const updateLibraryCategoryHandler = async (
       targetId: id,
       metadata: { category },
     });
-    res.json({ ok: true, item });
-  } catch (err) {
-    handleServiceError(err, res, next);
-  }
-};
-
-/** Any admin in the 'general' domain — content-sourcing work, not a
- * Servant-only edit. Returns curated-name audio assets only; the frontend
- * cross-references against its own imported curated list (backend has no
- * access to frontend/src/utils/zikrLibrary.ts, same boundary
- * zikrDuplicateMatch.ts already respects) and against the library items also
- * returned here (those carry their own audioUrl field directly). */
-export const audioStatusHandler = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const [curated, libraryItems] = await Promise.all([
-      zikrAudioService.listCuratedAudio(),
-      zikrRequestService.listGlobalLibrary(),
-    ]);
-    res.json({ ok: true, curated, libraryItems });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const setCuratedAudioHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { audioUrl } = req.body as { audioUrl: string };
-    const name = paramString(req.params.name);
-    const asset = await zikrAudioService.setCuratedAudio(name, audioUrl, req.admin!.email);
-    res.json({ ok: true, asset });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const setLibraryItemAudioHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { audioUrl } = req.body as { audioUrl: string };
-    const id = paramString(req.params.id);
-    const item = await zikrRequestService.setLibraryItemAudio(id, audioUrl);
     res.json({ ok: true, item });
   } catch (err) {
     handleServiceError(err, res, next);

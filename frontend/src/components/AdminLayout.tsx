@@ -10,7 +10,6 @@ import {
   ArrowTopRightOnSquareIcon,
   ClipboardDocumentListIcon,
   EnvelopeIcon,
-  SpeakerWaveIcon,
   HeartIcon,
   MegaphoneIcon,
   ChevronDownIcon,
@@ -215,12 +214,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 <NavLink to="/admin/feedback" className={navItemClass}>
                   <EnvelopeIcon className="w-4 h-4" />
                   {t('adminLayout.feedback', 'Feedback')}
-                </NavLink>
-              )}
-              {canSeeZikrRequests && (
-                <NavLink to="/admin/zikr-audio" className={navItemClass}>
-                  <SpeakerWaveIcon className="w-4 h-4" />
-                  {t('adminLayout.zikrAudio', 'Zikr Audio')}
                 </NavLink>
               )}
               {/* Broadcast is open to every admin, Servant or Ansar */}

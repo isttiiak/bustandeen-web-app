@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.51.0 - Zikr: own-list consent, audio tracker removed, istighfar sources fixed - 2026-09-20
+
+### Added
+
+- **Two ways to add a zikr in Settings.** The request form now has "Request for the library" (reviewed, shared with everyone) and "Add to my list only". The second opens a consent box: the zikr is added privately, nobody reviews it, and the user takes responsibility for it. The box also offers "Make request for review" instead, and a red-bordered cross to back out.
+- **Audio status on approval.** When approving a zikr request the admin sees whether the user asked for audio and can tick "audio has been added". If ticked, the approval email gets one extra line saying so. Approved requests show whether audio was added. The admin notification also says when audio was requested.
+- **Custom zikr deletions now sync across devices.** The server's list is the source of truth for non-built-in zikr, so a custom type removed on one device no longer comes back on another.
+
+### Changed
+
+- **The counter's "+" form is now the same form as Settings.** Same fields, same "Request for the library" / "Add to my list only" buttons and the same consent box (one shared component).
+- **Counter header row fits small screens.** The name truncates, and the dropdown, "+" and audio buttons stay on one line at 320px. The edit/remove list moved to the top of the counter's settings drawer.
+- **"Log missed counts" no longer lets you create a new zikr.** Pick from your existing list only.
+- **Two istighfar entries corrected.** "Astaghfirullahal-Azim" used the wording of Tirmidhi 3577 under the Abu Dawud 1517 reference (which has no "al-Azim"). There are now two entries: Abu Dawud 1517 without "al-Azim" (Sahih), and the full "Astaghfirullahal-Azim alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh" from Tirmidhi 3577 (Hasan). Anyone who had the old name keeps it and sees the new card.
+
+### Removed
+
+- **Admin "Zikr audio tracker"**, its API routes, model and the `audioUrl` fields. The wrong link stored for Astaghfirullahal-Azim was deleted from the database (`npx tsx src/scripts/removeZikrAudioLinks.ts`, already run once). Audio stays bundled in the app.
+
 ## v5.50.1 - Update emails greet everyone, not one name - 2026-09-21
 
 ### Changed

@@ -22,7 +22,7 @@ import {
   useZikrTimeOfDay,
   useZikrSessions,
 } from '../hooks/useAnalytics.js';
-import { useZikrTypes, useAddZikrType } from '../hooks/useZikrTypes.js';
+import { useZikrTypes } from '../hooks/useZikrTypes.js';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { zikrDisplayName } from '../utils/zikrLibrary.js';
@@ -43,9 +43,8 @@ interface ManualEntryModalProps {
 function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryModalProps) {
   const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
-  const { types, addConfirmedCounts, setTypes, setCustomMeaning } = useZikrStore();
+  const { types, addConfirmedCounts } = useZikrStore();
   const { data: fetchedTypes } = useZikrTypes();
-  const addZikrType = useAddZikrType();
 
   // Merge store types + server types deduplicated
   const allTypes = [...new Set([...types, ...(fetchedTypes ?? []).map((ft) => ft.name)])];
@@ -65,14 +64,6 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
     d.setDate(d.getDate() - n);
     return formatLocaleDate(d, { weekday: 'short', month: 'short', day: 'numeric' });
   };
-
-  // Add-new-type sub-form
-  const [showAddNew, setShowAddNew] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newArabic, setNewArabic] = useState('');
-  const [newMeaning, setNewMeaning] = useState('');
-  const [newSource, setNewSource] = useState('');
-  const [newSourceUrl, setNewSourceUrl] = useState('');
 
   // Existing count for the selected type today
   const serverCount = todayPerType.find((tp) => tp.zikrType === selectedType)?.total ?? 0;
@@ -115,32 +106,6 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
     }
   };
 
-  const handleAddNewType = () => {
-    const name = newName.trim();
-    const meaning = newMeaning.trim();
-    if (!name || !meaning) return;
-    addZikrType.mutate(name, {
-      onSuccess: () => {
-        setCustomMeaning(name, {
-          arabic: newArabic.trim() || undefined,
-          meaning,
-          source: newSource.trim() || undefined,
-          sourceUrl: newSourceUrl.trim() || undefined,
-        });
-        setTypes([...types, name]);
-        setSelectedType(name);
-        setShowAddNew(false);
-        setNewName('');
-        setNewArabic('');
-        setNewMeaning('');
-        setNewSource('');
-        setNewSourceUrl('');
-        setSubmitError('');
-      },
-      onError: () => setSubmitError(t('zikrAnalytics.addTypeError')),
-    });
-  };
-
   // Portaled to <body>: rendering inside the page's transformed/animated
   // ancestors created a stacking context that let the sticky navbar float
   // OVER the form. max-h + scroll keep it usable with the keyboard open.
@@ -178,254 +143,141 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
         </div>
 
         <div className="p-6 space-y-5">
-          {!showAddNew ? (
-            <>
-              {/* Which day — today or up to 2 days back (streak grace window) */}
-              <div className="space-y-1.5">
-                <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
-                  {t('zikrAnalytics.whichDay')}
-                </label>
-                <div className="flex gap-1.5">
-                  {([0, 1, 2] as const).map((n) => (
-                    <button
-                      key={n}
-                      onClick={() => {
-                        setDaysBack(n);
-                        setSubmitError('');
-                      }}
-                      className={`flex-1 px-2 py-1.5 rounded-xl text-xs font-bold border transition-all ${
-                        daysBack === n
-                          ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
-                          : 'bg-brand-deep border-brand-border text-white/40 hover:text-white/70'
-                      }`}
-                    >
-                      {dayLabel(n)}
-                    </button>
-                  ))}
-                </div>
-                {daysBack > 0 && (
-                  <p className="text-brand-info/70 text-[11px]">
-                    🧊 {t('zikrAnalytics.backfillNote')}
-                  </p>
-                )}
+          <>
+            {/* Which day — today or up to 2 days back (streak grace window) */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
+                {t('zikrAnalytics.whichDay')}
+              </label>
+              <div className="flex gap-1.5">
+                {([0, 1, 2] as const).map((n) => (
+                  <button
+                    key={n}
+                    onClick={() => {
+                      setDaysBack(n);
+                      setSubmitError('');
+                    }}
+                    className={`flex-1 px-2 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                      daysBack === n
+                        ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
+                        : 'bg-brand-deep border-brand-border text-white/40 hover:text-white/70'
+                    }`}
+                  >
+                    {dayLabel(n)}
+                  </button>
+                ))}
               </div>
-
-              {/* Type selector */}
-              <div className="space-y-1.5">
-                <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
-                  {t('zikrAnalytics.zikrType')}
-                </label>
-                <select
-                  value={selectedType}
-                  onChange={(e) => {
-                    setSelectedType(e.target.value);
-                    setAmount('');
-                    setSubmitError('');
-                  }}
-                  className="select select-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
-                >
-                  {allTypes.map((tn) => (
-                    <option key={tn} value={tn} className="bg-brand-deep">
-                      {zikrDisplayName(tn, i18n.language)}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={() => {
-                    setShowAddNew(true);
-                    setSubmitError('');
-                  }}
-                  className="flex items-center gap-1.5 text-brand-emerald/70 hover:text-brand-emerald text-xs font-semibold transition-colors"
-                >
-                  <PlusCircleIcon className="w-3.5 h-3.5" />
-                  {t('zikrAnalytics.addNewDhikrType')}
-                </button>
-              </div>
-
-              {/* Amount FIRST (Istiak: type → save, fastest path), context after */}
-              <div className="space-y-1.5">
-                <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
-                  {t('zikrAnalytics.countsToAdd')}
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={amount}
-                  onChange={(e) => {
-                    setAmount(e.target.value);
-                    setSubmitError('');
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') void handleSubmit();
-                  }}
-                  placeholder={t('zikrAnalytics.egAmount')}
-                  className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-lg font-bold"
-                  autoFocus
-                />
-              </div>
-
-              {/* Today's existing count (only meaningful for today) */}
-              {daysBack === 0 && (
-                <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-brand-emerald/10">
-                  <span className="text-white/50 text-sm">
-                    {t('zikrAnalytics.todaysCountSoFar')}
-                  </span>
-                  <span className="text-white font-black text-lg tabular-nums">
-                    {formatLocaleNumber(existingCount)}
-                  </span>
-                </div>
+              {daysBack > 0 && (
+                <p className="text-brand-info/70 text-[11px]">
+                  🧊 {t('zikrAnalytics.backfillNote')}
+                </p>
               )}
+            </div>
 
-              {/* Total preview */}
-              {parsedAmount > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center justify-between px-4 py-3 rounded-xl bg-brand-emerald/10 border border-brand-emerald/30"
-                >
-                  {daysBack === 0 ? (
-                    <>
-                      <span className="text-brand-emerald/80 text-sm font-semibold">
-                        {formatLocaleNumber(existingCount)} + {formatLocaleNumber(parsedAmount)}
-                      </span>
-                      <span className="text-brand-emerald font-black text-xl tabular-nums">
-                        = {formatLocaleNumber(newTotal)}
-                      </span>
-                    </>
-                  ) : (
-                    <span className="text-brand-emerald font-bold text-sm">
-                      {t('zikrAnalytics.backfillPreview', {
-                        amount: formatLocaleNumber(parsedAmount),
-                        day: dayLabel(daysBack),
-                      })}
+            {/* Type selector */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
+                {t('zikrAnalytics.zikrType')}
+              </label>
+              <select
+                value={selectedType}
+                onChange={(e) => {
+                  setSelectedType(e.target.value);
+                  setAmount('');
+                  setSubmitError('');
+                }}
+                className="select select-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
+              >
+                {allTypes.map((tn) => (
+                  <option key={tn} value={tn} className="bg-brand-deep">
+                    {zikrDisplayName(tn, i18n.language)}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Amount FIRST (Istiak: type → save, fastest path), context after */}
+            <div className="space-y-1.5">
+              <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
+                {t('zikrAnalytics.countsToAdd')}
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={amount}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                  setSubmitError('');
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') void handleSubmit();
+                }}
+                placeholder={t('zikrAnalytics.egAmount')}
+                className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-lg font-bold"
+                autoFocus
+              />
+            </div>
+
+            {/* Today's existing count (only meaningful for today) */}
+            {daysBack === 0 && (
+              <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-brand-emerald/10">
+                <span className="text-white/50 text-sm">{t('zikrAnalytics.todaysCountSoFar')}</span>
+                <span className="text-white font-black text-lg tabular-nums">
+                  {formatLocaleNumber(existingCount)}
+                </span>
+              </div>
+            )}
+
+            {/* Total preview */}
+            {parsedAmount > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center justify-between px-4 py-3 rounded-xl bg-brand-emerald/10 border border-brand-emerald/30"
+              >
+                {daysBack === 0 ? (
+                  <>
+                    <span className="text-brand-emerald/80 text-sm font-semibold">
+                      {formatLocaleNumber(existingCount)} + {formatLocaleNumber(parsedAmount)}
                     </span>
-                  )}
-                </motion.div>
-              )}
+                    <span className="text-brand-emerald font-black text-xl tabular-nums">
+                      = {formatLocaleNumber(newTotal)}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-brand-emerald font-bold text-sm">
+                    {t('zikrAnalytics.backfillPreview', {
+                      amount: formatLocaleNumber(parsedAmount),
+                      day: dayLabel(daysBack),
+                    })}
+                  </span>
+                )}
+              </motion.div>
+            )}
 
-              {submitError && <p className="text-red-400 text-xs">{submitError}</p>}
+            {submitError && <p className="text-red-400 text-xs">{submitError}</p>}
 
-              {/* Actions */}
-              <div className="flex gap-3 pt-1">
-                <button
-                  onClick={onClose}
-                  className="btn flex-1 btn-ghost text-white/60 border-brand-border"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  onClick={() => void handleSubmit()}
-                  disabled={parsedAmount <= 0 || submitting}
-                  className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold disabled:opacity-40"
-                >
-                  {submitting ? (
-                    <span className="loading loading-spinner loading-sm" />
-                  ) : (
-                    t('zikrAnalytics.saveCounts')
-                  )}
-                </button>
-              </div>
-            </>
-          ) : (
-            // ── Add new dhikr sub-form ─────────────────────────────────────────
-            <>
-              <div className="flex items-center gap-2 mb-1">
-                <button
-                  onClick={() => {
-                    setShowAddNew(false);
-                    setSubmitError('');
-                  }}
-                  className="text-white/40 hover:text-white text-xs transition-colors flex items-center gap-1"
-                >
-                  ← {t('common.back')}
-                </button>
-                <span className="text-white/25 text-xs">{t('zikrAnalytics.newDhikrType')}</span>
-              </div>
-
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs text-white/50 uppercase tracking-wider mb-1 block">
-                    {t('zikrAnalytics.nameLabel')} <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    placeholder={t('zikrAnalytics.egName')}
-                    className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
-                    autoFocus
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 uppercase tracking-wider mb-1 block">
-                    {t('zikrAnalytics.arabicLabel')}{' '}
-                    <span className="text-white/25">({t('common.optional')})</span>
-                  </label>
-                  <input
-                    value={newArabic}
-                    onChange={(e) => setNewArabic(e.target.value)}
-                    placeholder="حَسْبُنَا اللَّهُ"
-                    dir="rtl"
-                    className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-base"
-                    style={{ fontFamily: "'Amiri', serif" }}
-                  />
-                </div>
-                <div>
-                  <label className="text-xs text-white/50 uppercase tracking-wider mb-1 block">
-                    {t('zikrAnalytics.englishMeaning')} <span className="text-red-400">*</span>
-                  </label>
-                  <input
-                    value={newMeaning}
-                    onChange={(e) => setNewMeaning(e.target.value)}
-                    placeholder={t('zikrAnalytics.egMeaning')}
-                    className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
-                  />
-                </div>
-                <div className="border-t border-brand-border/60 pt-3 space-y-2">
-                  <p className="text-white/25 text-[10px] uppercase tracking-wider">
-                    {t('zikrAnalytics.sourceLabel')}{' '}
-                    <span className="normal-case text-white/20">({t('common.optional')})</span>
-                  </p>
-                  <input
-                    value={newSource}
-                    onChange={(e) => setNewSource(e.target.value)}
-                    placeholder={t('zikrAnalytics.egSource')}
-                    className="input input-sm input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-xs"
-                  />
-                  <input
-                    value={newSourceUrl}
-                    onChange={(e) => setNewSourceUrl(e.target.value)}
-                    placeholder="https://quran.com/3/173"
-                    className="input input-sm input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-xs"
-                  />
-                </div>
-              </div>
-
-              {submitError && <p className="text-red-400 text-xs">{submitError}</p>}
-
-              <div className="flex gap-3 pt-1">
-                <button
-                  onClick={() => {
-                    setShowAddNew(false);
-                    setSubmitError('');
-                  }}
-                  className="btn flex-1 btn-ghost text-white/60 border-brand-border"
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  onClick={handleAddNewType}
-                  disabled={!newName.trim() || !newMeaning.trim() || addZikrType.isPending}
-                  className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold disabled:opacity-40"
-                >
-                  {addZikrType.isPending ? (
-                    <span className="loading loading-spinner loading-sm" />
-                  ) : (
-                    t('zikr.addDhikr')
-                  )}
-                </button>
-              </div>
-            </>
-          )}
+            {/* Actions */}
+            <div className="flex gap-3 pt-1">
+              <button
+                onClick={onClose}
+                className="btn flex-1 btn-ghost text-white/60 border-brand-border"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={() => void handleSubmit()}
+                disabled={parsedAmount <= 0 || submitting}
+                className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold disabled:opacity-40"
+              >
+                {submitting ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : (
+                  t('zikrAnalytics.saveCounts')
+                )}
+              </button>
+            </div>
+          </>
         </div>
       </motion.div>
     </motion.div>,

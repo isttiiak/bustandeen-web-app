@@ -3001,6 +3001,7 @@
     "keepCounting": "Keep counting",
     "leaveWithout": "Leave without saving",
     "lockedTitle": "Your salat tracker adds counts to this dhikr, so it stays in your list.",
+    "manageListDesc": "Edit your own zikr, or remove ones you no longer want in the dropdown.",
     "manageList": "Manage my zikr list",
     "manageNote": "Custom zikr can be edited (✏️) — renaming keeps all your counts. Removing only takes it out of your dropdown; saved counts stay in analytics.",
     "meaningPlaceholder": "e.g. I seek forgiveness from Allah",
@@ -3213,6 +3214,15 @@
     "newUserTrend": "Your trend will appear here once you start counting zikr. 🌱"
   },
   "zikrLibrary": {
+    "makeRequest": "Request for the library",
+    "addOwnOnly": "Add to my list only",
+    "addedOwn": "\"{{name}}\" added to your own list 📿",
+    "twoWaysHint": "The library request is reviewed and shared with everyone. \"My list only\" stays private to you and is not reviewed.",
+    "consentTitle": "Before you add this",
+    "consentBody": "\"{{name}}\" will only be added to your own list. Nobody on our team will check its wording or source. If it is not a correct or authentic practice, that is your responsibility.",
+    "consentAlt": "You can send it to our team for review instead, and it may join the library for everyone.",
+    "consentRequest": "Make request for review",
+    "consentYes": "Yes, add it, I take responsibility",
     "addFail": "Could not add — try again.",
     "addOwn": "➕ Add your own zikr",
     "addOwnHint": "Name and meaning are required — Arabic and a reference make it complete.",

@@ -89,7 +89,6 @@ const AdminUsers = lazy(() => import('./pages/AdminUsers.js'));
 const AdminAccounts = lazy(() => import('./pages/AdminAccounts.js'));
 const AdminAuditLog = lazy(() => import('./pages/AdminAuditLog.js'));
 const AdminFeedback = lazy(() => import('./pages/AdminFeedback.js'));
-const AdminZikrAudio = lazy(() => import('./pages/AdminZikrAudio.js'));
 const AdminUserDetail = lazy(() => import('./pages/AdminUserDetail.js'));
 const AdminOpsHealth = lazy(() => import('./pages/AdminOpsHealth.js'));
 const AdminBroadcast = lazy(() => import('./pages/AdminBroadcast.js'));
@@ -984,14 +983,6 @@ export default function App() {
                   element={
                     <AdminProtected>
                       <AdminFeedback />
-                    </AdminProtected>
-                  }
-                />
-                <Route
-                  path="/admin/zikr-audio"
-                  element={
-                    <AdminProtected>
-                      <AdminZikrAudio />
                     </AdminProtected>
                   }
                 />

@@ -6,7 +6,6 @@ import {
   UsersIcon,
   ShieldCheckIcon,
   EnvelopeIcon,
-  SpeakerWaveIcon,
   ClipboardDocumentListIcon,
   HeartIcon,
   MegaphoneIcon,
@@ -193,17 +192,6 @@ export default function AdminHome() {
             icon={EnvelopeIcon}
             title={t('adminHome.feedbackTitle', 'Feedback & contact')}
             description={t('adminHome.feedbackDesc', 'Read and reply to user messages.')}
-          />
-        )}
-        {canSeeZikrRequests && (
-          <AdminCard
-            to="/admin/zikr-audio"
-            icon={SpeakerWaveIcon}
-            title={t('adminHome.zikrAudioTitle', 'Zikr audio tracker')}
-            description={t(
-              'adminHome.zikrAudioDesc',
-              'Track and source recitation audio for the zikr library.'
-            )}
           />
         )}
         {isServant && (
