@@ -43,3 +43,10 @@ updates:
     labels:
       - 'dependencies'
       - 'frontend'
+    ignore:
+      # daisyui 5 and tailwindcss 4 must move together and need a rewrite of the
+      # theme setup (CSS-based config), so majors are handled by hand, not by PR.
+      - dependency-name: 'daisyui'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'tailwindcss'
+        update-types: ['version-update:semver-major']
