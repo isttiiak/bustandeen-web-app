@@ -1,10 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { isAiEnabled, type AiLanguage } from '../services/ai.service.js';
+import { isAiEnabled } from '../services/ai.service.js';
 import * as naseeh from '../services/naseehInsights.service.js';
-
-function requestLanguage(req: Request): AiLanguage {
-  return req.headers['x-app-language'] === 'bn' ? 'bn' : 'en';
-}
 
 /** These routes only compute from the user's own data, but "Naseeh is off"
  * should silence them too, not just the model-backed calls. */
@@ -26,7 +22,6 @@ export const patternInsightsHandler = async (
       today: q.today,
       timezoneOffset: q.timezoneOffset,
       phrase: q.phrase,
-      language: requestLanguage(req),
     });
     res.json({ ok: true, ...result });
   } catch (err) {
@@ -45,7 +40,6 @@ export const kazaPlanHandler = async (
     const result = await naseeh.getKazaPlan(req.user.uid, {
       today: q.today,
       phrase: q.phrase,
-      language: requestLanguage(req),
     });
     res.json({ ok: true, ...result });
   } catch (err) {
@@ -64,7 +58,6 @@ export const askHandler = async (
     const result = await naseeh.askAboutData(req.user.uid, b.question, {
       today: b.today,
       timezoneOffset: b.timezoneOffset,
-      language: requestLanguage(req),
     });
     res.json(result);
   } catch (err) {
@@ -89,7 +82,7 @@ export const dataAnswerHandler = async (
     const result = await naseeh.runDataQuery(
       req.user.uid,
       { query: b.query, period: b.period, prayer: b.prayer },
-      { today: b.today, timezoneOffset: b.timezoneOffset, language: requestLanguage(req) }
+      { today: b.today, timezoneOffset: b.timezoneOffset }
     );
     res.json(result);
   } catch (err) {

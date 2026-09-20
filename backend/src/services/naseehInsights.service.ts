@@ -20,54 +20,35 @@ import * as quranService from './quran.service.js';
 import * as fastingService from './fasting.service.js';
 import { getAnalyticsData } from './analytics.service.js';
 import { complete, parseLoose, sanitizeForPrompt, asUntrustedData } from './ai.service.js';
-import type { AiLanguage } from './ai.service.js';
 
-// ── Small formatting helpers (en / bn) ───────────────────────────────────────
-const BN_DIGITS = '০১২৩৪৫৬৭৮৯';
-const pick = (lang: AiLanguage, en: string, bn: string): string => (lang === 'bn' ? bn : en);
-const num = (lang: AiLanguage, n: number | string): string =>
-  lang === 'bn' ? String(n).replace(/\d/g, (d) => BN_DIGITS[Number(d)] ?? d) : String(n);
-
-const PRAYER_NAME: Record<AiLanguage, Record<PrayerId, string>> = {
-  en: { fajr: 'Fajr', dhuhr: 'Dhuhr', asr: 'Asr', maghrib: 'Maghrib', isha: 'Isha' },
-  bn: { fajr: 'ফজর', dhuhr: 'যোহর', asr: 'আসর', maghrib: 'মাগরিব', isha: 'এশা' },
+// ── Small formatting helpers (the AI companion is English only) ─────────────
+const PRAYER_NAME: Record<PrayerId, string> = {
+  fajr: 'Fajr',
+  dhuhr: 'Dhuhr',
+  asr: 'Asr',
+  maghrib: 'Maghrib',
+  isha: 'Isha',
 };
-const WEEKDAY_NAME: Record<AiLanguage, string[]> = {
-  en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  bn: ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'],
-};
-const REASON_NAME: Record<AiLanguage, Record<string, string>> = {
-  en: { sleep: 'oversleeping', travel: 'travel', forgot: 'forgetting', busy: 'being busy' },
-  bn: { sleep: 'ঘুমিয়ে পড়া', travel: 'ভ্রমণ', forgot: 'ভুলে যাওয়া', busy: 'ব্যস্ততা' },
+const WEEKDAY_NAME = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const REASON_NAME: Record<string, string> = {
+  sleep: 'oversleeping',
+  travel: 'travel',
+  forgot: 'forgetting',
+  busy: 'being busy',
 };
 
 function h12(h: number): number {
   return h % 12 === 0 ? 12 : h % 12;
 }
-function bnPart(h: number): string {
-  if (h >= 4 && h < 6) return 'ভোর';
-  if (h >= 6 && h < 12) return 'সকাল';
-  if (h >= 12 && h < 15) return 'দুপুর';
-  if (h >= 15 && h < 17) return 'বিকাল';
-  if (h >= 17 && h < 19) return 'সন্ধ্যা';
-  return 'রাত';
+function hourLabel(h: number): string {
+  return `${h12(h)} ${h % 24 < 12 ? 'AM' : 'PM'}`;
 }
-function hourLabel(lang: AiLanguage, h: number): string {
-  return lang === 'bn'
-    ? `${bnPart(h)} ${num(lang, h12(h))}টা`
-    : `${h12(h)} ${h % 24 < 12 ? 'AM' : 'PM'}`;
+function windowLabel(start: number): string {
+  return `${hourLabel(start)} to ${hourLabel((start + 3) % 24)}`;
 }
-function windowLabel(lang: AiLanguage, start: number): string {
-  const end = (start + 3) % 24;
-  return pick(
-    lang,
-    `${hourLabel(lang, start)} to ${hourLabel(lang, end)}`,
-    `${hourLabel(lang, start)} থেকে ${hourLabel(lang, end)}`
-  );
-}
-function dateLabel(lang: AiLanguage, iso: string): string {
+function dateLabel(iso: string): string {
   const d = new Date(`${iso}T00:00:00Z`);
-  return new Intl.DateTimeFormat(lang === 'bn' ? 'bn-BD' : 'en-GB', {
+  return new Intl.DateTimeFormat('en-GB', {
     day: 'numeric',
     month: 'long',
     year: 'numeric',
@@ -79,14 +60,14 @@ function addDays(iso: string, delta: number): string {
   d.setUTCDate(d.getUTCDate() + delta);
   return d.toISOString().slice(0, 10);
 }
-function durationLabel(lang: AiLanguage, days: number): string {
-  if (days < 60) return pick(lang, `${days} days`, `${num(lang, days)} দিন`);
+function durationLabel(days: number): string {
+  if (days < 60) return `${days} days`;
   if (days < 730) {
     const m = Math.round(days / 30);
-    return pick(lang, `about ${m} months`, `প্রায় ${num(lang, m)} মাস`);
+    return `about ${m} months`;
   }
   const y = Math.round((days / 365) * 10) / 10;
-  return pick(lang, `about ${y} years`, `প্রায় ${num(lang, y)} বছর`);
+  return `about ${y} years`;
 }
 
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -95,8 +76,7 @@ function safeToday(today?: string): string {
 }
 
 // ── Model rewrite with number-preservation check ─────────────────────────────
-const toAscii = (s: string): string => s.replace(/[০-৯]/g, (d) => String(BN_DIGITS.indexOf(d)));
-const numbersIn = (s: string): string[] => (toAscii(s).match(/\d+/g) ?? []).sort();
+const numbersIn = (s: string): string[] => (s.match(/\d+/g) ?? []).sort();
 
 /**
  * Asks the model to re-word sentences we already wrote. The result is accepted
@@ -107,8 +87,7 @@ const numbersIn = (s: string): string[] => (toAscii(s).match(/\d+/g) ?? []).sort
 async function rephrase(
   lines: string[],
   feature: string,
-  userId: string,
-  language: AiLanguage
+  userId: string
 ): Promise<string[] | null> {
   if (lines.length === 0) return null;
   const out = await complete(
@@ -119,7 +98,7 @@ async function rephrase(
 Reply ONLY as JSON: {"lines": string[${lines.length}]}.`,
     `Sentences (JSON): ${JSON.stringify(lines)}`,
     700,
-    { feature, userId, language }
+    { feature, userId }
   );
   if (!out) return null;
   const parsed = parseLoose<{ lines?: unknown }>(out.text);
@@ -199,9 +178,9 @@ const MIN_GAP = 10; // percentage points before a difference is worth mentioning
 
 export async function getPatternInsights(
   userId: string,
-  opts: { today?: string; timezoneOffset: number; phrase: boolean; language: AiLanguage }
+  opts: { today?: string; timezoneOffset: number; phrase: boolean }
 ): Promise<PatternInsightsResult> {
-  const { timezoneOffset, language } = opts;
+  const { timezoneOffset } = opts;
   const today = safeToday(opts.today);
   const [zikrHours, quranHours, salat, correlation] = await Promise.all([
     zikrService.getTimeOfDayDistribution(userId, 30, timezoneOffset),
@@ -221,11 +200,7 @@ export async function getPatternInsights(
         id: 'zikr-time',
         kind: 'timing',
         score: 60 + pct / 10,
-        text: pick(
-          language,
-          `About ${pct}% of your dhikr in the last 30 days happens between ${windowLabel(language, z.start)}. That is your natural rhythm.`,
-          `গত ৩০ দিনে আপনার যিকিরের প্রায় ${num(language, pct)}% হয়েছে ${windowLabel(language, z.start)}-এর মধ্যে। এটাই আপনার স্বাভাবিক ছন্দ।`
-        ),
+        text: `About ${pct}% of your dhikr in the last 30 days happens between ${windowLabel(z.start)}. That is your natural rhythm.`,
       });
     }
   }
@@ -237,11 +212,7 @@ export async function getPatternInsights(
         id: 'quran-time',
         kind: 'timing',
         score: 58 + pct / 10,
-        text: pick(
-          language,
-          `Your Quran time clusters between ${windowLabel(language, q.start)}, about ${pct}% of your minutes in the last 30 days.`,
-          `আপনার কুরআনের সময় বেশি জমে ${windowLabel(language, q.start)}-এর মধ্যে, গত ৩০ দিনের প্রায় ${num(language, pct)}% মিনিট।`
-        ),
+        text: `Your Quran time clusters between ${windowLabel(q.start)}, about ${pct}% of your minutes in the last 30 days.`,
       });
     }
   }
@@ -260,16 +231,12 @@ export async function getPatternInsights(
     const othersRate = others.reduce((a, d) => a + d.rate, 0) / others.length;
     const gap = Math.round(othersRate - lowest.rate);
     if (gap >= MIN_GAP) {
-      const name = WEEKDAY_NAME[language][lowest.weekday] ?? '';
+      const name = WEEKDAY_NAME[lowest.weekday] ?? '';
       scored.push({
         id: 'weekday-dip',
         kind: 'attention',
         score: 40 + gap,
-        text: pick(
-          language,
-          `${name} is your quietest day for prayer: ${Math.round(lowest.rate)}% prayed, against ${Math.round(othersRate)}% on your other days.`,
-          `${name} আপনার নামাযের সবচেয়ে শান্ত দিন: ${num(language, Math.round(lowest.rate))}% আদায়, অন্য দিনগুলোতে ${num(language, Math.round(othersRate))}%।`
-        ),
+        text: `${name} is your quietest day for prayer: ${Math.round(lowest.rate)}% prayed, against ${Math.round(othersRate)}% on your other days.`,
       });
     }
   }
@@ -289,11 +256,7 @@ export async function getPatternInsights(
         id: 'strong-prayer',
         kind: 'strength',
         score: 70 + (best.rate - 75) / 5,
-        text: pick(
-          language,
-          `${PRAYER_NAME.en[best.pid]} is your steadiest prayer, at ${Math.round(best.rate)}% over the last 90 days.`,
-          `${PRAYER_NAME.bn[best.pid]} আপনার সবচেয়ে নিয়মিত নামায, গত ৯০ দিনে ${num(language, Math.round(best.rate))}%।`
-        ),
+        text: `${PRAYER_NAME[best.pid]} is your steadiest prayer, at ${Math.round(best.rate)}% over the last 90 days.`,
       });
     }
     const gap = Math.round(best.rate - worst.rate);
@@ -302,11 +265,7 @@ export async function getPatternInsights(
         id: 'weak-prayer',
         kind: 'attention',
         score: 42 + gap,
-        text: pick(
-          language,
-          `${PRAYER_NAME.en[worst.pid]} is the prayer that slips most often (${Math.round(worst.rate)}%). A small reminder just for it could help.`,
-          `${PRAYER_NAME.bn[worst.pid]} নামাযটিই সবচেয়ে বেশি ছুটে যায় (${num(language, Math.round(worst.rate))}%)। শুধু এর জন্য একটি ছোট রিমাইন্ডার কাজে দিতে পারে।`
-        ),
+        text: `${PRAYER_NAME[worst.pid]} is the prayer that slips most often (${Math.round(worst.rate)}%). A small reminder just for it could help.`,
       });
     }
   }
@@ -323,11 +282,7 @@ export async function getPatternInsights(
         id: 'isha-fajr',
         kind: 'attention',
         score: 50 + gap,
-        text: pick(
-          language,
-          `When you pray Isha before 11 PM, Fajr is on time ${correlation.earlyIshaFajrRate}% of mornings, against ${correlation.lateIshaFajrRate}% after a later Isha.`,
-          `রাত ১১টার আগে এশা পড়লে ${num(language, correlation.earlyIshaFajrRate)}% সকালে ফজর সময়মতো হয়, দেরিতে এশা পড়লে ${num(language, correlation.lateIshaFajrRate)}%।`
-        ),
+        text: `When you pray Isha before 11 PM, Fajr is on time ${correlation.earlyIshaFajrRate}% of mornings, against ${correlation.lateIshaFajrRate}% after a later Isha.`,
       });
     }
   }
@@ -341,16 +296,12 @@ export async function getPatternInsights(
   if (topReason && topReason[1] >= 3 && reasonTotal > 0) {
     const pct = Math.round((topReason[1] / reasonTotal) * 100);
     if (pct >= 40) {
-      const label = REASON_NAME[language][topReason[0]] ?? topReason[0];
+      const label = REASON_NAME[topReason[0]] ?? topReason[0];
       scored.push({
         id: 'miss-reason',
         kind: 'attention',
         score: 45 + pct / 5,
-        text: pick(
-          language,
-          `When a prayer slipped and you picked a reason, ${label} was the cause ${pct}% of the time.`,
-          `যখন কোনো নামায ছুটেছে ও আপনি কারণ বেছেছেন, ${num(language, pct)}% ক্ষেত্রে কারণ ছিল ${label}।`
-        ),
+        text: `When a prayer slipped and you picked a reason, ${label} was the cause ${pct}% of the time.`,
       });
     }
   }
@@ -368,8 +319,7 @@ export async function getPatternInsights(
     const worded = await rephrase(
       top.map((f) => f.text),
       'pattern-insights',
-      userId,
-      language
+      userId
     );
     if (worded) {
       worded.forEach((text, i) => {
@@ -408,9 +358,8 @@ export interface KazaPlanResult {
 
 export async function getKazaPlan(
   userId: string,
-  opts: { today?: string; phrase: boolean; language: AiLanguage }
+  opts: { today?: string; phrase: boolean }
 ): Promise<KazaPlanResult> {
-  const { language } = opts;
   const today = safeToday(opts.today);
   await salatDebtService.ensureCaughtUp(userId, today);
   const [debt, insights, salat] = await Promise.all([
@@ -434,13 +383,7 @@ export async function getKazaPlan(
   if (total <= 0) {
     return {
       ...base,
-      lines: [
-        pick(
-          language,
-          'You have no make-up prayers on the list right now. Nothing to plan.',
-          'এই মুহূর্তে আপনার কাযার তালিকায় কোনো নামায নেই। পরিকল্পনার কিছু নেই।'
-        ),
-      ],
+      lines: ['You have no make-up prayers on the list right now. Nothing to plan.'],
       ai: false,
     };
   }
@@ -463,35 +406,21 @@ export async function getKazaPlan(
 
   const lines: string[] = [];
   lines.push(
-    pick(
-      language,
-      `You have ${total} make-up ${total === 1 ? 'prayer' : 'prayers'} to catch up on. One a day${anchor ? `, right after ${PRAYER_NAME.en[anchor]}` : ''}, you would finish by ${dateLabel(language, clearedBy)}${daysToClear >= 60 ? ` (${durationLabel(language, daysToClear)})` : ''}.`,
-      `আপনার ${num(language, total)}টি কাযা নামায বাকি আছে। প্রতিদিন একটি করে${anchor ? `, ${PRAYER_NAME.bn[anchor]}-এর ঠিক পরে` : ''} পড়লে ${dateLabel(language, clearedBy)} নাগাদ শেষ হবে${daysToClear >= 60 ? ` (${durationLabel(language, daysToClear)})` : ''}।`
-    )
+    `You have ${total} make-up ${total === 1 ? 'prayer' : 'prayers'} to catch up on. One a day${anchor ? `, right after ${PRAYER_NAME[anchor]}` : ''}, you would finish by ${dateLabel(clearedBy)}${daysToClear >= 60 ? ` (${durationLabel(daysToClear)})` : ''}.`
   );
   if (total >= 4) {
-    lines.push(
-      pick(
-        language,
-        `Two a day would bring that to ${dateLabel(language, twoPerDayClearedBy)}.`,
-        `প্রতিদিন দুটি করে পড়লে ${dateLabel(language, twoPerDayClearedBy)} নাগাদ শেষ হবে।`
-      )
-    );
+    lines.push(`Two a day would bring that to ${dateLabel(twoPerDayClearedBy)}.`);
   }
   if (base.startWith && insights.oldestOwed) {
     lines.push(
-      pick(
-        language,
-        `The one owed longest is ${PRAYER_NAME.en[base.startWith]} from ${dateLabel(language, insights.oldestOwed.missedDate)}, a good one to start with.`,
-        `সবচেয়ে পুরনো বাকি নামায ${dateLabel(language, insights.oldestOwed.missedDate)}-এর ${PRAYER_NAME.bn[base.startWith]}, এটি দিয়ে শুরু করতে পারেন।`
-      )
+      `The one owed longest is ${PRAYER_NAME[base.startWith]} from ${dateLabel(insights.oldestOwed.missedDate)}, a good one to start with.`
     );
   }
 
   let ai = false;
   let originalHeadline: string | undefined;
   if (opts.phrase) {
-    const worded = await rephrase([lines[0] as string], 'kaza-plan', userId, language);
+    const worded = await rephrase([lines[0] as string], 'kaza-plan', userId);
     if (worded?.[0]) {
       originalHeadline = lines[0];
       lines[0] = worded[0];
@@ -545,19 +474,11 @@ export interface DataAnswer {
   reason?: 'unsupported' | 'unavailable';
 }
 
-const PERIOD_LABEL: Record<AiLanguage, Record<DataPeriod, string>> = {
-  en: {
-    today: 'today',
-    week: 'in the last 7 days',
-    month: 'so far this month',
-    year: 'in the last year',
-  },
-  bn: {
-    today: 'আজ',
-    week: 'গত ৭ দিনে',
-    month: 'এই মাসে এখন পর্যন্ত',
-    year: 'গত এক বছরে',
-  },
+const PERIOD_LABEL: Record<DataPeriod, string> = {
+  today: 'today',
+  week: 'in the last 7 days',
+  month: 'so far this month',
+  year: 'in the last year',
 };
 
 function periodDays(period: DataPeriod, today: string): number {
@@ -572,14 +493,13 @@ const plural = (n: number, one: string, many: string): string => (n === 1 ? one 
 export async function runDataQuery(
   userId: string,
   q: DataQuery,
-  opts: { today?: string; timezoneOffset: number; language: AiLanguage }
+  opts: { today?: string; timezoneOffset: number }
 ): Promise<DataAnswer> {
-  const { language, timezoneOffset } = opts;
+  const { timezoneOffset } = opts;
   const today = safeToday(opts.today);
   const period: DataPeriod = q.period ?? 'week';
   const days = periodDays(period, today);
-  const when = PERIOD_LABEL[language][period];
-  const N = (n: number): string => num(language, n);
+  const when = PERIOD_LABEL[period];
   const done = (answer: string): DataAnswer => ({
     ok: true,
     answered: true,
@@ -593,39 +513,21 @@ export async function runDataQuery(
     case 'salat_rate': {
       const a = await loadSalatAnalytics(userId, days, today);
       const p = q.prayer ? a.perPrayer[q.prayer] : undefined;
-      const name = q.prayer ? PRAYER_NAME[language][q.prayer] : '';
+      const name = q.prayer ? PRAYER_NAME[q.prayer] : '';
       // "Counted over N days" note when tracking started inside the window.
       const note =
         a.totalDays < days
-          ? pick(
-              language,
-              ` (counted over ${a.totalDays} ${plural(a.totalDays, 'day', 'days')}, since you started tracking)`,
-              ` (${N(a.totalDays)} দিনের হিসাব, ট্র্যাকিং শুরুর পর থেকে)`
-            )
+          ? ` (counted over ${a.totalDays} ${plural(a.totalDays, 'day', 'days')}, since you started tracking)`
           : '';
       if (q.query === 'salat_missed') {
         const n = p ? p.missed : a.missedCount;
         if (n === 0 && period === 'today') {
-          return done(
-            pick(
-              language,
-              "Nothing is marked missed today, and today's prayers are still open.",
-              'আজ কোনো নামায ছুটে যাওয়া হিসেবে চিহ্নিত নেই, আজকের নামাযগুলো এখনো খোলা।'
-            )
-          );
+          return done("Nothing is marked missed today, and today's prayers are still open.");
         }
         return done(
           q.prayer
-            ? pick(
-                language,
-                `You missed ${name} ${n} ${plural(n, 'time', 'times')} ${when}${note}.`,
-                `${when} আপনার ${name} ${N(n)} বার ছুটেছে${note}।`
-              )
-            : pick(
-                language,
-                `You missed ${n} ${plural(n, 'prayer', 'prayers')} ${when}${note}.`,
-                `${when} আপনার ${N(n)}টি নামায ছুটেছে${note}।`
-              )
+            ? `You missed ${name} ${n} ${plural(n, 'time', 'times')} ${when}${note}.`
+            : `You missed ${n} ${plural(n, 'prayer', 'prayers')} ${when}${note}.`
         );
       }
       if (q.query === 'salat_prayed') {
@@ -633,16 +535,8 @@ export async function runDataQuery(
         const of = p ? a.totalDays : a.totalPossiblePrayers;
         return done(
           q.prayer
-            ? pick(
-                language,
-                `You prayed ${name} on ${n} of ${of} ${plural(of, 'day', 'days')} ${when}${note}.`,
-                `${when} ${N(of)} দিনের মধ্যে ${N(n)} দিন আপনি ${name} পড়েছেন${note}।`
-              )
-            : pick(
-                language,
-                `You prayed ${n} of ${of} prayers ${when}${note}.`,
-                `${when} ${N(of)}টির মধ্যে ${N(n)}টি নামায পড়েছেন${note}।`
-              )
+            ? `You prayed ${name} on ${n} of ${of} ${plural(of, 'day', 'days')} ${when}${note}.`
+            : `You prayed ${n} of ${of} prayers ${when}${note}.`
         );
       }
       // salat_rate
@@ -653,16 +547,8 @@ export async function runDataQuery(
         : a.completionRate;
       return done(
         q.prayer
-          ? pick(
-              language,
-              `Your ${name} rate ${when} is ${rate}%${note}.`,
-              `${when} আপনার ${name}-এর হার ${N(rate)}%${note}।`
-            )
-          : pick(
-              language,
-              `Your prayer rate ${when} is ${rate}%${note}.`,
-              `${when} আপনার নামাযের হার ${N(rate)}%${note}।`
-            )
+          ? `Your ${name} rate ${when} is ${rate}%${note}.`
+          : `Your prayer rate ${when} is ${rate}%${note}.`
       );
     }
 
@@ -670,19 +556,11 @@ export async function runDataQuery(
       const a = await loadSalatAnalytics(userId, 365, today);
       const cur = q.prayer ? (a.perPrayer[q.prayer]?.currentStreak ?? 0) : a.currentStreak;
       const best = q.prayer ? (a.perPrayer[q.prayer]?.bestStreak ?? 0) : a.bestStreak;
-      const what = q.prayer ? PRAYER_NAME[language][q.prayer] : '';
+      const what = q.prayer ? PRAYER_NAME[q.prayer] : '';
       return done(
         q.prayer
-          ? pick(
-              language,
-              `Your ${what} streak is ${cur} ${plural(cur, 'day', 'days')}. Your best in the last year is ${best}.`,
-              `আপনার ${what}-এর ধারাবাহিকতা ${N(cur)} দিন। গত এক বছরে সর্বোচ্চ ${N(best)} দিন।`
-            )
-          : pick(
-              language,
-              `Your all-five-prayers streak is ${cur} ${plural(cur, 'day', 'days')}. Your best in the last year is ${best}.`,
-              `পাঁচ ওয়াক্ত নামাযের ধারাবাহিকতা ${N(cur)} দিন। গত এক বছরে সর্বোচ্চ ${N(best)} দিন।`
-            )
+          ? `Your ${what} streak is ${cur} ${plural(cur, 'day', 'days')}. Your best in the last year is ${best}.`
+          : `Your all-five-prayers streak is ${cur} ${plural(cur, 'day', 'days')}. Your best in the last year is ${best}.`
       );
     }
 
@@ -692,37 +570,23 @@ export async function runDataQuery(
       if (q.prayer) {
         const n = debt.owed[q.prayer];
         return done(
-          pick(
-            language,
-            `You owe ${n} ${PRAYER_NAME.en[q.prayer]} make-up ${plural(n, 'prayer', 'prayers')}.`,
-            `আপনার ${PRAYER_NAME.bn[q.prayer]}-এর ${N(n)}টি কাযা বাকি আছে।`
-          )
+          `You owe ${n} ${PRAYER_NAME[q.prayer]} make-up ${plural(n, 'prayer', 'prayers')}.`
         );
       }
       const parts = PRAYER_IDS.filter((p) => debt.owed[p] > 0)
-        .map((p) => `${PRAYER_NAME[language][p]} ${N(debt.owed[p])}`)
+        .map((p) => `${PRAYER_NAME[p]} ${debt.owed[p]}`)
         .join(', ');
       return done(
         debt.totalOwed === 0
-          ? pick(language, 'You have no make-up prayers owed.', 'আপনার কোনো কাযা নামায বাকি নেই।')
-          : pick(
-              language,
-              `You owe ${debt.totalOwed} make-up ${plural(debt.totalOwed, 'prayer', 'prayers')} (${parts}).`,
-              `আপনার মোট ${N(debt.totalOwed)}টি কাযা নামায বাকি (${parts})।`
-            )
+          ? 'You have no make-up prayers owed.'
+          : `You owe ${debt.totalOwed} make-up ${plural(debt.totalOwed, 'prayer', 'prayers')} (${parts}).`
       );
     }
 
     case 'zikr_total': {
       const a = await getAnalyticsData(userId, days, timezoneOffset, today);
       const n = a.stats.total;
-      return done(
-        pick(
-          language,
-          `You counted ${n.toLocaleString('en-US')} dhikr ${when}.`,
-          `${when} আপনি মোট ${N(n)}টি যিকির গণনা করেছেন।`
-        )
-      );
+      return done(`You counted ${n.toLocaleString('en-US')} dhikr ${when}.`);
     }
 
     case 'zikr_streak': {
@@ -730,11 +594,7 @@ export async function runDataQuery(
       const cur = a.streak.currentStreak;
       const best = a.streak.longestStreak;
       return done(
-        pick(
-          language,
-          `Your dhikr streak is ${cur} ${plural(cur, 'day', 'days')}. Your longest ever is ${best}.`,
-          `আপনার যিকিরের ধারাবাহিকতা ${N(cur)} দিন। এখন পর্যন্ত সর্বোচ্চ ${N(best)} দিন।`
-        )
+        `Your dhikr streak is ${cur} ${plural(cur, 'day', 'days')}. Your longest ever is ${best}.`
       );
     }
 
@@ -743,46 +603,25 @@ export async function runDataQuery(
       const pages = Math.round(rows.reduce((a, r) => a + r.pages, 0) * 10) / 10;
       const ayat = rows.reduce((a, r) => a + r.ayat, 0);
       if (pages === 0 && ayat === 0) {
-        return done(
-          pick(language, `No Quran reading is logged ${when}.`, `${when} কুরআন পড়া লগ করা নেই।`)
-        );
+        return done(`No Quran reading is logged ${when}.`);
       }
       const bits: string[] = [];
-      if (pages > 0)
-        bits.push(
-          pick(language, `${pages} ${plural(pages, 'page', 'pages')}`, `${N(pages)} পৃষ্ঠা`)
-        );
-      if (ayat > 0) bits.push(pick(language, `${ayat} ayat`, `${N(ayat)}টি আয়াত`));
-      return done(
-        pick(
-          language,
-          `You read ${bits.join(' and ')} ${when}.`,
-          `${when} আপনি ${bits.join(' ও ')} পড়েছেন।`
-        )
-      );
+      if (pages > 0) bits.push(`${pages} ${plural(pages, 'page', 'pages')}`);
+      if (ayat > 0) bits.push(`${ayat} ayat`);
+      return done(`You read ${bits.join(' and ')} ${when}.`);
     }
 
     case 'quran_streak': {
       const s = await quranService.getSummary(userId, today);
       return done(
-        pick(
-          language,
-          `Your Quran streak is ${s.streak} ${plural(s.streak, 'day', 'days')}. Your best is ${s.bestStreak}.`,
-          `আপনার কুরআনের ধারাবাহিকতা ${N(s.streak)} দিন। সর্বোচ্চ ${N(s.bestStreak)} দিন।`
-        )
+        `Your Quran streak is ${s.streak} ${plural(s.streak, 'day', 'days')}. Your best is ${s.bestStreak}.`
       );
     }
 
     case 'fasting_days': {
       const rows = await fastingService.getHistory(userId, days, today);
       const n = rows.filter((r) => r.status === 'completed' && r.date <= today).length;
-      return done(
-        pick(
-          language,
-          `You completed ${n} ${plural(n, 'fast', 'fasts')} ${when}.`,
-          `${when} আপনি ${N(n)}টি রোযা সম্পন্ন করেছেন।`
-        )
-      );
+      return done(`You completed ${n} ${plural(n, 'fast', 'fasts')} ${when}.`);
     }
   }
 }
@@ -807,18 +646,15 @@ const QUERY_CATALOG = `- salat_missed: how many prayers were missed (optional pr
 export async function askAboutData(
   userId: string,
   question: string,
-  opts: { today?: string; timezoneOffset: number; language: AiLanguage }
+  opts: { today?: string; timezoneOffset: number }
 ): Promise<DataAnswer> {
   const clean = sanitizeForPrompt(question, 200);
   const unsupported = (): DataAnswer => ({
     ok: true,
     answered: false,
     reason: 'unsupported',
-    answer: pick(
-      opts.language,
+    answer:
       'I can only answer questions about your own numbers, like prayers, dhikr, Quran, fasting and make-up prayers. For anything about rulings, please ask a qualified scholar.',
-      'আমি শুধু আপনার নিজের হিসাব নিয়ে উত্তর দিতে পারি, যেমন নামায, যিকির, কুরআন, রোযা ও কাযা। বিধান নিয়ে কিছু জানতে চাইলে দয়া করে একজন যোগ্য আলেমকে জিজ্ঞাসা করুন।'
-    ),
   });
   if (!clean) return unsupported();
 
@@ -831,18 +667,14 @@ If the question is not answerable by exactly one lookup above (rulings, advice, 
 Reply ONLY as JSON: {"query": one of the lookup ids or "none", "period": "today"|"week"|"month"|"year", "prayer": prayer id or null}.`,
     asUntrustedData('Question', clean),
     500,
-    { feature: 'data-chat', userId, language: opts.language }
+    { feature: 'data-chat', userId }
   );
   if (!out) {
     return {
       ok: true,
       answered: false,
       reason: 'unavailable',
-      answer: pick(
-        opts.language,
-        "Naseeh couldn't read that question right now. Try one of the quick questions below.",
-        'নাসিহ এখন প্রশ্নটি বুঝতে পারেনি। নিচের দ্রুত প্রশ্নগুলোর একটি চেষ্টা করুন।'
-      ),
+      answer: "Naseeh couldn't read that question right now. Try one of the quick questions below.",
     };
   }
   const parsed = parseLoose<{ query?: unknown; period?: unknown; prayer?: unknown }>(out.text);

@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
 import AnimatedBackground from '../components/AnimatedBackground.js';
-import NaseehInsights from '../components/ai/NaseehInsights.js';
 import MuhasabahReport from '../components/ai/MuhasabahReport.js';
 import StreakCoaching from '../components/ai/StreakCoaching.js';
 import NaturalLogEntry from '../components/ai/NaturalLogEntry.js';
@@ -21,6 +20,7 @@ export default function NaseehPage() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const aiEnabled = useAuthStore((s) => s.aiEnabled);
+  const isDemoMode = useAuthStore((s) => s.isDemoMode);
 
   const civilToday = localTodayStr();
   const { data: analyticsData } = useAnalytics(1);
@@ -42,6 +42,8 @@ export default function NaseehPage() {
   const isPostMaghrib = now.getHours() >= 18 || now.getHours() < 4;
 
   if (!user) return null;
+  // Naseeh needs a real account (it reads your own logs); the demo has none.
+  if (isDemoMode) return <Navigate to="/" replace />;
 
   if (!aiEnabled) {
     return (
@@ -104,9 +106,6 @@ export default function NaseehPage() {
 
         {/* Make-up prayer plan; hidden when nothing is owed */}
         <KazaPlanCard />
-
-        {/* Weekly Naseeh summary + monthly activity insight */}
-        <NaseehInsights />
 
         {/* Weekly muhāsabah with verified reference */}
         <MuhasabahReport />

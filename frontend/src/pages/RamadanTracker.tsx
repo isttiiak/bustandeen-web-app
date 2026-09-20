@@ -294,7 +294,7 @@ export default function RamadanTracker() {
         hint: zikrGoal && zikrTotal >= zikrGoal ? t('ramadan.goalMet') : t('ramadan.tapToCount'),
       },
     };
-  }, [salatLog, zikrAnalytics, quranSummary]);
+  }, [salatLog, zikrAnalytics, quranSummary, t]);
 
   const logToday = (status: 'completed' | 'intended') => {
     upsert.mutate(

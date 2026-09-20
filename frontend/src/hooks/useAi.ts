@@ -13,12 +13,6 @@ export interface SuggestResult {
   ai: boolean;
   provider?: string;
 }
-export interface WeeklyResult {
-  summary: string;
-  encouragement: string;
-  ai: boolean;
-  provider?: string;
-}
 export interface MuhasabahResult {
   wentWell: string;
   slipped: string;
@@ -30,8 +24,6 @@ export interface NudgeResult {
   message: string;
   ai: boolean;
   provider?: string;
-  /** Set by /comfort when a named mood (low/anxious) warrants pointing to real support. */
-  resourceNote?: boolean;
 }
 export interface CoachResult {
   message: string;
@@ -44,29 +36,12 @@ export interface FastingCompanionResult {
   ai: boolean;
   provider?: string;
 }
-export interface InsightResult {
-  insights: string[];
-  headline: string;
-  ai: boolean;
-  provider?: string;
-}
 
 export function useAiSuggest() {
   return useMutation({
     mutationFn: async (userSummary: string) => {
       const { data } = await api.post<SuggestResult & { ok: boolean }>('/api/ai/suggest', {
         userSummary,
-      });
-      return data;
-    },
-  });
-}
-
-export function useAiWeekly() {
-  return useMutation({
-    mutationFn: async (stats: Record<string, unknown>) => {
-      const { data } = await api.post<WeeklyResult & { ok: boolean }>('/api/ai/weekly-summary', {
-        stats,
       });
       return data;
     },
@@ -88,27 +63,6 @@ export function useAiComeback() {
   return useMutation({
     mutationFn: async (vars: { daysAway: number; bestStreak?: number }) => {
       const { data } = await api.post<NudgeResult & { ok: boolean }>('/api/ai/comeback', vars);
-      return data;
-    },
-  });
-}
-
-export function useAiComfort() {
-  return useMutation({
-    mutationFn: async (vars: { moods: string[]; symptoms?: string[] }) => {
-      const { data } = await api.post<NudgeResult & { ok: boolean }>('/api/ai/comfort', vars);
-      return data;
-    },
-  });
-}
-
-export function useAiCycleGuidance() {
-  return useMutation({
-    mutationFn: async (vars: { phase: 'hayd' | 'nifas'; dayCount: number; beyondMax: boolean }) => {
-      const { data } = await api.post<NudgeResult & { ok: boolean }>(
-        '/api/ai/cycle-guidance',
-        vars
-      );
       return data;
     },
   });
@@ -142,17 +96,6 @@ export function useAiFastingCompanion() {
         '/api/ai/fasting-companion',
         vars
       );
-      return data;
-    },
-  });
-}
-
-export function useAiActivityInsight() {
-  return useMutation({
-    mutationFn: async (stats: Record<string, unknown>) => {
-      const { data } = await api.post<InsightResult & { ok: boolean }>('/api/ai/activity-insight', {
-        stats,
-      });
       return data;
     },
   });

@@ -1,77 +1,32 @@
-﻿import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useAiCycleGuidance } from '../hooks/useAi.js';
-import { AiBadge } from './ai/AiFlair.js';
 
 /**
- * Phase-aware encouragement for Rayhanah — distinct from MoodComfort (which
- * needs her to pick moods first): this shows automatically whenever a cycle
- * is active, tailored to exactly which day of hayd/nifas she's on. The AI
- * only ever supplies the encouragement line — istihada/ghusl fiqh content
- * stays as the app's own static, citation-carrying copy shown elsewhere.
+ * Phase-aware encouragement for Rayhanah.
  *
- * Cached per (day + phase + dayCount) so re-renders don't spam the API.
+ * Rayhanah privacy rule: NO cycle data (phase, day count, dates) is ever sent
+ * to an AI or any other outside service. This is fixed, hand-written text
+ * chosen on the device from the day number; it makes no network call. The
+ * istihada/ghusl guidance stays as the app's own static copy shown elsewhere.
  */
-
-const CACHE_KEY = 'bustandeen_cycle_guidance';
-
-function sig(day: string, phase: string, dayCount: number): string {
-  return `${day}|${phase}|${dayCount}`;
-}
-function readCache(key: string): string | null {
-  try {
-    const raw = JSON.parse(localStorage.getItem(CACHE_KEY) ?? '{}') as {
-      key?: string;
-      message?: string;
-    };
-    return raw.key === key && raw.message ? raw.message : null;
-  } catch {
-    return null;
-  }
-}
-function writeCache(key: string, message: string): void {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ key, message }));
-  } catch {
-    /* full */
-  }
-}
-
-export default function CycleGuidance({
-  day,
-  phase,
-  dayCount,
-  beyondMax,
-}: {
-  day: string;
-  phase: 'hayd' | 'nifas';
-  dayCount: number;
-  beyondMax: boolean;
-}) {
+export default function CycleGuidance({ dayCount }: { dayCount: number }) {
   const { t } = useTranslation();
-  const guidance = useAiCycleGuidance();
-  const [message, setMessage] = useState<string | null>(null);
-  const key = sig(day, phase, dayCount);
 
-  useEffect(() => {
-    const cached = readCache(key);
-    if (cached) {
-      setMessage(cached);
-      return;
-    }
-    setMessage(null);
-    guidance.mutate(
-      { phase, dayCount, beyondMax },
-      {
-        onSuccess: (r) => {
-          setMessage(r.message);
-          writeCache(key, r.message);
-        },
-      }
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, [key]);
+  const options = [
+    t(
+      'cycleSupport.day.a',
+      'Rest is written for you these days. Your dhikr and du’a reach Him just the same.'
+    ),
+    t(
+      'cycleSupport.day.b',
+      'You are not behind. This is a different kind of worship season, and you are still close to Allah.'
+    ),
+    t(
+      'cycleSupport.day.c',
+      'Be gentle with yourself today. A quiet moment of remembrance is enough.'
+    ),
+  ];
+  const message = options[Math.abs(dayCount) % options.length];
 
   return (
     <motion.div
@@ -79,25 +34,15 @@ export default function CycleGuidance({
       animate={{ opacity: 1, y: 0 }}
       className="rounded-2xl border border-brand-pink/25 bg-brand-pink/[0.07] p-3.5"
     >
-      <AiBadge label={t('naseeh.forYouToday', 'Naseeh · for you today')} />
-      {guidance.isPending && !message ? (
-        <div className="flex items-center gap-2 mt-2">
-          {['#c4825a', '#c4825a', '#5a9e8e'].map((c, i) => (
-            <motion.span
-              key={i}
-              className="w-2 h-2 rounded-full"
-              style={{ background: c }}
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.15 }}
-            />
-          ))}
-          <span className="text-white/40 text-xs">{t('naseeh.findingWords')}</span>
-        </div>
-      ) : (
-        <p className="text-brand-pink/80 text-sm leading-relaxed mt-2">{message}</p>
-      )}
+      <p className="text-brand-pink/70 text-[11px] font-bold">
+        {t('cycleSupport.label', 'For you today')}
+      </p>
+      <p className="text-brand-pink/80 text-sm leading-relaxed mt-1.5">{message}</p>
       <p className="text-white/30 text-[10px] mt-2">
-        {t('naseeh.disclaimer', "✨ A companion's words — not medical or religious advice.")}
+        {t(
+          'cycleSupport.disclaimer',
+          'Kind words, not medical or religious advice. What you record here stays private and is never sent to an AI.'
+        )}
       </p>
     </motion.div>
   );

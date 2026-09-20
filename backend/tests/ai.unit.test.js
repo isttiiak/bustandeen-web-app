@@ -1,4 +1,5 @@
 import { jest } from '@jest/globals';
+import { readFileSync } from 'node:fs';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import * as aiService from '../src/services/ai.service.js';
@@ -237,40 +238,24 @@ describe('AI guardrail: prompt injection defense', () => {
   });
 });
 
-describe('AI mental-health boundary: mood comfort resource note', () => {
-  const originalFetch = global.fetch;
-  const originalKey = process.env.GROQ_API_KEY;
-
-  beforeEach(() => {
-    process.env.GROQ_API_KEY = 'test-key';
-    mockGroqReply(JSON.stringify({ message: 'You are held today.' }));
+describe('Rayhanah privacy: no cycle data can reach the AI', () => {
+  test('the AI service exposes no cycle/mood function', () => {
+    const names = Object.keys(aiService);
+    expect(names.filter((n) => /cycle|mood|comfort|rayhanah|hayd|nifas/i.test(n))).toEqual([]);
   });
 
-  afterEach(() => {
-    global.fetch = originalFetch;
-    process.env.GROQ_API_KEY = originalKey;
-    jest.restoreAllMocks();
+  test('the AI service source never imports a cycle model or service', () => {
+    const src = readFileSync(new URL('../src/services/ai.service.ts', import.meta.url), 'utf8');
+    expect(src).not.toMatch(/CycleDay|CycleLog|CycleProfile|cycle\.service|cyclePartner/);
   });
 
-  test('resourceNote is set when a heavier mood (low/anxious) is named', async () => {
-    const result = await aiService.getMoodComfort({ moods: ['low'] }, AI_ENABLED_UID);
-    expect(result.resourceNote).toBe(true);
-  });
-
-  test('resourceNote is not set for lighter moods only', async () => {
-    const result = await aiService.getMoodComfort({ moods: ['calm', 'happy'] }, AI_ENABLED_UID);
-    expect(result.resourceNote).toBe(false);
-  });
-
-  test('resourceNote still reflects the mood even when the AI call fails (fallback path)', async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500 });
-    const result = await aiService.getMoodComfort({ moods: ['anxious'] }, AI_ENABLED_UID);
-    expect(result.ai).toBe(false);
-    expect(result.resourceNote).toBe(true);
+  test('the old /comfort and /cycle-guidance routes are gone', () => {
+    const routes = readFileSync(new URL('../src/routes/ai.routes.ts', import.meta.url), 'utf8');
+    expect(routes).not.toMatch(/comfort|cycle-guidance/);
   });
 });
 
-describe('AI: cycle-phase guidance (Rayhanah)', () => {
+describe('AI: English-only replies', () => {
   const originalFetch = global.fetch;
   const originalKey = process.env.GROQ_API_KEY;
 
@@ -284,124 +269,34 @@ describe('AI: cycle-phase guidance (Rayhanah)', () => {
     jest.restoreAllMocks();
   });
 
-  test('a clean reply passes through as AI-generated', async () => {
-    mockGroqReply(JSON.stringify({ message: 'Rest is written for you today — be gentle.' }));
-    const result = await aiService.getCycleGuidance(
-      {
-        phase: 'hayd',
-        dayCount: 3,
-        beyondMax: false,
-      },
-      AI_ENABLED_UID
-    );
-    expect(result.ai).toBe(true);
-    expect(result.message).toContain('Rest is written');
-  });
-
-  test('a reply naming istihada is blocked by the output guardrail (ruling-language filter)', async () => {
-    mockGroqReply(
-      JSON.stringify({ message: 'Since this is istihada, wudu is now wajib for each salah.' })
-    );
-    const result = await aiService.getCycleGuidance(
-      {
-        phase: 'hayd',
-        dayCount: 14,
-        beyondMax: true,
-      },
-      AI_ENABLED_UID
-    );
-    expect(result.ai).toBe(false);
-    expect(result.message).not.toContain('istihada');
-  });
-
-  test('a provider failure falls back to the static message', async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500 });
-    const result = await aiService.getCycleGuidance(
-      {
-        phase: 'nifas',
-        dayCount: 10,
-        beyondMax: false,
-      },
-      AI_ENABLED_UID
-    );
-    expect(result.ai).toBe(false);
-    expect(result.message.length).toBeGreaterThan(0);
-  });
-});
-
-describe('AI: language support (bn)', () => {
-  const originalFetch = global.fetch;
-  const originalKey = process.env.GROQ_API_KEY;
-
-  beforeEach(() => {
-    process.env.GROQ_API_KEY = 'test-key';
-  });
-
-  afterEach(() => {
-    global.fetch = originalFetch;
-    process.env.GROQ_API_KEY = originalKey;
-    jest.restoreAllMocks();
-  });
-
-  test('passing language: "bn" puts a Bengali-response instruction in the system prompt sent to the provider', async () => {
-    mockGroqReply(JSON.stringify({ message: 'বিশ্রাম আপনার জন্য লেখা — নিজের প্রতি নরম থাকুন।' }));
-    await aiService.getCycleGuidance(
-      { phase: 'hayd', dayCount: 2, beyondMax: false },
-      AI_ENABLED_UID,
-      'bn'
-    );
-    const body = JSON.parse(global.fetch.mock.calls[0][1].body);
-    const systemMessage = body.messages.find((m) => m.role === 'system').content;
-    expect(systemMessage).toMatch(/Bengali/i);
-  });
-
-  test('omitting language (defaults to "en") puts an English-response instruction in the system prompt', async () => {
-    mockGroqReply(JSON.stringify({ message: 'Rest is written for you — be gentle.' }));
-    await aiService.getCycleGuidance(
-      { phase: 'hayd', dayCount: 2, beyondMax: false },
-      AI_ENABLED_UID
-    );
+  test('the system prompt tells the model to respond in English', async () => {
+    mockGroqReply(JSON.stringify({ message: 'Welcome back. Start with one dhikr.' }));
+    await aiService.getComebackNudge({ daysAway: 3 }, AI_ENABLED_UID);
     const body = JSON.parse(global.fetch.mock.calls[0][1].body);
     const systemMessage = body.messages.find((m) => m.role === 'system').content;
     expect(systemMessage).toMatch(/Respond in English/);
   });
 
-  test('a Bengali-script hadith citation is blocked by the output guardrail (the English-only patterns would miss it)', async () => {
+  test('a Bengali-script hadith citation is still blocked by the output guardrail', async () => {
     mockGroqReply(JSON.stringify({ message: 'সহীহ বুখারীতে বর্ণিত আছে যে এই দিনগুলো ধৈর্যের।' }));
-    const result = await aiService.getCycleGuidance(
-      { phase: 'hayd', dayCount: 2, beyondMax: false },
-      AI_ENABLED_UID,
-      'bn'
-    );
+    const result = await aiService.getComebackNudge({ daysAway: 3 }, AI_ENABLED_UID);
     expect(result.ai).toBe(false);
     expect(result.message).not.toContain('বুখারী');
   });
 
-  test('a Bengali-script ruling word (হারাম) is blocked by the output guardrail', async () => {
+  test('a Bengali-script ruling word (হারাম) is still blocked', async () => {
     mockGroqReply(JSON.stringify({ message: 'এই সময়ে রোযা রাখা হারাম, তাই চিন্তা করবেন না।' }));
     const result = await aiService.getFastingCompanion(
       { period: 'morning', fastType: 'general' },
-      AI_ENABLED_UID,
-      'bn'
+      AI_ENABLED_UID
     );
     expect(result.ai).toBe(false);
   });
 
-  test('a Bengali-script verse citation (সূরা) is blocked by the output guardrail', async () => {
+  test('a Bengali-script verse citation (সূরা) is still blocked', async () => {
     mockGroqReply(JSON.stringify({ message: 'সূরা বাকারায় বলা হয়েছে যে এটি সহজ হবে।' }));
-    const result = await aiService.getComebackNudge({ daysAway: 3 }, AI_ENABLED_UID, 'bn');
+    const result = await aiService.getComebackNudge({ daysAway: 3 }, AI_ENABLED_UID);
     expect(result.ai).toBe(false);
-  });
-
-  test('a provider failure with language: "bn" falls back to the Bengali static message, not the English one', async () => {
-    global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500 });
-    const result = await aiService.getCycleGuidance(
-      { phase: 'hayd', dayCount: 2, beyondMax: false },
-      AI_ENABLED_UID,
-      'bn'
-    );
-    expect(result.ai).toBe(false);
-    expect(result.message).toMatch(/[ঀ-৿]/); // contains Bengali script
   });
 });
 
@@ -454,11 +349,11 @@ describe('AI: weekly muhāsabah report', () => {
     expect(global.fetch).not.toHaveBeenCalled();
   });
 
-  test('a provider failure with language "bn" falls back to the Bengali static message', async () => {
+  test('a provider failure falls back to the English static message', async () => {
     global.fetch = jest.fn().mockResolvedValue({ ok: false, status: 500 });
-    const result = await aiService.getMuhasabahReport({}, AI_ENABLED_UID, 'bn');
+    const result = await aiService.getMuhasabahReport({}, AI_ENABLED_UID);
     expect(result.ai).toBe(false);
-    expect(result.wentWell).toMatch(/[ঀ-৿]/);
+    expect(result.wentWell).toMatch(/showed up/i);
   });
 });
 

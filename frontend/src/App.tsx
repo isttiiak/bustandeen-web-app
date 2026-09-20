@@ -657,7 +657,7 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
   }, [setUser, init, resetAll, hydrate, setAuthLoading]);
 
-  const { authLoading, aiEnabled } = useAuthStore();
+  const { authLoading, aiEnabled, isDemoMode } = useAuthStore();
   const [quickLogOpen, setQuickLogOpen] = useState(false);
   const isAuthPage = ['/login', '/signup', '/auth/action'].includes(location.pathname);
   // Programmatic-SEO static pages (src/seo/) ship their own self-contained
@@ -1043,6 +1043,7 @@ export default function App() {
             </Suspense>
             {/* Floating ✨ quick-log button — visible on app pages except /naseeh (it has its own) and the zikr counter */}
             {aiEnabled &&
+              !isDemoMode &&
               !isAdminPage &&
               !isSeoPage &&
               !isAuthPage &&

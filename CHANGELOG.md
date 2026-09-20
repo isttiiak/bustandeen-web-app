@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.54.0 - Rayhanah data never reaches AI, English-only Naseeh, one weekly card, lint clean - 2026-09-21
+
+### Changed
+
+- **No cycle data goes to any AI, ever.** The cycle "for you today" cards (mood comfort and cycle-day guidance) no longer call an AI. They now show fixed, hand-written lines picked on your device, so moods, symptoms, phase and day numbers are never sent anywhere. The `/api/ai/comfort` and `/api/ai/cycle-guidance` routes and their code are deleted. A test now fails if the AI service ever imports cycle data, exposes a cycle function, or those routes return. The privacy panel says "Cycle tracker: nothing is sent".
+- **One weekly card instead of two.** "Naseeh · your week" is removed; "Muhāsabah · this week" (with its verified reference) is the one that stays. Its old monthly-pattern part is covered by "What I noticed". The weekly-summary and activity-insight AI routes are removed with it.
+- **The AI companion is English only.** No Bengali AI replies, fallbacks or screen text, and the language header is gone. This saves free Groq limit and upkeep. The cycle cards above are not AI and stay in English and Bengali.
+- **Naseeh is hidden in demo mode:** the page (redirects home), the menu link and the floating quick-log button.
+
+### Fixed
+
+- **Lint is clean.** Lint no longer scans the generated `dist-ssr` build output (2 false errors). All seven hook-dependency warnings are fixed properly: Ayah share card fit loop, fasting vows list, Ramadan tracker, and the Quran reader's resume/read callbacks (which now use stable `mutate` functions so listing them cannot cause repeated flushes).
+
 ## v5.53.0 - Naseeh page: what I noticed, make-up prayer plan, ask about my data, privacy panel - 2026-09-21
 
 ### Added

@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import api from '../lib/api.js';
-import i18n from '../i18n.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
@@ -59,18 +58,15 @@ export interface DataAnswerData {
 // computed sentence is unchanged (so a re-worded number can never go stale).
 interface RewordCache {
   weekId: string;
-  lang: string;
   /** true once a re-word was attempted this week, so a failing model is not retried on every visit */
   tried: boolean;
   items: Record<string, { original: string; text: string }>;
 }
 
-const lang = (): string => (i18n.language?.startsWith('bn') ? 'bn' : 'en');
-
 function readCache(key: string): RewordCache | null {
   try {
     const raw = JSON.parse(localStorage.getItem(key) ?? 'null') as RewordCache | null;
-    if (raw && raw.weekId === weekIdForMuhasabah() && raw.lang === lang()) return raw;
+    if (raw && raw.weekId === weekIdForMuhasabah()) return raw;
   } catch {
     /* unreadable cache = no cache */
   }
@@ -78,7 +74,7 @@ function readCache(key: string): RewordCache | null {
 }
 function writeCache(key: string, items: RewordCache['items']): void {
   try {
-    const entry: RewordCache = { weekId: weekIdForMuhasabah(), lang: lang(), tried: true, items };
+    const entry: RewordCache = { weekId: weekIdForMuhasabah(), tried: true, items };
     localStorage.setItem(key, JSON.stringify(entry));
   } catch {
     /* storage full or blocked: skip caching */
@@ -108,7 +104,7 @@ export function usePatternInsights() {
   const today = getTrackingDay();
   const tz = getUserTimezoneOffset();
   return useQuery({
-    queryKey: ['naseeh', 'patterns', today, tz, lang()],
+    queryKey: ['naseeh', 'patterns', today, tz],
     enabled: !!user && aiEnabled,
     staleTime: 6 * 60 * 60_000,
     queryFn: async (): Promise<PatternInsightsData> => {
@@ -147,7 +143,7 @@ export function useKazaPlan() {
   const aiEnabled = useAuthStore((s) => s.aiEnabled);
   const today = getTrackingDay();
   return useQuery({
-    queryKey: ['naseeh', 'kaza-plan', today, lang()],
+    queryKey: ['naseeh', 'kaza-plan', today],
     enabled: !!user && aiEnabled,
     staleTime: 60 * 60_000,
     queryFn: async (): Promise<KazaPlanData> => {

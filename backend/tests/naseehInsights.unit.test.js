@@ -59,7 +59,7 @@ afterEach(() => {
   global.fetch = ORIGINAL_FETCH;
 });
 
-const opts = { today: TODAY, timezoneOffset: 0, language: 'en' };
+const opts = { today: TODAY, timezoneOffset: 0 };
 
 describe('runDataQuery (no model involved)', () => {
   test('counts missed Fajr in the last 7 days from the log', async () => {
@@ -71,16 +71,6 @@ describe('runDataQuery (no model involved)', () => {
     expect(r.answered).toBe(true);
     expect(r.answer).toBe('You missed Fajr 6 times in the last 7 days.');
     expect(global.fetch).not.toHaveBeenCalled();
-  });
-
-  test('answers in Bengali with Bengali digits', async () => {
-    const r = await naseeh.runDataQuery(
-      UID,
-      { query: 'salat_missed', period: 'week', prayer: 'fajr' },
-      { ...opts, language: 'bn' }
-    );
-    expect(r.answer).toContain('৬');
-    expect(r.answer).toContain('ফজর');
   });
 
   test('prayed count and kaza owed reflect the seeded log', async () => {
@@ -130,7 +120,7 @@ describe('askAboutData (model only picks the lookup)', () => {
 
 describe('kaza plan', () => {
   test('projects a clear-by date from the owed count', async () => {
-    const plan = await naseeh.getKazaPlan(UID, { today: TODAY, phrase: false, language: 'en' });
+    const plan = await naseeh.getKazaPlan(UID, { today: TODAY, phrase: false });
     expect(plan.totalOwed).toBeGreaterThan(0);
     expect(plan.daysToClear).toBe(plan.totalOwed);
     expect(plan.clearedBy).toBe(iso(plan.totalOwed - 1));
@@ -139,14 +129,14 @@ describe('kaza plan', () => {
   });
 
   test('a model re-word that keeps the numbers is used; one that changes them is dropped', async () => {
-    const plain = await naseeh.getKazaPlan(UID, { today: TODAY, phrase: false, language: 'en' });
+    const plain = await naseeh.getKazaPlan(UID, { today: TODAY, phrase: false });
     mockReply(JSON.stringify({ lines: [`Good news! ${plain.lines[0]}`] }));
-    const kept = await naseeh.getKazaPlan(UID, { today: TODAY, phrase: true, language: 'en' });
+    const kept = await naseeh.getKazaPlan(UID, { today: TODAY, phrase: true });
     expect(kept.ai).toBe(true);
     expect(kept.lines[0]).toBe(`Good news! ${plain.lines[0]}`);
 
     mockReply(JSON.stringify({ lines: [plain.lines[0].replace(/\d+/, '2')] }));
-    const dropped = await naseeh.getKazaPlan(UID, { today: TODAY, phrase: true, language: 'en' });
+    const dropped = await naseeh.getKazaPlan(UID, { today: TODAY, phrase: true });
     expect(dropped.ai).toBe(plain.totalOwed === 2);
   });
 });

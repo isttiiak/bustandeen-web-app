@@ -132,9 +132,9 @@ export default function QuranReader() {
   const endAyah = Number(params.get('end')) || null; // bundle bound
 
   const { data: summary } = useQuranSummary();
-  const readAyat = useReadAyat();
+  const { mutate: readAyat } = useReadAyat();
   const toggleBookmark = useToggleBookmark();
-  const setResumeServer = useSetResume();
+  const { mutate: setResumeServer } = useSetResume();
   const resumeSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resumePromptDoneRef = useRef(false);
   const [tafsirOpen, setTafsirOpen] = useState(false);
@@ -285,10 +285,10 @@ export default function QuranReader() {
       if (!user) return;
       if (resumeSyncTimerRef.current) clearTimeout(resumeSyncTimerRef.current);
       resumeSyncTimerRef.current = setTimeout(() => {
-        setResumeServer.mutate({ surah: surahNo, ayah });
+        setResumeServer({ surah: surahNo, ayah });
       }, 1500);
     },
-    [user, surahNo]
+    [user, surahNo, setResumeServer]
   );
 
   // ── logging: count each NEW ayah the reader moves past, flush in batches ──
@@ -297,7 +297,7 @@ export default function QuranReader() {
       const n = pendingRef.current;
       if ((n <= 0 && !completedSurah) || !user || !countsGoal) return;
       pendingRef.current = 0;
-      readAyat.mutate(
+      readAyat(
         { count: n, surah: surahNo, advanceKhatm: mode === 'khatam', completedSurah },
         {
           onSuccess: (r) => {
@@ -306,7 +306,7 @@ export default function QuranReader() {
         }
       );
     },
-    [user, surahNo, mode, countsGoal]
+    [user, surahNo, mode, countsGoal, readAyat]
   );
 
   useEffect(() => () => flush(), [flush]); // flush on unmount / surah change
@@ -377,7 +377,7 @@ export default function QuranReader() {
           id: 'ayah-audio',
         })
       );
-  }, [current, playing, stopAudio, volume]);
+  }, [current, playing, stopAudio, volume, t]);
 
   const changeVolume = useCallback((v: number) => {
     setVolume(v);
@@ -475,6 +475,8 @@ export default function QuranReader() {
     goToIdx,
     finishAndRedirect,
     syncResume,
+    t,
+    i18n.language,
   ]);
 
   const goPrev = useCallback(() => {

@@ -2,6 +2,7 @@ import {
   forwardRef,
   useEffect,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
   type CSSProperties,
@@ -168,7 +169,10 @@ const AyahShareCard = forwardRef<HTMLDivElement, AyahShareCardProps>(function Ay
     fontsTick,
   ].join('#');
   const [fitState, setFitState] = useState<Fit>({ key, scale: 1, lean: false, lines: 40 });
-  const fit: Fit = fitState.key === key ? fitState : { key, scale: 1, lean: false, lines: 40 };
+  const fit: Fit = useMemo(
+    () => (fitState.key === key ? fitState : { key, scale: 1, lean: false, lines: 40 }),
+    [fitState, key]
+  );
 
   useLayoutEffect(() => {
     const el = bodyRef.current;
@@ -179,7 +183,7 @@ const AyahShareCard = forwardRef<HTMLDivElement, AyahShareCardProps>(function Ay
     } else if (fitState.key !== key) {
       setFitState(fit);
     }
-  });
+  }, [ayah, fit, fitState.key, key]);
 
   const scale = fit.scale * ratio.fontBoost;
   const translations = fit.lean

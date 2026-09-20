@@ -26,16 +26,8 @@ interface Provider {
   model: string;
 }
 
-/** The app currently ships English and Bengali (see frontend/src/i18n.js).
- * Every AI reply should match whichever one the user is actually reading —
- * see the language-instruction note appended in `complete()` below. */
-export type AiLanguage = 'en' | 'bn';
-
-function languageDirective(language: AiLanguage): string {
-  return language === 'bn'
-    ? 'Respond ONLY in natural, everyday Bengali (বাংলা) — the way a warm friend actually talks, not a stiff or literal translation from English. Keep it simple, calm and encouraging; avoid heavy Sanskrit-derived words when an everyday word says the same thing. Never mix in English sentences.'
-    : 'Respond in English.';
-}
+/** The AI companion replies in English only, whatever the app's UI language is. */
+const LANGUAGE_DIRECTIVE = 'Respond in English.';
 
 // Safety-sensitive domain (religious guidance) — favor consistent, predictable
 // phrasing over creative variation. 0.8 was tuned for warmth but also raises
@@ -300,7 +292,7 @@ export async function complete(
   system: string,
   user: string,
   maxTokens = 600,
-  meta?: { feature: string; userId?: string; language?: AiLanguage }
+  meta?: { feature: string; userId?: string }
 ): Promise<{ text: string; provider: string } | null> {
   const feature = meta?.feature ?? 'unknown';
   const access = await resolveAiAccess(meta?.userId);
@@ -308,9 +300,8 @@ export async function complete(
     logAiCall({ feature, userId: meta?.userId, success: false, filtered: 'ai-disabled' });
     return null;
   }
-  const directive = languageDirective(meta?.language ?? 'en');
   const out = await completeRaw(
-    `${GUARDRAIL}\n\n${system}\n\n${directive}`,
+    `${GUARDRAIL}\n\n${system}\n\n${LANGUAGE_DIRECTIVE}`,
     user,
     maxTokens,
     access.customKey
@@ -360,11 +351,7 @@ const STATIC_SUGGEST: SuggestResult = {
   ai: false,
 };
 
-export async function getSuggestions(
-  userSummary: string,
-  userId?: string,
-  language: AiLanguage = 'en'
-): Promise<SuggestResult> {
+export async function getSuggestions(userSummary: string, userId?: string): Promise<SuggestResult> {
   const clean = sanitizeForPrompt(userSummary, 500);
   const out = await complete(
     `The user shares a short summary of their worship habits. Suggest exactly 3 short dhikr PHRASES (names only, transliteration, no translation, no references) that suit them, and ONE warm motivational sentence tailored to them. The dhikr phrases themselves stay in Arabic transliteration regardless of reply language — only the surrounding motivation sentence follows the language instruction below. Reply ONLY as JSON: {"suggestions": string[3], "motivation": string}.`,
@@ -372,7 +359,7 @@ export async function getSuggestions(
       ? asUntrustedData('My worship summary', clean)
       : 'My worship summary: a Muslim building daily dhikr, salah, Quran and fasting habits',
     600,
-    { feature: 'suggest', userId, language }
+    { feature: 'suggest', userId }
   );
   if (!out) return STATIC_SUGGEST;
   const parsed = parseLoose<{ suggestions?: string[]; motivation?: string }>(out.text);
@@ -385,68 +372,11 @@ export async function getSuggestions(
   };
 }
 
-// ── Feature 2: weekly worship recap ──────────────────────────────────────────
-export interface WeeklyResult {
-  summary: string;
-  encouragement: string;
-  ai: boolean;
-  provider?: string;
-}
-
-export async function getWeeklySummary(
-  stats: Record<string, unknown>,
-  userId?: string,
-  language: AiLanguage = 'en'
-): Promise<WeeklyResult> {
-  const out = await complete(
-    `You are given the user's worship numbers for the past week (prayers, dhikr, Quran āyāt, fasting, streaks). Write a warm, non-judgmental recap: ONE "summary" sentence and ONE "encouragement" sentence for the week ahead.
-
-Be genuinely informative, not generic praise: name at least one SPECIFIC number from the data (a streak length, a percentage, a count) rather than vague words like "great" or "wonderful" alone. If one tracker clearly lagged behind the others, the encouragement sentence should gently point toward that one specific thing — not a generic "keep going." Vary your sentence structure and opening words each time; do not default to the same template phrase. Celebrate effort, never shame gaps. No references, no rulings. Reply ONLY as JSON: {"summary": string, "encouragement": string}.`,
-    `This week's numbers (JSON): ${JSON.stringify(stats).slice(0, 800)}`,
-    600,
-    { feature: 'weekly-summary', userId, language }
-  );
-  if (!out) {
-    return language === 'bn'
-      ? {
-          summary: 'এই সপ্তাহে আপনি লেগে ছিলেন — প্রতিটি স্মরণই গণনায় এসেছে।',
-          encouragement: 'ধীরে-স্থিরে চলুন; অল্প কিন্তু নিয়মিত হওয়াই আসল পথ।',
-          ai: false,
-        }
-      : {
-          summary: 'You showed up this week — every remembrance counted.',
-          encouragement: 'Keep it gentle and steady; small and constant is the way.',
-          ai: false,
-        };
-  }
-  const parsed = parseLoose<{ summary?: string; encouragement?: string }>(out.text);
-  if (!parsed?.summary || !parsed.encouragement) {
-    return {
-      summary: out.text.slice(0, 300),
-      encouragement:
-        language === 'bn'
-          ? 'এগিয়ে যান — ধারাবাহিক ও ভালোবাসা নিয়ে।'
-          : 'Keep going — steadily and with love.',
-      ai: true,
-      provider: out.provider,
-    };
-  }
-  return {
-    summary: String(parsed.summary),
-    encouragement: String(parsed.encouragement),
-    ai: true,
-    provider: out.provider,
-  };
-}
-
 // ── Feature 3: comeback nudge after time away ────────────────────────────────
 export interface NudgeResult {
   message: string;
   ai: boolean;
   provider?: string;
-  /** Set (true) by getMoodComfort when a named mood warrants pointing to real
-   * support alongside the AI line — see the mental-health boundary note there. */
-  resourceNote?: boolean;
 }
 
 export async function getComebackNudge(
@@ -454,91 +384,15 @@ export async function getComebackNudge(
     daysAway: number;
     bestStreak?: number;
   },
-  userId?: string,
-  language: AiLanguage = 'en'
+  userId?: string
 ): Promise<NudgeResult> {
   const out = await complete(
     `The user has been away from their worship tracking for a few days and just opened the app again. Write ONE short, warm welcome-back line (max 2 sentences). Make returning feel easy and shame-free — suggest the SMALLEST possible next step (a single āyah, one dhikr, one prayer logged). Never guilt them, never mention "streak loss" as a failure. Reply ONLY as JSON: {"message": string}.`,
     `Days away: ${input.daysAway}. Their best run ever: ${input.bestStreak ?? 0} days.`,
     220,
-    { feature: 'comeback', userId, language }
+    { feature: 'comeback', userId }
   );
-  const fallback =
-    language === 'bn'
-      ? `${input.daysAway} দিন দূরে ছিলেন — আর আপনি ফিরে এসেছেন। আজ ছোট্ট করে শুরু করুন: একটি আয়াত, বা একটি যিকির। এটাই যথেষ্ট।`
-      : `${input.daysAway} days away — and you came back. Start tiny today: one āyah, or one dhikr. That's enough.`;
-  if (!out) return { message: fallback, ai: false };
-  const parsed = parseLoose<{ message?: string }>(out.text);
-  return {
-    message: parsed?.message ? String(parsed.message) : fallback,
-    ai: !!parsed?.message,
-    provider: out.provider,
-  };
-}
-
-// ── Feature 4: mood-aware comfort (Rayhanah) ─────────────────────────────────
-// Mental health boundary: this is encouragement, never a substitute for real
-// support. When she names a heavier feeling, attach a resource note pointing
-// to a real person/professional rather than only a warmer AI sentence — a
-// generated line can't judge whether that's enough, but a genuine offline
-// connection always outranks it.
-const DISTRESS_MOODS = new Set(['low', 'anxious']);
-
-export async function getMoodComfort(
-  input: {
-    moods: string[];
-    symptoms?: string[];
-  },
-  userId?: string,
-  language: AiLanguage = 'en'
-): Promise<NudgeResult> {
-  const out = await complete(
-    `A Muslim woman logged how she feels today during her cycle. Write ONE gentle, comforting line (max 2 sentences) that acknowledges EXACTLY the feelings she named — warm, sisterly, never clinical, never preachy. If she named several, hold them together. Do NOT give medical advice, do NOT give any ruling, do NOT cite anything. Reply ONLY as JSON: {"message": string}.`,
-    `She feels: ${input.moods.join(', ') || 'unspecified'}${input.symptoms?.length ? `. Body: ${input.symptoms.join(', ')}` : ''}.`,
-    220,
-    { feature: 'mood-comfort', userId, language }
-  );
-  const resourceNote = input.moods.some((m) => DISTRESS_MOODS.has(m));
-  const fallback =
-    language === 'bn'
-      ? 'আজ যেমনই লাগুক না কেন, আল্লাহ এখনও আপনাকে ধরে আছেন, এখনও আপনাকে ভালোবাসেন। নিজের প্রতি নরম থাকুন।'
-      : 'Whatever today feels like, you are still held and still beloved to Allah. Be gentle with yourself.';
-  if (!out) return { message: fallback, ai: false, resourceNote };
-  const parsed = parseLoose<{ message?: string }>(out.text);
-  return {
-    message: parsed?.message ? String(parsed.message) : fallback,
-    ai: !!parsed?.message,
-    provider: out.provider,
-    resourceNote,
-  };
-}
-
-/**
- * Cycle-phase-aware encouragement (Rayhanah). This is deliberately the ONLY
- * thing the AI supplies here — fiqh content (istihada rulings, ghusl steps)
- * stays as static, citation-carrying copy already shown elsewhere in
- * RayhanahCycle.tsx; the guardrail below would strip a ruling/citation out of
- * the model's own output anyway, but the prompt also tells it not to try.
- */
-export async function getCycleGuidance(
-  input: {
-    phase: 'hayd' | 'nifas';
-    dayCount: number;
-    beyondMax: boolean;
-  },
-  userId?: string,
-  language: AiLanguage = 'en'
-): Promise<NudgeResult> {
-  const out = await complete(
-    `A Muslim woman is currently on day ${input.dayCount} of her ${input.phase === 'nifas' ? 'post-natal bleeding (nifas)' : 'monthly cycle (hayd)'} — salat is excused for her right now. Write ONE short, warm, sisterly encouragement line (max 2 sentences) for exactly this day of her cycle. Do NOT mention istihada, wudu, or any ruling even if it seems relevant — that guidance is shown to her separately. Do NOT cite anything. Reply ONLY as JSON: {"message": string}.`,
-    `Day ${input.dayCount} of ${input.phase}.`,
-    180,
-    { feature: 'cycle-guidance', userId, language }
-  );
-  const fallback =
-    language === 'bn'
-      ? 'এই দিনগুলোতে বিশ্রাম আপনার জন্যই লেখা — আপনার যিকির ও দুআ ঠিক আগের মতোই তাঁর কাছে পৌঁছায়।'
-      : "Rest is written for you these days — your dhikr and du'a still reach Him just the same.";
+  const fallback = `${input.daysAway} days away — and you came back. Start tiny today: one āyah, or one dhikr. That's enough.`;
   if (!out) return { message: fallback, ai: false };
   const parsed = parseLoose<{ message?: string }>(out.text);
   return {
@@ -563,8 +417,7 @@ export async function getStreakCoaching(
     feature: string;
     bestStreak?: number;
   },
-  userId?: string,
-  language: AiLanguage = 'en'
+  userId?: string
 ): Promise<CoachResult> {
   const isMilestone = input.event === 'milestone';
   // `feature` is a translated UI label (varies by locale), not a closed enum
@@ -576,32 +429,19 @@ export async function getStreakCoaching(
       : `The user's ${feature} streak just broke after ${input.streakDays ?? 0} days. Their best ever: ${input.bestStreak ?? 0} days. Write ONE shame-free, encouraging "message" (max 2 sentences — this is a restart, not a failure) and ONE tiny, CONCRETE "tip" for getting back (1 sentence, smallest possible action, not a vague platitude). Vary your phrasing each time. Reply ONLY as JSON: {"message": string, "tip": string}.`,
     `${feature} streak ${isMilestone ? 'milestone' : 'break'}: ${input.streakDays ?? 0} days. Best ever: ${input.bestStreak ?? 0}.`,
     300,
-    { feature: 'streak-coaching', userId, language }
+    { feature: 'streak-coaching', userId }
   );
-  const fallback: CoachResult =
-    language === 'bn'
-      ? isMilestone
-        ? {
-            message: `${input.streakDays} দিন — মাশাআল্লাহ, আপনার ধারাবাহিকতা চমৎকার।`,
-            tip: 'একই সময়, একই জায়গা — ছন্দ ইচ্ছাশক্তির চেয়ে বেশি টেকে।',
-            ai: false,
-          }
-        : {
-            message: `স্ট্রিক ভাঙে — কিন্তু আপনি ${input.streakDays ?? 0} দিন লেগে ছিলেন, আর সেটা গণনায় এসেছে।`,
-            tip: 'আজ শুধু একটি করুন। একটি যিকির, একটি আয়াত, একটি নামায লগ করুন। এতেই সব আবার শুরু হয়।',
-            ai: false,
-          }
-      : isMilestone
-        ? {
-            message: `${input.streakDays} days — masha'Allah, your consistency is beautiful.`,
-            tip: 'Same time, same place — rhythm outlasts willpower.',
-            ai: false,
-          }
-        : {
-            message: `Streaks end — but you showed up for ${input.streakDays ?? 0} days, and that counted.`,
-            tip: 'Just one today. One dhikr, one āyah, one prayer logged. That restarts everything.',
-            ai: false,
-          };
+  const fallback: CoachResult = isMilestone
+    ? {
+        message: `${input.streakDays} days — masha'Allah, your consistency is beautiful.`,
+        tip: 'Same time, same place — rhythm outlasts willpower.',
+        ai: false,
+      }
+    : {
+        message: `Streaks end — but you showed up for ${input.streakDays ?? 0} days, and that counted.`,
+        tip: 'Just one today. One dhikr, one āyah, one prayer logged. That restarts everything.',
+        ai: false,
+      };
   if (!out) return fallback;
   const parsed = parseLoose<{ message?: string; tip?: string }>(out.text);
   if (!parsed?.message || !parsed.tip) return fallback;
@@ -626,8 +466,7 @@ export async function getFastingCompanion(
     fastType: string;
     dayNumber?: number;
   },
-  userId?: string,
-  language: AiLanguage = 'en'
+  userId?: string
 ): Promise<FastingCompanionResult> {
   const isMorning = input.period === 'morning';
   const out = await complete(
@@ -636,89 +475,24 @@ export async function getFastingCompanion(
       : `A Muslim is nearing iftar after fasting today (${input.fastType}${input.dayNumber ? `, day ${input.dayNumber}` : ''}). Write ONE short, warm evening "message" (max 2 sentences) — acknowledgement of the effort, gentle anticipation. Not a du'a. No hadith, no ruling. Vary your phrasing each time. Reply ONLY as JSON: {"message": string}.`,
     `Fasting: ${input.fastType}, ${isMorning ? 'just starting' : 'near iftar'}. Day ${input.dayNumber ?? 1}.`,
     220,
-    { feature: 'fasting-companion', userId, language }
+    { feature: 'fasting-companion', userId }
   );
-  const fallback: FastingCompanionResult =
-    language === 'bn'
-      ? isMorning
-        ? {
-            message:
-              'রোযার আরেকটি নতুন দিন শুরু হলো — আপনি আল্লাহর এই নৈকট্য বেছে নিয়েছেন। আজকের প্রতিটি নীরব মুহূর্ত তাঁর সাথে কথোপকথন হোক।',
-            ai: false,
-          }
-        : {
-            message:
-              'শেষ সময় ঘনিয়ে এসেছে — আপনি ধৈর্য নিয়ে আজকের দিনটি পার করেছেন। শীঘ্রই ইফতারের পুরস্কার, আর ক্ষুধার্ত প্রতিটি মুহূর্তই গণনায় এসেছে।',
-            ai: false,
-          }
-      : isMorning
-        ? {
-            message:
-              'A new day of fasting begins — you chose this closeness to Allah. Let every quiet moment today be a conversation with Him.',
-            ai: false,
-          }
-        : {
-            message:
-              'The end is near — you carried this day with patience. Soon the reward of breaking your fast, and every hungry moment counted.',
-            ai: false,
-          };
+  const fallback: FastingCompanionResult = isMorning
+    ? {
+        message:
+          'A new day of fasting begins — you chose this closeness to Allah. Let every quiet moment today be a conversation with Him.',
+        ai: false,
+      }
+    : {
+        message:
+          'The end is near — you carried this day with patience. Soon the reward of breaking your fast, and every hungry moment counted.',
+        ai: false,
+      };
   if (!out) return fallback;
   const parsed = parseLoose<{ message?: string }>(out.text);
   return {
     message: parsed?.message ? String(parsed.message) : fallback.message,
     ai: !!parsed?.message,
-    provider: out.provider,
-  };
-}
-
-// ── Feature 7: activity pattern analysis ─────────────────────────────────────
-export interface InsightResult {
-  insights: string[];
-  headline: string;
-  ai: boolean;
-  provider?: string;
-}
-
-export async function getActivityInsight(
-  stats: Record<string, unknown>,
-  userId?: string,
-  language: AiLanguage = 'en'
-): Promise<InsightResult> {
-  const out = await complete(
-    `You are given a user's worship activity data for the past month (salat, dhikr, Quran, fasting). Analyze the patterns and write:
-- ONE short "headline" (max 1 sentence) summarizing the overall picture
-- 2-3 "insights" (each 1 sentence) about patterns you notice: which days are strong, what's growing, what dropped, any notable rhythm
-
-Be warm and specific — name the actual numbers you see, not generic praise. Vary your headline's phrasing and structure each time rather than reusing the same sentence shape. No hadith, no ruling, no guilt. Reply ONLY as JSON: {"headline": string, "insights": string[]}.`,
-    `Monthly activity data (JSON): ${JSON.stringify(stats).slice(0, 1200)}`,
-    500,
-    { feature: 'activity-insight', userId, language }
-  );
-  const fallback: InsightResult =
-    language === 'bn'
-      ? {
-          headline: 'আপনার মাসটির নিজস্ব ছন্দ ছিল — প্রতিদিন আপনার উপস্থিতিই গুরুত্বপূর্ণ ছিল।',
-          insights: [
-            'আপনার সবচেয়ে শক্তিশালী দিনগুলো লক্ষ্য করুন এবং সেই সময়টা রক্ষা করে চলুন।',
-            'মাঝে মাঝে বড় বিস্ফোরণের চেয়ে ছোট্ট ধারাবাহিকতা ভালো — শান্ত দিনগুলোও যোগ হতে থাকে।',
-          ],
-          ai: false,
-        }
-      : {
-          headline: 'Your month had its own rhythm — every day you showed up mattered.',
-          insights: [
-            'Look at your strongest days and keep protecting that time.',
-            'Small consistency beats occasional bursts — the quiet days add up too.',
-          ],
-          ai: false,
-        };
-  if (!out) return fallback;
-  const parsed = parseLoose<{ headline?: string; insights?: string[] }>(out.text);
-  if (!parsed?.headline || !parsed.insights?.length) return fallback;
-  return {
-    headline: String(parsed.headline),
-    insights: parsed.insights.slice(0, 4).map(String),
-    ai: true,
     provider: out.provider,
   };
 }
@@ -788,8 +562,7 @@ const AVG_AYAT_PER_JUZ = 208;
 export async function parseNaturalLog(
   text: string,
   existingZikrTypes: string[],
-  userId?: string,
-  language: AiLanguage = 'en'
+  userId?: string
 ): Promise<ParsedLogResult> {
   const clean = sanitizeForPrompt(text, 400);
   if (!clean) return EMPTY_PARSE;
@@ -810,7 +583,7 @@ export async function parseNaturalLog(
     // small a budget here means the reply gets cut off before any JSON comes
     // out at all (empty content), not a shorter-but-valid one.
     700,
-    { feature: 'natural-log', userId, language }
+    { feature: 'natural-log', userId }
   );
   if (!out) return EMPTY_PARSE;
   const parsed = parseLoose<{
@@ -887,8 +660,7 @@ export interface MuhasabahResult {
 
 export async function getMuhasabahReport(
   stats: Record<string, unknown>,
-  userId?: string,
-  language: AiLanguage = 'en'
+  userId?: string
 ): Promise<MuhasabahResult> {
   const out = await complete(
     `You are given a Muslim user's worship numbers for the past week (prayers, dhikr, Qur'an, fasting, streaks). Write a short weekly muhāsabah (self-accounting), as a gentle mirror, never a scold. Three short fields:
@@ -898,23 +670,14 @@ export async function getMuhasabahReport(
 No hadith, no verse, no ruling, no citation of any kind — that is handled separately. Reply ONLY as JSON: {"wentWell": string, "slipped": string, "suggestion": string}.`,
     `This week's numbers (JSON): ${JSON.stringify(stats).slice(0, 800)}`,
     600,
-    { feature: 'muhasabah', userId, language }
+    { feature: 'muhasabah', userId }
   );
-  const fallback: MuhasabahResult =
-    language === 'bn'
-      ? {
-          wentWell: 'এই সপ্তাহে আপনি ধারাবাহিকভাবে হাজির ছিলেন — প্রতিটি ছোট আমলই গণনায় এসেছে।',
-          slipped: 'কোনো একটি ট্র্যাকার হয়তো একটু পিছিয়ে ছিল — আর তা ঠিক আছে।',
-          suggestion:
-            'আগামী সপ্তাহে একটি ছোট, নির্দিষ্ট লক্ষ্য বেছে নিন এবং শুধু সেটাতেই মনোযোগ দিন।',
-          ai: false,
-        }
-      : {
-          wentWell: 'You showed up consistently this week — every small act counted.',
-          slipped: 'One tracker may have lagged a little behind the rest — and that is alright.',
-          suggestion: 'Pick one small, specific target for next week and give it your focus.',
-          ai: false,
-        };
+  const fallback: MuhasabahResult = {
+    wentWell: 'You showed up consistently this week — every small act counted.',
+    slipped: 'One tracker may have lagged a little behind the rest — and that is alright.',
+    suggestion: 'Pick one small, specific target for next week and give it your focus.',
+    ai: false,
+  };
   if (!out) return fallback;
   const parsed = parseLoose<{ wentWell?: string; slipped?: string; suggestion?: string }>(out.text);
   if (!parsed?.wentWell || !parsed.slipped || !parsed.suggestion) return fallback;

@@ -5,14 +5,10 @@ import { aiUserLimiter } from '../middleware/rateLimiter.js';
 import * as aiController from '../controllers/ai.controller.js';
 import {
   aiSuggestSchema,
-  aiWeeklySchema,
   aiMuhasabahSchema,
   aiComebackSchema,
-  aiComfortSchema,
   aiStreakCoachSchema,
   aiFastingCompanionSchema,
-  aiActivityInsightSchema,
-  aiCycleGuidanceSchema,
   aiSetGroqKeySchema,
 } from '../validation/ai.schemas.js';
 
@@ -29,13 +25,6 @@ router.post(
   aiController.suggestHandler
 );
 router.post(
-  '/weekly-summary',
-  requireAuth,
-  aiUserLimiter,
-  validate(aiWeeklySchema),
-  aiController.weeklyHandler
-);
-router.post(
   '/muhasabah',
   requireAuth,
   aiUserLimiter,
@@ -50,20 +39,6 @@ router.post(
   aiController.comebackHandler
 );
 router.post(
-  '/comfort',
-  requireAuth,
-  aiUserLimiter,
-  validate(aiComfortSchema),
-  aiController.comfortHandler
-);
-router.post(
-  '/cycle-guidance',
-  requireAuth,
-  aiUserLimiter,
-  validate(aiCycleGuidanceSchema),
-  aiController.cycleGuidanceHandler
-);
-router.post(
   '/streak-coaching',
   requireAuth,
   aiUserLimiter,
@@ -76,13 +51,6 @@ router.post(
   aiUserLimiter,
   validate(aiFastingCompanionSchema),
   aiController.fastingCompanionHandler
-);
-router.post(
-  '/activity-insight',
-  requireAuth,
-  aiUserLimiter,
-  validate(aiActivityInsightSchema),
-  aiController.activityInsightHandler
 );
 
 // Bring-your-own Groq key (Settings > AI) — a settings write, not a Groq

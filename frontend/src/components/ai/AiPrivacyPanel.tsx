@@ -68,10 +68,10 @@ export default function AiPrivacyPanel() {
     },
     {
       key: 'cycle',
-      title: t('naseehPrivacy.cycle', 'Cycle companion (only if you use it)'),
+      title: t('naseehPrivacy.cycle', 'Cycle tracker (Rayhanah)'),
       sends: t(
         'naseehPrivacy.cycleSends',
-        'The mood and body words you tap, or the day number of the current phase. No dates and no notes.'
+        'Nothing. Cycle data is never sent to an AI, and the cycle screens make no AI request.'
       ),
     },
   ];
@@ -108,7 +108,7 @@ export default function AiPrivacyPanel() {
         <p className="text-white/60 text-sm leading-relaxed">
           {t(
             'naseehPrivacy.intro',
-            'Naseeh only sees what is listed below. It never gets your journal notes, your name or your account details, and no cycle dates or notes are ever sent.'
+            'Naseeh only sees what is listed below. It never gets your journal notes, your name or your account details, and no cycle data of any kind is ever sent.'
           )}
         </p>
 

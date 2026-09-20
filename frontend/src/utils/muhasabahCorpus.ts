@@ -1,5 +1,5 @@
 // The verified āyah/hadith corpus for the weekly muhāsabah report — the
-// differentiator from the existing NaseehInsights weekly recap. This is
+// differentiator from the old weekly recap card (now removed). This is
 // NEVER AI-generated: the AI (getMuhasabahReport) only ever writes the
 // reflection/suggestion text, and the guardrail already strips any citation
 // it might try to add. The reference shown alongside it always comes from
@@ -49,7 +49,7 @@ export const MUHASABAH_CORPUS: MuhasabahRef[] = [
 ];
 
 /** ISO-week-stable pick — same week always shows the same reference, next
- * week rotates to a different one. Mirrors NaseehInsights.tsx's weekId(). */
+ * week rotates to a different one. Same week numbering the Naseeh cards use. */
 export function weekIdForMuhasabah(): string {
   const d = new Date();
   const jan1 = new Date(d.getFullYear(), 0, 1);

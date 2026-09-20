@@ -1,13 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import * as aiService from '../services/ai.service.js';
-import type { AiLanguage } from '../services/ai.service.js';
-
-/** The frontend's axios interceptor sets this on every request to the
- * currently-displayed UI language (see frontend/src/lib/api.ts) — anything
- * else (missing header, an unsupported locale) safely falls back to English. */
-function requestLanguage(req: Request): AiLanguage {
-  return req.headers['x-app-language'] === 'bn' ? 'bn' : 'en';
-}
 
 export const suggestHandler = async (
   req: Request,
@@ -16,29 +8,7 @@ export const suggestHandler = async (
 ): Promise<void> => {
   try {
     const { userSummary } = req.body as { userSummary?: string };
-    const result = await aiService.getSuggestions(
-      userSummary ?? '',
-      req.user?.uid,
-      requestLanguage(req)
-    );
-    res.json({ ok: true, ...result });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const weeklyHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { stats } = req.body as { stats?: Record<string, unknown> };
-    const result = await aiService.getWeeklySummary(
-      stats ?? {},
-      req.user?.uid,
-      requestLanguage(req)
-    );
+    const result = await aiService.getSuggestions(userSummary ?? '', req.user?.uid);
     res.json({ ok: true, ...result });
   } catch (err) {
     next(err);
@@ -52,11 +22,7 @@ export const muhasabahHandler = async (
 ): Promise<void> => {
   try {
     const { stats } = req.body as { stats?: Record<string, unknown> };
-    const result = await aiService.getMuhasabahReport(
-      stats ?? {},
-      req.user?.uid,
-      requestLanguage(req)
-    );
+    const result = await aiService.getMuhasabahReport(stats ?? {}, req.user?.uid);
     res.json({ ok: true, ...result });
   } catch (err) {
     next(err);
@@ -70,51 +36,7 @@ export const comebackHandler = async (
 ): Promise<void> => {
   try {
     const { daysAway, bestStreak } = req.body as { daysAway: number; bestStreak?: number };
-    const result = await aiService.getComebackNudge(
-      { daysAway, bestStreak },
-      req.user?.uid,
-      requestLanguage(req)
-    );
-    res.json({ ok: true, ...result });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const comfortHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { moods, symptoms } = req.body as { moods: string[]; symptoms?: string[] };
-    const result = await aiService.getMoodComfort(
-      { moods, symptoms },
-      req.user?.uid,
-      requestLanguage(req)
-    );
-    res.json({ ok: true, ...result });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const cycleGuidanceHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { phase, dayCount, beyondMax } = req.body as {
-      phase: 'hayd' | 'nifas';
-      dayCount: number;
-      beyondMax: boolean;
-    };
-    const result = await aiService.getCycleGuidance(
-      { phase, dayCount, beyondMax },
-      req.user?.uid,
-      requestLanguage(req)
-    );
+    const result = await aiService.getComebackNudge({ daysAway, bestStreak }, req.user?.uid);
     res.json({ ok: true, ...result });
   } catch (err) {
     next(err);
@@ -135,8 +57,7 @@ export const streakCoachHandler = async (
     };
     const result = await aiService.getStreakCoaching(
       { event, streakDays, feature, bestStreak },
-      req.user?.uid,
-      requestLanguage(req)
+      req.user?.uid
     );
     res.json({ ok: true, ...result });
   } catch (err) {
@@ -157,26 +78,7 @@ export const fastingCompanionHandler = async (
     };
     const result = await aiService.getFastingCompanion(
       { period, fastType, dayNumber },
-      req.user?.uid,
-      requestLanguage(req)
-    );
-    res.json({ ok: true, ...result });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const activityInsightHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { stats } = req.body as { stats?: Record<string, unknown> };
-    const result = await aiService.getActivityInsight(
-      stats ?? {},
-      req.user?.uid,
-      requestLanguage(req)
+      req.user?.uid
     );
     res.json({ ok: true, ...result });
   } catch (err) {

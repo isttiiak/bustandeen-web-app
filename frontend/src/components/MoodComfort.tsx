@@ -1,83 +1,58 @@
-﻿import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { useAiComfort } from '../hooks/useAi.js';
-import { AiBadge } from './ai/AiFlair.js';
 
 /**
- * A gentle line tuned to exactly the feelings she selected today.
+ * A gentle line for the feelings she selected today.
  *
- * Cached per (day + mood signature) so changing chips doesn't spam the API —
- * one short call per distinct combination per day.
+ * Rayhanah privacy rule: NO cycle data (moods, symptoms, days, phases) is ever
+ * sent to an AI or any other outside service. This card is fixed, hand-written
+ * text picked on the device from the moods on screen. It makes no network call.
  */
 
-const CACHE_KEY = 'bustandeen_mood_comfort';
-
-// Computed locally from `moods` (not from the AI response) so it still shows
-// on a cache hit, where the mutation never runs — see useEffect below.
 const DISTRESS_MOODS = new Set(['low', 'anxious']);
+const KNOWN_MOODS = ['low', 'anxious', 'tired', 'irritable', 'happy', 'calm'] as const;
+type KnownMood = (typeof KNOWN_MOODS)[number];
 
-function sig(day: string, moods: string[]): string {
-  return `${day}|${[...moods].sort().join(',')}`;
-}
-function readCache(key: string): string | null {
-  try {
-    const raw = JSON.parse(localStorage.getItem(CACHE_KEY) ?? '{}') as {
-      key?: string;
-      message?: string;
-    };
-    return raw.key === key && raw.message ? raw.message : null;
-  } catch {
-    return null;
-  }
-}
-function writeCache(key: string, message: string): void {
-  try {
-    localStorage.setItem(CACHE_KEY, JSON.stringify({ key, message }));
-  } catch {
-    /* full */
-  }
-}
-
-export default function MoodComfort({
-  day,
-  moods,
-  symptoms,
-}: {
-  day: string;
-  moods: string[];
-  symptoms?: string[];
-}) {
+export default function MoodComfort({ moods }: { moods: string[] }) {
   const { t } = useTranslation();
-  const comfort = useAiComfort();
-  const [message, setMessage] = useState<string | null>(null);
-  const key = sig(day, moods);
+  if (!moods.length) return null;
+
+  // Heavier feelings first, so the line speaks to the hardest one she named.
+  const lead: KnownMood | undefined = KNOWN_MOODS.find((m) => moods.includes(m));
   const showResourceNote = moods.some((m) => DISTRESS_MOODS.has(m));
 
-  useEffect(() => {
-    if (!moods.length) {
-      setMessage(null);
-      return;
-    }
-    const cached = readCache(key);
-    if (cached) {
-      setMessage(cached);
-      return;
-    }
-    setMessage(null);
-    comfort.mutate(
-      { moods, symptoms },
-      {
-        onSuccess: (r) => {
-          setMessage(r.message);
-          writeCache(key, r.message);
-        },
-      }
-    );
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, [key]);
-
-  if (!moods.length) return null;
+  const lines: Record<KnownMood, string> = {
+    low: t(
+      'cycleSupport.mood.low',
+      'A low day is allowed. You are still held and still loved by Allah. Be soft with yourself today.'
+    ),
+    anxious: t(
+      'cycleSupport.mood.anxious',
+      'Take one slow breath. Whatever is worrying you, you do not have to carry it all today.'
+    ),
+    tired: t(
+      'cycleSupport.mood.tired',
+      'Rest is not laziness. Your body is asking for care, and giving it is a good thing.'
+    ),
+    irritable: t(
+      'cycleSupport.mood.irritable',
+      'Feeling on edge is okay. Give yourself some quiet and a little patience today.'
+    ),
+    happy: t(
+      'cycleSupport.mood.happy',
+      'A happy heart is a gift. Enjoy it, and say Alhamdulillah for it.'
+    ),
+    calm: t(
+      'cycleSupport.mood.calm',
+      'Calm is a blessing. Let this peace stay with you through the day.'
+    ),
+  };
+  const message = lead
+    ? lines[lead]
+    : t(
+        'cycleSupport.mood.other',
+        'Whatever today feels like, you are still held and still loved by Allah. Be gentle with yourself.'
+      );
 
   return (
     <motion.div
@@ -85,31 +60,21 @@ export default function MoodComfort({
       animate={{ opacity: 1, y: 0 }}
       className="rounded-2xl border border-brand-pink/25 bg-brand-pink/[0.07] p-3.5"
     >
-      <AiBadge label={t('naseeh.forYouToday', 'Naseeh · for you today')} />
-      {comfort.isPending && !message ? (
-        <div className="flex items-center gap-2 mt-2">
-          {['#c4825a', '#c4825a', '#5a9e8e'].map((c, i) => (
-            <motion.span
-              key={c}
-              className="w-2 h-2 rounded-full"
-              style={{ background: c }}
-              animate={{ opacity: [0.3, 1, 0.3] }}
-              transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.15 }}
-            />
-          ))}
-          <span className="text-white/40 text-xs">{t('naseeh.findingWords')}</span>
-        </div>
-      ) : (
-        <p className="text-brand-pink/80 text-sm leading-relaxed mt-2">{message}</p>
-      )}
+      <p className="text-brand-pink/70 text-[11px] font-bold">
+        {t('cycleSupport.label', 'For you today')}
+      </p>
+      <p className="text-brand-pink/80 text-sm leading-relaxed mt-1.5">{message}</p>
       <p className="text-white/30 text-[10px] mt-2">
-        {t('naseeh.disclaimer', "✨ A companion's words — not medical or religious advice.")}
+        {t(
+          'cycleSupport.disclaimer',
+          'Kind words, not medical or religious advice. What you record here stays private and is never sent to an AI.'
+        )}
       </p>
       {showResourceNote && (
         <p className="text-brand-pink/60 text-[11px] mt-1.5 leading-relaxed">
           {t(
-            'naseeh.resourceNote',
-            'If this feeling sits heavy for more than today, please reach out to someone you trust or a mental health professional — you deserve real support, not just words.'
+            'cycleSupport.resourceNote',
+            'If this feeling sits heavy for more than today, please reach out to someone you trust or a mental health professional. You deserve real support, not just words.'
           )}
         </p>
       )}

@@ -122,7 +122,7 @@ export default function Navbar() {
   /** translated page title with English fallback */
   const pageTitle = (path: string, fallback: string) =>
     PAGE_KEYS[path] ? t(PAGE_KEYS[path]!, { defaultValue: fallback }) : fallback;
-  const { user, setUser, aiEnabled } = useAuthStore();
+  const { user, setUser, aiEnabled, isDemoMode } = useAuthStore();
   const resetAll = useZikrStore((s) => s.resetAll);
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -381,7 +381,7 @@ export default function Navbar() {
                         <Cog6ToothIcon className="w-4 h-4 text-white/40" />
                         {t('nav.settings')}
                       </Link>
-                      {aiEnabled && (
+                      {aiEnabled && !isDemoMode && (
                         <Link
                           to="/naseeh"
                           onClick={() => setDropdownOpen(false)}

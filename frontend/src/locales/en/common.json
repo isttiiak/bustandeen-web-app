@@ -1089,8 +1089,6 @@
   "naseeh": {
     "disclaimer": "✨ A companion's words — not medical or religious advice.",
     "findingWords": "Finding the right words…",
-    "forYouToday": "Naseeh · for you today",
-    "resourceNote": "If this feeling sits heavy for more than today, please reach out to someone you trust or a mental health professional — you deserve real support, not just words.",
     "pageTitle": "Naseeh, AI Companion",
     "pageHeading": "Naseeh",
     "pageSubheading": "Your personal Islamic productivity companion",
@@ -1130,7 +1128,7 @@
   },
   "naseehPrivacy": {
     "title": "AI usage and privacy",
-    "intro": "Naseeh only sees what is listed below. It never gets your journal notes, your name or your account details, and no cycle dates or notes are ever sent.",
+    "intro": "Naseeh only sees what is listed below. It never gets your journal notes, your name or your account details, and no cycle data of any kind is ever sent.",
     "quickLog": "Quick log",
     "quickLogSends": "The sentence you type, and the names of your dhikr types.",
     "summary": "Weekly summary and muhāsabah",
@@ -1143,8 +1141,8 @@
     "chatSends": "Only the question you type. The answer is worked out on our server from your logs.",
     "coaching": "Streak coaching, fasting and welcome-back notes",
     "coachingSends": "A streak length, the kind of fast and its day number, or how many days you were away.",
-    "cycle": "Cycle companion (only if you use it)",
-    "cycleSends": "The mood and body words you tap, or the day number of the current phase. No dates and no notes.",
+    "cycle": "Cycle tracker (Rayhanah)",
+    "cycleSends": "Nothing. Cycle data is never sent to an AI, and the cycle screens make no AI request.",
     "ownKey": "You are using your own Groq key, so your requests do not touch the shared Naseeh allowance.",
     "sharedKey": "You are using the shared Naseeh key. You can add your own Groq key in Settings.",
     "limits": "Limits: up to 20 AI requests and 30 typed questions a day. Most cards are re-worded once a week and remembered on this device.",
@@ -1154,12 +1152,6 @@
     "confirmYes": "Yes, turn off",
     "confirmNo": "Keep it on",
     "failed": "Naseeh is off on this device, but we could not update your account. Open Settings to confirm."
-  },
-  "naseehInsights": {
-    "badgeLabel": "Naseeh · your week",
-    "dismiss": "Dismiss",
-    "monthlyPatterns": "Monthly patterns",
-    "thinkingLabel": "Naseeh is reading your week…"
   },
   "naturalLog": {
     "entryTitle": "Quick log with a sentence",
@@ -1190,6 +1182,25 @@
     "dayToday": "Today",
     "dayYesterday": "Yesterday",
     "newDhikr": "(new dhikr)"
+  },
+  "cycleSupport": {
+    "label": "For you today",
+    "disclaimer": "Kind words, not medical or religious advice. What you record here stays private and is never sent to an AI.",
+    "resourceNote": "If this feeling sits heavy for more than today, please reach out to someone you trust or a mental health professional. You deserve real support, not just words.",
+    "mood": {
+      "low": "A low day is allowed. You are still held and still loved by Allah. Be soft with yourself today.",
+      "anxious": "Take one slow breath. Whatever is worrying you, you do not have to carry it all today.",
+      "tired": "Rest is not laziness. Your body is asking for care, and giving it is a good thing.",
+      "irritable": "Feeling on edge is okay. Give yourself some quiet and a little patience today.",
+      "happy": "A happy heart is a gift. Enjoy it, and say Alhamdulillah for it.",
+      "calm": "Calm is a blessing. Let this peace stay with you through the day.",
+      "other": "Whatever today feels like, you are still held and still loved by Allah. Be gentle with yourself."
+    },
+    "day": {
+      "a": "Rest is written for you these days. Your dhikr and du’a reach Him just the same.",
+      "b": "You are not behind. This is a different kind of worship season, and you are still close to Allah.",
+      "c": "Be gentle with yourself today. A quiet moment of remembrance is enough."
+    }
   },
   "nav": {
     "aboutUs": "About Us",

@@ -97,13 +97,6 @@ describe('Naseeh data API', () => {
     expect(res.body.answer).toBe('You have no make-up prayers owed.');
   });
 
-  test('Bengali header gives a Bengali answer', async () => {
-    const res = await as(request(app).post('/api/naseeh/data-answer'), onTok)
-      .set('X-App-Language', 'bn')
-      .send({ query: 'kaza_owed', today: TODAY, timezoneOffset: 0 });
-    expect(res.body.answer).toBe('আপনার কোনো কাযা নামায বাকি নেই।');
-  });
-
   test('validation rejects unknown lookups, bad prayers and bad dates', async () => {
     const bad = (body) => as(request(app).post('/api/naseeh/data-answer'), onTok).send(body);
     expect((await bad({ query: 'drop_users' })).status).toBe(400);

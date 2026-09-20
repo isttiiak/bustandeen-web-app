@@ -475,12 +475,7 @@ export default function RayhanahCycle() {
               )}
 
               <div className="mt-4">
-                <CycleGuidance
-                  day={today}
-                  phase={active.type}
-                  dayCount={active.dayCount}
-                  beyondMax={active.beyondMax}
-                />
+                <CycleGuidance dayCount={active.dayCount} />
               </div>
 
               <button
@@ -816,14 +811,8 @@ export default function RayhanahCycle() {
               </div>
             </div>
 
-            {/* A gentle line tuned to exactly the feelings she named (today only) */}
-            {viewDay === today && (
-              <MoodComfort
-                day={today}
-                moods={todayNote?.moods ?? []}
-                symptoms={todayNote?.symptoms}
-              />
-            )}
+            {/* A gentle fixed line for the feelings she named (today only). On-device only: no cycle data goes to any AI. */}
+            {viewDay === today && <MoodComfort moods={todayNote?.moods ?? []} />}
 
             {(viewDayNote?.symptoms?.length ?? 0) > 0 && (
               <p className="text-brand-pink/70 text-xs leading-relaxed border-t border-brand-emerald/5 pt-2.5">

@@ -241,7 +241,7 @@ export default function FastingTracker() {
   const [vowTitle, setVowTitle] = useState('');
   const [vowDays, setVowDays] = useState('');
 
-  const vows = summary?.profile.vows ?? [];
+  const vows = useMemo(() => summary?.profile.vows ?? [], [summary]);
   const kaffarahActive = summary?.profile.kaffarah.active ?? false;
   const qadaOwed = summary?.profile.qadaOwed ?? 0;
   const qadaDone = summary?.qadaCompleted ?? 0;

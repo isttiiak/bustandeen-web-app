@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store/useAuthStore.js';
 import NaturalLogModal from './NaturalLogModal.js';
 
 /** Entry point for natural-language logging — self-gated on aiEnabled, same
- * pattern as NaseehInsights/ComebackNudge, so dropping it into a page needs
+ * pattern as MuhasabahReport/ComebackNudge, so dropping it into a page needs
  * no extra prop-threading. */
 export default function NaturalLogEntry() {
   const { t } = useTranslation();

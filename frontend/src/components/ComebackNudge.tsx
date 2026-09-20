@@ -65,7 +65,7 @@ export default function ComebackNudge() {
     }
   }
   // aiEnabled gate was missing here — every sibling AI component (Streak-
-  // Coaching, NaseehInsights, FastingCompanion) already checks it before
+  // Coaching, MuhasabahReport, FastingCompanion) already checks it before
   // firing; this one didn't, so an opted-out user with no Groq key of their
   // own still got a real reply from the app's shared key.
   const show = aiEnabled && daysAway >= 2 && !dismissed;
