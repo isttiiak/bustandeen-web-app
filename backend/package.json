@@ -35,7 +35,7 @@
     "@types/express": "^5.0.6",
     "@types/mailparser": "^3.4.6",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^22",
+    "@types/node": "^26",
     "@types/nodemailer": "^8.0.2",
     "cross-env": "^10.1.0",
     "dotenv": "^16.4.5",
