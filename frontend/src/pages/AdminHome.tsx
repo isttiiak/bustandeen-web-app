@@ -247,17 +247,15 @@ export default function AdminHome() {
             )}
           />
         )}
-        {isServant && (
-          <AdminCard
-            to="/admin/broadcast"
-            icon={MegaphoneIcon}
-            title={t('adminHome.broadcastTitle', 'Broadcast')}
-            description={t(
-              'adminHome.broadcastDesc',
-              'Push a dismissible banner to every visitor.'
-            )}
-          />
-        )}
+        <AdminCard
+          to="/admin/broadcast"
+          icon={MegaphoneIcon}
+          title={t('adminHome.broadcastTitle', 'Broadcast')}
+          description={t(
+            'adminHome.broadcastDesc',
+            'Push a banner to every visitor, or send an update email.'
+          )}
+        />
       </div>
     </div>
   );

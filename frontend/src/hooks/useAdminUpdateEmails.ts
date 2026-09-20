@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 
-export type UpdateAudience = 'brother' | 'sister' | 'all';
+export type UpdateAudience = 'brother' | 'sister' | 'all' | 'custom';
 export type NotSetMode = 'include' | 'skip' | 'selected';
 
 export interface UpdateEmailAudience {
@@ -18,7 +18,7 @@ export interface UpdateEmailCampaignSummary {
   _id: string;
   subject: string;
   audience: UpdateAudience;
-  notSetMode: NotSetMode;
+  notSetMode?: NotSetMode;
   createdBy: string;
   createdAt: string;
   total: number;
@@ -31,7 +31,7 @@ export interface UpdateEmailRecipient {
   uid: string;
   email: string;
   name: string;
-  group: 'male' | 'female' | 'unset';
+  group: 'male' | 'female' | 'unset' | 'custom';
   status: 'pending' | 'sent' | 'failed';
   sentAt?: string;
   error?: string;
@@ -77,9 +77,12 @@ export function useUpdateEmailCampaign(id: string | null) {
 export interface SendUpdateInput {
   subject: string;
   body: string;
-  audience: UpdateAudience;
-  notSetMode: NotSetMode;
+  /** Group selection... */
+  audience?: Exclude<UpdateAudience, 'custom'>;
+  notSetMode?: NotSetMode;
   selectedUids?: string[];
+  /** ...or custom addresses (used instead of any group). */
+  customEmails?: string[];
 }
 
 type CampaignResponse = { campaign: UpdateEmailCampaignSummary };

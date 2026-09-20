@@ -55,11 +55,16 @@ describe('Admin update emails', () => {
 
   const asServant = (r) => r.set('X-Admin-Token', servant);
 
-  test('Ansar cannot read the audience or send', async () => {
+  test('unauthenticated requests are rejected', async () => {
+    const res = await request(app).get('/api/admin/update-emails/audience');
+    expect(res.status).toBe(401);
+  });
+
+  test('an Ansar can use it too (Servant and Ansar both have broadcast access)', async () => {
     const a = await request(app)
       .get('/api/admin/update-emails/audience')
       .set('X-Admin-Token', ansar);
-    expect(a.status).toBe(403);
+    expect(a.status).toBe(200);
   });
 
   test('audience counts brothers, sisters and not-set (disabled accounts excluded)', async () => {
@@ -122,6 +127,37 @@ describe('Admin update emails', () => {
       request(app).post(`/api/admin/update-emails/${res.body.campaign._id}/retry-failed`)
     );
     expect(retry.body.campaign.pending).toBe(2);
+  });
+
+  test('custom recipients: exactly those addresses, de-duplicated, names borrowed from accounts', async () => {
+    const res = await asServant(request(app).post('/api/admin/update-emails')).send({
+      subject: 'Test send',
+      body: 'Assalamu alaikum {name}, this is a test.',
+      customEmails: ['someone@example.com', 'SOMEONE@example.com', 'b1@t.dev'],
+    });
+    expect(res.status).toBe(200);
+    expect(res.body.campaign.total).toBe(2);
+    expect(res.body.campaign.audience).toBe('custom');
+    const detail = await asServant(
+      request(app).get(`/api/admin/update-emails/${res.body.campaign._id}`)
+    );
+    const byEmail = Object.fromEntries(detail.body.recipients.map((r) => [r.email, r]));
+    expect(byEmail['b1@t.dev'].name).toBe('Bilal');
+    expect(byEmail['someone@example.com'].name).toBe('');
+  });
+
+  test('a send needs either a group or custom recipients, and custom addresses must be valid', async () => {
+    const neither = await asServant(request(app).post('/api/admin/update-emails')).send({
+      subject: 'x',
+      body: 'y',
+    });
+    expect(neither.status).toBe(400);
+    const bad = await asServant(request(app).post('/api/admin/update-emails')).send({
+      subject: 'x',
+      body: 'y',
+      customEmails: ['not-an-email'],
+    });
+    expect(bad.status).toBe(400);
   });
 
   test('an empty selection is rejected', async () => {

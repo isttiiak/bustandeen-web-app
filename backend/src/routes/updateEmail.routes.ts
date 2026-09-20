@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { requireAdminAuth, requireServant } from '../middleware/auth.js';
+import { requireAdminAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { createUpdateEmailSchema } from '../validation/updateEmail.schemas.js';
 import * as updateEmailController from '../controllers/updateEmail.controller.js';
 
 const router = Router();
 
-// Servant-only bulk send (from ansar@bustandeen.com), same tier as the in-app
-// broadcast banner it sits beside.
-router.use(requireAdminAuth, requireServant);
+// Any signed-in admin (Servant or Ansar), same as the in-app broadcast banner
+// it sits beside. Always sent from ansar@bustandeen.com.
+router.use(requireAdminAuth);
 
 router.get('/audience', updateEmailController.audienceHandler);
 router.get('/', updateEmailController.listHandler);

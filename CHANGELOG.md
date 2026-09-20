@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.50.0 - Custom recipients for update emails, Broadcast open to Ansars - 2026-09-21
+
+### Added
+
+- **Custom recipients** on the Update emails tab: switch from "Choose a group" to "Custom recipients" and type addresses separated by commas (handy for test sends and one-off mails). Addresses are checked and de-duplicated, an address that belongs to an account borrows its first name for `{name}`, and the send is recorded in the history like any other.
+
+### Changed
+
+- **Broadcast is now open to both Servant and Ansar accounts** (the in-app banner and the update emails, including the nav link and the admin home card).
+- **Removed the template dropdown** from Update emails. Every message now starts from the standard greeting and closing lines instead, which is all a one-off update needs.
+
 ## v5.49.0 - Update emails from the admin panel, persistent broadcast banner, Noor tweaks - 2026-09-20
 
 ### Added

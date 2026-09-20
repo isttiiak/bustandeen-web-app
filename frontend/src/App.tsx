@@ -1019,9 +1019,7 @@ export default function App() {
                   path="/admin/broadcast"
                   element={
                     <AdminProtected>
-                      <ServantProtected>
-                        <AdminBroadcast />
-                      </ServantProtected>
+                      <AdminBroadcast />
                     </AdminProtected>
                   }
                 />

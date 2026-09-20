@@ -131,7 +131,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       label: t('adminLayout.auditLog', 'Audit Log'),
     },
     { to: '/admin/ops-health', icon: HeartIcon, label: t('adminLayout.opsHealth', 'Ops Health') },
-    { to: '/admin/broadcast', icon: MegaphoneIcon, label: t('adminLayout.broadcast', 'Broadcast') },
     {
       to: '/admin/compose-email',
       icon: PaperAirplaneIcon,
@@ -224,6 +223,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {t('adminLayout.zikrAudio', 'Zikr Audio')}
                 </NavLink>
               )}
+              {/* Broadcast is open to every admin, Servant or Ansar */}
+              <NavLink to="/admin/broadcast" className={navItemClass}>
+                <MegaphoneIcon className="w-4 h-4" />
+                {t('adminLayout.broadcast', 'Broadcast')}
+              </NavLink>
             </div>
             {isServant && (
               <>

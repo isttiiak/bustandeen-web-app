@@ -21,7 +21,7 @@ export const CHUNK_SIZE = 20;
 export const MAX_RECIPIENTS = 2000;
 const SEND_CONCURRENCY = 4;
 
-type Group = 'male' | 'female' | 'unset';
+type Group = 'male' | 'female' | 'unset' | 'custom';
 
 export interface AudienceUser {
   uid: string;
@@ -83,9 +83,12 @@ export async function getAudienceSummary(): Promise<AudienceSummary> {
 export interface CampaignInput {
   subject: string;
   body: string;
-  audience: UpdateEmailAudience;
-  notSetMode: NotSetMode;
+  /** Group selection (brothers / sisters / all + how to treat not-set accounts)... */
+  audience?: Exclude<UpdateEmailAudience, 'custom'>;
+  notSetMode?: NotSetMode;
   selectedUids?: string[];
+  /** ...OR an explicit list of addresses (special or test sends), used instead. */
+  customEmails?: string[];
 }
 
 /** Who a given selection resolves to. */
@@ -118,11 +121,38 @@ export function personalise(body: string, name: string): string {
   return body.replace(/[ \t]*\{name\}/gi, '');
 }
 
+/** Lower-cased, de-duplicated addresses from the custom list. */
+export function normaliseEmails(emails: string[]): string[] {
+  return [...new Set(emails.map((e) => e.trim().toLowerCase()).filter(Boolean))];
+}
+
 export async function createCampaign(
   input: CampaignInput,
   createdBy: string
 ): Promise<IUpdateEmailCampaign> {
   const users = await loadAudienceUsers();
+  const custom = normaliseEmails(input.customEmails ?? []);
+  if (custom.length > 0) {
+    // Special or test send: exactly these addresses. When one belongs to an
+    // account, borrow its first name so {name} still works.
+    const byEmail = new Map(users.map((u) => [u.email.toLowerCase(), u]));
+    return UpdateEmailCampaign.create({
+      subject: input.subject,
+      body: withTrailer(input.body),
+      audience: 'custom',
+      createdBy,
+      recipients: custom.map((email) => ({
+        uid: byEmail.get(email)?.uid ?? `custom:${email}`,
+        email,
+        name: byEmail.get(email)?.name ?? '',
+        group: 'custom',
+        status: 'pending',
+      })),
+    });
+  }
+  if (!input.audience || !input.notSetMode) {
+    throw httpError(400, 'Choose a group or enter custom recipients.');
+  }
   const recipients = selectRecipients(users, input.audience, input.notSetMode, input.selectedUids);
   if (recipients.length === 0) throw httpError(400, 'No recipients match this selection.');
   if (recipients.length > MAX_RECIPIENTS) {
@@ -184,7 +214,7 @@ export interface CampaignSummary {
   _id: string;
   subject: string;
   audience: UpdateEmailAudience;
-  notSetMode: NotSetMode;
+  notSetMode?: NotSetMode;
   createdBy: string;
   createdAt: Date;
   total: number;
