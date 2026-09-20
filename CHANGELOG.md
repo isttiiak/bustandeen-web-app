@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.51.2 - Friends: honest Noor bars and clearer explanation - 2026-09-20
+
+### Fixed
+
+- **Noor bars now show Noor out of 100.** They were scaled to the leader, so the top friend always had a full bar even at 33 Noor (Today and This week).
+
+### Changed
+
+- **"What is Noor" explains the weekly average and "usually".** The week line says days with nothing count 0 and what "active X of Y days" means. The "usually" line says it is the average of the last 14 active days (shown from 3).
+- **TODO cleanup.** Noor transparency, the Noor v2 design notes and the closed zikr-loophole items moved to `archive/TODO-v3-done-2026-09-20.md`.
+
 ## v5.51.1 - Friends: the "This week" board now shows week numbers - 2026-09-20
 
 ### Fixed

@@ -594,7 +594,6 @@ export default function Friends() {
       a.displayName.localeCompare(b.displayName)
   );
   const friendsCount = Math.max(0, leaderboard.length - 1);
-  const maxScore = Math.max(1, ...leaderboard.map(shownScore));
 
   return (
     <AnimatedBackground variant="dark">
@@ -766,7 +765,7 @@ export default function Friends() {
                           <div className="flex-1 bg-white/10 rounded-full h-1.5 overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
-                              animate={{ width: `${(shownScore(f) / maxScore) * 100}%` }}
+                              animate={{ width: `${Math.min(100, Math.max(0, shownScore(f)))}%` }}
                               transition={{
                                 duration: 0.7,
                                 delay: 0.15 + i * 0.06,
