@@ -889,8 +889,8 @@
     "noorSteady": "Steadiness: 1 for each day in a row you show up, up to 10, once you have done something today",
     "noorExtras": "Extras, 5 each (best two): a completed fast, nafl prayer, ṣalawāt or istighfār",
     "noorExcusedV2": "Rayhanah days (for sisters): prayer and fasting are excused, not lost. Dhikr and Quran count for more, and Noor still reaches 100.",
-    "noorWeekDesc": "= your average daily Noor since Friday; a day with nothing counts 0.",
-    "noorUsualDesc": "\"Above their usual\" compares today with the average of their recent active days, so everyone races their own best."
+    "noorWeekDesc": "= your average daily Noor since Friday, counting today so far. A day with nothing counts 0. \"Active X of Y days\" means days with at least one prayer, dhikr, Quran or extra.",
+    "noorUsualDesc": "\"Usually\" is your average Noor on the active days of the last 14 days (shown once you have 3). \"Above their usual\" means today is already higher, so everyone races their own best. Bars show Noor out of 100."
   },
   "genderGate": {
     "asBrother": "As a brother",
