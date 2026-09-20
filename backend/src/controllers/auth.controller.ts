@@ -65,6 +65,9 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
       }
     );
 
+    // Typed nullable since mongoose 9.10; an upsert always yields a document.
+    if (!user) throw new Error('User upsert returned no document');
+
     // Checked here (not just requireAuth) so a disabled account gets a clear
     // rejection at the sign-in step itself, rather than loading the app
     // shell and only failing on whatever API call happens to run first.
