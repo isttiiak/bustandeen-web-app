@@ -1,4 +1,4 @@
-import admin from 'firebase-admin';
+import { getAuth, type UserRecord } from 'firebase-admin/auth';
 import AdminAccount, { AdminRole, AnsarDomain, IAdminAccount } from '../models/AdminAccount.js';
 import { isFirebaseInitialized } from '../config/firebaseAdmin.js';
 
@@ -59,9 +59,9 @@ export const bootstrapAdminAccounts = async (): Promise<void> => {
     if (existing) continue;
 
     try {
-      let firebaseUser: admin.auth.UserRecord;
+      let firebaseUser: UserRecord;
       try {
-        firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
+        firebaseUser = await getAuth().getUserByEmail(normalizedEmail);
       } catch {
         if (!password) {
           console.warn(
@@ -69,7 +69,7 @@ export const bootstrapAdminAccounts = async (): Promise<void> => {
           );
           continue;
         }
-        firebaseUser = await admin.auth().createUser({
+        firebaseUser = await getAuth().createUser({
           email: normalizedEmail,
           password,
           emailVerified: true,
@@ -142,11 +142,11 @@ export const createAdminAccount = async (input: {
   const existing = await AdminAccount.findOne({ email });
   if (existing) throw new AdminAccountError('An admin account with this email already exists', 409);
 
-  let firebaseUser: admin.auth.UserRecord;
+  let firebaseUser: UserRecord;
   try {
-    firebaseUser = await admin.auth().getUserByEmail(email);
+    firebaseUser = await getAuth().getUserByEmail(email);
   } catch {
-    firebaseUser = await admin.auth().createUser({
+    firebaseUser = await getAuth().createUser({
       email,
       password: input.password,
       displayName: input.displayName,
