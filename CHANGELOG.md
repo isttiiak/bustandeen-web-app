@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.53.0 - Naseeh page: what I noticed, make-up prayer plan, ask about my data, privacy panel - 2026-09-21
+
+### Added
+
+- **"What I noticed" card.** Patterns worked out from your own logs with no AI: the time of day you do most dhikr and Quran, a weekday that runs quieter for prayer, your steadiest and most-slipping prayer, the Isha-before-11pm link to Fajr, and the reason you most often pick when a prayer slips. It only shows a pattern when there is enough history behind it. The AI may re-word the top two sentences, and its version is thrown away if any number changed.
+- **Make-up prayer plan.** From your owed count: one a day (attached to the prayer you are steadiest at) with a "done by" date, the date at two a day, and the oldest one owed. Hidden when nothing is owed.
+- **Ask about my data.** Quick-question buttons (no AI at all) and a typed question box for prayers missed or prayed, prayer rate and streaks, make-up prayers owed, dhikr, Quran, and fasts, for today, 7 days, this month or the last year. The AI only picks which lookup to run; the answer is always written from your logs. Rulings and anything outside your own numbers get a polite redirect to a scholar. The chat is not saved.
+- **AI usage and privacy panel.** Plain-words list of what each Naseeh feature sends, whether you are on your own Groq key or the shared one, the daily limits, and a "Turn off Naseeh" button with a confirm step.
+
+### Notes
+
+- New routes under `/api/naseeh`. Only the AI re-word (`phrase=1`) and typed questions count against AI limits; typed questions have their own 30 a day so they do not use up the shared 20. All four routes return 403 while Naseeh is off.
+- Bengali and English throughout, chosen from the app language.
+
 ## v5.52.0 - Signed sadaqah receipts and "Download all my data" - 2026-09-20
 
 ### Added

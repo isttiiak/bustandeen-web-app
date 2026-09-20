@@ -6,6 +6,10 @@ import MuhasabahReport from '../components/ai/MuhasabahReport.js';
 import StreakCoaching from '../components/ai/StreakCoaching.js';
 import NaturalLogEntry from '../components/ai/NaturalLogEntry.js';
 import FastingCompanion from '../components/ai/FastingCompanion.js';
+import PatternInsightsCard from '../components/ai/PatternInsightsCard.js';
+import KazaPlanCard from '../components/ai/KazaPlanCard.js';
+import DataChat from '../components/ai/DataChat.js';
+import AiPrivacyPanel from '../components/ai/AiPrivacyPanel.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
@@ -95,11 +99,23 @@ export default function NaseehPage() {
         {/* Fasting companion — only renders when today's fast is logged */}
         {fastActive && <FastingCompanion fastType={fastType} isPostMaghrib={isPostMaghrib} />}
 
+        {/* What Naseeh noticed in the user's own logs (computed first, AI only re-words) */}
+        <PatternInsightsCard />
+
+        {/* Make-up prayer plan; hidden when nothing is owed */}
+        <KazaPlanCard />
+
         {/* Weekly Naseeh summary + monthly activity insight */}
         <NaseehInsights />
 
         {/* Weekly muhāsabah with verified reference */}
         <MuhasabahReport />
+
+        {/* Read-only questions about the user's own numbers */}
+        <DataChat />
+
+        {/* What each feature sends, and the off switch */}
+        <AiPrivacyPanel />
 
         {/* Footer note */}
         <p className="text-white/20 text-[10px] text-center leading-relaxed px-4">

@@ -91,6 +91,19 @@ export const aiUserLimiter = makeUidLimit(
   'aiUser'
 );
 
+/** Naseeh data chat: 30 free-text questions per day per UID. Each one is a
+ *  model request (it only picks which lookup to run), so it has its own cap
+ *  instead of eating the shared 20/day AI allowance. */
+export const aiChatLimiter = makeUidLimit(
+  24 * 60 * 60 * 1000,
+  30,
+  {
+    ok: false,
+    error: 'Daily question limit reached. Try the quick questions, or come back tomorrow.',
+  },
+  'aiChat'
+);
+
 /** Friend-connect: 10 per hour per UID — prevents invite-code spam */
 export const socialConnectLimiter = makeUidLimit(
   60 * 60 * 1000,
