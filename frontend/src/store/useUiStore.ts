@@ -1,6 +1,11 @@
 ﻿import { create } from 'zustand';
 
 interface UiState {
+  /** Bumped when a cross-device sync changed settings at session start, so the
+   * routes remount and re-read plain-localStorage prefs (see App.tsx). */
+  prefsRevision: number;
+  /** Re-read all persisted prefs after sync rewrote localStorage. */
+  reloadFromStorage: (remount?: boolean) => void;
   reduceMotion: boolean;
   highContrast: boolean;
   /** Show all-time Noor in the navbar on every page (default: friends page only) */
@@ -47,24 +52,56 @@ interface UiState {
   setDiscreetMode: (val: boolean) => void;
 }
 
+type StoredPrefs = Pick<
+  UiState,
+  | 'reduceMotion'
+  | 'highContrast'
+  | 'showNoorAllTime'
+  | 'showNoorToday'
+  | 'vibrationEnabled'
+  | 'zikrSoundEnabled'
+  | 'tasbihMode'
+  | 'tasbihTarget'
+  | 'zikrAudioEnabled'
+  | 'zikrAudioVolume'
+  | 'discreetMode'
+  | 'cycleHeightUnit'
+  | 'cycleWeightUnit'
+  | 'hideBmi'
+>;
+
+/** Reads every persisted UI preference from localStorage. Used for the initial
+ * state and again after cross-device sync (utils/prefsSync.ts) rewrites storage. */
+function readStoredPrefs(): StoredPrefs {
+  return {
+    reduceMotion: localStorage.getItem('bustandeen_reduce_motion') === '1',
+    highContrast: localStorage.getItem('bustandeen_high_contrast') === '1',
+    showNoorAllTime: localStorage.getItem('bustandeen_noor_alltime') === '1',
+    showNoorToday: localStorage.getItem('bustandeen_noor_today') === '1',
+    vibrationEnabled: localStorage.getItem('bustandeen_vibration') !== '0',
+    zikrSoundEnabled: localStorage.getItem('bustandeen_zikr_sound') === '1',
+    tasbihMode: localStorage.getItem('bustandeen_tasbih_mode') === '1',
+    tasbihTarget: Math.max(
+      1,
+      parseInt(localStorage.getItem('bustandeen_tasbih_target') || '33', 10) || 33
+    ),
+    zikrAudioEnabled: localStorage.getItem('bustandeen_zikr_audio') !== '0',
+    zikrAudioVolume: parseFloat(localStorage.getItem('bustandeen_zikr_volume') || '0.7'),
+    discreetMode: localStorage.getItem('bustandeen_discreet_mode') === '1',
+    cycleHeightUnit: localStorage.getItem('bustandeen_cycle_height_unit') === 'ft' ? 'ft' : 'm',
+    cycleWeightUnit: localStorage.getItem('bustandeen_cycle_weight_unit') === 'lbs' ? 'lbs' : 'kg',
+    hideBmi: localStorage.getItem('bustandeen_hide_bmi') === '1',
+  };
+}
+
 export const useUiStore = create<UiState>((set) => ({
-  reduceMotion: localStorage.getItem('bustandeen_reduce_motion') === '1',
-  highContrast: localStorage.getItem('bustandeen_high_contrast') === '1',
-  showNoorAllTime: localStorage.getItem('bustandeen_noor_alltime') === '1',
-  showNoorToday: localStorage.getItem('bustandeen_noor_today') === '1',
-  vibrationEnabled: localStorage.getItem('bustandeen_vibration') !== '0',
-  zikrSoundEnabled: localStorage.getItem('bustandeen_zikr_sound') === '1',
-  tasbihMode: localStorage.getItem('bustandeen_tasbih_mode') === '1',
-  tasbihTarget: Math.max(
-    1,
-    parseInt(localStorage.getItem('bustandeen_tasbih_target') || '33', 10) || 33
-  ),
-  zikrAudioEnabled: localStorage.getItem('bustandeen_zikr_audio') !== '0',
-  zikrAudioVolume: parseFloat(localStorage.getItem('bustandeen_zikr_volume') || '0.7'),
-  discreetMode: localStorage.getItem('bustandeen_discreet_mode') === '1',
-  cycleHeightUnit: localStorage.getItem('bustandeen_cycle_height_unit') === 'ft' ? 'ft' : 'm',
-  cycleWeightUnit: localStorage.getItem('bustandeen_cycle_weight_unit') === 'lbs' ? 'lbs' : 'kg',
-  hideBmi: localStorage.getItem('bustandeen_hide_bmi') === '1',
+  ...readStoredPrefs(),
+  prefsRevision: 0,
+  reloadFromStorage: (remount) =>
+    set((st) => ({
+      ...readStoredPrefs(),
+      prefsRevision: remount ? st.prefsRevision + 1 : st.prefsRevision,
+    })),
 
   setCycleHeightUnit: (val) => {
     localStorage.setItem('bustandeen_cycle_height_unit', val);

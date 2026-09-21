@@ -13,6 +13,8 @@ import { replaySalatOutbox } from './hooks/useSalatLog.js';
 import { clearSalatOutbox } from './utils/salatOutbox.js';
 import { setDayStartModeLocal, type DayStartMode } from './utils/trackingDay.js';
 import { idbRemove } from './utils/idbCache.js';
+import { startPrefsSync, stopPrefsSync } from './utils/prefsSync.js';
+import { useUiStore } from './store/useUiStore.js';
 import Navbar from './components/Navbar.js';
 import AdminGate from './components/AdminGate.js';
 import AdminLayout from './components/AdminLayout.js';
@@ -511,6 +513,7 @@ export default function App() {
       if (useAuthStore.getState().isDemoMode) return;
       if (!u) {
         setUser(null);
+        stopPrefsSync();
         resetAll();
         // resetAll() only queues a debounced (400ms) localStorage write —
         // force it through immediately so a fast re-sign-in on the same
@@ -634,6 +637,10 @@ export default function App() {
             }
           }
 
+          // Bring this account's settings (font, reciter, sounds, prayer method…)
+          // over from its other devices; non-blocking and never throws.
+          void startPrefsSync(u.uid);
+
           try {
             await hydrate();
           } catch {
@@ -658,6 +665,8 @@ export default function App() {
   }, [setUser, init, resetAll, hydrate, setAuthLoading]);
 
   const { authLoading, aiEnabled, isDemoMode } = useAuthStore();
+  // Bumped when a sign-in sync changed settings, so screens re-read them.
+  const prefsRevision = useUiStore((s) => s.prefsRevision);
   const [quickLogOpen, setQuickLogOpen] = useState(false);
   const isAuthPage = ['/login', '/signup', '/auth/action'].includes(location.pathname);
   // Programmatic-SEO static pages (src/seo/) ship their own self-contained
@@ -715,7 +724,7 @@ export default function App() {
           {!isAuthPage && !isSeoPage && !isAdminPage && <GenderGate />}
           <div className="flex-1">
             <Suspense fallback={<RouteFallback />}>
-              <Routes>
+              <Routes key={prefsRevision}>
                 <Route path="/" element={<RootRoute />} />
                 <Route path="/zikr" element={<ZikrCounter />} />
                 <Route path="/salat" element={<SalatTracker />} />

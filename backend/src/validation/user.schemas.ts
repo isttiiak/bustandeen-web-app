@@ -59,3 +59,20 @@ export const updateUserSchema = z.object({
     aiEnabled: z.boolean().optional(),
   }),
 });
+
+// Cross-device preferences. Keys are checked against the whitelist in the
+// service (unknown keys are dropped, not rejected, so an older server never
+// breaks a newer client); this only bounds the shape and size.
+export const putPrefsSchema = z.object({
+  body: z.object({
+    prefs: z
+      .record(
+        z.string().max(64),
+        z.object({
+          v: z.string().max(4000),
+          t: z.number().int().nonnegative(),
+        })
+      )
+      .refine((r) => Object.keys(r).length <= 64, 'Too many keys'),
+  }),
+});

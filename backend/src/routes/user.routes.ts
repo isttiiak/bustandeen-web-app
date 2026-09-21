@@ -7,6 +7,7 @@ import {
   linkGoogleSchema,
   unlinkGoogleSchema,
   setPrimaryEmailSchema,
+  putPrefsSchema,
 } from '../validation/user.schemas.js';
 import { importLimiter, dataExportLimiter } from '../middleware/rateLimiter.js';
 
@@ -14,6 +15,11 @@ const router = Router();
 
 router.get('/me', requireAuth, userController.getUserHandler);
 router.patch('/me', requireAuth, validate(updateUserSchema), userController.updateUserHandler);
+
+// Cross-device app preferences (theme-like settings that used to be
+// localStorage-only). GET returns every stored key; PUT merges newest-wins.
+router.get('/prefs', requireAuth, userController.getPrefsHandler);
+router.put('/prefs', requireAuth, validate(putPrefsSchema), userController.putPrefsHandler);
 
 // Linked Google account management
 router.post(

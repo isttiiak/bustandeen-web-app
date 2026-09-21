@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.57.0 - Your settings now follow you across devices - 2026-09-22
+
+### Fixed
+
+- **Settings changed on one device no longer revert on another.** Most preferences were saved only in the browser they were set in, so a new device showed the defaults. Quran settings synced only when their drawer was opened. Now these follow your account: sounds, vibration, volume, tasbih mode and target, hidden dhikr, Noor display, discreet mode, height/weight units, BMI hiding, motion and contrast, share-card design, language, the prayer calculation method and Asr madhab, salat guide toggles and after-prayer tasbih style, and every Quran reading choice (font, sizes, transliteration, reciter, translations, tafsir).
+- **Newest change wins, per setting.** Each setting is stamped when you change it; on sign-in and when you return to the tab, the app keeps the newer side of each one and sends the rest up. Settings you had before this update are kept and uploaded, not reset. Quran choices already saved on your account are picked up automatically.
+- **Account isolation.** Signing in with a different account on the same device clears the previous account's synced settings first.
+
+### Notes
+
+- New routes: `GET /api/user/prefs` and `PUT /api/user/prefs` (whitelisted keys only, at most 64 per request, timestamps clamped to 5 minutes ahead). Prefs are never included in `/api/user/me`.
+- Device-specific choices stay per device on purpose: saved location, reader zoom and split, caches.
+- To sync a new setting, add its key to both `SYNCED_KEYS` (frontend `utils/prefsSync.ts`) and `SYNCED_PREF_KEYS` (backend `userPrefs.service.ts`).
+
 ## v5.56.0 - Weekly plan on the Naseeh page; deleted cycles now restore their days - 2026-09-21
 
 ### Added

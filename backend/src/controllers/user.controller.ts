@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as userService from '../services/user.service.js';
+import * as userPrefsService from '../services/userPrefs.service.js';
 import { isAdminEmail } from '../middleware/auth.js';
 
 export const getUserHandler = async (
@@ -191,6 +192,31 @@ export const importAllHandler = async (
       body as unknown as import('../services/backup.service.js').BackupFile
     );
     res.json({ ok: true, counts });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getPrefsHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    res.json({ ok: true, prefs: await userPrefsService.getPrefs(req.user.uid) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const putPrefsHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { prefs } = req.body as { prefs: Record<string, { v: string; t: number }> };
+    res.json({ ok: true, prefs: await userPrefsService.mergePrefs(req.user.uid, prefs) });
   } catch (err) {
     next(err);
   }

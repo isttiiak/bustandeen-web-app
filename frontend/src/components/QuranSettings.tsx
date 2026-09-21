@@ -23,8 +23,6 @@ import {
   setListenCountsAsAyat,
   getReciterId,
   setReciterId,
-  applyServerQuranPrefs,
-  getLocalQuranPrefsForSync,
 } from '../utils/quranPrefs.js';
 
 /** FontKind → the PATCH /api/quran/profile field it syncs to. */
@@ -127,41 +125,6 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
   useEffect(() => {
     if (open) setGoal(summary?.profile.dailyGoalAyat ?? 0);
   }, [open, summary?.profile.dailyGoalAyat]);
-
-  // Cross-device sync — runs once per drawer-open per device, when the
-  // server profile first arrives. `displayPrefsSet` tells apart "nobody has
-  // ever synced these fields" (push this device's current local values up,
-  // so an existing single-device customization survives the migration)
-  // from "already synced elsewhere" (pull those down instead, overwriting
-  // whatever this device had locally). See QuranProfile.ts's doc comment.
-  const syncedRef = useRef(false);
-  useEffect(() => {
-    if (!open || !summary || syncedRef.current) return;
-    syncedRef.current = true;
-    const { profile } = summary;
-    if (profile.displayPrefsSet) {
-      applyServerQuranPrefs(profile);
-      setReciter(profile.reciterId);
-      setTranslations(profile.translations.length ? profile.translations : ['en.sahih']);
-      setArabicFontId(profile.arabicFont);
-      setTranslit(profile.translitEnabled);
-      setListenCounts(profile.listenCountsAsAyat);
-      setFontSizes({
-        arabic: profile.fontArabicPx,
-        translation: profile.fontTranslationPx,
-        translit: profile.fontTranslitPx,
-        tafsir: profile.fontTafsirPx,
-      });
-    } else {
-      updateProfile.mutate(getLocalQuranPrefsForSync());
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- updateProfile is a stable useMutation reference; excluding it avoids re-running this on every unrelated summary refetch
-  }, [open, summary]);
-  // Re-arm the one-time sync for the next time the drawer opens (e.g. after
-  // another device changed something in between).
-  useEffect(() => {
-    if (!open) syncedRef.current = false;
-  }, [open]);
 
   // Debounced push to the server — a slider drag fires onCommit continuously;
   // this coalesces it into one PATCH per ~600ms of inactivity, per field.
