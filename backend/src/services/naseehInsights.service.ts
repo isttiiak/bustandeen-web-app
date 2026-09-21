@@ -514,10 +514,14 @@ export async function runDataQuery(
       const a = await loadSalatAnalytics(userId, days, today);
       const p = q.prayer ? a.perPrayer[q.prayer] : undefined;
       const name = q.prayer ? PRAYER_NAME[q.prayer] : '';
-      // "Counted over N days" note when tracking started inside the window.
+      // Fewer counted days than asked for (tracking began inside the window, or
+      // some days do not count): say how many were used, without giving a reason.
+      if (a.totalDays === 0) {
+        return done('There are no days to count in this period yet.');
+      }
       const note =
         a.totalDays < days
-          ? ` (counted over ${a.totalDays} ${plural(a.totalDays, 'day', 'days')}, since you started tracking)`
+          ? ` (based on ${a.totalDays} counted ${plural(a.totalDays, 'day', 'days')})`
           : '';
       if (q.query === 'salat_missed') {
         const n = p ? p.missed : a.missedCount;

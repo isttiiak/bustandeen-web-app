@@ -402,6 +402,42 @@ export async function getExcusedIntervals(
   return rows.map((r) => ({ start: r.startDate, end: r.endDate }));
 }
 
+/** True if `day` falls inside any excused interval (an open one runs to `through`). */
+export function isDayExcused(
+  intervals: Array<{ start: string; end: string | null }>,
+  day: string,
+  through: string
+): boolean {
+  return intervals.some((iv) => iv.start <= day && day <= (iv.end ?? through));
+}
+
+/**
+ * The set of excused (Rayhanah rest) days between `from` and `to` inclusive.
+ * Salat is not owed and cannot be "missed" on these days, so kaza accrual and
+ * the salat analytics leave them out. Server-side only: this never goes into a
+ * response, an AI prompt or any social endpoint.
+ */
+export async function getExcusedDaySet(
+  userId: string,
+  from: string,
+  to: string
+): Promise<Set<string>> {
+  const intervals = await getExcusedIntervals(userId);
+  const days = new Set<string>();
+  for (const iv of intervals) {
+    const start = iv.start > from ? iv.start : from;
+    const end = (iv.end ?? to) < to ? (iv.end ?? to) : to;
+    for (let d = start; d <= end; d = nextDay(d)) days.add(d);
+  }
+  return days;
+}
+
+function nextDay(dateStr: string): string {
+  const dt = new Date(`${dateStr}T00:00:00Z`);
+  dt.setUTCDate(dt.getUTCDate() + 1);
+  return dt.toISOString().slice(0, 10);
+}
+
 /**
  * Opt-in, revocable partner status-sharing. Sharing is deliberately narrow:
  * the partner must already be a mutual friend (reuses the existing, proven

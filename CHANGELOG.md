@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.55.0 - Rest days no longer add make-up prayers; Naseeh goes quiet on rest days - 2026-09-21
+
+### Fixed
+
+- **Rest days (Rayhanah) never create make-up prayers.** Salat is excused on those days, but the automatic day sweep used to add every unlogged prayer to your owed make-up count anyway. It now skips rest days, and the salat analytics (missed, totals, percentage, per-prayer and weekday counts) leave them out. A rest day also no longer breaks or extends a streak.
+- **Make-up prayers already added for rest days are released.** This runs automatically and safely (once per prayer, even with several requests at once, and it also handles a cycle you add later). It only removes still-owed, dated entries on rest days. Paid ones and your manual +/- adjustments are never touched, and entries dated before a manual reset do not lower the counter.
+- The test output no longer prints a fake `AUTHENTICATIONFAILED` error. That was one mailbox test deliberately failing a fetch; it is now captured and checked.
+- Chat answers no longer say "since you started tracking" when fewer days were counted; they say how many days were used.
+- The privacy panel now shows the updated wording (the English text file was overriding it).
+
+### Added
+
+- **Rayhanah-aware tone.** While a cycle is active, the Naseeh page shows one gentle, fixed card ("Take it gently: these are rest days, nothing here is a slip, your streaks and goals are paused, not lost") instead of the streak, fasting, patterns, make-up plan and weekly cards, and the welcome-back note on Home stays quiet. It is decided on your device, makes no AI request at all, and fails closed: if the cycle status is loading or cannot be read, no AI card runs. Tests guard this.
+
+### Notes
+
+- For anyone with recorded cycles, the make-up count will drop the first time salat analytics loads, by the number of prayers that fell on rest days.
+
 ## v5.54.2 - Prompt sanitizer closes three evasion routes - 2026-09-21
 
 ### Fixed

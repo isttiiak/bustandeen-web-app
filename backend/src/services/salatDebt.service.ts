@@ -3,6 +3,7 @@ import SalatDebtEvent from '../models/SalatDebtEvent.js';
 import SalatLog from '../models/SalatLog.js';
 import { PRAYER_IDS, PrayerId } from '../models/SalatLog.js';
 import KazaUnit from '../models/KazaUnit.js';
+import { getExcusedDaySet, getExcusedIntervals, isDayExcused } from './cycle.service.js';
 
 export interface SalatDebtSummary {
   owed: Record<PrayerId, number>;
@@ -193,8 +194,51 @@ export async function resetDebt(userId: string, date?: string): Promise<SalatDeb
  * `null` back, and returns having touched nothing. Exactly one caller ever
  * proceeds to actually sweep a given window, no matter how many raced for it.
  */
+/**
+ * Rest days (Rayhanah) never create kaza: salat is excused and not made up.
+ * Debt that an earlier version already added for such a day is released here,
+ * and this also self-heals when a past cycle is added later.
+ *
+ * Idempotent and race-safe: each unit is claimed by deleting it first, and only
+ * the caller that deleted it lowers the counter, so concurrent calls cannot
+ * double-release. Only itemized, still-owed units on excused days are touched;
+ * paid units and anonymous +/- adjustments are left exactly as they were.
+ */
+export async function releaseExcusedDebt(userId: string, today: string): Promise<number> {
+  const intervals = await getExcusedIntervals(userId);
+  if (intervals.length === 0) return 0;
+
+  const owedUnits = await KazaUnit.find({ userId, status: 'owed' }).select('prayer missedDate');
+  // A manual reset zeroes the counter but leaves older ledger entries behind, so a
+  // unit dated before `since` is not in the counter any more: remove the unit,
+  // but do not lower a counter that never contained it.
+  const since = (await SalatDebt.findOne({ userId }).select('since'))?.since ?? '';
+  let released = 0;
+  for (const u of owedUnits) {
+    if (!isDayExcused(intervals, u.missedDate, today)) continue;
+    const claimed = await KazaUnit.findOneAndDelete({ _id: u._id, status: 'owed' });
+    if (!claimed) continue; // another call released it first
+    released++;
+    if (u.missedDate >= since) {
+      await SalatDebt.updateOne(
+        { userId, [`owed.${u.prayer}`]: { $gt: 0 } },
+        { $inc: { [`owed.${u.prayer}`]: -1 } }
+      );
+    }
+    // Drop the matching +1 history entry so the debt chart stays truthful.
+    await SalatDebtEvent.deleteOne({ userId, prayer: u.prayer, date: u.missedDate, delta: 1 });
+    // The day's own log should not read "missed" either.
+    await SalatLog.updateOne(
+      { userId, date: u.missedDate, [`prayers.${u.prayer}.status`]: 'missed' },
+      { $set: { [`prayers.${u.prayer}.status`]: 'pending' } }
+    );
+  }
+  return released;
+}
+
 export async function ensureCaughtUp(userId: string, today?: string): Promise<void> {
   const t = today ?? todayDateString();
+  await releaseExcusedDebt(userId, t);
   const doc = await SalatDebt.findOneAndUpdate(
     { userId },
     { $setOnInsert: { userId } },
@@ -227,11 +271,13 @@ export async function ensureCaughtUp(userId: string, today?: string): Promise<vo
 
   const logs = await SalatLog.find({ userId, date: { $gte: cursor, $lt: t } });
   const logMap = new Map(logs.map((l) => [l.date, l]));
+  const excusedDays = await getExcusedDaySet(userId, cursor, shiftDateStr(t, -1));
   const totals = EMPTY_OWED();
   const events: Array<{ userId: string; prayer: PrayerId; delta: number; date: string }> = [];
   const dirtyLogs: typeof logs = [];
 
   for (let day = cursor; day < t; day = shiftDateStr(day, 1)) {
+    if (excusedDays.has(day)) continue; // rest day: nothing is owed, nothing is "missed"
     let log = logMap.get(day);
     let logChanged = false;
     for (const pid of PRAYER_IDS) {

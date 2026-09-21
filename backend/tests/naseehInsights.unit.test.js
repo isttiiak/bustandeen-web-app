@@ -82,7 +82,7 @@ describe('runDataQuery (no model involved)', () => {
 
   test('a period before tracking started says how many days were counted', async () => {
     const r = await naseeh.runDataQuery(UID, { query: 'salat_missed', period: 'year' }, opts);
-    expect(r.answer).toMatch(/since you started tracking/);
+    expect(r.answer).toMatch(/based on \d+ counted days/);
   });
 });
 

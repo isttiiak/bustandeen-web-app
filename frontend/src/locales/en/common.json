@@ -2,6 +2,14 @@
   "arabicKeyboard": {
     "space": "space"
   },
+  "restDays": {
+    "heading": "Take it gently",
+    "body": "These are rest days. Nothing here is a slip, and your streaks and goals are paused, not lost. Naseeh will not check your progress until you are back.",
+    "note": "You can still make dhikr or read Quran whenever your heart wants to. Anything you do counts, and nothing you skip is held against you.",
+    "dhikr": "Do some dhikr",
+    "quran": "Read Quran",
+    "privacy": "This card is worked out on your device. Nothing about your cycle is sent to an AI, ever."
+  },
   "sadaqah": {
     "seoTitle": "Sadaqah — Support Bustandeen",
     "seoDescription": "Support Bustandeen with sadaqah — ongoing charity that helps keep the app free and growing for the community.",
@@ -1130,7 +1138,7 @@
     "title": "AI usage and privacy",
     "intro": "Naseeh only sees what is listed below. It never gets your journal notes, your name or your account details, and no cycle data of any kind is ever sent.",
     "quickLog": "Quick log",
-    "quickLogSends": "The sentence you type, and the names of your dhikr types.",
+    "quickLogSends": "The sentence you type, and the names of your dhikr types. Please keep cycle or health details out of it.",
     "summary": "Weekly summary and muhāsabah",
     "summarySends": "Counts only: dhikr total, streak lengths, prayer percentage, Quran ayat today, fasts this month.",
     "patterns": "What I noticed",
@@ -1142,7 +1150,7 @@
     "coaching": "Streak coaching, fasting and welcome-back notes",
     "coachingSends": "A streak length, the kind of fast and its day number, or how many days you were away.",
     "cycle": "Cycle tracker (Rayhanah)",
-    "cycleSends": "Nothing. Cycle data is never sent to an AI, and the cycle screens make no AI request.",
+    "cycleSends": "Nothing. Cycle data is never sent to an AI. While you are on a rest day, Naseeh makes no progress-card AI requests at all.",
     "ownKey": "You are using your own Groq key, so your requests do not touch the shared Naseeh allowance.",
     "sharedKey": "You are using the shared Naseeh key. You can add your own Groq key in Settings.",
     "limits": "Limits: up to 20 AI requests and 30 typed questions a day. Most cards are re-worded once a week and remembered on this device.",

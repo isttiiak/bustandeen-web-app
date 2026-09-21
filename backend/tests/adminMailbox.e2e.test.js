@@ -1,3 +1,4 @@
+import { jest } from '@jest/globals';
 import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../src/app.js';
@@ -111,9 +112,14 @@ describe('Founder mailbox sync', () => {
   });
 
   test('a failing fetch is recorded, not thrown, and releases the lock', async () => {
+    // The service logs the failure on purpose; capture it so it neither
+    // pollutes the test output nor goes unchecked.
+    const logged = jest.spyOn(console, 'error').mockImplementation(() => {});
     const res = await syncMailbox(async () => {
       throw new Error('AUTHENTICATIONFAILED');
     });
+    expect(logged).toHaveBeenCalledWith('Mailbox sync failed:', expect.any(Error));
+    logged.mockRestore();
     expect(res.ok).toBe(false);
     const state = await MailboxSyncState.findOne({ key: 'inbox' });
     expect(state.lastError).toMatch(/AUTHENTICATIONFAILED/);

@@ -9,6 +9,8 @@ import PatternInsightsCard from '../components/ai/PatternInsightsCard.js';
 import KazaPlanCard from '../components/ai/KazaPlanCard.js';
 import DataChat from '../components/ai/DataChat.js';
 import AiPrivacyPanel from '../components/ai/AiPrivacyPanel.js';
+import RestDaysCard from '../components/ai/RestDaysCard.js';
+import { useCycleAiGate } from '../hooks/useCycleAiGate.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
@@ -21,6 +23,8 @@ export default function NaseehPage() {
   const user = useAuthStore((s) => s.user);
   const aiEnabled = useAuthStore((s) => s.aiEnabled);
   const isDemoMode = useAuthStore((s) => s.isDemoMode);
+  // On-device: are we on a Rayhanah rest day? Decides whether ANY AI card runs.
+  const cycleGate = useCycleAiGate();
 
   const civilToday = localTodayStr();
   const { data: analyticsData } = useAnalytics(1);
@@ -91,24 +95,33 @@ export default function NaseehPage() {
         {/* Quick log — always at the top so it's one tap away */}
         <NaturalLogEntry />
 
-        {/* Streak coaching — only renders when a milestone or break is detected */}
-        <StreakCoaching
-          zikrStreak={zikrStreak}
-          quranStreak={quranStreak}
-          salatStreak={salatStreak}
-        />
+        {/* Rest days (Rayhanah): one fixed, gentle, on-device card replaces every
+            progress card below. None of them mount, so none of them can call the AI. */}
+        {cycleGate === 'resting' && <RestDaysCard />}
 
-        {/* Fasting companion — only renders when today's fast is logged */}
-        {fastActive && <FastingCompanion fastType={fastType} isPostMaghrib={isPostMaghrib} />}
+        {/* While the cycle status is still loading, show none of the AI cards yet. */}
+        {cycleGate === 'clear' && (
+          <>
+            {/* Streak coaching — only renders when a milestone or break is detected */}
+            <StreakCoaching
+              zikrStreak={zikrStreak}
+              quranStreak={quranStreak}
+              salatStreak={salatStreak}
+            />
 
-        {/* What Naseeh noticed in the user's own logs (computed first, AI only re-words) */}
-        <PatternInsightsCard />
+            {/* Fasting companion — only renders when today's fast is logged */}
+            {fastActive && <FastingCompanion fastType={fastType} isPostMaghrib={isPostMaghrib} />}
 
-        {/* Make-up prayer plan; hidden when nothing is owed */}
-        <KazaPlanCard />
+            {/* What Naseeh noticed in the user's own logs (computed first, AI only re-words) */}
+            <PatternInsightsCard />
 
-        {/* Weekly muhāsabah with verified reference */}
-        <MuhasabahReport />
+            {/* Make-up prayer plan; hidden when nothing is owed */}
+            <KazaPlanCard />
+
+            {/* Weekly muhāsabah with verified reference */}
+            <MuhasabahReport />
+          </>
+        )}
 
         {/* Read-only questions about the user's own numbers */}
         <DataChat />

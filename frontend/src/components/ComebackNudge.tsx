@@ -8,6 +8,7 @@ import { useAiComeback } from '../hooks/useAi.js';
 import { AiPanel, AiBadge, AiDisclaimer } from './ai/AiFlair.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { useAuthStore } from '../store/useAuthStore.js';
+import { useCycleAiGate } from '../hooks/useCycleAiGate.js';
 
 /**
  * The comeback nudge — the highest-leverage moment in a habit app.
@@ -43,6 +44,9 @@ function writeCache(day: string, message: string): void {
 export default function ComebackNudge() {
   const { t } = useTranslation();
   const aiEnabled = useAuthStore((s) => s.aiEnabled);
+  // Rayhanah rest days: a quiet stretch is rest, not absence. No welcome-back
+  // note and no AI call while resting, or while that status is unknown.
+  const cycleGate = useCycleAiGate();
   const { data: summary } = useQuranSummary();
   const { data: zikrData } = useAnalytics(7);
   const comeback = useAiComeback();
@@ -68,7 +72,7 @@ export default function ComebackNudge() {
   // Coaching, MuhasabahReport, FastingCompanion) already checks it before
   // firing; this one didn't, so an opted-out user with no Groq key of their
   // own still got a real reply from the app's shared key.
-  const show = aiEnabled && daysAway >= 2 && !dismissed;
+  const show = aiEnabled && cycleGate === 'clear' && daysAway >= 2 && !dismissed;
 
   useEffect(() => {
     if (!show) return;

@@ -26,7 +26,7 @@ export default function AiPrivacyPanel() {
       title: t('naseehPrivacy.quickLog', 'Quick log'),
       sends: t(
         'naseehPrivacy.quickLogSends',
-        'The sentence you type, and the names of your dhikr types.'
+        'The sentence you type, and the names of your dhikr types. Please keep cycle or health details out of it.'
       ),
     },
     {
@@ -71,7 +71,7 @@ export default function AiPrivacyPanel() {
       title: t('naseehPrivacy.cycle', 'Cycle tracker (Rayhanah)'),
       sends: t(
         'naseehPrivacy.cycleSends',
-        'Nothing. Cycle data is never sent to an AI, and the cycle screens make no AI request.'
+        'Nothing. Cycle data is never sent to an AI. While you are on a rest day, Naseeh makes no progress-card AI requests at all.'
       ),
     },
   ];

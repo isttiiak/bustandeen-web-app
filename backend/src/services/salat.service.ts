@@ -9,6 +9,7 @@ import SalatLog, {
   MissedReason,
 } from '../models/SalatLog.js';
 import * as salatDebtService from './salatDebt.service.js';
+import { getExcusedDaySet } from './cycle.service.js';
 
 export function todayDateString(): string {
   return new Date().toISOString().substring(0, 10);
@@ -282,6 +283,9 @@ export async function getSalatAnalytics(
   );
 
   const logMap = new Map(logs.map((l) => [l.date, l]));
+  // Rest days (Rayhanah): salat is excused, so these days are neither missed nor
+  // pending, do not count towards totals, and neither break nor extend a streak.
+  const excused = await getExcusedDaySet(userId, statsCutoff, today);
 
   let completedCount = 0;
   let kazaCount = 0;
@@ -324,6 +328,7 @@ export async function getSalatAnalytics(
   // missed prayers. Pending prayers on past logged days also count as missed.
   for (let i = 0; i < effectiveDays; i++) {
     const dateStr = shiftDateStr(statsCutoff, i);
+    if (excused.has(dateStr)) continue;
     const isPast = dateStr < today;
     const log = logMap.get(dateStr);
 
@@ -419,7 +424,7 @@ export async function getSalatAnalytics(
     }
   }
 
-  const totalDays = effectiveDays;
+  const totalDays = Math.max(0, effectiveDays - excused.size);
   const totalPossiblePrayers = totalDays * 5;
   const prayedTotal = completedCount + kazaCount;
 
@@ -436,13 +441,19 @@ export async function getSalatAnalytics(
   let runStreak = 0;
   for (let i = 0; i < effectiveDays; i++) {
     const date = shiftDateStr(statsCutoff, i);
+    if (excused.has(date)) continue; // a rest day neither breaks nor extends a streak
     runStreak = isAllDone(date) ? runStreak + 1 : 0;
     if (runStreak > bestStreak) bestStreak = runStreak;
   }
 
   let currentStreak = 0;
-  let cursor = isAllDone(today) ? today : shiftDateStr(today, -1);
-  while (isAllDone(cursor) && cursor >= statsCutoff) {
+  let cursor = excused.has(today) || isAllDone(today) ? today : shiftDateStr(today, -1);
+  while (cursor >= statsCutoff) {
+    if (excused.has(cursor)) {
+      cursor = shiftDateStr(cursor, -1);
+      continue;
+    }
+    if (!isAllDone(cursor)) break;
     currentStreak++;
     cursor = shiftDateStr(cursor, -1);
   }
@@ -460,12 +471,18 @@ export async function getSalatAnalytics(
     let pRun = 0;
     for (let i = 0; i < effectiveDays; i++) {
       const date = shiftDateStr(statsCutoff, i);
+      if (excused.has(date)) continue;
       pRun = isPrayerDone(pid, date) ? pRun + 1 : 0;
       if (pRun > pBest) pBest = pRun;
     }
     let pCurrent = 0;
-    let pCursor = isPrayerDone(pid, today) ? today : shiftDateStr(today, -1);
-    while (isPrayerDone(pid, pCursor) && pCursor >= statsCutoff) {
+    let pCursor = excused.has(today) || isPrayerDone(pid, today) ? today : shiftDateStr(today, -1);
+    while (pCursor >= statsCutoff) {
+      if (excused.has(pCursor)) {
+        pCursor = shiftDateStr(pCursor, -1);
+        continue;
+      }
+      if (!isPrayerDone(pid, pCursor)) break;
       pCurrent++;
       pCursor = shiftDateStr(pCursor, -1);
     }

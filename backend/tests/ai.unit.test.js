@@ -293,6 +293,42 @@ describe('Rayhanah privacy: no cycle data can reach the AI', () => {
     expect(src).not.toMatch(/CycleDay|CycleLog|CycleProfile|cycle\.service|cyclePartner/);
   });
 
+  test('the Naseeh page mounts every AI card only when the on-device rest-day gate is clear', () => {
+    const page = readFileSync(
+      new URL('../../frontend/src/pages/NaseehPage.tsx', import.meta.url),
+      'utf8'
+    );
+    const gated = page.slice(page.indexOf("cycleGate === 'clear'"));
+    for (const card of [
+      'StreakCoaching',
+      'FastingCompanion',
+      'PatternInsightsCard',
+      'KazaPlanCard',
+      'MuhasabahReport',
+    ]) {
+      expect(gated).toContain(`<${card}`);
+      // and it must not be mounted anywhere BEFORE the gate
+      expect(page.slice(0, page.indexOf("cycleGate === 'clear'"))).not.toContain(`<${card}`);
+    }
+  });
+
+  test('the welcome-back note also waits for the rest-day gate', () => {
+    const src = readFileSync(
+      new URL('../../frontend/src/components/ComebackNudge.tsx', import.meta.url),
+      'utf8'
+    );
+    expect(src).toContain("cycleGate === 'clear'");
+  });
+
+  test('the rest-day gate fails closed (unknown or unreadable cycle status means no AI)', () => {
+    const src = readFileSync(
+      new URL('../../frontend/src/hooks/useCycleAiGate.ts', import.meta.url),
+      'utf8'
+    );
+    expect(src).toMatch(/isPending\)\s*return 'checking'/);
+    expect(src).toMatch(/isError\)\s*return 'resting'/);
+  });
+
   test('the old /comfort and /cycle-guidance routes are gone', () => {
     const routes = readFileSync(new URL('../src/routes/ai.routes.ts', import.meta.url), 'utf8');
     expect(routes).not.toMatch(/comfort|cycle-guidance/);
