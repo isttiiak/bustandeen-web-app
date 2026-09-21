@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.54.2 - Prompt sanitizer closes three evasion routes - 2026-09-21
+
+### Fixed
+
+- **No round limit.** The cleaner used to stop after 5 passes, so deeply nested markers could survive. It now cuts until none are left (each cut shortens the text, so it always ends).
+- **Invisible characters.** Zero-width spaces and joiners, bidi controls, soft hyphens and similar can no longer split a marker such as `system:`.
+- **Look-alike letters.** Full-width forms are folded to plain letters, and Cyrillic/Greek look-alikes (for example a Cyrillic "е" in `system:`) are matched as their Latin twins. Only the marker is removed; genuine Cyrillic or Greek text is left as written.
+- Six new tests cover each case, plus a check that ordinary text passes through unchanged.
+
+### Notes
+
+- This is still a blocklist. The real protection stays the model having no tools or data access, and its output being checked (numbers must match, chat can only pick a fixed lookup, rulings and citations are filtered).
+
 ## v5.54.1 - Backend lint at zero warnings, sturdier prompt sanitizer - 2026-09-21
 
 ### Fixed

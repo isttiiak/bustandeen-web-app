@@ -272,29 +272,113 @@ function logAiCall(entry: {
 // sequences from user-influenced text before it's interpolated into a prompt,
 // then wraps it so the model is told explicitly to treat it as inert data.
 const INJECTION_MARKERS = [
-  /```/g,
-  /"""/g,
-  /<\|[^|]*\|>/g,
-  /\b(?:ignore|disregard)\s+(?:previous|prior|above)\s+(?:instructions?|rules?)\b/gi,
-  /\b(?:ignore|disregard)\s+all\s+(?:previous|prior|above)\s+(?:instructions?|rules?)\b/gi,
-  /\b(?:ignore|disregard)\s+the\s+(?:previous|prior|above)\s+(?:instructions?|rules?)\b/gi,
-  /system\s*:/gi,
-  /assistant\s*:/gi,
-  /\byou\s+are\s+now\b/gi,
+  /```/,
+  /"""/,
+  /<\|[^|]*\|>/,
+  /\b(?:ignore|disregard)\s+(?:previous|prior|above)\s+(?:instructions?|rules?)\b/i,
+  /\b(?:ignore|disregard)\s+all\s+(?:previous|prior|above)\s+(?:instructions?|rules?)\b/i,
+  /\b(?:ignore|disregard)\s+the\s+(?:previous|prior|above)\s+(?:instructions?|rules?)\b/i,
+  /system\s*:/i,
+  /assistant\s*:/i,
+  /\byou\s+are\s+now\b/i,
 ];
 
-export function sanitizeForPrompt(input: string, maxLen: number): string {
-  // eslint-disable-next-line no-control-regex -- deliberately stripping control chars
-  const noControl = input.replace(/[\x00-\x1F\x7F]/g, ' ');
-  // Repeat until stable: removing one marker can splice its neighbours into a
-  // new one (e.g. "syst```em:"), which a single pass would leave behind.
-  let stripped = noControl;
-  for (let round = 0; round < 5; round++) {
-    const next = INJECTION_MARKERS.reduce((text, marker) => text.replace(marker, ''), stripped);
-    if (next === stripped) break;
-    stripped = next;
+// Characters that render as nothing (or reorder text) but split a word for a
+// regex: soft hyphen, zero-width space/joiners, bidi controls, word joiner and
+// the invisible math operators, byte-order mark, and similar fillers.
+const INVISIBLE_RANGES: ReadonlyArray<readonly [number, number]> = [
+  [0x00ad, 0x00ad],
+  [0x034f, 0x034f],
+  [0x061c, 0x061c],
+  [0x115f, 0x1160],
+  [0x17b4, 0x17b5],
+  [0x180b, 0x180e],
+  [0x200b, 0x200f],
+  [0x202a, 0x202e],
+  [0x2060, 0x206f],
+  [0x3164, 0x3164],
+  [0xfeff, 0xfeff],
+  [0xffa0, 0xffa0],
+];
+const stripInvisible = (text: string): string =>
+  Array.from(text)
+    .filter((ch) => {
+      const code = ch.codePointAt(0) ?? 0;
+      return !INVISIBLE_RANGES.some(([lo, hi]) => code >= lo && code <= hi);
+    })
+    .join('');
+
+// Common Cyrillic/Greek look-alikes for Latin letters. Used ONLY to find
+// markers: the match is cut out of the original text, so genuine Cyrillic or
+// Greek text is left untouched. Every mapping is one UTF-16 unit to one, so
+// positions in the folded copy line up with the original.
+const LOOKALIKES = new Map<string, string>(
+  Object.entries({
+    а: 'a',
+    е: 'e',
+    о: 'o',
+    р: 'p',
+    с: 'c',
+    х: 'x',
+    у: 'y',
+    і: 'i',
+    ѕ: 's',
+    ј: 'j',
+    ԁ: 'd',
+    ѡ: 'w',
+    һ: 'h',
+    ո: 'n',
+    ν: 'v',
+    ο: 'o',
+    α: 'a',
+    ε: 'e',
+    ι: 'i',
+    κ: 'k',
+    τ: 't',
+    υ: 'u',
+    А: 'A',
+    Е: 'E',
+    О: 'O',
+    Р: 'P',
+    С: 'C',
+    Х: 'X',
+    У: 'Y',
+    І: 'I',
+    Ѕ: 'S',
+    Ј: 'J',
+    Α: 'A',
+    Ε: 'E',
+    Ο: 'O',
+    Τ: 'T',
+    Υ: 'Y',
+  })
+);
+const foldLookalikes = (text: string): string =>
+  text.replace(/\P{ASCII}/gu, (c) => LOOKALIKES.get(c) ?? c);
+
+/** Cut the first marker found (matched on the folded copy) out of `text`. */
+function cutOneMarker(text: string): string | null {
+  const folded = foldLookalikes(text);
+  for (const marker of INJECTION_MARKERS) {
+    const m = marker.exec(folded);
+    if (m) return text.slice(0, m.index) + text.slice(m.index + m[0].length);
   }
-  return stripped.replace(/\s+/g, ' ').trim().slice(0, maxLen);
+  return null;
+}
+
+export function sanitizeForPrompt(input: string, maxLen: number): string {
+  // NFKC folds full-width and other compatibility forms (e.g. "ｓｙｓｔｅｍ：")
+  // to plain ASCII; then drop invisible characters and control characters.
+  const cleaned = stripInvisible(input.normalize('NFKC'))
+    // eslint-disable-next-line no-control-regex -- deliberately stripping control chars
+    .replace(/[\x00-\x1F\x7F]/g, ' ');
+  // Keep cutting until no marker is left. Removing one marker can splice its
+  // neighbours into a new one (e.g. "syst```em:"), so this is a loop, not a
+  // single pass, and it has no round limit: every cut shortens the text, so it
+  // always ends, however deeply the markers are nested.
+  let text = cleaned;
+  for (let next = cutOneMarker(text); next !== null; next = cutOneMarker(text)) text = next;
+  return text.replace(/\s+/g, ' ').trim().slice(0, maxLen);
 }
 
 /** Wrap untrusted, user-influenced text as inert data for the prompt. */
