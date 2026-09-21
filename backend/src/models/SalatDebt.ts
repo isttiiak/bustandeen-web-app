@@ -20,6 +20,13 @@ export interface ISalatDebt extends Document {
    * day-rollover sweep (see ensureCaughtUp in salatDebt.service.ts). Days
    * after this one, up to (not including) today, still need processing. */
   lastAccrualDate?: string;
+  /** Past days the sweep skipped (or released) because they were Rayhanah rest
+   * days. Kept so that if a cycle is later deleted or shortened, exactly those
+   * days can be counted after all. Days older than `since` are pruned. */
+  skippedRestDays: string[];
+  /** True once skippedRestDays has been filled from the cycle log (one-time
+   * catch-up for debt documents created before that list existed). */
+  restDaysSeeded?: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -45,6 +52,8 @@ const salatDebtSchema = new Schema<ISalatDebt>(
     // silently back-charging days before the user (or this feature) existed.
     since: { type: String, default: todayDateStr },
     lastAccrualDate: { type: String, default: yesterdayDateStr },
+    skippedRestDays: { type: [String], default: [] },
+    restDaysSeeded: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

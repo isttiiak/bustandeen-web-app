@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.56.0 - Weekly plan on the Naseeh page; deleted cycles now restore their days - 2026-09-21
+
+### Added
+
+- **"Your plan for this week".** One or two small targets, sized to what you actually did over the last four weeks (not a fixed goal): the dhikr amount for a typical day of yours, the Quran ayat for a typical reading day, and the one prayer you logged least. Each shows why it was chosen, and you can adjust the amount and the number of days with + and - before pressing **Accept**. Accepting sets your daily dhikr and Quran goals to those amounts and starts a progress bar for the week. If you are already steady everywhere, it says so instead of inventing work, and with too little history it waits.
+- **No AI is used for the plan.** It is worked out on our server from your own logs, and the privacy panel lists it as "Nothing sent".
+- **Rest days pause it.** Rest days are left out of the four-week baseline (they do not shrink your amounts), they lower how many days a target can be met on, and while today is a rest day the plan is paused: nothing is shown, nothing can be accepted, and nothing is lost. It comes back when the rest days end.
+
+### Fixed
+
+- **A cycle that is deleted or shortened later now counts its days after all.** The day sweep skips rest days, so removing or shortening a cycle used to leave those days uncounted for good. The app now remembers which days were skipped or released as rest days and, if they stop being rest days, counts them once (only prayers you had not logged; safe with several requests at once). Accounts that existed before this get a one-time catch-up from the cycles they have now.
+- **The last day of a cycle is a rest day on your device too.** The on-device check that keeps Naseeh's AI cards quiet only looked for an open cycle, so on the day a cycle ended the AI cards still ran, while the server already treated that day as a rest day. Both now use the same rule.
+
+### Notes
+
+- New routes: `GET /api/naseeh/plan` and `POST /api/naseeh/plan/accept`. Both return 403 while Naseeh is off. Tests guard that the plan makes no AI request and that the plan card only mounts when the rest-day check is clear.
+
 ## v5.55.0 - Rest days no longer add make-up prayers; Naseeh goes quiet on rest days - 2026-09-21
 
 ### Fixed

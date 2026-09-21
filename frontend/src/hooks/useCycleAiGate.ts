@@ -1,4 +1,5 @@
 import { useAuthStore } from '../store/useAuthStore.js';
+import { getTrackingDay } from '../utils/trackingDay.js';
 import { useCycleSummary, useIsFemale } from './useCycle.js';
 
 /**
@@ -11,7 +12,9 @@ import { useCycleSummary, useIsFemale } from './useCycle.js';
  * nothing about it is sent anywhere.
  *
  * - 'clear'    - not on a rest day (or not a Rayhanah user): AI cards may run.
- * - 'resting'  - a cycle is active, or its status could not be read. Fails
+ * - 'resting'  - today falls inside a logged cycle (still open, OR ended today:
+ *                the last day is a rest day too, the same rule the server uses),
+ *                or the status could not be read. Fails
  *                CLOSED: if we cannot tell, we do not call the AI.
  * - 'checking' - the cycle status is still loading. Do not call the AI yet.
  */
@@ -25,5 +28,9 @@ export function useCycleAiGate(): CycleAiGate {
   if (!user || !isFemale) return 'clear';
   if (summary.isPending) return 'checking';
   if (summary.isError) return 'resting';
-  return summary.data?.active ? 'resting' : 'clear';
+  const today = getTrackingDay();
+  const coversToday = (summary.data?.logs ?? []).some(
+    (l) => l.startDate <= today && (l.endDate === null || today <= l.endDate)
+  );
+  return summary.data?.active || coversToday ? 'resting' : 'clear';
 }

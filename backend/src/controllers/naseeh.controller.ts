@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { isAiEnabled } from '../services/ai.service.js';
 import * as naseeh from '../services/naseehInsights.service.js';
+import * as naseehPlan from '../services/naseehPlan.service.js';
 
 /** These routes only compute from the user's own data, but "Naseeh is off"
  * should silence them too, not just the model-backed calls. */
@@ -85,6 +86,47 @@ export const dataAnswerHandler = async (
       { today: b.today, timezoneOffset: b.timezoneOffset }
     );
     res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const planHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!(await guard(req, res))) return;
+    const q = req.query as unknown as { today?: string; timezoneOffset: number };
+    const plan = await naseehPlan.getPlan(req.user.uid, {
+      today: q.today,
+      timezoneOffset: q.timezoneOffset,
+    });
+    res.json({ ok: true, ...plan });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const acceptPlanHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!(await guard(req, res))) return;
+    const b = req.body as {
+      today?: string;
+      timezoneOffset: number;
+      targets?: naseehPlan.PlanAdjustment[];
+    };
+    const plan = await naseehPlan.acceptPlan(req.user.uid, {
+      today: b.today,
+      timezoneOffset: b.timezoneOffset,
+      adjust: b.targets,
+    });
+    res.json({ ok: true, ...plan });
   } catch (err) {
     next(err);
   }

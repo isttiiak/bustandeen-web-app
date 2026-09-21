@@ -51,6 +51,14 @@ export default function AiPrivacyPanel() {
       sends: t('naseehPrivacy.kazaSends', 'One sentence with your owed count and a date.'),
     },
     {
+      key: 'plan',
+      title: t('naseehPrivacy.plan', 'Weekly plan'),
+      sends: t(
+        'naseehPrivacy.planSends',
+        'Nothing. It is worked out on our server from your own logs, and no AI request is made.'
+      ),
+    },
+    {
       key: 'chat',
       title: t('naseehPrivacy.chat', 'Ask about my data'),
       sends: t(

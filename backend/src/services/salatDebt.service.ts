@@ -224,6 +224,8 @@ export async function releaseExcusedDebt(userId: string, today: string): Promise
         { userId, [`owed.${u.prayer}`]: { $gt: 0 } },
         { $inc: { [`owed.${u.prayer}`]: -1 } }
       );
+      // Remember the day so it can be counted again if the cycle is removed later.
+      await SalatDebt.updateOne({ userId }, { $addToSet: { skippedRestDays: u.missedDate } });
     }
     // Drop the matching +1 history entry so the debt chart stays truthful.
     await SalatDebtEvent.deleteOne({ userId, prayer: u.prayer, date: u.missedDate, delta: 1 });
@@ -236,9 +238,79 @@ export async function releaseExcusedDebt(userId: string, today: string): Promise
   return released;
 }
 
+/**
+ * The other direction of releaseExcusedDebt: a cycle that is deleted or made
+ * shorter turns some remembered rest days back into ordinary days. Those days
+ * were never counted, so count them now, exactly once.
+ *
+ * - One-time catch-up: for debt documents that pre-date `skippedRestDays`, fill
+ *   it from the days that are rest days right now (they were skipped or released).
+ * - Each day is claimed with an atomic $pull, so concurrent calls cannot count
+ *   it twice; only the winner counts it.
+ * - Only prayers still 'pending' are counted; anything the user logged is kept.
+ * - Only the already-swept region (<= lastAccrualDate) is touched; the normal
+ *   sweep handles later days itself.
+ */
+export async function restoreUncoveredDays(userId: string, today: string): Promise<number> {
+  const doc = await SalatDebt.findOne({ userId }).select(
+    'since lastAccrualDate skippedRestDays restDaysSeeded'
+  );
+  if (!doc || !doc.lastAccrualDate) return 0;
+  if (doc.restDaysSeeded && doc.skippedRestDays.length === 0) return 0;
+
+  const since = doc.since ?? '';
+  const sweptThrough = doc.lastAccrualDate;
+
+  if (!doc.restDaysSeeded) {
+    const excusedNow = await getExcusedDaySet(userId, since || sweptThrough, sweptThrough);
+    await SalatDebt.updateOne(
+      { userId, restDaysSeeded: { $ne: true } },
+      { $set: { restDaysSeeded: true }, $addToSet: { skippedRestDays: { $each: [...excusedNow] } } }
+    );
+  }
+
+  const fresh = await SalatDebt.findOne({ userId }).select('skippedRestDays');
+  const remembered = (fresh?.skippedRestDays ?? []).filter((d) => d <= sweptThrough && d < today);
+  if (remembered.length === 0) return 0;
+
+  const sorted = [...remembered].sort();
+  const stillExcused = await getExcusedDaySet(userId, sorted[0]!, sorted[sorted.length - 1]!);
+  let restored = 0;
+  for (const day of sorted) {
+    if (stillExcused.has(day)) continue;
+    const claimed = await SalatDebt.updateOne(
+      { userId, skippedRestDays: day },
+      { $pull: { skippedRestDays: day } }
+    );
+    if (claimed.modifiedCount !== 1) continue; // another call already restored it
+    if (day < since) continue; // before a reset: not part of the counter
+    await countMissedDay(userId, day);
+    restored++;
+  }
+  // Days before a reset can never matter again.
+  if (since) {
+    await SalatDebt.updateOne({ userId }, { $pull: { skippedRestDays: { $lt: since } } });
+  }
+  return restored;
+}
+
+/** Count one ordinary past day: every prayer still 'pending' becomes owed. */
+async function countMissedDay(userId: string, day: string): Promise<void> {
+  let log = await SalatLog.findOne({ userId, date: day });
+  const pending = PRAYER_IDS.filter(
+    (pid) => (log?.prayers[pid]?.status ?? 'pending') === 'pending'
+  );
+  if (pending.length === 0) return;
+  if (!log) log = new SalatLog({ userId, date: day });
+  for (const pid of pending) log.prayers[pid].status = 'missed';
+  await log.save();
+  for (const pid of pending) await adjustDebt(userId, pid, 1, day);
+}
+
 export async function ensureCaughtUp(userId: string, today?: string): Promise<void> {
   const t = today ?? todayDateString();
   await releaseExcusedDebt(userId, t);
+  await restoreUncoveredDays(userId, t);
   const doc = await SalatDebt.findOneAndUpdate(
     { userId },
     { $setOnInsert: { userId } },
@@ -300,6 +372,14 @@ export async function ensureCaughtUp(userId: string, today?: string): Promise<vo
       }
     }
     if (log && logChanged) dirtyLogs.push(log);
+  }
+
+  const skippedNow = [...excusedDays].filter((d) => d >= (doc.since ?? ''));
+  if (skippedNow.length) {
+    await SalatDebt.updateOne(
+      { userId },
+      { $addToSet: { skippedRestDays: { $each: skippedNow } } }
+    );
   }
 
   for (const log of dirtyLogs) await log.save();

@@ -44,3 +44,28 @@ export const naseehDataAnswerSchema = z.object({
     timezoneOffset: timezoneOffset.default(0),
   }),
 });
+
+export const naseehPlanSchema = z.object({
+  query: z.object({
+    today: today.optional(),
+    timezoneOffset: timezoneOffset.default(0),
+  }),
+});
+
+export const naseehAcceptPlanSchema = z.object({
+  body: z.object({
+    today: today.optional(),
+    timezoneOffset: timezoneOffset.default(0),
+    // Optional tweaks to the suggested targets before accepting.
+    targets: z
+      .array(
+        z.object({
+          kind: z.enum(['zikr', 'quran', 'salat']),
+          dailyAmount: z.number().int().min(1).max(100000).optional(),
+          daysTarget: z.number().int().min(1).max(7).optional(),
+        })
+      )
+      .max(3)
+      .optional(),
+  }),
+});

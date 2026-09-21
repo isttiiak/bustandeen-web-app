@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
@@ -192,6 +192,73 @@ export function useDataAnswer() {
         timezoneOffset: getUserTimezoneOffset(),
       });
       return data;
+    },
+  });
+}
+
+// ── Weekly plan ───────────────────────────────────────────────────────────────
+// Worked out on the server from the user's own logs. No AI is used for it, so
+// there is no re-word cache here.
+export interface PlanTarget {
+  kind: 'zikr' | 'quran' | 'salat';
+  dailyAmount?: number;
+  prayer?: PrayerId;
+  daysTarget: number;
+  title: string;
+  reason: string;
+  done: number;
+  effectiveDaysTarget: number;
+  daysLeft: number;
+  met: boolean;
+}
+export interface WeeklyPlan {
+  weekStart: string;
+  weekEnd: string;
+  status: 'paused' | 'not-enough-data' | 'steady' | 'ready' | 'accepted';
+  headline: string;
+  targets: PlanTarget[];
+  acceptedAt: string | null;
+}
+export interface PlanAdjustment {
+  kind: PlanTarget['kind'];
+  dailyAmount?: number;
+  daysTarget?: number;
+}
+
+export function useWeeklyPlan() {
+  const user = useAuthStore((s) => s.user);
+  const aiEnabled = useAuthStore((s) => s.aiEnabled);
+  const today = getTrackingDay();
+  const tz = getUserTimezoneOffset();
+  return useQuery({
+    queryKey: ['naseeh', 'plan', today, tz],
+    enabled: !!user && aiEnabled,
+    staleTime: 5 * 60_000,
+    queryFn: async (): Promise<WeeklyPlan> => {
+      const { data } = await api.get<WeeklyPlan & { ok: boolean }>(
+        `/api/naseeh/plan?today=${today}&timezoneOffset=${tz}`
+      );
+      return data;
+    },
+  });
+}
+
+export function useAcceptPlan() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (targets: PlanAdjustment[]) => {
+      const { data } = await api.post<WeeklyPlan & { ok: boolean }>('/api/naseeh/plan/accept', {
+        today: getTrackingDay(),
+        timezoneOffset: getUserTimezoneOffset(),
+        targets,
+      });
+      return data;
+    },
+    onSuccess: () => {
+      // Accepting changes the dhikr and Quran daily goals, so refresh anything showing them.
+      void qc.invalidateQueries({ queryKey: ['naseeh', 'plan'] });
+      void qc.invalidateQueries({ queryKey: ['analytics'] });
+      void qc.invalidateQueries({ queryKey: ['quran'] });
     },
   });
 }

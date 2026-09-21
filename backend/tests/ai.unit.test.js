@@ -300,6 +300,7 @@ describe('Rayhanah privacy: no cycle data can reach the AI', () => {
     );
     const gated = page.slice(page.indexOf("cycleGate === 'clear'"));
     for (const card of [
+      'WeeklyPlanCard',
       'StreakCoaching',
       'FastingCompanion',
       'PatternInsightsCard',
@@ -327,6 +328,8 @@ describe('Rayhanah privacy: no cycle data can reach the AI', () => {
     );
     expect(src).toMatch(/isPending\)\s*return 'checking'/);
     expect(src).toMatch(/isError\)\s*return 'resting'/);
+    // and it counts the day a cycle ends on, not just an open cycle
+    expect(src).toMatch(/today <= l\.endDate/);
   });
 
   test('the old /comfort and /cycle-guidance routes are gone', () => {

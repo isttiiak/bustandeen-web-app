@@ -8,6 +8,8 @@ import {
   naseehKazaPlanSchema,
   naseehAskSchema,
   naseehDataAnswerSchema,
+  naseehPlanSchema,
+  naseehAcceptPlanSchema,
 } from '../validation/naseeh.schemas.js';
 
 const router = Router();
@@ -52,6 +54,16 @@ router.post(
   requireAuth,
   validate(naseehDataAnswerSchema),
   naseehController.dataAnswerHandler
+);
+
+// Weekly plan: worked out on the server from the user's own logs. No AI request
+// is made (its numbers depend on rest days, which must never reach a model).
+router.get('/plan', requireAuth, validate(naseehPlanSchema), naseehController.planHandler);
+router.post(
+  '/plan/accept',
+  requireAuth,
+  validate(naseehAcceptPlanSchema),
+  naseehController.acceptPlanHandler
 );
 
 export default router;

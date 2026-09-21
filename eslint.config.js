@@ -70,6 +70,7 @@ export default [
       'backend/src/services/salat.service.ts',
       'backend/src/services/salatDebt.service.ts',
       'backend/src/services/naseehInsights.service.ts',
+      'backend/src/services/naseehPlan.service.ts',
       'backend/src/services/insights.service.ts',
       'backend/src/services/noor.service.ts',
       'backend/src/services/social.service.ts',

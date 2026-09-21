@@ -10,6 +10,7 @@ import KazaPlanCard from '../components/ai/KazaPlanCard.js';
 import DataChat from '../components/ai/DataChat.js';
 import AiPrivacyPanel from '../components/ai/AiPrivacyPanel.js';
 import RestDaysCard from '../components/ai/RestDaysCard.js';
+import WeeklyPlanCard from '../components/ai/WeeklyPlanCard.js';
 import { useCycleAiGate } from '../hooks/useCycleAiGate.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
@@ -102,6 +103,9 @@ export default function NaseehPage() {
         {/* While the cycle status is still loading, show none of the AI cards yet. */}
         {cycleGate === 'clear' && (
           <>
+            {/* This week's plan: sized to the last four weeks; server-side, no AI */}
+            <WeeklyPlanCard />
+
             {/* Streak coaching — only renders when a milestone or break is detected */}
             <StreakCoaching
               zikrStreak={zikrStreak}

@@ -150,3 +150,129 @@ describe('salat analytics treat rest days as neutral', () => {
     expect(a.currentStreak).toBe(2);
   });
 });
+
+describe('removing or shortening a cycle counts its days after all', () => {
+  const allFive = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+
+  test('deleting a cycle that the sweep skipped brings its days back, once', async () => {
+    const UID = 'excused-restore-delete';
+    const cycle = await CycleLog.create({
+      userId: UID,
+      type: 'hayd',
+      startDate: iso(-5),
+      endDate: iso(-3),
+    });
+    await seedCounter(UID, 10);
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(35);
+
+    await CycleLog.deleteOne({ _id: cycle._id });
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(50); // the 3 days x 5 are owed like any other day
+    expect(await KazaUnit.countDocuments({ userId: UID, missedDate: iso(-4) })).toBe(5);
+
+    // idempotent
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(50);
+  });
+
+  test('shortening a cycle counts only the days it no longer covers', async () => {
+    const UID = 'excused-restore-shorten';
+    const cycle = await CycleLog.create({
+      userId: UID,
+      type: 'hayd',
+      startDate: iso(-6),
+      endDate: iso(-2),
+    });
+    await seedCounter(UID, 10);
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(25); // 5 rest days skipped
+
+    await CycleLog.updateOne({ _id: cycle._id }, { $set: { endDate: iso(-5) } }); // now only 2 rest days
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(40); // 3 days came back (15 prayers)
+    expect(await KazaUnit.countDocuments({ userId: UID, missedDate: iso(-6) })).toBe(0);
+    expect(await KazaUnit.countDocuments({ userId: UID, missedDate: iso(-4) })).toBe(5);
+  });
+
+  test('days released after the fact (cycle added later) come back when it is deleted', async () => {
+    const UID = 'excused-restore-released';
+    await seedCounter(UID, 10);
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(50);
+    const cycle = await CycleLog.create({
+      userId: UID,
+      type: 'hayd',
+      startDate: iso(-5),
+      endDate: iso(-4),
+    });
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(40);
+    await CycleLog.deleteOne({ _id: cycle._id });
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(50);
+  });
+
+  test('a prayer the user logged on a restored day is kept, not counted as missed', async () => {
+    const UID = 'excused-restore-logged';
+    const cycle = await CycleLog.create({
+      userId: UID,
+      type: 'hayd',
+      startDate: iso(-3),
+      endDate: iso(-3),
+    });
+    await seedCounter(UID, 6);
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    await salatService.updatePrayerStatus(UID, 'fajr', 'completed', iso(-3));
+    await CycleLog.deleteOne({ _id: cycle._id });
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    const log = await SalatLog.findOne({ userId: UID, date: iso(-3) });
+    expect(log.prayers.fajr.status).toBe('completed');
+    expect(await KazaUnit.countDocuments({ userId: UID, missedDate: iso(-3) })).toBe(4);
+  });
+
+  test('concurrent calls restore each day only once', async () => {
+    const UID = 'excused-restore-concurrent';
+    const cycle = await CycleLog.create({
+      userId: UID,
+      type: 'hayd',
+      startDate: iso(-4),
+      endDate: iso(-3),
+    });
+    await seedCounter(UID, 6);
+    await salatDebt.ensureCaughtUp(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(20);
+    await CycleLog.deleteOne({ _id: cycle._id });
+    await Promise.all([1, 2, 3, 4].map(() => salatDebt.restoreUncoveredDays(UID, TODAY)));
+    expect(await owedTotal(UID)).toBe(30);
+  });
+
+  test('a counter created before the list existed is caught up on first use', async () => {
+    const UID = 'excused-restore-legacy';
+    // Simulate the state after the earlier release-only version: debt counted 40
+    // (rest days already released), no remembered list, and the flag not set.
+    await seedCounter(UID, 10);
+    await SalatDebt.updateOne(
+      { userId: UID },
+      { $set: { restDaysSeeded: false, skippedRestDays: [], lastAccrualDate: iso(-1) } }
+    );
+    const cycle = await CycleLog.create({
+      userId: UID,
+      type: 'hayd',
+      startDate: iso(-5),
+      endDate: iso(-4),
+    });
+    await SalatDebt.updateOne(
+      { userId: UID },
+      {
+        $set: { 'owed.fajr': 8, 'owed.dhuhr': 8, 'owed.asr': 8, 'owed.maghrib': 8, 'owed.isha': 8 },
+      }
+    );
+    await salatDebt.restoreUncoveredDays(UID, TODAY); // seeds from the cycle that exists now
+    await CycleLog.deleteOne({ _id: cycle._id });
+    await salatDebt.restoreUncoveredDays(UID, TODAY);
+    expect(await owedTotal(UID)).toBe(50); // 2 rest days x 5 came back
+    expect(allFive.length).toBe(5);
+  });
+});
