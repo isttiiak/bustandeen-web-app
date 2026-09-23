@@ -38,7 +38,7 @@
     "@types/node": "^26",
     "@types/nodemailer": "^8.0.2",
     "cross-env": "^10.1.0",
-    "dotenv": "^16.4.5",
+    "dotenv": "^18.0.1",
     "eslint": "^10.10.0",
     "jest": "^30.5.1",
     "mongodb-memory-server": "^11.2.0",
