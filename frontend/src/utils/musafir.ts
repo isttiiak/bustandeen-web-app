@@ -475,8 +475,8 @@ export const MUSAFIR_RULINGS: MusafirRuling[] = [
         bn: 'হানাফী: আরাফা ও মুযদালিফা ছাড়া প্রত্যেক নামায নিজ ওয়াক্তে; “বাহ্যিক জমা” (এক ওয়াক্তের শেষে, পরেরটির শুরুতে) সহজতা রক্ষা করে।',
       },
       {
-        en: 'In the salat tracker, a “Join ʿAṣr now” button appears under Ẓuhr (and “Join ʿIshāʾ” under Maghrib) while Musafir mode is on with the majority view.',
-        bn: 'মুসাফির মোড (অধিকাংশ মত) চালু থাকলে সালাত ট্র্যাকারে যোহরের নিচে “আসর এখনই জমা” (মাগরিবের নিচে “ইশা জমা”) বাটন আসে।',
+        en: 'In the salat tracker (Musafir mode, majority view): during Ẓuhr or Maghrib time a “Ẓuhr + ʿAṣr” / “Maghrib + ʿIshāʾ” button logs both together; during ʿAṣr or ʿIshāʾ time the same button appears if the earlier prayer is still unprayed.',
+        bn: 'সালাত ট্র্যাকারে (মুসাফির মোড, অধিকাংশ মত): যোহর বা মাগরিবের ওয়াক্তে “যোহর + আসর” / “মাগরিব + ইশা” বাটনে দুটো একসাথে লেখা যায়; আসর বা ইশার ওয়াক্তে আগের নামায বাকি থাকলেও একই বাটন আসে।',
       },
     ],
     refs: [
@@ -487,6 +487,14 @@ export const MUSAFIR_RULINGS: MusafirRuling[] = [
         source: 'Ṣaḥīḥ al-Bukhārī 1111',
         url: 'https://sunnah.com/bukhari:1111',
         grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: 'Muʿādh (Tabūk): If he set out after the sun had declined, he brought ʿAṣr forward to Ẓuhr and prayed Ẓuhr and ʿAṣr together, then travelled. If he set out after Maghrib, he brought ʿIshāʾ forward and prayed it with Maghrib.',
+        textBn:
+          'মুআয (রা., তাবুক): সূর্য ঢলার পরে রওনা হলে তিনি আসরকে যোহরের সময়ে এগিয়ে এনে যোহর ও আসর একসাথে পড়তেন, তারপর রওনা হতেন। মাগরিবের পরে রওনা হলে ইশাকে এগিয়ে এনে মাগরিবের সাথে পড়তেন।',
+        source: 'Jāmiʿ al-Tirmidhī 553',
+        url: 'https://sunnah.com/tirmidhi:553',
+        grade: 'Ṣaḥīḥ (al-Albānī); at-Tirmidhī: ḥasan gharīb',
       },
       {
         text: 'Muʿādh: On the Tabūk expedition the Prophet ﷺ joined Ẓuhr with ʿAṣr and Maghrib with ʿIshāʾ; he wanted his Ummah not to be put in hardship.',

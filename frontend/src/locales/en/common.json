@@ -2457,7 +2457,7 @@
     "jumuahKazaAlone": "⏰ Made up as an ordinary Dhuhr, prayed alone — Jumu'ah itself has no kaza.",
     "jamDone": "{{a}} + {{b}} joined, may Allah accept it",
     "musafirAria": "Musafir mode",
-    "qasrBadge": "✂️ {{n}} rakʿah · qaṣr",
+    "qasrBadge": "✂️ {{n}} · qaṣr",
     "rakatBadge": "{{n}} rakʿah",
     "jamBadge": "🔗 joined",
     "travelFriday": "Travelling: Ẓuhr instead of Jumu'ah (Muslim 1218a)",
@@ -2466,10 +2466,11 @@
     "asJumuah": "🕌 Jumu'ah",
     "asFull": "4 · behind a local imam",
     "joinedWith": "Joined with {{name}}",
-    "jamOffer": "On the move? Pray {{name}} now, straight after (jamʿ taqdīm, Bukhārī 1111).",
-    "jamNow": "Join {{name}} now",
     "travelSunnahTitle": "On a journey, the sunnah is light",
-    "travelSunnahDesc": "The Prophet ﷺ left the regular sunnah of Ẓuhr, Maghrib and ʿIshāʾ on journeys; he kept Fajr's two and Witr. Any nafl is still yours to pray."
+    "travelSunnahDesc": "The Prophet ﷺ left the regular sunnah of Ẓuhr, Maghrib and ʿIshāʾ on journeys; he kept Fajr's two and Witr. Any nafl is still yours to pray.",
+    "jamOfferTaqdim": "On the move? Pray {{a}} and {{b}} together now, in {{a}} time (jamʿ taqdīm).",
+    "jamOfferTakhir": "{{a}} not prayed yet? Pray {{a}} and {{b}} together now, in {{b}} time (jamʿ taʾkhīr).",
+    "jamBoth": "{{a}} + {{b}} ✓"
   },
   "shareAyah": {
     "title": "Share this āyah",

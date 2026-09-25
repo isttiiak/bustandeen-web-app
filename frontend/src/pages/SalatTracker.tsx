@@ -741,36 +741,50 @@ export default function SalatTracker() {
     });
   };
 
-  // Musafir jamʿ taqdīm: pray the later prayer of the pair straight after the
-  // earlier one, in the earlier one's time. Bypasses the "not yet" lock on
-  // purpose — that is exactly what joining is.
-  const joinPartnerNow = (first: PrayerId) => {
+  // Musafir jamʿ: log both prayers of a pair (Ẓuhr+ʿAṣr, Maghrib+ʿIshāʾ) in one
+  // tap, in the earlier prayer's time (taqdīm) or the later one's (taʾkhīr).
+  // Mu'ādh at Tabūk: "if he set out after the sun declined, he brought ʿAṣr
+  // forward to Ẓuhr and prayed them together" (Tirmidhī 553, Abū Dāwūd 1220).
+  // Taqdīm bypasses the "not yet" lock on purpose — that is what joining is.
+  const joinPair = (first: PrayerId, kind: 'taqdim' | 'takhir') => {
     if (!user) {
       setShowGuestDialog(true);
       return;
     }
     const second = jamPartner(first);
     if (!second) return;
+    // Only the prayer whose own time it is gets a window (early/mid/late analytics).
+    const windowOf = (p: PrayerId) => {
+      const start = isToday ? todayPrayerTimes?.times[p] : undefined;
+      const end =
+        isToday && todayPrayerTimes?.full ? getPrayerEndTime(p, todayPrayerTimes.full) : undefined;
+      return {
+        windowStart: start ? start.toISOString() : undefined,
+        windowEnd: end ? end.toISOString() : undefined,
+      };
+    };
+    const inTimeOf = kind === 'taqdim' ? first : second;
     const firstEntry = log?.prayers[first];
-    updatePrayer.mutate({
-      prayer: first,
-      status: normaliseStatus(firstEntry?.status) === 'kaza' ? 'kaza' : 'completed',
-      date: selectedDate,
-      location: firstEntry?.location ?? 'home',
-      tasbeeh: firstEntry?.tasbeeh ?? false,
-      ayatulKursi: firstEntry?.ayatulKursi ?? false,
-      windowStart: firstEntry?.windowStart,
-      windowEnd: firstEntry?.windowEnd,
-      jam: 'taqdim',
-    });
-    updatePrayer.mutate({
-      prayer: second,
-      status: 'completed',
-      date: selectedDate,
-      location: firstEntry?.location ?? 'home',
-      qasr: isQasrPrayer(second) ? true : undefined,
-      jam: 'taqdim',
-    });
+    const location = firstEntry?.location ?? log?.prayers[second]?.location ?? 'home';
+    for (const p of [first, second]) {
+      const e = log?.prayers[p];
+      const done = ['completed', 'kaza'].includes(normaliseStatus(e?.status));
+      updatePrayer.mutate({
+        prayer: p,
+        status: normaliseStatus(e?.status) === 'kaza' ? 'kaza' : 'completed',
+        date: selectedDate,
+        location: e?.location ?? location,
+        tasbeeh: e?.tasbeeh ?? false,
+        ayatulKursi: e?.ayatulKursi ?? false,
+        ...(done
+          ? { windowStart: e?.windowStart, windowEnd: e?.windowEnd }
+          : p === inTimeOf
+            ? windowOf(p)
+            : {}),
+        qasr: isQasrPrayer(p) ? e?.qasr !== false : undefined,
+        jam: kind,
+      });
+    }
     const doneAfter = trackablePrayers.filter((p) => {
       const s =
         p.id === second || p.id === first ? 'completed' : log?.prayers[p.id as PrayerId]?.status;
@@ -1409,14 +1423,14 @@ export default function SalatTracker() {
                                 )}
                                 {(isQasrRow || (travelDay && !isQasrPrayer(prayerId))) && (
                                   <span
-                                    className={`ml-2 inline-block align-middle whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                                    className={`mt-1 block w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                                       isQasrRow
                                         ? 'bg-brand-info/20 text-brand-info'
                                         : 'bg-white/10 text-white/40'
                                     }`}
                                   >
                                     {isQasrRow
-                                      ? t('salatTracker.qasrBadge', '✂️ {{n}} rakʿah · qaṣr', {
+                                      ? t('salatTracker.qasrBadge', '✂️ {{n}} · qaṣr', {
                                           n: formatLocaleNumber(travelRakat(prayerId)),
                                         })
                                       : t('salatTracker.rakatBadge', '{{n}} rakʿah', {
@@ -1425,7 +1439,7 @@ export default function SalatTracker() {
                                   </span>
                                 )}
                                 {entry?.jam && hasSubTag && (
-                                  <span className="ml-1.5 inline-block align-middle whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-brand-gold/20 text-brand-gold">
+                                  <span className="mt-1 block w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-brand-gold/20 text-brand-gold">
                                     {t('salatTracker.jamBadge', '🔗 joined')}
                                   </span>
                                 )}
@@ -1842,35 +1856,75 @@ export default function SalatTracker() {
                             closed once a prayer's time had passed, so Fajr's
                             guidance was still showing at Isha. Independently
                             toggleable per emphasis (Salat settings). */}
-                        {/* Musafir jamʿ taqdīm — Ẓuhr/Maghrib done in its own
-                            time and its partner not yet due: offer to join it now. */}
+                        {/* Musafir jamʿ — pray the pair together. On Ẓuhr/Maghrib
+                            (its own time, partner not yet due): taqdīm. On ʿAṣr/ʿIshāʾ
+                            (its own time, partner still unprayed): taʾkhīr. */}
                         {canJoinPrayers &&
                           isToday &&
-                          (prayerId === 'dhuhr' || prayerId === 'maghrib') &&
-                          hasSubTag &&
                           jamWith &&
-                          isFuturePrayer(jamWith, todayPrayerTimes?.times) &&
-                          normaliseStatus(log?.prayers[jamWith]?.status) === 'pending' && (
-                            <div className="px-3 py-2.5 border-t border-brand-gold/20 flex items-center gap-3 bg-brand-gold/5">
-                              <span className="text-base shrink-0">🔗</span>
-                              <p className="flex-1 min-w-0 text-white/50 text-xs leading-snug">
-                                {t(
-                                  'salatTracker.jamOffer',
-                                  'On the move? Pray {{name}} now, straight after (jamʿ taqdīm, Bukhārī 1111).',
-                                  { name: translateSalatName(jamWith, jamWith, t) }
-                                )}
-                              </p>
-                              <motion.button
-                                whileTap={{ scale: 0.92 }}
-                                onClick={() => joinPartnerNow(prayerId)}
-                                className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-gold/20 border border-brand-gold/60 text-brand-gold hover:bg-brand-gold/30"
-                              >
-                                {t('salatTracker.jamNow', 'Join {{name}} now', {
-                                  name: translateSalatName(jamWith, jamWith, t),
-                                })}
-                              </motion.button>
-                            </div>
-                          )}
+                          (() => {
+                            const partnerStatus = normaliseStatus(log?.prayers[jamWith]?.status);
+                            const isFirst = prayerId === 'dhuhr' || prayerId === 'maghrib';
+                            const offer = isFirst
+                              ? (isCurrent || hasSubTag) &&
+                                status !== 'missed' &&
+                                partnerStatus === 'pending' &&
+                                isFuturePrayer(jamWith, todayPrayerTimes?.times)
+                              : isCurrent && status !== 'missed' && partnerStatus === 'pending';
+                            if (!offer) return null;
+                            const first = isFirst ? prayerId : jamWith;
+                            const second = isFirst ? jamWith : prayerId;
+                            const names = {
+                              a: translateSalatName(first, first, t),
+                              b: translateSalatName(second, second, t),
+                            };
+                            return (
+                              <div className="px-3 py-2.5 border-t border-brand-gold/20 bg-brand-gold/5">
+                                <div className="flex items-center gap-3">
+                                  <span className="text-base shrink-0">🔗</span>
+                                  <p className="flex-1 min-w-0 text-white/55 text-xs leading-snug">
+                                    {isFirst
+                                      ? t(
+                                          'salatTracker.jamOfferTaqdim',
+                                          'On the move? Pray {{a}} and {{b}} together now, in {{a}} time (jamʿ taqdīm).',
+                                          names
+                                        )
+                                      : t(
+                                          'salatTracker.jamOfferTakhir',
+                                          '{{a}} not prayed yet? Pray {{a}} and {{b}} together now, in {{b}} time (jamʿ taʾkhīr).',
+                                          names
+                                        )}
+                                  </p>
+                                  <motion.button
+                                    whileTap={{ scale: 0.92 }}
+                                    onClick={() => joinPair(first, isFirst ? 'taqdim' : 'takhir')}
+                                    className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-gold/20 border border-brand-gold/60 text-brand-gold hover:bg-brand-gold/30"
+                                  >
+                                    {t('salatTracker.jamBoth', '{{a}} + {{b}} ✓', names)}
+                                  </motion.button>
+                                </div>
+                                <a
+                                  href={
+                                    isFirst
+                                      ? 'https://sunnah.com/tirmidhi:553'
+                                      : 'https://sunnah.com/bukhari:1111'
+                                  }
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="ml-8 mt-1 inline-block text-brand-gold/45 text-[11px] underline hover:text-brand-gold/80"
+                                >
+                                  📖{' '}
+                                  {translateReference(
+                                    isFirst
+                                      ? 'Jāmiʿ al-Tirmidhī 553 · Ṣaḥīḥ (al-Albānī)'
+                                      : 'Ṣaḥīḥ al-Bukhārī 1111 · Ṣaḥīḥ',
+                                    i18n.language
+                                  )}
+                                </a>
+                              </div>
+                            );
+                          })()}
 
                         {/* Musafir: the regular sunnah may be left on a journey
                             (Ibn ʿUmar, Muslim 689a) — Fajr's two are kept, so
