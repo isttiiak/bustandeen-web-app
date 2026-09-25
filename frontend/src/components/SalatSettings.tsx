@@ -5,8 +5,6 @@ import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { useMusafir } from '../utils/musafir.js';
 import api from '../lib/api.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import {
@@ -38,7 +36,6 @@ import { getTrackingDay } from '../utils/trackingDay.js';
  */
 export default function SalatSettings({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t, i18n } = useTranslation();
-  const musafir = useMusafir();
   const queryClient = useQueryClient();
   const [tasbih, setTasbih] = useState<TasbihMode>(() => getTasbihMode());
   const [autoCount, setAutoCount] = useState<boolean>(() => getAutoCountDhikr());
@@ -146,32 +143,6 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
             </div>
 
             <div className="p-5 space-y-7">
-              {/* ── Musafir mode ───────────────────────────────────────── */}
-              <Link
-                to="/musafir"
-                onClick={onClose}
-                className="flex items-center gap-3 rounded-2xl border border-brand-info/30 bg-brand-info/[0.08] p-4 hover:border-brand-info/60 transition-colors"
-              >
-                <span className="text-2xl">🧳</span>
-                <span className="flex-1 min-w-0">
-                  <span className="block text-brand-info font-bold text-sm">
-                    {t('salatSettings.musafirTitle', 'Musafir mode')}
-                    <span className="ml-2 text-[10px] font-black uppercase text-white/40">
-                      {musafir
-                        ? t('salatSettings.musafirOn', 'on')
-                        : t('salatSettings.musafirOff', 'off')}
-                    </span>
-                  </span>
-                  <span className="block text-white/45 text-xs mt-0.5 leading-snug">
-                    {t(
-                      'salatSettings.musafirDesc',
-                      'Travelling? Shortened and joined prayers, travel du‘ās and every concession with its hadith.'
-                    )}
-                  </span>
-                </span>
-                <span className="text-brand-info/60">→</span>
-              </Link>
-
               {/* ── auto-count dhikr ───────────────────────────────────── */}
               <section className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/[0.06] p-4">
                 <div className="flex items-center justify-between gap-3">

@@ -54,6 +54,49 @@ async function logEvent(
 }
 
 /**
+ * Atomically add `delta` to one prayer's owed count, clamped at 0. A
+ * read-then-$set here lost increments when calls overlapped (e.g. several
+ * concurrent restoreUncoveredDays runs each counting a different day), so
+ * increases are a plain $inc, and decreases are an $inc guarded by "enough is
+ * owed", falling back to a compare-and-set to 0 when less is owed.
+ */
+async function applyOwedDelta(
+  userId: string,
+  prayer: PrayerId,
+  delta: number
+): Promise<{ doc: ISalatDebt | null; actualDelta: number }> {
+  const path = `owed.${prayer}`;
+  if (delta > 0) {
+    const doc = await SalatDebt.findOneAndUpdate(
+      { userId },
+      { $inc: { [path]: delta } },
+      { upsert: true, new: true }
+    );
+    return { doc, actualDelta: delta };
+  }
+  const need = -delta;
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const full = await SalatDebt.findOneAndUpdate(
+      { userId, [path]: { $gte: need } },
+      { $inc: { [path]: delta } },
+      { new: true }
+    );
+    if (full) return { doc: full, actualDelta: delta };
+    const current = await SalatDebt.findOne({ userId });
+    const currentVal = current?.owed?.[prayer] ?? 0;
+    if (currentVal <= 0) return { doc: current, actualDelta: 0 };
+    const partial = await SalatDebt.findOneAndUpdate(
+      { userId, [path]: currentVal },
+      { $set: { [path]: 0 } },
+      { new: true }
+    );
+    if (partial) return { doc: partial, actualDelta: -currentVal };
+    // The value moved under us; try again with the fresh count.
+  }
+  return { doc: await SalatDebt.findOne({ userId }), actualDelta: 0 };
+}
+
+/**
  * Add `delta` to one prayer's owed count, clamped at 0 so payback taps can
  * never go negative. Used both for the manual "+/-" controls and for the
  * automatic missed <-> non-missed transition hook in salat.service.ts.
@@ -68,15 +111,7 @@ export async function adjustDebt(
   date?: string
 ): Promise<SalatDebtSummary> {
   if (delta === 0) return getDebtReadOnly(userId);
-  const before = await getDebtReadOnly(userId);
-  const beforeVal = before.owed[prayer];
-  const afterVal = Math.max(0, beforeVal + delta);
-  const actualDelta = afterVal - beforeVal;
-  const doc = await SalatDebt.findOneAndUpdate(
-    { userId },
-    { $set: { [`owed.${prayer}`]: afterVal } },
-    { upsert: true, new: true }
-  );
+  const { doc, actualDelta } = await applyOwedDelta(userId, prayer, delta);
   await logEvent(userId, prayer, actualDelta, date);
 
   // Itemize only the single-unit, date-specific case (a specific day's log

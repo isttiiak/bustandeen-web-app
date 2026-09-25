@@ -20,8 +20,21 @@ import {
   getHijriToday,
   formatHijriDate,
 } from '../utils/islamicCalendar.js';
-import { getDayStartMode, setDayStartModeLocal, type DayStartMode } from '../utils/trackingDay.js';
+import {
+  getDayStartMode,
+  setDayStartModeLocal,
+  getTrackingDay,
+  type DayStartMode,
+} from '../utils/trackingDay.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
+import {
+  useMusafir,
+  startMusafir,
+  endMusafir,
+  defaultSchool,
+  journeyDay,
+  schoolMeta,
+} from '../utils/musafir.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { useGroqKeyStatus, useSetGroqKey, useClearGroqKey } from '../hooks/useAi.js';
@@ -428,6 +441,7 @@ function GroqKeySetting({ t }: { t: (key: string) => string }) {
 export default function Settings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const musafir = useMusafir();
   const { user } = useAuthStore();
   // Rayhanah is a sisters-only feature — its delete group must not appear for
   // anyone else (a brother seeing a 🌸 cycle-data row was a bug).
@@ -792,6 +806,47 @@ export default function Settings() {
             <p className="text-white/25 text-[10px] mt-3 leading-relaxed">
               {t('settings.languageNote')}
             </p>
+          </SectionCard>
+
+          {/* ── Musafir mode — right under Language so a traveller finds it fast ── */}
+          <SectionCard
+            icon={<span className="text-lg leading-none">🧳</span>}
+            title={t('settings.musafirSection')}
+            subtitle={t('settings.musafirSubtitle')}
+            delay={0.04}
+          >
+            <Toggle
+              checked={!!musafir}
+              onChange={(on) => {
+                const today = getTrackingDay();
+                if (on) {
+                  startMusafir({ today, school: defaultSchool() });
+                  toast.success(t('settings.musafirStarted'), { icon: '✈️' });
+                } else {
+                  endMusafir(today);
+                  toast.success(t('settings.musafirEnded'), { icon: '🏡' });
+                }
+              }}
+              title={musafir ? t('settings.musafirOnTitle') : t('settings.musafirOffTitle')}
+              detail={
+                musafir
+                  ? t('settings.musafirOnDetail', {
+                      day: journeyDay(musafir, getTrackingDay()),
+                      school:
+                        i18n.resolvedLanguage === 'bn'
+                          ? schoolMeta(musafir.school).labelBn
+                          : schoolMeta(musafir.school).label,
+                    })
+                  : t('settings.musafirOffDetail')
+              }
+              accent="toggle-info"
+            />
+            <button
+              onClick={() => navigate('/musafir')}
+              className="mt-3 w-full text-left px-3 py-2.5 rounded-xl border border-brand-info/30 bg-brand-info/[0.08] text-brand-info text-sm font-bold hover:border-brand-info/60 transition-colors"
+            >
+              {t('settings.musafirOpen')} →
+            </button>
           </SectionCard>
 
           {/* ── Noor display ── */}

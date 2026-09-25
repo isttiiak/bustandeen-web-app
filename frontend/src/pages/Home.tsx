@@ -13,7 +13,8 @@ import ComebackNudge from '../components/ComebackNudge.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import MusafirBanner from '../components/MusafirBanner.js';
-import { useMusafir } from '../utils/musafir.js';
+import toast from 'react-hot-toast';
+import { useMusafir, startMusafir, defaultSchool } from '../utils/musafir.js';
 import {
   calcPrayerTimes,
   formatTime,
@@ -531,9 +532,37 @@ export default function Home() {
         </motion.div>
 
         {/* Musafir mode — the journey at a glance */}
-        {musafir && (
+        {musafir ? (
           <div className="mb-6">
             <MusafirBanner state={musafir} today={getTrackingDay()} variant="home" />
+          </div>
+        ) : (
+          // Off: a quiet one-tap way to start it. Details live on /musafir.
+          <div className="mb-6 flex items-center gap-3 rounded-2xl border border-brand-info/25 bg-brand-info/[0.06] px-4 py-3">
+            <span className="text-2xl shrink-0">🧳</span>
+            <Link to="/musafir" className="min-w-0 flex-1">
+              <span className="block text-white/85 font-bold text-sm leading-tight">
+                {t('home.musafirPromptTitle', 'Travelling?')}
+              </span>
+              <span className="block text-white/45 text-xs mt-0.5 leading-snug">
+                {t(
+                  'home.musafirPromptDesc',
+                  'Musafir mode shortens and joins your prayers the Sunnah way.'
+                )}
+              </span>
+            </Link>
+            <motion.button
+              whileTap={{ scale: 0.94 }}
+              onClick={() => {
+                startMusafir({ today: getTrackingDay(), school: defaultSchool() });
+                toast.success(t('home.musafirStarted', 'Safe travels! Musafir mode is on.'), {
+                  icon: '✈️',
+                });
+              }}
+              className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-info/20 border border-brand-info/60 text-brand-info hover:bg-brand-info/30"
+            >
+              {t('home.musafirTurnOn', 'Turn on')}
+            </motion.button>
           </div>
         )}
 
