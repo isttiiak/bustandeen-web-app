@@ -222,6 +222,90 @@ describe('Salat API', () => {
     expect(prayers.dhuhr?.status ?? 'pending').toBe('pending');
   });
 
+  test('PATCH /prayer stores Musafir qasr/jam flags and clears them on un-mark', async () => {
+    const tokenM = fakeJwt({ uid: 'salM', email: 'salm@test.dev', name: 'SalM' });
+    const authM = (r) => r.set('Authorization', `Bearer ${tokenM}`);
+    await request(app).post('/api/auth/verify').send({ idToken: tokenM });
+
+    const res = await authM(
+      request(app)
+        .patch('/api/salat/prayer')
+        .send({ date: today, prayer: 'asr', status: 'completed', qasr: true, jam: 'taqdim' })
+    );
+    expect(res.status).toBe(200);
+    expect(res.body.log.prayers.asr.qasr).toBe(true);
+    expect(res.body.log.prayers.asr.jam).toBe('taqdim');
+
+    // A sub-tag tap omits the flags: they must survive.
+    const tag = await authM(
+      request(app)
+        .patch('/api/salat/prayer')
+        .send({ date: today, prayer: 'asr', status: 'completed', tasbeeh: true })
+    );
+    expect(tag.body.log.prayers.asr.qasr).toBe(true);
+    expect(tag.body.log.prayers.asr.jam).toBe('taqdim');
+
+    // jam: null clears the combining flag only.
+    const unjam = await authM(
+      request(app)
+        .patch('/api/salat/prayer')
+        .send({ date: today, prayer: 'asr', status: 'completed', jam: null })
+    );
+    expect(unjam.body.log.prayers.asr.jam).toBeUndefined();
+    expect(unjam.body.log.prayers.asr.qasr).toBe(true);
+
+    // Fajr and Maghrib are never shortened.
+    const fajr = await authM(
+      request(app)
+        .patch('/api/salat/prayer')
+        .send({ date: today, prayer: 'maghrib', status: 'completed', qasr: true })
+    );
+    expect(fajr.body.log.prayers.maghrib.qasr).toBeUndefined();
+
+    // Back to pending wipes the travel flags.
+    const pending = await authM(
+      request(app)
+        .patch('/api/salat/prayer')
+        .send({ date: today, prayer: 'asr', status: 'pending' })
+    );
+    expect(pending.body.log.prayers.asr.qasr).toBeUndefined();
+  });
+
+  test('Friday Dhuhr prayed as qasr is Zuhr, not Jumuah: location is kept', async () => {
+    const tokenF = fakeJwt({ uid: 'salF', email: 'salf@test.dev', name: 'SalF' });
+    const authF = (r) => r.set('Authorization', `Bearer ${tokenF}`);
+    await request(app).post('/api/auth/verify').send({ idToken: tokenF });
+    // Most recent Friday on or before today.
+    const d = new Date(today + 'T12:00:00');
+    while (d.getDay() !== 5) d.setDate(d.getDate() - 1);
+    const friday = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+    const travel = await authF(
+      request(app).patch('/api/salat/prayer').send({
+        date: friday,
+        prayer: 'dhuhr',
+        status: 'completed',
+        location: 'jamat',
+        qasr: true,
+      })
+    );
+    expect(travel.status).toBe(200);
+    expect(travel.body.log.prayers.dhuhr.location).toBe('jamat');
+
+    const resident = await authF(
+      request(app).patch('/api/salat/prayer').send({
+        date: friday,
+        prayer: 'dhuhr',
+        status: 'completed',
+        location: 'home',
+        qasr: false,
+      })
+    );
+    // qasr:false on a travel Friday = attended Jumu'ah: stored, and it is a mosque prayer.
+    expect(resident.body.log.prayers.dhuhr.qasr).toBe(false);
+    expect(resident.body.log.prayers.dhuhr.location).toBe('mosque');
+  });
+
   test('GET /history returns logs for the requested range', async () => {
     const res = await auth(request(app).get('/api/salat/history?days=7'));
     expect(res.status).toBe(200);

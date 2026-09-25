@@ -53,6 +53,9 @@ import { calcPrayerTimes, formatTime } from '../utils/prayerTimes.js';
 import { isPostMaghrib, getHijriToday } from '../utils/islamicCalendar.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
+import MusafirBanner from '../components/MusafirBanner.js';
+import { useMusafir } from '../utils/musafir.js';
+import { getTrackingDay } from '../utils/trackingDay.js';
 
 // ─── date helpers ─────────────────────────────────────────────────────────────
 
@@ -179,6 +182,7 @@ const SPARKLES = [
 // ─── component ────────────────────────────────────────────────────────────────
 
 export default function FastingTracker() {
+  const musafir = useMusafir();
   const { t, i18n } = useTranslation();
   const cycleActive = useCycleActive();
   const navigate = useNavigate();
@@ -469,6 +473,7 @@ export default function FastingTracker() {
       <h1 className="sr-only">{t('fasting.title', 'Fasting Tracker')}</h1>
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-xl mx-auto space-y-4">
+          {musafir && <MusafirBanner state={musafir} today={getTrackingDay()} variant="fasting" />}
           {/* ── Tabs + calendar toggle ── */}
           <div className="flex items-center justify-between gap-2">
             <TabNav

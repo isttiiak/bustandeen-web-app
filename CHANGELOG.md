@@ -2,6 +2,28 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.58.0 - Musafir mode: pray, fast and make du'a the traveller's way - 2026-09-25
+
+### Added
+
+- **Musafir mode (`/musafir`).** Start a journey (destination, how long you will stay, and the fiqh view you follow) and the app adapts to it on every device you use. The page shows the day of your safar, your five prayers with their travel rak'ahs (Ẓuhr, ʿAṣr and ʿIshāʾ become 2; Fajr and Maghrib never change), which prayers may be joined, and an "I'm home" button that ends the trip with the returning sunnah.
+- **The traveller's concessions, each with its evidence:** qaṣr (Quran 4:101, Bukhārī 350, Muslim 686a and 689a), when it starts and ends (Bukhārī 1089), how long a stay keeps you a traveller (Bukhārī 1080 and 1081, Abū Dāwūd 1235), jamʿ (Bukhārī 1111, Tirmidhī 553, Muslim 706a), lighter sunnah but Fajr's two and Witr kept (Muslim 689a and 681, Bukhārī 1000), fard in a vehicle (Bukhārī 1099), praying behind a local imam (Muslim 688), Friday on the road (Muslim 1218a), fasting (Quran 2:185, Bukhārī 1943 and 1946), wiping over socks for 3 days (Muslim 276a) and tayammum (Quran 5:6).
+- **Both madhab positions, side by side.** Distance, how many days of staying make you a resident (4 for the majority, 15 for the Ḥanafī school) and whether joining is allowed. If your planned stay reaches your school's limit, the app tells you to shorten on the road and pray in full once you arrive. The default school follows your ʿAṣr setting.
+- **Du'as of the journey, as a daily checklist:** leaving home (Abū Dāwūd 5095), farewell (Abū Dāwūd 2600), the riding du'a and the return words (Muslim 1342), going up and down (Bukhārī 2993) and arriving at a place (Muslim 2708), each with Arabic, transliteration and meaning.
+- **Motivation cards:** your usual deeds are still written for you while travelling (Bukhārī 2996), and the traveller's du'a is answered (Tirmidhī 1905).
+- **Salat tracker, on travel days:** a Musafir strip at the top; a rak'ah badge on every prayer ("2 rakʿah · qaṣr"); prayers are saved as qaṣr, with a switch to "4, behind a local imam"; Friday's prayer is Ẓuhr, not Jumu'ah, with a switch for when you did attend Jumu'ah; one-tap joining (majority view): during Ẓuhr or Maghrib time a "Ẓuhr + ʿAṣr" / "Maghrib + ʿIshāʾ" button logs both prayers together (jamʿ taqdīm, Tirmidhī 553: "he brought ʿAṣr forward to Ẓuhr and prayed them together"), and during ʿAṣr or ʿIshāʾ time the same button appears while the earlier prayer is still unprayed (jamʿ taʾkhīr, Bukhārī 1111); a "Joined with…" tag to mark a pair joined afterwards; and a short note in place of the regular sunnah guidance (Fajr's sunnah guidance stays). A 🧳 button next to the settings cog opens Musafir mode.
+- **Home and Fasting:** a Musafir strip while a journey is on; on the Fasting page it reminds you that you may break the fast and make it up later.
+- Musafir mode entry in Salat settings. English and Bengali throughout.
+
+### Fixed
+
+- Tapping "Where", "Tasbeeh" or "Ayatul Kursi" on a logged prayer no longer erases that prayer's time window (it was used by the "prayed early / mid / late" analytics).
+
+### Notes
+
+- `SalatLog` prayer entries gain optional `qasr` (boolean) and `jam` (`taqdim` | `takhir`). `PATCH /api/salat/prayer` accepts both; if a field is left out, the stored value is kept, `jam: null` clears it, and both are cleared when a prayer goes back to pending or missed. `qasr` is ignored for Fajr and Maghrib. A Friday Dhuhr with `qasr: true` is an ordinary Ẓuhr, so the location you pick is kept instead of being forced to "mosque".
+- The journey (`bustandeen_musafir`) and past journeys (`bustandeen_musafir_history`) are synced preferences. The du'a checklist stays on the device.
+
 ## v5.57.0 - Your settings now follow you across devices - 2026-09-22
 
 ### Fixed

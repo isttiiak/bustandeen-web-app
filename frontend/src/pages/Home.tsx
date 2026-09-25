@@ -12,6 +12,8 @@ import { StreakBadge, GoalBadge } from '../components/StatusBadges.js';
 import ComebackNudge from '../components/ComebackNudge.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
+import MusafirBanner from '../components/MusafirBanner.js';
+import { useMusafir } from '../utils/musafir.js';
 import {
   calcPrayerTimes,
   formatTime,
@@ -47,6 +49,7 @@ interface ActivityItem {
 }
 
 export default function Home() {
+  const musafir = useMusafir();
   const { t, i18n } = useTranslation();
   const { counts = {}, hydrate } = useZikrStore();
   const location = useLocation();
@@ -526,6 +529,13 @@ export default function Home() {
             </Link>
           )}
         </motion.div>
+
+        {/* Musafir mode — the journey at a glance */}
+        {musafir && (
+          <div className="mb-6">
+            <MusafirBanner state={musafir} today={getTrackingDay()} variant="home" />
+          </div>
+        )}
 
         {/* Islamic special day widget */}
         {todaySpecialDays.length > 0 && (
