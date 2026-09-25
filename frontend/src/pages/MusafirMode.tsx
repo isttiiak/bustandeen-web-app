@@ -25,6 +25,7 @@ import {
   jamAllowed,
   getMusafirHistory,
   getDuasSaid,
+  suggestStartAfter,
   setDuasSaid,
   FARD_RAKAT,
   travelRakat,
@@ -127,7 +128,13 @@ export default function MusafirMode() {
   const [destination, setDestination] = useState('');
   const [plannedStay, setPlannedStay] = useState<number>(0);
   const [school, setSchool] = useState<MusafirSchool>(() => defaultSchool());
+  // When the journey began: a date plus the last prayer prayed at home that day
+  // (for a sudden trip logged later). Unset = left before Fajr.
+  const [startDate, setStartDate] = useState(today);
+  const [startAfter, setStartAfter] = useState<PrayerId | undefined>(undefined);
   const openForm = () => {
+    setStartDate(musafir?.startedAt ?? today);
+    setStartAfter(musafir ? musafir.startAfter : suggestStartAfter(today));
     setDestination(musafir?.destination ?? '');
     setPlannedStay(musafir?.plannedStay ?? 0);
     setSchool(musafir?.school ?? defaultSchool());
@@ -136,13 +143,15 @@ export default function MusafirMode() {
   const submitForm = () => {
     if (musafir) {
       updateMusafir({
+        startedAt: startDate <= today ? startDate : today,
+        startAfter,
         destination: destination.trim() || undefined,
         plannedStay,
         school,
       });
       toast.success(t('musafir.updated', 'Journey updated'), { icon: '🧭' });
     } else {
-      startMusafir({ today, destination, plannedStay, school });
+      startMusafir({ today, startedAt: startDate, startAfter, destination, plannedStay, school });
       celebrateSmall();
       toast.success(t('musafir.started', 'Safe travels! Musafir mode is on.'), {
         icon: '✈️',
@@ -186,6 +195,13 @@ export default function MusafirMode() {
   const canJoin = jamAllowed(musafir?.school ?? school);
   const savedRakat = PRAYERS.reduce((n, p) => n + FARD_RAKAT[p.id] - travelRakat(p.id), 0);
   const saidCount = said.length;
+
+  // A forgotten trip can be back-dated up to 60 days.
+  const minStartDate = (() => {
+    const d = new Date(`${today}T12:00:00`);
+    d.setDate(d.getDate() - 60);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  })();
 
   const fmtDate = (d: string) =>
     formatLocaleDate(new Date(d + 'T12:00:00'), { day: 'numeric', month: 'short' });
@@ -250,7 +266,20 @@ export default function MusafirMode() {
                     : t('musafir.onTheRoad', 'On the road')}
                   <span className="text-white/30">
                     {' · '}
-                    {t('musafir.since', 'since {{date}}', { date: fmtDate(musafir.startedAt) })}
+                    {musafir.startAfter
+                      ? t('musafir.sinceAfter', 'since {{date}}, after {{prayer}}', {
+                          date: fmtDate(musafir.startedAt),
+                          prayer: translateSalatName(musafir.startAfter, musafir.startAfter, t),
+                        })
+                      : t('musafir.since', 'since {{date}}', {
+                          date: fmtDate(musafir.startedAt),
+                        })}{' '}
+                    <button
+                      onClick={openForm}
+                      className="underline underline-offset-2 text-white/40 hover:text-white/70"
+                    >
+                      {t('musafir.changeStart', 'change')}
+                    </button>
                   </span>
                 </p>
                 <JourneyRoad reduce={reduceMotion} />
@@ -409,6 +438,58 @@ export default function MusafirMode() {
                     ? t('musafir.editTitle', 'Your journey')
                     : t('musafir.setupTitle', 'Where are you heading?')}
                 </h3>
+
+                <div>
+                  <label className="block">
+                    <span className="text-white/50 text-xs font-bold">
+                      🗓️ {t('musafir.startDateLabel', 'When did you set out?')}
+                    </span>
+                    <input
+                      type="date"
+                      value={startDate}
+                      max={today}
+                      min={minStartDate}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        if (v && v <= today && v >= minStartDate) setStartDate(v);
+                      }}
+                      className="mt-1.5 w-full rounded-xl bg-brand-deep border border-brand-border px-3 py-2.5 text-white text-sm focus:outline-none focus:border-brand-info/60 [color-scheme:dark]"
+                    />
+                  </label>
+                  <p className="text-white/50 text-xs font-bold mt-3">
+                    🕌 {t('musafir.startAfterLabel', 'Last prayer you prayed at home that day')}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                    {([undefined, 'fajr', 'dhuhr', 'asr', 'maghrib'] as const).map((p) => (
+                      <button
+                        key={p ?? 'none'}
+                        onClick={() => setStartAfter(p)}
+                        aria-pressed={startAfter === p}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                          startAfter === p
+                            ? 'bg-brand-info/25 border-brand-info/70 text-brand-info'
+                            : 'bg-brand-deep border-brand-border text-white/50 hover:text-white/80'
+                        }`}
+                      >
+                        {p
+                          ? translateSalatName(p, p, t)
+                          : t('musafir.startAfterNone', 'None, left before Fajr')}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-white/35 text-[11px] mt-1.5 leading-relaxed">
+                    {startAfter
+                      ? t(
+                          'musafir.startAfterHint',
+                          'Shortening starts with the prayer after {{prayer}} on that day. Left after ʿIshāʾ? Pick the next day and “None”.',
+                          { prayer: translateSalatName(startAfter, startAfter, t) }
+                        )
+                      : t(
+                          'musafir.startAfterHintNone',
+                          'Every prayer of that day counts as a travel prayer. Left after ʿIshāʾ? Pick the next day.'
+                        )}
+                  </p>
+                </div>
 
                 <label className="block">
                   <span className="text-white/50 text-xs font-bold">

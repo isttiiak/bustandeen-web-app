@@ -943,10 +943,12 @@
     "libraryAsmaSubtitle": "স্মরণ ও অনুধাবন করুন",
     "libraryZakatTitle": "যাকাত ক্যালকুলেটর",
     "libraryZakatSubtitle": "আপনার প্রদেয় যাকাত হিসাব করুন",
-    "musafirPromptTitle": "সফরে আছেন?",
-    "musafirPromptDesc": "মুসাফির মোড সুন্নাহ অনুযায়ী আপনার নামায কসর ও জমা করে দেয়।",
     "musafirStarted": "নিরাপদ সফর হোক! মুসাফির মোড চালু।",
-    "musafirTurnOn": "চালু করুন"
+    "musafirTurnOn": "চালু করুন",
+    "musafirHintTitle": "সফরে আছেন?",
+    "musafirHintDesc": "আপনি {{place}} থেকে প্রায় {{km}} কিমি দূরে।",
+    "musafirHintDescNoName": "আপনি সংরক্ষিত অবস্থান থেকে প্রায় {{km}} কিমি দূরে।",
+    "musafirHintDismiss": "এখন না"
   },
   "library": {
     "duaTitle": "দোয়া সংকলন",
@@ -1095,7 +1097,11 @@
     "locationUpdated": "অবস্থান আপডেট হয়েছে",
     "noLocation": "সেট করা হয়নি",
     "title": "নামাযের সময়ের সেটিংস",
-    "trackerHint": "তাসবীহ গণনা বা কাযা ঋণ খুঁজছেন? সেটি আছে"
+    "trackerHint": "তাসবীহ গণনা বা কাযা ঋণ খুঁজছেন? সেটি আছে",
+    "musafirTitle": "মুসাফির মোড",
+    "musafirOn": "চালু",
+    "musafirOff": "বন্ধ",
+    "musafirDesc": "সফরে আছেন? কসর ও জমা নামায, সফরের দু‘আ এবং প্রতিটি ছাড় হাদীসসহ।"
   },
   "prayerTimes": {
     "seoTitle": "নামাজের সময় — আপনার অবস্থানের জন্য সঠিক সালাতের সময়",
@@ -2441,7 +2447,10 @@
     "musafirOnDetail": "সফরের {{day, number}}তম দিন · {{school}}। বাড়ি ফিরলে বন্ধ করুন।",
     "musafirOpen": "সফরের বিস্তারিত, দু‘আ ও মাসায়েল",
     "musafirStarted": "নিরাপদ সফর হোক! মুসাফির মোড চালু।",
-    "musafirEnded": "স্বাগতম! মুসাফির মোড বন্ধ।"
+    "musafirEnded": "স্বাগতম! মুসাফির মোড বন্ধ।",
+    "musafirStartedOn": "{{date}} থেকে শুরু।",
+    "musafirStartedAfter": "{{date}}, {{prayer}}-এর পর থেকে শুরু।",
+    "musafirChangeStart": "শুরু পরিবর্তন"
   },
   "specialDays": {
     "arafah": {
@@ -3431,6 +3440,15 @@
     "bannerFasting": "সফরে রোযা রাখতে বা ভাঙতে পারেন; রমযানের ছুটে যাওয়া দিন পরে কাযা করবেন।",
     "bannerResident": "পথে কসর করুন; গন্তব্যে স্থির হলে পূর্ণ নামায পড়ুন।",
     "bannerQasr": "আজ যোহর, আসর ও ইশা দুই রাকআত।",
-    "bannerTitle": "মুসাফির · {{day}}তম দিন"
+    "bannerTitle": "মুসাফির · {{day}}তম দিন",
+    "sinceAfter": "{{date}} থেকে, {{prayer}}-এর পর",
+    "changeStart": "পরিবর্তন",
+    "startDateLabel": "কবে রওনা হয়েছেন?",
+    "startAfterLabel": "সেদিন বাড়িতে শেষ যে নামায পড়েছেন",
+    "startAfterNone": "কোনোটি না, ফজরের আগেই রওনা",
+    "startAfterHint": "সেদিন {{prayer}}-এর পরের নামায থেকে কসর শুরু। ইশার পরে রওনা হলে? পরের দিন ও “কোনোটি না” বাছুন।",
+    "startAfterHintNone": "সেদিনের সব নামায সফরের নামায ধরা হবে। ইশার পরে রওনা হলে? পরের দিন বাছুন।",
+    "bannerQasrTomorrow": "কসর আগামীকাল থেকে শুরু।",
+    "bannerQasrSome": "আজ {{names}}: দুই রাকআত।"
   }
 }

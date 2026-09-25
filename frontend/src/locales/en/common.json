@@ -1009,10 +1009,12 @@
     "libraryAsmaSubtitle": "Reflect and remember",
     "libraryZakatTitle": "Zakat Calculator",
     "libraryZakatSubtitle": "Work out what you owe",
-    "musafirPromptTitle": "Travelling?",
-    "musafirPromptDesc": "Musafir mode shortens and joins your prayers the Sunnah way.",
     "musafirStarted": "Safe travels! Musafir mode is on.",
-    "musafirTurnOn": "Turn on"
+    "musafirTurnOn": "Turn on",
+    "musafirHintTitle": "Travelling?",
+    "musafirHintDesc": "You are about {{km}} km from {{place}}.",
+    "musafirHintDescNoName": "You are about {{km}} km from your saved location.",
+    "musafirHintDismiss": "Not now"
   },
   "library": {
     "duaTitle": "Du'a Library",
@@ -1264,7 +1266,11 @@
     "locationUpdated": "Location updated",
     "noLocation": "Not set",
     "title": "Prayer time settings",
-    "trackerHint": "Looking for tasbīḥ counting or kaza debt? That's in"
+    "trackerHint": "Looking for tasbīḥ counting or kaza debt? That's in",
+    "musafirTitle": "Musafir mode",
+    "musafirOn": "on",
+    "musafirOff": "off",
+    "musafirDesc": "Travelling? Shortened and joined prayers, the travel duʿās and every concession with its hadith."
   },
   "prayerTimes": {
     "seoTitle": "Prayer Times — Accurate Salat Times for Your Location",
@@ -2610,7 +2616,10 @@
     "musafirOnDetail": "Day {{day}} of your journey · {{school}}. Turn off when you are home.",
     "musafirOpen": "Journey details, duʿās and rulings",
     "musafirStarted": "Safe travels! Musafir mode is on.",
-    "musafirEnded": "Welcome home! Musafir mode is off."
+    "musafirEnded": "Welcome home! Musafir mode is off.",
+    "musafirStartedOn": "Started {{date}}.",
+    "musafirStartedAfter": "Started {{date}}, after {{prayer}}.",
+    "musafirChangeStart": "Change start"
   },
   "specialDays": {
     "arafah": {
@@ -3607,6 +3616,15 @@
     "bannerFasting": "You may fast or break it on a journey; a missed Ramadan day becomes a qaḍāʾ to make up later.",
     "bannerResident": "Shorten on the road; pray in full once you settle at your destination.",
     "bannerQasr": "Ẓuhr, ʿAṣr and ʿIshāʾ are 2 rak’ahs today.",
-    "bannerTitle": "Musafir · day {{day}}"
+    "bannerTitle": "Musafir · day {{day}}",
+    "sinceAfter": "since {{date}}, after {{prayer}}",
+    "changeStart": "change",
+    "startDateLabel": "When did you set out?",
+    "startAfterLabel": "Last prayer you prayed at home that day",
+    "startAfterNone": "None, left before Fajr",
+    "startAfterHint": "Shortening starts with the prayer after {{prayer}} on that day. Left after ʿIshāʾ? Pick the next day and “None”.",
+    "startAfterHintNone": "Every prayer of that day counts as a travel prayer. Left after ʿIshāʾ? Pick the next day.",
+    "bannerQasrTomorrow": "Shortened prayers start from tomorrow.",
+    "bannerQasrSome": "Today {{names}}: 2 rak’ahs."
   }
 }

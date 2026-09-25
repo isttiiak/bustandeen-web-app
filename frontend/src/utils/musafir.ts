@@ -20,6 +20,7 @@
 import { useEffect, useState } from 'react';
 import type { PrayerId } from '../hooks/useSalatLog.js';
 import { getAsrMadhab } from './salatPrefs.js';
+import { calcPrayerTimes } from './prayerTimes.js';
 
 // ─── journey state ──────────────────────────────────────────────────────────
 
@@ -30,6 +31,10 @@ export interface MusafirState {
   active: boolean;
   /** Tracking day (YYYY-MM-DD) the journey began. */
   startedAt: string;
+  /** The last prayer of `startedAt` that was prayed at home, before setting
+   * out. Travel rulings apply from the prayer after it. Unset = the whole
+   * start day is a travel day. (Set after the fact for a sudden trip.) */
+  startAfter?: PrayerId;
   /** Optional free text — "Chattogram", "Umrah", "Grandma's village". */
   destination?: string;
   /** Days the traveller intends to stay at the destination (0 = unknown / keeps moving). */
@@ -68,6 +73,11 @@ export function getMusafir(): MusafirState | null {
     return {
       active: true,
       startedAt: p.startedAt,
+      startAfter:
+        typeof p.startAfter === 'string' &&
+        (PRAYER_ORDER as readonly string[]).includes(p.startAfter)
+          ? p.startAfter
+          : undefined,
       destination:
         typeof p.destination === 'string' ? p.destination.slice(0, 60) || undefined : undefined,
       plannedStay:
@@ -94,13 +104,18 @@ function writeMusafir(state: MusafirState | null): void {
 
 export function startMusafir(opts: {
   today: string;
+  /** Defaults to `today`; may be earlier for a trip logged after the fact. */
+  startedAt?: string;
+  startAfter?: PrayerId;
   destination?: string;
   plannedStay?: number;
   school: MusafirSchool;
 }): void {
+  const startedAt = opts.startedAt && opts.startedAt <= opts.today ? opts.startedAt : opts.today;
   writeMusafir({
     active: true,
-    startedAt: opts.today,
+    startedAt,
+    startAfter: opts.startAfter,
     destination: opts.destination?.trim().slice(0, 60) || undefined,
     plannedStay: opts.plannedStay,
     school: opts.school,
@@ -173,9 +188,133 @@ export function journeyDay(state: MusafirState, today: string): number {
   return Math.max(1, dayDiff(state.startedAt, today) + 1);
 }
 
-/** Does Musafir mode apply to this tracking day? (Never to days before the journey.) */
+/** Fard prayers in the order they fall in a tracking day. */
+export const PRAYER_ORDER: readonly PrayerId[] = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'];
+
+/**
+ * Is this one prayer a travel prayer? Days after the start day: all of them.
+ * The start day: only the prayers after `startAfter` (the last one prayed at
+ * home). Days before the journey: none.
+ */
+export function musafirAppliesTo(
+  state: MusafirState | null,
+  date: string,
+  prayer: PrayerId
+): boolean {
+  if (!state?.active || date < state.startedAt) return false;
+  if (date > state.startedAt || !state.startAfter) return true;
+  return PRAYER_ORDER.indexOf(prayer) > PRAYER_ORDER.indexOf(state.startAfter);
+}
+
+/** Does Musafir mode apply to any prayer of this tracking day? */
 export function musafirAppliesOn(state: MusafirState | null, date: string): boolean {
-  return !!state?.active && date >= state.startedAt;
+  return PRAYER_ORDER.some((p) => musafirAppliesTo(state, date, p));
+}
+
+/**
+ * Best guess for "after which prayer did I leave?" when starting right now:
+ * the prayer whose time is running is treated as a travel prayer (not prayed
+ * yet), so the journey starts after the one before it. Needs the saved
+ * location for prayer times; without it the whole day counts. The user can
+ * always correct it on /musafir.
+ */
+export function suggestStartAfter(date: string, now: Date = new Date()): PrayerId | undefined {
+  try {
+    const raw = localStorage.getItem('bustandeen_location');
+    if (!raw) return undefined;
+    const loc = JSON.parse(raw) as { latitude: number; longitude: number };
+    const times = calcPrayerTimes(loc.latitude, loc.longitude, new Date(`${date}T12:00:00`));
+    const begun = PRAYER_ORDER.filter((p) => times[p] <= now);
+    if (begun.length < 2) return undefined;
+    return begun[begun.length - 2];
+  } catch {
+    return undefined;
+  }
+}
+
+// ─── "are you travelling?" hint (location, only if already permitted) ──────
+
+const HINT_DISMISSED_KEY = 'bustandeen_musafir_hint_dismissed';
+
+/** The qaṣr distance for a school, in km (the lower bound of each range above). */
+export const QASR_DISTANCE_KM: Record<MusafirSchool, number> = { majority: 80, hanafi: 77 };
+
+export function distanceKm(
+  a: { latitude: number; longitude: number },
+  b: { latitude: number; longitude: number }
+): number {
+  const rad = (d: number) => (d * Math.PI) / 180;
+  const dLat = rad(b.latitude - a.latitude);
+  const dLng = rad(b.longitude - a.longitude);
+  const h =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(rad(a.latitude)) * Math.cos(rad(b.latitude)) * Math.sin(dLng / 2) ** 2;
+  return 2 * 6371 * Math.asin(Math.sqrt(h));
+}
+
+export interface TravelHint {
+  km: number;
+  from: string;
+}
+
+export function dismissTravelHint(today: string): void {
+  try {
+    localStorage.setItem(HINT_DISMISSED_KEY, today);
+  } catch {
+    /* private mode */
+  }
+}
+
+/**
+ * "You're 140 km from Dhaka — travelling?" Only when Musafir mode is off, the
+ * browser ALREADY has location permission (we never trigger a permission
+ * prompt for this), and the device is at least the qaṣr distance from the
+ * saved prayer-times location. The position is used only for this distance on
+ * the device and is never stored or sent anywhere.
+ */
+export function useTravelHint(today: string, active: boolean): TravelHint | null {
+  const [hint, setHint] = useState<TravelHint | null>(null);
+  useEffect(() => {
+    if (active) {
+      setHint(null);
+      return;
+    }
+    let cancelled = false;
+    try {
+      if (localStorage.getItem(HINT_DISMISSED_KEY) === today) return;
+      const raw = localStorage.getItem('bustandeen_location');
+      if (!raw || !navigator.geolocation || !navigator.permissions?.query) return;
+      const home = JSON.parse(raw) as { latitude: number; longitude: number; name?: string };
+      if (typeof home.latitude !== 'number' || typeof home.longitude !== 'number') return;
+      void navigator.permissions
+        .query({ name: 'geolocation' })
+        .then((status) => {
+          if (cancelled || status.state !== 'granted') return;
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              if (cancelled) return;
+              const km = distanceKm(home, pos.coords);
+              if (km >= QASR_DISTANCE_KM[defaultSchool()]) {
+                setHint({ km: Math.round(km), from: home.name ?? '' });
+              }
+            },
+            () => {
+              /* unavailable: no hint */
+            },
+            { enableHighAccuracy: false, maximumAge: 30 * 60_000, timeout: 10_000 }
+          );
+        })
+        .catch(() => {
+          /* permissions API unsupported: no hint */
+        });
+    } catch {
+      /* storage blocked: no hint */
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, [today, active]);
+  return hint;
 }
 
 // ─── rak'ahs ────────────────────────────────────────────────────────────────

@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.59.0 - Musafir mode: set when the journey began; travel hint on Home - 2026-09-25
+
+### Added
+
+- **Set when your journey began, even after the fact.** A sudden trip is often logged later, so the journey form now asks **when you set out** (up to 60 days back) and **the last prayer you prayed at home that day** (none, Fajr, Ẓuhr, ʿAṣr or Maghrib). Travel rulings apply from the prayer after it: on the start day only the later prayers are shortened, joined or labelled for travel; every later day is fully a travel day. The hero shows "since 24 Sep, after Ẓuhr" with a **change** link.
+- **A good first guess.** Starting a journey (from the form, Settings or Home) pre-selects the prayer before the one whose time is running now, using your saved prayer-times location, so the prayer you are about to pray on the road counts as a travel prayer.
+- **Travel hint on Home.** If the browser already has location permission (the app never asks for it for this), and you are at least the qaṣr distance (80 km, 77 km for Ḥanafī) from your saved prayer-times location, Home shows "Travelling? You are about 214 km from Dhaka" with **Turn on** and **Not now** (hidden for the rest of the day). Your position is only used on the device for this distance and is never stored or sent.
+- **Musafir mode in the Prayer Times settings drawer**, alongside the main Settings section.
+
+### Changed
+
+- The permanent "Travelling?" card on Home is gone; Home shows the travel hint above only when it applies, and the "Musafir · day N" strip while a journey is on. On the start day the strip names only the prayers that are shortened ("Today ʿAṣr, ʿIshāʾ: 2 rakʿahs").
+- Joining (jamʿ) is offered only when both prayers of the pair are travel prayers.
+
 ## v5.58.1 - Turn Musafir mode on from Home or Settings - 2026-09-25
 
 ### Changed

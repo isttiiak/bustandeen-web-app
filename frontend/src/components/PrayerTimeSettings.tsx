@@ -4,7 +4,9 @@ import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
 import { XMarkIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import LocationPicker from './LocationPicker.js';
+import { useMusafir } from '../utils/musafir.js';
 import type { StoredLocation } from '../utils/geocode.js';
 import {
   ASR_MADHABS,
@@ -23,7 +25,8 @@ import {
  * Only things that change the TIMETABLE live here: location, calculation
  * method, and ʿAṣr madhab. Per-worshipper tracking prefs (tasbīḥ counting,
  * kaza debt reset) stay in SalatSettings — this page is about the clock,
- * not the tracker.
+ * not the tracker. One exception: a link to Musafir mode, because a traveller
+ * checking prayer times away from home is exactly who needs it.
  */
 export default function PrayerTimeSettings({
   open,
@@ -37,6 +40,7 @@ export default function PrayerTimeSettings({
   onLocationChange: (loc: StoredLocation) => void;
 }) {
   const { t } = useTranslation();
+  const musafir = useMusafir();
   const [madhab, setMadhab] = useState<AsrMadhab>(() => getAsrMadhab());
   const [calcMethod, setCalcMethodState] = useState<CalculationMethodId>(() => getCalcMethod());
   const [changingLocation, setChangingLocation] = useState(false);
@@ -103,6 +107,32 @@ export default function PrayerTimeSettings({
             </div>
 
             <div className="p-5 space-y-7">
+              {/* ── Musafir mode ───────────────────────────────────────── */}
+              <Link
+                to="/musafir"
+                onClick={onClose}
+                className="flex items-center gap-3 rounded-2xl border border-brand-info/30 bg-brand-info/[0.08] p-4 hover:border-brand-info/60 transition-colors"
+              >
+                <span className="text-2xl">🧳</span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-brand-info font-bold text-sm">
+                    {t('prayerTimeSettings.musafirTitle', 'Musafir mode')}
+                    <span className="ml-2 text-[10px] font-black uppercase text-white/40">
+                      {musafir
+                        ? t('prayerTimeSettings.musafirOn', 'on')
+                        : t('prayerTimeSettings.musafirOff', 'off')}
+                    </span>
+                  </span>
+                  <span className="block text-white/45 text-xs mt-0.5 leading-snug">
+                    {t(
+                      'prayerTimeSettings.musafirDesc',
+                      'Travelling? Shortened and joined prayers, the travel duʿās and every concession with its hadith.'
+                    )}
+                  </span>
+                </span>
+                <span className="text-brand-info/60">→</span>
+              </Link>
+
               {/* ── Location ───────────────────────────────────────────── */}
               <section>
                 <h3 className="text-white font-bold text-sm">
