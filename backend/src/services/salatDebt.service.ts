@@ -108,7 +108,11 @@ export async function adjustDebt(
   userId: string,
   prayer: PrayerId,
   delta: number,
-  date?: string
+  date?: string,
+  /** Pay back this exact missed day's unit (a "made it up" tap on a listed
+   * unit). The event still goes on `date` (today), since that is when the
+   * prayer was actually made up. */
+  missedDate?: string
 ): Promise<SalatDebtSummary> {
   if (delta === 0) return getDebtReadOnly(userId);
   const { doc, actualDelta } = await applyOwedDelta(userId, prayer, delta);
@@ -127,11 +131,50 @@ export async function adjustDebt(
         { upsert: true }
       );
     } else if (actualDelta === -1) {
-      await resolveKazaUnit(userId, prayer, date);
+      await resolveKazaUnit(userId, prayer, missedDate ?? date);
     }
+  } else if (actualDelta === -1 && missedDate) {
+    await resolveKazaUnit(userId, prayer, missedDate);
   }
 
   return toSummary(doc);
+}
+
+export interface OwedKazaUnit {
+  prayer: PrayerId;
+  missedDate: string;
+}
+
+/**
+ * The itemized, still-owed missed prayers (newest first), for views that pay
+ * them back one specific day at a time (e.g. the Musafir travel-kaza list).
+ * Only units inside the current counting period, and never more per prayer
+ * than the running counter says is owed: a counter lowered by hand (the
+ * "set exact count" field) leaves older units behind, and payback is FIFO,
+ * so the newest `owed[prayer]` units are the ones still genuinely due.
+ */
+export async function listOwedKazaUnits(userId: string, limit = 300): Promise<OwedKazaUnit[]> {
+  const [summary, units] = await Promise.all([
+    getDebtReadOnly(userId),
+    KazaUnit.find({ userId, status: 'owed' })
+      .sort({ missedDate: -1 })
+      .limit(2000)
+      .select('prayer missedDate')
+      .lean(),
+  ]);
+  const since = summary.since ?? '';
+  const taken: Record<string, number> = {};
+  const out: OwedKazaUnit[] = [];
+  for (const u of units) {
+    if (u.missedDate < since) continue;
+    const pid = u.prayer;
+    const used = taken[pid] ?? 0;
+    if (used >= (summary.owed[pid] ?? 0)) continue;
+    taken[pid] = used + 1;
+    out.push({ prayer: pid, missedDate: u.missedDate });
+    if (out.length >= limit) break;
+  }
+  return out;
 }
 
 /**

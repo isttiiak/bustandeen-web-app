@@ -246,8 +246,13 @@ export const adjustDebt = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { prayer, delta, date } = req.body as { prayer: PrayerId; delta: number; date?: string };
-    const debt = await salatDebtService.adjustDebt(req.user.uid, prayer, delta, date);
+    const { prayer, delta, date, missedDate } = req.body as {
+      prayer: PrayerId;
+      delta: number;
+      date?: string;
+      missedDate?: string;
+    };
+    const debt = await salatDebtService.adjustDebt(req.user.uid, prayer, delta, date, missedDate);
     res.json({ ok: true, ...debt });
   } catch (err) {
     next(err);
@@ -274,6 +279,19 @@ export const getDebtHistory = async (
     const today = req.query['today'] as string | undefined;
     const weeks = await salatDebtService.getDebtHistory(req.user.uid, days, today);
     res.json({ ok: true, weeks });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getDebtUnits = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const units = await salatDebtService.listOwedKazaUnits(req.user.uid);
+    res.json({ ok: true, units });
   } catch (err) {
     next(err);
   }

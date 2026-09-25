@@ -456,6 +456,7 @@ export function useUpdatePrayer() {
       void qc.invalidateQueries({ queryKey: ['salat', 'analytics'] });
       // A prayer moving into/out of 'missed' auto-adjusts the kaza debt server-side.
       void qc.invalidateQueries({ queryKey: ['salat', 'debt'] });
+      void qc.invalidateQueries({ queryKey: ['salat', 'debtUnits'] });
       void qc.invalidateQueries({ queryKey: ['salat', 'debtHistory'] });
     },
   });
@@ -538,14 +539,45 @@ export function useSalatDebt() {
 export function useAdjustSalatDebt() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (vars: { prayer: PrayerId; delta: number; date?: string }) => {
+    mutationFn: async (vars: {
+      prayer: PrayerId;
+      delta: number;
+      date?: string;
+      /** Pay back this exact missed day (with delta -1). */
+      missedDate?: string;
+    }) => {
       const { data } = await api.patch<SalatDebt & { ok: boolean }>('/api/salat/debt/adjust', vars);
       return data;
     },
     onSuccess: (data) => {
       qc.setQueryData(['salat', 'debt'], data);
       void qc.invalidateQueries({ queryKey: ['salat', 'debtHistory'] });
+      void qc.invalidateQueries({ queryKey: ['salat', 'debtUnits'] });
+      void qc.invalidateQueries({ queryKey: ['salat', 'debtInsights'] });
     },
+  });
+}
+
+export interface OwedKazaUnit {
+  prayer: PrayerId;
+  missedDate: string;
+}
+
+/** Itemized still-owed missed prayers, newest first (see listOwedKazaUnits). */
+export function useOwedKazaUnits(totalOwed: number, enabled = true) {
+  const user = useAuthStore((s) => s.user);
+  return useQuery({
+    // The total in the key refetches the list whenever the counter moves
+    // (e.g. after the day sweep adds missed prayers on a debt read).
+    queryKey: ['salat', 'debtUnits', totalOwed],
+    queryFn: async () => {
+      const { data } = await api.get<{ ok: boolean; units: OwedKazaUnit[] }>(
+        '/api/salat/debt/units'
+      );
+      return data.units;
+    },
+    enabled: !!user && enabled,
+    staleTime: 60_000,
   });
 }
 

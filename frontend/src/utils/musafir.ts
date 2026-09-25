@@ -47,6 +47,11 @@ export interface PastJourney {
   to: string;
   destination?: string;
   days: number;
+  /** Last prayer of `from` prayed at home (see MusafirState.startAfter). */
+  startAfter?: PrayerId;
+  /** Last prayer of `to` still prayed as a traveller; the rest of that day
+   * was at home. Unset (older records) = the whole return day counts. */
+  endAfter?: PrayerId;
 }
 
 export const MUSAFIR_KEY = 'bustandeen_musafir';
@@ -137,6 +142,10 @@ export function endMusafir(today: string): PastJourney | null {
     to: today,
     destination: cur.destination,
     days: journeyDay(cur, today),
+    startAfter: cur.startAfter,
+    // Home now: the prayer running at this moment is prayed at home, so the
+    // journey's last travel prayer is the one before it.
+    endAfter: suggestStartAfter(today),
   };
   try {
     const history = [trip, ...getMusafirHistory()].slice(0, HISTORY_LIMIT);
@@ -153,7 +162,13 @@ export function getMusafirHistory(): PastJourney[] {
     const raw = localStorage.getItem(MUSAFIR_HISTORY_KEY);
     const parsed = raw ? (JSON.parse(raw) as unknown) : [];
     return Array.isArray(parsed)
-      ? (parsed as PastJourney[]).filter((j) => isDate(j?.from) && isDate(j?.to))
+      ? (parsed as PastJourney[])
+          .filter((j) => isDate(j?.from) && isDate(j?.to))
+          .map((j) => ({
+            ...j,
+            startAfter: isPrayerId(j.startAfter) ? j.startAfter : undefined,
+            endAfter: isPrayerId(j.endAfter) ? j.endAfter : undefined,
+          }))
       : [];
   } catch {
     return [];
@@ -204,6 +219,70 @@ export function musafirAppliesTo(
   if (!state?.active || date < state.startedAt) return false;
   if (date > state.startedAt || !state.startAfter) return true;
   return PRAYER_ORDER.indexOf(prayer) > PRAYER_ORDER.indexOf(state.startAfter);
+}
+
+const isPrayerId = (v: unknown): v is PrayerId =>
+  typeof v === 'string' && (PRAYER_ORDER as readonly string[]).includes(v);
+
+/**
+ * Was this prayer (on this day) a travel prayer, on the current journey or any
+ * remembered past one? Used to recognise a missed prayer as a travel kaza.
+ */
+export function wasTravelPrayer(
+  state: MusafirState | null,
+  history: PastJourney[],
+  date: string,
+  prayer: PrayerId
+): boolean {
+  if (musafirAppliesTo(state, date, prayer)) return true;
+  const idx = PRAYER_ORDER.indexOf(prayer);
+  return history.some((j) => {
+    if (date < j.from || date > j.to) return false;
+    if (date === j.from && j.startAfter && idx <= PRAYER_ORDER.indexOf(j.startAfter)) return false;
+    if (date === j.to && j.endAfter && idx > PRAYER_ORDER.indexOf(j.endAfter)) return false;
+    return true;
+  });
+}
+
+// ─── making up a travel prayer (kaza) ───────────────────────────────────────
+
+/**
+ * How many rak'ahs a missed TRAVEL prayer is made up with, once back home.
+ * While still travelling everyone agrees: 2. At home the schools differ:
+ * - 'short' (2): Ḥanafī, Mālikī, the old Shāfiʿī view; the make-up follows the
+ *   prayer as it was owed.
+ * - 'full' (4): the later Shāfiʿī and the Ḥanbalī view; shortening is a
+ *   concession of travel, and the travel is over.
+ * A prayer missed AT HOME is made up in full, even on a journey.
+ */
+export type TravelKazaRule = 'short' | 'full';
+export const MUSAFIR_KAZA_RULE_KEY = 'bustandeen_musafir_kaza_rule';
+
+export function getTravelKazaRule(): TravelKazaRule {
+  try {
+    return localStorage.getItem(MUSAFIR_KAZA_RULE_KEY) === 'full' ? 'full' : 'short';
+  } catch {
+    return 'short';
+  }
+}
+
+export function setTravelKazaRule(rule: TravelKazaRule): void {
+  try {
+    localStorage.setItem(MUSAFIR_KAZA_RULE_KEY, rule);
+  } catch {
+    /* private mode */
+  }
+  window.dispatchEvent(new Event(CHANGE_EVENT));
+}
+
+/** Rak'ahs to pray when making up a travel prayer now. */
+export function travelKazaRakat(
+  prayer: PrayerId,
+  travellingNow: boolean,
+  rule: TravelKazaRule
+): number {
+  if (!isQasrPrayer(prayer)) return FARD_RAKAT[prayer];
+  return travellingNow || rule === 'short' ? 2 : 4;
 }
 
 /** Does Musafir mode apply to any prayer of this tracking day? */
@@ -463,6 +542,43 @@ export const REF_RETURN_MASJID: MusafirRef = {
   source: 'Ṣaḥīḥ al-Bukhārī 3088',
   url: 'https://sunnah.com/bukhari:3088',
   grade: 'Ṣaḥīḥ',
+};
+
+/** Making up a missed prayer: the general rule every school builds on. */
+export const REF_KAZA_WHEN_REMEMBERED: MusafirRef = {
+  text: 'Whoever forgets a prayer should pray it when he remembers it. There is no expiation for it except that. (“Establish prayer for My remembrance.”)',
+  textBn:
+    'যে নামায ভুলে যায়, মনে পড়লেই সে যেন তা পড়ে নেয়। এ ছাড়া এর কোনো কাফফারা নেই। (“আমার স্মরণের জন্য নামায কায়েম করো।”)',
+  source: 'Ṣaḥīḥ al-Bukhārī 597',
+  url: 'https://sunnah.com/bukhari:597',
+  grade: 'Ṣaḥīḥ',
+};
+
+export const REF_KAZA_MUSLIM: MusafirRef = {
+  text: 'Whoever forgets a prayer or sleeps through it, its expiation is to pray it when he remembers it.',
+  textBn: 'যে নামায ভুলে যায় বা ঘুমিয়ে থাকে, তার কাফফারা হলো মনে পড়লে তা পড়ে নেওয়া।',
+  source: 'Ṣaḥīḥ Muslim 684a',
+  url: 'https://sunnah.com/muslim:684a',
+  grade: 'Ṣaḥīḥ',
+};
+
+/** The make-up mirrors the prayer as it was due: on a journey, the Fajr missed
+ * in sleep was prayed as on every day. */
+export const REF_KAZA_AS_EVERY_DAY: MusafirRef = {
+  text: 'On a journey the caravan slept through Fajr. When they woke, Bilāl called the adhān; the Prophet ﷺ prayed two rak’ahs, then prayed Fajr, doing just as he did every day.',
+  textBn:
+    'এক সফরে কাফেলা ফজরে ঘুমিয়ে ছিল। জেগে উঠলে বিলাল আযান দিলেন; নবী ﷺ দুই রাকআত পড়লেন, তারপর ফজর পড়লেন, ঠিক প্রতিদিনের মতো।',
+  source: 'Ṣaḥīḥ Muslim 681',
+  url: 'https://sunnah.com/muslim:681',
+  grade: 'Ṣaḥīḥ',
+};
+
+export const REF_ESTABLISH_FOR_REMEMBRANCE: MusafirRef = {
+  text: '“…and establish prayer for My remembrance.”',
+  textBn: '“…এবং আমার স্মরণের জন্য নামায কায়েম করো।”',
+  source: 'Quran 20:14',
+  url: 'https://quran.com/20/14',
+  grade: 'Quran',
 };
 
 // ─── rukhṣah cards (the concessions of the journey) ────────────────────────
@@ -773,6 +889,40 @@ export const MUSAFIR_RULINGS: MusafirRuling[] = [
         url: 'https://sunnah.com/muslim:1218a',
         grade: 'Ṣaḥīḥ',
       },
+    ],
+  },
+  {
+    id: 'kaza',
+    emoji: '⏳',
+    title: 'Missed a prayer on the journey?',
+    titleBn: 'সফরে নামায ছুটে গেছে?',
+    summary:
+      'Make it up as a travel prayer: 2 rak’ahs while travelling. Back home, the schools differ.',
+    summaryBn:
+      'সফরের নামায হিসেবেই কাযা করুন: সফরে থাকলে দুই রাকআত। বাড়িতে ফিরলে মাযহাবে মতভেদ আছে।',
+    points: [
+      {
+        en: 'No hadith names this exact case. Scholars reason from the rule that a missed prayer is made up when remembered, as it was owed (on a journey, Fajr missed in sleep was prayed “just as he did every day”).',
+        bn: 'এই নির্দিষ্ট অবস্থা নিয়ে সরাসরি কোনো হাদীস নেই। আলিমগণ মূলনীতি থেকে সিদ্ধান্ত নেন: ছুটে যাওয়া নামায মনে পড়লে যেভাবে ফরয ছিল সেভাবে কাযা করা হয় (সফরে ঘুমে ছুটে যাওয়া ফজর “ঠিক প্রতিদিনের মতো” পড়া হয়েছিল)।',
+      },
+      {
+        en: 'Made up while still travelling: 2 rak’ahs, by agreement.',
+        bn: 'সফর চলাকালীন কাযা করলে: সর্বসম্মতভাবে দুই রাকআত।',
+      },
+      {
+        en: 'Made up at home: 2 rak’ahs in the Ḥanafī and Mālikī schools (and the old Shāfiʿī view), since the make-up follows what was owed; 4 in the later Shāfiʿī and the Ḥanbalī view, since shortening belongs to the journey. Pick yours in the travel-kaza card on the salat tracker.',
+        bn: 'বাড়িতে কাযা করলে: হানাফী ও মালিকী মাযহাবে (এবং শাফিঈর পুরনো মতে) দুই রাকআত, কারণ কাযা যা ফরয ছিল তা-ই অনুসরণ করে; শাফিঈর পরবর্তী মত ও হাম্বলী মাযহাবে চার রাকআত, কারণ কসর সফরের সাথে সম্পৃক্ত। সালাত ট্র্যাকারের সফরের কাযা কার্ডে আপনার মত বেছে নিন।',
+      },
+      {
+        en: 'A prayer missed at home and made up on a journey is prayed in full (4).',
+        bn: 'বাড়িতে ছুটে যাওয়া নামায সফরে কাযা করলে পূর্ণ (চার রাকআত) পড়তে হবে।',
+      },
+    ],
+    refs: [
+      REF_KAZA_WHEN_REMEMBERED,
+      REF_KAZA_MUSLIM,
+      REF_KAZA_AS_EVERY_DAY,
+      REF_ESTABLISH_FOR_REMEMBRANCE,
     ],
   },
   {

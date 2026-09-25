@@ -306,6 +306,67 @@ describe('Salat API', () => {
     expect(resident.body.log.prayers.dhuhr.location).toBe('mosque');
   });
 
+  test('GET /debt/units lists owed units; paying back a missedDate resolves that exact day', async () => {
+    const tokenK = fakeJwt({ uid: 'salK', email: 'salk@test.dev', name: 'SalK' });
+    const authK = (r) => r.set('Authorization', `Bearer ${tokenK}`);
+    await request(app).post('/api/auth/verify').send({ idToken: tokenK });
+    const d1 = shiftDateStr(today, -2);
+    const d2 = shiftDateStr(today, -1);
+    // Start the counting period before both days so the units are in range.
+    await authK(
+      request(app)
+        .post('/api/salat/debt/reset')
+        .send({ today: shiftDateStr(today, -3) })
+    );
+    for (const d of [d1, d2]) {
+      const r = await authK(
+        request(app).patch('/api/salat/prayer').send({ date: d, prayer: 'asr', status: 'missed' })
+      );
+      expect(r.status).toBe(200);
+    }
+
+    const list = await authK(request(app).get('/api/salat/debt/units'));
+    expect(list.status).toBe(200);
+    const asrDays = list.body.units.filter((u) => u.prayer === 'asr').map((u) => u.missedDate);
+    expect(asrDays).toEqual([d2, d1]); // newest first
+
+    // Pay back the OLDER day specifically; the event is dated today.
+    const pay = await authK(
+      request(app)
+        .patch('/api/salat/debt/adjust')
+        .send({ prayer: 'asr', delta: -1, date: today, missedDate: d1 })
+    );
+    expect(pay.status).toBe(200);
+    const after = await authK(request(app).get('/api/salat/debt/units'));
+    expect(after.body.units.filter((u) => u.prayer === 'asr').map((u) => u.missedDate)).toEqual([
+      d2,
+    ]);
+  });
+
+  test('GET /debt/units never lists more per prayer than the counter owes', async () => {
+    const tokenC = fakeJwt({ uid: 'salC', email: 'salc@test.dev', name: 'SalC' });
+    const authC = (r) => r.set('Authorization', `Bearer ${tokenC}`);
+    await request(app).post('/api/auth/verify').send({ idToken: tokenC });
+    await authC(
+      request(app)
+        .post('/api/salat/debt/reset')
+        .send({ today: shiftDateStr(today, -4) })
+    );
+    for (const back of [3, 2, 1]) {
+      await authC(
+        request(app)
+          .patch('/api/salat/prayer')
+          .send({ date: shiftDateStr(today, -back), prayer: 'isha', status: 'missed' })
+      );
+    }
+    // Lower the counter by hand to 1: only the newest unit is still due.
+    await authC(request(app).patch('/api/salat/debt/set').send({ prayer: 'isha', count: 1 }));
+    const list = await authC(request(app).get('/api/salat/debt/units'));
+    expect(list.body.units.filter((u) => u.prayer === 'isha').map((u) => u.missedDate)).toEqual([
+      shiftDateStr(today, -1),
+    ]);
+  });
+
   test('GET /history returns logs for the requested range', async () => {
     const res = await auth(request(app).get('/api/salat/history?days=7'));
     expect(res.status).toBe(200);

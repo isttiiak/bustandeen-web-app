@@ -63,6 +63,7 @@ import { getFridayHour, FRIDAY_HOUR_REF } from '../utils/fridayHour.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import MusafirBanner from '../components/MusafirBanner.js';
+import TravelKazaCard from '../components/TravelKazaCard.js';
 import {
   useMusafir,
   musafirAppliesOn,
@@ -2456,6 +2457,10 @@ export default function SalatTracker() {
                   </AnimatePresence>
                 </motion.div>
               )}
+
+              {/* Travel kaza — the owed prayers that fell on a journey, made up
+                  as travel prayers (see TravelKazaCard). Renders nothing otherwise. */}
+              {!isLoading && user && <TravelKazaCard />}
 
               {/* Legend */}
               <div className="card bg-brand-surface border border-brand-border rounded-2xl overflow-hidden">

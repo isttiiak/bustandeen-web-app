@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.60.0 - Travel kaza: making up prayers missed on a journey - 2026-09-25
+
+### Added
+
+- **Travel kaza card on the salat tracker.** Missed prayers that fell on a journey are listed day by day (newest first) with how many rakʿahs to pray and a **✓ Made up** button that pays back that exact day. They are the same prayers the Kaza Debt counter already holds; nothing is counted twice. The card only appears when you have owed prayers from a journey.
+- **How many rakʿahs.** While you are still travelling, a missed Ẓuhr, ʿAṣr or ʿIshāʾ is made up as 2 (scholars agree). Once home, choose your school: **2** (as missed: Ḥanafī, Mālikī, the old Shāfiʿī view) or **4** (in full: the later Shāfiʿī and the Ḥanbalī view). Fajr and Maghrib never change. Prayers missed at home stay in full even when made up on a journey.
+- **The evidence, stated honestly.** No hadith names this exact case, and the card says so. It shows the rule every school builds on: pray a missed prayer when you remember it (Ṣaḥīḥ al-Bukhārī 597, Ṣaḥīḥ Muslim 684a, Quran 20:14), made up as it was owed (on a journey, Fajr missed in sleep was prayed "just as he did every day", Ṣaḥīḥ Muslim 681). The same ruling is a new card on the Musafir page.
+- **Journeys remember when they ended.** Ending a journey now records the last prayer prayed as a traveller, so prayers after you got home that day are not treated as travel prayers. Older journeys count their whole return day.
+
+### Notes
+
+- New route `GET /api/salat/debt/units` lists the itemized, still-owed missed prayers inside the current counting period, never more per prayer than the counter owes (a counter lowered by hand leaves older units behind; payback is oldest first, so the newest are the ones still due).
+- `PATCH /api/salat/debt/adjust` accepts an optional `missedDate` to pay back that exact day; the event is still dated with `date` (the day it was made up).
+- Whether a missed prayer was a travel prayer is worked out on the device from the current and past journeys (synced preferences), so a journey whose start is set after the fact is picked up too. The at-home rule is a new synced preference, `bustandeen_musafir_kaza_rule`.
+- Demo mode now has a small itemized kaza debt.
+
 ## v5.59.0 - Musafir mode: set when the journey began; travel hint on Home - 2026-09-25
 
 ### Added
