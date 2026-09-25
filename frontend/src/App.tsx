@@ -71,6 +71,7 @@ const Feedback = lazy(() => import('./pages/Feedback.js'));
 const Contact = lazy(() => import('./pages/Contact.js'));
 const RayhanahCycle = lazy(() => import('./pages/RayhanahCycle.js'));
 const RamadanTracker = lazy(() => import('./pages/RamadanTracker.js'));
+const MusafirMode = lazy(() => import('./pages/MusafirMode.js'));
 const RamadanAnalytics = lazy(() => import('./pages/RamadanAnalytics.js'));
 const CycleAnalytics = lazy(() => import('./pages/CycleAnalytics.js'));
 const QuranKhatam = lazy(() => import('./pages/QuranKhatam.js'));
@@ -736,6 +737,7 @@ export default function App() {
                     </Protected>
                   }
                 />
+                <Route path="/musafir" element={<MusafirMode />} />
                 <Route path="/fasting" element={<FastingTracker />} />
                 <Route
                   path="/fasting/analytics"

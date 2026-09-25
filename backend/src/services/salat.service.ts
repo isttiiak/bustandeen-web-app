@@ -7,6 +7,7 @@ import SalatLog, {
   PrayerLocation,
   NaflType,
   MissedReason,
+  JamKind,
 } from '../models/SalatLog.js';
 import * as salatDebtService from './salatDebt.service.js';
 import { getExcusedDaySet } from './cycle.service.js';
@@ -81,6 +82,8 @@ export async function getLogReadOnly(userId: string, date?: string) {
   };
 }
 
+const QASR_PRAYERS: ReadonlySet<PrayerId> = new Set<PrayerId>(['dhuhr', 'asr', 'isha']);
+
 export async function updatePrayerStatus(
   userId: string,
   prayer: PrayerId,
@@ -91,7 +94,8 @@ export async function updatePrayerStatus(
   ayatulKursi?: boolean,
   windowStart?: string,
   windowEnd?: string,
-  missedReason?: MissedReason
+  missedReason?: MissedReason,
+  travel: { qasr?: boolean; jam?: JamKind | null } = {}
 ) {
   const d = date ?? todayDateString();
   const log = await getOrCreateLog(userId, d);
@@ -104,9 +108,20 @@ export async function updatePrayerStatus(
   // Jumu'ah — Friday's Dhuhr is only valid as a congregational mosque prayer,
   // so "Done" always means "at the mosque". If it's missed on time, it can
   // only be made up as an ordinary (alone) Dhuhr — Jumu'ah itself has no kaza.
-  const isFridayDhuhr = prayer === 'dhuhr' && new Date(d + 'T12:00:00').getDay() === 5;
+  // A traveller (Musafir mode) owes no Jumu'ah: a shortened Friday Dhuhr is an
+  // ordinary Ẓuhr, so the location is whatever they chose.
+  // Only the four-rak'ah prayers can be shortened; Fajr and Maghrib never are.
+  if (!QASR_PRAYERS.has(prayer)) travel = { ...travel, qasr: undefined };
+  const isFriday = prayer === 'dhuhr' && new Date(d + 'T12:00:00').getDay() === 5;
+  const willBeQasr = travel.qasr ?? entry.qasr ?? false;
+  const isFridayDhuhr = isFriday && !willBeQasr;
 
   if (status === 'completed' || status === 'kaza') {
+    // Omitted = unchanged, so older clients and sub-tag taps keep the flags.
+    // false is kept on purpose: a traveller who prayed in full behind a local
+    // imam, or attended Jumu'ah, on a travel day.
+    if (travel.qasr !== undefined) entry.qasr = travel.qasr;
+    if (travel.jam !== undefined) entry.jam = travel.jam ?? undefined;
     entry.location = isFridayDhuhr
       ? status === 'completed'
         ? 'mosque'
@@ -128,6 +143,8 @@ export async function updatePrayerStatus(
     entry.windowStart = undefined;
     entry.windowEnd = undefined;
     entry.missedReason = missedReason;
+    entry.qasr = undefined;
+    entry.jam = undefined;
   } else {
     entry.location = undefined;
     entry.tasbeeh = false;
@@ -135,6 +152,8 @@ export async function updatePrayerStatus(
     entry.windowStart = undefined;
     entry.windowEnd = undefined;
     entry.missedReason = undefined;
+    entry.qasr = undefined;
+    entry.jam = undefined;
   }
 
   await log.save();

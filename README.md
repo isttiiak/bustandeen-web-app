@@ -29,6 +29,7 @@ verse and hadith links to quran.com or sunnah.com with its exact number and grad
 - Post-salat surahs one tap away: Āyatul Kursī + the three Quls after every fard, al-Mulk after Isha, al-Kahf on Friday — with a live ʿAṣr→Maghrib duʿā-hour banner on Fridays
 - Nafl (Tahajjud, Duha, Ishraq, Awwābīn…) with a minimum of 2 rakʿah, pair-stepped
 - Streaks, per-prayer analytics, and a 90-day calendar. During Ramadan a tarawih row appears under Isha
+- **Musafir mode** (`/musafir`) for travellers: qaṣr (2 rakʿahs) and jamʿ right on the tracker, Friday as Ẓuhr, both madhab positions on distance and length of stay, the journey duʿās as a daily checklist, and every concession cited to the Quran or a ṣaḥīḥ/ḥasan hadith
 
 ### 🕐 Prayer Times
 

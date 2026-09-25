@@ -1,5 +1,5 @@
 ﻿import { useState, useMemo, useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useTranslation, Trans } from 'react-i18next';
@@ -62,6 +62,16 @@ import { SUNNAH_GUIDE, JUMUAH_SUNNAH_GUIDE, type SunnahSlot } from '../utils/sun
 import { getFridayHour, FRIDAY_HOUR_REF } from '../utils/fridayHour.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
+import MusafirBanner from '../components/MusafirBanner.js';
+import {
+  useMusafir,
+  musafirAppliesOn,
+  isQasrPrayer,
+  jamAllowed,
+  jamPartner,
+  FARD_RAKAT,
+  travelRakat,
+} from '../utils/musafir.js';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -319,6 +329,11 @@ export default function SalatTracker() {
   const [showGuestDialog, setShowGuestDialog] = useState(false);
 
   const isToday = selectedDate === todayStr();
+
+  // Musafir mode — applies to days on/after the journey began while it's on.
+  const musafir = useMusafir();
+  const travelDay = musafirAppliesOn(musafir, selectedDate);
+  const canJoinPrayers = travelDay && !!musafir && jamAllowed(musafir.school);
   // A past civil day whose prayers were never logged reads as "missed" (derived
   // on read — no DB writes, consistent with the app's lazy-expiry approach).
   const isPastDay = selectedDate < todayStr();
@@ -591,7 +606,11 @@ export default function SalatTracker() {
     // HARD BLOCK (Istiak's spec): a prayer whose time hasn't arrived today
     // cannot be logged in any state — the row is visually locked, and this
     // guard closes every other code path.
-    if (selectedDate === todayStr() && isFuturePrayer(prayer, todayPrayerTimes?.times)) {
+    if (
+      selectedDate === todayStr() &&
+      isFuturePrayer(prayer, todayPrayerTimes?.times) &&
+      !log?.prayers[prayer]?.jam
+    ) {
       toast.error(t('salatTracker.tooEarly', "This prayer's time hasn't arrived yet."), {
         id: 'salat-early',
         icon: '🔒',
@@ -615,6 +634,23 @@ export default function SalatTracker() {
       if (current?.ayatulKursi) creditDhikr('ayatulKursi', false, current, prayer);
     }
 
+    // Un-marking one half of a joined (jamʿ) pair: the other half is no longer joined.
+    const partner = jamPartner(prayer);
+    const partnerEntry = partner ? log?.prayers[partner] : undefined;
+    if (wasCompleted && !willBeCompleted && current?.jam && partner && partnerEntry?.jam) {
+      updatePrayer.mutate({
+        prayer: partner,
+        status: normaliseStatus(partnerEntry.status) === 'kaza' ? 'kaza' : 'completed',
+        date: selectedDate,
+        location: partnerEntry.location ?? 'home',
+        tasbeeh: partnerEntry.tasbeeh ?? false,
+        ayatulKursi: partnerEntry.ayatulKursi ?? false,
+        windowStart: partnerEntry.windowStart,
+        windowEnd: partnerEntry.windowEnd,
+        jam: null,
+      });
+    }
+
     // If setting to completed/kaza, open sub-tag row; keep existing location if re-selecting
     if (newStatus === 'completed' || newStatus === 'kaza') {
       // Window bounds for the "prayed early/mid/late" analytic — computed
@@ -635,6 +671,9 @@ export default function SalatTracker() {
         ayatulKursi: current?.ayatulKursi ?? false,
         windowStart: windowStartDate ? windowStartDate.toISOString() : undefined,
         windowEnd: windowEndDate ? windowEndDate.toISOString() : undefined,
+        // On a travel day the four-rak'ah prayers are logged as qaṣr — unless
+        // this one was already marked as prayed in full (local imam / Jumu'ah).
+        qasr: travelDay && isQasrPrayer(prayer) ? current?.qasr !== false : undefined,
       });
       // Celebrate: small burst per prayer, big double burst when all 5 are in
       const doneAfter = trackablePrayers.filter((p) => {
@@ -680,6 +719,99 @@ export default function SalatTracker() {
     });
   };
 
+  // Musafir: switch one logged prayer between qaṣr (2) and full (4 behind a
+  // local imam, or Jumu'ah on a Friday).
+  const setQasr = (prayer: PrayerId, qasr: boolean) => {
+    if (!user) {
+      setShowGuestDialog(true);
+      return;
+    }
+    const current = log?.prayers[prayer];
+    const normalised = normaliseStatus(current?.status);
+    updatePrayer.mutate({
+      prayer,
+      status: normalised === 'pending' ? 'completed' : normalised,
+      date: selectedDate,
+      location: current?.location ?? 'home',
+      tasbeeh: current?.tasbeeh ?? false,
+      ayatulKursi: current?.ayatulKursi ?? false,
+      windowStart: current?.windowStart,
+      windowEnd: current?.windowEnd,
+      qasr,
+    });
+  };
+
+  // Musafir jamʿ taqdīm: pray the later prayer of the pair straight after the
+  // earlier one, in the earlier one's time. Bypasses the "not yet" lock on
+  // purpose — that is exactly what joining is.
+  const joinPartnerNow = (first: PrayerId) => {
+    if (!user) {
+      setShowGuestDialog(true);
+      return;
+    }
+    const second = jamPartner(first);
+    if (!second) return;
+    const firstEntry = log?.prayers[first];
+    updatePrayer.mutate({
+      prayer: first,
+      status: normaliseStatus(firstEntry?.status) === 'kaza' ? 'kaza' : 'completed',
+      date: selectedDate,
+      location: firstEntry?.location ?? 'home',
+      tasbeeh: firstEntry?.tasbeeh ?? false,
+      ayatulKursi: firstEntry?.ayatulKursi ?? false,
+      windowStart: firstEntry?.windowStart,
+      windowEnd: firstEntry?.windowEnd,
+      jam: 'taqdim',
+    });
+    updatePrayer.mutate({
+      prayer: second,
+      status: 'completed',
+      date: selectedDate,
+      location: firstEntry?.location ?? 'home',
+      qasr: isQasrPrayer(second) ? true : undefined,
+      jam: 'taqdim',
+    });
+    const doneAfter = trackablePrayers.filter((p) => {
+      const s =
+        p.id === second || p.id === first ? 'completed' : log?.prayers[p.id as PrayerId]?.status;
+      return s === 'completed' || s === 'kaza';
+    }).length;
+    if (doneAfter >= 5) celebrateAllPrayers();
+    else celebrateSmall();
+    toast.success(
+      t('salatTracker.jamDone', '{{a}} + {{b}} joined, may Allah accept it', {
+        a: translateSalatName(first, first, t),
+        b: translateSalatName(second, second, t),
+      }),
+      { icon: '🔗', duration: 3000 }
+    );
+  };
+
+  // Musafir jamʿ taʾkhīr (or undo any jamʿ): flag both prayers of the pair.
+  const toggleJoined = (second: PrayerId) => {
+    if (!user) {
+      setShowGuestDialog(true);
+      return;
+    }
+    const first = jamPartner(second);
+    if (!first) return;
+    const joined = !!log?.prayers[second]?.jam;
+    for (const p of [first, second]) {
+      const e = log?.prayers[p];
+      updatePrayer.mutate({
+        prayer: p,
+        status: normaliseStatus(e?.status) === 'kaza' ? 'kaza' : 'completed',
+        date: selectedDate,
+        location: e?.location ?? 'home',
+        tasbeeh: e?.tasbeeh ?? false,
+        ayatulKursi: e?.ayatulKursi ?? false,
+        windowStart: e?.windowStart,
+        windowEnd: e?.windowEnd,
+        jam: joined ? null : 'takhir',
+      });
+    }
+  };
+
   // Handle sub-tag change
   const handleSubTag = (
     prayer: PrayerId,
@@ -699,6 +831,8 @@ export default function SalatTracker() {
       location: type === 'location' ? (value as PrayerLocation) : (current?.location ?? 'home'),
       tasbeeh: type === 'tasbeeh' ? (value as boolean) : (current?.tasbeeh ?? false),
       ayatulKursi: type === 'ayatulKursi' ? (value as boolean) : (current?.ayatulKursi ?? false),
+      windowStart: current?.windowStart,
+      windowEnd: current?.windowEnd,
     });
 
     if (type === 'location') {
@@ -825,6 +959,18 @@ export default function SalatTracker() {
             ]}
           />
         </div>
+        <Link
+          to="/musafir"
+          aria-label={t('salatTracker.musafirAria', 'Musafir mode')}
+          title={t('salatTracker.musafirAria', 'Musafir mode')}
+          className={`shrink-0 px-2.5 py-2 rounded-xl border text-sm leading-5 transition-colors ${
+            musafir
+              ? 'border-brand-info/60 bg-brand-info/20 text-brand-info'
+              : 'border-brand-emerald/20 bg-white/5 text-white/50 hover:border-brand-info/40'
+          }`}
+        >
+          🧳
+        </Link>
         <button
           onClick={() => setShowSettings(true)}
           aria-label={t('salatTracker.settingsAria', 'Salat settings')}
@@ -838,6 +984,9 @@ export default function SalatTracker() {
 
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-xl mx-auto space-y-5">
+          {travelDay && musafir && (
+            <MusafirBanner state={musafir} today={selectedDate} variant="salat" />
+          )}
           {/* ── Friday: the hour of response (Abū Dāwūd 1048, ṣaḥīḥ) ──
               Shown only while it is actually running — ʿAṣr has begun and
               Maghrib has not. No notification permission, no cron: the page
@@ -1180,6 +1329,16 @@ export default function SalatTracker() {
                     const isCurrent =
                       isToday && isCurrentPrayer(prayerId, todayPrayerTimes?.current);
                     const isFuture = isToday && isFuturePrayer(prayerId, todayPrayerTimes?.times);
+                    // Musafir: is this row a shortened (qaṣr) prayer? A logged
+                    // flag wins; otherwise a travel day implies it for Ẓuhr/ʿAṣr/ʿIshāʾ.
+                    const isQasrRow =
+                      entry?.qasr === true ||
+                      (travelDay && isQasrPrayer(prayerId) && entry?.qasr !== false);
+                    // Friday's Dhuhr is Jumu'ah — unless a traveller prays Ẓuhr instead.
+                    const isJumuah = prayerId === 'dhuhr' && isCivilFriday && !isQasrRow;
+                    // Joined early (jamʿ taqdīm): logged before its own time came.
+                    const joinedEarly = isFuture && !!entry?.jam;
+                    const jamWith = jamPartner(prayerId);
                     // Window auto-closed today (adhan-derived) but never logged —
                     // nudge without forcing it into 'missed' the way a past day does.
                     const isOverdue = status === 'pending' && isOverdueToday(prayerId);
@@ -1227,7 +1386,7 @@ export default function SalatTracker() {
                               <p
                                 className={`font-bold text-sm leading-none ${isCurrent ? 'text-brand-emerald' : isOverdue ? 'text-brand-gold' : style.text}`}
                               >
-                                {prayerId === 'dhuhr' && isCivilFriday
+                                {isJumuah
                                   ? t('salatNames.jumuah', "Jumu'ah")
                                   : translateSalatName(prayer.id, prayer.name, t)}
                                 {isCurrent && (
@@ -1243,9 +1402,31 @@ export default function SalatTracker() {
                                       : t('salatTracker.overdueTag', 'window closed')}
                                   </span>
                                 )}
-                                {prayerId === 'dhuhr' && isCivilFriday && (
+                                {isJumuah && (
                                   <span className="ml-2 text-xs font-normal text-brand-emerald/60">
                                     🕌 congregation
+                                  </span>
+                                )}
+                                {(isQasrRow || (travelDay && !isQasrPrayer(prayerId))) && (
+                                  <span
+                                    className={`ml-2 inline-block align-middle whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
+                                      isQasrRow
+                                        ? 'bg-brand-info/20 text-brand-info'
+                                        : 'bg-white/10 text-white/40'
+                                    }`}
+                                  >
+                                    {isQasrRow
+                                      ? t('salatTracker.qasrBadge', '✂️ {{n}} rakʿah · qaṣr', {
+                                          n: formatLocaleNumber(travelRakat(prayerId)),
+                                        })
+                                      : t('salatTracker.rakatBadge', '{{n}} rakʿah', {
+                                          n: formatLocaleNumber(FARD_RAKAT[prayerId]),
+                                        })}
+                                  </span>
+                                )}
+                                {entry?.jam && hasSubTag && (
+                                  <span className="ml-1.5 inline-block align-middle whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-brand-gold/20 text-brand-gold">
+                                    {t('salatTracker.jamBadge', '🔗 joined')}
                                   </span>
                                 )}
                               </p>
@@ -1275,16 +1456,24 @@ export default function SalatTracker() {
                                   )}
                                 </div>
                               )}
-                              {prayerId === 'dhuhr' && isCivilFriday && (
+                              {isJumuah && (
                                 <p className="text-brand-emerald/50 text-xs mt-0.5">
                                   replaces Dhuhr — attend at mosque
+                                </p>
+                              )}
+                              {prayerId === 'dhuhr' && isCivilFriday && travelDay && !isJumuah && (
+                                <p className="text-brand-info/60 text-xs mt-0.5">
+                                  {t(
+                                    'salatTracker.travelFriday',
+                                    "Travelling: Ẓuhr instead of Jumu'ah (Muslim 1218a)"
+                                  )}
                                 </p>
                               )}
                             </div>
                           </div>
 
                           {/* Primary action buttons (future prayers locked for today) */}
-                          {isFuture ? (
+                          {isFuture && !joinedEarly ? (
                             <div className="flex items-center gap-1.5">
                               <span className="text-white/20 text-xs font-medium px-2 py-1 rounded-lg border border-brand-emerald/10">
                                 {t('salatTracker.notYet', '🔒 not yet')}
@@ -1347,48 +1536,45 @@ export default function SalatTracker() {
                                 Friday's Dhuhr (Jumu'ah) is skipped entirely: it's only valid as a
                                 mosque congregation prayer, so the location is set automatically
                                 instead of asking the user to pick it. */}
-                                {status === 'completed' &&
-                                  prayerId === 'dhuhr' &&
-                                  isCivilFriday && (
-                                    <p className="text-brand-emerald/60 text-[11px] sm:text-xs">
-                                      {t(
-                                        'salatTracker.jumuahAutoMosque',
-                                        "🕌 Marked at the mosque automatically — Jumu'ah is only valid in congregation."
-                                      )}
-                                    </p>
-                                  )}
-                                {status === 'completed' &&
-                                  !(prayerId === 'dhuhr' && isCivilFriday) && (
-                                    <div className="flex items-center gap-1.5 flex-wrap">
-                                      <span className="text-white/30 text-[11px] sm:text-xs">
-                                        {t('salatTracker.whereLabel', 'Where:')}
-                                      </span>
-                                      {LOCATION_TAGS.map((tag) => {
-                                        const { label, note } = locationTagText(tag.value);
-                                        return (
-                                          <motion.button
-                                            key={tag.value}
-                                            whileTap={{ scale: 0.9 }}
-                                            onClick={() =>
-                                              handleSubTag(prayerId, 'location', tag.value)
-                                            }
-                                            className={`flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-semibold border transition-all ${
-                                              entry?.location === tag.value ||
-                                              (!entry?.location && tag.value === 'home')
-                                                ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
-                                                : 'bg-brand-deep border-brand-border text-white/40 hover:text-white/70'
-                                            }`}
-                                          >
-                                            <span>{tag.emoji}</span> {label}
-                                            <span className="text-white/25 text-xs hidden sm:inline">
-                                              ({note})
-                                            </span>
-                                          </motion.button>
-                                        );
-                                      })}
-                                    </div>
-                                  )}
-                                {status === 'kaza' && prayerId === 'dhuhr' && isCivilFriday && (
+                                {status === 'completed' && isJumuah && (
+                                  <p className="text-brand-emerald/60 text-[11px] sm:text-xs">
+                                    {t(
+                                      'salatTracker.jumuahAutoMosque',
+                                      "🕌 Marked at the mosque automatically — Jumu'ah is only valid in congregation."
+                                    )}
+                                  </p>
+                                )}
+                                {status === 'completed' && !isJumuah && (
+                                  <div className="flex items-center gap-1.5 flex-wrap">
+                                    <span className="text-white/30 text-[11px] sm:text-xs">
+                                      {t('salatTracker.whereLabel', 'Where:')}
+                                    </span>
+                                    {LOCATION_TAGS.map((tag) => {
+                                      const { label, note } = locationTagText(tag.value);
+                                      return (
+                                        <motion.button
+                                          key={tag.value}
+                                          whileTap={{ scale: 0.9 }}
+                                          onClick={() =>
+                                            handleSubTag(prayerId, 'location', tag.value)
+                                          }
+                                          className={`flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-semibold border transition-all ${
+                                            entry?.location === tag.value ||
+                                            (!entry?.location && tag.value === 'home')
+                                              ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
+                                              : 'bg-brand-deep border-brand-border text-white/40 hover:text-white/70'
+                                          }`}
+                                        >
+                                          <span>{tag.emoji}</span> {label}
+                                          <span className="text-white/25 text-xs hidden sm:inline">
+                                            ({note})
+                                          </span>
+                                        </motion.button>
+                                      );
+                                    })}
+                                  </div>
+                                )}
+                                {status === 'kaza' && isJumuah && (
                                   <p className="text-brand-gold/60 text-[11px] sm:text-xs">
                                     {t(
                                       'salatTracker.jumuahKazaAlone',
@@ -1396,6 +1582,62 @@ export default function SalatTracker() {
                                     )}
                                   </p>
                                 )}
+                                {/* Musafir: 2 (qaṣr) or in full — behind a local
+                                imam, or Jumu'ah on a Friday. */}
+                                {(travelDay || entry?.qasr !== undefined) &&
+                                  isQasrPrayer(prayerId) && (
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                      <span className="text-white/30 text-[11px] sm:text-xs">
+                                        🧳 {t('salatTracker.prayedAs', 'Prayed as:')}
+                                      </span>
+                                      {[true, false].map((q) => {
+                                        const on = q ? isQasrRow : !isQasrRow;
+                                        const label = q
+                                          ? t('salatTracker.asQasr', '✂️ 2 · qaṣr')
+                                          : prayerId === 'dhuhr' && isCivilFriday
+                                            ? t('salatTracker.asJumuah', "🕌 Jumu'ah")
+                                            : t('salatTracker.asFull', '4 · behind a local imam');
+                                        return (
+                                          <motion.button
+                                            key={String(q)}
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={() => !on && setQasr(prayerId, q)}
+                                            aria-pressed={on}
+                                            className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-semibold border transition-all ${
+                                              on
+                                                ? 'bg-brand-info/20 border-brand-info/60 text-brand-info'
+                                                : 'bg-brand-deep border-brand-border text-white/40 hover:text-white/70'
+                                            }`}
+                                          >
+                                            {label}
+                                          </motion.button>
+                                        );
+                                      })}
+                                    </div>
+                                  )}
+                                {/* Musafir jamʿ taʾkhīr — flag the pair as joined */}
+                                {canJoinPrayers &&
+                                  (prayerId === 'asr' || prayerId === 'isha') &&
+                                  jamWith &&
+                                  ['completed', 'kaza'].includes(
+                                    normaliseStatus(log?.prayers[jamWith]?.status)
+                                  ) && (
+                                    <motion.button
+                                      whileTap={{ scale: 0.95 }}
+                                      onClick={() => toggleJoined(prayerId)}
+                                      aria-pressed={!!entry?.jam}
+                                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-xl text-xs font-semibold border transition-all ${
+                                        entry?.jam
+                                          ? 'bg-brand-gold/20 border-brand-gold/60 text-brand-gold'
+                                          : 'bg-brand-deep border-brand-border text-white/40 hover:text-white/70'
+                                      }`}
+                                    >
+                                      🔗{' '}
+                                      {t('salatTracker.joinedWith', 'Joined with {{name}}', {
+                                        name: translateSalatName(jamWith, jamWith, t),
+                                      })}
+                                    </motion.button>
+                                  )}
                                 {/* After-salat toggles */}
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span className="text-white/30 text-xs shrink-0">
@@ -1600,15 +1842,75 @@ export default function SalatTracker() {
                             closed once a prayer's time had passed, so Fajr's
                             guidance was still showing at Isha. Independently
                             toggleable per emphasis (Salat settings). */}
+                        {/* Musafir jamʿ taqdīm — Ẓuhr/Maghrib done in its own
+                            time and its partner not yet due: offer to join it now. */}
+                        {canJoinPrayers &&
+                          isToday &&
+                          (prayerId === 'dhuhr' || prayerId === 'maghrib') &&
+                          hasSubTag &&
+                          jamWith &&
+                          isFuturePrayer(jamWith, todayPrayerTimes?.times) &&
+                          normaliseStatus(log?.prayers[jamWith]?.status) === 'pending' && (
+                            <div className="px-3 py-2.5 border-t border-brand-gold/20 flex items-center gap-3 bg-brand-gold/5">
+                              <span className="text-base shrink-0">🔗</span>
+                              <p className="flex-1 min-w-0 text-white/50 text-xs leading-snug">
+                                {t(
+                                  'salatTracker.jamOffer',
+                                  'On the move? Pray {{name}} now, straight after (jamʿ taqdīm, Bukhārī 1111).',
+                                  { name: translateSalatName(jamWith, jamWith, t) }
+                                )}
+                              </p>
+                              <motion.button
+                                whileTap={{ scale: 0.92 }}
+                                onClick={() => joinPartnerNow(prayerId)}
+                                className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-gold/20 border border-brand-gold/60 text-brand-gold hover:bg-brand-gold/30"
+                              >
+                                {t('salatTracker.jamNow', 'Join {{name}} now', {
+                                  name: translateSalatName(jamWith, jamWith, t),
+                                })}
+                              </motion.button>
+                            </div>
+                          )}
+
+                        {/* Musafir: the regular sunnah may be left on a journey
+                            (Ibn ʿUmar, Muslim 689a) — Fajr's two are kept, so
+                            Fajr falls through to its normal guidance below. */}
+                        {isCurrent && travelDay && prayerId !== 'fajr' && (
+                          <div className="px-3 py-2.5 border-t border-brand-info/20 flex items-start gap-2 bg-brand-info/5">
+                            <span className="text-base shrink-0">🧳</span>
+                            <div className="min-w-0">
+                              <p className="text-brand-info font-bold text-xs leading-tight">
+                                {t(
+                                  'salatTracker.travelSunnahTitle',
+                                  'On a journey, the sunnah is light'
+                                )}
+                              </p>
+                              <p className="text-white/30 text-xs leading-relaxed mt-0.5">
+                                {t(
+                                  'salatTracker.travelSunnahDesc',
+                                  "The Prophet ﷺ left the regular sunnah of Ẓuhr, Maghrib and ʿIshāʾ on journeys; he kept Fajr's two and Witr. Any nafl is still yours to pray."
+                                )}
+                              </p>
+                              <a
+                                href="https://sunnah.com/muslim:689a"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="text-brand-info/50 text-xs underline hover:text-brand-info/80 transition-colors mt-0.5 inline-block"
+                              >
+                                📖 {translateReference('Ṣaḥīḥ Muslim 689a', i18n.language)}
+                              </a>
+                            </div>
+                          </div>
+                        )}
+
                         {isCurrent &&
+                          !(travelDay && prayerId !== 'fajr') &&
                           (() => {
                             // Friday's Dhuhr slot IS Jumu'ah — its sunnah
                             // guidance is genuinely different, not a fallback
                             // to Dhuhr's own rawātib (see sunnahGuide.ts).
-                            const guide =
-                              prayerId === 'dhuhr' && isCivilFriday
-                                ? JUMUAH_SUNNAH_GUIDE
-                                : SUNNAH_GUIDE[prayerId];
+                            const guide = isJumuah ? JUMUAH_SUNNAH_GUIDE : SUNNAH_GUIDE[prayerId];
                             if (!guide) return null;
                             const showMuakkadah = getShowSunnahGuide();
                             const showNafl = getShowNaflGuide();

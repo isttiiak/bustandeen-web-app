@@ -244,7 +244,13 @@ export interface PrayerEntry {
   windowStart?: string;
   windowEnd?: string;
   missedReason?: MissedReason;
+  /** Musafir mode: prayed shortened (2 rak'ahs). */
+  qasr?: boolean;
+  /** Musafir mode: joined with its pair prayer. */
+  jam?: JamKind;
 }
+
+export type JamKind = 'taqdim' | 'takhir';
 
 export interface NaflEntry {
   completed: boolean;
@@ -271,6 +277,10 @@ export interface UpdatePrayerVars {
   windowStart?: string;
   windowEnd?: string;
   missedReason?: MissedReason;
+  /** Omitted = unchanged on the server. */
+  qasr?: boolean;
+  /** Omitted = unchanged; null clears. */
+  jam?: JamKind | null;
 }
 
 export interface UpdateNaflVars {
@@ -413,6 +423,17 @@ export function useUpdatePrayer() {
               windowEnd:
                 vars.status === 'completed' || vars.status === 'kaza' ? vars.windowEnd : undefined,
               missedReason: vars.status === 'missed' ? vars.missedReason : undefined,
+              // Mirrors the server: omitted keeps the previous flag.
+              qasr:
+                vars.status === 'completed' || vars.status === 'kaza'
+                  ? (vars.qasr ?? old.prayers[vars.prayer]?.qasr)
+                  : undefined,
+              jam:
+                vars.status === 'completed' || vars.status === 'kaza'
+                  ? vars.jam === undefined
+                    ? old.prayers[vars.prayer]?.jam
+                    : (vars.jam ?? undefined)
+                  : undefined,
             },
           },
         };

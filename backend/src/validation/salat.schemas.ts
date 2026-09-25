@@ -17,6 +17,10 @@ export const updatePrayerSchema = z.object({
     windowEnd: z.string().datetime().optional(),
     // Optional, user-chosen context for a 'missed' tap — never required.
     missedReason: z.enum(['sleep', 'travel', 'forgot', 'busy', 'other']).optional(),
+    // Musafir mode — only kept alongside completed/kaza. Omitted = unchanged.
+    qasr: z.boolean().optional(),
+    // null clears a previous jamʿ; omitted = unchanged.
+    jam: z.enum(['taqdim', 'takhir']).nullable().optional(),
   }),
 });
 

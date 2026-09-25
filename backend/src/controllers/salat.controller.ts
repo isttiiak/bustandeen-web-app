@@ -7,6 +7,7 @@ import {
   PrayerLocation,
   NaflType,
   MissedReason,
+  JamKind,
 } from '../models/SalatLog.js';
 
 export const getLog = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -37,6 +38,8 @@ export const updatePrayer = async (
       windowStart,
       windowEnd,
       missedReason,
+      qasr,
+      jam,
     } = req.body as {
       prayer: PrayerId;
       status: PrayerStatus;
@@ -47,6 +50,8 @@ export const updatePrayer = async (
       windowStart?: string;
       windowEnd?: string;
       missedReason?: MissedReason;
+      qasr?: boolean;
+      jam?: JamKind | null;
     };
     const log = await salatService.updatePrayerStatus(
       req.user.uid,
@@ -58,7 +63,8 @@ export const updatePrayer = async (
       ayatulKursi,
       windowStart,
       windowEnd,
-      missedReason
+      missedReason,
+      { qasr, jam }
     );
     res.json({ ok: true, log });
   } catch (err) {
