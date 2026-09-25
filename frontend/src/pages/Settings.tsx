@@ -34,7 +34,9 @@ import {
   defaultSchool,
   journeyDay,
   schoolMeta,
+  suggestStartAfter,
 } from '../utils/musafir.js';
+import { translateSalatName } from '../utils/prayerTimes.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { useGroqKeyStatus, useSetGroqKey, useClearGroqKey } from '../hooks/useAi.js';
@@ -820,7 +822,11 @@ export default function Settings() {
               onChange={(on) => {
                 const today = getTrackingDay();
                 if (on) {
-                  startMusafir({ today, school: defaultSchool() });
+                  startMusafir({
+                    today,
+                    startAfter: suggestStartAfter(today),
+                    school: defaultSchool(),
+                  });
                   toast.success(t('settings.musafirStarted'), { icon: '✈️' });
                 } else {
                   endMusafir(today);
@@ -841,6 +847,30 @@ export default function Settings() {
               }
               accent="toggle-info"
             />
+            {musafir && (
+              <p className="text-white/40 text-xs mt-2 px-1">
+                {musafir.startAfter
+                  ? t('settings.musafirStartedAfter', {
+                      date: formatLocaleDate(new Date(`${musafir.startedAt}T12:00:00`), {
+                        day: 'numeric',
+                        month: 'short',
+                      }),
+                      prayer: translateSalatName(musafir.startAfter, musafir.startAfter, t),
+                    })
+                  : t('settings.musafirStartedOn', {
+                      date: formatLocaleDate(new Date(`${musafir.startedAt}T12:00:00`), {
+                        day: 'numeric',
+                        month: 'short',
+                      }),
+                    })}{' '}
+                <button
+                  onClick={() => navigate('/musafir')}
+                  className="underline underline-offset-2 hover:text-white/70"
+                >
+                  {t('settings.musafirChangeStart')}
+                </button>
+              </p>
+            )}
             <button
               onClick={() => navigate('/musafir')}
               className="mt-3 w-full text-left px-3 py-2.5 rounded-xl border border-brand-info/30 bg-brand-info/[0.08] text-brand-info text-sm font-bold hover:border-brand-info/60 transition-colors"

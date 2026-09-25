@@ -3,7 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
-import { journeyDay, staysAsResident, type MusafirState } from '../utils/musafir.js';
+import { translateSalatName } from '../utils/prayerTimes.js';
+import {
+  journeyDay,
+  staysAsResident,
+  musafirAppliesTo,
+  QASR_PRAYERS,
+  type MusafirState,
+} from '../utils/musafir.js';
 
 /**
  * The one-line "you're travelling" strip shown on the trackers while Musafir
@@ -22,6 +29,8 @@ export default function MusafirBanner({
   const { t, i18n } = useTranslation();
   const day = formatLocaleNumber(journeyDay(state, today));
   const resident = staysAsResident(state);
+  // On the start day only the prayers after the one prayed at home shorten.
+  const qasrToday = QASR_PRAYERS.filter((p) => musafirAppliesTo(state, today, p));
 
   const line =
     variant === 'fasting'
@@ -34,7 +43,13 @@ export default function MusafirBanner({
             'musafir.bannerResident',
             'Shorten on the road; pray in full once you settle at your destination.'
           )
-        : t('musafir.bannerQasr', 'Ẓuhr, ʿAṣr and ʿIshāʾ are 2 rak’ahs today.');
+        : qasrToday.length === QASR_PRAYERS.length
+          ? t('musafir.bannerQasr', 'Ẓuhr, ʿAṣr and ʿIshāʾ are 2 rak’ahs today.')
+          : qasrToday.length === 0
+            ? t('musafir.bannerQasrTomorrow', 'Shortened prayers start from tomorrow.')
+            : t('musafir.bannerQasrSome', 'Today {{names}}: 2 rak’ahs.', {
+                names: qasrToday.map((p) => translateSalatName(p, p, t)).join(', '),
+              });
 
   return (
     <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}>

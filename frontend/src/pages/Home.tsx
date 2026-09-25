@@ -14,7 +14,14 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import MusafirBanner from '../components/MusafirBanner.js';
 import toast from 'react-hot-toast';
-import { useMusafir, startMusafir, defaultSchool } from '../utils/musafir.js';
+import {
+  useMusafir,
+  startMusafir,
+  defaultSchool,
+  suggestStartAfter,
+  useTravelHint,
+  dismissTravelHint,
+} from '../utils/musafir.js';
 import {
   calcPrayerTimes,
   formatTime,
@@ -51,6 +58,9 @@ interface ActivityItem {
 
 export default function Home() {
   const musafir = useMusafir();
+  const rawTravelHint = useTravelHint(getTrackingDay(), !!musafir);
+  const [hintDismissed, setHintDismissed] = useState(false);
+  const travelHint = hintDismissed ? null : rawTravelHint;
   const { t, i18n } = useTranslation();
   const { counts = {}, hydrate } = useZikrStore();
   const location = useLocation();
@@ -537,33 +547,61 @@ export default function Home() {
             <MusafirBanner state={musafir} today={getTrackingDay()} variant="home" />
           </div>
         ) : (
-          // Off: a quiet one-tap way to start it. Details live on /musafir.
-          <div className="mb-6 flex items-center gap-3 rounded-2xl border border-brand-info/25 bg-brand-info/[0.06] px-4 py-3">
-            <span className="text-2xl shrink-0">🧳</span>
-            <Link to="/musafir" className="min-w-0 flex-1">
-              <span className="block text-white/85 font-bold text-sm leading-tight">
-                {t('home.musafirPromptTitle', 'Travelling?')}
-              </span>
-              <span className="block text-white/45 text-xs mt-0.5 leading-snug">
-                {t(
-                  'home.musafirPromptDesc',
-                  'Musafir mode shortens and joins your prayers the Sunnah way.'
-                )}
-              </span>
-            </Link>
-            <motion.button
-              whileTap={{ scale: 0.94 }}
-              onClick={() => {
-                startMusafir({ today: getTrackingDay(), school: defaultSchool() });
-                toast.success(t('home.musafirStarted', 'Safe travels! Musafir mode is on.'), {
-                  icon: '✈️',
-                });
-              }}
-              className="shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-info/20 border border-brand-info/60 text-brand-info hover:bg-brand-info/30"
-            >
-              {t('home.musafirTurnOn', 'Turn on')}
-            </motion.button>
-          </div>
+          travelHint && (
+            // Off, but the device is already past the qaṣr distance from the
+            // saved prayer-times location (only checked when location
+            // permission was already granted — see useTravelHint).
+            <div className="mb-6 flex items-center gap-3 rounded-2xl border border-brand-info/30 bg-brand-info/[0.08] px-4 py-3">
+              <span className="text-2xl shrink-0">🧳</span>
+              <Link to="/musafir" className="min-w-0 flex-1">
+                <span className="block text-white/85 font-bold text-sm leading-tight">
+                  {t('home.musafirHintTitle', 'Travelling?')}
+                </span>
+                <span className="block text-white/50 text-xs mt-0.5 leading-snug">
+                  {travelHint.from
+                    ? t('home.musafirHintDesc', 'You are about {{km}} km from {{place}}.', {
+                        km: formatLocaleNumber(travelHint.km),
+                        place: travelHint.from,
+                      })
+                    : t(
+                        'home.musafirHintDescNoName',
+                        'You are about {{km}} km from your saved location.',
+                        {
+                          km: formatLocaleNumber(travelHint.km),
+                        }
+                      )}
+                </span>
+              </Link>
+              <div className="flex flex-col items-end gap-1 shrink-0">
+                <motion.button
+                  whileTap={{ scale: 0.94 }}
+                  onClick={() => {
+                    const today = getTrackingDay();
+                    startMusafir({
+                      today,
+                      startAfter: suggestStartAfter(today),
+                      school: defaultSchool(),
+                    });
+                    toast.success(t('home.musafirStarted', 'Safe travels! Musafir mode is on.'), {
+                      icon: '✈️',
+                    });
+                  }}
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-info/20 border border-brand-info/60 text-brand-info hover:bg-brand-info/30"
+                >
+                  {t('home.musafirTurnOn', 'Turn on')}
+                </motion.button>
+                <button
+                  onClick={() => {
+                    dismissTravelHint(getTrackingDay());
+                    setHintDismissed(true);
+                  }}
+                  className="text-white/30 text-[10px] underline hover:text-white/60"
+                >
+                  {t('home.musafirHintDismiss', 'Not now')}
+                </button>
+              </div>
+            </div>
+          )
         )}
 
         {/* Islamic special day widget */}

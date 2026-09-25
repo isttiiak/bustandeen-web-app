@@ -66,6 +66,7 @@ import MusafirBanner from '../components/MusafirBanner.js';
 import {
   useMusafir,
   musafirAppliesOn,
+  musafirAppliesTo,
   isQasrPrayer,
   jamAllowed,
   jamPartner,
@@ -332,8 +333,21 @@ export default function SalatTracker() {
 
   // Musafir mode — applies to days on/after the journey began while it's on.
   const musafir = useMusafir();
+  // Day level (banner) vs prayer level: on the day the journey began, only
+  // the prayers after the one prayed at home are travel prayers.
   const travelDay = musafirAppliesOn(musafir, selectedDate);
-  const canJoinPrayers = travelDay && !!musafir && jamAllowed(musafir.school);
+  const travelPrayer = (p: PrayerId) => musafirAppliesTo(musafir, selectedDate, p);
+  // Joining needs both prayers of the pair to be travel prayers.
+  const canJoin = (p: PrayerId) => {
+    const partner = jamPartner(p);
+    return (
+      !!musafir &&
+      jamAllowed(musafir.school) &&
+      !!partner &&
+      travelPrayer(p) &&
+      travelPrayer(partner)
+    );
+  };
   // A past civil day whose prayers were never logged reads as "missed" (derived
   // on read — no DB writes, consistent with the app's lazy-expiry approach).
   const isPastDay = selectedDate < todayStr();
@@ -673,7 +687,7 @@ export default function SalatTracker() {
         windowEnd: windowEndDate ? windowEndDate.toISOString() : undefined,
         // On a travel day the four-rak'ah prayers are logged as qaṣr — unless
         // this one was already marked as prayed in full (local imam / Jumu'ah).
-        qasr: travelDay && isQasrPrayer(prayer) ? current?.qasr !== false : undefined,
+        qasr: travelPrayer(prayer) && isQasrPrayer(prayer) ? current?.qasr !== false : undefined,
       });
       // Celebrate: small burst per prayer, big double burst when all 5 are in
       const doneAfter = trackablePrayers.filter((p) => {
@@ -1345,9 +1359,10 @@ export default function SalatTracker() {
                     const isFuture = isToday && isFuturePrayer(prayerId, todayPrayerTimes?.times);
                     // Musafir: is this row a shortened (qaṣr) prayer? A logged
                     // flag wins; otherwise a travel day implies it for Ẓuhr/ʿAṣr/ʿIshāʾ.
+                    const rowTravel = travelPrayer(prayerId);
                     const isQasrRow =
                       entry?.qasr === true ||
-                      (travelDay && isQasrPrayer(prayerId) && entry?.qasr !== false);
+                      (rowTravel && isQasrPrayer(prayerId) && entry?.qasr !== false);
                     // Friday's Dhuhr is Jumu'ah — unless a traveller prays Ẓuhr instead.
                     const isJumuah = prayerId === 'dhuhr' && isCivilFriday && !isQasrRow;
                     // Joined early (jamʿ taqdīm): logged before its own time came.
@@ -1421,7 +1436,7 @@ export default function SalatTracker() {
                                     🕌 congregation
                                   </span>
                                 )}
-                                {(isQasrRow || (travelDay && !isQasrPrayer(prayerId))) && (
+                                {(isQasrRow || (rowTravel && !isQasrPrayer(prayerId))) && (
                                   <span
                                     className={`mt-1 block w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
                                       isQasrRow
@@ -1475,7 +1490,7 @@ export default function SalatTracker() {
                                   replaces Dhuhr — attend at mosque
                                 </p>
                               )}
-                              {prayerId === 'dhuhr' && isCivilFriday && travelDay && !isJumuah && (
+                              {prayerId === 'dhuhr' && isCivilFriday && rowTravel && !isJumuah && (
                                 <p className="text-brand-info/60 text-xs mt-0.5">
                                   {t(
                                     'salatTracker.travelFriday',
@@ -1598,7 +1613,7 @@ export default function SalatTracker() {
                                 )}
                                 {/* Musafir: 2 (qaṣr) or in full — behind a local
                                 imam, or Jumu'ah on a Friday. */}
-                                {(travelDay || entry?.qasr !== undefined) &&
+                                {(rowTravel || entry?.qasr !== undefined) &&
                                   isQasrPrayer(prayerId) && (
                                     <div className="flex items-center gap-1.5 flex-wrap">
                                       <span className="text-white/30 text-[11px] sm:text-xs">
@@ -1630,7 +1645,7 @@ export default function SalatTracker() {
                                     </div>
                                   )}
                                 {/* Musafir jamʿ taʾkhīr — flag the pair as joined */}
-                                {canJoinPrayers &&
+                                {canJoin(prayerId) &&
                                   (prayerId === 'asr' || prayerId === 'isha') &&
                                   jamWith &&
                                   ['completed', 'kaza'].includes(
@@ -1859,7 +1874,7 @@ export default function SalatTracker() {
                         {/* Musafir jamʿ — pray the pair together. On Ẓuhr/Maghrib
                             (its own time, partner not yet due): taqdīm. On ʿAṣr/ʿIshāʾ
                             (its own time, partner still unprayed): taʾkhīr. */}
-                        {canJoinPrayers &&
+                        {canJoin(prayerId) &&
                           isToday &&
                           jamWith &&
                           (() => {
@@ -1929,7 +1944,7 @@ export default function SalatTracker() {
                         {/* Musafir: the regular sunnah may be left on a journey
                             (Ibn ʿUmar, Muslim 689a) — Fajr's two are kept, so
                             Fajr falls through to its normal guidance below. */}
-                        {isCurrent && travelDay && prayerId !== 'fajr' && (
+                        {isCurrent && rowTravel && prayerId !== 'fajr' && (
                           <div className="px-3 py-2.5 border-t border-brand-info/20 flex items-start gap-2 bg-brand-info/5">
                             <span className="text-base shrink-0">🧳</span>
                             <div className="min-w-0">
@@ -1959,7 +1974,7 @@ export default function SalatTracker() {
                         )}
 
                         {isCurrent &&
-                          !(travelDay && prayerId !== 'fajr') &&
+                          !(rowTravel && prayerId !== 'fajr') &&
                           (() => {
                             // Friday's Dhuhr slot IS Jumu'ah — its sunnah
                             // guidance is genuinely different, not a fallback
