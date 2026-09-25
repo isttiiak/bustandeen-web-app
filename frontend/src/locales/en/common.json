@@ -1008,7 +1008,11 @@
     "libraryAsmaTitle": "99 Names of Allah",
     "libraryAsmaSubtitle": "Reflect and remember",
     "libraryZakatTitle": "Zakat Calculator",
-    "libraryZakatSubtitle": "Work out what you owe"
+    "libraryZakatSubtitle": "Work out what you owe",
+    "musafirPromptTitle": "Travelling?",
+    "musafirPromptDesc": "Musafir mode shortens and joins your prayers the Sunnah way.",
+    "musafirStarted": "Safe travels! Musafir mode is on.",
+    "musafirTurnOn": "Turn on"
   },
   "library": {
     "duaTitle": "Du'a Library",
@@ -2325,11 +2329,7 @@
     "tasbihUpdated": "Tasbīḥ counting updated",
     "timesUpdated": "Prayer times updated",
     "title": "Salat settings",
-    "using": "✓ Using",
-    "musafirTitle": "Musafir mode",
-    "musafirOn": "on",
-    "musafirOff": "off",
-    "musafirDesc": "Travelling? Shortened and joined prayers, travel du‘ās and every concession with its hadith."
+    "using": "✓ Using"
   },
   "salatTracker": {
     "seoTitle": "Salat Tracker — Log Your 5 Daily Prayers",
@@ -2601,7 +2601,16 @@
     "vibrationDetail": "Haptic pulse on each zikr tap (supported mobile browsers)",
     "yesDoIt": "Yes, do it",
     "zikrLibrary": "Zikr library",
-    "zikrLibrarySubtitle": "Ṣalawāt, istighfār, the weighty words — verified adhkār to add to your counter"
+    "zikrLibrarySubtitle": "Ṣalawāt, istighfār, the weighty words — verified adhkār to add to your counter",
+    "musafirSection": "Musafir mode",
+    "musafirSubtitle": "For journeys: 2 rakʿahs for Ẓuhr, ʿAṣr and ʿIshāʾ, joining prayers, and the travel duʿās.",
+    "musafirOffTitle": "I’m travelling",
+    "musafirOffDetail": "Turn on to shorten Ẓuhr, ʿAṣr and ʿIshāʾ to 2 rakʿahs on the salat tracker. Uses the madhab from your ʿAṣr setting.",
+    "musafirOnTitle": "Musafir mode is on",
+    "musafirOnDetail": "Day {{day}} of your journey · {{school}}. Turn off when you are home.",
+    "musafirOpen": "Journey details, duʿās and rulings",
+    "musafirStarted": "Safe travels! Musafir mode is on.",
+    "musafirEnded": "Welcome home! Musafir mode is off."
   },
   "specialDays": {
     "arafah": {

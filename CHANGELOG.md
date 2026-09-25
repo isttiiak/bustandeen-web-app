@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.58.1 - Turn Musafir mode on from Home or Settings - 2026-09-25
+
+### Changed
+
+- **Home:** while Musafir mode is off, a small "Travelling?" card with a **Turn on** button starts it in one tap (using the madhab from your ʿAṣr setting). Once it is on, the "Musafir · day N" strip takes its place.
+- **Settings:** a new **Musafir mode** section right below Language, with an on/off switch that shows the day of your journey, and a link to the journey details, duʿās and rulings.
+- The Musafir entry was removed from Salat settings; the 🧳 button on the salat tracker stays.
+
 ## v5.58.0 - Musafir mode: pray, fast and make du'a the traveller's way - 2026-09-25
 
 ### Added
