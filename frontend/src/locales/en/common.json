@@ -2476,7 +2476,10 @@
     "travelSunnahDesc": "The Prophet ﷺ left the regular sunnah of Ẓuhr, Maghrib and ʿIshāʾ on journeys; he kept Fajr's two and Witr. Any nafl is still yours to pray.",
     "jamOfferTaqdim": "On the move? Pray {{a}} and {{b}} together now, in {{a}} time (jamʿ taqdīm).",
     "jamOfferTakhir": "{{a}} not prayed yet? Pray {{a}} and {{b}} together now, in {{b}} time (jamʿ taʾkhīr).",
-    "jamBoth": "{{a}} + {{b}} ✓"
+    "jamBoth": "{{a}} + {{b}} ✓",
+    "jamHanafi": "Joining {{a}} and {{b}} in one time is not part of the Ḥanafī view you follow. The Ḥanafī way: pray {{a}} near the end of its time and {{b}} as soon as it begins.",
+    "jamSwitched": "Now following the majority view for this journey.",
+    "jamUseMajority": "Follow the majority view (allows joining)"
   },
   "shareAyah": {
     "title": "Share this āyah",
@@ -3606,7 +3609,6 @@
     "rowStay": "Staying at one place",
     "rowJam": "Joining prayers",
     "homeTitle": "When the work is done, go home",
-    "pastTitle": "Your past journeys",
     "aJourney": "A journey",
     "daysShort": "{{count}}d",
     "disclaimer": "Every reference links to its source. Details (exact distance, socks, special cases like a job that keeps you travelling) differ between scholars: when in doubt, ask a scholar you trust. Your journey is saved to your account settings and stays private.",
@@ -3625,7 +3627,18 @@
     "startAfterHint": "Shortening starts with the prayer after {{prayer}} on that day. Left after ʿIshāʾ? Pick the next day and “None”.",
     "startAfterHintNone": "Every prayer of that day counts as a travel prayer. Left after ʿIshāʾ? Pick the next day.",
     "bannerQasrTomorrow": "Shortened prayers start from tomorrow.",
-    "bannerQasrSome": "Today {{names}}: 2 rak’ahs."
+    "bannerQasrSome": "Today {{names}}: 2 rak’ahs.",
+    "historyTitle": "Travel history",
+    "historyTotals": "{{journeys}} journeys · {{days}} days on the road",
+    "historyEmpty": "Your journeys will be listed here: where you went, when you set out and came back, and how many days.",
+    "historyOngoing": "ongoing",
+    "historyAfter": "after {{prayer}}",
+    "historyUntil": "until {{prayer}}",
+    "historyNow": "now",
+    "historyDelete": "Remove this journey",
+    "historyDeleteTitle": "Remove this journey?",
+    "historyDeleteMessage": "Its days will no longer count as travel days, so missed prayers from them move out of Travel kaza. Your prayer logs are not changed.",
+    "historyDeleteConfirm": "Remove"
   },
   "travelKaza": {
     "paid": "Made up. May Allah accept it.",
