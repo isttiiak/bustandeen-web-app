@@ -19,8 +19,14 @@ const fakeJwt = (payload) => {
   const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
   return `${header}.${body}.`;
 };
+// "Today" is pinned to the current week's Monday. The tests seed activity N
+// days back and assume none of it falls earlier in the same Mon-Sun week,
+// which is only true on a Monday; on other weekdays the seeded days also count
+// towards this week's progress and the expectations drift. Every service call
+// and request below passes `today` explicitly, so nothing reads the real clock.
+const MONDAY = planService.weekStartOf(new Date().toISOString().slice(0, 10));
 const iso = (offset) => {
-  const d = new Date();
+  const d = new Date(`${MONDAY}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + offset);
   return d.toISOString().slice(0, 10);
 };
