@@ -25,6 +25,7 @@ import {
   jamAllowed,
   getMusafirHistory,
   getDuasSaid,
+  deleteMusafirJourney,
   suggestStartAfter,
   setDuasSaid,
   FARD_RAKAT,
@@ -163,6 +164,7 @@ export default function MusafirMode() {
 
   // ── ending the journey ──
   const [confirmEnd, setConfirmEnd] = useState(false);
+  const [deleteIdx, setDeleteIdx] = useState<number | null>(null);
   const [returned, setReturned] = useState<PastJourney | null>(null);
   const finishJourney = () => {
     setConfirmEnd(false);
@@ -605,29 +607,29 @@ export default function MusafirMode() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 * i }}
-                  className={`rounded-2xl border text-center py-3 px-1 ${
+                  className={`min-w-0 rounded-2xl border text-center py-2.5 sm:py-3 px-0.5 sm:px-1 ${
                     shortened
                       ? 'border-brand-info/40 bg-brand-info/10'
                       : 'border-white/10 bg-white/[0.03]'
                   }`}
                 >
-                  <div className="text-xl">{p.icon}</div>
-                  <p className="text-white/70 text-[11px] font-bold mt-1 truncate">
+                  <div className="text-lg sm:text-xl">{p.icon}</div>
+                  <p className="text-white/70 text-[9px] min-[360px]:text-[10px] sm:text-[11px] font-bold mt-1 leading-tight tracking-tight sm:tracking-normal whitespace-nowrap">
                     {translateSalatName(p.id, p.name, t)}
                   </p>
                   <p className="mt-1 leading-none">
                     {shortened && (
-                      <span className="text-white/25 text-xs line-through mr-1">
+                      <span className="text-white/25 text-[10px] sm:text-xs line-through mr-0.5 sm:mr-1">
                         {formatLocaleNumber(FARD_RAKAT[p.id])}
                       </span>
                     )}
                     <span
-                      className={`text-2xl font-black ${shortened ? 'text-brand-info' : 'text-white/80'}`}
+                      className={`text-xl sm:text-2xl font-black ${shortened ? 'text-brand-info' : 'text-white/80'}`}
                     >
                       {formatLocaleNumber(travelRakat(p.id))}
                     </span>
                   </p>
-                  <p className="text-white/30 text-[9px] mt-1 uppercase tracking-wide">
+                  <p className="text-white/30 text-[8px] sm:text-[9px] mt-1 uppercase sm:tracking-wide">
                     {shortened ? t('musafir.qasrTag', 'qaṣr') : t('musafir.unchanged', 'same')}
                   </p>
                 </motion.div>
@@ -936,38 +938,113 @@ export default function MusafirMode() {
           <RefQuote r={REF_RETURN_MASJID} lang={lang} />
         </section>
 
-        {/* ── Past journeys ──────────────────────────────────────────────── */}
-        {history.length > 0 && (
-          <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-4 sm:p-5">
-            <h3 className="text-white font-black">
-              🗺️ {t('musafir.pastTitle', 'Your past journeys')}
-            </h3>
-            <ul className="mt-2 divide-y divide-white/5">
-              {history.map((j) => (
-                <li
-                  key={j.from + j.to}
-                  className="py-2 flex items-center justify-between gap-3 text-sm"
-                >
-                  <span className="text-white/75 truncate">
-                    📍 {j.destination || t('musafir.aJourney', 'A journey')}
-                  </span>
-                  <span className="text-white/35 text-xs shrink-0 tabular-nums">
-                    {fmtDate(j.from)} → {fmtDate(j.to)} ·{' '}
-                    {t('musafir.daysShort', '{{count}}d', { count: j.days })}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </section>
-        )}
-
         <p className="text-white/30 text-[11px] leading-relaxed px-1">
           {t(
             'musafir.disclaimer',
             'Every reference links to its source. Details (exact distance, socks, special cases like a job that keeps you travelling) differ between scholars: when in doubt, ask a scholar you trust. Your journey is saved to your account settings and stays private.'
           )}
         </p>
+
+        {/* ── Travel history — the current journey and every past one ─────── */}
+        <section className="rounded-3xl border border-white/10 bg-white/[0.04] p-4 sm:p-5">
+          <div className="flex items-baseline justify-between gap-2 flex-wrap">
+            <h3 className="text-white font-black">
+              🗺️ {t('musafir.historyTitle', 'Travel history')}
+            </h3>
+            {(history.length > 0 || musafir) && (
+              <span className="text-white/40 text-[11px] font-bold">
+                {t('musafir.historyTotals', '{{journeys}} journeys · {{days}} days on the road', {
+                  journeys: formatLocaleNumber(history.length + (musafir ? 1 : 0)),
+                  days: formatLocaleNumber(
+                    history.reduce((n, j) => n + j.days, 0) + (musafir ? day : 0)
+                  ),
+                })}
+              </span>
+            )}
+          </div>
+          {history.length === 0 && !musafir ? (
+            <p className="text-white/40 text-xs mt-2 leading-relaxed">
+              {t(
+                'musafir.historyEmpty',
+                'Your journeys will be listed here: where you went, when you set out and came back, and how many days.'
+              )}
+            </p>
+          ) : (
+            <ol className="mt-3 relative border-l border-white/10 ml-2 space-y-3">
+              {musafir && (
+                <li className="pl-4 relative">
+                  <span className="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-brand-info shadow-[0_0_8px_rgba(90,158,142,0.7)]" />
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-white/85 text-sm font-bold min-w-0 break-words">
+                      📍 {musafir.destination || t('musafir.aJourney', 'A journey')}
+                    </span>
+                    <span className="text-[10px] font-black uppercase px-1.5 py-0.5 rounded-md bg-brand-info/20 text-brand-info">
+                      {t('musafir.historyOngoing', 'ongoing')}
+                    </span>
+                  </div>
+                  <p className="text-white/45 text-xs mt-0.5">
+                    {fmtDate(musafir.startedAt)}
+                    {musafir.startAfter &&
+                      ` (${t('musafir.historyAfter', 'after {{prayer}}', {
+                        prayer: translateSalatName(musafir.startAfter, musafir.startAfter, t),
+                      })})`}{' '}
+                    → {t('musafir.historyNow', 'now')} ·{' '}
+                    {t('musafir.daysShort', '{{count}}d', { count: day })}
+                  </p>
+                </li>
+              )}
+              {history.map((j, idx) => (
+                <li key={`${j.from}-${j.to}-${idx}`} className="pl-4 relative">
+                  <span className="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-white/30" />
+                  <div className="flex items-start gap-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-white/75 text-sm font-bold break-words">
+                        📍 {j.destination || t('musafir.aJourney', 'A journey')}
+                      </p>
+                      <p className="text-white/40 text-xs mt-0.5">
+                        {fmtDate(j.from)}
+                        {j.startAfter &&
+                          ` (${t('musafir.historyAfter', 'after {{prayer}}', {
+                            prayer: translateSalatName(j.startAfter, j.startAfter, t),
+                          })})`}{' '}
+                        → {fmtDate(j.to)}
+                        {j.endAfter &&
+                          ` (${t('musafir.historyUntil', 'until {{prayer}}', {
+                            prayer: translateSalatName(j.endAfter, j.endAfter, t),
+                          })})`}{' '}
+                        · {t('musafir.daysShort', '{{count}}d', { count: j.days })}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setDeleteIdx(idx)}
+                      aria-label={t('musafir.historyDelete', 'Remove this journey')}
+                      title={t('musafir.historyDelete', 'Remove this journey')}
+                      className="shrink-0 w-7 h-7 rounded-lg grid place-items-center text-white/30 hover:text-red-300 hover:bg-red-500/10"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
       </div>
+
+      <ConfirmDialog
+        open={deleteIdx !== null}
+        title={t('musafir.historyDeleteTitle', 'Remove this journey?')}
+        message={t(
+          'musafir.historyDeleteMessage',
+          'Its days will no longer count as travel days, so missed prayers from them move out of Travel kaza. Your prayer logs are not changed.'
+        )}
+        confirmLabel={t('musafir.historyDeleteConfirm', 'Remove')}
+        onConfirm={() => {
+          if (deleteIdx !== null) deleteMusafirJourney(deleteIdx);
+          setDeleteIdx(null);
+        }}
+        onCancel={() => setDeleteIdx(null)}
+      />
 
       <ConfirmDialog
         open={confirmEnd}

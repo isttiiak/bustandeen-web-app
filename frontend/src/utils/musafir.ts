@@ -157,6 +157,20 @@ export function endMusafir(today: string): PastJourney | null {
   return trip;
 }
 
+/** Remove one past journey (by its position in the history list). Its days
+ * then stop counting as travel days, e.g. for travel kaza. */
+export function deleteMusafirJourney(index: number): void {
+  const history = getMusafirHistory();
+  if (index < 0 || index >= history.length) return;
+  history.splice(index, 1);
+  try {
+    localStorage.setItem(MUSAFIR_HISTORY_KEY, JSON.stringify(history));
+  } catch {
+    /* private mode */
+  }
+  window.dispatchEvent(new Event(CHANGE_EVENT));
+}
+
 export function getMusafirHistory(): PastJourney[] {
   try {
     const raw = localStorage.getItem(MUSAFIR_HISTORY_KEY);

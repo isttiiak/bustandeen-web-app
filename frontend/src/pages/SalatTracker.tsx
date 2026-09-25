@@ -68,6 +68,7 @@ import {
   useMusafir,
   musafirAppliesOn,
   musafirAppliesTo,
+  updateMusafir,
   isQasrPrayer,
   jamAllowed,
   jamPartner,
@@ -1491,14 +1492,6 @@ export default function SalatTracker() {
                                   replaces Dhuhr — attend at mosque
                                 </p>
                               )}
-                              {prayerId === 'dhuhr' && isCivilFriday && rowTravel && !isJumuah && (
-                                <p className="text-brand-info/60 text-xs mt-0.5">
-                                  {t(
-                                    'salatTracker.travelFriday',
-                                    "Travelling: Ẓuhr instead of Jumu'ah (Muslim 1218a)"
-                                  )}
-                                </p>
-                              )}
                             </div>
                           </div>
 
@@ -1550,6 +1543,19 @@ export default function SalatTracker() {
                             </div>
                           )}
                         </div>
+
+                        {/* Travelling on a Friday: a full-width strip rather than a
+                            line in the narrow name column, which on small phones
+                            wrapped to five lines beside the buttons. */}
+                        {prayerId === 'dhuhr' && isCivilFriday && rowTravel && !isJumuah && (
+                          <div className="px-3 py-1.5 border-t border-brand-info/15 bg-brand-info/5 text-[11px] sm:text-xs text-brand-info/75">
+                            🧳{' '}
+                            {t(
+                              'salatTracker.travelFriday',
+                              "Travelling: Ẓuhr instead of Jumu'ah (Muslim 1218a)"
+                            )}
+                          </div>
+                        )}
 
                         {/* Sub-tags row (only for completed/kaza) */}
                         <AnimatePresence>
@@ -1941,6 +1947,53 @@ export default function SalatTracker() {
                               </div>
                             );
                           })()}
+
+                        {/* Ḥanafī view: no real joining, so say so here (instead of
+                            silently showing nothing) and offer the formal way plus
+                            a one-tap switch to the majority view for this journey. */}
+                        {isToday &&
+                          musafir?.school === 'hanafi' &&
+                          (prayerId === 'dhuhr' || prayerId === 'maghrib') &&
+                          isCurrent &&
+                          jamWith &&
+                          rowTravel &&
+                          travelPrayer(jamWith) &&
+                          normaliseStatus(log?.prayers[jamWith]?.status) === 'pending' &&
+                          isFuturePrayer(jamWith, todayPrayerTimes?.times) && (
+                            <div className="px-3 py-2.5 border-t border-brand-gold/20 bg-brand-gold/5">
+                              <div className="flex items-start gap-2">
+                                <span className="text-base shrink-0">🔗</span>
+                                <p className="flex-1 min-w-0 text-white/55 text-xs leading-snug">
+                                  {t(
+                                    'salatTracker.jamHanafi',
+                                    'Joining {{a}} and {{b}} in one time is not part of the Ḥanafī view you follow. The Ḥanafī way: pray {{a}} near the end of its time and {{b}} as soon as it begins.',
+                                    {
+                                      a: translateSalatName(prayerId, prayerId, t),
+                                      b: translateSalatName(jamWith, jamWith, t),
+                                    }
+                                  )}
+                                </p>
+                              </div>
+                              <button
+                                onClick={() => {
+                                  updateMusafir({ school: 'majority' });
+                                  toast.success(
+                                    t(
+                                      'salatTracker.jamSwitched',
+                                      'Now following the majority view for this journey.'
+                                    ),
+                                    { icon: '🔗' }
+                                  );
+                                }}
+                                className="mt-2 ml-6 px-2.5 py-1 rounded-lg text-[11px] font-bold bg-brand-gold/15 border border-brand-gold/50 text-brand-gold hover:bg-brand-gold/25"
+                              >
+                                {t(
+                                  'salatTracker.jamUseMajority',
+                                  'Follow the majority view (allows joining)'
+                                )}
+                              </button>
+                            </div>
+                          )}
 
                         {/* Musafir: the regular sunnah may be left on a journey
                             (Ibn ʿUmar, Muslim 689a) — Fajr's two are kept, so

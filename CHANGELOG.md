@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.61.0 - Musafir: travel history, clearer joining for Ḥanafī users, small-screen fixes - 2026-09-25
+
+### Added
+
+- **Travel history** at the end of the Musafir page: the current journey (marked "ongoing") and every past one as a timeline, with where you went, the dates and the prayer you set out after / came back after, the number of days, and totals ("3 journeys · 8 days on the road"). A past journey can be removed (with a confirmation); its days then stop counting as travel days, so its missed prayers leave Travel kaza. Your prayer logs are not changed.
+
+### Fixed
+
+- **The joining button seemed to be missing.** Musafir mode takes its fiqh view from your ʿAṣr setting, and in the Ḥanafī view real joining is not allowed, so nothing was shown. Now, during Ẓuhr or Maghrib time on a travel day, Ḥanafī users see why, the Ḥanafī way (pray Ẓuhr near the end of its time and ʿAṣr as soon as it begins), and a one-tap **Follow the majority view** that brings up the "Ẓuhr + ʿAṣr" button for this journey.
+- **Small phones.** On the salat tracker the "Travelling: Ẓuhr instead of Jumuʿah" note is now a full-width line under the prayer instead of wrapping to five lines in the narrow name column beside the buttons. On the Musafir page the five prayer tiles fit at 320px without cutting off names like "Maghrib".
+
 ## v5.60.0 - Travel kaza: making up prayers missed on a journey - 2026-09-25
 
 ### Added
