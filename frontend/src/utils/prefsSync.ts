@@ -39,6 +39,7 @@ export const SYNCED_KEYS: readonly string[] = [
   'bustandeen_calc_method',
   'bustandeen_musafir',
   'bustandeen_musafir_history',
+  'bustandeen_musafir_kaza_rule',
   'bustandeen_arabic_font',
   'bustandeen_qfs_arabic',
   'bustandeen_qfs_translation',

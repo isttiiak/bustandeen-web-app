@@ -37,6 +37,7 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   // Musafir mode (journey state + past journeys)
   'bustandeen_musafir',
   'bustandeen_musafir_history',
+  'bustandeen_musafir_kaza_rule',
   // Quran
   'bustandeen_arabic_font',
   'bustandeen_qfs_arabic',

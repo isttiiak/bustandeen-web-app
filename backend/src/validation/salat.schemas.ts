@@ -84,6 +84,11 @@ export const adjustSalatDebtSchema = z.object({
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/)
       .optional(),
+    // Pay back this exact missed day's itemized unit (with delta -1).
+    missedDate: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .optional(),
   }),
 });
 

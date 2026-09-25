@@ -3626,5 +3626,24 @@
     "startAfterHintNone": "Every prayer of that day counts as a travel prayer. Left after ʿIshāʾ? Pick the next day.",
     "bannerQasrTomorrow": "Shortened prayers start from tomorrow.",
     "bannerQasrSome": "Today {{names}}: 2 rak’ahs."
+  },
+  "travelKaza": {
+    "paid": "Made up. May Allah accept it.",
+    "payFailed": "Could not save. Please try again.",
+    "title": "Travel kaza",
+    "summary": "{{count}} missed on a journey · made up as travel prayers",
+    "stillTravelling": "You are still travelling, so a missed Ẓuhr, ʿAṣr or ʿIshāʾ is made up as 2 rakʿahs. Scholars agree on this.",
+    "ruleLabel": "Now that you are home, make up Ẓuhr, ʿAṣr and ʿIshāʾ as:",
+    "ruleShort": "2 rakʿahs",
+    "ruleShortWho": "as missed · Ḥanafī, Mālikī",
+    "ruleFull": "4 rakʿahs",
+    "ruleFullWho": "in full · Shāfiʿī, Ḥanbalī",
+    "rakat": "{{n}} rakʿah",
+    "madeUp": "✓ Made up",
+    "showLess": "Show fewer",
+    "showAll": "Show all {{count}}",
+    "fromHomeNote": "Only prayers missed on a journey are listed here, and each is also part of the Kaza Debt total above. Prayers owed from home stay in full (4 rakʿahs), even when made up on a journey.",
+    "why": "Why? The evidence",
+    "whyNote": "No hadith names this exact case. The rule every school builds on: a missed prayer is prayed when remembered, as it was owed. On a journey, Fajr missed in sleep was prayed “just as he did every day”. So on the road it is 2; at home the schools differ, as above."
   }
 }

@@ -471,6 +471,26 @@ export function getDemoResponse(url: string, method: string, gender = 'male'): u
 
   if (url.includes('/api/zikr/analytics')) return buildZikrAnalytics(parseDays(url));
   if (url.includes('/api/salat/analytics')) return buildSalatAnalytics(parseDays(url));
+  // Kaza debt: a small itemized debt, so the Kaza Debt and Travel kaza cards
+  // have something real to show (the travel card only lists days that fall
+  // on a journey the visitor records in Musafir mode).
+  if (url.includes('/api/salat/debt/units'))
+    return {
+      ok: true,
+      units: [
+        { prayer: 'isha', missedDate: dateStr(2) },
+        { prayer: 'asr', missedDate: dateStr(2) },
+        { prayer: 'dhuhr', missedDate: dateStr(5) },
+        { prayer: 'fajr', missedDate: dateStr(9) },
+      ],
+    };
+  if (/\/api\/salat\/debt(\?|$)/.test(url))
+    return {
+      ok: true,
+      owed: { fajr: 1, dhuhr: 1, asr: 1, maghrib: 0, isha: 1 },
+      totalOwed: 4,
+      since: dateStr(30),
+    };
   if (url.includes('/api/salat')) return buildSalatLog();
   if (url.includes('/api/fasting/summary')) return buildFastingSummary();
   if (url.includes('/api/fasting')) return { ok: true, log: null };
