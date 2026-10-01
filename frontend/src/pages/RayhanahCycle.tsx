@@ -31,6 +31,7 @@ import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import MoodComfort from '../components/MoodComfort.js';
 import CycleGuidance from '../components/CycleGuidance.js';
+import { OfflineQueuedError } from '../utils/syncOutbox.js';
 
 // ─── Sweet, powerful phrases for excused days (Istiak's spec) ─────────────────
 const PHRASES = [
@@ -202,7 +203,7 @@ export default function RayhanahCycle() {
   const setPregnancy = useSetPregnancy();
 
   const [partnerPickerOpen, setPartnerPickerOpen] = useState(false);
-  const { data: friends } = useFriendsList(partnerPickerOpen || !!summary?.partnerSync.enabled);
+  const { data: friends } = useFriendsList(partnerPickerOpen || !!summary?.partnerSync?.enabled);
 
   const [pregnancyFormOpen, setPregnancyFormOpen] = useState(false);
   const [dueDateInput, setDueDateInput] = useState('');
@@ -298,16 +299,22 @@ export default function RayhanahCycle() {
 
   const handleEndConfirmed = () => {
     const startedOn = active?.startDate;
+    // The ghusl guidance and the qaḍāʾ prompt follow the END of the period, so
+    // they show for an end saved offline too (it syncs later, audit T2.3).
+    const afterEnd = () => {
+      setGhuslOpen(true);
+      setGhuslChecked(GHUSL_STEPS.map(() => false));
+      if (startedOn) {
+        const n = ramadanDaysIn(startedOn, today);
+        if (n > 0) setQadaPrompt({ days: n });
+      }
+    };
     endCycle.mutate(
       { date: today },
       {
-        onSuccess: () => {
-          setGhuslOpen(true);
-          setGhuslChecked(GHUSL_STEPS.map(() => false));
-          if (startedOn) {
-            const n = ramadanDaysIn(startedOn, today);
-            if (n > 0) setQadaPrompt({ days: n });
-          }
+        onSuccess: afterEnd,
+        onError: (e) => {
+          if (e instanceof OfflineQueuedError) afterEnd();
         },
       }
     );
@@ -497,7 +504,7 @@ export default function RayhanahCycle() {
               </p>
             </div>
           </motion.div>
-        ) : summary?.pregnancy.active ? (
+        ) : summary?.pregnancy?.active ? (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1066,7 +1073,7 @@ export default function RayhanahCycle() {
               <input
                 type="checkbox"
                 className="toggle toggle-sm border-brand-pink/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-pink checked:border-brand-pink shrink-0"
-                checked={summary?.partnerSync.enabled ?? false}
+                checked={summary?.partnerSync?.enabled ?? false}
                 disabled={partnerSync.isPending}
                 onChange={(e) => {
                   if (e.target.checked) {
@@ -1079,17 +1086,17 @@ export default function RayhanahCycle() {
               />
             </div>
 
-            {summary?.partnerSync.enabled && summary.partnerSync.partnerUid && (
+            {summary?.partnerSync?.enabled && summary.partnerSync?.partnerUid && (
               <p className="text-brand-emerald/70 text-xs mt-2">
                 {t('rayhanah.sharingWith', 'Currently sharing with {{name}}', {
                   name:
-                    friends?.find((f) => f.uid === summary.partnerSync.partnerUid)?.displayName ??
+                    friends?.find((f) => f.uid === summary.partnerSync?.partnerUid)?.displayName ??
                     t('rayhanah.aFriend', 'a friend'),
                 })}
               </p>
             )}
 
-            {partnerPickerOpen && !summary?.partnerSync.enabled && (
+            {partnerPickerOpen && !summary?.partnerSync?.enabled && (
               <div className="mt-2 space-y-1.5">
                 {!friends?.length ? (
                   <p className="text-white/25 text-xs">
@@ -1140,7 +1147,7 @@ export default function RayhanahCycle() {
               <input
                 type="checkbox"
                 className="toggle toggle-sm border-brand-emerald/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-emerald checked:border-brand-emerald shrink-0"
-                checked={summary?.pregnancy.active ?? false}
+                checked={summary?.pregnancy?.active ?? false}
                 disabled={setPregnancy.isPending}
                 onChange={(e) => {
                   if (e.target.checked) {
@@ -1154,7 +1161,7 @@ export default function RayhanahCycle() {
               />
             </div>
 
-            {pregnancyFormOpen && !summary?.pregnancy.active && (
+            {pregnancyFormOpen && !summary?.pregnancy?.active && (
               <div className="mt-2 flex items-center gap-2">
                 <input
                   type="date"
@@ -1180,7 +1187,7 @@ export default function RayhanahCycle() {
                 </button>
               </div>
             )}
-            {!pregnancyFormOpen && summary?.pregnancy.active && summary.pregnancy.dueDate && (
+            {!pregnancyFormOpen && summary?.pregnancy?.active && summary.pregnancy.dueDate && (
               <p className="text-brand-emerald/70 text-xs mt-2">
                 {t('rayhanah.pregnancyDueDate', 'Expected due date: {{date}}', {
                   date: formatDay(summary.pregnancy.dueDate),
@@ -1462,7 +1469,13 @@ export default function RayhanahCycle() {
                 onClick={() =>
                   startCycle.mutate(
                     { date: startDate, type: startType },
-                    { onSuccess: () => setStartOpen(false) }
+                    {
+                      onSuccess: () => setStartOpen(false),
+                      // Saved on the device; it syncs when back online.
+                      onError: (e) => {
+                        if (e instanceof OfflineQueuedError) setStartOpen(false);
+                      },
+                    }
                   )
                 }
               >

@@ -11,6 +11,7 @@ import { useAdminStore } from './store/useAdminStore.js';
 import { useZikrStore, flushZikrLocalPersistence } from './store/useZikrStore.js';
 import { replaySalatOutbox } from './hooks/useSalatLog.js';
 import { clearSalatOutbox } from './utils/salatOutbox.js';
+import { clearSyncOutbox, replaySyncOutbox } from './utils/syncOutbox.js';
 import { setDayStartModeLocal, type DayStartMode } from './utils/trackingDay.js';
 import { idbRemove } from './utils/idbCache.js';
 import { startPrefsSync, stopPrefsSync } from './utils/prefsSync.js';
@@ -423,6 +424,8 @@ export default function App() {
         .flush()
         .then(() => queryClient.invalidateQueries({ queryKey: ['analytics'] }));
       void replaySalatOutbox(queryClient);
+      // Fasting, Quran and Rayhanah writes made offline (utils/syncOutbox.ts).
+      void replaySyncOutbox(queryClient);
       // Belt-and-suspenders alongside the visibilitychange handler above: if
       // 'online' DID fire but a query's own automatic refetchOnReconnect
       // attempt raced ahead of the network actually being ready and failed
@@ -433,7 +436,10 @@ export default function App() {
     // Also try once on mount: a queue can survive a reload while the browser
     // was ALREADY online the whole time (tab closed offline, reopened later
     // with connectivity restored) — no 'online' transition ever fires for that.
-    if (navigator.onLine) void replaySalatOutbox(queryClient);
+    if (navigator.onLine) {
+      void replaySalatOutbox(queryClient);
+      void replaySyncOutbox(queryClient);
+    }
     return () => window.removeEventListener('online', onOnline);
   }, [queryClient]);
 
@@ -495,6 +501,7 @@ export default function App() {
         // device can't hydrate against the outgoing account's stale blob.
         flushZikrLocalPersistence();
         clearSalatOutbox();
+        clearSyncOutbox();
         localStorage.removeItem('bustandeen_user');
         localStorage.removeItem('bustandeen_idToken');
         // The persisted React Query cache holds personal stats (incl. cycle

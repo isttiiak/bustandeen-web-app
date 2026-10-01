@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '../lib/api.js';
+import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import type { FastingCategory, FastingStatus, VoluntaryKind } from '../utils/fastingRules.js';
 
@@ -93,11 +94,29 @@ export interface UpsertFastingVars {
   tarawih?: boolean;
 }
 
+const offlineToast = () =>
+  toast("You're offline. Your fast is saved here and will sync when you're back online.", {
+    icon: '📶',
+    id: 'fasting-offline',
+  });
+
+// Both writes carry the day's full end state, so offline they coalesce per
+// date: the last one for a day is the one that syncs (a clear after a log
+// replaces it). networkMode 'always' lets an offline write reach the outbox
+// instead of being paused in memory (see useSalatLog).
 export function useUpsertFastingLog() {
   const qc = useQueryClient();
   return useMutation({
+    networkMode: 'always',
     mutationFn: async (vars: UpsertFastingVars) => {
-      const { data } = await api.put<{ ok: boolean; log: FastingLog }>('/api/fasting/log', vars);
+      const data = await sendOrQueue<{ ok: boolean; log: FastingLog }>({
+        tracker: 'fasting',
+        method: 'put',
+        url: '/api/fasting/log',
+        body: { ...vars },
+        key: `fasting:log:${vars.date}`,
+        coalesce: 'replace',
+      });
       return data.log;
     },
     onMutate: async (vars) => {
@@ -117,14 +136,16 @@ export function useUpsertFastingLog() {
       }));
       return { previous, key };
     },
-    onError: (_e, _v, ctx) => {
+    onError: (e, _v, ctx) => {
+      if (e instanceof OfflineQueuedError) return offlineToast(); // keep the optimistic state
       // Roll back AND tell the user — a silent revert looks like a broken button
       if (ctx) qc.setQueryData(ctx.key, ctx.previous);
       toast.error('Could not save your fast — check your connection and try again.', {
         id: 'fasting-save',
       });
     },
-    onSettled: (_d, _e, vars) => {
+    onSettled: (_d, e, vars) => {
+      if (e instanceof OfflineQueuedError) return; // nothing changed server-side yet
       void qc.invalidateQueries({ queryKey: ['fasting', 'log', vars.date] });
       void qc.invalidateQueries({ queryKey: ['fasting', 'summary'] });
       void qc.invalidateQueries({ queryKey: ['fasting', 'history'] });
@@ -135,8 +156,15 @@ export function useUpsertFastingLog() {
 export function useClearFastingLog() {
   const qc = useQueryClient();
   return useMutation({
+    networkMode: 'always',
     mutationFn: async (date: string) => {
-      await api.delete(`/api/fasting/log?date=${date}`);
+      await sendOrQueue({
+        tracker: 'fasting',
+        method: 'delete',
+        url: `/api/fasting/log?date=${date}`,
+        key: `fasting:log:${date}`,
+        coalesce: 'replace',
+      });
       return date;
     },
     onMutate: async (date) => {
@@ -146,11 +174,13 @@ export function useClearFastingLog() {
       qc.setQueryData<FastingLog | null>(key, null);
       return { previous, key };
     },
-    onError: (_e, _v, ctx) => {
+    onError: (e, _v, ctx) => {
+      if (e instanceof OfflineQueuedError) return offlineToast();
       if (ctx) qc.setQueryData(ctx.key, ctx.previous);
       toast.error('Could not remove the log — try again.', { id: 'fasting-clear' });
     },
-    onSettled: (date) => {
+    onSettled: (_d, e, date) => {
+      if (e instanceof OfflineQueuedError) return;
       void qc.invalidateQueries({ queryKey: ['fasting', 'log', date] });
       void qc.invalidateQueries({ queryKey: ['fasting', 'summary'] });
       void qc.invalidateQueries({ queryKey: ['fasting', 'history'] });

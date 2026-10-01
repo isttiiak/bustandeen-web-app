@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { enqueueSalatOp, peekSalatOutbox, removeSalatOp } from '../utils/salatOutbox.js';
+import { outboxOpOwnership } from '../utils/outboxOwner.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
 
@@ -775,6 +776,13 @@ export async function replaySalatOutbox(qc: QueryClient): Promise<void> {
 
   let replayedAny = false;
   for (const op of queue) {
+    // Only the account (or demo) that queued it may replay it.
+    const ownership = outboxOpOwnership(op.owner);
+    if (ownership === 'wait') continue;
+    if (ownership === 'foreign') {
+      removeSalatOp(op.id);
+      continue;
+    }
     try {
       if (op.kind === 'prayer') {
         await api.patch('/api/salat/prayer', op.vars);
