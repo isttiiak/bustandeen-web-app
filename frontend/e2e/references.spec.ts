@@ -20,7 +20,9 @@ test.beforeEach(async ({ context }) => {
 
 async function demoAt(page: Page, path: string) {
   await page.goto('/');
-  await page.getByRole('button', { name: /Explore as Brother/ }).click();
+  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  // The demo link is a page load (/demo/brother): wait for the app.
+  await expect(page.getByText('Demo Mode')).toBeVisible();
   await page.evaluate((p) => {
     window.history.pushState({}, '', p);
     window.dispatchEvent(new PopStateEvent('popstate'));

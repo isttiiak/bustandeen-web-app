@@ -3,6 +3,7 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import {
   createUserWithEmailAndPassword,
   signInWithPopup,
+  browserPopupRedirectResolver,
   updateProfile,
   sendEmailVerification,
   AuthError,
@@ -106,7 +107,7 @@ export default function AuthSignUp() {
     setError('');
     setLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
+      await signInWithPopup(auth, googleProvider, browserPopupRedirectResolver);
     } catch (err) {
       const code = (err as AuthError).code ?? '';
       if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {

@@ -24,6 +24,7 @@ import NaturalLogModal from './components/ai/NaturalLogModal.js';
 import type { AuthUser } from './types/api.js';
 import { trackPageView } from './utils/analytics.js';
 import { safeRedirect } from './utils/safeRedirect.js';
+import { isSeoPagePath } from './seo/staticPaths.js';
 import AppRoutes from './routes.js';
 import { RouteFallback } from './routeGuards.js';
 
@@ -43,6 +44,7 @@ if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
 
 export default function App() {
   const { setUser, init, setAuthLoading } = useAuthStore();
+  const hasUser = useAuthStore((s) => !!s.user);
   const { hydrate, resetAll, checkAndResetIfNewDay } = useZikrStore();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -64,7 +66,10 @@ export default function App() {
 
   // Prefetch the most-visited lazy chunks while the browser is idle, so
   // tapping Salat/Quran/Fasting/Prayer-times never shows the route spinner.
+  // Only for someone signed in (or in demo): a visitor who opened one tool
+  // from search would download four pages they never open (audit PERF-01).
   useEffect(() => {
+    if (!hasUser) return;
     const prefetch = () => {
       void import('./pages/SalatTracker.js');
       void import('./pages/QuranHabit.js');
@@ -81,7 +86,7 @@ export default function App() {
     }
     const t = setTimeout(prefetch, 2500); // Safari has no requestIdleCallback
     return () => clearTimeout(t);
-  }, []);
+  }, [hasUser]);
 
   // Daily-reset listeners registered once; route changes also trigger a check below.
   useEffect(() => {
@@ -369,10 +374,7 @@ export default function App() {
   // client-side routing takes over from the pre-rendered HTML. Deliberately
   // excludes the bare `/prayer-times` and `/qibla` paths (the live, on-device
   // tracker pages), which keep the normal app chrome.
-  const isSeoPage =
-    /^\/(bn\/|ar\/)?(prayer-times\/|qibla\/|ramadan-calendar(\/|$)|duas(\/|$)|adhkar\/|hijri-date-converter|asma-ul-husna|zakat-calculator)/.test(
-      location.pathname
-    );
+  const isSeoPage = isSeoPagePath(location.pathname);
   // The admin panel (AdminProtected, above) has its OWN chrome — AdminLayout
   // — and must never render underneath the main app's Navbar/Footer/
   // DemoBanner/GenderGate. This is the actual fix for a real incident: the

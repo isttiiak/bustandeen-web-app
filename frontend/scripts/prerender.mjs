@@ -37,8 +37,53 @@ if (!existsSync(ssrEntryPath)) {
   process.exit(1);
 }
 
-const baseHtml = readFileSync(baseHtmlPath, 'utf-8');
+const appShellHtml = readFileSync(baseHtmlPath, 'utf-8');
 const ssr = await import('file://' + ssrEntryPath.replace(/\\/g, '/'));
+
+// ── The static entry (audit PERF-01) ────────────────────────────────────────
+// Every page written here loads src/static-entry.ts instead of the app's
+// entry: the app's <script type="module"> and its <link rel="modulepreload">
+// tags are swapped for the static entry and the chunks it imports. The
+// stylesheet (Tailwind + fonts) stays: the pages use the same classes.
+const manifestPath = join(DIST, '.vite', 'manifest.json');
+if (!existsSync(manifestPath)) {
+  console.error('dist/.vite/manifest.json not found — vite.config.ts must set build.manifest.');
+  process.exit(1);
+}
+const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
+const staticEntry = manifest['src/static-entry.ts'];
+if (!staticEntry?.isEntry) {
+  console.error('prerender: src/static-entry.ts is not a build entry (vite.config.ts input).');
+  process.exit(1);
+}
+function staticImports(key, seen = new Set()) {
+  for (const imp of manifest[key]?.imports ?? []) {
+    if (seen.has(imp)) continue;
+    seen.add(imp);
+    staticImports(imp, seen);
+  }
+  return seen;
+}
+const staticTags = [
+  `<script type="module" crossorigin src="/${staticEntry.file}"></script>`,
+  ...[...staticImports('src/static-entry.ts')].map(
+    (k) => `<link rel="modulepreload" crossorigin href="/${manifest[k].file}">`
+  ),
+].join('\n    ');
+const appEntryTags =
+  /<script type="module" crossorigin src="\/assets\/main-[^"]+\.js"><\/script>(\s*<link rel="modulepreload" crossorigin href="[^"]+">)*/;
+if (!appEntryTags.test(appShellHtml)) {
+  console.error("prerender: the app entry's <script> tag was not found in app-shell.html");
+  process.exit(1);
+}
+const baseHtml = appShellHtml.replace(appEntryTags, staticTags);
+
+/** The data src/seo/entry-client.tsx renders from, for the pages that need it. */
+function clientDataTag(client) {
+  if (!client) return '';
+  const json = JSON.stringify(client).replace(/</g, '\\u003c');
+  return `<script type="application/json" id="seo-page">${json}</script>`;
+}
 
 const LANGS = ['en', 'bn', 'ar'];
 const OG_LOCALE = { en: 'en_US', bn: 'bn_BD', ar: 'ar_SA' };
@@ -89,7 +134,7 @@ function escapeAttr(s) {
   return escapeHtml(s);
 }
 
-function buildPageHtml({ lang, title, description, path, bodyHtml }) {
+function buildPageHtml({ lang, title, description, path, bodyHtml, client }) {
   const dir = RTL.has(lang) ? ' dir="rtl"' : '';
   const url = `${SITE_URL}${path}`;
   const safeTitle = escapeHtml(title);
@@ -147,7 +192,10 @@ function buildPageHtml({ lang, title, description, path, bodyHtml }) {
     `    <meta name="robots" content="index, follow" />\n    ${hreflangLinks}\n    ${xDefault}\n  </head>`
   );
 
-  html = html.replace('<div id="root"></div>', `<div id="root">${bodyHtml}</div>`);
+  html = html.replace(
+    '<div id="root"></div>',
+    `<div id="root">${bodyHtml}</div>${clientDataTag(client)}`
+  );
 
   return html;
 }
@@ -228,9 +276,10 @@ for (const { kind, params } of routes) {
       html: bodyHtml,
       title,
       description,
+      client,
     } = ssr.renderRoute({ route: ssrRoute, lang, buildDate: BUILD_DATE });
     const path = routePath(kind, params, lang);
-    const pageHtml = buildPageHtml({ lang, title, description, path, bodyHtml });
+    const pageHtml = buildPageHtml({ lang, title, description, path, bodyHtml, client });
     writePage(path, pageHtml);
 
     if (lang === 'en') {
@@ -289,7 +338,7 @@ function sitemapXml(entries, dated) {
 }
 
 const staticPages = [
-  { path: '/', priority: '1.0' },
+  { path: '/', priority: '1.0', alternates: { en: '/', bn: '/bn' } },
   { path: '/zikr', priority: '0.9' },
   { path: '/salat', priority: '0.9' },
   { path: '/prayer-times', priority: '0.9' },
@@ -332,36 +381,77 @@ writeFileSync(join(DIST, 'sitemap.xml'), sitemapIndex);
 
 console.error(`Wrote sitemap-index.xml + ${Object.keys(sitemapFiles).length} category sitemaps.`);
 
-// ── Prerendered landing page: / ─────────────────────────────────────────
-// Written INTO dist/index.html, which Vercel serves for `/` (audit SEO-01).
-// Every other app route is rewritten to dist/app-shell.html (an untouched
-// copy of the shell made during the vite build, see vite.config.ts), so no
-// other page ever shows this content. Runs last: everything above cloned the
-// empty shell (`baseHtml`, read before this point).
-const landing = ssr.renderLanding();
-const knownSlugs = new Set(ssr.CITIES.map((c) => c.slug));
-const missingSlugs = landing.citySlugs.filter((s) => !knownSlugs.has(s));
-if (missingSlugs.length > 0) {
-  console.error(`prerender: landing links to unknown city pages: ${missingSlugs.join(', ')}`);
-  process.exit(1);
-}
-// FAQPage JSON-LD goes in <head>, outside #root, so it survives the React app
-// replacing the prerendered body.
-const faqJsonLd = JSON.stringify({
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: landing.faq.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
-  })),
-}).replace(/</g, '\u003c');
+// ── Prerendered landing: / and /bn ──────────────────────────────────────
+// `/` is written INTO dist/index.html, which Vercel serves for `/` (audit
+// SEO-01); `/bn` is the same page in Bangla. Since PERF-01 this is the whole
+// landing for signed-out visitors: the app is not loaded on it. Every other
+// app route is rewritten to dist/app-shell.html (an untouched copy of the
+// shell made during the vite build, see vite.config.ts), so no other page
+// ever shows this content. Runs last: everything above cloned the empty shell.
 if (!baseHtml.includes('<div id="root"></div>')) {
   console.error('prerender: dist/index.html has no empty <div id="root"></div> to fill');
   process.exit(1);
 }
-const landingHtml = baseHtml
-  .replace('<div id="root"></div>', `<div id="root">${landing.html}</div>`)
-  .replace('</head>', `    <script type="application/ld+json">${faqJsonLd}</script>\n  </head>`);
-writeFileSync(join(DIST, 'index.html'), landingHtml);
-console.error('Wrote the prerendered landing page into index.html.');
+const knownSlugs = new Set(ssr.CITIES.map((c) => c.slug));
+const landingAlternates = [
+  `<link rel="alternate" hreflang="en" href="${SITE_URL}/" />`,
+  `<link rel="alternate" hreflang="bn" href="${SITE_URL}/bn" />`,
+  `<link rel="alternate" hreflang="x-default" href="${SITE_URL}/" />`,
+].join('\n    ');
+for (const lang of ['en', 'bn']) {
+  const landing = ssr.renderLanding(lang);
+  const missingSlugs = landing.citySlugs.filter((s) => !knownSlugs.has(s));
+  if (missingSlugs.length > 0) {
+    console.error(`prerender: landing links to unknown city pages: ${missingSlugs.join(', ')}`);
+    process.exit(1);
+  }
+  // FAQPage JSON-LD goes in <head>, outside #root, so it survives the app
+  // replacing the prerendered body for a signed-in visitor.
+  const faqJsonLd = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: landing.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  }).replace(/</g, '\u003c');
+  let html = baseHtml
+    .replace('<div id="root"></div>', `<div id="root">${landing.html}</div>`)
+    .replace(
+      '</head>',
+      `    ${landingAlternates}\n    <script type="application/ld+json">${faqJsonLd}</script>\n  </head>`
+    );
+  if (lang === 'bn') {
+    const title = escapeHtml(landing.title);
+    const desc = escapeAttr(landing.description);
+    const url = `${SITE_URL}/bn`;
+    html = html
+      .replace(
+        '<html lang="en" data-theme="bustandeen">',
+        '<html lang="bn" data-theme="bustandeen">'
+      )
+      .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
+      .replace(
+        /<meta\s+name="description"[\s\S]*?\/>/,
+        `<meta name="description" content="${desc}" />`
+      )
+      .replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${url}" />`)
+      .replace(
+        /<meta property="og:url" content="[^"]*" \/>/,
+        `<meta property="og:url" content="${url}" />`
+      )
+      .replace(
+        /<meta property="og:description" content="[^"]*" \/>/,
+        `<meta property="og:description" content="${desc}" />`
+      )
+      .replace(
+        /<meta property="og:locale" content="[^"]*" \/>/,
+        '<meta property="og:locale" content="bn_BD" />'
+      );
+    writePage('/bn', html);
+  } else {
+    writeFileSync(join(DIST, 'index.html'), html);
+  }
+}
+console.error('Wrote the prerendered landing pages (/ into index.html, and /bn).');

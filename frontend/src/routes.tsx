@@ -3,7 +3,14 @@ import { lazy } from 'react';
 import { Route, Routes } from 'react-router';
 import ZikrCounter from './pages/ZikrCounter.js';
 import NotFound from './pages/NotFound.js';
-import { AdminProtected, Protected, RootRoute, ServantProtected } from './routeGuards.js';
+import {
+  AdminProtected,
+  BanglaEntry,
+  DemoEntry,
+  Protected,
+  RootRoute,
+  ServantProtected,
+} from './routeGuards.js';
 
 // Route-level code splitting — keeps each tracker's page weight off the shell
 // and Profile/Settings are large; keep them out of the initial bundle.
@@ -104,6 +111,8 @@ export default function AppRoutes({ revision }: { revision: number }) {
   return (
     <Routes key={revision}>
       <Route path="/" element={<RootRoute />} />
+      <Route path="/bn" element={<BanglaEntry />} />
+      <Route path="/demo/:as" element={<DemoEntry />} />
       <Route path="/zikr" element={<ZikrCounter />} />
       <Route path="/salat" element={<SalatTracker />} />
       <Route

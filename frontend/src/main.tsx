@@ -9,7 +9,7 @@ import {
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import App from './App.js';
-import './i18n.js';
+import { i18nReady } from './i18n.js';
 import './fonts.js';
 import './styles.css';
 import './styles/global.css';
@@ -67,25 +67,30 @@ try {
   /* ignore */
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{
-        persister,
-        maxAge: 24 * 60 * 60 * 1000,
-        // Bump to invalidate every persisted cache after a breaking shape change.
-        buster: 'v1',
-      }}
-    >
-      <BrowserRouter>
-        <ThemeInit />
-        <UiInit />
-        <ErrorBoundary>
-          <App />
-        </ErrorBoundary>
-      </BrowserRouter>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </PersistQueryClientProvider>
-  </React.StrictMode>
-);
+// After the detected language's strings have loaded (Bangla is its own chunk,
+// see i18n.ts). If that load fails, render anyway: i18next falls back to the
+// bundled English.
+const render = () =>
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      <PersistQueryClientProvider
+        client={queryClient}
+        persistOptions={{
+          persister,
+          maxAge: 24 * 60 * 60 * 1000,
+          // Bump to invalidate every persisted cache after a breaking shape change.
+          buster: 'v1',
+        }}
+      >
+        <BrowserRouter>
+          <ThemeInit />
+          <UiInit />
+          <ErrorBoundary>
+            <App />
+          </ErrorBoundary>
+        </BrowserRouter>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </PersistQueryClientProvider>
+    </React.StrictMode>
+  );
+void i18nReady.then(render, render);

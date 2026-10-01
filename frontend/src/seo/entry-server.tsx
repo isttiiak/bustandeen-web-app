@@ -13,8 +13,9 @@ import AdhkarPage from './templates/AdhkarPage.js';
 import HijriConverterPage from './templates/HijriConverterPage.js';
 import AsmaUlHusnaPage from './templates/AsmaUlHusnaPage.js';
 import ZakatCalculatorPage from './templates/ZakatCalculatorPage.js';
-import LandingPage, { enT } from './templates/LandingPage.js';
+import LandingPage, { landingT, type LandingLang } from './templates/LandingPage.js';
 import { LANDING_FAQ, POPULAR_CITY_LINKS } from '../components/LandingSeoSections.js';
+import type { SeoClientPage } from './entry-client.js';
 
 export type RouteKind =
   | { kind: 'prayer-times'; citySlug: string }
@@ -51,6 +52,10 @@ export interface RenderResult {
   html: string;
   title: string;
   description: string;
+  /** Set for the pages that depend on today's date or are interactive: what
+   * prerender.mjs embeds for src/seo/entry-client.tsx. Every other page is
+   * complete as HTML and loads no React at all. */
+  client?: SeoClientPage;
 }
 
 export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResult {
@@ -67,6 +72,7 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
         ),
         title: `${t.prayerTimes.heading(city.name)} | ${t.siteName}`,
         description: t.prayerTimes.subheading(city.name, city.country),
+        client: { kind: 'prayer-times', city },
       };
     }
     case 'qibla': {
@@ -96,6 +102,7 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
         html: renderToStaticMarkup(<RamadanCalendarIndexPage lang={lang} gregorianYear={gYear} />),
         title: `${t.ramadan.indexHeading(gYear)} | ${t.siteName}`,
         description: t.ramadan.indexSubheading,
+        client: { kind: 'ramadan-calendar-index' },
       };
     }
     case 'dua': {
@@ -128,18 +135,21 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
         html: renderToStaticMarkup(<HijriConverterPage lang={lang} buildDate={date} />),
         title: `${t.hijri.title} | ${t.siteName}`,
         description: t.hijri.subtitle,
+        client: { kind: 'hijri-converter' },
       };
     case 'asma-ul-husna':
       return {
         html: renderToStaticMarkup(<AsmaUlHusnaPage lang={lang} />),
         title: `${t.asmaUlHusna.title} | ${t.siteName}`,
         description: t.asmaUlHusna.subtitle,
+        client: { kind: 'asma-ul-husna' },
       };
     case 'zakat-calculator':
       return {
         html: renderToStaticMarkup(<ZakatCalculatorPage lang={lang} />),
         title: `${t.zakat.title} | ${t.siteName}`,
         description: t.zakat.subtitle,
+        client: { kind: 'zakat-calculator' },
       };
   }
 }
@@ -148,14 +158,19 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
  * what the script needs around it: the FAQ text for FAQPage JSON-LD in the
  * <head> (outside #root, so the React app never removes it) and the city
  * slugs the page links to, which the script checks against the dataset. */
-export function renderLanding(): {
+export function renderLanding(lang: LandingLang = 'en'): {
   html: string;
+  title: string;
+  description: string;
   faq: { q: string; a: string }[];
   citySlugs: string[];
 } {
+  const t = landingT(lang);
   return {
-    html: renderToStaticMarkup(<LandingPage />),
-    faq: LANDING_FAQ.map(({ q, a }) => ({ q: enT(q[0], q[1]), a: enT(a[0], a[1]) })),
+    html: renderToStaticMarkup(<LandingPage lang={lang} />),
+    title: t('landing.seoTitle', 'Bustandeen - Nourish Your Deen'),
+    description: t('landing.seoDescription', ''),
+    faq: LANDING_FAQ.map(({ q, a }) => ({ q: t(q[0], q[1]), a: t(a[0], a[1]) })),
     citySlugs: POPULAR_CITY_LINKS.map((c) => c.slug),
   };
 }

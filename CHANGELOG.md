@@ -2,6 +2,29 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.79.0 - Faster first visits - 2026-10-02
+
+### Changed
+
+- **The landing page and the 13,000 prayer-time, Qibla, Ramadan, duʿā and tool pages no longer load the app** (audit PERF-01). They used to download and start the whole app (about 520 KB of compressed JavaScript, Firebase and the animation library included) just to show a page that was already complete. Now they load a 0.6 KB script; the pages that change with the date or are interactive (today's prayer times, the Hijri converter, the zakat calculator, the Names of Allah, the Ramadan calendar list) render their own template again with React only.
+- **For visitors who are not signed in, the landing is now the static page**, with the same hero, features, cities, tools and FAQ, plus the "Explore as Brother / Sister" demo links. Signed-in visitors still get their Home at once.
+- **A Bangla landing at `/bn`**, linked from the English one ("বাংলা") and back ("English"). A visitor who chose Bangla is taken to it from `/`.
+- Google Analytics' script now loads on the first tap, key or scroll, or once the page is idle, so it no longer competes with the page itself.
+- Sign-in no longer loads Google's sign-in frame on every page; it loads when someone signs in with Google.
+- The Bangla strings load only when Bangla is used, so English visitors download about 77 KB less.
+- Home no longer jumps when it loads: the footer stays below the screen until the page is there (layout shift 0.278).
+- Visitors who are not signed in no longer download the Salat, Quran, Fasting and Prayer-times pages in the background.
+
+### Changed (developers)
+
+- New `src/static-entry.ts` (second Vite input; `build.manifest`), `src/seo/entry-client.tsx`, `src/seo/staticPaths.ts` (shared by the app, the static entry and the SW). `prerender.mjs` swaps the app's entry tags for the static entry, embeds `<script type="application/json" id="seo-page">` for the pages that render, and writes `/bn`. `check-csp.mjs` skips JSON data scripts and also checks `/bn`.
+- App routes `/demo/:as` (the landing's demo links) and `/bn` (switches to Bangla when the app answers it, e.g. offline).
+- Service worker: SEO pages and `/bn` network-first (`static-pages`), falling back to the app shell offline.
+- `firebase.ts`: `initializeAuth` with `getAuth()`'s persistences and no popup resolver; `signInWithPopup` passes `browserPopupRedirectResolver`.
+- Chunks by module path: `react/jsx-runtime` had landed in the `motion` chunk, so every component needed framer-motion. React Router is its own chunk.
+- `index.html`'s inline script also sends a signed-out Bangla visitor of `/` to `/bn` (CSP hash updated). Fixed the landing FAQ JSON-LD escaping (`'<'`).
+- e2e: `static-pages.spec.ts` (no app chunks on the landing and SEO pages, the app for a signed-in visitor, the Bangla landing and language memory, an interactive SEO page); the demo helpers click links.
+
 ## v5.77.1 - Where the database lives - 2026-10-02
 
 ### Changed

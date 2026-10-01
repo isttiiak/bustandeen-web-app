@@ -17,7 +17,7 @@ test.beforeEach(async ({ context }) => {
  * client-side navigation; a reload drops back to the landing page. */
 async function enterDemo(page: Page) {
   await page.goto('/');
-  await page.getByRole('button', { name: /Explore as Brother/ }).click();
+  await page.getByRole('link', { name: /Explore as Brother/ }).click();
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 

@@ -175,18 +175,39 @@ export default defineConfig({
   ],
   server: { port: 5173 },
   build: {
+    // scripts/prerender.mjs reads the manifest to find the static entry's file.
+    manifest: true,
     rollupOptions: {
+      // Two entries (audit PERF-01): the app (index.html → src/main.tsx), and
+      // src/static-entry.ts for the prerendered landing and SEO pages, which
+      // must not load the app.
+      input: {
+        main: 'index.html',
+        static: 'src/static-entry.ts',
+      },
       output: {
         // Split the heaviest dependencies into their own long-cacheable chunks
         // so a small app change doesn't re-download all of them.
-        manualChunks: {
+        // By module path, not package name: by name, `react/jsx-runtime` (a
+        // CommonJS proxy) was not matched and ended up in `motion`, so every
+        // component, the SEO pages' too, needed the framer-motion chunk
+        // (audit PERF-01).
+        manualChunks(id) {
+          // Vite gives module ids with forward slashes on every OS.
+          if (!id.includes('/node_modules/')) return undefined;
           // React changes far less often than our code — keeping it separate
-          // means an app deploy doesn't invalidate it. It landed back in the
-          // main bundle when the recharts chunk was removed, which is what
-          // pushed index past the 500 kB warning.
-          'react-vendor': ['react', 'react-dom', 'react-router'],
-          firebase: ['firebase/app', 'firebase/auth', 'firebase/storage'],
-          motion: ['framer-motion'],
+          // means an app deploy doesn't invalidate it.
+          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(id)) {
+            return 'react-vendor';
+          }
+          // Apart from React so the SEO pages that render (seo/entry-client)
+          // don't download the router too.
+          if (/\/node_modules\/react-router\//.test(id)) return 'router';
+          if (/\/node_modules\/(firebase|@firebase|idb)\//.test(id)) return 'firebase';
+          if (/\/node_modules\/(framer-motion|motion-dom|motion-utils)\//.test(id)) {
+            return 'motion';
+          }
+          return undefined;
         },
       },
     },

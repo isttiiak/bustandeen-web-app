@@ -1,8 +1,7 @@
-﻿import i18n from 'i18next';
+﻿import i18n, { type BackendModule, type ResourceKey } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import en from './locales/en/common.json';
-import bn from './locales/bn/common.json';
 
 /**
  * Multilingual support (v4.11.0) — English default + বাংলা.
@@ -21,14 +20,41 @@ export const LANGUAGES = [
   { id: 'bn', label: 'বাংলা (Bengali)' },
 ] as const;
 
-void i18n
+/**
+ * English is bundled: it is the fallback for every language (the admin and
+ * Naseeh strings exist only in English). The Bangla strings (about 380 KB)
+ * load as their own chunk, only when Bangla is used (audit PERF-01).
+ */
+const lazyLocales: BackendModule = {
+  type: 'backend',
+  init() {},
+  read(lng, _ns, callback) {
+    if (lng !== 'bn') {
+      callback(null, {});
+      return;
+    }
+    import('./locales/bn/common.json')
+      .then((m) => callback(null, m.default as ResourceKey))
+      .catch((err: Error) => callback(err, false));
+  },
+};
+
+/** Resolves once the detected language's strings are loaded; main.tsx waits
+ * for it before the first render, so no screen shows raw keys or English
+ * first. */
+export const i18nReady = i18n
   .use(LanguageDetector)
+  .use(lazyLocales)
   .use(initReactI18next)
   .init({
     resources: {
       en: { common: en },
-      bn: { common: bn },
     },
+    // Use the bundled English and fetch the rest through lazyLocales.
+    partialBundledLanguages: true,
+    // A language switch keeps showing the current language until the new
+    // one has loaded, instead of suspending the page.
+    react: { useSuspense: false },
     defaultNS: 'common',
     fallbackLng: 'en',
     // escapeValue: false — React escapes already. i18next ships a built-in

@@ -70,11 +70,13 @@
 
     <!-- Before first paint: the theme (no flash), and a "has-session" class for
          signed-in visitors so the prerendered landing page in index.html
-         (scripts/prerender.mjs) never flashes before their Home loads.
+         (scripts/prerender.mjs) never flashes before their Home loads. A
+         signed-out visitor whose language is Bangla goes from / to /bn, the
+         Bangla landing (audit PERF-01).
          Kept on ONE line: its sha256 is allow-listed in the CSP in
          /vercel.json, and scripts/check-csp.mjs fails the build if the two
          drift apart. -->
-    <script>try{var d=document.documentElement;d.setAttribute("data-theme",localStorage.getItem("bustandeen_theme")||"bustandeen");if(localStorage.getItem("bustandeen_idToken"))d.classList.add("has-session")}catch(e){}</script>
+    <script>try{var d=document.documentElement,s=localStorage;d.setAttribute("data-theme",s.getItem("bustandeen_theme")||"bustandeen");if(s.getItem("bustandeen_idToken"))d.classList.add("has-session");else if(location.pathname==="/"&&s.getItem("bustandeen_lang")==="bn")location.replace("/bn")}catch(e){}</script>
     <style>.has-session [data-prerendered-landing]{display:none}</style>
   </head>
   <body>
