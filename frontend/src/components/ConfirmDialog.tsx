@@ -32,12 +32,16 @@ export default function ConfirmDialog({
     <AnimatePresence>
       {open && (
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm grid place-items-center p-4"
           onClick={onCancel}
         >
           <motion.div
-            initial={{ scale: 0.94, y: 8 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.94, y: 8 }}
+            initial={{ scale: 0.94, y: 8 }}
+            animate={{ scale: 1, y: 0 }}
+            exit={{ scale: 0.94, y: 8 }}
             transition={{ type: 'spring', damping: 24 }}
             className="w-full max-w-xs rounded-2xl bg-brand-deep border border-red-400/25 p-5 text-center"
             onClick={(e) => e.stopPropagation()}
@@ -48,7 +52,10 @@ export default function ConfirmDialog({
             <h3 className="text-white font-black text-base">{title}</h3>
             <p className="text-white/50 text-xs mt-1.5 leading-relaxed">{message}</p>
             <div className="flex gap-2 mt-4">
-              <button className="flex-1 btn btn-sm rounded-xl bg-white/5 border-brand-emerald/10 text-white/70" onClick={onCancel}>
+              <button
+                className="flex-1 btn btn-sm rounded-xl bg-white/5 border-brand-emerald/10 text-white/70"
+                onClick={onCancel}
+              >
                 {t('common.cancel')}
               </button>
               <button
@@ -62,6 +69,6 @@ export default function ConfirmDialog({
         </motion.div>
       )}
     </AnimatePresence>,
-    document.body,
+    document.body
   );
 }

@@ -29,7 +29,12 @@ export interface FridayHourState {
   countdown: string;
 }
 
-const IDLE: FridayHourState = { active: false, isFinalStretch: false, msToMaghrib: 0, countdown: '' };
+const IDLE: FridayHourState = {
+  active: false,
+  isFinalStretch: false,
+  msToMaghrib: 0,
+  countdown: '',
+};
 
 /** Minutes before Maghrib treated as the "final stretch". */
 const FINAL_STRETCH_MIN = 60;
@@ -49,7 +54,7 @@ function fmt(ms: number): string {
 export function getFridayHour(
   asr: Date | undefined,
   maghrib: Date | undefined,
-  now: Date = new Date(),
+  now: Date = new Date()
 ): FridayHourState {
   if (!asr || !maghrib) return IDLE;
   if (now.getDay() !== 5) return IDLE; // 5 = Friday

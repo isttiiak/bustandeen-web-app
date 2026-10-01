@@ -30,7 +30,12 @@ router.get('/summary', requireAuth, validate(fastingSummarySchema), fastingContr
 router.get('/history', requireAuth, validate(fastingHistorySchema), fastingController.getHistory);
 
 // PATCH /api/fasting/profile — qada owed / kaffarah settings
-router.patch('/profile', requireAuth, validate(updateFastingProfileSchema), fastingController.updateProfile);
+router.patch(
+  '/profile',
+  requireAuth,
+  validate(updateFastingProfileSchema),
+  fastingController.updateProfile
+);
 
 // Nadhr vows
 router.post('/vows', requireAuth, validate(addVowSchema), fastingController.addVow);

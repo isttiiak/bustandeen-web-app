@@ -1,0 +1,6 @@
+# Formatting-only commits that `git blame` should skip. GitHub reads this
+# file automatically; locally run once:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+
+# style: format the whole repo with Prettier (one-shot), audit T2.9, v5.73.1
+80c8a522baf7465be7048712828457b0c38d62bb

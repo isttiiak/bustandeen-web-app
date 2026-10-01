@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.73.1 - One code style everywhere - 2026-10-01
+
+### Notes (developers)
+
+- **The whole repo is formatted with Prettier** (audit T2.9 / BE-03) in one formatting-only commit, listed in `.git-blame-ignore-revs` so `git blame` skips it (GitHub does this automatically; locally run `git config blame.ignoreRevsFile .git-blame-ignore-revs` once).
+- CI now runs `npm run format:check`.
+- `.gitattributes` checks text files out with LF on every machine, matching Prettier's `endOfLine: lf` (no content change: the repository already stored LF). Before this, a Windows checkout made every file look unformatted.
+- `frontend/index.html` is excluded from Prettier: its inline theme script is CSP-hashed, and reformatting it would break the hash.
+
 ## v5.73.0 - Who handles your data, in one place - 2026-10-01
 
 ### Added

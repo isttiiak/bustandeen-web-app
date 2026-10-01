@@ -36,7 +36,8 @@ const pages = [
   'frontend/dist/bn/duas/index.html',
 ].filter((p) => existsSync(join(root, p)));
 
-const inlineScript = /<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>([\s\S]*?)<\/script>/g;
+const inlineScript =
+  /<script(?![^>]*\bsrc=)(?![^>]*type="application\/ld\+json")[^>]*>([\s\S]*?)<\/script>/g;
 const missing = new Map();
 
 for (const page of pages) {

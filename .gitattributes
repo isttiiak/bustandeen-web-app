@@ -1,4 +1,8 @@
-# Vitest writes snapshot files with LF line endings. Without this, Git on
-# Windows (core.autocrlf=true) checks them out as CRLF and every test run
-# leaves them looking modified.
+# Check text files out with LF everywhere, matching Prettier's endOfLine: lf
+# (audit T2.9). Without this, Git on Windows (core.autocrlf=true) writes CRLF
+# and `npm run format:check` reports every file. Binary files are detected by
+# text=auto and left alone.
+* text=auto eol=lf
+
+# Vitest snapshots (kept explicit; covered by the rule above).
 *.snap text eol=lf

@@ -54,7 +54,10 @@ const VARIANTS: Record<BackgroundVariant, VariantColors> = {
   },
 };
 
-export default function AnimatedBackground({ children, variant = 'default' }: AnimatedBackgroundProps) {
+export default function AnimatedBackground({
+  children,
+  variant = 'default',
+}: AnimatedBackgroundProps) {
   const colors = VARIANTS[variant] ?? VARIANTS.default;
 
   return (

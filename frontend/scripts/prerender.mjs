@@ -31,7 +31,9 @@ if (!existsSync(baseHtmlPath)) {
 }
 const ssrEntryPath = join(ROOT, 'dist-ssr', 'entry-server.js');
 if (!existsSync(ssrEntryPath)) {
-  console.error('dist-ssr/entry-server.js not found — run `vite build --config vite.ssr.config.ts` first.');
+  console.error(
+    'dist-ssr/entry-server.js not found — run `vite build --config vite.ssr.config.ts` first.'
+  );
   process.exit(1);
 }
 
@@ -77,7 +79,11 @@ function routePath(kind, params, lang) {
 }
 
 function escapeHtml(s) {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 function escapeAttr(s) {
   return escapeHtml(s);
@@ -132,10 +138,14 @@ function buildPageHtml({ lang, title, description, path, bodyHtml }) {
   // hreflang alternates — Google's recommended mechanism (over sitemap
   // annotations). x-default points at the English (unprefixed) URL.
   const hreflangLinks = LANGS.map(
-    (l) => `<link rel="alternate" hreflang="${l}" href="${SITE_URL}${path.replace(/^\/(bn|ar)/, '').replace(/^/, langPrefix(l))}" />`
+    (l) =>
+      `<link rel="alternate" hreflang="${l}" href="${SITE_URL}${path.replace(/^\/(bn|ar)/, '').replace(/^/, langPrefix(l))}" />`
   ).join('\n    ');
   const xDefault = `<link rel="alternate" hreflang="x-default" href="${SITE_URL}${path.replace(/^\/(bn|ar)/, '')}" />`;
-  html = html.replace('</head>', `    <meta name="robots" content="index, follow" />\n    ${hreflangLinks}\n    ${xDefault}\n  </head>`);
+  html = html.replace(
+    '</head>',
+    `    <meta name="robots" content="index, follow" />\n    ${hreflangLinks}\n    ${xDefault}\n  </head>`
+  );
 
   html = html.replace('<div id="root"></div>', `<div id="root">${bodyHtml}</div>`);
 
@@ -157,7 +167,10 @@ for (const city of ssr.CITIES) {
 const hijriYear = ssr.currentRamadanHijriYear();
 const gregorianYear = ssr.ramadanGregorianYear(hijriYear);
 for (const city of ssr.CITIES) {
-  routes.push({ kind: 'ramadan-calendar', params: { citySlug: city.slug, hijriYear, gregorianYear } });
+  routes.push({
+    kind: 'ramadan-calendar',
+    params: { citySlug: city.slug, hijriYear, gregorianYear },
+  });
 }
 routes.push({ kind: 'ramadan-calendar-index', params: {} });
 for (const duaId of ssr.DUA_IDS) {
@@ -170,7 +183,9 @@ routes.push({ kind: 'hijri-converter', params: {} });
 routes.push({ kind: 'asma-ul-husna', params: {} });
 routes.push({ kind: 'zakat-calculator', params: {} });
 
-console.error(`Prerendering ${routes.length} routes × ${LANGS.length} languages = ${routes.length * LANGS.length} pages...`);
+console.error(
+  `Prerendering ${routes.length} routes × ${LANGS.length} languages = ${routes.length * LANGS.length} pages...`
+);
 
 const sitemapEntries = {
   pages: [],
@@ -209,7 +224,11 @@ for (const { kind, params } of routes) {
               ? { kind }
               : { kind, citySlug: params.citySlug };
 
-    const { html: bodyHtml, title, description } = ssr.renderRoute({ route: ssrRoute, lang, buildDate: BUILD_DATE });
+    const {
+      html: bodyHtml,
+      title,
+      description,
+    } = ssr.renderRoute({ route: ssrRoute, lang, buildDate: BUILD_DATE });
     const path = routePath(kind, params, lang);
     const pageHtml = buildPageHtml({ lang, title, description, path, bodyHtml });
     writePage(path, pageHtml);
@@ -232,7 +251,9 @@ for (const { kind, params } of routes) {
     count++;
   }
   if (count % 2000 < LANGS.length) {
-    process.stdout.write(`  ...${count}/${routes.length * LANGS.length} (${Math.round((Date.now() - start) / 1000)}s)\n`);
+    process.stdout.write(
+      `  ...${count}/${routes.length * LANGS.length} (${Math.round((Date.now() - start) / 1000)}s)\n`
+    );
   }
 }
 console.error(`Wrote ${count} pages in ${Math.round((Date.now() - start) / 1000)}s.`);
@@ -247,7 +268,9 @@ const DATED_SITEMAPS = new Set(['sitemap-prayer-times.xml', 'sitemap-ramadan.xml
 function urlXml(path, entry, dated) {
   const links = entry.alternates
     ? Object.entries(entry.alternates)
-        .map(([l, p]) => `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}${p}"/>`)
+        .map(
+          ([l, p]) => `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}${p}"/>`
+        )
         .join('') +
       `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${entry.alternates.en}"/>`
     : '';
@@ -258,7 +281,9 @@ function urlXml(path, entry, dated) {
 }
 function sitemapXml(entries, dated) {
   const urls = entries
-    .flatMap((e) => (e.alternates ? Object.values(e.alternates) : [e.path]).map((p) => urlXml(p, e, dated)))
+    .flatMap((e) =>
+      (e.alternates ? Object.values(e.alternates) : [e.path]).map((p) => urlXml(p, e, dated))
+    )
     .join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>\n`;
 }
@@ -295,7 +320,10 @@ for (const [filename, entries] of Object.entries(sitemapFiles)) {
 const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${Object.keys(
   sitemapFiles
 )
-  .map((f) => `  <sitemap>\n    <loc>${SITE_URL}/${f}</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`)
+  .map(
+    (f) =>
+      `  <sitemap>\n    <loc>${SITE_URL}/${f}</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`
+  )
   .join('\n')}\n</sitemapindex>\n`;
 writeFileSync(join(DIST, 'sitemap-index.xml'), sitemapIndex);
 // Keep the old /sitemap.xml URL alive as an alias to the new index, in case
