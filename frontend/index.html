@@ -3,17 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Arabic reading fonts (free, display=swap): Amiri = muṣḥaf calligraphy,
-         Scheherazade New = traditional naskh. The default "clean" option uses
-         system fonts and needs no download. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <!-- crossorigin: without it, libraries that read stylesheet.cssRules to
-         embed fonts into a canvas capture (html-to-image, for the shareable
-         āyah card) hit a SecurityError on this cross-origin sheet and silently
-         fall back to a system font. Google Fonts serves CORS headers on both
-         the CSS and the font files, so this costs nothing. -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=El+Messiri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Scheherazade+New:wght@400;500&display=swap" rel="stylesheet" crossorigin="anonymous" />
+    <!-- Fonts are self-hosted and bundled with the app (src/fonts.ts):
+         no request to Google Fonts. -->
     <title>Bustandeen - Nourish Your Deen</title>
     <meta
       name="description"

@@ -135,15 +135,16 @@ qibla, ramadan, duas, adhkar, utilities. Also `robots.txt` and `llms.txt`.
 
 ## 6. Third parties the browser talks to
 
-| Origin                                                 | Why                                                                  |
-| ------------------------------------------------------ | -------------------------------------------------------------------- |
-| Firebase (`*.googleapis.com`, auth domain, Storage)    | Sign-in, profile photos                                              |
-| `www.googletagmanager.com`, `www.google-analytics.com` | GA4 page views (audit PRIV-01)                                       |
-| `fonts.googleapis.com`, `fonts.gstatic.com`            | Web fonts (audit PWA-03)                                             |
-| `api.alquran.cloud`                                    | Quran text                                                           |
-| `cdn.islamic.network`, `server1x.mp3quran.net`         | Quran audio                                                          |
-| `nominatim.openstreetmap.org`                          | Reverse/forward geocoding in the location picker (**sends lat/lon**) |
-| `flagcdn.com`                                          | Country flags on Friends / Profile                                   |
+| Origin                                                 | Why                                                                                        |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| Firebase (`*.googleapis.com`, auth domain, Storage)    | Sign-in, profile photos                                                                    |
+| `www.googletagmanager.com`, `www.google-analytics.com` | GA4 page views (audit PRIV-01)                                                             |
+| `api.alquran.cloud`                                    | Quran text                                                                                 |
+| `cdn.islamic.network`, `server1x.mp3quran.net`         | Quran audio                                                                                |
+| `nominatim.openstreetmap.org`                          | Place names, only if the user picks OpenStreetMap (location rounded to ~1 km, audit T1.10) |
+| `flagcdn.com`                                          | Country flags on Friends / Profile                                                         |
+
+Fonts are self-hosted (`frontend/src/fonts.ts`, audit T2.7); no font requests leave the site.
 
 The backend talks to MongoDB Atlas, Firebase Admin, api.quran.com (tafsir proxy), Groq (Naseeh AI, English only; cycle data is
 never sent) and Zoho SMTP.

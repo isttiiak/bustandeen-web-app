@@ -10,6 +10,7 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import App from './App.js';
 import './i18n.js';
+import './fonts.js';
 import './styles.css';
 import './styles/global.css';
 import ThemeInit from './components/ThemeInit.js';

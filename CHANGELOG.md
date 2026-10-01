@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.70.0 - Our own fonts, and a Bangla one - 2026-10-01
+
+### Changed
+
+- **Fonts now come with the app instead of from Google** (audit T2.7). Opening Bustandeen no longer contacts Google Fonts, text keeps its look offline once a page has been seen, and the browser downloads only the scripts a page actually uses (Latin, Arabic or Bangla).
+- **Bangla has its own typeface, Hind Siliguri**, instead of whatever font the phone happened to have. English keeps Plus Jakarta Sans and El Messiri; Arabic keeps Amiri and Scheherazade New.
+- Privacy page (English and Bangla): fonts are part of the app, so loading them contacts no one.
+
+### Notes
+
+- `src/fonts.ts` imports the Fontsource subsets: Plus Jakarta Sans and El Messiri (Latin + Latin Extended, for transliterations like Ṣaḥīḥ), Amiri and Scheherazade New (Arabic only), Hind Siliguri (Bengali only), same weights as before. 20 woff2 files, 844 KB in all, none precached: the service worker caches them as pages use them (`fonts-v2`) and deletes the old Google Fonts cache.
+- Removed the Google Fonts preconnects and stylesheet from `index.html` and `fonts.googleapis.com` / `fonts.gstatic.com` from the CSP (`vercel.json`). `docs/README.md` third-party table updated (and its stale Nominatim row corrected).
+- New e2e check: Latin, Arabic and Bangla faces load, all from the site itself.
+
 ## v5.69.0 - A proper app install - 2026-10-01
 
 ### Changed
