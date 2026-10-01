@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.76.0 - A lighter Fasting tracker - 2026-10-01
+
+### Changed (developers)
+
+- **FastingTracker split** (audit T2.4, part 3): 2,029 → 979 lines. Moved verbatim into `components/fasting/`: `fastingParts.tsx` (date helpers, `RefLink`, `ManageProgress`, status/category labels), `RamadanQadaWarning`, `FastingMonthCalendar`, `FastingWeekStrip`, `FastingProgressChips`, `FastingLearn`, `FastingTypeSheet`, `FastingSettingsSheet`, `FastingMakruhModal`, `FastingGuestDialog`.
+- Verified as a pure move: the full visible text of `/fasting` (frozen clock, calendar, learn panel, manage, type sheet and logging a fast) is identical before and after.
+
 ## v5.75.0 - Every reference shows again, and a lighter Salat tracker - 2026-10-01
 
 ### Fixed
