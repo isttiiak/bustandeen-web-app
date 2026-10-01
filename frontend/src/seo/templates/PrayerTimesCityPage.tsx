@@ -3,6 +3,7 @@ import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd, faqJsonLd } from '../components/JsonLd.js';
 import { computePrayerTimes, formatTimeInZone } from '../utils/calc.js';
+import { countryName } from '../../utils/countryDefaults.js';
 
 const LOCALE_BY_LANG: Record<SeoLang, string> = { en: 'en-US', bn: 'bn-BD', ar: 'ar-SA' };
 
@@ -12,14 +13,16 @@ interface Props {
   buildDate: Date;
 }
 
-const PRAYER_ROWS: {
-  key: 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
-  icon: string;
-}[] = [
+type RowKey = 'fajr' | 'sunrise' | 'dhuhr' | 'asrStandard' | 'asrHanafi' | 'maghrib' | 'isha';
+
+// ʿAṣr appears twice, once per school: a time that disagrees with the local
+// mosque is the fastest way to lose trust (audit SEO-04 / FIQH-01).
+const PRAYER_ROWS: { key: RowKey; icon: string }[] = [
   { key: 'fajr', icon: '🌅' },
   { key: 'sunrise', icon: '🌄' },
   { key: 'dhuhr', icon: '☀️' },
-  { key: 'asr', icon: '🌤️' },
+  { key: 'asrStandard', icon: '🌤️' },
+  { key: 'asrHanafi', icon: '🌤️' },
   { key: 'maghrib', icon: '🌆' },
   { key: 'isha', icon: '🌙' },
 ];
@@ -27,7 +30,17 @@ const PRAYER_ROWS: {
 export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
   const t = CHROME[lang];
   const locale = LOCALE_BY_LANG[lang];
-  const times = computePrayerTimes(city.lat, city.lng, buildDate);
+  const times = computePrayerTimes(city.lat, city.lng, buildDate, city.countryCode);
+  const localCountry = countryName(city.countryCode, locale);
+  const rowLabel = (key: RowKey) =>
+    key === 'asrStandard'
+      ? t.prayerTimes.asrStandardLabel
+      : key === 'asrHanafi'
+        ? t.prayerTimes.asrHanafiLabel
+        : t.prayerTimes.prayerNames[key];
+  const isUsualAsr = (key: RowKey) =>
+    (key === 'asrStandard' && times.asrSchool === 'standard') ||
+    (key === 'asrHanafi' && times.asrSchool === 'hanafi');
   const dateStr = new Intl.DateTimeFormat(locale, {
     year: 'numeric',
     month: 'long',
@@ -59,19 +72,28 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
 
       <div className="mt-6 rounded-2xl border border-[#1e2d42] bg-[#0d1520] divide-y divide-[#1e2d42] overflow-hidden">
         {PRAYER_ROWS.map(({ key, icon }) => (
-          <div key={key} className="flex items-center justify-between px-4 py-3">
-            <span className="flex items-center gap-2 text-[#f1f5f9] font-semibold capitalize">
-              <span aria-hidden>{icon}</span> {key}
+          <div key={key} className="flex items-center justify-between gap-3 px-4 py-3">
+            <span className="flex flex-wrap items-center gap-x-2 gap-y-1 min-w-0 text-[#f1f5f9] font-semibold">
+              <span className="whitespace-nowrap">
+                <span aria-hidden>{icon}</span> {rowLabel(key)}
+              </span>
+              {isUsualAsr(key) && (
+                <span className="whitespace-nowrap text-[10px] font-semibold text-[#f59e0b] border border-[#f59e0b]/40 rounded-full px-2 py-0.5">
+                  {t.prayerTimes.usualBadge}
+                </span>
+              )}
             </span>
-            <span className="text-[#10b981] font-black tabular-nums">
+            <span className="shrink-0 whitespace-nowrap text-[#10b981] font-black tabular-nums">
               {formatTimeInZone(times[key], city.timezone, locale)}
             </span>
           </div>
         ))}
       </div>
 
-      <p className="text-xs text-[#94a3b8] mt-3">{t.prayerTimes.methodNote}</p>
-      <p className="text-xs text-[#94a3b8] mt-1">{t.prayerTimes.hanafiAsrNote}</p>
+      <p className="text-xs text-[#94a3b8] mt-3">
+        {t.prayerTimes.methodNote(t.prayerTimes.methodNames[times.method], localCountry)}
+      </p>
+      <p className="text-xs text-[#94a3b8] mt-1">{t.prayerTimes.asrNote}</p>
 
       <a
         href="https://bustandeen.com/prayer-times"

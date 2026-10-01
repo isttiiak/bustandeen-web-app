@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 import PrayerTimeSettings from '../components/PrayerTimeSettings.js';
+import PrayerDefaultsSuggestion from '../components/PrayerDefaultsSuggestion.js';
 import LocationPicker from '../components/LocationPicker.js';
 import {
   MapPinIcon,
@@ -521,6 +522,9 @@ export default function PrayerTimes() {
   const [times, setTimes] = useState<PrayerTimesResult | null>(null);
   const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
+  // Bumped when the calc method / ʿAṣr school may have changed (settings
+  // drawer closed, suggestion accepted) so the timetable recomputes at once.
+  const [settingsRev, setSettingsRev] = useState(0);
   const [sourcesExpanded, setSourcesExpanded] = useState(false);
 
   // 60-second tick for timeline active/past states — the live clock has its
@@ -535,7 +539,7 @@ export default function PrayerTimes() {
     if (!location) return;
     setTimes(calcPrayerTimes(location.latitude, location.longitude, now));
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, [location, now.toDateString()]);
+  }, [location, now.toDateString(), settingsRev]);
 
   const saveLocation = useCallback((loc: StoredLocation) => {
     setLocation(loc);
@@ -605,10 +609,15 @@ export default function PrayerTimes() {
 
           <PrayerTimeSettings
             open={showSettings}
-            onClose={() => setShowSettings(false)}
+            onClose={() => {
+              setShowSettings(false);
+              setSettingsRev((r) => r + 1);
+            }}
             location={location}
             onLocationChange={saveLocation}
           />
+
+          {location && <PrayerDefaultsSuggestion onChange={() => setSettingsRev((r) => r + 1)} />}
 
           {/* First-run prompt — no location saved yet. Once set, changing it
               lives in Prayer time settings (⚙️ above), not inline here. */}

@@ -11,34 +11,53 @@
 //
 // utils/qibla.ts has no such dependency and is reused as-is.
 import * as adhan from 'adhan';
+import {
+  prayerDefaultsForCountry,
+  type AsrSchool,
+  type CalcMethodId,
+} from '../../utils/countryDefaults.js';
 
 export interface PrayerTimesResult {
   fajr: Date;
   sunrise: Date;
   dhuhr: Date;
+  /** ʿAṣr in the school most mosques in this country follow (`asrSchool`). */
   asr: Date;
+  /** Both schools, so a page can show the two ʿAṣr times side by side. */
+  asrStandard: Date;
+  asrHanafi: Date;
   maghrib: Date;
   isha: Date;
+  /** The method and ʿAṣr school used: the country's usual convention
+   * (utils/countryDefaults.ts), the same default a new app user there gets. */
+  method: CalcMethodId;
+  asrSchool: AsrSchool;
 }
 
-// Matches DEFAULT_CALC_METHOD / DEFAULT_ASR_MADHAB in utils/salatPrefs.ts —
-// what a fresh install of the app shows before any settings change, so the
-// static page matches the in-app default on first load.
 export function computePrayerTimes(
   lat: number,
   lng: number,
-  date: Date = new Date()
+  date: Date = new Date(),
+  countryCode?: string
 ): PrayerTimesResult {
+  const { method, asr: asrSchool } = prayerDefaultsForCountry(countryCode);
   const coords = new adhan.Coordinates(lat, lng);
-  const params = adhan.CalculationMethod.MoonsightingCommittee();
-  const times = new adhan.PrayerTimes(coords, date, params);
+  const standardParams = adhan.CalculationMethod[method]();
+  const hanafiParams = adhan.CalculationMethod[method]();
+  hanafiParams.madhab = adhan.Madhab.Hanafi;
+  const standard = new adhan.PrayerTimes(coords, date, standardParams);
+  const hanafi = new adhan.PrayerTimes(coords, date, hanafiParams);
   return {
-    fajr: times.fajr,
-    sunrise: times.sunrise,
-    dhuhr: times.dhuhr,
-    asr: times.asr,
-    maghrib: times.maghrib,
-    isha: times.isha,
+    fajr: standard.fajr,
+    sunrise: standard.sunrise,
+    dhuhr: standard.dhuhr,
+    asr: asrSchool === 'hanafi' ? hanafi.asr : standard.asr,
+    asrStandard: standard.asr,
+    asrHanafi: hanafi.asr,
+    maghrib: standard.maghrib,
+    isha: standard.isha,
+    method,
+    asrSchool,
   };
 }
 

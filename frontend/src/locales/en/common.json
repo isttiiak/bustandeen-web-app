@@ -1273,6 +1273,14 @@
     "musafirDesc": "Travelling? Shortened and joined prayers, the travel duʿās and every concession with its hadith."
   },
   "prayerTimes": {
+    "defaults": {
+      "title": "Times used in {{country}}",
+      "body": "Most mosques in {{country}} use the {{method}} method with {{asr}}. You are using {{currentMethod}} with {{currentAsr}}. Follow your local mosque.",
+      "accept": "Use the usual times",
+      "keep": "Keep mine",
+      "asrHanafi": "Ḥanafī ʿAṣr",
+      "asrStandard": "standard ʿAṣr"
+    },
     "seoTitle": "Prayer Times — Accurate Salat Times for Your Location",
     "seoDescription": "On-device prayer time calculator for Fajr, Dhuhr, Asr, Maghrib and Isha, with multiple calculation methods, Hanafi/standard Asr settings and a live countdown.",
     "after": "After",
@@ -2304,6 +2312,7 @@
     "journeyTabTitle": "Your Journey"
   },
   "salatSettings": {
+    "usualIn": "Usual in {{country}}",
     "asrDesc": "Madhabs differ on when ʿAṣr begins. Because Ẓuhr lasts until ʿAṣr starts, this moves both. Follow your local mosque.",
     "asrTitle": "🕌 ʿAṣr timing (madhab)",
     "autoCountDesc": "When on, tapping Tasbīḥ or Ayatul Kursi below adds the counts straight to your dhikr counter. Turn it off to just mark them as done — use Tasbih mode on the Zikr counter to count them yourself instead.",
