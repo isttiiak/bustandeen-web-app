@@ -37,6 +37,11 @@ self.skipWaiting();
 clientsClaim();
 
 cleanupOutdatedCaches();
+
+// The Google Fonts cache from before fonts were self-hosted (v5.70.0).
+self.addEventListener('activate', (event) => {
+  event.waitUntil(caches.delete('fonts'));
+});
 precacheAndRoute(self.__WB_MANIFEST);
 
 // SPA offline routing: serve the cached app shell for any navigation that
@@ -69,12 +74,16 @@ registerRoute(
   })
 );
 
-// Google Fonts stylesheets + woff2 (Arabic reading faces)
+// Self-hosted fonts (src/fonts.ts). Not precached: the browser fetches only
+// the faces and scripts a page actually uses (each @font-face has a
+// unicode-range), and the file names are content-hashed, so cache-first is
+// safe and they work offline once seen.
 registerRoute(
-  ({ url }) =>
-    url.origin === 'https://fonts.googleapis.com' || url.origin === 'https://fonts.gstatic.com',
+  ({ url, request }) =>
+    url.origin === self.location.origin &&
+    (request.destination === 'font' || url.pathname.endsWith('.woff2')),
   new CacheFirst({
-    cacheName: 'fonts',
+    cacheName: 'fonts-v2',
     plugins: [
       new ExpirationPlugin({ maxEntries: 30, maxAgeSeconds: 365 * 24 * 60 * 60 }),
       new CacheableResponsePlugin({ statuses: [0, 200] }),

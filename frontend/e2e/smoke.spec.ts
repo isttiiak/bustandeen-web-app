@@ -104,6 +104,31 @@ test('a prayer logged offline is queued, then synced on reconnect', async ({ pag
   await expect.poll(() => outbox(page), { timeout: 10_000 }).toEqual([]);
 });
 
+test('fonts are self-hosted: Latin, Arabic and Bangla faces load from the site itself', async ({
+  page,
+}) => {
+  const fontHosts = new Set<string>();
+  page.on('request', (r) => {
+    if (r.resourceType() === 'font') fontHosts.add(new URL(r.url()).host);
+  });
+  await enterDemo(page);
+  await go(page, '/zikr'); // English UI + Arabic dhikr text
+  const loaded = await page.evaluate(async () => {
+    await Promise.all([
+      document.fonts.load('16px "Plus Jakarta Sans"', 'Bustandeen'),
+      document.fonts.load('16px "Amiri"', 'سبحان الله'),
+      document.fonts.load('16px "Hind Siliguri"', 'বুস্তানদীন'),
+    ]);
+    return {
+      latin: document.fonts.check('16px "Plus Jakarta Sans"', 'Bustandeen'),
+      arabic: document.fonts.check('16px "Amiri"', 'سبحان الله'),
+      bangla: document.fonts.check('16px "Hind Siliguri"', 'বুস্তানদীন'),
+    };
+  });
+  expect(loaded).toEqual({ latin: true, arabic: true, bangla: true });
+  expect([...fontHosts]).toEqual(['localhost:4173']);
+});
+
 test('the manifest is installable-rich and every asset it lists exists', async ({ request }) => {
   const manifest = (await (await request.get('/manifest.webmanifest')).json()) as {
     id: string;
