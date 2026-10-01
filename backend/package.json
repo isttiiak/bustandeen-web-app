@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.62.1",
+  "version": "5.65.0",
   "private": true,
   "type": "module",
   "scripts": {

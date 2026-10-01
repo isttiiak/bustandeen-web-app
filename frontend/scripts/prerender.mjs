@@ -21,9 +21,12 @@ const DIST = join(ROOT, 'dist');
 const SITE_URL = 'https://bustandeen.com';
 const BUILD_DATE = new Date().toISOString();
 
-const baseHtmlPath = join(DIST, 'index.html');
+// The untouched shell (vite.config.ts appShellCopy). Not index.html: this
+// script writes the prerendered landing INTO index.html at the end, so reading
+// it would make a second run clone the landing into every page.
+const baseHtmlPath = join(DIST, 'app-shell.html');
 if (!existsSync(baseHtmlPath)) {
-  console.error('dist/index.html not found — run `vite build` before prerender.mjs.');
+  console.error('dist/app-shell.html not found — run `vite build` before prerender.mjs.');
   process.exit(1);
 }
 const ssrEntryPath = join(ROOT, 'dist-ssr', 'entry-server.js');
@@ -212,8 +215,12 @@ for (const { kind, params } of routes) {
     writePage(path, pageHtml);
 
     if (lang === 'en') {
+      // One entry per page, listed in every language with hreflang
+      // alternates (until 2026-10 only the English URLs were listed, so none
+      // of the Bangla or Arabic pages were in any sitemap).
       sitemapEntries[sitemapBucket(kind)].push({
         path,
+        alternates: Object.fromEntries(LANGS.map((l) => [l, routePath(kind, params, l)])),
         priority:
           kind === 'duas-index' || kind === 'ramadan-calendar-index'
             ? '0.5'
@@ -232,11 +239,28 @@ console.error(`Wrote ${count} pages in ${Math.round((Date.now() - start) / 1000)
 
 // ── Sitemaps ─────────────────────────────────────────────────────────────
 const today = new Date().toISOString().slice(0, 10);
-function sitemapXml(entries) {
+// <lastmod> only where the content really changes with each build (today's
+// prayer times, the Ramadan calendar for the coming year). Google ignores
+// lastmod across a site once it proves inaccurate, and the duʿā, adhkār,
+// Qibla and tool pages do not change from one deploy to the next.
+const DATED_SITEMAPS = new Set(['sitemap-prayer-times.xml', 'sitemap-ramadan.xml']);
+function urlXml(path, entry, dated) {
+  const links = entry.alternates
+    ? Object.entries(entry.alternates)
+        .map(([l, p]) => `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${SITE_URL}${p}"/>`)
+        .join('') +
+      `\n    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}${entry.alternates.en}"/>`
+    : '';
+  const lastmod = dated ? `\n    <lastmod>${today}</lastmod>` : '';
+  // Order follows the sitemap schema: loc, lastmod, priority, then the
+  // xhtml:link extension elements.
+  return `  <url>\n    <loc>${SITE_URL}${path}</loc>${lastmod}\n    <priority>${entry.priority}</priority>${links}\n  </url>`;
+}
+function sitemapXml(entries, dated) {
   const urls = entries
-    .map((e) => `  <url>\n    <loc>${SITE_URL}${e.path}</loc>\n    <lastmod>${today}</lastmod>\n    <priority>${e.priority}</priority>\n  </url>`)
+    .flatMap((e) => (e.alternates ? Object.values(e.alternates) : [e.path]).map((p) => urlXml(p, e, dated)))
     .join('\n');
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls}\n</urlset>\n`;
 }
 
 const staticPages = [
@@ -265,7 +289,7 @@ const sitemapFiles = {
 };
 
 for (const [filename, entries] of Object.entries(sitemapFiles)) {
-  writeFileSync(join(DIST, filename), sitemapXml(entries));
+  writeFileSync(join(DIST, filename), sitemapXml(entries, DATED_SITEMAPS.has(filename)));
 }
 
 const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${Object.keys(
@@ -279,3 +303,37 @@ writeFileSync(join(DIST, 'sitemap-index.xml'), sitemapIndex);
 writeFileSync(join(DIST, 'sitemap.xml'), sitemapIndex);
 
 console.error(`Wrote sitemap-index.xml + ${Object.keys(sitemapFiles).length} category sitemaps.`);
+
+// ── Prerendered landing page: / ─────────────────────────────────────────
+// Written INTO dist/index.html, which Vercel serves for `/` (audit SEO-01).
+// Every other app route is rewritten to dist/app-shell.html (an untouched
+// copy of the shell made during the vite build, see vite.config.ts), so no
+// other page ever shows this content. Runs last: everything above cloned the
+// empty shell (`baseHtml`, read before this point).
+const landing = ssr.renderLanding();
+const knownSlugs = new Set(ssr.CITIES.map((c) => c.slug));
+const missingSlugs = landing.citySlugs.filter((s) => !knownSlugs.has(s));
+if (missingSlugs.length > 0) {
+  console.error(`prerender: landing links to unknown city pages: ${missingSlugs.join(', ')}`);
+  process.exit(1);
+}
+// FAQPage JSON-LD goes in <head>, outside #root, so it survives the React app
+// replacing the prerendered body.
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: landing.faq.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+}).replace(/</g, '\u003c');
+if (!baseHtml.includes('<div id="root"></div>')) {
+  console.error('prerender: dist/index.html has no empty <div id="root"></div> to fill');
+  process.exit(1);
+}
+const landingHtml = baseHtml
+  .replace('<div id="root"></div>', `<div id="root">${landing.html}</div>`)
+  .replace('</head>', `    <script type="application/ld+json">${faqJsonLd}</script>\n  </head>`);
+writeFileSync(join(DIST, 'index.html'), landingHtml);
+console.error('Wrote the prerendered landing page into index.html.');

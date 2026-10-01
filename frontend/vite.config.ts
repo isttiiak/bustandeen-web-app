@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -10,12 +10,37 @@ const rootPkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.u
   version: string;
 };
 
+/**
+ * Emits `app-shell.html`: an exact copy of the built index.html, before the
+ * service-worker precache manifest is generated (so it is precached).
+ *
+ * Why two files (audit SEO-01): scripts/prerender.mjs writes the prerendered
+ * landing page INTO dist/index.html, so `/` has real content for search
+ * engines and first-time visitors. Every other app route must still get the
+ * EMPTY shell (or it would flash the landing page), so /vercel.json's
+ * catch-all rewrite and the SW's offline navigation fallback both point at
+ * app-shell.html instead.
+ */
+function appShellCopy(): Plugin {
+  return {
+    name: 'bustandeen:app-shell-copy',
+    apply: 'build',
+    enforce: 'post',
+    generateBundle(_options, bundle) {
+      const index = bundle['index.html'];
+      if (!index || index.type !== 'asset') return;
+      this.emitFile({ type: 'asset', fileName: 'app-shell.html', source: index.source });
+    },
+  };
+}
+
 export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(rootPkg.version),
   },
   plugins: [
     react(),
+    appShellCopy(),
     // v4.10.0 — installable PWA: precached app shell + offline-tolerant
     // runtime caching. The API stays network-only (worship data must never be
     // stale-served); the free Quran text CDN and fonts cache aggressively.

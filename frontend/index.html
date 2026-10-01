@@ -77,10 +77,14 @@
     }
     </script>
 
-    <!-- Theme before first paint (no flash). Kept on ONE line: its sha256 is
-         allow-listed in the CSP in /vercel.json, and scripts/check-csp.mjs
-         fails the build if the two drift apart. -->
-    <script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("bustandeen_theme")||"bustandeen")}catch(e){}</script>
+    <!-- Before first paint: the theme (no flash), and a "has-session" class for
+         signed-in visitors so the prerendered landing page in index.html
+         (scripts/prerender.mjs) never flashes before their Home loads.
+         Kept on ONE line: its sha256 is allow-listed in the CSP in
+         /vercel.json, and scripts/check-csp.mjs fails the build if the two
+         drift apart. -->
+    <script>try{var d=document.documentElement;d.setAttribute("data-theme",localStorage.getItem("bustandeen_theme")||"bustandeen");if(localStorage.getItem("bustandeen_idToken"))d.classList.add("has-session")}catch(e){}</script>
+    <style>.has-session [data-prerendered-landing]{display:none}</style>
   </head>
   <body>
     <div id="root"></div>

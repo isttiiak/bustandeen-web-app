@@ -6,6 +6,7 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 import InstallPwaBanner from '../components/InstallPwaBanner.js';
 import { useAuthStore } from '../store/useAuthStore.js';
+import LandingSeoSections from '../components/LandingSeoSections.js';
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -302,6 +303,11 @@ export default function Landing() {
             </span>
           </Link>
         </motion.section>
+
+        {/* ── Cities, free tools, FAQ: same block as the prerendered landing ── */}
+        <div className="mb-14">
+          <LandingSeoSections t={(key, fallback) => t(key, fallback)} />
+        </div>
 
         {/* ── Final CTA ── */}
         <motion.section {...fadeUp} className="text-center pb-4">
