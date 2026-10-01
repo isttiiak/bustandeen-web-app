@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.69.0 - A proper app install - 2026-10-01
+
+### Changed
+
+- **Installing Bustandeen looks and works like a real app** (audit T2.5).
+  - A new home-screen icon made for Android's shaped icons: the crescent and star now sit fully inside any circle, squircle or rounded square, instead of the old icon whose rounded tile got cut off.
+  - **Shortcuts**: long-press the icon for Log a prayer, Zikr counter, Prayer times and Read Quran.
+  - **Screenshots on the install sheet** (phone and desktop), so Android shows the richer install screen.
+  - The app no longer locks itself to portrait: tablets and desktop installs can rotate.
+  - A stable app id, so an installed app stays the same app if its start page ever changes.
+
+### Notes
+
+- `scripts/generate-pwa-icons.mjs` (`npm run pwa:icons`) renders the maskable and shortcut icons from the favicon's mark and fails if the mark leaves the 80% safe zone.
+- `scripts/capture-pwa-screenshots.mjs` (`npm run pwa:screenshots`, after a build) captures the screenshots from the production build in demo mode, with a sample Dhaka location and third-party requests blocked. They live in `public/screenshots/` and are excluded from the service-worker precache.
+- New e2e check: the manifest has the new fields and every icon and screenshot it lists is served.
+
 ## v5.68.0 - Every tracker works offline - 2026-10-01
 
 ### Added
