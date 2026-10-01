@@ -12,14 +12,22 @@ import {
   sessionsSchema,
 } from '../validation/zikr.schemas.js';
 import { submitZikrRequestSchema } from '../validation/zikrRequest.schemas.js';
+import { idempotent } from '../middleware/idempotency.js';
 
 const router = Router();
 
-router.post('/increment', requireAuth, validate(incrementSchema), zikrController.incrementHandler);
+router.post(
+  '/increment',
+  requireAuth,
+  validate(incrementSchema),
+  idempotent(),
+  zikrController.incrementHandler
+);
 router.post(
   '/increment/batch',
   requireAuth,
   validate(batchIncrementSchema),
+  idempotent(),
   zikrController.batchIncrementHandler
 );
 router.get('/summary', requireAuth, zikrController.getSummaryHandler);

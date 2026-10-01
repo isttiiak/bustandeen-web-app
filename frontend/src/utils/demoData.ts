@@ -249,6 +249,10 @@ function buildCycleSummary() {
   return {
     ok: true,
     active: null,
+    // Every field the Rayhanah page reads must exist here: a missing
+    // partnerSync crashed the demo for sisters before v5.68.0.
+    partnerSync: { enabled: false, partnerUid: null },
+    pregnancy: { active: false, dueDate: null, weeksAlong: null },
     prediction: {
       nextStart: dateStr(-15), // 15 days from now
       avgCycleDays: 28,

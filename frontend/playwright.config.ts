@@ -17,6 +17,8 @@ export default defineConfig({
   workers: isCI ? 2 : undefined,
   reporter: isCI ? [['github'], ['list']] : 'list',
   timeout: 30_000,
+  // Generous for a cold production build under parallel load.
+  expect: { timeout: 10_000 },
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: 'retain-on-failure',

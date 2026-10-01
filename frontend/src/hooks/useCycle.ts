@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import api from '../lib/api.js';
+import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 
@@ -68,17 +69,29 @@ export function useCycleActive(): CycleActive | null {
   return data?.active ?? null;
 }
 
+// Offline (audit T2.3): Rayhanah writes are queued on this device
+// (utils/syncOutbox.ts) and sync when the connection returns. Start, end and a
+// past episode carry an op id the server dedupes (it never stores their
+// responses); a day note merges per date, so flow then mood both survive.
+const cycleOfflineToast = () =>
+  toast("You're offline. Saved on this device, it will sync when you're back online.", {
+    icon: '📶',
+    id: 'cycle-offline',
+  });
+
+const errorMessage = (err: unknown) =>
+  (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+
 export function useStartCycle() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (vars: { date: string; type: 'hayd' | 'nifas' }) => {
-      const { data } = await api.post('/api/cycle/start', vars);
-      return data;
-    },
+    networkMode: 'always',
+    mutationFn: (vars: { date: string; type: 'hayd' | 'nifas' }) =>
+      sendOrQueue({ tracker: 'cycle', method: 'post', url: '/api/cycle/start', body: vars }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      toast.error(msg ?? 'Could not save — try again.', { id: 'cycle-start' });
+      if (err instanceof OfflineQueuedError) return cycleOfflineToast();
+      toast.error(errorMessage(err) ?? 'Could not save — try again.', { id: 'cycle-start' });
     },
   });
 }
@@ -86,14 +99,13 @@ export function useStartCycle() {
 export function useEndCycle() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (vars: { date: string }) => {
-      const { data } = await api.post('/api/cycle/end', vars);
-      return data;
-    },
+    networkMode: 'always',
+    mutationFn: (vars: { date: string }) =>
+      sendOrQueue({ tracker: 'cycle', method: 'post', url: '/api/cycle/end', body: vars }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      toast.error(msg ?? 'Could not save — try again.', { id: 'cycle-end' });
+      if (err instanceof OfflineQueuedError) return cycleOfflineToast();
+      toast.error(errorMessage(err) ?? 'Could not save — try again.', { id: 'cycle-end' });
     },
   });
 }
@@ -151,17 +163,21 @@ export function useSetPregnancy() {
 export function useAddPastCycle() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (vars: { startDate: string; endDate: string; type: 'hayd' | 'nifas' }) => {
-      const { data } = await api.post('/api/cycle/logs', { ...vars, today: getTrackingDay() });
-      return data;
-    },
+    networkMode: 'always',
+    mutationFn: (vars: { startDate: string; endDate: string; type: 'hayd' | 'nifas' }) =>
+      sendOrQueue({
+        tracker: 'cycle',
+        method: 'post',
+        url: '/api/cycle/logs',
+        body: { ...vars, today: getTrackingDay() },
+      }),
     onSuccess: () => {
       toast.success('Past cycle added — predictions just got smarter 🌸', { id: 'cycle-past' });
       void qc.invalidateQueries({ queryKey: ['cycle'] });
     },
     onError: (err: unknown) => {
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      toast.error(msg ?? 'Could not add that cycle.', { id: 'cycle-past' });
+      if (err instanceof OfflineQueuedError) return cycleOfflineToast();
+      toast.error(errorMessage(err) ?? 'Could not add that cycle.', { id: 'cycle-past' });
     },
   });
 }
@@ -170,16 +186,22 @@ export function useAddPastCycle() {
 export function useUpsertCycleDay() {
   const qc = useQueryClient();
   return useMutation({
+    networkMode: 'always',
     mutationFn: async (vars: {
       date: string;
       flow?: CycleFlow | null;
       symptoms?: string[];
       moods?: CycleMood[];
       garden?: string[];
-    }) => {
-      const { data } = await api.put('/api/cycle/day', vars);
-      return data;
-    },
+    }) =>
+      sendOrQueue({
+        tracker: 'cycle',
+        method: 'put',
+        url: '/api/cycle/day',
+        body: { ...vars },
+        key: `cycle:day:${vars.date}`,
+        coalesce: 'merge',
+      }),
     onMutate: async (vars) => {
       // Optimistic merge into every cached cycle summary
       await qc.cancelQueries({ queryKey: ['cycle'] });
@@ -206,11 +228,15 @@ export function useUpsertCycleDay() {
         }
       );
     },
-    onError: () => {
+    onError: (err) => {
+      if (err instanceof OfflineQueuedError) return cycleOfflineToast(); // keep the optimistic note
       toast.error('Could not save your note — try again.', { id: 'cycle-day' });
       void qc.invalidateQueries({ queryKey: ['cycle'] });
     },
-    onSettled: () => void qc.invalidateQueries({ queryKey: ['cycle', 'summary'] }),
+    onSettled: (_d, err) => {
+      if (err instanceof OfflineQueuedError) return;
+      void qc.invalidateQueries({ queryKey: ['cycle', 'summary'] });
+    },
   });
 }
 

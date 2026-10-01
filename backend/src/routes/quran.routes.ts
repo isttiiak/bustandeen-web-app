@@ -17,14 +17,21 @@ import {
   quranRangeSchema,
   quranTimeOfDaySchema,
 } from '../validation/quran.schemas.js';
+import { idempotent } from '../middleware/idempotency.js';
 
 const router = Router();
 
 // POST /api/quran/read — add pages for a day (optionally advance the bookmark)
-router.post('/read', requireAuth, validate(quranReadSchema), quranController.read);
+router.post('/read', requireAuth, validate(quranReadSchema), idempotent(), quranController.read);
 
 // POST /api/quran/read-ayat — v4 ayah engine (surah credit + khatam advance)
-router.post('/read-ayat', requireAuth, validate(quranReadAyatSchema), quranController.readAyat);
+router.post(
+  '/read-ayat',
+  requireAuth,
+  validate(quranReadAyatSchema),
+  idempotent(),
+  quranController.readAyat
+);
 
 // POST /api/quran/bookmark — toggle a saved ayah
 router.post(

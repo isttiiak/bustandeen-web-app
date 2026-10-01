@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
 import { getTrackingDay, getTrackingDayMiddayTs } from '../utils/trackingDay.js';
 import { API_BASE, getIdToken } from '../lib/api.js';
+import { newOpId } from '../utils/syncOutbox.js';
 
 const FLUSH_DELAY = 800; // ms
 const RETRY_DELAY = 20_000; // ms: retry a failed flush without waiting for another tap
@@ -67,6 +68,36 @@ export interface CustomMeaning {
   virtue?: string;
 }
 
+interface ZikrInflight {
+  opId: string;
+  body: string;
+}
+
+/** Counts not yet confirmed by the server, per type: the pending taps plus an
+ * unsent batch (when it belongs to the current tracking day). */
+export function unsyncedCounts(state: {
+  pending: Record<string, number>;
+  inflight: ZikrInflight | null;
+}): Record<string, number> {
+  const out: Record<string, number> = { ...state.pending };
+  if (state.inflight) {
+    try {
+      const body = JSON.parse(state.inflight.body) as {
+        today?: string;
+        increments?: { zikrType: string; amount: number }[];
+      };
+      if (body.today === getTrackingDay()) {
+        for (const inc of body.increments ?? []) {
+          out[inc.zikrType] = (out[inc.zikrType] ?? 0) + inc.amount;
+        }
+      }
+    } catch {
+      /* unreadable batch: nothing to add */
+    }
+  }
+  return out;
+}
+
 interface ZikrState {
   types: string[];
   selected: string;
@@ -81,6 +112,10 @@ interface ZikrState {
    * type, so a debounced flush (or a retry after being offline) still records
    * when the counting actually happened, not when the request finally went out. */
   tapSpan: Record<string, { first: number; last: number }>;
+  /** The batch currently being sent, already taken out of `pending`. It keeps
+   * one op id across retries so the server applies it once even if a response
+   * is lost (audit T2.3), and keeps the day it was counted in. Persisted. */
+  inflight: ZikrInflight | null;
   total: number;
   isFlushing: boolean;
   lastResetDate: string | null;
@@ -116,6 +151,7 @@ export const useZikrStore = create<ZikrState>()(
       pending: {},
       untimed: {},
       tapSpan: {},
+      inflight: null,
       total: 0,
       isFlushing: false,
       lastResetDate: null,
@@ -186,6 +222,7 @@ export const useZikrStore = create<ZikrState>()(
           pending: {},
           untimed: {},
           tapSpan: {},
+          inflight: null,
           lifetimeTotals: {},
           total: 0,
           selected: 'SubhanAllah',
@@ -216,9 +253,9 @@ export const useZikrStore = create<ZikrState>()(
           }, {});
           set({ total: data.totalCount ?? 0, lifetimeTotals: lt });
           // Sync TODAY's counts from the DB so every browser/device agrees.
-          // Local unflushed pending deltas are layered on top.
+          // Local unconfirmed deltas (pending + an unsent batch) are layered on top.
           if (data.today?.perType) {
-            const pending = get().pending;
+            const pending = unsyncedCounts(get());
             const counts: Record<string, number> = {};
             const typeNames = new Set([
               ...Object.keys(data.today.perType),
@@ -347,13 +384,6 @@ export const useZikrStore = create<ZikrState>()(
         // Prevent concurrent flushes
         if (get().isFlushing) return;
 
-        // Snapshot pending at this moment — any taps during the request stay safe
-        const snapshot = { ...get().pending };
-        const untimedSnap = { ...get().untimed };
-        const spanSnap = { ...get().tapSpan };
-        const entries = Object.entries(snapshot).filter(([, a]) => a !== 0);
-        if (!entries.length) return;
-
         // During page unload there's no time for Firebase's async token
         // refresh (`getIdToken()`) to complete before the page is torn
         // down — read the last cached token synchronously instead.
@@ -362,55 +392,51 @@ export const useZikrStore = create<ZikrState>()(
           : await getIdToken();
         if (!idToken) return;
 
-        const resolvedOffset = get().timezoneOffset ?? SESSION_TZ_OFFSET;
-        // Anchor every increment INSIDE the current tracking day (midday ts):
-        // with the Fajr boundary, a 1 AM tap belongs to the CLOSING day's
-        // bucket — Date.now() would land it in the next civil day.
-        const anchorTs = getTrackingDayMiddayTs();
-        const flushedAt = Date.now();
-        const payload = entries.map(([zikrType, amount]) => {
-          const span = spanSnap[zikrType];
-          return {
-            zikrType,
-            amount,
-            ts: anchorTs,
-            // Real wall-clock moment of the LAST tap (for time-of-day/session
-            // analytics): `ts` above is anchored to the tracking day's midday
-            // and can't tell us when during the day this actually happened.
-            // Not the flush time, since a retry after being offline, or a
-            // debounced flush after a long run of taps, would misplace it.
-            realTs: Math.min(span?.last ?? flushedAt, flushedAt),
-            startTs: span?.first,
-            untimedAmount: untimedSnap[zikrType] ?? 0,
-            timezoneOffset: resolvedOffset,
-          };
-        });
+        // A batch from an earlier attempt goes first, unchanged (same op id,
+        // same day), so the server can recognise a repeat.
+        let batch = get().inflight;
+        if (!batch) {
+          const snapshot = { ...get().pending };
+          const untimedSnap = { ...get().untimed };
+          const spanSnap = { ...get().tapSpan };
+          const entries = Object.entries(snapshot).filter(([, a]) => a !== 0);
+          if (!entries.length) return;
 
-        set({ isFlushing: true });
-        try {
-          const res = await fetch(`${API_BASE}/api/zikr/increment/batch`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
+          const resolvedOffset = get().timezoneOffset ?? SESSION_TZ_OFFSET;
+          // Anchor every increment INSIDE the current tracking day (midday ts):
+          // with the Fajr boundary, a 1 AM tap belongs to the CLOSING day's
+          // bucket — Date.now() would land it in the next civil day.
+          const anchorTs = getTrackingDayMiddayTs();
+          const flushedAt = Date.now();
+          const payload = entries.map(([zikrType, amount]) => {
+            const span = spanSnap[zikrType];
+            return {
+              zikrType,
+              amount,
+              ts: anchorTs,
+              // Real wall-clock moment of the LAST tap (for time-of-day/session
+              // analytics): `ts` above is anchored to the tracking day's midday
+              // and can't tell us when during the day this actually happened.
+              // Not the flush time, since a retry after being offline, or a
+              // debounced flush after a long run of taps, would misplace it.
+              realTs: Math.min(span?.last ?? flushedAt, flushedAt),
+              startTs: span?.first,
+              untimedAmount: untimedSnap[zikrType] ?? 0,
+              timezoneOffset: resolvedOffset,
+            };
+          });
+          batch = {
+            opId: newOpId(),
             body: JSON.stringify({
               increments: payload,
               timezoneOffset: resolvedOffset,
               today: getTrackingDay(),
             }),
-            // Lets the request survive page unload — a plain fetch would be
-            // cancelled the instant the tab closes/navigates away.
-            keepalive: opts?.keepalive,
-          });
-
-          if (!res.ok) {
-            // Keep pending intact — counts will be retried on next flush
-            console.warn(`Batch flush returned ${res.status} — pending preserved for retry`);
-            scheduleRetry();
-            return;
-          }
-
-          // Only subtract the amounts we confirmed were saved (not everything —
-          // user may have tapped during the request). No clamping: pending can
-          // legitimately be negative (queued decrements).
+          };
+          // Move the batch out of `pending` (no clamping: pending can be
+          // negative, i.e. queued decrements). Taps from here on start a new
+          // batch; a day rollover that clears `pending` cannot touch this one.
+          const sent = batch;
           set((s) => {
             const newPending = { ...s.pending };
             const newUntimed = { ...s.untimed };
@@ -418,28 +444,67 @@ export const useZikrStore = create<ZikrState>()(
             for (const [type, amount] of entries) {
               newPending[type] = (newPending[type] ?? 0) - amount;
               newUntimed[type] = (newUntimed[type] ?? 0) - (untimedSnap[type] ?? 0);
-              // Keep the span only if more taps arrived while the request was
-              // in flight; those start where the flushed run ended.
-              const flushedLast = spanSnap[type]?.last;
+              // Keep the span only if more taps arrived after the snapshot;
+              // those start where the batched run ended.
+              const batchedLast = spanSnap[type]?.last;
               const cur = newSpan[type];
-              if (cur && flushedLast !== undefined && cur.last > flushedLast) {
+              if (cur && batchedLast !== undefined && cur.last > batchedLast) {
                 newSpan[type] = { first: cur.last, last: cur.last };
               } else {
                 delete newSpan[type];
               }
             }
-            // A type whose taps and corrections cancelled out (pending 0) has
-            // nothing left to time.
+            for (const type of Object.keys(newPending)) {
+              if (!newPending[type]) delete newPending[type];
+            }
             for (const type of Object.keys(newSpan)) {
               if (!newPending[type]) delete newSpan[type];
             }
-            return { pending: newPending, untimed: newUntimed, tapSpan: newSpan };
+            return { pending: newPending, untimed: newUntimed, tapSpan: newSpan, inflight: sent };
           });
+        }
+
+        set({ isFlushing: true });
+        let delivered = false;
+        try {
+          const res = await fetch(`${API_BASE}/api/zikr/increment/batch`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${idToken}`,
+              'X-Client-Op-Id': batch.opId,
+            },
+            body: batch.body,
+            // Lets the request survive page unload — a plain fetch would be
+            // cancelled the instant the tab closes/navigates away.
+            keepalive: opts?.keepalive,
+          });
+
+          if (res.ok) {
+            delivered = true;
+          } else if (res.status === 400) {
+            // The server will never accept this batch; holding it would block
+            // every later count.
+            console.warn('Zikr batch rejected (400) — dropped');
+            delivered = true;
+          } else {
+            // 401/409/429/5xx: keep the batch (same op id) and try again.
+            console.warn(`Batch flush returned ${res.status} — batch kept for retry`);
+            scheduleRetry();
+          }
         } catch (e) {
-          console.error('Flush error — pending preserved:', e);
+          console.error('Flush error — batch kept for retry:', e);
           scheduleRetry();
         } finally {
           set({ isFlushing: false });
+        }
+
+        if (delivered) {
+          set((s) => (s.inflight?.opId === batch.opId ? { inflight: null } : {}));
+          // Taps made while this batch was in the air go out next.
+          if (!opts?.keepalive && Object.values(get().pending).some((a) => a !== 0)) {
+            void get().flush();
+          }
         }
       },
     }),
@@ -454,6 +519,7 @@ export const useZikrStore = create<ZikrState>()(
         pending: state.pending,
         untimed: state.untimed,
         tapSpan: state.tapSpan,
+        inflight: state.inflight,
         total: state.total,
         lastResetDate: state.lastResetDate,
         customMeanings: state.customMeanings,

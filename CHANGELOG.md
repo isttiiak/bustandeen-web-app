@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.68.0 - Every tracker works offline - 2026-10-01
+
+### Added
+
+- **Fasting, Quran and Rayhanah now work offline, like the salat tracker.** A fast you log, the āyāt you read, a period start or end, a past cycle and your daily Rayhanah notes are saved on your device when there is no connection and sync by themselves when you are back online, even if you closed the app in between. You see a short "saved here, will sync" note instead of an error.
+- **Nothing is ever counted twice.** Each offline change carries its own id, and the server applies it once, even if the app has to send it again after a lost response. This covers your zikr counts too: a batch of taps keeps its id until the server confirms it.
+
+### Fixed
+
+- **The Rayhanah page crashed in the demo for sisters** ("Something went wrong"): the demo data was missing two fields the page reads. Both are in the demo now, and the page no longer breaks if either is ever missing.
+- Ending a period while offline still shows the ghusl steps and, in Ramadan, the qaḍāʾ prompt.
+- **An offline change can no longer replay into another account.** Offline changes are tagged with the account that made them (demo included) and only that account syncs them; a change from someone else is discarded.
+- Zikr taps waiting to sync are no longer lost or turned into a negative count when the day rolls over before they are sent.
+
+### Notes
+
+- Backend: `middleware/idempotency.ts` + `models/ClientOp.ts`. Requests with `X-Client-Op-Id` (zikr increments, Quran `read`/`read-ayat`, cycle `start`/`end`/`logs`) are applied once per user; a repeat gets the first answer (`Idempotent-Replayed: true`), an in-flight repeat gets 409, a 5xx clears the claim, and a claim stuck for over a minute counts as abandoned. The result is recorded before the response is sent (serverless instances can freeze right after). Cycle responses are never stored in the dedupe record. Requests without the header behave exactly as before.
+- **Needs `npm run sync-indexes -- --apply`** for the new `clientops` collection (unique `{uid, opId}` and a 30-day TTL). Dry run against the live database shows only those two creates. Until then, sequential repeats are still deduplicated; the unique index adds the guarantee under concurrency and the TTL the cleanup.
+- Frontend: `utils/syncOutbox.ts` (fasting, Quran, Rayhanah) next to the existing `salatOutbox.ts`; writes that carry the full state coalesce per day (`replace`), Rayhanah day notes merge (`merge`). Zikr keeps its own store but now sends a persisted `inflight` batch with a fixed op id. Both outboxes are cleared on sign-out.
+- Tests: 41 new unit tests (outbox rules, ownership, zikr batches), 11 backend tests for the dedupe, and Playwright offline tests for fasting, Quran and Rayhanah (salat was added in v5.67.0).
+
 ## v5.67.0 - A prayer logged offline is never lost - 2026-10-01
 
 ### Fixed

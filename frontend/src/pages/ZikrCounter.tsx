@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation, Trans } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { useZikrStore } from '../store/useZikrStore.js';
+import { unsyncedCounts, useZikrStore } from '../store/useZikrStore.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { useZikrTypes, useDeleteZikrType } from '../hooks/useZikrTypes.js';
@@ -297,6 +297,7 @@ export default function ZikrCounter() {
     selected,
     counts,
     pending,
+    inflight,
     isFlushing,
     customMeanings,
     selectType,
@@ -351,7 +352,10 @@ export default function ZikrCounter() {
   // We show max(local, confirmed) so the counter never appears to go backwards.
   const confirmedTotal = analyticsData?.today?.total ?? 0;
   const localTodayTotal = Object.values(counts ?? {}).reduce((a, b) => a + b, 0);
-  const pendingTotal = Object.values(pending ?? {}).reduce((a, b) => a + b, 0);
+  const pendingTotal = Object.values(unsyncedCounts({ pending: pending ?? {}, inflight })).reduce(
+    (a, b) => a + b,
+    0
+  );
   const effectiveTotal = Math.max(localTodayTotal, confirmedTotal + pendingTotal);
 
   const dailyGoal = analyticsData?.goal?.dailyTarget ?? null;
