@@ -92,5 +92,7 @@ describe('CSP report endpoint', () => {
     expect(csp).toContain("default-src 'none'");
     expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).not.toContain('groq');
+    expect(csp).not.toContain('font-src');
+    expect(csp).not.toContain('https:');
   });
 });
