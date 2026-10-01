@@ -1,7 +1,7 @@
 ﻿import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { onAuthStateChanged, sendEmailVerification } from 'firebase/auth';
 import { auth } from './firebase.js';
@@ -29,6 +29,7 @@ import AnnouncementBanner from './components/AnnouncementBanner.js';
 import NaturalLogModal from './components/ai/NaturalLogModal.js';
 import type { AuthUser } from './types/api.js';
 import { trackPageView } from './utils/analytics.js';
+import { safeRedirect } from './utils/safeRedirect.js';
 
 // `body { overflow-x: hidden }` (styles/global.css, added to stop mobile
 // horizontal bounce) makes the browser compute `overflow-y: auto` on <body>
@@ -138,24 +139,6 @@ const SeoAsmaUlHusna = lazy(() =>
 const SeoZakatCalculator = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.ZakatCalculatorRoute }))
 );
-
-/**
- * Post-sign-in redirects are read back out of sessionStorage, so they must be
- * treated as untrusted before being handed to navigate().
- *
- * Everything we WRITE is internal (location.pathname, '/zikr', `/connect/:code`
- * …), but sessionStorage is writable by anything running on the origin, and
- * react-router ≤7.17 has an open-redirect where a BACKSLASH slips past a naive
- * "starts with /" check (CVE-2025-68470 bypass, GHSA-wrjc-x8rr-h8h6). Requiring
- * a single leading slash followed by a character that is neither / nor \ closes
- * `//evil.com`, `/\evil.com` and `\\evil.com` at our own choke point — which
- * holds whichever router version is installed.
- */
-export function safeRedirect(raw: string | null | undefined): string {
-  if (!raw) return '/';
-  if (!/^\/(?![/\\])/.test(raw)) return '/';
-  return raw;
-}
 
 function RouteFallback() {
   return (

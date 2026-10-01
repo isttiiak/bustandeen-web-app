@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useTranslation, Trans } from 'react-i18next';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 

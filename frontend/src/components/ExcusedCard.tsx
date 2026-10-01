@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { translateReference } from '../utils/localeReference.js';
 
@@ -28,18 +28,44 @@ export default function ExcusedCard({ feature }: { feature: 'salat' | 'fasting' 
         <p className="text-brand-pink/80 text-sm leading-relaxed max-w-md mx-auto">{phrase}</p>
         <p className="text-white/40 text-xs leading-relaxed max-w-md mx-auto">
           {feature === 'salat' ? (
-            <>{t('excusedCard.salatExplanation')} —{' '}
-            <a className="underline" href="https://sunnah.com/muslim:335" target="_blank" rel="noreferrer">{translateReference('Ṣaḥīḥ Muslim 335', i18n.language)}</a>.</>
+            <>
+              {t('excusedCard.salatExplanation')} —{' '}
+              <a
+                className="underline"
+                href="https://sunnah.com/muslim:335"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {translateReference('Ṣaḥīḥ Muslim 335', i18n.language)}
+              </a>
+              .
+            </>
           ) : (
-            <>{t('excusedCard.fastingExplanation')} —{' '}
-            <a className="underline" href="https://sunnah.com/muslim:335" target="_blank" rel="noreferrer">{translateReference('Ṣaḥīḥ Muslim 335', i18n.language)}</a>.</>
+            <>
+              {t('excusedCard.fastingExplanation')} —{' '}
+              <a
+                className="underline"
+                href="https://sunnah.com/muslim:335"
+                target="_blank"
+                rel="noreferrer"
+              >
+                {translateReference('Ṣaḥīḥ Muslim 335', i18n.language)}
+              </a>
+              .
+            </>
           )}
         </p>
         <div className="flex flex-wrap justify-center gap-2 pt-2">
-          <Link to="/cycle" className="btn btn-sm rounded-xl border border-brand-pink/30 bg-brand-pink/15 hover:bg-brand-pink/25 text-brand-pink font-bold">
+          <Link
+            to="/cycle"
+            className="btn btn-sm rounded-xl border border-brand-pink/30 bg-brand-pink/15 hover:bg-brand-pink/25 text-brand-pink font-bold"
+          >
             {t('excusedCard.openGarden')}
           </Link>
-          <Link to="/zikr" className="btn btn-sm rounded-xl border border-brand-emerald/10 bg-white/5 hover:bg-white/10 text-white/70 font-bold">
+          <Link
+            to="/zikr"
+            className="btn btn-sm rounded-xl border border-brand-emerald/10 bg-white/5 hover:bg-white/10 text-white/70 font-bold"
+          >
             {t('excusedCard.doDhikr')}
           </Link>
         </div>

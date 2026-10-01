@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router';
 import { QueryClient } from '@tanstack/react-query';
 import {
   PersistQueryClientProvider,
@@ -77,7 +77,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         buster: 'v1',
       }}
     >
-      <BrowserRouter future={{ v7_relativeSplatPath: true }}>
+      <BrowserRouter>
         <ThemeInit />
         <UiInit />
         <ErrorBoundary>

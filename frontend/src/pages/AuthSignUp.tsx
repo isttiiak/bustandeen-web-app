@@ -8,7 +8,7 @@ import {
   AuthError,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase.js';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useTranslation } from 'react-i18next';
 import {

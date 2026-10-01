@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { translateReference } from '../utils/localeReference.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import TabNav from '../components/TabNav.js';

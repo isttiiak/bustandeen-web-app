@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
 import { XMarkIcon, MapPinIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import LocationPicker from './LocationPicker.js';
 import { useMusafir } from '../utils/musafir.js';
 import type { StoredLocation } from '../utils/geocode.js';

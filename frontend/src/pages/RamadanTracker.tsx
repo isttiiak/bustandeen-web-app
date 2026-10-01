@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
 import { useTranslation, Trans } from 'react-i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import ExcusedCard from '../components/ExcusedCard.js';

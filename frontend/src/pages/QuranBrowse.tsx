@@ -1,9 +1,14 @@
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import QuranTabNav from '../components/QuranTabNav.js';
-import { loadSurahList, surahDisplayName, surahMeaningDisplay, type SurahMeta } from '../utils/quranData.js';
+import {
+  loadSurahList,
+  surahDisplayName,
+  surahMeaningDisplay,
+  type SurahMeta,
+} from '../utils/quranData.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import { ArrowUpIcon } from '@heroicons/react/24/solid';
 
@@ -30,17 +35,26 @@ export default function QuranBrowse() {
 
   useEffect(() => {
     let alive = true;
-    loadSurahList().then((l) => { if (alive) setSurahs(l); }).catch(() => { if (alive) setError(true); });
-    return () => { alive = false; };
+    loadSurahList()
+      .then((l) => {
+        if (alive) setSurahs(l);
+      })
+      .catch(() => {
+        if (alive) setError(true);
+      });
+    return () => {
+      alive = false;
+    };
   }, []);
 
   const filtered = useMemo(() => {
     const needle = q.trim().toLowerCase();
     if (!needle) return surahs;
-    return surahs.filter((s) =>
-      s.englishName.toLowerCase().includes(needle) ||
-      s.englishNameTranslation.toLowerCase().includes(needle) ||
-      String(s.number) === needle
+    return surahs.filter(
+      (s) =>
+        s.englishName.toLowerCase().includes(needle) ||
+        s.englishNameTranslation.toLowerCase().includes(needle) ||
+        String(s.number) === needle
     );
   }, [surahs, q]);
 
@@ -64,7 +78,9 @@ export default function QuranBrowse() {
         {error ? (
           <p className="text-white/40 text-sm text-center py-8">{t('quranBrowse.loadError')}</p>
         ) : surahs.length === 0 ? (
-          <div className="grid place-items-center py-10"><span className="loading loading-spinner loading-lg text-brand-emerald" /></div>
+          <div className="grid place-items-center py-10">
+            <span className="loading loading-spinner loading-lg text-brand-emerald" />
+          </div>
         ) : (
           <div className="space-y-1.5">
             {filtered.map((s) => (
@@ -77,13 +93,24 @@ export default function QuranBrowse() {
                   {formatLocaleNumber(s.number)}
                 </span>
                 <span className="flex-1 min-w-0">
-                  <span className="block text-white font-bold text-sm">{surahDisplayName(s, i18n.language)}</span>
-                  <span className="block text-white/30 text-xs truncate">{surahMeaningDisplay(s, i18n.language)} · {formatLocaleNumber(s.numberOfAyahs)} āyāt · {s.revelationType}</span>
+                  <span className="block text-white font-bold text-sm">
+                    {surahDisplayName(s, i18n.language)}
+                  </span>
+                  <span className="block text-white/30 text-xs truncate">
+                    {surahMeaningDisplay(s, i18n.language)} · {formatLocaleNumber(s.numberOfAyahs)}{' '}
+                    āyāt · {s.revelationType}
+                  </span>
                 </span>
-                <span className="text-xl text-white/70 font-serif" dir="rtl">{s.name}</span>
+                <span className="text-xl text-white/70 font-serif" dir="rtl">
+                  {s.name}
+                </span>
               </button>
             ))}
-            {filtered.length === 0 && <p className="text-white/30 text-sm text-center py-6">{t('quranBrowse.noMatch', { query: q })}</p>}
+            {filtered.length === 0 && (
+              <p className="text-white/30 text-sm text-center py-6">
+                {t('quranBrowse.noMatch', { query: q })}
+              </p>
+            )}
           </div>
         )}
       </div>

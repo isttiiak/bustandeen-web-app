@@ -1,5 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useAuthStore } from '../store/useAuthStore.js';

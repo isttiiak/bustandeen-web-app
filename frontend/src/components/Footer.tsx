@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
 

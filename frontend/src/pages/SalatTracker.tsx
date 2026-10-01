@@ -1,5 +1,5 @@
 ﻿import { useState, useMemo, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useTranslation, Trans } from 'react-i18next';
