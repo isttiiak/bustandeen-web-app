@@ -18,6 +18,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - `scripts/generate-pwa-icons.mjs` (`npm run pwa:icons`) renders the maskable and shortcut icons from the favicon's mark and fails if the mark leaves the 80% safe zone.
 - `scripts/capture-pwa-screenshots.mjs` (`npm run pwa:screenshots`, after a build) captures the screenshots from the production build in demo mode, with a sample Dhaka location and third-party requests blocked. They live in `public/screenshots/` and are excluded from the service-worker precache.
 - New e2e check: the manifest has the new fields and every icon and screenshot it lists is served.
+
 ## v5.68.0 - Every tracker works offline - 2026-10-01
 
 ### Added
