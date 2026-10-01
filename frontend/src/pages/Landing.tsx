@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { translateReference } from '../utils/localeReference.js';

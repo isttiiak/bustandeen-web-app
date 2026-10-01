@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
 /**
@@ -30,13 +30,19 @@ export default function ReportReference({
 
   if (variant === 'card') {
     return (
-      <div className={`rounded-2xl border border-brand-emerald/10 bg-white/[0.03] px-4 py-3 ${className}`}>
+      <div
+        className={`rounded-2xl border border-brand-emerald/10 bg-white/[0.03] px-4 py-3 ${className}`}
+      >
         <p className="text-white/35 text-[11px] leading-relaxed">
           <span className="text-white/50 font-semibold">{t('reportRef.spottedMistake')}</span>{' '}
           {t('reportRef.cardBody')}{' '}
-          <Link to={to} className="text-brand-emerald/75 hover:text-brand-emerald underline underline-offset-2">
+          <Link
+            to={to}
+            className="text-brand-emerald/75 hover:text-brand-emerald underline underline-offset-2"
+          >
             {t('reportRef.tellUs')}
-          </Link>.
+          </Link>
+          .
         </p>
       </div>
     );
@@ -45,7 +51,10 @@ export default function ReportReference({
   return (
     <p className={`text-white/25 text-[11px] leading-relaxed ${className}`}>
       {t('reportRef.inlineQuestion')}{' '}
-      <Link to={to} className="text-brand-emerald/60 hover:text-brand-emerald underline underline-offset-2">
+      <Link
+        to={to}
+        className="text-brand-emerald/60 hover:text-brand-emerald underline underline-offset-2"
+      >
         {t('reportRef.reportIt')}
       </Link>
     </p>

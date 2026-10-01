@@ -2,7 +2,7 @@
 // top of the statically pre-rendered pages (see scripts/prerender.mjs).
 // Registered three times each in App.tsx — once per language prefix, with
 // `lang` passed explicitly — rather than parsing the URL prefix here.
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import { cityBySlug } from '../data/cities.js';
 import { DUAS } from '../content/duas.js';

@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.65.1 - React Router 7 and a uuid patch - 2026-10-01
+
+### Security
+
+- **React Router 6 → 7** (`react-router-dom@6` replaced by `react-router@7.18.4`). Clears both moderate advisories on v6: the backslash open redirect in `<Link>`/`useNavigate` (GHSA-wrjc-x8rr-h8h6) and the SSR hydration constructor injection (GHSA-337j-9hxr-rhxg). `npm audit --omit=dev` is now clean in the frontend.
+- **Backend `uuid` pinned to 11.1.1** through an npm `overrides` entry (GHSA-w5hq-g745-h8pq, missing bounds check in v3/v5/v6 when a buffer is passed). `uuid` only arrives through `firebase-admin@12` (Firestore/Storage/gaxios), which call nothing but `v4()`, so the bug was never reachable; the override keeps `firebase-admin` on 12 as intended and makes `npm audit --omit=dev` clean in the backend too.
+- `safeRedirect` (post-sign-in redirect guard) now also refuses control characters: browsers strip tabs and newlines from URLs, so `/\t/evil.com` would otherwise collapse into `//evil.com`.
+
+### Notes
+
+- Every `react-router-dom` import now comes from `react-router`; `BrowserRouter` lost its `v7_relativeSplatPath` future flag (it is the default in v7). No route or behaviour changes.
+- `safeRedirect` moved from `App.tsx` to `utils/safeRedirect.ts` (still used only by `App.tsx`) so it has unit tests (`safeRedirect.test.ts`).
+
 ## v5.65.0 - A home page search engines can read - 2026-10-01
 
 ### Added

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cog6ToothIcon, Bars3Icon, CheckIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';

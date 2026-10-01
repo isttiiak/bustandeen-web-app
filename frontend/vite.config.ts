@@ -104,7 +104,7 @@ export default defineConfig({
           // means an app deploy doesn't invalidate it. It landed back in the
           // main bundle when the recharts chunk was removed, which is what
           // pushed index past the 500 kB warning.
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'react-vendor': ['react', 'react-dom', 'react-router'],
           firebase: ['firebase/app', 'firebase/auth', 'firebase/storage'],
           motion: ['framer-motion'],
         },

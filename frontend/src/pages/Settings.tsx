@@ -1,7 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import i18n, { LANGUAGES } from '../i18n.js';
 import { useQueryClient } from '@tanstack/react-query';

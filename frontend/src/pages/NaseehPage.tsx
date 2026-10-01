@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import MuhasabahReport from '../components/ai/MuhasabahReport.js';
 import StreakCoaching from '../components/ai/StreakCoaching.js';

@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useQuranSummary } from '../hooks/useQuran.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
