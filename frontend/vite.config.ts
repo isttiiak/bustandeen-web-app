@@ -68,6 +68,8 @@ export default defineConfig({
       includeAssets: ['favicon.svg', 'og-image.jpg', 'robots.txt'],
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // Install-sheet screenshots are only read by the browser's install UI.
+        globIgnores: ['screenshots/**'],
       },
       manifest: {
         name: 'Bustandeen - Nourish Your Deen',
@@ -81,14 +83,91 @@ export default defineConfig({
         theme_color: '#1a1812',
         background_color: '#1a1812',
         display: 'standalone',
-        orientation: 'portrait',
+        // Audit T2.5 (PWA-01). A stable id keeps an installed app the same app
+        // if start_url ever changes. No orientation lock: tablets and desktop
+        // installs rotate freely.
+        id: '/',
         start_url: '/',
         scope: '/',
+        lang: 'en',
+        dir: 'ltr',
         categories: ['lifestyle', 'productivity'],
         icons: [
-          { src: '/pwa-192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/pwa-512.png', sizes: '512x512', type: 'image/png' },
-          { src: '/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+          { src: '/pwa-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+          { src: '/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          // Full-bleed with the mark inside the 80% safe zone, so launchers can
+          // crop to any shape (scripts/generate-pwa-icons.mjs).
+          {
+            src: '/pwa-maskable-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+          {
+            src: '/pwa-maskable-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
+        // Long-press on the home-screen icon.
+        shortcuts: [
+          {
+            name: 'Log a prayer',
+            short_name: 'Salat',
+            url: '/salat',
+            icons: [{ src: '/shortcut-96.png', sizes: '96x96', type: 'image/png' }],
+          },
+          {
+            name: 'Zikr counter',
+            short_name: 'Zikr',
+            url: '/zikr',
+            icons: [{ src: '/shortcut-96.png', sizes: '96x96', type: 'image/png' }],
+          },
+          {
+            name: 'Prayer times',
+            short_name: 'Times',
+            url: '/prayer-times',
+            icons: [{ src: '/shortcut-96.png', sizes: '96x96', type: 'image/png' }],
+          },
+          {
+            name: 'Read Quran',
+            short_name: 'Quran',
+            url: '/quran',
+            icons: [{ src: '/shortcut-96.png', sizes: '96x96', type: 'image/png' }],
+          },
+        ],
+        // Shown on Android's richer install sheet. Regenerate with
+        // scripts/capture-pwa-screenshots.mjs (demo data, no real account).
+        screenshots: [
+          {
+            src: '/screenshots/salat-narrow.webp',
+            sizes: '585x1266',
+            type: 'image/webp',
+            form_factor: 'narrow',
+            label: 'Log your five daily prayers',
+          },
+          {
+            src: '/screenshots/zikr-narrow.webp',
+            sizes: '585x1266',
+            type: 'image/webp',
+            form_factor: 'narrow',
+            label: 'A calm zikr counter',
+          },
+          {
+            src: '/screenshots/prayer-times-narrow.webp',
+            sizes: '585x1266',
+            type: 'image/webp',
+            form_factor: 'narrow',
+            label: 'Prayer times for your city',
+          },
+          {
+            src: '/screenshots/home-wide.webp',
+            sizes: '1280x800',
+            type: 'image/webp',
+            form_factor: 'wide',
+            label: 'Your day of worship at a glance',
+          },
         ],
       },
     }),

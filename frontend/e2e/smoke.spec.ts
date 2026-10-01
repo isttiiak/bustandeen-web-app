@@ -103,3 +103,37 @@ test('a prayer logged offline is queued, then synced on reconnect', async ({ pag
   await context.setOffline(false);
   await expect.poll(() => outbox(page), { timeout: 10_000 }).toEqual([]);
 });
+
+test('the manifest is installable-rich and every asset it lists exists', async ({ request }) => {
+  const manifest = (await (await request.get('/manifest.webmanifest')).json()) as {
+    id: string;
+    lang: string;
+    orientation?: string;
+    icons: { src: string; purpose?: string }[];
+    shortcuts: { url: string; icons?: { src: string }[] }[];
+    screenshots: { src: string; form_factor?: string }[];
+  };
+  expect(manifest.id).toBe('/');
+  expect(manifest.lang).toBe('en');
+  expect(manifest.orientation).toBeUndefined();
+  expect(manifest.icons.some((i) => i.purpose === 'maskable')).toBe(true);
+  expect(manifest.shortcuts.map((s) => s.url)).toEqual([
+    '/salat',
+    '/zikr',
+    '/prayer-times',
+    '/quran',
+  ]);
+  expect(manifest.screenshots.some((s) => s.form_factor === 'narrow')).toBe(true);
+  expect(manifest.screenshots.some((s) => s.form_factor === 'wide')).toBe(true);
+
+  const assets = [
+    ...manifest.icons.map((i) => i.src),
+    ...manifest.shortcuts.flatMap((s) => (s.icons ?? []).map((i) => i.src)),
+    ...manifest.screenshots.map((s) => s.src),
+  ];
+  for (const src of new Set(assets)) {
+    expect((await request.get(src)).status(), src).toBe(200);
+  }
+  // Screenshots are for the install sheet only, never precached.
+  expect(await (await request.get('/sw.js')).text()).not.toContain('screenshots/');
+});

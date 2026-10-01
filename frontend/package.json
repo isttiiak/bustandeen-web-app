@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.67.0",
+  "version": "5.69.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,7 +13,9 @@
     "og:image": "node scripts/generate-og-image.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "pwa:icons": "node scripts/generate-pwa-icons.mjs",
+    "pwa:screenshots": "node scripts/capture-pwa-screenshots.mjs"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
