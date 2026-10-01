@@ -1,4 +1,4 @@
-﻿import axios from 'axios';
+﻿import axios, { AxiosError } from 'axios';
 import type { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 import toast from 'react-hot-toast';
 import { auth } from '../firebase.js';
@@ -47,14 +47,28 @@ api.interceptors.request.use((config) => {
     const url = config.url ?? '';
     const gender = useAuthStore.getState().user?.gender ?? 'male';
     const mock = getDemoResponse(url, method, gender);
-    config.adapter = () =>
-      Promise.resolve({
+    config.adapter = () => {
+      // Behave like the real network when the browser is offline, so the demo
+      // shows the same offline queueing (salat outbox, zikr pending) a signed-in
+      // user gets, and the Playwright smoke tests can exercise it without a
+      // backend.
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        return Promise.reject(
+          new AxiosError(
+            'Network Error',
+            AxiosError.ERR_NETWORK,
+            config as InternalAxiosRequestConfig
+          )
+        );
+      }
+      return Promise.resolve({
         data: mock,
         status: 200,
         statusText: 'OK',
         headers: {} as unknown as AxiosHeaders,
         config: config as InternalAxiosRequestConfig,
       });
+    };
   }
   return config;
 });

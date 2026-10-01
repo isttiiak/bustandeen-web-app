@@ -29,6 +29,8 @@ pnpm-debug.log*
 coverage/
 .nyc_output/
 test-output.txt
+test-results/
+playwright-report/
 
 # Cache
 .cache/

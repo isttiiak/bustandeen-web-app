@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.67.0 - A prayer logged offline is never lost - 2026-10-01
+
+### Fixed
+
+- **A prayer marked while your phone was fully offline could be lost.** The salat tracker has an offline queue that replays your taps when the connection returns, but a tap made while the device reported no connection at all was only held in memory and never reached that queue, so closing the app before reconnecting dropped it. Prayer and nafl taps now always go through the queue when offline and sync on reconnect, even after the app was closed. (Found by the new smoke tests below.)
+
+### Changed
+
+- **The demo behaves like the real app when you go offline**: taps are queued and synced when the connection returns, instead of pretending to save.
+
+### Added (developers)
+
+- **Playwright smoke tests** (audit T2.2), against the production build in demo mode, so they never touch a backend, Firebase or the live database: a prerendered city page renders (HTML and app), the service worker installs and opens an app route offline, zikr taps count and survive leaving the page, and a prayer logged offline is queued and then synced on reconnect. Third-party requests are blocked during the run.
+- CI builds with placeholder Firebase values, installs Chromium and runs `npm run test:e2e` on every PR; traces are uploaded when a test fails. Locally the installed Chrome is used (`npm run build`, then `npm run test:e2e`).
+- `frontend/tsconfig.e2e.json`; `npm run typecheck` now also checks the e2e specs.
+
 ## v5.66.0 - Tests for every fiqh rule - 2026-10-01
 
 ### Fixed

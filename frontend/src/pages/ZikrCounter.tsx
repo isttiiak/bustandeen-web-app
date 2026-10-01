@@ -824,6 +824,7 @@ export default function ZikrCounter() {
               transition={{ type: 'tween', duration: 0.12, ease: 'easeOut' }}
             >
               <div
+                data-testid="zikr-count"
                 className="text-8xl sm:text-9xl font-black text-white leading-none"
                 style={{
                   textShadow: `0 0 40px ${color.glow}`,
