@@ -36,12 +36,46 @@ void i18n
     // placeholder already renders বাংলা digits (০১২৩...) in Bengali mode with
     // no extra config here — see utils/localeDate.ts#formatLocaleNumber for
     // the equivalent for raw (non-interpolated) JSX-rendered numbers.
-    interpolation: { escapeValue: false },
+    // alwaysFormat: every placeholder passes through the formatter, so a
+    // plain `{{count}}` also gets বাংলা digits in Bengali (see below).
+    interpolation: { escapeValue: false, alwaysFormat: true },
     detection: {
       order: ['localStorage', 'navigator'],
       lookupLocalStorage: 'bustandeen_lang',
       caches: ['localStorage'],
     },
   });
+
+/**
+ * Bangla numerals for numbers interpolated WITHOUT a format (audit UX-05):
+ * `{{count}}` used to print Latin digits inside Bangla sentences. Numbers in
+ * Bengali become ০১২৩...; everything else (English, strings, named formats)
+ * goes to i18next's own formatter unchanged. Grouping only from 10,000 up, so
+ * a year or a count like ১৪৪৭ is never written "১,৪৪৭".
+ */
+const bnNumber = (n: number) =>
+  new Intl.NumberFormat('bn-BD', { useGrouping: Math.abs(n) >= 10_000 }).format(n);
+
+type FormatFn = (
+  value: unknown,
+  format: string | undefined,
+  lng: string | undefined,
+  options?: object
+) => unknown;
+// The `format` hook is no longer in i18next's public types, but the runtime
+// still binds its formatter there and reads it back (Interpolator.init).
+const interpolationOptions = i18n.options.interpolation as { format?: FormatFn } | undefined;
+const builtInFormat = interpolationOptions?.format;
+const format: FormatFn = (value, fmt, lng, options) => {
+  if (!fmt && typeof value === 'number' && Number.isFinite(value) && lng?.startsWith('bn')) {
+    return bnNumber(value);
+  }
+  return builtInFormat ? builtInFormat(value, fmt, lng, options) : value;
+};
+// i18next re-reads options.interpolation.format whenever it resets its
+// interpolator, and the live interpolator holds its own copy.
+if (interpolationOptions) interpolationOptions.format = format;
+if (i18n.services.interpolator)
+  (i18n.services.interpolator as unknown as { format: FormatFn }).format = format;
 
 export default i18n;
