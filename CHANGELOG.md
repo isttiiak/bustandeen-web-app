@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.65.0 - A home page search engines can read - 2026-10-01
+
+### Added
+
+- **The home page now has real content before any JavaScript runs.** Until now `bustandeen.com/` sent an empty page to search engines and link previews, and first-time visitors on a slow connection stared at a blank screen for seconds. The landing page (hero, features, Rayhanah, verified references, the Fajr day) is now built into the HTML, then the interactive page takes over. Signed-in visitors never see it: they go straight to their Home as before.
+- **Prayer times in your city, free tools, and common questions** on the landing page: links to 21 of the most-searched city prayer-time pages (Dhaka, Chittagong, Sylhet, Karachi, London, New York, Makkah and more), the duʿās, morning/evening adhkār, Ramadan calendars, Zakat calculator, the 99 Names, Hijri converter and Qibla compass, and six short answers (free? prayer-time method? authentic references? privacy? offline? Bangla?). In English and Bangla, and marked up as FAQ for search engines.
+
+### Fixed
+
+- **The Bangla and Arabic pages were missing from every sitemap.** The sitemaps listed only the English version of each prayer-time, Qibla, Ramadan, duʿā, adhkār and tool page (4,367 of 13,071 pages). Every language is now listed, each with its hreflang alternates.
+- Sitemap `lastmod` dates now appear only where the content really changes with each build (today's prayer times, the Ramadan calendars), so search engines keep trusting them.
+
+### Notes
+
+- `dist/index.html` is now the prerendered landing (`seo/templates/LandingPage.tsx`, written by `scripts/prerender.mjs`); every other app route is served `dist/app-shell.html`, an untouched copy of the shell emitted by a small Vite plugin (`appShellCopy`). `/vercel.json`'s catch-all rewrite and the service worker's offline navigation fallback both point at `app-shell.html`.
+- The cities/tools/FAQ block is one component, `components/LandingSeoSections.tsx`, used by both the static and the React landing (Google indexes the page after JavaScript runs, so it must be in both). The build fails if it links a city page that does not exist.
+- The one-line theme script in `index.html` now also adds `has-session` for signed-in visitors (CSP hash updated; `check-csp.mjs` verifies it).
+- Depends on v5.63.0 for the FAQ answer about country-aware prayer times.
+
 ## v5.64.0 - Your location really stays on your device - 2026-10-01
 
 ### Changed

@@ -13,6 +13,8 @@ import AdhkarPage from './templates/AdhkarPage.js';
 import HijriConverterPage from './templates/HijriConverterPage.js';
 import AsmaUlHusnaPage from './templates/AsmaUlHusnaPage.js';
 import ZakatCalculatorPage from './templates/ZakatCalculatorPage.js';
+import LandingPage, { enT } from './templates/LandingPage.js';
+import { LANDING_FAQ, POPULAR_CITY_LINKS } from '../components/LandingSeoSections.js';
 
 export type RouteKind =
   | { kind: 'prayer-times'; citySlug: string }
@@ -140,4 +142,20 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
         description: t.zakat.subtitle,
       };
   }
+}
+
+/** The prerendered `/` (written into dist/index.html by prerender.mjs), plus
+ * what the script needs around it: the FAQ text for FAQPage JSON-LD in the
+ * <head> (outside #root, so the React app never removes it) and the city
+ * slugs the page links to, which the script checks against the dataset. */
+export function renderLanding(): {
+  html: string;
+  faq: { q: string; a: string }[];
+  citySlugs: string[];
+} {
+  return {
+    html: renderToStaticMarkup(<LandingPage />),
+    faq: LANDING_FAQ.map(({ q, a }) => ({ q: enT(q[0], q[1]), a: enT(a[0], a[1]) })),
+    citySlugs: POPULAR_CITY_LINKS.map((c) => c.slug),
+  };
 }

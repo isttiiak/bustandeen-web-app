@@ -1040,6 +1040,34 @@
     "zakatSeoDescription": "Work out your zakat: nisab by gold or silver standard, your assets and debts, and when your hawl is due."
   },
   "landing": {
+    "citiesTitle": "Prayer times in your city",
+    "citiesDesc": "Today’s Fajr, Ẓuhr, ʿAṣr, Maghrib and ʿIshāʾ for 1,400+ cities, with both ʿAṣr times.",
+    "toolsTitle": "Free tools, no account needed",
+    "faqTitle": "Common questions",
+    "tools": {
+      "duas": "Duʿās for every situation",
+      "morning": "Morning adhkār",
+      "evening": "Evening adhkār",
+      "ramadan": "Ramadan calendars",
+      "zakat": "Zakat calculator",
+      "asma": "The 99 Names of Allah",
+      "hijri": "Hijri date converter",
+      "qibla": "Qibla compass"
+    },
+    "faq": {
+      "q1": "Is Bustandeen free?",
+      "a1": "Yes. Every feature is free, with no ads and no subscriptions. It is kept running by voluntary sadaqah.",
+      "q2": "How are the prayer times calculated?",
+      "a2": "On your device, from your location, with the calculation method and ʿAṣr school most mosques in your country use. You can change either in the settings, and city pages show ʿAṣr for both schools.",
+      "q3": "Are the Quran and hadith references authentic?",
+      "a3": "Every verse and hadith links to quran.com or sunnah.com with its exact number, and grades are shown where they matter. If something cannot be verified, it is not included.",
+      "q4": "Is my data private?",
+      "a4": "Your location stays on your device, Rayhanah notes are encrypted before they are stored, there are no ads, and your data is never sold or shared.",
+      "q5": "Does it work offline and on my phone?",
+      "a5": "Yes. Install it on your home screen like an app. Prayer times work offline, and zikr counts and prayer logs made offline sync when you are back online.",
+      "q6": "Is it available in Bangla?",
+      "a6": "Yes. The app is in English and Bangla, and the prayer-time, duʿā and adhkār pages are also in Arabic."
+    },
     "seoTitle": "Bustandeen - Nourish Your Deen",
     "seoDescription": "Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a private circle of friends. Free, ad-free, and built for the Muslim community.",
     "brother": "Brother",
