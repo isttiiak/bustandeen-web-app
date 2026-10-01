@@ -87,7 +87,7 @@ export default function Landing() {
         title={t('landing.seoTitle', 'Bustandeen - Nourish Your Deen')}
         description={t(
           'landing.seoDescription',
-          'Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a friends leaderboard. Free, private, and built for the Muslim community.'
+          'Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a private circle of friends. Free, ad-free, and built for the Muslim community.'
         )}
         path="/"
       />

@@ -23,6 +23,10 @@ const emailFailureLogSchema = new Schema<IEmailFailureLog>({
   createdAt: { type: Date, default: Date.now },
 });
 
-emailFailureLogSchema.index({ createdAt: -1 });
+/** Retention: failed sends (recipient address + subject) are kept for 90
+ * days, long enough to notice and debug a broken mail setup. The TTL index
+ * also serves the newest-first sort. Built by `npm run sync-indexes`. */
+export const EMAIL_FAILURE_TTL_SECONDS = 90 * 24 * 60 * 60;
+emailFailureLogSchema.index({ createdAt: 1 }, { expireAfterSeconds: EMAIL_FAILURE_TTL_SECONDS });
 
 export default mongoose.model<IEmailFailureLog>('EmailFailureLog', emailFailureLogSchema);

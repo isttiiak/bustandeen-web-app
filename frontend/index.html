@@ -17,7 +17,7 @@
     <title>Bustandeen - Nourish Your Deen</title>
     <meta
       name="description"
-      content="Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a friends leaderboard. Free, private, and built for the Muslim community."
+      content="Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a private circle of friends. Free, ad-free, and built for the Muslim community."
     />
     <meta name="keywords" content="islamic app, zikr counter, tasbih counter, salat tracker, prayer tracker, fasting tracker, quran habit, prayer times, muslim productivity" />
     <meta name="author" content="Istiak Islam" />
@@ -60,7 +60,7 @@
       "name": "Bustandeen",
       "alternateName": "Bustandeen - Nourish Your Deen",
       "url": "https://bustandeen.com/",
-      "description": "Track zikr, salat, fasting and Quran reading with streaks, prayer times, authentic Quran & hadith references, and a friends leaderboard.",
+      "description": "Track zikr, salat, fasting and Quran reading with streaks, prayer times, authentic Quran & hadith references, and a private circle of friends.",
       "applicationCategory": "LifestyleApplication",
       "operatingSystem": "Web",
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
@@ -72,43 +72,15 @@
         "Prayer times calculated on-device",
         "Fiqh-aware fasting tracker",
         "Quran reading habit and khatm journey",
-        "Friends leaderboard"
+        "A private circle of friends"
       ]
     }
     </script>
 
-    <script>
-      try {
-        const t = localStorage.getItem("bustandeen_theme") || "bustandeen";
-        document.documentElement.setAttribute("data-theme", t);
-      } catch {}
-    </script>
-
-    <!-- Google Analytics 4 — loads only when VITE_GA_MEASUREMENT_ID is set.
-         SPA page views are sent from App.tsx on every route change. -->
-    <script>
-      (function () {
-        var gaId = "%VITE_GA_MEASUREMENT_ID%";
-        if (!gaId || gaId.indexOf("%") !== -1 || gaId === "undefined") return;
-        var s = document.createElement("script");
-        s.async = true;
-        s.src = "https://www.googletagmanager.com/gtag/js?id=" + gaId;
-        document.head.appendChild(s);
-        window.dataLayer = window.dataLayer || [];
-        window.gtag = function () { window.dataLayer.push(arguments); };
-        window.gtag("js", new Date());
-        // cookie_domain is pinned to the exact host: `vercel.app` is on the
-        // Public Suffix List, so GA's default `auto` tries to write the _ga
-        // cookie to `.vercel.app` and every browser rejects it ("invalid
-        // domain"). Pinning to the full hostname stops that rejection.
-        window.gtag("config", gaId, {
-          send_page_view: false,
-          anonymize_ip: true,
-          cookie_domain: location.hostname,
-        });
-        window.__BUSTANDEEN_GA_ID = gaId;
-      })();
-    </script>
+    <!-- Theme before first paint (no flash). Kept on ONE line: its sha256 is
+         allow-listed in the CSP in /vercel.json, and scripts/check-csp.mjs
+         fails the build if the two drift apart. -->
+    <script>try{document.documentElement.setAttribute("data-theme",localStorage.getItem("bustandeen_theme")||"bustandeen")}catch(e){}</script>
   </head>
   <body>
     <div id="root"></div>

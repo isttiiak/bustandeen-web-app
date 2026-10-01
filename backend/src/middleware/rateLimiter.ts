@@ -168,3 +168,13 @@ export const adminSessionLimiter = makeLimit(
   { ok: false, error: 'Too many attempts. Please try again later.' },
   'adminSession'
 );
+
+/** CSP violation reports: 60 per 15 min per IP. Browsers send one report per
+ *  violation, so a single misconfigured page can burst; anything beyond this
+ *  is noise or abuse. Throttled requests still get a 429 (browsers ignore it). */
+export const cspReportLimiter = makeLimit(
+  15 * 60 * 1000,
+  60,
+  { ok: false, error: 'Too many reports.' },
+  'cspReport'
+);

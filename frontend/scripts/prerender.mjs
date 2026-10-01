@@ -6,7 +6,7 @@
 // — see the `build` script in package.json.
 //
 // Approach: clone the real, already-built dist/index.html per route (same
-// fonts/GA snippet/theme-init script/asset tags as the live app, guaranteed
+// fonts/theme-init script/asset tags as the live app, guaranteed
 // never to drift out of sync with it) and surgically swap in page-specific
 // title/description/canonical/hreflang/og/twitter tags. The rendered body
 // (including each template's own BreadcrumbList/FAQPage/WebPage JSON-LD,
@@ -250,8 +250,8 @@ const staticPages = [
   { path: '/privacy', priority: '0.3' },
   { path: '/feedback', priority: '0.4' },
   { path: '/sadaqah', priority: '0.5' },
-  { path: '/login', priority: '0.3' },
-  { path: '/signup', priority: '0.3' },
+  // /login and /signup are deliberately left out: they are thin app shells
+  // with nothing to rank for, and listing them only dilutes the sitemap.
 ];
 
 const sitemapFiles = {

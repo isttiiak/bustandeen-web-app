@@ -10,6 +10,9 @@ export interface ZikrAudioState {
   loopCount: number;
   targetCount: number | null;
   play: () => void;
+  /** For the "play on every tap" setting: starts the clip unless it (or
+   * auto-play) is already playing, so fast tapping never cuts it off. */
+  playOnTap: () => void;
   stop: () => void;
   startAutoPlay: (target?: number) => void;
   stopAutoPlay: () => void;
@@ -102,6 +105,13 @@ export function useZikrAudio(zikrName: string): ZikrAudioState {
     audio.play().catch(() => setIsPlaying(false));
   }, [audioUrl, volume, getOrCreateAudio, clearHandler]);
 
+  const playOnTap = useCallback(() => {
+    if (isAutoPlayRef.current) return;
+    const audio = audioRef.current;
+    if (audio && !audio.paused && !audio.ended) return;
+    play();
+  }, [play]);
+
   const stop = useCallback(() => {
     clearHandler();
     const audio = audioRef.current;
@@ -186,6 +196,7 @@ export function useZikrAudio(zikrName: string): ZikrAudioState {
     loopCount,
     targetCount,
     play,
+    playOnTap,
     stop,
     startAutoPlay,
     stopAutoPlay,

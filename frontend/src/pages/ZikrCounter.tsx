@@ -315,8 +315,10 @@ export default function ZikrCounter() {
   const tasbihTarget = useUiStore((s) => s.tasbihTarget);
   const zikrAudioEnabled = useUiStore((s) => s.zikrAudioEnabled);
   const zikrAudioVolume = useUiStore((s) => s.zikrAudioVolume);
+  const zikrPlayOnTap = useUiStore((s) => s.zikrPlayOnTap);
   const setZikrAudioVolume = useUiStore((s) => s.setZikrAudioVolume);
   const audio = useZikrAudio(selected);
+  const { hasAudio: selectedHasAudio, playOnTap: playAudioOnTap } = audio;
   const [showAutoPlay, setShowAutoPlay] = useState(false);
   const [autoPlayTarget, setAutoPlayTarget] = useState('50');
   const [hiddenTypes, setHiddenTypes] = useState<string[]>(getHiddenZikr);
@@ -507,6 +509,9 @@ export default function ZikrCounter() {
     scheduleFlush();
     setColorIdx((i) => (i + 1) % GLOW_PALETTE.length);
     if (zikrSoundEnabled) playZikrClick();
+    // Opt-in "play on every tap": plays this dhikr's clip, never cutting off
+    // one that is still playing (see useZikrAudio.playOnTap).
+    if (zikrAudioEnabled && zikrPlayOnTap && selectedHasAudio) playAudioOnTap();
 
     if (tasbihMode && segmentStart !== null) {
       const doneAfter = currentCount + 1 - segmentStart;
@@ -542,6 +547,10 @@ export default function ZikrCounter() {
     increment,
     scheduleFlush,
     zikrSoundEnabled,
+    zikrAudioEnabled,
+    zikrPlayOnTap,
+    selectedHasAudio,
+    playAudioOnTap,
     vibrationEnabled,
     tasbihMode,
     segmentStart,

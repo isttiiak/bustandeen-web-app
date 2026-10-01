@@ -43,6 +43,8 @@ export default function ZikrSettings({
   const setZikrAudioEnabled = useUiStore((s) => s.setZikrAudioEnabled);
   const zikrAudioVolume = useUiStore((s) => s.zikrAudioVolume);
   const setZikrAudioVolume = useUiStore((s) => s.setZikrAudioVolume);
+  const zikrPlayOnTap = useUiStore((s) => s.zikrPlayOnTap);
+  const setZikrPlayOnTap = useUiStore((s) => s.setZikrPlayOnTap);
 
   const handleReset = async () => {
     setResetting(true);
@@ -228,6 +230,28 @@ export default function ZikrSettings({
                     'Play the pronunciation of each dhikr. Enable auto-play to loop the audio and count automatically.'
                   )}
                 </p>
+                {zikrAudioEnabled && (
+                  <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-white/80 text-xs font-semibold">
+                        {t('zikr.playOnTap', 'Play on every tap')}
+                      </span>
+                      <input
+                        type="checkbox"
+                        className="toggle toggle-success toggle-xs"
+                        checked={zikrPlayOnTap}
+                        onChange={(e) => setZikrPlayOnTap(e.target.checked)}
+                        aria-label={t('zikr.playOnTap', 'Play on every tap')}
+                      />
+                    </div>
+                    <p className="text-white/40 text-[11px] leading-relaxed mt-1.5">
+                      {t(
+                        'zikr.playOnTapDesc',
+                        'Hear the dhikr each time you count. If you tap again while it is still playing, it finishes instead of starting over.'
+                      )}
+                    </p>
+                  </div>
+                )}
                 {zikrAudioEnabled && (
                   <div className="mt-3 flex items-center gap-3">
                     <span className="text-white/50 text-xs shrink-0">

@@ -1192,7 +1192,7 @@ export default function RayhanahCycle() {
           <p className="text-white/25 text-[10px] leading-relaxed border-t border-brand-emerald/5 pt-3">
             {t(
               'rayhanah.privacyNote',
-              '🔒 Your cycle data is visible only to you. It is never shown to friends — on the leaderboard your Noor simply flows from the dhikr, Quran and ṣalawāt you do, exactly like any other day.'
+              '🔒 Your cycle data is visible only to you. It is never shown to friends — in your friends’ circle your Noor simply flows from the dhikr, Quran and ṣalawāt you do, exactly like any other day.'
             )}
           </p>
         </div>

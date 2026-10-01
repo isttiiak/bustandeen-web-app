@@ -26,6 +26,9 @@ interface UiState {
   zikrAudioEnabled: boolean;
   /** Volume for zikr audio (0–1) */
   zikrAudioVolume: number;
+  /** Play the dhikr's audio on every count tap (opt-in, off by default). A tap
+   * while it is still playing lets it finish instead of restarting it. */
+  zikrPlayOnTap: boolean;
   /** Rayhanah discreet mode: swaps the pink 🌸 "Rayhanah"/cycle-day wording
    * on the home screen and nav for a neutral "Wellness" label — for a
    * shared device or over-the-shoulder scenario. Purely cosmetic/local; the
@@ -49,6 +52,7 @@ interface UiState {
   setTasbihTarget: (val: number) => void;
   setZikrAudioEnabled: (val: boolean) => void;
   setZikrAudioVolume: (val: number) => void;
+  setZikrPlayOnTap: (val: boolean) => void;
   setDiscreetMode: (val: boolean) => void;
 }
 
@@ -64,6 +68,7 @@ type StoredPrefs = Pick<
   | 'tasbihTarget'
   | 'zikrAudioEnabled'
   | 'zikrAudioVolume'
+  | 'zikrPlayOnTap'
   | 'discreetMode'
   | 'cycleHeightUnit'
   | 'cycleWeightUnit'
@@ -87,6 +92,7 @@ function readStoredPrefs(): StoredPrefs {
     ),
     zikrAudioEnabled: localStorage.getItem('bustandeen_zikr_audio') !== '0',
     zikrAudioVolume: parseFloat(localStorage.getItem('bustandeen_zikr_volume') || '0.7'),
+    zikrPlayOnTap: localStorage.getItem('bustandeen_zikr_play_on_tap') === '1',
     discreetMode: localStorage.getItem('bustandeen_discreet_mode') === '1',
     cycleHeightUnit: localStorage.getItem('bustandeen_cycle_height_unit') === 'ft' ? 'ft' : 'm',
     cycleWeightUnit: localStorage.getItem('bustandeen_cycle_weight_unit') === 'lbs' ? 'lbs' : 'kg',
@@ -168,6 +174,11 @@ export const useUiStore = create<UiState>((set) => ({
     const clamped = Math.max(0, Math.min(1, val));
     localStorage.setItem('bustandeen_zikr_volume', String(clamped));
     set({ zikrAudioVolume: clamped });
+  },
+
+  setZikrPlayOnTap: (val) => {
+    localStorage.setItem('bustandeen_zikr_play_on_tap', val ? '1' : '0');
+    set({ zikrPlayOnTap: !!val });
   },
 
   setDiscreetMode: (val) => {

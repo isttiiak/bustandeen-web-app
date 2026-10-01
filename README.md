@@ -1,4 +1,4 @@
-# 🌱 Bustandeen — Islamic Productivity App
+# 🌱 Bustandeen - Nourish Your Deen
 
 **Live:** [https://bustandeen.com/](https://bustandeen.com/) · [CHANGELOG](CHANGELOG.md)
 

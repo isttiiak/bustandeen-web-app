@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
+import { logServerError } from '../lib/logger.js';
 
 interface AppError extends Error {
   statusCode?: number;
@@ -12,7 +13,7 @@ interface AppError extends Error {
 
 export const globalErrorHandler = (
   err: AppError,
-  _req: Request,
+  req: Request,
   res: Response,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- Express only treats a 4-arg function as error middleware; the trailing param must stay
   _next: NextFunction
@@ -58,7 +59,10 @@ export const globalErrorHandler = (
       ? 'Internal Server Error'
       : (err.message ?? 'Internal Server Error');
 
+  // Production: one structured, privacy-safe JSON line per server error
+  // (lib/logger.ts), never the request body. Development: the full error.
   if (!isProd) console.error(err);
+  else if (statusCode >= 500) logServerError(err, req, statusCode);
 
   res.status(statusCode).json({ ok: false, error: message });
 };

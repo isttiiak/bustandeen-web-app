@@ -28,6 +28,7 @@ import DemoBanner from './components/DemoBanner.js';
 import AnnouncementBanner from './components/AnnouncementBanner.js';
 import NaturalLogModal from './components/ai/NaturalLogModal.js';
 import type { AuthUser } from './types/api.js';
+import { trackPageView } from './utils/analytics.js';
 
 // `body { overflow-x: hidden }` (styles/global.css, added to stop mobile
 // horizontal bounce) makes the browser compute `overflow-y: auto` on <body>
@@ -489,21 +490,11 @@ export default function App() {
     }
   }, [location.pathname, location.hash]);
 
-  // Google Analytics 4: SPA page views (the gtag loader in index.html sets
-  // send_page_view=false, so each route change is reported exactly once here)
+  // Google Analytics 4: one redacted SPA page view per route change. Private
+  // areas are never reported and query strings never leave (utils/analytics.ts).
   useEffect(() => {
-    const w = window as unknown as {
-      gtag?: (...args: unknown[]) => void;
-      __BUSTANDEEN_GA_ID?: string;
-    };
-    if (w.gtag && w.__BUSTANDEEN_GA_ID) {
-      w.gtag('event', 'page_view', {
-        page_path: location.pathname + location.search,
-        page_location: window.location.href,
-        page_title: document.title,
-      });
-    }
-  }, [location.pathname, location.search]);
+    trackPageView(location.pathname);
+  }, [location.pathname]);
 
   useEffect(() => {
     init();

@@ -383,7 +383,7 @@
   "connectFriend": {
     "alreadyConnected": "Already connected!",
     "connected": "Connected!",
-    "connectedPost": "can now see each other on the leaderboard. May you push each other toward good, in sha' Allah!",
+    "connectedPost": "can now see each other in your private circle. May you encourage each other toward good, in sha' Allah!",
     "connectedPre": "You and",
     "connecting": "Connecting you…",
     "couldntConnect": "Couldn't connect",
@@ -393,7 +393,7 @@
     "invalidLink": "This invite link is not valid.",
     "invited": "A friend invited you!",
     "preparing": "Preparing your session…",
-    "seeLeaderboard": "See the leaderboard",
+    "seeLeaderboard": "See your circle",
     "signInPrompt": "Sign in to Bustandeen to connect — you'll see each other's streaks and daily worship, and race each other to good deeds.",
     "srTitle": "Connect with a friend",
     "yourFriend": "your friend"
@@ -839,7 +839,7 @@
     "notOnCycle": "not on her cycle",
     "fastingToday": "Fasting today",
     "invisibleDesc": "When on, no one — not even existing friends — sees your Noor or stats.",
-    "invisibleTitle": "Hide me from friends’ leaderboards",
+    "invisibleTitle": "Hide me from friends’ circles",
     "inviteCopied": "Invite message copied!",
     "inviteError": "Could not load your invite link",
     "inviteFriend": "Invite a friend",
@@ -959,7 +959,7 @@
     "fridayHourTitle": "Friday: the hour of response",
     "fridayKahf": "It's Friday — read Sūrat al-Kahf",
     "friendsSubtitle": "Race each other to good deeds — Quran 2:148",
-    "friendsTitle": "Friends & Leaderboard",
+    "friendsTitle": "Friends & Private Circle",
     "goalAchieved": "Goal Achieved!",
     "greeting": "Assalamu 'alaikum",
     "locating": "Locating…",
@@ -987,7 +987,7 @@
     "salatSubtitle": "Track your daily prayers",
     "salatTitle": "Salat Tracker",
     "setLocation": "Set Location →",
-    "srTitle": "Bustandeen — Islamic Productivity",
+    "srTitle": "Bustandeen - Nourish Your Deen",
     "startCounting": "Start Counting",
     "thisMonth": "This month",
     "toMaghrib": "to Maghrib",
@@ -1041,7 +1041,7 @@
   },
   "landing": {
     "seoTitle": "Bustandeen - Nourish Your Deen",
-    "seoDescription": "Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a friends leaderboard. Free, private, and built for the Muslim community.",
+    "seoDescription": "Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a private circle of friends. Free, ad-free, and built for the Muslim community.",
     "brother": "Brother",
     "cta": "Begin your journey — free",
     "ctaCounter": "Try the counter first",
@@ -1345,7 +1345,7 @@
     "aboutLink": "About Bustandeen",
     "contactText": "Have a question or concern about your privacy? We'd love to help.",
     "heading": "Privacy",
-    "lastUpdated": "Last updated: September 2026",
+    "lastUpdated": "Last updated: October 2026",
     "srTitle": "Privacy Policy, Bustandeen",
     "subtitle": "Short, honest, no legalese.",
     "whatWeStore": {
@@ -1356,7 +1356,8 @@
       "body3": "Rayhanah Cycle data, if you use it: start and end dates, daily flow, symptom and mood notes, and the height and weight you choose to add. Notes and body stats are encrypted (AES-256-GCM) before they reach the database.",
       "body4": "Friends: mutual connections, and the Noor scores worked out from your own activity.",
       "body5": "Messages you send us: feedback and contact forms, zikr requests, and sadaqah donation details (optional name, email, phone, payment method, transaction ID, amount, date, message, and an IP address to prevent abuse).",
-      "body6": "The time you were last active, and the service emails we send: a welcome, replies to your messages, donation status, and occasionally a gentle note after a long break."
+      "body6": "The time you were last active, and the service emails we send: a welcome, replies to your messages, donation status, and occasionally a gentle note after a long break.",
+      "body7": "How long we keep logs: when our rate limits block a request, its IP address is kept for 30 days to spot abuse, then deleted automatically. A failed email delivery (address and subject) is kept for 90 days. Server error logs never contain what you logged."
     },
     "deviceOnly": {
       "title": "Stays on your device only",
@@ -1368,7 +1369,7 @@
       "title": "What friends can see",
       "body0": "Only confirmed friends see your row: display name, photo, country flag, and your Noor (today and this week).",
       "body1": "A few small chips: prayers done today, zikr streak, today's zikr count, whether you are fasting, and Quran āyāt against your goal. Never times, notes, places, or which dhikr you did.",
-      "body2": "You can hide from every friend's leaderboard at any time with the invisible setting in Friends.",
+      "body2": "You can hide from every friend's circle at any time with the invisible setting in Friends.",
       "body3": "Rayhanah data is never visible to friends. On your excused days the numbers are filled from what you actually did, so nothing reveals it.",
       "body4": "The one exception is opt-in: if you choose to share your cycle status with a friend, she sees only a yes or no (never a date, symptom or note), and her view of your row hides the prayer and fasting chips. You can turn this off at any moment."
     },
@@ -1381,7 +1382,7 @@
     },
     "thirdParty": {
       "title": "Services we rely on",
-      "body0": "Google Analytics 4 counts page views and anonymous usage patterns (with IP anonymised). No worship data is ever sent to it.",
+      "body0": "Google Analytics 4 counts page views and anonymous usage patterns (with IP anonymised). It only sees general page addresses: private areas such as Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, the sadaqah forms and sign-in links are never reported, and no worship data is ever sent to it.",
       "body1": "Firebase (Google) handles sign-in, Vercel hosts the app, and MongoDB Atlas stores the database.",
       "body2": "Quran text, tafsir and recitation audio come from quran.com, alquran.cloud, the Islamic Network and mp3quran; flags come from flagcdn and fonts from Google Fonts. Like any website, those services can see your IP address when your device loads their files."
     },
@@ -2079,7 +2080,7 @@
     "pregnancyToggleTitle": "I'm currently pregnant",
     "pregnancyToggleDesc": "Pauses period predictions and shows a week count instead. Does not change your salat or fasting tracking.",
     "pregnancySave": "Save",
-    "privacyNote": "🔒 Your cycle data is visible only to you. It is never shown to friends, unless you choose to share a simple yes or no with one friend. On the leaderboard your Noor simply flows from the dhikr, Quran and ṣalawāt you do, like any other day.",
+    "privacyNote": "🔒 Your cycle data is visible only to you. It is never shown to friends, unless you choose to share a simple yes or no with one friend. In your friends’ circle your Noor simply flows from the dhikr, Quran and ṣalawāt you do, like any other day.",
     "privateNote": "private — only you can see this",
     "qadaAddedToast": "{{count, number}} qaḍā day(s) added — the tracker will guide you 🌸",
     "qadaPromptCount": "{{count, number}} day(s) of this cycle fell in Ramadan.",
@@ -3190,6 +3191,12 @@
     "syncing": "syncing",
     "tapSound": "Tap sound",
     "tapSoundDesc": "A soft click on every count, like wooden tasbih beads.",
+    "audioToggle": "Zikr audio",
+    "audioDesc": "Play the pronunciation of each dhikr. Enable auto-play to loop the audio and count automatically.",
+    "playPronunciation": "Play pronunciation",
+    "autoPlay": "Auto-play",
+    "playOnTap": "Play on every tap",
+    "playOnTapDesc": "Hear the dhikr each time you count. If you tap again while it is still playing, it finishes instead of starting over.",
     "tasbihCustom": "Custom",
     "tasbihMode": "Tasbih mode",
     "tasbihModeDesc": "Count down from a target instead of up — pick how many, then each tap counts down. A distinct vibration + celebration marks the set complete, then it starts over.",

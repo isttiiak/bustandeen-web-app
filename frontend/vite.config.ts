@@ -48,7 +48,7 @@ export default defineConfig({
         name: 'Bustandeen - Nourish Your Deen',
         short_name: 'Bustandeen',
         description:
-          'Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a friends leaderboard. Free, private, ad-free.',
+          'Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a private circle of friends. Free, private, ad-free.',
         // Match the app's real background (index.html's theme-color meta,
         // #1a1812). The old green/near-black values predated the current
         // design and flashed a mismatched colour on the install splash screen

@@ -25,6 +25,11 @@ const rateLimitHitSchema = new Schema<IRateLimitHit>({
   createdAt: { type: Date, default: Date.now },
 });
 
-rateLimitHitSchema.index({ createdAt: -1 });
+/** Retention: IP addresses are personal data, so throttle events are kept
+ * for 30 days only (the admin ops view reads the last 24h). The TTL index also
+ * serves the newest-first sort. Documented on /privacy. Built by
+ * `npm run sync-indexes` (autoIndex is off in production). */
+export const RATE_LIMIT_HIT_TTL_SECONDS = 30 * 24 * 60 * 60;
+rateLimitHitSchema.index({ createdAt: 1 }, { expireAfterSeconds: RATE_LIMIT_HIT_TTL_SECONDS });
 
 export default mongoose.model<IRateLimitHit>('RateLimitHit', rateLimitHitSchema);

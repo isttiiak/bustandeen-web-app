@@ -2,6 +2,34 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.62.0 - Privacy and security hardening (audit, phase 1) - 2026-10-01
+
+### Added
+
+- **Play the zikr on every tap.** A new switch under Zikr settings → Zikr audio. When it is on, each count plays the dhikr's recitation. Tapping again while it is still playing lets it finish instead of cutting it off. Off by default; the play button and auto-play work as before. Synced across devices like your other zikr settings.
+- **Security headers for the whole site:** HSTS (with subdomains), `nosniff`, `X-Frame-Options: DENY`, a strict referrer policy, a permissions policy (location only for this site; camera, microphone and payments off) and a Content-Security-Policy. The CSP starts in **report-only** mode: it blocks nothing yet, and the browser reports anything it would block to the new `/api/csp-report`. It will be switched on after a clean week.
+
+### Changed
+
+- **Google Analytics now sees much less.** Private areas (Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, the sadaqah forms, invite links, sign-in links and admin) are never reported, and GA's automatic events on those pages carry only "/private". Query strings are always dropped (sign-in links carry one-time codes), surah numbers are collapsed (`/quran/read/:surah`), and the page title sent is the cleaned path, so a previous page's title can never leak. The privacy page now says this.
+- **Old logs are deleted automatically.** IP addresses from rate-limit blocks are kept for 30 days, failed-email records for 90 days. The privacy page lists both.
+- **"Leaderboard" is now "private circle"** everywhere you read it (Home, Friends, invite page, privacy page, Rayhanah note, site description), in English and Bangla. Noor and how it works are unchanged.
+- **"Nourish Your Deen"** is the tagline everywhere, including the Home screen-reader title and the README.
+
+### Fixed
+
+- Signed-out visitors on the zikr counter no longer trigger three failed requests in the background, and demo mode no longer logs an error for the same check.
+- Several zikr audio labels (Zikr audio, Play pronunciation, Auto-play) now have Bangla text instead of falling back to English.
+
+### Notes
+
+- **Production errors are now logged** (they used to vanish): one JSON line per server error in the Vercel logs with the route pattern (never the real URL), a keyed hash instead of the user ID, the error and a short stack. Request bodies and query strings are never logged.
+- **Indexes are no longer built on cold starts in production** (`autoIndex` is off there). New `npm run sync-indexes` (dry run) and `npm run sync-indexes -- --apply` in `backend/`. **Run it once after this deploy**: it creates the two retention indexes and drops two old `createdAt_-1` indexes plus an unused `userId_1` index on `salatlogs` (the `userId + date` index already covers it). Creating the TTL indexes deletes rate-limit records older than 30 days and email-failure records older than 90.
+- The API's own CSP is now `default-src 'none'` (it only serves JSON), and `api.groq.com` is gone from it: the browser never talks to Groq.
+- The theme snippet in `index.html` is now on one line so its CSP hash is identical on Windows and Linux; `scripts/check-csp.mjs` runs at the end of the build and fails it if the hash and the snippet drift apart.
+- GA is loaded from `src/utils/analytics.ts` instead of an inline script.
+- `/login` and `/signup` are no longer in `sitemap-pages.xml`.
+
 ## v5.61.0 - Musafir: travel history, clearer joining for Ḥanafī users, small-screen fixes - 2026-09-25
 
 ### Added

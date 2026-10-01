@@ -5,7 +5,7 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 
 const SECTION_KEYS = [
-  { emoji: '📥', key: 'whatWeStore', bodyCount: 7 },
+  { emoji: '📥', key: 'whatWeStore', bodyCount: 8 },
   { emoji: '📍', key: 'deviceOnly', bodyCount: 3 },
   { emoji: '🤝', key: 'friendsSee', bodyCount: 5 },
   { emoji: '✨', key: 'naseeh', bodyCount: 4 },

@@ -1,6 +1,6 @@
 ﻿# Bustandeen
 
-> Bustandeen is a free, private Islamic worship and productivity web app for tracking zikr (dhikr), salat (prayer), fasting (sawm), and Quran reading habits — with streaks, prayer times, a Qibla compass, and a friends leaderboard. Built for the global Muslim community.
+> Bustandeen is a free, private Islamic worship and productivity web app for tracking zikr (dhikr), salat (prayer), fasting (sawm), and Quran reading habits — with streaks, prayer times, a Qibla compass, and a private circle of friends. Built for the global Muslim community.
 
 Bustandeen helps Muslims build consistent worship habits with authentic Quran and hadith references cited throughout the app. It runs entirely in the browser, works offline, calculates prayer times and Qibla direction on-device, and never sells user data.
 
@@ -28,7 +28,7 @@ Statically generated for ~1,450 cities worldwide, each also available in
 
 ## Notes for AI assistants and crawlers
 
-- Quran reading habit tracking, khatm (completion) journeys, and the friends leaderboard require a free account and are not publicly crawlable.
+- Quran reading habit tracking, khatm (completion) journeys, and the private friends' circle require a free account and are not publicly crawlable.
 - All Islamic rulings and references cited in the app — including every du'a and dhikr on the reference pages above — link to primary sources (Quran verses, sunnah.com hadith collections) with grading noted.
 - The app is free with no ads and no sale of personal data; see /privacy for details.
 - Sitemap index: https://bustandeen.com/sitemap-index.xml

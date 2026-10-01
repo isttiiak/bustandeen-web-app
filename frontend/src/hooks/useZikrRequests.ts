@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
+import { useAuthStore } from '../store/useAuthStore.js';
 
 export type ZikrRequestStatus = 'pending' | 'approved' | 'rejected';
 
@@ -75,12 +76,17 @@ export function useSubmitZikrRequest() {
  * the one-time "we added it" notice for an approved request the user hasn't
  * dismissed yet. */
 export function useMyZikrRequests() {
+  const user = useAuthStore((s) => s.user);
   return useQuery<ZikrRequest[]>({
     queryKey: ['zikr', 'requests', 'mine'],
     queryFn: async () => {
-      const res = await api.get<{ requests: ZikrRequest[] }>('/api/zikr/requests/mine');
-      return res.data.requests;
+      const res = await api.get<{ requests?: ZikrRequest[] }>('/api/zikr/requests/mine');
+      // Demo mode's mock API has no requests list; never hand React Query undefined.
+      return res.data.requests ?? [];
     },
+    // Signed-out visitors (the public /zikr counter) have no requests; asking
+    // anyway only produced 401s in the console.
+    enabled: !!user,
     staleTime: 60_000,
   });
 }

@@ -19,6 +19,7 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_tasbih_target',
   'bustandeen_zikr_audio',
   'bustandeen_zikr_volume',
+  'bustandeen_zikr_play_on_tap',
   'bustandeen_zikr_hidden',
   'bustandeen_share_card_prefs',
   'bustandeen_lang',

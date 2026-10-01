@@ -33,6 +33,7 @@ import adminOpsRoutes from './routes/adminOps.routes.js';
 import adminAnnouncementRoutes from './routes/adminAnnouncement.routes.js';
 import updateEmailRoutes from './routes/updateEmail.routes.js';
 import composeEmailRoutes from './routes/composeEmail.routes.js';
+import cspReportRoutes from './routes/cspReport.routes.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
 
@@ -46,29 +47,18 @@ const app = express();
 // request off the load balancer's IP — one heavy user rate-limits everyone.
 app.set('trust proxy', 1);
 
-// Core middleware — CSP configured explicitly to match SPA's runtime needs.
+// Core middleware. The API only ever returns JSON (plus the metadata-only
+// /connect/:code preview page for link crawlers), so its CSP allows nothing
+// to load at all. The SPA's own CSP lives in /vercel.json (static layer).
 app.use(
   helmet({
     contentSecurityPolicy: {
       directives: {
-        defaultSrc: ["'self'"],
-        // script-src: self only; no inline scripts or eval in the API layer
-        scriptSrc: ["'self'"],
-        // connect-src covers Firebase Auth, the Quran audio API, and the AI provider
-        connectSrc: [
-          "'self'",
-          'https://*.googleapis.com', // Firebase Auth + Firestore
-          'https://*.firebase.com', // Firebase realtime
-          'https://identitytoolkit.googleapis.com',
-          'https://api.alquran.cloud', // Quran audio / text
-          'https://api.groq.com', // AI companion (Groq)
-        ],
-        imgSrc: ["'self'", 'data:', 'https:'],
-        // Tailwind's JIT emits inline style attributes — unsafe-inline is required
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        // Prevent this app from being embedded as a frame (clickjacking guard)
+        defaultSrc: ["'none'"],
+        baseUri: ["'none'"],
+        formAction: ["'none'"],
+        // Clickjacking guard
         frameAncestors: ["'none'"],
-        objectSrc: ["'none'"],
       },
     },
   })
@@ -132,6 +122,10 @@ app.use(
     optionsSuccessStatus: 204,
   })
 );
+
+// CSP violation reports have their own limiter and must not eat into a
+// visitor's general API allowance, so they are mounted before it.
+app.use('/api/csp-report', cspReportRoutes);
 
 // Apply general rate limiter globally
 app.use(generalLimiter);

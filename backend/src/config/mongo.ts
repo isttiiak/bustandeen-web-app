@@ -18,7 +18,12 @@ export const connectDB = async (): Promise<void> => {
     cached = mongoose
       .connect(uri, {
         dbName: 'ihsan',
-        autoIndex: true,
+        // Index builds must not run on production cold starts (every model
+        // would issue createIndex against live collections). In production
+        // indexes are managed explicitly: `npm run sync-indexes` (dry run)
+        // then `npm run sync-indexes -- --apply`. Dev/test keep autoIndex so
+        // local DBs and mongodb-memory-server get every index automatically.
+        autoIndex: process.env.NODE_ENV !== 'production',
         // Atlas M0 caps total connections at 500 — with Fluid Compute warm
         // instances persist longer, so we raise the per-instance pool to 10
         // while keeping minPoolSize:1 so idle instances don't hold spare sockets.
