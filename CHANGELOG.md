@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.74.0 - Sadaqah in the demo, and a lighter App.tsx - 2026-10-01
+
+### Fixed
+
+- **The Sadaqah page crashed for anyone exploring the demo** ("Something went wrong"). The demo now answers the donation figures and payment settings with empty values (no invented numbers, no payment details), and the page no longer breaks if the figures are missing.
+
+### Changed (developers)
+
+- **The route table moved out of `App.tsx`** (audit T2.4, part 1): `src/routes.tsx` holds the lazy page imports and every route, `src/routeGuards.tsx` holds `RootRoute`, `Protected`, `AdminProtected`, `ServantProtected`, `VerifyEmailGate` and `RouteFallback`. Moved verbatim; `App.tsx` went from 1,063 to about 440 lines and keeps the app shell and session effects.
+- **New e2e test: every route renders in demo mode** (50 routes incl. prerendered SEO routes in en/bn/ar). It found the Sadaqah crash on its first run. Playwright now uses 2 workers everywhere (more made the offline tests flaky on a laptop).
+
 ## v5.73.1 - One code style everywhere - 2026-10-01
 
 ### Notes (developers)

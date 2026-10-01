@@ -14,7 +14,9 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: isCI,
   retries: isCI ? 1 : 0,
-  workers: isCI ? 2 : undefined,
+  // Two workers everywhere: more made the timing-sensitive offline tests flaky
+  // on a laptop while the route walk runs.
+  workers: 2,
   reporter: isCI ? [['github'], ['list']] : 'list',
   timeout: 30_000,
   // Generous for a cold production build under parallel load.

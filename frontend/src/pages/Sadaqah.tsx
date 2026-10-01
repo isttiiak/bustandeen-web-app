@@ -75,7 +75,7 @@ export default function Sadaqah() {
             </motion.div>
           )}
 
-          {stats && stats.quarterlyBreakdown.length > 0 && (
+          {(stats?.quarterlyBreakdown?.length ?? 0) > 0 && stats && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
