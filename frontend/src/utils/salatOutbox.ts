@@ -1,4 +1,5 @@
 ﻿import type { UpdatePrayerVars, UpdateNaflVars } from '../hooks/useSalatLog.js';
+import { currentOutboxOwner } from './outboxOwner.js';
 
 // Offline outbox for salat prayer/nafl updates. Unlike the zikr counter,
 // salat status changes had zero local persistence — a network failure while
@@ -12,12 +13,15 @@ interface QueuedPrayerOp {
   kind: 'prayer';
   vars: UpdatePrayerVars;
   queuedAt: number;
+  /** uid that made the change; see utils/outboxOwner.ts. */
+  owner?: string;
 }
 interface QueuedNaflOp {
   id: string;
   kind: 'nafl';
   vars: UpdateNaflVars;
   queuedAt: number;
+  owner?: string;
 }
 export type QueuedSalatOp = QueuedPrayerOp | QueuedNaflOp;
 
@@ -25,7 +29,9 @@ export type QueuedSalatOp = QueuedPrayerOp | QueuedNaflOp;
 // discriminant stays tied to the right `vars` shape — Omit collapses a
 // discriminated union into `{ kind: 'prayer' | 'nafl'; vars: A | B }`, which
 // loses the correlation and breaks narrowing on `op.kind`.
-type NewSalatOp = Omit<QueuedPrayerOp, 'id' | 'queuedAt'> | Omit<QueuedNaflOp, 'id' | 'queuedAt'>;
+type NewSalatOp =
+  | Omit<QueuedPrayerOp, 'id' | 'queuedAt' | 'owner'>
+  | Omit<QueuedNaflOp, 'id' | 'queuedAt' | 'owner'>;
 
 function readQueue(): QueuedSalatOp[] {
   try {
@@ -56,11 +62,15 @@ function opKey(op: NewSalatOp): string {
 
 export function enqueueSalatOp(op: NewSalatOp): void {
   const key = opKey(op);
-  const queue = readQueue().filter((existing) => opKey(existing) !== key);
+  const owner = currentOutboxOwner();
+  const queue = readQueue().filter(
+    (existing) => opKey(existing) !== key || existing.owner !== owner
+  );
   queue.push({
     ...op,
     id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
     queuedAt: Date.now(),
+    owner,
   } as QueuedSalatOp);
   writeQueue(queue);
 }

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
+import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
@@ -114,20 +115,26 @@ export function useReadAyat() {
   const qc = useQueryClient();
   const today = localTodayStr();
   return useMutation({
+    // Offline, the āyāt read are queued (utils/syncOutbox.ts) with an op id the
+    // server dedupes, so a replay after a lost response never counts twice.
+    networkMode: 'always',
     mutationFn: async (vars: {
       count: number;
       surah?: number;
       advanceKhatm?: boolean;
       completedSurah?: boolean;
-    }) => {
-      const { data } = await api.post<{
+    }) =>
+      sendOrQueue<{
         ok: boolean;
         khatmCompleted: boolean;
         currentAyah: number;
         todayAyat: number;
-      }>('/api/quran/read-ayat', { date: today, ...vars });
-      return data;
-    },
+      }>({
+        tracker: 'quran',
+        method: 'post',
+        url: '/api/quran/read-ayat',
+        body: { date: today, ...vars },
+      }),
     onMutate: async (vars) => {
       const key = ['quran', 'summary', today];
       await qc.cancelQueries({ queryKey: key });
@@ -147,7 +154,11 @@ export function useReadAyat() {
         };
       });
     },
-    onSettled: () => void qc.invalidateQueries({ queryKey: ['quran'] }),
+    // Offline: keep the optimistic count; the replay refreshes it.
+    onSettled: (_d, e) => {
+      if (e instanceof OfflineQueuedError) return;
+      void qc.invalidateQueries({ queryKey: ['quran'] });
+    },
   });
 }
 
@@ -168,9 +179,19 @@ export function useToggleBookmark() {
 /** Save (ayah 0 clears) the per-surah resume position on the server. */
 export function useSetResume() {
   return useMutation({
+    networkMode: 'always',
     mutationFn: async (vars: { surah: number; ayah: number }) => {
-      await api.put('/api/quran/resume', vars);
+      await sendOrQueue({
+        tracker: 'quran',
+        method: 'put',
+        url: '/api/quran/resume',
+        body: { ...vars },
+        key: `quran:resume:${vars.surah}`,
+        coalesce: 'replace',
+      });
     },
+    // Queued offline is fine: the position syncs later, nothing to tell the user.
+    onError: () => {},
   });
 }
 

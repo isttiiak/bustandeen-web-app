@@ -13,20 +13,25 @@ import {
   pregnancySchema,
   bodyStatsSchema,
 } from '../validation/cycle.schemas.js';
+import { idempotent } from '../middleware/idempotency.js';
 
 const router = Router();
+
+// Offline-outbox dedupe (audit T2.3). Cycle responses are never copied into
+// the dedupe record (they would sit there unencrypted): a replay gets { ok }.
+const noBody = idempotent({ storeBody: false });
 
 // GET /api/cycle/summary?today= — status + prediction + recent logs
 router.get('/summary', requireAuth, cycleController.getSummary);
 
 // POST /api/cycle/start — begin a hayd/nifas episode
-router.post('/start', requireAuth, validate(startCycleSchema), cycleController.startCycle);
+router.post('/start', requireAuth, validate(startCycleSchema), noBody, cycleController.startCycle);
 
 // POST /api/cycle/end — end the active episode
-router.post('/end', requireAuth, validate(endCycleSchema), cycleController.endCycle);
+router.post('/end', requireAuth, validate(endCycleSchema), noBody, cycleController.endCycle);
 
 // POST /api/cycle/logs — backfill a completed past episode (history import)
-router.post('/logs', requireAuth, validate(pastCycleSchema), cycleController.addPastCycle);
+router.post('/logs', requireAuth, validate(pastCycleSchema), noBody, cycleController.addPastCycle);
 
 // PUT /api/cycle/day — per-day wellness note (flow/symptoms/mood)
 router.put('/day', requireAuth, validate(cycleDaySchema), cycleController.upsertDay);

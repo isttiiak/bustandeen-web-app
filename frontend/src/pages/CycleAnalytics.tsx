@@ -23,6 +23,7 @@ import RayhanahSettingsDrawer from '../components/RayhanahSettingsDrawer.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
+import { OfflineQueuedError } from '../utils/syncOutbox.js';
 
 function shiftStr(dateStr: string, delta: number): string {
   const d = new Date(dateStr + 'T12:00:00');
@@ -1068,7 +1069,12 @@ export default function CycleAnalytics() {
               onClick={() =>
                 addPast.mutate(
                   { startDate: pastStart, endDate: pastEnd, type: pastType },
-                  { onSuccess: () => setPastOpen(false) }
+                  {
+                    onSuccess: () => setPastOpen(false),
+                    onError: (e) => {
+                      if (e instanceof OfflineQueuedError) setPastOpen(false);
+                    },
+                  }
                 )
               }
             >
