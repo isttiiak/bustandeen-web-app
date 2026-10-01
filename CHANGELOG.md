@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.75.0 - Every reference shows again, and a lighter Salat tracker - 2026-10-01
+
+### Fixed
+
+- **Citations were missing on the Ramadan page.** In the last ten nights it showed "(Quran 97:3, ). Duʿā of the night: ). Duʿā of the night: (Tirmidhī 3513)": the Bukhārī 2017 reference, the duʿā itself and the Tirmidhī link were missing, and the nafl note lost its Bukhārī 1899 reference. All of them show again, each with its sunnah.com / quran.com link, in English and Bangla.
+- **The salat help ("How it works") lost its highlighted words**: "Choose (Muslim 597a) or (Muslim 596a)", "Tapping (in ▾ Details)", "Turn off in salat settings". It now reads "33·33·33 + tahlīl", "33·33·34", "Ayatul Kursi" and "Auto-count dhikr" again.
+- The Zikr counter hint read "Press to count"; it says "Press Space to count" again.
+- Cause: these translated sentences mapped their highlighted parts by position, and spacing in the code shifted the positions. All of them (Ramadan, salat help, ḍaʿīf explainer, zikr) now name their parts explicitly, so formatting can never break them again.
+
+### Changed (developers)
+
+- **SalatTracker split** (audit T2.4, part 2): 2,747 → about 1,760 lines. Moved verbatim into `components/salat/`: `salatParts.tsx` (helpers, status styles, sunnah row, missed-day chips), `FridayHourCard`, `SalatWeekStrip`, `SalatMonthCalendar`, `SalatNaflCard`, `SalatKazaDebtCard`, `SalatLegend`, `SalatGuestDialog`. Props were derived from the compiler's view of each block's free variables.
+- Verified as a pure move: the full visible text of `/salat` (frozen clock, every panel opened, calendar open) is identical before and after, except the three help sentences above that were broken before.
+- New e2e `references.spec.ts`: the Ramadan last-ten-nights citations render with their links, and the salat help keeps its highlighted words.
+
 ## v5.74.0 - Sadaqah in the demo, and a lighter App.tsx - 2026-10-01
 
 ### Fixed

@@ -689,27 +689,25 @@ export default function RamadanTracker() {
             <Trans
               i18nKey="ramadan.naflFardNote"
               defaults="Nafl carries the reward of a farḍ in Ramadan, and a farḍ the reward of seventy (<1>Ibn Khuzaymah 1887</1> — ḍaʿīf chain, widely cited; the month's general virtue is established in <3>Bukhārī 1899</3>)."
-            >
-              Nafl carries the reward of a farḍ in Ramadan, and a farḍ the reward of seventy (
-              <a
-                className="underline hover:text-white/50"
-                href="https://islamqa.info/en/answers/21364"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {translateReference('Ibn Khuzaymah 1887', i18n.language)}
-              </a>{' '}
-              — ḍaʿīf chain, widely cited; the month's general virtue is established in{' '}
-              <a
-                className="underline hover:text-white/50"
-                href="https://sunnah.com/bukhari:1899"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {translateReference('Bukhārī 1899', i18n.language)}
-              </a>
-              ).
-            </Trans>
+              components={{
+                1: (
+                  <a
+                    className="underline hover:text-white/50"
+                    href="https://islamqa.info/en/answers/21364"
+                    target="_blank"
+                    rel="noreferrer"
+                  />
+                ),
+                3: (
+                  <a
+                    className="underline hover:text-white/50"
+                    href="https://sunnah.com/bukhari:1899"
+                    target="_blank"
+                    rel="noreferrer"
+                  />
+                ),
+              }}
+            />
           </p>
         </div>
 
@@ -735,38 +733,34 @@ export default function RamadanTracker() {
               <Trans
                 i18nKey="ramadan.laylatalQadrNote"
                 defaults="Seek Laylat al-Qadr in the odd nights — it is better than a thousand months (<1>Quran 97:3</1>, <3>Bukhārī 2017</3>). Duʿā of the night: <5>Allāhumma innaka ʿafuwwun tuḥibbul-ʿafwa faʿfu ʿannī</5> (<7>Tirmidhī 3513</7>)."
-              >
-                Seek Laylat al-Qadr in the odd nights — it is better than a thousand months (
-                <a
-                  className="underline"
-                  href="https://quran.com/97/3"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {translateReference('Quran 97:3', i18n.language)}
-                </a>
-                ,{' '}
-                <a
-                  className="underline"
-                  href="https://sunnah.com/bukhari:2017"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {translateReference('Bukhārī 2017', i18n.language)}
-                </a>
-                ). Duʿā of the night:{' '}
-                <span className="italic">Allāhumma innaka ʿafuwwun tuḥibbul-ʿafwa faʿfu ʿannī</span>{' '}
-                (
-                <a
-                  className="underline"
-                  href="https://sunnah.com/tirmidhi:3513"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {translateReference('Tirmidhī 3513', i18n.language)}
-                </a>
-                ).
-              </Trans>
+                components={{
+                  1: (
+                    <a
+                      className="underline"
+                      href="https://quran.com/97/3"
+                      target="_blank"
+                      rel="noreferrer"
+                    />
+                  ),
+                  3: (
+                    <a
+                      className="underline"
+                      href="https://sunnah.com/bukhari:2017"
+                      target="_blank"
+                      rel="noreferrer"
+                    />
+                  ),
+                  5: <span className="italic" />,
+                  7: (
+                    <a
+                      className="underline"
+                      href="https://sunnah.com/tirmidhi:3513"
+                      target="_blank"
+                      rel="noreferrer"
+                    />
+                  ),
+                }}
+              />
             </p>
             <div className="flex gap-1.5 mt-3">
               {[21, 23, 25, 27, 29].map((n) => (
@@ -937,19 +931,17 @@ export default function RamadanTracker() {
             <Trans
               i18nKey="ramadan.rayhanahAutoQadaNote"
               defaults="🌸 Rayhanah days are excused with zero guilt — when the cycle ends, those Ramadan days are offered to your qaḍā counter automatically (<1>Muslim 335</1>)."
-            >
-              🌸 Rayhanah days are excused with zero guilt — when the cycle ends, those Ramadan days
-              are offered to your qaḍā counter automatically (
-              <a
-                className="underline"
-                href="https://sunnah.com/muslim:335"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {translateReference('Muslim 335', i18n.language)}
-              </a>
-              ).
-            </Trans>
+              components={{
+                1: (
+                  <a
+                    className="underline"
+                    href="https://sunnah.com/muslim:335"
+                    target="_blank"
+                    rel="noreferrer"
+                  />
+                ),
+              }}
+            />
           </p>
         </div>
 

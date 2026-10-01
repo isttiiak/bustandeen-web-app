@@ -8,12 +8,7 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import TabNav from '../components/TabNav.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { celebrateSmall, celebrateAllPrayers } from '../utils/celebrate.js';
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Cog6ToothIcon,
-  CalendarDaysIcon,
-} from '@heroicons/react/24/outline';
+import { ChevronLeftIcon, ChevronRightIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import {
   useSalatLog,
   useUpdatePrayer,
@@ -57,7 +52,7 @@ import {
 } from '../utils/salatPrefs.js';
 import { recitationsFor, recitationHref } from '../utils/postSalatQuran.js';
 import { SUNNAH_GUIDE, JUMUAH_SUNNAH_GUIDE, type SunnahSlot } from '../utils/sunnahGuide.js';
-import { getFridayHour, FRIDAY_HOUR_REF } from '../utils/fridayHour.js';
+import { getFridayHour } from '../utils/fridayHour.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import MusafirBanner from '../components/MusafirBanner.js';
@@ -82,7 +77,6 @@ import {
   isFuturePrayer,
   isCurrentPrayer,
   SunnahGuidanceRow,
-  weekDotColor,
   friendlyDate,
   LOCATION_TAGS,
   STATUS_STYLE,
@@ -91,6 +85,9 @@ import SalatLegend from '../components/salat/SalatLegend.js';
 import SalatKazaDebtCard from '../components/salat/SalatKazaDebtCard.js';
 import SalatNaflCard from '../components/salat/SalatNaflCard.js';
 import SalatGuestDialog from '../components/salat/SalatGuestDialog.js';
+import SalatMonthCalendar from '../components/salat/SalatMonthCalendar.js';
+import SalatWeekStrip from '../components/salat/SalatWeekStrip.js';
+import FridayHourCard from '../components/salat/FridayHourCard.js';
 
 // ─── component ───────────────────────────────────────────────────────────────
 
@@ -800,56 +797,7 @@ export default function SalatTracker() {
                   Shown only while it is actually running — ʿAṣr has begun and
                   Maghrib has not. No notification permission, no cron: the page
                   already ticks every minute for the prayer clock. */}
-          {fridayHour.active && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`rounded-2xl border p-4 ${
-                fridayHour.isFinalStretch
-                  ? 'border-brand-gold/50 bg-gradient-to-br from-brand-gold/15 to-brand-gold-dim/5'
-                  : 'border-brand-gold/25 bg-brand-gold/[0.06]'
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                <span className="text-2xl shrink-0">🤲</span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <h3 className="text-brand-gold font-black text-sm">
-                      {fridayHour.isFinalStretch
-                        ? t('salatTracker.hourOfResponseNow', 'The hour of response — now')
-                        : t('salatTracker.hourOfResponse', 'Friday: the hour of response')}
-                    </h3>
-                    <span className="text-brand-gold/70 text-xs font-bold tabular-nums">
-                      {t('salatTracker.toMaghrib', '{{countdown}} to Maghrib', {
-                        countdown: fridayHour.countdown,
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-white/60 text-xs mt-1.5 leading-relaxed">
-                    {t(
-                      'salatTracker.hourOfResponseQuote',
-                      '"{{text}}" Keep asking until the sun sets — for yourself, your parents, and the ummah.',
-                      {
-                        text:
-                          i18n.language === 'bn' ? FRIDAY_HOUR_REF.textBn : FRIDAY_HOUR_REF.text,
-                      }
-                    )}
-                  </p>
-                  <div className="flex items-center gap-2 flex-wrap mt-2.5">
-                    <a
-                      href={FRIDAY_HOUR_REF.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-[11px] text-white/35 hover:text-brand-gold underline underline-offset-2"
-                    >
-                      {translateReference(FRIDAY_HOUR_REF.source, i18n.language)} ·{' '}
-                      {translateReference(FRIDAY_HOUR_REF.grade, i18n.language)} ↗
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
+          <FridayHourCard fridayHour={fridayHour} />
 
           {/* Date navigator */}
           <div className="flex items-center justify-between gap-3">
@@ -904,177 +852,27 @@ export default function SalatTracker() {
           </div>
 
           {/* Weekly summary — quick glance at the last 7 days, tap a day to jump */}
-          {weekDays.length > 0 && (
-            <div className="flex items-stretch gap-1">
-              {weekDays.map((d) => {
-                const isSel = d.date === selectedDate;
-                const isTod = d.date === todayStr();
-                const isFutureDay = d.date > todayStr();
-                const hasData = !isFutureDay;
-                const dot = hasData ? weekDotColor(d.completed) : 'rgba(255,255,255,0.12)';
-                return (
-                  <motion.button
-                    key={d.date}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      setSelectedDate(d.date);
-                      setExpandedPrayer(null);
-                      setCalendarOpen(false);
-                    }}
-                    aria-label={t('salatTracker.selectDay', 'Select {{day}}', {
-                      day: friendlyDate(d.date, t),
-                    })}
-                    className={`flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
-                      isSel
-                        ? 'bg-white/10 border-brand-emerald/30'
-                        : 'bg-white/[0.03] border-brand-emerald/5 hover:border-brand-emerald/20'
-                    }`}
-                  >
-                    <span
-                      className={`text-[9px] uppercase font-bold ${isTod ? 'text-brand-emerald' : 'text-white/30'}`}
-                    >
-                      {formatLocaleDate(new Date(d.date + 'T12:00:00'), { weekday: 'narrow' })}
-                    </span>
-                    <span className={`text-xs font-bold ${isSel ? 'text-white' : 'text-white/50'}`}>
-                      {formatLocaleNumber(parseInt(d.date.slice(8), 10))}
-                    </span>
-                    <span
-                      className="w-1.5 h-1.5 rounded-full"
-                      style={{ background: dot, boxShadow: hasData ? `0 0 6px ${dot}` : 'none' }}
-                    />
-                  </motion.button>
-                );
-              })}
-              {/* Calendar toggle button — opens the full-month view */}
-              <button
-                onClick={() => {
-                  setCalMonth(selectedDate.substring(0, 7));
-                  setCalendarOpen((o) => !o);
-                }}
-                aria-label={t('salatTracker.openCalendar', 'Open month calendar')}
-                title={t('salatTracker.openCalendar', 'Open month calendar')}
-                className={`shrink-0 flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl border transition-all ${
-                  calendarOpen
-                    ? 'bg-brand-emerald/20 border-brand-emerald/40 text-brand-emerald'
-                    : 'bg-white/[0.03] border-brand-emerald/5 text-white/40 hover:border-brand-emerald/20 hover:text-white/70'
-                }`}
-              >
-                <CalendarDaysIcon className="w-4 h-4" />
-                <span className="text-[9px] font-bold uppercase">
-                  {formatLocaleDate(new Date(selectedDate.substring(0, 7) + '-15T12:00:00'), {
-                    month: 'narrow',
-                  })}
-                </span>
-              </button>
-            </div>
-          )}
+          <SalatWeekStrip
+            calendarOpen={calendarOpen}
+            selectedDate={selectedDate}
+            setCalMonth={setCalMonth}
+            setCalendarOpen={setCalendarOpen}
+            setExpandedPrayer={setExpandedPrayer}
+            setSelectedDate={setSelectedDate}
+            weekDays={weekDays}
+          />
 
           {/* Month calendar — full month view, tap any day to navigate there */}
-          <AnimatePresence>
-            {calendarOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="overflow-hidden"
-              >
-                <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <button
-                      onClick={() => {
-                        const [y, m] = calMonth.split('-').map(Number);
-                        const d = new Date(y!, m! - 2, 1);
-                        setCalMonth(
-                          `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-                        );
-                      }}
-                      className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
-                    >
-                      <ChevronLeftIcon className="w-4 h-4" />
-                    </button>
-                    <p className="text-white font-bold text-sm">
-                      {formatLocaleDate(new Date(calMonth + '-15T12:00:00'), {
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </p>
-                    <button
-                      onClick={() => {
-                        const [y, m] = calMonth.split('-').map(Number);
-                        const d = new Date(y!, m!, 1);
-                        setCalMonth(
-                          `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-                        );
-                      }}
-                      disabled={calMonth >= todayStr().substring(0, 7)}
-                      className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 disabled:opacity-20"
-                    >
-                      <ChevronRightIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 text-center">
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                      <span key={i} className="text-white/25 text-[9px] font-bold uppercase">
-                        {d}
-                      </span>
-                    ))}
-                    {(() => {
-                      const [y, m] = calMonth.split('-').map(Number);
-                      const first = new Date(y!, m! - 1, 1);
-                      const daysInMonth = new Date(y!, m!, 0).getDate();
-                      const blanks = first.getDay();
-                      const cells = [];
-                      for (let i = 0; i < blanks; i++) cells.push(<span key={`b${i}`} />);
-                      for (let d = 1; d <= daysInMonth; d++) {
-                        const dateStr = `${calMonth}-${String(d).padStart(2, '0')}`;
-                        const completed = calendarDataMap.get(dateStr);
-                        const isFuture = dateStr > todayStr();
-                        const isSel = dateStr === selectedDate;
-                        const isTod = dateStr === todayStr();
-                        const salatStart = localStorage.getItem('bustandeen_salat_start_date');
-                        const isBeforeStart = salatStart ? dateStr < salatStart : false;
-                        const dot =
-                          completed === 5
-                            ? '#7a9e6e'
-                            : completed != null && completed >= 3
-                              ? '#c9a96e'
-                              : completed != null && completed >= 1
-                                ? '#f59e0b'
-                                : completed === 0
-                                  ? '#ef4444'
-                                  : undefined;
-                        cells.push(
-                          <button
-                            key={dateStr}
-                            disabled={isFuture || isBeforeStart}
-                            onClick={() => {
-                              setSelectedDate(dateStr);
-                              setExpandedPrayer(null);
-                              setCalendarOpen(false);
-                            }}
-                            className={`relative aspect-square rounded-lg text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 ${
-                              isFuture || isBeforeStart
-                                ? 'opacity-20 cursor-not-allowed'
-                                : 'hover:bg-white/10 cursor-pointer'
-                            } ${isSel ? 'bg-brand-emerald/25 border border-brand-emerald/50' : ''} ${isTod && !isSel ? 'border border-brand-emerald/30' : ''}`}
-                          >
-                            <span className={isTod ? 'text-brand-emerald' : 'text-white/70'}>
-                              {formatLocaleNumber(d)}
-                            </span>
-                            {dot && !isFuture && !isBeforeStart && (
-                              <span className="w-1 h-1 rounded-full" style={{ background: dot }} />
-                            )}
-                          </button>
-                        );
-                      }
-                      return cells;
-                    })()}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <SalatMonthCalendar
+            calMonth={calMonth}
+            calendarDataMap={calendarDataMap}
+            calendarOpen={calendarOpen}
+            selectedDate={selectedDate}
+            setCalMonth={setCalMonth}
+            setCalendarOpen={setCalendarOpen}
+            setExpandedPrayer={setExpandedPrayer}
+            setSelectedDate={setSelectedDate}
+          />
 
           {/* Rayhanah days — salat fully excused (never made up) */}
           {cycleActive && selectedDate >= cycleActive.startDate ? (

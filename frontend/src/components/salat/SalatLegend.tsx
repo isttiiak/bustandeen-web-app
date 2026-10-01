@@ -6,6 +6,12 @@ export interface SalatLegendProps {
   setLegendExpanded: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+/** The highlighted words inside the help sentences. Passed by tag NUMBER
+ * (`<1>`, `<3>`) rather than as positional children: with children, every
+ * `{' '}` spacer shifted the indices and the highlighted words went missing
+ * or doubled (found by the T2.4 render comparison). */
+const EMPHASIS = <span className="text-white/70 font-medium" />;
+
 export default function SalatLegend({ legendExpanded, setLegendExpanded }: SalatLegendProps) {
   const { t } = useTranslation();
   return (
@@ -103,63 +109,43 @@ export default function SalatLegend({ legendExpanded, setLegendExpanded }: Salat
                     <Trans
                       i18nKey="salatTracker.legendTasbeehInfo"
                       defaults="📿 Tapping <1>Tasbeeh</1> adds the full after-ṣalāh count to your dhikr automatically — no more logging 33s by hand. Ayatul Kursi adds one. Un-tap to undo."
-                    >
-                      📿 Tapping <span className="text-white/70 font-medium">Tasbeeh</span> adds the
-                      full after-ṣalāh count to your dhikr automatically — no more logging 33s by
-                      hand. Ayatul Kursi adds one. Un-tap to undo.
-                    </Trans>
+                      components={{ 1: EMPHASIS }}
+                    />
                   </p>
                   <p>
                     <Trans
                       i18nKey="salatTracker.legendAyatulKursiAutoInfo"
                       defaults="📖 Tapping <1>Ayatul Kursi</1> (in ▾ Details) also auto-counts 1 recitation in your dhikr log — the same rule as Tasbeeh. Un-tap to undo."
-                    >
-                      📖 Tapping <span className="text-white/70 font-medium">Ayatul Kursi</span> (in
-                      ▾ Details) also auto-counts 1 recitation in your dhikr log — the same rule as
-                      Tasbeeh. Un-tap to undo.
-                    </Trans>
+                      components={{ 1: EMPHASIS }}
+                    />
                   </p>
                   <p>
                     <Trans
                       i18nKey="salatTracker.legendTasbihModeInfo"
                       defaults="⚙️ Choose <1>33·33·33 + tahlīl</1> (Muslim 597a) or <3>33·33·34</3> (Muslim 596a) in salat settings — both are authentic. Your ʿAṣr school lives there too."
-                    >
-                      ⚙️ Choose <span className="text-white/70 font-medium">33·33·33 + tahlīl</span>{' '}
-                      (Muslim 597a) or <span className="text-white/70 font-medium">33·33·34</span>{' '}
-                      (Muslim 596a) in salat settings — both are authentic. Your ʿAṣr school lives
-                      there too.
-                    </Trans>
+                      components={{ 1: EMPHASIS, 3: EMPHASIS }}
+                    />
                   </p>
                   <p>
                     <Trans
                       i18nKey="salatTracker.legendAutoCountInfo"
                       defaults="🔕 Prefer to count by hand? Turn off <1>Auto-count dhikr</1> in salat settings — tags still mark as done, and Tasbih mode on the Zikr counter becomes your manual way to count them."
-                    >
-                      🔕 Prefer to count by hand? Turn off{' '}
-                      <span className="text-white/70 font-medium">Auto-count dhikr</span> in salat
-                      settings — tags still mark as done, and Tasbih mode on the Zikr counter
-                      becomes your manual way to count them.
-                    </Trans>
+                      components={{ 1: EMPHASIS }}
+                    />
                   </p>
                   <p>
                     <Trans
                       i18nKey="salatTracker.legendReadNowInfo"
                       defaults="📖 <1>Read now</1> under each prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd 1523, ṣaḥīḥ)."
-                    >
-                      📖 <span className="text-white/70 font-medium">Read now</span> under each
-                      prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd
-                      1523, ṣaḥīḥ).
-                    </Trans>
+                      components={{ 1: EMPHASIS }}
+                    />
                   </p>
                   <p>
                     <Trans
                       i18nKey="salatTracker.legendFridayInfo"
                       defaults="🌟 On <1>Friday</1> you'll see Sūrat al-Kahf, and a live reminder for the hour of response between ʿAṣr and Maghrib (Abū Dāwūd 1048, ṣaḥīḥ)."
-                    >
-                      🌟 On <span className="text-white/70 font-medium">Friday</span> you'll see
-                      Sūrat al-Kahf, and a live reminder for the hour of response between ʿAṣr and
-                      Maghrib (Abū Dāwūd 1048, ṣaḥīḥ).
-                    </Trans>
+                      components={{ 1: EMPHASIS }}
+                    />
                   </p>
                 </div>
               </div>
