@@ -506,6 +506,19 @@ export function getDemoResponse(url: string, method: string, gender = 'male'): u
   if (url.includes('/api/social/noor')) return { ok: true, today: 88, allTime: 14250 };
   if (url.includes('/api/social/friends')) return { ok: true, friends: [] };
   if (url.includes('/api/friends')) return { ok: true, friends: [] };
+  // Sadaqah pages read these shapes; the demo shows them empty (no invented
+  // donation figures, no payment numbers).
+  if (url.includes('/api/sadaqah/stats'))
+    return {
+      ok: true,
+      totalVerifiedAmount: 0,
+      totalVerifiedCount: 0,
+      totalContributors: 0,
+      lastUpdated: new Date().toISOString(),
+      quarterlyBreakdown: [],
+    };
+  if (url.includes('/api/sadaqah/config'))
+    return { ok: true, bkashNumber: null, nagadNumber: null, nagadEnabled: false };
   if (url.includes('/api/auth/verify')) return { ok: true, user: getDemoUser('male') };
   if (url.includes('/api/user/me')) return { ok: true };
   return { ok: true };
