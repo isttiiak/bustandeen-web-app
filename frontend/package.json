@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.62.0",
+  "version": "5.62.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -57,5 +57,8 @@
     "workbox-precaching": "^7.4.1",
     "workbox-routing": "^7.4.1",
     "workbox-strategies": "^7.4.1"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.5"
   }
 }
