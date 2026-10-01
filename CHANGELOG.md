@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.62.1 - Rate limits that actually hold on serverless - 2026-10-01
+
+### Fixed
+
+- **Daily AI limits and form limits are now real.** On Vercel every warm server instance kept its own counters, and a cold start reset them, so "20 Naseeh requests a day" really meant 20 per instance. The limits that protect money or public forms now share one count across all instances: Naseeh/AI (per IP, per user and data chat), sadaqah submissions and receipt checks, feedback, friend-connect, backup import, data export and the admin session check. The high-volume general and zikr flood guards stay in memory, where an approximate per-instance cap is enough.
+
+### Notes
+
+- New `RateLimitCounter` collection, used by `middleware/mongoRateLimitStore.ts` (an `express-rate-limit` `Store`). Each client's window starts at its first hit, as before; the count is one atomic update, so simultaneous hits on two instances are both counted.
+- Only a keyed hash of the IP or user id is stored, and a TTL index deletes each counter when its window ends (24 hours at most). The privacy page says so.
+- If MongoDB is unreachable, a limiter falls back to an in-memory count for that instance (logged as `rate-limit-store`) instead of blocking everyone or waiting on Mongoose's 10-second buffer.
+- **Local dev no longer builds indexes.** `autoIndex` is now on only in the test suite (or with `MONGO_AUTO_INDEX=1` for a local database). `backend/.env` points at the live Atlas database, so a dev server with `autoIndex` on changes production indexes. That happened on 2026-10-01: a local dev server built the new retention and counter indexes in production, which applied the 30/90-day retention immediately (both log collections are now empty).
+- Indexes for this release already exist in production (see above). `npm run sync-indexes` in `backend/` still lists three old indexes to drop (`createdAt_-1` on the two log collections, the unused `userId_1` on `salatlogs`); `-- --apply` removes them. Nothing else is pending.
+
 ## v5.62.0 - Privacy and security hardening (audit, phase 1) - 2026-10-01
 
 ### Added
