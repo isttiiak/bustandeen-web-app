@@ -1443,7 +1443,7 @@
         },
         "atlas": {
           "name": "MongoDB Atlas",
-          "why": "Our database.",
+          "why": "Our database, stored in Singapore (AWS).",
           "receives": "Your account details and everything you log. Rayhanah notes, body stats and your own AI key are encrypted before they are stored."
         },
         "firebase": {

@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.77.1 - Where the database lives - 2026-10-02
+
+### Changed
+
+- The privacy page's data-flow table now says where the database is: MongoDB Atlas, stored in Singapore (AWS), in English and Bangla (audit T2.11 follow-up).
+
+### Changed (developers)
+
+- Production indexes synced: `clientops` now has the unique `{uid, opId}` index and the 30-day TTL (audit T2.3). A dry run reports all indexes in sync.
+- The offline fasting e2e test pins its clock to a Wednesday. On Fridays (and Saturdays) "I fasted today" rightly asks about singling the day out first, so the test failed on those days.
+
 ## v5.77.0 - Lighter Zikr counter and Profile pages - 2026-10-01
 
 ### Changed (developers)
