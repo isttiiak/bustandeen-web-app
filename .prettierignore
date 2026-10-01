@@ -4,3 +4,10 @@ coverage
 .vercel
 package-lock.json
 frontend/public
+dist-ssr
+frontend/dev-dist
+frontend/test-results
+frontend/playwright-report
+# The one-line inline theme script is CSP-hashed (vercel.json, check-csp.mjs):
+# reformatting it would change the hash.
+frontend/index.html

@@ -14,9 +14,16 @@ export default function QuranListen() {
         <QuranTabNav active="listen" />
         <QuranAudioPlayer />
         <p className="text-white/30 text-[11px] leading-relaxed px-1">
-          🌸 {t('quranListen.listeningVirtue')}{' '}
-          (<a className="underline" href="https://sunnah.com/bukhari:5049" target="_blank" rel="noreferrer">{translateReference('Bukhārī 5049', i18n.language)}</a>).
-          {' '}{t('quranListen.listeningCounts')}
+          🌸 {t('quranListen.listeningVirtue')} (
+          <a
+            className="underline"
+            href="https://sunnah.com/bukhari:5049"
+            target="_blank"
+            rel="noreferrer"
+          >
+            {translateReference('Bukhārī 5049', i18n.language)}
+          </a>
+          ). {t('quranListen.listeningCounts')}
         </p>
       </div>
     </AnimatedBackground>

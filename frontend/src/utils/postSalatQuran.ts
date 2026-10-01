@@ -44,7 +44,7 @@ export const SALAT_RECITATIONS: SalatRecitation[] = [
     end: 255,
     emoji: '📖',
     note: 'Nothing prevents him from entering Paradise except death.',
-    source: 'an-Nasāʾī, ʿAmal al-Yawm wa\'l-Layla 100',
+    source: "an-Nasāʾī, ʿAmal al-Yawm wa'l-Layla 100",
     sourceUrl: 'https://quran.com/2/255',
     grade: 'Ṣaḥīḥ (al-Albānī, Silsilah aṣ-Ṣaḥīḥah 972)',
     prayers: 'all',

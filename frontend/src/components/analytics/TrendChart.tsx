@@ -99,7 +99,9 @@ export default function TrendChart({ data, period }: TrendChartProps) {
     return (
       <div className="card bg-brand-surface border border-brand-border shadow-glass">
         <div className="card-body p-6">
-          <h3 className="text-lg font-bold text-brand-emerald mb-4">{t('zikrAnalytics.trendChart.title', 'Trend Chart')}</h3>
+          <h3 className="text-lg font-bold text-brand-emerald mb-4">
+            {t('zikrAnalytics.trendChart.title', 'Trend Chart')}
+          </h3>
           <div className="flex items-center justify-center h-64 text-white/40">
             <p>{t('zikrAnalytics.trendChart.noData', 'No data available')}</p>
           </div>
@@ -122,7 +124,11 @@ export default function TrendChart({ data, period }: TrendChartProps) {
     >
       <div className="card-body p-6">
         <div className="flex items-baseline justify-between gap-3 mb-4">
-          <h3 className="text-lg font-bold text-brand-emerald">{t('zikrAnalytics.trendChart.dayTrend', '{{period}}-Day Trend', { period: formatLocaleNumber(period) })}</h3>
+          <h3 className="text-lg font-bold text-brand-emerald">
+            {t('zikrAnalytics.trendChart.dayTrend', '{{period}}-Day Trend', {
+              period: formatLocaleNumber(period),
+            })}
+          </h3>
           {active && (
             <p className="text-xs text-white/60 tabular-nums">
               <span className="text-white/40">{active.label}</span>{' '}
@@ -150,13 +156,21 @@ export default function TrendChart({ data, period }: TrendChartProps) {
           {ticks.map((t) => (
             <g key={t.y}>
               <line
-                x1={PAD.left} y1={t.y} x2={VB_W - PAD.right} y2={t.y}
-                stroke="rgba(255,255,255,0.10)" strokeWidth={1} strokeDasharray="3 3"
+                x1={PAD.left}
+                y1={t.y}
+                x2={VB_W - PAD.right}
+                y2={t.y}
+                stroke="rgba(255,255,255,0.10)"
+                strokeWidth={1}
+                strokeDasharray="3 3"
                 vectorEffect="non-scaling-stroke"
               />
               <text
-                x={PAD.left - 8} y={t.y + 4} textAnchor="end"
-                className="fill-white/40" style={{ fontSize: 11 }}
+                x={PAD.left - 8}
+                y={t.y + 4}
+                textAnchor="end"
+                className="fill-white/40"
+                style={{ fontSize: 11 }}
               >
                 {formatLocaleNumber(t.value)}
               </text>
@@ -193,29 +207,41 @@ export default function TrendChart({ data, period }: TrendChartProps) {
           {hover != null && (
             <g>
               <line
-                x1={pts[hover].x} y1={PAD.top} x2={pts[hover].x} y2={PAD.top + model.innerH}
-                stroke="rgba(255,255,255,0.25)" strokeWidth={1} vectorEffect="non-scaling-stroke"
+                x1={pts[hover].x}
+                y1={PAD.top}
+                x2={pts[hover].x}
+                y2={PAD.top + model.innerH}
+                stroke="rgba(255,255,255,0.25)"
+                strokeWidth={1}
+                vectorEffect="non-scaling-stroke"
               />
               <circle
-                cx={pts[hover].x} cy={pts[hover].y} r={4}
-                fill="var(--brand-emerald, #7a9e6e)" stroke="#0e0d0a" strokeWidth={2}
+                cx={pts[hover].x}
+                cy={pts[hover].y}
+                r={4}
+                fill="var(--brand-emerald, #7a9e6e)"
+                stroke="#0e0d0a"
+                strokeWidth={2}
                 vectorEffect="non-scaling-stroke"
               />
             </g>
           )}
 
           {/* x labels */}
-          {rows.map((r, i) => (
+          {rows.map((r, i) =>
             i % labelEvery === 0 ? (
               <text
                 key={`${r.label}-${i}`}
-                x={pts[i].x} y={VB_H - 8} textAnchor="middle"
-                className="fill-white/40" style={{ fontSize: 11 }}
+                x={pts[i].x}
+                y={VB_H - 8}
+                textAnchor="middle"
+                className="fill-white/40"
+                style={{ fontSize: 11 }}
               >
                 {r.label}
               </text>
             ) : null
-          ))}
+          )}
 
           {/* invisible hit areas — one column per point */}
           {rows.map((r, i) => (

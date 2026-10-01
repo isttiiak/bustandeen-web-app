@@ -4,8 +4,16 @@ export const FASTING_CATEGORIES = ['qada', 'kaffarah', 'nadhr', 'voluntary', 'ra
 export type FastingCategory = (typeof FASTING_CATEGORIES)[number];
 
 export const VOLUNTARY_KINDS = [
-  'mon_thu', 'ayyam_bid', 'arafah', 'ashura', 'shawwal_six',
-  'muharram', 'shaban', 'dawud', 'dhul_hijjah', 'general',
+  'mon_thu',
+  'ayyam_bid',
+  'arafah',
+  'ashura',
+  'shawwal_six',
+  'muharram',
+  'shaban',
+  'dawud',
+  'dhul_hijjah',
+  'general',
 ] as const;
 export type VoluntaryKind = (typeof VOLUNTARY_KINDS)[number];
 

@@ -77,7 +77,9 @@ for (const [key, value] of en) {
   if (ENGLISH_ONLY.has(ns)) continue;
   if (!bn.has(key) && !bnBases.has(base(key))) missing.push(key);
   else if (bn.has(key) && placeholders(value, key) !== placeholders(bn.get(key), key)) {
-    mismatched.push(`${key}: en {{${placeholders(value, key)}}} / bn {{${placeholders(bn.get(key), key)}}}`);
+    mismatched.push(
+      `${key}: en {{${placeholders(value, key)}}} / bn {{${placeholders(bn.get(key), key)}}}`
+    );
   }
 }
 for (const key of bn.keys()) {

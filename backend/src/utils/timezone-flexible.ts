@@ -6,7 +6,10 @@ export const DEFAULT_TIMEZONE_OFFSET = 6 * 60; // Dhaka: UTC+6 in minutes (defau
 /**
  * Get current date/time in specified timezone
  */
-export function getLocalDate(dateLike: number | Date = Date.now(), offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET): Date {
+export function getLocalDate(
+  dateLike: number | Date = Date.now(),
+  offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET
+): Date {
   const date = new Date(dateLike);
   return new Date(date.getTime() + offsetMinutes * 60 * 1000);
 }
@@ -14,7 +17,10 @@ export function getLocalDate(dateLike: number | Date = Date.now(), offsetMinutes
 /**
  * Truncate to start of day in specified timezone (local midnight)
  */
-export function truncateToTimezone(dateLike: number | Date = Date.now(), offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET): Date {
+export function truncateToTimezone(
+  dateLike: number | Date = Date.now(),
+  offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET
+): Date {
   const date = new Date(dateLike);
 
   const hours = date.getUTCHours();
@@ -34,11 +40,12 @@ export function truncateToTimezone(dateLike: number | Date = Date.now(), offsetM
   // half-hour offsets (India +5:30, Nepal +5:45, Iran +3:30) get a correct
   // day boundary instead of one shifted by 30–45 minutes.
   const DAY_MIN = 24 * 60;
-  const utcMinutesForLocalMidnight = ((DAY_MIN - offsetMinutes) % DAY_MIN + DAY_MIN) % DAY_MIN;
+  const utcMinutesForLocalMidnight = (((DAY_MIN - offsetMinutes) % DAY_MIN) + DAY_MIN) % DAY_MIN;
   date.setUTCHours(
     Math.floor(utcMinutesForLocalMidnight / 60),
     utcMinutesForLocalMidnight % 60,
-    0, 0
+    0,
+    0
   );
 
   return date;
@@ -60,7 +67,9 @@ export function bucketDateForDayString(
   const [, y, mo, d] = m;
   const DAY_MIN = 24 * 60;
   const utcMin = (((DAY_MIN - offsetMinutes) % DAY_MIN) + DAY_MIN) % DAY_MIN;
-  return new Date(Date.UTC(Number(y), Number(mo) - 1, Number(d), Math.floor(utcMin / 60), utcMin % 60, 0, 0));
+  return new Date(
+    Date.UTC(Number(y), Number(mo) - 1, Number(d), Math.floor(utcMin / 60), utcMin % 60, 0, 0)
+  );
 }
 
 /**
@@ -80,14 +89,16 @@ export function getTodayString(offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET):
 /**
  * Check if it's a new day in specified timezone
  */
-export function isNewDay(lastDateString: string, offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET): boolean {
+export function isNewDay(
+  lastDateString: string,
+  offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET
+): boolean {
   return lastDateString !== getTodayString(offsetMinutes);
 }
 
 // Backward compatibility aliases
 export const truncateDhakaDate = (dateLike: number | Date): Date =>
   truncateToTimezone(dateLike, DEFAULT_TIMEZONE_OFFSET);
-export const getTodayDhakaString = (): string =>
-  getTodayString(DEFAULT_TIMEZONE_OFFSET);
+export const getTodayDhakaString = (): string => getTodayString(DEFAULT_TIMEZONE_OFFSET);
 export const getDhakaDate = (dateLike: number | Date): Date =>
   getLocalDate(dateLike, DEFAULT_TIMEZONE_OFFSET);

@@ -50,9 +50,7 @@ test('only JPEGs, only under 1 MB', async () => {
   await assertFails(
     uploadBytes(ref(s, 'profile-photos/alice.jpg'), jpeg(), { contentType: 'image/png' })
   );
-  await assertFails(
-    uploadBytes(ref(s, 'profile-photos/alice.jpg'), jpeg(1024 * 1024), asJpeg)
-  );
+  await assertFails(uploadBytes(ref(s, 'profile-photos/alice.jpg'), jpeg(1024 * 1024), asJpeg));
   await assertSucceeds(
     uploadBytes(ref(s, 'profile-photos/alice.jpg'), jpeg(1024 * 1024 - 1), asJpeg)
   );
