@@ -376,9 +376,15 @@ export function useSalatLog(date?: string) {
   });
 }
 
+// networkMode 'always': React Query's default ('online') PAUSES a mutation
+// while the browser reports no connection, holding it only in memory, so a
+// prayer logged offline never reached the outbox and was lost if the tab
+// closed before reconnecting. Always running it lets the request fail fast and
+// land in the persistent salat outbox (found by the T2.2 smoke test).
 export function useUpdatePrayer() {
   const qc = useQueryClient();
   return useMutation({
+    networkMode: 'always',
     mutationFn: async (vars: UpdatePrayerVars) => {
       try {
         const { data } = await api.patch<{ ok: boolean; log: SalatLog }>('/api/salat/prayer', vars);
@@ -465,6 +471,7 @@ export function useUpdatePrayer() {
 export function useUpdateNafl() {
   const qc = useQueryClient();
   return useMutation({
+    networkMode: 'always', // see useUpdatePrayer
     mutationFn: async (vars: UpdateNaflVars) => {
       try {
         const { data } = await api.patch<{ ok: boolean; log: SalatLog }>('/api/salat/nafl', vars);

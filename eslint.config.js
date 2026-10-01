@@ -13,6 +13,8 @@ export default [
       '**/dist/**',
       '**/dist-ssr/**',
       '**/coverage/**',
+      'frontend/test-results/**',
+      'frontend/playwright-report/**',
       '**/.vercel/**',
       'frontend/dev-dist/**',
     ],
@@ -93,6 +95,9 @@ export default [
     files: [
       'frontend/vite.config.ts',
       'frontend/vite.ssr.config.ts',
+      'frontend/vitest.config.ts',
+      'frontend/playwright.config.ts',
+      'frontend/e2e/**/*.ts',
       'frontend/tailwind.config.js',
       'frontend/postcss.config.js',
       'eslint.config.js',
