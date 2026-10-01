@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.77.0 - Lighter Zikr counter and Profile pages - 2026-10-01
+
+### Changed (developers)
+
+- **ZikrCounter split** (audit T2.4, part 4): 1,847 → 862 lines. `components/zikr/`: `zikrCounterData.ts` (built-in meanings, hadith references, full texts, palette), `ZikrAutoPlayControls`, `ZikrReferencePanel`, `ZikrFocusOverlay`, `ZikrSetCountModal`, `ZikrAddCustomModal`, `ZikrGuestDialog`, `ZikrManageListSheet`.
+- **Profile split**: 1,834 → 665 lines. `components/profile/`: `profileParts.tsx` (country/city data, preset avatars, helpers, types, flag, Google logo), `ProfileSummaryCard`, `ProfileAccountCard`, `ProfileEditForm`, `ProfilePhotoChoiceModal`, `ProfileAvatarPicker`, `ProfilePhotoPreviewModal`.
+- Verified as pure moves: the rendered text of `/zikr` (counter, settings, focus mode, auto-play) is identical before and after, and so is `/profile` (summary, account, edit form, photo choice), apart from the app version in the footer.
+- With parts 1-3, the five mega-components went from 9,520 to about 4,700 lines (audit T2.4 done).
+
 ## v5.76.0 - A lighter Fasting tracker - 2026-10-01
 
 ### Changed (developers)
