@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.73.0 - Who handles your data, in one place - 2026-10-01
+
+### Added
+
+- **The privacy page now has a "Who handles your data" section** (audit T2.11), in English and Bangla: every service that receives anything from you (Vercel, MongoDB Atlas, Firebase, Google Analytics, Groq for Naseeh, Zoho Mail, the Quran text and audio services, flagcdn, OpenStreetMap), what it is for, and exactly what it receives. It reads well on a phone (stacked rows, no sideways scrolling).
+
+### Notes
+
+- Rows live under `privacy.dataFlow` in both locale files; the list is `DATA_FLOW_ROWS` in `Privacy.tsx`. Add a row whenever a new service is added.
+- The MongoDB Atlas region is not stated yet: it is not visible from the code and must be confirmed in the Atlas console first.
+- The e2e service-worker test gets a 60 s budget (a cold install under parallel load could pass 30 s).
+
 ## v5.71.0 - Storage rules in the repo, previews by config - 2026-10-01
 
 ### Security

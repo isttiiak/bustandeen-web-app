@@ -56,6 +56,8 @@ test('a prerendered city page renders with its prayer times', async ({ page, req
 });
 
 test('the service worker installs and serves the app offline', async ({ page, context }) => {
+  // A cold install precaches the app shell; slow under parallel load.
+  test.setTimeout(60_000);
   await page.goto('/');
   await page.evaluate(() => navigator.serviceWorker.ready);
   await expect

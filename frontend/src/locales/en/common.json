@@ -1430,6 +1430,59 @@
       "body1": "Firebase (Google) handles sign-in, Vercel hosts the app, and MongoDB Atlas stores the database.",
       "body2": "Quran text, tafsir and recitation audio come from quran.com, alquran.cloud, the Islamic Network and mp3quran; flags come from flagcdn. Fonts are part of the app itself, so loading them contacts no one. Like any website, those services can see your IP address when your device loads their files."
     },
+    "dataFlow": {
+      "title": "Who handles your data",
+      "intro": "Every service that receives anything from you, and exactly what it receives.",
+      "colWhy": "What for",
+      "colReceives": "What it receives",
+      "rows": {
+        "vercel": {
+          "name": "Vercel",
+          "why": "Hosts the app and runs our server, in Singapore.",
+          "receives": "Your IP address and the pages and requests you make, as with any website. Our error logs never include what you logged, and your account ID only in scrambled form."
+        },
+        "atlas": {
+          "name": "MongoDB Atlas",
+          "why": "Our database.",
+          "receives": "Your account details and everything you log. Rayhanah notes, body stats and your own AI key are encrypted before they are stored."
+        },
+        "firebase": {
+          "name": "Firebase (Google)",
+          "why": "Sign-in and profile photos.",
+          "receives": "Your email, your name and photo if you sign in with Google, and the profile photo you upload."
+        },
+        "ga": {
+          "name": "Google Analytics 4",
+          "why": "Counting page views.",
+          "receives": "General page addresses with your IP address anonymised. Never private areas (Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, sadaqah forms) and never worship data."
+        },
+        "groq": {
+          "name": "Groq",
+          "why": "Naseeh AI, only if you turn it on.",
+          "receives": "Short summaries (counts, streaks, percentages) and the sentence you type into quick log. Never your name, email, dates, Rayhanah notes or body stats."
+        },
+        "zoho": {
+          "name": "Zoho Mail",
+          "why": "Sending our emails.",
+          "receives": "Your email address and the email we send you (welcome, replies, donation status)."
+        },
+        "quran": {
+          "name": "alquran.cloud, Islamic Network, mp3quran",
+          "why": "Quran text and recitation.",
+          "receives": "Your IP address and which surah or āyah your device loads. Tafsir comes from quran.com through our server, so quran.com never sees you."
+        },
+        "flagcdn": {
+          "name": "flagcdn",
+          "why": "Country flags.",
+          "receives": "Your IP address when a flag is shown."
+        },
+        "osm": {
+          "name": "OpenStreetMap",
+          "why": "Place names, only if you choose it.",
+          "receives": "Your location rounded to about 1 km, or the place you type. By default place names are found on your device and nothing is sent."
+        }
+      }
+    },
     "neverDo": {
       "title": "What we never do",
       "body0": "Sell, share, or monetise your data. There are no ads, no trackers beyond Google Analytics, and no affiliate links.",

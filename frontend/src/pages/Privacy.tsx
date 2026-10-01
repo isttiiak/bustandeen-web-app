@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -16,10 +17,59 @@ const SECTION_KEYS = [
   { emoji: '📝', key: 'changes', bodyCount: 1 },
 ];
 
+/** Every processor that receives anything, in the order a request meets them
+ * (audit T2.11 / PRIV-02). Keys under privacy.dataFlow.rows in both locales. */
+const DATA_FLOW_ROWS = [
+  'vercel',
+  'atlas',
+  'firebase',
+  'ga',
+  'groq',
+  'zoho',
+  'quran',
+  'flagcdn',
+  'osm',
+] as const;
+
+function DataFlowTable() {
+  const { t } = useTranslation();
+  return (
+    <section
+      aria-labelledby="data-flow-title"
+      className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-5"
+    >
+      <h3 id="data-flow-title" className="text-white font-bold text-sm mb-1">
+        🗺️ {t('privacy.dataFlow.title')}
+      </h3>
+      <p className="text-white/40 text-xs leading-relaxed mb-3">{t('privacy.dataFlow.intro')}</p>
+      {/* A list of rows rather than a <table>: three long text columns do not
+          fit a phone screen, stacked rows do. */}
+      <dl className="divide-y divide-brand-emerald/10">
+        {DATA_FLOW_ROWS.map((row) => (
+          <div key={row} className="py-2.5 first:pt-0 last:pb-0">
+            <dt className="text-white/80 text-xs font-bold">
+              {t(`privacy.dataFlow.rows.${row}.name`)}
+            </dt>
+            <dd className="text-white/40 text-xs leading-relaxed mt-0.5">
+              <span className="text-white/55">{t('privacy.dataFlow.colWhy')}: </span>
+              {t(`privacy.dataFlow.rows.${row}.why`)}
+            </dd>
+            <dd className="text-white/40 text-xs leading-relaxed mt-0.5">
+              <span className="text-white/55">{t('privacy.dataFlow.colReceives')}: </span>
+              {t(`privacy.dataFlow.rows.${row}.receives`)}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
 export default function Privacy() {
   const { t } = useTranslation();
 
   const sections = SECTION_KEYS.map((s) => ({
+    key: s.key,
     emoji: s.emoji,
     title: t(`privacy.${s.key}.title`),
     body: Array.from({ length: s.bodyCount }, (_, i) => t(`privacy.${s.key}.body${i}`)),
@@ -52,27 +102,29 @@ export default function Privacy() {
           </motion.div>
 
           {sections.map((s, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.06 + i * 0.05 }}
-              className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-5"
-            >
-              <p className="text-white font-bold text-sm mb-2">
-                {s.emoji} {s.title}
-              </p>
-              <ul className="space-y-1.5">
-                {s.body.map((line, j) => (
-                  <li
-                    key={j}
-                    className="text-white/40 text-xs leading-relaxed pl-3 border-l-2 border-brand-emerald/10"
-                  >
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+            <Fragment key={s.key}>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.06 + i * 0.05 }}
+                className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-5"
+              >
+                <p className="text-white font-bold text-sm mb-2">
+                  {s.emoji} {s.title}
+                </p>
+                <ul className="space-y-1.5">
+                  {s.body.map((line, j) => (
+                    <li
+                      key={j}
+                      className="text-white/40 text-xs leading-relaxed pl-3 border-l-2 border-brand-emerald/10"
+                    >
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              </motion.div>
+              {s.key === 'thirdParty' && <DataFlowTable />}
+            </Fragment>
           ))}
 
           <motion.div
