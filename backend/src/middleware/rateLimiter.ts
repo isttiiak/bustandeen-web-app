@@ -1,6 +1,7 @@
 import rateLimit from 'express-rate-limit';
 import type { Request, Response } from 'express';
 import RateLimitHit from '../models/RateLimitHit.js';
+import { MongoRateLimitStore } from './mongoRateLimitStore.js';
 
 // In development all requests share localhost IP — disable rate limiting entirely
 const isDev = process.env.NODE_ENV !== 'production';
@@ -19,10 +20,28 @@ const makeThrottledHandler =
     res.status(429).json(message);
   };
 
-const makeLimit = (windowMs: number, max: number, message: object, limiterName: string) =>
+/** Where a limiter keeps its counts. 'memory' (express-rate-limit's default)
+ *  is per serverless instance: fine for high-volume flood guards, where an
+ *  approximate per-instance cap is enough and a DB write per request is not.
+ *  'shared' (MongoDB, see mongoRateLimitStore.ts) is one count across every
+ *  instance: used wherever the cap protects money (AI calls), a public form,
+ *  or an expensive/abusable endpoint, so it is actually enforced. */
+type CounterStore = 'memory' | 'shared';
+
+const storeFor = (store: CounterStore, limiterName: string) =>
+  store === 'shared' ? { store: new MongoRateLimitStore(limiterName) } : {};
+
+const makeLimit = (
+  windowMs: number,
+  max: number,
+  message: object,
+  limiterName: string,
+  store: CounterStore = 'memory'
+) =>
   rateLimit({
     windowMs,
     max: isDev ? 100_000 : max,
+    ...storeFor(store, limiterName),
     standardHeaders: true,
     legacyHeaders: false,
     message,
@@ -60,17 +79,25 @@ export const aiLimiter = makeLimit(
   60 * 60 * 1000,
   10,
   { ok: false, error: 'AI suggestion limit reached. Try again later.' },
-  'ai'
+  'ai',
+  'shared'
 );
 
 // ── Per-UID limiters (applied AFTER requireAuth so req.user.uid is set) ──────
 // Keying off UID rather than IP prevents a single user from exhausting the
 // limit by rotating IPs, and prevents one IP (NAT/proxy) from blocking others.
 
-const makeUidLimit = (windowMs: number, max: number, message: object, limiterName: string) =>
+const makeUidLimit = (
+  windowMs: number,
+  max: number,
+  message: object,
+  limiterName: string,
+  store: CounterStore = 'shared'
+) =>
   rateLimit({
     windowMs,
     max: isDev ? 100_000 : max,
+    ...storeFor(store, limiterName),
     keyGenerator: (req: Request) => req.user?.uid ?? req.ip ?? 'unknown',
     // Suppress the IP-fallback validation warning — the IP path is only reached
     // if requireAuth somehow fails before this middleware, which would 401 first.
@@ -126,7 +153,8 @@ export const sadaqahSubmitLimiter = makeLimit(
   60 * 60 * 1000,
   5,
   { ok: false, error: 'Too many donation submissions. Please try again in an hour.' },
-  'sadaqahSubmit'
+  'sadaqahSubmit',
+  'shared'
 );
 
 /** Full data export: 10 per hour per UID - it reads ~20 collections, so this
@@ -144,7 +172,8 @@ export const sadaqahVerifyLimiter = makeLimit(
   15 * 60 * 1000,
   60,
   { ok: false, error: 'Too many verification attempts. Please try again later.' },
-  'sadaqahVerify'
+  'sadaqahVerify',
+  'shared'
 );
 
 /** Feedback/contact submissions: own limiter, same shape as
@@ -155,7 +184,8 @@ export const feedbackSubmitLimiter = makeLimit(
   60 * 60 * 1000,
   5,
   { ok: false, error: 'Too many messages sent. Please try again in an hour.' },
-  'feedbackSubmit'
+  'feedbackSubmit',
+  'shared'
 );
 
 /** Admin session confirm: 20 per 15 min per IP — the first admin-panel call
@@ -166,7 +196,8 @@ export const adminSessionLimiter = makeLimit(
   15 * 60 * 1000,
   20,
   { ok: false, error: 'Too many attempts. Please try again later.' },
-  'adminSession'
+  'adminSession',
+  'shared'
 );
 
 /** CSP violation reports: 60 per 15 min per IP. Browsers send one report per

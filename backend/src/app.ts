@@ -53,6 +53,9 @@ app.set('trust proxy', 1);
 app.use(
   helmet({
     contentSecurityPolicy: {
+      // Exactly these directives: helmet's defaults (font-src https:, img-src
+      // data:, …) only loosen a policy that should allow nothing.
+      useDefaults: false,
       directives: {
         defaultSrc: ["'none'"],
         baseUri: ["'none'"],
