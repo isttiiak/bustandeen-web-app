@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { translateReference } from '../utils/localeReference.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
@@ -133,6 +133,21 @@ export default function About() {
                 sunnah.com
               </a>
               , {t('about.authenticityText2')}
+            </p>
+            <p className="text-white/60 text-sm leading-relaxed">
+              <Trans
+                i18nKey="about.quranTextSource"
+                components={{
+                  1: (
+                    <a
+                      href="https://tanzil.net"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-brand-emerald underline"
+                    />
+                  ),
+                }}
+              />
             </p>
           </motion.div>
 

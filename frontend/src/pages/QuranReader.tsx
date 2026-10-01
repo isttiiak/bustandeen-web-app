@@ -240,7 +240,13 @@ export default function QuranReader() {
     resumePromptDoneRef.current = false;
     suppressSaveRef.current = false;
     seenRef.current = new Set();
-    Promise.all([loadSurahList(), loadSurahText(surahNo, undefined, showTranslit)])
+    // The surah list is only the header (name, ayah count); the Arabic is
+    // bundled, so a failed list (offline before it was ever cached) must not
+    // stop the surah from opening.
+    Promise.all([
+      loadSurahList().catch((): SurahMeta[] => []),
+      loadSurahText(surahNo, undefined, showTranslit),
+    ])
       .then(([list, text]) => {
         if (!alive) return;
         setSurahs(list);
@@ -902,7 +908,15 @@ export default function QuranReader() {
                     ))}
                   </div>
                   <p className="text-white/20 text-[10px]">
-                    {editions.map(editionLabel).join(' · ')} ·{' '}
+                    <a
+                      className="underline"
+                      href="https://tanzil.net"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Tanzil
+                    </a>{' '}
+                    · {editions.map(editionLabel).join(' · ')} ·{' '}
                     <a
                       className="underline"
                       href={`https://quran.com/${surahNo}/${current.numberInSurah}`}

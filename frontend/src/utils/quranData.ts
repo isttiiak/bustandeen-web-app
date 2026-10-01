@@ -1,5 +1,7 @@
-﻿// Quran text + metadata loaders — all from the free alquran.cloud API,
-// cached hard in IndexedDB so each surah is fetched exactly once ever.
+﻿// Quran text + metadata loaders. The Arabic is the bundled Tanzil Uthmani
+// text (public/quran/uthmani/, audit T2.6); surah metadata, translations and
+// transliteration come from the free alquran.cloud API, cached hard in
+// IndexedDB so each is fetched exactly once ever.
 //
 // This used to live in localStorage, but a full Quran cache (114 surahs ×
 // translation-edition combos, 50-500 KB each) routinely approached or
@@ -9,7 +11,7 @@
 
 import { SURAH_NAMES_BN } from './surahNamesBn.js';
 import { SURAH_MEANINGS_BN } from './surahMeaningsBn.js';
-import { idbGet, idbSet } from './idbCache.js';
+import { idbGet, idbRemove, idbSet } from './idbCache.js';
 
 export interface SurahMeta {
   number: number;
@@ -130,8 +132,84 @@ export async function loadSurahList(): Promise<SurahMeta[]> {
 
 const TRANSLIT_EDITION = 'en.transliteration';
 
-/** Arabic (Uthmani) + the selected translations (1–2) for one surah, plus the
- * free transliteration edition when requested (pronunciation aid). */
+/** One surah of the bundled Tanzil Uthmani text (audit T2.6), written by
+ * scripts/build-quran-text.mjs from data/tanzil/quran-uthmani.xml. The ayah
+ * strings are Tanzil's, verbatim: never edit, trim or normalise them. */
+export interface TanzilSurah {
+  notice: string;
+  source: string;
+  surah: number;
+  name: string;
+  /** Global number (1..6236) of the first ayah */
+  start: number;
+  /** Absent for al-Fātiḥah (where it is ayah 1) and at-Tawbah */
+  bismillah?: string;
+  ayahs: string[];
+}
+
+/** Served from /quran/uthmani/{n}.json; the service worker keeps every surah
+ * that has been opened, so it reads offline afterwards. */
+export async function loadTanzilSurah(surah: number): Promise<TanzilSurah> {
+  const res = await fetch(`/quran/uthmani/${surah}.json`);
+  if (!res.ok) throw new Error(`Quran text ${surah}: HTTP ${res.status}`);
+  return (await res.json()) as TanzilSurah;
+}
+
+/** The Arabic of each ayah as the reader shows it. Ayah 1 carries the
+ * basmala in front, as it always has here (alquran.cloud joined the same two
+ * Tanzil strings with a space); al-Fātiḥah counts it as its first ayah and
+ * at-Tawbah has none. */
+export function arabicAyahs(s: TanzilSurah): string[] {
+  return s.ayahs.map((text, i) => (i === 0 && s.bismillah ? `${s.bismillah} ${text}` : text));
+}
+
+interface AyahExtras {
+  translations: string[];
+  transliteration?: string;
+}
+
+/** Translations (+ transliteration) for one surah, from alquran.cloud,
+ * cached in IndexedDB. Before v5.78.0 the Arabic came from the same request
+ * and was cached alongside (`bustandeen_surah_text_*_v2`); those entries'
+ * translations are reused so nobody downloads them again. */
+async function loadAyahExtras(surah: number, all: string[], withTranslit: boolean) {
+  const key = `bustandeen_surah_extras_${surah}_${all.join('+')}_v1`;
+  const cached = await idbGet<AyahExtras[]>(key);
+  if (cached) return cached;
+
+  const legacyKey = `bustandeen_surah_text_${surah}_${all.join('+')}_v2`;
+  const legacy =
+    (await idbGet<AyahText[]>(legacyKey)) ?? migrateFromLocalStorage<AyahText[]>(legacyKey);
+  if (legacy) {
+    const extras = legacy.map(({ translations, transliteration }) => ({
+      translations,
+      ...(transliteration !== undefined ? { transliteration } : {}),
+    }));
+    await idbSet(key, extras);
+    void idbRemove(legacyKey);
+    return extras;
+  }
+
+  const res = await fetch(`https://api.alquran.cloud/v1/surah/${surah}/editions/${all.join(',')}`);
+  if (!res.ok) throw new Error(`Translations ${surah}: HTTP ${res.status}`);
+  const data = (await res.json()) as {
+    data: Array<{ ayahs: Array<{ text: string }> }>;
+  };
+  const trs = withTranslit ? data.data.slice(0, -1) : data.data;
+  const translit = withTranslit ? data.data[data.data.length - 1] : undefined;
+  const extras: AyahExtras[] = (data.data[0]?.ayahs ?? []).map((_, i) => ({
+    translations: trs.map((tr) => tr?.ayahs?.[i]?.text ?? ''),
+    ...(translit ? { transliteration: translit.ayahs?.[i]?.text ?? '' } : {}),
+  }));
+  await idbSet(key, extras);
+  return extras;
+}
+
+/** Arabic (Uthmani, bundled Tanzil text) + the selected translations (1–2)
+ * for one surah, plus the free transliteration edition when requested
+ * (pronunciation aid). If the translations can't be fetched (offline and not
+ * cached yet) the Arabic still loads, with empty translations; the next open
+ * tries again. */
 export async function loadSurahText(
   surah: number,
   editions?: string[],
@@ -139,34 +217,18 @@ export async function loadSurahText(
 ): Promise<AyahText[]> {
   const eds = (editions?.length ? editions : selectedTranslations()).slice(0, 2);
   const all = withTranslit ? [...eds, TRANSLIT_EDITION] : eds;
-  const key = `bustandeen_surah_text_${surah}_${all.join('+')}_v2`;
 
-  const fromIdb = await idbGet<AyahText[]>(key);
-  if (fromIdb) return fromIdb;
-  const migrated = migrateFromLocalStorage<AyahText[]>(key);
-  if (migrated) {
-    void idbSet(key, migrated);
-    return migrated;
-  }
-
-  const res = await fetch(
-    `https://api.alquran.cloud/v1/surah/${surah}/editions/${['quran-uthmani', ...all].join(',')}`
-  );
-  const data = (await res.json()) as {
-    data: Array<{ ayahs: Array<{ number: number; numberInSurah: number; text: string }> }>;
-  };
-  const [ar, ...rest] = data.data;
-  const trs = withTranslit ? rest.slice(0, -1) : rest;
-  const translit = withTranslit ? rest[rest.length - 1] : undefined;
-  const ayat: AyahText[] = (ar?.ayahs ?? []).map((a, i) => ({
-    numberInSurah: a.numberInSurah,
-    number: a.number,
-    arabic: a.text,
-    translations: trs.map((tr) => tr?.ayahs?.[i]?.text ?? ''),
-    ...(translit ? { transliteration: translit.ayahs?.[i]?.text ?? '' } : {}),
+  const [text, extras] = await Promise.all([
+    loadTanzilSurah(surah),
+    loadAyahExtras(surah, all, withTranslit).catch(() => undefined),
+  ]);
+  return arabicAyahs(text).map((arabic, i) => ({
+    numberInSurah: i + 1,
+    number: text.start + i,
+    arabic,
+    translations: extras?.[i]?.translations ?? eds.map(() => ''),
+    ...(withTranslit ? { transliteration: extras?.[i]?.transliteration ?? '' } : {}),
   }));
-  await idbSet(key, ayat);
-  return ayat;
 }
 
 /** Per-ayah audio (Alafasy — the edition with full per-ayah coverage). */

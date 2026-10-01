@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import api from '../lib/api.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import { useQuranSummary, useUpdateQuranProfile } from '../hooks/useQuran.js';
@@ -408,6 +408,21 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                   style={{ fontFamily: ARABIC_FONTS.find((f) => f.id === arabicFontId)?.stack }}
                 >
                   بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
+                </p>
+                <p className="text-white/35 text-[11px] leading-relaxed">
+                  <Trans
+                    i18nKey="quranSettings.textSource"
+                    components={{
+                      1: (
+                        <a
+                          href="https://tanzil.net"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline"
+                        />
+                      ),
+                    }}
+                  />
                 </p>
               </div>
 

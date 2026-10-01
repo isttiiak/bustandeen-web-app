@@ -154,6 +154,7 @@
     "authenticityOr": "or",
     "authenticityText1": "Every verse and hadith in this app links to its exact source on",
     "authenticityText2": "with the grading shown where it matters. Nothing is quoted from memory — verify everything yourself, always. For personal rulings, please consult a qualified scholar.",
+    "quranTextSource": "The Arabic Quran text is the Tanzil Project's Uthmani text (version 1.1), used exactly as published and never altered. It is part of the app, so it also reads offline. Updates are listed at <1>tanzil.net</1>.",
     "dataDesc": "Export or delete everything, feature by feature, anytime. Available in English and Bengali, and installable on your phone.",
     "dataTitle": "Your data stays yours",
     "developedBy": "Developed with love by",
@@ -1428,7 +1429,7 @@
       "title": "Services we rely on",
       "body0": "Google Analytics 4 counts page views and anonymous usage patterns (with IP anonymised). It only sees general page addresses: private areas such as Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, the sadaqah forms and sign-in links are never reported, and no worship data is ever sent to it.",
       "body1": "Firebase (Google) handles sign-in, Vercel hosts the app, and MongoDB Atlas stores the database.",
-      "body2": "Quran text, tafsir and recitation audio come from quran.com, alquran.cloud, the Islamic Network and mp3quran; flags come from flagcdn. Fonts are part of the app itself, so loading them contacts no one. Like any website, those services can see your IP address when your device loads their files."
+      "body2": "The Arabic Quran text (from the Tanzil Project) is part of the app itself. Translations, tafsir and recitation audio come from quran.com, alquran.cloud, the Islamic Network and mp3quran; flags come from flagcdn. Fonts are part of the app itself, so loading them contacts no one. Like any website, those services can see your IP address when your device loads their files."
     },
     "dataFlow": {
       "title": "Who handles your data",
@@ -1468,7 +1469,7 @@
         },
         "quran": {
           "name": "alquran.cloud, Islamic Network, mp3quran",
-          "why": "Quran text and recitation.",
+          "why": "Quran translations, transliteration and recitation.",
           "receives": "Your IP address and which surah or āyah your device loads. Tafsir comes from quran.com through our server, so quran.com never sees you."
         },
         "flagcdn": {
@@ -1841,6 +1842,7 @@
   },
   "quranSettings": {
     "arabicFont": "🔤 Arabic font",
+    "textSource": "Arabic text: Tanzil Project, Uthmani version 1.1, unchanged. Updates at <1>tanzil.net</1>.",
     "close": "Close settings",
     "custom": "Custom",
     "dangerZoneHint": "Looking for full data deletion? That lives in",

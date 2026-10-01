@@ -8,8 +8,9 @@
 //
 // Quran entries carry only the (surah, ayah) reference — the actual Arabic +
 // translation text is fetched at render time via quranData.ts's
-// loadSurahText(), the same verified alquran.cloud source the Quran reader
-// itself trusts, so no verse text is ever hand-transcribed here.
+// loadSurahText(), the same source the Quran reader uses (bundled Tanzil
+// Arabic + alquran.cloud translations), so no verse text is ever
+// hand-transcribed here.
 
 export interface MuhasabahQuranRef {
   type: 'quran';
