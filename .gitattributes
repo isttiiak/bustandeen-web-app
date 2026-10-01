@@ -1,0 +1,4 @@
+# Vitest writes snapshot files with LF line endings. Without this, Git on
+# Windows (core.autocrlf=true) checks them out as CRLF and every test run
+# leaves them looking modified.
+*.snap text eol=lf
