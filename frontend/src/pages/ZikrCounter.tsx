@@ -1130,11 +1130,13 @@ export default function ZikrCounter() {
 
         {/* Keyboard hint */}
         <p className="text-center text-white/30 text-xs">
-          <Trans i18nKey="zikr.spaceToCountKbd" defaults="Press <1>Space</1> to count">
-            Press{' '}
-            <kbd className="kbd kbd-xs bg-white/15 text-white border-brand-emerald/20">Space</kbd>{' '}
-            to count
-          </Trans>
+          <Trans
+            i18nKey="zikr.spaceToCountKbd"
+            defaults="Press <1>Space</1> to count"
+            components={{
+              1: <kbd className="kbd kbd-xs bg-white/15 text-white border-brand-emerald/20" />,
+            }}
+          />
         </p>
 
         {/* ── Expandable full text & reference for the selected dhikr ──

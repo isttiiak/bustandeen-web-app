@@ -121,9 +121,8 @@ export default function DaifExplainer({ topics }: { topics: DaifTopic[] }) {
             <Trans
               i18nKey="daifExplainer.headerTitle"
               defaults="Why some things on this page are marked <1>ḍaʿīf</1>"
-            >
-              Why some things on this page are marked <span className="italic">ḍaʿīf</span>
-            </Trans>
+              components={{ 1: <span className="italic" /> }}
+            />
           </span>
           <span className="block text-white/30 text-[11px] mt-0.5">
             {t('daifExplainer.narrationCount', {
@@ -150,15 +149,8 @@ export default function DaifExplainer({ topics }: { topics: DaifTopic[] }) {
                 <Trans
                   i18nKey="daifExplainer.explainerParagraph"
                   defaults="The term <1>ḍaʿīf</1> means the chain of transmission has a flaw — a narrator with weak memory, an unknown link, or a break — so the words cannot be attributed to the Prophet ﷺ with confidence. It does not automatically mean the meaning is false. Many scholars permit acting on a weak report to encourage good deeds (faḍāʾil al-aʿmāl) provided nothing is treated as an established ruling or a guaranteed reward; others decline to use them at all. Bustandeen shows the grade so you can follow your own scholars."
-                >
-                  The term <b className="text-white/70">ḍaʿīf</b> means the chain of transmission
-                  has a flaw — a narrator with weak memory, an unknown link, or a break — so the
-                  words cannot be attributed to the Prophet ﷺ with confidence. It does not
-                  automatically mean the meaning is false. Many scholars permit acting on a weak
-                  report to encourage good deeds (faḍāʾil al-aʿmāl) provided nothing is treated as
-                  an established ruling or a guaranteed reward; others decline to use them at all.
-                  Bustandeen shows the grade so you can follow your own scholars.
-                </Trans>
+                  components={{ 1: <b className="text-white/70" /> }}
+                />
               </p>
 
               {list.map((e) => (

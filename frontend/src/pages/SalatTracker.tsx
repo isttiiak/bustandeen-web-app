@@ -1,20 +1,14 @@
-﻿import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
-import { useTranslation, Trans } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import TabNav from '../components/TabNav.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { celebrateSmall, celebrateAllPrayers } from '../utils/celebrate.js';
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  Cog6ToothIcon,
-  CalendarDaysIcon,
-} from '@heroicons/react/24/outline';
-import { getTrackingDay } from '../utils/trackingDay.js';
+import { ChevronLeftIcon, ChevronRightIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import {
   useSalatLog,
   useUpdatePrayer,
@@ -27,7 +21,6 @@ import {
   PrayerLocation,
   NaflType,
   NAFL_TYPE_META,
-  SELECTABLE_NAFL_TYPES,
   MISSED_REASONS,
   MissedReason,
 } from '../hooks/useSalatLog.js';
@@ -59,7 +52,7 @@ import {
 } from '../utils/salatPrefs.js';
 import { recitationsFor, recitationHref } from '../utils/postSalatQuran.js';
 import { SUNNAH_GUIDE, JUMUAH_SUNNAH_GUIDE, type SunnahSlot } from '../utils/sunnahGuide.js';
-import { getFridayHour, FRIDAY_HOUR_REF } from '../utils/fridayHour.js';
+import { getFridayHour } from '../utils/fridayHour.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import MusafirBanner from '../components/MusafirBanner.js';
@@ -76,242 +69,25 @@ import {
   travelRakat,
 } from '../utils/musafir.js';
 
-// ─── helpers ────────────────────────────────────────────────────────────────
-
-// Nafl is prayed in pairs — two rak'ahs is the smallest unit here. (Witr, the
-// one odd-numbered prayer, is NOT tracked in this section: it belongs to Isha,
-// not to voluntary rak'ah counting — Istiak's spec.)
-const MIN_RAKAT = 2;
-
-function isRamadanNow(): boolean {
-  try {
-    const month = parseInt(
-      new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', { month: 'numeric' }).format(
-        new Date()
-      ),
-      10
-    );
-    return month === 9;
-  } catch {
-    return false;
-  }
-}
-
-function todayStr() {
-  // Fajr boundary: before today's Fajr the "tracking day" is still yesterday.
-  // Isha at 2 AM and Tahajjud before Fajr belong to the closing Islamic day.
-  // Fallback to civil midnight when no location is saved.
-  return getTrackingDay();
-}
-function offsetDate(base: string, delta: number): string {
-  const d = new Date(base + 'T12:00:00');
-  d.setDate(d.getDate() + delta);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-function isFuturePrayer(
-  prayerId: string,
-  todayTimes: Record<string, Date> | null | undefined
-): boolean {
-  if (!todayTimes) return false;
-  const t = todayTimes[prayerId];
-  return !!t && t > new Date();
-}
-function isCurrentPrayer(prayerId: string, currentId: string | undefined): boolean {
-  return prayerId === currentId;
-}
-
-/** One before/after sunnah-rak'ah guidance row — same visual contract as the
- * existing Witr reminder block (gold accent), just re-colored per emphasis:
- * emerald for Sunnah Mu'akkadah (confirmed), info-blue for the lighter
- * ghair-mu'akkadah/nafl set, so the two toggles read as visually distinct. */
-function SunnahGuidanceRow({
-  slot,
-  position,
-  lang,
-}: {
-  slot: SunnahSlot;
-  position: 'before' | 'after';
-  lang: string;
-}) {
-  const { t } = useTranslation();
-  const muakkadah = slot.emphasis === 'muakkadah';
-  // Tailwind's JIT scanner needs literal class strings — a templated
-  // `border-${accent}/20` would never get generated into the built CSS.
-  const cls = muakkadah
-    ? {
-        wrap: 'px-3 py-2.5 border-t border-brand-emerald/20 flex items-start gap-2 bg-brand-emerald/5',
-        title: 'text-brand-emerald font-bold text-xs leading-tight',
-        sub: 'text-brand-emerald/70 font-normal',
-        link: 'text-brand-emerald/50 text-xs underline hover:text-brand-emerald/80 transition-colors mt-0.5 inline-block',
-      }
-    : {
-        wrap: 'px-3 py-2.5 border-t border-brand-info/20 flex items-start gap-2 bg-brand-info/5',
-        title: 'text-brand-info font-bold text-xs leading-tight',
-        sub: 'text-brand-info/70 font-normal',
-        link: 'text-brand-info/50 text-xs underline hover:text-brand-info/80 transition-colors mt-0.5 inline-block',
-      };
-  return (
-    <div className={cls.wrap}>
-      <span className="text-base shrink-0">{position === 'before' ? '⏮️' : '⏭️'}</span>
-      <div className="min-w-0">
-        <p className={cls.title}>
-          {position === 'before'
-            ? t('salatTracker.sunnahBefore', '{{rakat}} rakʿah sunnah before', {
-                rakat: slot.rakat,
-              })
-            : t('salatTracker.sunnahAfter', '{{rakat}} rakʿah sunnah after', { rakat: slot.rakat })}
-          {' · '}
-          <span className={cls.sub}>
-            {muakkadah
-              ? t('salatTracker.sunnahMuakkadah', 'Muʾakkadah — confirmed')
-              : t('salatTracker.sunnahGhairMuakkadah', 'Nafl — recommended')}
-          </span>
-        </p>
-        <p className="text-white/30 text-xs leading-relaxed mt-0.5">{slot.note}</p>
-        <a
-          href={slot.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => e.stopPropagation()}
-          className={cls.link}
-        >
-          📖 {translateReference(slot.source, lang)} · {translateReference(slot.grade, lang)}
-        </a>
-      </div>
-    </div>
-  );
-}
-function weekDotColor(completed: number): string {
-  if (completed >= 5) return '#10b981'; // brand-emerald
-  if (completed >= 3) return '#c9a96e'; // brand-gold
-  if (completed >= 1) return '#f59e0b'; // amber
-  return '#ef4444'; // red — logged nothing that day
-}
-
-function friendlyDate(dateStr: string, tr?: (key: string, fallback: string) => string): string {
-  const today = todayStr();
-  const yesterday = offsetDate(today, -1);
-  if (dateStr === today) return tr ? tr('common.today', 'Today') : 'Today';
-  if (dateStr === yesterday) return tr ? tr('salat.yesterday', 'Yesterday') : 'Yesterday';
-  return formatLocaleDate(new Date(dateStr + 'T12:00:00'), {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
-// ─── types ───────────────────────────────────────────────────────────────────
-
-interface SubTagDef {
-  value: PrayerLocation;
-  label: string;
-  emoji: string;
-  note: string;
-}
-
-const LOCATION_TAGS: SubTagDef[] = [
-  { value: 'mosque', label: 'At Mosque', emoji: '🕌', note: 'in jamat' },
-  { value: 'jamat', label: 'In Jamat', emoji: '👥', note: 'not at mosque' },
-  { value: 'home', label: 'At Home', emoji: '🏠', note: 'alone' },
-];
-
-// Primary colour per status
-const STATUS_STYLE: Record<
-  PrayerStatus,
-  { bg: string; border: string; text: string; emoji: string }
-> = {
-  completed: {
-    bg: 'bg-brand-emerald/20',
-    border: 'border-brand-emerald/60',
-    text: 'text-brand-emerald',
-    emoji: '✅',
-  },
-  kaza: {
-    bg: 'bg-brand-gold/20',
-    border: 'border-brand-gold/60',
-    text: 'text-brand-gold',
-    emoji: '⏰',
-  },
-  missed: { bg: 'bg-red-500/20', border: 'border-red-400/60', text: 'text-red-400', emoji: '❌' },
-  pending: {
-    bg: 'bg-brand-surface',
-    border: 'border-brand-border',
-    text: 'text-white/40',
-    emoji: '⬜',
-  },
-};
-
-// ─── MissedDayChips ──────────────────────────────────────────────────────────
-// Clickable date chips inside the kaza debt panel. Shows recent days that had
-// at least one missed prayer (completed < 5). First row is always visible;
-// extra rows expand on demand.
-
-const CHIPS_PER_ROW = 5;
-const INITIAL_ROWS = 1;
-const MAX_EXPANDED_ROWS = 3;
-
-function MissedDayChips({
-  calendarDataMap,
-  t,
-  setSelectedDate,
-  setExpandedPrayer,
-  setCalendarOpen,
-}: {
-  calendarDataMap: Map<string, number>;
-  t: (key: string, fallback: string, opts?: Record<string, unknown>) => string;
-  setSelectedDate: (d: string) => void;
-  setExpandedPrayer: (p: PrayerId | null) => void;
-  setCalendarOpen: (v: boolean) => void;
-}) {
-  const [expanded, setExpanded] = useState(false);
-  const today = todayStr();
-  const missedDays = Array.from(calendarDataMap.entries())
-    .filter(([d, c]) => d < today && c < 5)
-    .sort(([a], [b]) => b.localeCompare(a)); // newest first
-
-  if (missedDays.length === 0) return null;
-
-  const visibleCount = expanded
-    ? Math.min(missedDays.length, CHIPS_PER_ROW * MAX_EXPANDED_ROWS)
-    : CHIPS_PER_ROW * INITIAL_ROWS;
-  const visible = missedDays.slice(0, visibleCount);
-  const hasMore = missedDays.length > CHIPS_PER_ROW * INITIAL_ROWS;
-
-  return (
-    <div className="pt-2.5 mt-1 border-t border-brand-emerald/5 space-y-2">
-      <p className="text-white/20 text-[11px] font-semibold uppercase tracking-wide">
-        {t('salatTracker.kazaJumpTitle', '⚡ Quick-mark kaza')}
-      </p>
-      <div className="flex flex-wrap gap-1.5">
-        {visible.map(([d]) => (
-          <button
-            key={d}
-            onClick={() => {
-              setSelectedDate(d);
-              setExpandedPrayer(null);
-              setCalendarOpen(false);
-            }}
-            className="px-2 py-1 rounded-lg bg-brand-deep border border-brand-gold/25 text-brand-gold/70 hover:border-brand-gold/60 hover:text-brand-gold text-[11px] font-semibold transition-all"
-          >
-            {friendlyDate(d, t)}
-          </button>
-        ))}
-      </div>
-      {hasMore && (
-        <button
-          onClick={() => setExpanded((v) => !v)}
-          className="text-white/25 hover:text-white/50 text-[11px] underline underline-offset-2 transition-colors"
-        >
-          {expanded
-            ? t('salatTracker.kazaJumpLess', '▲ Show fewer dates')
-            : t('salatTracker.kazaJumpMore', '▾ Show more dates ({{count}})', {
-                count: missedDays.length - visibleCount,
-              })}
-        </button>
-      )}
-    </div>
-  );
-}
+import {
+  MIN_RAKAT,
+  isRamadanNow,
+  todayStr,
+  offsetDate,
+  isFuturePrayer,
+  isCurrentPrayer,
+  SunnahGuidanceRow,
+  friendlyDate,
+  LOCATION_TAGS,
+  STATUS_STYLE,
+} from '../components/salat/salatParts.js';
+import SalatLegend from '../components/salat/SalatLegend.js';
+import SalatKazaDebtCard from '../components/salat/SalatKazaDebtCard.js';
+import SalatNaflCard from '../components/salat/SalatNaflCard.js';
+import SalatGuestDialog from '../components/salat/SalatGuestDialog.js';
+import SalatMonthCalendar from '../components/salat/SalatMonthCalendar.js';
+import SalatWeekStrip from '../components/salat/SalatWeekStrip.js';
+import FridayHourCard from '../components/salat/FridayHourCard.js';
 
 // ─── component ───────────────────────────────────────────────────────────────
 
@@ -1018,59 +794,10 @@ export default function SalatTracker() {
             <MusafirBanner state={musafir} today={selectedDate} variant="salat" />
           )}
           {/* ── Friday: the hour of response (Abū Dāwūd 1048, ṣaḥīḥ) ──
-              Shown only while it is actually running — ʿAṣr has begun and
-              Maghrib has not. No notification permission, no cron: the page
-              already ticks every minute for the prayer clock. */}
-          {fridayHour.active && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`rounded-2xl border p-4 ${
-                fridayHour.isFinalStretch
-                  ? 'border-brand-gold/50 bg-gradient-to-br from-brand-gold/15 to-brand-gold-dim/5'
-                  : 'border-brand-gold/25 bg-brand-gold/[0.06]'
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                <span className="text-2xl shrink-0">🤲</span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <h3 className="text-brand-gold font-black text-sm">
-                      {fridayHour.isFinalStretch
-                        ? t('salatTracker.hourOfResponseNow', 'The hour of response — now')
-                        : t('salatTracker.hourOfResponse', 'Friday: the hour of response')}
-                    </h3>
-                    <span className="text-brand-gold/70 text-xs font-bold tabular-nums">
-                      {t('salatTracker.toMaghrib', '{{countdown}} to Maghrib', {
-                        countdown: fridayHour.countdown,
-                      })}
-                    </span>
-                  </div>
-                  <p className="text-white/60 text-xs mt-1.5 leading-relaxed">
-                    {t(
-                      'salatTracker.hourOfResponseQuote',
-                      '"{{text}}" Keep asking until the sun sets — for yourself, your parents, and the ummah.',
-                      {
-                        text:
-                          i18n.language === 'bn' ? FRIDAY_HOUR_REF.textBn : FRIDAY_HOUR_REF.text,
-                      }
-                    )}
-                  </p>
-                  <div className="flex items-center gap-2 flex-wrap mt-2.5">
-                    <a
-                      href={FRIDAY_HOUR_REF.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="text-[11px] text-white/35 hover:text-brand-gold underline underline-offset-2"
-                    >
-                      {translateReference(FRIDAY_HOUR_REF.source, i18n.language)} ·{' '}
-                      {translateReference(FRIDAY_HOUR_REF.grade, i18n.language)} ↗
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          )}
+                  Shown only while it is actually running — ʿAṣr has begun and
+                  Maghrib has not. No notification permission, no cron: the page
+                  already ticks every minute for the prayer clock. */}
+          <FridayHourCard fridayHour={fridayHour} />
 
           {/* Date navigator */}
           <div className="flex items-center justify-between gap-3">
@@ -1125,177 +852,27 @@ export default function SalatTracker() {
           </div>
 
           {/* Weekly summary — quick glance at the last 7 days, tap a day to jump */}
-          {weekDays.length > 0 && (
-            <div className="flex items-stretch gap-1">
-              {weekDays.map((d) => {
-                const isSel = d.date === selectedDate;
-                const isTod = d.date === todayStr();
-                const isFutureDay = d.date > todayStr();
-                const hasData = !isFutureDay;
-                const dot = hasData ? weekDotColor(d.completed) : 'rgba(255,255,255,0.12)';
-                return (
-                  <motion.button
-                    key={d.date}
-                    whileTap={{ scale: 0.9 }}
-                    onClick={() => {
-                      setSelectedDate(d.date);
-                      setExpandedPrayer(null);
-                      setCalendarOpen(false);
-                    }}
-                    aria-label={t('salatTracker.selectDay', 'Select {{day}}', {
-                      day: friendlyDate(d.date, t),
-                    })}
-                    className={`flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
-                      isSel
-                        ? 'bg-white/10 border-brand-emerald/30'
-                        : 'bg-white/[0.03] border-brand-emerald/5 hover:border-brand-emerald/20'
-                    }`}
-                  >
-                    <span
-                      className={`text-[9px] uppercase font-bold ${isTod ? 'text-brand-emerald' : 'text-white/30'}`}
-                    >
-                      {formatLocaleDate(new Date(d.date + 'T12:00:00'), { weekday: 'narrow' })}
-                    </span>
-                    <span className={`text-xs font-bold ${isSel ? 'text-white' : 'text-white/50'}`}>
-                      {formatLocaleNumber(parseInt(d.date.slice(8), 10))}
-                    </span>
-                    <span
-                      className="w-1.5 h-1.5 rounded-full"
-                      style={{ background: dot, boxShadow: hasData ? `0 0 6px ${dot}` : 'none' }}
-                    />
-                  </motion.button>
-                );
-              })}
-              {/* Calendar toggle button — opens the full-month view */}
-              <button
-                onClick={() => {
-                  setCalMonth(selectedDate.substring(0, 7));
-                  setCalendarOpen((o) => !o);
-                }}
-                aria-label={t('salatTracker.openCalendar', 'Open month calendar')}
-                title={t('salatTracker.openCalendar', 'Open month calendar')}
-                className={`shrink-0 flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl border transition-all ${
-                  calendarOpen
-                    ? 'bg-brand-emerald/20 border-brand-emerald/40 text-brand-emerald'
-                    : 'bg-white/[0.03] border-brand-emerald/5 text-white/40 hover:border-brand-emerald/20 hover:text-white/70'
-                }`}
-              >
-                <CalendarDaysIcon className="w-4 h-4" />
-                <span className="text-[9px] font-bold uppercase">
-                  {formatLocaleDate(new Date(selectedDate.substring(0, 7) + '-15T12:00:00'), {
-                    month: 'narrow',
-                  })}
-                </span>
-              </button>
-            </div>
-          )}
+          <SalatWeekStrip
+            calendarOpen={calendarOpen}
+            selectedDate={selectedDate}
+            setCalMonth={setCalMonth}
+            setCalendarOpen={setCalendarOpen}
+            setExpandedPrayer={setExpandedPrayer}
+            setSelectedDate={setSelectedDate}
+            weekDays={weekDays}
+          />
 
           {/* Month calendar — full month view, tap any day to navigate there */}
-          <AnimatePresence>
-            {calendarOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="overflow-hidden"
-              >
-                <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <button
-                      onClick={() => {
-                        const [y, m] = calMonth.split('-').map(Number);
-                        const d = new Date(y!, m! - 2, 1);
-                        setCalMonth(
-                          `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-                        );
-                      }}
-                      className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
-                    >
-                      <ChevronLeftIcon className="w-4 h-4" />
-                    </button>
-                    <p className="text-white font-bold text-sm">
-                      {formatLocaleDate(new Date(calMonth + '-15T12:00:00'), {
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </p>
-                    <button
-                      onClick={() => {
-                        const [y, m] = calMonth.split('-').map(Number);
-                        const d = new Date(y!, m!, 1);
-                        setCalMonth(
-                          `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-                        );
-                      }}
-                      disabled={calMonth >= todayStr().substring(0, 7)}
-                      className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 disabled:opacity-20"
-                    >
-                      <ChevronRightIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 text-center">
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                      <span key={i} className="text-white/25 text-[9px] font-bold uppercase">
-                        {d}
-                      </span>
-                    ))}
-                    {(() => {
-                      const [y, m] = calMonth.split('-').map(Number);
-                      const first = new Date(y!, m! - 1, 1);
-                      const daysInMonth = new Date(y!, m!, 0).getDate();
-                      const blanks = first.getDay();
-                      const cells = [];
-                      for (let i = 0; i < blanks; i++) cells.push(<span key={`b${i}`} />);
-                      for (let d = 1; d <= daysInMonth; d++) {
-                        const dateStr = `${calMonth}-${String(d).padStart(2, '0')}`;
-                        const completed = calendarDataMap.get(dateStr);
-                        const isFuture = dateStr > todayStr();
-                        const isSel = dateStr === selectedDate;
-                        const isTod = dateStr === todayStr();
-                        const salatStart = localStorage.getItem('bustandeen_salat_start_date');
-                        const isBeforeStart = salatStart ? dateStr < salatStart : false;
-                        const dot =
-                          completed === 5
-                            ? '#7a9e6e'
-                            : completed != null && completed >= 3
-                              ? '#c9a96e'
-                              : completed != null && completed >= 1
-                                ? '#f59e0b'
-                                : completed === 0
-                                  ? '#ef4444'
-                                  : undefined;
-                        cells.push(
-                          <button
-                            key={dateStr}
-                            disabled={isFuture || isBeforeStart}
-                            onClick={() => {
-                              setSelectedDate(dateStr);
-                              setExpandedPrayer(null);
-                              setCalendarOpen(false);
-                            }}
-                            className={`relative aspect-square rounded-lg text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 ${
-                              isFuture || isBeforeStart
-                                ? 'opacity-20 cursor-not-allowed'
-                                : 'hover:bg-white/10 cursor-pointer'
-                            } ${isSel ? 'bg-brand-emerald/25 border border-brand-emerald/50' : ''} ${isTod && !isSel ? 'border border-brand-emerald/30' : ''}`}
-                          >
-                            <span className={isTod ? 'text-brand-emerald' : 'text-white/70'}>
-                              {formatLocaleNumber(d)}
-                            </span>
-                            {dot && !isFuture && !isBeforeStart && (
-                              <span className="w-1 h-1 rounded-full" style={{ background: dot }} />
-                            )}
-                          </button>
-                        );
-                      }
-                      return cells;
-                    })()}
-                  </div>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <SalatMonthCalendar
+            calMonth={calMonth}
+            calendarDataMap={calendarDataMap}
+            calendarOpen={calendarOpen}
+            selectedDate={selectedDate}
+            setCalMonth={setCalMonth}
+            setCalendarOpen={setCalendarOpen}
+            setExpandedPrayer={setExpandedPrayer}
+            setSelectedDate={setSelectedDate}
+          />
 
           {/* Rayhanah days — salat fully excused (never made up) */}
           {cycleActive && selectedDate >= cycleActive.startDate ? (
@@ -2129,619 +1706,54 @@ export default function SalatTracker() {
               )}
 
               {/* Nafl Prayer card — tile-grid redesign */}
-              {!isLoading && (
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.24 }}
-                  layout
-                  className={`rounded-2xl border overflow-hidden transition-colors ${
-                    naflEntry.completed
-                      ? 'bg-brand-info/10 border-brand-info/40'
-                      : 'bg-brand-surface border-brand-border'
-                  }`}
-                >
-                  {/* Header row */}
-                  <div className="p-3.5 flex items-center gap-3">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <span className="text-2xl shrink-0">📿</span>
-                      <div className="min-w-0">
-                        <p
-                          className={`font-bold text-sm leading-none ${naflEntry.completed ? 'text-brand-info' : 'text-white/60'}`}
-                        >
-                          {t('salatTracker.naflPrayer', 'Nafl Prayer')}
-                        </p>
-                        <p className="text-white/25 text-xs mt-0.5">
-                          {naflEntry.completed && (naflEntry.types?.length ?? 0) > 0
-                            ? naflEntry.types
-                                .map((nt) => {
-                                  const m = NAFL_TYPE_META.find((mm) => mm.id === nt);
-                                  return m ? translateSalatName(m.id, m.label, t) : null;
-                                })
-                                .filter(Boolean)
-                                .join(', ')
-                            : t('salatTracker.voluntaryPrayers', 'voluntary prayers')}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      {naflEntry.completed && naflTotalRakat > 0 && (
-                        <span className="px-2.5 py-1 rounded-lg bg-brand-info/15 text-brand-info text-xs font-black tabular-nums">
-                          {t('salatTracker.rakatCount', "{{count}} rak'ah", {
-                            count: naflTotalRakat,
-                          })}
-                        </span>
-                      )}
-                      <motion.button
-                        whileTap={{ scale: 0.88 }}
-                        onClick={handleNaflToggle}
-                        className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all ${
-                          naflEntry.completed
-                            ? 'bg-brand-info text-white border-brand-info shadow-[0_0_12px_rgba(90,158,142,0.35)]'
-                            : 'bg-brand-deep border-brand-border text-white/50 hover:border-brand-info/50 hover:text-white/80'
-                        }`}
-                      >
-                        {naflEntry.completed
-                          ? t('salatTracker.done', '✅ Done')
-                          : t('salatTracker.markDoneBtn', 'Mark Done')}
-                      </motion.button>
-                    </div>
-                  </div>
-
-                  {/* Expanded: tile grid + rak'ah counter */}
-                  <AnimatePresence>
-                    {naflEntry.completed && naflExpanded && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden border-t border-brand-emerald/10"
-                      >
-                        <div className="px-3 py-3 space-y-3">
-                          <p className="text-white/30 text-[11px] font-bold uppercase tracking-wider">
-                            {t('salatTracker.selectWhatYouPrayed', 'Select what you prayed')}
-                          </p>
-
-                          {/* Tile grid — 2 columns on mobile, 3 on wider */}
-                          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                            {SELECTABLE_NAFL_TYPES.filter((nt) =>
-                              nt.id === 'tarawih' ? isRamadanNow() : true
-                            ).map((nt) => {
-                              const selected = (naflEntry.types ?? []).includes(nt.id);
-                              const infoOpen = naflInfoExpanded === nt.id;
-                              const typeRak = getTypeRakat(nt.id);
-                              const isFixed = nt.id === 'awwabin';
-                              return (
-                                <motion.div key={nt.id} layout className="flex flex-col">
-                                  <motion.button
-                                    whileTap={{ scale: 0.94 }}
-                                    onClick={() => handleNaflTypeToggle(nt.id)}
-                                    className={`relative rounded-xl p-2.5 text-left border transition-all ${
-                                      selected
-                                        ? 'bg-brand-info/15 border-brand-info/50 shadow-[0_0_10px_rgba(90,158,142,0.15)]'
-                                        : 'bg-brand-deep/80 border-brand-border hover:border-white/15'
-                                    }`}
-                                  >
-                                    <div className="flex items-start justify-between gap-1">
-                                      <span className="text-lg leading-none">{nt.emoji}</span>
-                                      {selected && (
-                                        <motion.span
-                                          initial={{ scale: 0 }}
-                                          animate={{ scale: 1 }}
-                                          className="text-brand-info text-xs leading-none"
-                                        >
-                                          ✓
-                                        </motion.span>
-                                      )}
-                                    </div>
-                                    <p
-                                      className={`text-xs font-bold mt-1.5 leading-tight ${selected ? 'text-brand-info' : 'text-white/70'}`}
-                                    >
-                                      {translateSalatName(nt.id, nt.label, t)}
-                                    </p>
-                                    <p className="text-white/20 text-[10px] mt-0.5 leading-snug">
-                                      {i18n.language === 'bn' && nt.shortNoteBn
-                                        ? nt.shortNoteBn
-                                        : nt.shortNote}
-                                    </p>
-                                  </motion.button>
-
-                                  {/* Per-type rak'ah counter (only when selected) */}
-                                  {selected && (
-                                    <motion.div
-                                      initial={{ opacity: 0, height: 0 }}
-                                      animate={{ opacity: 1, height: 'auto' }}
-                                      className="overflow-hidden"
-                                    >
-                                      <div className="mt-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-brand-info/[0.06] border border-brand-info/15">
-                                        {isFixed ? (
-                                          <span className="text-brand-info/70 text-[11px] font-bold tabular-nums">
-                                            {t('salatTracker.rakatCount', "{{count}} rak'ah", {
-                                              count: nt.defaultRakat,
-                                            })}
-                                          </span>
-                                        ) : (
-                                          <>
-                                            <motion.button
-                                              whileTap={{ scale: 0.85 }}
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleTypeRakat(nt.id, -1);
-                                              }}
-                                              disabled={typeRak <= MIN_RAKAT}
-                                              className="w-6 h-6 rounded-md bg-brand-deep border border-brand-border text-white/50 font-bold text-sm flex items-center justify-center disabled:opacity-20 hover:border-brand-info/40 transition-all"
-                                            >
-                                              −
-                                            </motion.button>
-                                            <span className="text-brand-info font-black text-sm tabular-nums w-6 text-center">
-                                              {typeRak}
-                                            </span>
-                                            <motion.button
-                                              whileTap={{ scale: 0.85 }}
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleTypeRakat(nt.id, 1);
-                                              }}
-                                              className="w-6 h-6 rounded-md bg-brand-deep border border-brand-border text-white/50 font-bold text-sm flex items-center justify-center hover:border-brand-info/40 transition-all"
-                                            >
-                                              +
-                                            </motion.button>
-                                          </>
-                                        )}
-                                      </div>
-                                    </motion.div>
-                                  )}
-
-                                  {/* Info toggle */}
-                                  <button
-                                    onClick={() => setNaflInfoExpanded(infoOpen ? null : nt.id)}
-                                    className="mt-0.5 text-white/15 hover:text-white/40 text-[10px] text-center transition-colors"
-                                  >
-                                    {infoOpen
-                                      ? t('salatTracker.hide', '▲ hide')
-                                      : t('salatTracker.about', 'ⓘ about')}
-                                  </button>
-                                  <AnimatePresence>
-                                    {infoOpen && (
-                                      <motion.div
-                                        initial={{ height: 0, opacity: 0 }}
-                                        animate={{ height: 'auto', opacity: 1 }}
-                                        exit={{ height: 0, opacity: 0 }}
-                                        transition={{ duration: 0.15 }}
-                                        className="overflow-hidden"
-                                      >
-                                        <div className="mt-1 p-2.5 rounded-xl bg-brand-deep border border-brand-emerald/10 space-y-1">
-                                          <p className="text-white/50 text-[11px] leading-relaxed">
-                                            {i18n.language === 'bn' && nt.fullNoteBn
-                                              ? nt.fullNoteBn
-                                              : nt.fullNote}
-                                          </p>
-                                          <p className="text-white/25 text-[11px] italic">
-                                            {i18n.language === 'bn' && nt.hadithBn
-                                              ? nt.hadithBn
-                                              : nt.hadith}
-                                          </p>
-                                          <a
-                                            href={nt.hadithUrl}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-brand-info/50 text-[11px] underline hover:text-brand-info/80"
-                                          >
-                                            📖 sunnah.com
-                                          </a>
-                                        </div>
-                                      </motion.div>
-                                    )}
-                                  </AnimatePresence>
-                                </motion.div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Expand toggle */}
-                  {naflEntry.completed && (
-                    <button
-                      onClick={() => setNaflExpanded(!naflExpanded)}
-                      className="w-full flex items-center justify-center gap-1.5 py-1.5 border-t border-brand-emerald/5 text-white/20 hover:text-white/50 text-xs transition-colors"
-                    >
-                      {naflExpanded
-                        ? t('salatTracker.less', '▲ Less')
-                        : t('salatTracker.details', '▾ Details')}
-                      {!naflExpanded && (naflEntry.types?.length ?? 0) > 0 && (
-                        <span className="text-brand-info/50 text-xs">
-                          {naflEntry.types
-                            .map((nt) => NAFL_TYPE_META.find((m) => m.id === nt)?.emoji)
-                            .join(' ')}
-                        </span>
-                      )}
-                    </button>
-                  )}
-                </motion.div>
-              )}
+              <SalatNaflCard
+                getTypeRakat={getTypeRakat}
+                handleNaflToggle={handleNaflToggle}
+                handleNaflTypeToggle={handleNaflTypeToggle}
+                handleTypeRakat={handleTypeRakat}
+                isLoading={isLoading}
+                naflEntry={naflEntry}
+                naflExpanded={naflExpanded}
+                naflInfoExpanded={naflInfoExpanded}
+                naflTotalRakat={naflTotalRakat}
+                setNaflExpanded={setNaflExpanded}
+                setNaflInfoExpanded={setNaflInfoExpanded}
+              />
 
               {/* Kaza debt — missed prayers owed, paid back one at a time */}
-              {!isLoading && (
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.28 }}
-                  layout
-                  className={`rounded-2xl border overflow-hidden transition-colors ${
-                    (debt?.totalOwed ?? 0) > 0
-                      ? 'bg-brand-gold/10 border-brand-gold/40'
-                      : 'bg-brand-surface border-brand-border'
-                  }`}
-                >
-                  <button
-                    onClick={() => setDebtExpanded((v) => !v)}
-                    className="w-full p-3.5 flex items-center gap-3 text-left"
-                  >
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <span className="text-2xl shrink-0">⏳</span>
-                      <div className="min-w-0">
-                        <p
-                          className={`font-bold text-sm leading-none ${(debt?.totalOwed ?? 0) > 0 ? 'text-brand-gold' : 'text-white/60'}`}
-                        >
-                          {t('salatTracker.kazaDebtTitle', 'Kaza Debt')}
-                        </p>
-                        <p className="text-white/25 text-xs mt-0.5">
-                          {(debt?.totalOwed ?? 0) > 0
-                            ? t('salatTracker.kazaDebtOwed', '{{count}} prayers owed', {
-                                count: debt?.totalOwed ?? 0,
-                              })
-                            : t('salatTracker.kazaDebtNone', 'Nothing owed — MashaAllah')}
-                          {debt?.since && (
-                            <span className="text-white/15">
-                              {' · '}
-                              {t('salatTracker.kazaDebtSince', 'since {{date}}', {
-                                date: friendlyDate(debt.since, t),
-                              })}
-                            </span>
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-white/20 text-xs shrink-0">
-                      {debtExpanded
-                        ? t('salatTracker.less', '▲ Less')
-                        : t('salatTracker.details', '▾ Details')}
-                    </span>
-                  </button>
-
-                  <AnimatePresence>
-                    {debtExpanded && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: 'auto', opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.2 }}
-                        className="overflow-hidden border-t border-brand-emerald/10"
-                      >
-                        <div className="px-3 py-3 space-y-2">
-                          <p className="text-white/30 text-[11px] leading-relaxed">
-                            {t(
-                              'salatTracker.kazaDebtHint',
-                              "Added automatically once a prayer's day passes without it being logged — no need to tap ❌ Miss yourself. Owe some from before you started tracking? Set a starting count for each below."
-                            )}
-                          </p>
-                          {trackablePrayers.map((prayer) => {
-                            const prayerId = prayer.id as PrayerId;
-                            const owed = debt?.owed[prayerId] ?? 0;
-                            const draft = debtDrafts[prayerId];
-                            return (
-                              <div
-                                key={prayerId}
-                                className="flex items-center gap-2 py-1.5 border-t border-brand-emerald/5 first:border-t-0"
-                              >
-                                <span className="text-lg shrink-0">{prayer.icon}</span>
-                                <span className="text-white/60 text-xs font-semibold flex-1 min-w-0 truncate">
-                                  {translateSalatName(prayer.id, prayer.name, t)}
-                                </span>
-                                <input
-                                  type="number"
-                                  inputMode="numeric"
-                                  min={0}
-                                  max={9999}
-                                  value={draft ?? String(owed)}
-                                  title={t('salatTracker.kazaDebtSetCount', 'Set exact count')}
-                                  onChange={(e) =>
-                                    setDebtDrafts((d) => ({ ...d, [prayerId]: e.target.value }))
-                                  }
-                                  onBlur={(e) => commitDebtEdit(prayerId, e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') e.currentTarget.blur();
-                                    if (e.key === 'Escape') {
-                                      setDebtDrafts((d) => {
-                                        const next = { ...d };
-                                        delete next[prayerId];
-                                        return next;
-                                      });
-                                      e.currentTarget.blur();
-                                    }
-                                  }}
-                                  className={`w-14 px-2 py-1 rounded-lg bg-brand-deep border text-xs text-center font-bold tabular-nums ${
-                                    owed > 0
-                                      ? 'border-brand-gold/40 text-brand-gold'
-                                      : 'border-brand-border text-white/50'
-                                  }`}
-                                />
-                              </div>
-                            );
-                          })}
-                          {/* Shortcut: clickable missed-day chips so the user can
-                              jump straight to a past day and mark kaza, without
-                              multiple nav clicks. Uses the 90-day calendar data
-                              already fetched (completed < 5 = at least one gap). */}
-                          <MissedDayChips
-                            calendarDataMap={calendarDataMap}
-                            t={
-                              t as (
-                                key: string,
-                                fallback: string,
-                                opts?: Record<string, unknown>
-                              ) => string
-                            }
-                            setSelectedDate={setSelectedDate}
-                            setExpandedPrayer={setExpandedPrayer}
-                            setCalendarOpen={setCalendarOpen}
-                          />
-
-                          {(debt?.totalOwed ?? 0) > 0 && (
-                            <div className="pt-2.5 mt-1 border-t border-brand-emerald/5">
-                              <button
-                                onClick={() => setShowSettings(true)}
-                                className="text-brand-gold/60 hover:text-brand-gold text-[11px] underline underline-offset-2"
-                              >
-                                {t(
-                                  'salatTracker.kazaDebtResetPointer',
-                                  '🌱 Reset it in ⚙️ Salat settings'
-                                )}
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              )}
+              <SalatKazaDebtCard
+                calendarDataMap={calendarDataMap}
+                commitDebtEdit={commitDebtEdit}
+                debt={debt}
+                debtDrafts={debtDrafts}
+                debtExpanded={debtExpanded}
+                isLoading={isLoading}
+                setCalendarOpen={setCalendarOpen}
+                setDebtDrafts={setDebtDrafts}
+                setDebtExpanded={setDebtExpanded}
+                setExpandedPrayer={setExpandedPrayer}
+                setSelectedDate={setSelectedDate}
+                setShowSettings={setShowSettings}
+                trackablePrayers={trackablePrayers}
+              />
 
               {/* Travel kaza — the owed prayers that fell on a journey, made up
                   as travel prayers (see TravelKazaCard). Renders nothing otherwise. */}
               {!isLoading && user && <TravelKazaCard />}
 
               {/* Legend */}
-              <div className="card bg-brand-surface border border-brand-border rounded-2xl overflow-hidden">
-                <button
-                  onClick={() => setLegendExpanded((v) => !v)}
-                  className="w-full card-body p-4 flex-row items-center justify-between gap-3 text-left"
-                >
-                  <p className="text-white/30 text-xs font-semibold uppercase tracking-wide">
-                    {t('salatTracker.howItWorks', 'How it works')}
-                  </p>
-                  <span className="text-white/20 text-xs shrink-0">
-                    {legendExpanded
-                      ? t('salatTracker.less', '▲ Less')
-                      : t('salatTracker.details', '▾ Details')}
-                  </span>
-                </button>
-                <AnimatePresence>
-                  {legendExpanded && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                      className="overflow-hidden border-t border-brand-emerald/10"
-                    >
-                      <div className="card-body p-4 pt-3 space-y-1.5 text-xs text-white/50">
-                        <p>
-                          ✅{' '}
-                          <span className="text-white/70 font-medium">
-                            {t('salatTracker.legendDone', 'Done')}
-                          </span>{' '}
-                          — {t('salatTracker.legendDoneDesc', 'prayed on time')}
-                        </p>
-                        <p>
-                          ⏰{' '}
-                          <span className="text-white/70 font-medium">
-                            {t('salatTracker.legendKaza', 'Kaza')}
-                          </span>{' '}
-                          —{' '}
-                          {t('salatTracker.legendKazaDesc', 'prayed late (still counts as prayed)')}
-                        </p>
-                        <p>
-                          ❌{' '}
-                          <span className="text-white/70 font-medium">
-                            {t('salatTracker.legendMissed', 'Missed')}
-                          </span>{' '}
-                          — {t('salatTracker.legendMissedDesc', 'not prayed')}
-                        </p>
-                        <p>
-                          🕌{' '}
-                          <span className="text-white/70 font-medium">
-                            {t('salatTracker.legendMosque', 'Mosque')}
-                          </span>{' '}
-                          {t('salatTracker.legendOr', 'or')} 👥{' '}
-                          <span className="text-white/70 font-medium">
-                            {t('salatTracker.legendJamat', 'Jamat')}
-                          </span>{' '}
-                          —{' '}
-                          {t('salatTracker.legendLocationDesc', 'tap ▾ Details after marking done')}
-                        </p>
-                        <p>
-                          {t(
-                            'salatTracker.legendFutureLocked',
-                            '🔒 Future prayers are locked until their time begins'
-                          )}
-                        </p>
-                        <p>
-                          📖{' '}
-                          <span className="text-white/70 font-medium">
-                            {t('salatTracker.ayatulKursiWord', 'Ayatul Kursi')}
-                          </span>{' '}
-                          —{' '}
-                          {t(
-                            'salatTracker.legendAyatulKursiDesc',
-                            'toggle after marking Done/Kaza (tap ▾ Details)'
-                          )}
-                        </p>
-                        <p>
-                          📿{' '}
-                          <span className="text-white/70 font-medium">
-                            {t('salatTracker.legendNafl', 'Nafl')}
-                          </span>{' '}
-                          —{' '}
-                          {t(
-                            'salatTracker.legendNaflDesc',
-                            "mark voluntary prayers and pick type + rak'ahs"
-                          )}
-                        </p>
-
-                        <div className="pt-2.5 mt-1 border-t border-brand-emerald/10 space-y-1.5">
-                          <p className="text-brand-emerald/70 font-semibold">
-                            {t('salatTracker.countsItselfNow', 'Counts itself now')}
-                          </p>
-                          <p>
-                            <Trans
-                              i18nKey="salatTracker.legendTasbeehInfo"
-                              defaults="📿 Tapping <1>Tasbeeh</1> adds the full after-ṣalāh count to your dhikr automatically — no more logging 33s by hand. Ayatul Kursi adds one. Un-tap to undo."
-                            >
-                              📿 Tapping <span className="text-white/70 font-medium">Tasbeeh</span>{' '}
-                              adds the full after-ṣalāh count to your dhikr automatically — no more
-                              logging 33s by hand. Ayatul Kursi adds one. Un-tap to undo.
-                            </Trans>
-                          </p>
-                          <p>
-                            <Trans
-                              i18nKey="salatTracker.legendAyatulKursiAutoInfo"
-                              defaults="📖 Tapping <1>Ayatul Kursi</1> (in ▾ Details) also auto-counts 1 recitation in your dhikr log — the same rule as Tasbeeh. Un-tap to undo."
-                            >
-                              📖 Tapping{' '}
-                              <span className="text-white/70 font-medium">Ayatul Kursi</span> (in ▾
-                              Details) also auto-counts 1 recitation in your dhikr log — the same
-                              rule as Tasbeeh. Un-tap to undo.
-                            </Trans>
-                          </p>
-                          <p>
-                            <Trans
-                              i18nKey="salatTracker.legendTasbihModeInfo"
-                              defaults="⚙️ Choose <1>33·33·33 + tahlīl</1> (Muslim 597a) or <3>33·33·34</3> (Muslim 596a) in salat settings — both are authentic. Your ʿAṣr school lives there too."
-                            >
-                              ⚙️ Choose{' '}
-                              <span className="text-white/70 font-medium">33·33·33 + tahlīl</span>{' '}
-                              (Muslim 597a) or{' '}
-                              <span className="text-white/70 font-medium">33·33·34</span> (Muslim
-                              596a) in salat settings — both are authentic. Your ʿAṣr school lives
-                              there too.
-                            </Trans>
-                          </p>
-                          <p>
-                            <Trans
-                              i18nKey="salatTracker.legendAutoCountInfo"
-                              defaults="🔕 Prefer to count by hand? Turn off <1>Auto-count dhikr</1> in salat settings — tags still mark as done, and Tasbih mode on the Zikr counter becomes your manual way to count them."
-                            >
-                              🔕 Prefer to count by hand? Turn off{' '}
-                              <span className="text-white/70 font-medium">Auto-count dhikr</span> in
-                              salat settings — tags still mark as done, and Tasbih mode on the Zikr
-                              counter becomes your manual way to count them.
-                            </Trans>
-                          </p>
-                          <p>
-                            <Trans
-                              i18nKey="salatTracker.legendReadNowInfo"
-                              defaults="📖 <1>Read now</1> under each prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd 1523, ṣaḥīḥ)."
-                            >
-                              📖 <span className="text-white/70 font-medium">Read now</span> under
-                              each prayer opens Ayatul Kursi and the three Quls straight in the
-                              reader (Abū Dāwūd 1523, ṣaḥīḥ).
-                            </Trans>
-                          </p>
-                          <p>
-                            <Trans
-                              i18nKey="salatTracker.legendFridayInfo"
-                              defaults="🌟 On <1>Friday</1> you'll see Sūrat al-Kahf, and a live reminder for the hour of response between ʿAṣr and Maghrib (Abū Dāwūd 1048, ṣaḥīḥ)."
-                            >
-                              🌟 On <span className="text-white/70 font-medium">Friday</span> you'll
-                              see Sūrat al-Kahf, and a live reminder for the hour of response
-                              between ʿAṣr and Maghrib (Abū Dāwūd 1048, ṣaḥīḥ).
-                            </Trans>
-                          </p>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              <SalatLegend legendExpanded={legendExpanded} setLegendExpanded={setLegendExpanded} />
             </>
           )}
         </div>
       </div>
 
       {/* ── Guest sign-in dialog — salat logs are server-side only ── */}
-      <AnimatePresence>
-        {showGuestDialog && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setShowGuestDialog(false);
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.92, opacity: 0, y: 20 }}
-              transition={{ type: 'spring', damping: 22 }}
-              className="bg-brand-surface rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-brand-border text-center"
-            >
-              <div className="text-5xl mb-4">🕌</div>
-              <h3 className="text-xl font-black text-white mb-2">
-                {t('salatTracker.signInToTrack', 'Sign in to track prayers')}
-              </h3>
-              <p className="text-white/50 text-sm mb-6 leading-relaxed">
-                {t(
-                  'salatTracker.signInDesc',
-                  'Your salat log is saved to your account so it syncs across devices. Create a free account to start tracking.'
-                )}
-              </p>
-              <div className="flex flex-col gap-3">
-                <button
-                  className="btn bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 w-full"
-                  onClick={() => {
-                    sessionStorage.setItem('bustandeen_redirect', '/salat');
-                    navigate('/login');
-                  }}
-                >
-                  {t('common.signIn')}
-                </button>
-                <button
-                  className="btn btn-ghost text-brand-emerald border border-brand-emerald/30 w-full"
-                  onClick={() => {
-                    sessionStorage.setItem('bustandeen_redirect', '/salat');
-                    navigate('/signup');
-                  }}
-                >
-                  {t('salatTracker.createFreeAccount', 'Create Free Account')}
-                </button>
-                <button
-                  className="btn btn-ghost text-white/50 text-sm w-full"
-                  onClick={() => setShowGuestDialog(false)}
-                >
-                  {t('salatTracker.justLooking', 'Just looking around')}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <SalatGuestDialog
+        navigate={navigate}
+        setShowGuestDialog={setShowGuestDialog}
+        showGuestDialog={showGuestDialog}
+      />
     </AnimatedBackground>
   );
 }
