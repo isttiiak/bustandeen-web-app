@@ -46,6 +46,10 @@ async function expectDrainsOnReconnect(
 }
 
 test('fasting: a fast logged offline is queued, then synced', async ({ page, context }) => {
+  // A plain Wednesday: on a Friday (or Saturday) "I fasted today" first asks
+  // about singling the day out, so the fast is not logged straight away.
+  // setFixedTime only pins Date; timers (outbox replay) still run normally.
+  await page.clock.setFixedTime(new Date('2026-10-07T10:00:00+06:00'));
   await enterDemo(page, 'Brother');
   await go(page, '/fasting');
   const fasted = page.getByRole('button', { name: /I fasted today/ });

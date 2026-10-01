@@ -11,6 +11,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 ### Changed (developers)
 
 - Production indexes synced: `clientops` now has the unique `{uid, opId}` index and the 30-day TTL (audit T2.3). A dry run reports all indexes in sync.
+- The offline fasting e2e test pins its clock to a Wednesday. On Fridays (and Saturdays) "I fasted today" rightly asks about singling the day out first, so the test failed on those days.
 
 ## v5.77.0 - Lighter Zikr counter and Profile pages - 2026-10-01
 
