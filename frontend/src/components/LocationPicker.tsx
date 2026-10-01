@@ -1,6 +1,15 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { reverseGeocodeCity, type StoredLocation } from '../utils/geocode.js';
+import {
+  coordinatesLabel,
+  getPlaceLookup,
+  reverseGeocodeCity,
+  searchPlaces,
+  setPlaceLookup,
+  type PlaceLookup,
+  type PlaceResult,
+  type StoredLocation,
+} from '../utils/geocode.js';
 
 /**
  * GPS + city-search location picker for prayer-time calculations. Shared
@@ -19,9 +28,15 @@ export default function LocationPicker({
   const [cityInput, setCityInput] = useState('');
   const [citySearching, setCitySearching] = useState(false);
   const [cityError, setCityError] = useState('');
-  const [citySuggestions, setCitySuggestions] = useState<
-    Array<{ lat: string; lon: string; display_name: string }>
-  >([]);
+  const [citySuggestions, setCitySuggestions] = useState<PlaceResult[]>([]);
+  const [lookup, setLookup] = useState<PlaceLookup>(getPlaceLookup);
+
+  const chooseLookup = (mode: PlaceLookup) => {
+    setLookup(mode);
+    setPlaceLookup(mode);
+    setCitySuggestions([]);
+    setCityError('');
+  };
 
   const requestLocation = useCallback(() => {
     setLocLoading(true);
@@ -37,7 +52,7 @@ export default function LocationPicker({
       async (pos) => {
         const { latitude, longitude } = pos.coords;
         const city = await reverseGeocodeCity(latitude, longitude);
-        const name = city ?? `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
+        const name = city ?? coordinatesLabel(latitude, longitude);
         onLocationChange({ latitude, longitude, name });
         setLocLoading(false);
       },
@@ -56,40 +71,30 @@ export default function LocationPicker({
     setCityError('');
     setCitySuggestions([]);
     try {
-      const r = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityInput)}&format=json&limit=5`
-      );
-      const results = (await r.json()) as Array<{ lat: string; lon: string; display_name: string }>;
+      const results = await searchPlaces(cityInput);
       if (!results.length) {
-        setCityError(t('prayerTimes.cityNotFound', 'City not found. Try a different name.'));
+        setCityError(
+          lookup === 'device'
+            ? t(
+                'prayerTimes.cityNotFoundDevice',
+                'Not in the on-device city list. Try a nearby larger city, or switch place names to OpenStreetMap below.'
+              )
+            : t('prayerTimes.cityNotFound', 'City not found. Try a different name.')
+        );
         setCitySearching(false);
         return;
       }
-      if (results.length === 1) {
-        const { lat, lon, display_name } = results[0];
-        const shortName = display_name.split(',').slice(0, 2).join(',').trim();
-        onLocationChange({
-          latitude: parseFloat(lat),
-          longitude: parseFloat(lon),
-          name: shortName,
-        });
-      } else {
-        setCitySuggestions(results);
-      }
+      if (results.length === 1) onLocationChange(results[0]);
+      else setCitySuggestions(results);
     } catch {
       setCityError(t('prayerTimes.searchFailed', 'Search failed. Check your internet connection.'));
     }
     setCitySearching(false);
-  }, [cityInput, onLocationChange, t]);
+  }, [cityInput, lookup, onLocationChange, t]);
 
   const pickSuggestion = useCallback(
-    (s: { lat: string; lon: string; display_name: string }) => {
-      const shortName = s.display_name.split(',').slice(0, 2).join(',').trim();
-      onLocationChange({
-        latitude: parseFloat(s.lat),
-        longitude: parseFloat(s.lon),
-        name: shortName,
-      });
+    (s: PlaceResult) => {
+      onLocationChange(s);
       setCitySuggestions([]);
     },
     [onLocationChange]
@@ -169,19 +174,60 @@ export default function LocationPicker({
                 onClick={() => pickSuggestion(s)}
                 className="w-full text-left px-3 py-2 rounded-lg bg-white/5 border border-brand-border hover:border-brand-emerald/40 text-white/70 hover:text-white text-xs transition-all"
               >
-                {s.display_name}
+                {s.name}
               </button>
             ))}
           </div>
         )}
       </div>
 
-      <p className="text-white/15 text-xs">
-        {t(
-          'prayerTimes.locationPrivacy',
-          'Your location is stored only in this browser and never sent to our servers.'
-        )}
-      </p>
+      {/* Where place NAMES come from (prayer times are on-device either way) */}
+      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 space-y-2">
+        <p className="text-white/60 text-xs font-semibold">
+          {t('prayerTimes.placeLookupTitle', 'Finding place names')}
+        </p>
+        <div className="grid grid-cols-2 gap-2" role="radiogroup">
+          {(['device', 'osm'] as const).map((mode) => {
+            const active = lookup === mode;
+            return (
+              <button
+                key={mode}
+                type="button"
+                role="radio"
+                aria-checked={active}
+                onClick={() => chooseLookup(mode)}
+                className={`text-left px-3 py-2 rounded-lg border text-xs transition-all ${
+                  active
+                    ? 'border-brand-emerald/50 bg-brand-emerald/10 text-brand-emerald'
+                    : 'border-white/10 bg-white/5 text-white/60 hover:border-brand-emerald/30'
+                }`}
+              >
+                <span className="font-bold block">
+                  {mode === 'device'
+                    ? t('prayerTimes.placeLookupDevice', '🔒 On this device')
+                    : t('prayerTimes.placeLookupOsm', '🌍 OpenStreetMap')}
+                </span>
+                <span className="text-[11px] opacity-80">
+                  {mode === 'device'
+                    ? t('prayerTimes.placeLookupDeviceHint', 'Private, ~1,450 cities')
+                    : t('prayerTimes.placeLookupOsmHint', 'Any town or village')}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <p className="text-white/40 text-[11px] leading-relaxed">
+          {lookup === 'device'
+            ? t(
+                'prayerTimes.placeLookupDeviceNote',
+                'Your location never leaves this device. Place names come from a city list inside the app.'
+              )
+            : t(
+                'prayerTimes.placeLookupOsmNote',
+                "To name your place, its location rounded to about 1 km (or the city you type) is sent to OpenStreetMap's free Nominatim service. Prayer times are still calculated on this device and nothing is sent to Bustandeen."
+              )}
+        </p>
+      </div>
     </div>
   );
 }

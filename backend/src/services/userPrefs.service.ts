@@ -35,6 +35,7 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_show_nafl_guide',
   'bustandeen_asr_madhab',
   'bustandeen_calc_method',
+  'bustandeen_place_lookup',
   // Musafir mode (journey state + past journeys)
   'bustandeen_musafir',
   'bustandeen_musafir_history',
