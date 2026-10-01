@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.63.0 - Prayer times that match your local mosque - 2026-10-01
+
+### Added
+
+- **Country-aware prayer-time defaults.** If you have not chosen a calculation method or ʿAṣr school, the app now starts from what most mosques in your country use, judged from your device's time zone (nothing is sent anywhere). Bangladesh, Pakistan, India and Afghanistan: University of Islamic Sciences, Karachi, with Ḥanafī ʿAṣr. Saudi Arabia: Umm al-Qura. The UAE, Kuwait and Qatar: their national methods. Egypt and much of the Levant: Egyptian. Turkey: Diyanet. Malaysia, Singapore, Indonesia, Brunei: 20°/18°. US and Canada: ISNA. Most of Western Europe: Muslim World League. Central Asia: Ḥanafī ʿAṣr. Anywhere else keeps the previous worldwide default. Every method and both ʿAṣr schools are still one tap away.
+- **Nobody's timetable moved on its own.** If you were already using prayer times and never picked a method or school, your current settings were kept exactly. If your country usually does it differently, the Prayer Times page shows a one-time card ("Times used in Bangladesh") with **Use the usual times** and **Keep mine**. A method or school you chose yourself is never changed and never second-guessed.
+- **"Usual in Bangladesh"** (or your country) now marks the matching method and ʿAṣr school in Prayer time settings.
+- **City prayer-time pages show both ʿAṣr times**, standard and Ḥanafī, with the one local mosques follow marked "usual here". Each page uses its country's method and names it ("Calculated with the University of Islamic Sciences, Karachi method, the convention most mosques in Bangladesh follow"). The same method now drives the sehri and iftar times on the Ramadan calendar pages.
+- Prayer names on the Bangla and Arabic city pages are now in Bangla and Arabic (they were printed in English).
+
+### Fixed
+
+- Changing the method or ʿAṣr school in Prayer time settings now updates the timetable as soon as the drawer closes, instead of on the next day or a reload.
+- The Prayer time settings drawer always shows the current choice (it could show an older one after a change made elsewhere, such as a cross-device sync).
+
+### Notes
+
+- The table lives in `frontend/src/utils/countryDefaults.ts` (pure data, also used at build time by the static pages). Country from time zone: `deviceCountry()`.
+- `migratePrayerDefaultsOnce()` (from `main.tsx`, before the first render) writes the old defaults as explicit choices for anyone with a saved location and no choice yet, once per device.
+- **Frontend unit tests (Vitest) are new:** `npm test` in `frontend/`, also run in CI. 16 tests: snapshot timetables for Dhaka, Karachi, London, Riyadh and New York, the country conventions, Ḥanafī ʿAṣr always later than standard, and the migration rules above.
+
 ## v5.62.2 - Rate limits that actually hold on serverless - 2026-10-01
 
 ### Fixed

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
@@ -17,7 +17,10 @@ import {
   getCalcMethod,
   setCalcMethod,
   type CalculationMethodId,
+  regionPrayerDefaults,
+  dismissPrayerDefaultsSuggestion,
 } from '../utils/salatPrefs.js';
+import { countryName, deviceCountry } from '../utils/countryDefaults.js';
 
 /**
  * Prayer Times settings — a right-side DRAWER, same shape as SalatSettings.
@@ -39,15 +42,34 @@ export default function PrayerTimeSettings({
   location: StoredLocation | null;
   onLocationChange: (loc: StoredLocation) => void;
 }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const musafir = useMusafir();
+  // What most mosques in this device's country use, marked in both pickers.
+  const country = deviceCountry();
+  const region = regionPrayerDefaults();
+  const usualLabel = country
+    ? t('salatSettings.usualIn', 'Usual in {{country}}', {
+        country: countryName(country, i18n.language === 'bn' ? 'bn' : 'en'),
+      })
+    : null;
   const [madhab, setMadhab] = useState<AsrMadhab>(() => getAsrMadhab());
   const [calcMethod, setCalcMethodState] = useState<CalculationMethodId>(() => getCalcMethod());
   const [changingLocation, setChangingLocation] = useState(false);
 
+  // The drawer stays mounted while closed, so re-read the saved choices each
+  // time it opens: they can change elsewhere (the "usual times" card, a
+  // cross-device sync) while it is hidden.
+  useEffect(() => {
+    if (!open) return;
+    setMadhab(getAsrMadhab());
+    setCalcMethodState(getCalcMethod());
+  }, [open]);
+
   const chooseMadhab = (m: AsrMadhab) => {
     setMadhab(m);
     setAsrMadhab(m);
+    // An explicit choice answers the one-time "your country usually…" card.
+    dismissPrayerDefaultsSuggestion();
     toast.success(t('salatSettings.timesUpdated', 'Prayer times updated'), {
       icon: '🕌',
       duration: 1800,
@@ -57,6 +79,7 @@ export default function PrayerTimeSettings({
   const chooseCalcMethod = (m: CalculationMethodId) => {
     setCalcMethodState(m);
     setCalcMethod(m);
+    dismissPrayerDefaultsSuggestion();
     toast.success(t('salatSettings.timesUpdated', 'Prayer times updated'), {
       icon: '🕌',
       duration: 1800,
@@ -194,6 +217,7 @@ export default function PrayerTimeSettings({
                   {CALC_METHODS.map((m) => (
                     <option key={m.id} value={m.id} className="bg-brand-deep text-white">
                       {m.label}
+                      {usualLabel && m.id === region.method ? ` · ${usualLabel}` : ''}
                     </option>
                   ))}
                 </select>
@@ -234,11 +258,18 @@ export default function PrayerTimeSettings({
                           >
                             {m.label}
                           </span>
-                          {active && (
-                            <span className="text-brand-info text-xs font-bold shrink-0">
-                              {t('salatSettings.using', '✓ Using')}
-                            </span>
-                          )}
+                          <span className="flex items-center gap-2 shrink-0">
+                            {usualLabel && m.id === region.asr && (
+                              <span className="text-[10px] font-semibold text-brand-gold/80 border border-brand-gold/25 rounded-full px-2 py-0.5">
+                                {usualLabel}
+                              </span>
+                            )}
+                            {active && (
+                              <span className="text-brand-info text-xs font-bold">
+                                {t('salatSettings.using', '✓ Using')}
+                              </span>
+                            )}
+                          </span>
                         </div>
                         <p className="text-white/50 text-xs mt-1 leading-relaxed">{m.detail}</p>
                       </button>

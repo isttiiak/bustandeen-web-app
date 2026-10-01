@@ -1,0 +1,71 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`computePrayerTimes (static city pages) > Dhaka: country method, both ʿAṣr times 1`] = `
+{
+  "asrHanafi": "4:27 pm",
+  "asrSchool": "hanafi",
+  "asrStandard": "3:32 pm",
+  "dhuhr": "12:08 pm",
+  "fajr": "4:53 am",
+  "isha": "7:23 pm",
+  "maghrib": "6:07 pm",
+  "method": "Karachi",
+  "sunrise": "6:08 am",
+}
+`;
+
+exports[`computePrayerTimes (static city pages) > Karachi: country method, both ʿAṣr times 1`] = `
+{
+  "asrHanafi": "5:00 pm",
+  "asrSchool": "hanafi",
+  "asrStandard": "4:06 pm",
+  "dhuhr": "12:42 pm",
+  "fajr": "5:26 am",
+  "isha": "7:57 pm",
+  "maghrib": "6:41 pm",
+  "method": "Karachi",
+  "sunrise": "6:41 am",
+}
+`;
+
+exports[`computePrayerTimes (static city pages) > London: country method, both ʿAṣr times 1`] = `
+{
+  "asrHanafi": "4:09 pm",
+  "asrSchool": "standard",
+  "asrStandard": "3:21 pm",
+  "dhuhr": "12:14 pm",
+  "fajr": "4:41 am",
+  "isha": "7:24 pm",
+  "maghrib": "6:08 pm",
+  "method": "MoonsightingCommittee",
+  "sunrise": "6:15 am",
+}
+`;
+
+exports[`computePrayerTimes (static city pages) > New York: country method, both ʿAṣr times 1`] = `
+{
+  "asrHanafi": "5:17 pm",
+  "asrSchool": "standard",
+  "asrStandard": "4:27 pm",
+  "dhuhr": "1:06 pm",
+  "fajr": "5:52 am",
+  "isha": "8:18 pm",
+  "maghrib": "7:03 pm",
+  "method": "NorthAmerica",
+  "sunrise": "7:08 am",
+}
+`;
+
+exports[`computePrayerTimes (static city pages) > Riyadh: country method, both ʿAṣr times 1`] = `
+{
+  "asrHanafi": "4:22 pm",
+  "asrSchool": "standard",
+  "asrStandard": "3:28 pm",
+  "dhuhr": "12:02 pm",
+  "fajr": "4:45 am",
+  "isha": "7:32 pm",
+  "maghrib": "6:02 pm",
+  "method": "UmmAlQura",
+  "sunrise": "6:03 am",
+}
+`;

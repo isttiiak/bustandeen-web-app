@@ -27,7 +27,7 @@ export default function RamadanCalendarPage({ lang, city, hijriYear }: Props) {
     const noon = new Date(
       Date.UTC(cursor.getUTCFullYear(), cursor.getUTCMonth(), cursor.getUTCDate(), 12)
     );
-    const times = computePrayerTimes(city.lat, city.lng, noon);
+    const times = computePrayerTimes(city.lat, city.lng, noon, city.countryCode);
     days.push({ day, date: cursor, imsak: times.fajr, iftar: times.maghrib });
     cursor = new Date(cursor.getTime() + 86_400_000);
     day++;

@@ -18,9 +18,12 @@ import ErrorBoundary from './components/ErrorBoundary.js';
 import { idbGet, idbSet, idbRemove } from './utils/idbCache.js';
 import { initPwaUpdates } from './pwaUpdate.js';
 import { initAnalytics } from './utils/analytics.js';
+import { migratePrayerDefaultsOnce } from './utils/salatPrefs.js';
 
 initPwaUpdates();
 initAnalytics();
+// Before the first render, so no screen ever shows a timetable that then jumps.
+migratePrayerDefaultsOnce();
 
 const queryClient = new QueryClient({
   defaultOptions: {

@@ -5,6 +5,13 @@
 // Every reference below was verified on sunnah.com.
 
 import { TAHLIL_NAME } from './zikrLibrary.js';
+import {
+  FALLBACK_PRAYER_DEFAULTS,
+  deviceCountry,
+  prayerDefaultsForCountry,
+  type CalcMethodId,
+  type PrayerDefaults,
+} from './countryDefaults.js';
 
 // ─── after-ṣalāh tasbīḥ ─────────────────────────────────────────────────────
 
@@ -258,9 +265,9 @@ export function setShowNaflGuide(value: boolean): void {
 export type AsrMadhab = 'standard' | 'hanafi';
 
 const ASR_KEY = 'bustandeen_asr_madhab';
-/** What every existing user has been seeing (adhan's default) — keeping it as
- * the default means nobody's timetable shifts under them after this update. */
-export const DEFAULT_ASR_MADHAB: AsrMadhab = 'standard';
+/** The worldwide fallback (adhan's default). The actual default for someone
+ * who has not chosen is their country's (see regionPrayerDefaults below). */
+export const DEFAULT_ASR_MADHAB: AsrMadhab = FALLBACK_PRAYER_DEFAULTS.asr;
 
 export const ASR_MADHABS: { id: AsrMadhab; label: string; detail: string }[] = [
   {
@@ -280,9 +287,9 @@ export const ASR_MADHABS: { id: AsrMadhab; label: string; detail: string }[] = [
 export function getAsrMadhab(): AsrMadhab {
   try {
     const v = localStorage.getItem(ASR_KEY);
-    return v === 'hanafi' || v === 'standard' ? v : DEFAULT_ASR_MADHAB;
+    return v === 'hanafi' || v === 'standard' ? v : regionPrayerDefaults().asr;
   } catch {
-    return DEFAULT_ASR_MADHAB;
+    return regionPrayerDefaults().asr;
   }
 }
 
@@ -300,29 +307,17 @@ export function setAsrMadhab(m: AsrMadhab): void {
  * match adhan.js's `CalculationMethod.*()` factories (utils/prayerTimes.ts
  * reads this and picks the matching one).
  */
-export type CalculationMethodId =
-  | 'MoonsightingCommittee'
-  | 'MuslimWorldLeague'
-  | 'Egyptian'
-  | 'Karachi'
-  | 'UmmAlQura'
-  | 'Dubai'
-  | 'NorthAmerica'
-  | 'Kuwait'
-  | 'Qatar'
-  | 'Singapore'
-  | 'Tehran'
-  | 'Turkey';
+export type CalculationMethodId = CalcMethodId;
 
 const CALC_METHOD_KEY = 'bustandeen_calc_method';
-/** Existing behaviour, unchanged for anyone who never touches the setting. */
-export const DEFAULT_CALC_METHOD: CalculationMethodId = 'MoonsightingCommittee';
+/** The worldwide fallback; see regionPrayerDefaults for the real default. */
+export const DEFAULT_CALC_METHOD: CalculationMethodId = FALLBACK_PRAYER_DEFAULTS.method;
 
 export const CALC_METHODS: { id: CalculationMethodId; label: string; detail: string }[] = [
   {
     id: 'MoonsightingCommittee',
     label: 'Moonsighting Committee',
-    detail: 'Worldwide-friendly default — used by this app since launch.',
+    detail: 'Worldwide fallback, used where no national convention is set. Common in the UK.',
   },
   {
     id: 'MuslimWorldLeague',
@@ -360,9 +355,11 @@ export const CALC_METHODS: { id: CalculationMethodId; label: string; detail: str
 export function getCalcMethod(): CalculationMethodId {
   try {
     const v = localStorage.getItem(CALC_METHOD_KEY);
-    return CALC_METHODS.some((m) => m.id === v) ? (v as CalculationMethodId) : DEFAULT_CALC_METHOD;
+    return CALC_METHODS.some((m) => m.id === v)
+      ? (v as CalculationMethodId)
+      : regionPrayerDefaults().method;
   } catch {
-    return DEFAULT_CALC_METHOD;
+    return regionPrayerDefaults().method;
   }
 }
 
@@ -371,5 +368,91 @@ export function setCalcMethod(m: CalculationMethodId): void {
     localStorage.setItem(CALC_METHOD_KEY, m);
   } catch {
     /* private mode */
+  }
+}
+
+// ─── Country-aware defaults (audit T1.9) ─────────────────────────────────────
+
+/** The defaults for someone who has not chosen a method or ʿAṣr school: what
+ * most mosques in their country use, judged from the device's time zone
+ * (utils/countryDefaults.ts). A saved choice always wins over this. */
+export function regionPrayerDefaults(): PrayerDefaults {
+  return prayerDefaultsForCountry(deviceCountry());
+}
+
+const DEFAULTS_MIGRATED_KEY = 'bustandeen_prayer_defaults_v1';
+const SUGGEST_KEY = 'bustandeen_prayer_defaults_suggest';
+
+/**
+ * Runs once per device, before the first render (main.tsx).
+ *
+ * Someone already using prayer times here (a saved location) but who never
+ * picked a method or ʿAṣr school has been seeing the old worldwide default.
+ * Switching them silently would move ʿAṣr by up to an hour overnight, so
+ * their current settings are written down as an explicit choice instead,
+ * and, if their country usually does it differently, a one-time card on the
+ * Prayer Times page offers the local convention (they decide).
+ * New users have no saved location yet, so they simply get the country
+ * default from the start.
+ */
+export function migratePrayerDefaultsOnce(): void {
+  try {
+    if (localStorage.getItem(DEFAULTS_MIGRATED_KEY)) return;
+    localStorage.setItem(DEFAULTS_MIGRATED_KEY, '1');
+    if (!localStorage.getItem('bustandeen_location')) return;
+
+    let pinned = false;
+    if (!localStorage.getItem(CALC_METHOD_KEY)) {
+      localStorage.setItem(CALC_METHOD_KEY, FALLBACK_PRAYER_DEFAULTS.method);
+      pinned = true;
+    }
+    if (!localStorage.getItem(ASR_KEY)) {
+      localStorage.setItem(ASR_KEY, FALLBACK_PRAYER_DEFAULTS.asr);
+      pinned = true;
+    }
+    // Only someone who never chose gets the offer; a deliberate choice of
+    // both settings is never second-guessed.
+    const region = regionPrayerDefaults();
+    if (pinned && (getCalcMethod() !== region.method || getAsrMadhab() !== region.asr)) {
+      localStorage.setItem(SUGGEST_KEY, '1');
+    }
+  } catch {
+    /* private mode: nothing to migrate */
+  }
+}
+
+export interface PrayerDefaultsSuggestion {
+  countryCode: string;
+  suggested: PrayerDefaults;
+  current: PrayerDefaults;
+}
+
+/** The one-time "your country usually uses…" offer, or null. */
+export function getPrayerDefaultsSuggestion(): PrayerDefaultsSuggestion | null {
+  try {
+    if (localStorage.getItem(SUGGEST_KEY) !== '1') return null;
+  } catch {
+    return null;
+  }
+  const countryCode = deviceCountry();
+  if (!countryCode) return null;
+  const suggested = regionPrayerDefaults();
+  const current: PrayerDefaults = { method: getCalcMethod(), asr: getAsrMadhab() };
+  if (current.method === suggested.method && current.asr === suggested.asr) return null;
+  return { countryCode, suggested, current };
+}
+
+export function acceptPrayerDefaultsSuggestion(): void {
+  const { method, asr } = regionPrayerDefaults();
+  setCalcMethod(method);
+  setAsrMadhab(asr);
+  dismissPrayerDefaultsSuggestion();
+}
+
+export function dismissPrayerDefaultsSuggestion(): void {
+  try {
+    localStorage.removeItem(SUGGEST_KEY);
+  } catch {
+    /* ignore */
   }
 }
