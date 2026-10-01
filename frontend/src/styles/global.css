@@ -21,14 +21,16 @@
   --text-secondary: #9e9580;
 }
 
-/* Typography: El Messiri (display) + Plus Jakarta Sans (body) */
+/* Typography: El Messiri (display) + Plus Jakarta Sans (body), self-hosted
+   (src/fonts.ts). Hind Siliguri carries Bangla: neither Latin face has
+   Bengali glyphs, so the browser takes them from the next face in line. */
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, sans-serif;
 }
 
 h1, h2, h3, h4, h5, h6,
 .font-display {
-  font-family: 'El Messiri', system-ui, sans-serif;
+  font-family: 'El Messiri', 'Hind Siliguri', system-ui, sans-serif;
 }
 
 /* Smooth scrolling */

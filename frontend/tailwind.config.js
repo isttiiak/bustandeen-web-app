@@ -36,8 +36,8 @@ export default {
         'glow-magenta': '0 0 24px rgba(196,130,90,0.45)',
       },
       fontFamily: {
-        display: ['"El Messiri"', 'system-ui', 'sans-serif'],
-        body: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+        display: ['"El Messiri"', '"Hind Siliguri"', 'system-ui', 'sans-serif'],
+        body: ['"Plus Jakarta Sans"', '"Hind Siliguri"', 'system-ui', 'sans-serif'],
       },
       animation: {
         float: 'float 6s ease-in-out infinite',

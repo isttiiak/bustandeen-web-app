@@ -67,7 +67,8 @@ export default defineConfig({
       injectRegister: null,
       includeAssets: ['favicon.svg', 'og-image.jpg', 'robots.txt'],
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
+        // No woff2: fonts are cached at runtime as pages use them (src/sw.ts).
+        globPatterns: ['**/*.{js,css,html,svg,png}'],
       },
       manifest: {
         name: 'Bustandeen - Nourish Your Deen',
