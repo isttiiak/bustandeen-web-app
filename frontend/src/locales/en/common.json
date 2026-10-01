@@ -1081,7 +1081,7 @@
     "featureFriends": "Friends & Noor",
     "featureFriendsDesc": "\"So compete with one another in doing good\" (Quran 2:148). Connect with one link and race each other gently with Noor — a calm daily light out of 100.",
     "featurePrayer": "Prayer Times",
-    "featurePrayerDesc": "Computed fully on your device — your location never leaves your browser. Live countdowns, forbidden windows, nafl windows.",
+    "featurePrayerDesc": "Computed fully on your device, and your location is never sent to Bustandeen. Live countdowns, forbidden windows, nafl windows.",
     "featureQuran": "Quran — read & listen",
     "featureQuranDesc": "An āyah-by-āyah reader with recitation, word highlighting, Bengali & English translations, a khatam journey, seven reciters, and one unified streak.",
     "featureSalat": "Salat Tracker",
@@ -1289,7 +1289,7 @@
   },
   "prayerTimeSettings": {
     "close": "Close prayer time settings",
-    "locationDesc": "Prayer times are calculated from this location, on this device — it never leaves your browser.",
+    "locationDesc": "Prayer times are calculated from this location, on this device. It is never sent to Bustandeen.",
     "locationTitle": "📍 Location",
     "locationUpdated": "Location updated",
     "noLocation": "Not set",
@@ -1301,6 +1301,22 @@
     "musafirDesc": "Travelling? Shortened and joined prayers, the travel duʿās and every concession with its hadith."
   },
   "prayerTimes": {
+    "placeLookupTitle": "Finding place names",
+    "placeLookupDevice": "🔒 On this device",
+    "placeLookupOsm": "🌍 OpenStreetMap",
+    "placeLookupDeviceHint": "Private, ~1,450 cities",
+    "placeLookupOsmHint": "Any town or village",
+    "placeLookupDeviceNote": "Your location never leaves this device. Place names come from a city list inside the app.",
+    "placeLookupOsmNote": "To name your place, its location rounded to about 1 km (or the city you type) is sent to OpenStreetMap's free Nominatim service. Prayer times are still calculated on this device and nothing is sent to Bustandeen.",
+    "cityNotFoundDevice": "Not in the on-device city list. Try a nearby larger city, or switch place names to OpenStreetMap below.",
+    "defaults": {
+      "title": "Times used in {{country}}",
+      "body": "Most mosques in {{country}} use the {{method}} method with {{asr}}. You are using {{currentMethod}} with {{currentAsr}}. Follow your local mosque.",
+      "accept": "Use the usual times",
+      "keep": "Keep mine",
+      "asrHanafi": "Ḥanafī ʿAṣr",
+      "asrStandard": "standard ʿAṣr"
+    },
     "seoTitle": "Prayer Times — Accurate Salat Times for Your Location",
     "seoDescription": "On-device prayer time calculator for Fajr, Dhuhr, Asr, Maghrib and Isha, with multiple calculation methods, Hanafi/standard Asr settings and a live countdown.",
     "after": "After",
@@ -1385,12 +1401,12 @@
       "body4": "Friends: mutual connections, and the Noor scores worked out from your own activity.",
       "body5": "Messages you send us: feedback and contact forms, zikr requests, and sadaqah donation details (optional name, email, phone, payment method, transaction ID, amount, date, message, and an IP address to prevent abuse).",
       "body6": "The time you were last active, and the service emails we send: a welcome, replies to your messages, donation status, and occasionally a gentle note after a long break.",
-      "body7": "How long we keep logs: when our rate limits block a request, its IP address is kept for 30 days to spot abuse, then deleted automatically. A failed email delivery (address and subject) is kept for 90 days. Server error logs never contain what you logged."
+      "body7": "How long we keep logs: when our rate limits block a request, its IP address is kept for 30 days to spot abuse, then deleted automatically. The counters behind those limits keep only a scrambled (hashed) form of your IP address or account ID and disappear when their time window ends, after 24 hours at most. A failed email delivery (address and subject) is kept for 90 days. Server error logs never contain what you logged."
     },
     "deviceOnly": {
       "title": "Stays on your device only",
       "body0": "Your prayer-times location (latitude and longitude). It is used to calculate times on your device and is never sent to our servers.",
-      "body1": "If you search for a city by name, the search text goes to OpenStreetMap's Nominatim service to find its coordinates.",
+      "body1": "Place names (showing your location as \"Dhaka, Bangladesh\", or finding a city you type) come from a city list inside the app by default, so nothing leaves your device. If you switch place names to OpenStreetMap, your location rounded to about 1 km, or the city you type, goes to OpenStreetMap's Nominatim service.",
       "body2": "Preferences (language, units, discreet mode, hide BMI), cached Quran text, counts waiting to sync while you are offline, and your sign-in token."
     },
     "friendsSee": {
@@ -2332,6 +2348,7 @@
     "journeyTabTitle": "Your Journey"
   },
   "salatSettings": {
+    "usualIn": "Usual in {{country}}",
     "asrDesc": "Madhabs differ on when ʿAṣr begins. Because Ẓuhr lasts until ʿAṣr starts, this moves both. Follow your local mosque.",
     "asrTitle": "🕌 ʿAṣr timing (madhab)",
     "autoCountDesc": "When on, tapping Tasbīḥ or Ayatul Kursi below adds the counts straight to your dhikr counter. Turn it off to just mark them as done — use Tasbih mode on the Zikr counter to count them yourself instead.",
@@ -2343,7 +2360,7 @@
     "close": "Close salat settings",
     "dangerZoneHint": "Looking for data deletion? Everything lives in",
     "kazaDebtResetDesc": "Fallen behind for a while? A running total can feel discouraging rather than useful — reset it and count fresh from today. Your prayer history isn't affected, and you can always add debt back on the tracker if you need to.",
-    "locationNote": "Your saved location never leaves this device — prayer times are computed here.",
+    "locationNote": "Your saved location is never sent to Bustandeen. Prayer times are computed here, on this device.",
     "naflGuideToggle": "Nafl guidance",
     "naflGuideToggleDesc": "Lighter-emphasis extras — 4 before ʿAṣr, 2 before Maghrib",
     "resetConfirm": "Yes, start fresh",

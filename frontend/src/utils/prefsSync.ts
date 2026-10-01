@@ -38,6 +38,7 @@ export const SYNCED_KEYS: readonly string[] = [
   'bustandeen_show_nafl_guide',
   'bustandeen_asr_madhab',
   'bustandeen_calc_method',
+  'bustandeen_place_lookup',
   'bustandeen_musafir',
   'bustandeen_musafir_history',
   'bustandeen_musafir_kaza_rule',

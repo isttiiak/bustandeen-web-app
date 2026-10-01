@@ -3,6 +3,8 @@
 // note in Phase E of the SEO plan) — these three languages back only the
 // /prayer-times, /qibla, /ramadan-calendar, /duas, /adhkar and
 // /hijri-date-converter static pages, not the authenticated app.
+import type { CalcMethodId } from '../../utils/countryDefaults.js';
+
 export type SeoLang = 'en' | 'bn' | 'ar';
 export const SEO_LANGS: SeoLang[] = ['en', 'bn', 'ar'];
 export const RTL_LANGS: SeoLang[] = ['ar'];
@@ -26,8 +28,17 @@ export interface ChromeStrings {
     heading: (city: string) => string;
     subheading: (city: string, country: string) => string;
     todayLabel: string;
-    methodNote: string;
-    hanafiAsrNote: string;
+    /** "Calculated with the {method} method, the convention most mosques in
+     *  {country} follow." */
+    methodNote: (method: string, country: string) => string;
+    /** Explains the two ʿAṣr rows. */
+    asrNote: string;
+    prayerNames: Record<'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha', string>;
+    asrStandardLabel: string;
+    asrHanafiLabel: string;
+    /** Marks the ʿAṣr row local mosques usually follow. */
+    usualBadge: string;
+    methodNames: Record<CalcMethodId, string>;
     liveAppCta: string;
     qiblaCta: (city: string) => string;
     ramadanCta: (city: string) => string;
@@ -169,10 +180,35 @@ const en: ChromeStrings = {
     subheading: (city, country) =>
       `Fajr, Dhuhr, Asr, Maghrib and Isha prayer times for ${city}, ${country}.`,
     todayLabel: "Today's prayer times",
-    methodNote:
-      'Calculated on-device using standard astronomical formulas (the same method the Bustandeen app uses for every prayer-time calculation).',
-    hanafiAsrNote:
-      "Asr time shown uses the standard (Shafi'i/Maliki/Hanbali) convention; the app lets you switch to the Hanafi convention.",
+    methodNote: (method, country) =>
+      `Calculated with the ${method} method, the convention most mosques in ${country} follow. The same calculation runs on your device in the Bustandeen app.`,
+    asrNote:
+      "ʿAṣr is shown for both schools: standard (Shāfiʿī, Mālikī, Ḥanbalī), when a shadow equals the object's length, and Ḥanafī, when it is twice the length. Follow your local mosque; the app lets you choose either.",
+    prayerNames: {
+      fajr: 'Fajr',
+      sunrise: 'Sunrise',
+      dhuhr: 'Dhuhr',
+      asr: 'Asr',
+      maghrib: 'Maghrib',
+      isha: 'Isha',
+    },
+    asrStandardLabel: 'Asr (standard)',
+    asrHanafiLabel: 'Asr (Ḥanafī)',
+    usualBadge: 'usual here',
+    methodNames: {
+      MoonsightingCommittee: 'Moonsighting Committee',
+      MuslimWorldLeague: 'Muslim World League',
+      Egyptian: 'Egyptian General Authority of Survey',
+      Karachi: 'University of Islamic Sciences, Karachi',
+      UmmAlQura: 'Umm al-Qura, Makkah',
+      Dubai: 'Dubai',
+      NorthAmerica: 'ISNA (North America)',
+      Kuwait: 'Kuwait',
+      Qatar: 'Qatar',
+      Singapore: 'Singapore (MUIS)',
+      Tehran: 'University of Tehran',
+      Turkey: 'Diyanet (Turkey)',
+    },
     liveAppCta: 'Open the live prayer-time tracker for exact, auto-updating times',
     qiblaCta: (city) => `Qibla direction from ${city}`,
     ramadanCta: (city) => `Ramadan calendar for ${city}`,
@@ -188,7 +224,7 @@ const en: ChromeStrings = {
       },
       {
         q: 'What calculation method and Asr convention are used?',
-        a: 'A standard calculation method with the majority-view Asr convention is shown by default; the in-app tracker lets you choose from multiple calculation methods and switch to the Hanafi Asr convention.',
+        a: 'Each city uses the method most mosques in its country follow (for example the Karachi method in Bangladesh and Pakistan, Umm al-Qura in Saudi Arabia), and ʿAṣr is shown for both the standard and the Ḥanafī school. In the app you can pick any of 12 methods and either school.',
       },
     ],
     nearbyTitle: 'Nearby',
@@ -364,10 +400,35 @@ const bn: ChromeStrings = {
     subheading: (city, country) =>
       `${city}, ${country}-এর ফজর, যোহর, আসর, মাগরিব ও এশার নামাজের সময়।`,
     todayLabel: 'আজকের নামাজের সময়',
-    methodNote:
-      'মান জ্যোতির্বৈজ্ঞানিক সূত্র ব্যবহার করে ডিভাইসেই হিসাব করা হয়েছে (Bustandeen অ্যাপের প্রতিটি নামাজের সময় হিসাবেও একই পদ্ধতি ব্যবহৃত হয়)।',
-    hanafiAsrNote:
-      'এখানে দেখানো আসরের সময় সাধারণ (শাফেয়ী/মালেকী/হাম্বলী) মত অনুযায়ী; অ্যাপে হানাফি মত অনুযায়ীও পরিবর্তন করা যায়।',
+    methodNote: (method, country) =>
+      `${method} পদ্ধতিতে হিসাব করা হয়েছে, ${country}-এর বেশিরভাগ মসজিদ যে পদ্ধতি অনুসরণ করে। Bustandeen অ্যাপেও একই হিসাব আপনার ডিভাইসেই হয়।`,
+    asrNote:
+      'আসরের সময় দুই মাযহাব অনুযায়ীই দেখানো হয়েছে: সাধারণ (শাফেয়ী, মালেকী, হাম্বলী), যখন ছায়া বস্তুর সমান হয়, আর হানাফী, যখন ছায়া বস্তুর দ্বিগুণ হয়। আপনার এলাকার মসজিদকে অনুসরণ করুন; অ্যাপে যেকোনোটি বেছে নেওয়া যায়।',
+    prayerNames: {
+      fajr: 'ফজর',
+      sunrise: 'সূর্যোদয়',
+      dhuhr: 'যোহর',
+      asr: 'আসর',
+      maghrib: 'মাগরিব',
+      isha: 'এশা',
+    },
+    asrStandardLabel: 'আসর (সাধারণ)',
+    asrHanafiLabel: 'আসর (হানাফী)',
+    usualBadge: 'এখানে প্রচলিত',
+    methodNames: {
+      MoonsightingCommittee: 'মুনসাইটিং কমিটি',
+      MuslimWorldLeague: 'মুসলিম ওয়ার্ল্ড লীগ',
+      Egyptian: 'মিশরীয় জেনারেল অথরিটি অব সার্ভে',
+      Karachi: 'ইউনিভার্সিটি অব ইসলামিক সায়েন্সেস, করাচি',
+      UmmAlQura: 'উম্মুল কুরা, মক্কা',
+      Dubai: 'দুবাই',
+      NorthAmerica: 'ইসনা (উত্তর আমেরিকা)',
+      Kuwait: 'কুয়েত',
+      Qatar: 'কাতার',
+      Singapore: 'সিঙ্গাপুর (মুইস)',
+      Tehran: 'তেহরান বিশ্ববিদ্যালয়',
+      Turkey: 'দিয়ানেত (তুরস্ক)',
+    },
     liveAppCta: 'সঠিক, স্বয়ংক্রিয়ভাবে হালনাগাদ হওয়া সময়ের জন্য লাইভ নামাজ ট্র্যাকার খুলুন',
     qiblaCta: (city) => `${city} থেকে কিবলার দিক`,
     ramadanCta: (city) => `${city}-এর রমজান ক্যালেন্ডার`,
@@ -383,7 +444,7 @@ const bn: ChromeStrings = {
       },
       {
         q: 'কোন হিসাব পদ্ধতি ও আসরের মত ব্যবহার করা হয়েছে?',
-        a: 'ডিফল্টভাবে একটি প্রচলিত হিসাব পদ্ধতি ও সংখ্যাগরিষ্ঠ মত অনুযায়ী আসরের সময় দেখানো হয়েছে; অ্যাপের ভেতরের ট্র্যাকারে একাধিক হিসাব পদ্ধতি থেকে বেছে নেওয়া যায় এবং হানাফি মতে পরিবর্তন করা যায়।',
+        a: 'প্রতিটি শহরে সেই দেশের বেশিরভাগ মসজিদ যে পদ্ধতি অনুসরণ করে তা ব্যবহার করা হয়েছে (যেমন বাংলাদেশ ও পাকিস্তানে করাচি পদ্ধতি, সৌদি আরবে উম্মুল কুরা), আর আসরের সময় সাধারণ ও হানাফী দুই মাযহাব অনুযায়ীই দেখানো হয়েছে। অ্যাপে ১২টি পদ্ধতির যেকোনোটি ও যেকোনো মাযহাব বেছে নেওয়া যায়।',
       },
     ],
     nearbyTitle: 'কাছাকাছি শহর',
@@ -556,10 +617,35 @@ const ar: ChromeStrings = {
     subheading: (city, country) =>
       `مواقيت الفجر والظهر والعصر والمغرب والعشاء في ${city}, ${country}.`,
     todayLabel: 'مواقيت الصلاة اليوم',
-    methodNote:
-      'تُحسب المواقيت على الجهاز مباشرة باستخدام معادلات فلكية قياسية — نفس الطريقة المستخدمة في تطبيق Bustandeen لكل حساب لمواقيت الصلاة.',
-    hanafiAsrNote:
-      'وقت العصر المعروض هنا وفق المذهب الجمهور (الشافعي/المالكي/الحنبلي)؛ يمكن التبديل إلى المذهب الحنفي داخل التطبيق.',
+    methodNote: (method, country) =>
+      `حُسبت المواقيت بطريقة ${method}، وهي الطريقة التي تتبعها أغلب المساجد في ${country}. ويُجري تطبيق Bustandeen الحساب نفسه على جهازك.`,
+    asrNote:
+      'يُعرض وقت العصر وفق المذهبين: قول الجمهور (الشافعي والمالكي والحنبلي) حين يصير ظل الشيء مثله، وقول الحنفية حين يصير مثليه. اتبع مسجدك المحلي؛ ويتيح التطبيق اختيار أيٍّ منهما.',
+    prayerNames: {
+      fajr: 'الفجر',
+      sunrise: 'الشروق',
+      dhuhr: 'الظهر',
+      asr: 'العصر',
+      maghrib: 'المغرب',
+      isha: 'العشاء',
+    },
+    asrStandardLabel: 'العصر (الجمهور)',
+    asrHanafiLabel: 'العصر (الحنفي)',
+    usualBadge: 'المعتمد هنا',
+    methodNames: {
+      MoonsightingCommittee: 'لجنة رؤية الهلال',
+      MuslimWorldLeague: 'رابطة العالم الإسلامي',
+      Egyptian: 'الهيئة المصرية العامة للمساحة',
+      Karachi: 'جامعة العلوم الإسلامية بكراتشي',
+      UmmAlQura: 'أم القرى بمكة المكرمة',
+      Dubai: 'دبي',
+      NorthAmerica: 'الجمعية الإسلامية لأمريكا الشمالية',
+      Kuwait: 'الكويت',
+      Qatar: 'قطر',
+      Singapore: 'سنغافورة',
+      Tehran: 'جامعة طهران',
+      Turkey: 'رئاسة الشؤون الدينية التركية',
+    },
     liveAppCta: 'افتح متتبع الصلاة المباشر للحصول على مواقيت دقيقة ومحدَّثة تلقائيًا',
     qiblaCta: (city) => `اتجاه القبلة من ${city}`,
     ramadanCta: (city) => `تقويم رمضان لمدينة ${city}`,
@@ -575,7 +661,7 @@ const ar: ChromeStrings = {
       },
       {
         q: 'ما طريقة الحساب ومذهب العصر المستخدمان؟',
-        a: 'تُعرض افتراضيًا طريقة حساب قياسية مع مذهب الجمهور للعصر؛ ويتيح متتبع التطبيق اختيار طرق حساب متعددة والتبديل إلى مذهب العصر الحنفي.',
+        a: 'تُستخدم لكل مدينة الطريقة التي تتبعها أغلب المساجد في بلدها (مثل طريقة كراتشي في بنغلاديش وباكستان، وأم القرى في السعودية)، ويُعرض العصر وفق قول الجمهور وقول الحنفية معًا. ويمكنك في التطبيق اختيار أيٍّ من ١٢ طريقة وأيٍّ من المذهبين.',
       },
     ],
     nearbyTitle: 'مدن قريبة',

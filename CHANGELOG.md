@@ -21,6 +21,54 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - The one-line theme script in `index.html` now also adds `has-session` for signed-in visitors (CSP hash updated; `check-csp.mjs` verifies it).
 - Depends on v5.63.0 for the FAQ answer about country-aware prayer times.
 
+## v5.64.0 - Your location really stays on your device - 2026-10-01
+
+### Changed
+
+- **Place names are now found on your device by default.** Turning a GPS fix into "Dhaka, Bangladesh" and finding a city you type used to send your exact coordinates (or the search text) to OpenStreetMap, while the app said your location "never leaves your browser". Now a city list inside the app (about 1,450 cities, loaded only when you set a location) does it, and nothing leaves the device. In the Dhaka area it says "Dhaka", not a neighbourhood; up to 200 km from any listed city it says "Near …"; further than that it shows the coordinates.
+- **OpenStreetMap is still there, as your choice.** The location picker has a new "Finding place names" switch: **On this device** (private, about 1,450 cities) or **OpenStreetMap** (any town or village). OpenStreetMap only ever receives your location rounded to about 1 km, and the picker says so. The choice syncs across your devices.
+- The location wording now matches what happens: "your location is never sent to Bustandeen" (Home, Prayer time settings, Salat settings), and the privacy page explains both ways of finding place names. English and Bangla.
+
+### Notes
+
+- `utils/geocode.ts`: `reverseGeocodeCity` / `searchPlaces` follow the choice (`bustandeen_place_lookup`: `device` | `osm`, synced). New `src/data/placeIndex.generated.json` (46 KB, 21 KB gzipped), built from the SEO city list by `scripts/build-place-index.mjs` (now part of `npm run data:cities`).
+- 6 new unit tests: the Dhaka metro is named "Dhaka" (not Paltan or Azimpur); "Near …" and the 200 km cut-off; search ignores accents, commas and case; **device mode makes no network request**; OpenStreetMap mode sends only `lat=23.78&lon=90.42`-style rounded coordinates.
+
+## v5.63.0 - Prayer times that match your local mosque - 2026-10-01
+
+### Added
+
+- **Country-aware prayer-time defaults.** If you have not chosen a calculation method or ʿAṣr school, the app now starts from what most mosques in your country use, judged from your device's time zone (nothing is sent anywhere). Bangladesh, Pakistan, India and Afghanistan: University of Islamic Sciences, Karachi, with Ḥanafī ʿAṣr. Saudi Arabia: Umm al-Qura. The UAE, Kuwait and Qatar: their national methods. Egypt and much of the Levant: Egyptian. Turkey: Diyanet. Malaysia, Singapore, Indonesia, Brunei: 20°/18°. US and Canada: ISNA. Most of Western Europe: Muslim World League. Central Asia: Ḥanafī ʿAṣr. Anywhere else keeps the previous worldwide default. Every method and both ʿAṣr schools are still one tap away.
+- **Nobody's timetable moved on its own.** If you were already using prayer times and never picked a method or school, your current settings were kept exactly. If your country usually does it differently, the Prayer Times page shows a one-time card ("Times used in Bangladesh") with **Use the usual times** and **Keep mine**. A method or school you chose yourself is never changed and never second-guessed.
+- **"Usual in Bangladesh"** (or your country) now marks the matching method and ʿAṣr school in Prayer time settings.
+- **City prayer-time pages show both ʿAṣr times**, standard and Ḥanafī, with the one local mosques follow marked "usual here". Each page uses its country's method and names it ("Calculated with the University of Islamic Sciences, Karachi method, the convention most mosques in Bangladesh follow"). The same method now drives the sehri and iftar times on the Ramadan calendar pages.
+- Prayer names on the Bangla and Arabic city pages are now in Bangla and Arabic (they were printed in English).
+
+### Fixed
+
+- Changing the method or ʿAṣr school in Prayer time settings now updates the timetable as soon as the drawer closes, instead of on the next day or a reload.
+- The Prayer time settings drawer always shows the current choice (it could show an older one after a change made elsewhere, such as a cross-device sync).
+
+### Notes
+
+- The table lives in `frontend/src/utils/countryDefaults.ts` (pure data, also used at build time by the static pages). Country from time zone: `deviceCountry()`.
+- `migratePrayerDefaultsOnce()` (from `main.tsx`, before the first render) writes the old defaults as explicit choices for anyone with a saved location and no choice yet, once per device.
+- **Frontend unit tests (Vitest) are new:** `npm test` in `frontend/`, also run in CI. 16 tests: snapshot timetables for Dhaka, Karachi, London, Riyadh and New York, the country conventions, Ḥanafī ʿAṣr always later than standard, and the migration rules above.
+
+## v5.62.2 - Rate limits that actually hold on serverless - 2026-10-01
+
+### Fixed
+
+- **Daily AI limits and form limits are now real.** On Vercel every warm server instance kept its own counters, and a cold start reset them, so "20 Naseeh requests a day" really meant 20 per instance. The limits that protect money or public forms now share one count across all instances: Naseeh/AI (per IP, per user and data chat), sadaqah submissions and receipt checks, feedback, friend-connect, backup import, data export and the admin session check. The high-volume general and zikr flood guards stay in memory, where an approximate per-instance cap is enough.
+
+### Notes
+
+- New `RateLimitCounter` collection, used by `middleware/mongoRateLimitStore.ts` (an `express-rate-limit` `Store`). Each client's window starts at its first hit, as before; the count is one atomic update, so simultaneous hits on two instances are both counted.
+- Only a keyed hash of the IP or user id is stored, and a TTL index deletes each counter when its window ends (24 hours at most). The privacy page says so.
+- The API's CSP no longer merges helmet's defaults (`useDefaults: false`), so it is exactly `default-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`.
+- If MongoDB is unreachable, a limiter falls back to an in-memory count for that instance (logged as `rate-limit-store`) instead of blocking everyone or waiting on Mongoose's 10-second buffer.
+- **Local dev no longer builds indexes.** `autoIndex` is now on only in the test suite (or with `MONGO_AUTO_INDEX=1` for a local database). `backend/.env` points at the live Atlas database, so a dev server with `autoIndex` on changes production indexes. That happened on 2026-10-01: a local dev server built the new retention and counter indexes in production, which applied the 30/90-day retention immediately (both log collections are now empty).
+- Indexes for this release already exist in production (see above). `npm run sync-indexes` in `backend/` still lists three old indexes to drop (`createdAt_-1` on the two log collections, the unused `userId_1` on `salatlogs`); `-- --apply` removes them. Nothing else is pending.
 ## v5.62.1 - Dependency security patch - 2026-10-01
 
 ### Security
