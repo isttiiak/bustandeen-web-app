@@ -21,6 +21,36 @@ const rootPkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.u
  * catch-all rewrite and the SW's offline navigation fallback both point at
  * app-shell.html instead.
  */
+/**
+ * fontsource's per-subset files (`bengali-400.css`, `latin-400.css`...) have no
+ * `unicode-range`, so the browser had to download a face to learn it lacks a
+ * glyph: every emoji on an English page pulled in all three Hind Siliguri
+ * weights (214 KB, audit PERF-01). This copies each subset's range from the
+ * package's per-weight file (`400.css`), which has them. Only the UI faces:
+ * the Arabic faces (Amiri, Scheherazade New) are left exactly as they were,
+ * because a range there would move the spaces in Quran text to another font.
+ */
+function fontsourceUnicodeRanges(): Plugin {
+  const file =
+    /@fontsource\/(hind-siliguri|plus-jakarta-sans|el-messiri)\/(bengali|latin|latin-ext)-(\d+)\.css$/;
+  return {
+    name: 'bustandeen:fontsource-unicode-ranges',
+    enforce: 'pre',
+    transform(code, id) {
+      const m = file.exec(id.split('?')[0] ?? '');
+      if (!m || code.includes('unicode-range')) return null;
+      const [, family, subset, weight] = m;
+      const perWeight = readFileSync(id.split('?')[0]!.replace(/[^/]+$/, `${weight}.css`), 'utf8');
+      const block = perWeight
+        .split('/* ')
+        .find((b) => b.startsWith(`${family}-${subset}-${weight}-normal */`));
+      const range = block && /unicode-range:[^;]+;/.exec(block)?.[0];
+      if (!range) throw new Error(`No unicode-range for ${family} ${subset} ${weight}`);
+      return { code: code.replace(/\}\s*$/, `  ${range}\n}\n`), map: null };
+    },
+  };
+}
+
 function appShellCopy(): Plugin {
   return {
     name: 'bustandeen:app-shell-copy',
@@ -40,6 +70,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    fontsourceUnicodeRanges(),
     appShellCopy(),
     // v4.10.0 — installable PWA: precached app shell + offline-tolerant
     // runtime caching. The API stays network-only (worship data must never be

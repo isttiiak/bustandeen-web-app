@@ -14,6 +14,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - The Bangla strings load only when Bangla is used, so English visitors download about 77 KB less.
 - Home no longer jumps when it loads: the footer stays below the screen until the page is there (layout shift 0.278).
 - Visitors who are not signed in no longer download the Salat, Quran, Fasting and Prayer-times pages in the background.
+- English pages no longer download the Bangla font (three weights, 214 KB): an emoji used to make the browser fetch it to check for the glyph.
 
 ### Changed (developers)
 
@@ -22,6 +23,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - Service worker: SEO pages and `/bn` network-first (`static-pages`), falling back to the app shell offline.
 - `firebase.ts`: `initializeAuth` with `getAuth()`'s persistences and no popup resolver; `signInWithPopup` passes `browserPopupRedirectResolver`.
 - Chunks by module path: `react/jsx-runtime` had landed in the `motion` chunk, so every component needed framer-motion. React Router is its own chunk.
+- Fonts: fontsource's subset files have no `unicode-range`; a Vite plugin (`fontsourceUnicodeRanges`) copies it from the per-weight files for Hind Siliguri, Plus Jakarta Sans and El Messiri. Amiri and Scheherazade New are unchanged (a range there would move the spaces in Quran text to another font).
 - `index.html`'s inline script also sends a signed-out Bangla visitor of `/` to `/bn` (CSP hash updated). Fixed the landing FAQ JSON-LD escaping (`'<'`).
 - e2e: `static-pages.spec.ts` (no app chunks on the landing and SEO pages, the app for a signed-in visitor, the Bangla landing and language memory, an interactive SEO page); the demo helpers click links.
 
