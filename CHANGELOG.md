@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.72.0 - Bangla numbers everywhere, and a check that Bangla is complete - 2026-10-01
+
+### Fixed
+
+- **Numbers inside Bangla sentences now use Bangla digits.** Sentences like "{{count}} সেকেন্ডে নিয়ে যাওয়া হচ্ছে" used to print 5 instead of ৫ wherever the number was not explicitly formatted (about 200 strings). Every number placed into a Bangla sentence is now written in Bangla digits; years and small counts are never split with a comma (১৪৪৭, not ১,৪৪৭). English is unchanged.
+- **The "welcome back" nudge was in English for Bangla users.** It is now in Bangla.
+
+### Added (developers)
+
+- `npm run i18n:check` (`frontend/scripts/check-i18n.mjs`), run in CI: fails on a missing Bangla translation, a Bangla key with no English source, or a sentence whose `{{placeholders}}` differ from English. Admin pages and the English-only Naseeh AI namespaces are listed as deliberately English-only in the script. Today: 3,138 English keys, all translated outside those namespaces.
+- `src/i18n.ts`: `alwaysFormat` plus a small formatter wrapper for Bangla digits, with tests (`src/i18n.test.ts`).
+
 ## v5.71.0 - Storage rules in the repo, previews by config - 2026-10-01
 
 ### Security
