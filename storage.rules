@@ -1,0 +1,29 @@
+rules_version = '2';
+
+// Firebase Storage rules for Bustandeen (audit SEC-04). Deployed from this
+// file (see .github/workflows/storage-rules.yml); edit here, not in the console.
+//
+// The app stores exactly one kind of file: a profile photo per user at
+// profile-photos/{uid}.jpg (Profile.tsx compresses it to a 400 px JPEG,
+// well under 100 KB). Everything else is closed.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /profile-photos/{file} {
+      // Friends see each other's photos through the tokenised download URL,
+      // which does not consult these rules; direct SDK reads need a sign-in.
+      allow read: if request.auth != null;
+
+      // Only the owner writes their own photo: a JPEG under 1 MB.
+      allow create, update: if request.auth != null
+        && file == request.auth.uid + '.jpg'
+        && request.resource.size < 1024 * 1024
+        && request.resource.contentType == 'image/jpeg';
+
+      allow delete: if request.auth != null && file == request.auth.uid + '.jpg';
+    }
+
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

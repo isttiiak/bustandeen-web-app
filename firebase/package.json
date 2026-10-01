@@ -1,0 +1,14 @@
+{
+  "name": "bustandeen-firebase-rules",
+  "private": true,
+  "type": "module",
+  "description": "Emulator tests for storage.rules (audit SEC-04). Needs Java 21.",
+  "scripts": {
+    "test": "firebase emulators:exec --only storage --project demo-bustandeen \"node --test storage.rules.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "firebase": "^12.19.0",
+    "firebase-tools": "^14.27.0"
+  }
+}
