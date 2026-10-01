@@ -18,6 +18,17 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - Service worker: `/quran/uthmani/*` stale-while-revalidate (`quran-uthmani` cache), not precached.
 - Tests: `src/utils/quranText.test.ts` (checksum, 114 files, 6,236 ayat against the backend's count table, every ayah and basmala byte for byte against the XML, the notice in every file, loader behaviour) and `e2e/quran-text.spec.ts` (Arabic without alquran.cloud, credit link, offline reopen through the service worker).
 
+## v5.77.1 - Where the database lives - 2026-10-02
+
+### Changed
+
+- The privacy page's data-flow table now says where the database is: MongoDB Atlas, stored in Singapore (AWS), in English and Bangla (audit T2.11 follow-up).
+
+### Changed (developers)
+
+- Production indexes synced: `clientops` now has the unique `{uid, opId}` index and the 30-day TTL (audit T2.3). A dry run reports all indexes in sync.
+- The offline fasting e2e test pins its clock to a Wednesday. On Fridays (and Saturdays) "I fasted today" rightly asks about singling the day out first, so the test failed on those days.
+
 ## v5.77.0 - Lighter Zikr counter and Profile pages - 2026-10-01
 
 ### Changed (developers)
