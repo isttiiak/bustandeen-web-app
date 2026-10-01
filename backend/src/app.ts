@@ -36,6 +36,7 @@ import composeEmailRoutes from './routes/composeEmail.routes.js';
 import cspReportRoutes from './routes/cspReport.routes.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
+import { isVercelPreviewOrigin, previewConfigFromEnv } from './utils/corsOrigins.js';
 
 // Vercel serves gzip and brotli compression automatically on all responses
 // (including JSON) — no express middleware needed. Verified 2026-09-02:
@@ -78,44 +79,24 @@ app.use(morgan(isProd ? 'combined' : 'dev'));
 // CORS — explicit allowlist.
 //
 // Matched origins:
-//   1. Anything in FRONTEND_ORIGIN (comma-separated list, e.g. custom domain)
-//   2. https://bustandeen.com  (production domain)
-//   3. https://ihsan-web-app-main.vercel.app  (legacy Vercel deployment)
-//   4. https://ihsan-web-app-main-<sha>-isttiiak.vercel.app   (deploy preview)
-//   5. https://ihsan-web-app-main-git-<branch>-isttiiak.vercel.app  (branch preview)
-//
-// The `-isttiiak` suffix is Vercel's per-account slug — only the `isttiiak`
-// account can generate URLs with that suffix, so this is safe against any
-// attacker registering an `ihsan-web-app-main-*` project under their own account.
+//   1. Anything in FRONTEND_ORIGIN (comma-separated list, e.g. the production
+//      domain https://bustandeen.com and local dev)
+//   2. Vercel previews of this project under this account (utils/corsOrigins.ts;
+//      slugs configurable via VERCEL_PREVIEW_BASES / VERCEL_PREVIEW_OWNER)
 const rawOrigins = process.env.FRONTEND_ORIGIN ?? 'http://localhost:5173';
 const allowedOrigins = String(rawOrigins)
   .split(',')
   .map((o) => o.trim().replace(/\/$/, ''))
   .filter(Boolean);
-
-// Matches only ihsan-web-app-main under the isttiiak Vercel account.
-// Drops the old permissive regex that matched any project starting with the name.
-const isVercelPreviewOrigin = (origin: string): boolean => {
-  const scheme = 'https://';
-  const domain = '.vercel.app';
-  const o = origin.toLowerCase();
-  if (!o.startsWith(scheme) || !o.endsWith(domain)) return false;
-  const host = o.slice(scheme.length, o.length - domain.length);
-  const base = 'ihsan-web-app-main';
-  if (host === base) return true;
-  const owner = '-isttiiak';
-  if (!host.startsWith(`${base}-`) || !host.endsWith(owner)) return false;
-  let slug = host.slice(base.length + 1, host.length - owner.length);
-  if (slug.startsWith('git-')) slug = slug.slice(4);
-  return /^[a-z0-9][a-z0-9-]*$/.test(slug);
-};
+const previewConfig = previewConfigFromEnv();
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
       const normalized = origin.replace(/\/$/, '');
-      const ok = allowedOrigins.includes(normalized) || isVercelPreviewOrigin(normalized);
+      const ok =
+        allowedOrigins.includes(normalized) || isVercelPreviewOrigin(normalized, previewConfig);
       return callback(null, ok);
     },
     // Auth uses Bearer tokens, not cookies — credentials false is correct here.

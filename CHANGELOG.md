@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.71.0 - Storage rules in the repo, previews by config - 2026-10-01
+
+### Security
+
+- **Firebase Storage rules are now version-controlled and tested** (audit SEC-04). `storage.rules`: a signed-in user may write only their own `profile-photos/{uid}.jpg`, a JPEG under 1 MB; signed-in users may read photos; the owner may delete; everything else is closed. Emulator tests (`firebase/storage.rules.test.mjs`, 8 cases) run in CI on every PR.
+- **Deploying the rules**: `.github/workflows/storage-rules.yml` deploys `storage.rules` when it changes on main, but only once a `FIREBASE_SERVICE_ACCOUNT` secret exists. Until then it does nothing; compare with the rules in the Firebase console before the first deploy.
+- **CORS preview matching moved to config** (audit SEC-05). `utils/corsOrigins.ts` reads `VERCEL_PREVIEW_BASES` and `VERCEL_PREVIEW_OWNER`. The old matcher only knew the pre-rename `ihsan-web-app-main` slug under `-isttiiak` and matched none of today's preview hosts (`bustandeenvercel-…-isttiiak-projects.vercel.app`); the defaults now accept the current slugs and keep the old one during the transition. Previews call their own API same-origin, so nothing was broken for users. 17 unit tests, including look-alike and other-account hosts.
+
 ## v5.70.0 - Our own fonts, and a Bangla one - 2026-10-01
 
 ### Changed

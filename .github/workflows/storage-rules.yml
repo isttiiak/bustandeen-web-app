@@ -1,0 +1,45 @@
+name: Deploy Storage rules
+
+# Deploys storage.rules to Firebase when it changes on main (audit SEC-04).
+# Does nothing until the repository has a FIREBASE_SERVICE_ACCOUNT secret
+# (a service-account JSON with the "Firebase Rules Admin" role). Before the
+# first deploy, compare storage.rules with the rules in the Firebase console.
+
+on:
+  push:
+    branches: [main]
+    paths: [storage.rules, firebase.json]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_SECRET: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' }}
+    steps:
+      - name: Skip (no FIREBASE_SERVICE_ACCOUNT secret)
+        if: env.HAS_SECRET != 'true'
+        run: echo "FIREBASE_SERVICE_ACCOUNT is not set; storage.rules was not deployed."
+
+      - uses: actions/checkout@v4
+        if: env.HAS_SECRET == 'true'
+
+      - uses: actions/setup-node@v4
+        if: env.HAS_SECRET == 'true'
+        with:
+          node-version: '24'
+
+      - name: Install
+        if: env.HAS_SECRET == 'true'
+        working-directory: firebase
+        run: npm ci
+
+      - name: Deploy
+        if: env.HAS_SECRET == 'true'
+        working-directory: firebase
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > "$RUNNER_TEMP/sa.json"
+          export GOOGLE_APPLICATION_CREDENTIALS="$RUNNER_TEMP/sa.json"
+          npx firebase deploy --only storage --project ihsan-9e89b --config ../firebase.json --non-interactive
