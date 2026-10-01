@@ -58,6 +58,10 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: i18n completeness (Bangla)
+        working-directory: frontend
+        run: npm run i18n:check
+
       - name: Test backend
         working-directory: backend
         run: npm test
