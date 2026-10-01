@@ -47,8 +47,11 @@ test('a surah opened once reads with no network', async ({ page, context }) => {
   // Let the service worker take control first: demo mode lives in memory, so
   // it has to be entered after the last full page load.
   await page.goto('/');
+  // A cold install precaches the app shell; slow under parallel load.
   await expect
-    .poll(() => page.evaluate(async () => (await navigator.serviceWorker.ready).active?.state))
+    .poll(() => page.evaluate(async () => (await navigator.serviceWorker.ready).active?.state), {
+      timeout: 30_000,
+    })
     .toBe('activated');
   await page.reload();
   await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
