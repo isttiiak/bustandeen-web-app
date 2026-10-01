@@ -2,7 +2,7 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
-## v5.62.1 - Rate limits that actually hold on serverless - 2026-10-01
+## v5.62.2 - Rate limits that actually hold on serverless - 2026-10-01
 
 ### Fixed
 
@@ -16,6 +16,17 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - If MongoDB is unreachable, a limiter falls back to an in-memory count for that instance (logged as `rate-limit-store`) instead of blocking everyone or waiting on Mongoose's 10-second buffer.
 - **Local dev no longer builds indexes.** `autoIndex` is now on only in the test suite (or with `MONGO_AUTO_INDEX=1` for a local database). `backend/.env` points at the live Atlas database, so a dev server with `autoIndex` on changes production indexes. That happened on 2026-10-01: a local dev server built the new retention and counter indexes in production, which applied the 30/90-day retention immediately (both log collections are now empty).
 - Indexes for this release already exist in production (see above). `npm run sync-indexes` in `backend/` still lists three old indexes to drop (`createdAt_-1` on the two log collections, the unused `userId_1` on `salatlogs`); `-- --apply` removes them. Nothing else is pending.
+## v5.62.1 - Dependency security patch - 2026-10-01
+
+### Security
+
+- **Backend:** `@grpc/grpc-js` 1.14.4 → 1.14.5 (high: certificate check in `getAuthContext`, error messages leaking to clients; reached through `firebase-admin`) and `ip-address` 10.7.0 → 10.7.2 (moderate; through `express-rate-limit` and `imapflow`). Lockfile only.
+- **Frontend:** `@grpc/grpc-js` pinned to `^1.14.5` with an npm `overrides` entry. It is Node-only code inside Firestore, which the app does not use and the browser bundle never includes, but it failed the CI audit. `npm audit fix --force` would have downgraded Firebase 12 to 9, so it was not used.
+
+### Notes
+
+- New advisories published on 2026-09-30 made the CI audit step fail on every branch, including Dependabot's. Both workspaces now pass `npm audit --omit=dev --audit-level=high`.
+- Still open, moderate only (CI fails on high): `react-router` 6.x advisories (an open redirect through a backslash in `<Link>`/`useNavigate`, already blocked for the one place that navigates to a stored path: `safeRedirect` in `App.tsx` rejects `//` and `/\` targets; and an SSR-only issue that does not apply here). The fix is React Router 7, a major upgrade, tracked as its own task. `uuid` < 11.1.1 (moderate) in the backend needs a breaking upgrade too.
 
 ## v5.62.0 - Privacy and security hardening (audit, phase 1) - 2026-10-01
 
