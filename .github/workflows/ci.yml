@@ -62,9 +62,18 @@ jobs:
         working-directory: backend
         run: npm test
 
-      - name: Test frontend
+      - name: Test frontend (coverage; fiqh utils must stay >= 90% lines)
         working-directory: frontend
-        run: npm test
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:coverage 2>&1 | tee test-output.txt
+          {
+            echo '### Frontend coverage'
+            echo '```'
+            sed -n '/^-*|-/,$p' test-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Build frontend
         working-directory: frontend

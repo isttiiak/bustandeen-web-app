@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.66.0 - Tests for every fiqh rule - 2026-10-01
+
+### Fixed
+
+- **The Hijri year in Bangla showed a thousands separator** ("১৪ শাওয়াল ১,৪৪৭ হিজরি"). It now reads "১৪ শাওয়াল ১৪৪৭ হিজরি" everywhere the app shows the Hijri date (the top bar, Prayer Times, Salat and Fasting trackers, Settings).
+
+### Added (developers)
+
+- **Table-driven tests for the fiqh rule files** (audit T2.1), 285 frontend tests in all:
+  - `trackingDay.test.ts`: the Fajr / midnight / Maghrib day boundary, one minute either side of Fajr and Maghrib in Dhaka, month/year/leap-day rollover, the civil-midnight fallback without a location.
+  - `islamicCalendar.test.ts`: Umm al-Qura conversions against the published 1447-1448 AH dates, the ±1 moon-sighting offset, Maghrib-aware "today" (the evening of 30 Ramaḍān is already Eid; Thursday after Maghrib is Jumuʿah), every special day, Laylat al-Qadr on odd nights only, Bangla digits.
+  - `fastingRules.test.ts`: the ḥarām days (both Eids, Tashrīq 11-13), Ramaḍān deferral, every recommended day and its order, the day-of-doubt and Friday/Saturday cautions, the moon-sighting offset moving a ruling, and every reference linking to quran.com or sunnah.com.
+  - `musafir.test.ts` + `musafir.hooks.test.ts`: qaṣr and jamʿ, which prayers on the first and last day are travel prayers, travel kaza rakʿahs for both views, residency thresholds per school, distances, the journey history, and the travel hint (never asks for location permission).
+  - `salatPrefs.toggles.test.ts`: both tasbīḥ forms reach exactly 100, a reversal subtracts exactly what was credited, every setting survives blocked storage.
+- **Coverage in CI.** `npm run test:coverage` (Vitest + v8) fails the build if `musafir.ts`, `fastingRules.ts`, `trackingDay.ts`, `islamicCalendar.ts` or `salatPrefs.ts` drops below 90% line coverage (all are now 94-100%), and writes the coverage table to the CI run summary.
+
+### Notes
+
+- Vitest now pins `TZ=Asia/Dhaka` so the suites reason in one wall clock on every machine.
+- `src/test/memoryStorage.ts` is the shared in-memory `localStorage` for unit tests.
+
 ## v5.65.1 - React Router 7 and a uuid patch - 2026-10-01
 
 ### Security
