@@ -1,6 +1,5 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react';
-import { useTranslation, Trans } from 'react-i18next';
-import { createPortal } from 'react-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -14,15 +13,7 @@ import ExcusedCard from '../components/ExcusedCard.js';
 import FastingCompanion from '../components/ai/FastingCompanion.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
 import Seo from '../components/Seo.js';
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  TrashIcon,
-  XMarkIcon,
-  Cog6ToothIcon,
-  CalendarDaysIcon,
-} from '@heroicons/react/24/outline';
+import { ChevronDownIcon, TrashIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 import {
   useFastingLog,
   useFastingSummary,
@@ -40,144 +31,33 @@ import {
   FastingCategory,
   FastingStatus,
   VoluntaryKind,
-  VOLUNTARY_META,
   VOLUNTARY_BY_ID,
-  OBLIGATORY_META,
-  PROHIBITED_INFO,
-  DISLIKED_INFO,
-  FASTING_SUNNAH,
   DayCaution,
-  FastingRef,
 } from '../utils/fastingRules.js';
 import { calcPrayerTimes, formatTime } from '../utils/prayerTimes.js';
 import { isPostMaghrib, getHijriToday } from '../utils/islamicCalendar.js';
-import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
+import { formatLocaleDate } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import MusafirBanner from '../components/MusafirBanner.js';
 import { useMusafir } from '../utils/musafir.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
-
-// ─── date helpers ─────────────────────────────────────────────────────────────
-
-function offsetDate(base: string, delta: number): string {
-  const d = new Date(base + 'T12:00:00');
-  d.setDate(d.getDate() + delta);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
-function friendlyDate(
-  dateStr: string,
-  translate?: (key: string, fallback: string) => string
-): string {
-  const tr = translate ?? ((_k: string, fb: string) => fb);
-  const today = localTodayStr();
-  if (dateStr === today) return tr('common.today', 'Today');
-  if (dateStr === offsetDate(today, -1)) return tr('common.yesterday', 'Yesterday');
-  if (dateStr === offsetDate(today, 1)) return tr('common.tomorrow', 'Tomorrow');
-  return formatLocaleDate(new Date(dateStr + 'T12:00:00'), {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
-// ─── tiny pieces ──────────────────────────────────────────────────────────────
-
-function RefLink({ r }: { r: FastingRef }) {
-  const { i18n } = useTranslation();
-  return (
-    <span className="inline-flex items-center gap-1.5 flex-wrap">
-      {r.grade && (
-        <span className="text-brand-emerald/60 text-[10px] font-semibold bg-brand-emerald/10 px-1.5 py-0.5 rounded-full">
-          {translateReference(r.grade, i18n.language)}
-        </span>
-      )}
-      <a
-        href={r.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-brand-gold/60 text-[10px] underline hover:text-brand-gold/90 transition-colors"
-      >
-        {translateReference(r.source, i18n.language)} ↗
-      </a>
-    </span>
-  );
-}
-
-/** Progress bar + countdown + finish estimate for the Manage sheet */
-function ManageProgress({
-  done,
-  target,
-  color,
-  doneLabel,
-  extra,
-}: {
-  done: number;
-  target: number;
-  color: string;
-  doneLabel: string;
-  extra?: string;
-}) {
-  const { t } = useTranslation();
-  const pct = Math.min(100, Math.round((done / Math.max(1, target)) * 100));
-  const remaining = Math.max(0, target - done);
-  const finish = new Date();
-  finish.setDate(finish.getDate() + remaining);
-  return (
-    <div className="space-y-1">
-      <div className="flex justify-between items-baseline text-[11px]">
-        <span className="font-bold tabular-nums" style={{ color }}>
-          {done}/{target} <span className="text-white/40 font-semibold">({pct}%)</span>
-        </span>
-        <span className={remaining === 0 ? 'text-brand-emerald font-bold' : 'text-white/50'}>
-          {doneLabel}
-        </span>
-      </div>
-      <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-        <motion.div
-          animate={{ width: `${pct}%` }}
-          transition={{ duration: 0.6, ease: 'easeOut' }}
-          className="h-full rounded-full"
-          style={{ background: color, boxShadow: `0 0 8px ${color}70` }}
-        />
-      </div>
-      <div className="flex justify-between text-[10px] text-white/25">
-        <span>{extra ?? ''}</span>
-        {remaining > 0 && (
-          <span>
-            {t('fasting.estimateFinish', "1 fast/day → done {{date}}, in sha' Allah", {
-              date: formatLocaleDate(finish, { month: 'short', day: 'numeric' }),
-            })}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-const STATUS_META: Record<FastingStatus, { label: string; emoji: string; color: string }> = {
-  intended: { label: 'Intending to fast', emoji: '🌅', color: '#5a9e8e' },
-  completed: { label: 'Fasted', emoji: '✨', color: '#7a9e6e' },
-  broken: { label: 'Fast broken', emoji: '💔', color: '#f87171' },
-};
-
-const CATEGORY_LABEL: Record<FastingCategory, { label: string; emoji: string }> = {
-  voluntary: { label: 'Voluntary', emoji: '💚' },
-  qada: { label: 'Qaḍā', emoji: '🔄' },
-  kaffarah: { label: 'Kaffārah', emoji: '⚖️' },
-  nadhr: { label: 'Vow', emoji: '🤝' },
-  ramadan: { label: 'Ramadan', emoji: '🌙' },
-};
-
-// Celebration sparkles around the hero emoji after logging a completed fast
-const SPARKLES = [
-  { x: -46, y: -30, d: 0.0 },
-  { x: 42, y: -38, d: 0.08 },
-  { x: -30, y: 26, d: 0.16 },
-  { x: 52, y: 18, d: 0.24 },
-  { x: 0, y: -52, d: 0.12 },
-  { x: -56, y: -4, d: 0.2 },
-];
+import {
+  offsetDate,
+  friendlyDate,
+  RefLink,
+  STATUS_META,
+  CATEGORY_LABEL,
+  SPARKLES,
+} from '../components/fasting/fastingParts.js';
+import FastingGuestDialog from '../components/fasting/FastingGuestDialog.js';
+import FastingMakruhModal from '../components/fasting/FastingMakruhModal.js';
+import FastingSettingsSheet from '../components/fasting/FastingSettingsSheet.js';
+import FastingTypeSheet from '../components/fasting/FastingTypeSheet.js';
+import FastingLearn from '../components/fasting/FastingLearn.js';
+import FastingProgressChips from '../components/fasting/FastingProgressChips.js';
+import FastingWeekStrip from '../components/fasting/FastingWeekStrip.js';
+import FastingMonthCalendar from '../components/fasting/FastingMonthCalendar.js';
+import RamadanQadaWarning from '../components/fasting/RamadanQadaWarning.js';
 
 // ─── component ────────────────────────────────────────────────────────────────
 
@@ -499,194 +379,34 @@ export default function FastingTracker() {
 
           {/* ── Ramadan qada advance warning — surfaced proactively before the
                month starts, not only once it has ── */}
-          {showRamadanQadaWarning && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-brand-gold/25 bg-brand-gold/[0.06] p-3.5 flex items-center gap-3"
-            >
-              <span className="text-2xl shrink-0">🌙</span>
-              <p className="text-white/70 text-xs leading-relaxed">
-                <Trans
-                  i18nKey="fasting.ramadanQadaWarning"
-                  values={{
-                    days: ramadanWindow.daysUntil,
-                    count: qadaRemaining,
-                    fastsWord:
-                      qadaRemaining === 1
-                        ? t('fasting.qadaFastSingular', 'fast')
-                        : t('fasting.qadaFastPlural', 'fasts'),
-                  }}
-                  defaults="Ramadan starts in <b>{{days}} days</b> — you still have <b>{{count}} qada {{fastsWord}}</b> to make up."
-                  components={{ b: <span className="text-brand-gold font-bold" /> }}
-                />
-              </p>
-            </motion.div>
-          )}
+          <RamadanQadaWarning
+            qadaRemaining={qadaRemaining}
+            ramadanWindow={ramadanWindow}
+            showRamadanQadaWarning={showRamadanQadaWarning}
+          />
 
           {/* ── Month calendar (full control over any past day) ── */}
-          <AnimatePresence>
-            {calendarOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.22 }}
-                className="overflow-hidden"
-              >
-                <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <button
-                      onClick={() => {
-                        const [y, m] = calMonth.split('-').map(Number);
-                        const d = new Date(y!, m! - 2, 1);
-                        setCalMonth(
-                          `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-                        );
-                      }}
-                      aria-label={t('fasting.previousMonth', 'Previous month')}
-                      className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
-                    >
-                      <ChevronLeftIcon className="w-4 h-4" />
-                    </button>
-                    <p className="text-white font-bold text-sm">
-                      {formatLocaleDate(new Date(calMonth + '-15T12:00:00'), {
-                        month: 'long',
-                        year: 'numeric',
-                      })}
-                    </p>
-                    <button
-                      onClick={() => {
-                        const [y, m] = calMonth.split('-').map(Number);
-                        const d = new Date(y!, m!, 1);
-                        setCalMonth(
-                          `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-                        );
-                      }}
-                      disabled={calMonth >= today.substring(0, 7)}
-                      aria-label={t('fasting.nextMonth', 'Next month')}
-                      className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 disabled:opacity-20"
-                    >
-                      <ChevronRightIcon className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-7 gap-1 text-center">
-                    {t('fasting.weekdayInitials', 'SMTWTFS')
-                      .split('')
-                      .map((d, i) => (
-                        <span key={i} className="text-white/25 text-[9px] font-bold uppercase">
-                          {d}
-                        </span>
-                      ))}
-                    {(() => {
-                      const [y, m] = calMonth.split('-').map(Number);
-                      const first = new Date(y!, m! - 1, 1);
-                      const daysInMonth = new Date(y!, m!, 0).getDate();
-                      const blanks = first.getDay();
-                      const cells = [];
-                      for (let i = 0; i < blanks; i++) cells.push(<span key={`b${i}`} />);
-                      for (let d = 1; d <= daysInMonth; d++) {
-                        const dateStr = `${calMonth}-${String(d).padStart(2, '0')}`;
-                        const dayLog = logsByDate[dateStr];
-                        const disabled = dateStr > tomorrow;
-                        const isSel = dateStr === selectedDate;
-                        const isTod = dateStr === today;
-                        const dot =
-                          dayLog?.status === 'completed'
-                            ? '#7a9e6e'
-                            : dayLog?.status === 'intended'
-                              ? '#5a9e8e'
-                              : dayLog?.status === 'broken'
-                                ? '#f87171'
-                                : 'transparent';
-                        cells.push(
-                          <button
-                            key={dateStr}
-                            disabled={disabled}
-                            onClick={() => {
-                              setSelectedDate(dateStr);
-                              setCalendarOpen(false);
-                            }}
-                            aria-label={t('fasting.selectDate', 'Select {{date}}', {
-                              date: dateStr,
-                            })}
-                            className={`relative h-8 rounded-lg text-xs font-semibold transition-all ${
-                              isSel
-                                ? 'bg-brand-emerald/25 text-brand-emerald border border-brand-emerald/50'
-                                : isTod
-                                  ? 'bg-white/10 text-white border border-brand-emerald/20'
-                                  : disabled
-                                    ? 'text-white/15 cursor-not-allowed'
-                                    : 'text-white/60 hover:bg-white/10'
-                            }`}
-                          >
-                            {d}
-                            <span
-                              className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                              style={{ background: dot }}
-                            />
-                          </button>
-                        );
-                      }
-                      return cells;
-                    })()}
-                  </div>
-                  <p className="text-white/25 text-[10px] mt-2">
-                    {t(
-                      'fasting.calendarLegend',
-                      'Tap any past day to view or log it — 🟢 fasted · 🔵 intended · 🔴 broken'
-                    )}
-                  </p>
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <FastingMonthCalendar
+            calMonth={calMonth}
+            calendarOpen={calendarOpen}
+            logsByDate={logsByDate}
+            selectedDate={selectedDate}
+            setCalMonth={setCalMonth}
+            setCalendarOpen={setCalendarOpen}
+            setSelectedDate={setSelectedDate}
+            today={today}
+            tomorrow={tomorrow}
+          />
 
           {/* ── Week strip (min-w-0 so 8 days never push the page wider than the phone) ── */}
-          <div className="flex justify-between gap-1 [&>*]:min-w-0">
-            {weekDays.map((d) => {
-              const dayLog = logsByDate[d];
-              const isSel = d === selectedDate;
-              const isTod = d === today;
-              const dot =
-                dayLog?.status === 'completed'
-                  ? '#7a9e6e'
-                  : dayLog?.status === 'intended'
-                    ? '#5a9e8e'
-                    : dayLog?.status === 'broken'
-                      ? '#f87171'
-                      : 'rgba(255,255,255,0.12)';
-              return (
-                <motion.button
-                  key={d}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => setSelectedDate(d)}
-                  aria-label={t('fasting.selectDay', 'Select {{day}}', { day: friendlyDate(d, t) })}
-                  className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
-                    isSel
-                      ? 'bg-white/10 border-brand-emerald/30'
-                      : 'bg-white/[0.03] border-brand-emerald/5 hover:border-brand-emerald/20'
-                  }`}
-                >
-                  <span
-                    className={`text-[9px] uppercase font-bold ${isTod ? 'text-brand-emerald' : 'text-white/30'}`}
-                  >
-                    {d === tomorrow
-                      ? '+1'
-                      : formatLocaleDate(new Date(d + 'T12:00:00'), { weekday: 'narrow' })}
-                  </span>
-                  <span className={`text-xs font-bold ${isSel ? 'text-white' : 'text-white/50'}`}>
-                    {parseInt(d.slice(8), 10)}
-                  </span>
-                  <motion.span
-                    layout
-                    className="w-1.5 h-1.5 rounded-full"
-                    style={{ background: dot, boxShadow: dayLog ? `0 0 6px ${dot}` : 'none' }}
-                  />
-                </motion.button>
-              );
-            })}
-          </div>
+          <FastingWeekStrip
+            logsByDate={logsByDate}
+            selectedDate={selectedDate}
+            setSelectedDate={setSelectedDate}
+            today={today}
+            tomorrow={tomorrow}
+            weekDays={weekDays}
+          />
 
           {/* Rayhanah days — fasting excused now, made up later */}
           {cycleActive && selectedDate >= cycleActive.startDate ? (
@@ -1126,80 +846,16 @@ export default function FastingTracker() {
           )}
 
           {/* ── Progress chips + manage ── */}
-          <div className="flex items-stretch gap-2">
-            <div className="flex-1 grid grid-cols-3 gap-2">
-              {[
-                {
-                  label: t('fasting.thisMonth', 'This month'),
-                  value: summary?.stats.thisMonth ?? 0,
-                  color: '#7a9e6e',
-                },
-                ...(qadaOwed > 0
-                  ? [
-                      {
-                        label: t('fasting.qadaLeft', 'Qada left'),
-                        value: qadaRemaining,
-                        color: '#c9a96e',
-                      },
-                    ]
-                  : [
-                      {
-                        label: t('fasting.last30d', 'Last 30d'),
-                        value: summary?.stats.last30 ?? 0,
-                        color: '#5a9e8e',
-                      },
-                    ]),
-                ...(kaffarahActive
-                  ? [
-                      {
-                        label: t('fasting.kaffarahRun', 'Kaffarah run'),
-                        value: summary?.kaffarah.currentRun ?? 0,
-                        color: '#c4825a',
-                      },
-                    ]
-                  : [
-                      {
-                        label: t('fasting.allTime', 'All time'),
-                        value: summary?.stats.total ?? 0,
-                        color: '#5a9e8e',
-                      },
-                    ]),
-              ].map((s) => (
-                <div
-                  key={s.label}
-                  className="rounded-xl border border-brand-emerald/10 bg-white/[0.04] px-2 py-2 text-center"
-                >
-                  <p
-                    className="font-black text-lg tabular-nums leading-none"
-                    style={{ color: s.color }}
-                  >
-                    {formatLocaleNumber(s.value)}
-                  </p>
-                  <p className="text-white/30 text-[9px] uppercase tracking-wide mt-1">{s.label}</p>
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={() => {
-                if (!user) {
-                  setShowGuestDialog(true);
-                  return;
-                }
-                // Seed the editor once on open — not on every refetch, which
-                // would wipe the input while the user is typing
-                setQadaInput(String(qadaOwed));
-                setShowManage(true);
-              }}
-              aria-label={t('fasting.manageAriaLabel', 'Manage make-up fasts and vows')}
-              title={t('fasting.manageTitle', 'Make-up fasts, kaffarah & vows')}
-              className="rounded-xl border border-brand-emerald/10 bg-white/[0.04] hover:bg-white/10 px-3 flex flex-col items-center justify-center gap-1 text-white/40 hover:text-white transition-all"
-            >
-              <Cog6ToothIcon className="w-4 h-4" />
-              <span className="text-[9px] font-bold uppercase">
-                {t('fasting.manage', 'Manage')}
-              </span>
-            </button>
-          </div>
+          <FastingProgressChips
+            kaffarahActive={kaffarahActive}
+            qadaOwed={qadaOwed}
+            qadaRemaining={qadaRemaining}
+            setQadaInput={setQadaInput}
+            setShowGuestDialog={setShowGuestDialog}
+            setShowManage={setShowManage}
+            summary={summary}
+            user={user}
+          />
 
           {/* Vow progress bars (only when vows exist) */}
           {vows.length > 0 && (
@@ -1246,765 +902,59 @@ export default function FastingTracker() {
             )}
 
           {/* ── Learn (single collapsible) ── */}
-          <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] overflow-hidden">
-            <button
-              onClick={() => setLearnOpen(!learnOpen)}
-              className="w-full px-4 py-3 flex items-center justify-between text-left"
-              aria-expanded={learnOpen}
-            >
-              <p className="text-white/70 font-bold text-sm">
-                📚 {t('fasting.newToFasting', 'New to fasting? Start here')}
-              </p>
-              <motion.span animate={{ rotate: learnOpen ? 180 : 0 }} className="text-white/30">
-                <ChevronDownIcon className="w-4 h-4" />
-              </motion.span>
-            </button>
-            <AnimatePresence>
-              {learnOpen && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: 'auto', opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.25 }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-4 pb-4 space-y-5 border-t border-brand-emerald/5 pt-4">
-                    {/* The basics */}
-                    <div className="space-y-1.5">
-                      <p className="text-brand-emerald text-[10px] uppercase tracking-widest font-bold">
-                        🌱 {t('fasting.theBasics', 'The basics')}
-                      </p>
-                      <p className="text-white/50 text-xs leading-relaxed">
-                        {t(
-                          'fasting.basicsDesc',
-                          'A fast runs from dawn (Fajr) to sunset (Maghrib): no food, drink, or intimacy. Make the intention in your heart, eat suhur before dawn, and break your fast promptly at sunset — dates and water are the sunnah.'
-                        )}
-                      </p>
-                      {FASTING_SUNNAH.map((r, i) => (
-                        <div key={r.url} className="pl-2 border-l-2 border-brand-emerald/30">
-                          <p className="text-white/40 text-[11px] italic">
-                            {t(`fastingRules.sunnahText.${i}`, r.text)}
-                          </p>
-                          <RefLink r={r} />
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Best days */}
-                    <div className="space-y-2">
-                      <p className="text-brand-gold text-[10px] uppercase tracking-widest font-bold">
-                        ⭐ {t('fasting.bestDays', 'The best days to fast')}
-                      </p>
-                      <div className="grid grid-cols-2 gap-1.5">
-                        {VOLUNTARY_META.filter((m) => m.id !== 'general').map((m) => (
-                          <div
-                            key={m.id}
-                            className="rounded-xl border px-2.5 py-2"
-                            style={{ background: `${m.color}10`, borderColor: `${m.color}30` }}
-                          >
-                            <p
-                              className="text-[11px] font-bold leading-tight"
-                              style={{ color: m.color }}
-                            >
-                              {m.emoji} {t(`fastingRules.voluntary.${m.id}`, m.label)}
-                            </p>
-                            <p className="text-white/30 text-[10px] leading-snug mt-0.5">
-                              {t(`fastingRules.voluntaryWhen.${m.id}`, m.when)}
-                            </p>
-                            <div className="mt-1">
-                              <RefLink r={m.ref} />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Never fast on */}
-                    <div className="space-y-1.5">
-                      <p className="text-red-400 text-[10px] uppercase tracking-widest font-bold">
-                        🚫 {t('fasting.neverFastOn', 'Never fast on')}
-                      </p>
-                      {PROHIBITED_INFO.map((p) => (
-                        <div
-                          key={p.id}
-                          className="rounded-xl bg-red-500/10 border border-red-500/25 px-3 py-2"
-                        >
-                          <p className="text-red-300 text-[11px] font-bold">
-                            {p.emoji} {t(`fastingRules.prohibited.${p.id}`, p.label)}
-                          </p>
-                          <p className="text-white/30 text-[10px] leading-snug">
-                            {t(`fastingRules.prohibitedDetail.${p.id}`, p.detail)}
-                          </p>
-                          <div className="mt-0.5">
-                            {p.refs.map((r) => (
-                              <RefLink key={r.url} r={r} />
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Better to avoid */}
-                    <div className="space-y-1.5">
-                      <p className="text-brand-gold/80 text-[10px] uppercase tracking-widest font-bold">
-                        ⚠️ {t('fasting.betterToAvoid', 'Better to avoid')}
-                      </p>
-                      {DISLIKED_INFO.map((p) => (
-                        <div
-                          key={p.id}
-                          className="rounded-xl bg-brand-gold/10 border border-brand-gold/20 px-3 py-2"
-                        >
-                          <p className="text-brand-gold/90 text-[11px] font-bold">
-                            {p.emoji} {t(`fastingRules.disliked.${p.id}`, p.label)}
-                          </p>
-                          <p className="text-white/30 text-[10px] leading-snug">
-                            {t(`fastingRules.dislikedDetail.${p.id}`, p.detail)}
-                          </p>
-                          <div className="mt-0.5">
-                            {p.refs.map((r) => (
-                              <RefLink key={r.url} r={r} />
-                            ))}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* Owe fasts? */}
-                    <div className="space-y-1.5">
-                      <p className="text-white/50 text-[10px] uppercase tracking-widest font-bold">
-                        🔄 {t('fasting.missedRamadan', 'Missed Ramadan days?')}
-                      </p>
-                      <p className="text-white/40 text-[11px] leading-relaxed">
-                        {/* components is an ARRAY prop — react-i18next numbers <0>/<1>/...
-                            by that array's own order only, ignoring surrounding text/
-                            whitespace nodes. The old children-based numbering (<1>/<3>/<5>/<7>)
-                            was thrown off by the {' '} whitespace node splitting the first
-                            text run, which shifted every index and rendered a garbled mix
-                            of the Bengali translation and the English defaults. */}
-                        <Trans
-                          i18nKey="fasting.missedRamadanDesc"
-                          defaults="Days missed for a valid reason are made up as <0>Qada</0> (Quran 2:184). Broke a fast deliberately? That may need <1>Kaffarah</1>. Made a vow to fast? That's <2>Nadhr</2>. Track all three from the <3>Manage</3> button above."
-                          components={[
-                            <b key="0" className="text-white/60" />,
-                            <b key="1" className="text-white/60" />,
-                            <b key="2" className="text-white/60" />,
-                            <b key="3" className="text-white/60" />,
-                          ]}
-                        />
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <FastingLearn learnOpen={learnOpen} setLearnOpen={setLearnOpen} />
         </div>
       </div>
 
       {/* ── Type sheet (what am I fasting as) ── */}
-      <AnimatePresence>
-        {showTypeSheet && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-4"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setShowTypeSheet(false);
-            }}
-          >
-            <motion.div
-              initial={{ y: 60, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 60, opacity: 0 }}
-              transition={{ type: 'spring', damping: 26 }}
-              className="bg-brand-surface rounded-3xl p-5 w-full max-w-md shadow-2xl border border-brand-border max-h-[80vh] overflow-y-auto"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-black text-white">
-                  {t('fasting.whatKindOfFast', 'What kind of fast?')}
-                </h3>
-                <button
-                  onClick={() => setShowTypeSheet(false)}
-                  aria-label={t('common.close')}
-                  className="text-white/30 hover:text-white p-1"
-                >
-                  <XMarkIcon className="w-5 h-5" />
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                {/* Voluntary kinds — recommended first */}
-                {[
-                  ...ruling.recommended,
-                  ...VOLUNTARY_META.filter((m) => !ruling.recommended.some((r) => r.id === m.id)),
-                ].map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => {
-                      setCategory('voluntary');
-                      setKind(m.id);
-                      setShowTypeSheet(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left transition-all ${
-                      category === 'voluntary' && effectiveKind === m.id
-                        ? 'border-brand-emerald/40 bg-white/10'
-                        : 'border-brand-emerald/10 bg-white/[0.03] hover:bg-white/[0.07]'
-                    }`}
-                  >
-                    <span className="text-xl shrink-0">{m.emoji}</span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-bold" style={{ color: m.color }}>
-                        {t(`fastingRules.voluntary.${m.id}`, m.label)}
-                        {ruling.recommended.some((r) => r.id === m.id) && (
-                          <span className="ml-1.5 text-[9px] px-1.5 py-0.5 rounded-full bg-brand-emerald/20 text-brand-emerald">
-                            {t('fasting.todayTag', 'today ✓')}
-                          </span>
-                        )}
-                      </p>
-                      <p className="text-white/30 text-[10px] leading-snug">
-                        {t(`fastingRules.voluntaryWhen.${m.id}`, m.when)}
-                      </p>
-                    </div>
-                  </button>
-                ))}
-
-                {/* Obligatory categories */}
-                <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold pt-2">
-                  {t('fasting.obligatoryMakeups', 'Obligatory make-ups')}
-                </p>
-                <button
-                  onClick={() => {
-                    setCategory('qada');
-                    setShowTypeSheet(false);
-                  }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left ${category === 'qada' ? 'border-brand-emerald/40 bg-white/10' : 'border-brand-emerald/10 bg-white/[0.03] hover:bg-white/[0.07]'}`}
-                >
-                  <span className="text-xl">🔄</span>
-                  <div>
-                    <p className="text-xs font-bold text-brand-gold">
-                      {t('fasting.qadaMakeupDay', 'Qaḍā — make-up day')}
-                      {qadaRemaining > 0 && (
-                        <span className="ml-1.5 text-[9px] px-1.5 py-0.5 rounded-full bg-brand-gold/20">
-                          {t('fasting.nLeft', '{{count}} left', { count: qadaRemaining })}
-                        </span>
-                      )}
-                    </p>
-                    <p className="text-white/30 text-[10px]">
-                      {t('fasting.qadaMakeupDesc', 'Making up a missed Ramaḍān day')}
-                    </p>
-                  </div>
-                </button>
-                {kaffarahActive && (
-                  <button
-                    onClick={() => {
-                      setCategory('kaffarah');
-                      setShowTypeSheet(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left ${category === 'kaffarah' ? 'border-brand-emerald/40 bg-white/10' : 'border-brand-emerald/10 bg-white/[0.03] hover:bg-white/[0.07]'}`}
-                  >
-                    <span className="text-xl">⚖️</span>
-                    <div>
-                      <p className="text-xs font-bold text-brand-warm">
-                        {t('fasting.kaffarahExpiationDay', 'Kaffārah — expiation day')}
-                      </p>
-                      <p className="text-white/30 text-[10px]">
-                        {t('fasting.consecutiveRun', 'Consecutive run: {{run}}/{{target}}', {
-                          run: summary?.kaffarah.currentRun ?? 0,
-                          target: summary?.profile.kaffarah.targetDays ?? 60,
-                        })}
-                      </p>
-                    </div>
-                  </button>
-                )}
-                {vows.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => {
-                      setCategory('nadhr');
-                      setVowId(v.id);
-                      setShowTypeSheet(false);
-                    }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left ${category === 'nadhr' && vowId === v.id ? 'border-brand-emerald/40 bg-white/10' : 'border-brand-emerald/10 bg-white/[0.03] hover:bg-white/[0.07]'}`}
-                  >
-                    <span className="text-xl">🤝</span>
-                    <div>
-                      <p className="text-xs font-bold text-brand-info">
-                        {t('fasting.vowLabel', 'Vow: {{title}}', { title: v.title })}
-                      </p>
-                      <p className="text-white/30 text-[10px]">
-                        {t('fasting.daysDone', '{{completed}}/{{target}} days done', {
-                          completed: v.completed,
-                          target: v.targetDays,
-                        })}
-                      </p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <FastingTypeSheet
+        category={category}
+        effectiveKind={effectiveKind}
+        kaffarahActive={kaffarahActive}
+        qadaRemaining={qadaRemaining}
+        ruling={ruling}
+        setCategory={setCategory}
+        setKind={setKind}
+        setShowTypeSheet={setShowTypeSheet}
+        setVowId={setVowId}
+        showTypeSheet={showTypeSheet}
+        summary={summary}
+        vowId={vowId}
+        vows={vows}
+      />
 
       {/* ── Fasting settings — portaled to body so it floats above navbar ── */}
-      {createPortal(
-        <AnimatePresence>
-          {showManage && (
-            <>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm"
-                onClick={() => setShowManage(false)}
-              />
-              <motion.aside
-                initial={{ x: '100%' }}
-                animate={{ x: 0 }}
-                exit={{ x: '100%' }}
-                transition={{ type: 'spring', damping: 28, stiffness: 260 }}
-                className="fixed right-0 top-0 bottom-0 z-[65] w-full max-w-sm bg-brand-deep border-l border-brand-border overflow-y-auto"
-                role="dialog"
-                aria-label={t('fasting.settingsAriaLabel', 'Fasting settings')}
-              >
-                <div className="sticky top-0 bg-brand-deep/95 backdrop-blur px-5 py-4 flex items-center justify-between border-b border-brand-emerald/5 z-10">
-                  <div>
-                    <h3 className="text-lg font-black text-white">
-                      ⚙️ {t('fasting.settingsTitle', 'Fasting settings')}
-                    </h3>
-                    <p className="text-white/30 text-[11px]">
-                      {t(
-                        'fasting.settingsSubtitle',
-                        'Obligations & vows — a countdown capsule appears on the main card'
-                      )}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => setShowManage(false)}
-                    aria-label={t('common.close')}
-                    className="text-white/30 hover:text-white p-1"
-                  >
-                    <XMarkIcon className="w-5 h-5" />
-                  </button>
-                </div>
-
-                <div className="p-5 space-y-4">
-                  {/* ── Qada ── */}
-                  <div className="rounded-2xl border border-brand-gold/25 bg-brand-gold/5 p-4 space-y-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="w-9 h-9 rounded-xl bg-brand-gold/15 grid place-items-center text-lg shrink-0">
-                        🔄
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-brand-gold font-bold text-sm leading-tight">
-                          {t('fasting.qadaMissedDays', 'Qaḍā — missed Ramaḍān days')}
-                        </p>
-                        <p className="text-white/30 text-[10px]">
-                          {t('fasting.qadaMakeupNote', 'Quran 2:184 — make them up day by day')}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-white/40 text-xs">{t('fasting.iOwe', 'I owe')}</span>
-                      <input
-                        type="number"
-                        min="0"
-                        value={qadaInput}
-                        onChange={(e) => setQadaInput(e.target.value)}
-                        aria-label={t('fasting.daysOwedAriaLabel', 'Days owed')}
-                        className="input input-sm w-20 bg-brand-deep border-brand-border text-white text-center font-bold"
-                      />
-                      <span className="text-white/40 text-xs">{t('common.days')}</span>
-                      <button
-                        onClick={saveQadaOwed}
-                        className="btn btn-xs bg-brand-emerald text-white border-0 ml-auto"
-                      >
-                        {t('common.save')}
-                      </button>
-                    </div>
-                    {qadaOwed > 0 && (
-                      <ManageProgress
-                        done={qadaDone}
-                        target={qadaOwed}
-                        color="#c9a96e"
-                        doneLabel={
-                          qadaRemaining === 0
-                            ? t('fasting.allMadeUp', "All made up — māshā'Allāh! 🎉")
-                            : t('fasting.daysRemaining', '{{count}} days remaining', {
-                                count: qadaRemaining,
-                              })
-                        }
-                      />
-                    )}
-                    <div className="flex gap-2 flex-wrap">
-                      {OBLIGATORY_META[0]!.refs.map((r) => (
-                        <RefLink key={r.url} r={r} />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* ── Kaffarah ── */}
-                  <div className="rounded-2xl border border-brand-warm/25 bg-brand-warm/5 p-4 space-y-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="w-9 h-9 rounded-xl bg-brand-warm/15 grid place-items-center text-lg shrink-0">
-                        ⚖️
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-brand-warm font-bold text-sm leading-tight">
-                          {t('fasting.kaffarahExpiation', 'Kaffārah — expiation')}
-                        </p>
-                        <p className="text-white/30 text-[10px]">
-                          {t(
-                            'fasting.kaffarahConsecutiveNote',
-                            'Consecutive days required (Bukhārī 1936)'
-                          )}
-                        </p>
-                      </div>
-                      <button
-                        onClick={() =>
-                          updateProfile.mutate({
-                            kaffarah: {
-                              active: !kaffarahActive,
-                              targetDays: summary?.profile.kaffarah.targetDays ?? 60,
-                            },
-                          })
-                        }
-                        className={`btn btn-xs border-0 shrink-0 ${kaffarahActive ? 'bg-white/10 text-white/50' : 'bg-brand-warm text-white'}`}
-                      >
-                        {kaffarahActive ? t('fasting.stop', 'Stop') : t('fasting.start', 'Start')}
-                      </button>
-                    </div>
-                    {kaffarahActive ? (
-                      <>
-                        <select
-                          value={summary?.profile.kaffarah.targetDays ?? 60}
-                          onChange={(e) =>
-                            updateProfile.mutate({
-                              kaffarah: { active: true, targetDays: parseInt(e.target.value, 10) },
-                            })
-                          }
-                          aria-label={t('fasting.kaffarahTargetAriaLabel', 'Kaffarah target')}
-                          className="select select-xs w-full bg-brand-deep border-brand-border text-white"
-                        >
-                          <option value={60}>
-                            {t('fasting.kaffarah60Days', '60 consecutive days (Ramaḍān violation)')}
-                          </option>
-                          <option value={3}>
-                            {t('fasting.kaffarah3Days', '3 days (broken oath)')}
-                          </option>
-                        </select>
-                        <ManageProgress
-                          done={summary?.kaffarah.currentRun ?? 0}
-                          target={summary?.profile.kaffarah.targetDays ?? 60}
-                          color="#a855f7"
-                          doneLabel={
-                            (summary?.kaffarah.currentRun ?? 0) >=
-                            (summary?.profile.kaffarah.targetDays ?? 60)
-                              ? t('fasting.kaffarahComplete', "Complete — māshā'Allāh! 🎉")
-                              : t('fasting.kaffarahDaysToGo', '{{count}} consecutive days to go', {
-                                  count: Math.max(
-                                    0,
-                                    (summary?.profile.kaffarah.targetDays ?? 60) -
-                                      (summary?.kaffarah.currentRun ?? 0)
-                                  ),
-                                })
-                          }
-                          extra={t(
-                            'fasting.kaffarahExtra',
-                            'current run: {{run}} · lifetime total: {{total}}',
-                            {
-                              run: summary?.kaffarah.currentRun ?? 0,
-                              total: summary?.kaffarah.completed ?? 0,
-                            }
-                          )}
-                        />
-                        {summary?.kaffarah.runStale && (summary?.kaffarah.completed ?? 0) > 0 && (
-                          <p className="text-red-400/90 text-[11px] rounded-lg bg-red-500/10 border border-red-500/25 px-2.5 py-1.5">
-                            ⚠️{' '}
-                            {t(
-                              'fasting.chainBrokenWarning',
-                              'Chain broken — an unexcused gap restarts the consecutive count. Log a fast today to start a new run. Consult a scholar about valid excuses.'
-                            )}
-                          </p>
-                        )}
-                        <p className="text-white/25 text-[10px] leading-relaxed">
-                          {t(
-                            'fasting.kaffarahAlternative',
-                            'For a broken oath, feeding/clothing ten poor people comes first — fasting 3 days only if unable (Quran 5:89).'
-                          )}
-                        </p>
-                      </>
-                    ) : (
-                      <p className="text-white/30 text-[11px]">
-                        {t('fasting.onlyIfApplies', 'Only activate if this applies to you.')}
-                      </p>
-                    )}
-                    <div className="flex gap-2 flex-wrap">
-                      {OBLIGATORY_META[1]!.refs.map((r) => (
-                        <RefLink key={r.url} r={r} />
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* ── Vows ── */}
-                  <div className="rounded-2xl border border-brand-info/25 bg-brand-info/5 p-4 space-y-3">
-                    <div className="flex items-center gap-2.5">
-                      <span className="w-9 h-9 rounded-xl bg-brand-info/15 grid place-items-center text-lg shrink-0">
-                        🤝
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-brand-info font-bold text-sm leading-tight">
-                          {t('fasting.nadhrVowedFasts', 'Nadhr — vowed fasts')}
-                        </p>
-                        <p className="text-white/30 text-[10px]">
-                          {t(
-                            'fasting.nadhrHadith',
-                            '"Whoever vows to obey Allah, let him obey Him" (Bukhārī 6696)'
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                    {vows.length === 0 && (
-                      <p className="text-white/30 text-[11px]">
-                        {t(
-                          'fasting.noVowsYet',
-                          'No vows yet. Add one below and it gets its own countdown.'
-                        )}
-                      </p>
-                    )}
-                    {vows.map((v) => (
-                      <div
-                        key={v.id}
-                        className="rounded-xl bg-white/[0.04] border border-brand-emerald/10 p-2.5 space-y-1.5"
-                      >
-                        <div className="flex items-center gap-2">
-                          <p className="text-white/70 text-xs font-bold flex-1 truncate">
-                            {v.title}
-                          </p>
-                          <button
-                            onClick={() => setConfirmVowDelete({ id: v.id, title: v.title })}
-                            aria-label={t('fasting.deleteVowAriaLabel', 'Delete vow {{title}}', {
-                              title: v.title,
-                            })}
-                            className="p-1 text-white/25 hover:text-red-400 shrink-0"
-                          >
-                            <TrashIcon className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                        <ManageProgress
-                          done={v.completed}
-                          target={v.targetDays}
-                          color="#5a9e8e"
-                          doneLabel={
-                            v.completed >= v.targetDays
-                              ? t('fasting.vowFulfilled', 'Fulfilled ✓')
-                              : t('fasting.daysRemaining', '{{count}} days remaining', {
-                                  count: v.targetDays - v.completed,
-                                })
-                          }
-                        />
-                      </div>
-                    ))}
-                    <div className="flex gap-1.5 pt-1">
-                      <input
-                        value={vowTitle}
-                        onChange={(e) => setVowTitle(e.target.value)}
-                        placeholder={t('fasting.vowPlaceholder', 'e.g. 3 days for shifa')}
-                        aria-label={t('fasting.vowDescriptionAriaLabel', 'Vow description')}
-                        className="input input-xs flex-1 bg-brand-deep border-brand-border text-white placeholder-white/20"
-                      />
-                      <input
-                        type="number"
-                        min="1"
-                        value={vowDays}
-                        onChange={(e) => setVowDays(e.target.value)}
-                        placeholder={t('common.days')}
-                        aria-label={t('fasting.vowDaysAriaLabel', 'Vow days')}
-                        className="input input-xs w-14 bg-brand-deep border-brand-border text-white placeholder-white/20 text-center"
-                      />
-                      <button
-                        onClick={submitVow}
-                        disabled={!vowTitle.trim() || !vowDays || addVow.isPending}
-                        className="btn btn-xs bg-brand-info text-white border-0 disabled:opacity-30"
-                      >
-                        {t('common.add')}
-                      </button>
-                    </div>
-                    <div className="flex gap-2 flex-wrap">
-                      {OBLIGATORY_META[2]!.refs.map((r) => (
-                        <RefLink key={r.url} r={r} />
-                      ))}
-                    </div>
-                  </div>
-
-                  <Link
-                    to="/settings"
-                    onClick={() => setShowManage(false)}
-                    className="block text-center text-white/25 hover:text-red-400 text-xs underline underline-offset-2 pt-4 pb-2 transition-colors"
-                  >
-                    {t('fasting.deleteFastingData', 'Delete fasting data →')}
-                  </Link>
-                </div>
-              </motion.aside>
-            </>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
+      <FastingSettingsSheet
+        addVow={addVow}
+        kaffarahActive={kaffarahActive}
+        qadaDone={qadaDone}
+        qadaInput={qadaInput}
+        qadaOwed={qadaOwed}
+        qadaRemaining={qadaRemaining}
+        saveQadaOwed={saveQadaOwed}
+        setConfirmVowDelete={setConfirmVowDelete}
+        setQadaInput={setQadaInput}
+        setShowManage={setShowManage}
+        setVowDays={setVowDays}
+        setVowTitle={setVowTitle}
+        showManage={showManage}
+        submitVow={submitVow}
+        summary={summary}
+        updateProfile={updateProfile}
+        vowDays={vowDays}
+        vowTitle={vowTitle}
+        vows={vows}
+      />
 
       {/* ── Makruh warning modal ── */}
-      <AnimatePresence>
-        {warnState && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setWarnState(null);
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.92, opacity: 0, y: 20 }}
-              transition={{ type: 'spring', damping: 22 }}
-              className="bg-brand-surface rounded-3xl p-6 w-full max-w-md shadow-2xl border-2 border-brand-gold/50"
-            >
-              <div className="flex items-start justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
-                  <motion.span
-                    animate={{ rotate: [0, -8, 8, 0] }}
-                    transition={{ duration: 0.5 }}
-                    className="text-3xl"
-                  >
-                    ⚠️
-                  </motion.span>
-                  <h3 className="text-lg font-black text-brand-gold">
-                    {t('fasting.oneMoment', 'One moment…')}
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setWarnState(null)}
-                  aria-label={t('fasting.closeWarningAriaLabel', 'Close warning')}
-                  className="text-white/30 hover:text-white p-1"
-                >
-                  <XMarkIcon className="w-5 h-5" />
-                </button>
-              </div>
-              <div className="space-y-3 mb-5">
-                {warnState.cautions.map((c) => (
-                  <div
-                    key={c.id}
-                    className="rounded-xl bg-brand-gold/10 border border-brand-gold/25 p-3 space-y-1"
-                  >
-                    <p className="text-brand-gold font-bold text-sm">
-                      {c.info.emoji} {t(`fastingRules.disliked.${c.info.id}`, c.info.label)}
-                    </p>
-                    <p className="text-white/60 text-xs leading-relaxed">
-                      {t(`fastingRules.dislikedDetail.${c.info.id}`, c.info.detail)}
-                    </p>
-                    {c.info.refs.map((r, i) => (
-                      <div key={r.url} className="space-y-0.5 pt-1">
-                        <p className="text-white/30 text-xs italic">
-                          {t(`fastingRules.dislikedRefText.${c.info.id}.${i}`, r.text)}
-                        </p>
-                        <RefLink r={r} />
-                      </div>
-                    ))}
-                  </div>
-                ))}
-                {warnState.cautions.some(
-                  (c) => c.id === 'friday_alone' || c.id === 'saturday_alone'
-                ) && (
-                  <p className="text-white/40 text-xs">
-                    💡{' '}
-                    {t(
-                      'fasting.easyFixTip',
-                      "Easy fix: also fast the day before or after — then there's no dislike at all."
-                    )}
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setWarnState(null)}
-                  className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold"
-                >
-                  {t('fasting.illReconsider', "I'll reconsider")}
-                </button>
-                <button
-                  onClick={() => submitLog(warnState.vars)}
-                  className="btn flex-1 btn-ghost text-white/50 hover:text-white border border-brand-border"
-                >
-                  {t('fasting.logAnyway', 'Log anyway')}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <FastingMakruhModal setWarnState={setWarnState} submitLog={submitLog} warnState={warnState} />
 
       {/* ── Guest sign-in dialog ── */}
-      <AnimatePresence>
-        {showGuestDialog && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-            onClick={(e) => {
-              if (e.target === e.currentTarget) setShowGuestDialog(false);
-            }}
-          >
-            <motion.div
-              initial={{ scale: 0.92, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.92, opacity: 0, y: 20 }}
-              transition={{ type: 'spring', damping: 22 }}
-              className="bg-brand-surface rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-brand-border text-center"
-            >
-              <div className="text-5xl mb-4">🌙</div>
-              <h3 className="text-xl font-black text-white mb-2">
-                {t('fasting.signInToTrack', 'Sign in to track fasting')}
-              </h3>
-              <p className="text-white/50 text-sm mb-6 leading-relaxed">
-                {t(
-                  'fasting.signInDesc',
-                  'Your fasting record — make-up days, vows, and sunnah fasts — is saved to your account so it syncs across devices.'
-                )}
-              </p>
-              <div className="flex flex-col gap-3">
-                <button
-                  className="btn bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 w-full"
-                  onClick={() => {
-                    sessionStorage.setItem('bustandeen_redirect', '/fasting');
-                    navigate('/login');
-                  }}
-                >
-                  {t('common.signIn')}
-                </button>
-                <button
-                  className="btn btn-ghost text-brand-emerald border border-brand-emerald/30 w-full"
-                  onClick={() => {
-                    sessionStorage.setItem('bustandeen_redirect', '/fasting');
-                    navigate('/signup');
-                  }}
-                >
-                  {t('fasting.createFreeAccount', 'Create Free Account')}
-                </button>
-                <button
-                  className="btn btn-ghost text-white/50 text-sm w-full"
-                  onClick={() => setShowGuestDialog(false)}
-                >
-                  {t('fasting.justLooking', 'Just looking around')}
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <FastingGuestDialog
+        navigate={navigate}
+        setShowGuestDialog={setShowGuestDialog}
+        showGuestDialog={showGuestDialog}
+      />
       {/* Second confirmation for deletes (app-wide rule) */}
       <ConfirmDialog
         open={!!confirmVowDelete}
