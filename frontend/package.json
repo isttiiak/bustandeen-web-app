@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.63.0",
+  "version": "5.64.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "lint": "cd .. && eslint frontend --config eslint.config.js",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json",
-    "data:cities": "node scripts/build-cities.mjs",
+    "data:cities": "node scripts/build-cities.mjs && node scripts/build-place-index.mjs",
     "og:image": "node scripts/generate-og-image.mjs",
     "test": "vitest run"
   },

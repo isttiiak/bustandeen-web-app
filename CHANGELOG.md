@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.64.0 - Your location really stays on your device - 2026-10-01
+
+### Changed
+
+- **Place names are now found on your device by default.** Turning a GPS fix into "Dhaka, Bangladesh" and finding a city you type used to send your exact coordinates (or the search text) to OpenStreetMap, while the app said your location "never leaves your browser". Now a city list inside the app (about 1,450 cities, loaded only when you set a location) does it, and nothing leaves the device. In the Dhaka area it says "Dhaka", not a neighbourhood; up to 200 km from any listed city it says "Near …"; further than that it shows the coordinates.
+- **OpenStreetMap is still there, as your choice.** The location picker has a new "Finding place names" switch: **On this device** (private, about 1,450 cities) or **OpenStreetMap** (any town or village). OpenStreetMap only ever receives your location rounded to about 1 km, and the picker says so. The choice syncs across your devices.
+- The location wording now matches what happens: "your location is never sent to Bustandeen" (Home, Prayer time settings, Salat settings), and the privacy page explains both ways of finding place names. English and Bangla.
+
+### Notes
+
+- `utils/geocode.ts`: `reverseGeocodeCity` / `searchPlaces` follow the choice (`bustandeen_place_lookup`: `device` | `osm`, synced). New `src/data/placeIndex.generated.json` (46 KB, 21 KB gzipped), built from the SEO city list by `scripts/build-place-index.mjs` (now part of `npm run data:cities`).
+- 6 new unit tests: the Dhaka metro is named "Dhaka" (not Paltan or Azimpur); "Near …" and the 200 km cut-off; search ignores accents, commas and case; **device mode makes no network request**; OpenStreetMap mode sends only `lat=23.78&lon=90.42`-style rounded coordinates.
+
 ## v5.63.0 - Prayer times that match your local mosque - 2026-10-01
 
 ### Added
