@@ -601,8 +601,10 @@ export function formatHijriDate(h: HijriDate): string {
   const lang = (i18n.language || 'en').split('-')[0];
   const monthName = i18n.t(`hijriMonths.${h.month - 1}`, { defaultValue: h.monthName });
   const ah = i18n.t('hijriMonths.ah', { defaultValue: 'AH' });
-  const day = lang === 'bn' ? h.day.toLocaleString('bn') : String(h.day);
-  const year = lang === 'bn' ? h.year.toLocaleString('bn') : String(h.year);
+  // useGrouping off: a year is "১৪৪৭", never "১,৪৪৭".
+  const bnDigits = (n: number) => n.toLocaleString('bn', { useGrouping: false });
+  const day = lang === 'bn' ? bnDigits(h.day) : String(h.day);
+  const year = lang === 'bn' ? bnDigits(h.year) : String(h.year);
   return `${day} ${monthName} ${year} ${ah}`;
 }
 
