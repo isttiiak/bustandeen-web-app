@@ -49,6 +49,13 @@ export default {
           note: c('reader-note'),
         },
         red: { ...colors.red, 300: c('red-300'), 400: c('red-400') },
+        // Status marks that must differ by hue in both themes (see global.css).
+        data: {
+          good: c('data-good'),
+          mid: c('data-mid'),
+          low: c('data-low'),
+          none: c('data-none'),
+        },
         brand: BRAND,
       },
       // Faint ink text never drops below the theme's floor (0 on dark, so

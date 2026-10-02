@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { m as motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { FireIcon, TrophyIcon, LockClosedIcon } from '@heroicons/react/24/solid';
 import {
   PauseIcon,
   PlayIcon,
   BoltIcon,
   CheckCircleIcon,
+  CheckIcon,
   ExclamationTriangleIcon,
   InformationCircleIcon,
+  XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { FrostIcon, LeafIcon } from '../icons/IslamicIcons.js';
 import type { ChartDataPoint } from '../../types/api.js';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
 
@@ -34,14 +37,24 @@ interface StreakCardProps {
   isNewUser?: boolean;
 }
 
+// Data tokens (global.css): bright on paper, the brand colours on dark.
+const BAR = {
+  met: 'rgb(var(--c-data-good) / 0.85)',
+  half: 'rgb(var(--c-data-good) / 0.45)',
+  partial: 'rgb(var(--c-data-mid) / 0.6)',
+  grace: 'rgb(var(--c-info) / 0.5)',
+  missed: 'rgb(var(--c-data-none) / 0.45)',
+  empty: 'rgb(var(--c-shade) / 0.15)',
+};
+
 function heatmapColor(total: number, goal: number | null | undefined): string {
-  if (total === 0) return 'rgba(255,255,255,0.06)';
-  if (!goal) return 'rgba(122,158,110,0.5)';
+  if (total === 0) return BAR.empty;
+  if (!goal) return BAR.half;
   const pct = total / goal;
-  if (pct >= 1) return 'rgba(122,158,110,0.85)';
-  if (pct >= 0.5) return 'rgba(122,158,110,0.45)';
-  if (pct > 0) return 'rgba(201,169,110,0.55)';
-  return 'rgba(255,255,255,0.06)';
+  if (pct >= 1) return BAR.met;
+  if (pct >= 0.5) return BAR.half;
+  if (pct > 0) return BAR.partial;
+  return BAR.empty;
 }
 
 function formatShortDate(dateStr: string): string {
@@ -61,7 +74,6 @@ export default function StreakCard({
 }: StreakCardProps) {
   const { t } = useTranslation();
   const { currentStreak, longestStreak, isPaused } = streak || {};
-  const prefersReducedMotion = useReducedMotion();
   const [showInfo, setShowInfo] = useState(false);
 
   // Last 7 days from chartData (most recent last)
@@ -76,58 +88,48 @@ export default function StreakCard({
     <motion.div
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`relative overflow-hidden rounded-[1.25rem] backdrop-blur-2xl border bg-brand-deep/60 text-white shadow-glass ${
+      className={`h-full rounded-card border bg-brand-deep text-white shadow-elev-2 ${
         isPaused
           ? 'border-brand-pink/40'
           : streakAtRisk
             ? 'border-brand-gold/50'
-            : 'border-brand-emerald/10'
+            : 'border-brand-border'
       }`}
     >
-      <motion.div
-        className="pointer-events-none absolute -top-20 -left-16 w-72 h-72 rounded-full blur-3xl bg-gradient-radial from-brand-gold/15 to-transparent"
-        animate={prefersReducedMotion ? {} : { scale: [1, 1.03, 1], opacity: [0.25, 0.35, 0.25] }}
-        transition={{ duration: 10, repeat: Infinity }}
-      />
-      <motion.div
-        className="pointer-events-none absolute -bottom-24 -right-20 w-80 h-80 rounded-full blur-3xl bg-gradient-radial from-brand-warm/10 to-transparent"
-        animate={prefersReducedMotion ? {} : { scale: [1.05, 1, 1.05] }}
-        transition={{ duration: 12, repeat: Infinity }}
-      />
-
-      <div className="relative z-10 p-4 sm:p-5">
+      <div className="p-4 sm:p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
-          <motion.h3
-            className="text-base sm:text-lg font-extrabold flex items-center gap-2"
-            animate={{}}
-            transition={{}}
-          >
+          <h3 className="font-display text-base sm:text-lg font-bold flex items-center gap-2">
             {isPaused ? (
-              <span className="relative inline-flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-pink shadow-[0_0_12px_rgba(244,63,94,0.8)] animate-pulse" />
-                <span className="px-2 py-0.5 rounded-full text-[11px] uppercase font-black tracking-wider bg-gradient-to-r from-brand-warm/90 via-brand-warm/80 to-brand-gold/80 text-on-color ring-1 ring-inset ring-brand-pink/40">
+              <span className="inline-flex items-center gap-2">
+                <PauseIcon className="w-5 h-5 text-brand-pink" aria-hidden="true" />
+                <span className="px-2 py-0.5 rounded-full text-[11px] uppercase font-bold tracking-wider border border-brand-pink/40 bg-brand-pink/10 text-brand-pink">
                   {t('zikrAnalytics.streakCard.paused', 'Paused')}
                 </span>
               </span>
             ) : (
               <>
-                <FireIcon className="w-5 h-5" />
+                <FireIcon className="w-5 h-5 text-brand-warm" aria-hidden="true" />
                 {t('zikrAnalytics.streakCard.streakTitle', 'Streak')}
               </>
             )}
-          </motion.h3>
+          </h3>
 
           <motion.button
             onClick={isPaused ? onResume : onPause}
             disabled={isLoading}
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
-            className={`w-10 h-10 rounded-2xl grid place-items-center border ${
+            className={`w-10 h-10 rounded-control grid place-items-center border shadow-elev-1 transition-colors ${
               isPaused
-                ? 'border-brand-emerald/40 bg-brand-emerald/15'
-                : 'border-brand-emerald/30 bg-white/10'
-            } backdrop-blur-md hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/30 disabled:opacity-60 disabled:cursor-not-allowed`}
+                ? 'border-brand-emerald/50 bg-brand-emerald/15 text-brand-emerald'
+                : 'border-brand-border bg-brand-surface text-white/70 hover:text-white hover:border-brand-emerald/40'
+            } focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50 disabled:opacity-60 disabled:cursor-not-allowed`}
+            aria-label={
+              isPaused
+                ? t('zikrAnalytics.streakCard.resumeStreak', 'Resume Streak')
+                : t('zikrAnalytics.streakCard.pauseStreak', 'Pause Streak')
+            }
             title={
               isPaused
                 ? t('zikrAnalytics.streakCard.resumeStreak', 'Resume Streak')
@@ -143,14 +145,14 @@ export default function StreakCard({
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-3 relative overflow-hidden rounded-lg border border-brand-pink/30 bg-gradient-to-r from-brand-pink/20 via-brand-warm/20 to-brand-pink/20 text-white backdrop-blur-sm"
+            className="mb-3 rounded-control border border-brand-pink/30 bg-brand-pink/10"
           >
-            <div className="flex items-center gap-2 px-3 py-2 text-xs font-extrabold uppercase tracking-wider">
-              <ExclamationTriangleIcon className="w-4 h-4 text-fuchsia-200" />
-              <span className="text-fuchsia-100">
+            <div className="flex items-center gap-2 px-3 py-2 text-xs font-bold">
+              <ExclamationTriangleIcon className="w-4 h-4 shrink-0 text-brand-pink" />
+              <span className="text-brand-pink">
                 {t(
                   'zikrAnalytics.streakCard.pausedBanner',
-                  "Streak Paused — counts won't increase until you resume"
+                  "Streak paused: counts won't increase until you resume"
                 )}
               </span>
             </div>
@@ -162,7 +164,7 @@ export default function StreakCard({
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-3 flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl border border-brand-gold/50 bg-brand-gold/10"
+            className="mb-3 flex items-center justify-between gap-3 px-3 py-2.5 rounded-control border border-brand-gold/50 bg-brand-gold/10"
           >
             <div className="flex items-center gap-2 min-w-0">
               <ExclamationTriangleIcon className="w-4 h-4 text-brand-gold shrink-0" />
@@ -179,7 +181,7 @@ export default function StreakCard({
             </div>
             <Link
               to="/zikr"
-              className="shrink-0 px-2.5 py-1 rounded-lg bg-brand-gold text-brand-deep text-[11px] font-black whitespace-nowrap hover:bg-brand-gold transition-colors"
+              className="shrink-0 px-2.5 py-1 rounded-control bg-brand-emerald-dim text-on-color text-[11px] font-bold whitespace-nowrap hover:brightness-110 transition"
             >
               {t('zikrAnalytics.streakCard.countNow', 'Count now →')}
             </Link>
@@ -188,9 +190,10 @@ export default function StreakCard({
 
         {/* Current / Best row */}
         {isNewUser ? (
-          <div className="text-center py-3 mb-3 border-y border-brand-emerald/10">
-            <p className="text-sm font-bold text-white/80">
-              {t('zikrAnalytics.streakCard.newUserTitle', '🌱 Start your first streak today')}
+          <div className="text-center py-3 mb-3 border-y border-brand-border">
+            <p className="text-sm font-bold text-white/80 inline-flex items-center gap-1.5">
+              <LeafIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
+              {t('zikrAnalytics.streakCard.newUserTitle', 'Start your first streak today')}
             </p>
             <p className="text-xs text-white/40 mt-1">
               {t(
@@ -200,60 +203,23 @@ export default function StreakCard({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3 mb-3">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="text-center">
-              <motion.div className="text-8xl sm:text-5xl font-black drop-shadow-[0_6px_24px_rgba(0,0,0,0.35)] bg-gradient-to-tr from-brand-gold via-brand-gold to-brand-warm bg-clip-text text-transparent">
+              <div className="font-display text-6xl sm:text-5xl font-bold leading-none text-brand-gold tabular-nums">
                 {formatLocaleNumber(currentStreak || 0)}
-              </motion.div>
-              <p className="text-xs font-bold text-white/80">
+              </div>
+              <p className="mt-1.5 text-xs font-bold text-white/80">
                 {t('zikrAnalytics.streakCard.dayStreak', 'Day Streak')}
               </p>
             </div>
 
-            <div className="text-center border-l border-brand-emerald/10">
-              <motion.div
-                className="relative inline-block px-2 py-1"
-                whileHover={!prefersReducedMotion ? { scale: 1.02 } : {}}
-              >
-                <span className="absolute -inset-3 rounded-full bg-gradient-radial from-brand-gold/25 to-transparent blur-md" />
-                {!prefersReducedMotion && (
-                  <>
-                    {[...Array(3)].map((_, i) => (
-                      <motion.span
-                        key={i}
-                        className="absolute rounded-full blur-xl opacity-30"
-                        style={{
-                          width: `${18 + (i % 3) * 8}px`,
-                          height: `${18 + (i % 3) * 8}px`,
-                          left: ['-18%', '35%', '110%'][i],
-                          top: ['-10%', '-15%', '0%'][i],
-                          background:
-                            i % 2 === 0
-                              ? 'radial-gradient(circle, rgba(214,197,43,0.3) 0%, rgba(214,197,43,0) 70%)'
-                              : 'radial-gradient(circle, rgba(199,87,171,0.25) 0%, rgba(199,87,171,0) 70%)',
-                        }}
-                        initial={{ scale: 0.9, opacity: 0.3 }}
-                        animate={{ scale: [0.9, 1.05, 0.95, 1], opacity: [0.3, 0.5, 0.35, 0.4] }}
-                        transition={{ duration: 6 + i * 0.3, repeat: Infinity, ease: 'easeInOut' }}
-                      />
-                    ))}
-                  </>
-                )}
-                <span
-                  className="relative text-6xl sm:text-4xl font-black"
-                  style={{
-                    background: 'linear-gradient(180deg,#fff,#f5f3c4)',
-                    WebkitBackgroundClip: 'text',
-                    backgroundClip: 'text',
-                    color: 'transparent',
-                    WebkitTextFillColor: 'transparent',
-                  }}
-                >
-                  {formatLocaleNumber(longestStreak || 0)}
-                </span>
-              </motion.div>
-              <p className="text-sm font-bold text-white/70 flex items-center justify-center gap-1">
-                {t('zikrAnalytics.streakCard.best', 'Best')} <TrophyIcon className="w-3 h-3" />
+            <div className="text-center border-l border-brand-border">
+              <div className="font-display text-5xl sm:text-4xl font-bold leading-none text-white tabular-nums pt-1">
+                {formatLocaleNumber(longestStreak || 0)}
+              </div>
+              <p className="mt-1.5 text-xs font-bold text-white/80 flex items-center justify-center gap-1">
+                {t('zikrAnalytics.streakCard.best', 'Best')}
+                <TrophyIcon className="w-3.5 h-3.5 text-brand-gold" aria-hidden="true" />
               </p>
             </div>
           </div>
@@ -262,7 +228,7 @@ export default function StreakCard({
         {/* 7-day heatmap with streak-status tags */}
         {last7.length > 0 && (
           <div className="mb-3">
-            <p className="text-[10px] text-white/30 uppercase tracking-widest mb-1.5 font-bold">
+            <p className="text-[10px] text-white/50 uppercase tracking-widest mb-1.5 font-bold">
               {t('zikrAnalytics.streakCard.last7Days', 'Last 7 days')}
             </p>
             <div className="flex gap-1.5 items-end">
@@ -270,9 +236,9 @@ export default function StreakCard({
                 const isToday = i === last7.length - 1;
                 const color =
                   day.status === 'grace'
-                    ? 'rgba(6,182,212,0.45)' // frozen — the streak survived this miss
+                    ? BAR.grace // frozen: the streak survived this miss
                     : day.status === 'missed'
-                      ? 'rgba(248,113,113,0.4)'
+                      ? BAR.missed
                       : heatmapColor(day.total, dailyGoal);
                 const pct = dailyGoal
                   ? Math.min(1, day.total / dailyGoal)
@@ -282,11 +248,11 @@ export default function StreakCard({
                 const height = 8 + Math.round(pct * 20); // 8–28px
                 const tagTip =
                   day.status === 'grace'
-                    ? ' — 🧊 grace day (streak survived, you got a chance!)'
+                    ? ' - grace day (streak survived, you got a chance!)'
                     : day.status === 'missed'
-                      ? ' — ✖ missed'
+                      ? ' - missed'
                       : day.status === 'pending'
-                        ? ' — in progress'
+                        ? ' - in progress'
                         : '';
                 return (
                   <div
@@ -295,17 +261,15 @@ export default function StreakCard({
                     data-tip={`${formatShortDate(day.date)}: ${formatLocaleNumber(day.total)} zikr${dailyGoal ? ` (${Math.round((day.total / dailyGoal) * 100)}% of goal)` : ''}${tagTip}`}
                   >
                     {/* Status tag above the bar */}
-                    <p className="text-center text-[10px] leading-none mb-0.5 h-3">
-                      {day.status === 'grace' && <span aria-label="grace day">🧊</span>}
+                    <p className="flex justify-center leading-none mb-0.5 h-3">
+                      {day.status === 'grace' && (
+                        <FrostIcon className="w-3 h-3 text-brand-info" aria-label="grace day" />
+                      )}
                       {day.status === 'missed' && (
-                        <span className="text-red-400/80" aria-label="missed">
-                          ✖
-                        </span>
+                        <XMarkIcon className="w-3 h-3 text-data-none" aria-label="missed" />
                       )}
                       {day.status === 'met' && (
-                        <span className="text-brand-emerald/70" aria-label="goal met">
-                          ✓
-                        </span>
+                        <CheckIcon className="w-3 h-3 text-data-good" aria-label="goal met" />
                       )}
                     </p>
                     <motion.div
@@ -320,10 +284,10 @@ export default function StreakCard({
                         background: color,
                         originY: 1,
                       }}
-                      className={`w-full rounded-t-sm ${isToday ? 'ring-1 ring-white/30' : ''}`}
+                      className={`w-full rounded-t-sm ${isToday ? 'ring-1 ring-white/40' : ''}`}
                     />
                     <p
-                      className={`text-[9px] text-center mt-0.5 ${isToday ? 'text-white/60 font-bold' : 'text-white/20'}`}
+                      className={`text-[9px] text-center mt-0.5 ${isToday ? 'text-white font-bold' : 'text-white/50'}`}
                     >
                       {formatLocaleDate(new Date(day.date + 'T12:00:00'), { weekday: 'narrow' })}
                     </p>
@@ -334,20 +298,14 @@ export default function StreakCard({
             {/* Legend */}
             <div className="flex items-center gap-2 mt-1.5 flex-wrap">
               {[
+                { color: BAR.met, label: t('zikrAnalytics.streakCard.legendGoalMet', 'goal met') },
                 {
-                  color: 'rgba(122,158,110,0.85)',
-                  label: t('zikrAnalytics.streakCard.legendGoalMet', '✓ goal met'),
+                  color: BAR.grace,
+                  label: t('zikrAnalytics.streakCard.legendGrace', 'grace (chance used)'),
                 },
+                { color: BAR.missed, label: t('zikrAnalytics.streakCard.legendMissed', 'missed') },
                 {
-                  color: 'rgba(90,158,142,0.45)',
-                  label: t('zikrAnalytics.streakCard.legendGrace', '🧊 grace (chance used)'),
-                },
-                {
-                  color: 'rgba(248,113,113,0.4)',
-                  label: t('zikrAnalytics.streakCard.legendMissed', '✖ missed'),
-                },
-                {
-                  color: 'rgba(201,169,110,0.55)',
+                  color: BAR.partial,
                   label: t('zikrAnalytics.streakCard.legendPartial', 'partial'),
                 },
               ].map(({ color, label }) => (
@@ -356,13 +314,13 @@ export default function StreakCard({
                     className="w-2.5 h-2.5 rounded-sm inline-block"
                     style={{ background: color }}
                   />
-                  <span className="text-[9px] text-white/25">{label}</span>
+                  <span className="text-[10px] text-white/60">{label}</span>
                 </div>
               ))}
             </div>
             <button
               onClick={() => setShowInfo((v) => !v)}
-              className="mt-1.5 inline-flex items-center gap-1 text-[10px] text-white/30 hover:text-white/55 transition-colors"
+              className="mt-1.5 inline-flex items-center gap-1 text-[11px] text-white/60 hover:text-white transition-colors"
             >
               <InformationCircleIcon className="w-3.5 h-3.5 shrink-0" />
               {t('zikrAnalytics.streakCard.howStreaksInfo', 'How streaks & grace days work')}
@@ -373,12 +331,12 @@ export default function StreakCard({
         {/* Status line */}
         {!isPaused && (currentStreak ?? 0) > 0 && !streakAtRisk && (
           <motion.div
-            className="p-2 bg-white/10 rounded-lg backdrop-blur-sm border border-brand-emerald/15 mb-2"
+            className="p-2 rounded-control border border-brand-emerald/30 bg-brand-emerald/10 mb-2"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
           >
-            <p className="text-xs text-center font-semibold text-white/90 flex items-center justify-center gap-1.5">
+            <p className="text-xs text-center font-semibold text-brand-emerald flex items-center justify-center gap-1.5">
               <CheckCircleIcon className="w-4 h-4" />{' '}
               {t('zikrAnalytics.streakCard.keepItUp', 'Keep it up! Strong habit.')}
             </p>
@@ -387,7 +345,7 @@ export default function StreakCard({
 
         {isPaused && (
           <motion.div
-            className="p-2 bg-white/10 rounded-lg backdrop-blur-sm border border-brand-emerald/15 mb-2"
+            className="p-2 rounded-control border border-brand-border bg-shade/10 mb-2"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
@@ -402,7 +360,7 @@ export default function StreakCard({
                 disabled={isLoading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border border-brand-emerald/40 disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-control text-[11px] font-bold text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 disabled:opacity-60"
               >
                 <PlayIcon className="w-3.5 h-3.5" />
                 {t('zikrAnalytics.streakCard.resumeNow', 'Resume now')}
@@ -412,17 +370,17 @@ export default function StreakCard({
         )}
 
         {/* How streaks work — collapsed by default; opened via the "i" hint above the heatmap */}
-        <div className="rounded-lg border border-brand-emerald/10 bg-white/5 backdrop-blur-sm overflow-hidden">
+        <div className="rounded-control border border-brand-border bg-shade/10 overflow-hidden">
           <button
             onClick={() => setShowInfo((v) => !v)}
             className="w-full p-3 flex items-center justify-between gap-2 text-left"
           >
             <span className="text-sm font-bold text-white/90 flex items-center gap-1.5">
-              <BoltIcon className="w-4 h-4" />{' '}
+              <BoltIcon className="w-4 h-4 text-brand-gold" />{' '}
               {t('zikrAnalytics.streakCard.howItWorks', 'How Streaks Work')}
             </span>
             <InformationCircleIcon
-              className={`w-4 h-4 text-white/30 transition-transform ${showInfo ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 text-white/50 transition-transform ${showInfo ? 'rotate-180' : ''}`}
             />
           </button>
           <AnimatePresence>
@@ -435,12 +393,12 @@ export default function StreakCard({
                 className="overflow-hidden"
               >
                 <div className="px-3 pb-3 space-y-1.5 text-sm text-white/80">
-                  <p className="flex items-start gap-2 text-xs text-cyan-200/80">
-                    <span aria-hidden>🧊</span>
+                  <p className="flex items-start gap-2 text-xs text-brand-info">
+                    <FrostIcon className="w-4 h-4 flex-shrink-0 mt-px" aria-hidden="true" />
                     <span>
                       {t(
                         'zikrAnalytics.streakCard.graceExplainer',
-                        'Grace day = you missed it but the streak survived. Backfill it from "Log Missed Counts" (up to 2 days back) to turn it green.'
+                        'Grace day: you missed it but the streak survived. Backfill it from "Log Missed Counts" (up to 2 days back) to turn it green.'
                       )}
                     </span>
                   </p>

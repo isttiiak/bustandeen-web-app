@@ -63,7 +63,18 @@ export default function SalatWeekStrip({
                 <span className={`text-xs font-bold ${isSel ? 'text-white' : 'text-white/70'}`}>
                   {formatLocaleNumber(parseInt(d.date.slice(8), 10))}
                 </span>
-                <span className={`w-1.5 h-1.5 rounded-full ${dot}`} aria-hidden="true" />
+                <span
+                  className={`w-2 h-2 rounded-full ${dot}`}
+                  title={
+                    hasData
+                      ? t('salatTracker.prayedOfFive', '{{done}} of {{total}} prayed', {
+                          done: formatLocaleNumber(d.completed),
+                          total: formatLocaleNumber(5),
+                        })
+                      : undefined
+                  }
+                  aria-hidden="true"
+                />
               </motion.button>
             );
           })}
