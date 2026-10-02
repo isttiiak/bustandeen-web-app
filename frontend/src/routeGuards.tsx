@@ -5,12 +5,13 @@ import { useLocation, useNavigate, useParams } from 'react-router';
 import { loadFirebase } from './authClient.js';
 import { useAuthStore } from './store/useAuthStore.js';
 import { useAdminStore } from './store/useAdminStore.js';
-import AdminLayout from './components/AdminLayout.js';
 import Home from './pages/Home.js';
 
 const Landing = lazy(() => import('./pages/Landing.js'));
-// Lazy: it brings the admin panel's own Firebase app (adminFirebase.ts).
+// Lazy, both: they bring the admin panel's own Firebase app (adminFirebase.ts,
+// through AdminGate and the logout in AdminLayout), which no other page needs.
 const AdminGate = lazy(() => import('./components/AdminGate.js'));
+const AdminLayout = lazy(() => import('./components/AdminLayout.js'));
 
 // Full height (audit PERF-01): at 60vh the Footer below it showed on screen
 // and was then pushed down when the page arrived (CLS 0.278 on Home).
