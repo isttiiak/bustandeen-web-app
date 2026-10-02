@@ -5,6 +5,7 @@ import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import ZikrSuggestForm from '../ZikrSuggestForm.js';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { TasbihIcon } from '../icons/IslamicIcons.js';
 
 export interface ZikrAddCustomModalProps {
   navigate: NavigateFunction;
@@ -37,7 +38,7 @@ export default function ZikrAddCustomModal({
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 40, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25 }}
-                className="bg-brand-surface rounded-3xl p-6 w-full max-w-md shadow-2xl border border-brand-border max-h-[85vh] flex flex-col"
+                className="bg-brand-surface rounded-card p-6 w-full max-w-md shadow-elev-3 border border-brand-border max-h-[85vh] flex flex-col"
               >
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="text-xl font-bold text-brand-emerald">
@@ -46,22 +47,23 @@ export default function ZikrAddCustomModal({
                   <button
                     onClick={() => setShowAddCustom(false)}
                     aria-label={t('common.close', 'Close')}
-                    className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
+                    className="p-1.5 rounded-control text-white/50 hover:text-white hover:bg-shade/20"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
                 </div>
                 <p className="text-xs mb-3">
                   <button
-                    className="text-brand-gold/80 underline"
+                    className="inline-flex items-center gap-1 text-brand-gold underline"
                     onClick={() => {
                       setShowAddCustom(false);
                       navigate('/settings');
                     }}
                   >
-                    📿 {t('zikr.checkLibrary', 'First check the zikr library in Settings')}
+                    <TasbihIcon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+                    {t('zikr.checkLibrary', 'First check the zikr library in Settings')}
                   </button>
-                  <span className="text-white/30">
+                  <span className="text-white/50">
                     {' '}
                     -{' '}
                     {t(

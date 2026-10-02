@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.91.0 - Zikr in the Bustan Arch design - 2026-10-03
+
+### Changed
+
+- **Zikr is the third screen in the new design** (audit T3.2). The count, the dhikr (Arabic, transliteration, meaning) and today's goal sit under one arch. The number no longer glows or changes colour on every tap; the Count button is solid dark sage (white text at 4.8:1, as in A11Y-01) with a hover lift, and minus and reset are matching square buttons.
+- The dhikr picker, the auto-play panel, "Full text & reference" and the dialogs (add a dhikr, set count, manage list, guest sign-in) use the theme's cards, radii and borders. Icons are drawn SVGs instead of emoji (tasbih, book, star, link, flame, target), and toasts use icons too.
+- **Focus mode is calmer**: the two breathing light orbs, the number glow and the gradient button are gone.
+- Zikr copy (English and Bangla) no longer uses emoji or em dashes: the motivational line, the short meanings, set-count and manage-list notes, toasts and the page title. The hadith and Quran translations are unchanged. Tab labels on Zikr and Zikr analytics are plain text, and the navbar shows an SVG icon on both.
+
+### Changed (developers)
+
+- `GLOW_PALETTE` (per-tap colour cycling) is removed from `zikrCounterData.ts`. The goal bar has `role="progressbar"`, and the pronunciation button has `aria-pressed`.
+- **Not redesigned yet on this screen (shared components):** the `ZikrSettings` drawer and `EditZikrModal`. Do them with Settings.
+
 ## v5.90.1 - Same Node on every machine - 2026-10-03
 
 ### Changed (developers)

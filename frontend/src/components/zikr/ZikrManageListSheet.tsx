@@ -47,7 +47,7 @@ export default function ZikrManageListSheet({
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 40, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25 }}
-                className="bg-brand-surface rounded-3xl p-6 w-full max-w-md shadow-2xl border border-brand-border max-h-[80vh] flex flex-col"
+                className="bg-brand-surface rounded-card p-6 w-full max-w-md shadow-elev-3 border border-brand-border max-h-[80vh] flex flex-col"
               >
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="text-xl font-bold text-brand-emerald">
@@ -63,7 +63,7 @@ export default function ZikrManageListSheet({
                 <p className="text-white/40 text-xs mb-4">
                   {t(
                     'zikr.manageNote',
-                    'Custom zikr can be edited (✏️) — renaming keeps all your counts. Removing only takes it out of your dropdown; saved counts stay in analytics.'
+                    'Custom zikr can be edited with the pencil. Renaming keeps all your counts. Removing only takes it out of your dropdown; saved counts stay in analytics.'
                   )}
                 </p>
                 <div className="space-y-1.5 overflow-y-auto pr-1">
@@ -80,7 +80,7 @@ export default function ZikrManageListSheet({
                     return (
                       <div
                         key={typ}
-                        className="flex items-center gap-2 p-2.5 rounded-xl border border-brand-border bg-brand-deep/50"
+                        className="flex items-center gap-2 p-2.5 rounded-control border border-brand-border bg-brand-deep/50"
                       >
                         <span className="flex-1 min-w-0 truncate text-white/80 text-sm font-semibold">
                           {zikrDisplayName(typ, i18n.language)}

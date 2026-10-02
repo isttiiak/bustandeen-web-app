@@ -36,8 +36,12 @@ import {
   ChevronDownIcon,
   Cog6ToothIcon,
   SpeakerWaveIcon,
+  CheckIcon,
+  LockClosedIcon,
+  TrashIcon,
 } from '@heroicons/react/24/outline';
-import { DEFAULT_MEANINGS, GLOW_PALETTE } from '../components/zikr/zikrCounterData.js';
+import { LeafIcon, TasbihIcon } from '../components/icons/IslamicIcons.js';
+import { DEFAULT_MEANINGS } from '../components/zikr/zikrCounterData.js';
 import ZikrManageListSheet from '../components/zikr/ZikrManageListSheet.js';
 import ZikrGuestDialog from '../components/zikr/ZikrGuestDialog.js';
 import ZikrAddCustomModal from '../components/zikr/ZikrAddCustomModal.js';
@@ -87,7 +91,6 @@ export default function ZikrCounter() {
   const { data: analyticsData } = useAnalytics(1);
 
   const currentCount = counts?.[selected] ?? 0;
-  const [colorIdx, setColorIdx] = useState(0);
   const [showAddCustom, setShowAddCustom] = useState(false);
   const [showGuestDialog, setShowGuestDialog] = useState(false);
   const [fullScreen, setFullScreen] = useState(false);
@@ -198,8 +201,6 @@ export default function ZikrCounter() {
     };
   }, [fullScreen]);
 
-  const color = GLOW_PALETTE[colorIdx % GLOW_PALETTE.length]!;
-
   // Resolve the COMPACT card display: built-in → library (short form) → custom
   const libItem = findLibraryZikr(selected);
   const defaultMeaning = DEFAULT_MEANINGS[selected];
@@ -270,7 +271,6 @@ export default function ZikrCounter() {
   const onIncrement = useCallback(() => {
     increment();
     scheduleFlush();
-    setColorIdx((i) => (i + 1) % GLOW_PALETTE.length);
     if (zikrSoundEnabled) playZikrClick();
     // Opt-in "play on every tap": plays this dhikr's clip, never cutting off
     // one that is still playing (see useZikrAudio.playOnTap).
@@ -287,8 +287,11 @@ export default function ZikrCounter() {
         }
         celebrateGoal();
         toast.success(
-          t('zikr.tasbihSetComplete', '{{count}} done — set complete', { count: tasbihTarget }),
-          { icon: '📿', duration: 2600 }
+          t('zikr.tasbihSetComplete', '{{count}} done, set complete', { count: tasbihTarget }),
+          {
+            icon: <TasbihIcon className="w-4 h-4 shrink-0 text-brand-emerald" />,
+            duration: 2600,
+          }
         );
         setSegmentStart(currentCount + 1);
       } else if (vibrationEnabled && 'vibrate' in navigator) {
@@ -361,7 +364,10 @@ export default function ZikrCounter() {
               onClick={() => {
                 reset();
                 toast.dismiss(toastObj.id);
-                toast.success(t('zikr.counterReset'), { icon: '🔄', duration: 2000 });
+                toast.success(t('zikr.counterReset'), {
+                  icon: <ArrowPathIcon className="w-4 h-4 shrink-0 text-brand-emerald" />,
+                  duration: 2000,
+                });
               }}
               className="btn btn-sm bg-red-500 hover:bg-red-600 text-on-color border-0"
             >
@@ -390,7 +396,7 @@ export default function ZikrCounter() {
       scheduleFlush();
     }
     toast.success(t('zikr.toast.countSet', { count: formatLocaleNumber(target) }), {
-      icon: '🔢',
+      icon: <CheckIcon className="w-4 h-4 shrink-0 text-brand-emerald" />,
       duration: 2000,
     });
     setShowSetCount(false);
@@ -403,7 +409,9 @@ export default function ZikrCounter() {
     // Core dhikr are structural — the salat tracker writes counts into them.
     // The UI hides their Remove button; this closes every other path.
     if (isCoreZikr(name)) {
-      toast.error(t('zikr.toast.coreLinked'), { icon: '🔒' });
+      toast.error(t('zikr.toast.coreLinked'), {
+        icon: <LockClosedIcon className="w-4 h-4 shrink-0" />,
+      });
       setConfirmDelete(null);
       return;
     }
@@ -417,14 +425,24 @@ export default function ZikrCounter() {
         onError: () => toast.error(t('zikr.toast.syncFailed'), { duration: 2500 }),
       });
     }
-    toast.success(t('zikr.toast.removed', { name }), { icon: '🗑️', duration: 2000 });
+    toast.success(t('zikr.toast.removed', { name }), {
+      icon: <TrashIcon className="w-4 h-4 shrink-0" />,
+      duration: 2000,
+    });
     setConfirmDelete(null);
   };
+
+  // Bustan Arch controls (audit T3.2): theme radii and borders, no glows.
+  const chipFrame =
+    'rounded-control border border-brand-border bg-shade/20 hover:border-brand-emerald/40 transition-colors';
+  const chip = `${chipFrame} text-white/70 hover:text-white`;
+  const roundBtn =
+    'w-12 h-12 rounded-control border border-brand-border bg-brand-deep text-white/80 shadow-elev-1 hover:shadow-hover flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-[color,border-color,box-shadow]';
 
   return (
     <AnimatedBackground variant="dark">
       <Seo
-        title={t('zikr.seoTitle', 'Zikr Counter — Digital Tasbih with Streaks & Goals')}
+        title={t('zikr.seoTitle', 'Zikr Counter: Digital Tasbih with Streaks & Goals')}
         description={t(
           'zikr.seoDescription',
           'Free online tasbih counter for SubhanAllah, Alhamdulillah, Allahu Akbar and custom zikr. Set daily goals, build streaks, and track your dhikr with authentic references.'
@@ -439,9 +457,9 @@ export default function ZikrCounter() {
           <div className="flex-1">
             <TabNav
               items={[
-                { label: `📿 ${t('zikr.counter')}`, to: '/zikr', active: true },
+                { label: t('zikr.counter'), to: '/zikr', active: true },
                 {
-                  label: `📊 ${t('zikr.analytics')}`,
+                  label: t('zikr.analytics'),
                   to: '/zikr/analytics',
                   ...(!user && Object.values(pending ?? {}).reduce((a, b) => a + b, 0) > 0
                     ? { onClick: () => setShowGuestDialog(true) }
@@ -455,7 +473,7 @@ export default function ZikrCounter() {
               onClick={() => setShowSettings(true)}
               aria-label={t('zikr.a11y.settings')}
               title={t('zikr.a11y.settings')}
-              className="shrink-0 p-2 rounded-xl border border-brand-emerald/20 bg-white/5 text-white/50 hover:text-brand-emerald hover:border-brand-emerald/40 transition-colors"
+              className="shrink-0 p-2 rounded-control border border-brand-border bg-brand-deep text-white/60 hover:text-brand-emerald hover:border-brand-emerald/40 transition-colors"
             >
               <Cog6ToothIcon className="w-5 h-5" />
             </button>
@@ -473,42 +491,26 @@ export default function ZikrCounter() {
         <ZikrRequestApprovedNotice />
 
         {/* Motivational subtitle */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-center text-white/50 text-sm tracking-wide"
-        >
-          {t('zikr.motivational')}
-        </motion.p>
+        <p className="text-center text-white/60 text-sm tracking-wide">{t('zikr.motivational')}</p>
 
-        {/* ── Type selector: name | change dropdown | + ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className="flex items-center gap-2 bg-white/10 backdrop-blur-md rounded-2xl px-4 py-2.5 border border-brand-emerald/15"
-          style={{ background: 'rgba(255,255,255,0.07)' }}
-        >
-          {/* Selected name — glowing accent */}
-          <span
-            className="font-bold text-sm truncate min-w-0"
-            style={{ color: color.glow, textShadow: `0 0 12px ${color.glow}60` }}
-          >
+        {/* ── Type selector: name | change | + | pronunciation ── */}
+        <div className="flex items-center gap-2 rounded-card border border-brand-border bg-brand-deep shadow-elev-1 px-4 py-2.5">
+          <TasbihIcon className="w-4 h-4 shrink-0 text-brand-emerald" aria-hidden="true" />
+          <span className="font-semibold text-sm text-brand-emerald truncate min-w-0">
             {zikrDisplayName(selected, i18n.language)}
           </span>
 
-          {/* Change zikr type — icon-only caret button. The native <select>
+          {/* Change zikr type: icon-only caret button. The native <select>
               stays for accessibility/keyboard support; its own text is
-              invisible (text-transparent) and a bigger caret is overlaid,
-              so tapping anywhere on the circle opens the type list without
-              a "Change" label taking up space next to the title. */}
-          <div className="relative flex-shrink-0 w-8 h-8 ml-auto">
+              invisible (text-transparent) and a caret is overlaid, so tapping
+              anywhere on the chip opens the type list. */}
+          <div className="relative flex-shrink-0 w-9 h-9 ml-auto">
             <select
               value=""
               onChange={(e) => {
                 if (e.target.value) selectType(e.target.value);
               }}
-              className="absolute inset-0 w-full h-full rounded-full bg-white/10 hover:bg-white/20 border border-brand-emerald/20 text-transparent focus:outline-none cursor-pointer appearance-none transition-colors"
+              className={`${chipFrame} absolute inset-0 w-full h-full text-transparent focus:outline-none cursor-pointer appearance-none`}
               style={{ backgroundImage: 'none' }}
               title={t('zikr.change')}
               aria-label={t('zikr.change')}
@@ -530,56 +532,51 @@ export default function ZikrCounter() {
           {/* Add custom */}
           <button
             onClick={() => setShowAddCustom(true)}
-            className="flex-shrink-0 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-brand-emerald/20 text-white/70 hover:text-white flex items-center justify-center transition-all"
+            className={`${chip} flex-shrink-0 w-9 h-9 flex items-center justify-center`}
             title={t('zikr.addCustom', 'Add custom dhikr')}
             aria-label={t('zikr.addCustom', 'Add custom dhikr')}
           >
-            <PlusIcon className="w-3.5 h-3.5" />
+            <PlusIcon className="w-4 h-4" />
           </button>
 
           {/* Play pronunciation */}
           {zikrAudioEnabled && audio.hasAudio && (
             <motion.button
-              whileTap={{ scale: 0.82 }}
+              whileTap={{ scale: 0.9 }}
               onClick={() => (audio.isPlaying && !audio.isAutoPlay ? audio.stop() : audio.play())}
-              className={`relative flex-shrink-0 w-8 h-8 rounded-full border flex items-center justify-center transition-all ${
+              aria-pressed={audio.isPlaying && !audio.isAutoPlay}
+              className={`flex-shrink-0 w-9 h-9 rounded-control border flex items-center justify-center transition-colors ${
                 audio.isPlaying && !audio.isAutoPlay
-                  ? 'bg-brand-gold/40 border-brand-gold/70 text-brand-gold shadow-[0_0_12px_rgba(245,158,11,0.5)]'
-                  : 'bg-brand-gold/15 hover:bg-brand-gold/25 border-brand-gold/40 text-brand-gold/80 hover:text-brand-gold'
+                  ? 'bg-brand-gold/20 border-brand-gold/60 text-brand-gold'
+                  : 'bg-brand-gold/10 hover:bg-brand-gold/20 border-brand-gold/30 text-brand-gold/80 hover:text-brand-gold'
               }`}
               title={t('zikr.playPronunciation', 'Play pronunciation')}
               aria-label={t('zikr.playPronunciation', 'Play pronunciation')}
             >
-              {audio.isPlaying && !audio.isAutoPlay && (
-                <span className="absolute inset-0 rounded-full bg-brand-gold/40 animate-ping" />
-              )}
-              <SpeakerWaveIcon className="relative w-4 h-4" />
+              <SpeakerWaveIcon className="w-4 h-4" />
             </motion.button>
           )}
-        </motion.div>
+        </div>
 
-        {/* ── Counter + meaning card ── */}
-        <motion.div
-          initial={{ scale: 0.95, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.08 }}
-          className="relative rounded-3xl border border-brand-emerald/20 bg-white/10 backdrop-blur-lg shadow-2xl overflow-hidden"
-          style={{ background: 'rgba(255,255,255,0.07)' }}
+        {/* ── The screen's one arch: count, the dhikr, today's goal ── */}
+        <section
+          aria-label={zikrDisplayName(selected, i18n.language)}
+          className="relative rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero overflow-hidden"
         >
           {/* Focus mode button */}
           <button
             onClick={() => setFullScreen(true)}
-            className="absolute top-3 right-3 p-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-white/40 hover:text-white/80 transition-all z-10"
+            className="absolute top-4 right-4 p-1.5 rounded-control border border-brand-border bg-brand-deep/60 text-white/50 hover:text-white hover:border-brand-emerald/40 transition-colors z-10"
             title={t('zikr.focusMode', 'Focus mode (full screen)')}
             aria-label={t('zikr.enterFocusMode', 'Enter full-screen focus mode')}
           >
             <ArrowsPointingOutIcon className="w-4 h-4" />
           </button>
 
-          {/* Number — a single cheap pop per tap (the old exit+enter pair ran
+          {/* Number: a single cheap pop per tap (the old exit+enter pair ran
               TWO spring animations per count and janked low-end phones);
               reduce-motion users get an instant swap. */}
-          <div className="pt-10 pb-4 text-center">
+          <div className="pt-12 pb-4 text-center">
             <motion.div
               key={`${selected}:${tasbihRemaining ?? currentCount}`}
               initial={reduceMotion ? false : { scale: 0.9 }}
@@ -588,17 +585,13 @@ export default function ZikrCounter() {
             >
               <div
                 data-testid="zikr-count"
-                className="text-8xl sm:text-9xl font-black text-white leading-none"
-                style={{
-                  textShadow: `0 0 40px ${color.glow}`,
-                  transition: 'text-shadow 0.25s ease',
-                }}
+                className="font-display text-8xl sm:text-9xl font-bold text-white leading-none tabular-nums"
               >
                 {formatLocaleNumber(tasbihRemaining ?? currentCount)}
               </div>
             </motion.div>
             {tasbihRemaining !== null ? (
-              <p className="mt-1 text-[11px] text-white/40">
+              <p className="mt-2 text-xs text-white/60">
                 {t('zikr.tasbihOfTarget', '{{done}} of {{target}} · lifetime {{lifetime}}', {
                   done: formatLocaleNumber(tasbihDoneInSegment),
                   target: formatLocaleNumber(tasbihTarget),
@@ -611,18 +604,15 @@ export default function ZikrCounter() {
                   setSetCountValue(String(currentCount));
                   setShowSetCount(true);
                 }}
-                className="mt-1 text-[11px] text-white/30 hover:text-brand-emerald underline underline-offset-2 transition-colors"
+                className="mt-2 text-xs text-white/50 hover:text-brand-emerald underline underline-offset-2 transition-colors"
               >
                 {t('zikr.setCountBtn', 'Set')}
               </button>
             )}
           </div>
 
-          {/* Divider */}
-          <div className="mx-6 h-px bg-white/10" />
-
           {/* Meaning section */}
-          <div className="px-6 py-5 text-center space-y-2.5 min-h-[130px] flex flex-col justify-center">
+          <div className="mx-5 border-t border-brand-border/70 px-1 py-5 text-center min-h-[130px] flex flex-col justify-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={selected}
@@ -637,27 +627,25 @@ export default function ZikrCounter() {
                     {meaning.arabic && (
                       <p
                         dir="rtl"
+                        lang="ar"
                         className="text-2xl sm:text-3xl font-bold text-white"
-                        style={{
-                          fontFamily: "'Amiri', 'Scheherazade New', serif",
-                          textShadow: `0 0 16px ${color.glow}80`,
-                        }}
+                        style={{ fontFamily: "'Amiri', 'Scheherazade New', serif" }}
                       >
                         {meaning.arabic}
                       </p>
                     )}
                     {meaning.transliteration && (
-                      <p className="text-xs text-white/50 italic tracking-wide">
+                      <p className="text-xs text-brand-gold italic tracking-wide">
                         {meaning.transliteration}
                       </p>
                     )}
                     <p className="text-sm text-white/75 leading-relaxed">{meaning.meaning}</p>
                   </>
                 ) : (
-                  <p className="text-sm text-white/40 italic">
+                  <p className="text-sm text-white/60 italic">
                     {t(
                       'zikr.customDhikrHint',
-                      'Custom dhikr — remember Allah sincerely with every count.'
+                      'Custom dhikr: remember Allah sincerely with every count.'
                     )}
                   </p>
                 )}
@@ -665,16 +653,16 @@ export default function ZikrCounter() {
             </AnimatePresence>
           </div>
 
-          {/* ── Card bottom: progress bar + streak + goal% ── */}
+          {/* ── Arch foot: today's goal + streak ── */}
           {(dailyGoal !== null || streakCount !== null) && (
-            <div className="px-6 pb-5 pt-1">
+            <div className="mx-5 border-t border-brand-border/70 px-1 pb-5 pt-4">
               {dailyGoal !== null && !goalMet && (
                 <>
-                  <div className="flex justify-between text-xs text-white/40 mb-1.5">
+                  <div className="flex justify-between text-xs text-white/60 mb-1.5">
                     <span>
                       {t('zikr.todayCount', 'Today')}: {formatLocaleNumber(effectiveTotal)}
                       {pendingTotal > 0 ? (
-                        <span className="text-brand-gold/60">
+                        <span className="text-brand-gold">
                           {' '}
                           (+{formatLocaleNumber(pendingTotal)} {t('zikr.syncing', 'syncing')})
                         </span>
@@ -686,18 +674,26 @@ export default function ZikrCounter() {
                       {t('zikr.goalLabel', 'Goal')}: {formatLocaleNumber(dailyGoal)}
                     </span>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className="w-full bg-shade/20 rounded-full h-1.5 overflow-hidden"
+                    role="progressbar"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={goalProgress ?? 0}
+                    aria-label={t('zikr.goalLabel', 'Goal')}
+                  >
                     <motion.div
                       animate={{ width: `${goalProgress}%` }}
                       transition={{ duration: 0.5, ease: 'easeOut' }}
-                      className={`h-full rounded-full ${color.bar}`}
+                      className="h-full rounded-full bg-brand-emerald"
                     />
                   </div>
                 </>
               )}
               {goalMet && (
-                <p className="text-sm text-brand-emerald font-bold text-center py-1">
-                  {t('zikr.goalAchieved', 'Goal Achieved!')} 🏆
+                <p className="flex items-center justify-center gap-1.5 text-sm text-brand-emerald font-semibold py-1">
+                  <LeafIcon className="w-4 h-4 fill-current" aria-hidden="true" />
+                  {t('zikr.goalAchieved', 'Goal Achieved!')}
                 </p>
               )}
               <div className="flex items-center justify-between mt-2.5">
@@ -710,48 +706,39 @@ export default function ZikrCounter() {
               </div>
             </div>
           )}
-        </motion.div>
+        </section>
 
         {/* ── Action buttons ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="flex gap-3 justify-center items-center"
-        >
+        <div className="flex gap-3 justify-center items-center">
           <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
+            whileTap={{ scale: 0.95 }}
             onClick={onDecrement}
             disabled={currentCount === 0}
             aria-label={t('zikr.decreaseAriaLabel', 'Decrease count by one')}
-            className="btn btn-circle bg-white/15 hover:bg-white/25 border-brand-emerald/20 text-white backdrop-blur-sm disabled:opacity-25"
+            className={`${roundBtn} hover:text-white hover:border-brand-emerald/40`}
           >
             <MinusIcon className="w-6 h-6" />
           </motion.button>
 
           <motion.button
-            whileHover={{ scale: 1.04, backgroundColor: '#e6faf4' }}
-            whileTap={{ scale: 0.96, backgroundColor: '#d1fae5' }}
+            whileTap={{ scale: 0.97 }}
             onClick={onIncrement}
-            className="flex items-center justify-center gap-2 w-44 sm:w-56 h-14 rounded-2xl text-ink-fixed font-bold text-lg cursor-pointer select-none outline-none border-0"
-            style={{ backgroundColor: 'white', boxShadow: `0 8px 32px ${color.glow}50` }}
+            className="flex items-center justify-center gap-2 w-44 sm:w-56 h-14 rounded-control bg-brand-emerald-dim text-on-color font-bold text-lg cursor-pointer select-none outline-none border-0 shadow-elev-2 hover:shadow-hover hover:brightness-105 transition-[box-shadow,filter]"
           >
             <PlusIcon className="w-6 h-6" />
             {t('zikr.countBtn', 'Count')}
           </motion.button>
 
           <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
+            whileTap={{ scale: 0.95 }}
             onClick={onReset}
             disabled={currentCount === 0}
             aria-label={t('zikr.resetAriaLabel', 'Reset counter')}
-            className="btn btn-circle bg-white/15 hover:bg-red-500/70 border-brand-emerald/20 text-white backdrop-blur-sm disabled:opacity-25 transition-colors"
+            className={`${roundBtn} hover:text-red-300 hover:border-red-400/50`}
           >
             <ArrowPathIcon className="w-6 h-6" />
           </motion.button>
-        </motion.div>
+        </div>
 
         {/* ── Auto-play controls ── */}
         <ZikrAutoPlayControls
@@ -766,12 +753,12 @@ export default function ZikrCounter() {
         />
 
         {/* Keyboard hint */}
-        <p className="text-center text-white/30 text-xs">
+        <p className="text-center text-white/50 text-xs">
           <Trans
             i18nKey="zikr.spaceToCountKbd"
             defaults="Press <1>Space</1> to count"
             components={{
-              1: <kbd className="kbd kbd-xs bg-white/15 text-white border-brand-emerald/20" />,
+              1: <kbd className="kbd kbd-xs bg-brand-deep text-white border-brand-border" />,
             }}
           />
         </p>

@@ -2,6 +2,7 @@ import type { NavigateFunction } from 'react-router';
 import React from 'react';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { TasbihIcon } from '../icons/IslamicIcons.js';
 
 export interface ZikrGuestDialogProps {
   navigate: NavigateFunction;
@@ -32,13 +33,16 @@ export default function ZikrGuestDialog({
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.92, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 22 }}
-              className="bg-brand-surface rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-brand-border text-center"
+              className="bg-brand-surface rounded-card p-6 w-full max-w-sm shadow-elev-3 border border-brand-border text-center"
             >
-              <div className="text-5xl mb-4">📿</div>
+              <TasbihIcon
+                className="w-12 h-12 mx-auto mb-4 text-brand-emerald"
+                aria-hidden="true"
+              />
               <h3 className="text-xl font-black text-white mb-2">
                 {t('zikr.dontLoseCounts', "Don't lose your counts")}
               </h3>
-              <p className="text-white/50 text-sm mb-6 leading-relaxed">
+              <p className="text-white/60 text-sm mb-6 leading-relaxed">
                 {t(
                   'zikr.unsavedCounts',
                   'You have {{count}} unsaved zikr counts. Sign in to save your progress and track your streaks.',

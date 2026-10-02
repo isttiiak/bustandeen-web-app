@@ -1,4 +1,4 @@
-// Zikr counter data (audit T2.4: moved out of pages/ZikrCounter.tsx unchanged): built-in meanings, hadith references, the full predefined texts and the glow palette.
+// Zikr counter data (audit T2.4: moved out of pages/ZikrCounter.tsx unchanged): built-in meanings, hadith references and the full predefined texts.
 
 // Meanings for all built-in dhikr — transliteration/meaning are i18n KEYS with
 // their English fallback carried alongside, resolved with t(key, fallback) at
@@ -18,28 +18,28 @@ export const DEFAULT_MEANINGS: Record<
     translitKey: 'zikr.translit.subhanallah',
     translitFallback: 'Subḥāna-llāh',
     meaningKey: 'zikr.meanings.subhanallah',
-    meaningFallback: 'Glory be to Allah — praising His perfection above all imperfections',
+    meaningFallback: 'Glory be to Allah: praising His perfection above all imperfections',
   },
   Alhamdulillah: {
     arabic: 'الْحَمْدُ لِلَّهِ',
     translitKey: 'zikr.translit.alhamdulillah',
     translitFallback: 'Al-ḥamdu li-llāh',
     meaningKey: 'zikr.meanings.alhamdulillah',
-    meaningFallback: 'All praise belongs to Allah — gratitude for every blessing, seen and unseen',
+    meaningFallback: 'All praise belongs to Allah: gratitude for every blessing, seen and unseen',
   },
   'Allahu Akbar': {
     arabic: 'اللَّهُ أَكْبَرُ',
     translitKey: 'zikr.translit.allahuAkbar',
     translitFallback: 'Allāhu Akbar',
     meaningKey: 'zikr.meanings.allahuAkbar',
-    meaningFallback: 'Allah is the Greatest — His greatness transcends all of creation',
+    meaningFallback: 'Allah is the Greatest: His greatness transcends all of creation',
   },
   'La ilaha illallah': {
     arabic: 'لَا إِلَهَ إِلَّا اللَّهُ',
     translitKey: 'zikr.translit.laIlahaIllallah',
     translitFallback: 'Lā ilāha illā-llāh',
     meaningKey: 'zikr.meanings.laIlahaIllallah',
-    meaningFallback: 'There is no god but Allah — the declaration of Tawhid, key to Jannah',
+    meaningFallback: 'There is no god but Allah: the declaration of Tawhid, key to Jannah',
   },
   Astaghfirullah: {
     arabic: 'أَسْتَغْفِرُ اللَّهَ',
@@ -47,7 +47,7 @@ export const DEFAULT_MEANINGS: Record<
     translitFallback: 'Astaghfiru-llāh',
     meaningKey: 'zikr.meanings.astaghfirullah',
     meaningFallback:
-      'I seek forgiveness from Allah — the Prophet ﷺ sought forgiveness 70–100 times a day',
+      'I seek forgiveness from Allah. The Prophet ﷺ sought forgiveness 70–100 times a day',
   },
   'SubhanAllah wa bihamdihi': {
     arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ',
@@ -55,7 +55,7 @@ export const DEFAULT_MEANINGS: Record<
     translitFallback: 'Subḥāna-llāhi wa bi-ḥamdih',
     meaningKey: 'zikr.meanings.subhanallahWaBihamdihi',
     meaningFallback:
-      'Glory be to Allah and all praise is His — light on the tongue, heavy on the scales, beloved to the Most Merciful',
+      'Glory be to Allah and all praise is His: light on the tongue, heavy on the scales, beloved to the Most Merciful',
   },
   'La hawla wa la quwwata illa billah': {
     arabic: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
@@ -63,7 +63,7 @@ export const DEFAULT_MEANINGS: Record<
     translitFallback: 'Lā ḥawla wa lā quwwata illā bi-llāh',
     meaningKey: 'zikr.meanings.laHawla',
     meaningFallback:
-      'There is no power and no strength except with Allah — a treasure from the treasures of Jannah',
+      'There is no power and no strength except with Allah: a treasure from the treasures of Jannah',
   },
   'SubhanAllah wal hamdulillah wa la ilaha illAllah wa Allahu akbar': {
     arabic: 'سُبْحَانَ اللَّهِ وَالْحَمْدُ لِلَّهِ وَلَا إِلَهَ إِلَّا اللَّهُ وَاللَّهُ أَكْبَرُ',
@@ -71,7 +71,7 @@ export const DEFAULT_MEANINGS: Record<
     translitFallback: 'Subḥāna-llāhi wal-ḥamdu li-llāhi wa lā ilāha illā-llāhu wa-llāhu akbar',
     meaningKey: 'zikr.meanings.fourBeloved',
     meaningFallback:
-      'The four most beloved words to Allah — whoever says them, sins fall as leaves fall from a dry tree',
+      'The four most beloved words to Allah. Whoever says them, sins fall as leaves fall from a dry tree',
   },
   'Ayatul Kursi': {
     arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ',
@@ -79,7 +79,7 @@ export const DEFAULT_MEANINGS: Record<
     translitFallback: 'Allāhu lā ilāha illā huwal-ḥayyul-qayyūm... (Quran 2:255)',
     meaningKey: 'zikr.meanings.ayatulKursi',
     meaningFallback:
-      'The Verse of the Throne — the greatest verse in the Quran. Recite after every prayer; nothing prevents entry to Jannah except death',
+      'The Verse of the Throne, the greatest verse in the Quran. Recite after every prayer; nothing prevents entry to Jannah except death',
   },
   'Durud Ibrahim': {
     arabic: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ',
@@ -87,7 +87,7 @@ export const DEFAULT_MEANINGS: Record<
     translitFallback: 'Allāhumma ṣalli ʿalā Muḥammadin wa ʿalā āli Muḥammad...',
     meaningKey: 'zikr.meanings.durudIbrahim',
     meaningFallback:
-      'Salutations upon the Prophet ﷺ and his family — Allah sends tenfold blessings upon the one who sends one salutation',
+      'Salutations upon the Prophet ﷺ and his family. Allah sends tenfold blessings upon the one who sends one salutation',
   },
 };
 
@@ -163,7 +163,7 @@ export const DHIKR_HADITHS: Record<
     textKey: 'zikr.hadith.ayatulKursi',
     textFallback:
       '"Whoever recites Āyat al-Kursī after every obligatory prayer, nothing prevents him from entering Jannah except death."',
-    source: "al-Nasā'ī (al-Sunan al-Kubrā) — Ṣaḥīḥ by al-Albānī",
+    source: "al-Nasā'ī (al-Sunan al-Kubrā) · Ṣaḥīḥ by al-Albānī",
     url: 'https://sunnah.com/nasai:9928',
     grade: 'Ṣaḥīḥ',
   },
@@ -199,43 +199,3 @@ export const FULL_PREDEFINED: Record<
     sourceUrl: 'https://quran.com/2/255',
   },
 };
-
-// Theme tokens (styles/global.css), so the light theme gets its darker shades.
-export const GLOW_PALETTE = [
-  {
-    glow: 'rgb(var(--c-emerald) / 0.9)',
-    ring: 'rgb(var(--c-emerald) / 0.3)',
-    bar: 'bg-brand-emerald',
-    solid: 'rgb(var(--c-emerald))',
-  },
-  {
-    glow: 'rgb(var(--c-gold) / 0.9)',
-    ring: 'rgb(var(--c-gold) / 0.3)',
-    bar: 'bg-brand-gold',
-    solid: 'rgb(var(--c-gold))',
-  },
-  {
-    glow: 'rgb(var(--c-info) / 0.9)',
-    ring: 'rgb(var(--c-info) / 0.3)',
-    bar: 'bg-brand-info',
-    solid: 'rgb(var(--c-info))',
-  },
-  {
-    glow: 'rgb(var(--c-warm) / 0.9)',
-    ring: 'rgb(var(--c-warm) / 0.3)',
-    bar: 'bg-brand-warm',
-    solid: 'rgb(var(--c-warm))',
-  },
-  {
-    glow: 'rgb(var(--c-info) / 0.9)',
-    ring: 'rgb(var(--c-info) / 0.3)',
-    bar: 'bg-brand-info',
-    solid: 'rgb(var(--c-info))',
-  },
-  {
-    glow: 'rgb(var(--c-warm) / 0.9)',
-    ring: 'rgb(var(--c-warm) / 0.3)',
-    bar: 'bg-brand-info',
-    solid: 'rgb(var(--c-warm))',
-  },
-];
