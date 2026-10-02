@@ -1,6 +1,46 @@
 import { m as motion } from 'framer-motion';
 import type { ReactNode } from 'react';
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
+
+/** A row of the "AI usage and privacy" panel on /naseeh (AiPrivacyPanel). */
+export type AiFeature = 'quickLog' | 'summary' | 'patterns' | 'kaza' | 'plan' | 'chat' | 'coaching';
+
+/** Opens the privacy panel at this feature's row: exactly what it sends. */
+export function AiSendsLink({
+  feature,
+  onNavigate,
+}: {
+  feature: AiFeature;
+  /** e.g. close the modal the link sits in */
+  onNavigate?: () => void;
+}) {
+  const { t } = useTranslation();
+  return (
+    <Link
+      to={`/naseeh#ai-sends-${feature}`}
+      onClick={onNavigate}
+      className="text-white/45 hover:text-white/70 underline underline-offset-2 text-[10px] whitespace-nowrap"
+    >
+      {t('aiFlair.whatIsSent', 'What is sent?')}
+    </Link>
+  );
+}
+
+/** Replaces <AiDisclaimer/> when a card shows its plain, non-AI version
+ * (the AI request failed or the daily limit was reached). */
+export function AiFallbackNote({ feature }: { feature: AiFeature }) {
+  const { t } = useTranslation();
+  return (
+    <p className="text-white/30 text-[10px] leading-relaxed mt-2">
+      {t(
+        'aiFlair.fallbackNote',
+        'Naseeh could not reach the AI just now, so this is a plain note worked out from your own numbers. No AI was used.'
+      )}{' '}
+      <AiSendsLink feature={feature} />
+    </p>
+  );
+}
 
 /**
  * The distinct "AI feel" — deliberately more colorful and alive than the calm
@@ -84,8 +124,9 @@ export function AiPanel({ children, className = '' }: { children: ReactNode; cla
   );
 }
 
-/** The non-negotiable label under every AI output. */
-export function AiDisclaimer() {
+/** The non-negotiable label under every AI output, with a link to what the
+ * feature sends. */
+export function AiDisclaimer({ feature }: { feature?: AiFeature }) {
   const { t } = useTranslation();
   return (
     <p className="text-white/30 text-[10px] leading-relaxed mt-2 flex items-start gap-1">
@@ -99,6 +140,12 @@ export function AiDisclaimer() {
         {t(
           'aiFlair.disclaimerSuffix',
           "For rulings or proofs, see the app's verified references or ask a qualified scholar."
+        )}
+        {feature && (
+          <>
+            {' '}
+            <AiSendsLink feature={feature} />
+          </>
         )}
       </span>
     </p>

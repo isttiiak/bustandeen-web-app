@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import api from '../../lib/api.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
 import { useGroqKeyStatus } from '../../hooks/useAi.js';
+import type { AiFeature } from './AiFlair.js';
 
 interface Row {
-  key: string;
+  key: AiFeature | 'cycle';
   title: string;
   sends: string;
 }
@@ -19,6 +21,20 @@ export default function AiPrivacyPanel() {
   const { data: keyStatus } = useGroqKeyStatus();
   const [confirming, setConfirming] = useState(false);
   const [failed, setFailed] = useState(false);
+  const [open, setOpen] = useState(false);
+  const { hash } = useLocation();
+  // A card's "What is sent?" link lands here as #ai-sends-<feature>: open the
+  // panel and bring that row into view.
+  const target = hash.startsWith('#ai-sends-') ? hash.slice(1) : null;
+
+  useEffect(() => {
+    if (!target) return;
+    setOpen(true);
+    const id = requestAnimationFrame(() =>
+      document.getElementById(target)?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+    );
+    return () => cancelAnimationFrame(id);
+  }, [target]);
 
   const rows: Row[] = [
     {
@@ -98,7 +114,12 @@ export default function AiPrivacyPanel() {
   };
 
   return (
-    <details className="rounded-2xl border border-brand-border bg-brand-deep/60 group">
+    <details
+      id="ai-privacy"
+      open={open}
+      onToggle={(e) => setOpen(e.currentTarget.open)}
+      className="rounded-2xl border border-brand-border bg-brand-deep/60 group"
+    >
       <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between gap-3">
         <span className="flex items-center gap-2 text-white font-bold text-sm">
           <span aria-hidden>🔒</span>
@@ -122,7 +143,15 @@ export default function AiPrivacyPanel() {
 
         <ul className="space-y-2.5">
           {rows.map((r) => (
-            <li key={r.key} className="text-sm">
+            <li
+              key={r.key}
+              id={`ai-sends-${r.key}`}
+              className={`text-sm rounded-lg scroll-mt-24 ${
+                target === `ai-sends-${r.key}`
+                  ? 'ring-1 ring-brand-gold/40 bg-white/[0.04] p-2 -m-2'
+                  : ''
+              }`}
+            >
               <p className="text-white/85 font-semibold">{r.title}</p>
               <p className="text-white/50 text-xs leading-relaxed">{r.sends}</p>
             </li>

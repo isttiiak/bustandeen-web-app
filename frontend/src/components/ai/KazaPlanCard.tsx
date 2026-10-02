@@ -1,6 +1,6 @@
 import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { AiPanel, AiBadge, AiDisclaimer } from './AiFlair.js';
+import { AiPanel, AiBadge, AiDisclaimer, AiFallbackNote } from './AiFlair.js';
 import { useKazaPlan } from '../../hooks/useNaseeh.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
 
@@ -63,7 +63,7 @@ export default function KazaPlanCard() {
               'A pace you can choose to follow, worked out from the count on your Salat page. It changes as you pay them back or add more.'
             )}
           </p>
-          <AiDisclaimer />
+          {data.ai ? <AiDisclaimer feature="kaza" /> : <AiFallbackNote feature="kaza" />}
         </div>
       </AiPanel>
     </motion.div>

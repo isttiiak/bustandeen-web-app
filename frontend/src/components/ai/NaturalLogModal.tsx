@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Link } from 'react-router';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
@@ -10,13 +11,15 @@ import {
   type ParsedZikrEntry,
   type ParsedQuranEntry,
 } from '../../hooks/useNaturalLog.js';
-import { AiBadge, AiThinking, AiDisclaimer } from './AiFlair.js';
+import { AiBadge, AiThinking, AiDisclaimer, AiSendsLink } from './AiFlair.js';
 import { PRAYER_META, translateSalatName } from '../../utils/prayerTimes.js';
 import { getTrackingDay } from '../../utils/trackingDay.js';
 import { useZikrStore } from '../../store/useZikrStore.js';
 import { getUserTimezoneOffset } from '../../utils/timezone.js';
 
-type Phase = 'input' | 'preview' | 'success' | 'empty';
+// 'unavailable': the AI request itself failed (limit reached, outage), as
+// opposed to 'empty' (it worked but found nothing to log).
+type Phase = 'input' | 'preview' | 'success' | 'empty' | 'unavailable';
 
 function shiftDate(dateStr: string, delta: number): string {
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -57,7 +60,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
         setDay(r.day === 'yesterday' ? 'yesterday' : 'today');
         setPhase('preview');
       },
-      onError: () => setPhase('empty'),
+      onError: () => setPhase('unavailable'),
     });
   };
 
@@ -144,7 +147,8 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                 {t('naturalLog.examplesHint', 'Try: ')}
                 <span className="italic">
                   {t(EXAMPLES_KEYS[1], '"Asr and maghrib at the mosque, 33 subhanallah"')}
-                </span>
+                </span>{' '}
+                <AiSendsLink feature="quickLog" onNavigate={onClose} />
               </p>
               <button
                 onClick={handleParse}
@@ -170,6 +174,39 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
               <button
                 onClick={() => setPhase('input')}
                 className="btn btn-sm rounded-xl bg-white/5 border-brand-border text-white/70"
+              >
+                {t('naturalLog.tryAgain', 'Try again')}
+              </button>
+            </div>
+          )}
+
+          {phase === 'unavailable' && (
+            <div className="space-y-3 py-2">
+              <p className="text-white/60 text-sm text-center">
+                {t(
+                  'naturalLog.unavailable',
+                  "Naseeh can't read notes just now. You can log the same things by hand:"
+                )}
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { to: '/salat', label: t('naturalLog.manualSalat', 'Salat') },
+                  { to: '/zikr', label: t('naturalLog.manualZikr', 'Zikr') },
+                  { to: '/quran', label: t('naturalLog.manualQuran', 'Quran') },
+                ].map((l) => (
+                  <Link
+                    key={l.to}
+                    to={l.to}
+                    onClick={onClose}
+                    className="btn btn-sm rounded-xl bg-white/5 border-brand-border text-white/80"
+                  >
+                    {l.label}
+                  </Link>
+                ))}
+              </div>
+              <button
+                onClick={() => setPhase('input')}
+                className="btn btn-sm btn-ghost w-full rounded-xl text-white/50"
               >
                 {t('naturalLog.tryAgain', 'Try again')}
               </button>
@@ -343,7 +380,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                     : t('naturalLog.confirmButton', 'Confirm & log')}
                 </button>
               </div>
-              <AiDisclaimer />
+              <AiDisclaimer feature="quickLog" />
             </div>
           )}
 

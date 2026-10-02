@@ -1,6 +1,6 @@
 import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { AiPanel, AiBadge, AiDisclaimer, AiThinking } from './AiFlair.js';
+import { AiPanel, AiBadge, AiDisclaimer, AiFallbackNote, AiThinking } from './AiFlair.js';
 import { usePatternInsights, type PatternFinding } from '../../hooks/useNaseeh.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
 
@@ -64,7 +64,12 @@ export default function PatternInsightsCard() {
               )}
             </p>
           )}
-          <AiDisclaimer />
+          {/* The findings are computed on the server; only their wording may be AI. */}
+          {findings.length > 0 && !data?.ai ? (
+            <AiFallbackNote feature="patterns" />
+          ) : (
+            <AiDisclaimer feature="patterns" />
+          )}
         </div>
       </AiPanel>
     </motion.div>

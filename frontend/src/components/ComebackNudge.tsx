@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuranSummary } from '../hooks/useQuran.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import { useAiComeback } from '../hooks/useAi.js';
-import { AiPanel, AiBadge, AiDisclaimer } from './ai/AiFlair.js';
+import { AiPanel, AiBadge, AiDisclaimer, AiFallbackNote } from './ai/AiFlair.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useCycleAiGate } from '../hooks/useCycleAiGate.js';
@@ -52,6 +52,9 @@ export default function ComebackNudge() {
   const comeback = useAiComeback();
   const [message, setMessage] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
+  // The AI request failed: show the plain, non-AI version (nothing is cached,
+  // so the next visit tries the AI again).
+  const failed = comeback.isError;
 
   // A day is quiet only when Quran AND zikr are both untouched.
   const zikrByDate = new Map((zikrData?.chartData ?? []).map((d) => [d.date, d.total ?? 0]));
@@ -95,7 +98,13 @@ export default function ComebackNudge() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
   }, [show, daysAway]);
 
-  if (!show || !message) return null;
+  if (!show || (!message && !failed)) return null;
+  const fallback = message
+    ? null
+    : t(
+        'comebackNudge.fallback',
+        'Welcome back. Begin again with something small: one āyah or one dhikr is a good start.'
+      );
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
@@ -111,7 +120,7 @@ export default function ComebackNudge() {
               {t('comebackNudge.dismiss')}
             </button>
           </div>
-          <p className="text-white/80 text-sm leading-relaxed">{message}</p>
+          <p className="text-white/80 text-sm leading-relaxed">{message ?? fallback}</p>
           <div className="flex flex-wrap gap-2 mt-3">
             <Link
               to="/quran/browse"
@@ -126,7 +135,7 @@ export default function ComebackNudge() {
               {t('comebackNudge.oneDhikr')}
             </Link>
           </div>
-          <AiDisclaimer />
+          {fallback ? <AiFallbackNote feature="coaching" /> : <AiDisclaimer feature="coaching" />}
         </div>
       </AiPanel>
     </motion.div>
