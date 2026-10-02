@@ -11,9 +11,10 @@ import {
   createHandlerBoundToURL,
 } from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
-import { CacheFirst, StaleWhileRevalidate } from 'workbox-strategies';
+import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
+import { isLandingPath, isSeoPagePath } from './seo/staticPaths.js';
 
 declare const self: ServiceWorkerGlobalScope;
 
@@ -56,6 +57,33 @@ precacheAndRoute(self.__WB_MANIFEST);
 // (served for `/` by the precache route above); every other route needs the
 // empty shell. See appShellCopy in vite.config.ts.
 const navigationHandler = createHandlerBoundToURL('app-shell.html');
+
+// The prerendered SEO pages and the Bangla landing `/bn` (audit PERF-01) are
+// real pages with their own light entry, so they come from the network (and
+// are kept for a while). Offline and not kept, the app shell renders them
+// instead, as it always did. `/` itself is precached above.
+const staticPages = new NetworkFirst({
+  cacheName: 'static-pages',
+  networkTimeoutSeconds: 4,
+  plugins: [
+    new ExpirationPlugin({ maxEntries: 50, maxAgeSeconds: 7 * 24 * 60 * 60 }),
+    new CacheableResponsePlugin({ statuses: [200] }),
+  ],
+});
+registerRoute(
+  ({ request, url }) =>
+    request.mode === 'navigate' &&
+    url.pathname !== '/' &&
+    (isSeoPagePath(url.pathname) || isLandingPath(url.pathname)),
+  async (options) => {
+    try {
+      return await staticPages.handle(options);
+    } catch {
+      return navigationHandler(options);
+    }
+  }
+);
+
 registerRoute(
   new NavigationRoute(navigationHandler, {
     denylist: [/^\/api\//, /^\/[^?]*\.[A-Za-z0-9]+(\?|$)/],

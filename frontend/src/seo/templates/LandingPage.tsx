@@ -1,4 +1,5 @@
 import en from '../../locales/en/common.json';
+import bn from '../../locales/bn/common.json';
 import LandingSeoSections, { type LandingT } from '../../components/LandingSeoSections.js';
 
 // The prerendered `/` (audit SEO-01). Written into dist/index.html by
@@ -9,19 +10,29 @@ import LandingSeoSections, { type LandingT } from '../../components/LandingSeoSe
 // the hand-over is calm rather than a jump to a different page.
 // Signed-in visitors never see it: index.html hides [data-prerendered-landing]
 // when a session exists.
+// Since audit PERF-01 this IS the landing for signed-out visitors: the app is
+// not loaded on it (src/static-entry.ts), so everything here is plain links.
+// `/bn` is the same page in Bangla.
 
-const STRINGS = en as unknown as Record<string, unknown>;
+export type LandingLang = 'en' | 'bn';
 
-export const enT: LandingT = (key, fallback) => {
+function lookup(strings: unknown, key: string): string | undefined {
   const value = key
     .split('.')
     .reduce<unknown>(
       (node, part) =>
         node && typeof node === 'object' ? (node as Record<string, unknown>)[part] : undefined,
-      STRINGS
+      strings
     );
-  return typeof value === 'string' ? value : fallback;
-};
+  return typeof value === 'string' ? value : undefined;
+}
+
+export const enT: LandingT = (key, fallback) => lookup(en, key) ?? fallback;
+
+/** Bangla where translated, English otherwise (as i18next does in the app). */
+const bnT: LandingT = (key, fallback) => lookup(bn, key) ?? enT(key, fallback);
+
+export const landingT = (lang: LandingLang): LandingT => (lang === 'bn' ? bnT : enT);
 
 const FEATURES = [
   {
@@ -68,20 +79,49 @@ const FEATURES = [
   },
 ];
 
-export default function LandingPage() {
-  const t = enT;
+export default function LandingPage({ lang = 'en' }: { lang?: LandingLang }) {
+  const t = landingT(lang);
   return (
     <div data-prerendered-landing className="min-h-screen bg-brand-void text-white">
       <header className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-brand-border">
-        <a href="/" className="flex items-center gap-2 font-black text-white no-underline">
+        <a
+          href={lang === 'bn' ? '/bn' : '/'}
+          className="flex items-center gap-2 font-black text-white no-underline"
+        >
           <span aria-hidden>🌙</span> Bustandeen
         </a>
-        <a
-          href="/login"
-          className="px-4 py-1.5 rounded-xl bg-brand-emerald text-brand-void text-sm font-bold no-underline"
-        >
-          Sign In
-        </a>
+        <div className="flex items-center gap-3">
+          {lang === 'bn' ? (
+            <a
+              href="/"
+              hrefLang="en"
+              lang="en"
+              data-set-lang="en"
+              className="inline-flex items-center text-white/60 text-sm font-semibold no-underline"
+            >
+              English
+            </a>
+          ) : (
+            <a
+              href="/bn"
+              hrefLang="bn"
+              lang="bn"
+              data-set-lang="bn"
+              // The system's Bangla font: this one word must not pull the
+              // Hind Siliguri web font into the English page.
+              style={{ fontFamily: 'system-ui, sans-serif' }}
+              className="inline-flex items-center text-white/60 text-sm font-semibold no-underline"
+            >
+              বাংলা
+            </a>
+          )}
+          <a
+            href="/login"
+            className="px-4 py-1.5 rounded-xl bg-brand-emerald text-brand-void text-sm font-bold no-underline"
+          >
+            {t('nav.signIn', 'Sign In')}
+          </a>
+        </div>
       </header>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 pb-20">
@@ -110,6 +150,21 @@ export default function LandingPage() {
               className="inline-flex items-center h-13 px-6 rounded-2xl bg-white/5 border border-brand-emerald/15 text-white/70 font-bold no-underline"
             >
               {t('landing.ctaCounter', 'Try the counter first')}
+            </a>
+          </div>
+          {/* Demo mode: /demo/:as (an app route) enters it and opens Home. */}
+          <div className="mt-3 flex flex-wrap justify-center gap-2">
+            <a
+              href="/demo/brother"
+              className="inline-flex items-center h-10 px-5 rounded-xl bg-brand-info/10 border border-brand-info/20 text-white/70 text-sm font-semibold no-underline"
+            >
+              🕌 {t('landing.exploreAsBrother', 'Explore as Brother')}
+            </a>
+            <a
+              href="/demo/sister"
+              className="inline-flex items-center h-10 px-5 rounded-xl bg-brand-pink/10 border border-brand-pink/20 text-white/70 text-sm font-semibold no-underline"
+            >
+              🌸 {t('landing.exploreAsSister', 'Explore as Sister')}
             </a>
           </div>
           <p className="text-white/25 text-xs mt-4">{t('landing.noAds', '')}</p>
@@ -159,7 +214,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <LandingSeoSections t={t} />
+        <LandingSeoSections t={t} prefix={lang === 'bn' ? '/bn' : ''} />
 
         <section className="text-center mt-14">
           <a
@@ -174,7 +229,7 @@ export default function LandingPage() {
             </a>{' '}
             ·{' '}
             <a href="/privacy" className="text-white/50 text-sm underline">
-              Privacy
+              {t('nav.privacy', 'Privacy')}
             </a>
           </p>
         </section>

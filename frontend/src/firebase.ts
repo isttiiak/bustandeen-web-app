@@ -1,5 +1,11 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import {
+  browserLocalPersistence,
+  browserSessionPersistence,
+  GoogleAuthProvider,
+  indexedDBLocalPersistence,
+  initializeAuth,
+} from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
@@ -12,7 +18,14 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
+// initializeAuth with getAuth()'s own persistences (same order, so existing
+// sessions keep working), minus the popup/redirect resolver: with it, Firebase
+// loads Google's sign-in iframe (~135 KB of scripts from apis.google.com and
+// firebaseapp.com) on every page view (audit PERF-01). The Google sign-in
+// buttons pass browserPopupRedirectResolver to signInWithPopup themselves.
+export const auth = initializeAuth(app, {
+  persistence: [indexedDBLocalPersistence, browserLocalPersistence, browserSessionPersistence],
+});
 export const googleProvider = new GoogleAuthProvider();
 
 googleProvider.setCustomParameters({ prompt: 'select_account' });

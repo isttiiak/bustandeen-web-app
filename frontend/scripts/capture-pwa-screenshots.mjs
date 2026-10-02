@@ -87,7 +87,7 @@ try {
       await page.goto(`${BASE}${shot.path}`);
     } else {
       await page.goto(`${BASE}/`);
-      await page.getByRole('button', { name: /Explore as Brother/ }).click();
+      await page.getByRole('link', { name: /Explore as Brother/ }).click();
       await page.getByText('Demo Mode').first().waitFor();
       // Runs in the page: browser globals via globalThis.
       await page.evaluate((p) => {

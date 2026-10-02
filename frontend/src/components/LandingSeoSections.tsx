@@ -123,7 +123,16 @@ export const LANDING_FAQ: { q: [string, string]; a: [string, string] }[] = [
   },
 ];
 
-export default function LandingSeoSections({ t }: { t: LandingT }) {
+/** `prefix` is the language prefix of the static Bangla landing (`/bn`): its
+ * city and tool links go to the Bangla pages. The bare `/qibla` is an app page
+ * with no language prefix. */
+export default function LandingSeoSections({
+  t,
+  prefix = '',
+}: {
+  t: LandingT;
+  prefix?: '' | '/bn';
+}) {
   return (
     <div className="space-y-12">
       <section aria-labelledby="landing-cities">
@@ -140,7 +149,7 @@ export default function LandingSeoSections({ t }: { t: LandingT }) {
           {POPULAR_CITY_LINKS.map((c) => (
             <li key={c.slug}>
               <a
-                href={`/prayer-times/${c.slug}`}
+                href={`${prefix}/prayer-times/${c.slug}`}
                 className="inline-block px-3 py-1.5 rounded-full border border-brand-border bg-white/5 text-white/70 text-sm hover:text-brand-emerald hover:border-brand-emerald/40 transition-colors"
               >
                 {c.name}
@@ -158,7 +167,7 @@ export default function LandingSeoSections({ t }: { t: LandingT }) {
           {TOOL_LINKS.map((tool) => (
             <li key={tool.href}>
               <a
-                href={tool.href}
+                href={tool.href === '/qibla' ? tool.href : `${prefix}${tool.href}`}
                 className="flex items-center gap-2 h-full px-3 py-3 rounded-2xl border border-brand-border bg-white/[0.04] text-white/75 text-sm font-semibold hover:text-white hover:border-brand-emerald/40 transition-colors"
               >
                 <span aria-hidden>{tool.emoji}</span>

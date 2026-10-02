@@ -122,10 +122,37 @@ export function initAnalytics(): void {
     page_title: path ?? PRIVATE_PATH,
   });
 
-  const s = document.createElement('script');
-  s.async = true;
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
-  document.head.appendChild(s);
+  // gtag.js itself (about 170 KB) waits for the first interaction or for the
+  // browser to go idle (audit PERF-01), so it never competes with the page's
+  // own first paint. Everything sent before then waits in dataLayer.
+  whenIdleOrInteracting(() => {
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
+    document.head.appendChild(s);
+  });
+}
+
+const INTERACTION_EVENTS = ['pointerdown', 'keydown', 'scroll', 'touchstart'] as const;
+
+/** Runs `fn` once: on the first tap, key or scroll, or once the page has
+ * loaded and the browser is idle (at most ~4 s after load). */
+export function whenIdleOrInteracting(fn: () => void): void {
+  let done = false;
+  const run = () => {
+    if (done) return;
+    done = true;
+    INTERACTION_EVENTS.forEach((e) => window.removeEventListener(e, run));
+    fn();
+  };
+  INTERACTION_EVENTS.forEach((e) => window.addEventListener(e, run, { once: true, passive: true }));
+  const w = window as Window & {
+    requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+  };
+  const afterLoad = () =>
+    w.requestIdleCallback ? w.requestIdleCallback(run, { timeout: 4000 }) : setTimeout(run, 4000);
+  if (document.readyState === 'complete') afterLoad();
+  else window.addEventListener('load', afterLoad, { once: true });
 }
 
 /** Reports one SPA page view (redacted), or nothing for a private page. Also

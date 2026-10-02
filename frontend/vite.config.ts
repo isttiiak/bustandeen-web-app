@@ -21,6 +21,36 @@ const rootPkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.u
  * catch-all rewrite and the SW's offline navigation fallback both point at
  * app-shell.html instead.
  */
+/**
+ * fontsource's per-subset files (`bengali-400.css`, `latin-400.css`...) have no
+ * `unicode-range`, so the browser had to download a face to learn it lacks a
+ * glyph: every emoji on an English page pulled in all three Hind Siliguri
+ * weights (214 KB, audit PERF-01). This copies each subset's range from the
+ * package's per-weight file (`400.css`), which has them. Only the UI faces:
+ * the Arabic faces (Amiri, Scheherazade New) are left exactly as they were,
+ * because a range there would move the spaces in Quran text to another font.
+ */
+function fontsourceUnicodeRanges(): Plugin {
+  const file =
+    /@fontsource\/(hind-siliguri|plus-jakarta-sans|el-messiri)\/(bengali|latin|latin-ext)-(\d+)\.css$/;
+  return {
+    name: 'bustandeen:fontsource-unicode-ranges',
+    enforce: 'pre',
+    transform(code, id) {
+      const m = file.exec(id.split('?')[0] ?? '');
+      if (!m || code.includes('unicode-range')) return null;
+      const [, family, subset, weight] = m;
+      const perWeight = readFileSync(id.split('?')[0]!.replace(/[^/]+$/, `${weight}.css`), 'utf8');
+      const block = perWeight
+        .split('/* ')
+        .find((b) => b.startsWith(`${family}-${subset}-${weight}-normal */`));
+      const range = block && /unicode-range:[^;]+;/.exec(block)?.[0];
+      if (!range) throw new Error(`No unicode-range for ${family} ${subset} ${weight}`);
+      return { code: code.replace(/\}\s*$/, `  ${range}\n}\n`), map: null };
+    },
+  };
+}
+
 function appShellCopy(): Plugin {
   return {
     name: 'bustandeen:app-shell-copy',
@@ -40,6 +70,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    fontsourceUnicodeRanges(),
     appShellCopy(),
     // v4.10.0 — installable PWA: precached app shell + offline-tolerant
     // runtime caching. The API stays network-only (worship data must never be
@@ -175,18 +206,39 @@ export default defineConfig({
   ],
   server: { port: 5173 },
   build: {
+    // scripts/prerender.mjs reads the manifest to find the static entry's file.
+    manifest: true,
     rollupOptions: {
+      // Two entries (audit PERF-01): the app (index.html → src/main.tsx), and
+      // src/static-entry.ts for the prerendered landing and SEO pages, which
+      // must not load the app.
+      input: {
+        main: 'index.html',
+        static: 'src/static-entry.ts',
+      },
       output: {
         // Split the heaviest dependencies into their own long-cacheable chunks
         // so a small app change doesn't re-download all of them.
-        manualChunks: {
+        // By module path, not package name: by name, `react/jsx-runtime` (a
+        // CommonJS proxy) was not matched and ended up in `motion`, so every
+        // component, the SEO pages' too, needed the framer-motion chunk
+        // (audit PERF-01).
+        manualChunks(id) {
+          // Vite gives module ids with forward slashes on every OS.
+          if (!id.includes('/node_modules/')) return undefined;
           // React changes far less often than our code — keeping it separate
-          // means an app deploy doesn't invalidate it. It landed back in the
-          // main bundle when the recharts chunk was removed, which is what
-          // pushed index past the 500 kB warning.
-          'react-vendor': ['react', 'react-dom', 'react-router'],
-          firebase: ['firebase/app', 'firebase/auth', 'firebase/storage'],
-          motion: ['framer-motion'],
+          // means an app deploy doesn't invalidate it.
+          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(id)) {
+            return 'react-vendor';
+          }
+          // Apart from React so the SEO pages that render (seo/entry-client)
+          // don't download the router too.
+          if (/\/node_modules\/react-router\//.test(id)) return 'router';
+          if (/\/node_modules\/(firebase|@firebase|idb)\//.test(id)) return 'firebase';
+          if (/\/node_modules\/(framer-motion|motion-dom|motion-utils)\//.test(id)) {
+            return 'motion';
+          }
+          return undefined;
         },
       },
     },

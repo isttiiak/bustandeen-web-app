@@ -1,7 +1,7 @@
 // Route guards and the root route (audit T2.4: moved out of App.tsx unchanged).
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { sendEmailVerification } from 'firebase/auth';
 import { auth } from './firebase.js';
 import { useAuthStore } from './store/useAuthStore.js';
@@ -12,9 +12,11 @@ import Home from './pages/Home.js';
 
 const Landing = lazy(() => import('./pages/Landing.js'));
 
+// Full height (audit PERF-01): at 60vh the Footer below it showed on screen
+// and was then pushed down when the page arrived (CLS 0.278 on Home).
 export function RouteFallback() {
   return (
-    <div className="min-h-[60vh] grid place-items-center bg-brand-void">
+    <div className="min-h-screen grid place-items-center bg-brand-void">
       <span className="loading loading-spinner loading-lg text-brand-emerald" />
     </div>
   );
@@ -76,6 +78,34 @@ function VerifyEmailGate({ email }: { email: string | null }) {
     </div>
   );
 }
+
+/** /demo/brother and /demo/sister: the demo links of the static landing
+ * (audit PERF-01), which has no app to call enterDemoMode on. Someone already
+ * signed in just goes Home. */
+export const DemoEntry = () => {
+  const { as } = useParams();
+  const { user, authLoading, enterDemoMode } = useAuthStore();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) enterDemoMode(as === 'sister' ? 'female' : 'male');
+    navigate('/', { replace: true });
+  }, [as, user, authLoading, enterDemoMode, navigate]);
+  return <RouteFallback />;
+};
+
+/** `/bn` is the static Bangla landing; when the app answers it instead (the
+ * service worker offline, or a link inside the app), switch the app to
+ * Bangla and show `/`. */
+export const BanglaEntry = () => {
+  const { i18n } = useTranslation();
+  const navigate = useNavigate();
+  useEffect(() => {
+    void i18n.changeLanguage('bn');
+    navigate('/', { replace: true });
+  }, [i18n, navigate]);
+  return <RouteFallback />;
+};
 
 /** "/" shows the marketing landing to guests and the app home to users. */
 export const RootRoute = () => {

@@ -67,7 +67,7 @@ test.beforeEach(async ({ context }) => {
 
 async function enterDemo(page: Page) {
   await page.goto('/');
-  await page.getByRole('button', { name: /Explore as Sister/ }).click();
+  await page.getByRole('link', { name: /Explore as Sister/ }).click();
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 

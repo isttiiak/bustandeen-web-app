@@ -4,7 +4,9 @@
 // faces as woff2 files that Vite bundles with the app.
 //
 // Only the scripts each face is used for are imported, so the browser never
-// downloads glyphs it cannot use (each @font-face carries a unicode-range):
+// downloads glyphs it cannot use. fontsource's subset files carry no
+// unicode-range; vite.config.ts (fontsourceUnicodeRanges) adds it for the UI
+// faces, so an emoji no longer makes the browser download Hind Siliguri:
 // - Plus Jakarta Sans (body) and El Messiri (headings): Latin + Latin Extended.
 // - Amiri and Scheherazade New: Arabic only (Quran, duʿā and dhikr text).
 // - Hind Siliguri: Bengali only, the Bangla UI face. The body and heading

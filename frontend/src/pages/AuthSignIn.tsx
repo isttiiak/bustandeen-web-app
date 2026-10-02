@@ -4,6 +4,7 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
+  browserPopupRedirectResolver,
   sendPasswordResetEmail,
   AuthError,
 } from 'firebase/auth';
@@ -98,7 +99,7 @@ export default function AuthSignIn() {
     setError('');
     setLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider);
+      await signInWithPopup(auth, googleProvider, browserPopupRedirectResolver);
     } catch (err) {
       const code = (err as AuthError).code ?? '';
       if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
