@@ -32,13 +32,19 @@ const amountField = z
 // per-user graceDays value available inside the schema, which Zod's static
 // validation doesn't have; left as a known limitation rather than plumbing
 // a DB lookup into request validation for an edge case.
+//
+// The bound is 4 x 24h, not 3: `ts` is the NOON of the target tracking day,
+// and the tracking day can lag the civil date (Maghrib mode: until sunset
+// "today" is still yesterday). Two days back from a Maghrib-mode afternoon
+// is noon three civil days ago, i.e. more than 72h, and was refused.
+export const TS_MAX_AGE_MS = 4 * 24 * 60 * 60 * 1000;
 const tsField = z
   .number()
   .optional()
   .refine(
     (ts) =>
       ts === undefined ||
-      (ts > Date.now() - 3 * 24 * 60 * 60 * 1000 && ts < Date.now() + 24 * 60 * 60 * 1000),
+      (ts > Date.now() - TS_MAX_AGE_MS && ts < Date.now() + 24 * 60 * 60 * 1000),
     { message: 'ts out of allowed range (max 2 days back)' }
   );
 

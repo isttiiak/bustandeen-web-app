@@ -5,6 +5,7 @@ import {
   getMaghribTime,
   getTrackingDay,
   getTrackingDayMiddayTs,
+  getTrackingDayMiddayTsDaysBack,
   isNewTrackingDay,
   setDayStartModeLocal,
   type DayStartMode,
@@ -155,6 +156,34 @@ describe('getTrackingDayMiddayTs', () => {
     store.setItem('bustandeen_location', DHAKA);
     expect(getTrackingDayMiddayTs(at(2026, 3, 15, 1, 0))).toBe(at(2026, 3, 14, 12).getTime());
     expect(getTrackingDayMiddayTs(at(2026, 3, 15, 15, 0))).toBe(at(2026, 3, 15, 12).getTime());
+  });
+});
+
+describe('getTrackingDayMiddayTsDaysBack (Log missed counts)', () => {
+  it('counts back from the TRACKING day, not the civil date', () => {
+    store.setItem('bustandeen_location', DHAKA);
+    setDayStartModeLocal('maghrib');
+    // 15:00 on the 15th, before Maghrib: tracking day is the 14th.
+    const now = at(2026, 3, 15, 15, 0);
+    expect(getTrackingDayMiddayTsDaysBack(0, now)).toBe(at(2026, 3, 14, 12).getTime());
+    expect(getTrackingDayMiddayTsDaysBack(1, now)).toBe(at(2026, 3, 13, 12).getTime());
+    expect(getTrackingDayMiddayTsDaysBack(2, now)).toBe(at(2026, 3, 12, 12).getTime());
+  });
+
+  it('fajr mode before dawn: 2 back is three civil days ago', () => {
+    store.setItem('bustandeen_location', DHAKA);
+    const now = at(2026, 3, 15, 2, 0);
+    expect(getTrackingDayMiddayTsDaysBack(2, now)).toBe(at(2026, 3, 12, 12).getTime());
+  });
+
+  it('stays inside the 4-day server window in the worst case', () => {
+    // Server (zikr.schemas.ts TS_MAX_AGE_MS) refuses ts older than 4 x 24h.
+    store.setItem('bustandeen_location', DHAKA);
+    setDayStartModeLocal('maghrib');
+    const maghrib = getMaghribTime(at(2026, 6, 21, 12))!;
+    const now = plusMin(maghrib, -1);
+    expect(now.getTime() - getTrackingDayMiddayTsDaysBack(2, now)).toBeLessThan(4 * 86_400_000);
+    expect(now.getTime() - getTrackingDayMiddayTsDaysBack(2, now)).toBeGreaterThan(3 * 86_400_000);
   });
 });
 

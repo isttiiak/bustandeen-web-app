@@ -123,6 +123,19 @@ export function getTrackingDayMiddayTs(now: Date = new Date()): number {
   return new Date(y, m - 1, d, 12, 0, 0, 0).getTime();
 }
 
+/**
+ * Midday of the tracking day `daysBack` days before the current one (0 =
+ * today). "Log missed counts" anchors backfills here AND labels them from it:
+ * deriving the label from the civil date showed the wrong day whenever the
+ * tracking day lags the calendar (before Fajr, or before Maghrib in 'maghrib'
+ * mode).
+ */
+export function getTrackingDayMiddayTsDaysBack(daysBack: number, now: Date = new Date()): number {
+  const d = new Date(getTrackingDayMiddayTs(now));
+  d.setDate(d.getDate() - daysBack);
+  return d.getTime();
+}
+
 export function isNewTrackingDay(lastDateString: string | null): boolean {
   return getTrackingDay() !== lastDateString;
 }

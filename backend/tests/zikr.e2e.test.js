@@ -275,6 +275,23 @@ describe('Zikr API', () => {
       expect(res.status).toBe(400);
     });
 
+    test('2 tracking days back is accepted when the tracking day lags the civil date', async () => {
+      // Maghrib mode, 18:00 before sunset on civil day D: the tracking day is
+      // D-1, so "2 days back" is noon of D-3 = 3 days + 6h ago (was > 72h: 400).
+      const res = await auth(request(app).post(`/api/zikr/increment/batch`)).send({
+        increments: [
+          {
+            zikrType: 'Alhamdulillah',
+            amount: 4,
+            ts: Date.now() - 3 * DAY - 6 * 3600 * 1000,
+            manual: true,
+          },
+        ],
+        timezoneOffset: 360,
+      });
+      expect(res.status).toBe(200);
+    });
+
     test('analytics chart days carry streak statuses', async () => {
       const res = await auth(request(app).get(`/api/analytics?days=7&timezoneOffset=360`));
       expect(res.status).toBe(200);

@@ -30,7 +30,7 @@ import { zikrDisplayName } from '../utils/zikrLibrary.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import api from '../lib/api.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
-import { getTrackingDay, getTrackingDayMiddayTs } from '../utils/trackingDay.js';
+import { getTrackingDay, getTrackingDayMiddayTsDaysBack } from '../utils/trackingDay.js';
 import { formatLocaleDate, formatLocaleTime } from '../utils/localeDate.js';
 
 // ─── Manual Entry Modal ───────────────────────────────────────────────────────
@@ -61,9 +61,11 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
   const dayLabel = (n: number): string => {
     if (n === 0) return t('common.today');
     if (n === 1) return t('zikrAnalytics.yesterday');
-    const d = new Date();
-    d.setDate(d.getDate() - n);
-    return formatLocaleDate(d, { weekday: 'short', month: 'short', day: 'numeric' });
+    return formatLocaleDate(new Date(getTrackingDayMiddayTsDaysBack(n)), {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    });
   };
 
   // Existing count for the selected type today
@@ -81,9 +83,7 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
     try {
       // Every day (incl. today) is anchored at the TRACKING day's midday so
       // the count lands in the right Fajr-boundary bucket for any timezone.
-      const d = new Date(getTrackingDayMiddayTs());
-      d.setDate(d.getDate() - daysBack);
-      const ts = d.getTime();
+      const ts = getTrackingDayMiddayTsDaysBack(daysBack);
       await api.post('/api/zikr/increment/batch', {
         increments: [{ zikrType: selectedType, amount: parsedAmount, ts, manual: true }],
         timezoneOffset: getUserTimezoneOffset(),

@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.92.1 - Log missed zikr counts follows the tracking day - 2026-10-03
+
+### Fixed
+
+- **Logging missed counts for an earlier day works with every day boundary.** In "Log missed counts" on Zikr analytics, the third day button took its date from the calendar instead of your tracking day, so before Fajr (or before Maghrib, with the Maghrib boundary) it showed the wrong date. With the Maghrib boundary, saving to that day between noon and Maghrib was also refused by the server ("could not save"), because the day sat a little more than three calendar days back. The label and the saved day now both come from the tracking day, and the server accepts that day in every mode.
+
+### Changed (developers)
+
+- `getTrackingDayMiddayTsDaysBack()` in `utils/trackingDay.ts` (+ tests); the batch increment `ts` window is now 4 x 24h (`TS_MAX_AGE_MS` in `zikr.schemas.ts`), with an e2e test for the Maghrib-afternoon case.
+
 ## v5.92.0 - Quran in the Bustan Arch design - 2026-10-03
 
 ### Fixed
