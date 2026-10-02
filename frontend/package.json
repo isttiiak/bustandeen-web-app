@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.90.0",
+  "version": "5.90.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -76,5 +76,10 @@
   },
   "overrides": {
     "@grpc/grpc-js": "^1.14.5"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "@firebase/util": false,
+    "protobufjs": false
   }
 }

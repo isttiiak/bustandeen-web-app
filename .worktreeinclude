@@ -1,0 +1,5 @@
+# Gitignored files Claude Code copies into each new worktree (gitignore syntax).
+# Frontend config only (public VITE_* values). backend/.env is deliberately NOT
+# listed: it points at the LIVE database, so a worktree must not pick it up.
+frontend/.env
+frontend/.env.local

@@ -134,7 +134,7 @@ bustandeen/
 
 ### Prerequisites
 
-- Node.js **v18+** (repo targets Node 22 in prod)
+- Node.js **24** with npm 11, the same as CI (`.nvmrc`; root `devEngines` refuses other versions). Use the same version on every machine: npm 10 and npm 11 disagree about the lockfiles.
 - A MongoDB connection string (Atlas M0 is fine)
 - A Firebase project (for authentication)
 
@@ -171,6 +171,12 @@ npm install
 
 npm run dev
 ```
+
+### Working on more than one machine (or in Claude Code worktrees)
+
+The `.env` files are gitignored, so copy them to each machine yourself (keep the values in a password manager). Claude Code worktrees copy the files listed in `.worktreeinclude` (only `frontend/.env*`; `backend/.env` points at the live database and is left out on purpose).
+
+npm 11 only runs dependency install scripts listed under `allowScripts` in each `package.json` (`mongodb-memory-server` downloads the test database, `esbuild` its binary). If the backend tests time out in `beforeAll` while "Downloading MongoDB", run `node node_modules/mongodb-memory-server/postinstall.js` once in `backend/`.
 
 ### 4. Open
 

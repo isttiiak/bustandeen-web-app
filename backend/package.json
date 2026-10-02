@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.90.0",
+  "version": "5.90.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -51,5 +51,12 @@
   },
   "overrides": {
     "uuid": "^11.1.1"
+  },
+  "allowScripts": {
+    "mongodb-memory-server": true,
+    "esbuild": true,
+    "@parcel/watcher": false,
+    "protobufjs": false,
+    "unrs-resolver": false
   }
 }
