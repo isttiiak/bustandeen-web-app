@@ -132,7 +132,7 @@ export default function Landing() {
           >
             <div className="flex flex-wrap justify-center">
               <button
-                className="btn h-13 px-10 rounded-2xl border-0 text-white text-base font-black bg-gradient-to-r from-brand-emerald to-brand-info hover:from-brand-emerald hover:to-brand-info shadow-xl shadow-brand-emerald-dim/40"
+                className="btn h-13 px-10 rounded-2xl border-0 text-white text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim shadow-xl shadow-brand-emerald-dim/40"
                 onClick={() => navigate('/signup')}
               >
                 {t('landing.cta')}
@@ -326,7 +326,7 @@ export default function Landing() {
           </p>
           <div className="flex flex-wrap justify-center gap-3 mt-7">
             <button
-              className="btn h-13 px-10 rounded-2xl border-0 text-white text-base font-black bg-gradient-to-r from-brand-emerald to-brand-info hover:from-brand-emerald hover:to-brand-info shadow-xl shadow-brand-emerald-dim/40"
+              className="btn h-13 px-10 rounded-2xl border-0 text-white text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim shadow-xl shadow-brand-emerald-dim/40"
               onClick={() => navigate('/signup')}
             >
               {t('landing.finalCta')}

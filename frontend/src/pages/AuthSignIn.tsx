@@ -242,7 +242,7 @@ export default function AuthSignIn() {
               <button
                 type="submit"
                 disabled={resetLoading || !resetEmail.trim()}
-                className="w-full bg-brand-emerald hover:bg-brand-emerald-dim text-white font-semibold py-3 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white font-semibold py-3 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {resetLoading ? (
                   <span className="loading loading-spinner loading-sm" />
@@ -404,7 +404,7 @@ export default function AuthSignIn() {
                       whileTap={{ scale: 0.98 }}
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-brand-emerald hover:bg-brand-emerald-dim text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading ? (
                         <span className="loading loading-spinner loading-sm" />

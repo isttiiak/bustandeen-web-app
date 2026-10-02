@@ -123,7 +123,7 @@ export default function FastingSettingsSheet({
                       <span className="text-white/40 text-xs">{t('common.days')}</span>
                       <button
                         onClick={saveQadaOwed}
-                        className="btn btn-xs bg-brand-emerald text-white border-0 ml-auto"
+                        className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 ml-auto"
                       >
                         {t('common.save')}
                       </button>

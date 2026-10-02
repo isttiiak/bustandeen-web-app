@@ -87,7 +87,7 @@ export default function InstallPwaBanner() {
               {isIOS && !canInstall ? (
                 !showIOSSteps && (
                   <button
-                    className="px-4 py-1.5 rounded-full bg-brand-emerald text-white text-xs font-bold hover:bg-brand-emerald-dim transition-colors"
+                    className="px-4 py-1.5 rounded-full bg-brand-emerald-dim text-white text-xs font-bold hover:bg-brand-emerald-dim hover:brightness-90 transition-colors"
                     onClick={() => setShowIOSSteps(true)}
                   >
                     {t('pwa.howTo', 'How to install')}
@@ -95,7 +95,7 @@ export default function InstallPwaBanner() {
                 )
               ) : (
                 <button
-                  className="px-4 py-1.5 rounded-full bg-brand-emerald text-white text-xs font-bold hover:bg-brand-emerald-dim transition-colors"
+                  className="px-4 py-1.5 rounded-full bg-brand-emerald-dim text-white text-xs font-bold hover:bg-brand-emerald-dim hover:brightness-90 transition-colors"
                   onClick={() => void promptInstall().then((outcome) => outcome && dismiss())}
                 >
                   {t('pwa.install', 'Install')}

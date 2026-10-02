@@ -25,9 +25,9 @@ export default function SadaqahVirtueCard({ day }: { day: SadaqahVirtueDay }) {
         <div className="flex items-start gap-3">
           <span className="text-2xl shrink-0">{day.icon}</span>
           <div className="min-w-0 flex-1">
-            <h3 className="text-brand-gold font-black text-sm">
+            <h2 className="text-brand-gold font-black text-sm">
               {t(`sadaqahVirtue.${day.id}.title`, day.title)}
-            </h3>
+            </h2>
             <p className="text-white/60 text-xs mt-1.5 leading-relaxed">
               {t(`sadaqahVirtue.${day.id}.desc`, day.desc)}
             </p>

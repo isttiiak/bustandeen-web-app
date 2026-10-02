@@ -139,7 +139,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
           <button
             type="submit"
             disabled={login.isPending || !form.email || !form.password}
-            className="btn btn-sm w-full rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald to-brand-info disabled:opacity-50"
+            className="btn btn-sm w-full rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim disabled:opacity-50"
           >
             {login.isPending ? '…' : t('adminGate.continue', 'Sign in')}
           </button>

@@ -816,6 +816,7 @@ export default function SalatTracker() {
                   ? t('salatTracker.noLogsBefore', 'No logs before this date')
                   : t('salatTracker.previousDay', 'Previous day')
               }
+              aria-label={t('salatTracker.previousDay', 'Previous day')}
               className="p-2 rounded-xl bg-brand-surface border border-brand-border text-white/60 hover:text-white hover:border-brand-emerald/40 disabled:opacity-20 disabled:cursor-not-allowed"
             >
               <ChevronLeftIcon className="w-5 h-5" />
@@ -845,6 +846,7 @@ export default function SalatTracker() {
                 setExpandedPrayer(null);
               }}
               disabled={isToday}
+              aria-label={t('salatTracker.nextDay', 'Next day')}
               className="p-2 rounded-xl bg-brand-surface border border-brand-border text-white/60 hover:text-white hover:border-brand-emerald/40 disabled:opacity-20 disabled:cursor-not-allowed"
             >
               <ChevronRightIcon className="w-5 h-5" />
@@ -1087,7 +1089,7 @@ export default function SalatTracker() {
                                 onClick={() => handleStatus(prayerId, 'completed')}
                                 className={`px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold border transition-all ${
                                   status === 'completed'
-                                    ? 'bg-brand-emerald text-white border-brand-emerald shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                                    ? 'bg-brand-emerald-dim text-white border-brand-emerald-dim shadow-[0_0_12px_rgba(16,185,129,0.4)]'
                                     : 'bg-brand-deep border-brand-border text-white/50 hover:border-brand-emerald/50 hover:text-white/80'
                                 }`}
                               >

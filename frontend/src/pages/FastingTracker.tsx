@@ -667,7 +667,7 @@ export default function FastingTracker() {
                                     hijri: log.hijri,
                                   })
                                 }
-                                className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold px-6"
+                                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 font-bold px-6"
                               >
                                 ✅ {t('fasting.completedIt', 'I completed it!')}
                               </motion.button>
@@ -726,7 +726,7 @@ export default function FastingTracker() {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => requestLog('completed')}
                             disabled={upsert.isPending || (category === 'nadhr' && !vowId)}
-                            className="w-full max-w-xs h-14 rounded-2xl bg-brand-emerald hover:bg-brand-emerald-dim text-white font-black text-lg border-0 shadow-[0_8px_30px_rgba(16,185,129,0.35)] transition-colors"
+                            className="w-full max-w-xs h-14 rounded-2xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white font-black text-lg border-0 shadow-[0_8px_30px_rgba(16,185,129,0.35)] transition-colors"
                           >
                             ✅{' '}
                             {t('fasting.iFasted', 'I fasted {{day}}', {

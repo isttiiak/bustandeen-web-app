@@ -659,11 +659,11 @@ export default function Home() {
                 <span className="text-2xl shrink-0">🤲</span>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline gap-2 flex-wrap">
-                    <h3 className="text-brand-gold font-black text-sm">
+                    <h2 className="text-brand-gold font-black text-sm">
                       {fridayHour.isFinalStretch
                         ? t('home.fridayHourNow')
                         : t('home.fridayHourTitle')}
-                    </h3>
+                    </h2>
                     <span className="text-brand-gold/70 text-xs font-bold tabular-nums">
                       {fridayHour.countdown} {t('home.toMaghrib')}
                     </span>
@@ -707,7 +707,7 @@ export default function Home() {
               <div className="flex items-center gap-3">
                 <span className="text-2xl shrink-0">🌟</span>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-brand-emerald font-black text-sm">{t('home.fridayKahf')}</h3>
+                  <h2 className="text-brand-emerald font-black text-sm">{t('home.fridayKahf')}</h2>
                   <p className="text-white/50 text-xs mt-1 leading-relaxed">
                     "
                     {t(
