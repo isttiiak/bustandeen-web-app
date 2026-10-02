@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-theme="bustandeen">
   <head>
     <meta charset="UTF-8" />
@@ -10,10 +10,7 @@
       name="description"
       content="Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a private circle of friends. Free, ad-free, and built for the Muslim community."
     />
-    <meta
-      name="keywords"
-      content="islamic app, zikr counter, tasbih counter, salat tracker, prayer tracker, fasting tracker, quran habit, prayer times, muslim productivity"
-    />
+    <meta name="keywords" content="islamic app, zikr counter, tasbih counter, salat tracker, prayer tracker, fasting tracker, quran habit, prayer times, muslim productivity" />
     <meta name="author" content="Istiak Islam" />
     <meta name="theme-color" content="#1a1812" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -32,10 +29,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Bustandeen" />
     <meta property="og:title" content="Bustandeen - Nourish Your Deen" />
-    <meta
-      property="og:description"
-      content="Zikr, salat, fasting, Quran and prayer times - with streaks, authentic references, and friends to race toward good. 'So compete with one another in doing good' (Quran 2:148)."
-    />
+    <meta property="og:description" content="Zikr, salat, fasting, Quran and prayer times - with streaks, authentic references, and friends to race toward good. 'So compete with one another in doing good' (Quran 2:148)." />
     <meta property="og:url" content="https://bustandeen.com/" />
     <meta property="og:image" content="https://bustandeen.com/og-image.jpg" />
     <meta property="og:image:width" content="1200" />
@@ -46,39 +40,32 @@
     <!-- Twitter / X -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Bustandeen - Nourish Your Deen" />
-    <meta
-      name="twitter:description"
-      content="Zikr, salat, fasting, Quran and prayer times - with streaks, authentic references, and friends to race toward good."
-    />
+    <meta name="twitter:description" content="Zikr, salat, fasting, Quran and prayer times - with streaks, authentic references, and friends to race toward good." />
     <meta name="twitter:image" content="https://bustandeen.com/og-image.jpg" />
 
     <!-- Structured data -->
     <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Bustandeen",
-        "alternateName": "Bustandeen - Nourish Your Deen",
-        "url": "https://bustandeen.com/",
-        "description": "Track zikr, salat, fasting and Quran reading with streaks, prayer times, authentic Quran & hadith references, and a private circle of friends.",
-        "applicationCategory": "LifestyleApplication",
-        "operatingSystem": "Web",
-        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-        "author": {
-          "@type": "Person",
-          "name": "Istiak Islam",
-          "url": "https://github.com/isttiiak"
-        },
-        "inLanguage": "en",
-        "featureList": [
-          "Zikr counter with daily goals and streaks",
-          "Salat tracker with analytics",
-          "Prayer times calculated on-device",
-          "Fiqh-aware fasting tracker",
-          "Quran reading habit and khatm journey",
-          "A private circle of friends"
-        ]
-      }
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Bustandeen",
+      "alternateName": "Bustandeen - Nourish Your Deen",
+      "url": "https://bustandeen.com/",
+      "description": "Track zikr, salat, fasting and Quran reading with streaks, prayer times, authentic Quran & hadith references, and a private circle of friends.",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+      "author": { "@type": "Person", "name": "Istiak Islam", "url": "https://github.com/isttiiak" },
+      "inLanguage": "en",
+      "featureList": [
+        "Zikr counter with daily goals and streaks",
+        "Salat tracker with analytics",
+        "Prayer times calculated on-device",
+        "Fiqh-aware fasting tracker",
+        "Quran reading habit and khatm journey",
+        "A private circle of friends"
+      ]
+    }
     </script>
 
     <!-- Before first paint: the theme (no flash), and a "has-session" class for
@@ -89,22 +76,8 @@
          Kept on ONE line: its sha256 is allow-listed in the CSP in
          /vercel.json, and scripts/check-csp.mjs fails the build if the two
          drift apart. -->
-    <script>
-      try {
-        var d = document.documentElement,
-          s = localStorage;
-        d.hasAttribute('data-static') ||
-          d.setAttribute('data-theme', s.getItem('bustandeen_theme') || 'bustandeen');
-        if (s.getItem('bustandeen_idToken')) d.classList.add('has-session');
-        else if (location.pathname === '/' && s.getItem('bustandeen_lang') === 'bn')
-          location.replace('/bn');
-      } catch (e) {}
-    </script>
-    <style>
-      .has-session [data-prerendered-landing] {
-        display: none;
-      }
-    </style>
+    <script>try{var d=document.documentElement,s=localStorage;d.hasAttribute("data-static")||d.setAttribute("data-theme",s.getItem("bustandeen_theme")||"bustandeen");if(s.getItem("bustandeen_idToken"))d.classList.add("has-session");else if(location.pathname==="/"&&s.getItem("bustandeen_lang")==="bn")location.replace("/bn")}catch(e){}</script>
+    <style>.has-session [data-prerendered-landing]{display:none}</style>
   </head>
   <body>
     <div id="root"></div>
