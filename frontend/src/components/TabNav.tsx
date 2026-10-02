@@ -10,6 +10,15 @@ export interface TabNavItem {
   onClick?: () => void;
 }
 
+/** Segmented control classes, shared with QuranTabNav. A raised paper pill on
+ * a sage-tinted track in light; a lifted dark pill on a darker track in dark
+ * (plain `bg-white/x` was grey ink on paper). */
+export const SEGMENT = {
+  track: 'flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10',
+  active: 'rounded-lg bg-brand-deep text-white font-bold shadow-elev-1',
+  idle: 'rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors',
+};
+
 /**
  * The Counter/Analytics (or Tracker/Analytics) pill switcher used at the top
  * of the zikr and salat pages. One shared component so spacing, width, and
@@ -17,13 +26,13 @@ export interface TabNavItem {
  */
 export default function TabNav({ items }: { items: TabNavItem[] }) {
   return (
-    <div className="flex gap-1 bg-white/5 rounded-xl p-1 border border-brand-emerald/10 max-w-xs">
+    <div className={`${SEGMENT.track} max-w-xs`}>
       {items.map((item) =>
         item.active ? (
           <span
             key={item.label}
             aria-current="page"
-            className="flex-1 text-center text-xs font-bold py-1.5 rounded-lg bg-white/10 text-white whitespace-nowrap px-3"
+            className={`flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 ${SEGMENT.active}`}
           >
             {item.label}
           </span>
@@ -31,7 +40,7 @@ export default function TabNav({ items }: { items: TabNavItem[] }) {
           <button
             key={item.label}
             onClick={item.onClick}
-            className="flex-1 text-center text-xs font-semibold py-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-all whitespace-nowrap px-3"
+            className={`flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 ${SEGMENT.idle}`}
           >
             {item.label}
           </button>
@@ -39,7 +48,7 @@ export default function TabNav({ items }: { items: TabNavItem[] }) {
           <Link
             key={item.label}
             to={item.to}
-            className="flex-1 text-center text-xs font-semibold py-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 transition-all whitespace-nowrap px-3"
+            className={`flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 ${SEGMENT.idle}`}
           >
             {item.label}
           </Link>

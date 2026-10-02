@@ -434,7 +434,7 @@ export default function ZikrCounter() {
 
   // Bustan Arch controls (audit T3.2): theme radii and borders, no glows.
   const chipFrame =
-    'rounded-control border border-brand-border bg-shade/20 hover:border-brand-emerald/40 transition-colors';
+    'rounded-control border border-brand-border bg-brand-deep shadow-elev-1 hover:border-brand-emerald/40 transition-colors';
   const chip = `${chipFrame} text-white/70 hover:text-white`;
   const roundBtn =
     'w-12 h-12 rounded-control border border-brand-border bg-brand-deep text-white/80 shadow-elev-1 hover:shadow-hover flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-[color,border-color,box-shadow]';

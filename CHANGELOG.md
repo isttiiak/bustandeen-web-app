@@ -15,6 +15,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - Salat analytics per-prayer cards use the theme card (dark or sage paper) with the prayer's SVG glyph and SVG icons instead of coloured gradients and emoji.
 - Streak and goal cards on Zikr analytics follow the Bustan Arch design: no glow orbs, sparkles or gradient text; theme buttons for pause and edit; the grace-day explainer and legend use SVG marks instead of emoji (English and Bangla copy without emoji or em dashes).
+- Light theme buttons: the Counter / Analytics (and Tracker / Analytics) switcher is a raised paper pill on a sage track instead of grey tints, and the small buttons in the dhikr row are raised paper buttons.
 - Every card on Zikr and Salat analytics has the same raised shadow and radius, with more space between sections. The time-of-day chart no longer draws a second card inside its section.
 
 ### Changed (developers)
