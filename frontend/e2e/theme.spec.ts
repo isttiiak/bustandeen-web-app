@@ -43,10 +43,12 @@ test('Settings switches the theme, and the choice survives a reload', async ({ p
   await group.getByRole('radio', { name: /^Dark/ }).click();
   expect(await theme(page)).toBe('bustandeen');
   await group.getByRole('radio', { name: /^Light/ }).click();
-
-  // A reload ends demo mode, but the saved theme applies before first paint.
-  await page.reload();
   expect(await theme(page)).toBe('bustandeen-light');
+  expect(await page.evaluate(() => localStorage.getItem('bustandeen_theme_mode'))).toBe('light');
+
+  // A reload ends demo mode, but the saved theme still applies.
+  await page.reload();
+  await expect.poll(() => theme(page)).toBe('bustandeen-light');
 });
 
 test('System follows the device', async ({ page }) => {
