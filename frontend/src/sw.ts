@@ -11,7 +11,7 @@ import {
   createHandlerBoundToURL,
 } from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
-import { CacheFirst, NetworkFirst } from 'workbox-strategies';
+import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
 import { isLandingPath, isSeoPagePath } from './seo/staticPaths.js';
@@ -90,7 +90,22 @@ registerRoute(
   })
 );
 
-// Quran text + surah meta (immutable content) — cache-first, 30 days
+// Bundled Tanzil Arabic text (audit T2.6), one file per surah. Not precached
+// (1.8 MB for all 114): each surah is kept once it has been opened, so it
+// reads offline from then on. Stale-while-revalidate rather than cache-first
+// so a corrected Tanzil release still reaches people who already have it.
+registerRoute(
+  ({ url }) => url.origin === self.location.origin && url.pathname.startsWith('/quran/uthmani/'),
+  new StaleWhileRevalidate({
+    cacheName: 'quran-uthmani',
+    plugins: [
+      new ExpirationPlugin({ maxEntries: 120 }),
+      new CacheableResponsePlugin({ statuses: [200] }),
+    ],
+  })
+);
+
+// Translations, transliteration + surah meta (immutable content) — cache-first, 30 days
 registerRoute(
   ({ url }) => url.origin === 'https://api.alquran.cloud',
   new CacheFirst({

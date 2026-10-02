@@ -11,3 +11,5 @@ frontend/playwright-report
 # The one-line inline theme script is CSP-hashed (vercel.json, check-csp.mjs):
 # reformatting it would change the hash.
 frontend/index.html
+# Tanzil Quran text: verbatim, never reformatted (audit T2.6).
+frontend/data/tanzil

@@ -6,3 +6,7 @@
 
 # Vitest snapshots (kept explicit; covered by the rule above).
 *.snap text eol=lf
+
+# Tanzil Quran text (audit T2.6): kept byte for byte as downloaded (verbatim
+# copies only; its SHA-256 is pinned in frontend/scripts/build-quran-text.mjs).
+frontend/data/tanzil/** -text -diff
