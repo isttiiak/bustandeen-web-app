@@ -86,3 +86,110 @@ export const getRateLimitSummary = async (): Promise<RateLimitHitSummary[]> => {
     lastHit: r.lastHit,
   }));
 };
+
+/** Atlas M0 caps a free cluster at 512 MB of uncompressed BSON plus index
+ *  bytes (not the compressed `storageSize` on disk). */
+export const M0_STORAGE_CAP_BYTES = 512 * 1024 * 1024;
+export const STORAGE_WARN_RATIO = 0.7;
+
+/** True once usage reaches 70% of the cap. */
+export const isStorageNearCap = (totalBytes: number, capBytes = M0_STORAGE_CAP_BYTES): boolean =>
+  totalBytes / capBytes >= STORAGE_WARN_RATIO;
+
+export interface CollectionSize {
+  name: string;
+  documents: number;
+  dataBytes: number;
+  indexBytes: number;
+  totalBytes: number;
+}
+
+export interface DatabaseSize {
+  name: string;
+  totalBytes: number;
+}
+
+export interface StorageUsage {
+  /** The app's own database, per collection. */
+  collections: CollectionSize[];
+  /** Every other database on the cluster: they share the same cap. */
+  otherDatabases: DatabaseSize[];
+  /** Totals below are for the whole cluster. */
+  dataBytes: number;
+  indexBytes: number;
+  totalBytes: number;
+  capBytes: number;
+  usedRatio: number;
+  warn: boolean;
+}
+
+// Atlas refuses dbStats on these, and they don't count toward the cap.
+const INTERNAL_DATABASES = new Set(['admin', 'local', 'config']);
+
+/** Read-only size metadata ($collStats, dbStats); never reads or writes
+ *  documents. The cap is per cluster, so other databases on it count too. */
+export const getStorageUsage = async (): Promise<StorageUsage> => {
+  const db = mongoose.connection.db;
+  if (!db) throw new Error('MongoDB is not connected');
+
+  // Views and system collections have no storage of their own.
+  const names = (await db.listCollections({ type: 'collection' }, { nameOnly: true }).toArray())
+    .map((c) => c.name)
+    .filter((n) => !n.startsWith('system.'));
+
+  const collections = await Promise.all(
+    names.map(async (name): Promise<CollectionSize> => {
+      const [stats] = await db
+        .collection(name)
+        .aggregate<{
+          storageStats: { count: number; size: number; totalIndexSize: number };
+        }>([{ $collStats: { storageStats: {} } }])
+        .toArray();
+      const s = stats?.storageStats;
+      const dataBytes = s?.size ?? 0;
+      const indexBytes = s?.totalIndexSize ?? 0;
+      return {
+        name,
+        documents: s?.count ?? 0,
+        dataBytes,
+        indexBytes,
+        totalBytes: dataBytes + indexBytes,
+      };
+    })
+  );
+  collections.sort((a, b) => b.totalBytes - a.totalBytes);
+
+  const client = mongoose.connection.getClient();
+  const { databases } = await db.admin().listDatabases({ nameOnly: true });
+  const others = await Promise.all(
+    databases
+      .map((d) => d.name)
+      .filter((name) => name !== db.databaseName && !INTERNAL_DATABASES.has(name))
+      .map(async (name) => {
+        const s = await client.db(name).stats();
+        return { name, dataBytes: s.dataSize ?? 0, indexBytes: s.indexSize ?? 0 };
+      })
+  );
+  const otherDatabases = others
+    .map((d) => ({ name: d.name, totalBytes: d.dataBytes + d.indexBytes }))
+    .sort((a, b) => b.totalBytes - a.totalBytes);
+
+  const sum = (
+    rows: { dataBytes: number; indexBytes: number }[],
+    key: 'dataBytes' | 'indexBytes'
+  ) => rows.reduce((total, r) => total + r[key], 0);
+  const dataBytes = sum(collections, 'dataBytes') + sum(others, 'dataBytes');
+  const indexBytes = sum(collections, 'indexBytes') + sum(others, 'indexBytes');
+  const totalBytes = dataBytes + indexBytes;
+
+  return {
+    collections,
+    otherDatabases,
+    dataBytes,
+    indexBytes,
+    totalBytes,
+    capBytes: M0_STORAGE_CAP_BYTES,
+    usedRatio: totalBytes / M0_STORAGE_CAP_BYTES,
+    warn: isStorageNearCap(totalBytes),
+  };
+};

@@ -1,7 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
-import { useOpsHealth, useRateLimitHits, type SenderDiagnostics } from '../hooks/useAdminOps.js';
+import {
+  useOpsHealth,
+  useRateLimitHits,
+  useStorageUsage,
+  type SenderDiagnostics,
+  type StorageUsage,
+} from '../hooks/useAdminOps.js';
 
 function StatusPill({ ok, label }: { ok: boolean; label: string }) {
   return (
@@ -15,10 +21,120 @@ function StatusPill({ ok, label }: { ok: boolean; label: string }) {
   );
 }
 
+function formatBytes(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function StorageSection({ storage }: { storage: StorageUsage }) {
+  const { t } = useTranslation();
+  const pct = storage.usedRatio * 100;
+  return (
+    <section className="space-y-2">
+      <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+        {t('adminOpsHealth.storage', 'Database storage (Atlas M0 cap)')}
+      </h2>
+      <div
+        className={`rounded-2xl border p-4 space-y-3 ${
+          storage.warn ? 'border-red-500/30 bg-red-500/[0.06]' : 'border-white/10 bg-white/[0.03]'
+        }`}
+      >
+        {storage.warn && (
+          <p className="text-red-300 font-bold text-sm">
+            ⚠️{' '}
+            {t(
+              'adminOpsHealth.storageWarn',
+              'Over 70% of the 512 MB free-tier cap. Writes fail once it is full: prune old data or upgrade the cluster soon.'
+            )}
+          </p>
+        )}
+        <div className="flex items-baseline justify-between gap-3">
+          <p className="text-white text-lg font-black">
+            {formatBytes(storage.totalBytes)}{' '}
+            <span className="text-white/40 text-sm font-normal">
+              / {formatBytes(storage.capBytes)}
+            </span>
+          </p>
+          <p className={`text-sm font-black ${storage.warn ? 'text-red-300' : 'text-brand-gold'}`}>
+            {pct < 0.1 ? '<0.1' : pct.toFixed(1)}%
+          </p>
+        </div>
+        <div
+          className="h-2 rounded-full bg-white/10 overflow-hidden"
+          role="progressbar"
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={Math.round(pct)}
+          aria-label={t('adminOpsHealth.storage', 'Database storage (Atlas M0 cap)')}
+        >
+          <div
+            className={`h-full ${storage.warn ? 'bg-red-400' : 'bg-brand-emerald'}`}
+            style={{ width: `${Math.min(100, Math.max(pct, 0.5))}%` }}
+          />
+        </div>
+        <p className="text-white/40 text-xs">
+          {t('adminOpsHealth.storageBreakdown', {
+            defaultValue:
+              'Documents {{data}} + indexes {{index}} (uncompressed, as Atlas counts it)',
+            data: formatBytes(storage.dataBytes),
+            index: formatBytes(storage.indexBytes),
+          })}
+        </p>
+        <div className="max-h-72 overflow-y-auto">
+          <table className="w-full text-xs">
+            <thead>
+              <tr className="text-white/40 text-left">
+                <th className="font-normal pb-1">{t('adminOpsHealth.collection', 'Collection')}</th>
+                <th className="font-normal pb-1 text-right">{t('adminOpsHealth.docs', 'Docs')}</th>
+                <th className="font-normal pb-1 text-right">{t('adminOpsHealth.data', 'Data')}</th>
+                <th className="font-normal pb-1 text-right">
+                  {t('adminOpsHealth.indexes', 'Indexes')}
+                </th>
+                <th className="font-normal pb-1 text-right">
+                  {t('adminOpsHealth.total', 'Total')}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {storage.collections.map((c) => (
+                <tr key={c.name} className="border-t border-white/5 text-white/70">
+                  <td className="py-1 font-mono truncate max-w-[10rem]">{c.name}</td>
+                  <td className="py-1 text-right">{c.documents.toLocaleString()}</td>
+                  <td className="py-1 text-right">{formatBytes(c.dataBytes)}</td>
+                  <td className="py-1 text-right">{formatBytes(c.indexBytes)}</td>
+                  <td className="py-1 text-right font-bold">{formatBytes(c.totalBytes)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {(storage.otherDatabases ?? []).length > 0 && (
+          <div className="space-y-1 border-t border-white/10 pt-3">
+            <p className="text-white/40 text-xs">
+              {t(
+                'adminOpsHealth.otherDatabases',
+                'Other databases on the cluster (they count toward the same cap):'
+              )}
+            </p>
+            {storage.otherDatabases.map((d) => (
+              <div key={d.name} className="flex justify-between text-xs text-white/70">
+                <span className="font-mono">{d.name}</span>
+                <span className="font-bold">{formatBytes(d.totalBytes)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export default function AdminOpsHealth() {
   const { t } = useTranslation();
   const { data: health, isLoading } = useOpsHealth();
   const { data: hits } = useRateLimitHits();
+  const { data: storage } = useStorageUsage();
 
   // Defensive against a stale cached frontend bundle briefly calling into an
   // API response shape it wasn't built against (this page's response shape
@@ -104,6 +220,8 @@ export default function AdminOpsHealth() {
                 </div>
               </section>
             </div>
+
+            {storage?.collections && <StorageSection storage={storage} />}
 
             <div className="grid lg:grid-cols-2 gap-6">
               <section className="space-y-2">

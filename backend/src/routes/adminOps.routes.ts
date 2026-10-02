@@ -9,5 +9,6 @@ router.use(requireAdminAuth, requireServant);
 
 router.get('/health', adminOpsController.healthHandler);
 router.get('/rate-limit-hits', adminOpsController.rateLimitHitsHandler);
+router.get('/storage', adminOpsController.storageHandler);
 
 export default router;

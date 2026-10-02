@@ -26,3 +26,16 @@ export const rateLimitHitsHandler = async (
     next(err);
   }
 };
+
+export const storageHandler = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const storage = await adminOpsService.getStorageUsage();
+    res.json({ ok: true, ...storage });
+  } catch (err) {
+    next(err);
+  }
+};

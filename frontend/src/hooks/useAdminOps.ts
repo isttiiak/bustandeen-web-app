@@ -48,3 +48,33 @@ export function useRateLimitHits() {
     staleTime: 15_000,
   });
 }
+
+export interface CollectionSize {
+  name: string;
+  documents: number;
+  dataBytes: number;
+  indexBytes: number;
+  totalBytes: number;
+}
+
+export interface StorageUsage {
+  collections: CollectionSize[];
+  otherDatabases: { name: string; totalBytes: number }[];
+  dataBytes: number;
+  indexBytes: number;
+  totalBytes: number;
+  capBytes: number;
+  usedRatio: number;
+  warn: boolean;
+}
+
+export function useStorageUsage() {
+  return useQuery<StorageUsage>({
+    queryKey: ['admin', 'ops', 'storage'],
+    queryFn: async () => {
+      const res = await api.get<{ ok: boolean } & StorageUsage>('/api/admin/ops/storage');
+      return res.data;
+    },
+    staleTime: 60_000,
+  });
+}
