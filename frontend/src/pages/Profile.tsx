@@ -5,7 +5,7 @@ import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage
 import { API_BASE, getIdToken } from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { auth, googleProvider, storage } from '../firebase.js';
-import { linkWithPopup, unlink, AuthError } from 'firebase/auth';
+import { browserPopupRedirectResolver, linkWithPopup, unlink, AuthError } from 'firebase/auth';
 import { motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
@@ -408,7 +408,11 @@ export default function Profile() {
     if (linkingGoogle || !auth.currentUser) return;
     setLinkingGoogle(true);
     try {
-      const result = await linkWithPopup(auth.currentUser, googleProvider);
+      const result = await linkWithPopup(
+        auth.currentUser,
+        googleProvider,
+        browserPopupRedirectResolver
+      );
       const googleInfo = result.user.providerData.find((p) => p.providerId === 'google.com');
       if (!googleInfo) {
         setLinkingGoogle(false);

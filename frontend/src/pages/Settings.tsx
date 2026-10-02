@@ -9,6 +9,7 @@ import {
   signOut,
   reauthenticateWithCredential,
   reauthenticateWithPopup,
+  browserPopupRedirectResolver,
   EmailAuthProvider,
   type AuthError,
 } from 'firebase/auth';
@@ -736,7 +737,7 @@ export default function Settings() {
     setReauthBusy(true);
     setReauthError(null);
     try {
-      await reauthenticateWithPopup(auth.currentUser, googleProvider);
+      await reauthenticateWithPopup(auth.currentUser, googleProvider, browserPopupRedirectResolver);
       await runDeleteAccount();
     } catch (err) {
       setReauthError(reauthErrorMessage(err));
