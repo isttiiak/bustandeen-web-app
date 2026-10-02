@@ -25,6 +25,8 @@
   --c-warm-dim: 160 104 64;
   --c-ink: 255 255 255;
   --c-shade: 0 0 0;
+  /* The hero card's gradient start (Bustan Arch): warm on dark, sage on paper */
+  --c-hero: 42 38 23;
   /* Quran reader's muṣḥaf card */
   --c-reader-from: 13 27 23;
   --c-reader-via: 10 20 18;
@@ -67,6 +69,7 @@
   --c-warm-dim: 104 52 26;
   --c-ink: 31 36 24;
   --c-shade: 120 135 100;
+  --c-hero: 217 227 198;
   --c-reader-from: 250 250 242;
   --c-reader-via: 246 247 236;
   --c-reader-to: 238 242 228;
@@ -85,6 +88,11 @@
   --elev-2: 0 12px 26px -10px rgb(40 50 25 / 0.42);
   --elev-3: 0 22px 44px -14px rgb(40 50 25 / 0.55);
   color-scheme: light;
+}
+
+/* Bustan Arch: the one arch per screen, on its hero card (T3.2). */
+.rounded-arch {
+  border-radius: 50% 50% 1.25rem 1.25rem / 4.5rem 4.5rem 1.25rem 1.25rem;
 }
 
 /* Hex aliases for inline styles and SVG */

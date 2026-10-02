@@ -2,12 +2,16 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { StreakState } from '../types/api.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
+import { FireIcon, PauseIcon, TrophyIcon } from '@heroicons/react/24/outline';
+import { FrostIcon, TargetIcon } from './icons/IslamicIcons.js';
 
 /**
  * Shared streak & goal capsules (Home card, Navbar, ZikrCounter).
- * Streak: 🔥 active · 🧊 grace (frozen — complete today to save it) ·
- *         red muted 🔥 with 0 when dead · ⏸️ paused.
- * Goal:   🎯 with % while in progress · 🏆 when completed.
+ * Streak: flame active · frost in the grace day (complete today to save it) ·
+ *         muted red flame with 0 when dead · pause when paused.
+ * Goal:   target with % while in progress · trophy when completed.
+ * `icon` (emoji) is kept for screens not yet redesigned (Friends); badges
+ * render the SVG `Icon` (audit T3.2).
  */
 
 export function streakVisual(
@@ -16,6 +20,7 @@ export function streakVisual(
   t: (key: string, fallback: string, opts?: Record<string, unknown>) => string
 ): {
   icon: string;
+  Icon: (p: { className?: string }) => React.ReactNode;
   cls: string;
   tip: string;
   iconCls?: string;
@@ -23,6 +28,8 @@ export function streakVisual(
   if (state === 'paused') {
     return {
       icon: '⏸️',
+      Icon: PauseIcon,
+      iconCls: 'text-brand-pink',
       cls: 'bg-brand-pink/15 border-brand-pink/40',
       tip: t('statusBadges.streakPaused', 'Streak paused — resume from analytics'),
     };
@@ -30,6 +37,8 @@ export function streakVisual(
   if (state === 'grace') {
     return {
       icon: '🧊',
+      Icon: FrostIcon,
+      iconCls: 'text-brand-info',
       cls: 'bg-brand-info/15 border-brand-info/50',
       tip: t(
         'statusBadges.streakFrozen',
@@ -41,13 +50,16 @@ export function streakVisual(
   if (streak <= 0 || state === 'none') {
     return {
       icon: '🔥',
-      iconCls: 'grayscale opacity-70',
+      Icon: FireIcon,
+      iconCls: 'text-red-400',
       cls: 'bg-red-500/15 border-red-400/50',
       tip: t('statusBadges.noStreak', 'No streak yet — meet your daily goal to light the fire'),
     };
   }
   return {
     icon: '🔥',
+    Icon: FireIcon,
+    iconCls: 'text-brand-gold',
     cls: 'bg-brand-gold/20 border-brand-gold/40',
     tip: t('statusBadges.streakActive', '{{streak}}-day streak — keep it burning!', {
       streak: formatLocaleNumber(streak),
@@ -74,9 +86,7 @@ export function StreakBadge({
           size === 'md' ? 'px-2.5 py-1 text-sm' : 'px-2 py-0.5 text-xs'
         }`}
       >
-        <span className={v.iconCls} aria-hidden>
-          {v.icon}
-        </span>
+        <v.Icon className={`w-3.5 h-3.5 shrink-0 ${v.iconCls ?? ''}`} />
         <span className={dead ? 'text-red-300' : state === 'grace' ? 'text-brand-info' : ''}>
           {formatLocaleNumber(Math.max(0, streak))}
         </span>
@@ -112,7 +122,11 @@ export function GoalBadge({
             : 'bg-white/10 border-brand-emerald/20'
         } ${size === 'md' ? 'px-2.5 py-1 text-sm' : 'px-2 py-0.5 text-xs'}`}
       >
-        <span aria-hidden>{met ? '🏆' : '🎯'}</span>
+        {met ? (
+          <TrophyIcon className="w-3.5 h-3.5 shrink-0 text-brand-emerald" aria-hidden="true" />
+        ) : (
+          <TargetIcon className="w-3.5 h-3.5 shrink-0 text-brand-emerald" />
+        )}
         <span className={met ? 'text-brand-emerald' : ''}>
           {met ? `${formatLocaleNumber(100)}%` : `${formatLocaleNumber(pct)}%`}
         </span>

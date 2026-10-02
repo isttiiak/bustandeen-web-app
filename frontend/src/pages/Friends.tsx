@@ -829,9 +829,9 @@ export default function Friends() {
                         </span>
                       )}
                       <span
-                        className={`px-2 py-0.5 rounded-full border text-[10px] font-bold text-white/70 ${sv.cls}`}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-bold text-white/70 ${sv.cls}`}
                       >
-                        <span className={sv.iconCls}>{sv.icon}</span>{' '}
+                        <sv.Icon className={`w-3 h-3 shrink-0 ${sv.iconCls ?? ''}`} />
                         {t('friends.zikrStreakStat', { count: formatLocaleNumber(f.zikrStreak) })}
                       </span>
                       <span className="px-2 py-0.5 rounded-full bg-white/10 border border-brand-emerald/10 text-[10px] font-bold text-white/60">
