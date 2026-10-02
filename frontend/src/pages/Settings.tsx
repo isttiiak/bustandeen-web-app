@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';

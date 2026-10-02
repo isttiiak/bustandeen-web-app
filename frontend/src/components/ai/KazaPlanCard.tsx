@@ -1,4 +1,4 @@
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { AiPanel, AiBadge, AiDisclaimer } from './AiFlair.js';
 import { useKazaPlan } from '../../hooks/useNaseeh.js';

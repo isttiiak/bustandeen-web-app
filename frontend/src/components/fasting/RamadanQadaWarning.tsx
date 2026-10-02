@@ -1,5 +1,5 @@
 import { useTranslation, Trans } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 
 export interface RamadanQadaWarningProps {
   qadaRemaining: number;

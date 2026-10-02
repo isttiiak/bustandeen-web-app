@@ -1,6 +1,6 @@
 import type { NavigateFunction } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 
 export interface SalatGuestDialogProps {
   navigate: NavigateFunction;

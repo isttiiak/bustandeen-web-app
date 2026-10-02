@@ -18,7 +18,7 @@ import {
   EnvelopeIcon,
   ArrowLeftIcon,
 } from '@heroicons/react/24/outline';
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { m as motion, AnimatePresence, type Variants } from 'framer-motion';
 
 type Translator = (key: string, fallback: string) => string;
 

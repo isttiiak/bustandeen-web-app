@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { Trans, useTranslation } from 'react-i18next';
 import { translateReference } from '../utils/localeReference.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';

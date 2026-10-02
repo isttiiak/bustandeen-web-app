@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
 import { todayStr } from './salatParts.js';

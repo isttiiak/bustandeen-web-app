@@ -1,6 +1,7 @@
 ﻿import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
+import { LazyMotion } from 'framer-motion';
 import { QueryClient } from '@tanstack/react-query';
 import {
   PersistQueryClientProvider,
@@ -70,6 +71,12 @@ try {
 // After the detected language's strings have loaded (Bangla is its own chunk,
 // see i18n.ts). If that load fails, render anyway: i18next falls back to the
 // bundled English.
+// Animation features (about 15 KB compressed) load after the app starts:
+// components import `m as motion` (eslint enforces it), and `strict` throws if
+// a full `motion` component ever slips back in. Until the features arrive,
+// elements show their `initial` state (audit PERF-01 follow-up).
+const loadMotionFeatures = () => import('./motionFeatures.js').then((mod) => mod.default);
+
 const render = () =>
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
@@ -82,13 +89,15 @@ const render = () =>
           buster: 'v1',
         }}
       >
-        <BrowserRouter>
-          <ThemeInit />
-          <UiInit />
-          <ErrorBoundary>
-            <App />
-          </ErrorBoundary>
-        </BrowserRouter>
+        <LazyMotion features={loadMotionFeatures} strict>
+          <BrowserRouter>
+            <ThemeInit />
+            <UiInit />
+            <ErrorBoundary>
+              <App />
+            </ErrorBoundary>
+          </BrowserRouter>
+        </LazyMotion>
         <ReactQueryDevtools initialIsOpen={false} />
       </PersistQueryClientProvider>
     </React.StrictMode>

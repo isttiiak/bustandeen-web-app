@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { UserCircleIcon, CameraIcon, MapPinIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
 import { CountryFlag, SPARKLE_POSITIONS } from './profileParts.js';
 

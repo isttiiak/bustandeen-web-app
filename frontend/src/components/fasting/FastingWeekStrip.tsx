@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { formatLocaleDate } from '../../utils/localeDate.js';
 import { friendlyDate } from './fastingParts.js';
 

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { PrayerId } from '../../hooks/useSalatLog.js';
 import { translateSalatName } from '../../utils/prayerTimes.js';
 import { friendlyDate, MissedDayChips } from './salatParts.js';

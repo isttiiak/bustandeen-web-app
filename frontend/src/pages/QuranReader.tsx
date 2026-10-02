@@ -8,7 +8,7 @@
   type PointerEvent as ReactPointerEvent,
 } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import {

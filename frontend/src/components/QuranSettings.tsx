@@ -1,6 +1,6 @@
 ﻿import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';

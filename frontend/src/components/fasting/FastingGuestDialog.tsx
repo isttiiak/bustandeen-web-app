@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 
 export interface FastingGuestDialogProps {
   navigate: import('../../../node_modules/react-router/dist/development/index.js').NavigateFunction;

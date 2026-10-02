@@ -1,6 +1,6 @@
 // Fasting tracker building blocks (audit T2.4: moved out of pages/FastingTracker.tsx unchanged).
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { localTodayStr } from '../../hooks/useFasting.js';
 import { FastingCategory, FastingStatus, FastingRef } from '../../utils/fastingRules.js';
 import { formatLocaleDate } from '../../utils/localeDate.js';

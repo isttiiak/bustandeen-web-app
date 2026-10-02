@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { NaflType, NAFL_TYPE_META, SELECTABLE_NAFL_TYPES } from '../../hooks/useSalatLog.js';
 import { translateSalatName } from '../../utils/prayerTimes.js';
 import { MIN_RAKAT, isRamadanNow } from './salatParts.js';
@@ -118,7 +118,7 @@ export default function SalatNaflCard({
                       const typeRak = getTypeRakat(nt.id);
                       const isFixed = nt.id === 'awwabin';
                       return (
-                        <motion.div key={nt.id} layout className="flex flex-col">
+                        <div key={nt.id} className="flex flex-col">
                           <motion.button
                             whileTap={{ scale: 0.94 }}
                             onClick={() => handleNaflTypeToggle(nt.id)}
@@ -239,7 +239,7 @@ export default function SalatNaflCard({
                               </motion.div>
                             )}
                           </AnimatePresence>
-                        </motion.div>
+                        </div>
                       );
                     })}
                   </div>

@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAnalytics } from '../../hooks/useAnalytics.js';
 import { useQuranSummary } from '../../hooks/useQuran.js';
