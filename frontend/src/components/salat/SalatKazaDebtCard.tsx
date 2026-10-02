@@ -2,7 +2,9 @@ import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { PrayerId } from '../../hooks/useSalatLog.js';
 import { translateSalatName } from '../../utils/prayerTimes.js';
-import { friendlyDate, MissedDayChips } from './salatParts.js';
+import { ClockIcon } from '@heroicons/react/24/outline';
+import { PrayerGlyph } from '../icons/IslamicIcons.js';
+import { friendlyDate, MissedDayChips, DisclosureLabel } from './salatParts.js';
 
 export interface SalatKazaDebtCardProps {
   calendarDataMap: Map<string, number>;
@@ -48,32 +50,41 @@ export default function SalatKazaDebtCard({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.28 }}
           layout
-          className={`rounded-2xl border overflow-hidden transition-colors ${
+          className={`rounded-card border overflow-hidden shadow-elev-1 hover:shadow-hover transition-[border-color,box-shadow] ${
             (debt?.totalOwed ?? 0) > 0
-              ? 'bg-brand-gold/10 border-brand-gold/40'
-              : 'bg-brand-surface border-brand-border'
+              ? 'bg-brand-gold/[0.07] border-brand-gold/40'
+              : 'bg-brand-deep border-brand-border'
           }`}
         >
           <button
             onClick={() => setDebtExpanded((v) => !v)}
+            aria-expanded={debtExpanded}
             className="w-full p-3.5 flex items-center gap-3 text-left"
           >
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <span className="text-2xl shrink-0">⏳</span>
+              <span
+                className={`w-10 h-10 shrink-0 rounded-full border flex items-center justify-center ${
+                  (debt?.totalOwed ?? 0) > 0
+                    ? 'border-brand-gold/50 text-brand-gold'
+                    : 'border-brand-border text-white/70'
+                }`}
+              >
+                <ClockIcon className="w-5 h-5" aria-hidden="true" />
+              </span>
               <div className="min-w-0">
                 <p
-                  className={`font-bold text-sm leading-none ${(debt?.totalOwed ?? 0) > 0 ? 'text-brand-gold' : 'text-white/60'}`}
+                  className={`font-bold text-sm leading-none ${(debt?.totalOwed ?? 0) > 0 ? 'text-brand-gold' : 'text-white/70'}`}
                 >
                   {t('salatTracker.kazaDebtTitle', 'Kaza Debt')}
                 </p>
-                <p className="text-white/25 text-xs mt-0.5">
+                <p className="text-white/60 text-xs mt-0.5">
                   {(debt?.totalOwed ?? 0) > 0
                     ? t('salatTracker.kazaDebtOwed', '{{count}} prayers owed', {
                         count: debt?.totalOwed ?? 0,
                       })
-                    : t('salatTracker.kazaDebtNone', 'Nothing owed — MashaAllah')}
+                    : t('salatTracker.kazaDebtNone', 'Nothing owed, MashaAllah')}
                   {debt?.since && (
-                    <span className="text-white/15">
+                    <span className="text-white/50">
                       {' · '}
                       {t('salatTracker.kazaDebtSince', 'since {{date}}', {
                         date: friendlyDate(debt.since, t),
@@ -83,10 +94,8 @@ export default function SalatKazaDebtCard({
                 </p>
               </div>
             </div>
-            <span className="text-white/20 text-xs shrink-0">
-              {debtExpanded
-                ? t('salatTracker.less', '▲ Less')
-                : t('salatTracker.details', '▾ Details')}
+            <span className="text-white/50 text-xs shrink-0">
+              <DisclosureLabel open={debtExpanded} />
             </span>
           </button>
 
@@ -97,13 +106,13 @@ export default function SalatKazaDebtCard({
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="overflow-hidden border-t border-brand-emerald/10"
+                className="overflow-hidden border-t border-brand-border/70"
               >
                 <div className="px-3 py-3 space-y-2">
-                  <p className="text-white/30 text-[11px] leading-relaxed">
+                  <p className="text-white/60 text-[11px] leading-relaxed">
                     {t(
                       'salatTracker.kazaDebtHint',
-                      "Added automatically once a prayer's day passes without it being logged — no need to tap ❌ Miss yourself. Owe some from before you started tracking? Set a starting count for each below."
+                      "Added automatically once a prayer's day passes without it being logged, so there is no need to tap Miss yourself. Owe some from before you started tracking, or need to correct a number? Just edit it directly below."
                     )}
                   </p>
                   {trackablePrayers.map((prayer) => {
@@ -113,13 +122,17 @@ export default function SalatKazaDebtCard({
                     return (
                       <div
                         key={prayerId}
-                        className="flex items-center gap-2 py-1.5 border-t border-brand-emerald/5 first:border-t-0"
+                        className="flex items-center gap-2 py-1.5 border-t border-brand-border/50 first:border-t-0"
                       >
-                        <span className="text-lg shrink-0">{prayer.icon}</span>
-                        <span className="text-white/60 text-xs font-semibold flex-1 min-w-0 truncate">
+                        <PrayerGlyph id={prayer.id} className="w-4 h-4 shrink-0 text-white/60" />
+                        <label
+                          htmlFor={`kaza-debt-${prayerId}`}
+                          className="text-white/70 text-xs font-semibold flex-1 min-w-0 truncate"
+                        >
                           {translateSalatName(prayer.id, prayer.name, t)}
-                        </span>
+                        </label>
                         <input
+                          id={`kaza-debt-${prayerId}`}
                           type="number"
                           inputMode="numeric"
                           min={0}
@@ -144,7 +157,7 @@ export default function SalatKazaDebtCard({
                           className={`w-14 px-2 py-1 rounded-lg bg-brand-deep border text-xs text-center font-bold tabular-nums ${
                             owed > 0
                               ? 'border-brand-gold/40 text-brand-gold'
-                              : 'border-brand-border text-white/50'
+                              : 'border-brand-border text-white/70'
                           }`}
                         />
                       </div>
@@ -165,12 +178,12 @@ export default function SalatKazaDebtCard({
                   />
 
                   {(debt?.totalOwed ?? 0) > 0 && (
-                    <div className="pt-2.5 mt-1 border-t border-brand-emerald/5">
+                    <div className="pt-2.5 mt-1 border-t border-brand-border/50">
                       <button
                         onClick={() => setShowSettings(true)}
-                        className="text-brand-gold/60 hover:text-brand-gold text-[11px] underline underline-offset-2"
+                        className="text-brand-gold/80 hover:text-brand-gold text-[11px] underline underline-offset-2"
                       >
-                        {t('salatTracker.kazaDebtResetPointer', '🌱 Reset it in ⚙️ Salat settings')}
+                        {t('salatTracker.kazaDebtResetPointer', 'Reset it in Salat settings')}
                       </button>
                     </div>
                   )}

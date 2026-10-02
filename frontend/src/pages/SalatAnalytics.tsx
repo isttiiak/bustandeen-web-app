@@ -255,8 +255,8 @@ export default function SalatAnalytics() {
         tabs={
           <TabNav
             items={[
-              { label: `🕌 ${t('salat.tracker')}`, to: '/salat' },
-              { label: `📊 ${t('salat.analytics')}`, to: '/salat/analytics', active: true },
+              { label: t('salat.tracker'), to: '/salat' },
+              { label: t('salat.analytics'), to: '/salat/analytics', active: true },
             ]}
           />
         }
@@ -271,8 +271,8 @@ export default function SalatAnalytics() {
           {/* Tab navigation — mirrors SalatTracker */}
           <TabNav
             items={[
-              { label: `🕌 ${t('salat.tracker')}`, to: '/salat' },
-              { label: `📊 ${t('salat.analytics')}`, to: '/salat/analytics', active: true },
+              { label: t('salat.tracker'), to: '/salat' },
+              { label: t('salat.analytics'), to: '/salat/analytics', active: true },
             ]}
           />
           <IntentionLine />

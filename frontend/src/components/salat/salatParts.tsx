@@ -8,6 +8,16 @@ import type { PrayerId, PrayerLocation, PrayerStatus } from '../../hooks/useSala
 import type { SunnahSlot } from '../../utils/sunnahGuide.js';
 import { formatLocaleDate } from '../../utils/localeDate.js';
 import { translateReference } from '../../utils/localeReference.js';
+import {
+  BackwardIcon,
+  BookOpenIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  ForwardIcon,
+  HomeIcon,
+  UserGroupIcon,
+} from '@heroicons/react/24/outline';
+import { MosqueIcon, type IconProps } from '../icons/IslamicIcons.js';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -73,19 +83,25 @@ export function SunnahGuidanceRow({
   const cls = muakkadah
     ? {
         wrap: 'px-3 py-2.5 border-t border-brand-emerald/20 flex items-start gap-2 bg-brand-emerald/5',
+        icon: 'text-brand-emerald',
         title: 'text-brand-emerald font-bold text-xs leading-tight',
         sub: 'text-brand-emerald/70 font-normal',
         link: 'text-brand-emerald/50 text-xs underline hover:text-brand-emerald/80 transition-colors mt-0.5 inline-block',
       }
     : {
         wrap: 'px-3 py-2.5 border-t border-brand-info/20 flex items-start gap-2 bg-brand-info/5',
+        icon: 'text-brand-info',
         title: 'text-brand-info font-bold text-xs leading-tight',
         sub: 'text-brand-info/70 font-normal',
         link: 'text-brand-info/50 text-xs underline hover:text-brand-info/80 transition-colors mt-0.5 inline-block',
       };
   return (
     <div className={cls.wrap}>
-      <span className="text-base shrink-0">{position === 'before' ? '⏮️' : '⏭️'}</span>
+      {position === 'before' ? (
+        <BackwardIcon className={`w-4 h-4 mt-px shrink-0 ${cls.icon}`} aria-hidden="true" />
+      ) : (
+        <ForwardIcon className={`w-4 h-4 mt-px shrink-0 ${cls.icon}`} aria-hidden="true" />
+      )}
       <div className="min-w-0">
         <p className={cls.title}>
           {position === 'before'
@@ -96,8 +112,8 @@ export function SunnahGuidanceRow({
           {' · '}
           <span className={cls.sub}>
             {muakkadah
-              ? t('salatTracker.sunnahMuakkadah', 'Muʾakkadah — confirmed')
-              : t('salatTracker.sunnahGhairMuakkadah', 'Nafl — recommended')}
+              ? t('salatTracker.sunnahMuakkadah', 'Muʾakkadah (confirmed)')
+              : t('salatTracker.sunnahGhairMuakkadah', 'Nafl (recommended)')}
           </span>
         </p>
         <p className="text-white/30 text-xs leading-relaxed mt-0.5">{slot.note}</p>
@@ -108,17 +124,39 @@ export function SunnahGuidanceRow({
           onClick={(e) => e.stopPropagation()}
           className={cls.link}
         >
-          📖 {translateReference(slot.source, lang)} · {translateReference(slot.grade, lang)}
+          <RefIcon />
+          {translateReference(slot.source, lang)} · {translateReference(slot.grade, lang)}
         </a>
       </div>
     </div>
   );
 }
-export function weekDotColor(completed: number): string {
-  if (completed >= 5) return '#10b981'; // brand-emerald
-  if (completed >= 3) return '#c9a96e'; // brand-gold
-  if (completed >= 1) return '#f59e0b'; // amber
-  return '#ef4444'; // red — logged nothing that day
+/** Small book mark before a hadith/Quran source link (replaces the 📖 emoji). */
+export function RefIcon() {
+  return <BookOpenIcon className="inline w-3.5 h-3.5 mr-1 -mt-0.5" aria-hidden="true" />;
+}
+
+/** "Details" / "Less" disclosure label with a chevron (replaces ▾ / ▲). */
+export function DisclosureLabel({ open }: { open: boolean }) {
+  const { t } = useTranslation();
+  return (
+    <span className="inline-flex items-center gap-1">
+      {open ? t('salatTracker.less', 'Less') : t('salatTracker.details', 'Details')}
+      {open ? (
+        <ChevronUpIcon className="w-3 h-3" aria-hidden="true" />
+      ) : (
+        <ChevronDownIcon className="w-3 h-3" aria-hidden="true" />
+      )}
+    </span>
+  );
+}
+
+/** Day dot class for the week strip and month calendar (theme tokens). */
+export function dayDotClass(completed: number): string {
+  if (completed >= 5) return 'bg-brand-emerald';
+  if (completed >= 3) return 'bg-brand-gold';
+  if (completed >= 1) return 'bg-brand-warm';
+  return 'bg-red-400'; // logged nothing that day
 }
 
 export function friendlyDate(
@@ -141,39 +179,33 @@ export function friendlyDate(
 export interface SubTagDef {
   value: PrayerLocation;
   label: string;
-  emoji: string;
+  Icon: (p: IconProps) => React.ReactNode;
   note: string;
 }
 
 export const LOCATION_TAGS: SubTagDef[] = [
-  { value: 'mosque', label: 'At Mosque', emoji: '🕌', note: 'in jamat' },
-  { value: 'jamat', label: 'In Jamat', emoji: '👥', note: 'not at mosque' },
-  { value: 'home', label: 'At Home', emoji: '🏠', note: 'alone' },
+  { value: 'mosque', label: 'At Mosque', Icon: MosqueIcon, note: 'in jamat' },
+  { value: 'jamat', label: 'In Jamat', Icon: UserGroupIcon, note: 'not at mosque' },
+  { value: 'home', label: 'At Home', Icon: HomeIcon, note: 'alone' },
 ];
 
-// Primary colour per status
-export const STATUS_STYLE: Record<
-  PrayerStatus,
-  { bg: string; border: string; text: string; emoji: string }
-> = {
+// Card tint per status (Bustan Arch: quiet tints on the deep card, no glow)
+export const STATUS_STYLE: Record<PrayerStatus, { bg: string; border: string; text: string }> = {
   completed: {
-    bg: 'bg-brand-emerald/20',
-    border: 'border-brand-emerald/60',
+    bg: 'bg-brand-emerald/[0.07]',
+    border: 'border-brand-emerald/40',
     text: 'text-brand-emerald',
-    emoji: '✅',
   },
   kaza: {
-    bg: 'bg-brand-gold/20',
-    border: 'border-brand-gold/60',
+    bg: 'bg-brand-gold/[0.07]',
+    border: 'border-brand-gold/40',
     text: 'text-brand-gold',
-    emoji: '⏰',
   },
-  missed: { bg: 'bg-red-500/20', border: 'border-red-400/60', text: 'text-red-400', emoji: '❌' },
+  missed: { bg: 'bg-red-400/[0.06]', border: 'border-red-400/35', text: 'text-red-400' },
   pending: {
-    bg: 'bg-brand-surface',
+    bg: 'bg-brand-deep',
     border: 'border-brand-border',
-    text: 'text-white/40',
-    emoji: '⬜',
+    text: 'text-white/70',
   },
 };
 
@@ -214,9 +246,9 @@ export function MissedDayChips({
   const hasMore = missedDays.length > CHIPS_PER_ROW * INITIAL_ROWS;
 
   return (
-    <div className="pt-2.5 mt-1 border-t border-brand-emerald/5 space-y-2">
-      <p className="text-white/20 text-[11px] font-semibold uppercase tracking-wide">
-        {t('salatTracker.kazaJumpTitle', '⚡ Quick-mark kaza')}
+    <div className="pt-2.5 mt-1 border-t border-brand-border/50 space-y-2">
+      <p className="text-white/50 text-[11px] font-semibold uppercase tracking-wide">
+        {t('salatTracker.kazaJumpTitle', 'Quick-mark kaza')}
       </p>
       <div className="flex flex-wrap gap-1.5">
         {visible.map(([d]) => (
@@ -227,7 +259,7 @@ export function MissedDayChips({
               setExpandedPrayer(null);
               setCalendarOpen(false);
             }}
-            className="px-2 py-1 rounded-lg bg-brand-deep border border-brand-gold/25 text-brand-gold/70 hover:border-brand-gold/60 hover:text-brand-gold text-[11px] font-semibold transition-all"
+            className="px-2 py-1 rounded-control bg-brand-deep border border-brand-gold/25 text-brand-gold/80 hover:border-brand-gold/60 hover:text-brand-gold text-[11px] font-semibold transition-colors"
           >
             {friendlyDate(d, t)}
           </button>
@@ -236,11 +268,11 @@ export function MissedDayChips({
       {hasMore && (
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="text-white/25 hover:text-white/50 text-[11px] underline underline-offset-2 transition-colors"
+          className="text-white/50 hover:text-white text-[11px] underline underline-offset-2 transition-colors"
         >
           {expanded
-            ? t('salatTracker.kazaJumpLess', '▲ Show fewer dates')
-            : t('salatTracker.kazaJumpMore', '▾ Show more dates ({{count}})', {
+            ? t('salatTracker.kazaJumpLess', 'Show fewer dates')
+            : t('salatTracker.kazaJumpMore', 'Show more dates ({{count}})', {
                 count: missedDays.length - visibleCount,
               })}
         </button>

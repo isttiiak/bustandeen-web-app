@@ -1,6 +1,7 @@
 import type { NavigateFunction } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
+import { MosqueIcon } from '../icons/IslamicIcons.js';
 
 export interface SalatGuestDialogProps {
   navigate: NavigateFunction;
@@ -32,9 +33,9 @@ export default function SalatGuestDialog({
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.92, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 22 }}
-              className="bg-brand-surface rounded-3xl p-6 w-full max-w-sm shadow-2xl border border-brand-border text-center"
+              className="bg-brand-surface rounded-card p-6 w-full max-w-sm shadow-elev-3 border border-brand-border text-center"
             >
-              <div className="text-5xl mb-4">🕌</div>
+              <MosqueIcon className="w-12 h-12 mx-auto mb-4 text-brand-emerald" />
               <h3 className="text-xl font-black text-white mb-2">
                 {t('salatTracker.signInToTrack', 'Sign in to track prayers')}
               </h3>

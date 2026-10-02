@@ -1,7 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
-import { todayStr } from './salatParts.js';
+import { todayStr, dayDotClass } from './salatParts.js';
 
 export interface SalatMonthCalendarProps {
   calMonth: string;
@@ -26,6 +27,7 @@ export default function SalatMonthCalendar({
   setExpandedPrayer,
   setSelectedDate,
 }: SalatMonthCalendarProps) {
+  const { t } = useTranslation();
   return (
     <>
       <AnimatePresence>
@@ -37,7 +39,7 @@ export default function SalatMonthCalendar({
             transition={{ duration: 0.22 }}
             className="overflow-hidden"
           >
-            <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-3">
+            <div className="rounded-card border border-brand-border bg-brand-deep shadow-elev-1 p-3">
               <div className="flex items-center justify-between mb-2">
                 <button
                   onClick={() => {
@@ -45,7 +47,8 @@ export default function SalatMonthCalendar({
                     const d = new Date(y!, m! - 2, 1);
                     setCalMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
                   }}
-                  className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
+                  aria-label={t('salatTracker.prevMonth', 'Previous month')}
+                  className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10"
                 >
                   <ChevronLeftIcon className="w-4 h-4" />
                 </button>
@@ -62,14 +65,15 @@ export default function SalatMonthCalendar({
                     setCalMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
                   }}
                   disabled={calMonth >= todayStr().substring(0, 7)}
-                  className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 disabled:opacity-20"
+                  aria-label={t('salatTracker.nextMonth', 'Next month')}
+                  className="p-1.5 rounded-lg text-white/60 hover:text-white hover:bg-white/10 disabled:opacity-20"
                 >
                   <ChevronRightIcon className="w-4 h-4" />
                 </button>
               </div>
               <div className="grid grid-cols-7 gap-1 text-center">
                 {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((d, i) => (
-                  <span key={i} className="text-white/25 text-[9px] font-bold uppercase">
+                  <span key={i} className="text-white/50 text-[9px] font-bold uppercase">
                     {d}
                   </span>
                 ))}
@@ -88,16 +92,7 @@ export default function SalatMonthCalendar({
                     const isTod = dateStr === todayStr();
                     const salatStart = localStorage.getItem('bustandeen_salat_start_date');
                     const isBeforeStart = salatStart ? dateStr < salatStart : false;
-                    const dot =
-                      completed === 5
-                        ? '#7a9e6e'
-                        : completed != null && completed >= 3
-                          ? '#c9a96e'
-                          : completed != null && completed >= 1
-                            ? '#f59e0b'
-                            : completed === 0
-                              ? '#ef4444'
-                              : undefined;
+                    const dot = completed != null ? dayDotClass(completed) : undefined;
                     cells.push(
                       <button
                         key={dateStr}
@@ -117,7 +112,7 @@ export default function SalatMonthCalendar({
                           {formatLocaleNumber(d)}
                         </span>
                         {dot && !isFuture && !isBeforeStart && (
-                          <span className="w-1 h-1 rounded-full" style={{ background: dot }} />
+                          <span className={`w-1 h-1 rounded-full ${dot}`} aria-hidden="true" />
                         )}
                       </button>
                     );

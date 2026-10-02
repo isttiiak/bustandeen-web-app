@@ -12,6 +12,7 @@ import { translateSalatName } from '../utils/prayerTimes.js';
 import { translateReference } from '../utils/localeReference.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { celebrateSmall } from '../utils/celebrate.js';
+import { DisclosureLabel } from './salat/salatParts.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import {
   useMusafir,
@@ -133,8 +134,8 @@ export default function TravelKazaCard() {
             })}
           </span>
         </span>
-        <span className="text-white/30 text-xs shrink-0">
-          {expanded ? t('salatTracker.less', '▲ Less') : t('salatTracker.details', '▾ Details')}
+        <span className="text-white/50 text-xs shrink-0">
+          <DisclosureLabel open={expanded} />
         </span>
       </button>
 

@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.89.0 - Salat in the Bustan Arch design - 2026-10-02
+
+### Changed
+
+- **Salat is the second screen in the new design** (audit T3.2). The day sits under one arch at the top: previous/next day, the Gregorian and Hijri date, and one leaf per fard prayer as its completion mark (Done = sage, Kaza = gold, Miss = red outline, not logged = faint), with "3 of 5 prayed". The old progress bar is gone.
+- **Prayer cards**: a drawn glyph for each prayer instead of emoji, Done / Kaza / Miss buttons with icons (no glow when selected), quiet status tints, theme radii and elevations, hover lift. Mosque, jamāʿah and home tags, tasbīḥ, Ayatul Kursi, qaṣr, jamʿ, Tarawih, Witr, travel and sunnah guidance rows all use SVG icons.
+- The week strip, month calendar, Nafl, Kaza debt, Friday hour card, "How it works" and the sign-in dialog follow the same design; day dots use theme colours, and faint text was raised to readable contrast.
+- Salat copy (English and Bangla) no longer uses emoji or em dashes. The legend now says Miss (was Missed). The Jumuʿah note under Ẓuhr is translated (it was English-only).
+- No floating orbs or glows on the Salat screen. Tab labels on Salat and Salat analytics are plain text.
+
+### Changed (developers)
+
+- `components/salat/SalatHero.tsx`. `IslamicIcons`: `DropIcon`, `ForkPathIcon`, and `PrayerGlyph` covers every nafl type (witr, tarawih, tahiyyat, hajat, istikharah). `salatParts`: `DisclosureLabel`, `RefIcon`, `dayDotClass` (replaces the hex `weekDotColor`); `LOCATION_TAGS` carry an `Icon`, `STATUS_STYLE` lost its `emoji`.
+
 ## v5.88.1 - Glass navbar and clearer depth - 2026-10-02
 
 ### Changed

@@ -193,6 +193,25 @@ export function TargetIcon(p: IconProps) {
   );
 }
 
+/** Water drop: wuḍūʾ (taḥiyyat al-wuḍūʾ). */
+export function DropIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M12 3.5c3 4 5.5 7.2 5.5 10.5a5.5 5.5 0 0 1-11 0c0-3.3 2.5-6.5 5.5-10.5z" />
+      <path d="M9.5 14.5a2.5 2.5 0 0 0 2.5 2.5" />
+    </Svg>
+  );
+}
+
+/** A path that forks in two: istikhārah, asking Allah to choose. */
+export function ForkPathIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M12 21v-7M12 14 6.5 8.5M12 14l5.5-5.5M4.5 9.5V6.5h3M19.5 9.5V6.5h-3" />
+    </Svg>
+  );
+}
+
 /** Line, star, line: the section divider. */
 export function OrnamentDivider({ className = '' }: { className?: string }) {
   return (
@@ -219,9 +238,15 @@ const PRAYER_GLYPHS: Record<string, (p: IconProps) => React.ReactNode> = {
   awwabin: MaghribIcon,
   isha: IshaIcon,
   tahajjud: IshaIcon,
+  witr: IshaIcon,
+  tarawih: CrescentIcon,
+  tahiyyat_wudu: DropIcon,
+  tahiyyat_masjid: MosqueIcon,
+  hajat: DuaHandsIcon,
+  istikharah: ForkPathIcon,
 };
 
-/** The glyph for a prayer or nafl window id (utils/prayerTimes.ts ids). */
+/** The glyph for a prayer or nafl id (utils/prayerTimes.ts, NAFL_TYPE_META ids). */
 export function PrayerGlyph({ id, ...p }: IconProps & { id: string }) {
   const Glyph = PRAYER_GLYPHS[id] ?? DhuhrIcon;
   return <Glyph {...p} />;

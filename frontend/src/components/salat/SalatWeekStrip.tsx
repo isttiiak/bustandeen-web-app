@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
 import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
-import { todayStr, weekDotColor, friendlyDate } from './salatParts.js';
+import { todayStr, dayDotClass, friendlyDate } from './salatParts.js';
 
 export interface SalatWeekStripProps {
   calendarOpen: boolean;
@@ -35,7 +35,7 @@ export default function SalatWeekStrip({
             const isTod = d.date === todayStr();
             const isFutureDay = d.date > todayStr();
             const hasData = !isFutureDay;
-            const dot = hasData ? weekDotColor(d.completed) : 'rgba(255,255,255,0.12)';
+            const dot = hasData ? dayDotClass(d.completed) : 'bg-white/15';
             return (
               <motion.button
                 key={d.date}
@@ -48,24 +48,22 @@ export default function SalatWeekStrip({
                 aria-label={t('salatTracker.selectDay', 'Select {{day}}', {
                   day: friendlyDate(d.date, t),
                 })}
-                className={`flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-xl border transition-all ${
+                aria-pressed={isSel}
+                className={`flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors ${
                   isSel
-                    ? 'bg-white/10 border-brand-emerald/30'
-                    : 'bg-white/[0.03] border-brand-emerald/5 hover:border-brand-emerald/20'
+                    ? 'bg-brand-deep border-brand-emerald/50 shadow-elev-1'
+                    : 'bg-brand-deep/50 border-brand-border/60 hover:border-brand-emerald/30'
                 }`}
               >
                 <span
-                  className={`text-[9px] uppercase font-bold ${isTod ? 'text-brand-emerald' : 'text-white/30'}`}
+                  className={`text-[9px] uppercase font-bold ${isTod ? 'text-brand-emerald' : 'text-white/50'}`}
                 >
                   {formatLocaleDate(new Date(d.date + 'T12:00:00'), { weekday: 'narrow' })}
                 </span>
-                <span className={`text-xs font-bold ${isSel ? 'text-white' : 'text-white/50'}`}>
+                <span className={`text-xs font-bold ${isSel ? 'text-white' : 'text-white/70'}`}>
                   {formatLocaleNumber(parseInt(d.date.slice(8), 10))}
                 </span>
-                <span
-                  className="w-1.5 h-1.5 rounded-full"
-                  style={{ background: dot, boxShadow: hasData ? `0 0 6px ${dot}` : 'none' }}
-                />
+                <span className={`w-1.5 h-1.5 rounded-full ${dot}`} aria-hidden="true" />
               </motion.button>
             );
           })}
@@ -77,10 +75,11 @@ export default function SalatWeekStrip({
             }}
             aria-label={t('salatTracker.openCalendar', 'Open month calendar')}
             title={t('salatTracker.openCalendar', 'Open month calendar')}
-            className={`shrink-0 flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-xl border transition-all ${
+            aria-expanded={calendarOpen}
+            className={`shrink-0 flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-control border transition-colors ${
               calendarOpen
-                ? 'bg-brand-emerald/20 border-brand-emerald/40 text-brand-emerald'
-                : 'bg-white/[0.03] border-brand-emerald/5 text-white/40 hover:border-brand-emerald/20 hover:text-white/70'
+                ? 'bg-brand-emerald/15 border-brand-emerald/50 text-brand-emerald'
+                : 'bg-brand-deep/50 border-brand-border/60 text-white/60 hover:border-brand-emerald/30 hover:text-white'
             }`}
           >
             <CalendarDaysIcon className="w-4 h-4" />
