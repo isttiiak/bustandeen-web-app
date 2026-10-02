@@ -228,7 +228,7 @@ function PendingRequestsModal({ onClose }: { onClose: () => void }) {
                   <button
                     onClick={() => accept.mutate(r.uid)}
                     disabled={reject.isPending || accept.isPending}
-                    className="btn btn-xs bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0"
+                    className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0"
                   >
                     {t('friends.accept')}
                   </button>
@@ -664,7 +664,7 @@ export default function Friends() {
               </p>
               <button
                 onClick={() => setInviteOpen(true)}
-                className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 gap-1.5"
+                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 gap-1.5"
               >
                 <UserPlusIcon className="w-4 h-4" /> {t('friends.connectFriend')}
               </button>
@@ -1028,7 +1028,7 @@ export default function Friends() {
                   <p className="text-brand-gold/80 text-sm">{t('friends.inviteError')}</p>
                   <button
                     onClick={() => void refetch()}
-                    className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0"
+                    className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0"
                   >
                     {t('friends.tryAgain')}
                   </button>
@@ -1042,7 +1042,7 @@ export default function Friends() {
                     <motion.button
                       whileTap={{ scale: 0.94 }}
                       onClick={() => void copyLink()}
-                      className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 gap-1.5 shrink-0 h-auto"
+                      className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 gap-1.5 shrink-0 h-auto"
                     >
                       {copied ? (
                         <CheckIcon className="w-4 h-4" />

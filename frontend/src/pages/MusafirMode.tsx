@@ -326,7 +326,7 @@ export default function MusafirMode() {
                 <div className="flex flex-wrap gap-2 mt-4">
                   <Link
                     to="/salat"
-                    className="px-4 py-2 rounded-xl text-sm font-bold bg-brand-emerald text-white shadow-[0_0_14px_rgba(122,158,110,0.35)] hover:brightness-110"
+                    className="px-4 py-2 rounded-xl text-sm font-bold bg-brand-emerald-dim text-white shadow-[0_0_14px_rgba(122,158,110,0.35)] hover:bg-brand-emerald-dim hover:brightness-90"
                   >
                     🕌 {t('musafir.logPrayers', 'Log today’s prayers')}
                   </Link>
@@ -729,7 +729,7 @@ export default function MusafirMode() {
                       aria-label={t('musafir.markSaid', 'Mark as said')}
                       className={`shrink-0 w-8 h-8 rounded-full border-2 grid place-items-center text-sm font-black transition-all ${
                         done
-                          ? 'bg-brand-emerald border-brand-emerald text-white'
+                          ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white'
                           : 'border-white/25 text-transparent hover:border-brand-emerald/60'
                       }`}
                     >

@@ -413,7 +413,7 @@ function GroqKeySetting({ t }: { t: (key: string) => string }) {
               type="button"
               onClick={handleSave}
               disabled={!value.trim() || setKey.isPending}
-              className="btn btn-xs bg-brand-emerald border-0 text-white hover:bg-brand-emerald-dim"
+              className="btn btn-xs bg-brand-emerald-dim border-0 text-white hover:bg-brand-emerald-dim hover:brightness-90"
             >
               {setKey.isPending ? (
                 <span className="loading loading-spinner loading-xs" />
@@ -919,7 +919,7 @@ export default function Settings() {
                   onClick={() => applyHijriAdj(d)}
                   className={`btn btn-sm flex-1 border ${
                     hijriAdj === d
-                      ? 'bg-brand-emerald text-white border-brand-emerald'
+                      ? 'bg-brand-emerald-dim text-white border-brand-emerald-dim'
                       : 'bg-brand-deep text-white/50 border-brand-border hover:text-white'
                   }`}
                 >

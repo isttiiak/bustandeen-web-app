@@ -166,7 +166,7 @@ export default function QuranHifz() {
                     { onSuccess: () => setTargetsOpen(false) }
                   );
                 }}
-                className="btn btn-xs bg-brand-emerald border-0 text-white self-end"
+                className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white self-end"
               >
                 {t('common.save', 'Save')}
               </button>
@@ -228,7 +228,7 @@ export default function QuranHifz() {
                 onClick={() =>
                   setLearning({ surah: nextNew.surah, ayah: nextNew.ayah, mode: 'next' })
                 }
-                className="btn btn-sm bg-brand-emerald border-0 text-white"
+                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
               >
                 {t('hifz.startMemorising', 'Start memorising')}
               </button>
@@ -279,7 +279,7 @@ export default function QuranHifz() {
               </label>
               <button
                 onClick={() => setLearning({ surah: pickSurah, ayah: pickAyah, mode: 'manual' })}
-                className="btn btn-xs bg-brand-emerald border-0 text-white"
+                className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
               >
                 {t('hifz.add', 'Add')}
               </button>

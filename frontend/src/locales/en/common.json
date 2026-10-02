@@ -2512,6 +2512,7 @@
     "optionalPrefix": "Optional",
     "prayed": "✅ Prayed",
     "previousDay": "Previous day",
+    "nextDay": "Next day",
     "rakatCount": "{{count}} rak'ah",
     "selectWhatYouPrayed": "Select what you prayed",
     "settingsAria": "Salat settings",

@@ -142,7 +142,7 @@ function VerifyEmailView({ oobCode }: { oobCode: string }) {
             </p>
             <button
               onClick={() => navigate('/')}
-              className="w-full py-3 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold transition-all"
+              className="w-full py-3 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold transition-all"
             >
               {t('authAction.goToAppNow', 'Go to App Now')}
             </button>
@@ -170,7 +170,7 @@ function VerifyEmailView({ oobCode }: { oobCode: string }) {
             <div className="flex gap-3">
               <button
                 onClick={() => navigate('/login')}
-                className="flex-1 py-3 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold transition-all text-sm"
+                className="flex-1 py-3 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold transition-all text-sm"
               >
                 {t('common.signIn')}
               </button>
@@ -283,7 +283,7 @@ function ResetPasswordView({ oobCode }: { oobCode: string }) {
           </div>
           <button
             onClick={() => navigate('/login')}
-            className="w-full py-3 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold transition-all"
+            className="w-full py-3 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold transition-all"
           >
             {t('authSignIn.backToSignIn', 'Back to sign in')}
           </button>
@@ -324,7 +324,7 @@ function ResetPasswordView({ oobCode }: { oobCode: string }) {
           <div className="flex gap-3">
             <button
               onClick={() => navigate('/login')}
-              className="flex-1 py-3 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+              className="flex-1 py-3 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)]"
             >
               {t('common.signIn')}
             </button>
@@ -485,7 +485,7 @@ function ResetPasswordView({ oobCode }: { oobCode: string }) {
           <button
             type="submit"
             disabled={submitting || confirmMismatch || !password || !confirm}
-            className="w-full py-4 bg-brand-emerald hover:bg-brand-emerald-dim text-white font-semibold rounded-xl transition-all shadow-[0_4px_20px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-4 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white font-semibold rounded-xl transition-all shadow-[0_4px_20px_rgba(16,185,129,0.3)] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? (
               <span className="loading loading-spinner loading-sm" />
@@ -537,7 +537,7 @@ export default function AuthAction() {
           <div className="flex gap-3">
             <button
               onClick={() => navigate('/login')}
-              className="flex-1 py-3 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold transition-all"
+              className="flex-1 py-3 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold transition-all"
             >
               {t('common.signIn')}
             </button>
@@ -567,7 +567,7 @@ export default function AuthAction() {
         </p>
         <button
           onClick={() => navigate('/')}
-          className="w-full py-3 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold transition-all"
+          className="w-full py-3 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold transition-all"
         >
           {t('authAction.goHome', 'Go Home')}
         </button>

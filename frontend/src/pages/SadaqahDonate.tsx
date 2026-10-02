@@ -347,7 +347,7 @@ export default function SadaqahDonate() {
             type="submit"
             whileTap={{ scale: 0.98 }}
             disabled={!canSubmit}
-            className="w-full btn h-12 rounded-2xl border-0 text-white font-black bg-gradient-to-r from-brand-emerald via-brand-emerald to-brand-emerald-dim hover:opacity-90 disabled:opacity-40 gap-2"
+            className="w-full btn h-12 rounded-2xl border-0 text-white font-black bg-brand-emerald-dim hover:opacity-90 disabled:opacity-40 gap-2"
           >
             {submitMutation.isPending ? (
               <span className="loading loading-spinner loading-sm" />

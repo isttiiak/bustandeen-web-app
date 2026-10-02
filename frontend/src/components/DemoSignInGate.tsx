@@ -35,7 +35,7 @@ export default function DemoSignInGate({ emoji, title, desc, backTo, backLabel, 
           <p className="text-white/50 text-sm leading-relaxed">{desc}</p>
           <div className="flex flex-col gap-2.5">
             <button
-              className="btn bg-brand-emerald hover:bg-brand-emerald text-white border-0 w-full"
+              className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 w-full"
               onClick={() => navigate('/signup')}
             >
               {t('app.createFreeAccount', 'Create Free Account')}

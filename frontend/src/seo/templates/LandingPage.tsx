@@ -141,7 +141,7 @@ export default function LandingPage({ lang = 'en' }: { lang?: LandingLang }) {
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <a
               href="/signup"
-              className="inline-flex items-center h-13 px-10 rounded-2xl text-white text-base font-black bg-gradient-to-r from-brand-emerald to-brand-info no-underline"
+              className="inline-flex items-center h-13 px-10 rounded-2xl text-white text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim no-underline"
             >
               {t('landing.cta', 'Begin your journey, free')}
             </a>
@@ -219,7 +219,7 @@ export default function LandingPage({ lang = 'en' }: { lang?: LandingLang }) {
         <section className="text-center mt-14">
           <a
             href="/signup"
-            className="inline-flex items-center h-13 px-10 rounded-2xl text-white text-base font-black bg-gradient-to-r from-brand-emerald to-brand-info no-underline"
+            className="inline-flex items-center h-13 px-10 rounded-2xl text-white text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim no-underline"
           >
             {t('landing.finalCta', 'Create your free account')}
           </a>

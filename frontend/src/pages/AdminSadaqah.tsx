@@ -144,7 +144,7 @@ function PendingCard({ donation }: { donation: Donation }) {
         <div className="flex gap-2">
           <button
             onClick={() => startAction('verified')}
-            className="btn btn-sm flex-1 bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white"
+            className="btn btn-sm flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
           >
             {t('adminSadaqah.verify', 'Verify')}
           </button>
@@ -532,7 +532,7 @@ function ExpensesTab({ isServant }: { isServant: boolean }) {
               !(Number(expForm.amount) >= 0) ||
               addExpense.isPending
             }
-            className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white disabled:opacity-40"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
           >
             {t('adminSadaqah.save', 'Save')}
           </button>
@@ -689,7 +689,7 @@ function QuarterlyPublisher() {
           <button
             onClick={confirmPublish}
             disabled={!previewData || publish.isPending}
-            className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white disabled:opacity-40"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
           >
             {publish.isPending ? '…' : t('adminSadaqah.publish', 'Publish')}
           </button>
@@ -755,7 +755,7 @@ function DonorEmailAction({ email }: { email: string }) {
           <button
             onClick={confirmSend}
             disabled={send.isPending}
-            className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
           >
             {send.isPending ? '…' : t('adminSadaqah.confirmSendEmail', 'Send this email')}
           </button>

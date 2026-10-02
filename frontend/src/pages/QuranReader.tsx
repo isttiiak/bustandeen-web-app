@@ -755,7 +755,7 @@ export default function QuranReader() {
               }
               title={t('quranReader.reciteOnlyThis', 'Recite only this ayah')}
               onClick={playAyah}
-              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all ${playing ? 'bg-brand-emerald text-white border-brand-emerald' : 'bg-white/5 text-brand-emerald border-brand-emerald/10 hover:border-brand-emerald/50'}`}
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all ${playing ? 'bg-brand-emerald-dim text-white border-brand-emerald-dim' : 'bg-white/5 text-brand-emerald border-brand-emerald/10 hover:border-brand-emerald/50'}`}
             >
               {playing ? (
                 <PauseIcon className="w-4 h-4" />
@@ -952,7 +952,7 @@ export default function QuranReader() {
                 <button
                   aria-label={t('quranReader.nextAyah', 'Next ayah')}
                   onClick={goNext}
-                  className="flex items-center gap-1.5 min-w-0 px-5 py-2.5 rounded-2xl bg-brand-emerald/90 hover:bg-brand-emerald text-white text-sm font-black border-0"
+                  className="flex items-center gap-1.5 min-w-0 px-5 py-2.5 rounded-2xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white text-sm font-black border-0"
                 >
                   <span className="truncate">
                     {idx >= lastIdx
@@ -1281,7 +1281,7 @@ export default function QuranReader() {
                   {t('quranReader.startOver', 'Start over')}
                 </button>
                 <button
-                  className="flex-1 btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald to-brand-info"
+                  className="flex-1 btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                   onClick={() => {
                     setIdx(Math.min(ayat.length - 1, resumeAyah - 1));
                     setResumeAyah(null);

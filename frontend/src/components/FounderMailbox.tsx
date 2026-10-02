@@ -71,7 +71,7 @@ function MailboxCard({ message }: { message: AdminMailboxMessage }) {
           {message.status !== 'archived' && (
             <button
               onClick={() => setReplying(true)}
-              className="btn btn-xs rounded-lg bg-brand-emerald border-brand-emerald text-white font-bold"
+              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-white font-bold"
             >
               {t('adminFeedback.reply', 'Reply')}
             </button>
@@ -139,7 +139,7 @@ function MailboxCard({ message }: { message: AdminMailboxMessage }) {
             <button
               onClick={sendReply}
               disabled={reply.isPending}
-              className="btn btn-xs rounded-lg bg-brand-emerald border-brand-emerald text-white font-bold"
+              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-white font-bold"
             >
               {reply.isPending ? '…' : t('adminFeedback.send', 'Send reply')}
             </button>
@@ -221,7 +221,7 @@ export default function FounderMailbox() {
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald border-brand-emerald text-white' : 'btn-ghost text-white/50'}`}
+            className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'btn-ghost text-white/50'}`}
           >
             {s}
           </button>

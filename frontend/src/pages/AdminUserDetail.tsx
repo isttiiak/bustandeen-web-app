@@ -206,7 +206,7 @@ export default function AdminUserDetail() {
                     <button
                       onClick={startWelcomeDraft}
                       disabled={welcomeDraft.isPending}
-                      className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white shrink-0"
+                      className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white shrink-0"
                     >
                       {welcomeDraft.isPending
                         ? '…'
@@ -242,7 +242,7 @@ export default function AdminUserDetail() {
                       <button
                         onClick={confirmSendWelcome}
                         disabled={sendWelcome.isPending}
-                        className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white"
+                        className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
                       >
                         {sendWelcome.isPending
                           ? '…'
@@ -428,7 +428,7 @@ export default function AdminUserDetail() {
                   <button
                     onClick={() => enableUser.mutate(uid)}
                     disabled={enableUser.isPending}
-                    className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white shrink-0"
+                    className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white shrink-0"
                   >
                     {enableUser.isPending ? '…' : t('adminUserDetail.enable', 'Re-enable account')}
                   </button>

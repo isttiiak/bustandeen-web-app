@@ -206,6 +206,9 @@ export default function Navbar() {
               <div className="flex items-center gap-0.5 min-w-0">
                 <button
                   onClick={() => navigate(parentPath)}
+                  aria-label={`${t('common.back')}: ${
+                    parentPath === '/' ? t('nav.home') : pageTitle(parentPath, parentMeta.title)
+                  }`}
                   className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-white/40 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0"
                 >
                   <ArrowLeftIcon className="w-3.5 h-3.5" />
@@ -479,7 +482,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="ml-1 px-3 py-1.5 rounded-xl bg-brand-emerald hover:bg-brand-emerald-dim text-white text-xs font-semibold transition-all shadow-md"
+                className="ml-1 px-3 py-1.5 rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white text-xs font-semibold transition-all shadow-md"
                 onClick={() => sessionStorage.setItem('bustandeen_redirect', location.pathname)}
               >
                 {t('nav.signIn')}
