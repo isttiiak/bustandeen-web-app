@@ -206,7 +206,7 @@ export default function AdminUserDetail() {
                     <button
                       onClick={startWelcomeDraft}
                       disabled={welcomeDraft.isPending}
-                      className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white shrink-0"
+                      className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color shrink-0"
                     >
                       {welcomeDraft.isPending
                         ? '…'
@@ -242,7 +242,7 @@ export default function AdminUserDetail() {
                       <button
                         onClick={confirmSendWelcome}
                         disabled={sendWelcome.isPending}
-                        className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
+                        className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
                       >
                         {sendWelcome.isPending
                           ? '…'
@@ -291,7 +291,7 @@ export default function AdminUserDetail() {
                     <button
                       onClick={startReengagementDraft}
                       disabled={reengagementDraft.isPending}
-                      className="btn btn-sm bg-brand-info hover:opacity-90 border-0 text-white shrink-0"
+                      className="btn btn-sm bg-brand-info hover:opacity-90 border-0 text-on-color shrink-0"
                     >
                       {reengagementDraft.isPending
                         ? '…'
@@ -325,7 +325,7 @@ export default function AdminUserDetail() {
                       <button
                         onClick={confirmSendReengagement}
                         disabled={sendReengagement.isPending}
-                        className="btn btn-sm bg-brand-info hover:opacity-90 border-0 text-white"
+                        className="btn btn-sm bg-brand-info hover:opacity-90 border-0 text-on-color"
                       >
                         {sendReengagement.isPending
                           ? '…'
@@ -358,7 +358,7 @@ export default function AdminUserDetail() {
                     </p>
                     <button
                       onClick={startCustomEmail}
-                      className="btn btn-sm bg-brand-magenta hover:opacity-90 border-0 text-white shrink-0"
+                      className="btn btn-sm bg-brand-magenta hover:opacity-90 border-0 text-on-color shrink-0"
                     >
                       {t('adminUserDetail.composeCustom', 'Compose custom email')}
                     </button>
@@ -385,7 +385,7 @@ export default function AdminUserDetail() {
                       <button
                         onClick={confirmSendCustomEmail}
                         disabled={sendCustomEmail.isPending}
-                        className="btn btn-sm bg-brand-magenta hover:opacity-90 border-0 text-white"
+                        className="btn btn-sm bg-brand-magenta hover:opacity-90 border-0 text-on-color"
                       >
                         {sendCustomEmail.isPending
                           ? '…'
@@ -428,7 +428,7 @@ export default function AdminUserDetail() {
                   <button
                     onClick={() => enableUser.mutate(uid)}
                     disabled={enableUser.isPending}
-                    className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white shrink-0"
+                    className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color shrink-0"
                   >
                     {enableUser.isPending ? '…' : t('adminUserDetail.enable', 'Re-enable account')}
                   </button>

@@ -59,7 +59,11 @@ import {
   LanguageIcon,
   KeyIcon,
   PencilSquareIcon,
+  SwatchIcon,
+  SunIcon,
+  DevicePhoneMobileIcon,
 } from '@heroicons/react/24/outline';
+import { getThemeMode, setThemeMode, type ThemeMode } from '../utils/theme.js';
 
 // ── Unified danger zone (Istiak's spec): EVERY data-erase control lives here,
 // grouped per feature, with full AND partial options. ─────────────────────────
@@ -302,6 +306,78 @@ function Toggle({
   );
 }
 
+/** Sun on a horizon: the "follow daylight" theme option. */
+function SunriseIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.5}
+      strokeLinecap="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3 18h18M6.5 18a5.5 5.5 0 0 1 11 0M12 6v2.5M5.2 9.7l1.7 1.7M18.8 9.7l-1.7 1.7M3.5 14.5h1.5M19 14.5h1.5" />
+    </svg>
+  );
+}
+
+const THEME_ICONS: Record<ThemeMode, (p: { className?: string }) => React.ReactNode> = {
+  system: DevicePhoneMobileIcon,
+  dark: MoonIcon,
+  light: SunIcon,
+  daylight: SunriseIcon,
+};
+
+function ThemeModePicker({ t }: { t: (key: string) => string }) {
+  const [mode, setMode] = useState<ThemeMode>(getThemeMode);
+  const options: { mode: ThemeMode; label: string; detail: string }[] = [
+    { mode: 'system', label: t('settings.themeSystem'), detail: t('settings.themeSystemDetail') },
+    { mode: 'dark', label: t('settings.themeDark'), detail: t('settings.themeDarkDetail') },
+    { mode: 'light', label: t('settings.themeLight'), detail: t('settings.themeLightDetail') },
+    {
+      mode: 'daylight',
+      label: t('settings.themeDaylight'),
+      detail: t('settings.themeDaylightDetail'),
+    },
+  ];
+  return (
+    <div
+      role="radiogroup"
+      aria-label={t('settings.appearanceSection')}
+      className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+    >
+      {options.map(({ mode: m, label, detail }) => {
+        const Icon = THEME_ICONS[m];
+        const on = mode === m;
+        return (
+          <button
+            key={m}
+            role="radio"
+            aria-checked={on}
+            onClick={() => {
+              setThemeMode(m);
+              setMode(m);
+            }}
+            className={`flex items-start gap-3 text-left p-3 rounded-xl border transition-colors ${
+              on
+                ? 'bg-brand-emerald/10 border-brand-emerald text-white'
+                : 'bg-brand-deep text-white/60 border-brand-border hover:text-white'
+            }`}
+          >
+            <Icon className={`w-5 h-5 mt-0.5 shrink-0 ${on ? 'text-brand-emerald' : ''}`} />
+            <span className="min-w-0">
+              <span className="block font-semibold text-sm">{label}</span>
+              <span className="block text-xs text-white/40 mt-0.5 leading-snug">{detail}</span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function GroqKeySetting({ t }: { t: (key: string) => string }) {
   const { data, isLoading } = useGroqKeyStatus();
   const setKey = useSetGroqKey();
@@ -407,13 +483,13 @@ function GroqKeySetting({ t }: { t: (key: string) => string }) {
               onChange={(e) => setValue(e.target.value)}
               placeholder={t('settings.groqKeyPlaceholder')}
               autoComplete="off"
-              className="input input-xs bg-black/30 border-brand-border text-white flex-1"
+              className="input input-xs bg-shade/30 border-brand-border text-white flex-1"
             />
             <button
               type="button"
               onClick={handleSave}
               disabled={!value.trim() || setKey.isPending}
-              className="btn btn-xs bg-brand-emerald-dim border-0 text-white hover:bg-brand-emerald-dim hover:brightness-90"
+              className="btn btn-xs bg-brand-emerald-dim border-0 text-on-color hover:bg-brand-emerald-dim hover:brightness-90"
             >
               {setKey.isPending ? (
                 <span className="loading loading-spinner loading-xs" />
@@ -919,7 +995,7 @@ export default function Settings() {
                   onClick={() => applyHijriAdj(d)}
                   className={`btn btn-sm flex-1 border ${
                     hijriAdj === d
-                      ? 'bg-brand-emerald-dim text-white border-brand-emerald-dim'
+                      ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim'
                       : 'bg-brand-deep text-white/50 border-brand-border hover:text-white'
                   }`}
                 >
@@ -1005,6 +1081,16 @@ export default function Settings() {
                 ⚠️ {t('settings.dayStartLocationNudge')}
               </p>
             )}
+          </SectionCard>
+
+          {/* Appearance: theme mode (utils/theme.ts) */}
+          <SectionCard
+            icon={<SwatchIcon className="w-5 h-5 text-brand-gold" />}
+            title={t('settings.appearanceSection')}
+            subtitle={t('settings.appearanceSubtitle')}
+            delay={0.13}
+          >
+            <ThemeModePicker t={t} />
           </SectionCard>
 
           {/* ── Accessibility ── */}
@@ -1197,7 +1283,7 @@ export default function Settings() {
                           <button
                             onClick={() => void runDanger(row)}
                             disabled={deleting === row.id}
-                            className="btn btn-xs bg-red-500 hover:bg-red-600 text-white border-0"
+                            className="btn btn-xs bg-red-500 hover:bg-red-600 text-on-color border-0"
                           >
                             {deleting === row.id ? (
                               <span className="loading loading-spinner loading-xs" />
@@ -1265,7 +1351,7 @@ export default function Settings() {
                       setReauthError(null);
                       setDeleteAccountStep('reauth');
                     }}
-                    className="btn btn-xs bg-red-600 hover:bg-red-700 text-white border-0"
+                    className="btn btn-xs bg-red-600 hover:bg-red-700 text-on-color border-0"
                   >
                     {t('settings.yesDeleteAccount', 'Yes, delete my account')}
                   </button>
@@ -1290,14 +1376,14 @@ export default function Settings() {
                       <button
                         type="button"
                         onClick={() => setReauthMethod('password')}
-                        className={`btn btn-2xs rounded-full ${reauthMethod === 'password' ? 'bg-red-600 text-white border-0' : 'bg-white/5 border-red-500/20 text-white/50'}`}
+                        className={`btn btn-2xs rounded-full ${reauthMethod === 'password' ? 'bg-red-600 text-on-color border-0' : 'bg-white/5 border-red-500/20 text-white/50'}`}
                       >
                         {t('settings.reauthMethodPassword', 'Password')}
                       </button>
                       <button
                         type="button"
                         onClick={() => setReauthMethod('google')}
-                        className={`btn btn-2xs rounded-full ${reauthMethod === 'google' ? 'bg-red-600 text-white border-0' : 'bg-white/5 border-red-500/20 text-white/50'}`}
+                        className={`btn btn-2xs rounded-full ${reauthMethod === 'google' ? 'bg-red-600 text-on-color border-0' : 'bg-white/5 border-red-500/20 text-white/50'}`}
                       >
                         {t('settings.reauthMethodGoogle', 'Google')}
                       </button>
@@ -1317,13 +1403,13 @@ export default function Settings() {
                         value={reauthPassword}
                         onChange={(e) => setReauthPassword(e.target.value)}
                         placeholder={t('settings.reauthPasswordPlaceholder', 'Your password')}
-                        className="input input-xs bg-black/30 border-red-500/30 text-white w-40"
+                        className="input input-xs bg-shade/30 border-red-500/30 text-white w-40"
                         disabled={reauthBusy}
                       />
                       <button
                         type="submit"
                         disabled={reauthBusy || !reauthPassword}
-                        className="btn btn-xs bg-red-600 hover:bg-red-700 text-white border-0"
+                        className="btn btn-xs bg-red-600 hover:bg-red-700 text-on-color border-0"
                       >
                         {reauthBusy ? (
                           <span className="loading loading-spinner loading-xs" />
@@ -1336,7 +1422,7 @@ export default function Settings() {
                     <button
                       onClick={() => void reauthWithGoogle()}
                       disabled={reauthBusy}
-                      className="btn btn-xs bg-red-600 hover:bg-red-700 text-white border-0"
+                      className="btn btn-xs bg-red-600 hover:bg-red-700 text-on-color border-0"
                     >
                       {reauthBusy ? (
                         <span className="loading loading-spinner loading-xs" />

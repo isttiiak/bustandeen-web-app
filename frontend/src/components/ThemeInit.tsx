@@ -1,9 +1,8 @@
-﻿import { useEffect } from 'react';
+import { useEffect } from 'react';
+import { watchTheme } from '../utils/theme.js';
 
+/** Applies the saved theme mode and keeps it current (utils/theme.ts). */
 export default function ThemeInit() {
-  useEffect(() => {
-    const theme = localStorage.getItem('bustandeen_theme') || 'bustandeen';
-    document.documentElement.setAttribute('data-theme', theme);
-  }, []);
+  useEffect(() => watchTheme(), []);
   return null;
 }

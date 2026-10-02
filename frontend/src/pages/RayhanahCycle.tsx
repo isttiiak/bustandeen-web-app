@@ -486,7 +486,7 @@ export default function RayhanahCycle() {
               </div>
 
               <button
-                className="mt-5 w-full btn h-14 rounded-2xl border-0 text-white text-base font-black bg-gradient-to-r from-brand-pink to-brand-pink hover:from-brand-pink hover:to-brand-pink shadow-lg shadow-brand-pink-dim/40"
+                className="mt-5 w-full btn h-14 rounded-2xl border-0 text-on-color text-base font-black bg-gradient-to-r from-brand-pink to-brand-pink hover:from-brand-pink hover:to-brand-pink shadow-lg shadow-brand-pink-dim/40"
                 onClick={handleEndConfirmed}
                 disabled={endCycle.isPending}
               >
@@ -663,7 +663,7 @@ export default function RayhanahCycle() {
                     <button
                       aria-label={t('rayhanah.markItem', 'Mark {{label}}', { label: gLabel })}
                       onClick={() => toggleGarden(g.id)}
-                      className={`w-6 h-6 rounded-full grid place-items-center border transition-all flex-shrink-0 ${garden[g.id] ? 'bg-brand-pink border-brand-pink text-white' : 'border-brand-emerald/20 text-transparent hover:border-brand-pink/60'}`}
+                      className={`w-6 h-6 rounded-full grid place-items-center border transition-all flex-shrink-0 ${garden[g.id] ? 'bg-brand-pink border-brand-pink text-on-color' : 'border-brand-emerald/20 text-transparent hover:border-brand-pink/60'}`}
                     >
                       ✓
                     </button>
@@ -1466,7 +1466,7 @@ export default function RayhanahCycle() {
                 ))}
               </div>
               <button
-                className="w-full btn rounded-2xl border-0 text-white font-black bg-gradient-to-r from-brand-pink to-brand-pink"
+                className="w-full btn rounded-2xl border-0 text-on-color font-black bg-gradient-to-r from-brand-pink to-brand-pink"
                 disabled={startCycle.isPending}
                 onClick={() =>
                   startCycle.mutate(
@@ -1536,7 +1536,7 @@ export default function RayhanahCycle() {
                     onClick={() => setGhuslChecked((c) => c.map((v, j) => (j === i ? !v : v)))}
                   >
                     <span
-                      className={`w-5 h-5 rounded-full grid place-items-center border text-[10px] flex-shrink-0 mt-0.5 ${ghuslChecked[i] ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'border-brand-emerald/20 text-white/30'}`}
+                      className={`w-5 h-5 rounded-full grid place-items-center border text-[10px] flex-shrink-0 mt-0.5 ${ghuslChecked[i] ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'border-brand-emerald/20 text-white/30'}`}
                     >
                       {ghuslChecked[i] ? '✓' : i + 1}
                     </span>
@@ -1565,7 +1565,7 @@ export default function RayhanahCycle() {
                 ). {t('rayhanah.welcomeBackShort', 'Welcome back 🌸')}
               </p>
               <button
-                className="w-full btn rounded-2xl border-0 text-white font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                className="w-full btn rounded-2xl border-0 text-on-color font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                 onClick={() => {
                   setGhuslOpen(false);
                   celebrateSmall();
@@ -1624,7 +1624,7 @@ export default function RayhanahCycle() {
                   {t('rayhanah.notNow', 'Not now')}
                 </button>
                 <button
-                  className="flex-1 btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-gold to-brand-warm"
+                  className="flex-1 btn btn-sm rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-gold to-brand-warm"
                   disabled={updateFastingProfile.isPending}
                   onClick={addQada}
                 >

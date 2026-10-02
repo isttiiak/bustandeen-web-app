@@ -211,7 +211,7 @@ export default function TravelKazaCard() {
                   return (
                     <li
                       key={key}
-                      className="flex items-center gap-2.5 rounded-xl bg-black/20 border border-white/5 px-3 py-2"
+                      className="flex items-center gap-2.5 rounded-xl bg-shade/20 border border-white/5 px-3 py-2"
                     >
                       <span className="text-lg shrink-0">{PRAYER_ICON[u.prayer]}</span>
                       <span className="min-w-0 flex-1">

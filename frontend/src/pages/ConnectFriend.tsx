@@ -68,7 +68,7 @@ export default function ConnectFriend() {
               </p>
               <div className="flex flex-col gap-2.5">
                 <button
-                  className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 w-full"
+                  className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 w-full"
                   onClick={() => {
                     sessionStorage.setItem('bustandeen_redirect', `/connect/${code}`);
                     navigate('/login');
@@ -117,7 +117,7 @@ export default function ConnectFriend() {
               </p>
               <Link
                 to="/friends"
-                className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 w-full"
+                className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 w-full"
               >
                 🏁 {t('connectFriend.seeLeaderboard')}
               </Link>

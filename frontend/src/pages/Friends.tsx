@@ -228,7 +228,7 @@ function PendingRequestsModal({ onClose }: { onClose: () => void }) {
                   <button
                     onClick={() => accept.mutate(r.uid)}
                     disabled={reject.isPending || accept.isPending}
-                    className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0"
+                    className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0"
                   >
                     {t('friends.accept')}
                   </button>
@@ -385,7 +385,7 @@ function ManageFriendsModal({ onClose }: { onClose: () => void }) {
                             <button
                               onClick={() => finalizeBlock(f.uid)}
                               disabled={blockUser.isPending}
-                              className="btn btn-xs bg-red-500 hover:bg-red-600 text-white border-0"
+                              className="btn btn-xs bg-red-500 hover:bg-red-600 text-on-color border-0"
                             >
                               {blockUser.isPending ? (
                                 <span className="loading loading-spinner loading-xs" />
@@ -417,7 +417,7 @@ function ManageFriendsModal({ onClose }: { onClose: () => void }) {
                             </button>
                             <button
                               onClick={() => advanceConfirm(f.uid)}
-                              className="btn btn-xs bg-red-500/80 hover:bg-red-500 text-white border-0"
+                              className="btn btn-xs bg-red-500/80 hover:bg-red-500 text-on-color border-0"
                             >
                               {t('common.remove')}
                             </button>
@@ -446,7 +446,7 @@ function ManageFriendsModal({ onClose }: { onClose: () => void }) {
                             <button
                               onClick={() => finalizeRemove(f.uid)}
                               disabled={unfriend.isPending}
-                              className="btn btn-xs bg-red-500 hover:bg-red-600 text-white border-0"
+                              className="btn btn-xs bg-red-500 hover:bg-red-600 text-on-color border-0"
                             >
                               {unfriend.isPending ? (
                                 <span className="loading loading-spinner loading-xs" />
@@ -664,7 +664,7 @@ export default function Friends() {
               </p>
               <button
                 onClick={() => setInviteOpen(true)}
-                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 gap-1.5"
+                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 gap-1.5"
               >
                 <UserPlusIcon className="w-4 h-4" /> {t('friends.connectFriend')}
               </button>
@@ -1028,7 +1028,7 @@ export default function Friends() {
                   <p className="text-brand-gold/80 text-sm">{t('friends.inviteError')}</p>
                   <button
                     onClick={() => void refetch()}
-                    className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0"
+                    className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0"
                   >
                     {t('friends.tryAgain')}
                   </button>
@@ -1036,13 +1036,13 @@ export default function Friends() {
               ) : inviteLink ? (
                 <>
                   <div className="flex gap-2">
-                    <code className="flex-1 min-w-0 truncate px-3 py-2.5 rounded-xl bg-black/30 border border-brand-emerald/10 text-brand-emerald/90 text-xs">
+                    <code className="flex-1 min-w-0 truncate px-3 py-2.5 rounded-xl bg-shade/30 border border-brand-emerald/10 text-brand-emerald/90 text-xs">
                       {inviteLink}
                     </code>
                     <motion.button
                       whileTap={{ scale: 0.94 }}
                       onClick={() => void copyLink()}
-                      className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 gap-1.5 shrink-0 h-auto"
+                      className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 gap-1.5 shrink-0 h-auto"
                     >
                       {copied ? (
                         <CheckIcon className="w-4 h-4" />

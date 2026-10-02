@@ -245,7 +245,7 @@ export default function ShareAyahModal({
 
             {/* scaled preview of the fixed-size capture node */}
             <div
-              className="mx-auto rounded-xl overflow-hidden border border-brand-emerald/10 grid place-items-center bg-black/20"
+              className="mx-auto rounded-xl overflow-hidden border border-brand-emerald/10 grid place-items-center bg-shade/20"
               style={{ width: ratio.width * previewScale, height: ratio.height * previewScale }}
             >
               {loading || !ayah ? (
@@ -481,7 +481,7 @@ export default function ShareAyahModal({
                 className={`flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border disabled:opacity-50 ${
                   canShareFiles
                     ? 'bg-white/5 border-brand-emerald/10 text-white/70'
-                    : 'border-0 text-white bg-brand-emerald-dim'
+                    : 'border-0 text-on-color bg-brand-emerald-dim'
                 }`}
                 onClick={handleDownload}
                 disabled={!!busyAction || loading || !ayah}
@@ -499,7 +499,7 @@ export default function ShareAyahModal({
               </button>
               {canShareFiles && (
                 <button
-                  className="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border-0 text-white bg-brand-emerald-dim disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border-0 text-on-color bg-brand-emerald-dim disabled:opacity-50"
                   onClick={handleShare}
                   disabled={!!busyAction || loading || !ayah}
                 >

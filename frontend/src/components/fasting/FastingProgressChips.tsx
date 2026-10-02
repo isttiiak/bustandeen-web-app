@@ -32,21 +32,21 @@ export default function FastingProgressChips({
             {
               label: t('fasting.thisMonth', 'This month'),
               value: summary?.stats.thisMonth ?? 0,
-              color: '#7a9e6e',
+              color: 'rgb(var(--c-emerald))',
             },
             ...(qadaOwed > 0
               ? [
                   {
                     label: t('fasting.qadaLeft', 'Qada left'),
                     value: qadaRemaining,
-                    color: '#c9a96e',
+                    color: 'rgb(var(--c-gold))',
                   },
                 ]
               : [
                   {
                     label: t('fasting.last30d', 'Last 30d'),
                     value: summary?.stats.last30 ?? 0,
-                    color: '#5a9e8e',
+                    color: 'rgb(var(--c-info))',
                   },
                 ]),
             ...(kaffarahActive
@@ -54,14 +54,14 @@ export default function FastingProgressChips({
                   {
                     label: t('fasting.kaffarahRun', 'Kaffarah run'),
                     value: summary?.kaffarah.currentRun ?? 0,
-                    color: '#c4825a',
+                    color: 'rgb(var(--c-warm))',
                   },
                 ]
               : [
                   {
                     label: t('fasting.allTime', 'All time'),
                     value: summary?.stats.total ?? 0,
-                    color: '#5a9e8e',
+                    color: 'rgb(var(--c-info))',
                   },
                 ]),
           ].map((s) => (

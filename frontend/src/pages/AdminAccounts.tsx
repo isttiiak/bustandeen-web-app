@@ -38,7 +38,7 @@ function AddAnsarForm() {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="btn btn-sm rounded-xl border-0 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white"
+        className="btn btn-sm rounded-xl border-0 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color"
       >
         {t('adminAccounts.addAnsar', '+ Add Ansar')}
       </button>
@@ -83,7 +83,7 @@ function AddAnsarForm() {
             onClick={() => setAnsarDomain('general')}
             className={`btn btn-sm rounded-xl flex-1 border-0 ${
               ansarDomain === 'general'
-                ? 'bg-brand-emerald-dim text-white'
+                ? 'bg-brand-emerald-dim text-on-color'
                 : 'bg-white/5 text-white/50'
             }`}
           >
@@ -94,7 +94,7 @@ function AddAnsarForm() {
             onClick={() => setAnsarDomain('sadaqah')}
             className={`btn btn-sm rounded-xl flex-1 border-0 ${
               ansarDomain === 'sadaqah'
-                ? 'bg-brand-emerald-dim text-white'
+                ? 'bg-brand-emerald-dim text-on-color'
                 : 'bg-white/5 text-white/50'
             }`}
           >
@@ -114,7 +114,7 @@ function AddAnsarForm() {
         <button
           type="submit"
           disabled={create.isPending}
-          className="btn btn-sm rounded-xl border-0 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white disabled:opacity-50"
+          className="btn btn-sm rounded-xl border-0 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color disabled:opacity-50"
         >
           {create.isPending ? '…' : t('adminAccounts.create', 'Create')}
         </button>

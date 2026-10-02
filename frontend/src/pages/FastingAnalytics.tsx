@@ -25,11 +25,11 @@ import { formatLocaleNumber } from '../utils/localeDate.js';
 // category, fixed order, never cycled. Chips elsewhere use the app's lighter
 // hues of the same families.
 const CATEGORY_CHART: Record<FastingCategory, { label: string; emoji: string; color: string }> = {
-  voluntary: { label: 'Voluntary', emoji: '💚', color: '#7a9e6e' },
-  qada: { label: 'Qaḍā', emoji: '🔄', color: '#c9a96e' },
-  kaffarah: { label: 'Kaffārah', emoji: '⚖️', color: '#c4825a' },
-  nadhr: { label: 'Vow', emoji: '🤝', color: '#5a9e8e' },
-  ramadan: { label: 'Ramadan', emoji: '🌙', color: '#a08850' },
+  voluntary: { label: 'Voluntary', emoji: '💚', color: 'rgb(var(--c-emerald))' },
+  qada: { label: 'Qaḍā', emoji: '🔄', color: 'rgb(var(--c-gold))' },
+  kaffarah: { label: 'Kaffārah', emoji: '⚖️', color: 'rgb(var(--c-warm))' },
+  nadhr: { label: 'Vow', emoji: '🤝', color: 'rgb(var(--c-info))' },
+  ramadan: { label: 'Ramadan', emoji: '🌙', color: 'rgb(var(--c-gold-dim))' },
 };
 const CATEGORY_ORDER: FastingCategory[] = ['voluntary', 'qada', 'kaffarah', 'nadhr'];
 

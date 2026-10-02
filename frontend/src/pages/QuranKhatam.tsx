@@ -113,7 +113,7 @@ export default function QuranKhatam() {
               {khatamStarted ? (
                 <>
                   <button
-                    className="mt-5 w-full btn h-13 rounded-2xl border-0 text-white text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                    className="mt-5 w-full btn h-13 rounded-2xl border-0 text-on-color text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                     onClick={() => {
                       if (pos) navigate(`/quran/read/${pos.surah}?start=${pos.ayah}&mode=khatam`);
                     }}
@@ -132,7 +132,7 @@ export default function QuranKhatam() {
               ) : (
                 <>
                   <button
-                    className="mt-5 w-full btn h-13 rounded-2xl border-0 text-white text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                    className="mt-5 w-full btn h-13 rounded-2xl border-0 text-on-color text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                     disabled={startKhatam.isPending}
                     onClick={() =>
                       startKhatam.mutate(undefined, {

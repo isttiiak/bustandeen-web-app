@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bustandeen Token Directions</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=El+Messiri:wght@500;600;700&family=Hind+Siliguri:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ------------------------------------------------------------------
+   T3.1 [UX-01] design token proposal. Static sketch, not app code.
+   Shared rules for every direction:
+   - 2 radii (card, control), 3 elevations (flat, raised, overlay)
+   - colour roles, not raw hex: bg, surface, surface-2, line, text,
+     muted, primary (+ on-primary), accent, warm
+   - 1 accent per screen, no glows on content, a gradient only on the
+     hero moment of a screen
+   - ornament = structure: dividers, completion marks, milestones
+   ------------------------------------------------------------------ */
+      :root {
+        --page-bg: #e9e4d8;
+        --page-text: #231e15;
+        --page-muted: #5f5644;
+        --page-card: #f6f2e8;
+        --page-line: #d3c9b3;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --page-bg: #0b0a08;
+          --page-text: #e8e2d4;
+          --page-muted: #a89f8a;
+          --page-card: #15130f;
+          --page-line: #2e2a20;
+        }
+      }
+      :root[data-theme='dark'] {
+        --page-bg: #0b0a08;
+        --page-text: #e8e2d4;
+        --page-muted: #a89f8a;
+        --page-card: #15130f;
+        --page-line: #2e2a20;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--page-bg);
+        color: var(--page-text);
+        font:
+          15px/1.55 'Plus Jakarta Sans',
+          system-ui,
+          sans-serif;
+      }
+      .wrap {
+        max-width: 1240px;
+        margin: 0 auto;
+        padding: 32px 16px 80px;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: 'El Messiri', serif;
+        font-weight: 600;
+        margin: 0;
+      }
+      h1 {
+        font-size: 34px;
+      }
+      h2 {
+        font-size: 28px;
+      }
+      .lede {
+        color: var(--page-muted);
+        max-width: 760px;
+      }
+      .rules {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 12px;
+        margin: 20px 0 8px;
+      }
+      .rule {
+        background: var(--page-card);
+        border: 1px solid var(--page-line);
+        border-radius: 10px;
+        padding: 12px 14px;
+        font-size: 13.5px;
+      }
+      .rule b {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 2px;
+      }
+      nav.jump {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 18px 0 0;
+      }
+      nav.jump a {
+        color: var(--page-text);
+        border: 1px solid var(--page-line);
+        border-radius: 999px;
+        padding: 6px 14px;
+        text-decoration: none;
+        font-size: 14px;
+        background: var(--page-card);
+      }
+      section.dir {
+        margin-top: 56px;
+        padding-top: 28px;
+        border-top: 1px solid var(--page-line);
+      }
+      .dir-head {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        align-items: baseline;
+      }
+      .dir-tag {
+        font-size: 13px;
+        color: var(--page-muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .dir p.idea {
+        max-width: 780px;
+        color: var(--page-muted);
+        margin: 6px 0 18px;
+      }
+      .specs {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+        gap: 12px;
+        margin-bottom: 22px;
+      }
+      .spec {
+        background: var(--page-card);
+        border: 1px solid var(--page-line);
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 13px;
+      }
+      .spec h3 {
+        font-size: 16px;
+        margin-bottom: 8px;
+      }
+      .sw-row {
+        display: grid;
+        grid-template-columns: 22px 1fr auto auto;
+        gap: 4px 8px;
+        align-items: center;
+      }
+      .sw {
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        border: 1px solid rgba(128, 128, 128, 0.35);
+      }
+      .sw-row code {
+        font-size: 12px;
+        color: var(--page-muted);
+      }
+      .cr {
+        font-size: 11.5px;
+        color: var(--page-muted);
+      }
+      .mini {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+      .mini .box {
+        width: 64px;
+        height: 44px;
+        background: var(--page-bg);
+        border: 1px solid var(--page-line);
+        display: grid;
+        place-items: center;
+        font-size: 11px;
+        color: var(--page-muted);
+      }
+      .row-label {
+        font-size: 12px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--page-muted);
+        margin: 18px 0 8px;
+      }
+      .phones {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 320px));
+        gap: 18px;
+        justify-content: start;
+      }
+      @media (max-width: 1040px) {
+        .phones {
+          grid-template-columns: repeat(2, minmax(0, 320px));
+        }
+      }
+      @media (max-width: 690px) {
+        .phones {
+          grid-template-columns: minmax(0, 340px);
+        }
+      }
+      .cap {
+        font-size: 12.5px;
+        color: var(--page-muted);
+        margin-top: 6px;
+      }
+      .compare {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+        font-size: 14px;
+      }
+      .compare th,
+      .compare td {
+        text-align: left;
+        vertical-align: top;
+        padding: 10px;
+        border-bottom: 1px solid var(--page-line);
+      }
+      .compare th {
+        font-family: 'El Messiri', serif;
+        font-weight: 600;
+      }
+      .tablewrap {
+        overflow-x: auto;
+      }
+      ol.ask li {
+        margin: 6px 0;
+      }
+
+      /* ---------------- Phone frame + direction tokens ---------------- */
+      .phone {
+        --font-display: 'El Messiri', serif;
+        --font-body: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, sans-serif;
+        --font-ar: 'Amiri', serif;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font-body);
+        border-radius: 28px;
+        padding: 12px 14px 18px;
+        min-height: 640px;
+        border: 1px solid rgba(128, 128, 128, 0.28);
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* A · Illuminated Margin */
+      .dA.dark {
+        --bg: #0e0d0a;
+        --s1: #1a1812;
+        --s2: #24211a;
+        --line: #3a3425;
+        --line-soft: #2b271d;
+        --text: #e8e2d4;
+        --muted: #ada38c;
+        --primary: #5a7a50;
+        --on: #fff;
+        --accent: #c9a96e;
+        --warm: #d08c62;
+        --rc: 14px;
+        --rk: 10px;
+        --e1: 0 1px 0 rgba(0, 0, 0, 0.4);
+        --e2: 0 8px 22px -12px rgba(0, 0, 0, 0.7);
+        --e3: 0 18px 40px -16px rgba(0, 0, 0, 0.8);
+        --hero: radial-gradient(120% 90% at 50% 0%, #2a2617 0%, #1a1812 70%);
+      }
+      .dA.light {
+        --bg: #f3ead6;
+        --s1: #fbf6ea;
+        --s2: #efe3c8;
+        --line: #d6c49c;
+        --line-soft: #e6d8b8;
+        --text: #2b2417;
+        --muted: #665a43;
+        --primary: #4f6c46;
+        --on: #fff;
+        --accent: #85662b;
+        --warm: #9c5530;
+        --rc: 14px;
+        --rk: 10px;
+        --e1: 0 1px 0 rgba(90, 70, 30, 0.12);
+        --e2: 0 6px 18px -10px rgba(90, 70, 30, 0.35);
+        --e3: 0 16px 36px -14px rgba(90, 70, 30, 0.45);
+        --hero: radial-gradient(120% 90% at 50% 0%, #fff9ea 0%, #f5e9cd 75%);
+      }
+      /* B · Ruled Ledger */
+      .dB.dark {
+        --bg: #121110;
+        --s1: #1b1a17;
+        --s2: #23211d;
+        --line: #33302a;
+        --line-soft: #282620;
+        --text: #ece7dc;
+        --muted: #a9a291;
+        --primary: #5a7a50;
+        --on: #fff;
+        --accent: #c9a96e;
+        --warm: #c4825a;
+        --rc: 8px;
+        --rk: 6px;
+        --e1: none;
+        --e2: 0 1px 0 #33302a;
+        --e3: 0 12px 32px -14px rgba(0, 0, 0, 0.8);
+        --hero: linear-gradient(180deg, #1f1d18, #1b1a17);
+      }
+      .dB.light {
+        --bg: #f7f3ea;
+        --s1: #fffdf8;
+        --s2: #f1ebdf;
+        --line: #e1d8c6;
+        --line-soft: #ece5d6;
+        --text: #262118;
+        --muted: #6a6150;
+        --primary: #55744b;
+        --on: #fff;
+        --accent: #86672c;
+        --warm: #9a5632;
+        --rc: 8px;
+        --rk: 6px;
+        --e1: none;
+        --e2: 0 1px 0 #e1d8c6;
+        --e3: 0 12px 32px -14px rgba(60, 45, 20, 0.35);
+        --hero: linear-gradient(180deg, #fffaf0, #fffdf8);
+      }
+      /* C · Bustan Arch */
+      .dC.dark {
+        --bg: #0e0d0a;
+        --s1: #1a1812;
+        --s2: #24211a;
+        --line: #3a3425;
+        --line-soft: #2b271d;
+        --text: #e8e2d4;
+        --muted: #ada38c;
+        --primary: #5a7a50;
+        --on: #fff;
+        --accent: #c9a96e;
+        --warm: #d08c62;
+        --leaf: #7a9e6e;
+        --rc: 20px;
+        --rk: 12px;
+        --e1: 0 1px 0 rgba(0, 0, 0, 0.4);
+        --e2: 0 10px 26px -14px rgba(0, 0, 0, 0.75);
+        --e3: 0 20px 44px -16px rgba(0, 0, 0, 0.85);
+        --hero: radial-gradient(120% 90% at 50% 0%, #2a2617 0%, #1a1812 72%);
+      }
+      .dC.light {
+        --bg: #edefe2;
+        --s1: #f8f8ef;
+        --s2: #e2e7d3;
+        --line: #c6ceb0;
+        --line-soft: #d8ddc6;
+        --text: #1f2418;
+        --muted: #545b46;
+        --primary: #3d5a35;
+        --on: #fff;
+        --accent: #765b22;
+        --warm: #8c4a28;
+        --leaf: #46663c;
+        --rc: 20px;
+        --rk: 12px;
+        --e1: 0 1px 2px rgba(40, 50, 25, 0.14), 0 1px 0 rgba(40, 50, 25, 0.06);
+        --e2: 0 12px 26px -10px rgba(40, 50, 25, 0.42);
+        --e3: 0 22px 44px -14px rgba(40, 50, 25, 0.55);
+        --hero: linear-gradient(180deg, #d9e3c6 0%, #f8f8ef 85%);
+      }
+
+      /* Shared screen pieces (read the tokens only) */
+      .ph-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 40px;
+        margin-bottom: 10px;
+      }
+      .ph-top .logo {
+        width: 26px;
+        height: 26px;
+        color: var(--accent);
+      }
+      .ph-top .ttl {
+        font-family: var(--font-display);
+        font-size: 17px;
+        font-weight: 600;
+        flex: 1;
+      }
+      .ph-top .av {
+        width: 30px;
+        height: 30px;
+        border-radius: 999px;
+        background: var(--s2);
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .card {
+        background: var(--s1);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--rc);
+        box-shadow: var(--e1);
+        padding: 14px;
+      }
+      .card + .card,
+      .stack > * + * {
+        margin-top: 10px;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .small {
+        font-size: 12px;
+      }
+      .lbl {
+        font-size: 11px;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .disp {
+        font-family: var(--font-display);
+      }
+      .btn {
+        border-radius: var(--rk);
+        border: 1px solid var(--line);
+        background: var(--s2);
+        color: var(--text);
+        font: 600 13px var(--font-body);
+        padding: 0 12px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .btn.pri {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--on);
+      }
+      .btn.ghost {
+        background: transparent;
+      }
+      .seg {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        background: var(--s1);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--rk);
+        padding: 3px;
+        gap: 3px;
+        margin-bottom: 10px;
+      }
+      .seg span {
+        text-align: center;
+        padding: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: calc(var(--rk) - 3px);
+        color: var(--muted);
+      }
+      .seg span.on {
+        background: var(--s2);
+        color: var(--text);
+        box-shadow: var(--e1);
+      }
+      .hero {
+        background: var(--hero);
+        border-radius: var(--rc);
+        border: 1px solid var(--line);
+        padding: 16px;
+        box-shadow: var(--e2);
+        position: relative;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 10px;
+      }
+      .tile {
+        background: var(--s1);
+        border: 1px solid var(--line-soft);
+        border-radius: var(--rc);
+        padding: 12px;
+        min-height: 84px;
+        box-shadow: var(--e1);
+      }
+      .tile .v {
+        font-family: var(--font-display);
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 1.2;
+        margin-top: 4px;
+      }
+      .bar {
+        height: 6px;
+        background: var(--s2);
+        border-radius: 999px;
+        overflow: hidden;
+        margin-top: 10px;
+      }
+      .bar i {
+        display: block;
+        height: 100%;
+        background: var(--primary);
+        border-radius: 999px;
+      }
+      .divider {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--accent);
+        margin: 14px 0;
+      }
+      .divider::before,
+      .divider::after {
+        content: '';
+        flex: 1;
+        height: 1px;
+        background: var(--line);
+      }
+      .divider svg {
+        width: 16px;
+        height: 16px;
+        flex: none;
+      }
+      .week {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        margin: 10px 0;
+      }
+      .week div {
+        text-align: center;
+        padding: 6px 0;
+        border-radius: var(--rk);
+        font-size: 11px;
+        color: var(--muted);
+        border: 1px solid transparent;
+      }
+      .week div b {
+        display: block;
+        color: var(--text);
+        font-size: 14px;
+        font-weight: 600;
+      }
+      .week div.on {
+        background: var(--s1);
+        border-color: var(--line);
+      }
+      .week div em {
+        display: block;
+        width: 5px;
+        height: 5px;
+        border-radius: 9px;
+        margin: 4px auto 0;
+      }
+      .pr {
+        display: grid;
+        grid-template-columns: 26px 1fr auto;
+        gap: 10px;
+        align-items: center;
+        padding: 10px 2px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .pr:last-child {
+        border-bottom: 0;
+      }
+      .pr .nm {
+        font-weight: 600;
+        font-size: 14px;
+      }
+      .pr .tm {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .pr .st {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      .pr .mk {
+        width: 24px;
+        height: 24px;
+        color: var(--accent);
+      }
+      .pr.cur {
+        background: var(--s2);
+        border-radius: var(--rk);
+        padding: 10px 8px;
+        border: 1px solid var(--line);
+        margin: 4px -6px;
+      }
+      .acts {
+        display: grid;
+        grid-template-columns: 1.3fr 1fr 1fr;
+        gap: 6px;
+        margin-top: 10px;
+      }
+      .acts .btn {
+        min-height: 44px;
+      }
+      .ctr-wrap {
+        display: grid;
+        place-items: center;
+        padding: 12px 0 4px;
+        position: relative;
+      }
+      .ctr-wrap svg.ring {
+        width: 210px;
+        height: 210px;
+      }
+      .ctr-num {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        align-content: center;
+      }
+      .ctr-num b {
+        font-family: var(--font-display);
+        font-size: 64px;
+        font-weight: 600;
+        line-height: 1;
+      }
+      .ctr-num span {
+        font-size: 12px;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+      .ar {
+        font-family: var(--font-ar);
+        font-size: 28px;
+        text-align: center;
+        line-height: 1.9;
+        margin-top: 4px;
+      }
+      .tr {
+        text-align: center;
+        font-size: 12.5px;
+        color: var(--muted);
+        font-style: italic;
+      }
+      .mean {
+        text-align: center;
+        font-size: 13.5px;
+        margin-top: 4px;
+      }
+      .countrow {
+        display: grid;
+        grid-template-columns: 52px 1fr 52px;
+        gap: 10px;
+        margin-top: 14px;
+      }
+      .countrow .btn.pri {
+        min-height: 60px;
+        font-size: 16px;
+      }
+      .countrow .btn {
+        min-height: 60px;
+      }
+      .milestone {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .milestone svg {
+        width: 40px;
+        height: 40px;
+        color: var(--accent);
+        flex: none;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        color: var(--muted);
+      }
+      .ic {
+        width: 16px;
+        height: 16px;
+        flex: none;
+      }
+      .bn {
+        font-family: 'Hind Siliguri', sans-serif;
+        line-height: 1.75;
+      }
+
+      /* A: ruled double frame on cards, corner rosettes on the hero */
+      .dA .card,
+      .dA .tile {
+        box-shadow:
+          var(--e1),
+          inset 0 0 0 3px var(--s1),
+          inset 0 0 0 4px var(--line-soft);
+      }
+      .dA .hero {
+        outline: 1px solid var(--accent);
+        outline-offset: -6px;
+        padding: 22px 24px;
+      }
+      .dA .hero .corner {
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        color: var(--accent);
+      }
+      /* B: hairline rules, no ornament inside cards */
+      .dB .card,
+      .dB .tile {
+        border-color: var(--line);
+      }
+      .dB .hero {
+        border-left: 3px solid var(--accent);
+      }
+      .dB .divider::before,
+      .dB .divider::after {
+        background: var(--line);
+      }
+      /* C: arch on the hero only, pill chips, leafy marks */
+      .dC .hero {
+        border-radius: 140px 140px var(--rc) var(--rc) / 70px 70px var(--rc) var(--rc);
+        padding-top: 34px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <div class="dir-tag">Audit T3.1 · UX-01 · proposal for approval</div>
+        <h1>Bustandeen design tokens: three directions</h1>
+        <p class="lede">
+          Three ways to give the app its own look, all built on the current warm olive, sage and
+          gold palette. Each direction is shown on Home, Salat and Zikr, in dark and light. These
+          are rough sketches with real tokens, not finished screens. Pick one direction (or mix
+          parts) and T3.2 turns it into <code>tailwind.config.js</code> and migrates screens one PR
+          at a time.
+        </p>
+        <div class="rules">
+          <div class="rule">
+            <b>2 radii</b>One for cards, one for controls. Today the app uses five (xl, 2xl, 3xl,
+            lg, full).
+          </div>
+          <div class="rule">
+            <b>3 elevations</b>Flat (border only), raised (cards), overlay (sheets, dialogs). No
+            glows.
+          </div>
+          <div class="rule">
+            <b>1 accent per screen</b>Gold marks the one thing that matters on a screen. A gradient
+            only on its hero.
+          </div>
+          <div class="rule">
+            <b>Ornament as structure</b>Dividers, completion marks and milestones. Never wallpaper.
+          </div>
+          <div class="rule">
+            <b>Branded light theme</b>Warm paper instead of DaisyUI's stock white, for reading
+            outdoors.
+          </div>
+          <div class="rule">
+            <b>Contrast</b>Every text pair below is AA (4.5:1 or more); muted text no longer uses
+            <code>white/30</code>.
+          </div>
+        </div>
+        <div class="rule" style="margin: 16px 0 0; border-color: var(--page-text)">
+          <b>Approved 2026-10-02: C · Bustan Arch, refined</b>Dark uses A's warm palette (the
+          current app colours) with the arch hero and leaf marks. Light is sage paper with a darker
+          green (#3d5a35, 7.7:1 with white) and stronger shadows. Theme setting: System (default),
+          Dark, Light, Follow daylight. Salat terms stay Done / Kaza / Miss. Icons are SVG only, no
+          emoji, no em dashes. A and B stay below for the record.
+        </div>
+        <nav class="jump">
+          <a href="#dir-a">A · Illuminated Margin</a><a href="#dir-b">B · Ruled Ledger</a
+          ><a href="#dir-c">C · Bustan Arch</a><a href="#compare">Compare and decide</a>
+        </nav>
+      </header>
+
+      <main id="dirs"></main>
+
+      <section class="dir" id="compare">
+        <h2>Compare and decide</h2>
+        <div class="tablewrap">
+          <table class="compare">
+            <thead>
+              <tr>
+                <th></th>
+                <th>A · Illuminated Margin</th>
+                <th>B · Ruled Ledger</th>
+                <th>C · Bustan Arch</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Feel</td>
+                <td>
+                  A page of an illuminated muṣḥaf: ruled double frames, rosette verse markers.
+                </td>
+                <td>A quiet notebook: hairline rules, flat cards, ornament only at milestones.</td>
+                <td>A garden gate: one arch on the hero, softer shapes, more sage.</td>
+              </tr>
+              <tr>
+                <td>Radii (card / control)</td>
+                <td>14 / 10</td>
+                <td>8 / 6</td>
+                <td>20 / 12 (+ arch on the hero only)</td>
+              </tr>
+              <tr>
+                <td>Ornament amount</td>
+                <td>Medium: frames, corner rosettes, rosette marks</td>
+                <td>Low: one divider star, milestone rosette</td>
+                <td>Medium: arch, leaf marks, rosette milestone</td>
+              </tr>
+              <tr>
+                <td>Light theme</td>
+                <td>Parchment <code>#f3ead6</code></td>
+                <td>Linen <code>#f7f3ea</code></td>
+                <td>Sage paper <code>#edefe2</code></td>
+              </tr>
+              <tr>
+                <td>Risk</td>
+                <td>
+                  Double frames cost 2 extra lines per card; must stay subtle on small phones.
+                </td>
+                <td>Closest to "generic" if the ornament is dropped later.</td>
+                <td>Arch is a strong shape; only works if used once per screen.</td>
+              </tr>
+              <tr>
+                <td>Migration effort (T3.2)</td>
+                <td>Medium</td>
+                <td>Lowest</td>
+                <td>Medium</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <h3 style="margin-top: 24px">What I need from you</h3>
+        <ol class="ask">
+          <li>Which direction: A, B, C, or a mix (for example A's frames with B's radii).</li>
+          <li>Light theme paper: parchment, linen or sage paper.</li>
+          <li>
+            Should the light theme become the default in daytime, or stay a manual choice (dark
+            stays the default)?
+          </li>
+          <li>Anything here that feels wrong for a worship app (too decorative, too plain)?</li>
+        </ol>
+        <p class="cap">
+          Nothing in the app changes until you approve. T3.2 starts only after your answer.
+        </p>
+      </section>
+    </div>
+
+    <script>
+      // Ornaments (currentColor, so they follow each direction's accent)
+      const SVG = {
+        tick: '<svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M4.5 10.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        clock:
+          '<svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M10 6v4l2.5 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>',
+        cross:
+          '<svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M6 6l8 8M14 6l-8 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+        minus:
+          '<svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+        plus: '<svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 5v10M5 10h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+        reset:
+          '<svg class="ic" viewBox="0 0 20 20" aria-hidden="true"><path d="M15.5 8A6 6 0 1 0 16 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 4v4h-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        logo: '<svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><path d="M21 6a11 11 0 1 0 5 16A9 9 0 0 1 21 6z" fill="currentColor"/></svg>',
+        star8:
+          '<svg viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="10" y="10" width="20" height="20"/><rect x="10" y="10" width="20" height="20" transform="rotate(45 20 20)"/></g></svg>',
+        rosette:
+          '<svg viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="20" cy="20" r="17"/><rect x="9.5" y="9.5" width="21" height="21"/><rect x="9.5" y="9.5" width="21" height="21" transform="rotate(45 20 20)"/><circle cx="20" cy="20" r="5"/></g><g fill="currentColor">' +
+          Array.from({ length: 16 }, (_, i) => {
+            const a = (i * Math.PI) / 8;
+            return `<circle cx="${(20 + 19 * Math.cos(a)).toFixed(2)}" cy="${(20 + 19 * Math.sin(a)).toFixed(2)}" r=".9"/>`;
+          }).join('') +
+          '</g></svg>',
+        rosetteDone:
+          '<svg class="mk" viewBox="0 0 40 40" aria-hidden="true"><g fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="2"><rect x="10" y="10" width="20" height="20"/><rect x="10" y="10" width="20" height="20" transform="rotate(45 20 20)"/></g><path d="M14.5 20.5l4 4 7-8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        check:
+          '<svg class="mk" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        leaf: '<svg class="mk" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z" fill="currentColor" fill-opacity=".2" stroke="currentColor" stroke-width="1.6"/><path d="M4 20L14 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+        open: '<svg class="mk" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-opacity=".45" stroke-width="1.6" stroke-dasharray="2 3"/></svg>',
+        now: '<svg class="mk" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg>',
+        diamond:
+          '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2l6 6-6 6-6-6z" fill="currentColor"/></svg>',
+      };
+
+      // Counter rings: A = ayah-marker dotted ring, B = plain thin arc, C = leafy beads
+      function ring(dir, frac) {
+        const r = 88,
+          c = 2 * Math.PI * r,
+          arc = (c * frac).toFixed(1);
+        let deco = '';
+        if (dir === 'A') {
+          deco =
+            '<circle cx="105" cy="105" r="100" fill="none" stroke="var(--line)" stroke-width="1"/>' +
+            Array.from({ length: 33 }, (_, i) => {
+              const a = -Math.PI / 2 + (i * 2 * Math.PI) / 33;
+              const on = i < Math.round(frac * 33);
+              return `<circle cx="${(105 + 100 * Math.cos(a)).toFixed(1)}" cy="${(105 + 100 * Math.sin(a)).toFixed(1)}" r="${on ? 3 : 2}" fill="${on ? 'var(--accent)' : 'var(--line)'}"/>`;
+            }).join('');
+        } else if (dir === 'C') {
+          deco = Array.from({ length: 33 }, (_, i) => {
+            const a = -Math.PI / 2 + (i * 2 * Math.PI) / 33;
+            const on = i < Math.round(frac * 33);
+            const x = 105 + 100 * Math.cos(a),
+              y = 105 + 100 * Math.sin(a),
+              deg = (a * 180) / Math.PI + 90;
+            return `<ellipse cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" rx="2.4" ry="5" transform="rotate(${deg.toFixed(1)} ${x.toFixed(1)} ${y.toFixed(1)})" fill="${on ? 'var(--leaf)' : 'var(--line)'}"/>`;
+          }).join('');
+        }
+        return `<svg class="ring" viewBox="0 0 210 210" aria-hidden="true">${deco}
+    <circle cx="105" cy="105" r="${r}" fill="var(--s1)" stroke="var(--line-soft)" stroke-width="${dir === 'B' ? 2 : 6}"/>
+    <circle cx="105" cy="105" r="${r}" fill="none" stroke="${dir === 'C' ? 'var(--leaf)' : 'var(--accent)'}" stroke-width="${dir === 'B' ? 2 : 6}" stroke-linecap="round"
+      stroke-dasharray="${arc} ${c.toFixed(1)}" transform="rotate(-90 105 105)"/></svg>`;
+      }
+
+      const doneMark = { A: SVG.rosetteDone, B: SVG.check, C: SVG.leaf };
+      const divider = (dir) =>
+        `<div class="divider">${dir === 'B' ? SVG.diamond : SVG.star8}</div>`;
+      const topBar = (t) =>
+        `<div class="ph-top">${SVG.logo}<div class="ttl">${t}</div><div class="av">A</div></div>`;
+
+      function home(dir) {
+        const corners =
+          dir === 'A'
+            ? [
+                'top:7px;left:7px',
+                'top:7px;right:7px',
+                'bottom:7px;left:7px',
+                'bottom:7px;right:7px',
+              ]
+                .map((p) => `<span class="corner" style="${p}">${SVG.star8}</span>`)
+                .join('')
+            : '';
+        return `${topBar('Bustandeen')}
+  <div class="small muted" style="margin:-2px 0 10px">Friday 2 October · 21 Rabīʿ al-Ākhir 1448</div>
+  <div class="hero">${corners}
+    <div class="lbl">Now</div>
+    <div class="disp" style="font-size:30px;font-weight:600;line-height:1.25">ʿAṣr</div>
+    <div class="muted small">Ends in <b style="color:var(--text)">1h 24m</b> · Maghrib 5:48 PM</div>
+    <div style="margin-top:12px;display:flex;gap:8px;${dir === 'C' ? 'justify-content:center' : ''}"><span class="btn pri">${SVG.tick} Mark ʿAṣr done</span></div>
+  </div>
+  <div class="grid2">
+    <div class="tile"><div class="lbl">Salat</div><div class="v">3<span class="muted" style="font-size:15px">/5</span></div><div class="bar"><i style="width:60%"></i></div></div>
+    <div class="tile"><div class="lbl">Zikr</div><div class="v">245</div><div class="small muted">today</div></div>
+    <div class="tile"><div class="lbl">Quran</div><div class="v">4 <span class="small muted">pages</span></div><div class="small muted">goal 5</div></div>
+    <div class="tile"><div class="lbl">Fasting</div><div class="v">2</div><div class="small muted">this month</div></div>
+  </div>
+  ${divider(dir)}
+  <div class="card milestone">${SVG.rosette}<div><div style="font-weight:600">7 days of all five prayers</div><div class="small muted">A private milestone, only for you.</div></div></div>`;
+      }
+
+      function salat(dir) {
+        const pr = [
+          ['Fajr', '4:35 - 5:50 AM', 'done'],
+          ['Jumuʿah', '11:53 AM - 3:12 PM', 'done'],
+          ['ʿAṣr', '3:12 - 5:29 PM', 'now'],
+          ['Maghrib', '5:48 - 7:01 PM', 'next'],
+          ['ʿIshāʾ', '7:01 PM', 'next'],
+        ];
+        const rows = pr
+          .map(([n, t, s]) => {
+            const mk = s === 'done' ? doneMark[dir] : s === 'now' ? SVG.now : SVG.open;
+            const st =
+              s === 'done'
+                ? `<span class="st" style="color:var(--primary)">Done</span>`
+                : s === 'now'
+                  ? `<span class="chip" style="color:var(--accent);border-color:var(--accent)">Now</span>`
+                  : `<span class="st muted">Upcoming</span>`;
+            const acts =
+              s === 'now'
+                ? `<div class="acts" style="grid-column:1/-1"><span class="btn pri">${SVG.tick} Done</span><span class="btn">${SVG.clock} Kaza</span><span class="btn ghost">${SVG.cross} Miss</span></div>`
+                : '';
+            return `<div class="pr ${s === 'now' ? 'cur' : ''}">${mk}<div><div class="nm">${n}</div><div class="tm">${t}</div></div>${st}${acts}</div>`;
+          })
+          .join('');
+        const days = [
+          ['F', 25, 'p'],
+          ['S', 26, 'w'],
+          ['S', 27, 'm'],
+          ['M', 28, 'p'],
+          ['T', 29, 'p'],
+          ['W', 30, 'p'],
+          ['T', 1, 'p'],
+          ['F', 2, 'on'],
+        ];
+        const dot = {
+          p: 'var(--primary)',
+          w: 'var(--accent)',
+          m: 'var(--warm)',
+          on: 'var(--line)',
+        };
+        const week = days
+          .slice(1)
+          .map(
+            ([d, n, k]) =>
+              `<div class="${k === 'on' ? 'on' : ''}">${d}<b>${n}</b><em style="background:${dot[k]}"></em></div>`
+          )
+          .join('');
+        return `${topBar('Salat')}
+  <div class="seg"><span class="on">Tracker</span><span>Analytics</span></div>
+  <div style="text-align:center"><div class="disp" style="font-size:20px;font-weight:600">Today</div><div class="small muted">Friday 2 October · 21 Rabīʿ al-Ākhir 1448</div></div>
+  <div class="week">${week}</div>
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:baseline"><span class="lbl">Today's prayers</span><span class="disp" style="font-size:20px;font-weight:600">2<span class="muted" style="font-size:14px">/5</span></span></div><div class="bar"><i style="width:40%"></i></div></div>
+  ${divider(dir)}
+  <div class="card" style="padding:6px 12px">${rows}</div>`;
+      }
+
+      function zikr(dir) {
+        return `${topBar('Zikr')}
+  <div class="seg"><span class="on">Counter</span><span>Analytics</span></div>
+  <div class="card" style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px"><span style="font-weight:600">SubhanAllah</span><span class="chip">Set 1 of 3</span></div>
+  <div class="ctr-wrap">${ring(dir, 21 / 33)}<div class="ctr-num"><b>21</b><span>of 33</span></div></div>
+  ${divider(dir)}
+  <div class="ar" lang="ar" dir="rtl">سُبْحَانَ اللهِ</div>
+  <div class="tr">Subḥāna-llāh</div>
+  <div class="mean">Glory be to Allah</div>
+  <div class="countrow"><span class="btn" aria-label="Undo">${SVG.minus}</span><span class="btn pri">${SVG.plus} Count</span><span class="btn" aria-label="Reset">${SVG.reset}</span></div>`;
+      }
+
+      const DIRS = [
+        {
+          id: 'A',
+          name: 'Illuminated Margin',
+          tag: 'Manuscript, medium ornament',
+          idea: 'Borrowed from the margins of an illuminated muṣḥaf. Cards get a fine ruled double frame, the hero gets a gold inner rule with corner stars, completed prayers become small eight-point stars, and the zikr counter is ringed by 33 dots like a verse marker. Gold is the accent; sage is for actions.',
+          light: 'Parchment',
+          radii: [14, 10],
+        },
+        {
+          id: 'B',
+          name: 'Ruled Ledger',
+          tag: 'Quiet, low ornament',
+          idea: "The calmest option. Flat cards with hairline rules, small radii, no shadows on content. The only ornaments are a diamond on dividers and the rosette on milestones. Closest to today's layout, so the cheapest to roll out, but it relies on typography to feel like Bustandeen.",
+          light: 'Linen',
+          radii: [8, 6],
+        },
+        {
+          id: 'C',
+          name: 'Bustan Arch',
+          tag: 'Garden, soft shapes',
+          idea: 'Leans on the name: a garden (bustān). The hero of each screen sits under one arch, completion marks are leaves, the counter ring is a string of leaf beads in sage, and the light theme is a pale sage paper. Softer and friendlier, more sage than gold.',
+          light: 'Sage paper',
+          radii: [20, 12],
+        },
+      ];
+
+      const L = (h) => {
+        const c = [1, 3, 5]
+          .map((i) => parseInt(h.slice(i, i + 2), 16) / 255)
+          .map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+        return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+      };
+      const ratio = (a, b) => {
+        const [x, y] = [L(a), L(b)].sort((p, q) => q - p);
+        return ((x + 0.05) / (y + 0.05)).toFixed(1);
+      };
+
+      function tokenTable(dir, theme) {
+        const probe = document.createElement('div');
+        probe.className = `phone d${dir} ${theme}`;
+        probe.style.cssText = 'position:absolute;visibility:hidden';
+        document.body.appendChild(probe);
+        const cs = getComputedStyle(probe);
+        const v = (k) => cs.getPropertyValue(k).trim();
+        const s1 = v('--s1');
+        const rows = [
+          ['bg', '--bg'],
+          ['surface', '--s1'],
+          ['surface-2', '--s2'],
+          ['line', '--line'],
+          ['text', '--text', s1],
+          ['muted', '--muted', s1],
+          ['primary', '--primary', '#ffffff'],
+          ['accent', '--accent', s1],
+          ['warm', '--warm', s1],
+        ]
+          .map(
+            ([n, k, against]) =>
+              `<div class="sw" style="background:${v(k)}"></div><span>${n}</span><code>${v(k)}</code><span class="cr">${against ? ratio(v(k), against) + ':1' + (k === '--primary' ? ' white' : '') : ''}</span>`
+          )
+          .join('');
+        probe.remove();
+        return `<div class="spec"><h3>${theme === 'dark' ? 'Dark' : 'Light'} roles</h3><div class="sw-row">${rows}</div></div>`;
+      }
+
+      document.getElementById('dirs').innerHTML = DIRS.map(
+        (d) => `
+  <section class="dir" id="dir-${d.id.toLowerCase()}">
+    <div class="dir-head"><h2>${d.id} · ${d.name}</h2><span class="dir-tag">${d.tag} · light: ${d.light}</span></div>
+    <p class="idea">${d.idea}</p>
+    <div class="specs">
+      ${tokenTable(d.id, 'dark')}
+      ${tokenTable(d.id, 'light')}
+      <div class="spec"><h3>Shape, depth, ornament</h3>
+        <div class="mini"><div class="box" style="border-radius:${d.radii[0]}px">card ${d.radii[0]}</div><div class="box" style="border-radius:${d.radii[1]}px">control ${d.radii[1]}</div></div>
+        <p class="small" style="margin:10px 0 6px">Elevations: flat (border) · raised (cards) · overlay (sheets).</p>
+        <div class="phone d${d.id} dark" style="min-height:0;padding:10px;border-radius:12px;display:flex;gap:14px;align-items:center;color:var(--accent)">
+          <span style="width:30px;height:30px;display:block">${SVG.rosette}</span><span style="width:26px;height:26px;display:block">${doneMark[d.id]}</span><span style="width:22px;height:22px;display:block">${SVG.star8}</span><span style="flex:1">${divider(d.id)}</span>
+        </div>
+      </div>
+      <div class="spec"><h3>Type</h3>
+        <div style="font-family:'El Messiri';font-size:22px;font-weight:600">Display · El Messiri</div>
+        <div>Body · Plus Jakarta Sans, 15/1.55</div>
+        <div class="bn" style="font-size:15px">বাংলা · Hind Siliguri, লাইন-উচ্চতা ১.৭৫ (আলাদা করে)</div>
+        <div lang="ar" dir="rtl" style="font-family:Amiri;font-size:22px;line-height:1.9">سُبْحَانَ اللهِ</div>
+      </div>
+    </div>
+    ${['dark', 'light']
+      .map(
+        (th) => `
+      <div class="row-label">${th === 'dark' ? 'Dark (default)' : 'Light · ' + d.light}</div>
+      <div class="phones">
+        <div><div class="phone d${d.id} ${th}">${home(d.id)}</div><div class="cap">Home</div></div>
+        <div><div class="phone d${d.id} ${th}">${salat(d.id)}</div><div class="cap">Salat</div></div>
+        <div><div class="phone d${d.id} ${th}">${zikr(d.id)}</div><div class="cap">Zikr</div></div>
+      </div>`
+      )
+      .join('')}
+  </section>`
+      ).join('');
+    </script>
+  </body>
+</html>

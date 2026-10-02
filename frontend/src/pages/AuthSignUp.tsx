@@ -257,7 +257,7 @@ export default function AuthSignUp() {
               {/* Continue to app */}
               <button
                 onClick={() => navigate('/')}
-                className="w-full py-3 px-4 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold shadow-lg transition-all duration-300"
+                className="w-full py-3 px-4 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color rounded-xl font-semibold shadow-lg transition-all duration-300"
               >
                 {t('authSignUp.continueToApp', 'Continue to App')}
               </button>
@@ -305,7 +305,7 @@ export default function AuthSignUp() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full py-3 px-4 bg-white hover:bg-white/90 text-brand-deep rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 border border-brand-emerald/20 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-3 px-4 bg-on-color hover:bg-on-color/90 text-ink-fixed rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 border border-brand-emerald/20 disabled:opacity-60 disabled:cursor-not-allowed"
                 onClick={google}
                 disabled={loading}
               >
@@ -551,7 +551,7 @@ export default function AuthSignUp() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-3 px-4 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 px-4 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color rounded-xl font-semibold shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   type="submit"
                   disabled={loading || confirmMismatch || emailInvalid}
                 >

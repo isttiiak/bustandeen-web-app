@@ -326,7 +326,7 @@ export default function MusafirMode() {
                 <div className="flex flex-wrap gap-2 mt-4">
                   <Link
                     to="/salat"
-                    className="px-4 py-2 rounded-xl text-sm font-bold bg-brand-emerald-dim text-white shadow-[0_0_14px_rgba(122,158,110,0.35)] hover:bg-brand-emerald-dim hover:brightness-90"
+                    className="px-4 py-2 rounded-xl text-sm font-bold bg-brand-emerald-dim text-on-color shadow-[0_0_14px_rgba(122,158,110,0.35)] hover:bg-brand-emerald-dim hover:brightness-90"
                   >
                     🕌 {t('musafir.logPrayers', 'Log today’s prayers')}
                   </Link>
@@ -349,7 +349,7 @@ export default function MusafirMode() {
                 <h2 className="text-2xl sm:text-3xl font-black text-white mt-1 leading-tight">
                   {t('musafir.heroTitle', 'Travelling? Allah has made it easy for you.')}
                 </h2>
-                <div className="mt-3 rounded-2xl border border-brand-gold/20 bg-black/20 p-3">
+                <div className="mt-3 rounded-2xl border border-brand-gold/20 bg-shade/20 p-3">
                   <RefQuote r={REF_SADAQAH} lang={lang} />
                 </div>
                 <div className="grid grid-cols-2 gap-2 mt-4">
@@ -374,7 +374,7 @@ export default function MusafirMode() {
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     onClick={openForm}
-                    className="mt-5 w-full py-3 rounded-2xl text-base font-black bg-gradient-to-r from-brand-info to-brand-emerald text-white shadow-[0_0_20px_rgba(90,158,142,0.35)] hover:brightness-110"
+                    className="mt-5 w-full py-3 rounded-2xl text-base font-black bg-gradient-to-r from-brand-info to-brand-emerald text-on-color shadow-[0_0_20px_rgba(90,158,142,0.35)] hover:brightness-110"
                   >
                     ✈️ {t('musafir.start', 'Start my journey')}
                   </motion.button>
@@ -408,7 +408,7 @@ export default function MusafirMode() {
                 )}
               </p>
               <div className="mt-3 space-y-3">
-                <div className="rounded-2xl bg-black/20 p-3">
+                <div className="rounded-2xl bg-shade/20 p-3">
                   <p className="text-white/40 text-[11px] font-bold uppercase tracking-wider mb-1">
                     {t('musafir.returnSunnah', 'The returning sunnah')}
                   </p>
@@ -568,7 +568,7 @@ export default function MusafirMode() {
                   <motion.button
                     whileTap={{ scale: 0.97 }}
                     onClick={submitForm}
-                    className="flex-1 py-3 rounded-2xl font-black bg-gradient-to-r from-brand-info to-brand-emerald text-white hover:brightness-110"
+                    className="flex-1 py-3 rounded-2xl font-black bg-gradient-to-r from-brand-info to-brand-emerald text-on-color hover:brightness-110"
                   >
                     {active
                       ? t('musafir.save', 'Save')
@@ -636,7 +636,7 @@ export default function MusafirMode() {
               );
             })}
           </div>
-          <div className="mt-3 rounded-2xl border border-white/10 bg-black/20 p-3">
+          <div className="mt-3 rounded-2xl border border-white/10 bg-shade/20 p-3">
             {canJoin ? (
               <div className="flex flex-wrap items-center gap-2 text-xs">
                 <span className="text-white/50 font-bold">
@@ -718,7 +718,7 @@ export default function MusafirMode() {
                   className={`rounded-2xl border transition-colors ${
                     done
                       ? 'border-brand-emerald/40 bg-brand-emerald/[0.08]'
-                      : 'border-white/10 bg-black/20'
+                      : 'border-white/10 bg-shade/20'
                   }`}
                 >
                   <div className="flex items-center gap-3 p-3">
@@ -729,7 +729,7 @@ export default function MusafirMode() {
                       aria-label={t('musafir.markSaid', 'Mark as said')}
                       className={`shrink-0 w-8 h-8 rounded-full border-2 grid place-items-center text-sm font-black transition-all ${
                         done
-                          ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white'
+                          ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color'
                           : 'border-white/25 text-transparent hover:border-brand-emerald/60'
                       }`}
                     >
@@ -911,7 +911,7 @@ export default function MusafirMode() {
                         className={`rounded-xl border p-2.5 ${
                           mine
                             ? 'border-brand-emerald/50 bg-brand-emerald/10'
-                            : 'border-white/10 bg-black/20'
+                            : 'border-white/10 bg-shade/20'
                         }`}
                       >
                         <p

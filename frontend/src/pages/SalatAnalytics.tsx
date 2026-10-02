@@ -285,13 +285,13 @@ export default function SalatAnalytics() {
               </h1>
               <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border">
                 <button
-                  className={`tab text-xs ${activeView === 'stats' ? 'tab-active bg-brand-emerald-dim text-white font-bold' : 'text-white/60'}`}
+                  className={`tab text-xs ${activeView === 'stats' ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'}`}
                   onClick={() => setActiveView('stats')}
                 >
                   {t('salatAnalytics.viewStats', 'Stats')}
                 </button>
                 <button
-                  className={`tab text-xs flex items-center gap-1 ${activeView === 'journey' ? 'tab-active bg-brand-emerald-dim text-white font-bold' : 'text-white/60'}`}
+                  className={`tab text-xs flex items-center gap-1 ${activeView === 'journey' ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'}`}
                   onClick={() => setActiveView('journey')}
                 >
                   <MapIcon className="w-3 h-3" />
@@ -304,7 +304,7 @@ export default function SalatAnalytics() {
                 {PERIOD_OPTIONS.map((p) => (
                   <button
                     key={p.value}
-                    className={`tab text-xs ${!selectedMonth && days === p.value ? 'tab-active bg-brand-emerald-dim text-white font-bold' : 'text-white/60'}`}
+                    className={`tab text-xs ${!selectedMonth && days === p.value ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'}`}
                     onClick={() => {
                       setDays(p.value);
                       setSelectedMonth(null);
@@ -381,7 +381,7 @@ export default function SalatAnalytics() {
                           }}
                           className={`py-2 rounded-xl text-xs font-bold transition-all ${
                             isSelected
-                              ? 'bg-brand-emerald-dim text-white'
+                              ? 'bg-brand-emerald-dim text-on-color'
                               : isFuture
                                 ? 'opacity-20 cursor-not-allowed text-white/30'
                                 : 'text-white/70 hover:bg-white/10 hover:text-white'

@@ -123,7 +123,7 @@ export default function FastingSettingsSheet({
                       <span className="text-white/40 text-xs">{t('common.days')}</span>
                       <button
                         onClick={saveQadaOwed}
-                        className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 ml-auto"
+                        className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 ml-auto"
                       >
                         {t('common.save')}
                       </button>
@@ -132,7 +132,7 @@ export default function FastingSettingsSheet({
                       <ManageProgress
                         done={qadaDone}
                         target={qadaOwed}
-                        color="#c9a96e"
+                        color="rgb(var(--c-gold))"
                         doneLabel={
                           qadaRemaining === 0
                             ? t('fasting.allMadeUp', "All made up — māshā'Allāh! 🎉")
@@ -175,7 +175,7 @@ export default function FastingSettingsSheet({
                             },
                           })
                         }
-                        className={`btn btn-xs border-0 shrink-0 ${kaffarahActive ? 'bg-white/10 text-white/50' : 'bg-brand-warm text-white'}`}
+                        className={`btn btn-xs border-0 shrink-0 ${kaffarahActive ? 'bg-white/10 text-white/50' : 'bg-brand-warm text-on-color'}`}
                       >
                         {kaffarahActive ? t('fasting.stop', 'Stop') : t('fasting.start', 'Start')}
                       </button>
@@ -300,7 +300,7 @@ export default function FastingSettingsSheet({
                         <ManageProgress
                           done={v.completed}
                           target={v.targetDays}
-                          color="#5a9e8e"
+                          color="rgb(var(--c-info))"
                           doneLabel={
                             v.completed >= v.targetDays
                               ? t('fasting.vowFulfilled', 'Fulfilled ✓')
@@ -331,7 +331,7 @@ export default function FastingSettingsSheet({
                       <button
                         onClick={submitVow}
                         disabled={!vowTitle.trim() || !vowDays || addVow.isPending}
-                        className="btn btn-xs bg-brand-info text-white border-0 disabled:opacity-30"
+                        className="btn btn-xs bg-brand-info text-on-color border-0 disabled:opacity-30"
                       >
                         {t('common.add')}
                       </button>

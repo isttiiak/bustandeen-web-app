@@ -2635,6 +2635,16 @@
     "shareButton": "Share as image"
   },
   "settings": {
+    "appearanceSection": "Appearance",
+    "appearanceSubtitle": "Choose how Bustandeen looks. Dark is the classic look; light is a sage paper for reading in daylight.",
+    "themeSystem": "Match my device",
+    "themeSystemDetail": "Follows your phone or computer setting.",
+    "themeDark": "Dark",
+    "themeDarkDetail": "Always the dark theme.",
+    "themeLight": "Light",
+    "themeLightDetail": "Always the sage paper theme.",
+    "themeDaylight": "Follow daylight",
+    "themeDaylightDetail": "Light from sunrise to Maghrib, dark after. Uses your saved location on this device only; without one, 6 AM to 6 PM.",
     "accessibilitySection": "Accessibility",
     "accountNote": "Account details (name, photo, email) are managed from your Profile page.",
     "backupNote": "The .json backup contains everything — zikr history, salat, fasting, Quran progress and your profile. Restoring merges it back: days in the file overwrite the same days here, everything else stays.",

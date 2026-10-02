@@ -635,7 +635,7 @@ export default function RamadanTracker() {
               // optional (Istiak). Voluntary fasts keep it in /fasting.
               <div className="mt-4">
                 <button
-                  className="w-full btn h-12 rounded-2xl border-0 text-white font-black bg-gradient-to-r from-brand-gold to-brand-gold hover:from-brand-gold hover:to-brand-gold"
+                  className="w-full btn h-12 rounded-2xl border-0 text-on-color font-black bg-gradient-to-r from-brand-gold to-brand-gold hover:from-brand-gold hover:to-brand-gold"
                   disabled={upsert.isPending}
                   onClick={() => logToday('completed')}
                 >

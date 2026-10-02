@@ -69,7 +69,7 @@ function CampaignRow({ c }: { c: UpdateEmailCampaignSummary }) {
         )}
       </div>
       {open && (
-        <div className="mt-2 rounded-xl bg-black/20 p-3 space-y-2">
+        <div className="mt-2 rounded-xl bg-shade/20 p-3 space-y-2">
           {detail.isLoading && <p className="text-white/30 text-xs">Loading…</p>}
           {detail.data && (
             <>
@@ -320,7 +320,7 @@ ${trailer}`);
                 ))}
               </div>
               {notSetMode === 'selected' && audience && (
-                <div className="mt-2 rounded-xl border border-white/10 bg-black/20 p-3 space-y-2">
+                <div className="mt-2 rounded-xl border border-white/10 bg-shade/20 p-3 space-y-2">
                   <div className="flex items-center justify-between text-xs">
                     <span className="text-white/40">{selected.size} selected</span>
                     <span className="flex gap-3">
@@ -395,14 +395,14 @@ ${trailer}`);
           <button
             onClick={() => setConfirmOpen(true)}
             disabled={!canSend}
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
           >
             {send.isPending ? 'Sending…' : 'Send update'}
           </button>
         </div>
 
         {(send.isPending || progress) && progress && (
-          <div className="rounded-xl bg-black/20 p-3 text-xs space-y-1.5">
+          <div className="rounded-xl bg-shade/20 p-3 text-xs space-y-1.5">
             <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
               <div
                 className="h-full bg-brand-emerald transition-all"

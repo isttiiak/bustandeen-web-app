@@ -250,7 +250,7 @@ export default function QuranAnalytics() {
             {(['month', 'last30', 'alltime'] as RangePeriod[]).map((p) => (
               <button
                 key={p}
-                className={`tab text-xs ${rangePeriod === p && p !== 'month' ? 'tab-active bg-brand-emerald-dim text-white font-bold' : 'text-white/60'} ${rangePeriod === 'month' && p === 'month' ? 'tab-active bg-brand-emerald-dim text-white font-bold' : ''}`}
+                className={`tab text-xs ${rangePeriod === p && p !== 'month' ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'} ${rangePeriod === 'month' && p === 'month' ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : ''}`}
                 onClick={() => {
                   setRangePeriod(p);
                   if (p !== 'month') setShowMonthPicker(false);
@@ -320,7 +320,7 @@ export default function QuranAnalytics() {
                         }}
                         className={`rounded-lg py-1.5 text-xs font-semibold transition-all ${
                           isSel
-                            ? 'bg-brand-emerald-dim text-white'
+                            ? 'bg-brand-emerald-dim text-on-color'
                             : isFuture
                               ? 'text-white/15 cursor-not-allowed'
                               : 'text-white/60 hover:bg-white/10 hover:text-white'
@@ -548,13 +548,13 @@ export default function QuranAnalytics() {
                         {s.surahs.map((surahNo) => (
                           <span
                             key={surahNo}
-                            className="px-1.5 py-0.5 rounded-md bg-black/30 border border-brand-border text-[10px] text-white/50"
+                            className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/50"
                           >
                             {nameOf(surahNo)}
                           </span>
                         ))}
                         {s.ayahCount > 0 && (
-                          <span className="px-1.5 py-0.5 rounded-md bg-black/30 border border-brand-border text-[10px] text-white/50">
+                          <span className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/50">
                             {t('quranAnalytics.sessions.ayahCount', {
                               n: formatLocaleNumber(s.ayahCount),
                             })}

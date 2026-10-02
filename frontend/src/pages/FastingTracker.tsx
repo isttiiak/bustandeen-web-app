@@ -41,6 +41,7 @@ import { translateReference } from '../utils/localeReference.js';
 import MusafirBanner from '../components/MusafirBanner.js';
 import { useMusafir } from '../utils/musafir.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+import { withAlpha } from '../utils/color.js';
 import {
   offsetDate,
   friendlyDate,
@@ -198,7 +199,7 @@ export default function FastingTracker() {
         id: 'qada',
         label: t('fasting.qada', 'Qaḍā'),
         emoji: '🔄',
-        color: '#c9a96e',
+        color: 'rgb(var(--c-gold))',
         done: qadaDone,
         target: qadaOwed,
       });
@@ -208,7 +209,7 @@ export default function FastingTracker() {
         id: 'kaffarah',
         label: t('fasting.kaffarah', 'Kaffārah'),
         emoji: '⚖️',
-        color: '#c4825a',
+        color: 'rgb(var(--c-warm))',
         done: summary?.kaffarah.currentRun ?? 0,
         target: summary?.profile.kaffarah.targetDays ?? 60,
       });
@@ -219,7 +220,7 @@ export default function FastingTracker() {
           id: `vow-${v.id}`,
           label: v.title,
           emoji: '🤝',
-          color: '#5a9e8e',
+          color: 'rgb(var(--c-info))',
           done: v.completed,
           target: v.targetDays,
         });
@@ -498,8 +499,8 @@ export default function FastingTracker() {
                                 : ''
                             }`}
                             style={{
-                              background: `${c.color}1c`,
-                              borderColor: `${c.color}55`,
+                              background: withAlpha(c.color, '1c'),
+                              borderColor: withAlpha(c.color, '55'),
                               color: c.color,
                             }}
                           >
@@ -569,7 +570,7 @@ export default function FastingTracker() {
                         )}
                       </p>
                       <button
-                        className="btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-gold to-brand-gold"
+                        className="btn btn-sm rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-gold to-brand-gold"
                         onClick={() => navigate('/ramadan')}
                       >
                         🌙 {t('fasting.openRamadanTracker', 'Open the Ramadan tracker')} →
@@ -667,7 +668,7 @@ export default function FastingTracker() {
                                     hijri: log.hijri,
                                   })
                                 }
-                                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 font-bold px-6"
+                                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 font-bold px-6"
                               >
                                 ✅ {t('fasting.completedIt', 'I completed it!')}
                               </motion.button>
@@ -726,7 +727,7 @@ export default function FastingTracker() {
                             whileTap={{ scale: 0.95 }}
                             onClick={() => requestLog('completed')}
                             disabled={upsert.isPending || (category === 'nadhr' && !vowId)}
-                            className="w-full max-w-xs h-14 rounded-2xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white font-black text-lg border-0 shadow-[0_8px_30px_rgba(16,185,129,0.35)] transition-colors"
+                            className="w-full max-w-xs h-14 rounded-2xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color font-black text-lg border-0 shadow-[0_8px_30px_rgba(16,185,129,0.35)] transition-colors"
                           >
                             ✅{' '}
                             {t('fasting.iFasted', 'I fasted {{day}}', {

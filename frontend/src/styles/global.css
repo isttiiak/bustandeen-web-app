@@ -1,24 +1,109 @@
 /* Global styles for Bustandeen app */
 
-/* Brand CSS variables */
-:root {
-  --brand-void: #0e0d0a;
-  --brand-deep: #1a1812;
-  --brand-surface: #211f16;
-  --brand-border: #3a3425;
-  --brand-emerald: #7a9e6e;
-  --brand-emerald-dim: #5a7a50;
-  --brand-gold: #c9a96e;
-  --brand-gold-dim: #a08850;
-  --brand-info: #5a9e8e;
-  --brand-info-dim: #488078;
-  --brand-pink: #d4839e;
-  --brand-pink-dim: #b06a84;
-  --brand-magenta: #c4825a;
-  --brand-warm: #c4825a;
-  --brand-warm-dim: #a06840;
+/* Theme tokens (audit T3.2, design: docs/design/t3-1-design-tokens.html).
+   Colours are RGB channels so Tailwind's opacity modifiers keep working
+   (`bg-brand-deep/80`, `text-white/40`). `white` in Tailwind means "ink":
+   real white on the dark theme, dark ink on the light one. Use `on-color`
+   for text that must stay white on a solid coloured fill (buttons).
+   The dark values are the original palette, unchanged. */
+:root,
+[data-theme='bustandeen'] {
+  --c-void: 14 13 10;
+  --c-deep: 26 24 18;
+  --c-void-deep: 20 19 14;
+  --c-surface: 33 31 22;
+  --c-border: 58 52 37;
+  --c-emerald: 122 158 110;
+  --c-emerald-dim: 90 122 80;
+  --c-gold: 201 169 110;
+  --c-gold-dim: 160 136 80;
+  --c-info: 90 158 142;
+  --c-info-dim: 72 128 120;
+  --c-pink: 212 131 158;
+  --c-pink-dim: 176 106 132;
+  --c-warm: 196 130 90;
+  --c-warm-dim: 160 104 64;
+  --c-ink: 255 255 255;
+  --c-shade: 0 0 0;
+  /* Quran reader's muṣḥaf card */
+  --c-reader-from: 13 27 23;
+  --c-reader-via: 10 20 18;
+  --c-reader-to: 13 20 32;
+  --c-reader-text: 232 226 208;
+  --c-reader-soft: 214 208 191;
+  --c-reader-note: 216 208 184;
+  /* Lowest opacity faint text may render at (0 = as written). */
+  --ink-text-floor: 0;
+  --accent-text-floor: 0;
+  /* Tailwind's red-300/400 (error text), theme-aware */
+  --c-red-300: 252 165 165;
+  --c-red-400: 248 113 113;
   --text-primary: #e8e2d4;
   --text-secondary: #9e9580;
+  /* Elevations: flat (border only) / raised / overlay */
+  --elev-1: 0 1px 0 rgb(0 0 0 / 0.4);
+  --elev-2: 0 10px 26px -14px rgb(0 0 0 / 0.75);
+  --elev-3: 0 20px 44px -16px rgb(0 0 0 / 0.85);
+  color-scheme: dark;
+}
+
+/* Sage paper: darker greens and golds so they pass AA as text on paper,
+   and stronger shadows than the dark theme (cards need lift on a light page). */
+[data-theme='bustandeen-light'] {
+  --c-void: 237 239 226;
+  --c-deep: 248 248 239;
+  --c-void-deep: 243 244 233;
+  --c-surface: 226 231 211;
+  --c-border: 198 206 176;
+  --c-emerald: 54 81 46;
+  --c-emerald-dim: 58 86 50;
+  --c-gold: 95 74 24;
+  --c-gold-dim: 84 65 20;
+  --c-info: 40 91 81;
+  --c-info-dim: 34 80 71;
+  --c-pink: 132 57 90;
+  --c-pink-dim: 116 48 78;
+  --c-warm: 119 61 31;
+  --c-warm-dim: 104 52 26;
+  --c-ink: 31 36 24;
+  --c-shade: 120 135 100;
+  --c-reader-from: 250 250 242;
+  --c-reader-via: 246 247 236;
+  --c-reader-to: 238 242 228;
+  --c-reader-text: 31 36 24;
+  --c-reader-soft: 60 66 50;
+  --c-reader-note: 60 66 50;
+  /* On paper (and its tinted panels) faint ink below ~0.75 drops under
+     4.5:1, so it is lifted; brand-coloured text with an opacity too. */
+  --ink-text-floor: 0.76;
+  --accent-text-floor: 0.92;
+  --c-red-300: 155 28 28;
+  --c-red-400: 180 35 24;
+  --text-primary: #1f2418;
+  --text-secondary: #545b46;
+  --elev-1: 0 1px 2px rgb(40 50 25 / 0.14), 0 1px 0 rgb(40 50 25 / 0.06);
+  --elev-2: 0 12px 26px -10px rgb(40 50 25 / 0.42);
+  --elev-3: 0 22px 44px -14px rgb(40 50 25 / 0.55);
+  color-scheme: light;
+}
+
+/* Hex aliases for inline styles and SVG */
+:root {
+  --brand-void: rgb(var(--c-void));
+  --brand-deep: rgb(var(--c-deep));
+  --brand-surface: rgb(var(--c-surface));
+  --brand-border: rgb(var(--c-border));
+  --brand-emerald: rgb(var(--c-emerald));
+  --brand-emerald-dim: rgb(var(--c-emerald-dim));
+  --brand-gold: rgb(var(--c-gold));
+  --brand-gold-dim: rgb(var(--c-gold-dim));
+  --brand-info: rgb(var(--c-info));
+  --brand-info-dim: rgb(var(--c-info-dim));
+  --brand-pink: rgb(var(--c-pink));
+  --brand-pink-dim: rgb(var(--c-pink-dim));
+  --brand-magenta: rgb(var(--c-warm));
+  --brand-warm: rgb(var(--c-warm));
+  --brand-warm-dim: rgb(var(--c-warm-dim));
 }
 
 /* Typography: El Messiri (display) + Plus Jakarta Sans (body), self-hosted
@@ -42,24 +127,16 @@ h6,
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
-  /* This app has a single dark theme, never a light one — telling the
-     browser that up front makes it render native form-control chrome
-     (a <select>'s own dropdown listbox, date/time pickers, etc.) in dark
-     colors automatically. Without this, Chromium/Windows in particular
-     renders a <select>'s OPTION LIST using OS-native light styling
-     regardless of any Tailwind/DaisyUI classes on the <select> itself —
-     the closed box looks themed, but opening it shows white-on-white
-     text until you hover. */
-  color-scheme: dark;
+  /* color-scheme comes from the theme tokens above: it makes the browser
+     draw native control chrome (a <select>'s option list, date pickers)
+     in the theme's colours. Without it, Chromium/Windows renders the
+     option list light on the dark theme (white-on-white until hover). */
 }
 
 /* Explicit fallback for the option-list colors — color-scheme alone
    doesn't guarantee every browser/OS combination picks readable option
    colors, so state them directly too. Applies to every <select> in the
    app (DaisyUI's .select and plain native selects alike). */
-select {
-  color-scheme: dark;
-}
 select option {
   background-color: var(--brand-deep);
   color: var(--text-primary);
@@ -81,9 +158,9 @@ select option {
 
 /* High contrast overrides */
 :root[data-high-contrast] {
-  --tw-ring-color: #ffffff;
+  --tw-ring-color: rgb(var(--c-ink));
   --tw-text-opacity: 1;
-  color: rgba(255, 255, 255, var(--tw-text-opacity));
+  color: rgb(var(--c-ink) / var(--tw-text-opacity));
 }
 
 :root[data-high-contrast] *:focus-visible {
@@ -91,11 +168,11 @@ select option {
 }
 
 :root[data-high-contrast] .text-white\/70 {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgb(var(--c-ink) / 0.9);
 }
 
 :root[data-high-contrast] .text-white\/80 {
-  color: rgba(255, 255, 255, 1);
+  color: rgb(var(--c-ink));
 }
 
 :root[data-high-contrast] .border-emerald-500\/10 {
@@ -123,7 +200,7 @@ select option {
 .btn:disabled,
 button:disabled,
 .btn[disabled] {
-  color: rgba(255, 255, 255, 0.4) !important;
+  color: rgb(var(--c-ink) / max(0.4, var(--ink-text-floor))) !important;
   opacity: 1 !important;
   background-opacity: 0.3;
   pointer-events: none;

@@ -209,7 +209,7 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
                           {m.steps.map((s) => (
                             <span
                               key={s.zikr}
-                              className="px-2 py-0.5 rounded-lg bg-black/30 border border-brand-emerald/10 text-[11px] text-white/60"
+                              className="px-2 py-0.5 rounded-lg bg-shade/30 border border-brand-emerald/10 text-[11px] text-white/60"
                             >
                               {s.zikr.length > 18 ? 'Tahlīl' : s.zikr}{' '}
                               <b className="text-white/80">×{s.count}</b>

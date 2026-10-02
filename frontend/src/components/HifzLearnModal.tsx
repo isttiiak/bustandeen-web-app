@@ -152,7 +152,7 @@ export default function HifzLearnModal({
             <button
               disabled={confirming || !ayat}
               onClick={onConfirm}
-              className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white flex-[2]"
+              className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color flex-[2]"
             >
               {t('hifz.confirmMemorise', "I've read it — start memorising")}
             </button>

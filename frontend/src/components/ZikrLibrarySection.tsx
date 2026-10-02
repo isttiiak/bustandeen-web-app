@@ -346,7 +346,7 @@ export default function ZikrLibrarySection() {
                             </a>
                           </div>
                           <button
-                            className={`btn btn-xs rounded-lg shrink-0 ${added ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white font-bold cursor-default !opacity-100' : 'bg-white/5 border-brand-emerald/20 text-white/70 hover:border-brand-emerald/50'}`}
+                            className={`btn btn-xs rounded-lg shrink-0 ${added ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color font-bold cursor-default !opacity-100' : 'bg-white/5 border-brand-emerald/20 text-white/70 hover:border-brand-emerald/50'}`}
                             disabled={added || adding === item.name}
                             onClick={() => addFromLibrary(item)}
                           >
@@ -462,7 +462,7 @@ export default function ZikrLibrarySection() {
                                   </a>
                                 </div>
                                 <button
-                                  className={`btn btn-xs rounded-lg shrink-0 ${added ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white font-bold cursor-default !opacity-100' : 'bg-white/5 border-brand-emerald/20 text-white/70 hover:border-brand-emerald/50'}`}
+                                  className={`btn btn-xs rounded-lg shrink-0 ${added ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color font-bold cursor-default !opacity-100' : 'bg-white/5 border-brand-emerald/20 text-white/70 hover:border-brand-emerald/50'}`}
                                   disabled={added || adding === item.name}
                                   onClick={() => addFromLibrary(item)}
                                 >

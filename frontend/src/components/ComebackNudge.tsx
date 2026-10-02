@@ -124,7 +124,7 @@ export default function ComebackNudge() {
           <div className="flex flex-wrap gap-2 mt-3">
             <Link
               to="/quran/browse"
-              className="btn btn-xs rounded-xl border-0 text-white font-bold bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90"
+              className="btn btn-xs rounded-xl border-0 text-on-color font-bold bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90"
             >
               {t('comebackNudge.readOneAyah')}
             </Link>

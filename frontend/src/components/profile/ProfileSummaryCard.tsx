@@ -38,6 +38,8 @@ export default function ProfileSummaryCard({
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
+        // A night-sky card in both themes: dark tokens inside (utils/theme.ts).
+        data-theme="bustandeen"
         className="relative rounded-2xl border border-brand-emerald/20 overflow-hidden"
         style={{
           background:
@@ -88,7 +90,7 @@ export default function ProfileSummaryCard({
                 type="button"
                 onClick={() => setShowPhotoChoice(true)}
                 disabled={uploading}
-                className="absolute bottom-0 right-0 group w-8 h-8 rounded-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white shadow-lg flex items-center justify-center transition-colors disabled:opacity-50"
+                className="absolute bottom-0 right-0 group w-8 h-8 rounded-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color shadow-lg flex items-center justify-center transition-colors disabled:opacity-50"
               >
                 <CameraIcon className="w-4 h-4" />
                 <span className="absolute -top-7 right-0 bg-brand-deep border border-brand-border text-white/70 text-[10px] px-2 py-0.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">

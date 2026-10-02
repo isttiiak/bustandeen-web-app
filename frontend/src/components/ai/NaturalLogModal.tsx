@@ -153,7 +153,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
               <button
                 onClick={handleParse}
                 disabled={!text.trim() || parseMut.isPending}
-                className="btn w-full rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
+                className="btn w-full rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
               >
                 {parseMut.isPending
                   ? t('naturalLog.parsing', 'Reading…')
@@ -373,7 +373,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                 <button
                   onClick={handleConfirm}
                   disabled={!hasAnything || commitMut.isPending}
-                  className="btn btn-sm flex-[2] rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
+                  className="btn btn-sm flex-[2] rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
                 >
                   {commitMut.isPending
                     ? t('naturalLog.logging', 'Logging…')

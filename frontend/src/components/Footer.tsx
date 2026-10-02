@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 export default function Footer() {
   const { t } = useTranslation();
   return (
-    <footer className="bg-gradient-to-r from-[#14130e] via-brand-deep to-brand-surface text-white border-t border-brand-emerald/20 mt-auto">
+    <footer className="bg-gradient-to-r from-brand-void-deep via-brand-deep to-brand-surface text-white border-t border-brand-emerald/20 mt-auto">
       <div className="footer footer-center p-6 sm:p-8">
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-2 text-sm sm:text-base">

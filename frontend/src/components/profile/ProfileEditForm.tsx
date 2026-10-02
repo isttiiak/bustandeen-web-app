@@ -293,7 +293,7 @@ export default function ProfileEditForm({
           <button
             className={`btn btn-sm w-full mt-1 gap-2 transition-all duration-300 border-0 ${
               isDirty && !saving
-                ? 'bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white shadow-[0_0_20px_rgba(16,185,129,0.35)]'
+                ? 'bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color shadow-[0_0_20px_rgba(16,185,129,0.35)]'
                 : 'bg-brand-surface border border-brand-border text-white/30 cursor-not-allowed'
             }`}
             onClick={saveProfile}

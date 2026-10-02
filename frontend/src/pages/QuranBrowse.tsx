@@ -64,7 +64,7 @@ export default function QuranBrowse() {
       <div className="max-w-2xl mx-auto px-4 pt-3 pb-16 space-y-4">
         <QuranTabNav active="read" />
 
-        <div className="sticky top-14 z-10 -mx-4 px-4 py-2 bg-[#0e0d0a]/90 backdrop-blur-md">
+        <div className="sticky top-14 z-10 -mx-4 px-4 py-2 bg-brand-void/90 backdrop-blur-md">
           <input
             type="search"
             placeholder={t('quranBrowse.searchPlaceholder')}
@@ -118,7 +118,7 @@ export default function QuranBrowse() {
       {showTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-20 right-4 z-30 w-10 h-10 rounded-full bg-brand-emerald-dim text-white shadow-lg grid place-items-center hover:bg-brand-emerald-dim hover:brightness-90 transition-colors"
+          className="fixed bottom-20 right-4 z-30 w-10 h-10 rounded-full bg-brand-emerald-dim text-on-color shadow-lg grid place-items-center hover:bg-brand-emerald-dim hover:brightness-90 transition-colors"
           aria-label={t('quranBrowse.scrollToTop')}
         >
           <ArrowUpIcon className="w-5 h-5" />

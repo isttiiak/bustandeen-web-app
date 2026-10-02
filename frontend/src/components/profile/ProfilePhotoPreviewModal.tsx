@@ -63,7 +63,7 @@ export default function ProfilePhotoPreviewModal({
                 <button
                   onClick={uploadPhoto}
                   disabled={uploading}
-                  className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 font-bold"
+                  className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 font-bold"
                 >
                   {uploading ? (
                     <span className="loading loading-spinner loading-sm" />

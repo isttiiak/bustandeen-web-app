@@ -59,7 +59,7 @@ export default function ConfirmDialog({
                 {t('common.cancel')}
               </button>
               <button
-                className="flex-1 btn btn-sm rounded-xl border-0 text-white font-bold bg-red-500/80 hover:bg-red-500"
+                className="flex-1 btn btn-sm rounded-xl border-0 text-on-color font-bold bg-red-500/80 hover:bg-red-500"
                 onClick={onConfirm}
               >
                 {confirmLabel ?? t('confirmDialog.yesDelete')}

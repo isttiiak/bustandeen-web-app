@@ -93,7 +93,7 @@ export default function SadaqahVerify() {
           )}
           <Link
             to="/"
-            className="btn mt-2 rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white w-full"
+            className="btn mt-2 rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color w-full"
           >
             {t('sadaqahThankYou.backToApp', 'Back to Bustandeen')}
           </Link>

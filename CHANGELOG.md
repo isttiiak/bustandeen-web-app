@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.87.0 - Light theme and a theme setting - 2026-10-02
+
+### Added
+
+- **A light theme, "sage paper"** (audit T3.2, design direction C "Bustan Arch" approved 2026-10-02): a pale sage page, darker greens and golds so every text colour passes AA contrast on paper, and stronger card shadows than the dark theme.
+- **Settings → Appearance** with four choices: **Match my device** (the default), **Dark**, **Light** and **Follow daylight** (light from sunrise to Maghrib, computed on the device from the saved location; 6 AM to 6 PM without one). In Bangla too. The dark theme looks exactly as before.
+- The landing page, `/bn` and the SEO pages stay dark for now: their templates carry their own dark palette.
+
+### Changed (developers)
+
+- Theme tokens: colours are RGB channels per `data-theme` in `styles/global.css` (`--c-*`), and Tailwind's `brand-*`, `white`, `red-300/400` read them. **`white` now means ink** (white on dark, dark ink on paper); use **`on-color`** for text on a solid coloured fill and **`ink-fixed`** for dark text on a literally white surface. `shade` replaces `bg-black/20-30` insets; `reader-*` is the Quran reader card. New tokens for T3.2+: `rounded-card` / `rounded-control`, `shadow-elev-1/2/3`.
+- Faint text has a per-theme opacity floor (`--ink-text-floor`, `--accent-text-floor`): 0 on dark (unchanged), lifted on paper to keep 4.5:1.
+- A codemod turned `text-white` into `text-on-color` on the ~160 lines that paint a solid fill (per class string, so the other side of a ternary is untouched).
+- Proof that dark did not change: computed colour, background, border, shadow, fill and stroke of every element on 22 demo routes, before vs after: identical, apart from the new Settings section.
+- `utils/theme.ts` (+ tests): mode → theme, written to `bustandeen_theme` for the first-paint script. `ThemeInit` keeps it current (OS change, daylight boundary, tab focus). `utils/color.ts` `withAlpha()` for token colours that used to get a hex alpha appended.
+- The first-paint script in `index.html` skips the theme on pages marked `data-static` (prerender.mjs). New CSP hash in `vercel.json`; the old hash stays until the service-worker-cached pages have rolled over.
+- `e2e/theme.spec.ts`. Design proposal: `docs/design/t3-1-design-tokens.html`.
+
 ## v5.86.0 - A line of intention on the analytics pages - 2026-10-02
 
 ### Added
