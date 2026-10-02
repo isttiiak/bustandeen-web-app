@@ -23,6 +23,14 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - English only, like the rest of Naseeh; `comebackNudge.fallback` also has Bangla, because that card's namespace is translated.
 - Tests: `src/components/ai/aiFallbacks.test.ts` (links, privacy-panel anchors, each fallback in the error state).
 
+## v5.83.1 - Quarterly major-upgrade checklist - 2026-10-02
+
+### Changed (developers)
+
+- **New issue template "Major bump day (quarterly)"** (SEC-06, `.github/ISSUE_TEMPLATE/major-bump-day.md`): lists the majors Dependabot is told to skip (firebase-admin, React + types, react-router, Vite, Tailwind + daisyUI), why each is skipped, and how to test one on a Vercel preview (function logs open for firebase-admin, the pages to click through, bundle size, version + CHANGELOG). Open it in January, April, July and October.
+- `.github/dependabot.yml`: the frontend ignore rule named `react-router-dom`, but the app has imported `react-router` since v5.65.1, so Dependabot would have opened a react-router 8 major PR. It now names `react-router`.
+- `.gitignore`: `.github/ISSUE_TEMPLATE/*.md` is tracked (all other `.md` files outside READMEs stay local).
+
 ## v5.83.0 - Easier-to-read buttons - 2026-10-02
 
 ### Changed
