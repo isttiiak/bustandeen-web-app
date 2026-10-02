@@ -1,8 +1,7 @@
 ﻿import axios, { AxiosError } from 'axios';
 import type { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 import toast from 'react-hot-toast';
-import { auth } from '../firebase.js';
-import { adminAuth } from '../adminFirebase.js';
+import { hasSessionHint, loadedAdminAuth, loadedFirebase, loadFirebase } from '../authClient.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { getDemoResponse } from '../utils/demoData.js';
@@ -27,7 +26,10 @@ const api = axios.create({ baseURL: API_BASE });
  * Firebase has restored the session on a hard reload.
  */
 export async function getIdToken(): Promise<string | null> {
-  const user = auth.currentUser;
+  // Firebase loads up front for anyone who has signed in here (authClient.ts);
+  // a guest has no token, so a guest request never loads it.
+  const firebase = loadedFirebase() ?? (hasSessionHint() ? await loadFirebase() : null);
+  const user = firebase?.auth.currentUser;
   if (user) {
     try {
       const token = await user.getIdToken();
@@ -91,7 +93,7 @@ api.interceptors.request.use(async (config) => {
 // on non-admin routes — the backend only ever checks this header under
 // /api/admin/*.
 api.interceptors.request.use(async (config) => {
-  const adminUser = adminAuth.currentUser;
+  const adminUser = loadedAdminAuth()?.currentUser;
   if (adminUser) {
     try {
       config.headers['X-Admin-Token'] = await adminUser.getIdToken();
@@ -109,9 +111,10 @@ api.interceptors.response.use(
   (res) => res,
   (err: unknown) => {
     if (axios.isAxiosError(err) && err.response?.status === 401) {
-      const hadSession = !!auth.currentUser || !!localStorage.getItem('bustandeen_idToken');
+      const currentUser = loadedFirebase()?.auth.currentUser ?? null;
+      const hadSession = !!currentUser || !!localStorage.getItem('bustandeen_idToken');
       localStorage.removeItem('bustandeen_idToken');
-      if (hadSession && auth.currentUser === null) {
+      if (hadSession && currentUser === null) {
         window.location.href = '/login';
       }
     }

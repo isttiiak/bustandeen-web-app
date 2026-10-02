@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.81.0 - Sign-in loads when it is needed - 2026-10-02
+
+### Changed
+
+- **Visitors who have never signed in no longer download Firebase** (about 41 KB compressed, PERF-01 follow-up). Anyone who has signed in on this device still gets it at once, and it loads as soon as someone opens sign in, sign up or an email link.
+- The admin panel's own sign-in now loads only on admin pages.
+
+### Changed (developers)
+
+- New `src/authClient.ts`: `loadFirebase()` (one dynamic import of `firebase.ts`), `whenFirebaseLoaded()`, `loadedFirebase()`, `hasSessionHint()` and the admin auth registry. `firebase.ts` re-exports `onAuthStateChanged`, `signOut` and `sendEmailVerification` and calls `markFirebaseLoaded()` when evaluated, so a static import from a lazy page (sign in, sign up, Profile, Settings) also starts the app's auth listener.
+- `bustandeen_has_session` (localStorage) is set while an account is signed in and removed on sign-out; with it, `bustandeen_idToken` or `bustandeen_user`, Firebase loads at startup. Without any of them App treats the visitor as a guest at once (the same path Firebase's first `null` took).
+- App.tsx, `lib/api.ts`, Navbar and routeGuards no longer import Firebase statically; `AdminGate` is lazy, and api.ts reads the admin token through `loadedAdminAuth()`.
+- Tests: `src/authClient.test.ts`; `e2e/app-lazy.spec.ts` (a guest on `/zikr` gets no Firebase but does get the animation features, a session loads it, `/login` loads it).
+
 ## v5.80.0 - Lighter animations - 2026-10-02
 
 ### Changed
