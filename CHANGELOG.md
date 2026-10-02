@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.90.1 - Same Node on every machine - 2026-10-03
+
+### Changed (developers)
+
+- `.nvmrc` (24) and root `devEngines` (Node >= 24, npm >= 11, error otherwise): CI already runs Node 24, and npm 10 on Node 22 rejected the backend lockfile that npm 11 wrote (`npm ci`: missing `gaxios`, `gcp-metadata`). `engines.node` is unchanged because Vercel picks the production runtime from it; `devEngines` lives only in the root package, which Vercel never installs.
+- `allowScripts` in `backend/` (`mongodb-memory-server`, `esbuild`) and `frontend/` (`esbuild`), unpinned: npm 11 skips unapproved install scripts, so the test MongoDB binary was no longer pre-downloaded and every backend suite timed out downloading 781 MB in `beforeAll`. The other dependency install scripts (`@parcel/watcher`, `protobufjs`, `unrs-resolver`, `@firebase/util`) are listed as denied: prebuilt binaries or optional setup that build and tests do not need.
+- `.worktreeinclude`: Claude Code worktrees get `frontend/.env*` (public Firebase config) so builds and e2e work there. `backend/.env` (live database) is deliberately not copied.
+- README: local setup for more than one machine.
+
 ## v5.90.0 - Drawn avatars, no photo uploads - 2026-10-02
 
 ### Changed
