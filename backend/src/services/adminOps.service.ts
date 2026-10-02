@@ -86,3 +86,78 @@ export const getRateLimitSummary = async (): Promise<RateLimitHitSummary[]> => {
     lastHit: r.lastHit,
   }));
 };
+
+/** Atlas M0 caps a free cluster at 512 MB of uncompressed BSON plus index
+ *  bytes (not the compressed `storageSize` on disk). */
+export const M0_STORAGE_CAP_BYTES = 512 * 1024 * 1024;
+export const STORAGE_WARN_RATIO = 0.7;
+
+/** True once usage reaches 70% of the cap. */
+export const isStorageNearCap = (totalBytes: number, capBytes = M0_STORAGE_CAP_BYTES): boolean =>
+  totalBytes / capBytes >= STORAGE_WARN_RATIO;
+
+export interface CollectionSize {
+  name: string;
+  documents: number;
+  dataBytes: number;
+  indexBytes: number;
+  totalBytes: number;
+}
+
+export interface StorageUsage {
+  collections: CollectionSize[];
+  dataBytes: number;
+  indexBytes: number;
+  totalBytes: number;
+  capBytes: number;
+  usedRatio: number;
+  warn: boolean;
+}
+
+/** Read-only size metadata from `$collStats`; never reads or writes documents.
+ *  Counts this database only (the app has no other database on the cluster). */
+export const getStorageUsage = async (): Promise<StorageUsage> => {
+  const db = mongoose.connection.db;
+  if (!db) throw new Error('MongoDB is not connected');
+
+  // Views and system collections have no storage of their own.
+  const names = (await db.listCollections({ type: 'collection' }, { nameOnly: true }).toArray())
+    .map((c) => c.name)
+    .filter((n) => !n.startsWith('system.'));
+
+  const collections = await Promise.all(
+    names.map(async (name): Promise<CollectionSize> => {
+      const [stats] = await db
+        .collection(name)
+        .aggregate<{
+          storageStats: { count: number; size: number; totalIndexSize: number };
+        }>([{ $collStats: { storageStats: {} } }])
+        .toArray();
+      const s = stats?.storageStats;
+      const dataBytes = s?.size ?? 0;
+      const indexBytes = s?.totalIndexSize ?? 0;
+      return {
+        name,
+        documents: s?.count ?? 0,
+        dataBytes,
+        indexBytes,
+        totalBytes: dataBytes + indexBytes,
+      };
+    })
+  );
+  collections.sort((a, b) => b.totalBytes - a.totalBytes);
+
+  const dataBytes = collections.reduce((sum, c) => sum + c.dataBytes, 0);
+  const indexBytes = collections.reduce((sum, c) => sum + c.indexBytes, 0);
+  const totalBytes = dataBytes + indexBytes;
+
+  return {
+    collections,
+    dataBytes,
+    indexBytes,
+    totalBytes,
+    capBytes: M0_STORAGE_CAP_BYTES,
+    usedRatio: totalBytes / M0_STORAGE_CAP_BYTES,
+    warn: isStorageNearCap(totalBytes),
+  };
+};

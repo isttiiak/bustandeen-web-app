@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.82.0 - Database size on the Ops Health page - 2026-10-02
+
+### Added
+
+- **Admin → System & ops health now shows how much of the free database tier is used** (DB-03): the total against Atlas M0's 512 MB cap, a bar, and every collection's document count, data size and index size, largest first. At 70% of the cap the section turns red with a warning. On release day the database is about 4 MB (under 1%).
+
+### Changed (developers)
+
+- `GET /api/admin/ops/storage` (Servant only): `$collStats` storage stats per collection (views and `system.*` skipped), summed as data + index bytes, the uncompressed figure Atlas counts toward the M0 cap (not the compressed `storageSize`). Size metadata only: it never reads documents and never writes.
+- `isStorageNearCap()` and `M0_STORAGE_CAP_BYTES` in `adminOps.service.ts`; `useStorageUsage()` in `hooks/useAdminOps.ts`.
+- Tests: `backend/tests/adminOpsStorage.e2e.test.js` (sizes and totals, read-only, Servant only, the 70% threshold).
+
 ## v5.81.0 - Sign-in loads when it is needed - 2026-10-02
 
 ### Changed
