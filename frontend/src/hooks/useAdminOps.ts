@@ -59,6 +59,7 @@ export interface CollectionSize {
 
 export interface StorageUsage {
   collections: CollectionSize[];
+  otherDatabases: { name: string; totalBytes: number }[];
   dataBytes: number;
   indexBytes: number;
   totalBytes: number;

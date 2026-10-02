@@ -104,8 +104,17 @@ export interface CollectionSize {
   totalBytes: number;
 }
 
+export interface DatabaseSize {
+  name: string;
+  totalBytes: number;
+}
+
 export interface StorageUsage {
+  /** The app's own database, per collection. */
   collections: CollectionSize[];
+  /** Every other database on the cluster: they share the same cap. */
+  otherDatabases: DatabaseSize[];
+  /** Totals below are for the whole cluster. */
   dataBytes: number;
   indexBytes: number;
   totalBytes: number;
@@ -114,8 +123,11 @@ export interface StorageUsage {
   warn: boolean;
 }
 
-/** Read-only size metadata from `$collStats`; never reads or writes documents.
- *  Counts this database only (the app has no other database on the cluster). */
+// Atlas refuses dbStats on these, and they don't count toward the cap.
+const INTERNAL_DATABASES = new Set(['admin', 'local', 'config']);
+
+/** Read-only size metadata ($collStats, dbStats); never reads or writes
+ *  documents. The cap is per cluster, so other databases on it count too. */
 export const getStorageUsage = async (): Promise<StorageUsage> => {
   const db = mongoose.connection.db;
   if (!db) throw new Error('MongoDB is not connected');
@@ -147,12 +159,32 @@ export const getStorageUsage = async (): Promise<StorageUsage> => {
   );
   collections.sort((a, b) => b.totalBytes - a.totalBytes);
 
-  const dataBytes = collections.reduce((sum, c) => sum + c.dataBytes, 0);
-  const indexBytes = collections.reduce((sum, c) => sum + c.indexBytes, 0);
+  const client = mongoose.connection.getClient();
+  const { databases } = await db.admin().listDatabases({ nameOnly: true });
+  const others = await Promise.all(
+    databases
+      .map((d) => d.name)
+      .filter((name) => name !== db.databaseName && !INTERNAL_DATABASES.has(name))
+      .map(async (name) => {
+        const s = await client.db(name).stats();
+        return { name, dataBytes: s.dataSize ?? 0, indexBytes: s.indexSize ?? 0 };
+      })
+  );
+  const otherDatabases = others
+    .map((d) => ({ name: d.name, totalBytes: d.dataBytes + d.indexBytes }))
+    .sort((a, b) => b.totalBytes - a.totalBytes);
+
+  const sum = (
+    rows: { dataBytes: number; indexBytes: number }[],
+    key: 'dataBytes' | 'indexBytes'
+  ) => rows.reduce((total, r) => total + r[key], 0);
+  const dataBytes = sum(collections, 'dataBytes') + sum(others, 'dataBytes');
+  const indexBytes = sum(collections, 'indexBytes') + sum(others, 'indexBytes');
   const totalBytes = dataBytes + indexBytes;
 
   return {
     collections,
+    otherDatabases,
     dataBytes,
     indexBytes,
     totalBytes,

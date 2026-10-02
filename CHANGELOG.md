@@ -6,13 +6,13 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 ### Added
 
-- **Admin → System & ops health now shows how much of the free database tier is used** (DB-03): the total against Atlas M0's 512 MB cap, a bar, and every collection's document count, data size and index size, largest first. At 70% of the cap the section turns red with a warning. On release day the database is about 4 MB (under 1%).
+- **Admin → System & ops health now shows how much of the free database tier is used** (DB-03): the whole cluster's total against Atlas M0's 512 MB cap, a bar, every app collection's document count, data size and index size (largest first), and the other databases on the cluster, which share the cap. At 70% the section turns red with a warning. On release day the app's database is about 4 MB, but Atlas's `sample_mflix` sample dataset takes about 136 MB, so the cluster is at about 27%.
 
 ### Changed (developers)
 
-- `GET /api/admin/ops/storage` (Servant only): `$collStats` storage stats per collection (views and `system.*` skipped), summed as data + index bytes, the uncompressed figure Atlas counts toward the M0 cap (not the compressed `storageSize`). Size metadata only: it never reads documents and never writes.
+- `GET /api/admin/ops/storage` (Servant only): `$collStats` storage stats per collection of the app database (views and `system.*` skipped) plus `dbStats` for every other database except `admin`/`local`/`config`, summed as data + index bytes, the uncompressed figure Atlas counts toward the M0 cap (not the compressed `storageSize`). Size metadata only: it never reads documents and never writes.
 - `isStorageNearCap()` and `M0_STORAGE_CAP_BYTES` in `adminOps.service.ts`; `useStorageUsage()` in `hooks/useAdminOps.ts`.
-- Tests: `backend/tests/adminOpsStorage.e2e.test.js` (sizes and totals, read-only, Servant only, the 70% threshold).
+- Tests: `backend/tests/adminOpsStorage.e2e.test.js` (sizes and totals including another database, read-only, Servant only, the 70% threshold).
 
 ## v5.81.0 - Sign-in loads when it is needed - 2026-10-02
 

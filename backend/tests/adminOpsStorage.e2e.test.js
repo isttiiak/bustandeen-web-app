@@ -28,6 +28,11 @@ describe('Admin ops — storage usage (DB-03)', () => {
       { firebaseUid: 'ops-servant', email: 'servant@test.dev', role: 'servant', createdBy: 't' },
       { firebaseUid: 'ops-ansar', email: 'ansar@test.dev', role: 'ansar', createdBy: 't' },
     ]);
+    await mongoose.connection
+      .getClient()
+      .db('ihsan_test_ops_other')
+      .collection('movies')
+      .insertOne({ title: 'sample' });
   });
 
   afterAll(async () => {
@@ -49,7 +54,15 @@ describe('Admin ops — storage usage (DB-03)', () => {
     expect(users.indexBytes).toBeGreaterThan(0);
     expect(users.totalBytes).toBe(users.dataBytes + users.indexBytes);
 
-    const sum = res.body.collections.reduce((s, c) => s + c.totalBytes, 0);
+    // The cap is per cluster: another database on it counts toward the total.
+    const other = res.body.otherDatabases.find((d) => d.name === 'ihsan_test_ops_other');
+    expect(other.totalBytes).toBeGreaterThan(0);
+    expect(res.body.otherDatabases.map((d) => d.name)).not.toContain('ihsan_test_ops_storage');
+    expect(res.body.otherDatabases.map((d) => d.name)).not.toContain('admin');
+
+    const sum =
+      res.body.collections.reduce((s, c) => s + c.totalBytes, 0) +
+      res.body.otherDatabases.reduce((s, d) => s + d.totalBytes, 0);
     expect(res.body.totalBytes).toBe(sum);
     expect(res.body.usedRatio).toBeCloseTo(sum / res.body.capBytes);
     expect(res.body.warn).toBe(false);

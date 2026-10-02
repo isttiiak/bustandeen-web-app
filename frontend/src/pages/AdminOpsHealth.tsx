@@ -109,6 +109,22 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
             </tbody>
           </table>
         </div>
+        {(storage.otherDatabases ?? []).length > 0 && (
+          <div className="space-y-1 border-t border-white/10 pt-3">
+            <p className="text-white/40 text-xs">
+              {t(
+                'adminOpsHealth.otherDatabases',
+                'Other databases on the cluster (they count toward the same cap):'
+              )}
+            </p>
+            {storage.otherDatabases.map((d) => (
+              <div key={d.name} className="flex justify-between text-xs text-white/70">
+                <span className="font-mono">{d.name}</span>
+                <span className="font-bold">{formatBytes(d.totalBytes)}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
