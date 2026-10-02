@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.78.0 - The Quran text is part of the app - 2026-10-02
+
+### Changed
+
+- **The Arabic Quran text now ships with the app** (audit T2.6 / PWA-02): the Tanzil Project's Uthmani text, version 1.1, used exactly as published. A surah opens even when alquran.cloud is down, and once opened it reads offline. Translations and transliteration still come from alquran.cloud; if they can't load, the Arabic still shows and the next open tries again.
+- The text is Tanzil's newest release (v1.1, 2021). alquran.cloud served v1.0.2, so a few words now match the Medina Mushaf more closely, e.g. وَبِٱلْـَٔاخِرَةِ (hamza on its seat, 2:4 and elsewhere), إِبْرَٰهِـۧمَ, يَٰصَٰحِبَىِ (12:39, 12:41), نُـۨجِى (21:88), and بَعْدَ مَا as two words (2:181, 8:6, 13:37). Checked in all three Arabic fonts.
+- Tanzil is credited, with a link to tanzil.net, on About, in Quran settings under the Arabic font, and in the source line under every āyah. `/privacy` now says the Arabic text is part of the app; alquran.cloud is listed for translations, transliteration and recitation.
+- The reader opens a surah even if the surah list can't be loaded (offline before it was ever cached); the header then shows no ayah count.
+
+### Changed (developers)
+
+- `frontend/data/tanzil/quran-uthmani.xml` (Tanzil download options: pause marks, sajdah, rub el hizb, small low meem; SHA-256 pinned) → `npm run quran:text --prefix frontend` → `public/quran/uthmani/{1..114}.json`, each with Tanzil's full notice, the basmala kept separate, and the global number of its first ayah. Kept byte for byte: `.gitattributes` `-text`, `.prettierignore`.
+- `loadSurahText` reads the Arabic from the bundle; translations are cached under `bustandeen_surah_extras_*_v1`. Older `bustandeen_surah_text_*_v2` entries give up their translations (no re-download) and their Arabic is dropped.
+- Service worker: `/quran/uthmani/*` stale-while-revalidate (`quran-uthmani` cache), not precached.
+- Tests: `src/utils/quranText.test.ts` (checksum, 114 files, 6,236 ayat against the backend's count table, every ayah and basmala byte for byte against the XML, the notice in every file, loader behaviour) and `e2e/quran-text.spec.ts` (Arabic without alquran.cloud, credit link, offline reopen through the service worker).
+
 ## v5.77.1 - Where the database lives - 2026-10-02
 
 ### Changed
