@@ -33,10 +33,10 @@ export const SADAQAH_VIRTUE_DAYS: SadaqahVirtueDay[] = [
   {
     id: 'friday',
     icon: '🤲',
-    title: "It's Jumu'ah — a blessed day to give",
-    desc: 'Ibn al-Qayyim taught that charity on Friday carries the same extra merit over other days that charity in Ramadan carries over other months — and charity itself never decreases wealth.',
+    title: "It's Jumu'ah: a blessed day to give",
+    desc: 'Ibn al-Qayyim taught that charity on Friday carries the same extra merit over other days that charity in Ramadan carries over other months, and charity itself never decreases wealth.',
     reference: {
-      text: 'Ibn al-Qayyim (Zād al-Maʿād) on Friday\'s merit; "Charity does not decrease wealth" — Ṣaḥīḥ Muslim 2588',
+      text: 'Ibn al-Qayyim (Zād al-Maʿād) on Friday\'s merit; "Charity does not decrease wealth" · Ṣaḥīḥ Muslim 2588',
       url: 'https://sunnah.com/muslim:2588',
       grade: "Ṣaḥīḥ (the wealth ḥadīth) · scholarly teaching (Friday's own merit)",
     },
@@ -44,10 +44,10 @@ export const SADAQAH_VIRTUE_DAYS: SadaqahVirtueDay[] = [
   {
     id: 'ramadan',
     icon: '🌙',
-    title: "It's Ramadan — the most generous month",
+    title: "It's Ramadan: the most generous month",
     desc: 'The Prophet ﷺ was already the most generous of people, and became even more generous every night of Ramadan.',
     reference: {
-      text: '"Allah\'s Messenger ﷺ was the most generous of all people, and he used to reach the peak in generosity in the month of Ramaḍān." — Ṣaḥīḥ al-Bukhārī 1902',
+      text: '"Allah\'s Messenger ﷺ was the most generous of all people, and he used to reach the peak in generosity in the month of Ramaḍān." · Ṣaḥīḥ al-Bukhārī 1902',
       url: 'https://sunnah.com/bukhari:1902',
       grade: 'Ṣaḥīḥ',
     },
@@ -55,10 +55,10 @@ export const SADAQAH_VIRTUE_DAYS: SadaqahVirtueDay[] = [
   {
     id: 'dhul_hijjah_first10',
     icon: '🌟',
-    title: 'The first 10 days of Dhul Ḥijjah — give generously',
-    desc: 'No days are more beloved to Allah for righteous deeds than these ten — charity given now is counted among the best deeds of the entire year.',
+    title: 'The first 10 days of Dhul Ḥijjah: give generously',
+    desc: 'No days are more beloved to Allah for righteous deeds than these ten, so charity given now is counted among the best deeds of the entire year.',
     reference: {
-      text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." — Ṣaḥīḥ al-Bukhārī 969',
+      text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." · Ṣaḥīḥ al-Bukhārī 969',
       url: 'https://sunnah.com/bukhari:969',
       grade: 'Ṣaḥīḥ',
     },
@@ -66,10 +66,10 @@ export const SADAQAH_VIRTUE_DAYS: SadaqahVirtueDay[] = [
   {
     id: 'arafah',
     icon: '⛰️',
-    title: 'Day of Arafah — the best day of the year',
-    desc: 'Arafah falls within the ten days most beloved to Allah for righteous deeds — charity given today shares in that same virtue.',
+    title: 'Day of Arafah: the best day of the year',
+    desc: 'Arafah falls within the ten days most beloved to Allah for righteous deeds, so charity given today shares in that same virtue.',
     reference: {
-      text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." — Ṣaḥīḥ al-Bukhārī 969',
+      text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." · Ṣaḥīḥ al-Bukhārī 969',
       url: 'https://sunnah.com/bukhari:969',
       grade: 'Ṣaḥīḥ',
     },
@@ -77,10 +77,10 @@ export const SADAQAH_VIRTUE_DAYS: SadaqahVirtueDay[] = [
   {
     id: 'laylat_qadr',
     icon: '✨',
-    title: 'Laylat al-Qadr — a night better than 1,000 months',
+    title: 'Laylat al-Qadr: a night better than 1,000 months',
     desc: 'Any charity given tonight is multiplied beyond a thousand months of ordinary worship.',
     reference: {
-      text: '"Laylat al-Qadr is better than a thousand months." — Quran 97:3',
+      text: '"Laylat al-Qadr is better than a thousand months." · Quran 97:3',
       url: 'https://quran.com/97',
       grade: 'Quran',
     },

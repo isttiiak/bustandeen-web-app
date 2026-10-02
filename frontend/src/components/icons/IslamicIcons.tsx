@@ -1,0 +1,228 @@
+// Hand-made line icons for the Bustan Arch design (audit T3.2): prayer
+// times, worship trackers and the manuscript ornaments. 24x24, stroke
+// `currentColor`, so they follow the theme's text colour. Generic icons come
+// from Heroicons; only what Heroicons lacks lives here. No emoji in redesigned
+// screens.
+
+import type { SVGProps } from 'react';
+
+export type IconProps = SVGProps<SVGSVGElement> & { className?: string };
+
+function Svg({ children, ...props }: IconProps & { children: React.ReactNode }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+      {...props}
+    >
+      {children}
+    </svg>
+  );
+}
+
+/** Pre-dawn: first light on the horizon. */
+export function FajrIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M3 17h18M8.5 17a3.5 3.5 0 0 1 7 0M12 7v4M10 9l2-2 2 2" />
+    </Svg>
+  );
+}
+
+/** Sunrise (shurūq), also the ishrāq window. */
+export function SunriseIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M3 18h18M6.5 18a5.5 5.5 0 0 1 11 0M12 6v2.5M5.2 9.7l1.7 1.7M18.8 9.7l-1.7 1.7M3.5 14.5h1.5M19 14.5h1.5" />
+    </Svg>
+  );
+}
+
+/** Midday sun: ẓuhr, also ḍuḥā. */
+export function DhuhrIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4" />
+    </Svg>
+  );
+}
+
+/** Afternoon: the sun lower, a shadow longer than the stick. */
+export function AsrIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="17" cy="7" r="3" />
+      <path d="M17 2.5v1M21.5 7h-1M20.2 3.8l-.7.7M3 20h18M7 20v-7M7 20l9-2" />
+    </Svg>
+  );
+}
+
+/** Sunset: maghrib, also awwābīn. */
+export function MaghribIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M3 17h18M6.5 17a5.5 5.5 0 0 1 11 0M12 5v4M10 7l2 2 2-2M5 21h14" />
+    </Svg>
+  );
+}
+
+/** Night: ʿishāʾ, also tahajjud. */
+export function IshaIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M14.5 4.5a7.5 7.5 0 1 0 5 12.5 6 6 0 0 1-5-12.5z" />
+      <path d="M18.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z" />
+    </Svg>
+  );
+}
+
+/** Crescent: fasting and Ramadan. */
+export function CrescentIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M15 3.5a8.5 8.5 0 1 0 5.5 14.2A7 7 0 0 1 15 3.5z" />
+    </Svg>
+  );
+}
+
+/** Tasbīḥ: a loop of beads with a tassel, zikr. */
+export function TasbihIcon(p: IconProps) {
+  // Beads on a ring, open at the bottom where the tassel hangs.
+  const beads = Array.from({ length: 9 }, (_, i) => {
+    const a = Math.PI / 2 + ((i + 1) / 10) * Math.PI * 2;
+    return [12 + 6.5 * Math.cos(a), 9 + 6.5 * Math.sin(a)] as const;
+  });
+  return (
+    <Svg {...p}>
+      {beads.map(([x, y], i) => (
+        <circle
+          key={i}
+          cx={x.toFixed(2)}
+          cy={y.toFixed(2)}
+          r="1.5"
+          fill="currentColor"
+          stroke="none"
+        />
+      ))}
+      <path d="M12 15.5v3M10 21.5l2-3 2 3z" />
+    </Svg>
+  );
+}
+
+/** Dome and minaret: salat. */
+export function MosqueIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M6 20v-7h12v7M4 20h16M6 13a6 6 0 0 1 12 0M12 7V4.5M10.5 20v-3a1.5 1.5 0 0 1 3 0v3M3 20v-9M2 11h2M3 11V8.5" />
+    </Svg>
+  );
+}
+
+/** Two raised palms: duʿā. */
+export function DuaHandsIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M10.5 20.5 6.8 18a3 3 0 0 1-1.3-2.5V8.5a1.3 1.3 0 0 1 2.6 0V13M8.1 11V6a1.3 1.3 0 0 1 2.6 0v8.5" />
+      <path d="M13.5 20.5l3.7-2.5a3 3 0 0 0 1.3-2.5V8.5a1.3 1.3 0 0 0-2.6 0V13M15.9 11V6a1.3 1.3 0 0 0-2.6 0v8.5" />
+    </Svg>
+  );
+}
+
+/** Eight-point star (khātam): ornament, special days. */
+export function Star8Icon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <rect x="6.5" y="6.5" width="11" height="11" />
+      <rect x="6.5" y="6.5" width="11" height="11" transform="rotate(45 12 12)" />
+    </Svg>
+  );
+}
+
+/** Leaf: completion marks; "discreet" wellness. */
+export function LeafIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z" />
+      <path d="M4 20 14 10" />
+    </Svg>
+  );
+}
+
+/** Five-petal flower: Rayhanah. */
+export function FlowerIcon(p: IconProps) {
+  const petals = Array.from({ length: 5 }, (_, i) => (i * 72 * Math.PI) / 180 - Math.PI / 2);
+  return (
+    <Svg {...p}>
+      {petals.map((a, i) => (
+        <circle
+          key={i}
+          cx={(12 + 4.2 * Math.cos(a)).toFixed(2)}
+          cy={(12 + 4.2 * Math.sin(a)).toFixed(2)}
+          r="3"
+        />
+      ))}
+      <circle cx="12" cy="12" r="1.6" />
+    </Svg>
+  );
+}
+
+/** Six-spoke frost: a streak in its grace day. */
+export function FrostIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9M10 4.5l2 1.5 2-1.5M10 19.5l2-1.5 2 1.5" />
+    </Svg>
+  );
+}
+
+/** Target: progress towards a daily goal. */
+export function TargetIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="4.5" />
+      <circle cx="12" cy="12" r="1" />
+    </Svg>
+  );
+}
+
+/** Line, star, line: the section divider. */
+export function OrnamentDivider({ className = '' }: { className?: string }) {
+  return (
+    <div
+      className={`flex items-center gap-2 text-brand-gold/70 ${className}`}
+      role="separator"
+      aria-hidden="true"
+    >
+      <span className="h-px flex-1 bg-brand-border" />
+      <Star8Icon className="w-4 h-4" />
+      <span className="h-px flex-1 bg-brand-border" />
+    </div>
+  );
+}
+
+const PRAYER_GLYPHS: Record<string, (p: IconProps) => React.ReactNode> = {
+  fajr: FajrIcon,
+  sunrise: SunriseIcon,
+  ishraq: SunriseIcon,
+  dhuhr: DhuhrIcon,
+  duha: DhuhrIcon,
+  asr: AsrIcon,
+  maghrib: MaghribIcon,
+  awwabin: MaghribIcon,
+  isha: IshaIcon,
+  tahajjud: IshaIcon,
+};
+
+/** The glyph for a prayer or nafl window id (utils/prayerTimes.ts ids). */
+export function PrayerGlyph({ id, ...p }: IconProps & { id: string }) {
+  const Glyph = PRAYER_GLYPHS[id] ?? DhuhrIcon;
+  return <Glyph {...p} />;
+}

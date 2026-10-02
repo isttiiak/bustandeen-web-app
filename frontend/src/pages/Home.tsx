@@ -2,7 +2,30 @@
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
-import { MapPinIcon } from '@heroicons/react/24/outline';
+import {
+  MapPinIcon,
+  ChevronRightIcon,
+  BellIcon,
+  BriefcaseIcon,
+  BookOpenIcon,
+  UserGroupIcon,
+  SparklesIcon,
+  CalculatorIcon,
+  NoSymbolIcon,
+  ClockIcon,
+} from '@heroicons/react/24/outline';
+import {
+  CrescentIcon,
+  DuaHandsIcon,
+  FlowerIcon,
+  LeafIcon,
+  MosqueIcon,
+  OrnamentDivider,
+  PrayerGlyph,
+  Star8Icon,
+  SunriseIcon,
+  TasbihIcon,
+} from '../components/icons/IslamicIcons.js';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import { useSalatLog, useSalatAnalytics } from '../hooks/useSalatLog.js';
@@ -10,7 +33,6 @@ import { useFastingSummary } from '../hooks/useFasting.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
 import { StreakBadge, GoalBadge } from '../components/StatusBadges.js';
 import ComebackNudge from '../components/ComebackNudge.js';
-import AnimatedBackground from '../components/AnimatedBackground.js';
 import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import MusafirBanner from '../components/MusafirBanner.js';
 import toast from 'react-hot-toast';
@@ -45,7 +67,7 @@ function localTodayForCycle(): string {
 
 interface ActivityItem {
   id: string;
-  icon: string;
+  icon: (p: { className?: string }) => React.ReactNode;
   title: string;
   stats: { label: string; value: string | number };
   link: string;
@@ -185,7 +207,7 @@ export default function Home() {
   const activities: ActivityItem[] = [
     {
       id: 'zikr',
-      icon: '📿',
+      icon: TasbihIcon,
       title: t('home.zikrTitle'),
       stats: { label: t('home.today'), value: formatLocaleNumber(effectiveToday) },
       link: '/zikr',
@@ -196,10 +218,10 @@ export default function Home() {
     },
     {
       id: 'salat',
-      icon: '🕌',
+      icon: MosqueIcon,
       title: t('home.salatTitle'),
       stats: cycleActive
-        ? { label: t('home.rayhanah'), value: `🌸 ${t('home.excused')}` }
+        ? { label: t('home.rayhanah'), value: t('home.excused') }
         : isNewSalatUser
           ? { label: t('home.today'), value: t('home.salatStart', 'Tap to begin') }
           : {
@@ -207,26 +229,26 @@ export default function Home() {
               value:
                 salatCompletedToday !== null
                   ? `${formatLocaleNumber(salatCompletedToday)}/${formatLocaleNumber(5)}`
-                  : `—/${formatLocaleNumber(5)}`,
+                  : `-/${formatLocaleNumber(5)}`,
             },
       link: '/salat',
       accent: 'brand-info',
       border: 'border-brand-info/15',
       tag: salatAnalytics?.currentStreak
-        ? `🔥 ${formatLocaleNumber(salatAnalytics.currentStreak)}${t('home.daySuffix', 'd')} · ${t('home.all5', 'all 5')}`
+        ? `${formatLocaleNumber(salatAnalytics.currentStreak)}${t('home.daySuffix', 'd')} · ${t('home.all5', 'all 5')}`
         : undefined,
     },
     {
       id: 'fasting',
-      icon: '🌙',
+      icon: CrescentIcon,
       title: t('home.fastingTitle'),
       stats: cycleActive
-        ? { label: t('home.rayhanah'), value: `🌸 ${t('home.excused')}` }
+        ? { label: t('home.rayhanah'), value: t('home.excused') }
         : {
             label: t('home.thisMonth'),
             value: fastingSummary
               ? `${formatLocaleNumber(fastingSummary.stats.thisMonth)} ${t('home.fasts')}`
-              : '—',
+              : '-',
           },
       link: '/fasting',
       accent: 'brand-gold',
@@ -234,13 +256,13 @@ export default function Home() {
     },
     {
       id: 'quran',
-      icon: '📖',
+      icon: BookOpenIcon,
       title: t('home.quranTitle'),
       stats: {
         label: t('home.today'),
         value: quranSummary
           ? `${formatLocaleNumber(quranSummary.todayAyat)}/${formatLocaleNumber(quranSummary.profile.dailyGoalAyat)} āyāt`
-          : '—',
+          : '-',
       },
       link: '/quran',
       accent: 'brand-info',
@@ -249,315 +271,271 @@ export default function Home() {
     },
   ];
 
+  const ends = (h: number, m: number) =>
+    `${h > 0 ? `${formatLocaleNumber(h)}h ` : ''}${formatLocaleNumber(m)}m`;
+  const prayerName = (id: string) =>
+    translateSalatName(id, PRAYER_META.find((p) => p.id === id)?.name ?? '', t);
+
+  const library = [
+    {
+      Icon: DuaHandsIcon,
+      to: '/library/duas',
+      title: t('home.libraryDuaTitle'),
+      subtitle: t('home.libraryDuaSubtitle'),
+    },
+    {
+      Icon: SunriseIcon,
+      to: '/library/adhkar',
+      title: t('home.libraryAdhkarTitle'),
+      subtitle: t('home.libraryAdhkarSubtitle'),
+    },
+    {
+      Icon: SparklesIcon,
+      to: '/library/asma-ul-husna',
+      title: t('home.libraryAsmaTitle'),
+      subtitle: t('home.libraryAsmaSubtitle'),
+    },
+    {
+      Icon: CalculatorIcon,
+      to: '/library/zakat-calculator',
+      title: t('home.libraryZakatTitle'),
+      subtitle: t('home.libraryZakatSubtitle'),
+    },
+  ];
+
+  // Bustan Arch (audit T3.2): one arch hero (the prayer window), flat cards
+  // with two radii and theme elevations, SVG icons only, no glows.
   return (
-    <AnimatedBackground variant="dark">
-      <h1 className="sr-only">{t('home.srTitle', 'Bustandeen — Islamic Productivity')}</h1>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        {/* Welcome back after a quiet stretch — the gentlest possible restart */}
-        <div className="mb-6 empty:mb-0">
+    <div className="min-h-screen bg-brand-void">
+      <h1 className="sr-only">{t('home.srTitle', 'Bustandeen, Islamic Productivity')}</h1>
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+        {/* Welcome back after a quiet stretch, the gentlest possible restart */}
+        <div className="mb-5 empty:mb-0">
           <ComebackNudge />
         </div>
 
-        {/* Pre-period heads-up — predicted start within 3 days */}
+        {/* Pre-period heads-up: predicted start within 3 days */}
         {upcomingCycleDays !== null && (
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
-          >
-            <Link to="/cycle">
-              <div
-                className={
-                  discreetMode
-                    ? 'rounded-2xl border border-brand-border bg-white/5 px-5 py-3.5 hover:border-white/20 transition-all'
-                    : 'rounded-2xl border border-brand-pink/20 bg-brand-pink/10 px-5 py-3.5 hover:border-brand-pink/30 transition-all'
-                }
-              >
+          <Link to="/cycle" className="block mb-4">
+            <div
+              className={`flex items-center gap-3 rounded-card border px-4 py-3 shadow-elev-1 transition-colors ${
+                discreetMode
+                  ? 'border-brand-border bg-brand-deep hover:border-white/20'
+                  : 'border-brand-pink/25 bg-brand-pink/10 hover:border-brand-pink/40'
+              }`}
+            >
+              {discreetMode ? (
+                <BellIcon className="w-6 h-6 shrink-0 text-white/60" />
+              ) : (
+                <FlowerIcon className="w-6 h-6 shrink-0 text-brand-pink" />
+              )}
+              <div className="min-w-0">
                 <p
-                  className={
-                    discreetMode
-                      ? 'text-white/70 font-bold text-sm'
-                      : 'text-brand-pink/90 font-bold text-sm'
-                  }
+                  className={`font-bold text-sm ${discreetMode ? 'text-white/80' : 'text-brand-pink'}`}
                 >
-                  {discreetMode ? (
-                    <>🔔 {t('home.discreetPrePeriod', 'Something to check')}</>
-                  ) : (
-                    <>
-                      🌷{' '}
-                      {upcomingCycleDays === 0
-                        ? t('home.periodMayBegin')
-                        : upcomingCycleDays! > 1
-                          ? t('home.periodMayBeginInPlural', { days: upcomingCycleDays })
-                          : t('home.periodMayBeginIn', { days: upcomingCycleDays })}
-                    </>
-                  )}
+                  {discreetMode
+                    ? t('home.discreetPrePeriod', 'Something to check')
+                    : upcomingCycleDays === 0
+                      ? t('home.periodMayBegin')
+                      : upcomingCycleDays! > 1
+                        ? t('home.periodMayBeginInPlural', { days: upcomingCycleDays })
+                        : t('home.periodMayBeginIn', { days: upcomingCycleDays })}
                 </p>
-                <p className="text-white/30 text-xs mt-0.5">
+                <p className="text-white/50 text-xs mt-0.5">
                   {discreetMode
                     ? t('home.discreetOpenWellness', 'Open Wellness')
                     : t('home.openRayhanah')}
                 </p>
               </div>
-            </Link>
-          </motion.div>
+            </div>
+          </Link>
         )}
 
-        {/* Rayhanah days banner — female users with an active cycle */}
+        {/* Rayhanah days banner: female users with an active cycle */}
         {cycleActive && (
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
-          >
-            <Link to="/cycle">
-              <div
-                className={
-                  discreetMode
-                    ? 'rounded-2xl border border-brand-border bg-white/5 px-5 py-4 hover:border-white/20 transition-all'
-                    : 'rounded-2xl border border-brand-pink/25 bg-gradient-to-r from-brand-pink/15 via-brand-pink/10 to-brand-warm/10 px-5 py-4 hover:border-brand-pink/40 transition-all'
-                }
-              >
+          <Link to="/cycle" className="block mb-4">
+            <div
+              className={`flex items-center gap-3 rounded-card border px-4 py-3.5 shadow-elev-1 transition-colors ${
+                discreetMode
+                  ? 'border-brand-border bg-brand-deep hover:border-white/20'
+                  : 'border-brand-pink/25 bg-brand-pink/10 hover:border-brand-pink/40'
+              }`}
+            >
+              {discreetMode ? (
+                <LeafIcon className="w-6 h-6 shrink-0 text-brand-emerald" />
+              ) : (
+                <FlowerIcon className="w-6 h-6 shrink-0 text-brand-pink" />
+              )}
+              <div className="min-w-0">
                 <p
-                  className={
-                    discreetMode
-                      ? 'text-white/70 font-bold text-sm'
-                      : 'text-brand-pink font-bold text-sm'
-                  }
+                  className={`font-bold text-sm ${discreetMode ? 'text-white/80' : 'text-brand-pink'}`}
                 >
                   {discreetMode
-                    ? `🍃 ${t('home.discreetActiveDay', 'Wellness mode — day {{day, number}}', { day: cycleActive.dayCount })}`
-                    : `🌸 ${t('home.rayhanahDay', { day: cycleActive.dayCount })}`}
+                    ? t('home.discreetActiveDay', 'Wellness mode, day {{day, number}}', {
+                        day: cycleActive.dayCount,
+                      })
+                    : t('home.rayhanahDay', { day: cycleActive.dayCount })}
                 </p>
-                <p className="text-white/40 text-xs mt-1">
+                <p className="text-white/50 text-xs mt-1">
                   {discreetMode
                     ? t('home.discreetActiveDetail', 'Some trackers are paused today.')
                     : t('home.rayhanahDetail')}
                 </p>
               </div>
-            </Link>
-          </motion.div>
+            </div>
+          </Link>
         )}
 
-        {/* Prayer times widget / location CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
-        >
-          {prayerWidgetData ? (
-            <Link to="/prayer-times">
-              <motion.div
-                whileHover={{ scale: 1.005 }}
-                className="flex items-stretch gap-0 rounded-2xl bg-brand-surface/80 backdrop-blur-md border border-brand-border hover:border-brand-emerald/30 transition-all overflow-hidden"
-              >
-                {/* LEFT: current status (forbidden / mandatory / nafl / free) */}
-                <div className="flex-1 flex items-center gap-3 px-4 py-3 min-w-0">
-                  {/* Icon */}
-                  <span className="text-2xl shrink-0 leading-none">
-                    {prayerWidgetData.forbiddenWindow
-                      ? '🚫'
-                      : prayerWidgetData.currentMandatory
-                        ? (PRAYER_META.find((p) => p.id === prayerWidgetData.currentMandatory)
-                            ?.icon ?? '🕌')
-                        : prayerWidgetData.naflWindow
-                          ? prayerWidgetData.naflWindow.icon
-                          : '🕊️'}
-                  </span>
-
-                  {/* Content */}
-                  <div className="min-w-0 flex-1">
-                    {prayerWidgetData.forbiddenWindow ? (
-                      <>
-                        <p className="text-red-400/60 text-[10px] uppercase tracking-widest leading-none mb-0.5">
-                          {t('home.forbiddenTime')}
-                        </p>
-                        <p className="text-red-300 font-black text-sm leading-tight">
-                          {prayerWidgetData.forbiddenWindow.label.replace('Forbidden — ', '')}
-                        </p>
-                        <p className="text-white/30 text-[10px] mt-0.5">
-                          {t('common.ends')} {formatTime(prayerWidgetData.forbiddenWindow.end)} —{' '}
-                          {t('home.noPrayer')}
-                        </p>
-                      </>
-                    ) : prayerWidgetData.currentMandatory ? (
-                      <>
-                        <p className="text-white/30 text-[10px] uppercase tracking-widest leading-none mb-0.5">
-                          {t('home.current')}
-                        </p>
-                        <p className="text-white font-black text-sm leading-tight">
-                          {translateSalatName(
-                            prayerWidgetData.currentMandatory ?? '',
-                            PRAYER_META.find((p) => p.id === prayerWidgetData.currentMandatory)
-                              ?.name ?? '',
-                            t
-                          )}
-                        </p>
-                        <p className="text-white/30 text-[10px] mt-0.5">
-                          {t('common.ends')} {formatTime(prayerWidgetData.currentMandatoryEnd!)}
-                        </p>
-                        {/* Nafl alongside mandatory (Awabeen during Maghrib, Tahajjud during Isha) */}
-                        {prayerWidgetData.naflWindow && (
-                          <div className="mt-1 pt-1 border-t border-brand-border/40">
-                            <p className="text-brand-warm/80 text-[10px] font-semibold leading-none">
-                              {prayerWidgetData.naflWindow.icon}{' '}
-                              {translateSalatName(
-                                prayerWidgetData.naflWindow.id,
-                                prayerWidgetData.naflWindow.name,
-                                t
-                              )}{' '}
-                              {t('common.time')}
-                            </p>
-                            <p className="text-white/25 text-[10px] leading-none mt-0.5">
-                              {t('common.until')} {formatTime(prayerWidgetData.naflWindow.end)}
-                            </p>
-                          </div>
-                        )}
-                      </>
-                    ) : prayerWidgetData.naflWindow ? (
-                      <>
-                        <p className="text-brand-info/60 text-[10px] uppercase tracking-widest leading-none mb-0.5">
-                          {t('home.naflTime')}
-                        </p>
-                        <p className="text-brand-info font-black text-sm leading-tight">
-                          {translateSalatName(
-                            prayerWidgetData.naflWindow.id,
-                            prayerWidgetData.naflWindow.name,
-                            t
-                          )}
-                        </p>
-                        <p className="text-white/30 text-[10px] mt-0.5">
-                          {formatTime(prayerWidgetData.naflWindow.start)} –{' '}
-                          {formatTime(prayerWidgetData.naflWindow.end)}
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-white/25 text-[10px] uppercase tracking-widest leading-none mb-0.5">
-                          {t('home.freeTime')}
-                        </p>
-                        <p className="text-white/50 font-semibold text-sm leading-tight">
-                          {t('home.nextPrayerComing')}
-                        </p>
-                        <p className="text-white/25 text-[10px] mt-0.5">
-                          {t('common.in')}{' '}
-                          {prayerWidgetData.nextHh > 0
-                            ? `${formatLocaleNumber(prayerWidgetData.nextHh)}h `
-                            : ''}
-                          {formatLocaleNumber(
-                            Number(String(prayerWidgetData.nextMm).padStart(2, '0'))
-                          )}
-                          m
-                        </p>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Ends-in counter (right side of left section) */}
-                  {(prayerWidgetData.endHh > 0 || prayerWidgetData.endMm > 0) && (
-                    <div className="text-right shrink-0">
-                      <p className="text-white/30 text-[10px] uppercase tracking-widest leading-none mb-0.5">
-                        {t('home.endsIn')}
-                      </p>
-                      <p
-                        className={`font-black text-base tabular-nums leading-tight ${
-                          prayerWidgetData.forbiddenWindow ? 'text-red-400' : 'text-brand-gold'
-                        }`}
-                      >
-                        {prayerWidgetData.endHh > 0
-                          ? `${formatLocaleNumber(prayerWidgetData.endHh)}h `
-                          : ''}
-                        {formatLocaleNumber(
-                          Number(String(prayerWidgetData.endMm).padStart(2, '0'))
-                        )}
-                        m
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* DIVIDER */}
-                <div className="w-px bg-brand-border/60 self-stretch my-2" />
-
-                {/* RIGHT: next mandatory prayer */}
-                <div className="flex flex-col justify-center px-4 py-3 shrink-0 min-w-[110px] sm:min-w-[130px]">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-sm leading-none">
-                      {PRAYER_META.find((p) => p.id === prayerWidgetData.nextMandatory)?.icon}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-white/30 text-[10px] uppercase tracking-widest leading-none mb-0.5">
-                        {t('home.next')}
-                      </p>
-                      <p className="text-brand-emerald font-bold text-xs leading-tight">
-                        {translateSalatName(
-                          prayerWidgetData.nextMandatory,
-                          PRAYER_META.find((p) => p.id === prayerWidgetData.nextMandatory)?.name ??
-                            '',
-                          t
-                        )}
-                      </p>
-                      <p className="text-white/30 text-[10px] leading-none">
-                        {formatTime(prayerWidgetData.nextMandatoryTime)}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-white/20 text-[10px] mt-1">
-                    {t('common.in')}{' '}
-                    {prayerWidgetData.nextHh > 0
-                      ? `${formatLocaleNumber(prayerWidgetData.nextHh)}h `
-                      : ''}
-                    {formatLocaleNumber(Number(String(prayerWidgetData.nextMm).padStart(2, '0')))}m
+        {/* Hero: the prayer window, under the screen's one arch */}
+        {prayerWidgetData ? (
+          <Link to="/prayer-times" className="block mb-4">
+            <div className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-elev-2 px-5 pt-8 pb-5 text-center hover:border-brand-emerald/40 transition-colors">
+              {prayerWidgetData.forbiddenWindow ? (
+                <>
+                  <NoSymbolIcon className="w-7 h-7 mx-auto text-red-400" />
+                  <p className="mt-2 text-[11px] uppercase tracking-widest font-bold text-red-400">
+                    {t('home.forbiddenTime')}
                   </p>
-                </div>
-              </motion.div>
-            </Link>
-          ) : (
-            /* No location stored — send to the prayer-times page, which
-             * offers "use my location" and manual city search side by side.
-             * Deliberately NOT a native geolocation prompt fired straight
-             * from this button: the user should see and choose between both
-             * options before any permission dialog appears. */
-            <Link to="/prayer-times">
-              <motion.div
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-between gap-3 px-4 sm:px-5 py-3 rounded-2xl bg-brand-surface/60 backdrop-blur-md border border-brand-border/60 border-dashed hover:border-brand-emerald/40 hover:bg-brand-surface/80 transition-all text-left"
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <MapPinIcon className="w-5 h-5 text-brand-emerald/60 shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-white/70 font-semibold text-sm leading-none mb-0.5">
-                      {t('home.enablePrayerTimes')}
+                  <p className="font-display text-2xl font-semibold text-red-300 leading-tight mt-0.5">
+                    {prayerWidgetData.forbiddenWindow.label.replace('Forbidden — ', '')}
+                  </p>
+                  <p className="text-white/60 text-sm mt-1">
+                    {t('common.ends')} {formatTime(prayerWidgetData.forbiddenWindow.end)} ·{' '}
+                    {t('home.noPrayer')}
+                  </p>
+                </>
+              ) : prayerWidgetData.currentMandatory ? (
+                <>
+                  <PrayerGlyph
+                    id={prayerWidgetData.currentMandatory}
+                    className="w-7 h-7 mx-auto text-brand-gold"
+                  />
+                  <p className="mt-2 text-[11px] uppercase tracking-widest font-bold text-white/60">
+                    {t('home.current')}
+                  </p>
+                  <p className="font-display text-3xl font-semibold text-white leading-tight mt-0.5">
+                    {prayerName(prayerWidgetData.currentMandatory)}
+                  </p>
+                  <p className="text-white/60 text-sm mt-1">
+                    {t('common.ends')} {formatTime(prayerWidgetData.currentMandatoryEnd!)}
+                  </p>
+                  {/* Nafl alongside mandatory (Awabeen during Maghrib, Tahajjud during Isha) */}
+                  {prayerWidgetData.naflWindow && (
+                    <p className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full border border-brand-warm/30 text-brand-warm text-xs font-semibold">
+                      <PrayerGlyph id={prayerWidgetData.naflWindow.id} className="w-3.5 h-3.5" />
+                      {translateSalatName(
+                        prayerWidgetData.naflWindow.id,
+                        prayerWidgetData.naflWindow.name,
+                        t
+                      )}{' '}
+                      {t('common.time')} · {t('common.until')}{' '}
+                      {formatTime(prayerWidgetData.naflWindow.end)}
                     </p>
-                    <p className="text-white/30 text-xs">{t('home.enablePrayerTimesDetail')}</p>
-                  </div>
-                </div>
-                <span className="text-brand-emerald/50 text-xs font-semibold shrink-0">
-                  {t('home.setLocation')}
-                </span>
-              </motion.div>
-            </Link>
-          )}
-        </motion.div>
+                  )}
+                </>
+              ) : prayerWidgetData.naflWindow ? (
+                <>
+                  <PrayerGlyph
+                    id={prayerWidgetData.naflWindow.id}
+                    className="w-7 h-7 mx-auto text-brand-info"
+                  />
+                  <p className="mt-2 text-[11px] uppercase tracking-widest font-bold text-brand-info">
+                    {t('home.naflTime')}
+                  </p>
+                  <p className="font-display text-3xl font-semibold text-white leading-tight mt-0.5">
+                    {translateSalatName(
+                      prayerWidgetData.naflWindow.id,
+                      prayerWidgetData.naflWindow.name,
+                      t
+                    )}
+                  </p>
+                  <p className="text-white/60 text-sm mt-1">
+                    {formatTime(prayerWidgetData.naflWindow.start)} -{' '}
+                    {formatTime(prayerWidgetData.naflWindow.end)}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <ClockIcon className="w-7 h-7 mx-auto text-white/60" />
+                  <p className="mt-2 text-[11px] uppercase tracking-widest font-bold text-white/60">
+                    {t('home.freeTime')}
+                  </p>
+                  <p className="font-display text-2xl font-semibold text-white leading-tight mt-0.5">
+                    {t('home.nextPrayerComing')}
+                  </p>
+                </>
+              )}
 
-        {/* Musafir mode — the journey at a glance */}
+              {/* Ends in, and the next mandatory prayer */}
+              <div className="mt-4 pt-3 border-t border-brand-border/70 flex flex-col items-center gap-1 text-sm">
+                {(prayerWidgetData.endHh > 0 || prayerWidgetData.endMm > 0) && (
+                  <span className="text-white/60">
+                    {t('home.endsIn')}{' '}
+                    <b
+                      className={`tabular-nums ${
+                        prayerWidgetData.forbiddenWindow ? 'text-red-400' : 'text-brand-gold'
+                      }`}
+                    >
+                      {ends(prayerWidgetData.endHh, prayerWidgetData.endMm)}
+                    </b>
+                  </span>
+                )}
+                <span className="inline-flex flex-wrap items-center justify-center gap-x-1.5 text-white/60">
+                  <PrayerGlyph
+                    id={prayerWidgetData.nextMandatory}
+                    className="w-4 h-4 text-brand-emerald"
+                  />
+                  {t('home.next')}{' '}
+                  <b className="text-brand-emerald">{prayerName(prayerWidgetData.nextMandatory)}</b>{' '}
+                  {formatTime(prayerWidgetData.nextMandatoryTime)}
+                  <span className="text-white/50">
+                    ({t('common.in')} {ends(prayerWidgetData.nextHh, prayerWidgetData.nextMm)})
+                  </span>
+                </span>
+              </div>
+            </div>
+          </Link>
+        ) : (
+          /* No location stored: send to the prayer-times page, which
+           * offers "use my location" and manual city search side by side.
+           * Deliberately NOT a native geolocation prompt fired straight
+           * from this button: the user should see and choose between both
+           * options before any permission dialog appears. */
+          <Link to="/prayer-times" className="block mb-4">
+            <div className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-card border border-dashed border-brand-border bg-brand-deep hover:border-brand-emerald/40 transition-colors">
+              <div className="flex items-center gap-3 min-w-0">
+                <MapPinIcon className="w-6 h-6 text-brand-emerald shrink-0" />
+                <div className="min-w-0">
+                  <p className="text-white/80 font-semibold text-sm leading-none mb-1">
+                    {t('home.enablePrayerTimes')}
+                  </p>
+                  <p className="text-white/50 text-xs">{t('home.enablePrayerTimesDetail')}</p>
+                </div>
+              </div>
+              <span className="text-brand-emerald text-xs font-semibold shrink-0">
+                {t('home.setLocation')}
+              </span>
+            </div>
+          </Link>
+        )}
+
+        {/* Musafir mode: the journey at a glance */}
         {musafir ? (
-          <div className="mb-6">
+          <div className="mb-4">
             <MusafirBanner state={musafir} today={getTrackingDay()} variant="home" />
           </div>
         ) : (
           travelHint && (
             // Off, but the device is already past the qaṣr distance from the
             // saved prayer-times location (only checked when location
-            // permission was already granted — see useTravelHint).
-            <div className="mb-6 flex items-center gap-3 rounded-2xl border border-brand-info/30 bg-brand-info/[0.08] px-4 py-3">
-              <span className="text-2xl shrink-0">🧳</span>
+            // permission was already granted, see useTravelHint).
+            <div className="mb-4 flex items-center gap-3 rounded-card border border-brand-info/30 bg-brand-info/[0.08] px-4 py-3">
+              <BriefcaseIcon className="w-6 h-6 shrink-0 text-brand-info" />
               <Link to="/musafir" className="min-w-0 flex-1">
                 <span className="block text-white/85 font-bold text-sm leading-tight">
                   {t('home.musafirHintTitle', 'Travelling?')}
                 </span>
-                <span className="block text-white/50 text-xs mt-0.5 leading-snug">
+                <span className="block text-white/60 text-xs mt-0.5 leading-snug">
                   {travelHint.from
                     ? t('home.musafirHintDesc', 'You are about {{km}} km from {{place}}.', {
                         km: formatLocaleNumber(travelHint.km),
@@ -583,10 +561,10 @@ export default function Home() {
                       school: defaultSchool(),
                     });
                     toast.success(t('home.musafirStarted', 'Safe travels! Musafir mode is on.'), {
-                      icon: '✈️',
+                      icon: <BriefcaseIcon className="w-5 h-5 text-brand-info" />,
                     });
                   }}
-                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-info/20 border border-brand-info/60 text-brand-info hover:bg-brand-info/30"
+                  className="px-3 py-1.5 rounded-control text-xs font-bold bg-brand-info/20 border border-brand-info/60 text-brand-info hover:bg-brand-info/30"
                 >
                   {t('home.musafirTurnOn', 'Turn on')}
                 </motion.button>
@@ -595,7 +573,7 @@ export default function Home() {
                     dismissTravelHint(getTrackingDay());
                     setHintDismissed(true);
                   }}
-                  className="text-white/30 text-[10px] underline hover:text-white/60"
+                  className="text-white/50 text-[11px] underline hover:text-white/70"
                 >
                   {t('home.musafirHintDismiss', 'Not now')}
                 </button>
@@ -604,296 +582,232 @@ export default function Home() {
           )
         )}
 
-        {/* Islamic special day widget */}
+        {/* Today's worship */}
+        <div className="grid grid-cols-2 gap-3 mb-2">
+          {activities.map((a) => {
+            const isZikr = a.id === 'zikr';
+            const Icon = a.icon;
+            return (
+              <Link key={a.id} to={a.link} className="block group">
+                <div className="h-full rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-3.5 sm:p-4 hover:border-brand-emerald/40 transition-colors">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Icon className="w-5 h-5 shrink-0 text-brand-emerald" />
+                    <h2 className="font-display text-sm sm:text-base font-semibold text-white flex-1 min-w-0 truncate">
+                      {a.title}
+                    </h2>
+                    <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/40 group-hover:text-white/70 transition-colors" />
+                  </div>
+                  <div className="flex items-baseline flex-wrap gap-x-2">
+                    <span className="font-display text-xl sm:text-2xl font-semibold text-white tabular-nums">
+                      {a.stats.value}
+                    </span>
+                    <span className="text-white/50 text-[11px] font-semibold uppercase tracking-wide">
+                      {a.stats.label}
+                    </span>
+                  </div>
+
+                  {/* Badges: streak, goal, Ramadan */}
+                  {(isZikr || a.id === 'quran' || a.tag || a.id === 'fasting') && (
+                    <div className="mt-2.5 pt-2 border-t border-brand-border/60 flex flex-wrap items-center gap-1.5">
+                      {isZikr && (
+                        <>
+                          <StreakBadge
+                            streak={a.streakCount ?? 0}
+                            state={analyticsData?.streak?.state}
+                            size="sm"
+                          />
+                          <GoalBadge pct={zikrGoalPct} met={goalCompleted} size="sm" />
+                        </>
+                      )}
+                      {/* A streak is only meaningful against a goal the user
+                          actually set: with none, "streak" would just be
+                          "days read at all," which isn't what this badge
+                          communicates elsewhere (zikr/salat always have an
+                          implicit goal). */}
+                      {a.id === 'quran' &&
+                        quranSummary &&
+                        quranSummary.profile.dailyGoalAyat > 0 && (
+                          <StreakBadge
+                            streak={quranSummary.streak}
+                            state={quranSummary.streak > 0 ? 'active' : 'none'}
+                            size="sm"
+                          />
+                        )}
+                      {a.tag && (
+                        <StreakBadge
+                          streak={salatAnalytics?.currentStreak ?? 0}
+                          state={salatAnalytics?.currentStreak ? 'active' : 'none'}
+                          size="sm"
+                        />
+                      )}
+                      {a.id === 'fasting' && (
+                        <button
+                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-control text-[11px] font-bold text-brand-gold border border-brand-gold/40 bg-brand-gold/10 hover:bg-brand-gold/20 transition-colors"
+                          title={
+                            ramadan.active ? 'Open the Ramadan tracker' : 'Countdown to Ramadan'
+                          }
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            navigate('/ramadan');
+                          }}
+                        >
+                          <CrescentIcon className="w-3.5 h-3.5" />
+                          {ramadan.active
+                            ? t('home.ramadanDay', {
+                                day: formatLocaleNumber(ramadan.todayNumber ?? 0),
+                              })
+                            : t('home.ramadanIn', { days: formatLocaleNumber(ramadan.daysUntil) })}
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+
+        {/* Today's special days, Friday cards and sadaqah virtue */}
+        {(todaySpecialDays.length > 0 ||
+          sadaqahVirtueDay ||
+          fridayHour.active ||
+          isFridayToday) && <OrnamentDivider className="my-5" />}
+
         {todaySpecialDays.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.05 }}
-            className="mb-6 space-y-2"
-          >
+          <div className="mb-4 space-y-2">
             {todaySpecialDays.map((day) => (
-              <Link key={day.id} to={`/special-day/${day.id}`}>
-                <motion.div
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="flex items-center gap-3 px-4 py-3 rounded-2xl border overflow-hidden transition-all"
-                  style={{ background: `${day.color}12`, borderColor: `${day.color}40` }}
-                >
-                  <span className="text-2xl shrink-0">{day.icon}</span>
+              <Link key={day.id} to={`/special-day/${day.id}`} className="block">
+                <div className="flex items-center gap-3 px-4 py-3 rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 hover:border-brand-gold/40 transition-colors">
+                  <Star8Icon className="w-6 h-6 shrink-0 text-brand-gold" />
                   <div className="min-w-0 flex-1">
                     <p className="text-white font-bold text-sm leading-tight">
                       {t(`specialDays.${day.id}.name`, day.name)}
                     </p>
-                    <p className="text-white/40 text-xs leading-snug truncate mt-0.5">
+                    <p className="text-white/60 text-xs leading-snug truncate mt-0.5">
                       {t(`specialDays.${day.id}.shortDesc`, day.shortDesc)}
                     </p>
                   </div>
-                  <span className="text-white/30 text-xs shrink-0 font-bold">→</span>
-                </motion.div>
+                  <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/40" />
+                </div>
               </Link>
             ))}
-          </motion.div>
+          </div>
         )}
 
         {/* Days with extra sadaqah virtue (Friday, Ramadan, first 10 days of
-            Dhul Hijjah, Arafah, Laylat al-Qadr) — persistent, unlike the old
+            Dhul Hijjah, Arafah, Laylat al-Qadr): persistent, unlike the old
             30s-auto-dismissing Friday-only reminder this replaces. */}
         {sadaqahVirtueDay && <SadaqahVirtueCard day={sadaqahVirtueDay} />}
 
         {/* Friday: hour of response (Abū Dāwūd 1048, ṣaḥīḥ) */}
         {fridayHour.active && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
+          <div
+            className={`mb-4 rounded-card border p-4 shadow-elev-1 ${
+              fridayHour.isFinalStretch
+                ? 'border-brand-gold/60 bg-brand-gold/[0.12]'
+                : 'border-brand-gold/25 bg-brand-gold/[0.06]'
+            }`}
           >
-            <div
-              className={`rounded-2xl border p-4 ${
-                fridayHour.isFinalStretch
-                  ? 'border-brand-gold/50 bg-gradient-to-br from-brand-gold/15 to-brand-gold-dim/5'
-                  : 'border-brand-gold/25 bg-brand-gold/[0.06]'
-              }`}
-            >
-              <div className="flex items-start gap-3">
-                <span className="text-2xl shrink-0">🤲</span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline gap-2 flex-wrap">
-                    <h2 className="text-brand-gold font-black text-sm">
-                      {fridayHour.isFinalStretch
-                        ? t('home.fridayHourNow')
-                        : t('home.fridayHourTitle')}
-                    </h2>
-                    <span className="text-brand-gold/70 text-xs font-bold tabular-nums">
-                      {fridayHour.countdown} {t('home.toMaghrib')}
-                    </span>
-                  </div>
-                  <p className="text-white/60 text-xs mt-1.5 leading-relaxed">
-                    {t(
-                      'home.fridayHourQuote',
-                      '"{{text}}" Keep asking until the sun sets — for yourself, your parents, and the ummah.',
-                      {
-                        text:
-                          i18n.language === 'bn' ? FRIDAY_HOUR_REF.textBn : FRIDAY_HOUR_REF.text,
-                      }
-                    )}
-                  </p>
-                  <a
-                    href={FRIDAY_HOUR_REF.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-[11px] text-white/35 hover:text-brand-gold underline underline-offset-2 mt-2 inline-block"
-                  >
-                    {translateReference(FRIDAY_HOUR_REF.source, i18n.language)} ·{' '}
-                    {translateReference(FRIDAY_HOUR_REF.grade, i18n.language)} ↗
-                  </a>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Friday: Surah al-Kahf — one tap into the reader */}
-        {isFridayToday && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
-          >
-            <button
-              onClick={() => navigate('/quran/read/18?mode=single')}
-              className="w-full text-left rounded-2xl border border-brand-emerald/25 bg-brand-emerald/[0.07] p-4 hover:border-brand-emerald/50 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-2xl shrink-0">🌟</span>
-                <div className="min-w-0 flex-1">
-                  <h2 className="text-brand-emerald font-black text-sm">{t('home.fridayKahf')}</h2>
-                  <p className="text-white/50 text-xs mt-1 leading-relaxed">
-                    "
-                    {t(
-                      'home.fridayKahfQuote',
-                      'A light will shine for him between the two Fridays.'
-                    )}
-                    "
-                  </p>
-                  <p className="text-white/25 text-[11px] mt-1">
-                    {translateReference('Ṣaḥīḥ at-Targhīb 736 · Ṣaḥīḥ', i18n.language)}
-                  </p>
-                </div>
-                <span className="text-brand-emerald/60 text-lg shrink-0">→</span>
-              </div>
-            </button>
-          </motion.div>
-        )}
-
-        {/* ── Activity cards (compact dashboard tiles) ── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-          {activities.map((a, i) => {
-            const isZikr = a.id === 'zikr';
-            return (
-              <motion.div
-                key={a.id}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.06 }}
-              >
-                <Link to={a.link} className="block group">
-                  <div
-                    className={`relative rounded-2xl ${a.border} border bg-white/[0.04] hover:bg-white/[0.07] backdrop-blur-md p-4 transition-all`}
-                  >
-                    {/* Top row: icon + title */}
-                    <div className="flex items-center gap-3 mb-3">
-                      <span className="text-3xl shrink-0 leading-none">{a.icon}</span>
-                      <h2 className="text-base font-black text-white flex-1 min-w-0 truncate">
-                        {a.title}
-                      </h2>
-                      <span className="text-white/20 text-xs font-bold group-hover:text-white/40 transition-colors">
-                        →
-                      </span>
-                    </div>
-
-                    {/* Stat row */}
-                    <div className="flex items-baseline">
-                      <span className="text-2xl font-black text-white tabular-nums">
-                        {a.stats.value}
-                      </span>
-                      <span className="text-white/30 text-xs font-semibold ml-2 uppercase">
-                        {a.stats.label}
-                      </span>
-                    </div>
-
-                    {/* Bottom badges row — streak, goal, ramadan */}
-                    {(isZikr || a.id === 'quran' || a.tag || a.id === 'fasting') && (
-                      <div className="mt-2.5 pt-2 border-t border-white/[0.06] flex flex-wrap items-center gap-1.5">
-                        {isZikr && (
-                          <>
-                            <StreakBadge
-                              streak={a.streakCount ?? 0}
-                              state={analyticsData?.streak?.state}
-                              size="sm"
-                            />
-                            <GoalBadge pct={zikrGoalPct} met={goalCompleted} size="sm" />
-                          </>
-                        )}
-                        {/* A streak is only meaningful against a goal the user
-                            actually set — with none, "streak" would just be
-                            "days read at all," which isn't what this badge
-                            communicates elsewhere (zikr/salat always have an
-                            implicit goal). */}
-                        {a.id === 'quran' &&
-                          quranSummary &&
-                          quranSummary.profile.dailyGoalAyat > 0 && (
-                            <StreakBadge
-                              streak={quranSummary.streak}
-                              state={quranSummary.streak > 0 ? 'active' : 'none'}
-                              size="sm"
-                            />
-                          )}
-                        {a.tag && (
-                          <StreakBadge
-                            streak={salatAnalytics?.currentStreak ?? 0}
-                            state={salatAnalytics?.currentStreak ? 'active' : 'none'}
-                            size="sm"
-                          />
-                        )}
-                        {a.id === 'fasting' && (
-                          <button
-                            className="px-2.5 py-0.5 rounded-full text-[10px] font-black text-white border border-brand-gold/20 bg-gradient-to-r from-amber-700/80 to-purple-700/80 hover:scale-105 transition-transform"
-                            title={
-                              ramadan.active ? 'Open the Ramadan tracker' : 'Countdown to Ramadan'
-                            }
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              navigate('/ramadan');
-                            }}
-                          >
-                            {ramadan.active
-                              ? `🌙 ${t('home.ramadanDay', { day: formatLocaleNumber(ramadan.todayNumber ?? 0) })}`
-                              : `🌙 ${t('home.ramadanIn', { days: formatLocaleNumber(ramadan.daysUntil) })}`}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </Link>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* ── Friends / Share activities ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="mb-10"
-        >
-          <Link to="/friends" className="block group">
-            <div className="flex items-center gap-3 px-4 py-3.5 rounded-2xl border border-brand-gold/20 bg-brand-gold/[0.06] hover:bg-brand-gold/10 transition-all">
-              <span className="text-2xl shrink-0">🤝</span>
+            <div className="flex items-start gap-3">
+              <DuaHandsIcon className="w-6 h-6 shrink-0 text-brand-gold" />
               <div className="min-w-0 flex-1">
-                <h2 className="text-sm font-black text-white">{t('home.friendsTitle')}</h2>
-                <p className="text-white/30 text-xs truncate">{t('home.friendsSubtitle')}</p>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <h2 className="font-display text-brand-gold font-semibold text-base">
+                    {fridayHour.isFinalStretch
+                      ? t('home.fridayHourNow')
+                      : t('home.fridayHourTitle')}
+                  </h2>
+                  <span className="text-brand-gold text-xs font-bold tabular-nums">
+                    {fridayHour.countdown} {t('home.toMaghrib')}
+                  </span>
+                </div>
+                <p className="text-white/70 text-xs mt-1.5 leading-relaxed">
+                  {t(
+                    'home.fridayHourQuote',
+                    '"{{text}}" Keep asking until the sun sets: for yourself, your parents, and the ummah.',
+                    {
+                      text: i18n.language === 'bn' ? FRIDAY_HOUR_REF.textBn : FRIDAY_HOUR_REF.text,
+                    }
+                  )}
+                </p>
+                <a
+                  href={FRIDAY_HOUR_REF.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[11px] text-white/60 hover:text-brand-gold underline underline-offset-2 mt-2 inline-block"
+                >
+                  {translateReference(FRIDAY_HOUR_REF.source, i18n.language)} ·{' '}
+                  {translateReference(FRIDAY_HOUR_REF.grade, i18n.language)} ↗
+                </a>
               </div>
-              <span className="shrink-0 text-brand-gold/60 text-xs font-bold group-hover:text-brand-gold transition-colors">
-                {t('home.compete')}
-              </span>
             </div>
-          </Link>
-        </motion.div>
+          </div>
+        )}
 
-        {/* ── Islamic Library / one-stop utilities ── */}
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
-          className="mb-10"
-        >
+        {/* Friday: Surah al-Kahf, one tap into the reader */}
+        {isFridayToday && (
+          <button
+            onClick={() => navigate('/quran/read/18?mode=single')}
+            className="mb-4 w-full text-left rounded-card border border-brand-emerald/30 bg-brand-emerald/[0.07] shadow-elev-1 p-4 hover:border-brand-emerald/50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <BookOpenIcon className="w-6 h-6 shrink-0 text-brand-emerald" />
+              <div className="min-w-0 flex-1">
+                <h2 className="font-display text-brand-emerald font-semibold text-base">
+                  {t('home.fridayKahf')}
+                </h2>
+                <p className="text-white/70 text-xs mt-1 leading-relaxed">
+                  "
+                  {t('home.fridayKahfQuote', 'A light will shine for him between the two Fridays.')}
+                  "
+                </p>
+                <p className="text-white/60 text-[11px] mt-1">
+                  {translateReference('Ṣaḥīḥ at-Targhīb 736 · Ṣaḥīḥ', i18n.language)}
+                </p>
+              </div>
+              <ChevronRightIcon className="w-5 h-5 shrink-0 text-brand-emerald" />
+            </div>
+          </button>
+        )}
+
+        <OrnamentDivider className="my-5" />
+
+        {/* Friends */}
+        <Link to="/friends" className="block group mb-6">
+          <div className="flex items-center gap-3 px-4 py-3.5 rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 hover:border-brand-gold/40 transition-colors">
+            <UserGroupIcon className="w-6 h-6 shrink-0 text-brand-gold" />
+            <div className="min-w-0 flex-1">
+              <h2 className="text-sm font-bold text-white">{t('home.friendsTitle')}</h2>
+              <p className="text-white/60 text-xs truncate">{t('home.friendsSubtitle')}</p>
+            </div>
+            <span className="shrink-0 text-brand-gold text-xs font-bold">{t('home.compete')}</span>
+          </div>
+        </Link>
+
+        {/* Islamic library: one-stop utilities */}
+        <div className="mb-8">
           <div className="mb-3">
-            <h2 className="text-sm font-black text-white">{t('home.libraryTitle')}</h2>
-            <p className="text-white/30 text-xs">{t('home.librarySubtitle')}</p>
+            <h2 className="font-display text-base font-semibold text-white">
+              {t('home.libraryTitle')}
+            </h2>
+            <p className="text-white/60 text-xs">{t('home.librarySubtitle')}</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            {[
-              {
-                icon: '🤲',
-                to: '/library/duas',
-                title: t('home.libraryDuaTitle'),
-                subtitle: t('home.libraryDuaSubtitle'),
-              },
-              {
-                icon: '🌅',
-                to: '/library/adhkar',
-                title: t('home.libraryAdhkarTitle'),
-                subtitle: t('home.libraryAdhkarSubtitle'),
-              },
-              {
-                icon: '✨',
-                to: '/library/asma-ul-husna',
-                title: t('home.libraryAsmaTitle'),
-                subtitle: t('home.libraryAsmaSubtitle'),
-              },
-              {
-                icon: '🧮',
-                to: '/library/zakat-calculator',
-                title: t('home.libraryZakatTitle'),
-                subtitle: t('home.libraryZakatSubtitle'),
-              },
-            ].map((u) => (
-              <Link key={u.to} to={u.to} className="block group">
-                <div className="rounded-2xl border border-brand-border bg-white/[0.04] hover:bg-white/[0.07] backdrop-blur-md p-4 transition-all h-full">
-                  <span className="text-2xl leading-none">{u.icon}</span>
-                  <h3 className="text-sm font-bold text-white mt-2 truncate">{u.title}</h3>
-                  <p className="text-white/30 text-xs mt-0.5 truncate">{u.subtitle}</p>
+            {library.map(({ Icon, to, title, subtitle }) => (
+              <Link key={to} to={to} className="block group">
+                <div className="h-full rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-4 hover:border-brand-emerald/40 transition-colors">
+                  <Icon className="w-6 h-6 text-brand-emerald" />
+                  <h3 className="text-sm font-bold text-white mt-2 truncate">{title}</h3>
+                  <p className="text-white/60 text-xs mt-0.5 truncate">{subtitle}</p>
                 </div>
               </Link>
             ))}
           </div>
-        </motion.div>
+        </div>
 
-        <div className="text-center text-xs text-white/30 pb-4">{t('home.footer')}</div>
+        <div className="text-center text-xs text-white/50 pb-4">{t('home.footer')}</div>
       </div>
-    </AnimatedBackground>
+    </div>
   );
 }

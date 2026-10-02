@@ -40,6 +40,7 @@ export default {
         'ink-fixed': '#1a1812',
         // Inset panels (`bg-shade/20`): black on dark, a soft sage on paper.
         shade: c('shade'),
+        hero: c('hero'),
         reader: {
           from: c('reader-from'),
           via: c('reader-via'),

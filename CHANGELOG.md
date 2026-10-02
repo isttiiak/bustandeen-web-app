@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.88.0 - Home in the Bustan Arch design - 2026-10-02
+
+### Changed
+
+- **Home is the first screen in the new design** (audit T3.2, direction C "Bustan Arch"). The current prayer window sits under one arch at the top (the only gradient on the screen), then today's worship as four cards: zikr, salat, fasting, Quran. Special days, the Friday cards and sadaqah days follow an ornament divider, then friends and the library.
+- **Icons are drawn, not emoji**: prayer-time glyphs (Fajr to ʿIshāʾ, and the nafl windows), tasbīḥ, mosque, crescent, raised hands, an eight-point star, leaf and flower, plus Heroicons. The streak and goal badges (Home, zikr counter, friends) use them too.
+- No glows or floating orbs on Home; cards use the new radii and elevations, and every text colour passes AA in both themes.
+- Copy on Home, the streak/goal tooltips, special-day names and short descriptions, and the sadaqah-day cards no longer use em dashes (English and Bangla).
+
+### Changed (developers)
+
+- `components/icons/IslamicIcons.tsx` (hand-made 24px line icons, `PrayerGlyph`, `OrnamentDivider`). `rounded-arch` utility and the `hero` colour token. `streakVisual()` now also returns an `Icon`.
+
 ## v5.87.0 - Light theme and a theme setting - 2026-10-02
 
 ### Added
