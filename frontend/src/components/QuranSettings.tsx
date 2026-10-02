@@ -3,7 +3,7 @@ import { createPortal } from 'react-dom';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
-import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowPathIcon, BookOpenIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { Trans, useTranslation } from 'react-i18next';
 import api from '../lib/api.js';
 import ConfirmDialog from './ConfirmDialog.js';
@@ -182,12 +182,10 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
       {
         onSuccess: () =>
           toast.success(
-            g > 0
-              ? `Daily goal set: ${g} āyah${g > 1 ? 's' : ''} 🎯`
-              : 'Goal removed — read freely 🌿',
+            g > 0 ? `Daily goal set: ${g} āyah${g > 1 ? 's' : ''}` : 'Goal removed. Read freely.',
             { id: 'quran-goal' }
           ),
-        onError: () => toast.error('Could not save the goal — try again.', { id: 'quran-goal' }),
+        onError: () => toast.error('Could not save the goal. Try again.', { id: 'quran-goal' }),
       }
     );
   };
@@ -219,8 +217,9 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
             aria-label={t('quranSettings.title', 'Quran settings')}
           >
             <div className="sticky top-0 bg-brand-deep/95 backdrop-blur border-b border-brand-emerald/5 px-5 py-4 flex items-center justify-between z-10">
-              <h3 className="text-white font-black text-lg">
-                ⚙️ {t('quranSettings.title', 'Quran settings')}
+              <h3 className="font-display text-white font-bold text-lg flex items-center gap-2">
+                <Cog6ToothIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />
+                {t('quranSettings.title', 'Quran settings')}
               </h3>
               <button
                 aria-label={t('quranSettings.close', 'Close settings')}
@@ -235,12 +234,12 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
               {/* ── Dedicated: Daily Quran goal (its own save button) ── */}
               <div className="rounded-2xl border border-brand-emerald/25 bg-brand-emerald/[0.06] p-4">
                 <p className="text-white font-black text-sm">
-                  {t('quranSettings.goalTitle', '🎯 Daily Quran goal')}
+                  {t('quranSettings.goalTitle', 'Daily Quran goal')}
                 </p>
                 <p className="text-white/40 text-[11px] mt-0.5 leading-relaxed">
                   {t(
                     'quranSettings.goalDesc',
-                    'Completely optional — set it only when YOU want a daily target. Start small: even 1 āyah a day keeps the habit alive. Reading anywhere counts.'
+                    'Completely optional: set it only when YOU want a daily target. Start small: even 1 āyah a day keeps the habit alive. Reading anywhere counts.'
                   )}
                 </p>
                 <div className="flex flex-wrap gap-1.5 mt-3">
@@ -293,7 +292,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                   ) : goalDirty ? (
                     t('quranSettings.saveGoal', 'Save goal')
                   ) : (
-                    t('quranSettings.goalSaved', 'Goal saved ✓')
+                    t('quranSettings.goalSaved', 'Goal saved')
                   )}
                 </button>
               </div>
@@ -306,7 +305,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
 
               <div>
                 <label className="text-white/50 text-xs font-bold" htmlFor="q-reciter">
-                  {t('quranSettings.reciterLabel', '🎙️ Default reciter')}
+                  {t('quranSettings.reciterLabel', 'Default reciter')}
                 </label>
                 <select
                   id="q-reciter"
@@ -334,7 +333,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
 
               <div className="space-y-2.5">
                 <p className="text-white/50 text-xs font-bold">
-                  {t('quranSettings.translationsLabel', '🌐 Translations')}{' '}
+                  {t('quranSettings.translationsLabel', 'Translations')}{' '}
                   <span className="text-white/25 font-normal">
                     {t('quranSettings.translationsHint', '(up to two shown together)')}
                   </span>
@@ -367,7 +366,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                     onChange={(e) => setSecondary(e.target.value)}
                   >
                     <option value="none">
-                      {t('quranSettings.noneTranslation', 'None — one translation only')}
+                      {t('quranSettings.noneTranslation', 'None, one translation only')}
                     </option>
                     {TRANSLATIONS.filter((tr) => tr.id !== primary).map((tr) => (
                       <option key={tr.id} value={tr.id}>
@@ -381,7 +380,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
               {/* ── Arabic font — the "clean" default is the easiest to read ── */}
               <div className="rounded-2xl border border-brand-warm/20 bg-brand-warm/[0.05] p-4 space-y-2">
                 <p className="text-white/60 text-xs font-bold">
-                  {t('quranSettings.arabicFont', '🔤 Arabic font')}
+                  {t('quranSettings.arabicFont', 'Arabic font')}
                 </p>
                 <select
                   aria-label="Arabic font"
@@ -431,12 +430,12 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 <label className="flex items-center justify-between gap-3 cursor-pointer">
                   <div>
                     <p className="text-white/70 text-sm font-bold">
-                      {t('quranSettings.translitTitle', '🗣️ Transliteration')}
+                      {t('quranSettings.translitTitle', 'Transliteration')}
                     </p>
                     <p className="text-white/30 text-[11px] mt-0.5">
                       {t(
                         'quranSettings.translitDesc',
-                        'Latin pronunciation under the Arabic — for readers still learning the script.'
+                        'Latin pronunciation under the Arabic, for readers still learning the script.'
                       )}
                     </p>
                   </div>
@@ -458,7 +457,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 <label className="flex items-center justify-between gap-3 cursor-pointer">
                   <div>
                     <p className="text-white/70 text-sm font-bold">
-                      {t('quranSettings.listenTitle', '🎧 Count listening as āyāt')}
+                      {t('quranSettings.listenTitle', 'Count listening as āyāt')}
                     </p>
                     <p className="text-white/30 text-[11px] mt-0.5">
                       {t(
@@ -483,7 +482,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
               {/* ── Text sizes — one slider per text kind (Istiak's spec) ── */}
               <div className="rounded-2xl border border-brand-info/20 bg-brand-info/[0.05] p-4 space-y-4">
                 <p className="text-white/60 text-xs font-bold">
-                  {t('quranSettings.textSizes', '📏 Text sizes')}
+                  {t('quranSettings.textSizes', 'Text sizes')}
                 </p>
                 <SizeSlider
                   label="Arabic"
@@ -609,12 +608,12 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 .then(() => {
                   queryClient.invalidateQueries({ queryKey: ['quran'] });
                   toast.success(t('quranSettings.khatamResetDone', 'Khatam journey reset'), {
-                    icon: '📖',
+                    icon: <BookOpenIcon className="w-5 h-5 text-brand-emerald" />,
                   });
                   setConfirmResetKhatam(false);
                 })
                 .catch(() =>
-                  toast.error(t('quranSettings.resetFail', 'Could not reset — try again'))
+                  toast.error(t('quranSettings.resetFail', 'Could not reset. Try again'))
                 )
                 .finally(() => setResetting(null));
             }}
@@ -639,12 +638,12 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 .then(() => {
                   queryClient.invalidateQueries({ queryKey: ['quran'] });
                   toast.success(t('quranSettings.readingResetDone', 'Reading progress reset'), {
-                    icon: '📖',
+                    icon: <BookOpenIcon className="w-5 h-5 text-brand-emerald" />,
                   });
                   setConfirmResetReading(false);
                 })
                 .catch(() =>
-                  toast.error(t('quranSettings.resetFail', 'Could not reset — try again'))
+                  toast.error(t('quranSettings.resetFail', 'Could not reset. Try again'))
                 )
                 .finally(() => setResetting(null));
             }}

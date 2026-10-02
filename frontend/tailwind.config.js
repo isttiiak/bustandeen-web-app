@@ -49,6 +49,8 @@ export default {
           note: c('reader-note'),
         },
         red: { ...colors.red, 300: c('red-300'), 400: c('red-400') },
+        // Empty part of bars, rings and tracks (see global.css).
+        track: 'var(--track)',
         // Status marks that must differ by hue in both themes (see global.css).
         data: {
           good: c('data-good'),

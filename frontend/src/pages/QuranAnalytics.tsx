@@ -23,6 +23,9 @@ import {
 import { loadSurahList, surahDisplayName, type SurahMeta } from '../utils/quranData.js';
 import { formatLocaleDate, formatLocaleNumber, formatLocaleTime } from '../utils/localeDate.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+import { BookOpenIcon, FireIcon, SpeakerWaveIcon } from '@heroicons/react/24/outline';
+import { Star8Icon } from '../components/icons/IslamicIcons.js';
+import { CARD, SECTION_TITLE, TILE } from '../components/quran/quranStyles.js';
 
 type RangePeriod = 'month' | 'last30' | 'alltime';
 interface MonthSel {
@@ -38,7 +41,7 @@ function shiftDate(dateStr: string, delta: number): string {
   return dt.toISOString().slice(0, 10);
 }
 
-/** The whole Quran journey in numbers — reading, listening, khatam, favourites. */
+/** The whole Quran journey in numbers: reading, listening, khatam, favourites. */
 export default function QuranAnalytics() {
   const { t, i18n } = useTranslation();
   const isDemoMode = useAuthStore((s) => s.isDemoMode);
@@ -87,21 +90,21 @@ export default function QuranAnalytics() {
       title: t('quranAnalytics.info.chartTitle', 'Daily Quran Chart'),
       body: t(
         'quranAnalytics.info.chartBody',
-        'How many āyāt you read or listened to each day over the selected period. Each bar is one day — taller means more āyāt. Days you skipped show as empty. Hover a bar to see the date and count.'
+        'How many āyāt you read or listened to each day over the selected period. Each bar is one day: taller means more āyāt. Days you skipped show as empty. Hover a bar to see the date and count.'
       ),
     },
     timeOfDay: {
       title: t('quranAnalytics.info.timeOfDayTitle', 'Time of Day'),
       body: t(
         'quranAnalytics.info.timeOfDayBody',
-        'When during the day you spend time with the Quran, averaged over the last 30 days — reading and listening combined. Helps you find your best time and build a consistent habit.'
+        'When during the day you spend time with the Quran, averaged over the last 30 days, reading and listening combined. Helps you find your best time and build a consistent habit.'
       ),
     },
     sessions: {
       title: t('quranAnalytics.info.sessionsTitle', 'Quran Sessions'),
       body: t(
         'quranAnalytics.info.sessionsBody',
-        'Sessions logged for the selected day — 📖 for reading, 🎧 for listening. The time shown is the wall-clock start and end. The duration is active time only — if you fell asleep or left audio playing, the active count will be much less than the time gap shown.'
+        'Sessions logged for the selected day: a book icon for reading, headphones for listening. The time shown is the wall-clock start and end. The duration is active time only. If you fell asleep or left audio playing, the active count will be much less than the time gap shown.'
       ),
     },
   };
@@ -184,11 +187,11 @@ export default function QuranAnalytics() {
   if (isDemoMode) {
     return (
       <DemoSignInGate
-        emoji="📖"
+        icon={<BookOpenIcon className="w-7 h-7" />}
         title={t('demoGate.analyticsTitle', 'Your personal analytics await')}
         desc={t(
           'demoGate.quranDesc',
-          'Your Quran journey — pages read, khatam progress, and recitation log — lives in your account.'
+          'Your Quran journey (pages read, khatam progress and recitation log) lives in your account.'
         )}
         backTo="/quran"
         backLabel={t('demoGate.backToQuran', 'Back to Quran')}
@@ -200,43 +203,45 @@ export default function QuranAnalytics() {
   return (
     <AnimatedBackground variant="dark">
       <h1 className="sr-only">{t('quranAnalytics.title')}</h1>
-      <div className="max-w-2xl mx-auto px-4 pt-3 pb-16 space-y-4">
+      <div className="max-w-2xl mx-auto px-4 pt-3 pb-16 space-y-5">
         <QuranTabNav active="analytics" />
         <IntentionLine />
 
         {/* tiles */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-            <p className="text-2xl font-black text-brand-emerald">
-              {summary ? formatLocaleNumber(summary.stats.allTimeUnits) : '—'}
+          <div className={TILE}>
+            <p className="font-display text-2xl font-bold text-brand-emerald">
+              {summary ? formatLocaleNumber(summary.stats.allTimeUnits) : '-'}
             </p>
-            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
               {t('quranAnalytics.ayatAllTime')}
             </p>
           </div>
-          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-            <p className="text-2xl font-black text-brand-gold">
-              🔥 {formatLocaleNumber(summary?.streak ?? 0)}
+          <div className={TILE}>
+            <p className="font-display text-2xl font-bold text-brand-warm flex items-center justify-center gap-1">
+              <FireIcon className="w-5 h-5" aria-hidden="true" />
+              {formatLocaleNumber(summary?.streak ?? 0)}
             </p>
-            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
               {t('quranAnalytics.dayStreak', {
                 best: formatLocaleNumber(summary?.bestStreak ?? 0),
               })}
             </p>
           </div>
-          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-            <p className="text-2xl font-black text-brand-info">
+          <div className={TILE}>
+            <p className="font-display text-2xl font-bold text-brand-info">
               {formatLocaleNumber(summary?.stats.last30Units ?? 0)}
             </p>
-            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
               {t('quranAnalytics.ayatLast30')}
             </p>
           </div>
-          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-            <p className="text-2xl font-black text-brand-info">
-              ⭐ {formatLocaleNumber(summary?.profile.khatmCount ?? 0)}
+          <div className={TILE}>
+            <p className="font-display text-2xl font-bold text-brand-gold flex items-center justify-center gap-1">
+              <Star8Icon className="w-5 h-5" aria-hidden="true" />
+              {formatLocaleNumber(summary?.profile.khatmCount ?? 0)}
             </p>
-            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
               {t('quranAnalytics.khatmNow', {
                 pct: formatLocaleNumber(Number(khatmPct.toFixed(0))),
               })}
@@ -246,7 +251,7 @@ export default function QuranAnalytics() {
 
         {/* range selector */}
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border">
+          <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border shadow-elev-1">
             {(['month', 'last30', 'alltime'] as RangePeriod[]).map((p) => (
               <button
                 key={p}
@@ -272,7 +277,7 @@ export default function QuranAnalytics() {
             className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
               showMonthPicker
                 ? 'bg-brand-emerald/20 border-brand-emerald/40 text-brand-emerald'
-                : 'bg-brand-deep border-brand-border text-white/60 hover:text-white'
+                : 'bg-brand-deep border-brand-border text-white/70 hover:text-white shadow-elev-1'
             }`}
           >
             <CalendarDaysIcon className="w-3.5 h-3.5" />
@@ -287,11 +292,11 @@ export default function QuranAnalytics() {
             const currentYear = now.getFullYear();
             const currentMonth = now.getMonth() + 1;
             return (
-              <div className="rounded-2xl border border-brand-emerald/20 bg-brand-deep/90 p-4 space-y-3">
+              <div className={`${CARD} p-4 space-y-3`}>
                 <div className="flex items-center justify-between">
                   <button
                     onClick={() => setPickerYear((y) => y - 1)}
-                    className="p-1.5 text-white/40 hover:text-white hover:bg-white/10 rounded-lg"
+                    className="p-1.5 text-white/60 hover:text-white hover:bg-shade/10 rounded-lg"
                   >
                     <ChevronLeftIcon className="w-4 h-4" />
                   </button>
@@ -299,7 +304,7 @@ export default function QuranAnalytics() {
                   <button
                     onClick={() => setPickerYear((y) => y + 1)}
                     disabled={pickerYear >= currentYear}
-                    className="p-1.5 text-white/40 hover:text-white hover:bg-white/10 rounded-lg disabled:opacity-20"
+                    className="p-1.5 text-white/60 hover:text-white hover:bg-shade/10 rounded-lg disabled:opacity-20"
                   >
                     <ChevronRightIcon className="w-4 h-4" />
                   </button>
@@ -322,8 +327,8 @@ export default function QuranAnalytics() {
                           isSel
                             ? 'bg-brand-emerald-dim text-on-color'
                             : isFuture
-                              ? 'text-white/15 cursor-not-allowed'
-                              : 'text-white/60 hover:bg-white/10 hover:text-white'
+                              ? 'text-white/30 cursor-not-allowed'
+                              : 'text-white/70 hover:bg-shade/10 hover:text-white'
                         }`}
                       >
                         {formatLocaleDate(new Date(pickerYear, m - 1, 15), { month: 'short' })}
@@ -337,47 +342,57 @@ export default function QuranAnalytics() {
 
         {/* range KPIs: time spent reading vs listening in the selected window */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-            <p className="text-xl font-black text-brand-emerald">
-              📖 {range ? fmtDuration(range.stats.readSec) : '—'}
+          <div className={TILE}>
+            <p className="font-display text-xl font-bold text-brand-emerald flex items-center justify-center gap-1">
+              <BookOpenIcon className="w-4 h-4" aria-hidden="true" />
+              {range ? fmtDuration(range.stats.readSec) : '-'}
             </p>
-            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
               {t('quranAnalytics.kpi_readTime', 'Time reading')}
             </p>
           </div>
-          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-            <p className="text-xl font-black text-brand-info">
-              🎧 {range ? fmtDuration(range.stats.listenSec) : '—'}
+          <div className={TILE}>
+            <p className="font-display text-xl font-bold text-brand-info flex items-center justify-center gap-1">
+              <SpeakerWaveIcon className="w-4 h-4" aria-hidden="true" />
+              {range ? fmtDuration(range.stats.listenSec) : '-'}
             </p>
-            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
               {t('quranAnalytics.kpi_listenTime', 'Time listening')}
             </p>
           </div>
-          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-            <p className="text-xl font-black text-brand-gold">
+          <div className={TILE}>
+            <p className="font-display text-xl font-bold text-brand-gold">
               {range
                 ? formatLocaleNumber(range.stats.readSessions + range.stats.listenSessions)
-                : '—'}
+                : '-'}
             </p>
-            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
               {t('quranAnalytics.kpi_sessions', 'Sessions')}
             </p>
             {range && (
-              <p className="text-white/25 text-[10px] mt-0.5">
-                📖 {formatLocaleNumber(range.stats.readSessions)} · 🎧{' '}
+              <p className="text-white/60 text-[10px] mt-0.5 flex items-center justify-center gap-1">
+                <BookOpenIcon
+                  className="w-3 h-3"
+                  aria-label={t('quranAnalytics.sessions.sourceRead', 'Reading')}
+                />
+                {formatLocaleNumber(range.stats.readSessions)} ·
+                <SpeakerWaveIcon
+                  className="w-3 h-3"
+                  aria-label={t('quranAnalytics.sessions.sourceListen', 'Listening')}
+                />
                 {formatLocaleNumber(range.stats.listenSessions)}
               </p>
             )}
           </div>
-          <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-            <p className="text-xl font-black text-brand-warm">
-              {range ? formatLocaleNumber(range.stats.activeDays) : '—'}
+          <div className={TILE}>
+            <p className="font-display text-xl font-bold text-brand-warm">
+              {range ? formatLocaleNumber(range.stats.activeDays) : '-'}
             </p>
-            <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
               {t('quranAnalytics.kpi_activeDays', 'Active days')}
             </p>
             {range && (
-              <p className="text-white/25 text-[10px] mt-0.5">
+              <p className="text-white/60 text-[10px] mt-0.5">
                 {t('quranAnalytics.kpi_ayatInRange', '{{n}} āyāt', {
                   n: formatLocaleNumber(range.stats.totalUnits),
                 })}
@@ -387,16 +402,16 @@ export default function QuranAnalytics() {
         </div>
 
         {/* chart header */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
+        <div className={`${CARD} p-5`}>
           <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-            <h2 className="text-white font-black flex items-center gap-2">
+            <h2 className={`${SECTION_TITLE} flex-wrap`}>
               {chart.monthly
                 ? t('quranAnalytics.chartTitleMonthly', 'Āyāt per month')
                 : t('quranAnalytics.chartTitle', 'Āyāt per day')}
-              <span className="text-white/30 text-xs font-normal">· {rangeLabel}</span>
+              <span className="font-sans text-white/60 text-xs font-normal">· {rangeLabel}</span>
               <InfoButton onClick={() => setInfoTopic('chart')} label={CHART_INFO.chart!.title} />
             </h2>
-            <span className="text-white/30 text-xs">
+            <span className="text-white/60 text-xs">
               {t('quranAnalytics.daysWithQuran', {
                 active: formatLocaleNumber(range?.stats.activeDays ?? 0),
               })}
@@ -407,12 +422,12 @@ export default function QuranAnalytics() {
               <div
                 key={d.key}
                 title={`${d.label}: ${formatLocaleNumber(d.units)} āyāt`}
-                className={`flex-1 rounded-t ${d.units > 0 ? 'bg-gradient-to-t from-brand-emerald-dim/70 to-brand-info/70' : 'bg-white/5'}`}
+                className={`flex-1 rounded-t ${d.units > 0 ? 'bg-data-good' : 'bg-track'}`}
                 style={{ height: `${Math.max(4, (d.units / chart.max) * 100)}%` }}
               />
             ))}
           </div>
-          <div className="flex justify-between text-[9px] text-white/25 mt-1">
+          <div className="flex justify-between text-[10px] text-white/60 mt-1">
             <span>{chart.bars[0]?.label.slice(chart.monthly ? 0 : 5)}</span>
             <span>
               {rangeTo === civilToday
@@ -423,19 +438,22 @@ export default function QuranAnalytics() {
         </div>
 
         {/* top surahs */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
-          <h2 className="text-white font-black mb-3">{t('quranAnalytics.topSurahsTitle')}</h2>
+        <div className={`${CARD} p-5`}>
+          <h2 className={`${SECTION_TITLE} mb-3`}>
+            <Star8Icon className="w-4 h-4 text-brand-gold" aria-hidden="true" />
+            {t('quranAnalytics.topSurahsTitle')}
+          </h2>
           {(summary?.topSurahs ?? []).length === 0 ? (
-            <p className="text-white/30 text-xs">{t('quranAnalytics.topSurahsEmpty')}</p>
+            <p className="text-white/60 text-xs">{t('quranAnalytics.topSurahsEmpty')}</p>
           ) : (
             <div className="space-y-1.5">
               {(summary?.topSurahs ?? []).map((t, i) => (
                 <div key={t.surah} className="flex items-center gap-2 text-xs">
-                  <span className="w-5 text-white/30 font-black">{i + 1}</span>
-                  <span className="text-white/70 font-bold w-32 truncate">{nameOf(t.surah)}</span>
-                  <div className="flex-1 h-4 rounded-full bg-white/5 overflow-hidden">
+                  <span className="w-5 text-white/60 font-bold tabular-nums">{i + 1}</span>
+                  <span className="text-white/80 font-bold w-32 truncate">{nameOf(t.surah)}</span>
+                  <div className="flex-1 h-4 rounded-full bg-track overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-brand-emerald/60 to-brand-info/60"
+                      className="h-full rounded-full bg-data-good"
                       style={{ width: `${(t.completions / maxTop) * 100}%` }}
                     />
                   </div>
@@ -449,17 +467,15 @@ export default function QuranAnalytics() {
         </div>
 
         {/* khatam projection */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
-          <h2 className="text-white font-black mb-2">
+        <div className={`${CARD} p-5`}>
+          <h2 className={`${SECTION_TITLE} mb-2`}>
+            <BookOpenIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
             {t('quranAnalytics.khatamProjectionTitle')}
           </h2>
-          <div className="h-2.5 rounded-full bg-white/10 overflow-hidden">
-            <div
-              className="h-full rounded-full bg-gradient-to-r from-brand-emerald to-brand-info"
-              style={{ width: `${khatmPct}%` }}
-            />
+          <div className="h-2.5 rounded-full bg-track overflow-hidden">
+            <div className="h-full rounded-full bg-data-good" style={{ width: `${khatmPct}%` }} />
           </div>
-          <p className="text-white/40 text-xs mt-2">
+          <p className="text-white/70 text-xs mt-2">
             {summary?.estDaysToKhatm
               ? t('quranAnalytics.paceEstimate', {
                   pace: formatLocaleNumber(summary.pace ?? 0),
@@ -470,10 +486,10 @@ export default function QuranAnalytics() {
         </div>
 
         {/* time of day */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5 space-y-3">
-          <h2 className="text-white font-black flex items-center gap-2">
+        <div className={`${CARD} p-5 space-y-3`}>
+          <h2 className={SECTION_TITLE}>
             {t('quranAnalytics.timeOfDayTitle', 'Time of day')}
-            <span className="text-white/25 text-[10px] font-normal">
+            <span className="font-sans text-white/60 text-[10px] font-normal">
               {t('quranAnalytics.timeOfDaySubtitle', 'last 30 days')}
             </span>
             <InfoButton
@@ -485,9 +501,9 @@ export default function QuranAnalytics() {
         </div>
 
         {/* reading session history */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
+        <div className={`${CARD} p-5`}>
           <div className="flex items-center justify-between gap-3 mb-3">
-            <h2 className="text-white font-black text-sm flex items-center gap-2">
+            <h2 className={SECTION_TITLE}>
               <ClockIcon className="w-4 h-4 text-brand-info" />
               {t('quranAnalytics.sessions.title', 'Quran sessions')}
               <InfoButton
@@ -504,7 +520,7 @@ export default function QuranAnalytics() {
             />
           </div>
           {sessionsLoading ? (
-            <p className="text-white/30 text-xs text-center py-4">{t('common.loading')}</p>
+            <p className="text-white/60 text-xs text-center py-4">{t('common.loading')}</p>
           ) : sessions && sessions.length > 0 ? (
             <div className="space-y-2">
               {sessions.map((s, i) => {
@@ -523,19 +539,23 @@ export default function QuranAnalytics() {
                 return (
                   <div
                     key={i}
-                    className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-brand-border p-3"
+                    className="flex items-center justify-between gap-3 rounded-control bg-brand-surface/50 border border-brand-border p-3"
                   >
                     <div className="min-w-0">
-                      <p className="text-white/80 text-sm font-semibold tabular-nums">
+                      <p className="text-white text-sm font-semibold tabular-nums flex items-center gap-1.5">
                         <span
-                          className="mr-1"
+                          className="text-brand-emerald"
                           title={
                             s.source === 'listen'
                               ? t('quranAnalytics.sessions.sourceListen', 'Listening')
                               : t('quranAnalytics.sessions.sourceRead', 'Reading')
                           }
                         >
-                          {s.source === 'listen' ? '🎧' : '📖'}
+                          {s.source === 'listen' ? (
+                            <SpeakerWaveIcon className="w-4 h-4" />
+                          ) : (
+                            <BookOpenIcon className="w-4 h-4" />
+                          )}
                         </span>
                         {formatLocaleTime(new Date(s.start), {
                           hour: 'numeric',
@@ -548,13 +568,13 @@ export default function QuranAnalytics() {
                         {s.surahs.map((surahNo) => (
                           <span
                             key={surahNo}
-                            className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/50"
+                            className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/70"
                           >
                             {nameOf(surahNo)}
                           </span>
                         ))}
                         {s.ayahCount > 0 && (
-                          <span className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/50">
+                          <span className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/70">
                             {t('quranAnalytics.sessions.ayahCount', {
                               n: formatLocaleNumber(s.ayahCount),
                             })}
@@ -562,7 +582,7 @@ export default function QuranAnalytics() {
                         )}
                         {isLongIdle && (
                           <span
-                            className="px-1.5 py-0.5 rounded-md bg-brand-gold/10 border border-brand-gold/20 text-[10px] text-brand-gold/70"
+                            className="px-1.5 py-0.5 rounded-md bg-brand-gold/10 border border-brand-gold/20 text-[10px] text-brand-gold"
                             title={t(
                               'quranAnalytics.sessions.idleHint',
                               'Audio kept playing while idle'
@@ -575,7 +595,7 @@ export default function QuranAnalytics() {
                         )}
                       </div>
                     </div>
-                    <p className="text-brand-emerald font-black text-lg shrink-0 whitespace-nowrap">
+                    <p className="font-display text-brand-emerald font-bold text-lg shrink-0 whitespace-nowrap">
                       {duration}
                     </p>
                   </div>
@@ -583,7 +603,7 @@ export default function QuranAnalytics() {
               })}
             </div>
           ) : (
-            <p className="text-white/30 text-xs text-center py-4">
+            <p className="text-white/60 text-xs text-center py-4">
               {t('quranAnalytics.sessions.empty', 'No sessions logged for this day')}
             </p>
           )}

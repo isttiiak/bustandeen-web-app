@@ -154,7 +154,7 @@ export default function HifzLearnModal({
               onClick={onConfirm}
               className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color flex-[2]"
             >
-              {t('hifz.confirmMemorise', "I've read it — start memorising")}
+              {t('hifz.confirmMemorise', "I've read it, start memorising")}
             </button>
           </div>
         </motion.div>

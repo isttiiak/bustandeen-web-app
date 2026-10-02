@@ -1,3 +1,7 @@
+import { BookmarkIcon, TrashIcon } from '@heroicons/react/24/outline';
+import { DuaHandsIcon } from '../components/icons/IslamicIcons.js';
+import { BTN_PRIMARY, CARD } from '../components/quran/quranStyles.js';
+import { SEGMENT } from '../components/TabNav.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -28,7 +32,7 @@ import ShareAyahModal from '../components/ShareAyahModal.js';
 import { ShareIcon } from '@heroicons/react/24/outline';
 
 /**
- * 🔖 Saved — a full tab of its own (Istiak's spec) with TWO sub-tabs:
+ * Saved: a full tab of its own (Istiak's spec) with TWO sub-tabs:
  * āyāt (organized by surah, Arabic preview) and saved duʿās from the
  * curated list. Each entry opens straight in the reader.
  */
@@ -106,11 +110,11 @@ export default function QuranBookmarks() {
   if (isDemoMode) {
     return (
       <DemoSignInGate
-        emoji="🔖"
+        icon={<BookmarkIcon className="w-7 h-7" />}
         title={t('demoGate.bookmarksTitle', 'Your saved āyāt await')}
         desc={t(
           'demoGate.bookmarksDesc',
-          'Bookmarks are saved to your account — sign in to see every āyah you have marked across devices.'
+          'Bookmarks are saved to your account. Sign in to see every āyah you have marked across devices.'
         )}
         backTo="/quran"
         backLabel={t('demoGate.backToQuran', 'Back to Quran')}
@@ -126,7 +130,7 @@ export default function QuranBookmarks() {
         <QuranTabNav active="bookmarks" />
 
         {/* sub-tabs: saved āyāt vs saved duʿās */}
-        <div className="flex gap-1 bg-white/5 rounded-xl p-1 border border-brand-emerald/10">
+        <div className={SEGMENT.track}>
           {(
             [
               [
@@ -142,7 +146,8 @@ export default function QuranBookmarks() {
             <button
               key={id}
               onClick={() => setTab(id)}
-              className={`flex-1 text-center text-xs font-bold py-1.5 rounded-lg transition-all ${tab === id ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white'}`}
+              aria-pressed={tab === id}
+              className={`flex-1 text-center text-xs py-1.5 ${tab === id ? SEGMENT.active : SEGMENT.idle}`}
             >
               {label}
             </button>
@@ -155,21 +160,18 @@ export default function QuranBookmarks() {
               <span className="loading loading-spinner loading-lg text-brand-emerald" />
             </div>
           ) : savedDuas.length === 0 ? (
-            <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-10 text-center space-y-3">
-              <div className="text-5xl">🤲</div>
+            <div className={`${CARD} p-10 text-center space-y-3`}>
+              <DuaHandsIcon className="w-12 h-12 mx-auto text-brand-gold" aria-hidden="true" />
               <p className="text-white font-black">
                 {t('quranBookmarks.noDuasYet', 'No saved duʿās yet')}
               </p>
-              <p className="text-white/40 text-sm max-w-sm mx-auto leading-relaxed">
+              <p className="text-white/70 text-sm max-w-sm mx-auto leading-relaxed">
                 {t(
                   'quranBookmarks.noDuasHint',
-                  'On the Quran page, tap the 🏷️ tag on any duʿā from the Quran to keep it here.'
+                  'On the Quran page, tap the bookmark on any duʿā from the Quran to keep it here.'
                 )}
               </p>
-              <button
-                className="btn btn-sm rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
-                onClick={() => navigate('/quran')}
-              >
+              <button className={BTN_PRIMARY} onClick={() => navigate('/quran')}>
                 {t('quranBookmarks.browseDuas', 'Browse duas →')}
               </button>
             </div>
@@ -181,7 +183,7 @@ export default function QuranBookmarks() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04 }}
-                  className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 hover:border-brand-gold/30 transition-all"
+                  className={`${CARD} p-4 hover:border-brand-gold/40 transition-colors`}
                 >
                   <button
                     className="w-full text-left"
@@ -191,10 +193,14 @@ export default function QuranBookmarks() {
                       )
                     }
                   >
-                    <p className="text-white/80 text-sm font-bold">
-                      {d.emoji} {d.title}
+                    <p className="text-white text-sm font-bold flex items-center gap-2">
+                      <DuaHandsIcon
+                        className="w-4 h-4 text-brand-gold shrink-0"
+                        aria-hidden="true"
+                      />
+                      {d.title}
                     </p>
-                    <p className="text-brand-gold/50 text-[11px] mt-1">
+                    <p className="text-brand-gold text-[11px] mt-1">
                       {t('quranBookmarks.duaRef', 'Quran {{ref}} · read with its story →', {
                         ref: `${d.surah}:${d.fromAyah}${d.toAyah !== d.fromAyah ? `–${d.toAyah}` : ''}`,
                       })}
@@ -202,10 +208,11 @@ export default function QuranBookmarks() {
                   </button>
                   <div className="flex justify-end mt-1">
                     <button
-                      className="text-white/25 hover:text-red-300 text-xs"
+                      className="inline-flex items-center gap-1 text-white/60 hover:text-red-400 text-xs"
                       onClick={() => setPendingRemoveDua(d.id)}
                     >
-                      🗑 {t('quranBookmarks.remove', 'remove')}
+                      <TrashIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                      {t('quranBookmarks.remove', 'remove')}
                     </button>
                   </div>
                 </motion.div>
@@ -217,21 +224,18 @@ export default function QuranBookmarks() {
             <span className="loading loading-spinner loading-lg text-brand-emerald" />
           </div>
         ) : groups.length === 0 ? (
-          <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-10 text-center space-y-3">
-            <div className="text-5xl">🔖</div>
+          <div className={`${CARD} p-10 text-center space-y-3`}>
+            <BookmarkIcon className="w-12 h-12 mx-auto text-brand-emerald" aria-hidden="true" />
             <p className="text-white font-black">
               {t('quranBookmarks.noAyatYet', 'No saved āyāt yet')}
             </p>
-            <p className="text-white/40 text-sm max-w-sm mx-auto leading-relaxed">
+            <p className="text-white/70 text-sm max-w-sm mx-auto leading-relaxed">
               {t(
                 'quranBookmarks.noAyatHint',
-                'While reading, tap the bookmark icon on any āyah that touches your heart — it will wait for you here, organized by surah.'
+                'While reading, tap the bookmark icon on any āyah that touches your heart. It will wait for you here, organized by surah.'
               )}
             </p>
-            <button
-              className="btn btn-sm rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
-              onClick={() => navigate('/quran/browse')}
-            >
+            <button className={BTN_PRIMARY} onClick={() => navigate('/quran/browse')}>
               {t('quranBookmarks.startReading', 'Start reading →')}
             </button>
           </div>
@@ -245,27 +249,27 @@ export default function QuranBookmarks() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: gi * 0.05 }}
-                className="rounded-3xl bg-brand-deep/80 border border-brand-border overflow-hidden"
+                className={`${CARD} overflow-hidden`}
               >
                 <button
                   onClick={() => setOpenSurah(isOpen ? null : g.surah)}
                   aria-expanded={isOpen}
                   className="w-full p-5 flex items-center justify-between gap-3 text-left"
                 >
-                  <h2 className="text-white font-black text-sm">
+                  <h2 className="text-white font-bold text-sm">
                     {g.surah}. {meta ? surahDisplayName(meta, i18n.language) : `Surah ${g.surah}`}
-                    <span className="text-white/30 font-normal">
+                    <span className="text-white/60 font-normal">
                       {' '}
                       ·{' '}
                       {t('quranBookmarks.savedCount', '{{count}} saved', { count: g.items.length })}
                     </span>
                   </h2>
                   <div className="flex items-center gap-2 shrink-0">
-                    <span className="text-lg text-white/60 font-serif" dir="rtl">
+                    <span className="text-lg text-brand-gold font-serif" dir="rtl" lang="ar">
                       {meta?.name}
                     </span>
                     <ChevronDownIcon
-                      className={`w-4 h-4 text-white/30 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                      className={`w-4 h-4 text-white/60 transition-transform ${isOpen ? 'rotate-180' : ''}`}
                     />
                   </div>
                 </button>
@@ -284,7 +288,7 @@ export default function QuranBookmarks() {
                           return (
                             <div
                               key={`${b.surah}:${b.ayah}`}
-                              className="rounded-2xl bg-white/5 border border-brand-emerald/10 p-3.5 hover:border-brand-emerald/30 transition-all"
+                              className="rounded-control bg-brand-surface/50 border border-brand-border p-3.5 hover:border-brand-emerald/40 transition-colors"
                             >
                               <button
                                 className="w-full text-left"
@@ -297,7 +301,7 @@ export default function QuranBookmarks() {
                                   <p
                                     dir="rtl"
                                     lang="ar"
-                                    className="text-white/80 font-serif leading-[1.9] text-lg line-clamp-2"
+                                    className="text-white font-serif leading-[1.9] text-lg line-clamp-2"
                                   >
                                     {a.arabic}
                                   </p>
@@ -305,7 +309,7 @@ export default function QuranBookmarks() {
                                   <span className="loading loading-dots loading-xs text-white/30" />
                                 )}
                                 {a?.translations?.[0] && (
-                                  <p className="text-white/40 text-xs mt-1.5 line-clamp-2">
+                                  <p className="text-white/70 text-xs mt-1.5 line-clamp-2">
                                     {a.translations[0]}
                                   </p>
                                 )}
@@ -313,7 +317,7 @@ export default function QuranBookmarks() {
                               <div className="flex justify-end items-center gap-3 mt-1">
                                 <button
                                   aria-label={t('shareAyah.shareButton', 'Share as image')}
-                                  className="text-white/25 hover:text-brand-emerald text-xs flex items-center gap-1"
+                                  className="text-white/60 hover:text-brand-emerald text-xs flex items-center gap-1"
                                   onClick={() => setSharing(b)}
                                 >
                                   <ShareIcon className="w-3.5 h-3.5" />
@@ -324,10 +328,11 @@ export default function QuranBookmarks() {
                                     'Remove bookmark {{ref}}',
                                     { ref: `${b.surah}:${b.ayah}` }
                                   )}
-                                  className="text-white/25 hover:text-red-300 text-xs"
+                                  className="inline-flex items-center gap-1 text-white/60 hover:text-red-400 text-xs"
                                   onClick={() => setPendingRemove(b)}
                                 >
-                                  🗑 {t('quranBookmarks.remove', 'remove')}
+                                  <TrashIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                                  {t('quranBookmarks.remove', 'remove')}
                                 </button>
                               </div>
                             </div>
@@ -368,7 +373,7 @@ export default function QuranBookmarks() {
         title={t('quranBookmarks.removeDuaTitle', 'Remove this saved duʿā?')}
         message={t(
           'quranBookmarks.removeDuaMsg',
-          'It stays in the Duas list on the Quran page — only your saved tag is removed.'
+          'It stays in the Duas list on the Quran page. Only your saved tag is removed.'
         )}
         confirmLabel={t('quranBookmarks.yesRemove', 'Yes, remove')}
         onConfirm={() => {

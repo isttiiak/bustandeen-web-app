@@ -21,6 +21,10 @@ import {
   SpeakerXMarkIcon,
   BookOpenIcon,
   ShareIcon,
+  DocumentTextIcon,
+  ArrowTopRightOnSquareIcon,
+  ClockIcon,
+  PauseCircleIcon,
 } from '@heroicons/react/24/outline';
 import { BookmarkIcon as BookmarkSolid, PlayIcon, PauseIcon } from '@heroicons/react/24/solid';
 import { useAuthStore } from '../store/useAuthStore.js';
@@ -52,6 +56,8 @@ import { formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import { celebrateGoal, celebrateKhatm, celebrateSmall } from '../utils/celebrate.js';
 import ShareAyahModal from '../components/ShareAyahModal.js';
+import { DuaHandsIcon } from '../components/icons/IslamicIcons.js';
+import { BTN_PRIMARY, BTN_SECONDARY } from '../components/quran/quranStyles.js';
 
 /**
  * The ayah-by-ayah reading room (Istiak's design):
@@ -259,7 +265,7 @@ export default function QuranReader() {
         if (alive) {
           setLoading(false);
           toast.error(
-            t('quranReader.loadError', 'Could not load the surah — check your connection.'),
+            t('quranReader.loadError', 'Could not load the surah. Check your connection.'),
             { id: 'quran-load' }
           );
         }
@@ -371,7 +377,7 @@ export default function QuranReader() {
     }); // ONE ayah, then stop
     a.addEventListener('error', () => {
       stopAudio();
-      toast.error(t('quranReader.audioError', 'Audio unavailable — try again.'), {
+      toast.error(t('quranReader.audioError', 'Audio unavailable. Try again.'), {
         id: 'ayah-audio',
       });
     });
@@ -430,9 +436,7 @@ export default function QuranReader() {
     }
     // At the last ayah of this view.
     if (mode === 'bundle') {
-      finishAndRedirect(
-        t('quranReader.bundleComplete', 'Complete — may it protect and bless you 🤲')
-      );
+      finishAndRedirect(t('quranReader.bundleComplete', 'Complete. May it protect and bless you'));
       return;
     }
     // free / khatam / single reached the surah's end
@@ -442,7 +446,7 @@ export default function QuranReader() {
     syncResume(0);
     if (mode === 'single') {
       finishAndRedirect(
-        t('quranReader.singleComplete', '{{name}} complete 🌿', {
+        t('quranReader.singleComplete', '{{name}} complete', {
           name: surahMeta
             ? surahDisplayName(surahMeta, i18n.language)
             : t('quranReader.surah', 'Surah'),
@@ -454,7 +458,7 @@ export default function QuranReader() {
       suppressSaveRef.current = true;
       celebrateSmall();
       toast.success(
-        t('quranReader.surahDone', '{{name}} completed — onward! 🌿', {
+        t('quranReader.surahDone', '{{name}} completed. Onward!', {
           name: surahMeta
             ? surahDisplayName(surahMeta, i18n.language)
             : t('quranReader.surah', 'Surah'),
@@ -465,7 +469,7 @@ export default function QuranReader() {
       // — and so you can't step back into the previous surah.
       navigate(`/quran/read/${surahNo + 1}?mode=${mode}`, { replace: true });
     } else {
-      finishAndRedirect(t('quranReader.khatmComplete', 'Khatm complete — Allahu akbar! 🕋'));
+      finishAndRedirect(t('quranReader.khatmComplete', 'Khatm complete. Allahu akbar!'));
       celebrateKhatm();
     }
   }, [
@@ -628,7 +632,7 @@ export default function QuranReader() {
         {/* top bar */}
         <div className="flex items-center justify-between text-xs">
           <button
-            className="text-white/40 hover:text-white"
+            className="text-white/60 hover:text-white"
             onClick={() => {
               // Go back to wherever the reader was opened from; fall back to
               // the section home when the reader was the entry point.
@@ -638,7 +642,7 @@ export default function QuranReader() {
           >
             {t('quranReader.back', '← Back')}
           </button>
-          <div className="flex items-center gap-2 text-white/40">
+          <div className="flex items-center gap-2 text-white/60">
             {mode === 'khatam' && (
               <span className="px-2 py-0.5 rounded-full bg-brand-emerald/15 text-brand-emerald border border-brand-emerald/30 font-bold">
                 {t('quranReader.khatamJourney', 'Khatam journey')}
@@ -650,39 +654,41 @@ export default function QuranReader() {
               </span>
             )}
             <span className="hidden sm:inline">
-              {t('quranReader.keyboardHint', '⌨️ ← → · F fullscreen')}
+              {t('quranReader.keyboardHint', 'Keys: ← → · F fullscreen')}
             </span>
           </div>
         </div>
 
         {/* info chips */}
         <div className="flex flex-wrap items-center gap-2 text-[11px]">
-          <span className="px-2.5 py-1 rounded-full bg-white/5 border border-brand-emerald/10 text-white/70 font-bold">
+          <span className="px-2.5 py-1 rounded-full bg-brand-deep border border-brand-border text-white/70 font-bold">
             {formatLocaleNumber(surahNo)}.{' '}
             {surahMeta ? surahDisplayName(surahMeta, i18n.language) : '…'}{' '}
-            <span className="text-white/30">
+            <span className="text-white/60">
               · {surahMeta ? formatLocaleNumber(surahMeta.numberOfAyahs) : '–'}{' '}
               {t('quranReader.ayahWord', 'āyāt')}
             </span>
           </span>
-          <span className="px-2.5 py-1 rounded-full bg-white/5 border border-brand-emerald/10 text-white/50">
+          <span className="px-2.5 py-1 rounded-full bg-brand-deep border border-brand-border text-white/50">
             {t('quranReader.juz', 'Juz')}{' '}
             {current ? formatLocaleNumber(juzOf(surahNo, current.numberInSurah)) : '–'}
           </span>
           {countsGoal ? (
-            <span className="px-2.5 py-1 rounded-full bg-brand-emerald/10 border border-brand-emerald/25 text-brand-emerald font-bold">
-              📖 {t('quranReader.todayCount', '{{count}} āyāt today', { count: todayCount })}
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald font-bold">
+              <BookOpenIcon className="w-3.5 h-3.5" aria-hidden="true" />
+              {t('quranReader.todayCount', '{{count}} āyāt today', { count: todayCount })}
               {summary
                 ? ` / ${t('quranReader.goalCount', '{{count}} goal', { count: summary.profile.dailyGoalAyat })}`
                 : ''}
             </span>
           ) : (
-            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-brand-emerald/10 text-white/40">
-              🤲 {t('quranReader.reflectionNote', 'Reflection — not counted toward the goal')}
+            <span className="px-2.5 py-1 rounded-full bg-brand-deep border border-brand-border text-white/60">
+              <DuaHandsIcon className="w-3.5 h-3.5 inline -mt-0.5 mr-1" aria-hidden="true" />
+              {t('quranReader.reflectionNote', 'Reflection, not counted toward the goal')}
             </span>
           )}
           {khatamPos && (
-            <span className="px-2.5 py-1 rounded-full bg-white/5 border border-brand-emerald/10 text-white/40">
+            <span className="px-2.5 py-1 rounded-full bg-brand-deep border border-brand-border text-white/60">
               {t('quranReader.khatamAt', 'Khatam at {{surah}}:{{ayah}}', {
                 surah: khatamPos.surah,
                 ayah: khatamPos.ayah,
@@ -693,16 +699,17 @@ export default function QuranReader() {
             <span
               title={
                 readingSession.isPaused
-                  ? t('quranReader.timerPaused', "Paused — timer resumes when you're back")
+                  ? t('quranReader.timerPaused', "Paused. The timer resumes when you're back")
                   : t('quranReader.timerActive', 'Active reading time this visit')
               }
-              className={`px-2.5 py-1 rounded-full border font-bold tabular-nums transition-colors ${
-                readingSession.isPaused
-                  ? 'bg-white/5 border-brand-emerald/10 text-white/30'
-                  : 'bg-white/5 border-brand-emerald/10 text-white/50'
-              }`}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-brand-border bg-brand-deep font-bold tabular-nums text-white/70"
             >
-              {readingSession.isPaused ? '⏸' : '⏱'} {formatReadingTime(readingSession.activeSec)}
+              {readingSession.isPaused ? (
+                <PauseCircleIcon className="w-3.5 h-3.5" aria-hidden="true" />
+              ) : (
+                <ClockIcon className="w-3.5 h-3.5" aria-hidden="true" />
+              )}
+              {formatReadingTime(readingSession.activeSec)}
             </span>
           )}
         </div>
@@ -713,7 +720,7 @@ export default function QuranReader() {
             the split becomes a vertical stack — āyah first, tafsir below. */}
         <div
           ref={cardRef}
-          className={`relative rounded-3xl border border-brand-emerald/10 bg-gradient-to-br from-reader-from via-reader-via to-reader-to ${fullscreen ? 'fixed inset-0 z-[9999] rounded-none flex flex-col md:flex-row overflow-y-auto overflow-x-hidden md:overflow-hidden' : 'overflow-hidden p-4 sm:p-10'}`}
+          className={`relative rounded-card border border-brand-border shadow-elev-2 bg-gradient-to-br from-reader-from via-reader-via to-reader-to ${fullscreen ? 'fixed inset-0 z-[9999] rounded-none flex flex-col md:flex-row overflow-y-auto overflow-x-hidden md:overflow-hidden' : 'overflow-hidden p-4 sm:p-10'}`}
         >
           {/* controls — in-flow row on phones (they overlapped the āyah header),
               floating top-right from sm up */}
@@ -721,7 +728,7 @@ export default function QuranReader() {
             className={`flex items-center justify-end gap-2 z-20 ${fullscreen ? 'absolute top-3 right-3 sm:top-4 sm:right-4' : 'sm:absolute sm:top-4 sm:right-4 mb-2 sm:mb-0'}`}
           >
             {/* in-app zoom — works in the card AND fullscreen (Istiak's spec) */}
-            <div className="flex items-center rounded-full bg-white/5 border border-brand-emerald/10 overflow-hidden">
+            <div className="flex items-center rounded-full bg-brand-deep border border-brand-border overflow-hidden">
               <button
                 aria-label={t('quranReader.zoomOut', 'Zoom out')}
                 onClick={() => changeZoom(-0.1)}
@@ -734,7 +741,7 @@ export default function QuranReader() {
                 aria-label={t('quranReader.resetZoom', 'Reset zoom')}
                 title={t('quranReader.resetZoom', 'Reset zoom')}
                 onClick={() => changeZoom(0)}
-                className={`px-1 text-[10px] font-bold tabular-nums ${zoom === 1 ? 'text-white/25' : 'text-brand-emerald'}`}
+                className={`px-1 text-[10px] font-bold tabular-nums ${zoom === 1 ? 'text-white/50' : 'text-brand-emerald'}`}
               >
                 {Math.round(zoom * 100)}%
               </button>
@@ -755,7 +762,7 @@ export default function QuranReader() {
               }
               title={t('quranReader.reciteOnlyThis', 'Recite only this ayah')}
               onClick={playAyah}
-              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all ${playing ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim' : 'bg-white/5 text-brand-emerald border-brand-emerald/10 hover:border-brand-emerald/50'}`}
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all ${playing ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim' : 'bg-brand-deep text-brand-emerald border-brand-emerald/10 hover:border-brand-emerald/50'}`}
             >
               {playing ? (
                 <PauseIcon className="w-4 h-4" />
@@ -773,7 +780,7 @@ export default function QuranReader() {
                 onClick={() =>
                   current && toggleBookmark.mutate({ surah: surahNo, ayah: current.numberInSurah })
                 }
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-white/5 border-brand-emerald/10 text-brand-gold hover:border-brand-gold/50"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-brand-gold hover:border-brand-gold/50"
               >
                 {isBookmarked ? (
                   <BookmarkSolid className="w-4 h-4" />
@@ -787,7 +794,7 @@ export default function QuranReader() {
                 aria-label={t('shareAyah.shareButton', 'Share as image')}
                 title={t('shareAyah.shareButton', 'Share as image')}
                 onClick={() => setShareOpen(true)}
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-white/5 border-brand-emerald/10 text-white/50 hover:text-white hover:border-brand-emerald/50"
+                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-white/50 hover:text-white hover:border-brand-emerald/50"
               >
                 <ShareIcon className="w-4 h-4" />
               </button>
@@ -802,7 +809,7 @@ export default function QuranReader() {
                 }
                 title={t('quranReader.tafsir', 'Tafsir')}
                 onClick={() => setSplitTafsir((v) => !v)}
-                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all ${splitTafsir ? 'bg-brand-emerald/20 text-brand-emerald border-brand-emerald/50' : 'bg-white/5 text-white/60 border-brand-emerald/10 hover:text-white'}`}
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all ${splitTafsir ? 'bg-brand-emerald/20 text-brand-emerald border-brand-emerald/50' : 'bg-brand-deep shadow-elev-1 text-white/60 border-brand-emerald/10 hover:text-white'}`}
               >
                 <BookOpenIcon className="w-4 h-4" />
               </button>
@@ -814,7 +821,7 @@ export default function QuranReader() {
                   : t('quranReader.fullscreen', 'Fullscreen')
               }
               onClick={toggleFullscreen}
-              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-white/5 border-brand-emerald/10 text-white/50 hover:text-white"
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-white/50 hover:text-white"
             >
               {fullscreen ? (
                 <ArrowsPointingInIcon className="w-4 h-4" />
@@ -852,18 +859,18 @@ export default function QuranReader() {
                   className={`${fullscreen ? 'max-w-4xl' : ''} w-full text-center space-y-6 sm:space-y-8 pt-2 sm:pt-8`}
                 >
                   <div className="space-y-0.5">
-                    <p className="text-white/25 text-xs font-bold tracking-widest">
+                    <p className="text-white/50 text-xs font-bold tracking-widest">
                       {surahMeta?.name} ·{' '}
                       <span className="text-brand-emerald/80 text-sm">
                         {formatLocaleNumber(current.numberInSurah)}
                       </span>
-                      <span className="text-white/20">
+                      <span className="text-white/50">
                         /{surahMeta ? formatLocaleNumber(surahMeta.numberOfAyahs) : ''}
                       </span>
                     </p>
                     {surahMeta?.englishNameTranslation && (
-                      <p className="text-white/30 text-[11px]">
-                        {surahDisplayName(surahMeta, i18n.language)} — “
+                      <p className="text-white/60 text-[11px]">
+                        {surahDisplayName(surahMeta, i18n.language)}: “
                         {surahMeaningDisplay(surahMeta, i18n.language)}”
                       </p>
                     )}
@@ -879,7 +886,7 @@ export default function QuranReader() {
                     {words.map((w, i) => (
                       <span
                         key={i}
-                        className={`transition-colors duration-150 rounded px-0.5 cursor-default ${playing && i === wordIdx ? 'bg-brand-emerald/30 text-white' : 'hover:bg-white/10'}`}
+                        className={`transition-colors duration-150 rounded px-0.5 cursor-default ${playing && i === wordIdx ? 'bg-brand-emerald/30 text-white' : 'hover:bg-shade/15'}`}
                       >
                         {w}{' '}
                       </span>
@@ -907,7 +914,7 @@ export default function QuranReader() {
                       </p>
                     ))}
                   </div>
-                  <p className="text-white/20 text-[10px]">
+                  <p className="text-white/50 text-[10px]">
                     <a
                       className="underline"
                       href="https://tanzil.net"
@@ -944,7 +951,7 @@ export default function QuranReader() {
                   aria-label={t('quranReader.previousAyah', 'Previous ayah')}
                   onClick={goPrev}
                   disabled={idx <= firstIdx}
-                  className="flex items-center gap-1.5 min-w-0 px-4 py-2.5 rounded-2xl bg-white/5 border border-brand-emerald/10 text-white/60 hover:text-white disabled:opacity-20 text-sm font-bold"
+                  className="flex items-center gap-1.5 min-w-0 px-4 py-2.5 rounded-control bg-brand-deep border border-brand-border shadow-elev-1 text-white/80 hover:text-white disabled:opacity-30 text-sm font-bold"
                 >
                   <ChevronLeftIcon className="w-4 h-4 shrink-0" />
                   <span className="truncate">{t('quranReader.previous', 'Previous')}</span>
@@ -952,14 +959,14 @@ export default function QuranReader() {
                 <button
                   aria-label={t('quranReader.nextAyah', 'Next ayah')}
                   onClick={goNext}
-                  className="flex items-center gap-1.5 min-w-0 px-5 py-2.5 rounded-2xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color text-sm font-black border-0"
+                  className="flex items-center gap-1.5 min-w-0 px-5 py-2.5 rounded-control bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 text-on-color text-sm font-bold border-0"
                 >
                   <span className="truncate">
                     {idx >= lastIdx
                       ? mode === 'bundle'
-                        ? t('quranReader.finishDua', 'Finish 🤲')
+                        ? t('quranReader.finishDua', 'Finish')
                         : mode === 'single'
-                          ? t('quranReader.finishLeaf', 'Finish 🌿')
+                          ? t('quranReader.finishLeaf', 'Finish')
                           : surahNo < 114
                             ? t('quranReader.nextSurah', 'Next surah')
                             : t('quranReader.finish', 'Finish')
@@ -994,7 +1001,7 @@ export default function QuranReader() {
                   <BookOpenIcon className="w-4 h-4 text-brand-gold/60 shrink-0" />
                   <select
                     aria-label={t('quranReader.tafsirEdition', 'Tafsir edition')}
-                    className="select select-xs flex-1 max-w-xs bg-white/5 border-brand-gold/10 text-white/80 rounded-lg"
+                    className="select select-xs flex-1 max-w-xs bg-brand-surface/60 border-brand-border text-white/80 rounded-lg"
                     value={tafsirEdition}
                     onChange={(e) => changeTafsirEdition(Number(e.target.value))}
                   >
@@ -1022,7 +1029,7 @@ export default function QuranReader() {
                   <p className="text-white/50 text-sm">
                     {t(
                       'quranReader.tafsirLoadErrorShort',
-                      "Couldn't load this tafsir — try another edition."
+                      "Couldn't load this tafsir. Try another edition."
                     )}
                   </p>
                 ) : (
@@ -1034,7 +1041,7 @@ export default function QuranReader() {
                     <div className={`whitespace-pre-line`} style={tafsirTextStyle}>
                       {tafsir.data?.text}
                     </div>
-                    <p className="text-white/25 text-[10px] mt-4">
+                    <p className="text-white/50 text-[10px] mt-4">
                       {t('quranReader.sourcedFromPrefix', 'Sourced from')}{' '}
                       <a
                         className="underline"
@@ -1043,8 +1050,8 @@ export default function QuranReader() {
                         rel="noreferrer"
                       >
                         quran.com
-                      </a>{' '}
-                      — {t('quranReader.authenticUnedited', 'authentic, unedited.')}
+                      </a>
+                      , {t('quranReader.authenticUnedited', 'authentic, unedited.')}
                     </p>
                   </>
                 )}
@@ -1055,7 +1062,7 @@ export default function QuranReader() {
 
         {/* bottom controls: jump (left) · volume (right) */}
         {!loading && ayat.length > 0 && (
-          <div className="flex items-center justify-between gap-3 text-xs text-white/40">
+          <div className="flex items-center justify-between gap-3 text-xs text-white/60">
             {/* Khatam must be read serially — a jump dropdown here would let
                 ayat get skipped without being counted, breaking the "read
                 every āyah in order" invariant the khatam count relies on.
@@ -1067,7 +1074,7 @@ export default function QuranReader() {
                 </label>
                 <select
                   id="jump-ayah"
-                  className="select select-xs bg-white/5 border-brand-emerald/10 text-white/70 rounded-lg"
+                  className="select select-xs bg-brand-surface/60 border-brand-border text-white/80 rounded-lg"
                   value={idx + 1}
                   onChange={(e) => goToIdx(Number(e.target.value) - 1)}
                 >
@@ -1106,7 +1113,7 @@ export default function QuranReader() {
                 value={Math.round(volume * 100)}
                 aria-label={t('quranReader.recitationVolume', 'Recitation volume')}
                 onChange={(e) => changeVolume(Number(e.target.value) / 100)}
-                className="range range-xs w-24 [--range-shdw:theme(colors.emerald.400)]"
+                className="range range-xs w-24 [--range-shdw:theme(colors.brand.emerald-dim)]"
               />
             </div>
           </div>
@@ -1118,25 +1125,27 @@ export default function QuranReader() {
             <div className="flex gap-2">
               <button
                 onClick={() => setTafsirOpen((o) => !o)}
-                className={`flex-1 flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold border transition-all ${tafsirOpen ? 'bg-brand-emerald/15 border-brand-emerald/30 text-brand-emerald' : 'bg-white/5 border-brand-emerald/10 text-white/70 hover:text-white'}`}
+                className={`flex-1 flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold border shadow-elev-1 transition-colors ${tafsirOpen ? 'bg-brand-emerald/15 border-brand-emerald/30 text-brand-emerald' : 'bg-brand-deep border-brand-border text-white/80 hover:text-white'}`}
               >
                 <BookOpenIcon className="w-4 h-4" /> {t('quranReader.tafsir', 'Tafsir')}
               </button>
               {dua?.context && (
                 <button
                   onClick={() => setContextOpen((o) => !o)}
-                  className={`flex-1 flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold border transition-all ${contextOpen ? 'bg-brand-gold/15 border-brand-gold/30 text-brand-gold' : 'bg-white/5 border-brand-emerald/10 text-white/70 hover:text-white'}`}
+                  className={`flex-1 flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold border shadow-elev-1 transition-colors ${contextOpen ? 'bg-brand-gold/15 border-brand-gold/30 text-brand-gold' : 'bg-brand-deep border-brand-border text-white/80 hover:text-white'}`}
                 >
-                  📜 {t('quranReader.whyThisDua', 'Why this duʿā')}
+                  <DocumentTextIcon className="w-4 h-4" aria-hidden="true" />
+                  {t('quranReader.whyThisDua', 'Why this duʿā')}
                 </button>
               )}
             </div>
 
             {/* The story & evidence behind this duʿā (verified reference) */}
             {contextOpen && dua?.context && (
-              <div className="rounded-2xl border border-brand-gold/15 bg-brand-surface p-4 sm:p-5 space-y-2.5">
-                <p className="text-brand-gold/80 text-xs font-black">
-                  {dua.emoji} {i18n.language === 'bn' && dua.titleBn ? dua.titleBn : dua.title}
+              <div className="rounded-card border border-brand-gold/30 bg-brand-surface shadow-elev-1 p-4 sm:p-5 space-y-2.5">
+                <p className="text-brand-gold text-xs font-bold flex items-center gap-1.5">
+                  <DuaHandsIcon className="w-4 h-4" aria-hidden="true" />
+                  {i18n.language === 'bn' && dua.titleBn ? dua.titleBn : dua.title}
                 </p>
                 <p className="text-reader-note text-sm leading-relaxed">
                   {i18n.language === 'bn' && dua.context.textBn
@@ -1144,23 +1153,24 @@ export default function QuranReader() {
                     : dua.context.text}
                 </p>
                 <a
-                  className="inline-block text-brand-gold/60 text-[11px] underline hover:text-brand-gold"
+                  className="inline-flex items-center gap-1 text-brand-gold text-[11px] underline"
                   href={dua.context.ref.url}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {translateReference(dua.context.ref.text, i18n.language)} ↗
+                  {translateReference(dua.context.ref.text, i18n.language)}
+                  <ArrowTopRightOnSquareIcon className="w-3 h-3" aria-hidden="true" />
                 </a>
               </div>
             )}
 
             {/* Calm reading surface: warm dark ground + warm ink, never pure white */}
             {tafsirOpen && (
-              <div className="rounded-2xl border border-brand-gold/10 bg-brand-deep p-4 sm:p-5 space-y-3">
+              <div className="rounded-card border border-brand-border bg-brand-deep shadow-elev-1 p-4 sm:p-5 space-y-3">
                 <div className="flex items-center gap-2">
                   <select
                     aria-label={t('quranReader.tafsirEdition', 'Tafsir edition')}
-                    className="select select-xs flex-1 bg-white/5 border-brand-gold/10 text-white/80 rounded-lg"
+                    className="select select-xs flex-1 bg-brand-surface/60 border-brand-border text-white/80 rounded-lg"
                     value={tafsirEdition}
                     onChange={(e) => changeTafsirEdition(Number(e.target.value))}
                   >
@@ -1180,7 +1190,7 @@ export default function QuranReader() {
                     </optgroup>
                   </select>
                   <button
-                    className="text-white/40 hover:text-white text-xs shrink-0"
+                    className="text-white/60 hover:text-white text-xs shrink-0"
                     onClick={() => setTafsirOpen(false)}
                   >
                     {t('quranReader.close', 'Close')}
@@ -1195,7 +1205,7 @@ export default function QuranReader() {
                   <p className="text-white/50 text-sm py-2">
                     {t(
                       'quranReader.tafsirLoadErrorLong',
-                      "Couldn't load this tafsir — check your connection or try another edition."
+                      "Couldn't load this tafsir. Check your connection or try another edition."
                     )}
                   </p>
                 ) : (
@@ -1206,8 +1216,12 @@ export default function QuranReader() {
                     >
                       {tafsir.data?.text}
                     </div>
-                    <p className="text-white/30 text-[10px]">
-                      📖 {tafsir.data?.resourceName} ·{' '}
+                    <p className="text-white/60 text-[11px]">
+                      <BookOpenIcon
+                        className="w-3.5 h-3.5 inline -mt-0.5 mr-1"
+                        aria-hidden="true"
+                      />
+                      {tafsir.data?.resourceName} ·{' '}
                       {t('quranReader.sourcedFromLower', 'sourced from')}{' '}
                       <a
                         className="underline"
@@ -1216,11 +1230,11 @@ export default function QuranReader() {
                         rel="noreferrer"
                       >
                         quran.com
-                      </a>{' '}
-                      — {t('quranReader.authenticUnedited', 'authentic, unedited.')}
+                      </a>
+                      , {t('quranReader.authenticUnedited', 'authentic, unedited.')}
                       <span className="mx-1.5">·</span>
                       <a
-                        className="underline text-white/20 hover:text-brand-emerald/60"
+                        className="underline text-white/60 hover:text-brand-emerald"
                         href="/feedback"
                       >
                         {t('quranReader.reportReferenceIssue', 'Report a reference issue')}
@@ -1248,15 +1262,18 @@ export default function QuranReader() {
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.94, y: 8 }}
               transition={{ type: 'spring', damping: 24 }}
-              className="w-full max-w-xs rounded-2xl bg-brand-deep border border-brand-emerald/25 p-5 text-center"
+              className="w-full max-w-xs rounded-card bg-brand-deep border border-brand-border shadow-elev-3 p-5 text-center"
               role="alertdialog"
               aria-modal="true"
             >
-              <div className="text-3xl mb-2">📖</div>
-              <h3 className="text-white font-black text-base">
+              <BookOpenIcon
+                className="w-8 h-8 mx-auto mb-2 text-brand-emerald"
+                aria-hidden="true"
+              />
+              <h3 className="font-display text-white font-bold text-base">
                 {t('quranReader.continueReading', 'Continue reading?')}
               </h3>
-              <p className="text-white/50 text-xs mt-1.5 leading-relaxed">
+              <p className="text-white/70 text-xs mt-1.5 leading-relaxed">
                 {t('quranReader.leftOffAt', 'You left {{name}} at āyah', {
                   name: surahMeta
                     ? surahDisplayName(surahMeta, i18n.language)
@@ -1270,7 +1287,7 @@ export default function QuranReader() {
               </p>
               <div className="flex gap-2 mt-4">
                 <button
-                  className="flex-1 btn btn-sm rounded-xl bg-white/5 border-brand-emerald/10 text-white/70"
+                  className={`flex-1 !py-2 ${BTN_SECONDARY}`}
                   onClick={() => {
                     clearResume(surahNo);
                     syncResume(0);
@@ -1281,7 +1298,7 @@ export default function QuranReader() {
                   {t('quranReader.startOver', 'Start over')}
                 </button>
                 <button
-                  className="flex-1 btn btn-sm rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                  className={`flex-1 !py-2 ${BTN_PRIMARY}`}
                   onClick={() => {
                     setIdx(Math.min(ayat.length - 1, resumeAyah - 1));
                     setResumeAyah(null);

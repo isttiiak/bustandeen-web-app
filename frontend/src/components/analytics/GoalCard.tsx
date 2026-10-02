@@ -73,7 +73,7 @@ export default function GoalCard({ goal, today, onEditGoal }: GoalCardProps) {
                 stroke="currentColor"
                 strokeWidth="8"
                 fill="none"
-                className="text-shade/20"
+                className="text-track"
               />
               <motion.circle
                 cx="60"

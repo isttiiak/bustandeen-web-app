@@ -658,7 +658,7 @@ export default function SalatAnalytics() {
                                   total: formatLocaleNumber(total),
                                 })}
                               </p>
-                              <div className="w-full bg-shade/20 rounded-full h-1.5 mb-3">
+                              <div className="w-full bg-track rounded-full h-1.5 mb-3">
                                 <motion.div
                                   initial={{ width: 0 }}
                                   animate={{ width: `${pct}%` }}

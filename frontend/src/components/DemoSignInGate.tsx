@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import AnimatedBackground from './AnimatedBackground.js';
 
 interface Props {
-  emoji: string;
+  /** Legacy emoji mark; redesigned screens pass an SVG `icon` instead. */
+  emoji?: string;
+  icon?: ReactNode;
   title: string;
   desc: string;
   backTo: string;
@@ -17,7 +19,15 @@ interface Props {
  * Full-page sign-in gate shown to demo users who navigate to an analytics or
  * personal-data page. Never renders the page body — no crashes from missing data.
  */
-export default function DemoSignInGate({ emoji, title, desc, backTo, backLabel, tabs }: Props) {
+export default function DemoSignInGate({
+  emoji,
+  icon,
+  title,
+  desc,
+  backTo,
+  backLabel,
+  tabs,
+}: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -30,7 +40,13 @@ export default function DemoSignInGate({ emoji, title, desc, backTo, backLabel, 
       )}
       <div className="min-h-[60vh] grid place-items-center px-4 text-center">
         <div className="space-y-4 max-w-xs">
-          <div className="text-5xl">{emoji}</div>
+          {icon ? (
+            <div className="mx-auto w-16 h-16 rounded-full border border-brand-border bg-brand-deep shadow-elev-2 grid place-items-center text-brand-emerald">
+              {icon}
+            </div>
+          ) : (
+            <div className="text-5xl">{emoji}</div>
+          )}
           <p className="text-white font-black text-lg">{title}</p>
           <p className="text-white/50 text-sm leading-relaxed">{desc}</p>
           <div className="flex flex-col gap-2.5">

@@ -14,9 +14,12 @@ import {
 } from '../utils/quranData.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
+import { BookOpenIcon } from '@heroicons/react/24/outline';
+import { Star8Icon } from '../components/icons/IslamicIcons.js';
+import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/quran/quranStyles.js';
 
 /**
- * The Khatam journey — a serial, self-paced read-through of the whole Quran.
+ * The Khatam journey: a serial, self-paced read-through of the whole Quran.
  * Scholars across the madhāhib prefer reading in order (tartīb) for a khatam;
  * this tab owns that journey while the Read tab stays free for any surah.
  */
@@ -57,7 +60,7 @@ export default function QuranKhatam() {
         <QuranTabNav active="khatam" />
 
         {isLoading || !summary ? (
-          <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-10 grid place-items-center">
+          <div className={`${CARD} p-10 grid place-items-center`}>
             <span className="loading loading-spinner loading-lg text-brand-emerald" />
           </div>
         ) : (
@@ -65,17 +68,17 @@ export default function QuranKhatam() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-3xl p-6 sm:p-8 border border-brand-emerald/25 bg-gradient-to-br from-brand-emerald/15 via-brand-info/10 to-brand-deep relative overflow-hidden"
+              className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-12 pb-6 sm:px-8 text-center"
             >
-              <p className="text-brand-emerald/80 text-xs font-bold uppercase tracking-widest">
+              <Star8Icon className="w-7 h-7 mx-auto text-brand-gold" aria-hidden="true" />
+              <p className="mt-2 text-brand-emerald text-xs font-bold uppercase tracking-widest">
                 {t('quranKhatam.journeyLabel')}
               </p>
-              <h2 className="text-2xl font-black text-white mt-1">
+              <h2 className="font-display text-2xl font-bold text-white mt-1">
                 {pos && posMeta ? (
                   <>
                     {surahDisplayName(posMeta, i18n.language)}{' '}
-                    <span className="text-white/40 text-base">
-                      ·{' '}
+                    <span className="block font-sans text-white/70 text-sm font-semibold mt-1">
                       {t('quranKhatam.ayahOfTotal', {
                         ayah: formatLocaleNumber(pos.ayah),
                         total: formatLocaleNumber(posMeta.numberOfAyahs),
@@ -89,15 +92,15 @@ export default function QuranKhatam() {
                 )}
               </h2>
 
-              <div className="mt-4 h-3 rounded-full bg-white/10 overflow-hidden">
+              <div className="mt-5 h-3 rounded-full bg-track overflow-hidden text-left">
                 <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-brand-emerald to-brand-info"
+                  className="h-full rounded-full bg-data-good"
                   initial={{ width: 0 }}
                   animate={{ width: `${pct}%` }}
                   transition={{ duration: 0.8 }}
                 />
               </div>
-              <div className="flex justify-between text-[11px] text-white/40 mt-1.5">
+              <div className="flex justify-between gap-3 text-[11px] text-white/70 mt-1.5 text-left">
                 <span>
                   {formatLocaleNumber(summary.profile.currentAyah)} /{' '}
                   {formatLocaleNumber(QURAN_TOTAL_AYAT)} {t('quranKhatam.ayatLabel')} ·{' '}
@@ -113,26 +116,27 @@ export default function QuranKhatam() {
               {khatamStarted ? (
                 <>
                   <button
-                    className="mt-5 w-full btn h-13 rounded-2xl border-0 text-on-color text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                    className={`mt-5 w-full py-3 text-base ${BTN_PRIMARY}`}
                     onClick={() => {
                       if (pos) navigate(`/quran/read/${pos.surah}?start=${pos.ayah}&mode=khatam`);
                     }}
                     disabled={!pos}
                   >
+                    <BookOpenIcon className="w-5 h-5" aria-hidden="true" />
                     {t('quranKhatam.continueFrom', {
                       ref: pos
                         ? `${formatLocaleNumber(pos.surah)}:${formatLocaleNumber(pos.ayah)}`
                         : '…',
                     })}
                   </button>
-                  <p className="text-white/30 text-[11px] text-center mt-2">
+                  <p className="text-white/60 text-xs text-center mt-2">
                     {t('quranKhatam.calmPace')}
                   </p>
                 </>
               ) : (
                 <>
                   <button
-                    className="mt-5 w-full btn h-13 rounded-2xl border-0 text-on-color text-base font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                    className={`mt-5 w-full py-3 text-base ${BTN_PRIMARY}`}
                     disabled={startKhatam.isPending}
                     onClick={() =>
                       startKhatam.mutate(undefined, {
@@ -140,9 +144,10 @@ export default function QuranKhatam() {
                       })
                     }
                   >
+                    <BookOpenIcon className="w-5 h-5" aria-hidden="true" />
                     {t('quranKhatam.beginButton')}
                   </button>
-                  <p className="text-white/30 text-[11px] text-center mt-2">
+                  <p className="text-white/60 text-xs text-center mt-2">
                     {t('quranKhatam.yourChoice')}
                   </p>
                 </>
@@ -150,41 +155,46 @@ export default function QuranKhatam() {
             </motion.div>
 
             <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-                <p className="text-2xl font-black text-brand-gold">
-                  ⭐ {formatLocaleNumber(summary.profile.khatmCount)}
+              <div className={TILE}>
+                <p className="font-display text-2xl font-bold text-brand-gold flex items-center justify-center gap-1.5">
+                  <Star8Icon className="w-5 h-5" aria-hidden="true" />
+                  {formatLocaleNumber(summary.profile.khatmCount)}
                 </p>
-                <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
                   {t('quranKhatam.khatmCompleted')}
                 </p>
               </div>
-              <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center">
-                <p className="text-2xl font-black text-brand-emerald">
-                  {summary.pace != null ? formatLocaleNumber(summary.pace) : '—'}
+              <div className={TILE}>
+                <p className="font-display text-2xl font-bold text-brand-emerald">
+                  {summary.pace != null ? formatLocaleNumber(summary.pace) : '-'}
                 </p>
-                <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
                   {t('quranKhatam.ayatPerDay')}
                 </p>
               </div>
             </div>
 
-            <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
-              <h3 className="text-white font-black text-sm mb-2">
+            <div className={`${CARD} p-5`}>
+              <h3 className={`${SECTION_TITLE} mb-2`}>
+                <BookOpenIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
                 {t('quranKhatam.whyOrderTitle')}
               </h3>
-              <p className="text-white/40 text-xs leading-relaxed">
+              <p className="text-white/70 text-sm leading-relaxed">
                 {t('quranKhatam.whyOrderBody')}
               </p>
-              <p className="text-white/30 text-[11px] mt-2">
-                {t('quranKhatam.reciteQuote')} —{' '}
+              {/* Abu Umamah, Sahih Muslim 804 (checked on sunnah.com). It was
+                  mis-cited as Quran 73:4 before v5.92.0. */}
+              <p className="text-white/60 text-xs mt-3">
+                {t('quranKhatam.reciteQuote')} (
                 <a
                   className="underline"
-                  href="https://quran.com/73/4"
+                  href="https://sunnah.com/muslim:804a"
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {translateReference('Quran 73:4', i18n.language)}
+                  {translateReference('Ṣaḥīḥ Muslim 804', i18n.language)}
                 </a>
+                )
               </p>
             </div>
           </>

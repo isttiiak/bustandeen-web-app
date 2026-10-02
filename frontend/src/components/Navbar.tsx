@@ -21,6 +21,7 @@ import {
   HeartIcon,
   LockClosedIcon,
   ChartBarIcon,
+  BookOpenIcon,
 } from '@heroicons/react/24/outline';
 import { MosqueIcon, TasbihIcon } from './icons/IslamicIcons.js';
 import { UserAvatar } from './icons/AvatarGlyphs.js';
@@ -59,7 +60,7 @@ const PAGE_META: Record<
   '/fasting/analytics': { title: 'Fasting Analytics', emoji: '📊' },
   '/prayer-times': { title: 'Prayer Times', emoji: '🕐' },
   '/qibla': { title: 'Qibla Compass', emoji: '🧭' },
-  '/quran': { title: 'Quran Habit', emoji: '📖' },
+  '/quran': { title: 'Quran Habit', emoji: '', Icon: BookOpenIcon },
   '/friends': { title: 'Friends', emoji: '🤝' },
   '/settings': { title: 'Settings', emoji: '⚙️' },
   '/about': { title: 'About Bustandeen', emoji: '🌱' },

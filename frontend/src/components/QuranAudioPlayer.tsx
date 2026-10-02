@@ -3,6 +3,13 @@ import toast from 'react-hot-toast';
 import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { PlayIcon, PauseIcon, ForwardIcon, BackwardIcon } from '@heroicons/react/24/solid';
+import {
+  ClockIcon,
+  PauseCircleIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+} from '@heroicons/react/24/outline';
+import { CARD } from './quran/quranStyles.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useReadAyat } from '../hooks/useQuran.js';
 import { useQuranReadingSession } from '../hooks/useQuranReadingSession.js';
@@ -23,7 +30,7 @@ function formatListeningTime(totalSec: number): string {
 }
 
 /**
- * 🎧 Audio Quran — all 114 surahs, streamed from the free Islamic Network CDN
+ * Audio Quran: all 114 surahs, streamed from the free Islamic Network CDN
  * (the audio backend of alquran.cloud; no storage cost on our side).
  *
  * LISTENING AUTO-LOG (v4.3, ayah units): listening feeds the SAME āyah goal
@@ -171,7 +178,7 @@ export default function QuranAudioPlayer() {
           toast.success(
             t('quranAudioPlayer.ayahLogged', {
               count: diff,
-              defaultValue: '🎧 +{{count}} āyah(s) logged toward your goal',
+              defaultValue: '+{{count}} āyah(s) logged toward your goal',
             }),
             {
               id: 'quran-listen',
@@ -229,15 +236,16 @@ export default function QuranAudioPlayer() {
   };
 
   return (
-    <div className="card bg-gradient-to-br from-brand-info/10 to-brand-deep border border-brand-info/20 rounded-3xl">
-      <div className="card-body p-5 space-y-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-white font-black">
-            🎧 {t('quranAudioPlayer.title', 'Listen to the Quran')}
+    <div className={CARD}>
+      <div className="p-5 space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <h2 className="font-display text-white font-bold text-base flex items-center gap-2">
+            <SpeakerWaveIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
+            {t('quranAudioPlayer.title', 'Listen to the Quran')}
           </h2>
           <select
             aria-label={t('quranAudioPlayer.reciterLabel', 'Reciter')}
-            className="select select-xs bg-white/5 border-brand-emerald/10 text-white/70 rounded-lg max-w-[45%]"
+            className="select select-xs bg-brand-surface/60 border-brand-border text-white/80 rounded-control max-w-[45%]"
             value={reciter}
             onChange={(e) => {
               setReciter(e.target.value);
@@ -253,17 +261,17 @@ export default function QuranAudioPlayer() {
         </div>
 
         {loadError ? (
-          <p className="text-white/40 text-xs">
+          <p className="text-white/60 text-xs">
             {t(
               'quranAudioPlayer.loadError',
-              "Couldn't load the surah list — check your connection and reload."
+              "Couldn't load the surah list. Check your connection and reload."
             )}
           </p>
         ) : (
           <>
             <select
               aria-label={t('quranAudioPlayer.surahLabel', 'Surah')}
-              className="select select-sm w-full bg-white/5 border-brand-emerald/10 text-white rounded-xl"
+              className="select select-sm w-full bg-brand-surface/60 border-brand-border text-white rounded-control"
               value={surahNo}
               onChange={(e) => changeSurah(Number(e.target.value))}
             >
@@ -280,14 +288,18 @@ export default function QuranAudioPlayer() {
                   ]
               ).map((s) => (
                 <option key={s.number} value={s.number}>
-                  {s.number}. {surahDisplayName(s, i18n.language)} —{' '}
+                  {s.number}. {surahDisplayName(s, i18n.language)}:{' '}
                   {surahMeaningDisplay(s, i18n.language)} ({s.numberOfAyahs} āyāt)
                 </option>
               ))}
             </select>
 
             {surah && (
-              <p className="text-center text-2xl text-brand-info/90 font-serif" dir="rtl">
+              <p
+                className="text-center text-3xl text-brand-gold font-serif py-1"
+                dir="rtl"
+                lang="ar"
+              >
                 {surah.name}
               </p>
             )}
@@ -297,12 +309,16 @@ export default function QuranAudioPlayer() {
                 <span
                   title={
                     readingSession.isPaused
-                      ? t('quranAudioPlayer.timerPaused', 'Paused — press play to keep counting')
+                      ? t('quranAudioPlayer.timerPaused', 'Paused. Press play to keep counting')
                       : t('quranAudioPlayer.timerActive', 'Active listening time this visit')
                   }
-                  className="inline-block px-2.5 py-1 rounded-full border border-brand-info/10 bg-white/5 text-white/40 text-[11px] font-bold tabular-nums"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full border border-brand-border bg-brand-surface/60 text-white/70 text-[11px] font-bold tabular-nums"
                 >
-                  {readingSession.isPaused ? '⏸' : '⏱'}{' '}
+                  {readingSession.isPaused ? (
+                    <PauseCircleIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                  ) : (
+                    <ClockIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                  )}
                   {formatListeningTime(readingSession.activeSec)}
                 </span>
               </p>
@@ -312,7 +328,7 @@ export default function QuranAudioPlayer() {
             <div className="flex items-center justify-center gap-4">
               <button
                 aria-label={t('quranAudioPlayer.previousSurah', 'Previous surah')}
-                className="p-2 text-white/50 hover:text-white disabled:opacity-20"
+                className="p-2.5 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/70 hover:text-white disabled:opacity-30"
                 disabled={surahNo <= 1}
                 onClick={() => changeSurah(surahNo - 1)}
               >
@@ -325,7 +341,7 @@ export default function QuranAudioPlayer() {
                     ? t('quranAudioPlayer.pause', 'Pause')
                     : t('quranAudioPlayer.play', 'Play')
                 }
-                className="w-14 h-14 rounded-full grid place-items-center text-on-color shadow-lg bg-gradient-to-br from-brand-info to-brand-emerald-dim"
+                className="w-16 h-16 rounded-full grid place-items-center text-on-color shadow-elev-2 bg-brand-emerald-dim hover:brightness-110 transition"
                 onClick={togglePlay}
               >
                 {buffering ? (
@@ -338,7 +354,7 @@ export default function QuranAudioPlayer() {
               </motion.button>
               <button
                 aria-label={t('quranAudioPlayer.nextSurah', 'Next surah')}
-                className="p-2 text-white/50 hover:text-white disabled:opacity-20"
+                className="p-2.5 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/70 hover:text-white disabled:opacity-30"
                 disabled={surahNo >= 114}
                 onClick={() => changeSurah(surahNo + 1)}
               >
@@ -347,7 +363,7 @@ export default function QuranAudioPlayer() {
             </div>
 
             {/* progress */}
-            <div className="flex items-center gap-2 text-[10px] text-white/30">
+            <div className="flex items-center gap-2 text-[10px] text-white/60 tabular-nums">
               <span className="w-9 text-right">{fmtClock(progress)}</span>
               <input
                 type="range"
@@ -357,23 +373,27 @@ export default function QuranAudioPlayer() {
                 aria-label={t('quranAudioPlayer.seek', 'Seek')}
                 value={duration ? (progress / duration) * 100 : 0}
                 onChange={seek}
-                className="range range-xs flex-1 [--range-shdw:theme(colors.brand.info)]"
+                className="range range-xs flex-1 [--range-shdw:theme(colors.brand.emerald-dim)]"
               />
               <span className="w-9">{fmtClock(duration)}</span>
             </div>
 
             {/* sound control */}
-            <div className="flex items-center gap-2 text-white/40">
+            <div className="flex items-center gap-2 text-white/60">
               <button
                 aria-label={
                   muted
                     ? t('quranAudioPlayer.unmute', 'Unmute')
                     : t('quranAudioPlayer.mute', 'Mute')
                 }
-                className="text-sm w-6"
+                className="w-6 hover:text-white"
                 onClick={() => setMuted((m) => !m)}
               >
-                {muted || volume === 0 ? '🔇' : volume < 0.5 ? '🔉' : '🔊'}
+                {muted || volume === 0 ? (
+                  <SpeakerXMarkIcon className="w-5 h-5" />
+                ) : (
+                  <SpeakerWaveIcon className="w-5 h-5" />
+                )}
               </button>
               <input
                 type="range"
@@ -387,7 +407,7 @@ export default function QuranAudioPlayer() {
                   setMuted(v === 0);
                   localStorage.setItem('bustandeen_quran_volume', String(v));
                 }}
-                className="range range-xs w-32 [--range-shdw:theme(colors.brand.info)]"
+                className="range range-xs w-32 [--range-shdw:theme(colors.brand.emerald-dim)]"
               />
             </div>
 
@@ -417,22 +437,21 @@ export default function QuranAudioPlayer() {
               onEnded={() => setPlaying(false)} // one surah at a time — no autoplay (Istiak's spec)
             />
 
-            <p className="text-white/30 text-[10px] leading-relaxed">
+            <p className="text-white/60 text-[11px] leading-relaxed">
               {t('quranAudioPlayer.loggedIntro', 'As you listen, āyāt are logged toward your')}{' '}
-              <b className="text-white/50">{t('quranAudioPlayer.dailyGoal', 'daily goal')}</b>{' '}
+              <b className="text-white/80">{t('quranAudioPlayer.dailyGoal', 'daily goal')}</b>{' '}
               {t('quranAudioPlayer.andStreak', 'and streak')}
-              {!user && ` ${t('quranAudioPlayer.signInToSave', '(sign in to save it)')}`}{' '}
+              {!user && ` ${t('quranAudioPlayer.signInToSave', '(sign in to save it)')}`}
               {t(
                 'quranAudioPlayer.loggedTail',
-                "— counted from each surah's own length. Recitation streamed free from the Islamic Network CDN."
+                ", counted from each surah's own length. Recitation streamed free from the Islamic Network CDN."
               )}
               {user?.gender === 'female' && (
                 <>
                   {' '}
-                  🌸{' '}
                   {t(
                     'quranAudioPlayer.rayhanahNote',
-                    'During Rayhanah days, listening keeps your Quran connection — and your Noor — alive.'
+                    'During Rayhanah days, listening keeps your Quran connection, and your Noor, alive.'
                   )}
                 </>
               )}
