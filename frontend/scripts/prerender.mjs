@@ -76,7 +76,19 @@ if (!appEntryTags.test(appShellHtml)) {
   console.error("prerender: the app entry's <script> tag was not found in app-shell.html");
   process.exit(1);
 }
-const baseHtml = appShellHtml.replace(appEntryTags, staticTags);
+// `data-static` keeps the landing and SEO pages on the dark theme: their
+// templates carry their own dark palette (T3.2 only themed the app). The
+// first-paint script in index.html skips the saved theme when it is set.
+const baseHtml = appShellHtml
+  .replace(appEntryTags, staticTags)
+  .replace(
+    '<html lang="en" data-theme="bustandeen">',
+    '<html lang="en" data-theme="bustandeen" data-static>'
+  );
+if (!baseHtml.includes('data-static>')) {
+  console.error('prerender: could not mark static pages (<html> tag changed in index.html?)');
+  process.exit(1);
+}
 
 /** The data src/seo/entry-client.tsx renders from, for the pages that need it. */
 function clientDataTag(client) {
@@ -143,8 +155,8 @@ function buildPageHtml({ lang, title, description, path, bodyHtml, client }) {
   let html = baseHtml;
 
   html = html.replace(
-    '<html lang="en" data-theme="bustandeen">',
-    `<html lang="${lang}" data-theme="bustandeen"${dir}>`
+    '<html lang="en" data-theme="bustandeen" data-static>',
+    `<html lang="${lang}" data-theme="bustandeen" data-static${dir}>`
   );
   html = html.replace(/<title>[^<]*<\/title>/, `<title>${safeTitle}</title>`);
   html = html.replace(
@@ -428,8 +440,8 @@ for (const lang of ['en', 'bn']) {
     const url = `${SITE_URL}/bn`;
     html = html
       .replace(
-        '<html lang="en" data-theme="bustandeen">',
-        '<html lang="bn" data-theme="bustandeen">'
+        '<html lang="en" data-theme="bustandeen" data-static>',
+        '<html lang="bn" data-theme="bustandeen" data-static>'
       )
       .replace(/<title>[^<]*<\/title>/, `<title>${title}</title>`)
       .replace(

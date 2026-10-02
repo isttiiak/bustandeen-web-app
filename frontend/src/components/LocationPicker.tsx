@@ -153,7 +153,7 @@ export default function LocationPicker({
           <button
             onClick={() => void searchByCity()}
             disabled={citySearching || !cityInput.trim()}
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-none"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-none"
           >
             {citySearching ? (
               <span className="loading loading-spinner loading-xs" />

@@ -119,11 +119,11 @@ function PendingCard({ donation }: { donation: Donation }) {
       </div>
 
       <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="rounded-xl bg-black/20 px-3 py-2">
+        <div className="rounded-xl bg-shade/20 px-3 py-2">
           <p className="text-white/30">{t('adminSadaqah.trxId', 'Transaction ID')}</p>
           <p className="text-white font-mono font-bold">{donation.transactionId}</p>
         </div>
-        <div className="rounded-xl bg-black/20 px-3 py-2">
+        <div className="rounded-xl bg-shade/20 px-3 py-2">
           <p className="text-white/30">
             {t('adminSadaqah.method', 'Method')} · {t('adminSadaqah.date', 'Date')}
           </p>
@@ -144,7 +144,7 @@ function PendingCard({ donation }: { donation: Donation }) {
         <div className="flex gap-2">
           <button
             onClick={() => startAction('verified')}
-            className="btn btn-sm flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
+            className="btn btn-sm flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
           >
             {t('adminSadaqah.verify', 'Verify')}
           </button>
@@ -532,7 +532,7 @@ function ExpensesTab({ isServant }: { isServant: boolean }) {
               !(Number(expForm.amount) >= 0) ||
               addExpense.isPending
             }
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
           >
             {t('adminSadaqah.save', 'Save')}
           </button>
@@ -661,7 +661,7 @@ function QuarterlyPublisher() {
           </button>
 
           {previewData && (
-            <div className="rounded-xl bg-black/20 px-3 py-2 text-sm">
+            <div className="rounded-xl bg-shade/20 px-3 py-2 text-sm">
               <p className="text-white">
                 {t('adminSadaqah.received', 'Received')}:{' '}
                 <span className="font-bold text-brand-emerald">
@@ -689,7 +689,7 @@ function QuarterlyPublisher() {
           <button
             onClick={confirmPublish}
             disabled={!previewData || publish.isPending}
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
           >
             {publish.isPending ? '…' : t('adminSadaqah.publish', 'Publish')}
           </button>
@@ -755,7 +755,7 @@ function DonorEmailAction({ email }: { email: string }) {
           <button
             onClick={confirmSend}
             disabled={send.isPending}
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
           >
             {send.isPending ? '…' : t('adminSadaqah.confirmSendEmail', 'Send this email')}
           </button>

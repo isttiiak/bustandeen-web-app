@@ -206,7 +206,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
         <div className="flex gap-2 pt-1">
           <button
             onClick={() => startReview('approving')}
-            className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-white font-bold"
+            className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
           >
             {t('adminZikr.approve', 'Review & approve')}
           </button>
@@ -332,7 +332,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
             <button
               onClick={confirmApprove}
               disabled={sending}
-              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-white font-bold"
+              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
             >
               {approve.isPending ? '…' : t('adminZikr.confirmApprove', 'Add to library & notify')}
             </button>
@@ -367,7 +367,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
             <button
               onClick={confirmReject}
               disabled={sending}
-              className="btn btn-xs rounded-lg bg-red-500/80 border-red-500 text-white font-bold"
+              className="btn btn-xs rounded-lg bg-red-500/80 border-red-500 text-on-color font-bold"
             >
               {reject.isPending ? '…' : t('adminZikr.confirmReject', 'Confirm reject')}
             </button>
@@ -494,7 +494,7 @@ function LibraryItemRow({ item }: { item: GlobalLibraryItem }) {
         <button
           onClick={save}
           disabled={update.isPending}
-          className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-white font-bold"
+          className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
         >
           {update.isPending ? '…' : t('adminSadaqah.save', 'Save')}
         </button>
@@ -555,7 +555,7 @@ export default function AdminZikrRequests() {
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'btn-ghost text-white/50'}`}
+              className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
             >
               {s}
             </button>

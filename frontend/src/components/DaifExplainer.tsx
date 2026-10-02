@@ -154,7 +154,7 @@ export default function DaifExplainer({ topics }: { topics: DaifTopic[] }) {
               </p>
 
               {list.map((e) => (
-                <div key={e.id} className="rounded-2xl bg-black/20 border border-brand-gold/15 p-4">
+                <div key={e.id} className="rounded-2xl bg-shade/20 border border-brand-gold/15 p-4">
                   <p className="text-white/80 text-sm font-semibold leading-relaxed">
                     {isBn ? e.claimBn : e.claim}
                   </p>

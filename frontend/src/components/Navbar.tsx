@@ -188,7 +188,7 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-40 bg-gradient-to-r from-[#14130e] via-brand-deep to-brand-deep border-b border-brand-emerald/20 shadow-[0_2px_16px_rgba(122,158,110,0.08)]">
+      <nav className="sticky top-0 z-40 bg-gradient-to-r from-brand-void-deep via-brand-deep to-brand-deep border-b border-brand-emerald/20 shadow-[0_2px_16px_rgba(122,158,110,0.08)]">
         <div className="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
           {/* ── Left: logo + back + title ─────────────────── */}
           <div className="flex items-center gap-0.5 flex-shrink-0 min-w-0">
@@ -482,7 +482,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="ml-1 px-3 py-1.5 rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white text-xs font-semibold transition-all shadow-md"
+                className="ml-1 px-3 py-1.5 rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color text-xs font-semibold transition-all shadow-md"
                 onClick={() => sessionStorage.setItem('bustandeen_redirect', location.pathname)}
               >
                 {t('nav.signIn')}
@@ -507,7 +507,7 @@ export default function Navbar() {
                   {t('common.cancel')}
                 </button>
                 <button
-                  className="btn btn-sm bg-red-500 hover:bg-red-600 text-white border-0"
+                  className="btn btn-sm bg-red-500 hover:bg-red-600 text-on-color border-0"
                   onClick={async () => {
                     const { auth, signOut } = await loadFirebase();
                     await signOut(auth);

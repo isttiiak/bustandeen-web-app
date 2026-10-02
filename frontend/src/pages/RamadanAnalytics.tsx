@@ -337,7 +337,7 @@ export default function RamadanAnalytics() {
                 .{t('ramadanAnalytics.lastTenNote')}
               </p>
               <div className="grid grid-cols-2 gap-2.5 mt-3">
-                <div className="rounded-2xl bg-black/25 border border-brand-info/20 p-3">
+                <div className="rounded-2xl bg-shade/25 border border-brand-info/20 p-3">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-white/30">
                     {t('ramadanAnalytics.tarawihLastTen')}
                   </p>
@@ -346,7 +346,7 @@ export default function RamadanAnalytics() {
                     <span className="text-white/25 text-sm">/{model.lastTenTotal}</span>
                   </p>
                 </div>
-                <div className="rounded-2xl bg-black/25 border border-brand-info/20 p-3">
+                <div className="rounded-2xl bg-shade/25 border border-brand-info/20 p-3">
                   <p className="text-[10px] font-bold uppercase tracking-wider text-white/30">
                     {t('ramadanAnalytics.oddNightsKept')}
                   </p>

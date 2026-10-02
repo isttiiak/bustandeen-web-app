@@ -325,7 +325,7 @@ export default function QuranAudioPlayer() {
                     ? t('quranAudioPlayer.pause', 'Pause')
                     : t('quranAudioPlayer.play', 'Play')
                 }
-                className="w-14 h-14 rounded-full grid place-items-center text-white shadow-lg bg-gradient-to-br from-brand-info to-brand-emerald-dim"
+                className="w-14 h-14 rounded-full grid place-items-center text-on-color shadow-lg bg-gradient-to-br from-brand-info to-brand-emerald-dim"
                 onClick={togglePlay}
               >
                 {buffering ? (

@@ -1064,7 +1064,7 @@ export default function CycleAnalytics() {
               ))}
             </div>
             <button
-              className="w-full btn btn-sm rounded-2xl border-0 text-white font-black bg-gradient-to-r from-brand-pink to-brand-pink"
+              className="w-full btn btn-sm rounded-2xl border-0 text-on-color font-black bg-gradient-to-r from-brand-pink to-brand-pink"
               disabled={!pastStart || !pastEnd || addPast.isPending}
               onClick={() =>
                 addPast.mutate(

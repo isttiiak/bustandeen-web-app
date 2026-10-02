@@ -168,7 +168,7 @@ export default function QiblaCompass() {
             <button
               onClick={requestLocation}
               disabled={locLoading}
-              className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white gap-2"
+              className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color gap-2"
             >
               <MapPinIcon className="w-4 h-4" />
               {locLoading
@@ -184,7 +184,7 @@ export default function QiblaCompass() {
             {sensorState === 'needs-permission' && (
               <button
                 onClick={startCompass}
-                className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
+                className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
               >
                 {t('qibla.enableCompass', 'Enable compass')}
               </button>

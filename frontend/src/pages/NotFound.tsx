@@ -28,7 +28,7 @@ export default function NotFound() {
             <p className="text-sm sm:text-base text-white/60 mb-8">{t('notFound.description')}</p>
             <Link
               to="/"
-              className="btn btn-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 hover:shadow-lg transition-all gap-2"
+              className="btn btn-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 hover:shadow-lg transition-all gap-2"
             >
               <HomeIcon className="w-5 h-5" />
               {t('notFound.backHome')}

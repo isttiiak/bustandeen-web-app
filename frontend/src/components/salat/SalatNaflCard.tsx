@@ -82,7 +82,7 @@ export default function SalatNaflCard({
                 onClick={handleNaflToggle}
                 className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                   naflEntry.completed
-                    ? 'bg-brand-info text-white border-brand-info shadow-[0_0_12px_rgba(90,158,142,0.35)]'
+                    ? 'bg-brand-info text-on-color border-brand-info shadow-[0_0_12px_rgba(90,158,142,0.35)]'
                     : 'bg-brand-deep border-brand-border text-white/50 hover:border-brand-info/50 hover:text-white/80'
                 }`}
               >

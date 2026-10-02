@@ -69,7 +69,7 @@ function FeedbackCard({ message }: { message: AdminFeedbackMessage }) {
           {message.status !== 'archived' && (
             <button
               onClick={() => setReplying(true)}
-              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-white font-bold"
+              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
             >
               {t('adminFeedback.reply', 'Reply')}
             </button>
@@ -131,7 +131,7 @@ function FeedbackCard({ message }: { message: AdminFeedbackMessage }) {
             <button
               onClick={sendReply}
               disabled={reply.isPending}
-              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-white font-bold"
+              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
             >
               {reply.isPending ? '…' : t('adminFeedback.send', 'Send reply')}
             </button>
@@ -171,7 +171,7 @@ export default function AdminFeedback() {
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'btn-ghost text-white/50'}`}
+              className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
             >
               {s}
             </button>

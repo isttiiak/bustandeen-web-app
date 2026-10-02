@@ -2,6 +2,7 @@
 import { useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
 import { localTodayStr } from '../../hooks/useFasting.js';
+import { withAlpha } from '../../utils/color.js';
 import { FastingCategory, FastingStatus, FastingRef } from '../../utils/fastingRules.js';
 import { formatLocaleDate } from '../../utils/localeDate.js';
 import { translateReference } from '../../utils/localeReference.js';
@@ -87,7 +88,7 @@ export function ManageProgress({
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.6, ease: 'easeOut' }}
           className="h-full rounded-full"
-          style={{ background: color, boxShadow: `0 0 8px ${color}70` }}
+          style={{ background: color, boxShadow: `0 0 8px ${withAlpha(color, '70')}` }}
         />
       </div>
       <div className="flex justify-between text-[10px] text-white/25">
@@ -105,8 +106,8 @@ export function ManageProgress({
 }
 
 export const STATUS_META: Record<FastingStatus, { label: string; emoji: string; color: string }> = {
-  intended: { label: 'Intending to fast', emoji: '🌅', color: '#5a9e8e' },
-  completed: { label: 'Fasted', emoji: '✨', color: '#7a9e6e' },
+  intended: { label: 'Intending to fast', emoji: '🌅', color: 'rgb(var(--c-info))' },
+  completed: { label: 'Fasted', emoji: '✨', color: 'rgb(var(--c-emerald))' },
   broken: { label: 'Fast broken', emoji: '💔', color: '#f87171' },
 };
 

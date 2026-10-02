@@ -242,7 +242,7 @@ export default function AuthSignIn() {
               <button
                 type="submit"
                 disabled={resetLoading || !resetEmail.trim()}
-                className="w-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white font-semibold py-3 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color font-semibold py-3 px-6 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {resetLoading ? (
                   <span className="loading loading-spinner loading-sm" />
@@ -296,7 +296,7 @@ export default function AuthSignIn() {
                     variants={itemVariants}
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full relative group bg-white hover:bg-white/90 text-brand-deep font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="w-full relative group bg-on-color hover:bg-on-color/90 text-ink-fixed font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
                     onClick={google}
                     disabled={loading}
                   >
@@ -404,7 +404,7 @@ export default function AuthSignIn() {
                       whileTap={{ scale: 0.98 }}
                       type="submit"
                       disabled={loading}
-                      className="w-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading ? (
                         <span className="loading loading-spinner loading-sm" />

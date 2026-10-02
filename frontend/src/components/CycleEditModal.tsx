@@ -115,7 +115,7 @@ export default function CycleEditModal({ target, today, onClose }: Props) {
                 {t('rayhanah.cancel', 'Cancel')}
               </button>
               <button
-                className="flex-1 btn btn-sm rounded-xl border-0 text-white font-bold bg-brand-pink/80 hover:bg-brand-pink"
+                className="flex-1 btn btn-sm rounded-xl border-0 text-on-color font-bold bg-brand-pink/80 hover:bg-brand-pink"
                 disabled={editCycle.isPending || !start}
                 onClick={() =>
                   editCycle.mutate(

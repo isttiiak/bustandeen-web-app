@@ -65,7 +65,7 @@ export default function ZikrSetCountModal({
                 <div className="flex gap-2 mt-4">
                   <button
                     onClick={submitSetCount}
-                    className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white"
+                    className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
                   >
                     {t('zikr.setCountBtn', 'Set')}
                   </button>

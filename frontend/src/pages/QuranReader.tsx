@@ -501,7 +501,7 @@ export default function QuranReader() {
   // Calm long-form reading: warm ink (never pure white), generous line-height,
   // and a Bengali-friendly font stack when a বাংলা edition is selected.
   const tafsirTextStyle = {
-    color: '#d6d0bf',
+    color: 'rgb(var(--c-reader-soft))',
     fontSize: fs.tafsir,
     lineHeight: tafsirIsBn ? 2.15 : 1.95,
     ...(tafsirIsBn
@@ -713,7 +713,7 @@ export default function QuranReader() {
             the split becomes a vertical stack — āyah first, tafsir below. */}
         <div
           ref={cardRef}
-          className={`relative rounded-3xl border border-brand-emerald/10 bg-gradient-to-br from-[#0d1b17] via-[#0a1412] to-[#0d1420] ${fullscreen ? 'fixed inset-0 z-[9999] rounded-none flex flex-col md:flex-row overflow-y-auto overflow-x-hidden md:overflow-hidden' : 'overflow-hidden p-4 sm:p-10'}`}
+          className={`relative rounded-3xl border border-brand-emerald/10 bg-gradient-to-br from-reader-from via-reader-via to-reader-to ${fullscreen ? 'fixed inset-0 z-[9999] rounded-none flex flex-col md:flex-row overflow-y-auto overflow-x-hidden md:overflow-hidden' : 'overflow-hidden p-4 sm:p-10'}`}
         >
           {/* controls — in-flow row on phones (they overlapped the āyah header),
               floating top-right from sm up */}
@@ -755,7 +755,7 @@ export default function QuranReader() {
               }
               title={t('quranReader.reciteOnlyThis', 'Recite only this ayah')}
               onClick={playAyah}
-              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all ${playing ? 'bg-brand-emerald-dim text-white border-brand-emerald-dim' : 'bg-white/5 text-brand-emerald border-brand-emerald/10 hover:border-brand-emerald/50'}`}
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all ${playing ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim' : 'bg-white/5 text-brand-emerald border-brand-emerald/10 hover:border-brand-emerald/50'}`}
             >
               {playing ? (
                 <PauseIcon className="w-4 h-4" />
@@ -873,7 +873,7 @@ export default function QuranReader() {
                   <p
                     dir="rtl"
                     lang="ar"
-                    className="leading-[2.1] text-[#e8e2d0]"
+                    className="leading-[2.1] text-reader-text"
                     style={{ fontSize: fs.arabic, fontFamily: arabicFont.stack }}
                   >
                     {words.map((w, i) => (
@@ -952,7 +952,7 @@ export default function QuranReader() {
                 <button
                   aria-label={t('quranReader.nextAyah', 'Next ayah')}
                   onClick={goNext}
-                  className="flex items-center gap-1.5 min-w-0 px-5 py-2.5 rounded-2xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white text-sm font-black border-0"
+                  className="flex items-center gap-1.5 min-w-0 px-5 py-2.5 rounded-2xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color text-sm font-black border-0"
                 >
                   <span className="truncate">
                     {idx >= lastIdx
@@ -988,9 +988,9 @@ export default function QuranReader() {
           {/* TAFSIR pane — beside the āyah on desktop, stacked below on mobile.
               Calm long-form reading: warm surface, warm ink, roomy line-height. */}
           {fullscreen && splitTafsir && (
-            <div className="w-full md:flex-1 md:h-full md:overflow-y-auto bg-[#1a1812] px-5 sm:px-8 pb-10 pt-4 md:pt-6 border-t border-brand-gold/5 md:border-t-0">
+            <div className="w-full md:flex-1 md:h-full md:overflow-y-auto bg-brand-deep px-5 sm:px-8 pb-10 pt-4 md:pt-6 border-t border-brand-gold/5 md:border-t-0">
               <div className="max-w-2xl mx-auto">
-                <div className="flex items-center gap-2 mb-3 md:sticky md:top-0 bg-[#1a1812]/95 backdrop-blur md:-mt-2 md:pt-2 pb-2 z-10">
+                <div className="flex items-center gap-2 mb-3 md:sticky md:top-0 bg-brand-deep/95 backdrop-blur md:-mt-2 md:pt-2 pb-2 z-10">
                   <BookOpenIcon className="w-4 h-4 text-brand-gold/60 shrink-0" />
                   <select
                     aria-label={t('quranReader.tafsirEdition', 'Tafsir edition')}
@@ -1134,11 +1134,11 @@ export default function QuranReader() {
 
             {/* The story & evidence behind this duʿā (verified reference) */}
             {contextOpen && dua?.context && (
-              <div className="rounded-2xl border border-brand-gold/15 bg-[#211f16] p-4 sm:p-5 space-y-2.5">
+              <div className="rounded-2xl border border-brand-gold/15 bg-brand-surface p-4 sm:p-5 space-y-2.5">
                 <p className="text-brand-gold/80 text-xs font-black">
                   {dua.emoji} {i18n.language === 'bn' && dua.titleBn ? dua.titleBn : dua.title}
                 </p>
-                <p className="text-[#d8d0b8] text-sm leading-relaxed">
+                <p className="text-reader-note text-sm leading-relaxed">
                   {i18n.language === 'bn' && dua.context.textBn
                     ? dua.context.textBn
                     : dua.context.text}
@@ -1156,7 +1156,7 @@ export default function QuranReader() {
 
             {/* Calm reading surface: warm dark ground + warm ink, never pure white */}
             {tafsirOpen && (
-              <div className="rounded-2xl border border-brand-gold/10 bg-[#1a1812] p-4 sm:p-5 space-y-3">
+              <div className="rounded-2xl border border-brand-gold/10 bg-brand-deep p-4 sm:p-5 space-y-3">
                 <div className="flex items-center gap-2">
                   <select
                     aria-label={t('quranReader.tafsirEdition', 'Tafsir edition')}
@@ -1281,7 +1281,7 @@ export default function QuranReader() {
                   {t('quranReader.startOver', 'Start over')}
                 </button>
                 <button
-                  className="flex-1 btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                  className="flex-1 btn btn-sm rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                   onClick={() => {
                     setIdx(Math.min(ayat.length - 1, resumeAyah - 1));
                     setResumeAyah(null);

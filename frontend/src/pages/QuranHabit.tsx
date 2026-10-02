@@ -136,7 +136,7 @@ export default function QuranHabit() {
               <div className="flex flex-col sm:flex-row gap-2 mt-3">
                 {khatamStarted ? (
                   <button
-                    className="btn btn-sm w-full sm:w-auto rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                    className="btn btn-sm w-full sm:w-auto rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                     onClick={() => {
                       if (pos) navigate(`/quran/read/${pos.surah}?start=${pos.ayah}&mode=khatam`);
                       else navigate('/quran/khatam');
@@ -146,7 +146,7 @@ export default function QuranHabit() {
                   </button>
                 ) : (
                   <button
-                    className="btn btn-sm w-full sm:w-auto rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                    className="btn btn-sm w-full sm:w-auto rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                     disabled={startKhatam.isPending}
                     onClick={() =>
                       startKhatam.mutate(undefined, { onSuccess: () => navigate('/quran/khatam') })

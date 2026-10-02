@@ -47,7 +47,7 @@ export default function ZikrGuestDialog({
               </p>
               <div className="flex flex-col gap-3">
                 <button
-                  className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 w-full"
+                  className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 w-full"
                   onClick={() => {
                     sessionStorage.setItem('bustandeen_redirect', '/zikr');
                     navigate('/login');

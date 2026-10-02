@@ -57,7 +57,7 @@ export default function ZikrFocusOverlay({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.25 }}
               className="fixed inset-0 flex flex-col overflow-hidden"
-              style={{ zIndex: 99999, background: '#0e0d0a' }}
+              style={{ zIndex: 99999, background: 'rgb(var(--c-void))' }}
             >
               {/* ── Calm ambiance (redesigned, Istiak's spec): ONE fixed emerald
                    tone — no per-tap rainbow cycling, no sparkle strobing.
@@ -133,7 +133,7 @@ export default function ZikrFocusOverlay({
                   {types
                     .filter((typ) => typ !== selected)
                     .map((typ) => (
-                      <option key={typ} value={typ} className="bg-[#0e0d0a] text-white">
+                      <option key={typ} value={typ} className="bg-brand-void text-white">
                         {zikrDisplayName(typ, i18n.language)}
                       </option>
                     ))}

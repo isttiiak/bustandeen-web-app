@@ -76,7 +76,7 @@
          Kept on ONE line: its sha256 is allow-listed in the CSP in
          /vercel.json, and scripts/check-csp.mjs fails the build if the two
          drift apart. -->
-    <script>try{var d=document.documentElement,s=localStorage;d.setAttribute("data-theme",s.getItem("bustandeen_theme")||"bustandeen");if(s.getItem("bustandeen_idToken"))d.classList.add("has-session");else if(location.pathname==="/"&&s.getItem("bustandeen_lang")==="bn")location.replace("/bn")}catch(e){}</script>
+    <script>try{var d=document.documentElement,s=localStorage;d.hasAttribute("data-static")||d.setAttribute("data-theme",s.getItem("bustandeen_theme")||"bustandeen");if(s.getItem("bustandeen_idToken"))d.classList.add("has-session");else if(location.pathname==="/"&&s.getItem("bustandeen_lang")==="bn")location.replace("/bn")}catch(e){}</script>
     <style>.has-session [data-prerendered-landing]{display:none}</style>
   </head>
   <body>

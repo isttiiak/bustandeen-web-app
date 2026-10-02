@@ -36,7 +36,7 @@ export default function IslamicSpecialDay() {
           </p>
           <Link
             to="/"
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0"
           >
             {t('specialDays.backHome', '← Back to Home')}
           </Link>

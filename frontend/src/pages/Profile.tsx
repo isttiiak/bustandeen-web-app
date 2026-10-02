@@ -449,7 +449,7 @@ export default function Profile() {
           background: '#1a1812',
           color: '#f1f5f9',
           confirmButtonColor: '#ef4444',
-          customClass: { popup: 'rounded-3xl border border-[#3a3425]' },
+          customClass: { popup: 'rounded-3xl border border-brand-border' },
         });
       }
     } catch (err) {
@@ -465,7 +465,7 @@ export default function Profile() {
           background: '#1a1812',
           color: '#f1f5f9',
           confirmButtonColor: '#c9a96e',
-          customClass: { popup: 'rounded-3xl border border-[#3a3425]' },
+          customClass: { popup: 'rounded-3xl border border-brand-border' },
         });
       } else if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
         await Swal.fire({
@@ -478,7 +478,7 @@ export default function Profile() {
           background: '#1a1812',
           color: '#f1f5f9',
           confirmButtonColor: '#ef4444',
-          customClass: { popup: 'rounded-3xl border border-[#3a3425]' },
+          customClass: { popup: 'rounded-3xl border border-brand-border' },
         });
       }
     }
@@ -500,7 +500,7 @@ export default function Profile() {
       color: '#f1f5f9',
       confirmButtonColor: '#ef4444',
       cancelButtonColor: '#3a3425',
-      customClass: { popup: 'rounded-3xl border border-[#3a3425]' },
+      customClass: { popup: 'rounded-3xl border border-brand-border' },
     });
     if (!confirm.isConfirmed) return;
     setUnlinkingGoogle(true);

@@ -1089,7 +1089,7 @@ export default function SalatTracker() {
                                 onClick={() => handleStatus(prayerId, 'completed')}
                                 className={`px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold border transition-all ${
                                   status === 'completed'
-                                    ? 'bg-brand-emerald-dim text-white border-brand-emerald-dim shadow-[0_0_12px_rgba(16,185,129,0.4)]'
+                                    ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim shadow-[0_0_12px_rgba(16,185,129,0.4)]'
                                     : 'bg-brand-deep border-brand-border text-white/50 hover:border-brand-emerald/50 hover:text-white/80'
                                 }`}
                               >
@@ -1101,7 +1101,7 @@ export default function SalatTracker() {
                                 onClick={() => handleStatus(prayerId, 'kaza')}
                                 className={`px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold border transition-all ${
                                   status === 'kaza'
-                                    ? 'bg-brand-gold text-white border-brand-gold shadow-[0_0_12px_rgba(245,158,11,0.4)]'
+                                    ? 'bg-brand-gold text-on-color border-brand-gold shadow-[0_0_12px_rgba(245,158,11,0.4)]'
                                     : 'bg-brand-deep border-brand-border text-white/50 hover:border-brand-gold/50 hover:text-white/80'
                                 }`}
                               >
@@ -1113,7 +1113,7 @@ export default function SalatTracker() {
                                 onClick={() => handleStatus(prayerId, 'missed')}
                                 className={`px-1.5 py-1 sm:px-2.5 sm:py-1.5 rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-bold border transition-all ${
                                   status === 'missed'
-                                    ? 'bg-red-500 text-white border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.3)]'
+                                    ? 'bg-red-500 text-on-color border-red-500 shadow-[0_0_12px_rgba(239,68,68,0.3)]'
                                     : 'bg-brand-deep border-brand-border text-white/50 hover:border-red-400/50 hover:text-white/80'
                                 }`}
                               >

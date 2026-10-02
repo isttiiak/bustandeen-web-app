@@ -106,7 +106,7 @@ export default function StreakCard({
             {isPaused ? (
               <span className="relative inline-flex items-center gap-2">
                 <span className="w-2.5 h-2.5 rounded-full bg-brand-pink shadow-[0_0_12px_rgba(244,63,94,0.8)] animate-pulse" />
-                <span className="px-2 py-0.5 rounded-full text-[11px] uppercase font-black tracking-wider bg-gradient-to-r from-brand-warm/90 via-brand-warm/80 to-brand-gold/80 text-white ring-1 ring-inset ring-brand-pink/40">
+                <span className="px-2 py-0.5 rounded-full text-[11px] uppercase font-black tracking-wider bg-gradient-to-r from-brand-warm/90 via-brand-warm/80 to-brand-gold/80 text-on-color ring-1 ring-inset ring-brand-pink/40">
                   {t('zikrAnalytics.streakCard.paused', 'Paused')}
                 </span>
               </span>
@@ -402,7 +402,7 @@ export default function StreakCard({
                 disabled={isLoading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black text-white bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border border-brand-emerald/40 disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border border-brand-emerald/40 disabled:opacity-60"
               >
                 <PlayIcon className="w-3.5 h-3.5" />
                 {t('zikrAnalytics.streakCard.resumeNow', 'Resume now')}

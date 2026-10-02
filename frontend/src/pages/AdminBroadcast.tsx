@@ -112,7 +112,7 @@ export default function AdminBroadcast() {
               <button
                 onClick={publish}
                 disabled={!form.title.trim() || !form.body.trim() || create.isPending}
-                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
+                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
               >
                 {create.isPending ? '…' : t('adminBroadcast.publish', 'Publish')}
               </button>

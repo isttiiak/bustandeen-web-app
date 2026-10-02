@@ -191,7 +191,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button
-            className="btn btn-sm w-full rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+            className="btn btn-sm w-full rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
             disabled={!reqName.trim() || submitZikrRequest.isPending}
             onClick={submitRequest}
           >
@@ -253,7 +253,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
               </p>
               <div className="flex flex-col gap-2 mt-4">
                 <button
-                  className="btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                  className="btn btn-sm rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                   disabled={submitZikrRequest.isPending}
                   onClick={requestFromConsent}
                 >

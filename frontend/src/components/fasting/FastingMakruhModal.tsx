@@ -102,7 +102,7 @@ export default function FastingMakruhModal({
               <div className="flex gap-3">
                 <button
                   onClick={() => setWarnState(null)}
-                  className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 font-bold"
+                  className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 font-bold"
                 >
                   {t('fasting.illReconsider', "I'll reconsider")}
                 </button>

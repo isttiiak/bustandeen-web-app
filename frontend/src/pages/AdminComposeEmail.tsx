@@ -38,7 +38,7 @@ function InboxPicker({ onPick }: { onPick: (message: AdminFeedbackMessage) => vo
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'btn-ghost text-white/50'}`}
+            className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
           >
             {s}
           </button>
@@ -172,19 +172,19 @@ export default function AdminComposeEmail() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => switchMode('inbox')}
-            className={`btn btn-sm rounded-lg ${mode === 'inbox' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'btn-ghost text-white/50'}`}
+            className={`btn btn-sm rounded-lg ${mode === 'inbox' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
           >
             {t('adminCompose.modeInbox', 'Reply to someone who wrote in')}
           </button>
           <button
             onClick={() => switchMode('custom')}
-            className={`btn btn-sm rounded-lg ${mode === 'custom' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'btn-ghost text-white/50'}`}
+            className={`btn btn-sm rounded-lg ${mode === 'custom' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
           >
             {t('adminCompose.modeCustom', 'Custom recipient')}
           </button>
           <button
             onClick={() => switchMode('mailbox')}
-            className={`btn btn-sm rounded-lg ${mode === 'mailbox' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'btn-ghost text-white/50'}`}
+            className={`btn btn-sm rounded-lg ${mode === 'mailbox' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
           >
             {t('adminCompose.modeMailbox', 'Founder mailbox')}
           </button>
@@ -247,7 +247,7 @@ export default function AdminComposeEmail() {
             <button
               onClick={() => setReviewing(true)}
               disabled={!canReviewThread}
-              className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
+              className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
             >
               {t('adminCompose.review', 'Review & send')}
             </button>
@@ -300,7 +300,7 @@ export default function AdminComposeEmail() {
             <button
               onClick={() => setReviewing(true)}
               disabled={!canReviewCustom}
-              className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
+              className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
             >
               {t('adminCompose.review', 'Review & send')}
             </button>
@@ -332,7 +332,7 @@ export default function AdminComposeEmail() {
               <button
                 onClick={mode === 'inbox' ? confirmSendThread : confirmSendCustom}
                 disabled={send.isPending}
-                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
+                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
               >
                 {send.isPending ? '…' : t('adminCompose.confirmSend', 'Send this email')}
               </button>

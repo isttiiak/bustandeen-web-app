@@ -351,7 +351,7 @@ export default function ZikrCounter() {
     toast(
       (toastObj) => (
         <div className="flex flex-col gap-3">
-          <p className="font-semibold text-brand-deep text-sm">
+          <p className="font-semibold text-ink-fixed text-sm">
             {t('zikr.resetConfirmTitle', { name: zikrDisplayName(selected, i18n.language) })}
             <br />
             <span className="text-white text-xs">{t('zikr.resetConfirmNote')}</span>
@@ -363,7 +363,7 @@ export default function ZikrCounter() {
                 toast.dismiss(toastObj.id);
                 toast.success(t('zikr.counterReset'), { icon: '🔄', duration: 2000 });
               }}
-              className="btn btn-sm bg-red-500 hover:bg-red-600 text-white border-0"
+              className="btn btn-sm bg-red-500 hover:bg-red-600 text-on-color border-0"
             >
               {t('zikr.resetBtn')}
             </button>
@@ -734,7 +734,7 @@ export default function ZikrCounter() {
             whileHover={{ scale: 1.04, backgroundColor: '#e6faf4' }}
             whileTap={{ scale: 0.96, backgroundColor: '#d1fae5' }}
             onClick={onIncrement}
-            className="flex items-center justify-center gap-2 w-44 sm:w-56 h-14 rounded-2xl text-brand-deep font-bold text-lg cursor-pointer select-none outline-none border-0"
+            className="flex items-center justify-center gap-2 w-44 sm:w-56 h-14 rounded-2xl text-ink-fixed font-bold text-lg cursor-pointer select-none outline-none border-0"
             style={{ backgroundColor: 'white', boxShadow: `0 8px 32px ${color.glow}50` }}
           >
             <PlusIcon className="w-6 h-6" />

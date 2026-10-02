@@ -284,7 +284,7 @@ export default function FeedbackForm({
         type="submit"
         whileTap={{ scale: 0.98 }}
         disabled={!canSend}
-        className="w-full btn h-12 rounded-2xl border-0 text-white font-black bg-gradient-to-r from-brand-emerald-dim via-brand-info-dim to-brand-info-dim hover:opacity-90 disabled:opacity-40 gap-2"
+        className="w-full btn h-12 rounded-2xl border-0 text-on-color font-black bg-gradient-to-r from-brand-emerald-dim via-brand-info-dim to-brand-info-dim hover:opacity-90 disabled:opacity-40 gap-2"
       >
         {sending ? (
           <span className="loading loading-spinner loading-sm" />

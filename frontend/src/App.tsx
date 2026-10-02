@@ -210,8 +210,6 @@ export default function App() {
 
   useEffect(() => {
     init();
-    const theme = localStorage.getItem('bustandeen_theme') || 'bustandeen';
-    document.documentElement.setAttribute('data-theme', theme);
 
     const onUser = async (u: User | null) => {
       if (useAuthStore.getState().isDemoMode) return;

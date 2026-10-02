@@ -200,41 +200,42 @@ export const FULL_PREDEFINED: Record<
   },
 };
 
+// Theme tokens (styles/global.css), so the light theme gets its darker shades.
 export const GLOW_PALETTE = [
   {
-    glow: 'rgba(122,158,110,0.9)',
-    ring: 'rgba(122,158,110,0.3)',
+    glow: 'rgb(var(--c-emerald) / 0.9)',
+    ring: 'rgb(var(--c-emerald) / 0.3)',
     bar: 'bg-brand-emerald',
-    solid: '#7a9e6e',
+    solid: 'rgb(var(--c-emerald))',
   },
   {
-    glow: 'rgba(201,169,110,0.9)',
-    ring: 'rgba(201,169,110,0.3)',
+    glow: 'rgb(var(--c-gold) / 0.9)',
+    ring: 'rgb(var(--c-gold) / 0.3)',
     bar: 'bg-brand-gold',
-    solid: '#c9a96e',
+    solid: 'rgb(var(--c-gold))',
   },
   {
-    glow: 'rgba(90,158,142,0.9)',
-    ring: 'rgba(90,158,142,0.3)',
+    glow: 'rgb(var(--c-info) / 0.9)',
+    ring: 'rgb(var(--c-info) / 0.3)',
     bar: 'bg-brand-info',
-    solid: '#5a9e8e',
+    solid: 'rgb(var(--c-info))',
   },
   {
-    glow: 'rgba(196,130,90,0.9)',
-    ring: 'rgba(196,130,90,0.3)',
+    glow: 'rgb(var(--c-warm) / 0.9)',
+    ring: 'rgb(var(--c-warm) / 0.3)',
     bar: 'bg-brand-warm',
-    solid: '#c4825a',
+    solid: 'rgb(var(--c-warm))',
   },
   {
-    glow: 'rgba(90,158,142,0.9)',
-    ring: 'rgba(90,158,142,0.3)',
+    glow: 'rgb(var(--c-info) / 0.9)',
+    ring: 'rgb(var(--c-info) / 0.3)',
     bar: 'bg-brand-info',
-    solid: '#5a9e8e',
+    solid: 'rgb(var(--c-info))',
   },
   {
-    glow: 'rgba(196,130,90,0.9)',
-    ring: 'rgba(196,130,90,0.3)',
+    glow: 'rgb(var(--c-warm) / 0.9)',
+    ring: 'rgb(var(--c-warm) / 0.3)',
     bar: 'bg-brand-info',
-    solid: '#c4825a',
+    solid: 'rgb(var(--c-warm))',
   },
 ];

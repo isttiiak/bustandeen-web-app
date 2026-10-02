@@ -260,7 +260,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                       onClick={() => setGoal(p)}
                       className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
                         goal === p
-                          ? 'bg-brand-emerald-dim text-white border-brand-emerald-dim'
+                          ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim'
                           : 'bg-white/5 border-brand-emerald/15 text-white/60 hover:border-brand-emerald/40'
                       }`}
                     >
@@ -284,7 +284,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                   <span className="text-white/30 text-[11px]">/ day</span>
                 </div>
                 <button
-                  className="w-full btn btn-sm h-10 mt-3 rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim disabled:opacity-50"
+                  className="w-full btn btn-sm h-10 mt-3 rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim disabled:opacity-50"
                   onClick={saveGoal}
                   disabled={!goalDirty || updateProfile.isPending}
                 >
