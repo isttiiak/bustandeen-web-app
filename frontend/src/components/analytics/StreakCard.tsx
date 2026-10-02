@@ -44,7 +44,7 @@ const BAR = {
   partial: 'rgb(var(--c-data-mid) / 0.6)',
   grace: 'rgb(var(--c-info) / 0.5)',
   missed: 'rgb(var(--c-data-none) / 0.45)',
-  empty: 'rgb(var(--c-shade) / 0.15)',
+  empty: 'var(--track)',
 };
 
 function heatmapColor(total: number, goal: number | null | undefined): string {

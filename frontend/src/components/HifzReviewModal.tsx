@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import {
+  XMarkIcon,
+  XCircleIcon,
+  QuestionMarkCircleIcon,
+  CheckCircleIcon,
+} from '@heroicons/react/24/outline';
 import { loadSurahText, surahDisplayName, type SurahMeta } from '../utils/quranData.js';
 import type { HifzResult } from '../hooks/useHifz.js';
 
@@ -159,7 +164,7 @@ export default function HifzReviewModal({
               onClick={() => onResult('forgot')}
               className="btn btn-sm bg-red-500/15 hover:bg-red-500/25 text-red-400 border-0 flex-col h-auto py-2.5 gap-0.5"
             >
-              <span className="text-lg">😞</span>
+              <XCircleIcon className="w-5 h-5" aria-hidden="true" />
               <span className="text-[10px] font-bold">{t('hifz.forgot', 'Forgot')}</span>
             </button>
             <button
@@ -167,7 +172,7 @@ export default function HifzReviewModal({
               onClick={() => onResult('hesitant')}
               className="btn btn-sm bg-brand-gold/15 hover:bg-brand-gold/25 text-brand-gold border-0 flex-col h-auto py-2.5 gap-0.5"
             >
-              <span className="text-lg">🤔</span>
+              <QuestionMarkCircleIcon className="w-5 h-5" aria-hidden="true" />
               <span className="text-[10px] font-bold">{t('hifz.hesitant', 'Hesitant')}</span>
             </button>
             <button
@@ -175,7 +180,7 @@ export default function HifzReviewModal({
               onClick={() => onResult('easy')}
               className="btn btn-sm bg-brand-emerald/15 hover:bg-brand-emerald/25 text-brand-emerald border-0 flex-col h-auto py-2.5 gap-0.5"
             >
-              <span className="text-lg">😊</span>
+              <CheckCircleIcon className="w-5 h-5" aria-hidden="true" />
               <span className="text-[10px] font-bold">{t('hifz.easy', 'Easy')}</span>
             </button>
           </div>

@@ -20,12 +20,22 @@ import {
 } from '../hooks/useHifz.js';
 import { loadSurahList, surahDisplayName, type SurahMeta } from '../utils/quranData.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
+import {
+  AcademicCapIcon,
+  ArrowPathIcon,
+  FireIcon,
+  PlusCircleIcon,
+  Squares2X2Icon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
+import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/quran/quranStyles.js';
 
+// Data tokens: distinct hues in both themes (bright on paper).
 const STATE_COLOR: Record<string, string> = {
-  new: 'bg-white/10',
-  learning: 'bg-red-500/50',
-  consolidating: 'bg-brand-gold/50',
-  solid: 'bg-brand-emerald/60',
+  new: 'bg-shade/30',
+  learning: 'bg-data-none/70',
+  consolidating: 'bg-data-mid',
+  solid: 'bg-data-good',
 };
 
 const STATE_LABEL_KEY: Record<string, string> = {
@@ -88,11 +98,11 @@ export default function QuranHifz() {
   if (isDemoMode) {
     return (
       <DemoSignInGate
-        emoji="🧠"
+        icon={<AcademicCapIcon className="w-7 h-7" />}
         title={t('demoGate.hifzTitle', 'Your memorisation journey awaits')}
         desc={t(
           'demoGate.hifzDesc',
-          'Your Hifz progress — memorised āyāt, revision schedule, and weak spots — lives in your account.'
+          'Your Hifz progress (memorised āyāt, revision schedule and weak spots) lives in your account.'
         )}
         backTo="/quran"
         backLabel={t('demoGate.backToQuran', 'Back to Quran')}
@@ -110,12 +120,16 @@ export default function QuranHifz() {
         <QuranTabNav active="hifz" />
 
         {/* Daily targets */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
+        <div className={`${CARD} p-5`}>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-white font-black">{t('hifz.todayTitle', "Today's targets")}</h2>
+            <h2 className={SECTION_TITLE}>
+              <AcademicCapIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
+              {t('hifz.todayTitle', "Today's targets")}
+            </h2>
             <div className="flex items-center gap-2">
-              <span className="text-brand-gold text-xs font-bold">
-                🔥 {formatLocaleNumber(summary?.streak ?? 0)}
+              <span className="inline-flex items-center gap-1 text-brand-warm text-xs font-bold">
+                <FireIcon className="w-4 h-4" aria-hidden="true" />
+                {formatLocaleNumber(summary?.streak ?? 0)}
               </span>
               <button
                 onClick={() => {
@@ -123,7 +137,7 @@ export default function QuranHifz() {
                   setRevisionTargetInput(String(summary?.profile.dailyRevisionTarget ?? 15));
                   setTargetsOpen((v) => !v);
                 }}
-                className="text-white/30 text-[10px] font-bold uppercase hover:text-white"
+                className="px-2 py-1 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/70 text-[10px] font-bold uppercase hover:text-white"
               >
                 {t('hifz.editTargets', 'Edit')}
               </button>
@@ -131,7 +145,7 @@ export default function QuranHifz() {
           </div>
 
           {targetsOpen && (
-            <div className="mb-4 p-3 rounded-2xl bg-white/5 border border-brand-border flex flex-col gap-2">
+            <div className="mb-4 p-3 rounded-control bg-shade/10 border border-brand-border flex flex-col gap-2">
               <label className="flex items-center justify-between text-xs text-white/60">
                 {t('hifz.newTargetLabel', 'New ayat / day')}
                 <input
@@ -166,7 +180,7 @@ export default function QuranHifz() {
                     { onSuccess: () => setTargetsOpen(false) }
                   );
                 }}
-                className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color self-end"
+                className={`${BTN_PRIMARY} !py-1.5 !px-3 text-xs self-end`}
               >
                 {t('common.save', 'Save')}
               </button>
@@ -175,16 +189,16 @@ export default function QuranHifz() {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <div className="flex justify-between text-[10px] text-white/40 mb-1">
+              <div className="flex justify-between text-[11px] text-white/70 mb-1">
                 <span>{t('hifz.newLabel', 'New')}</span>
                 <span>
                   {formatLocaleNumber(summary?.today.newCount ?? 0)}/
                   {formatLocaleNumber(summary?.profile.dailyNewTarget ?? 0)}
                 </span>
               </div>
-              <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-2 rounded-full bg-track overflow-hidden">
                 <div
-                  className={`h-full rounded-full ${summary?.newGoalMet ? 'bg-brand-emerald' : 'bg-gradient-to-r from-brand-emerald/60 to-brand-info/60'}`}
+                  className={`h-full rounded-full ${summary?.newGoalMet ? 'bg-data-good' : 'bg-data-good/60'}`}
                   style={{
                     width: `${Math.min(100, ((summary?.today.newCount ?? 0) / Math.max(1, summary?.profile.dailyNewTarget ?? 1)) * 100)}%`,
                   }}
@@ -192,16 +206,16 @@ export default function QuranHifz() {
               </div>
             </div>
             <div>
-              <div className="flex justify-between text-[10px] text-white/40 mb-1">
+              <div className="flex justify-between text-[11px] text-white/70 mb-1">
                 <span>{t('hifz.revisionLabel', 'Revision')}</span>
                 <span>
                   {formatLocaleNumber(summary?.today.revisionCount ?? 0)}/
                   {formatLocaleNumber(summary?.profile.dailyRevisionTarget ?? 0)}
                 </span>
               </div>
-              <div className="h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="h-2 rounded-full bg-track overflow-hidden">
                 <div
-                  className={`h-full rounded-full ${summary?.revisionGoalMet ? 'bg-brand-emerald' : 'bg-gradient-to-r from-brand-gold/60 to-brand-emerald/60'}`}
+                  className={`h-full rounded-full ${summary?.revisionGoalMet ? 'bg-data-good' : 'bg-data-mid'}`}
                   style={{
                     width: `${Math.min(100, ((summary?.today.revisionCount ?? 0) / Math.max(1, summary?.profile.dailyRevisionTarget ?? 1)) * 100)}%`,
                   }}
@@ -212,15 +226,16 @@ export default function QuranHifz() {
         </div>
 
         {/* Add new memorisation */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
-          <h2 className="text-white font-black mb-3">
+        <div className={`${CARD} p-5`}>
+          <h2 className={`${SECTION_TITLE} mb-3`}>
+            <PlusCircleIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
             {t('hifz.addNewTitle', 'Memorise something new')}
           </h2>
           {nextNew ? (
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-white font-bold text-sm">{nameOf(nextNew.surah)}</p>
-                <p className="text-white/40 text-xs">
+                <p className="text-white/60 text-xs">
                   {t('hifz.ayahNo', { n: nextNew.ayah, defaultValue: 'Āyah {{n}}' })}
                 </p>
               </div>
@@ -228,14 +243,14 @@ export default function QuranHifz() {
                 onClick={() =>
                   setLearning({ surah: nextNew.surah, ayah: nextNew.ayah, mode: 'next' })
                 }
-                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
+                className={BTN_PRIMARY}
               >
                 {t('hifz.startMemorising', 'Start memorising')}
               </button>
             </div>
           ) : (
-            <p className="text-white/40 text-xs">
-              {t('hifz.allMemorised', "You've started every āyah in the mushaf — masha'Allah!")}
+            <p className="text-white/60 text-xs">
+              {t('hifz.allMemorised', "You've started every āyah in the mushaf. Masha'Allah!")}
             </p>
           )}
           <button
@@ -247,8 +262,8 @@ export default function QuranHifz() {
               : t('hifz.pickDifferent', 'Pick a specific āyah instead →')}
           </button>
           {pickerOpen && (
-            <div className="mt-3 p-3 rounded-2xl bg-white/5 border border-brand-border flex flex-wrap items-end gap-2">
-              <label className="flex flex-col text-[10px] text-white/40 font-bold uppercase gap-1">
+            <div className="mt-3 p-3 rounded-control bg-shade/10 border border-brand-border flex flex-wrap items-end gap-2">
+              <label className="flex flex-col text-[10px] text-white/60 font-bold uppercase gap-1">
                 {t('hifz.surah', 'Surah')}
                 <select
                   value={pickSurah}
@@ -266,7 +281,7 @@ export default function QuranHifz() {
                   ))}
                 </select>
               </label>
-              <label className="flex flex-col text-[10px] text-white/40 font-bold uppercase gap-1">
+              <label className="flex flex-col text-[10px] text-white/60 font-bold uppercase gap-1">
                 {t('hifz.ayah', 'Āyah')}
                 <input
                   type="number"
@@ -279,7 +294,7 @@ export default function QuranHifz() {
               </label>
               <button
                 onClick={() => setLearning({ surah: pickSurah, ayah: pickAyah, mode: 'manual' })}
-                className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
+                className={`${BTN_PRIMARY} !py-1.5 !px-3 text-xs`}
               >
                 {t('hifz.add', 'Add')}
               </button>
@@ -288,33 +303,34 @@ export default function QuranHifz() {
         </div>
 
         {/* Due for revision */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
+        <div className={`${CARD} p-5`}>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-white font-black">{t('hifz.dueTitle', 'Due for revision')}</h2>
-            <span className="text-white/30 text-xs">
+            <h2 className={SECTION_TITLE}>
+              <ArrowPathIcon className="w-4 h-4 text-brand-gold" aria-hidden="true" />
+              {t('hifz.dueTitle', 'Due for revision')}
+            </h2>
+            <span className="text-white/60 text-xs">
               {t('hifz.dueCount', { count: dueList.length, defaultValue: '{{count}} due' })}
             </span>
           </div>
           {dueList.length === 0 ? (
-            <p className="text-white/30 text-xs">
-              {t('hifz.dueEmpty', "Nothing due right now — you're all caught up.")}
+            <p className="text-white/60 text-xs">
+              {t('hifz.dueEmpty', "Nothing due right now. You're all caught up.")}
             </p>
           ) : (
             <div className="space-y-1.5">
               {dueList.map((e) => (
                 <div
                   key={`${e.surah}-${e.ayah}`}
-                  className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10 transition-colors"
+                  className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-control border border-brand-border bg-brand-surface/50 hover:bg-brand-surface transition-colors"
                 >
                   <button
                     onClick={() => setReviewing(e)}
                     className="flex items-center gap-2 min-w-0 flex-1 text-left"
                   >
                     <span className={`w-2 h-2 rounded-full shrink-0 ${STATE_COLOR[e.state]}`} />
-                    <span className="text-white/80 text-xs font-bold truncate">
-                      {nameOf(e.surah)}
-                    </span>
-                    <span className="text-white/30 text-xs shrink-0">
+                    <span className="text-white text-xs font-bold truncate">{nameOf(e.surah)}</span>
+                    <span className="text-white/60 text-xs shrink-0">
                       {t('hifz.ayahNo', { n: e.ayah, defaultValue: 'Āyah {{n}}' })}
                     </span>
                   </button>
@@ -334,9 +350,9 @@ export default function QuranHifz() {
                       }
                     )}
                     onClick={() => setPendingRemove(e)}
-                    className="text-white/20 hover:text-red-300 text-xs shrink-0"
+                    className="text-white/50 hover:text-red-400 shrink-0"
                   >
-                    🗑
+                    <TrashIcon className="w-4 h-4" />
                   </button>
                 </div>
               ))}
@@ -345,15 +361,16 @@ export default function QuranHifz() {
         </div>
 
         {/* Weak-spot heatmap */}
-        <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
-          <h2 className="text-white font-black mb-1">
+        <div className={`${CARD} p-5`}>
+          <h2 className={`${SECTION_TITLE} mb-1`}>
+            <Squares2X2Icon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
             {t('hifz.heatmapTitle', 'Weak-spot heatmap')}
           </h2>
-          <p className="text-white/30 text-[10px] mb-3">
+          <p className="text-white/60 text-xs mb-3">
             {t('hifz.heatmapHint', 'Coverage and strength across every surah you have started')}
           </p>
           {(summary?.heatmap ?? []).length === 0 ? (
-            <p className="text-white/30 text-xs">
+            <p className="text-white/60 text-xs">
               {t('hifz.heatmapEmpty', 'Start memorising an āyah to see your progress here.')}
             </p>
           ) : (
@@ -364,9 +381,9 @@ export default function QuranHifz() {
                   <div
                     key={row.surah}
                     title={`${nameOf(row.surah)}: ${row.memorised}/${row.totalAyat} started · ${row.solid} solid`}
-                    className="aspect-square rounded-md flex items-center justify-center text-[9px] font-bold text-white/70"
+                    className="aspect-square rounded-md flex items-center justify-center text-[9px] font-bold text-white"
                     style={{
-                      backgroundColor: `rgba(16, 185, 129, ${0.12 + (weakPct / 100) * 0.55})`,
+                      backgroundColor: `rgb(var(--c-data-good) / ${0.15 + (weakPct / 100) * 0.6})`,
                       opacity: Math.max(0.35, row.memorised / heatmapMax + 0.35),
                     }}
                   >
@@ -376,7 +393,7 @@ export default function QuranHifz() {
               })}
             </div>
           )}
-          <div className="flex items-center justify-center gap-4 mt-3 text-[9px] text-white/30">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 mt-3 text-[10px] text-white/60">
             {(['new', 'learning', 'consolidating', 'solid'] as const).map((s) => (
               <span key={s} className="flex items-center gap-1">
                 <span className={`w-2 h-2 rounded-full ${STATE_COLOR[s]}`} />
@@ -389,14 +406,11 @@ export default function QuranHifz() {
         {/* Totals */}
         <div className="grid grid-cols-4 gap-2">
           {(['new', 'learning', 'consolidating', 'solid'] as const).map((s) => (
-            <div
-              key={s}
-              className="rounded-2xl bg-brand-deep/80 border border-brand-border p-3 text-center"
-            >
-              <p className="text-lg font-black text-white">
+            <div key={s} className={`${TILE} !p-3`}>
+              <p className="font-display text-lg font-bold text-white">
                 {formatLocaleNumber(summary?.totals[s] ?? 0)}
               </p>
-              <p className="text-white/30 text-[9px] font-bold uppercase mt-0.5">
+              <p className="text-white/60 text-[9px] font-bold uppercase mt-0.5">
                 {t(STATE_LABEL_KEY[s])}
               </p>
             </div>

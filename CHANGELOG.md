@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.92.0 - Quran in the Bustan Arch design - 2026-10-03
+
+### Fixed
+
+- **Two citations pointed to the wrong source.** On the Khatam page, "Recite the Quran, for it will come as an intercessor for its companions on the Day of Resurrection" was cited as Quran 73:4; it is a hadith, Ṣaḥīḥ Muslim 804 (Abū Umāmah). On the Listen page, "When the Quran is recited, listen to it and be silent" was cited as Bukhārī 5049; it is Quran 7:204. Both checked on sunnah.com and quran.com; a test keeps them fixed.
+
+### Changed
+
+- **Quran is the fourth screen in the new design** (audit T3.2). The Quran home has one arch with today's reading ring and two clear actions (continue the khatam, pick a surah); the Khatam journey has its own arch. Every room (Khatam, Read, Listen, Saved, Hifz, Analytics, the reader) uses the theme's raised cards with the same radius and shadow, so text stays readable on dark and on sage paper.
+- Room tabs are plain words with SVG icons (book, star, list, speaker, bookmark, cap, chart) on the same switcher as Zikr and Salat, and the navbar shows an SVG icon for Quran.
+- Emoji are gone from the Quran rooms: beloved surahs, protection āyāt and duʿās use drawn star, shield and raised-hands marks; save/remove, play/volume, timers, toasts, empty states, the Hifz recall buttons and the sign-in screens use SVG icons. Buttons are solid dark sage or raised paper instead of gradients, and bars use the new data and track colours.
+- Quran copy in English and Bangla no longer uses emoji or em dashes (room tabs, settings drawer, reader, listening, Saved, Hifz, analytics help, share-image toasts). Quran text, translations and hadith wording are unchanged.
+
+### Changed (developers)
+
+- `components/quran/quranStyles.ts` (`CARD`, `TILE`, `ITEM`, `SECTION_TITLE`, `BTN_PRIMARY`, `BTN_SECONDARY`, `REF_LINK`) and `SEGMENT` in `TabNav.tsx`, shared by all Quran rooms. `DemoSignInGate` takes an SVG `icon`.
+- New `--track` token (Tailwind `track`): the empty part of bars and rings, white 10% on dark and soft sage on paper (black shade was invisible on dark).
+- `pages/quranRooms.test.ts`: no emoji in the Quran pages' code, and the two citations above.
+- **Not redesigned yet:** the Quran settings drawer's layout (only its emoji and dashes changed) and the reader's fullscreen split; do them with Settings.
+
 ## v5.91.1 - Salat analytics day fix, light theme polish - 2026-10-03
 
 ### Fixed

@@ -136,9 +136,9 @@ export default function ShareAyahModal({
       const blob = await capture();
       if (!blob) throw new Error('capture failed');
       await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
-      toast.success(t('shareAyah.copied', 'Copied — paste it anywhere'));
+      toast.success(t('shareAyah.copied', 'Copied. Paste it anywhere'));
     } catch {
-      toast.error(t('shareAyah.copyError', "Couldn't copy the image — try downloading instead."));
+      toast.error(t('shareAyah.copyError', "Couldn't copy the image. Try downloading instead."));
     } finally {
       setBusyAction(null);
     }
@@ -156,7 +156,7 @@ export default function ShareAyahModal({
       a.click();
       URL.revokeObjectURL(url);
     } catch {
-      toast.error(t('shareAyah.captureError', "Couldn't generate the image — try again."));
+      toast.error(t('shareAyah.captureError', "Couldn't generate the image. Try again."));
     } finally {
       setBusyAction(null);
     }
@@ -182,7 +182,7 @@ export default function ShareAyahModal({
       }
     } catch (err) {
       if ((err as Error)?.name !== 'AbortError') {
-        toast.error(t('shareAyah.captureError', "Couldn't generate the image — try again."));
+        toast.error(t('shareAyah.captureError', "Couldn't generate the image. Try again."));
       }
     } finally {
       setBusyAction(null);

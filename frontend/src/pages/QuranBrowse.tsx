@@ -13,7 +13,7 @@ import { formatLocaleNumber } from '../utils/localeDate.js';
 import { ArrowUpIcon } from '@heroicons/react/24/solid';
 
 /**
- * Free reading — pick ANY surah, any time (the flexibility Istiak asked for:
+ * Free reading: pick ANY surah, any time (the flexibility Istiak asked for:
  * "user might need to read some of the special surah in a specific time").
  * Everything read here still counts toward the daily goal and streak.
  */
@@ -69,45 +69,45 @@ export default function QuranBrowse() {
             type="search"
             placeholder={t('quranBrowse.searchPlaceholder')}
             aria-label={t('quranBrowse.searchAriaLabel')}
-            className="input input-bordered w-full bg-white/5 border-brand-emerald/10 text-white rounded-2xl"
+            className="input input-bordered w-full bg-brand-deep border-brand-border text-white rounded-control shadow-elev-1 placeholder:text-white/50 focus:border-brand-emerald/50"
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
         </div>
 
         {error ? (
-          <p className="text-white/40 text-sm text-center py-8">{t('quranBrowse.loadError')}</p>
+          <p className="text-white/60 text-sm text-center py-8">{t('quranBrowse.loadError')}</p>
         ) : surahs.length === 0 ? (
           <div className="grid place-items-center py-10">
             <span className="loading loading-spinner loading-lg text-brand-emerald" />
           </div>
         ) : (
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {filtered.map((s) => (
               <button
                 key={s.number}
-                className="w-full flex items-center gap-3 rounded-2xl bg-brand-deep/70 border border-brand-border hover:border-brand-emerald/40 px-4 py-3 text-left transition-all"
+                className="w-full flex items-center gap-3 rounded-card bg-brand-deep border border-brand-border shadow-elev-1 hover:border-brand-emerald/40 hover:shadow-hover px-4 py-3 text-left transition"
                 onClick={() => navigate(`/quran/read/${s.number}`)}
               >
-                <span className="w-9 h-9 rounded-xl bg-brand-emerald/10 border border-brand-emerald/25 grid place-items-center text-brand-emerald text-xs font-black shrink-0">
+                <span className="w-9 h-9 rounded-control bg-brand-emerald/10 border border-brand-emerald/30 grid place-items-center text-brand-emerald text-xs font-bold tabular-nums shrink-0">
                   {formatLocaleNumber(s.number)}
                 </span>
                 <span className="flex-1 min-w-0">
                   <span className="block text-white font-bold text-sm">
                     {surahDisplayName(s, i18n.language)}
                   </span>
-                  <span className="block text-white/30 text-xs truncate">
+                  <span className="block text-white/60 text-xs truncate">
                     {surahMeaningDisplay(s, i18n.language)} · {formatLocaleNumber(s.numberOfAyahs)}{' '}
                     āyāt · {s.revelationType}
                   </span>
                 </span>
-                <span className="text-xl text-white/70 font-serif" dir="rtl">
+                <span className="text-xl text-brand-gold font-serif" dir="rtl" lang="ar">
                   {s.name}
                 </span>
               </button>
             ))}
             {filtered.length === 0 && (
-              <p className="text-white/30 text-sm text-center py-6">
+              <p className="text-white/60 text-sm text-center py-6">
                 {t('quranBrowse.noMatch', { query: q })}
               </p>
             )}
@@ -118,7 +118,7 @@ export default function QuranBrowse() {
       {showTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-20 right-4 z-30 w-10 h-10 rounded-full bg-brand-emerald-dim text-on-color shadow-lg grid place-items-center hover:bg-brand-emerald-dim hover:brightness-90 transition-colors"
+          className="fixed bottom-20 right-4 z-30 w-10 h-10 rounded-full bg-brand-emerald-dim text-on-color shadow-elev-2 grid place-items-center hover:bg-brand-emerald-dim hover:brightness-90 transition-colors"
           aria-label={t('quranBrowse.scrollToTop')}
         >
           <ArrowUpIcon className="w-5 h-5" />
