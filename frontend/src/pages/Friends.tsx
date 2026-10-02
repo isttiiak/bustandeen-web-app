@@ -1,3 +1,4 @@
+import { UserAvatar } from '../components/icons/AvatarGlyphs.js';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -117,29 +118,21 @@ const RANK_BADGE = ['🥇', '🥈', '🥉'];
 function Avatar({
   name,
   photoUrl,
+  avatarId,
   size = 'w-10 h-10',
 }: {
   name: string;
   photoUrl?: string;
+  avatarId?: string;
   size?: string;
 }) {
-  if (photoUrl) {
-    return (
-      <img
-        src={photoUrl}
-        alt=""
-        className={`${size} rounded-full object-cover ring-2 ring-white/15 shrink-0`}
-      />
-    );
-  }
   return (
-    <div
-      className={`${size} rounded-full bg-brand-emerald/20 ring-2 ring-brand-emerald/30 grid place-items-center shrink-0`}
-    >
-      <span className="text-sm font-black text-brand-emerald">
-        {name?.[0]?.toUpperCase() ?? '؟'}
-      </span>
-    </div>
+    <UserAvatar
+      photoUrl={photoUrl}
+      avatarId={avatarId}
+      name={name}
+      className={`${size} text-sm ring-2 ring-white/15 shrink-0`}
+    />
   );
 }
 
@@ -213,7 +206,7 @@ function PendingRequestsModal({ onClose }: { onClose: () => void }) {
                 key={r.uid}
                 className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-3 flex items-center gap-3"
               >
-                <Avatar name={r.displayName} photoUrl={r.photoUrl} />
+                <Avatar name={r.displayName} photoUrl={r.photoUrl} avatarId={r.avatarId} />
                 <p className="flex-1 min-w-0 text-white font-bold text-sm truncate">
                   {r.displayName}
                 </p>
@@ -334,7 +327,7 @@ function ManageFriendsModal({ onClose }: { onClose: () => void }) {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <Avatar name={f.displayName} photoUrl={f.photoUrl} />
+                    <Avatar name={f.displayName} photoUrl={f.photoUrl} avatarId={f.avatarId} />
                     <div className="flex-1 min-w-0">
                       <p className="text-white font-bold text-sm truncate">{f.displayName}</p>
                       <p className="text-white/30 text-[11px] truncate">
@@ -520,7 +513,12 @@ function ManageFriendsModal({ onClose }: { onClose: () => void }) {
                   ) : (
                     blocked.map((b) => (
                       <div key={b.uid} className="flex items-center gap-2.5 py-1.5">
-                        <Avatar name={b.displayName} photoUrl={b.photoUrl} size="w-7 h-7" />
+                        <Avatar
+                          name={b.displayName}
+                          photoUrl={b.photoUrl}
+                          avatarId={b.avatarId}
+                          size="w-7 h-7"
+                        />
                         <p className="flex-1 min-w-0 text-white/70 text-xs font-semibold truncate">
                           {b.displayName}
                         </p>
@@ -737,7 +735,7 @@ export default function Friends() {
                           <span className="text-white/30 text-sm">{formatLocaleNumber(i + 1)}</span>
                         )}
                       </span>
-                      <Avatar name={f.displayName} photoUrl={f.photoUrl} />
+                      <Avatar name={f.displayName} photoUrl={f.photoUrl} avatarId={f.avatarId} />
                       <div className="flex-1 min-w-0">
                         <p className="text-white font-bold text-sm truncate">
                           {f.displayName}

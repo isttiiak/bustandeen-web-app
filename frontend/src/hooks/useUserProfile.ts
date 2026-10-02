@@ -8,6 +8,7 @@ export interface DBUserProfile {
   firstName?: string;
   lastName?: string;
   photoUrl?: string;
+  avatarId?: string;
   gender?: string;
   birthDate?: string;
   occupation?: string;

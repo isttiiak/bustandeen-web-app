@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AVATAR_IDS } from '../utils/avatars.js';
 
 export const linkGoogleSchema = z.object({
   body: z.object({
@@ -37,8 +38,7 @@ const photoUrlSchema = z
       return val.length <= 2048;
     },
     {
-      message:
-        'photoUrl must be an https URL (≤2 KB) or a base64 image/jpeg|png|webp (≤2 KB). Upload photos to Firebase Storage.',
+      message: 'photoUrl must be an https URL (≤2 KB) or a base64 image/jpeg|png|webp (≤2 KB).',
     }
   );
 
@@ -46,6 +46,9 @@ export const updateUserSchema = z.object({
   body: z.object({
     displayName: z.string().min(1).max(100).optional(),
     photoUrl: photoUrlSchema.optional(),
+    // A preset avatar id, or null to drop it. Setting one clears photoUrl and
+    // vice versa (see user.service updateUser).
+    avatarId: z.enum(AVATAR_IDS).nullable().optional(),
     firstName: z.string().max(100).optional(),
     lastName: z.string().max(100).optional(),
     gender: z.enum(['male', 'female', 'other', 'prefer_not_say']).optional(),

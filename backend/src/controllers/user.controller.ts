@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import * as userService from '../services/user.service.js';
 import * as userPrefsService from '../services/userPrefs.service.js';
 import { isAdminEmail } from '../middleware/auth.js';
+import type { AvatarId } from '../utils/avatars.js';
 
 export const getUserHandler = async (
   req: Request,
@@ -41,6 +42,7 @@ export const updateUserHandler = async (
     const {
       displayName,
       photoUrl,
+      avatarId,
       gender,
       birthDate,
       firstName,
@@ -55,6 +57,7 @@ export const updateUserHandler = async (
     } = req.body as {
       displayName?: string;
       photoUrl?: string;
+      avatarId?: AvatarId | null;
       gender?: 'male' | 'female' | 'other' | 'prefer_not_say';
       birthDate?: string;
       firstName?: string;
@@ -71,6 +74,7 @@ export const updateUserHandler = async (
     const user = await userService.updateUser(req.user.uid, {
       displayName,
       photoUrl,
+      avatarId,
       gender,
       birthDate,
       firstName,

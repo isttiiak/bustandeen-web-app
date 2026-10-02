@@ -150,6 +150,7 @@ export async function exportEverything(uid: string): Promise<PlainDoc> {
           city: u.city ?? null,
           country: u.country ?? null,
           photoUrl: u.photoUrl ?? null,
+          avatarId: u.avatarId ?? null,
           createdAt: u.createdAt ?? null,
           lastActiveAt: u.lastActiveAt ?? null,
         }

@@ -62,7 +62,8 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
         setDefaultsOnInsert: true,
         // Frontend only reads displayName/photoUrl here — don't ship the
         // zikr lifetime map and the rest of the doc on every session start.
-        projection: 'uid email displayName photoUrl gender hijriOffset dayStartMode disabled',
+        projection:
+          'uid email displayName photoUrl avatarId gender hijriOffset dayStartMode disabled',
       }
     );
 

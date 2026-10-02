@@ -251,6 +251,11 @@ export default function App() {
         if (cached?.uid === u.uid) {
           optimistic.displayName = cached.displayName ?? optimistic.displayName;
           optimistic.photoUrl = cached.photoUrl ?? optimistic.photoUrl;
+          // A chosen preset avatar wins over the Firebase (Google) photo.
+          if (cached.avatarId) {
+            optimistic.avatarId = cached.avatarId;
+            optimistic.photoUrl = null;
+          }
           // gender lives only in our DB, never in Firebase's own user object —
           // without this, every reload's optimistic rebuild dropped it for the
           // brief window before the background /api/auth/verify sync restored
@@ -311,6 +316,7 @@ export default function App() {
                 user?: {
                   displayName?: string;
                   photoUrl?: string;
+                  avatarId?: string;
                   gender?: AuthUser['gender'];
                   hijriOffset?: number;
                   dayStartMode?: DayStartMode;
@@ -320,7 +326,12 @@ export default function App() {
               const authUser: AuthUser = {
                 ...optimistic,
                 displayName: verifyData?.user?.displayName || optimistic.displayName,
-                photoUrl: verifyData?.user?.photoUrl || optimistic.photoUrl,
+                ...(verifyData?.user?.avatarId
+                  ? { photoUrl: null, avatarId: verifyData.user.avatarId }
+                  : {
+                      photoUrl: verifyData?.user?.photoUrl || optimistic.photoUrl,
+                      avatarId: null,
+                    }),
                 gender: verifyData?.user?.gender ?? optimistic.gender,
                 isAdmin: verifyData?.isAdmin ?? optimistic.isAdmin,
               };

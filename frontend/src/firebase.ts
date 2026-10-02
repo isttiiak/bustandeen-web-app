@@ -6,7 +6,6 @@ import {
   indexedDBLocalPersistence,
   initializeAuth,
 } from 'firebase/auth';
-import { getStorage } from 'firebase/storage';
 import { markFirebaseLoaded } from './authClient.js';
 
 // Loaded on demand through authClient.ts (never import this from a module the
@@ -34,7 +33,5 @@ export const auth = initializeAuth(app, {
 export const googleProvider = new GoogleAuthProvider();
 
 googleProvider.setCustomParameters({ prompt: 'select_account' });
-
-export const storage = getStorage(app);
 
 markFirebaseLoaded();

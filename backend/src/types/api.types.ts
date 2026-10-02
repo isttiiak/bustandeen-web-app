@@ -89,6 +89,7 @@ export interface UserProfile {
   email: string;
   displayName?: string;
   photoUrl?: string;
+  avatarId?: string;
   firstName?: string;
   lastName?: string;
   occupation?: string;

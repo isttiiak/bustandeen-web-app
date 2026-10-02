@@ -275,43 +275,6 @@ export function CountryFlag({ countryName }: { countryName: string }) {
   );
 }
 
-// ── Preset avatars ────────────────────────────────────────────────────────────
-export const PRESET_AVATARS = [
-  { id: 'sun', emoji: '☀️', label: 'Sun', bg: '#92400e' },
-  { id: 'moon', emoji: '🌙', label: 'Moon', bg: '#312e81' },
-  { id: 'star', emoji: '⭐', label: 'Star', bg: '#1e3a5f' },
-  { id: 'glowstar', emoji: '🌟', label: 'Glow Star', bg: '#3b1f63' },
-  { id: 'rose', emoji: '🌹', label: 'Rose', bg: '#7f1d1d' },
-  { id: 'tulip', emoji: '🌷', label: 'Tulip', bg: '#831843' },
-  { id: 'sunflower', emoji: '🌻', label: 'Sunflower', bg: '#713f12' },
-  { id: 'blossom', emoji: '🌸', label: 'Blossom', bg: '#9d174d' },
-  { id: 'leaf', emoji: '🌿', label: 'Leaf', bg: '#064e3b' },
-  { id: 'tree', emoji: '🌳', label: 'Tree', bg: '#14532d' },
-  { id: 'palm', emoji: '🌴', label: 'Palm', bg: '#365314' },
-  { id: 'mountain', emoji: '⛰️', label: 'Mountain', bg: '#292524' },
-  { id: 'ocean', emoji: '🌊', label: 'Ocean', bg: '#0c4a6e' },
-  { id: 'diamond', emoji: '💎', label: 'Diamond', bg: '#164e63' },
-  { id: 'crystal', emoji: '🔮', label: 'Crystal', bg: '#2e1065' },
-  { id: 'rainbow', emoji: '🌈', label: 'Rainbow', bg: '#3b0764' },
-] as const;
-
-export function createAvatarDataUrl(emoji: string, bg: string): string {
-  const canvas = document.createElement('canvas');
-  canvas.width = 200;
-  canvas.height = 200;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return '';
-  ctx.fillStyle = bg;
-  ctx.beginPath();
-  ctx.arc(100, 100, 100, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.font = '90px serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(emoji, 100, 108);
-  return canvas.toDataURL('image/png');
-}
-
 // ── Helpers ───────────────────────────────────────────────────────────────────
 export function calcFullAge(birthDate: string): { years: number; months: number } | null {
   if (!birthDate) return null;
@@ -369,6 +332,7 @@ export interface DBUser {
   firstName?: string;
   lastName?: string;
   photoUrl?: string;
+  avatarId?: string;
   gender?: string;
   birthDate?: string;
   occupation?: string;

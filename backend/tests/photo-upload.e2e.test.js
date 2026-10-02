@@ -98,3 +98,61 @@ describe('PATCH /api/user/me — photo upload path', () => {
     expect(second.status).toBe(304);
   });
 });
+
+describe('PATCH /api/user/me: preset avatars (no Firebase Storage)', () => {
+  const AV_UID = 'avatar-test-uid-1';
+  const AV_TOKEN = fakeJwt({ uid: AV_UID, email: 'avatar@test.dev' });
+  const patch = (body) =>
+    request(app).patch('/api/user/me').set('Authorization', `Bearer ${AV_TOKEN}`).send(body);
+
+  beforeAll(async () => {
+    process.env.DEV_AUTH_BYPASS = '1';
+    if (mongoose.connection.readyState === 0) {
+      mongo = await MongoMemoryServer.create();
+      await mongoose.connect(mongo.getUri(), { dbName: 'ihsan_avatar_test' });
+    }
+    await request(app).post('/api/auth/verify').send({ idToken: AV_TOKEN });
+  });
+
+  afterAll(async () => {
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.connection.dropDatabase().catch(() => {});
+      await mongoose.disconnect().catch(() => {});
+    }
+    if (mongo) await mongo.stop();
+  });
+
+  test('an existing photoUrl is untouched by unrelated profile edits', async () => {
+    const photo = 'https://lh3.googleusercontent.com/a/test-photo';
+    await patch({ photoUrl: photo });
+    const res = await patch({ bio: 'hello' });
+    expect(res.status).toBe(200);
+    expect(res.body.user.photoUrl).toBe(photo);
+  });
+
+  test('choosing an avatar stores its id and clears the photo', async () => {
+    const res = await patch({ avatarId: 'leaf' });
+    expect(res.status).toBe(200);
+    expect(res.body.user.avatarId).toBe('leaf');
+    expect(res.body.user.photoUrl).toBeUndefined();
+  });
+
+  test('choosing a photo again clears the avatar', async () => {
+    const res = await patch({ photoUrl: 'https://lh3.googleusercontent.com/a/other' });
+    expect(res.status).toBe(200);
+    expect(res.body.user.photoUrl).toMatch(/^https:/);
+    expect(res.body.user.avatarId).toBeUndefined();
+  });
+
+  test('an unknown avatar id is rejected', async () => {
+    const res = await patch({ avatarId: 'unicorn' });
+    expect(res.status).toBe(400);
+    expect(res.body.ok).toBe(false);
+  });
+
+  test('the verify response carries avatarId for the navbar', async () => {
+    await patch({ avatarId: 'crescent' });
+    const res = await request(app).post('/api/auth/verify').send({ idToken: AV_TOKEN });
+    expect(res.body.user.avatarId).toBe('crescent');
+  });
+});

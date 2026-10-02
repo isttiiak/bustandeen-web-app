@@ -1,6 +1,7 @@
 import admin from 'firebase-admin';
 import { isFirebaseInitialized } from '../config/firebaseAdmin.js';
 import User, { IUser, ILinkedProvider } from '../models/User.js';
+import { isAvatarId, type AvatarId } from '../utils/avatars.js';
 import ZikrDaily from '../models/ZikrDaily.js';
 import ZikrGoal from '../models/ZikrGoal.js';
 import ZikrStreak from '../models/ZikrStreak.js';
@@ -42,6 +43,7 @@ export interface ClientUser {
   linkedProviders: ILinkedProvider[];
   displayName?: string;
   photoUrl?: string;
+  avatarId?: AvatarId;
   firstName?: string;
   lastName?: string;
   occupation?: string;
@@ -70,6 +72,7 @@ export function toClientUser(user: IUser): ClientUser {
     })),
     displayName: user.displayName,
     photoUrl: user.photoUrl,
+    avatarId: user.avatarId,
     firstName: user.firstName,
     lastName: user.lastName,
     occupation: user.occupation,
@@ -94,6 +97,7 @@ export async function getUserById(uid: string): Promise<IUser | null> {
 export interface UserUpdateFields {
   displayName?: string;
   photoUrl?: string;
+  avatarId?: AvatarId | null;
   gender?: 'male' | 'female' | 'other' | 'prefer_not_say';
   birthDate?: Date | string;
   firstName?: string;
@@ -199,6 +203,21 @@ export async function updateUser(uid: string, fields: UserUpdateFields): Promise
     }
     updates.photoUrl = fields.photoUrl;
   }
+  // A photo and a preset avatar are mutually exclusive: choosing one clears
+  // the other, so every client shows the same picture.
+  const unset: Record<string, ''> = {};
+  if (fields.avatarId !== undefined) {
+    if (fields.avatarId === null) {
+      unset.avatarId = '';
+    } else if (isAvatarId(fields.avatarId)) {
+      updates.avatarId = fields.avatarId;
+      if (fields.photoUrl === undefined) unset.photoUrl = '';
+    } else {
+      throw Object.assign(new Error('Unknown avatarId.'), { statusCode: 400 });
+    }
+  } else if (fields.photoUrl !== undefined) {
+    unset.avatarId = '';
+  }
   if (fields.gender !== undefined) updates.gender = fields.gender;
   if (fields.birthDate !== undefined) updates.birthDate = new Date(fields.birthDate);
   if (fields.firstName !== undefined) updates.firstName = fields.firstName;
@@ -213,5 +232,9 @@ export async function updateUser(uid: string, fields: UserUpdateFields): Promise
     (updates as Record<string, unknown>).dayStartMode = fields.dayStartMode;
   if (fields.aiEnabled !== undefined) updates.aiEnabled = fields.aiEnabled;
 
-  return User.findOneAndUpdate({ uid }, updates, { new: true, runValidators: true });
+  return User.findOneAndUpdate(
+    { uid },
+    Object.keys(unset).length ? { $set: updates, $unset: unset } : updates,
+    { new: true, runValidators: true }
+  );
 }

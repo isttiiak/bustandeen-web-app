@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { AVATAR_IDS, type AvatarId } from '../utils/avatars.js';
 
 export interface IZikrTypeItem {
   _id: mongoose.Types.ObjectId;
@@ -25,6 +26,8 @@ export interface IUser extends Document {
   linkedProviders?: ILinkedProvider[];
   displayName?: string;
   photoUrl?: string;
+  /** Preset avatar (utils/avatars.ts); mutually exclusive with photoUrl. */
+  avatarId?: AvatarId;
   firstName?: string;
   lastName?: string;
   occupation?: string;
@@ -108,6 +111,7 @@ const userSchema = new Schema(
     },
     displayName: { type: String },
     photoUrl: { type: String },
+    avatarId: { type: String, enum: AVATAR_IDS },
     firstName: { type: String },
     lastName: { type: String },
     occupation: { type: String },

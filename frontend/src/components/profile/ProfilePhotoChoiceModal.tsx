@@ -1,11 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
-import { CameraIcon, XMarkIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import { AvatarDisc } from '../icons/AvatarGlyphs.js';
 
 export interface ProfilePhotoChoiceModalProps {
   applyGoogleAccountPhoto: () => Promise<void>;
-  fileInputRef: React.RefObject<HTMLInputElement>;
   googleLinked: import('./profileParts.js').LinkedProvider | undefined;
   googlePhotoUrl: string | null;
   hasGoogle: boolean;
@@ -17,7 +17,6 @@ export interface ProfilePhotoChoiceModalProps {
 
 export default function ProfilePhotoChoiceModal({
   applyGoogleAccountPhoto,
-  fileInputRef,
   googleLinked,
   googlePhotoUrl,
   hasGoogle,
@@ -58,7 +57,8 @@ export default function ProfilePhotoChoiceModal({
                 </div>
                 <button
                   onClick={() => setShowPhotoChoice(false)}
-                  className="text-white/40 hover:text-white p-1 transition-colors"
+                  aria-label={t('common.close', 'Close')}
+                  className="text-white/60 hover:text-white p-1 transition-colors"
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </button>
@@ -67,39 +67,17 @@ export default function ProfilePhotoChoiceModal({
                 <button
                   onClick={() => {
                     setShowPhotoChoice(false);
-                    fileInputRef.current?.click();
-                  }}
-                  className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-brand-deep border border-brand-border hover:border-brand-emerald/40 hover:bg-brand-emerald/5 text-white/70 hover:text-white transition-all text-left group"
-                >
-                  <div className="w-9 h-9 rounded-xl bg-brand-emerald/15 flex items-center justify-center shrink-0 group-hover:bg-brand-emerald/25 transition-colors">
-                    <CameraIcon className="w-5 h-5 text-brand-emerald" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold">
-                      {t('profile.uploadPhoto', 'Upload Photo')}
-                    </p>
-                    <p className="text-white/30 text-xs">
-                      {t('profile.fromDevice', 'From your device')}
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setShowPhotoChoice(false);
                     setAvatarModalOpen(true);
                   }}
                   className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-brand-deep border border-brand-border hover:border-brand-warm/40 hover:bg-brand-warm/5 text-white/70 hover:text-white transition-all text-left group"
                 >
-                  <div className="w-9 h-9 rounded-xl bg-brand-warm/15 flex items-center justify-center shrink-0 group-hover:bg-brand-warm/25 transition-colors">
-                    <PhotoIcon className="w-5 h-5 text-brand-warm" />
-                  </div>
+                  <AvatarDisc id="leaf" className="w-9 h-9 shrink-0" />
                   <div>
                     <p className="text-sm font-semibold">
                       {t('profile.chooseAvatar', 'Choose Avatar')}
                     </p>
                     <p className="text-white/30 text-xs">
-                      {t('profile.themedIcons', 'Themed emoji icons')}
+                      {t('profile.themedIcons', 'Leaf, crescent, lantern and more')}
                     </p>
                   </div>
                 </button>

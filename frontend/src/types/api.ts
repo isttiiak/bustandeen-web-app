@@ -95,6 +95,7 @@ export interface UserProfile {
   email: string;
   displayName?: string;
   photoUrl?: string;
+  avatarId?: string;
   firstName?: string;
   lastName?: string;
   occupation?: string;
@@ -110,6 +111,8 @@ export interface AuthUser {
   email: string | null;
   displayName: string | null;
   photoUrl?: string | null;
+  /** Preset avatar id (components/icons/AvatarGlyphs.tsx), when no photo. */
+  avatarId?: string | null;
   emailVerified?: boolean;
   /** From the DB profile — gates the Rayhanah Cycle entry (female only) */
   gender?: 'male' | 'female' | 'other' | 'prefer_not_say';

@@ -62,6 +62,7 @@ describe('User API response projection', () => {
           reengagementEmailCount: 2,
           disabledReason: 'old note',
           'zikrTotals.SubhanAllah': 33,
+          avatarId: 'olive',
         },
       }
     );
@@ -80,6 +81,7 @@ describe('User API response projection', () => {
     expect(res.status).toBe(200);
     expect(res.body.user.uid).toBe(uid);
     expect(res.body.user.dayStartMode).toBe('fajr');
+    expect(res.body.user.avatarId).toBe('olive');
     expectNoServerOnlyFields(res.body.user);
     expect(JSON.stringify(res.body)).not.toContain('groqApiKey');
   });
@@ -92,6 +94,7 @@ describe('User API response projection', () => {
     expect(res.status).toBe(200);
     expect(res.body.user.displayName).toBe('Projected');
     expect(res.body.user.city).toBe('Dhaka');
+    expect(res.body.user.avatarId).toBe('olive');
     expectNoServerOnlyFields(res.body.user);
     expect(JSON.stringify(res.body)).not.toContain('groqApiKey');
 
@@ -104,6 +107,7 @@ describe('User API response projection', () => {
     const res = await request(app).post('/api/auth/verify').send({ idToken: token });
     expect(res.status).toBe(200);
     expect(res.body.user.uid).toBe(uid);
+    expect(res.body.user.avatarId).toBe('olive');
     expectNoServerOnlyFields(res.body.user);
   });
 

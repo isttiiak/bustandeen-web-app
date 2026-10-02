@@ -1,16 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
-import { UserCircleIcon, CameraIcon, MapPinIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
+import { UserCircleIcon, PencilIcon, MapPinIcon, BriefcaseIcon } from '@heroicons/react/24/outline';
+import { UserAvatar } from '../icons/AvatarGlyphs.js';
 import { CountryFlag, SPARKLE_POSITIONS } from './profileParts.js';
 
 export interface ProfileSummaryCardProps {
   ageInfo: { years: number; months: number } | null;
-  fileInputRef: React.RefObject<HTMLInputElement>;
   longestStreak: number | null;
   memberSince: string | null;
-  onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;
   preview: string;
+  avatarId: string | null;
   profile: import('./profileParts.js').ProfileData;
   setShowPhotoChoice: React.Dispatch<React.SetStateAction<boolean>>;
   totalZikr: string;
@@ -20,11 +20,10 @@ export interface ProfileSummaryCardProps {
 
 export default function ProfileSummaryCard({
   ageInfo,
-  fileInputRef,
   longestStreak,
   memberSince,
-  onFileChange,
   preview,
+  avatarId,
   profile,
   setShowPhotoChoice,
   totalZikr,
@@ -77,8 +76,13 @@ export default function ProfileSummaryCard({
             <div className="relative shrink-0">
               <div className="avatar">
                 <div className="w-24 rounded-full ring-2 ring-brand-emerald ring-offset-2 ring-offset-[#0a1628]">
-                  {preview || profile.photoUrl ? (
-                    <img src={preview || profile.photoUrl} alt="profile" className="object-cover" />
+                  {preview || avatarId ? (
+                    <UserAvatar
+                      photoUrl={preview || null}
+                      avatarId={avatarId}
+                      name={profile.displayName}
+                      className="w-24 h-24"
+                    />
                   ) : (
                     <div className="w-full h-full bg-brand-emerald/20 flex items-center justify-center">
                       <UserCircleIcon className="w-16 h-16 text-brand-emerald/50" />
@@ -89,21 +93,15 @@ export default function ProfileSummaryCard({
               <button
                 type="button"
                 onClick={() => setShowPhotoChoice(true)}
+                aria-label={t('profile.changePhoto', 'Change Photo')}
                 disabled={uploading}
                 className="absolute bottom-0 right-0 group w-8 h-8 rounded-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color shadow-lg flex items-center justify-center transition-colors disabled:opacity-50"
               >
-                <CameraIcon className="w-4 h-4" />
+                <PencilIcon className="w-4 h-4" />
                 <span className="absolute -top-7 right-0 bg-brand-deep border border-brand-border text-white/70 text-[10px] px-2 py-0.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                   {t('profile.changePhoto', 'Change Photo')}
                 </span>
               </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={onFileChange}
-              />
             </div>
 
             {/* Info */}

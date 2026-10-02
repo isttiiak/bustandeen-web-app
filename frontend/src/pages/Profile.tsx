@@ -1,10 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Swal from 'sweetalert2';
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { API_BASE, getIdToken } from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
-import { auth, googleProvider, storage } from '../firebase.js';
+import { auth, googleProvider } from '../firebase.js';
 import { browserPopupRedirectResolver, linkWithPopup, unlink, AuthError } from 'firebase/auth';
 import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
@@ -12,14 +11,12 @@ import { useAnalytics } from '../hooks/useAnalytics.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import {
   COUNTRIES_CITIES,
-  createAvatarDataUrl,
   calcFullAge,
   formatFullDate,
   ProfileData,
   DBUser,
   UserResponse,
 } from '../components/profile/profileParts.js';
-import ProfilePhotoPreviewModal from '../components/profile/ProfilePhotoPreviewModal.js';
 import ProfileAvatarPicker from '../components/profile/ProfileAvatarPicker.js';
 import ProfilePhotoChoiceModal from '../components/profile/ProfilePhotoChoiceModal.js';
 import ProfileEditForm from '../components/profile/ProfileEditForm.js';
@@ -56,12 +53,9 @@ export default function Profile() {
   const [dbUser, setDbUser] = useState<DBUser | null>(null);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(user?.photoUrl || '');
+  const [avatarId, setAvatarId] = useState<string | null>(user?.avatarId ?? null);
   const [showPhotoChoice, setShowPhotoChoice] = useState(false);
-  const [photoModalOpen, setPhotoModalOpen] = useState(false);
-  const [photoPreviewUrl, setPhotoPreviewUrl] = useState('');
-  const [photoBlob, setPhotoBlob] = useState<Blob | null>(null);
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [linkingGoogle, setLinkingGoogle] = useState(false);
   const [unlinkingGoogle, setUnlinkingGoogle] = useState(false);
   const [primaryEmailLoading, setPrimaryEmailLoading] = useState(false);
@@ -116,7 +110,8 @@ export default function Profile() {
           };
           setProfile(loaded);
           setOriginalProfile(loaded);
-          setPreview(d.user.photoUrl || user?.photoUrl || '');
+          setPreview(d.user.photoUrl || (d.user.avatarId ? '' : user?.photoUrl) || '');
+          setAvatarId(d.user.avatarId ?? null);
         }
       })
       .catch(() => {
@@ -150,14 +145,7 @@ export default function Profile() {
           displayName: profile.displayName || undefined,
           firstName: profile.firstName || undefined,
           lastName: profile.lastName || undefined,
-          // Only send photoUrl when it is an https URL (Firebase Storage).
-          // Legacy users may still have a base64 data: URL in the DB — we don't
-          // re-send it; the DB value stays as-is until they explicitly change
-          // their photo via the upload flow.
-          photoUrl:
-            profile.photoUrl && profile.photoUrl.startsWith('https://')
-              ? profile.photoUrl
-              : undefined,
+          // The picture is saved on its own when it is chosen (choosePicture).
           gender: profile.gender || undefined,
           birthDate: profile.birthDate || undefined,
           occupation: profile.occupation || undefined,
@@ -173,7 +161,8 @@ export default function Profile() {
         const updatedAuthUser = {
           ...(user ?? { uid: '', email: null }),
           displayName: data.user.displayName || profile.displayName,
-          photoUrl: data.user.photoUrl || profile.photoUrl,
+          photoUrl: data.user.photoUrl ?? null,
+          avatarId: data.user.avatarId ?? null,
           // Gender gates the Rayhanah Cycle menu entry — reflect it immediately
           gender: (data.user.gender || profile.gender || undefined) as
             'male' | 'female' | 'other' | 'prefer_not_say' | undefined,
@@ -185,6 +174,7 @@ export default function Profile() {
             ...JSON.parse(localStorage.getItem('bustandeen_user') || '{}'),
             displayName: updatedAuthUser.displayName,
             photoUrl: updatedAuthUser.photoUrl,
+            avatarId: updatedAuthUser.avatarId,
             gender: updatedAuthUser.gender,
           })
         );
@@ -202,185 +192,55 @@ export default function Profile() {
     setSaving(false);
   };
 
-  const compressImage = (file: File): Promise<Blob> =>
-    new Promise((resolve, reject) => {
-      const img = new Image();
-      const src = URL.createObjectURL(file);
-      img.onload = () => {
-        const MAX = 400;
-        const scale = Math.min(1, MAX / Math.max(img.width, img.height));
-        const canvas = document.createElement('canvas');
-        canvas.width = Math.round(img.width * scale);
-        canvas.height = Math.round(img.height * scale);
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          URL.revokeObjectURL(src);
-          reject(new Error('canvas'));
-          return;
-        }
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(
-          (blob) => {
-            URL.revokeObjectURL(src);
-            if (blob) resolve(blob);
-            else reject(new Error('compression'));
-          },
-          'image/jpeg',
-          0.75
-        );
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(src);
-        reject(new Error('load'));
-      };
-      img.src = src;
-    });
-
-  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    e.target.value = '';
-    setSaveError('');
-    try {
-      const blob = await compressImage(file);
-      setPhotoBlob(blob);
-      setPhotoPreviewUrl(URL.createObjectURL(blob));
-      setPhotoModalOpen(true);
-    } catch {
-      setSaveError(
-        t('profile.imageProcessError', 'Could not process image. Try a different file.')
-      );
-    }
-  };
-
-  // Upload a blob to Firebase Storage at profile-photos/{uid}.jpg (overwrite).
-  // Returns the public https download URL.
-  const uploadBlobToStorage = async (blob: Blob): Promise<string> => {
-    const uid = user?.uid;
-    if (!uid) throw new Error('not authenticated');
-    const fileRef = storageRef(storage, `profile-photos/${uid}.jpg`);
-    await uploadBytes(fileRef, blob, { contentType: 'image/jpeg' });
-    return getDownloadURL(fileRef);
-  };
-
-  // Photos are uploaded directly to Firebase Storage; only the short https URL
-  // is sent to PATCH /api/user/me (keeps the Mongo document small).
-  const uploadPhoto = async () => {
-    if (!photoBlob) return;
+  // Saves the profile picture: the Google photo (an https URL) or a preset
+  // avatar id. Photos are never uploaded (Firebase Storage is not enabled);
+  // the server keeps the two mutually exclusive.
+  const choosePicture = async (choice: { photoUrl: string } | { avatarId: string }) => {
     setSaveError('');
     setUploading(true);
+    const nextPhoto = 'photoUrl' in choice ? choice.photoUrl : '';
+    const nextAvatar = 'avatarId' in choice ? choice.avatarId : null;
+    const prev = { preview, avatarId };
+    setPreview(nextPhoto);
+    setAvatarId(nextAvatar);
     try {
-      setPhotoModalOpen(false);
-      URL.revokeObjectURL(photoPreviewUrl);
-      setPhotoPreviewUrl('');
-
-      const httpsUrl = await uploadBlobToStorage(photoBlob);
-      setPhotoBlob(null);
-
-      setPreview(httpsUrl);
-      setProfile((p) => ({ ...p, photoUrl: httpsUrl }));
-
       const idToken = await getIdToken();
-      if (idToken) {
-        const res = await fetch(`${API_BASE}/api/user/me`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-          body: JSON.stringify({ photoUrl: httpsUrl }),
-        });
-        if (res.ok) {
-          setOriginalProfile((p) => (p ? { ...p, photoUrl: httpsUrl } : null));
-          const updated = {
-            ...(user ?? { uid: '', email: null }),
-            displayName: user?.displayName ?? null,
-            photoUrl: httpsUrl,
-          };
-          setUser(updated);
-          localStorage.setItem(
-            'bustandeen_user',
-            JSON.stringify({
-              ...JSON.parse(localStorage.getItem('bustandeen_user') || '{}'),
-              photoUrl: httpsUrl,
-            })
-          );
-        } else {
-          setSaveError(
-            t(
-              'profile.uploadedNotSaved',
-              'Uploaded but could not save — click "Save Changes" to retry.'
-            )
-          );
-        }
-      }
-    } catch {
-      setSaveError(
-        t('profile.uploadFailed', 'Upload failed. Check your connection and try again.')
+      if (!idToken) throw new Error('no session');
+      const res = await fetch(`${API_BASE}/api/user/me`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
+        body: JSON.stringify(choice),
+      });
+      if (!res.ok) throw new Error('save');
+      setProfile((p) => ({ ...p, photoUrl: nextPhoto }));
+      setOriginalProfile((p) => (p ? { ...p, photoUrl: nextPhoto } : null));
+      const updated = {
+        ...(user ?? { uid: '', email: null }),
+        displayName: user?.displayName ?? null,
+        photoUrl: nextPhoto || null,
+        avatarId: nextAvatar,
+      };
+      setUser(updated);
+      localStorage.setItem(
+        'bustandeen_user',
+        JSON.stringify({
+          ...JSON.parse(localStorage.getItem('bustandeen_user') || '{}'),
+          photoUrl: updated.photoUrl,
+          avatarId: updated.avatarId,
+        })
       );
+    } catch {
+      setPreview(prev.preview);
+      setAvatarId(prev.avatarId);
+      setSaveError(t('profile.pictureNotSaved', 'Could not save your picture. Please try again.'));
     } finally {
       setUploading(false);
     }
   };
 
-  const cancelPhotoModal = () => {
-    URL.revokeObjectURL(photoPreviewUrl);
-    setPhotoModalOpen(false);
-    setPhotoBlob(null);
-    setPhotoPreviewUrl('');
-  };
-
-  const applyPhotoUrl = async (url: string) => {
-    setSaveError('');
-    setUploading(true);
-    try {
-      // Show optimistic preview immediately
-      setPreview(url);
-
-      // If url is a data: URI (emoji avatar canvas), upload it to Firebase Storage
-      // first so the backend only ever sees a short https URL.
-      let finalUrl = url;
-      if (url.startsWith('data:')) {
-        const res = await fetch(url);
-        const blob = await res.blob();
-        finalUrl = await uploadBlobToStorage(blob);
-        setPreview(finalUrl);
-      }
-
-      setProfile((p) => ({ ...p, photoUrl: finalUrl }));
-      const idToken = await getIdToken();
-      if (idToken) {
-        const res = await fetch(`${API_BASE}/api/user/me`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-          body: JSON.stringify({ photoUrl: finalUrl }),
-        });
-        if (res.ok) {
-          setOriginalProfile((p) => (p ? { ...p, photoUrl: finalUrl } : null));
-          const updated = {
-            ...(user ?? { uid: '', email: null }),
-            displayName: user?.displayName ?? null,
-            photoUrl: finalUrl,
-          };
-          setUser(updated);
-          localStorage.setItem(
-            'bustandeen_user',
-            JSON.stringify({
-              ...JSON.parse(localStorage.getItem('bustandeen_user') || '{}'),
-              photoUrl: finalUrl,
-            })
-          );
-        }
-      }
-    } catch {
-      /* non-fatal */
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const selectAvatar = async (av: { emoji: string; bg: string }) => {
-    const dataUrl = createAvatarDataUrl(av.emoji, av.bg);
-    if (!dataUrl) return;
+  const selectAvatar = async (id: string) => {
     setAvatarModalOpen(false);
-    await applyPhotoUrl(dataUrl);
+    await choosePicture({ avatarId: id });
   };
 
   // Get Google profile photo from Firebase Auth provider data
@@ -393,7 +253,7 @@ export default function Profile() {
   const applyGoogleAccountPhoto = async () => {
     if (!googlePhotoUrl) return;
     setShowPhotoChoice(false);
-    await applyPhotoUrl(googlePhotoUrl);
+    await choosePicture({ photoUrl: googlePhotoUrl });
   };
 
   const linked = dbUser?.linkedProviders ?? [];
@@ -590,11 +450,10 @@ export default function Profile() {
             {/* ── Avatar + summary card ─── gradient with star animation */}
             <ProfileSummaryCard
               ageInfo={ageInfo}
-              fileInputRef={fileInputRef}
               longestStreak={longestStreak}
               memberSince={memberSince}
-              onFileChange={onFileChange}
               preview={preview}
+              avatarId={avatarId}
               profile={profile}
               setShowPhotoChoice={setShowPhotoChoice}
               totalZikr={totalZikr}
@@ -638,7 +497,6 @@ export default function Profile() {
       {/* ── Photo choice modal ── */}
       <ProfilePhotoChoiceModal
         applyGoogleAccountPhoto={applyGoogleAccountPhoto}
-        fileInputRef={fileInputRef}
         googleLinked={googleLinked}
         googlePhotoUrl={googlePhotoUrl}
         hasGoogle={hasGoogle}
@@ -652,16 +510,8 @@ export default function Profile() {
       <ProfileAvatarPicker
         avatarModalOpen={avatarModalOpen}
         selectAvatar={selectAvatar}
+        selectedId={avatarId}
         setAvatarModalOpen={setAvatarModalOpen}
-        uploading={uploading}
-      />
-
-      {/* ── Photo upload preview modal ── */}
-      <ProfilePhotoPreviewModal
-        cancelPhotoModal={cancelPhotoModal}
-        photoModalOpen={photoModalOpen}
-        photoPreviewUrl={photoPreviewUrl}
-        uploadPhoto={uploadPhoto}
         uploading={uploading}
       />
     </>
