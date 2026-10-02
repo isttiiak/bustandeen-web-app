@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.88.1 - Glass navbar and clearer depth - 2026-10-02
+
+### Changed
+
+- **The top bar is glass**: page content stays faintly visible as it scrolls underneath. The back, language and profile buttons sit on their own small panels, so they are easy to find over any content.
+- **Hover lift on the dark theme**: cards on Home and the navbar buttons gain a visible shadow with a faint warm edge on hover (a black shadow alone disappears on a near-black page). The light theme gets a soft green-grey shadow.
+- **The current-prayer arch on Home has a fixed shadow** in both themes.
+
+### Changed (developers)
+
+- New shadow tokens `shadow-hover` and `shadow-hero` (`--elev-hover`, `--elev-hero` per theme). The navbar no longer uses a gradient or the sage glow shadow.
+
 ## v5.88.0 - Home in the Bustan Arch design - 2026-10-02
 
 ### Changed

@@ -46,6 +46,12 @@
   --elev-1: 0 1px 0 rgb(0 0 0 / 0.4);
   --elev-2: 0 10px 26px -14px rgb(0 0 0 / 0.75);
   --elev-3: 0 20px 44px -16px rgb(0 0 0 / 0.85);
+  /* On a near-black page a black shadow alone is invisible, so hover lift
+     and the hero add a faint warm edge under the shadow. */
+  --elev-hover: 0 10px 24px -8px rgb(0 0 0 / 0.95), 0 0 0 1px rgb(201 169 110 / 0.22);
+  --elev-hero:
+    0 18px 40px -14px rgb(0 0 0 / 0.95), 0 0 0 1px rgb(201 169 110 / 0.16),
+    0 8px 30px -10px rgb(201 169 110 / 0.12);
   color-scheme: dark;
 }
 
@@ -87,6 +93,8 @@
   --elev-1: 0 1px 2px rgb(40 50 25 / 0.14), 0 1px 0 rgb(40 50 25 / 0.06);
   --elev-2: 0 12px 26px -10px rgb(40 50 25 / 0.42);
   --elev-3: 0 22px 44px -14px rgb(40 50 25 / 0.55);
+  --elev-hover: 0 12px 26px -10px rgb(40 50 25 / 0.45);
+  --elev-hero: 0 18px 36px -12px rgb(40 50 25 / 0.5);
   color-scheme: light;
 }
 
