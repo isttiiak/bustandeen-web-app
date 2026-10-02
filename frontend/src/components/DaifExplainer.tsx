@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router';
 import { useTranslation, Trans } from 'react-i18next';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import { ChevronDownIcon, ScaleIcon } from '@heroicons/react/24/outline';
+import { CARD } from './bustanStyles.js';
 
 /**
  * Wherever the app shows a ḍaʿīf badge, this card must appear near the bottom
@@ -109,30 +110,30 @@ export default function DaifExplainer({ topics }: { topics: DaifTopic[] }) {
   if (list.length === 0) return null;
 
   return (
-    <div className="rounded-3xl border border-brand-gold/20 bg-brand-gold/[0.05] overflow-hidden">
+    <div className={`${CARD} border-brand-gold/40 overflow-hidden`}>
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         className="w-full flex items-center gap-3 px-5 py-4 text-left"
       >
-        <span className="text-lg shrink-0">⚖️</span>
+        <ScaleIcon className="w-5 h-5 shrink-0 text-brand-gold" aria-hidden="true" />
         <span className="flex-1 min-w-0">
-          <span className="block text-brand-gold/90 font-bold text-sm">
+          <span className="block text-brand-gold font-bold text-sm">
             <Trans
               i18nKey="daifExplainer.headerTitle"
               defaults="Why some things on this page are marked <1>ḍaʿīf</1>"
               components={{ 1: <span className="italic" /> }}
             />
           </span>
-          <span className="block text-white/30 text-[11px] mt-0.5">
+          <span className="block text-white/65 text-[11px] mt-0.5">
             {t('daifExplainer.narrationCount', {
               count: list.length,
-              defaultValue: '{{count}} narration — the chain, the defect, and who graded it',
+              defaultValue: '{{count}} narration: the chain, the defect, and who graded it',
             })}
           </span>
         </span>
         <ChevronDownIcon
-          className={`w-4 h-4 text-brand-gold/50 shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-brand-gold shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
         />
       </button>
 
@@ -145,46 +146,49 @@ export default function DaifExplainer({ topics }: { topics: DaifTopic[] }) {
             transition={{ duration: 0.2 }}
           >
             <div className="px-5 pb-5 space-y-4">
-              <p className="text-white/40 text-xs leading-relaxed border-l-2 border-brand-gold/25 pl-3">
+              <p className="text-white/75 text-xs leading-relaxed border-l-2 border-brand-gold/40 pl-3">
                 <Trans
                   i18nKey="daifExplainer.explainerParagraph"
                   defaults="The term <1>ḍaʿīf</1> means the chain of transmission has a flaw — a narrator with weak memory, an unknown link, or a break — so the words cannot be attributed to the Prophet ﷺ with confidence. It does not automatically mean the meaning is false. Many scholars permit acting on a weak report to encourage good deeds (faḍāʾil al-aʿmāl) provided nothing is treated as an established ruling or a guaranteed reward; others decline to use them at all. Bustandeen shows the grade so you can follow your own scholars."
-                  components={{ 1: <b className="text-white/70" /> }}
+                  components={{ 1: <b className="text-white" /> }}
                 />
               </p>
 
               {list.map((e) => (
-                <div key={e.id} className="rounded-2xl bg-shade/20 border border-brand-gold/15 p-4">
-                  <p className="text-white/80 text-sm font-semibold leading-relaxed">
+                <div
+                  key={e.id}
+                  className="rounded-control bg-shade/20 border border-brand-border p-4"
+                >
+                  <p className="text-white/90 text-sm font-semibold leading-relaxed">
                     {isBn ? e.claimBn : e.claim}
                   </p>
 
                   <dl className="mt-2.5 space-y-1.5 text-xs leading-relaxed">
                     <div>
-                      <dt className="inline text-white/30">
+                      <dt className="inline text-white/60">
                         {t('daifExplainer.whereFound', 'Where it is found:')}{' '}
                       </dt>
-                      <dd className="inline text-white/60">{isBn ? e.sourceBn : e.source}</dd>
+                      <dd className="inline text-white/80">{isBn ? e.sourceBn : e.source}</dd>
                     </div>
                     <div>
-                      <dt className="inline text-white/30">
+                      <dt className="inline text-white/60">
                         {t('daifExplainer.theDefect', 'The defect:')}{' '}
                       </dt>
-                      <dd className="inline text-white/60">{isBn ? e.defectBn : e.defect}</dd>
+                      <dd className="inline text-white/80">{isBn ? e.defectBn : e.defect}</dd>
                     </div>
                     <div>
-                      <dt className="inline text-white/30">
+                      <dt className="inline text-white/60">
                         {t('daifExplainer.verdictLabel', 'Verdict:')}{' '}
                       </dt>
-                      <dd className="inline text-brand-gold/80 font-semibold">
+                      <dd className="inline text-brand-gold font-semibold">
                         {isBn ? e.verdictBn : e.verdict}
                       </dd>
                     </div>
                     <div>
-                      <dt className="inline text-white/30">
+                      <dt className="inline text-white/60">
                         {t('daifExplainer.howWeUseIt', 'How Bustandeen uses it:')}{' '}
                       </dt>
-                      <dd className="inline text-white/60">{isBn ? e.practiceBn : e.practice}</dd>
+                      <dd className="inline text-white/80">{isBn ? e.practiceBn : e.practice}</dd>
                     </div>
                   </dl>
 
@@ -192,22 +196,19 @@ export default function DaifExplainer({ topics }: { topics: DaifTopic[] }) {
                     href={e.sourceUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-block mt-2 text-[11px] text-brand-gold/60 hover:text-brand-gold underline underline-offset-2"
+                    className="inline-block mt-2 text-[11px] text-brand-gold underline underline-offset-2"
                   >
                     {t('daifExplainer.readScholarlyDiscussion', 'Read the scholarly discussion ↗')}
                   </a>
                 </div>
               ))}
 
-              <p className="text-white/30 text-[11px] leading-relaxed">
+              <p className="text-white/65 text-[11px] leading-relaxed">
                 {t(
                   'daifExplainer.footerText',
                   'Bustandeen is not a source of religious authority — verify with a scholar you trust. Spotted a grading you believe is wrong?'
                 )}{' '}
-                <Link
-                  to="/feedback"
-                  className="text-brand-emerald/70 hover:text-brand-emerald underline underline-offset-2"
-                >
+                <Link to="/feedback" className="text-brand-emerald underline underline-offset-2">
                   {t('daifExplainer.footerLink', 'Tell us and we will correct it')}
                 </Link>
                 .

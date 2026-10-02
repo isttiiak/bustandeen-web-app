@@ -20,8 +20,9 @@ export function formatLocaleTime(date: Date, options: Intl.DateTimeFormatOptions
   return date.toLocaleTimeString(INTL_LOCALE[lang] ?? 'en-US', options);
 }
 
-/** Locale-aware number formatting — বাংলা digits (০১২৩...) in Bengali mode. */
-export function formatLocaleNumber(n: number): string {
+/** Locale-aware number formatting — বাংলা digits (০১২৩...) in Bengali mode.
+ * Pass { useGrouping: false } for years (1448, not 1,448). */
+export function formatLocaleNumber(n: number, options?: Intl.NumberFormatOptions): string {
   const lang = (i18n.language || 'en').split('-')[0]!;
-  return n.toLocaleString(INTL_LOCALE[lang] ?? 'en-US');
+  return n.toLocaleString(INTL_LOCALE[lang] ?? 'en-US', options);
 }

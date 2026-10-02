@@ -2,6 +2,28 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.94.0 - Ramadan in the Bustan Arch design - 2026-10-03
+
+### Fixed
+
+- **A Ramadan citation pointed to the wrong hadith.** In "What makes this month unlike any other?", the hadith about the gates of Paradise opening was linked to Ṣaḥīḥ al-Bukhārī 38, which is a different hadith (fasting Ramadan with faith brings forgiveness). It now links to Ṣaḥīḥ al-Bukhārī 1899, where this hadith is narrated. The quoted text is unchanged.
+- **The suhoor and iftar narrations were in English for Bangla readers.** They now use the same verified English and Bangla wording as the Fasting screen (Bukhārī 1923 and 1957).
+- **Ramadan analytics showed "of {{total}} required days"**, and the fasting rate and excused count had no number in front of them. The real numbers now appear.
+- The Hijri year read "Ramadan 1,448"; it is now "Ramadan 1448". The ashra "days 1-10" label is translated, and the "not logged" legend reads as words, not a lone dash.
+- **The Analytics tab was missing during Ramadan.** The tab bar showed only before the month began; it now shows on the tracker all year.
+
+### Changed
+
+- **Ramadan is the sixth screen in the new design** (audit T3.2). The day (or, before the month, the countdown) is the screen's one arch: the Hijri year, the day number, a live suhoor or iftar countdown, month progress, suhoor and iftar times, and the main action. A medallion shows when the day is fasted. Today's worship, the inline salat card, the last ten nights, the 30-day month and Ramadan analytics sit on raised theme cards with the premium shadow, and secondary text is brighter, so they read on dark and on sage paper.
+- Emoji are gone from Ramadan: prayers, worship tiles, the month grid (check, cross, Rayhanah flower, sunrise, mosque for tarawih, a star on the odd nights of the last ten) and the legends use SVG icons. Done and Kaza in the salat card are labelled buttons instead of ✅ and ⏰. The pulsing glow on the odd nights, the floating orb and the gradients are removed.
+- The Rayhanah "You are excused today" card (Salat, Fasting and Ramadan) and the "Why some things are marked ḍaʿīf" card (Ramadan and Quran) use the same raised card and SVG marks.
+- Ramadan copy in English and Bangla no longer uses emoji or em dashes. Only punctuation changed in the notes; quoted hadith are unchanged.
+
+### Changed (developers)
+
+- `formatLocaleNumber(n, options?)` takes `Intl.NumberFormatOptions`; pass `{ useGrouping: false }` for years.
+- `pages/ramadanScreen.test.ts`: no emoji in the Ramadan pages and the cards they render, and no emoji or em dashes in the Ramadan, Rayhanah-excused and ḍaʿīf locale strings (en + bn).
+
 ## v5.93.0 - Fasting in the Bustan Arch design - 2026-10-03
 
 ### Fixed
