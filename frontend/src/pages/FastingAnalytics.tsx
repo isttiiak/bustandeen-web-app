@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import IntentionLine from '../components/analytics/IntentionLine.js';
 import { useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
@@ -161,6 +162,7 @@ export default function FastingAnalytics() {
               },
             ]}
           />
+          <IntentionLine />
 
           {isLoading ? (
             <div className="min-h-[40vh] grid place-items-center">

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import IntentionLine from '../components/analytics/IntentionLine.js';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
@@ -797,6 +798,7 @@ export default function ZikrAnalytics() {
               {t('zikrAnalytics.logMissedCounts')}
             </motion.button>
           </div>
+          <IntentionLine />
 
           {/* Streak + Goal cards */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

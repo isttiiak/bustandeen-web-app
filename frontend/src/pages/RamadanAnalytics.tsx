@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import IntentionLine from '../components/analytics/IntentionLine.js';
 import { useTranslation } from 'react-i18next';
 import { translateReference } from '../utils/localeReference.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
@@ -190,6 +191,9 @@ export default function RamadanAnalytics() {
             { label: t('ramadanAnalytics.tabAnalytics'), to: '/ramadan/analytics', active: true },
           ]}
         />
+        <div className="pt-3">
+          <IntentionLine />
+        </div>
       </div>
 
       <div className="max-w-2xl mx-auto px-4 pt-5 pb-16 space-y-5">

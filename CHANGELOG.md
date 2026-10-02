@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.86.0 - A line of intention on the analytics pages - 2026-10-02
+
+### Added
+
+- **One quiet line under the tabs of every worship analytics page** (FIQH-05): zikr, salat, fasting, Quran and Ramadan. "A private mirror for your own growth. Only Allah knows what each deed is worth." In Bangla: "শুধু নিজের উন্নতির জন্য একটি আয়না। প্রতিটি আমলের প্রকৃত মূল্য শুধু আল্লাহই জানেন।" It is not on Rayhanah analytics: cycle tracking is not a count of deeds.
+
+### Changed (developers)
+
+- `components/analytics/IntentionLine.tsx`, key `common.analyticsIntention` (en + bn). `text-white/60`, so it passes AA contrast (A11Y-01).
+- `IntentionLine.test.ts`: each of the five pages renders it once, after the demo sign-in gate (demo mode shows the gate on all analytics pages, so e2e can't reach them), and Rayhanah analytics does not.
+
 ## v5.84.0 - See what Naseeh sends, and a plain note when the AI is away - 2026-10-02
 
 ### Added

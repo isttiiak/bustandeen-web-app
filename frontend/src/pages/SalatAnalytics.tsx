@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import IntentionLine from '../components/analytics/IntentionLine.js';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { m as motion } from 'framer-motion';
@@ -274,6 +275,7 @@ export default function SalatAnalytics() {
               { label: `📊 ${t('salat.analytics')}`, to: '/salat/analytics', active: true },
             ]}
           />
+          <IntentionLine />
 
           {/* Title + view toggle + period selector */}
           <div className="flex items-center justify-between flex-wrap gap-3">

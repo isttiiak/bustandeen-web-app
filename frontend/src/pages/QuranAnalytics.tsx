@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import IntentionLine from '../components/analytics/IntentionLine.js';
 import { useTranslation } from 'react-i18next';
 import {
   ClockIcon,
@@ -201,6 +202,7 @@ export default function QuranAnalytics() {
       <h1 className="sr-only">{t('quranAnalytics.title')}</h1>
       <div className="max-w-2xl mx-auto px-4 pt-3 pb-16 space-y-4">
         <QuranTabNav active="analytics" />
+        <IntentionLine />
 
         {/* tiles */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
