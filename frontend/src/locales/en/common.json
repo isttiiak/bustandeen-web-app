@@ -1409,7 +1409,7 @@
     "subtitle": "Short, honest, no legalese.",
     "whatWeStore": {
       "title": "What we store",
-      "body0": "Your email and sign-in details (from Firebase, using email or Google), a display name, and a profile photo and country if you add them. We never store your password.",
+      "body0": "Your email and sign-in details (from Firebase, using email or Google), a display name, and a profile picture (your Google photo or a drawn avatar) and country if you add them. We never store your password.",
       "body1": "Worship logs: zikr counts, salat statuses (including home or mosque, and your kaza ledger), fasting, Quran progress, hifz progress and Ramadan data. These are tied to your user ID, never to your device fingerprint.",
       "body2": "Timing details: when you count zikr (kept for 90 days, to power session history and the time-of-day chart) and when you read or listen to the Quran (start, end and active minutes of each session).",
       "body3": "Rayhanah Cycle data, if you use it: start and end dates, daily flow, symptom and mood notes, and the height and weight you choose to add. Notes and body stats are encrypted (AES-256-GCM) before they reach the database.",
@@ -1463,8 +1463,8 @@
         },
         "firebase": {
           "name": "Firebase (Google)",
-          "why": "Sign-in and profile photos.",
-          "receives": "Your email, your name and photo if you sign in with Google, and the profile photo you upload."
+          "why": "Sign-in.",
+          "receives": "Your email, and your name and photo if you sign in with Google. Photos are never uploaded."
         },
         "ga": {
           "name": "Google Analytics 4",
@@ -1574,7 +1574,7 @@
     "makeSecondaryFirst": "Make secondary first to disconnect",
     "male": "Male",
     "memberSince": "Member Since",
-    "natureIcons": "Nature-themed icons — no upload required",
+    "natureIcons": "Drawn icons, nothing to upload",
     "noChanges": "No changes",
     "notSet": "Not set",
     "occupation": "Occupation",
@@ -1592,7 +1592,7 @@
     "selectCountryFirst": "Select country first",
     "signedInGoogle": "You're signed in with Google — this is your primary account",
     "subtitle": "Manage your personal information",
-    "themedIcons": "Themed emoji icons",
+    "themedIcons": "Leaf, crescent, lantern and more",
     "title": "My Profile",
     "totalZikr": "Total Zikr",
     "uploadFailed": "Upload failed. Check your connection and try again.",
@@ -1600,7 +1600,22 @@
     "uploadProfilePhoto": "Upload Profile Photo",
     "uploadedNotSaved": "Uploaded but could not save — click \"Save Changes\" to retry.",
     "useGooglePhoto": "Use Google Account Photo",
-    "useThisPhoto": "Use This Photo"
+    "useThisPhoto": "Use This Photo",
+    "pictureNotSaved": "Could not save your picture. Please try again.",
+    "avatar": {
+      "leaf": "Leaf",
+      "palm": "Palm",
+      "crescent": "Crescent",
+      "star": "Star",
+      "lantern": "Lantern",
+      "arch": "Arch",
+      "dome": "Dome",
+      "olive": "Olive",
+      "rose": "Rose",
+      "mountain": "Mountain",
+      "wave": "Wave",
+      "book": "Book"
+    }
   },
   "pwa": {
     "installTitle": "Install Bustandeen",

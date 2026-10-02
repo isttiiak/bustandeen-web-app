@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.90.0 - Drawn avatars, no photo uploads - 2026-10-02
+
+### Changed
+
+- **Profile pictures are your Google photo or a drawn avatar.** Twelve preset avatars (leaf, palm, crescent, star, lantern, arch, dome, olive, rose, mountain, wave, book) replace the emoji avatars, and photo upload is gone. Firebase Storage was never enabled (it needs the paid Blaze plan), so uploads and the old emoji avatars could not be saved on production.
+- Friends see your avatar too. Choosing an avatar clears the photo and choosing the Google photo clears the avatar, so every screen shows the same picture. Existing pictures keep showing as they are.
+- Privacy page: Firebase is now listed for sign-in only; photos are never uploaded.
+
+### Changed (developers)
+
+- `User.avatarId` (enum in `backend/src/utils/avatars.ts`), accepted by `PATCH /api/user/me` (`null` clears it), returned by `/api/auth/verify`, the friends, requests, blocked and leaderboard payloads, backups and the data export. `components/icons/AvatarGlyphs.tsx` (`AVATARS`, `AvatarDisc`, `UserAvatar`), used by the navbar, Profile and Friends; a unit test keeps the two id lists equal.
+- `firebase/storage` is no longer imported (smaller auth chunk). `ProfilePhotoPreviewModal` and the canvas emoji renderer are removed. `storage.rules` and its workflow stay in the repo, dormant.
+
 ## v5.89.0 - Salat in the Bustan Arch design - 2026-10-02
 
 ### Changed

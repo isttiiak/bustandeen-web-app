@@ -1,3 +1,4 @@
+import { isAvatarId } from '../utils/avatars.js';
 import SocialProfile, {
   generateInviteCode,
   ISocialProfile,
@@ -115,6 +116,7 @@ export interface PendingRequestItem {
   uid: string;
   displayName: string;
   photoUrl?: string;
+  avatarId?: string;
 }
 
 export interface InvitePreview {
@@ -137,18 +139,29 @@ export async function getInvitePreview(code: string): Promise<InvitePreview | nu
   return { displayName: user.displayName };
 }
 
+/** What friends may see of someone's picture: an https photo (never a data:
+ * URL, which can be large) or a preset avatar id. */
+function publicPicture(u: { photoUrl?: string; avatarId?: string } | null | undefined): {
+  photoUrl?: string;
+  avatarId?: string;
+} {
+  const photo = u?.photoUrl;
+  if (photo && /^https?:\/\//.test(photo)) return { photoUrl: photo };
+  if (isAvatarId(u?.avatarId)) return { avatarId: u.avatarId };
+  return {};
+}
+
 function toPendingItems(
   uids: string[],
-  users: Array<{ uid: string; displayName?: string; photoUrl?: string }>
+  users: Array<{ uid: string; displayName?: string; photoUrl?: string; avatarId?: string }>
 ): PendingRequestItem[] {
   const byUid = new Map(users.map((u) => [u.uid, u]));
   return uids.map((uid) => {
     const u = byUid.get(uid);
-    const photo = u?.photoUrl;
     return {
       uid,
       displayName: u?.displayName || 'Bustandeen user',
-      ...(photo && /^https?:\/\//.test(photo) ? { photoUrl: photo } : {}),
+      ...publicPicture(u),
     };
   });
 }
@@ -158,7 +171,7 @@ export async function getPendingIncoming(userId: string): Promise<PendingRequest
   const profile = await getOrCreateProfile(userId);
   if (!profile.pendingIncoming.length) return [];
   const users = await User.find({ uid: { $in: profile.pendingIncoming } }).select(
-    'uid displayName photoUrl'
+    'uid displayName photoUrl avatarId'
   );
   return toPendingItems(profile.pendingIncoming, users);
 }
@@ -249,7 +262,7 @@ export async function getBlockedList(userId: string): Promise<PendingRequestItem
   const profile = await getOrCreateProfile(userId);
   if (!profile.blocked.length) return [];
   const users = await User.find({ uid: { $in: profile.blocked } }).select(
-    'uid displayName photoUrl'
+    'uid displayName photoUrl avatarId'
   );
   return toPendingItems(profile.blocked, users);
 }
@@ -284,6 +297,7 @@ export interface FriendListItem {
   uid: string;
   displayName: string;
   photoUrl?: string;
+  avatarId?: string;
   /** ISO date the friendship began; null for connections made before this field existed */
   connectedSince: string | null;
 }
@@ -293,18 +307,17 @@ export async function getFriendsList(userId: string): Promise<FriendListItem[]> 
   if (profile.friends.length === 0) return [];
 
   const users = await User.find({ uid: { $in: profile.friends } }).select(
-    'uid displayName photoUrl'
+    'uid displayName photoUrl avatarId'
   );
   const byUid = new Map(users.map((u) => [u.uid, u]));
 
   const list = profile.friends.map((uid) => {
     const u = byUid.get(uid);
-    const photo = u?.photoUrl;
     const since = profile.friendSince?.get(uid);
     return {
       uid,
       displayName: u?.displayName || 'Bustandeen user',
-      ...(photo && /^https?:\/\//.test(photo) ? { photoUrl: photo } : {}),
+      ...publicPicture(u),
       connectedSince: since ? since.toISOString() : null,
     };
   });
@@ -327,6 +340,7 @@ export interface FriendStats {
   displayName: string;
   /** Only http(s) URLs — base64 data-URL photos are skipped to keep the payload small */
   photoUrl?: string;
+  avatarId?: string;
   /** Full country name from the user's profile (e.g. "Bangladesh") */
   country?: string;
   isMe: boolean;
@@ -403,7 +417,7 @@ async function statsForUser(
 
   const [user, zikr, salatLog, fastsThisMonth, todayFastLog, quranLogs, quranProfile] =
     await Promise.all([
-      User.findOne({ uid }).select('displayName photoUrl country'),
+      User.findOne({ uid }).select('displayName photoUrl avatarId country'),
       getStreakStatus(uid, timezoneOffset, today),
       SalatLog.findOne({ userId: uid, date: today }),
       FastingLog.countDocuments({
@@ -474,11 +488,10 @@ async function statsForUser(
     base.fastedToday = base.zikrGoalMet;
   }
 
-  const photo = user?.photoUrl;
   return {
     uid,
     displayName: user?.displayName || 'Bustandeen user',
-    ...(photo && /^https?:\/\//.test(photo) ? { photoUrl: photo } : {}),
+    ...publicPicture(user),
     ...(user?.country ? { country: user.country } : {}),
     ...base,
     score,

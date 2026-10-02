@@ -191,6 +191,16 @@ describe('Social API (share activities)', () => {
     expect(typeof res.body.allTime).toBe('number');
   });
 
+  test('friends see a preset avatar id, never a data: photo', async () => {
+    await asB(request(app).patch('/api/user/me')).send({ avatarId: 'olive' });
+    const res = await asA(request(app).get(`/api/social/friends`));
+    expect(res.body.friends[0].avatarId).toBe('olive');
+    expect(res.body.friends[0].photoUrl).toBeUndefined();
+    await asB(request(app).patch('/api/user/me')).send({ avatarId: null });
+    const after = await asA(request(app).get(`/api/social/friends`));
+    expect(after.body.friends[0].avatarId).toBeUndefined();
+  });
+
   test('friends list returns the connection with a connectedSince date', async () => {
     const res = await asA(request(app).get(`/api/social/friends`));
     expect(res.status).toBe(200);

@@ -1,3 +1,4 @@
+import { isAvatarId } from '../utils/avatars.js';
 import User from '../models/User.js';
 import ZikrDaily from '../models/ZikrDaily.js';
 import ZikrGoal from '../models/ZikrGoal.js';
@@ -95,6 +96,7 @@ export async function exportAll(uid: string): Promise<PlainDoc> {
           birthDate: user.birthDate ?? null,
           country: (user as unknown as PlainDoc).country ?? null,
           photoUrl: user.photoUrl ?? null,
+          avatarId: user.avatarId ?? null,
         }
       : null,
     zikr: {
@@ -190,6 +192,8 @@ export async function importAll(uid: string, data: BackupFile): Promise<ImportCo
     if (data.user.photoUrl !== undefined && data.user.photoUrl !== null) {
       if (isValidPhotoUrl(data.user.photoUrl)) userSet.photoUrl = data.user.photoUrl;
     }
+    // Preset avatar (newer backups); unknown ids are ignored.
+    if (isAvatarId(data.user.avatarId)) userSet.avatarId = data.user.avatarId;
   }
   if (data.zikr) {
     if (typeof data.zikr.totalCount === 'number' && data.zikr.totalCount >= 0)

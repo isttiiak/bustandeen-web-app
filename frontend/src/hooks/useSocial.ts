@@ -9,6 +9,7 @@ export interface FriendStats {
   uid: string;
   displayName: string;
   photoUrl?: string;
+  avatarId?: string;
   /** Full country name from the user's profile (e.g. "Bangladesh") */
   country?: string;
   isMe: boolean;
@@ -137,6 +138,7 @@ export interface FriendListItem {
   uid: string;
   displayName: string;
   photoUrl?: string;
+  avatarId?: string;
   connectedSince: string | null;
 }
 
@@ -160,6 +162,7 @@ export interface PendingRequestItem {
   uid: string;
   displayName: string;
   photoUrl?: string;
+  avatarId?: string;
 }
 
 /** Incoming friend requests awaiting accept/reject — people who opened my invite link. */

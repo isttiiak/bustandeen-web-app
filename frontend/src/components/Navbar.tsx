@@ -23,6 +23,7 @@ import {
   ChartBarIcon,
 } from '@heroicons/react/24/outline';
 import { MosqueIcon } from './icons/IslamicIcons.js';
+import { UserAvatar } from './icons/AvatarGlyphs.js';
 import i18n from '../i18n.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
 
@@ -343,40 +344,24 @@ export default function Navbar() {
                   aria-expanded={dropdownOpen}
                   className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ${dropdownOpen ? 'ring-brand-emerald scale-105' : 'ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover'}`}
                 >
-                  {user.photoUrl ? (
-                    <img
-                      alt="Profile"
-                      src={user.photoUrl}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-brand-emerald/30 flex items-center justify-center">
-                      <span className="text-xs font-black text-white">
-                        {user.displayName?.[0]?.toUpperCase() ??
-                          user.email?.[0]?.toUpperCase() ??
-                          'U'}
-                      </span>
-                    </div>
-                  )}
+                  <UserAvatar
+                    photoUrl={user.photoUrl}
+                    avatarId={user.avatarId}
+                    name={user.displayName ?? user.email}
+                    className="w-8 h-8 text-xs"
+                  />
                 </button>
 
                 {dropdownOpen && (
                   <div className="absolute right-0 top-full mt-2 bg-brand-deep border border-brand-border rounded-2xl z-50 w-64 shadow-2xl overflow-hidden">
                     <div className="px-4 py-3 border-b border-brand-border/60 bg-brand-surface/60">
                       <div className="flex items-center gap-3">
-                        {user.photoUrl ? (
-                          <img
-                            src={user.photoUrl}
-                            alt=""
-                            className="w-9 h-9 rounded-full object-cover ring-2 ring-brand-emerald/40 flex-shrink-0"
-                          />
-                        ) : (
-                          <div className="w-9 h-9 rounded-full bg-brand-emerald/20 ring-2 ring-brand-emerald/30 flex items-center justify-center flex-shrink-0">
-                            <span className="text-sm font-black text-brand-emerald">
-                              {user.displayName?.[0]?.toUpperCase() ?? 'U'}
-                            </span>
-                          </div>
-                        )}
+                        <UserAvatar
+                          photoUrl={user.photoUrl}
+                          avatarId={user.avatarId}
+                          name={user.displayName}
+                          className="w-9 h-9 text-sm ring-2 ring-brand-emerald/40 flex-shrink-0"
+                        />
                         <div className="min-w-0 flex-1">
                           <p className="text-white font-bold text-sm truncate leading-snug">
                             {user.displayName ?? 'User'}
