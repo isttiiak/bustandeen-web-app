@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.89.1 - Profile responses send only what the app shows - 2026-10-02
+
+### Security
+
+- **Your profile no longer carries server-only data to the browser.** Loading or saving your profile (and signing in, linking Google, or changing the primary email) used to return the whole stored account record, including the encrypted copy of your own Groq key and internal admin notes such as email history and account flags. Nothing could be decrypted from it, but it never needed to leave the server. These responses now include only the profile fields the app actually displays.
+
+### Changed (developers)
+
+- `services/user.service.ts`: new `toClientUser()` whitelist projection (`ClientUser`), used by `GET`/`PATCH /api/user/me`, `link-google`, `unlink-google`, `primary-email` and `POST /api/auth/verify`. A new User field stays server-side until it is added there. The weak ETag on `GET /api/user/me` is unchanged.
+- New `tests/userProjection.e2e.test.js`: asserts `groqApiKeyEnc` and other server-only fields are absent from GET, PATCH and verify, and that the ETag still returns 304.
+
 ## v5.89.0 - Salat in the Bustan Arch design - 2026-10-02
 
 ### Changed
