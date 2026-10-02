@@ -389,7 +389,7 @@ export default function Home() {
         {/* Hero: the prayer window, under the screen's one arch */}
         {prayerWidgetData ? (
           <Link to="/prayer-times" className="block mb-4">
-            <div className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-elev-2 px-5 pt-8 pb-5 text-center hover:border-brand-emerald/40 transition-colors">
+            <div className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-8 pb-5 text-center hover:border-brand-emerald/40 transition-colors">
               {prayerWidgetData.forbiddenWindow ? (
                 <>
                   <NoSymbolIcon className="w-7 h-7 mx-auto text-red-400" />
@@ -502,7 +502,7 @@ export default function Home() {
            * from this button: the user should see and choose between both
            * options before any permission dialog appears. */
           <Link to="/prayer-times" className="block mb-4">
-            <div className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-card border border-dashed border-brand-border bg-brand-deep hover:border-brand-emerald/40 transition-colors">
+            <div className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-card border border-dashed border-brand-border bg-brand-deep hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
               <div className="flex items-center gap-3 min-w-0">
                 <MapPinIcon className="w-6 h-6 text-brand-emerald shrink-0" />
                 <div className="min-w-0">
@@ -589,7 +589,7 @@ export default function Home() {
             const Icon = a.icon;
             return (
               <Link key={a.id} to={a.link} className="block group">
-                <div className="h-full rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-3.5 sm:p-4 hover:border-brand-emerald/40 transition-colors">
+                <div className="h-full rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-3.5 sm:p-4 hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
                   <div className="flex items-center gap-2 mb-2">
                     <Icon className="w-5 h-5 shrink-0 text-brand-emerald" />
                     <h2 className="font-display text-sm sm:text-base font-semibold text-white flex-1 min-w-0 truncate">
@@ -678,7 +678,7 @@ export default function Home() {
           <div className="mb-4 space-y-2">
             {todaySpecialDays.map((day) => (
               <Link key={day.id} to={`/special-day/${day.id}`} className="block">
-                <div className="flex items-center gap-3 px-4 py-3 rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 hover:border-brand-gold/40 transition-colors">
+                <div className="flex items-center gap-3 px-4 py-3 rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 hover:border-brand-gold/40 hover:shadow-hover transition-[border-color,box-shadow]">
                   <Star8Icon className="w-6 h-6 shrink-0 text-brand-gold" />
                   <div className="min-w-0 flex-1">
                     <p className="text-white font-bold text-sm leading-tight">
@@ -775,7 +775,7 @@ export default function Home() {
 
         {/* Friends */}
         <Link to="/friends" className="block group mb-6">
-          <div className="flex items-center gap-3 px-4 py-3.5 rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 hover:border-brand-gold/40 transition-colors">
+          <div className="flex items-center gap-3 px-4 py-3.5 rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 hover:border-brand-gold/40 hover:shadow-hover transition-[border-color,box-shadow]">
             <UserGroupIcon className="w-6 h-6 shrink-0 text-brand-gold" />
             <div className="min-w-0 flex-1">
               <h2 className="text-sm font-bold text-white">{t('home.friendsTitle')}</h2>
@@ -796,7 +796,7 @@ export default function Home() {
           <div className="grid grid-cols-2 gap-3">
             {library.map(({ Icon, to, title, subtitle }) => (
               <Link key={to} to={to} className="block group">
-                <div className="h-full rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-4 hover:border-brand-emerald/40 transition-colors">
+                <div className="h-full rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-4 hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
                   <Icon className="w-6 h-6 text-brand-emerald" />
                   <h3 className="text-sm font-bold text-white mt-2 truncate">{title}</h3>
                   <p className="text-white/60 text-xs mt-0.5 truncate">{subtitle}</p>

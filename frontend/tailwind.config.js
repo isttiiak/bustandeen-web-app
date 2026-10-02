@@ -76,6 +76,8 @@ export default {
         'elev-1': 'var(--elev-1)',
         'elev-2': 'var(--elev-2)',
         'elev-3': 'var(--elev-3)',
+        hover: 'var(--elev-hover)',
+        hero: 'var(--elev-hero)',
         glass: '0 20px 60px -20px rgba(0,0,0,0.6)',
         islamic: '0 10px 40px rgba(122,158,110,0.2)',
         'glow-emerald': '0 0 24px rgba(122,158,110,0.45)',

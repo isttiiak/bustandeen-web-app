@@ -188,13 +188,15 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-40 bg-gradient-to-r from-brand-void-deep via-brand-deep to-brand-deep border-b border-brand-emerald/20 shadow-[0_2px_16px_rgba(122,158,110,0.08)]">
+      {/* Glass bar (T3.2): content scrolls visibly underneath, so the bar's
+          buttons carry their own chip background to stay easy to find. */}
+      <nav className="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
         <div className="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
           {/* ── Left: logo + back + title ─────────────────── */}
           <div className="flex items-center gap-0.5 flex-shrink-0 min-w-0">
             <Link
               to="/"
-              className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 transition-all group"
+              className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group"
             >
               <img src={logo as string} alt="Bustandeen" className="w-5 h-5 flex-shrink-0" />
               <span className="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
@@ -209,7 +211,7 @@ export default function Navbar() {
                   aria-label={`${t('common.back')}: ${
                     parentPath === '/' ? t('nav.home') : pageTitle(parentPath, parentMeta.title)
                   }`}
-                  className="flex items-center gap-1 px-2 py-1.5 rounded-xl text-white/40 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0"
+                  className="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0"
                 >
                   <ArrowLeftIcon className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">
@@ -267,7 +269,7 @@ export default function Navbar() {
                 syncQuranTranslationWithLang(next);
               }}
               aria-label={t('nav.switchLang')}
-              className="flex items-center gap-1 px-1 sm:px-2 py-1.5 rounded-xl text-white/40 hover:text-white hover:bg-white/10 transition-all"
+              className="flex items-center gap-1 px-1 sm:px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all"
             >
               <GlobeAltIcon className="w-4 h-4" />
               <span className="text-[10px] font-bold uppercase hidden sm:inline">
@@ -324,7 +326,7 @@ export default function Navbar() {
                   onClick={() => setDropdownOpen((o) => !o)}
                   aria-label={t('navbar.openAccountMenu', 'Open account menu')}
                   aria-expanded={dropdownOpen}
-                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ${dropdownOpen ? 'ring-brand-emerald scale-105' : 'ring-brand-emerald/30 hover:ring-brand-emerald/70'}`}
+                  className={`flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ${dropdownOpen ? 'ring-brand-emerald scale-105' : 'ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover'}`}
                 >
                   {user.photoUrl ? (
                     <img
