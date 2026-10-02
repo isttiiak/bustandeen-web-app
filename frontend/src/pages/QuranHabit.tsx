@@ -35,7 +35,7 @@ import {
   ITEM,
   REF_LINK,
   SECTION_TITLE,
-} from '../components/quran/quranStyles.js';
+} from '../components/bustanStyles.js';
 
 const RING = 2 * Math.PI * 42;
 

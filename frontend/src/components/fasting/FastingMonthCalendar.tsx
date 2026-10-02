@@ -2,6 +2,9 @@ import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { formatLocaleDate } from '../../utils/localeDate.js';
+import { CARD } from '../bustanStyles.js';
+import { STATUS_TONE } from './fastingIcons.js';
+import { STATUS_META } from './fastingParts.js';
 
 export interface FastingMonthCalendarProps {
   calMonth: string;
@@ -38,7 +41,7 @@ export default function FastingMonthCalendar({
             transition={{ duration: 0.22 }}
             className="overflow-hidden"
           >
-            <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-3">
+            <div className={`${CARD} p-4`}>
               <div className="flex items-center justify-between mb-2">
                 <button
                   onClick={() => {
@@ -47,11 +50,11 @@ export default function FastingMonthCalendar({
                     setCalMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
                   }}
                   aria-label={t('fasting.previousMonth', 'Previous month')}
-                  className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
+                  className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-shade/10"
                 >
                   <ChevronLeftIcon className="w-4 h-4" />
                 </button>
-                <p className="text-white font-bold text-sm">
+                <p className="font-display text-white font-bold text-base">
                   {formatLocaleDate(new Date(calMonth + '-15T12:00:00'), {
                     month: 'long',
                     year: 'numeric',
@@ -65,7 +68,7 @@ export default function FastingMonthCalendar({
                   }}
                   disabled={calMonth >= today.substring(0, 7)}
                   aria-label={t('fasting.nextMonth', 'Next month')}
-                  className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10 disabled:opacity-20"
+                  className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-shade/10 disabled:opacity-30"
                 >
                   <ChevronRightIcon className="w-4 h-4" />
                 </button>
@@ -74,7 +77,7 @@ export default function FastingMonthCalendar({
                 {t('fasting.weekdayInitials', 'SMTWTFS')
                   .split('')
                   .map((d, i) => (
-                    <span key={i} className="text-white/25 text-[9px] font-bold uppercase">
+                    <span key={i} className="text-white/60 text-[10px] font-bold uppercase">
                       {d}
                     </span>
                   ))}
@@ -93,12 +96,12 @@ export default function FastingMonthCalendar({
                     const isTod = dateStr === today;
                     const dot =
                       dayLog?.status === 'completed'
-                        ? '#7a9e6e'
+                        ? STATUS_TONE.completed.dot
                         : dayLog?.status === 'intended'
-                          ? '#5a9e8e'
+                          ? STATUS_TONE.intended.dot
                           : dayLog?.status === 'broken'
-                            ? '#f87171'
-                            : 'transparent';
+                            ? STATUS_TONE.broken.dot
+                            : 'bg-transparent';
                     cells.push(
                       <button
                         key={dateStr}
@@ -110,20 +113,20 @@ export default function FastingMonthCalendar({
                         aria-label={t('fasting.selectDate', 'Select {{date}}', {
                           date: dateStr,
                         })}
-                        className={`relative h-8 rounded-lg text-xs font-semibold transition-all ${
+                        aria-pressed={isSel}
+                        className={`relative h-9 rounded-lg text-xs font-semibold tabular-nums transition-colors ${
                           isSel
-                            ? 'bg-brand-emerald/25 text-brand-emerald border border-brand-emerald/50'
+                            ? 'bg-brand-emerald/15 text-brand-emerald border border-brand-emerald/50 font-bold'
                             : isTod
-                              ? 'bg-white/10 text-white border border-brand-emerald/20'
+                              ? 'bg-shade/10 text-white border border-brand-border font-bold'
                               : disabled
-                                ? 'text-white/15 cursor-not-allowed'
-                                : 'text-white/60 hover:bg-white/10'
+                                ? 'text-white/80 opacity-30 cursor-not-allowed'
+                                : 'text-white/80 hover:bg-shade/10'
                         }`}
                       >
                         {d}
                         <span
-                          className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full"
-                          style={{ background: dot }}
+                          className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${dot}`}
                         />
                       </button>
                     );
@@ -131,12 +134,17 @@ export default function FastingMonthCalendar({
                   return cells;
                 })()}
               </div>
-              <p className="text-white/25 text-[10px] mt-2">
-                {t(
-                  'fasting.calendarLegend',
-                  'Tap any past day to view or log it — 🟢 fasted · 🔵 intended · 🔴 broken'
-                )}
+              <p className="text-white/70 text-[11px] mt-3">
+                {t('fasting.calendarLegend', 'Tap any past day to view or log it.')}
               </p>
+              <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-[11px] text-white/80">
+                {(['completed', 'intended', 'broken'] as const).map((st) => (
+                  <span key={st} className="inline-flex items-center gap-1.5">
+                    <span className={`w-2 h-2 rounded-full ${STATUS_TONE[st].dot}`} />
+                    {t(`fasting.${st}`, STATUS_META[st].label)}
+                  </span>
+                ))}
+              </div>
             </div>
           </motion.div>
         )}

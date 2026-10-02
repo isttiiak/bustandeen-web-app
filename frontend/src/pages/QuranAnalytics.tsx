@@ -25,7 +25,7 @@ import { formatLocaleDate, formatLocaleNumber, formatLocaleTime } from '../utils
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { BookOpenIcon, FireIcon, SpeakerWaveIcon } from '@heroicons/react/24/outline';
 import { Star8Icon } from '../components/icons/IslamicIcons.js';
-import { CARD, SECTION_TITLE, TILE } from '../components/quran/quranStyles.js';
+import { CARD, SECTION_TITLE, TILE } from '../components/bustanStyles.js';
 
 type RangePeriod = 'month' | 'last30' | 'alltime';
 interface MonthSel {

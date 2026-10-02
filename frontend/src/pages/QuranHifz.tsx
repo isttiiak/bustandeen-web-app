@@ -28,7 +28,7 @@ import {
   Squares2X2Icon,
   TrashIcon,
 } from '@heroicons/react/24/outline';
-import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/quran/quranStyles.js';
+import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/bustanStyles.js';
 
 // Data tokens: distinct hues in both themes (bright on paper).
 const STATE_COLOR: Record<string, string> = {

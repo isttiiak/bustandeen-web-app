@@ -13,7 +13,27 @@ import ExcusedCard from '../components/ExcusedCard.js';
 import FastingCompanion from '../components/ai/FastingCompanion.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
 import Seo from '../components/Seo.js';
-import { ChevronDownIcon, TrashIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowTopRightOnSquareIcon,
+  CalendarDaysIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
+  HandRaisedIcon,
+  InformationCircleIcon,
+  TrashIcon,
+} from '@heroicons/react/24/outline';
+import { CrescentIcon, FajrIcon, MaghribIcon } from '../components/icons/IslamicIcons.js';
+import { BTN_PRIMARY, CARD } from '../components/bustanStyles.js';
+import {
+  CATEGORY_ICON,
+  CautionIcon,
+  ProhibitedIcon,
+  STATUS_ICON,
+  STATUS_TONE,
+  VOLUNTARY_ICON,
+  fastIcon,
+} from '../components/fasting/fastingIcons.js';
 import {
   useFastingLog,
   useFastingSummary,
@@ -41,14 +61,12 @@ import { translateReference } from '../utils/localeReference.js';
 import MusafirBanner from '../components/MusafirBanner.js';
 import { useMusafir } from '../utils/musafir.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
-import { withAlpha } from '../utils/color.js';
 import {
   offsetDate,
   friendlyDate,
   RefLink,
   STATUS_META,
   CATEGORY_LABEL,
-  SPARKLES,
 } from '../components/fasting/fastingParts.js';
 import FastingGuestDialog from '../components/fasting/FastingGuestDialog.js';
 import FastingMakruhModal from '../components/fasting/FastingMakruhModal.js';
@@ -189,8 +207,8 @@ export default function FastingTracker() {
     const caps: Array<{
       id: string;
       label: string;
-      emoji: string;
-      color: string;
+      Icon: typeof CATEGORY_ICON.qada;
+      tone: string;
       done: number;
       target: number;
     }> = [];
@@ -198,8 +216,8 @@ export default function FastingTracker() {
       caps.push({
         id: 'qada',
         label: t('fasting.qada', 'Qaḍā'),
-        emoji: '🔄',
-        color: 'rgb(var(--c-gold))',
+        Icon: CATEGORY_ICON.qada,
+        tone: 'text-brand-gold border-brand-gold/40 bg-brand-gold/10',
         done: qadaDone,
         target: qadaOwed,
       });
@@ -208,8 +226,8 @@ export default function FastingTracker() {
       caps.push({
         id: 'kaffarah',
         label: t('fasting.kaffarah', 'Kaffārah'),
-        emoji: '⚖️',
-        color: 'rgb(var(--c-warm))',
+        Icon: CATEGORY_ICON.kaffarah,
+        tone: 'text-brand-warm border-brand-warm/40 bg-brand-warm/10',
         done: summary?.kaffarah.currentRun ?? 0,
         target: summary?.profile.kaffarah.targetDays ?? 60,
       });
@@ -219,8 +237,8 @@ export default function FastingTracker() {
         caps.push({
           id: `vow-${v.id}`,
           label: v.title,
-          emoji: '🤝',
-          color: 'rgb(var(--c-info))',
+          Icon: CATEGORY_ICON.nadhr,
+          tone: 'text-brand-info border-brand-info/40 bg-brand-info/10',
           done: v.completed,
           target: v.targetDays,
         });
@@ -320,31 +338,33 @@ export default function FastingTracker() {
     );
   };
 
-  // Hero gradient by state
-  const heroGradient =
-    ruling.level === 'haram'
-      ? 'from-red-500/25 via-red-900/20 to-brand-deep'
-      : log?.status === 'completed'
-        ? 'from-brand-emerald/30 via-brand-info/15 to-brand-deep'
-        : log?.status === 'intended'
-          ? 'from-brand-info/25 via-brand-info-dim/15 to-brand-deep'
-          : log?.status === 'broken'
-            ? 'from-red-400/15 via-brand-deep to-brand-deep'
-            : ruling.level === 'ramadan'
-              ? 'from-brand-gold/25 via-brand-gold-dim/15 to-brand-deep'
-              : 'from-brand-info/20 via-brand-deep to-brand-deep';
+  // The arch keeps one surface in every state; the state shows in the medallion.
+  const archBorder = ruling.level === 'haram' ? 'border-red-400/40' : 'border-brand-border';
 
-  const currentTypeChip =
+  const TypeIcon =
+    category === 'voluntary' ? VOLUNTARY_ICON[effectiveKind] : CATEGORY_ICON[category];
+  const currentTypeLabel =
     category === 'voluntary'
-      ? `${VOLUNTARY_BY_ID[effectiveKind]?.emoji ?? '💚'} ${VOLUNTARY_BY_ID[effectiveKind] ? t(`fastingRules.voluntary.${effectiveKind}`, VOLUNTARY_BY_ID[effectiveKind]!.label) : t('fasting.voluntary', 'Voluntary')}`
+      ? VOLUNTARY_BY_ID[effectiveKind]
+        ? t(`fastingRules.voluntary.${effectiveKind}`, VOLUNTARY_BY_ID[effectiveKind]!.label)
+        : t('fasting.voluntary', 'Voluntary')
       : category === 'nadhr'
-        ? `🤝 ${vows.find((v) => v.id === vowId)?.title ?? t('fasting.nadhr', 'Vow')}`
-        : `${CATEGORY_LABEL[category].emoji} ${t(`fasting.${category}`, CATEGORY_LABEL[category].label)}`;
+        ? (vows.find((v) => v.id === vowId)?.title ?? t('fasting.nadhr', 'Vow'))
+        : t(`fasting.${category}`, CATEGORY_LABEL[category].label);
+
+  const loggedLabel = (l: NonNullable<typeof log>): string =>
+    l.category === 'voluntary' && l.voluntaryKind
+      ? VOLUNTARY_BY_ID[l.voluntaryKind]
+        ? t(`fastingRules.voluntary.${l.voluntaryKind}`, VOLUNTARY_BY_ID[l.voluntaryKind]!.label)
+        : t('fasting.voluntary', 'Voluntary')
+      : l.category === 'nadhr'
+        ? (vows.find((v) => v.id === l.vowId)?.title ?? t('fasting.nadhr', 'Vow'))
+        : t(`fasting.${l.category}`, CATEGORY_LABEL[l.category as FastingCategory]?.label ?? '');
 
   return (
     <AnimatedBackground variant="dark">
       <Seo
-        title={t('fasting.seoTitle', 'Fasting Tracker — Ramadan, Qada & Voluntary Sawm')}
+        title={t('fasting.seoTitle', 'Fasting Tracker: Ramadan, Qada & Voluntary Sawm')}
         description={t(
           'fasting.seoDescription',
           'Log obligatory, qada (makeup) and voluntary fasts with a fiqh-aware calendar, streaks and progress stats. Track your Ramadan and Sunnah fasting in one place.'
@@ -353,14 +373,14 @@ export default function FastingTracker() {
       />
       <h1 className="sr-only">{t('fasting.title', 'Fasting Tracker')}</h1>
       <div className="p-4 sm:p-6 lg:p-8">
-        <div className="max-w-xl mx-auto space-y-4">
+        <div className="max-w-xl mx-auto space-y-5">
           {musafir && <MusafirBanner state={musafir} today={getTrackingDay()} variant="fasting" />}
           {/* ── Tabs + calendar toggle ── */}
           <div className="flex items-center justify-between gap-2">
             <TabNav
               items={[
-                { label: `🌙 ${t('fasting.tracker', 'Tracker')}`, to: '/fasting', active: true },
-                { label: `📊 ${t('fasting.analytics', 'Analytics')}`, to: '/fasting/analytics' },
+                { label: t('fasting.tracker', 'Tracker'), to: '/fasting', active: true },
+                { label: t('fasting.analytics', 'Analytics'), to: '/fasting/analytics' },
               ]}
             />
             <button
@@ -368,17 +388,17 @@ export default function FastingTracker() {
               aria-label={t('fasting.openCalendarAriaLabel', 'Open month calendar')}
               aria-expanded={calendarOpen}
               title={t('fasting.pickDay', 'Pick any day from the calendar')}
-              className={`p-2 rounded-xl border transition-all ${
+              className={`p-2.5 rounded-control border shadow-elev-1 transition-colors ${
                 calendarOpen
-                  ? 'bg-brand-emerald/20 border-brand-emerald/50 text-brand-emerald'
-                  : 'bg-white/[0.04] border-brand-emerald/10 text-white/40 hover:text-white'
+                  ? 'bg-brand-deep border-brand-emerald/50 text-brand-emerald'
+                  : 'bg-brand-deep border-brand-border text-white/70 hover:text-white hover:border-brand-emerald/40'
               }`}
             >
-              <CalendarDaysIcon className="w-4 h-4" />
+              <CalendarDaysIcon className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
 
-          {/* ── Ramadan qada advance warning — surfaced proactively before the
+          {/* ── Ramadan qada advance warning: surfaced proactively before the
                month starts, not only once it has ── */}
           <RamadanQadaWarning
             qadaRemaining={qadaRemaining}
@@ -409,271 +429,208 @@ export default function FastingTracker() {
             weekDays={weekDays}
           />
 
-          {/* Rayhanah days — fasting excused now, made up later */}
+          {/* Rayhanah days: fasting excused now, made up later */}
           {cycleActive && selectedDate >= cycleActive.startDate ? (
             <ExcusedCard feature="fasting" />
           ) : (
             <>
-              {/* ── HERO card ── */}
-              <motion.div
+              {/* ── The screen's one arch: the selected day ── */}
+              <motion.section
                 layout
-                className={`relative rounded-3xl border border-brand-emerald/15 bg-gradient-to-br ${heroGradient} overflow-hidden shadow-2xl`}
+                className={`rounded-arch border ${archBorder} bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-9 pb-5 sm:px-6 text-center space-y-4`}
               >
-                {/* soft animated orb */}
-                <motion.div
-                  className="absolute -top-16 -right-16 w-56 h-56 rounded-full pointer-events-none"
-                  style={{
-                    background:
-                      'radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%)',
-                  }}
-                  animate={{ scale: [1, 1.05, 1] }}
-                  transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-                />
+                {/* Date */}
+                <div>
+                  <h2 className="font-display text-white font-bold text-2xl leading-tight">
+                    {friendlyDate(selectedDate, t)}
+                  </h2>
+                  <p className="text-white/70 text-xs mt-1">
+                    {formatLocaleDate(dateObj, {
+                      weekday: 'long',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                    {ruling.hijriLabel && (
+                      <span className="text-brand-gold"> · {ruling.hijriLabel}</span>
+                    )}
+                  </p>
+                </div>
 
-                <div className="relative p-5 sm:p-6 text-center space-y-3">
-                  {/* Date */}
-                  <div>
-                    <p className="text-white font-black text-xl leading-tight">
-                      {friendlyDate(selectedDate, t)}
+                {/* Active obligation countdowns: one capsule per activated type.
+                    Tap to log the day against that obligation. */}
+                {debtCapsules.length > 0 && (
+                  <div className="flex justify-center gap-1.5 flex-wrap">
+                    {debtCapsules.map((c) => {
+                      const remaining = Math.max(0, c.target - c.done);
+                      const selected =
+                        (c.id === 'qada' && category === 'qada') ||
+                        (c.id === 'kaffarah' && category === 'kaffarah') ||
+                        (c.id.startsWith('vow-') &&
+                          category === 'nadhr' &&
+                          vowId === c.id.replace('vow-', ''));
+                      return (
+                        <motion.button
+                          key={c.id}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => {
+                            if (!user) {
+                              setShowGuestDialog(true);
+                              return;
+                            }
+                            if (log) {
+                              toast(
+                                t(
+                                  'fasting.alreadyLogged',
+                                  'This day is already logged. Remove it with the bin button to change its type.'
+                                ),
+                                {
+                                  id: 'fasting-capsule',
+                                  icon: (
+                                    <InformationCircleIcon className="w-5 h-5 text-brand-info" />
+                                  ),
+                                }
+                              );
+                              return;
+                            }
+                            if (c.id === 'qada') setCategory('qada');
+                            else if (c.id === 'kaffarah') setCategory('kaffarah');
+                            else {
+                              setCategory('nadhr');
+                              setVowId(c.id.replace('vow-', ''));
+                            }
+                            toast.success(
+                              t(
+                                'fasting.typeSet',
+                                'Fast type set to {{label}}. Now tap "I fasted"',
+                                { label: c.label }
+                              ),
+                              { id: 'fasting-capsule', duration: 2500 }
+                            );
+                          }}
+                          aria-pressed={selected}
+                          title={`${c.label}: ${c.done}/${c.target}`}
+                          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold transition-shadow ${c.tone} ${
+                            selected ? 'ring-2 ring-current ring-offset-0' : ''
+                          }`}
+                        >
+                          <c.Icon className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span className="max-w-[90px] truncate">{c.label}</span>
+                          <span className="tabular-nums text-white">
+                            {c.done}/{c.target}
+                          </span>
+                          <span className="text-white/70 font-semibold">
+                            · {t('fasting.nLeft', '{{count}} left', { count: remaining })}
+                          </span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* State display */}
+                {ruling.level === 'haram' && ruling.haram ? (
+                  <div className="space-y-2 py-1">
+                    <span className="mx-auto w-16 h-16 rounded-full grid place-items-center bg-red-400/10 border border-red-400/40 text-red-400">
+                      <ProhibitedIcon className="w-8 h-8" aria-hidden="true" />
+                    </span>
+                    <p className="text-red-400 font-bold text-lg leading-tight">
+                      {ruling.haram.title}
                     </p>
-                    <p className="text-white/30 text-xs">
-                      {formatLocaleDate(dateObj, {
-                        weekday: 'long',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                      {ruling.hijriLabel && (
-                        <span className="text-brand-gold/50"> · {ruling.hijriLabel}</span>
+                    <p className="text-white/80 text-sm leading-relaxed max-w-sm mx-auto">
+                      {t(`fastingRules.prohibitedDetail.${ruling.haram.id}`, ruling.haram.detail)}
+                    </p>
+                    <div className="flex justify-center gap-2 flex-wrap">
+                      {ruling.haram.refs.map((r) => (
+                        <RefLink key={r.url} r={r} />
+                      ))}
+                    </div>
+                    <p className="text-white/70 text-sm pt-1">
+                      {t(
+                        'fasting.enjoyBlessing',
+                        'Enjoy the blessing: today is for eating and celebrating.'
                       )}
                     </p>
                   </div>
-
-                  {/* Active obligation countdowns — one capsule per activated type.
-                  Tap to log the day against that obligation. */}
-                  {debtCapsules.length > 0 && (
-                    <div className="flex justify-center gap-1.5 flex-wrap">
-                      {debtCapsules.map((c) => {
-                        const remaining = Math.max(0, c.target - c.done);
-                        return (
-                          <motion.button
-                            key={c.id}
-                            whileTap={{ scale: 0.93 }}
-                            onClick={() => {
-                              if (!user) {
-                                setShowGuestDialog(true);
-                                return;
-                              }
-                              if (log) {
-                                toast(
-                                  t(
-                                    'fasting.alreadyLogged',
-                                    'This day is already logged — remove it (🗑) to change its type.'
-                                  ),
-                                  { id: 'fasting-capsule', icon: 'ℹ️' }
-                                );
-                                return;
-                              }
-                              if (c.id === 'qada') setCategory('qada');
-                              else if (c.id === 'kaffarah') setCategory('kaffarah');
-                              else {
-                                setCategory('nadhr');
-                                setVowId(c.id.replace('vow-', ''));
-                              }
-                              toast.success(
-                                t(
-                                  'fasting.typeSet',
-                                  'Fast type set to {{label}} — now tap "I fasted"',
-                                  { label: c.label }
-                                ),
-                                { id: 'fasting-capsule', duration: 2500 }
-                              );
-                            }}
-                            title={`${c.label}: ${c.done}/${c.target} done — tap to log this day as ${c.label}`}
-                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold transition-all ${
-                              (c.id === 'qada' && category === 'qada') ||
-                              (c.id === 'kaffarah' && category === 'kaffarah') ||
-                              (c.id.startsWith('vow-') &&
-                                category === 'nadhr' &&
-                                vowId === c.id.replace('vow-', ''))
-                                ? 'ring-1 ring-white/50'
-                                : ''
-                            }`}
-                            style={{
-                              background: withAlpha(c.color, '1c'),
-                              borderColor: withAlpha(c.color, '55'),
-                              color: c.color,
-                            }}
-                          >
-                            <span aria-hidden>{c.emoji}</span>
-                            <span className="max-w-[90px] truncate">{c.label}</span>
-                            <span className="tabular-nums text-white/80">
-                              {c.done}/{c.target}
-                            </span>
-                            <span className="text-white/40 font-semibold">
-                              · {t('fasting.nLeft', '{{count}} left', { count: remaining })}
-                            </span>
-                          </motion.button>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* State display */}
-                  {ruling.level === 'haram' && ruling.haram ? (
-                    <motion.div
-                      initial={{ scale: 0.9, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      className="space-y-2 py-2"
+                ) : ruling.level === 'ramadan' ? (
+                  <div className="space-y-3 py-1">
+                    <span className="mx-auto w-16 h-16 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/40 text-brand-gold">
+                      <CrescentIcon className="w-8 h-8" />
+                    </span>
+                    <p className="font-display text-brand-gold font-bold text-xl">
+                      {t('fasting.ramadanMubarak', 'Ramaḍān Mubārak!')}
+                    </p>
+                    <p className="text-white/80 text-sm leading-relaxed max-w-sm mx-auto">
+                      {t(
+                        'fasting.ramadanHomeDesc',
+                        'This blessed month has its own home: the 30-day tracker with suhoor & iftar times, tarawih nights and Laylat al-Qadr.'
+                      )}
+                    </p>
+                    <button className={BTN_PRIMARY} onClick={() => navigate('/ramadan')}>
+                      <CrescentIcon className="w-4 h-4" />
+                      {t('fasting.openRamadanTracker', 'Open the Ramadan tracker')}
+                    </button>
+                    <a
+                      href="https://quran.com/2/185"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-1 text-brand-gold text-[11px] underline underline-offset-2"
                     >
-                      <motion.div
-                        animate={{ rotate: [0, -6, 6, 0] }}
-                        transition={{ duration: 0.5, delay: 0.2 }}
-                        className="text-6xl"
-                      >
-                        🚫
-                      </motion.div>
-                      <p className="text-red-300 font-black text-lg leading-tight">
-                        {ruling.haram.title}
-                      </p>
-                      <p className="text-red-200/60 text-xs leading-relaxed max-w-sm mx-auto">
-                        {t(`fastingRules.prohibitedDetail.${ruling.haram.id}`, ruling.haram.detail)}
-                      </p>
-                      <div className="flex justify-center gap-2 flex-wrap">
-                        {ruling.haram.refs.map((r) => (
-                          <RefLink key={r.url} r={r} />
-                        ))}
-                      </div>
-                      <p className="text-white/40 text-xs pt-1">
-                        {t(
-                          'fasting.enjoyBlessing',
-                          'Enjoy the blessing — today is for eating and celebrating!'
-                        )}{' '}
-                        🎉
-                      </p>
-                    </motion.div>
-                  ) : ruling.level === 'ramadan' ? (
-                    <div className="space-y-3 py-2">
-                      <motion.div
-                        animate={{ y: [0, -6, 0] }}
-                        transition={{ duration: 3, repeat: Infinity }}
-                        className="text-6xl"
-                      >
-                        🌙
-                      </motion.div>
-                      <p className="text-brand-gold font-black text-lg">
-                        {t('fasting.ramadanMubarak', 'Ramaḍān Mubārak!')}
-                      </p>
-                      <p className="text-white/50 text-xs leading-relaxed max-w-sm mx-auto">
-                        {t(
-                          'fasting.ramadanHomeDesc',
-                          'This blessed month has its own home — the 30-day tracker with suhoor & iftar times, tarawih nights and Laylat al-Qadr.'
-                        )}
-                      </p>
-                      <button
-                        className="btn btn-sm rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-gold to-brand-gold"
-                        onClick={() => navigate('/ramadan')}
-                      >
-                        🌙 {t('fasting.openRamadanTracker', 'Open the Ramadan tracker')} →
-                      </button>
-                      <a
-                        href="https://quran.com/2/185"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block text-brand-gold/60 text-[10px] underline"
-                      >
-                        {translateReference('Quran 2:185', i18n.language)} ↗
-                      </a>
-                    </div>
-                  ) : log ? (
-                    /* ── Logged state ── */
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={log.status}
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 1.1, opacity: 0 }}
-                        transition={{ type: 'spring', damping: 18 }}
-                        className="space-y-3 py-1"
-                      >
-                        <div className="relative inline-block">
-                          <motion.div
-                            animate={log.status === 'completed' ? { scale: [1, 1.15, 1] } : {}}
+                      {translateReference('Quran 2:185', i18n.language)}
+                      <ArrowTopRightOnSquareIcon className="w-3 h-3" aria-hidden="true" />
+                    </a>
+                  </div>
+                ) : log ? (
+                  /* ── Logged state ── */
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={log.status}
+                      initial={{ scale: 0.92, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ type: 'spring', damping: 20 }}
+                      className="space-y-3"
+                    >
+                      {(() => {
+                        const StatusIcon = STATUS_ICON[log.status];
+                        const tone = STATUS_TONE[log.status];
+                        return (
+                          <motion.span
+                            animate={celebrate ? { scale: [1, 1.12, 1] } : {}}
                             transition={{ duration: 0.6 }}
-                            className="text-6xl"
+                            className={`mx-auto w-16 h-16 rounded-full grid place-items-center border border-current bg-brand-deep shadow-elev-1 ${tone.text}`}
                           >
-                            {STATUS_META[log.status].emoji}
-                          </motion.div>
-                          {/* celebration sparkles */}
-                          <AnimatePresence>
-                            {celebrate &&
-                              SPARKLES.map((s, i) => (
-                                <motion.span
-                                  key={i}
-                                  initial={{ x: 0, y: 0, scale: 0, opacity: 1 }}
-                                  animate={{ x: s.x, y: s.y, scale: 1.2, opacity: 0 }}
-                                  exit={{ opacity: 0 }}
-                                  transition={{ duration: 1.1, delay: s.d, ease: 'easeOut' }}
-                                  className="absolute top-1/2 left-1/2 text-lg pointer-events-none"
-                                >
-                                  ✨
-                                </motion.span>
-                              ))}
-                          </AnimatePresence>
-                        </div>
+                            <StatusIcon className="w-9 h-9" aria-hidden="true" />
+                          </motion.span>
+                        );
+                      })()}
+                      <div>
                         <p
-                          className="font-black text-lg"
-                          style={{ color: STATUS_META[log.status].color }}
+                          className={`font-display font-bold text-xl ${STATUS_TONE[log.status].text}`}
                         >
                           {t(`fasting.${log.status}`, STATUS_META[log.status].label)}
-                          {log.status === 'completed' && (
-                            <span className="text-white/50 font-semibold text-sm">
-                              {' '}
-                              — {t('fasting.mayAllahAccept', 'may Allah accept it!')} 🤲
-                            </span>
-                          )}
                         </p>
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-brand-emerald/15 text-white/60 text-xs font-semibold">
-                          {CATEGORY_LABEL[log.category as FastingCategory]?.emoji}{' '}
-                          {log.category === 'voluntary' && log.voluntaryKind
-                            ? VOLUNTARY_BY_ID[log.voluntaryKind]
-                              ? t(
-                                  `fastingRules.voluntary.${log.voluntaryKind}`,
-                                  VOLUNTARY_BY_ID[log.voluntaryKind]!.label
-                                )
-                              : t('fasting.voluntary', 'Voluntary')
-                            : log.category === 'nadhr'
-                              ? (vows.find((v) => v.id === log.vowId)?.title ??
-                                t('fasting.nadhr', 'Vow'))
-                              : t(
-                                  `fasting.${log.category}`,
-                                  CATEGORY_LABEL[log.category as FastingCategory]?.label ?? ''
-                                )}
-                        </div>
+                        {log.status === 'completed' && (
+                          <p className="text-white/80 text-sm mt-0.5">
+                            {t('fasting.mayAllahAccept', 'May Allah accept it.')}
+                          </p>
+                        )}
+                      </div>
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-deep border border-brand-border text-white/80 text-xs font-semibold">
+                        {(() => {
+                          const Icon = fastIcon(log.category as FastingCategory, log.voluntaryKind);
+                          return (
+                            <Icon className="w-3.5 h-3.5 text-brand-emerald" aria-hidden="true" />
+                          );
+                        })()}
+                        {loggedLabel(log)}
+                      </div>
 
-                        <div className="flex justify-center gap-2 pt-1">
-                          {!isFuture &&
-                            log.status === 'intended' &&
-                            (selectedDate !== today ||
-                              !dayTimes ||
-                              new Date() >= dayTimes.maghrib) && (
-                              <motion.button
-                                whileTap={{ scale: 0.94 }}
-                                onClick={() =>
-                                  submitLog({
-                                    date: selectedDate,
-                                    category: log.category as FastingCategory,
-                                    voluntaryKind: log.voluntaryKind,
-                                    vowId: log.vowId,
-                                    status: 'completed',
-                                    hijri: log.hijri,
-                                  })
-                                }
-                                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 font-bold px-6"
-                              >
-                                ✅ {t('fasting.completedIt', 'I completed it!')}
-                              </motion.button>
-                            )}
-                          {!isFuture && log.status !== 'broken' && (
+                      <div className="flex justify-center items-center gap-2 pt-1 flex-wrap">
+                        {!isFuture &&
+                          log.status === 'intended' &&
+                          (selectedDate !== today ||
+                            !dayTimes ||
+                            new Date() >= dayTimes.maghrib) && (
                             <button
                               onClick={() =>
                                 submitLog({
@@ -681,95 +638,110 @@ export default function FastingTracker() {
                                   category: log.category as FastingCategory,
                                   voluntaryKind: log.voluntaryKind,
                                   vowId: log.vowId,
-                                  status: 'broken',
+                                  status: 'completed',
                                   hijri: log.hijri,
                                 })
                               }
-                              className="btn btn-sm btn-ghost text-white/40 hover:text-red-300 text-xs"
+                              className={BTN_PRIMARY}
                             >
-                              {t('fasting.brokeFast', 'I broke the fast')}
+                              <CheckIcon className="w-4 h-4" aria-hidden="true" />
+                              {t('fasting.completedIt', 'I completed it!')}
                             </button>
                           )}
+                        {!isFuture && log.status !== 'broken' && (
                           <button
-                            onClick={handleClear}
-                            aria-label={t('fasting.removeLogAriaLabel', 'Remove this fast log')}
-                            className="btn btn-sm btn-ghost text-white/30 hover:text-red-400 px-2"
+                            onClick={() =>
+                              submitLog({
+                                date: selectedDate,
+                                category: log.category as FastingCategory,
+                                voluntaryKind: log.voluntaryKind,
+                                vowId: log.vowId,
+                                status: 'broken',
+                                hijri: log.hijri,
+                              })
+                            }
+                            className="px-3 py-2 rounded-control text-white/70 hover:text-red-400 text-xs font-semibold transition-colors"
                           >
-                            <TrashIcon className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </motion.div>
-                    </AnimatePresence>
-                  ) : (
-                    /* ── Not logged yet ── */
-                    <div className="space-y-3 py-1">
-                      <motion.div
-                        animate={{ y: [0, -5, 0] }}
-                        transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-                        className="text-6xl"
-                      >
-                        🌙
-                      </motion.div>
-
-                      {/* Fasting-as chip → opens type sheet */}
-                      <button
-                        onClick={() => setShowTypeSheet(true)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/15 border border-brand-emerald/20 text-white/70 text-xs font-semibold transition-all"
-                      >
-                        {currentTypeChip}
-                        <ChevronDownIcon className="w-3 h-3 text-white/40" />
-                      </button>
-
-                      <div className="flex flex-col items-center gap-2">
-                        {!isFuture && (
-                          <motion.button
-                            whileHover={{ scale: 1.03 }}
-                            whileTap={{ scale: 0.95 }}
-                            onClick={() => requestLog('completed')}
-                            disabled={upsert.isPending || (category === 'nadhr' && !vowId)}
-                            className="w-full max-w-xs h-14 rounded-2xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color font-black text-lg border-0 shadow-[0_8px_30px_rgba(16,185,129,0.35)] transition-colors"
-                          >
-                            ✅{' '}
-                            {t('fasting.iFasted', 'I fasted {{day}}', {
-                              day: friendlyDate(selectedDate, t).toLowerCase(),
-                            })}
-                          </motion.button>
-                        )}
-                        {(selectedDate === today || isFuture) && (
-                          <button
-                            onClick={() => requestLog('intended')}
-                            disabled={upsert.isPending || (category === 'nadhr' && !vowId)}
-                            className="text-brand-info/80 hover:text-brand-info text-xs font-semibold underline underline-offset-4"
-                          >
-                            🌅{' '}
-                            {isFuture
-                              ? t('fasting.intendTomorrow', 'I intend to fast tomorrow')
-                              : t('fasting.fastingToday', "I'm fasting today (mark intention)")}
+                            {t('fasting.brokeFast', 'I broke the fast')}
                           </button>
                         )}
+                        <button
+                          onClick={handleClear}
+                          aria-label={t('fasting.removeLogAriaLabel', 'Remove this fast log')}
+                          className="p-2 rounded-control text-white/60 hover:text-red-400 transition-colors"
+                        >
+                          <TrashIcon className="w-4 h-4" aria-hidden="true" />
+                        </button>
                       </div>
-                    </div>
-                  )}
+                    </motion.div>
+                  </AnimatePresence>
+                ) : (
+                  /* ── Not logged yet ── */
+                  <div className="space-y-4">
+                    <span className="mx-auto w-16 h-16 rounded-full grid place-items-center border border-brand-border bg-brand-deep text-brand-gold shadow-elev-1">
+                      <CrescentIcon className="w-8 h-8" />
+                    </span>
 
-                  {/* Suhoor / iftar strip */}
-                  {dayTimes && ruling.level !== 'haram' && (
-                    <div className="flex items-center justify-center gap-4 pt-2 border-t border-brand-emerald/10 text-xs">
-                      <span className="text-white/40">
-                        🌌 {t('fasting.suhoorEnds', 'Suhur ends')}{' '}
-                        <span className="text-white/80 font-bold tabular-nums">
-                          {formatTime(dayTimes.fajr)}
-                        </span>
-                      </span>
-                      <span className="text-white/40">
-                        🌇 {t('fasting.iftar', 'Iftar')}{' '}
-                        <span className="text-brand-gold font-bold tabular-nums">
-                          {formatTime(dayTimes.maghrib)}
-                        </span>
-                      </span>
+                    {/* Fasting-as chip: opens the type sheet */}
+                    <button
+                      onClick={() => setShowTypeSheet(true)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-deep border border-brand-border hover:border-brand-emerald/40 text-white/80 text-xs font-semibold shadow-elev-1 transition-colors"
+                    >
+                      <TypeIcon className="w-3.5 h-3.5 text-brand-emerald" aria-hidden="true" />
+                      {currentTypeLabel}
+                      <ChevronDownIcon className="w-3 h-3 text-white/60" aria-hidden="true" />
+                    </button>
+
+                    <div className="flex flex-col items-center gap-3">
+                      {!isFuture && (
+                        <motion.button
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => requestLog('completed')}
+                          disabled={upsert.isPending || (category === 'nadhr' && !vowId)}
+                          className={`${BTN_PRIMARY} w-full max-w-xs h-14 text-base shadow-elev-2`}
+                        >
+                          <CheckIcon className="w-5 h-5" aria-hidden="true" />
+                          {t('fasting.iFasted', 'I fasted {{day}}', {
+                            day: friendlyDate(selectedDate, t).toLowerCase(),
+                          })}
+                        </motion.button>
+                      )}
+                      {(selectedDate === today || isFuture) && (
+                        <button
+                          onClick={() => requestLog('intended')}
+                          disabled={upsert.isPending || (category === 'nadhr' && !vowId)}
+                          className="inline-flex items-center gap-1.5 text-brand-info text-sm font-semibold underline underline-offset-4 hover:opacity-80"
+                        >
+                          <FajrIcon className="w-4 h-4" />
+                          {isFuture
+                            ? t('fasting.intendTomorrow', 'I intend to fast tomorrow')
+                            : t('fasting.fastingToday', "I'm fasting today (mark intention)")}
+                        </button>
+                      )}
                     </div>
-                  )}
-                </div>
-              </motion.div>
+                  </div>
+                )}
+
+                {/* Suhoor / iftar strip */}
+                {dayTimes && ruling.level !== 'haram' && (
+                  <div className="flex items-center justify-center gap-5 pt-3 border-t border-brand-border text-xs">
+                    <span className="inline-flex items-center gap-1.5 text-white/70">
+                      <FajrIcon className="w-4 h-4 text-brand-info" />
+                      {t('fasting.suhoorEnds', 'Suhur ends')}
+                      <span className="text-white font-bold tabular-nums">
+                        {formatTime(dayTimes.fajr)}
+                      </span>
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 text-white/70">
+                      <MaghribIcon className="w-4 h-4 text-brand-gold" />
+                      {t('fasting.iftar', 'Iftar')}
+                      <span className="text-brand-gold font-bold tabular-nums">
+                        {formatTime(dayTimes.maghrib)}
+                      </span>
+                    </span>
+                  </div>
+                )}
+              </motion.section>
 
               {/* ── AI fasting companion ── */}
               {log?.status === 'completed' && selectedDate === today && (
@@ -786,67 +758,67 @@ export default function FastingTracker() {
                 />
               )}
 
-              {/* ── Recommended today chips ── */}
+              {/* ── Recommended today ── */}
               {ruling.level === 'normal' && ruling.recommended.length > 0 && (
-                <div className="space-y-1.5">
-                  {ruling.recommended.map((r, i) => (
-                    <motion.div
-                      key={r.id}
-                      initial={{ opacity: 0, x: -14 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.08 + i * 0.06 }}
-                      className="rounded-2xl border px-4 py-2.5 flex items-center gap-3"
-                      style={{ background: `${r.color}14`, borderColor: `${r.color}45` }}
-                    >
-                      <motion.span
-                        className="text-2xl shrink-0"
-                        animate={{ scale: [1, 1.04, 1] }}
-                        transition={{ duration: 3, repeat: Infinity, delay: i * 0.4 }}
+                <div className="space-y-2">
+                  {ruling.recommended.map((r, i) => {
+                    const Icon = VOLUNTARY_ICON[r.id];
+                    return (
+                      <motion.div
+                        key={r.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.08 + i * 0.06 }}
+                        className={`${CARD} px-4 py-3 flex items-start gap-3`}
                       >
-                        {r.emoji}
-                      </motion.span>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-bold text-sm leading-tight" style={{ color: r.color }}>
-                          {t(`fastingRules.voluntary.${r.id}`, r.label)}{' '}
-                          <span className="text-white/40 font-normal text-[11px]">
-                            — {t('fasting.sunnahFast', 'sunnah fast!')}
-                          </span>
-                        </p>
-                        <p className="text-white/40 text-[11px] leading-snug">
-                          {t(`fastingRules.voluntaryVirtue.${r.id}`, r.virtue)}
-                        </p>
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <RefLink r={r.ref} />
-                          {r.specialDayId && (
-                            <Link
-                              to={`/special-day/${r.specialDayId}`}
-                              className="text-[10px] font-bold underline underline-offset-2 hover:opacity-80"
-                              style={{ color: r.color }}
-                            >
-                              {t('fasting.learnMore', 'Learn more')} →
-                            </Link>
-                          )}
+                        <span className="w-10 h-10 shrink-0 rounded-control grid place-items-center bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald">
+                          <Icon className="w-5 h-5" aria-hidden="true" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-bold text-sm text-white leading-tight flex items-center gap-2 flex-wrap">
+                            {t(`fastingRules.voluntary.${r.id}`, r.label)}
+                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-brand-emerald/10 text-brand-emerald">
+                              {t('fasting.sunnahFast', 'Sunnah fast')}
+                            </span>
+                          </p>
+                          <p className="text-white/80 text-xs leading-snug mt-1">
+                            {t(`fastingRules.voluntaryVirtue.${r.id}`, r.virtue)}
+                          </p>
+                          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                            <RefLink r={r.ref} />
+                            {r.specialDayId && (
+                              <Link
+                                to={`/special-day/${r.specialDayId}`}
+                                className="inline-flex items-center gap-0.5 text-brand-emerald text-[11px] font-bold underline underline-offset-2 hover:opacity-80"
+                              >
+                                {t('fasting.learnMore', 'Learn more')}
+                                <ChevronRightIcon className="w-3 h-3" aria-hidden="true" />
+                              </Link>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  ))}
+                      </motion.div>
+                    );
+                  })}
                 </div>
               )}
 
               {/* Caution note (full warning shows at log time) */}
               {ruling.level === 'normal' && ruling.cautions.length > 0 && !log && (
-                <p className="text-brand-gold/60 text-[11px] px-2 leading-relaxed">
-                  ⚠️{' '}
-                  {ruling.cautions
-                    .map((c) => t(`fastingRules.disliked.${c.info.id}`, c.info.label))
-                    .join(' · ')}{' '}
-                  — {t('fasting.remindBeforeLogging', "we'll remind you before logging.")}
+                <p className="flex items-start gap-2 text-brand-gold text-xs px-2 leading-relaxed">
+                  <CautionIcon className="w-4 h-4 shrink-0 mt-px" aria-hidden="true" />
+                  <span>
+                    {ruling.cautions
+                      .map((c) => t(`fastingRules.disliked.${c.info.id}`, c.info.label))
+                      .join(' · ')}
+                    . {t('fasting.remindBeforeLogging', "We'll remind you before logging.")}
+                  </span>
                 </p>
               )}
             </>
           )}
 
-          {/* ── Progress chips + manage ── */}
+          {/* ── Progress tiles + manage ── */}
           <FastingProgressChips
             kaffarahActive={kaffarahActive}
             qadaOwed={qadaOwed}
@@ -860,31 +832,36 @@ export default function FastingTracker() {
 
           {/* Vow progress bars (only when vows exist) */}
           {vows.length > 0 && (
-            <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-3 space-y-2">
-              {vows.map((v) => (
-                <div key={v.id}>
-                  <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-white/60 font-semibold truncate">🤝 {v.title}</span>
-                    <span
-                      className={
-                        v.completed >= v.targetDays
-                          ? 'text-brand-emerald font-bold'
-                          : 'text-white/40'
-                      }
-                    >
-                      {v.completed}/{v.targetDays}
-                      {v.completed >= v.targetDays ? ' ✓' : ''}
-                    </span>
+            <div className={`${CARD} p-4 space-y-3`}>
+              {vows.map((v) => {
+                const done = v.completed >= v.targetDays;
+                return (
+                  <div key={v.id}>
+                    <div className="flex justify-between items-center text-xs mb-1.5">
+                      <span className="text-white/80 font-semibold truncate inline-flex items-center gap-1.5">
+                        <HandRaisedIcon
+                          className="w-3.5 h-3.5 text-brand-info"
+                          aria-hidden="true"
+                        />
+                        {v.title}
+                      </span>
+                      <span
+                        className={`inline-flex items-center gap-1 tabular-nums ${done ? 'text-brand-emerald font-bold' : 'text-white/70'}`}
+                      >
+                        {v.completed}/{v.targetDays}
+                        {done && <CheckIcon className="w-3.5 h-3.5" aria-hidden="true" />}
+                      </span>
+                    </div>
+                    <div className="w-full bg-track rounded-full h-1.5 overflow-hidden">
+                      <motion.div
+                        animate={{ width: `${Math.min(100, (v.completed / v.targetDays) * 100)}%` }}
+                        transition={{ duration: 0.6 }}
+                        className="h-full bg-brand-gold rounded-full"
+                      />
+                    </div>
                   </div>
-                  <div className="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
-                    <motion.div
-                      animate={{ width: `${Math.min(100, (v.completed / v.targetDays) * 100)}%` }}
-                      transition={{ duration: 0.6 }}
-                      className="h-full bg-brand-gold rounded-full"
-                    />
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -892,13 +869,15 @@ export default function FastingTracker() {
           {kaffarahActive &&
             summary?.kaffarah.runStale &&
             (summary?.kaffarah.completed ?? 0) > 0 && (
-              <p className="text-red-400/80 text-[11px] px-2">
-                ⚠️{' '}
-                {t(
-                  'fasting.kaffarahChainBroken',
-                  'Kaffarah chain broken — the {{days}} days must be consecutive. An unexcused gap restarts the count (open Manage for details).',
-                  { days: summary?.profile.kaffarah.targetDays ?? 60 }
-                )}
+              <p className="flex items-start gap-2 text-red-400 text-xs px-2 leading-relaxed">
+                <CautionIcon className="w-4 h-4 shrink-0 mt-px" aria-hidden="true" />
+                <span>
+                  {t(
+                    'fasting.kaffarahChainBroken',
+                    'Kaffarah chain broken: the {{days}} days must be consecutive. An unexcused gap restarts the count (open Manage for details).',
+                    { days: summary?.profile.kaffarah.targetDays ?? 60 }
+                  )}
+                </span>
               </p>
             )}
 
@@ -924,7 +903,7 @@ export default function FastingTracker() {
         vows={vows}
       />
 
-      {/* ── Fasting settings — portaled to body so it floats above navbar ── */}
+      {/* ── Fasting settings: portaled to body so it floats above navbar ── */}
       <FastingSettingsSheet
         addVow={addVow}
         kaffarahActive={kaffarahActive}

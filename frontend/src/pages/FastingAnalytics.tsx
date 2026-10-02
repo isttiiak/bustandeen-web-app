@@ -7,7 +7,9 @@ import TabNav from '../components/TabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { ChartBarIcon, CheckIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { CARD, SECTION_TITLE } from '../components/bustanStyles.js';
+import { STATUS_ICON, fastIcon } from '../components/fasting/fastingIcons.js';
 import { formatLocaleDate } from '../utils/localeDate.js';
 import {
   useFastingSummary,
@@ -17,34 +19,32 @@ import {
   localTodayStr,
   FastingLog,
 } from '../hooks/useFasting.js';
-import { FastingCategory, VOLUNTARY_BY_ID } from '../utils/fastingRules.js';
+import { FastingCategory, FastingStatus, VOLUNTARY_BY_ID } from '../utils/fastingRules.js';
 import { useWorshipCorrelation } from '../hooks/useInsights.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 
-// Chart palette — validated (dataviz six checks, dark surface): identity per
-// category, fixed order, never cycled. Chips elsewhere use the app's lighter
-// hues of the same families.
-const CATEGORY_CHART: Record<FastingCategory, { label: string; emoji: string; color: string }> = {
-  voluntary: { label: 'Voluntary', emoji: '💚', color: 'rgb(var(--c-emerald))' },
-  qada: { label: 'Qaḍā', emoji: '🔄', color: 'rgb(var(--c-gold))' },
-  kaffarah: { label: 'Kaffārah', emoji: '⚖️', color: 'rgb(var(--c-warm))' },
-  nadhr: { label: 'Vow', emoji: '🤝', color: 'rgb(var(--c-info))' },
-  ramadan: { label: 'Ramadan', emoji: '🌙', color: 'rgb(var(--c-gold-dim))' },
+// Chart palette: identity per category, fixed order, never cycled. The
+// `--c-data-*` tokens equal the brand colours on dark (unchanged) and are
+// separated by hue on sage paper, where the brand tints were too close.
+const CATEGORY_CHART: Record<FastingCategory, { label: string; color: string }> = {
+  voluntary: { label: 'Voluntary', color: 'rgb(var(--c-data-good))' },
+  qada: { label: 'Qaḍā', color: 'rgb(var(--c-data-mid))' },
+  kaffarah: { label: 'Kaffārah', color: 'rgb(var(--c-data-low))' },
+  nadhr: { label: 'Vow', color: 'rgb(var(--c-info))' },
+  ramadan: { label: 'Ramadan', color: 'rgb(var(--c-gold-dim))' },
 };
 const CATEGORY_ORDER: FastingCategory[] = ['voluntary', 'qada', 'kaffarah', 'nadhr'];
 
-const STATUS_CHIP: Record<string, { emoji: string; labelEn: string; cls: string }> = {
+const STATUS_CHIP: Record<FastingStatus, { labelEn: string; cls: string }> = {
   completed: {
-    emoji: '✓',
     labelEn: 'Fasted',
-    cls: 'bg-brand-emerald/15 text-brand-emerald border-brand-emerald/40',
+    cls: 'bg-brand-emerald/10 text-brand-emerald border-brand-emerald/40',
   },
   intended: {
-    emoji: '🌅',
     labelEn: 'Intended',
-    cls: 'bg-brand-info/15 text-brand-info border-brand-info/40',
+    cls: 'bg-brand-info/10 text-brand-info border-brand-info/40',
   },
-  broken: { emoji: '💔', labelEn: 'Broken', cls: 'bg-red-500/15 text-red-300 border-red-400/40' },
+  broken: { labelEn: 'Broken', cls: 'bg-red-400/10 text-red-400 border-red-400/40' },
 };
 
 function monthLabel(ym: string): string {
@@ -123,7 +123,7 @@ export default function FastingAnalytics() {
   if (isDemoMode) {
     return (
       <DemoSignInGate
-        emoji="📊"
+        icon={<ChartBarIcon className="w-7 h-7" />}
         title={t('demoGate.analyticsTitle', 'Your personal analytics await')}
         desc={t(
           'demoGate.fastingDesc',
@@ -134,9 +134,9 @@ export default function FastingAnalytics() {
         tabs={
           <TabNav
             items={[
-              { label: `🌙 ${t('fasting.tracker', 'Tracker')}`, to: '/fasting' },
+              { label: t('fasting.tracker', 'Tracker'), to: '/fasting' },
               {
-                label: `📊 ${t('fasting.analytics', 'Analytics')}`,
+                label: t('fasting.analytics', 'Analytics'),
                 to: '/fasting/analytics',
                 active: true,
               },
@@ -151,12 +151,12 @@ export default function FastingAnalytics() {
     <AnimatedBackground variant="dark">
       <h1 className="sr-only">{t('fastingAnalytics.srTitle', 'Fasting Analytics')}</h1>
       <div className="p-4 sm:p-6 lg:p-8">
-        <div className="max-w-xl mx-auto space-y-4">
+        <div className="max-w-xl mx-auto space-y-5">
           <TabNav
             items={[
-              { label: `🌙 ${t('fasting.tracker', 'Tracker')}`, to: '/fasting' },
+              { label: t('fasting.tracker', 'Tracker'), to: '/fasting' },
               {
-                label: `📊 ${t('fasting.analytics', 'Analytics')}`,
+                label: t('fasting.analytics', 'Analytics'),
                 to: '/fasting/analytics',
                 active: true,
               },
@@ -211,15 +211,15 @@ export default function FastingAnalytics() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] px-3 py-3"
+                    className={`${CARD} px-3 py-3`}
                   >
-                    <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold">
+                    <p className="text-white/70 text-[10px] uppercase tracking-widest font-bold">
                       {s.label}
                     </p>
-                    <p className="text-white font-black text-2xl tabular-nums mt-0.5">
+                    <p className="font-display text-white font-bold text-3xl tabular-nums mt-1 leading-none">
                       {formatLocaleNumber(s.value)}
                     </p>
-                    <p className="text-white/25 text-[10px]">{s.sub}</p>
+                    <p className="text-white/70 text-[11px] mt-1">{s.sub}</p>
                   </motion.div>
                 ))}
               </div>
@@ -229,14 +229,16 @@ export default function FastingAnalytics() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-4 space-y-3"
+                className={`${CARD} p-4 space-y-3`}
               >
-                <p className="text-white/70 font-bold text-sm">
-                  {t('fastingAnalytics.completedByType', 'Completed fasts by type')}{' '}
-                  <span className="text-white/25 font-normal text-[11px]">
-                    — {t('fastingAnalytics.last12Months', 'last 12 months')}
-                  </span>
-                </p>
+                <div>
+                  <h2 className={SECTION_TITLE}>
+                    {t('fastingAnalytics.completedByType', 'Completed fasts by type')}
+                  </h2>
+                  <p className="text-white/70 text-xs">
+                    {t('fastingAnalytics.last12Months', 'last 12 months')}
+                  </p>
+                </div>
                 <div className="space-y-2.5">
                   {CATEGORY_ORDER.map((c) => {
                     const meta = CATEGORY_CHART[c];
@@ -249,18 +251,16 @@ export default function FastingAnalytics() {
                         title={`${t(`fasting.${c}`, meta.label)}: ${count} ${t('fastingAnalytics.completed', 'completed')}`}
                       >
                         <div className="flex justify-between items-baseline mb-1">
-                          <span className="text-white/60 text-xs font-semibold flex items-center gap-1.5">
+                          <span className="text-white/80 text-xs font-semibold flex items-center gap-1.5">
                             <span
                               className="w-2.5 h-2.5 rounded-sm inline-block"
                               style={{ background: meta.color }}
                             />
-                            {meta.emoji} {t(`fasting.${c}`, meta.label)}
+                            {t(`fasting.${c}`, meta.label)}
                           </span>
-                          <span className="text-white/80 text-xs font-bold tabular-nums">
-                            {count}
-                          </span>
+                          <span className="text-white text-xs font-bold tabular-nums">{count}</span>
                         </div>
-                        <div className="w-full bg-white/10 rounded-full h-2.5 overflow-hidden">
+                        <div className="w-full bg-track rounded-full h-2.5 overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${count > 0 ? Math.max(pct, 4) : 0}%` }}
@@ -280,11 +280,11 @@ export default function FastingAnalytics() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-4"
+                className={`${CARD} p-4`}
               >
-                <p className="text-white/70 font-bold text-sm mb-3">
+                <h2 className={`${SECTION_TITLE} mb-3`}>
                   {t('fastingAnalytics.completedPerMonth', 'Completed fasts per month')}
-                </p>
+                </h2>
                 <div className="flex items-end justify-between gap-2 h-28">
                   {derived.months.map((m) => {
                     const isMax = m.count === maxMonth && m.count > 0;
@@ -293,24 +293,27 @@ export default function FastingAnalytics() {
                     return (
                       <div
                         key={m.ym}
-                        className="flex-1 flex flex-col items-center gap-1 tooltip"
+                        className="flex-1 h-full flex flex-col items-center gap-1 tooltip"
                         data-tip={`${monthLabel(m.ym)}: ${t('fastingAnalytics.fastCount', { count: m.count, defaultValue: '{{count}} fasts' })}`}
                       >
                         {/* Selective direct label: only the peak month */}
                         <span
-                          className={`text-[10px] font-bold h-3 leading-none ${isMax ? 'text-white/70' : 'text-transparent'}`}
+                          className={`text-[10px] font-bold h-3 leading-none ${isMax ? 'text-white' : 'text-transparent'}`}
                         >
                           {m.count}
                         </span>
-                        <motion.div
-                          initial={{ height: 0 }}
-                          animate={{ height: `${h}%` }}
-                          transition={{ duration: 0.5, ease: 'easeOut' }}
-                          className={`w-full rounded-t-[4px] ${isCurrent ? 'ring-1 ring-white/30' : ''}`}
-                          style={{ background: m.count > 0 ? '#7a9e6e' : 'rgba(255,255,255,0.08)' }}
-                        />
+                        {/* The bar's % height needs a definite box: this flex-1
+                            slot (the column itself had no height, so no bar drew). */}
+                        <div className="flex-1 w-full flex items-end">
+                          <motion.div
+                            initial={{ height: 0 }}
+                            animate={{ height: `${h}%` }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
+                            className={`w-full rounded-t-[4px] ${m.count > 0 ? 'bg-data-good' : 'bg-track'} ${isCurrent ? 'ring-1 ring-brand-gold' : ''}`}
+                          />
+                        </div>
                         <span
-                          className={`text-[9px] ${isCurrent ? 'text-white/60 font-bold' : 'text-white/25'}`}
+                          className={`text-[10px] ${isCurrent ? 'text-white font-bold' : 'text-white/70'}`}
                         >
                           {monthLabel(m.ym)}
                         </span>
@@ -326,16 +329,16 @@ export default function FastingAnalytics() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.18 }}
-                  className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-4 space-y-3"
+                  className={`${CARD} p-4 space-y-3`}
                 >
                   <div>
-                    <p className="text-white/70 font-bold text-sm">
+                    <h2 className={SECTION_TITLE}>
                       {t('fastingAnalytics.correlationTitle', 'Fasting & Worship')}
-                    </p>
-                    <p className="text-white/25 text-[10px]">
+                    </h2>
+                    <p className="text-white/70 text-xs">
                       {t(
                         'fastingAnalytics.correlationSubtitle',
-                        'Your salat, zikr, and Quran on fasting days vs. others — last {{days}} days',
+                        'Your salat, zikr, and Quran on fasting days vs. others, last {{days}} days',
                         { days: correlation.windowDays }
                       )}
                     </p>
@@ -366,21 +369,21 @@ export default function FastingAnalytics() {
                       const higher = f > r ? 'fasting' : f < r ? 'rest' : null;
                       return (
                         <div key={row.label} className="flex items-center justify-between gap-3">
-                          <span className="text-white/50 text-xs">{row.label}</span>
+                          <span className="text-white/80 text-xs">{row.label}</span>
                           <span className="text-xs font-bold tabular-nums flex items-center gap-1.5">
                             <span
                               className={
-                                higher === 'fasting' ? 'text-brand-emerald' : 'text-white/60'
+                                higher === 'fasting' ? 'text-brand-emerald' : 'text-white/80'
                               }
                             >
                               {formatLocaleNumber(f)}
                               {row.unit}
                             </span>
-                            <span className="text-white/20 font-normal">
+                            <span className="text-white/60 font-normal">
                               {t('fastingAnalytics.vsNonFasting', 'vs')}
                             </span>
                             <span
-                              className={higher === 'rest' ? 'text-brand-emerald' : 'text-white/60'}
+                              className={higher === 'rest' ? 'text-brand-emerald' : 'text-white/80'}
                             >
                               {formatLocaleNumber(r)}
                               {row.unit}
@@ -390,10 +393,10 @@ export default function FastingAnalytics() {
                       );
                     })}
                   </div>
-                  <p className="text-white/20 text-[10px]">
+                  <p className="text-white/60 text-[11px]">
                     {t(
                       'fastingAnalytics.correlationHint',
-                      '{{fastingDays}} fasting days vs. {{restDays}} others in this window — a comparison, not a claim about cause and effect.',
+                      '{{fastingDays}} fasting days vs. {{restDays}} others in this window. A comparison, not a claim about cause and effect.',
                       {
                         fastingDays: correlation.fastingDays.days,
                         restDays: correlation.nonFastingDays.days,
@@ -408,32 +411,31 @@ export default function FastingAnalytics() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] overflow-hidden"
+                className={`${CARD} overflow-hidden`}
               >
                 <div className="px-4 pt-4 pb-2">
-                  <p className="text-white/70 font-bold text-sm">
+                  <h2 className={SECTION_TITLE}>
                     {t('fastingAnalytics.history', 'Fasting history')}
-                  </p>
-                  <p className="text-white/25 text-[10px]">
+                  </h2>
+                  <p className="text-white/70 text-xs">
                     {t(
                       'fastingAnalytics.historySubtitle',
-                      'Every logged day — fix a status or remove an entry'
+                      'Every logged day: fix a status or remove an entry'
                     )}
                   </p>
                 </div>
                 {derived.groups.length === 0 ? (
-                  <p className="text-white/30 text-sm text-center py-10">
+                  <p className="text-white/70 text-sm text-center py-10">
                     {t(
                       'fastingAnalytics.noFastsYet',
-                      'No fasts logged yet — start from the Tracker tab'
-                    )}{' '}
-                    🌙
+                      'No fasts logged yet. Start from the Tracker tab.'
+                    )}
                   </p>
                 ) : (
-                  <div className="divide-y divide-white/5">
+                  <div className="divide-y divide-brand-border">
                     {derived.groups.map((g) => (
                       <div key={g.ym}>
-                        <p className="px-4 py-1.5 bg-white/[0.03] text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                        <p className="px-4 py-1.5 bg-shade/10 text-white/70 text-[10px] font-bold uppercase tracking-widest">
                           {formatLocaleDate(new Date(g.ym + '-15T12:00:00'), {
                             month: 'long',
                             year: 'numeric',
@@ -447,15 +449,16 @@ export default function FastingAnalytics() {
                         </p>
                         {g.items.map((l) => {
                           const cat = CATEGORY_CHART[l.category as FastingCategory];
-                          const chip = STATUS_CHIP[l.status] ?? STATUS_CHIP['completed']!;
+                          const chip = STATUS_CHIP[l.status] ?? STATUS_CHIP.completed;
+                          const ChipIcon = STATUS_ICON[l.status] ?? STATUS_ICON.completed;
                           return (
                             <div key={l.date} className="px-4 py-2.5 flex items-center gap-3">
                               {/* Date */}
                               <div className="w-11 shrink-0 text-center">
-                                <p className="text-white font-black text-base leading-none tabular-nums">
+                                <p className="font-display text-white font-bold text-lg leading-none tabular-nums">
                                   {parseInt(l.date.slice(8), 10)}
                                 </p>
-                                <p className="text-white/30 text-[9px] uppercase">
+                                <p className="text-white/70 text-[10px] uppercase">
                                   {formatLocaleDate(new Date(l.date + 'T12:00:00'), {
                                     weekday: 'short',
                                   })}
@@ -463,11 +466,20 @@ export default function FastingAnalytics() {
                               </div>
                               {/* Type */}
                               <div className="flex-1 min-w-0">
-                                <p
-                                  className="text-xs font-bold truncate"
-                                  style={{ color: cat?.color ?? '#fff' }}
-                                >
-                                  {cat?.emoji}{' '}
+                                <p className="text-xs font-bold truncate text-white flex items-center gap-1.5">
+                                  {(() => {
+                                    const Icon = fastIcon(
+                                      l.category as FastingCategory,
+                                      l.voluntaryKind
+                                    );
+                                    return (
+                                      <Icon
+                                        className="w-3.5 h-3.5 shrink-0"
+                                        style={{ color: cat?.color }}
+                                        aria-hidden="true"
+                                      />
+                                    );
+                                  })()}
                                   {l.category === 'voluntary' && l.voluntaryKind
                                     ? VOLUNTARY_BY_ID[l.voluntaryKind]
                                       ? t(
@@ -478,14 +490,14 @@ export default function FastingAnalytics() {
                                     : t(`fasting.${l.category}`, cat?.label)}
                                 </p>
                                 {l.hijri && (
-                                  <p className="text-white/25 text-[10px] truncate">{l.hijri}</p>
+                                  <p className="text-white/70 text-[11px] truncate">{l.hijri}</p>
                                 )}
                               </div>
                               {/* Status chip / editor */}
                               <span
-                                className={`px-2 py-0.5 rounded-full border text-[10px] font-bold shrink-0 ${chip.cls}`}
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[10px] font-bold shrink-0 ${chip.cls}`}
                               >
-                                {chip.emoji}{' '}
+                                <ChipIcon className="w-3 h-3" aria-hidden="true" />
                                 {t(`fastingAnalytics.status.${l.status}`, chip.labelEn)}
                               </span>
                               {/* Actions */}
@@ -498,9 +510,9 @@ export default function FastingAnalytics() {
                                       date: l.date,
                                       defaultValue: 'Mark {{date}} as fasted',
                                     })}
-                                    className="p-1.5 rounded-lg text-white/30 hover:text-brand-emerald hover:bg-brand-emerald/10 text-xs"
+                                    className="p-1.5 rounded-lg text-white/60 hover:text-brand-emerald hover:bg-brand-emerald/10"
                                   >
-                                    ✓
+                                    <CheckIcon className="w-4 h-4" aria-hidden="true" />
                                   </button>
                                 )}
                                 {l.status !== 'broken' && l.date <= today && (
@@ -511,9 +523,9 @@ export default function FastingAnalytics() {
                                       date: l.date,
                                       defaultValue: 'Mark {{date}} as broken',
                                     })}
-                                    className="p-1.5 rounded-lg text-white/30 hover:text-red-400 hover:bg-red-500/10 text-xs"
+                                    className="p-1.5 rounded-lg text-white/60 hover:text-red-400 hover:bg-red-400/10"
                                   >
-                                    💔
+                                    <XCircleIcon className="w-4 h-4" aria-hidden="true" />
                                   </button>
                                 )}
                                 <button
@@ -523,9 +535,9 @@ export default function FastingAnalytics() {
                                     date: l.date,
                                     defaultValue: 'Delete {{date}} entry',
                                   })}
-                                  className="p-1.5 rounded-lg text-white/25 hover:text-red-400 hover:bg-red-500/10"
+                                  className="p-1.5 rounded-lg text-white/60 hover:text-red-400 hover:bg-red-400/10"
                                 >
-                                  <TrashIcon className="w-3.5 h-3.5" />
+                                  <TrashIcon className="w-4 h-4" aria-hidden="true" />
                                 </button>
                               </div>
                             </div>

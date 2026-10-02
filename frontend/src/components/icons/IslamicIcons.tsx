@@ -212,6 +212,35 @@ export function ForkPathIcon(p: IconProps) {
   );
 }
 
+/** Full moon with a soft halo: the white days (13-15th of the lunar month). */
+export function FullMoonIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="6" />
+      <path d="M12 2.5v1.5M12 20v1.5M2.5 12H4M20 12h1.5" />
+    </Svg>
+  );
+}
+
+/** A mountain: ʿArafah. */
+export function MountainIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M3 19.5 9.5 8l3.5 6 2.5-3.5L21 19.5z" />
+      <path d="M8 10.7 9.5 12l1.6-1.4" />
+    </Svg>
+  );
+}
+
+/** Waves: ʿĀshūrāʾ, the day the sea parted for Mūsā. */
+export function WavesIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M3 9c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 14c2-2 4-2 6 0s4 2 6 0 4-2 6 0M3 19c2-2 4-2 6 0s4 2 6 0 4-2 6 0" />
+    </Svg>
+  );
+}
+
 /** Line, star, line: the section divider. */
 export function OrnamentDivider({ className = '' }: { className?: string }) {
   return (
