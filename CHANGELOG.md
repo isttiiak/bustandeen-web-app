@@ -16,6 +16,27 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - `ZikrReferencePanel.tsx`; keys `zikr.fingertipNote`, `fingertipCite`, `fingertipHand`, `fingertipHandCite` (en + bn).
 - `e2e/references.spec.ts`: the note renders on `/zikr` with both sunnah.com links.
 
+## v5.84.0 - See what Naseeh sends, and a plain note when the AI is away - 2026-10-02
+
+### Added
+
+- **Every Naseeh card now has a "What is sent?" link** (AI-01): quick log, muhāsabah, what I noticed, make-up prayer plan, weekly plan, ask about my data, streak coaching, the fasting companion and the welcome-back note. It opens the "AI usage and privacy" panel on the Naseeh page at that feature's row.
+- **Each AI card has a plain, non-AI version** for when the AI request fails or the daily limit is reached, instead of disappearing:
+  - Muhāsabah: this week's own numbers (dhikr, prayers logged, streaks, fasts) with the same verified āyah or hadith.
+  - Streak coaching, the fasting companion and the welcome-back note: a short fixed note.
+  - Quick log: "can't read notes just now", with buttons to log salat, zikr or Quran by hand (it used to say it found nothing in the note).
+  - Ask about my data: a failed typed question points to the quick questions, which never use AI.
+  - What I noticed and the make-up prayer plan already fall back to computed text; they now say so.
+  - Every fallback says "No AI was used" in place of the AI label.
+
+### Changed (developers)
+
+- `AiFlair.tsx`: `AiSendsLink`, `AiFallbackNote`, `AiFeature`; `AiDisclaimer` takes an optional `feature`. `AiPrivacyPanel` rows have `id="ai-sends-<feature>"` and the panel opens and scrolls to the row named in the URL hash.
+- Card fallbacks read the mutation's own `isError` (no extra state, nothing cached, so the next visit tries the AI again). `useKazaPlan()` now sets `ai` from whether the headline shown was AI-worded.
+- Rayhanah: unchanged. The fallbacks sit inside the cards, which still mount only when the rest-day gate is clear, and they use the same counts as before (`ai.unit.test.js` guard passes).
+- English only, like the rest of Naseeh; `comebackNudge.fallback` also has Bangla, because that card's namespace is translated.
+- Tests: `src/components/ai/aiFallbacks.test.ts` (links, privacy-panel anchors, each fallback in the error state).
+
 ## v5.83.1 - Quarterly major-upgrade checklist - 2026-10-02
 
 ### Changed (developers)

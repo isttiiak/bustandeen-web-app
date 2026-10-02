@@ -3,7 +3,7 @@ import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAiStreakCoach } from '../../hooks/useAi.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
-import { AiBadge, AiDisclaimer } from './AiFlair.js';
+import { AiBadge, AiDisclaimer, AiFallbackNote } from './AiFlair.js';
 import { getTrackingDay } from '../../utils/trackingDay.js';
 
 /**
@@ -121,6 +121,9 @@ export default function StreakCoaching({
   const coach = useAiStreakCoach();
   const [result, setResult] = useState<CachedCoach | null>(null);
   const [dismissed, setDismissed] = useState(false);
+  // The AI request failed: show the plain, non-AI version (nothing is cached,
+  // so the next visit tries the AI again).
+  const failed = coach.isError;
 
   const day = getTrackingDay();
   const prev = readPrev();
@@ -171,9 +174,34 @@ export default function StreakCoaching({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
   }, [day, streakEvent?.feature, streakEvent?.event]);
 
-  if (!streakEvent || dismissed || (!result && !coach.isPending)) return null;
+  if (!streakEvent || dismissed || (!result && !coach.isPending && !failed)) return null;
 
   const isMilestone = streakEvent.event === 'milestone';
+  const vars = { days: streakEvent.streakDays, feature: streakEvent.featureLabel };
+  const fallback: CachedCoach | null =
+    !result && failed
+      ? {
+          id: '',
+          message: isMilestone
+            ? t(
+                'streakCoaching.fallbackMilestone',
+                '{{days}} days of {{feature}} in a row. Alhamdulillah.',
+                vars
+              )
+            : t(
+                'streakCoaching.fallbackBreak',
+                'Your {{feature}} streak paused after {{days}} days. Every day is a chance to begin again.',
+                vars
+              ),
+          tip: isMilestone
+            ? t(
+                'streakCoaching.fallbackMilestoneTip',
+                'Keep the same small, steady amount rather than adding a lot at once.'
+              )
+            : t('streakCoaching.fallbackBreakTip', 'Start with one small step today.'),
+        }
+      : null;
+  const shown = result ?? fallback;
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -221,18 +249,18 @@ export default function StreakCoaching({
               {t('naseeh.findingWords', 'Finding the right words…')}
             </span>
           </div>
-        ) : result ? (
+        ) : shown ? (
           <div className="space-y-1.5">
-            <p className="text-white/80 text-sm leading-relaxed">{result.message}</p>
+            <p className="text-white/80 text-sm leading-relaxed">{shown.message}</p>
             <p
               className={`text-sm italic ${isMilestone ? 'text-brand-gold/70' : 'text-brand-info/70'}`}
             >
-              {result.tip}
+              {shown.tip}
             </p>
           </div>
         ) : null}
 
-        <AiDisclaimer />
+        {fallback ? <AiFallbackNote feature="coaching" /> : <AiDisclaimer feature="coaching" />}
       </div>
     </motion.div>
   );

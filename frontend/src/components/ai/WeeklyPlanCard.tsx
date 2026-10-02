@@ -3,6 +3,7 @@ import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAcceptPlan, useWeeklyPlan, type PlanTarget } from '../../hooks/useNaseeh.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
+import { AiSendsLink } from './AiFlair.js';
 
 /**
  * "This week's plan": one or two small targets sized to what the user actually
@@ -232,7 +233,8 @@ export default function WeeklyPlanCard() {
           {t(
             'weeklyPlan.basis',
             'Worked out on our server from your own logs. No AI is used for this card.'
-          )}
+          )}{' '}
+          <AiSendsLink feature="plan" />
         </p>
       </div>
     </motion.div>

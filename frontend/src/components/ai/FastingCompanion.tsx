@@ -3,7 +3,7 @@ import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAiFastingCompanion } from '../../hooks/useAi.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
-import { AiBadge, AiDisclaimer } from './AiFlair.js';
+import { AiBadge, AiDisclaimer, AiFallbackNote } from './AiFlair.js';
 import { getTrackingDay } from '../../utils/trackingDay.js';
 
 /**
@@ -58,6 +58,9 @@ export default function FastingCompanion({
   const companion = useAiFastingCompanion();
   const [message, setMessage] = useState<string | null>(null);
   const [dismissed, setDismissed] = useState(false);
+  // The AI request failed: show the plain, non-AI version (nothing is cached,
+  // so the next visit tries the AI again).
+  const failed = companion.isError;
 
   const day = getTrackingDay();
   const period = isPostMaghrib ? 'evening' : 'morning';
@@ -83,7 +86,21 @@ export default function FastingCompanion({
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
   }, [user, aiEnabled, id]);
 
-  if (!user || !aiEnabled || dismissed || (!message && !companion.isPending)) return null;
+  if (!user || !aiEnabled || dismissed || (!message && !companion.isPending && !failed)) {
+    return null;
+  }
+  const fallback =
+    !message && failed
+      ? isPostMaghrib
+        ? t(
+            'fastingCompanion.fallbackEvening',
+            'Iftar is close. May Allah accept your fast and your duʿāʾ.'
+          )
+        : t(
+            'fastingCompanion.fallbackMorning',
+            'May Allah accept your fast today. Take the day gently, with your heart in remembrance.'
+          )
+      : null;
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
@@ -101,7 +118,7 @@ export default function FastingCompanion({
               : t('fastingCompanion.fastingToday', 'Naseeh · fasting today')
           }
         />
-        {companion.isPending && !message ? (
+        {companion.isPending && !message && !fallback ? (
           <div className="flex items-center gap-2 mt-2">
             {['#c9a96e', '#7a9e6e', '#5a9e8e'].map((c, i) => (
               <motion.span
@@ -119,11 +136,11 @@ export default function FastingCompanion({
               isPostMaghrib ? 'text-brand-gold/80' : 'text-white/70'
             }`}
           >
-            {message}
+            {message ?? fallback}
           </p>
         )}
         <div className="flex items-center justify-between mt-2">
-          <AiDisclaimer />
+          {fallback ? <AiFallbackNote feature="coaching" /> : <AiDisclaimer feature="coaching" />}
           <button
             className="text-white/20 hover:text-white/50 text-[10px]"
             onClick={() => setDismissed(true)}
