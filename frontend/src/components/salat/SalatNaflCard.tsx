@@ -2,7 +2,9 @@ import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { NaflType, NAFL_TYPE_META, SELECTABLE_NAFL_TYPES } from '../../hooks/useSalatLog.js';
 import { translateSalatName } from '../../utils/prayerTimes.js';
-import { MIN_RAKAT, isRamadanNow } from './salatParts.js';
+import { CheckIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import { PrayerGlyph, TasbihIcon } from '../icons/IslamicIcons.js';
+import { MIN_RAKAT, isRamadanNow, DisclosureLabel, RefIcon } from './salatParts.js';
 
 export interface SalatNaflCardProps {
   getTypeRakat: (type: NaflType) => number;
@@ -40,23 +42,31 @@ export default function SalatNaflCard({
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.24 }}
           layout
-          className={`rounded-2xl border overflow-hidden transition-colors ${
+          className={`rounded-card border overflow-hidden shadow-elev-1 hover:shadow-hover transition-[border-color,box-shadow] ${
             naflEntry.completed
-              ? 'bg-brand-info/10 border-brand-info/40'
-              : 'bg-brand-surface border-brand-border'
+              ? 'bg-brand-info/[0.07] border-brand-info/40'
+              : 'bg-brand-deep border-brand-border'
           }`}
         >
           {/* Header row */}
           <div className="p-3.5 flex items-center gap-3">
             <div className="flex items-center gap-3 flex-1 min-w-0">
-              <span className="text-2xl shrink-0">📿</span>
+              <span
+                className={`w-10 h-10 shrink-0 rounded-full border flex items-center justify-center ${
+                  naflEntry.completed
+                    ? 'border-brand-info/50 text-brand-info'
+                    : 'border-brand-border text-white/70'
+                }`}
+              >
+                <TasbihIcon className="w-5 h-5" />
+              </span>
               <div className="min-w-0">
                 <p
-                  className={`font-bold text-sm leading-none ${naflEntry.completed ? 'text-brand-info' : 'text-white/60'}`}
+                  className={`font-bold text-sm leading-none ${naflEntry.completed ? 'text-brand-info' : 'text-white/70'}`}
                 >
                   {t('salatTracker.naflPrayer', 'Nafl Prayer')}
                 </p>
-                <p className="text-white/25 text-xs mt-0.5">
+                <p className="text-white/60 text-xs mt-0.5">
                   {naflEntry.completed && (naflEntry.types?.length ?? 0) > 0
                     ? naflEntry.types
                         .map((nt) => {
@@ -80,14 +90,16 @@ export default function SalatNaflCard({
               <motion.button
                 whileTap={{ scale: 0.88 }}
                 onClick={handleNaflToggle}
-                className={`px-2.5 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                aria-pressed={naflEntry.completed}
+                className={`flex items-center gap-1 px-2.5 py-1.5 rounded-control text-xs font-bold border transition-colors ${
                   naflEntry.completed
-                    ? 'bg-brand-info text-on-color border-brand-info shadow-[0_0_12px_rgba(90,158,142,0.35)]'
-                    : 'bg-brand-deep border-brand-border text-white/50 hover:border-brand-info/50 hover:text-white/80'
+                    ? 'bg-brand-info/20 border-brand-info text-brand-info'
+                    : 'bg-brand-deep border-brand-border text-white/60 hover:border-brand-info/50 hover:text-white'
                 }`}
               >
+                {naflEntry.completed && <CheckIcon className="w-3.5 h-3.5" aria-hidden="true" />}
                 {naflEntry.completed
-                  ? t('salatTracker.done', '✅ Done')
+                  ? t('salatTracker.done', 'Done')
                   : t('salatTracker.markDoneBtn', 'Mark Done')}
               </motion.button>
             </div>
@@ -101,10 +113,10 @@ export default function SalatNaflCard({
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ duration: 0.2 }}
-                className="overflow-hidden border-t border-brand-emerald/10"
+                className="overflow-hidden border-t border-brand-border/70"
               >
                 <div className="px-3 py-3 space-y-3">
-                  <p className="text-white/30 text-[11px] font-bold uppercase tracking-wider">
+                  <p className="text-white/60 text-[11px] font-bold uppercase tracking-wider">
                     {t('salatTracker.selectWhatYouPrayed', 'Select what you prayed')}
                   </p>
 
@@ -122,22 +134,23 @@ export default function SalatNaflCard({
                           <motion.button
                             whileTap={{ scale: 0.94 }}
                             onClick={() => handleNaflTypeToggle(nt.id)}
-                            className={`relative rounded-xl p-2.5 text-left border transition-all ${
+                            aria-pressed={selected}
+                            className={`relative rounded-control p-2.5 text-left border transition-colors ${
                               selected
-                                ? 'bg-brand-info/15 border-brand-info/50 shadow-[0_0_10px_rgba(90,158,142,0.15)]'
-                                : 'bg-brand-deep/80 border-brand-border hover:border-white/15'
+                                ? 'bg-brand-info/15 border-brand-info/50'
+                                : 'bg-brand-deep border-brand-border hover:border-brand-info/30'
                             }`}
                           >
                             <div className="flex items-start justify-between gap-1">
-                              <span className="text-lg leading-none">{nt.emoji}</span>
+                              <PrayerGlyph
+                                id={nt.id}
+                                className={`w-5 h-5 ${selected ? 'text-brand-info' : 'text-white/60'}`}
+                              />
                               {selected && (
-                                <motion.span
-                                  initial={{ scale: 0 }}
-                                  animate={{ scale: 1 }}
-                                  className="text-brand-info text-xs leading-none"
-                                >
-                                  ✓
-                                </motion.span>
+                                <CheckIcon
+                                  className="w-3.5 h-3.5 text-brand-info"
+                                  aria-hidden="true"
+                                />
                               )}
                             </div>
                             <p
@@ -145,7 +158,7 @@ export default function SalatNaflCard({
                             >
                               {translateSalatName(nt.id, nt.label, t)}
                             </p>
-                            <p className="text-white/20 text-[10px] mt-0.5 leading-snug">
+                            <p className="text-white/50 text-[10px] mt-0.5 leading-snug">
                               {i18n.language === 'bn' && nt.shortNoteBn
                                 ? nt.shortNoteBn
                                 : nt.shortNote}
@@ -175,7 +188,8 @@ export default function SalatNaflCard({
                                         handleTypeRakat(nt.id, -1);
                                       }}
                                       disabled={typeRak <= MIN_RAKAT}
-                                      className="w-6 h-6 rounded-md bg-brand-deep border border-brand-border text-white/50 font-bold text-sm flex items-center justify-center disabled:opacity-20 hover:border-brand-info/40 transition-all"
+                                      aria-label={t('salatTracker.fewerRakat', 'Fewer rakʿah')}
+                                      className="w-6 h-6 rounded-md bg-brand-deep border border-brand-border text-white/60 font-bold text-sm flex items-center justify-center disabled:opacity-20 hover:border-brand-info/40 transition-colors"
                                     >
                                       −
                                     </motion.button>
@@ -188,7 +202,8 @@ export default function SalatNaflCard({
                                         e.stopPropagation();
                                         handleTypeRakat(nt.id, 1);
                                       }}
-                                      className="w-6 h-6 rounded-md bg-brand-deep border border-brand-border text-white/50 font-bold text-sm flex items-center justify-center hover:border-brand-info/40 transition-all"
+                                      aria-label={t('salatTracker.moreRakat', 'More rakʿah')}
+                                      className="w-6 h-6 rounded-md bg-brand-deep border border-brand-border text-white/60 font-bold text-sm flex items-center justify-center hover:border-brand-info/40 transition-colors"
                                     >
                                       +
                                     </motion.button>
@@ -201,11 +216,15 @@ export default function SalatNaflCard({
                           {/* Info toggle */}
                           <button
                             onClick={() => setNaflInfoExpanded(infoOpen ? null : nt.id)}
-                            className="mt-0.5 text-white/15 hover:text-white/40 text-[10px] text-center transition-colors"
+                            aria-expanded={infoOpen}
+                            className="mt-0.5 inline-flex items-center justify-center gap-1 text-white/50 hover:text-white text-[10px] transition-colors"
                           >
+                            {!infoOpen && (
+                              <InformationCircleIcon className="w-3 h-3" aria-hidden="true" />
+                            )}
                             {infoOpen
-                              ? t('salatTracker.hide', '▲ hide')
-                              : t('salatTracker.about', 'ⓘ about')}
+                              ? t('salatTracker.hide', 'hide')
+                              : t('salatTracker.about', 'about')}
                           </button>
                           <AnimatePresence>
                             {infoOpen && (
@@ -216,13 +235,13 @@ export default function SalatNaflCard({
                                 transition={{ duration: 0.15 }}
                                 className="overflow-hidden"
                               >
-                                <div className="mt-1 p-2.5 rounded-xl bg-brand-deep border border-brand-emerald/10 space-y-1">
-                                  <p className="text-white/50 text-[11px] leading-relaxed">
+                                <div className="mt-1 p-2.5 rounded-control bg-brand-deep border border-brand-border space-y-1">
+                                  <p className="text-white/70 text-[11px] leading-relaxed">
                                     {i18n.language === 'bn' && nt.fullNoteBn
                                       ? nt.fullNoteBn
                                       : nt.fullNote}
                                   </p>
-                                  <p className="text-white/25 text-[11px] italic">
+                                  <p className="text-white/60 text-[11px] italic">
                                     {i18n.language === 'bn' && nt.hadithBn
                                       ? nt.hadithBn
                                       : nt.hadith}
@@ -231,9 +250,10 @@ export default function SalatNaflCard({
                                     href={nt.hadithUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-brand-info/50 text-[11px] underline hover:text-brand-info/80"
+                                    className="text-brand-info/80 text-[11px] underline hover:text-brand-info"
                                   >
-                                    📖 sunnah.com
+                                    <RefIcon />
+                                    sunnah.com
                                   </a>
                                 </div>
                               </motion.div>
@@ -252,18 +272,14 @@ export default function SalatNaflCard({
           {naflEntry.completed && (
             <button
               onClick={() => setNaflExpanded(!naflExpanded)}
-              className="w-full flex items-center justify-center gap-1.5 py-1.5 border-t border-brand-emerald/5 text-white/20 hover:text-white/50 text-xs transition-colors"
+              aria-expanded={naflExpanded}
+              className="w-full flex items-center justify-center gap-1.5 py-1.5 border-t border-brand-border/50 text-white/50 hover:text-white text-xs transition-colors"
             >
-              {naflExpanded
-                ? t('salatTracker.less', '▲ Less')
-                : t('salatTracker.details', '▾ Details')}
-              {!naflExpanded && (naflEntry.types?.length ?? 0) > 0 && (
-                <span className="text-brand-info/50 text-xs">
-                  {naflEntry.types
-                    .map((nt) => NAFL_TYPE_META.find((m) => m.id === nt)?.emoji)
-                    .join(' ')}
-                </span>
-              )}
+              <DisclosureLabel open={naflExpanded} />
+              {!naflExpanded &&
+                (naflEntry.types ?? []).map((nt) => (
+                  <PrayerGlyph key={nt} id={nt} className="w-3.5 h-3.5 text-brand-info" />
+                ))}
             </button>
           )}
         </motion.div>

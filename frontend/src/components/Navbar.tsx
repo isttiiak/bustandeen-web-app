@@ -20,7 +20,9 @@ import {
   GlobeAltIcon,
   HeartIcon,
   LockClosedIcon,
+  ChartBarIcon,
 } from '@heroicons/react/24/outline';
+import { MosqueIcon } from './icons/IslamicIcons.js';
 import i18n from '../i18n.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
 
@@ -42,11 +44,16 @@ const PAGE_KEYS: Record<string, string> = {
   '/naseeh': 'nav.naseeh',
   '/musafir': 'nav.musafir',
 };
-const PAGE_META: Record<string, { title: string; emoji: string }> = {
+// Redesigned screens (audit T3.2) carry an SVG `Icon`; the rest keep their
+// emoji until their own redesign.
+const PAGE_META: Record<
+  string,
+  { title: string; emoji: string; Icon?: (p: { className?: string }) => React.ReactNode }
+> = {
   '/zikr': { title: 'Zikr Counter', emoji: '📿' },
   '/zikr/analytics': { title: 'Zikr Analytics', emoji: '📊' },
-  '/salat': { title: 'Salat Tracker', emoji: '🕌' },
-  '/salat/analytics': { title: 'Salat Analytics', emoji: '📊' },
+  '/salat': { title: 'Salat Tracker', emoji: '', Icon: MosqueIcon },
+  '/salat/analytics': { title: 'Salat Analytics', emoji: '', Icon: ChartBarIcon },
   '/fasting': { title: 'Fasting', emoji: '🌙' },
   '/fasting/analytics': { title: 'Fasting Analytics', emoji: '📊' },
   '/prayer-times': { title: 'Prayer Times', emoji: '🕐' },
@@ -215,7 +222,11 @@ export default function Navbar() {
                 >
                   <ArrowLeftIcon className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">
-                    {parentMeta.emoji}{' '}
+                    {parentMeta.Icon ? (
+                      <parentMeta.Icon className="inline w-3.5 h-3.5 -mt-0.5" />
+                    ) : (
+                      parentMeta.emoji
+                    )}{' '}
                     {parentPath === '/' ? t('nav.home') : pageTitle(parentPath, parentMeta.title)}
                   </span>
                 </button>
@@ -224,7 +235,11 @@ export default function Navbar() {
                   <div className="flex items-center gap-1 min-w-0 pl-1">
                     <span className="text-white/15 text-sm hidden sm:inline">|</span>
                     <span className="text-sm shrink-0" aria-hidden>
-                      {pageMeta.emoji}
+                      {pageMeta.Icon ? (
+                        <pageMeta.Icon className="w-4 h-4 text-brand-emerald" />
+                      ) : (
+                        pageMeta.emoji
+                      )}
                     </span>
                     <span className="font-semibold text-white/70 text-xs sm:text-sm truncate max-w-[70px] sm:max-w-[130px]">
                       {pageTitle(location.pathname, pageMeta.title)}
