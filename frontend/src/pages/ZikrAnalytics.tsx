@@ -268,7 +268,7 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
               <button
                 onClick={() => void handleSubmit()}
                 disabled={parsedAmount <= 0 || submitting}
-                className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold disabled:opacity-40"
+                className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 font-bold disabled:opacity-40"
               >
                 {submitting ? (
                   <span className="loading loading-spinner loading-sm" />
@@ -710,7 +710,7 @@ export default function ZikrAnalytics() {
               </p>
             </div>
             <button
-              className="btn bg-brand-emerald hover:bg-brand-emerald-dim text-white border-none"
+              className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-none"
               onClick={() => void refetch()}
             >
               {t('zikrAnalytics.tryAgain')}
@@ -877,7 +877,7 @@ export default function ZikrAnalytics() {
                 {(['today', 'all'] as const).map((tab) => (
                   <button
                     key={tab}
-                    className={`tab text-xs ${activeTab === tab ? 'tab-active bg-brand-emerald text-white font-bold' : 'text-white/60'}`}
+                    className={`tab text-xs ${activeTab === tab ? 'tab-active bg-brand-emerald-dim text-white font-bold' : 'text-white/60'}`}
                     onClick={() => setActiveTab(tab)}
                   >
                     {tab === 'today' ? t('common.today') : t('zikrAnalytics.allTimeLabel')}
@@ -941,7 +941,7 @@ export default function ZikrAnalytics() {
                 {periods.map((p) => (
                   <button
                     key={p.value}
-                    className={`tab text-xs ${selectedPeriod === p.value ? 'tab-active bg-brand-emerald text-white font-bold' : 'text-white/60'}`}
+                    className={`tab text-xs ${selectedPeriod === p.value ? 'tab-active bg-brand-emerald-dim text-white font-bold' : 'text-white/60'}`}
                     onClick={() => setSelectedPeriod(p.value)}
                   >
                     {p.label}
@@ -1290,7 +1290,7 @@ export default function ZikrAnalytics() {
                   {t('common.cancel')}
                 </button>
                 <button
-                  className="btn bg-brand-emerald hover:bg-brand-emerald-dim text-white border-none font-bold"
+                  className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-none font-bold"
                   onClick={handleUpdateGoal}
                   disabled={isUpdating || !newGoal || newGoal < 1}
                 >

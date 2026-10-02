@@ -48,7 +48,7 @@ export default function AdminUsers() {
                 setSort('newest');
                 setPage(1);
               }}
-              className={`btn btn-xs rounded-lg ${sort === 'newest' ? 'bg-brand-emerald border-brand-emerald text-white' : 'btn-ghost text-white/50'}`}
+              className={`btn btn-xs rounded-lg ${sort === 'newest' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'btn-ghost text-white/50'}`}
             >
               {t('adminUsers.sortNewest', 'Recently joined')}
             </button>

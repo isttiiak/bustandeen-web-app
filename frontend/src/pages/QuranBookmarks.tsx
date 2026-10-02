@@ -167,7 +167,7 @@ export default function QuranBookmarks() {
                 )}
               </p>
               <button
-                className="btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald to-brand-info"
+                className="btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                 onClick={() => navigate('/quran')}
               >
                 {t('quranBookmarks.browseDuas', 'Browse duas →')}
@@ -229,7 +229,7 @@ export default function QuranBookmarks() {
               )}
             </p>
             <button
-              className="btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald to-brand-info"
+              className="btn btn-sm rounded-xl border-0 text-white font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
               onClick={() => navigate('/quran/browse')}
             >
               {t('quranBookmarks.startReading', 'Start reading →')}

@@ -136,7 +136,7 @@ export default function Sadaqah() {
           >
             <Link
               to="/sadaqah/donate"
-              className="btn h-12 px-8 rounded-2xl border-0 text-white font-black bg-gradient-to-r from-brand-emerald via-brand-emerald to-brand-emerald-dim hover:opacity-90 inline-flex"
+              className="btn h-12 px-8 rounded-2xl border-0 text-white font-black bg-brand-emerald-dim hover:opacity-90 inline-flex"
             >
               🤲 {t('sadaqah.giveCta', 'Give Sadaqah')}
             </Link>

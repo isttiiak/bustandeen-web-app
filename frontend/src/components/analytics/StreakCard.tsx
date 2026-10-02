@@ -402,7 +402,7 @@ export default function StreakCard({
                 disabled={isLoading}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black text-white bg-brand-emerald/80 hover:bg-brand-emerald/90 border border-brand-emerald/40 disabled:opacity-60"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-black text-white bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border border-brand-emerald/40 disabled:opacity-60"
               >
                 <PlayIcon className="w-3.5 h-3.5" />
                 {t('zikrAnalytics.streakCard.resumeNow', 'Resume now')}

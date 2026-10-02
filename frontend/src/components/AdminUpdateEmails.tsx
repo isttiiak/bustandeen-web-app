@@ -395,7 +395,7 @@ ${trailer}`);
           <button
             onClick={() => setConfirmOpen(true)}
             disabled={!canSend}
-            className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-0 text-white disabled:opacity-40"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-white disabled:opacity-40"
           >
             {send.isPending ? 'Sending…' : 'Send update'}
           </button>

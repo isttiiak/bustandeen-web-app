@@ -248,7 +248,7 @@ export default function QuranAnalytics() {
             {(['month', 'last30', 'alltime'] as RangePeriod[]).map((p) => (
               <button
                 key={p}
-                className={`tab text-xs ${rangePeriod === p && p !== 'month' ? 'tab-active bg-brand-emerald text-white font-bold' : 'text-white/60'} ${rangePeriod === 'month' && p === 'month' ? 'tab-active bg-brand-emerald text-white font-bold' : ''}`}
+                className={`tab text-xs ${rangePeriod === p && p !== 'month' ? 'tab-active bg-brand-emerald-dim text-white font-bold' : 'text-white/60'} ${rangePeriod === 'month' && p === 'month' ? 'tab-active bg-brand-emerald-dim text-white font-bold' : ''}`}
                 onClick={() => {
                   setRangePeriod(p);
                   if (p !== 'month') setShowMonthPicker(false);
@@ -318,7 +318,7 @@ export default function QuranAnalytics() {
                         }}
                         className={`rounded-lg py-1.5 text-xs font-semibold transition-all ${
                           isSel
-                            ? 'bg-brand-emerald text-white'
+                            ? 'bg-brand-emerald-dim text-white'
                             : isFuture
                               ? 'text-white/15 cursor-not-allowed'
                               : 'text-white/60 hover:bg-white/10 hover:text-white'

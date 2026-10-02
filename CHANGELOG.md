@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.83.0 - Easier-to-read buttons - 2026-10-02
+
+### Changed
+
+- **Sage buttons with white text are easier to read** (A11Y-01). White on the sage brand colour was 3.02:1, below the 4.5:1 that WCAG AA asks for. These buttons, tabs and badges now use the deeper sage already in the palette (#5a7a50, 4.84:1), and the sage-to-teal gradients (landing page, Quran, feedback) use the deeper shades of both (4.84:1 and 4.53:1). Hover now darkens a button instead of lightening it. Sage used as an accent or on dark text is unchanged.
+- Screen readers: the back button in the top bar now says where it goes (it was icon-only on phones); the next-day arrow on the salat tracker, the two Rayhanah switches (share cycle status, pregnancy) and the birth-date field in Profile now have names; the Friday cards on Home are proper second-level headings (they skipped a level).
+
+### Changed (developers)
+
+- Measured with axe-core over 21 demo-mode routes, before → after: white-on-sage contrast failures 9 → 0, `heading-order` 2 → 0, `button-name` 20 → 0, `label` 3 → 0. The remaining `color-contrast` hits (126 → 117) are faint `text-white/30`-style text, left for T3.5.
+- New `e2e/a11y.spec.ts`: fails if any visible element paints white text on solid sage (or a sage gradient), checks that Home headings don't skip a level, that the top-bar back button has a name, and that a sage `.btn` stays sage on hover (DaisyUI's `.btn:hover` grey otherwise wins over a plain `bg-*` class, so these buttons carry `hover:bg-brand-emerald-dim hover:brightness-90`).
+- New i18n key `salatTracker.nextDay` (en + bn).
+
 ## v5.82.0 - Database size on the Ops Health page - 2026-10-02
 
 ### Added

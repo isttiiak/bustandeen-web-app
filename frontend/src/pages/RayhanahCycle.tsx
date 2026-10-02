@@ -1072,6 +1072,7 @@ export default function RayhanahCycle() {
               </div>
               <input
                 type="checkbox"
+                aria-label={t('rayhanah.partnerSyncTitle', 'Share cycle status')}
                 className="toggle toggle-sm border-brand-pink/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-pink checked:border-brand-pink shrink-0"
                 checked={summary?.partnerSync?.enabled ?? false}
                 disabled={partnerSync.isPending}
@@ -1146,6 +1147,7 @@ export default function RayhanahCycle() {
               </div>
               <input
                 type="checkbox"
+                aria-label={t('rayhanah.pregnancyToggleTitle', "I'm currently pregnant")}
                 className="toggle toggle-sm border-brand-emerald/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-emerald checked:border-brand-emerald shrink-0"
                 checked={summary?.pregnancy?.active ?? false}
                 disabled={setPregnancy.isPending}
@@ -1534,7 +1536,7 @@ export default function RayhanahCycle() {
                     onClick={() => setGhuslChecked((c) => c.map((v, j) => (j === i ? !v : v)))}
                   >
                     <span
-                      className={`w-5 h-5 rounded-full grid place-items-center border text-[10px] flex-shrink-0 mt-0.5 ${ghuslChecked[i] ? 'bg-brand-emerald border-brand-emerald text-white' : 'border-brand-emerald/20 text-white/30'}`}
+                      className={`w-5 h-5 rounded-full grid place-items-center border text-[10px] flex-shrink-0 mt-0.5 ${ghuslChecked[i] ? 'bg-brand-emerald-dim border-brand-emerald-dim text-white' : 'border-brand-emerald/20 text-white/30'}`}
                     >
                       {ghuslChecked[i] ? '✓' : i + 1}
                     </span>
@@ -1563,7 +1565,7 @@ export default function RayhanahCycle() {
                 ). {t('rayhanah.welcomeBackShort', 'Welcome back 🌸')}
               </p>
               <button
-                className="w-full btn rounded-2xl border-0 text-white font-black bg-gradient-to-r from-brand-emerald to-brand-info"
+                className="w-full btn rounded-2xl border-0 text-white font-black bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
                 onClick={() => {
                   setGhuslOpen(false);
                   celebrateSmall();

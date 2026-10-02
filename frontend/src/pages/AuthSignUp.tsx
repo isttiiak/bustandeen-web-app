@@ -257,7 +257,7 @@ export default function AuthSignUp() {
               {/* Continue to app */}
               <button
                 onClick={() => navigate('/')}
-                className="w-full py-3 px-4 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold shadow-lg transition-all duration-300"
+                className="w-full py-3 px-4 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold shadow-lg transition-all duration-300"
               >
                 {t('authSignUp.continueToApp', 'Continue to App')}
               </button>
@@ -551,7 +551,7 @@ export default function AuthSignUp() {
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-3 px-4 bg-brand-emerald hover:bg-brand-emerald-dim text-white rounded-xl font-semibold shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3 px-4 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white rounded-xl font-semibold shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                   type="submit"
                   disabled={loading || confirmMismatch || emailInvalid}
                 >

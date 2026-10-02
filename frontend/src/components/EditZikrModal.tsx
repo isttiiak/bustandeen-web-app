@@ -195,7 +195,7 @@ export default function EditZikrModal({
               <button
                 onClick={() => void save()}
                 disabled={!title.trim() || saving}
-                className="btn flex-1 bg-brand-emerald hover:bg-brand-emerald-dim text-white border-0 font-bold"
+                className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0 font-bold"
               >
                 {saving ? (
                   <span className="loading loading-spinner loading-sm" />

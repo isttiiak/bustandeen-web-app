@@ -88,7 +88,7 @@ export default function ProfileSummaryCard({
                 type="button"
                 onClick={() => setShowPhotoChoice(true)}
                 disabled={uploading}
-                className="absolute bottom-0 right-0 group w-8 h-8 rounded-full bg-brand-emerald hover:bg-brand-emerald-dim text-white shadow-lg flex items-center justify-center transition-colors disabled:opacity-50"
+                className="absolute bottom-0 right-0 group w-8 h-8 rounded-full bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white shadow-lg flex items-center justify-center transition-colors disabled:opacity-50"
               >
                 <CameraIcon className="w-4 h-4" />
                 <span className="absolute -top-7 right-0 bg-brand-deep border border-brand-border text-white/70 text-[10px] px-2 py-0.5 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">

@@ -270,6 +270,7 @@ export default function ProfileEditForm({
               </label>
               <input
                 type="date"
+                aria-label={t('profile.birthDate', 'Birth Date')}
                 className="input input-sm input-bordered bg-brand-deep border-brand-border text-white focus:border-brand-emerald focus:outline-none transition-colors [color-scheme:dark]"
                 value={profile.birthDate}
                 max={new Date().toISOString().substring(0, 10)}
@@ -292,7 +293,7 @@ export default function ProfileEditForm({
           <button
             className={`btn btn-sm w-full mt-1 gap-2 transition-all duration-300 border-0 ${
               isDirty && !saving
-                ? 'bg-brand-emerald hover:bg-brand-emerald-dim text-white shadow-[0_0_20px_rgba(16,185,129,0.35)]'
+                ? 'bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white shadow-[0_0_20px_rgba(16,185,129,0.35)]'
                 : 'bg-brand-surface border border-brand-border text-white/30 cursor-not-allowed'
             }`}
             onClick={saveProfile}

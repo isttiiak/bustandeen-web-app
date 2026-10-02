@@ -34,7 +34,10 @@ export default function IslamicSpecialDay() {
           <p className="text-white/60 text-lg font-semibold">
             {t('specialDays.notFound', 'Special day not found.')}
           </p>
-          <Link to="/" className="btn btn-sm bg-brand-emerald text-white border-0">
+          <Link
+            to="/"
+            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-white border-0"
+          >
             {t('specialDays.backHome', '← Back to Home')}
           </Link>
         </div>

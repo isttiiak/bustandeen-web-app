@@ -118,7 +118,7 @@ export default function QuranBrowse() {
       {showTop && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-20 right-4 z-30 w-10 h-10 rounded-full bg-brand-emerald/80 text-white shadow-lg grid place-items-center hover:bg-brand-emerald transition-colors"
+          className="fixed bottom-20 right-4 z-30 w-10 h-10 rounded-full bg-brand-emerald-dim text-white shadow-lg grid place-items-center hover:bg-brand-emerald-dim hover:brightness-90 transition-colors"
           aria-label={t('quranBrowse.scrollToTop')}
         >
           <ArrowUpIcon className="w-5 h-5" />
