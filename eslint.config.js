@@ -109,10 +109,10 @@ export default [
     },
   },
 
-  // Build-time Node scripts (city dataset, OG image, SSG prerender) — not
-  // shipped to the browser.
+  // Build-time and CI Node scripts (city dataset, OG image, SSG prerender,
+  // audit gate) — not shipped to the browser.
   {
-    files: ['frontend/scripts/**/*.mjs'],
+    files: ['frontend/scripts/**/*.mjs', 'scripts/**/*.mjs'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
