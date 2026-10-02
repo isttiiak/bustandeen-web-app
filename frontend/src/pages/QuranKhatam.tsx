@@ -16,7 +16,7 @@ import { formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import { BookOpenIcon } from '@heroicons/react/24/outline';
 import { Star8Icon } from '../components/icons/IslamicIcons.js';
-import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/quran/quranStyles.js';
+import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/bustanStyles.js';
 
 /**
  * The Khatam journey: a serial, self-paced read-through of the whole Quran.

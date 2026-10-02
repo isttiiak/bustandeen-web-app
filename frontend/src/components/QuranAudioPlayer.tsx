@@ -9,7 +9,7 @@ import {
   SpeakerWaveIcon,
   SpeakerXMarkIcon,
 } from '@heroicons/react/24/outline';
-import { CARD } from './quran/quranStyles.js';
+import { CARD } from './bustanStyles.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useReadAyat } from '../hooks/useQuran.js';
 import { useQuranReadingSession } from '../hooks/useQuranReadingSession.js';

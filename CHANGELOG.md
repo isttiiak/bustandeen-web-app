@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.93.0 - Fasting in the Bustan Arch design - 2026-10-03
+
+### Fixed
+
+- **The "Completed fasts per month" chart on Fasting analytics drew no bars.** Each bar's height was a percentage of a column that had no height of its own, so every month showed as empty whatever was logged. Bars now show the real counts.
+
+### Changed
+
+- **Fasting is the fifth screen in the new design** (audit T3.2). The selected day is the screen's one arch: date and Hijri date, obligation countdowns, a medallion for the day's state (not logged, intending, fasted, broken, Ramadan, or a day when fasting is not allowed), the main action, and suhur and iftar times. Everything else (week strip, month calendar, sunnah-day cards, progress tiles, vows, Learn) sits on the theme's raised cards with the premium shadow, and secondary text is brighter, so it reads on dark and on sage paper.
+- Emoji are gone from the fasting screens: the tracker, analytics, the type picker, the settings sheet, the warning and sign-in dialogs and the navbar use SVG icons (crescent, sunrise, check, scale, raised hand, mountain for ʿArafah, waves for ʿĀshūrāʾ, full moon for the white days and others). The calendar legend is drawn with coloured dots instead of emoji. Floating, glowing and sparkle animations and the coloured gradients are removed; buttons are solid dark sage or raised paper.
+- Fasting copy in English and Bangla no longer uses emoji or em dashes (tracker, settings, analytics and the explanations of sunnah, prohibited and disliked days). Only punctuation changed in the rulings; quoted hadith and their attributions are unchanged.
+- Category colours on Fasting analytics use the data colours: the same on dark, clearer apart on paper.
+
+### Changed (developers)
+
+- `components/quran/quranStyles.ts` moved to `components/bustanStyles.ts` (shared by Quran and Fasting). `components/fasting/fastingIcons.tsx` maps voluntary kinds, categories and statuses to icons; `utils/fastingRules.ts` keeps its `emoji` data for other screens. New hand-drawn `FullMoonIcon`, `MountainIcon`, `WavesIcon`.
+- `pages/fastingScreen.test.ts`: no emoji in the fasting pages and components, and no emoji or em dashes in the fasting locale strings (en + bn).
+
 ## v5.92.1 - Log missed zikr counts follows the tracking day - 2026-10-03
 
 ### Fixed

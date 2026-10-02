@@ -1,6 +1,6 @@
 import { BookmarkIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { DuaHandsIcon } from '../components/icons/IslamicIcons.js';
-import { BTN_PRIMARY, CARD } from '../components/quran/quranStyles.js';
+import { BTN_PRIMARY, CARD } from '../components/bustanStyles.js';
 import { SEGMENT } from '../components/TabNav.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';

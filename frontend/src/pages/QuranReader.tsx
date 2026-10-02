@@ -57,7 +57,7 @@ import { translateReference } from '../utils/localeReference.js';
 import { celebrateGoal, celebrateKhatm, celebrateSmall } from '../utils/celebrate.js';
 import ShareAyahModal from '../components/ShareAyahModal.js';
 import { DuaHandsIcon } from '../components/icons/IslamicIcons.js';
-import { BTN_PRIMARY, BTN_SECONDARY } from '../components/quran/quranStyles.js';
+import { BTN_PRIMARY, BTN_SECONDARY } from '../components/bustanStyles.js';
 
 /**
  * The ayah-by-ayah reading room (Istiak's design):

@@ -2,6 +2,17 @@ import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { VOLUNTARY_META } from '../../utils/fastingRules.js';
+import { CATEGORY_ICON, VOLUNTARY_ICON } from './fastingIcons.js';
+
+function SheetIcon({ Icon, tone }: { Icon: (typeof VOLUNTARY_ICON)['general']; tone: string }) {
+  return (
+    <span
+      className={`w-9 h-9 shrink-0 rounded-control grid place-items-center bg-shade/10 border border-brand-border ${tone}`}
+    >
+      <Icon className="w-5 h-5" aria-hidden="true" />
+    </span>
+  );
+}
 
 export interface FastingTypeSheetProps {
   category: import('../../utils/fastingRules.js').FastingCategory;
@@ -57,16 +68,16 @@ export default function FastingTypeSheet({
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 60, opacity: 0 }}
               transition={{ type: 'spring', damping: 26 }}
-              className="bg-brand-surface rounded-3xl p-5 w-full max-w-md shadow-2xl border border-brand-border max-h-[80vh] overflow-y-auto"
+              className="bg-brand-deep rounded-card p-5 w-full max-w-md shadow-elev-3 border border-brand-border max-h-[80vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-black text-white">
+                <h3 className="font-display text-lg font-bold text-white">
                   {t('fasting.whatKindOfFast', 'What kind of fast?')}
                 </h3>
                 <button
                   onClick={() => setShowTypeSheet(false)}
                   aria-label={t('common.close')}
-                  className="text-white/30 hover:text-white p-1"
+                  className="text-white/60 hover:text-white p-1"
                 >
                   <XMarkIcon className="w-5 h-5" />
                 </button>
@@ -85,23 +96,23 @@ export default function FastingTypeSheet({
                       setKind(m.id);
                       setShowTypeSheet(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left transition-all ${
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-control border text-left transition-colors ${
                       category === 'voluntary' && effectiveKind === m.id
-                        ? 'border-brand-emerald/40 bg-white/10'
-                        : 'border-brand-emerald/10 bg-white/[0.03] hover:bg-white/[0.07]'
+                        ? 'border-brand-emerald/50 bg-brand-emerald/10 shadow-elev-1'
+                        : 'border-brand-border bg-brand-surface/50 hover:border-brand-emerald/40 hover:bg-brand-surface'
                     }`}
                   >
-                    <span className="text-xl shrink-0">{m.emoji}</span>
+                    <SheetIcon Icon={VOLUNTARY_ICON[m.id]} tone="text-brand-emerald" />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-bold" style={{ color: m.color }}>
+                      <p className="text-sm font-bold text-white">
                         {t(`fastingRules.voluntary.${m.id}`, m.label)}
                         {ruling.recommended.some((r) => r.id === m.id) && (
-                          <span className="ml-1.5 text-[9px] px-1.5 py-0.5 rounded-full bg-brand-emerald/20 text-brand-emerald">
-                            {t('fasting.todayTag', 'today ✓')}
+                          <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-brand-emerald/15 text-brand-emerald">
+                            {t('fasting.todayTag', 'today')}
                           </span>
                         )}
                       </p>
-                      <p className="text-white/30 text-[10px] leading-snug">
+                      <p className="text-white/70 text-xs leading-snug">
                         {t(`fastingRules.voluntaryWhen.${m.id}`, m.when)}
                       </p>
                     </div>
@@ -109,7 +120,7 @@ export default function FastingTypeSheet({
                 ))}
 
                 {/* Obligatory categories */}
-                <p className="text-white/30 text-[10px] uppercase tracking-widest font-bold pt-2">
+                <p className="text-white/70 text-[11px] uppercase tracking-widest font-bold pt-3">
                   {t('fasting.obligatoryMakeups', 'Obligatory make-ups')}
                 </p>
                 <button
@@ -117,19 +128,19 @@ export default function FastingTypeSheet({
                     setCategory('qada');
                     setShowTypeSheet(false);
                   }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left ${category === 'qada' ? 'border-brand-emerald/40 bg-white/10' : 'border-brand-emerald/10 bg-white/[0.03] hover:bg-white/[0.07]'}`}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-control border text-left transition-colors ${category === 'qada' ? 'border-brand-emerald/50 bg-brand-emerald/10 shadow-elev-1' : 'border-brand-border bg-brand-surface/50 hover:border-brand-emerald/40 hover:bg-brand-surface'}`}
                 >
-                  <span className="text-xl">🔄</span>
+                  <SheetIcon Icon={CATEGORY_ICON.qada} tone="text-brand-gold" />
                   <div>
-                    <p className="text-xs font-bold text-brand-gold">
-                      {t('fasting.qadaMakeupDay', 'Qaḍā — make-up day')}
+                    <p className="text-sm font-bold text-white">
+                      {t('fasting.qadaMakeupDay', 'Qaḍā: make-up day')}
                       {qadaRemaining > 0 && (
-                        <span className="ml-1.5 text-[9px] px-1.5 py-0.5 rounded-full bg-brand-gold/20">
+                        <span className="ml-1.5 text-[10px] px-1.5 py-0.5 rounded-full bg-brand-gold/15 text-brand-gold">
                           {t('fasting.nLeft', '{{count}} left', { count: qadaRemaining })}
                         </span>
                       )}
                     </p>
-                    <p className="text-white/30 text-[10px]">
+                    <p className="text-white/70 text-xs">
                       {t('fasting.qadaMakeupDesc', 'Making up a missed Ramaḍān day')}
                     </p>
                   </div>
@@ -140,14 +151,14 @@ export default function FastingTypeSheet({
                       setCategory('kaffarah');
                       setShowTypeSheet(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left ${category === 'kaffarah' ? 'border-brand-emerald/40 bg-white/10' : 'border-brand-emerald/10 bg-white/[0.03] hover:bg-white/[0.07]'}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-control border text-left transition-colors ${category === 'kaffarah' ? 'border-brand-emerald/50 bg-brand-emerald/10 shadow-elev-1' : 'border-brand-border bg-brand-surface/50 hover:border-brand-emerald/40 hover:bg-brand-surface'}`}
                   >
-                    <span className="text-xl">⚖️</span>
+                    <SheetIcon Icon={CATEGORY_ICON.kaffarah} tone="text-brand-warm" />
                     <div>
-                      <p className="text-xs font-bold text-brand-warm">
-                        {t('fasting.kaffarahExpiationDay', 'Kaffārah — expiation day')}
+                      <p className="text-sm font-bold text-white">
+                        {t('fasting.kaffarahExpiationDay', 'Kaffārah: expiation day')}
                       </p>
-                      <p className="text-white/30 text-[10px]">
+                      <p className="text-white/70 text-xs">
                         {t('fasting.consecutiveRun', 'Consecutive run: {{run}}/{{target}}', {
                           run: summary?.kaffarah.currentRun ?? 0,
                           target: summary?.profile.kaffarah.targetDays ?? 60,
@@ -164,14 +175,14 @@ export default function FastingTypeSheet({
                       setVowId(v.id);
                       setShowTypeSheet(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-2xl border text-left ${category === 'nadhr' && vowId === v.id ? 'border-brand-emerald/40 bg-white/10' : 'border-brand-emerald/10 bg-white/[0.03] hover:bg-white/[0.07]'}`}
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-control border text-left transition-colors ${category === 'nadhr' && vowId === v.id ? 'border-brand-emerald/50 bg-brand-emerald/10 shadow-elev-1' : 'border-brand-border bg-brand-surface/50 hover:border-brand-emerald/40 hover:bg-brand-surface'}`}
                   >
-                    <span className="text-xl">🤝</span>
+                    <SheetIcon Icon={CATEGORY_ICON.nadhr} tone="text-brand-info" />
                     <div>
-                      <p className="text-xs font-bold text-brand-info">
+                      <p className="text-sm font-bold text-white">
                         {t('fasting.vowLabel', 'Vow: {{title}}', { title: v.title })}
                       </p>
-                      <p className="text-white/30 text-[10px]">
+                      <p className="text-white/70 text-xs">
                         {t('fasting.daysDone', '{{completed}}/{{target}} days done', {
                           completed: v.completed,
                           target: v.targetDays,

@@ -2,7 +2,15 @@ import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
 import { m as motion, AnimatePresence } from 'framer-motion';
-import { TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowPathIcon,
+  Cog6ToothIcon,
+  ExclamationTriangleIcon,
+  HandRaisedIcon,
+  ScaleIcon,
+  TrashIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
 import { useUpdateFastingProfile, useAddVow } from '../../hooks/useFasting.js';
 import { OBLIGATORY_META } from '../../utils/fastingRules.js';
 import { RefLink, ManageProgress } from './fastingParts.js';
@@ -73,22 +81,23 @@ export default function FastingSettingsSheet({
                 role="dialog"
                 aria-label={t('fasting.settingsAriaLabel', 'Fasting settings')}
               >
-                <div className="sticky top-0 bg-brand-deep/95 backdrop-blur px-5 py-4 flex items-center justify-between border-b border-brand-emerald/5 z-10">
+                <div className="sticky top-0 bg-brand-deep/95 backdrop-blur px-5 py-4 flex items-center justify-between border-b border-brand-border z-10">
                   <div>
-                    <h3 className="text-lg font-black text-white">
-                      ⚙️ {t('fasting.settingsTitle', 'Fasting settings')}
+                    <h3 className="font-display text-xl font-bold text-white flex items-center gap-2">
+                      <Cog6ToothIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />
+                      {t('fasting.settingsTitle', 'Fasting settings')}
                     </h3>
-                    <p className="text-white/30 text-[11px]">
+                    <p className="text-white/70 text-xs">
                       {t(
                         'fasting.settingsSubtitle',
-                        'Obligations & vows — a countdown capsule appears on the main card'
+                        'Obligations and vows. Each one gets a countdown on the main card.'
                       )}
                     </p>
                   </div>
                   <button
                     onClick={() => setShowManage(false)}
                     aria-label={t('common.close')}
-                    className="text-white/30 hover:text-white p-1"
+                    className="text-white/60 hover:text-white p-1"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
@@ -96,22 +105,22 @@ export default function FastingSettingsSheet({
 
                 <div className="p-5 space-y-4">
                   {/* ── Qada ── */}
-                  <div className="rounded-2xl border border-brand-gold/25 bg-brand-gold/5 p-4 space-y-3">
+                  <div className="rounded-card border border-brand-border border-t-2 border-t-brand-gold bg-brand-surface shadow-elev-2 p-4 space-y-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-9 h-9 rounded-xl bg-brand-gold/15 grid place-items-center text-lg shrink-0">
-                        🔄
+                      <span className="w-9 h-9 rounded-control bg-brand-gold/10 text-brand-gold grid place-items-center shrink-0">
+                        <ArrowPathIcon className="w-5 h-5" aria-hidden="true" />
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-brand-gold font-bold text-sm leading-tight">
-                          {t('fasting.qadaMissedDays', 'Qaḍā — missed Ramaḍān days')}
+                        <p className="text-white font-bold text-sm leading-tight">
+                          {t('fasting.qadaMissedDays', 'Qaḍā: missed Ramaḍān days')}
                         </p>
-                        <p className="text-white/30 text-[10px]">
-                          {t('fasting.qadaMakeupNote', 'Quran 2:184 — make them up day by day')}
+                        <p className="text-white/70 text-[11px]">
+                          {t('fasting.qadaMakeupNote', 'Quran 2:184: make them up day by day')}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-white/40 text-xs">{t('fasting.iOwe', 'I owe')}</span>
+                      <span className="text-white/80 text-xs">{t('fasting.iOwe', 'I owe')}</span>
                       <input
                         type="number"
                         min="0"
@@ -120,10 +129,10 @@ export default function FastingSettingsSheet({
                         aria-label={t('fasting.daysOwedAriaLabel', 'Days owed')}
                         className="input input-sm w-20 bg-brand-deep border-brand-border text-white text-center font-bold"
                       />
-                      <span className="text-white/40 text-xs">{t('common.days')}</span>
+                      <span className="text-white/80 text-xs">{t('common.days')}</span>
                       <button
                         onClick={saveQadaOwed}
-                        className="btn btn-xs bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 ml-auto"
+                        className="ml-auto px-3 py-1.5 rounded-control text-xs font-bold text-on-color bg-brand-emerald-dim hover:brightness-110 shadow-elev-1"
                       >
                         {t('common.save')}
                       </button>
@@ -135,7 +144,7 @@ export default function FastingSettingsSheet({
                         color="rgb(var(--c-gold))"
                         doneLabel={
                           qadaRemaining === 0
-                            ? t('fasting.allMadeUp', "All made up — māshā'Allāh! 🎉")
+                            ? t('fasting.allMadeUp', "All made up, māshā'Allāh!")
                             : t('fasting.daysRemaining', '{{count}} days remaining', {
                                 count: qadaRemaining,
                               })
@@ -150,16 +159,16 @@ export default function FastingSettingsSheet({
                   </div>
 
                   {/* ── Kaffarah ── */}
-                  <div className="rounded-2xl border border-brand-warm/25 bg-brand-warm/5 p-4 space-y-3">
+                  <div className="rounded-card border border-brand-border border-t-2 border-t-brand-warm bg-brand-surface shadow-elev-2 p-4 space-y-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-9 h-9 rounded-xl bg-brand-warm/15 grid place-items-center text-lg shrink-0">
-                        ⚖️
+                      <span className="w-9 h-9 rounded-control bg-brand-warm/10 text-brand-warm grid place-items-center shrink-0">
+                        <ScaleIcon className="w-5 h-5" aria-hidden="true" />
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-brand-warm font-bold text-sm leading-tight">
-                          {t('fasting.kaffarahExpiation', 'Kaffārah — expiation')}
+                        <p className="text-white font-bold text-sm leading-tight">
+                          {t('fasting.kaffarahExpiation', 'Kaffārah: expiation')}
                         </p>
-                        <p className="text-white/30 text-[10px]">
+                        <p className="text-white/70 text-[11px]">
                           {t(
                             'fasting.kaffarahConsecutiveNote',
                             'Consecutive days required (Bukhārī 1936)'
@@ -175,7 +184,7 @@ export default function FastingSettingsSheet({
                             },
                           })
                         }
-                        className={`btn btn-xs border-0 shrink-0 ${kaffarahActive ? 'bg-white/10 text-white/50' : 'bg-brand-warm text-on-color'}`}
+                        className={`px-3 py-1.5 rounded-control text-xs font-bold shrink-0 shadow-elev-1 ${kaffarahActive ? 'bg-brand-deep border border-brand-border text-white/80' : 'bg-brand-emerald-dim text-on-color hover:brightness-110'}`}
                       >
                         {kaffarahActive ? t('fasting.stop', 'Stop') : t('fasting.start', 'Start')}
                       </button>
@@ -202,11 +211,11 @@ export default function FastingSettingsSheet({
                         <ManageProgress
                           done={summary?.kaffarah.currentRun ?? 0}
                           target={summary?.profile.kaffarah.targetDays ?? 60}
-                          color="#a855f7"
+                          color="rgb(var(--c-warm))"
                           doneLabel={
                             (summary?.kaffarah.currentRun ?? 0) >=
                             (summary?.profile.kaffarah.targetDays ?? 60)
-                              ? t('fasting.kaffarahComplete', "Complete — māshā'Allāh! 🎉")
+                              ? t('fasting.kaffarahComplete', "Complete, māshā'Allāh!")
                               : t('fasting.kaffarahDaysToGo', '{{count}} consecutive days to go', {
                                   count: Math.max(
                                     0,
@@ -225,23 +234,26 @@ export default function FastingSettingsSheet({
                           )}
                         />
                         {summary?.kaffarah.runStale && (summary?.kaffarah.completed ?? 0) > 0 && (
-                          <p className="text-red-400/90 text-[11px] rounded-lg bg-red-500/10 border border-red-500/25 px-2.5 py-1.5">
-                            ⚠️{' '}
+                          <p className="flex items-start gap-2 text-red-400 text-xs rounded-control bg-red-400/10 border border-red-400/30 px-2.5 py-2">
+                            <ExclamationTriangleIcon
+                              className="w-4 h-4 shrink-0"
+                              aria-hidden="true"
+                            />
                             {t(
                               'fasting.chainBrokenWarning',
-                              'Chain broken — an unexcused gap restarts the consecutive count. Log a fast today to start a new run. Consult a scholar about valid excuses.'
+                              'Chain broken: an unexcused gap restarts the consecutive count. Log a fast today to start a new run. Consult a scholar about valid excuses.'
                             )}
                           </p>
                         )}
-                        <p className="text-white/25 text-[10px] leading-relaxed">
+                        <p className="text-white/70 text-[11px] leading-relaxed">
                           {t(
                             'fasting.kaffarahAlternative',
-                            'For a broken oath, feeding/clothing ten poor people comes first — fasting 3 days only if unable (Quran 5:89).'
+                            'For a broken oath, feeding/clothing ten poor people comes first; fasting 3 days only if unable (Quran 5:89).'
                           )}
                         </p>
                       </>
                     ) : (
-                      <p className="text-white/30 text-[11px]">
+                      <p className="text-white/70 text-xs">
                         {t('fasting.onlyIfApplies', 'Only activate if this applies to you.')}
                       </p>
                     )}
@@ -253,16 +265,16 @@ export default function FastingSettingsSheet({
                   </div>
 
                   {/* ── Vows ── */}
-                  <div className="rounded-2xl border border-brand-info/25 bg-brand-info/5 p-4 space-y-3">
+                  <div className="rounded-card border border-brand-border border-t-2 border-t-brand-info bg-brand-surface shadow-elev-2 p-4 space-y-3">
                     <div className="flex items-center gap-2.5">
-                      <span className="w-9 h-9 rounded-xl bg-brand-info/15 grid place-items-center text-lg shrink-0">
-                        🤝
+                      <span className="w-9 h-9 rounded-control bg-brand-info/10 text-brand-info grid place-items-center shrink-0">
+                        <HandRaisedIcon className="w-5 h-5" aria-hidden="true" />
                       </span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-brand-info font-bold text-sm leading-tight">
-                          {t('fasting.nadhrVowedFasts', 'Nadhr — vowed fasts')}
+                        <p className="text-white font-bold text-sm leading-tight">
+                          {t('fasting.nadhrVowedFasts', 'Nadhr: vowed fasts')}
                         </p>
-                        <p className="text-white/30 text-[10px]">
+                        <p className="text-white/70 text-[11px]">
                           {t(
                             'fasting.nadhrHadith',
                             '"Whoever vows to obey Allah, let him obey Him" (Bukhārī 6696)'
@@ -271,7 +283,7 @@ export default function FastingSettingsSheet({
                       </div>
                     </div>
                     {vows.length === 0 && (
-                      <p className="text-white/30 text-[11px]">
+                      <p className="text-white/70 text-xs">
                         {t(
                           'fasting.noVowsYet',
                           'No vows yet. Add one below and it gets its own countdown.'
@@ -281,18 +293,16 @@ export default function FastingSettingsSheet({
                     {vows.map((v) => (
                       <div
                         key={v.id}
-                        className="rounded-xl bg-white/[0.04] border border-brand-emerald/10 p-2.5 space-y-1.5"
+                        className="rounded-control bg-brand-deep border border-brand-border p-2.5 space-y-1.5"
                       >
                         <div className="flex items-center gap-2">
-                          <p className="text-white/70 text-xs font-bold flex-1 truncate">
-                            {v.title}
-                          </p>
+                          <p className="text-white text-xs font-bold flex-1 truncate">{v.title}</p>
                           <button
                             onClick={() => setConfirmVowDelete({ id: v.id, title: v.title })}
                             aria-label={t('fasting.deleteVowAriaLabel', 'Delete vow {{title}}', {
                               title: v.title,
                             })}
-                            className="p-1 text-white/25 hover:text-red-400 shrink-0"
+                            className="p-1 text-white/60 hover:text-red-400 shrink-0"
                           >
                             <TrashIcon className="w-3.5 h-3.5" />
                           </button>
@@ -303,7 +313,7 @@ export default function FastingSettingsSheet({
                           color="rgb(var(--c-info))"
                           doneLabel={
                             v.completed >= v.targetDays
-                              ? t('fasting.vowFulfilled', 'Fulfilled ✓')
+                              ? t('fasting.vowFulfilled', 'Fulfilled')
                               : t('fasting.daysRemaining', '{{count}} days remaining', {
                                   count: v.targetDays - v.completed,
                                 })
@@ -317,7 +327,7 @@ export default function FastingSettingsSheet({
                         onChange={(e) => setVowTitle(e.target.value)}
                         placeholder={t('fasting.vowPlaceholder', 'e.g. 3 days for shifa')}
                         aria-label={t('fasting.vowDescriptionAriaLabel', 'Vow description')}
-                        className="input input-xs flex-1 bg-brand-deep border-brand-border text-white placeholder-white/20"
+                        className="input input-sm flex-1 bg-brand-deep border-brand-border text-white placeholder-white/50"
                       />
                       <input
                         type="number"
@@ -326,12 +336,12 @@ export default function FastingSettingsSheet({
                         onChange={(e) => setVowDays(e.target.value)}
                         placeholder={t('common.days')}
                         aria-label={t('fasting.vowDaysAriaLabel', 'Vow days')}
-                        className="input input-xs w-14 bg-brand-deep border-brand-border text-white placeholder-white/20 text-center"
+                        className="input input-sm w-16 bg-brand-deep border-brand-border text-white placeholder-white/50 text-center"
                       />
                       <button
                         onClick={submitVow}
                         disabled={!vowTitle.trim() || !vowDays || addVow.isPending}
-                        className="btn btn-xs bg-brand-info text-on-color border-0 disabled:opacity-30"
+                        className="px-3 rounded-control text-xs font-bold text-on-color bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 disabled:opacity-40"
                       >
                         {t('common.add')}
                       </button>
@@ -346,9 +356,9 @@ export default function FastingSettingsSheet({
                   <Link
                     to="/settings"
                     onClick={() => setShowManage(false)}
-                    className="block text-center text-white/25 hover:text-red-400 text-xs underline underline-offset-2 pt-4 pb-2 transition-colors"
+                    className="block text-center text-white/60 hover:text-red-400 text-xs underline underline-offset-2 pt-4 pb-2 transition-colors"
                   >
-                    {t('fasting.deleteFastingData', 'Delete fasting data →')}
+                    {t('fasting.deleteFastingData', 'Delete fasting data')}
                   </Link>
                 </div>
               </motion.aside>

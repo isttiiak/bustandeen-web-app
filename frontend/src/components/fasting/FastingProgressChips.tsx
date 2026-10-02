@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { formatLocaleNumber } from '../../utils/localeDate.js';
+import { CARD } from '../bustanStyles.js';
 
 export interface FastingProgressChipsProps {
   kaffarahActive: boolean;
@@ -32,21 +33,21 @@ export default function FastingProgressChips({
             {
               label: t('fasting.thisMonth', 'This month'),
               value: summary?.stats.thisMonth ?? 0,
-              color: 'rgb(var(--c-emerald))',
+              tone: 'text-data-good',
             },
             ...(qadaOwed > 0
               ? [
                   {
                     label: t('fasting.qadaLeft', 'Qada left'),
                     value: qadaRemaining,
-                    color: 'rgb(var(--c-gold))',
+                    tone: 'text-brand-gold',
                   },
                 ]
               : [
                   {
                     label: t('fasting.last30d', 'Last 30d'),
                     value: summary?.stats.last30 ?? 0,
-                    color: 'rgb(var(--c-info))',
+                    tone: 'text-brand-info',
                   },
                 ]),
             ...(kaffarahActive
@@ -54,28 +55,24 @@ export default function FastingProgressChips({
                   {
                     label: t('fasting.kaffarahRun', 'Kaffarah run'),
                     value: summary?.kaffarah.currentRun ?? 0,
-                    color: 'rgb(var(--c-warm))',
+                    tone: 'text-brand-warm',
                   },
                 ]
               : [
                   {
                     label: t('fasting.allTime', 'All time'),
                     value: summary?.stats.total ?? 0,
-                    color: 'rgb(var(--c-info))',
+                    tone: 'text-brand-info',
                   },
                 ]),
           ].map((s) => (
-            <div
-              key={s.label}
-              className="rounded-xl border border-brand-emerald/10 bg-white/[0.04] px-2 py-2 text-center"
-            >
-              <p
-                className="font-black text-lg tabular-nums leading-none"
-                style={{ color: s.color }}
-              >
+            <div key={s.label} className={`${CARD} px-2 py-3 text-center`}>
+              <p className={`font-display font-bold text-2xl tabular-nums leading-none ${s.tone}`}>
                 {formatLocaleNumber(s.value)}
               </p>
-              <p className="text-white/30 text-[9px] uppercase tracking-wide mt-1">{s.label}</p>
+              <p className="text-white/70 text-[10px] uppercase tracking-wide font-bold mt-1.5">
+                {s.label}
+              </p>
             </div>
           ))}
         </div>
@@ -92,10 +89,10 @@ export default function FastingProgressChips({
           }}
           aria-label={t('fasting.manageAriaLabel', 'Manage make-up fasts and vows')}
           title={t('fasting.manageTitle', 'Make-up fasts, kaffarah & vows')}
-          className="rounded-xl border border-brand-emerald/10 bg-white/[0.04] hover:bg-white/10 px-3 flex flex-col items-center justify-center gap-1 text-white/40 hover:text-white transition-all"
+          className={`${CARD} px-3 flex flex-col items-center justify-center gap-1 text-white/70 hover:text-white hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow,color]`}
         >
-          <Cog6ToothIcon className="w-4 h-4" />
-          <span className="text-[9px] font-bold uppercase">{t('fasting.manage', 'Manage')}</span>
+          <Cog6ToothIcon className="w-5 h-5" aria-hidden="true" />
+          <span className="text-[10px] font-bold uppercase">{t('fasting.manage', 'Manage')}</span>
         </button>
       </div>
     </>

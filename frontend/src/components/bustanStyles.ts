@@ -1,5 +1,6 @@
-// Bustan Arch classes shared by the Quran rooms (T3.2), so every card, button
-// and tile has the same radius, border and elevation in both themes.
+// Bustan Arch classes (T3.2), shared by the redesigned screens (Quran,
+// Fasting) so every card, button and tile has the same radius, border and
+// elevation in both themes.
 
 /** A raised theme card (dark card on dark, paper on sage paper). */
 export const CARD = 'rounded-card border border-brand-border bg-brand-deep shadow-elev-2';
