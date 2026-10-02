@@ -22,7 +22,11 @@ export const getUserHandler = async (
       return;
     }
     res.setHeader('ETag', etag);
-    res.json({ ok: true, user, isAdmin: isAdminEmail(req.user.email) });
+    res.json({
+      ok: true,
+      user: userService.toClientUser(user),
+      isAdmin: isAdminEmail(req.user.email),
+    });
   } catch (err) {
     next(err);
   }
@@ -80,7 +84,7 @@ export const updateUserHandler = async (
       aiEnabled,
     });
 
-    res.json({ ok: true, user });
+    res.json({ ok: true, user: user && userService.toClientUser(user) });
   } catch (err) {
     next(err);
   }
@@ -94,7 +98,7 @@ export const linkGoogleHandler = async (
   try {
     const { googleEmail, googleUid } = req.body as { googleEmail: string; googleUid: string };
     const user = await userService.linkGoogleProvider(req.user.uid, googleEmail, googleUid);
-    res.json({ ok: true, user });
+    res.json({ ok: true, user: user && userService.toClientUser(user) });
   } catch (err) {
     next(err);
   }
@@ -108,7 +112,7 @@ export const unlinkGoogleHandler = async (
   try {
     const { providerUid } = req.body as { providerUid: string };
     const user = await userService.unlinkGoogleProvider(req.user.uid, providerUid);
-    res.json({ ok: true, user });
+    res.json({ ok: true, user: user && userService.toClientUser(user) });
   } catch (err) {
     next(err);
   }
@@ -122,7 +126,7 @@ export const setPrimaryEmailHandler = async (
   try {
     const { email } = req.body as { email: string };
     const user = await userService.setPrimaryEmail(req.user.uid, email);
-    res.json({ ok: true, user });
+    res.json({ ok: true, user: user && userService.toClientUser(user) });
   } catch (err) {
     next(err);
   }
