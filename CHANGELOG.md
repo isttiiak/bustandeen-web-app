@@ -27,6 +27,13 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - `index.html`'s inline script also sends a signed-out Bangla visitor of `/` to `/bn` (CSP hash updated). Fixed the landing FAQ JSON-LD escaping (`'<'`).
 - e2e: `static-pages.spec.ts` (no app chunks on the landing and SEO pages, the app for a signed-in visitor, the Bangla landing and language memory, an interactive SEO page); the demo helpers click links.
 
+## v5.78.1 - A reviewed audit exception - 2026-10-02
+
+### Changed (developers)
+
+- CI's dependency audit runs `scripts/audit-gate.mjs` instead of `npm audit --audit-level=high`. It still fails on any high or critical advisory in production dependencies, except reviewed exceptions, each limited to one advisory and package path, with a reason and a review date after which it fails again.
+- First exception: GHSA-86w9-cpqp-85rv (node-forge, every release, published 2026-10-02) via firebase-admin 12. firebase-admin uses node-forge only to parse our own service-account key, never to verify a signature, so the flaw is not reachable. The fix is firebase-admin 14, which crashed the Vercel function on 2026-09-20. Review by 2026-11-01.
+
 ## v5.78.0 - The Quran text is part of the app - 2026-10-02
 
 ### Changed

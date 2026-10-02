@@ -113,11 +113,13 @@ jobs:
             frontend/test-results/
           retention-days: 7
 
+      # npm audit --omit=dev, failing on high/critical advisories except the
+      # reviewed, dated exceptions in scripts/audit-gate.mjs.
       - name: Audit backend (production deps, high+)
         working-directory: backend
         run: |
           for attempt in 1 2 3; do
-            npm audit --production --audit-level=high && exit 0
+            node ../scripts/audit-gate.mjs && exit 0
             if [ "$attempt" -lt 3 ]; then
               echo "npm audit failed, retrying in 15s (attempt $((attempt + 1))/3)..."
               sleep 15
@@ -130,7 +132,7 @@ jobs:
         working-directory: frontend
         run: |
           for attempt in 1 2 3; do
-            npm audit --production --audit-level=high && exit 0
+            node ../scripts/audit-gate.mjs && exit 0
             if [ "$attempt" -lt 3 ]; then
               echo "npm audit failed, retrying in 15s (attempt $((attempt + 1))/3)..."
               sleep 15
