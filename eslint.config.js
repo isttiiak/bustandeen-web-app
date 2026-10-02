@@ -38,7 +38,7 @@ export default [
             {
               name: 'framer-motion',
               importNames: ['motion'],
-              message: "Import { m as motion } instead (LazyMotion, see frontend/src/main.tsx).",
+              message: 'Import { m as motion } instead (LazyMotion, see frontend/src/main.tsx).',
             },
           ],
         },

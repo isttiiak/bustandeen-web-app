@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.80.0 - Lighter animations - 2026-10-02
+
+### Changed
+
+- **The app downloads about 27 KB less before it can start** (PERF-01 follow-up). The animation engine now loads just after the app appears instead of before it; every animation still plays.
+- The Nafl prayer tiles no longer glide into place when a neighbour's rakʿah counter opens; the counter itself still opens smoothly, and the tick and tap animations are unchanged.
+
+### Changed (developers)
+
+- `main.tsx` wraps the app in `<LazyMotion features={…} strict>`; `src/motionFeatures.ts` (domAnimation) is its own chunk. Components import `{ m as motion }` from framer-motion; ESLint (`no-restricted-imports`) blocks the full `motion` import, and `strict` throws if one renders.
+- domAnimation has no `layout` animations (domMax, about 10 KB more); the one use (SalatNaflCard tiles) was removed.
+- framer-motion no longer has a manual chunk in `vite.config.ts` (it would pull the lazy features back in).
+
 ## v5.79.0 - Faster first visits - 2026-10-02
 
 ### Changed
