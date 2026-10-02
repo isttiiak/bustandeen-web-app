@@ -97,7 +97,7 @@ export default function TrendChart({ data, period }: TrendChartProps) {
 
   if (!model) {
     return (
-      <div className="card bg-brand-surface border border-brand-border shadow-glass">
+      <div className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2">
         <div className="card-body p-6">
           <h3 className="text-lg font-bold text-brand-emerald mb-4">
             {t('zikrAnalytics.trendChart.title', 'Trend Chart')}
@@ -120,7 +120,7 @@ export default function TrendChart({ data, period }: TrendChartProps) {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="card bg-brand-surface border border-brand-border shadow-glass"
+      className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2"
     >
       <div className="card-body p-6">
         <div className="flex items-baseline justify-between gap-3 mb-4">

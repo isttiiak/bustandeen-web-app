@@ -24,9 +24,9 @@ export interface SalatHeroProps {
 }
 
 const LEAF_CLASS: Record<PrayerStatus, string> = {
-  completed: 'text-brand-emerald fill-current',
-  kaza: 'text-brand-gold fill-current',
-  missed: 'text-red-400/70',
+  completed: 'text-data-good fill-current',
+  kaza: 'text-data-mid fill-current',
+  missed: 'text-data-none/70',
   pending: 'text-white/25',
 };
 

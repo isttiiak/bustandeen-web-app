@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.91.1 - Salat analytics day fix, light theme polish - 2026-10-03
+
+### Fixed
+
+- **Opening Salat analytics after midnight no longer marks the day's prayers as missed.** The page sent the calendar date as "today" instead of the Fajr-based tracking day, so between midnight and Fajr the server's daily sweep closed the still-open day: unmarked prayers (usually Isha) became Miss and gained a kaza entry while their time was still running. Marking such a prayer Done or Kaza reverses it. The prayer calendar no longer shows an empty "today" square for the new date before Fajr either. The default month also follows the tracking day, and the page never sends a date later than it.
+- **Zikr focus mode button is visible again.** It sat on the arch's curved top corner, which clipped it on wide screens; it is now in the dhikr row, next to the pronunciation button.
+- **Light theme:** the day dots under the Salat dates, the prayer leaves and the status marks use brighter colours that stay told apart on paper (green all five, gold three or four, orange one or two, red none). Each dot shows "4 of 5 prayed" on hover.
+- **Zikr analytics:** the best-streak number is readable (it was gradient text that vanished on paper). The activity heatmap shows the whole last year as a grid that fills the card, with month labels, visible empty days, levels based on your own typical days rather than your single best day, and a ring on today; on a phone it opens at the latest weeks.
+
+### Changed
+
+- Salat analytics per-prayer cards use the theme card (dark or sage paper) with the prayer's SVG glyph and SVG icons instead of coloured gradients and emoji.
+- Streak and goal cards on Zikr analytics follow the Bustan Arch design: no glow orbs, sparkles or gradient text; theme buttons for pause and edit; the grace-day explainer and legend use SVG marks instead of emoji (English and Bangla copy without emoji or em dashes).
+- Light theme buttons: the Counter / Analytics (and Tracker / Analytics) switcher is a raised paper pill on a sage track instead of grey tints, and the small buttons in the dhikr row are raised paper buttons.
+- Every card on Zikr and Salat analytics has the same raised shadow and radius, with more space between sections. The time-of-day chart no longer draws a second card inside its section.
+
+### Changed (developers)
+
+- New data tokens `--c-data-good/-mid/-low/-none` (Tailwind `data-*`): the brand colours on dark (unchanged), brighter hues on paper, for small marks that must differ by hue. `dayDotClass`, the Salat hero leaves, the streak bars and the zikr heatmap use them.
+- `pages/salatAnalyticsToday.test.ts` guards that Salat analytics takes "today" from `getTrackingDay()`.
+
 ## v5.91.0 - Zikr in the Bustan Arch design - 2026-10-03
 
 ### Changed

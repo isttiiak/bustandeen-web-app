@@ -53,15 +53,8 @@ export default function TimeOfDayChart({ data }: TimeOfDayChartProps) {
 
   if (!model) {
     return (
-      <div className="card bg-brand-surface border border-brand-border shadow-glass">
-        <div className="card-body p-6">
-          <h3 className="text-lg font-bold text-brand-emerald mb-4">
-            {t('zikrAnalytics.timeOfDay.title', 'Time of day')}
-          </h3>
-          <div className="flex items-center justify-center h-40 text-white/40">
-            <p>{t('zikrAnalytics.trendChart.noData', 'No data available')}</p>
-          </div>
-        </div>
+      <div className="flex items-center justify-center h-40 text-white/50">
+        <p>{t('zikrAnalytics.trendChart.noData', 'No data available')}</p>
       </div>
     );
   }
@@ -70,12 +63,10 @@ export default function TimeOfDayChart({ data }: TimeOfDayChartProps) {
   const active = hover != null ? bars[hover] : null;
 
   return (
-    <div className="card bg-brand-surface border border-brand-border shadow-glass">
-      <div className="card-body p-6">
-        <div className="flex items-baseline justify-between gap-3 mb-4">
-          <h3 className="text-lg font-bold text-brand-emerald">
-            {t('zikrAnalytics.timeOfDay.title', 'Time of day')}
-          </h3>
+    // Bare: the page wraps it in its own titled card.
+    <div>
+      <div>
+        <div className="flex items-baseline justify-end gap-3 mb-2 h-4">
           {active && (
             <p className="text-xs text-white/60 tabular-nums">
               <span className="text-white/40">{hourLabel(active.hour)}</span>{' '}

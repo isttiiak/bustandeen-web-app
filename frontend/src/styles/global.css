@@ -40,6 +40,13 @@
   /* Tailwind's red-300/400 (error text), theme-aware */
   --c-red-300: 252 165 165;
   --c-red-400: 248 113 113;
+  /* Data marks (status dots, leaves, heatmap scales): small shapes that must
+     stay told apart by hue, so on paper they keep their brightness instead of
+     taking the darkened text tones. Dark = the brand colours, unchanged. */
+  --c-data-good: 122 158 110;
+  --c-data-mid: 201 169 110;
+  --c-data-low: 196 130 90;
+  --c-data-none: 248 113 113;
   --text-primary: #e8e2d4;
   --text-secondary: #9e9580;
   /* Elevations: flat (border only) / raised / overlay */
@@ -88,6 +95,10 @@
   --accent-text-floor: 0.92;
   --c-red-300: 155 28 28;
   --c-red-400: 180 35 24;
+  --c-data-good: 74 138 62;
+  --c-data-mid: 212 158 38;
+  --c-data-low: 206 108 50;
+  --c-data-none: 200 56 44;
   --text-primary: #1f2418;
   --text-secondary: #545b46;
   --elev-1: 0 1px 2px rgb(40 50 25 / 0.14), 0 1px 0 rgb(40 50 25 / 0.06);

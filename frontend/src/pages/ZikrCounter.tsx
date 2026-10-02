@@ -434,7 +434,7 @@ export default function ZikrCounter() {
 
   // Bustan Arch controls (audit T3.2): theme radii and borders, no glows.
   const chipFrame =
-    'rounded-control border border-brand-border bg-shade/20 hover:border-brand-emerald/40 transition-colors';
+    'rounded-control border border-brand-border bg-brand-deep shadow-elev-1 hover:border-brand-emerald/40 transition-colors';
   const chip = `${chipFrame} text-white/70 hover:text-white`;
   const roundBtn =
     'w-12 h-12 rounded-control border border-brand-border bg-brand-deep text-white/80 shadow-elev-1 hover:shadow-hover flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed transition-[color,border-color,box-shadow]';
@@ -493,7 +493,7 @@ export default function ZikrCounter() {
         {/* Motivational subtitle */}
         <p className="text-center text-white/60 text-sm tracking-wide">{t('zikr.motivational')}</p>
 
-        {/* ── Type selector: name | change | + | pronunciation ── */}
+        {/* ── Type selector: name | change | + | pronunciation | focus ── */}
         <div className="flex items-center gap-2 rounded-card border border-brand-border bg-brand-deep shadow-elev-1 px-4 py-2.5">
           <TasbihIcon className="w-4 h-4 shrink-0 text-brand-emerald" aria-hidden="true" />
           <span className="font-semibold text-sm text-brand-emerald truncate min-w-0">
@@ -556,6 +556,17 @@ export default function ZikrCounter() {
               <SpeakerWaveIcon className="w-4 h-4" />
             </motion.button>
           )}
+
+          {/* Focus mode: lives here, not on the arch, whose curved top
+              corners clipped it on wide screens. */}
+          <button
+            onClick={() => setFullScreen(true)}
+            className={`${chip} flex-shrink-0 w-9 h-9 flex items-center justify-center`}
+            title={t('zikr.focusMode', 'Focus mode (full screen)')}
+            aria-label={t('zikr.enterFocusMode', 'Enter full-screen focus mode')}
+          >
+            <ArrowsPointingOutIcon className="w-4 h-4" />
+          </button>
         </div>
 
         {/* ── The screen's one arch: count, the dhikr, today's goal ── */}
@@ -563,16 +574,6 @@ export default function ZikrCounter() {
           aria-label={zikrDisplayName(selected, i18n.language)}
           className="relative rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero overflow-hidden"
         >
-          {/* Focus mode button */}
-          <button
-            onClick={() => setFullScreen(true)}
-            className="absolute top-4 right-4 p-1.5 rounded-control border border-brand-border bg-brand-deep/60 text-white/50 hover:text-white hover:border-brand-emerald/40 transition-colors z-10"
-            title={t('zikr.focusMode', 'Focus mode (full screen)')}
-            aria-label={t('zikr.enterFocusMode', 'Enter full-screen focus mode')}
-          >
-            <ArrowsPointingOutIcon className="w-4 h-4" />
-          </button>
-
           {/* Number: a single cheap pop per tap (the old exit+enter pair ran
               TWO spring animations per count and janked low-end phones);
               reduce-motion users get an instant swap. */}

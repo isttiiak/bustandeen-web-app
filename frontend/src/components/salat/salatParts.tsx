@@ -153,10 +153,10 @@ export function DisclosureLabel({ open }: { open: boolean }) {
 
 /** Day dot class for the week strip and month calendar (theme tokens). */
 export function dayDotClass(completed: number): string {
-  if (completed >= 5) return 'bg-brand-emerald';
-  if (completed >= 3) return 'bg-brand-gold';
-  if (completed >= 1) return 'bg-brand-warm';
-  return 'bg-red-400'; // logged nothing that day
+  if (completed >= 5) return 'bg-data-good';
+  if (completed >= 3) return 'bg-data-mid';
+  if (completed >= 1) return 'bg-data-low';
+  return 'bg-data-none'; // logged nothing that day
 }
 
 export function friendlyDate(

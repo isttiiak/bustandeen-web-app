@@ -14,7 +14,13 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   MapIcon,
+  CheckIcon,
+  ClockIcon,
+  XMarkIcon,
+  FireIcon,
+  TrophyIcon,
 } from '@heroicons/react/24/outline';
+import { MosqueIcon, PrayerGlyph, TasbihIcon } from '../components/icons/IslamicIcons.js';
 import {
   useSalatAnalytics,
   useSalatDebt,
@@ -26,6 +32,7 @@ import {
 } from '../hooks/useSalatLog.js';
 import { PRAYER_META, translateSalatName } from '../utils/prayerTimes.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
+import { getTrackingDay } from '../utils/trackingDay.js';
 import KazaDebtChart from '../components/analytics/KazaDebtChart.js';
 import MosqueTrendChart from '../components/analytics/MosqueTrendChart.js';
 import ChartInfoModal, { InfoButton } from '../components/ChartInfoModal.js';
@@ -45,14 +52,6 @@ interface MonthSel {
   year: number;
   month: number;
 } // 1-based month
-
-const PRAYER_GRADIENTS: Record<string, string> = {
-  fajr: 'from-brand-info to-brand-info-dim',
-  dhuhr: 'from-brand-gold to-brand-warm',
-  asr: 'from-brand-info to-brand-info-dim',
-  maghrib: 'from-brand-pink to-brand-pink-dim',
-  isha: 'from-brand-info to-brand-info-dim',
-};
 
 function calendarCellStyle(completed: number, hasData: boolean) {
   if (!hasData)
@@ -82,16 +81,18 @@ export default function SalatAnalytics() {
   // "use the day-count period selector instead"; that's now only reached by
   // explicitly clicking 30d/90d/1y.
   const [selectedMonth, setSelectedMonth] = useState<MonthSel | null>(() => {
-    const now = new Date();
-    return { year: now.getFullYear(), month: now.getMonth() + 1 };
+    // Month of the tracking day (before Fajr on the 1st it is still last month).
+    const day = getTrackingDay();
+    return { year: Number(day.slice(0, 4)), month: Number(day.slice(5, 7)) };
   });
   const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [pickerYear, setPickerYear] = useState(() => new Date().getFullYear());
 
-  const civilToday = (() => {
-    const n = new Date();
-    return `${n.getFullYear()}-${String(n.getMonth() + 1).padStart(2, '0')}-${String(n.getDate()).padStart(2, '0')}`;
-  })();
+  // The Fajr-boundary tracking day, NOT the civil date: this is the `today`
+  // the analytics endpoint sweeps up to (ensureCaughtUp). A civil date sent
+  // between midnight and Fajr swept the still-open day's unmarked prayers
+  // (Isha) into "missed" + kaza, and drew an empty "today" cell for it.
+  const trackingToday = getTrackingDay();
 
   // When a calendar month is selected, derive days + todayOverride so the
   // analytics endpoint returns exactly that month's data.
@@ -100,15 +101,17 @@ export default function SalatAnalytics() {
     const { year, month } = selectedMonth;
     const daysInMonth = new Date(year, month, 0).getDate();
     const lastDay = `${year}-${String(month).padStart(2, '0')}-${String(daysInMonth).padStart(2, '0')}`;
-    const today = civilToday;
+    const today = trackingToday;
     const isCurrentMonth = today.startsWith(`${year}-${String(month).padStart(2, '0')}`);
     return {
       analyticsDays: isCurrentMonth
         ? parseInt(today.slice(8), 10) // days elapsed so far this month
         : daysInMonth,
-      analyticsToday: isCurrentMonth ? today : lastDay,
+      // Never later than the tracking day: `today` is where the server's
+      // missed-prayer sweep stops, so a future date would sweep open days.
+      analyticsToday: isCurrentMonth || lastDay > today ? today : lastDay,
     };
-  }, [selectedMonth, days, civilToday]);
+  }, [selectedMonth, days, trackingToday]);
 
   const [activeView, setActiveView] = useState<'stats' | 'journey'>('stats');
   const [infoTopic, setInfoTopic] = useState<string | null>(null);
@@ -179,7 +182,7 @@ export default function SalatAnalytics() {
   const { data: debt } = useSalatDebt();
   const { data: debtHistory } = useSalatDebtHistory(analyticsDays, analyticsToday);
   const { data: kazaInsights } = useSalatDebtInsights();
-  const { data: journeyPhases, isLoading: journeyLoading } = useSalatJourney(civilToday);
+  const { data: journeyPhases, isLoading: journeyLoading } = useSalatJourney(trackingToday);
   const { data: correlation } = useSalatCorrelation();
 
   // Group calendar data into weeks (Fri–Thu, Islamic week) for the heatmap
@@ -218,7 +221,7 @@ export default function SalatAnalytics() {
     return labels;
   })();
 
-  const todayStr = civilToday;
+  const todayStr = trackingToday;
 
   const DAY_LABELS = [
     t('salatAnalytics.dayFri'),
@@ -346,7 +349,7 @@ export default function SalatAnalytics() {
                 <motion.div
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="rounded-2xl border border-brand-emerald/20 bg-brand-deep/90 p-4 space-y-3"
+                  className="rounded-card border border-brand-emerald/30 bg-brand-deep shadow-elev-2 p-4 space-y-3"
                 >
                   <div className="flex items-center justify-between">
                     <button
@@ -404,7 +407,7 @@ export default function SalatAnalytics() {
                 </div>
               )}
               {isError && (
-                <div className="card bg-brand-surface border border-brand-border rounded-2xl">
+                <div className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2">
                   <div className="card-body text-center p-10">
                     <p className="text-white/50">{t('salatAnalytics.loadError')}</p>
                   </div>
@@ -471,7 +474,7 @@ export default function SalatAnalytics() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="rounded-2xl bg-brand-deep/80 border border-brand-border p-4 text-center"
+                        className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-4 text-center"
                       >
                         <p className={`text-2xl font-black ${s.accent}`}>{s.value}</p>
                         <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
@@ -485,7 +488,7 @@ export default function SalatAnalytics() {
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="rounded-2xl bg-brand-deep/80 border border-brand-border"
+                    className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2"
                   >
                     <div className="card-body p-5 space-y-3">
                       <div className="flex items-center gap-2">
@@ -615,88 +618,111 @@ export default function SalatAnalytics() {
                         const total = data.totalDays;
                         const done = stats.completed + stats.kaza;
                         const pct = total > 0 ? Math.round((done / total) * 100) : 0;
-                        const gradient =
-                          PRAYER_GRADIENTS[prayer.id] ?? 'from-white to-brand-border';
+                        const stat = (
+                          Icon: React.ComponentType<{ className?: string }>,
+                          cls: string,
+                          text: string
+                        ) => (
+                          <span className="flex items-center gap-1.5 min-w-0">
+                            <Icon className={`w-3.5 h-3.5 shrink-0 ${cls}`} aria-hidden="true" />
+                            <span className="truncate">{text}</span>
+                          </span>
+                        );
                         return (
                           <motion.div
                             key={prayer.id}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.04 * i }}
-                            className={`card bg-gradient-to-br ${gradient} border border-brand-emerald/20 rounded-2xl`}
+                            className="rounded-card border border-brand-border bg-brand-deep shadow-elev-2"
                           >
-                            <div className="card-body p-4">
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-2xl">{prayer.icon}</span>
-                                <h3 className="font-black text-white text-base">
+                            <div className="p-4">
+                              <div className="flex items-center gap-2.5 mb-2">
+                                <span className="w-9 h-9 rounded-full border border-brand-border bg-shade/10 flex items-center justify-center text-brand-emerald">
+                                  <PrayerGlyph
+                                    id={prayer.id}
+                                    className="w-5 h-5"
+                                    aria-hidden="true"
+                                  />
+                                </span>
+                                <h3 className="font-display font-bold text-white text-base">
                                   {t(`salatAnalytics.prayerName.${prayer.id}`)}
                                 </h3>
                               </div>
-                              <div className="text-3xl font-black text-white mb-0.5">
+                              <div className="text-3xl font-black text-white mb-0.5 tabular-nums">
                                 {formatLocaleNumber(pct)}%
                               </div>
-                              <p className="text-white/40 text-xs mb-1.5">
+                              <p className="text-white/60 text-xs mb-2">
                                 {t('salatAnalytics.prayedFormula', {
                                   done: formatLocaleNumber(done),
                                   total: formatLocaleNumber(total),
                                 })}
                               </p>
-                              <div className="w-full bg-white/20 rounded-full h-1.5 mb-2">
+                              <div className="w-full bg-shade/20 rounded-full h-1.5 mb-3">
                                 <motion.div
                                   initial={{ width: 0 }}
                                   animate={{ width: `${pct}%` }}
                                   transition={{ duration: 0.6, delay: 0.05 * i }}
-                                  className="h-full bg-white rounded-full"
+                                  className="h-full bg-data-good rounded-full"
                                 />
                               </div>
-                              <div className="grid grid-cols-2 gap-0.5 text-xs text-white/80">
-                                <span>
-                                  ✅{' '}
-                                  {t('salatAnalytics.onTimeStat', {
+                              <div className="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-white/80">
+                                {stat(
+                                  CheckIcon,
+                                  'text-data-good',
+                                  t('salatAnalytics.onTimeStat', {
                                     count: formatLocaleNumber(stats.completed),
-                                  })}
-                                </span>
-                                <span>
-                                  ⏰{' '}
-                                  {t('salatAnalytics.kazaStat', {
+                                  })
+                                )}
+                                {stat(
+                                  ClockIcon,
+                                  'text-data-mid',
+                                  t('salatAnalytics.kazaStat', {
                                     count: formatLocaleNumber(stats.kaza),
-                                  })}
-                                </span>
-                                <span>
-                                  ❌{' '}
-                                  {t('salatAnalytics.missedStat', {
+                                  })
+                                )}
+                                {stat(
+                                  XMarkIcon,
+                                  'text-data-none',
+                                  t('salatAnalytics.missedStat', {
                                     count: formatLocaleNumber(stats.missed),
-                                  })}
-                                </span>
-                                <span>
-                                  🕌{' '}
-                                  {t('salatAnalytics.mosqueStat', {
+                                  })
+                                )}
+                                {stat(
+                                  MosqueIcon,
+                                  'text-white/60',
+                                  t('salatAnalytics.mosqueStat', {
                                     count: formatLocaleNumber(stats.mosque),
-                                  })}
-                                </span>
+                                  })
+                                )}
                                 {stats.tasbeeh > 0 && (
                                   <span className="col-span-2">
-                                    📿{' '}
-                                    {t('salatAnalytics.tasbeehStat', {
-                                      count: formatLocaleNumber(stats.tasbeeh),
-                                    })}
+                                    {stat(
+                                      TasbihIcon,
+                                      'text-white/60',
+                                      t('salatAnalytics.tasbeehStat', {
+                                        count: formatLocaleNumber(stats.tasbeeh),
+                                      })
+                                    )}
                                   </span>
                                 )}
                               </div>
                               {(stats.currentStreak > 0 || stats.bestStreak > 0) && (
-                                <div className="flex items-center gap-3 mt-2 pt-2 border-t border-white/15 text-xs text-white/80">
-                                  <span>
-                                    🔥{' '}
-                                    {t('salatAnalytics.prayerStreakCurrent', {
+                                <div className="flex items-center gap-4 mt-3 pt-2.5 border-t border-brand-border text-xs text-white/80">
+                                  {stat(
+                                    FireIcon,
+                                    'text-brand-warm',
+                                    t('salatAnalytics.prayerStreakCurrent', {
                                       count: formatLocaleNumber(stats.currentStreak),
-                                    })}
-                                  </span>
-                                  <span>
-                                    🏆{' '}
-                                    {t('salatAnalytics.prayerStreakBest', {
+                                    })
+                                  )}
+                                  {stat(
+                                    TrophyIcon,
+                                    'text-brand-gold',
+                                    t('salatAnalytics.prayerStreakBest', {
                                       count: formatLocaleNumber(stats.bestStreak),
-                                    })}
-                                  </span>
+                                    })
+                                  )}
                                 </div>
                               )}
                             </div>
@@ -711,7 +737,7 @@ export default function SalatAnalytics() {
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="card bg-brand-deep/80 border border-brand-border rounded-2xl"
+                      className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2"
                     >
                       <div className="card-body p-5 space-y-3">
                         <h2 className="text-white font-black text-sm flex items-center gap-2">
@@ -770,7 +796,7 @@ export default function SalatAnalytics() {
                           <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="card bg-brand-deep/80 border border-brand-border rounded-2xl"
+                            className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2"
                           >
                             <div className="card-body p-5 space-y-3">
                               <h2 className="text-white font-black text-sm flex items-center gap-2">
@@ -847,7 +873,7 @@ export default function SalatAnalytics() {
                           <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="card bg-brand-deep/80 border border-brand-border rounded-2xl"
+                            className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2"
                           >
                             <div className="card-body p-5 space-y-3">
                               <h2 className="text-white font-black text-sm flex items-center gap-2">
@@ -910,7 +936,7 @@ export default function SalatAnalytics() {
                       <motion.div
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="card bg-brand-deep/80 border border-brand-border rounded-2xl"
+                        className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2"
                       >
                         <div className="card-body p-5 space-y-3">
                           <h2 className="text-white font-black text-sm flex items-center gap-2">
@@ -1009,7 +1035,7 @@ export default function SalatAnalytics() {
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="card bg-brand-deep/80 border border-brand-border rounded-2xl"
+                      className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2"
                     >
                       <div className="card-body p-5 space-y-3">
                         <h2 className="text-white font-black text-sm flex items-center gap-2">
@@ -1101,7 +1127,7 @@ export default function SalatAnalytics() {
                     <motion.div
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="card bg-brand-surface border border-brand-border rounded-2xl overflow-x-auto"
+                      className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2 overflow-x-auto"
                     >
                       <div className="p-5">
                         {/* Month labels across the top */}
@@ -1258,7 +1284,7 @@ export default function SalatAnalytics() {
                 </div>
               )}
               {!journeyLoading && journeyPhases && journeyPhases.length === 0 && (
-                <div className="rounded-2xl bg-brand-deep/80 border border-brand-border p-8 text-center">
+                <div className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-8 text-center">
                   <p className="text-white/40 text-sm">
                     {t(
                       'salatAnalytics.journeyEmpty',
@@ -1292,10 +1318,10 @@ export default function SalatAnalytics() {
                       )}
 
                       <div
-                        className={`rounded-2xl border p-5 space-y-4 ${
+                        className={`rounded-card border shadow-elev-2 p-5 space-y-4 ${
                           isCurrentPhase
                             ? 'bg-brand-emerald/10 border-brand-emerald/30'
-                            : 'bg-brand-deep/80 border-brand-border'
+                            : 'bg-brand-deep border-brand-border'
                         }`}
                       >
                         {/* Header row */}
