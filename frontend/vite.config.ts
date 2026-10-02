@@ -220,9 +220,9 @@ export default defineConfig({
         // Split the heaviest dependencies into their own long-cacheable chunks
         // so a small app change doesn't re-download all of them.
         // By module path, not package name: by name, `react/jsx-runtime` (a
-        // CommonJS proxy) was not matched and ended up in `motion`, so every
-        // component, the SEO pages' too, needed the framer-motion chunk
-        // (audit PERF-01).
+        // CommonJS proxy) was not matched and ended up in the framer-motion
+        // chunk, so every component, the SEO pages' too, needed it (audit
+        // PERF-01).
         manualChunks(id) {
           // Vite gives module ids with forward slashes on every OS.
           if (!id.includes('/node_modules/')) return undefined;
@@ -235,9 +235,8 @@ export default defineConfig({
           // don't download the router too.
           if (/\/node_modules\/react-router\//.test(id)) return 'router';
           if (/\/node_modules\/(firebase|@firebase|idb)\//.test(id)) return 'firebase';
-          if (/\/node_modules\/(framer-motion|motion-dom|motion-utils)\//.test(id)) {
-            return 'motion';
-          }
+          // No chunk for framer-motion: a manual chunk would pull the lazily
+          // imported animation features (src/motionFeatures.ts) back into it.
           return undefined;
         },
       },

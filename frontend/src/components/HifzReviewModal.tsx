@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { loadSurahText, surahDisplayName, type SurahMeta } from '../utils/quranData.js';
 import type { HifzResult } from '../hooks/useHifz.js';

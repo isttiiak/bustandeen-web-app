@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import AnimatedBackground from '../components/AnimatedBackground.js';

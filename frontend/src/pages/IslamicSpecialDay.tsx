@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import ReportReference from '../components/ReportReference.js';
 import { SPECIAL_DAYS } from '../utils/islamicCalendar.js';

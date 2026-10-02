@@ -1,5 +1,5 @@
 import { useTranslation, Trans } from 'react-i18next';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 
 export interface SalatLegendProps {
   legendExpanded: boolean;

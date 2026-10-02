@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
+import { m as motion, useReducedMotion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { formatLocaleNumber } from '../../utils/localeDate.js';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';

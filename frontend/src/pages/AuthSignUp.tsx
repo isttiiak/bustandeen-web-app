@@ -19,7 +19,7 @@ import {
   CheckCircleIcon,
   EnvelopeIcon,
 } from '@heroicons/react/24/outline';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 
 type Translator = (key: string, fallback: string) => string;
 

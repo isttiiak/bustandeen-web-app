@@ -6,7 +6,7 @@ import { API_BASE, getIdToken } from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { auth, googleProvider, storage } from '../firebase.js';
 import { browserPopupRedirectResolver, linkWithPopup, unlink, AuthError } from 'firebase/auth';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';

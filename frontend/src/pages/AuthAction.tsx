@@ -8,7 +8,7 @@ import {
   AuthError,
 } from 'firebase/auth';
 import { auth } from '../firebase.js';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import {
   EyeIcon,
   EyeSlashIcon,

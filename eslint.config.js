@@ -29,6 +29,20 @@ export default [
       '@eslint-community/eslint-comments': eslintComments,
     },
     rules: {
+      // Animation features are lazy (LazyMotion in frontend/src/main.tsx): use
+      // `m`, never the full `motion` component, which bundles every feature.
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'framer-motion',
+              importNames: ['motion'],
+              message: 'Import { m as motion } instead (LazyMotion, see frontend/src/main.tsx).',
+            },
+          ],
+        },
+      ],
       'no-console': ['warn', { allow: ['warn', 'error'] }],
       // Explicit escape hatch: `any` is an error, but can be disabled inline —
       // as long as the disable comment explains why (enforced below).

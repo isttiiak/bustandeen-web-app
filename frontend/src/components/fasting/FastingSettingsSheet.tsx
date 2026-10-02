@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m as motion, AnimatePresence } from 'framer-motion';
 import { TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { useUpdateFastingProfile, useAddVow } from '../../hooks/useFasting.js';
 import { OBLIGATORY_META } from '../../utils/fastingRules.js';

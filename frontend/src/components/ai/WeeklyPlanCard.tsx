@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAcceptPlan, useWeeklyPlan, type PlanTarget } from '../../hooks/useNaseeh.js';
 import { useAuthStore } from '../../store/useAuthStore.js';

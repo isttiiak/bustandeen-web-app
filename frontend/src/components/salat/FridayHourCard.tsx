@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { FRIDAY_HOUR_REF } from '../../utils/fridayHour.js';
 import { translateReference } from '../../utils/localeReference.js';
 

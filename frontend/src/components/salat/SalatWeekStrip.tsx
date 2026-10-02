@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import { CalendarDaysIcon } from '@heroicons/react/24/outline';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
 import { todayStr, weekDotColor, friendlyDate } from './salatParts.js';
