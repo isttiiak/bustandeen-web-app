@@ -157,6 +157,35 @@ export default function ZikrReferencePanel({
                         ) : null}
                       </div>
                     )}
+                    {/* FIQH-04: an optional Sunnah way of counting, shown for every
+                        dhikr. Both narrations verified on sunnah.com (2026-10-02). */}
+                    <div className="border-t border-white/10 pt-3 space-y-1.5">
+                      <p className="text-white/50 text-xs leading-relaxed">
+                        {t(
+                          'zikr.fingertipNote',
+                          'Optional: you can also count on your fingertips. The Prophet ﷺ told the women Companions to count tasbīḥ on their fingertips, for the fingers will be questioned and made to speak.'
+                        )}
+                      </p>
+                      <a
+                        href="https://sunnah.com/abudawud:1501"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block text-brand-gold/60 text-[10px] underline hover:text-brand-gold/90 transition-colors"
+                      >
+                        {t('zikr.fingertipCite', 'Sunan Abī Dāwūd 1501 · ḥasan (al-Albānī)')} ↗
+                      </a>
+                      <p className="text-white/50 text-xs leading-relaxed">
+                        {t('zikr.fingertipHand', 'He ﷺ counted tasbīḥ on his own hand.')}
+                      </p>
+                      <a
+                        href="https://sunnah.com/abudawud:1502"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block text-brand-gold/60 text-[10px] underline hover:text-brand-gold/90 transition-colors"
+                      >
+                        {t('zikr.fingertipHandCite', 'Sunan Abī Dāwūd 1502 · ṣaḥīḥ (al-Albānī)')} ↗
+                      </a>
+                    </div>
                   </div>
                 </motion.div>
               )}

@@ -13,6 +13,20 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - `components/analytics/IntentionLine.tsx`, key `common.analyticsIntention` (en + bn). `text-white/60`, so it passes AA contrast (A11Y-01).
 - `IntentionLine.test.ts`: each of the five pages renders it once, after the demo sign-in gate (demo mode shows the gate on all analytics pages, so e2e can't reach them), and Rayhanah analytics does not.
 
+## v5.85.0 - Counting on the fingertips - 2026-10-02
+
+### Added
+
+- **A short note on counting dhikr on the fingertips** at the bottom of every dhikr's "Full text & reference" panel on the counter (FIQH-04), in English and Bangla. It is offered as an option, not a rule, with two narrations:
+  - The Prophet ﷺ told the women Companions to count tasbīḥ on their fingertips, for the fingers will be questioned and made to speak: Sunan Abī Dāwūd 1501, graded ḥasan by al-Albānī.
+  - He ﷺ counted tasbīḥ on his own hand: Sunan Abī Dāwūd 1502, graded ṣaḥīḥ by al-Albānī.
+  - Both numbers and grades checked on sunnah.com on 2026-10-02; each links there.
+
+### Changed (developers)
+
+- `ZikrReferencePanel.tsx`; keys `zikr.fingertipNote`, `fingertipCite`, `fingertipHand`, `fingertipHandCite` (en + bn).
+- `e2e/references.spec.ts`: the note renders on `/zikr` with both sunnah.com links.
+
 ## v5.84.0 - See what Naseeh sends, and a plain note when the AI is away - 2026-10-02
 
 ### Added
