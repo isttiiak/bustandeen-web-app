@@ -1,11 +1,13 @@
-import { m as motion } from 'framer-motion';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { translateReference } from '../utils/localeReference.js';
+import { FlowerIcon } from './icons/IslamicIcons.js';
+import { CARD, REF_LINK } from './bustanStyles.js';
 
 /**
  * Shown in place of salat/fasting logging while a Rayhanah cycle is active.
- * Tone: sweet, powerful, zero guilt (Istiak's spec — flower emojis, motivating).
+ * Tone: sweet, powerful, zero guilt (Istiak's spec: a flower, motivating). The
+ * flower is the drawn Rayhanah mark now that redesigned screens carry no emoji.
  */
 export default function ExcusedCard({ feature }: { feature: 'salat' | 'fasting' }) {
   const { t, i18n } = useTranslation();
@@ -16,60 +18,40 @@ export default function ExcusedCard({ feature }: { feature: 'salat' | 'fasting' 
   ];
   const phrase = CARD_PHRASES[Math.floor(Date.now() / 86_400_000) % CARD_PHRASES.length]!;
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="rounded-3xl p-6 sm:p-8 border border-brand-pink/25 bg-gradient-to-br from-brand-pink/15 via-brand-pink/10 to-brand-warm/10 relative overflow-hidden text-center"
-    >
-      <div className="absolute -top-8 -left-8 w-32 h-32 rounded-full bg-brand-pink/15 blur-2xl" />
-      <div className="relative space-y-3">
-        <div className="text-5xl">🌸</div>
-        <h2 className="text-xl font-black text-white">{t('excusedCard.heading')}</h2>
-        <p className="text-brand-pink/80 text-sm leading-relaxed max-w-md mx-auto">{phrase}</p>
-        <p className="text-white/40 text-xs leading-relaxed max-w-md mx-auto">
-          {feature === 'salat' ? (
-            <>
-              {t('excusedCard.salatExplanation')} —{' '}
-              <a
-                className="underline"
-                href="https://sunnah.com/muslim:335"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {translateReference('Ṣaḥīḥ Muslim 335', i18n.language)}
-              </a>
-              .
-            </>
-          ) : (
-            <>
-              {t('excusedCard.fastingExplanation')} —{' '}
-              <a
-                className="underline"
-                href="https://sunnah.com/muslim:335"
-                target="_blank"
-                rel="noreferrer"
-              >
-                {translateReference('Ṣaḥīḥ Muslim 335', i18n.language)}
-              </a>
-              .
-            </>
-          )}
-        </p>
-        <div className="flex flex-wrap justify-center gap-2 pt-2">
-          <Link
-            to="/cycle"
-            className="btn btn-sm rounded-xl border border-brand-pink/30 bg-brand-pink/15 hover:bg-brand-pink/25 text-brand-pink font-bold"
-          >
-            {t('excusedCard.openGarden')}
-          </Link>
-          <Link
-            to="/zikr"
-            className="btn btn-sm rounded-xl border border-brand-emerald/10 bg-white/5 hover:bg-white/10 text-white/70 font-bold"
-          >
-            {t('excusedCard.doDhikr')}
-          </Link>
-        </div>
+    <div className={`${CARD} border-brand-pink/40 p-6 sm:p-8 text-center space-y-3`}>
+      <span className="mx-auto w-14 h-14 rounded-full grid place-items-center bg-brand-pink/10 border border-brand-pink/40 text-brand-pink">
+        <FlowerIcon className="w-7 h-7" aria-hidden="true" />
+      </span>
+      <h2 className="font-display text-xl font-bold text-white">{t('excusedCard.heading')}</h2>
+      <p className="text-brand-pink text-sm leading-relaxed max-w-md mx-auto">{phrase}</p>
+      <p className="text-white/70 text-xs leading-relaxed max-w-md mx-auto">
+        {feature === 'salat'
+          ? t('excusedCard.salatExplanation')
+          : t('excusedCard.fastingExplanation')}
+        <br />
+        <a
+          className={REF_LINK}
+          href="https://sunnah.com/muslim:335"
+          target="_blank"
+          rel="noreferrer"
+        >
+          {translateReference('Ṣaḥīḥ Muslim 335', i18n.language)}
+        </a>
+      </p>
+      <div className="flex flex-wrap justify-center gap-2 pt-2">
+        <Link
+          to="/cycle"
+          className="inline-flex items-center rounded-control px-3 py-2 text-sm font-bold border border-brand-pink/40 bg-brand-pink/10 hover:bg-brand-pink/20 text-brand-pink transition-colors"
+        >
+          {t('excusedCard.openGarden')}
+        </Link>
+        <Link
+          to="/zikr"
+          className="inline-flex items-center rounded-control px-3 py-2 text-sm font-bold border border-brand-border bg-brand-surface/50 hover:bg-brand-surface text-white/80 transition-colors"
+        >
+          {t('excusedCard.doDhikr')}
+        </Link>
       </div>
-    </motion.div>
+    </div>
   );
 }
