@@ -7,7 +7,7 @@ import { useSalatAnalytics } from '../../hooks/useSalatLog.js';
 import { useFastingSummary } from '../../hooks/useFasting.js';
 import { useAiMuhasabah } from '../../hooks/useAi.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
-import { AiPanel, AiBadge, AiDisclaimer, AiThinking } from './AiFlair.js';
+import { AiPanel, AiBadge, AiDisclaimer, AiFallbackNote, AiThinking } from './AiFlair.js';
 import { getTrackingDay } from '../../utils/trackingDay.js';
 import { loadSurahText } from '../../utils/quranData.js';
 import {
@@ -110,6 +110,9 @@ export default function MuhasabahReport() {
 
   const [report, setReport] = useState<CachedReport | null>(null);
   const [dismissed, setDismissed] = useState(false);
+  // The AI request failed: show the plain, non-AI version (nothing is cached,
+  // so the next visit tries the AI again).
+  const failed = muhasabahMut.isError;
 
   const wk = weekIdForMuhasabah();
   const reference = useMemo(() => pickMuhasabahRef(wk), [wk]);
@@ -154,7 +157,8 @@ export default function MuhasabahReport() {
   }, [user, aiEnabled, wk, !!weeklyStats]);
 
   if (!user || !aiEnabled || dismissed) return null;
-  if (!report && !muhasabahMut.isPending) return null;
+  const showFallback = !report && failed && !!weeklyStats;
+  if (!report && !muhasabahMut.isPending && !showFallback) return null;
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
@@ -189,7 +193,38 @@ export default function MuhasabahReport() {
             </div>
           )}
 
-          <AiDisclaimer />
+          {showFallback && weeklyStats && (
+            <div className="space-y-2">
+              <p className="text-white/80 text-sm leading-relaxed">
+                {t('muhasabah.fallbackZikr', 'This week you counted {{total}} dhikr.', {
+                  total: weeklyStats.zikrTotal7d.toLocaleString('en-GB'),
+                })}
+              </p>
+              <p className="text-white/60 text-sm leading-relaxed">
+                {t(
+                  'muhasabah.fallbackSalat',
+                  "You logged {{pct}}% of this week's prayers. Prayer streak: {{salat}} days. Quran streak: {{quran}} days. Fasts this month: {{fasts}}.",
+                  {
+                    pct: weeklyStats.salatPct,
+                    salat: weeklyStats.salatStreak,
+                    quran: weeklyStats.quranStreak,
+                    fasts: weeklyStats.fastingThisMonth,
+                  }
+                )}
+              </p>
+              <p className="text-brand-info/80 text-sm italic">
+                {t(
+                  'muhasabah.fallbackSuggestion',
+                  'Look at these quietly, then pick one small thing to keep steady next week.'
+                )}
+              </p>
+              <div className="pt-2">
+                <ReferenceCard reference={reference} />
+              </div>
+            </div>
+          )}
+
+          {showFallback ? <AiFallbackNote feature="summary" /> : <AiDisclaimer feature="summary" />}
         </div>
       </AiPanel>
     </motion.div>

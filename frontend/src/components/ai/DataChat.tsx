@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AiPanel, AiBadge, AiThinking } from './AiFlair.js';
+import { AiPanel, AiBadge, AiSendsLink, AiThinking } from './AiFlair.js';
 import {
   useAskNaseeh,
   useDataAnswer,
@@ -79,6 +79,11 @@ export default function DataChat() {
 
   const busy = ask.isPending || lookup.isPending;
   const failMsg = t('naseehChat.error', "That didn't load. Please try again in a moment.");
+  // A typed question needs one AI request; the quick questions never do.
+  const askFailMsg = t(
+    'naseehChat.askError',
+    "Naseeh couldn't answer that just now. The quick questions above still work: they don't use AI."
+  );
 
   const push = (question: string, answer: string, answered: boolean) =>
     setTurns((prev) => [...prev, { id: nextId.current++, question, answer, answered }].slice(-6));
@@ -98,7 +103,7 @@ export default function DataChat() {
     setText('');
     ask.mutate(q, {
       onSuccess: (r) => push(q, r.answer || failMsg, !!r.answer && r.answered),
-      onError: () => push(q, failMsg, false),
+      onError: () => push(q, askFailMsg, false),
     });
   };
 
@@ -173,7 +178,8 @@ export default function DataChat() {
           {t(
             'naseehChat.privacy',
             'Only your question text goes to the AI, to choose which lookup to run. Your numbers never leave our server, and this chat is not saved.'
-          )}
+          )}{' '}
+          <AiSendsLink feature="chat" />
         </p>
       </div>
     </AiPanel>

@@ -157,15 +157,20 @@ export function useKazaPlan() {
         writeCache(KAZA_KEY, {
           headline: { original: data.originalHeadline, text: lines[0] ?? '' },
         });
-        return { ...data, lines };
+        return { ...data, lines, ai: true };
       }
+      // `ai` = the headline shown was worded by the AI (now or earlier this week).
+      let ai = false;
       if (!cache) {
         writeCache(KAZA_KEY, {});
       } else {
         const hit = cache.items['headline'];
-        if (hit && lines[0] === hit.original) lines[0] = hit.text;
+        if (hit && lines[0] === hit.original) {
+          lines[0] = hit.text;
+          ai = true;
+        }
       }
-      return { ...data, lines };
+      return { ...data, lines, ai };
     },
   });
 }

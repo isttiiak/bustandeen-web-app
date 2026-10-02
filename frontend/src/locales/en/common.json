@@ -208,6 +208,8 @@
     "bustandeenDefinition": "A name born of بستان (bustān, garden) and دين (dīn, religion/faith) — a garden of faith, tended daily."
   },
   "aiFlair": {
+    "whatIsSent": "What is sent?",
+    "fallbackNote": "Naseeh could not reach the AI just now, so this is a plain note worked out from your own numbers. No AI was used.",
     "badgeLabel": "Naseeh · AI companion",
     "disclaimerBold": "never a source of religious evidence",
     "disclaimerPrefix": "AI-generated encouragement — a companion,",
@@ -327,6 +329,7 @@
     "wrongEmail": "Wrong email?"
   },
   "comebackNudge": {
+    "fallback": "Welcome back. Begin again with something small: one āyah or one dhikr is a good start.",
     "dismiss": "Not now",
     "oneDhikr": "Start with one dhikr",
     "readOneAyah": "Read one ayah",
@@ -709,6 +712,8 @@
     }
   },
   "fastingCompanion": {
+    "fallbackEvening": "Iftar is close. May Allah accept your fast and your duʿāʾ.",
+    "fallbackMorning": "May Allah accept your fast today. Take the day gently, with your heart in remembrance.",
     "fastingToday": "Naseeh · fasting today",
     "nearIftar": "Naseeh · near iftar"
   },
@@ -1124,6 +1129,9 @@
     "subtext": "From the words of Allah and His Messenger ﷺ"
   },
   "muhasabah": {
+    "fallbackZikr": "This week you counted {{total}} dhikr.",
+    "fallbackSalat": "You logged {{pct}}% of this week's prayers. Prayer streak: {{salat}} days. Quran streak: {{quran}} days. Fasts this month: {{fasts}}.",
+    "fallbackSuggestion": "Look at these quietly, then pick one small thing to keep steady next week.",
     "badgeLabel": "Muhāsabah · this week",
     "dismiss": "Dismiss",
     "thinkingLabel": "Naseeh is reflecting on your week…",
@@ -1152,6 +1160,7 @@
     "basis": "A pace you can choose to follow, worked out from the count on your Salat page. It changes as you pay them back or add more."
   },
   "naseehChat": {
+    "askError": "Naseeh couldn't answer that just now. The quick questions above still work: they don't use AI.",
     "badge": "Naseeh · ask about my data",
     "intro": "Ask about your own numbers: prayers, dhikr, Quran, fasting and make-up prayers. Answers come straight from your logs. This is not a place for rulings.",
     "quick": "Quick questions",
@@ -1197,6 +1206,10 @@
     "failed": "Naseeh is off on this device, but we could not update your account. Open Settings to confirm."
   },
   "naturalLog": {
+    "unavailable": "Naseeh can't read notes just now. You can log the same things by hand:",
+    "manualSalat": "Salat",
+    "manualZikr": "Zikr",
+    "manualQuran": "Quran",
     "entryTitle": "Quick log with a sentence",
     "entryHint": "e.g. \"Prayed fajr in jamaah, read 5 pages, 100 istighfar\"",
     "badgeLabel": "Naseeh · quick log",
@@ -3170,6 +3183,10 @@
     "streakPaused": "Streak paused — resume from analytics"
   },
   "streakCoaching": {
+    "fallbackMilestone": "{{days}} days of {{feature}} in a row. Alhamdulillah.",
+    "fallbackBreak": "Your {{feature}} streak paused after {{days}} days. Every day is a chance to begin again.",
+    "fallbackMilestoneTip": "Keep the same small, steady amount rather than adding a lot at once.",
+    "fallbackBreakTip": "Start with one small step today.",
     "milestoneBadge": "{{days}}-day {{feature}} streak!",
     "quran": "Quran",
     "resetBadge": "{{feature}} streak reset",
