@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.83.1 - Quarterly major-upgrade checklist - 2026-10-02
+
+### Changed (developers)
+
+- **New issue template "Major bump day (quarterly)"** (SEC-06, `.github/ISSUE_TEMPLATE/major-bump-day.md`): lists the majors Dependabot is told to skip (firebase-admin, React + types, react-router, Vite, Tailwind + daisyUI), why each is skipped, and how to test one on a Vercel preview (function logs open for firebase-admin, the pages to click through, bundle size, version + CHANGELOG). Open it in January, April, July and October.
+- `.github/dependabot.yml`: the frontend ignore rule named `react-router-dom`, but the app has imported `react-router` since v5.65.1, so Dependabot would have opened a react-router 8 major PR. It now names `react-router`.
+- `.gitignore`: `.github/ISSUE_TEMPLATE/*.md` is tracked (all other `.md` files outside READMEs stay local).
+
 ## v5.82.0 - Database size on the Ops Health page - 2026-10-02
 
 ### Added
