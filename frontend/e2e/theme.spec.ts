@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 
 // Audit T3.2: theme setting (System default, Dark, Light, Follow daylight).
 // The landing and SEO pages stay dark (`data-static`), whatever is saved.
@@ -10,14 +10,22 @@ test.beforeEach(async ({ context }) => {
   );
 });
 
-const theme = (page: import('@playwright/test').Page) =>
+const theme = (page: Page) =>
   page.evaluate(() => document.documentElement.getAttribute('data-theme'));
+
+/** In-app navigation: a full page load would end demo mode. */
+async function go(page: Page, path: string) {
+  await page.evaluate((p) => {
+    window.history.pushState({}, '', p);
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  }, path);
+}
 
 test('Settings switches the theme, and the choice survives a reload', async ({ page }) => {
   await page.emulateMedia({ colorScheme: 'dark' });
   await page.goto('/demo/sister');
   await expect(page.getByText('Demo Mode').first()).toBeVisible();
-  await page.goto('/settings');
+  await go(page, '/settings');
 
   const group = page.getByRole('radiogroup', { name: 'Appearance' });
   await expect(group.getByRole('radio', { name: /Match my device/ })).toHaveAttribute(
@@ -28,15 +36,17 @@ test('Settings switches the theme, and the choice survives a reload', async ({ p
 
   await group.getByRole('radio', { name: /^Light/ }).click();
   expect(await theme(page)).toBe('bustandeen-light');
-  // White text on a sage button stays white (on-color), body ink turns dark.
+  // Body ink turns dark on paper.
   const body = await page.evaluate(() => getComputedStyle(document.body).color);
   expect(body).not.toBe('rgb(255, 255, 255)');
 
+  await group.getByRole('radio', { name: /^Dark/ }).click();
+  expect(await theme(page)).toBe('bustandeen');
+  await group.getByRole('radio', { name: /^Light/ }).click();
+
+  // A reload ends demo mode, but the saved theme applies before first paint.
   await page.reload();
   expect(await theme(page)).toBe('bustandeen-light');
-
-  await page.getByRole('radio', { name: /^Dark/ }).click();
-  expect(await theme(page)).toBe('bustandeen');
 });
 
 test('System follows the device', async ({ page }) => {

@@ -21,6 +21,10 @@ const ROUTES = [
   '/sadaqah',
 ];
 
+// These checks are written against the dark palette; Playwright reports a
+// light OS by default, which now selects the light theme (T3.2).
+test.use({ colorScheme: 'dark' });
+
 test.beforeEach(async ({ context }) => {
   await context.route(
     (url) => url.hostname !== 'localhost',
