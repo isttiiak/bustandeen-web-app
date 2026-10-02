@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.80.0 - Lighter animations - 2026-10-02
+
+### Changed
+
+- **The app downloads about 27 KB less before it can start** (PERF-01 follow-up). The animation engine now loads just after the app appears instead of before it; every animation still plays.
+- The Nafl prayer tiles no longer glide into place when a neighbour's rakʿah counter opens; the counter itself still opens smoothly, and the tick and tap animations are unchanged.
+
+### Changed (developers)
+
+- `main.tsx` wraps the app in `<LazyMotion features={…} strict>`; `src/motionFeatures.ts` (domAnimation) is its own chunk. Components import `{ m as motion }` from framer-motion; ESLint (`no-restricted-imports`) blocks the full `motion` import, and `strict` throws if one renders.
+- domAnimation has no `layout` animations (domMax, about 10 KB more); the one use (SalatNaflCard tiles) was removed.
+- framer-motion no longer has a manual chunk in `vite.config.ts` (it would pull the lazy features back in).
+
 ## v5.79.0 - Faster first visits - 2026-10-02
 
 ### Changed
@@ -26,6 +39,13 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - Fonts: fontsource's subset files have no `unicode-range`; a Vite plugin (`fontsourceUnicodeRanges`) copies it from the per-weight files for Hind Siliguri, Plus Jakarta Sans and El Messiri. Amiri and Scheherazade New are unchanged (a range there would move the spaces in Quran text to another font).
 - `index.html`'s inline script also sends a signed-out Bangla visitor of `/` to `/bn` (CSP hash updated). Fixed the landing FAQ JSON-LD escaping (`'<'`).
 - e2e: `static-pages.spec.ts` (no app chunks on the landing and SEO pages, the app for a signed-in visitor, the Bangla landing and language memory, an interactive SEO page); the demo helpers click links.
+
+## v5.78.1 - A reviewed audit exception - 2026-10-02
+
+### Changed (developers)
+
+- CI's dependency audit runs `scripts/audit-gate.mjs` instead of `npm audit --audit-level=high`. It still fails on any high or critical advisory in production dependencies, except reviewed exceptions, each limited to one advisory and package path, with a reason and a review date after which it fails again.
+- First exception: GHSA-86w9-cpqp-85rv (node-forge, every release, published 2026-10-02) via firebase-admin 12. firebase-admin uses node-forge only to parse our own service-account key, never to verify a signature, so the flaw is not reachable. The fix is firebase-admin 14, which crashed the Vercel function on 2026-09-20. Review by 2026-11-01.
 
 ## v5.78.0 - The Quran text is part of the app - 2026-10-02
 
