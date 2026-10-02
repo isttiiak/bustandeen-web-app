@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.85.0 - Counting on the fingertips - 2026-10-02
+
+### Added
+
+- **A short note on counting dhikr on the fingertips** at the bottom of every dhikr's "Full text & reference" panel on the counter (FIQH-04), in English and Bangla. It is offered as an option, not a rule, with two narrations:
+  - The Prophet ﷺ told the women Companions to count tasbīḥ on their fingertips, for the fingers will be questioned and made to speak: Sunan Abī Dāwūd 1501, graded ḥasan by al-Albānī.
+  - He ﷺ counted tasbīḥ on his own hand: Sunan Abī Dāwūd 1502, graded ṣaḥīḥ by al-Albānī.
+  - Both numbers and grades checked on sunnah.com on 2026-10-02; each links there.
+
+### Changed (developers)
+
+- `ZikrReferencePanel.tsx`; keys `zikr.fingertipNote`, `fingertipCite`, `fingertipHand`, `fingertipHandCite` (en + bn).
+- `e2e/references.spec.ts`: the note renders on `/zikr` with both sunnah.com links.
+
 ## v5.83.1 - Quarterly major-upgrade checklist - 2026-10-02
 
 ### Changed (developers)

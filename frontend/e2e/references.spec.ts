@@ -58,3 +58,17 @@ test('Salat legend: highlighted words are present', async ({ page }) => {
   await expect(page.getByText(/Tapping Ayatul Kursi \(in/)).toBeVisible();
   await expect(page.getByText(/Turn off Auto-count dhikr in salat settings/)).toBeVisible();
 });
+
+test('Zikr reference: the fingertip-counting note cites Abū Dāwūd 1501 and 1502', async ({
+  page,
+}) => {
+  await demoAt(page, '/zikr');
+  await page.getByRole('button', { name: /Full text & reference/ }).click();
+  await expect(page.getByText(/count on your fingertips/)).toBeVisible();
+  for (const [text, href] of [
+    [/Sunan Abī Dāwūd 1501/, 'https://sunnah.com/abudawud:1501'],
+    [/Sunan Abī Dāwūd 1502/, 'https://sunnah.com/abudawud:1502'],
+  ] as const) {
+    await expect(page.getByRole('link', { name: text })).toHaveAttribute('href', href);
+  }
+});
