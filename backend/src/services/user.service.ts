@@ -30,6 +30,66 @@ function isValidPhotoUrl(url: string): boolean {
   return PHOTO_SAFE_DATA_RE.test(url) && url.length <= 2048;
 }
 
+/** The User fields the browser is allowed to see. A whitelist, not a
+ * blacklist: every field added to the schema stays server-only until it is
+ * listed here. Readers: pages/Profile.tsx (DBUser), hooks/useUserProfile.ts,
+ * Settings (export overview), App.tsx (auth/verify reconcile). Server-only
+ * fields (groqApiKeyEnc, admin email bookkeeping, disabled*, zikrTotals, ...)
+ * must never be added. */
+export interface ClientUser {
+  uid: string;
+  email: string;
+  primaryEmail?: string;
+  linkedProviders: ILinkedProvider[];
+  displayName?: string;
+  photoUrl?: string;
+  avatarId?: AvatarId;
+  firstName?: string;
+  lastName?: string;
+  occupation?: string;
+  gender?: IUser['gender'];
+  birthDate?: Date;
+  bio?: string;
+  city?: string;
+  country?: string;
+  hijriOffset: number;
+  dayStartMode: IUser['dayStartMode'];
+  aiEnabled: boolean;
+  totalCount: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export function toClientUser(user: IUser): ClientUser {
+  return {
+    uid: user.uid,
+    email: user.email,
+    primaryEmail: user.primaryEmail,
+    linkedProviders: (user.linkedProviders ?? []).map((p) => ({
+      provider: p.provider,
+      email: p.email,
+      providerUid: p.providerUid,
+    })),
+    displayName: user.displayName,
+    photoUrl: user.photoUrl,
+    avatarId: user.avatarId,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    occupation: user.occupation,
+    gender: user.gender,
+    birthDate: user.birthDate,
+    bio: user.bio,
+    city: user.city,
+    country: user.country,
+    hijriOffset: user.hijriOffset,
+    dayStartMode: user.dayStartMode,
+    aiEnabled: user.aiEnabled,
+    totalCount: user.totalCount,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+}
+
 export async function getUserById(uid: string): Promise<IUser | null> {
   return User.findOne({ uid });
 }

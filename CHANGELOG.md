@@ -14,6 +14,18 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - `User.avatarId` (enum in `backend/src/utils/avatars.ts`), accepted by `PATCH /api/user/me` (`null` clears it), returned by `/api/auth/verify`, the friends, requests, blocked and leaderboard payloads, backups and the data export. `components/icons/AvatarGlyphs.tsx` (`AVATARS`, `AvatarDisc`, `UserAvatar`), used by the navbar, Profile and Friends; a unit test keeps the two id lists equal.
 - `firebase/storage` is no longer imported (smaller auth chunk). `ProfilePhotoPreviewModal` and the canvas emoji renderer are removed. `storage.rules` and its workflow stay in the repo, dormant.
+- `avatarId` is in the `toClientUser()` whitelist (v5.89.1), so `/api/user/me`, `/api/auth/verify` and the other user routes return it; `tests/userProjection.e2e.test.js` checks it.
+
+## v5.89.1 - Profile responses send only what the app shows - 2026-10-02
+
+### Security
+
+- **Your profile no longer carries server-only data to the browser.** Loading or saving your profile (and signing in, linking Google, or changing the primary email) used to return the whole stored account record, including the encrypted copy of your own Groq key and internal admin notes such as email history and account flags. Nothing could be decrypted from it, but it never needed to leave the server. These responses now include only the profile fields the app actually displays.
+
+### Changed (developers)
+
+- `services/user.service.ts`: new `toClientUser()` whitelist projection (`ClientUser`), used by `GET`/`PATCH /api/user/me`, `link-google`, `unlink-google`, `primary-email` and `POST /api/auth/verify`. A new User field stays server-side until it is added there. The weak ETag on `GET /api/user/me` is unchanged.
+- New `tests/userProjection.e2e.test.js`: asserts `groqApiKeyEnc` and other server-only fields are absent from GET, PATCH and verify, and that the ETag still returns 304.
 
 ## v5.89.0 - Salat in the Bustan Arch design - 2026-10-02
 

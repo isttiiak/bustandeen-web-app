@@ -6,6 +6,7 @@ import {
 } from '../config/firebaseAdmin.js';
 import User from '../models/User.js';
 import { isAdminEmail } from '../middleware/auth.js';
+import { toClientUser } from '../services/user.service.js';
 
 export const verifyHandler = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -77,7 +78,7 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    res.json({ ok: true, user, isAdmin: isAdminEmail(email) });
+    res.json({ ok: true, user: toClientUser(user), isAdmin: isAdminEmail(email) });
   } catch (err) {
     const error = err as {
       code?: string;
