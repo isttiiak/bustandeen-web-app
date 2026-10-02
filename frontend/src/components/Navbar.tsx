@@ -1,8 +1,7 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { auth } from '../firebase.js';
-import { signOut } from 'firebase/auth';
+import { loadFirebase, SESSION_MARKER } from '../authClient.js';
 import logo from '../assets/logo.svg';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useZikrStore } from '../store/useZikrStore.js';
@@ -507,7 +506,9 @@ export default function Navbar() {
                 <button
                   className="btn btn-sm bg-red-500 hover:bg-red-600 text-white border-0"
                   onClick={async () => {
+                    const { auth, signOut } = await loadFirebase();
                     await signOut(auth);
+                    localStorage.removeItem(SESSION_MARKER);
                     setUser(null);
                     localStorage.removeItem('bustandeen_user');
                     localStorage.removeItem('bustandeen_idToken');

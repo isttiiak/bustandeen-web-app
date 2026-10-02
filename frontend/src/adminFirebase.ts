@@ -1,5 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, browserLocalPersistence, setPersistence } from 'firebase/auth';
+import { markAdminAuthLoaded } from './authClient.js';
 
 /**
  * A SECOND, named Firebase app instance — same project as the main app's
@@ -33,3 +34,4 @@ const adminApp = initializeApp(firebaseConfig, 'admin');
 export const adminAuth = getAuth(adminApp);
 
 void setPersistence(adminAuth, browserLocalPersistence);
+markAdminAuthLoaded(adminAuth);

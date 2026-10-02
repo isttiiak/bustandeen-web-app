@@ -2,8 +2,14 @@
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
-import { onAuthStateChanged } from 'firebase/auth';
-import { auth } from './firebase.js';
+import type { User } from 'firebase/auth';
+import {
+  hasSessionHint,
+  loadedFirebase,
+  loadFirebase,
+  SESSION_MARKER,
+  whenFirebaseLoaded,
+} from './authClient.js';
 import { API_BASE } from './lib/api.js';
 import { useAuthStore } from './store/useAuthStore.js';
 import { useZikrStore, flushZikrLocalPersistence } from './store/useZikrStore.js';
@@ -207,9 +213,10 @@ export default function App() {
     const theme = localStorage.getItem('bustandeen_theme') || 'bustandeen';
     document.documentElement.setAttribute('data-theme', theme);
 
-    const unsub = onAuthStateChanged(auth, async (u) => {
+    const onUser = async (u: User | null) => {
       if (useAuthStore.getState().isDemoMode) return;
       if (!u) {
+        localStorage.removeItem(SESSION_MARKER);
         setUser(null);
         stopPrefsSync();
         resetAll();
@@ -259,6 +266,7 @@ export default function App() {
       } catch {
         /* corrupt cache — Firebase values are fine */
       }
+      localStorage.setItem(SESSION_MARKER, '1');
       setUser(optimistic);
       setAuthLoading(false);
 
@@ -294,7 +302,7 @@ export default function App() {
                   { duration: 8000 }
                 );
               }
-              await auth.signOut();
+              await loadedFirebase()?.auth.signOut();
               return;
             }
             console.warn(`Verify returned ${verifyRes.status} — keeping session alive`);
@@ -356,9 +364,23 @@ export default function App() {
           console.error('Auth background sync error:', err);
         }
       })();
-    });
+    };
 
-    return () => unsub();
+    // Firebase loads lazily (authClient.ts): at once when someone has signed
+    // in on this device, otherwise only when a sign-in page loads it. Until
+    // then a visitor is a guest, exactly as Firebase would report.
+    let alive = true;
+    let unsub: (() => void) | undefined;
+    whenFirebaseLoaded(({ auth, onAuthStateChanged }) => {
+      if (alive) unsub = onAuthStateChanged(auth, onUser);
+    });
+    if (hasSessionHint()) void loadFirebase();
+    else if (!loadedFirebase()) void onUser(null);
+
+    return () => {
+      alive = false;
+      unsub?.();
+    };
     // Subscribe exactly once — navigation is handled via refs above.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
   }, [setUser, init, resetAll, hydrate, setAuthLoading]);

@@ -2,15 +2,15 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { sendEmailVerification } from 'firebase/auth';
-import { auth } from './firebase.js';
+import { loadFirebase } from './authClient.js';
 import { useAuthStore } from './store/useAuthStore.js';
 import { useAdminStore } from './store/useAdminStore.js';
-import AdminGate from './components/AdminGate.js';
 import AdminLayout from './components/AdminLayout.js';
 import Home from './pages/Home.js';
 
 const Landing = lazy(() => import('./pages/Landing.js'));
+// Lazy: it brings the admin panel's own Firebase app (adminFirebase.ts).
+const AdminGate = lazy(() => import('./components/AdminGate.js'));
 
 // Full height (audit PERF-01): at 60vh the Footer below it showed on screen
 // and was then pushed down when the page arrived (CLS 0.278 on Home).
@@ -28,9 +28,11 @@ function VerifyEmailGate({ email }: { email: string | null }) {
   const [resending, setResending] = useState(false);
 
   const resend = async () => {
-    if (resending || !auth.currentUser) return;
+    if (resending) return;
     setResending(true);
     try {
+      const { auth, sendEmailVerification } = await loadFirebase();
+      if (!auth.currentUser) throw new Error('signed out');
       await sendEmailVerification(auth.currentUser, {
         url: 'https://bustandeen.com/auth/action',
         handleCodeInApp: true,
@@ -209,9 +211,11 @@ export const Protected = ({ children }: ProtectedProps) => {
  * expected, not a hole.
  */
 export const AdminProtected = ({ children }: ProtectedProps) => (
-  <AdminGate>
-    <AdminLayout>{children}</AdminLayout>
-  </AdminGate>
+  <Suspense fallback={<RouteFallback />}>
+    <AdminGate>
+      <AdminLayout>{children}</AdminLayout>
+    </AdminGate>
+  </Suspense>
 );
 
 /** Servant-only pages (user directory, managing Ansars) — the backend
