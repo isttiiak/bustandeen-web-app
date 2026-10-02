@@ -3,7 +3,12 @@ import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { translateReference } from '../../utils/localeReference.js';
 import ReportReference from '../ReportReference.js';
-import { ChevronDownIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowTopRightOnSquareIcon,
+  BookOpenIcon,
+  ChevronDownIcon,
+} from '@heroicons/react/24/outline';
+import { Star8Icon } from '../icons/IslamicIcons.js';
 import { DHIKR_HADITHS, FULL_PREDEFINED } from './zikrCounterData.js';
 
 export interface ZikrReferencePanelProps {
@@ -12,6 +17,11 @@ export interface ZikrReferencePanelProps {
   refExpanded: boolean;
   selected: string;
   setRefExpanded: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+/** Marks a link that opens the source in a new tab (replaces the ↗ glyph). */
+function ExternalMark() {
+  return <ArrowTopRightOnSquareIcon className="inline w-3 h-3 ml-0.5 -mt-0.5" aria-hidden="true" />;
 }
 
 export default function ZikrReferencePanel({
@@ -69,18 +79,19 @@ export default function ZikrReferencePanel({
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.25 }}
-            className="rounded-2xl border border-brand-emerald/10 bg-white/5 backdrop-blur-sm overflow-hidden"
+            className="rounded-card border border-brand-border bg-brand-deep shadow-elev-1 overflow-hidden"
           >
             <button
               onClick={() => setRefExpanded((v) => !v)}
               aria-expanded={refExpanded}
               className="w-full px-4 py-3 flex items-center justify-between text-left"
             >
-              <span className="text-white/40 text-[11px] uppercase tracking-widest font-bold">
-                📖 {t('zikr.fullTextRef', 'Full text & reference')}
+              <span className="flex items-center gap-1.5 text-white/60 text-[11px] uppercase tracking-widest font-bold">
+                <BookOpenIcon className="w-3.5 h-3.5 text-brand-gold" aria-hidden="true" />
+                {t('zikr.fullTextRef', 'Full text & reference')}
               </span>
               <ChevronDownIcon
-                className={`w-4 h-4 text-white/30 transition-transform ${refExpanded ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 text-white/50 transition-transform ${refExpanded ? 'rotate-180' : ''}`}
               />
             </button>
             <AnimatePresence>
@@ -117,7 +128,10 @@ export default function ZikrReferencePanel({
                       <p className="text-sm text-white/60 leading-relaxed">{full.meaning}</p>
                     )}
                     {full?.virtue && (
-                      <p className="text-brand-gold/60 text-xs leading-relaxed">✨ {full.virtue}</p>
+                      <p className="flex gap-1.5 text-brand-gold text-xs leading-relaxed">
+                        <Star8Icon className="w-3.5 h-3.5 shrink-0 mt-px" aria-hidden="true" />
+                        <span>{full.virtue}</span>
+                      </p>
                     )}
                     {builtin && (
                       <p className="text-white/50 text-xs italic leading-relaxed border-l-2 border-brand-emerald/25 pl-3">
@@ -137,18 +151,20 @@ export default function ZikrReferencePanel({
                             href={builtin.url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-brand-gold/60 text-[10px] underline hover:text-brand-gold/90 transition-colors"
+                            className="text-brand-gold text-[11px] underline hover:text-brand-gold/80 transition-colors"
                           >
-                            {translateReference(builtin.source, i18n.language)} ↗
+                            {translateReference(builtin.source, i18n.language)}
+                            <ExternalMark />
                           </a>
                         ) : full?.sourceUrl ? (
                           <a
                             href={full.sourceUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-brand-gold/60 text-[10px] underline hover:text-brand-gold/90 transition-colors"
+                            className="text-brand-gold text-[11px] underline hover:text-brand-gold/80 transition-colors"
                           >
-                            {translateReference(full.source ?? '', i18n.language)} ↗
+                            {translateReference(full.source ?? '', i18n.language)}
+                            <ExternalMark />
                           </a>
                         ) : full?.source ? (
                           <span className="text-white/40 text-xs">
@@ -159,7 +175,7 @@ export default function ZikrReferencePanel({
                     )}
                     {/* FIQH-04: an optional Sunnah way of counting, shown for every
                         dhikr. Both narrations verified on sunnah.com (2026-10-02). */}
-                    <div className="border-t border-white/10 pt-3 space-y-1.5">
+                    <div className="border-t border-brand-border pt-3 space-y-1.5">
                       <p className="text-white/50 text-xs leading-relaxed">
                         {t(
                           'zikr.fingertipNote',
@@ -170,9 +186,10 @@ export default function ZikrReferencePanel({
                         href="https://sunnah.com/abudawud:1501"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block text-brand-gold/60 text-[10px] underline hover:text-brand-gold/90 transition-colors"
+                        className="inline-block text-brand-gold text-[11px] underline hover:text-brand-gold/80 transition-colors"
                       >
-                        {t('zikr.fingertipCite', 'Sunan Abī Dāwūd 1501 · ḥasan (al-Albānī)')} ↗
+                        {t('zikr.fingertipCite', 'Sunan Abī Dāwūd 1501 · ḥasan (al-Albānī)')}
+                        <ExternalMark />
                       </a>
                       <p className="text-white/50 text-xs leading-relaxed">
                         {t('zikr.fingertipHand', 'He ﷺ counted tasbīḥ on his own hand.')}
@@ -181,9 +198,10 @@ export default function ZikrReferencePanel({
                         href="https://sunnah.com/abudawud:1502"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block text-brand-gold/60 text-[10px] underline hover:text-brand-gold/90 transition-colors"
+                        className="inline-block text-brand-gold text-[11px] underline hover:text-brand-gold/80 transition-colors"
                       >
-                        {t('zikr.fingertipHandCite', 'Sunan Abī Dāwūd 1502 · ṣaḥīḥ (al-Albānī)')} ↗
+                        {t('zikr.fingertipHandCite', 'Sunan Abī Dāwūd 1502 · ṣaḥīḥ (al-Albānī)')}
+                        <ExternalMark />
                       </a>
                     </div>
                   </div>

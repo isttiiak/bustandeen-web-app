@@ -22,7 +22,7 @@ import {
   LockClosedIcon,
   ChartBarIcon,
 } from '@heroicons/react/24/outline';
-import { MosqueIcon } from './icons/IslamicIcons.js';
+import { MosqueIcon, TasbihIcon } from './icons/IslamicIcons.js';
 import { UserAvatar } from './icons/AvatarGlyphs.js';
 import i18n from '../i18n.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
@@ -51,8 +51,8 @@ const PAGE_META: Record<
   string,
   { title: string; emoji: string; Icon?: (p: { className?: string }) => React.ReactNode }
 > = {
-  '/zikr': { title: 'Zikr Counter', emoji: '📿' },
-  '/zikr/analytics': { title: 'Zikr Analytics', emoji: '📊' },
+  '/zikr': { title: 'Zikr Counter', emoji: '', Icon: TasbihIcon },
+  '/zikr/analytics': { title: 'Zikr Analytics', emoji: '', Icon: ChartBarIcon },
   '/salat': { title: 'Salat Tracker', emoji: '', Icon: MosqueIcon },
   '/salat/analytics': { title: 'Salat Analytics', emoji: '', Icon: ChartBarIcon },
   '/fasting': { title: 'Fasting', emoji: '🌙' },

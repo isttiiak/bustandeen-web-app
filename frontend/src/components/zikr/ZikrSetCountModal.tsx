@@ -38,7 +38,7 @@ export default function ZikrSetCountModal({
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 40, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25 }}
-                className="bg-brand-surface rounded-3xl p-6 w-full max-w-xs shadow-2xl border border-brand-border"
+                className="bg-brand-surface rounded-card p-6 w-full max-w-xs shadow-elev-3 border border-brand-border"
               >
                 <h3 className="text-xl font-bold text-brand-emerald mb-1">
                   {t('zikr.setCountTitle', 'Set starting count')}
@@ -46,7 +46,7 @@ export default function ZikrSetCountModal({
                 <p className="text-white/40 text-xs mb-4">
                   {t(
                     'zikr.setCountDesc',
-                    'Jump straight to a number — start from 33, 99, or wherever you left off.'
+                    'Jump straight to a number: start from 33, 99, or wherever you left off.'
                   )}
                 </p>
                 <input

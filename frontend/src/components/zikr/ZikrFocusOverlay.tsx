@@ -4,7 +4,8 @@ import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { zikrDisplayName } from '../../utils/zikrLibrary.js';
 import { formatLocaleNumber } from '../../utils/localeDate.js';
-import { PlusIcon, XMarkIcon, PlayIcon, StopIcon } from '@heroicons/react/24/outline';
+import { FireIcon, PlusIcon, XMarkIcon, PlayIcon, StopIcon } from '@heroicons/react/24/outline';
+import { TargetIcon } from '../icons/IslamicIcons.js';
 
 export interface ZikrFocusOverlayProps {
   audio: import('../../hooks/useZikrAudio.js').ZikrAudioState;
@@ -59,39 +60,6 @@ export default function ZikrFocusOverlay({
               className="fixed inset-0 flex flex-col overflow-hidden"
               style={{ zIndex: 99999, background: 'rgb(var(--c-void))' }}
             >
-              {/* ── Calm ambiance (redesigned, Istiak's spec): ONE fixed emerald
-                   tone — no per-tap rainbow cycling, no sparkle strobing.
-                   Two slow breathing orbs, nothing else moves. ── */}
-              <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                <motion.div
-                  className="absolute rounded-full"
-                  style={{
-                    width: '75vw',
-                    height: '75vw',
-                    left: '0%',
-                    top: '-15%',
-                    background:
-                      'radial-gradient(circle, rgba(122,158,110,0.10) 0%, transparent 70%)',
-                    filter: 'blur(70px)',
-                  }}
-                  animate={{ scale: [1, 1.08, 1], opacity: [0.8, 1, 0.8] }}
-                  transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
-                />
-                <motion.div
-                  className="absolute rounded-full"
-                  style={{
-                    width: '60vw',
-                    height: '60vw',
-                    right: '-10%',
-                    bottom: '-10%',
-                    background: 'radial-gradient(circle, rgba(90,122,80,0.08) 0%, transparent 70%)',
-                    filter: 'blur(60px)',
-                  }}
-                  animate={{ scale: [1, 1.06, 1], opacity: [0.7, 1, 0.7] }}
-                  transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut', delay: 5 }}
-                />
-              </div>
-
               {/* ── Top bar: close (top-right) ── */}
               <div className="relative z-10 flex items-center justify-between px-5 sm:px-8 pt-5 pb-2 flex-shrink-0">
                 <button
@@ -140,7 +108,7 @@ export default function ZikrFocusOverlay({
                 </select>
                 <button
                   onClick={() => setFullScreen(false)}
-                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white/40 hover:text-white transition-all"
+                  className="p-2.5 rounded-control border border-brand-border bg-brand-deep/60 text-white/50 hover:text-white hover:border-brand-emerald/40 transition-colors"
                   title={t('zikr.exitFocus', 'Exit focus mode (Esc)')}
                   aria-label={t('zikr.exitFocusAriaLabel', 'Exit full-screen focus mode')}
                 >
@@ -172,17 +140,14 @@ export default function ZikrFocusOverlay({
                   </motion.p>
                 )}
 
-                {/* Huge counter number — one soft pop per tap, steady gentle glow */}
+                {/* Huge counter number: one soft pop per tap, no glow */}
                 <motion.span
                   key={`fs:${selected}:${tasbihRemaining ?? currentCount}`}
                   initial={reduceMotion ? false : { scale: 0.94 }}
                   animate={{ scale: 1 }}
                   transition={{ type: 'tween', duration: 0.14, ease: 'easeOut' }}
                   className="font-black text-white/95 tabular-nums leading-none block text-center"
-                  style={{
-                    fontSize: 'clamp(100px, 28vw, 260px)',
-                    textShadow: '0 0 60px rgba(122,158,110,0.35)',
-                  }}
+                  style={{ fontSize: 'clamp(100px, 28vw, 260px)' }}
                 >
                   {formatLocaleNumber(tasbihRemaining ?? currentCount)}
                 </motion.span>
@@ -211,16 +176,15 @@ export default function ZikrFocusOverlay({
                   </p>
                 )}
 
-                {/* Count button — deep calm emerald, tall for easy tap */}
+                {/* Count button: calm sage, tall for easy tap */}
                 <div className="relative" style={{ width: 'min(92vw, 520px)' }}>
                   {!reduceMotion && (
                     <motion.div
                       key={`ripple:${currentCount}`}
-                      className="absolute inset-0 rounded-3xl pointer-events-none"
+                      className="absolute inset-0 rounded-card pointer-events-none bg-brand-emerald"
                       initial={{ scale: 1, opacity: 0.25 }}
                       animate={{ scale: 1.25, opacity: 0 }}
                       transition={{ duration: 0.5, ease: 'easeOut' }}
-                      style={{ background: '#7a9e6e' }}
                     />
                   )}
                   <motion.button
@@ -228,14 +192,10 @@ export default function ZikrFocusOverlay({
                     // No onClick here — the tap bubbles up to the whole-screen
                     // tap target on the center-content wrapper, which counts
                     // it exactly once. An explicit handler here would double-count.
-                    className="relative flex items-center justify-center gap-3 font-black rounded-3xl w-full select-none outline-none border border-brand-emerald/25 text-white"
+                    className="relative flex items-center justify-center gap-3 font-black rounded-card w-full select-none outline-none border border-brand-emerald/40 bg-brand-emerald/25 text-white shadow-elev-2"
                     style={{
                       height: 'clamp(120px, 18vh, 180px)',
                       fontSize: 'clamp(24px, 4vw, 36px)',
-                      background:
-                        'linear-gradient(180deg, rgba(122,158,110,0.32) 0%, rgba(90,122,80,0.45) 100%)',
-                      boxShadow: '0 12px 40px rgba(122,158,110,0.18)',
-                      backdropFilter: 'blur(6px)',
                     }}
                   >
                     <PlusIcon className="w-10 h-10 sm:w-11 sm:h-11" />
@@ -253,7 +213,7 @@ export default function ZikrFocusOverlay({
                           e.stopPropagation();
                           audio.stopAutoPlay();
                         }}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-bold"
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-control bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-bold"
                       >
                         <StopIcon className="w-5 h-5" />
                         {t('zikr.stop', 'Stop')}
@@ -269,7 +229,7 @@ export default function ZikrFocusOverlay({
                           e.stopPropagation();
                           audio.startAutoPlay();
                         }}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-brand-gold/15 border border-brand-gold/40 text-brand-gold/90 hover:text-brand-gold text-sm font-bold transition-all"
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-control bg-brand-gold/15 border border-brand-gold/40 text-brand-gold/90 hover:text-brand-gold text-sm font-bold transition-colors"
                       >
                         <PlayIcon className="w-5 h-5" />
                         {t('zikr.autoPlay', 'Auto-play')}
@@ -282,12 +242,16 @@ export default function ZikrFocusOverlay({
                 {!goalMet && (streakCount !== null || goalProgress !== null) && (
                   <div className="flex items-center gap-6 opacity-35">
                     {streakCount !== null && (
-                      <span className="text-brand-gold text-xs font-bold">
-                        🔥 {t('zikr.streakDay', '{{count}} day', { count: streakCount })}
+                      <span className="flex items-center gap-1 text-brand-gold text-xs font-bold">
+                        <FireIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                        {t('zikr.streakDay', '{{count}} day', { count: streakCount })}
                       </span>
                     )}
                     {goalProgress !== null && (
-                      <span className="text-white/60 text-xs font-bold">🎯 {goalProgress}%</span>
+                      <span className="flex items-center gap-1 text-white/60 text-xs font-bold">
+                        <TargetIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                        {goalProgress}%
+                      </span>
                     )}
                   </div>
                 )}

@@ -765,8 +765,8 @@ export default function ZikrAnalytics() {
         tabs={
           <TabNav
             items={[
-              { label: `📿 ${t('zikr.counter')}`, to: '/zikr' },
-              { label: `📊 ${t('zikr.analytics')}`, to: '/zikr/analytics', active: true },
+              { label: t('zikr.counter'), to: '/zikr' },
+              { label: t('zikr.analytics'), to: '/zikr/analytics', active: true },
             ]}
           />
         }
@@ -782,8 +782,8 @@ export default function ZikrAnalytics() {
           <div className="flex items-center justify-between flex-wrap gap-3">
             <TabNav
               items={[
-                { label: `📿 ${t('zikr.counter')}`, to: '/zikr' },
-                { label: `📊 ${t('zikr.analytics')}`, to: '/zikr/analytics', active: true },
+                { label: t('zikr.counter'), to: '/zikr' },
+                { label: t('zikr.analytics'), to: '/zikr/analytics', active: true },
               ]}
             />
 

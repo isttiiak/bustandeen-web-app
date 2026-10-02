@@ -34,7 +34,7 @@ export default function ZikrAutoPlayControls({
               <motion.button
                 whileTap={{ scale: 0.94 }}
                 onClick={() => setShowAutoPlay(!showAutoPlay)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all border ${
+                className={`flex items-center gap-2 px-4 py-2 rounded-control text-sm font-bold transition-colors border ${
                   showAutoPlay
                     ? 'bg-brand-gold/25 border-brand-gold/50 text-brand-gold'
                     : 'bg-brand-gold/10 border-brand-gold/30 text-brand-gold/80 hover:text-brand-gold hover:bg-brand-gold/20'
@@ -43,7 +43,7 @@ export default function ZikrAutoPlayControls({
                 <PlayPauseIcon className="w-4 h-4" />
                 {t('zikr.autoPlay', 'Auto-play')}
               </motion.button>
-              <p className="text-white/30 text-[11px] text-center max-w-[240px]">
+              <p className="text-white/50 text-[11px] text-center max-w-[240px]">
                 {t('zikr.autoPlayHint', 'Plays the pronunciation and counts it for you, on repeat')}
               </p>
             </div>
@@ -52,7 +52,7 @@ export default function ZikrAutoPlayControls({
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-brand-emerald/30 bg-brand-emerald/[0.08] backdrop-blur-md p-4 space-y-3"
+              className="rounded-card border border-brand-emerald/30 bg-brand-deep shadow-elev-1 p-4 space-y-3"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export default function ZikrAutoPlayControls({
                   className="range range-success range-xs flex-1"
                   aria-label={t('zikr.volume', 'Volume')}
                 />
-                <span className="text-white/30 text-xs w-8 text-right">
+                <span className="text-white/50 text-xs w-8 text-right">
                   {Math.round(zikrAudioVolume * 100)}%
                 </span>
               </div>
@@ -107,7 +107,7 @@ export default function ZikrAutoPlayControls({
                 exit={{ opacity: 0, height: 0 }}
                 className="overflow-hidden"
               >
-                <div className="rounded-2xl border border-brand-emerald/20 bg-white/[0.05] backdrop-blur-md p-4 space-y-3">
+                <div className="rounded-card border border-brand-border bg-brand-deep shadow-elev-1 p-4 space-y-3">
                   <div className="flex items-center gap-3">
                     <label className="text-white/50 text-xs shrink-0">
                       {t('zikr.targetCount', 'Target count')}
@@ -136,7 +136,7 @@ export default function ZikrAutoPlayControls({
                       className="range range-success range-xs flex-1"
                       aria-label={t('zikr.volume', 'Volume')}
                     />
-                    <span className="text-white/30 text-xs w-8 text-right">
+                    <span className="text-white/50 text-xs w-8 text-right">
                       {Math.round(zikrAudioVolume * 100)}%
                     </span>
                   </div>
