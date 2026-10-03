@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
 import { useEditCycleLog } from '../hooks/useCycle.js';
+import { BTN_PRIMARY, BTN_SECONDARY } from './bustanStyles.js';
 
 export interface CycleEditTarget {
   _id: string;
@@ -31,7 +34,9 @@ export default function CycleEditModal({ target, today, onClose }: Props) {
     }
   }, [target]);
 
-  return (
+  // Portaled: AnimatedBackground wraps pages in `relative z-10`, which kept
+  // this under the sticky navbar (its close button was hidden).
+  return createPortal(
     <AnimatePresence>
       {target && (
         <motion.div
@@ -47,15 +52,16 @@ export default function CycleEditModal({ target, today, onClose }: Props) {
             initial={{ scale: 0.95, y: 10 }}
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.95, y: 10 }}
-            className="w-full max-w-sm rounded-3xl bg-brand-deep border border-brand-pink/25 p-6 space-y-4"
+            className="w-full max-w-sm rounded-card bg-brand-deep border border-brand-pink/40 shadow-elev-3 p-6 space-y-4"
             role="dialog"
             aria-label={t('rayhanah.editCycleAriaLabel', 'Edit cycle')}
           >
             <div>
-              <h3 className="text-white font-black">
-                {t('rayhanah.editThisCycle', '✏️ Edit this cycle')}
+              <h3 className="font-display text-white font-bold text-xl flex items-center gap-2">
+                <PencilSquareIcon className="w-5 h-5 text-brand-pink" />
+                {t('rayhanah.editThisCycle', 'Edit this cycle')}
               </h3>
-              <p className="text-white/40 text-xs mt-1 leading-relaxed">
+              <p className="text-white/75 text-xs mt-1 leading-relaxed">
                 {t(
                   'rayhanah.editCycleDesc',
                   "Adjust the dates, or clear the end date if it hasn't truly finished. Your daily notes belong to their days and are never lost."
@@ -64,7 +70,7 @@ export default function CycleEditModal({ target, today, onClose }: Props) {
             </div>
             <div className="space-y-2.5">
               <div>
-                <label className="text-white/50 text-xs font-bold" htmlFor="edit-cycle-start">
+                <label className="text-white/75 text-xs font-bold" htmlFor="edit-cycle-start">
                   {t('rayhanah.startDate', 'Start date')}
                 </label>
                 <input
@@ -73,11 +79,11 @@ export default function CycleEditModal({ target, today, onClose }: Props) {
                   value={start}
                   max={today}
                   onChange={(e) => setStart(e.target.value)}
-                  className="input input-sm w-full mt-1 bg-white/5 border-brand-pink/20 text-white rounded-xl"
+                  className="input input-sm w-full mt-1 rounded-control bg-brand-surface/50 border-brand-border text-white"
                 />
               </div>
               <div>
-                <label className="text-white/50 text-xs font-bold" htmlFor="edit-cycle-end">
+                <label className="text-white/75 text-xs font-bold" htmlFor="edit-cycle-end">
                   {t('rayhanah.endDate', 'End date')}
                 </label>
                 <input
@@ -87,35 +93,32 @@ export default function CycleEditModal({ target, today, onClose }: Props) {
                   min={start}
                   max={today}
                   onChange={(e) => setEnd(e.target.value)}
-                  className="input input-sm w-full mt-1 bg-white/5 border-brand-pink/20 text-white rounded-xl"
+                  className="input input-sm w-full mt-1 rounded-control bg-brand-surface/50 border-brand-border text-white"
                 />
                 {target.endDate && (
                   <button
-                    className="mt-1.5 text-brand-pink/70 hover:text-brand-pink text-[11px] underline"
+                    className="mt-1.5 text-brand-pink text-[11px] underline underline-offset-2"
                     onClick={() => setEnd('')}
                   >
                     {t('rayhanah.clearEndDate', 'Clear the end date, this cycle is still ongoing')}
                   </button>
                 )}
                 {end === '' && (
-                  <p className="text-brand-pink/60 text-[11px] mt-1">
+                  <p className="text-brand-pink text-[11px] mt-1">
                     {t(
                       'rayhanah.savingReopensCycle',
-                      '🌸 Saving without an end date reopens the cycle.'
+                      'Saving without an end date reopens the cycle.'
                     )}
                   </p>
                 )}
               </div>
             </div>
             <div className="flex gap-2">
-              <button
-                className="flex-1 btn btn-sm rounded-xl bg-white/5 border-white/20 text-white/60"
-                onClick={onClose}
-              >
+              <button className={`${BTN_SECONDARY} flex-1`} onClick={onClose}>
                 {t('rayhanah.cancel', 'Cancel')}
               </button>
               <button
-                className="flex-1 btn btn-sm rounded-xl border-0 text-on-color font-bold bg-brand-pink/80 hover:bg-brand-pink"
+                className={`${BTN_PRIMARY} flex-1`}
                 disabled={editCycle.isPending || !start}
                 onClick={() =>
                   editCycle.mutate(
@@ -124,8 +127,8 @@ export default function CycleEditModal({ target, today, onClose }: Props) {
                       onSuccess: () => {
                         toast.success(
                           end === ''
-                            ? t('rayhanah.cycleReopenedShort', 'Cycle reopened 🌸')
-                            : t('rayhanah.cycleUpdated', 'Cycle updated ✏️'),
+                            ? t('rayhanah.cycleReopenedShort', 'Cycle reopened')
+                            : t('rayhanah.cycleUpdated', 'Cycle updated'),
                           { id: 'cycle-edit' }
                         );
                         onClose();
@@ -144,6 +147,7 @@ export default function CycleEditModal({ target, today, onClose }: Props) {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
