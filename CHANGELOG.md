@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.95.1 - Installed app (PWA) fixes - 2026-10-03
+
+### Fixed
+
+- **The installed app could break after an update.** A phone keeps the app open in the background, so after a deploy it was still running the previous version and asked for page code (for example the sign-in page) that no longer existed; the page then failed to load. The app now reloads once to pick up the new version (at most once every 30 seconds, so it can never loop).
+
+### Changed
+
+- **Google sign-in is ready for a full-page redirect in the installed app.** A Google popup opened from an installed app (iOS especially) opens in a separate browser sheet that cannot hand the sign-in back. `vercel.json` now serves Firebase's sign-in helper pages from our own domain (`/__/auth/*`, proxied to Firebase; the service worker and the site headers leave those paths alone). Once `VITE_FIREBASE_AUTH_DOMAIN` is `bustandeen.com` in Vercel (after `https://bustandeen.com/__/auth/handler` is added as an authorised redirect URI of the Google OAuth client), the installed app signs in with a redirect; a browser tab keeps the popup. Until then nothing changes.
+
+### Changed (developers)
+
+- `utils/staleChunkReload.ts` (`vite:preloadError` → one guarded reload), `utils/googleSignIn.ts` (`signInWithGoogle`, `completeGoogleRedirect`), tests in `utils/pwaSignIn.test.ts`.
+
 ## v5.95.0 - Rayhanah in the Bustan Arch design - 2026-10-03
 
 ### Fixed

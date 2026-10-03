@@ -13,6 +13,10 @@
 
 import { initAnalytics, trackPageView } from './utils/analytics.js';
 import { isLandingPath, isSeoPagePath } from './seo/staticPaths.js';
+import { initStaleChunkReload } from './utils/staleChunkReload.js';
+
+// Before any dynamic import: a stale page reloads instead of breaking.
+initStaleChunkReload();
 
 const path = window.location.pathname;
 const signedIn = document.documentElement.classList.contains('has-session');
