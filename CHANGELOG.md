@@ -9,6 +9,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - **The daily excused-day phrase was always in English.** The eight phrases under "Rayhanah days" had no translation keys, so Bangla readers saw English (with emoji). They are now in English and Bangla.
 - **The Rayhanah settings drawer hid its own close button.** The page content sits in a `relative z-10` layer, so the drawer and the start, ghusl, qaḍāʾ, edit and "log a past period" dialogs opened under the sticky navbar. They now open above it.
 - Rayhanah analytics: "1 day(s)" wrapped onto two lines in the body-patterns list, and the regularity spread read "(±2D)".
+- Security: `@fastify/busboy` (pulled in by firebase-admin) updated 3.2.0 → 3.2.2 for two denial-of-service advisories published 2026-10-03 (GHSA-xjh9-v7x6-24jw, GHSA-x8mw-p69m-v3mx). Lockfile only.
 
 ### Changed
 
