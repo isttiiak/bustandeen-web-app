@@ -1,14 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { useAuthStore } from '../store/useAuthStore.js';
-import {
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  browserPopupRedirectResolver,
-  sendPasswordResetEmail,
-  AuthError,
-} from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail, AuthError } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase.js';
+import { completeGoogleRedirect, signInWithGoogle } from '../utils/googleSignIn.js';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
@@ -95,11 +90,23 @@ export default function AuthSignIn() {
   const [resetSent, setResetSent] = useState(false);
   const [resetError, setResetError] = useState('');
 
+  // Back from a Google redirect (installed app): show its error, if any.
+  useEffect(() => {
+    let alive = true;
+    void completeGoogleRedirect(auth).then((code) => {
+      if (alive && code) setError(mapFirebaseError(code, t));
+    });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount; t is stable enough for an error message
+  }, []);
+
   const google = async () => {
     setError('');
     setLoading(true);
     try {
-      await signInWithPopup(auth, googleProvider, browserPopupRedirectResolver);
+      await signInWithGoogle(auth, googleProvider);
     } catch (err) {
       const code = (err as AuthError).code ?? '';
       if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {

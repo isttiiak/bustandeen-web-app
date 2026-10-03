@@ -86,7 +86,9 @@ registerRoute(
 
 registerRoute(
   new NavigationRoute(navigationHandler, {
-    denylist: [/^\/api\//, /^\/[^?]*\.[A-Za-z0-9]+(\?|$)/],
+    // /__/ = Firebase's auth helper pages, proxied to Firebase by vercel.json:
+    // the app shell must never answer them.
+    denylist: [/^\/api\//, /^\/__\//, /^\/[^?]*\.[A-Za-z0-9]+(\?|$)/],
   })
 );
 
