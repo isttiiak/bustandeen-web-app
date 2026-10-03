@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { CalendarDaysIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import type { CycleSummary } from '../hooks/useCycle.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { getDayRuling } from '../utils/fastingRules.js';
+import { CrescentIcon } from './icons/IslamicIcons.js';
+import { CARD, SECTION_TITLE } from './bustanStyles.js';
 
 /**
  * Month calendar for Rayhanah Cycle:
@@ -23,10 +25,11 @@ function shiftStr(dateStr: string, delta: number): string {
   return ymd(d);
 }
 
+// Theme tokens, not hex: the dots follow the light/dark palette.
 const FLOW_DOT: Record<string, string> = {
-  light: 'rgba(212,131,158,0.5)',
-  medium: 'rgba(212,131,158,0.8)',
-  heavy: 'rgba(176,106,132,1)',
+  light: 'bg-brand-pink/50',
+  medium: 'bg-brand-pink/80',
+  heavy: 'bg-brand-pink-dim',
 };
 
 export default function CycleCalendar({
@@ -80,13 +83,16 @@ export default function CycleCalendar({
   const monthLabel = formatLocaleDate(first, { month: 'long', year: 'numeric' });
 
   return (
-    <div className="rounded-3xl bg-brand-deep/80 border border-brand-border p-5">
-      <div className="flex items-center justify-between mb-3">
-        <h2 className="text-white font-black">{t('cycleCalendar.title')}</h2>
+    <section className={`${CARD} p-5`}>
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <h2 className={`${SECTION_TITLE} whitespace-nowrap`}>
+          <CalendarDaysIcon className="w-5 h-5 text-brand-pink" />
+          {t('cycleCalendar.title')}
+        </h2>
         <div className="flex items-center gap-1">
           <button
             aria-label={t('cycleCalendar.prevMonth', 'Previous month')}
-            className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
+            className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-brand-surface"
             onClick={() => {
               const d = new Date(y!, m! - 2, 1);
               setMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
@@ -94,10 +100,12 @@ export default function CycleCalendar({
           >
             <ChevronLeftIcon className="w-4 h-4" />
           </button>
-          <span className="text-white/70 text-sm font-bold w-32 text-center">{monthLabel}</span>
+          <span className="text-white text-sm font-bold min-w-[6.5rem] text-center whitespace-nowrap">
+            {monthLabel}
+          </span>
           <button
             aria-label={t('cycleCalendar.nextMonth', 'Next month')}
-            className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
+            className="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-brand-surface"
             onClick={() => {
               const d = new Date(y!, m!, 1);
               setMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
@@ -110,7 +118,7 @@ export default function CycleCalendar({
 
       <div className="grid grid-cols-7 gap-1 text-center">
         {(t('cycleCalendar.weekdays', { returnObjects: true }) as string[]).map((d, i) => (
-          <span key={i} className="text-white/25 text-[9px] font-bold uppercase py-1">
+          <span key={i} className="text-white/60 text-[10px] font-bold uppercase py-1">
             {d}
           </span>
         ))}
@@ -152,9 +160,9 @@ export default function CycleCalendar({
                             : undefined
               }
               className={[
-                'relative aspect-square rounded-xl grid place-items-center text-[11px] font-bold transition-all',
+                'relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors',
                 cycleType === 'hayd'
-                  ? 'bg-brand-pink/30 text-brand-pink'
+                  ? 'bg-brand-pink/25 text-brand-pink'
                   : cycleType === 'nifas'
                     ? 'bg-brand-warm/30 text-brand-warm'
                     : predicted
@@ -165,20 +173,20 @@ export default function CycleCalendar({
                           ? 'bg-brand-info/15 text-brand-info/80'
                           : isPms
                             ? 'bg-brand-gold/10 text-brand-gold/80'
-                            : 'text-white/40 bg-white/[0.03]',
+                            : 'text-white/75 bg-brand-surface/50',
                 isToday ? 'ring-2 ring-white/70' : '',
               ].join(' ')}
             >
               {formatLocaleNumber(i + 1)}
               {recommendedFast && (
-                <span className="absolute top-0.5 right-0.5 text-[8px] leading-none text-brand-emerald">
-                  🌙
-                </span>
+                <CrescentIcon
+                  className="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald"
+                  aria-hidden="true"
+                />
               )}
               {note?.flow && (
                 <span
-                  className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full"
-                  style={{ background: FLOW_DOT[note.flow] }}
+                  className={`absolute bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full ${FLOW_DOT[note.flow] ?? ''}`}
                 />
               )}
             </div>
@@ -186,7 +194,7 @@ export default function CycleCalendar({
         })}
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-[10px] text-white/30">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-[11px] text-white/70">
         <span>
           <span className="inline-block w-2.5 h-2.5 rounded bg-brand-pink/50 align-middle mr-1" />
           {t('cycleCalendar.legendPeriod')}
@@ -212,34 +220,34 @@ export default function CycleCalendar({
           {t('common.today')}
         </span>
         <span>
-          <span className="align-middle mr-1">🌙</span>
+          <CrescentIcon
+            className="inline-block w-3 h-3 align-middle mr-1 text-brand-emerald"
+            aria-hidden="true"
+          />
           {t('cycleCalendar.legendRecommendedFast', 'Recommended fast')}
         </span>
       </div>
-      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-[10px] text-white/30">
-        <span className="text-white/25">{t('cycleCalendar.flowNotes')}:</span>
+      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-[11px] text-white/70">
+        <span className="text-white/60">{t('cycleCalendar.flowNotes')}:</span>
         <span>
           <span
-            className="inline-block w-1.5 h-1.5 rounded-full align-middle mr-1"
-            style={{ background: FLOW_DOT.light }}
+            className={`inline-block w-1.5 h-1.5 rounded-full align-middle mr-1 ${FLOW_DOT.light}`}
           />
           {t('cycleCalendar.flowLight')}
         </span>
         <span>
           <span
-            className="inline-block w-1.5 h-1.5 rounded-full align-middle mr-1"
-            style={{ background: FLOW_DOT.medium }}
+            className={`inline-block w-1.5 h-1.5 rounded-full align-middle mr-1 ${FLOW_DOT.medium}`}
           />
           {t('cycleCalendar.flowMedium')}
         </span>
         <span>
           <span
-            className="inline-block w-1.5 h-1.5 rounded-full align-middle mr-1"
-            style={{ background: FLOW_DOT.heavy }}
+            className={`inline-block w-1.5 h-1.5 rounded-full align-middle mr-1 ${FLOW_DOT.heavy}`}
           />
           {t('cycleCalendar.flowHeavy')}
         </span>
       </div>
-    </div>
+    </section>
   );
 }

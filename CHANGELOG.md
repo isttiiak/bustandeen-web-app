@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](README.md#versioning--when-to-bump) in the README) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.95.0 - Rayhanah in the Bustan Arch design - 2026-10-03
+
+### Fixed
+
+- **The daily excused-day phrase was always in English.** The eight phrases under "Rayhanah days" had no translation keys, so Bangla readers saw English (with emoji). They are now in English and Bangla.
+- **The Rayhanah settings drawer hid its own close button.** The page content sits in a `relative z-10` layer, so the drawer and the start, ghusl, qaḍāʾ, edit and "log a past period" dialogs opened under the sticky navbar. They now open above it.
+- Rayhanah analytics: "1 day(s)" wrapped onto two lines in the body-patterns list, and the regularity spread read "(±2D)".
+
+### Changed
+
+- **Rayhanah is the seventh screen in the new design** (audit T3.2). The top of /cycle is the screen's one arch with a medallion: in a period, the day number, the date it began, the day's phrase, the gentle note and "My period has ended"; while expecting, the week; otherwise the greeting, the predicted next period, the PMS or fertile-window note and "My period started". Garden of Light, "How are you today?", the adhkār garden, fasting makeup, the calendar, sharing and pregnancy, and the fiqh companion sit on raised theme cards with the premium shadow, and secondary text is brighter, so they read on dark and on sage paper. Rayhanah analytics, the settings drawer and the dialogs use the same cards.
+- Emoji are gone from Rayhanah: the Garden of Light items, adhkār, flow (drawn drops), symptoms, moods, calendar (a crescent marks a recommended fast), history (edit and delete icons) and every heading use SVG icons or plain words. The glow, gradients and gradient buttons are removed; the BMI scale is four solid zones instead of a gradient, and the calendar's flow dots use theme colours instead of fixed hex.
+- Rayhanah copy in English and Bangla no longer uses emoji or em dashes. Only punctuation changed in rulings and narrations; quoted hadith are unchanged.
+- Privacy is unchanged: cycle data still never reaches any AI and is never shown to friends (only the opt-in yes/no status).
+
+### Changed (developers)
+
+- `components/cycle/cycleIcons.tsx`: Garden of Light and adhkār icons, `FlowDrops`.
+- `pages/rayhanahScreen.test.ts`: no emoji or em dashes in the Rayhanah pages and cards or their locale strings (en + bn), no import of an AI hook in any of them, and the eight phrases exist in both languages.
+
 ## v5.94.0 - Ramadan in the Bustan Arch design - 2026-10-03
 
 ### Fixed

@@ -32,13 +32,13 @@ export default function CycleGuidance({ dayCount }: { dayCount: number }) {
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-brand-pink/25 bg-brand-pink/[0.07] p-3.5"
+      className="rounded-control border border-brand-pink/40 bg-brand-pink/10 p-3.5"
     >
-      <p className="text-brand-pink/70 text-[11px] font-bold">
+      <p className="text-brand-pink text-[11px] font-bold uppercase tracking-wide">
         {t('cycleSupport.label', 'For you today')}
       </p>
-      <p className="text-brand-pink/80 text-sm leading-relaxed mt-1.5">{message}</p>
-      <p className="text-white/30 text-[10px] mt-2">
+      <p className="text-white/85 text-sm leading-relaxed mt-1.5">{message}</p>
+      <p className="text-white/70 text-[11px] mt-2">
         {t(
           'cycleSupport.disclaimer',
           'Kind words, not medical or religious advice. What you record here stays private and is never sent to an AI.'
