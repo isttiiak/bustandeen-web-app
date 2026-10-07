@@ -8,6 +8,10 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - **A Terms of Service page at /terms** (English and Bangla): what Bustandeen is (guidance with sources, not a fatwa; health notes are not medical advice), your account, fair use, your data (export and delete any time), Naseeh, sadaqah, availability and limits, ending your use, and changes. Linked from the sign-in and sign-up pages ("By continuing, you agree to our Terms of Service and Privacy Policy"), the footer, the account menu, the landing page and the sitemap. Its address, https://bustandeen.com/terms, is the "Application terms of service link" for Google's sign-in branding.
 
+### Security
+
+- Three advisories published 2026-10-07 failed the CI audit gate; lockfile-only updates in the frontend: `source-map-js` 1.2.1 → 1.2.2 (GHSA-68fv-2mgg-jv7q, via postcss), `solid-js` 1.9.15 → 1.9.16 and `seroval` → 1.6.8 (critical, via the React Query devtools, which only render in development).
+
 ### Changed (developers)
 
 - `components/LegalAgreeLine.tsx` (`<Trans>` with `components`), `pages/termsPage.test.ts` (every section exists in en + bn, no emoji or em dashes, agreement lines link both pages).
