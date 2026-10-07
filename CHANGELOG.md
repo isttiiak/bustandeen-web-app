@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.95.2 - Security patch - 2026-10-07
+
+### Security
+
+- **`proxy-addr` 2.0.7 → 2.0.8 (backend, via Express).** Fixes GHSA-jqcg-44mw-7w3h (critical): an IPv4-mapped IPv6 address could match a trusted-proxy subnet and spoof the client IP. CI's audit gate failed on it.
+
 ## v5.95.1 - Installed app (PWA) fixes - 2026-10-03
 
 ### Fixed
