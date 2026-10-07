@@ -825,7 +825,8 @@
     "platformNote": "📱 iOS & Android apps are coming soon — this web app is the stable version for now.",
     "privacy": "Privacy",
     "sadaqah": "Sadaqah",
-    "secure": "Your data is yours"
+    "secure": "Your data is yours",
+    "terms": "Terms"
   },
   "friends": {
     "accept": "Accept",
@@ -1290,7 +1291,8 @@
     "wellness": "Wellness",
     "zikrAnalytics": "Zikr Analytics",
     "zikrCounter": "Zikr Counter",
-    "musafir": "Musafir Mode"
+    "musafir": "Musafir Mode",
+    "terms": "Terms"
   },
   "navbar": {
     "openAccountMenu": "Open account menu"
@@ -3846,5 +3848,75 @@
     "fromHomeNote": "Only prayers missed on a journey are listed here, and each is also part of the Kaza Debt total above. Prayers owed from home stay in full (4 rakʿahs), even when made up on a journey.",
     "why": "Why? The evidence",
     "whyNote": "No hadith names this exact case. The rule every school builds on: a missed prayer is prayed when remembered, as it was owed. On a journey, Fajr missed in sleep was prayed “just as he did every day”. So on the road it is 2; at home the schools differ, as above."
+  },
+  "terms": {
+    "seoTitle": "Terms of Service",
+    "seoDescription": "The terms for using Bustandeen, a free, non-commercial worship companion: your account, fair use, your data, and our limits.",
+    "heading": "Terms of Service",
+    "subtitle": "Plain words for a simple agreement: how you may use Bustandeen, and what you can expect from us.",
+    "lastUpdated": "Last updated: 7 October 2026",
+    "agreement": {
+      "title": "This agreement",
+      "body0": "By creating an account or using Bustandeen (bustandeen.com and the installed app), you agree to these terms and to our Privacy Policy.",
+      "body1": "If you do not agree, please do not use the app. You can stop at any time."
+    },
+    "service": {
+      "title": "What Bustandeen is",
+      "body0": "Bustandeen is a free, non-commercial companion for zikr, salat, fasting, Quran and other worship. There are no ads and no paid plans.",
+      "body1": "Rulings, prayer times, fasting days and references in the app are general guidance with their sources. They are not a fatwa. For your own situation, please ask a scholar you trust, and check prayer times with your local mosque.",
+      "body2": "Health features (such as Rayhanah and body stats) are for your own notes only. They are not medical advice."
+    },
+    "account": {
+      "title": "Your account",
+      "body0": "Give accurate details when you sign up, and keep your password private. You are responsible for what happens in your account.",
+      "body1": "One account is for one person. Please do not share it or sign in as someone else.",
+      "body2": "If you are under 13, please use Bustandeen with a parent's or guardian's permission.",
+      "body3": "Tell us at ansar@bustandeen.com if you think someone else has used your account."
+    },
+    "use": {
+      "title": "Fair use",
+      "body0": "Use Bustandeen for your own worship and for kind encouragement between friends.",
+      "body1": "Do not harass, shame or deceive anyone, and do not post anything hateful or unlawful in names, messages, feedback or requests.",
+      "body2": "Do not try to break, overload, scrape or get around the security of the app, or use it to send spam.",
+      "body3": "We may remove content or limit an account that breaks these rules."
+    },
+    "data": {
+      "title": "Your data",
+      "body0": "Your worship records belong to you. We use them only to run the app for you, as described in the Privacy Policy.",
+      "body1": "You can export your data, delete any part of it, or delete your whole account at any time from Settings and your Profile.",
+      "body2": "We never sell your data or show your worship details to anyone."
+    },
+    "naseeh": {
+      "title": "Naseeh (optional AI)",
+      "body0": "Naseeh is off unless you turn it on. Its words are encouragement written by an AI service and can be wrong; they are never a religious ruling.",
+      "body1": "If you use your own AI key, you are responsible for your use of that service."
+    },
+    "sadaqah": {
+      "title": "Sadaqah",
+      "body0": "Supporting Bustandeen with sadaqah is fully voluntary and never unlocks extra features.",
+      "body1": "Contributions go toward keeping the app free and improving it, as described on the Sadaqah page."
+    },
+    "availability": {
+      "title": "Availability and limits",
+      "body0": "We work hard to keep Bustandeen running and your data safe, but the app is provided as it is, without guarantees that it will always be available or free of mistakes.",
+      "body1": "Features may change, be improved or be removed. We will try to give notice of big changes in the app.",
+      "body2": "As far as the law allows, Bustandeen is not responsible for indirect losses that come from using or not being able to use the app."
+    },
+    "ending": {
+      "title": "Ending your use",
+      "body0": "You can delete your account whenever you like. Your server-side data is then removed.",
+      "body1": "We may suspend or close an account that seriously or repeatedly breaks these terms."
+    },
+    "changes": {
+      "title": "Changes to these terms",
+      "body0": "We may update these terms as the app grows. The date at the top always shows the latest version.",
+      "body1": "If a change matters for you, we will let you know in the app. Using Bustandeen after a change means you accept the new terms."
+    },
+    "contactText": "Questions about these terms? Write to",
+    "privacyLink": "Read our Privacy Policy"
+  },
+  "legal": {
+    "agreeSignIn": "By continuing, you agree to our <1>Terms of Service</1> and <3>Privacy Policy</3>.",
+    "agreeSignUp": "By creating an account, you agree to our <1>Terms of Service</1> and <3>Privacy Policy</3>."
   }
 }

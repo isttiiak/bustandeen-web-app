@@ -35,6 +35,13 @@ export default function Footer() {
             >
               {t('footer.privacy')}
             </Link>
+            <span className="text-white/20">•</span>
+            <Link
+              to="/terms"
+              className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+            >
+              {t('footer.terms')}
+            </Link>
           </nav>
           <p className="text-xs sm:text-sm text-white/70">
             {t('footer.copyright', { year: new Date().getFullYear() })}

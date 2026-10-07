@@ -6,6 +6,7 @@ import { auth, googleProvider } from '../firebase.js';
 import { completeGoogleRedirect, signInWithGoogle } from '../utils/googleSignIn.js';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import LegalAgreeLine from '../components/LegalAgreeLine.js';
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -444,6 +445,9 @@ export default function AuthSignIn() {
                         {t('authSignIn.signUpLink', 'Sign up')}
                       </button>
                     </p>
+                  </motion.div>
+                  <motion.div variants={itemVariants} className="mt-4">
+                    <LegalAgreeLine mode="signIn" />
                   </motion.div>
                 </>
               )}
