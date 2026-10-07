@@ -16,6 +16,7 @@ import {
   ArrowLeftIcon,
   InformationCircleIcon,
   ShieldCheckIcon,
+  DocumentTextIcon,
   ChatBubbleLeftRightIcon,
   GlobeAltIcon,
   HeartIcon,
@@ -65,6 +66,7 @@ const PAGE_META: Record<
   '/settings': { title: 'Settings', emoji: '⚙️' },
   '/about': { title: 'About Bustandeen', emoji: '🌱' },
   '/privacy': { title: 'Privacy', emoji: '🔒' },
+  '/terms': { title: 'Terms', emoji: '', Icon: DocumentTextIcon },
   '/feedback': { title: 'Feedback', emoji: '💬' },
   '/contact': { title: 'Contact Us', emoji: '📨' },
   '/profile': { title: 'My Profile', emoji: '👤' },
@@ -87,6 +89,7 @@ const PARENT_ROUTES: Record<string, string> = {
   '/settings': '/',
   '/about': '/',
   '/privacy': '/',
+  '/terms': '/',
   '/feedback': '/',
   '/contact': '/',
   '/profile': '/',
@@ -416,6 +419,14 @@ export default function Navbar() {
                       >
                         <ShieldCheckIcon className="w-4 h-4 text-brand-info/60" />
                         {t('nav.privacy')}
+                      </Link>
+                      <Link
+                        to="/terms"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/5 text-sm transition-colors"
+                      >
+                        <DocumentTextIcon className="w-4 h-4 text-brand-gold/60" />
+                        {t('nav.terms')}
                       </Link>
 
                       {user.gender === 'female' && (

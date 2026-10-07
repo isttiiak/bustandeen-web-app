@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.96.0 - Terms of Service - 2026-10-07
+
+### Added
+
+- **A Terms of Service page at /terms** (English and Bangla): what Bustandeen is (guidance with sources, not a fatwa; health notes are not medical advice), your account, fair use, your data (export and delete any time), Naseeh, sadaqah, availability and limits, ending your use, and changes. Linked from the sign-in and sign-up pages ("By continuing, you agree to our Terms of Service and Privacy Policy"), the footer, the account menu, the landing page and the sitemap. Its address, https://bustandeen.com/terms, is the "Application terms of service link" for Google's sign-in branding.
+
+### Changed (developers)
+
+- `components/LegalAgreeLine.tsx` (`<Trans>` with `components`), `pages/termsPage.test.ts` (every section exists in en + bn, no emoji or em dashes, agreement lines link both pages).
+
 ## v5.95.2 - Security patch - 2026-10-07
 
 ### Security
@@ -656,6 +666,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - If MongoDB is unreachable, a limiter falls back to an in-memory count for that instance (logged as `rate-limit-store`) instead of blocking everyone or waiting on Mongoose's 10-second buffer.
 - **Local dev no longer builds indexes.** `autoIndex` is now on only in the test suite (or with `MONGO_AUTO_INDEX=1` for a local database). `backend/.env` points at the live Atlas database, so a dev server with `autoIndex` on changes production indexes. That happened on 2026-10-01: a local dev server built the new retention and counter indexes in production, which applied the 30/90-day retention immediately (both log collections are now empty).
 - Indexes for this release already exist in production (see above). `npm run sync-indexes` in `backend/` still lists three old indexes to drop (`createdAt_-1` on the two log collections, the unused `userId_1` on `salatlogs`); `-- --apply` removes them. Nothing else is pending.
+
 ## v5.62.1 - Dependency security patch - 2026-10-01
 
 ### Security
@@ -1163,7 +1174,7 @@ A second pass over everything added in v5.43.0 to v5.45.0 (whose changelog entri
 
 ### Added
 
-- **Sadaqah virtue day card on the homepage.** A persistent card (styled like the existing Islamic special-day widget, not auto-dismissing like the reminder it replaces) surfaces on Friday, Ramadan, the first 10 days of Dhul Ḥijjah, Arafah, and Laylat al-Qadr — each with its own heading, short explanation, and a citation, linking straight to `/sadaqah`. Friday's copy is explicitly attributed to Ibn al-Qayyim's own teaching in *Zād al-Maʿād* (paired with the authentic "charity does not decrease wealth" ḥadīth, Ṣaḥīḥ Muslim 2588) rather than presented as a standalone Prophetic ḥadīth, since it isn't one. Replaces `SadaqahFridayReminder.tsx`, which only covered Friday and auto-hid after 30 seconds. New `frontend/src/utils/sadaqahVirtueDays.ts`, `frontend/src/components/SadaqahVirtueCard.tsx`.
+- **Sadaqah virtue day card on the homepage.** A persistent card (styled like the existing Islamic special-day widget, not auto-dismissing like the reminder it replaces) surfaces on Friday, Ramadan, the first 10 days of Dhul Ḥijjah, Arafah, and Laylat al-Qadr — each with its own heading, short explanation, and a citation, linking straight to `/sadaqah`. Friday's copy is explicitly attributed to Ibn al-Qayyim's own teaching in _Zād al-Maʿād_ (paired with the authentic "charity does not decrease wealth" ḥadīth, Ṣaḥīḥ Muslim 2588) rather than presented as a standalone Prophetic ḥadīth, since it isn't one. Replaces `SadaqahFridayReminder.tsx`, which only covered Friday and auto-hid after 30 seconds. New `frontend/src/utils/sadaqahVirtueDays.ts`, `frontend/src/components/SadaqahVirtueCard.tsx`.
 - **Quran settings now sync across devices.** `arabicFont`, all four text-size sliders, the transliteration toggle, "count listening as āyāt," default reciter, and translation picks were localStorage-only — a genuinely different phone and laptop always looked different. `QuranProfile` (backend) gained these fields plus a `displayPrefsSet` flag; opening Quran settings for the first time after this update either pushes that device's existing local prefs up (if nothing has synced yet) or pulls the already-synced values down (if another device got there first) — never silently overwrites a real prior customization with factory defaults. Every subsequent change (debounced for the sliders) pushes to the server. `PATCH /api/quran/profile` extended accordingly; localStorage stays the fast synchronous read path everywhere else in the reader, now backed by the server instead of being the only copy.
 
 ### Fixed
@@ -1498,7 +1509,7 @@ See `TODO-v3.md`'s "Admin panel rebuild — Servant/Ansar roles" section for the
 - **Quran settings drawer's close button was hidden behind the navbar.** The drawer was rendered inline inside a page wrapper that creates its own (lower) stacking context, so its z-index could never actually win against the navbar above it. Portaled it to `<body>`, matching every other settings drawer (Salat, Zikr, Prayer Times) in the app, which already did this.
 - **Salat tracker's calendar toggle could be squeezed to invisible on mobile.** It sat alongside 7 equal-width day cells with nothing protecting its own width; gave it `shrink-0` so the day cells compress first instead.
 - **Āyah share card's Download/Copy/Share buttons could overflow their own box on mobile.** A three-button row with icon+label side by side didn't leave enough width for text at narrow modal sizes, so the label wrapped to a second line that rendered outside the button. Switched to icon-over-label buttons, which can't overflow regardless of column width.
-- Incidentally found and fixed the demo-mode banner (`z-90`) sitting above *every* modal and settings drawer in the app, including the ones above — lowered it to sit correctly between the navbar and modal backdrops.
+- Incidentally found and fixed the demo-mode banner (`z-90`) sitting above _every_ modal and settings drawer in the app, including the ones above — lowered it to sit correctly between the navbar and modal backdrops.
 
 ## v5.14.0 — Āyah Card Copy-to-Clipboard — 2026-09-11
 
@@ -1545,7 +1556,7 @@ See `TODO-v3.md`'s "Admin panel rebuild — Servant/Ansar roles" section for the
 
 ### Added
 
-- **Best-ever Mon/Thu fasting streak.** Fasting Analytics only ever showed the *current* streak; added a "Best Mon/Thu streak" stat computed from the full fast history (longest unbroken run, not just the trailing one from today).
+- **Best-ever Mon/Thu fasting streak.** Fasting Analytics only ever showed the _current_ streak; added a "Best Mon/Thu streak" stat computed from the full fast history (longest unbroken run, not just the trailing one from today).
 - **Rayhanah: discreet mode.** A new toggle (Settings on the Rayhanah page) that swaps the home-screen banner and nav-menu wording from explicit "🌸 Rayhanah day N" language to a neutral "🍃 Wellness mode" for a shared-device or over-the-shoulder scenario. The Rayhanah page itself is unaffected once opened — this only changes ambient, at-a-glance surfaces.
 - **Rayhanah: pregnancy mode.** A status + due-date toggle that suspends period predictions (which would otherwise be actively wrong during pregnancy) and shows a week count instead. Deliberately does **not** touch salat/fasting exemption logic — pregnancy alone doesn't excuse worship, so that stays exactly as it was.
 - **"iOS & Android apps coming soon" note** moved from the footer (shown on every page) to the landing page only, where it's actually relevant to a prospective new user.

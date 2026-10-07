@@ -11,6 +11,7 @@ import { completeGoogleRedirect, signInWithGoogle } from '../utils/googleSignIn.
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useTranslation } from 'react-i18next';
+import LegalAgreeLine from '../components/LegalAgreeLine.js';
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -585,6 +586,7 @@ export default function AuthSignUp() {
                   {t('authSignUp.logIn', 'Log in')}
                 </button>
               </div>
+              <LegalAgreeLine mode="signUp" />
             </div>
           </div>
         </motion.div>
