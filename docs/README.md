@@ -148,3 +148,51 @@ Fonts are self-hosted (`frontend/src/fonts.ts`, audit T2.7); no font requests le
 
 The backend talks to MongoDB Atlas, Firebase Admin, api.quran.com (tafsir proxy), Groq (Naseeh AI, English only; cycle data is
 never sent) and Zoho SMTP.
+
+## 7. Local development
+
+Prerequisites: Node **24** with npm 11 (`.nvmrc`; root `devEngines` refuses other versions), a MongoDB connection
+string and a Firebase project.
+
+```bash
+git clone https://github.com/isttiiak/bustandeen-web-app.git
+cd bustandeen-web-app
+npm run install:all
+npm run dev            # backend :5000 + frontend :5173 (the CORS allowlist expects 5173)
+```
+
+- `backend/.env`: `MONGODB_URI`, `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`,
+  `FIELD_ENCRYPTION_KEY`, optional `GROQ_API_KEY`. macOS: port 5000 is AirPlay, use `PORT=5001`.
+- `frontend/.env`: `VITE_BACKEND_URL` (local dev only; production calls `/api` same-origin) and `VITE_FIREBASE_*`.
+- The `.env` files are gitignored; copy them to each machine. Claude Code worktrees copy only `frontend/.env*`
+  (`.worktreeinclude`).
+- npm 11 runs install scripts only for packages under `allowScripts`. If backend tests time out "Downloading MongoDB",
+  run `node node_modules/mongodb-memory-server/postinstall.js` once in `backend/`.
+
+Quality gates (CI runs all of them on every push and PR to `main`):
+
+```bash
+npm run lint && npm run typecheck && npm run format:check
+npm test --prefix backend      # Jest + mongodb-memory-server
+npm test --prefix frontend     # Vitest
+npm run build --prefix frontend
+```
+
+Pre-commit (Husky + lint-staged) lints and formats staged files. Dependabot opens weekly grouped update PRs.
+
+### Versioning
+
+Not strict semver; the version tracks release size:
+
+- **Patch** (`x.y.Z`): a fix, security patch or small tweak.
+- **Minor** (`x.Y.0`): a batch of related work (a feature, or several fixes shipped together).
+- **Major** (`X.0.0`): a milestone that changes the app's shape (a redesign, a native app launch).
+
+Bump the three `package.json` files together (root, `frontend/`, `backend/`) and add a [`CHANGELOG.md`](../CHANGELOG.md)
+entry before pushing.
+
+### Deployment
+
+One Vercel project: `vercel.json` serves `frontend/dist` and `api/index.ts` as a serverless function (region `sin1`).
+Set the backend and `VITE_*` env vars in the Vercel dashboard. Root `package.json` must keep `"type": "module"`, and
+`firebase-admin` stays on v12 (v14 breaks `verifyIdToken()` in the bundle).
