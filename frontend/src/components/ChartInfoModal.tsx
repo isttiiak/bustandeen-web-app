@@ -2,6 +2,7 @@ import { createPortal } from 'react-dom';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import { BTN_SECONDARY } from './bustanStyles.js';
 
 /**
  * Small "ⓘ" trigger for a chart/section title — opens a ChartInfoModal
@@ -15,7 +16,7 @@ export function InfoButton({ onClick, label }: { onClick: () => void; label: str
       onClick={onClick}
       aria-label={label}
       title={label}
-      className="shrink-0 w-4 h-4 grid place-items-center rounded-full text-white/25 hover:text-brand-emerald transition-colors"
+      className="shrink-0 w-6 h-6 -m-1 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald transition-colors"
     >
       <InformationCircleIcon className="w-4 h-4" />
     </button>
@@ -55,18 +56,18 @@ export default function ChartInfoModal({
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.95, y: 12 }}
             transition={{ type: 'spring', damping: 24 }}
-            className="bg-brand-surface rounded-3xl p-6 w-full max-w-md shadow-2xl border border-brand-border max-h-[85vh] overflow-y-auto"
+            className="bg-brand-deep rounded-card p-6 w-full max-w-md shadow-elev-3 border border-brand-border max-h-[85vh] overflow-y-auto"
             role="dialog"
             aria-modal="true"
           >
             <div className="flex items-start justify-between gap-3 mb-3">
-              <h3 className="text-white font-black text-base flex items-center gap-2">
+              <h3 className="font-display text-white font-bold text-base flex items-center gap-2">
                 <InformationCircleIcon className="w-5 h-5 text-brand-emerald shrink-0" />
                 {title}
               </h3>
               <button
                 onClick={onClose}
-                className="shrink-0 w-8 h-8 grid place-items-center rounded-full text-white/40 hover:text-white hover:bg-white/5 transition-colors"
+                className="shrink-0 w-9 h-9 grid place-items-center rounded-full text-white/70 hover:text-white hover:bg-brand-surface transition-colors"
                 aria-label={t('common.close')}
               >
                 <XMarkIcon className="w-5 h-5" />
@@ -75,10 +76,7 @@ export default function ChartInfoModal({
 
             <p className="text-white/70 text-sm leading-relaxed whitespace-pre-line">{body}</p>
 
-            <button
-              onClick={onClose}
-              className="btn btn-sm w-full mt-4 rounded-xl bg-brand-emerald/10 border-brand-emerald/30 text-brand-emerald hover:bg-brand-emerald/20"
-            >
+            <button onClick={onClose} className={`${BTN_SECONDARY} w-full mt-4`}>
               {t('common.close')}
             </button>
           </motion.div>
