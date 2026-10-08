@@ -2,6 +2,11 @@ import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { LeafIcon } from './icons/IslamicIcons.js';
+import { BTN_PRIMARY, BTN_SECONDARY } from './bustanStyles.js';
+
+const INPUT =
+  'w-full rounded-control border border-brand-border bg-shade/30 px-3 py-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-brand-emerald';
 import { useTranslation } from 'react-i18next';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useAddZikrType } from '../hooks/useZikrTypes.js';
@@ -55,7 +60,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
     const name = reqName.trim();
     if (!name) return;
     if (inList(name)) {
-      toast.error(t('zikrLibrary.alreadyInList', 'Already in your list ✓'), { id: 'lib-add' });
+      toast.error(t('zikrLibrary.alreadyInList', 'Already in your list'), { id: 'lib-add' });
       setShowConsent(false);
       return;
     }
@@ -68,7 +73,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
           source: reqSource.trim() || undefined,
           sourceUrl: reqSourceUrl.trim() || undefined,
         });
-        toast.success(t('zikrLibrary.addedOwn', '"{{name}}" added to your own list 📿', { name }), {
+        toast.success(t('zikrLibrary.addedOwn', '"{{name}}" added to your own list', { name }), {
           id: 'lib-add',
         });
         resetRequestForm();
@@ -76,7 +81,9 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
         onDone?.();
       },
       onError: () => {
-        toast.error(t('zikrLibrary.addFail', 'Could not add — try again.'), { id: 'lib-add' });
+        toast.error(t('zikrLibrary.addFail', 'Could not add. Please try again.'), {
+          id: 'lib-add',
+        });
         setShowConsent(false);
       },
     });
@@ -105,7 +112,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
           toast.success(
             t(
               'zikrLibrary.requestSubmitted',
-              'Thank you — we’ll review "{{name}}" and add it soon, in shā’ Allāh. 🌱',
+              'Thank you. We will review "{{name}}" and add it soon, in shā’ Allāh.',
               { name }
             ),
             { id: 'lib-request', duration: 5000 }
@@ -114,7 +121,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
           onDone?.();
         },
         onError: () =>
-          toast.error(t('zikrLibrary.requestFail', 'Could not submit — try again.'), {
+          toast.error(t('zikrLibrary.requestFail', 'Could not submit. Please try again.'), {
             id: 'lib-request',
           }),
       }
@@ -123,21 +130,22 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
 
   return (
     <>
-      <p className="text-white/60 text-xs font-bold mb-1">
-        {t('zikrLibrary.requestOwn', '🌱 Suggest a zikr or dua')}
+      <p className="flex items-center gap-1.5 text-white text-sm font-bold mb-1">
+        <LeafIcon className="w-4 h-4 text-brand-emerald" />
+        {t('zikrLibrary.requestOwn', 'Suggest a zikr or dua')}
       </p>
-      <p className="text-white/30 text-[11px] mb-3">
+      <p className="text-white/70 text-[11px] mb-3 leading-relaxed">
         {t(
           'zikrLibrary.requestOwnHint',
-          'Only the name is required — an Ansar will review it (with a scholar if needed) and fill in the rest before it joins the library. Anything else you can tell us helps verify it faster.'
+          'Only the name is required. An Ansar will review it (with a scholar if needed) and fill in the rest before it joins the library. Anything else you can tell us helps verify it faster.'
         )}
       </p>
       <div className="space-y-2">
         <input
           type="text"
-          placeholder={t('zikrLibrary.namePlaceholder', 'Name — e.g. Rabbi zidni ilma *')}
+          placeholder={t('zikrLibrary.namePlaceholder', 'Name, e.g. Rabbi zidni ilma *')}
           aria-label={t('zikrLibrary.nameLabel', 'Zikr name')}
-          className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+          className={INPUT}
           value={reqName}
           maxLength={100}
           onChange={(e) => setReqName(e.target.value)}
@@ -145,9 +153,9 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
         <input
           type="text"
           dir="rtl"
-          placeholder={t('zikrLibrary.arabicPlaceholder', 'Arabic — رَبِّ زِدْنِي عِلْمًا')}
+          placeholder={t('zikrLibrary.arabicPlaceholder', 'Arabic, e.g. رَبِّ زِدْنِي عِلْمًا')}
           aria-label={t('zikrLibrary.arabicLabel', 'Arabic text')}
-          className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl font-serif"
+          className={`${INPUT} font-serif`}
           value={reqArabic}
           onChange={(e) => setReqArabic(e.target.value)}
         />
@@ -155,32 +163,32 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
           type="text"
           placeholder={t(
             'zikrLibrary.meaningPlaceholder',
-            'Meaning — e.g. My Lord, increase me in knowledge (optional)'
+            'Meaning, e.g. My Lord, increase me in knowledge (optional)'
           )}
           aria-label={t('zikrLibrary.meaningLabel', 'Meaning')}
-          className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+          className={INPUT}
           value={reqMeaning}
           onChange={(e) => setReqMeaning(e.target.value)}
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <input
             type="text"
-            placeholder={t('zikrLibrary.refPlaceholder', 'Reference — e.g. Quran 20:114')}
+            placeholder={t('zikrLibrary.refPlaceholder', 'Reference, e.g. Quran 20:114')}
             aria-label={t('zikrLibrary.refLabel', 'Reference')}
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl text-xs"
+            className={`${INPUT} text-xs`}
             value={reqSource}
             onChange={(e) => setReqSource(e.target.value)}
           />
           <input
             type="text"
-            placeholder={t('zikrLibrary.linkPlaceholder', 'Link — https://quran.com/20/114')}
+            placeholder={t('zikrLibrary.linkPlaceholder', 'Link, e.g. https://quran.com/20/114')}
             aria-label={t('zikrLibrary.linkLabel', 'Reference link')}
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl text-xs"
+            className={`${INPUT} text-xs`}
             value={reqSourceUrl}
             onChange={(e) => setReqSourceUrl(e.target.value)}
           />
         </div>
-        <label className="flex items-center gap-2 text-white/50 text-xs px-1">
+        <label className="flex items-center gap-2 text-white/80 text-xs px-1">
           <input
             type="checkbox"
             className="checkbox checkbox-xs"
@@ -191,7 +199,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button
-            className="btn btn-sm w-full rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+            className={`${BTN_PRIMARY} w-full`}
             disabled={!reqName.trim() || submitZikrRequest.isPending}
             onClick={submitRequest}
           >
@@ -200,14 +208,14 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
               : t('zikrLibrary.makeRequest', 'Request for the library')}
           </button>
           <button
-            className="btn btn-sm w-full rounded-xl bg-white/5 border-brand-emerald/25 text-white/80 hover:border-brand-emerald/50"
+            className={`${BTN_SECONDARY} w-full`}
             disabled={!reqName.trim() || addZikrType.isPending}
             onClick={() => setShowConsent(true)}
           >
             {t('zikrLibrary.addOwnOnly', 'Add to my list only')}
           </button>
         </div>
-        <p className="text-white/30 text-[11px] px-1">
+        <p className="text-white/70 text-[11px] px-1 leading-relaxed">
           {t(
             'zikrLibrary.twoWaysHint',
             'The library request is reviewed and shared with everyone. "My list only" stays private to you and is not reviewed.'
@@ -222,7 +230,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
             onClick={() => setShowConsent(false)}
           >
             <div
-              className="relative w-full max-w-sm rounded-2xl bg-brand-deep border border-brand-border p-5 pt-6"
+              className="relative w-full max-w-sm rounded-card bg-brand-deep border border-brand-border shadow-elev-3 p-5 pt-6"
               onClick={(e) => e.stopPropagation()}
               role="alertdialog"
               aria-modal="true"
@@ -231,21 +239,21 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
               <button
                 onClick={() => setShowConsent(false)}
                 aria-label={t('common.close', 'Close')}
-                className="absolute top-3 right-3 w-7 h-7 rounded-full grid place-items-center border border-red-500/70 text-red-400 hover:bg-red-500/10"
+                className="absolute top-3 right-3 w-8 h-8 rounded-control grid place-items-center text-white/70 hover:text-white hover:bg-brand-surface"
               >
                 <XMarkIcon className="w-4 h-4" />
               </button>
-              <h3 className="text-white font-black text-base pr-8">
+              <h3 className="font-display text-white font-bold text-lg pr-8">
                 {t('zikrLibrary.consentTitle', 'Before you add this')}
               </h3>
-              <p className="text-white/60 text-xs mt-2 leading-relaxed">
+              <p className="text-white/80 text-xs mt-2 leading-relaxed">
                 {t(
                   'zikrLibrary.consentBody',
                   '"{{name}}" will only be added to your own list. Nobody on our team will check its wording or source. If it is not a correct or authentic practice, that is your responsibility.',
                   { name: reqName.trim() }
                 )}
               </p>
-              <p className="text-white/40 text-xs mt-2 leading-relaxed">
+              <p className="text-white/70 text-xs mt-2 leading-relaxed">
                 {t(
                   'zikrLibrary.consentAlt',
                   'You can send it to our team for review instead, and it may join the library for everyone.'
@@ -253,14 +261,14 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
               </p>
               <div className="flex flex-col gap-2 mt-4">
                 <button
-                  className="btn btn-sm rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim"
+                  className={BTN_PRIMARY}
                   disabled={submitZikrRequest.isPending}
                   onClick={requestFromConsent}
                 >
                   {t('zikrLibrary.consentRequest', 'Make request for review')}
                 </button>
                 <button
-                  className="btn btn-sm rounded-xl bg-white/5 border-brand-emerald/30 text-brand-emerald hover:bg-brand-emerald/10"
+                  className={BTN_SECONDARY}
                   disabled={addZikrType.isPending}
                   onClick={addToOwnList}
                 >

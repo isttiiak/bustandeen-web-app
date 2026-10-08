@@ -62,8 +62,38 @@ import {
   SwatchIcon,
   SunIcon,
   DevicePhoneMobileIcon,
+  BookOpenIcon,
+  AcademicCapIcon,
+  BriefcaseIcon,
+  MapPinIcon,
+  ExclamationTriangleIcon,
+  CheckCircleIcon,
+  ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 import { getThemeMode, setThemeMode, type ThemeMode } from '../utils/theme.js';
+import {
+  CrescentIcon,
+  FlowerIcon,
+  MosqueIcon,
+  SunriseIcon,
+  TasbihIcon,
+} from '../components/icons/IslamicIcons.js';
+import { BTN_SECONDARY, CARD, SECTION_TITLE } from '../components/bustanStyles.js';
+
+type SvgIcon = (p: { className?: string }) => React.ReactNode;
+
+/** A chosen / not chosen option tile (theme, language, day start). */
+const OPTION_ON = 'bg-brand-emerald/10 border-brand-emerald text-white';
+const OPTION_OFF =
+  'bg-brand-surface/50 border-brand-border text-white/80 hover:text-white hover:border-brand-emerald/40';
+/** A quiet inline button inside a card (Change, Cancel, Clear). */
+const BTN_QUIET =
+  'inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold text-white/75 hover:text-white hover:bg-brand-surface transition-colors';
+/** A destructive action, quiet until confirmed. */
+const BTN_DANGER_QUIET =
+  'inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold text-red-400 hover:bg-red-500/10 transition-colors';
+const BTN_DANGER =
+  'btn-solid inline-flex items-center justify-center gap-1.5 rounded-control px-3 py-1.5 text-xs font-bold text-on-color bg-red-600 hover:bg-red-700 shadow-elev-1 transition-colors disabled:opacity-50';
 
 // ── Unified danger zone (Istiak's spec): EVERY data-erase control lives here,
 // grouped per feature, with full AND partial options. ─────────────────────────
@@ -79,19 +109,19 @@ interface DangerRow {
 }
 interface DangerGroup {
   id: string;
-  emoji: string;
+  Icon: SvgIcon;
   title: string;
-  /** colored-card classes so groups are recognizable at a glance */
-  card: string;
+  /** icon colour so groups are recognizable at a glance */
+  tone: string;
   rows: DangerRow[];
 }
 
 const DANGER_GROUPS: DangerGroup[] = [
   {
     id: 'zikr',
-    emoji: '📿',
+    Icon: TasbihIcon,
     title: 'Zikr',
-    card: 'border-brand-emerald/20 bg-brand-emerald/[0.04]',
+    tone: 'text-brand-emerald',
     rows: [
       {
         id: 'zikr-all',
@@ -104,9 +134,9 @@ const DANGER_GROUPS: DangerGroup[] = [
   },
   {
     id: 'salat',
-    emoji: '🕌',
+    Icon: MosqueIcon,
     title: 'Salat',
-    card: 'border-brand-info/20 bg-brand-info/[0.04]',
+    tone: 'text-brand-info',
     rows: [
       {
         id: 'salat-all',
@@ -119,9 +149,9 @@ const DANGER_GROUPS: DangerGroup[] = [
   },
   {
     id: 'fasting',
-    emoji: '🌙',
+    Icon: CrescentIcon,
     title: 'Fasting',
-    card: 'border-brand-gold/20 bg-brand-gold/[0.04]',
+    tone: 'text-brand-gold',
     rows: [
       {
         id: 'fasting-all',
@@ -174,9 +204,9 @@ const DANGER_GROUPS: DangerGroup[] = [
   },
   {
     id: 'quran',
-    emoji: '📖',
+    Icon: BookOpenIcon,
     title: 'Quran',
-    card: 'border-brand-info/20 bg-brand-info/[0.04]',
+    tone: 'text-brand-info',
     rows: [
       {
         id: 'quran-all',
@@ -206,9 +236,9 @@ const DANGER_GROUPS: DangerGroup[] = [
   },
   {
     id: 'hifz',
-    emoji: '🧠',
+    Icon: AcademicCapIcon,
     title: 'Hifz',
-    card: 'border-brand-emerald/20 bg-brand-emerald/[0.04]',
+    tone: 'text-brand-emerald',
     rows: [
       {
         id: 'hifz-all',
@@ -229,14 +259,14 @@ const DANGER_GROUPS: DangerGroup[] = [
   },
   {
     id: 'cycle',
-    emoji: '🌸',
+    Icon: FlowerIcon,
     title: 'Rayhanah Cycle',
-    card: 'border-brand-pink/20 bg-brand-pink/[0.04]',
+    tone: 'text-brand-pink',
     rows: [
       {
         id: 'cycle-all',
         label: 'All cycle data',
-        detail: 'History, wellness notes & settings — visible only to you',
+        detail: 'History, wellness notes & settings, visible only to you',
         method: 'delete',
         endpoint: '/api/cycle/all',
       },
@@ -258,22 +288,23 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <motion.div
+    <motion.section
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className="rounded-2xl border border-brand-border bg-brand-surface overflow-hidden"
+      className={`${CARD} p-5 sm:p-6`}
     >
-      <div className="p-5 sm:p-6">
-        <div className="flex items-center gap-2.5 mb-1">
-          {icon}
-          <h2 className="text-base sm:text-lg font-black text-white">{title}</h2>
-        </div>
-        {subtitle && <p className="text-white/30 text-xs mb-4">{subtitle}</p>}
-        {!subtitle && <div className="mb-4" />}
-        {children}
-      </div>
-    </motion.div>
+      <h2 className={SECTION_TITLE}>
+        {icon}
+        {title}
+      </h2>
+      {subtitle ? (
+        <p className="text-white/70 text-xs mt-1 mb-4 leading-relaxed">{subtitle}</p>
+      ) : (
+        <div className="mb-4" />
+      )}
+      {children}
+    </motion.section>
   );
 }
 
@@ -291,7 +322,7 @@ function Toggle({
   accent?: string;
 }) {
   return (
-    <label className="flex items-center gap-4 p-3 rounded-xl border border-brand-border bg-brand-deep/50 cursor-pointer hover:border-brand-emerald/20 transition-colors">
+    <label className="flex items-center gap-4 p-3 rounded-control border border-brand-border bg-brand-surface/50 cursor-pointer hover:border-brand-emerald/40 transition-colors">
       <input
         type="checkbox"
         className={`toggle ${accent}`}
@@ -299,31 +330,14 @@ function Toggle({
         onChange={(e) => onChange(e.target.checked)}
       />
       <div className="min-w-0">
-        <p className="font-semibold text-white/80 text-sm">{title}</p>
-        <p className="text-white/30 text-xs leading-snug">{detail}</p>
+        <p className="font-semibold text-white text-sm">{title}</p>
+        <p className="text-white/70 text-xs leading-snug mt-0.5">{detail}</p>
       </div>
     </label>
   );
 }
 
-/** Sun on a horizon: the "follow daylight" theme option. */
-function SunriseIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.5}
-      strokeLinecap="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M3 18h18M6.5 18a5.5 5.5 0 0 1 11 0M12 6v2.5M5.2 9.7l1.7 1.7M18.8 9.7l-1.7 1.7M3.5 14.5h1.5M19 14.5h1.5" />
-    </svg>
-  );
-}
-
-const THEME_ICONS: Record<ThemeMode, (p: { className?: string }) => React.ReactNode> = {
+const THEME_ICONS: Record<ThemeMode, SvgIcon> = {
   system: DevicePhoneMobileIcon,
   dark: MoonIcon,
   light: SunIcon,
@@ -360,16 +374,14 @@ function ThemeModePicker({ t }: { t: (key: string) => string }) {
               setThemeMode(m);
               setMode(m);
             }}
-            className={`flex items-start gap-3 text-left p-3 rounded-xl border transition-colors ${
-              on
-                ? 'bg-brand-emerald/10 border-brand-emerald text-white'
-                : 'bg-brand-deep text-white/60 border-brand-border hover:text-white'
+            className={`flex items-start gap-3 text-left p-3 rounded-control border transition-colors ${
+              on ? OPTION_ON : OPTION_OFF
             }`}
           >
             <Icon className={`w-5 h-5 mt-0.5 shrink-0 ${on ? 'text-brand-emerald' : ''}`} />
             <span className="min-w-0">
               <span className="block font-semibold text-sm">{label}</span>
-              <span className="block text-xs text-white/40 mt-0.5 leading-snug">{detail}</span>
+              <span className="block text-xs text-white/70 mt-0.5 leading-snug">{detail}</span>
             </span>
           </button>
         );
@@ -418,12 +430,12 @@ function GroqKeySetting({ t }: { t: (key: string) => string }) {
   };
 
   return (
-    <div className="p-3 rounded-xl border border-brand-border bg-brand-deep/50 space-y-2">
+    <div className="p-3 rounded-control border border-brand-border bg-brand-surface/50 space-y-2">
       <div className="flex items-center gap-2">
         <KeyIcon className="w-4 h-4 text-brand-gold shrink-0" />
-        <p className="font-semibold text-white/80 text-sm">{t('settings.groqKeySection')}</p>
+        <p className="font-semibold text-white text-sm">{t('settings.groqKeySection')}</p>
       </div>
-      <p className="text-white/30 text-xs leading-snug">
+      <p className="text-white/70 text-xs leading-snug">
         {t('settings.groqKeyDetail')}{' '}
         <a
           href="https://console.groq.com/keys"
@@ -438,15 +450,12 @@ function GroqKeySetting({ t }: { t: (key: string) => string }) {
       {!isLoading && hasOwnKey && !showForm && (
         <div className="pt-1 space-y-1.5">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-xs text-brand-emerald font-medium">
-              ✓ {t('settings.groqKeyActive')}
+            <span className="inline-flex items-center gap-1 text-xs text-brand-emerald font-bold">
+              <CheckCircleIcon className="w-4 h-4" />
+              {t('settings.groqKeyActive')}
             </span>
             <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setChanging(true)}
-                className="btn btn-xs btn-ghost gap-1 text-white/50 hover:text-white"
-              >
+              <button type="button" onClick={() => setChanging(true)} className={BTN_QUIET}>
                 <PencilSquareIcon className="w-3.5 h-3.5" />
                 {t('settings.groqKeyChange')}
               </button>
@@ -454,14 +463,14 @@ function GroqKeySetting({ t }: { t: (key: string) => string }) {
                 type="button"
                 onClick={handleRemove}
                 disabled={clearKey.isPending}
-                className="btn btn-xs btn-ghost text-red-400/60 hover:text-red-400 hover:bg-red-500/10"
+                className={BTN_DANGER_QUIET}
               >
                 {t('settings.groqKeyRemove')}
               </button>
             </div>
           </div>
           {setAt && (
-            <p className="text-white/25 text-[11px]">
+            <p className="text-white/70 text-[11px]">
               {t('settings.groqKeyAddedOn')}{' '}
               {formatLocaleDate(new Date(setAt), {
                 year: 'numeric',
@@ -470,7 +479,7 @@ function GroqKeySetting({ t }: { t: (key: string) => string }) {
               })}
             </p>
           )}
-          <p className="text-white/25 text-[11px]">{t('settings.groqKeySyncNote')}</p>
+          <p className="text-white/70 text-[11px]">{t('settings.groqKeySyncNote')}</p>
         </div>
       )}
 
@@ -483,13 +492,13 @@ function GroqKeySetting({ t }: { t: (key: string) => string }) {
               onChange={(e) => setValue(e.target.value)}
               placeholder={t('settings.groqKeyPlaceholder')}
               autoComplete="off"
-              className="input input-xs bg-shade/30 border-brand-border text-white flex-1"
+              className="flex-1 min-w-0 rounded-control border border-brand-border bg-shade/30 px-3 py-1.5 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-brand-emerald"
             />
             <button
               type="button"
               onClick={handleSave}
               disabled={!value.trim() || setKey.isPending}
-              className="btn btn-xs bg-brand-emerald-dim border-0 text-on-color hover:bg-brand-emerald-dim hover:brightness-90"
+              className="btn-solid inline-flex items-center justify-center rounded-control px-3 py-1.5 text-xs font-bold text-on-color bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 transition disabled:opacity-50"
             >
               {setKey.isPending ? (
                 <span className="loading loading-spinner loading-xs" />
@@ -504,13 +513,13 @@ function GroqKeySetting({ t }: { t: (key: string) => string }) {
                   setChanging(false);
                   setValue('');
                 }}
-                className="btn btn-xs btn-ghost text-white/40 hover:text-white/70"
+                className={BTN_QUIET}
               >
                 {t('common.cancel')}
               </button>
             )}
           </div>
-          <p className="text-white/25 text-[11px]">{t('settings.groqKeySyncNote')}</p>
+          <p className="text-white/70 text-[11px]">{t('settings.groqKeySyncNote')}</p>
         </div>
       )}
     </div>
@@ -592,7 +601,7 @@ export default function Settings() {
       a.download = `bustandeen-backup-${new Date().toISOString().substring(0, 10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
-      toast.success('Backup downloaded — keep it somewhere safe 📦');
+      toast.success('Backup downloaded. Keep it somewhere safe.');
     } catch {
       toast.error('Export failed. Check your connection and try again.');
     } finally {
@@ -653,13 +662,13 @@ export default function Settings() {
       // Overview
       addSheet('Overview', [
         { Metric: 'Exported at', Value: new Date().toLocaleString() },
-        { Metric: 'Name', Value: profile?.displayName ?? profile?.user?.displayName ?? '—' },
-        { Metric: 'Email', Value: profile?.email ?? profile?.user?.email ?? '—' },
-        { Metric: 'Zikr — lifetime total', Value: zikr?.totalCount ?? 0 },
-        { Metric: 'Zikr — today', Value: zikr?.today?.total ?? 0 },
-        { Metric: 'Quran — day streak', Value: quran?.streak ?? 0 },
-        { Metric: 'Quran — khatms completed', Value: quran?.profile?.khatmCount ?? 0 },
-        { Metric: 'Quran — āyāt all-time', Value: quran?.stats?.allTimeUnits ?? 0 },
+        { Metric: 'Name', Value: profile?.displayName ?? profile?.user?.displayName ?? '-' },
+        { Metric: 'Email', Value: profile?.email ?? profile?.user?.email ?? '-' },
+        { Metric: 'Zikr: lifetime total', Value: zikr?.totalCount ?? 0 },
+        { Metric: 'Zikr: today', Value: zikr?.today?.total ?? 0 },
+        { Metric: 'Quran: day streak', Value: quran?.streak ?? 0 },
+        { Metric: 'Quran: khatms completed', Value: quran?.profile?.khatmCount ?? 0 },
+        { Metric: 'Quran: āyāt all-time', Value: quran?.stats?.allTimeUnits ?? 0 },
       ]);
 
       // Zikr lifetime per type
@@ -695,7 +704,7 @@ export default function Settings() {
         return;
       }
       XLSX.writeFile(wb, `bustandeen-export-${new Date().toISOString().substring(0, 10)}.xlsx`);
-      toast.success('Excel file downloaded ✓');
+      toast.success('Excel file downloaded.');
     } catch {
       toast.error('Excel export failed. Check your connection and try again.');
     } finally {
@@ -712,7 +721,7 @@ export default function Settings() {
     try {
       const parsed = JSON.parse(await file.text()) as { app?: string; version?: number };
       if (parsed?.app !== 'ihsan') {
-        toast.error('That is not a Bustandeen backup file — export one from this page first.');
+        toast.error('That is not a Bustandeen backup file. Export one from this page first.');
         return;
       }
       const { data } = await api.post<{ ok: boolean; counts: Record<string, number> }>(
@@ -722,14 +731,14 @@ export default function Settings() {
       await queryClient.invalidateQueries();
       const c = data.counts ?? {};
       toast.success(
-        `Restored: ${c.zikrDays ?? 0} zikr · ${c.salatDays ?? 0} salat · ${c.fastingDays ?? 0} fasting · ${c.quranDays ?? 0} quran day(s) ✅`,
+        `Restored: ${c.zikrDays ?? 0} zikr · ${c.salatDays ?? 0} salat · ${c.fastingDays ?? 0} fasting · ${c.quranDays ?? 0} quran day(s)`,
         { duration: 6000 }
       );
     } catch (err) {
       // The version mismatch is the one import error worth naming specifically
       // (backend/services/backup.service.ts) — an old export needs a fresh one.
       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      toast.error(msg ?? 'Import failed — the file may be damaged, or the connection dropped.');
+      toast.error(msg ?? 'Import failed. The file may be damaged, or the connection dropped.');
     } finally {
       setImporting(false);
     }
@@ -768,11 +777,11 @@ export default function Settings() {
         (err as { response?: { data?: { error?: string } } }).response?.data?.error ===
           'reauth_required';
       if (reauthRequired) {
-        toast.error('Your sign-in is too old for this — please verify again.');
+        toast.error('Your sign-in is too old for this. Please verify again.');
         setReauthError(null);
         setDeleteAccountStep('reauth');
       } else {
-        toast.error('Account deletion failed — please try again or contact support.');
+        toast.error('Account deletion failed. Please try again or contact support.');
         setDeleteAccountStep('idle');
       }
     }
@@ -781,15 +790,15 @@ export default function Settings() {
   const reauthErrorMessage = (err: unknown): string => {
     const code = (err as AuthError)?.code;
     if (code === 'auth/wrong-password' || code === 'auth/invalid-credential') {
-      return t('settings.reauthWrongPassword', 'Incorrect password — please try again.');
+      return t('settings.reauthWrongPassword', 'Incorrect password. Please try again.');
     }
     if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
       return t('settings.reauthPopupClosed', 'Verification was cancelled.');
     }
     if (code === 'auth/too-many-requests') {
-      return t('settings.reauthTooManyRequests', 'Too many attempts — please wait and try again.');
+      return t('settings.reauthTooManyRequests', 'Too many attempts. Please wait and try again.');
     }
-    return t('settings.reauthFailed', 'Verification failed — please try again.');
+    return t('settings.reauthFailed', 'Verification failed. Please try again.');
   };
 
   const reauthWithPassword = async () => {
@@ -830,9 +839,9 @@ export default function Settings() {
       else if (row.method === 'post') await api.post(row.endpoint, row.body ?? {});
       else await api.patch(row.endpoint, row.body ?? {});
       await queryClient.invalidateQueries();
-      toast.success(`${row.label} — done.`, { icon: '🗑️' });
+      toast.success(`${row.label}: done.`);
     } catch {
-      toast.error(`Could not complete "${row.label}" — try again.`);
+      toast.error(`Could not complete "${row.label}". Please try again.`);
     } finally {
       setDeleting(null);
       setConfirmTarget(null);
@@ -841,26 +850,32 @@ export default function Settings() {
 
   return (
     <AnimatedBackground variant="dark">
-      <div className="p-4 sm:p-6 lg:p-8">
-        <div className="max-w-2xl mx-auto space-y-4">
-          <motion.div
-            initial={{ opacity: 0, y: -16 }}
+      <div className="px-4 pt-3 pb-16 sm:p-6 lg:p-8">
+        <div className="max-w-2xl mx-auto space-y-5">
+          {/* ── The screen's one arch ── */}
+          <motion.section
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-6"
+            className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-10 pb-6 text-center"
           >
-            <div className="flex items-center justify-center gap-2.5 mb-1">
-              <Cog6ToothIcon className="w-7 h-7 text-brand-emerald" />
-              <h1 className="text-2xl sm:text-3xl font-black text-brand-emerald">
-                {t('settings.title')}
-              </h1>
+            <div className="w-16 h-16 mx-auto rounded-full grid place-items-center bg-brand-emerald/10 border border-brand-emerald/30">
+              <Cog6ToothIcon className="w-8 h-8 text-brand-emerald" />
             </div>
-            <p className="text-sm text-white/40">{t('settings.subtitle')}</p>
-          </motion.div>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-white mt-4">
+              {t('settings.title')}
+            </h1>
+            <p className="text-sm text-white/70 mt-1">{t('settings.subtitle')}</p>
+            {user?.email && (
+              <p className="inline-flex items-center gap-1.5 mt-4 px-3 py-1 rounded-full border border-brand-border bg-brand-surface/60 text-xs text-white/80 max-w-full">
+                <span className="truncate">{user.email}</span>
+              </p>
+            )}
+          </motion.section>
 
           {/* ── Language — kept at the very top so it's the first thing found ── */}
           <SectionCard
             icon={<LanguageIcon className="w-5 h-5 text-brand-emerald" />}
-            title={`🌐 ${t('settings.language')}`}
+            title={t('settings.language')}
             subtitle={t('settings.languageSubtitle')}
             delay={0.03}
           >
@@ -872,24 +887,23 @@ export default function Settings() {
                     void i18n.changeLanguage(l.id);
                     syncQuranTranslationWithLang(l.id);
                   }}
-                  className={`p-3 rounded-xl border text-sm font-bold transition-all ${
-                    i18n.resolvedLanguage === l.id
-                      ? 'bg-brand-emerald/20 border-brand-emerald/50 text-brand-emerald'
-                      : 'bg-brand-deep/50 border-brand-border text-white/60 hover:border-brand-emerald/30'
+                  aria-pressed={i18n.resolvedLanguage === l.id}
+                  className={`p-3 rounded-control border text-sm font-bold transition-colors ${
+                    i18n.resolvedLanguage === l.id ? OPTION_ON : OPTION_OFF
                   }`}
                 >
                   {l.label}
                 </button>
               ))}
             </div>
-            <p className="text-white/25 text-[10px] mt-3 leading-relaxed">
+            <p className="text-white/70 text-[11px] mt-3 leading-relaxed">
               {t('settings.languageNote')}
             </p>
           </SectionCard>
 
           {/* ── Musafir mode — right under Language so a traveller finds it fast ── */}
           <SectionCard
-            icon={<span className="text-lg leading-none">🧳</span>}
+            icon={<BriefcaseIcon className="w-5 h-5 text-brand-info" />}
             title={t('settings.musafirSection')}
             subtitle={t('settings.musafirSubtitle')}
             delay={0.04}
@@ -904,10 +918,10 @@ export default function Settings() {
                     startAfter: suggestStartAfter(today),
                     school: defaultSchool(),
                   });
-                  toast.success(t('settings.musafirStarted'), { icon: '✈️' });
+                  toast.success(t('settings.musafirStarted'));
                 } else {
                   endMusafir(today);
-                  toast.success(t('settings.musafirEnded'), { icon: '🏡' });
+                  toast.success(t('settings.musafirEnded'));
                 }
               }}
               title={musafir ? t('settings.musafirOnTitle') : t('settings.musafirOffTitle')}
@@ -925,7 +939,7 @@ export default function Settings() {
               accent="toggle-info"
             />
             {musafir && (
-              <p className="text-white/40 text-xs mt-2 px-1">
+              <p className="text-white/70 text-xs mt-2 px-1">
                 {musafir.startAfter
                   ? t('settings.musafirStartedAfter', {
                       date: formatLocaleDate(new Date(`${musafir.startedAt}T12:00:00`), {
@@ -942,7 +956,7 @@ export default function Settings() {
                     })}{' '}
                 <button
                   onClick={() => navigate('/musafir')}
-                  className="underline underline-offset-2 hover:text-white/70"
+                  className="underline underline-offset-2 text-white/85 hover:text-white"
                 >
                   {t('settings.musafirChangeStart')}
                 </button>
@@ -950,9 +964,10 @@ export default function Settings() {
             )}
             <button
               onClick={() => navigate('/musafir')}
-              className="mt-3 w-full text-left px-3 py-2.5 rounded-xl border border-brand-info/30 bg-brand-info/[0.08] text-brand-info text-sm font-bold hover:border-brand-info/60 transition-colors"
+              className="mt-3 w-full flex items-center justify-between gap-2 text-left px-3 py-2.5 rounded-control border border-brand-info/30 bg-brand-info/[0.08] text-brand-info text-sm font-bold hover:border-brand-info/60 transition-colors"
             >
-              {t('settings.musafirOpen')} →
+              {t('settings.musafirOpen')}
+              <ChevronRightIcon className="w-4 h-4 shrink-0" />
             </button>
           </SectionCard>
 
@@ -967,14 +982,14 @@ export default function Settings() {
               <Toggle
                 checked={showNoorToday}
                 onChange={setShowNoorToday}
-                title={`✨ ${t('settings.noorToday')}`}
+                title={t('settings.noorToday')}
                 detail={t('settings.noorTodayDetail')}
                 accent="toggle-success"
               />
               <Toggle
                 checked={showNoorAllTime}
                 onChange={setShowNoorAllTime}
-                title={`🌟 ${t('settings.noorAllTime')}`}
+                title={t('settings.noorAllTime')}
                 detail={t('settings.noorAllTimeDetail')}
                 accent="toggle-warning"
               />
@@ -993,10 +1008,11 @@ export default function Settings() {
                 <button
                   key={d}
                   onClick={() => applyHijriAdj(d)}
-                  className={`btn btn-sm flex-1 border ${
+                  aria-pressed={hijriAdj === d}
+                  className={`flex-1 rounded-control border px-2 py-2 text-sm font-bold transition-colors ${
                     hijriAdj === d
-                      ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim'
-                      : 'bg-brand-deep text-white/50 border-brand-border hover:text-white'
+                      ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim shadow-elev-1'
+                      : OPTION_OFF
                   }`}
                 >
                   {d === 0
@@ -1007,13 +1023,13 @@ export default function Settings() {
                 </button>
               ))}
             </div>
-            <p className="text-brand-gold/60 text-xs mt-3">
-              Today:{' '}
+            <p className="text-brand-gold text-xs mt-3 font-semibold">
+              {t('settings.hijriToday', 'Today:')}{' '}
               {(() => {
                 const h = getHijriToday();
-                return h ? formatHijriDate(h) : '—';
+                return h ? formatHijriDate(h) : '-';
               })()}
-              <span className="text-white/30"> · {t('settings.hijriNote')}</span>
+              <span className="text-white/70 font-normal"> · {t('settings.hijriNote')}</span>
             </p>
           </SectionCard>
 
@@ -1046,25 +1062,24 @@ export default function Settings() {
               ).map(({ mode, label, detail }) => (
                 <div
                   key={mode}
-                  className={`relative rounded-xl border transition-colors ${
-                    dayStartMode === mode
-                      ? 'bg-brand-emerald/10 border-brand-emerald text-white'
-                      : 'bg-brand-deep text-white/50 border-brand-border hover:text-white'
+                  className={`relative rounded-control border transition-colors ${
+                    dayStartMode === mode ? OPTION_ON : OPTION_OFF
                   }`}
                 >
                   <button
                     onClick={() => applyDayStartMode(mode)}
+                    aria-pressed={dayStartMode === mode}
                     className="w-full text-left p-3 pr-9"
                   >
                     <p className="font-semibold text-sm">{label}</p>
-                    <p className="text-xs text-white/40 mt-0.5 leading-snug">{detail}</p>
+                    <p className="text-xs text-white/70 mt-0.5 leading-snug">{detail}</p>
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       setDayStartInfoMode(mode);
                     }}
-                    className="absolute top-2 right-2 w-6 h-6 grid place-items-center rounded-full text-white/30 hover:text-brand-emerald hover:bg-white/5 transition-colors"
+                    className="absolute top-2 right-2 w-7 h-7 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald hover:bg-brand-surface transition-colors"
                     aria-label={t('settings.dayStartInfoAria', { option: label })}
                   >
                     <InformationCircleIcon className="w-4 h-4" />
@@ -1077,8 +1092,9 @@ export default function Settings() {
               onClose={() => setDayStartInfoMode(null)}
             />
             {(dayStartMode === 'fajr' || dayStartMode === 'maghrib') && !savedLocation && (
-              <p className="text-brand-gold/70 text-xs mt-3 leading-relaxed">
-                ⚠️ {t('settings.dayStartLocationNudge')}
+              <p className="flex items-start gap-2 text-brand-gold text-xs mt-3 leading-relaxed">
+                <ExclamationTriangleIcon className="w-4 h-4 shrink-0 mt-px" />
+                {t('settings.dayStartLocationNudge')}
               </p>
             )}
           </SectionCard>
@@ -1146,7 +1162,7 @@ export default function Settings() {
 
           {/* ── Zikr library ── */}
           <SectionCard
-            icon={<span className="text-lg">📿</span>}
+            icon={<TasbihIcon className="w-5 h-5 text-brand-emerald" />}
             title={t('settings.zikrLibrary')}
             subtitle={t('settings.zikrLibrarySubtitle')}
             delay={0.22}
@@ -1161,9 +1177,9 @@ export default function Settings() {
             subtitle={t('settings.dataSubtitle')}
             delay={0.25}
           >
-            <div className="flex flex-wrap gap-2 mb-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
               <button
-                className="btn btn-sm bg-brand-deep border border-brand-border text-white/70 hover:text-white gap-2"
+                className={BTN_SECONDARY}
                 onClick={() => void exportProfile()}
                 disabled={exporting}
               >
@@ -1175,7 +1191,7 @@ export default function Settings() {
                 {t('settings.fullBackup')}
               </button>
               <button
-                className="btn btn-sm bg-brand-deep border border-brand-border text-white/70 hover:text-white gap-2"
+                className={BTN_SECONDARY}
                 onClick={() => void exportExcel()}
                 disabled={exportingXlsx}
               >
@@ -1187,7 +1203,7 @@ export default function Settings() {
                 {t('settings.exportExcel')}
               </button>
               <button
-                className="btn btn-sm bg-brand-deep border border-brand-border text-white/70 hover:text-white gap-2"
+                className={BTN_SECONDARY}
                 onClick={() => void exportEverything()}
                 disabled={exportingAll}
               >
@@ -1199,7 +1215,7 @@ export default function Settings() {
                 {t('settings.downloadAllData')}
               </button>
               <label
-                className={`btn btn-sm bg-brand-deep border border-brand-border text-white/70 hover:text-white gap-2 cursor-pointer ${importing ? 'pointer-events-none opacity-60' : ''}`}
+                className={`${BTN_SECONDARY} cursor-pointer ${importing ? 'pointer-events-none opacity-60' : ''}`}
               >
                 {importing ? (
                   <span className="loading loading-spinner loading-xs" />
@@ -1215,22 +1231,20 @@ export default function Settings() {
                 />
               </label>
             </div>
-            <p className="text-white/30 text-[11px] mb-4 leading-relaxed">
+            <p className="text-white/70 text-[11px] mb-2 leading-relaxed">
               {t('settings.backupNote')}
               {user?.gender === 'female' ? t('settings.backupNoteCycle') : ''}
             </p>
-            <p className="text-white/30 text-[11px] mb-4 leading-relaxed">
+            <p className="text-white/70 text-[11px] mb-4 leading-relaxed">
               {t('settings.downloadAllDataNote')}
             </p>
 
             {/* Saved prayer location (stored only in this browser) */}
-            <div className="flex items-center gap-3 p-2.5 rounded-xl border border-brand-border bg-brand-deep/40 mb-5">
-              <span className="text-lg shrink-0">📍</span>
+            <div className="flex items-center gap-3 p-3 rounded-control border border-brand-border bg-brand-surface/50 mb-5">
+              <MapPinIcon className="w-5 h-5 shrink-0 text-brand-emerald" />
               <div className="flex-1 min-w-0">
-                <p className="text-white/70 text-sm font-semibold">
-                  {t('settings.prayerLocation')}
-                </p>
-                <p className="text-white/30 text-[11px] truncate">
+                <p className="text-white text-sm font-semibold">{t('settings.prayerLocation')}</p>
+                <p className="text-white/70 text-[11px] truncate">
                   {savedLocation
                     ? t('settings.locationSet', { name: savedLocation })
                     : t('settings.locationNotSet')}
@@ -1243,7 +1257,7 @@ export default function Settings() {
                     setSavedLocation(null);
                     toast.success('Saved location cleared.');
                   }}
-                  className="btn btn-xs btn-ghost text-white/40 hover:text-red-400 shrink-0"
+                  className={`${BTN_DANGER_QUIET} shrink-0`}
                 >
                   {t('settings.clearLocation')}
                 </button>
@@ -1252,38 +1266,43 @@ export default function Settings() {
 
             {/* separator: everything below is destructive (Istiak's spec) */}
             <div className="flex items-center gap-3 my-5">
-              <div className="flex-1 border-t border-red-500/25" />
-              <span className="text-red-400/80 text-[11px] uppercase tracking-widest font-bold">
-                ⚠️ {t('settings.dangerZone')}
+              <div className="flex-1 border-t border-red-400/30" />
+              <span className="inline-flex items-center gap-1.5 text-red-400 text-[11px] uppercase tracking-widest font-bold">
+                <ExclamationTriangleIcon className="w-4 h-4" />
+                {t('settings.dangerZone')}
               </span>
-              <div className="flex-1 border-t border-red-500/25" />
+              <div className="flex-1 border-t border-red-400/30" />
             </div>
-            <div className="rounded-2xl bg-red-500/[0.08] border border-red-500/25 p-3 space-y-3">
-              <p className="text-red-300/60 text-[11px]">{t('settings.dangerNote')}</p>
+            <div className="rounded-card bg-red-500/[0.06] border border-red-400/30 p-3 space-y-3">
+              <p className="text-red-400 text-[11px] font-semibold">{t('settings.dangerNote')}</p>
               {dangerGroups.map((g) => (
-                <div key={g.id} className={`rounded-2xl border ${g.card} p-3 space-y-1.5`}>
-                  <p className="text-white/70 text-xs font-black">
-                    {g.emoji} {g.title}
+                <div
+                  key={g.id}
+                  className="rounded-control border border-brand-border bg-brand-deep shadow-elev-1 p-3 space-y-1.5"
+                >
+                  <p className="flex items-center gap-2 text-white text-xs font-bold">
+                    <g.Icon className={`w-4 h-4 ${g.tone}`} />
+                    {g.title}
                   </p>
                   {g.rows.map((row) => (
                     <div
                       key={row.id}
-                      className={`flex items-center gap-3 py-1.5 ${row.sub ? 'pl-4 border-l-2 border-white/5 ml-1' : ''}`}
+                      className={`flex items-center gap-3 py-1.5 ${row.sub ? 'pl-4 border-l-2 border-brand-border ml-1' : ''}`}
                     >
                       <div className="flex-1 min-w-0">
                         <p
-                          className={`text-sm ${row.sub ? 'text-white/50' : 'text-white/75 font-semibold'}`}
+                          className={`text-sm ${row.sub ? 'text-white/85' : 'text-white font-semibold'}`}
                         >
                           {row.label}
                         </p>
-                        <p className="text-white/30 text-[11px]">{row.detail}</p>
+                        <p className="text-white/70 text-[11px]">{row.detail}</p>
                       </div>
                       {confirmTarget === row.id ? (
                         <div className="flex gap-1.5 shrink-0">
                           <button
                             onClick={() => void runDanger(row)}
                             disabled={deleting === row.id}
-                            className="btn btn-xs bg-red-500 hover:bg-red-600 text-on-color border-0"
+                            className={BTN_DANGER}
                           >
                             {deleting === row.id ? (
                               <span className="loading loading-spinner loading-xs" />
@@ -1291,10 +1310,7 @@ export default function Settings() {
                               t('settings.yesDoIt')
                             )}
                           </button>
-                          <button
-                            onClick={() => setConfirmTarget(null)}
-                            className="btn btn-xs btn-ghost text-white/50"
-                          >
+                          <button onClick={() => setConfirmTarget(null)} className={BTN_QUIET}>
                             {t('common.cancel')}
                           </button>
                         </div>
@@ -1302,9 +1318,9 @@ export default function Settings() {
                         <button
                           onClick={() => setConfirmTarget(row.id)}
                           aria-label={row.label}
-                          className="btn btn-xs btn-ghost text-red-400/60 hover:text-red-400 hover:bg-red-500/10 gap-1 shrink-0"
+                          className={`${BTN_DANGER_QUIET} shrink-0`}
                         >
-                          <TrashIcon className="w-3.5 h-3.5" />{' '}
+                          <TrashIcon className="w-3.5 h-3.5" />
                           {row.method === 'delete'
                             ? t('common.delete')
                             : row.id === 'quran-khatam'
@@ -1317,30 +1333,27 @@ export default function Settings() {
                 </div>
               ))}
             </div>
-            <p className="text-white/25 text-[10px] mt-3">{t('settings.accountNote')}</p>
+            <p className="text-white/70 text-[11px] mt-3">{t('settings.accountNote')}</p>
 
             {/* Delete entire account */}
-            <div className="mt-4 rounded-2xl border border-red-500/40 bg-red-900/20 p-4">
-              <p className="text-red-300 font-bold text-sm mb-1">
+            <div className="mt-4 rounded-card border border-red-400/40 bg-red-500/[0.06] p-4">
+              <p className="text-red-400 font-bold text-sm mb-1">
                 {t('settings.deleteAccount', 'Delete account')}
               </p>
-              <p className="text-red-300/50 text-[11px] mb-3">
+              <p className="text-white/75 text-[11px] mb-3">
                 {t(
                   'settings.deleteAccountDetail',
-                  'Permanently removes all your data and your login — this cannot be undone.'
+                  'Permanently removes all your data and your login. This cannot be undone.'
                 )}
               </p>
               {deleteAccountStep === 'idle' && (
-                <button
-                  onClick={() => setDeleteAccountStep('confirm')}
-                  className="btn btn-xs bg-red-700/60 hover:bg-red-600 text-red-100 border-0"
-                >
+                <button onClick={() => setDeleteAccountStep('confirm')} className={BTN_DANGER}>
                   {t('settings.deleteAccount', 'Delete account')}
                 </button>
               )}
               {deleteAccountStep === 'confirm' && (
                 <div className="flex gap-2 items-center flex-wrap">
-                  <span className="text-red-300 text-xs">
+                  <span className="text-red-400 text-xs font-semibold">
                     {t(
                       'settings.deleteAccountConfirm',
                       'This will erase everything. Are you sure?'
@@ -1351,21 +1364,18 @@ export default function Settings() {
                       setReauthError(null);
                       setDeleteAccountStep('reauth');
                     }}
-                    className="btn btn-xs bg-red-600 hover:bg-red-700 text-on-color border-0"
+                    className={BTN_DANGER}
                   >
                     {t('settings.yesDeleteAccount', 'Yes, delete my account')}
                   </button>
-                  <button
-                    onClick={() => setDeleteAccountStep('idle')}
-                    className="btn btn-xs btn-ghost text-white/50"
-                  >
+                  <button onClick={() => setDeleteAccountStep('idle')} className={BTN_QUIET}>
                     {t('common.cancel')}
                   </button>
                 </div>
               )}
               {deleteAccountStep === 'reauth' && (
                 <div className="space-y-2">
-                  <p className="text-red-300 text-xs">
+                  <p className="text-white/85 text-xs">
                     {t(
                       'settings.reauthPrompt',
                       'For your security, please verify it’s really you before we delete everything.'
@@ -1376,14 +1386,16 @@ export default function Settings() {
                       <button
                         type="button"
                         onClick={() => setReauthMethod('password')}
-                        className={`btn btn-2xs rounded-full ${reauthMethod === 'password' ? 'bg-red-600 text-on-color border-0' : 'bg-white/5 border-red-500/20 text-white/50'}`}
+                        aria-pressed={reauthMethod === 'password'}
+                        className={`rounded-full border px-3 py-1 text-xs font-bold ${reauthMethod === 'password' ? 'bg-red-600 border-red-600 text-on-color' : 'bg-brand-surface/50 border-brand-border text-white/75'}`}
                       >
                         {t('settings.reauthMethodPassword', 'Password')}
                       </button>
                       <button
                         type="button"
                         onClick={() => setReauthMethod('google')}
-                        className={`btn btn-2xs rounded-full ${reauthMethod === 'google' ? 'bg-red-600 text-on-color border-0' : 'bg-white/5 border-red-500/20 text-white/50'}`}
+                        aria-pressed={reauthMethod === 'google'}
+                        className={`rounded-full border px-3 py-1 text-xs font-bold ${reauthMethod === 'google' ? 'bg-red-600 border-red-600 text-on-color' : 'bg-brand-surface/50 border-brand-border text-white/75'}`}
                       >
                         {t('settings.reauthMethodGoogle', 'Google')}
                       </button>
@@ -1403,13 +1415,13 @@ export default function Settings() {
                         value={reauthPassword}
                         onChange={(e) => setReauthPassword(e.target.value)}
                         placeholder={t('settings.reauthPasswordPlaceholder', 'Your password')}
-                        className="input input-xs bg-shade/30 border-red-500/30 text-white w-40"
+                        className="w-44 rounded-control border border-red-400/40 bg-shade/30 px-3 py-1.5 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-red-400"
                         disabled={reauthBusy}
                       />
                       <button
                         type="submit"
                         disabled={reauthBusy || !reauthPassword}
-                        className="btn btn-xs bg-red-600 hover:bg-red-700 text-on-color border-0"
+                        className={BTN_DANGER}
                       >
                         {reauthBusy ? (
                           <span className="loading loading-spinner loading-xs" />
@@ -1422,7 +1434,7 @@ export default function Settings() {
                     <button
                       onClick={() => void reauthWithGoogle()}
                       disabled={reauthBusy}
-                      className="btn btn-xs bg-red-600 hover:bg-red-700 text-on-color border-0"
+                      className={BTN_DANGER}
                     >
                       {reauthBusy ? (
                         <span className="loading loading-spinner loading-xs" />
@@ -1431,14 +1443,16 @@ export default function Settings() {
                       )}
                     </button>
                   )}
-                  {reauthError && <p className="text-red-400 text-[11px]">{reauthError}</p>}
+                  {reauthError && (
+                    <p className="text-red-400 text-xs font-semibold">{reauthError}</p>
+                  )}
                   <button
                     onClick={() => {
                       setReauthPassword('');
                       setReauthError(null);
                       setDeleteAccountStep('idle');
                     }}
-                    className="btn btn-xs btn-ghost text-white/50"
+                    className={BTN_QUIET}
                   >
                     {t('common.cancel')}
                   </button>

@@ -15,9 +15,10 @@ export const SECTION_TITLE = 'font-display text-white font-bold text-base flex i
 export const ITEM =
   'rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors';
 
-/** Solid dark-sage action (white text at 4.8:1, A11Y-01). */
+/** Solid dark-sage action (white text at 4.8:1, A11Y-01). `btn-solid`: stays white
+ *  text when disabled (styles/global.css). */
 export const BTN_PRIMARY =
-  'inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 transition disabled:opacity-50 disabled:cursor-not-allowed';
+  'btn-solid inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 transition disabled:opacity-50 disabled:cursor-not-allowed';
 
 /** Quiet action: a raised paper/dark button with a border. */
 export const BTN_SECONDARY =
