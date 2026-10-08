@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { CheckCircleIcon } from '@heroicons/react/24/solid';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { BTN_PRIMARY } from '../components/bustanStyles.js';
 
 export default function SadaqahThankYou() {
   const { t } = useTranslation();
@@ -20,7 +21,7 @@ export default function SadaqahThankYou() {
         <motion.div
           initial={{ opacity: 0, scale: 0.94 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full rounded-3xl border border-brand-emerald/30 bg-brand-emerald/[0.07] p-8 text-center space-y-4"
+          className="max-w-md w-full rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-8 pt-12 pb-8 text-center space-y-4"
         >
           <motion.div
             initial={{ scale: 0 }}
@@ -29,25 +30,22 @@ export default function SadaqahThankYou() {
           >
             <CheckCircleIcon className="w-16 h-16 text-brand-emerald mx-auto" />
           </motion.div>
-          <h1 className="text-white font-black text-2xl">
+          <h1 className="font-display text-white font-bold text-2xl">
             {t('sadaqahThankYou.title', 'JazākAllāhu khayran')}
           </h1>
-          <p className="text-white/60 text-sm leading-relaxed">
+          <p className="text-white/75 text-sm leading-relaxed">
             {t(
               'sadaqahThankYou.body',
               "We've received your submission and will verify it against our bKash records within 24-48 hours. A confirmation email is on its way."
             )}
           </p>
-          <p className="text-brand-emerald/80 text-sm italic">
+          <p className="text-brand-emerald text-sm italic">
             {t(
               'sadaqahThankYou.dua',
               'May Allah accept it from you and make it a means of ongoing reward.'
             )}
           </p>
-          <Link
-            to="/"
-            className="btn mt-2 rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color w-full"
-          >
+          <Link to="/" className={`${BTN_PRIMARY} mt-2 w-full`}>
             {t('sadaqahThankYou.backToApp', 'Back to Bustandeen')}
           </Link>
         </motion.div>

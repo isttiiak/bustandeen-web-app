@@ -6,6 +6,8 @@ import axios from 'axios';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 import BackButton from '../components/BackButton.js';
+import { BTN_PRIMARY, CARD } from '../components/bustanStyles.js';
+import { DuaHandsIcon } from '../components/icons/IslamicIcons.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useSadaqahFormStore } from '../store/useSadaqahFormStore.js';
 import { useSadaqahConfig, useSubmitDonation } from '../hooks/useSadaqah.js';
@@ -85,7 +87,7 @@ export default function SadaqahDonate() {
         serverMessage ??
           t(
             'sadaqahDonate.submitFail',
-            'Could not submit right now — please check your connection and try again.'
+            'Could not submit right now. Please check your connection and try again.'
           )
       );
     }
@@ -97,7 +99,7 @@ export default function SadaqahDonate() {
         title={t('sadaqahDonate.seoTitle', 'Give Sadaqah')}
         description={t(
           'sadaqahDonate.seoDescription',
-          'Submit your bKash sadaqah to Bustandeen — verified within 24-48 hours.'
+          'Submit your bKash sadaqah to Bustandeen, verified within 24-48 hours.'
         )}
         path="/sadaqah/donate"
         index={false}
@@ -105,22 +107,22 @@ export default function SadaqahDonate() {
       <div className="max-w-2xl mx-auto px-4 py-6 sm:py-10 space-y-5">
         <BackButton to="/sadaqah" />
 
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl border border-brand-gold/25 bg-brand-gold/5 p-5 space-y-2"
-        >
-          <p className="text-brand-gold font-black text-sm uppercase tracking-widest">
+        {/* Arch hero: the four bKash steps */}
+        <section className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-10 pb-6">
+          <div className="w-14 h-14 mx-auto rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/30">
+            <DuaHandsIcon className="w-7 h-7 text-brand-gold" aria-hidden />
+          </div>
+          <h1 className="font-display text-2xl font-bold text-white mt-4 text-center">
             {t('sadaqahDonate.howLabel', 'How to give')}
-          </p>
-          <ol className="text-white/70 text-sm leading-relaxed list-decimal list-inside space-y-1">
+          </h1>
+          <ol className="text-white/80 text-sm leading-relaxed list-decimal list-inside space-y-1.5 mt-4 max-w-md mx-auto">
             <li>{t('sadaqahDonate.step1', 'Open bKash and choose Send Money (not Payment).')}</li>
             <li>
               {t('sadaqahDonate.step2', 'Send your amount to')}{' '}
               {config?.bkashNumber ? (
                 <span className="text-white font-black">{config.bkashNumber}</span>
               ) : (
-                <span className="text-white/40">
+                <span className="text-white/60">
                   {t('sadaqahDonate.numberLoading', 'loading…')}
                 </span>
               )}
@@ -130,27 +132,27 @@ export default function SadaqahDonate() {
             </li>
             <li>{t('sadaqahDonate.step4', 'Fill in the form below with that ID and amount.')}</li>
           </ol>
-        </motion.div>
+        </section>
 
         <motion.form
           onSubmit={handleSubmit}
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.06 }}
-          className="rounded-3xl border border-brand-border bg-brand-surface p-5 sm:p-7 space-y-5"
+          className={`${CARD} p-5 sm:p-7 space-y-5`}
         >
           {/* Payment method — bKash only for now, Nagad scaffolded-disabled */}
           <div>
-            <label className="text-white/70 text-sm font-bold">
+            <label className="text-white/80 text-sm font-bold">
               {t('sadaqahDonate.methodLabel', 'Payment method')}
             </label>
             <div className="grid grid-cols-2 gap-3 mt-1.5">
-              <div className="rounded-2xl border-2 border-brand-emerald bg-brand-emerald/10 p-3 text-center">
+              <div className="rounded-control border-2 border-brand-emerald bg-brand-emerald/10 p-3 text-center">
                 <p className="font-bold text-white text-sm">bKash</p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-center opacity-40">
+              <div className="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
                 <p className="font-bold text-white/50 text-sm">Nagad</p>
-                <p className="text-[10px] text-white/30">
+                <p className="text-[10px] text-white/50">
                   {t('sadaqahDonate.comingSoon', 'Coming soon')}
                 </p>
               </div>
@@ -167,7 +169,7 @@ export default function SadaqahDonate() {
                 setField('isAnonymous', e.target.checked);
                 if (e.target.checked) setField('showNamePublicly', false);
               }}
-              className="checkbox checkbox-sm border-brand-emerald/40"
+              className="checkbox checkbox-sm border-brand-border"
             />
             <label htmlFor="sd-anon" className="text-white/70 text-sm">
               {t('sadaqahDonate.anonymousLabel', "Don't record my name at all")}
@@ -176,7 +178,7 @@ export default function SadaqahDonate() {
 
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-white/70 text-sm font-bold" htmlFor="sd-name">
+              <label className="text-white/80 text-sm font-bold" htmlFor="sd-name">
                 {t('sadaqahDonate.nameLabel', 'Your name')}{' '}
                 {!isAnonymous && <span className="text-red-400">*</span>}
               </label>
@@ -187,11 +189,11 @@ export default function SadaqahDonate() {
                 value={isAnonymous ? '' : donorName}
                 onChange={(e) => setField('donorName', e.target.value)}
                 placeholder={t('sadaqahDonate.namePlaceholder', 'e.g. Abdullah')}
-                className="input input-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white disabled:opacity-40"
+                className="input input-bordered w-full mt-1.5 rounded-control bg-brand-surface border-brand-border text-white placeholder:text-white/40 focus:border-brand-emerald disabled:opacity-40"
               />
             </div>
             <div>
-              <label className="text-white/70 text-sm font-bold" htmlFor="sd-behalf">
+              <label className="text-white/80 text-sm font-bold" htmlFor="sd-behalf">
                 {t('sadaqahDonate.onBehalfLabel', 'On behalf of (optional)')}
               </label>
               <input
@@ -200,14 +202,14 @@ export default function SadaqahDonate() {
                 value={onBehalfOf}
                 onChange={(e) => setField('onBehalfOf', e.target.value)}
                 placeholder={t('sadaqahDonate.onBehalfPlaceholder', 'e.g. my late father')}
-                className="input input-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white"
+                className="input input-bordered w-full mt-1.5 rounded-control bg-brand-surface border-brand-border text-white placeholder:text-white/40 focus:border-brand-emerald"
               />
             </div>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-white/70 text-sm font-bold" htmlFor="sd-email">
+              <label className="text-white/80 text-sm font-bold" htmlFor="sd-email">
                 {t('sadaqahDonate.emailLabel', 'Email')} <span className="text-red-400">*</span>
               </label>
               <input
@@ -217,11 +219,11 @@ export default function SadaqahDonate() {
                 value={email}
                 onChange={(e) => setField('email', e.target.value)}
                 placeholder="you@example.com"
-                className="input input-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white"
+                className="input input-bordered w-full mt-1.5 rounded-control bg-brand-surface border-brand-border text-white placeholder:text-white/40 focus:border-brand-emerald"
               />
             </div>
             <div>
-              <label className="text-white/70 text-sm font-bold" htmlFor="sd-phone">
+              <label className="text-white/80 text-sm font-bold" htmlFor="sd-phone">
                 {t('sadaqahDonate.phoneLabel', 'bKash number you sent from')}{' '}
                 <span className="text-red-400">*</span>
               </label>
@@ -232,10 +234,10 @@ export default function SadaqahDonate() {
                 value={phone}
                 onChange={(e) => setField('phone', e.target.value)}
                 placeholder="01XXXXXXXXX"
-                className="input input-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white"
+                className="input input-bordered w-full mt-1.5 rounded-control bg-brand-surface border-brand-border text-white placeholder:text-white/40 focus:border-brand-emerald"
               />
               {!!phone && !phoneValid && (
-                <p className="text-brand-gold/70 text-xs mt-1">
+                <p className="text-brand-gold text-xs mt-1">
                   {t('sadaqahDonate.phoneHint', 'Enter an 11-digit Bangladeshi mobile number')}
                 </p>
               )}
@@ -244,7 +246,7 @@ export default function SadaqahDonate() {
 
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
-              <label className="text-white/70 text-sm font-bold" htmlFor="sd-trxid">
+              <label className="text-white/80 text-sm font-bold" htmlFor="sd-trxid">
                 {t('sadaqahDonate.trxIdLabel', 'Transaction ID')}{' '}
                 <span className="text-red-400">*</span>
               </label>
@@ -255,11 +257,11 @@ export default function SadaqahDonate() {
                 value={transactionId}
                 onChange={(e) => setField('transactionId', e.target.value)}
                 placeholder={t('sadaqahDonate.trxIdPlaceholder', 'From your bKash SMS')}
-                className="input input-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white font-mono"
+                className="input input-bordered w-full mt-1.5 rounded-control bg-brand-surface border-brand-border text-white placeholder:text-white/40 focus:border-brand-emerald font-mono"
               />
             </div>
             <div>
-              <label className="text-white/70 text-sm font-bold" htmlFor="sd-amount">
+              <label className="text-white/80 text-sm font-bold" htmlFor="sd-amount">
                 {t('sadaqahDonate.amountLabel', 'Amount (BDT)')}{' '}
                 <span className="text-red-400">*</span>
               </label>
@@ -273,13 +275,13 @@ export default function SadaqahDonate() {
                 value={amount}
                 onChange={(e) => setField('amount', e.target.value)}
                 placeholder="500"
-                className="input input-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white"
+                className="input input-bordered w-full mt-1.5 rounded-control bg-brand-surface border-brand-border text-white placeholder:text-white/40 focus:border-brand-emerald"
               />
             </div>
           </div>
 
           <div>
-            <label className="text-white/70 text-sm font-bold" htmlFor="sd-date">
+            <label className="text-white/80 text-sm font-bold" htmlFor="sd-date">
               {t('sadaqahDonate.dateLabel', 'Transaction date')}{' '}
               <span className="text-red-400">*</span>
             </label>
@@ -289,16 +291,16 @@ export default function SadaqahDonate() {
               required
               value={transactionDate}
               onChange={(e) => setField('transactionDate', e.target.value)}
-              className="input input-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white max-w-[200px]"
+              className="input input-bordered w-full mt-1.5 rounded-control bg-brand-surface border-brand-border text-white placeholder:text-white/40 focus:border-brand-emerald max-w-[200px]"
             />
           </div>
 
           <div>
             <div className="flex items-end justify-between">
-              <label className="text-white/70 text-sm font-bold" htmlFor="sd-message">
+              <label className="text-white/80 text-sm font-bold" htmlFor="sd-message">
                 {t('sadaqahDonate.messageLabel', 'Message (optional)')}
               </label>
-              <span className="text-[11px] text-white/25">
+              <span className="text-[11px] text-white/55">
                 {t('sadaqahDonate.charCount', '{{count}} characters', { count: message.length })}
               </span>
             </div>
@@ -312,7 +314,7 @@ export default function SadaqahDonate() {
                 'sadaqahDonate.messagePlaceholder',
                 'A du’a, a note, anything you’d like to add'
               )}
-              className="textarea textarea-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white leading-relaxed"
+              className="textarea textarea-bordered w-full mt-1.5 rounded-control bg-brand-surface border-brand-border text-white placeholder:text-white/40 focus:border-brand-emerald leading-relaxed"
             />
           </div>
 
@@ -323,7 +325,7 @@ export default function SadaqahDonate() {
               checked={!isAnonymous && showNamePublicly}
               disabled={isAnonymous}
               onChange={(e) => setField('showNamePublicly', e.target.checked)}
-              className="checkbox checkbox-sm border-brand-emerald/40"
+              className="checkbox checkbox-sm border-brand-border"
             />
             <label htmlFor="sd-public" className="text-white/70 text-sm disabled:opacity-40">
               {t('sadaqahDonate.showPubliclyLabel', 'Show my name publicly (default: private)')}
@@ -347,18 +349,18 @@ export default function SadaqahDonate() {
             type="submit"
             whileTap={{ scale: 0.98 }}
             disabled={!canSubmit}
-            className="w-full btn h-12 rounded-2xl border-0 text-on-color font-black bg-brand-emerald-dim hover:opacity-90 disabled:opacity-40 gap-2"
+            className={`${BTN_PRIMARY} w-full h-12`}
           >
             {submitMutation.isPending ? (
               <span className="loading loading-spinner loading-sm" />
             ) : (
-              '🤲'
+              <DuaHandsIcon className="w-5 h-5" aria-hidden />
             )}
             {submitMutation.isPending
               ? t('sadaqahDonate.sending', 'Submitting…')
               : t('sadaqahDonate.submitLabel', 'Submit')}
           </motion.button>
-          <p className="text-white/25 text-[11px] text-center">
+          <p className="text-white/60 text-[11px] text-center">
             {t(
               'sadaqahDonate.disclaimer',
               'Once submitted, we will verify against our bKash records within 24-48 hours. May Allah accept.'

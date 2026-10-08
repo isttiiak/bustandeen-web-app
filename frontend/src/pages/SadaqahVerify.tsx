@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/24/solid';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { BTN_PRIMARY } from '../components/bustanStyles.js';
 import { useReceiptCheck } from '../hooks/useSadaqah.js';
+import { formatLocaleNumber } from '../utils/localeDate.js';
 
 /** Target of the QR code printed on every signed sadaqah receipt. */
 export default function SadaqahVerify() {
@@ -27,38 +29,36 @@ export default function SadaqahVerify() {
         <motion.div
           initial={{ opacity: 0, scale: 0.94 }}
           animate={{ opacity: 1, scale: 1 }}
-          className={`max-w-md w-full rounded-3xl border p-8 text-center space-y-4 ${
-            valid
-              ? 'border-brand-emerald/30 bg-brand-emerald/[0.07]'
-              : 'border-white/10 bg-white/[0.03]'
-          }`}
+          className="max-w-md w-full rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-8 pt-12 pb-8 text-center space-y-4"
         >
           {isLoading ? (
             <p className="text-white/60 text-sm">{t('common.loading', 'Loading…')}</p>
           ) : valid ? (
             <>
               <CheckBadgeIcon className="w-16 h-16 text-brand-emerald mx-auto" />
-              <h1 className="text-white font-black text-2xl">
+              <h1 className="font-display text-white font-bold text-2xl">
                 {t('sadaqahVerify.validTitle', 'This receipt is genuine')}
               </h1>
-              <p className="text-white/60 text-sm leading-relaxed">
+              <p className="text-white/75 text-sm leading-relaxed">
                 {t(
                   'sadaqahVerify.validBody',
                   'Bustandeen verified this sadaqah and signed the receipt.'
                 )}
               </p>
-              <dl className="text-sm text-left rounded-2xl bg-white/5 p-4 space-y-2">
+              <dl className="text-sm text-left rounded-control bg-shade/20 border border-brand-border p-4 space-y-2">
                 <div className="flex justify-between gap-3">
-                  <dt className="text-white/50">{t('sadaqahVerify.receiptNo', 'Receipt no.')}</dt>
+                  <dt className="text-white/65">{t('sadaqahVerify.receiptNo', 'Receipt no.')}</dt>
                   <dd className="text-white font-bold">#{data?.receiptNo}</dd>
                 </div>
                 <div className="flex justify-between gap-3">
-                  <dt className="text-white/50">{t('sadaqahVerify.amount', 'Amount')}</dt>
-                  <dd className="text-white font-bold">{data?.amount?.toLocaleString()} BDT</dd>
+                  <dt className="text-white/65">{t('sadaqahVerify.amount', 'Amount')}</dt>
+                  <dd className="text-white font-bold">
+                    {formatLocaleNumber(data?.amount ?? 0)} BDT
+                  </dd>
                 </div>
                 {data?.verifiedAt && (
                   <div className="flex justify-between gap-3">
-                    <dt className="text-white/50">
+                    <dt className="text-white/65">
                       {t('sadaqahVerify.verifiedOn', 'Verified on')}
                     </dt>
                     <dd className="text-white font-bold">
@@ -75,10 +75,10 @@ export default function SadaqahVerify() {
           ) : (
             <>
               <XCircleIcon className="w-16 h-16 text-brand-gold mx-auto" />
-              <h1 className="text-white font-black text-2xl">
+              <h1 className="font-display text-white font-bold text-2xl">
                 {t('sadaqahVerify.invalidTitle', 'We could not confirm this receipt')}
               </h1>
-              <p className="text-white/60 text-sm leading-relaxed">
+              <p className="text-white/75 text-sm leading-relaxed">
                 {isError
                   ? t(
                       'sadaqahVerify.errorBody',
@@ -91,10 +91,7 @@ export default function SadaqahVerify() {
               </p>
             </>
           )}
-          <Link
-            to="/"
-            className="btn mt-2 rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color w-full"
-          >
+          <Link to="/" className={`${BTN_PRIMARY} mt-2 w-full`}>
             {t('sadaqahThankYou.backToApp', 'Back to Bustandeen')}
           </Link>
         </motion.div>
