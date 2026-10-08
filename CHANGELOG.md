@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.97.1 - Backend updates, safely - 2026-10-08
+
+### Fixed
+
+- **The app could not reach the server for about 45 minutes on 8 October** (07:05 to 07:50 UTC): sign-in, prayers, zikr and every other synced feature failed. A routine library update was rolled back right away, and it now comes back with the faulty part held at its earlier version.
+
+### Changed (developers)
+
+- Re-lands #123 (imapflow 2.2.5, mailparser 3.9.35, mongoose 9.10.4, nodemailer 10.0.14, dotenv 18.0.5, eslint, supertest) with `"overrides": { "he": "^1.2.0" }`. mailparser 3.9.35 pulled in he 2.0.0, which is ESM-only; mailparser `require()`s it, and Vercel's Node loader does not support `require()` of an ES module (`ERR_REQUIRE_ESM` on every cold start), although the same code loads fine on Node 20, 22 and 24 locally. The bad merge was reverted on main (`9e44690`).
+- `tests/esmOnlyDeps.unit.test.js` fails when any CommonJS production package depends on an ESM-only package (it flags `mailparser -> he` on the #123 lockfile).
+
 ## v5.97.0 - Settings in the Bustan Arch design - 2026-10-08
 
 ### Changed
