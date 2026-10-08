@@ -14,17 +14,17 @@ export interface ArabicFont {
 export const ARABIC_FONTS: ArabicFont[] = [
   {
     id: 'clean',
-    label: 'Clean — easiest to read (default)',
+    label: 'Clean: easiest to read (default)',
     stack: "Tahoma, 'Segoe UI', 'Noto Naskh Arabic', system-ui, sans-serif",
   },
   {
     id: 'naskh',
-    label: 'Naskh — traditional print',
+    label: 'Naskh: traditional print',
     stack: "'Scheherazade New', 'Noto Naskh Arabic', 'Times New Roman', serif",
   },
   {
     id: 'uthmani',
-    label: 'Uthmani — muṣḥaf calligraphy',
+    label: 'Uthmani: muṣḥaf calligraphy',
     stack: "'Amiri', 'Scheherazade New', serif",
   },
 ];

@@ -7,7 +7,11 @@ import {
   PencilSquareIcon,
   SpeakerWaveIcon,
   StopIcon,
+  SparklesIcon,
+  CheckIcon,
+  PlusIcon,
 } from '@heroicons/react/24/outline';
+import { COMMUNITY_ICON, ZIKR_CATEGORY_ICON } from './zikr/zikrCategoryIcons.js';
 import { useTranslation } from 'react-i18next';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useAddZikrType, useDeleteZikrType, useZikrTypes } from '../hooks/useZikrTypes.js';
@@ -50,7 +54,7 @@ const COMMUNITY_CATEGORY_META: Record<
   ...Object.fromEntries(
     ZIKR_LIBRARY.map((c) => [c.id, { emoji: c.emoji, title: c.title, titleBn: c.titleBn }])
   ),
-  uncategorized: { emoji: '📎', title: 'Uncategorized' },
+  uncategorized: { emoji: '', title: 'Uncategorized' },
 } as Record<GlobalZikrCategory, { emoji: string; title: string; titleBn?: string }>;
 
 const COMMUNITY_CATEGORY_ORDER: GlobalZikrCategory[] = [
@@ -89,10 +93,10 @@ function AudioPreviewButton({
   return (
     <button
       onClick={onToggle}
-      className={`shrink-0 w-6 h-6 rounded-full grid place-items-center border transition-colors ${
+      className={`shrink-0 w-7 h-7 rounded-full grid place-items-center border transition-colors ${
         playing
-          ? 'bg-brand-gold/30 border-brand-gold/60 text-brand-gold'
-          : 'bg-white/5 border-brand-emerald/20 text-white/50 hover:text-brand-gold hover:border-brand-gold/40'
+          ? 'bg-brand-gold/20 border-brand-gold/60 text-brand-gold'
+          : 'bg-brand-surface/60 border-brand-border text-white/70 hover:text-brand-gold hover:border-brand-gold/40'
       }`}
       title={t('zikrLibrary.previewAudio', 'Listen')}
       aria-label={t('zikrLibrary.previewAudio', 'Listen')}
@@ -100,6 +104,11 @@ function AudioPreviewButton({
       {playing ? <StopIcon className="w-3.5 h-3.5" /> : <SpeakerWaveIcon className="w-3.5 h-3.5" />}
     </button>
   );
+}
+
+function CategoryIcon({ id, small = false }: { id: string; small?: boolean }) {
+  const Icon = ZIKR_CATEGORY_ICON[id as GlobalZikrCategory] ?? ZIKR_CATEGORY_ICON.uncategorized;
+  return <Icon className={`${small ? 'w-3.5 h-3.5' : 'w-4 h-4'} text-brand-emerald shrink-0`} />;
 }
 
 export default function ZikrLibrarySection() {
@@ -199,13 +208,12 @@ export default function ZikrLibrarySection() {
     removeType(name);
     deleteZikrType.mutate(name, {
       onError: () =>
-        toast.error(t('zikrLibrary.removeFail', 'Could not remove — try again.'), {
+        toast.error(t('zikrLibrary.removeFail', 'Could not remove. Please try again.'), {
           id: 'lib-del',
         }),
     });
     toast.success(t('zikrLibrary.removed', '"{{name}}" removed', { name }), {
       id: 'lib-del',
-      icon: '🗑️',
     });
     setConfirmDelete(null);
   };
@@ -227,7 +235,7 @@ export default function ZikrLibrarySection() {
           virtue: item.virtue,
         });
         toast.success(
-          t('zikrLibrary.added', '"{{name}}" added to your counter 📿', {
+          t('zikrLibrary.added', '"{{name}}" added to your counter', {
             name: zikrDisplayName(item.name, i18n.language),
           }),
           { id: 'lib-add' }
@@ -235,7 +243,9 @@ export default function ZikrLibrarySection() {
         setAdding(null);
       },
       onError: () => {
-        toast.error(t('zikrLibrary.addFail', 'Could not add — try again.'), { id: 'lib-add' });
+        toast.error(t('zikrLibrary.addFail', 'Could not add. Please try again.'), {
+          id: 'lib-add',
+        });
         setAdding(null);
       },
     });
@@ -243,10 +253,10 @@ export default function ZikrLibrarySection() {
 
   return (
     <div className="space-y-3">
-      <p className="text-white/40 text-xs leading-relaxed">
+      <p className="text-white/70 text-xs leading-relaxed">
         {t(
           'zikrLibrary.intro',
-          "Add any of these to your counter's dropdown — every reference is verified. Your existing list stays exactly as it is."
+          "Add any of these to your counter's dropdown. Every reference is verified, and your existing list stays exactly as it is."
         )}
       </p>
 
@@ -254,10 +264,10 @@ export default function ZikrLibrarySection() {
         <div
           key={cat.id}
           id={`zikr-cat-${cat.id}`}
-          className="rounded-2xl border border-brand-emerald/10 bg-white/5 overflow-hidden"
+          className="rounded-control border border-brand-border bg-brand-surface/50 overflow-hidden"
         >
           <button
-            className="w-full px-4 py-3 flex items-center justify-between text-left"
+            className="w-full px-4 py-3 flex items-center justify-between gap-2 text-left"
             onClick={() => {
               const opening = openCat !== cat.id;
               setOpenCat(opening ? cat.id : null);
@@ -273,15 +283,18 @@ export default function ZikrLibrarySection() {
             }}
             aria-expanded={openCat === cat.id}
           >
-            <span className="text-white/80 text-sm font-bold">
-              {cat.emoji} {i18n.language === 'bn' && cat.titleBn ? cat.titleBn : cat.title}
-              <span className="text-white/25 font-normal">
-                {' '}
-                · {formatLocaleNumber(cat.items.length)}
+            <span className="flex items-center gap-2 text-white text-sm font-bold">
+              <CategoryIcon id={cat.id} />
+              <span>
+                <bdi>{i18n.language === 'bn' && cat.titleBn ? cat.titleBn : cat.title}</bdi>
+                <span className="text-white/60 font-normal">
+                  {' '}
+                  · {formatLocaleNumber(cat.items.length)}
+                </span>
               </span>
             </span>
             <ChevronDownIcon
-              className={`w-4 h-4 text-white/30 transition-transform ${openCat === cat.id ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 shrink-0 text-white/60 transition-transform ${openCat === cat.id ? 'rotate-180' : ''}`}
             />
           </button>
           <AnimatePresence>
@@ -293,7 +306,7 @@ export default function ZikrLibrarySection() {
                 className="overflow-hidden"
               >
                 <div className="px-4 pb-3 space-y-2">
-                  <p className="text-white/30 text-[11px] italic">
+                  <p className="text-white/70 text-[11px] italic">
                     {i18n.language === 'bn' && cat.blurbBn ? cat.blurbBn : cat.blurb}
                   </p>
                   {cat.items.map((item) => {
@@ -301,11 +314,11 @@ export default function ZikrLibrarySection() {
                     return (
                       <div
                         key={item.name}
-                        className="rounded-xl bg-white/5 border border-brand-emerald/10 p-3"
+                        className="rounded-control bg-brand-deep border border-brand-border shadow-elev-1 p-3"
                       >
                         <div className="flex items-start gap-3">
                           <div className="flex-1 min-w-0">
-                            <p className="text-white/80 text-sm font-bold flex items-center gap-1.5">
+                            <p className="text-white text-sm font-bold flex items-center gap-1.5">
                               {zikrDisplayName(item.name, i18n.language)}
                               <AudioPreviewButton
                                 name={item.name}
@@ -316,25 +329,25 @@ export default function ZikrLibrarySection() {
                             <p
                               dir="rtl"
                               lang="ar"
-                              className="text-brand-emerald/80 font-serif text-base leading-loose mt-0.5"
+                              className="text-brand-emerald font-serif text-base leading-loose mt-0.5"
                             >
                               {item.arabic}
                             </p>
-                            <p className="text-white/40 text-[11px] mt-1 leading-relaxed">
+                            <p className="text-white/75 text-[11px] mt-1 leading-relaxed">
                               {i18n.language === 'bn' && item.meaningBn
                                 ? item.meaningBn
                                 : item.meaning}
                             </p>
                             {item.virtue && (
-                              <p className="text-brand-gold/60 text-[11px] mt-1 leading-relaxed">
-                                ✨{' '}
+                              <p className="flex items-start gap-1 text-brand-gold text-[11px] mt-1 leading-relaxed">
+                                <SparklesIcon className="w-3.5 h-3.5 shrink-0 mt-px" />
                                 {i18n.language === 'bn' && item.virtueBn
                                   ? item.virtueBn
                                   : item.virtue}
                               </p>
                             )}
                             <a
-                              className="text-white/30 text-[10px] underline"
+                              className="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2"
                               href={item.sourceUrl}
                               target="_blank"
                               rel="noreferrer"
@@ -346,15 +359,23 @@ export default function ZikrLibrarySection() {
                             </a>
                           </div>
                           <button
-                            className={`btn btn-xs rounded-lg shrink-0 ${added ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color font-bold cursor-default !opacity-100' : 'bg-white/5 border-brand-emerald/20 text-white/70 hover:border-brand-emerald/50'}`}
+                            className={`inline-flex items-center gap-1 rounded-control border px-2.5 py-1.5 text-xs font-bold shrink-0 transition-colors ${added ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color cursor-default' : 'bg-brand-surface/60 border-brand-border text-white/85 hover:border-brand-emerald/50 hover:text-white'}`}
                             disabled={added || adding === item.name}
                             onClick={() => addFromLibrary(item)}
                           >
-                            {added
-                              ? t('zikrLibrary.inList', '✓ In your list')
-                              : adding === item.name
-                                ? '…'
-                                : t('zikrLibrary.addToList', '＋ Add to list')}
+                            {added ? (
+                              <>
+                                <CheckIcon className="w-3.5 h-3.5" />
+                                {t('zikrLibrary.inList', 'In your list')}
+                              </>
+                            ) : adding === item.name ? (
+                              '…'
+                            ) : (
+                              <>
+                                <PlusIcon className="w-3.5 h-3.5" />
+                                {t('zikrLibrary.addToList', 'Add to list')}
+                              </>
+                            )}
                           </button>
                         </div>
                       </div>
@@ -372,22 +393,25 @@ export default function ZikrLibrarySection() {
       {globalLibraryItems && globalLibraryItems.length > 0 && (
         <div
           id="zikr-cat-community"
-          className="rounded-2xl border border-brand-emerald/10 bg-white/5 overflow-hidden"
+          className="rounded-control border border-brand-border bg-brand-surface/50 overflow-hidden"
         >
           <button
-            className="w-full px-4 py-3 flex items-center justify-between text-left"
+            className="w-full px-4 py-3 flex items-center justify-between gap-2 text-left"
             onClick={() => setOpenCat(openCat === 'community' ? null : 'community')}
             aria-expanded={openCat === 'community'}
           >
-            <span className="text-white/80 text-sm font-bold">
-              🌱 {t('zikrLibrary.communityTitle', 'Community-suggested')}
-              <span className="text-white/25 font-normal">
-                {' '}
-                · {formatLocaleNumber(globalLibraryItems.length)}
+            <span className="flex items-center gap-2 text-white text-sm font-bold">
+              <COMMUNITY_ICON className="w-4 h-4 text-brand-emerald shrink-0" />
+              <span>
+                {t('zikrLibrary.communityTitle', 'Community-suggested')}
+                <span className="text-white/60 font-normal">
+                  {' '}
+                  · {formatLocaleNumber(globalLibraryItems.length)}
+                </span>
               </span>
             </span>
             <ChevronDownIcon
-              className={`w-4 h-4 text-white/30 transition-transform ${openCat === 'community' ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 shrink-0 text-white/60 transition-transform ${openCat === 'community' ? 'rotate-180' : ''}`}
             />
           </button>
           <AnimatePresence>
@@ -399,7 +423,7 @@ export default function ZikrLibrarySection() {
                 className="overflow-hidden"
               >
                 <div className="px-4 pb-3 space-y-3">
-                  <p className="text-white/30 text-[11px] italic">
+                  <p className="text-white/70 text-[11px] italic">
                     {t(
                       'zikrLibrary.communityBlurb',
                       'Suggested by the community and verified by our team.'
@@ -409,8 +433,8 @@ export default function ZikrLibrarySection() {
                     const meta = COMMUNITY_CATEGORY_META[cat];
                     return (
                       <div key={cat} className="space-y-2">
-                        <p className="text-white/50 text-[11px] font-bold">
-                          {meta.emoji}{' '}
+                        <p className="flex items-center gap-1.5 text-white/80 text-[11px] font-bold">
+                          <CategoryIcon id={cat} small />
                           {i18n.language === 'bn' && meta.titleBn ? meta.titleBn : meta.title}
                         </p>
                         {items.map((item) => {
@@ -420,15 +444,15 @@ export default function ZikrLibrarySection() {
                             <div
                               key={item._id}
                               id={`zikr-lib-${item._id}`}
-                              className={`rounded-xl bg-white/5 border p-3 transition-colors ${
+                              className={`rounded-control bg-brand-deep border shadow-elev-1 p-3 transition-colors ${
                                 isHighlighted
                                   ? 'border-brand-gold/60 ring-2 ring-brand-gold/30'
-                                  : 'border-brand-emerald/10'
+                                  : 'border-brand-border'
                               }`}
                             >
                               <div className="flex items-start gap-3">
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-white/80 text-sm font-bold flex items-center gap-1.5">
+                                  <p className="text-white text-sm font-bold flex items-center gap-1.5">
                                     {item.name}
                                     <AudioPreviewButton
                                       name={item.name}
@@ -439,20 +463,21 @@ export default function ZikrLibrarySection() {
                                   <p
                                     dir="rtl"
                                     lang="ar"
-                                    className="text-brand-emerald/80 font-serif text-base leading-loose mt-0.5"
+                                    className="text-brand-emerald font-serif text-base leading-loose mt-0.5"
                                   >
                                     {item.arabic}
                                   </p>
-                                  <p className="text-white/40 text-[11px] mt-1 leading-relaxed">
+                                  <p className="text-white/75 text-[11px] mt-1 leading-relaxed">
                                     {item.meaning}
                                   </p>
                                   {item.virtue && (
-                                    <p className="text-brand-gold/60 text-[11px] mt-1 leading-relaxed">
-                                      ✨ {item.virtue}
+                                    <p className="flex items-start gap-1 text-brand-gold text-[11px] mt-1 leading-relaxed">
+                                      <SparklesIcon className="w-3.5 h-3.5 shrink-0 mt-px" />
+                                      {item.virtue}
                                     </p>
                                   )}
                                   <a
-                                    className="text-white/30 text-[10px] underline"
+                                    className="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2"
                                     href={item.sourceUrl}
                                     target="_blank"
                                     rel="noreferrer"
@@ -462,15 +487,23 @@ export default function ZikrLibrarySection() {
                                   </a>
                                 </div>
                                 <button
-                                  className={`btn btn-xs rounded-lg shrink-0 ${added ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color font-bold cursor-default !opacity-100' : 'bg-white/5 border-brand-emerald/20 text-white/70 hover:border-brand-emerald/50'}`}
+                                  className={`inline-flex items-center gap-1 rounded-control border px-2.5 py-1.5 text-xs font-bold shrink-0 transition-colors ${added ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color cursor-default' : 'bg-brand-surface/60 border-brand-border text-white/85 hover:border-brand-emerald/50 hover:text-white'}`}
                                   disabled={added || adding === item.name}
                                   onClick={() => addFromLibrary(item)}
                                 >
-                                  {added
-                                    ? t('zikrLibrary.inList', '✓ In your list')
-                                    : adding === item.name
-                                      ? '…'
-                                      : t('zikrLibrary.addToList', '＋ Add to list')}
+                                  {added ? (
+                                    <>
+                                      <CheckIcon className="w-3.5 h-3.5" />
+                                      {t('zikrLibrary.inList', 'In your list')}
+                                    </>
+                                  ) : adding === item.name ? (
+                                    '…'
+                                  ) : (
+                                    <>
+                                      <PlusIcon className="w-3.5 h-3.5" />
+                                      {t('zikrLibrary.addToList', 'Add to list')}
+                                    </>
+                                  )}
                                 </button>
                               </div>
                             </div>
@@ -488,35 +521,37 @@ export default function ZikrLibrarySection() {
 
       {/* Request a new zikr — submitted for admin review, not added directly,
           so the library stays hadith-verified. */}
-      <div className="rounded-2xl border border-brand-emerald/10 bg-white/5 p-4">
+      <div className="rounded-control border border-brand-border bg-brand-surface/50 p-4">
         <ZikrSuggestForm />
 
         {/* Your own custom tracker labels (from the counter's "+" add) —
             personal to your counter, unrelated to the shared library above. */}
         {customTypes.length > 0 && (
           <div className="mt-4 space-y-1.5">
-            <p className="text-white/40 text-[11px] font-bold">
+            <p className="text-white/80 text-[11px] font-bold">
               {t('zikrLibrary.customAdditions', 'Your custom additions')}
             </p>
             {customTypes.map((name) => (
               <div
                 key={name}
-                className="flex items-center gap-1.5 rounded-xl bg-white/5 border border-brand-emerald/10 px-3 py-2"
+                className="flex items-center gap-1.5 rounded-control bg-brand-deep border border-brand-border px-3 py-2"
               >
-                <span className="flex-1 min-w-0 truncate text-white/75 text-xs">{name}</span>
+                <span className="flex-1 min-w-0 truncate text-white text-xs">{name}</span>
                 <button
                   onClick={() => setEditZikr(name)}
                   aria-label={t('zikrLibrary.editAria', 'Edit {{name}}', { name })}
-                  className="btn btn-xs btn-ghost text-brand-emerald/70 hover:text-brand-emerald hover:bg-brand-emerald/10 gap-1 shrink-0"
+                  className="inline-flex items-center gap-1 rounded-control px-2 py-1 text-xs font-bold text-brand-emerald hover:bg-brand-emerald/10 shrink-0 transition-colors"
                 >
-                  <PencilSquareIcon className="w-3.5 h-3.5" /> {t('zikrLibrary.edit', 'Edit')}
+                  <PencilSquareIcon className="w-3.5 h-3.5" />
+                  {t('zikrLibrary.edit', 'Edit')}
                 </button>
                 <button
                   onClick={() => setConfirmDelete(name)}
                   aria-label={t('zikrLibrary.deleteAria', 'Delete {{name}}', { name })}
-                  className="btn btn-xs btn-ghost text-red-400/60 hover:text-red-400 hover:bg-red-500/10 gap-1 shrink-0"
+                  className="inline-flex items-center gap-1 rounded-control px-2 py-1 text-xs font-bold text-red-400 hover:bg-red-500/10 shrink-0 transition-colors"
                 >
-                  <TrashIcon className="w-3.5 h-3.5" /> {t('zikrLibrary.delete', 'Delete')}
+                  <TrashIcon className="w-3.5 h-3.5" />
+                  {t('zikrLibrary.delete', 'Delete')}
                 </button>
               </div>
             ))}
@@ -531,7 +566,7 @@ export default function ZikrLibrarySection() {
         })}
         message={t(
           'zikrLibrary.deleteConfirmMsg',
-          "This removes your custom zikr from the list and the server. Curated library items can't be deleted — only added or left out."
+          "This removes your custom zikr from the list and the server. Curated library items can't be deleted, only added or left out."
         )}
         confirmLabel={t('zikrLibrary.yesDelete', 'Yes, delete')}
         onConfirm={() => confirmDelete && deleteCustom(confirmDelete)}

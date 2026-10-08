@@ -63,7 +63,7 @@ const PAGE_META: Record<
   '/qibla': { title: 'Qibla Compass', emoji: '🧭' },
   '/quran': { title: 'Quran Habit', emoji: '', Icon: BookOpenIcon },
   '/friends': { title: 'Friends', emoji: '🤝' },
-  '/settings': { title: 'Settings', emoji: '⚙️' },
+  '/settings': { title: 'Settings', emoji: '', Icon: Cog6ToothIcon },
   '/about': { title: 'About Bustandeen', emoji: '🌱' },
   '/privacy': { title: 'Privacy', emoji: '🔒' },
   '/terms': { title: 'Terms', emoji: '', Icon: DocumentTextIcon },

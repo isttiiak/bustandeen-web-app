@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.97.0 - Settings in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Settings has the new look**, in dark and light: one arch at the top, calm theme cards with a soft shadow, and easier-to-read text everywhere (descriptions, notes and labels were very faint). Every option tile (language, theme, day start, Hijri adjustment) shows its choice the same way. The danger zone is a clear red panel with one card per feature, each with its own icon.
+- **The Zikr library, the Quran and Zikr settings panels, the zikr edit window and the tracking-day explanations** follow the same design. The coloured gradient buttons are now the solid sage button used across the app.
+- **Icons instead of emoji** on all these screens (zikr categories, feature cards, notes and messages), and no em dashes in their wording, in English and Bangla.
+
+### Fixed
+
+- **Disabled buttons on the light theme were unreadable** (dark text on the dark-green button, for example "Goal saved" in Quran settings). They now keep white text and fade instead, on every redesigned screen.
+- **Some Zikr library text showed in English for Bangla readers**: the "Suggest a zikr or dua" heading and note, the community section, the listen button, the volume label and two messages had no translation at all. They are translated now.
+- "Ṣalawāt upon the Prophet ﷺ" no longer shows its count in the wrong place.
+
+### Changed (developers)
+
+- `pages/settingsScreen.test.ts` guards the Settings files: no emoji or em dash in code or in any locale string they use, every key exists in en and bn (catches keys missing from both, which `i18n:check` cannot), and every `fixed inset-0` overlay is portaled. `components/zikr/zikrCategoryIcons.tsx` (SVG per library category). `btn-solid` (in `BTN_PRIMARY` and the Settings danger buttons) keeps white text when disabled (`styles/global.css`). Navbar: SVG gear for Settings. Option labels in `utils/quranData.ts` / `quranPrefs.ts` use a colon instead of an em dash.
+
 ## v5.96.4 - Smoother sign-in - 2026-10-08
 
 ### Fixed

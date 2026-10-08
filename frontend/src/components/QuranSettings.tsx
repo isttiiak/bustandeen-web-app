@@ -1,5 +1,6 @@
 ﻿import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
+import { BTN_PRIMARY } from './bustanStyles.js';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
@@ -71,8 +72,8 @@ function SizeSlider({
   return (
     <div>
       <div className="flex items-center justify-between mb-1">
-        <p className="text-white/50 text-xs font-bold">{label}</p>
-        <span className="text-white/30 text-[10px] tabular-nums">{value}px</span>
+        <p className="text-white/80 text-xs font-bold">{label}</p>
+        <span className="text-white/70 text-[10px] tabular-nums">{value}px</span>
       </div>
       <input
         type="range"
@@ -88,7 +89,7 @@ function SizeSlider({
         className="range range-xs w-full [--range-shdw:theme(colors.brand.emerald)]"
       />
       {sample && (
-        <p className="text-white/60 mt-1 truncate" style={{ fontSize: value, ...sampleStyle }}>
+        <p className="text-white/80 mt-1 truncate" style={{ fontSize: value, ...sampleStyle }}>
           {sample}
         </p>
       )}
@@ -204,7 +205,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm"
             onClick={onClose}
           />
           <motion.aside
@@ -212,18 +213,18 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 260 }}
-            className="fixed right-0 top-0 bottom-0 z-[55] w-full max-w-sm bg-brand-deep border-l border-brand-border overflow-y-auto"
+            className="fixed right-0 top-0 bottom-0 z-[55] w-full max-w-sm bg-brand-deep border-l border-brand-border shadow-elev-3 overflow-y-auto"
             role="dialog"
             aria-label={t('quranSettings.title', 'Quran settings')}
           >
-            <div className="sticky top-0 bg-brand-deep/95 backdrop-blur border-b border-brand-emerald/5 px-5 py-4 flex items-center justify-between z-10">
+            <div className="sticky top-0 bg-brand-deep/95 backdrop-blur border-b border-brand-border px-5 pt-5 pb-3 flex items-center justify-between z-10">
               <h3 className="font-display text-white font-bold text-lg flex items-center gap-2">
                 <Cog6ToothIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />
                 {t('quranSettings.title', 'Quran settings')}
               </h3>
               <button
                 aria-label={t('quranSettings.close', 'Close settings')}
-                className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
+                className="p-1.5 rounded-control text-white/70 hover:text-white hover:bg-brand-surface"
                 onClick={onClose}
               >
                 <XMarkIcon className="w-5 h-5" />
@@ -232,11 +233,11 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
 
             <div className="p-5 space-y-5">
               {/* ── Dedicated: Daily Quran goal (its own save button) ── */}
-              <div className="rounded-2xl border border-brand-emerald/25 bg-brand-emerald/[0.06] p-4">
+              <div className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
                 <p className="text-white font-black text-sm">
                   {t('quranSettings.goalTitle', 'Daily Quran goal')}
                 </p>
-                <p className="text-white/40 text-[11px] mt-0.5 leading-relaxed">
+                <p className="text-white/70 text-[11px] mt-0.5 leading-relaxed">
                   {t(
                     'quranSettings.goalDesc',
                     'Completely optional: set it only when YOU want a daily target. Start small: even 1 āyah a day keeps the habit alive. Reading anywhere counts.'
@@ -245,10 +246,10 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 <div className="flex flex-wrap gap-1.5 mt-3">
                   <button
                     onClick={() => setGoal(0)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                    className={`px-3 py-1.5 rounded-control text-xs font-bold border transition-colors ${
                       goal === 0
-                        ? 'bg-white/15 text-white border-brand-border'
-                        : 'bg-white/5 border-brand-emerald/15 text-white/60 hover:border-brand-border'
+                        ? 'bg-brand-emerald/10 text-white border-brand-emerald'
+                        : 'bg-brand-deep border-brand-border text-white/80 hover:border-brand-emerald/40'
                     }`}
                   >
                     {t('quranSettings.noGoal', 'No goal')}
@@ -257,10 +258,10 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                     <button
                       key={p}
                       onClick={() => setGoal(p)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                      className={`px-3 py-1.5 rounded-control text-xs font-bold border transition-colors ${
                         goal === p
                           ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim'
-                          : 'bg-white/5 border-brand-emerald/15 text-white/60 hover:border-brand-emerald/40'
+                          : 'bg-brand-deep border-brand-border text-white/80 hover:border-brand-emerald/40'
                       }`}
                     >
                       {p} āyah{p > 1 ? 's' : ''}
@@ -268,7 +269,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                   ))}
                 </div>
                 <div className="flex items-center gap-2 mt-3">
-                  <label className="text-white/40 text-[11px] font-bold shrink-0" htmlFor="q-goal">
+                  <label className="text-white/70 text-[11px] font-bold shrink-0" htmlFor="q-goal">
                     {t('quranSettings.custom', 'Custom')}
                   </label>
                   <input
@@ -278,12 +279,12 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                     max={6236}
                     value={goal}
                     onChange={(e) => setGoal(Number(e.target.value))}
-                    className="input input-bordered input-sm flex-1 bg-white/5 border-brand-emerald/15 text-white"
+                    className="input input-bordered input-sm flex-1 bg-shade/30 border-brand-border text-white rounded-control"
                   />
-                  <span className="text-white/30 text-[11px]">/ day</span>
+                  <span className="text-white/70 text-[11px]">/ day</span>
                 </div>
                 <button
-                  className="w-full btn btn-sm h-10 mt-3 rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim disabled:opacity-50"
+                  className={`${BTN_PRIMARY} w-full mt-3`}
                   onClick={saveGoal}
                   disabled={!goalDirty || updateProfile.isPending}
                 >
@@ -297,19 +298,19 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 </button>
               </div>
 
-              <div className="border-t border-brand-emerald/10 pt-4">
-                <p className="text-white/40 text-[11px] font-bold uppercase tracking-wider mb-3">
+              <div className="border-t border-brand-border pt-4">
+                <p className="text-white/70 text-[11px] font-bold uppercase tracking-wider mb-3">
                   {t('quranSettings.readingAudio', 'Reading & audio')}
                 </p>
               </div>
 
               <div>
-                <label className="text-white/50 text-xs font-bold" htmlFor="q-reciter">
+                <label className="text-white/80 text-xs font-bold" htmlFor="q-reciter">
                   {t('quranSettings.reciterLabel', 'Default reciter')}
                 </label>
                 <select
                   id="q-reciter"
-                  className="select select-sm w-full mt-1.5 bg-white/5 border-brand-emerald/10 text-white rounded-xl"
+                  className="select select-sm w-full mt-1.5 bg-shade/30 border-brand-border text-white rounded-control"
                   value={reciter}
                   onChange={(e) => {
                     setReciter(e.target.value);
@@ -323,7 +324,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                     </option>
                   ))}
                 </select>
-                <p className="text-white/25 text-[10px] mt-1">
+                <p className="text-white/70 text-[10px] mt-1">
                   {t(
                     'quranSettings.reciterNote',
                     'Used by the Listen tab. The single-āyah recitation in the reader uses Alafasy (the only free per-āyah source).'
@@ -332,19 +333,19 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
               </div>
 
               <div className="space-y-2.5">
-                <p className="text-white/50 text-xs font-bold">
+                <p className="text-white/80 text-xs font-bold">
                   {t('quranSettings.translationsLabel', 'Translations')}{' '}
-                  <span className="text-white/25 font-normal">
+                  <span className="text-white/70 font-normal">
                     {t('quranSettings.translationsHint', '(up to two shown together)')}
                   </span>
                 </p>
                 <div>
-                  <label className="text-white/30 text-[10px] font-bold" htmlFor="q-tr1">
+                  <label className="text-white/70 text-[10px] font-bold" htmlFor="q-tr1">
                     {t('quranSettings.primary', 'Primary')}
                   </label>
                   <select
                     id="q-tr1"
-                    className="select select-sm w-full mt-1 bg-white/5 border-brand-emerald/10 text-white rounded-xl"
+                    className="select select-sm w-full mt-1 bg-shade/30 border-brand-border text-white rounded-control"
                     value={primary}
                     onChange={(e) => setPrimary(e.target.value)}
                   >
@@ -356,12 +357,12 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                   </select>
                 </div>
                 <div>
-                  <label className="text-white/30 text-[10px] font-bold" htmlFor="q-tr2">
+                  <label className="text-white/70 text-[10px] font-bold" htmlFor="q-tr2">
                     {t('quranSettings.secondary', 'Second (optional)')}
                   </label>
                   <select
                     id="q-tr2"
-                    className="select select-sm w-full mt-1 bg-white/5 border-brand-emerald/10 text-white rounded-xl"
+                    className="select select-sm w-full mt-1 bg-shade/30 border-brand-border text-white rounded-control"
                     value={secondary}
                     onChange={(e) => setSecondary(e.target.value)}
                   >
@@ -378,13 +379,13 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
               </div>
 
               {/* ── Arabic font — the "clean" default is the easiest to read ── */}
-              <div className="rounded-2xl border border-brand-warm/20 bg-brand-warm/[0.05] p-4 space-y-2">
-                <p className="text-white/60 text-xs font-bold">
+              <div className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4 space-y-2">
+                <p className="text-white/80 text-xs font-bold">
                   {t('quranSettings.arabicFont', 'Arabic font')}
                 </p>
                 <select
                   aria-label="Arabic font"
-                  className="select select-sm w-full bg-white/5 border-brand-warm/15 text-white rounded-xl"
+                  className="select select-sm w-full bg-shade/30 border-brand-border text-white rounded-control"
                   value={arabicFontId}
                   onChange={(e) => {
                     setArabicFontId(e.target.value);
@@ -408,7 +409,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 >
                   بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
                 </p>
-                <p className="text-white/35 text-[11px] leading-relaxed">
+                <p className="text-white/70 text-[11px] leading-relaxed">
                   <Trans
                     i18nKey="quranSettings.textSource"
                     components={{
@@ -426,13 +427,13 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
               </div>
 
               {/* ── Transliteration (pronunciation aid, free source) ── */}
-              <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/[0.05] p-4">
+              <div className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
                 <label className="flex items-center justify-between gap-3 cursor-pointer">
                   <div>
-                    <p className="text-white/70 text-sm font-bold">
+                    <p className="text-white text-sm font-bold">
                       {t('quranSettings.translitTitle', 'Transliteration')}
                     </p>
-                    <p className="text-white/30 text-[11px] mt-0.5">
+                    <p className="text-white/70 text-[11px] mt-0.5">
                       {t(
                         'quranSettings.translitDesc',
                         'Latin pronunciation under the Arabic, for readers still learning the script.'
@@ -453,13 +454,13 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
               </div>
 
               {/* ── Listening → ayat counting ── */}
-              <div className="rounded-2xl border border-brand-info/20 bg-brand-info/[0.05] p-4">
+              <div className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
                 <label className="flex items-center justify-between gap-3 cursor-pointer">
                   <div>
-                    <p className="text-white/70 text-sm font-bold">
+                    <p className="text-white text-sm font-bold">
                       {t('quranSettings.listenTitle', 'Count listening as āyāt')}
                     </p>
-                    <p className="text-white/30 text-[11px] mt-0.5">
+                    <p className="text-white/70 text-[11px] mt-0.5">
                       {t(
                         'quranSettings.listenDesc',
                         'When on, listening time is converted into āyāt and logged toward your daily goal and streak.'
@@ -480,8 +481,8 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
               </div>
 
               {/* ── Text sizes — one slider per text kind (Istiak's spec) ── */}
-              <div className="rounded-2xl border border-brand-info/20 bg-brand-info/[0.05] p-4 space-y-4">
-                <p className="text-white/60 text-xs font-bold">
+              <div className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4 space-y-4">
+                <p className="text-white/80 text-xs font-bold">
                   {t('quranSettings.textSizes', 'Text sizes')}
                 </p>
                 <SizeSlider
@@ -531,19 +532,19 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
               </div>
 
               {/* ── Reset options ── */}
-              <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/[0.06] p-4 space-y-3">
+              <div className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4 space-y-3">
                 <div className="flex items-center gap-2 mb-1">
                   <ArrowPathIcon className="w-4 h-4 text-brand-gold" />
-                  <h3 className="text-brand-gold font-bold text-sm">
+                  <h3 className="text-white font-bold text-sm">
                     {t('quranSettings.resetProgress', 'Reset progress')}
                   </h3>
                 </div>
                 <div className="space-y-2.5">
                   <div>
-                    <p className="text-white/60 text-xs font-semibold">
+                    <p className="text-white/80 text-xs font-semibold">
                       {t('quranSettings.khatamJourney', 'Khatam journey')}
                     </p>
-                    <p className="text-white/30 text-[11px] mb-1.5">
+                    <p className="text-white/70 text-[11px] mb-1.5">
                       {t(
                         'quranSettings.khatamResetDesc',
                         'Bookmark back to 1:1, journey un-started. Completed count stays.'
@@ -552,17 +553,17 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                     <button
                       onClick={() => setConfirmResetKhatam(true)}
                       disabled={!summary?.profile.khatamStartedAt}
-                      className="btn btn-xs border border-brand-gold/30 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 gap-1 disabled:opacity-30"
+                      className="inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold border border-brand-gold/40 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 transition-colors disabled:opacity-40"
                     >
                       <ArrowPathIcon className="w-3 h-3" />{' '}
                       {t('quranSettings.resetKhatam', 'Reset khatam')}
                     </button>
                   </div>
-                  <div className="border-t border-white/[0.06] pt-2.5">
-                    <p className="text-white/60 text-xs font-semibold">
+                  <div className="border-t border-brand-border pt-2.5">
+                    <p className="text-white/80 text-xs font-semibold">
                       {t('quranSettings.readingProgress', 'Reading progress')}
                     </p>
-                    <p className="text-white/30 text-[11px] mb-1.5">
+                    <p className="text-white/70 text-[11px] mb-1.5">
                       {t(
                         'quranSettings.readingResetDesc',
                         'Zero surah completion counts and reader positions. Logs, bookmarks and goal stay.'
@@ -570,7 +571,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                     </p>
                     <button
                       onClick={() => setConfirmResetReading(true)}
-                      className="btn btn-xs border border-brand-gold/30 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 gap-1"
+                      className="inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold border border-brand-gold/40 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 transition-colors disabled:opacity-40"
                     >
                       <ArrowPathIcon className="w-3 h-3" />{' '}
                       {t('quranSettings.resetReading', 'Reset reading')}
@@ -579,9 +580,9 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 </div>
               </div>
 
-              <p className="text-white/25 text-[11px] leading-relaxed">
+              <p className="text-white/70 text-[11px] leading-relaxed">
                 {t('quranSettings.dangerZoneHint', 'Looking for full data deletion? That lives in')}{' '}
-                <a href="/settings" className="underline text-white/40">
+                <a href="/settings" className="underline text-white/85 hover:text-white">
                   {t('nav.settingsDangerZone', 'Settings → Danger zone')}
                 </a>
                 .
