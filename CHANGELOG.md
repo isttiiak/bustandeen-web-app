@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.104.0 - Qibla in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **The Qibla compass has the new look**, in dark and light: the title and the dial share one arch, with a gold north, a drawn Kaaba marker and a needle pointing to it. The angle from true North and the refresh link sit in a calm card below.
+- **Icons instead of emoji**: the Kaaba marker, the pointer at the top and the navbar icon are drawn, not emoji.
+- No em dashes in the Qibla wording, in English and Bangla. The direction is worked out exactly as before.
+
 ## v5.103.0 - Prayer Times in the Bustan Arch design - 2026-10-08
 
 ### Changed
