@@ -69,7 +69,7 @@ const PAGE_META: Record<
   '/terms': { title: 'Terms', emoji: '', Icon: DocumentTextIcon },
   '/feedback': { title: 'Feedback', emoji: '💬' },
   '/contact': { title: 'Contact Us', emoji: '📨' },
-  '/profile': { title: 'My Profile', emoji: '👤' },
+  '/profile': { title: 'My Profile', emoji: '', Icon: UserCircleIcon },
   '/naseeh': { title: 'Naseeh', emoji: '✨' },
   '/musafir': { title: 'Musafir Mode', emoji: '🧳' },
 };

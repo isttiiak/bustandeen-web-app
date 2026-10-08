@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.98.0 - Profile in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Profile has the new look**, in dark and light: your picture, name, place and bio sit in one arch at the top, with four calm stat tiles under it (total zikr, best streak, age, member since). The account and edit cards match Settings, and the text is easier to read.
+- **Messages about your Google account now appear in the card itself** instead of a pop-up, and disconnecting Google asks in the app's own confirmation window.
+- "Make secondary first to disconnect" is now shown under the Google row, so it can be read on a phone (it only appeared on mouse hover).
+- **Icons instead of emoji** on Profile, the navigation bar title and the delete confirmation window used across the app.
+
+### Fixed
+
+- **The birth date picker was dark on the light theme.** It now follows the theme.
+- **Bangla age read "মাসs"**: the English plural "s" was added to the Bangla word. Age now reads correctly in both languages, with Bangla digits.
+- The night-sky card's twinkling dots are gone (they never stopped animating).
+
+### Changed (developers)
+
+- `pages/profileScreen.test.ts` guards the Profile files and `ConfirmDialog`: no emoji or em dash in code or in any locale string they use, every key exists in en and bn (plural keys via `_other`), every `fixed inset-0` overlay is portaled, exactly one `rounded-arch`, and no hex colour (except the Google logo), glow shadow, `repeat: Infinity` or sweetalert2.
+- Profile no longer uses sweetalert2 (it was the last user); the dependency is removed. `ConfirmDialog` takes an optional `icon` (SVG trash can by default). Profile dialogs are portaled at `z-[70]`. `profile.ageDisplay` is now `ageDisplay_one` / `ageDisplay_other`; new `profile.ageShort`. `SPARKLE_POSITIONS` removed from `profileParts.tsx`.
+- Lint is back to zero warnings: eslint-plugin-security 4.2.0 (#122) flagged `r[key]` in `adminOps.service.ts` (a typed two-key union); the sum now reads the field explicitly.
+
 ## v5.97.1 - Backend updates, safely - 2026-10-08
 
 ### Fixed

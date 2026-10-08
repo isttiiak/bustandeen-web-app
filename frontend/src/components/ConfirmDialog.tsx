@@ -1,6 +1,8 @@
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
+import type { ReactNode } from 'react';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 /**
  * Small app-wide confirmation dialog — the SECOND "are you sure?" for every
@@ -17,6 +19,7 @@ export default function ConfirmDialog({
   title,
   message,
   confirmLabel,
+  icon,
   onConfirm,
   onCancel,
 }: {
@@ -24,6 +27,8 @@ export default function ConfirmDialog({
   title: string;
   message: string;
   confirmLabel?: string;
+  /** SVG icon over the title; a trash can by default. */
+  icon?: ReactNode;
   onConfirm: () => void;
   onCancel: () => void;
 }) {
@@ -43,14 +48,16 @@ export default function ConfirmDialog({
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.94, y: 8 }}
             transition={{ type: 'spring', damping: 24 }}
-            className="w-full max-w-xs rounded-2xl bg-brand-deep border border-red-400/25 p-5 text-center"
+            className="w-full max-w-xs rounded-card bg-brand-deep border border-red-400/25 shadow-elev-3 p-5 text-center"
             onClick={(e) => e.stopPropagation()}
             role="alertdialog"
             aria-modal="true"
           >
-            <div className="text-3xl mb-2">🗑️</div>
+            <div className="w-11 h-11 mx-auto mb-2 rounded-full grid place-items-center bg-red-500/10 text-red-400">
+              {icon ?? <TrashIcon className="w-6 h-6" />}
+            </div>
             <h3 className="text-white font-black text-base">{title}</h3>
-            <p className="text-white/50 text-xs mt-1.5 leading-relaxed">{message}</p>
+            <p className="text-white/75 text-xs mt-1.5 leading-relaxed">{message}</p>
             <div className="flex gap-2 mt-4">
               <button
                 className="flex-1 btn btn-sm rounded-xl bg-white/5 border-brand-emerald/10 text-white/70"

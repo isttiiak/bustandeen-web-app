@@ -292,21 +292,9 @@ export function calcFullAge(birthDate: string): { years: number; months: number 
 }
 
 export function formatFullDate(iso: string): string {
-  if (!iso) return '—';
+  if (!iso) return '';
   return formatLocaleDate(new Date(iso), { day: 'numeric', month: 'long', year: 'numeric' });
 }
-
-// Animated sparkle dots for the profile card header
-export const SPARKLE_POSITIONS = [
-  { left: '8%', top: '18%', delay: 0 },
-  { left: '22%', top: '72%', delay: 0.4 },
-  { left: '40%', top: '12%', delay: 0.8 },
-  { left: '58%', top: '80%', delay: 0.3 },
-  { left: '72%', top: '20%', delay: 1.1 },
-  { left: '85%', top: '55%', delay: 0.6 },
-  { left: '92%', top: '25%', delay: 1.5 },
-  { left: '15%', top: '45%', delay: 0.9 },
-];
 
 export interface ProfileData {
   displayName: string;

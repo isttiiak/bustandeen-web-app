@@ -1,11 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Swal from 'sweetalert2';
 import { API_BASE, getIdToken } from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { auth, googleProvider } from '../firebase.js';
 import { browserPopupRedirectResolver, linkWithPopup, unlink, AuthError } from 'firebase/auth';
-import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
@@ -22,6 +20,8 @@ import ProfilePhotoChoiceModal from '../components/profile/ProfilePhotoChoiceMod
 import ProfileEditForm from '../components/profile/ProfileEditForm.js';
 import ProfileAccountCard from '../components/profile/ProfileAccountCard.js';
 import ProfileSummaryCard from '../components/profile/ProfileSummaryCard.js';
+import ConfirmDialog from '../components/ConfirmDialog.js';
+import { LinkSlashIcon } from '@heroicons/react/24/outline';
 
 export default function Profile() {
   const { t } = useTranslation();
@@ -58,6 +58,9 @@ export default function Profile() {
   const [avatarModalOpen, setAvatarModalOpen] = useState(false);
   const [linkingGoogle, setLinkingGoogle] = useState(false);
   const [unlinkingGoogle, setUnlinkingGoogle] = useState(false);
+  /** providerUid waiting for the Disconnect confirmation. */
+  const [confirmUnlink, setConfirmUnlink] = useState<string | null>(null);
+  const [accountError, setAccountError] = useState('');
   const [primaryEmailLoading, setPrimaryEmailLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
@@ -267,6 +270,7 @@ export default function Profile() {
   const linkGoogle = async () => {
     if (linkingGoogle || !auth.currentUser) return;
     setLinkingGoogle(true);
+    setAccountError('');
     try {
       const result = await linkWithPopup(
         auth.currentUser,
@@ -294,75 +298,38 @@ export default function Profile() {
       if (data.ok && data.user) {
         setDbUser(data.user);
       } else {
-        const msg =
+        setAccountError(
           res.status === 409
             ? t(
                 'profile.googleAlreadyLinkedOther',
                 'This Google account is already linked to another Bustandeen account.'
               )
             : (data.error ??
-              t('profile.linkSaveFailed', 'Failed to save linked account. Please try again.'));
-        await Swal.fire({
-          title: t('profile.errorTitle', 'Error'),
-          text: msg,
-          icon: 'error',
-          background: '#1a1812',
-          color: '#f1f5f9',
-          confirmButtonColor: '#ef4444',
-          customClass: { popup: 'rounded-3xl border border-brand-border' },
-        });
+                t('profile.linkSaveFailed', 'Failed to save linked account. Please try again.'))
+        );
       }
     } catch (err) {
       const code = (err as AuthError).code ?? '';
       if (code === 'auth/credential-already-in-use') {
-        await Swal.fire({
-          title: t('profile.alreadyLinkedTitle', 'Already linked'),
-          text: t(
+        setAccountError(
+          t(
             'profile.googleAlreadyConnectedDifferent',
             'This Google account is already connected to a different Bustandeen account.'
-          ),
-          icon: 'warning',
-          background: '#1a1812',
-          color: '#f1f5f9',
-          confirmButtonColor: '#c9a96e',
-          customClass: { popup: 'rounded-3xl border border-brand-border' },
-        });
+          )
+        );
       } else if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
-        await Swal.fire({
-          title: t('profile.errorTitle', 'Error'),
-          text: t(
-            'profile.googleConnectFailed',
-            'Could not connect Google account. Please try again.'
-          ),
-          icon: 'error',
-          background: '#1a1812',
-          color: '#f1f5f9',
-          confirmButtonColor: '#ef4444',
-          customClass: { popup: 'rounded-3xl border border-brand-border' },
-        });
+        setAccountError(
+          t('profile.googleConnectFailed', 'Could not connect Google account. Please try again.')
+        );
       }
     }
     setLinkingGoogle(false);
   };
 
+  // Asked first in the ConfirmDialog (confirmUnlink), then run here.
   const unlinkGoogle = async (providerUid: string) => {
-    const confirm = await Swal.fire({
-      title: t('profile.disconnectGoogleTitle', 'Disconnect Google account?'),
-      text: t(
-        'profile.disconnectGoogleText',
-        'You will no longer be able to sign in with this Google account.'
-      ),
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: t('profile.disconnect', 'Disconnect'),
-      cancelButtonText: t('common.cancel'),
-      background: '#1a1812',
-      color: '#f1f5f9',
-      confirmButtonColor: '#ef4444',
-      cancelButtonColor: '#3a3425',
-      customClass: { popup: 'rounded-3xl border border-brand-border' },
-    });
-    if (!confirm.isConfirmed) return;
+    setConfirmUnlink(null);
+    setAccountError('');
     setUnlinkingGoogle(true);
     try {
       if (auth.currentUser) await unlink(auth.currentUser, 'google.com');
@@ -433,21 +400,7 @@ export default function Profile() {
       <AnimatedBackground variant="dark">
         <div className="p-4 sm:p-6 lg:p-8 pb-16">
           <div className="max-w-2xl mx-auto space-y-5">
-            {/* Header */}
-            <motion.div
-              initial={{ opacity: 0, y: -16 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center"
-            >
-              <h1 className="text-3xl sm:text-4xl font-black text-brand-emerald mb-1">
-                {t('profile.title', 'My Profile')}
-              </h1>
-              <p className="text-white/40 text-sm">
-                {t('profile.subtitle', 'Manage your personal information')}
-              </p>
-            </motion.div>
-
-            {/* ── Avatar + summary card ─── gradient with star animation */}
+            {/* The arch hero and the stat tiles */}
             <ProfileSummaryCard
               ageInfo={ageInfo}
               longestStreak={longestStreak}
@@ -461,8 +414,9 @@ export default function Profile() {
               user={user}
             />
 
-            {/* ── Account & Linked Accounts ── */}
+            {/* Account & linked accounts */}
             <ProfileAccountCard
+              accountError={accountError}
               firebaseHasGoogle={firebaseHasGoogle}
               googleIsPrimary={googleIsPrimary}
               googleLinked={googleLinked}
@@ -470,7 +424,7 @@ export default function Profile() {
               linkingGoogle={linkingGoogle}
               makePrimaryEmail={makePrimaryEmail}
               primaryEmailLoading={primaryEmailLoading}
-              unlinkGoogle={unlinkGoogle}
+              unlinkGoogle={setConfirmUnlink}
               unlinkingGoogle={unlinkingGoogle}
               user={user}
             />
@@ -494,7 +448,7 @@ export default function Profile() {
         </div>
       </AnimatedBackground>
 
-      {/* ── Photo choice modal ── */}
+      {/* Photo choice and avatar dialogs (portaled) */}
       <ProfilePhotoChoiceModal
         applyGoogleAccountPhoto={applyGoogleAccountPhoto}
         googleLinked={googleLinked}
@@ -506,13 +460,25 @@ export default function Profile() {
         uploading={uploading}
       />
 
-      {/* ── Avatar selection modal ── */}
       <ProfileAvatarPicker
         avatarModalOpen={avatarModalOpen}
         selectAvatar={selectAvatar}
         selectedId={avatarId}
         setAvatarModalOpen={setAvatarModalOpen}
         uploading={uploading}
+      />
+
+      <ConfirmDialog
+        open={confirmUnlink !== null}
+        title={t('profile.disconnectGoogleTitle', 'Disconnect Google account?')}
+        message={t(
+          'profile.disconnectGoogleText',
+          'You will no longer be able to sign in with this Google account.'
+        )}
+        confirmLabel={t('profile.disconnect', 'Disconnect')}
+        onConfirm={() => confirmUnlink && void unlinkGoogle(confirmUnlink)}
+        icon={<LinkSlashIcon className="w-6 h-6" />}
+        onCancel={() => setConfirmUnlink(null)}
       />
     </>
   );
