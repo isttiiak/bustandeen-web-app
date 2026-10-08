@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { ChevronDownIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { BTN_PRIMARY, BTN_SECONDARY, CARD } from '../bustanStyles.js';
 import api from '../../lib/api.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
 import { useGroqKeyStatus } from '../../hooks/useAi.js';
@@ -118,23 +120,21 @@ export default function AiPrivacyPanel() {
       id="ai-privacy"
       open={open}
       onToggle={(e) => setOpen(e.currentTarget.open)}
-      className="rounded-2xl border border-brand-border bg-brand-deep/60 group"
+      className={`${CARD} group`}
     >
       <summary className="cursor-pointer list-none px-4 py-3 flex items-center justify-between gap-3">
         <span className="flex items-center gap-2 text-white font-bold text-sm">
-          <span aria-hidden>🔒</span>
+          <LockClosedIcon aria-hidden className="w-4 h-4 text-brand-emerald" />
           {t('naseehPrivacy.title', 'AI usage and privacy')}
         </span>
-        <span
-          className="text-white/40 text-xs group-open:rotate-180 transition-transform"
+        <ChevronDownIcon
           aria-hidden
-        >
-          ▾
-        </span>
+          className="w-4 h-4 text-white/60 group-open:rotate-180 transition-transform"
+        />
       </summary>
 
       <div className="px-4 pb-4 space-y-4">
-        <p className="text-white/60 text-sm leading-relaxed">
+        <p className="text-white/70 text-sm leading-relaxed">
           {t(
             'naseehPrivacy.intro',
             'Naseeh only sees what is listed below. It never gets your journal notes, your name or your account details, and no cycle data of any kind is ever sent.'
@@ -146,19 +146,19 @@ export default function AiPrivacyPanel() {
             <li
               key={r.key}
               id={`ai-sends-${r.key}`}
-              className={`text-sm rounded-lg scroll-mt-24 ${
+              className={`text-sm rounded-control scroll-mt-24 ${
                 target === `ai-sends-${r.key}`
-                  ? 'ring-1 ring-brand-gold/40 bg-white/[0.04] p-2 -m-2'
+                  ? 'ring-1 ring-brand-gold/40 bg-shade/20 p-2 -m-2'
                   : ''
               }`}
             >
               <p className="text-white/85 font-semibold">{r.title}</p>
-              <p className="text-white/50 text-xs leading-relaxed">{r.sends}</p>
+              <p className="text-white/65 text-xs leading-relaxed">{r.sends}</p>
             </li>
           ))}
         </ul>
 
-        <div className="rounded-xl bg-white/[0.04] border border-white/10 p-3 space-y-1.5 text-xs text-white/60 leading-relaxed">
+        <div className="rounded-control bg-shade/20 border border-brand-border p-3 space-y-1.5 text-xs text-white/70 leading-relaxed">
           <p>
             {keyStatus?.hasOwnKey
               ? t(
@@ -185,16 +185,12 @@ export default function AiPrivacyPanel() {
         </div>
 
         {!confirming ? (
-          <button
-            type="button"
-            onClick={() => setConfirming(true)}
-            className="btn btn-sm btn-outline border-white/20 text-white/70 hover:bg-white/10"
-          >
+          <button type="button" onClick={() => setConfirming(true)} className={BTN_SECONDARY}>
             {t('naseehPrivacy.turnOff', 'Turn off Naseeh')}
           </button>
         ) : (
           <div className="space-y-2">
-            <p className="text-white/70 text-sm">
+            <p className="text-white/80 text-sm">
               {t(
                 'naseehPrivacy.confirm',
                 'Turn Naseeh off? You can switch it back on any time in Settings.'
@@ -204,15 +200,11 @@ export default function AiPrivacyPanel() {
               <button
                 type="button"
                 onClick={() => void turnOff()}
-                className="btn btn-sm bg-brand-gold/20 border-brand-gold/30 text-brand-gold hover:bg-brand-gold/30"
+                className={`${BTN_SECONDARY} !text-brand-gold`}
               >
                 {t('naseehPrivacy.confirmYes', 'Yes, turn off')}
               </button>
-              <button
-                type="button"
-                onClick={() => setConfirming(false)}
-                className="btn btn-sm btn-ghost text-white/60"
-              >
+              <button type="button" onClick={() => setConfirming(false)} className={BTN_PRIMARY}>
                 {t('naseehPrivacy.confirmNo', 'Keep it on')}
               </button>
             </div>

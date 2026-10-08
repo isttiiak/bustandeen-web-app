@@ -3,13 +3,14 @@ import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAiStreakCoach } from '../../hooks/useAi.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
-import { AiBadge, AiDisclaimer, AiFallbackNote } from './AiFlair.js';
+import { AiBadge, AiDisclaimer, AiFallbackNote, AiThinking } from './AiFlair.js';
+import { CARD } from '../bustanStyles.js';
 import { getTrackingDay } from '../../utils/trackingDay.js';
 
 /**
  * Smart streak coaching — fires when:
  *  · A streak hits a milestone (7, 30, 100, 365)
- *  · A streak breaks (was ≥3 days, now 0)
+ *  · A streak breaks (was at least 3 days, now 0)
  *
  * Cached per (day + event + feature) in localStorage so a single coaching
  * moment costs one API call, never more.
@@ -205,13 +206,7 @@ export default function StreakCoaching({
 
   return (
     <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-      <div
-        className={`rounded-2xl border p-4 ${
-          isMilestone
-            ? 'border-brand-gold/30 bg-gradient-to-br from-brand-gold/10 to-brand-gold/[0.04]'
-            : 'border-brand-info/20 bg-brand-info/[0.05]'
-        }`}
-      >
+      <div className={`${CARD} p-4 ${isMilestone ? '!border-brand-gold/40' : ''}`}>
         <div className="flex items-center justify-between mb-2">
           <AiBadge
             label={
@@ -226,7 +221,7 @@ export default function StreakCoaching({
             }
           />
           <button
-            className="text-white/30 hover:text-white text-xs"
+            className="text-white/60 hover:text-white text-xs"
             onClick={() => setDismissed(true)}
             aria-label={t('naseehInsights.dismiss', 'Dismiss')}
           >
@@ -235,26 +230,11 @@ export default function StreakCoaching({
         </div>
 
         {coach.isPending && !result ? (
-          <div className="flex items-center gap-2 py-2">
-            {['#c9a96e', '#7a9e6e', '#5a9e8e'].map((c, i) => (
-              <motion.span
-                key={c}
-                className="w-2 h-2 rounded-full"
-                style={{ background: c }}
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.15 }}
-              />
-            ))}
-            <span className="text-white/40 text-xs">
-              {t('naseeh.findingWords', 'Finding the right words…')}
-            </span>
-          </div>
+          <AiThinking label={t('naseeh.findingWords', 'Finding the right words…')} />
         ) : shown ? (
           <div className="space-y-1.5">
             <p className="text-white/80 text-sm leading-relaxed">{shown.message}</p>
-            <p
-              className={`text-sm italic ${isMilestone ? 'text-brand-gold/70' : 'text-brand-info/70'}`}
-            >
+            <p className={`text-sm italic ${isMilestone ? 'text-brand-gold' : 'text-brand-info'}`}>
               {shown.tip}
             </p>
           </div>

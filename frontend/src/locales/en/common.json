@@ -212,7 +212,7 @@
     "fallbackNote": "Naseeh could not reach the AI just now, so this is a plain note worked out from your own numbers. No AI was used.",
     "badgeLabel": "Naseeh · AI companion",
     "disclaimerBold": "never a source of religious evidence",
-    "disclaimerPrefix": "AI-generated encouragement — a companion,",
+    "disclaimerPrefix": "AI-generated encouragement, a companion,",
     "disclaimerSuffix": "For rulings or proofs, see the app's verified references or ask a qualified scholar.",
     "thinkingLabel": "Naseeh is reflecting…"
   },
@@ -1141,7 +1141,7 @@
     "loadingVerse": "Loading verse…"
   },
   "naseeh": {
-    "disclaimer": "✨ A companion's words — not medical or religious advice.",
+    "disclaimer": "A companion's words, not medical or religious advice.",
     "findingWords": "Finding the right words…",
     "pageTitle": "Naseeh, AI Companion",
     "pageHeading": "Naseeh",
@@ -1149,6 +1149,20 @@
     "disabledTitle": "Naseeh AI is off",
     "disabledDesc": "Turn on Naseeh in Settings to get personal weekly insights, muhāsabah reports and quick logging.",
     "openSettings": "Open Settings"
+  },
+  "naseehInsights": {
+    "dismiss": "Dismiss"
+  },
+  "weeklyPlan": {
+    "title": "Your plan for this week",
+    "perDay": "Per day",
+    "onDays": "On",
+    "met": "Done for the week. Anything more is a bonus.",
+    "saving": "Saving…",
+    "accept": "Accept this plan",
+    "acceptNote": "Accepting also sets your daily dhikr and Quran goals to these amounts. You can change them any time in the app.",
+    "failed": "That did not save. Please try again in a moment.",
+    "basis": "Worked out on our server from your own logs. No AI is used for this card."
   },
   "naseehPatterns": {
     "badge": "Naseeh · what I noticed",
@@ -1192,6 +1206,8 @@
     "patternsSends": "Two short sentences we already worked out (a time of day, a weekday, a prayer name, a percentage). No raw logs.",
     "kaza": "Make-up prayer plan",
     "kazaSends": "One sentence with your owed count and a date.",
+    "plan": "Weekly plan",
+    "planSends": "Nothing. It is worked out on our server from your own logs, and no AI request is made.",
     "chat": "Ask about my data",
     "chatSends": "Only the question you type. The answer is worked out on our server from your logs.",
     "coaching": "Streak coaching, fasting and welcome-back notes",
@@ -1216,15 +1232,15 @@
     "entryTitle": "Quick log with a sentence",
     "entryHint": "e.g. \"Prayed fajr in jamaah, read 5 pages, 100 istighfar\"",
     "badgeLabel": "Naseeh · quick log",
-    "inputPrompt": "Describe what you did in one sentence — Naseeh will turn it into a log entry for you to review.",
+    "inputPrompt": "Describe what you did in one sentence. Naseeh will turn it into a log entry for you to review.",
     "example1": "Prayed fajr in jamaah, read 5 pages, 100 istighfar",
     "example2": "\"Asr and maghrib at the mosque, 33 subhanallah\"",
     "examplesHint": "Try: ",
     "parseButton": "Read my note",
     "parsing": "Reading…",
-    "emptyResult": "Naseeh couldn't find anything to log in that note — try mentioning a prayer, a dhikr count, or pages read.",
+    "emptyResult": "Naseeh couldn't find anything to log in that note. Try mentioning a prayer, a dhikr count, or pages read.",
     "tryAgain": "Try again",
-    "previewHint": "Here's what Naseeh understood — remove anything that's wrong, then confirm.",
+    "previewHint": "Here's what Naseeh understood. Remove anything that's wrong, then confirm.",
     "salatSection": "Prayers",
     "zikrSection": "Dhikr",
     "quranSection": "Qur'an reading",
@@ -1236,7 +1252,7 @@
     "back": "Back",
     "confirmButton": "Confirm & log",
     "logging": "Logging…",
-    "successMessage": "Logged — well done for keeping track.",
+    "successMessage": "Logged. Well done for keeping track.",
     "dayLabel": "For",
     "dayToday": "Today",
     "dayYesterday": "Yesterday",

@@ -1,8 +1,17 @@
-import { useState } from 'react';
+import { useState, type ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { BTN_PRIMARY, BTN_SECONDARY } from '../bustanStyles.js';
+import {
+  AsrIcon,
+  DhuhrIcon,
+  FajrIcon,
+  IshaIcon,
+  MaghribIcon,
+  type IconProps,
+} from '../icons/IslamicIcons.js';
 import { XMarkIcon, TrashIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import {
   useParseNaturalLog,
@@ -28,11 +37,24 @@ function shiftDate(dateStr: string, delta: number): string {
   return dt.toISOString().slice(0, 10);
 }
 
+const PRAYER_ICON: Record<string, (p: IconProps) => ReactElement> = {
+  fajr: FajrIcon,
+  dhuhr: DhuhrIcon,
+  asr: AsrIcon,
+  maghrib: MaghribIcon,
+  isha: IshaIcon,
+};
+
 const EXAMPLES_KEYS = [
   'naturalLog.example1',
   'naturalLog.example2',
   'naturalLog.example3',
 ] as const;
+
+function PrayerGlyph({ prayer }: { prayer: string }) {
+  const Glyph = PRAYER_ICON[prayer];
+  return Glyph ? <Glyph aria-hidden className="w-4 h-4 text-brand-gold shrink-0" /> : null;
+}
 
 export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
@@ -109,7 +131,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.95, y: 12 }}
           transition={{ type: 'spring', damping: 24 }}
-          className="bg-brand-surface rounded-3xl p-6 w-full max-w-md shadow-2xl border border-brand-border max-h-[85vh] overflow-y-auto"
+          className="bg-brand-deep rounded-card p-6 w-full max-w-md shadow-elev-3 border border-brand-border max-h-[85vh] overflow-y-auto"
           role="dialog"
           aria-modal="true"
         >
@@ -117,7 +139,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
             <AiBadge label={t('naturalLog.badgeLabel', 'Naseeh · quick log')} />
             <button
               onClick={onClose}
-              className="shrink-0 w-8 h-8 grid place-items-center rounded-full text-white/40 hover:text-white hover:bg-white/5 transition-colors"
+              className="shrink-0 w-8 h-8 grid place-items-center rounded-full text-white/60 hover:text-white hover:bg-brand-surface transition-colors"
               aria-label={t('common.close')}
             >
               <XMarkIcon className="w-5 h-5" />
@@ -126,10 +148,10 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
 
           {phase === 'input' && (
             <div className="space-y-3">
-              <p className="text-white/60 text-sm">
+              <p className="text-white/75 text-sm">
                 {t(
                   'naturalLog.inputPrompt',
-                  'Describe what you did in one sentence — Naseeh will turn it into a log entry for you to review.'
+                  'Describe what you did in one sentence. Naseeh will turn it into a log entry for you to review.'
                 )}
               </p>
               <textarea
@@ -141,9 +163,9 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                   EXAMPLES_KEYS[0],
                   'Prayed fajr in jamaah, read 5 pages, 100 istighfar'
                 )}
-                className="textarea w-full rounded-xl bg-brand-deep border-brand-border text-white text-sm focus:border-brand-emerald"
+                className="textarea w-full rounded-control bg-brand-surface border-brand-border text-white text-sm placeholder:text-white/40 focus:border-brand-emerald"
               />
-              <p className="text-white/25 text-[11px]">
+              <p className="text-white/55 text-[11px]">
                 {t('naturalLog.examplesHint', 'Try: ')}
                 <span className="italic">
                   {t(EXAMPLES_KEYS[1], '"Asr and maghrib at the mosque, 33 subhanallah"')}
@@ -153,7 +175,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
               <button
                 onClick={handleParse}
                 disabled={!text.trim() || parseMut.isPending}
-                className="btn w-full rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
+                className={`${BTN_PRIMARY} w-full`}
               >
                 {parseMut.isPending
                   ? t('naturalLog.parsing', 'Reading…')
@@ -165,16 +187,13 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
 
           {phase === 'empty' && (
             <div className="space-y-3 text-center py-4">
-              <p className="text-white/60 text-sm">
+              <p className="text-white/75 text-sm">
                 {t(
                   'naturalLog.emptyResult',
-                  "Naseeh couldn't find anything to log in that note — try mentioning a prayer, a dhikr count, or pages read."
+                  "Naseeh couldn't find anything to log in that note. Try mentioning a prayer, a dhikr count, or pages read."
                 )}
               </p>
-              <button
-                onClick={() => setPhase('input')}
-                className="btn btn-sm rounded-xl bg-white/5 border-brand-border text-white/70"
-              >
+              <button onClick={() => setPhase('input')} className={BTN_SECONDARY}>
                 {t('naturalLog.tryAgain', 'Try again')}
               </button>
             </div>
@@ -182,7 +201,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
 
           {phase === 'unavailable' && (
             <div className="space-y-3 py-2">
-              <p className="text-white/60 text-sm text-center">
+              <p className="text-white/75 text-sm text-center">
                 {t(
                   'naturalLog.unavailable',
                   "Naseeh can't read notes just now. You can log the same things by hand:"
@@ -194,19 +213,14 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                   { to: '/zikr', label: t('naturalLog.manualZikr', 'Zikr') },
                   { to: '/quran', label: t('naturalLog.manualQuran', 'Quran') },
                 ].map((l) => (
-                  <Link
-                    key={l.to}
-                    to={l.to}
-                    onClick={onClose}
-                    className="btn btn-sm rounded-xl bg-white/5 border-brand-border text-white/80"
-                  >
+                  <Link key={l.to} to={l.to} onClick={onClose} className={`${BTN_SECONDARY} !px-2`}>
                     {l.label}
                   </Link>
                 ))}
               </div>
               <button
                 onClick={() => setPhase('input')}
-                className="btn btn-sm btn-ghost w-full rounded-xl text-white/50"
+                className="w-full py-2 text-sm font-bold text-white/65 hover:text-white"
               >
                 {t('naturalLog.tryAgain', 'Try again')}
               </button>
@@ -215,15 +229,15 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
 
           {phase === 'preview' && (
             <div className="space-y-4">
-              <p className="text-white/50 text-xs">
+              <p className="text-white/70 text-xs">
                 {t(
                   'naturalLog.previewHint',
-                  "Here's what Naseeh understood — remove anything that's wrong, then confirm."
+                  "Here's what Naseeh understood. Remove anything that's wrong, then confirm."
                 )}
               </p>
 
               <div className="flex items-center gap-2">
-                <span className="text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                <span className="text-white/55 text-[10px] font-bold uppercase tracking-widest">
                   {t('naturalLog.dayLabel', 'For')}
                 </span>
                 <div className="join">
@@ -231,7 +245,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                     <button
                       key={d}
                       onClick={() => setDay(d)}
-                      className={`join-item btn btn-xs ${day === d ? 'bg-brand-emerald/25 border-brand-emerald/40 text-brand-emerald' : 'bg-white/5 border-brand-border text-white/50'}`}
+                      className={`join-item btn btn-xs ${day === d ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'bg-brand-surface border-brand-border text-white/70'}`}
                     >
                       {d === 'today'
                         ? t('naturalLog.dayToday', 'Today')
@@ -243,7 +257,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
 
               {salat.length > 0 && (
                 <div className="space-y-1.5">
-                  <p className="text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                  <p className="text-white/55 text-[10px] font-bold uppercase tracking-widest">
                     {t('naturalLog.salatSection', 'Prayers')}
                   </p>
                   {salat.map((s, i) => {
@@ -251,12 +265,12 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                     return (
                       <div
                         key={i}
-                        className="flex items-center justify-between gap-2 rounded-xl bg-brand-deep border border-brand-border px-3 py-2 text-sm"
+                        className="flex items-center justify-between gap-2 rounded-control bg-brand-surface/50 border border-brand-border px-3 py-2 text-sm"
                       >
                         <span className="text-white/80 flex items-center gap-2">
-                          <span>{meta?.icon}</span>
+                          <PrayerGlyph prayer={s.prayer} />
                           {translateSalatName(s.prayer, meta?.name ?? s.prayer, t)}
-                          <span className="text-white/30 text-xs">
+                          <span className="text-white/55 text-xs">
                             ·{' '}
                             {s.status === 'kaza'
                               ? t('naturalLog.statusKaza', 'kaza')
@@ -266,7 +280,7 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                         </span>
                         <button
                           onClick={() => setSalat((prev) => prev.filter((_, idx) => idx !== i))}
-                          className="text-white/30 hover:text-red-400 shrink-0"
+                          className="text-white/55 hover:text-red-400 shrink-0"
                           aria-label={t('naturalLog.remove', 'Remove')}
                         >
                           <TrashIcon className="w-4 h-4" />
@@ -279,13 +293,13 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
 
               {zikr.length > 0 && (
                 <div className="space-y-1.5">
-                  <p className="text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                  <p className="text-white/55 text-[10px] font-bold uppercase tracking-widest">
                     {t('naturalLog.zikrSection', 'Dhikr')}
                   </p>
                   {zikr.map((z, i) => (
                     <div
                       key={i}
-                      className="flex items-center justify-between gap-2 rounded-xl bg-brand-deep border border-brand-border px-3 py-2 text-sm"
+                      className="flex items-center justify-between gap-2 rounded-control bg-brand-surface/50 border border-brand-border px-3 py-2 text-sm"
                     >
                       <span className="text-white/80 truncate">
                         {z.typeName}
@@ -307,11 +321,11 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                               prev.map((it, idx) => (idx === i ? { ...it, count: n } : it))
                             );
                           }}
-                          className="input input-xs w-20 rounded-lg bg-brand-surface border-brand-border text-white text-right"
+                          className="input input-xs w-20 rounded-control bg-brand-surface border-brand-border text-white text-right"
                         />
                         <button
                           onClick={() => setZikr((prev) => prev.filter((_, idx) => idx !== i))}
-                          className="text-white/30 hover:text-red-400"
+                          className="text-white/55 hover:text-red-400"
                           aria-label={t('naturalLog.remove', 'Remove')}
                         >
                           <TrashIcon className="w-4 h-4" />
@@ -324,16 +338,16 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
 
               {quran && (
                 <div className="space-y-1.5">
-                  <p className="text-white/30 text-[10px] font-bold uppercase tracking-widest">
+                  <p className="text-white/55 text-[10px] font-bold uppercase tracking-widest">
                     {t('naturalLog.quranSection', "Qur'an reading")}
                   </p>
-                  <div className="flex items-center justify-between gap-2 rounded-xl bg-brand-deep border border-brand-border px-3 py-2 text-sm">
+                  <div className="flex items-center justify-between gap-2 rounded-control bg-brand-surface/50 border border-brand-border px-3 py-2 text-sm">
                     <span className="text-white/80">
                       {t('naturalLog.quranAyatCount', '{{count, number}} ayat', {
                         count: quran.ayat,
                       })}
                       {quran.approximate && (
-                        <span className="text-white/30 text-xs">
+                        <span className="text-white/55 text-xs">
                           {' '}
                           ({t('naturalLog.approximate', 'approximate')})
                         </span>
@@ -349,11 +363,11 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
                           const n = Math.max(1, Math.min(6236, Number(e.target.value) || 1));
                           setQuran((prev) => (prev ? { ...prev, ayat: n } : prev));
                         }}
-                        className="input input-xs w-20 rounded-lg bg-brand-surface border-brand-border text-white text-right"
+                        className="input input-xs w-20 rounded-control bg-brand-surface border-brand-border text-white text-right"
                       />
                       <button
                         onClick={() => setQuran(null)}
-                        className="text-white/30 hover:text-red-400"
+                        className="text-white/55 hover:text-red-400"
                         aria-label={t('naturalLog.remove', 'Remove')}
                       >
                         <TrashIcon className="w-4 h-4" />
@@ -364,16 +378,13 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
               )}
 
               <div className="flex gap-2 pt-1">
-                <button
-                  onClick={() => setPhase('input')}
-                  className="btn btn-sm flex-1 rounded-xl bg-white/5 border-brand-border text-white/70"
-                >
+                <button onClick={() => setPhase('input')} className={`${BTN_SECONDARY} flex-1`}>
                   {t('naturalLog.back', 'Back')}
                 </button>
                 <button
                   onClick={handleConfirm}
                   disabled={!hasAnything || commitMut.isPending}
-                  className="btn btn-sm flex-[2] rounded-xl bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
+                  className={`${BTN_PRIMARY} flex-[2]`}
                 >
                   {commitMut.isPending
                     ? t('naturalLog.logging', 'Logging…')
@@ -388,12 +399,9 @@ export default function NaturalLogModal({ onClose }: { onClose: () => void }) {
             <div className="space-y-3 text-center py-4">
               <CheckCircleIcon className="w-10 h-10 text-brand-emerald mx-auto" />
               <p className="text-white/80 text-sm font-semibold">
-                {t('naturalLog.successMessage', 'Logged — well done for keeping track.')}
+                {t('naturalLog.successMessage', 'Logged. Well done for keeping track.')}
               </p>
-              <button
-                onClick={onClose}
-                className="btn btn-sm rounded-xl bg-brand-emerald/10 border-brand-emerald/30 text-brand-emerald"
-              >
+              <button onClick={onClose} className={BTN_PRIMARY}>
                 {t('common.close')}
               </button>
             </div>
