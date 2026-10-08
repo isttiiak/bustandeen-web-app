@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { signInWithEmailAndPassword, sendPasswordResetEmail, AuthError } from 'firebase/auth';
-import { auth, googleProvider } from '../firebase.js';
-import { completeGoogleRedirect, signInWithGoogle } from '../utils/googleSignIn.js';
+import { auth } from '../firebase.js';
+import { useSignInFlow } from '../utils/useSignInFlow.js';
+import SigningInOverlay from '../components/SigningInOverlay.js';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import LegalAgreeLine from '../components/LegalAgreeLine.js';
@@ -69,8 +70,11 @@ const itemVariants: Variants = {
 export default function AuthSignIn() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   const user = useAuthStore((s) => s.user);
+  const [error, setError] = useState('');
+  const { loading, setLoading, setFinishing, google, signingIn } = useSignInFlow((code) =>
+    setError(mapFirebaseError(code, t))
+  );
 
   // Safety net: once the auth store has a user, this page is done. App.tsx
   // navigates verified users away; unverified email/password sign-ins would
@@ -80,9 +84,8 @@ export default function AuthSignIn() {
     if (!user) return;
     setLoading(false);
     if (user.emailVerified === false) navigate('/', { replace: true });
-  }, [user, navigate]);
+  }, [user, navigate, setLoading]);
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
 
   // Forgot password state
   const [forgotMode, setForgotMode] = useState(false);
@@ -91,30 +94,9 @@ export default function AuthSignIn() {
   const [resetSent, setResetSent] = useState(false);
   const [resetError, setResetError] = useState('');
 
-  // Back from a Google redirect (installed app): show its error, if any.
-  useEffect(() => {
-    let alive = true;
-    void completeGoogleRedirect(auth).then((code) => {
-      if (alive && code) setError(mapFirebaseError(code, t));
-    });
-    return () => {
-      alive = false;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once on mount; t is stable enough for an error message
-  }, []);
-
-  const google = async () => {
+  const onGoogle = () => {
     setError('');
-    setLoading(true);
-    try {
-      await signInWithGoogle(auth, googleProvider);
-    } catch (err) {
-      const code = (err as AuthError).code ?? '';
-      if (code !== 'auth/popup-closed-by-user' && code !== 'auth/cancelled-popup-request') {
-        setError(mapFirebaseError(code, t));
-      }
-      setLoading(false);
-    }
+    void google();
   };
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -126,6 +108,7 @@ export default function AuthSignIn() {
     const password = (form.elements.namedItem('password') as HTMLInputElement).value;
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      setFinishing(true);
     } catch (err) {
       setError(mapFirebaseError((err as AuthError).code ?? '', t));
       setLoading(false);
@@ -268,6 +251,7 @@ export default function AuthSignIn() {
   // ── Sign-in form ─────────────────────────────────────────────────────────────
   return (
     <AnimatedBackground variant="dark">
+      <SigningInOverlay show={signingIn} />
       <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
         <motion.div
           variants={containerVariants}
@@ -305,7 +289,7 @@ export default function AuthSignIn() {
                     whileHover={{ scale: 1.02, y: -2 }}
                     whileTap={{ scale: 0.98 }}
                     className="w-full relative group bg-on-color hover:bg-on-color/90 text-ink-fixed font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed"
-                    onClick={google}
+                    onClick={onGoogle}
                     disabled={loading}
                   >
                     {loading ? (

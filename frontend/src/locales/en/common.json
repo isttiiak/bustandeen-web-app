@@ -255,6 +255,7 @@
     "verifyingResetLink": "Verifying reset link…"
   },
   "authSignIn": {
+    "signingIn": "Signing you in...",
     "backToSignIn": "Back to sign in",
     "checkEmail": "Check your email",
     "continueWithGoogle": "Continue with Google",

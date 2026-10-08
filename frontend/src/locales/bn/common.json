@@ -197,6 +197,7 @@
     "verifyingResetLink": "রিসেট লিঙ্ক যাচাই করা হচ্ছে…"
   },
   "authSignIn": {
+    "signingIn": "সাইন ইন হচ্ছে...",
     "backToSignIn": "সাইন ইনে ফিরে যান",
     "checkEmail": "আপনার ইমেইল দেখুন",
     "continueWithGoogle": "Google দিয়ে চালিয়ে যান",

@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.96.4 - Smoother sign-in - 2026-10-08
+
+### Fixed
+
+- **After signing in, the sign-in form no longer shows again while the app gets ready.** A calm "Signing you in..." screen covers it until your home page opens: when you come back from Google in the installed app, and after a Google or email sign-in in the browser.
+- **Closing the Google window without signing in left both sign-in buttons spinning** until the page was reloaded (the browser only reports a closed window after up to about 10 seconds). The buttons are ready again about 2 seconds after you are back on the page.
+
+### Changed (developers)
+
+- `utils/useSignInFlow.ts` (shared by AuthSignIn and AuthSignUp): loading state, Google sign-in, the redirect result, a focus-return guard (`POPUP_RETURN_GRACE_MS` 2.5 s) and a `FINISH_TIMEOUT_MS` (20 s) cap. `components/SigningInOverlay.tsx` (portaled, z-[90]). `utils/googleSignIn.ts`: a per-tab `bustandeen_google_redirect` flag set before `signInWithRedirect`; `completeGoogleRedirect` returns `{ error, signedIn }`; `shouldShowSigningIn()` (verified non-demo user, or finishing; never over the verify-email step). Test `utils/signingIn.test.ts`. Locale key `authSignIn.signingIn` (en + bn).
+
 ## v5.96.3 - Lighter app install - 2026-10-08
 
 ### Fixed
