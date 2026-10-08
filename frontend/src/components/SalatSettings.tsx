@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
-import { useQueryClient } from '@tanstack/react-query';
 import {
   XMarkIcon,
   ArrowPathIcon,
@@ -18,7 +17,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import api from '../lib/api.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import { BTN_SECONDARY, ITEM, REF_LINK, SECTION_TITLE } from './bustanStyles.js';
 import {
@@ -35,7 +33,7 @@ import {
   setShowNaflGuide,
 } from '../utils/salatPrefs.js';
 import { translateReference } from '../utils/localeReference.js';
-import { useSalatDebt, useResetSalatDebt } from '../hooks/useSalatLog.js';
+import { useSalatDebt, useResetSalat, useResetSalatDebt } from '../hooks/useSalatLog.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 
 /**
@@ -51,32 +49,35 @@ import { getTrackingDay } from '../utils/trackingDay.js';
  */
 export default function SalatSettings({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t, i18n } = useTranslation();
-  const queryClient = useQueryClient();
   const [tasbih, setTasbih] = useState<TasbihMode>(() => getTasbihMode());
   const [autoCount, setAutoCount] = useState<boolean>(() => getAutoCountDhikr());
   const [showSunnah, setShowSunnah] = useState<boolean>(() => getShowSunnahGuide());
   const [showNafl, setShowNafl] = useState<boolean>(() => getShowNaflGuide());
   const [confirmReset, setConfirmReset] = useState(false);
-  const [resetting, setResetting] = useState(false);
+  const resetSalat = useResetSalat();
   const { data: debt } = useSalatDebt();
   const resetDebt = useResetSalatDebt();
   const [confirmDebtReset, setConfirmDebtReset] = useState(false);
 
-  const handleReset = async () => {
-    setResetting(true);
-    try {
-      const d = new Date();
-      const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-      await api.post('/api/salat/reset', { today });
-      queryClient.invalidateQueries({ queryKey: ['salat'] });
-      toast.success(t('salatSettings.resetDone', 'Salat tracking reset. Your history is kept.'));
-      setConfirmReset(false);
-      onClose();
-    } catch {
-      toast.error(t('salatSettings.resetFail', 'Could not reset. Please try again.'));
-    } finally {
-      setResetting(false);
-    }
+  // The reset date is the TRACKING day (CLAUDE.md "Salat today"): between
+  // midnight and Fajr the civil date is a day ahead, which put the reset after
+  // the still-open day and dropped the current phase from the journey.
+  const handleReset = () => {
+    if (resetSalat.isPending) return;
+    resetSalat.mutate(
+      { today: getTrackingDay() },
+      {
+        onSuccess: () => {
+          toast.success(
+            t('salatSettings.resetDone', 'Salat tracking reset. Your history is kept.')
+          );
+          setConfirmReset(false);
+          onClose();
+        },
+        onError: () =>
+          toast.error(t('salatSettings.resetFail', 'Could not reset. Please try again.')),
+      }
+    );
   };
 
   const chooseTasbih = (m: TasbihMode) => {
@@ -410,11 +411,11 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
               "Your streak and analytics will start fresh from today. All past prayer logs are kept; they just won't count toward the new stats."
             )}
             confirmLabel={
-              resetting
+              resetSalat.isPending
                 ? t('salatSettings.resetting', 'Resetting…')
                 : t('salatSettings.resetConfirm', 'Yes, start fresh')
             }
-            onConfirm={() => void handleReset()}
+            onConfirm={handleReset}
             onCancel={() => setConfirmReset(false)}
           />
 
