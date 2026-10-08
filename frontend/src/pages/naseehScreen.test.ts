@@ -81,4 +81,11 @@ describe('Naseeh screen', () => {
     );
     expect(bad).toEqual([]);
   });
+  it('the AI cards write the account through React Query hooks, not the api client', () => {
+    // Data rule: server data goes through hooks/ (the Turn off Naseeh switch
+    // used to call api.patch directly and left the profile cache stale).
+    for (const [path, code] of Object.entries(files)) {
+      expect(code, path).not.toMatch(/\/lib\/api\.js'/);
+    }
+  });
 });
