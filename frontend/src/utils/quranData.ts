@@ -37,9 +37,9 @@ export interface AyahText {
 
 /** Translations the reader can show (up to two at once — Istiak's spec). */
 export const TRANSLATIONS = [
-  { id: 'en.sahih', label: 'English — Ṣaḥīḥ International' },
-  { id: 'bn.bengali', label: 'Bengali — মুহিউদ্দীন খান' },
-  { id: 'bn.hoque', label: 'Bengali — জহুরুল হক' },
+  { id: 'en.sahih', label: 'English: Ṣaḥīḥ International' },
+  { id: 'bn.bengali', label: 'Bengali: মুহিউদ্দীন খান' },
+  { id: 'bn.hoque', label: 'Bengali: জহুরুল হক' },
 ] as const;
 
 /** Surah display name in the app's current language — the Bengali table is a

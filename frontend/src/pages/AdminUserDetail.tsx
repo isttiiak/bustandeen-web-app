@@ -133,6 +133,14 @@ export default function AdminUserDetail() {
                 </h1>
                 <p className="text-white/40 text-sm mt-0.5">{user.email}</p>
               </div>
+              {user.admin && (
+                <span
+                  title={`${user.admin.role}${user.admin.active ? '' : ', inactive'}`}
+                  className="shrink-0 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wide bg-brand-gold/15 text-brand-gold"
+                >
+                  {t('adminUserDetail.adminBadge', 'Admin')}
+                </span>
+              )}
               {user.disabled && (
                 <span className="shrink-0 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wide bg-red-500/15 text-red-400">
                   {t('adminUserDetail.disabledBadge', 'Disabled')}

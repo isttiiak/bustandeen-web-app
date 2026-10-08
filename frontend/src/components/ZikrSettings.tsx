@@ -52,13 +52,11 @@ export default function ZikrSettings({
       await api.post('/api/zikr/reset');
       queryClient.invalidateQueries({ queryKey: ['zikr'] });
       queryClient.invalidateQueries({ queryKey: ['analytics'] });
-      toast.success(t('zikr.toast.resetDone', 'Counters reset — your history is still there'), {
-        icon: '📿',
-      });
+      toast.success(t('zikr.toast.resetDone', 'Counters reset. Your history is still there'));
       setConfirmReset(false);
       onClose();
     } catch {
-      toast.error(t('zikr.toast.resetFail', 'Could not reset — try again'));
+      toast.error(t('zikr.toast.resetFail', 'Could not reset. Please try again'));
     } finally {
       setResetting(false);
     }
@@ -73,43 +71,43 @@ export default function ZikrSettings({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-[65] bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-[65] bg-black/70 backdrop-blur-sm"
           />
           <motion.aside
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 z-[70] w-full max-w-sm bg-brand-deep border-l border-brand-border overflow-y-auto"
+            className="fixed right-0 top-0 bottom-0 z-[70] w-full max-w-sm bg-brand-deep border-l border-brand-border shadow-elev-3 overflow-y-auto"
             role="dialog"
             aria-modal="true"
             aria-label={t('zikr.a11y.settings', 'Zikr settings')}
           >
-            <div className="sticky top-0 z-10 flex items-center justify-between px-5 py-4 bg-brand-deep/95 backdrop-blur border-b border-brand-emerald/10">
-              <h2 className="text-brand-emerald font-black text-lg">
+            <div className="sticky top-0 z-10 flex items-center justify-between px-5 pt-5 pb-3 bg-brand-deep/95 backdrop-blur border-b border-brand-border">
+              <h2 className="font-display text-white font-bold text-lg">
                 {t('zikr.a11y.settings', 'Zikr settings')}
               </h2>
               <button
                 onClick={onClose}
                 aria-label={t('zikr.a11y.closeSettings', 'Close zikr settings')}
-                className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
+                className="p-1.5 rounded-control text-white/70 hover:text-white hover:bg-brand-surface"
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="p-5 space-y-7">
+            <div className="p-5 space-y-4">
               {onManageList && (
                 <button
                   onClick={onManageList}
-                  className="w-full flex items-center gap-3 rounded-2xl border border-brand-emerald/20 bg-brand-emerald/[0.06] p-4 text-left hover:bg-brand-emerald/10 transition-colors"
+                  className="w-full flex items-center gap-3 rounded-card border border-brand-emerald/30 bg-brand-emerald/[0.08] shadow-elev-1 p-4 text-left hover:border-brand-emerald/60 transition-colors"
                 >
                   <PencilSquareIcon className="w-4 h-4 text-brand-emerald shrink-0" />
                   <span className="min-w-0">
                     <span className="block text-brand-emerald font-bold text-sm">
                       {t('zikr.manageList', 'Edit my zikr list')}
                     </span>
-                    <span className="block text-white/40 text-xs leading-relaxed mt-0.5">
+                    <span className="block text-white/75 text-xs leading-relaxed mt-0.5">
                       {t(
                         'zikr.manageListDesc',
                         'Edit your own zikr, or remove ones you no longer want in the dropdown.'
@@ -119,11 +117,11 @@ export default function ZikrSettings({
                 </button>
               )}
 
-              <section className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/[0.06] p-4">
+              <section className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <ArrowsRightLeftIcon className="w-4 h-4 text-brand-emerald" />
-                    <h3 className="text-brand-emerald font-bold text-sm">
+                    <h3 className="text-white font-bold text-sm">
                       {t('zikr.tasbihMode', 'Tasbih mode')}
                     </h3>
                   </div>
@@ -135,15 +133,15 @@ export default function ZikrSettings({
                     aria-label={t('zikr.tasbihMode', 'Tasbih mode')}
                   />
                 </div>
-                <p className="text-white/40 text-xs leading-relaxed mt-2">
+                <p className="text-white/75 text-xs leading-relaxed mt-2">
                   {t(
                     'zikr.tasbihModeDesc',
-                    'Count down from a target instead of up — pick how many, then each tap counts down. A distinct vibration + celebration marks the set complete, then it starts over.'
+                    'Count down from a target instead of up: pick how many, then each tap counts down. A distinct vibration and celebration mark the set complete, then it starts over.'
                   )}
                 </p>
                 {tasbihMode && (
                   <div className="mt-3">
-                    <p className="text-white/50 text-xs mb-1.5">
+                    <p className="text-white/80 text-xs font-semibold mb-1.5">
                       {t('zikr.tasbihTargetLabel', 'Target')}
                     </p>
                     <div className="flex flex-wrap gap-1.5 items-center">
@@ -154,10 +152,11 @@ export default function ZikrSettings({
                             setTasbihTarget(n);
                             setCustomTarget('');
                           }}
-                          className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition-colors ${
+                          aria-pressed={tasbihTarget === n}
+                          className={`px-3 py-1.5 rounded-control text-xs font-bold border transition-colors ${
                             tasbihTarget === n
-                              ? 'border-brand-emerald/50 bg-brand-emerald/15 text-brand-emerald'
-                              : 'border-brand-emerald/10 bg-white/5 text-white/50 hover:border-brand-emerald/30'
+                              ? 'border-brand-emerald bg-brand-emerald/10 text-white'
+                              : 'border-brand-border bg-brand-deep text-white/80 hover:border-brand-emerald/40'
                           }`}
                         >
                           {n}
@@ -176,10 +175,10 @@ export default function ZikrSettings({
                           if (Number.isFinite(n) && n > 0) setTasbihTarget(n);
                           setCustomTarget('');
                         }}
-                        className={`w-20 px-2.5 py-1.5 rounded-xl text-xs font-bold border bg-white/5 text-white/80 placeholder:text-white/25 focus:outline-none ${
+                        className={`w-20 px-2.5 py-1.5 rounded-control text-xs font-bold border bg-brand-deep text-white placeholder:text-white/50 focus:outline-none focus:border-brand-emerald ${
                           !TASBIH_TARGET_PRESETS.includes(tasbihTarget) && !customTarget
-                            ? 'border-brand-emerald/50 bg-brand-emerald/15 text-brand-emerald'
-                            : 'border-brand-emerald/10'
+                            ? 'border-brand-emerald bg-brand-emerald/10'
+                            : 'border-brand-border'
                         }`}
                       />
                     </div>
@@ -187,11 +186,11 @@ export default function ZikrSettings({
                 )}
               </section>
 
-              <section className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/[0.06] p-4">
+              <section className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <MusicalNoteIcon className="w-4 h-4 text-brand-emerald" />
-                    <h3 className="text-brand-emerald font-bold text-sm">
+                    <h3 className="text-white font-bold text-sm">
                       {t('zikr.tapSound', 'Tap sound')}
                     </h3>
                   </div>
@@ -203,16 +202,16 @@ export default function ZikrSettings({
                     aria-label={t('zikr.tapSound', 'Tap sound')}
                   />
                 </div>
-                <p className="text-white/40 text-xs leading-relaxed mt-2">
+                <p className="text-white/75 text-xs leading-relaxed mt-2">
                   {t('zikr.tapSoundDesc', 'A soft click on every count, like wooden tasbih beads.')}
                 </p>
               </section>
 
-              <section className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/[0.06] p-4">
+              <section className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <SpeakerWaveIcon className="w-4 h-4 text-brand-emerald" />
-                    <h3 className="text-brand-emerald font-bold text-sm">
+                    <h3 className="text-white font-bold text-sm">
                       {t('zikr.audioToggle', 'Zikr audio')}
                     </h3>
                   </div>
@@ -224,16 +223,16 @@ export default function ZikrSettings({
                     aria-label={t('zikr.audioToggle', 'Zikr audio')}
                   />
                 </div>
-                <p className="text-white/40 text-xs leading-relaxed mt-2">
+                <p className="text-white/75 text-xs leading-relaxed mt-2">
                   {t(
                     'zikr.audioDesc',
                     'Play the pronunciation of each dhikr. Enable auto-play to loop the audio and count automatically.'
                   )}
                 </p>
                 {zikrAudioEnabled && (
-                  <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3">
+                  <div className="mt-3 rounded-control border border-brand-border bg-brand-deep p-3">
                     <div className="flex items-center justify-between gap-3">
-                      <span className="text-white/80 text-xs font-semibold">
+                      <span className="text-white text-xs font-semibold">
                         {t('zikr.playOnTap', 'Play on every tap')}
                       </span>
                       <input
@@ -244,7 +243,7 @@ export default function ZikrSettings({
                         aria-label={t('zikr.playOnTap', 'Play on every tap')}
                       />
                     </div>
-                    <p className="text-white/40 text-[11px] leading-relaxed mt-1.5">
+                    <p className="text-white/75 text-[11px] leading-relaxed mt-1.5">
                       {t(
                         'zikr.playOnTapDesc',
                         'Hear the dhikr each time you count. If you tap again while it is still playing, it finishes instead of starting over.'
@@ -254,7 +253,7 @@ export default function ZikrSettings({
                 )}
                 {zikrAudioEnabled && (
                   <div className="mt-3 flex items-center gap-3">
-                    <span className="text-white/50 text-xs shrink-0">
+                    <span className="text-white/80 text-xs shrink-0">
                       {t('zikr.volume', 'Volume')}
                     </span>
                     <input
@@ -267,39 +266,40 @@ export default function ZikrSettings({
                       className="range range-success range-xs flex-1"
                       aria-label={t('zikr.volume', 'Volume')}
                     />
-                    <span className="text-white/40 text-xs w-8 text-right">
+                    <span className="text-white/80 text-xs w-9 text-right tabular-nums">
                       {Math.round(zikrAudioVolume * 100)}%
                     </span>
                   </div>
                 )}
               </section>
 
-              <section className="rounded-2xl border border-brand-gold/20 bg-brand-gold/[0.06] p-4">
+              <section className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <ArrowPathIcon className="w-4 h-4 text-brand-gold" />
-                  <h3 className="text-brand-gold font-bold text-sm">
+                  <h3 className="text-white font-bold text-sm">
                     {t('zikr.resetCounters', 'Start fresh')}
                   </h3>
                 </div>
-                <p className="text-white/40 text-xs leading-relaxed mb-3">
+                <p className="text-white/75 text-xs leading-relaxed mb-3">
                   {t(
                     'zikr.resetDesc',
-                    'Zero your counts, streak and goal to begin again — your daily history stays saved in Analytics, nothing is deleted.'
+                    'Zero your counts, streak and goal to begin again. Your daily history stays saved in Analytics; nothing is deleted.'
                   )}
                 </p>
                 <button
                   onClick={() => setConfirmReset(true)}
-                  className="btn btn-sm border border-brand-gold/30 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 gap-1.5"
+                  className="inline-flex items-center gap-1.5 rounded-control px-3 py-2 text-xs font-bold border border-brand-gold/40 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 transition-colors"
                 >
-                  <ArrowPathIcon className="w-3.5 h-3.5" /> {t('zikr.resetCounters', 'Start fresh')}
+                  <ArrowPathIcon className="w-3.5 h-3.5" />
+                  {t('zikr.resetCounters', 'Start fresh')}
                 </button>
               </section>
 
-              <p className="text-white/25 text-[11px] leading-relaxed border-t border-brand-emerald/10 pt-4">
+              <p className="text-white/70 text-[11px] leading-relaxed border-t border-brand-border pt-4">
                 {t('zikr.dangerZoneHint', 'Looking for data deletion? Everything lives in')}{' '}
                 <a
                   href="/settings"
-                  className="text-brand-emerald/70 hover:text-brand-emerald underline underline-offset-2"
+                  className="text-brand-emerald hover:brightness-110 underline underline-offset-2"
                 >
                   {t('zikr.dangerZoneLink', 'Settings → Danger zone')}
                 </a>
