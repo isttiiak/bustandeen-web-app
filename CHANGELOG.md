@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.109.1 - Security policy ready for own-domain sign-in - 2026-10-09
+
+### Security
+
+- **The site's Content-Security-Policy now allows Firebase's sign-in frame from bustandeen.com itself.** Since v5.96.0 sign-in runs through our own domain, so the policy has to allow same-site frames before it can be enforced.
+- **One unused image source removed**: Firebase Storage (never enabled; avatars are drawn in the app or come from Google).
+- The policy stays report-only for now: the week of violation reports needed before enforcing it could not be reviewed, because the hosting plan keeps request logs for one hour. Nothing changes for visitors.
+
 ## v5.109.0 - Salat analytics in the Bustan Arch design - 2026-10-09
 
 ### Changed
