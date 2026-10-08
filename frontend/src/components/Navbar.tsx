@@ -26,6 +26,7 @@ import {
   BookOpenIcon,
   HomeIcon,
   SparklesIcon,
+  ClockIcon,
 } from '@heroicons/react/24/outline';
 import { CrescentIcon, MosqueIcon, Star8Icon, TasbihIcon } from './icons/IslamicIcons.js';
 import { UserAvatar } from './icons/AvatarGlyphs.js';
@@ -62,7 +63,7 @@ const PAGE_META: Record<
   '/salat/analytics': { title: 'Salat Analytics', emoji: '', Icon: ChartBarIcon },
   '/fasting': { title: 'Fasting', emoji: '', Icon: CrescentIcon },
   '/fasting/analytics': { title: 'Fasting Analytics', emoji: '', Icon: ChartBarIcon },
-  '/prayer-times': { title: 'Prayer Times', emoji: '🕐' },
+  '/prayer-times': { title: 'Prayer Times', emoji: '', Icon: ClockIcon },
   '/qibla': { title: 'Qibla Compass', emoji: '🧭' },
   '/quran': { title: 'Quran Habit', emoji: '', Icon: BookOpenIcon },
   '/friends': { title: 'Friends', emoji: '', Icon: UsersIcon },

@@ -256,6 +256,17 @@ export function OrnamentDivider({ className = '' }: { className?: string }) {
   );
 }
 
+/** A compass rose: a ring and a needle (Qibla). */
+export function CompassIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M15.5 8.5 13.2 13.2 8.5 15.5l2.3-4.7z" />
+      <circle cx="12" cy="12" r="0.6" fill="currentColor" />
+    </Svg>
+  );
+}
+
 const PRAYER_GLYPHS: Record<string, (p: IconProps) => React.ReactNode> = {
   fajr: FajrIcon,
   sunrise: SunriseIcon,
