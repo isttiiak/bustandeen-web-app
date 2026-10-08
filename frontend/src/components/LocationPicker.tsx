@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GlobeAltIcon, LockClosedIcon, SignalIcon } from '@heroicons/react/24/outline';
+import { BTN_PRIMARY, ITEM } from './bustanStyles.js';
 import {
   coordinatesLabel,
   getPlaceLookup,
@@ -14,7 +16,7 @@ import {
 /**
  * GPS + city-search location picker for prayer-time calculations. Shared
  * between the first-run prompt on the Prayer Times page and the "Change
- * location" section of Prayer Time settings — one copy of the GPS/search
+ * location" section of Prayer Time settings: one copy of the GPS/search
  * flow instead of two.
  */
 export default function LocationPicker({
@@ -43,7 +45,10 @@ export default function LocationPicker({
     setLocError('');
     if (!('geolocation' in navigator)) {
       setLocError(
-        t('prayerTimes.geoNotSupported', 'Geolocation not supported — use city search instead.')
+        t(
+          'prayerTimes.geoNotSupported',
+          'Location is not available in this browser. Search for your city instead.'
+        )
       );
       setLocLoading(false);
       return;
@@ -57,7 +62,7 @@ export default function LocationPicker({
         setLocLoading(false);
       },
       () => {
-        // GPS denied — nudge city search
+        // GPS denied: nudge city search
         setLocError(t('prayerTimes.gpsDenied', 'GPS denied. Type your city below.'));
         setLocLoading(false);
       },
@@ -106,37 +111,39 @@ export default function LocationPicker({
       <button
         onClick={requestLocation}
         disabled={locLoading}
-        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-emerald/10 border border-brand-emerald/30 hover:border-brand-emerald/60 text-left transition-all"
+        className={`${ITEM} w-full flex items-center gap-3 shadow-elev-1`}
       >
-        {locLoading ? (
-          <span className="loading loading-spinner loading-xs text-brand-emerald" />
-        ) : (
-          <span className="text-lg">📡</span>
-        )}
-        <div>
-          <p className="text-brand-emerald font-semibold text-sm">
+        <span className="w-9 h-9 rounded-control bg-brand-emerald/15 flex items-center justify-center shrink-0">
+          {locLoading ? (
+            <span className="loading loading-spinner loading-xs text-brand-emerald" />
+          ) : (
+            <SignalIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />
+          )}
+        </span>
+        <span className="min-w-0">
+          <span className="block text-brand-emerald font-bold text-sm">
             {t('prayerTimes.useGps', 'Use GPS (recommended)')}
-          </p>
-          <p className="text-white/30 text-xs">
+          </span>
+          <span className="block text-white/70 text-xs">
             {t('prayerTimes.gpsDesc', 'Most accurate. Requires browser location permission.')}
-          </p>
-        </div>
+          </span>
+        </span>
       </button>
       {locError && <p className="text-red-400 text-xs">{locError}</p>}
 
       {/* Divider */}
       <div className="flex items-center gap-2">
         <div className="flex-1 h-px bg-brand-border" />
-        <span className="text-white/20 text-xs">{t('prayerTimes.or', 'or')}</span>
+        <span className="text-white/70 text-xs">{t('prayerTimes.or', 'or')}</span>
         <div className="flex-1 h-px bg-brand-border" />
       </div>
 
       {/* Option 2: City search */}
       <div>
-        <p className="text-white/40 text-xs mb-2">
+        <p className="text-white/70 text-xs mb-2">
           {t(
             'prayerTimes.citySearchDesc',
-            'Search by city — no GPS needed, times are still accurate'
+            'Search by city. No GPS needed, and the times are just as accurate.'
           )}
         </p>
         <div className="flex gap-2">
@@ -148,12 +155,13 @@ export default function LocationPicker({
               if (e.key === 'Enter') void searchByCity();
             }}
             placeholder={t('prayerTimes.cityPlaceholder', 'e.g. Dhaka, London, Karachi...')}
-            className="input input-sm flex-1 bg-brand-deep border border-brand-border text-white placeholder-white/20 focus:border-brand-emerald/40 focus:outline-none"
+            aria-label={t('prayerTimes.citySearchDesc', 'Search by city')}
+            className="input h-11 text-sm flex-1 min-w-0 bg-shade/30 border border-brand-border rounded-control text-white placeholder-white/50 focus:border-brand-emerald/50 focus:outline-none"
           />
           <button
             onClick={() => void searchByCity()}
             disabled={citySearching || !cityInput.trim()}
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-none"
+            className={`${BTN_PRIMARY} h-11 !py-0 shrink-0`}
           >
             {citySearching ? (
               <span className="loading loading-spinner loading-xs" />
@@ -164,15 +172,15 @@ export default function LocationPicker({
         </div>
         {cityError && <p className="text-red-400 text-xs mt-1">{cityError}</p>}
         {citySuggestions.length > 0 && (
-          <div className="mt-2 space-y-1">
-            <p className="text-white/40 text-[11px]">
+          <div className="mt-2 space-y-1.5">
+            <p className="text-white/70 text-[11px]">
               {t('prayerTimes.pickCity', 'Pick your city:')}
             </p>
             {citySuggestions.map((s, i) => (
               <button
                 key={i}
                 onClick={() => pickSuggestion(s)}
-                className="w-full text-left px-3 py-2 rounded-lg bg-white/5 border border-brand-border hover:border-brand-emerald/40 text-white/70 hover:text-white text-xs transition-all"
+                className={`${ITEM} w-full !py-2 text-white/80 hover:text-white text-xs`}
               >
                 {s.name}
               </button>
@@ -182,13 +190,14 @@ export default function LocationPicker({
       </div>
 
       {/* Where place NAMES come from (prayer times are on-device either way) */}
-      <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 space-y-2">
-        <p className="text-white/60 text-xs font-semibold">
+      <div className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-3 space-y-2">
+        <p className="text-white/80 text-xs font-bold">
           {t('prayerTimes.placeLookupTitle', 'Finding place names')}
         </p>
         <div className="grid grid-cols-2 gap-2" role="radiogroup">
           {(['device', 'osm'] as const).map((mode) => {
             const active = lookup === mode;
+            const Icon = mode === 'device' ? LockClosedIcon : GlobeAltIcon;
             return (
               <button
                 key={mode}
@@ -196,18 +205,19 @@ export default function LocationPicker({
                 role="radio"
                 aria-checked={active}
                 onClick={() => chooseLookup(mode)}
-                className={`text-left px-3 py-2 rounded-lg border text-xs transition-all ${
+                className={`text-left px-3 py-2 rounded-control border text-xs transition-colors ${
                   active
                     ? 'border-brand-emerald/50 bg-brand-emerald/10 text-brand-emerald'
-                    : 'border-white/10 bg-white/5 text-white/60 hover:border-brand-emerald/30'
+                    : 'border-brand-border bg-brand-deep text-white/70 hover:border-brand-emerald/40'
                 }`}
               >
-                <span className="font-bold block">
+                <span className="font-bold flex items-center gap-1.5">
+                  <Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
                   {mode === 'device'
-                    ? t('prayerTimes.placeLookupDevice', '🔒 On this device')
-                    : t('prayerTimes.placeLookupOsm', '🌍 OpenStreetMap')}
+                    ? t('prayerTimes.placeLookupDevice', 'On this device')
+                    : t('prayerTimes.placeLookupOsm', 'OpenStreetMap')}
                 </span>
-                <span className="text-[11px] opacity-80">
+                <span className="block text-[11px] mt-0.5 opacity-90">
                   {mode === 'device'
                     ? t('prayerTimes.placeLookupDeviceHint', 'Private, ~1,450 cities')
                     : t('prayerTimes.placeLookupOsmHint', 'Any town or village')}
@@ -216,7 +226,7 @@ export default function LocationPicker({
             );
           })}
         </div>
-        <p className="text-white/40 text-[11px] leading-relaxed">
+        <p className="text-white/70 text-[11px] leading-relaxed">
           {lookup === 'device'
             ? t(
                 'prayerTimes.placeLookupDeviceNote',

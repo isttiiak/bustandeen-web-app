@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.105.0 - Prayer time settings in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Prayer time settings has the new look**, in dark and light: a calm drawer with icons for Musafir mode, location, calculation method and ʿAṣr timing, and clearer cards for each choice.
+- **Choosing a location** (in the drawer and the first-run prompt on Prayer Times) uses the same cards and buttons: GPS, city search and where place names come from now have drawn icons instead of emoji, and the search box and button line up.
+- **The "Times used in your country" card** matches the rest of the screen.
+- **Easier to read**: descriptions, hints and the madhab details have stronger text, especially in the light theme.
+- No emoji or em dashes in this wording, in English and Bangla. Prayer times are calculated exactly as before.
+
 ## v5.104.1 - Settings Naseeh switch saves through the account hook - 2026-10-08
 
 ### Changed

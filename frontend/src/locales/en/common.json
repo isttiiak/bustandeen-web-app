@@ -1324,7 +1324,7 @@
   "prayerTimeSettings": {
     "close": "Close prayer time settings",
     "locationDesc": "Prayer times are calculated from this location, on this device. It is never sent to Bustandeen.",
-    "locationTitle": "📍 Location",
+    "locationTitle": "Location",
     "locationUpdated": "Location updated",
     "noLocation": "Not set",
     "title": "Prayer time settings",
@@ -1336,8 +1336,8 @@
   },
   "prayerTimes": {
     "placeLookupTitle": "Finding place names",
-    "placeLookupDevice": "🔒 On this device",
-    "placeLookupOsm": "🌍 OpenStreetMap",
+    "placeLookupDevice": "On this device",
+    "placeLookupOsm": "OpenStreetMap",
     "placeLookupDeviceHint": "Private, ~1,450 cities",
     "placeLookupOsmHint": "Any town or village",
     "placeLookupDeviceNote": "Your location never leaves this device. Place names come from a city list inside the app.",
@@ -1361,7 +1361,7 @@
     "change": "Change",
     "cityNotFound": "City not found. Try a different name.",
     "cityPlaceholder": "e.g. Dhaka, London, Karachi...",
-    "citySearchDesc": "Search by city — no GPS needed, times are still accurate",
+    "citySearchDesc": "Search by city. No GPS needed, and the times are just as accurate.",
     "current": "Current",
     "currentBadge": "Current",
     "dhuhr": "Dhuhr",
@@ -1377,7 +1377,7 @@
     "forbiddenZenith": "Forbidden: Istiwa' (Solar Zenith)",
     "forbiddenZenithHadith": "\"At three times the Prophet ﷺ forbade us to pray ... when it is at its zenith.\" · Sahih Muslim 831; Ibn 'Umar: \"Do not pray when the sun is rising, nor when it is setting, nor when it is at its peak (zenith).\" · Sahih al-Bukhari 585",
     "forbiddenZenithNote": "The sun is directly overhead (~10 min before Dhuhr). Prayer is forbidden until Dhuhr time begins.",
-    "geoNotSupported": "Geolocation not supported — use city search instead.",
+    "geoNotSupported": "Location is not available in this browser. Search for your city instead.",
     "gpsDenied": "GPS denied. Type your city below.",
     "gpsDesc": "Most accurate. Requires browser location permission.",
     "isha": "Isha",
@@ -2474,13 +2474,13 @@
   "salatSettings": {
     "usualIn": "Usual in {{country}}",
     "asrDesc": "Madhabs differ on when ʿAṣr begins. Because Ẓuhr lasts until ʿAṣr starts, this moves both. Follow your local mosque.",
-    "asrTitle": "🕌 ʿAṣr timing (madhab)",
+    "asrTitle": "ʿAṣr timing (madhab)",
     "autoCountDesc": "When on, tapping Tasbīḥ or Ayatul Kursi below adds the counts straight to your dhikr counter. Turn it off to just mark them as done — use Tasbih mode on the Zikr counter to count them yourself instead.",
     "autoCountTitle": "📿 Auto-count dhikr",
     "ayatulKursiDesc": "Tapping \"Ayatul Kursi\" on a prayer adds one count to that dhikr.",
     "ayatulKursiTitle": "📖 Ayatul Kursi",
-    "calcMethodDesc": "Sets the Fajr/Isha twilight angles — the main source of disagreement between prayer-time apps. Match your local mosque if times feel off.",
-    "calcMethodTitle": "🌐 Calculation method",
+    "calcMethodDesc": "Sets the Fajr/Isha twilight angles, the main reason prayer-time apps disagree. Match your local mosque if times feel off.",
+    "calcMethodTitle": "Calculation method",
     "close": "Close salat settings",
     "dangerZoneHint": "Looking for data deletion? Everything lives in",
     "kazaDebtResetDesc": "Fallen behind for a while? A running total can feel discouraging rather than useful — reset it and count fresh from today. Your prayer history isn't affected, and you can always add debt back on the tracker if you need to.",
@@ -2505,7 +2505,7 @@
     "tasbihUpdated": "Tasbīḥ counting updated",
     "timesUpdated": "Prayer times updated",
     "title": "Salat settings",
-    "using": "✓ Using"
+    "using": "Using"
   },
   "salatTracker": {
     "seoTitle": "Salat Tracker: Log Your 5 Daily Prayers",
