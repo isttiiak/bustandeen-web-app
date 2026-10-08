@@ -161,17 +161,7 @@ export default function ZakatCalculatorPage({ lang }: Props) {
         </label>
         <p className="text-xs text-[#94a3b8] mt-2 leading-relaxed">{t.zakat.jewelryNote}</p>
         <p className="text-xs text-[#10b981] mt-2">
-          {includeJewelry
-            ? lang === 'bn'
-              ? 'নিচের স্বর্ণ/রৌপ্যের ঘরে গহনার মূল্যও যোগ করুন।'
-              : lang === 'ar'
-                ? 'أضف قيمة الحلي إلى حقول الذهب/الفضة أدناه.'
-                : 'Add your jewelry value into the gold/silver fields below.'
-            : lang === 'bn'
-              ? 'নিচের স্বর্ণ/রৌপ্যের ঘরে শুধু বিনিয়োগ/সঞ্চয়ের অংশ লিখুন, গহনা বাদ দিন।'
-              : lang === 'ar'
-                ? 'أدخل في حقول الذهب/الفضة أدناه أموال الاستثمار/الادخار فقط، دون الحلي.'
-                : 'Enter only investment/savings gold and silver below, excluding jewelry.'}
+          {includeJewelry ? t.zakat.jewelryIncludedHint : t.zakat.jewelryExcludedHint}
         </p>
       </div>
 

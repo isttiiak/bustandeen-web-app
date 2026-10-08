@@ -178,6 +178,9 @@ export default function ZakatCalculatorLibrary() {
               </span>
             </label>
             <p className="text-xs text-white/70 mt-2 leading-relaxed">{z.jewelryNote}</p>
+            <p className="text-xs font-semibold text-brand-emerald mt-2" aria-live="polite">
+              {includeJewelry ? z.jewelryIncludedHint : z.jewelryExcludedHint}
+            </p>
           </section>
 
           {/* Assets */}

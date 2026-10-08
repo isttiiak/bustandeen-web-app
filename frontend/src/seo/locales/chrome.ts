@@ -132,6 +132,8 @@ export interface ChromeStrings {
     madhabNote: string;
     jewelryLabel: string;
     jewelryNote: string;
+    jewelryIncludedHint: string;
+    jewelryExcludedHint: string;
     assetsTitle: string;
     cashLabel: string;
     goldValueLabel: string;
@@ -331,6 +333,8 @@ const en: ChromeStrings = {
     jewelryLabel: 'Include personal-use gold/silver jewelry?',
     jewelryNote:
       "Hanafi view: zakat is due on gold/silver jewelry regardless of use. Majority view (Shafi'i, Maliki, Hanbali): jewelry worn/used within customary limits is exempt. Toggle this only if you're following the view that includes it.",
+    jewelryIncludedHint: 'Add your jewelry value into the gold/silver fields below.',
+    jewelryExcludedHint: 'Enter only investment/savings gold and silver below, excluding jewelry.',
     assetsTitle: 'Your assets and debts',
     cashLabel: 'Cash and bank balances',
     goldValueLabel: 'Gold value (market price)',
@@ -549,6 +553,8 @@ const bn: ChromeStrings = {
     jewelryLabel: 'ব্যক্তিগত ব্যবহারের স্বর্ণ/রৌপ্য গহনা অন্তর্ভুক্ত করবেন?',
     jewelryNote:
       'হানাফি মত: ব্যবহার নির্বিশেষে স্বর্ণ/রৌপ্য গহনার উপর যাকাত ফরজ। সংখ্যাগরিষ্ঠ মত (শাফেয়ী, মালেকী, হাম্বলী): প্রচলিত মাত্রায় ব্যবহৃত গহনা যাকাতমুক্ত। আপনি যে মত অনুসরণ করেন তা গহনা অন্তর্ভুক্ত করলে তবেই এটি চালু করুন।',
+    jewelryIncludedHint: 'নিচের স্বর্ণ/রৌপ্যের ঘরে গহনার মূল্যও যোগ করুন।',
+    jewelryExcludedHint: 'নিচের স্বর্ণ/রৌপ্যের ঘরে শুধু বিনিয়োগ/সঞ্চয়ের অংশ লিখুন, গহনা বাদ দিন।',
     assetsTitle: 'আপনার সম্পদ ও ঋণ',
     cashLabel: 'নগদ ও ব্যাংক জমা',
     goldValueLabel: 'স্বর্ণের মূল্য (বাজারদর)',
@@ -766,6 +772,8 @@ const ar: ChromeStrings = {
     jewelryLabel: 'هل تُدرِج الحلي الذهبية/الفضية المستخدمة شخصيًا؟',
     jewelryNote:
       'مذهب الحنفية: تجب الزكاة في حلي الذهب والفضة بغض النظر عن الاستخدام. مذهب الجمهور (الشافعية والمالكية والحنابلة): الحلي المستخدمة ضمن الحدود المعتادة معفاة. فعّل هذا الخيار فقط إن كنت تتبع الرأي القائل بوجوبها.',
+    jewelryIncludedHint: 'أضف قيمة الحلي إلى حقول الذهب/الفضة أدناه.',
+    jewelryExcludedHint: 'أدخل في حقول الذهب/الفضة أدناه أموال الاستثمار/الادخار فقط، دون الحلي.',
     assetsTitle: 'أموالك وديونك',
     cashLabel: 'النقد والأرصدة البنكية',
     goldValueLabel: 'قيمة الذهب (سعر السوق)',
