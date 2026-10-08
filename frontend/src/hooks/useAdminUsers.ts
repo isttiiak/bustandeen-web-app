@@ -18,6 +18,9 @@ export interface AdminUserListItem {
   aiEnabled: boolean;
   welcomeEmailSentAt?: string | null;
   disabled: boolean;
+  /** Set when this uid is also a staff account (AdminAccount). Staff are
+   *  listed but left out of the overview user counts. */
+  admin: { role: 'servant' | 'ansar'; active: boolean } | null;
 }
 
 interface AdminUserListResult {
