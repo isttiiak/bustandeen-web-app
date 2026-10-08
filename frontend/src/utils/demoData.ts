@@ -519,6 +519,7 @@ export function getDemoResponse(url: string, method: string, gender = 'male'): u
     };
   if (url.includes('/api/sadaqah/config'))
     return { ok: true, bkashNumber: null, nagadNumber: null, nagadEnabled: false };
+  if (url.includes('/api/announcements/active')) return { ok: true, announcement: null };
   if (url.includes('/api/auth/verify')) return { ok: true, user: getDemoUser('male') };
   if (url.includes('/api/user/me')) return { ok: true };
   return { ok: true };
