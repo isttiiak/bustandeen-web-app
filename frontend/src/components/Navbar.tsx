@@ -24,8 +24,10 @@ import {
   LockClosedIcon,
   ChartBarIcon,
   BookOpenIcon,
+  HomeIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
-import { CrescentIcon, MosqueIcon, TasbihIcon } from './icons/IslamicIcons.js';
+import { CrescentIcon, MosqueIcon, Star8Icon, TasbihIcon } from './icons/IslamicIcons.js';
 import { UserAvatar } from './icons/AvatarGlyphs.js';
 import i18n from '../i18n.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
@@ -74,6 +76,8 @@ const PAGE_META: Record<
   '/naseeh': { title: 'Naseeh', emoji: '✨' },
   '/musafir': { title: 'Musafir Mode', emoji: '🧳' },
 };
+
+const HOME_META: (typeof PAGE_META)[string] = { title: 'Home', emoji: '', Icon: HomeIcon };
 
 // Maps each page to its logical parent for the back button
 const PARENT_ROUTES: Record<string, string> = {
@@ -146,10 +150,7 @@ export default function Navbar() {
   const isHome = location.pathname === '/';
   const pageMeta = PAGE_META[location.pathname];
   const parentPath = PARENT_ROUTES[location.pathname] ?? '/';
-  const parentMeta =
-    parentPath === '/'
-      ? { title: 'Home', emoji: '🏠' }
-      : (PAGE_META[parentPath] ?? { title: 'Home', emoji: '🏠' });
+  const parentMeta = parentPath === '/' ? HOME_META : (PAGE_META[parentPath] ?? HOME_META);
 
   useEffect(() => {
     if (!dropdownOpen) return;
@@ -302,10 +303,14 @@ export default function Navbar() {
                 {noorTodayVisible && (
                   <div
                     className="tooltip tooltip-bottom"
-                    data-tip="Today's Noor — fresh light every day, resets at midnight"
+                    data-tip={`${t('settings.noorToday')}: ${t('settings.noorTodayDetail')}`}
                   >
-                    <span className="px-1 sm:px-2 py-0.5 rounded-full bg-brand-emerald/15 border border-brand-emerald/40 text-brand-emerald text-xs font-bold flex items-center gap-0.5 sm:gap-1 whitespace-nowrap">
-                      ✨ {formatLocaleNumber(noor.today)}
+                    <span
+                      aria-label={`${t('settings.noorToday')}: ${formatLocaleNumber(noor.today)}`}
+                      className="px-1 sm:px-2 py-0.5 rounded-full bg-brand-emerald/15 border border-brand-emerald/40 text-brand-emerald text-xs font-bold flex items-center gap-0.5 sm:gap-1 whitespace-nowrap"
+                    >
+                      <SparklesIcon aria-hidden className="w-3.5 h-3.5" />
+                      {formatLocaleNumber(noor.today)}
                     </span>
                   </div>
                 )}
@@ -320,10 +325,14 @@ export default function Navbar() {
                   // more actionable one, so it stays; all-time drops first.
                   <div
                     className="hidden sm:block tooltip tooltip-bottom"
-                    data-tip="All-time Noor — every day's light, gathered. Never resets"
+                    data-tip={`${t('settings.noorAllTime')}: ${t('settings.noorAllTimeDetail')}`}
                   >
-                    <span className="px-1.5 sm:px-2 py-0.5 rounded-full bg-brand-gold/15 border border-brand-gold/40 text-brand-gold text-xs font-bold flex items-center gap-0.5 sm:gap-1 whitespace-nowrap">
-                      🌟 {formatLocaleNumber(noor.allTime ?? 0)}
+                    <span
+                      aria-label={`${t('settings.noorAllTime')}: ${formatLocaleNumber(noor.allTime ?? 0)}`}
+                      className="px-1.5 sm:px-2 py-0.5 rounded-full bg-brand-gold/15 border border-brand-gold/40 text-brand-gold text-xs font-bold flex items-center gap-0.5 sm:gap-1 whitespace-nowrap"
+                    >
+                      <Star8Icon aria-hidden className="w-3.5 h-3.5" />
+                      {formatLocaleNumber(noor.allTime ?? 0)}
                     </span>
                   </div>
                 )}
