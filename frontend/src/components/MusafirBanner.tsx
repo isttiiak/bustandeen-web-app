@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
+import { BriefcaseIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import { translateSalatName } from '../utils/prayerTimes.js';
@@ -55,24 +56,26 @@ export default function MusafirBanner({
     <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}>
       <Link
         to="/musafir"
-        className="flex items-center gap-3 rounded-2xl border border-brand-info/40 bg-gradient-to-r from-brand-info/15 to-brand-emerald/10 px-4 py-3 hover:border-brand-info/70 transition-colors"
+        className="flex items-center gap-3 rounded-card border border-brand-border bg-brand-deep shadow-elev-1 px-4 py-3 hover:border-brand-gold/40 transition-colors"
       >
-        <span className="text-2xl shrink-0">🧳</span>
+        <span className="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/30">
+          <BriefcaseIcon className="w-5 h-5 text-brand-gold" aria-hidden />
+        </span>
         <span className="min-w-0 flex-1">
-          <span className="block text-brand-info font-black text-sm leading-tight">
+          <span className="block text-brand-gold font-bold text-sm leading-tight">
             {t('musafir.bannerTitle', 'Musafir · day {{day}}', { day })}
             {state.destination && (
-              <span className="text-white/40 font-semibold"> · {state.destination}</span>
+              <span className="text-white/65 font-semibold"> · {state.destination}</span>
             )}
           </span>
-          <span className="block text-white/60 text-xs mt-0.5 leading-snug">{line}</span>
+          <span className="block text-white/75 text-xs mt-0.5 leading-snug">{line}</span>
           {variant === 'fasting' && (
-            <span className="block text-white/30 text-[10px] mt-0.5">
+            <span className="block text-white/60 text-[10px] mt-0.5">
               {translateReference('Ṣaḥīḥ al-Bukhārī 1943 · Ṣaḥīḥ', i18n.language)}
             </span>
           )}
         </span>
-        <span className="text-brand-info/60 text-lg shrink-0">→</span>
+        <ChevronRightIcon className="w-5 h-5 shrink-0 text-white/60" aria-hidden />
       </Link>
     </motion.div>
   );

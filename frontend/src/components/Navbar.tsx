@@ -26,6 +26,7 @@ import {
   BookOpenIcon,
   HomeIcon,
   SparklesIcon,
+  BriefcaseIcon,
 } from '@heroicons/react/24/outline';
 import { CrescentIcon, MosqueIcon, Star8Icon, TasbihIcon } from './icons/IslamicIcons.js';
 import { UserAvatar } from './icons/AvatarGlyphs.js';
@@ -74,7 +75,7 @@ const PAGE_META: Record<
   '/contact': { title: 'Contact Us', emoji: '📨' },
   '/profile': { title: 'My Profile', emoji: '', Icon: UserCircleIcon },
   '/naseeh': { title: 'Naseeh', emoji: '', Icon: SparklesIcon },
-  '/musafir': { title: 'Musafir Mode', emoji: '🧳' },
+  '/musafir': { title: 'Musafir Mode', emoji: '', Icon: BriefcaseIcon },
 };
 
 const HOME_META: (typeof PAGE_META)[string] = { title: 'Home', emoji: '', Icon: HomeIcon };
