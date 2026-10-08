@@ -799,7 +799,7 @@ export default function Friends() {
                           </span>
                         )}
                         <div className="flex items-center gap-2 mt-1">
-                          <div className="flex-1 bg-shade rounded-full h-1.5 overflow-hidden">
+                          <div className="flex-1 bg-track rounded-full h-1.5 overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${Math.min(100, Math.max(0, shownScore(f)))}%` }}
