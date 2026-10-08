@@ -579,4 +579,52 @@ describe('Salat API', () => {
     expect(after.body.totalOwed).toBe(0);
     expect(after.body.since).toBe(today);
   });
+
+  // The client sends the TRACKING day (getTrackingDay) as the reset date.
+  // Between midnight and Fajr that is yesterday's civil date; the old civil
+  // date put the reset a day after the still-open day, so the journey dropped
+  // the current phase. A reset never touches logs or kaza debt.
+  test('POST /reset on the tracking day keeps the open day and leaves logs and debt alone', async () => {
+    const tokenR = fakeJwt({ uid: 'salR', email: 'salr@test.dev', name: 'SalR' });
+    const authR = (r) => r.set('Authorization', `Bearer ${tokenR}`);
+    await authR(request(app).post('/api/auth/verify').send({ token: tokenR }));
+
+    const trackingDay = shiftDateStr(today, -1); // before Fajr: civil today is a day ahead
+    await SalatLogModel.create({
+      userId: 'salR',
+      date: trackingDay,
+      prayers: { fajr: { status: 'completed' }, isha: { status: 'completed' } },
+    });
+    await SalatLogModel.create({
+      userId: 'salR',
+      date: shiftDateStr(trackingDay, -1),
+      prayers: { fajr: { status: 'completed' } },
+    });
+    await SalatDebtModel.create({
+      userId: 'salR',
+      owed: { asr: 3 },
+      since: shiftDateStr(trackingDay, -5),
+      lastAccrualDate: trackingDay,
+    });
+    const logsBefore = await SalatLogModel.find({ userId: 'salR' }).sort({ date: 1 }).lean();
+    const debtBefore = await SalatDebtModel.findOne({ userId: 'salR' }).lean();
+
+    const reset = await authR(request(app).post('/api/salat/reset').send({ today: trackingDay }));
+    expect(reset.status).toBe(200);
+    expect(reset.body.resetDate).toBe(trackingDay);
+
+    const journey = await authR(request(app).get(`/api/salat/journey?today=${trackingDay}`));
+    expect(journey.status).toBe(200);
+    const current = journey.body.phases[0];
+    expect(current.to).toBeNull();
+    expect(current.from).toBe(trackingDay);
+    expect(current.done).toBe(2); // the open day's Fajr + Isha still count
+
+    const logsAfter = await SalatLogModel.find({ userId: 'salR' }).sort({ date: 1 }).lean();
+    expect(
+      logsAfter.map((l) => [l.date, l.prayers?.fajr?.status, l.prayers?.isha?.status])
+    ).toEqual(logsBefore.map((l) => [l.date, l.prayers?.fajr?.status, l.prayers?.isha?.status]));
+    const debtAfter = await SalatDebtModel.findOne({ userId: 'salR' }).lean();
+    expect(debtAfter.owed).toEqual(debtBefore.owed);
+  });
 });

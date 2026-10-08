@@ -691,7 +691,8 @@ export interface JourneyPhase {
 
 export function useSalatJourney(today?: string) {
   const user = useAuthStore((s) => s.user);
-  const todayParam = today ?? localTodayStr();
+  // Phases are cut at the reset dates, which are tracking days.
+  const todayParam = today ?? getTrackingDay();
   return useQuery({
     queryKey: ['salat', 'journey', todayParam],
     queryFn: async () => {
@@ -705,6 +706,9 @@ export function useSalatJourney(today?: string) {
   });
 }
 
+/** "Start fresh". `today` must be getTrackingDay(), never a civil date: the
+ * server stores it as User.salatResetDate, the cutoff analytics and the journey
+ * compare against the tracking day. */
 export function useResetSalat() {
   const qc = useQueryClient();
   return useMutation({
@@ -712,9 +716,10 @@ export function useResetSalat() {
       const { data } = await api.post<{ ok: boolean; resetDate: string }>('/api/salat/reset', vars);
       return data;
     },
+    // The reset moves the stats cutoff: streak, analytics, journey and the
+    // tracker's week strip all read it.
     onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['salat', 'analytics'] });
-      void qc.invalidateQueries({ queryKey: ['salat', 'journey'] });
+      void qc.invalidateQueries({ queryKey: ['salat'] });
     },
   });
 }

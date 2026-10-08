@@ -70,3 +70,34 @@ describe('Salat settings', () => {
     expect({ missing, bad }).toEqual({ missing: [], bad: [] });
   });
 });
+
+// "Start fresh" stores its date as User.salatResetDate, which analytics and the
+// journey compare against the tracking day (CLAUDE.md "Salat today"). A civil
+// date is a day ahead between midnight and Fajr and hid the still-open day.
+const hooks =
+  Object.values(
+    import.meta.glob<string>('../hooks/useSalatLog.ts', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    })
+  )[0] ?? '';
+
+describe('Salat reset date', () => {
+  const body = stripComments(code);
+
+  it('both resets send the tracking day through their hooks', () => {
+    expect(body).toMatch(/resetSalat\.mutate\(\s*\{\s*today: getTrackingDay\(\)\s*\}/);
+    expect(body).toMatch(/resetDebt\.mutate\(\s*\{\s*today: getTrackingDay\(\)\s*\}/);
+  });
+
+  it('builds no civil date and posts nothing directly', () => {
+    expect(body).not.toMatch(/getFullYear\(\)|getDate\(\)\)\.padStart/);
+    expect(body).not.toMatch(/api\.post|\/api\/salat\/reset/);
+  });
+
+  it('the journey defaults to the tracking day too', () => {
+    const journey = hooks.slice(hooks.indexOf('export function useSalatJourney'));
+    expect(journey.slice(0, journey.indexOf('useQuery'))).toContain('getTrackingDay()');
+  });
+});
