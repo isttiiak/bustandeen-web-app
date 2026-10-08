@@ -12,6 +12,7 @@ import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import {
   Cog6ToothIcon,
   UserCircleIcon,
+  UsersIcon,
   ArrowRightOnRectangleIcon,
   ArrowLeftIcon,
   InformationCircleIcon,
@@ -62,7 +63,7 @@ const PAGE_META: Record<
   '/prayer-times': { title: 'Prayer Times', emoji: '🕐' },
   '/qibla': { title: 'Qibla Compass', emoji: '🧭' },
   '/quran': { title: 'Quran Habit', emoji: '', Icon: BookOpenIcon },
-  '/friends': { title: 'Friends', emoji: '🤝' },
+  '/friends': { title: 'Friends', emoji: '', Icon: UsersIcon },
   '/settings': { title: 'Settings', emoji: '', Icon: Cog6ToothIcon },
   '/about': { title: 'About Bustandeen', emoji: '🌱' },
   '/privacy': { title: 'Privacy', emoji: '🔒' },
