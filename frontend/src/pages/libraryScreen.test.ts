@@ -103,4 +103,17 @@ describe('Library screens', () => {
       .map(([k]) => k);
     expect(bad).toEqual([]);
   });
+
+  // Istiak 2026-10-09: the jewellery checkbox stays a disclosure (no source to
+  // change the maths); it only switches the hint for what to enter below.
+  it('the jewellery checkbox switches a hint and never enters the sum', () => {
+    const zakat = files['./ZakatCalculatorLibrary.tsx'];
+    expect(zakat).toContain('includeJewelry ? z.jewelryIncludedHint : z.jewelryExcludedHint');
+    const sum = zakat.match(/const totalAssets = (.*);/)?.[1] ?? '';
+    expect(sum).not.toMatch(/jewel/i);
+    for (const l of ['en', 'bn', 'ar'] as const) {
+      expect(CHROME[l].zakat.jewelryIncludedHint).toBeTruthy();
+      expect(CHROME[l].zakat.jewelryExcludedHint).toBeTruthy();
+    }
+  });
 });

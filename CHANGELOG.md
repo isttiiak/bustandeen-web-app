@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.108.1 - Zakat jewellery choice explains what to enter - 2026-10-09
+
+### Changed
+
+- **The "Include personal-use gold/silver jewelry?" choice** in the Library's Zakat calculator now tells you what to enter: ticked, add your jewellery's value to the gold and silver fields; unticked, enter only investment or savings gold and silver. The public zakat calculator pages already did this, and both now share the same wording (English, Bangla, Arabic).
+- The zakat maths is unchanged: the calculator adds what you enter, and the choice between the Hanafi and majority views on jewellery stays yours.
+
 ## v5.108.0 - Library in the Bustan Arch design - 2026-10-08
 
 ### Changed
