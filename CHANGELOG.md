@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.100.1 - Navigation bar icons - 2026-10-08
+
+### Changed
+
+- **Icons instead of emoji in the navigation bar**: the "Home" back button has a house icon, and the Noor pills show a sparkles icon (today) and a star (all-time).
+- The Noor pill tooltips are now translated (they were English only, also in Bangla) and read the same as in Settings, without em dashes.
+
 ## v5.100.0 - Naseeh in the Bustan Arch design - 2026-10-08
 
 ### Changed
