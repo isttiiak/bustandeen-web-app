@@ -70,11 +70,11 @@ function ReferenceCard({ reference }: { reference: MuhasabahRef }) {
 
   if (reference.type === 'hadith') {
     return (
-      <div className="rounded-xl border border-brand-gold/20 bg-brand-gold/[0.06] p-3 space-y-1.5">
+      <div className="rounded-control border border-brand-gold/25 bg-brand-gold/[0.06] p-3 space-y-1.5">
         <p className="text-white/80 text-sm leading-relaxed italic">
           "{isBn ? reference.textBn : reference.textEn}"
         </p>
-        <p className="text-brand-gold/70 text-[11px]">
+        <p className="text-brand-gold text-[11px]">
           {reference.source} · {reference.grade}
         </p>
       </div>
@@ -87,13 +87,13 @@ function ReferenceCard({ reference }: { reference: MuhasabahRef }) {
       : `${reference.surahName} ${reference.surah}:${reference.ayahStart}-${reference.ayahEnd}`;
 
   return (
-    <div className="rounded-xl border border-brand-emerald/20 bg-brand-emerald/[0.06] p-3 space-y-1.5">
+    <div className="rounded-control border border-brand-emerald/25 bg-brand-emerald/[0.06] p-3 space-y-1.5">
       {verseText ? (
         <p className="text-white/80 text-sm leading-relaxed italic">"{verseText}"</p>
       ) : (
-        <p className="text-white/30 text-xs">{t('muhasabah.loadingVerse', 'Loading verse…')}</p>
+        <p className="text-white/55 text-xs">{t('muhasabah.loadingVerse', 'Loading verse…')}</p>
       )}
-      <p className="text-brand-emerald/70 text-[11px]">{citation}</p>
+      <p className="text-brand-emerald text-[11px]">{citation}</p>
     </div>
   );
 }
@@ -167,7 +167,7 @@ export default function MuhasabahReport() {
           <div className="flex items-center justify-between mb-2">
             <AiBadge label={t('muhasabah.badgeLabel', 'Muhāsabah · this week')} />
             <button
-              className="text-white/30 hover:text-white text-xs"
+              className="text-white/60 hover:text-white text-xs"
               onClick={() => setDismissed(true)}
               aria-label={t('muhasabah.dismiss', 'Dismiss')}
             >
@@ -184,8 +184,8 @@ export default function MuhasabahReport() {
           {report && (
             <div className="space-y-2">
               <p className="text-white/80 text-sm leading-relaxed">{report.wentWell}</p>
-              <p className="text-white/60 text-sm leading-relaxed">{report.slipped}</p>
-              <p className="text-brand-info/80 text-sm italic">{report.suggestion}</p>
+              <p className="text-white/75 text-sm leading-relaxed">{report.slipped}</p>
+              <p className="text-brand-info text-sm italic">{report.suggestion}</p>
 
               <div className="pt-2">
                 <ReferenceCard reference={reference} />
@@ -200,7 +200,7 @@ export default function MuhasabahReport() {
                   total: weeklyStats.zikrTotal7d.toLocaleString('en-GB'),
                 })}
               </p>
-              <p className="text-white/60 text-sm leading-relaxed">
+              <p className="text-white/75 text-sm leading-relaxed">
                 {t(
                   'muhasabah.fallbackSalat',
                   "You logged {{pct}}% of this week's prayers. Prayer streak: {{salat}} days. Quran streak: {{quran}} days. Fasts this month: {{fasts}}.",
@@ -212,7 +212,7 @@ export default function MuhasabahReport() {
                   }
                 )}
               </p>
-              <p className="text-brand-info/80 text-sm italic">
+              <p className="text-brand-info text-sm italic">
                 {t(
                   'muhasabah.fallbackSuggestion',
                   'Look at these quietly, then pick one small thing to keep steady next week.'

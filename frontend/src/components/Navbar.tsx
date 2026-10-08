@@ -24,6 +24,7 @@ import {
   LockClosedIcon,
   ChartBarIcon,
   BookOpenIcon,
+  SparklesIcon,
 } from '@heroicons/react/24/outline';
 import { CrescentIcon, MosqueIcon, TasbihIcon } from './icons/IslamicIcons.js';
 import { UserAvatar } from './icons/AvatarGlyphs.js';
@@ -71,7 +72,7 @@ const PAGE_META: Record<
   '/feedback': { title: 'Feedback', emoji: '💬' },
   '/contact': { title: 'Contact Us', emoji: '📨' },
   '/profile': { title: 'My Profile', emoji: '', Icon: UserCircleIcon },
-  '/naseeh': { title: 'Naseeh', emoji: '✨' },
+  '/naseeh': { title: 'Naseeh', emoji: '', Icon: SparklesIcon },
   '/musafir': { title: 'Musafir Mode', emoji: '🧳' },
 };
 
@@ -399,9 +400,7 @@ export default function Navbar() {
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-emerald/10 text-sm transition-colors"
                         >
-                          <span className="w-4 h-4 grid place-items-center text-sm leading-none">
-                            ✨
-                          </span>
+                          <SparklesIcon className="w-4 h-4" />
                           {t('nav.naseeh', 'Naseeh')}
                         </Link>
                       )}
