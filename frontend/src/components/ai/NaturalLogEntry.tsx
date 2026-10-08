@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PencilSquareIcon } from '@heroicons/react/24/outline';
+import { BTN_PRIMARY } from '../bustanStyles.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
 import NaturalLogModal from './NaturalLogModal.js';
 
 /** Entry point for natural-language logging — self-gated on aiEnabled, same
  * pattern as MuhasabahReport/ComebackNudge, so dropping it into a page needs
- * no extra prop-threading. */
+ * no extra prop-threading. Drawn as the main action in the Naseeh hero. */
 export default function NaturalLogEntry() {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
@@ -16,20 +18,13 @@ export default function NaturalLogEntry() {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="w-full rounded-2xl border border-brand-border bg-brand-deep/60 hover:bg-brand-deep px-4 py-3 flex items-center gap-3 text-left transition-colors"
-      >
-        <span className="text-xl">✨</span>
-        <div className="flex-1 min-w-0">
-          <p className="text-white font-bold text-sm">
-            {t('naturalLog.entryTitle', 'Quick log with a sentence')}
-          </p>
-          <p className="text-white/40 text-xs truncate">
-            {t('naturalLog.entryHint', 'e.g. "Prayed fajr in jamaah, read 5 pages, 100 istighfar"')}
-          </p>
-        </div>
+      <button type="button" onClick={() => setOpen(true)} className={BTN_PRIMARY}>
+        <PencilSquareIcon className="w-4 h-4" aria-hidden />
+        {t('naturalLog.entryTitle', 'Quick log with a sentence')}
       </button>
+      <p className="text-white/55 text-xs">
+        {t('naturalLog.entryHint', 'e.g. "Prayed fajr in jamaah, read 5 pages, 100 istighfar"')}
+      </p>
       {open && <NaturalLogModal onClose={() => setOpen(false)} />}
     </>
   );

@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { CalendarDaysIcon } from '@heroicons/react/24/outline';
+import { BTN_PRIMARY, CARD, SECTION_TITLE } from '../bustanStyles.js';
 import { useAcceptPlan, useWeeklyPlan, type PlanTarget } from '../../hooks/useNaseeh.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
 import { AiSendsLink } from './AiFlair.js';
@@ -45,12 +47,12 @@ function Stepper({
 }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="text-white/40 text-[11px] w-16 shrink-0">{label}</span>
+      <span className="text-white/60 text-[11px] w-16 shrink-0">{label}</span>
       <button
         type="button"
         onClick={onDec}
         aria-label={`Decrease ${label}`}
-        className="btn btn-xs btn-circle btn-ghost border border-white/15 text-white/70"
+        className="w-7 h-7 grid place-items-center rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-emerald/40 text-white/80"
       >
         -
       </button>
@@ -61,7 +63,7 @@ function Stepper({
         type="button"
         onClick={onInc}
         aria-label={`Increase ${label}`}
-        className="btn btn-xs btn-circle btn-ghost border border-white/15 text-white/70"
+        className="w-7 h-7 grid place-items-center rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-emerald/40 text-white/80"
       >
         +
       </button>
@@ -77,12 +79,12 @@ function ProgressRow({ target }: { target: PlanTarget }) {
     <li className="space-y-1.5">
       <div className="flex items-baseline justify-between gap-3">
         <p className="text-white/85 text-sm font-semibold">{target.title}</p>
-        <p className="text-white/50 text-xs shrink-0">
+        <p className="text-white/65 text-xs shrink-0">
           {target.done} / {goal}
         </p>
       </div>
       <div
-        className="h-1.5 rounded-full bg-white/10 overflow-hidden"
+        className="h-1.5 rounded-full bg-track overflow-hidden"
         role="progressbar"
         aria-valuenow={target.done}
         aria-valuemin={0}
@@ -94,7 +96,7 @@ function ProgressRow({ target }: { target: PlanTarget }) {
           style={{ width: `${pct}%` }}
         />
       </div>
-      <p className="text-white/35 text-[11px]">
+      <p className="text-white/55 text-[11px]">
         {target.met
           ? t('weeklyPlan.met', 'Done for the week. Anything more is a bonus.')
           : `${target.daysLeft} ${target.daysLeft === 1 ? 'day' : 'days'} left to fit it in.`}
@@ -138,17 +140,13 @@ export default function WeeklyPlanCard() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
-      <div className="rounded-3xl border border-brand-border bg-brand-deep/70 p-4 space-y-3">
+      <div className={`${CARD} p-4 space-y-3`}>
         <div className="flex items-center gap-2">
-          <span aria-hidden className="text-lg">
-            🗓️
-          </span>
-          <h3 className="text-white font-black text-base">
-            {t('weeklyPlan.title', 'Your plan for this week')}
-          </h3>
+          <CalendarDaysIcon aria-hidden className="w-5 h-5 text-brand-emerald" />
+          <h3 className={SECTION_TITLE}>{t('weeklyPlan.title', 'Your plan for this week')}</h3>
         </div>
 
-        <p className="text-white/70 text-sm leading-relaxed">{plan.headline}</p>
+        <p className="text-white/80 text-sm leading-relaxed">{plan.headline}</p>
 
         {plan.status === 'ready' && (
           <>
@@ -158,7 +156,7 @@ export default function WeeklyPlanCard() {
                   <p className="text-white/85 text-sm font-semibold">
                     {liveTitle(target, current(target))}
                   </p>
-                  <p className="text-white/40 text-xs leading-relaxed">{target.reason}</p>
+                  <p className="text-white/60 text-xs leading-relaxed">{target.reason}</p>
                   <div className="space-y-1.5">
                     {target.kind !== 'salat' && (
                       <Stepper
@@ -200,13 +198,13 @@ export default function WeeklyPlanCard() {
                 type="button"
                 onClick={onAccept}
                 disabled={accept.isPending}
-                className="btn btn-sm bg-brand-emerald/20 border-brand-emerald/30 text-brand-emerald hover:bg-brand-emerald/30 disabled:opacity-50"
+                className={BTN_PRIMARY}
               >
                 {accept.isPending
                   ? t('weeklyPlan.saving', 'Saving…')
                   : t('weeklyPlan.accept', 'Accept this plan')}
               </button>
-              <p className="text-white/35 text-[11px]">
+              <p className="text-white/55 text-[11px]">
                 {t(
                   'weeklyPlan.acceptNote',
                   'Accepting also sets your daily dhikr and Quran goals to these amounts. You can change them any time in the app.'
@@ -229,7 +227,7 @@ export default function WeeklyPlanCard() {
           </ul>
         )}
 
-        <p className="text-white/25 text-[10px] leading-relaxed">
+        <p className="text-white/55 text-[11px] leading-relaxed">
           {t(
             'weeklyPlan.basis',
             'Worked out on our server from your own logs. No AI is used for this card.'

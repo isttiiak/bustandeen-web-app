@@ -34,14 +34,14 @@ export default function KazaPlanCard() {
           <AiBadge label={t('naseehKaza.badge', 'Naseeh · make-up prayer plan')} />
 
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-xl bg-white/[0.04] border border-white/10 p-3">
-              <p className="text-white/40 text-[11px]">{t('naseehKaza.owed', 'Owed')}</p>
+            <div className="rounded-control bg-shade/20 border border-brand-border p-3">
+              <p className="text-white/60 text-[11px]">{t('naseehKaza.owed', 'Owed')}</p>
               <p className="text-white font-black text-2xl leading-tight">
                 {data.totalOwed.toLocaleString(locale)}
               </p>
             </div>
-            <div className="rounded-xl bg-brand-emerald/[0.08] border border-brand-emerald/20 p-3">
-              <p className="text-white/40 text-[11px]">
+            <div className="rounded-control bg-brand-emerald/[0.08] border border-brand-emerald/25 p-3">
+              <p className="text-white/60 text-[11px]">
                 {t('naseehKaza.oneADay', 'One a day, done by')}
               </p>
               <p className="text-brand-emerald font-black text-base leading-tight mt-1">
@@ -52,12 +52,12 @@ export default function KazaPlanCard() {
 
           {headline && <p className="text-white/80 text-sm leading-relaxed">{headline}</p>}
           {rest.map((line) => (
-            <p key={line} className="text-white/60 text-sm leading-relaxed">
+            <p key={line} className="text-white/75 text-sm leading-relaxed">
               {line}
             </p>
           ))}
 
-          <p className="text-white/30 text-[11px] leading-relaxed">
+          <p className="text-white/55 text-[11px] leading-relaxed">
             {t(
               'naseehKaza.basis',
               'A pace you can choose to follow, worked out from the count on your Salat page. It changes as you pay them back or add more.'

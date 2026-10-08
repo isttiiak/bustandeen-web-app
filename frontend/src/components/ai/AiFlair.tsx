@@ -1,7 +1,8 @@
-import { m as motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { SparklesIcon } from '@heroicons/react/24/outline';
+import { CARD } from '../bustanStyles.js';
 
 /** A row of the "AI usage and privacy" panel on /naseeh (AiPrivacyPanel). */
 export type AiFeature = 'quickLog' | 'summary' | 'patterns' | 'kaza' | 'plan' | 'chat' | 'coaching';
@@ -20,7 +21,7 @@ export function AiSendsLink({
     <Link
       to={`/naseeh#ai-sends-${feature}`}
       onClick={onNavigate}
-      className="text-white/45 hover:text-white/70 underline underline-offset-2 text-[10px] whitespace-nowrap"
+      className="text-white/60 hover:text-white underline underline-offset-2 text-[10px] whitespace-nowrap"
     >
       {t('aiFlair.whatIsSent', 'What is sent?')}
     </Link>
@@ -32,7 +33,7 @@ export function AiSendsLink({
 export function AiFallbackNote({ feature }: { feature: AiFeature }) {
   const { t } = useTranslation();
   return (
-    <p className="text-white/30 text-[10px] leading-relaxed mt-2">
+    <p className="text-white/55 text-[11px] leading-relaxed mt-2">
       {t(
         'aiFlair.fallbackNote',
         'Naseeh could not reach the AI just now, so this is a plain note worked out from your own numbers. No AI was used.'
@@ -43,85 +44,47 @@ export function AiFallbackNote({ feature }: { feature: AiFeature }) {
 }
 
 /**
- * The distinct "AI feel" — deliberately more colorful and alive than the calm
- * emerald app chrome, so an AI surface reads as generative at a glance:
- * a slowly rotating aurora gradient, prismatic dots, and a shimmering label.
- * Every AI output carries <AiDisclaimer/> — never a source of evidence.
+ * The Naseeh look (T3.2 Bustan Arch): AI surfaces are ordinary theme cards
+ * marked by a calm sage badge with a sparkles icon. No aurora, glow or endless
+ * motion. Every AI output carries <AiDisclaimer/>, never a source of evidence.
  */
 
-/** A colorful pill/badge that marks a surface as AI. */
+/** The badge that marks a surface as AI. */
 export function AiBadge({ label }: { label?: string }) {
   const { t } = useTranslation();
   return (
-    <span className="relative inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-black text-white overflow-hidden">
-      <motion.span
-        aria-hidden
-        className="absolute inset-0 opacity-90"
-        style={{
-          background: 'linear-gradient(90deg,#7a9e6e,#06b6d4,#a855f7,#ec4899,#c9a96e,#7a9e6e)',
-          backgroundSize: '300% 100%',
-        }}
-        animate={{ backgroundPosition: ['0% 50%', '300% 50%'] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'linear' }}
-      />
-      <span className="relative">✨</span>
-      <span className="relative">{label ?? t('aiFlair.badgeLabel', 'Naseeh · AI companion')}</span>
+    <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-bold text-brand-emerald bg-brand-emerald/10 border border-brand-emerald/30">
+      <SparklesIcon aria-hidden className="w-3.5 h-3.5" />
+      <span>{label ?? t('aiFlair.badgeLabel', 'Naseeh · AI companion')}</span>
     </span>
   );
 }
 
-/** Prismatic "thinking" loader — colorful pulsing dots over a soft aurora. */
+/** "Thinking" loader: three dots that pulse while the request is pending
+ * (CSS, stopped under reduced motion). */
 export function AiThinking({ label }: { label?: string }) {
   const { t } = useTranslation();
-  const colors = ['#7a9e6e', '#5a9e8e', '#c4825a', '#c4825a', '#c9a96e'];
   return (
-    <div className="relative flex flex-col items-center justify-center gap-3 py-6">
-      <motion.div
-        aria-hidden
-        className="absolute w-32 h-32 rounded-full blur-2xl opacity-40"
-        style={{ background: 'radial-gradient(circle, #a855f7, #06b6d4, transparent 70%)' }}
-        animate={{ scale: [1, 1.06, 1], opacity: [0.25, 0.35, 0.25] }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-      />
-      <div className="relative flex items-center gap-2">
-        {colors.map((c, i) => (
-          <motion.span
-            key={i}
-            className="w-2.5 h-2.5 rounded-full"
-            style={{ background: c, boxShadow: `0 0 10px ${c}` }}
-            animate={{ y: [0, -8, 0], opacity: [0.4, 1, 0.4] }}
-            transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.12, ease: 'easeInOut' }}
+    <div className="flex flex-col items-center justify-center gap-3 py-6" role="status">
+      <div className="flex items-center gap-2" aria-hidden>
+        {['bg-brand-emerald', 'bg-brand-gold', 'bg-brand-info'].map((c, i) => (
+          <span
+            key={c}
+            className={`w-2.5 h-2.5 rounded-full ${c} animate-pulse motion-reduce:animate-none`}
+            style={{ animationDelay: `${i * 150}ms` }}
           />
         ))}
       </div>
-      <p className="relative text-white/50 text-xs font-semibold tracking-wide">
+      <p className="text-white/60 text-xs font-semibold tracking-wide">
         {label ?? t('aiFlair.thinkingLabel', 'Naseeh is reflecting…')}
       </p>
     </div>
   );
 }
 
-/** A card with a FULL gradient border whose colors slowly traverse the whole
- * perimeter (Istiak: no partial "running" segment — the complete border stays
- * visible at all times and the gradient drifts along it, calm and slow). The
- * interior is fully opaque so nothing moves behind the text. */
+/** An AI card: the shared theme card. */
 export function AiPanel({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return (
-    <div className={`relative rounded-3xl p-[2px] overflow-hidden ${className}`}>
-      <motion.div
-        aria-hidden
-        className="absolute inset-0 rounded-3xl"
-        style={{
-          background:
-            'linear-gradient(100deg,#0f766e,#0e7490,#4f46e5,#7e22ce,#be185d,#b45309,#0f766e)',
-          backgroundSize: '300% 100%',
-        }}
-        animate={{ backgroundPosition: ['0% 50%', '300% 50%'] }}
-        transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
-      />
-      <div className="relative rounded-[calc(1.5rem-2px)] bg-brand-deep">{children}</div>
-    </div>
-  );
+  return <div className={`${CARD} ${className}`}>{children}</div>;
 }
 
 /** The non-negotiable label under every AI output, with a link to what the
@@ -129,10 +92,10 @@ export function AiPanel({ children, className = '' }: { children: ReactNode; cla
 export function AiDisclaimer({ feature }: { feature?: AiFeature }) {
   const { t } = useTranslation();
   return (
-    <p className="text-white/30 text-[10px] leading-relaxed mt-2 flex items-start gap-1">
-      <span aria-hidden>✨</span>
+    <p className="text-white/55 text-[11px] leading-relaxed mt-2 flex items-start gap-1">
+      <SparklesIcon aria-hidden className="w-3 h-3 mt-0.5 shrink-0 text-brand-emerald" />
       <span>
-        {t('aiFlair.disclaimerPrefix', 'AI-generated encouragement — a companion,')}{' '}
+        {t('aiFlair.disclaimerPrefix', 'AI-generated encouragement, a companion,')}{' '}
         <b className="text-white/50">
           {t('aiFlair.disclaimerBold', 'never a source of religious evidence')}
         </b>

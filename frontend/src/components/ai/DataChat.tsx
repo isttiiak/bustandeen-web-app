@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import type { FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
+import { BTN_PRIMARY } from '../bustanStyles.js';
 import { AiPanel, AiBadge, AiSendsLink, AiThinking } from './AiFlair.js';
 import {
   useAskNaseeh,
@@ -111,7 +112,7 @@ export default function DataChat() {
     <AiPanel>
       <div className="p-4 space-y-3">
         <AiBadge label={t('naseehChat.badge', 'Naseeh · ask about my data')} />
-        <p className="text-white/50 text-xs leading-relaxed">
+        <p className="text-white/70 text-xs leading-relaxed">
           {t(
             'naseehChat.intro',
             'Ask about your own numbers: prayers, dhikr, Quran, fasting and make-up prayers. Answers come straight from your logs. This is not a place for rulings.'
@@ -129,7 +130,7 @@ export default function DataChat() {
               type="button"
               disabled={busy}
               onClick={() => onChip(c)}
-              className="text-[11px] rounded-full border border-white/15 bg-white/[0.04] hover:bg-white/10 disabled:opacity-40 text-white/70 px-2.5 py-1 transition-colors text-left"
+              className="text-xs rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-emerald/40 hover:bg-brand-surface disabled:opacity-40 text-white/80 px-2.5 py-1.5 transition-colors text-left"
             >
               {c.label}
             </button>
@@ -140,12 +141,12 @@ export default function DataChat() {
           <div className="space-y-3" aria-live="polite">
             {turns.map((turn) => (
               <div key={turn.id} className="space-y-1.5">
-                <p className="text-white/40 text-xs text-right">{turn.question}</p>
+                <p className="text-white/60 text-xs text-right">{turn.question}</p>
                 <p
-                  className={`text-sm leading-relaxed rounded-2xl px-3 py-2 ${
+                  className={`text-sm leading-relaxed rounded-control px-3 py-2 ${
                     turn.answered
-                      ? 'bg-brand-emerald/[0.1] border border-brand-emerald/20 text-white/90'
-                      : 'bg-white/[0.04] border border-white/10 text-white/60'
+                      ? 'bg-brand-emerald/10 border border-brand-emerald/25 text-white'
+                      : 'bg-shade/20 border border-brand-border text-white/70'
                   }`}
                 >
                   {turn.answer}
@@ -164,17 +165,17 @@ export default function DataChat() {
             maxLength={200}
             placeholder={t('naseehChat.placeholder', 'e.g. How many Asr did I miss this week?')}
             aria-label={t('naseehChat.inputLabel', 'Ask a question about your own data')}
-            className="input input-sm flex-1 bg-white/5 border-white/15 text-white placeholder:text-white/30"
+            className="input input-sm flex-1 rounded-control bg-brand-surface border-brand-border text-white placeholder:text-white/40 focus:border-brand-emerald"
           />
           <button
             type="submit"
             disabled={busy || text.trim().length < 2}
-            className="btn btn-sm bg-brand-emerald/20 border-brand-emerald/30 text-brand-emerald hover:bg-brand-emerald/30 disabled:opacity-40"
+            className={`${BTN_PRIMARY} !py-1.5`}
           >
             {t('naseehChat.ask', 'Ask')}
           </button>
         </form>
-        <p className="text-white/25 text-[10px] leading-relaxed">
+        <p className="text-white/55 text-[11px] leading-relaxed">
           {t(
             'naseehChat.privacy',
             'Only your question text goes to the AI, to choose which lookup to run. Your numbers never leave our server, and this chat is not saved.'

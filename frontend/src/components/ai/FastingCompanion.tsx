@@ -3,7 +3,8 @@ import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAiFastingCompanion } from '../../hooks/useAi.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
-import { AiBadge, AiDisclaimer, AiFallbackNote } from './AiFlair.js';
+import { AiBadge, AiDisclaimer, AiFallbackNote, AiThinking } from './AiFlair.js';
+import { CARD } from '../bustanStyles.js';
 import { getTrackingDay } from '../../utils/trackingDay.js';
 
 /**
@@ -104,13 +105,7 @@ export default function FastingCompanion({
 
   return (
     <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-      <div
-        className={`rounded-2xl border p-3.5 ${
-          isPostMaghrib
-            ? 'border-brand-gold/25 bg-gradient-to-br from-brand-gold/10 to-brand-warm/[0.04]'
-            : 'border-brand-emerald/20 bg-brand-emerald/[0.05]'
-        }`}
-      >
+      <div className={`${CARD} p-4 ${isPostMaghrib ? '!border-brand-gold/40' : ''}`}>
         <AiBadge
           label={
             isPostMaghrib
@@ -119,30 +114,20 @@ export default function FastingCompanion({
           }
         />
         {companion.isPending && !message && !fallback ? (
-          <div className="flex items-center gap-2 mt-2">
-            {['#c9a96e', '#7a9e6e', '#5a9e8e'].map((c, i) => (
-              <motion.span
-                key={c}
-                className="w-2 h-2 rounded-full"
-                style={{ background: c }}
-                animate={{ opacity: [0.3, 1, 0.3] }}
-                transition={{ duration: 1.1, repeat: Infinity, delay: i * 0.15 }}
-              />
-            ))}
-          </div>
+          <AiThinking label={t('naseeh.findingWords', 'Finding the right words…')} />
         ) : (
           <p
             className={`text-sm leading-relaxed mt-2 ${
-              isPostMaghrib ? 'text-brand-gold/80' : 'text-white/70'
+              isPostMaghrib ? 'text-brand-gold' : 'text-white/80'
             }`}
           >
             {message ?? fallback}
           </p>
         )}
-        <div className="flex items-center justify-between mt-2">
+        <div className="flex items-start justify-between gap-3 mt-2">
           {fallback ? <AiFallbackNote feature="coaching" /> : <AiDisclaimer feature="coaching" />}
           <button
-            className="text-white/20 hover:text-white/50 text-[10px]"
+            className="text-white/60 hover:text-white text-[11px] shrink-0"
             onClick={() => setDismissed(true)}
           >
             {t('naseehInsights.dismiss', 'Dismiss')}

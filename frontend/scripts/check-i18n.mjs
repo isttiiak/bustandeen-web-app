@@ -25,11 +25,13 @@ const ENGLISH_ONLY = new Set([
   'muhasabah',
   'naseeh',
   'naseehChat',
+  'naseehInsights',
   'naseehKaza',
   'naseehPatterns',
   'naseehPrivacy',
   'naturalLog',
   'streakCoaching',
+  'weeklyPlan',
 ]);
 
 /** Placeholders that exist only for English grammar and may be left out of

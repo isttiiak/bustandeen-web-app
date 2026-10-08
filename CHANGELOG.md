@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.100.1 - Navigation bar icons - 2026-10-08
+
+### Changed
+
+- **Icons instead of emoji in the navigation bar**: the "Home" back button has a house icon, and the Noor pills show a sparkles icon (today) and a star (all-time).
+- The Noor pill tooltips are now translated (they were English only, also in Bangla) and read the same as in Settings, without em dashes.
+
+## v5.100.0 - Naseeh in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Naseeh has the new look**, in dark and light: one arch at the top with "Quick log with a sentence" as its main button, then the weekly plan, what Naseeh noticed, the make-up prayer plan, the weekly muhāsabah, "Ask about my data" and the privacy panel as calm theme cards. When Naseeh is off, the same arch shows the Open Settings button.
+- **Calmer AI marks**: the rainbow badge, the moving rainbow border and the glowing "thinking" dots are gone. AI cards now carry a quiet sage "Naseeh" badge with a sparkles icon, and the loading dots stop under reduced motion.
+- **Icons instead of emoji** on Naseeh and in the navigation bar and account menu: what Naseeh noticed (leaf, clock, magnifier), the weekly plan, the privacy panel, the rest-days card and the prayers in the quick log preview.
+- Text on Naseeh is easier to read (the AI notes and "What is sent?" links were very faint), and the wording has no em dashes. The streak coaching and fasting companion cards (also on Fasting) lost their gradients.
+
+### Changed (developers)
+
+- `pages/naseehScreen.test.ts` guards the page and every `components/ai/*.tsx` file like `profileScreen.test.ts` (no emoji, em dashes, hex colours, glows, gradients or endless animations; one arch; overlays portaled; every key in English). `AiPanel` is now the shared `CARD`. The `weeklyPlan` and `naseehInsights` strings and two privacy rows were missing from `en/common.json` (the code defaults were shown); they are added and marked English-only in `check-i18n.mjs`.
+
 ## v5.99.0 - Friends in the Bustan Arch design - 2026-10-08
 
 ### Changed
