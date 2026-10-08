@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.99.0 - Friends in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Friends has the new look**, in dark and light: one arch at the top with the verse (Quran 2:148) and the Invite and See friends buttons, then your circle as calm cards. The top three wear gold, silver and bronze number discs instead of medal emoji, and the verse no longer shimmers.
+- **Icons instead of emoji** everywhere on Friends: the prayer, streak, zikr, fasting and Quran chips, the "What is Noor?" list, the invite tips, the blocked list and the navigation bar title. "Above their usual" has an arrow icon, and "usually 42" now reads "usually 42 Noor".
+- Text on Friends is easier to read (many lines were very faint), and the wording has no em dashes, in English and Bangla. The copied invite message no longer ends in an emoji.
+- **The Friends dialogs (invite, your friends, friend requests) open above the navigation bar** on every screen size.
+
+### Changed (developers)
+
+- `pages/friendsScreen.test.ts` guards Friends like `profileScreen.test.ts`. The Friends dialogs share one portaled `Sheet` (`z-[70]`). Friends reuses `CountryFlag` from `components/profile/profileParts.tsx` (its own copy of the country list is gone). Demo mode hides the Invite button, which did nothing there.
+
 ## v5.98.0 - Profile in the Bustan Arch design - 2026-10-08
 
 ### Changed
