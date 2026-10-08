@@ -358,25 +358,23 @@ export default function RamadanTracker() {
   // ────────────────────────── COUNTDOWN MODE ──────────────────────────
   if (!window_.active) {
     const startStr = window_.days[0]?.date;
-    const prep: { to: string; Icon: Icon; label: ReactNode }[] = [
+    // A citation is drawn beside the row's link, not inside it: an <a> nested
+    // in the row's <Link> is invalid HTML (React's validateDOMNesting warning).
+    const prep: {
+      to: string;
+      Icon: Icon;
+      label: ReactNode;
+      cite?: { label: string; href: string };
+    }[] = [
       { to: '/fasting', Icon: ArrowPathIcon, label: t('ramadan.clearQada') },
       {
         to: '/fasting',
         Icon: CrescentIcon,
-        label: (
-          <>
-            {t('ramadan.warmUpShaban')}{' '}
-            <a
-              className="text-brand-gold underline underline-offset-2"
-              href="https://sunnah.com/bukhari:1969"
-              target="_blank"
-              rel="noreferrer"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {translateReference('Bukhārī 1969', i18n.language)}
-            </a>
-          </>
-        ),
+        label: t('ramadan.warmUpShaban'),
+        cite: {
+          label: translateReference('Bukhārī 1969', i18n.language),
+          href: 'https://sunnah.com/bukhari:1969',
+        },
       },
       { to: '/quran', Icon: BookOpenIcon, label: t('ramadan.buildQuranHabit') },
     ];
@@ -442,14 +440,35 @@ export default function RamadanTracker() {
             </h2>
             <div className="space-y-2 text-sm">
               {prep.map((p, i) => (
-                <Link key={i} to={p.to} className={`${ITEM} flex items-center gap-3`}>
+                <div key={i} className={`${ITEM} relative flex items-center gap-3`}>
                   <p.Icon className="w-5 h-5 shrink-0 text-brand-emerald" aria-hidden="true" />
-                  <span className="flex-1 text-white/85 leading-snug">{p.label}</span>
-                  <span className="flex items-center gap-0.5 text-brand-gold text-xs font-bold shrink-0">
+                  <span className="flex-1 text-white/85 leading-snug">
+                    {/* Stretched link: its ::after covers the whole row. */}
+                    <Link to={p.to} className="after:absolute after:inset-0 after:content-['']">
+                      {p.label}
+                    </Link>
+                    {p.cite && (
+                      <>
+                        {' '}
+                        <a
+                          className="relative z-10 text-brand-gold underline underline-offset-2"
+                          href={p.cite.href}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {p.cite.label}
+                        </a>
+                      </>
+                    )}
+                  </span>
+                  <span
+                    className="flex items-center gap-0.5 text-brand-gold text-xs font-bold shrink-0"
+                    aria-hidden="true"
+                  >
                     {t('ramadan.open')}
                     <ChevronRightIcon className="w-3.5 h-3.5" aria-hidden="true" />
                   </span>
-                </Link>
+                </div>
               ))}
             </div>
           </section>

@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.107.2 - Ramadan citation link opens its source - 2026-10-08
+
+### Fixed
+
+- **The Bukhārī 1969 link under "Warm up with Shaʿbān fasting"** on the Ramadan countdown now opens the hadith on sunnah.com. Before, it sat inside the row's own link, so a tap could open Fasting instead and the browser logged an invalid nested link. The whole row still opens Fasting as before.
+
 ## v5.107.1 - Start fresh uses your tracking day - 2026-10-08
 
 ### Fixed
