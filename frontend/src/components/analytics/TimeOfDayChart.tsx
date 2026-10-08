@@ -53,7 +53,7 @@ export default function TimeOfDayChart({ data }: TimeOfDayChartProps) {
 
   if (!model) {
     return (
-      <div className="flex items-center justify-center h-40 text-white/50">
+      <div className="flex items-center justify-center h-40 text-white/70">
         <p>{t('zikrAnalytics.trendChart.noData', 'No data available')}</p>
       </div>
     );
@@ -68,8 +68,8 @@ export default function TimeOfDayChart({ data }: TimeOfDayChartProps) {
       <div>
         <div className="flex items-baseline justify-end gap-3 mb-2 h-4">
           {active && (
-            <p className="text-xs text-white/60 tabular-nums">
-              <span className="text-white/40">{hourLabel(active.hour)}</span>{' '}
+            <p className="text-xs text-white/70 tabular-nums">
+              <span className="text-white/70">{hourLabel(active.hour)}</span>{' '}
               <span className="font-bold text-white">{formatLocaleNumber(active.total)}</span>
             </p>
           )}
@@ -91,7 +91,7 @@ export default function TimeOfDayChart({ data }: TimeOfDayChartProps) {
               width={Math.max(0, b.w)}
               height={Math.max(0, b.h)}
               rx={2}
-              fill={hover === i ? 'var(--brand-gold, #c9a96e)' : 'var(--brand-emerald, #7a9e6e)'}
+              fill={hover === i ? 'var(--brand-gold)' : 'var(--brand-emerald)'}
               opacity={b.total === 0 ? 0.15 : 1}
             />
           ))}
@@ -115,7 +115,7 @@ export default function TimeOfDayChart({ data }: TimeOfDayChartProps) {
                 x={b.x + b.w / 2}
                 y={VB_H - 6}
                 textAnchor="middle"
-                className="fill-white/40"
+                className="fill-white/70"
                 style={{ fontSize: 11 }}
               >
                 {hourLabel(b.hour)}
