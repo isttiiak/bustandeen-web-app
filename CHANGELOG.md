@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.104.1 - Settings Naseeh switch saves through the account hook - 2026-10-08
+
+### Changed
+
+- **The Naseeh switch in Settings** now saves through the same account update as the AI privacy panel and Profile, so the saved account copy on this device stays in step. Nothing changes in how it looks or works.
+
 ## v5.104.0 - Qibla in the Bustan Arch design - 2026-10-08
 
 ### Changed
