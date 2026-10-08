@@ -3,7 +3,7 @@ import { m as motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
-import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, ArrowPathIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import api from '../lib/api.js';
 import ConfirmDialog from './ConfirmDialog.js';
@@ -198,8 +198,9 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
                             {m.label}
                           </span>
                           {active && (
-                            <span className="text-brand-emerald text-xs font-bold shrink-0">
-                              {t('salatSettings.using', '✓ Using')}
+                            <span className="flex items-center gap-1 text-brand-emerald text-xs font-bold shrink-0">
+                              <CheckIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                              {t('salatSettings.using', 'Using')}
                             </span>
                           )}
                         </div>

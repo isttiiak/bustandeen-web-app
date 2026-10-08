@@ -274,13 +274,13 @@ export const ASR_MADHABS: { id: AsrMadhab; label: string; detail: string }[] = [
     id: 'standard',
     label: 'Standard',
     detail:
-      "Shāfiʿī · Mālikī · Ḥanbalī — ʿAṣr when the shadow equals the object's length. Ẓuhr ends earlier.",
+      "Shāfiʿī · Mālikī · Ḥanbalī: ʿAṣr when the shadow equals the object's length. Ẓuhr ends earlier.",
   },
   {
     id: 'hanafi',
     label: 'Ḥanafī',
     detail:
-      "ʿAṣr when the shadow is twice the object's length — ʿAṣr starts later, so Ẓuhr runs longer.",
+      "ʿAṣr when the shadow is twice the object's length. ʿAṣr starts later, so Ẓuhr runs longer.",
   },
 ];
 
@@ -337,7 +337,7 @@ export const CALC_METHODS: { id: CalculationMethodId; label: string; detail: str
   {
     id: 'UmmAlQura',
     label: 'Umm al-Qura, Makkah',
-    detail: 'Used in Saudi Arabia — fixed 90-minute Isha interval.',
+    detail: 'Used in Saudi Arabia, with a fixed 90-minute Isha interval.',
   },
   { id: 'Dubai', label: 'Dubai', detail: 'Used in the UAE.' },
   {
