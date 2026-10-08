@@ -6,39 +6,45 @@ import { useTranslation } from 'react-i18next';
 export default function Footer() {
   const { t } = useTranslation();
   return (
-    <footer className="bg-gradient-to-r from-brand-void-deep via-brand-deep to-brand-surface text-white border-t border-brand-emerald/20 mt-auto">
+    <footer className="bg-brand-deep text-white border-t border-brand-border mt-auto">
       <div className="footer footer-center p-6 sm:p-8">
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-2 text-sm sm:text-base">
             <span>{t('footer.madeWith')}</span>
-            <HeartIcon className="w-4 h-4 text-red-300 animate-pulse" />
+            <HeartIcon className="w-4 h-4 text-red-300" aria-hidden="true" />
             <span>{t('footer.forTheUmmah')}</span>
           </div>
           <nav className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1.5 text-xs">
             <Link
               to="/feedback"
-              className="text-white/60 hover:text-brand-emerald underline underline-offset-2 transition-colors"
+              className="inline-flex items-center text-white/60 hover:text-brand-emerald underline underline-offset-2 transition-colors"
             >
               {t('footer.feedbackContact')}
             </Link>
-            <span className="text-white/20">•</span>
+            <span className="text-white/60" aria-hidden="true">
+              •
+            </span>
             <Link
               to="/about"
-              className="text-white/60 hover:text-brand-gold underline underline-offset-2 transition-colors"
+              className="inline-flex items-center text-white/60 hover:text-brand-gold underline underline-offset-2 transition-colors"
             >
               {t('footer.about')}
             </Link>
-            <span className="text-white/20">•</span>
+            <span className="text-white/60" aria-hidden="true">
+              •
+            </span>
             <Link
               to="/privacy"
-              className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+              className="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors"
             >
               {t('footer.privacy')}
             </Link>
-            <span className="text-white/20">•</span>
+            <span className="text-white/60" aria-hidden="true">
+              •
+            </span>
             <Link
               to="/terms"
-              className="text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+              className="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors"
             >
               {t('footer.terms')}
             </Link>
@@ -53,7 +59,7 @@ export default function Footer() {
             <span>•</span>
             <span>{t('footer.secure')}</span>
           </div>
-          <p className="text-[10px] text-white/25 tabular-nums">v{__APP_VERSION__}</p>
+          <p className="text-[10px] text-white/60 tabular-nums">v{__APP_VERSION__}</p>
         </div>
       </div>
     </footer>

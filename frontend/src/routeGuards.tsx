@@ -2,7 +2,9 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router';
+import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { loadFirebase } from './authClient.js';
+import { BTN_PRIMARY, BTN_SECONDARY } from './components/bustanStyles.js';
 import { useAuthStore } from './store/useAuthStore.js';
 import { useAdminStore } from './store/useAdminStore.js';
 import Home from './pages/Home.js';
@@ -48,11 +50,13 @@ function VerifyEmailGate({ email }: { email: string | null }) {
   return (
     <div className="min-h-[60vh] flex items-center justify-center px-4">
       <div className="text-center space-y-5 max-w-sm w-full">
-        <div className="text-6xl">📧</div>
-        <h2 className="text-2xl font-black text-white">
+        <div className="mx-auto w-16 h-16 rounded-full grid place-items-center border border-brand-border bg-brand-deep shadow-elev-1">
+          <EnvelopeIcon className="w-8 h-8 text-brand-gold" aria-hidden="true" />
+        </div>
+        <h2 className="font-display text-2xl font-bold text-white">
           {t('app.verifyEmailTitle', 'Verify your email')}
         </h2>
-        <p className="text-white/50 text-sm leading-relaxed">
+        <p className="text-white/70 text-sm leading-relaxed">
           {t('app.verifyEmailSentTo', 'A verification link was sent to')}{' '}
           <span className="text-brand-emerald font-medium">{email}</span>.{' '}
           {t(
@@ -66,7 +70,7 @@ function VerifyEmailGate({ email }: { email: string | null }) {
           </p>
         ) : (
           <button
-            className="btn btn-ghost text-brand-emerald border border-brand-emerald/30 w-full"
+            className={`${BTN_SECONDARY} w-full`}
             onClick={() => void resend()}
             disabled={resending}
           >
@@ -158,19 +162,21 @@ export const Protected = ({ children }: ProtectedProps) => {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-4">
         <div className="text-center space-y-5 max-w-sm w-full">
-          <div className="text-6xl">🔐</div>
-          <h2 className="text-2xl font-black text-white">
+          <div className="mx-auto w-16 h-16 rounded-full grid place-items-center border border-brand-border bg-brand-deep shadow-elev-1">
+            <LockClosedIcon className="w-8 h-8 text-brand-gold" aria-hidden="true" />
+          </div>
+          <h2 className="font-display text-2xl font-bold text-white">
             {t('app.signInRequired', 'Sign in required')}
           </h2>
-          <p className="text-white/50 text-sm leading-relaxed">
+          <p className="text-white/70 text-sm leading-relaxed">
             {t(
               'app.signInRequiredDesc',
-              'This page is only available to signed-in users. Create a free account to track your progress and access analytics.'
+              'This page is only available when you are signed in. Create a free account to keep your progress and see your analytics.'
             )}
           </p>
           <div className="flex flex-col gap-3">
             <button
-              className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 w-full"
+              className={`${BTN_PRIMARY} w-full`}
               onClick={() => {
                 sessionStorage.setItem('bustandeen_redirect', redirectTarget);
                 nav('/login');
@@ -179,7 +185,7 @@ export const Protected = ({ children }: ProtectedProps) => {
               {t('app.signIn', 'Sign In')}
             </button>
             <button
-              className="btn btn-ghost text-brand-emerald border border-brand-emerald/30 w-full"
+              className={`${BTN_SECONDARY} w-full`}
               onClick={() => {
                 sessionStorage.setItem('bustandeen_redirect', redirectTarget);
                 nav('/signup');
