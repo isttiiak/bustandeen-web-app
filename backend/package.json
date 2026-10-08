@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.97.0",
+  "version": "5.97.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -50,7 +50,8 @@
     "typescript": "^5.6.0"
   },
   "overrides": {
-    "uuid": "^11.1.1"
+    "uuid": "^11.1.1",
+    "he": "^1.2.0"
   },
   "allowScripts": {
     "mongodb-memory-server": true,
