@@ -16,6 +16,7 @@ export interface DBUserProfile {
   bio?: string;
   city?: string;
   country?: string;
+  aiEnabled?: boolean;
   totalCount?: number;
   createdAt?: string;
   primaryEmail?: string;
@@ -38,6 +39,7 @@ export type ProfilePatch = Partial<
     | 'bio'
     | 'city'
     | 'country'
+    | 'aiEnabled'
   >
 >;
 

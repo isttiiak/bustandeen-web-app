@@ -28,6 +28,9 @@ vi.mock('../../store/useAuthStore.js', () => ({
   useAuthStore: (sel: (s: unknown) => unknown) =>
     sel({ user: { uid: 'u1' }, aiEnabled: true, setAiEnabled: () => {} }),
 }));
+vi.mock('../../hooks/useUserProfile.js', () => ({
+  useUpdateProfile: () => ({ mutateAsync: async () => null }),
+}));
 vi.mock('../../hooks/useAi.js', () => ({
   useAiMuhasabah: ai.mutation,
   useAiStreakCoach: ai.mutation,
