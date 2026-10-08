@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
+import { CARD } from '../bustanStyles.js';
 
 /**
  * Kaza debt, week by week — plain-SVG grouped bars, same no-library approach
@@ -80,9 +81,9 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
 
   if (!model) {
     return (
-      <div className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2">
+      <div className={CARD}>
         <div className="card-body p-6">
-          <div className="flex items-center justify-center h-40 text-white/40">
+          <div className="flex items-center justify-center h-40 text-white/70">
             <p>{t('zikrAnalytics.trendChart.noData', 'No data available')}</p>
           </div>
         </div>
@@ -104,11 +105,11 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
         )}`;
 
   return (
-    <div className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2 overflow-x-auto">
+    <div className={`${CARD} overflow-x-auto`}>
       <div className="card-body p-5">
-        <div className="flex items-center gap-3 text-[11px] text-white/50 mb-1">
+        <div className="flex items-center gap-3 text-[11px] text-white/70 mb-1">
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-sm bg-red-500/70 inline-block" />{' '}
+            <span className="w-2.5 h-2.5 rounded-sm bg-data-none/70 inline-block" />{' '}
             {t('salatAnalytics.kazaDebtAccumulated')}
           </span>
           <span className="flex items-center gap-1">
@@ -120,8 +121,8 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
         <div className="min-h-[18px] mb-1">
           {active && (
             <p className="text-xs text-white/70 tabular-nums">
-              <span className="text-white/40">{weekLabel(active)}</span>{' '}
-              <span className="font-bold text-red-400">
+              <span className="text-white/70">{weekLabel(active)}</span>{' '}
+              <span className="font-bold text-data-none">
                 +{formatLocaleNumber(active.accumulated)}
               </span>
               {' · '}
@@ -147,7 +148,7 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
                 y1={tk.y}
                 x2={VB_W - PAD.right}
                 y2={tk.y}
-                stroke="rgba(255,255,255,0.10)"
+                stroke="var(--track)"
                 strokeWidth={1}
                 strokeDasharray="3 3"
                 vectorEffect="non-scaling-stroke"
@@ -156,7 +157,7 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
                 x={PAD.left - 6}
                 y={tk.y + 4}
                 textAnchor="end"
-                className="fill-white/40"
+                className="fill-white/70"
                 style={{ fontSize: 10 }}
               >
                 {formatLocaleNumber(tk.value)}
@@ -172,7 +173,7 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
                 width={barW}
                 height={Math.max(0, g.accH)}
                 rx={2}
-                className="fill-red-500/70"
+                className="fill-data-none/70"
                 opacity={hover === null || hover === i ? 1 : 0.35}
               />
               <rect
@@ -181,7 +182,7 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
                 width={barW}
                 height={Math.max(0, g.paidH)}
                 rx={2}
-                fill="var(--brand-emerald, #7a9e6e)"
+                fill="var(--brand-emerald)"
                 opacity={hover === null || hover === i ? 1 : 0.35}
               />
             </g>
@@ -209,7 +210,7 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
                 x={g.cx}
                 y={VB_H - 8}
                 textAnchor="middle"
-                className="fill-white/40"
+                className="fill-white/70"
                 style={{ fontSize: 10 }}
               >
                 {/* The LAST bucket always gets the full range (or, in daily
@@ -229,7 +230,7 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
           })}
         </svg>
 
-        <p className="text-white/25 text-[10px] mt-2">{t('salatAnalytics.kazaDebtChartHint')}</p>
+        <p className="text-white/70 text-[10px] mt-2">{t('salatAnalytics.kazaDebtChartHint')}</p>
       </div>
     </div>
   );
