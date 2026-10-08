@@ -5,6 +5,8 @@ import {
   useOpsHealth,
   useRateLimitHits,
   useStorageUsage,
+  useCspViolations,
+  type CspViolationReport,
   type SenderDiagnostics,
   type StorageUsage,
 } from '../hooks/useAdminOps.js';
@@ -130,11 +132,79 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
   );
 }
 
+/** CSP reports per UTC day, origins only (audit T1.3b): reviewed for a week
+ *  before the Report-Only header in vercel.json is switched to enforcing. */
+function CspSection({ report }: { report: CspViolationReport }) {
+  const { t } = useTranslation();
+  const total = report.daily.reduce((sum, d) => sum + d.count, 0);
+  return (
+    <section className="space-y-2">
+      <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+        {t('adminOpsHealth.cspTitle', 'CSP violation reports (last 7 days, UTC)')}
+      </h2>
+      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
+        <p className="text-white/50 text-xs leading-relaxed">
+          {t(
+            'adminOpsHealth.cspDesc',
+            'Counted per day from {{since}}, origins only (kept 30 days). The policy is still Report-Only: anything legitimate here must be allowed in vercel.json before enforcing.',
+            { since: report.sinceDay }
+          )}
+        </p>
+        {total === 0 ? (
+          <p className="text-white/30 text-sm">
+            {t('adminOpsHealth.cspNone', 'No violations reported in this period.')}
+          </p>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-2">
+              {report.daily.map((d) => (
+                <span
+                  key={d.day}
+                  className="rounded-lg border border-white/10 px-2 py-1 text-[11px] font-mono text-white/70"
+                >
+                  {d.day}: <span className="text-brand-gold font-bold">{d.count}</span>
+                </span>
+              ))}
+            </div>
+            <div className="space-y-2">
+              {report.top.map((r) => (
+                <div
+                  key={`${r.directive}|${r.blocked}|${r.source}|${r.disposition}`}
+                  className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
+                >
+                  <div className="min-w-0">
+                    <p className="text-white/70 text-xs font-bold font-mono">
+                      {r.directive}
+                      {r.disposition !== 'report' && (
+                        <span className="text-red-300"> ({r.disposition})</span>
+                      )}
+                    </p>
+                    <p className="text-white/40 text-[11px] font-mono truncate">
+                      {r.blocked} {t('adminOpsHealth.cspFrom', 'from')} {r.source}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-brand-gold text-sm font-black">{r.count}</p>
+                    <p className="text-white/25 text-[10px]">
+                      {t('adminOpsHealth.cspDays', '{{count}} day(s)', { count: r.days })}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
 export default function AdminOpsHealth() {
   const { t } = useTranslation();
   const { data: health, isLoading } = useOpsHealth();
   const { data: hits } = useRateLimitHits();
   const { data: storage } = useStorageUsage();
+  const { data: csp } = useCspViolations();
 
   // Defensive against a stale cached frontend bundle briefly calling into an
   // API response shape it wasn't built against (this page's response shape
@@ -222,6 +292,8 @@ export default function AdminOpsHealth() {
             </div>
 
             {storage?.collections && <StorageSection storage={storage} />}
+
+            {csp?.daily && <CspSection report={csp} />}
 
             <div className="grid lg:grid-cols-2 gap-6">
               <section className="space-y-2">
