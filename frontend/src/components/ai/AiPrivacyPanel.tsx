@@ -3,9 +3,9 @@ import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ChevronDownIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { BTN_PRIMARY, BTN_SECONDARY, CARD } from '../bustanStyles.js';
-import api from '../../lib/api.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
 import { useGroqKeyStatus } from '../../hooks/useAi.js';
+import { useUpdateProfile } from '../../hooks/useUserProfile.js';
 import type { AiFeature } from './AiFlair.js';
 
 interface Row {
@@ -21,6 +21,7 @@ export default function AiPrivacyPanel() {
   const user = useAuthStore((s) => s.user);
   const setAiEnabled = useAuthStore((s) => s.setAiEnabled);
   const { data: keyStatus } = useGroqKeyStatus();
+  const updateProfile = useUpdateProfile();
   const [confirming, setConfirming] = useState(false);
   const [failed, setFailed] = useState(false);
   const [open, setOpen] = useState(false);
@@ -107,7 +108,7 @@ export default function AiPrivacyPanel() {
     setAiEnabled(false);
     if (user) {
       try {
-        await api.patch('/api/user/me', { aiEnabled: false });
+        await updateProfile.mutateAsync({ aiEnabled: false });
       } catch {
         // The switch is already off on this device; say the account copy may lag.
         setFailed(true);
