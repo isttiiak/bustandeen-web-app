@@ -177,7 +177,7 @@ export const getStorageUsage = async (): Promise<StorageUsage> => {
   const sum = (
     rows: { dataBytes: number; indexBytes: number }[],
     key: 'dataBytes' | 'indexBytes'
-  ) => rows.reduce((total, r) => total + r[key], 0);
+  ) => rows.reduce((total, r) => total + (key === 'dataBytes' ? r.dataBytes : r.indexBytes), 0);
   const dataBytes = sum(collections, 'dataBytes') + sum(others, 'dataBytes');
   const indexBytes = sum(collections, 'indexBytes') + sum(others, 'indexBytes');
   const totalBytes = dataBytes + indexBytes;
