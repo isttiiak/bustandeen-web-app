@@ -17,6 +17,8 @@ export interface DBUserProfile {
   city?: string;
   country?: string;
   aiEnabled?: boolean;
+  hijriOffset?: number;
+  dayStartMode?: 'fajr' | 'midnight' | 'maghrib';
   totalCount?: number;
   createdAt?: string;
   primaryEmail?: string;
@@ -40,6 +42,8 @@ export type ProfilePatch = Partial<
     | 'city'
     | 'country'
     | 'aiEnabled'
+    | 'hijriOffset'
+    | 'dayStartMode'
   >
 >;
 

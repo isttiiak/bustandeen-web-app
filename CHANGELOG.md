@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.106.1 - Hijri date and tracking day save like the rest of your profile - 2026-10-08
+
+### Fixed
+
+- **Changing the Hijri date adjustment or the tracking day boundary in Settings** now updates your saved profile on this device straight away, the same way the Naseeh switch does since v5.104. Before, the server saved it but other screens could keep showing the old value until a reload.
+
 ## v5.106.0 - About, Privacy and Feedback in the Bustan Arch design - 2026-10-08
 
 ### Changed

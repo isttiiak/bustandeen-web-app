@@ -581,13 +581,13 @@ export default function Settings() {
   const applyHijriAdj = (days: number) => {
     setHijriAdjustment(days);
     setHijriAdjState(days);
-    if (user) api.patch('/api/user/me', { hijriOffset: days }).catch(() => {});
+    if (user) updateProfile.mutateAsync({ hijriOffset: days }).catch(() => {});
   };
 
   const applyDayStartMode = (mode: DayStartMode) => {
     setDayStartModeLocal(mode);
     setDayStartModeState(mode);
-    if (user) api.patch('/api/user/me', { dayStartMode: mode }).catch(() => {});
+    if (user) updateProfile.mutateAsync({ dayStartMode: mode }).catch(() => {});
   };
 
   // ── Data export / import ────────────────────────────────────────────────────
