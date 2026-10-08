@@ -3771,7 +3771,7 @@
   "musafir": {
     "updated": "Journey updated",
     "started": "Safe travels! Musafir mode is on.",
-    "seoTitle": "Musafir Mode — Salah & Sunnah for Travellers",
+    "seoTitle": "Musafir Mode: Salah & Sunnah for Travellers",
     "seoDescription": "Travelling? Shorten and join your prayers the Sunnah way: qasr, jam‘, fasting, wiping over socks and the travel du‘as, each with its authentic hadith reference.",
     "title": "Musafir mode",
     "kicker": "Musafir mode",
@@ -3782,7 +3782,7 @@
     "since": "since {{date}}",
     "stayChip": "staying {{count}} days",
     "residentWarning": "You plan to stay {{stay}} days. In the {{school}} view an intended stay of {{limit}}+ days makes you a resident: shorten on the road, then pray in full once you arrive.",
-    "qasrApplies": "✂️ Qaṣr applies: pray Ẓuhr, ʿAṣr and ʿIshāʾ as 2 rak’ahs. Your salat tracker already knows.",
+    "qasrApplies": "Qaṣr applies: pray Ẓuhr, ʿAṣr and ʿIshāʾ as 2 rak’ahs. Your salat tracker already knows.",
     "logPrayers": "Log today’s prayers",
     "edit": "Edit journey",
     "imHome": "I’m home",
