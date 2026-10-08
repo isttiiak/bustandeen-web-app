@@ -1,19 +1,24 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { API_BASE, getIdToken } from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { auth, googleProvider } from '../firebase.js';
 import { browserPopupRedirectResolver, linkWithPopup, unlink, AuthError } from 'firebase/auth';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
+import {
+  requestError,
+  useLinkGoogle,
+  useSetPrimaryEmail,
+  useUnlinkGoogle,
+  useUpdateProfile,
+  useUserProfile,
+} from '../hooks/useUserProfile.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import {
   COUNTRIES_CITIES,
   calcFullAge,
   formatFullDate,
   ProfileData,
-  DBUser,
-  UserResponse,
 } from '../components/profile/profileParts.js';
 import ProfileAvatarPicker from '../components/profile/ProfileAvatarPicker.js';
 import ProfilePhotoChoiceModal from '../components/profile/ProfilePhotoChoiceModal.js';
@@ -50,7 +55,13 @@ export default function Profile() {
     country: '',
   });
   const [originalProfile, setOriginalProfile] = useState<ProfileData | null>(null);
-  const [dbUser, setDbUser] = useState<DBUser | null>(null);
+  // Fresh on every visit: the edit form starts from the server's copy.
+  const { data: dbUser, isFetchedAfterMount } = useUserProfile({ fresh: true });
+  const updateProfile = useUpdateProfile();
+  const linkGoogleMut = useLinkGoogle();
+  const unlinkGoogleMut = useUnlinkGoogle();
+  const setPrimaryEmailMut = useSetPrimaryEmail();
+  const formLoaded = useRef(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(user?.photoUrl || '');
   const [avatarId, setAvatarId] = useState<string | null>(user?.avatarId ?? null);
@@ -78,50 +89,38 @@ export default function Profile() {
     }
   }, []);
 
+  // Fill the form once, from the first fresh copy (later cache writes from the
+  // mutations below must not overwrite what the user is typing).
   useEffect(() => {
-    getIdToken()
-      .then((idToken) => {
-        if (!idToken) throw new Error('no session');
-        return fetch(`${API_BASE}/api/user/me`, {
-          headers: { Authorization: `Bearer ${idToken}` },
-        });
-      })
-      .then((r) => r.json())
-      .then((d: UserResponse) => {
-        if (d?.user) {
-          setDbUser(d.user);
-          let city = d.user.city || '';
-          let country = d.user.country || '';
-          if (!city && !country && locationFromStorage?.name) {
-            const parts = locationFromStorage.name.split(', ');
-            if (parts.length >= 2) {
-              city = parts[0] ?? '';
-              country = parts[parts.length - 1] ?? '';
-            }
-          }
-          const loaded: ProfileData = {
-            displayName: d.user.displayName || user?.displayName || '',
-            firstName: d.user.firstName || googleFirstName,
-            lastName: d.user.lastName || googleLastName,
-            photoUrl: d.user.photoUrl || user?.photoUrl || '',
-            gender: d.user.gender || '',
-            birthDate: d.user.birthDate ? d.user.birthDate.substring(0, 10) : '',
-            occupation: d.user.occupation || '',
-            bio: d.user.bio || '',
-            city,
-            country,
-          };
-          setProfile(loaded);
-          setOriginalProfile(loaded);
-          setPreview(d.user.photoUrl || (d.user.avatarId ? '' : user?.photoUrl) || '');
-          setAvatarId(d.user.avatarId ?? null);
-        }
-      })
-      .catch(() => {
-        /* non-fatal */
-      });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, []);
+    if (!isFetchedAfterMount || !dbUser || formLoaded.current) return;
+    formLoaded.current = true;
+    let city = dbUser.city || '';
+    let country = dbUser.country || '';
+    if (!city && !country && locationFromStorage?.name) {
+      const parts = locationFromStorage.name.split(', ');
+      if (parts.length >= 2) {
+        city = parts[0] ?? '';
+        country = parts[parts.length - 1] ?? '';
+      }
+    }
+    const loaded: ProfileData = {
+      displayName: dbUser.displayName || user?.displayName || '',
+      firstName: dbUser.firstName || googleFirstName,
+      lastName: dbUser.lastName || googleLastName,
+      photoUrl: dbUser.photoUrl || user?.photoUrl || '',
+      gender: dbUser.gender || '',
+      birthDate: dbUser.birthDate ? dbUser.birthDate.substring(0, 10) : '',
+      occupation: dbUser.occupation || '',
+      bio: dbUser.bio || '',
+      city,
+      country,
+    };
+    setProfile(loaded);
+    setOriginalProfile(loaded);
+    setPreview(dbUser.photoUrl || (dbUser.avatarId ? '' : user?.photoUrl) || '');
+    setAvatarId(dbUser.avatarId ?? null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs once, when the fresh copy arrives; the other values are read at that moment on purpose
+  }, [isFetchedAfterMount, dbUser]);
 
   const isDirty = useMemo(() => {
     if (!originalProfile) return false;
@@ -135,61 +134,49 @@ export default function Profile() {
     setSaving(true);
     setSaveSuccess(false);
     setSaveError('');
-    const idToken = await getIdToken();
-    if (!idToken) {
-      setSaving(false);
-      return;
-    }
     try {
-      const res = await fetch(`${API_BASE}/api/user/me`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-        body: JSON.stringify({
-          displayName: profile.displayName || undefined,
-          firstName: profile.firstName || undefined,
-          lastName: profile.lastName || undefined,
-          // The picture is saved on its own when it is chosen (choosePicture).
-          gender: profile.gender || undefined,
-          birthDate: profile.birthDate || undefined,
-          occupation: profile.occupation || undefined,
-          bio: profile.bio || undefined,
-          city: profile.city || undefined,
-          country: profile.country || undefined,
-        }),
+      const saved = await updateProfile.mutateAsync({
+        displayName: profile.displayName || undefined,
+        firstName: profile.firstName || undefined,
+        lastName: profile.lastName || undefined,
+        // The picture is saved on its own when it is chosen (choosePicture).
+        gender: profile.gender || undefined,
+        birthDate: profile.birthDate || undefined,
+        occupation: profile.occupation || undefined,
+        bio: profile.bio || undefined,
+        city: profile.city || undefined,
+        country: profile.country || undefined,
       });
-      const data = (await res.json()) as UserResponse;
-      if (data?.user) {
-        setDbUser(data.user);
-        setOriginalProfile({ ...profile });
-        const updatedAuthUser = {
-          ...(user ?? { uid: '', email: null }),
-          displayName: data.user.displayName || profile.displayName,
-          photoUrl: data.user.photoUrl ?? null,
-          avatarId: data.user.avatarId ?? null,
-          // Gender gates the Rayhanah Cycle menu entry — reflect it immediately
-          gender: (data.user.gender || profile.gender || undefined) as
-            'male' | 'female' | 'other' | 'prefer_not_say' | undefined,
-        };
-        setUser(updatedAuthUser);
-        localStorage.setItem(
-          'bustandeen_user',
-          JSON.stringify({
-            ...JSON.parse(localStorage.getItem('bustandeen_user') || '{}'),
-            displayName: updatedAuthUser.displayName,
-            photoUrl: updatedAuthUser.photoUrl,
-            avatarId: updatedAuthUser.avatarId,
-            gender: updatedAuthUser.gender,
-          })
-        );
-        setSaveSuccess(true);
-        if (saveSuccessTimeout.current) clearTimeout(saveSuccessTimeout.current);
-        saveSuccessTimeout.current = setTimeout(() => setSaveSuccess(false), 4000);
-      } else {
-        setSaveError(t('profile.saveFailed', 'Save failed. Please try again.'));
-      }
-    } catch {
+      setOriginalProfile({ ...profile });
+      const updatedAuthUser = {
+        ...(user ?? { uid: '', email: null }),
+        displayName: saved?.displayName || profile.displayName,
+        photoUrl: saved ? (saved.photoUrl ?? null) : (user?.photoUrl ?? null),
+        avatarId: saved ? (saved.avatarId ?? null) : (user?.avatarId ?? null),
+        // Gender gates the Rayhanah Cycle menu entry — reflect it immediately
+        gender: (saved?.gender || profile.gender || undefined) as
+          'male' | 'female' | 'other' | 'prefer_not_say' | undefined,
+      };
+      setUser(updatedAuthUser);
+      localStorage.setItem(
+        'bustandeen_user',
+        JSON.stringify({
+          ...JSON.parse(localStorage.getItem('bustandeen_user') || '{}'),
+          displayName: updatedAuthUser.displayName,
+          photoUrl: updatedAuthUser.photoUrl,
+          avatarId: updatedAuthUser.avatarId,
+          gender: updatedAuthUser.gender,
+        })
+      );
+      setSaveSuccess(true);
+      if (saveSuccessTimeout.current) clearTimeout(saveSuccessTimeout.current);
+      saveSuccessTimeout.current = setTimeout(() => setSaveSuccess(false), 4000);
+    } catch (err) {
+      // No reply at all is the connection; a reply (or `ok: false`) is a failed save.
       setSaveError(
-        t('profile.saveFailedConnection', 'Failed to save. Please check your connection.')
+        requestError(err).offline
+          ? t('profile.saveFailedConnection', 'Failed to save. Please check your connection.')
+          : t('profile.saveFailed', 'Save failed. Please try again.')
       );
     }
     setSaving(false);
@@ -207,14 +194,7 @@ export default function Profile() {
     setPreview(nextPhoto);
     setAvatarId(nextAvatar);
     try {
-      const idToken = await getIdToken();
-      if (!idToken) throw new Error('no session');
-      const res = await fetch(`${API_BASE}/api/user/me`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-        body: JSON.stringify(choice),
-      });
-      if (!res.ok) throw new Error('save');
+      await updateProfile.mutateAsync(choice);
       setProfile((p) => ({ ...p, photoUrl: nextPhoto }));
       setOriginalProfile((p) => (p ? { ...p, photoUrl: nextPhoto } : null));
       const updated = {
@@ -283,28 +263,20 @@ export default function Profile() {
         return;
       }
 
-      const idToken = await getIdToken();
-      if (!idToken) {
-        setLinkingGoogle(false);
-        return;
-      }
-
-      const res = await fetch(`${API_BASE}/api/user/link-google`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-        body: JSON.stringify({ googleEmail: googleInfo.email ?? '', googleUid: googleInfo.uid }),
-      });
-      const data = (await res.json()) as { ok: boolean; user?: DBUser; error?: string };
-      if (data.ok && data.user) {
-        setDbUser(data.user);
-      } else {
+      try {
+        await linkGoogleMut.mutateAsync({
+          googleEmail: googleInfo.email ?? '',
+          googleUid: googleInfo.uid,
+        });
+      } catch (saveErr) {
+        const { status, message } = requestError(saveErr);
         setAccountError(
-          res.status === 409
+          status === 409
             ? t(
                 'profile.googleAlreadyLinkedOther',
                 'This Google account is already linked to another Bustandeen account.'
               )
-            : (data.error ??
+            : (message ??
                 t('profile.linkSaveFailed', 'Failed to save linked account. Please try again.'))
         );
       }
@@ -333,16 +305,7 @@ export default function Profile() {
     setUnlinkingGoogle(true);
     try {
       if (auth.currentUser) await unlink(auth.currentUser, 'google.com');
-      const idToken = await getIdToken();
-      if (idToken) {
-        const res = await fetch(`${API_BASE}/api/user/unlink-google`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-          body: JSON.stringify({ providerUid }),
-        });
-        const data = (await res.json()) as { ok: boolean; user?: DBUser };
-        if (data.ok && data.user) setDbUser(data.user);
-      }
+      await unlinkGoogleMut.mutateAsync(providerUid);
     } catch {
       /* non-fatal */
     }
@@ -350,24 +313,11 @@ export default function Profile() {
   };
 
   const makePrimaryEmail = async (email: string) => {
-    const idToken = await getIdToken();
-    if (!idToken || primaryEmailLoading) return;
+    if (primaryEmailLoading) return;
     setPrimaryEmailLoading(true);
     try {
-      const res = await fetch(`${API_BASE}/api/user/primary-email`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
-        body: JSON.stringify({ email }),
-      });
-      if (!res.ok) return;
-      // Re-fetch full user to get authoritative linkedProviders + primaryEmail state
-      const meRes = await fetch(`${API_BASE}/api/user/me`, {
-        headers: { Authorization: `Bearer ${idToken}` },
-      });
-      if (meRes.ok) {
-        const data = (await meRes.json()) as { user?: DBUser };
-        if (data.user) setDbUser(data.user);
-      }
+      // The reply carries the authoritative linkedProviders + primaryEmail.
+      await setPrimaryEmailMut.mutateAsync(email);
     } catch {
       /* non-fatal */
     } finally {
