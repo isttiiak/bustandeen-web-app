@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.103.0 - Prayer Times in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Prayer Times has the new look**, in dark and light: one arch at the top with today's date, the live clock, the current prayer with its countdown and the next prayer, then the day's timeline as calm cards.
+- **Icons instead of emoji** for every prayer, the sunset marker, the voluntary prayers and the forbidden windows; the Qibla link, settings button and navbar use icons too. The glow around the current prayer is gone.
+- **Forbidden and voluntary windows** open the same way: tap one for the explanation, the hadith and a link to sunnah.com (now translated in Bangla).
+- **Easier to read**: end times, notes and past prayers have stronger text, especially in the light theme.
+- **Sources** now say the times use the calculation method and Asr setting you chose in Prayer time settings (it used to name one fixed method).
+- No em dashes or emoji in the Prayer Times wording, in English and Bangla; the quoted hadith text is unchanged. The prayer times themselves are calculated exactly as before.
+
 ## v5.102.0 - Musafir in the Bustan Arch design - 2026-10-08
 
 ### Changed
