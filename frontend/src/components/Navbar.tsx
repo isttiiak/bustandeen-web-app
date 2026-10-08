@@ -29,13 +29,16 @@ import {
   BriefcaseIcon,
   ClockIcon,
   EnvelopeIcon,
+  CalculatorIcon,
 } from '@heroicons/react/24/outline';
 import {
   CompassIcon,
   CrescentIcon,
+  DuaHandsIcon,
   LeafIcon,
   MosqueIcon,
   Star8Icon,
+  SunriseIcon,
   TasbihIcon,
 } from './icons/IslamicIcons.js';
 import { UserAvatar } from './icons/AvatarGlyphs.js';
@@ -59,6 +62,10 @@ const PAGE_KEYS: Record<string, string> = {
   '/profile': 'nav.myProfile',
   '/naseeh': 'nav.naseeh',
   '/musafir': 'nav.musafir',
+  '/library/duas': 'home.libraryDuaTitle',
+  '/library/adhkar': 'home.libraryAdhkarTitle',
+  '/library/asma-ul-husna': 'home.libraryAsmaTitle',
+  '/library/zakat-calculator': 'home.libraryZakatTitle',
 };
 // Every screen carries an SVG `Icon` (audit T3.2; no emoji).
 const PAGE_META: Record<
@@ -84,6 +91,10 @@ const PAGE_META: Record<
   '/profile': { title: 'My Profile', Icon: UserCircleIcon },
   '/naseeh': { title: 'Naseeh', Icon: SparklesIcon },
   '/musafir': { title: 'Musafir Mode', Icon: BriefcaseIcon },
+  '/library/duas': { title: "Du'a Library", Icon: DuaHandsIcon },
+  '/library/adhkar': { title: 'Adhkar', Icon: SunriseIcon },
+  '/library/asma-ul-husna': { title: '99 Names of Allah', Icon: SparklesIcon },
+  '/library/zakat-calculator': { title: 'Zakat Calculator', Icon: CalculatorIcon },
 };
 
 const HOME_META: (typeof PAGE_META)[string] = { title: 'Home', Icon: HomeIcon };
@@ -109,6 +120,10 @@ const PARENT_ROUTES: Record<string, string> = {
   '/profile': '/',
   '/naseeh': '/',
   '/musafir': '/salat',
+  '/library/duas': '/',
+  '/library/adhkar': '/',
+  '/library/asma-ul-husna': '/',
+  '/library/zakat-calculator': '/',
 };
 
 // ── Typewriter greeting ───────────────────────────────────────────────────────
