@@ -130,6 +130,30 @@ function startWorker(): void {
     })
   );
 
+  // Build output the precache leaves out (vite.config.ts globIgnores: the
+  // admin panel, the xlsx export, the SEO city list), kept once it has loaded
+  // so it still works offline. Names are content-hashed, so cache-first is
+  // safe. Only real JS/CSS is kept: a chunk missing after a deploy gets the
+  // app shell (HTML, status 200) from vercel.json's catch-all, and caching
+  // that under a .js URL would break the page for good.
+  registerRoute(
+    ({ url }) =>
+      url.origin === self.location.origin &&
+      url.pathname.startsWith('/assets/') &&
+      /\.(js|css)$/.test(url.pathname),
+    new CacheFirst({
+      cacheName: 'assets-runtime',
+      plugins: [
+        new ExpirationPlugin({ maxEntries: 40, maxAgeSeconds: 30 * 24 * 60 * 60 }),
+        new CacheableResponsePlugin({ statuses: [200] }),
+        {
+          cacheWillUpdate: async ({ response }) =>
+            /javascript|css/.test(response.headers.get('content-type') ?? '') ? response : null,
+        },
+      ],
+    })
+  );
+
   // Self-hosted fonts (src/fonts.ts). Not precached: the browser fetches only
   // the faces and scripts a page actually uses (each @font-face has a
   // unicode-range), and the file names are content-hashed, so cache-first is

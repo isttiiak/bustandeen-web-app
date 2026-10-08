@@ -162,5 +162,10 @@ test('the manifest is installable-rich and every asset it lists exists', async (
     expect((await request.get(src)).status(), src).toBe(200);
   }
   // Screenshots are for the install sheet only, never precached.
-  expect(await (await request.get('/sw.js')).text()).not.toContain('screenshots/');
+  const sw = await (await request.get('/sw.js')).text();
+  expect(sw).not.toContain('screenshots/');
+  // Large chunks most people never open are cached on first use instead.
+  for (const chunk of ['assets/Admin', 'assets/xlsx-', 'assets/seo-cities-', 'og-image.jpg']) {
+    expect(sw, chunk).not.toContain(chunk);
+  }
 });

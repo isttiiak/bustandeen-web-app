@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.96.3 - Lighter app install - 2026-10-08
+
+### Fixed
+
+- **The app could reload by itself and land on the browser's "no internet" page.** If the connection dropped while the app was fetching a page in the background, the update check from v5.95.1 mistook that for an outdated version and reloaded. It no longer reloads while offline. A first visit also no longer reloads itself a few seconds after opening the app from the home page; the app now reloads only to replace an older version.
+
+### Changed
+
+- **Faster first install of the offline app: about 0.9 MB less to download** (3.1 MB instead of 4.1 MB). The admin panel, the spreadsheet export and the city list of the public prayer-times pages are no longer downloaded up front; each is saved for offline use the first time it is opened.
+
+### Changed (developers)
+
+- `vite.config.ts`: `globIgnores` adds `assets/Admin*.js`, `assets/xlsx-*.js` and `assets/seo-cities-*.js` (a new named chunk for `data/cities.generated.json` + `seo/data/cities.ts`, which Rollup had named after RamadanCalendarIndexPage); `og-image.jpg` left `includeAssets`. Precache 147 entries / 4.07 MB to 132 / 3.14 MB. `src/sw.ts`: cache-first `assets-runtime` route for same-origin `/assets/*.js|css` (40 entries, 30 days), JS/CSS content types only (a missing chunk gets the app shell with status 200). `utils/staleChunkReload.ts`: no reload when `navigator.onLine` is false (the idle route prefetch failing offline, before the worker controls a first-visit page, fired `vite:preloadError` and reloaded into Chrome's offline page; `smoke.spec.ts` "a prayer logged offline" failed 6 of 8 runs on main). `src/pwaUpdate.ts`: `onNeedReload` reloads only if the page already had a controller (the plugin reloaded on the first install's "external" activation). `smoke.spec.ts` asserts the ignored chunks stay out of `sw.js`.
+
 ## v5.96.2 - Staff accounts in Admin Users - 2026-10-08
 
 ### Fixed

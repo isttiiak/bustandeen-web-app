@@ -19,6 +19,11 @@ describe('stale chunk reload guard', () => {
     expect(shouldReloadForStaleChunk(now, String(now - RELOAD_GUARD_MS - 1))).toBe(true);
     expect(shouldReloadForStaleChunk(now, String(now + 60_000))).toBe(true);
   });
+
+  it('never reloads while offline (that would show the browser offline page)', () => {
+    expect(shouldReloadForStaleChunk(now, null, false)).toBe(false);
+    expect(shouldReloadForStaleChunk(now, null, true)).toBe(true);
+  });
 });
 
 describe('Google sign-in: popup or redirect', () => {
