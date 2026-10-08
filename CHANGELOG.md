@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.107.0 - Salat settings in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Salat settings has the new look**, in dark and light: the drawer on the Salat tracker matches Prayer time settings, with icons for auto-count, the after-ṣalāh tasbīḥ, Ayatul Kursi, sunnah and nafl guidance, kaza debt and starting fresh.
+- **Each switch sits in its own card** with its title and a short explanation, and the tasbīḥ choices use the same selected style as the ʿAṣr choices.
+- **The hadith source under each tasbīḥ choice** is now its own link next to the choice instead of sitting inside it, which screen readers and keyboards handle properly.
+- No emoji, arrows or em dashes in the Salat settings wording or its messages, in English and Bangla. What each setting does is unchanged.
+
 ## v5.106.1 - Hijri date and tracking day save like the rest of your profile - 2026-10-08
 
 ### Fixed
