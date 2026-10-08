@@ -4,6 +4,7 @@ import ZikrRequest from '../models/ZikrRequest.js';
 import User from '../models/User.js';
 import AdminAuditLog from '../models/AdminAuditLog.js';
 import { countOpenFeedback } from './feedback.service.js';
+import { excludeAdminUids } from './adminAccount.service.js';
 import type { AdminRole, AnsarDomain } from '../models/AdminAccount.js';
 
 export interface AdminOverviewStats {
@@ -57,11 +58,13 @@ export const getOverview = async (
   }
   if (isServant) {
     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    // Staff accounts (AdminAccount) that also signed into the app are not users.
+    const notAdmin = await excludeAdminUids();
     tasks.push(
       Promise.all([
         DonationStats.findById('current'),
-        User.countDocuments({ createdAt: { $gte: weekAgo } }),
-        User.countDocuments({}),
+        User.countDocuments({ ...notAdmin, createdAt: { $gte: weekAgo } }),
+        User.countDocuments(notAdmin),
         AdminAuditLog.find().sort({ createdAt: -1 }).limit(5).select('actorEmail action createdAt'),
       ]).then(([donationStats, newUsersThisWeek, totalUsers, recentAuditLog]) => {
         stats.servant = {

@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.96.2 - Staff accounts in Admin Users - 2026-10-08
+
+### Fixed
+
+- **Admin: staff accounts no longer count as users.** The admin accounts (Servant and Ansar) that once signed into the app appeared as ordinary users. They now carry an Admin badge in User Management (list and profile), and the overview's Total users and New this week, plus the welcome-email backfill, leave them out.
+
+### Changed (developers)
+
+- `adminAccount.service.ts`: `getAdminTagsByUid()` (every AdminAccount row, active or not) and `excludeAdminUids()`. `GET /api/admin/users` and `/users/:uid` add `admin: { role, active } | null`. Tests in `adminUsers.e2e.test.js`.
+
 ## v5.96.1 - Retire the old www app - 2026-10-08
 
 ### Fixed
