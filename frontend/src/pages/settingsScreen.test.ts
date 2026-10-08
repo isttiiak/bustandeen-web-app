@@ -69,4 +69,12 @@ describe('Settings screen', () => {
     expect(code).not.toMatch(/api\.patch\([^)]*aiEnabled/);
     expect(code).toMatch(/updateProfile\.mutateAsync\(\{ aiEnabled: v \}\)/);
   });
+
+  it('the Hijri offset and day-start mode save through useUpdateProfile, not api.patch', () => {
+    // Same stale-profile fix as #145, for the last two direct writes.
+    const code = stripComments(files['./Settings.tsx'] ?? '');
+    expect(code).not.toMatch(/api\.patch\([^)]*(hijriOffset|dayStartMode)/);
+    expect(code).toMatch(/updateProfile\.mutateAsync\(\{ hijriOffset: days \}\)/);
+    expect(code).toMatch(/updateProfile\.mutateAsync\(\{ dayStartMode: mode \}\)/);
+  });
 });
