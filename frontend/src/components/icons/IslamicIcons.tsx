@@ -267,6 +267,18 @@ export function CompassIcon(p: IconProps) {
   );
 }
 
+/** The Kaaba: a cube with its gold band (kiswah belt) and door. */
+export function KaabaIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M4 8.5 12 5l8 3.5v8L12 20l-8-3.5z" />
+      <path d="M4 8.5 12 12l8-3.5M12 12v8" />
+      <path d="M4 10.8 12 14.3l8-3.5" />
+      <path d="M14.6 13.2v4.4" />
+    </Svg>
+  );
+}
+
 const PRAYER_GLYPHS: Record<string, (p: IconProps) => React.ReactNode> = {
   fajr: FajrIcon,
   sunrise: SunriseIcon,

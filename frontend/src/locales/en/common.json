@@ -1648,15 +1648,15 @@
     "notNow": "Not now"
   },
   "qibla": {
-    "seoTitle": "Qibla Compass — Find the Direction to Makkah",
+    "seoTitle": "Qibla Compass: Find the Direction to Makkah",
     "seoDescription": "Free on-device Qibla compass. Point your phone to find the exact direction to the Kaaba in Makkah for prayer, wherever you are.",
     "bearingLabel": "Qibla is {{deg}}° from true North",
     "enableCompass": "Enable compass",
-    "geoFailed": "Could not get your location — allow location access and try again",
+    "geoFailed": "Could not get your location. Allow location access and try again",
     "geoUnsupported": "Geolocation is not supported on this device",
     "locating": "Locating…",
     "needLocation": "Set your location to find the Qibla direction.",
-    "noSensor": "No compass sensor detected — this works best on a mobile phone. Use the angle above with a physical compass instead.",
+    "noSensor": "No compass sensor detected. This works best on a mobile phone; use the angle above with a physical compass instead.",
     "refreshLocation": "Refresh my location",
     "subtitle": "Point your phone flat and turn until the Kaaba marker points straight up.",
     "title": "Qibla Compass",

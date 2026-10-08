@@ -29,7 +29,13 @@ import {
   BriefcaseIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
-import { CrescentIcon, MosqueIcon, Star8Icon, TasbihIcon } from './icons/IslamicIcons.js';
+import {
+  CompassIcon,
+  CrescentIcon,
+  MosqueIcon,
+  Star8Icon,
+  TasbihIcon,
+} from './icons/IslamicIcons.js';
 import { UserAvatar } from './icons/AvatarGlyphs.js';
 import i18n from '../i18n.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
@@ -65,7 +71,7 @@ const PAGE_META: Record<
   '/fasting': { title: 'Fasting', emoji: '', Icon: CrescentIcon },
   '/fasting/analytics': { title: 'Fasting Analytics', emoji: '', Icon: ChartBarIcon },
   '/prayer-times': { title: 'Prayer Times', emoji: '', Icon: ClockIcon },
-  '/qibla': { title: 'Qibla Compass', emoji: '🧭' },
+  '/qibla': { title: 'Qibla Compass', emoji: '', Icon: CompassIcon },
   '/quran': { title: 'Quran Habit', emoji: '', Icon: BookOpenIcon },
   '/friends': { title: 'Friends', emoji: '', Icon: UsersIcon },
   '/settings': { title: 'Settings', emoji: '', Icon: Cog6ToothIcon },

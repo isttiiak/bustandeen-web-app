@@ -4,6 +4,8 @@ import { m as motion } from 'framer-motion';
 import { MapPinIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { BTN_PRIMARY, CARD } from '../components/bustanStyles.js';
+import { CompassIcon, KaabaIcon } from '../components/icons/IslamicIcons.js';
 import { calcQiblaBearing } from '../utils/qibla.js';
 
 interface StoredLocation {
@@ -130,7 +132,7 @@ export default function QiblaCompass() {
       },
       () => {
         setLocError(
-          t('qibla.geoFailed', 'Could not get your location — allow location access and try again')
+          t('qibla.geoFailed', 'Could not get your location. Allow location access and try again')
         );
         setLocLoading(false);
       },
@@ -144,33 +146,95 @@ export default function QiblaCompass() {
   return (
     <AnimatedBackground variant="dark">
       <Seo
-        title={t('qibla.seoTitle', 'Qibla Compass — Find the Direction to Makkah')}
+        title={t('qibla.seoTitle', 'Qibla Compass: Find the Direction to Makkah')}
         description={t(
           'qibla.seoDescription',
           'Free on-device Qibla compass. Point your phone to find the exact direction to the Kaaba in Makkah for prayer, wherever you are.'
         )}
         path="/qibla"
       />
-      <div className="max-w-md mx-auto px-4 pb-10 pt-4 space-y-6 text-center">
-        <h1 className="text-2xl font-black text-white">{t('qibla.title', 'Qibla Compass')}</h1>
-        <p className="text-white/50 text-sm">
-          {t(
-            'qibla.subtitle',
-            'Point your phone flat and turn until the Kaaba marker points straight up.'
+      <div className="max-w-md mx-auto px-4 pt-5 pb-16 space-y-4 text-center">
+        {/* Arch hero: the title and, once there is a location, the dial */}
+        <section className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-10 pb-6">
+          <div className="w-14 h-14 mx-auto rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/30">
+            <CompassIcon className="w-7 h-7 text-brand-gold" aria-hidden />
+          </div>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-white mt-3">
+            {t('qibla.title', 'Qibla Compass')}
+          </h1>
+          <p className="text-white/75 text-sm mt-1 leading-relaxed max-w-xs mx-auto">
+            {t(
+              'qibla.subtitle',
+              'Point your phone flat and turn until the Kaaba marker points straight up.'
+            )}
+          </p>
+
+          {location && (
+            <>
+              {sensorState === 'needs-permission' && (
+                <button onClick={startCompass} className={`${BTN_PRIMARY} mt-4`}>
+                  <CompassIcon className="w-4 h-4" aria-hidden />
+                  {t('qibla.enableCompass', 'Enable compass')}
+                </button>
+              )}
+
+              <div className="relative mx-auto mt-5" style={{ width: 260, height: 280 }}>
+                {/* Fixed pointer: the top of the phone */}
+                <svg
+                  className="absolute left-1/2 top-0 -translate-x-1/2 w-5 h-4 text-brand-gold"
+                  viewBox="0 0 20 16"
+                  aria-hidden
+                >
+                  <path d="M10 15 2 1h16z" fill="currentColor" />
+                </svg>
+                <motion.div
+                  className="absolute left-0 right-0 bottom-0 rounded-full border-2 border-brand-border bg-brand-surface/60 shadow-elev-1"
+                  style={{ top: 20 }}
+                  animate={{ rotate: sensorState === 'active' ? dialRotation : 0 }}
+                  transition={{ type: 'tween', duration: 0.15, ease: 'linear' }}
+                >
+                  <span className="absolute inset-3 rounded-full border border-dashed border-brand-border" />
+                  {(['N', 'E', 'S', 'W'] as const).map((label, i) => (
+                    <span
+                      key={label}
+                      className={`absolute text-xs font-bold ${label === 'N' ? 'text-brand-gold' : 'text-white/70'}`}
+                      style={{
+                        top: i === 0 ? 14 : i === 2 ? undefined : '50%',
+                        bottom: i === 2 ? 4 : undefined,
+                        left: i === 3 ? 14 : i === 1 ? undefined : '50%',
+                        right: i === 1 ? 4 : undefined,
+                        transform: 'translate(-50%, -50%)',
+                      }}
+                    >
+                      {label}
+                    </span>
+                  ))}
+
+                  {bearing != null && (
+                    <div
+                      className="absolute inset-0"
+                      style={{ transform: `rotate(${needleAngle}deg)` }}
+                    >
+                      <span className="absolute left-1/2 top-1/2 -translate-x-1/2 w-0.5 h-[26%] -translate-y-full bg-brand-gold/60 rounded-full" />
+                      <span className="absolute left-1/2 top-9 -translate-x-1/2 w-11 h-11 rounded-full grid place-items-center bg-brand-deep border border-brand-gold/50 shadow-elev-1">
+                        <KaabaIcon className="w-7 h-7 text-brand-gold" aria-hidden />
+                      </span>
+                    </div>
+                  )}
+                  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full bg-brand-gold" />
+                </motion.div>
+              </div>
+            </>
           )}
-        </p>
+        </section>
 
         {!location && (
-          <div className="rounded-2xl border border-brand-border bg-brand-surface p-6 space-y-3">
-            <p className="text-white/60 text-sm">
+          <div className={`${CARD} p-6 space-y-3`}>
+            <p className="text-white/85 text-sm">
               {t('qibla.needLocation', 'Set your location to find the Qibla direction.')}
             </p>
-            <button
-              onClick={requestLocation}
-              disabled={locLoading}
-              className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color gap-2"
-            >
-              <MapPinIcon className="w-4 h-4" />
+            <button onClick={requestLocation} disabled={locLoading} className={BTN_PRIMARY}>
+              <MapPinIcon className="w-4 h-4" aria-hidden />
               {locLoading
                 ? t('qibla.locating', 'Locating…')
                 : t('qibla.useLocation', 'Use my location')}
@@ -180,55 +244,9 @@ export default function QiblaCompass() {
         )}
 
         {location && (
-          <>
-            {sensorState === 'needs-permission' && (
-              <button
-                onClick={startCompass}
-                className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
-              >
-                {t('qibla.enableCompass', 'Enable compass')}
-              </button>
-            )}
-
-            <div className="relative mx-auto" style={{ width: 280, height: 300 }}>
-              <div className="absolute left-1/2 top-0 -translate-x-1/2 text-brand-gold text-xl leading-none">
-                ▲
-              </div>
-              <motion.div
-                className="absolute left-0 right-0 bottom-0 rounded-full border-2 border-brand-emerald/30 bg-white/5"
-                style={{ top: 20 }}
-                animate={{ rotate: sensorState === 'active' ? dialRotation : 0 }}
-                transition={{ type: 'tween', duration: 0.15, ease: 'linear' }}
-              >
-                {(['N', 'E', 'S', 'W'] as const).map((label, i) => (
-                  <span
-                    key={label}
-                    className="absolute text-white/40 text-xs font-bold"
-                    style={{
-                      top: i === 0 ? 10 : i === 2 ? undefined : '50%',
-                      bottom: i === 2 ? 10 : undefined,
-                      left: i === 3 ? 10 : i === 1 ? undefined : '50%',
-                      right: i === 1 ? 10 : undefined,
-                      transform: 'translate(-50%, -50%)',
-                    }}
-                  >
-                    {label}
-                  </span>
-                ))}
-
-                {bearing != null && (
-                  <div
-                    className="absolute inset-0"
-                    style={{ transform: `rotate(${needleAngle}deg)` }}
-                  >
-                    <span className="absolute left-1/2 top-3 -translate-x-1/2 text-3xl">🕋</span>
-                  </div>
-                )}
-              </motion.div>
-            </div>
-
+          <div className={`${CARD} p-4 space-y-3`}>
             {bearing != null && (
-              <p className="text-white/60 text-sm">
+              <p className="text-white/85 text-sm">
                 {t('qibla.bearingLabel', 'Qibla is {{deg}}° from true North', {
                   deg: Math.round(bearing),
                 })}
@@ -236,21 +254,23 @@ export default function QiblaCompass() {
             )}
 
             {sensorState === 'unavailable' && (
-              <p className="text-brand-gold/70 text-xs max-w-xs mx-auto leading-relaxed">
+              <p className="text-white/75 text-xs max-w-xs mx-auto leading-relaxed rounded-control border border-brand-gold/30 bg-brand-gold/10 p-3">
                 {t(
                   'qibla.noSensor',
-                  'No compass sensor detected — this works best on a mobile phone. Use the angle above with a physical compass instead.'
+                  'No compass sensor detected. This works best on a mobile phone; use the angle above with a physical compass instead.'
                 )}
               </p>
             )}
 
             <button
               onClick={requestLocation}
-              className="text-xs text-white/30 hover:text-brand-emerald underline underline-offset-2"
+              className="inline-flex items-center gap-1.5 text-xs text-white/70 hover:text-brand-emerald underline underline-offset-2"
             >
+              <MapPinIcon className="w-3.5 h-3.5" aria-hidden />
               {t('qibla.refreshLocation', 'Refresh my location')}
             </button>
-          </>
+            {locError && <p className="text-red-400 text-xs">{locError}</p>}
+          </div>
         )}
       </div>
     </AnimatedBackground>
