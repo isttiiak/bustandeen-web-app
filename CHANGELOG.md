@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.109.0 - Salat analytics in the Bustan Arch design - 2026-10-09
+
+### Changed
+
+- **Salat analytics has the new look**, in dark and light: the same cards, stat tiles and section titles as the rest of the app, with stronger text that is easy to read on the light theme.
+- **The prayer calendar follows your theme.** Its colours (red for none, through gold, to green for all five) now come from the theme, so they are clear on the light theme too. The glow on perfect days is gone.
+- **Icons and words instead of emoji**: the "showing fewer days" note and the Journey reset marker use icons, kaza insights show each prayer's icon, and missed reasons are shown as words, like in the tracker.
+- **The "how to read this" dialogs** on Salat, Zikr and Quran analytics have the new card style and a larger info button.
+- No em dashes in the Salat analytics wording, in English and Bangla. The numbers, periods and tracking day are unchanged.
+
 ## v5.108.1 - Zakat jewellery choice explains what to enter - 2026-10-09
 
 ### Changed

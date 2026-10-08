@@ -3,6 +3,7 @@ import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useUiStore } from '../../store/useUiStore.js';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
+import { CARD } from '../bustanStyles.js';
 
 /**
  * Mosque attendance rate, week by week — plain-SVG line + area, same
@@ -81,9 +82,9 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
 
   if (!model) {
     return (
-      <div className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2">
+      <div className={CARD}>
         <div className="card-body p-6">
-          <div className="flex items-center justify-center h-40 text-white/40">
+          <div className="flex items-center justify-center h-40 text-white/70">
             <p>{t('zikrAnalytics.trendChart.noData', 'No data available')}</p>
           </div>
         </div>
@@ -109,16 +110,16 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
         )}`;
 
   return (
-    <div className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2 overflow-x-auto">
+    <div className={`${CARD} overflow-x-auto`}>
       <div className="card-body p-5">
         <div className="min-h-[18px] mb-1">
           {active ? (
             <p className="text-xs text-white/70 tabular-nums">
-              <span className="text-white/40">{weekLabel(active)}</span>{' '}
+              <span className="text-white/70">{weekLabel(active)}</span>{' '}
               <span className="font-bold text-brand-emerald">
                 {formatLocaleNumber(active.rate)}%
               </span>{' '}
-              <span className="text-white/40">
+              <span className="text-white/70">
                 (
                 {t('salatAnalytics.mosqueTrendFraction', '{{mosque}} of {{prayed}} prayers', {
                   mosque: formatLocaleNumber(active.mosqueCount),
@@ -128,7 +129,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
               </span>
             </p>
           ) : (
-            <p className="text-xs text-white/30">{t('salatAnalytics.mosqueTrendHoverHint')}</p>
+            <p className="text-xs text-white/70">{t('salatAnalytics.mosqueTrendHoverHint')}</p>
           )}
         </div>
 
@@ -142,8 +143,8 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
         >
           <defs>
             <linearGradient id="mosqueTrendGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--brand-emerald, #7a9e6e)" stopOpacity={0.35} />
-              <stop offset="95%" stopColor="var(--brand-emerald, #7a9e6e)" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--brand-emerald)" stopOpacity={0.35} />
+              <stop offset="95%" stopColor="var(--brand-emerald)" stopOpacity={0} />
             </linearGradient>
           </defs>
 
@@ -154,7 +155,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
                 y1={tk.y}
                 x2={VB_W - PAD.right}
                 y2={tk.y}
-                stroke="rgba(255,255,255,0.10)"
+                stroke="var(--track)"
                 strokeWidth={1}
                 strokeDasharray="3 3"
                 vectorEffect="non-scaling-stroke"
@@ -163,7 +164,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
                 x={PAD.left - 6}
                 y={tk.y + 4}
                 textAnchor="end"
-                className="fill-white/40"
+                className="fill-white/70"
                 style={{ fontSize: 10 }}
               >
                 {tk.value}%
@@ -176,7 +177,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
           <motion.path
             d={line}
             fill="none"
-            stroke="var(--brand-emerald, #7a9e6e)"
+            stroke="var(--brand-emerald)"
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -190,8 +191,8 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
             cx={pts[pts.length - 1]!.x}
             cy={pts[pts.length - 1]!.y}
             r={3.5}
-            fill="var(--brand-emerald, #7a9e6e)"
-            stroke="var(--brand-deep, #211f16)"
+            fill="var(--brand-emerald)"
+            stroke="var(--brand-deep)"
             strokeWidth={2}
             vectorEffect="non-scaling-stroke"
           />
@@ -203,7 +204,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
                 y1={PAD.top}
                 x2={pts[hover]!.x}
                 y2={PAD.top + model.innerH}
-                stroke="rgba(255,255,255,0.25)"
+                stroke="rgb(var(--c-ink) / 0.25)"
                 strokeWidth={1}
                 vectorEffect="non-scaling-stroke"
               />
@@ -211,8 +212,8 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
                 cx={pts[hover]!.x}
                 cy={pts[hover]!.y}
                 r={4}
-                fill="var(--brand-emerald, #7a9e6e)"
-                stroke="#0e0d0a"
+                fill="var(--brand-emerald)"
+                stroke="var(--brand-void)"
                 strokeWidth={2}
                 vectorEffect="non-scaling-stroke"
               />
@@ -228,7 +229,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
                 x={pts[i]!.x}
                 y={VB_H - 8}
                 textAnchor="middle"
-                className="fill-white/40"
+                className="fill-white/70"
                 style={{ fontSize: 10 }}
               >
                 {isLast
@@ -254,7 +255,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
           ))}
         </svg>
 
-        <p className="text-white/25 text-[10px] mt-2">{t('salatAnalytics.mosqueTrendHint')}</p>
+        <p className="text-white/70 text-[10px] mt-2">{t('salatAnalytics.mosqueTrendHint')}</p>
       </div>
     </div>
   );
