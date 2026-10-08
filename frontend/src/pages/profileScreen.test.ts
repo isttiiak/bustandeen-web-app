@@ -63,6 +63,11 @@ describe('Profile screen', () => {
     expect(code).not.toMatch(/shadow-\[0_0_|repeat:\s*Infinity|sweetalert2/);
   });
 
+  it.each(Object.keys(files))('%s reads and writes the server only through hooks', (path) => {
+    // All server data goes through React Query hooks (hooks/useUserProfile.ts).
+    expect(stripComments(files[path] ?? '')).not.toMatch(/\bfetch\(|API_BASE|getIdToken/);
+  });
+
   it('has exactly one arch hero', () => {
     const arches =
       Object.values(files)

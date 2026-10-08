@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.100.2 - Profile account requests through the app's data layer - 2026-10-08
+
+### Changed (developers)
+
+- **Profile no longer calls `fetch()` directly** for your account (loading and saving the profile, the picture, connecting and disconnecting Google, choosing the primary email). These go through React Query hooks in `hooks/useUserProfile.ts` (`useUserProfile({ fresh })`, `useUpdateProfile`, `useLinkGoogle`, `useUnlinkGoogle`, `useSetPrimaryEmail`), which write the returned user into the shared cache; the extra re-fetch after choosing the primary email is gone (the server already returns the user). The edit form still starts from a fresh copy on every visit.
+- In the demo, saving the profile no longer depends on a request that could not reach the server. `pages/profileScreen.test.ts` now fails on a raw `fetch` in the Profile files; `hooks/useUserProfile.test.ts` covers the error mapping (409 "already linked", offline).
+
 ## v5.100.1 - Navigation bar icons - 2026-10-08
 
 ### Changed
