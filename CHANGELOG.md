@@ -2,6 +2,83 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.97.0 - Settings in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Settings has the new look**, in dark and light: one arch at the top, calm theme cards with a soft shadow, and easier-to-read text everywhere (descriptions, notes and labels were very faint). Every option tile (language, theme, day start, Hijri adjustment) shows its choice the same way. The danger zone is a clear red panel with one card per feature, each with its own icon.
+- **The Zikr library, the Quran and Zikr settings panels, the zikr edit window and the tracking-day explanations** follow the same design. The coloured gradient buttons are now the solid sage button used across the app.
+- **Icons instead of emoji** on all these screens (zikr categories, feature cards, notes and messages), and no em dashes in their wording, in English and Bangla.
+
+### Fixed
+
+- **Disabled buttons on the light theme were unreadable** (dark text on the dark-green button, for example "Goal saved" in Quran settings). They now keep white text and fade instead, on every redesigned screen.
+- **Some Zikr library text showed in English for Bangla readers**: the "Suggest a zikr or dua" heading and note, the community section, the listen button, the volume label and two messages had no translation at all. They are translated now.
+- "Ṣalawāt upon the Prophet ﷺ" no longer shows its count in the wrong place.
+
+### Changed (developers)
+
+- `pages/settingsScreen.test.ts` guards the Settings files: no emoji or em dash in code or in any locale string they use, every key exists in en and bn (catches keys missing from both, which `i18n:check` cannot), and every `fixed inset-0` overlay is portaled. `components/zikr/zikrCategoryIcons.tsx` (SVG per library category). `btn-solid` (in `BTN_PRIMARY` and the Settings danger buttons) keeps white text when disabled (`styles/global.css`). Navbar: SVG gear for Settings. Option labels in `utils/quranData.ts` / `quranPrefs.ts` use a colon instead of an em dash.
+
+## v5.96.4 - Smoother sign-in - 2026-10-08
+
+### Fixed
+
+- **After signing in, the sign-in form no longer shows again while the app gets ready.** A calm "Signing you in..." screen covers it until your home page opens: when you come back from Google in the installed app, and after a Google or email sign-in in the browser.
+- **Closing the Google window without signing in left both sign-in buttons spinning** until the page was reloaded (the browser only reports a closed window after up to about 10 seconds). The buttons are ready again about 2 seconds after you are back on the page.
+
+### Changed (developers)
+
+- `utils/useSignInFlow.ts` (shared by AuthSignIn and AuthSignUp): loading state, Google sign-in, the redirect result, a focus-return guard (`POPUP_RETURN_GRACE_MS` 2.5 s) and a `FINISH_TIMEOUT_MS` (20 s) cap. `components/SigningInOverlay.tsx` (portaled, z-[90]). `utils/googleSignIn.ts`: a per-tab `bustandeen_google_redirect` flag set before `signInWithRedirect`; `completeGoogleRedirect` returns `{ error, signedIn }`; `shouldShowSigningIn()` (verified non-demo user, or finishing; never over the verify-email step). Test `utils/signingIn.test.ts`. Locale key `authSignIn.signingIn` (en + bn).
+
+## v5.96.3 - Lighter app install - 2026-10-08
+
+### Fixed
+
+- **The app could reload by itself and land on the browser's "no internet" page.** If the connection dropped while the app was fetching a page in the background, the update check from v5.95.1 mistook that for an outdated version and reloaded. It no longer reloads while offline. A first visit also no longer reloads itself a few seconds after opening the app from the home page; the app now reloads only to replace an older version.
+
+### Changed
+
+- **Faster first install of the offline app: about 0.9 MB less to download** (3.1 MB instead of 4.1 MB). The admin panel, the spreadsheet export and the city list of the public prayer-times pages are no longer downloaded up front; each is saved for offline use the first time it is opened.
+
+### Changed (developers)
+
+- `vite.config.ts`: `globIgnores` adds `assets/Admin*.js`, `assets/xlsx-*.js` and `assets/seo-cities-*.js` (a new named chunk for `data/cities.generated.json` + `seo/data/cities.ts`, which Rollup had named after RamadanCalendarIndexPage); `og-image.jpg` left `includeAssets`. Precache 147 entries / 4.07 MB to 132 / 3.14 MB. `src/sw.ts`: cache-first `assets-runtime` route for same-origin `/assets/*.js|css` (40 entries, 30 days), JS/CSS content types only (a missing chunk gets the app shell with status 200). `utils/staleChunkReload.ts`: no reload when `navigator.onLine` is false (the idle route prefetch failing offline, before the worker controls a first-visit page, fired `vite:preloadError` and reloaded into Chrome's offline page; `smoke.spec.ts` "a prayer logged offline" failed 6 of 8 runs on main). `src/pwaUpdate.ts`: `onNeedReload` reloads only if the page already had a controller (the plugin reloaded on the first install's "external" activation). `smoke.spec.ts` asserts the ignored chunks stay out of `sw.js`.
+
+## v5.96.2 - Staff accounts in Admin Users - 2026-10-08
+
+### Fixed
+
+- **Admin: staff accounts no longer count as users.** The admin accounts (Servant and Ansar) that once signed into the app appeared as ordinary users. They now carry an Admin badge in User Management (list and profile), and the overview's Total users and New this week, plus the welcome-email backfill, leave them out.
+
+### Changed (developers)
+
+- `adminAccount.service.ts`: `getAdminTagsByUid()` (every AdminAccount row, active or not) and `excludeAdminUids()`. `GET /api/admin/users` and `/users/:uid` add `admin: { role, active } | null`. Tests in `adminUsers.e2e.test.js`.
+
+## v5.96.1 - Retire the old www app - 2026-10-08
+
+### Fixed
+
+- **Browsers that once used www.bustandeen.com were stuck on a very old version** that could not sign in (its server calls were blocked) and could never update itself. That old offline copy now removes itself and opens the same page on bustandeen.com. Every other www address still redirects to bustandeen.com as before.
+
+### Changed (developers)
+
+- `vercel.json` redirects host `www.bustandeen.com` to the apex for every path except `/sw.js` (a service-worker script may not redirect). `src/sw.ts` checks its own host: on www it runs `src/swRetire.ts` (skip waiting, claim, delete every cache, unregister, navigate each window to the same path on the apex) and nothing else; elsewhere it starts exactly as before. Needs the Vercel www domain set to serve Production instead of its domain-level redirect. Tests: `src/swRetire.test.ts`.
+
+## v5.96.0 - Terms of Service - 2026-10-07
+
+### Added
+
+- **A Terms of Service page at /terms** (English and Bangla): what Bustandeen is (guidance with sources, not a fatwa; health notes are not medical advice), your account, fair use, your data (export and delete any time), Naseeh, sadaqah, availability and limits, ending your use, and changes. Linked from the sign-in and sign-up pages ("By continuing, you agree to our Terms of Service and Privacy Policy"), the footer, the account menu, the landing page and the sitemap. Its address, https://bustandeen.com/terms, is the "Application terms of service link" for Google's sign-in branding.
+
+### Security
+
+- Three advisories published 2026-10-07 failed the CI audit gate; lockfile-only updates in the frontend: `source-map-js` 1.2.1 → 1.2.2 (GHSA-68fv-2mgg-jv7q, via postcss), `solid-js` 1.9.15 → 1.9.16 and `seroval` → 1.6.8 (critical, via the React Query devtools, which only render in development).
+
+### Changed (developers)
+
+- `components/LegalAgreeLine.tsx` (`<Trans>` with `components`), `pages/termsPage.test.ts` (every section exists in en + bn, no emoji or em dashes, agreement lines link both pages).
+
 ## v5.95.2 - Security patch - 2026-10-07
 
 ### Security
@@ -656,6 +733,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - If MongoDB is unreachable, a limiter falls back to an in-memory count for that instance (logged as `rate-limit-store`) instead of blocking everyone or waiting on Mongoose's 10-second buffer.
 - **Local dev no longer builds indexes.** `autoIndex` is now on only in the test suite (or with `MONGO_AUTO_INDEX=1` for a local database). `backend/.env` points at the live Atlas database, so a dev server with `autoIndex` on changes production indexes. That happened on 2026-10-01: a local dev server built the new retention and counter indexes in production, which applied the 30/90-day retention immediately (both log collections are now empty).
 - Indexes for this release already exist in production (see above). `npm run sync-indexes` in `backend/` still lists three old indexes to drop (`createdAt_-1` on the two log collections, the unused `userId_1` on `salatlogs`); `-- --apply` removes them. Nothing else is pending.
+
 ## v5.62.1 - Dependency security patch - 2026-10-01
 
 ### Security
@@ -1163,7 +1241,7 @@ A second pass over everything added in v5.43.0 to v5.45.0 (whose changelog entri
 
 ### Added
 
-- **Sadaqah virtue day card on the homepage.** A persistent card (styled like the existing Islamic special-day widget, not auto-dismissing like the reminder it replaces) surfaces on Friday, Ramadan, the first 10 days of Dhul Ḥijjah, Arafah, and Laylat al-Qadr — each with its own heading, short explanation, and a citation, linking straight to `/sadaqah`. Friday's copy is explicitly attributed to Ibn al-Qayyim's own teaching in *Zād al-Maʿād* (paired with the authentic "charity does not decrease wealth" ḥadīth, Ṣaḥīḥ Muslim 2588) rather than presented as a standalone Prophetic ḥadīth, since it isn't one. Replaces `SadaqahFridayReminder.tsx`, which only covered Friday and auto-hid after 30 seconds. New `frontend/src/utils/sadaqahVirtueDays.ts`, `frontend/src/components/SadaqahVirtueCard.tsx`.
+- **Sadaqah virtue day card on the homepage.** A persistent card (styled like the existing Islamic special-day widget, not auto-dismissing like the reminder it replaces) surfaces on Friday, Ramadan, the first 10 days of Dhul Ḥijjah, Arafah, and Laylat al-Qadr — each with its own heading, short explanation, and a citation, linking straight to `/sadaqah`. Friday's copy is explicitly attributed to Ibn al-Qayyim's own teaching in _Zād al-Maʿād_ (paired with the authentic "charity does not decrease wealth" ḥadīth, Ṣaḥīḥ Muslim 2588) rather than presented as a standalone Prophetic ḥadīth, since it isn't one. Replaces `SadaqahFridayReminder.tsx`, which only covered Friday and auto-hid after 30 seconds. New `frontend/src/utils/sadaqahVirtueDays.ts`, `frontend/src/components/SadaqahVirtueCard.tsx`.
 - **Quran settings now sync across devices.** `arabicFont`, all four text-size sliders, the transliteration toggle, "count listening as āyāt," default reciter, and translation picks were localStorage-only — a genuinely different phone and laptop always looked different. `QuranProfile` (backend) gained these fields plus a `displayPrefsSet` flag; opening Quran settings for the first time after this update either pushes that device's existing local prefs up (if nothing has synced yet) or pulls the already-synced values down (if another device got there first) — never silently overwrites a real prior customization with factory defaults. Every subsequent change (debounced for the sliders) pushes to the server. `PATCH /api/quran/profile` extended accordingly; localStorage stays the fast synchronous read path everywhere else in the reader, now backed by the server instead of being the only copy.
 
 ### Fixed
@@ -1498,7 +1576,7 @@ See `TODO-v3.md`'s "Admin panel rebuild — Servant/Ansar roles" section for the
 - **Quran settings drawer's close button was hidden behind the navbar.** The drawer was rendered inline inside a page wrapper that creates its own (lower) stacking context, so its z-index could never actually win against the navbar above it. Portaled it to `<body>`, matching every other settings drawer (Salat, Zikr, Prayer Times) in the app, which already did this.
 - **Salat tracker's calendar toggle could be squeezed to invisible on mobile.** It sat alongside 7 equal-width day cells with nothing protecting its own width; gave it `shrink-0` so the day cells compress first instead.
 - **Āyah share card's Download/Copy/Share buttons could overflow their own box on mobile.** A three-button row with icon+label side by side didn't leave enough width for text at narrow modal sizes, so the label wrapped to a second line that rendered outside the button. Switched to icon-over-label buttons, which can't overflow regardless of column width.
-- Incidentally found and fixed the demo-mode banner (`z-90`) sitting above *every* modal and settings drawer in the app, including the ones above — lowered it to sit correctly between the navbar and modal backdrops.
+- Incidentally found and fixed the demo-mode banner (`z-90`) sitting above _every_ modal and settings drawer in the app, including the ones above — lowered it to sit correctly between the navbar and modal backdrops.
 
 ## v5.14.0 — Āyah Card Copy-to-Clipboard — 2026-09-11
 
@@ -1545,7 +1623,7 @@ See `TODO-v3.md`'s "Admin panel rebuild — Servant/Ansar roles" section for the
 
 ### Added
 
-- **Best-ever Mon/Thu fasting streak.** Fasting Analytics only ever showed the *current* streak; added a "Best Mon/Thu streak" stat computed from the full fast history (longest unbroken run, not just the trailing one from today).
+- **Best-ever Mon/Thu fasting streak.** Fasting Analytics only ever showed the _current_ streak; added a "Best Mon/Thu streak" stat computed from the full fast history (longest unbroken run, not just the trailing one from today).
 - **Rayhanah: discreet mode.** A new toggle (Settings on the Rayhanah page) that swaps the home-screen banner and nav-menu wording from explicit "🌸 Rayhanah day N" language to a neutral "🍃 Wellness mode" for a shared-device or over-the-shoulder scenario. The Rayhanah page itself is unaffected once opened — this only changes ambient, at-a-glance surfaces.
 - **Rayhanah: pregnancy mode.** A status + due-date toggle that suspends period predictions (which would otherwise be actively wrong during pregnancy) and shows a week count instead. Deliberately does **not** touch salat/fasting exemption logic — pregnancy alone doesn't excuse worship, so that stays exactly as it was.
 - **"iOS & Android apps coming soon" note** moved from the footer (shown on every page) to the landing page only, where it's actually relevant to a prospective new user.

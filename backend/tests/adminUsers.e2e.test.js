@@ -34,6 +34,15 @@ describe('Admin users — directory + welcome-email backfill (servant only)', ()
       welcomeEmailSentAt: new Date(),
     });
 
+    // The owner admin also signed into the main app once (a real User doc,
+    // also pre-dating the welcome email): badged in the list, never counted.
+    await User.collection.insertOne({
+      uid: 'admin-uid-owner',
+      email: OWNER_EMAIL,
+      zikrTypes: [],
+      createdAt: new Date('2026-09-01T00:00:00Z'),
+    });
+
     await AdminAccount.create({
       firebaseUid: 'admin-uid-owner',
       email: OWNER_EMAIL,
@@ -104,12 +113,33 @@ describe('Admin users — directory + welcome-email backfill (servant only)', ()
     expect(res.status).toBe(403);
   });
 
-  test('servant lists users, newest first, with total count', async () => {
+  test('servant lists users, newest first, with total count; staff accounts are badged', async () => {
     const res = await request(app).get('/api/admin/users').set('X-Admin-Token', ownerToken);
     expect(res.status).toBe(200);
-    expect(res.body.total).toBe(3);
-    expect(res.body.users).toHaveLength(3);
+    expect(res.body.total).toBe(4);
+    expect(res.body.users).toHaveLength(4);
     expect(res.body.users.map((u) => u.uid)).toContain('old-1');
+    const byUid = Object.fromEntries(res.body.users.map((u) => [u.uid, u]));
+    expect(byUid['admin-uid-owner'].admin).toEqual({ role: 'servant', active: true });
+    expect(byUid['old-1'].admin).toBeNull();
+    expect(byUid['old-1'].email).toBe('old1@test.dev');
+    expect(byUid['old-1'].disabled).toBe(false);
+  });
+
+  test('user detail carries the admin badge', async () => {
+    const res = await request(app)
+      .get('/api/admin/users/admin-uid-owner')
+      .set('X-Admin-Token', ownerToken);
+    expect(res.status).toBe(200);
+    expect(res.body.user.admin).toEqual({ role: 'servant', active: true });
+  });
+
+  test('overview user counts leave staff accounts out', async () => {
+    const res = await request(app)
+      .get('/api/admin/stats/overview')
+      .set('X-Admin-Token', ownerToken);
+    expect(res.status).toBe(200);
+    expect(res.body.servant.totalUsers).toBe(3);
   });
 
   test('servant search filters by email', async () => {

@@ -230,6 +230,10 @@ export default function LandingPage({ lang = 'en' }: { lang?: LandingLang }) {
             ·{' '}
             <a href="/privacy" className="text-white/50 text-sm underline">
               {t('nav.privacy', 'Privacy')}
+            </a>{' '}
+            ·{' '}
+            <a href="/terms" className="text-white/50 text-sm underline">
+              {t('nav.terms', 'Terms')}
             </a>
           </p>
         </section>

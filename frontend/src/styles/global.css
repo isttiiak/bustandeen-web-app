@@ -239,6 +239,14 @@ button:disabled,
 button:disabled * {
   opacity: 1 !important;
 }
+/* A solid colour fill (BTN_PRIMARY, the danger buttons) keeps its white text
+   when disabled: the ink colour above is dark on the light theme, unreadable
+   on a dark-sage or red fill. The whole button fades instead. */
+.btn-solid:disabled,
+.btn-solid[disabled] {
+  color: #ffffff !important;
+  opacity: 0.5 !important;
+}
 
 /* Fix overflow on mobile */
 body {

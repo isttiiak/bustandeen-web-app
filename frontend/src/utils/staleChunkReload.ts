@@ -9,8 +9,18 @@
 const KEY = 'bustandeen_chunk_reload_at';
 export const RELOAD_GUARD_MS = 30_000;
 
-/** True unless this tab already reloaded for a missing chunk very recently. */
-export function shouldReloadForStaleChunk(now: number, lastReloadAt: string | null): boolean {
+/**
+ * True unless this tab already reloaded for a missing chunk very recently, or
+ * is offline: a chunk that fails offline is not a stale build (often just the
+ * idle route prefetch before the service worker controls the page), and a
+ * reload then only swaps the app for the browser's offline page.
+ */
+export function shouldReloadForStaleChunk(
+  now: number,
+  lastReloadAt: string | null,
+  online = true
+): boolean {
+  if (!online) return false;
   if (!lastReloadAt) return true;
   const last = Number(lastReloadAt);
   return !Number.isFinite(last) || now - last > RELOAD_GUARD_MS || now < last;
@@ -28,7 +38,7 @@ export function initStaleChunkReload(): void {
     } catch {
       /* storage blocked: treat as no earlier reload */
     }
-    if (!shouldReloadForStaleChunk(Date.now(), last)) return; // let the error surface
+    if (!shouldReloadForStaleChunk(Date.now(), last, navigator.onLine)) return; // let the error surface
     event.preventDefault();
     try {
       sessionStorage.setItem(KEY, String(Date.now()));

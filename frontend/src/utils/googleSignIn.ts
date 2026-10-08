@@ -6,6 +6,7 @@ import {
   type Auth,
   type AuthProvider,
 } from 'firebase/auth';
+import type { AuthUser } from '../types/api.js';
 
 // Google sign-in for the website and the installed app (PWA).
 //
@@ -36,27 +37,72 @@ function redirectMode(auth: Auth): boolean {
   return shouldUseRedirect(auth.config.authDomain, window.location.host, isStandaloneDisplay());
 }
 
+// Set just before leaving for Google, so the sign-in page that loads on the
+// way back can show "Signing you in" instead of the form while the result is
+// read. Session storage: it belongs to this tab only.
+const REDIRECT_PENDING_KEY = 'bustandeen_google_redirect';
+
+function readPending(): boolean {
+  try {
+    return sessionStorage.getItem(REDIRECT_PENDING_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function setPending(on: boolean): void {
+  try {
+    if (on) sessionStorage.setItem(REDIRECT_PENDING_KEY, '1');
+    else sessionStorage.removeItem(REDIRECT_PENDING_KEY);
+  } catch {
+    /* storage blocked: the page just shows the form while it finishes */
+  }
+}
+
+/** This page load is the way back from a Google redirect sign-in. */
+export function hasPendingGoogleRedirect(): boolean {
+  return readPending();
+}
+
 /** Popup in a tab; redirect in the installed app (once authDomain is ours). */
 export async function signInWithGoogle(auth: Auth, provider: AuthProvider): Promise<void> {
   if (redirectMode(auth)) {
+    setPending(true);
     await signInWithRedirect(auth, provider, browserPopupRedirectResolver);
     return;
   }
   await signInWithPopup(auth, provider, browserPopupRedirectResolver);
 }
 
-/**
- * Finish a redirect sign-in when the app comes back to the sign-in page. The
- * signed-in user then arrives through onAuthStateChanged as usual; this only
- * surfaces an error (e.g. account-exists-with-different-credential).
- * Resolves to the Firebase error code, or null.
- */
-export async function completeGoogleRedirect(auth: Auth): Promise<string | null> {
-  if (!redirectMode(auth)) return null;
-  try {
-    await getRedirectResult(auth, browserPopupRedirectResolver);
-    return null;
-  } catch (err) {
-    return (err as { code?: string }).code ?? 'auth/internal-error';
+export interface RedirectOutcome {
+  /** A Firebase error code (e.g. account-exists-with-different-credential). */
+  error: string | null;
+  /** The redirect signed someone in; they arrive through onAuthStateChanged. */
+  signedIn: boolean;
+}
+
+/** Finish a redirect sign-in when the app comes back to the sign-in page. */
+export async function completeGoogleRedirect(auth: Auth): Promise<RedirectOutcome> {
+  if (!redirectMode(auth)) {
+    setPending(false);
+    return { error: null, signedIn: false };
   }
+  try {
+    const result = await getRedirectResult(auth, browserPopupRedirectResolver);
+    return { error: null, signedIn: !!result };
+  } catch (err) {
+    return { error: (err as { code?: string }).code ?? 'auth/internal-error', signedIn: false };
+  } finally {
+    setPending(false);
+  }
+}
+
+/**
+ * The sign-in page shows "Signing you in" instead of its form once a sign-in
+ * has succeeded (or is being read back after a redirect), until App.tsx moves
+ * on. An unverified email account stays: sign-up shows its verify screen.
+ */
+export function shouldShowSigningIn(finishing: boolean, user: AuthUser | null): boolean {
+  if (user) return user.emailVerified !== false;
+  return finishing;
 }

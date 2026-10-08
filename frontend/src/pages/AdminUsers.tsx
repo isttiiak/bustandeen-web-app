@@ -104,7 +104,17 @@ export default function AdminUsers() {
                     onClick={() => navigate(`/admin/users/${u.uid}`)}
                     className="border-b border-base-300/60 last:border-0 hover:bg-white/[0.03] cursor-pointer"
                   >
-                    <td className="px-3 py-2 text-white/80">{u.email}</td>
+                    <td className="px-3 py-2 text-white/80">
+                      {u.email}
+                      {u.admin && (
+                        <span
+                          title={`${u.admin.role}${u.admin.active ? '' : ', inactive'}`}
+                          className="ml-1.5 px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-brand-gold/15 text-brand-gold"
+                        >
+                          {t('adminUsers.adminBadge', 'Admin')}
+                        </span>
+                      )}
+                    </td>
                     <td className="px-3 py-2 text-white/60">
                       {u.displayName || [u.firstName, u.lastName].filter(Boolean).join(' ') || '—'}
                     </td>
