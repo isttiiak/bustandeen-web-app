@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.102.0 - Musafir in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Musafir mode has the new look**, in dark and light: one arch at the top with your journey day, where you are heading and what changes for your prayers, then calm cards for today's prayers, the journey du'as, the traveller's concessions, where the madhabs differ and your travel history.
+- **Icons instead of emoji** for every concession, du'a, prayer and button. The floating plane and the bus that drove back and forth are gone, and so are the glows and colour sweeps.
+- **Easier to read**: hints, references and history lines have stronger text, especially in the light theme.
+- The Musafir strip on the Salat and Fasting pages and the navbar icon match the new look.
+- No em dashes or emoji in the Musafir wording, in English and Bangla. How qaṣr, jamʿ and travel days are worked out has not changed.
+
 ## v5.101.2 - Naseeh switch saves through the account hook - 2026-10-08
 
 ### Changed
