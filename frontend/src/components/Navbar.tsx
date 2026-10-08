@@ -28,10 +28,12 @@ import {
   SparklesIcon,
   BriefcaseIcon,
   ClockIcon,
+  EnvelopeIcon,
 } from '@heroicons/react/24/outline';
 import {
   CompassIcon,
   CrescentIcon,
+  LeafIcon,
   MosqueIcon,
   Star8Icon,
   TasbihIcon,
@@ -58,34 +60,33 @@ const PAGE_KEYS: Record<string, string> = {
   '/naseeh': 'nav.naseeh',
   '/musafir': 'nav.musafir',
 };
-// Redesigned screens (audit T3.2) carry an SVG `Icon`; the rest keep their
-// emoji until their own redesign.
+// Every screen carries an SVG `Icon` (audit T3.2; no emoji).
 const PAGE_META: Record<
   string,
-  { title: string; emoji: string; Icon?: (p: { className?: string }) => React.ReactNode }
+  { title: string; Icon: (p: { className?: string }) => React.ReactNode }
 > = {
-  '/zikr': { title: 'Zikr Counter', emoji: '', Icon: TasbihIcon },
-  '/zikr/analytics': { title: 'Zikr Analytics', emoji: '', Icon: ChartBarIcon },
-  '/salat': { title: 'Salat Tracker', emoji: '', Icon: MosqueIcon },
-  '/salat/analytics': { title: 'Salat Analytics', emoji: '', Icon: ChartBarIcon },
-  '/fasting': { title: 'Fasting', emoji: '', Icon: CrescentIcon },
-  '/fasting/analytics': { title: 'Fasting Analytics', emoji: '', Icon: ChartBarIcon },
-  '/prayer-times': { title: 'Prayer Times', emoji: '', Icon: ClockIcon },
-  '/qibla': { title: 'Qibla Compass', emoji: '', Icon: CompassIcon },
-  '/quran': { title: 'Quran Habit', emoji: '', Icon: BookOpenIcon },
-  '/friends': { title: 'Friends', emoji: '', Icon: UsersIcon },
-  '/settings': { title: 'Settings', emoji: '', Icon: Cog6ToothIcon },
-  '/about': { title: 'About Bustandeen', emoji: '🌱' },
-  '/privacy': { title: 'Privacy', emoji: '🔒' },
-  '/terms': { title: 'Terms', emoji: '', Icon: DocumentTextIcon },
-  '/feedback': { title: 'Feedback', emoji: '💬' },
-  '/contact': { title: 'Contact Us', emoji: '📨' },
-  '/profile': { title: 'My Profile', emoji: '', Icon: UserCircleIcon },
-  '/naseeh': { title: 'Naseeh', emoji: '', Icon: SparklesIcon },
-  '/musafir': { title: 'Musafir Mode', emoji: '', Icon: BriefcaseIcon },
+  '/zikr': { title: 'Zikr Counter', Icon: TasbihIcon },
+  '/zikr/analytics': { title: 'Zikr Analytics', Icon: ChartBarIcon },
+  '/salat': { title: 'Salat Tracker', Icon: MosqueIcon },
+  '/salat/analytics': { title: 'Salat Analytics', Icon: ChartBarIcon },
+  '/fasting': { title: 'Fasting', Icon: CrescentIcon },
+  '/fasting/analytics': { title: 'Fasting Analytics', Icon: ChartBarIcon },
+  '/prayer-times': { title: 'Prayer Times', Icon: ClockIcon },
+  '/qibla': { title: 'Qibla Compass', Icon: CompassIcon },
+  '/quran': { title: 'Quran Habit', Icon: BookOpenIcon },
+  '/friends': { title: 'Friends', Icon: UsersIcon },
+  '/settings': { title: 'Settings', Icon: Cog6ToothIcon },
+  '/about': { title: 'About Bustandeen', Icon: LeafIcon },
+  '/privacy': { title: 'Privacy', Icon: LockClosedIcon },
+  '/terms': { title: 'Terms', Icon: DocumentTextIcon },
+  '/feedback': { title: 'Feedback', Icon: ChatBubbleLeftRightIcon },
+  '/contact': { title: 'Contact Us', Icon: EnvelopeIcon },
+  '/profile': { title: 'My Profile', Icon: UserCircleIcon },
+  '/naseeh': { title: 'Naseeh', Icon: SparklesIcon },
+  '/musafir': { title: 'Musafir Mode', Icon: BriefcaseIcon },
 };
 
-const HOME_META: (typeof PAGE_META)[string] = { title: 'Home', emoji: '', Icon: HomeIcon };
+const HOME_META: (typeof PAGE_META)[string] = { title: 'Home', Icon: HomeIcon };
 
 // Maps each page to its logical parent for the back button
 const PARENT_ROUTES: Record<string, string> = {
@@ -237,11 +238,7 @@ export default function Navbar() {
                 >
                   <ArrowLeftIcon className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">
-                    {parentMeta.Icon ? (
-                      <parentMeta.Icon className="inline w-3.5 h-3.5 -mt-0.5" />
-                    ) : (
-                      parentMeta.emoji
-                    )}{' '}
+                    <parentMeta.Icon className="inline w-3.5 h-3.5 -mt-0.5" />{' '}
                     {parentPath === '/' ? t('nav.home') : pageTitle(parentPath, parentMeta.title)}
                   </span>
                 </button>
@@ -250,11 +247,7 @@ export default function Navbar() {
                   <div className="flex items-center gap-1 min-w-0 pl-1">
                     <span className="text-white/15 text-sm hidden sm:inline">|</span>
                     <span className="text-sm shrink-0" aria-hidden>
-                      {pageMeta.Icon ? (
-                        <pageMeta.Icon className="w-4 h-4 text-brand-emerald" />
-                      ) : (
-                        pageMeta.emoji
-                      )}
+                      <pageMeta.Icon className="w-4 h-4 text-brand-emerald" />
                     </span>
                     <span className="font-semibold text-white/70 text-xs sm:text-sm truncate max-w-[70px] sm:max-w-[130px]">
                       {pageTitle(location.pathname, pageMeta.title)}

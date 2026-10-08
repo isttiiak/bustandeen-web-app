@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { PaperAirplaneIcon, CheckCircleIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
+import { BTN_PRIMARY, BTN_SECONDARY } from './bustanStyles.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { celebrateSmall } from '../utils/celebrate.js';
 import api from '../lib/api.js';
@@ -9,7 +10,7 @@ import api from '../lib/api.js';
 /**
  * Shared interactive form for /feedback and /contact.
  *
- * Delivery goes through our own backend (POST /api/feedback) — stored in
+ * Delivery goes through our own backend (POST /api/feedback), stored in
  * FeedbackMessage so it's manageable from /admin/feedback (read/reply/
  * archive/delete), and still emails the review inbox so nothing regresses if
  * the inbox isn't checked. Previously posted straight to Web3Forms, which
@@ -20,9 +21,8 @@ import api from '../lib/api.js';
 export interface FormType {
   id: string;
   label: string;
-  emoji: string;
-  /** tailwind classes for the selected state */
-  active: string;
+  /** An SVG icon component (Heroicons or IslamicIcons). */
+  Icon: (p: { className?: string }) => React.ReactNode;
   hint: string;
 }
 
@@ -81,7 +81,7 @@ export default function FeedbackForm({
       setError(
         t(
           'feedbackForm.sendFail',
-          'Could not send right now — please check your connection and try again.'
+          'Could not send right now. Please check your connection and try again.'
         )
       );
     } finally {
@@ -94,7 +94,7 @@ export default function FeedbackForm({
       <motion.div
         initial={{ opacity: 0, scale: 0.94 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="rounded-3xl border border-brand-emerald/30 bg-brand-emerald/[0.07] p-8 text-center"
+        className="rounded-card border border-brand-emerald/40 bg-brand-deep shadow-elev-2 p-8 text-center"
       >
         <motion.div
           initial={{ scale: 0 }}
@@ -103,23 +103,23 @@ export default function FeedbackForm({
         >
           <CheckCircleIcon className="w-16 h-16 text-brand-emerald mx-auto" />
         </motion.div>
-        <h2 className="text-white font-black text-xl mt-3">
-          {t('feedbackForm.thanks', 'JazākAllāhu khayran! 💚')}
+        <h2 className="font-display text-white font-bold text-xl mt-3">
+          {t('feedbackForm.thanks', 'JazākAllāhu khayran!')}
         </h2>
-        <p className="text-white/50 text-sm mt-2 leading-relaxed max-w-md mx-auto">
+        <p className="text-white/75 text-sm mt-2 leading-relaxed max-w-md mx-auto">
           {kind === 'feedback'
             ? t(
                 'feedbackForm.receivedFeedback',
-                "Your feedback reached us. Every note genuinely shapes what Bustandeen becomes next — and if it needs a reply, we'll write back to"
+                "Your feedback reached us. Every note genuinely shapes what Bustandeen becomes next. If it needs a reply, we'll write back to"
               )
             : t(
                 'feedbackForm.receivedMessage',
-                "Your message reached us. Every note genuinely shapes what Bustandeen becomes next — and if it needs a reply, we'll write back to"
+                "Your message reached us. Every note genuinely shapes what Bustandeen becomes next. If it needs a reply, we'll write back to"
               )}{' '}
-          <b className="text-white/75">{email}</b>.
+          <b className="text-white">{email}</b>.
         </p>
         <button
-          className="btn btn-sm mt-5 rounded-xl bg-white/5 border-brand-emerald/15 text-white/70"
+          className={`${BTN_SECONDARY} mt-5`}
           onClick={() => {
             setSent(false);
             setMessage('');
@@ -134,7 +134,7 @@ export default function FeedbackForm({
 
   return (
     <form onSubmit={submit} className="space-y-5">
-      {/* honeypot — hidden from humans, catches bots */}
+      {/* honeypot: hidden from humans, catches bots */}
       <input
         type="checkbox"
         name="botcheck"
@@ -145,14 +145,14 @@ export default function FeedbackForm({
         onChange={(e) => setBotcheck(e.target.checked ? 'bot' : '')}
       />
 
-      {/* ── Type (multi-select — becomes the subject) ── */}
+      {/* ── Type (multi-select; becomes the subject) ── */}
       <div>
-        <label className="text-white/70 text-sm font-bold">
+        <label className="text-white/85 text-sm font-bold">
           {t('feedbackForm.aboutLabel', "What's this about?")}{' '}
           <span className="text-red-400">*</span>
         </label>
-        <p className="text-white/30 text-xs mt-0.5 mb-2.5">
-          {t('feedbackForm.aboutHint', 'Select all that apply — you can pick more than one.')}
+        <p className="text-white/70 text-xs mt-0.5 mb-2.5">
+          {t('feedbackForm.aboutHint', 'Select all that apply. You can pick more than one.')}
         </p>
         <div className="grid sm:grid-cols-2 gap-2">
           {types.map((ty, i) => {
@@ -166,19 +166,22 @@ export default function FeedbackForm({
                 transition={{ delay: i * 0.04 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => toggleType(ty.id)}
-                className={`rounded-2xl border p-3 text-left transition-all ${
+                aria-pressed={on}
+                className={`rounded-control border p-3 text-left transition-colors flex gap-2.5 ${
                   on
-                    ? ty.active
-                    : 'bg-white/[0.03] border-brand-emerald/10 text-white/60 hover:border-brand-emerald/25 hover:text-white/80'
+                    ? 'border-brand-emerald/50 bg-brand-emerald/10 text-brand-emerald shadow-elev-1'
+                    : 'border-brand-border bg-brand-deep text-white/80 hover:border-brand-emerald/40 hover:text-white'
                 }`}
               >
-                <span className="text-lg">{ty.emoji}</span>
-                <p className="font-bold text-sm mt-0.5">{ty.label}</p>
-                <p
-                  className={`text-[11px] mt-0.5 leading-snug ${on ? 'opacity-80' : 'text-white/30'}`}
-                >
-                  {ty.hint}
-                </p>
+                <ty.Icon className="w-5 h-5 shrink-0 mt-0.5" />
+                <span className="min-w-0">
+                  <span className="block font-bold text-sm">{ty.label}</span>
+                  <span
+                    className={`block text-[11px] mt-0.5 leading-snug ${on ? 'opacity-90' : 'text-white/70'}`}
+                  >
+                    {ty.hint}
+                  </span>
+                </span>
               </motion.button>
             );
           })}
@@ -188,7 +191,7 @@ export default function FeedbackForm({
       {/* ── Name + email ── */}
       <div className="grid sm:grid-cols-2 gap-3">
         <div>
-          <label className="text-white/70 text-sm font-bold" htmlFor="fb-name">
+          <label className="text-white/85 text-sm font-bold" htmlFor="fb-name">
             {t('feedbackForm.nameLabel', 'Your name')} <span className="text-red-400">*</span>
           </label>
           <input
@@ -199,11 +202,11 @@ export default function FeedbackForm({
             readOnly={!!user?.displayName}
             onChange={(e) => setName(e.target.value)}
             placeholder={t('feedbackForm.namePlaceholder', 'e.g. Abdullah')}
-            className={`input input-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white ${user?.displayName ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`input input-bordered w-full mt-1.5 bg-shade/30 border-brand-border rounded-control text-white ${user?.displayName ? 'opacity-70 cursor-not-allowed' : ''}`}
           />
         </div>
         <div>
-          <label className="text-white/70 text-sm font-bold" htmlFor="fb-email">
+          <label className="text-white/85 text-sm font-bold" htmlFor="fb-email">
             {t('feedbackForm.emailLabel', 'Email')} <span className="text-red-400">*</span>
           </label>
           <input
@@ -214,12 +217,12 @@ export default function FeedbackForm({
             readOnly={!!user?.email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
-            className={`input input-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white ${user?.email ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`input input-bordered w-full mt-1.5 bg-shade/30 border-brand-border rounded-control text-white ${user?.email ? 'opacity-70 cursor-not-allowed' : ''}`}
           />
         </div>
       </div>
       {user && (
-        <p className="text-white/25 text-[11px] -mt-2">
+        <p className="text-white/70 text-[11px] -mt-2">
           {t(
             'feedbackForm.autofilled',
             'Filled in from your account so we can reply to the right person.'
@@ -230,11 +233,11 @@ export default function FeedbackForm({
       {/* ── Message ── */}
       <div>
         <div className="flex items-end justify-between">
-          <label className="text-white/70 text-sm font-bold" htmlFor="fb-msg">
+          <label className="text-white/85 text-sm font-bold" htmlFor="fb-msg">
             {t('feedbackForm.messageLabel', 'Tell us more')} <span className="text-red-400">*</span>
           </label>
           <span
-            className={`text-[11px] ${message.trim().length >= 10 ? 'text-white/25' : 'text-brand-gold/60'}`}
+            className={`text-[11px] ${message.trim().length >= 10 ? 'text-white/70' : 'text-brand-gold'}`}
           >
             {message.trim().length < 10
               ? t('feedbackForm.moreChars', '{{count}} more characters', {
@@ -254,7 +257,7 @@ export default function FeedbackForm({
             selectedIds.length > 1
               ? t(
                   'feedbackForm.multiTopicPlaceholder',
-                  'Please separate each topic in its own paragraph — one issue per paragraph makes it easier for us to track and fix.'
+                  'Please put each topic in its own paragraph. One issue per paragraph makes it easier for us to track and fix.'
                 )
               : kind === 'feedback'
                 ? t(
@@ -263,7 +266,7 @@ export default function FeedbackForm({
                   )
                 : t('feedbackForm.contactPlaceholder', 'How can we help?')
           }
-          className="textarea textarea-bordered w-full mt-1.5 bg-white/5 border-brand-emerald/15 text-white leading-relaxed"
+          className="textarea textarea-bordered w-full mt-1.5 bg-shade/30 border-brand-border rounded-control text-white leading-relaxed"
         />
       </div>
 
@@ -284,7 +287,7 @@ export default function FeedbackForm({
         type="submit"
         whileTap={{ scale: 0.98 }}
         disabled={!canSend}
-        className="w-full btn h-12 rounded-2xl border-0 text-on-color font-black bg-gradient-to-r from-brand-emerald-dim via-brand-info-dim to-brand-info-dim hover:opacity-90 disabled:opacity-40 gap-2"
+        className={`${BTN_PRIMARY} w-full h-12 !text-base`}
       >
         {sending ? (
           <span className="loading loading-spinner loading-sm" />
@@ -293,10 +296,10 @@ export default function FeedbackForm({
         )}
         {sending ? t('feedbackForm.sending', 'Sending…') : resolvedSubmitLabel}
       </motion.button>
-      <p className="text-white/25 text-[11px] text-center">
+      <p className="text-white/70 text-[11px] text-center">
         {t(
           'feedbackForm.privacyNote',
-          'We only use what you send here to reply and improve Bustandeen — never for anything else.'
+          'We only use what you send here to reply and improve Bustandeen, never for anything else.'
         )}
       </p>
     </form>

@@ -148,19 +148,19 @@
     "expenseDescPlaceholder": "e.g. Server hosting — September"
   },
   "about": {
-    "seoTitle": "About Bustandeen — Our Mission",
-    "seoDescription": "Bustandeen is a free, private Islamic productivity app for zikr, salat, fasting and Quran habits — built for the Muslim community with authentic Quran and hadith references.",
+    "seoTitle": "About Bustandeen: Our Mission",
+    "seoDescription": "Bustandeen is a free, private Islamic productivity app for zikr, salat, fasting and Quran habits, built for the Muslim community with authentic Quran and hadith references.",
     "authenticityLabel": "Authenticity first",
     "authenticityOr": "or",
     "authenticityText1": "Every verse and hadith in this app links to its exact source on",
-    "authenticityText2": "with the grading shown where it matters. Nothing is quoted from memory — verify everything yourself, always. For personal rulings, please consult a qualified scholar.",
+    "authenticityText2": "with the grading shown where it matters. Nothing is quoted from memory, so verify everything yourself, always. For personal rulings, please consult a qualified scholar.",
     "quranTextSource": "The Arabic Quran text is the Tanzil Project's Uthmani text (version 1.1), used exactly as published and never altered. It is part of the app, so it also reads offline. Updates are listed at <1>tanzil.net</1>.",
     "dataDesc": "Export or delete everything, feature by feature, anytime. Available in English and Bengali, and installable on your phone.",
     "dataTitle": "Your data stays yours",
     "developedBy": "Developed with love by",
     "feature": {
       "fastingTracker": {
-        "desc": "Fiqh-aware: qaḍā, kaffārah and vows alongside every sunnah day — and it blocks the days fasting is forbidden.",
+        "desc": "Fiqh-aware: qaḍā, kaffārah and vows alongside every sunnah day, and it blocks the days fasting is forbidden.",
         "title": "Fasting Tracker"
       },
       "friends": {
@@ -168,7 +168,7 @@
         "desc": "Connect with one link and encourage each other with Noor, a calm daily and weekly measure that only ever goes up during the day."
       },
       "prayerTimes": {
-        "desc": "Calculated entirely on your device from your location — nothing is sent to any server.",
+        "desc": "Calculated entirely on your device from your location. Nothing is sent to any server.",
         "title": "Prayer Times"
       },
       "quranHabit": {
@@ -203,9 +203,9 @@
     "conceptPurpose": "This app exists to help you bring that awareness into every day.",
     "intentionLabel": "Our intention",
     "intentionText": "Worship deserves better than noisy, gamified apps. Bustandeen is calm by design: it counts what you ask it to count, reminds you gently, celebrates sincerely, and never turns your dīn into a game. It is free, has no ads, and never sells your data. Built simply in the hope of being a ṣadaqah jāriyah.",
-    "privacyLink": "Privacy →",
+    "privacyLink": "Privacy",
     "srTitle": "About Bustandeen",
-    "bustandeenDefinition": "A name born of بستان (bustān, garden) and دين (dīn, religion/faith) — a garden of faith, tended daily."
+    "bustandeenDefinition": "A name born of بستان (bustān, garden) and دين (dīn, religion/faith): a garden of faith, tended daily."
   },
   "aiFlair": {
     "whatIsSent": "What is sent?",
@@ -721,11 +721,11 @@
   },
   "feedback": {
     "seoTitle": "Feedback & Contact",
-    "seoDescription": "Report a bug, suggest a feature, or ask a question — reach the Bustandeen team directly. Real replies, kept private, built for the ummah.",
+    "seoDescription": "Report a bug, suggest a feature, or ask a question. Reach the Bustandeen team directly. Real replies, kept private, built for the ummah.",
     "disclaimer": "Messages go directly to the developer. No data is shared with third parties.",
-    "heroDesc1": "Bustandeen is built quietly by one developer for the sake of Allah — which means there's no big team testing every screen.",
+    "heroDesc1": "Bustandeen is built quietly by one developer for the sake of Allah, which means there's no big team testing every screen.",
     "heroDesc2": "You are the testers.",
-    "heroDesc3": "If something broke, felt confusing, or you wished a feature existed — tell us. It genuinely gets read, and it genuinely changes what gets built next.",
+    "heroDesc3": "If something broke, felt confusing, or you wished a feature existed, tell us. It genuinely gets read, and it genuinely changes what gets built next.",
     "heroTitle": "Your voice shapes Bustandeen",
     "promise": {
       "builtForUmmah": {
@@ -733,7 +733,7 @@
         "title": "Built for the ummah"
       },
       "keptPrivate": {
-        "text": "Your message is only seen by the developer — never shared or published.",
+        "text": "Your message is only seen by the developer. It is never shared or published.",
         "title": "Kept private"
       },
       "realReply": {
@@ -741,7 +741,7 @@
         "title": "Every message gets a real reply"
       }
     },
-    "referenceNote": "Found a verse, hadith or grading you believe is inaccurate? Please report it — authenticity is the one thing we will never compromise, and corrections are treated as urgent.",
+    "referenceNote": "Found a verse, hadith or grading you believe is inaccurate? Please report it. Authenticity is the one thing we will never compromise, and corrections are treated as urgent.",
     "submitLabel": "Send to Bustandeen",
     "type": {
       "account": {
@@ -791,7 +791,7 @@
     }
   },
   "feedbackForm": {
-    "aboutHint": "Select all that apply — you can pick more than one.",
+    "aboutHint": "Select all that apply. You can pick more than one.",
     "aboutLabel": "What's this about?",
     "autofilled": "Filled in from your account so we can reply to the right person.",
     "charCount": "{{count}} characters",
@@ -800,20 +800,20 @@
     "feedbackPlaceholder": "What happened, or what would make Bustandeen better for you? Steps to reproduce a bug are gold.",
     "messageLabel": "Tell us more",
     "moreChars": "{{count}} more characters",
-    "multiTopicPlaceholder": "Please separate each topic in its own paragraph — one issue per paragraph makes it easier for us to track and fix.",
+    "multiTopicPlaceholder": "Please put each topic in its own paragraph. One issue per paragraph makes it easier for us to track and fix.",
     "nameLabel": "Your name",
     "namePlaceholder": "e.g. Abdullah",
     "notConfigured": "This form needs",
     "notConfiguredSuffix": "set before it can send.",
-    "notConnected": "The form isn't connected yet — please email us directly for now.",
-    "privacyNote": "We only use what you send here to reply and improve Bustandeen — never for anything else.",
-    "receivedFeedback": "Your feedback reached us. Every note genuinely shapes what Bustandeen becomes next — and if it needs a reply, we'll write back to",
-    "receivedMessage": "Your message reached us. Every note genuinely shapes what Bustandeen becomes next — and if it needs a reply, we'll write back to",
+    "notConnected": "The form isn't connected yet. Please email us directly for now.",
+    "privacyNote": "We only use what you send here to reply and improve Bustandeen, never for anything else.",
+    "receivedFeedback": "Your feedback reached us. Every note genuinely shapes what Bustandeen becomes next. If it needs a reply, we'll write back to",
+    "receivedMessage": "Your message reached us. Every note genuinely shapes what Bustandeen becomes next. If it needs a reply, we'll write back to",
     "send": "Send",
     "sendAnother": "Send another",
-    "sendFail": "Could not send right now — please check your connection and try again.",
+    "sendFail": "Could not send right now. Please check your connection and try again.",
     "sending": "Sending…",
-    "thanks": "JazākAllāhu khayran! 💚"
+    "thanks": "JazākAllāhu khayran!"
   },
   "footer": {
     "about": "About",
