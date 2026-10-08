@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.106.0 - About, Privacy and Feedback in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **About, Privacy and Feedback have the new look**, in dark and light. About and Feedback open with one arch; Privacy reads like the Terms page, one calm card per section.
+- **Icons instead of emoji** for every feature on About, every Privacy section, every feedback topic and promise, and in the top bar for these pages. Feedback topics now share one selected style, and the glow and the swaying speech bubble are gone.
+- **Easier to read**: descriptions, hints and the privacy details have stronger text, especially in the light theme.
+- No emoji, arrows or em dashes in the About, Privacy and Feedback wording, in English and Bangla. What the form sends is unchanged.
+
 ## v5.105.0 - Prayer time settings in the Bustan Arch design - 2026-10-08
 
 ### Changed

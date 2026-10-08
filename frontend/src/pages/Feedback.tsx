@@ -1,91 +1,53 @@
-import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import {
+  BookOpenIcon,
+  BugAntIcon,
+  ChatBubbleLeftRightIcon,
+  EnvelopeOpenIcon,
+  ExclamationTriangleIcon,
+  HeartIcon,
+  KeyIcon,
+  LightBulbIcon,
+  LockClosedIcon,
+  PaintBrushIcon,
+  QuestionMarkCircleIcon,
+  SparklesIcon,
+  UsersIcon,
+} from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import FeedbackForm, { type FormType } from '../components/FeedbackForm.js';
 import Seo from '../components/Seo.js';
+import { CARD } from '../components/bustanStyles.js';
+import { MosqueIcon } from '../components/icons/IslamicIcons.js';
 
-const TYPE_KEYS = [
-  { id: 'bug', emoji: '🐛', active: 'bg-red-500/15 border-red-400/40 text-red-100', key: 'bug' },
-  {
-    id: 'idea',
-    emoji: '💡',
-    active: 'bg-brand-gold/15 border-brand-gold/40 text-brand-gold',
-    key: 'idea',
-  },
-  {
-    id: 'design',
-    emoji: '🎨',
-    active: 'bg-brand-pink/15 border-brand-pink/40 text-brand-pink',
-    key: 'design',
-  },
-  {
-    id: 'reference',
-    emoji: '📖',
-    active: 'bg-brand-emerald/15 border-brand-emerald/40 text-brand-emerald',
-    key: 'reference',
-  },
-  {
-    id: 'question',
-    emoji: '❓',
-    active: 'bg-brand-info/15 border-brand-info/40 text-brand-info',
-    key: 'question',
-  },
-  {
-    id: 'account',
-    emoji: '🔑',
-    active: 'bg-brand-info/15 border-brand-info/40 text-brand-info',
-    key: 'account',
-  },
-  {
-    id: 'privacy',
-    emoji: '🔒',
-    active: 'bg-brand-emerald/15 border-brand-emerald/40 text-brand-emerald',
-    key: 'privacy',
-  },
-  {
-    id: 'collab',
-    emoji: '🤝',
-    active: 'bg-brand-gold/15 border-brand-gold/40 text-brand-gold',
-    key: 'collab',
-  },
-  {
-    id: 'appreciation',
-    emoji: '💚',
-    active: 'bg-brand-info/15 border-brand-info/40 text-brand-info',
-    key: 'appreciation',
-  },
-  {
-    id: 'report',
-    emoji: '⚠️',
-    active: 'bg-red-500/15 border-red-400/40 text-red-100',
-    key: 'report',
-  },
-  {
-    id: 'other',
-    emoji: '✨',
-    active: 'bg-brand-info/15 border-brand-info/40 text-brand-info',
-    key: 'other',
-  },
+const TYPE_KEYS: { id: string; Icon: FormType['Icon'] }[] = [
+  { id: 'bug', Icon: BugAntIcon },
+  { id: 'idea', Icon: LightBulbIcon },
+  { id: 'design', Icon: PaintBrushIcon },
+  { id: 'reference', Icon: BookOpenIcon },
+  { id: 'question', Icon: QuestionMarkCircleIcon },
+  { id: 'account', Icon: KeyIcon },
+  { id: 'privacy', Icon: LockClosedIcon },
+  { id: 'collab', Icon: UsersIcon },
+  { id: 'appreciation', Icon: HeartIcon },
+  { id: 'report', Icon: ExclamationTriangleIcon },
+  { id: 'other', Icon: SparklesIcon },
 ];
 
-const PROMISE_KEYS = ['realReply', 'keptPrivate', 'builtForUmmah'] as const;
-const PROMISE_EMOJIS = ['📬', '🔒', '🕌'] as const;
+const PROMISES = [
+  { key: 'realReply', Icon: EnvelopeOpenIcon },
+  { key: 'keptPrivate', Icon: LockClosedIcon },
+  { key: 'builtForUmmah', Icon: MosqueIcon },
+] as const;
 
 export default function Feedback() {
   const { t } = useTranslation();
 
-  const types: FormType[] = TYPE_KEYS.map((tk) => ({
-    id: tk.id,
-    label: t(`feedback.type.${tk.key}.label`),
-    emoji: tk.emoji,
-    active: tk.active,
-    hint: t(`feedback.type.${tk.key}.hint`),
-  }));
-
-  const promises = PROMISE_KEYS.map((k, i) => ({
-    emoji: PROMISE_EMOJIS[i],
-    title: t(`feedback.promise.${k}.title`),
-    text: t(`feedback.promise.${k}.text`),
+  const types: FormType[] = TYPE_KEYS.map(({ id, Icon }) => ({
+    id,
+    label: t(`feedback.type.${id}.label`),
+    Icon,
+    hint: t(`feedback.type.${id}.hint`),
   }));
 
   return (
@@ -94,72 +56,54 @@ export default function Feedback() {
         title={t('feedback.seoTitle', 'Feedback & Contact')}
         description={t(
           'feedback.seoDescription',
-          'Report a bug, suggest a feature, or ask a question — reach the Bustandeen team directly. Real replies, kept private, built for the ummah.'
+          'Report a bug, suggest a feature, or ask a question. Reach the Bustandeen team directly. Real replies, kept private, built for the ummah.'
         )}
         path="/feedback"
       />
-      <div className="max-w-2xl mx-auto px-4 py-8 sm:py-12 space-y-6">
-        {/* hero */}
-        <motion.div
-          initial={{ opacity: 0, y: -14 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="relative rounded-3xl border border-brand-emerald/25 bg-gradient-to-br from-brand-emerald/10 via-brand-info/10 to-brand-deep p-6 sm:p-8 overflow-hidden"
-        >
-          <motion.div
-            aria-hidden
-            className="absolute -top-16 -right-12 w-52 h-52 rounded-full bg-brand-emerald/15 blur-3xl"
-            animate={{ scale: [1, 1.05, 1], opacity: [0.3, 0.4, 0.3] }}
-            transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut' }}
-          />
-          <div className="relative">
-            <motion.div
-              className="text-5xl mb-3 origin-bottom inline-block"
-              animate={{ rotate: [0, -5, 5, 0] }}
-              transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              💬
-            </motion.div>
-            <h1 className="text-2xl sm:text-3xl font-black text-white">
-              {t('feedback.heroTitle')}
-            </h1>
-            <p className="text-white/50 text-sm sm:text-base mt-2.5 leading-relaxed">
-              {t('feedback.heroDesc1')} <b className="text-white/80">{t('feedback.heroDesc2')}</b>{' '}
-              {t('feedback.heroDesc3')}
-            </p>
-            <p className="text-brand-emerald/75 text-xs mt-3 leading-relaxed">
-              📖 {t('feedback.referenceNote')}
-            </p>
+      <div className="max-w-2xl mx-auto px-4 py-6 sm:py-10 space-y-4">
+        {/* Arch hero */}
+        <section className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 sm:px-8 pt-10 pb-6 text-center">
+          <div className="w-14 h-14 mx-auto rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/30">
+            <ChatBubbleLeftRightIcon className="w-7 h-7 text-brand-gold" aria-hidden="true" />
           </div>
-        </motion.div>
+          <h1 className="font-display text-2xl sm:text-3xl font-bold text-white mt-3">
+            {t('feedback.heroTitle')}
+          </h1>
+          <p className="text-white/75 text-sm sm:text-base mt-2.5 leading-relaxed">
+            {t('feedback.heroDesc1')} <b className="text-white">{t('feedback.heroDesc2')}</b>{' '}
+            {t('feedback.heroDesc3')}
+          </p>
+          <p className="mt-4 flex items-start gap-2 text-left rounded-control border border-brand-emerald/30 bg-brand-emerald/10 p-3 text-brand-emerald text-xs leading-relaxed">
+            <BookOpenIcon className="w-4 h-4 shrink-0 mt-px" aria-hidden="true" />
+            <span>{t('feedback.referenceNote')}</span>
+          </p>
+        </section>
 
-        {/* promises */}
+        {/* Promises */}
         <div className="grid sm:grid-cols-3 gap-3">
-          {promises.map((p, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.06 * i }}
-              className="rounded-2xl border border-brand-emerald/10 bg-white/[0.03] p-4"
-            >
-              <div className="text-2xl">{p.emoji}</div>
-              <p className="text-white/80 text-sm font-bold mt-1.5">{p.title}</p>
-              <p className="text-white/40 text-xs mt-0.5 leading-snug">{p.text}</p>
-            </motion.div>
+          {PROMISES.map(({ key, Icon }) => (
+            <div key={key} className={`${CARD} p-4 flex gap-3 sm:block`}>
+              <span className="w-9 h-9 rounded-control bg-brand-emerald/15 grid place-items-center shrink-0">
+                <Icon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />
+              </span>
+              <span className="block min-w-0">
+                <span className="block text-white text-sm font-bold sm:mt-2">
+                  {t(`feedback.promise.${key}.title`)}
+                </span>
+                <span className="block text-white/70 text-xs mt-0.5 leading-snug">
+                  {t(`feedback.promise.${key}.text`)}
+                </span>
+              </span>
+            </div>
           ))}
         </div>
 
-        {/* form */}
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="rounded-3xl border border-brand-border bg-brand-surface p-5 sm:p-7"
-        >
+        {/* Form */}
+        <div className={`${CARD} p-5 sm:p-7`}>
           <FeedbackForm kind="feedback" types={types} submitLabel={t('feedback.submitLabel')} />
-        </motion.div>
+        </div>
 
-        <p className="text-center text-white/25 text-[11px]">{t('feedback.disclaimer')}</p>
+        <p className="text-center text-white/70 text-[11px]">{t('feedback.disclaimer')}</p>
       </div>
     </AnimatedBackground>
   );

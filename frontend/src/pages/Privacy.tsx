@@ -1,21 +1,40 @@
 import { Fragment } from 'react';
 import { Link } from 'react-router';
-import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import {
+  ArrowDownTrayIcon,
+  DevicePhoneMobileIcon,
+  GlobeAltIcon,
+  LockClosedIcon,
+  MapIcon,
+  NoSymbolIcon,
+  PencilSquareIcon,
+  ShieldCheckIcon,
+  SparklesIcon,
+  TrashIcon,
+  UsersIcon,
+} from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { CARD } from '../components/bustanStyles.js';
 
-const SECTION_KEYS = [
-  { emoji: '📥', key: 'whatWeStore', bodyCount: 8 },
-  { emoji: '📍', key: 'deviceOnly', bodyCount: 3 },
-  { emoji: '🤝', key: 'friendsSee', bodyCount: 5 },
-  { emoji: '✨', key: 'naseeh', bodyCount: 4 },
-  { emoji: '🌐', key: 'thirdParty', bodyCount: 3 },
-  { emoji: '🚫', key: 'neverDo', bodyCount: 3 },
-  { emoji: '🗑️', key: 'yourControl', bodyCount: 4 },
-  { emoji: '🔐', key: 'protected', bodyCount: 4 },
-  { emoji: '📝', key: 'changes', bodyCount: 1 },
+type HeroIcon = typeof LockClosedIcon;
+
+const SECTION_KEYS: { Icon: HeroIcon; key: string; bodyCount: number }[] = [
+  { Icon: ArrowDownTrayIcon, key: 'whatWeStore', bodyCount: 8 },
+  { Icon: DevicePhoneMobileIcon, key: 'deviceOnly', bodyCount: 3 },
+  { Icon: UsersIcon, key: 'friendsSee', bodyCount: 5 },
+  { Icon: SparklesIcon, key: 'naseeh', bodyCount: 4 },
+  { Icon: GlobeAltIcon, key: 'thirdParty', bodyCount: 3 },
+  { Icon: NoSymbolIcon, key: 'neverDo', bodyCount: 3 },
+  { Icon: TrashIcon, key: 'yourControl', bodyCount: 4 },
+  { Icon: ShieldCheckIcon, key: 'protected', bodyCount: 4 },
+  { Icon: PencilSquareIcon, key: 'changes', bodyCount: 1 },
 ];
+
+/** Section heading inside a privacy card, with its icon. */
+const HEADING = 'text-white font-bold text-sm mb-2 flex items-center gap-2';
+const ICON = 'w-4 h-4 text-brand-emerald shrink-0';
 
 /** Every processor that receives anything, in the order a request meets them
  * (audit T2.11 / PRIV-02). Keys under privacy.dataFlow.rows in both locales. */
@@ -34,28 +53,28 @@ const DATA_FLOW_ROWS = [
 function DataFlowTable() {
   const { t } = useTranslation();
   return (
-    <section
-      aria-labelledby="data-flow-title"
-      className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-5"
-    >
-      <h3 id="data-flow-title" className="text-white font-bold text-sm mb-1">
-        🗺️ {t('privacy.dataFlow.title')}
+    <section aria-labelledby="data-flow-title" className={`${CARD} p-5`}>
+      <h3 id="data-flow-title" className={HEADING}>
+        <MapIcon className={ICON} aria-hidden="true" />
+        {t('privacy.dataFlow.title')}
       </h3>
-      <p className="text-white/40 text-xs leading-relaxed mb-3">{t('privacy.dataFlow.intro')}</p>
+      <p className="text-white/70 text-xs leading-relaxed mb-3">{t('privacy.dataFlow.intro')}</p>
       {/* A list of rows rather than a <table>: three long text columns do not
           fit a phone screen, stacked rows do. */}
-      <dl className="divide-y divide-brand-emerald/10">
+      <dl className="divide-y divide-brand-border">
         {DATA_FLOW_ROWS.map((row) => (
           <div key={row} className="py-2.5 first:pt-0 last:pb-0">
-            <dt className="text-white/80 text-xs font-bold">
+            <dt className="text-white text-xs font-bold">
               {t(`privacy.dataFlow.rows.${row}.name`)}
             </dt>
-            <dd className="text-white/40 text-xs leading-relaxed mt-0.5">
-              <span className="text-white/55">{t('privacy.dataFlow.colWhy')}: </span>
+            <dd className="text-white/80 text-xs leading-relaxed mt-0.5">
+              <span className="text-white/70 font-semibold">{t('privacy.dataFlow.colWhy')}: </span>
               {t(`privacy.dataFlow.rows.${row}.why`)}
             </dd>
-            <dd className="text-white/40 text-xs leading-relaxed mt-0.5">
-              <span className="text-white/55">{t('privacy.dataFlow.colReceives')}: </span>
+            <dd className="text-white/80 text-xs leading-relaxed mt-0.5">
+              <span className="text-white/70 font-semibold">
+                {t('privacy.dataFlow.colReceives')}:{' '}
+              </span>
               {t(`privacy.dataFlow.rows.${row}.receives`)}
             </dd>
           </div>
@@ -70,7 +89,7 @@ export default function Privacy() {
 
   const sections = SECTION_KEYS.map((s) => ({
     key: s.key,
-    emoji: s.emoji,
+    Icon: s.Icon,
     title: t(`privacy.${s.key}.title`),
     body: Array.from({ length: s.bodyCount }, (_, i) => t(`privacy.${s.key}.body${i}`)),
   }));
@@ -88,61 +107,50 @@ export default function Privacy() {
       <h1 className="sr-only">{t('privacy.srTitle')}</h1>
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-2xl mx-auto space-y-4 pb-10">
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-6 space-y-2"
-          >
-            <p className="text-5xl">🔒</p>
-            <h2 className="text-3xl font-black text-white">{t('privacy.heading')}</h2>
-            <p className="text-white/40 text-sm max-w-md mx-auto leading-relaxed">
+          <header className="text-center py-6 space-y-2">
+            <span className="mx-auto w-14 h-14 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/40 text-brand-gold">
+              <LockClosedIcon className="w-7 h-7" aria-hidden="true" />
+            </span>
+            <h2 className="font-display text-3xl font-bold text-white">{t('privacy.heading')}</h2>
+            <p className="text-white/75 text-sm max-w-md mx-auto leading-relaxed">
               {t('privacy.subtitle')}
             </p>
-            <p className="text-white/25 text-xs">{t('privacy.lastUpdated')}</p>
-          </motion.div>
+            <p className="text-white/70 text-xs">{t('privacy.lastUpdated')}</p>
+          </header>
 
-          {sections.map((s, i) => (
+          {sections.map((s) => (
             <Fragment key={s.key}>
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.06 + i * 0.05 }}
-                className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-5"
-              >
-                <p className="text-white font-bold text-sm mb-2">
-                  {s.emoji} {s.title}
-                </p>
+              <section className={`${CARD} p-5`} aria-labelledby={`privacy-${s.key}`}>
+                <h3 id={`privacy-${s.key}`} className={HEADING}>
+                  <s.Icon className={ICON} aria-hidden="true" />
+                  {s.title}
+                </h3>
                 <ul className="space-y-1.5">
                   {s.body.map((line, j) => (
                     <li
                       key={j}
-                      className="text-white/40 text-xs leading-relaxed pl-3 border-l-2 border-brand-emerald/10"
+                      className="text-white/80 text-xs leading-relaxed pl-3 border-l-2 border-brand-border"
                     >
                       {line}
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </section>
               {s.key === 'thirdParty' && <DataFlowTable />}
             </Fragment>
           ))}
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="text-center pt-4 space-y-2"
-          >
-            <p className="text-white/40 text-xs">
+          <footer className="text-center pt-4 space-y-2">
+            <p className="text-white/75 text-xs">
               {t('privacy.contactText')}{' '}
               <a href="mailto:ansar@bustandeen.com" className="text-brand-emerald underline">
                 ansar@bustandeen.com
               </a>
             </p>
-            <Link to="/about" className="text-white/30 text-xs underline hover:text-white/60">
+            <Link to="/about" className="text-white/70 text-xs underline hover:text-white">
               {t('privacy.aboutLink')}
             </Link>
-          </motion.div>
+          </footer>
         </div>
       </div>
     </AnimatedBackground>
