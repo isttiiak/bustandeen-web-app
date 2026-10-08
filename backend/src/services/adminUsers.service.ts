@@ -3,6 +3,7 @@ import { sendWelcomeEmail } from './welcomeEmail.service.js';
 import { welcomeEmail } from './welcomeEmail.templates.js';
 import { deleteAccount } from './user.service.js';
 import { sendMail } from './email.service.js';
+import { excludeAdminUids, getAdminTagsByUid, type AdminTag } from './adminAccount.service.js';
 import { REENGAGEMENT_SUBJECT, reengagementDraft, toSimpleHtml } from './userEmail.templates.js';
 
 const httpError = (status: number, message: string): Error & { status: number } => {
@@ -30,7 +31,7 @@ const USER_LIST_FIELDS =
   'uid email displayName firstName lastName gender country city createdAt lastActiveAt aiEnabled welcomeEmailSentAt disabled';
 
 export interface UserListResult {
-  users: Pick<
+  users: (Pick<
     IUser,
     | 'uid'
     | 'email'
@@ -45,7 +46,7 @@ export interface UserListResult {
     | 'aiEnabled'
     | 'welcomeEmailSentAt'
     | 'disabled'
-  >[];
+  > & { admin: AdminTag | null })[];
   total: number;
   page: number;
   limit: number;
@@ -83,20 +84,27 @@ export const listUsers = async (
   const sort: Record<string, 1 | -1> =
     sortBy === 'inactive' ? { lastActiveAt: 1 } : { createdAt: -1 };
 
-  const [users, total] = await Promise.all([
+  const [users, total, adminTags] = await Promise.all([
     User.find(filter)
       .select(USER_LIST_FIELDS)
       .sort(sort)
       .skip((page - 1) * limit)
       .limit(limit),
     User.countDocuments(filter),
+    getAdminTagsByUid(),
   ]);
 
-  return { users, total, page, limit };
+  // Staff accounts stay listed (searchable) but carry an Admin badge.
+  return {
+    users: users.map((u) => ({ ...u.toJSON(), admin: adminTags.get(u.uid) ?? null })),
+    total,
+    page,
+    limit,
+  };
 };
 
 export const countMissingWelcomeEmail = async (): Promise<number> =>
-  User.countDocuments(MISSING_WELCOME_FILTER);
+  User.countDocuments({ ...MISSING_WELCOME_FILTER, ...(await excludeAdminUids()) });
 
 const USER_DETAIL_FIELDS =
   'uid email displayName firstName lastName gender country city createdAt lastActiveAt aiEnabled welcomeEmailSentAt reengagementEmailSentAt reengagementEmailCount totalCount salatResetDate disabled disabledAt disabledReason';
@@ -122,7 +130,7 @@ export type UserDetail = Pick<
   | 'disabled'
   | 'disabledAt'
   | 'disabledReason'
->;
+> & { admin: AdminTag | null };
 
 /** Single-user profile summary for the Servant-only detail view — not a full
  * data editor (zikr counts, Rayhanah cycle data, etc. stay out of reach
@@ -130,9 +138,12 @@ export type UserDetail = Pick<
  * excludes per-type zikr counts — that's the user's own worship data, not
  * something the admin needs to see beyond the lifetime total. */
 export const getUserDetail = async (uid: string): Promise<UserDetail> => {
-  const user = await User.findOne({ uid }).select(USER_DETAIL_FIELDS);
+  const [user, adminTags] = await Promise.all([
+    User.findOne({ uid }).select(USER_DETAIL_FIELDS),
+    getAdminTagsByUid(),
+  ]);
   if (!user) throw httpError(404, 'User not found');
-  return user;
+  return { ...user.toJSON(), admin: adminTags.get(uid) ?? null };
 };
 
 /** Drafts the (editable) welcome email for a specific user — welcome email is
@@ -275,7 +286,7 @@ export const deleteUserByAdmin = async (uid: string): Promise<void> => {
 export const sendWelcomeBackfill = async (
   limit = 200
 ): Promise<{ sent: number; remaining: number }> => {
-  const users = await User.find(MISSING_WELCOME_FILTER)
+  const users = await User.find({ ...MISSING_WELCOME_FILTER, ...(await excludeAdminUids()) })
     .select('uid email displayName')
     .limit(limit);
 

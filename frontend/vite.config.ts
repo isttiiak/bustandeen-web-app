@@ -96,12 +96,22 @@ export default defineConfig({
       // check, so `injectRegister: null` turns off the plugin's own script to
       // avoid registering twice.
       injectRegister: null,
-      includeAssets: ['favicon.svg', 'og-image.jpg', 'robots.txt'],
+      // og-image.jpg is only read by link previews, never by the app.
+      includeAssets: ['favicon.svg', 'robots.txt'],
       injectManifest: {
         // No woff2: fonts are cached at runtime as pages use them (src/sw.ts).
         globPatterns: ['**/*.{js,css,html,svg,png}'],
         // Install-sheet screenshots are only read by the browser's install UI.
-        globIgnores: ['screenshots/**'],
+        // The rest are large chunks most people never open: the admin panel,
+        // the spreadsheet export (xlsx) and the SEO city list. They are cached
+        // the first time they load (the /assets/ route in src/sw.ts), so they
+        // still work offline after one use. Keeps the first install small.
+        globIgnores: [
+          'screenshots/**',
+          'assets/Admin*.js',
+          'assets/xlsx-*.js',
+          'assets/seo-cities-*.js',
+        ],
       },
       manifest: {
         name: 'Bustandeen - Nourish Your Deen',
@@ -225,6 +235,12 @@ export default defineConfig({
         // PERF-01).
         manualChunks(id) {
           // Vite gives module ids with forward slashes on every OS.
+          // The 300 KB city list (SEO prayer-times, Qibla and Ramadan pages).
+          // Named so the SW precache can leave it out by a stable pattern;
+          // Rollup otherwise named it after RamadanCalendarIndexPage.
+          if (/\/src\/(data\/cities\.generated\.json|seo\/data\/cities\.ts)$/.test(id)) {
+            return 'seo-cities';
+          }
           if (!id.includes('/node_modules/')) return undefined;
           // React changes far less often than our code — keeping it separate
           // means an app deploy doesn't invalidate it.

@@ -358,6 +358,7 @@ const staticPages = [
   { path: '/qibla', priority: '0.7' },
   { path: '/about', priority: '0.6' },
   { path: '/privacy', priority: '0.3' },
+  { path: '/terms', priority: '0.3' },
   { path: '/feedback', priority: '0.4' },
   { path: '/sadaqah', priority: '0.5' },
   // /login and /signup are deliberately left out: they are thin app shells

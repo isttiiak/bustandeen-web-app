@@ -205,3 +205,23 @@ export const setAdminAccountActive = async (
   await account.save();
   return account;
 };
+
+export interface AdminTag {
+  role: AdminRole;
+  active: boolean;
+}
+
+/**
+ * Every AdminAccount uid (active or not) with its role. Staff accounts that
+ * once signed into the main app also have a User document; the admin user
+ * directory badges them and the user counts leave them out.
+ */
+export const getAdminTagsByUid = async (): Promise<Map<string, AdminTag>> => {
+  const rows = await AdminAccount.find().select('firebaseUid role active').lean();
+  return new Map(rows.map((r) => [r.firebaseUid, { role: r.role, active: r.active }]));
+};
+
+/** User filter fragment that leaves out every AdminAccount uid. */
+export const excludeAdminUids = async (): Promise<{ uid: { $nin: string[] } }> => ({
+  uid: { $nin: [...(await getAdminTagsByUid()).keys()] },
+});
