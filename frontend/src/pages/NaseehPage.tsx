@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Navigate } from 'react-router';
+import type { ReactNode } from 'react';
+import { Cog6ToothIcon, SparklesIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import { BTN_PRIMARY } from '../components/bustanStyles.js';
 import MuhasabahReport from '../components/ai/MuhasabahReport.js';
 import StreakCoaching from '../components/ai/StreakCoaching.js';
 import NaturalLogEntry from '../components/ai/NaturalLogEntry.js';
@@ -17,6 +20,28 @@ import { useAnalytics } from '../hooks/useAnalytics.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
 import { useSalatAnalytics } from '../hooks/useSalatLog.js';
 import { useFastingLog, localTodayStr } from '../hooks/useFasting.js';
+
+/** The one arch hero on /naseeh: title, a line, and the main action. */
+function NaseehHero({
+  title,
+  subtitle,
+  children,
+}: {
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+}) {
+  return (
+    <section className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-10 pb-6 text-center">
+      <div className="w-16 h-16 mx-auto rounded-full grid place-items-center bg-brand-emerald/10 border border-brand-emerald/30">
+        <SparklesIcon className="w-8 h-8 text-brand-emerald" aria-hidden />
+      </div>
+      <h1 className="font-display text-2xl sm:text-3xl font-bold text-white mt-4">{title}</h1>
+      <p className="text-white/70 text-sm mt-2 leading-relaxed max-w-sm mx-auto">{subtitle}</p>
+      <div className="mt-5 flex flex-col items-center gap-2">{children}</div>
+    </section>
+  );
+}
 
 export default function NaseehPage() {
   const { t } = useTranslation();
@@ -53,25 +78,19 @@ export default function NaseehPage() {
   if (!aiEnabled) {
     return (
       <AnimatedBackground variant="dark">
-        <div className="min-h-[60vh] grid place-items-center px-4 text-center">
-          <div className="max-w-sm space-y-4">
-            <div className="text-5xl">✨</div>
-            <h1 className="text-white font-black text-xl">
-              {t('naseeh.disabledTitle', 'Naseeh AI is off')}
-            </h1>
-            <p className="text-white/50 text-sm leading-relaxed">
-              {t(
-                'naseeh.disabledDesc',
-                'Enable Naseeh in Settings to unlock personalised weekly insights, muhāsabah reports and quick logging.'
-              )}
-            </p>
-            <button
-              className="btn bg-brand-emerald/20 border-brand-emerald/30 text-brand-emerald hover:bg-brand-emerald/30"
-              onClick={() => navigate('/settings')}
-            >
+        <div className="max-w-2xl mx-auto px-4 pt-5 pb-20">
+          <NaseehHero
+            title={t('naseeh.disabledTitle', 'Naseeh AI is off')}
+            subtitle={t(
+              'naseeh.disabledDesc',
+              'Enable Naseeh in Settings to unlock personalised weekly insights, muhāsabah reports and quick logging.'
+            )}
+          >
+            <button type="button" className={BTN_PRIMARY} onClick={() => navigate('/settings')}>
+              <Cog6ToothIcon className="w-4 h-4" aria-hidden />
               {t('naseeh.openSettings', 'Open Settings')}
             </button>
-          </div>
+          </NaseehHero>
         </div>
       </AnimatedBackground>
     );
@@ -79,22 +98,14 @@ export default function NaseehPage() {
 
   return (
     <AnimatedBackground variant="dark">
-      <h1 className="sr-only">{t('naseeh.pageTitle', 'Naseeh — AI Companion')}</h1>
       <div className="max-w-2xl mx-auto px-4 pt-5 pb-20 space-y-4">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h2 className="text-white font-black text-2xl">
-              ✨ {t('naseeh.pageHeading', 'Naseeh')}
-            </h2>
-            <p className="text-white/40 text-sm mt-0.5">
-              {t('naseeh.pageSubheading', 'Your personal Islamic productivity companion')}
-            </p>
-          </div>
-        </div>
-
-        {/* Quick log — always at the top so it's one tap away */}
-        <NaturalLogEntry />
+        {/* Quick log sits in the hero so it is one tap away */}
+        <NaseehHero
+          title={t('naseeh.pageHeading', 'Naseeh')}
+          subtitle={t('naseeh.pageSubheading', 'Your personal Islamic productivity companion')}
+        >
+          <NaturalLogEntry />
+        </NaseehHero>
 
         {/* Rest days (Rayhanah): one fixed, gentle, on-device card replaces every
             progress card below. None of them mount, so none of them can call the AI. */}
@@ -134,10 +145,10 @@ export default function NaseehPage() {
         <AiPrivacyPanel />
 
         {/* Footer note */}
-        <p className="text-white/20 text-[10px] text-center leading-relaxed px-4">
+        <p className="text-white/55 text-[11px] text-center leading-relaxed px-4">
           {t(
             'naseeh.disclaimer',
-            'Naseeh uses AI to personalise encouragement — not to give rulings (fatwa). Always verify religious guidance with a qualified scholar.'
+            'Naseeh uses AI to personalise encouragement, not to give rulings (fatwa). Always verify religious guidance with a qualified scholar.'
           )}
         </p>
       </div>
