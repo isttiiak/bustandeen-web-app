@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.101.2 - Naseeh switch saves through the account hook - 2026-10-08
+
+### Changed
+
+- **"Turn off Naseeh"** in the AI privacy panel now saves through the same account update as Settings and Profile, so the saved account copy on this device stays in step. Nothing changes in how it looks or works.
+
 ## v5.101.1 - Demo console error fix - 2026-10-08
 
 ### Fixed
