@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { MapPinIcon } from '@heroicons/react/24/outline';
+import { BTN_PRIMARY, BTN_SECONDARY } from './bustanStyles.js';
 import {
   CALC_METHODS,
   acceptPrayerDefaultsSuggestion,
@@ -45,15 +47,16 @@ export default function PrayerDefaultsSuggestion({ onChange }: { onChange: () =>
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -8 }}
-        className="rounded-2xl border border-brand-gold/25 bg-brand-gold/[0.06] p-4 space-y-3"
+        className="rounded-card border border-brand-gold/40 bg-brand-deep shadow-elev-2 p-4 space-y-3"
         role="region"
         aria-label={t('prayerTimes.defaults.title', 'Times used in {{country}}', { country })}
       >
         <div>
-          <p className="text-brand-gold font-bold text-sm">
+          <p className="text-brand-gold font-bold text-sm flex items-center gap-2">
+            <MapPinIcon className="w-4 h-4 shrink-0" aria-hidden="true" />
             {t('prayerTimes.defaults.title', 'Times used in {{country}}', { country })}
           </p>
-          <p className="text-white/60 text-xs leading-relaxed mt-1.5">
+          <p className="text-white/80 text-xs leading-relaxed mt-1.5">
             {t(
               'prayerTimes.defaults.body',
               'Most mosques in {{country}} use the {{method}} method with {{asr}}. You are using {{currentMethod}} with {{currentAsr}}. Follow your local mosque.',
@@ -68,16 +71,10 @@ export default function PrayerDefaultsSuggestion({ onChange }: { onChange: () =>
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button
-            onClick={accept}
-            className="btn btn-sm bg-brand-emerald hover:bg-brand-emerald-dim border-none text-brand-void font-bold"
-          >
+          <button onClick={accept} className={BTN_PRIMARY}>
             {t('prayerTimes.defaults.accept', 'Use the usual times')}
           </button>
-          <button
-            onClick={keep}
-            className="btn btn-sm btn-ghost text-white/60 hover:text-white border border-white/10"
-          >
+          <button onClick={keep} className={BTN_SECONDARY}>
             {t('prayerTimes.defaults.keep', 'Keep mine')}
           </button>
         </div>
