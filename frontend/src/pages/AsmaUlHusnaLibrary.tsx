@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { m as motion } from 'framer-motion';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+import { SparklesIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { CARD } from '../components/bustanStyles.js';
+import { formatLocaleNumber } from '../utils/localeDate.js';
+import { ARABIC_STYLE, LibraryHero, LibrarySearch } from '../components/library/libraryParts.js';
 import { ASMA_UL_HUSNA } from '../seo/content/asmaUlHusna.js';
 
 export default function AsmaUlHusnaLibrary() {
@@ -35,56 +37,41 @@ export default function AsmaUlHusnaLibrary() {
       />
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-2xl mx-auto space-y-5 pb-10">
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-4 space-y-2"
-          >
-            <p className="text-4xl">✨</p>
-            <h1 className="text-2xl font-black text-white">{t('library.asmaTitle')}</h1>
-            <p className="text-white/40 text-sm max-w-md mx-auto">{t('library.asmaSubtitle')}</p>
-          </motion.div>
+          <LibraryHero
+            Icon={SparklesIcon}
+            title={t('library.asmaTitle')}
+            subtitle={t('library.asmaSubtitle')}
+          />
 
-          <div className="relative">
-            <MagnifyingGlassIcon className="w-4 h-4 text-white/30 absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={t('library.searchPlaceholder') as string}
-              className="w-full rounded-xl bg-white/[0.04] border border-brand-border text-white placeholder:text-white/30 pl-10 pr-4 py-3 text-sm"
-            />
-          </div>
+          <LibrarySearch
+            value={query}
+            onChange={setQuery}
+            placeholder={t('library.searchPlaceholder')}
+          />
 
           {filtered.length === 0 ? (
-            <p className="text-center text-white/30 text-sm py-8">{t('library.noResults')}</p>
+            <p className="text-center text-white/60 text-sm py-8">{t('library.noResults')}</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-              {filtered.map((n, i) => (
-                <motion.div
+              {filtered.map((n) => (
+                <div
                   key={n.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: Math.min(i, 20) * 0.02 }}
-                  className="rounded-2xl border border-brand-border bg-white/[0.04] p-3.5 flex flex-col items-center text-center gap-1.5"
+                  className={`${CARD} p-3.5 flex flex-col items-center text-center gap-1.5`}
                 >
-                  <span className="text-[10px] text-brand-emerald font-bold">{n.number}</span>
-                  <p
-                    dir="rtl"
-                    lang="ar"
-                    className="text-2xl text-white"
-                    style={{ fontFamily: "'Amiri', serif" }}
-                  >
+                  <span className="text-[11px] text-brand-gold font-bold tabular-nums">
+                    {formatLocaleNumber(n.number)}
+                  </span>
+                  <p dir="rtl" lang="ar" className="text-2xl text-white" style={ARABIC_STYLE}>
                     {n.arabic}
                   </p>
                   <p className="text-xs font-bold text-white">{n.transliteration}</p>
-                  <p className="text-[11px] text-white/40 leading-snug">{n.meaning[lang]}</p>
-                </motion.div>
+                  <p className="text-xs text-white/70 leading-snug">{n.meaning[lang]}</p>
+                </div>
               ))}
             </div>
           )}
 
-          <p className="text-xs text-white/30 leading-relaxed text-center pt-4 max-w-lg mx-auto">
+          <p className="text-xs text-white/60 leading-relaxed text-center pt-4 max-w-lg mx-auto">
             {t('library.asmaSourceNote')}
           </p>
         </div>

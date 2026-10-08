@@ -1,8 +1,18 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { m as motion } from 'framer-motion';
+import {
+  BanknotesIcon,
+  CalculatorIcon,
+  CalendarDaysIcon,
+  ExclamationTriangleIcon,
+  QuestionMarkCircleIcon,
+  ScaleIcon,
+  SparklesIcon,
+} from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { CARD, SECTION_TITLE } from '../components/bustanStyles.js';
+import { INPUT, LibraryHero, OPTION_OFF, OPTION_ON } from '../components/library/libraryParts.js';
 import { CHROME, type SeoLang } from '../seo/locales/chrome.js';
 import { toHijri, hijriToGregorian } from '../seo/utils/calc.js';
 import {
@@ -42,7 +52,7 @@ interface FieldProps {
 function MoneyField({ label, value, onChange }: FieldProps) {
   return (
     <label className="block">
-      <span className="text-xs text-white/40">{label}</span>
+      <span className="text-xs text-white/70">{label}</span>
       <input
         type="number"
         inputMode="decimal"
@@ -50,7 +60,7 @@ function MoneyField({ label, value, onChange }: FieldProps) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="0"
-        className="mt-1 w-full rounded-lg bg-white/[0.04] border border-brand-border text-white px-3 py-2 text-sm"
+        className={`mt-1 ${INPUT}`}
       />
     </label>
   );
@@ -113,69 +123,69 @@ export default function ZakatCalculatorLibrary() {
       />
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-2xl mx-auto space-y-5 pb-10">
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-4 space-y-2"
-          >
-            <p className="text-4xl">🧮</p>
-            <h1 className="text-2xl font-black text-white">{z.title}</h1>
-            <p className="text-white/40 text-sm max-w-md mx-auto">{z.subtitle}</p>
-            <p className="text-xs text-white/30">{z.pricesAsOfLabel(PRICES_AS_OF)}</p>
-          </motion.div>
+          <LibraryHero Icon={CalculatorIcon} title={z.title} subtitle={z.subtitle}>
+            <p className="text-xs text-white/60">{z.pricesAsOfLabel(PRICES_AS_OF)}</p>
+          </LibraryHero>
 
           {/* Nisab standard */}
-          <div className="rounded-2xl border border-brand-border bg-white/[0.04] p-4">
-            <p className="text-xs uppercase tracking-widest text-white/40 mb-2">{z.nisabTitle}</p>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setStandard('silver')}
-                className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold transition-colors ${
-                  standard === 'silver'
-                    ? 'bg-brand-emerald text-brand-void'
-                    : 'bg-white/[0.04] border border-brand-border text-white/50'
-                }`}
-              >
-                {z.nisabSilverLabel}
-              </button>
-              <button
-                type="button"
-                onClick={() => setStandard('gold')}
-                className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold transition-colors ${
-                  standard === 'gold'
-                    ? 'bg-brand-emerald text-brand-void'
-                    : 'bg-white/[0.04] border border-brand-border text-white/50'
-                }`}
-              >
-                {z.nisabGoldLabel}
-              </button>
+          <section className={`${CARD} p-5 space-y-3`}>
+            <h2 className={SECTION_TITLE}>
+              <ScaleIcon className="w-5 h-5 text-brand-gold" aria-hidden="true" />
+              {z.nisabTitle}
+            </h2>
+            <div className="grid grid-cols-2 gap-2">
+              {(
+                [
+                  ['silver', z.nisabSilverLabel],
+                  ['gold', z.nisabGoldLabel],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setStandard(id)}
+                  aria-pressed={standard === id}
+                  className={`rounded-control border px-3 py-2.5 text-sm font-bold transition-colors ${
+                    standard === id ? OPTION_ON : OPTION_OFF
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
             </div>
-            <p className="text-xs text-white/40 mt-2">{z.nisabStandardHint}</p>
-            <p className="text-sm font-bold text-brand-emerald mt-2">
+            <p className="text-xs text-white/70">{z.nisabStandardHint}</p>
+            <p className="text-sm font-bold text-brand-emerald">
               {z.nisabTitle}: {fmtCurrency(nisabThreshold, lang)}
             </p>
-            <p className="text-xs text-white/40 mt-3 font-semibold">{z.madhabTitle}</p>
-            <p className="text-xs text-white/40 mt-1 leading-relaxed">{z.madhabNote}</p>
-          </div>
+            <div className="rounded-control bg-shade/30 p-3">
+              <p className="text-xs text-white/80 font-semibold">{z.madhabTitle}</p>
+              <p className="text-xs text-white/70 mt-1 leading-relaxed">{z.madhabNote}</p>
+            </div>
+          </section>
 
           {/* Jewelry disclosure */}
-          <div className="rounded-2xl border border-brand-border bg-white/[0.04] p-4">
-            <label className="flex items-start gap-2 cursor-pointer">
+          <section className={`${CARD} p-5`}>
+            <label className="flex items-start gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 checked={includeJewelry}
                 onChange={(e) => setIncludeJewelry(e.target.checked)}
-                className="mt-0.5"
+                className="checkbox checkbox-sm checkbox-primary mt-0.5"
               />
-              <span className="text-sm font-semibold text-white">{z.jewelryLabel}</span>
+              <span className="flex items-center gap-2 text-sm font-semibold text-white">
+                <SparklesIcon className="w-4 h-4 text-brand-gold shrink-0" aria-hidden="true" />
+                {z.jewelryLabel}
+              </span>
             </label>
-            <p className="text-xs text-white/40 mt-2 leading-relaxed">{z.jewelryNote}</p>
-          </div>
+            <p className="text-xs text-white/70 mt-2 leading-relaxed">{z.jewelryNote}</p>
+          </section>
 
           {/* Assets */}
-          <div className="rounded-2xl border border-brand-border bg-white/[0.04] p-4 space-y-3">
-            <p className="text-xs uppercase tracking-widest text-white/40">{z.assetsTitle}</p>
+          <section className={`${CARD} p-5 space-y-3`}>
+            <h2 className={SECTION_TITLE}>
+              <BanknotesIcon className="w-5 h-5 text-brand-gold" aria-hidden="true" />
+              {z.assetsTitle}
+            </h2>
             <div className="grid sm:grid-cols-2 gap-3">
               <MoneyField label={z.cashLabel} value={cash} onChange={setCash} />
               <MoneyField label={z.goldValueLabel} value={goldValue} onChange={setGoldValue} />
@@ -197,8 +207,8 @@ export default function ZakatCalculatorLibrary() {
               />
             </div>
 
-            <div className="pt-3 border-t border-white/10 space-y-1">
-              <p className="text-xs text-white/40 flex justify-between">
+            <div className="pt-3 border-t border-brand-border space-y-1">
+              <p className="text-xs text-white/70 flex justify-between">
                 <span>{z.totalLabel}</span>
                 <span>{fmtCurrency(totalAssets, lang)}</span>
               </p>
@@ -208,57 +218,76 @@ export default function ZakatCalculatorLibrary() {
               </p>
             </div>
 
-            <div className="rounded-xl bg-white/[0.06] p-3">
+            <div
+              aria-live="polite"
+              className={`rounded-control border p-3 ${
+                aboveNisab
+                  ? 'border-brand-emerald/40 bg-brand-emerald/10'
+                  : 'border-brand-border bg-shade/30'
+              }`}
+            >
               {aboveNisab ? (
                 <p className="text-sm font-bold text-brand-emerald">
                   {z.aboveNisabMsg(fmtCurrency(zakatDue, lang))}
                 </p>
               ) : (
-                <p className="text-sm text-white/40">{z.belowNisabMsg}</p>
+                <p className="text-sm text-white/80">{z.belowNisabMsg}</p>
               )}
-              <p className="text-xs text-white/40 mt-2">{z.rateNote}</p>
+              <p className="text-xs text-white/70 mt-2">{z.rateNote}</p>
             </div>
-          </div>
+          </section>
 
           {/* Hawl tracker */}
-          <div className="rounded-2xl border border-brand-border bg-white/[0.04] p-4">
-            <p className="text-xs uppercase tracking-widest text-white/40 mb-2">{z.hawlTitle}</p>
-            <p className="text-xs text-white/40 mb-2">{z.hawlNote}</p>
+          <section className={`${CARD} p-5 space-y-3`}>
+            <h2 className={SECTION_TITLE}>
+              <CalendarDaysIcon className="w-5 h-5 text-brand-gold" aria-hidden="true" />
+              {z.hawlTitle}
+            </h2>
+            <p className="text-xs text-white/70">{z.hawlNote}</p>
             <label className="block">
-              <span className="text-xs text-white/40">{z.hawlStartLabel}</span>
+              <span className="text-xs text-white/70">{z.hawlStartLabel}</span>
               <input
                 type="date"
                 value={hawlStart}
                 onChange={(e) => setHawlStart(e.target.value)}
-                className="mt-1 w-full rounded-lg bg-white/[0.04] border border-brand-border text-white px-3 py-2 text-sm"
+                className={`mt-1 ${INPUT}`}
               />
             </label>
             {hawlResult ? (
-              <p className="text-sm font-bold text-brand-emerald mt-3">
+              <p className="text-sm font-bold text-brand-emerald">
                 {z.hawlDueDateLabel}: {fmtDate(hawlResult.dueDate, lang)}.{' '}
                 {z.hawlDaysLeftMsg(hawlResult.daysLeft)}
               </p>
             ) : (
-              <p className="text-xs text-white/40 mt-3">{z.hawlNotSetMsg}</p>
+              <p className="text-xs text-white/70">{z.hawlNotSetMsg}</p>
             )}
-          </div>
+          </section>
 
           {/* Disclaimer */}
-          <div className="rounded-2xl border border-brand-gold/30 bg-brand-gold/5 p-4">
-            <p className="text-xs font-bold text-brand-gold">{z.disclaimerTitle}</p>
-            <p className="text-xs text-white/40 mt-1 leading-relaxed">{z.disclaimer}</p>
-          </div>
+          <section className="rounded-card border border-brand-gold/30 bg-brand-gold/5 p-5">
+            <p className="flex items-center gap-2 text-sm font-bold text-brand-gold">
+              <ExclamationTriangleIcon className="w-4 h-4 shrink-0" aria-hidden="true" />
+              {z.disclaimerTitle}
+            </p>
+            <p className="text-xs text-white/75 mt-1.5 leading-relaxed">{z.disclaimer}</p>
+          </section>
 
           {/* FAQ */}
-          <div className="space-y-3">
-            <p className="text-xs uppercase tracking-widest text-white/40">{z.faqTitle}</p>
+          <section className={`${CARD} p-5 space-y-3`}>
+            <h2 className={SECTION_TITLE}>
+              <QuestionMarkCircleIcon className="w-5 h-5 text-brand-gold" aria-hidden="true" />
+              {z.faqTitle}
+            </h2>
             {z.faq.map((f, i) => (
-              <div key={i} className="rounded-xl border border-brand-border bg-white/[0.04] p-4">
+              <div
+                key={i}
+                className="rounded-control border border-brand-border bg-brand-surface/50 p-3"
+              >
                 <p className="text-sm font-bold text-white">{f.q}</p>
-                <p className="text-xs text-white/40 mt-1.5 leading-relaxed">{f.a}</p>
+                <p className="text-xs text-white/70 mt-1.5 leading-relaxed">{f.a}</p>
               </div>
             ))}
-          </div>
+          </section>
         </div>
       </div>
     </AnimatedBackground>

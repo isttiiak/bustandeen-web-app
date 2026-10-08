@@ -38,10 +38,10 @@ export const MORNING_ADHKAR: AdhkarItem[] = [
     title: { en: 'The Three Quls', bn: 'তিন কুল', ar: 'المعوذات الثلاث' },
     arabic:
       'قُلْ هُوَ اللَّهُ أَحَدٌ ۝ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ قُلْ أَعُوذُ بِرَبِّ النَّاسِ',
-    transliteration: 'Surah Al-Ikhlas, Al-Falaq, An-Nas — recited three times each',
+    transliteration: 'Surah Al-Ikhlas, Al-Falaq, An-Nas, recited three times each',
     translation: {
-      en: 'Surah Al-Ikhlas, Al-Falaq and An-Nas, recited three times each — "it will suffice you in all respects."',
-      bn: 'সূরা ইখলাস, ফালাক ও নাস — প্রতিটি ৩ বার করে পাঠ করলে "তা সর্ব বিষয়ে যথেষ্ট হয়ে যাবে।"',
+      en: 'Surah Al-Ikhlas, Al-Falaq and An-Nas, recited three times each: "it will suffice you in all respects."',
+      bn: 'সূরা ইখলাস, ফালাক ও নাস: প্রতিটি ৩ বার করে পাঠ করলে "তা সর্ব বিষয়ে যথেষ্ট হয়ে যাবে।"',
     },
     repeat: 3,
     arabicNote: 'من قرأ هذه السور الثلاث ثلاث مرات في الصباح والمساء كفته من كل شيء بإذن الله.',

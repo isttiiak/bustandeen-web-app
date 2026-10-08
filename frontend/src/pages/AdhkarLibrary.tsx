@@ -1,8 +1,16 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { m as motion } from 'framer-motion';
+import { CheckIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
+import { CARD } from '../components/bustanStyles.js';
+import { MaghribIcon, SunriseIcon } from '../components/icons/IslamicIcons.js';
+import {
+  ARABIC_STYLE,
+  LibraryHero,
+  OPTION_OFF,
+  OPTION_ON,
+} from '../components/library/libraryParts.js';
 import { MORNING_ADHKAR, EVENING_ADHKAR, type AdhkarItem } from '../seo/content/adhkar.js';
 import { translateReference } from '../utils/localeReference.js';
 
@@ -28,46 +36,43 @@ export default function AdhkarLibrary() {
         title={t('library.adhkarSeoTitle', 'Adhkar')}
         description={t(
           'library.adhkarSeoDescription',
-          "Morning and evening adhkar — the Prophet's ﷺ remembrances for the start and end of the day."
+          "Morning and evening adhkar: the Prophet's ﷺ remembrances for the start and end of the day."
         )}
         path="/library/adhkar"
         index={false}
       />
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-2xl mx-auto space-y-5 pb-10">
-          <motion.div
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-4 space-y-2"
-          >
-            <p className="text-4xl">{period === 'morning' ? '🌅' : '🌆'}</p>
-            <h1 className="text-2xl font-black text-white">{t('library.adhkarTitle')}</h1>
-            <p className="text-white/40 text-sm max-w-md mx-auto">{t('library.adhkarSubtitle')}</p>
-          </motion.div>
+          <LibraryHero
+            Icon={period === 'morning' ? SunriseIcon : MaghribIcon}
+            title={t('library.adhkarTitle')}
+            subtitle={t('library.adhkarSubtitle')}
+          />
 
-          <div className="flex gap-2">
-            <button
-              type="button"
-              onClick={() => setPeriod('morning')}
-              className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold transition-colors ${
-                period === 'morning'
-                  ? 'bg-brand-emerald text-brand-void'
-                  : 'bg-white/[0.04] border border-brand-border text-white/50'
-              }`}
-            >
-              {t('library.adhkarMorning')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setPeriod('evening')}
-              className={`flex-1 rounded-lg px-3 py-2 text-sm font-bold transition-colors ${
-                period === 'evening'
-                  ? 'bg-brand-emerald text-brand-void'
-                  : 'bg-white/[0.04] border border-brand-border text-white/50'
-              }`}
-            >
-              {t('library.adhkarEvening')}
-            </button>
+          <div
+            className="grid grid-cols-2 gap-2"
+            role="group"
+            aria-label={t('library.adhkarTitle')}
+          >
+            {(
+              [
+                ['morning', SunriseIcon, t('library.adhkarMorning')],
+                ['evening', MaghribIcon, t('library.adhkarEvening')],
+              ] as const
+            ).map(([id, PeriodIcon, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => setPeriod(id)}
+                aria-pressed={period === id}
+                className={`flex items-center justify-center gap-2 rounded-control border px-3 py-2.5 text-sm font-bold transition-colors ${
+                  period === id ? OPTION_ON : OPTION_OFF
+                }`}
+              >
+                <PeriodIcon className="w-5 h-5 text-brand-gold" aria-hidden="true" />
+                {label}
+              </button>
+            ))}
           </div>
 
           <div className="space-y-3">
@@ -75,22 +80,23 @@ export default function AdhkarLibrary() {
               const done = counts[item.id] ?? 0;
               const complete = done >= item.repeat;
               return (
-                <div
-                  key={item.id}
-                  className="rounded-2xl border border-brand-border bg-white/[0.04] p-4 space-y-3"
-                >
+                <div key={item.id} className={`${CARD} p-4 space-y-3`}>
                   <div className="flex items-center justify-between gap-3">
-                    <h2 className="font-bold text-white text-sm">{item.title[lang]}</h2>
+                    <h2 className="font-display font-bold text-white text-base">
+                      {item.title[lang]}
+                    </h2>
                     <button
                       type="button"
                       onClick={() => bump(item)}
-                      title={t('library.tapToCount') as string}
-                      className={`shrink-0 rounded-full px-3 py-1 text-xs font-black tabular-nums transition-colors ${
+                      title={t('library.tapToCount')}
+                      aria-label={`${t('library.tapToCount')}: ${done}/${item.repeat}`}
+                      className={`shrink-0 inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-black tabular-nums transition-colors ${
                         complete
-                          ? 'bg-brand-emerald text-brand-void'
-                          : 'bg-white/10 text-white/60 hover:bg-white/15'
+                          ? 'btn-solid border-transparent bg-brand-emerald-dim text-on-color'
+                          : 'border-brand-border bg-brand-surface/50 text-white/80 hover:border-brand-emerald/40'
                       }`}
                     >
+                      {complete && <CheckIcon className="w-3.5 h-3.5" aria-hidden="true" />}
                       {done}/{item.repeat}
                     </button>
                   </div>
@@ -98,19 +104,19 @@ export default function AdhkarLibrary() {
                     dir="rtl"
                     lang="ar"
                     className="text-xl leading-loose text-white"
-                    style={{ fontFamily: "'Amiri', serif" }}
+                    style={ARABIC_STYLE}
                   >
                     {item.arabic}
                   </p>
-                  <p className="italic text-white/40 text-xs">{item.transliteration}</p>
-                  <p className="text-white/70 text-sm leading-relaxed">{item.translation[lang]}</p>
-                  <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs">
-                    <span className="text-white/30">{t('library.sourceLabel')}</span>
+                  <p className="italic text-white/60 text-xs">{item.transliteration}</p>
+                  <p className="text-white/80 text-sm leading-relaxed">{item.translation[lang]}</p>
+                  <div className="pt-2 border-t border-brand-border flex items-center justify-between gap-3 text-xs">
+                    <span className="text-white/60">{t('library.sourceLabel')}</span>
                     <a
                       href={item.reference.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-brand-emerald underline"
+                      className="text-brand-gold underline underline-offset-2 text-right"
                     >
                       {translateReference(
                         `${item.reference.text} · ${item.reference.grade}`,

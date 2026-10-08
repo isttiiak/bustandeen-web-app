@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.108.0 - Library in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **The Library has the new look**, in dark and light: Du'a Library, Adhkar, 99 Names of Allah and the Zakat calculator each open with one arch and use the same cards, search field and choice tiles as the rest of the app.
+- **Icons instead of emoji** at the top of each Library page, for Morning and Evening adhkar, and for each part of the Zakat calculator. The top bar now shows each Library page's name and icon, and Back goes Home.
+- **Easier to read**: transliterations, meanings, notes and sources have stronger text, especially in the light theme. The 99 Names are numbered in Bangla when the app is in Bangla.
+- **The adhkar counter** shows a tick when a dhikr is complete and tells screen readers the count.
+- No emoji or em dashes in the Library wording, in English and Bangla. The Arabic text, translations of the Quran and du'as, sources and the zakat maths are unchanged.
+
 ## v5.107.2 - Ramadan citation link opens its source - 2026-10-08
 
 ### Fixed
