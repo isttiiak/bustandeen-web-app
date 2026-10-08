@@ -11,6 +11,19 @@
       "maxDuration": 30
     }
   },
+  "redirects": [
+    {
+      "source": "/((?!sw\\.js$).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.bustandeen.com"
+        }
+      ],
+      "destination": "https://bustandeen.com/$1",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",

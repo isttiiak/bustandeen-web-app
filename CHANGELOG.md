@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.96.1 - Retire the old www app - 2026-10-08
+
+### Fixed
+
+- **Browsers that once used www.bustandeen.com were stuck on a very old version** that could not sign in (its server calls were blocked) and could never update itself. That old offline copy now removes itself and opens the same page on bustandeen.com. Every other www address still redirects to bustandeen.com as before.
+
+### Changed (developers)
+
+- `vercel.json` redirects host `www.bustandeen.com` to the apex for every path except `/sw.js` (a service-worker script may not redirect). `src/sw.ts` checks its own host: on www it runs `src/swRetire.ts` (skip waiting, claim, delete every cache, unregister, navigate each window to the same path on the apex) and nothing else; elsewhere it starts exactly as before. Needs the Vercel www domain set to serve Production instead of its domain-level redirect. Tests: `src/swRetire.test.ts`.
+
 ## v5.96.0 - Terms of Service - 2026-10-07
 
 ### Added
