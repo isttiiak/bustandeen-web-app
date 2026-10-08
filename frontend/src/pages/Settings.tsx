@@ -40,6 +40,7 @@ import {
 import { translateSalatName } from '../utils/prayerTimes.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore } from '../store/useUiStore.js';
+import { useUpdateProfile } from '../hooks/useUserProfile.js';
 import { useGroqKeyStatus, useSetGroqKey, useClearGroqKey } from '../hooks/useAi.js';
 import { formatLocaleDate } from '../utils/localeDate.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
@@ -535,6 +536,7 @@ export default function Settings() {
   // anyone else (a brother seeing a 🌸 cycle-data row was a bug).
   const dangerGroups = DANGER_GROUPS.filter((g) => g.id !== 'cycle' || user?.gender === 'female');
   const { aiEnabled, setAiEnabled } = useAuthStore();
+  const updateProfile = useUpdateProfile();
   const {
     reduceMotion,
     highContrast,
@@ -1150,7 +1152,8 @@ export default function Settings() {
                 checked={aiEnabled}
                 onChange={(v) => {
                   setAiEnabled(v);
-                  if (user) api.patch('/api/user/me', { aiEnabled: v }).catch(() => {});
+                  // Through the profile hook so the cached profile follows (#141).
+                  if (user) updateProfile.mutateAsync({ aiEnabled: v }).catch(() => {});
                 }}
                 title={t('settings.enableNaseeh')}
                 detail={t('settings.enableNaseehDetail')}

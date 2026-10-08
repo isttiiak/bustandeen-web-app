@@ -62,4 +62,11 @@ describe('Settings screen', () => {
     const bad = usedKeys.filter((k) => DASH_OR_EMOJI.test(String(lookup(dict, k) ?? '')));
     expect({ missing, bad }).toEqual({ missing: [], bad: [] });
   });
+
+  it('the Naseeh toggle saves through useUpdateProfile, not api.patch', () => {
+    // A direct api.patch left the cached profile stale (same fix as #141).
+    const code = stripComments(files['./Settings.tsx'] ?? '');
+    expect(code).not.toMatch(/api\.patch\([^)]*aiEnabled/);
+    expect(code).toMatch(/updateProfile\.mutateAsync\(\{ aiEnabled: v \}\)/);
+  });
 });
