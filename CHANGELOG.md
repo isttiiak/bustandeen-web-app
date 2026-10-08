@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.101.0 - Sadaqah in the Bustan Arch design - 2026-10-08
+
+### Changed
+
+- **Sadaqah has the new look**, in dark and light: one arch at the top with what your sadaqah supports and the Give Sadaqah button, then the donation count, where it has gone and sadaqah jariyah as calm cards. The pulsing glow behind the old header is gone.
+- **The giving form** shows the four bKash steps in its own arch, with fields and choices that match the rest of the app and easier-to-read hints. The thank-you page and the receipt check now show their result in an arch.
+- **Icons instead of emoji**: the open-hands mark replaces the seedling and the hands emoji on the buttons.
+- Numbers on Sadaqah use Bangla digits in Bangla, and the wording has no em dashes, in English and Bangla.
+
+### Changed (developers)
+
+- `pages/sadaqahScreen.test.ts` guards the four public Sadaqah pages (one arch each, no emoji, em dashes, hex colours, glows or endless animations, every key in both languages). The admin Sadaqah page is unchanged.
+
 ## v5.100.2 - Profile account requests through the app's data layer - 2026-10-08
 
 ### Changed (developers)

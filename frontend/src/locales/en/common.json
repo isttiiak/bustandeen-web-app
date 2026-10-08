@@ -11,23 +11,23 @@
     "privacy": "This card is worked out on your device. Nothing about your cycle is sent to an AI, ever."
   },
   "sadaqah": {
-    "seoTitle": "Sadaqah — Support Bustandeen",
-    "seoDescription": "Support Bustandeen with sadaqah — ongoing charity that helps keep the app free and growing for the community.",
+    "seoTitle": "Sadaqah: Support Bustandeen",
+    "seoDescription": "Support Bustandeen with sadaqah, ongoing charity that helps keep the app free and growing for the community.",
     "heroTitle": "Sadaqah",
-    "heroDesc": "Bustandeen stays free for everyone. If it has helped you, you can support the community that keeps it running — server costs, qari recordings, and features still to come — as an ongoing charity, sadaqah jariyah.",
+    "heroDesc": "Bustandeen stays free for everyone. If it has helped you, you can support the community that keeps it running (server costs, qari recordings, and features still to come) as an ongoing charity, sadaqah jariyah.",
     "contributorsLabel": "Donations given",
     "jazakAllahLine": "JazākAllāhu khayran to everyone who has given so far",
     "whereTitle": "Where it has gone",
     "jariyahLabel": "Sadaqah jariyah",
-    "jariyahText": "In the Islamic tradition, sadaqah jariyah is charity whose reward keeps flowing long after it's given — like a well someone dug that keeps giving people water. Every contribution here goes toward keeping this app free and improving it for the community, not toward any individual.",
-    "notCommerceNote": "Nothing in Bustandeen is ever locked behind a donation — this is a request to give, never a transaction.",
+    "jariyahText": "In the Islamic tradition, sadaqah jariyah is charity whose reward keeps flowing long after it's given, like a well someone dug that keeps giving people water. Every contribution here goes toward keeping this app free and improving it for the community, not toward any individual.",
+    "notCommerceNote": "Nothing in Bustandeen is ever locked behind a donation. This is a request to give, never a transaction.",
     "giveCta": "Give Sadaqah",
-    "bdOnlyNote": "Currently open to bKash donations from Bangladesh — more ways to give are on the way."
+    "bdOnlyNote": "Currently open to bKash donations from Bangladesh. More ways to give are on the way."
   },
   "sadaqahDonate": {
     "seoTitle": "Give Sadaqah",
-    "seoDescription": "Submit your bKash sadaqah to Bustandeen — verified within 24-48 hours.",
-    "submitFail": "Could not submit right now — please check your connection and try again.",
+    "seoDescription": "Submit your bKash sadaqah to Bustandeen, verified within 24-48 hours.",
+    "submitFail": "Could not submit right now. Please check your connection and try again.",
     "howLabel": "How to give",
     "step1": "Open bKash and choose Send Money (not Payment).",
     "step2": "Send your amount to",
