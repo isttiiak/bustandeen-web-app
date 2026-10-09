@@ -98,6 +98,9 @@ function clientDataTag(client) {
 }
 
 const LANGS = ['en', 'bn', 'ar'];
+// The Bangladesh district timetables (T4.4) exist in English and Bangla only.
+const MONTHLY_KINDS = new Set(['prayer-times-month', 'bd-districts']);
+const langsFor = (kind) => (MONTHLY_KINDS.has(kind) ? ['en', 'bn'] : LANGS);
 const OG_LOCALE = { en: 'en_US', bn: 'bn_BD', ar: 'ar_SA' };
 const RTL = new Set(['ar']);
 
@@ -130,6 +133,10 @@ function routePath(kind, params, lang) {
       return `${p}/asma-ul-husna`;
     case 'zakat-calculator':
       return `${p}/zakat-calculator`;
+    case 'prayer-times-month':
+      return `${p}/prayer-times/${params.citySlug}/${params.ym}`;
+    case 'bd-districts':
+      return `${p}/prayer-times/bangladesh`;
     default:
       throw new Error(`Unknown route kind: ${kind}`);
   }
@@ -146,7 +153,7 @@ function escapeAttr(s) {
   return escapeHtml(s);
 }
 
-function buildPageHtml({ lang, title, description, path, bodyHtml, client }) {
+function buildPageHtml({ lang, title, description, path, bodyHtml, client, langs = LANGS }) {
   const dir = RTL.has(lang) ? ' dir="rtl"' : '';
   const url = `${SITE_URL}${path}`;
   const safeTitle = escapeHtml(title);
@@ -194,10 +201,12 @@ function buildPageHtml({ lang, title, description, path, bodyHtml, client }) {
 
   // hreflang alternates — Google's recommended mechanism (over sitemap
   // annotations). x-default points at the English (unprefixed) URL.
-  const hreflangLinks = LANGS.map(
-    (l) =>
-      `<link rel="alternate" hreflang="${l}" href="${SITE_URL}${path.replace(/^\/(bn|ar)/, '').replace(/^/, langPrefix(l))}" />`
-  ).join('\n    ');
+  const hreflangLinks = langs
+    .map(
+      (l) =>
+        `<link rel="alternate" hreflang="${l}" href="${SITE_URL}${path.replace(/^\/(bn|ar)/, '').replace(/^/, langPrefix(l))}" />`
+    )
+    .join('\n    ');
   const xDefault = `<link rel="alternate" hreflang="x-default" href="${SITE_URL}${path.replace(/^\/(bn|ar)/, '')}" />`;
   html = html.replace(
     '</head>',
@@ -242,9 +251,17 @@ routes.push({ kind: 'adhkar', params: { period: 'evening' } });
 routes.push({ kind: 'hijri-converter', params: {} });
 routes.push({ kind: 'asma-ul-husna', params: {} });
 routes.push({ kind: 'zakat-calculator', params: {} });
+const bdMonthly = ssr.bdMonthRoutes(BUILD_DATE);
+routes.push({ kind: 'bd-districts', params: {} });
+for (const citySlug of bdMonthly.citySlugs) {
+  for (const ym of bdMonthly.months) {
+    routes.push({ kind: 'prayer-times-month', params: { citySlug, ym } });
+  }
+}
+const pageCount = routes.reduce((n, r) => n + langsFor(r.kind).length, 0);
 
 console.error(
-  `Prerendering ${routes.length} routes × ${LANGS.length} languages = ${routes.length * LANGS.length} pages...`
+  `Prerendering ${routes.length} routes in up to ${LANGS.length} languages = ${pageCount} pages...`
 );
 
 const sitemapEntries = {
@@ -257,7 +274,7 @@ const sitemapEntries = {
   utilities: [],
 };
 const sitemapBucket = (kind) => {
-  if (kind === 'prayer-times') return 'prayer-times';
+  if (kind === 'prayer-times' || MONTHLY_KINDS.has(kind)) return 'prayer-times';
   if (kind === 'qibla') return 'qibla';
   if (kind === 'ramadan-calendar' || kind === 'ramadan-calendar-index') return 'ramadan';
   if (kind === 'dua' || kind === 'duas-index') return 'duas';
@@ -268,21 +285,25 @@ const sitemapBucket = (kind) => {
 let count = 0;
 const start = Date.now();
 for (const { kind, params } of routes) {
-  for (const lang of LANGS) {
+  const langs = langsFor(kind);
+  for (const lang of langs) {
     const ssrRoute =
-      kind === 'ramadan-calendar'
-        ? { kind, citySlug: params.citySlug, hijriYear: params.hijriYear }
-        : kind === 'adhkar'
-          ? { kind, period: params.period }
-          : kind === 'dua'
-            ? { kind, duaId: params.duaId }
-            : kind === 'duas-index' ||
-                kind === 'hijri-converter' ||
-                kind === 'asma-ul-husna' ||
-                kind === 'zakat-calculator' ||
-                kind === 'ramadan-calendar-index'
-              ? { kind }
-              : { kind, citySlug: params.citySlug };
+      kind === 'prayer-times-month'
+        ? { kind, citySlug: params.citySlug, ym: params.ym }
+        : kind === 'ramadan-calendar'
+          ? { kind, citySlug: params.citySlug, hijriYear: params.hijriYear }
+          : kind === 'adhkar'
+            ? { kind, period: params.period }
+            : kind === 'dua'
+              ? { kind, duaId: params.duaId }
+              : kind === 'duas-index' ||
+                  kind === 'hijri-converter' ||
+                  kind === 'asma-ul-husna' ||
+                  kind === 'zakat-calculator' ||
+                  kind === 'ramadan-calendar-index' ||
+                  kind === 'bd-districts'
+                ? { kind }
+                : { kind, citySlug: params.citySlug };
 
     const {
       html: bodyHtml,
@@ -291,7 +312,7 @@ for (const { kind, params } of routes) {
       client,
     } = ssr.renderRoute({ route: ssrRoute, lang, buildDate: BUILD_DATE });
     const path = routePath(kind, params, lang);
-    const pageHtml = buildPageHtml({ lang, title, description, path, bodyHtml, client });
+    const pageHtml = buildPageHtml({ lang, title, description, path, bodyHtml, client, langs });
     writePage(path, pageHtml);
 
     if (lang === 'en') {
@@ -300,7 +321,7 @@ for (const { kind, params } of routes) {
       // of the Bangla or Arabic pages were in any sitemap).
       sitemapEntries[sitemapBucket(kind)].push({
         path,
-        alternates: Object.fromEntries(LANGS.map((l) => [l, routePath(kind, params, l)])),
+        alternates: Object.fromEntries(langs.map((l) => [l, routePath(kind, params, l)])),
         priority:
           kind === 'duas-index' || kind === 'ramadan-calendar-index'
             ? '0.5'
@@ -311,13 +332,35 @@ for (const { kind, params } of routes) {
     }
     count++;
   }
-  if (count % 2000 < LANGS.length) {
+  if (count % 2000 < langs.length) {
     process.stdout.write(
-      `  ...${count}/${routes.length * LANGS.length} (${Math.round((Date.now() - start) / 1000)}s)\n`
+      `  ...${count}/${pageCount} (${Math.round((Date.now() - start) / 1000)}s)\n`
     );
   }
 }
 console.error(`Wrote ${count} pages in ${Math.round((Date.now() - start) / 1000)}s.`);
+
+// A district month that fell out of the window (T4.4) answers with a page
+// that sends visitors and crawlers to the current month: an instant meta
+// refresh, which Google treats as a permanent redirect, plus a canonical.
+// Not in any sitemap.
+let redirects = 0;
+for (const citySlug of bdMonthly.citySlugs) {
+  for (const ym of bdMonthly.expired) {
+    for (const lang of ['en', 'bn']) {
+      const from = routePath('prayer-times-month', { citySlug, ym }, lang);
+      const to =
+        SITE_URL + routePath('prayer-times-month', { citySlug, ym: bdMonthly.months[0] }, lang);
+      writePage(
+        from,
+        `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><title>${escapeHtml(to)}</title><meta name="robots" content="noindex"><link rel="canonical" href="${escapeAttr(to)}"><meta http-equiv="refresh" content="0; url=${escapeAttr(to)}"></head><body><a href="${escapeAttr(to)}">${escapeHtml(to)}</a></body></html>
+`
+      );
+      redirects++;
+    }
+  }
+}
+if (redirects) console.error(`Wrote ${redirects} redirect pages for past district months.`);
 
 // ── Sitemaps ─────────────────────────────────────────────────────────────
 const today = new Date().toISOString().slice(0, 10);

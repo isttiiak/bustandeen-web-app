@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.130.0 - Monthly prayer timetables for every district of Bangladesh - 2026-10-10
+
+### Added
+
+- **Monthly timetable for each of the 64 districts (T4.4, part 2)**, in English and Bangla: `/prayer-times/{district}/{yyyy-mm}` and `/bn/prayer-times/...`. Every day of the month with Fajr, sunrise, Dhuhr, Asr, Maghrib and Isha (Karachi method, Hanafi Asr), the weekday, and a thin row where the Hijri month changes. This month and the next two are live; a month that has passed sends you to the current one. Today's row is highlighted.
+- **District index** at `/prayer-times/bangladesh` (and `/bn/...`): all 64 districts by division.
+- A note under each table: times are astronomical with no extra minutes added, may differ by a few minutes from your local mosque or the Islamic Foundation Bangladesh timetable (linked), and for congregation follow your mosque. Hijri dates follow Umm al-Qura and can differ by a day in Bangladesh.
+- These pages use the app's Bustan look and follow your light or dark theme (the app's setting, else your device's). District pages link to their monthly timetable.
+
+### Changed
+
+- Bangla prayer-time pages now write যুহর and ইশা, the app's spelling (was যোহর, এশা).
+
+### Fixed
+
+- On phones, the breadcrumb on every prayer-times, Qibla, Ramadan and du'a page showed its "/" separators a line below the links (the 44px tap height pushed the labels up). They line up again.
+
 ## v5.129.0 - Prayer times for all 64 districts of Bangladesh - 2026-10-10
 
 ### Added
