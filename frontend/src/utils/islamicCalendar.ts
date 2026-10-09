@@ -1,4 +1,4 @@
-﻿// Islamic calendar utilities — Hijri date detection and special day definitions.
+﻿// Islamic calendar utilities: Hijri date detection and special day definitions.
 // Uses Intl.DateTimeFormat with the islamic-umalqura calendar.
 // The Islamic day starts at Maghrib: getHijriToday() accounts for this.
 
@@ -6,7 +6,6 @@ import { calcPrayerTimes } from './prayerTimes.js';
 import i18n from '../i18n.js';
 
 export interface SpecialDayTodo {
-  icon: string;
   action: string;
   note?: string;
 }
@@ -21,7 +20,6 @@ export interface SpecialDayInfo {
   id: string;
   name: string;
   arabicName: string;
-  icon: string;
   color: string; // Tailwind-compatible CSS color token
   type: 'weekly' | 'monthly' | 'annual' | 'ramadan';
   shortDesc: string;
@@ -37,9 +35,8 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
   // ── FRIDAY ────────────────────────────────────────────────────────────────
   {
     id: 'friday',
-    name: "Friday — Jumu'ah",
+    name: "Friday (Jumu'ah)",
     arabicName: 'يَوْمُ الجُمُعَة',
-    icon: '🕌',
     color: '#7a9e6e',
     type: 'weekly',
     replaceDhuhrWithJumah: true,
@@ -48,64 +45,57 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
       "Friday is the best day the sun rises upon. Allah made it a day of gathering (Jumu'ah), supplication, ṣalawāt on the Prophet ﷺ, and the reading of Surah Al-Kahf. There is a hidden hour on Friday in which any du'ā is accepted. The Jumu'ah prayer (khutbah + 2 rak'ahs in congregation) replaces Dhuhr for adult Muslim men.",
     todos: [
       {
-        icon: '🛁',
         action: "Perform ghusl (ritual bath) before Jumu'ah",
-        note: 'Sunnah — highly recommended',
+        note: 'Sunnah, highly recommended',
       },
       {
-        icon: '🕌',
         action: "Attend Jumu'ah prayer in congregation at a mosque",
-        note: 'Farḍ — obligatory for adult Muslim men',
+        note: 'Farḍ: obligatory for adult Muslim men',
       },
       {
-        icon: '📖',
         action: 'Read Surah Al-Kahf (Quran 18)',
         note: 'Illuminates with light from Friday to Friday',
       },
       {
-        icon: '🤲',
         action: 'Send abundant ṣalawāt on the Prophet ﷺ',
-        note: 'At least 80× — especially after Asr',
+        note: 'At least 80×, especially after Asr',
       },
       {
-        icon: '🌙',
         action: "Make du'ā between Asr and Maghrib",
-        note: 'The hidden hour of acceptance — do not miss it',
+        note: 'The hidden hour of acceptance. Do not miss it',
       },
       {
-        icon: '📿',
         action: 'Increase dhikr, istighfār, and Quran recitation throughout the day',
         note: '',
       },
       {
-        icon: '💚',
         action: 'Cut nails, wear best clothes, use miswāk and fragrance',
         note: 'Sunnah of the day',
       },
     ],
     references: [
       {
-        text: '"The best day the sun rises upon is Friday." — Ṣaḥīḥ Muslim 854',
+        text: '"The best day the sun rises upon is Friday." · Ṣaḥīḥ Muslim 854',
         url: 'https://sunnah.com/muslim:854',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: "Jumu'ah prayer obligation — Quran 62:9",
+        text: "Jumu'ah prayer obligation · Quran 62:9",
         url: 'https://quran.com/62/9',
         grade: 'Quran',
       },
       {
-        text: '"Whoever reads Surah Al-Kahf on Friday will be illuminated between the two Fridays." — al-Mustadrak 2/399',
+        text: '"Whoever reads Surah Al-Kahf on Friday will be illuminated between the two Fridays." · al-Mustadrak 2/399',
         url: 'https://sunnah.com/nawawi40',
         grade: 'Ṣaḥīḥ by al-Albānī',
       },
       {
-        text: '"On Friday there is a time in which a Muslim does not ask Allah for anything but He gives it to him." — Ṣaḥīḥ Muslim 852',
+        text: '"On Friday there is a time in which a Muslim does not ask Allah for anything but He gives it to him." · Ṣaḥīḥ Muslim 852',
         url: 'https://sunnah.com/muslim:852',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: '"Send abundant ṣalawāt on me on Fridays — for your ṣalawāt is presented to me." — Sunan Abū Dāwūd 1047',
+        text: '"Send abundant ṣalawāt on me on Fridays, for your ṣalawāt is presented to me." · Sunan Abū Dāwūd 1047',
         url: 'https://sunnah.com/abudawud:1047',
         grade: 'Ṣaḥīḥ',
       },
@@ -117,34 +107,31 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'fast_mon_thu',
     name: 'Sunnah Fast Day',
     arabicName: 'صيام الاثنين والخميس',
-    icon: '🌙',
     color: '#5a9e8e',
     type: 'weekly',
-    shortDesc: 'Monday & Thursday — the Prophet ﷺ fasted these days. Deeds are presented to Allah.',
+    shortDesc: 'Monday & Thursday: the Prophet ﷺ fasted these days. Deeds are presented to Allah.',
     significance:
       "The Prophet ﷺ was asked about fasting on Monday and Thursday. He said: 'Those are two days on which people's deeds are presented to the Lord of the Worlds and I would like my deeds to be presented when I am fasting.' Fasting Monday and Thursday is among the most regularly observed sunnah fasts.",
     todos: [
       {
-        icon: '🌅',
         action: 'Make intention (niyyah) for fasting before Fajr',
         note: 'Or you may intend in the morning if you have not eaten',
       },
-      { icon: '🍽️', action: 'Have suhūr (pre-dawn meal) for blessing', note: '' },
-      { icon: '📿', action: 'Increase dhikr and istighfār throughout the fasting hours', note: '' },
+      { action: 'Have suhūr (pre-dawn meal) for blessing', note: '' },
+      { action: 'Increase dhikr and istighfār throughout the fasting hours', note: '' },
       {
-        icon: '🤲',
-        action: "Make du'ā at iftār — the fasting person's du'ā is not rejected",
+        action: "Make du'ā at iftār: the fasting person's du'ā is not rejected",
         note: '',
       },
     ],
     references: [
       {
-        text: '"Those are two days on which deeds are presented to the Lord of the Worlds, and I like for my deeds to be presented when I am fasting." — Ṣaḥīḥ Muslim 1162',
+        text: '"Those are two days on which deeds are presented to the Lord of the Worlds, and I like for my deeds to be presented when I am fasting." · Ṣaḥīḥ Muslim 1162',
         url: 'https://sunnah.com/muslim:1162',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: '"The du\'ā of a fasting person at the time of breaking fast is not rejected." — Sunan Ibn Mājah 1753',
+        text: '"The du\'ā of a fasting person at the time of breaking fast is not rejected." · Sunan Ibn Mājah 1753',
         url: 'https://sunnah.com/ibnmajah:1753',
         grade: 'Ḥasan',
       },
@@ -156,30 +143,28 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'ayyam_al_bid',
     name: 'Ayyām al-Bīḍ',
     arabicName: 'أيام البيض',
-    icon: '🌕',
     color: '#c9a96e',
     type: 'monthly',
     shortDesc:
-      '13th, 14th, 15th of every Islamic month — fasting equivalent to fasting the whole month.',
+      '13th, 14th, 15th of every Islamic month: fasting equivalent to fasting the whole month.',
     significance:
-      "The Prophet ﷺ never abandoned fasting the three white days — the 13th, 14th, and 15th of each Islamic month. These are called 'the white days' because the full moon illuminates the night. Fasting these three days is like fasting the entire month, for each good deed is multiplied ten times.",
+      "The Prophet ﷺ never abandoned fasting the three white days: the 13th, 14th, and 15th of each Islamic month. These are called 'the white days' because the full moon illuminates the night. Fasting these three days is like fasting the entire month, for each good deed is multiplied ten times.",
     todos: [
       {
-        icon: '🌅',
         action: 'Fast the three white days (13th, 14th, 15th)',
         note: 'Equivalent to fasting the whole month',
       },
-      { icon: '🌙', action: "Observe the full moon — reflect on Allah's creation", note: '' },
-      { icon: '📖', action: 'Increase Quran recitation in these blessed nights', note: '' },
+      { action: "Observe the full moon; reflect on Allah's creation", note: '' },
+      { action: 'Increase Quran recitation in these blessed nights', note: '' },
     ],
     references: [
       {
-        text: '"Fast three days of every month — the 13th, 14th, and 15th." — Sunan Abū Dāwūd 2449',
+        text: '"Fast three days of every month: the 13th, 14th, and 15th." · Sunan Abū Dāwūd 2449',
         url: 'https://sunnah.com/abudawud:2449',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: '"Fasting three days of every month is like fasting the whole year." — Ṣaḥīḥ al-Bukhārī 1979',
+        text: '"Fasting three days of every month is like fasting the whole year." · Ṣaḥīḥ al-Bukhārī 1979',
         url: 'https://sunnah.com/bukhari:1979',
         grade: 'Ṣaḥīḥ',
       },
@@ -191,38 +176,34 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'ashura',
     name: "'Āshūrā",
     arabicName: 'عاشوراء',
-    icon: '🌊',
     color: '#5a9e8e',
     type: 'annual',
-    shortDesc: "10th Muharram — fasting expiates the previous year's sins. Also fast the 9th.",
+    shortDesc: "10th Muharram: fasting expiates the previous year's sins. Also fast the 9th.",
     significance:
       "The Prophet ﷺ arrived in Medina and found the Jews fasting on this day. They told him it was the day Allah saved Musa (Moses) ﷺ and drowned Pharaoh. The Prophet ﷺ said 'We have more right to Musa than you do' and fasted and commanded fasting. He intended to also fast the 9th to differ from the People of the Book. Fasting 'Āshūrā expiates the sins of the previous year.",
     todos: [
       {
-        icon: '⭐',
         action: "Fast the 9th of Muharram (Tāsū'ā)",
-        note: 'To differ from the People of the Book — the Prophet intended to do this',
+        note: 'To differ from the People of the Book. The Prophet intended to do this',
       },
       {
-        icon: '🌙',
         action: "Fast the 10th of Muharram ('Āshūrā)",
         note: 'Expiates one year of sins',
       },
-      { icon: '🤲', action: "Make du'ā and increase istighfār", note: '' },
+      { action: "Make du'ā and increase istighfār", note: '' },
       {
-        icon: '📿',
-        action: "Reflect on the story of Musa ﷺ — Allah's deliverance of the believers",
+        action: "Reflect on the story of Musa ﷺ: Allah's deliverance of the believers",
         note: '',
       },
     ],
     references: [
       {
-        text: '"Fasting the day of \'Āshūrā expiates the sins of the previous year." — Ṣaḥīḥ Muslim 1162',
+        text: '"Fasting the day of \'Āshūrā expiates the sins of the previous year." · Ṣaḥīḥ Muslim 1162',
         url: 'https://sunnah.com/muslim:1162',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: '"If I live until next year, I will fast the 9th as well." — Ṣaḥīḥ Muslim 1134',
+        text: '"If I live until next year, I will fast the 9th as well." · Ṣaḥīḥ Muslim 1134',
         url: 'https://sunnah.com/muslim:1134',
         grade: 'Ṣaḥīḥ',
       },
@@ -234,45 +215,40 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'dhul_hijjah_first10',
     name: 'First 10 Days of Dhul Ḥijjah',
     arabicName: 'أيام ذو الحجة',
-    icon: '🌟',
     color: '#c9a96e',
     type: 'annual',
-    shortDesc: 'The greatest days for good deeds — outweigh even jihād in virtue.',
+    shortDesc: 'The greatest days for good deeds; they outweigh even jihād in virtue.',
     significance:
-      "These are the ten days Allah swore by in the Quran (89:2). The Prophet ﷺ said: 'There are no days in which righteous deeds are more beloved to Allah than these ten days.' Good deeds in these days — including fasting, dhikr (especially tahlīl, takbīr, taḥmīd), Quran recitation, ṣadaqah, and qiyām — are multiplied and more beloved to Allah than even those done in other times.",
+      "These are the ten days Allah swore by in the Quran (89:2). The Prophet ﷺ said: 'There are no days in which righteous deeds are more beloved to Allah than these ten days.' Good deeds in these days, including fasting, dhikr (especially tahlīl, takbīr, taḥmīd), Quran recitation, ṣadaqah, and qiyām, are multiplied and more beloved to Allah than even those done in other times.",
     todos: [
       {
-        icon: '📿',
         action:
           'Increase tahlīl (Lā ilāha illallāh), takbīr (Allāhu Akbar), taḥmīd (Alḥamdulillāh), and tasbīḥ (SubḥānAllāh)',
         note: '',
       },
       {
-        icon: '🌙',
-        action: 'Fast the first 9 days if able (especially Day of Arafah — 9th)',
+        action: 'Fast the first 9 days if able (especially Day of Arafah, 9th)',
         note: '',
       },
-      { icon: '💚', action: 'Give ṣadaqah generously throughout these 10 days', note: '' },
+      { action: 'Give ṣadaqah generously throughout these 10 days', note: '' },
       {
-        icon: '📖',
         action: 'Increase Quran recitation and complete a khatm if possible',
         note: '',
       },
-      { icon: '🙏', action: 'Perform extra nawāfil prayers — especially Tahajjud', note: '' },
+      { action: 'Perform extra nawāfil prayers, especially Tahajjud', note: '' },
       {
-        icon: '✋',
-        action: 'If planning Qurbānī — do not cut hair or nails from 1st Dhul Ḥijjah',
+        action: 'If planning Qurbānī, do not cut hair or nails from 1st Dhul Ḥijjah',
         note: 'Sunnah for those offering sacrifice',
       },
     ],
     references: [
       {
-        text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." — Ṣaḥīḥ al-Bukhārī 969',
+        text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." · Ṣaḥīḥ al-Bukhārī 969',
         url: 'https://sunnah.com/bukhari:969',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: "By the dawn; and the ten nights (89:1-2) — these are the ten days of Dhul Ḥijjah, per Ibn 'Abbās (RA)",
+        text: "By the dawn; and the ten nights (89:1-2). These are the ten days of Dhul Ḥijjah, per Ibn 'Abbās (RA)",
         url: 'https://quran.com/89',
         grade: 'Quran',
       },
@@ -284,39 +260,36 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'arafah',
     name: 'Day of Arafah',
     arabicName: 'يَوْم عَرَفَة',
-    icon: '⛰️',
     color: '#c9a96e',
     type: 'annual',
-    shortDesc: '9th Dhul Ḥijjah — the best day of the year. Fasting expiates two years of sins.',
+    shortDesc: '9th Dhul Ḥijjah: the best day of the year. Fasting expiates two years of sins.',
     significance:
-      'The Day of Arafah is the best day in the whole year. On this day, millions of pilgrims stand on the plain of Arafah in the greatest act of worship. For those not on Ḥajj, the Prophet ﷺ strongly recommended fasting — it expiates the sins of the previous year and the coming year. Allah descends and boasts to His angels about the people of Arafah. This is also the day Islam was perfected.',
+      'The Day of Arafah is the best day in the whole year. On this day, millions of pilgrims stand on the plain of Arafah in the greatest act of worship. For those not on Ḥajj, the Prophet ﷺ strongly recommended fasting: it expiates the sins of the previous year and the coming year. Allah descends and boasts to His angels about the people of Arafah. This is also the day Islam was perfected.',
     todos: [
       {
-        icon: '🌙',
         action: 'Fast the Day of Arafah (9th Dhul Ḥijjah)',
-        note: 'Expiates two years of sins — do not miss it!',
+        note: 'Expiates two years of sins. Do not miss it!',
       },
       {
-        icon: '🤲',
         action: "Spend the day in du'ā, dhikr, and Quran",
         note: "Best du'ā: \"Lā ilāha illAllāhu waḥdahu lā sharīka lahu, lahu l-mulku wa lahu l-ḥamdu wa huwa 'alā kulli shay'in qadīr\"",
       },
-      { icon: '📿', action: 'Recite takbīr (Allāhu Akbar) abundantly', note: '' },
-      { icon: '💚', action: 'Give ṣadaqah and increase in righteous deeds', note: '' },
+      { action: 'Recite takbīr (Allāhu Akbar) abundantly', note: '' },
+      { action: 'Give ṣadaqah and increase in righteous deeds', note: '' },
     ],
     references: [
       {
-        text: '"Fasting the Day of Arafah expiates the sins of the previous and coming year." — Ṣaḥīḥ Muslim 1162',
+        text: '"Fasting the Day of Arafah expiates the sins of the previous and coming year." · Ṣaḥīḥ Muslim 1162',
         url: 'https://sunnah.com/muslim:1162',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: '"The best du\'ā is du\'ā on the Day of Arafah." — Tirmidhī 3585',
+        text: '"The best du\'ā is du\'ā on the Day of Arafah." · Tirmidhī 3585',
         url: 'https://sunnah.com/tirmidhi:3585',
         grade: 'Ḥasan',
       },
       {
-        text: '"Today I have perfected your religion for you..." — Quran 5:3',
+        text: '"Today I have perfected your religion for you..." · Quran 5:3',
         url: 'https://quran.com/5/3',
         grade: 'Quran',
       },
@@ -328,44 +301,39 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'eid_fitr',
     name: 'Eid al-Fiṭr',
     arabicName: 'عيد الفطر',
-    icon: '🎉',
     color: '#7a9e6e',
     type: 'annual',
-    shortDesc: '1st Shawwāl — celebrate the completion of Ramadan. Eid prayer is wājib.',
+    shortDesc: '1st Shawwāl: celebrate the completion of Ramadan. Eid prayer is wājib.',
     significance:
       "Eid al-Fiṭr marks the end of Ramadan and is a day of pure joy and gratitude. Fasting on this day is forbidden (ḥarām). The Eid prayer is wājib (required by many scholars) or Sunnah Muakkadah. Muslims pay Zakāt al-Fiṭr before the prayer, exchange Eid greetings, visit family, and celebrate Allah's blessing of completing Ramadan.",
     todos: [
       {
-        icon: '🕌',
         action: 'Attend Eid prayer in congregation',
-        note: 'Wājib/Sunnah Muakkadah — do not miss it',
+        note: 'Wājib/Sunnah Muakkadah. Do not miss it',
       },
       {
-        icon: '💚',
         action: 'Pay Zakāt al-Fiṭr before the Eid prayer',
-        note: 'Must be paid before prayer to count — a grain-based charity',
+        note: 'Must be paid before prayer to count (a grain-based charity)',
       },
       {
-        icon: '🍬',
         action: 'Eat something sweet (dates) before Eid prayer',
-        note: 'Sunnah — the Prophet ﷺ ate an odd number of dates before going out',
+        note: 'Sunnah: the Prophet ﷺ ate an odd number of dates before going out',
       },
       {
-        icon: '🤲',
         action: 'Recite takbīr until the Eid prayer begins',
         note: 'Allāhu Akbar, Allāhu Akbar, Lā ilāha illAllāhu, Allāhu Akbar, Allāhu Akbar wa lillāhil ḥamd',
       },
-      { icon: '👨‍👩‍👧', action: 'Visit family, exchange gifts, spread joy', note: '' },
-      { icon: '❌', action: 'Do NOT fast today — fasting is ḥarām on Eid al-Fiṭr', note: '' },
+      { action: 'Visit family, exchange gifts, spread joy', note: '' },
+      { action: 'Do NOT fast today: fasting is ḥarām on Eid al-Fiṭr', note: '' },
     ],
     references: [
       {
-        text: 'Eid prayer and its rulings — Ṣaḥīḥ al-Bukhārī 950',
+        text: 'Eid prayer and its rulings · Ṣaḥīḥ al-Bukhārī 950',
         url: 'https://sunnah.com/bukhari:950',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: '"The Messenger of Allah ﷺ would eat an odd number of dates before going out on the morning of Eid al-Fiṭr." — Ṣaḥīḥ al-Bukhārī 953',
+        text: '"The Messenger of Allah ﷺ would eat an odd number of dates before going out on the morning of Eid al-Fiṭr." · Ṣaḥīḥ al-Bukhārī 953',
         url: 'https://sunnah.com/bukhari:953',
         grade: 'Ṣaḥīḥ',
       },
@@ -377,39 +345,35 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'eid_adha',
     name: 'Eid al-Aḍḥā',
     arabicName: 'عيد الأضحى',
-    icon: '🐑',
     color: '#c9a96e',
     type: 'annual',
-    shortDesc: '10th Dhul Ḥijjah — the greater Eid. Eid prayer, Qurbānī, and celebration.',
+    shortDesc: '10th Dhul Ḥijjah: the greater Eid. Eid prayer, Qurbānī, and celebration.',
     significance:
       'Eid al-Aḍḥā is the greater Eid, coinciding with the Day of Naḥr (sacrifice) when Ḥājjīs perform their sacrifice after the Day of Arafah. Muslims worldwide offer Qurbānī (an animal sacrifice) to commemorate the sacrifice of Ibrāhīm ﷺ. It is a day of gratitude, prayer, and celebration. Fasting on this day is ḥarām.',
     todos: [
-      { icon: '🕌', action: 'Attend Eid prayer in congregation', note: '' },
+      { action: 'Attend Eid prayer in congregation', note: '' },
       {
-        icon: '🐑',
-        action: 'Offer Qurbānī (Uḍḥiyyah) — sacrifice an animal',
+        action: 'Offer Qurbānī (Uḍḥiyyah): sacrifice an animal',
         note: 'Wājib (Ḥanafī) or Sunnah Muakkadah (other madhāhib) for those who are able',
       },
       {
-        icon: '🤲',
         action: 'Recite takbīr al-Tashrīq from Fajr of 9th to Asr of 13th Dhul Ḥijjah',
         note: '',
       },
       {
-        icon: '🍖',
         action: 'Distribute Qurbānī meat: 1/3 family, 1/3 neighbours, 1/3 poor',
         note: '',
       },
-      { icon: '❌', action: 'Do NOT fast today — fasting is ḥarām on Eid al-Aḍḥā', note: '' },
+      { action: 'Do NOT fast today: fasting is ḥarām on Eid al-Aḍḥā', note: '' },
     ],
     references: [
       {
-        text: 'Qurbānī (Uḍḥiyyah) — Ṣaḥīḥ Muslim 1977',
+        text: 'Qurbānī (Uḍḥiyyah) · Ṣaḥīḥ Muslim 1977',
         url: 'https://sunnah.com/muslim:1977',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: 'Eid al-Adha prayer — Ṣaḥīḥ al-Bukhārī 956',
+        text: 'Eid al-Adha prayer · Ṣaḥīḥ al-Bukhārī 956',
         url: 'https://sunnah.com/bukhari:956',
         grade: 'Ṣaḥīḥ',
       },
@@ -421,37 +385,35 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'laylat_qadr',
     name: 'Laylat al-Qadr',
     arabicName: 'لَيْلَةُ القَدْر',
-    icon: '✨',
     color: '#c4825a',
     type: 'ramadan',
-    shortDesc: 'Odd nights of the last 10 of Ramadan — better than 1000 months of worship.',
+    shortDesc: 'Odd nights of the last 10 of Ramadan: better than 1000 months of worship.',
     significance:
       "Laylat al-Qadr is the night the Quran was revealed and the greatest night of the year. Worship on this single night is better than 83+ years of worship. The Prophet ﷺ would seclude himself (i'tikāf) in the last 10 nights of Ramadan and seek it especially on odd nights. The signs include a calm, temperate night and the sun rising with no rays the next morning.",
     todos: [
-      { icon: '🕌', action: 'Pray Tarāwīḥ/Qiyām al-Layl throughout the night', note: '' },
+      { action: 'Pray Tarāwīḥ/Qiyām al-Layl throughout the night', note: '' },
       {
-        icon: '🤲',
         action: "Recite the du'ā: 'Allāhumma innaka 'afuwwun tuḥibb al-'afwa fa'fu 'annī'",
-        note: '"O Allah, You are Most Forgiving and love forgiveness, so forgive me." — Tirmidhī 3513',
+        note: '"O Allah, You are Most Forgiving and love forgiveness, so forgive me." · Tirmidhī 3513',
       },
-      { icon: '📖', action: 'Recite the Quran extensively throughout the night', note: '' },
-      { icon: '📿', action: 'Make abundant istighfār, ṣalawāt, and dhikr', note: '' },
-      { icon: '💚', action: 'Give ṣadaqah — multiplied infinitely on this night', note: '' },
-      { icon: '🌅', action: 'Pray Fajr in congregation — completing the night', note: '' },
+      { action: 'Recite the Quran extensively throughout the night', note: '' },
+      { action: 'Make abundant istighfār, ṣalawāt, and dhikr', note: '' },
+      { action: 'Give ṣadaqah: multiplied infinitely on this night', note: '' },
+      { action: 'Pray Fajr in congregation, completing the night', note: '' },
     ],
     references: [
       {
-        text: '"Laylat al-Qadr is better than a thousand months." — Quran 97:3',
+        text: '"Laylat al-Qadr is better than a thousand months." · Quran 97:3',
         url: 'https://quran.com/97',
         grade: 'Quran',
       },
       {
-        text: '"Seek it in the odd nights of the last ten of Ramadan." — Ṣaḥīḥ al-Bukhārī 2017',
+        text: '"Seek it in the odd nights of the last ten of Ramadan." · Ṣaḥīḥ al-Bukhārī 2017',
         url: 'https://sunnah.com/bukhari:2017',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: "The Laylat al-Qadr du'ā — Sunan al-Tirmidhī 3513",
+        text: "The Laylat al-Qadr du'ā · Sunan al-Tirmidhī 3513",
         url: 'https://sunnah.com/tirmidhi:3513',
         grade: 'Ṣaḥīḥ',
       },
@@ -463,31 +425,29 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'shab_e_barat',
     name: "Laylat al-Barā'ah",
     arabicName: 'ليلة البراءة',
-    icon: '🌙',
     color: '#5a9e8e',
     type: 'annual',
     shortDesc:
-      "15th Sha'bān night — Allah forgives abundantly. Some scholars consider this established.",
+      "15th Sha'bān night: Allah forgives abundantly. Some scholars consider this established.",
     significance:
-      "On the night of the 15th of Sha'bān (i.e., the night between 14th and 15th), some hadith reports indicate that Allah looks upon His creation and forgives all except those who associate partners with Him and those who harbour enmity. Many scholars (including Imam Ahmad, Ibn Rajab, and al-Albānī) consider this night to have virtue. However, there is scholarly disagreement — the reports are weak by some standards but ḥasan by others. Observe this night with worship if you believe in its virtue, but don't innovate specific rituals with no established basis.",
+      "On the night of the 15th of Sha'bān (i.e., the night between 14th and 15th), some hadith reports indicate that Allah looks upon His creation and forgives all except those who associate partners with Him and those who harbour enmity. Many scholars (including Imam Ahmad, Ibn Rajab, and al-Albānī) consider this night to have virtue. However, there is scholarly disagreement: the reports are weak by some standards but ḥasan by others. Observe this night with worship if you believe in its virtue, but don't innovate specific rituals with no established basis.",
     todos: [
-      { icon: '🌙', action: "Spend the night in qiyām, du'ā, and dhikr", note: '' },
+      { action: "Spend the night in qiyām, du'ā, and dhikr", note: '' },
       {
-        icon: '🌅',
         action: "Fast on the 15th of Sha'bān",
         note: 'Many scholars recommend fasting this day',
       },
-      { icon: '📿', action: 'Seek forgiveness (istighfār) abundantly', note: '' },
-      { icon: '📖', action: 'Recite Quran and reflect on your life', note: '' },
+      { action: 'Seek forgiveness (istighfār) abundantly', note: '' },
+      { action: 'Recite Quran and reflect on your life', note: '' },
     ],
     references: [
       {
-        text: '"Allah looks down on the night of the 15th of Sha\'bān and forgives all His creation except a mushrik or a spiteful person." — Sunan Ibn Mājah 1389',
+        text: '"Allah looks down on the night of the 15th of Sha\'bān and forgives all His creation except a mushrik or a spiteful person." · Sunan Ibn Mājah 1389',
         url: 'https://sunnah.com/ibnmajah:1389',
         grade: 'Graded Ṣaḥīḥ by al-Albānī',
       },
       {
-        text: "Scholarly discussion on Sha'bān 15 — see Ibn Rajab's Laṭā'if al-Ma'ārif",
+        text: "Scholarly discussion on Sha'bān 15 · see Ibn Rajab's Laṭā'if al-Ma'ārif",
         url: 'https://islamqa.info/en/answers/8907',
         grade: 'Reference',
       },
@@ -499,30 +459,28 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     id: 'islamic_new_year',
     name: 'Islamic New Year',
     arabicName: 'رأس السنة الهجرية',
-    icon: '🌙',
     color: '#7a9e6e',
     type: 'annual',
-    shortDesc: "1st Muḥarram — the Hijrī year begins. Reflect on the Prophet ﷺ's migration.",
+    shortDesc: "1st Muḥarram: the Hijrī year begins. Reflect on the Prophet ﷺ's migration.",
     significance:
-      "The Islamic New Year marks the beginning of the Hijrī calendar, established after the migration (Hijra) of the Prophet ﷺ from Mecca to Medina. Muḥarram is one of the four sacred months in Islam. It is a time for reflection, renewed intentions, and increased worship. The Quran mentions: 'Allah's count of months is twelve' (9:36). There is no specific act of worship legislated for this day — it is a time for reflection.",
+      "The Islamic New Year marks the beginning of the Hijrī calendar, established after the migration (Hijra) of the Prophet ﷺ from Mecca to Medina. Muḥarram is one of the four sacred months in Islam. It is a time for reflection, renewed intentions, and increased worship. The Quran mentions: 'Allah's count of months is twelve' (9:36). There is no specific act of worship legislated for this day; it is a time for reflection.",
     todos: [
       {
-        icon: '🤲',
         action: 'Reflect on the Hijra and its lessons of sacrifice and trust in Allah',
         note: '',
       },
-      { icon: '📿', action: 'Renew your intention (niyyah) for the year ahead', note: '' },
-      { icon: '🌙', action: 'Increase worship in this sacred month of Muḥarram', note: '' },
-      { icon: '⭐', action: "Prepare for 'Āshūrā fasting (9th and 10th Muḥarram)", note: '' },
+      { action: 'Renew your intention (niyyah) for the year ahead', note: '' },
+      { action: 'Increase worship in this sacred month of Muḥarram', note: '' },
+      { action: "Prepare for 'Āshūrā fasting (9th and 10th Muḥarram)", note: '' },
     ],
     references: [
       {
-        text: '"The best fasting after Ramadan is fasting in the month of Muḥarram." — Ṣaḥīḥ Muslim 1163',
+        text: '"The best fasting after Ramadan is fasting in the month of Muḥarram." · Ṣaḥīḥ Muslim 1163',
         url: 'https://sunnah.com/muslim:1163',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: 'The four sacred months — Quran 9:36',
+        text: 'The four sacred months · Quran 9:36',
         url: 'https://quran.com/9/36',
         grade: 'Quran',
       },
@@ -594,7 +552,7 @@ export function getHijriDate(date: Date = new Date()): HijriDate | null {
   }
 }
 
-/** Format Hijri date for display — month name, day, and year all follow the
+/** Format Hijri date for display: month name, day, and year all follow the
  * app's selected language (via the shared `hijriMonths.*` locale keys and
  * বাংলা digits in Bengali mode). */
 export function formatHijriDate(h: HijriDate): string {
@@ -625,7 +583,7 @@ export function isPostMaghrib(now: Date = new Date()): boolean {
 }
 
 /**
- * Hijri date for the current ISLAMIC day — advances at Maghrib, not midnight.
+ * Hijri date for the current ISLAMIC day; advances at Maghrib, not midnight.
  * Use this for display ("today's Hijri date") and special-day detection.
  * For calendar/historical conversions, use getHijriDate(specificDate) instead.
  */
@@ -664,10 +622,10 @@ export function getTodaySpecialDays(date?: Date): SpecialDayInfo[] {
       if (h.day === 9 || h.day === 10) ids.push('ashura');
     }
 
-    // Sha'ban 14th/15th — Laylat al-Bara'ah
+    // Sha'ban 14th/15th: Laylat al-Bara'ah
     if (h.month === 8 && (h.day === 14 || h.day === 15)) ids.push('shab_e_barat');
 
-    // Ramadan (month 9) — odd nights of last 10 = Laylat al-Qadr
+    // Ramadan (month 9): odd nights of last 10 = Laylat al-Qadr
     if (h.month === 9 && h.day >= 21 && h.day % 2 === 1) ids.push('laylat_qadr');
 
     // Shawwal 1st = Eid al-Fitr
@@ -686,7 +644,7 @@ export function getTodaySpecialDays(date?: Date): SpecialDayInfo[] {
     .filter((d): d is SpecialDayInfo => d !== undefined);
 }
 
-/** Returns true if the current Islamic day is Friday (Jumu'ah) — Maghrib-aware */
+/** Returns true if the current Islamic day is Friday (Jumu'ah), Maghrib-aware */
 export function isFriday(): boolean {
   const now = new Date();
   const shifted = isPostMaghrib(now) ? new Date(now.getTime() + 86_400_000) : now;

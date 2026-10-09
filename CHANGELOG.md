@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.113.1 - Special day texts without em dashes - 2026-10-09
+
+### Changed
+
+- **Special day texts** (Friday, Arafah, Ashura, Eid and the rest) no longer use em dashes, in English and Bangla. Sources now read "quote · Ṣaḥīḥ Muslim 1162", and the explanations use a colon, comma or full stop instead. Only punctuation changed: every word is the same, and a test now checks that.
+- **The Bangla Dhul Ḥijjah āyah** now closes its quote after the āyah, so the commentary after it is no longer shown as part of the Quran.
+
+### Removed
+
+- **Unused emoji icons** in the special day data (they have not been shown since the redesign).
+
 ## v5.113.0 - Hifz and Share āyah dialogs in the Bustan Arch design - 2026-10-09
 
 ### Changed
