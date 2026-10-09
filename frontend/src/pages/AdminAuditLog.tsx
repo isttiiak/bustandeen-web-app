@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
+import { AdminHero } from '../components/admin/adminParts.js';
 import { useAdminAuditLog } from '../hooks/useAdminAudit.js';
 
 const ACTION_LABELS: Record<string, string> = {
@@ -54,15 +56,15 @@ export default function AdminAuditLog() {
         path="/admin/audit-log"
         index={false}
       />
-      <div className="max-w-6xl mx-auto px-6 py-6 sm:py-10 space-y-6">
-        <div>
-          <h1 className="text-2xl font-black text-white">
-            {t('adminAuditLog.title', 'Audit log')}
-          </h1>
-          <p className="text-sm text-white/50 mt-1">
-            {t('adminAuditLog.subtitle', 'Every mutating admin action — who did what, and when.')}
-          </p>
-        </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
+        <AdminHero
+          icon={ClipboardDocumentListIcon}
+          title={t('adminAuditLog.title', 'Audit log')}
+          subtitle={t(
+            'adminAuditLog.subtitle',
+            'Every mutating admin action: who did what, and when.'
+          )}
+        />
 
         <input
           value={actor}
@@ -71,13 +73,13 @@ export default function AdminAuditLog() {
             setPage(1);
           }}
           placeholder={t('adminAuditLog.filterPlaceholder', 'Filter by admin email…')}
-          className="input input-sm w-full max-w-xs bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+          className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors w-full max-w-xs"
         />
 
-        <div className="rounded-2xl bg-base-200 border border-base-300 overflow-x-auto">
+        <div className="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-white/40 text-xs uppercase tracking-wide border-b border-base-300">
+              <tr className="text-left text-white/70 text-xs uppercase tracking-wide border-b border-brand-border">
                 <th className="px-3 py-2">{t('adminAuditLog.colWhen', 'When')}</th>
                 <th className="px-3 py-2">{t('adminAuditLog.colActor', 'Actor')}</th>
                 <th className="px-3 py-2">{t('adminAuditLog.colAction', 'Action')}</th>
@@ -87,21 +89,21 @@ export default function AdminAuditLog() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={4} className="text-center text-white/30 py-6">
+                  <td colSpan={4} className="text-center text-white/70 py-6">
                     {t('common.loading', 'Loading…')}
                   </td>
                 </tr>
               )}
               {!isLoading && data?.entries.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="text-center text-white/30 py-6">
+                  <td colSpan={4} className="text-center text-white/70 py-6">
                     {t('adminAuditLog.empty', 'No admin actions recorded yet.')}
                   </td>
                 </tr>
               )}
               {data?.entries.map((e) => (
-                <tr key={e._id} className="border-b border-base-300/60 last:border-0">
-                  <td className="px-3 py-2 text-white/50 whitespace-nowrap">
+                <tr key={e._id} className="border-b border-brand-border/60 last:border-0">
+                  <td className="px-3 py-2 text-white/70 whitespace-nowrap">
                     {new Date(e.createdAt).toLocaleString()}
                   </td>
                   <td className="px-3 py-2 text-white/80">
@@ -117,7 +119,7 @@ export default function AdminAuditLog() {
                     </span>
                   </td>
                   <td className="px-3 py-2 text-white/70">{ACTION_LABELS[e.action] ?? e.action}</td>
-                  <td className="px-3 py-2 text-white/40 font-mono text-xs">
+                  <td className="px-3 py-2 text-white/70 font-mono text-xs">
                     {e.targetType}#{e.targetId.slice(-6)}
                   </td>
                 </tr>
@@ -127,11 +129,11 @@ export default function AdminAuditLog() {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-3 text-sm text-white/60">
+          <div className="flex items-center justify-center gap-3 text-sm text-white/70">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="btn btn-xs rounded-lg disabled:opacity-30"
+              className="inline-flex items-center justify-center gap-1.5 rounded-control px-3 py-1.5 text-xs font-bold text-white/80 hover:text-white bg-brand-surface border border-brand-border hover:border-brand-emerald/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('adminUsers.prev', 'Prev')}
             </button>
@@ -141,7 +143,7 @@ export default function AdminAuditLog() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="btn btn-xs rounded-lg disabled:opacity-30"
+              className="inline-flex items-center justify-center gap-1.5 rounded-control px-3 py-1.5 text-xs font-bold text-white/80 hover:text-white bg-brand-surface border border-brand-border hover:border-brand-emerald/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('adminUsers.next', 'Next')}
             </button>

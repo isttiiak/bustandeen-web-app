@@ -10,6 +10,10 @@ export { INPUT as ADMIN_INPUT, LABEL as ADMIN_LABEL } from '../auth/authParts.js
 export const ADMIN_INPUT_SM =
   'px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors';
 
+/** A small filter/sort chip; pair with OPTION_ON / OPTION_OFF. */
+export const OPTION_CHIP =
+  'inline-flex items-center gap-1.5 rounded-control border px-3 py-1.5 text-xs font-bold transition-colors';
+
 /** Small pill for a status or role. */
 export const PILL = 'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold';
 export const PILL_GOLD = `${PILL} bg-brand-gold/15 text-brand-gold`;
