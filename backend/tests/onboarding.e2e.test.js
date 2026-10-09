@@ -116,4 +116,16 @@ describe('Onboarding flags', () => {
       expect(res.status).toBe(400);
     }
   });
+
+  test('the chosen habits sync as a cross-device pref', async () => {
+    const put = await request(app)
+      .put('/api/user/prefs')
+      .set('Authorization', `Bearer ${newToken}`)
+      .send({ prefs: { bustandeen_focus_habits: { v: '["salat","quran"]', t: Date.now() } } });
+    expect(put.status).toBe(200);
+    const get = await request(app)
+      .get('/api/user/prefs')
+      .set('Authorization', `Bearer ${newToken}`);
+    expect(get.body.prefs.bustandeen_focus_habits.v).toBe('["salat","quran"]');
+  });
 });

@@ -29,6 +29,8 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_cycle_weight_unit',
   'bustandeen_hide_bmi',
   'bustandeen_home_special',
+  // Onboarding (T3.3): the habits chosen in the first-run setup
+  'bustandeen_focus_habits',
   // Salat
   'bustandeen_tasbih_breakdown',
   'bustandeen_salat_auto_count',
