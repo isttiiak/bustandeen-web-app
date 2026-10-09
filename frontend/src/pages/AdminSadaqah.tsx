@@ -3,6 +3,14 @@ import { m as motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import { BTN_PRIMARY, BTN_SECONDARY, CARD } from '../components/bustanStyles.js';
+import {
+  ADMIN_INPUT_SM,
+  AdminHero,
+  BTN_DANGER,
+  BTN_SMALL,
+} from '../components/admin/adminParts.js';
+import { BanknotesIcon, CheckIcon } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
 import DonationStatusBadge from '../components/DonationStatusBadge.js';
 import { useSadaqahStats } from '../hooks/useSadaqah.js';
@@ -80,7 +88,7 @@ function PendingCard({ donation }: { donation: Donation }) {
         toast.error(
           t(
             'adminSadaqah.emailFailedWarning',
-            'Saved — but the email to the donor failed to send. Check System & ops health.'
+            'Saved, but the email to the donor failed to send. Check System & ops health.'
           )
         );
       }
@@ -96,35 +104,35 @@ function PendingCard({ donation }: { donation: Donation }) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-brand-gold/20 bg-white/[0.03] p-4 space-y-3"
+      className={`${CARD} p-4 space-y-3`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-white font-bold text-sm truncate">
             {donorLabel(donation)}
             {donation.onBehalfOf && (
-              <span className="text-white/40 font-normal">
+              <span className="text-white/70 font-normal">
                 {' '}
-                — {t('adminSadaqah.onBehalfOfPrefix', 'on behalf of')} {donation.onBehalfOf}
+                · {t('adminSadaqah.onBehalfOfPrefix', 'on behalf of')} {donation.onBehalfOf}
               </span>
             )}
           </p>
-          <p className="text-white/40 text-xs mt-0.5">
+          <p className="text-white/70 text-xs mt-0.5">
             {donation.email} · {donation.phone}
           </p>
         </div>
-        <p className="text-brand-gold font-black text-lg shrink-0">
+        <p className="text-brand-gold font-bold text-lg shrink-0">
           {donation.amount.toLocaleString()} <span className="text-xs">BDT</span>
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="rounded-xl bg-shade/20 px-3 py-2">
-          <p className="text-white/30">{t('adminSadaqah.trxId', 'Transaction ID')}</p>
+        <div className="rounded-control bg-shade/20 px-3 py-2">
+          <p className="text-white/70">{t('adminSadaqah.trxId', 'Transaction ID')}</p>
           <p className="text-white font-mono font-bold">{donation.transactionId}</p>
         </div>
-        <div className="rounded-xl bg-shade/20 px-3 py-2">
-          <p className="text-white/30">
+        <div className="rounded-control bg-shade/20 px-3 py-2">
+          <p className="text-white/70">
             {t('adminSadaqah.method', 'Method')} · {t('adminSadaqah.date', 'Date')}
           </p>
           <p className="text-white font-bold">
@@ -135,36 +143,30 @@ function PendingCard({ donation }: { donation: Donation }) {
       </div>
 
       {donation.message && (
-        <p className="text-white/50 text-xs italic border-l-2 border-white/10 pl-3">
+        <p className="text-white/70 text-xs italic border-l-2 border-brand-border pl-3">
           {donation.message}
         </p>
       )}
 
       {mode === 'idle' ? (
         <div className="flex gap-2">
-          <button
-            onClick={() => startAction('verified')}
-            className="btn btn-sm flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
-          >
+          <button onClick={() => startAction('verified')} className={`${BTN_PRIMARY} flex-1`}>
             {t('adminSadaqah.verify', 'Verify')}
           </button>
-          <button
-            onClick={() => startAction('rejected')}
-            className="btn btn-sm flex-1 bg-white/5 hover:bg-red-500/20 border border-red-400/30 text-red-300"
-          >
+          <button onClick={() => startAction('rejected')} className={`${BTN_DANGER} flex-1`}>
             {t('adminSadaqah.reject', 'Reject')}
           </button>
         </div>
       ) : (
         <div className="space-y-2">
-          <p className="text-white/40 text-xs">
+          <p className="text-white/70 text-xs">
             {t(
               'adminSadaqah.emailEditableNote',
-              'Prefilled — edit anything before sending. This is exactly what the donor receives.'
+              'Prefilled: edit anything before sending. This is exactly what the donor receives.'
             )}
           </p>
           {draft.isPending ? (
-            <p className="text-white/30 text-sm">{t('common.loading', 'Loading…')}</p>
+            <p className="text-white/70 text-sm">{t('common.loading', 'Loading…')}</p>
           ) : (
             <textarea
               autoFocus
@@ -173,8 +175,8 @@ function PendingCard({ donation }: { donation: Donation }) {
               rows={8}
               className={`textarea textarea-bordered w-full text-white text-sm leading-relaxed ${
                 mode === 'rejected'
-                  ? 'bg-white/5 border-red-400/20'
-                  : 'bg-white/5 border-brand-emerald/20'
+                  ? 'bg-brand-surface/50 border-red-400/20'
+                  : 'bg-brand-surface/50 border-brand-emerald/20'
               }`}
             />
           )}
@@ -182,11 +184,7 @@ function PendingCard({ donation }: { donation: Donation }) {
             <button
               onClick={confirm}
               disabled={!emailText.trim() || sending || draft.isPending}
-              className={`btn btn-sm flex-1 border-0 text-white disabled:opacity-40 ${
-                mode === 'rejected'
-                  ? 'bg-red-500 hover:bg-red-600'
-                  : 'bg-brand-emerald hover:bg-brand-emerald-dim'
-              }`}
+              className={`${mode === 'rejected' ? `${BTN_DANGER} !text-sm !py-2.5` : BTN_PRIMARY} flex-1`}
             >
               {sending ? (
                 <span className="loading loading-spinner loading-xs" />
@@ -196,10 +194,7 @@ function PendingCard({ donation }: { donation: Donation }) {
                 t('adminSadaqah.sendVerify', 'Send verification email')
               )}
             </button>
-            <button
-              onClick={cancel}
-              className="btn btn-sm bg-white/5 border border-white/10 text-white/60"
-            >
+            <button onClick={cancel} className={BTN_SMALL}>
               {t('common.cancel', 'Cancel')}
             </button>
           </div>
@@ -240,21 +235,21 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/5 p-4 text-center">
-          <p className="text-white text-2xl font-black">{pending?.length ?? '—'}</p>
-          <p className="text-white/40 text-xs mt-1">{t('adminSadaqah.statPending', 'Pending')}</p>
+        <div className={`${CARD} p-4 text-center`}>
+          <p className="text-white text-2xl font-bold">{pending?.length ?? '-'}</p>
+          <p className="text-white/70 text-xs mt-1">{t('adminSadaqah.statPending', 'Pending')}</p>
         </div>
-        <div className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/5 p-4 text-center">
-          <p className="text-white text-2xl font-black">{verifiedThisMonth.length}</p>
-          <p className="text-white/40 text-xs mt-1">
+        <div className={`${CARD} p-4 text-center`}>
+          <p className="text-white text-2xl font-bold">{verifiedThisMonth.length}</p>
+          <p className="text-white/70 text-xs mt-1">
             {t('adminSadaqah.statThisMonth', 'Verified this month')}
           </p>
         </div>
-        <div className="rounded-2xl border border-brand-emerald/10 bg-white/[0.04] p-4 text-center">
-          <p className="text-white text-2xl font-black">
-            {stats?.totalVerifiedAmount.toLocaleString() ?? '—'}
+        <div className={`${CARD} p-4 text-center`}>
+          <p className="text-white text-2xl font-bold">
+            {stats?.totalVerifiedAmount.toLocaleString() ?? '-'}
           </p>
-          <p className="text-white/40 text-xs mt-1">
+          <p className="text-white/70 text-xs mt-1">
             {t('adminSadaqah.statLifetime', 'Lifetime BDT')}
           </p>
         </div>
@@ -265,11 +260,11 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
           {t('adminSadaqah.pendingQueue', 'Pending queue')}
         </h2>
         {pendingLoading && (
-          <p className="text-white/40 text-sm">{t('common.loading', 'Loading…')}</p>
+          <p className="text-white/70 text-sm">{t('common.loading', 'Loading…')}</p>
         )}
         {!pendingLoading && pending?.length === 0 && (
-          <p className="text-white/30 text-sm">
-            {t('adminSadaqah.noPending', 'Nothing waiting — all caught up.')}
+          <p className="text-white/70 text-sm">
+            {t('adminSadaqah.noPending', 'Nothing waiting. All caught up.')}
           </p>
         )}
         <div className="grid lg:grid-cols-2 gap-3">
@@ -281,7 +276,7 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+          <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/70">
             {t('adminSadaqah.allSubmissions', 'All submissions')}
           </h2>
           <select
@@ -290,7 +285,7 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
               setFilterStatus(e.target.value as DonationStatus | 'all');
               setPage(1);
             }}
-            className="select select-sm bg-white/5 border-brand-emerald/15 text-white"
+            className={ADMIN_INPUT_SM}
           >
             <option value="all">{t('adminSadaqah.filterAll', 'All')}</option>
             <option value="pending">{t('adminSadaqah.statusPending', 'Pending')}</option>
@@ -299,11 +294,11 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
           </select>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+        <div className={`${CARD} overflow-hidden`}>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-white/40 text-xs border-b border-white/10">
+                <tr className="text-white/70 text-xs border-b border-brand-border">
                   <th className="text-left px-3 py-2">{t('adminSadaqah.colDate', 'Date')}</th>
                   <th className="text-left px-3 py-2">{t('adminSadaqah.colDonor', 'Donor')}</th>
                   <th className="text-right px-3 py-2">{t('adminSadaqah.colAmount', 'Amount')}</th>
@@ -318,14 +313,14 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
               <tbody>
                 {allLoading && (
                   <tr>
-                    <td colSpan={isServant ? 7 : 6} className="text-center text-white/30 py-4">
+                    <td colSpan={isServant ? 7 : 6} className="text-center text-white/70 py-4">
                       {t('common.loading', 'Loading…')}
                     </td>
                   </tr>
                 )}
                 {allResult?.donations.map((d) => (
-                  <tr key={d._id} className="border-b border-white/5 last:border-0">
-                    <td className="px-3 py-2 text-white/50 whitespace-nowrap">
+                  <tr key={d._id} className="border-b border-brand-border/60 last:border-0">
+                    <td className="px-3 py-2 text-white/70 whitespace-nowrap">
                       {d.createdAt.slice(0, 10)}
                     </td>
                     <td className="px-3 py-2 text-white/80 truncate max-w-[160px]">
@@ -334,12 +329,12 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
                     <td className="px-3 py-2 text-white text-right font-bold whitespace-nowrap">
                       {d.amount.toLocaleString()}
                     </td>
-                    <td className="px-3 py-2 text-white/50 font-mono text-xs">{d.transactionId}</td>
+                    <td className="px-3 py-2 text-white/70 font-mono text-xs">{d.transactionId}</td>
                     <td className="px-3 py-2">
                       <DonationStatusBadge status={d.status} />
                     </td>
-                    <td className="px-3 py-2 text-white/40 text-xs max-w-[220px]">
-                      <span className="truncate">{d.verifiedBy ?? '—'}</span>
+                    <td className="px-3 py-2 text-white/70 text-xs max-w-[220px]">
+                      <span className="truncate">{d.verifiedBy ?? '-'}</span>
                       {d.status === 'verified' && (
                         <button
                           onClick={() => downloadReceipt.mutate(d._id)}
@@ -362,7 +357,7 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
                           className={
                             confirmDeleteId === d._id
                               ? 'text-red-400 text-xs font-bold'
-                              : 'text-white/20 hover:text-red-400 text-xs'
+                              : 'text-white/70 hover:text-red-400 text-xs'
                           }
                         >
                           {confirmDeleteId === d._id
@@ -383,11 +378,11 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
             <button
               disabled={page <= 1}
               onClick={() => setPage((p) => Math.max(1, p - 1))}
-              className="btn btn-sm bg-white/5 border border-white/10 text-white/60 disabled:opacity-30"
+              className={BTN_SMALL}
             >
               {t('adminSadaqah.prevPage', 'Prev')}
             </button>
-            <span className="text-white/40">
+            <span className="text-white/70">
               {t('adminSadaqah.pageOf', 'Page {{page}} of {{total}}', {
                 page,
                 total: Math.ceil(allResult.total / allResult.limit),
@@ -396,7 +391,7 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
             <button
               disabled={page >= Math.ceil(allResult.total / allResult.limit)}
               onClick={() => setPage((p) => p + 1)}
-              className="btn btn-sm bg-white/5 border border-white/10 text-white/60 disabled:opacity-30"
+              className={BTN_SMALL}
             >
               {t('adminSadaqah.nextPage', 'Next')}
             </button>
@@ -444,41 +439,41 @@ function ExpensesTab({ isServant }: { isServant: boolean }) {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+        <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/70">
           {t('adminSadaqah.expensesTitle', 'Project costs')}
         </h2>
-        <p className="text-white/25 text-xs mt-0.5">
+        <p className="text-white/70 text-xs mt-0.5">
           {t(
             'adminSadaqah.expensesNote',
-            'Internal record only — never shown publicly. This is also what the Analytics tab sums to auto-calculate a quarter\'s "spent" figure.'
+            'Internal record only, never shown publicly. This is also what the Analytics tab sums to auto-calculate a quarter\'s "spent" figure.'
           )}
         </p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-2">
+        <div className={`${CARD} p-4 space-y-2`}>
           {expenses?.length === 0 && (
-            <p className="text-white/30 text-sm">
+            <p className="text-white/70 text-sm">
               {t('adminSadaqah.noExpenses', 'No costs recorded yet.')}
             </p>
           )}
           {expenses?.map((e) => (
             <div
               key={e._id}
-              className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
+              className="flex items-center justify-between gap-3 border-b border-brand-border/60 pb-2 last:border-0 last:pb-0"
             >
               <div className="min-w-0">
                 <p className="text-white font-bold text-sm">
-                  {e.amount.toLocaleString()} <span className="text-xs text-white/40">BDT</span>
+                  {e.amount.toLocaleString()} <span className="text-xs text-white/70">BDT</span>
                 </p>
-                <p className="text-white/40 text-xs truncate">
-                  {e.date.slice(0, 10)} — {e.description}
+                <p className="text-white/70 text-xs truncate">
+                  {e.date.slice(0, 10)} · {e.description}
                 </p>
               </div>
               {isServant && (
                 <button
                   onClick={() => clickDeleteExpense(e._id)}
-                  className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300 shrink-0"
+                  className={`${BTN_DANGER} shrink-0`}
                 >
                   {confirmDeleteExpenseId === e._id
                     ? t('adminSadaqah.confirmDelete', 'Confirm?')
@@ -488,7 +483,7 @@ function ExpensesTab({ isServant }: { isServant: boolean }) {
             </div>
           ))}
           {!!expenses?.length && (
-            <p className="text-white/50 text-xs font-bold pt-1">
+            <p className="text-white/70 text-xs font-bold pt-1">
               {t('adminSadaqah.totalCosts', 'Total: {{amount}} BDT', {
                 amount: totalExpenses.toLocaleString(),
               })}
@@ -496,7 +491,7 @@ function ExpensesTab({ isServant }: { isServant: boolean }) {
           )}
         </div>
 
-        <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2 h-fit">
+        <div className={`${CARD} p-4 space-y-2 h-fit`}>
           <p className="text-white/70 text-xs font-bold">
             {t('adminSadaqah.addExpense', 'Record a cost')}
           </p>
@@ -505,24 +500,23 @@ function ExpensesTab({ isServant }: { isServant: boolean }) {
               type="date"
               value={expForm.date}
               onChange={(e) => setExpForm((f) => ({ ...f, date: e.target.value }))}
-              className="input input-sm bg-white/5 border-brand-emerald/15 text-white"
+              className={ADMIN_INPUT_SM}
             />
             <input
               type="number"
               value={expForm.amount}
               onChange={(e) => setExpForm((f) => ({ ...f, amount: e.target.value }))}
               placeholder={t('adminSadaqah.amountBdt', 'Amount (BDT)')}
-              className="input input-sm bg-white/5 border-brand-emerald/15 text-white"
+              aria-label={t('adminSadaqah.amountBdt', 'Amount (BDT)')}
+              className={ADMIN_INPUT_SM}
             />
           </div>
           <input
             value={expForm.description}
             onChange={(e) => setExpForm((f) => ({ ...f, description: e.target.value }))}
-            placeholder={t(
-              'adminSadaqah.expenseDescPlaceholder',
-              'e.g. Server hosting — September'
-            )}
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
+            placeholder={t('adminSadaqah.expenseDescPlaceholder', 'e.g. Server hosting, September')}
+            aria-label={t('adminSadaqah.expenseDescPlaceholder', 'e.g. Server hosting, September')}
+            className={`${ADMIN_INPUT_SM} w-full`}
           />
           <button
             onClick={saveExpense}
@@ -532,7 +526,7 @@ function ExpensesTab({ isServant }: { isServant: boolean }) {
               !(Number(expForm.amount) >= 0) ||
               addExpense.isPending
             }
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
+            className={BTN_PRIMARY}
           >
             {t('adminSadaqah.save', 'Save')}
           </button>
@@ -570,36 +564,36 @@ function QuarterlyPublisher() {
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+        <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/70">
           {t('adminSadaqah.quarterlyTitle', 'Quarterly public report')}
         </h2>
-        <p className="text-white/25 text-xs mt-0.5">
+        <p className="text-white/70 text-xs mt-0.5">
           {t(
             'adminSadaqah.quarterlyNote',
-            'Received and spent are always computed fresh from verified donations and the expense ledger — nothing here is typed in by hand. Nothing shows on the public page until you publish.'
+            'Received and spent are always computed fresh from verified donations and the expense ledger. Nothing here is typed in by hand. Nothing shows on the public page until you publish.'
           )}
         </p>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-2">
-          <p className="text-white/50 text-xs font-bold uppercase tracking-wide">
+        <div className={`${CARD} p-4 space-y-2`}>
+          <p className="text-white/70 text-xs font-bold uppercase tracking-wide">
             {t('adminSadaqah.publishedQuarters', 'Quarters')}
           </p>
           {quarterlyList?.length === 0 && (
-            <p className="text-white/30 text-sm">{t('adminSadaqah.noQuarters', 'None yet.')}</p>
+            <p className="text-white/70 text-sm">{t('adminSadaqah.noQuarters', 'None yet.')}</p>
           )}
           {quarterlyList?.map((q) => (
             <div
               key={q.quarter}
-              className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
+              className="flex items-center justify-between gap-3 border-b border-brand-border/60 pb-2 last:border-0 last:pb-0"
             >
               <div className="min-w-0">
                 <p className="text-white font-bold text-sm">
                   {q.quarter}{' '}
                   <span
-                    className={`text-[10px] font-black uppercase tracking-wide ml-1 ${
-                      q.published ? 'text-brand-emerald' : 'text-white/30'
+                    className={`text-[10px] font-bold uppercase tracking-wide ml-1 ${
+                      q.published ? 'text-brand-emerald' : 'text-white/70'
                     }`}
                   >
                     {q.published
@@ -607,31 +601,25 @@ function QuarterlyPublisher() {
                       : t('adminSadaqah.draft', 'draft')}
                   </span>
                 </p>
-                <p className="text-white/40 text-xs truncate">
+                <p className="text-white/70 text-xs truncate">
                   +{q.received.toLocaleString()} / -{q.spent.toLocaleString()}
-                  {q.notes ? ` — ${q.notes}` : ''}
+                  {q.notes ? ` · ${q.notes}` : ''}
                 </p>
               </div>
               <div className="flex gap-2 shrink-0">
                 {q.published ? (
-                  <button
-                    onClick={() => unpublish.mutate(q.quarter)}
-                    className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
-                  >
+                  <button onClick={() => unpublish.mutate(q.quarter)} className={BTN_SMALL}>
                     {t('adminSadaqah.unpublish', 'Unpublish')}
                   </button>
                 ) : (
                   <button
                     onClick={() => publish.mutate({ quarter: q.quarter })}
-                    className="btn btn-xs bg-brand-emerald/20 border border-brand-emerald/30 text-brand-emerald"
+                    className={BTN_SMALL}
                   >
                     {t('adminSadaqah.publish', 'Publish')}
                   </button>
                 )}
-                <button
-                  onClick={() => deleteQuarterly.mutate(q.quarter)}
-                  className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300"
-                >
+                <button onClick={() => deleteQuarterly.mutate(q.quarter)} className={BTN_DANGER}>
                   {t('adminSadaqah.delete', 'Delete')}
                 </button>
               </div>
@@ -639,7 +627,7 @@ function QuarterlyPublisher() {
           ))}
         </div>
 
-        <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-2 h-fit">
+        <div className={`${CARD} p-4 space-y-2 h-fit`}>
           <p className="text-white/70 text-xs font-bold">
             {t('adminSadaqah.previewPublish', 'Preview & publish a quarter')}
           </p>
@@ -650,18 +638,19 @@ function QuarterlyPublisher() {
               setPreviewData(null);
             }}
             placeholder="2026-Q3"
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
+            aria-label="2026-Q3"
+            className={`${ADMIN_INPUT_SM} w-full`}
           />
           <button
             onClick={runPreview}
             disabled={!/^\d{4}-Q[1-4]$/.test(quarter) || preview.isPending}
-            className="btn btn-sm bg-white/5 border border-white/10 text-white/70 disabled:opacity-40"
+            className={BTN_SMALL}
           >
             {preview.isPending ? '…' : t('adminSadaqah.calculate', 'Calculate')}
           </button>
 
           {previewData && (
-            <div className="rounded-xl bg-shade/20 px-3 py-2 text-sm">
+            <div className="rounded-control bg-shade/20 px-3 py-2 text-sm">
               <p className="text-white">
                 {t('adminSadaqah.received', 'Received')}:{' '}
                 <span className="font-bold text-brand-emerald">
@@ -684,12 +673,16 @@ function QuarterlyPublisher() {
               'adminSadaqah.notesPlaceholder',
               'Notes (e.g. server costs, qari recording)'
             )}
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white"
+            aria-label={t(
+              'adminSadaqah.notesPlaceholder',
+              'Notes (e.g. server costs, qari recording)'
+            )}
+            className={`${ADMIN_INPUT_SM} w-full`}
           />
           <button
             onClick={confirmPublish}
             disabled={!previewData || publish.isPending}
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
+            className={BTN_PRIMARY}
           >
             {publish.isPending ? '…' : t('adminSadaqah.publish', 'Publish')}
           </button>
@@ -718,11 +711,7 @@ function DonorEmailAction({ email }: { email: string }) {
 
   if (!form) {
     return (
-      <button
-        onClick={start}
-        disabled={draft.isPending}
-        className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
-      >
+      <button onClick={start} disabled={draft.isPending} className={BTN_SMALL}>
         {draft.isPending ? '…' : t('adminSadaqah.sendEmail', 'Send email')}
       </button>
     );
@@ -730,36 +719,32 @@ function DonorEmailAction({ email }: { email: string }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="w-full max-w-lg rounded-2xl border border-brand-emerald/20 bg-brand-deep p-5 space-y-3">
+      <div className="w-full max-w-lg rounded-card border border-brand-emerald/20 bg-brand-deep p-5 space-y-3">
         <p className="text-white font-bold text-sm">
           {t('adminSadaqah.emailTo', 'Email to')} {email}
         </p>
-        <p className="text-white/40 text-xs">
+        <p className="text-white/70 text-xs">
           {t(
             'adminSadaqah.emailEditableNote',
-            'Prefilled — edit anything before sending. This is exactly what the donor receives.'
+            'Prefilled: edit anything before sending. This is exactly what the donor receives.'
           )}
         </p>
         <input
           value={form.subject}
           onChange={(e) => setForm((f) => (f ? { ...f, subject: e.target.value } : f))}
-          className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+          className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors w-full"
         />
         <textarea
           value={form.body}
           onChange={(e) => setForm((f) => (f ? { ...f, body: e.target.value } : f))}
           rows={9}
-          className="textarea textarea-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl font-mono"
+          className={`${ADMIN_INPUT_SM} w-full font-mono`}
         />
         <div className="flex gap-2">
-          <button
-            onClick={confirmSend}
-            disabled={send.isPending}
-            className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
-          >
+          <button onClick={confirmSend} disabled={send.isPending} className={BTN_PRIMARY}>
             {send.isPending ? '…' : t('adminSadaqah.confirmSendEmail', 'Send this email')}
           </button>
-          <button onClick={() => setForm(null)} className="btn btn-sm btn-ghost text-white/50">
+          <button onClick={() => setForm(null)} className={BTN_SECONDARY}>
             {t('adminZikr.cancel', 'Cancel')}
           </button>
         </div>
@@ -774,11 +759,8 @@ function AnalyticsTab({ isServant }: { isServant: boolean }) {
 
   if (!isServant) {
     return (
-      <p className="text-white/40 text-sm">
-        {t(
-          'adminSadaqah.analyticsServantOnly',
-          'Servant-only — financial analytics and reporting.'
-        )}
+      <p className="text-white/70 text-sm">
+        {t('adminSadaqah.analyticsServantOnly', 'Servant-only: financial analytics and reporting.')}
       </p>
     );
   }
@@ -789,28 +771,28 @@ function AnalyticsTab({ isServant }: { isServant: boolean }) {
 
       {donorAnalytics && (
         <section className="space-y-3">
-          <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+          <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/70">
             {t('adminSadaqah.donorAnalyticsTitle', 'Donor analytics')}
           </h2>
 
           <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-brand-emerald/20 bg-brand-emerald/5 p-4 text-center">
-              <p className="text-white text-2xl font-black">{donorAnalytics.repeatDonorCount}</p>
-              <p className="text-white/40 text-xs mt-1">
+            <div className={`${CARD} p-4 text-center`}>
+              <p className="text-white text-2xl font-bold">{donorAnalytics.repeatDonorCount}</p>
+              <p className="text-white/70 text-xs mt-1">
                 {t('adminSadaqah.repeatDonors', 'Repeat donors')}
               </p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
-              <p className="text-white text-2xl font-black">{donorAnalytics.oneOffDonorCount}</p>
-              <p className="text-white/40 text-xs mt-1">
+            <div className={`${CARD} p-4 text-center`}>
+              <p className="text-white text-2xl font-bold">{donorAnalytics.oneOffDonorCount}</p>
+              <p className="text-white/70 text-xs mt-1">
                 {t('adminSadaqah.oneOffDonors', 'One-off donors')}
               </p>
             </div>
           </div>
 
           {donorAnalytics.monthlyTrend.length > 0 && (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-              <p className="text-white/50 text-xs font-bold mb-2">
+            <div className={`${CARD} p-4`}>
+              <p className="text-white/70 text-xs font-bold mb-2">
                 {t('adminSadaqah.monthlyTrend', 'Month-over-month (verified)')}
               </p>
               <div className="space-y-1.5">
@@ -818,8 +800,8 @@ function AnalyticsTab({ isServant }: { isServant: boolean }) {
                   const max = Math.max(...donorAnalytics.monthlyTrend.map((x) => x.amount), 1);
                   return (
                     <div key={m.month} className="flex items-center gap-2 text-xs">
-                      <span className="text-white/40 w-16 shrink-0">{m.month}</span>
-                      <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+                      <span className="text-white/70 w-16 shrink-0">{m.month}</span>
+                      <div className="flex-1 h-2 rounded-full bg-brand-surface/50 overflow-hidden">
                         <div
                           className="h-full bg-brand-emerald rounded-full"
                           style={{ width: `${(m.amount / max) * 100}%` }}
@@ -835,11 +817,11 @@ function AnalyticsTab({ isServant }: { isServant: boolean }) {
             </div>
           )}
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
+          <div className={`${CARD} overflow-hidden`}>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-white/40 text-xs border-b border-white/10">
+                  <tr className="text-white/70 text-xs border-b border-brand-border">
                     <th className="text-left px-3 py-2">{t('adminSadaqah.colEmail', 'Email')}</th>
                     <th className="text-right px-3 py-2">
                       {t('adminSadaqah.colDonations', 'Donations')}
@@ -853,7 +835,7 @@ function AnalyticsTab({ isServant }: { isServant: boolean }) {
                 </thead>
                 <tbody>
                   {donorAnalytics.topDonors.map((d) => (
-                    <tr key={d.email} className="border-b border-white/5 last:border-0">
+                    <tr key={d.email} className="border-b border-brand-border/60 last:border-0">
                       <td className="px-3 py-2 text-white/80 truncate max-w-[200px]">{d.email}</td>
                       <td className="px-3 py-2 text-white text-right font-bold">
                         {d.donationCount}
@@ -861,7 +843,13 @@ function AnalyticsTab({ isServant }: { isServant: boolean }) {
                       <td className="px-3 py-2 text-white text-right font-bold">
                         {d.totalAmount.toLocaleString()}
                       </td>
-                      <td className="px-3 py-2">{d.isAppUser ? '✓' : '—'}</td>
+                      <td className="px-3 py-2">
+                        {d.isAppUser ? (
+                          <CheckIcon className="w-4 h-4 text-brand-emerald" aria-label="App user" />
+                        ) : (
+                          '-'
+                        )}
+                      </td>
                       <td className="px-3 py-2 text-right">
                         <DonorEmailAction email={d.email} />
                       </td>
@@ -899,19 +887,17 @@ export default function AdminSadaqah() {
         index={false}
       />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
-        <h1 className="text-2xl font-black text-white">
-          {t('adminSadaqah.title', 'Sadaqah Admin')}
-        </h1>
+        <AdminHero icon={BanknotesIcon} title={t('adminSadaqah.title', 'Sadaqah Admin')} />
 
-        <div className="flex gap-2 border-b border-white/10 pb-px">
+        <div className="flex gap-2 border-b border-brand-border pb-px">
           {tabs.map((tb) => (
             <button
               key={tb.id}
               onClick={() => setTab(tb.id)}
-              className={`px-4 py-2 text-sm font-bold rounded-t-lg transition-colors ${
+              className={`px-4 py-2 text-sm font-bold rounded-t-control transition-colors ${
                 tab === tb.id
                   ? 'bg-brand-emerald/15 text-brand-emerald border-b-2 border-brand-emerald'
-                  : 'text-white/50 hover:text-white'
+                  : 'text-white/70 hover:text-white'
               }`}
             >
               {tb.label}

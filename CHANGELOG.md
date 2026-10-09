@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.116.3 - Admin panel: sadaqah in the new look - 2026-10-09
+
+### Changed
+
+- **Admin panel (staff only)**: the Sadaqah admin (submissions, project costs and analytics) uses the Bustan Arch design: the arched heading, the app's cards, buttons and inputs, labelled fields, and a check icon for app users. The verify and reject email buttons are clearly told apart, and the English text no longer uses em dashes.
+
 ## v5.116.2 - Admin panel: messages and zikr requests in the new look - 2026-10-09
 
 ### Changed
