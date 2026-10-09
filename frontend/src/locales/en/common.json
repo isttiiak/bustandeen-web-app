@@ -1091,7 +1091,10 @@
       "nextSunnah": "Next sunnah fast: {{day}}, {{kind}}",
       "suhoorIftar": "suḥūr until {{fajr}}, ifṭār {{maghrib}}",
       "nextSunnahDay": "Next sunnah fast: {{day}}"
-    }
+    },
+    "adhkarProgress": "{{done}} of {{total}} read",
+    "adhkarUntil": "until {{time}}",
+    "adhkarDone": "Done for today"
   },
   "library": {
     "duaTitle": "Du'a Library",
@@ -1099,7 +1102,7 @@
     "duaSeoTitle": "Du'a Library",
     "duaSeoDescription": "Authentic du'as for everyday situations, with source and grading for every entry.",
     "adhkarTitle": "Adhkar",
-    "adhkarSubtitle": "Morning and evening remembrance from the Sunnah - tap a count badge to track your repeats.",
+    "adhkarSubtitle": "Morning and evening remembrance from the Sunnah, one at a time. Tap to count; the next one opens when the count is reached.",
     "adhkarSeoTitle": "Adhkar",
     "adhkarSeoDescription": "Morning and evening adhkar - the Prophet's ﷺ remembrances for the start and end of the day.",
     "adhkarMorning": "Morning",
@@ -1114,7 +1117,21 @@
     "noResults": "No results found.",
     "sourceLabel": "Source",
     "zakatSeoTitle": "Zakat Calculator",
-    "zakatSeoDescription": "Work out your zakat: nisab by gold or silver standard, your assets and debts, and when your hawl is due."
+    "zakatSeoDescription": "Work out your zakat: nisab by gold or silver standard, your assets and debts, and when your hawl is due.",
+    "adhkarStep": "{{n}} of {{total}}",
+    "adhkarDoneCount_one": "{{count}} done",
+    "adhkarDoneCount_other": "{{count}} done",
+    "adhkarNext": "Next",
+    "adhkarBack": "Back",
+    "adhkarShowAll": "Show all",
+    "adhkarOneByOne": "One at a time",
+    "adhkarCompleteMorning": "Morning adhkar complete. May Allah accept it.",
+    "adhkarCompleteEvening": "Evening adhkar complete. May Allah accept it.",
+    "adhkarSavedDone": "Saved as done for today on all your devices.",
+    "adhkarReadAgain": "Read again",
+    "adhkarArabicText": "Arabic text:",
+    "adhkarQuranLoading": "Loading the Arabic text...",
+    "adhkarQuranError": "The Arabic text could not load. Check your connection and open this page again."
   },
   "landing": {
     "citiesTitle": "Prayer times in your city",
@@ -2850,7 +2867,7 @@
     "downloadAllData": "Download all my data",
     "downloadAllDataDone": "Your data was downloaded",
     "downloadAllDataFailed": "Could not download your data. Check your connection and try again.",
-    "downloadAllDataNote": "\"Download all my data\" gives you a copy of everything Bustandeen holds about you: profile, zikr, salat, fasting, Quran, hifz, Rayhanah, friends (as counts only), messages you sent us and your sadaqah submissions. It is for your own records and cannot be restored. Use the full backup above to restore.",
+    "downloadAllDataNote": "\"Download all my data\" gives you a copy of everything Bustandeen holds about you: profile, zikr, salat, fasting, adhkar routine days, Quran, hifz, Rayhanah, friends (as counts only), messages you sent us and your sadaqah submissions. It is for your own records and cannot be restored. Use the full backup above to restore.",
     "groqKeyActive": "Using your own key",
     "groqKeyAddedOn": "Added on",
     "groqKeyChange": "Change",

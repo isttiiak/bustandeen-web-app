@@ -1,0 +1,726 @@
+<title>Adhkar Routine Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link
+  href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=El+Messiri:wght@500;600;700&family=Hind+Siliguri:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  /* T4.3 prototype: guided morning/evening adhkar on /library/adhkar.
+     Static mock, not app code. Phone colours = the app's --c-* tokens
+     (bustandeen dark + bustandeen-light). Layout: doc header, then two
+     375px phones side by side (dark, light), then the decision notes. */
+  :root {
+    --page: #d9dccd;
+    --pageInk: #1f2418;
+    --pageMuted: #4b5440;
+    --display: 'El Messiri', Georgia, serif;
+    --body: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, sans-serif;
+    --arabic: 'Amiri', 'Scheherazade New', serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --page: #2b2a26;
+      --pageInk: #e8e2d4;
+      --pageMuted: #b5ad9b;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme='dark'] {
+    --page: #2b2a26;
+    --pageInk: #e8e2d4;
+    --pageMuted: #b5ad9b;
+    color-scheme: dark;
+  }
+  .t-dark {
+    --void: 14 13 10;
+    --deep: 26 24 18;
+    --surface: 33 31 22;
+    --border: 58 52 37;
+    --emerald: 122 158 110;
+    --emerald-dim: 90 122 80;
+    --gold: 201 169 110;
+    --ink: 255 255 255;
+    --hero: 42 38 23;
+    --elev: 0 4px 14px rgb(0 0 0 / 0.45);
+  }
+  .t-light {
+    --void: 237 239 226;
+    --deep: 248 248 239;
+    --surface: 226 231 211;
+    --border: 198 206 176;
+    --emerald: 54 81 46;
+    --emerald-dim: 58 86 50;
+    --gold: 95 74 24;
+    --ink: 31 36 24;
+    --hero: 217 227 198;
+    --elev: 0 6px 18px rgb(60 70 40 / 0.18);
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--pageInk);
+    font-family: var(--body);
+    padding: 24px 16px 48px;
+  }
+  .doc {
+    max-width: 820px;
+    margin: 0 auto;
+    display: grid;
+    gap: 10px;
+  }
+  .doc h1 {
+    font-family: var(--display);
+    font-size: 1.7rem;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .doc p {
+    margin: 0;
+    color: var(--pageMuted);
+    line-height: 1.55;
+    max-width: 68ch;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+  }
+  .controls button {
+    font: 600 0.85rem var(--body);
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid currentColor;
+    background: transparent;
+    color: var(--pageInk);
+    cursor: pointer;
+  }
+  .controls button[aria-pressed='true'] {
+    background: var(--pageInk);
+    color: var(--page);
+  }
+  .phones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    justify-content: center;
+    margin: 24px auto 0;
+    max-width: 820px;
+  }
+  .phone-wrap {
+    display: grid;
+    gap: 8px;
+    justify-items: center;
+  }
+  .phone-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pageMuted);
+  }
+  .phone {
+    width: 375px;
+    max-width: 100%;
+    border-radius: 28px;
+    overflow: hidden;
+    background: rgb(var(--void));
+    color: rgb(var(--ink));
+    box-shadow: 0 10px 30px rgb(0 0 0 / 0.3);
+    border: 1px solid rgb(var(--border));
+  }
+  .screen {
+    padding: 16px;
+    display: grid;
+    gap: 14px;
+    min-height: 720px;
+    align-content: start;
+  }
+  .lbl {
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(var(--ink) / 0.6);
+    font-weight: 700;
+  }
+
+  /* Home card (existing AdhkarCard, now with progress) */
+  .home {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 20px;
+    background: rgb(var(--deep));
+    border: 1px solid rgb(var(--border));
+  }
+  .home .ic {
+    width: 36px;
+    height: 36px;
+    flex: none;
+    color: rgb(var(--gold));
+  }
+  .home .t {
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  .home .s {
+    font-size: 0.75rem;
+    color: rgb(var(--ink) / 0.65);
+  }
+  .home .ring {
+    margin-left: auto;
+    flex: none;
+  }
+  .home.done .t::after {
+    content: '';
+  }
+
+  /* period toggle */
+  .seg {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .seg button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 9px;
+    border-radius: 12px;
+    font: 700 0.85rem var(--body);
+    cursor: pointer;
+    border: 1px solid rgb(var(--border));
+    background: rgb(var(--surface) / 0.5);
+    color: rgb(var(--ink) / 0.8);
+  }
+  .seg button[aria-pressed='true'] {
+    border-color: rgb(var(--emerald) / 0.6);
+    background: rgb(var(--emerald) / 0.15);
+    color: rgb(var(--ink));
+  }
+  .seg svg {
+    width: 18px;
+    height: 18px;
+    color: rgb(var(--gold));
+  }
+
+  /* progress */
+  .prog {
+    display: grid;
+    gap: 6px;
+  }
+  .prog-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: rgb(var(--ink) / 0.7);
+    font-variant-numeric: tabular-nums;
+  }
+  .steps {
+    display: flex;
+    gap: 4px;
+  }
+  .steps i {
+    flex: 1;
+    height: 5px;
+    border-radius: 3px;
+    background: rgb(var(--border));
+  }
+  .steps i.d {
+    background: rgb(var(--emerald));
+  }
+  .steps i.c {
+    background: rgb(var(--gold));
+  }
+
+  /* guided card */
+  .card {
+    border-radius: 20px;
+    background: rgb(var(--deep));
+    border: 1px solid rgb(var(--border));
+    box-shadow: var(--elev);
+    padding: 18px 16px;
+    display: grid;
+    gap: 12px;
+  }
+  .card h2 {
+    font-family: var(--display);
+    font-size: 1.15rem;
+    margin: 0;
+  }
+  .ar {
+    font-family: var(--arabic);
+    font-size: 1.45rem;
+    line-height: 2.1;
+    direction: rtl;
+    text-align: right;
+    margin: 0;
+  }
+  .tr {
+    font-style: italic;
+    font-size: 0.78rem;
+    color: rgb(var(--ink) / 0.6);
+    margin: 0;
+  }
+  .mean {
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: rgb(var(--ink) / 0.85);
+    margin: 0;
+  }
+  .src {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.75rem;
+    padding-top: 10px;
+    border-top: 1px solid rgb(var(--border));
+  }
+  .src span {
+    color: rgb(var(--ink) / 0.6);
+  }
+  .src a {
+    color: rgb(var(--gold));
+    text-align: right;
+  }
+
+  .counter {
+    justify-self: center;
+    width: 148px;
+    height: 148px;
+    border-radius: 50%;
+    border: 0;
+    cursor: pointer;
+    position: relative;
+    background: transparent;
+    color: rgb(var(--ink));
+    font: 800 2rem var(--body);
+    font-variant-numeric: tabular-nums;
+  }
+  .counter svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .counter .num {
+    position: relative;
+    display: grid;
+    gap: 2px;
+  }
+  .counter .of {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgb(var(--ink) / 0.6);
+  }
+  .counter:focus-visible,
+  .nav button:focus-visible,
+  .seg button:focus-visible {
+    outline: 2px solid rgb(var(--gold));
+    outline-offset: 3px;
+  }
+  .hint {
+    text-align: center;
+    font-size: 0.75rem;
+    color: rgb(var(--ink) / 0.6);
+    margin: -4px 0 0;
+  }
+
+  .nav {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .nav button {
+    padding: 10px;
+    border-radius: 12px;
+    font: 700 0.85rem var(--body);
+    cursor: pointer;
+    border: 1px solid rgb(var(--border));
+    background: rgb(var(--surface) / 0.5);
+    color: rgb(var(--ink));
+  }
+  .nav button.pri {
+    background: rgb(var(--emerald-dim));
+    border-color: transparent;
+    color: #fff;
+  }
+  .all {
+    background: none;
+    border: 0;
+    color: rgb(var(--gold));
+    font: 600 0.8rem var(--body);
+    text-decoration: underline;
+    cursor: pointer;
+    justify-self: center;
+  }
+
+  .list {
+    display: grid;
+    gap: 8px;
+  }
+  .list div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgb(var(--deep));
+    border: 1px solid rgb(var(--border));
+    font-size: 0.85rem;
+  }
+  .list b {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.75rem;
+    color: rgb(var(--ink) / 0.7);
+  }
+  .list .ok b {
+    color: rgb(var(--emerald));
+  }
+
+  .notes {
+    max-width: 820px;
+    margin: 32px auto 0;
+    display: grid;
+    gap: 10px;
+  }
+  .notes h2 {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    margin: 0;
+  }
+  .notes ul {
+    margin: 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 6px;
+    line-height: 1.5;
+    max-width: 70ch;
+  }
+  .tbl {
+    overflow-x: auto;
+  }
+  table {
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    min-width: 560px;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 6px 10px;
+    border-bottom: 1px solid color-mix(in srgb, var(--pageInk) 20%, transparent);
+    vertical-align: top;
+  }
+  td.n {
+    font-variant-numeric: tabular-nums;
+  }
+  .flag {
+    font-weight: 700;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
+</style>
+
+<header class="doc">
+  <h1>T4.3 Morning and evening adhkar</h1>
+  <p>
+    One screen: <code>/library/adhkar</code> becomes a guided routine. One adhkar at a time, a big
+    tap counter, auto-advance when the count is reached. Home's card shows progress. Tap the counter
+    to try it. Both phones share the same state.
+  </p>
+  <div class="controls" role="group" aria-label="Prototype options">
+    <button type="button" id="lang-en" aria-pressed="true">English</button>
+    <button type="button" id="lang-bn" aria-pressed="false">বাংলা</button>
+    <button type="button" id="reset">Reset progress</button>
+  </div>
+</header>
+
+<div class="phones" id="phones"></div>
+
+<section class="notes">
+  <h2>Proposed set (verified on sunnah.com, 2026-10-10)</h2>
+  <div class="tbl">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Adhkar</th>
+          <th>Count</th>
+          <th>When</th>
+          <th>Source, grade as shown on sunnah.com</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="n">1</td>
+          <td>Ayat al-Kursi</td>
+          <td class="n">1</td>
+          <td>both</td>
+          <td>Quran 2:255 (Tanzil text)</td>
+        </tr>
+        <tr>
+          <td class="n">2</td>
+          <td>Ikhlas, Falaq, Nas</td>
+          <td class="n">3 each</td>
+          <td>both</td>
+          <td>Tirmidhi 3575, Hasan (Darussalam); Tirmidhi: hasan sahih gharib</td>
+        </tr>
+        <tr>
+          <td class="n">3</td>
+          <td>Asbahna / Amsayna wa asbaha al-mulku lillah (full)</td>
+          <td class="n">1</td>
+          <td>both</td>
+          <td>Muslim 2723b, Sahih</td>
+        </tr>
+        <tr>
+          <td class="n">4</td>
+          <td>Allahumma bika asbahna / amsayna</td>
+          <td class="n">1</td>
+          <td>both</td>
+          <td>Tirmidhi 3391, Sahih (Darussalam); Tirmidhi: hasan</td>
+        </tr>
+        <tr>
+          <td class="n">5</td>
+          <td>Sayyid al-Istighfar (full)</td>
+          <td class="n">1</td>
+          <td>both</td>
+          <td>Bukhari 6306, Sahih</td>
+        </tr>
+        <tr>
+          <td class="n">6</td>
+          <td>Bismillahilladhi la yadurru</td>
+          <td class="n">3</td>
+          <td>both</td>
+          <td>Abu Dawud 5088, Sahih (al-Albani); Tirmidhi 3388</td>
+        </tr>
+        <tr>
+          <td class="n">7</td>
+          <td>A'udhu bi-kalimatillahit-tammat</td>
+          <td class="n">1</td>
+          <td>evening</td>
+          <td>Muslim 2709a (2708b), Sahih</td>
+        </tr>
+        <tr>
+          <td class="n">8</td>
+          <td>Subhanallahi wa bihamdihi</td>
+          <td class="n">100</td>
+          <td>both</td>
+          <td>Muslim 2692, Sahih</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <ul>
+    <li class="flag">
+      Found while verifying: the live "Raditu billahi Rabba" item cites Abu Dawud 5072 as Hasan, but
+      sunnah.com grades 5072 Da'if (al-Albani), and its wording is "radina ... wa bi-Muhammadin
+      rasula" with no count of 3. The "raditu ... nabiyya" wording is Tirmidhi 3389 (Tirmidhi: hasan
+      gharib, no count). Not in the routine above; needs your decision.
+    </li>
+    <li>
+      Progress: per-item counts on this device for the tracking day; "morning done" / "evening done"
+      synced per day and shown on Home. Nothing is added to zikr totals, Noor or streaks.
+    </li>
+    <li>
+      Counts can be tapped past by "Next", so a partly done routine is fine. Done = every item
+      reached its count.
+    </li>
+    <li>"Show all" keeps today's full list view for people who read along without counting.</li>
+    <li>Bangla meanings are drafts for your review.</li>
+  </ul>
+</section>
+
+<script>
+  const ITEMS = [
+    { id: 'kursi', when: 'both', n: 1, t: { en: 'Ayat al-Kursi', bn: 'আয়াতুল কুরসী' } },
+    {
+      id: 'quls',
+      when: 'both',
+      n: 3,
+      t: { en: 'Ikhlas, Falaq and Nas', bn: 'সূরা ইখলাস, ফালাক ও নাস' },
+    },
+    {
+      id: 'asbahna',
+      when: 'both',
+      n: 1,
+      t: { en: 'Asbahna wa asbaha al-mulku lillah', bn: 'আসবাহনা ওয়া আসবাহাল মুলকু লিল্লাহ' },
+    },
+    {
+      id: 'bika',
+      when: 'both',
+      n: 1,
+      t: { en: 'Allahumma bika asbahna', bn: 'আল্লাহুম্মা বিকা আসবাহনা' },
+    },
+    {
+      id: 'sayyid',
+      when: 'both',
+      n: 1,
+      t: { en: 'Sayyid al-Istighfar', bn: 'সাইয়্যিদুল ইসতিগফার' },
+    },
+    {
+      id: 'bismillah',
+      when: 'both',
+      n: 3,
+      t: { en: 'Bismillahilladhi la yadurru', bn: 'বিসমিল্লাহিল্লাযী লা ইয়াদুররু' },
+      ar: 'بِسْمِ اللَّهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَىْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',
+      translit:
+        "Bismillahil-ladhi la yadurru ma'as-mihi shay'un fil-ardi wa la fis-sama'i, wa Huwas-Sami'ul-'Alim",
+      mean: {
+        en: 'In the name of Allah, with whose name nothing on earth or in the heavens can cause harm, and He is the All-Hearing, the All-Knowing.',
+        bn: 'আল্লাহর নামে, যাঁর নামের সাথে আসমান ও জমিনের কোনো কিছুই ক্ষতি করতে পারে না, আর তিনি সর্বশ্রোতা, সর্বজ্ঞ।',
+      },
+      src: 'Sunan Abi Dawud 5088 · Sahih (al-Albani)',
+      srcBn: 'সুনান আবু দাউদ ৫০৮৮ · সহীহ (আলবানী)',
+      url: 'https://sunnah.com/abudawud:5088',
+    },
+    {
+      id: 'subhan',
+      when: 'both',
+      n: 100,
+      t: { en: 'Subhanallahi wa bihamdihi', bn: 'সুবহানাল্লাহি ওয়া বিহামদিহি' },
+    },
+  ];
+  // Pretend the user has finished the first five.
+  const START = { kursi: 1, quls: 3, asbahna: 1, bika: 1, sayyid: 1, bismillah: 1 };
+  let counts = { ...START };
+  let lang = 'en';
+  let showAll = false;
+  const cur = () => ITEMS.findIndex((i) => (counts[i.id] || 0) < i.n);
+
+  const L = {
+    en: {
+      home: 'Morning adhkar',
+      homeSub: (d, n) => `${d} of ${n} · until 6:02 AM`,
+      homeDone: 'Morning adhkar done',
+      morning: 'Morning',
+      evening: 'Evening',
+      step: (i, n) => `${i} of ${n}`,
+      done: (d) => `${d} done`,
+      tap: 'Tap to count',
+      next: 'Next',
+      prev: 'Back',
+      all: 'Show all',
+      guided: 'One at a time',
+      src: 'Source',
+      finished: 'Morning adhkar complete. May Allah accept it.',
+      of: 'of',
+    },
+    bn: {
+      home: 'সকালের আযকার',
+      homeSub: (d, n) => `${n}টির মধ্যে ${d}টি · সকাল ৬:০২ পর্যন্ত`,
+      homeDone: 'সকালের আযকার সম্পন্ন',
+      morning: 'সকাল',
+      evening: 'সন্ধ্যা',
+      step: (i, n) => `${n}টির মধ্যে ${i}`,
+      done: (d) => `${d}টি সম্পন্ন`,
+      tap: 'গুনতে চাপুন',
+      next: 'পরেরটি',
+      prev: 'আগেরটি',
+      all: 'সব দেখুন',
+      guided: 'একটি একটি করে',
+      src: 'সূত্র',
+      finished: 'সকালের আযকার সম্পন্ন হয়েছে। আল্লাহ কবুল করুন।',
+      of: 'এর মধ্যে',
+    },
+  };
+  const bnNum = (s) =>
+    lang === 'bn' ? String(s).replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]) : String(s);
+  const sun =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 18h18M6 18a6 6 0 0 1 12 0M12 6V3M5.6 9.6 4 8M18.4 9.6 20 8"/></svg>';
+  const moon =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 18h18M7 18a5 5 0 0 1 10 0M15 6a4 4 0 1 0 3 6 5 5 0 0 1-3-6z"/></svg>';
+
+  function ring(frac, size, stroke) {
+    const r = (size - stroke) / 2,
+      c = 2 * Math.PI * r;
+    return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" aria-hidden="true">
+      <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="rgb(var(--border))" stroke-width="${stroke}"/>
+      <circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="rgb(var(--emerald))" stroke-width="${stroke}"
+        stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${c * (1 - frac)}" style="transition:stroke-dashoffset .25s"/></svg>`;
+  }
+
+  function screen() {
+    const t = L[lang];
+    const doneN = ITEMS.filter((i) => (counts[i.id] || 0) >= i.n).length;
+    const ci = cur();
+    const item = ITEMS[ci === -1 ? ITEMS.length - 1 : ci];
+    const homeCard =
+      ci === -1
+        ? `<div class="home done">${sun.replace('<svg', '<svg class="ic"')}<div><div class="t">${t.homeDone}</div><div class="s">${bnNum(ITEMS.length)}/${bnNum(ITEMS.length)}</div></div><div class="ring">${ring(1, 34, 4)}</div></div>`
+        : `<div class="home">${sun.replace('<svg', '<svg class="ic"')}<div><div class="t">${t.home}</div><div class="s">${t.homeSub(bnNum(doneN), bnNum(ITEMS.length))}</div></div><div class="ring">${ring(doneN / ITEMS.length, 34, 4)}</div></div>`;
+    const steps = ITEMS.map(
+      (i, k) => `<i class="${(counts[i.id] || 0) >= i.n ? 'd' : k === ci ? 'c' : ''}"></i>`
+    ).join('');
+    let body;
+    if (showAll) {
+      body = `<div class="list">${ITEMS.map((i) => `<div class="${(counts[i.id] || 0) >= i.n ? 'ok' : ''}"><span>${i.t[lang]}</span><b>${bnNum(counts[i.id] || 0)}/${bnNum(i.n)}</b></div>`).join('')}</div>`;
+    } else if (ci === -1) {
+      body = `<div class="card"><h2>${t.finished}</h2></div>`;
+    } else {
+      const c = counts[item.id] || 0;
+      const full = item.ar
+        ? `<p class="ar" lang="ar">${item.ar}</p><p class="tr">${item.translit}</p><p class="mean">${item.mean[lang]}</p>
+           <div class="src"><span>${t.src}</span><a href="${item.url}" target="_blank" rel="noopener noreferrer">${lang === 'bn' ? item.srcBn : item.src}</a></div>`
+        : `<p class="mean">(${item.t[lang]})</p>`;
+      body = `<div class="card"><div class="lbl">${t.step(bnNum(ci + 1), bnNum(ITEMS.length))}</div><h2>${item.t[lang]}</h2>${full}</div>
+        <button type="button" class="counter" data-act="tap" aria-label="${t.tap}: ${c} ${t.of} ${item.n}">${ring(c / item.n, 148, 8)}<span class="num">${bnNum(c)}<span class="of">/ ${bnNum(item.n)}</span></span></button>
+        <p class="hint">${t.tap}</p>
+        <div class="nav"><button type="button" data-act="prev">${t.prev}</button><button type="button" class="pri" data-act="next">${t.next}</button></div>`;
+    }
+    return `<div class="screen">${homeCard}
+      <div class="seg" role="group"><button type="button" aria-pressed="true">${sun}${t.morning}</button><button type="button" aria-pressed="false">${moon}${t.evening}</button></div>
+      <div class="prog"><div class="prog-row"><span>${t.done(bnNum(doneN))}</span><span>${bnNum(doneN)}/${bnNum(ITEMS.length)}</span></div><div class="steps">${steps}</div></div>
+      ${body}
+      <button type="button" class="all" data-act="all">${showAll ? t.guided : t.all}</button></div>`;
+  }
+
+  function render() {
+    document.getElementById('phones').innerHTML = ['dark', 'light']
+      .map(
+        (m) =>
+          `<div class="phone-wrap"><div class="phone-label">${m} · 375px</div><div class="phone t-${m}">${screen()}</div></div>`
+      )
+      .join('');
+  }
+
+  let advanceTimer = null;
+  document.getElementById('phones').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const ci = cur();
+    const act = b.dataset.act;
+    if (act === 'all') showAll = !showAll;
+    if (act === 'tap' && ci !== -1) {
+      const it = ITEMS[ci];
+      counts[it.id] = Math.min(it.n, (counts[it.id] || 0) + 1);
+    }
+    if (act === 'next' && ci !== -1) counts[ITEMS[ci].id] = ITEMS[ci].n;
+    if (act === 'prev' && ci > 0) counts[ITEMS[ci - 1].id] = 0;
+    clearTimeout(advanceTimer);
+    render();
+  });
+  for (const l of ['en', 'bn']) {
+    document.getElementById('lang-' + l).addEventListener('click', () => {
+      lang = l;
+      document.getElementById('lang-en').setAttribute('aria-pressed', String(l === 'en'));
+      document.getElementById('lang-bn').setAttribute('aria-pressed', String(l === 'bn'));
+      render();
+    });
+  }
+  document.getElementById('reset').addEventListener('click', () => {
+    counts = { ...START };
+    showAll = false;
+    render();
+  });
+  render();
+</script>

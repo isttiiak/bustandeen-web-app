@@ -527,6 +527,7 @@ function buildSocialSummary(gender: string) {
 // Fasting logs written in the demo (Home's Fasting section, the Fasting
 // page), kept in memory for this page view so a "Yes" survives the refetch.
 const demoFastingLogs = new Map<string, Record<string, unknown>>();
+const demoAdhkarDays = new Map<string, { date: string; morning: boolean; evening: boolean }>();
 const queryDate = (url: string) => new URL(url, 'http://demo.local').searchParams.get('date');
 
 export function getDemoResponse(
@@ -546,6 +547,17 @@ export function getDemoResponse(
       if (d) demoFastingLogs.delete(d);
       return { ok: true };
     }
+  }
+  // Adhkar routine done flags, kept for the visit like the fasting logs.
+  if (url.includes('/api/adhkar/day')) {
+    const b = (typeof body === 'string' ? JSON.parse(body) : body) as {
+      date?: string;
+      period?: 'morning' | 'evening';
+    } | null;
+    const date = (method === 'put' ? b?.date : queryDate(url)) ?? '';
+    const day = demoAdhkarDays.get(date) ?? { date, morning: false, evening: false };
+    if (method === 'put' && b?.period) demoAdhkarDays.set(date, { ...day, [b.period]: true });
+    return { ok: true, day: demoAdhkarDays.get(date) ?? day };
   }
   if (method !== 'get') return { ok: true };
 

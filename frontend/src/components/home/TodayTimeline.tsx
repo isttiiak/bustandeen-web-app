@@ -14,6 +14,8 @@ import {
 import { getDayStartMode, getTrackingDay } from '../../utils/trackingDay.js';
 import { celebrateAllPrayers, celebrateSmall } from '../../utils/celebrate.js';
 import { translateReference } from '../../utils/localeReference.js';
+import { readAdhkarSummary } from '../../utils/adhkarProgress.js';
+import { useAdhkarDay } from '../../hooks/useAdhkar.js';
 import {
   ADHKAR_REFS,
   TIMELINE_PRAYERS,
@@ -213,14 +215,21 @@ export default function TodayTimeline({
   );
 }
 
-/** The open morning/evening adhkār, linking to that list in the Library.
- *  Shown only while its window is open (utils/todayTimeline.ts). */
+/** The open morning/evening adhkār, linking to the guided routine in the
+ *  Library. Shown only while its window is open (utils/todayTimeline.ts).
+ *  T4.3: shows this device's progress, or "done" once the routine is
+ *  finished here or on another device. */
 export function AdhkarCard({ period, until }: { period: AdhkarPeriod; until: Date }) {
   const { t, i18n } = useTranslation();
   const Icon = period === 'morning' ? SunriseIcon : MaghribIcon;
+  const day = getTrackingDay();
+  const synced = useAdhkarDay(day).data?.[period] ?? false;
+  const local = readAdhkarSummary(day, period);
+  const done = synced || (!!local && local.total > 0 && local.done >= local.total);
   return (
     <Link
       to={`/library/adhkar?period=${period}`}
+      data-testid="home-adhkar-card"
       className="mt-2 flex items-center gap-2.5 rounded-control border border-brand-gold/50 bg-brand-gold/10 hover:bg-brand-gold/15 px-3 py-2 transition-colors"
     >
       <Icon className="w-5 h-5 shrink-0 text-brand-gold" aria-hidden="true" />
@@ -231,12 +240,26 @@ export function AdhkarCard({ period, until }: { period: AdhkarPeriod; until: Dat
             : t('home.adhkarEvening', 'Evening adhkār')}
         </span>
         <span className="block text-white/70">
-          {t('home.adhkarOpenUntil', 'Now, until {{time}}', { time: formatTime(until) })}
-          {' · '}
-          {translateReference(ADHKAR_REFS[period], i18n.language)}
+          {done ? (
+            t('home.adhkarDone')
+          ) : (
+            <>
+              {local && local.done > 0
+                ? t('home.adhkarProgress', { done: local.done, total: local.total })
+                : t('home.adhkarOpenUntil', 'Now, until {{time}}', { time: formatTime(until) })}
+              {' · '}
+              {local && local.done > 0
+                ? t('home.adhkarUntil', { time: formatTime(until) })
+                : translateReference(ADHKAR_REFS[period], i18n.language)}
+            </>
+          )}
         </span>
       </span>
-      <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/60" aria-hidden="true" />
+      {done ? (
+        <CheckIcon className="w-4 h-4 shrink-0 text-brand-emerald" aria-hidden="true" />
+      ) : (
+        <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/60" aria-hidden="true" />
+      )}
     </Link>
   );
 }
