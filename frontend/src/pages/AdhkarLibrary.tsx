@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
@@ -17,7 +18,11 @@ import { translateReference } from '../utils/localeReference.js';
 export default function AdhkarLibrary() {
   const { t, i18n } = useTranslation();
   const lang: 'en' | 'bn' = i18n.language === 'bn' ? 'bn' : 'en';
-  const [period, setPeriod] = useState<'morning' | 'evening'>('morning');
+  // Home's timeline links straight to the open window (?period=evening).
+  const [params] = useSearchParams();
+  const [period, setPeriod] = useState<'morning' | 'evening'>(
+    params.get('period') === 'evening' ? 'evening' : 'morning'
+  );
   const [counts, setCounts] = useState<Record<string, number>>({});
 
   const items: AdhkarItem[] = period === 'morning' ? MORNING_ADHKAR : EVENING_ADHKAR;

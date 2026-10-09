@@ -1023,7 +1023,20 @@
     "setupTitle": "Make Bustandeen yours",
     "setupDetail": "Your prayer times, your madhab and the habits you want to grow first. About a minute.",
     "setupStart": "Set up",
-    "setupDismiss": "No thanks"
+    "setupDismiss": "No thanks",
+    "timelineTitle": "Today's prayers",
+    "timelineDone": "Done",
+    "timelineKaza": "Kaza",
+    "timelineMiss": "Miss",
+    "timelineNow": "Now",
+    "timelineMarkDone": "Mark Done",
+    "timelineOpenSalat": "Open Salat",
+    "adhkarMorning": "Morning adhkār",
+    "adhkarEvening": "Evening adhkār",
+    "adhkarOpenUntil": "Now, until {{time}}",
+    "adhkarMorningWhen": "From Fajr until sunrise",
+    "adhkarEveningWhen": "From ʿAṣr until Maghrib",
+    "goalsTitle": "Today's goals"
   },
   "library": {
     "duaTitle": "Du'a Library",

@@ -959,7 +959,20 @@
     "setupTitle": "Bustandeen নিজের মতো করে সাজিয়ে নিন",
     "setupDetail": "আপনার সালাতের সময়, মাযহাব আর যে আমলগুলো প্রথমে বাড়াতে চান। মাত্র এক মিনিট।",
     "setupStart": "সাজিয়ে নিন",
-    "setupDismiss": "দরকার নেই"
+    "setupDismiss": "দরকার নেই",
+    "timelineTitle": "আজকের সালাত",
+    "timelineDone": "সম্পন্ন",
+    "timelineKaza": "কাযা",
+    "timelineMiss": "ছুটে গেছে",
+    "timelineNow": "এখন",
+    "timelineMarkDone": "আদায় করেছি",
+    "timelineOpenSalat": "সালাত পাতা খুলুন",
+    "adhkarMorning": "সকালের আযকার",
+    "adhkarEvening": "সন্ধ্যার আযকার",
+    "adhkarOpenUntil": "এখন, {{time}} পর্যন্ত",
+    "adhkarMorningWhen": "ফজর থেকে সূর্যোদয় পর্যন্ত",
+    "adhkarEveningWhen": "আসর থেকে মাগরিব পর্যন্ত",
+    "goalsTitle": "আজকের লক্ষ্য"
   },
   "library": {
     "duaTitle": "দোয়া সংকলন",

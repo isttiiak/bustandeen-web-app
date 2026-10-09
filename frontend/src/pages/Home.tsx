@@ -13,6 +13,7 @@ import {
   CalculatorIcon,
   NoSymbolIcon,
   ClockIcon,
+  CheckIcon,
 } from '@heroicons/react/24/outline';
 import {
   CrescentIcon,
@@ -36,6 +37,7 @@ import ComebackNudge from '../components/ComebackNudge.js';
 import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import MusafirBanner from '../components/MusafirBanner.js';
 import TodayHighlights from '../components/home/TodayHighlights.js';
+import TodayTimeline from '../components/home/TodayTimeline.js';
 import toast from 'react-hot-toast';
 import {
   useMusafir,
@@ -112,6 +114,8 @@ interface ActivityItem {
   tag?: string;
   streakCount?: number | null;
   goalCompleted?: boolean;
+  /** 0-100 for the goal bar, when the activity has a daily goal. */
+  progress?: number | null;
 }
 
 export default function Home() {
@@ -296,6 +300,7 @@ export default function Home() {
       border: 'border-brand-emerald/15',
       streakCount,
       goalCompleted,
+      progress: zikrGoalPct,
     },
     {
       id: 'salat',
@@ -313,6 +318,10 @@ export default function Home() {
                   : `-/${formatLocaleNumber(5)}`,
             },
       link: '/salat',
+      progress:
+        !cycleActive && salatCompletedToday !== null
+          ? Math.round((salatCompletedToday / 5) * 100)
+          : null,
       accent: 'brand-info',
       border: 'border-brand-info/15',
       tag: salatAnalytics?.currentStreak
@@ -349,6 +358,13 @@ export default function Home() {
       accent: 'brand-info',
       border: 'border-brand-info/15',
       streakCount: quranSummary?.streak ?? null,
+      progress:
+        quranSummary && quranSummary.profile.dailyGoalAyat > 0
+          ? Math.min(
+              100,
+              Math.round((quranSummary.todayAyat / quranSummary.profile.dailyGoalAyat) * 100)
+            )
+          : null,
     },
   ];
 
@@ -713,6 +729,39 @@ export default function Home() {
                   </span>
                 </span>
               </div>
+              {salatLog && (
+                <ul
+                  className="flex justify-center gap-3 mt-3"
+                  aria-label={t('home.timelineTitle', "Today's prayers")}
+                >
+                  {(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const).map((id) => {
+                    const st = salatLog.prayers[id]?.status;
+                    const done = st === 'completed' || st === 'kaza';
+                    return (
+                      <li key={id} className="flex flex-col items-center gap-1">
+                        <span
+                          className={`w-6 h-6 rounded-full border-[1.5px] flex items-center justify-center ${
+                            done
+                              ? 'bg-brand-emerald-dim border-brand-emerald-dim'
+                              : id === prayerWidgetData.currentMandatory
+                                ? 'border-brand-emerald ring-2 ring-brand-emerald/20'
+                                : 'border-brand-border'
+                          }`}
+                        >
+                          {done && <CheckIcon className="w-3.5 h-3.5 text-on-color" />}
+                        </span>
+                        <span className="text-[10px] font-bold text-white/70">
+                          {prayerName(id)}
+                          <span className="sr-only">
+                            {' '}
+                            {done ? t('home.timelineDone', 'Done') : ''}
+                          </span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
               {archPills && (
                 <TodayHighlights
                   variant="pills"
@@ -810,6 +859,16 @@ export default function Home() {
           )
         )}
 
+        {prayerWidgetData && (
+          <TodayTimeline
+            times={prayerWidgetData.times}
+            now={prayerNow}
+            log={salatLog}
+            excused={!!cycleActive}
+            travelling={!!musafir}
+          />
+        )}
+
         {homeLayout === 'strip' && (
           <TodayHighlights
             variant="strip"
@@ -820,8 +879,11 @@ export default function Home() {
         )}
         {homeLayout === 'full' && specialBlock}
 
-        {/* Today's worship */}
-        <div className="grid grid-cols-2 gap-3 mb-2">
+        {/* Today's goals, in the order of the habits chosen at setup */}
+        <h2 className="font-display text-base font-semibold text-white mb-2">
+          {t('home.goalsTitle', "Today's goals")}
+        </h2>
+        <div className="grid gap-3 mb-2" data-testid="today-goals">
           {orderByFocus(activities, focusHabits).map((a) => {
             const isZikr = a.id === 'zikr';
             const Icon = a.icon;
@@ -830,9 +892,9 @@ export default function Home() {
                 <div className="h-full rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-3.5 sm:p-4 hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
                   <div className="flex items-center gap-2 mb-2">
                     <Icon className="w-5 h-5 shrink-0 text-brand-emerald" />
-                    <h2 className="font-display text-sm sm:text-base font-semibold text-white flex-1 min-w-0 truncate">
+                    <h3 className="font-display text-sm sm:text-base font-semibold text-white flex-1 min-w-0 truncate">
                       {a.title}
-                    </h2>
+                    </h3>
                     <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/40 group-hover:text-white/70 transition-colors" />
                   </div>
                   <div className="flex items-baseline flex-wrap gap-x-2">
@@ -843,6 +905,21 @@ export default function Home() {
                       {a.stats.label}
                     </span>
                   </div>
+                  {a.progress != null && (
+                    <div
+                      className="h-1.5 rounded-full bg-brand-border overflow-hidden mt-2"
+                      role="progressbar"
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                      aria-valuenow={a.progress}
+                      aria-label={a.title}
+                    >
+                      <span
+                        className="block h-full bg-brand-emerald rounded-full"
+                        style={{ width: `${a.progress}%` }}
+                      />
+                    </div>
+                  )}
 
                   {/* Badges: streak, goal, Ramadan */}
                   {(isZikr || a.id === 'quran' || a.tag || a.id === 'fasting') && (
