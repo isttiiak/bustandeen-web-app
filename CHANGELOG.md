@@ -2,6 +2,44 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.116.3 - Admin panel: sadaqah in the new look - 2026-10-09
+
+### Changed
+
+- **Admin panel (staff only)**: the Sadaqah admin (submissions, project costs and analytics) uses the Bustan Arch design: the arched heading, the app's cards, buttons and inputs, labelled fields, and a check icon for app users. The verify and reject email buttons are clearly told apart, and the English text no longer uses em dashes.
+
+## v5.116.2 - Admin panel: messages and zikr requests in the new look - 2026-10-09
+
+### Changed
+
+- **Admin panel (staff only)**: the Feedback inbox, Broadcast (banner and update emails), Compose email and Zikr requests pages use the Bustan Arch design: the arched heading, the app's cards, buttons and inputs, clear filter and tab choices, labelled fields, and drawn icons instead of emoji and arrows. Their English text no longer uses em dashes.
+
+## v5.116.1 - Admin panel: users, accounts and audit log in the new look - 2026-10-09
+
+### Changed
+
+- **Admin panel (staff only)**: User management, a user's detail page, Manage Ansars and the Audit log use the Bustan Arch design: the arched heading, the app's cards, buttons and inputs, clear sort and domain choices, labelled fields and easier-to-read text. Ticks and dashes in the tables are now icons and plain hyphens.
+- Every admin page keeps a 16 px margin on phones.
+
+## v5.116.0 - Admin panel: new look for the shell, sign-in and overview - 2026-10-09
+
+### Changed
+
+- **Admin panel (staff only)**: the header, the admin sign-in and the overview page use the Bustan Arch design: the Bustandeen leaf instead of the moon emoji, the arched heading, the app's cards and buttons, labelled sign-in fields with show/hide password, and easier-to-read text in dark and light.
+
+### Fixed
+
+- **Admin panel on phones**: the section tabs (Sadaqah, Zikr Requests, Feedback, Broadcast) no longer overlap each other on narrow screens; they scroll sideways instead.
+
+## v5.115.0 - Why two special-day narrations are graded weak - 2026-10-09
+
+### Added
+
+- **The Monday and Thursday fast** and **15 Sha'bān** pages now end with the "Why some things on this page are marked ḍaʿīf" card, like the Ramadan page. It names the narrator behind each weak grade and who graded it:
+  - The du'ā at iftār (Sunan Ibn Mājah 1753): its chain runs through Isḥāq ibn ʿUbaydillāh, whom Ibn Ḥajar calls unknown; Ḍaʿīf per al-Albānī, Ḥasan per Darussalam.
+  - 15 Sha'bān (Sunan Ibn Mājah 1390): its chain has Ibn Lahīʿah and al-Ḍaḥḥāk ibn Ayman; al-Būṣīrī and Darussalam grade the chain ḍaʿīf, al-Albānī grades the narration ḥasan through its other routes. The card also notes the authentic nightly descent in the last third of every night (Ṣaḥīḥ al-Bukhārī 1145).
+- In English and Bangla.
+
 ## v5.114.4 - Corrected hadith references on the special days - 2026-10-09
 
 ### Fixed

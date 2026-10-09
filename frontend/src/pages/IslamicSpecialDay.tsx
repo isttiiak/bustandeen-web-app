@@ -12,6 +12,7 @@ import {
   SparklesIcon,
 } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import DaifExplainer, { type DaifTopic } from '../components/DaifExplainer.js';
 import ReportReference from '../components/ReportReference.js';
 import { Star8Icon } from '../components/icons/IslamicIcons.js';
 import { BTN_PRIMARY, CARD, SECTION_TITLE } from '../components/bustanStyles.js';
@@ -32,6 +33,13 @@ const FASTING_DAY_IDS = new Set([
   'arafah',
   'dhul_hijjah_first10',
 ]);
+
+// Days with a reference graded ḍaʿīf by any grader: the explainer card names
+// the defective narrator and who graded it (guarded in specialDayScreen.test.ts).
+const DAIF_TOPICS_BY_DAY: Partial<Record<string, DaifTopic[]>> = {
+  fast_mon_thu: ['iftar-dua'],
+  shab_e_barat: ['mid-shaban'],
+};
 
 export default function IslamicSpecialDay() {
   const { id } = useParams<{ id: string }>();
@@ -56,6 +64,8 @@ export default function IslamicSpecialDay() {
       </AnimatedBackground>
     );
   }
+
+  const daifTopics = DAIF_TOPICS_BY_DAY[day.id];
 
   return (
     <AnimatedBackground variant="dark">
@@ -184,6 +194,8 @@ export default function IslamicSpecialDay() {
               ))}
             </div>
           </motion.div>
+
+          {daifTopics && <DaifExplainer topics={daifTopics} />}
         </div>
         <ReportReference variant="card" what={day.name} className="mt-6" />
       </div>
