@@ -2,7 +2,16 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import { ArrowLeftIcon, UserCircleIcon } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
+import {
+  ADMIN_INPUT_SM,
+  AdminHero,
+  BTN_DANGER,
+  PILL_GOLD,
+  PILL_RED,
+} from '../components/admin/adminParts.js';
+import { BTN_PRIMARY, BTN_SECONDARY, CARD } from '../components/bustanStyles.js';
 import {
   useAdminUserDetail,
   useWelcomeDraft,
@@ -22,7 +31,7 @@ const daysInactive = (lastActiveAt: string | null | undefined, createdAt: string
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div>
-      <p className="text-white/30 text-[10px] uppercase tracking-wide">{label}</p>
+      <p className="text-white/80 text-[11px] uppercase tracking-wide">{label}</p>
       <p className="text-white text-sm font-bold mt-0.5">{value}</p>
     </div>
   );
@@ -84,7 +93,7 @@ export default function AdminUserDetail() {
     const name = user?.displayName || user?.firstName || 'there';
     setCustomEmailForm({
       subject: '',
-      body: `Assalamu Alaikum ${name},\n\n\n\n— Bustandeen`,
+      body: `Assalamu Alaikum ${name},\n\n\n\nBustandeen`,
     });
   };
   const confirmSendCustomEmail = () => {
@@ -112,46 +121,51 @@ export default function AdminUserDetail() {
         path="/admin/users"
         index={false}
       />
-      <div className="max-w-4xl mx-auto px-6 py-6 sm:py-10 space-y-6">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
         <button
           onClick={() => navigate('/admin/users')}
-          className="text-white/40 text-sm hover:text-white"
+          className="inline-flex items-center gap-1.5 text-white/80 text-sm hover:text-white"
         >
-          {t('adminUserDetail.back', '← Back to users')}
+          <ArrowLeftIcon className="w-4 h-4" aria-hidden="true" />
+          {t('adminUserDetail.back', 'Back to users')}
         </button>
 
-        {isLoading && <p className="text-white/40 text-sm">{t('common.loading', 'Loading…')}</p>}
+        {isLoading && <p className="text-white/70 text-sm">{t('common.loading', 'Loading…')}</p>}
 
         {user && (
           <>
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <h1 className="text-2xl font-black text-white">
-                  {user.displayName ||
-                    [user.firstName, user.lastName].filter(Boolean).join(' ') ||
-                    user.email}
-                </h1>
-                <p className="text-white/40 text-sm mt-0.5">{user.email}</p>
-              </div>
-              {user.admin && (
-                <span
-                  title={`${user.admin.role}${user.admin.active ? '' : ', inactive'}`}
-                  className="shrink-0 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wide bg-brand-gold/15 text-brand-gold"
-                >
-                  {t('adminUserDetail.adminBadge', 'Admin')}
-                </span>
+            <AdminHero
+              icon={UserCircleIcon}
+              title={
+                user.displayName ||
+                [user.firstName, user.lastName].filter(Boolean).join(' ') ||
+                user.email
+              }
+              subtitle={<span className="break-all">{user.email}</span>}
+            >
+              {(user.admin || user.disabled) && (
+                <div className="flex justify-center gap-2 mt-3">
+                  {user.admin && (
+                    <span
+                      title={`${user.admin.role}${user.admin.active ? '' : ', inactive'}`}
+                      className={`${PILL_GOLD} uppercase tracking-wide`}
+                    >
+                      {t('adminUserDetail.adminBadge', 'Admin')}
+                    </span>
+                  )}
+                  {user.disabled && (
+                    <span className={`${PILL_RED} uppercase tracking-wide`}>
+                      {t('adminUserDetail.disabledBadge', 'Disabled')}
+                    </span>
+                  )}
+                </div>
               )}
-              {user.disabled && (
-                <span className="shrink-0 px-2 py-1 rounded-full text-[10px] font-black uppercase tracking-wide bg-red-500/15 text-red-400">
-                  {t('adminUserDetail.disabledBadge', 'Disabled')}
-                </span>
-              )}
-            </div>
+            </AdminHero>
 
-            <div className="rounded-2xl bg-base-200 border border-base-300 p-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className={`${CARD} p-4 grid grid-cols-2 sm:grid-cols-4 gap-4`}>
               <Field
                 label={t('adminUserDetail.location', 'Location')}
-                value={[user.city, user.country].filter(Boolean).join(', ') || '—'}
+                value={[user.city, user.country].filter(Boolean).join(', ') || '-'}
               />
               <Field
                 label={t('adminUserDetail.joined', 'Joined')}
@@ -174,23 +188,25 @@ export default function AdminUserDetail() {
                 value={
                   user.welcomeEmailSentAt
                     ? new Date(user.welcomeEmailSentAt).toLocaleDateString()
-                    : '—'
+                    : '-'
                 }
               />
               <Field
                 label={t('adminUserDetail.reengagementSent', 'Re-engagement emails sent')}
                 value={
                   user.reengagementEmailCount > 0
-                    ? t('adminUserDetail.reengagementSentValue', '{{count}}× · last {{date}}', {
+                    ? t('adminUserDetail.reengagementSentValue', '{{count}} times, last {{date}}', {
                         count: user.reengagementEmailCount,
                         date: new Date(user.reengagementEmailSentAt!).toLocaleDateString(),
                       })
-                    : '—'
+                    : '-'
                 }
               />
               <Field
                 label={t('adminUserDetail.aiEnabled', 'AI companion enabled')}
-                value={user.aiEnabled ? '✓' : '—'}
+                value={
+                  user.aiEnabled ? t('adminUserDetail.yes', 'Yes') : t('adminUserDetail.no', 'No')
+                }
               />
               <Field
                 label={t('adminUserDetail.uid', 'UID')}
@@ -199,22 +215,22 @@ export default function AdminUserDetail() {
             </div>
 
             <section className="space-y-3">
-              <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+              <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
                 {t('adminUserDetail.actions', 'Actions')}
               </h2>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
+              <div className={`${CARD} p-4 space-y-3`}>
                 {!welcomeForm ? (
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-white/60 text-sm">
+                    <p className="text-white/70 text-sm">
                       {t(
                         'adminUserDetail.welcomeDesc',
-                        "Welcome email is sent manually — you'll see and can edit the predefined text (e.g. to call out something specific to this person) before anything sends."
+                        "Welcome email is sent manually. You'll see and can edit the predefined text (e.g. to call out something specific to this person) before anything sends."
                       )}
                     </p>
                     <button
                       onClick={startWelcomeDraft}
                       disabled={welcomeDraft.isPending}
-                      className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color shrink-0"
+                      className={`${BTN_PRIMARY} shrink-0`}
                     >
                       {welcomeDraft.isPending
                         ? '…'
@@ -225,41 +241,40 @@ export default function AdminUserDetail() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold">
+                    <p className="text-white/70 text-[10px] uppercase tracking-wide font-bold">
                       {t(
                         'adminUserDetail.welcomeEditable',
-                        'Editable draft — review and change anything before sending'
+                        'Editable draft: review and change anything before sending'
                       )}
                     </p>
                     <input
                       value={welcomeForm.subject}
+                      aria-label="Subject"
                       onChange={(e) =>
                         setWelcomeForm((f) => (f ? { ...f, subject: e.target.value } : f))
                       }
-                      className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+                      className={`${ADMIN_INPUT_SM} w-full`}
                     />
                     <textarea
                       value={welcomeForm.body}
+                      aria-label="Message"
                       onChange={(e) =>
                         setWelcomeForm((f) => (f ? { ...f, body: e.target.value } : f))
                       }
                       rows={9}
-                      className="textarea textarea-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl font-mono"
+                      className={`${ADMIN_INPUT_SM} w-full font-mono`}
                     />
                     <div className="flex gap-2">
                       <button
                         onClick={confirmSendWelcome}
                         disabled={sendWelcome.isPending}
-                        className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
+                        className={`${BTN_PRIMARY}`}
                       >
                         {sendWelcome.isPending
                           ? '…'
                           : t('adminUserDetail.confirmSend', 'Send this email')}
                       </button>
-                      <button
-                        onClick={() => setWelcomeForm(null)}
-                        className="btn btn-sm btn-ghost text-white/50"
-                      >
+                      <button onClick={() => setWelcomeForm(null)} className={BTN_SECONDARY}>
                         {t('adminZikr.cancel', 'Cancel')}
                       </button>
                     </div>
@@ -272,22 +287,22 @@ export default function AdminUserDetail() {
                 )}
               </div>
 
-              <div className="rounded-2xl border border-brand-info/20 bg-brand-info/[0.04] p-4 space-y-3">
+              <div className={`${CARD} p-4 space-y-3`}>
                 {!reengagementForm ? (
                   <div className="flex items-center justify-between gap-3">
                     <div className="space-y-1">
-                      <p className="text-white/60 text-sm">
+                      <p className="text-white/70 text-sm">
                         {t(
                           'adminUserDetail.reengagementDesc',
-                          "It's been {{count}} days since this person was last active. Draft a gentle re-engagement email — you'll see and can edit the exact text before anything sends.",
+                          "It's been {{count}} days since this person was last active. Draft a gentle re-engagement email. You'll see and can edit the exact text before anything sends.",
                           { count: daysInactive(user.lastActiveAt, user.createdAt) }
                         )}
                       </p>
                       {user.reengagementEmailCount > 0 && (
-                        <p className="text-white/30 text-xs">
+                        <p className="text-white/70 text-xs">
                           {t(
                             'adminUserDetail.reengagementHistory',
-                            "Already sent {{count}}× — most recently {{date}}. That doesn't mean they came back, so it's fine to send again.",
+                            "Already sent {{count}} times, most recently {{date}}. That doesn't mean they came back, so it's fine to send again.",
                             {
                               count: user.reengagementEmailCount,
                               date: new Date(user.reengagementEmailSentAt!).toLocaleDateString(),
@@ -299,7 +314,7 @@ export default function AdminUserDetail() {
                     <button
                       onClick={startReengagementDraft}
                       disabled={reengagementDraft.isPending}
-                      className="btn btn-sm bg-brand-info hover:opacity-90 border-0 text-on-color shrink-0"
+                      className={`${BTN_PRIMARY} shrink-0`}
                     >
                       {reengagementDraft.isPending
                         ? '…'
@@ -308,41 +323,40 @@ export default function AdminUserDetail() {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold">
+                    <p className="text-white/70 text-[10px] uppercase tracking-wide font-bold">
                       {t(
                         'adminUserDetail.reengagementEditable',
-                        'Editable draft — review and change anything before sending'
+                        'Editable draft: review and change anything before sending'
                       )}
                     </p>
                     <input
                       value={reengagementForm.subject}
+                      aria-label="Subject"
                       onChange={(e) =>
                         setReengagementForm((f) => (f ? { ...f, subject: e.target.value } : f))
                       }
-                      className="input input-sm w-full bg-white/5 border-brand-info/15 text-white rounded-xl"
+                      className={`${ADMIN_INPUT_SM} w-full`}
                     />
                     <textarea
                       value={reengagementForm.body}
+                      aria-label="Message"
                       onChange={(e) =>
                         setReengagementForm((f) => (f ? { ...f, body: e.target.value } : f))
                       }
                       rows={7}
-                      className="textarea textarea-sm w-full bg-white/5 border-brand-info/15 text-white rounded-xl font-mono"
+                      className={`${ADMIN_INPUT_SM} w-full font-mono`}
                     />
                     <div className="flex gap-2">
                       <button
                         onClick={confirmSendReengagement}
                         disabled={sendReengagement.isPending}
-                        className="btn btn-sm bg-brand-info hover:opacity-90 border-0 text-on-color"
+                        className={`${BTN_PRIMARY}`}
                       >
                         {sendReengagement.isPending
                           ? '…'
                           : t('adminUserDetail.confirmSend', 'Send this email')}
                       </button>
-                      <button
-                        onClick={() => setReengagementForm(null)}
-                        className="btn btn-sm btn-ghost text-white/50"
-                      >
+                      <button onClick={() => setReengagementForm(null)} className={BTN_SECONDARY}>
                         {t('adminZikr.cancel', 'Cancel')}
                       </button>
                     </div>
@@ -355,19 +369,16 @@ export default function AdminUserDetail() {
                 )}
               </div>
 
-              <div className="rounded-2xl border border-brand-magenta/20 bg-brand-magenta/[0.04] p-4 space-y-3">
+              <div className={`${CARD} p-4 space-y-3`}>
                 {!customEmailForm ? (
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-white/60 text-sm">
+                    <p className="text-white/70 text-sm">
                       {t(
                         'adminUserDetail.customEmailDesc',
-                        'Write a fully custom, one-off email to this person — not the welcome or re-engagement template.'
+                        'Write a fully custom, one-off email to this person, not the welcome or re-engagement template.'
                       )}
                     </p>
-                    <button
-                      onClick={startCustomEmail}
-                      className="btn btn-sm bg-brand-magenta hover:opacity-90 border-0 text-on-color shrink-0"
-                    >
+                    <button onClick={startCustomEmail} className={`${BTN_PRIMARY} shrink-0`}>
                       {t('adminUserDetail.composeCustom', 'Compose custom email')}
                     </button>
                   </div>
@@ -375,34 +386,33 @@ export default function AdminUserDetail() {
                   <div className="space-y-2">
                     <input
                       value={customEmailForm.subject}
+                      aria-label="Subject"
                       onChange={(e) =>
                         setCustomEmailForm((f) => (f ? { ...f, subject: e.target.value } : f))
                       }
                       placeholder={t('adminUserDetail.customEmailSubject', 'Subject')}
-                      className="input input-sm w-full bg-white/5 border-brand-magenta/15 text-white rounded-xl"
+                      className={`${ADMIN_INPUT_SM} w-full`}
                     />
                     <textarea
                       value={customEmailForm.body}
+                      aria-label="Message"
                       onChange={(e) =>
                         setCustomEmailForm((f) => (f ? { ...f, body: e.target.value } : f))
                       }
                       rows={9}
-                      className="textarea textarea-sm w-full bg-white/5 border-brand-magenta/15 text-white rounded-xl font-mono"
+                      className={`${ADMIN_INPUT_SM} w-full font-mono`}
                     />
                     <div className="flex gap-2">
                       <button
                         onClick={confirmSendCustomEmail}
                         disabled={sendCustomEmail.isPending}
-                        className="btn btn-sm bg-brand-magenta hover:opacity-90 border-0 text-on-color"
+                        className={`${BTN_PRIMARY}`}
                       >
                         {sendCustomEmail.isPending
                           ? '…'
                           : t('adminUserDetail.confirmSend', 'Send this email')}
                       </button>
-                      <button
-                        onClick={() => setCustomEmailForm(null)}
-                        className="btn btn-sm btn-ghost text-white/50"
-                      >
+                      <button onClick={() => setCustomEmailForm(null)} className={BTN_SECONDARY}>
                         {t('adminZikr.cancel', 'Cancel')}
                       </button>
                     </div>
@@ -415,20 +425,20 @@ export default function AdminUserDetail() {
                 )}
               </div>
 
-              <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/[0.04] p-4 space-y-3">
-                <p className="text-white/60 text-sm">
+              <div className={`${CARD} p-4 space-y-3`}>
+                <p className="text-white/70 text-sm">
                   {user.disabled
                     ? t(
                         'adminUserDetail.disabledDesc',
-                        'This account is disabled — sign-in is blocked everywhere, but no data was touched. Re-enabling restores access immediately.'
+                        'This account is disabled. Sign-in is blocked everywhere, but no data was touched. Re-enabling restores access immediately.'
                       )
                     : t(
                         'adminUserDetail.disableDesc',
-                        'Blocks sign-in immediately without deleting any data — reversible, unlike the permanent delete below. Use for abuse, not routine cleanup.'
+                        'Blocks sign-in immediately without deleting any data. Reversible, unlike the permanent delete below. Use for abuse, not routine cleanup.'
                       )}
                 </p>
                 {user.disabled && user.disabledReason && (
-                  <p className="text-white/40 text-xs italic">
+                  <p className="text-white/70 text-xs italic">
                     {t('adminUserDetail.disabledReasonLabel', 'Reason:')} {user.disabledReason}
                   </p>
                 )}
@@ -436,14 +446,14 @@ export default function AdminUserDetail() {
                   <button
                     onClick={() => enableUser.mutate(uid)}
                     disabled={enableUser.isPending}
-                    className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color shrink-0"
+                    className={`${BTN_PRIMARY} shrink-0`}
                   >
                     {enableUser.isPending ? '…' : t('adminUserDetail.enable', 'Re-enable account')}
                   </button>
                 ) : !showDisableForm ? (
                   <button
                     onClick={() => setShowDisableForm(true)}
-                    className="btn btn-sm bg-brand-gold/20 hover:bg-brand-gold/30 border-0 text-brand-gold shrink-0"
+                    className={`${BTN_SECONDARY} shrink-0 !text-brand-gold`}
                   >
                     {t('adminUserDetail.disable', 'Disable account')}
                   </button>
@@ -451,12 +461,13 @@ export default function AdminUserDetail() {
                   <div className="space-y-2">
                     <input
                       value={disableReason}
+                      aria-label="Reason"
                       onChange={(e) => setDisableReason(e.target.value)}
                       placeholder={t(
                         'adminUserDetail.disableReasonPlaceholder',
                         'Reason (internal note, optional)'
                       )}
-                      className="input input-sm w-full bg-white/5 border-brand-gold/15 text-white rounded-xl"
+                      className={`${ADMIN_INPUT_SM} w-full`}
                     />
                     <div className="flex gap-2">
                       <button
@@ -467,16 +478,13 @@ export default function AdminUserDetail() {
                           )
                         }
                         disabled={disableUser.isPending}
-                        className="btn btn-sm bg-brand-gold/80 hover:bg-brand-gold border-0 text-black font-bold"
+                        className={`${BTN_SECONDARY} !text-brand-gold !border-brand-gold/50`}
                       >
                         {disableUser.isPending
                           ? '…'
                           : t('adminUserDetail.confirmDisable', 'Confirm disable')}
                       </button>
-                      <button
-                        onClick={() => setShowDisableForm(false)}
-                        className="btn btn-sm btn-ghost text-white/50"
-                      >
+                      <button onClick={() => setShowDisableForm(false)} className={BTN_SECONDARY}>
                         {t('adminZikr.cancel', 'Cancel')}
                       </button>
                     </div>
@@ -484,8 +492,8 @@ export default function AdminUserDetail() {
                 )}
               </div>
 
-              <div className="rounded-2xl border border-red-500/20 bg-red-500/[0.04] p-4 space-y-3">
-                <p className="text-white/60 text-sm">
+              <div className="rounded-card border border-red-400/40 bg-red-400/5 shadow-elev-2 p-4 space-y-3">
+                <p className="text-white/70 text-sm">
                   {t(
                     'adminUserDetail.deleteDesc',
                     'Permanently deletes this account and all of its data across every feature (zikr, salat, fasting, Quran, Rayhanah, etc.) and revokes their Firebase sign-in. Cannot be undone.'
@@ -494,16 +502,14 @@ export default function AdminUserDetail() {
                 <button
                   onClick={clickDelete}
                   disabled={deleteUser.isPending}
-                  className={`btn btn-sm border-0 text-white shrink-0 ${
-                    confirmDelete ? 'bg-red-600' : 'bg-red-500/80 hover:bg-red-600'
-                  }`}
+                  className={`${BTN_DANGER} !text-sm !px-4 !py-2.5 shrink-0 ${confirmDelete ? '!bg-red-400/25' : ''}`}
                 >
                   {deleteUser.isPending
                     ? '…'
                     : confirmDelete
                       ? t(
                           'adminUserDetail.confirmDelete',
-                          'Click again to confirm — this is permanent'
+                          'Click again to confirm. This is permanent.'
                         )
                       : t('adminUserDetail.deleteAccount', 'Delete this account')}
                 </button>

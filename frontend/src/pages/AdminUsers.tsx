@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import { CheckIcon, UsersIcon } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
+import { AdminHero, OPTION_CHIP } from '../components/admin/adminParts.js';
+import { OPTION_OFF, OPTION_ON } from '../components/bustanStyles.js';
 import { useAdminUserList, type UserListSort } from '../hooks/useAdminUsers.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -27,10 +30,8 @@ export default function AdminUsers() {
         path="/admin/users"
         index={false}
       />
-      <div className="max-w-6xl mx-auto px-6 py-6 sm:py-10 space-y-6">
-        <h1 className="text-2xl font-black text-white">
-          {t('adminUsers.title', 'User management')}
-        </h1>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
+        <AdminHero icon={UsersIcon} title={t('adminUsers.title', 'User management')} />
 
         <div className="flex items-center gap-2 flex-wrap">
           <input
@@ -40,7 +41,7 @@ export default function AdminUsers() {
               setPage(1);
             }}
             placeholder={t('adminUsers.searchPlaceholder', 'Search by email or name…')}
-            className="input input-sm w-full max-w-xs bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+            className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors w-full max-w-xs"
           />
           <div className="flex gap-1">
             <button
@@ -48,7 +49,8 @@ export default function AdminUsers() {
                 setSort('newest');
                 setPage(1);
               }}
-              className={`btn btn-xs rounded-lg ${sort === 'newest' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
+              aria-pressed={sort === 'newest'}
+              className={`${OPTION_CHIP} ${sort === 'newest' ? OPTION_ON : OPTION_OFF}`}
             >
               {t('adminUsers.sortNewest', 'Recently joined')}
             </button>
@@ -57,22 +59,23 @@ export default function AdminUsers() {
                 setSort('inactive');
                 setPage(1);
               }}
-              className={`btn btn-xs rounded-lg ${sort === 'inactive' ? 'bg-brand-gold border-brand-gold text-black' : 'btn-ghost text-white/50'}`}
+              aria-pressed={sort === 'inactive'}
+              className={`${OPTION_CHIP} ${sort === 'inactive' ? OPTION_ON : OPTION_OFF}`}
             >
               {t('adminUsers.sortInactive', 'Most inactive first')}
             </button>
           </div>
           {data && (
-            <span className="text-xs text-white/40">
+            <span className="text-xs text-white/70">
               {t('adminUsers.total', '{{count}} users', { count: data.total })}
             </span>
           )}
         </div>
 
-        <div className="rounded-2xl bg-base-200 border border-base-300 overflow-x-auto">
+        <div className="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-white/40 text-xs uppercase tracking-wide border-b border-base-300">
+              <tr className="text-left text-white/70 text-xs uppercase tracking-wide border-b border-brand-border">
                 <th className="px-3 py-2">{t('adminUsers.colEmail', 'Email')}</th>
                 <th className="px-3 py-2">{t('adminUsers.colName', 'Name')}</th>
                 <th className="px-3 py-2">{t('adminUsers.colLocation', 'Location')}</th>
@@ -84,14 +87,14 @@ export default function AdminUsers() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={6} className="text-center text-white/30 py-6">
+                  <td colSpan={6} className="text-center text-white/70 py-6">
                     {t('common.loading', 'Loading…')}
                   </td>
                 </tr>
               )}
               {!isLoading && data?.users.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="text-center text-white/30 py-6">
+                  <td colSpan={6} className="text-center text-white/70 py-6">
                     {t('adminUsers.empty', 'No users found.')}
                   </td>
                 </tr>
@@ -102,7 +105,7 @@ export default function AdminUsers() {
                   <tr
                     key={u.uid}
                     onClick={() => navigate(`/admin/users/${u.uid}`)}
-                    className="border-b border-base-300/60 last:border-0 hover:bg-white/[0.03] cursor-pointer"
+                    className="border-b border-brand-border/60 last:border-0 hover:bg-brand-surface/50 cursor-pointer"
                   >
                     <td className="px-3 py-2 text-white/80">
                       {u.email}
@@ -115,29 +118,32 @@ export default function AdminUsers() {
                         </span>
                       )}
                     </td>
-                    <td className="px-3 py-2 text-white/60">
-                      {u.displayName || [u.firstName, u.lastName].filter(Boolean).join(' ') || '—'}
+                    <td className="px-3 py-2 text-white/70">
+                      {u.displayName || [u.firstName, u.lastName].filter(Boolean).join(' ') || '-'}
                     </td>
-                    <td className="px-3 py-2 text-white/60">
-                      {[u.city, u.country].filter(Boolean).join(', ') || '—'}
+                    <td className="px-3 py-2 text-white/70">
+                      {[u.city, u.country].filter(Boolean).join(', ') || '-'}
                     </td>
-                    <td className="px-3 py-2 text-white/60">
+                    <td className="px-3 py-2 text-white/70">
                       {new Date(u.createdAt).toLocaleDateString()}
                     </td>
                     <td
-                      className={`px-3 py-2 ${inactiveDays >= 30 ? 'text-brand-gold' : 'text-white/60'}`}
+                      className={`px-3 py-2 ${inactiveDays >= 30 ? 'text-brand-gold' : 'text-white/70'}`}
                     >
                       {t('adminUsers.daysAgo', '{{count}}d ago', { count: inactiveDays })}
                     </td>
                     <td className="px-3 py-2">
                       {u.disabled ? (
-                        <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-red-500/15 text-red-400">
+                        <span className="px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-red-400/15 text-red-400">
                           {t('adminUsers.disabled', 'Disabled')}
                         </span>
                       ) : u.welcomeEmailSentAt ? (
-                        '✓'
+                        <CheckIcon
+                          className="w-4 h-4 text-brand-emerald"
+                          aria-label={t('adminUsers.welcomed', 'Welcomed')}
+                        />
                       ) : (
-                        '—'
+                        '-'
                       )}
                     </td>
                   </tr>
@@ -148,11 +154,11 @@ export default function AdminUsers() {
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-center gap-3 text-sm text-white/60">
+          <div className="flex items-center justify-center gap-3 text-sm text-white/70">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="btn btn-xs rounded-lg disabled:opacity-30"
+              className="inline-flex items-center justify-center gap-1.5 rounded-control px-3 py-1.5 text-xs font-bold text-white/80 hover:text-white bg-brand-surface border border-brand-border hover:border-brand-emerald/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('adminUsers.prev', 'Prev')}
             </button>
@@ -162,7 +168,7 @@ export default function AdminUsers() {
             <button
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
-              className="btn btn-xs rounded-lg disabled:opacity-30"
+              className="inline-flex items-center justify-center gap-1.5 rounded-control px-3 py-1.5 text-xs font-bold text-white/80 hover:text-white bg-brand-surface border border-brand-border hover:border-brand-emerald/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {t('adminUsers.next', 'Next')}
             </button>

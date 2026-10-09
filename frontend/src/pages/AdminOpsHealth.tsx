@@ -222,7 +222,7 @@ export default function AdminOpsHealth() {
         path="/admin/ops-health"
         index={false}
       />
-      <div className="max-w-5xl mx-auto px-6 py-6 sm:py-10 space-y-6">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
         <h1 className="text-2xl font-black text-white">
           {t('adminOpsHealth.title', 'System & ops health')}
         </h1>

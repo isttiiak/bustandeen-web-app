@@ -1,7 +1,18 @@
 import { useState, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import { PlusIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
+import {
+  ADMIN_INPUT_SM,
+  AdminHero,
+  BTN_DANGER,
+  BTN_SMALL,
+  OPTION_CHIP,
+  PILL_EMERALD,
+  PILL_GOLD,
+} from '../components/admin/adminParts.js';
+import { BTN_PRIMARY, BTN_SECONDARY, OPTION_OFF, OPTION_ON } from '../components/bustanStyles.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import {
   useAdminAccounts,
@@ -36,11 +47,9 @@ function AddAnsarForm() {
 
   if (!open) {
     return (
-      <button
-        onClick={() => setOpen(true)}
-        className="btn btn-sm rounded-xl border-0 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color"
-      >
-        {t('adminAccounts.addAnsar', '+ Add Ansar')}
+      <button onClick={() => setOpen(true)} className={BTN_PRIMARY}>
+        <PlusIcon className="w-4 h-4" aria-hidden="true" />
+        {t('adminAccounts.addAnsar', 'Add Ansar')}
       </button>
     );
   }
@@ -48,7 +57,7 @@ function AddAnsarForm() {
   return (
     <form
       onSubmit={submit}
-      className="rounded-2xl border border-brand-emerald/15 bg-white/[0.03] p-4 space-y-3 max-w-sm"
+      className="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 space-y-3 max-w-sm"
     >
       <input
         type="email"
@@ -56,13 +65,15 @@ function AddAnsarForm() {
         value={form.email}
         onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
         placeholder={t('adminAccounts.emailPlaceholder', 'Ansar email')}
-        className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+        aria-label={t('adminAccounts.emailPlaceholder', 'Ansar email')}
+        className={`${ADMIN_INPUT_SM} w-full`}
       />
       <input
         value={form.displayName}
         onChange={(e) => setForm((f) => ({ ...f, displayName: e.target.value }))}
         placeholder={t('adminAccounts.namePlaceholder', 'Display name (optional)')}
-        className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+        aria-label={t('adminAccounts.namePlaceholder', 'Display name (optional)')}
+        className={`${ADMIN_INPUT_SM} w-full`}
       />
       <input
         type="password"
@@ -71,32 +82,27 @@ function AddAnsarForm() {
         value={form.password}
         onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
         placeholder={t('adminAccounts.passwordPlaceholder', 'Temporary password (min 8 chars)')}
-        className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+        aria-label={t('adminAccounts.passwordPlaceholder', 'Temporary password (min 8 chars)')}
+        className={`${ADMIN_INPUT_SM} w-full`}
       />
       <div>
-        <p className="text-xs text-white/40 mb-1">
+        <p className="text-xs text-white/70 mb-1">
           {t('adminAccounts.domainLabel', 'Which area does this Ansar manage?')}
         </p>
         <div className="flex gap-2">
           <button
             type="button"
             onClick={() => setAnsarDomain('general')}
-            className={`btn btn-sm rounded-xl flex-1 border-0 ${
-              ansarDomain === 'general'
-                ? 'bg-brand-emerald-dim text-on-color'
-                : 'bg-white/5 text-white/50'
-            }`}
+            aria-pressed={ansarDomain === 'general'}
+            className={`${OPTION_CHIP} flex-1 justify-center ${ansarDomain === 'general' ? OPTION_ON : OPTION_OFF}`}
           >
             {t('adminAccounts.domainGeneral', 'General (zikr review, etc.)')}
           </button>
           <button
             type="button"
             onClick={() => setAnsarDomain('sadaqah')}
-            className={`btn btn-sm rounded-xl flex-1 border-0 ${
-              ansarDomain === 'sadaqah'
-                ? 'bg-brand-emerald-dim text-on-color'
-                : 'bg-white/5 text-white/50'
-            }`}
+            aria-pressed={ansarDomain === 'sadaqah'}
+            className={`${OPTION_CHIP} flex-1 justify-center ${ansarDomain === 'sadaqah' ? OPTION_ON : OPTION_OFF}`}
           >
             {t('adminAccounts.domainSadaqah', 'Sadaqah only')}
           </button>
@@ -106,23 +112,19 @@ function AddAnsarForm() {
         <p className="text-red-400 text-xs">
           {t(
             'adminAccounts.createError',
-            'Could not create this account — email may already exist.'
+            'Could not create this account. The email may already exist.'
           )}
         </p>
       )}
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={create.isPending}
-          className="btn btn-sm rounded-xl border-0 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color disabled:opacity-50"
-        >
-          {create.isPending ? '…' : t('adminAccounts.create', 'Create')}
+        <button type="submit" disabled={create.isPending} className={BTN_PRIMARY}>
+          {create.isPending ? (
+            <span className="loading loading-spinner loading-xs" aria-label="Creating" />
+          ) : (
+            t('adminAccounts.create', 'Create')
+          )}
         </button>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="btn btn-sm rounded-xl bg-transparent text-white/50"
-        >
+        <button type="button" onClick={() => setOpen(false)} className={BTN_SECONDARY}>
           {t('adminAccounts.cancel', 'Cancel')}
         </button>
       </div>
@@ -138,15 +140,11 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
   const isSelf = account.email === myEmail;
 
   return (
-    <tr className="border-b border-base-300/60 last:border-0">
+    <tr className="border-b border-brand-border/60 last:border-0">
       <td className="px-3 py-2 text-white/80">{account.email}</td>
       <td className="px-3 py-2">
         <span
-          className={`px-1.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${
-            account.role === 'servant'
-              ? 'bg-brand-gold/15 text-brand-gold'
-              : 'bg-brand-emerald/15 text-brand-emerald'
-          }`}
+          className={`${account.role === 'servant' ? PILL_GOLD : PILL_EMERALD} uppercase tracking-wide`}
         >
           {account.role === 'servant'
             ? t('adminGate.servant', 'Servant')
@@ -161,35 +159,32 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
               setDomain.mutate({ id: account.id, ansarDomain: e.target.value as AnsarDomain })
             }
             disabled={setDomain.isPending}
-            className="select select-xs bg-white/5 border-brand-emerald/15 text-white/70 rounded-lg disabled:opacity-40"
+            aria-label={t('adminAccounts.colDomain', 'Domain')}
+            className={`${ADMIN_INPUT_SM} !py-1 text-xs disabled:opacity-50`}
           >
             <option value="general">{t('adminAccounts.domainGeneralBadge', 'General')}</option>
             <option value="sadaqah">{t('adminAccounts.domainSadaqahBadge', 'Sadaqah')}</option>
           </select>
         ) : (
-          <span className="text-white/25 text-xs">
+          <span className="text-white/70 text-xs">
             {t('adminAccounts.allAccess', 'All access')}
           </span>
         )}
       </td>
-      <td className="px-3 py-2 text-white/60">
+      <td className="px-3 py-2 text-white/70">
         {account.active
           ? t('adminAccounts.active', 'Active')
           : t('adminAccounts.inactive', 'Deactivated')}
       </td>
-      <td className="px-3 py-2 text-white/60">
-        {account.lastLoginAt ? new Date(account.lastLoginAt).toLocaleString() : '—'}
+      <td className="px-3 py-2 text-white/70">
+        {account.lastLoginAt ? new Date(account.lastLoginAt).toLocaleString() : '-'}
       </td>
       <td className="px-3 py-2">
         {!isSelf && (
           <button
             onClick={() => setActive.mutate({ id: account.id, active: !account.active })}
             disabled={setActive.isPending}
-            className={`btn btn-xs rounded-lg border-0 disabled:opacity-40 ${
-              account.active
-                ? 'bg-red-500/20 text-red-300'
-                : 'bg-brand-emerald/20 text-brand-emerald'
-            }`}
+            className={account.active ? BTN_DANGER : BTN_SMALL}
           >
             {account.active
               ? t('adminAccounts.deactivate', 'Deactivate')
@@ -213,25 +208,22 @@ export default function AdminAccounts() {
         path="/admin/accounts"
         index={false}
       />
-      <div className="max-w-5xl mx-auto px-6 py-6 sm:py-10 space-y-6">
-        <div>
-          <h1 className="text-2xl font-black text-white">
-            {t('adminAccounts.title', 'Manage Ansars')}
-          </h1>
-          <p className="text-sm text-white/50 mt-1">
-            {t(
-              'adminAccounts.subtitle',
-              'Servant-only. Add a new Ansar, change which area they manage, or revoke an existing one — every change takes effect immediately.'
-            )}
-          </p>
-        </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
+        <AdminHero
+          icon={ShieldCheckIcon}
+          title={t('adminAccounts.title', 'Manage Ansars')}
+          subtitle={t(
+            'adminAccounts.subtitle',
+            'Servant-only. Add a new Ansar, change which area they manage, or revoke an existing one. Every change takes effect immediately.'
+          )}
+        />
 
         <AddAnsarForm />
 
-        <div className="rounded-2xl bg-base-200 border border-base-300 overflow-x-auto">
+        <div className="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-left text-white/40 text-xs uppercase tracking-wide border-b border-base-300">
+              <tr className="text-left text-white/70 text-xs uppercase tracking-wide border-b border-brand-border">
                 <th className="px-3 py-2">{t('adminAccounts.colEmail', 'Email')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colRole', 'Role')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colDomain', 'Domain')}</th>
@@ -243,7 +235,7 @@ export default function AdminAccounts() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={6} className="text-center text-white/30 py-6">
+                  <td colSpan={6} className="text-center text-white/70 py-6">
                     {t('common.loading', 'Loading…')}
                   </td>
                 </tr>
