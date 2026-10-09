@@ -24,3 +24,23 @@ export const socialSummarySchema = z.object({
 export const setInvisibleSchema = z.object({
   body: z.object({ invisible: z.boolean() }),
 });
+
+export const setPrivacySchema = z.object({
+  body: z
+    .object({
+      visibility: z.enum(['hidden', 'streaks', 'detail']).optional(),
+      secret: z
+        .object({
+          salat: z.boolean().optional(),
+          zikr: z.boolean().optional(),
+          quran: z.boolean().optional(),
+          fasting: z.boolean().optional(),
+        })
+        .strict()
+        .optional(),
+    })
+    .strict()
+    .refine((b) => b.visibility !== undefined || b.secret !== undefined, {
+      message: 'Send visibility or secret',
+    }),
+});

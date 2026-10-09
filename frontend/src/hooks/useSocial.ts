@@ -5,6 +5,18 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 
+export type Visibility = 'hidden' | 'streaks' | 'detail';
+export type SecretArea = 'salat' | 'zikr' | 'quran' | 'fasting';
+export interface PrivacySettings {
+  visibility: Visibility;
+  secret: Record<SecretArea, boolean>;
+}
+
+/**
+ * One person in your circle. What is present depends on what they share
+ * (T3.6): your own row is always 'detail'; a friend at 'streaks' carries only
+ * the consistency fields; an area a friend keeps secret is absent entirely.
+ */
 export interface FriendStats {
   uid: string;
   displayName: string;
@@ -13,34 +25,39 @@ export interface FriendStats {
   /** Full country name from the user's profile (e.g. "Bangladesh") */
   country?: string;
   isMe: boolean;
-  salatToday: number;
+  visibility: 'detail' | 'streaks';
+  // Consistency (both levels)
+  zikrStreak?: number;
+  zikrState?: 'active' | 'grace' | 'none' | 'paused';
+  quranStreak?: number;
+  /** Active days this Friday-to-Thursday week so far, including today */
+  activeDays: number;
+  weekDays: number;
+  // Full detail only
+  salatToday?: number;
   /** How many fard prayer windows have opened so far today (0–5) */
   prayersDue?: number;
-  zikrStreak: number;
-  zikrState: 'active' | 'grace' | 'none' | 'paused';
-  zikrToday: number;
-  zikrGoal: number;
-  zikrGoalMet: boolean;
-  fastsThisMonth: number;
-  fastedToday: boolean;
-  quranStreak: number;
-  quranPagesToday: number;
-  quranGoal: number;
-  score: number;
+  zikrToday?: number;
+  zikrGoal?: number;
+  zikrGoalMet?: boolean;
+  fastsThisMonth?: number;
+  fastedToday?: boolean;
+  quranPagesToday?: number;
+  quranGoal?: number;
+  score?: number;
   /** Average daily Noor this Friday-to-Thursday week so far */
   weekScore?: number;
   /** Week-so-far totals behind the "This week" chips */
   week?: {
-    salat: number;
-    zikr: number;
-    quran: number;
-    fasts: number;
+    salat?: number;
+    zikr?: number;
+    quran?: number;
+    fasts?: number;
     activeDays: number;
     days: number;
   };
   /** The friend's usual daily Noor (average of recent active days); null while there is too little history */
   usualScore?: number | null;
-  /** Distinct good acts today (leaderboard tie-break) */
   actsToday?: number;
   /** Present ONLY for the one friend who has opted in to share her cycle
    * status with you specifically — see Rayhanah's partner-sync setting. */
@@ -49,9 +66,10 @@ export interface FriendStats {
 
 export interface SocialSummary {
   inviteCode: string;
-  leaderboard: FriendStats[];
-  /** Whether the viewer has opted out of appearing on others' leaderboards */
-  invisible: boolean;
+  /** You first, then friends by longest streak. Never ranked. */
+  circle: FriendStats[];
+  /** Your own privacy choices */
+  privacy: PrivacySettings;
   /** Count of incoming friend requests awaiting the viewer's accept/reject */
   pendingCount: number;
 }
@@ -250,19 +268,24 @@ export function useUnblockUser() {
   });
 }
 
-/** Full leaderboard opt-out — when on, no one (not even existing friends) sees your stats. */
-export function useSetInvisible() {
+/** What friends see of you, and which areas stay secret (T3.6). */
+export function useSetPrivacy() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (invisible: boolean) => {
-      const { data } = await api.patch<{ ok: boolean; invisible: boolean }>(
-        '/api/social/invisible',
-        { invisible }
+    mutationFn: async (update: {
+      visibility?: Visibility;
+      secret?: Partial<Record<SecretArea, boolean>>;
+    }) => {
+      const { data } = await api.patch<{ ok: boolean; privacy: PrivacySettings }>(
+        '/api/social/privacy',
+        update
       );
       return data;
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['social'] }),
     onError: () =>
-      toast.error('Could not update your privacy setting — try again.', { id: 'social-invisible' }),
+      toast.error('Could not update your privacy setting. Please try again.', {
+        id: 'social-privacy',
+      }),
   });
 }

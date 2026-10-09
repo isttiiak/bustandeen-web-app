@@ -1,8 +1,11 @@
 import { isAvatarId } from '../utils/avatars.js';
 import SocialProfile, {
+  effectiveVisibility,
   generateInviteCode,
   ISocialProfile,
   MAX_FRIENDS,
+  SecretAreas,
+  Visibility,
 } from '../models/SocialProfile.js';
 import User from '../models/User.js';
 import SalatLog, { PRAYER_IDS } from '../models/SalatLog.js';
@@ -27,7 +30,12 @@ export async function getOrCreateProfile(userId: string): Promise<ISocialProfile
   // Retry a few times on the (astronomically unlikely) code collision
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      return await SocialProfile.create({ userId, inviteCode: generateInviteCode() });
+      // New people share consistency only until they choose otherwise (T3.6)
+      return await SocialProfile.create({
+        userId,
+        inviteCode: generateInviteCode(),
+        visibility: 'streaks',
+      });
     } catch (err) {
       const isDup = (err as { code?: number })?.code === 11000;
       if (!isDup) throw err;
@@ -267,13 +275,57 @@ export async function getBlockedList(userId: string): Promise<PendingRequestItem
   return toPendingItems(profile.blocked, users);
 }
 
-/** Full leaderboard opt-out — see ISocialProfile.invisible. */
+export interface PrivacySettings {
+  visibility: Visibility;
+  secret: SecretAreas;
+}
+
+const NO_SECRET: SecretAreas = { salat: false, zikr: false, quran: false, fasting: false };
+
+function privacyOf(
+  p: Pick<ISocialProfile, 'visibility' | 'invisible' | 'secret'>
+): PrivacySettings {
+  return {
+    visibility: effectiveVisibility(p),
+    secret: {
+      salat: !!p.secret?.salat,
+      zikr: !!p.secret?.zikr,
+      quran: !!p.secret?.quran,
+      fasting: !!p.secret?.fasting,
+    },
+  };
+}
+
+/** What friends see of me + my secret deeds. Either part may be sent alone. */
+export async function setPrivacy(
+  userId: string,
+  update: { visibility?: Visibility; secret?: Partial<SecretAreas> }
+): Promise<{ ok: boolean; privacy: PrivacySettings }> {
+  await getOrCreateProfile(userId);
+  const $set: Record<string, unknown> = {};
+  if (update.visibility) {
+    $set['visibility'] = update.visibility;
+    $set['invisible'] = update.visibility === 'hidden';
+  }
+  for (const [area, on] of Object.entries(update.secret ?? {})) {
+    if (typeof on === 'boolean') $set[`secret.${area}`] = on;
+  }
+  const updated = await SocialProfile.findOneAndUpdate(
+    { userId },
+    // The user's own choice is never undone by the migration's --revert
+    { $set, ...(update.visibility ? { $unset: { visibilitySource: '' } } : {}) },
+    { returnDocument: 'after' }
+  );
+  return { ok: true, privacy: privacyOf(updated ?? { invisible: false, secret: NO_SECRET }) };
+}
+
+/** Pre-T3.6 alias (PATCH /api/social/invisible), kept one release for cached
+ * clients: on = hidden; off = full detail, which is what that switch meant. */
 export async function setInvisible(
   userId: string,
   invisible: boolean
 ): Promise<{ ok: boolean; invisible: boolean }> {
-  await getOrCreateProfile(userId);
-  await SocialProfile.updateOne({ userId }, { $set: { invisible } });
+  await setPrivacy(userId, { visibility: invisible ? 'hidden' : 'detail' });
   return { ok: true, invisible };
 }
 
@@ -333,8 +385,15 @@ export async function getFriendsList(userId: string): Promise<FriendListItem[]> 
   return list;
 }
 
-// ─── Leaderboard ──────────────────────────────────────────────────────────────
+// ─── Circle ───────────────────────────────────────────────────────────────────
 
+/**
+ * One person in the viewer's circle. What is present depends on what that
+ * person chose to share (T3.6): the viewer's own row is always full detail;
+ * a friend at 'streaks' carries only the consistency fields; and any area a
+ * friend keeps secret is left out entirely (absent, not zero), as is its share
+ * of the Noor friends see.
+ */
 export interface FriendStats {
   uid: string;
   displayName: string;
@@ -344,40 +403,50 @@ export interface FriendStats {
   /** Full country name from the user's profile (e.g. "Bangladesh") */
   country?: string;
   isMe: boolean;
-  salatToday: number; // 0..5 fard prayers completed/kaza today
+  /** How much this row shares: 'detail' (always, for the viewer's own row) or 'streaks' */
+  visibility: 'detail' | 'streaks';
+
+  // Consistency: shared at both levels (each one left out when its area is secret)
+  zikrStreak?: number;
+  zikrState?: string; // active | grace | none | paused
+  quranStreak?: number;
+  /** Active days this Fri-Thu week so far, including today */
+  activeDays: number;
+  /** Days of the week so far, including today */
+  weekDays: number;
+
+  // Full detail only
+  salatToday?: number; // 0..5 fard prayers completed/kaza today
   /** How many fard prayer windows have opened so far today (0–5, time-of-day aware) */
-  prayersDue: number;
-  zikrStreak: number;
-  zikrState: string; // active | grace | none | paused
-  zikrToday: number;
-  zikrGoal: number;
-  zikrGoalMet: boolean;
-  fastsThisMonth: number;
+  prayersDue?: number;
+  zikrToday?: number;
+  zikrGoal?: number;
+  zikrGoalMet?: boolean;
+  fastsThisMonth?: number;
   /** Fasting today (completed, or intended while the day is in progress) */
-  fastedToday: boolean;
-  quranStreak: number;
-  quranPagesToday: number;
-  quranGoal: number;
-  score: number; // Noor today, 0..100 (see noor.service.ts for the formula)
+  fastedToday?: boolean;
+  quranPagesToday?: number;
+  quranGoal?: number;
+  score?: number; // Noor today, 0..100 (see noor.service.ts for the formula)
   /** Average daily Noor this Fri-Thu week so far */
-  weekScore: number;
+  weekScore?: number;
   /** Week-so-far totals (Fri-Thu, including today) behind the "This week" chips */
-  week: {
-    salat: number;
-    zikr: number;
-    quran: number;
-    fasts: number;
+  week?: {
+    salat?: number;
+    zikr?: number;
+    quran?: number;
+    fasts?: number;
     activeDays: number;
     days: number;
   };
   /** The friend's usual daily Noor (average of recent active days), or null while there is too little history */
-  usualScore: number | null;
-  /** Distinct good acts today - the leaderboard tie-break */
-  actsToday: number;
+  usualScore?: number | null;
+  /** Distinct good acts today */
+  actsToday?: number;
   /** Present ONLY for the one friend who has opted in to share cycle status
    * with THIS viewer specifically (see cycle.service.ts#setPartnerSync) —
    * absent for everyone else, preserving the same "cannot tell from the
-   * leaderboard" privacy the excused-day score substitution relies on. */
+   * circle" privacy the excused-day score substitution relies on. */
   onCycle?: boolean;
 }
 
@@ -385,7 +454,7 @@ export interface FriendStats {
  * Approximate number of fard prayer windows that have opened at the current
  * local time. timezoneOffset is POSITIVE EAST (frontend -getTimezoneOffset()).
  * Fixed-hour thresholds are a fair global approximation; actual adhan times
- * vary by location and season, but give a consistent ranking basis.
+ * vary by location and season, but give a consistent basis.
  */
 function prayersDueNow(timezoneOffset: number, today?: string): number {
   // `today` is the tracking day being scored. Between midnight and Fajr it is
@@ -409,13 +478,20 @@ async function statsForUser(
   viewerUid: string,
   today: string,
   timezoneOffset: number,
+  privacy: PrivacySettings,
   excusedToday = false,
   sharesCycleWithViewer = false
 ): Promise<FriendStats> {
+  const isMe = uid === viewerUid;
+  // The viewer always sees all of their own row
+  const level: 'detail' | 'streaks' =
+    isMe || privacy.visibility === 'detail' ? 'detail' : 'streaks';
+  const secret = isMe ? NO_SECRET : privacy.secret;
+
   const monthStart = today.substring(0, 8) + '01';
   const quranSince = shiftDateStr(today, -30);
 
-  const [user, zikr, salatLog, fastsThisMonth, todayFastLog, quranLogs, quranProfile] =
+  const [user, zikr, salatLog, fastsThisMonth, todayFastLog, quranLogs, quranProfile, noor] =
     await Promise.all([
       User.findOne({ uid }).select('displayName photoUrl avatarId country'),
       getStreakStatus(uid, timezoneOffset, today),
@@ -430,6 +506,8 @@ async function statsForUser(
         'date pages ayat'
       ),
       QuranProfile.findOne({ userId: uid }).select('dailyGoalAyat'),
+      // Secret areas are left out of the Noor friends see (not of your own)
+      getNoorSummary(uid, today, secret),
     ]);
 
   let salatToday = 0;
@@ -453,71 +531,76 @@ async function statsForUser(
   }
 
   const prayersDue = prayersDueNow(timezoneOffset, today);
-
-  const base = {
-    isMe: uid === viewerUid,
-    salatToday,
-    prayersDue,
-    zikrStreak: zikr.currentStreak,
-    zikrState: zikr.state,
-    zikrToday: zikr.todayTotal,
-    zikrGoal: zikr.dailyTarget,
-    zikrGoalMet: zikr.goalMet,
-    fastsThisMonth,
-    fastedToday: todayFastLog?.status === 'completed' || todayFastLog?.status === 'intended',
-    quranStreak,
-    quranPagesToday,
-    quranGoal: quranProfile?.dailyGoalAyat ?? 20,
-  };
-
-  const noor = await getNoorSummary(uid, today);
   const score = noor.today.score;
+  const zikrGoalMet = secret.zikr ? false : zikr.goalMet;
+  let fastedToday = todayFastLog?.status === 'completed' || todayFastLog?.status === 'intended';
 
   if (excusedToday) {
-    // Rayhanah Cycle substitution. Check for salawat/istighfar in today's
-    // per-type buckets, score from the permitted acts, then fill the salat
-    // and fasting chips from that same real effort so the row looks like any
-    // other active day (Istiak's spec: nothing may reveal an excused day).
-    // Cap the substituted salat chip at the number of prayers whose time has
-    // plausibly arrived at the viewer's local clock — a 4/5 at Dhuhr time was
-    // a dead giveaway that the number was synthetic (defeating the privacy
-    // goal). Coarse fixed windows; friends overwhelmingly share a locale.
-    // timezoneOffset is POSITIVE EAST here (frontend sends -getTimezoneOffset())
-    const prayersElapsed = prayersDue;
-    base.salatToday = Math.min(prayersElapsed, Math.round(5 * Math.min(1, score / 100)));
-    base.fastedToday = base.zikrGoalMet;
+    // Rayhanah Cycle substitution. Score from the permitted acts, then fill
+    // the salat and fasting chips from that same real effort so the row looks
+    // like any other active day (Istiak's spec: nothing may reveal an excused
+    // day). Cap the substituted salat chip at the number of prayers whose time
+    // has plausibly arrived at the viewer's local clock — a 4/5 at Dhuhr time
+    // was a dead giveaway that the number was synthetic. Coarse fixed windows;
+    // friends overwhelmingly share a locale.
+    salatToday = Math.min(prayersDue, Math.round(5 * Math.min(1, score / 100)));
+    fastedToday = zikrGoalMet;
   }
 
-  return {
+  const activeDays = noor.weekPast.activeDays + (noor.today.base > 0 ? 1 : 0);
+  const row: FriendStats = {
     uid,
     displayName: user?.displayName || 'Bustandeen user',
     ...publicPicture(user),
     ...(user?.country ? { country: user.country } : {}),
-    ...base,
+    isMe,
+    visibility: level,
+    ...(secret.zikr ? {} : { zikrStreak: zikr.currentStreak, zikrState: zikr.state }),
+    ...(secret.quran ? {} : { quranStreak }),
+    activeDays,
+    weekDays: noor.weekPast.days,
+    ...(sharesCycleWithViewer ? { onCycle: excusedToday } : {}),
+  };
+  if (level === 'streaks') return row;
+
+  return {
+    ...row,
+    ...(secret.salat ? {} : { salatToday, prayersDue }),
+    ...(secret.zikr
+      ? {}
+      : { zikrToday: zikr.todayTotal, zikrGoal: zikr.dailyTarget, zikrGoalMet: zikr.goalMet }),
+    ...(secret.fasting ? {} : { fastsThisMonth, fastedToday }),
+    ...(secret.quran ? {} : { quranPagesToday, quranGoal: quranProfile?.dailyGoalAyat ?? 20 }),
     score,
     weekScore: noor.week,
     week: {
-      salat: noor.weekPast.salat + base.salatToday,
-      zikr: noor.weekPast.zikr + base.zikrToday,
-      quran: noor.weekPast.quran + base.quranPagesToday,
-      fasts: noor.weekPast.fasts + (base.fastedToday ? 1 : 0),
-      activeDays: noor.weekPast.activeDays + (noor.today.base > 0 ? 1 : 0),
+      ...(secret.salat ? {} : { salat: noor.weekPast.salat + salatToday }),
+      ...(secret.zikr ? {} : { zikr: noor.weekPast.zikr + zikr.todayTotal }),
+      ...(secret.quran ? {} : { quran: noor.weekPast.quran + quranPagesToday }),
+      ...(secret.fasting ? {} : { fasts: noor.weekPast.fasts + (fastedToday ? 1 : 0) }),
+      activeDays,
       days: noor.weekPast.days,
     },
     usualScore: noor.usual,
     actsToday: noor.today.acts,
-    ...(sharesCycleWithViewer ? { onCycle: excusedToday } : {}),
   };
 }
 
 export interface SocialSummary {
   inviteCode: string;
-  leaderboard: FriendStats[]; // me + friends, ranked by score desc
-  /** Whether the VIEWER has opted out of appearing on others' leaderboards */
+  /** Me first, then friends by their longest shared streak, then name. No ranking. */
+  circle: FriendStats[];
+  /** @deprecated alias of `circle` for clients cached before T3.6; remove next release */
+  leaderboard: FriendStats[];
+  /** The VIEWER's own privacy choices */
+  privacy: PrivacySettings;
+  /** @deprecated `privacy.visibility === 'hidden'`, for clients cached before T3.6 */
   invisible: boolean;
   /** Count of incoming friend requests awaiting the viewer's accept/reject */
   pendingCount: number;
 }
+
+const longestStreak = (f: FriendStats): number => Math.max(f.zikrStreak ?? 0, f.quranStreak ?? 0);
 
 export async function getSummary(
   userId: string,
@@ -533,17 +616,22 @@ export async function getSummary(
   const end = today ?? getTodayString(timezoneOffset);
   const profile = await getOrCreateProfile(userId);
 
-  // A friend who has gone invisible (see ISocialProfile.invisible) is a full
-  // opt-out — excluded from EVERY friend's leaderboard, not just new ones.
-  // The viewer always sees their own row regardless of their own setting.
+  // A hidden friend is a full opt-out — excluded from EVERY friend's circle,
+  // not just new ones. The viewer always sees their own row.
   const friendUids = profile.friends.slice(0, MAX_FRIENDS);
   const friendProfiles = friendUids.length
-    ? await SocialProfile.find({ userId: { $in: friendUids } }).select('userId invisible')
+    ? await SocialProfile.find({ userId: { $in: friendUids } }).select(
+        'userId invisible visibility secret'
+      )
     : [];
-  const visibleFriendUids = friendProfiles.filter((p) => !p.invisible).map((p) => p.userId);
+  const privacyByUid = new Map<string, PrivacySettings>();
+  for (const p of friendProfiles) {
+    const pv = privacyOf(p);
+    if (pv.visibility !== 'hidden') privacyByUid.set(p.userId, pv);
+  }
+  const visibleFriendUids = [...privacyByUid.keys()];
 
-  // Everyone is judged on the VIEWER's calendar date — a consistent basis for
-  // one ranked list (documented in CLAUDE.md).
+  // Everyone is judged on the VIEWER's calendar date — one consistent basis.
   const uids = [userId, ...visibleFriendUids];
   const [excused, cycleShares] = await Promise.all([
     getExcusedSet(uids, end),
@@ -551,26 +639,34 @@ export async function getSummary(
   ]);
   const stats = await Promise.all(
     uids.map((uid) =>
-      statsForUser(uid, userId, end, timezoneOffset, excused.has(uid), cycleShares.has(uid))
+      statsForUser(
+        uid,
+        userId,
+        end,
+        timezoneOffset,
+        privacyByUid.get(uid) ?? { visibility: 'detail', secret: NO_SECRET },
+        excused.has(uid),
+        cycleShares.has(uid)
+      )
     )
   );
 
+  // No ranking (FIQH-03, D3): ordering by Noor would also reveal the score of
+  // anyone who shares consistency only.
   stats.sort(
     (a, b) =>
-      b.score - a.score ||
-      b.actsToday - a.actsToday ||
-      // At the start of a day everyone is 0: fall back to who is usually
-      // higher, then the longer streak, so a 72-day streak never sits below
-      // someone who has just begun.
-      (b.usualScore ?? 0) - (a.usualScore ?? 0) ||
-      b.zikrStreak - a.zikrStreak ||
+      Number(b.isMe) - Number(a.isMe) ||
+      longestStreak(b) - longestStreak(a) ||
       a.displayName.localeCompare(b.displayName)
   );
 
+  const privacy = privacyOf(profile);
   return {
     inviteCode: profile.inviteCode,
+    circle: stats,
     leaderboard: stats,
-    invisible: profile.invisible,
+    privacy,
+    invisible: privacy.visibility === 'hidden',
     pendingCount: profile.pendingIncoming.length,
   };
 }
@@ -583,7 +679,7 @@ export interface NoorResult {
 }
 
 /**
- * Today's Noor = the live leaderboard score.
+ * Today's Noor = the viewer's own score in the circle.
  * All-time Noor = the daily formula applied to every recorded day of the last
  * 365 days and summed — it only ever grows. (A streak is a live property, so
  * the historical zikr component uses that day's goal progress instead;

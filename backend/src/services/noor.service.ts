@@ -5,9 +5,14 @@ import QuranProfile from '../models/QuranProfile.js';
 import ZikrGoal from '../models/ZikrGoal.js';
 import ZikrDaily from '../models/ZikrDaily.js';
 import { getExcusedIntervals } from './cycle.service.js';
+import type { SecretArea } from '../models/SocialProfile.js';
+
+/** Areas to leave out of a series: the "secret deeds" of someone seen by a
+ * friend. Their own Noor is always computed with nothing left out. */
+export type NoorMask = Partial<Record<SecretArea, boolean>>;
 
 /**
- * Noor v2: the daily score behind the leaderboard and the navbar capsules.
+ * Noor v2: the daily score behind the friends circle and the navbar capsules.
  * One formula for a day, used for today, past days, the weekly average and the
  * all-time total, so the numbers can never disagree with each other.
  *
@@ -56,7 +61,7 @@ export interface DayNoor {
   acts: number;
   /** Score before the steadiness bonus; > 0 means an active day. */
   base: number;
-  /** Raw inputs of the day, kept for the weekly totals on the leaderboard. */
+  /** Raw inputs of the day, kept for the weekly totals in the friends circle. */
   detail?: {
     salat: number;
     zikr: number;
@@ -114,7 +119,8 @@ const SALAWAT_DB_REGEX = 'salawat|ṣalawāt|durud|darood|salat.?.?ala|istighfar
 export async function loadNoorSeries(
   userId: string,
   from: string,
-  to: string
+  to: string,
+  mask: NoorMask = {}
 ): Promise<Map<string, DayNoor>> {
   const loadFrom = shift(from, -NOOR_WEIGHTS.steadyMax);
   const [salatLogs, zikrRows, quranLogs, fastLogs, zikrGoalDoc, quranProfile, intervals] =
@@ -191,14 +197,14 @@ export async function loadNoorSeries(
   let run = 0;
   for (let day = loadFrom; day <= to; day = shift(day, 1)) {
     const inputs: DayInputs = {
-      salatDone: salatByDay.get(day) ?? 0,
-      zikr: zikrByDay.get(day) ?? 0,
+      salatDone: mask.salat ? 0 : (salatByDay.get(day) ?? 0),
+      zikr: mask.zikr ? 0 : (zikrByDay.get(day) ?? 0),
       zikrGoal,
-      quran: quranByDay.get(day) ?? 0,
+      quran: mask.quran ? 0 : (quranByDay.get(day) ?? 0),
       quranGoal,
-      fasted: fastDays.has(day),
-      nafl: naflDays.has(day),
-      salawat: salawatDays.has(day),
+      fasted: mask.fasting ? false : fastDays.has(day),
+      nafl: mask.salat ? false : naflDays.has(day),
+      salawat: mask.zikr ? false : salawatDays.has(day),
       excused: isExcused(day),
     };
     // First learn whether the day is active (extends or resets the run), then
@@ -249,10 +255,14 @@ export interface NoorSummary {
   usual: number | null;
 }
 
-export async function getNoorSummary(userId: string, today: string): Promise<NoorSummary> {
+export async function getNoorSummary(
+  userId: string,
+  today: string,
+  mask: NoorMask = {}
+): Promise<NoorSummary> {
   const weekStart = weekStartFriday(today);
   const from = shift(today, -14);
-  const series = await loadNoorSeries(userId, from, today);
+  const series = await loadNoorSeries(userId, from, today, mask);
   const todayNoor = series.get(today) ?? { score: 0, acts: 0, base: 0 };
 
   let weekSum = 0;

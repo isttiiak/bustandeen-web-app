@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.125.0 - Friends: you choose what they see, and secret deeds - 2026-10-09
+
+### Changed
+
+- **What friends see (T3.6, FIQH-03)**: Friends → See friends now has three choices instead of one "hide me" switch: **Nothing** (hidden from everyone, even current friends), **Consistency only** (your dhikr and Quran streaks and active days this week, no daily numbers) and **Full detail** (today's prayers, dhikr, fasting, Quran and Noor). New accounts start at Consistency only. Existing accounts keep exactly what friends saw before: hidden stays hidden, everyone else stays at Full detail.
+- **Secret deeds**: keep Prayers, Dhikr, Quran or Fasting secret. Friends never see that area, and it is left out of the Noor they see. It still counts in your own analytics and your own Noor.
+- **No more ranking**: the circle lists you first, then friends by their longest streak, with no 1/2/3 badges. Ordering by Noor would have revealed the score of anyone who shares consistency only.
+- **A quiet line under the circle**: "Noor is your consistency, not your worth. Acceptance is with Allah alone." with "The most beloved deeds to Allah are the most consistent, even if small." (Ṣaḥīḥ al-Bukhārī 6464, also Muslim 783b). It replaces the old Noor disclaimer.
+- The Privacy page describes the new choices.
+
+### API
+
+- `GET /api/social/summary` returns `circle` (was `leaderboard`) and `privacy: { visibility, secret }` (was `invisible`). Rows a friend shares at consistency only carry no daily numbers or Noor; secret areas are absent. `PATCH /api/social/privacy { visibility?, secret? }` sets them. `leaderboard`, `invisible` and `PATCH /api/social/invisible` stay one release for cached clients.
+- `SocialProfile.visibility` + `secret`. Migration `npm run migrate:social-visibility --prefix backend` (dry run by default, `-- --apply`, `-- --revert`): writes `hidden`/`detail` from the old `invisible` flag on profiles created before this release; idempotent; revert only touches values it wrote. Unmigrated profiles already read the same way, so the app is correct before and after it runs.
+
 ## v5.124.0 - Quick sections for Quran, Zikr and Fasting - 2026-10-09
 
 ### Added

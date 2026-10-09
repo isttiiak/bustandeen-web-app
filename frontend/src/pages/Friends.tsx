@@ -33,6 +33,8 @@ import {
   NoSymbolIcon,
   BellIcon,
   EyeSlashIcon,
+  EyeIcon,
+  FireIcon,
   BookOpenIcon,
   ArrowUpIcon,
   SparklesIcon,
@@ -51,7 +53,9 @@ import {
   useBlockedList,
   useBlockUser,
   useUnblockUser,
-  useSetInvisible,
+  useSetPrivacy,
+  type SecretArea,
+  type Visibility,
 } from '../hooks/useSocial.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useIsFemale } from '../hooks/useCycle.js';
@@ -73,13 +77,6 @@ const BTN_DANGER =
   'btn-solid inline-flex items-center justify-center gap-1 rounded-control px-3 py-1.5 text-xs font-bold text-on-color bg-red-600 hover:bg-red-700 shadow-elev-1 transition-colors disabled:opacity-50';
 const ICON_DANGER =
   'p-2 rounded-control text-white/70 hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0';
-/** Gold, silver and bronze rank discs. */
-const RANK_TONE = [
-  'border-brand-gold/60 bg-brand-gold/15 text-brand-gold',
-  'border-white/40 bg-brand-surface text-white',
-  'border-brand-warm/60 bg-brand-warm/15 text-brand-warm',
-];
-
 function Avatar({
   name,
   photoUrl,
@@ -253,6 +250,96 @@ function PendingRequestsModal({ onClose }: { onClose: () => void }) {
   );
 }
 
+const VISIBILITY_OPTIONS: { value: Visibility; Icon: SvgIcon }[] = [
+  { value: 'hidden', Icon: EyeSlashIcon },
+  { value: 'streaks', Icon: FireIcon },
+  { value: 'detail', Icon: EyeIcon },
+];
+const SECRET_OPTIONS: { area: SecretArea; Icon: SvgIcon }[] = [
+  { area: 'salat', Icon: MosqueIcon },
+  { area: 'zikr', Icon: TasbihIcon },
+  { area: 'quran', Icon: BookOpenIcon },
+  { area: 'fasting', Icon: CrescentIcon },
+];
+
+/** What friends see of me (three levels) + secret deeds (T3.6, FIQH-03). */
+function PrivacySettingsBlock() {
+  const { t } = useTranslation();
+  const { data: summary } = useSocialSummary();
+  const setPrivacy = useSetPrivacy();
+  const privacy = summary?.privacy;
+  // Show the choice at once; the refetch after the save confirms it
+  const pending = setPrivacy.isPending ? setPrivacy.variables : undefined;
+  const visibility = pending?.visibility ?? privacy?.visibility;
+  const isSecret = (area: SecretArea): boolean =>
+    pending?.secret?.[area] ?? privacy?.secret[area] ?? false;
+
+  return (
+    <div className={`${ROW} space-y-3`}>
+      <div role="radiogroup" aria-labelledby="friends-visibility-title" className="space-y-1.5">
+        <p id="friends-visibility-title" className="text-white font-bold text-sm">
+          {t('friends.privacy.title')}
+        </p>
+        {VISIBILITY_OPTIONS.map(({ value, Icon }) => {
+          const on = visibility === value;
+          return (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              disabled={!privacy || setPrivacy.isPending}
+              onClick={() => !on && setPrivacy.mutate({ visibility: value })}
+              className={`w-full min-h-[44px] flex items-start gap-2.5 rounded-control border px-3 py-2 text-left transition-colors ${
+                on ? OPTION_ON : OPTION_OFF
+              }`}
+            >
+              <Icon
+                className={`w-5 h-5 mt-0.5 shrink-0 ${on ? 'text-brand-emerald' : 'text-white/70'}`}
+              />
+              <span className="flex-1 min-w-0">
+                <span className="block text-sm font-bold">{t(`friends.privacy.${value}`)}</span>
+                <span className="block text-xs text-white/70 leading-relaxed">
+                  {t(`friends.privacy.${value}Desc`)}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div className="space-y-1.5">
+        <p className="flex items-center gap-1.5 text-white font-bold text-sm">
+          <LockClosedIcon className="w-4 h-4 text-brand-gold" />
+          {t('friends.privacy.secretTitle')}
+        </p>
+        <p className="text-white/70 text-xs leading-relaxed">{t('friends.privacy.secretDesc')}</p>
+        <div className="grid grid-cols-2 gap-1.5">
+          {SECRET_OPTIONS.map(({ area, Icon }) => {
+            const on = isSecret(area);
+            return (
+              <button
+                key={area}
+                type="button"
+                aria-pressed={on}
+                disabled={!privacy || setPrivacy.isPending}
+                onClick={() => setPrivacy.mutate({ secret: { [area]: !on } })}
+                className={`min-h-[44px] inline-flex items-center gap-2 rounded-control border px-3 py-2 text-xs font-bold transition-colors ${
+                  on ? 'bg-brand-gold/10 border-brand-gold text-white' : OPTION_OFF
+                }`}
+              >
+                <Icon className={`w-4 h-4 shrink-0 ${on ? 'text-brand-gold' : 'text-white/70'}`} />
+                <span className="flex-1 text-left">{t(`friends.privacy.area.${area}`)}</span>
+                {on && <LockClosedIcon className="w-3.5 h-3.5 text-brand-gold shrink-0" />}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /** Manage-friends modal: full list, connected-since date, two-step confirm delete. */
 function ManageFriendsModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
@@ -260,8 +347,6 @@ function ManageFriendsModal({ onClose }: { onClose: () => void }) {
   const unfriend = useUnfriend();
   const blockUser = useBlockUser();
   const unblockUser = useUnblockUser();
-  const setInvisible = useSetInvisible();
-  const { data: summary } = useSocialSummary();
   const { data: blocked, isLoading: blockedLoading } = useBlockedList(true);
   // Two-step confirm: null, then "confirm-1" (Remove?), then "confirm-2" (Are you sure?), then delete
   const [confirmStep, setConfirmStep] = useState<{ uid: string; step: 1 | 2 } | null>(null);
@@ -431,22 +516,7 @@ function ManageFriendsModal({ onClose }: { onClose: () => void }) {
         </div>
       )}
 
-      {/* Privacy: full leaderboard opt-out */}
-      <label className={`${ROW} flex items-center gap-3 cursor-pointer`}>
-        <EyeSlashIcon className="w-5 h-5 text-white/70 shrink-0" />
-        <div className="flex-1 min-w-0">
-          <p className="text-white font-bold text-sm">{t('friends.invisibleTitle')}</p>
-          <p className="text-white/70 text-xs leading-relaxed">{t('friends.invisibleDesc')}</p>
-        </div>
-        <input
-          type="checkbox"
-          className="toggle toggle-sm toggle-success shrink-0"
-          checked={summary?.invisible ?? false}
-          disabled={setInvisible.isPending}
-          onChange={(e) => setInvisible.mutate(e.target.checked)}
-          aria-label={t('friends.invisibleTitle')}
-        />
-      </label>
+      <PrivacySettingsBlock />
 
       {/* Blocked users */}
       <div className="rounded-control border border-brand-border bg-brand-surface/50 overflow-hidden">
@@ -544,6 +614,179 @@ function Chip({
   );
 }
 
+/** One person in the circle. A friend who shares consistency only gets the
+ * streak chips; an area a friend keeps secret is simply absent (T3.6). */
+function CircleRow({ f, i, board }: { f: FriendStats; i: number; board: 'today' | 'week' }) {
+  const { t } = useTranslation();
+  const detail = f.visibility === 'detail' && f.score !== undefined;
+  const shown = board === 'week' ? (f.weekScore ?? f.score ?? 0) : (f.score ?? 0);
+  const week = board === 'week' && f.week ? f.week : null;
+  const sv = f.zikrStreak !== undefined ? streakVisual(f.zikrState, f.zikrStreak, t) : null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.04 + i * 0.04 }}
+      className={`${CARD} p-3.5 ${f.isMe ? 'border-brand-emerald/60' : ''}`}
+    >
+      <div className="flex items-center gap-3">
+        <Avatar name={f.displayName} photoUrl={f.photoUrl} avatarId={f.avatarId} />
+        <div className="flex-1 min-w-0">
+          <p className="text-white font-bold text-sm flex items-center gap-1.5 min-w-0">
+            <span className="truncate">{f.displayName}</span>
+            {f.country && <CountryFlag countryName={f.country} />}
+            {f.isMe && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full border border-brand-emerald/50 bg-brand-emerald/10 text-brand-emerald shrink-0">
+                {t('friends.you')}
+              </span>
+            )}
+          </p>
+          {f.onCycle !== undefined && (
+            <span
+              className={`inline-flex items-center gap-1 mt-0.5 text-[11px] font-semibold ${
+                f.onCycle ? 'text-brand-pink' : 'text-white/70'
+              }`}
+            >
+              {f.onCycle && <FlowerIcon className="w-3.5 h-3.5" />}
+              {f.onCycle
+                ? t('friends.onCycle', 'on her cycle')
+                : t('friends.notOnCycle', 'not on her cycle')}
+            </span>
+          )}
+          {detail ? (
+            <>
+              <div className="flex items-center gap-2 mt-1">
+                <div className="flex-1 bg-track rounded-full h-1.5 overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${Math.min(100, Math.max(0, shown))}%` }}
+                    transition={{ duration: 0.6, delay: 0.1 + i * 0.04, ease: 'easeOut' }}
+                    className="h-full rounded-full bg-brand-emerald"
+                  />
+                </div>
+                <span className="inline-flex items-center gap-0.5 text-white text-xs font-bold tabular-nums w-12 justify-end">
+                  <SparklesIcon className="w-3.5 h-3.5 text-brand-gold" />
+                  {formatLocaleNumber(shown)}
+                </span>
+              </div>
+              {week && (
+                <p className="text-[11px] mt-1 text-white/70">
+                  {t(
+                    'friends.weekActiveDays',
+                    'daily average · active {{active}} of {{days}} days',
+                    {
+                      active: formatLocaleNumber(week.activeDays),
+                      days: formatLocaleNumber(week.days),
+                    }
+                  )}
+                </p>
+              )}
+              {board === 'today' && f.usualScore != null && f.score !== undefined && (
+                <p
+                  className={`text-[11px] mt-1 inline-flex items-center gap-0.5 ${
+                    f.score > f.usualScore ? 'text-brand-emerald font-semibold' : 'text-white/70'
+                  }`}
+                >
+                  {f.score > f.usualScore && <ArrowUpIcon className="w-3 h-3" />}
+                  {f.score > f.usualScore
+                    ? t('friends.aboveUsual', '{{n}} above their usual', {
+                        n: formatLocaleNumber(f.score - f.usualScore),
+                      })
+                    : t('friends.usualNoor', 'usually {{n}} Noor', {
+                        n: formatLocaleNumber(f.usualScore),
+                      })}
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="text-[11px] mt-0.5 text-white/70">{t('friends.consistencyOnly')}</p>
+          )}
+        </div>
+      </div>
+      {/* Stat chips: today's numbers on "Today", week-so-far totals on "This
+          week", so the chips always explain the Noor shown. */}
+      <div className="flex flex-wrap gap-1.5 mt-2.5 pl-[52px]">
+        {sv && (
+          <Chip
+            Icon={sv.Icon}
+            className={`text-white/85 ${sv.cls}`}
+            iconClassName={sv.iconCls ?? ''}
+          >
+            {t('friends.zikrStreakStat', { count: formatLocaleNumber(f.zikrStreak ?? 0) })}
+          </Chip>
+        )}
+        {!detail ? (
+          <>
+            {f.quranStreak !== undefined && (
+              <Chip Icon={BookOpenIcon}>
+                {t('friends.quranStreakStat', { count: formatLocaleNumber(f.quranStreak) })}
+              </Chip>
+            )}
+            <Chip Icon={LeafIcon}>
+              {t('friends.activeDaysStat', {
+                active: formatLocaleNumber(f.activeDays),
+                days: formatLocaleNumber(f.weekDays),
+              })}
+            </Chip>
+          </>
+        ) : (
+          <>
+            {/* Someone who shares her cycle status: prayer and fasting are
+                paused for her, so those two chips would only confuse. */}
+            {!f.onCycle && f.salatToday !== undefined && (
+              <Chip Icon={MosqueIcon}>
+                {week ? (
+                  t('friends.prayersWeekStat', '{{n}} prayers this week', {
+                    n: formatLocaleNumber(week.salat ?? 0),
+                  })
+                ) : (
+                  <>
+                    {formatLocaleNumber(f.salatToday)}/{formatLocaleNumber(5)}{' '}
+                    {t('friends.prayers')}
+                  </>
+                )}
+              </Chip>
+            )}
+            {f.zikrToday !== undefined && (
+              <Chip Icon={TasbihIcon}>
+                {week
+                  ? t('friends.zikrWeekStat', '{{n}} this week', {
+                      n: formatLocaleNumber(week.zikr ?? 0),
+                    })
+                  : t('friends.zikrTodayStat', { count: formatLocaleNumber(f.zikrToday) })}
+              </Chip>
+            )}
+            {!f.onCycle && f.fastedToday !== undefined && (
+              <Chip Icon={CrescentIcon} on={week ? (week.fasts ?? 0) > 0 : f.fastedToday}>
+                {week
+                  ? t('friends.fastsWeekStat', '{{n}} fasts', {
+                      n: formatLocaleNumber(week.fasts ?? 0),
+                    })
+                  : f.fastedToday
+                    ? t('friends.fastingToday')
+                    : t('friends.notFasting')}
+              </Chip>
+            )}
+            {f.quranPagesToday !== undefined && (
+              <Chip Icon={BookOpenIcon}>
+                {week
+                  ? t('friends.quranWeekStat', '{{n}} āyāt this week', {
+                      n: formatLocaleNumber(week.quran ?? 0),
+                    })
+                  : t('friends.quranPagesStat', {
+                      current: formatLocaleNumber(f.quranPagesToday),
+                      goal: formatLocaleNumber(f.quranGoal ?? 0),
+                    })}
+              </Chip>
+            )}
+          </>
+        )}
+      </div>
+    </motion.div>
+  );
+}
+
 export default function Friends() {
   const { t } = useTranslation();
   const isDemoMode = useAuthStore((s) => s.isDemoMode);
@@ -577,23 +820,15 @@ export default function Friends() {
   };
 
   // "Today" is the live daily Noor; "This week" is the Friday-to-Thursday
-  // average, so someone who started late (or had a quiet day) can still climb.
+  // average, so someone who started late (or had a quiet day) still shows effort.
   const [board, setBoard] = useState<'today' | 'week'>('today');
   // Cycle wording is only ever shown to sisters (the public Privacy page aside).
   const isFemale = useIsFemale();
-  const shownScore = (f: FriendStats): number =>
-    board === 'week' ? (f.weekScore ?? f.score) : f.score;
-  const leaderboard = [...(data?.leaderboard ?? [])].sort(
-    (a, b) =>
-      shownScore(b) - shownScore(a) ||
-      (b.actsToday ?? 0) - (a.actsToday ?? 0) ||
-      // Everyone is 0 at the start of a day: rank by usual Noor, then streak,
-      // so a long-standing streak never sits below someone who just began.
-      (b.usualScore ?? 0) - (a.usualScore ?? 0) ||
-      b.zikrStreak - a.zikrStreak ||
-      a.displayName.localeCompare(b.displayName)
-  );
-  const friendsCount = Math.max(0, leaderboard.length - 1);
+  // Server order: you first, then friends by longest streak. Never ranked
+  // (FIQH-03): ordering by Noor would also reveal the score of anyone who
+  // shares consistency only.
+  const circle = data?.circle ?? [];
+  const friendsCount = Math.max(0, circle.length - 1);
 
   const noorParts: { Icon: SvgIcon; tone: string; points: number; text: string }[] = [
     {
@@ -666,15 +901,10 @@ export default function Friends() {
                 <button type="button" onClick={() => setInviteOpen(true)} className={BTN_PRIMARY}>
                   <UserPlusIcon className="w-4 h-4" /> {t('friends.inviteFriend')}
                 </button>
-                {friendsCount > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => setManageOpen(true)}
-                    className={BTN_SECONDARY}
-                  >
-                    <UsersIcon className="w-4 h-4" /> {t('friends.seeFriends')}
-                  </button>
-                )}
+                {/* Always shown: the privacy settings live in this sheet */}
+                <button type="button" onClick={() => setManageOpen(true)} className={BTN_SECONDARY}>
+                  <UsersIcon className="w-4 h-4" /> {t('friends.seeFriends')}
+                </button>
               </div>
             )}
           </motion.section>
@@ -699,7 +929,7 @@ export default function Friends() {
             </motion.button>
           )}
 
-          {/* Leaderboard */}
+          {/* The circle */}
           {isLoading ? (
             <div className="min-h-[30vh] grid place-items-center">
               <Spinner className="loading-lg" />
@@ -756,152 +986,25 @@ export default function Friends() {
                 </div>
               </div>
 
-              {leaderboard.map((f, i) => {
-                const sv = streakVisual(f.zikrState, f.zikrStreak, t);
-                const week = board === 'week' && f.week ? f.week : null;
-                return (
-                  <motion.div
-                    key={f.uid}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.04 + i * 0.04 }}
-                    className={`${CARD} p-3.5 ${f.isMe ? 'border-brand-emerald/60' : ''}`}
+              {circle.map((f, i) => (
+                <CircleRow key={f.uid} f={f} i={i} board={board} />
+              ))}
+
+              {/* FIQH-03: the quiet framing under the circle */}
+              <figure className="px-2 pt-1 text-center text-xs text-white/70 leading-relaxed">
+                <p>{t('friends.framing')}</p>
+                <blockquote className="mt-1 italic">{t('friends.framingHadith')}</blockquote>
+                <figcaption>
+                  <a
+                    href="https://sunnah.com/bukhari:6464"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={REF_LINK}
                   >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`w-7 h-7 rounded-full grid place-items-center text-xs font-bold tabular-nums shrink-0 ${
-                          i < 3 ? `border ${RANK_TONE[i]}` : 'text-white/70'
-                        }`}
-                      >
-                        {formatLocaleNumber(i + 1)}
-                      </span>
-                      <Avatar name={f.displayName} photoUrl={f.photoUrl} avatarId={f.avatarId} />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white font-bold text-sm flex items-center gap-1.5 min-w-0">
-                          <span className="truncate">{f.displayName}</span>
-                          {f.country && <CountryFlag countryName={f.country} />}
-                          {f.isMe && (
-                            <span className="text-[10px] px-1.5 py-0.5 rounded-full border border-brand-emerald/50 bg-brand-emerald/10 text-brand-emerald shrink-0">
-                              {t('friends.you')}
-                            </span>
-                          )}
-                        </p>
-                        {f.onCycle !== undefined && (
-                          <span
-                            className={`inline-flex items-center gap-1 mt-0.5 text-[11px] font-semibold ${
-                              f.onCycle ? 'text-brand-pink' : 'text-white/70'
-                            }`}
-                          >
-                            {f.onCycle && <FlowerIcon className="w-3.5 h-3.5" />}
-                            {f.onCycle
-                              ? t('friends.onCycle', 'on her cycle')
-                              : t('friends.notOnCycle', 'not on her cycle')}
-                          </span>
-                        )}
-                        <div className="flex items-center gap-2 mt-1">
-                          <div className="flex-1 bg-track rounded-full h-1.5 overflow-hidden">
-                            <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${Math.min(100, Math.max(0, shownScore(f)))}%` }}
-                              transition={{ duration: 0.6, delay: 0.1 + i * 0.04, ease: 'easeOut' }}
-                              className={`h-full rounded-full ${i === 0 ? 'bg-brand-gold' : 'bg-brand-emerald'}`}
-                            />
-                          </div>
-                          <span className="inline-flex items-center gap-0.5 text-white text-xs font-bold tabular-nums w-12 justify-end">
-                            <SparklesIcon className="w-3.5 h-3.5 text-brand-gold" />
-                            {formatLocaleNumber(shownScore(f))}
-                          </span>
-                        </div>
-                        {week && (
-                          <p className="text-[11px] mt-1 text-white/70">
-                            {t(
-                              'friends.weekActiveDays',
-                              'daily average · active {{active}} of {{days}} days',
-                              {
-                                active: formatLocaleNumber(week.activeDays),
-                                days: formatLocaleNumber(week.days),
-                              }
-                            )}
-                          </p>
-                        )}
-                        {board === 'today' && f.usualScore != null && (
-                          <p
-                            className={`text-[11px] mt-1 inline-flex items-center gap-0.5 ${
-                              f.score > f.usualScore
-                                ? 'text-brand-emerald font-semibold'
-                                : 'text-white/70'
-                            }`}
-                          >
-                            {f.score > f.usualScore && <ArrowUpIcon className="w-3 h-3" />}
-                            {f.score > f.usualScore
-                              ? t('friends.aboveUsual', '{{n}} above their usual', {
-                                  n: formatLocaleNumber(f.score - f.usualScore),
-                                })
-                              : t('friends.usualNoor', 'usually {{n}} Noor', {
-                                  n: formatLocaleNumber(f.usualScore),
-                                })}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    {/* Stat chips: today's numbers on "Today", week-so-far totals on
-                        "This week", so the chips always explain the Noor shown. */}
-                    <div className="flex flex-wrap gap-1.5 mt-2.5 pl-10">
-                      {/* Someone who shares her cycle status: prayer and fasting are
-                          paused for her, so those two chips would only confuse. */}
-                      {!f.onCycle && (
-                        <Chip Icon={MosqueIcon}>
-                          {week ? (
-                            t('friends.prayersWeekStat', '{{n}} prayers this week', {
-                              n: formatLocaleNumber(week.salat),
-                            })
-                          ) : (
-                            <>
-                              {formatLocaleNumber(f.salatToday)}/{formatLocaleNumber(5)}{' '}
-                              {t('friends.prayers')}
-                            </>
-                          )}
-                        </Chip>
-                      )}
-                      <Chip
-                        Icon={sv.Icon}
-                        className={`text-white/85 ${sv.cls}`}
-                        iconClassName={sv.iconCls ?? ''}
-                      >
-                        {t('friends.zikrStreakStat', { count: formatLocaleNumber(f.zikrStreak) })}
-                      </Chip>
-                      <Chip Icon={TasbihIcon}>
-                        {week
-                          ? t('friends.zikrWeekStat', '{{n}} this week', {
-                              n: formatLocaleNumber(week.zikr),
-                            })
-                          : t('friends.zikrTodayStat', { count: formatLocaleNumber(f.zikrToday) })}
-                      </Chip>
-                      {!f.onCycle && (
-                        <Chip Icon={CrescentIcon} on={week ? week.fasts > 0 : f.fastedToday}>
-                          {week
-                            ? t('friends.fastsWeekStat', '{{n}} fasts', {
-                                n: formatLocaleNumber(week.fasts),
-                              })
-                            : f.fastedToday
-                              ? t('friends.fastingToday')
-                              : t('friends.notFasting')}
-                        </Chip>
-                      )}
-                      <Chip Icon={BookOpenIcon}>
-                        {week
-                          ? t('friends.quranWeekStat', '{{n}} āyāt this week', {
-                              n: formatLocaleNumber(week.quran),
-                            })
-                          : t('friends.quranPagesStat', {
-                              current: formatLocaleNumber(f.quranPagesToday),
-                              goal: formatLocaleNumber(f.quranGoal),
-                            })}
-                      </Chip>
-                    </div>
-                  </motion.div>
-                );
-              })}
+                    {t('friends.framingRef')}
+                  </a>
+                </figcaption>
+              </figure>
             </section>
           )}
 
@@ -976,7 +1079,6 @@ export default function Friends() {
                         '"Above their usual" compares today with the average of their recent active days, so everyone races their own best.'
                       )}
                     </p>
-                    <p className="text-white/70 text-xs italic">{t('friends.noorDisclaimer')}</p>
                   </div>
                 </motion.div>
               )}

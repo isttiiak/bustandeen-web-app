@@ -401,7 +401,7 @@
     "invalidLink": "This invite link is not valid.",
     "invited": "A friend invited you!",
     "preparing": "Preparing your session…",
-    "seeLeaderboard": "See your circle",
+    "seeCircle": "See your circle",
     "signInPrompt": "Sign in to Bustandeen to connect. You'll see each other's streaks and daily worship, and race each other to good deeds.",
     "srTitle": "Connect with a friend",
     "yourFriend": "your friend"
@@ -849,8 +849,6 @@
     "onCycle": "on her cycle",
     "notOnCycle": "not on her cycle",
     "fastingToday": "Fasting today",
-    "invisibleDesc": "When on, no one sees your Noor or stats, not even existing friends.",
-    "invisibleTitle": "Hide me from friends’ circles",
     "inviteCopied": "Invite message copied!",
     "inviteError": "Could not load your invite link",
     "inviteFriend": "Invite a friend",
@@ -865,7 +863,6 @@
     "noRequests": "No pending requests",
     "noorAllTimeDesc": "= every day's light, gathered.",
     "noorAllTimeLabel": "All-time",
-    "noorDisclaimer": "Noor only reflects effort you chose to share. It is motivation, not judgement.",
     "noorExcused": "Rayhanah days (for sisters): salat & fasting points are excused, not lost — Noor still flows from dhikr, Quran & duʿā.",
     "noorFasting": "Fasting",
     "noorPrayers": "Prayers (on time + kaza)",
@@ -921,7 +918,30 @@
     "noorExtras": "Extras, 5 each (best two): a completed fast, nafl prayer, ṣalawāt or istighfār",
     "noorExcusedV2": "Rayhanah days (for sisters): prayer and fasting are excused, not lost. Dhikr and Quran count for more, and Noor still reaches 100.",
     "noorWeekDesc": "= your average daily Noor since Friday, counting today so far. A day with nothing counts 0. \"Active X of Y days\" means days with at least one prayer, dhikr, Quran or extra.",
-    "noorUsualDesc": "\"Usually\" is your average Noor on the active days of the last 14 days (shown once you have 3). \"Above their usual\" means today is already higher, so everyone races their own best. Bars show Noor out of 100."
+    "noorUsualDesc": "\"Usually\" is your average Noor on the active days of the last 14 days (shown once you have 3). \"Above their usual\" means today is already higher, so everyone races their own best. Bars show Noor out of 100.",
+    "privacy": {
+      "title": "What friends see",
+      "hidden": "Nothing",
+      "hiddenDesc": "Hidden from everyone, even current friends.",
+      "streaks": "Consistency only",
+      "streaksDesc": "Your streaks and active days this week. No daily numbers.",
+      "detail": "Full detail",
+      "detailDesc": "Today's prayers, dhikr, fasting, Quran and Noor.",
+      "secretTitle": "Secret deeds",
+      "secretDesc": "Friends never see these, and they are left out of the Noor friends see. They still count for you.",
+      "area": {
+        "salat": "Prayers",
+        "zikr": "Dhikr",
+        "quran": "Quran",
+        "fasting": "Fasting"
+      }
+    },
+    "framing": "Noor is your consistency, not your worth. Acceptance is with Allah alone.",
+    "framingHadith": "\"The most beloved deeds to Allah are the most consistent, even if small.\"",
+    "framingRef": "Ṣaḥīḥ al-Bukhārī 6464",
+    "consistencyOnly": "Shares consistency only",
+    "quranStreakStat": "Quran {{count}} days",
+    "activeDaysStat": "Active {{active}} of {{days}} days this week"
   },
   "genderGate": {
     "brother": "Brother",
@@ -1504,9 +1524,9 @@
     },
     "friendsSee": {
       "title": "What friends can see",
-      "body0": "Only confirmed friends see your row: display name, photo, country flag, and your Noor (today and this week).",
-      "body1": "A few small chips: prayers done today, zikr streak, today's zikr count, whether you are fasting, and Quran āyāt against your goal. Never times, notes, places, or which dhikr you did.",
-      "body2": "You can hide from every friend's circle at any time with the invisible setting in Friends.",
+      "body0": "Only confirmed friends see your row, and you choose how much under What friends see on the Friends page: Nothing, Consistency only (where new accounts start) or Full detail. Friends see your display name, photo and country flag.",
+      "body1": "Consistency only shows your dhikr and Quran streaks and your active days this week. Full detail adds your Noor (today and this week) and a few chips: prayers done today, today's dhikr count, whether you are fasting, and Quran āyāt against your goal. Never times, notes, places, or which dhikr you did.",
+      "body2": "Secret deeds: keep prayers, dhikr, Quran or fasting secret and friends never see that area, and it is left out of the Noor they see. Choose Nothing to leave every friend's circle, even current friends.",
       "body3": "Rayhanah data is never visible to friends. On your excused days the numbers are filled from what you actually did, so nothing reveals it.",
       "body4": "The one exception is opt-in: if you choose to share your cycle status with a friend, she sees only a yes or no (never a date, symptom or note), and her view of your row hides the prayer and fasting chips. You can turn this off at any moment."
     },
@@ -1587,7 +1607,7 @@
       "body0": "Export everything as a JSON backup or Excel file from Settings.",
       "body1": "Delete any feature's data separately from the Settings danger zone.",
       "body2": "Delete your entire account and all server-side data from your Profile page.",
-      "body3": "Go invisible to friends, turn Naseeh off, remove your saved height and weight, or use discreet mode, each with a tap."
+      "body3": "Hide from friends or keep deeds secret, turn Naseeh off, remove your saved height and weight, or use discreet mode, each with a tap."
     },
     "protected": {
       "title": "How it's protected",

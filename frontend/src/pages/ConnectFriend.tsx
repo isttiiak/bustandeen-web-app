@@ -131,7 +131,7 @@ export default function ConnectFriend() {
               </p>
               <Link to="/friends" className={`${BTN_PRIMARY} w-full`}>
                 <UsersIcon className="w-4 h-4" aria-hidden="true" />
-                {t('connectFriend.seeLeaderboard')}
+                {t('connectFriend.seeCircle')}
               </Link>
             </>
           ) : (
