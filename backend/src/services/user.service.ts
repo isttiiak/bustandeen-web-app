@@ -21,6 +21,19 @@ import CycleLog from '../models/CycleLog.js';
 import CycleDay from '../models/CycleDay.js';
 import CycleProfile from '../models/CycleProfile.js';
 import SocialProfile from '../models/SocialProfile.js';
+import QuranReadingSession from '../models/QuranReadingSession.js';
+import ZikrEvent from '../models/ZikrEvent.js';
+import NaseehPlan from '../models/NaseehPlan.js';
+import ClientOp from '../models/ClientOp.js';
+import FeedbackMessage from '../models/FeedbackMessage.js';
+import ZikrRequest from '../models/ZikrRequest.js';
+import Donation from '../models/Donation.js';
+import UpdateEmailCampaign from '../models/UpdateEmailCampaign.js';
+
+/** Stands in for a deleted account on admin records that are kept
+ * (ZikrRequest.userId is required, campaign recipients need a uid). */
+export const DELETED_ACCOUNT_ID = 'deleted-account';
+const DELETED_ACCOUNT_NAME = 'Deleted account';
 
 // Belt-and-braces: the Zod schema catches invalid photoUrls at the HTTP boundary;
 // this helper protects direct service calls (backup restore, future callers).
@@ -171,8 +184,49 @@ export async function setPrimaryEmail(uid: string, email: string): Promise<IUser
   return User.findOneAndUpdate({ uid }, { $set: { primaryEmail: email } }, { new: true });
 }
 
+/**
+ * Deletes everything personal and unlinks what the admin side keeps (/privacy
+ * "Your control"): feedback and zikr requests stay as anonymous messages,
+ * donations stay as money records without the account link, broadcast
+ * recipient lists lose the uid, name and email. RateLimitHit keeps the uid
+ * until its 30-day TTL (abuse checks); AdminAuditLog keeps the bare uid as the
+ * target of past admin actions.
+ */
 export async function deleteAccount(uid: string): Promise<void> {
   await Promise.all([
+    // Personal data the user logged or that was derived from it.
+    QuranReadingSession.deleteMany({ userId: uid }),
+    ZikrEvent.deleteMany({ userId: uid }),
+    NaseehPlan.deleteMany({ userId: uid }),
+    ClientOp.deleteMany({ uid }),
+    // Other people's friend lists, requests and blocks.
+    SocialProfile.updateMany(
+      {
+        userId: { $ne: uid },
+        $or: [
+          { friends: uid },
+          { pendingIncoming: uid },
+          { pendingOutgoing: uid },
+          { blocked: uid },
+        ],
+      },
+      {
+        $pull: { friends: uid, pendingIncoming: uid, pendingOutgoing: uid, blocked: uid },
+        $unset: { [`friendSince.${uid}`]: '' },
+      }
+    ),
+    // Admin records that are kept, unlinked from the person.
+    FeedbackMessage.updateMany(
+      { userId: uid },
+      { $set: { userId: null, name: DELETED_ACCOUNT_NAME, email: '', ipAddress: null } }
+    ),
+    ZikrRequest.updateMany(
+      { userId: uid },
+      { $set: { userId: DELETED_ACCOUNT_ID }, $unset: { userEmail: '' } }
+    ),
+    Donation.updateMany({ userId: uid }, { $set: { userId: null } }),
+    scrubCampaignRecipients(uid),
+
     ZikrDaily.deleteMany({ userId: uid }),
     ZikrGoal.deleteMany({ userId: uid }),
     ZikrStreak.deleteMany({ userId: uid }),
@@ -208,6 +262,27 @@ export async function deleteAccount(uid: string): Promise<void> {
     // auth/user-not-found is fine — the Firebase user may already be gone
     if (code !== 'auth/user-not-found') throw err;
   }
+}
+
+/** A recipient still pending in a campaign that is mid-send is marked failed
+ * first, so the chunked sender never mails the cleared address. */
+async function scrubCampaignRecipients(uid: string): Promise<void> {
+  await UpdateEmailCampaign.updateMany(
+    { recipients: { $elemMatch: { uid, status: 'pending' } } },
+    { $set: { 'recipients.$[r].status': 'failed', 'recipients.$[r].error': 'Account deleted' } },
+    { arrayFilters: [{ 'r.uid': uid, 'r.status': 'pending' }] }
+  );
+  await UpdateEmailCampaign.updateMany(
+    { 'recipients.uid': uid },
+    {
+      $set: {
+        'recipients.$[r].uid': DELETED_ACCOUNT_ID,
+        'recipients.$[r].email': '',
+        'recipients.$[r].name': DELETED_ACCOUNT_NAME,
+      },
+    },
+    { arrayFilters: [{ 'r.uid': uid }] }
+  );
 }
 
 export async function updateUser(uid: string, fields: UserUpdateFields): Promise<IUser | null> {

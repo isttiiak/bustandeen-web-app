@@ -1626,7 +1626,7 @@
       "title": "Your control",
       "body0": "Export everything as a JSON backup or Excel file from Settings.",
       "body1": "Delete any feature's data separately from the Settings danger zone.",
-      "body2": "Delete your entire account and all server-side data from your Profile page.",
+      "body2": "Delete your entire account from your Profile page. Everything you logged is removed, and your login with it. Messages you sent us (feedback and zikr requests) are kept as anonymous notes without your name or email. Sadaqah donation records are kept for accountability, with the details you entered on the form, but no longer linked to your account. Rate-limit records keep your account ID until they expire after 30 days, and a log of admin actions keeps only that ID.",
       "body3": "Hide from friends or keep deeds secret, turn Naseeh off, remove your saved height and weight, or use discreet mode, each with a tap."
     },
     "protected": {
@@ -2831,7 +2831,7 @@
     "dangerNote": "These actions cannot be undone. Take a full backup first.",
     "dangerZone": "Danger zone",
     "deleteAccount": "Delete account",
-    "deleteAccountDetail": "Permanently removes all your data and your login. This cannot be undone.",
+    "deleteAccountDetail": "Permanently removes everything you logged and your login. Messages you sent us stay without your name or email (see Privacy). This cannot be undone.",
     "deleteAccountConfirm": "This will erase everything. Are you sure?",
     "yesDeleteAccount": "Yes, delete my account",
     "reauthPrompt": "For your security, please verify it’s really you before we delete everything.",

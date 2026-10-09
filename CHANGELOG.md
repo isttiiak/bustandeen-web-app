@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.128.1 - Account deletion removes everything it should - 2026-10-10
+
+### Fixed
+
+- **Deleting your account left some data behind.** It now also removes your Quran reading and listening sessions, zikr timing events, Naseeh weekly plans and offline-sync records, and takes you out of other people's friend lists, friend requests and block lists.
+- **What is kept, and how:** feedback messages and zikr requests stay as anonymous notes (no name, email or IP address); sadaqah donation records stay for accountability with the details typed into the form, but are no longer linked to the account; broadcast-email recipient lists replace the uid, name and email with "Deleted account" (a recipient still waiting in a mid-send campaign is marked failed). Rate-limit records keep the account ID until their 30-day expiry, and the admin audit log keeps the bare ID.
+- /privacy ("Your control") and the Delete account note in Settings now say exactly this, in English and Bangla.
+- Admin: replying to an anonymised feedback message now answers 400 ("no address to reply to") instead of trying to send.
+
 ## v5.128.0 - Guided morning and evening adhkar - 2026-10-10
 
 ### Added

@@ -127,6 +127,20 @@ describe('Admin feedback: mark replied externally', () => {
     expect(fresh.repliedAt).toBeFalsy();
   });
 
+  test('reply to a message anonymised by account deletion returns 400 and stays open', async () => {
+    const msg = await makeMessage();
+    await FeedbackMessage.collection.updateOne(
+      { _id: msg._id },
+      { $set: { userId: null, name: 'Deleted account', email: '' } }
+    );
+    const res = await request(app)
+      .post(`/api/admin/feedback/${msg._id}/reply`)
+      .set('X-Admin-Token', generalAnsarToken)
+      .send({ body: 'Assalamu Alaikum.' });
+    expect(res.status).toBe(400);
+    expect((await FeedbackMessage.findById(msg._id)).status).toBe('open');
+  });
+
   test('reply to a non-existent message id returns 404', async () => {
     const res = await request(app)
       .post(`/api/admin/feedback/${new mongoose.Types.ObjectId()}/reply`)
