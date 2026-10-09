@@ -922,18 +922,10 @@
     "noorUsualDesc": "\"Usually\" is your average Noor on the active days of the last 14 days (shown once you have 3). \"Above their usual\" means today is already higher, so everyone races their own best. Bars show Noor out of 100."
   },
   "genderGate": {
-    "asBrother": "As a brother",
-    "asSister": "As a sister",
     "brother": "Brother",
-    "continue": "Continue",
-    "decideLater": "I'll decide later",
     "error": "Something went wrong. Please try again.",
-    "greeting": "As-salamu alaykum!",
-    "guestPrompt": "How would you like to explore?",
-    "prompt": "To personalise your experience — including content, greetings, and access to Rayhanah (cycle tracking for sisters) — please let us know:",
-    "settingsHint": "You can set this anytime in",
     "sister": "Sister",
-    "bannerPrompt": "Personalise your Bustandeen — tell us who you are:"
+    "bannerPrompt": "Personalise Bustandeen for you. Are you a brother or a sister?"
   },
   "hijriMonths": {
     "0": "Muharram",

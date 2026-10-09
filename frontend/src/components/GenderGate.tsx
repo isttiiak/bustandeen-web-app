@@ -1,10 +1,12 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import { m as motion } from 'framer-motion';
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '../store/useAuthStore.js';
 import api from '../lib/api.js';
 import type { AuthUser } from '../types/api.js';
+import { BTN_SECONDARY } from './bustanStyles.js';
 
 /**
  * For signed-in users who have no gender set (Google sign-up, legacy accounts):
@@ -46,11 +48,14 @@ export default function GenderGate() {
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="bg-brand-surface/80 backdrop-blur-sm border-b border-brand-border/40 px-4 py-3"
+      className="bg-brand-deep border-b border-brand-border shadow-elev-1 px-4 py-3"
     >
       <div className="max-w-2xl mx-auto flex flex-col sm:flex-row items-center gap-3 text-center sm:text-left">
-        <p className="text-white/60 text-sm flex-1">
-          {t('genderGate.bannerPrompt', 'Personalise your Bustandeen — tell us who you are:')}
+        <p className="text-white/80 text-sm flex-1">
+          {t(
+            'genderGate.bannerPrompt',
+            'Personalise Bustandeen for you. Are you a brother or a sister?'
+          )}
         </p>
 
         {error && <p className="text-red-400 text-xs">{error}</p>}
@@ -59,16 +64,16 @@ export default function GenderGate() {
           <button
             onClick={() => void save('male')}
             disabled={saving}
-            className="px-4 py-1.5 rounded-xl text-sm font-semibold bg-brand-info/10 border border-brand-info/30 text-white/70 hover:bg-brand-info/20 hover:text-white transition-all disabled:opacity-50"
+            className={`${BTN_SECONDARY} py-1.5 hover:border-brand-info/50 disabled:opacity-50`}
           >
-            🧔 {t('genderGate.brother', 'Brother')}
+            {t('genderGate.brother', 'Brother')}
           </button>
           <button
             onClick={() => void save('female')}
             disabled={saving}
-            className="px-4 py-1.5 rounded-xl text-sm font-semibold bg-brand-pink/10 border border-brand-pink/30 text-white/70 hover:bg-brand-pink/20 hover:text-white transition-all disabled:opacity-50"
+            className={`${BTN_SECONDARY} py-1.5 hover:border-brand-pink/50 disabled:opacity-50`}
           >
-            🧕 {t('genderGate.sister', 'Sister')}
+            {t('genderGate.sister', 'Sister')}
           </button>
         </div>
 
@@ -76,16 +81,16 @@ export default function GenderGate() {
           <Link
             to="/settings"
             onClick={skip}
-            className="text-white/30 hover:text-white/50 text-xs transition-colors underline"
+            className="text-white/70 hover:text-white text-xs transition-colors underline underline-offset-2"
           >
             {t('nav.settings', 'Settings')}
           </Link>
           <button
             onClick={skip}
-            className="text-white/30 hover:text-white/60 text-lg leading-none transition-colors"
-            aria-label="Dismiss"
+            className="p-1 rounded-control text-white/70 hover:text-white hover:bg-brand-surface transition-colors"
+            aria-label={t('common.close', 'Close')}
           >
-            ×
+            <XMarkIcon className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>
