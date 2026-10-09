@@ -27,6 +27,8 @@ import UnsavedWarning from './components/UnsavedWarning.js';
 import GenderGate from './components/GenderGate.js';
 import DemoBanner from './components/DemoBanner.js';
 import AnnouncementBanner from './components/AnnouncementBanner.js';
+import MoonSightingSync from './components/MoonSightingSync.js';
+import { syncHijriFromServer } from './utils/islamicCalendar.js';
 import NaturalLogModal from './components/ai/NaturalLogModal.js';
 import type { AuthUser } from './types/api.js';
 import { trackPageView } from './utils/analytics.js';
@@ -333,6 +335,7 @@ export default function App() {
                   avatarId?: string;
                   gender?: AuthUser['gender'];
                   hijriOffset?: number;
+                  hijriManual?: boolean;
                   dayStartMode?: DayStartMode;
                 };
                 isAdmin?: boolean;
@@ -351,12 +354,9 @@ export default function App() {
               };
               localStorage.setItem('bustandeen_user', JSON.stringify(authUser));
               setUser(authUser);
-              // Sync hijri offset from server → localStorage
+              // Sync hijri offset (+ whether the user chose it, T4.1) → localStorage
               if (verifyData?.user?.hijriOffset !== undefined) {
-                localStorage.setItem(
-                  'bustandeen_hijri_offset',
-                  String(verifyData.user.hijriOffset)
-                );
+                syncHijriFromServer(verifyData.user.hijriOffset, verifyData.user.hijriManual);
               }
               // Sync day-start mode from server → localStorage
               if (verifyData?.user?.dayStartMode !== undefined) {
@@ -466,6 +466,7 @@ export default function App() {
               {t('common.skipToContent')}
             </a>
           )}
+          {!isSeoPage && !isAdminPage && <MoonSightingSync />}
           {!isSeoPage && !isAdminPage && <AnnouncementBanner />}
           {!isSeoPage && !isAdminPage && <DemoBanner />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <Navbar />}

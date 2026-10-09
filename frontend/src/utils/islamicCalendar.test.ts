@@ -10,6 +10,13 @@ import {
   isFriday,
   isPostMaghrib,
   setHijriAdjustment,
+  setHijriAutomatic,
+  getHijriOffsetSource,
+  resolveHijriOffset,
+  syncHijriFromServer,
+  HIJRI_COUNTRY_KEY,
+  MOON_SIGHTING_KEY,
+  type MoonSightingRecord,
 } from './islamicCalendar.js';
 import { getMaghribTime } from './trackingDay.js';
 import { MemoryStorage } from '../test/memoryStorage.js';
@@ -103,6 +110,106 @@ describe('Hijri adjustment setting', () => {
     expect(getHijriAdjustment()).toBe(0);
     store.setItem('bustandeen_hijri_offset', 'abc');
     expect(getHijriAdjustment()).toBe(0);
+  });
+});
+
+// T4.1: the user's own offset, else the country's moon-sighting record in
+// force on that day, else 0. Records here are test fixtures, not real
+// committee decisions.
+describe('moon-sighting override (T4.1)', () => {
+  const rec = (country: string, effectiveFrom: string, offset: number): MoonSightingRecord => ({
+    id: `${country}-${effectiveFrom}`,
+    country,
+    effectiveFrom,
+    offset,
+    note: 'fixture',
+  });
+  const RECORDS = [
+    rec('BD', '2027-02-08', -1),
+    rec('BD', '2027-03-10', 0),
+    rec('PK', '2027-02-08', 1),
+  ];
+  const base = { manual: false, userOffset: 0, country: 'BD', records: RECORDS };
+
+  it('the record in force applies from its date until the next one', () => {
+    expect(resolveHijriOffset({ ...base, day: '2027-02-07' })).toMatchObject({
+      offset: 0,
+      source: 'none',
+    });
+    expect(resolveHijriOffset({ ...base, day: '2027-02-08' })).toMatchObject({
+      offset: -1,
+      source: 'country',
+    });
+    expect(resolveHijriOffset({ ...base, day: '2027-03-09' }).offset).toBe(-1);
+    expect(resolveHijriOffset({ ...base, day: '2027-03-10' })).toMatchObject({
+      offset: 0,
+      source: 'country',
+    });
+  });
+
+  it('only the device country counts; no country means no override', () => {
+    expect(resolveHijriOffset({ ...base, country: 'PK', day: '2027-02-20' }).offset).toBe(1);
+    expect(resolveHijriOffset({ ...base, country: 'IN', day: '2027-02-20' })).toMatchObject({
+      offset: 0,
+      source: 'none',
+    });
+    expect(resolveHijriOffset({ ...base, country: null, day: '2027-02-20' }).source).toBe('none');
+  });
+
+  it("the user's own choice wins, even 0", () => {
+    expect(
+      resolveHijriOffset({ ...base, manual: true, userOffset: 0, day: '2027-02-20' })
+    ).toMatchObject({ offset: 0, source: 'manual' });
+    expect(
+      resolveHijriOffset({ ...base, manual: true, userOffset: 1, day: '2027-02-20' }).offset
+    ).toBe(1);
+  });
+
+  it('a record out of range is clamped, never applied as is', () => {
+    expect(
+      resolveHijriOffset({ ...base, records: [rec('BD', '2027-01-01', 3)], day: '2027-02-01' })
+        .offset
+    ).toBe(0);
+  });
+
+  it('devices from before T4.1: a non-zero offset counts as chosen, 0 follows the country', () => {
+    store.setItem(MOON_SIGHTING_KEY, JSON.stringify(RECORDS));
+    store.setItem(HIJRI_COUNTRY_KEY, 'BD');
+    const day = noon('2027-02-20');
+    store.setItem('bustandeen_hijri_offset', '1');
+    expect(getHijriOffsetSource(day)).toMatchObject({ offset: 1, source: 'manual' });
+    store.setItem('bustandeen_hijri_offset', '0');
+    expect(getHijriOffsetSource(day)).toMatchObject({ offset: -1, source: 'country' });
+  });
+
+  it('Settings: picking an offset is manual, Automatic follows the record', () => {
+    store.setItem(MOON_SIGHTING_KEY, JSON.stringify(RECORDS));
+    store.setItem(HIJRI_COUNTRY_KEY, 'BD');
+    const day = noon('2027-02-20');
+    setHijriAdjustment(0);
+    expect(getHijriAdjustment(day)).toBe(0);
+    setHijriAutomatic();
+    expect(getHijriAdjustment(day)).toBe(-1);
+    syncHijriFromServer(1, true);
+    expect(getHijriAdjustment(day)).toBe(1);
+    syncHijriFromServer(0, false);
+    expect(getHijriAdjustment(day)).toBe(-1);
+  });
+
+  it('the Hijri date moves with the record: Ramadan 1448 starts a day later in BD', () => {
+    store.setItem(MOON_SIGHTING_KEY, JSON.stringify(RECORDS));
+    store.setItem(HIJRI_COUNTRY_KEY, 'BD');
+    // Umm al-Qura: 1 Ramadan 1448 = Mon 8 Feb 2027 (Shaʿbān has 30 days); with BD's -1 it is still 30 Shaʿbān
+    expect(getHijriDate(noon('2027-02-08'))).toMatchObject({ day: 30, month: 8, year: 1448 });
+    expect(getHijriDate(noon('2027-02-09'))).toMatchObject({ day: 1, month: 9, year: 1448 });
+    store.setItem(HIJRI_COUNTRY_KEY, 'SA');
+    expect(getHijriDate(noon('2027-02-08'))).toMatchObject({ day: 1, month: 9, year: 1448 });
+  });
+
+  it('a broken cache never breaks the date', () => {
+    store.setItem(MOON_SIGHTING_KEY, '{not json');
+    store.setItem(HIJRI_COUNTRY_KEY, 'BD');
+    expect(getHijriAdjustment(noon('2027-02-20'))).toBe(0);
   });
 });
 

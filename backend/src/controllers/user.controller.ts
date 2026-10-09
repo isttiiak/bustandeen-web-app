@@ -67,7 +67,7 @@ export const updateUserHandler = async (
       bio?: string;
       city?: string;
       country?: string;
-      hijriOffset?: number;
+      hijriOffset?: number | null;
       dayStartMode?: 'fajr' | 'midnight' | 'maghrib';
       aiEnabled?: boolean;
       onboarded?: true;

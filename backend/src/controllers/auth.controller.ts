@@ -65,7 +65,7 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
         // Frontend only reads displayName/photoUrl here — don't ship the
         // zikr lifetime map and the rest of the doc on every session start.
         projection:
-          'uid email displayName photoUrl avatarId gender hijriOffset dayStartMode onboardingRequired onboardedAt disabled',
+          'uid email displayName photoUrl avatarId gender hijriOffset hijriOffsetSet dayStartMode onboardingRequired onboardedAt disabled',
       }
     );
 

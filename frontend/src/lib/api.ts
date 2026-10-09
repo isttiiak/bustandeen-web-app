@@ -44,7 +44,10 @@ export async function getIdToken(): Promise<string | null> {
 
 // Demo mode: intercept all requests and return mock data
 api.interceptors.request.use((config) => {
-  if (useAuthStore.getState().isDemoMode) {
+  // Public calendar data (national moon-sighting records, T4.1) is the same
+  // for everyone, so the demo reads the real list: its Hijri dates stay right.
+  const isPublicCalendar = (config.url ?? '').startsWith('/api/calendar/');
+  if (useAuthStore.getState().isDemoMode && !isPublicCalendar) {
     const method = (config.method ?? 'get').toLowerCase();
     const url = config.url ?? '';
     const gender = useAuthStore.getState().user?.gender ?? 'male';

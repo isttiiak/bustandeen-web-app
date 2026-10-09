@@ -66,6 +66,7 @@ const AdminFeedback = lazy(() => import('./pages/AdminFeedback.js'));
 const AdminUserDetail = lazy(() => import('./pages/AdminUserDetail.js'));
 const AdminOpsHealth = lazy(() => import('./pages/AdminOpsHealth.js'));
 const AdminBroadcast = lazy(() => import('./pages/AdminBroadcast.js'));
+const AdminMoonSighting = lazy(() => import('./pages/AdminMoonSighting.js'));
 const AdminComposeEmail = lazy(() => import('./pages/AdminComposeEmail.js'));
 const NaseehPage = lazy(() => import('./pages/NaseehPage.js'));
 
@@ -405,6 +406,16 @@ export default function AppRoutes({ revision }: { revision: number }) {
         element={
           <AdminProtected>
             <AdminBroadcast />
+          </AdminProtected>
+        }
+      />
+      <Route
+        path="/admin/moon-sighting"
+        element={
+          <AdminProtected>
+            <ServantProtected>
+              <AdminMoonSighting />
+            </ServantProtected>
           </AdminProtected>
         }
       />

@@ -37,6 +37,10 @@ export interface IUser extends Document {
   city?: string;
   country?: string;
   hijriOffset: number;
+  /** true = the user picked hijriOffset themselves (it wins over their
+   * country's moon-sighting record); false = Automatic. Absent on accounts
+   * from before T4.1: read via hijriIsManual() (a non-zero offset was chosen). */
+  hijriOffsetSet?: boolean;
   /** How the user's daily tracking day begins for zikr/salat/quran (see
    * frontend/src/utils/trackingDay.ts) — mirrored to localStorage for the
    * offline-first client calc. Fasting and salat kaza-debt history always
@@ -133,6 +137,7 @@ const userSchema = new Schema(
     },
     birthDate: { type: Date },
     hijriOffset: { type: Number, default: 0, min: -1, max: 1 },
+    hijriOffsetSet: { type: Boolean },
     dayStartMode: {
       type: String,
       enum: ['fajr', 'midnight', 'maghrib'],

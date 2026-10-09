@@ -57,7 +57,8 @@ export const updateUserSchema = z.object({
     bio: z.string().max(250).optional(),
     city: z.string().max(100).optional(),
     country: z.string().max(100).optional(),
-    hijriOffset: z.number().int().min(-1).max(1).optional(),
+    // null = Automatic: follow the country's moon-sighting record (T4.1)
+    hijriOffset: z.number().int().min(-1).max(1).nullable().optional(),
     dayStartMode: z.enum(['fajr', 'midnight', 'maghrib']).optional(),
     aiEnabled: z.boolean().optional(),
     onboarded: z.literal(true).optional(),

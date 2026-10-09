@@ -18,6 +18,8 @@ export interface DBUserProfile {
   country?: string;
   aiEnabled?: boolean;
   hijriOffset?: number;
+  /** false = Automatic: the device follows its country's moon-sighting record (T4.1) */
+  hijriManual?: boolean;
   dayStartMode?: 'fajr' | 'midnight' | 'maghrib';
   totalCount?: number;
   /** T3.3 onboarding (utils/onboarding.ts onboardingMode). */
@@ -45,12 +47,13 @@ export type ProfilePatch = Partial<
     | 'city'
     | 'country'
     | 'aiEnabled'
-    | 'hijriOffset'
     | 'dayStartMode'
   >
 > & {
   /** Finished, skipped or dismissed onboarding; the server keeps the first. */
   onboarded?: true;
+  /** The user's own offset, or null = Automatic (country record, T4.1) */
+  hijriOffset?: number | null;
 };
 
 const PROFILE_KEY = ['user', 'profile'] as const;

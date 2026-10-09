@@ -53,6 +53,8 @@ export interface ClientUser {
   city?: string;
   country?: string;
   hijriOffset: number;
+  /** false = Automatic: the device applies its country's moon-sighting record */
+  hijriManual: boolean;
   dayStartMode: IUser['dayStartMode'];
   aiEnabled: boolean;
   onboardingRequired: boolean;
@@ -60,6 +62,13 @@ export interface ClientUser {
   totalCount: number;
   createdAt: Date;
   updatedAt: Date;
+}
+
+/** Whether the user chose their own Hijri offset (T4.1). Accounts from before
+ * the flag existed count as manual only with a non-zero offset: 0 was the
+ * default almost nobody picked, so those follow their country. */
+export function hijriIsManual(u: Pick<IUser, 'hijriOffset' | 'hijriOffsetSet'>): boolean {
+  return u.hijriOffsetSet ?? (u.hijriOffset ?? 0) !== 0;
 }
 
 export function toClientUser(user: IUser): ClientUser {
@@ -84,6 +93,7 @@ export function toClientUser(user: IUser): ClientUser {
     city: user.city,
     country: user.country,
     hijriOffset: user.hijriOffset,
+    hijriManual: hijriIsManual(user),
     dayStartMode: user.dayStartMode,
     aiEnabled: user.aiEnabled,
     onboardingRequired: user.onboardingRequired === true,
@@ -110,7 +120,8 @@ export interface UserUpdateFields {
   bio?: string;
   city?: string;
   country?: string;
-  hijriOffset?: number;
+  /** A number = the user's own offset; null = Automatic (T4.1) */
+  hijriOffset?: number | null;
   dayStartMode?: 'fajr' | 'midnight' | 'maghrib';
   aiEnabled?: boolean;
   /** true = onboarding finished, skipped or dismissed. Only the first one is
@@ -233,8 +244,10 @@ export async function updateUser(uid: string, fields: UserUpdateFields): Promise
   if (fields.bio !== undefined) updates.bio = fields.bio;
   if (fields.city !== undefined) updates.city = fields.city;
   if (fields.country !== undefined) updates.country = fields.country;
-  if (fields.hijriOffset !== undefined)
-    (updates as Record<string, unknown>).hijriOffset = fields.hijriOffset;
+  if (fields.hijriOffset !== undefined) {
+    (updates as Record<string, unknown>).hijriOffset = fields.hijriOffset ?? 0;
+    (updates as Record<string, unknown>).hijriOffsetSet = fields.hijriOffset !== null;
+  }
   if (fields.dayStartMode !== undefined)
     (updates as Record<string, unknown>).dayStartMode = fields.dayStartMode;
   if (fields.aiEnabled !== undefined) updates.aiEnabled = fields.aiEnabled;
