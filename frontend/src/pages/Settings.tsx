@@ -619,6 +619,8 @@ export default function Settings() {
     setShowNoorAllTime,
     setShowNoorToday,
     setVibrationEnabled,
+    homeAdhkar,
+    setHomeAdhkar,
   } = useUiStore();
   const queryClient = useQueryClient();
 
@@ -1185,6 +1187,17 @@ export default function Settings() {
             delay={0.14}
           >
             <HomeSpecialPicker t={t} />
+            <div className="mt-4">
+              <Toggle
+                checked={homeAdhkar}
+                onChange={setHomeAdhkar}
+                title={t('settings.homeAdhkar', 'Adhkār on the timeline')}
+                detail={t(
+                  'settings.homeAdhkarDetail',
+                  'Morning adhkār on Fajr until sunrise, evening adhkār on Maghrib until ʿIshāʾ.'
+                )}
+              />
+            </div>
             <button
               onClick={() => navigate('/welcome')}
               className={`${ITEM} w-full mt-4 flex items-center gap-3`}

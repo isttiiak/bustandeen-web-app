@@ -47,6 +47,9 @@ interface UiState {
   /** How Home shows today's special days (utils/homeSpecial.ts) */
   homeSpecialLayout: HomeSpecialLayout;
   setHomeSpecialLayout: (val: HomeSpecialLayout) => void;
+  /** Home timeline: morning/evening adhkār cards while their window is open. */
+  homeAdhkar: boolean;
+  setHomeAdhkar: (val: boolean) => void;
   setCycleHeightUnit: (val: 'm' | 'ft') => void;
   setCycleWeightUnit: (val: 'kg' | 'lbs') => void;
   setHideBmi: (val: boolean) => void;
@@ -82,6 +85,7 @@ type StoredPrefs = Pick<
   | 'cycleWeightUnit'
   | 'hideBmi'
   | 'homeSpecialLayout'
+  | 'homeAdhkar'
 >;
 
 /** Reads every persisted UI preference from localStorage. Used for the initial
@@ -107,6 +111,7 @@ function readStoredPrefs(): StoredPrefs {
     cycleWeightUnit: localStorage.getItem('bustandeen_cycle_weight_unit') === 'lbs' ? 'lbs' : 'kg',
     hideBmi: localStorage.getItem('bustandeen_hide_bmi') === '1',
     homeSpecialLayout: parseHomeSpecialLayout(localStorage.getItem(HOME_SPECIAL_KEY)),
+    homeAdhkar: localStorage.getItem('bustandeen_home_adhkar') !== '0',
   };
 }
 
@@ -194,6 +199,11 @@ export const useUiStore = create<UiState>((set) => ({
   setHomeSpecialLayout: (val) => {
     localStorage.setItem(HOME_SPECIAL_KEY, val);
     set({ homeSpecialLayout: val });
+  },
+
+  setHomeAdhkar: (val) => {
+    localStorage.setItem('bustandeen_home_adhkar', val ? '1' : '0');
+    set({ homeAdhkar: !!val });
   },
 
   setDiscreetMode: (val) => {

@@ -970,12 +970,11 @@
     "adhkarMorning": "সকালের আযকার",
     "adhkarEvening": "সন্ধ্যার আযকার",
     "adhkarOpenUntil": "এখন, {{time}} পর্যন্ত",
-    "adhkarMorningWhen": "ফজর থেকে সূর্যোদয় পর্যন্ত",
-    "adhkarEveningWhen": "আসর থেকে মাগরিব পর্যন্ত",
     "goalsTitle": "আজকের লক্ষ্য",
     "bestTimeLeft": "উত্তম সময়: আর <1>{{left}}</1> বাকি",
     "bestUntil": "উত্তম সময় {{time}} পর্যন্ত",
-    "endsAtFajr": "ফজরে শেষ, {{time}}"
+    "endsAtFajr": "ফজরে শেষ, {{time}}",
+    "timelineKazaAria": "{{prayer}} কাযা হিসেবে চিহ্নিত করুন"
   },
   "library": {
     "duaTitle": "দোয়া সংকলন",
@@ -2667,7 +2666,9 @@
     "musafirStartedAfter": "{{date}}, {{prayer}}-এর পর থেকে শুরু।",
     "musafirChangeStart": "শুরু পরিবর্তন",
     "setupAgain": "শুরুর সেটআপ আবার করুন",
-    "setupAgainDetail": "অবস্থান, মাযহাব, সময় হিসাবের পদ্ধতি আর আপনার আমলগুলো।"
+    "setupAgainDetail": "অবস্থান, মাযহাব, সময় হিসাবের পদ্ধতি আর আপনার আমলগুলো।",
+    "homeAdhkar": "টাইমলাইনে আযকার",
+    "homeAdhkarDetail": "ফজরে সূর্যোদয় পর্যন্ত সকালের আযকার, মাগরিবে ইশা পর্যন্ত সন্ধ্যার আযকার।"
   },
   "specialDays": {
     "arafah": {

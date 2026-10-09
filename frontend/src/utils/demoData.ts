@@ -84,7 +84,8 @@ function buildSalatLog() {
       prayers: {
         fajr: { status: 'completed', at: 'mosque', tasbeeh: true },
         dhuhr: { status: 'completed', at: 'home' },
-        asr: { status: 'completed', at: 'home', tasbeeh: true },
+        // Left unmarked so Home shows the one-tap Kaza once ʿAṣr's time is over.
+        asr: { status: 'pending' },
         maghrib: { status: 'completed', at: 'mosque' },
         isha: { status: 'pending' },
       },
