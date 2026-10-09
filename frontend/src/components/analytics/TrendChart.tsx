@@ -3,6 +3,7 @@ import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useUiStore } from '../../store/useUiStore.js';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
+import { CARD } from '../bustanStyles.js';
 
 /**
  * Daily-total trend, drawn as plain SVG.
@@ -97,12 +98,12 @@ export default function TrendChart({ data, period }: TrendChartProps) {
 
   if (!model) {
     return (
-      <div className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2">
+      <div className={CARD}>
         <div className="card-body p-6">
           <h3 className="text-lg font-bold text-brand-emerald mb-4">
             {t('zikrAnalytics.trendChart.title', 'Trend Chart')}
           </h3>
-          <div className="flex items-center justify-center h-64 text-white/40">
+          <div className="flex items-center justify-center h-64 text-white/70">
             <p>{t('zikrAnalytics.trendChart.noData', 'No data available')}</p>
           </div>
         </div>
@@ -117,11 +118,7 @@ export default function TrendChart({ data, period }: TrendChartProps) {
   const labelEvery = Math.max(1, Math.ceil(rows.length / 7));
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="card rounded-card bg-brand-deep border border-brand-border shadow-elev-2"
-    >
+    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className={CARD}>
       <div className="card-body p-6">
         <div className="flex items-baseline justify-between gap-3 mb-4">
           <h3 className="text-lg font-bold text-brand-emerald">
@@ -130,8 +127,8 @@ export default function TrendChart({ data, period }: TrendChartProps) {
             })}
           </h3>
           {active && (
-            <p className="text-xs text-white/60 tabular-nums">
-              <span className="text-white/40">{active.label}</span>{' '}
+            <p className="text-xs text-white/70 tabular-nums">
+              <span className="text-white/70">{active.label}</span>{' '}
               <span className="font-bold text-white">{formatLocaleNumber(active.value)}</span>
             </p>
           )}
@@ -147,8 +144,8 @@ export default function TrendChart({ data, period }: TrendChartProps) {
         >
           <defs>
             <linearGradient id="trendGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="var(--brand-emerald, #7a9e6e)" stopOpacity={0.35} />
-              <stop offset="95%" stopColor="var(--brand-emerald, #7a9e6e)" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--brand-emerald)" stopOpacity={0.35} />
+              <stop offset="95%" stopColor="var(--brand-emerald)" stopOpacity={0} />
             </linearGradient>
           </defs>
 
@@ -160,7 +157,7 @@ export default function TrendChart({ data, period }: TrendChartProps) {
                 y1={t.y}
                 x2={VB_W - PAD.right}
                 y2={t.y}
-                stroke="rgba(255,255,255,0.10)"
+                stroke="var(--track)"
                 strokeWidth={1}
                 strokeDasharray="3 3"
                 vectorEffect="non-scaling-stroke"
@@ -169,7 +166,7 @@ export default function TrendChart({ data, period }: TrendChartProps) {
                 x={PAD.left - 8}
                 y={t.y + 4}
                 textAnchor="end"
-                className="fill-white/40"
+                className="fill-white/70"
                 style={{ fontSize: 11 }}
               >
                 {formatLocaleNumber(t.value)}
@@ -182,7 +179,7 @@ export default function TrendChart({ data, period }: TrendChartProps) {
           <motion.path
             d={line}
             fill="none"
-            stroke="var(--brand-emerald, #7a9e6e)"
+            stroke="var(--brand-emerald)"
             strokeWidth={2}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -197,8 +194,8 @@ export default function TrendChart({ data, period }: TrendChartProps) {
             cx={pts[pts.length - 1].x}
             cy={pts[pts.length - 1].y}
             r={3.5}
-            fill="var(--brand-emerald, #7a9e6e)"
-            stroke="var(--brand-surface, #211f16)"
+            fill="var(--brand-emerald)"
+            stroke="var(--brand-deep)"
             strokeWidth={2}
             vectorEffect="non-scaling-stroke"
           />
@@ -211,7 +208,7 @@ export default function TrendChart({ data, period }: TrendChartProps) {
                 y1={PAD.top}
                 x2={pts[hover].x}
                 y2={PAD.top + model.innerH}
-                stroke="rgba(255,255,255,0.25)"
+                stroke="rgb(var(--c-ink) / 0.25)"
                 strokeWidth={1}
                 vectorEffect="non-scaling-stroke"
               />
@@ -219,8 +216,8 @@ export default function TrendChart({ data, period }: TrendChartProps) {
                 cx={pts[hover].x}
                 cy={pts[hover].y}
                 r={4}
-                fill="var(--brand-emerald, #7a9e6e)"
-                stroke="#0e0d0a"
+                fill="var(--brand-emerald)"
+                stroke="var(--brand-deep)"
                 strokeWidth={2}
                 vectorEffect="non-scaling-stroke"
               />
@@ -235,7 +232,7 @@ export default function TrendChart({ data, period }: TrendChartProps) {
                 x={pts[i].x}
                 y={VB_H - 8}
                 textAnchor="middle"
-                className="fill-white/40"
+                className="fill-white/70"
                 style={{ fontSize: 11 }}
               >
                 {r.label}

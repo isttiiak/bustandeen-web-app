@@ -9,7 +9,26 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import TabNav from '../components/TabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
 import { useAuthStore } from '../store/useAuthStore.js';
-import { ChartBarIcon, PlusCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowDownTrayIcon,
+  CalendarDaysIcon,
+  ChartBarIcon,
+  ClockIcon,
+  ExclamationTriangleIcon,
+  InformationCircleIcon,
+  ListBulletIcon,
+  PlusCircleIcon,
+  PresentationChartLineIcon,
+  TrophyIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
+import {
+  BTN_PRIMARY,
+  BTN_SECONDARY,
+  CARD,
+  SECTION_TITLE,
+  TILE,
+} from '../components/bustanStyles.js';
 import ChartInfoModal, { InfoButton } from '../components/ChartInfoModal.js';
 import StreakCard from '../components/analytics/StreakCard.js';
 import GoalCard from '../components/analytics/GoalCard.js';
@@ -96,7 +115,7 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
       // refetch happens in the background; the charts catch up on their own.
       void queryClient.invalidateQueries({ queryKey: ['analytics'] });
       toast.success(
-        `${t('zikrAnalytics.backfillToast', { amount: formatLocaleNumber(parsedAmount), type: zikrDisplayName(selectedType, i18n.language), day: dayLabel(daysBack).toLowerCase() })} 📿`,
+        `${t('zikrAnalytics.backfillToast', { amount: formatLocaleNumber(parsedAmount), type: zikrDisplayName(selectedType, i18n.language), day: dayLabel(daysBack).toLowerCase() })}`,
         { id: 'zikr-backfill' }
       );
       onClose();
@@ -125,19 +144,22 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
         animate={{ y: 0, opacity: 1 }}
         exit={{ y: 40, opacity: 0 }}
         transition={{ type: 'spring', damping: 25 }}
-        className="bg-brand-surface rounded-3xl w-full max-w-md shadow-2xl border border-brand-border overflow-hidden max-h-[88vh] overflow-y-auto"
+        className="bg-brand-deep rounded-card w-full max-w-md shadow-elev-3 border border-brand-border overflow-hidden max-h-[88vh] overflow-y-auto"
+        role="dialog"
+        aria-modal="true"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-brand-border/60">
           <div>
-            <h3 className="text-lg font-black text-brand-emerald">
+            <h3 className="font-display text-lg font-bold text-brand-emerald">
               {t('zikrAnalytics.logMissedCounts')}
             </h3>
-            <p className="text-white/30 text-xs mt-0.5">{t('zikrAnalytics.logMissedSubtitle')}</p>
+            <p className="text-white/70 text-xs mt-0.5">{t('zikrAnalytics.logMissedSubtitle')}</p>
           </div>
           <button
             onClick={onClose}
-            className="text-white/40 hover:text-white p-1 transition-colors"
+            aria-label={t('common.close')}
+            className="shrink-0 w-9 h-9 grid place-items-center rounded-full text-white/70 hover:text-white hover:bg-brand-surface transition-colors"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
@@ -147,7 +169,7 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
           <>
             {/* Which day — today or up to 2 days back (streak grace window) */}
             <div className="space-y-1.5">
-              <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
+              <label className="text-xs text-white/70 uppercase tracking-wider font-bold">
                 {t('zikrAnalytics.whichDay')}
               </label>
               <div className="flex gap-1.5">
@@ -158,10 +180,10 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
                       setDaysBack(n);
                       setSubmitError('');
                     }}
-                    className={`flex-1 px-2 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                    className={`flex-1 px-2 py-1.5 rounded-control text-xs font-bold border transition-colors ${
                       daysBack === n
                         ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
-                        : 'bg-brand-deep border-brand-border text-white/40 hover:text-white/70'
+                        : 'bg-brand-surface/50 border-brand-border text-white/70 hover:text-white'
                     }`}
                   >
                     {dayLabel(n)}
@@ -169,15 +191,19 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
                 ))}
               </div>
               {daysBack > 0 && (
-                <p className="text-brand-info/70 text-[11px]">
-                  🧊 {t('zikrAnalytics.backfillNote')}
+                <p className="text-brand-info text-[11px] flex items-start gap-1">
+                  <InformationCircleIcon
+                    className="w-3.5 h-3.5 shrink-0 mt-px"
+                    aria-hidden="true"
+                  />
+                  {t('zikrAnalytics.backfillNote')}
                 </p>
               )}
             </div>
 
             {/* Type selector */}
             <div className="space-y-1.5">
-              <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
+              <label className="text-xs text-white/70 uppercase tracking-wider font-bold">
                 {t('zikrAnalytics.zikrType')}
               </label>
               <select
@@ -187,10 +213,10 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
                   setAmount('');
                   setSubmitError('');
                 }}
-                className="select select-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-sm"
+                className="select select-bordered w-full rounded-control bg-brand-surface/50 border-brand-border text-white focus:border-brand-emerald text-sm"
               >
                 {allTypes.map((tn) => (
-                  <option key={tn} value={tn} className="bg-brand-deep">
+                  <option key={tn} value={tn} className="bg-brand-deep text-white">
                     {zikrDisplayName(tn, i18n.language)}
                   </option>
                 ))}
@@ -199,7 +225,7 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
 
             {/* Amount FIRST (Istiak: type → save, fastest path), context after */}
             <div className="space-y-1.5">
-              <label className="text-xs text-white/50 uppercase tracking-wider font-bold">
+              <label className="text-xs text-white/70 uppercase tracking-wider font-bold">
                 {t('zikrAnalytics.countsToAdd')}
               </label>
               <input
@@ -214,15 +240,15 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
                   if (e.key === 'Enter') void handleSubmit();
                 }}
                 placeholder={t('zikrAnalytics.egAmount')}
-                className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-lg font-bold"
+                className="input input-bordered w-full rounded-control bg-brand-surface/50 border-brand-border text-white focus:border-brand-emerald text-lg font-bold"
                 autoFocus
               />
             </div>
 
             {/* Today's existing count (only meaningful for today) */}
             {daysBack === 0 && (
-              <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/5 border border-brand-emerald/10">
-                <span className="text-white/50 text-sm">{t('zikrAnalytics.todaysCountSoFar')}</span>
+              <div className="flex items-center justify-between px-4 py-3 rounded-control bg-shade/10 border border-brand-border">
+                <span className="text-white/70 text-sm">{t('zikrAnalytics.todaysCountSoFar')}</span>
                 <span className="text-white font-black text-lg tabular-nums">
                   {formatLocaleNumber(existingCount)}
                 </span>
@@ -234,7 +260,7 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
               <motion.div
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-between px-4 py-3 rounded-xl bg-brand-emerald/10 border border-brand-emerald/30"
+                className="flex items-center justify-between px-4 py-3 rounded-control bg-brand-emerald/10 border border-brand-emerald/30"
               >
                 {daysBack === 0 ? (
                   <>
@@ -260,16 +286,13 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
 
             {/* Actions */}
             <div className="flex gap-3 pt-1">
-              <button
-                onClick={onClose}
-                className="btn flex-1 btn-ghost text-white/60 border-brand-border"
-              >
+              <button onClick={onClose} className={`${BTN_SECONDARY} flex-1`}>
                 {t('common.cancel')}
               </button>
               <button
                 onClick={() => void handleSubmit()}
                 disabled={parsedAmount <= 0 || submitting}
-                className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 font-bold disabled:opacity-40"
+                className={`${BTN_PRIMARY} flex-1`}
               >
                 {submitting ? (
                   <span className="loading loading-spinner loading-sm" />
@@ -288,14 +311,13 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
 
 // ─── Heatmap Calendar ─────────────────────────────────────────────────────────
 
+// One colour per top-5 type line, from the theme's tokens (redefined on paper).
 const TYPE_COLORS = [
-  'var(--brand-emerald, #7a9e6e)',
-  '#60a5fa',
-  '#f59e0b',
-  '#f472b6',
-  '#a78bfa',
-  '#34d399',
-  '#fb923c',
+  'rgb(var(--c-data-good))',
+  'rgb(var(--c-data-mid))',
+  'var(--brand-info)',
+  'var(--brand-pink)',
+  'rgb(var(--c-data-low))',
 ];
 
 interface HeatmapDay {
@@ -535,7 +557,7 @@ function PerTypeTrendChart({
             y1={t.y}
             x2={VBW - pad2Right}
             y2={t.y}
-            stroke="rgba(255,255,255,0.08)"
+            stroke="var(--track)"
             strokeWidth={1}
             strokeDasharray="3 3"
             vectorEffect="non-scaling-stroke"
@@ -544,7 +566,7 @@ function PerTypeTrendChart({
             x={pad2Left - 6}
             y={t.y + 4}
             textAnchor="end"
-            className="fill-white/30"
+            className="fill-white/70"
             style={{ fontSize: 10 }}
           >
             {formatLocaleNumber(t.value)}
@@ -574,7 +596,7 @@ function PerTypeTrendChart({
           y1={pad2Top}
           x2={pts[0][hover].x}
           y2={pad2Top + innerH}
-          stroke="rgba(255,255,255,0.2)"
+          stroke="rgb(var(--c-ink) / 0.25)"
           strokeWidth={1}
           vectorEffect="non-scaling-stroke"
         />
@@ -588,7 +610,7 @@ function PerTypeTrendChart({
             cy={p[hover].y}
             r={3.5}
             fill={TYPE_COLORS[si % TYPE_COLORS.length]}
-            stroke="#0e0d0a"
+            stroke="var(--brand-deep)"
             strokeWidth={1.5}
             vectorEffect="non-scaling-stroke"
           />
@@ -601,7 +623,7 @@ function PerTypeTrendChart({
             x={x}
             y={VBH - 6}
             textAnchor="middle"
-            className="fill-white/30"
+            className="fill-white/70"
             style={{ fontSize: 10 }}
           >
             {label}
@@ -661,28 +683,28 @@ export default function ZikrAnalytics() {
       title: t('zikrAnalytics.info.trendTitle', 'Zikr Trend'),
       body: t(
         'zikrAnalytics.info.trendBody',
-        "Your total zikr count day by day over the selected period. Hover (or tap) any bar to see that day's total. The bar height is relative to the highest day in the window, so a quiet day looks shorter even if the count is still meaningful."
+        "Your total zikr count day by day over the selected period. Hover (or tap) the chart to see a day's total. The height is relative to the highest day in the window, so a quiet day looks lower even if the count is still meaningful."
       ),
     },
     perTypeTrend: {
       title: t('zikrAnalytics.info.perTypeTrendTitle', 'Per-Type Trends'),
       body: t(
         'zikrAnalytics.info.perTypeTrendBody',
-        "How each of your top 5 dhikr types has moved over the same period — each line is one type. Only shows types you've counted in this window."
+        "How each of your top 5 dhikr types has moved over the same period. Each line is one type. Only shows types you've counted in this window."
       ),
     },
     timeOfDay: {
       title: t('zikrAnalytics.info.timeOfDayTitle', 'Time of Day'),
       body: t(
         'zikrAnalytics.info.timeOfDayBody',
-        'When during the day you do your dhikr, averaged over the last 30 days — morning (Fajr to Dhuhr), afternoon (Dhuhr to Asr), evening (Asr to Isha), night (Isha onwards). Helps you see your natural rhythm.'
+        'When during the day you do your dhikr, hour by hour, over the last 30 days. Hover (or tap) a bar to see that hour. Helps you see your natural rhythm.'
       ),
     },
     heatmap: {
       title: t('zikrAnalytics.info.heatmapTitle', 'Activity Heatmap'),
       body: t(
         'zikrAnalytics.info.heatmapBody',
-        'Every day of the last year, colored by how much zikr you did — the darker the green, the more you counted. A white/grey cell means no zikr that day. Hover a cell to see the date and count.'
+        'Every day of the last year, coloured by how much zikr you did compared with your own active days: the stronger the green, the more you counted. An empty cell means no zikr that day. Hover a cell to see the date and count.'
       ),
     },
   };
@@ -737,19 +759,20 @@ export default function ZikrAnalytics() {
       <AnimatedBackground variant="dark">
         <div className="min-h-screen flex items-center justify-center p-4">
           <div className="flex flex-col items-center gap-6 max-w-sm text-center">
-            <div className="text-5xl">{isRateLimit ? '⏳' : '⚠️'}</div>
+            {isRateLimit ? (
+              <ClockIcon className="w-12 h-12 text-brand-gold" aria-hidden="true" />
+            ) : (
+              <ExclamationTriangleIcon className="w-12 h-12 text-red-400" aria-hidden="true" />
+            )}
             <div>
               <p className="text-lg font-bold text-white mb-1">
                 {isRateLimit ? t('zikrAnalytics.tooManyRequests') : t('zikrAnalytics.couldNotLoad')}
               </p>
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-white/70">
                 {isRateLimit ? t('zikrAnalytics.rateLimitMsg') : errMsg}
               </p>
             </div>
-            <button
-              className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-none"
-              onClick={() => void refetch()}
-            >
+            <button className={BTN_PRIMARY} onClick={() => void refetch()}>
               {t('zikrAnalytics.tryAgain')}
             </button>
           </div>
@@ -790,7 +813,7 @@ export default function ZikrAnalytics() {
   if (isDemoMode) {
     return (
       <DemoSignInGate
-        emoji="📊"
+        icon={<ChartBarIcon className="w-7 h-7" />}
         title={t('demoGate.analyticsTitle', 'Your personal analytics await')}
         desc={t(
           'demoGate.zikrDesc',
@@ -825,12 +848,11 @@ export default function ZikrAnalytics() {
 
             {/* Log missed counts button */}
             <motion.button
-              whileHover={{ scale: 1.03, y: -1 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => setShowManualEntry(true)}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-emerald/15 hover:bg-brand-emerald/25 border border-brand-emerald/40 hover:border-brand-emerald/70 text-brand-emerald text-sm font-bold transition-all"
+              className={BTN_SECONDARY}
             >
-              <PlusCircleIcon className="w-4 h-4" />
+              <PlusCircleIcon className="w-4 h-4 text-brand-emerald" />
               {t('zikrAnalytics.logMissedCounts')}
             </motion.button>
           </div>
@@ -895,20 +917,20 @@ export default function ZikrAnalytics() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
-                className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-4 text-center"
+                className={TILE}
               >
                 <p className={`text-2xl font-black ${s.accent}`}>{s.value}</p>
-                <p className="text-white/30 text-[10px] font-bold uppercase mt-1">{s.label}</p>
-                {s.sub && <p className="text-white/20 text-[10px] mt-0.5">{s.sub}</p>}
+                <p className="text-white/70 text-[10px] font-bold uppercase mt-1">{s.label}</p>
+                {s.sub && <p className="text-white/70 text-[10px] mt-0.5">{s.sub}</p>}
               </motion.div>
             ))}
           </div>
 
           {/* Breakdown by Type */}
-          <div className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-4 sm:p-5">
+          <div className={`${CARD} p-4 sm:p-5`}>
             <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-              <h2 className="text-white font-black text-sm flex items-center gap-2">
-                <ChartBarIcon className="w-4 h-4 text-brand-emerald" />{' '}
+              <h2 className={SECTION_TITLE}>
+                <ChartBarIcon className="w-5 h-5 text-brand-emerald" />
                 {t('zikrAnalytics.breakdownByType')}
               </h2>
               <div className="tabs tabs-boxed tabs-sm bg-brand-surface border border-brand-border">
@@ -944,21 +966,21 @@ export default function ZikrAnalytics() {
                           {formatLocaleNumber(item.total)}
                         </span>
                       </div>
-                      <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                      <div className="w-full bg-track rounded-full h-2 overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${pct > 0 ? Math.max(pct, 2) : 0}%` }}
                           transition={{ duration: 0.6, delay: i * 0.03 }}
-                          className="h-full rounded-full bg-gradient-to-r from-brand-emerald/80 to-brand-info/80"
+                          className="h-full rounded-full bg-data-good"
                         />
                       </div>
-                      <p className="text-white/20 text-[10px] mt-0.5">{pct.toFixed(1)}%</p>
+                      <p className="text-white/70 text-[10px] mt-0.5">{pct.toFixed(1)}%</p>
                     </motion.div>
                   );
                 })}
               </div>
             ) : (
-              <p className="text-white/30 text-sm text-center py-8">
+              <p className="text-white/70 text-sm text-center py-8">
                 {t(
                   activeTab === 'today'
                     ? 'zikrAnalytics.noZikrToday'
@@ -971,8 +993,9 @@ export default function ZikrAnalytics() {
           {/* Trend chart */}
           <div className="space-y-3">
             <div className="flex items-center justify-between flex-wrap gap-3">
-              <h2 className="text-white font-black text-sm flex items-center gap-2">
-                <ChartBarIcon className="w-4 h-4 text-brand-emerald" /> {t('zikrAnalytics.trend')}
+              <h2 className={SECTION_TITLE}>
+                <PresentationChartLineIcon className="w-5 h-5 text-brand-emerald" />
+                {t('zikrAnalytics.trend')}
                 <InfoButton onClick={() => setInfoTopic('trend')} label={CHART_INFO.trend!.title} />
               </h2>
               <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border">
@@ -988,11 +1011,11 @@ export default function ZikrAnalytics() {
               </div>
             </div>
             {allTime?.totalCount === 0 ? (
-              <div className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-6 text-center">
-                <p className="text-white/40 text-sm">
+              <div className={`${CARD} p-6 text-center`}>
+                <p className="text-white/70 text-sm">
                   {t(
                     'zikrAnalytics.newUserTrend',
-                    'Your trend will appear here once you start counting zikr. 🌱'
+                    'Your trend will appear here once you start counting zikr.'
                   )}
                 </p>
               </div>
@@ -1014,9 +1037,9 @@ export default function ZikrAnalytics() {
               .map((x) => x.type);
             if (!topTypes.length) return null;
             return (
-              <div className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-4 sm:p-5 space-y-3">
-                <h2 className="text-white font-black text-sm flex items-center gap-2">
-                  <ChartBarIcon className="w-4 h-4 text-brand-info" />
+              <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
+                <h2 className={SECTION_TITLE}>
+                  <PresentationChartLineIcon className="w-5 h-5 text-brand-info" />
                   {t('zikrAnalytics.perTypeTrend', 'Per-type trends')}
                   <InfoButton
                     onClick={() => setInfoTopic('perTypeTrend')}
@@ -1034,7 +1057,7 @@ export default function ZikrAnalytics() {
                           background: TYPE_COLORS[si % TYPE_COLORS.length],
                         }}
                       />
-                      <span className="text-white/60 text-[11px]">
+                      <span className="text-white/70 text-[11px]">
                         {zikrDisplayName(type, i18n.language)}
                       </span>
                     </div>
@@ -1046,11 +1069,11 @@ export default function ZikrAnalytics() {
           })()}
 
           {/* ── Time of day ───────────────────────────────────────────────────── */}
-          <div className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-4 sm:p-5 space-y-3">
-            <h2 className="text-white font-black text-sm flex items-center gap-2">
-              <ChartBarIcon className="w-4 h-4 text-brand-gold" />
+          <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
+            <h2 className={SECTION_TITLE}>
+              <ClockIcon className="w-5 h-5 text-brand-gold" />
               {t('zikrAnalytics.timeOfDay.title', 'Time of day')}
-              <span className="text-white/25 text-[10px] font-normal">
+              <span className="text-white/70 text-xs font-normal font-sans">
                 {t('zikrAnalytics.timeOfDay.subtitle', 'last 30 days')}
               </span>
               <InfoButton
@@ -1063,11 +1086,11 @@ export default function ZikrAnalytics() {
 
           {/* ── Contribution heatmap ─────────────────────────────────────────── */}
           {yearData?.chartData && yearData.chartData.length > 0 && (
-            <div className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-4 sm:p-5 space-y-2">
-              <h2 className="text-white font-black text-sm flex items-center gap-2">
-                <ChartBarIcon className="w-4 h-4 text-brand-emerald" />
+            <div className={`${CARD} p-4 sm:p-5 space-y-2`}>
+              <h2 className={SECTION_TITLE}>
+                <CalendarDaysIcon className="w-5 h-5 text-brand-emerald" />
                 {t('zikrAnalytics.heatmap', 'Activity heatmap')}
-                <span className="text-white/25 text-[10px] font-normal">
+                <span className="text-white/70 text-xs font-normal font-sans">
                   {t('zikrAnalytics.heatmapSub', 'last 365 days')}
                 </span>
                 <InfoButton
@@ -1076,7 +1099,7 @@ export default function ZikrAnalytics() {
                 />
               </h2>
               {allTime?.totalCount === 0 ? (
-                <p className="text-white/40 text-sm text-center py-6">
+                <p className="text-white/70 text-sm text-center py-6">
                   {t(
                     'zikrAnalytics.newUserHeatmap',
                     'Not enough activity yet. This fills in as you go.'
@@ -1101,19 +1124,13 @@ export default function ZikrAnalytics() {
               dayOfWeekTotals[dow] = (dayOfWeekTotals[dow] ?? 0) + d.total;
             }
             const bestDow = dayOfWeekTotals.indexOf(Math.max(...dayOfWeekTotals));
-            const dowNames = [
-              'Sunday',
-              'Monday',
-              'Tuesday',
-              'Wednesday',
-              'Thursday',
-              'Friday',
-              'Saturday',
-            ];
+            // 7 Jan 2024 was a Sunday: weekday names in the UI language.
+            const dowName = (dow: number) =>
+              formatLocaleDate(new Date(2024, 0, 7 + dow, 12), { weekday: 'long' });
             const records = [
               {
                 label: t('zikrAnalytics.bestDayRecord', 'Best day'),
-                value: allTime?.bestDay?.count ? formatLocaleNumber(allTime.bestDay.count) : '—',
+                value: allTime?.bestDay?.count ? formatLocaleNumber(allTime.bestDay.count) : '-',
                 sub: allTime?.bestDay?.date
                   ? formatLocaleDate(new Date(allTime.bestDay.date), {
                       month: 'short',
@@ -1126,29 +1143,33 @@ export default function ZikrAnalytics() {
               {
                 label: t('zikrAnalytics.longestStreak', 'Longest streak'),
                 value: streak?.longestStreak
-                  ? `${formatLocaleNumber(streak.longestStreak)} d`
-                  : '—',
+                  ? t('zikrAnalytics.streakDaysValue', '{{n}} d', {
+                      n: formatLocaleNumber(streak.longestStreak),
+                    })
+                  : '-',
                 sub: '',
                 accent: 'text-brand-gold',
               },
               {
                 label: t('zikrAnalytics.avgActiveDay', 'Avg on active days'),
-                value: avgActive ? formatLocaleNumber(avgActive) : '—',
-                sub: `${activeDays.length} active days`,
+                value: avgActive ? formatLocaleNumber(avgActive) : '-',
+                sub: t('zikrAnalytics.activeDaysCount', '{{n}} active days', {
+                  n: formatLocaleNumber(activeDays.length),
+                }),
                 accent: 'text-brand-info',
               },
               {
                 label: t('zikrAnalytics.mostActiveDay', 'Most active day'),
-                value: dayOfWeekTotals[bestDow] > 0 ? dowNames[bestDow] : '—',
+                value: dayOfWeekTotals[bestDow] > 0 ? dowName(bestDow) : '-',
                 sub: '',
                 accent: 'text-brand-warm',
               },
             ];
             return (
-              <div className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-4 sm:p-5 space-y-3">
+              <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
                 <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-white font-black text-sm flex items-center gap-2">
-                    <ChartBarIcon className="w-4 h-4 text-brand-gold" />
+                  <h2 className={SECTION_TITLE}>
+                    <TrophyIcon className="w-5 h-5 text-brand-gold" />
                     {t('zikrAnalytics.personalRecords', 'Personal records')}
                   </h2>
                   <button
@@ -1157,10 +1178,11 @@ export default function ZikrAnalytics() {
                         ...new Set(chartData.flatMap((d) => Object.keys(d.breakdown ?? {}))),
                       ])
                     }
-                    className="flex items-center gap-1.5 text-white/40 hover:text-brand-emerald text-xs font-semibold transition-colors"
+                    className="flex items-center gap-1.5 text-white/70 hover:text-brand-emerald text-xs font-semibold transition-colors"
                     title={t('zikrAnalytics.exportCsv', 'Export CSV')}
                   >
-                    ↓ CSV
+                    <ArrowDownTrayIcon className="w-4 h-4" aria-hidden="true" />
+                    CSV
                   </button>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -1170,10 +1192,10 @@ export default function ZikrAnalytics() {
                       className="rounded-control bg-brand-surface/60 border border-brand-border shadow-elev-1 p-3 text-center"
                     >
                       <p className={`text-xl font-black ${r.accent}`}>{r.value}</p>
-                      <p className="text-white/30 text-[10px] font-bold uppercase mt-1">
+                      <p className="text-white/70 text-[10px] font-bold uppercase mt-1">
                         {r.label}
                       </p>
-                      {r.sub && <p className="text-white/20 text-[10px] mt-0.5">{r.sub}</p>}
+                      {r.sub && <p className="text-white/70 text-[10px] mt-0.5">{r.sub}</p>}
                     </div>
                   ))}
                 </div>
@@ -1182,10 +1204,10 @@ export default function ZikrAnalytics() {
           })()}
 
           {/* ── Session history ───────────────────────────────────────────────── */}
-          <div className="rounded-card bg-brand-deep border border-brand-border shadow-elev-2 p-4 sm:p-5 space-y-3">
+          <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-white font-black text-sm flex items-center gap-2">
-                <ChartBarIcon className="w-4 h-4 text-brand-info" />
+              <h2 className={SECTION_TITLE}>
+                <ListBulletIcon className="w-5 h-5 text-brand-info" />
                 {t('zikrAnalytics.sessions.title', 'Session history')}
               </h2>
               <input
@@ -1193,11 +1215,11 @@ export default function ZikrAnalytics() {
                 value={sessionsDate}
                 max={getTrackingDay()}
                 onChange={(e) => setSessionsDate(e.target.value)}
-                className="input input-xs input-bordered bg-brand-surface border-brand-border text-white/80 text-xs"
+                className="input input-xs input-bordered rounded-control bg-brand-surface border-brand-border text-white/80 text-xs"
               />
             </div>
             {sessionsLoading ? (
-              <p className="text-white/30 text-xs text-center py-4">
+              <p className="text-white/70 text-xs text-center py-4">
                 {t('common.loading', 'Loading…')}
               </p>
             ) : sessionsData && sessionsData.length > 0 ? (
@@ -1217,12 +1239,12 @@ export default function ZikrAnalytics() {
                   return (
                     <div
                       key={i}
-                      className="flex items-center justify-between gap-3 rounded-xl bg-white/5 border border-brand-border p-3"
+                      className="flex items-center justify-between gap-3 rounded-control bg-brand-surface/50 border border-brand-border p-3"
                     >
                       <div className="min-w-0">
                         <p className="text-white/80 text-sm font-semibold tabular-nums">
                           {isManualEntry ? (
-                            <span className="text-white/40 text-xs font-medium italic">
+                            <span className="text-white/70 text-xs font-medium italic">
                               {t('zikrAnalytics.sessions.manualLog', 'Manual log')}
                             </span>
                           ) : (
@@ -1243,7 +1265,7 @@ export default function ZikrAnalytics() {
                           {Object.entries(s.perType).map(([type, count]) => (
                             <span
                               key={type}
-                              className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/50"
+                              className="px-1.5 py-0.5 rounded-md bg-shade/10 border border-brand-border text-[10px] text-white/70"
                             >
                               {zikrDisplayName(type, i18n.language)} ×{formatLocaleNumber(count)}
                             </span>
@@ -1258,11 +1280,11 @@ export default function ZikrAnalytics() {
                 })}
               </div>
             ) : (
-              <p className="text-white/30 text-xs text-center py-4">
+              <p className="text-white/70 text-xs text-center py-4">
                 {t('zikrAnalytics.sessions.empty', 'No sessions logged for this day')}
               </p>
             )}
-            <p className="text-white/25 text-[10px] leading-relaxed">
+            <p className="text-white/70 text-[10px] leading-relaxed">
               {t(
                 'zikrAnalytics.sessions.note',
                 "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
@@ -1271,77 +1293,84 @@ export default function ZikrAnalytics() {
           </div>
         </div>
 
-        {/* Set Goal modal */}
-        {showGoalModal && (
-          <div className="modal modal-open">
-            <motion.div
-              className="modal-box bg-brand-surface border border-brand-border shadow-2xl rounded-2xl"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-            >
-              <h3 className="font-black text-2xl mb-6 text-brand-emerald">
-                {t('zikrAnalytics.setDailyGoal')}
-              </h3>
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text text-white/70 font-semibold">
-                    {t('zikrAnalytics.dailyTarget')}
-                  </span>
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={newGoal}
-                  onChange={(e) => setNewGoal(parseInt(e.target.value) || 0)}
-                  className="input input-bordered bg-brand-deep border-brand-border text-white focus:border-brand-emerald"
-                  placeholder={t('zikrAnalytics.enterGoal')}
-                />
-              </div>
-              <div className="form-control mt-4">
-                <label className="label">
-                  <span className="label-text text-white/70 font-semibold">
-                    {t('zikrAnalytics.graceDays')}
-                  </span>
-                </label>
-                <select
-                  value={newGraceDays}
-                  onChange={(e) => setNewGraceDays(parseInt(e.target.value, 10))}
-                  className="select select-bordered bg-brand-deep border-brand-border text-white focus:border-brand-emerald"
-                >
-                  <option value={0}>{t('zikrAnalytics.grace0')}</option>
-                  <option value={1}>{t('zikrAnalytics.grace1')}</option>
-                  <option value={2}>{t('zikrAnalytics.grace2')}</option>
-                  <option value={3}>{t('zikrAnalytics.grace3')}</option>
-                </select>
-                <label className="label">
-                  <span className="label-text-alt text-white/30">
-                    {t('zikrAnalytics.graceDaysNote')}
-                  </span>
-                </label>
-              </div>
-              <div className="modal-action">
-                <button
-                  className="btn bg-brand-deep border-brand-border text-white/60"
-                  onClick={() => setShowGoalModal(false)}
-                  disabled={isUpdating}
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-none font-bold"
-                  onClick={handleUpdateGoal}
-                  disabled={isUpdating || !newGoal || newGoal < 1}
-                >
-                  {updateGoal.isPending ? t('zikrAnalytics.updating') : t('zikrAnalytics.saveGoal')}
-                </button>
-              </div>
-            </motion.div>
+        {/* Set Goal modal: portaled above the navbar, like the other dialogs */}
+        {showGoalModal &&
+          createPortal(
             <div
-              className="modal-backdrop bg-black/60 backdrop-blur-sm"
-              onClick={() => setShowGoalModal(false)}
-            />
-          </div>
-        )}
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[70] p-4"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) setShowGoalModal(false);
+              }}
+            >
+              <motion.div
+                className="bg-brand-deep border border-brand-border shadow-elev-3 rounded-card w-full max-w-md p-6 max-h-[88vh] overflow-y-auto"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                role="dialog"
+                aria-modal="true"
+              >
+                <h3 className="font-display font-bold text-xl mb-6 text-brand-emerald">
+                  {t('zikrAnalytics.setDailyGoal')}
+                </h3>
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text text-white/70 font-semibold">
+                      {t('zikrAnalytics.dailyTarget')}
+                    </span>
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={newGoal}
+                    onChange={(e) => setNewGoal(parseInt(e.target.value) || 0)}
+                    className="input input-bordered rounded-control bg-brand-surface/50 border-brand-border text-white focus:border-brand-emerald"
+                    placeholder={t('zikrAnalytics.enterGoal')}
+                  />
+                </div>
+                <div className="form-control mt-4">
+                  <label className="label">
+                    <span className="label-text text-white/70 font-semibold">
+                      {t('zikrAnalytics.graceDays')}
+                    </span>
+                  </label>
+                  <select
+                    value={newGraceDays}
+                    onChange={(e) => setNewGraceDays(parseInt(e.target.value, 10))}
+                    className="select select-bordered rounded-control bg-brand-surface/50 border-brand-border text-white focus:border-brand-emerald"
+                  >
+                    <option value={0}>{t('zikrAnalytics.grace0')}</option>
+                    <option value={1}>{t('zikrAnalytics.grace1')}</option>
+                    <option value={2}>{t('zikrAnalytics.grace2')}</option>
+                    <option value={3}>{t('zikrAnalytics.grace3')}</option>
+                  </select>
+                  <label className="label">
+                    <span className="label-text-alt text-white/70">
+                      {t('zikrAnalytics.graceDaysNote')}
+                    </span>
+                  </label>
+                </div>
+                <div className="flex gap-3 mt-6">
+                  <button
+                    className={`${BTN_SECONDARY} flex-1`}
+                    onClick={() => setShowGoalModal(false)}
+                    disabled={isUpdating}
+                  >
+                    {t('common.cancel')}
+                  </button>
+                  <button
+                    className={`${BTN_PRIMARY} flex-1`}
+                    onClick={handleUpdateGoal}
+                    disabled={isUpdating || !newGoal || newGoal < 1}
+                  >
+                    {updateGoal.isPending
+                      ? t('zikrAnalytics.updating')
+                      : t('zikrAnalytics.saveGoal')}
+                  </button>
+                </div>
+              </motion.div>
+            </div>,
+            document.body
+          )}
       </div>
 
       {/* Manual entry modal */}

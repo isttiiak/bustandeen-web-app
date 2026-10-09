@@ -1436,7 +1436,7 @@
       "body4": "Friends: mutual connections, and the Noor scores worked out from your own activity.",
       "body5": "Messages you send us: feedback and contact forms, zikr requests, and sadaqah donation details (optional name, email, phone, payment method, transaction ID, amount, date, message, and an IP address to prevent abuse).",
       "body6": "The time you were last active, and the service emails we send: a welcome, replies to your messages, donation status, and occasionally a gentle note after a long break.",
-      "body7": "How long we keep logs: when our rate limits block a request, its IP address is kept for 30 days to spot abuse, then deleted automatically. The counters behind those limits keep only a scrambled (hashed) form of your IP address or account ID and disappear when their time window ends, after 24 hours at most. A failed email delivery (address and subject) is kept for 90 days. Server error logs never contain what you logged."
+      "body7": "How long we keep logs: when our rate limits block a request, its IP address is kept for 30 days to spot abuse, then deleted automatically. The counters behind those limits keep only a scrambled (hashed) form of your IP address or account ID and disappear when their time window ends, after 24 hours at most. A failed email delivery (address and subject) is kept for 90 days. Security reports that browsers send when a page tries to load something our security policy does not allow are counted per day by website domain only (no page address, IP address or account) and deleted after 30 days. Server error logs never contain what you logged."
     },
     "deviceOnly": {
       "title": "Stays on your device only",
@@ -3437,12 +3437,14 @@
     "volume": "Volume"
   },
   "zikrAnalytics": {
+    "streakDaysValue": "{{n}} d",
+    "activeDaysCount": "{{n}} active days",
     "addNewDhikrType": "+ Add a new dhikr type",
-    "addTypeError": "Could not add this dhikr type — try again",
+    "addTypeError": "Could not add this dhikr type. Please try again.",
     "allTimeLabel": "All time",
     "allTimeStat": "All Time",
     "arabicLabel": "Arabic",
-    "backfillNote": "Frozen streak — this fills the gap without breaking your chain.",
+    "backfillNote": "Frozen streak: this fills the gap without breaking your chain.",
     "backfillPreview": "+{{amount}} will be added to {{day}}",
     "backfillToast": "{{amount}} {{type}} added to {{day}}",
     "bestDay": "Best Day",
@@ -3458,7 +3460,7 @@
     "egSource": "e.g. Quran 3:173",
     "englishMeaning": "English meaning",
     "enterGoal": "Enter your daily goal",
-    "grace0": "0 — no forgiveness, any miss resets the streak",
+    "grace0": "0: any missed day resets the streak",
     "grace1": "1 day (default)",
     "grace2": "2 days",
     "grace3": "3 days",
@@ -3474,9 +3476,9 @@
     "period30d": "30d",
     "period7d": "7d",
     "period90d": "90d",
-    "rateLimitMsg": "You're refreshing a bit too fast — give it a moment and try again.",
+    "rateLimitMsg": "You're refreshing a bit too fast. Give it a moment and try again.",
     "saveCounts": "Save Counts",
-    "saveError": "Could not save — try again",
+    "saveError": "Could not save. Please try again.",
     "saveGoal": "Save Goal",
     "setDailyGoal": "Set Daily Goal",
     "sourceLabel": "Reference",
@@ -3496,7 +3498,7 @@
       "pauseStreak": "Pause Streak",
       "pausedBanner": "Streak paused: counts won't increase until you resume",
       "atRisk": "{{remaining}} more to protect your {{streak}}-day streak!",
-      "countNow": "Count now →",
+      "countNow": "Count now",
       "dayStreak": "Day Streak",
       "best": "Best",
       "last7Days": "Last 7 days",
@@ -3544,13 +3546,13 @@
     "noZikrAllTime": "No zikr logged yet",
     "info": {
       "trendTitle": "Zikr Trend",
-      "trendBody": "Your total zikr count day by day over the selected period. Hover (or tap) any bar to see that day's total. The bar height is relative to the highest day in the window, so a quiet day looks shorter even if the count is still meaningful.",
+      "trendBody": "Your total zikr count day by day over the selected period. Hover (or tap) the chart to see a day's total. The height is relative to the highest day in the window, so a quiet day looks lower even if the count is still meaningful.",
       "perTypeTrendTitle": "Per-Type Trends",
-      "perTypeTrendBody": "How each of your top 5 dhikr types has moved over the same period — each line is one type. Only shows types you've counted in this window.",
+      "perTypeTrendBody": "How each of your top 5 dhikr types has moved over the same period. Each line is one type. Only shows types you've counted in this window.",
       "timeOfDayTitle": "Time of Day",
-      "timeOfDayBody": "When during the day you do your dhikr, averaged over the last 30 days — morning (Fajr to Dhuhr), afternoon (Dhuhr to Asr), evening (Asr to Isha), night (Isha onwards). Helps you see your natural rhythm.",
+      "timeOfDayBody": "When during the day you do your dhikr, hour by hour, over the last 30 days. Hover (or tap) a bar to see that hour. Helps you see your natural rhythm.",
       "heatmapTitle": "Activity Heatmap",
-      "heatmapBody": "Every day of the last year, colored by how much zikr you did — the darker the green, the more you counted. A white/grey cell means no zikr that day. Hover a cell to see the date and count."
+      "heatmapBody": "Every day of the last year, coloured by how much zikr you did compared with your own active days: the stronger the green, the more you counted. An empty cell means no zikr that day. Hover a cell to see the date and count."
     },
     "avgActiveDay": "Avg on active days",
     "bestDayRecord": "Best day",
@@ -3562,7 +3564,7 @@
     "heatmapSub": "last 365 days",
     "perTypeTrend": "Per-type trends",
     "newUserHeatmap": "Not enough activity yet. This fills in as you go.",
-    "newUserTrend": "Your trend will appear here once you start counting zikr. 🌱"
+    "newUserTrend": "Your trend will appear here once you start counting zikr."
   },
   "zikrLibrary": {
     "makeRequest": "Request for the library",
