@@ -1,6 +1,9 @@
 import { cityCountry, cityLabel, cityName, type CityEntry } from '../data/cities.js';
 import { bdDistrictForCity } from '../data/bdDistricts.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
+import { MONTHLY } from '../locales/monthly.js';
+import { ymInZone } from '../utils/monthTable.js';
+import { monthPagePath } from './PrayerTimesMonthPage.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd, faqJsonLd } from '../components/JsonLd.js';
 import { computePrayerTimes, formatTimeInZone } from '../utils/calc.js';
@@ -35,6 +38,8 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
   const localCountry = countryName(city.countryCode, locale);
   const bd = bdDistrictForCity(city.slug);
   const partOf = bd && !bd.isHq ? bd.district : undefined;
+  // District HQ pages link to the monthly timetable (English and Bangla only).
+  const monthly = bd?.isHq && lang !== 'ar' ? bd.district : undefined;
   const rowLabel = (key: RowKey) =>
     key === 'asrStandard'
       ? t.prayerTimes.asrStandardLabel
@@ -106,6 +111,17 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
       >
         {t.prayerTimes.liveAppCta}
       </a>
+
+      {monthly && lang !== 'ar' && (
+        <p className="mt-5 text-sm">
+          <a
+            href={langPath(lang, monthPagePath(city.slug, ymInZone(buildDate)))}
+            className="text-[#10b981] no-underline hover:underline"
+          >
+            {MONTHLY[lang].monthlyCta(lang === 'bn' ? monthly.bn : monthly.en)} →
+          </a>
+        </p>
+      )}
 
       {partOf && (
         <p className="mt-5 text-sm">

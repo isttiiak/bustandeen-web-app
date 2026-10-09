@@ -432,7 +432,7 @@ const bn: ChromeStrings = {
   prayerTimes: {
     heading: (city) => `${BN_SCRIPT.test(city) ? bnOf(city) : `${city}-এ`} আজকের নামাজের সময়`,
     subheading: (city, country) =>
-      `${city}, ${bnOf(country)} ফজর, যোহর, আসর, মাগরিব ও এশার নামাজের সময়।`,
+      `${city}, ${bnOf(country)} ফজর, যুহর, আসর, মাগরিব ও ইশার নামাজের সময়।`,
     todayLabel: 'আজকের নামাজের সময়',
     methodNote: (method, country) =>
       `${method} পদ্ধতিতে হিসাব করা হয়েছে, ${bnOf(country)} বেশিরভাগ মসজিদ যে পদ্ধতি অনুসরণ করে। Bustandeen অ্যাপেও একই হিসাব আপনার ডিভাইসেই হয়।`,
@@ -441,10 +441,10 @@ const bn: ChromeStrings = {
     prayerNames: {
       fajr: 'ফজর',
       sunrise: 'সূর্যোদয়',
-      dhuhr: 'যোহর',
+      dhuhr: 'যুহর',
       asr: 'আসর',
       maghrib: 'মাগরিব',
-      isha: 'এশা',
+      isha: 'ইশা',
     },
     asrStandardLabel: 'আসর (সাধারণ)',
     asrHanafiLabel: 'আসর (হানাফী)',

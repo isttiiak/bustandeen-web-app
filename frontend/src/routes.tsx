@@ -78,6 +78,12 @@ const NaseehPage = lazy(() => import('./pages/NaseehPage.js'));
 const SeoPrayerTimesCity = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.PrayerTimesCityRoute }))
 );
+const SeoPrayerTimesMonth = lazy(() =>
+  import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.PrayerTimesMonthRoute }))
+);
+const SeoBdDistricts = lazy(() =>
+  import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.BdDistrictsRoute }))
+);
 const SeoQiblaCity = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.QiblaCityRoute }))
 );
@@ -145,6 +151,10 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route path="/prayer-times/:city" element={<SeoPrayerTimesCity lang="en" />} />
       <Route path="/bn/prayer-times/:city" element={<SeoPrayerTimesCity lang="bn" />} />
       <Route path="/ar/prayer-times/:city" element={<SeoPrayerTimesCity lang="ar" />} />
+      <Route path="/prayer-times/bangladesh" element={<SeoBdDistricts lang="en" />} />
+      <Route path="/bn/prayer-times/bangladesh" element={<SeoBdDistricts lang="bn" />} />
+      <Route path="/prayer-times/:city/:month" element={<SeoPrayerTimesMonth lang="en" />} />
+      <Route path="/bn/prayer-times/:city/:month" element={<SeoPrayerTimesMonth lang="bn" />} />
       <Route path="/qibla/:city" element={<SeoQiblaCity lang="en" />} />
       <Route path="/bn/qibla/:city" element={<SeoQiblaCity lang="bn" />} />
       <Route path="/ar/qibla/:city" element={<SeoQiblaCity lang="ar" />} />

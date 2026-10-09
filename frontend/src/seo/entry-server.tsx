@@ -13,6 +13,11 @@ import AdhkarPage from './templates/AdhkarPage.js';
 import HijriConverterPage from './templates/HijriConverterPage.js';
 import AsmaUlHusnaPage from './templates/AsmaUlHusnaPage.js';
 import ZakatCalculatorPage from './templates/ZakatCalculatorPage.js';
+import PrayerTimesMonthPage from './templates/PrayerTimesMonthPage.js';
+import BdDistrictsIndexPage from './templates/BdDistrictsIndexPage.js';
+import { BD_DISTRICTS } from './data/bdDistricts.js';
+import { MONTHLY, formatMonth, type MonthlyLang } from './locales/monthly.js';
+import { expiredMonths, monthWindow, ymInZone } from './utils/monthTable.js';
 import LandingPage, { landingT, type LandingLang } from './templates/LandingPage.js';
 import { LANDING_FAQ, POPULAR_CITY_LINKS } from '../components/LandingSeoSections.js';
 import type { SeoClientPage } from './entry-client.js';
@@ -27,7 +32,10 @@ export type RouteKind =
   | { kind: 'adhkar'; period: 'morning' | 'evening' }
   | { kind: 'hijri-converter' }
   | { kind: 'asma-ul-husna' }
-  | { kind: 'zakat-calculator' };
+  | { kind: 'zakat-calculator' }
+  // Bangladesh district timetables (T4.4): English and Bangla only.
+  | { kind: 'prayer-times-month'; citySlug: string; ym: string }
+  | { kind: 'bd-districts' };
 
 export interface RenderInput {
   route: RouteKind;
@@ -43,6 +51,20 @@ export { CITIES };
 export const DUA_IDS = DUAS.map((d) => d.id);
 export function currentRamadanHijriYear(): number {
   return currentHijriYear();
+}
+/** The BD district timetable pages to build at `buildDate`, and the months
+ * that fell out of the window (prerender.mjs writes redirects for those). */
+export function bdMonthRoutes(buildDate: string): {
+  citySlugs: string[];
+  months: string[];
+  expired: string[];
+} {
+  const date = new Date(buildDate);
+  return {
+    citySlugs: BD_DISTRICTS.map((d) => d.citySlug),
+    months: monthWindow(date),
+    expired: expiredMonths(date),
+  };
 }
 export function ramadanGregorianYear(hijriYear: number): number {
   return ramadanRangeForHijriYear(hijriYear).start.getUTCFullYear();
@@ -144,6 +166,39 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
         description: t.asmaUlHusna.subtitle,
         client: { kind: 'asma-ul-husna' },
       };
+    case 'prayer-times-month': {
+      const district = BD_DISTRICTS.find((d) => d.citySlug === route.citySlug);
+      const city = cityBySlug(route.citySlug);
+      if (!district || !city) throw new Error(`Unknown district page: ${route.citySlug}`);
+      if (lang === 'ar') throw new Error('District timetables have no Arabic version');
+      const m = MONTHLY[lang as MonthlyLang];
+      const name = lang === 'bn' ? district.bn : district.en;
+      const month = formatMonth(route.ym, lang as MonthlyLang);
+      return {
+        html: renderToStaticMarkup(
+          <PrayerTimesMonthPage
+            lang={lang as MonthlyLang}
+            district={district}
+            city={city}
+            ym={route.ym}
+            months={monthWindow(date)}
+          />
+        ),
+        title: `${m.title(name, month)} | ${t.siteName}`,
+        description: m.description(name, month),
+      };
+    }
+    case 'bd-districts': {
+      if (lang === 'ar') throw new Error('District timetables have no Arabic version');
+      const m = MONTHLY[lang as MonthlyLang];
+      return {
+        html: renderToStaticMarkup(
+          <BdDistrictsIndexPage lang={lang as MonthlyLang} ym={ymInZone(date)} />
+        ),
+        title: `${m.indexTitle} | ${t.siteName}`,
+        description: m.indexSubheading,
+      };
+    }
     case 'zakat-calculator':
       return {
         html: renderToStaticMarkup(<ZakatCalculatorPage lang={lang} />),

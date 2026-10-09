@@ -21,6 +21,11 @@ import AdhkarPage from '../templates/AdhkarPage.js';
 import HijriConverterPage from '../templates/HijriConverterPage.js';
 import AsmaUlHusnaPage from '../templates/AsmaUlHusnaPage.js';
 import ZakatCalculatorPage from '../templates/ZakatCalculatorPage.js';
+import PrayerTimesMonthPage from '../templates/PrayerTimesMonthPage.js';
+import BdDistrictsIndexPage from '../templates/BdDistrictsIndexPage.js';
+import { BD_DISTRICTS } from '../data/bdDistricts.js';
+import type { MonthlyLang } from '../locales/monthly.js';
+import { monthWindow, ymInZone } from '../utils/monthTable.js';
 
 function NotFoundInline({ lang }: { lang: SeoLang }) {
   return (
@@ -97,4 +102,21 @@ export function AsmaUlHusnaRoute({ lang }: { lang: SeoLang }) {
 
 export function ZakatCalculatorRoute({ lang }: { lang: SeoLang }) {
   return <ZakatCalculatorPage lang={lang} />;
+}
+
+export function PrayerTimesMonthRoute({ lang }: { lang: MonthlyLang }) {
+  const { city: citySlug, month } = useParams();
+  const district = BD_DISTRICTS.find((d) => d.citySlug === citySlug);
+  const city = citySlug ? cityBySlug(citySlug) : undefined;
+  const months = monthWindow(new Date());
+  if (!district || !city || !month || !months.includes(month)) {
+    return <NotFoundInline lang={lang} />;
+  }
+  return (
+    <PrayerTimesMonthPage lang={lang} district={district} city={city} ym={month} months={months} />
+  );
+}
+
+export function BdDistrictsRoute({ lang }: { lang: MonthlyLang }) {
+  return <BdDistrictsIndexPage lang={lang} ym={ymInZone(new Date())} />;
 }

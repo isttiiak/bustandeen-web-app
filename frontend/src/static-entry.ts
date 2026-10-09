@@ -14,6 +14,37 @@
 import { initAnalytics, trackPageView } from './utils/analytics.js';
 import { isLandingPath, isSeoPagePath } from './seo/staticPaths.js';
 import { initStaleChunkReload } from './utils/staleChunkReload.js';
+// utils/theme.ts RESOLVED_THEME_KEY (not imported: theme.ts pulls in adhan).
+const RESOLVED_THEME_KEY = 'bustandeen_theme';
+
+/** Pages drawn with the app's theme tokens (the T4.4 district timetables)
+ * show the visitor's theme: the app's saved one, else the system's. The
+ * other static pages have their own dark palette and stay dark. */
+function followTheme(): void {
+  let theme: string | null = null;
+  try {
+    theme = localStorage.getItem(RESOLVED_THEME_KEY);
+  } catch {
+    /* storage blocked: fall back to the system setting */
+  }
+  if (theme !== 'bustandeen' && theme !== 'bustandeen-light') {
+    theme = window.matchMedia?.('(prefers-color-scheme: light)').matches
+      ? 'bustandeen-light'
+      : 'bustandeen';
+  }
+  document.documentElement.setAttribute('data-theme', theme);
+}
+
+/** A monthly timetable marks today's row: the page is built once, the date
+ * is the visitor's (in the table's own time zone). */
+function markToday(): void {
+  const table = document.querySelector<HTMLElement>('[data-month-table]');
+  if (!table) return;
+  const today = new Intl.DateTimeFormat('en-CA', {
+    timeZone: table.dataset.timezone || 'Asia/Dhaka',
+  }).format(new Date());
+  table.querySelector(`tr[data-date="${today}"]`)?.setAttribute('aria-current', 'date');
+}
 
 // Before any dynamic import: a stale page reloads instead of breaking.
 initStaleChunkReload();
@@ -32,6 +63,8 @@ if (isLanding && signedIn && path !== '/') {
 } else if (!isStaticPage || (isLanding && signedIn)) {
   void import('./main.js');
 } else {
+  if (document.querySelector('[data-follow-theme]')) followTheme();
+  markToday();
   void import('./pwaUpdate.js').then((m) => m.initPwaUpdates());
   initAnalytics();
   trackPageView(path);
