@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.116.2 - Admin panel: messages and zikr requests in the new look - 2026-10-09
+
+### Changed
+
+- **Admin panel (staff only)**: the Feedback inbox, Broadcast (banner and update emails), Compose email and Zikr requests pages use the Bustan Arch design: the arched heading, the app's cards, buttons and inputs, clear filter and tab choices, labelled fields, and drawn icons instead of emoji and arrows. Their English text no longer uses em dashes.
+
 ## v5.116.1 - Admin panel: users, accounts and audit log in the new look - 2026-10-09
 
 ### Changed
