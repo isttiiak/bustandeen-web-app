@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.112.4 - Install card in the Bustan Arch design - 2026-10-09
+
+### Changed
+
+- **The "Install Bustandeen" card** on the welcome page has the new look, in dark and light: the app's usual card and buttons, drawn icons for Install and for the iPhone Share step, and easier-to-read text. It now sits above everything else on the page. Its wording has no em dash, in English and Bangla.
+
 ## v5.112.3 - Special day page in the Bustan Arch design - 2026-10-09
 
 ### Changed
