@@ -14,6 +14,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import api from '../lib/api.js';
 import ConfirmDialog from './ConfirmDialog.js';
+import ZikrQuickSettings from './zikr/ZikrQuickSettings.js';
 import { useUiStore } from '../store/useUiStore.js';
 
 const TASBIH_TARGET_PRESETS = [33, 34, 99, 100];
@@ -185,6 +186,8 @@ export default function ZikrSettings({
                   </div>
                 )}
               </section>
+
+              <ZikrQuickSettings />
 
               <section className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
                 <div className="flex items-center justify-between gap-3">

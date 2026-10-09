@@ -69,14 +69,25 @@ import {
   MapPinIcon,
   ExclamationTriangleIcon,
   CheckCircleIcon,
+  ChevronDownIcon,
   ChevronRightIcon,
+  ChevronUpIcon,
   HomeIcon,
   RectangleStackIcon,
   QueueListIcon,
   TagIcon,
 } from '@heroicons/react/24/outline';
 import type { HomeSpecialLayout } from '../utils/homeSpecial.js';
-import { getHomeTimeline, setHomeTimeline as setHomeTimelinePref } from '../utils/onboarding.js';
+import {
+  getFocusHabits,
+  getHomeTimeline,
+  moveHabit,
+  setFocusHabits,
+  setHomeTimeline,
+  type Habit,
+} from '../utils/onboarding.js';
+import { isSectionOn, setSectionOn } from '../utils/homeSections.js';
+import { formatLocaleNumber } from '../utils/localeDate.js';
 import { getThemeMode, setThemeMode, THEME_MODE_EVENT, type ThemeMode } from '../utils/theme.js';
 import {
   CrescentIcon,
@@ -404,6 +415,99 @@ function ThemeModePicker({ t }: { t: (key: string) => string }) {
   );
 }
 
+const SECTION_ICON: Record<Habit, SvgIcon> = {
+  salat: MosqueIcon,
+  zikr: TasbihIcon,
+  quran: BookOpenIcon,
+  fasting: CrescentIcon,
+};
+
+/** Settings → Home screen (T3.4 E): the four habit sections in the habit
+ *  order (the same order the welcome setup sets), each on/off and movable.
+ *  Salat's switch is the prayer timeline; the arch's prayer row always stays. */
+function HomeSectionsEditor() {
+  const { t } = useTranslation();
+  const [order, setOrder] = useState<Habit[]>(getFocusHabits);
+  const [on, setOn] = useState<Record<Habit, boolean>>(() => ({
+    salat: getHomeTimeline(),
+    zikr: isSectionOn('zikr'),
+    quran: isSectionOn('quran'),
+    fasting: isSectionOn('fasting'),
+  }));
+  const move = (h: Habit, dir: -1 | 1) => {
+    const next = moveHabit(order, h, dir);
+    setOrder(next);
+    setFocusHabits(next);
+  };
+  const toggle = (h: Habit, value: boolean) => {
+    if (h === 'salat') setHomeTimeline(value);
+    else setSectionOn(h, value);
+    setOn((cur) => ({ ...cur, [h]: value }));
+  };
+  const name = (h: Habit) =>
+    h === 'salat' ? t('settings.homeTimeline', 'Prayer timeline') : t(`onboarding.habit.${h}`);
+  return (
+    <div role="group" aria-label={t('settings.homeSections', 'Home sections')}>
+      <p className="text-white font-semibold text-sm">
+        {t('settings.homeSections', 'Home sections')}
+      </p>
+      <p className="text-white/70 text-xs leading-snug mt-0.5 mb-2">
+        {t(
+          'settings.homeSectionsDetail',
+          'A short section for each habit, in this order. The prayer row in the arch always stays.'
+        )}
+      </p>
+      <ol className="space-y-2">
+        {order.map((h, i) => {
+          const Icon = SECTION_ICON[h];
+          return (
+            <li
+              key={h}
+              data-section={h}
+              className="flex items-center gap-2 p-2 pl-3 rounded-control border border-brand-border bg-brand-surface/50"
+            >
+              <span className="w-4 text-center text-brand-gold font-bold text-sm tabular-nums">
+                {formatLocaleNumber(i + 1)}
+              </span>
+              <Icon className="w-5 h-5 text-brand-emerald shrink-0" aria-hidden="true" />
+              <span className="flex-1 min-w-0 text-white text-sm font-semibold truncate">
+                {name(h)}
+              </span>
+              <button
+                type="button"
+                onClick={() => move(h, -1)}
+                disabled={i === 0}
+                aria-label={t('onboarding.moveUp', 'Move {{habit}} up', { habit: name(h) })}
+                className="w-10 h-10 min-h-0 min-w-0 flex items-center justify-center rounded-control text-white/70 hover:bg-white/5 disabled:opacity-30"
+              >
+                <ChevronUpIcon className="w-4 h-4" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={() => move(h, 1)}
+                disabled={i === order.length - 1}
+                aria-label={t('onboarding.moveDown', 'Move {{habit}} down', { habit: name(h) })}
+                className="w-10 h-10 min-h-0 min-w-0 flex items-center justify-center rounded-control text-white/70 hover:bg-white/5 disabled:opacity-30"
+              >
+                <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
+              </button>
+              <input
+                type="checkbox"
+                className="toggle toggle-success toggle-sm shrink-0"
+                checked={on[h]}
+                onChange={(e) => toggle(h, e.target.checked)}
+                aria-label={t('settings.showSection', 'Show {{section}} on Home', {
+                  section: name(h),
+                })}
+              />
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
 const HOME_SPECIAL_ICONS: Record<HomeSpecialLayout, SvgIcon> = {
   full: RectangleStackIcon,
   strip: QueueListIcon,
@@ -623,7 +727,6 @@ export default function Settings() {
     homeAdhkar,
     setHomeAdhkar,
   } = useUiStore();
-  const [homeTimeline, setHomeTimelineState] = useState(getHomeTimeline);
   const queryClient = useQueryClient();
 
   const [hijriAdj, setHijriAdjState] = useState(getHijriAdjustment());
@@ -1190,18 +1293,7 @@ export default function Settings() {
           >
             <HomeSpecialPicker t={t} />
             <div className="mt-4 space-y-3">
-              <Toggle
-                checked={homeTimeline}
-                onChange={(on) => {
-                  setHomeTimelinePref(on);
-                  setHomeTimelineState(on);
-                }}
-                title={t('settings.homeTimeline', 'Prayer timeline')}
-                detail={t(
-                  'settings.homeTimelineDetail',
-                  "Today's five prayers under the arch, with Mark Done and Kaza. The prayer row in the arch always stays."
-                )}
-              />
+              <HomeSectionsEditor />
               <Toggle
                 checked={homeAdhkar}
                 onChange={setHomeAdhkar}

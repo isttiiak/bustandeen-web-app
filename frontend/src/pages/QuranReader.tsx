@@ -35,6 +35,7 @@ import {
   useSetResume,
 } from '../hooks/useQuran.js';
 import { useTafsir } from '../hooks/useQuran.js';
+import { setLastRead } from '../utils/quranLastRead.js';
 import { useQuranReadingSession } from '../hooks/useQuranReadingSession.js';
 import { TAFSIRS, getPreferredTafsir, setPreferredTafsir } from '../utils/tafsir.js';
 import { QURANIC_DUAS } from '../utils/quranMeta.js';
@@ -402,6 +403,10 @@ export default function QuranReader() {
     (next: number) => {
       stopAudio();
       setIdx(next);
+      // Home's Quran "Continue" (khatam off) goes to the last place read, in
+      // any mode except a bounded bundle.
+      const at = ayat[next];
+      if (at && mode !== 'bundle') setLastRead({ surah: surahNo, ayah: at.numberInSurah });
       if (usesResume && !suppressSaveRef.current) {
         const a = ayat[next];
         if (a) {
@@ -410,7 +415,7 @@ export default function QuranReader() {
         }
       }
     },
-    [stopAudio, usesResume, ayat, surahNo, syncResume]
+    [stopAudio, usesResume, ayat, surahNo, syncResume, mode]
   );
 
   const finishAndRedirect = useCallback(

@@ -46,7 +46,7 @@ test('Friday, default strip: hour of response first, between the arch and the wo
 
   const arch = await box(page, '.rounded-arch');
   const s = await box(page, '[data-testid="today-highlights"]');
-  const zikr = await box(page, 'a[href="/zikr"]');
+  const zikr = await box(page, '[data-testid="today-goals"] a[href="/zikr"]');
   expect(s.y).toBeGreaterThanOrEqual(arch.y + arch.height);
   expect(s.y + s.height).toBeLessThanOrEqual(zikr.y);
   // The detailed cards stay below the worship cards.
@@ -66,7 +66,7 @@ test('Monday, default strip: the Sunnah fast row sits above the worship cards', 
     '/special-day/fast_mon_thu'
   );
   const s = await box(page, '[data-testid="today-highlights"]');
-  const zikr = await box(page, 'a[href="/zikr"]');
+  const zikr = await box(page, '[data-testid="today-goals"] a[href="/zikr"]');
   expect(s.y + s.height).toBeLessThanOrEqual(zikr.y);
 });
 
@@ -90,6 +90,6 @@ test('Monday, detailed: the full block sits above the worship cards', async ({ p
   await demoHome(page, MONDAY, 'full');
   await expect(page.getByTestId('today-highlights')).toHaveCount(0);
   const details = await box(page, '#today-special');
-  const zikr = await box(page, 'a[href="/zikr"]');
+  const zikr = await box(page, '[data-testid="today-goals"] a[href="/zikr"]');
   expect(details.y + details.height).toBeLessThanOrEqual(zikr.y);
 });

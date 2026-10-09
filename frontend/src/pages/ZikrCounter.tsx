@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { m as motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
+import { parseTarget } from '../utils/zikrQuick.js';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation, Trans } from 'react-i18next';
 import toast from 'react-hot-toast';
@@ -75,8 +76,13 @@ export default function ZikrCounter() {
   const reduceMotion = useUiStore((s) => s.reduceMotion);
   const vibrationEnabled = useUiStore((s) => s.vibrationEnabled);
   const zikrSoundEnabled = useUiStore((s) => s.zikrSoundEnabled);
-  const tasbihMode = useUiStore((s) => s.tasbihMode);
-  const tasbihTarget = useUiStore((s) => s.tasbihTarget);
+  // A Home quick chip opens /zikr?type=…&target=N: that dhikr with N as a
+  // session-only tasbih target (the saved tasbih settings are left alone).
+  const [searchParams] = useSearchParams();
+  const linkType = searchParams.get('type');
+  const linkTarget = parseTarget(searchParams.get('target'));
+  const tasbihMode = useUiStore((s) => s.tasbihMode) || linkTarget !== null;
+  const tasbihTarget = useUiStore((s) => linkTarget ?? s.tasbihTarget);
   const zikrAudioEnabled = useUiStore((s) => s.zikrAudioEnabled);
   const zikrAudioVolume = useUiStore((s) => s.zikrAudioVolume);
   const zikrPlayOnTap = useUiStore((s) => s.zikrPlayOnTap);
@@ -89,6 +95,11 @@ export default function ZikrCounter() {
   const { data: fetchedTypes } = useZikrTypes();
   const deleteZikrType = useDeleteZikrType();
   const { data: analyticsData } = useAnalytics(1);
+
+  useEffect(() => {
+    if (linkType && types.includes(linkType)) selectType(linkType);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per link; types arrive after merge
+  }, [linkType, types.includes(linkType ?? '')]);
 
   const currentCount = counts?.[selected] ?? 0;
   const [showAddCustom, setShowAddCustom] = useState(false);

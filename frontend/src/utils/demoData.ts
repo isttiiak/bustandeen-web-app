@@ -471,7 +471,29 @@ function buildSocialSummary(gender: string) {
   };
 }
 
-export function getDemoResponse(url: string, method: string, gender = 'male'): unknown {
+// Fasting logs written in the demo (Home's Fasting section, the Fasting
+// page), kept in memory for this page view so a "Yes" survives the refetch.
+const demoFastingLogs = new Map<string, Record<string, unknown>>();
+const queryDate = (url: string) => new URL(url, 'http://demo.local').searchParams.get('date');
+
+export function getDemoResponse(
+  url: string,
+  method: string,
+  gender = 'male',
+  body?: unknown
+): unknown {
+  if (url.includes('/api/fasting/log')) {
+    if (method === 'put') {
+      const b = (typeof body === 'string' ? JSON.parse(body) : body) as { date?: string } | null;
+      if (b?.date) demoFastingLogs.set(b.date, { ...b });
+      return { ok: true, log: (b?.date && demoFastingLogs.get(b.date)) || null };
+    }
+    if (method === 'delete') {
+      const d = queryDate(url);
+      if (d) demoFastingLogs.delete(d);
+      return { ok: true };
+    }
+  }
   if (method !== 'get') return { ok: true };
 
   if (url.includes('/api/zikr/analytics')) return buildZikrAnalytics(parseDays(url));
@@ -498,7 +520,10 @@ export function getDemoResponse(url: string, method: string, gender = 'male'): u
     };
   if (url.includes('/api/salat')) return buildSalatLog();
   if (url.includes('/api/fasting/summary')) return buildFastingSummary();
-  if (url.includes('/api/fasting')) return { ok: true, log: null };
+  if (url.includes('/api/fasting')) {
+    const d = queryDate(url);
+    return { ok: true, log: (d && demoFastingLogs.get(d)) || null };
+  }
   if (url.includes('/api/quran/summary')) return buildQuranSummary();
   if (url.includes('/api/quran/history')) return buildQuranHistory();
   if (url.includes('/api/cycle/active')) return { ok: true, active: null };

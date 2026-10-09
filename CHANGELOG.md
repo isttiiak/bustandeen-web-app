@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.124.0 - Quick sections for Quran, Zikr and Fasting - 2026-10-09
+
+### Added
+
+- **Quick sections on Home (T3.4 E)**: next to the Salat timeline, a short section for Quran, Zikr and Fasting, in your habit order. "Today's goals" stays below them.
+  - **Quran**: today's āyāt and goal. "Continue" goes on with your khatam when khatam is on, otherwise to the last place you read in any surah. "Listen" and "Pick a surah" below it.
+  - **Zikr**: three dhikr chips, by default Astaghfirullah, Lā ilāha illallāh and Durūd Ibrāhīm, 100 each. One tap opens the counter on that dhikr with 100 as the target. In Zikr settings → "Quick dhikr on Home" you can pick the three and their numbers, and switch the tap to add the number at once.
+  - **Fasting**: "Fasting today?" with one "Yes" that logs today's fast as the Fasting page would (the day's sunnah kind, otherwise voluntary), with "Change" to pick another type there. A second tap undoes it. While fasting, "Broke" marks it broken. Below it, the next sunnah fast with its suḥūr and ifṭār times. On a lone Friday or Saturday or the day of doubt, "Yes" opens the Fasting page with its guidance. Prohibited days show the ruling; Ramadan points to the Ramadan tracker. Rayhanah days show "Excused".
+- **Settings → Home screen → Home sections**: the four sections in your habit order, each with a switch and up/down (the same order the welcome setup sets). Salat's switch is the prayer timeline; the arch's prayer row always stays.
+
 ## v5.123.1 - The arch prayer row on one line - 2026-10-09
 
 ### Changed

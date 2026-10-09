@@ -48,7 +48,7 @@ api.interceptors.request.use((config) => {
     const method = (config.method ?? 'get').toLowerCase();
     const url = config.url ?? '';
     const gender = useAuthStore.getState().user?.gender ?? 'male';
-    const mock = getDemoResponse(url, method, gender);
+    const mock = getDemoResponse(url, method, gender, config.data);
     config.adapter = () => {
       // Behave like the real network when the browser is offline, so the demo
       // shows the same offline queueing (salat outbox, zikr pending) a signed-in
