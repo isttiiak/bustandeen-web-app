@@ -2730,7 +2730,7 @@
         }
       }
     },
-    "backHome": "← হোমে ফিরুন",
+    "backHome": "হোমে ফিরুন",
     "dhul_hijjah_first10": {
       "name": "যুলহিজ্জাহর প্রথম ১০ দিন",
       "references": {
@@ -2883,7 +2883,6 @@
         }
       }
     },
-    "footerQuote": "\"যে ব্যক্তি তাকে দেওয়া জ্ঞান অনুযায়ী আমল করে, আল্লাহ তাকে এমন জ্ঞান দান করেন যা সে জানত না।\" — ইবনুল কাইয়্যিম",
     "friday": {
       "name": "জুমু'আহ (শুক্রবার)",
       "references": {
@@ -3020,7 +3019,7 @@
       }
     },
     "notFound": "বিশেষ দিন পাওয়া যায়নি।",
-    "referencesLabel": "📖 দলিলসমূহ",
+    "referencesLabel": "দলিলসমূহ",
     "shab_e_barat": {
       "name": "শবে বরাত / লাইলাতুল বারা'আত",
       "references": {
@@ -3054,16 +3053,16 @@
         }
       }
     },
-    "significanceLabel": "✨ গুরুত্ব",
-    "trackFast": "🌙 এই রোজা ট্র্যাক করুন →",
+    "significanceLabel": "গুরুত্ব",
+    "trackFast": "এই রোজা ট্র্যাক করুন",
     "typeBadge": {
       "annual": "বার্ষিক",
       "monthly": "মাসিক সুন্নাহ",
       "ramadan": "রমাদান",
       "weekly": "সাপ্তাহিক সুন্নাহ"
     },
-    "viewSource": "মূল উৎস দেখুন ↗",
-    "whatToDoLabel": "📋 আজ কী করবেন"
+    "viewSource": "মূল উৎস দেখুন",
+    "whatToDoLabel": "আজ কী করবেন"
   },
   "statusBadges": {
     "goalAchieved": "দৈনিক লক্ষ্য অর্জিত হয়েছে, মাশাআল্লাহ!",
