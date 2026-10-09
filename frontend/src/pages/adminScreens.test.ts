@@ -6,6 +6,11 @@ import users from './AdminUsers.tsx?raw';
 import userDetail from './AdminUserDetail.tsx?raw';
 import accounts from './AdminAccounts.tsx?raw';
 import auditLog from './AdminAuditLog.tsx?raw';
+import feedback from './AdminFeedback.tsx?raw';
+import broadcast from './AdminBroadcast.tsx?raw';
+import compose from './AdminComposeEmail.tsx?raw';
+import zikrRequests from './AdminZikrRequests.tsx?raw';
+import updateEmails from '../components/AdminUpdateEmails.tsx?raw';
 
 // T3.2 Admin pages (staff only, English only): one arch hero per screen via
 // AdminHero, shared card/button classes, SVG icons, readable ink (no ink
@@ -22,6 +27,11 @@ const FILES: Record<string, string> = {
   AdminUserDetail: userDetail,
   AdminAccounts: accounts,
   AdminAuditLog: auditLog,
+  AdminFeedback: feedback,
+  AdminBroadcast: broadcast,
+  AdminComposeEmail: compose,
+  AdminZikrRequests: zikrRequests,
+  AdminUpdateEmails: updateEmails,
 };
 const SCREENS: Record<string, string> = {
   AdminHome: home,
@@ -29,6 +39,10 @@ const SCREENS: Record<string, string> = {
   AdminUserDetail: userDetail,
   AdminAccounts: accounts,
   AdminAuditLog: auditLog,
+  AdminFeedback: feedback,
+  AdminBroadcast: broadcast,
+  AdminComposeEmail: compose,
+  AdminZikrRequests: zikrRequests,
 };
 
 describe('admin screens', () => {
