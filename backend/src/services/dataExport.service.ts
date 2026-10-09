@@ -9,6 +9,7 @@ import SalatDebt from '../models/SalatDebt.js';
 import SalatDebtEvent from '../models/SalatDebtEvent.js';
 import KazaUnit from '../models/KazaUnit.js';
 import FastingLog from '../models/FastingLog.js';
+import AdhkarDay from '../models/AdhkarDay.js';
 import FastingProfile from '../models/FastingProfile.js';
 import QuranLog from '../models/QuranLog.js';
 import QuranProfile from '../models/QuranProfile.js';
@@ -78,6 +79,7 @@ export async function exportEverything(uid: string): Promise<PlainDoc> {
     kaza,
     fastingProfile,
     fastingLogs,
+    adhkarDays,
     quranProfile,
     quranLogs,
     quranSessions,
@@ -102,6 +104,7 @@ export async function exportEverything(uid: string): Promise<PlainDoc> {
     KazaUnit.find({ userId: uid }).sort({ missedDate: 1 }).lean(),
     FastingProfile.findOne({ userId: uid }).lean(),
     FastingLog.find({ userId: uid }).sort({ date: 1 }).lean(),
+    AdhkarDay.find({ userId: uid }).sort({ date: 1 }).lean(),
     QuranProfile.findOne({ userId: uid }).lean(),
     QuranLog.find({ userId: uid }).sort({ date: 1 }).lean(),
     QuranReadingSession.find({ userId: uid }).sort({ startedAt: 1 }).lean(),
@@ -191,6 +194,9 @@ export async function exportEverything(uid: string): Promise<PlainDoc> {
     fasting: {
       profile: clean(fastingProfile as unknown as PlainDoc | null),
       logs: cleanAll(fastingLogs),
+    },
+    adhkar: {
+      days: cleanAll(adhkarDays),
     },
     quran: {
       profile: clean(quranProfile as unknown as PlainDoc | null),

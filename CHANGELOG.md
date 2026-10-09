@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.128.0 - Guided morning and evening adhkar - 2026-10-10
+
+### Added
+
+- **Morning and evening adhkar, one at a time (T4.3, FEAT-04)**: Library → Adhkar is now a guided routine. Each adhkar shows its Arabic, transliteration, meaning and source; a big tap counter moves on to the next one when the count is reached. Back and Next let you reread or skip; "Show all" keeps the full list.
+- **Progress**: your counts stay on this device for the day. Finishing a routine marks it done for the day on all your devices. Home's adhkar card shows "3 of 7 read" or "Done for today". Nothing is added to your zikr count, Noor or streaks.
+- **Fuller set, every source checked on sunnah.com**: Ayat al-Kursi and the three Quls (from the bundled Tanzil text), Asbahna / Amsayna in full (Muslim 2723), Allahumma bika asbahna / amsayna (Tirmidhi 3391), Sayyid al-Istighfar in full (Bukhari 6306), Bismillahil-ladhi la yadurru 3x (Abu Dawud 5088), A'udhu bi-kalimatillahit-tammat in the evening (Muslim 2709) and Subhanallahi wa bihamdihi 100x (Muslim 2692). The /adhkar/morning and /adhkar/evening pages show the same list.
+
+### Fixed
+
+- "Raditu billahi Rabba" cited Abu Dawud 5072 as Hasan, but sunnah.com grades that hadith Da'if (al-Albani) and its wording differs. It is removed from the adhkar.
+- The Ayat al-Kursi note on the Arabic adhkar page promised protection with no source cited; it now only names the ayah.
+
+### API
+
+- `GET /api/adhkar/day?date=` and `PUT /api/adhkar/day { date, period }` (signed in): which routines are done on a tracking day; marking done is idempotent. New `AdhkarDay` collection (unique `userId + date`, run `sync-indexes`), included in "Download all my data" and removed with the account.
+
 ## v5.127.0 - Moon sighting by country - 2026-10-10
 
 ### Added

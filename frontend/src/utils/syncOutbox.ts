@@ -21,7 +21,7 @@ import { currentOutboxOwner, outboxOpOwnership } from './outboxOwner.js';
 
 const STORAGE_KEY = 'bustandeen_sync_outbox';
 
-export type SyncTracker = 'fasting' | 'quran' | 'cycle';
+export type SyncTracker = 'fasting' | 'quran' | 'cycle' | 'adhkar';
 type Method = 'post' | 'put' | 'patch' | 'delete';
 
 export interface SyncOp {
@@ -165,6 +165,7 @@ const QUERY_ROOTS: Record<SyncTracker, string[][]> = {
   fasting: [['fasting']],
   quran: [['quran']],
   cycle: [['cycle']],
+  adhkar: [['adhkar']],
 };
 
 let replaying = false;
