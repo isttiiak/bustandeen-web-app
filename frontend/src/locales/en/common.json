@@ -1633,7 +1633,7 @@
   },
   "pwa": {
     "installTitle": "Install Bustandeen",
-    "installDesc": "Add Bustandeen to your home screen for a faster, full-screen experience — offline-ready and one tap away.",
+    "installDesc": "Add Bustandeen to your home screen for a faster, full-screen experience. It works offline and opens in one tap.",
     "install": "Install",
     "howTo": "How to install",
     "iosSteps": "Tap the Share icon in Safari's toolbar, then choose \"Add to Home Screen\".",
