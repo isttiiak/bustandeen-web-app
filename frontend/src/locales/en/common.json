@@ -2913,7 +2913,7 @@
         }
       }
     },
-    "backHome": "← Back to Home",
+    "backHome": "Back to Home",
     "dhul_hijjah_first10": {
       "name": "First 10 Days of Dhul Ḥijjah",
       "references": {
@@ -3066,7 +3066,6 @@
         }
       }
     },
-    "footerQuote": "\"Whoever acts on knowledge given to him, Allah will give him knowledge of what he did not know.\" — Ibn al-Qayyim",
     "friday": {
       "name": "Friday (Jumu'ah)",
       "references": {
@@ -3203,7 +3202,7 @@
       }
     },
     "notFound": "Special day not found.",
-    "referencesLabel": "📖 References",
+    "referencesLabel": "References",
     "shab_e_barat": {
       "name": "Laylat al-Barā'ah",
       "references": {
@@ -3237,16 +3236,16 @@
         }
       }
     },
-    "significanceLabel": "✨ Significance",
-    "trackFast": "🌙 Track this fast →",
+    "significanceLabel": "Significance",
+    "trackFast": "Track this fast",
     "typeBadge": {
       "annual": "Annual",
       "monthly": "Monthly Sunnah",
       "ramadan": "Ramadan",
       "weekly": "Weekly Sunnah"
     },
-    "viewSource": "View source ↗",
-    "whatToDoLabel": "📋 What to do today"
+    "viewSource": "View source",
+    "whatToDoLabel": "What to do today"
   },
   "statusBadges": {
     "goalAchieved": "Daily goal achieved, māshā’Allāh!",

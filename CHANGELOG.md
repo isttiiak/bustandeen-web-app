@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.112.3 - Special day page in the Bustan Arch design - 2026-10-09
+
+### Changed
+
+- **Each special day page** (Friday, Arafah, Ashura and the rest) has the new look, in dark and light: one arched card with a drawn star, the app's usual cards and buttons, drawn icons instead of emoji and easier-to-read text. Its labels have no emoji or arrows, in English and Bangla.
+
+### Removed
+
+- **The closing quote credited to Ibn al-Qayyim.** It is a weak report that was not his saying, so it is no longer shown.
+
 ## v5.112.2 - Calmer "brother or sister" banner - 2026-10-09
 
 ### Changed
