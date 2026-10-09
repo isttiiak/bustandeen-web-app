@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.110.0 - Security reports counted for review - 2026-10-09
+
+### Security
+
+- **Security policy reports are now counted per day** so a full week can be reviewed before the policy is enforced (the hosting plan keeps request logs for only one hour). Only website domains are kept, never the page address, IP address or account, and the counts are deleted after 30 days. The privacy page says so, in English and Bangla.
+- Staff can see the last 7 days of reports in System health.
+- The policy stays report-only for now. Nothing changes for visitors.
+
 ## v5.109.1 - Security policy ready for own-domain sign-in - 2026-10-09
 
 ### Security

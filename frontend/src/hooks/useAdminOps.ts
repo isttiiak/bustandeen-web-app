@@ -78,3 +78,33 @@ export function useStorageUsage() {
     staleTime: 60_000,
   });
 }
+
+export interface CspViolationSummary {
+  directive: string;
+  blocked: string;
+  source: string;
+  disposition: string;
+  count: number;
+  days: number;
+  lastSeen: string;
+}
+
+export interface CspViolationReport {
+  sinceDay: string;
+  daily: { day: string; count: number }[];
+  top: CspViolationSummary[];
+}
+
+/** Daily CSP report counts, origins only (audit T1.3b). */
+export function useCspViolations() {
+  return useQuery<CspViolationReport>({
+    queryKey: ['admin', 'ops', 'csp-violations'],
+    queryFn: async () => {
+      const res = await api.get<{ ok: boolean } & CspViolationReport>(
+        '/api/admin/ops/csp-violations'
+      );
+      return res.data;
+    },
+    staleTime: 60_000,
+  });
+}

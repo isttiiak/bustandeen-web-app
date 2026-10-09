@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as adminOpsService from '../services/adminOps.service.js';
+import * as cspReportService from '../services/cspReport.service.js';
 
 export const healthHandler = async (
   _req: Request,
@@ -35,6 +36,19 @@ export const storageHandler = async (
   try {
     const storage = await adminOpsService.getStorageUsage();
     res.json({ ok: true, ...storage });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const cspViolationsHandler = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const report = await cspReportService.getViolationReport();
+    res.json({ ok: true, ...report });
   } catch (err) {
     next(err);
   }

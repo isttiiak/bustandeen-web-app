@@ -1436,7 +1436,7 @@
       "body4": "Friends: mutual connections, and the Noor scores worked out from your own activity.",
       "body5": "Messages you send us: feedback and contact forms, zikr requests, and sadaqah donation details (optional name, email, phone, payment method, transaction ID, amount, date, message, and an IP address to prevent abuse).",
       "body6": "The time you were last active, and the service emails we send: a welcome, replies to your messages, donation status, and occasionally a gentle note after a long break.",
-      "body7": "How long we keep logs: when our rate limits block a request, its IP address is kept for 30 days to spot abuse, then deleted automatically. The counters behind those limits keep only a scrambled (hashed) form of your IP address or account ID and disappear when their time window ends, after 24 hours at most. A failed email delivery (address and subject) is kept for 90 days. Server error logs never contain what you logged."
+      "body7": "How long we keep logs: when our rate limits block a request, its IP address is kept for 30 days to spot abuse, then deleted automatically. The counters behind those limits keep only a scrambled (hashed) form of your IP address or account ID and disappear when their time window ends, after 24 hours at most. A failed email delivery (address and subject) is kept for 90 days. Security reports that browsers send when a page tries to load something our security policy does not allow are counted per day by website domain only (no page address, IP address or account) and deleted after 30 days. Server error logs never contain what you logged."
     },
     "deviceOnly": {
       "title": "Stays on your device only",
