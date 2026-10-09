@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.121.0 - Compact prayer cards, adhkār in their time, one-tap Kaza - 2026-10-09
+
+### Changed
+
+- **Home timeline, one compact card per prayer**: name, status and time, with the current prayer keeping Mark Done and Open Salat.
+- **Adhkār only while their time is open**: the morning adhkār card shows on Fajr from Fajr until sunrise. The evening card moved to Maghrib and shows from Maghrib until ʿIshāʾ, after Ṣaḥīḥ Muslim 2723 ("when evening came" the Prophet asked for the good of "this night"; the night begins at Maghrib). It no longer starts at ʿAṣr. Outside those windows no adhkār card is shown. Settings → Home screen can turn the cards off.
+
+### Added
+
+- **One-tap Kaza on Home**: when a prayer's own time is over (Fajr at sunrise, Ẓuhr when ʿAṣr begins, ʿAṣr at sunset, Maghrib when ʿIshāʾ begins) and it is still unmarked or Miss, a small softly glowing "Kaza" button on its card marks it Kaza. A same-day Kaza adds no kaza debt, and Miss → Kaza pays that day's unit back, exactly as on the Salat page. Never for ʿIshāʾ: it is the last prayer of the day and an unmarked ʿIshāʾ still becomes Miss at the day boundary. Not offered in Rayhanah days, in Musafir mode (qaṣr and jamʿ stay on the Salat page) or when the day starts at Maghrib; with a midnight day start only from Fajr on.
+
 ## v5.120.0 - Home arch polish and a navbar theme switch - 2026-10-09
 
 ### Changed

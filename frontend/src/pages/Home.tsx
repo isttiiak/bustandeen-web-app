@@ -260,6 +260,7 @@ export default function Home() {
   // Settings → Home: how much of today's special days shows up top. Chips in
   // the arch need the arch, so without a location they fall back to the strip.
   const homeSpecialLayout = useUiStore((s) => s.homeSpecialLayout);
+  const homeAdhkar = useUiStore((s) => s.homeAdhkar);
   const homeLayout =
     homeSpecialLayout === 'pills' && !prayerWidgetData ? 'strip' : homeSpecialLayout;
   const highlights = useMemo(
@@ -918,6 +919,7 @@ export default function Home() {
             log={salatLog}
             excused={!!cycleActive}
             travelling={!!musafir}
+            showAdhkar={homeAdhkar}
           />
         )}
 

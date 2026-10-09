@@ -1034,12 +1034,11 @@
     "adhkarMorning": "Morning adhkār",
     "adhkarEvening": "Evening adhkār",
     "adhkarOpenUntil": "Now, until {{time}}",
-    "adhkarMorningWhen": "From Fajr until sunrise",
-    "adhkarEveningWhen": "From ʿAṣr until Maghrib",
     "goalsTitle": "Today's goals",
     "bestTimeLeft": "Best time: <1>{{left}}</1> left",
     "bestUntil": "Best until {{time}}",
-    "endsAtFajr": "Ends at Fajr, {{time}}"
+    "endsAtFajr": "Ends at Fajr, {{time}}",
+    "timelineKazaAria": "Mark {{prayer}} as Kaza"
   },
   "library": {
     "duaTitle": "Du'a Library",
@@ -2858,7 +2857,9 @@
     "musafirStartedAfter": "Started {{date}}, after {{prayer}}.",
     "musafirChangeStart": "Change start",
     "setupAgain": "Run the welcome setup again",
-    "setupAgainDetail": "Location, madhab, prayer method and your habits."
+    "setupAgainDetail": "Location, madhab, prayer method and your habits.",
+    "homeAdhkar": "Adhkār on the timeline",
+    "homeAdhkarDetail": "Morning adhkār on Fajr until sunrise, evening adhkār on Maghrib until ʿIshāʾ."
   },
   "specialDays": {
     "arafah": {

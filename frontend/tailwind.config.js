@@ -99,11 +99,17 @@ export default {
       },
       animation: {
         float: 'float 6s ease-in-out infinite',
+        // Home's one-tap Kaza: a soft gold halo, never a flash.
+        'soft-glow': 'softGlow 2.4s ease-in-out infinite',
       },
       keyframes: {
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
           '50%': { transform: 'translateY(-20px)' },
+        },
+        softGlow: {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgb(var(--c-gold) / 0)' },
+          '50%': { boxShadow: '0 0 0 4px rgb(var(--c-gold) / 0.22)' },
         },
         navbarShimmer: {
           '0%': { backgroundPosition: '0% 50%' },
