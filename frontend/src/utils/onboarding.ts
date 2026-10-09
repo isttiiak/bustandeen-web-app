@@ -6,10 +6,10 @@
 //    flag while the server write is in flight or offline), nothing shows.
 // The flow stays reachable from Settings → Home screen.
 
+/** Also the default order (Istiak, 2026-10-09): 1 Salat, 2 Zikr, 3 Quran,
+ *  4 Fasting. The user can reorder them; nothing is left out. */
 export const HABITS = ['salat', 'zikr', 'quran', 'fasting'] as const;
 export type Habit = (typeof HABITS)[number];
-/** Gentle by design: up to three things to grow first. */
-export const MAX_HABITS = 3;
 
 /** Synced across devices (utils/prefsSync.ts + the server whitelist). */
 export const FOCUS_KEY = 'bustandeen_focus_habits';
@@ -24,38 +24,70 @@ export const DEFAULT_QURAN_AYAT = 5;
 
 const isHabit = (v: unknown): v is Habit => HABITS.includes(v as Habit);
 
-/** The chosen habits in the order they were picked; [] when none chosen. */
+/** A full order of all four habits: the saved ones first (older setups saved
+ *  up to three picks), then the rest in the default order. */
+export function completeOrder(saved: readonly unknown[]): Habit[] {
+  const picked = [...new Set(saved.filter(isHabit))];
+  return [...picked, ...HABITS.filter((h) => !picked.includes(h))];
+}
+
+/** The user's habit order (all four); the default order when none saved. */
 export function getFocusHabits(): Habit[] {
   try {
     const raw = localStorage.getItem(FOCUS_KEY);
     const parsed = raw ? (JSON.parse(raw) as unknown) : [];
-    if (!Array.isArray(parsed)) return [];
-    return [...new Set(parsed.filter(isHabit))].slice(0, MAX_HABITS);
+    return completeOrder(Array.isArray(parsed) ? parsed : []);
   } catch {
-    return [];
+    return [...HABITS];
   }
 }
 
 export function setFocusHabits(habits: Habit[]): void {
   try {
-    localStorage.setItem(
-      FOCUS_KEY,
-      JSON.stringify([...new Set(habits.filter(isHabit))].slice(0, MAX_HABITS))
-    );
+    localStorage.setItem(FOCUS_KEY, JSON.stringify(completeOrder(habits)));
   } catch {
     /* private mode */
   }
 }
 
-/** Adds or removes a habit; adding beyond the cap is ignored. */
-export function toggleHabit(current: Habit[], habit: Habit): Habit[] {
-  if (current.includes(habit)) return current.filter((h) => h !== habit);
-  if (current.length >= MAX_HABITS) return current;
-  return [...current, habit];
+/** Moves a habit one place up (-1) or down (+1); the ends stay put. */
+export function moveHabit(order: Habit[], habit: Habit, dir: -1 | 1): Habit[] {
+  const i = order.indexOf(habit);
+  const j = i + dir;
+  if (i === -1 || j < 0 || j >= order.length) return order;
+  const next = [...order];
+  [next[i], next[j]] = [next[j]!, next[i]!];
+  return next;
 }
 
-/** Home's worship cards: chosen habits first (in the order picked), the rest
- * keep their usual order. */
+/** Settings → Home and the setup's last step: the Salat timeline on Home.
+ *  The arch's five-prayer row always stays. Synced across devices. */
+export const HOME_TIMELINE_KEY = 'bustandeen_home_timeline';
+
+/** On unless turned off (older accounts keep the timeline they have). */
+export function getHomeTimeline(): boolean {
+  try {
+    return localStorage.getItem(HOME_TIMELINE_KEY) !== '0';
+  } catch {
+    return true;
+  }
+}
+
+export function setHomeTimeline(on: boolean): void {
+  try {
+    localStorage.setItem(HOME_TIMELINE_KEY, on ? '1' : '0');
+  } catch {
+    /* private mode */
+  }
+}
+
+/** The setup's suggestion: show the timeline when Salat comes first. */
+export function defaultTimelineFor(order: Habit[]): boolean {
+  return order[0] === 'salat';
+}
+
+/** Home's worship cards in the user's habit order; anything not in it keeps
+ * its usual place after them. */
 export function orderByFocus<T extends { id: string }>(items: T[], focus: Habit[]): T[] {
   const rank = (id: string) => {
     const i = focus.indexOf(id as Habit);

@@ -1038,7 +1038,8 @@
     "bestTimeLeft": "Best time: <1>{{left}}</1> left",
     "bestUntil": "Best until {{time}}",
     "endsAtFajr": "Ends at Fajr, {{time}}",
-    "timelineKazaAria": "Mark {{prayer}} as Kaza"
+    "timelineKazaAria": "Mark {{prayer}} as Kaza",
+    "archRowOpen": "Today's prayers, open Salat"
   },
   "library": {
     "duaTitle": "Du'a Library",
@@ -2861,7 +2862,9 @@
     "setupAgain": "Run the welcome setup again",
     "setupAgainDetail": "Location, madhab, prayer method and your habits.",
     "homeAdhkar": "Adhkār on the timeline",
-    "homeAdhkarDetail": "Morning adhkār on Fajr until sunrise, evening adhkār on Maghrib until ʿIshāʾ."
+    "homeAdhkarDetail": "Morning adhkār on Fajr until sunrise, evening adhkār on Maghrib until ʿIshāʾ.",
+    "homeTimeline": "Prayer timeline",
+    "homeTimelineDetail": "Today's five prayers under the arch, with Mark Done and Kaza. The prayer row in the arch always stays."
   },
   "specialDays": {
     "arafah": {
@@ -3999,10 +4002,8 @@
     "progress": "Step {{n}} of {{total}}",
     "locationTitle": "Where do you pray?",
     "prayerTitle": "Your prayer times",
-    "habitsTitle": "What would you like to grow first?",
     "locationIntro": "Prayer times are worked out on this device from your location. It never leaves your phone.",
     "prayerIntro": "We picked what most mosques near you use. Match your local mosque if it differs.",
-    "habitsIntro": "Pick up to three. Small and steady is the aim. Everything else stays one tap away.",
     "locationLater": "No location yet? That is fine. Prayer times wait until you set one.",
     "asrDesc": "The schools differ on when ʿAṣr begins, and Ẓuhr lasts until it does. Choose the one you follow.",
     "asrHanafi": "Ḥanafī",
@@ -4026,13 +4027,17 @@
     "zikrGoal": "Daily zikr goal",
     "quranGoal": "Daily Quran goal",
     "ayatCount": "{{n}} āyāt",
-    "habitsCount": "{{n}} of {{max}} chosen",
     "next": "Next",
     "nextNoLocation": "Continue without location",
     "finish": "Start",
-    "finishNoHabits": "Start without choosing",
     "changeLater": "You can change any of this later in Settings.",
     "goalSaveFailed": "Your goals could not be saved. You can set them on the Zikr and Quran pages.",
-    "done": "All set. May Allah put barakah in it."
+    "done": "All set. May Allah put barakah in it.",
+    "orderTitle": "Your habits, in your order",
+    "orderIntro": "Home follows this order. Move a habit up or down; small and steady is the aim.",
+    "moveUp": "Move {{habit}} up",
+    "moveDown": "Move {{habit}} down",
+    "timelineTitle": "Show the prayer timeline on Home?",
+    "timelineDetail": "The five prayers of today with their times, Mark Done and Kaza. The prayer row in the arch always stays."
   }
 }
