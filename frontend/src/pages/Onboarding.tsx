@@ -5,7 +5,9 @@ import toast from 'react-hot-toast';
 import {
   BookOpenIcon,
   CheckIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
+  ChevronUpIcon,
   LockClosedIcon,
   MapPinIcon,
 } from '@heroicons/react/24/outline';
@@ -47,15 +49,15 @@ import {
 import {
   DEFAULT_QURAN_AYAT,
   DEFAULT_ZIKR_GOAL,
-  HABITS,
-  MAX_HABITS,
   QURAN_AYAT_OPTIONS,
   ZIKR_GOAL_OPTIONS,
+  defaultTimelineFor,
   getFocusHabits,
   initialGoal,
   markOnboardedLocally,
+  moveHabit,
   setFocusHabits,
-  toggleHabit,
+  setHomeTimeline,
   type Habit,
 } from '../utils/onboarding.js';
 
@@ -119,10 +121,13 @@ export default function Onboarding() {
     return asrBySchool(location.latitude, location.longitude, new Date(), method);
   }, [location, method]);
 
-  // Step 3: habits + starting goals
+  // Step 3: the order of the four habits + starting goals + the timeline
   const { data: zikrGoal } = useGoal();
   const { data: quranSummary } = useQuranSummary();
   const [habits, setHabits] = useState<Habit[]>(getFocusHabits);
+  // Follows the order (on when Salat is first) until the user sets it.
+  const [timelinePick, setTimelinePick] = useState<boolean | null>(null);
+  const timelineOn = timelinePick ?? defaultTimelineFor(habits);
   const [zikrTarget, setZikrTarget] = useState<number | null>(null);
   const [quranAyat, setQuranAyat] = useState<number | null>(null);
   const zikrPick =
@@ -156,11 +161,12 @@ export default function Onboarding() {
   const finish = async () => {
     setSaving(true);
     setFocusHabits(habits);
+    setHomeTimeline(timelineOn);
     const writes: Promise<unknown>[] = [];
-    if (habits.includes('zikr') && zikrPick !== zikrGoal?.dailyTarget) {
+    if (zikrPick !== zikrGoal?.dailyTarget) {
       writes.push(updateGoal.mutateAsync({ dailyTarget: zikrPick }));
     }
-    if (habits.includes('quran') && quranPick !== quranSummary?.profile.dailyGoalAyat) {
+    if (quranPick !== quranSummary?.profile.dailyGoalAyat) {
       writes.push(updateQuran.mutateAsync({ dailyGoalAyat: quranPick }));
     }
     const results = await Promise.allSettled(writes);
@@ -188,7 +194,7 @@ export default function Onboarding() {
   const stepTitle = [
     t('onboarding.locationTitle', 'Where do you pray?'),
     t('onboarding.prayerTitle', 'Your prayer times'),
-    t('onboarding.habitsTitle', 'What would you like to grow first?'),
+    t('onboarding.orderTitle', 'Your habits, in your order'),
   ][step];
 
   return (
@@ -260,8 +266,8 @@ export default function Onboarding() {
                   'We picked what most mosques near you use. Match your local mosque if it differs.'
                 ),
                 t(
-                  'onboarding.habitsIntro',
-                  'Pick up to three. Small and steady is the aim. Everything else stays one tap away.'
+                  'onboarding.orderIntro',
+                  'Home follows this order. Move a habit up or down; small and steady is the aim.'
                 ),
               ][step]
             }
@@ -400,71 +406,103 @@ export default function Onboarding() {
 
         {step === 2 && (
           <section className="space-y-2.5" aria-label={stepTitle}>
-            {HABITS.map((h) => {
-              const on = habits.includes(h);
-              const full = !on && habits.length >= MAX_HABITS;
-              const Icon = HABIT_ICON[h];
-              return (
-                <div
-                  key={h}
-                  className={`rounded-card border shadow-elev-1 transition-colors ${on ? OPTION_ON : `${OPTION_OFF} bg-brand-deep`}`}
-                >
-                  <button
-                    onClick={() => setHabits((cur) => toggleHabit(cur, h))}
-                    aria-pressed={on}
-                    disabled={full}
-                    className="w-full flex items-center gap-3 p-4 text-left disabled:opacity-50"
+            <ol className="space-y-2.5">
+              {habits.map((h, idx) => {
+                const Icon = HABIT_ICON[h];
+                const label = t(`onboarding.habit.${h}`);
+                return (
+                  <li
+                    key={h}
+                    data-habit={h}
+                    className={`rounded-card border shadow-elev-1 bg-brand-deep ${
+                      idx === 0 ? 'border-brand-emerald/50' : 'border-brand-border'
+                    }`}
                   >
-                    <span className="w-10 h-10 rounded-control bg-brand-emerald/15 flex items-center justify-center shrink-0">
-                      <Icon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />
-                    </span>
-                    <span className="flex-1 min-w-0">
-                      <span className="block text-white font-bold text-sm">
-                        {t(`onboarding.habit.${h}`)}
+                    <div className="flex items-center gap-3 p-3 pl-4">
+                      <span
+                        className="w-6 text-center font-display font-bold text-brand-gold tabular-nums shrink-0"
+                        aria-hidden="true"
+                      >
+                        {formatLocaleNumber(idx + 1)}
                       </span>
-                      <span className="block text-white/70 text-xs mt-0.5 leading-snug">
-                        {t(`onboarding.habitDetail.${h}`)}
+                      <span className="w-10 h-10 rounded-control bg-brand-emerald/15 flex items-center justify-center shrink-0">
+                        <Icon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />
                       </span>
-                    </span>
-                    <span
-                      className={`w-6 h-6 rounded-full border flex items-center justify-center shrink-0 ${
-                        on ? 'bg-brand-emerald-dim border-brand-emerald-dim' : 'border-brand-border'
-                      }`}
-                      aria-hidden="true"
-                    >
-                      {on && <CheckIcon className="w-4 h-4 text-on-color" />}
-                    </span>
-                  </button>
+                      <span className="flex-1 min-w-0">
+                        <span className="block text-white font-bold text-sm">{label}</span>
+                        <span className="block text-white/70 text-xs mt-0.5 leading-snug">
+                          {t(`onboarding.habitDetail.${h}`)}
+                        </span>
+                      </span>
+                      <span className="flex flex-col shrink-0">
+                        <button
+                          type="button"
+                          onClick={() => setHabits((cur) => moveHabit(cur, h, -1))}
+                          disabled={idx === 0}
+                          aria-label={t('onboarding.moveUp', 'Move {{habit}} up', { habit: label })}
+                          className="w-11 h-9 min-h-0 flex items-center justify-center rounded-control text-white/70 hover:text-white hover:bg-white/5 disabled:opacity-30"
+                        >
+                          <ChevronUpIcon className="w-5 h-5" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setHabits((cur) => moveHabit(cur, h, 1))}
+                          disabled={idx === habits.length - 1}
+                          aria-label={t('onboarding.moveDown', 'Move {{habit}} down', {
+                            habit: label,
+                          })}
+                          className="w-11 h-9 min-h-0 flex items-center justify-center rounded-control text-white/70 hover:text-white hover:bg-white/5 disabled:opacity-30"
+                        >
+                          <ChevronDownIcon className="w-5 h-5" aria-hidden="true" />
+                        </button>
+                      </span>
+                    </div>
 
-                  {on && h === 'zikr' && (
-                    <GoalChips
-                      label={t('onboarding.zikrGoal', 'Daily zikr goal')}
-                      options={ZIKR_GOAL_OPTIONS}
-                      value={zikrPick}
-                      onChange={setZikrTarget}
-                      format={(n) => formatLocaleNumber(n)}
-                    />
-                  )}
-                  {on && h === 'quran' && (
-                    <GoalChips
-                      label={t('onboarding.quranGoal', 'Daily Quran goal')}
-                      options={QURAN_AYAT_OPTIONS}
-                      value={quranPick}
-                      onChange={setQuranAyat}
-                      format={(n) =>
-                        t('onboarding.ayatCount', '{{n}} āyāt', { n: formatLocaleNumber(n) })
-                      }
-                    />
-                  )}
-                </div>
-              );
-            })}
-            <p className="text-white/60 text-xs text-center pt-1">
-              {t('onboarding.habitsCount', '{{n}} of {{max}} chosen', {
-                n: formatLocaleNumber(habits.length),
-                max: formatLocaleNumber(MAX_HABITS),
+                    {h === 'zikr' && (
+                      <GoalChips
+                        label={t('onboarding.zikrGoal', 'Daily zikr goal')}
+                        options={ZIKR_GOAL_OPTIONS}
+                        value={zikrPick}
+                        onChange={setZikrTarget}
+                        format={(n) => formatLocaleNumber(n)}
+                      />
+                    )}
+                    {h === 'quran' && (
+                      <GoalChips
+                        label={t('onboarding.quranGoal', 'Daily Quran goal')}
+                        options={QURAN_AYAT_OPTIONS}
+                        value={quranPick}
+                        onChange={setQuranAyat}
+                        format={(n) =>
+                          t('onboarding.ayatCount', '{{n}} āyāt', { n: formatLocaleNumber(n) })
+                        }
+                      />
+                    )}
+                  </li>
+                );
               })}
-            </p>
+            </ol>
+
+            <label className="flex items-center gap-3 p-4 rounded-card border border-brand-border bg-brand-deep shadow-elev-1 cursor-pointer">
+              <span className="flex-1 min-w-0">
+                <span className="block text-white font-bold text-sm">
+                  {t('onboarding.timelineTitle', 'Show the prayer timeline on Home?')}
+                </span>
+                <span className="block text-white/70 text-xs mt-0.5 leading-snug">
+                  {t(
+                    'onboarding.timelineDetail',
+                    'The five prayers of today with their times, Mark Done and Kaza. The prayer row in the arch always stays.'
+                  )}
+                </span>
+              </span>
+              <input
+                type="checkbox"
+                className="toggle toggle-success shrink-0"
+                checked={timelineOn}
+                onChange={(e) => setTimelinePick(e.target.checked)}
+                aria-label={t('onboarding.timelineTitle', 'Show the prayer timeline on Home?')}
+              />
+            </label>
           </section>
         )}
 
@@ -481,9 +519,7 @@ export default function Onboarding() {
               disabled={saving}
               className={`${BTN_PRIMARY} w-full min-h-[48px]`}
             >
-              {habits.length
-                ? t('onboarding.finish', 'Start')
-                : t('onboarding.finishNoHabits', 'Start without choosing')}
+              {t('onboarding.finish', 'Start')}
             </button>
           )}
           <p className="text-white/50 text-xs text-center mt-3 leading-relaxed">

@@ -119,3 +119,17 @@ test('maghrib day-start mode: no Mark Done on Home, the Salat link stays', async
   await expect(row(page, 'isha').getByRole('link', { name: 'Open Salat' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Mark Done' })).toHaveCount(0);
 });
+
+test('arch prayer row: statuses as steps, opens Salat; stays when the timeline is off', async ({
+  page,
+}) => {
+  await page.context().addInitScript(() => localStorage.setItem('bustandeen_home_timeline', '0'));
+  await demoHomeAt(page, '2026-10-15T20:00:00+06:00');
+  await expect(page.getByTestId('today-timeline')).toHaveCount(0);
+  const archRow = page.getByTestId('arch-prayer-row');
+  await expect(archRow).toBeVisible();
+  await expect(archRow.locator('li')).toHaveCount(5);
+  await expect(archRow).toContainText('Fajr');
+  await archRow.click();
+  await expect(page).toHaveURL(/\/salat$/);
+});

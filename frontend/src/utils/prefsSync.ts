@@ -35,6 +35,7 @@ export const SYNCED_KEYS: readonly string[] = [
   'bustandeen_home_special',
   'bustandeen_home_adhkar',
   'bustandeen_focus_habits',
+  'bustandeen_home_timeline',
   'bustandeen_tasbih_breakdown',
   'bustandeen_salat_auto_count',
   'bustandeen_show_sunnah_guide',

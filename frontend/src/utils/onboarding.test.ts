@@ -1,15 +1,19 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   FOCUS_KEY,
-  MAX_HABITS,
+  HOME_TIMELINE_KEY,
+  completeOrder,
+  defaultTimelineFor,
   getFocusHabits,
+  getHomeTimeline,
   initialGoal,
   isOnboardedLocally,
   markOnboardedLocally,
   onboardingMode,
   orderByFocus,
+  moveHabit,
   setFocusHabits,
-  toggleHabit,
+  setHomeTimeline,
 } from './onboarding.js';
 
 class MemoryStorage {
@@ -58,31 +62,53 @@ describe('onboardingMode', () => {
   });
 });
 
-describe('focus habits', () => {
-  it('round-trips in the order picked', () => {
-    setFocusHabits(['quran', 'salat']);
-    expect(getFocusHabits()).toEqual(['quran', 'salat']);
+describe('habit order', () => {
+  it('defaults to Salat, Zikr, Quran, Fasting', () => {
+    expect(getFocusHabits()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
   });
-  it('drops unknown values, duplicates and anything past the cap', () => {
-    localStorage.setItem(
-      FOCUS_KEY,
-      JSON.stringify(['zikr', 'cycle', 'zikr', 'salat', 'quran', 'fasting'])
-    );
-    expect(getFocusHabits()).toEqual(['zikr', 'salat', 'quran']);
-    expect(getFocusHabits()).toHaveLength(MAX_HABITS);
+  it('round-trips a full order', () => {
+    setFocusHabits(['quran', 'fasting', 'salat', 'zikr']);
+    expect(getFocusHabits()).toEqual(['quran', 'fasting', 'salat', 'zikr']);
+  });
+  it('completes an older setup (up to three picks) with the rest in default order', () => {
+    localStorage.setItem(FOCUS_KEY, JSON.stringify(['quran', 'salat']));
+    expect(getFocusHabits()).toEqual(['quran', 'salat', 'zikr', 'fasting']);
+  });
+  it('drops unknown values and duplicates', () => {
+    expect(completeOrder(['zikr', 'cycle', 'zikr', 'fasting'])).toEqual([
+      'zikr',
+      'fasting',
+      'salat',
+      'quran',
+    ]);
   });
   it('survives a corrupt value', () => {
     localStorage.setItem(FOCUS_KEY, '{oops');
-    expect(getFocusHabits()).toEqual([]);
+    expect(getFocusHabits()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
     localStorage.setItem(FOCUS_KEY, '"salat"');
-    expect(getFocusHabits()).toEqual([]);
+    expect(getFocusHabits()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
   });
-  it('toggles, and never adds a fourth', () => {
-    let h = toggleHabit([], 'salat');
-    h = toggleHabit(h, 'zikr');
-    h = toggleHabit(h, 'quran');
-    expect(toggleHabit(h, 'fasting')).toEqual(['salat', 'zikr', 'quran']);
-    expect(toggleHabit(h, 'zikr')).toEqual(['salat', 'quran']);
+  it('moves one place up or down; the ends stay put', () => {
+    const o = ['salat', 'zikr', 'quran', 'fasting'] as const;
+    expect(moveHabit([...o], 'quran', -1)).toEqual(['salat', 'quran', 'zikr', 'fasting']);
+    expect(moveHabit([...o], 'salat', 1)).toEqual(['zikr', 'salat', 'quran', 'fasting']);
+    expect(moveHabit([...o], 'salat', -1)).toEqual([...o]);
+    expect(moveHabit([...o], 'fasting', 1)).toEqual([...o]);
+  });
+});
+
+describe('Home timeline preference', () => {
+  it('is on unless turned off (older accounts keep it)', () => {
+    expect(getHomeTimeline()).toBe(true);
+    setHomeTimeline(false);
+    expect(localStorage.getItem(HOME_TIMELINE_KEY)).toBe('0');
+    expect(getHomeTimeline()).toBe(false);
+    setHomeTimeline(true);
+    expect(getHomeTimeline()).toBe(true);
+  });
+  it('the setup suggests it when Salat comes first', () => {
+    expect(defaultTimelineFor(['salat', 'zikr', 'quran', 'fasting'])).toBe(true);
+    expect(defaultTimelineFor(['zikr', 'salat', 'quran', 'fasting'])).toBe(false);
   });
 });
 

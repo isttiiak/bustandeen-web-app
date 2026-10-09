@@ -47,38 +47,61 @@ test('the Home card walks through location, madhab and habits, then orders Home'
   await standard.click();
   await page.getByRole('button', { name: 'Next', exact: true }).click();
 
-  // 3. Habits: up to three, with starting goals
-  await expect(
-    page.getByRole('heading', { name: 'What would you like to grow first?' })
-  ).toBeVisible();
-  for (const h of ['Quran', 'Salat', 'Zikr']) {
-    await page.getByRole('button', { name: new RegExp(`^${h}`) }).click();
-  }
-  await expect(page.getByRole('button', { name: /^Fasting/ })).toBeDisabled();
-  await expect(page.getByText('3 of 3 chosen')).toBeVisible();
+  // 3. Habits: all four in the default order, reorderable, with goals
+  await expect(page.getByRole('heading', { name: 'Your habits, in your order' })).toBeVisible();
+  const order = () =>
+    page.locator('[data-habit]').evaluateAll((els) => els.map((e) => e.getAttribute('data-habit')));
+  expect(await order()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
+  const timeline = page.getByRole('checkbox', { name: 'Show the prayer timeline on Home?' });
+  // On while Salat is first.
+  await expect(timeline).toBeChecked();
+  await page.getByRole('button', { name: 'Move Quran up' }).click();
+  await page.getByRole('button', { name: 'Move Quran up' }).click();
+  expect(await order()).toEqual(['quran', 'salat', 'zikr', 'fasting']);
+  await expect(page.getByRole('button', { name: 'Move Quran up' })).toBeDisabled();
+  // The suggestion follows the order until the user sets it.
+  await expect(timeline).not.toBeChecked();
+  await timeline.check();
   await page
     .getByRole('radiogroup', { name: 'Daily Quran goal' })
     .getByRole('radio', { name: '20 āyāt' })
     .click();
   await page.getByRole('button', { name: 'Start', exact: true }).click();
 
-  // Back on Home: no card, chosen habits first, choices stored
+  // Back on Home: no card, habits in the chosen order, choices stored
   await expect(page).toHaveURL(/\/$/);
   await expect(setupCard(page)).toHaveCount(0);
   const cards = page.getByTestId('today-goals').locator('a');
   await expect(cards.first()).toHaveAttribute('href', '/quran');
   await expect(cards.nth(1)).toHaveAttribute('href', '/salat');
   await expect(cards.nth(2)).toHaveAttribute('href', '/zikr');
+  await expect(cards.nth(3)).toHaveAttribute('href', '/fasting');
   const stored = await page.evaluate(() => ({
     asr: localStorage.getItem('bustandeen_asr_madhab'),
     method: localStorage.getItem('bustandeen_calc_method'),
     focus: localStorage.getItem('bustandeen_focus_habits'),
+    timeline: localStorage.getItem('bustandeen_home_timeline'),
     location: localStorage.getItem('bustandeen_location'),
   }));
   expect(stored.asr).toBe('standard');
   expect(stored.method).toBe('Karachi');
-  expect(JSON.parse(stored.focus!)).toEqual(['quran', 'salat', 'zikr']);
+  expect(JSON.parse(stored.focus!)).toEqual(['quran', 'salat', 'zikr', 'fasting']);
+  expect(stored.timeline).toBe('1');
   expect(stored.location).toContain('Dhaka');
+});
+
+test('the timeline can be left off; the arch prayer row always stays', async ({ page }) => {
+  await demoHome(page);
+  await setupCard(page).getByRole('link', { name: 'Set up' }).click();
+  await page
+    .getByRole('button', { name: /Continue without location|Next/ })
+    .first()
+    .click();
+  await page.getByRole('button', { name: 'Next', exact: true }).click();
+  await page.getByRole('checkbox', { name: 'Show the prayer timeline on Home?' }).uncheck();
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  expect(await page.evaluate(() => localStorage.getItem('bustandeen_home_timeline'))).toBe('0');
 });
 
 test('"No thanks" hides the card for good', async ({ page }) => {

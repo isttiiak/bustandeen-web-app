@@ -76,6 +76,7 @@ import {
   TagIcon,
 } from '@heroicons/react/24/outline';
 import type { HomeSpecialLayout } from '../utils/homeSpecial.js';
+import { getHomeTimeline, setHomeTimeline as setHomeTimelinePref } from '../utils/onboarding.js';
 import { getThemeMode, setThemeMode, THEME_MODE_EVENT, type ThemeMode } from '../utils/theme.js';
 import {
   CrescentIcon,
@@ -622,6 +623,7 @@ export default function Settings() {
     homeAdhkar,
     setHomeAdhkar,
   } = useUiStore();
+  const [homeTimeline, setHomeTimelineState] = useState(getHomeTimeline);
   const queryClient = useQueryClient();
 
   const [hijriAdj, setHijriAdjState] = useState(getHijriAdjustment());
@@ -1187,7 +1189,19 @@ export default function Settings() {
             delay={0.14}
           >
             <HomeSpecialPicker t={t} />
-            <div className="mt-4">
+            <div className="mt-4 space-y-3">
+              <Toggle
+                checked={homeTimeline}
+                onChange={(on) => {
+                  setHomeTimelinePref(on);
+                  setHomeTimelineState(on);
+                }}
+                title={t('settings.homeTimeline', 'Prayer timeline')}
+                detail={t(
+                  'settings.homeTimelineDetail',
+                  "Today's five prayers under the arch, with Mark Done and Kaza. The prayer row in the arch always stays."
+                )}
+              />
               <Toggle
                 checked={homeAdhkar}
                 onChange={setHomeAdhkar}

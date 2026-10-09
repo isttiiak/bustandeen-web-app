@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.123.0 - Habits in your order, an optional timeline, a livelier prayer row - 2026-10-09
+
+### Changed
+
+- **Your habits, in your order**: the setup's last step now lists all four habits in a set order (1 Salat, 2 Zikr, 3 Quran, 4 Fasting) that you can rearrange with up and down buttons, instead of picking up to three. Home's "Today's goals" follows that order. Older setups keep their picks first, with the rest after them in the default order. The zikr and Quran starting goals are always offered.
+- **The prayer timeline is optional**: the setup asks whether to show the Salat timeline on Home (Yes by default when Salat comes first), and Settings → Home screen has a "Prayer timeline" switch. Existing accounts keep it on.
+- **The arch's five-prayer row always stays** and now reads as steps: a line joins the circles and fills in sage between prayers already prayed. Done is sage, Kaza gold, Miss red, and the current prayer is ringed. Tapping the row opens the Salat page; the rest of the arch still opens prayer times.
+
 ## v5.122.0 - Adhkār on the Salat tracker - 2026-10-09
 
 ### Added

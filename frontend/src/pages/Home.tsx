@@ -12,7 +12,6 @@ import {
   CalculatorIcon,
   NoSymbolIcon,
   ClockIcon,
-  CheckIcon,
 } from '@heroicons/react/24/outline';
 import {
   CrescentIcon,
@@ -38,6 +37,7 @@ import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import MusafirBanner from '../components/MusafirBanner.js';
 import TodayHighlights from '../components/home/TodayHighlights.js';
 import TodayTimeline from '../components/home/TodayTimeline.js';
+import PrayerRow from '../components/home/PrayerRow.js';
 import toast from 'react-hot-toast';
 import {
   useMusafir,
@@ -72,30 +72,17 @@ import { HIGHLIGHT_CAP, orderHighlights, TODAY_SPECIAL_ID } from '../utils/homeS
 import { useUpdateProfile, useUserProfile } from '../hooks/useUserProfile.js';
 import {
   getFocusHabits,
+  getHomeTimeline,
   isOnboardedLocally,
   markOnboardedLocally,
   onboardingMode,
   orderByFocus,
 } from '../utils/onboarding.js';
 
-/** The prayer arch links to /prayer-times. With chips in its foot (the 'pills'
- * Home layout) it becomes a stretched link: an overlay link under the chips,
- * so each chip is its own link instead of a link nested in a link. */
-function ArchShell({
-  pills,
-  label,
-  children,
-}: {
-  pills: boolean;
-  label: string;
-  children: React.ReactNode;
-}) {
-  if (!pills)
-    return (
-      <Link to="/prayer-times" className="group block mb-4">
-        {children}
-      </Link>
-    );
+/** The prayer arch links to /prayer-times as a stretched link: an overlay
+ * link under the prayer row and the special-day chips (both `relative z-10`),
+ * so each of those is its own link instead of a link nested in a link. */
+function ArchShell({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="group relative mb-4">
       {children}
@@ -146,6 +133,11 @@ export default function Home() {
     setSetupDismissed(true);
     updateProfile.mutate({ onboarded: true });
   };
+  const showTimeline = useMemo(
+    () => getHomeTimeline(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- location.key is the trigger, not an input
+    [location.key]
+  );
   const focusHabits = useMemo(
     () => getFocusHabits(),
     // Re-read when coming back from the setup screen.
@@ -676,7 +668,7 @@ export default function Home() {
 
         {/* Hero: the prayer window, under the screen's one arch */}
         {prayerWidgetData ? (
-          <ArchShell pills={archPills} label={t('nav.prayerTimes')}>
+          <ArchShell label={t('nav.prayerTimes')}>
             <div className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-8 pb-5 text-center group-hover:border-brand-emerald/40 transition-colors">
               <div className="mb-2">{todayDate}</div>
               {prayerWidgetData.forbiddenWindow ? (
@@ -782,37 +774,12 @@ export default function Home() {
                 </span>
               </div>
               {salatLog && (
-                <ul
-                  className="flex justify-center gap-3 mt-3"
-                  aria-label={t('home.timelineTitle', "Today's prayers")}
-                >
-                  {(['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const).map((id) => {
-                    const st = salatLog.prayers[id]?.status;
-                    const done = st === 'completed' || st === 'kaza';
-                    return (
-                      <li key={id} className="flex flex-col items-center gap-1">
-                        <span
-                          className={`w-6 h-6 rounded-full border-[1.5px] flex items-center justify-center ${
-                            done
-                              ? 'bg-brand-emerald-dim border-brand-emerald-dim'
-                              : id === prayerWidgetData.currentMandatory
-                                ? 'border-brand-emerald ring-2 ring-brand-emerald/20'
-                                : 'border-brand-border'
-                          }`}
-                        >
-                          {done && <CheckIcon className="w-3.5 h-3.5 text-on-color" />}
-                        </span>
-                        <span className="text-[10px] font-bold text-white/70">
-                          {prayerName(id)}
-                          <span className="sr-only">
-                            {' '}
-                            {done ? t('home.timelineDone', 'Done') : ''}
-                          </span>
-                        </span>
-                      </li>
-                    );
-                  })}
-                </ul>
+                <PrayerRow
+                  log={salatLog}
+                  current={prayerWidgetData.currentMandatory}
+                  excused={!!cycleActive}
+                  name={prayerName}
+                />
               )}
               {archPills && (
                 <TodayHighlights
@@ -912,7 +879,7 @@ export default function Home() {
           )
         )}
 
-        {prayerWidgetData && (
+        {prayerWidgetData && showTimeline && (
           <TodayTimeline
             times={prayerWidgetData.times}
             now={prayerNow}
