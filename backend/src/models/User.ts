@@ -85,6 +85,14 @@ export interface IUser extends Document {
   disabled: boolean;
   disabledAt?: Date | null;
   disabledReason?: string | null;
+  /** First-run onboarding (audit T3.3). Set to true only on accounts created
+   * after onboarding shipped (auth.controller.ts $setOnInsert), so those get
+   * the full-screen flow; older accounts leave it unset and are offered a
+   * Home card instead. */
+  onboardingRequired?: boolean;
+  /** When the user finished, skipped or dismissed onboarding (first time
+   * only, see user.service.ts updateUser). Null until then. */
+  onboardedAt?: Date | null;
   salatResetDate?: string;
   salatResetHistory: ISalatResetEntry[];
   totalCount: number;
@@ -141,6 +149,8 @@ const userSchema = new Schema(
     disabled: { type: Boolean, default: false },
     disabledAt: { type: Date, default: null },
     disabledReason: { type: String, default: null, maxlength: 500 },
+    onboardingRequired: { type: Boolean },
+    onboardedAt: { type: Date, default: null },
     salatResetDate: { type: String, default: undefined },
     salatResetHistory: {
       type: [

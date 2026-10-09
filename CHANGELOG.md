@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.117.0 - Onboarding groundwork (server) - 2026-10-09
+
+### Added
+
+- **Groundwork for the first-run setup (T3.3)**: the server now remembers whether an account is new enough to get the welcome setup (accounts created from this version on), when someone finished, skipped or dismissed it, and syncs the habits chosen there across devices. Existing accounts are not changed; they will be offered a card on Home instead of a full-screen flow. Nothing visible changes yet; the setup screens come in the next version.
+
 ## v5.116.6 - Recovering an open app after a deploy - 2026-10-09
 
 ### Fixed

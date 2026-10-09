@@ -54,6 +54,8 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
           displayName: displayName ?? '',
           ...(picture ? { photoUrl: picture } : {}),
           ...(genderOnInsert ? { gender: genderOnInsert } : {}),
+          // Only brand-new accounts get the full-screen first run (T3.3).
+          onboardingRequired: true,
         },
       },
       {
@@ -63,7 +65,7 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
         // Frontend only reads displayName/photoUrl here — don't ship the
         // zikr lifetime map and the rest of the doc on every session start.
         projection:
-          'uid email displayName photoUrl avatarId gender hijriOffset dayStartMode disabled',
+          'uid email displayName photoUrl avatarId gender hijriOffset dayStartMode onboardingRequired onboardedAt disabled',
       }
     );
 

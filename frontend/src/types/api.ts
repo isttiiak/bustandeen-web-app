@@ -102,6 +102,10 @@ export interface UserProfile {
   gender?: 'male' | 'female' | 'other' | 'prefer_not_say';
   birthDate?: string;
   aiEnabled?: boolean;
+  /** T3.3: true only on accounts created after onboarding shipped. */
+  onboardingRequired?: boolean;
+  /** ISO time onboarding was finished, skipped or dismissed; null until then. */
+  onboardedAt?: string | null;
   totalCount?: number;
   zikrTypes?: ZikrTypeItem[];
 }
