@@ -1,6 +1,14 @@
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import { CARD } from '../components/bustanStyles.js';
+import {
+  CheckIcon,
+  ExclamationTriangleIcon,
+  HeartIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
+import { AdminHero } from '../components/admin/adminParts.js';
 import {
   useOpsHealth,
   useRateLimitHits,
@@ -14,11 +22,16 @@ import {
 function StatusPill({ ok, label }: { ok: boolean; label: string }) {
   return (
     <span
-      className={`px-2 py-1 rounded-full text-xs font-bold ${
-        ok ? 'bg-brand-emerald/15 text-brand-emerald' : 'bg-red-500/15 text-red-400'
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-bold ${
+        ok ? 'bg-brand-emerald/15 text-brand-emerald' : 'bg-red-400/15 text-red-400'
       }`}
     >
-      {ok ? '✓' : '✕'} {label}
+      {ok ? (
+        <CheckIcon className="w-3.5 h-3.5" aria-label="OK" />
+      ) : (
+        <XMarkIcon className="w-3.5 h-3.5" aria-label="Down" />
+      )}
+      {label}
     </span>
   );
 }
@@ -34,17 +47,19 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
   const pct = storage.usedRatio * 100;
   return (
     <section className="space-y-2">
-      <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+      <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
         {t('adminOpsHealth.storage', 'Database storage (Atlas M0 cap)')}
       </h2>
       <div
-        className={`rounded-2xl border p-4 space-y-3 ${
-          storage.warn ? 'border-red-500/30 bg-red-500/[0.06]' : 'border-white/10 bg-white/[0.03]'
+        className={`rounded-card border p-4 space-y-3 ${
+          storage.warn
+            ? 'border-red-400/40 bg-red-400/5 shadow-elev-2'
+            : 'border-brand-border bg-brand-deep shadow-elev-2'
         }`}
       >
         {storage.warn && (
-          <p className="text-red-300 font-bold text-sm">
-            ⚠️{' '}
+          <p className="flex items-start gap-1.5 text-red-400 font-bold text-sm">
+            <ExclamationTriangleIcon className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
             {t(
               'adminOpsHealth.storageWarn',
               'Over 70% of the 512 MB free-tier cap. Writes fail once it is full: prune old data or upgrade the cluster soon.'
@@ -52,18 +67,18 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
           </p>
         )}
         <div className="flex items-baseline justify-between gap-3">
-          <p className="text-white text-lg font-black">
+          <p className="text-white text-lg font-bold">
             {formatBytes(storage.totalBytes)}{' '}
-            <span className="text-white/40 text-sm font-normal">
+            <span className="text-white/70 text-sm font-normal">
               / {formatBytes(storage.capBytes)}
             </span>
           </p>
-          <p className={`text-sm font-black ${storage.warn ? 'text-red-300' : 'text-brand-gold'}`}>
+          <p className={`text-sm font-bold ${storage.warn ? 'text-red-400' : 'text-brand-gold'}`}>
             {pct < 0.1 ? '<0.1' : pct.toFixed(1)}%
           </p>
         </div>
         <div
-          className="h-2 rounded-full bg-white/10 overflow-hidden"
+          className="h-2 rounded-full bg-brand-border overflow-hidden"
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={100}
@@ -75,7 +90,7 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
             style={{ width: `${Math.min(100, Math.max(pct, 0.5))}%` }}
           />
         </div>
-        <p className="text-white/40 text-xs">
+        <p className="text-white/70 text-xs">
           {t('adminOpsHealth.storageBreakdown', {
             defaultValue:
               'Documents {{data}} + indexes {{index}} (uncompressed, as Atlas counts it)',
@@ -86,7 +101,7 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
         <div className="max-h-72 overflow-y-auto">
           <table className="w-full text-xs">
             <thead>
-              <tr className="text-white/40 text-left">
+              <tr className="text-white/70 text-left">
                 <th className="font-normal pb-1">{t('adminOpsHealth.collection', 'Collection')}</th>
                 <th className="font-normal pb-1 text-right">{t('adminOpsHealth.docs', 'Docs')}</th>
                 <th className="font-normal pb-1 text-right">{t('adminOpsHealth.data', 'Data')}</th>
@@ -100,7 +115,7 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
             </thead>
             <tbody>
               {storage.collections.map((c) => (
-                <tr key={c.name} className="border-t border-white/5 text-white/70">
+                <tr key={c.name} className="border-t border-brand-border/60 text-white/70">
                   <td className="py-1 font-mono truncate max-w-[10rem]">{c.name}</td>
                   <td className="py-1 text-right">{c.documents.toLocaleString()}</td>
                   <td className="py-1 text-right">{formatBytes(c.dataBytes)}</td>
@@ -112,8 +127,8 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
           </table>
         </div>
         {(storage.otherDatabases ?? []).length > 0 && (
-          <div className="space-y-1 border-t border-white/10 pt-3">
-            <p className="text-white/40 text-xs">
+          <div className="space-y-1 border-t border-brand-border pt-3">
+            <p className="text-white/70 text-xs">
               {t(
                 'adminOpsHealth.otherDatabases',
                 'Other databases on the cluster (they count toward the same cap):'
@@ -139,11 +154,11 @@ function CspSection({ report }: { report: CspViolationReport }) {
   const total = report.daily.reduce((sum, d) => sum + d.count, 0);
   return (
     <section className="space-y-2">
-      <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+      <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
         {t('adminOpsHealth.cspTitle', 'CSP violation reports (last 7 days, UTC)')}
       </h2>
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
-        <p className="text-white/50 text-xs leading-relaxed">
+      <div className={`${CARD} p-4 space-y-3`}>
+        <p className="text-white/70 text-xs leading-relaxed">
           {t(
             'adminOpsHealth.cspDesc',
             'Counted per day from {{since}}, origins only (kept 30 days). The policy is still Report-Only: anything legitimate here must be allowed in vercel.json before enforcing.',
@@ -151,7 +166,7 @@ function CspSection({ report }: { report: CspViolationReport }) {
           )}
         </p>
         {total === 0 ? (
-          <p className="text-white/30 text-sm">
+          <p className="text-white/70 text-sm">
             {t('adminOpsHealth.cspNone', 'No violations reported in this period.')}
           </p>
         ) : (
@@ -160,7 +175,7 @@ function CspSection({ report }: { report: CspViolationReport }) {
               {report.daily.map((d) => (
                 <span
                   key={d.day}
-                  className="rounded-lg border border-white/10 px-2 py-1 text-[11px] font-mono text-white/70"
+                  className="rounded-control border border-brand-border px-2 py-1 text-[11px] font-mono text-white/70"
                 >
                   {d.day}: <span className="text-brand-gold font-bold">{d.count}</span>
                 </span>
@@ -170,22 +185,22 @@ function CspSection({ report }: { report: CspViolationReport }) {
               {report.top.map((r) => (
                 <div
                   key={`${r.directive}|${r.blocked}|${r.source}|${r.disposition}`}
-                  className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
+                  className="flex items-center justify-between gap-3 border-b border-brand-border/60 pb-2 last:border-0 last:pb-0"
                 >
                   <div className="min-w-0">
                     <p className="text-white/70 text-xs font-bold font-mono">
                       {r.directive}
                       {r.disposition !== 'report' && (
-                        <span className="text-red-300"> ({r.disposition})</span>
+                        <span className="text-red-400"> ({r.disposition})</span>
                       )}
                     </p>
-                    <p className="text-white/40 text-[11px] font-mono truncate">
+                    <p className="text-white/70 text-[11px] font-mono truncate">
                       {r.blocked} {t('adminOpsHealth.cspFrom', 'from')} {r.source}
                     </p>
                   </div>
                   <div className="text-right shrink-0">
-                    <p className="text-brand-gold text-sm font-black">{r.count}</p>
-                    <p className="text-white/25 text-[10px]">
+                    <p className="text-brand-gold text-sm font-bold">{r.count}</p>
+                    <p className="text-white/70 text-[10px]">
                       {t('adminOpsHealth.cspDays', '{{count}} day(s)', { count: r.days })}
                     </p>
                   </div>
@@ -223,28 +238,28 @@ export default function AdminOpsHealth() {
         index={false}
       />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
-        <h1 className="text-2xl font-black text-white">
-          {t('adminOpsHealth.title', 'System & ops health')}
-        </h1>
+        <AdminHero icon={HeartIcon} title={t('adminOpsHealth.title', 'System & ops health')} />
 
-        {isLoading && <p className="text-white/40 text-sm">{t('common.loading', 'Loading…')}</p>}
+        {isLoading && <p className="text-white/70 text-sm">{t('common.loading', 'Loading…')}</p>}
 
         {health && (
           <>
             {senderCollisions.length > 0 && (
-              <div className="rounded-2xl border border-red-500/30 bg-red-500/[0.06] p-4 space-y-2">
-                <p className="text-red-300 font-bold text-sm">
-                  ⚠️ {t('adminOpsHealth.collisionTitle', 'Email senders sharing one mailbox')}
+              <div className="rounded-card border border-red-400/40 bg-red-400/5 shadow-elev-2 p-4 space-y-2">
+                <p className="flex items-center gap-1.5 text-red-400 font-bold text-sm">
+                  <ExclamationTriangleIcon className="w-4 h-4 shrink-0" aria-hidden="true" />
+                  {t('adminOpsHealth.collisionTitle', 'Email senders sharing one mailbox')}
                 </p>
-                <p className="text-white/50 text-xs leading-relaxed">
+                <p className="text-white/70 text-xs leading-relaxed">
                   {t(
                     'adminOpsHealth.collisionDesc',
-                    'These senders\' env vars were set to the same mailbox address — mail shows the right display name but the wrong "From" address. Each sender needs its own <SENDER>_SMTP_USER/PASS pair pointing at its own address.'
+                    'These senders\' env vars were set to the same mailbox address: mail shows the right display name but the wrong "From" address. Each sender needs its own <SENDER>_SMTP_USER/PASS pair pointing at its own address.'
                   )}
                 </p>
                 {senderCollisions.map((c) => (
                   <p key={c.resolvedUser} className="text-white/70 text-xs font-mono">
-                    {c.senders.join(' + ')} → <span className="text-red-300">{c.resolvedUser}</span>
+                    {c.senders.join(' + ')} to{' '}
+                    <span className="text-red-400">{c.resolvedUser}</span>
                   </p>
                 ))}
               </div>
@@ -252,7 +267,7 @@ export default function AdminOpsHealth() {
 
             <div className="grid lg:grid-cols-2 gap-6">
               <section className="space-y-2">
-                <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+                <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
                   {t('adminOpsHealth.infra', 'Infrastructure')}
                 </h2>
                 <div className="flex flex-wrap gap-2">
@@ -262,18 +277,18 @@ export default function AdminOpsHealth() {
               </section>
 
               <section className="space-y-2">
-                <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+                <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
                   {t('adminOpsHealth.emailSenders', 'Email senders')}
                 </h2>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-2">
+                <div className={`${CARD} p-4 space-y-2`}>
                   {Object.entries(emailSenders).map(([sender, diag]) => (
                     <div
                       key={sender}
-                      className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
+                      className="flex items-center justify-between gap-3 border-b border-brand-border/60 pb-2 last:border-0 last:pb-0"
                     >
                       <div>
                         <p className="text-white/80 text-sm font-bold">{sender}</p>
-                        <p className="text-white/40 text-xs font-mono">
+                        <p className="text-white/70 text-xs font-mono">
                           {diag.resolvedUser ?? t('adminOpsHealth.notConfigured', 'not configured')}
                         </p>
                       </div>
@@ -297,23 +312,26 @@ export default function AdminOpsHealth() {
 
             <div className="grid lg:grid-cols-2 gap-6">
               <section className="space-y-2">
-                <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+                <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
                   {t('adminOpsHealth.emailFailures', 'Recent email send failures')}
                 </h2>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <div className={`${CARD} p-4`}>
                   {recentEmailFailures.length === 0 && (
-                    <p className="text-white/30 text-sm">
+                    <p className="text-white/70 text-sm">
                       {t('adminOpsHealth.noFailures', 'No failures recorded.')}
                     </p>
                   )}
                   <div className="space-y-2">
                     {recentEmailFailures.map((f, i) => (
-                      <div key={i} className="border-b border-white/5 pb-2 last:border-0 last:pb-0">
+                      <div
+                        key={i}
+                        className="border-b border-brand-border/60 pb-2 last:border-0 last:pb-0"
+                      >
                         <p className="text-white/70 text-xs">
-                          <span className="font-bold">{f.sender}</span> → {f.to} · {f.subject}
+                          <span className="font-bold">{f.sender}</span> to {f.to} · {f.subject}
                         </p>
-                        <p className="text-red-400/80 text-xs font-mono mt-0.5">{f.error}</p>
-                        <p className="text-white/25 text-[10px] mt-0.5">
+                        <p className="text-red-400 text-xs font-mono mt-0.5">{f.error}</p>
+                        <p className="text-white/70 text-[10px] mt-0.5">
                           {new Date(f.createdAt).toLocaleString()}
                         </p>
                       </div>
@@ -323,12 +341,12 @@ export default function AdminOpsHealth() {
               </section>
 
               <section className="space-y-2">
-                <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+                <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
                   {t('adminOpsHealth.rateLimits', 'Rate-limit hits (last 24h)')}
                 </h2>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+                <div className={`${CARD} p-4`}>
                   {(!hits || hits.length === 0) && (
-                    <p className="text-white/30 text-sm">
+                    <p className="text-white/70 text-sm">
                       {t(
                         'adminOpsHealth.noRateLimitHits',
                         'Nothing throttled in the last 24 hours.'
@@ -339,15 +357,15 @@ export default function AdminOpsHealth() {
                     {hits?.map((h, i) => (
                       <div
                         key={i}
-                        className="flex items-center justify-between gap-3 border-b border-white/5 pb-2 last:border-0 last:pb-0"
+                        className="flex items-center justify-between gap-3 border-b border-brand-border/60 pb-2 last:border-0 last:pb-0"
                       >
                         <div className="min-w-0">
                           <p className="text-white/70 text-xs font-bold">{h.limiterName}</p>
-                          <p className="text-white/40 text-[11px] font-mono truncate">{h.path}</p>
+                          <p className="text-white/70 text-[11px] font-mono truncate">{h.path}</p>
                         </div>
                         <div className="text-right shrink-0">
-                          <p className="text-brand-gold text-sm font-black">{h.count}</p>
-                          <p className="text-white/25 text-[10px]">
+                          <p className="text-brand-gold text-sm font-bold">{h.count}</p>
+                          <p className="text-white/70 text-[10px]">
                             {new Date(h.lastHit).toLocaleTimeString()}
                           </p>
                         </div>
