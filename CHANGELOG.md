@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.116.6 - Recovering an open app after a deploy - 2026-10-09
+
+### Fixed
+
+- **An app left open across a deploy could end on "Something went wrong"**: when it asked for a page file the new deploy had removed, it reloaded, but the reload was often answered by the old offline worker with the old app again, and a 30-second guard then stopped any further try. Now it first fetches the new version's worker and waits for it (up to 5 seconds), then reloads; the guard is one automatic reload per missing file, so a second missing file later still recovers. If it still fails, the screen says "A new version is ready" with an Update button that loads the new version (as a last resort it removes the old offline worker; offline use returns after one load). English and Bangla, no emoji.
+
 ## v5.116.5 - Admin panel: phone layout fixes - 2026-10-09
 
 ### Fixed
