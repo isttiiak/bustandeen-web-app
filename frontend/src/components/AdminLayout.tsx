@@ -11,6 +11,7 @@ import {
   ClipboardDocumentListIcon,
   EnvelopeIcon,
   HeartIcon,
+  MoonIcon,
   MegaphoneIcon,
   ChevronDownIcon,
   PaperAirplaneIcon,
@@ -133,6 +134,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       label: t('adminLayout.auditLog', 'Audit Log'),
     },
     { to: '/admin/ops-health', icon: HeartIcon, label: t('adminLayout.opsHealth', 'Ops Health') },
+    {
+      to: '/admin/moon-sighting',
+      icon: MoonIcon,
+      label: t('adminLayout.moonSighting', 'Moon sighting'),
+    },
     {
       to: '/admin/compose-email',
       icon: PaperAirplaneIcon,

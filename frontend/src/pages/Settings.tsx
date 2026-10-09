@@ -16,11 +16,18 @@ import {
 import { auth, googleProvider } from '../firebase.js';
 import api, { API_BASE, getIdToken } from '../lib/api.js';
 import {
-  getHijriAdjustment,
   setHijriAdjustment,
+  setHijriAutomatic,
   getHijriToday,
+  isHijriManual,
+  readMoonSightingCache,
+  readUserOffset,
+  resolveHijriOffset,
   formatHijriDate,
+  HIJRI_COUNTRY_KEY,
 } from '../utils/islamicCalendar.js';
+import { countryName } from '../utils/countryDefaults.js';
+import { useMoonSightingRecords } from '../hooks/useMoonSighting.js';
 import {
   getDayStartMode,
   setDayStartModeLocal,
@@ -459,6 +466,91 @@ function ReduceMotionPicker({ t }: { t: (key: string) => string }) {
   );
 }
 
+/** Today's Hijri date under the current choice; re-renders with the list. */
+function HijriTodayLine() {
+  const { t } = useTranslation();
+  useMoonSightingRecords();
+  const h = getHijriToday();
+  return (
+    <p className="text-brand-gold text-xs mt-3 font-semibold">
+      {t('settings.hijriToday', 'Today:')} {h ? formatHijriDate(h) : '-'}
+      <span className="text-white/70 font-normal"> · {t('settings.hijriNote')}</span>
+    </p>
+  );
+}
+
+/** "Automatic": the device's country record (T4.1), with what it does now. */
+function HijriAutoOption({
+  active,
+  onSelect,
+  t,
+}: {
+  active: boolean;
+  onSelect: () => void;
+  t: (key: string, opts?: Record<string, unknown>) => string;
+}) {
+  // Subscribed so the text updates when a newer list arrives
+  useMoonSightingRecords();
+  const lang = (i18n.language || 'en').split('-')[0] ?? 'en';
+  const code = localStorage.getItem(HIJRI_COUNTRY_KEY);
+  const country = code ? countryName(code, lang) : null;
+  // What Automatic gives today, whichever option is chosen now
+  const auto = resolveHijriOffset({
+    manual: false,
+    userOffset: 0,
+    country: code,
+    records: readMoonSightingCache(),
+    day: getTrackingDay(),
+  });
+  const shift =
+    auto.offset < 0
+      ? t('settings.hijriShiftBehind')
+      : auto.offset > 0
+        ? t('settings.hijriShiftAhead')
+        : t('settings.hijriShiftSame');
+  const detail = !country
+    ? t('settings.hijriAutoNoCountry')
+    : auto.record
+      ? t('settings.hijriAutoRecord', {
+          country,
+          date: formatLocaleDate(new Date(`${auto.record.effectiveFrom}T12:00:00`), {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
+          }),
+          shift,
+        })
+      : t('settings.hijriAutoNone', { country });
+  return (
+    <div>
+      <button
+        type="button"
+        onClick={onSelect}
+        aria-pressed={active}
+        className={`w-full text-left p-3 rounded-control border transition-colors ${
+          active ? OPTION_ON : OPTION_OFF
+        }`}
+      >
+        <span className="block font-semibold text-sm">{t('settings.hijriAuto')}</span>
+        <span className="block text-xs text-white/70 mt-0.5 leading-snug">{detail}</span>
+      </button>
+      {auto.record?.sourceUrl && (
+        <p className="text-xs text-white/70 mt-1.5 px-1">
+          {t('settings.hijriAutoSource')}:{' '}
+          <a
+            href={auto.record.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline text-brand-gold"
+          >
+            {new URL(auto.record.sourceUrl).hostname}
+          </a>
+        </p>
+      )}
+    </div>
+  );
+}
+
 const SECTION_ICON: Record<Habit, SvgIcon> = {
   salat: MosqueIcon,
   zikr: TasbihIcon,
@@ -774,7 +866,10 @@ export default function Settings() {
   } = useUiStore();
   const queryClient = useQueryClient();
 
-  const [hijriAdj, setHijriAdjState] = useState(getHijriAdjustment());
+  // null = Automatic (the country's moon-sighting record, T4.1)
+  const [hijriAdj, setHijriAdjState] = useState<number | null>(() =>
+    isHijriManual() ? readUserOffset() : null
+  );
   const [dayStartMode, setDayStartModeState] = useState<DayStartMode>(getDayStartMode());
   const [dayStartInfoMode, setDayStartInfoMode] = useState<DayStartMode | null>(null);
   const [savedLocation, setSavedLocation] = useState<string | null>(() => {
@@ -805,6 +900,11 @@ export default function Settings() {
     setHijriAdjustment(days);
     setHijriAdjState(days);
     if (user) updateProfile.mutateAsync({ hijriOffset: days }).catch(() => {});
+  };
+  const applyHijriAuto = () => {
+    setHijriAutomatic();
+    setHijriAdjState(null);
+    if (user) updateProfile.mutateAsync({ hijriOffset: null }).catch(() => {});
   };
 
   const applyDayStartMode = (mode: DayStartMode) => {
@@ -1223,13 +1323,15 @@ export default function Settings() {
             subtitle={t('settings.hijriSubtitle')}
             delay={0.1}
           >
+            <HijriAutoOption active={hijriAdj === null} onSelect={applyHijriAuto} t={t} />
+            <p className="text-white/70 text-xs mt-3 mb-1.5">{t('settings.hijriManualLabel')}</p>
             <div className="flex items-center gap-2">
               {[-1, 0, 1].map((d) => (
                 <button
                   key={d}
                   onClick={() => applyHijriAdj(d)}
                   aria-pressed={hijriAdj === d}
-                  className={`flex-1 rounded-control border px-2 py-2 text-sm font-bold transition-colors ${
+                  className={`flex-1 min-h-[44px] whitespace-nowrap rounded-control border px-2 py-2 text-xs sm:text-sm font-bold transition-colors ${
                     hijriAdj === d
                       ? 'bg-brand-emerald-dim text-on-color border-brand-emerald-dim shadow-elev-1'
                       : OPTION_OFF
@@ -1243,14 +1345,7 @@ export default function Settings() {
                 </button>
               ))}
             </div>
-            <p className="text-brand-gold text-xs mt-3 font-semibold">
-              {t('settings.hijriToday', 'Today:')}{' '}
-              {(() => {
-                const h = getHijriToday();
-                return h ? formatHijriDate(h) : '-';
-              })()}
-              <span className="text-white/70 font-normal"> · {t('settings.hijriNote')}</span>
-            </p>
+            <HijriTodayLine />
           </SectionCard>
 
           {/* ── Tracking day boundary ── */}

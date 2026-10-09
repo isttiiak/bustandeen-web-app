@@ -517,23 +517,143 @@ const HIJRI_MONTH_NAMES = [
 ];
 
 // ── Regional moon-sighting adjustment ───────────────────────────────────────
-// Umm al-Qura follows Saudi sighting; Bangladesh/India/Pakistan are often one
-// day behind. The user can correct this in Settings (-1, 0, +1 days).
+// Umm al-Qura follows Saudi sighting; a country's committee often starts a
+// month a day earlier or later (Bangladesh is frequently a day behind).
+// T4.1: in this order, the first that applies wins (all on-device):
+//   1. the user's own offset (Settings: -1, 0, +1 days);
+//   2. "Automatic": their country's moon-sighting record in force on that
+//      date, set by the admin from the national committee's announcement;
+//   3. 0 (plain Umm al-Qura): no guessed default (Istiak, T4.1).
 
 const HIJRI_ADJUSTMENT_KEY = 'bustandeen_hijri_offset';
+/** '1' = the user picked their own offset; '0' = Automatic. Absent on devices
+ * from before T4.1: a non-zero offset counts as chosen (0 was the default). */
+const HIJRI_MANUAL_KEY = 'bustandeen_hijri_manual';
+/** Cached active records from /api/calendar/moon-sighting (useMoonSighting) */
+export const MOON_SIGHTING_KEY = 'bustandeen_moon_sighting';
+/** ISO country used for Automatic: profile country, else the time zone's */
+export const HIJRI_COUNTRY_KEY = 'bustandeen_hijri_country';
 
-export function getHijriAdjustment(): number {
-  const raw = parseInt(localStorage.getItem(HIJRI_ADJUSTMENT_KEY) ?? '0', 10);
-  return raw === -1 || raw === 1 ? raw : 0;
+export interface MoonSightingRecord {
+  id: string;
+  country: string;
+  /** YYYY-MM-DD */
+  effectiveFrom: string;
+  offset: number;
+  note: string;
+  sourceUrl?: string;
 }
 
+export interface HijriOffsetSource {
+  offset: number;
+  source: 'manual' | 'country' | 'none';
+  record?: MoonSightingRecord;
+}
+
+const clampOffset = (n: number): number => (n === -1 || n === 1 ? n : 0);
+
+/** Local YYYY-MM-DD of a Date (the device's calendar day). */
+function localDay(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
+ * The pure rule (unit-tested): which offset applies to `day` (YYYY-MM-DD).
+ * A country record applies from its effectiveFrom until the next record for
+ * the same country; before the first one there is no override.
+ */
+export function resolveHijriOffset(input: {
+  manual: boolean;
+  userOffset: number;
+  country: string | null;
+  records: readonly MoonSightingRecord[];
+  day: string;
+}): HijriOffsetSource {
+  if (input.manual) return { offset: clampOffset(input.userOffset), source: 'manual' };
+  if (!input.country) return { offset: 0, source: 'none' };
+  let best: MoonSightingRecord | undefined;
+  for (const r of input.records) {
+    if (r.country !== input.country || r.effectiveFrom > input.day) continue;
+    if (!best || r.effectiveFrom > best.effectiveFrom) best = r;
+  }
+  return best
+    ? { offset: clampOffset(best.offset), source: 'country', record: best }
+    : { offset: 0, source: 'none' };
+}
+
+/** The user's own stored offset (used only when they chose it, see isHijriManual). */
+export function readUserOffset(): number {
+  return clampOffset(parseInt(localStorage.getItem(HIJRI_ADJUSTMENT_KEY) ?? '0', 10));
+}
+
+export function isHijriManual(): boolean {
+  const raw = localStorage.getItem(HIJRI_MANUAL_KEY);
+  if (raw === '1') return true;
+  if (raw === '0') return false;
+  return readUserOffset() !== 0;
+}
+
+export function readMoonSightingCache(): MoonSightingRecord[] {
+  try {
+    const parsed: unknown = JSON.parse(localStorage.getItem(MOON_SIGHTING_KEY) ?? '[]');
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (r): r is MoonSightingRecord =>
+        !!r &&
+        typeof r.country === 'string' &&
+        typeof r.effectiveFrom === 'string' &&
+        typeof r.offset === 'number'
+    );
+  } catch {
+    return [];
+  }
+}
+
+/** The offset in force on `date`, and where it comes from. */
+export function getHijriOffsetSource(date: Date = new Date()): HijriOffsetSource {
+  return resolveHijriOffset({
+    manual: isHijriManual(),
+    userOffset: readUserOffset(),
+    country: localStorage.getItem(HIJRI_COUNTRY_KEY),
+    records: readMoonSightingCache(),
+    day: localDay(date),
+  });
+}
+
+export function getHijriAdjustment(date: Date = new Date()): number {
+  return getHijriOffsetSource(date).offset;
+}
+
+/** The user's own choice: from now on it wins over their country's record. */
 export function setHijriAdjustment(days: number): void {
-  localStorage.setItem(HIJRI_ADJUSTMENT_KEY, String(days === -1 || days === 1 ? days : 0));
+  localStorage.setItem(HIJRI_ADJUSTMENT_KEY, String(clampOffset(days)));
+  localStorage.setItem(HIJRI_MANUAL_KEY, '1');
+}
+
+/** Back to Automatic: follow the country's moon-sighting record. */
+export function setHijriAutomatic(): void {
+  localStorage.setItem(HIJRI_ADJUSTMENT_KEY, '0');
+  localStorage.setItem(HIJRI_MANUAL_KEY, '0');
+}
+
+/** Mirror the server's values (session start): offset + whether it is manual. */
+export function syncHijriFromServer(offset: number, manual: boolean | undefined): void {
+  localStorage.setItem(HIJRI_ADJUSTMENT_KEY, String(clampOffset(offset)));
+  if (manual !== undefined) localStorage.setItem(HIJRI_MANUAL_KEY, manual ? '1' : '0');
 }
 
 export function getHijriDate(date: Date = new Date()): HijriDate | null {
+  return hijriDateWithOffset(date, getHijriAdjustment(date));
+}
+
+/** Umm al-Qura date of `date` shifted by an explicit `offset` in days, ignoring
+ * every setting (the admin preview uses it). */
+export function hijriDateWithOffset(date: Date, offset: number): HijriDate | null {
   try {
-    const adjusted = new Date(date.getTime() + getHijriAdjustment() * 86_400_000);
+    const adjusted = new Date(date.getTime() + offset * 86_400_000);
     const fmt = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', {
       day: 'numeric',
       month: 'numeric',

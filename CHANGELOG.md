@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.127.0 - Moon sighting by country - 2026-10-10
+
+### Added
+
+- **Hijri dates follow your country's moon sighting (T4.1, FEAT-03, FIQH-02)**: Settings → Hijri date adjustment has a new **Automatic** choice, the default for anyone who never set an offset. When the national committee announces a month, the admin records it once (country, the date it applies from, and whether the month is a day after or before Umm al-Qura), and every device in that country on Automatic shows the right Hijri date, Ramadan day, Eid and special days. Until a country has a record, Umm al-Qura is used: nothing is guessed.
+- **Your own choice still wins**: picking -1, Umm al-Qura or +1 keeps that offset over any country record. Existing accounts with -1 or +1 keep it; accounts at 0 (the old default) move to Automatic.
+- Country: your profile country, otherwise your phone's time zone. Worked out on the device; no location is sent.
+- **Admin → Tools → Moon sighting** (Servant only): add a record with the committee's note and an optional announcement link, with a preview of the Hijri date it gives; deactivate a mistaken one. Every change is in the audit log.
+
+### API
+
+- `GET /api/calendar/moon-sighting` (public, cached 15 min): active records. `GET/POST /api/admin/moon-sighting`, `PATCH /api/admin/moon-sighting/:id/deactivate` (Servant only, audit-logged).
+- `PATCH /api/user/me { hijriOffset: null }` = Automatic; a number = the user's own choice. Clients get `hijriManual`. Pre-T4.1 accounts are read as before (non-zero = chosen) with no data rewrite, so no migration is needed.
+
+### Fixed
+
+- A Home e2e test read the section order before the sections had rendered.
+
 ## v5.126.0 - Accessibility pass - 2026-10-10
 
 ### Changed

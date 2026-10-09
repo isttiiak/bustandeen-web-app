@@ -24,10 +24,14 @@ async function demoHomeAt(page: Page, at: string, storage: Record<string, string
   await expect(page.getByText('Demo Mode').first()).toBeVisible();
 }
 
-const order = (page: Page) =>
-  page
+// Waits for Home's sections to render first: under a busy full run the
+// order was once read while only one had appeared.
+const order = async (page: Page) => {
+  await page.locator('[data-testid^="quick-"]').first().waitFor();
+  return page
     .locator('[data-testid="today-timeline"], [data-testid^="quick-"]')
     .evaluateAll((els) => els.map((e) => e.getAttribute('data-testid')));
+};
 
 test('sections follow the habit order; Today’s goals stay', async ({ page }) => {
   await demoHomeAt(page, '2026-10-15T20:00:00+06:00');
