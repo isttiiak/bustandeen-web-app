@@ -238,7 +238,7 @@
     "goToAppNow": "Go to App Now",
     "home": "Home",
     "noActionCode": "This link didn't carry the details we need",
-    "noActionCodeDesc": "If you just clicked a verification or password reset link, it may have already gone through. Try signing in — if it didn't work, request a new link and use it directly from your email.",
+    "noActionCodeDesc": "If you just clicked a verification or password reset link, it may have already gone through. Try signing in. If it didn't work, request a new link and use it directly from your email.",
     "linkExpired": "Link Expired",
     "linkExpiredDesc": "This password reset link has expired or already been used. Please request a new one from the sign-in page.",
     "newPassword": "New Password",
@@ -255,6 +255,8 @@
     "verifyingResetLink": "Verifying reset link…"
   },
   "authSignIn": {
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
     "signingIn": "Signing you in...",
     "backToSignIn": "Back to sign in",
     "checkEmail": "Check your email",
@@ -326,7 +328,7 @@
     "subtitle": "Start your spiritual journey today",
     "verificationResent": "Verification email resent!",
     "verificationSentTo": "We sent a verification link to",
-    "verifyClickHint": "Click the link in the email to verify your address. You can use the app now — some features require a verified email.",
+    "verifyClickHint": "Click the link in the email to verify your address. You can use the app now. Some features require a verified email.",
     "wrongEmail": "Wrong email?"
   },
   "comebackNudge": {

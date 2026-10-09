@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.114.1 - Sign in, sign up and email links in the Bustan Arch design - 2026-10-09
+
+### Changed
+
+- **Sign in, Sign up and Forgot password** have the new look, in dark and light: the arched welcome card, the app's usual card, inputs and buttons, and easier-to-read text. The tip about Google sign-in shows a drawn light bulb instead of an emoji.
+- **The pages you reach from an email link** (verify your email, set a new password) match them, with the Bustandeen leaf instead of an emoji.
+- **The show/hide password button** now says what it does to screen readers, and every field has a proper label, in English and Bangla.
+- Two of their messages no longer use an em dash, in English and Bangla.
+
 ## v5.114.0 - Today's special days at the top of Home, your way - 2026-10-09
 
 ### Added
