@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { CHROME, type SeoLang } from './locales/chrome.js';
-import { CITIES, cityBySlug } from './data/cities.js';
+import { CITIES, cityBySlug, cityCountry, cityName } from './data/cities.js';
 import { DUAS } from './content/duas.js';
 import { currentHijriYear, ramadanRangeForHijriYear } from './utils/calc.js';
 import PrayerTimesCityPage from './templates/PrayerTimesCityPage.js';
@@ -70,8 +70,8 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
         html: renderToStaticMarkup(
           <PrayerTimesCityPage lang={lang} city={city} buildDate={date} />
         ),
-        title: `${t.prayerTimes.heading(city.name)} | ${t.siteName}`,
-        description: t.prayerTimes.subheading(city.name, city.country),
+        title: `${t.prayerTimes.heading(cityName(city, lang))} | ${t.siteName}`,
+        description: t.prayerTimes.subheading(cityName(city, lang), cityCountry(city, lang)),
         client: { kind: 'prayer-times', city },
       };
     }
@@ -80,8 +80,8 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
       if (!city) throw new Error(`Unknown city slug: ${route.citySlug}`);
       return {
         html: renderToStaticMarkup(<QiblaCityPage lang={lang} city={city} />),
-        title: `${t.qibla.heading(city.name)} | ${t.siteName}`,
-        description: t.qibla.subheading(city.name, city.country),
+        title: `${t.qibla.heading(cityName(city, lang))} | ${t.siteName}`,
+        description: t.qibla.subheading(cityName(city, lang), cityCountry(city, lang)),
       };
     }
     case 'ramadan-calendar': {
@@ -92,8 +92,8 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
         html: renderToStaticMarkup(
           <RamadanCalendarPage lang={lang} city={city} hijriYear={route.hijriYear} />
         ),
-        title: `${t.ramadan.heading(city.name, gYear)} | ${t.siteName}`,
-        description: t.ramadan.subheading(city.name, city.country),
+        title: `${t.ramadan.heading(cityName(city, lang), gYear)} | ${t.siteName}`,
+        description: t.ramadan.subheading(cityName(city, lang), cityCountry(city, lang)),
       };
     }
     case 'ramadan-calendar-index': {

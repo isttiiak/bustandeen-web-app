@@ -1,4 +1,4 @@
-import type { CityEntry } from '../data/cities.js';
+import { cityCountry, cityLabel, cityName, type CityEntry } from '../data/cities.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
@@ -42,13 +42,15 @@ export default function RamadanCalendarPage({ lang, city, hijriYear }: Props) {
       breadcrumbs={[
         { label: t.home, path: 'https://bustandeen.com/' },
         { label: t.breadcrumbRamadan },
-        { label: `${city.name}, ${city.country}` },
+        { label: cityLabel(city, lang) },
       ]}
     >
       <h1 className="text-2xl sm:text-3xl font-black text-[#f1f5f9]">
-        {t.ramadan.heading(city.name, gregorianYear)}
+        {t.ramadan.heading(cityName(city, lang), gregorianYear)}
       </h1>
-      <p className="text-[#94a3b8] mt-2">{t.ramadan.subheading(city.name, city.country)}</p>
+      <p className="text-[#94a3b8] mt-2">
+        {t.ramadan.subheading(cityName(city, lang), cityCountry(city, lang))}
+      </p>
       <p className="text-xs text-[#94a3b8] mt-3 bg-[#0d1520] border border-[#1e2d42] rounded-xl p-3">
         {t.ramadan.note}
       </p>
@@ -98,28 +100,28 @@ export default function RamadanCalendarPage({ lang, city, hijriYear }: Props) {
           href={langPath(lang, `/prayer-times/${city.slug}`)}
           className="text-[#10b981] no-underline hover:underline"
         >
-          {t.ramadan.prayerTimesCta(city.name)} →
+          {t.ramadan.prayerTimesCta(cityName(city, lang))} →
         </a>
         <a
           href={langPath(lang, `/qibla/${city.slug}`)}
           className="text-[#10b981] no-underline hover:underline"
         >
-          {t.ramadan.qiblaCta(city.name)} →
+          {t.ramadan.qiblaCta(cityName(city, lang))} →
         </a>
       </div>
 
       <JsonLd
         data={breadcrumbJsonLd([
           { name: t.home, url: 'https://bustandeen.com/' },
-          { name: `${city.name}, ${city.country}`, url },
+          { name: cityLabel(city, lang), url },
         ])}
       />
       <JsonLd
         data={{
           '@context': 'https://schema.org',
           '@type': 'WebPage',
-          name: t.ramadan.heading(city.name, gregorianYear),
-          description: t.ramadan.subheading(city.name, city.country),
+          name: t.ramadan.heading(cityName(city, lang), gregorianYear),
+          description: t.ramadan.subheading(cityName(city, lang), cityCountry(city, lang)),
           url,
           inLanguage: lang,
           isPartOf: { '@type': 'WebSite', name: 'Bustandeen', url: 'https://bustandeen.com/' },

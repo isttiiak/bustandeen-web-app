@@ -42,6 +42,8 @@ export interface ChromeStrings {
     liveAppCta: string;
     qiblaCta: (city: string) => string;
     ramadanCta: (city: string) => string;
+    /** Link from a town or neighbourhood page to its BD district page. */
+    partOfDistrict: (district: string) => string;
     faqTitle: string;
     faq: { q: string; a: string }[];
     nearbyTitle: string;
@@ -214,6 +216,7 @@ const en: ChromeStrings = {
     liveAppCta: 'Open the live prayer-time tracker for exact, auto-updating times',
     qiblaCta: (city) => `Qibla direction from ${city}`,
     ramadanCta: (city) => `Ramadan calendar for ${city}`,
+    partOfDistrict: (district) => `Part of ${district} district: ${district} prayer times`,
     faqTitle: 'Common questions',
     faq: [
       {
@@ -385,6 +388,33 @@ const en: ChromeStrings = {
   },
 };
 
+// Bangla case endings for place names. A name in Bangla script takes the
+// real ending (ঢাকার, সিলেটের, বাংলাদেশে); a name in Latin script keeps the
+// hyphenated form the pages always used (Dhaka-এর).
+const BN_SCRIPT = /[ঀ-৿]$/;
+// A final chandrabindu (নওগাঁ) does not change the ending.
+const bnBase = (name: string) => name.replace(/ঁ$/, '');
+const BN_VOWEL_SIGN = /[া-ৌ]$/; // া ি ী ু ূ ৃ ে ৈ ো ৌ
+const BN_I_U_SIGN = /[ি-ৄ]$/; // ি ী ু ূ ৃ
+const BN_VOWEL_LETTER = /[অ-ঔ]$/; // অ ... ঔ
+/** Genitive: ঢাকার, সিলেটের, ঠাকুরগাঁওয়ের, Dhaka-এর. */
+export function bnOf(name: string): string {
+  if (!BN_SCRIPT.test(name)) return `${name}-এর`;
+  const base = bnBase(name);
+  if (BN_VOWEL_SIGN.test(base)) return `${name}র`;
+  if (BN_VOWEL_LETTER.test(base)) return `${name}য়ের`;
+  return `${name}ের`;
+}
+/** Locative: ঢাকায়, রাজশাহীতে, বাংলাদেশে, Dhaka-এ. */
+export function bnIn(name: string): string {
+  if (!BN_SCRIPT.test(name)) return `${name}-এ`;
+  const base = bnBase(name);
+  if (BN_I_U_SIGN.test(base)) return `${name}তে`;
+  if (BN_VOWEL_SIGN.test(base)) return `${name}য়`;
+  if (BN_VOWEL_LETTER.test(base)) return `${name}য়ে`;
+  return `${name}ে`;
+}
+
 const bn: ChromeStrings = {
   siteName: 'Bustandeen',
   tagline: 'আপনার দ্বীনকে সমৃদ্ধ করুন',
@@ -400,12 +430,12 @@ const bn: ChromeStrings = {
   breadcrumbAsmaUlHusna: 'আল্লাহর ৯৯ নাম',
   breadcrumbZakat: 'যাকাত ক্যালকুলেটর',
   prayerTimes: {
-    heading: (city) => `${city}-এ আজকের নামাজের সময়`,
+    heading: (city) => `${BN_SCRIPT.test(city) ? bnOf(city) : `${city}-এ`} আজকের নামাজের সময়`,
     subheading: (city, country) =>
-      `${city}, ${country}-এর ফজর, যোহর, আসর, মাগরিব ও এশার নামাজের সময়।`,
+      `${city}, ${bnOf(country)} ফজর, যোহর, আসর, মাগরিব ও এশার নামাজের সময়।`,
     todayLabel: 'আজকের নামাজের সময়',
     methodNote: (method, country) =>
-      `${method} পদ্ধতিতে হিসাব করা হয়েছে, ${country}-এর বেশিরভাগ মসজিদ যে পদ্ধতি অনুসরণ করে। Bustandeen অ্যাপেও একই হিসাব আপনার ডিভাইসেই হয়।`,
+      `${method} পদ্ধতিতে হিসাব করা হয়েছে, ${bnOf(country)} বেশিরভাগ মসজিদ যে পদ্ধতি অনুসরণ করে। Bustandeen অ্যাপেও একই হিসাব আপনার ডিভাইসেই হয়।`,
     asrNote:
       'আসরের সময় দুই মাযহাব অনুযায়ীই দেখানো হয়েছে: সাধারণ (শাফেয়ী, মালেকী, হাম্বলী), যখন ছায়া বস্তুর সমান হয়, আর হানাফী, যখন ছায়া বস্তুর দ্বিগুণ হয়। আপনার এলাকার মসজিদকে অনুসরণ করুন; অ্যাপে যেকোনোটি বেছে নেওয়া যায়।',
     prayerNames: {
@@ -435,7 +465,8 @@ const bn: ChromeStrings = {
     },
     liveAppCta: 'সঠিক, স্বয়ংক্রিয়ভাবে হালনাগাদ হওয়া সময়ের জন্য লাইভ নামাজ ট্র্যাকার খুলুন',
     qiblaCta: (city) => `${city} থেকে কিবলার দিক`,
-    ramadanCta: (city) => `${city}-এর রমজান ক্যালেন্ডার`,
+    ramadanCta: (city) => `${bnOf(city)} রমজান ক্যালেন্ডার`,
+    partOfDistrict: (district) => `${district} জেলার অংশ: ${bnOf(district)} নামাজের সময়`,
     faqTitle: 'সাধারণ প্রশ্ন',
     faq: [
       {
@@ -462,7 +493,7 @@ const bn: ChromeStrings = {
     howToFindBody:
       'উপরে দেখানো দিক অনুযায়ী দাঁড়ান, যা সত্যিকারের উত্তর থেকে ঘড়ির কাঁটার দিকে পরিমাপ করা (চৌম্বক উত্তর নয় — বেশিরভাগ ফোনের কম্পাসে সত্যিকারের উত্তর দেখাতে ক্যালিব্রেশন প্রয়োজন)। Bustandeen অ্যাপের লাইভ কিবলা কম্পাস আপনার ডিভাইসের অভিমুখ সেন্সর ও বর্তমান অবস্থান ব্যবহার করে স্বয়ংক্রিয়ভাবে দিক দেখায়, কোনো ম্যানুয়াল হিসাবের প্রয়োজন নেই।',
     liveAppCta: 'অ্যাপে লাইভ কিবলা কম্পাস খুলুন',
-    prayerTimesCta: (city) => `${city}-এর নামাজের সময়`,
+    prayerTimesCta: (city) => `${bnOf(city)} নামাজের সময়`,
     faqTitle: 'সাধারণ প্রশ্ন',
     faq: [
       {
@@ -486,15 +517,15 @@ const bn: ChromeStrings = {
     searchPlaceholder: 'শহর বা দেশ খুঁজুন...',
     popularCitiesLabel: 'জনপ্রিয় শহর',
     noResults: 'আপনার অনুসন্ধানের সাথে মিলে এমন কোনো শহর নেই।',
-    heading: (city, year) => `${city}-এর রমজান ${year} ক্যালেন্ডার`,
+    heading: (city, year) => `${bnOf(city)} রমজান ${year} ক্যালেন্ডার`,
     subheading: (city, country) =>
-      `${city}, ${country}-এ রমজানের প্রতিটি দিনের সেহরি (ইমসাক) ও ইফতারের সময়।`,
+      `${city}, ${bnIn(country)} রমজানের প্রতিটি দিনের সেহরি (ইমসাক) ও ইফতারের সময়।`,
     imsakLabel: 'ইমসাক / সেহরি শেষ (ফজর)',
     iftarLabel: 'ইফতার (মাগরিব)',
     dayLabel: 'দিন',
     dateLabel: 'তারিখ',
     liveAppCta: 'অ্যাপে প্রতিদিনের রোজা ট্র্যাক করুন',
-    prayerTimesCta: (city) => `${city}-এর সারাবছরের নামাজের সময়`,
+    prayerTimesCta: (city) => `${bnOf(city)} সারাবছরের নামাজের সময়`,
     qiblaCta: (city) => `${city} থেকে কিবলার দিক`,
     note: 'রমজানের শুরুর তারিখ উম্মুল কুরা (islamic-umalqura) ক্যালেন্ডারের হিসাব অনুযায়ী দেখানো হয়েছে এবং স্থানীয় চাঁদ দেখা কমিটির ঘোষণা অনুযায়ী এক দিন কমবেশি হতে পারে — সবসময় আপনার স্থানীয় চাঁদ দেখা কর্তৃপক্ষের সাথে নিশ্চিত করুন।',
   },
@@ -655,6 +686,7 @@ const ar: ChromeStrings = {
     liveAppCta: 'افتح متتبع الصلاة المباشر للحصول على مواقيت دقيقة ومحدَّثة تلقائيًا',
     qiblaCta: (city) => `اتجاه القبلة من ${city}`,
     ramadanCta: (city) => `تقويم رمضان لمدينة ${city}`,
+    partOfDistrict: (district) => `جزء من محافظة ${district}: مواقيت الصلاة في ${district}`,
     faqTitle: 'أسئلة شائعة',
     faq: [
       {

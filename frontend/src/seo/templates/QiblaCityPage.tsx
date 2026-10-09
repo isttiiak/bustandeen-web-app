@@ -1,4 +1,4 @@
-import type { CityEntry } from '../data/cities.js';
+import { cityCountry, cityLabel, cityName, type CityEntry } from '../data/cities.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd, faqJsonLd } from '../components/JsonLd.js';
@@ -58,13 +58,15 @@ export default function QiblaCityPage({ lang, city }: Props) {
       breadcrumbs={[
         { label: t.home, path: 'https://bustandeen.com/' },
         { label: t.breadcrumbQibla, path: 'https://bustandeen.com/qibla' },
-        { label: `${city.name}, ${city.country}` },
+        { label: cityLabel(city, lang) },
       ]}
     >
       <h1 className="text-2xl sm:text-3xl font-black text-[#f1f5f9]">
-        {t.qibla.heading(city.name)}
+        {t.qibla.heading(cityName(city, lang))}
       </h1>
-      <p className="text-[#94a3b8] mt-2">{t.qibla.subheading(city.name, city.country)}</p>
+      <p className="text-[#94a3b8] mt-2">
+        {t.qibla.subheading(cityName(city, lang), cityCountry(city, lang))}
+      </p>
 
       <div className="mt-6 flex flex-col sm:flex-row items-center gap-6 rounded-2xl border border-[#1e2d42] bg-[#0d1520] p-6">
         <CompassDiagram bearing={bearing} />
@@ -103,7 +105,7 @@ export default function QiblaCityPage({ lang, city }: Props) {
           href={langPath(lang, `/prayer-times/${city.slug}`)}
           className="text-[#10b981] no-underline hover:underline"
         >
-          {t.qibla.prayerTimesCta(city.name)} →
+          {t.qibla.prayerTimesCta(cityName(city, lang))} →
         </a>
       </div>
 
@@ -123,7 +125,7 @@ export default function QiblaCityPage({ lang, city }: Props) {
         data={breadcrumbJsonLd([
           { name: t.home, url: 'https://bustandeen.com/' },
           { name: t.breadcrumbQibla, url: 'https://bustandeen.com/qibla' },
-          { name: `${city.name}, ${city.country}`, url },
+          { name: cityLabel(city, lang), url },
         ])}
       />
       <JsonLd data={faqJsonLd(t.qibla.faq)} />
@@ -131,8 +133,8 @@ export default function QiblaCityPage({ lang, city }: Props) {
         data={{
           '@context': 'https://schema.org',
           '@type': 'WebPage',
-          name: t.qibla.heading(city.name),
-          description: t.qibla.subheading(city.name, city.country),
+          name: t.qibla.heading(cityName(city, lang)),
+          description: t.qibla.subheading(cityName(city, lang), cityCountry(city, lang)),
           url,
           inLanguage: lang,
           isPartOf: { '@type': 'WebSite', name: 'Bustandeen', url: 'https://bustandeen.com/' },
