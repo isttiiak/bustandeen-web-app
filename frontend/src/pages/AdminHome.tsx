@@ -9,8 +9,11 @@ import {
   ClipboardDocumentListIcon,
   HeartIcon,
   MegaphoneIcon,
+  Squares2X2Icon,
 } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
+import { AdminHero } from '../components/admin/adminParts.js';
+import { CARD } from '../components/bustanStyles.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminStats } from '../hooks/useAdminStats.js';
 
@@ -28,14 +31,14 @@ function AdminCard({
   return (
     <Link
       to={to}
-      className="flex items-start gap-3 rounded-2xl bg-base-200 border border-base-300 p-4 hover:border-brand-emerald/40 transition-colors"
+      className={`${CARD} flex items-start gap-3 p-4 hover:border-brand-emerald/40 transition-colors`}
     >
-      <div className="w-10 h-10 rounded-xl bg-brand-emerald/10 grid place-items-center shrink-0">
-        <Icon className="w-5 h-5 text-brand-emerald" />
+      <div className="w-10 h-10 rounded-control bg-brand-emerald/10 grid place-items-center shrink-0">
+        <Icon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />
       </div>
       <div>
-        <div className="font-bold text-white">{title}</div>
-        <div className="text-sm text-white/50">{description}</div>
+        <div className="font-display font-bold text-white">{title}</div>
+        <div className="text-sm text-white/80">{description}</div>
       </div>
     </Link>
   );
@@ -52,14 +55,18 @@ function StatTile({
 }) {
   return (
     <div
-      className={`rounded-2xl border p-4 ${
-        emphasis ? 'bg-brand-gold/10 border-brand-gold/30' : 'bg-base-200 border-base-300'
-      }`}
+      className={
+        emphasis
+          ? 'rounded-card border border-brand-gold/40 bg-brand-gold/10 shadow-elev-2 p-4'
+          : `${CARD} p-4`
+      }
     >
-      <div className={`text-2xl font-black ${emphasis ? 'text-brand-gold' : 'text-white'}`}>
+      <div
+        className={`text-2xl font-bold font-display ${emphasis ? 'text-brand-gold' : 'text-white'}`}
+      >
         {value}
       </div>
-      <div className="text-xs text-white/50 mt-0.5">{label}</div>
+      <div className="text-xs text-white/80 mt-0.5">{label}</div>
     </div>
   );
 }
@@ -83,17 +90,18 @@ export default function AdminHome() {
         path="/admin"
         index={false}
       />
-      <div>
-        <h1 className="text-xl font-black text-white">{t('adminHome.title', 'Admin overview')}</h1>
-        <p className="text-sm text-white/50 mt-1">
-          {isServant
-            ? t('adminHome.subtitleServant', 'Full operational access — Servant tier.')
+      <AdminHero
+        icon={Squares2X2Icon}
+        title={t('adminHome.title', 'Admin overview')}
+        subtitle={
+          isServant
+            ? t('adminHome.subtitleServant', 'Full operational access, Servant tier.')
             : t(
                 'adminHome.subtitleAnsar',
-                'Routine review access — Ansar tier. Critical operations are Servant-only.'
-              )}
-        </p>
-      </div>
+                'Routine review access, Ansar tier. Critical operations are Servant-only.'
+              )
+        }
+      />
 
       {/* Servant: a full stats hub. Sadaqah Ansar: pending-donations hero.
           General Ansar: pending zikr requests + open feedback hero. Never
@@ -129,11 +137,13 @@ export default function AdminHome() {
       {!isServant && ansarDomain === 'sadaqah' && (
         <Link
           to="/admin/sadaqah"
-          className="block rounded-2xl border border-brand-gold/30 bg-brand-gold/10 p-5 hover:bg-brand-gold/15 transition-colors"
+          className="block rounded-card border border-brand-gold/40 bg-brand-gold/10 shadow-elev-2 p-5 hover:bg-brand-gold/15 transition-colors"
         >
-          <div className="text-3xl font-black text-brand-gold">{stats?.pendingSadaqah ?? 0}</div>
-          <div className="text-sm text-white/60 mt-1">
-            {t('adminHome.pendingSadaqahCta', 'Donations waiting for review — tap to review now')}
+          <div className="text-3xl font-display font-bold text-brand-gold">
+            {stats?.pendingSadaqah ?? 0}
+          </div>
+          <div className="text-sm text-white/80 mt-1">
+            {t('adminHome.pendingSadaqahCta', 'Donations waiting for review. Tap to review now.')}
           </div>
         </Link>
       )}
@@ -142,22 +152,24 @@ export default function AdminHome() {
         <div className="grid sm:grid-cols-2 gap-3">
           <Link
             to="/admin/zikr-requests"
-            className="block rounded-2xl border border-brand-gold/30 bg-brand-gold/10 p-5 hover:bg-brand-gold/15 transition-colors"
+            className="block rounded-card border border-brand-gold/40 bg-brand-gold/10 shadow-elev-2 p-5 hover:bg-brand-gold/15 transition-colors"
           >
-            <div className="text-3xl font-black text-brand-gold">
+            <div className="text-3xl font-display font-bold text-brand-gold">
               {stats?.pendingZikrRequests ?? 0}
             </div>
-            <div className="text-sm text-white/60 mt-1">
+            <div className="text-sm text-white/80 mt-1">
               {t('adminHome.pendingZikrCta', 'Zikr requests waiting for review')}
             </div>
           </Link>
           <Link
             to="/admin/feedback"
-            className="block rounded-2xl border border-brand-emerald/20 bg-brand-emerald/[0.06] p-5 hover:bg-brand-emerald/10 transition-colors"
+            className="block rounded-card border border-brand-emerald/30 bg-brand-emerald/10 shadow-elev-2 p-5 hover:bg-brand-emerald/15 transition-colors"
           >
-            <div className="text-3xl font-black text-brand-emerald">{stats?.openFeedback ?? 0}</div>
-            <div className="text-sm text-white/60 mt-1">
-              {t('adminHome.openFeedbackCta', 'Open feedback/contact messages')}
+            <div className="text-3xl font-display font-bold text-brand-emerald">
+              {stats?.openFeedback ?? 0}
+            </div>
+            <div className="text-sm text-white/80 mt-1">
+              {t('adminHome.openFeedbackCta', 'Open feedback and contact messages')}
             </div>
           </Link>
         </div>

@@ -15,6 +15,7 @@ import {
   ChevronDownIcon,
   PaperAirplaneIcon,
 } from '@heroicons/react/24/outline';
+import { LeafIcon } from './icons/IslamicIcons.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminLogout } from '../hooks/useAdminAuth.js';
 
@@ -32,10 +33,10 @@ import { useAdminLogout } from '../hooks/useAdminAuth.js';
  */
 
 const navItemClass = ({ isActive }: { isActive: boolean }) =>
-  `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+  `shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-control text-sm font-medium whitespace-nowrap transition-colors ${
     isActive
       ? 'bg-brand-emerald/15 text-brand-emerald'
-      : 'text-white/60 hover:text-white hover:bg-white/5'
+      : 'text-white/80 hover:text-white hover:bg-brand-surface'
   }`;
 
 interface ToolLink {
@@ -65,13 +66,15 @@ function ToolsMenu({ links }: { links: ToolLink[] }) {
   useEffect(() => setOpen(false), [location.pathname]);
 
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative shrink-0">
       <button
         onClick={() => setOpen((o) => !o)}
-        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+        aria-expanded={open}
+        aria-haspopup="menu"
+        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-control text-sm font-medium whitespace-nowrap transition-colors ${
           isActive || open
             ? 'bg-brand-emerald/15 text-brand-emerald'
-            : 'text-white/60 hover:text-white hover:bg-white/5'
+            : 'text-white/80 hover:text-white hover:bg-brand-surface'
         }`}
       >
         <ShieldCheckIcon className="w-4 h-4" />
@@ -81,7 +84,7 @@ function ToolsMenu({ links }: { links: ToolLink[] }) {
         />
       </button>
       {open && (
-        <div className="absolute left-0 top-full mt-1.5 w-52 rounded-xl border border-brand-border bg-brand-deep shadow-xl shadow-black/40 py-1.5 z-30">
+        <div className="absolute left-0 top-full mt-1.5 w-52 rounded-control border border-brand-border bg-brand-deep shadow-elev-3 py-1.5 z-30">
           {links.map((l) => (
             <NavLink
               key={l.to}
@@ -90,7 +93,7 @@ function ToolsMenu({ links }: { links: ToolLink[] }) {
                 `flex items-center gap-2 px-3 py-2 text-sm transition-colors ${
                   linkActive
                     ? 'bg-brand-emerald/15 text-brand-emerald'
-                    : 'text-white/70 hover:text-white hover:bg-white/5'
+                    : 'text-white/80 hover:text-white hover:bg-brand-surface'
                 }`
               }
             >
@@ -139,15 +142,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen bg-brand-void">
-      <header className="border-b border-brand-border/60 bg-brand-deep/90 backdrop-blur-xl sticky top-0 z-20">
-        <div className="max-w-[1600px] mx-auto px-6">
+      <header className="border-b border-brand-border/60 bg-brand-deep shadow-elev-1 sticky top-0 z-20">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6">
           {/* Row 1: brand ↔ identity/logout — two independent clusters so
               wrapping (narrow screens only) never interleaves them. */}
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 py-3 border-b border-white/5">
-            <NavLink to="/admin" className="flex items-center gap-2 font-black text-white text-sm">
-              <span aria-hidden className={accent}>
-                🌙
-              </span>
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 py-3 border-b border-brand-border/60">
+            <NavLink
+              to="/admin"
+              className="flex items-center gap-2 font-display font-bold text-white text-base"
+            >
+              <LeafIcon className={`w-5 h-5 ${accent}`} aria-hidden="true" />
               {t('adminLayout.brand', 'Bustandeen Admin')}
             </NavLink>
             <div className="flex items-center gap-3 text-xs">
@@ -155,13 +159,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href="/"
                 target="_blank"
                 rel="noreferrer"
-                className="hidden sm:flex items-center gap-1 text-white/40 hover:text-white transition-colors"
+                className="hidden sm:flex items-center gap-1 text-white/70 hover:text-white transition-colors"
               >
                 {t('adminLayout.viewPublicSite', 'Public site')}
                 <ArrowTopRightOnSquareIcon className="w-3.5 h-3.5" />
               </a>
-              <span className="w-px h-4 bg-white/10 hidden sm:block" aria-hidden />
-              <span className="flex items-center gap-1.5 text-white/60">
+              <span className="w-px h-4 bg-brand-border hidden sm:block" aria-hidden />
+              <span className="flex items-center gap-1.5 text-white/80">
                 <span className="truncate max-w-[160px] sm:max-w-none">{email}</span>
                 {role && (
                   <span
@@ -178,7 +182,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <button
                 onClick={() => logout.mutate()}
                 title={t('adminGate.logOut', 'Log out')}
-                className="flex items-center gap-1 px-2 py-1 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+                className="flex items-center gap-1 px-2 py-1 rounded-control text-white/70 hover:text-white hover:bg-brand-surface transition-colors"
               >
                 <ArrowRightOnRectangleIcon className="w-4 h-4" />
                 <span className="hidden sm:inline">{t('adminGate.logOut', 'Log out')}</span>
@@ -197,7 +201,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               was silently clipping the dropdown's vertical overflow whenever
               it lived inside that scroll container. */}
           <nav className="flex items-center gap-1 py-2">
-            <div className="flex items-center gap-1 overflow-x-auto">
+            <div className="flex min-w-0 items-center gap-1 overflow-x-auto">
               {canSeeSadaqah && (
                 <NavLink to="/admin/sadaqah" className={navItemClass}>
                   <BanknotesIcon className="w-4 h-4" />
@@ -224,7 +228,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
             {isServant && (
               <>
-                <span className="w-px h-5 bg-white/10 mx-1 shrink-0" aria-hidden />
+                <span className="w-px h-5 bg-brand-border mx-1 shrink-0" aria-hidden />
                 <ToolsMenu links={toolLinks} />
               </>
             )}
