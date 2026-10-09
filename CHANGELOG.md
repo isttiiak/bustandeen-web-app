@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.111.1 - Calmer sign-in screens and footer - 2026-10-09
+
+### Changed
+
+- **The "Sign in required" and "Verify your email" screens** show a drawn lock and envelope instead of emoji, with easier-to-read text and the app's usual buttons. The sign-in message is simpler, in English and Bangla.
+- **The footer is calmer**: the heart no longer pulses, the background is a plain theme surface, and the dots between the links line up with the text.
+
 ## v5.111.0 - Zikr analytics in the Bustan Arch design - 2026-10-09
 
 ### Changed

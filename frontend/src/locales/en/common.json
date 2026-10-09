@@ -221,7 +221,7 @@
     "resendVerification": "Resend verification email",
     "signIn": "Sign In",
     "signInRequired": "Sign in required",
-    "signInRequiredDesc": "This page is only available to signed-in users. Create a free account to track your progress and access analytics.",
+    "signInRequiredDesc": "This page is only available when you are signed in. Create a free account to keep your progress and see your analytics.",
     "verifyEmailCheckInbox": "Check your inbox (and spam folder) and click the link to unlock this page.",
     "verifyEmailResent": "Email resent! Check your inbox.",
     "verifyEmailSentTo": "A verification link was sent to",
