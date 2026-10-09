@@ -55,6 +55,8 @@ export interface ClientUser {
   hijriOffset: number;
   dayStartMode: IUser['dayStartMode'];
   aiEnabled: boolean;
+  onboardingRequired: boolean;
+  onboardedAt: Date | null;
   totalCount: number;
   createdAt: Date;
   updatedAt: Date;
@@ -84,6 +86,8 @@ export function toClientUser(user: IUser): ClientUser {
     hijriOffset: user.hijriOffset,
     dayStartMode: user.dayStartMode,
     aiEnabled: user.aiEnabled,
+    onboardingRequired: user.onboardingRequired === true,
+    onboardedAt: user.onboardedAt ?? null,
     totalCount: user.totalCount,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
@@ -109,6 +113,9 @@ export interface UserUpdateFields {
   hijriOffset?: number;
   dayStartMode?: 'fajr' | 'midnight' | 'maghrib';
   aiEnabled?: boolean;
+  /** true = onboarding finished, skipped or dismissed. Only the first one is
+   * recorded; it can't be un-set (the flow stays reachable from Settings). */
+  onboarded?: true;
 }
 
 export async function linkGoogleProvider(
@@ -231,6 +238,10 @@ export async function updateUser(uid: string, fields: UserUpdateFields): Promise
   if (fields.dayStartMode !== undefined)
     (updates as Record<string, unknown>).dayStartMode = fields.dayStartMode;
   if (fields.aiEnabled !== undefined) updates.aiEnabled = fields.aiEnabled;
+  if (fields.onboarded) {
+    // Separate conditional write so a repeat call keeps the first timestamp.
+    await User.updateOne({ uid, onboardedAt: null }, { $set: { onboardedAt: new Date() } });
+  }
 
   return User.findOneAndUpdate(
     { uid },
