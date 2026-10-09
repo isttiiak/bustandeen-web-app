@@ -44,6 +44,13 @@ const RING = 2 * Math.PI * 42;
  * spec): reading happens in the ayah reader (Khatam/Read tabs), listening in
  * the Listen tab, and everything flows into ONE daily ayat goal + streak.
  */
+/** A button whose ::after covers its `relative` card, so the whole card is
+ * tappable while links inside it stay separate controls (T3.5). */
+const STRETCHED = 'text-left after:absolute after:inset-0 after:rounded-control';
+/** STRETCHED for a title inside a taller card: the card (via ::after) is the
+ * 44px target, so the title itself skips the mobile min-height rule. */
+const STRETCHED_TITLE = `${STRETCHED} min-h-0 min-w-0`;
+
 export default function QuranHabit() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -240,13 +247,17 @@ export default function QuranHabit() {
           </h2>
           <div className="grid sm:grid-cols-2 gap-2 mt-3">
             {SPECIAL_SURAHS.map((sp) => (
-              <button
-                key={sp.surah}
-                className={ITEM}
-                onClick={() => navigate(`/quran/read/${sp.surah}?mode=single`)}
-              >
+              // The title is the button; its ::after covers the card, and the
+              // reference link sits above it (no link inside a button, T3.5).
+              <div key={sp.surah} className={`${ITEM} relative`}>
                 <p className="text-white text-sm font-bold">
-                  {surahDisplayName({ number: sp.surah, englishName: sp.name }, i18n.language)}{' '}
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/quran/read/${sp.surah}?mode=single`)}
+                    className={STRETCHED_TITLE}
+                  >
+                    {surahDisplayName({ number: sp.surah, englishName: sp.name }, i18n.language)}
+                  </button>{' '}
                   <span className="text-white/50 font-normal">
                     · {formatLocaleNumber(sp.surah)}
                   </span>
@@ -256,16 +267,15 @@ export default function QuranHabit() {
                 </p>
                 {sp.ref && (
                   <a
-                    className={REF_LINK}
+                    className={`${REF_LINK} relative z-10`}
                     href={sp.ref.url}
                     target="_blank"
                     rel="noreferrer"
-                    onClick={(e) => e.stopPropagation()}
                   >
                     {translateReference(sp.ref.text, i18n.language)}
                   </a>
                 )}
-              </button>
+              </div>
             ))}
           </div>
         </section>
@@ -279,15 +289,19 @@ export default function QuranHabit() {
           <p className="text-white/60 text-xs mt-1">{t('quranHabit.protectionSubtitle')}</p>
           <div className="grid sm:grid-cols-2 gap-2 mt-3">
             {AYAH_BUNDLES.map((b) => (
-              <button
-                key={b.id}
-                className={ITEM}
-                onClick={() =>
-                  navigate(`/quran/read/${b.surah}?start=${b.fromAyah}&end=${b.toAyah}&mode=bundle`)
-                }
-              >
+              <div key={b.id} className={`${ITEM} relative`}>
                 <p className="text-white text-sm font-bold">
-                  {i18n.language === 'bn' && b.titleBn ? b.titleBn : b.title}{' '}
+                  <button
+                    type="button"
+                    onClick={() =>
+                      navigate(
+                        `/quran/read/${b.surah}?start=${b.fromAyah}&end=${b.toAyah}&mode=bundle`
+                      )
+                    }
+                    className={STRETCHED_TITLE}
+                  >
+                    {i18n.language === 'bn' && b.titleBn ? b.titleBn : b.title}
+                  </button>{' '}
                   <span className="text-white/50 font-normal">
                     · {formatLocaleNumber(b.surah)}:{formatLocaleNumber(b.fromAyah)}
                     {b.toAyah !== b.fromAyah ? `–${formatLocaleNumber(b.toAyah)}` : ''}
@@ -297,15 +311,14 @@ export default function QuranHabit() {
                   {i18n.language === 'bn' && b.virtueBn ? b.virtueBn : b.virtue}
                 </p>
                 <a
-                  className={REF_LINK}
+                  className={`${REF_LINK} relative z-10`}
                   href={b.ref.url}
                   target="_blank"
                   rel="noreferrer"
-                  onClick={(e) => e.stopPropagation()}
                 >
                   {translateReference(b.ref.text, i18n.language)}
                 </a>
-              </button>
+              </div>
             ))}
           </div>
         </section>
@@ -327,18 +340,16 @@ export default function QuranHabit() {
               return (
                 <div
                   key={d.id}
-                  className="group flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors cursor-pointer"
-                  onClick={open}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') open();
-                  }}
+                  className="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors"
                 >
                   <DuaHandsIcon className="w-4 h-4 text-brand-gold shrink-0" aria-hidden="true" />
-                  <span className="flex-1 text-white/80 group-hover:text-white text-xs transition-colors">
+                  <button
+                    type="button"
+                    onClick={open}
+                    className={`flex-1 text-white/80 group-hover:text-white text-xs transition-colors ${STRETCHED}`}
+                  >
                     {i18n.language === 'bn' && d.titleBn ? d.titleBn : d.title}
-                  </span>
+                  </button>
                   <span className="text-white/50 text-[10px] tabular-nums">
                     {formatLocaleNumber(d.surah)}:{formatLocaleNumber(d.fromAyah)}
                   </span>
@@ -349,11 +360,8 @@ export default function QuranHabit() {
                         : t('quranHabit.saveDuaAriaLabel', { title: d.title })
                     }
                     aria-pressed={saved}
-                    className={`p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors ${saved ? 'text-brand-gold' : 'text-white/40 hover:text-brand-gold'}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleDua.mutate(d.id);
-                    }}
+                    className={`hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors ${saved ? 'text-brand-gold' : 'text-white/40 hover:text-brand-gold'}`}
+                    onClick={() => toggleDua.mutate(d.id)}
                   >
                     {saved ? (
                       <BookmarkSolidIcon className="w-4 h-4" />

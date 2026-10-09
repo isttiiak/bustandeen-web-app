@@ -286,7 +286,6 @@ function ResetPasswordView({ oobCode }: { oobCode: string }) {
               }}
               placeholder={t('authSignUp.passwordPlaceholder', 'Create a strong password')}
               required
-              autoFocus
             />
             <StrengthMeter password={password} />
           </div>

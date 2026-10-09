@@ -148,11 +148,16 @@ export default function ZikrCounter() {
   }, [isFlushing, queryClient]);
 
   // Confetti the moment the daily goal is crossed (false → true transition)
+  // (and the live region below says so, once, for screen-reader users)
   const wasGoalMetRef = useRef(goalMet);
+  const [goalJustMetAt, setGoalJustMetAt] = useState<number | null>(null);
   useEffect(() => {
-    if (!wasGoalMetRef.current && goalMet && dailyGoal !== null) celebrateGoal();
+    if (!wasGoalMetRef.current && goalMet && dailyGoal !== null) {
+      celebrateGoal();
+      setGoalJustMetAt(effectiveTotal);
+    }
     wasGoalMetRef.current = goalMet;
-  }, [goalMet, dailyGoal]);
+  }, [goalMet, dailyGoal, effectiveTotal]);
 
   // Guest: warn before tab close if they have unsaved counts
   useEffect(() => {
@@ -515,13 +520,14 @@ export default function ZikrCounter() {
               stays for accessibility/keyboard support; its own text is
               invisible (text-transparent) and a caret is overlaid, so tapping
               anywhere on the chip opens the type list. */}
-          <div className="relative flex-shrink-0 w-9 h-9 ml-auto">
+          <div className={`relative flex-shrink-0 w-9 h-9 ml-auto ${chipFrame}`}>
+            {/* The select reaches 5px past the chip (inside its border): 44px to tap */}
             <select
               value=""
               onChange={(e) => {
                 if (e.target.value) selectType(e.target.value);
               }}
-              className={`${chipFrame} absolute inset-0 w-full h-full text-transparent focus:outline-none cursor-pointer appearance-none`}
+              className="absolute -inset-[5px] rounded-control bg-transparent text-transparent cursor-pointer appearance-none"
               style={{ backgroundImage: 'none' }}
               title={t('zikr.change')}
               aria-label={t('zikr.change')}
@@ -543,7 +549,7 @@ export default function ZikrCounter() {
           {/* Add custom */}
           <button
             onClick={() => setShowAddCustom(true)}
-            className={`${chip} flex-shrink-0 w-9 h-9 flex items-center justify-center`}
+            className={`${chip} hit-44 flex-shrink-0 w-9 h-9 flex items-center justify-center`}
             title={t('zikr.addCustom', 'Add custom dhikr')}
             aria-label={t('zikr.addCustom', 'Add custom dhikr')}
           >
@@ -602,6 +608,13 @@ export default function ZikrCounter() {
                 {formatLocaleNumber(tasbihRemaining ?? currentCount)}
               </div>
             </motion.div>
+            {/* Screen readers hear the number on every tap (T3.5, Istiak's
+                choice), and "goal reached" on the tap that reaches it. Kept
+                outside the keyed element above, which remounts per tap. */}
+            <p className="sr-only" aria-live="polite" aria-atomic="true">
+              {formatLocaleNumber(tasbihRemaining ?? currentCount)}
+              {goalJustMetAt === effectiveTotal ? `. ${t('zikr.a11y.goalReached')}` : ''}
+            </p>
             {tasbihRemaining !== null ? (
               <p className="mt-2 text-xs text-white/60">
                 {t('zikr.tasbihOfTarget', '{{done}} of {{target}} · lifetime {{lifetime}}', {
@@ -735,7 +748,7 @@ export default function ZikrCounter() {
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={onIncrement}
-            className="flex items-center justify-center gap-2 w-44 sm:w-56 h-14 rounded-control bg-brand-emerald-dim text-on-color font-bold text-lg cursor-pointer select-none outline-none border-0 shadow-elev-2 hover:shadow-hover hover:brightness-105 transition-[box-shadow,filter]"
+            className="flex items-center justify-center gap-2 w-44 sm:w-56 h-14 rounded-control bg-brand-emerald-dim text-on-color font-bold text-lg cursor-pointer select-none border-0 shadow-elev-2 hover:shadow-hover hover:brightness-105 transition-[box-shadow,filter]"
           >
             <PlusIcon className="w-6 h-6" />
             {t('zikr.countBtn', 'Count')}

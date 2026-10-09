@@ -1,7 +1,8 @@
-﻿import { Suspense, useEffect, useRef, useState } from 'react';
+﻿import { Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import type { User } from 'firebase/auth';
 import {
   hasSessionHint,
@@ -48,7 +49,20 @@ if (typeof window !== 'undefined' && 'scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual';
 }
 
+/** The page's one <main> landmark (target of the skip link). SEO and admin
+ * pages render their own <main>, so there it is a plain wrapper (T3.5). */
+function MainLandmark({ plain, children }: { plain: boolean; children: ReactNode }) {
+  return plain ? (
+    <div className="flex-1">{children}</div>
+  ) : (
+    <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
+      {children}
+    </main>
+  );
+}
+
 export default function App() {
+  const { t } = useTranslation();
   const { setUser, init, setAuthLoading } = useAuthStore();
   const hasUser = useAuthStore((s) => !!s.user);
   const { hydrate, resetAll, checkAndResetIfNewDay } = useZikrStore();
@@ -444,12 +458,21 @@ export default function App() {
         </div>
       ) : (
         <>
+          {!isSeoPage && !isAdminPage && (
+            <a
+              href="#main"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald"
+            >
+              {t('common.skipToContent')}
+            </a>
+          )}
           {!isSeoPage && !isAdminPage && <AnnouncementBanner />}
           {!isSeoPage && !isAdminPage && <DemoBanner />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <Navbar />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <UnsavedWarning />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <GenderGate />}
-          <div className="flex-1">
+          {/* SEO and admin pages bring their own <main> */}
+          <MainLandmark plain={isSeoPage || isAdminPage}>
             <Suspense fallback={<RouteFallback />}>
               <AppRoutes revision={prefsRevision} />
             </Suspense>
@@ -474,7 +497,7 @@ export default function App() {
                   {quickLogOpen && <NaturalLogModal onClose={() => setQuickLogOpen(false)} />}
                 </>
               )}
-          </div>
+          </MainLandmark>
           {showFooter && <Footer />}
         </>
       )}

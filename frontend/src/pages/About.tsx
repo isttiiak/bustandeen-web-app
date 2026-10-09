@@ -24,6 +24,7 @@ import {
   type IconProps,
 } from '../components/icons/IslamicIcons.js';
 import { useAuthStore } from '../store/useAuthStore.js';
+import ExtLink from '../components/ExtLink.js';
 
 const FEATURE_KEYS: { Icon: (p: IconProps) => React.ReactNode; key: string }[] = [
   { Icon: TasbihIcon, key: 'zikrCounter' },
@@ -70,12 +71,14 @@ export default function About() {
               <LeafIcon className="w-7 h-7 text-brand-gold" aria-hidden />
             </div>
             <h2 className="font-display text-3xl font-bold text-white">{t('about.heading')}</h2>
-            <p className="font-arabic text-brand-gold text-xl">بستان + دين</p>
+            <p lang="ar" dir="rtl" className="font-arabic text-brand-gold text-xl">
+              بستان + دين
+            </p>
             <p className="text-white/75 text-sm leading-relaxed max-w-lg mx-auto">
-              {t(
-                'about.bustandeenDefinition',
-                'A name born of بستان (bustān, garden) and دين (dīn, religion/faith): a garden of faith, tended daily.'
-              )}
+              <Trans
+                i18nKey="about.bustandeenDefinition"
+                components={{ ar: <span lang="ar" dir="rtl" className="font-arabic" /> }}
+              />
             </p>
             <p className="text-brand-emerald text-sm font-semibold italic">"Nourish your deen."</p>
             <p className="text-white/70 text-xs max-w-sm mx-auto leading-relaxed">
@@ -150,14 +153,7 @@ export default function About() {
               <Trans
                 i18nKey="about.quranTextSource"
                 components={{
-                  1: (
-                    <a
-                      href="https://tanzil.net"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-brand-emerald underline"
-                    />
-                  ),
+                  1: <ExtLink href="https://tanzil.net" className="text-brand-emerald underline" />,
                 }}
               />
             </p>
@@ -182,7 +178,7 @@ export default function About() {
           </section>
 
           {/* Developer credit */}
-          <footer className="text-center pt-4 space-y-2">
+          <div className="text-center pt-4 space-y-2">
             <p className="text-white/75 text-sm">
               {t('about.developedBy')} <span className="text-brand-emerald font-bold">Istiak</span>
             </p>
@@ -193,7 +189,7 @@ export default function About() {
               <EnvelopeIcon className="w-4 h-4" aria-hidden="true" />
               istiak@bustandeen.com
             </a>
-          </footer>
+          </div>
         </div>
       </div>
     </AnimatedBackground>

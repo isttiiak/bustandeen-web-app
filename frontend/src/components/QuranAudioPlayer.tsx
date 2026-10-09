@@ -411,6 +411,7 @@ export default function QuranAudioPlayer() {
               />
             </div>
 
+            {/* eslint-disable-next-line jsx-a11y-x/media-has-caption -- Quran recitation; the āyah being recited is shown as text on screen, which serves as its transcript */}
             <audio
               ref={audioRef}
               src={src}

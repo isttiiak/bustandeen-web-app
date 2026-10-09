@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.126.0 - Accessibility pass - 2026-10-10
+
+### Changed
+
+- **Reduce animations (T3.5, UX-04)**: Settings → Accessibility now offers Auto, On or Off. Auto, the default, follows your phone's reduce-motion setting. It now covers every animation (page and card motion, CSS transitions, confetti), not only charts. Earlier "on" stays on.
+- **Zikr counter for screen readers**: the count is read out on every tap, and "Daily goal reached" on the tap that reaches it. The Count button shows a focus ring again for keyboard users.
+- **44px tap targets everywhere at phone width**: small controls keep their look but get a 44px touch area (week strips, the Salat Done/Kaza/Miss chips, the zikr type picker, the demo "Sign up" button). Settings' Home-section switches and order buttons, Profile fields and the custom-dhikr form are 44px tall.
+- **Contrast**: the remaining low-contrast spots pass WCAG AA in both themes (the demo "Sign up" button, Salat Done and info chips, the location option hint).
+- **Structure**: one main landmark on every app page with a "Skip to main content" link, named navigation bars, a level-one heading on the sign-in gate, and Escape closes the announcement, goal, past-period and zikr-suggestion dialogs. The Quran page's surah and protection cards no longer put links inside buttons; the dua bookmark is its own button. Hifz review words are buttons.
+- Arabic words on About are marked as Arabic for screen readers.
+
+### Developer
+
+- `eslint-plugin-jsx-a11y-x` (the ESLint 10 fork of jsx-a11y), recommended rules as errors.
+- `e2e/a11y.spec.ts`: axe (WCAG 2.1 AA + best practice) on 21 demo routes in dark and light, a 44px target guard, Arabic `lang` check, the Home quick sections, reduced motion, the counter live region and the skip link. `hit-44` utility in global.css.
+
 ## v5.125.0 - Friends: you choose what they see, and secret deeds - 2026-10-09
 
 ### Changed

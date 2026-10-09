@@ -63,7 +63,7 @@ export default function Terms() {
             </section>
           ))}
 
-          <footer className="text-center pt-4 space-y-2">
+          <div className="text-center pt-4 space-y-2">
             <p className="text-white/75 text-xs">
               {t('terms.contactText')}{' '}
               <a href="mailto:ansar@bustandeen.com" className="text-brand-emerald underline">
@@ -73,7 +73,7 @@ export default function Terms() {
             <Link to="/privacy" className="text-white/70 text-xs underline hover:text-white">
               {t('terms.privacyLink')}
             </Link>
-          </footer>
+          </div>
         </div>
       </div>
     </AnimatedBackground>

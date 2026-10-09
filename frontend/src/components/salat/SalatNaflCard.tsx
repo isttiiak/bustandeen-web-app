@@ -93,7 +93,7 @@ export default function SalatNaflCard({
                 aria-pressed={naflEntry.completed}
                 className={`flex items-center gap-1 px-2.5 py-1.5 rounded-control text-xs font-bold border transition-colors ${
                   naflEntry.completed
-                    ? 'bg-brand-info/20 border-brand-info text-brand-info'
+                    ? 'bg-brand-info/10 border-brand-info text-brand-info'
                     : 'bg-brand-deep border-brand-border text-white/60 hover:border-brand-info/50 hover:text-white'
                 }`}
               >

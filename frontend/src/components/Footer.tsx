@@ -14,7 +14,10 @@ export default function Footer() {
             <HeartIcon className="w-4 h-4 text-red-300" aria-hidden="true" />
             <span>{t('footer.forTheUmmah')}</span>
           </div>
-          <nav className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1.5 text-xs">
+          <nav
+            aria-label={t('common.footerNav')}
+            className="flex flex-wrap justify-center items-center gap-x-3 gap-y-1.5 text-xs"
+          >
             <Link
               to="/feedback"
               className="inline-flex items-center text-white/60 hover:text-brand-emerald underline underline-offset-2 transition-colors"

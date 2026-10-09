@@ -39,7 +39,7 @@ import {
 } from '../utils/musafir.js';
 import { translateSalatName } from '../utils/prayerTimes.js';
 import { useAuthStore } from '../store/useAuthStore.js';
-import { useUiStore } from '../store/useUiStore.js';
+import { useUiStore, type ReduceMotionMode } from '../store/useUiStore.js';
 import { useUpdateProfile } from '../hooks/useUserProfile.js';
 import { useGroqKeyStatus, useSetGroqKey, useClearGroqKey } from '../hooks/useAi.js';
 import { formatLocaleDate } from '../utils/localeDate.js';
@@ -415,6 +415,50 @@ function ThemeModePicker({ t }: { t: (key: string) => string }) {
   );
 }
 
+/** Reduce animations: Auto (follows the device), On, Off (T3.5). */
+function ReduceMotionPicker({ t }: { t: (key: string) => string }) {
+  const mode = useUiStore((s) => s.reduceMotionMode);
+  const setMode = useUiStore((s) => s.setReduceMotionMode);
+  const options: { value: ReduceMotionMode; label: string }[] = [
+    { value: 'auto', label: t('settings.reduceMotionAuto') },
+    { value: 'on', label: t('settings.reduceMotionOn') },
+    { value: 'off', label: t('settings.reduceMotionOff') },
+  ];
+  return (
+    <div className="p-3 rounded-control border border-brand-border bg-brand-surface/50">
+      <p id="reduce-motion-title" className="font-semibold text-white text-sm">
+        {t('settings.reduceMotion')}
+      </p>
+      <p className="text-white/70 text-xs leading-snug mt-0.5">
+        {t('settings.reduceMotionDetail')}
+      </p>
+      <div
+        role="radiogroup"
+        aria-labelledby="reduce-motion-title"
+        className="grid grid-cols-3 gap-1.5 mt-2.5"
+      >
+        {options.map(({ value, label }) => {
+          const on = mode === value;
+          return (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={on}
+              onClick={() => setMode(value)}
+              className={`min-h-[44px] rounded-control border text-xs font-bold transition-colors ${
+                on ? OPTION_ON : OPTION_OFF
+              }`}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const SECTION_ICON: Record<Habit, SvgIcon> = {
   salat: MosqueIcon,
   zikr: TasbihIcon,
@@ -478,7 +522,7 @@ function HomeSectionsEditor() {
                 onClick={() => move(h, -1)}
                 disabled={i === 0}
                 aria-label={t('onboarding.moveUp', 'Move {{habit}} up', { habit: name(h) })}
-                className="w-10 h-10 min-h-0 min-w-0 flex items-center justify-center rounded-control text-white/70 hover:bg-white/5 disabled:opacity-30"
+                className="w-11 h-11 min-h-0 min-w-0 flex items-center justify-center rounded-control text-white/70 hover:bg-white/5 disabled:opacity-30"
               >
                 <ChevronUpIcon className="w-4 h-4" aria-hidden="true" />
               </button>
@@ -487,19 +531,22 @@ function HomeSectionsEditor() {
                 onClick={() => move(h, 1)}
                 disabled={i === order.length - 1}
                 aria-label={t('onboarding.moveDown', 'Move {{habit}} down', { habit: name(h) })}
-                className="w-10 h-10 min-h-0 min-w-0 flex items-center justify-center rounded-control text-white/70 hover:bg-white/5 disabled:opacity-30"
+                className="w-11 h-11 min-h-0 min-w-0 flex items-center justify-center rounded-control text-white/70 hover:bg-white/5 disabled:opacity-30"
               >
                 <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
               </button>
-              <input
-                type="checkbox"
-                className="toggle toggle-success toggle-sm shrink-0"
-                checked={on[h]}
-                onChange={(e) => toggle(h, e.target.checked)}
-                aria-label={t('settings.showSection', 'Show {{section}} on Home', {
-                  section: name(h),
-                })}
-              />
+              {/* A 44px label around the small toggle: the whole square taps it */}
+              <label className="w-11 h-11 shrink-0 flex items-center justify-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="toggle toggle-success toggle-sm shrink-0"
+                  checked={on[h]}
+                  onChange={(e) => toggle(h, e.target.checked)}
+                  aria-label={t('settings.showSection', 'Show {{section}} on Home', {
+                    section: name(h),
+                  })}
+                />
+              </label>
             </li>
           );
         })}
@@ -714,12 +761,10 @@ export default function Settings() {
   const { aiEnabled, setAiEnabled } = useAuthStore();
   const updateProfile = useUpdateProfile();
   const {
-    reduceMotion,
     highContrast,
     showNoorAllTime,
     showNoorToday,
     vibrationEnabled,
-    setReduceMotion,
     setHighContrast,
     setShowNoorAllTime,
     setShowNoorToday,
@@ -1331,12 +1376,7 @@ export default function Settings() {
             delay={0.15}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Toggle
-                checked={reduceMotion}
-                onChange={setReduceMotion}
-                title={t('settings.reduceMotion')}
-                detail={t('settings.reduceMotionDetail')}
-              />
+              <ReduceMotionPicker t={t} />
               <Toggle
                 checked={highContrast}
                 onChange={setHighContrast}
@@ -1627,6 +1667,7 @@ export default function Settings() {
                     >
                       <input
                         type="password"
+                        // eslint-disable-next-line jsx-a11y-x/no-autofocus -- appears after the user asks to confirm deletion
                         autoFocus
                         value={reauthPassword}
                         onChange={(e) => setReauthPassword(e.target.value)}

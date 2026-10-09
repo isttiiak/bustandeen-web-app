@@ -11,6 +11,11 @@ interface UiState {
   prefsRevision: number;
   /** Re-read all persisted prefs after sync rewrote localStorage. */
   reloadFromStorage: (remount?: boolean) => void;
+  /** Settings choice (T3.5): 'auto' follows the device's reduce-motion setting */
+  reduceMotionMode: ReduceMotionMode;
+  /** The device asks for reduced motion (prefers-reduced-motion) */
+  osReducedMotion: boolean;
+  /** In force now: 'on', or 'auto' while the device asks for it */
   reduceMotion: boolean;
   highContrast: boolean;
   /** Show all-time Noor in the navbar on every page (default: friends page only) */
@@ -53,7 +58,8 @@ interface UiState {
   setCycleHeightUnit: (val: 'm' | 'ft') => void;
   setCycleWeightUnit: (val: 'kg' | 'lbs') => void;
   setHideBmi: (val: boolean) => void;
-  setReduceMotion: (val: boolean) => void;
+  setReduceMotionMode: (mode: ReduceMotionMode) => void;
+  setOsReducedMotion: (val: boolean) => void;
   setHighContrast: (val: boolean) => void;
   setShowNoorAllTime: (val: boolean) => void;
   setShowNoorToday: (val: boolean) => void;
@@ -67,9 +73,27 @@ interface UiState {
   setDiscreetMode: (val: boolean) => void;
 }
 
+export type ReduceMotionMode = 'auto' | 'on' | 'off';
+
+/** 'on' / 'off' / 'auto'. Before T3.5 the key held '1' (on) or '0' (the
+ * default, never chosen), so '1' stays on and anything else is auto. */
+export function parseReduceMotionMode(raw: string | null): ReduceMotionMode {
+  if (raw === 'on' || raw === '1') return 'on';
+  if (raw === 'off') return 'off';
+  return 'auto';
+}
+
+function osPrefersReducedMotion(): boolean {
+  return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+}
+
+export function effectiveReduceMotion(mode: ReduceMotionMode, os: boolean): boolean {
+  return mode === 'on' || (mode === 'auto' && os);
+}
+
 type StoredPrefs = Pick<
   UiState,
-  | 'reduceMotion'
+  | 'reduceMotionMode'
   | 'highContrast'
   | 'showNoorAllTime'
   | 'showNoorToday'
@@ -92,7 +116,7 @@ type StoredPrefs = Pick<
  * state and again after cross-device sync (utils/prefsSync.ts) rewrites storage. */
 function readStoredPrefs(): StoredPrefs {
   return {
-    reduceMotion: localStorage.getItem('bustandeen_reduce_motion') === '1',
+    reduceMotionMode: parseReduceMotionMode(localStorage.getItem('bustandeen_reduce_motion')),
     highContrast: localStorage.getItem('bustandeen_high_contrast') === '1',
     showNoorAllTime: localStorage.getItem('bustandeen_noor_alltime') === '1',
     showNoorToday: localStorage.getItem('bustandeen_noor_today') === '1',
@@ -115,14 +139,23 @@ function readStoredPrefs(): StoredPrefs {
   };
 }
 
+const initialPrefs = readStoredPrefs();
+const initialOs = osPrefersReducedMotion();
+
 export const useUiStore = create<UiState>((set) => ({
-  ...readStoredPrefs(),
+  ...initialPrefs,
+  osReducedMotion: initialOs,
+  reduceMotion: effectiveReduceMotion(initialPrefs.reduceMotionMode, initialOs),
   prefsRevision: 0,
   reloadFromStorage: (remount) =>
-    set((st) => ({
-      ...readStoredPrefs(),
-      prefsRevision: remount ? st.prefsRevision + 1 : st.prefsRevision,
-    })),
+    set((st) => {
+      const prefs = readStoredPrefs();
+      return {
+        ...prefs,
+        reduceMotion: effectiveReduceMotion(prefs.reduceMotionMode, st.osReducedMotion),
+        prefsRevision: remount ? st.prefsRevision + 1 : st.prefsRevision,
+      };
+    }),
 
   setCycleHeightUnit: (val) => {
     localStorage.setItem('bustandeen_cycle_height_unit', val);
@@ -139,10 +172,19 @@ export const useUiStore = create<UiState>((set) => ({
     set({ hideBmi: !!val });
   },
 
-  setReduceMotion: (val) => {
-    localStorage.setItem('bustandeen_reduce_motion', val ? '1' : '0');
-    set({ reduceMotion: !!val });
+  setReduceMotionMode: (mode) => {
+    localStorage.setItem('bustandeen_reduce_motion', mode);
+    set((st) => ({
+      reduceMotionMode: mode,
+      reduceMotion: effectiveReduceMotion(mode, st.osReducedMotion),
+    }));
   },
+
+  setOsReducedMotion: (val) =>
+    set((st) => ({
+      osReducedMotion: val,
+      reduceMotion: effectiveReduceMotion(st.reduceMotionMode, val),
+    })),
 
   setHighContrast: (val) => {
     localStorage.setItem('bustandeen_high_contrast', val ? '1' : '0');

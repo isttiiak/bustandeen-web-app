@@ -49,7 +49,7 @@ export default function SalatWeekStrip({
                   day: friendlyDate(d.date, t),
                 })}
                 aria-pressed={isSel}
-                className={`flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors ${
+                className={`hit-44 flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors ${
                   isSel
                     ? 'bg-brand-deep border-brand-emerald/50 shadow-elev-1'
                     : 'bg-brand-deep/50 border-brand-border/60 hover:border-brand-emerald/30'

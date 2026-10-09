@@ -25,6 +25,7 @@ import {
   getReciterId,
   setReciterId,
 } from '../utils/quranPrefs.js';
+import ExtLink from './ExtLink.js';
 
 /** FontKind → the PATCH /api/quran/profile field it syncs to. */
 const FONT_SYNC_FIELD = {
@@ -413,14 +414,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                   <Trans
                     i18nKey="quranSettings.textSource"
                     components={{
-                      1: (
-                        <a
-                          href="https://tanzil.net"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="underline"
-                        />
-                      ),
+                      1: <ExtLink href="https://tanzil.net" className="underline" />,
                     }}
                   />
                 </p>

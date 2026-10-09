@@ -118,8 +118,11 @@ export default function ZikrFocusOverlay({
 
               {/* ── Center content — whole area is tappable to count, for
                    eyes-free tasbih; the Count button and auto-play controls
-                   below stop propagation so they don't double-fire. ── */}
+                   below stop propagation so they don't double-fire. A pointer
+                   convenience only (role="presentation"): keyboard and
+                   screen-reader users count with the Count button. ── */}
               <div
+                role="presentation"
                 onClick={onIncrement}
                 className="relative z-10 flex-1 flex flex-col items-center justify-center gap-5 px-6 -mt-6 cursor-pointer"
               >

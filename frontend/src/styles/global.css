@@ -209,6 +209,22 @@ select option {
   border-color: rgba(16, 185, 129, 0.4);
 }
 
+/* 44px touch target without changing the look (audit T3.5, WCAG 2.5.5):
+   a transparent hit area, centred, at least 44x44. Keep the element's own
+   neighbours 44px apart or the areas overlap. */
+.hit-44 {
+  position: relative;
+}
+.hit-44::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
 /* Reduced motion: prefer minimal animations */
 :root[data-reduce-motion] *,
 :root[data-reduce-motion] *::before,

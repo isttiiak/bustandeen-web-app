@@ -34,8 +34,9 @@ export interface ProfileEditFormProps {
  *  date picker's colours follow the theme's color-scheme (styles/global.css). */
 const FIELD =
   'w-full rounded-control border border-brand-border bg-brand-surface/50 text-white placeholder:text-white/50 focus:border-brand-emerald focus:outline-none transition-colors';
-const INPUT = `input input-sm ${FIELD}`;
-const SELECT = `select select-sm ${FIELD}`;
+// h-11: 44px tall, a comfortable tap target (T3.5)
+const INPUT = `input input-sm h-11 ${FIELD}`;
+const SELECT = `select select-sm h-11 ${FIELD}`;
 const LABEL = 'text-white/80 text-sm font-semibold flex items-center gap-1.5 mb-1.5';
 
 export default function ProfileEditForm({

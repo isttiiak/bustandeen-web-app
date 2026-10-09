@@ -217,7 +217,7 @@ export default function LocationPicker({
                     ? t('prayerTimes.placeLookupDevice', 'On this device')
                     : t('prayerTimes.placeLookupOsm', 'OpenStreetMap')}
                 </span>
-                <span className="block text-[11px] mt-0.5 opacity-90">
+                <span className="block text-[11px] mt-0.5">
                   {mode === 'device'
                     ? t('prayerTimes.placeLookupDeviceHint', 'Private, ~1,450 cities')
                     : t('prayerTimes.placeLookupOsmHint', 'Any town or village')}
