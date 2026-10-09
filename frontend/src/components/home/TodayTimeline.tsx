@@ -25,7 +25,7 @@ import {
 } from '../../utils/todayTimeline.js';
 
 const KAZA_BTN =
-  "relative text-[11px] font-bold px-2 py-0.5 rounded-full border border-brand-gold/60 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 motion-safe:animate-soft-glow before:absolute before:-inset-x-2 before:-inset-y-3 before:content-['']";
+  "relative min-h-0 min-w-0 text-[11px] font-bold px-2 py-0.5 rounded-full border border-brand-gold/60 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 motion-safe:animate-soft-glow before:absolute before:-inset-x-2 before:-inset-y-3 before:content-['']";
 
 /**
  * Home's "Today" timeline (T3.4): one compact card per prayer (name, status,
