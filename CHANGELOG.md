@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.112.2 - Calmer "brother or sister" banner - 2026-10-09
+
+### Changed
+
+- **The banner that asks whether you are a brother or a sister** (shown until you choose) has the new look in dark and light: the app's usual buttons, no emoji, a drawn close icon and easier-to-read text. The question is simpler and has no em dash, in English and Bangla. Choosing, skipping and Settings work as before.
+
 ## v5.112.1 - Travel kaza without emoji - 2026-10-09
 
 ### Changed
