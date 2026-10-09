@@ -30,7 +30,9 @@ import {
   getShowSunnahGuide,
   setShowSunnahGuide,
   getShowNaflGuide,
+  getShowSalatAdhkar,
   setShowNaflGuide,
+  setShowSalatAdhkar,
 } from '../utils/salatPrefs.js';
 import { translateReference } from '../utils/localeReference.js';
 import { useSalatDebt, useResetSalat, useResetSalatDebt } from '../hooks/useSalatLog.js';
@@ -53,6 +55,7 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
   const [autoCount, setAutoCount] = useState<boolean>(() => getAutoCountDhikr());
   const [showSunnah, setShowSunnah] = useState<boolean>(() => getShowSunnahGuide());
   const [showNafl, setShowNafl] = useState<boolean>(() => getShowNaflGuide());
+  const [showAdhkar, setShowAdhkar] = useState<boolean>(() => getShowSalatAdhkar());
   const [confirmReset, setConfirmReset] = useState(false);
   const resetSalat = useResetSalat();
   const { data: debt } = useSalatDebt();
@@ -99,6 +102,11 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
   const toggleShowNafl = (value: boolean) => {
     setShowNafl(value);
     setShowNaflGuide(value);
+  };
+
+  const toggleShowAdhkar = (value: boolean) => {
+    setShowAdhkar(value);
+    setShowSalatAdhkar(value);
   };
 
   const handleDebtReset = () => {
@@ -337,6 +345,27 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
                       checked={showNafl}
                       onChange={(e) => toggleShowNafl(e.target.checked)}
                       aria-label={t('salatSettings.naflGuideToggle', 'Nafl guidance')}
+                    />
+                  </label>
+
+                  <label className={`${ITEM} flex items-center gap-3 cursor-pointer`}>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-white text-sm font-semibold">
+                        {t('salatSettings.adhkarToggle', 'Morning and evening adhkār')}
+                      </span>
+                      <span className="block text-white/70 text-xs mt-0.5 leading-snug">
+                        {t(
+                          'salatSettings.adhkarToggleDesc',
+                          'On Fajr until sunrise and on Maghrib until ʿIshāʾ, while their time is open'
+                        )}
+                      </span>
+                    </span>
+                    <input
+                      type="checkbox"
+                      className="toggle toggle-success toggle-sm shrink-0"
+                      checked={showAdhkar}
+                      onChange={(e) => toggleShowAdhkar(e.target.checked)}
+                      aria-label={t('salatSettings.adhkarToggle', 'Morning and evening adhkār')}
                     />
                   </label>
                 </div>

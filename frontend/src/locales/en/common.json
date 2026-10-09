@@ -2533,7 +2533,9 @@
     "tasbihUpdated": "Tasbīḥ counting updated",
     "timesUpdated": "Prayer times updated",
     "title": "Salat settings",
-    "using": "Using"
+    "using": "Using",
+    "adhkarToggle": "Morning and evening adhkār",
+    "adhkarToggleDesc": "On Fajr until sunrise and on Maghrib until ʿIshāʾ, while their time is open"
   },
   "salatTracker": {
     "seoTitle": "Salat Tracker: Log Your 5 Daily Prayers",

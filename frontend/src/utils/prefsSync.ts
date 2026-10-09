@@ -39,6 +39,7 @@ export const SYNCED_KEYS: readonly string[] = [
   'bustandeen_salat_auto_count',
   'bustandeen_show_sunnah_guide',
   'bustandeen_show_nafl_guide',
+  'bustandeen_salat_adhkar',
   'bustandeen_asr_madhab',
   'bustandeen_calc_method',
   'bustandeen_place_lookup',

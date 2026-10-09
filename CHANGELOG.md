@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.122.0 - Adhkār on the Salat tracker - 2026-10-09
+
+### Added
+
+- **Adhkār on the Salat tracker**: the same morning/evening adhkār card as on Home now shows on the tracker while its time is open: on Fajr from Fajr until sunrise, on Maghrib from Maghrib until ʿIshāʾ, on today's view only. It can be turned off in Salat settings → "Morning and evening adhkār" (on by default, synced across devices).
+
 ## v5.121.0 - Compact prayer cards, adhkār in their time, one-tap Kaza - 2026-10-09
 
 ### Changed
