@@ -10,6 +10,7 @@ import feedback from './AdminFeedback.tsx?raw';
 import broadcast from './AdminBroadcast.tsx?raw';
 import compose from './AdminComposeEmail.tsx?raw';
 import zikrRequests from './AdminZikrRequests.tsx?raw';
+import sadaqah from './AdminSadaqah.tsx?raw';
 import updateEmails from '../components/AdminUpdateEmails.tsx?raw';
 
 // T3.2 Admin pages (staff only, English only): one arch hero per screen via
@@ -32,6 +33,7 @@ const FILES: Record<string, string> = {
   AdminComposeEmail: compose,
   AdminZikrRequests: zikrRequests,
   AdminUpdateEmails: updateEmails,
+  AdminSadaqah: sadaqah,
 };
 const SCREENS: Record<string, string> = {
   AdminHome: home,
@@ -43,6 +45,7 @@ const SCREENS: Record<string, string> = {
   AdminBroadcast: broadcast,
   AdminComposeEmail: compose,
   AdminZikrRequests: zikrRequests,
+  AdminSadaqah: sadaqah,
 };
 
 describe('admin screens', () => {
