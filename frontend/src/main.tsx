@@ -15,7 +15,7 @@ import './fonts.js';
 import './styles.css';
 import './styles/global.css';
 import ThemeInit from './components/ThemeInit.js';
-import UiInit from './components/UiInit.js';
+import UiInit, { MotionPrefs } from './components/UiInit.js';
 import ErrorBoundary from './components/ErrorBoundary.js';
 import { idbGet, idbSet, idbRemove } from './utils/idbCache.js';
 import { initPwaUpdates } from './pwaUpdate.js';
@@ -92,13 +92,15 @@ const render = () =>
         }}
       >
         <LazyMotion features={loadMotionFeatures} strict>
-          <BrowserRouter>
-            <ThemeInit />
-            <UiInit />
-            <ErrorBoundary>
-              <App />
-            </ErrorBoundary>
-          </BrowserRouter>
+          <MotionPrefs>
+            <BrowserRouter>
+              <ThemeInit />
+              <UiInit />
+              <ErrorBoundary>
+                <App />
+              </ErrorBoundary>
+            </BrowserRouter>
+          </MotionPrefs>
         </LazyMotion>
         <ReactQueryDevtools initialIsOpen={false} />
       </PersistQueryClientProvider>

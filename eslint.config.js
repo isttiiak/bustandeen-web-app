@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
 import reactHooks from 'eslint-plugin-react-hooks';
+import jsxA11y from 'eslint-plugin-jsx-a11y-x';
 import security from 'eslint-plugin-security';
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import prettierConfig from 'eslint-config-prettier';
@@ -154,6 +155,20 @@ export default [
       // adopting those wholesale would mean refactoring, not linting.
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+    },
+  },
+
+  // Accessibility (audit T3.5, UX-04). The jsx-a11y-x fork: the original
+  // eslint-plugin-jsx-a11y does not support ESLint 10. Recommended set, as
+  // errors; the rendered DOM is also checked by axe in e2e/a11y.spec.ts.
+  {
+    files: ['frontend/src/**/*.tsx'],
+    ...jsxA11y.configs.recommended,
+    rules: {
+      ...jsxA11y.configs.recommended.rules,
+      // Setting rows wrap their toggle in a <label> whose text sits a few
+      // elements deep (title + hint paragraphs); the default depth of 2 misses it.
+      'jsx-a11y-x/label-has-associated-control': ['error', { depth: 4 }],
     },
   },
 ];

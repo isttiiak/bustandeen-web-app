@@ -103,7 +103,6 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
             <input
               id="admin-email"
               type="email"
-              autoFocus
               autoComplete="username"
               value={form.email}
               onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}

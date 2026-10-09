@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.125.0",
+  "version": "5.126.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -48,6 +48,7 @@
     "zustand": "^4.5.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^26.6.4",

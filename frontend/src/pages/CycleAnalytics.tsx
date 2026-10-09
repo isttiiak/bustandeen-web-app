@@ -42,6 +42,7 @@ import { translateReference } from '../utils/localeReference.js';
 import { OfflineQueuedError } from '../utils/syncOutbox.js';
 import { CrescentIcon, FlowerIcon, LeafIcon } from '../components/icons/IslamicIcons.js';
 import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/bustanStyles.js';
+import { useEscapeKey } from '../hooks/useEscapeKey.js';
 
 // Rayhanah privacy rule: these numbers are computed on the device from the
 // user's own cycle data; nothing here is sent to an AI or shown to friends.
@@ -103,6 +104,7 @@ export default function CycleAnalytics() {
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   const [pastOpen, setPastOpen] = useState(false);
+  useEscapeKey(() => setPastOpen(false), pastOpen);
   const [pastStart, setPastStart] = useState('');
   const [pastEnd, setPastEnd] = useState('');
   const [pastType, setPastType] = useState<'hayd' | 'nifas'>('hayd');
@@ -1064,14 +1066,16 @@ export default function CycleAnalytics() {
       {pastOpen &&
         createPortal(
           <div
+            role="presentation"
             className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-4"
-            onClick={() => setPastOpen(false)}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setPastOpen(false);
+            }}
           >
             <div
               className="w-full max-w-sm rounded-card bg-brand-deep border border-brand-pink/40 shadow-elev-3 p-6 space-y-4"
               role="dialog"
               aria-label={t('cycleAnalytics.logPastPeriodTitle', 'Log a past period')}
-              onClick={(e) => e.stopPropagation()}
             >
               <h3 className="font-display text-white font-bold text-xl flex items-center gap-2">
                 <CalendarDaysIcon className="w-6 h-6 text-brand-pink" />

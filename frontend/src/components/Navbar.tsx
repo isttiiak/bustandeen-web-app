@@ -220,7 +220,10 @@ export default function Navbar() {
     <>
       {/* Glass bar (T3.2): content scrolls visibly underneath, so the bar's
           buttons carry their own chip background to stay easy to find. */}
-      <nav className="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+      <nav
+        aria-label={t('common.mainNav')}
+        className="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1"
+      >
         <div className="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
           {/* ── Left: logo + back + title ─────────────────── */}
           <div className="flex items-center gap-0.5 flex-shrink-0 min-w-0">

@@ -44,6 +44,7 @@ import { calcPrayerTimes, formatTime } from '../utils/prayerTimes.js';
 import { celebrateFast } from '../utils/celebrate.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
+import ExtLink from '../components/ExtLink.js';
 
 /**
  * Dedicated Ramadan tracker (v3.1) — the month gets its own home:
@@ -745,19 +746,15 @@ export default function RamadanTracker() {
               i18nKey="ramadan.naflFardNote"
               components={{
                 1: (
-                  <a
-                    className="underline text-brand-gold"
+                  <ExtLink
                     href="https://islamqa.info/en/answers/21364"
-                    target="_blank"
-                    rel="noreferrer"
+                    className="underline text-brand-gold"
                   />
                 ),
                 3: (
-                  <a
-                    className="underline text-brand-gold"
+                  <ExtLink
                     href="https://sunnah.com/bukhari:1899"
-                    target="_blank"
-                    rel="noreferrer"
+                    className="underline text-brand-gold"
                   />
                 ),
               }}
@@ -785,28 +782,19 @@ export default function RamadanTracker() {
                 i18nKey="ramadan.laylatalQadrNote"
                 components={{
                   1: (
-                    <a
-                      className="underline text-brand-gold"
-                      href="https://quran.com/97/3"
-                      target="_blank"
-                      rel="noreferrer"
-                    />
+                    <ExtLink href="https://quran.com/97/3" className="underline text-brand-gold" />
                   ),
                   3: (
-                    <a
-                      className="underline text-brand-gold"
+                    <ExtLink
                       href="https://sunnah.com/bukhari:2017"
-                      target="_blank"
-                      rel="noreferrer"
+                      className="underline text-brand-gold"
                     />
                   ),
                   5: <span className="italic text-white" />,
                   7: (
-                    <a
-                      className="underline text-brand-gold"
+                    <ExtLink
                       href="https://sunnah.com/tirmidhi:3513"
-                      target="_blank"
-                      rel="noreferrer"
+                      className="underline text-brand-gold"
                     />
                   ),
                 }}
@@ -976,11 +964,9 @@ export default function RamadanTracker() {
               i18nKey="ramadan.rayhanahAutoQadaNote"
               components={{
                 1: (
-                  <a
-                    className="underline text-brand-gold"
+                  <ExtLink
                     href="https://sunnah.com/muslim:335"
-                    target="_blank"
-                    rel="noreferrer"
+                    className="underline text-brand-gold"
                   />
                 ),
               }}

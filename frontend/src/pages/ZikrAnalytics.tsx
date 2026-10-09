@@ -51,6 +51,7 @@ import api from '../lib/api.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
 import { getTrackingDay, getTrackingDayMiddayTsDaysBack } from '../utils/trackingDay.js';
 import { formatLocaleDate, formatLocaleTime } from '../utils/localeDate.js';
+import { useEscapeKey } from '../hooks/useEscapeKey.js';
 
 // ─── Manual Entry Modal ───────────────────────────────────────────────────────
 
@@ -241,6 +242,7 @@ function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryMod
                 }}
                 placeholder={t('zikrAnalytics.egAmount')}
                 className="input input-bordered w-full rounded-control bg-brand-surface/50 border-brand-border text-white focus:border-brand-emerald text-lg font-bold"
+                // eslint-disable-next-line jsx-a11y-x/no-autofocus -- opened by the user to type an amount; focus moves into the dialog
                 autoFocus
               />
             </div>
@@ -672,6 +674,7 @@ export default function ZikrAnalytics() {
   const [selectedPeriod, setSelectedPeriod] = useState(7);
   const [activeTab, setActiveTab] = useState<'today' | 'all'>('today');
   const [showGoalModal, setShowGoalModal] = useState(false);
+  useEscapeKey(() => setShowGoalModal(false), showGoalModal);
   const [newGoal, setNewGoal] = useState(100);
   const [newGraceDays, setNewGraceDays] = useState(1);
   const [showManualEntry, setShowManualEntry] = useState(false);
@@ -1297,6 +1300,7 @@ export default function ZikrAnalytics() {
         {showGoalModal &&
           createPortal(
             <div
+              role="presentation"
               className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[70] p-4"
               onClick={(e) => {
                 if (e.target === e.currentTarget) setShowGoalModal(false);

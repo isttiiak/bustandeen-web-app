@@ -60,6 +60,7 @@ function Shell({
   return (
     <section
       data-testid={testId}
+      data-home-section
       aria-label={title}
       className="mb-3 rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 px-4 py-3"
     >

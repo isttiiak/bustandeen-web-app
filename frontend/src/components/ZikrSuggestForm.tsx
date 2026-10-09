@@ -6,12 +6,13 @@ import { LeafIcon } from './icons/IslamicIcons.js';
 import { BTN_PRIMARY, BTN_SECONDARY } from './bustanStyles.js';
 
 const INPUT =
-  'w-full rounded-control border border-brand-border bg-shade/30 px-3 py-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-brand-emerald';
+  'w-full min-h-[44px] rounded-control border border-brand-border bg-shade/30 px-3 py-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-brand-emerald';
 import { useTranslation } from 'react-i18next';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useAddZikrType } from '../hooks/useZikrTypes.js';
 import { useSubmitZikrRequest } from '../hooks/useZikrRequests.js';
 import { LEGACY_NAME_ALIASES } from '../utils/zikrLibrary.js';
+import { useEscapeKey } from '../hooks/useEscapeKey.js';
 
 /**
  * The "suggest a zikr" form, shared by Settings and the counter's "+" modal so
@@ -35,6 +36,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
   const [reqWantsAudio, setReqWantsAudio] = useState(false);
   // Own-list-only add is confirmed in a modal before anything is saved.
   const [showConsent, setShowConsent] = useState(false);
+  useEscapeKey(() => setShowConsent(false), showConsent);
 
   const inList = (name: string) =>
     types.some((n) => {
@@ -188,7 +190,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
             onChange={(e) => setReqSourceUrl(e.target.value)}
           />
         </div>
-        <label className="flex items-center gap-2 text-white/80 text-xs px-1">
+        <label className="flex items-center gap-2 min-h-[44px] text-white/80 text-xs px-1 cursor-pointer">
           <input
             type="checkbox"
             className="checkbox checkbox-xs"
@@ -226,12 +228,14 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
       {showConsent &&
         createPortal(
           <div
+            role="presentation"
             className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm grid place-items-center p-4"
-            onClick={() => setShowConsent(false)}
+            onClick={(e) => {
+              if (e.target === e.currentTarget) setShowConsent(false);
+            }}
           >
             <div
               className="relative w-full max-w-sm rounded-card bg-brand-deep border border-brand-border shadow-elev-3 p-5 pt-6"
-              onClick={(e) => e.stopPropagation()}
               role="alertdialog"
               aria-modal="true"
               aria-label={t('zikrLibrary.consentTitle', 'Before you add this')}

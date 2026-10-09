@@ -47,7 +47,7 @@ export default function DemoSignInGate({
           ) : (
             <div className="text-5xl">{emoji}</div>
           )}
-          <p className="text-white font-black text-lg">{title}</p>
+          <h1 className="text-white font-black text-lg">{title}</h1>
           <p className="text-white/50 text-sm leading-relaxed">{desc}</p>
           <div className="flex flex-col gap-2.5">
             <button

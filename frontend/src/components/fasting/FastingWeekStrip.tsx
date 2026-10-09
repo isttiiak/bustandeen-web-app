@@ -44,7 +44,7 @@ export default function FastingWeekStrip({
               onClick={() => setSelectedDate(d)}
               aria-label={t('fasting.selectDay', 'Select {{day}}', { day: friendlyDate(d, t) })}
               aria-pressed={isSel}
-              className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors ${
+              className={`hit-44 flex-1 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors ${
                 isSel
                   ? 'bg-brand-deep border-brand-emerald/50 shadow-elev-2'
                   : 'bg-brand-deep/60 border-brand-border hover:border-brand-emerald/40'

@@ -169,6 +169,7 @@ function PendingCard({ donation }: { donation: Donation }) {
             <p className="text-white/70 text-sm">{t('common.loading', 'Loading…')}</p>
           ) : (
             <textarea
+              // eslint-disable-next-line jsx-a11y-x/no-autofocus -- appears after the admin asks to edit the email
               autoFocus
               value={emailText}
               onChange={(e) => setEmailText(e.target.value)}

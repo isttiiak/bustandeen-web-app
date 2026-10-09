@@ -814,7 +814,7 @@ export default function SalatTracker() {
           title={t('salatTracker.musafirAria', 'Musafir mode')}
           className={`shrink-0 p-2 rounded-control border transition-colors ${
             musafir
-              ? 'border-brand-info/60 bg-brand-info/20 text-brand-info'
+              ? 'border-brand-info/60 bg-brand-info/10 text-brand-info'
               : 'border-brand-border bg-brand-deep text-white/60 hover:text-brand-info hover:border-brand-info/40'
           }`}
         >
@@ -1099,7 +1099,7 @@ export default function SalatTracker() {
                                     s: 'completed',
                                     Icon: CheckIcon,
                                     label: t('salatTracker.done', 'Done'),
-                                    on: 'bg-brand-emerald/20 border-brand-emerald text-brand-emerald',
+                                    on: 'bg-brand-emerald/10 border-brand-emerald text-brand-emerald',
                                     hover: 'hover:border-brand-emerald/50',
                                   },
                                   {
@@ -1124,7 +1124,7 @@ export default function SalatTracker() {
                                   whileTap={{ scale: 0.92 }}
                                   onClick={() => handleStatus(prayerId, b.s)}
                                   aria-pressed={status === b.s}
-                                  className={`flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-bold border transition-colors ${
+                                  className={`hit-44 flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-bold border transition-colors ${
                                     status === b.s
                                       ? b.on
                                       : `bg-brand-deep border-brand-border text-white/60 hover:text-white ${b.hover}`
@@ -1251,7 +1251,7 @@ export default function SalatTracker() {
                                             aria-pressed={on}
                                             className={`flex items-center gap-1 px-2 py-1 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-semibold border transition-colors ${
                                               on
-                                                ? 'bg-brand-info/20 border-brand-info/60 text-brand-info'
+                                                ? 'bg-brand-info/10 border-brand-info/60 text-brand-info'
                                                 : 'bg-brand-deep border-brand-border text-white/60 hover:text-white'
                                             }`}
                                           >
@@ -1300,7 +1300,7 @@ export default function SalatTracker() {
                                     aria-pressed={!!entry?.tasbeeh}
                                     className={`flex items-center gap-1.5 px-2.5 py-1 rounded-control text-xs font-semibold border transition-colors ${
                                       entry?.tasbeeh
-                                        ? 'bg-brand-info/20 border-brand-info/60 text-brand-info'
+                                        ? 'bg-brand-info/10 border-brand-info/60 text-brand-info'
                                         : 'bg-brand-deep border-brand-border text-white/60 hover:text-white'
                                     }`}
                                   >
@@ -1491,7 +1491,7 @@ export default function SalatTracker() {
                             <span
                               className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-control text-[11px] font-bold border shrink-0 ${
                                 ramadanTodayLog?.tarawih
-                                  ? 'bg-brand-info/20 border-brand-info/50 text-brand-info'
+                                  ? 'bg-brand-info/10 border-brand-info/50 text-brand-info'
                                   : 'bg-brand-deep border-brand-border text-white/60'
                               }`}
                             >

@@ -116,8 +116,10 @@ export default function HifzReviewModal({
             words.map((w, i) => {
               const revealed = i < revealCount || tappedOpen.has(i);
               return (
-                <span
+                <button
+                  type="button"
                   key={i}
+                  aria-pressed={revealed}
                   onClick={() =>
                     setTappedOpen((prev) => {
                       const next = new Set(prev);
@@ -131,7 +133,7 @@ export default function HifzReviewModal({
                   }`}
                 >
                   {w}
-                </span>
+                </button>
               );
             })}
         </div>

@@ -60,6 +60,7 @@ export default function ZikrSetCountModal({
                   }}
                   placeholder={t('zikr.setCountPlaceholder', 'Enter a number')}
                   className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-lg text-center"
+                  // eslint-disable-next-line jsx-a11y-x/no-autofocus -- the dialog's only field; moving focus into a dialog is expected
                   autoFocus
                 />
                 <div className="flex gap-2 mt-4">

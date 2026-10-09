@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useActiveAnnouncement } from '../hooks/useAnnouncement.js';
+import { useEscapeKey } from '../hooks/useEscapeKey.js';
 
 const STATE_KEY = 'bustandeen_announcement_state';
 /** Crossing the banner this many times hides it for HIDE_MS, then it returns. */
@@ -60,6 +61,7 @@ export default function AnnouncementBanner() {
   // Crossed during this page load: hidden until the next reload.
   const [crossed, setCrossed] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  useEscapeKey(() => setDetailsOpen(false), detailsOpen);
 
   if (!announcement || crossed) return null;
 
@@ -120,6 +122,7 @@ export default function AnnouncementBanner() {
       {detailsOpen &&
         createPortal(
           <div
+            role="presentation"
             className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm grid place-items-center p-4"
             onClick={(e) => {
               if (e.target === e.currentTarget) setDetailsOpen(false);

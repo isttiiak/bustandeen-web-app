@@ -204,7 +204,6 @@ export default function AuthSignIn() {
                     className={INPUT}
                     placeholder={t('authSignIn.emailPlaceholder', 'you@example.com')}
                     required
-                    autoFocus
                   />
                 </div>
                 <button

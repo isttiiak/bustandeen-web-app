@@ -205,7 +205,7 @@
     "intentionText": "Worship deserves better than noisy, gamified apps. Bustandeen is calm by design: it counts what you ask it to count, reminds you gently, celebrates sincerely, and never turns your dīn into a game. It is free, has no ads, and never sells your data. Built simply in the hope of being a ṣadaqah jāriyah.",
     "privacyLink": "Privacy",
     "srTitle": "About Bustandeen",
-    "bustandeenDefinition": "A name born of بستان (bustān, garden) and دين (dīn, religion/faith): a garden of faith, tended daily."
+    "bustandeenDefinition": "A name born of <ar>بستان</ar> (bustān, garden) and <ar>دين</ar> (dīn, religion/faith): a garden of faith, tended daily."
   },
   "aiFlair": {
     "whatIsSent": "What is sent?",
@@ -364,7 +364,10 @@
     "today": "Today",
     "until": "until",
     "seeDetails": "See details",
-    "closePermanently": "Close permanently"
+    "closePermanently": "Close permanently",
+    "skipToContent": "Skip to main content",
+    "mainNav": "Main",
+    "footerNav": "Footer"
   },
   "confirmDialog": {
     "yesDelete": "Yes, delete"
@@ -2887,7 +2890,7 @@
     "noorTodayDetail": "Fresh every morning. Resets at midnight",
     "prayerLocation": "Prayer times location",
     "reduceMotion": "Reduce animations",
-    "reduceMotionDetail": "Tone down motion effects and celebrations",
+    "reduceMotionDetail": "Tone down motion effects and celebrations. Auto follows your phone's setting.",
     "restoreBackup": "Restore backup",
     "subtitle": "Everything under your control",
     "title": "Settings",
@@ -2916,7 +2919,10 @@
     "homeTimelineDetail": "Today's five prayers under the arch, with Mark Done and Kaza. The prayer row in the arch always stays.",
     "homeSections": "Home sections",
     "homeSectionsDetail": "A short section for each habit, in this order. The prayer row in the arch always stays.",
-    "showSection": "Show {{section}} on Home"
+    "showSection": "Show {{section}} on Home",
+    "reduceMotionAuto": "Auto",
+    "reduceMotionOn": "On",
+    "reduceMotionOff": "Off"
   },
   "specialDays": {
     "arafah": {
@@ -3387,7 +3393,8 @@
     "seoDescription": "Free online tasbih counter for SubhanAllah, Alhamdulillah, Allahu Akbar and custom zikr. Set daily goals, build streaks, and track your dhikr with authentic references.",
     "a11y": {
       "closeSettings": "Close zikr settings",
-      "settings": "Zikr settings"
+      "settings": "Zikr settings",
+      "goalReached": "Daily goal reached"
     },
     "addCustom": "Suggest a Dhikr",
     "addCustomDhikr": "Add custom dhikr",
