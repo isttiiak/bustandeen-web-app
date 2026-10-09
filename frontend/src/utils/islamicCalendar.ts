@@ -58,7 +58,7 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
       },
       {
         action: 'Send abundant ṣalawāt on the Prophet ﷺ',
-        note: 'At least 80×, especially after Asr',
+        note: 'As much as you can, as he ﷺ asked (Sunan Abū Dāwūd 1047)',
       },
       {
         action: "Make du'ā between Asr and Maghrib",
@@ -126,14 +126,14 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     ],
     references: [
       {
-        text: '"Those are two days on which deeds are presented to the Lord of the Worlds, and I like for my deeds to be presented when I am fasting." · Ṣaḥīḥ Muslim 1162',
-        url: 'https://sunnah.com/muslim:1162',
-        grade: 'Ṣaḥīḥ',
+        text: '"Deeds are presented on Monday and Thursday, and I love that my deeds be presented while I am fasting." · Sunan al-Tirmidhī 747',
+        url: 'https://sunnah.com/tirmidhi:747',
+        grade: 'Ḥasan (Darussalam); Ṣaḥīḥ per al-Albānī',
       },
       {
         text: '"The du\'ā of a fasting person at the time of breaking fast is not rejected." · Sunan Ibn Mājah 1753',
         url: 'https://sunnah.com/ibnmajah:1753',
-        grade: 'Ḥasan',
+        grade: 'Ḥasan (Darussalam); Ḍaʿīf per al-Albānī',
       },
     ],
   },
@@ -328,8 +328,8 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     ],
     references: [
       {
-        text: 'Eid prayer and its rulings · Ṣaḥīḥ al-Bukhārī 950',
-        url: 'https://sunnah.com/bukhari:950',
+        text: '"The Messenger of Allah ﷺ, Abū Bakr and \'Umar used to offer the two Eid prayers before the khuṭbah." · Ṣaḥīḥ al-Bukhārī 963',
+        url: 'https://sunnah.com/bukhari:963',
         grade: 'Ṣaḥīḥ',
       },
       {
@@ -398,7 +398,10 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
       },
       { action: 'Recite the Quran extensively throughout the night', note: '' },
       { action: 'Make abundant istighfār, ṣalawāt, and dhikr', note: '' },
-      { action: 'Give ṣadaqah: multiplied infinitely on this night', note: '' },
+      {
+        action: 'Give ṣadaqah: this night is better than a thousand months (Quran 97:3)',
+        note: '',
+      },
       { action: 'Pray Fajr in congregation, completing the night', note: '' },
     ],
     references: [
@@ -442,9 +445,9 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     ],
     references: [
       {
-        text: '"Allah looks down on the night of the 15th of Sha\'bān and forgives all His creation except a mushrik or a spiteful person." · Sunan Ibn Mājah 1389',
-        url: 'https://sunnah.com/ibnmajah:1389',
-        grade: 'Graded Ṣaḥīḥ by al-Albānī',
+        text: '"Allah looks down on the night of the 15th of Sha\'bān and forgives all His creation except a mushrik or a spiteful person." · Sunan Ibn Mājah 1390',
+        url: 'https://sunnah.com/ibnmajah:1390',
+        grade: 'Ḥasan per al-Albānī; Ḍaʿīf (Darussalam)',
       },
       {
         text: "Scholarly discussion on Sha'bān 15 · see Ibn Rajab's Laṭā'if al-Ma'ārif",

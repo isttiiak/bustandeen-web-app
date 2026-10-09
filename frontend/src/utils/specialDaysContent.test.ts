@@ -8,7 +8,9 @@ import { SPECIAL_DAYS } from './islamicCalendar.js';
 // dashes were replaced (2026-10-09). The fingerprints below hash each day's
 // words with punctuation and case removed, so a punctuation-only edit keeps
 // them; changing a word fails here on purpose. Religious text: re-verify the
-// source before updating a fingerprint.
+// source before updating a fingerprint. Updated 2026-10-09 for the verified
+// citation fixes (Tirmidhī 747, Bukhārī 963, Ibn Mājah 1390, grade notes,
+// Friday ṣalawāt note, Laylat al-Qadr ṣadaqah line from 97:3).
 type Dict = Record<string, unknown>;
 
 const strings = (v: unknown): string[] =>
@@ -43,12 +45,12 @@ const FINGERPRINTS = {
     ayyam_al_bid: '6367346e',
     dhul_hijjah_first10: 'ab0ac40d',
     eid_adha: '45e163cc',
-    eid_fitr: 'e5049ad9',
-    fast_mon_thu: 'bddd02e4',
-    friday: '03713dea',
+    eid_fitr: 'fae33661',
+    fast_mon_thu: 'd5f918b7',
+    friday: '9c77c04e',
     islamic_new_year: 'b32b49f8',
-    laylat_qadr: '0f0c3039',
-    shab_e_barat: '905ca13b',
+    laylat_qadr: 'fa72e189',
+    shab_e_barat: 'c4364e98',
     typeBadge: '5bfd8f7e',
   },
   bn: {
@@ -57,12 +59,12 @@ const FINGERPRINTS = {
     ayyam_al_bid: 'c7270a69',
     dhul_hijjah_first10: '30f585bf',
     eid_adha: 'df65baf6',
-    eid_fitr: '9b50bb8c',
-    fast_mon_thu: 'fb992a62',
-    friday: '0844a997',
+    eid_fitr: 'f8dd1b3b',
+    fast_mon_thu: 'b4698aeb',
+    friday: 'fe5a21ed',
     islamic_new_year: '32540f2b',
-    laylat_qadr: '15a9807e',
-    shab_e_barat: '72b2caae',
+    laylat_qadr: '2b2c86cd',
+    shab_e_barat: 'b8e7b46a',
     typeBadge: '6ccd5a4d',
   },
 } as const;
