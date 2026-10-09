@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.112.1 - Travel kaza without emoji - 2026-10-09
+
+### Changed
+
+- **The travel kaza card on Salat** shows drawn icons instead of emoji: each prayer's own glyph, a briefcase, scissors on the shortened prayers, a check on "Made up" and a book for the evidence. Its text is easier to read on the light theme. Rakʿah counts, the rule choice and making up a prayer work as before.
+
 ## v5.112.0 - Friend invites and streak badges in the Bustan Arch design - 2026-10-09
 
 ### Changed
