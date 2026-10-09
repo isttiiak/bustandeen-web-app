@@ -14,6 +14,15 @@ import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { celebrateSmall } from '../utils/celebrate.js';
 import { DisclosureLabel } from './salat/salatParts.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+import { PrayerGlyph, DuaHandsIcon } from './icons/IslamicIcons.js';
+import {
+  ArrowTopRightOnSquareIcon,
+  BookOpenIcon,
+  BriefcaseIcon,
+  CheckIcon,
+  ChevronDownIcon,
+  ScissorsIcon,
+} from '@heroicons/react/24/outline';
 import {
   useMusafir,
   getMusafirHistory,
@@ -29,13 +38,6 @@ import {
   type TravelKazaRule,
 } from '../utils/musafir.js';
 
-const PRAYER_ICON: Record<PrayerId, string> = {
-  fajr: '🌅',
-  dhuhr: '☀️',
-  asr: '🌤️',
-  maghrib: '🌆',
-  isha: '🌙',
-};
 const INITIAL_ROWS = 6;
 
 /**
@@ -91,7 +93,7 @@ export default function TravelKazaCard() {
         onSuccess: () => {
           celebrateSmall();
           toast.success(t('travelKaza.paid', 'Made up. May Allah accept it.'), {
-            icon: '🤲',
+            icon: <DuaHandsIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />,
             id: 'travel-kaza-paid',
           });
         },
@@ -116,25 +118,25 @@ export default function TravelKazaCard() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       layout
-      className="rounded-2xl border border-brand-info/40 bg-brand-info/[0.08] overflow-hidden"
+      className="rounded-card border border-brand-info/40 bg-brand-info/[0.08] overflow-hidden"
     >
       <button
         onClick={() => setExpanded((v) => !v)}
         aria-expanded={expanded}
         className="w-full p-3.5 flex items-center gap-3 text-left"
       >
-        <span className="text-2xl shrink-0">🧳</span>
+        <BriefcaseIcon className="w-6 h-6 shrink-0 text-brand-info" aria-hidden="true" />
         <span className="min-w-0 flex-1">
           <span className="block font-bold text-sm leading-none text-brand-info">
             {t('travelKaza.title', 'Travel kaza')}
           </span>
-          <span className="block text-white/50 text-xs mt-1 leading-snug">
+          <span className="block text-white/70 text-xs mt-1 leading-snug">
             {t('travelKaza.summary', '{{count}} missed on a journey · made up as travel prayers', {
               count: travelUnits.length,
             })}
           </span>
         </span>
-        <span className="text-white/50 text-xs shrink-0">
+        <span className="text-white/70 text-xs shrink-0">
           <DisclosureLabel open={expanded} />
         </span>
       </button>
@@ -149,10 +151,10 @@ export default function TravelKazaCard() {
             className="overflow-hidden border-t border-brand-info/15"
           >
             <div className="p-3.5 space-y-3">
-              {/* How many rak'ahs — the one real choice here */}
+              {/* How many rak'ahs: the one real choice here */}
               {shortenedCount > 0 &&
                 (travelling ? (
-                  <p className="rounded-xl bg-brand-info/10 border border-brand-info/25 px-3 py-2 text-xs text-white/70 leading-relaxed">
+                  <p className="rounded-control bg-brand-info/10 border border-brand-info/25 px-3 py-2 text-xs text-white/70 leading-relaxed">
                     {t(
                       'travelKaza.stillTravelling',
                       'You are still travelling, so a missed Ẓuhr, ʿAṣr or ʿIshāʾ is made up as 2 rakʿahs. Scholars agree on this.'
@@ -160,7 +162,7 @@ export default function TravelKazaCard() {
                   </p>
                 ) : (
                   <div>
-                    <p className="text-white/60 text-xs font-bold">
+                    <p className="text-white/70 text-xs font-bold">
                       {t(
                         'travelKaza.ruleLabel',
                         'Now that you are home, make up Ẓuhr, ʿAṣr and ʿIshāʾ as:'
@@ -185,18 +187,18 @@ export default function TravelKazaCard() {
                           key={id}
                           onClick={() => chooseRule(id)}
                           aria-pressed={rule === id}
-                          className={`text-left rounded-xl border px-3 py-2 transition-all ${
+                          className={`text-left rounded-control border px-3 py-2 transition-all ${
                             rule === id
                               ? 'bg-brand-info/20 border-brand-info/60'
-                              : 'bg-brand-deep border-brand-border hover:border-white/25'
+                              : 'bg-brand-deep border-brand-border hover:border-brand-info/40'
                           }`}
                         >
                           <span
-                            className={`block text-sm font-black ${rule === id ? 'text-brand-info' : 'text-white/75'}`}
+                            className={`block text-sm font-bold ${rule === id ? 'text-brand-info' : 'text-white/75'}`}
                           >
                             {label}
                           </span>
-                          <span className="block text-white/40 text-[10px] mt-0.5">{who}</span>
+                          <span className="block text-white/70 text-[10px] mt-0.5">{who}</span>
                         </button>
                       ))}
                     </div>
@@ -212,34 +214,45 @@ export default function TravelKazaCard() {
                   return (
                     <li
                       key={key}
-                      className="flex items-center gap-2.5 rounded-xl bg-shade/20 border border-white/5 px-3 py-2"
+                      className="flex items-center gap-2.5 rounded-control bg-shade/20 border border-brand-border px-3 py-2"
                     >
-                      <span className="text-lg shrink-0">{PRAYER_ICON[u.prayer]}</span>
+                      <PrayerGlyph
+                        id={u.prayer}
+                        className="w-5 h-5 shrink-0 text-brand-gold"
+                        aria-hidden="true"
+                      />
                       <span className="min-w-0 flex-1">
                         <span className="block text-white/85 text-sm font-bold leading-tight">
                           {translateSalatName(u.prayer, u.prayer, t)}
                         </span>
-                        <span className="block text-white/35 text-[11px]">
+                        <span className="block text-white/70 text-[11px]">
                           {fmtDate(u.missedDate)}
                         </span>
                       </span>
                       <span
-                        className={`shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-md whitespace-nowrap ${
+                        className={`shrink-0 inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md whitespace-nowrap ${
                           shortened
                             ? 'bg-brand-info/20 text-brand-info'
-                            : 'bg-white/10 text-white/50'
+                            : 'bg-shade/20 text-white/70'
                         }`}
                       >
-                        {shortened ? '✂️ ' : ''}
+                        {shortened && <ScissorsIcon className="w-3 h-3" aria-hidden="true" />}
                         {t('travelKaza.rakat', '{{n}} rakʿah', { n: formatLocaleNumber(rakat) })}
                       </span>
                       <motion.button
                         whileTap={{ scale: 0.9 }}
                         disabled={paying !== null}
                         onClick={() => madeUp(u.prayer, u.missedDate)}
-                        className="shrink-0 px-2.5 py-1 rounded-lg text-xs font-bold bg-brand-emerald/15 border border-brand-emerald/50 text-brand-emerald hover:bg-brand-emerald/25 disabled:opacity-40"
+                        className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 rounded-control text-xs font-bold bg-brand-emerald/15 border border-brand-emerald/50 text-brand-emerald hover:bg-brand-emerald/25 disabled:opacity-40"
                       >
-                        {paying === key ? '…' : t('travelKaza.madeUp', '✓ Made up')}
+                        {paying === key ? (
+                          '…'
+                        ) : (
+                          <>
+                            <CheckIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                            {t('travelKaza.madeUp', 'Made up')}
+                          </>
+                        )}
                       </motion.button>
                     </li>
                   );
@@ -248,7 +261,7 @@ export default function TravelKazaCard() {
               {travelUnits.length > INITIAL_ROWS && (
                 <button
                   onClick={() => setShowAll((v) => !v)}
-                  className="text-brand-info/70 hover:text-brand-info text-xs underline underline-offset-2"
+                  className="text-brand-info hover:brightness-110 text-xs underline underline-offset-2"
                 >
                   {showAll
                     ? t('travelKaza.showLess', 'Show fewer')
@@ -256,21 +269,26 @@ export default function TravelKazaCard() {
                 </button>
               )}
 
-              <p className="text-white/35 text-[11px] leading-relaxed">
+              <p className="text-white/70 text-[11px] leading-relaxed">
                 {t(
                   'travelKaza.fromHomeNote',
                   'Only prayers missed on a journey are listed here, and each is also part of the Kaza Debt total above. Prayers owed from home stay in full (4 rakʿahs), even when made up on a journey.'
                 )}
               </p>
 
-              {/* Why — the evidence, and an honest note on where it comes from */}
-              <div className="border-t border-white/10 pt-2.5">
+              {/* Why: the evidence, and an honest note on where it comes from */}
+              <div className="border-t border-brand-border pt-2.5">
                 <button
                   onClick={() => setShowWhy((v) => !v)}
                   aria-expanded={showWhy}
-                  className="text-white/50 hover:text-white/80 text-xs font-bold"
+                  className="inline-flex items-center gap-1.5 text-white/70 hover:text-white text-xs font-bold"
                 >
-                  📖 {t('travelKaza.why', 'Why? The evidence')} {showWhy ? '▲' : '▼'}
+                  <BookOpenIcon className="w-4 h-4" aria-hidden="true" />
+                  {t('travelKaza.why', 'Why? The evidence')}
+                  <ChevronDownIcon
+                    className={`w-3 h-3 transition-transform ${showWhy ? 'rotate-180' : ''}`}
+                    aria-hidden="true"
+                  />
                 </button>
                 <AnimatePresence>
                   {showWhy && (
@@ -280,7 +298,7 @@ export default function TravelKazaCard() {
                       exit={{ height: 0, opacity: 0 }}
                       className="overflow-hidden"
                     >
-                      <p className="text-white/55 text-xs leading-relaxed mt-2">
+                      <p className="text-white/70 text-xs leading-relaxed mt-2">
                         {t(
                           'travelKaza.whyNote',
                           'No hadith names this exact case. The rule every school builds on: a missed prayer is prayed when remembered, as it was owed. On a journey, Fajr missed in sleep was prayed “just as he did every day”. So on the road it is 2; at home the schools differ, as above.'
@@ -298,10 +316,11 @@ export default function TravelKazaCard() {
                               href={r.url}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-block mt-0.5 text-[11px] text-brand-info/60 hover:text-brand-info underline underline-offset-2"
+                              className="inline-flex items-center gap-1 mt-0.5 text-[11px] text-brand-info hover:brightness-110 underline underline-offset-2"
                             >
                               {translateReference(r.source, lang)}
-                              {r.grade !== 'Quran' && ` · ${translateReference(r.grade, lang)}`} ↗
+                              {r.grade !== 'Quran' && ` · ${translateReference(r.grade, lang)}`}
+                              <ArrowTopRightOnSquareIcon className="w-3 h-3" aria-hidden="true" />
                             </a>
                           </div>
                         ))}
