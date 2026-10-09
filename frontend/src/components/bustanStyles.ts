@@ -24,6 +24,11 @@ export const BTN_PRIMARY =
 export const BTN_SECONDARY =
   'inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors';
 
+/** A chosen / not chosen option tile or chip (Settings, Library, Share āyah). */
+export const OPTION_ON = 'bg-brand-emerald/10 border-brand-emerald text-white';
+export const OPTION_OFF =
+  'bg-brand-surface/50 border-brand-border text-white/80 hover:text-white hover:border-brand-emerald/40';
+
 /** A citation link under a virtue or note. */
 export const REF_LINK =
   'inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2';

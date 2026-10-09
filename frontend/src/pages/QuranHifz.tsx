@@ -23,6 +23,7 @@ import { formatLocaleNumber } from '../utils/localeDate.js';
 import {
   AcademicCapIcon,
   ArrowPathIcon,
+  ChevronRightIcon,
   FireIcon,
   PlusCircleIcon,
   Squares2X2Icon,
@@ -255,11 +256,16 @@ export default function QuranHifz() {
           )}
           <button
             onClick={() => setPickerOpen((v) => !v)}
-            className="mt-3 text-brand-emerald text-xs font-bold"
+            aria-expanded={pickerOpen}
+            className="mt-3 inline-flex items-center gap-1 text-brand-emerald text-xs font-bold"
           >
             {pickerOpen
               ? t('hifz.hidePicker', 'Hide')
-              : t('hifz.pickDifferent', 'Pick a specific āyah instead →')}
+              : t('hifz.pickDifferent', 'Pick a specific āyah instead')}
+            <ChevronRightIcon
+              className={`w-3.5 h-3.5 transition-transform ${pickerOpen ? 'rotate-90' : ''}`}
+              aria-hidden="true"
+            />
           </button>
           {pickerOpen && (
             <div className="mt-3 p-3 rounded-control bg-shade/10 border border-brand-border flex flex-wrap items-end gap-2">
