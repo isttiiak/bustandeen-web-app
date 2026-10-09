@@ -267,6 +267,19 @@ export function CompassIcon(p: IconProps) {
   );
 }
 
+/** A medallion: a ringed eight-point star, for the 99 Names (Asmāʾ al-Ḥusnā).
+ *  Deliberately not a sparkle, which marks the Naseeh AI. */
+export function NamesMedallionIcon(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <circle cx="12" cy="12" r="9.5" />
+      <rect x="8.2" y="8.2" width="7.6" height="7.6" />
+      <rect x="8.2" y="8.2" width="7.6" height="7.6" transform="rotate(45 12 12)" />
+      <circle cx="12" cy="12" r="1.3" />
+    </Svg>
+  );
+}
+
 /** The Kaaba: a cube with its gold band (kiswah belt) and door. */
 export function KaabaIcon(p: IconProps) {
   return (

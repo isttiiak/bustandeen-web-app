@@ -11,13 +11,14 @@
 // T3.2: theme tokens and line icons (no emoji), shared with the landing body.
 
 import type { ComponentType } from 'react';
-import { CalculatorIcon, CalendarDaysIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { CalculatorIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
 import {
   CompassIcon,
   CrescentIcon,
   DuaHandsIcon,
   FajrIcon,
   MaghribIcon,
+  NamesMedallionIcon,
   type IconProps,
 } from './icons/IslamicIcons.js';
 import { CARD } from './bustanStyles.js';
@@ -89,7 +90,7 @@ const TOOL_LINKS: {
     href: '/asma-ul-husna',
     key: 'landing.tools.asma',
     fallback: 'The 99 Names of Allah',
-    Icon: SparklesIcon,
+    Icon: NamesMedallionIcon,
   },
   {
     href: '/hijri-date-converter',

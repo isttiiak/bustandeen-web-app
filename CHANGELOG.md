@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.120.0 - Home arch polish and a navbar theme switch - 2026-10-09
+
+### Changed
+
+- **Home arch**: today's date (with the Hijri date) now sits at the top of the arch instead of the navbar. The countdown belongs to the prayer on now, so it moved next to it, above the line; the line now separates the current prayer from the next one.
+- **ʿIshāʾ countdown**: until the middle of the night it reads "Best until 23:40" and "Best time: 3h 40m left", after Sahih Muslim 612a (the time of ʿIshāʾ is up to the middle of the night). After that it no longer says "best" and counts down to Fajr. Before, the countdown disappeared between Islamic midnight and civil midnight.
+- **Navbar**: a small Light/Dark switch next to the language button. It sets the Settings theme mode (System and Follow daylight stay in Settings → Appearance).
+- **Settings**: the email is no longer shown in the Settings arch. The Language section now says the whole app is in English and বাংলা (Naseeh replies in English only).
+- **99 Names of Allah** in the Library, the landing tools and the zikr categories use a medallion icon instead of the sparkles that mark the AI companion.
+
 ## v5.119.0 - Home: today, prayer by prayer - 2026-10-09
 
 ### Changed

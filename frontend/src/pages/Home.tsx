@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
 import {
   MapPinIcon,
@@ -9,7 +9,6 @@ import {
   BriefcaseIcon,
   BookOpenIcon,
   UserGroupIcon,
-  SparklesIcon,
   CalculatorIcon,
   NoSymbolIcon,
   ClockIcon,
@@ -21,6 +20,7 @@ import {
   FlowerIcon,
   LeafIcon,
   MosqueIcon,
+  NamesMedallionIcon,
   OrnamentDivider,
   PrayerGlyph,
   Star8Icon,
@@ -54,9 +54,14 @@ import {
   PRAYER_META,
   translateSalatName,
 } from '../utils/prayerTimes.js';
-import { formatLocaleNumber } from '../utils/localeDate.js';
+import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
-import { isFriday, getTodaySpecialDays } from '../utils/islamicCalendar.js';
+import {
+  formatHijriDate,
+  getHijriToday,
+  getTodaySpecialDays,
+  isFriday,
+} from '../utils/islamicCalendar.js';
 import { getTodaySadaqahVirtueDay } from '../utils/sadaqahVirtueDays.js';
 import { useCycleActive, useCycleSummary } from '../hooks/useCycle.js';
 import { useUiStore } from '../store/useUiStore.js';
@@ -373,6 +378,52 @@ export default function Home() {
   const prayerName = (id: string) =>
     translateSalatName(id, PRAYER_META.find((p) => p.id === id)?.name ?? '', t);
 
+  // Today's date lives in the arch (it used to sit in the navbar).
+  const hijriToday = (() => {
+    const h = getHijriToday();
+    return h ? formatHijriDate(h) : null;
+  })();
+  const todayDate = (
+    <p className="text-[11px] text-white/60 font-medium">
+      {formatLocaleDate(prayerNow, { weekday: 'short', month: 'short', day: 'numeric' })}
+      {hijriToday && (
+        <>
+          <span aria-hidden> · </span>
+          <span className="text-brand-gold/90">{hijriToday}</span>
+        </>
+      )}
+    </p>
+  );
+
+  // The countdown belongs to what is on now, so it sits with it, above the
+  // line that separates "now" from "next". ʿIshāʾ: the preferred time runs to
+  // Islamic midnight (Sahih Muslim 612a), then it counts down to Fajr.
+  const hasCountdown =
+    !!prayerWidgetData && (prayerWidgetData.endHh > 0 || prayerWidgetData.endMm > 0);
+  const countdown = prayerWidgetData && hasCountdown && (
+    <p className="text-sm text-white/70 mt-1">
+      {prayerWidgetData.ishaBest ? (
+        <Trans
+          i18nKey="home.bestTimeLeft"
+          defaults="Best time: <1>{{left}}</1> left"
+          values={{ left: ends(prayerWidgetData.endHh, prayerWidgetData.endMm) }}
+          components={{ 1: <b className="tabular-nums text-brand-gold" /> }}
+        />
+      ) : (
+        <>
+          {t('home.endsIn')}{' '}
+          <b
+            className={`tabular-nums ${
+              prayerWidgetData.forbiddenWindow ? 'text-red-400' : 'text-brand-gold'
+            }`}
+          >
+            {ends(prayerWidgetData.endHh, prayerWidgetData.endMm)}
+          </b>
+        </>
+      )}
+    </p>
+  );
+
   const library = [
     {
       Icon: DuaHandsIcon,
@@ -387,7 +438,7 @@ export default function Home() {
       subtitle: t('home.libraryAdhkarSubtitle'),
     },
     {
-      Icon: SparklesIcon,
+      Icon: NamesMedallionIcon,
       to: '/library/asma-ul-husna',
       title: t('home.libraryAsmaTitle'),
       subtitle: t('home.libraryAsmaSubtitle'),
@@ -626,6 +677,7 @@ export default function Home() {
         {prayerWidgetData ? (
           <ArchShell pills={archPills} label={t('nav.prayerTimes')}>
             <div className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-8 pb-5 text-center group-hover:border-brand-emerald/40 transition-colors">
+              <div className="mb-2">{todayDate}</div>
               {prayerWidgetData.forbiddenWindow ? (
                 <>
                   <NoSymbolIcon className="w-7 h-7 mx-auto text-red-400" />
@@ -639,6 +691,7 @@ export default function Home() {
                     {t('common.ends')} {formatTime(prayerWidgetData.forbiddenWindow.end)} ·{' '}
                     {t('home.noPrayer')}
                   </p>
+                  {countdown}
                 </>
               ) : prayerWidgetData.currentMandatory ? (
                 <>
@@ -653,8 +706,17 @@ export default function Home() {
                     {prayerName(prayerWidgetData.currentMandatory)}
                   </p>
                   <p className="text-white/60 text-sm mt-1">
-                    {t('common.ends')} {formatTime(prayerWidgetData.currentMandatoryEnd!)}
+                    {prayerWidgetData.ishaBest
+                      ? t('home.bestUntil', 'Best until {{time}}', {
+                          time: formatTime(prayerWidgetData.currentMandatoryEnd!),
+                        })
+                      : prayerWidgetData.ishaBest === false
+                        ? t('home.endsAtFajr', 'Ends at Fajr, {{time}}', {
+                            time: formatTime(prayerWidgetData.currentMandatoryEnd!),
+                          })
+                        : `${t('common.ends')} ${formatTime(prayerWidgetData.currentMandatoryEnd!)}`}
                   </p>
+                  {countdown}
                   {/* Nafl alongside mandatory (Awabeen during Maghrib, Tahajjud during Isha) */}
                   {prayerWidgetData.naflWindow && (
                     <p className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 rounded-full border border-brand-warm/30 text-brand-warm text-xs font-semibold">
@@ -689,6 +751,7 @@ export default function Home() {
                     {formatTime(prayerWidgetData.naflWindow.start)} -{' '}
                     {formatTime(prayerWidgetData.naflWindow.end)}
                   </p>
+                  {countdown}
                 </>
               ) : (
                 <>
@@ -702,20 +765,8 @@ export default function Home() {
                 </>
               )}
 
-              {/* Ends in, and the next mandatory prayer */}
+              {/* The line separates what is on now from the next prayer */}
               <div className="mt-4 pt-3 border-t border-brand-border/70 flex flex-col items-center gap-1 text-sm">
-                {(prayerWidgetData.endHh > 0 || prayerWidgetData.endMm > 0) && (
-                  <span className="text-white/60">
-                    {t('home.endsIn')}{' '}
-                    <b
-                      className={`tabular-nums ${
-                        prayerWidgetData.forbiddenWindow ? 'text-red-400' : 'text-brand-gold'
-                      }`}
-                    >
-                      {ends(prayerWidgetData.endHh, prayerWidgetData.endMm)}
-                    </b>
-                  </span>
-                )}
                 <span className="inline-flex flex-wrap items-center justify-center gap-x-1.5 text-white/60">
                   <PrayerGlyph
                     id={prayerWidgetData.nextMandatory}
@@ -779,6 +830,7 @@ export default function Home() {
            * from this button: the user should see and choose between both
            * options before any permission dialog appears. */
           <Link to="/prayer-times" className="block mb-4">
+            <div className="mb-2 text-center">{todayDate}</div>
             <div className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-card border border-dashed border-brand-border bg-brand-deep hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
               <div className="flex items-center gap-3 min-w-0">
                 <MapPinIcon className="w-6 h-6 text-brand-emerald shrink-0" />

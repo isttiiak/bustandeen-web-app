@@ -270,6 +270,33 @@ export function getPrayerEndTime(prayer: PrayerKey, times: PrayerTimesResult): D
   }
 }
 
+export interface IshaPhase {
+  /** True before Islamic midnight: the preferred (ikhtiyārī) time. */
+  best: boolean;
+  /** Islamic midnight while `best`, else the Fajr that closes ʿIshāʾ. */
+  end: Date;
+}
+
+/**
+ * Where we are inside ʿIshāʾ. Its preferred time runs to the middle of the
+ * night (Sahih Muslim 612a/612d, ʿAbdullāh ibn ʿAmr: "the time of ʿIshāʾ is
+ * up to the middle of the night"), the midpoint between ʿIshāʾ and the next
+ * Fajr, as `getPrayerEndTime('isha')` computes it; after that it is still
+ * ʿIshāʾ until Fajr. Works on both sides of civil midnight: before today's
+ * Fajr the night began with yesterday's ʿIshāʾ.
+ */
+export function getIshaPhase(times: PrayerTimesResult, now: Date): IshaPhase {
+  const DAY = 86_400_000;
+  const [start, fajr] =
+    now < times.fajr
+      ? [times.isha.getTime() - DAY, times.fajr.getTime()]
+      : [times.isha.getTime(), times.fajr.getTime() + DAY];
+  const midnight = (start + fajr) / 2;
+  return now.getTime() < midnight
+    ? { best: true, end: new Date(midnight) }
+    : { best: false, end: new Date(fajr) };
+}
+
 /** Current mandatory prayer period (null if between periods or in a forbidden window) */
 function getCurrentMandatoryPeriod(times: PrayerTimesResult, now: Date): PrayerKey | null {
   // Before today's Fajr → we are in last night's Isha period (valid until Fajr)
@@ -305,6 +332,8 @@ export interface MandatoryWidgetData {
   forbiddenWindow: ForbiddenWindow | null;
   currentMandatory: PrayerKey | null;
   currentMandatoryEnd: Date | null;
+  /** Set while the current prayer is ʿIshāʾ (see getIshaPhase). */
+  ishaBest: boolean | null;
   naflWindow: NaflWindow | null;
   nextMandatory: PrayerKey;
   nextMandatoryTime: Date;
@@ -322,12 +351,10 @@ export function getMandatoryWidget(
   const forbiddenWindow = forbidden.find((w) => now >= w.start && now < w.end) ?? null;
 
   const currentMandatory = getCurrentMandatoryPeriod(times, now);
-  // Before Fajr we are in last night's Isha — it ends at today's Fajr, not at
-  // tonight's Islamic midnight (which getPrayerEndTime would compute).
+  // ʿIshāʾ counts down to Islamic midnight (its preferred time), then to Fajr.
+  const isha = currentMandatory === 'isha' ? getIshaPhase(times, now) : null;
   const currentMandatoryEnd = currentMandatory
-    ? currentMandatory === 'isha' && now < times.fajr
-      ? times.fajr
-      : getPrayerEndTime(currentMandatory, times)
+    ? (isha?.end ?? getPrayerEndTime(currentMandatory, times))
     : null;
   const naflWindow = getCurrentNaflWindow(times, now);
 
@@ -339,6 +366,7 @@ export function getMandatoryWidget(
     forbiddenWindow,
     currentMandatory,
     currentMandatoryEnd,
+    ishaBest: isha ? isha.best : null,
     naflWindow,
     nextMandatory: next.id,
     nextMandatoryTime: next.time,

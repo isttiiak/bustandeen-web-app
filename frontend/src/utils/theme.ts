@@ -19,6 +19,9 @@ export type ResolvedTheme = 'bustandeen' | 'bustandeen-light';
 export const THEME_MODES: ThemeMode[] = ['system', 'dark', 'light', 'daylight'];
 export const THEME_MODE_KEY = 'bustandeen_theme_mode';
 export const RESOLVED_THEME_KEY = 'bustandeen_theme';
+/** Fired on window after the mode is saved, so every open control (the
+ *  navbar toggle, Settings) can show the new choice. */
+export const THEME_MODE_EVENT = 'bustandeen:theme-mode';
 
 const THEME_COLOR: Record<ResolvedTheme, string> = {
   bustandeen: '#1a1812',
@@ -119,7 +122,16 @@ export function setThemeMode(mode: ThemeMode): ResolvedTheme {
   } catch {
     // storage blocked: apply for this page view only
   }
-  return applyTheme(mode);
+  const theme = applyTheme(mode);
+  window.dispatchEvent(new Event(THEME_MODE_EVENT));
+  return theme;
+}
+
+/** The navbar's one-tap switch: Light or Dark only. It flips whatever is on
+ *  screen now and saves that as the mode (System and Daylight stay in
+ *  Settings). */
+export function toggleLightDark(current: ResolvedTheme): ResolvedTheme {
+  return setThemeMode(current === 'bustandeen-light' ? 'dark' : 'light');
 }
 
 /** Keeps the theme right while the app is open: OS theme changes, the
