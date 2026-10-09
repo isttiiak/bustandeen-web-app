@@ -53,6 +53,8 @@ import { useCycleActive } from '../hooks/useCycle.js';
 import { useFastingHistory, useUpsertFastingLog } from '../hooks/useFasting.js';
 import ExcusedCard from '../components/ExcusedCard.js';
 import SalatSettings from '../components/SalatSettings.js';
+import { AdhkarCard } from '../components/home/TodayTimeline.js';
+import { openAdhkar } from '../utils/todayTimeline.js';
 import Seo from '../components/Seo.js';
 import { useZikrStore } from '../store/useZikrStore.js';
 import {
@@ -65,6 +67,7 @@ import {
   setDhikrCredited,
   getShowSunnahGuide,
   getShowNaflGuide,
+  getShowSalatAdhkar,
 } from '../utils/salatPrefs.js';
 import { recitationsFor, recitationHref } from '../utils/postSalatQuran.js';
 import { SUNNAH_GUIDE, JUMUAH_SUNNAH_GUIDE, type SunnahSlot } from '../utils/sunnahGuide.js';
@@ -192,6 +195,22 @@ export default function SalatTracker() {
       return null;
     }
   }, [selectedDate, minuteNow]);
+
+  // The adhkār window open right now (Fajr→sunrise on Fajr, Maghrib→ʿIshāʾ on
+  // Maghrib), from today's times on the device, shown only on today's view.
+  // Independent of selectedDate's noon, so in `maghrib` day-start mode
+  // tonight's Maghrib (the new tracking day's first prayer) still gets it.
+  const adhkarNow = useMemo(() => {
+    if (!isToday) return null;
+    try {
+      const stored = localStorage.getItem('bustandeen_location');
+      if (!stored) return null;
+      const loc = JSON.parse(stored) as { latitude: number; longitude: number };
+      return openAdhkar(calcPrayerTimes(loc.latitude, loc.longitude, minuteNow), minuteNow);
+    } catch {
+      return null;
+    }
+  }, [isToday, minuteNow]);
 
   // Month calendar state — full-month view for navigating to any past day
   const [calendarOpen, setCalendarOpen] = useState(false);
@@ -1435,6 +1454,13 @@ export default function SalatTracker() {
                               </span>
                             )}
                           </button>
+                        )}
+
+                        {/* Morning/evening adhkār while its window is open */}
+                        {adhkarNow?.prayer === prayerId && getShowSalatAdhkar() && (
+                          <div className="px-3 pb-2.5 border-t border-brand-border/50">
+                            <AdhkarCard period={adhkarNow.period} until={adhkarNow.until} />
+                          </div>
                         )}
 
                         {/* Tarawih — only during Ramadan, attached to Isha because

@@ -254,6 +254,26 @@ export function setShowNaflGuide(value: boolean): void {
   }
 }
 
+/** Morning/evening adhkār card on the tracker's Fajr and Maghrib cards while
+ * their window is open (utils/todayTimeline.ts openAdhkar). On by default. */
+const SALAT_ADHKAR_KEY = 'bustandeen_salat_adhkar';
+
+export function getShowSalatAdhkar(): boolean {
+  try {
+    return localStorage.getItem(SALAT_ADHKAR_KEY) !== '0';
+  } catch {
+    return true;
+  }
+}
+
+export function setShowSalatAdhkar(value: boolean): void {
+  try {
+    localStorage.setItem(SALAT_ADHKAR_KEY, value ? '1' : '0');
+  } catch {
+    /* private mode */
+  }
+}
+
 // ─── ʿAṣr calculation school ────────────────────────────────────────────────
 
 /**
