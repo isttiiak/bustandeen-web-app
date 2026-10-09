@@ -183,7 +183,7 @@ export default function StreakCard({
               to="/zikr"
               className="shrink-0 px-2.5 py-1 rounded-control bg-brand-emerald-dim text-on-color text-[11px] font-bold whitespace-nowrap hover:brightness-110 transition"
             >
-              {t('zikrAnalytics.streakCard.countNow', 'Count now →')}
+              {t('zikrAnalytics.streakCard.countNow', 'Count now')}
             </Link>
           </motion.div>
         )}
@@ -195,10 +195,10 @@ export default function StreakCard({
               <LeafIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
               {t('zikrAnalytics.streakCard.newUserTitle', 'Start your first streak today')}
             </p>
-            <p className="text-xs text-white/40 mt-1">
+            <p className="text-xs text-white/70 mt-1">
               {t(
                 'zikrAnalytics.streakCard.newUserHint',
-                'Meet your daily goal once to light the fire — every streak starts at day one.'
+                'Meet your daily goal once to light the fire. Every streak starts at day one.'
               )}
             </p>
           </div>
@@ -228,7 +228,7 @@ export default function StreakCard({
         {/* 7-day heatmap with streak-status tags */}
         {last7.length > 0 && (
           <div className="mb-3">
-            <p className="text-[10px] text-white/50 uppercase tracking-widest mb-1.5 font-bold">
+            <p className="text-[10px] text-white/70 uppercase tracking-widest mb-1.5 font-bold">
               {t('zikrAnalytics.streakCard.last7Days', 'Last 7 days')}
             </p>
             <div className="flex gap-1.5 items-end">
@@ -287,7 +287,7 @@ export default function StreakCard({
                       className={`w-full rounded-t-sm ${isToday ? 'ring-1 ring-white/40' : ''}`}
                     />
                     <p
-                      className={`text-[9px] text-center mt-0.5 ${isToday ? 'text-white font-bold' : 'text-white/50'}`}
+                      className={`text-[9px] text-center mt-0.5 ${isToday ? 'text-white font-bold' : 'text-white/70'}`}
                     >
                       {formatLocaleDate(new Date(day.date + 'T12:00:00'), { weekday: 'narrow' })}
                     </p>
@@ -380,7 +380,7 @@ export default function StreakCard({
               {t('zikrAnalytics.streakCard.howItWorks', 'How Streaks Work')}
             </span>
             <InformationCircleIcon
-              className={`w-4 h-4 text-white/50 transition-transform ${showInfo ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 text-white/70 transition-transform ${showInfo ? 'rotate-180' : ''}`}
             />
           </button>
           <AnimatePresence>
