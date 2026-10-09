@@ -5,6 +5,16 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import ZikrDaily from '../src/models/ZikrDaily.js';
 import User from '../src/models/User.js';
 import { BACKUP_VERSION } from '../src/services/backup.service.js';
+import { DELETED_ACCOUNT_ID } from '../src/services/user.service.js';
+import QuranReadingSession from '../src/models/QuranReadingSession.js';
+import ZikrEvent from '../src/models/ZikrEvent.js';
+import NaseehPlan from '../src/models/NaseehPlan.js';
+import ClientOp from '../src/models/ClientOp.js';
+import FeedbackMessage from '../src/models/FeedbackMessage.js';
+import ZikrRequest from '../src/models/ZikrRequest.js';
+import Donation from '../src/models/Donation.js';
+import SocialProfile from '../src/models/SocialProfile.js';
+import UpdateEmailCampaign from '../src/models/UpdateEmailCampaign.js';
 
 // For tests, we'll use DEV_AUTH_BYPASS and a fake JWT with uid/email
 const fakeJwt = (payload) => {
@@ -147,6 +157,149 @@ describe('User profile API', () => {
     // A GET no longer finds a profile either.
     const get = await auth(request(app).get('/api/user/me'));
     expect(get.status).toBe(404);
+  });
+
+  test('DELETE /api/user/me removes personal rows, unlinks admin records and leaves other users alone', async () => {
+    const me = 'purge1';
+    const other = 'purge2';
+    const token = fakeJwt({ uid: me, email: 'purge1@test.dev' });
+    const auth = (r) => r.set('Authorization', `Bearer ${token}`);
+    await request(app).post('/api/auth/verify').send({ idToken: token });
+
+    // Raw inserts: this test is about who owns a row, not each schema's rules.
+    const now = new Date();
+    for (const uid of [me, other]) {
+      await QuranReadingSession.collection.insertOne({
+        userId: uid,
+        clientSessionId: `s-${uid}`,
+        date: '2026-10-01',
+        startedAt: now,
+        endedAt: now,
+      });
+      await ZikrEvent.collection.insertOne({
+        userId: uid,
+        zikrType: 'SubhanAllah',
+        amount: 3,
+        ts: now,
+      });
+      await NaseehPlan.collection.insertOne({ userId: uid, weekStart: '2026-09-28' });
+      await ClientOp.collection.insertOne({
+        uid,
+        opId: `op-${uid}`,
+        route: 'POST /x',
+        status: 'done',
+        createdAt: now,
+      });
+      await FeedbackMessage.collection.insertOne({
+        name: `N ${uid}`,
+        email: `${uid}@test.dev`,
+        message: 'Salam',
+        category: [],
+        kind: 'feedback',
+        userId: uid,
+        status: 'open',
+        ipAddress: '1.2.3.4',
+      });
+      await ZikrRequest.collection.insertOne({
+        userId: uid,
+        userEmail: `${uid}@test.dev`,
+        name: 'Dua',
+        status: 'pending',
+      });
+      await Donation.collection.insertOne({
+        email: `${uid}@test.dev`,
+        phone: '017',
+        paymentMethod: 'bkash',
+        transactionId: `TX${uid}`.toUpperCase(),
+        amount: 100,
+        transactionDate: now,
+        userId: uid,
+        status: 'verified',
+      });
+    }
+    await SocialProfile.collection.insertOne({
+      userId: other,
+      friends: [me, 'third'],
+      friendSince: { [me]: now, third: now },
+      pendingIncoming: [me],
+      pendingOutgoing: [],
+      blocked: [me],
+    });
+    await UpdateEmailCampaign.collection.insertOne({
+      subject: 'News',
+      body: 'Hello',
+      audience: 'all',
+      createdBy: 'admin@test.dev',
+      createdAt: now,
+      recipients: [
+        { uid: me, email: 'purge1@test.dev', name: 'Me', group: 'male', status: 'pending' },
+        { uid: other, email: 'purge2@test.dev', name: 'Other', group: 'male', status: 'pending' },
+      ],
+    });
+
+    const del = await auth(request(app).delete('/api/user/me'));
+    expect(del.status).toBe(200);
+
+    // Personal data: gone for me, untouched for the other user.
+    for (const [Model, key] of [
+      [QuranReadingSession, 'userId'],
+      [ZikrEvent, 'userId'],
+      [NaseehPlan, 'userId'],
+      [ClientOp, 'uid'],
+    ]) {
+      expect(await Model.countDocuments({ [key]: me })).toBe(0);
+      expect(await Model.countDocuments({ [key]: other })).toBe(1);
+    }
+
+    // Feedback kept as an anonymous message.
+    expect(await FeedbackMessage.countDocuments({ userId: me })).toBe(0);
+    const anonFeedback = await FeedbackMessage.findOne({ message: 'Salam', userId: null })
+      .select('+ipAddress')
+      .lean();
+    expect(anonFeedback).toMatchObject({ name: 'Deleted account', email: '', ipAddress: null });
+    expect(
+      await FeedbackMessage.countDocuments({ userId: other, email: `${other}@test.dev` })
+    ).toBe(1);
+
+    // Zikr request kept, unlinked, no email.
+    expect(await ZikrRequest.countDocuments({ userId: me })).toBe(0);
+    const anonRequest = await ZikrRequest.findOne({ userId: DELETED_ACCOUNT_ID }).lean();
+    expect(anonRequest.userEmail).toBeUndefined();
+    expect(
+      await ZikrRequest.countDocuments({ userId: other, userEmail: `${other}@test.dev` })
+    ).toBe(1);
+
+    // Donation kept as a money record, without the account link.
+    expect(await Donation.countDocuments({ userId: me })).toBe(0);
+    expect(
+      await Donation.countDocuments({
+        transactionId: `TX${me}`.toUpperCase(),
+        userId: null,
+        amount: 100,
+      })
+    ).toBe(1);
+    expect(await Donation.countDocuments({ userId: other })).toBe(1);
+
+    // The other user's friend list no longer points at me; their other friend stays.
+    const otherSocial = await SocialProfile.collection.findOne({ userId: other });
+    expect(otherSocial.friends).toEqual(['third']);
+    expect(otherSocial.pendingIncoming).toEqual([]);
+    expect(otherSocial.blocked).toEqual([]);
+    expect(Object.keys(otherSocial.friendSince)).toEqual(['third']);
+
+    // Campaign recipient scrubbed and no longer pending; the other recipient unchanged.
+    const campaign = await UpdateEmailCampaign.collection.findOne({ subject: 'News' });
+    expect(campaign.recipients[0]).toMatchObject({
+      uid: DELETED_ACCOUNT_ID,
+      email: '',
+      name: 'Deleted account',
+      status: 'failed',
+    });
+    expect(campaign.recipients[1]).toMatchObject({
+      uid: other,
+      email: 'purge2@test.dev',
+      status: 'pending',
+    });
   });
 
   test('DELETE /api/user/me rejects a stale auth_time with reauth_required', async () => {

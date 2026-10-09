@@ -99,6 +99,9 @@ export const replyToFeedback = async (
 ): Promise<IFeedbackMessage> => {
   const doc = await FeedbackMessage.findById(id);
   if (!doc) throw httpError(404, 'Feedback message not found');
+  // Anonymised when the sender deleted their account (user.service deleteAccount).
+  if (!doc.email)
+    throw httpError(400, 'The sender deleted their account, so there is no address to reply to.');
 
   const messageId = await sendMail({
     to: doc.email,
