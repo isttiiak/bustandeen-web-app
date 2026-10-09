@@ -62,6 +62,14 @@ import { getTrackingDay } from '../utils/trackingDay.js';
 import { getRamadanWindow } from '../utils/ramadan.js';
 import { getFridayHour, FRIDAY_HOUR_REF } from '../utils/fridayHour.js';
 import { HIGHLIGHT_CAP, orderHighlights, TODAY_SPECIAL_ID } from '../utils/homeSpecial.js';
+import { useUpdateProfile, useUserProfile } from '../hooks/useUserProfile.js';
+import {
+  getFocusHabits,
+  isOnboardedLocally,
+  markOnboardedLocally,
+  onboardingMode,
+  orderByFocus,
+} from '../utils/onboarding.js';
 
 /** The prayer arch links to /prayer-times. With chips in its foot (the 'pills'
  * Home layout) it becomes a stretched link: an overlay link under the chips,
@@ -115,6 +123,26 @@ export default function Home() {
   const { counts = {}, hydrate } = useZikrStore();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // First-run setup (T3.3): new accounts go to the flow, older ones get a card.
+  const { data: profile } = useUserProfile();
+  const [setupDismissed, setSetupDismissed] = useState(isOnboardedLocally);
+  const setupMode = onboardingMode(profile, setupDismissed);
+  const updateProfile = useUpdateProfile();
+  useEffect(() => {
+    if (setupMode === 'flow') navigate('/welcome', { replace: true });
+  }, [setupMode, navigate]);
+  const dismissSetup = () => {
+    markOnboardedLocally();
+    setSetupDismissed(true);
+    updateProfile.mutate({ onboarded: true });
+  };
+  const focusHabits = useMemo(
+    () => getFocusHabits(),
+    // Re-read when coming back from the setup screen.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- location.key is the trigger, not an input
+    [location.key]
+  );
 
   useEffect(() => {
     const doHydrate = () => hydrate?.();
@@ -466,6 +494,46 @@ export default function Home() {
           <ComebackNudge />
         </div>
 
+        {setupMode === 'card' && (
+          <section
+            className="mb-5 rounded-card border border-brand-emerald/30 bg-brand-deep shadow-elev-2 p-4"
+            aria-labelledby="home-setup-title"
+            data-testid="home-setup-card"
+          >
+            <div className="flex items-start gap-3">
+              <LeafIcon className="w-6 h-6 shrink-0 text-brand-emerald mt-0.5" />
+              <div className="min-w-0 flex-1">
+                <h2
+                  id="home-setup-title"
+                  className="font-display text-white font-semibold text-base"
+                >
+                  {t('home.setupTitle', 'Make Bustandeen yours')}
+                </h2>
+                <p className="text-white/70 text-xs mt-1 leading-relaxed">
+                  {t(
+                    'home.setupDetail',
+                    'Your prayer times, your madhab and the habits you want to grow first. About a minute.'
+                  )}
+                </p>
+                <div className="flex flex-wrap items-center gap-2 mt-3">
+                  <Link
+                    to="/welcome"
+                    className="btn-solid inline-flex items-center justify-center rounded-control px-4 py-2 min-h-[44px] text-sm font-bold text-on-color bg-brand-emerald-dim hover:brightness-110 shadow-elev-1"
+                  >
+                    {t('home.setupStart', 'Set up')}
+                  </Link>
+                  <button
+                    onClick={dismissSetup}
+                    className="px-3 min-h-[44px] text-white/70 hover:text-white text-sm underline underline-offset-2"
+                  >
+                    {t('home.setupDismiss', 'No thanks')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {/* Pre-period heads-up: predicted start within 3 days */}
         {upcomingCycleDays !== null && (
           <Link to="/cycle" className="block mb-4">
@@ -754,7 +822,7 @@ export default function Home() {
 
         {/* Today's worship */}
         <div className="grid grid-cols-2 gap-3 mb-2">
-          {activities.map((a) => {
+          {orderByFocus(activities, focusHabits).map((a) => {
             const isZikr = a.id === 'zikr';
             const Icon = a.icon;
             return (

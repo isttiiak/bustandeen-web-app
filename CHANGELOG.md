@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.118.0 - A welcome setup for new accounts - 2026-10-09
+
+### Added
+
+- **Welcome setup (T3.3)**: three short steps, each one skippable. (1) Where you pray: GPS or a city search, and the location stays on your device. (2) Your prayer times: the ʿAṣr school and calculation method most mosques in your country use are picked for you. You see today's ʿAṣr time under both schools before you choose. (3) What you want to grow first: pick up to three of salat, zikr, Quran and fasting, with a gentle starting goal for zikr (33, 100 or 300 a day) and Quran (5, 10 or 20 āyāt a day). The habits you choose come first on Home and follow you to your other devices. Reminders are not asked about (they wait for the native apps).
+- **Who sees it**: new accounts are taken to it once, from Home. Existing accounts get a small "Make Bustandeen yours" card on Home instead, with Set up and No thanks; nothing changes for them otherwise. It can be run again any time from Settings → Home screen. English and Bangla, dark and light.
+
 ## v5.117.0 - Onboarding groundwork (server) - 2026-10-09
 
 ### Added

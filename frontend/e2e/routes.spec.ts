@@ -29,6 +29,7 @@ const ROUTES = [
   '/friends',
   '/connect/ABC123',
   '/settings',
+  '/welcome',
   '/profile',
   '/special-day/ashura',
   '/naseeh',

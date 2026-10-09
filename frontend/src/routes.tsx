@@ -16,6 +16,7 @@ import {
 // and Profile/Settings are large; keep them out of the initial bundle.
 const ZikrAnalytics = lazy(() => import('./pages/ZikrAnalytics.js'));
 const Settings = lazy(() => import('./pages/Settings.js'));
+const Onboarding = lazy(() => import('./pages/Onboarding.js'));
 const AuthSignIn = lazy(() => import('./pages/AuthSignIn.js'));
 const AuthSignUp = lazy(() => import('./pages/AuthSignUp.js'));
 const AuthAction = lazy(() => import('./pages/AuthAction.js'));
@@ -242,6 +243,14 @@ export default function AppRoutes({ revision }: { revision: number }) {
         element={
           <Protected>
             <ZikrAnalytics />
+          </Protected>
+        }
+      />
+      <Route
+        path="/welcome"
+        element={
+          <Protected>
+            <Onboarding />
           </Protected>
         }
       />

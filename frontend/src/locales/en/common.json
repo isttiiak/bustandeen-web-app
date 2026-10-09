@@ -1019,7 +1019,11 @@
     "musafirHintTitle": "Travelling?",
     "musafirHintDesc": "You are about {{km}} km from {{place}}.",
     "musafirHintDescNoName": "You are about {{km}} km from your saved location.",
-    "musafirHintDismiss": "Not now"
+    "musafirHintDismiss": "Not now",
+    "setupTitle": "Make Bustandeen yours",
+    "setupDetail": "Your prayer times, your madhab and the habits you want to grow first. About a minute.",
+    "setupStart": "Set up",
+    "setupDismiss": "No thanks"
   },
   "library": {
     "duaTitle": "Du'a Library",
@@ -2834,7 +2838,9 @@
     "musafirEnded": "Welcome home! Musafir mode is off.",
     "musafirStartedOn": "Started {{date}}.",
     "musafirStartedAfter": "Started {{date}}, after {{prayer}}.",
-    "musafirChangeStart": "Change start"
+    "musafirChangeStart": "Change start",
+    "setupAgain": "Run the welcome setup again",
+    "setupAgainDetail": "Location, madhab, prayer method and your habits."
   },
   "specialDays": {
     "arafah": {
@@ -3964,5 +3970,48 @@
   "legal": {
     "agreeSignIn": "By continuing, you agree to our <1>Terms of Service</1> and <3>Privacy Policy</3>.",
     "agreeSignUp": "By creating an account, you agree to our <1>Terms of Service</1> and <3>Privacy Policy</3>."
+  },
+  "onboarding": {
+    "welcome": "Welcome to Bustandeen",
+    "back": "Back",
+    "skip": "Skip setup",
+    "progress": "Step {{n}} of {{total}}",
+    "locationTitle": "Where do you pray?",
+    "prayerTitle": "Your prayer times",
+    "habitsTitle": "What would you like to grow first?",
+    "locationIntro": "Prayer times are worked out on this device from your location. It never leaves your phone.",
+    "prayerIntro": "We picked what most mosques near you use. Match your local mosque if it differs.",
+    "habitsIntro": "Pick up to three. Small and steady is the aim. Everything else stays one tap away.",
+    "locationLater": "No location yet? That is fine. Prayer times wait until you set one.",
+    "asrDesc": "The schools differ on when ʿAṣr begins, and Ẓuhr lasts until it does. Choose the one you follow.",
+    "asrHanafi": "Ḥanafī",
+    "asrStandard": "Shāfiʿī, Mālikī, Ḥanbalī",
+    "asrHanafiDetail": "ʿAṣr when an object's shadow is twice its length.",
+    "asrStandardDetail": "ʿAṣr when an object's shadow equals its length.",
+    "asrToday": "ʿAṣr today: {{time}}",
+    "methodDesc": "Sets Fajr and ʿIshāʾ. If your times feel off from your mosque, change it later in Prayer time settings.",
+    "habit": {
+      "salat": "Salat",
+      "zikr": "Zikr",
+      "quran": "Quran",
+      "fasting": "Fasting"
+    },
+    "habitDetail": {
+      "salat": "The five daily prayers, with kaza for any you miss.",
+      "zikr": "A daily count of dhikr, with a goal you choose.",
+      "quran": "A few āyāt every day, at your own pace.",
+      "fasting": "Sunnah and make-up fasts, and Ramadan."
+    },
+    "zikrGoal": "Daily zikr goal",
+    "quranGoal": "Daily Quran goal",
+    "ayatCount": "{{n}} āyāt",
+    "habitsCount": "{{n}} of {{max}} chosen",
+    "next": "Next",
+    "nextNoLocation": "Continue without location",
+    "finish": "Start",
+    "finishNoHabits": "Start without choosing",
+    "changeLater": "You can change any of this later in Settings.",
+    "goalSaveFailed": "Your goals could not be saved. You can set them on the Zikr and Quran pages.",
+    "done": "All set. May Allah put barakah in it."
   }
 }
