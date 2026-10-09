@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.116.0 - Admin panel: new look for the shell, sign-in and overview - 2026-10-09
+
+### Changed
+
+- **Admin panel (staff only)**: the header, the admin sign-in and the overview page use the Bustan Arch design: the Bustandeen leaf instead of the moon emoji, the arched heading, the app's cards and buttons, labelled sign-in fields with show/hide password, and easier-to-read text in dark and light.
+
+### Fixed
+
+- **Admin panel on phones**: the section tabs (Sadaqah, Zikr Requests, Feedback, Broadcast) no longer overlap each other on narrow screens; they scroll sideways instead.
+
 ## v5.115.0 - Why two special-day narrations are graded weak - 2026-10-09
 
 ### Added
