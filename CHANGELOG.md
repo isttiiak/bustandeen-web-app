@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.119.0 - Home: today, prayer by prayer - 2026-10-09
+
+### Changed
+
+- **Home is now a "Today" timeline (T3.4)** when a location is saved: the arch shows the current prayer with a row of the five prayers (a check for each one prayed), and below it the day's five prayers in order with their time and Done / Kaza / Miss. The current prayer has "Mark Done" and "Open Salat"; everything else (Kaza, Miss, travel and joined prayers, earlier days) stays on the Salat page. Mark Done is not offered in Rayhanah days, in Musafir mode, or when the day starts at Maghrib.
+- **Morning and evening adhkār on the timeline**: the morning card sits under Fajr and is highlighted from Fajr until sunrise, the evening card under ʿAṣr from ʿAṣr until Maghrib, after Quran 50:39 ("before the rising of the sun and before its setting"). Each opens the matching list in the Library.
+- **"Today's goals"** replaces the two-by-two worship cards: one row each with a progress bar, in the order of the habits chosen at setup.
+
 ## v5.118.0 - A welcome setup for new accounts - 2026-10-09
 
 ### Added

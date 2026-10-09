@@ -65,9 +65,7 @@ test('the Home card walks through location, madhab and habits, then orders Home'
   // Back on Home: no card, chosen habits first, choices stored
   await expect(page).toHaveURL(/\/$/);
   await expect(setupCard(page)).toHaveCount(0);
-  const cards = page.locator(
-    'a[href="/quran"], a[href="/salat"], a[href="/zikr"], a[href="/fasting"]'
-  );
+  const cards = page.getByTestId('today-goals').locator('a');
   await expect(cards.first()).toHaveAttribute('href', '/quran');
   await expect(cards.nth(1)).toHaveAttribute('href', '/salat');
   await expect(cards.nth(2)).toHaveAttribute('href', '/zikr');
