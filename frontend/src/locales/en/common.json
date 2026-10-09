@@ -1311,6 +1311,16 @@
   "navbar": {
     "openAccountMenu": "Open account menu"
   },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "body": "An unexpected error interrupted the app. Your worship data is safe. Try reloading.",
+    "reload": "Reload",
+    "home": "Go to Home",
+    "newVersionTitle": "A new version is ready",
+    "newVersionBody": "Bustandeen was updated while this page was open. Your worship data is safe. Tap Update to load the new version.",
+    "update": "Update",
+    "updating": "Updating..."
+  },
   "notFound": {
     "seoTitle": "Page Not Found",
     "seoDescription": "The page you're looking for doesn't exist.",
