@@ -1036,7 +1036,10 @@
     "adhkarOpenUntil": "Now, until {{time}}",
     "adhkarMorningWhen": "From Fajr until sunrise",
     "adhkarEveningWhen": "From ʿAṣr until Maghrib",
-    "goalsTitle": "Today's goals"
+    "goalsTitle": "Today's goals",
+    "bestTimeLeft": "Best time: <1>{{left}}</1> left",
+    "bestUntil": "Best until {{time}}",
+    "endsAtFajr": "Ends at Fajr, {{time}}"
   },
   "library": {
     "duaTitle": "Du'a Library",
@@ -1323,7 +1326,9 @@
     "zikrAnalytics": "Zikr Analytics",
     "zikrCounter": "Zikr Counter",
     "musafir": "Musafir Mode",
-    "terms": "Terms"
+    "terms": "Terms",
+    "themeToDark": "Switch to dark",
+    "themeToLight": "Switch to light"
   },
   "navbar": {
     "openAccountMenu": "Open account menu"
@@ -2817,8 +2822,8 @@
     "language": "Language",
     "languageBengali": "বাংলা (Bengali)",
     "languageEnglish": "English",
-    "languageNote": "বাংলা covers the main screens today. The rest is arriving screen by screen, and every untranslated text safely falls back to English. Quran & hadith references are never machine-translated.",
-    "languageSubtitle": "Choose the app's language. More translations are on the way",
+    "languageNote": "The whole app is available in English and বাংলা, and you can switch at any time. Naseeh, the AI companion, replies in English only. Quran and hadith references are never machine-translated.",
+    "languageSubtitle": "Choose the app's language: English or বাংলা",
     "locationNotSet": "Not set. Choose one on the Prayer Times page",
     "locationSet": "{{name}}, stored only in this browser",
     "naseehSection": "Naseeh AI companion",

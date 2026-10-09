@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { m as motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
@@ -76,7 +76,7 @@ import {
   TagIcon,
 } from '@heroicons/react/24/outline';
 import type { HomeSpecialLayout } from '../utils/homeSpecial.js';
-import { getThemeMode, setThemeMode, type ThemeMode } from '../utils/theme.js';
+import { getThemeMode, setThemeMode, THEME_MODE_EVENT, type ThemeMode } from '../utils/theme.js';
 import {
   CrescentIcon,
   FlowerIcon,
@@ -353,6 +353,12 @@ const THEME_ICONS: Record<ThemeMode, SvgIcon> = {
 
 function ThemeModePicker({ t }: { t: (key: string) => string }) {
   const [mode, setMode] = useState<ThemeMode>(getThemeMode);
+  // The navbar toggle can change the mode while this screen is open.
+  useEffect(() => {
+    const sync = () => setMode(getThemeMode());
+    window.addEventListener(THEME_MODE_EVENT, sync);
+    return () => window.removeEventListener(THEME_MODE_EVENT, sync);
+  }, []);
   const options: { mode: ThemeMode; label: string; detail: string }[] = [
     { mode: 'system', label: t('settings.themeSystem'), detail: t('settings.themeSystemDetail') },
     { mode: 'dark', label: t('settings.themeDark'), detail: t('settings.themeDarkDetail') },
@@ -932,11 +938,6 @@ export default function Settings() {
               {t('settings.title')}
             </h1>
             <p className="text-sm text-white/70 mt-1">{t('settings.subtitle')}</p>
-            {user?.email && (
-              <p className="inline-flex items-center gap-1.5 mt-4 px-3 py-1 rounded-full border border-brand-border bg-brand-surface/60 text-xs text-white/80 max-w-full">
-                <span className="truncate">{user.email}</span>
-              </p>
-            )}
           </motion.section>
 
           {/* ── Language — kept at the very top so it's the first thing found ── */}

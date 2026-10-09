@@ -1,10 +1,11 @@
+import { PaperClipIcon, ScaleIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import {
-  PaperClipIcon,
-  ScaleIcon,
-  ShieldCheckIcon,
-  SparklesIcon,
-} from '@heroicons/react/24/outline';
-import { DropIcon, LeafIcon, Star8Icon, TasbihIcon } from '../icons/IslamicIcons.js';
+  DropIcon,
+  LeafIcon,
+  NamesMedallionIcon,
+  Star8Icon,
+  TasbihIcon,
+} from '../icons/IslamicIcons.js';
 import type { GlobalZikrCategory } from '../../hooks/useZikrRequests.js';
 
 type Icon = (p: { className?: string }) => React.ReactNode;
@@ -16,7 +17,7 @@ export const ZIKR_CATEGORY_ICON: Record<GlobalZikrCategory, Icon> = {
   istighfar: DropIcon,
   salawat: Star8Icon,
   kalimat: ScaleIcon,
-  asma: SparklesIcon,
+  asma: NamesMedallionIcon,
   protection: ShieldCheckIcon,
   uncategorized: PaperClipIcon,
 };

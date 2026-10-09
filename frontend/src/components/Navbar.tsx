@@ -7,8 +7,8 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useNoor } from '../hooks/useSocial.js';
 import { useUiStore } from '../store/useUiStore.js';
-import { getHijriToday, formatHijriDate } from '../utils/islamicCalendar.js';
-import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
+import { formatLocaleNumber } from '../utils/localeDate.js';
+import ThemeToggle from './ThemeToggle.js';
 import {
   Cog6ToothIcon,
   UserCircleIcon,
@@ -37,6 +37,7 @@ import {
   DuaHandsIcon,
   LeafIcon,
   MosqueIcon,
+  NamesMedallionIcon,
   Star8Icon,
   SunriseIcon,
   TasbihIcon,
@@ -93,7 +94,7 @@ const PAGE_META: Record<
   '/musafir': { title: 'Musafir Mode', Icon: BriefcaseIcon },
   '/library/duas': { title: "Du'a Library", Icon: DuaHandsIcon },
   '/library/adhkar': { title: 'Adhkar', Icon: SunriseIcon },
-  '/library/asma-ul-husna': { title: '99 Names of Allah', Icon: SparklesIcon },
+  '/library/asma-ul-husna': { title: '99 Names of Allah', Icon: NamesMedallionIcon },
   '/library/zakat-calculator': { title: 'Zakat Calculator', Icon: CalculatorIcon },
 };
 
@@ -202,15 +203,6 @@ export default function Navbar() {
   const greeting = `${t('home.greeting')}${firstName ? ', ' + firstName : ''}`;
 
   // ── Center content by route ───────────────────────────────────────────────
-  const hijriToday = (() => {
-    const h = getHijriToday();
-    return h ? formatHijriDate(h) : null;
-  })();
-
-  const todayEnglish = (() => {
-    return formatLocaleDate(new Date(), { month: 'short', day: 'numeric', year: 'numeric' });
-  })();
-
   const centerContent = (() => {
     if (isHome && user) {
       return (
@@ -299,6 +291,7 @@ export default function Navbar() {
 
           {/* ── Right: lang + noor + profile ────────────────── */}
           <div className="flex items-center gap-0.5 flex-shrink-0">
+            <ThemeToggle />
             {/* Language toggle — cycles en ↔ bn */}
             <button
               onClick={() => {
@@ -354,18 +347,6 @@ export default function Navbar() {
                 )}
               </div>
             )}
-            {/* Date display — home page only */}
-            {isHome && user && (
-              <div className="hidden md:flex flex-col items-end mr-2 shrink-0 px-2 py-1 rounded-xl bg-white/5 border border-brand-border/60">
-                <span className="text-white/80 text-xs font-bold leading-none">{todayEnglish}</span>
-                {hijriToday && (
-                  <span className="text-brand-gold/70 text-[10px] font-medium leading-none mt-0.5">
-                    {hijriToday}
-                  </span>
-                )}
-              </div>
-            )}
-
             {user ? (
               <div className="relative shrink-0" ref={dropdownRef}>
                 <button
