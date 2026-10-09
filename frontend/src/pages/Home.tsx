@@ -38,6 +38,12 @@ import MusafirBanner from '../components/MusafirBanner.js';
 import TodayHighlights from '../components/home/TodayHighlights.js';
 import TodayTimeline from '../components/home/TodayTimeline.js';
 import PrayerRow from '../components/home/PrayerRow.js';
+import {
+  FastingQuickCard,
+  QuranQuickCard,
+  ZikrQuickCard,
+} from '../components/home/QuickSections.js';
+import { homeSections } from '../utils/homeSections.js';
 import toast from 'react-hot-toast';
 import {
   useMusafir,
@@ -72,7 +78,6 @@ import { HIGHLIGHT_CAP, orderHighlights, TODAY_SPECIAL_ID } from '../utils/homeS
 import { useUpdateProfile, useUserProfile } from '../hooks/useUserProfile.js';
 import {
   getFocusHabits,
-  getHomeTimeline,
   isOnboardedLocally,
   markOnboardedLocally,
   onboardingMode,
@@ -133,8 +138,9 @@ export default function Home() {
     setSetupDismissed(true);
     updateProfile.mutate({ onboarded: true });
   };
-  const showTimeline = useMemo(
-    () => getHomeTimeline(),
+  // The per-habit sections (T3.4 E) in the habit order; Salat = the timeline.
+  const sections = useMemo(
+    () => homeSections(),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- location.key is the trigger, not an input
     [location.key]
   );
@@ -879,15 +885,26 @@ export default function Home() {
           )
         )}
 
-        {prayerWidgetData && showTimeline && (
-          <TodayTimeline
-            times={prayerWidgetData.times}
-            now={prayerNow}
-            log={salatLog}
-            excused={!!cycleActive}
-            travelling={!!musafir}
-            showAdhkar={homeAdhkar}
-          />
+        {sections.map((s) =>
+          s === 'salat' ? (
+            prayerWidgetData && (
+              <TodayTimeline
+                key={s}
+                times={prayerWidgetData.times}
+                now={prayerNow}
+                log={salatLog}
+                excused={!!cycleActive}
+                travelling={!!musafir}
+                showAdhkar={homeAdhkar}
+              />
+            )
+          ) : s === 'quran' ? (
+            <QuranQuickCard key={s} />
+          ) : s === 'zikr' ? (
+            <ZikrQuickCard key={s} today={effectiveToday} goal={analyticsGoal} />
+          ) : (
+            <FastingQuickCard key={s} excused={!!cycleActive} />
+          )
         )}
 
         {homeLayout === 'strip' && (

@@ -1039,7 +1039,36 @@
     "bestUntil": "Best until {{time}}",
     "endsAtFajr": "Ends at Fajr, {{time}}",
     "timelineKazaAria": "Mark {{prayer}} as Kaza",
-    "archRowOpen": "Today's prayers, open Salat"
+    "archRowOpen": "Today's prayers, open Salat",
+    "quick": {
+      "quran": "Quran",
+      "quranKhatam": "Khatam: {{where}}",
+      "quranLast": "Last read: {{where}}",
+      "quranNone": "Begin with any surah",
+      "ayat": "āyāt",
+      "continueKhatam": "Continue khatam",
+      "continue": "Continue",
+      "startReading": "Start reading",
+      "listen": "Listen",
+      "pickSurah": "Pick a surah",
+      "zikr": "Zikr",
+      "zikrGoal": "Goal {{n}} a day",
+      "zikrNoGoal": "Your chosen dhikr, one tap away",
+      "zikrAdd": "Add {{n}} {{name}}",
+      "zikrOpen": "Count {{name}}, target {{n}}",
+      "openCounter": "Open counter",
+      "fasting": "Fasting",
+      "fastsThisMonth": "{{n}} fasts this month",
+      "openRamadan": "Open the Ramadan tracker",
+      "fastingToday": "Fasting today?",
+      "change": "Change",
+      "yes": "Yes",
+      "broken": "Broken",
+      "broke": "Broke",
+      "nextSunnah": "Next sunnah fast: {{day}}, {{kind}}",
+      "suhoorIftar": "suḥūr until {{fajr}}, ifṭār {{maghrib}}",
+      "nextSunnahDay": "Next sunnah fast: {{day}}"
+    }
   },
   "library": {
     "duaTitle": "Du'a Library",
@@ -2864,7 +2893,10 @@
     "homeAdhkar": "Adhkār on the timeline",
     "homeAdhkarDetail": "Morning adhkār on Fajr until sunrise, evening adhkār on Maghrib until ʿIshāʾ.",
     "homeTimeline": "Prayer timeline",
-    "homeTimelineDetail": "Today's five prayers under the arch, with Mark Done and Kaza. The prayer row in the arch always stays."
+    "homeTimelineDetail": "Today's five prayers under the arch, with Mark Done and Kaza. The prayer row in the arch always stays.",
+    "homeSections": "Home sections",
+    "homeSectionsDetail": "A short section for each habit, in this order. The prayer row in the arch always stays.",
+    "showSection": "Show {{section}} on Home"
   },
   "specialDays": {
     "arafah": {
@@ -3478,7 +3510,18 @@
     "yesRemove": "Yes, remove",
     "resetAllConfirmTitle": "Start fresh?",
     "wantsAudio": "Want an audio recitation for this, if it's added?",
-    "volume": "Volume"
+    "volume": "Volume",
+    "quick": {
+      "title": "Quick dhikr on Home",
+      "desc": "Three dhikr on the Home Zikr section, each with its number.",
+      "slot": "Quick dhikr {{n}}",
+      "count": "Number for quick dhikr {{n}}",
+      "actionLabel": "One tap on a chip",
+      "open": "Open the counter with that number as the target",
+      "add": "Add that number at once",
+      "openDesc": "You count each one yourself. The default.",
+      "addDesc": "Logged in one tap, without counting on screen."
+    }
   },
   "zikrAnalytics": {
     "streakDaysValue": "{{n}} d",

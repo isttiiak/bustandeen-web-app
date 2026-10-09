@@ -33,6 +33,10 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   // Onboarding (T3.3): the habits chosen in the first-run setup
   'bustandeen_focus_habits',
   'bustandeen_home_timeline',
+  'bustandeen_home_sections_off',
+  'bustandeen_zikr_quick',
+  'bustandeen_zikr_quick_action',
+  'bustandeen_quran_last',
   // Salat
   'bustandeen_tasbih_breakdown',
   'bustandeen_salat_auto_count',
