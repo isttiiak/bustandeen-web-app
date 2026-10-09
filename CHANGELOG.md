@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.111.0 - Zikr analytics in the Bustan Arch design - 2026-10-09
+
+### Changed
+
+- **Zikr analytics has the new look**, in dark and light: the same cards, stat tiles and section titles as Salat analytics, with stronger text that is easy to read on the light theme.
+- **Charts follow your theme.** The per-type lines, the trend, the time of day bars and the type breakdown use the theme's colours, so they stay clear on the light theme. The gradient bar is now a solid one.
+- **Icons instead of emoji** on the loading error, the backfill note, the CSV export and the demo screen.
+- **The daily goal dialog now opens above the navigation bar**, like the other dialogs.
+- **Personal records speak your language**: the most active weekday and "active days" were always in English, now they follow the app language.
+- **The chart explanations match the charts**: the trend is a line, time of day is shown hour by hour, and the heatmap is coloured against your own active days. No em dashes in the Zikr analytics wording, in English and Bangla. Counts, streaks and the tracking day are unchanged.
+
 ## v5.110.0 - Security reports counted for review - 2026-10-09
 
 ### Security
