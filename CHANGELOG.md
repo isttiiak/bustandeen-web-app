@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.115.0 - Why two special-day narrations are graded weak - 2026-10-09
+
+### Added
+
+- **The Monday and Thursday fast** and **15 Sha'bān** pages now end with the "Why some things on this page are marked ḍaʿīf" card, like the Ramadan page. It names the narrator behind each weak grade and who graded it:
+  - The du'ā at iftār (Sunan Ibn Mājah 1753): its chain runs through Isḥāq ibn ʿUbaydillāh, whom Ibn Ḥajar calls unknown; Ḍaʿīf per al-Albānī, Ḥasan per Darussalam.
+  - 15 Sha'bān (Sunan Ibn Mājah 1390): its chain has Ibn Lahīʿah and al-Ḍaḥḥāk ibn Ayman; al-Būṣīrī and Darussalam grade the chain ḍaʿīf, al-Albānī grades the narration ḥasan through its other routes. The card also notes the authentic nightly descent in the last third of every night (Ṣaḥīḥ al-Bukhārī 1145).
+- In English and Bangla.
+
 ## v5.114.4 - Corrected hadith references on the special days - 2026-10-09
 
 ### Fixed
