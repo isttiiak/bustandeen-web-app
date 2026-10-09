@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.114.4 - Corrected hadith references on the special days - 2026-10-09
+
+### Fixed
+
+- **Monday and Thursday fast**: the hadith about deeds being presented now points to its real source, Sunan al-Tirmidhī 747 (Ḥasan per Darussalam, Ṣaḥīḥ per al-Albānī).
+- **The du'ā at iftār** (Sunan Ibn Mājah 1753) now shows that scholars differ on its grade: Ḥasan per Darussalam, Ḍaʿīf per al-Albānī.
+- **Friday**: the "at least 80 times, especially after Asr" note on ṣalawāt is gone, because that wording is not reliably established. It now says to send as much as you can, as the Prophet ﷺ asked (Sunan Abū Dāwūd 1047).
+- **15 Sha'bān**: the narration now links to the right number, Sunan Ibn Mājah 1390, and shows both grades (Ḥasan per al-Albānī, Ḍaʿīf per Darussalam).
+- **Eid al-Fiṭr**: the reference about the Eid prayer now points to Ṣaḥīḥ al-Bukhārī 963 (the prayer comes before the khuṭbah).
+- **Laylat al-Qadr**: "multiplied infinitely" for ṣadaqah had no source. It now quotes Quran 97:3: this night is better than a thousand months.
+- All of the above in English and Bangla.
+
 ## v5.114.3 - The welcome page in the Bustan Arch design - 2026-10-09
 
 ### Changed
