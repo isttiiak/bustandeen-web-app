@@ -3,6 +3,15 @@ import { m as motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import { BTN_PRIMARY, CARD, OPTION_OFF, OPTION_ON } from '../components/bustanStyles.js';
+import {
+  ADMIN_INPUT_SM,
+  AdminHero,
+  BTN_DANGER,
+  BTN_SMALL,
+  OPTION_CHIP,
+} from '../components/admin/adminParts.js';
+import { InboxStackIcon, SpeakerWaveIcon } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import {
@@ -26,7 +35,7 @@ type ReviewMode = 'idle' | 'approving' | 'rejecting';
 const CATEGORY_OPTIONS: { value: GlobalZikrCategory; label: string }[] = [
   { value: 'uncategorized', label: 'Uncategorized' },
   { value: 'tasbih', label: 'Tasbīḥ & praise' },
-  { value: 'istighfar', label: 'Istighfār — seeking forgiveness' },
+  { value: 'istighfar', label: 'Istighfār: seeking forgiveness' },
   { value: 'salawat', label: 'Ṣalawāt upon the Prophet ﷺ' },
   { value: 'kalimat', label: 'The weighty words' },
   { value: 'asma', label: 'Calling on His Names' },
@@ -81,7 +90,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
       toast.error(
         t(
           'adminZikr.emailFailedWarning',
-          'Saved — but the email to the requester failed to send. Check System & ops health.'
+          'Saved, but the email to the requester failed to send. Check System & ops health.'
         )
       );
     }
@@ -119,20 +128,20 @@ function RequestCard({ request }: { request: ZikrRequest }) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-brand-emerald/15 bg-white/[0.03] p-4 space-y-3"
+      className={`${CARD} p-4 space-y-3`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-white font-bold text-sm">{request.name}</p>
-          {request.userEmail && <p className="text-white/40 text-xs mt-0.5">{request.userEmail}</p>}
+          {request.userEmail && <p className="text-white/70 text-xs mt-0.5">{request.userEmail}</p>}
         </div>
         <span
-          className={`shrink-0 text-[10px] font-black uppercase tracking-wide px-2 py-1 rounded-full ${
+          className={`shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-1 rounded-full ${
             request.status === 'pending'
               ? 'bg-brand-gold/15 text-brand-gold'
               : request.status === 'approved'
                 ? 'bg-brand-emerald/15 text-brand-emerald'
-                : 'bg-red-500/15 text-red-400'
+                : 'bg-red-400/15 text-red-400'
           }`}
         >
           {request.status}
@@ -145,11 +154,11 @@ function RequestCard({ request }: { request: ZikrRequest }) {
         </p>
       )}
       {request.meaning && (
-        <p className="text-white/60 text-xs leading-relaxed">{request.meaning}</p>
+        <p className="text-white/70 text-xs leading-relaxed">{request.meaning}</p>
       )}
       {(request.source || request.sourceUrl) && (
         <a
-          className="text-white/30 text-[10px] underline block"
+          className="text-white/70 text-[10px] underline block"
           href={request.sourceUrl}
           target="_blank"
           rel="noreferrer"
@@ -158,8 +167,9 @@ function RequestCard({ request }: { request: ZikrRequest }) {
         </a>
       )}
       {request.wantsAudio && (
-        <p className="text-brand-gold/70 text-[11px] font-bold">
-          {t('adminZikr.wantsAudio', '🔊 Requester would like an audio recitation for this')}
+        <p className="flex items-center gap-1.5 text-brand-gold text-[11px] font-bold">
+          <SpeakerWaveIcon className="w-3.5 h-3.5" aria-hidden="true" />
+          {t('adminZikr.wantsAudio', 'Requester would like an audio recitation for this')}
           {request.status === 'approved' &&
             (request.audioAdded
               ? ` · ${t('adminZikr.audioDone', 'audio added')}`
@@ -168,11 +178,11 @@ function RequestCard({ request }: { request: ZikrRequest }) {
       )}
 
       {isPending && request.possibleDuplicateOf && (
-        <div className="rounded-xl bg-brand-gold/10 border border-brand-gold/20 px-3 py-2">
+        <div className="rounded-control bg-brand-gold/10 border border-brand-gold/20 px-3 py-2">
           <p className="text-brand-gold text-[11px] font-bold">
             {t('adminZikr.possibleDuplicate', 'Possible duplicate')}
           </p>
-          <p className="text-white/50 text-[11px] mt-0.5">
+          <p className="text-white/70 text-[11px] mt-0.5">
             {t('adminZikr.possibleDuplicateOf', 'Looks similar to an existing entry: "{{name}}"', {
               name: request.possibleDuplicateOf.name,
             })}
@@ -194,26 +204,20 @@ function RequestCard({ request }: { request: ZikrRequest }) {
       )}
 
       {!isPending && request.adminNote && (
-        <p className="text-white/30 text-[11px] italic">Note: {request.adminNote}</p>
+        <p className="text-white/70 text-[11px] italic">Note: {request.adminNote}</p>
       )}
       {!isPending && request.reviewedBy && (
-        <p className="text-white/25 text-[11px]">
+        <p className="text-white/70 text-[11px]">
           {t('adminZikr.reviewedBy', 'Reviewed by')} {request.reviewedBy}
         </p>
       )}
 
       {isPending && mode === 'idle' && (
         <div className="flex gap-2 pt-1">
-          <button
-            onClick={() => startReview('approving')}
-            className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
-          >
+          <button onClick={() => startReview('approving')} className={BTN_PRIMARY}>
             {t('adminZikr.approve', 'Review & approve')}
           </button>
-          <button
-            onClick={() => startReview('rejecting')}
-            className="btn btn-xs btn-ghost rounded-lg text-red-400/70 hover:text-red-400"
-          >
+          <button onClick={() => startReview('rejecting')} className={BTN_DANGER}>
             {request.possibleDuplicateOf
               ? t('adminZikr.rejectAsDuplicate', 'Reject as duplicate')
               : t('adminZikr.reject', 'Reject')}
@@ -223,65 +227,73 @@ function RequestCard({ request }: { request: ZikrRequest }) {
 
       {mode === 'approving' && (
         <div className="space-y-2 pt-2 border-t border-brand-emerald/10">
-          <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold">
+          <p className="text-white/70 text-[10px] uppercase tracking-wide font-bold">
             {t('adminZikr.finalFields', 'Final library entry (edit as needed)')}
           </p>
           <input
-            className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+            className={`${ADMIN_INPUT_SM} w-full`}
             placeholder="Name"
+            aria-label="Name"
             value={form.name}
             onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
           />
           <input
             dir="rtl"
-            className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg font-serif"
+            className={`${ADMIN_INPUT_SM} w-full`}
             placeholder="Arabic"
+            aria-label="Arabic"
             value={form.arabic}
             onChange={(e) => setForm((f) => ({ ...f, arabic: e.target.value }))}
           />
           <input
-            className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+            className={`${ADMIN_INPUT_SM} w-full`}
             placeholder="Transliteration (optional)"
+            aria-label="Transliteration (optional)"
             value={form.transliteration}
             onChange={(e) => setForm((f) => ({ ...f, transliteration: e.target.value }))}
           />
           <textarea
-            className="textarea textarea-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+            className={`${ADMIN_INPUT_SM} w-full`}
             placeholder="Meaning"
+            aria-label="Meaning"
             rows={2}
             value={form.meaning}
             onChange={(e) => setForm((f) => ({ ...f, meaning: e.target.value }))}
           />
           <div className="grid grid-cols-2 gap-2">
             <input
-              className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+              className={`${ADMIN_INPUT_SM} w-full`}
               placeholder="Source (e.g. Bukhari 6306)"
+              aria-label="Source (e.g. Bukhari 6306)"
               value={form.source}
               onChange={(e) => setForm((f) => ({ ...f, source: e.target.value }))}
             />
             <input
-              className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+              className={`${ADMIN_INPUT_SM} w-full`}
               placeholder="Source URL"
+              aria-label="Source URL"
               value={form.sourceUrl}
               onChange={(e) => setForm((f) => ({ ...f, sourceUrl: e.target.value }))}
             />
           </div>
           <div className="grid grid-cols-2 gap-2">
             <input
-              className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+              className={`${ADMIN_INPUT_SM} w-full`}
               placeholder="Grade (optional)"
+              aria-label="Grade (optional)"
               value={form.grade}
               onChange={(e) => setForm((f) => ({ ...f, grade: e.target.value }))}
             />
             <input
-              className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+              className={`${ADMIN_INPUT_SM} w-full`}
               placeholder="Virtue (optional)"
+              aria-label="Virtue (optional)"
               value={form.virtue}
               onChange={(e) => setForm((f) => ({ ...f, virtue: e.target.value }))}
             />
           </div>
           <select
-            className="select select-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+            className={`${ADMIN_INPUT_SM} w-full`}
             value={form.category}
             onChange={(e) =>
               setForm((f) => ({ ...f, category: e.target.value as GlobalZikrCategory }))
@@ -293,7 +305,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
               </option>
             ))}
           </select>
-          <label className="flex items-start gap-2 text-white/60 text-xs pt-1">
+          <label className="flex items-start gap-2 text-white/70 text-xs pt-1">
             <input
               type="checkbox"
               className="checkbox checkbox-xs mt-0.5"
@@ -311,7 +323,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
                   ({t('adminZikr.audioRequested', 'requested')})
                 </span>
               )}
-              <span className="block text-white/30 text-[10px]">
+              <span className="block text-white/70 text-[10px]">
                 {t(
                   'adminZikr.audioAddedHint',
                   'Adds one line about the audio above the sign-off of the email.'
@@ -319,24 +331,20 @@ function RequestCard({ request }: { request: ZikrRequest }) {
               </span>
             </span>
           </label>
-          <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold pt-1">
+          <p className="text-white/70 text-[10px] uppercase tracking-wide font-bold pt-1">
             {t('adminZikr.emailToUser', 'Email to the requester (editable)')}
           </p>
           <textarea
-            className="textarea textarea-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg font-mono"
+            className={`${ADMIN_INPUT_SM} w-full font-mono`}
             rows={6}
             value={emailText}
             onChange={(e) => setEmailText(e.target.value)}
           />
           <div className="flex gap-2 pt-1">
-            <button
-              onClick={confirmApprove}
-              disabled={sending}
-              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
-            >
+            <button onClick={confirmApprove} disabled={sending} className={BTN_PRIMARY}>
               {approve.isPending ? '…' : t('adminZikr.confirmApprove', 'Add to library & notify')}
             </button>
-            <button onClick={cancel} className="btn btn-xs btn-ghost rounded-lg text-white/50">
+            <button onClick={cancel} className={BTN_SMALL}>
               {t('adminZikr.cancel', 'Cancel')}
             </button>
           </div>
@@ -346,32 +354,29 @@ function RequestCard({ request }: { request: ZikrRequest }) {
       {mode === 'rejecting' && (
         <div className="space-y-2 pt-2 border-t border-brand-emerald/10">
           <input
-            className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+            className={`${ADMIN_INPUT_SM} w-full`}
             placeholder={t('adminZikr.internalNote', 'Internal note (not sent)')}
+            aria-label={t('adminZikr.internalNote', 'Internal note (not sent)')}
             value={adminNote}
             onChange={(e) => setAdminNote(e.target.value)}
           />
-          <p className="text-white/40 text-[10px] uppercase tracking-wide font-bold">
+          <p className="text-white/70 text-[10px] uppercase tracking-wide font-bold">
             {t(
               'adminZikr.emailOptional',
-              'Email to the requester (optional — leave blank to send nothing)'
+              'Email to the requester (optional, leave blank to send nothing)'
             )}
           </p>
           <textarea
-            className="textarea textarea-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg font-mono"
+            className={`${ADMIN_INPUT_SM} w-full font-mono`}
             rows={5}
             value={emailText}
             onChange={(e) => setEmailText(e.target.value)}
           />
           <div className="flex gap-2 pt-1">
-            <button
-              onClick={confirmReject}
-              disabled={sending}
-              className="btn btn-xs rounded-lg bg-red-500/80 border-red-500 text-on-color font-bold"
-            >
+            <button onClick={confirmReject} disabled={sending} className={BTN_DANGER}>
               {reject.isPending ? '…' : t('adminZikr.confirmReject', 'Confirm reject')}
             </button>
-            <button onClick={cancel} className="btn btn-xs btn-ghost rounded-lg text-white/50">
+            <button onClick={cancel} className={BTN_SMALL}>
               {t('adminZikr.cancel', 'Cancel')}
             </button>
           </div>
@@ -403,17 +408,14 @@ function LibraryItemRow({ item }: { item: GlobalLibraryItem }) {
 
   if (!editing) {
     return (
-      <div className="flex items-start justify-between gap-3 border-b border-white/5 pb-3 last:border-0 last:pb-0">
+      <div className="flex items-start justify-between gap-3 border-b border-brand-border/60 pb-3 last:border-0 last:pb-0">
         <div className="min-w-0">
           <p className="text-white font-bold text-sm">{item.name}</p>
-          <p className="text-white/40 text-xs truncate">{item.meaning}</p>
-          <p className="text-white/25 text-[10px] mt-0.5">{item.category}</p>
+          <p className="text-white/70 text-xs truncate">{item.meaning}</p>
+          <p className="text-white/70 text-[10px] mt-0.5">{item.category}</p>
         </div>
         <div className="flex gap-2 shrink-0">
-          <button
-            onClick={() => setEditing(true)}
-            className="btn btn-xs bg-white/5 border border-white/10 text-white/60"
-          >
+          <button onClick={() => setEditing(true)} className={BTN_SMALL}>
             {t('adminSadaqah.edit', 'Edit')}
           </button>
           <button
@@ -425,7 +427,7 @@ function LibraryItemRow({ item }: { item: GlobalLibraryItem }) {
               )
                 del.mutate(item._id);
             }}
-            className="btn btn-xs bg-white/5 border border-red-400/20 text-red-300"
+            className={BTN_DANGER}
           >
             {t('adminSadaqah.delete', 'Delete')}
           </button>
@@ -435,73 +437,74 @@ function LibraryItemRow({ item }: { item: GlobalLibraryItem }) {
   }
 
   return (
-    <div className="space-y-2 border-b border-white/5 pb-3 last:border-0 last:pb-0">
+    <div className="space-y-2 border-b border-brand-border/60 pb-3 last:border-0 last:pb-0">
       <input
-        className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+        className={`${ADMIN_INPUT_SM} w-full`}
         placeholder="Name"
+        aria-label="Name"
         value={form.name}
         onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
       />
       <input
         dir="rtl"
-        className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg font-serif"
+        className={`${ADMIN_INPUT_SM} w-full`}
         placeholder="Arabic"
+        aria-label="Arabic"
         value={form.arabic}
         onChange={(e) => setForm((f) => ({ ...f, arabic: e.target.value }))}
       />
       <input
-        className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+        className={`${ADMIN_INPUT_SM} w-full`}
         placeholder="Transliteration"
+        aria-label="Transliteration"
         value={form.transliteration}
         onChange={(e) => setForm((f) => ({ ...f, transliteration: e.target.value }))}
       />
       <textarea
-        className="textarea textarea-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+        className={`${ADMIN_INPUT_SM} w-full`}
         rows={2}
         placeholder="Meaning"
+        aria-label="Meaning"
         value={form.meaning}
         onChange={(e) => setForm((f) => ({ ...f, meaning: e.target.value }))}
       />
       <div className="grid grid-cols-2 gap-2">
         <input
-          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          className={`${ADMIN_INPUT_SM} w-full`}
           placeholder="Source"
+          aria-label="Source"
           value={form.source}
           onChange={(e) => setForm((f) => ({ ...f, source: e.target.value }))}
         />
         <input
-          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          className={`${ADMIN_INPUT_SM} w-full`}
           placeholder="Source URL"
+          aria-label="Source URL"
           value={form.sourceUrl}
           onChange={(e) => setForm((f) => ({ ...f, sourceUrl: e.target.value }))}
         />
       </div>
       <div className="grid grid-cols-2 gap-2">
         <input
-          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          className={`${ADMIN_INPUT_SM} w-full`}
           placeholder="Grade"
+          aria-label="Grade"
           value={form.grade}
           onChange={(e) => setForm((f) => ({ ...f, grade: e.target.value }))}
         />
         <input
-          className="input input-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          className={`${ADMIN_INPUT_SM} w-full`}
           placeholder="Virtue"
+          aria-label="Virtue"
           value={form.virtue}
           onChange={(e) => setForm((f) => ({ ...f, virtue: e.target.value }))}
         />
       </div>
       <div className="flex gap-2">
-        <button
-          onClick={save}
-          disabled={update.isPending}
-          className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
-        >
+        <button onClick={save} disabled={update.isPending} className={BTN_PRIMARY}>
           {update.isPending ? '…' : t('adminSadaqah.save', 'Save')}
         </button>
-        <button
-          onClick={() => setEditing(false)}
-          className="btn btn-xs btn-ghost rounded-lg text-white/50"
-        >
+        <button onClick={() => setEditing(false)} className={BTN_SMALL}>
           {t('adminZikr.cancel', 'Cancel')}
         </button>
       </div>
@@ -515,13 +518,13 @@ function ManageLibrarySection() {
 
   return (
     <section className="space-y-3">
-      <h2 className="text-white font-bold text-sm uppercase tracking-widest text-white/50">
+      <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
         {t('adminZikrLibrary.title', 'Manage library')}
       </h2>
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-3">
-        {isLoading && <p className="text-white/30 text-sm">{t('common.loading', 'Loading…')}</p>}
+      <div className={`${CARD} p-4 space-y-3`}>
+        {isLoading && <p className="text-white/70 text-sm">{t('common.loading', 'Loading…')}</p>}
         {!isLoading && items?.length === 0 && (
-          <p className="text-white/30 text-sm">
+          <p className="text-white/70 text-sm">
             {t('adminZikrLibrary.empty', 'No published library entries yet.')}
           </p>
         )}
@@ -548,14 +551,15 @@ export default function AdminZikrRequests() {
         index={false}
       />
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
-        <h1 className="text-2xl font-black text-white">{t('adminZikr.title', 'Zikr Requests')}</h1>
+        <AdminHero icon={InboxStackIcon} title={t('adminZikr.title', 'Zikr Requests')} />
 
         <div className="flex gap-2">
           {(['pending', 'approved', 'rejected', 'all'] as const).map((s) => (
             <button
               key={s}
               onClick={() => setFilter(s)}
-              className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
+              aria-pressed={filter === s}
+              className={`${OPTION_CHIP} ${filter === s ? OPTION_ON : OPTION_OFF}`}
             >
               {s}
             </button>
@@ -564,10 +568,10 @@ export default function AdminZikrRequests() {
 
         <div className="space-y-3">
           {isLoading && (
-            <p className="text-white/40 text-sm">{t('adminZikr.loading', 'Loading…')}</p>
+            <p className="text-white/70 text-sm">{t('adminZikr.loading', 'Loading…')}</p>
           )}
           {!isLoading && requests?.length === 0 && (
-            <p className="text-white/40 text-sm">{t('adminZikr.empty', 'Nothing here.')}</p>
+            <p className="text-white/70 text-sm">{t('adminZikr.empty', 'Nothing here.')}</p>
           )}
           {requests?.map((r) => (
             <RequestCard key={r._id} request={r} />

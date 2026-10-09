@@ -3,6 +3,15 @@ import axios from 'axios';
 import { m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import {
+  BTN_PRIMARY,
+  BTN_SECONDARY,
+  CARD,
+  OPTION_OFF,
+  OPTION_ON,
+} from '../components/bustanStyles.js';
+import { ADMIN_INPUT_SM, AdminHero, OPTION_CHIP } from '../components/admin/adminParts.js';
+import { ArrowLeftIcon, PaperAirplaneIcon } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
 import FounderMailbox from '../components/FounderMailbox.js';
 import { useSendComposedEmail } from '../hooks/useComposeEmail.js';
@@ -38,7 +47,8 @@ function InboxPicker({ onPick }: { onPick: (message: AdminFeedbackMessage) => vo
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
+            aria-pressed={filter === s}
+            className={`${OPTION_CHIP} ${filter === s ? OPTION_ON : OPTION_OFF}`}
           >
             {s}
           </button>
@@ -47,14 +57,15 @@ function InboxPicker({ onPick }: { onPick: (message: AdminFeedbackMessage) => vo
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t('adminCompose.searchPlaceholder', 'Search name, email, message…')}
-          className="input input-xs ml-auto w-56 bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+          aria-label={t('adminCompose.searchPlaceholder', 'Search name, email, message…')}
+          className={`${ADMIN_INPUT_SM} ml-auto w-56`}
         />
       </div>
 
       <div className="space-y-2 max-h-[28rem] overflow-y-auto pr-1">
-        {isLoading && <p className="text-white/40 text-sm">{t('adminZikr.loading', 'Loading…')}</p>}
+        {isLoading && <p className="text-white/70 text-sm">{t('adminZikr.loading', 'Loading…')}</p>}
         {!isLoading && filtered.length === 0 && (
-          <p className="text-white/40 text-sm">{t('adminZikr.empty', 'Nothing here.')}</p>
+          <p className="text-white/70 text-sm">{t('adminZikr.empty', 'Nothing here.')}</p>
         )}
         {filtered.map((m) => (
           <motion.button
@@ -62,26 +73,26 @@ function InboxPicker({ onPick }: { onPick: (message: AdminFeedbackMessage) => vo
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={() => onPick(m)}
-            className="w-full text-left rounded-xl border border-brand-emerald/15 bg-white/[0.03] hover:bg-white/[0.06] p-3 space-y-1 transition-colors"
+            className="w-full text-left rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-emerald/40 p-3 space-y-1 transition-colors"
           >
             <div className="flex items-start justify-between gap-3">
               <p className="text-white font-bold text-sm min-w-0 truncate">
-                {m.name} <span className="text-white/30 font-normal">· {m.email}</span>
+                {m.name} <span className="text-white/70 font-normal">· {m.email}</span>
               </p>
               <span
-                className={`shrink-0 text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full ${
+                className={`shrink-0 text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${
                   m.status === 'open'
                     ? 'bg-brand-gold/15 text-brand-gold'
                     : m.status === 'replied'
                       ? 'bg-brand-emerald/15 text-brand-emerald'
-                      : 'bg-white/10 text-white/40'
+                      : 'bg-brand-border text-white/70'
                 }`}
               >
                 {m.status}
               </span>
             </div>
-            <p className="text-white/50 text-xs line-clamp-2">{m.message}</p>
-            <p className="text-white/25 text-[11px]">{new Date(m.createdAt).toLocaleString()}</p>
+            <p className="text-white/70 text-xs line-clamp-2">{m.message}</p>
+            <p className="text-white/70 text-[11px]">{new Date(m.createdAt).toLocaleString()}</p>
           </motion.button>
         ))}
       </div>
@@ -157,41 +168,41 @@ export default function AdminComposeEmail() {
         index={false}
       />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-6">
-        <div>
-          <h1 className="text-2xl font-black text-white">
-            {t('adminCompose.title', 'Compose email')}
-          </h1>
-          <p className="text-sm text-white/50 mt-1">
-            {t(
-              'adminCompose.subtitle',
-              'Sends from istiak@bustandeen.com — for anything that needs the founder’s own name attached, rather than a system mailbox. Every send here is recorded in the Audit Log, unlike replying directly from the Zoho mail app.'
-            )}
-          </p>
-        </div>
+        <AdminHero
+          icon={PaperAirplaneIcon}
+          title={t('adminCompose.title', 'Compose email')}
+          subtitle={t(
+            'adminCompose.subtitle',
+            'Sends from istiak@bustandeen.com, for anything that needs the founder’s own name attached rather than a system mailbox. Every send here is recorded in the Audit Log, unlike replying directly from the Zoho mail app.'
+          )}
+        />
 
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => switchMode('inbox')}
-            className={`btn btn-sm rounded-lg ${mode === 'inbox' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
+            aria-pressed={mode === 'inbox'}
+            className={`${OPTION_CHIP} ${mode === 'inbox' ? OPTION_ON : OPTION_OFF}`}
           >
             {t('adminCompose.modeInbox', 'Reply to someone who wrote in')}
           </button>
           <button
             onClick={() => switchMode('custom')}
-            className={`btn btn-sm rounded-lg ${mode === 'custom' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
+            aria-pressed={mode === 'custom'}
+            className={`${OPTION_CHIP} ${mode === 'custom' ? OPTION_ON : OPTION_OFF}`}
           >
             {t('adminCompose.modeCustom', 'Custom recipient')}
           </button>
           <button
             onClick={() => switchMode('mailbox')}
-            className={`btn btn-sm rounded-lg ${mode === 'mailbox' ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
+            aria-pressed={mode === 'mailbox'}
+            className={`${OPTION_CHIP} ${mode === 'mailbox' ? OPTION_ON : OPTION_OFF}`}
           >
             {t('adminCompose.modeMailbox', 'Founder mailbox')}
           </button>
         </div>
 
         {sentOk && !reviewing && (
-          <div className="rounded-xl border border-brand-emerald/25 bg-brand-emerald/10 px-4 py-3 text-brand-emerald text-sm font-semibold">
+          <div className="rounded-control border border-brand-emerald/25 bg-brand-emerald/10 px-4 py-3 text-brand-emerald text-sm font-semibold">
             {t('adminCompose.sent', 'Email sent.')}
           </div>
         )}
@@ -208,32 +219,33 @@ export default function AdminComposeEmail() {
         )}
 
         {mode === 'inbox' && !reviewing && selected && (
-          <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-3">
+          <div className={`${CARD} p-4 space-y-3`}>
             <button
               onClick={() => setSelected(null)}
-              className="text-white/40 hover:text-white/70 text-xs"
+              className="text-white/70 hover:text-white/70 text-xs"
             >
-              {t('adminCompose.backToList', '← Back to list')}
+              <ArrowLeftIcon className="w-4 h-4" aria-hidden="true" />
+              {t('adminCompose.backToList', 'Back to list')}
             </button>
             <div className="text-sm text-white/70">
-              <span className="text-white/40">{t('adminCompose.to', 'To')}:</span> {selected.name}{' '}
-              <span className="text-white/40">&lt;{selected.email}&gt;</span>
+              <span className="text-white/70">{t('adminCompose.to', 'To')}:</span> {selected.name}{' '}
+              <span className="text-white/70">&lt;{selected.email}&gt;</span>
             </div>
-            <p className="text-white/40 text-xs">
+            <p className="text-white/70 text-xs">
               {t(
                 'adminCompose.threadNote',
                 'Subject is kept identical to the original conversation so this reply lands in the same email thread.'
               )}
             </p>
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-              <p className="text-white/25 text-[11px] mb-1">
+            <div className="rounded-control border border-brand-border bg-brand-surface/50 p-3">
+              <p className="text-white/70 text-[11px] mb-1">
                 {t('adminCompose.originalMessage', 'Their message')} ·{' '}
                 {new Date(selected.createdAt).toLocaleString()}
               </p>
-              <p className="text-white/60 text-sm whitespace-pre-wrap">{selected.message}</p>
+              <p className="text-white/70 text-sm whitespace-pre-wrap">{selected.message}</p>
             </div>
             <div>
-              <label className="text-white/40 text-xs uppercase tracking-wide font-bold">
+              <label className="text-white/70 text-xs uppercase tracking-wide font-bold">
                 {t('adminCompose.body', 'Message')}
               </label>
               <textarea
@@ -241,13 +253,14 @@ export default function AdminComposeEmail() {
                 onChange={(e) => setThreadBody(e.target.value)}
                 rows={8}
                 placeholder={t('adminFeedback.replyPlaceholder', 'Your reply…')}
-                className="textarea textarea-sm w-full mt-1 bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+                aria-label={t('adminFeedback.replyPlaceholder', 'Your reply…')}
+                className={`${ADMIN_INPUT_SM} w-full mt-1`}
               />
             </div>
             <button
               onClick={() => setReviewing(true)}
               disabled={!canReviewThread}
-              className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
+              className={BTN_PRIMARY}
             >
               {t('adminCompose.review', 'Review & send')}
             </button>
@@ -255,9 +268,9 @@ export default function AdminComposeEmail() {
         )}
 
         {mode === 'custom' && !reviewing && (
-          <div className="rounded-2xl border border-brand-emerald/15 bg-brand-emerald/5 p-4 space-y-3">
+          <div className={`${CARD} p-4 space-y-3`}>
             <div>
-              <label className="text-white/40 text-xs uppercase tracking-wide font-bold">
+              <label className="text-white/70 text-xs uppercase tracking-wide font-bold">
                 {t('adminCompose.to', 'To')}
               </label>
               <input
@@ -267,11 +280,12 @@ export default function AdminComposeEmail() {
                   setSentOk(false);
                 }}
                 placeholder="someone@example.com"
-                className="input input-sm w-full mt-1 bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+                aria-label="someone@example.com"
+                className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors w-full mt-1"
               />
             </div>
             <div>
-              <label className="text-white/40 text-xs uppercase tracking-wide font-bold">
+              <label className="text-white/70 text-xs uppercase tracking-wide font-bold">
                 {t('adminCompose.subject', 'Subject')}
               </label>
               <input
@@ -280,11 +294,11 @@ export default function AdminComposeEmail() {
                   setCustomForm((f) => ({ ...f, subject: e.target.value }));
                   setSentOk(false);
                 }}
-                className="input input-sm w-full mt-1 bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+                className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors w-full mt-1"
               />
             </div>
             <div>
-              <label className="text-white/40 text-xs uppercase tracking-wide font-bold">
+              <label className="text-white/70 text-xs uppercase tracking-wide font-bold">
                 {t('adminCompose.body', 'Message')}
               </label>
               <textarea
@@ -294,13 +308,13 @@ export default function AdminComposeEmail() {
                   setSentOk(false);
                 }}
                 rows={10}
-                className="textarea textarea-sm w-full mt-1 bg-white/5 border-brand-emerald/15 text-white rounded-xl"
+                className={`${ADMIN_INPUT_SM} w-full mt-1`}
               />
             </div>
             <button
               onClick={() => setReviewing(true)}
               disabled={!canReviewCustom}
-              className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
+              className={BTN_PRIMARY}
             >
               {t('adminCompose.review', 'Review & send')}
             </button>
@@ -308,23 +322,23 @@ export default function AdminComposeEmail() {
         )}
 
         {reviewing && (
-          <div className="rounded-2xl border border-brand-gold/20 bg-brand-gold/5 p-4 space-y-3">
+          <div className={`${CARD} p-4 space-y-3`}>
             <p className="text-brand-gold text-xs font-bold uppercase tracking-wide">
-              {t('adminCompose.reviewLabel', 'Review before sending — this cannot be unsent')}
+              {t('adminCompose.reviewLabel', 'Review before sending. This cannot be unsent.')}
             </p>
             <p className="text-white/80 text-sm">
-              <span className="text-white/40">{t('adminCompose.to', 'To')}:</span>{' '}
+              <span className="text-white/70">{t('adminCompose.to', 'To')}:</span>{' '}
               {mode === 'inbox' && selected
                 ? `${selected.name} <${selected.email}>`
                 : customForm.to}
             </p>
             {mode === 'custom' && (
               <p className="text-white/80 text-sm">
-                <span className="text-white/40">{t('adminCompose.subject', 'Subject')}:</span>{' '}
+                <span className="text-white/70">{t('adminCompose.subject', 'Subject')}:</span>{' '}
                 {customForm.subject}
               </p>
             )}
-            <p className="text-white/70 text-sm whitespace-pre-wrap border-t border-white/10 pt-3">
+            <p className="text-white/70 text-sm whitespace-pre-wrap border-t border-brand-border pt-3">
               {mode === 'inbox' ? threadBody : customForm.body}
             </p>
             {errorMessage && <p className="text-red-400 text-xs">{errorMessage}</p>}
@@ -332,14 +346,14 @@ export default function AdminComposeEmail() {
               <button
                 onClick={mode === 'inbox' ? confirmSendThread : confirmSendCustom}
                 disabled={send.isPending}
-                className="btn btn-sm bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color disabled:opacity-40"
+                className={BTN_PRIMARY}
               >
                 {send.isPending ? '…' : t('adminCompose.confirmSend', 'Send this email')}
               </button>
               <button
                 onClick={() => setReviewing(false)}
                 disabled={send.isPending}
-                className="btn btn-sm btn-ghost text-white/50"
+                className={BTN_SECONDARY}
               >
                 {t('adminZikr.cancel', 'Cancel')}
               </button>

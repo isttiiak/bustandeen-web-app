@@ -73,6 +73,7 @@ export default function AdminAuditLog() {
             setPage(1);
           }}
           placeholder={t('adminAuditLog.filterPlaceholder', 'Filter by admin email…')}
+          aria-label={t('adminAuditLog.filterPlaceholder', 'Filter by admin email…')}
           className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors w-full max-w-xs"
         />
 
