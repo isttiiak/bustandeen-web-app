@@ -292,6 +292,59 @@ function prayersDueDemo(): number {
   return 0;
 }
 
+/** Shape the demo rows like the real circle (T3.6): you first, then friends
+ * by longest streak, never ranked. One friend shares consistency only and
+ * one keeps Quran secret, so the demo shows every kind of row. */
+function toDemoCircle(
+  rows: Array<Record<string, unknown> & { uid: string; isMe: boolean; displayName: string }>,
+  streaksOnly: string,
+  quranSecret: string
+) {
+  const days = ((new Date().getDay() + 2) % 7) + 1; // Friday to Thursday week
+  const circle = rows.map((r) => {
+    const activeDays = Math.max(1, days - (r.isMe ? 0 : 1));
+    if (r.uid === streaksOnly) {
+      return {
+        uid: r.uid,
+        displayName: r.displayName,
+        country: r['country'],
+        isMe: false,
+        visibility: 'streaks' as const,
+        zikrStreak: r['zikrStreak'],
+        zikrState: r['zikrState'],
+        quranStreak: r['quranStreak'],
+        activeDays,
+        weekDays: days,
+      };
+    }
+    const row: Record<string, unknown> = {
+      ...r,
+      visibility: 'detail',
+      activeDays,
+      weekDays: days,
+    };
+    if (r.uid === quranSecret) {
+      delete row['quranStreak'];
+      delete row['quranPagesToday'];
+      delete row['quranGoal'];
+    }
+    return row;
+  });
+  const longest = (r: Record<string, unknown>) =>
+    Math.max(Number(r['zikrStreak'] ?? 0), Number(r['quranStreak'] ?? 0));
+  return circle.sort(
+    (a, b) =>
+      Number(b['isMe']) - Number(a['isMe']) ||
+      longest(b) - longest(a) ||
+      String(a['displayName']).localeCompare(String(b['displayName']))
+  );
+}
+
+const DEMO_PRIVACY = {
+  visibility: 'streaks',
+  secret: { salat: false, zikr: false, quran: false, fasting: false },
+};
+
 function buildSocialSummary(gender: string) {
   const due = prayersDueDemo();
   const isAfterMorning = new Date().getHours() >= 8;
@@ -378,8 +431,8 @@ function buildSocialSummary(gender: string) {
     return {
       ok: true,
       inviteCode: 'demo-invite-f',
-      leaderboard: leaderboard.sort((a, b) => b.score - a.score),
-      invisible: false,
+      circle: toDemoCircle(leaderboard, 'demo-f-003', 'demo-f-004'),
+      privacy: DEMO_PRIVACY,
       pendingCount: 0,
     };
   }
@@ -465,8 +518,8 @@ function buildSocialSummary(gender: string) {
   return {
     ok: true,
     inviteCode: 'demo-invite-m',
-    leaderboard: leaderboard.sort((a, b) => b.score - a.score),
-    invisible: false,
+    circle: toDemoCircle(leaderboard, 'demo-m-003', 'demo-m-004'),
+    privacy: DEMO_PRIVACY,
     pendingCount: 0,
   };
 }

@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.124.0",
+  "version": "5.125.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,6 +10,7 @@
     "lint": "cd .. && eslint backend --config eslint.config.js",
     "typecheck": "tsc --noEmit",
     "sync-indexes": "tsx src/scripts/syncIndexes.ts",
+    "migrate:social-visibility": "tsx src/scripts/migrateSocialVisibility.ts",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --runInBand"
   },
   "engines": {

@@ -6,12 +6,13 @@ import {
   connectSchema,
   socialSummarySchema,
   setInvisibleSchema,
+  setPrivacySchema,
 } from '../validation/social.schemas.js';
 import { socialConnectLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
-// GET /api/social/summary?today=&timezoneOffset= — invite code + ranked leaderboard
+// GET /api/social/summary?today=&timezoneOffset= — invite code + the circle (no ranking)
 router.get('/summary', requireAuth, validate(socialSummarySchema), socialController.getSummary);
 
 // GET /api/social/noor?today=&timezoneOffset= — viewer's Noor (today + all-time)
@@ -48,7 +49,11 @@ router.delete('/block/:targetUid', requireAuth, socialController.unblockUser);
 // GET /api/social/blocked — manage-blocked-users view
 router.get('/blocked', requireAuth, socialController.getBlockedList);
 
-// PATCH /api/social/invisible { invisible } — full leaderboard opt-out
+// PATCH /api/social/privacy { visibility?, secret? } — what friends see + secret deeds
+router.patch('/privacy', requireAuth, validate(setPrivacySchema), socialController.setPrivacy);
+
+// PATCH /api/social/invisible { invisible } — pre-T3.6 alias of /privacy for
+// cached clients (on = hidden, off = detail). Remove in the next release.
 router.patch(
   '/invisible',
   requireAuth,

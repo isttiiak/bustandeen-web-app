@@ -154,3 +154,17 @@ export const setInvisible = async (
     next(err);
   }
 };
+
+export const setPrivacy = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const body = req.body as Parameters<typeof socialService.setPrivacy>[1];
+    const result = await socialService.setPrivacy(req.user.uid, body);
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};

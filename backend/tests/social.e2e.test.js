@@ -42,7 +42,7 @@ describe('Social API (share activities)', () => {
     expect(res.status).toBe(401);
   });
 
-  test('summary creates a profile with an invite code; leaderboard contains me', async () => {
+  test('summary creates a profile with an invite code; the circle contains me', async () => {
     await request(app).post(`/api/auth/verify`).send({ idToken: tokenA });
     await request(app).post(`/api/auth/verify`).send({ idToken: tokenB });
 
@@ -151,13 +151,12 @@ describe('Social API (share activities)', () => {
     await asB(request(app).patch(`/api/social/invisible`)).send({ invisible: false });
   });
 
-  test('leaderboard ranks by activity score', async () => {
-    // Bilal does zikr (meets default goal 100) → his score should rise above Amir's
+  test('the circle lists me first, never ranks, and shows a full-detail friend in full', async () => {
+    // Bilal does zikr (meets default goal 100) and prays two fard prayers today
     await asB(request(app).post(`/api/zikr/increment/batch`)).send({
       increments: [{ zikrType: 'SubhanAllah', amount: 120 }],
       timezoneOffset: 360,
     });
-    // Bilal also prays two fard prayers today
     await asB(request(app).patch(`/api/salat/prayer`)).send({
       prayer: 'fajr',
       status: 'completed',
@@ -172,14 +171,16 @@ describe('Social API (share activities)', () => {
     const res = await asA(
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=360`)
     );
-    const [first, second] = res.body.leaderboard;
-    expect(first.uid).toBe('bilal');
-    expect(first.salatToday).toBe(2);
-    expect(first.score).toBeGreaterThan(second.score);
-    // Score is prayer-time-aware: salat pts = round(done/due * 50) so exact
-    // value varies by time of day — just verify it's in the valid 0–100 range
-    expect(first.score).toBeGreaterThanOrEqual(0);
-    expect(first.score).toBeLessThanOrEqual(100);
+    expect(res.body.circle).toEqual(res.body.leaderboard);
+    const [first, second] = res.body.circle;
+    // Amir (me) first even though Bilal's Noor is higher: no ranking
+    expect(first.uid).toBe('amir');
+    expect(second.uid).toBe('bilal');
+    // Bilal switched the old invisible toggle off above = full detail
+    expect(second.visibility).toBe('detail');
+    expect(second.salatToday).toBe(2);
+    expect(second.score).toBeGreaterThan(first.score);
+    expect(second.score).toBeLessThanOrEqual(100);
   });
 
   test("noor endpoint returns today's and all-time Noor", async () => {
