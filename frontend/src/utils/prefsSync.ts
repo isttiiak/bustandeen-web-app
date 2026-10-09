@@ -32,6 +32,7 @@ export const SYNCED_KEYS: readonly string[] = [
   'bustandeen_cycle_height_unit',
   'bustandeen_cycle_weight_unit',
   'bustandeen_hide_bmi',
+  'bustandeen_home_special',
   'bustandeen_tasbih_breakdown',
   'bustandeen_salat_auto_count',
   'bustandeen_show_sunnah_guide',

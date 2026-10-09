@@ -28,6 +28,7 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_cycle_height_unit',
   'bustandeen_cycle_weight_unit',
   'bustandeen_hide_bmi',
+  'bustandeen_home_special',
   // Salat
   'bustandeen_tasbih_breakdown',
   'bustandeen_salat_auto_count',

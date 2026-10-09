@@ -943,6 +943,8 @@
     "ah": "AH"
   },
   "home": {
+    "todayHighlights": "Today",
+    "todayMore": "{{n}} more today",
     "ayat": "āyāt",
     "compete": "Compete →",
     "current": "Current",
@@ -2697,6 +2699,14 @@
     "shareButton": "Share as image"
   },
   "settings": {
+    "homeSection": "Home screen",
+    "homeSubtitle": "How much Home shows about today's special days.",
+    "homeSpecialFull": "Detailed",
+    "homeSpecialFullDetail": "Every special-day card right under the prayer times: virtues, the Friday hour and al-Kahf.",
+    "homeSpecialStrip": "Compact",
+    "homeSpecialStripDetail": "One short line per special day under the prayer times. The details stay further down.",
+    "homeSpecialPills": "Minimal",
+    "homeSpecialPillsDetail": "Small tags inside the prayer times card. Takes no extra space.",
     "appearanceSection": "Appearance",
     "appearanceSubtitle": "Choose how Bustandeen looks. Dark is the classic look; light is a sage paper for reading in daylight.",
     "themeSystem": "Match my device",
