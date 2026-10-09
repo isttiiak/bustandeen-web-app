@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.112.0 - Friend invites and streak badges in the Bustan Arch design - 2026-10-09
+
+### Changed
+
+- **The friend invite page has the new look**, in dark and light: one arched card with a drawn icon for each step (invited, connected, could not connect) instead of emoji, the app's usual buttons and easier-to-read text.
+- **The streak and goal badges** on Home, Friends and the Zikr counter take their colours from the theme, so they stay clear on the light theme. Their tooltips no longer use em dashes or emoji.
+- The invite wording has no em dashes, in English and Bangla. Connecting, streaks and goals work as before.
+
 ## v5.111.1 - Calmer sign-in screens and footer - 2026-10-09
 
 ### Changed
