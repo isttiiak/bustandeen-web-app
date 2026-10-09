@@ -2,8 +2,18 @@ import { useState, useEffect, FormEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import axios from 'axios';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { ShieldCheckIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from './AnimatedBackground.js';
+import {
+  AuthCard,
+  AuthHero,
+  AuthShell,
+  ErrorNote,
+  INPUT,
+  LABEL,
+  PasswordField,
+} from './auth/authParts.js';
+import { BTN_PRIMARY } from './bustanStyles.js';
 import { adminAuth } from '../adminFirebase.js';
 import { API_BASE } from '../lib/api.js';
 import { useAdminStore, AdminRole, AnsarDomain } from '../store/useAdminStore.js';
@@ -24,7 +34,6 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
   const setSession = useAdminStore((s) => s.setSession);
   const setSignedOut = useAdminStore((s) => s.setSignedOut);
   const [form, setForm] = useState({ email: '', password: '' });
-  const [showPassword, setShowPassword] = useState(false);
   const [rejectedError, setRejectedError] = useState<string | null>(null);
   const login = useAdminLogin();
 
@@ -79,72 +88,57 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AnimatedBackground variant="dark">
-      <div className="max-w-sm mx-auto px-4 py-24">
-        <form
-          onSubmit={submit}
-          className="rounded-2xl border border-brand-emerald/15 bg-white/[0.03] p-6 space-y-4"
-        >
-          <div>
-            <h1 className="text-lg font-black text-white">
-              {t('adminGate.title', 'Admin sign-in')}
-            </h1>
-            <p className="text-white/40 text-xs mt-1">
-              {t('adminGate.subtitle', 'Servant and Ansar accounts only.')}
-            </p>
-          </div>
-          <input
-            type="email"
-            autoFocus
-            autoComplete="username"
-            value={form.email}
-            onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-            placeholder={t('adminGate.emailPlaceholder', 'Admin email')}
-            aria-label={t('adminGate.emailPlaceholder', 'Admin email')}
-            className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl"
-          />
-          <div className="relative">
+    <AuthShell>
+      <AuthHero
+        icon={<ShieldCheckIcon className="w-7 h-7" aria-hidden="true" />}
+        title={t('adminGate.title', 'Admin sign-in')}
+        subtitle={t('adminGate.subtitle', 'Servant and Ansar accounts only.')}
+      />
+      <AuthCard>
+        <form onSubmit={submit} className="space-y-4">
+          <div className="space-y-1.5">
+            <label htmlFor="admin-email" className={LABEL}>
+              {t('adminGate.emailPlaceholder', 'Admin email')}
+            </label>
             <input
-              type={showPassword ? 'text' : 'password'}
+              id="admin-email"
+              type="email"
+              autoFocus
+              autoComplete="username"
+              value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
+              className={INPUT}
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label htmlFor="admin-password" className={LABEL}>
+              {t('adminGate.passwordPlaceholder', 'Password')}
+            </label>
+            <PasswordField
+              id="admin-password"
               autoComplete="current-password"
               value={form.password}
               onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))}
-              placeholder={t('adminGate.passwordPlaceholder', 'Password')}
-              aria-label={t('adminGate.passwordPlaceholder', 'Password')}
-              className="input input-sm w-full bg-white/5 border-brand-emerald/15 text-white rounded-xl pr-10"
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              aria-label={
-                showPassword
-                  ? t('adminGate.hidePassword', 'Hide password')
-                  : t('adminGate.showPassword', 'Show password')
-              }
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
-            >
-              {showPassword ? (
-                <EyeSlashIcon className="w-4 h-4" />
-              ) : (
-                <EyeIcon className="w-4 h-4" />
-              )}
-            </button>
           </div>
           {(login.isError || rejectedError) && (
-            <p className="text-red-400 text-xs">
-              {rejectedError ??
-                t('adminGate.incorrect', 'Incorrect email or password — try again.')}
-            </p>
+            <ErrorNote>
+              {rejectedError ?? t('adminGate.incorrect', 'Incorrect email or password. Try again.')}
+            </ErrorNote>
           )}
           <button
             type="submit"
             disabled={login.isPending || !form.email || !form.password}
-            className="btn btn-sm w-full rounded-xl border-0 text-on-color font-bold bg-gradient-to-r from-brand-emerald-dim to-brand-info-dim disabled:opacity-50"
+            className={`${BTN_PRIMARY} w-full`}
           >
-            {login.isPending ? '…' : t('adminGate.continue', 'Sign in')}
+            {login.isPending ? (
+              <span className="loading loading-spinner loading-sm" aria-label="Signing in" />
+            ) : (
+              t('adminGate.continue', 'Sign in')
+            )}
           </button>
         </form>
-      </div>
-    </AnimatedBackground>
+      </AuthCard>
+    </AuthShell>
   );
 }
