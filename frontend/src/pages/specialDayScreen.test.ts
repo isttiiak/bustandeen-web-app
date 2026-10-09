@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import en from '../locales/en/common.json';
 import bn from '../locales/bn/common.json';
 import code from './IslamicSpecialDay.tsx?raw';
+import { SPECIAL_DAYS } from '../utils/islamicCalendar.js';
 
 // T3.2 Special day page: one arch hero with the shared card/button classes,
 // SVG icons only (not the emoji in the SPECIAL_DAYS data), theme tokens instead
@@ -47,5 +48,13 @@ describe('IslamicSpecialDay', () => {
       expect(sd[k]).not.toMatch(DASH_OR_EMOJI);
     }
     expect(sd.footerQuote).toBeUndefined();
+  });
+
+  // DaifExplainer rule: every ḍaʿīf grade on a page gets an explainer card.
+  it('maps every day with a ḍaʿīf grade to a DaifExplainer topic', () => {
+    const weak = SPECIAL_DAYS.filter((d) => d.references.some((r) => /Ḍaʿīf/i.test(r.grade ?? '')));
+    expect(weak.map((d) => d.id).sort()).toEqual(['fast_mon_thu', 'shab_e_barat']);
+    for (const d of weak) expect(code).toContain(`  ${d.id}: ['`);
+    expect(code).toContain('<DaifExplainer topics={daifTopics} />');
   });
 });
