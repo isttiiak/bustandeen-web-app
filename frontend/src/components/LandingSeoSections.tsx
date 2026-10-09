@@ -8,6 +8,19 @@
 //     app loads. Google indexes the page AFTER running JavaScript, so content
 //     only in the static HTML would vanish from its view.
 // Pure: no hooks, plain <a> links, strings through the `t` it is given.
+// T3.2: theme tokens and line icons (no emoji), shared with the landing body.
+
+import type { ComponentType } from 'react';
+import { CalculatorIcon, CalendarDaysIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import {
+  CompassIcon,
+  CrescentIcon,
+  DuaHandsIcon,
+  FajrIcon,
+  MaghribIcon,
+  type IconProps,
+} from './icons/IslamicIcons.js';
+import { CARD } from './bustanStyles.js';
 
 export type LandingT = (key: string, fallback: string) => string;
 
@@ -36,45 +49,55 @@ export const POPULAR_CITY_LINKS: { slug: string; name: string }[] = [
   { slug: 'cairo-egypt', name: 'Cairo' },
 ];
 
-const TOOL_LINKS: { href: string; key: string; fallback: string; emoji: string }[] = [
-  { href: '/duas', key: 'landing.tools.duas', fallback: 'Duʿās for every situation', emoji: '🤲' },
+const TOOL_LINKS: {
+  href: string;
+  key: string;
+  fallback: string;
+  Icon: ComponentType<IconProps>;
+}[] = [
+  {
+    href: '/duas',
+    key: 'landing.tools.duas',
+    fallback: 'Duʿās for every situation',
+    Icon: DuaHandsIcon,
+  },
   {
     href: '/adhkar/morning',
     key: 'landing.tools.morning',
     fallback: 'Morning adhkār',
-    emoji: '🌅',
+    Icon: FajrIcon,
   },
   {
     href: '/adhkar/evening',
     key: 'landing.tools.evening',
     fallback: 'Evening adhkār',
-    emoji: '🌆',
+    Icon: MaghribIcon,
   },
   {
     href: '/ramadan-calendar',
     key: 'landing.tools.ramadan',
     fallback: 'Ramadan calendars',
-    emoji: '🌙',
+    Icon: CrescentIcon,
   },
   {
     href: '/zakat-calculator',
     key: 'landing.tools.zakat',
     fallback: 'Zakat calculator',
-    emoji: '💰',
+    Icon: CalculatorIcon,
   },
   {
     href: '/asma-ul-husna',
     key: 'landing.tools.asma',
     fallback: 'The 99 Names of Allah',
-    emoji: '✨',
+    Icon: SparklesIcon,
   },
   {
     href: '/hijri-date-converter',
     key: 'landing.tools.hijri',
     fallback: 'Hijri date converter',
-    emoji: '📅',
+    Icon: CalendarDaysIcon,
   },
-  { href: '/qibla', key: 'landing.tools.qibla', fallback: 'Qibla compass', emoji: '🧭' },
+  { href: '/qibla', key: 'landing.tools.qibla', fallback: 'Qibla compass', Icon: CompassIcon },
 ];
 
 /** FAQ keys + English fallbacks; also used for the FAQPage JSON-LD. */
@@ -136,10 +159,13 @@ export default function LandingSeoSections({
   return (
     <div className="space-y-12">
       <section aria-labelledby="landing-cities">
-        <h2 id="landing-cities" className="text-white font-black text-xl sm:text-2xl text-center">
+        <h2
+          id="landing-cities"
+          className="font-display text-white font-bold text-xl sm:text-2xl text-center"
+        >
           {t('landing.citiesTitle', 'Prayer times in your city')}
         </h2>
-        <p className="text-white/45 text-sm text-center mt-2">
+        <p className="text-white/80 text-sm text-center mt-2">
           {t(
             'landing.citiesDesc',
             'Today’s Fajr, Ẓuhr, ʿAṣr, Maghrib and ʿIshāʾ for 1,400+ cities, with both ʿAṣr times.'
@@ -150,7 +176,7 @@ export default function LandingSeoSections({
             <li key={c.slug}>
               <a
                 href={`${prefix}/prayer-times/${c.slug}`}
-                className="inline-block px-3 py-1.5 rounded-full border border-brand-border bg-white/5 text-white/70 text-sm hover:text-brand-emerald hover:border-brand-emerald/40 transition-colors"
+                className="inline-block px-3 py-1.5 rounded-full border border-brand-border bg-brand-deep text-white/80 text-sm hover:text-brand-emerald hover:border-brand-emerald/40 transition-colors"
               >
                 {c.name}
               </a>
@@ -160,7 +186,10 @@ export default function LandingSeoSections({
       </section>
 
       <section aria-labelledby="landing-tools">
-        <h2 id="landing-tools" className="text-white font-black text-xl sm:text-2xl text-center">
+        <h2
+          id="landing-tools"
+          className="font-display text-white font-bold text-xl sm:text-2xl text-center"
+        >
           {t('landing.toolsTitle', 'Free tools, no account needed')}
         </h2>
         <ul className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -168,9 +197,9 @@ export default function LandingSeoSections({
             <li key={tool.href}>
               <a
                 href={tool.href === '/qibla' ? tool.href : `${prefix}${tool.href}`}
-                className="flex items-center gap-2 h-full px-3 py-3 rounded-2xl border border-brand-border bg-white/[0.04] text-white/75 text-sm font-semibold hover:text-white hover:border-brand-emerald/40 transition-colors"
+                className="flex items-center gap-2 h-full px-3 py-3 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/80 text-sm font-semibold hover:text-white hover:border-brand-emerald/40 transition-colors"
               >
-                <span aria-hidden>{tool.emoji}</span>
+                <tool.Icon className="w-5 h-5 shrink-0 text-brand-emerald" aria-hidden="true" />
                 {t(tool.key, tool.fallback)}
               </a>
             </li>
@@ -179,14 +208,17 @@ export default function LandingSeoSections({
       </section>
 
       <section aria-labelledby="landing-faq" className="max-w-3xl mx-auto">
-        <h2 id="landing-faq" className="text-white font-black text-xl sm:text-2xl text-center">
+        <h2
+          id="landing-faq"
+          className="font-display text-white font-bold text-xl sm:text-2xl text-center"
+        >
           {t('landing.faqTitle', 'Common questions')}
         </h2>
         <dl className="mt-5 space-y-3">
           {LANDING_FAQ.map(({ q, a }) => (
-            <div key={q[0]} className="rounded-2xl border border-brand-border bg-white/[0.04] p-4">
+            <div key={q[0]} className={`${CARD} p-4`}>
               <dt className="text-white font-bold text-sm">{t(q[0], q[1])}</dt>
-              <dd className="text-white/55 text-sm mt-1.5 leading-relaxed">{t(a[0], a[1])}</dd>
+              <dd className="text-white/80 text-sm mt-1.5 leading-relaxed">{t(a[0], a[1])}</dd>
             </div>
           ))}
         </dl>

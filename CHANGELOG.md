@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.114.3 - The welcome page in the Bustan Arch design - 2026-10-09
+
+### Changed
+
+- **The welcome page** (bustandeen.com and /bn) has the new look: the arched welcome card with the Bustandeen leaf, the app's usual cards and buttons, drawn icons instead of emoji, and easier-to-read text. The page you see inside the app and the one you see first now share one layout, so nothing jumps when the app takes over.
+- It now also shows the privacy, sadaqah and "Read our story" sections on the first visit, and the closing verse (Quran 2:148) in Bangla on the Bangla page.
+- Its English and Bangla texts, and the note about the iOS and Android apps, no longer use em dashes or emoji.
+
 ## v5.114.2 - "Signing you in" screen in the Bustan Arch design - 2026-10-09
 
 ### Changed
