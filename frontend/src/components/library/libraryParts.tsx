@@ -7,9 +7,7 @@ import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 type SvgIcon = (p: { className?: string }) => ReactNode;
 
 /** A chosen / not chosen option tile (same as Settings). */
-export const OPTION_ON = 'bg-brand-emerald/10 border-brand-emerald text-white';
-export const OPTION_OFF =
-  'bg-brand-surface/50 border-brand-border text-white/80 hover:text-white hover:border-brand-emerald/40';
+export { OPTION_ON, OPTION_OFF } from '../bustanStyles.js';
 
 /** A theme text/number/date field. */
 export const INPUT =

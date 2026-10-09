@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.113.0 - Hifz and Share āyah dialogs in the Bustan Arch design - 2026-10-09
+
+### Changed
+
+- **The Hifz "Read before you memorise" and recall dialogs** have the new look, in dark and light: the app's usual card, buttons and drawn icons, and easier-to-read text. They now open above the top bar instead of under it. The Forgot / Hesitant / Easy buttons are clearer on the light theme.
+- **The "Share this āyah" dialog** uses the same card, option chips and buttons as Settings. The custom colour swatch shows a drawn brush instead of a rainbow.
+- **"Pick a specific āyah instead"** on the Hifz page shows a drawn arrow instead of a text arrow, in English and Bangla.
+
 ## v5.112.4 - Install card in the Bustan Arch design - 2026-10-09
 
 ### Changed

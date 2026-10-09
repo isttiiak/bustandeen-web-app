@@ -10,8 +10,10 @@ import {
   ShareIcon,
   ClipboardDocumentIcon,
   SparklesIcon,
+  PaintBrushIcon,
 } from '@heroicons/react/24/outline';
 import AyahShareCard from './AyahShareCard.js';
+import { OPTION_OFF, OPTION_ON } from './bustanStyles.js';
 import {
   SHARE_CARD_THEMES,
   SHARE_CARD_RATIOS,
@@ -42,10 +44,8 @@ const PREVIEW_MAX_W = 320;
 const PREVIEW_MAX_H = 400;
 
 const chipClass = (active: boolean) =>
-  `px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all ${
-    active
-      ? 'bg-brand-emerald/15 border-brand-emerald/40 text-brand-emerald'
-      : 'bg-white/5 border-brand-emerald/10 text-white/50 hover:text-white'
+  `px-2.5 py-1 rounded-control text-[11px] font-bold border transition-colors ${
+    active ? OPTION_ON : OPTION_OFF
   }`;
 
 const pickRandom = <T,>(items: readonly T[]): T => items[Math.floor(Math.random() * items.length)]!;
@@ -201,7 +201,7 @@ export default function ShareAyahModal({
     })();
 
   // Clipboard image writes need both the API and a secure context (https or
-  // localhost) — plain http falls through to Download/Share instead of a
+  // localhost); plain http falls through to Download/Share instead of a
   // silently-failing Copy button.
   const canCopyImage =
     typeof navigator !== 'undefined' &&
@@ -225,18 +225,19 @@ export default function ShareAyahModal({
             animate={{ scale: 1, y: 0 }}
             exit={{ scale: 0.94, y: 8 }}
             transition={{ type: 'spring', damping: 24 }}
-            className="w-full max-w-sm rounded-2xl bg-brand-deep border border-brand-emerald/25 p-5 my-8"
+            className="w-full max-w-sm rounded-card bg-brand-deep border border-brand-border shadow-elev-3 p-5 my-8"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
+            aria-labelledby="share-ayah-title"
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-black text-base">
+              <h3 id="share-ayah-title" className="font-display text-white font-bold text-base">
                 {t('shareAyah.title', 'Share this āyah')}
               </h3>
               <button
                 aria-label={t('common.close', 'Close')}
-                className="text-white/40 hover:text-white"
+                className="p-1.5 rounded-control text-white/70 hover:text-white hover:bg-shade/20"
                 onClick={onClose}
               >
                 <XMarkIcon className="w-5 h-5" />
@@ -245,7 +246,7 @@ export default function ShareAyahModal({
 
             {/* scaled preview of the fixed-size capture node */}
             <div
-              className="mx-auto rounded-xl overflow-hidden border border-brand-emerald/10 grid place-items-center bg-shade/20"
+              className="mx-auto rounded-control overflow-hidden border border-brand-border grid place-items-center bg-shade/20"
               style={{ width: ratio.width * previewScale, height: ratio.height * previewScale }}
             >
               {loading || !ayah ? (
@@ -280,7 +281,7 @@ export default function ShareAyahModal({
             <div className="mt-4 space-y-3">
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <p className="text-white/40 text-[11px] font-bold">
+                  <p className="text-white/70 text-[11px] font-bold">
                     {t('shareAyah.theme', 'Card style')}
                   </p>
                   <button
@@ -304,25 +305,27 @@ export default function ShareAyahModal({
                       className={`w-8 h-8 rounded-full border-2 transition-all ${
                         prefs.themeId === th.id
                           ? 'border-white scale-110'
-                          : 'border-white/15 hover:border-white/40'
+                          : 'border-brand-border hover:border-brand-emerald/40'
                       }`}
                       style={{ background: th.background }}
                     />
                   ))}
                   <label
                     title={t('shareAyah.customColor', 'Custom color')}
-                    className={`relative w-8 h-8 rounded-full border-2 cursor-pointer overflow-hidden transition-all ${
+                    className={`relative w-8 h-8 rounded-full border-2 cursor-pointer overflow-hidden transition-all grid place-items-center ${
                       prefs.themeId === CUSTOM_THEME_ID
                         ? 'border-white scale-110'
-                        : 'border-white/15 hover:border-white/40'
+                        : 'border-brand-border hover:border-brand-emerald/40 bg-brand-surface'
                     }`}
-                    style={{
-                      background:
-                        prefs.themeId === CUSTOM_THEME_ID
-                          ? prefs.customAccent
-                          : 'conic-gradient(#f43f5e, #f59e0b, #84cc16, #10b981, #38bdf8, #a855f7, #f43f5e)',
-                    }}
+                    style={
+                      prefs.themeId === CUSTOM_THEME_ID
+                        ? { background: prefs.customAccent }
+                        : undefined
+                    }
                   >
+                    {prefs.themeId !== CUSTOM_THEME_ID && (
+                      <PaintBrushIcon className="w-4 h-4 text-white/80" aria-hidden="true" />
+                    )}
                     <input
                       type="color"
                       aria-label={t('shareAyah.customColor', 'Custom color')}
@@ -337,7 +340,7 @@ export default function ShareAyahModal({
               </div>
 
               <div>
-                <p className="text-white/40 text-[11px] font-bold mb-1.5">
+                <p className="text-white/70 text-[11px] font-bold mb-1.5">
                   {t('shareAyah.shape', 'Shape')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
@@ -356,7 +359,7 @@ export default function ShareAyahModal({
               </div>
 
               <div>
-                <p className="text-white/40 text-[11px] font-bold mb-1.5">
+                <p className="text-white/70 text-[11px] font-bold mb-1.5">
                   {t('shareAyah.pattern', 'Background pattern')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
@@ -375,7 +378,7 @@ export default function ShareAyahModal({
               </div>
 
               <div>
-                <p className="text-white/40 text-[11px] font-bold mb-1.5">
+                <p className="text-white/70 text-[11px] font-bold mb-1.5">
                   {t('shareAyah.ornament', 'Decoration')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
@@ -395,7 +398,7 @@ export default function ShareAyahModal({
 
               {(prefs.pattern !== 'none' || prefs.ornament !== 'none') && (
                 <div>
-                  <p className="text-white/40 text-[11px] font-bold mb-1.5">
+                  <p className="text-white/70 text-[11px] font-bold mb-1.5">
                     {t('shareAyah.intensity', 'Graphics strength')}
                   </p>
                   <div className="flex flex-wrap gap-1.5">
@@ -415,7 +418,7 @@ export default function ShareAyahModal({
               )}
 
               <div>
-                <p className="text-white/40 text-[11px] font-bold mb-1.5">
+                <p className="text-white/70 text-[11px] font-bold mb-1.5">
                   {t('shareAyah.translations', 'Translations (up to 2)')}
                 </p>
                 <div className="flex flex-wrap gap-1.5">
@@ -423,11 +426,8 @@ export default function ShareAyahModal({
                     <button
                       key={ed.id}
                       onClick={() => toggleEdition(ed.id)}
-                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold border transition-all ${
-                        editions.includes(ed.id)
-                          ? 'bg-brand-emerald/15 border-brand-emerald/40 text-brand-emerald'
-                          : 'bg-white/5 border-brand-emerald/10 text-white/50 hover:text-white'
-                      }`}
+                      aria-pressed={editions.includes(ed.id)}
+                      className={chipClass(editions.includes(ed.id))}
                     >
                       {ed.label}
                     </button>
@@ -446,15 +446,15 @@ export default function ShareAyahModal({
               </label>
             </div>
 
-            {/* Copy always leads — it's the fastest path to "paste into WhatsApp/
+            {/* Copy always leads: it's the fastest path to "paste into WhatsApp/
                 Messenger" without a download round-trip. Share only appears
                 alongside a real native share sheet (Download vs. Share would
-                otherwise be two buttons doing the exact same thing) — see
+                otherwise be two buttons doing the exact same thing), see
                 `canShareFiles`. Whichever action is last gets the highlighted
                 style, so there's always exactly one obvious primary action.
                 Icon-over-label (not icon+label in a row) so a narrow column
                 on mobile never squeezes "Download" into a wrap that escapes
-                the button's box — a fixed-height row layout did exactly that. */}
+                the button's box; a fixed-height row layout did exactly that. */}
             <div
               className="grid gap-2 mt-5"
               style={{
@@ -463,7 +463,7 @@ export default function ShareAyahModal({
             >
               {canCopyImage && (
                 <button
-                  className="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border bg-white/5 border-brand-emerald/10 text-white/70 disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-1 py-2.5 rounded-control border bg-brand-deep border-brand-border text-white/80 hover:text-white shadow-elev-1 transition-colors disabled:opacity-50"
                   onClick={handleCopy}
                   disabled={!!busyAction || loading || !ayah}
                 >
@@ -478,10 +478,10 @@ export default function ShareAyahModal({
                 </button>
               )}
               <button
-                className={`flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border disabled:opacity-50 ${
+                className={`flex flex-col items-center justify-center gap-1 py-2.5 rounded-control border transition-colors disabled:opacity-50 ${
                   canShareFiles
-                    ? 'bg-white/5 border-brand-emerald/10 text-white/70'
-                    : 'border-0 text-on-color bg-brand-emerald-dim'
+                    ? 'bg-brand-deep border-brand-border text-white/80 hover:text-white shadow-elev-1'
+                    : 'btn-solid border-0 text-on-color bg-brand-emerald-dim shadow-elev-1'
                 }`}
                 onClick={handleDownload}
                 disabled={!!busyAction || loading || !ayah}
@@ -499,7 +499,7 @@ export default function ShareAyahModal({
               </button>
               {canShareFiles && (
                 <button
-                  className="flex flex-col items-center justify-center gap-1 py-2.5 rounded-xl border-0 text-on-color bg-brand-emerald-dim disabled:opacity-50"
+                  className="flex flex-col items-center justify-center gap-1 py-2.5 rounded-control btn-solid border-0 text-on-color bg-brand-emerald-dim shadow-elev-1 disabled:opacity-50"
                   onClick={handleShare}
                   disabled={!!busyAction || loading || !ayah}
                 >
