@@ -6,20 +6,27 @@ import { TIMELINE_PRAYERS, type TimelinePrayer } from '../../utils/todayTimeline
 
 type RowStatus = 'completed' | 'kaza' | 'missed' | 'pending';
 
+// Opaque fills: the track runs behind the circles, into each one.
 const DOT: Record<RowStatus, string> = {
   completed: 'bg-brand-emerald-dim border-brand-emerald-dim',
   kaza: 'bg-brand-gold border-brand-gold',
-  missed: 'bg-red-400/10 border-red-300',
+  missed: 'bg-brand-deep border-red-300',
   pending: 'bg-brand-deep border-brand-border',
 };
+
+/** Column width and gap in px (w-11, gap-4): the track's geometry. */
+const COL = 44;
+const GAP = 16;
 
 const normalise = (s: string | undefined): RowStatus =>
   s === 'completed' || s === 'kaza' || s === 'missed' ? s : 'pending';
 
 /**
- * The arch's five-prayer row (always on Home): the day's prayers as steps,
- * joined by a line that fills in as each one is prayed. Done is sage, Kaza
- * gold, Miss red, the current prayer ringed. Tapping it opens the Salat page.
+ * The arch's five-prayer row (always on Home): the day's prayers as steps on
+ * one line that runs through the circles, like the timeline's vertical line,
+ * and fills in sage between prayers already prayed. Done is sage, Kaza gold,
+ * Miss red; the current prayer is ringed with a green name. Tapping it opens
+ * the Salat page.
  */
 export default function PrayerRow({
   log,
@@ -55,25 +62,34 @@ export default function PrayerRow({
       aria-label={t('home.archRowOpen', "Today's prayers, open Salat")}
       className="relative z-10 block mt-3 mx-auto w-fit rounded-control px-1 py-1 hover:bg-white/5 active:scale-[0.98] transition"
     >
-      <ol className="flex items-start justify-center">
-        {TIMELINE_PRAYERS.map((id, i) => {
-          const st = statuses[i]!;
-          const isCurrent = id === current && !prayed(st);
-          const joined = i > 0 && prayed(statuses[i - 1]!) && prayed(st);
-          return (
-            <li key={id} className="flex items-start">
-              {i > 0 && (
+      <div className="relative">
+        {/* The track, from the first circle's centre to the last one's */}
+        <span
+          aria-hidden="true"
+          className="absolute top-[11px] h-0.5 rounded-full bg-brand-border"
+          style={{ left: COL / 2, right: COL / 2 }}
+        />
+        {TIMELINE_PRAYERS.slice(1).map((id, k) =>
+          prayed(statuses[k]!) && prayed(statuses[k + 1]!) ? (
+            <span
+              key={`seg-${id}`}
+              aria-hidden="true"
+              className="absolute top-[11px] h-0.5 rounded-full bg-brand-emerald"
+              style={{ left: COL / 2 + k * (COL + GAP), width: COL + GAP }}
+            />
+          ) : null
+        )}
+        <ol className="relative flex items-start justify-center gap-4">
+          {TIMELINE_PRAYERS.map((id, i) => {
+            const st = statuses[i]!;
+            const isCurrent = id === current && !prayed(st);
+            return (
+              <li key={id} className="relative flex flex-col items-center gap-1 w-11">
                 <span
-                  aria-hidden="true"
-                  className={`mt-[11px] h-0.5 w-4 sm:w-6 rounded-full ${
-                    joined ? 'bg-brand-emerald' : 'bg-brand-border'
-                  }`}
-                />
-              )}
-              <span className="flex flex-col items-center gap-1 w-11">
-                <span
-                  className={`w-6 h-6 rounded-full border-[1.5px] flex items-center justify-center ${DOT[st]} ${
-                    isCurrent ? 'border-brand-emerald ring-2 ring-brand-emerald/25' : ''
+                  className={`w-6 h-6 rounded-full border-[1.5px] flex items-center justify-center ${
+                    isCurrent
+                      ? 'bg-brand-deep border-brand-emerald ring-2 ring-brand-emerald/25'
+                      : DOT[st]
                   }`}
                 >
                   {prayed(st) && <CheckIcon className="w-3.5 h-3.5 text-on-color" />}
@@ -93,11 +109,11 @@ export default function PrayerRow({
                   {name(id)}
                   <span className="sr-only"> {label(id, st)}</span>
                 </span>
-              </span>
-            </li>
-          );
-        })}
-      </ol>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </Link>
   );
 }

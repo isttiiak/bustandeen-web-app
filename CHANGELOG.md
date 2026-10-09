@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.123.1 - The arch prayer row on one line - 2026-10-09
+
+### Changed
+
+- **Arch prayer row**: one line now runs through all five circles, like the timeline's vertical line, filling in sage between prayers already prayed. The current prayer's name is green (gold stays for Kaza).
+
 ## v5.123.0 - Habits in your order, an optional timeline, a livelier prayer row - 2026-10-09
 
 ### Changed
