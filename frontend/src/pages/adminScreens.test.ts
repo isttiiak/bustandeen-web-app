@@ -11,12 +11,13 @@ import broadcast from './AdminBroadcast.tsx?raw';
 import compose from './AdminComposeEmail.tsx?raw';
 import zikrRequests from './AdminZikrRequests.tsx?raw';
 import sadaqah from './AdminSadaqah.tsx?raw';
+import opsHealth from './AdminOpsHealth.tsx?raw';
 import updateEmails from '../components/AdminUpdateEmails.tsx?raw';
 
 // T3.2 Admin pages (staff only, English only): one arch hero per screen via
 // AdminHero, shared card/button classes, SVG icons, readable ink (no ink
-// below /70), theme tokens and no em dashes in the visible copy. Each admin
-// page group adds its files here as it is redesigned.
+// below /70), theme tokens and no em dashes in the visible copy. Every
+// admin page and shared admin component is listed here.
 const DASH_OR_EMOJI = /—|\p{Extended_Pictographic}|[✓✔←→↗]/u;
 const stripComments = (src: string) => src.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
 
@@ -34,6 +35,7 @@ const FILES: Record<string, string> = {
   AdminZikrRequests: zikrRequests,
   AdminUpdateEmails: updateEmails,
   AdminSadaqah: sadaqah,
+  AdminOpsHealth: opsHealth,
 };
 const SCREENS: Record<string, string> = {
   AdminHome: home,
@@ -46,6 +48,7 @@ const SCREENS: Record<string, string> = {
   AdminComposeEmail: compose,
   AdminZikrRequests: zikrRequests,
   AdminSadaqah: sadaqah,
+  AdminOpsHealth: opsHealth,
 };
 
 describe('admin screens', () => {

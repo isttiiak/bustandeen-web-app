@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.116.4 - Admin panel: ops health in the new look - 2026-10-09
+
+### Changed
+
+- **Admin panel (staff only)**: System & ops health uses the Bustan Arch design: the arched heading, check and cross icons for each service, warning icons instead of emoji for storage and email-sender alerts, and easier-to-read text. With this, every screen of the app and the admin panel has the new design.
+
 ## v5.116.3 - Admin panel: sadaqah in the new look - 2026-10-09
 
 ### Changed
