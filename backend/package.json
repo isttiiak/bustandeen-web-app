@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.128.1",
+  "version": "5.128.2",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "sync-indexes": "tsx src/scripts/syncIndexes.ts",
     "migrate:social-visibility": "tsx src/scripts/migrateSocialVisibility.ts",
+    "cleanup:orphans": "tsx src/scripts/cleanupOrphans.ts",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules NODE_ENV=test jest --runInBand"
   },
   "engines": {
