@@ -10,8 +10,7 @@ import { FrostIcon, TargetIcon } from './icons/IslamicIcons.js';
  * Streak: flame active · frost in the grace day (complete today to save it) ·
  *         muted red flame with 0 when dead · pause when paused.
  * Goal:   target with % while in progress · trophy when completed.
- * `icon` (emoji) is kept for screens not yet redesigned (Friends); badges
- * render the SVG `Icon` (audit T3.2).
+ * SVG icons only; colours come from the theme's data/brand tokens (audit T3.2).
  */
 
 export function streakVisual(
@@ -19,7 +18,6 @@ export function streakVisual(
   streak: number,
   t: (key: string, fallback: string, opts?: Record<string, unknown>) => string
 ): {
-  icon: string;
   Icon: (p: { className?: string }) => React.ReactNode;
   cls: string;
   tip: string;
@@ -27,16 +25,14 @@ export function streakVisual(
 } {
   if (state === 'paused') {
     return {
-      icon: '⏸️',
       Icon: PauseIcon,
       iconCls: 'text-brand-pink',
       cls: 'bg-brand-pink/15 border-brand-pink/40',
-      tip: t('statusBadges.streakPaused', 'Streak paused — resume from analytics'),
+      tip: t('statusBadges.streakPaused', 'Streak paused. Resume from analytics'),
     };
   }
   if (state === 'grace') {
     return {
-      icon: '🧊',
       Icon: FrostIcon,
       iconCls: 'text-brand-info',
       cls: 'bg-brand-info/15 border-brand-info/50',
@@ -49,19 +45,17 @@ export function streakVisual(
   }
   if (streak <= 0 || state === 'none') {
     return {
-      icon: '🔥',
       Icon: FireIcon,
       iconCls: 'text-red-400',
-      cls: 'bg-red-500/15 border-red-400/50',
-      tip: t('statusBadges.noStreak', 'No streak yet — meet your daily goal to light the fire'),
+      cls: 'bg-red-400/15 border-red-400/50',
+      tip: t('statusBadges.noStreak', 'No streak yet. Meet your daily goal to light the fire'),
     };
   }
   return {
-    icon: '🔥',
     Icon: FireIcon,
     iconCls: 'text-brand-gold',
     cls: 'bg-brand-gold/20 border-brand-gold/40',
-    tip: t('statusBadges.streakActive', '{{streak}}-day streak — keep it burning!', {
+    tip: t('statusBadges.streakActive', '{{streak}}-day streak, keep it burning!', {
       streak: formatLocaleNumber(streak),
     }),
   };
@@ -111,7 +105,7 @@ export function GoalBadge({
       className="tooltip tooltip-bottom"
       data-tip={
         met
-          ? t('statusBadges.goalAchieved', 'Daily goal achieved — māshā’Allāh! 🏆')
+          ? t('statusBadges.goalAchieved', 'Daily goal achieved, māshā’Allāh!')
           : t('statusBadges.goalPct', "{{pct}}% of today's goal", { pct: formatLocaleNumber(pct) })
       }
     >
@@ -119,7 +113,7 @@ export function GoalBadge({
         className={`rounded-full border font-bold flex items-center gap-1 text-white ${
           met
             ? 'bg-brand-emerald/25 border-brand-emerald/50'
-            : 'bg-white/10 border-brand-emerald/20'
+            : 'bg-shade/20 border-brand-emerald/30'
         } ${size === 'md' ? 'px-2.5 py-1 text-sm' : 'px-2 py-0.5 text-xs'}`}
       >
         {met ? (
