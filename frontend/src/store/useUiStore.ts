@@ -1,4 +1,9 @@
 ﻿import { create } from 'zustand';
+import {
+  HOME_SPECIAL_KEY,
+  parseHomeSpecialLayout,
+  type HomeSpecialLayout,
+} from '../utils/homeSpecial.js';
 
 interface UiState {
   /** Bumped when a cross-device sync changed settings at session start, so the
@@ -39,6 +44,9 @@ interface UiState {
   cycleWeightUnit: 'kg' | 'lbs';
   /** Hide the BMI card on Rayhanah analytics (local preference) */
   hideBmi: boolean;
+  /** How Home shows today's special days (utils/homeSpecial.ts) */
+  homeSpecialLayout: HomeSpecialLayout;
+  setHomeSpecialLayout: (val: HomeSpecialLayout) => void;
   setCycleHeightUnit: (val: 'm' | 'ft') => void;
   setCycleWeightUnit: (val: 'kg' | 'lbs') => void;
   setHideBmi: (val: boolean) => void;
@@ -73,6 +81,7 @@ type StoredPrefs = Pick<
   | 'cycleHeightUnit'
   | 'cycleWeightUnit'
   | 'hideBmi'
+  | 'homeSpecialLayout'
 >;
 
 /** Reads every persisted UI preference from localStorage. Used for the initial
@@ -97,6 +106,7 @@ function readStoredPrefs(): StoredPrefs {
     cycleHeightUnit: localStorage.getItem('bustandeen_cycle_height_unit') === 'ft' ? 'ft' : 'm',
     cycleWeightUnit: localStorage.getItem('bustandeen_cycle_weight_unit') === 'lbs' ? 'lbs' : 'kg',
     hideBmi: localStorage.getItem('bustandeen_hide_bmi') === '1',
+    homeSpecialLayout: parseHomeSpecialLayout(localStorage.getItem(HOME_SPECIAL_KEY)),
   };
 }
 
@@ -179,6 +189,11 @@ export const useUiStore = create<UiState>((set) => ({
   setZikrPlayOnTap: (val) => {
     localStorage.setItem('bustandeen_zikr_play_on_tap', val ? '1' : '0');
     set({ zikrPlayOnTap: !!val });
+  },
+
+  setHomeSpecialLayout: (val) => {
+    localStorage.setItem(HOME_SPECIAL_KEY, val);
+    set({ homeSpecialLayout: val });
   },
 
   setDiscreetMode: (val) => {

@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.114.0 - Today's special days at the top of Home, your way - 2026-10-09
+
+### Added
+
+- **Settings → Home screen**: choose how much Home shows about today's special days (Friday, the Monday and Thursday fast, Arafah, Eid and the rest). It follows you to your other devices.
+  - **Compact** (new default): one short line per special day right under the prayer times, so you see it without scrolling. When the Friday hour of response is on, it comes first with its countdown. At most two lines, then "N more today".
+  - **Detailed**: every special-day card (virtues, the Friday hour, al-Kahf) right under the prayer times.
+  - **Minimal**: small tags inside the prayer times card. Takes no extra space.
+- Musafir and the location prompt stay directly under the prayer times in every option. A day shown at the top is not repeated further down.
+
 ## v5.113.1 - Special day texts without em dashes - 2026-10-09
 
 ### Changed

@@ -879,6 +879,8 @@
     "ah": "হিজরি"
   },
   "home": {
+    "todayHighlights": "আজ",
+    "todayMore": "আজ আরও {{n}}টি",
     "ayat": "আয়াত",
     "compete": "প্রতিযোগিতা →",
     "current": "বর্তমান",
@@ -2506,6 +2508,14 @@
     "shareButton": "ছবি হিসেবে শেয়ার করুন"
   },
   "settings": {
+    "homeSection": "হোম স্ক্রিন",
+    "homeSubtitle": "আজকের বিশেষ দিনগুলো হোমে কতটা দেখাবে, বেছে নিন।",
+    "homeSpecialFull": "বিস্তারিত",
+    "homeSpecialFullDetail": "নামাজের সময়ের ঠিক নিচে সব বিশেষ দিনের কার্ড: ফজিলত, জুমুআহর দু'আ কবুলের সময় ও সূরা আল-কাহফ।",
+    "homeSpecialStrip": "সংক্ষিপ্ত",
+    "homeSpecialStripDetail": "নামাজের সময়ের নিচে প্রতিটি বিশেষ দিনের জন্য এক লাইন। বিস্তারিত নিচে থাকবে।",
+    "homeSpecialPills": "ন্যূনতম",
+    "homeSpecialPillsDetail": "নামাজের সময়ের কার্ডের ভেতরে ছোট ট্যাগ। বাড়তি জায়গা নেয় না।",
     "appearanceSection": "থিম",
     "appearanceSubtitle": "Bustandeen দেখতে কেমন হবে তা বেছে নিন। ডার্ক হলো চিরচেনা রূপ, আর লাইট দিনের আলোয় পড়ার জন্য হালকা সবুজ কাগজের মতো।",
     "themeSystem": "ডিভাইসের মতো",

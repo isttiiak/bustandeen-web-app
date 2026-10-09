@@ -35,6 +35,7 @@ import { StreakBadge, GoalBadge } from '../components/StatusBadges.js';
 import ComebackNudge from '../components/ComebackNudge.js';
 import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import MusafirBanner from '../components/MusafirBanner.js';
+import TodayHighlights from '../components/home/TodayHighlights.js';
 import toast from 'react-hot-toast';
 import {
   useMusafir,
@@ -60,6 +61,33 @@ import { useUiStore } from '../store/useUiStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { getRamadanWindow } from '../utils/ramadan.js';
 import { getFridayHour, FRIDAY_HOUR_REF } from '../utils/fridayHour.js';
+import { HIGHLIGHT_CAP, orderHighlights, TODAY_SPECIAL_ID } from '../utils/homeSpecial.js';
+
+/** The prayer arch links to /prayer-times. With chips in its foot (the 'pills'
+ * Home layout) it becomes a stretched link: an overlay link under the chips,
+ * so each chip is its own link instead of a link nested in a link. */
+function ArchShell({
+  pills,
+  label,
+  children,
+}: {
+  pills: boolean;
+  label: string;
+  children: React.ReactNode;
+}) {
+  if (!pills)
+    return (
+      <Link to="/prayer-times" className="group block mb-4">
+        {children}
+      </Link>
+    );
+  return (
+    <div className="group relative mb-4">
+      {children}
+      <Link to="/prayer-times" aria-label={label} className="absolute inset-0 rounded-arch" />
+    </div>
+  );
+}
 
 function localTodayForCycle(): string {
   return getTrackingDay();
@@ -192,6 +220,31 @@ export default function Home() {
     [prayerNow.getMinutes()]
   );
 
+  // Settings → Home: how much of today's special days shows up top. Chips in
+  // the arch need the arch, so without a location they fall back to the strip.
+  const homeSpecialLayout = useUiStore((s) => s.homeSpecialLayout);
+  const homeLayout =
+    homeSpecialLayout === 'pills' && !prayerWidgetData ? 'strip' : homeSpecialLayout;
+  const highlights = useMemo(
+    () =>
+      orderHighlights(
+        todaySpecialDays.map((d) => d.id),
+        fridayHour
+      ),
+    [todaySpecialDays, fridayHour]
+  );
+  const archPills = homeLayout === 'pills' && highlights.length > 0;
+  // Days already shown up top (strip rows or arch chips) are not repeated in
+  // the detailed block; "N more" scrolls down to the rest.
+  const shownUpTop = new Set(
+    homeLayout === 'full'
+      ? []
+      : highlights.slice(0, HIGHLIGHT_CAP).flatMap((h) => (h.kind === 'day' ? [h.id] : []))
+  );
+  const blockDays = todaySpecialDays.filter((d) => !shownUpTop.has(d.id));
+  const hasSpecialBlock =
+    blockDays.length > 0 || !!sadaqahVirtueDay || fridayHour.active || isFridayToday;
+
   // Gentle heads-up when the predicted period is ≤3 days away (female only)
   const upcomingCycleDays = (() => {
     const ns = cycleSummary?.prediction?.nextStart;
@@ -305,6 +358,105 @@ export default function Home() {
 
   // Bustan Arch (audit T3.2): one arch hero (the prayer window), flat cards
   // with two radii and theme elevations, SVG icons only, no glows.
+  // The detailed special-day block (rows, sadaqah virtue, Friday hour, al-Kahf).
+  // Under the arch for the 'full' Home layout, below the worship cards otherwise.
+  const specialBlock = hasSpecialBlock ? (
+    <div id={TODAY_SPECIAL_ID} className="scroll-mt-24">
+      {blockDays.length > 0 && (
+        <div className="mb-4 space-y-2">
+          {blockDays.map((day) => (
+            <Link key={day.id} to={`/special-day/${day.id}`} className="block">
+              <div className="flex items-center gap-3 px-4 py-3 rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 hover:border-brand-gold/40 hover:shadow-hover transition-[border-color,box-shadow]">
+                <Star8Icon className="w-6 h-6 shrink-0 text-brand-gold" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-white font-bold text-sm leading-tight">
+                    {t(`specialDays.${day.id}.name`, day.name)}
+                  </p>
+                  <p className="text-white/60 text-xs leading-snug truncate mt-0.5">
+                    {t(`specialDays.${day.id}.shortDesc`, day.shortDesc)}
+                  </p>
+                </div>
+                <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/40" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+
+      {/* Days with extra sadaqah virtue (Friday, Ramadan, first 10 days of
+          Dhul Hijjah, Arafah, Laylat al-Qadr): persistent, unlike the old
+          30s-auto-dismissing Friday-only reminder this replaces. */}
+      {sadaqahVirtueDay && <SadaqahVirtueCard day={sadaqahVirtueDay} />}
+
+      {/* Friday: hour of response (Abū Dāwūd 1048, ṣaḥīḥ) */}
+      {fridayHour.active && (
+        <div
+          className={`mb-4 rounded-card border p-4 shadow-elev-1 ${
+            fridayHour.isFinalStretch
+              ? 'border-brand-gold/60 bg-brand-gold/[0.12]'
+              : 'border-brand-gold/25 bg-brand-gold/[0.06]'
+          }`}
+        >
+          <div className="flex items-start gap-3">
+            <DuaHandsIcon className="w-6 h-6 shrink-0 text-brand-gold" />
+            <div className="min-w-0 flex-1">
+              <div className="flex items-baseline gap-2 flex-wrap">
+                <h2 className="font-display text-brand-gold font-semibold text-base">
+                  {fridayHour.isFinalStretch ? t('home.fridayHourNow') : t('home.fridayHourTitle')}
+                </h2>
+                <span className="text-brand-gold text-xs font-bold tabular-nums">
+                  {fridayHour.countdown} {t('home.toMaghrib')}
+                </span>
+              </div>
+              <p className="text-white/70 text-xs mt-1.5 leading-relaxed">
+                {t(
+                  'home.fridayHourQuote',
+                  '"{{text}}" Keep asking until the sun sets: for yourself, your parents, and the ummah.',
+                  {
+                    text: i18n.language === 'bn' ? FRIDAY_HOUR_REF.textBn : FRIDAY_HOUR_REF.text,
+                  }
+                )}
+              </p>
+              <a
+                href={FRIDAY_HOUR_REF.url}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[11px] text-white/60 hover:text-brand-gold underline underline-offset-2 mt-2 inline-block"
+              >
+                {translateReference(FRIDAY_HOUR_REF.source, i18n.language)} ·{' '}
+                {translateReference(FRIDAY_HOUR_REF.grade, i18n.language)} ↗
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Friday: Surah al-Kahf, one tap into the reader */}
+      {isFridayToday && (
+        <button
+          onClick={() => navigate('/quran/read/18?mode=single')}
+          className="mb-4 w-full text-left rounded-card border border-brand-emerald/30 bg-brand-emerald/[0.07] shadow-elev-1 p-4 hover:border-brand-emerald/50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <BookOpenIcon className="w-6 h-6 shrink-0 text-brand-emerald" />
+            <div className="min-w-0 flex-1">
+              <h2 className="font-display text-brand-emerald font-semibold text-base">
+                {t('home.fridayKahf')}
+              </h2>
+              <p className="text-white/70 text-xs mt-1 leading-relaxed">
+                "{t('home.fridayKahfQuote', 'A light will shine for him between the two Fridays.')}"
+              </p>
+              <p className="text-white/60 text-[11px] mt-1">
+                {translateReference('Ṣaḥīḥ at-Targhīb 736 · Ṣaḥīḥ', i18n.language)}
+              </p>
+            </div>
+            <ChevronRightIcon className="w-5 h-5 shrink-0 text-brand-emerald" />
+          </div>
+        </button>
+      )}
+    </div>
+  ) : null;
+
   return (
     <div className="min-h-screen bg-brand-void">
       <h1 className="sr-only">{t('home.srTitle', 'Bustandeen, Islamic Productivity')}</h1>
@@ -388,8 +540,8 @@ export default function Home() {
 
         {/* Hero: the prayer window, under the screen's one arch */}
         {prayerWidgetData ? (
-          <Link to="/prayer-times" className="block mb-4">
-            <div className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-8 pb-5 text-center hover:border-brand-emerald/40 transition-colors">
+          <ArchShell pills={archPills} label={t('nav.prayerTimes')}>
+            <div className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-8 pb-5 text-center group-hover:border-brand-emerald/40 transition-colors">
               {prayerWidgetData.forbiddenWindow ? (
                 <>
                   <NoSymbolIcon className="w-7 h-7 mx-auto text-red-400" />
@@ -493,8 +645,16 @@ export default function Home() {
                   </span>
                 </span>
               </div>
+              {archPills && (
+                <TodayHighlights
+                  variant="pills"
+                  highlights={highlights}
+                  days={todaySpecialDays}
+                  fridayCountdown={fridayHour.countdown}
+                />
+              )}
             </div>
-          </Link>
+          </ArchShell>
         ) : (
           /* No location stored: send to the prayer-times page, which
            * offers "use my location" and manual city search side by side.
@@ -582,6 +742,16 @@ export default function Home() {
           )
         )}
 
+        {homeLayout === 'strip' && (
+          <TodayHighlights
+            variant="strip"
+            highlights={highlights}
+            days={todaySpecialDays}
+            fridayCountdown={fridayHour.countdown}
+          />
+        )}
+        {homeLayout === 'full' && specialBlock}
+
         {/* Today's worship */}
         <div className="grid grid-cols-2 gap-3 mb-2">
           {activities.map((a) => {
@@ -668,107 +838,13 @@ export default function Home() {
           })}
         </div>
 
-        {/* Today's special days, Friday cards and sadaqah virtue */}
-        {(todaySpecialDays.length > 0 ||
-          sadaqahVirtueDay ||
-          fridayHour.active ||
-          isFridayToday) && <OrnamentDivider className="my-5" />}
-
-        {todaySpecialDays.length > 0 && (
-          <div className="mb-4 space-y-2">
-            {todaySpecialDays.map((day) => (
-              <Link key={day.id} to={`/special-day/${day.id}`} className="block">
-                <div className="flex items-center gap-3 px-4 py-3 rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 hover:border-brand-gold/40 hover:shadow-hover transition-[border-color,box-shadow]">
-                  <Star8Icon className="w-6 h-6 shrink-0 text-brand-gold" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-white font-bold text-sm leading-tight">
-                      {t(`specialDays.${day.id}.name`, day.name)}
-                    </p>
-                    <p className="text-white/60 text-xs leading-snug truncate mt-0.5">
-                      {t(`specialDays.${day.id}.shortDesc`, day.shortDesc)}
-                    </p>
-                  </div>
-                  <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/40" />
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
-
-        {/* Days with extra sadaqah virtue (Friday, Ramadan, first 10 days of
-            Dhul Hijjah, Arafah, Laylat al-Qadr): persistent, unlike the old
-            30s-auto-dismissing Friday-only reminder this replaces. */}
-        {sadaqahVirtueDay && <SadaqahVirtueCard day={sadaqahVirtueDay} />}
-
-        {/* Friday: hour of response (Abū Dāwūd 1048, ṣaḥīḥ) */}
-        {fridayHour.active && (
-          <div
-            className={`mb-4 rounded-card border p-4 shadow-elev-1 ${
-              fridayHour.isFinalStretch
-                ? 'border-brand-gold/60 bg-brand-gold/[0.12]'
-                : 'border-brand-gold/25 bg-brand-gold/[0.06]'
-            }`}
-          >
-            <div className="flex items-start gap-3">
-              <DuaHandsIcon className="w-6 h-6 shrink-0 text-brand-gold" />
-              <div className="min-w-0 flex-1">
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  <h2 className="font-display text-brand-gold font-semibold text-base">
-                    {fridayHour.isFinalStretch
-                      ? t('home.fridayHourNow')
-                      : t('home.fridayHourTitle')}
-                  </h2>
-                  <span className="text-brand-gold text-xs font-bold tabular-nums">
-                    {fridayHour.countdown} {t('home.toMaghrib')}
-                  </span>
-                </div>
-                <p className="text-white/70 text-xs mt-1.5 leading-relaxed">
-                  {t(
-                    'home.fridayHourQuote',
-                    '"{{text}}" Keep asking until the sun sets: for yourself, your parents, and the ummah.',
-                    {
-                      text: i18n.language === 'bn' ? FRIDAY_HOUR_REF.textBn : FRIDAY_HOUR_REF.text,
-                    }
-                  )}
-                </p>
-                <a
-                  href={FRIDAY_HOUR_REF.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[11px] text-white/60 hover:text-brand-gold underline underline-offset-2 mt-2 inline-block"
-                >
-                  {translateReference(FRIDAY_HOUR_REF.source, i18n.language)} ·{' '}
-                  {translateReference(FRIDAY_HOUR_REF.grade, i18n.language)} ↗
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Friday: Surah al-Kahf, one tap into the reader */}
-        {isFridayToday && (
-          <button
-            onClick={() => navigate('/quran/read/18?mode=single')}
-            className="mb-4 w-full text-left rounded-card border border-brand-emerald/30 bg-brand-emerald/[0.07] shadow-elev-1 p-4 hover:border-brand-emerald/50 transition-colors"
-          >
-            <div className="flex items-center gap-3">
-              <BookOpenIcon className="w-6 h-6 shrink-0 text-brand-emerald" />
-              <div className="min-w-0 flex-1">
-                <h2 className="font-display text-brand-emerald font-semibold text-base">
-                  {t('home.fridayKahf')}
-                </h2>
-                <p className="text-white/70 text-xs mt-1 leading-relaxed">
-                  "
-                  {t('home.fridayKahfQuote', 'A light will shine for him between the two Fridays.')}
-                  "
-                </p>
-                <p className="text-white/60 text-[11px] mt-1">
-                  {translateReference('Ṣaḥīḥ at-Targhīb 736 · Ṣaḥīḥ', i18n.language)}
-                </p>
-              </div>
-              <ChevronRightIcon className="w-5 h-5 shrink-0 text-brand-emerald" />
-            </div>
-          </button>
+        {/* Today's special days, Friday cards and sadaqah virtue: here unless
+            the Home layout setting puts the full block under the arch */}
+        {homeLayout !== 'full' && hasSpecialBlock && (
+          <>
+            <OrnamentDivider className="my-5" />
+            {specialBlock}
+          </>
         )}
 
         <OrnamentDivider className="my-5" />
