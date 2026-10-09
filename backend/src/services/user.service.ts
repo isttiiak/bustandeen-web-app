@@ -193,6 +193,26 @@ export async function setPrimaryEmail(uid: string, email: string): Promise<IUser
  * target of past admin actions.
  */
 export async function deleteAccount(uid: string): Promise<void> {
+  await purgeAccountData(uid);
+
+  // Skip in environments without Firebase Admin credentials (local dev without
+  // a service account, DEV_AUTH_BYPASS) — admin.auth() throws synchronously
+  // there ("app/no-app"), which would otherwise surface as a 500 even though
+  // the Mongo purge above already succeeded.
+  if (!isFirebaseInitialized()) return;
+
+  try {
+    await admin.auth().deleteUser(uid);
+  } catch (err: unknown) {
+    const code = (err as { code?: string })?.code;
+    // auth/user-not-found is fine — the Firebase user may already be gone
+    if (code !== 'auth/user-not-found') throw err;
+  }
+}
+
+/** The database half of deleteAccount. Also used by the orphan cleanup
+ * script for accounts deleted before v5.128.1 (scripts/cleanupOrphans.ts). */
+export async function purgeAccountData(uid: string): Promise<void> {
   await Promise.all([
     // Personal data the user logged or that was derived from it.
     QuranReadingSession.deleteMany({ userId: uid }),
@@ -248,20 +268,6 @@ export async function deleteAccount(uid: string): Promise<void> {
     SocialProfile.deleteMany({ userId: uid }),
     User.deleteOne({ uid }),
   ]);
-
-  // Skip in environments without Firebase Admin credentials (local dev without
-  // a service account, DEV_AUTH_BYPASS) — admin.auth() throws synchronously
-  // there ("app/no-app"), which would otherwise surface as a 500 even though
-  // the Mongo purge above already succeeded.
-  if (!isFirebaseInitialized()) return;
-
-  try {
-    await admin.auth().deleteUser(uid);
-  } catch (err: unknown) {
-    const code = (err as { code?: string })?.code;
-    // auth/user-not-found is fine — the Firebase user may already be gone
-    if (code !== 'auth/user-not-found') throw err;
-  }
 }
 
 /** A recipient still pending in a campaign that is mid-send is marked failed

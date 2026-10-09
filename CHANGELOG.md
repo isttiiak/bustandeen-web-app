@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.128.2 - Cleanup tool for accounts deleted earlier - 2026-10-10
+
+### Added
+
+- **Admin script `npm run cleanup:orphans --prefix backend`.** It finds rows left behind by accounts deleted before v5.128.1 (a uid with no User row) and lists them per collection. Dry run by default. `--apply` skips any uid that still exists in Firebase Auth, writes every affected document to a JSON backup in the OS temp folder, then purges each uid exactly as account deletion does today. Not applied yet.
+- `deleteAccount` now calls a shared `purgeAccountData(uid)` for the database part, so the cleanup and the delete button can never drift apart.
+
 ## v5.128.1 - Account deletion removes everything it should - 2026-10-10
 
 ### Fixed
