@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.116.1 - Admin panel: users, accounts and audit log in the new look - 2026-10-09
+
+### Changed
+
+- **Admin panel (staff only)**: User management, a user's detail page, Manage Ansars and the Audit log use the Bustan Arch design: the arched heading, the app's cards, buttons and inputs, clear sort and domain choices, labelled fields and easier-to-read text. Ticks and dashes in the tables are now icons and plain hyphens.
+- Every admin page keeps a 16 px margin on phones.
+
 ## v5.116.0 - Admin panel: new look for the shell, sign-in and overview - 2026-10-09
 
 ### Changed
