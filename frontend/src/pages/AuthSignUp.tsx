@@ -1,5 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
-import AnimatedBackground from '../components/AnimatedBackground.js';
+import React, { useEffect, useState } from 'react';
 import {
   createUserWithEmailAndPassword,
   updateProfile,
@@ -13,14 +12,24 @@ import { useNavigate } from 'react-router';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useTranslation } from 'react-i18next';
 import LegalAgreeLine from '../components/LegalAgreeLine.js';
+import { CheckCircleIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import { LeafIcon } from '../components/icons/IslamicIcons.js';
+import { BTN_PRIMARY, OPTION_OFF, OPTION_ON } from '../components/bustanStyles.js';
 import {
-  EyeIcon,
-  EyeSlashIcon,
-  ExclamationCircleIcon,
-  CheckCircleIcon,
-  EnvelopeIcon,
-} from '@heroicons/react/24/outline';
-import { m as motion } from 'framer-motion';
+  AuthCard,
+  AuthHero,
+  AuthShell,
+  ErrorNote,
+  INPUT,
+  INPUT_BAD,
+  INPUT_OK,
+  LABEL,
+  OrDivider,
+  PasswordField,
+  StrengthMeter,
+  TEXT_ACTION,
+} from '../components/auth/authParts.js';
+import GoogleGlyph, { GOOGLE_BTN } from '../components/auth/GoogleGlyph.js';
 
 type Translator = (key: string, fallback: string) => string;
 
@@ -47,25 +56,6 @@ function mapFirebaseError(code: string, t: Translator): string {
   }
 }
 
-function getPasswordStrength(
-  pw: string,
-  t: Translator
-): { score: number; label: string; color: string } {
-  if (!pw) return { score: 0, label: '', color: '' };
-  let score = 0;
-  if (pw.length >= 8) score++;
-  if (/[A-Z]/.test(pw)) score++;
-  if (/[0-9]/.test(pw)) score++;
-  if (/[^A-Za-z0-9]/.test(pw)) score++;
-  if (score <= 1)
-    return { score, label: t('authSignUp.strengthWeak', 'Weak'), color: 'bg-red-500' };
-  if (score === 2)
-    return { score, label: t('authSignUp.strengthFair', 'Fair'), color: 'bg-brand-gold' };
-  if (score === 3)
-    return { score, label: t('authSignUp.strengthGood', 'Good'), color: 'bg-brand-info' };
-  return { score, label: t('authSignUp.strengthStrong', 'Strong'), color: 'bg-brand-emerald' };
-}
-
 // Stricter email regex: requires a real domain with a TLD of 2+ chars
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
@@ -75,8 +65,6 @@ export default function AuthSignUp() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
   const [error, setError] = useState('');
   const { loading, setLoading, google, signingIn } = useSignInFlow((code) =>
     setError(mapFirebaseError(code, t))
@@ -102,7 +90,6 @@ export default function AuthSignUp() {
     }
   }, [user, verificationSent]);
 
-  const strength = getPasswordStrength(password, t);
   const confirmMismatch = confirmTouched && confirm !== password;
   const emailInvalid = emailTouched && emailValue.length > 0 && !isValidEmail(emailValue);
 
@@ -194,386 +181,260 @@ export default function AuthSignUp() {
   // ── Verification sent screen ─────────────────────────────────────────────────
   if (verificationSent) {
     return (
-      <AnimatedBackground variant="dark">
-        <div className="min-h-screen flex items-center justify-center p-4">
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative w-full max-w-md"
-          >
-            <div className="backdrop-blur-xl bg-brand-surface/80 rounded-3xl shadow-2xl border border-brand-border/60 p-8 sm:p-10 text-center space-y-6">
-              {/* Icon */}
-              <div className="flex justify-center">
-                <div className="w-20 h-20 rounded-full bg-brand-emerald/15 border border-brand-emerald/30 flex items-center justify-center">
-                  <EnvelopeIcon className="w-10 h-10 text-brand-emerald" />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <h2 className="text-2xl sm:text-3xl font-black text-white">
-                  {t('authSignUp.checkInbox', 'Check your inbox')}
-                </h2>
-                <p className="text-white/50 text-sm leading-relaxed">
-                  {t('authSignUp.verificationSentTo', 'We sent a verification link to')}
-                </p>
-                <p className="text-brand-emerald font-semibold text-sm break-all">
-                  {verificationEmail}
-                </p>
-                <p className="text-white/40 text-xs leading-relaxed pt-1">
-                  {t(
-                    'authSignUp.verifyClickHint',
-                    'Click the link in the email to verify your address. You can use the app now — some features require a verified email.'
-                  )}
-                </p>
-              </div>
-
-              {/* Resend */}
-              <div className="space-y-2">
-                {resendSuccess ? (
-                  <div className="flex items-center justify-center gap-2 text-brand-emerald text-sm">
-                    <CheckCircleIcon className="w-4 h-4" />
-                    {t('authSignUp.verificationResent', 'Verification email resent!')}
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => void resendVerification()}
-                    disabled={resendLoading}
-                    className="text-white/40 hover:text-brand-emerald text-sm transition-colors disabled:opacity-40"
-                  >
-                    {resendLoading
-                      ? t('authSignUp.sending', 'Sending…')
-                      : t('app.resendVerification', 'Resend verification email')}
-                  </button>
+      <AuthShell>
+        <AuthHero
+          icon={<EnvelopeIcon className="w-7 h-7" />}
+          titleAs="h1"
+          title={t('authSignUp.checkInbox', 'Check your inbox')}
+          subtitle={
+            <>
+              <p>{t('authSignUp.verificationSentTo', 'We sent a verification link to')}</p>
+              <p className="text-brand-emerald font-semibold break-all mt-1">{verificationEmail}</p>
+              <p className="text-white/70 text-xs mt-2">
+                {t(
+                  'authSignUp.verifyClickHint',
+                  'Click the link in the email to verify your address. You can use the app now. Some features require a verified email.'
                 )}
-              </div>
-
-              {/* Continue to app */}
-              <button
-                onClick={() => navigate('/')}
-                className="w-full py-3 px-4 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color rounded-xl font-semibold shadow-lg transition-all duration-300"
-              >
-                {t('authSignUp.continueToApp', 'Continue to App')}
-              </button>
-
-              <p className="text-white/30 text-xs">
-                {t('authSignUp.wrongEmail', 'Wrong email?')}{' '}
-                <button
-                  className="text-brand-emerald hover:underline"
-                  onClick={() => {
-                    setVerificationSent(false);
-                    setVerificationEmail('');
-                  }}
-                >
-                  {t('authSignUp.goBack', 'Go back')}
-                </button>
               </p>
-            </div>
-          </motion.div>
-        </div>
-      </AnimatedBackground>
+            </>
+          }
+        >
+          <div className="mt-6 space-y-4">
+            {resendSuccess ? (
+              <p className="flex items-center justify-center gap-2 text-brand-emerald text-sm">
+                <CheckCircleIcon className="w-4 h-4" />
+                {t('authSignUp.verificationResent', 'Verification email resent!')}
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void resendVerification()}
+                disabled={resendLoading}
+                className={`${TEXT_ACTION} text-sm disabled:opacity-50`}
+              >
+                {resendLoading
+                  ? t('authSignUp.sending', 'Sending…')
+                  : t('app.resendVerification', 'Resend verification email')}
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className={`${BTN_PRIMARY} w-full py-3`}
+            >
+              {t('authSignUp.continueToApp', 'Continue to App')}
+            </button>
+            <p className="text-white/80 text-xs">
+              {t('authSignUp.wrongEmail', 'Wrong email?')}{' '}
+              <button
+                type="button"
+                className={TEXT_ACTION}
+                onClick={() => {
+                  setVerificationSent(false);
+                  setVerificationEmail('');
+                }}
+              >
+                {t('authSignUp.goBack', 'Go back')}
+              </button>
+            </p>
+          </div>
+        </AuthHero>
+      </AuthShell>
     );
   }
 
   // ── Sign-up form ─────────────────────────────────────────────────────────────
+  const confirmState = confirmMismatch
+    ? 'bad'
+    : confirmTouched && confirm && confirm === password
+      ? 'ok'
+      : undefined;
   return (
-    <AnimatedBackground variant="dark">
+    <AuthShell>
       <SigningInOverlay show={signingIn} />
-      <div className="min-h-screen flex items-center justify-center p-4 sm:p-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="w-full max-w-md"
-        >
-          <div className="backdrop-blur-xl bg-brand-surface/80 rounded-3xl shadow-2xl border border-brand-border/60 overflow-hidden">
-            <div className="p-8 space-y-6">
-              <div className="text-center space-y-2">
-                <h2 className="text-4xl sm:text-5xl font-bold text-brand-emerald">
-                  {t('authSignUp.joinIhsan', 'Join Bustandeen')}
-                </h2>
-                <p className="text-white/60 text-sm sm:text-base">
-                  {t('authSignUp.subtitle', 'Start your spiritual journey today')}
-                </p>
-              </div>
+      <AuthHero
+        icon={<LeafIcon className="w-7 h-7" />}
+        title={t('authSignUp.joinIhsan', 'Join Bustandeen')}
+        subtitle={t('authSignUp.subtitle', 'Start your spiritual journey today')}
+      />
+      <AuthCard>
+        <button type="button" className={GOOGLE_BTN} onClick={onGoogle} disabled={loading}>
+          {loading ? (
+            <span className="loading loading-spinner loading-md text-brand-emerald" />
+          ) : (
+            <>
+              <GoogleGlyph />
+              {t('authSignUp.signUpWithGoogle', 'Sign up with Google')}
+            </>
+          )}
+        </button>
 
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-3 px-4 bg-on-color hover:bg-on-color/90 text-ink-fixed rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-3 border border-brand-emerald/20 disabled:opacity-60 disabled:cursor-not-allowed"
-                onClick={onGoogle}
-                disabled={loading}
-              >
-                {loading ? (
-                  <span className="loading loading-spinner loading-md" />
-                ) : (
-                  <>
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
-                      <path
-                        fill="#4285F4"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      />
-                      <path
-                        fill="#34A853"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      />
-                      <path
-                        fill="#FBBC05"
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      />
-                      <path
-                        fill="#EA4335"
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      />
-                    </svg>
-                    {t('authSignUp.signUpWithGoogle', 'Sign up with Google')}
-                  </>
-                )}
-              </motion.button>
+        <OrDivider label={t('authSignUp.or', 'OR')} />
 
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-brand-border" />
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-4 bg-brand-surface text-white/40">
-                    {t('authSignUp.or', 'OR')}
-                  </span>
-                </div>
-              </div>
+        <form onSubmit={onSubmit} className="space-y-4">
+          {error && <ErrorNote>{error}</ErrorNote>}
 
-              <form onSubmit={onSubmit} className="space-y-4">
-                {error && (
-                  <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
-                    <ExclamationCircleIcon className="w-5 h-5 shrink-0 mt-0.5" />
-                    <span>{error}</span>
-                  </div>
-                )}
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <label className="text-white/70 text-sm font-medium">
-                      {t('authSignUp.firstName', 'First Name')}
-                    </label>
-                    <input
-                      name="firstName"
-                      type="text"
-                      placeholder={t('authSignUp.firstNamePlaceholder', 'First name')}
-                      className="w-full px-4 py-3 bg-white/5 border border-brand-border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-brand-emerald/50 focus:border-transparent transition-all"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="text-white/70 text-sm font-medium">
-                      {t('authSignUp.lastName', 'Last Name')}
-                    </label>
-                    <input
-                      name="lastName"
-                      type="text"
-                      placeholder={t('authSignUp.lastNamePlaceholder', 'Last name')}
-                      className="w-full px-4 py-3 bg-white/5 border border-brand-border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-brand-emerald/50 focus:border-transparent transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-white/70 text-sm font-medium">
-                    {t('authSignUp.gender', 'Gender')} <span className="text-red-400">*</span>
-                  </label>
-                  <p className="text-white/30 text-xs leading-relaxed">
-                    {t(
-                      'authSignUp.genderHint',
-                      'Required for personalized content and Rayhanah (cycle tracking for sisters).'
-                    )}
-                  </p>
-                  <div className="flex gap-3">
-                    {(['male', 'female'] as const).map((g) => (
-                      <button
-                        key={g}
-                        type="button"
-                        onClick={() => setGender(g)}
-                        className={`flex-1 py-2.5 rounded-xl text-sm font-semibold border transition-all ${
-                          gender === g
-                            ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
-                            : 'bg-white/5 border-brand-border text-white/50 hover:border-brand-border/80'
-                        }`}
-                      >
-                        {g === 'male'
-                          ? t('authSignUp.brother', 'Brother')
-                          : t('authSignUp.sister', 'Sister')}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-white/70 text-sm font-medium">
-                    {t('authSignIn.email', 'Email')}
-                  </label>
-                  <input
-                    name="email"
-                    type="email"
-                    placeholder={t('authSignIn.emailPlaceholder', 'you@example.com')}
-                    value={emailValue}
-                    onChange={(e) => {
-                      setEmailValue(e.target.value);
-                      error && setError('');
-                    }}
-                    onBlur={() => setEmailTouched(true)}
-                    className={`w-full px-4 py-3 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
-                      emailInvalid
-                        ? 'border-red-500/60 focus:ring-red-500/40'
-                        : emailTouched && emailValue && isValidEmail(emailValue)
-                          ? 'border-brand-emerald/50 focus:ring-brand-emerald/50'
-                          : 'border-brand-border focus:ring-brand-emerald/50'
-                    }`}
-                    required
-                  />
-                  {emailInvalid && (
-                    <p className="text-xs text-red-400">
-                      {t(
-                        'authSignUp.errEmailFormat',
-                        'Enter a valid email address (e.g. name@domain.com).'
-                      )}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-white/70 text-sm font-medium">
-                    {t('authSignIn.password', 'Password')}
-                  </label>
-                  <div className="relative">
-                    <input
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      placeholder={t('authSignUp.passwordPlaceholder', 'Create a strong password')}
-                      value={password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        error && setError('');
-                      }}
-                      className="w-full px-4 py-3 pr-12 bg-white/5 border border-brand-border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:ring-brand-emerald/50 focus:border-transparent transition-all"
-                      required
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-white/10 rounded-lg transition-colors"
-                      onClick={() => setShowPassword(!showPassword)}
-                      tabIndex={-1}
-                    >
-                      {showPassword ? (
-                        <EyeSlashIcon className="w-5 h-5 text-white/50" />
-                      ) : (
-                        <EyeIcon className="w-5 h-5 text-white/50" />
-                      )}
-                    </button>
-                  </div>
-                  {password && (
-                    <div className="space-y-1">
-                      <div className="flex gap-1">
-                        {[1, 2, 3, 4].map((i) => (
-                          <div
-                            key={i}
-                            className={`h-1 flex-1 rounded-full transition-all duration-300 ${i <= strength.score ? strength.color : 'bg-white/10'}`}
-                          />
-                        ))}
-                      </div>
-                      <p className="text-xs text-white/40">
-                        {t('authSignUp.passwordStrengthLabel', '{{strength}} password', {
-                          strength: strength.label,
-                        })}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-white/70 text-sm font-medium">
-                    {t('authSignUp.confirmPassword', 'Confirm Password')}
-                  </label>
-                  <div className="relative">
-                    <input
-                      name="confirmPassword"
-                      type={showConfirm ? 'text' : 'password'}
-                      placeholder={t(
-                        'authSignUp.confirmPasswordPlaceholder',
-                        'Repeat your password'
-                      )}
-                      value={confirm}
-                      onChange={(e) => {
-                        setConfirm(e.target.value);
-                        error && setError('');
-                      }}
-                      onBlur={() => setConfirmTouched(true)}
-                      className={`w-full px-4 py-3 pr-12 bg-white/5 border rounded-xl text-white placeholder-white/30 focus:outline-none focus:ring-2 focus:border-transparent transition-all ${
-                        confirmMismatch
-                          ? 'border-red-500/60 focus:ring-red-500/40'
-                          : confirmTouched && confirm && confirm === password
-                            ? 'border-brand-emerald/60 focus:ring-brand-emerald/50'
-                            : 'border-brand-border focus:ring-brand-emerald/50'
-                      }`}
-                      required
-                    />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                      {confirmTouched &&
-                        confirm &&
-                        (confirm === password ? (
-                          <CheckCircleIcon className="w-4 h-4 text-brand-emerald" />
-                        ) : (
-                          <ExclamationCircleIcon className="w-4 h-4 text-red-400" />
-                        ))}
-                      <button
-                        type="button"
-                        className="p-1 hover:bg-white/10 rounded-lg transition-colors"
-                        onClick={() => setShowConfirm(!showConfirm)}
-                        tabIndex={-1}
-                      >
-                        {showConfirm ? (
-                          <EyeSlashIcon className="w-5 h-5 text-white/50" />
-                        ) : (
-                          <EyeIcon className="w-5 h-5 text-white/50" />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  {confirmMismatch && (
-                    <p className="text-xs text-red-400">
-                      {t('authSignUp.errPasswordMismatch', 'Passwords do not match.')}
-                    </p>
-                  )}
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-3 px-4 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color rounded-xl font-semibold shadow-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                  type="submit"
-                  disabled={loading || confirmMismatch || emailInvalid}
-                >
-                  {loading ? (
-                    <span className="loading loading-spinner loading-md" />
-                  ) : (
-                    t('authSignUp.createAccount', 'Create Account')
-                  )}
-                </motion.button>
-              </form>
-
-              <div className="text-center text-sm">
-                <span className="text-white/50">
-                  {t('authSignUp.alreadyHaveAccount', 'Already have an account?')}{' '}
-                </span>
-                <button
-                  className="text-brand-emerald font-semibold hover:text-brand-emerald-dim transition-colors cursor-pointer"
-                  onClick={() => navigate('/login')}
-                >
-                  {t('authSignUp.logIn', 'Log in')}
-                </button>
-              </div>
-              <LegalAgreeLine mode="signUp" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label htmlFor="signup-first" className={LABEL}>
+                {t('authSignUp.firstName', 'First Name')}
+              </label>
+              <input
+                id="signup-first"
+                name="firstName"
+                type="text"
+                autoComplete="given-name"
+                placeholder={t('authSignUp.firstNamePlaceholder', 'First name')}
+                className={INPUT}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="signup-last" className={LABEL}>
+                {t('authSignUp.lastName', 'Last Name')}
+              </label>
+              <input
+                id="signup-last"
+                name="lastName"
+                type="text"
+                autoComplete="family-name"
+                placeholder={t('authSignUp.lastNamePlaceholder', 'Last name')}
+                className={INPUT}
+              />
             </div>
           </div>
-        </motion.div>
-      </div>
-    </AnimatedBackground>
+
+          <div className="space-y-2" role="radiogroup" aria-labelledby="signup-gender">
+            <p id="signup-gender" className={LABEL}>
+              {t('authSignUp.gender', 'Gender')} <span className="text-red-400">*</span>
+            </p>
+            <p className="text-white/70 text-xs leading-relaxed">
+              {t(
+                'authSignUp.genderHint',
+                'Required for personalized content and Rayhanah (cycle tracking for sisters).'
+              )}
+            </p>
+            <div className="flex gap-3">
+              {(['male', 'female'] as const).map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  role="radio"
+                  aria-checked={gender === g}
+                  onClick={() => setGender(g)}
+                  className={`flex-1 py-2.5 rounded-control text-sm font-semibold border transition-colors ${
+                    gender === g ? OPTION_ON : OPTION_OFF
+                  }`}
+                >
+                  {g === 'male'
+                    ? t('authSignUp.brother', 'Brother')
+                    : t('authSignUp.sister', 'Sister')}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="signup-email" className={LABEL}>
+              {t('authSignIn.email', 'Email')}
+            </label>
+            <input
+              id="signup-email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              placeholder={t('authSignIn.emailPlaceholder', 'you@example.com')}
+              value={emailValue}
+              onChange={(e) => {
+                setEmailValue(e.target.value);
+                if (error) setError('');
+              }}
+              onBlur={() => setEmailTouched(true)}
+              aria-invalid={emailInvalid || undefined}
+              className={`${INPUT} ${
+                emailInvalid
+                  ? INPUT_BAD
+                  : emailTouched && emailValue && isValidEmail(emailValue)
+                    ? INPUT_OK
+                    : ''
+              }`}
+              required
+            />
+            {emailInvalid && (
+              <p className="text-xs text-red-400">
+                {t(
+                  'authSignUp.errEmailFormat',
+                  'Enter a valid email address (e.g. name@domain.com).'
+                )}
+              </p>
+            )}
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="signup-password" className={LABEL}>
+              {t('authSignIn.password', 'Password')}
+            </label>
+            <PasswordField
+              id="signup-password"
+              name="password"
+              autoComplete="new-password"
+              placeholder={t('authSignUp.passwordPlaceholder', 'Create a strong password')}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (error) setError('');
+              }}
+              required
+            />
+            <StrengthMeter password={password} />
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="signup-confirm" className={LABEL}>
+              {t('authSignUp.confirmPassword', 'Confirm Password')}
+            </label>
+            <PasswordField
+              id="signup-confirm"
+              name="confirmPassword"
+              autoComplete="new-password"
+              placeholder={t('authSignUp.confirmPasswordPlaceholder', 'Repeat your password')}
+              value={confirm}
+              onChange={(e) => {
+                setConfirm(e.target.value);
+                if (error) setError('');
+              }}
+              onBlur={() => setConfirmTouched(true)}
+              state={confirmState}
+              aria-invalid={confirmMismatch || undefined}
+              required
+            />
+            {confirmMismatch && (
+              <p className="text-xs text-red-400">
+                {t('authSignUp.errPasswordMismatch', 'Passwords do not match.')}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || confirmMismatch || emailInvalid}
+            className={`${BTN_PRIMARY} w-full py-3`}
+          >
+            {loading ? (
+              <span className="loading loading-spinner loading-md" />
+            ) : (
+              t('authSignUp.createAccount', 'Create Account')
+            )}
+          </button>
+        </form>
+
+        <p className="text-center text-sm text-white/80">
+          {t('authSignUp.alreadyHaveAccount', 'Already have an account?')}{' '}
+          <button type="button" className={TEXT_ACTION} onClick={() => navigate('/login')}>
+            {t('authSignUp.logIn', 'Log in')}
+          </button>
+        </p>
+        <LegalAgreeLine mode="signUp" />
+      </AuthCard>
+    </AuthShell>
   );
 }
