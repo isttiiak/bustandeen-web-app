@@ -1,4 +1,5 @@
-import type { CityEntry } from '../data/cities.js';
+import { cityCountry, cityLabel, cityName, type CityEntry } from '../data/cities.js';
+import { bdDistrictForCity } from '../data/bdDistricts.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd, faqJsonLd } from '../components/JsonLd.js';
@@ -32,6 +33,8 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
   const locale = LOCALE_BY_LANG[lang];
   const times = computePrayerTimes(city.lat, city.lng, buildDate, city.countryCode);
   const localCountry = countryName(city.countryCode, locale);
+  const bd = bdDistrictForCity(city.slug);
+  const partOf = bd && !bd.isHq ? bd.district : undefined;
   const rowLabel = (key: RowKey) =>
     key === 'asrStandard'
       ? t.prayerTimes.asrStandardLabel
@@ -61,13 +64,15 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
       breadcrumbs={[
         { label: t.home, path: 'https://bustandeen.com/' },
         { label: t.breadcrumbPrayerTimes, path: 'https://bustandeen.com/prayer-times' },
-        { label: `${city.name}, ${city.country}` },
+        { label: cityLabel(city, lang) },
       ]}
     >
       <h1 className="text-2xl sm:text-3xl font-black text-[#f1f5f9]">
-        {t.prayerTimes.heading(city.name)}
+        {t.prayerTimes.heading(cityName(city, lang))}
       </h1>
-      <p className="text-[#94a3b8] mt-2">{t.prayerTimes.subheading(city.name, city.country)}</p>
+      <p className="text-[#94a3b8] mt-2">
+        {t.prayerTimes.subheading(cityName(city, lang), cityCountry(city, lang))}
+      </p>
       <p className="text-xs text-[#94a3b8] mt-1">{dateStr}</p>
 
       <div className="mt-6 rounded-2xl border border-[#1e2d42] bg-[#0d1520] divide-y divide-[#1e2d42] overflow-hidden">
@@ -102,18 +107,29 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
         {t.prayerTimes.liveAppCta}
       </a>
 
+      {partOf && (
+        <p className="mt-5 text-sm">
+          <a
+            href={langPath(lang, `/prayer-times/${partOf.citySlug}`)}
+            className="text-[#10b981] no-underline hover:underline"
+          >
+            {t.prayerTimes.partOfDistrict(lang === 'bn' ? partOf.bn : partOf.en)} →
+          </a>
+        </p>
+      )}
+
       <div className="mt-6 flex flex-wrap gap-3 text-sm">
         <a
           href={langPath(lang, `/qibla/${city.slug}`)}
           className="text-[#10b981] no-underline hover:underline"
         >
-          {t.prayerTimes.qiblaCta(city.name)} →
+          {t.prayerTimes.qiblaCta(cityName(city, lang))} →
         </a>
         <a
           href={langPath(lang, `/ramadan-calendar/${city.slug}`)}
           className="text-[#10b981] no-underline hover:underline"
         >
-          {t.prayerTimes.ramadanCta(city.name)} →
+          {t.prayerTimes.ramadanCta(cityName(city, lang))} →
         </a>
       </div>
 
@@ -136,7 +152,7 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
             name: t.breadcrumbPrayerTimes,
             url: 'https://bustandeen.com/prayer-times',
           },
-          { name: `${city.name}, ${city.country}`, url },
+          { name: cityLabel(city, lang), url },
         ])}
       />
       <JsonLd data={faqJsonLd(faq)} />
@@ -144,8 +160,8 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
         data={{
           '@context': 'https://schema.org',
           '@type': 'WebPage',
-          name: t.prayerTimes.heading(city.name),
-          description: t.prayerTimes.subheading(city.name, city.country),
+          name: t.prayerTimes.heading(cityName(city, lang)),
+          description: t.prayerTimes.subheading(cityName(city, lang), cityCountry(city, lang)),
           url,
           inLanguage: lang,
           isPartOf: { '@type': 'WebSite', name: 'Bustandeen', url: 'https://bustandeen.com/' },

@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.129.0 - Prayer times for all 64 districts of Bangladesh - 2026-10-10
+
+### Added
+
+- **Every district of Bangladesh has a prayer-times page (T4.4, part 1).** 34 district towns that were missing (Gazipur, Brahmanbaria, Chandpur, Noakhali, Rangamati, Moulvibazar, Sunamganj, Thakurgaon and others) now get /prayer-times, /qibla and /ramadan-calendar pages in English, Bangla and Arabic. Coordinates come from GeoNames, names and divisions from the official district list.
+- **Bangla pages use Bangla place names** for district towns, with proper Bangla endings, for example "ঢাকার আজকের নামাজের সময়" and "ঢাকা, বাংলাদেশ" in the title, heading and breadcrumb. Country names on every Bangla page read the same way ("বাংলাদেশের বেশিরভাগ মসজিদ", not "বাংলাদেশ-এর").
+- **Town and neighbourhood pages link to their district** (Tungi to Gazipur, Paltan and Azimpur to Dhaka, Saidpur to Nilphamari, and so on).
+
+### Changed
+
+- Two district town pages are now titled with the district name: "Par Naogaon" is "Naogaon" and "Nawabganj" is "Chapainawabganj". Their addresses stay the same.
+
 ## v5.128.2 - Cleanup tool for accounts deleted earlier - 2026-10-10
 
 ### Added
