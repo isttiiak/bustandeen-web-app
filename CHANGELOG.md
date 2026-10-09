@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.116.5 - Admin panel: phone layout fixes - 2026-10-09
+
+### Fixed
+
+- **Admin panel (staff only), checked with real data at 375px, dark and light**: the tab row wraps onto two lines instead of scrolling sideways (at phone width only Sadaqah and half of Zikr Requests showed, and on Feedback or Broadcast the active tab was out of view); the Tools menu opens right-aligned so it no longer runs off the screen; on a user's page the action buttons sit under their description instead of squeezing it to a few words per line, and the UID wraps inside its card; Ops Health's storage table shows Docs and Total on phones (Data and Indexes from tablet width up) so sizes no longer break onto two lines.
+
 ## v5.116.4 - Admin panel: ops health in the new look - 2026-10-09
 
 ### Changed

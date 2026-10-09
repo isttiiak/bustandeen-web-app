@@ -84,7 +84,7 @@ function ToolsMenu({ links }: { links: ToolLink[] }) {
         />
       </button>
       {open && (
-        <div className="absolute left-0 top-full mt-1.5 w-52 rounded-control border border-brand-border bg-brand-deep shadow-elev-3 py-1.5 z-30">
+        <div className="absolute right-0 top-full mt-1.5 w-52 rounded-control border border-brand-border bg-brand-deep shadow-elev-3 py-1.5 z-30">
           {links.map((l) => (
             <NavLink
               key={l.to}
@@ -194,14 +194,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               admin's role/domain can access — must match AdminHome.tsx's own
               card-grid gating exactly, or a domain-scoped Ansar sees a tab
               for a section the API will 403 them out of.
-              ToolsMenu is a SIBLING of the overflow-x-auto tab strip, not a
-              child of it — CSS gives an element `overflow-x: auto` an
-              implicit `overflow-y: auto` too (an axis left `visible` while
-              the other is set to anything else computes to `auto`), which
-              was silently clipping the dropdown's vertical overflow whenever
-              it lived inside that scroll container. */}
-          <nav className="flex items-center gap-1 py-2">
-            <div className="flex min-w-0 items-center gap-1 overflow-x-auto">
+              The row WRAPS on phones instead of scrolling sideways: as a
+              scroll strip, 375px showed only Sadaqah + half of Zikr Requests,
+              and on Feedback/Broadcast the active tab sat out of view. Never
+              give this row (or an ancestor of ToolsMenu) `overflow-x: auto`:
+              it implies `overflow-y: auto` and clips the Tools dropdown. */}
+          <nav className="flex flex-wrap items-center gap-1 py-2">
+            <div className="contents">
               {canSeeSadaqah && (
                 <NavLink to="/admin/sadaqah" className={navItemClass}>
                   <BanknotesIcon className="w-4 h-4" />
@@ -228,7 +227,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
             {isServant && (
               <>
-                <span className="w-px h-5 bg-brand-border mx-1 shrink-0" aria-hidden />
+                <span
+                  className="hidden sm:block w-px h-5 bg-brand-border mx-1 shrink-0"
+                  aria-hidden
+                />
                 <ToolsMenu links={toolLinks} />
               </>
             )}

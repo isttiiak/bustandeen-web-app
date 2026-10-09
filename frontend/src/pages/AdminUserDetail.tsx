@@ -210,7 +210,7 @@ export default function AdminUserDetail() {
               />
               <Field
                 label={t('adminUserDetail.uid', 'UID')}
-                value={<span className="font-mono text-xs">{user.uid}</span>}
+                value={<span className="font-mono text-xs break-all">{user.uid}</span>}
               />
             </div>
 
@@ -220,7 +220,7 @@ export default function AdminUserDetail() {
               </h2>
               <div className={`${CARD} p-4 space-y-3`}>
                 {!welcomeForm ? (
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-white/70 text-sm">
                       {t(
                         'adminUserDetail.welcomeDesc',
@@ -289,7 +289,7 @@ export default function AdminUserDetail() {
 
               <div className={`${CARD} p-4 space-y-3`}>
                 {!reengagementForm ? (
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div className="space-y-1">
                       <p className="text-white/70 text-sm">
                         {t(
@@ -371,7 +371,7 @@ export default function AdminUserDetail() {
 
               <div className={`${CARD} p-4 space-y-3`}>
                 {!customEmailForm ? (
-                  <div className="flex items-center justify-between gap-3">
+                  <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-white/70 text-sm">
                       {t(
                         'adminUserDetail.customEmailDesc',

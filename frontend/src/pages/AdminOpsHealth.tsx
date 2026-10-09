@@ -103,12 +103,19 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
             <thead>
               <tr className="text-white/70 text-left">
                 <th className="font-normal pb-1">{t('adminOpsHealth.collection', 'Collection')}</th>
-                <th className="font-normal pb-1 text-right">{t('adminOpsHealth.docs', 'Docs')}</th>
-                <th className="font-normal pb-1 text-right">{t('adminOpsHealth.data', 'Data')}</th>
-                <th className="font-normal pb-1 text-right">
+                <th className="font-normal pb-1 pl-3 text-right">
+                  {t('adminOpsHealth.docs', 'Docs')}
+                </th>
+                {/* Data + Indexes only from sm: at 375px five columns wrapped
+                    every "123.4 KB" onto two lines. The line above the table
+                    already gives both totals. */}
+                <th className="hidden sm:table-cell font-normal pb-1 pl-3 text-right">
+                  {t('adminOpsHealth.data', 'Data')}
+                </th>
+                <th className="hidden sm:table-cell font-normal pb-1 pl-3 text-right">
                   {t('adminOpsHealth.indexes', 'Indexes')}
                 </th>
-                <th className="font-normal pb-1 text-right">
+                <th className="font-normal pb-1 pl-3 text-right">
                   {t('adminOpsHealth.total', 'Total')}
                 </th>
               </tr>
@@ -116,11 +123,19 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
             <tbody>
               {storage.collections.map((c) => (
                 <tr key={c.name} className="border-t border-brand-border/60 text-white/70">
-                  <td className="py-1 font-mono truncate max-w-[10rem]">{c.name}</td>
-                  <td className="py-1 text-right">{c.documents.toLocaleString()}</td>
-                  <td className="py-1 text-right">{formatBytes(c.dataBytes)}</td>
-                  <td className="py-1 text-right">{formatBytes(c.indexBytes)}</td>
-                  <td className="py-1 text-right font-bold">{formatBytes(c.totalBytes)}</td>
+                  <td className="py-1 font-mono break-all">{c.name}</td>
+                  <td className="py-1 pl-3 text-right whitespace-nowrap">
+                    {c.documents.toLocaleString()}
+                  </td>
+                  <td className="hidden sm:table-cell py-1 pl-3 text-right whitespace-nowrap">
+                    {formatBytes(c.dataBytes)}
+                  </td>
+                  <td className="hidden sm:table-cell py-1 pl-3 text-right whitespace-nowrap">
+                    {formatBytes(c.indexBytes)}
+                  </td>
+                  <td className="py-1 pl-3 text-right font-bold whitespace-nowrap">
+                    {formatBytes(c.totalBytes)}
+                  </td>
                 </tr>
               ))}
             </tbody>
