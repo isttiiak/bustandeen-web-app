@@ -21,7 +21,8 @@ import { CARD } from './bustanStyles.js';
  * hooks/useSalatLog.ts. Not run through translateReference().
  */
 
-export type DaifTopic = 'ramadan-ashra' | 'nafl-fard-reward' | 'waqiah-poverty';
+export type DaifTopic =
+  'ramadan-ashra' | 'nafl-fard-reward' | 'waqiah-poverty' | 'iftar-dua' | 'mid-shaban';
 
 interface DaifEntry {
   id: DaifTopic;
@@ -99,6 +100,49 @@ const ENTRIES: Record<DaifTopic, DaifEntry> = {
       'What IS established is the practice of the companion: ʿAbdullāh ibn Masʿūd (ra) instructed his daughters to recite it each night. So Bustandeen offers the surah as a good nightly habit and states no reward. Note too that the wording is "every night", not specifically after Maghrib.',
     practiceBn:
       'যা প্রতিষ্ঠিত তা হলো সাহাবীর আমল: আবদুল্লাহ ইবনে মাসউদ (রা) তাঁর কন্যাদের প্রতি রাতে এটি পাঠ করার নির্দেশ দিয়েছিলেন। তাই Bustandeen এই সূরাটিকে একটি ভালো রাতের অভ্যাস হিসেবে উপস্থাপন করে এবং কোনো সওয়াবের কথা বলে না। এটাও লক্ষণীয় যে, ভাষাটি হলো "প্রতি রাতে", নির্দিষ্টভাবে মাগরিবের পর নয়।',
+  },
+  'iftar-dua': {
+    id: 'iftar-dua',
+    claim: "That the du'ā of a fasting person at the moment of breaking the fast is not rejected.",
+    claimBn: 'যে ইফতারের সময় রোজাদারের দোয়া ফিরিয়ে দেওয়া হয় না।',
+    source: 'Sunan Ibn Mājah 1753, from ʿAbdullāh ibn ʿAmr (ra)',
+    sourceBn: 'সুনান ইবনে মাজাহ ১৭৫৩, আবদুল্লাহ ইবনে আমর (রা) থেকে',
+    sourceUrl:
+      'https://qandabenefits.com/688/is-the-supplication-at-the-time-of-breaking-fast-accepted',
+    defect:
+      'Its chain runs through Isḥāq ibn ʿUbaydillāh, from Ibn Abī Mulaykah. Ibn Ḥajar (al-Taqrīb) identifies him as Isḥāq ibn ʿUbaydillāh ibn Abī al-Muhājir and calls him majhūl (unknown), so his reliability cannot be established.',
+    defectBn:
+      'এর সনদ ইবনে আবী মুলাইকাহ থেকে ইসহাক ইবনে উবাইদুল্লাহর মাধ্যমে এসেছে। ইবনে হাজার (আত-তাকরীব) তাঁকে ইসহাক ইবনে উবাইদুল্লাহ ইবনে আবিল মুহাজির হিসেবে চিহ্নিত করেছেন এবং মাজহূল (অপরিচিত) বলেছেন, তাই তাঁর নির্ভরযোগ্যতা প্রমাণিত নয়।',
+    verdict:
+      'Ḍaʿīf per al-Albānī; Ḥasan per Darussalam. The graders differ, so both grades are shown.',
+    verdictBn:
+      'আল-আলবানীর মতে যঈফ; দারুসসালামের মতে হাসান। মুহাদ্দিসগণের মধ্যে মতভেদ আছে, তাই উভয় গ্রেড দেখানো হয়েছে।',
+    practice:
+      "Making du'ā at iftār is still good, since du'ā is worship at any time. Bustandeen keeps it as a habit to encourage, not as a promise that a du'ā made at that moment is sure to be answered.",
+    practiceBn:
+      'ইফতারের সময় দোয়া করা তবুও ভালো, কারণ দোয়া যেকোনো সময়ের ইবাদত। Bustandeen এটিকে উৎসাহ দেওয়ার মতো একটি অভ্যাস হিসেবে রাখে, এই মুহূর্তের দোয়া কবুল হওয়ার নিশ্চিত প্রতিশ্রুতি হিসেবে নয়।',
+  },
+  'mid-shaban': {
+    id: 'mid-shaban',
+    claim:
+      'That on the night of the 15th of Shaʿbān Allah looks upon His creation and forgives all of them except a mushrik or one who harbours enmity.',
+    claimBn:
+      'যে শাবানের ১৫তম রাতে আল্লাহ তাঁর সৃষ্টির দিকে তাকান এবং মুশরিক ও বিদ্বেষ পোষণকারী ছাড়া সবাইকে ক্ষমা করেন।',
+    source: 'Sunan Ibn Mājah 1390, from Abū Mūsā al-Ashʿarī (ra)',
+    sourceBn: 'সুনান ইবনে মাজাহ ১৩৯০, আবু মূসা আল-আশআরী (রা) থেকে',
+    sourceUrl: 'https://islamqa.info/en/answers/49678',
+    defect:
+      'The chain contains ʿAbdullāh ibn Lahīʿah, criticised for weak memory, and al-Ḍaḥḥāk ibn Ayman, of whom al-Dhahabī said no one knows who he is. al-Walīd ibn Muslim in the same chain is known for tadlīs (hiding a link). al-Būṣīrī (al-Zawāʾid) graded the chain ḍaʿīf for these reasons.',
+    defectBn:
+      'এর সনদে আছেন আবদুল্লাহ ইবনে লাহীআহ, যিনি দুর্বল স্মরণশক্তির জন্য সমালোচিত, এবং আদ-দাহহাক ইবনে আয়মান, যাঁর সম্পর্কে আয-যাহাবী বলেছেন, কেউ জানে না তিনি কে। একই সনদের আল-ওয়ালীদ ইবনে মুসলিম তাদলীসের (সূত্রের একজনকে গোপন করা) জন্য পরিচিত। এসব কারণে আল-বূসীরী (আয-যাওয়াইদ) এই সনদকে যঈফ বলেছেন।',
+    verdict:
+      'This chain is ḍaʿīf (al-Būṣīrī; Darussalam). al-Albānī graded the narration ḥasan through its other supporting routes.',
+    verdictBn:
+      'এই সনদটি যঈফ (আল-বূসীরী; দারুসসালাম)। আল-আলবানী অন্যান্য সমর্থক সূত্রের ভিত্তিতে বর্ণনাটিকে হাসান বলেছেন।',
+    practice:
+      'Bustandeen lists the night because of this difference, without promising a specific reward and without special rituals. What is firmly authentic is that Allah descends every night in its last third and asks who will seek His forgiveness (Ṣaḥīḥ al-Bukhārī 1145), so worship on this night is as welcome as on any night.',
+    practiceBn:
+      'এই মতভেদের কারণে Bustandeen রাতটি তালিকায় রাখে, তবে কোনো নির্দিষ্ট সওয়াবের প্রতিশ্রুতি বা বিশেষ কোনো আমল ছাড়া। যা দৃঢ়ভাবে সহীহ তা হলো, আল্লাহ প্রতি রাতের শেষ তৃতীয়াংশে নিকটতম আসমানে নেমে আসেন এবং জিজ্ঞেস করেন, কে তাঁর কাছে ক্ষমা চাইবে (সহীহ বুখারী ১১৪৫)। তাই এই রাতের ইবাদতও অন্য যেকোনো রাতের মতোই প্রিয়।',
   },
 };
 
