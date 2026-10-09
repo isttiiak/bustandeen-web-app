@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.114.2 - "Signing you in" screen in the Bustan Arch design - 2026-10-09
+
+### Changed
+
+- **The "Signing you in..." screen** shown while a sign-in finishes is now a calm card with the Bustandeen leaf, in dark and light. The ring around the leaf stays still when your device asks for reduced motion.
+- **The Terms of Service and Privacy Policy links** under the sign-in and sign-up forms show a clear outline when you reach them with the keyboard.
+
 ## v5.114.1 - Sign in, sign up and email links in the Bustan Arch design - 2026-10-09
 
 ### Changed

@@ -1,7 +1,8 @@
 import { Link } from 'react-router';
 import { Trans } from 'react-i18next';
 
-const LINK = 'text-brand-emerald underline underline-offset-2 hover:text-white';
+const LINK =
+  'text-brand-emerald underline underline-offset-2 hover:text-white rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50';
 
 /** "By continuing, you agree to our Terms of Service and Privacy Policy." under
  * the sign-in and sign-up forms. `<1>`/`<3>` go through `components`, never
