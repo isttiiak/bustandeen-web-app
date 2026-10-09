@@ -17,6 +17,7 @@ const ROUTES = [
   '/quran',
   '/quran/hifz',
   '/settings',
+  '/welcome',
   '/friends',
   '/sadaqah',
 ];

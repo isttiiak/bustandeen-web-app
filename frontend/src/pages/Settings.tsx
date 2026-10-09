@@ -80,11 +80,12 @@ import { getThemeMode, setThemeMode, type ThemeMode } from '../utils/theme.js';
 import {
   CrescentIcon,
   FlowerIcon,
+  LeafIcon,
   MosqueIcon,
   SunriseIcon,
   TasbihIcon,
 } from '../components/icons/IslamicIcons.js';
-import { BTN_SECONDARY, CARD, SECTION_TITLE } from '../components/bustanStyles.js';
+import { BTN_SECONDARY, CARD, ITEM, SECTION_TITLE } from '../components/bustanStyles.js';
 
 type SvgIcon = (p: { className?: string }) => React.ReactNode;
 
@@ -1183,6 +1184,24 @@ export default function Settings() {
             delay={0.14}
           >
             <HomeSpecialPicker t={t} />
+            <button
+              onClick={() => navigate('/welcome')}
+              className={`${ITEM} w-full mt-4 flex items-center gap-3`}
+            >
+              <LeafIcon className="w-5 h-5 shrink-0 text-brand-emerald" aria-hidden="true" />
+              <span className="flex-1 min-w-0">
+                <span className="block text-white font-bold text-sm">
+                  {t('settings.setupAgain', 'Run the welcome setup again')}
+                </span>
+                <span className="block text-white/70 text-xs mt-0.5">
+                  {t(
+                    'settings.setupAgainDetail',
+                    'Location, madhab, prayer method and your habits.'
+                  )}
+                </span>
+              </span>
+              <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/60" aria-hidden="true" />
+            </button>
           </SectionCard>
 
           {/* ── Accessibility ── */}

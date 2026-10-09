@@ -1,5 +1,5 @@
 import * as adhan from 'adhan';
-import { getAsrMadhab, getCalcMethod } from './salatPrefs.js';
+import { getAsrMadhab, getCalcMethod, type CalculationMethodId } from './salatPrefs.js';
 import i18n from '../i18n.js';
 
 export type PrayerKey = 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
@@ -82,6 +82,28 @@ export function calcPrayerTimes(
     isha: times.isha,
     sunset,
   };
+}
+
+/**
+ * Today's ʿAṣr under each school with the user's calculation method, so the
+ * madhab choice (onboarding, FIQH-01) can show what it changes. `method`
+ * lets a picker preview a method before it is saved. Only the
+ * shadow factor differs: 1 (Shāfiʿī, Mālikī, Ḥanbalī) vs 2 (Ḥanafī).
+ */
+export function asrBySchool(
+  lat: number,
+  lng: number,
+  date: Date = new Date(),
+  method: CalculationMethodId = getCalcMethod()
+): { standard: Date; hanafi: Date } {
+  const coords = new adhan.Coordinates(lat, lng);
+  const day = calendarDateAtLocation(lng, date);
+  const at = (madhab: (typeof adhan.Madhab)[keyof typeof adhan.Madhab]) => {
+    const params = adhan.CalculationMethod[method]();
+    params.madhab = madhab;
+    return new adhan.PrayerTimes(coords, day, params).asr;
+  };
+  return { standard: at(adhan.Madhab.Shafi), hanafi: at(adhan.Madhab.Hanafi) };
 }
 
 /**

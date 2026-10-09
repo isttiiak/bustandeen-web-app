@@ -20,6 +20,9 @@ export interface DBUserProfile {
   hijriOffset?: number;
   dayStartMode?: 'fajr' | 'midnight' | 'maghrib';
   totalCount?: number;
+  /** T3.3 onboarding (utils/onboarding.ts onboardingMode). */
+  onboardingRequired?: boolean;
+  onboardedAt?: string | null;
   createdAt?: string;
   primaryEmail?: string;
   linkedProviders?: Array<{ provider: string; email: string; providerUid: string }>;
@@ -45,7 +48,10 @@ export type ProfilePatch = Partial<
     | 'hijriOffset'
     | 'dayStartMode'
   >
->;
+> & {
+  /** Finished, skipped or dismissed onboarding; the server keeps the first. */
+  onboarded?: true;
+};
 
 const PROFILE_KEY = ['user', 'profile'] as const;
 
