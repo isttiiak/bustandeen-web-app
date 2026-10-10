@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { requireAdminAuth, requireDomain, requireServant } from '../middleware/auth.js';
+import {
+  requireAdminAuth,
+  requireAdminRecentAuth,
+  requireDomain,
+  requireServant,
+} from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import {
   adminListZikrRequestsQuerySchema,
@@ -39,6 +44,7 @@ router.patch(
 router.delete(
   '/library/:id',
   requireServant,
+  requireAdminRecentAuth,
   validate(libraryItemIdParamSchema),
   adminZikrController.deleteLibraryItemHandler
 );

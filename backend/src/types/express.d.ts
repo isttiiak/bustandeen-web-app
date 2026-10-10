@@ -20,6 +20,9 @@ declare global {
          * this account may touch (null for servant, which bypasses domain
          * checks entirely via requireDomain). */
         ansarDomain: AnsarDomain | null;
+        /** When this admin last entered their password (the token's
+         *  auth_time, seconds). Absent on a dev-bypass token without one. */
+        authTime?: number;
       };
     }
   }

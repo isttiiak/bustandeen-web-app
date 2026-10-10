@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAdminAuth, requireServant } from '../middleware/auth.js';
+import { requireAdminAuth, requireAdminRecentAuth, requireServant } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import {
   createAdminAccountSchema,
@@ -16,9 +16,15 @@ const router = Router();
 router.use(requireAdminAuth, requireServant);
 
 router.get('/', adminAccountController.listHandler);
-router.post('/', validate(createAdminAccountSchema), adminAccountController.createHandler);
+router.post(
+  '/',
+  requireAdminRecentAuth,
+  validate(createAdminAccountSchema),
+  adminAccountController.createHandler
+);
 router.patch(
   '/:id/active',
+  requireAdminRecentAuth,
   validate(setAdminAccountActiveSchema),
   adminAccountController.setActiveHandler
 );

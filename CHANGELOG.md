@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.142.0 - Admin sign-ins end after 12 hours, and big deletes ask for the password - 2026-10-10
+
+### Changed
+
+- **Admin sessions end 12 hours after sign-in (U8.4, admin audit S2).** The panel keeps its sign-in on the device, so a left-open or stolen browser stayed in the admin panel until someone pressed Log out. Now the server refuses an admin sign-in that is more than 12 hours old; the panel signs out and says why.
+- **Irreversible Servant actions ask for the password again** when the last password entry is more than 5 minutes old: deleting a user, a donation, an expense, a quarter or a library item, adding an admin, and activating or deactivating one. A small prompt asks once and the action then goes through; Cancel leaves everything as it was.
+
 ## v5.141.4 - Checked input on the admin user tools - 2026-10-10
 
 ### Fixed
