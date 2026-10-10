@@ -49,7 +49,7 @@
       "destination": "https://ihsan-9e89b.firebaseapp.com/__/firebase/:path*"
     },
     {
-      "source": "/((?!api/|__/).*)",
+      "source": "/((?!api/|__/|assets/).*)",
       "destination": "/app-shell.html"
     }
   ],
