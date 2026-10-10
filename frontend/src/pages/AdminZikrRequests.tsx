@@ -71,13 +71,15 @@ function RequestCard({ request }: { request: ZikrRequest }) {
   });
   const [audioAdded, setAudioAdded] = useState(false);
 
+  const loadDraft = (type: 'approved' | 'rejected') =>
+    draft.mutate({ id: request._id, type }, { onSuccess: (d) => setEmailText(d.body) });
+
+  // Approve starts with the suggested email; Reject starts blank (sends
+  // nothing) and the admin can insert the suggestion on purpose.
   const startReview = (type: 'approving' | 'rejecting') => {
     setMode(type);
     setEmailText('');
-    draft.mutate(
-      { id: request._id, type: type === 'approving' ? 'approved' : 'rejected' },
-      { onSuccess: (d) => setEmailText(d.body) }
-    );
+    if (type === 'approving') loadDraft('approved');
   };
   const cancel = () => {
     setMode('idle');
@@ -410,12 +412,27 @@ function RequestCard({ request }: { request: ZikrRequest }) {
           <textarea
             className={`${ADMIN_INPUT_SM} w-full font-mono`}
             rows={5}
+            aria-label={t('adminZikr.rejectEmailLabel', 'Email to the requester')}
             value={emailText}
             onChange={(e) => setEmailText(e.target.value)}
           />
+          {!emailText.trim() && (
+            <button
+              type="button"
+              onClick={() => loadDraft('rejected')}
+              disabled={draft.isPending}
+              className={BTN_SMALL}
+            >
+              {draft.isPending ? '…' : t('adminZikr.insertDraft', 'Insert suggested email')}
+            </button>
+          )}
           <div className="flex gap-2 pt-1">
             <button onClick={confirmReject} disabled={sending} className={BTN_DANGER}>
-              {reject.isPending ? '…' : t('adminZikr.confirmReject', 'Confirm reject')}
+              {reject.isPending
+                ? '…'
+                : emailText.trim()
+                  ? t('adminZikr.confirmRejectEmail', 'Reject and send email')
+                  : t('adminZikr.confirmRejectSilent', 'Reject without email')}
             </button>
             <button onClick={cancel} className={BTN_SMALL}>
               {t('adminZikr.cancel', 'Cancel')}

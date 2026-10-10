@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.153.1 - Rejecting a zikr request sends no email unless you add one - 2026-10-11
+
+### Fixed
+
+- **Zikr request Reject form (admin, U8 check).** The email box said "leave blank to send nothing" but opened with a suggested email already in it, so every rejection emailed the requester. It now opens empty and the button reads "Reject without email". "Insert suggested email" loads the draft when you want to send one, and the button then reads "Reject and send email". Approve still opens with its suggested email.
+
 ## v5.153.0 - Read the Quran without an account - 2026-10-11
 
 ### Added
