@@ -30,6 +30,7 @@ import AnnouncementBanner from './components/AnnouncementBanner.js';
 import MoonSightingSync from './components/MoonSightingSync.js';
 import { syncHijriFromServer } from './utils/islamicCalendar.js';
 import NaturalLogModal from './components/ai/NaturalLogModal.js';
+import FloatingActions from './components/FloatingActions.js';
 import type { AuthUser } from './types/api.js';
 import { trackPageView } from './utils/analytics.js';
 import { safeRedirect } from './utils/safeRedirect.js';
@@ -477,27 +478,29 @@ export default function App() {
             <Suspense fallback={<RouteFallback />}>
               <AppRoutes revision={prefsRevision} />
             </Suspense>
-            {/* Floating ✨ quick-log button — visible on app pages except /naseeh (it has its own) and the zikr counter */}
-            {aiEnabled &&
-              !isDemoMode &&
-              !isAdminPage &&
+            {/* Bottom-right stack (U1): "go to top" above the ✨ quick-log button.
+                Neither shows on /naseeh (its own chat UI) or the zikr counter: a
+                tap-anywhere surface where a corner button gets hit mid-count. */}
+            {!isAdminPage &&
               !isSeoPage &&
               !isAuthPage &&
               location.pathname !== '/naseeh' &&
-              // The zikr counter is a tap-anywhere surface; a floating button in the
-              // corner would get hit by accident mid-count.
               location.pathname !== '/zikr' && (
-                <>
-                  <button
-                    onClick={() => setQuickLogOpen(true)}
-                    aria-label="Quick log with a sentence"
-                    className="fixed bottom-20 right-4 z-40 w-12 h-12 rounded-full bg-brand-emerald shadow-lg shadow-brand-emerald/30 flex items-center justify-center text-xl hover:scale-110 active:scale-95 transition-transform"
-                  >
-                    ✨
-                  </button>
-                  {quickLogOpen && <NaturalLogModal onClose={() => setQuickLogOpen(false)} />}
-                </>
+                <FloatingActions
+                  quickLog={
+                    aiEnabled && !isDemoMode ? (
+                      <button
+                        onClick={() => setQuickLogOpen(true)}
+                        aria-label="Quick log with a sentence"
+                        className="w-12 h-12 rounded-full bg-brand-emerald shadow-lg shadow-brand-emerald/30 flex items-center justify-center text-xl hover:scale-110 active:scale-95 transition-transform"
+                      >
+                        ✨
+                      </button>
+                    ) : undefined
+                  }
+                />
               )}
+            {quickLogOpen && <NaturalLogModal onClose={() => setQuickLogOpen(false)} />}
           </MainLandmark>
           {showFooter && <Footer />}
         </>

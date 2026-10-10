@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useCallback } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
@@ -10,7 +10,6 @@ import {
   type SurahMeta,
 } from '../utils/quranData.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
-import { ArrowUpIcon } from '@heroicons/react/24/solid';
 
 /**
  * Free reading: pick ANY surah, any time (the flexibility Istiak asked for:
@@ -23,16 +22,6 @@ export default function QuranBrowse() {
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
   const [q, setQ] = useState('');
   const [error, setError] = useState(false);
-  const [showTop, setShowTop] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setShowTop(window.scrollY > 400);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
-  const scrollToTop = useCallback(() => window.scrollTo({ top: 0, behavior: 'smooth' }), []);
-
   useEffect(() => {
     let alive = true;
     loadSurahList()
@@ -114,16 +103,6 @@ export default function QuranBrowse() {
           </div>
         )}
       </div>
-
-      {showTop && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-20 right-4 z-30 w-10 h-10 rounded-full bg-brand-emerald-dim text-on-color shadow-elev-2 grid place-items-center hover:bg-brand-emerald-dim hover:brightness-90 transition-colors"
-          aria-label={t('quranBrowse.scrollToTop')}
-        >
-          <ArrowUpIcon className="w-5 h-5" />
-        </button>
-      )}
     </AnimatedBackground>
   );
 }
