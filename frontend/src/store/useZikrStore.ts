@@ -3,7 +3,9 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
 import { getTrackingDay, getTrackingDayMiddayTs } from '../utils/trackingDay.js';
 import { API_BASE, getIdToken } from '../lib/api.js';
-import { newOpId } from '../utils/syncOutbox.js';
+import { newOpId, peekSyncOutbox } from '../utils/syncOutbox.js';
+import { currentOutboxOwner } from '../utils/outboxOwner.js';
+import { todaysLoggedCounts } from '../utils/zikrLog.js';
 
 const FLUSH_DELAY = 800; // ms
 const RETRY_DELAY = 20_000; // ms: retry a failed flush without waiting for another tap
@@ -74,7 +76,8 @@ interface ZikrInflight {
 }
 
 /** Counts not yet confirmed by the server, per type: the pending taps plus an
- * unsent batch (when it belongs to the current tracking day). */
+ * unsent batch (when it belongs to the current tracking day), plus "Log
+ * counts" entries for today still waiting in the offline outbox (U4). */
 export function unsyncedCounts(state: {
   pending: Record<string, number>;
   inflight: ZikrInflight | null;
@@ -94,6 +97,13 @@ export function unsyncedCounts(state: {
     } catch {
       /* unreadable batch: nothing to add */
     }
+  }
+  const owner = currentOutboxOwner();
+  const queuedLogs = peekSyncOutbox()
+    .filter((op) => op.tracker === 'zikr' && op.owner === owner)
+    .map((op) => op.body);
+  for (const [type, amount] of Object.entries(todaysLoggedCounts(queuedLogs))) {
+    out[type] = (out[type] ?? 0) + amount;
   }
   return out;
 }

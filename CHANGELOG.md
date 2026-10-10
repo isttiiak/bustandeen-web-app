@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.135.1 - Zikr "Log counts" fixes - 2026-10-10
+
+### Fixed
+
+Found in the U4 audit of the zikr "Log missed counts" flow (today or up to two tracking days back).
+
+- **Counted twice:** pressing Enter again while a save was on its way posted the same counts a second time. The Enter key is now guarded like the Save button.
+- **Lost or doubled offline:** the log was a plain request with no op id, so a save whose answer was lost could be counted twice on a retry, and with no connection it just failed. It now goes through the offline outbox like fasting and Quran: each save carries an `X-Client-Op-Id` (the server applies it once), and offline it is kept on the device and syncs later. A log for today queued offline still shows in today's count meanwhile.
+- **Wrong day across the boundary:** a form opened just before Fajr (or Maghrib, or midnight, per your day-start setting) and saved just after put the counts on the new day while it said "Today" for the closing one. The day choices are now fixed when the form opens, so counts land on the day you picked.
+- **Too large or not whole:** more than 10,000 at once was refused by the server with a generic "Could not save"; "12.5" was silently saved as 12. Both now get a clear message before saving.
+- **Stale screens:** after a log, the day's session list and the Friends/Noor numbers kept the old values for up to two minutes. They now refresh with the analytics.
+- Today's count shown in the form no longer includes counts left from an earlier day when the app stayed open overnight.
+
+### Changed
+
+- The form is its own component (`components/zikr/ZikrLogCountsModal.tsx`) with a hook (`hooks/useZikrLog.ts`), ready for Home. In demo mode it offers only Today (there is no history to fill).
+
+Checked and correct (now covered by tests): server day bucketing in every timezone including UTC+5:45, +14 and -12, all three day-start modes, the server's 2-days-back window in Maghrib mode, streak and goal (derived from the day totals, so a backfill reconnects a streak), Noor (computed from the same totals), and time-of-day charts (logged counts never become a timed session).
+
 ## v5.135.0 - A calmer Friends page - 2026-10-10
 
 ### Added

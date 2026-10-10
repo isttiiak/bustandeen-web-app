@@ -11,6 +11,7 @@ import bn from '../locales/bn/common.json';
 const files = import.meta.glob<string>(
   [
     './ZikrAnalytics.tsx',
+    '../components/zikr/ZikrLogCountsModal.tsx',
     '../components/analytics/StreakCard.tsx',
     '../components/analytics/GoalCard.tsx',
     '../components/analytics/TrendChart.tsx',
@@ -51,10 +52,25 @@ describe('Zikr analytics screen', () => {
   });
 
   it('both dialogs are portaled above the navbar', () => {
-    const page = files['./ZikrAnalytics.tsx']!;
-    expect(page.match(/createPortal\(/g)?.length).toBeGreaterThanOrEqual(2);
-    expect(page.match(/z-\[70\]/g)?.length).toBeGreaterThanOrEqual(2);
-    expect(page).not.toContain('modal-open');
+    // The goal dialog lives in the page; "Log counts" is shared with Home (U4).
+    for (const p of ['./ZikrAnalytics.tsx', '../components/zikr/ZikrLogCountsModal.tsx']) {
+      const code = files[p]!;
+      expect(code).toMatch(/createPortal\(/);
+      expect(code).toMatch(/z-\[70\]/);
+      expect(code).not.toContain('modal-open');
+    }
+    expect(files['./ZikrAnalytics.tsx']).toContain('<ZikrLogCountsModal');
+  });
+
+  it('"Log counts" saves through its hook, once per tap or Enter (U4)', () => {
+    const modal = stripComments(files['../components/zikr/ZikrLogCountsModal.tsx']!);
+    // Through the outbox hook (op id + offline queue), never a raw API call.
+    expect(modal).toContain('useLogZikrCounts');
+    expect(modal).not.toMatch(/lib\/api|api\.post|fetch\(/);
+    // The Enter key path is guarded like the button, so it cannot post twice.
+    expect(modal).toMatch(/if \(parsedAmount <= 0 \|\| savingRef\.current\) return;/);
+    // The day choices are pinned to when the form opened.
+    expect(modal).toContain('const [openedAt] = useState(');
   });
 
   it('records are translated, not hard-coded English', () => {
