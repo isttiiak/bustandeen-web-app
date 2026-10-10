@@ -3,6 +3,12 @@
 // The Islamic day starts at Maghrib: getHijriToday() accounts for this.
 
 import { calcPrayerTimes } from './prayerTimes.js';
+import {
+  clampOffset,
+  resolveHijriOffset,
+  type HijriOffsetSource,
+  type MoonSightingRecord,
+} from './hijriOffset.js';
 import i18n from '../i18n.js';
 
 export interface SpecialDayTodo {
@@ -534,23 +540,11 @@ export const MOON_SIGHTING_KEY = 'bustandeen_moon_sighting';
 /** ISO country used for Automatic: profile country, else the time zone's */
 export const HIJRI_COUNTRY_KEY = 'bustandeen_hijri_country';
 
-export interface MoonSightingRecord {
-  id: string;
-  country: string;
-  /** YYYY-MM-DD */
-  effectiveFrom: string;
-  offset: number;
-  note: string;
-  sourceUrl?: string;
-}
-
-export interface HijriOffsetSource {
-  offset: number;
-  source: 'manual' | 'country' | 'none';
-  record?: MoonSightingRecord;
-}
-
-const clampOffset = (n: number): number => (n === -1 || n === 1 ? n : 0);
+export {
+  resolveHijriOffset,
+  type HijriOffsetSource,
+  type MoonSightingRecord,
+} from './hijriOffset.js';
 
 /** Local YYYY-MM-DD of a Date (the device's calendar day). */
 function localDay(d: Date): string {
@@ -558,30 +552,6 @@ function localDay(d: Date): string {
   const m = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   return `${y}-${m}-${day}`;
-}
-
-/**
- * The pure rule (unit-tested): which offset applies to `day` (YYYY-MM-DD).
- * A country record applies from its effectiveFrom until the next record for
- * the same country; before the first one there is no override.
- */
-export function resolveHijriOffset(input: {
-  manual: boolean;
-  userOffset: number;
-  country: string | null;
-  records: readonly MoonSightingRecord[];
-  day: string;
-}): HijriOffsetSource {
-  if (input.manual) return { offset: clampOffset(input.userOffset), source: 'manual' };
-  if (!input.country) return { offset: 0, source: 'none' };
-  let best: MoonSightingRecord | undefined;
-  for (const r of input.records) {
-    if (r.country !== input.country || r.effectiveFrom > input.day) continue;
-    if (!best || r.effectiveFrom > best.effectiveFrom) best = r;
-  }
-  return best
-    ? { offset: clampOffset(best.offset), source: 'country', record: best }
-    : { offset: 0, source: 'none' };
 }
 
 /** The user's own stored offset (used only when they chose it, see isHijriManual). */

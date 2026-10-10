@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.131.0 - Ramadan 2027 sehri and iftar calendar for every district of Bangladesh - 2026-10-10
+
+### Added
+
+- **Ramadan 2027 calendar for each of the 64 districts (T4.4, part 3)**, in Bangla and English, at the existing `/ramadan-calendar/{district}/2027` and `/bn/...` addresses: every fast with its date, weekday, sehri end (start of Fajr) and iftar (Maghrib), in the Bustan look that follows your theme. Today's row is highlighted during Ramadan.
+- **A clear notice above the table:** the expected first fast is Umm al-Qura's (Monday 8 February 2027) and, in Bangladesh, Ramadan begins on the National Moon Sighting Committee's announcement, so it may begin a day later. A row for a possible 30th fast is shown while the month's length is unknown.
+- **Follows the committee once it announces:** the build reads Bangladesh's moon-sighting records (the ones the admin enters from the committee's announcement, T4.1) and the calendar then shows the announced first fast, with a link to the announcement. If the records cannot be read, the build still succeeds with Umm al-Qura dates and the notice.
+- The Ramadan calendar index lists all 64 districts.
+
+### Changed
+
+- The moon-sighting offset rule moved to its own small module (`utils/hijriOffset.ts`) so the prerendered pages can use it; the app's behaviour is unchanged.
+
+### Fixed
+
+- The "Ramadan calendar" link on the monthly district timetables pointed at an address without a year, which opened an empty page. It now opens the district's Ramadan calendar.
+
 ## v5.130.0 - Monthly prayer timetables for every district of Bangladesh - 2026-10-10
 
 ### Added
