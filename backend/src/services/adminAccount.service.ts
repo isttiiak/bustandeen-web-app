@@ -290,6 +290,14 @@ export const getAdminTagsByUid = async (): Promise<Map<string, AdminTag>> => {
   return new Map(rows.map((r) => [r.firebaseUid, { role: r.role, active: r.active }]));
 };
 
+/**
+ * Whether this Firebase uid is an active admin's login. Staff who also use the
+ * app share that uid with their User document, so deleting or disabling that
+ * User would delete or block the admin's own panel login too.
+ */
+export const isActiveAdminUid = async (uid: string): Promise<boolean> =>
+  !!(await AdminAccount.exists({ firebaseUid: uid, active: true }));
+
 /** User filter fragment that leaves out every AdminAccount uid. */
 export const excludeAdminUids = async (): Promise<{ uid: { $nin: string[] } }> => ({
   uid: { $nin: [...(await getAdminTagsByUid()).keys()] },

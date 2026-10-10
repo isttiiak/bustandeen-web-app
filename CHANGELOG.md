@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.141.3 - An admin's own login is safe from Users - 2026-10-10
+
+### Fixed
+
+- **Deleting or disabling a staff account locked the admin out (U8.3, admin audit S3).** Staff who also use the app share one login between the app and the admin panel. Users > Delete removed that login entirely, so the Servant or Ansar could no longer sign in to the panel; Disable blocked them in the app. Both are now refused for an active admin's account, with "Deactivate it under Accounts first", and the user page shows that note instead of the Disable and Delete buttons. A deactivated former admin's account is an ordinary user again.
+- The same applies to an active admin deleting their own app account from Settings: it explains that the Servant deactivates the admin account first.
+
 ## v5.141.2 - One decision per donation, zikr request and email chunk - 2026-10-10
 
 ### Fixed

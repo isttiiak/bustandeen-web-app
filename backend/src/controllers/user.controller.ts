@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as userService from '../services/user.service.js';
+import { isActiveAdminUid } from '../services/adminAccount.service.js';
 import * as userPrefsService from '../services/userPrefs.service.js';
 import { isAdminEmail } from '../middleware/auth.js';
 import type { AvatarId } from '../utils/avatars.js';
@@ -145,6 +146,12 @@ export const deleteAccountHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    // An admin's panel login is this same Firebase account; deleting it here
+    // would lock them out of the panel. The Servant deactivates it first.
+    if (await isActiveAdminUid(req.user.uid)) {
+      res.status(409).json({ ok: false, error: 'staff_account' });
+      return;
+    }
     await userService.deleteAccount(req.user.uid);
     res.json({ ok: true });
   } catch (err) {

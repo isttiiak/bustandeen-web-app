@@ -904,13 +904,14 @@ export default function Settings() {
       // somewhere sensible for a now-signed-out visitor.
       navigate('/', { replace: true });
     } catch (err) {
-      const reauthRequired =
-        !!err &&
-        typeof err === 'object' &&
-        'response' in err &&
-        (err as { response?: { data?: { error?: string } } }).response?.data?.error ===
-          'reauth_required';
-      if (reauthRequired) {
+      const errorCode = (err as { response?: { data?: { error?: string } } } | null)?.response?.data
+        ?.error;
+      if (errorCode === 'staff_account') {
+        toast.error(
+          'This login is also an admin account. Ask the Servant to deactivate it in the admin panel first.'
+        );
+        setDeleteAccountStep('idle');
+      } else if (errorCode === 'reauth_required') {
         toast.error('Your sign-in is too old for this. Please verify again.');
         setReauthError(null);
         setDeleteAccountStep('reauth');

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { ArrowLeftIcon, UserCircleIcon } from '@heroicons/react/24/outline';
@@ -425,95 +425,116 @@ export default function AdminUserDetail() {
                 )}
               </div>
 
-              <div className={`${CARD} p-4 space-y-3`}>
-                <p className="text-white/70 text-sm">
-                  {user.disabled
-                    ? t(
-                        'adminUserDetail.disabledDesc',
-                        'This account is disabled. Sign-in is blocked everywhere, but no data was touched. Re-enabling restores access immediately.'
-                      )
-                    : t(
-                        'adminUserDetail.disableDesc',
-                        'Blocks sign-in immediately without deleting any data. Reversible, unlike the permanent delete below. Use for abuse, not routine cleanup.'
-                      )}
-                </p>
-                {user.disabled && user.disabledReason && (
-                  <p className="text-white/70 text-xs italic">
-                    {t('adminUserDetail.disabledReasonLabel', 'Reason:')} {user.disabledReason}
+              {user.admin?.active ? (
+                <div className={`${CARD} p-4 space-y-2`}>
+                  <p className="text-white/70 text-sm">
+                    {t(
+                      'adminUserDetail.staffProtected',
+                      'This is an active admin login. Disabling or deleting it would also lock this admin out of the panel, so deactivate it under Accounts first.'
+                    )}
                   </p>
-                )}
-                {user.disabled ? (
-                  <button
-                    onClick={() => enableUser.mutate(uid)}
-                    disabled={enableUser.isPending}
-                    className={`${BTN_PRIMARY} shrink-0`}
-                  >
-                    {enableUser.isPending ? '…' : t('adminUserDetail.enable', 'Re-enable account')}
-                  </button>
-                ) : !showDisableForm ? (
-                  <button
-                    onClick={() => setShowDisableForm(true)}
-                    className={`${BTN_SECONDARY} shrink-0 !text-brand-gold`}
-                  >
-                    {t('adminUserDetail.disable', 'Disable account')}
-                  </button>
-                ) : (
-                  <div className="space-y-2">
-                    <input
-                      value={disableReason}
-                      aria-label="Reason"
-                      onChange={(e) => setDisableReason(e.target.value)}
-                      placeholder={t(
-                        'adminUserDetail.disableReasonPlaceholder',
-                        'Reason (internal note, optional)'
-                      )}
-                      className={`${ADMIN_INPUT_SM} w-full`}
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          disableUser.mutate(
-                            { uid, reason: disableReason.trim() || undefined },
-                            { onSuccess: () => setShowDisableForm(false) }
+                  <Link to="/admin/accounts" className={BTN_SECONDARY}>
+                    {t('adminUserDetail.openAccounts', 'Open Accounts')}
+                  </Link>
+                </div>
+              ) : (
+                <>
+                  <div className={`${CARD} p-4 space-y-3`}>
+                    <p className="text-white/70 text-sm">
+                      {user.disabled
+                        ? t(
+                            'adminUserDetail.disabledDesc',
+                            'This account is disabled. Sign-in is blocked everywhere, but no data was touched. Re-enabling restores access immediately.'
                           )
-                        }
-                        disabled={disableUser.isPending}
-                        className={`${BTN_SECONDARY} !text-brand-gold !border-brand-gold/50`}
+                        : t(
+                            'adminUserDetail.disableDesc',
+                            'Blocks sign-in immediately without deleting any data. Reversible, unlike the permanent delete below. Use for abuse, not routine cleanup.'
+                          )}
+                    </p>
+                    {user.disabled && user.disabledReason && (
+                      <p className="text-white/70 text-xs italic">
+                        {t('adminUserDetail.disabledReasonLabel', 'Reason:')} {user.disabledReason}
+                      </p>
+                    )}
+                    {user.disabled ? (
+                      <button
+                        onClick={() => enableUser.mutate(uid)}
+                        disabled={enableUser.isPending}
+                        className={`${BTN_PRIMARY} shrink-0`}
                       >
-                        {disableUser.isPending
+                        {enableUser.isPending
                           ? '…'
-                          : t('adminUserDetail.confirmDisable', 'Confirm disable')}
+                          : t('adminUserDetail.enable', 'Re-enable account')}
                       </button>
-                      <button onClick={() => setShowDisableForm(false)} className={BTN_SECONDARY}>
-                        {t('adminZikr.cancel', 'Cancel')}
+                    ) : !showDisableForm ? (
+                      <button
+                        onClick={() => setShowDisableForm(true)}
+                        className={`${BTN_SECONDARY} shrink-0 !text-brand-gold`}
+                      >
+                        {t('adminUserDetail.disable', 'Disable account')}
                       </button>
-                    </div>
+                    ) : (
+                      <div className="space-y-2">
+                        <input
+                          value={disableReason}
+                          aria-label="Reason"
+                          onChange={(e) => setDisableReason(e.target.value)}
+                          placeholder={t(
+                            'adminUserDetail.disableReasonPlaceholder',
+                            'Reason (internal note, optional)'
+                          )}
+                          className={`${ADMIN_INPUT_SM} w-full`}
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() =>
+                              disableUser.mutate(
+                                { uid, reason: disableReason.trim() || undefined },
+                                { onSuccess: () => setShowDisableForm(false) }
+                              )
+                            }
+                            disabled={disableUser.isPending}
+                            className={`${BTN_SECONDARY} !text-brand-gold !border-brand-gold/50`}
+                          >
+                            {disableUser.isPending
+                              ? '…'
+                              : t('adminUserDetail.confirmDisable', 'Confirm disable')}
+                          </button>
+                          <button
+                            onClick={() => setShowDisableForm(false)}
+                            className={BTN_SECONDARY}
+                          >
+                            {t('adminZikr.cancel', 'Cancel')}
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
 
-              <div className="rounded-card border border-red-400/40 bg-red-400/5 shadow-elev-2 p-4 space-y-3">
-                <p className="text-white/70 text-sm">
-                  {t(
-                    'adminUserDetail.deleteDesc',
-                    'Permanently deletes this account and all of its data across every feature (zikr, salat, fasting, Quran, Rayhanah, etc.) and revokes their Firebase sign-in. Cannot be undone.'
-                  )}
-                </p>
-                <button
-                  onClick={clickDelete}
-                  disabled={deleteUser.isPending}
-                  className={`${BTN_DANGER} !text-sm !px-4 !py-2.5 shrink-0 ${confirmDelete ? '!bg-red-400/25' : ''}`}
-                >
-                  {deleteUser.isPending
-                    ? '…'
-                    : confirmDelete
-                      ? t(
-                          'adminUserDetail.confirmDelete',
-                          'Click again to confirm. This is permanent.'
-                        )
-                      : t('adminUserDetail.deleteAccount', 'Delete this account')}
-                </button>
-              </div>
+                  <div className="rounded-card border border-red-400/40 bg-red-400/5 shadow-elev-2 p-4 space-y-3">
+                    <p className="text-white/70 text-sm">
+                      {t(
+                        'adminUserDetail.deleteDesc',
+                        'Permanently deletes this account and all of its data across every feature (zikr, salat, fasting, Quran, Rayhanah, etc.) and revokes their Firebase sign-in. Cannot be undone.'
+                      )}
+                    </p>
+                    <button
+                      onClick={clickDelete}
+                      disabled={deleteUser.isPending}
+                      className={`${BTN_DANGER} !text-sm !px-4 !py-2.5 shrink-0 ${confirmDelete ? '!bg-red-400/25' : ''}`}
+                    >
+                      {deleteUser.isPending
+                        ? '…'
+                        : confirmDelete
+                          ? t(
+                              'adminUserDetail.confirmDelete',
+                              'Click again to confirm. This is permanent.'
+                            )
+                          : t('adminUserDetail.deleteAccount', 'Delete this account')}
+                    </button>
+                  </div>
+                </>
+              )}
             </section>
           </>
         )}
