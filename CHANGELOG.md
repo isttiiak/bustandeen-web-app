@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.134.0 - Share Bustandeen - 2026-10-10
+
+### Added
+
+- **"Share Bustandeen" in the profile menu (U2)**, right before Sign out. It opens a preview: the Bustandeen card, a warm invitation with a link to bustandeen.com, and an "Add my name" switch (off by default, so the message does not say who sent it unless you want it to). "Share via apps" opens the phone's share sheet with the card image, like the photo cards (text only where the browser cannot share images); "Copy" copies the invitation. Sharing the app makes no friend connection; that stays on the Friends page. The card is the site's own image, so no new third-party request. English and Bangla.
+
 ## v5.133.0 - Go to top - 2026-10-10
 
 ### Added
