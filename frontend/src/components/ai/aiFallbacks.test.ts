@@ -76,13 +76,15 @@ beforeEach(() => {
   ai.error = true;
 });
 
+// The first dynamic import of a component graph can take over Vitest's 5 s
+// default on a cold Windows run, hence the longer timeouts here.
 describe('"What is sent?" links', () => {
   it('the disclaimer links to its feature row on /naseeh', async () => {
     const { AiDisclaimer } = await import('./AiFlair.js');
     const html = render(createElement(AiDisclaimer, { feature: 'patterns' }));
     expect(html).toContain('href="/naseeh#ai-sends-patterns"');
     expect(html).toContain('What is sent?');
-  });
+  }, 20_000);
 
   it('the privacy panel has a row for every feature a card links to', async () => {
     const { default: AiPrivacyPanel } = await import('./AiPrivacyPanel.js');
@@ -90,7 +92,7 @@ describe('"What is sent?" links', () => {
     for (const f of ['quickLog', 'summary', 'patterns', 'kaza', 'plan', 'chat', 'coaching']) {
       expect(html).toContain(`id="ai-sends-${f}"`);
     }
-  });
+  }, 20_000);
 });
 
 describe('non-AI fallbacks when the AI request fails', () => {

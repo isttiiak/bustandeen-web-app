@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.153.2 - Dev dependency patches and steadier local tests - 2026-10-11
+
+### Security
+
+- **Dev tooling patched (lockfiles only, nothing that ships changes).** `npm audit fix` without breaking upgrades: handlebars (critical, Jest coverage reports), brace-expansion and fast-uri. Still open, with no patched version anywhere: braces (Tailwind 3 / nodemon file watchers), sprintf-js (Jest), and node-forge via firebase-admin 12 (already excepted in `scripts/audit-gate.mjs`, review by 2026-11-01). Production dependencies: frontend 0, backend only that node-forge exception.
+
+### Fixed
+
+- **Backend tests ran out of memory on Windows** (about 2 GB heap after ~55 of 61 suites in band). The test script now gives Node a 4 GB heap.
+- **A cold-start timeout in the AI disclaimer test** (first dynamic import over 5 s); those two tests now allow 20 s.
+
 ## v5.153.1 - Rejecting a zikr request sends no email unless you add one - 2026-10-11
 
 ### Fixed
