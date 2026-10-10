@@ -673,7 +673,7 @@ export default function QuranReader() {
             )}{' '}
             <button
               type="button"
-              className="font-semibold text-brand-emerald underline underline-offset-2"
+              className="hit-44 font-semibold text-brand-emerald underline underline-offset-2"
               onClick={() => {
                 sessionStorage.setItem(
                   'bustandeen_redirect',
