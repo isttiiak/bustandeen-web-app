@@ -46,6 +46,19 @@ function markToday(): void {
   table.querySelector(`tr[data-date="${today}"]`)?.setAttribute('aria-current', 'date');
 }
 
+/** "Download PDF" opens the print window on the page's A4 sheet (no inline
+ * handlers: the CSP forbids them). A link ending in #pdf (the daily district
+ * pages' "monthly timetable (PDF)") opens it straight away. */
+function wirePrint(): void {
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-print-button]');
+  buttons.forEach((b) => b.addEventListener('click', () => window.print()));
+  if (buttons.length && window.location.hash === '#pdf') {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+    if (document.readyState === 'complete') window.print();
+    else window.addEventListener('load', () => window.print(), { once: true });
+  }
+}
+
 // Before any dynamic import: a stale page reloads instead of breaking.
 initStaleChunkReload();
 
@@ -65,6 +78,7 @@ if (isLanding && signedIn && path !== '/') {
 } else {
   if (document.querySelector('[data-follow-theme]')) followTheme();
   markToday();
+  wirePrint();
   void import('./pwaUpdate.js').then((m) => m.initPwaUpdates());
   initAnalytics();
   trackPageView(path);

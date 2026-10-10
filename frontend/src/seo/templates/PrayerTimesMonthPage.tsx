@@ -17,6 +17,8 @@ import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 import { BD_TZ, monthRows, type YearMonth } from '../utils/monthTable.js';
 import type { HijriDate } from '../utils/calc.js';
 import { ramadanPagePath } from '../utils/ramadanBd.js';
+import { DownloadPdfButton, PrintSheetHead } from '../components/PrintSheet.js';
+import type { QrPath } from '../utils/qr.js';
 
 interface Props {
   lang: MonthlyLang;
@@ -27,6 +29,8 @@ interface Props {
   months: YearMonth[];
   /** Gregorian year of the Ramadan calendar the page links to. */
   ramadanYear: number;
+  /** QR of the page URL for the A4 sheet (build time only). */
+  qr?: QrPath;
 }
 
 const SITE = 'https://bustandeen.com';
@@ -73,6 +77,7 @@ export default function PrayerTimesMonthPage({
   ym,
   months,
   ramadanYear,
+  qr,
 }: Props) {
   const t = CHROME[lang];
   const m = MONTHLY[lang];
@@ -108,6 +113,7 @@ export default function PrayerTimesMonthPage({
       lang={lang}
       langs={MONTHLY_LANGS}
       look="bustan"
+      printable
       barePath={barePath}
       breadcrumbs={[
         { label: t.home, path: `${SITE}/` },
@@ -116,7 +122,13 @@ export default function PrayerTimesMonthPage({
         { label: monthLabel },
       ]}
     >
-      <header className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-9 pb-5 text-center">
+      <PrintSheetHead
+        lang={lang}
+        title={m.title(name, monthLabel)}
+        sub={`${hijriRange} · ${m.division(divisionName)}`}
+        qr={qr}
+      />
+      <header className="print:hidden rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-9 pb-5 text-center">
         <span className="inline-flex text-brand-gold">
           <LeafMark />
         </span>
@@ -131,7 +143,7 @@ export default function PrayerTimesMonthPage({
         <p className="mt-2 text-sm text-white/70">{hijriRange}</p>
       </header>
 
-      <nav aria-label={m.monthsLabel} className="mt-4 flex items-center gap-2">
+      <nav aria-label={m.monthsLabel} className="mt-4 flex items-center gap-2 print:hidden">
         {prev ? (
           <a
             className={`${btn} no-underline hover:border-brand-emerald/40`}
@@ -176,7 +188,9 @@ export default function PrayerTimesMonthPage({
         )}
       </nav>
 
-      <div className="mt-4 overflow-x-auto rounded-card border border-brand-border bg-brand-deep shadow-elev-2">
+      <DownloadPdfButton lang={lang} className="mt-4" />
+
+      <div className="mt-4 print:mt-0 overflow-x-auto rounded-card border border-brand-border bg-brand-deep shadow-elev-2">
         <table
           data-month-table=""
           data-timezone={BD_TZ}
@@ -247,7 +261,7 @@ export default function PrayerTimesMonthPage({
         </table>
       </div>
 
-      <div className="mt-4 space-y-2 text-xs text-white/70">
+      <div className="mt-4 space-y-2 text-xs text-white/70 print:mt-2 print:space-y-0.5 print:text-[7.5pt]">
         <p>{m.methodNote}</p>
         <p>
           {m.mosqueNote[0]}
@@ -264,7 +278,7 @@ export default function PrayerTimesMonthPage({
         <p>{m.hijriNote}</p>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+      <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm print:hidden">
         <a href={dailyPath} className="text-brand-emerald no-underline hover:underline">
           {m.todayCta(name)} →
         </a>

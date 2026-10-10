@@ -2,6 +2,7 @@ import { cityCountry, cityLabel, cityName, type CityEntry } from '../data/cities
 import { bdDistrictForCity } from '../data/bdDistricts.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import { MONTHLY } from '../locales/monthly.js';
+import { PRINT } from '../locales/print.js';
 import { ymInZone } from '../utils/monthTable.js';
 import { monthPagePath } from './PrayerTimesMonthPage.js';
 import Layout, { langPath } from '../components/Layout.js';
@@ -113,12 +114,19 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
       </a>
 
       {monthly && lang !== 'ar' && (
-        <p className="mt-5 text-sm">
+        <p className="mt-5 flex flex-col gap-2 text-sm">
           <a
             href={langPath(lang, monthPagePath(city.slug, ymInZone(buildDate)))}
             className="text-[#10b981] no-underline hover:underline"
           >
             {MONTHLY[lang].monthlyCta(lang === 'bn' ? monthly.bn : monthly.en)} →
+          </a>
+          {/* #pdf: the monthly page opens its print window (static-entry.ts) */}
+          <a
+            href={`${langPath(lang, monthPagePath(city.slug, ymInZone(buildDate)))}#pdf`}
+            className="text-[#10b981] no-underline hover:underline"
+          >
+            {PRINT[lang].monthlyPdf(lang === 'bn' ? monthly.bn : monthly.en)} →
           </a>
         </p>
       )}

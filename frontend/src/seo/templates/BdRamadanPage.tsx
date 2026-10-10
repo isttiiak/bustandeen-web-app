@@ -14,6 +14,8 @@ import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 import { LeafMark, monthPagePath } from './PrayerTimesMonthPage.js';
 import { BD_TZ, type YearMonth } from '../utils/monthTable.js';
+import { DownloadPdfButton, PrintSheetHead } from '../components/PrintSheet.js';
+import type { QrPath } from '../utils/qr.js';
 import { ramadanPagePath, type RamadanDay, type RamadanPlan } from '../utils/ramadanBd.js';
 
 interface Props {
@@ -23,12 +25,14 @@ interface Props {
   plan: RamadanPlan;
   /** The month the monthly-timetable link opens on (the build's). */
   ym: YearMonth;
+  /** QR of the page URL for the A4 sheet (build time only). */
+  qr?: QrPath;
 }
 
 const SITE = 'https://bustandeen.com';
 
 /** Ramadan calendar of a Bangladesh district: the Bustan look, Bangla first. */
-export default function BdRamadanPage({ lang, district, city, plan, ym }: Props) {
+export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Props) {
   const t = CHROME[lang];
   const m = MONTHLY[lang];
   const r = RAMADAN_BD[lang];
@@ -87,6 +91,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym }: Props)
     <Layout
       lang={lang}
       look="bustan"
+      printable
       barePath={barePath}
       breadcrumbs={[
         { label: t.home, path: `${SITE}/` },
@@ -94,7 +99,13 @@ export default function BdRamadanPage({ lang, district, city, plan, ym }: Props)
         { label: m.districtCrumb(name) },
       ]}
     >
-      <header className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-9 pb-5 text-center">
+      <PrintSheetHead
+        lang={lang}
+        title={r.title(name, yearLabel)}
+        sub={`${r.subheading(num(plan.hijriYear), yearLabel)} · ${m.division(divisionName)}`}
+        qr={qr}
+      />
+      <header className="print:hidden rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-9 pb-5 text-center">
         <span className="inline-flex text-brand-gold">
           <LeafMark />
         </span>
@@ -109,7 +120,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym }: Props)
 
       <div
         role="note"
-        className="mt-4 rounded-card border border-brand-gold/40 bg-brand-gold/10 px-4 py-3 text-sm text-white"
+        className="mt-4 rounded-card border border-brand-gold/40 bg-brand-gold/10 px-4 py-3 text-sm text-white print:mt-0 print:mb-2 print:px-0 print:py-0 print:border-0 print:text-[8pt]"
       >
         {record ? (
           <p>
@@ -134,7 +145,9 @@ export default function BdRamadanPage({ lang, district, city, plan, ym }: Props)
         {!plan.endSettled && <p className="mt-1.5 text-white/80">{r.eidNote}</p>}
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-card border border-brand-border bg-brand-deep shadow-elev-2">
+      <DownloadPdfButton lang={lang} className="mt-4" />
+
+      <div className="mt-4 print:mt-0 overflow-x-auto rounded-card border border-brand-border bg-brand-deep shadow-elev-2">
         <table
           data-month-table=""
           data-timezone={BD_TZ}
@@ -177,7 +190,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym }: Props)
         </table>
       </div>
 
-      <div className="mt-4 space-y-2 text-xs text-white/70">
+      <div className="mt-4 space-y-2 text-xs text-white/70 print:mt-2 print:space-y-0.5 print:text-[7.5pt]">
         <p>{r.timesNote}</p>
         <p>
           {m.mosqueNote[0]}
@@ -193,7 +206,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym }: Props)
         </p>
       </div>
 
-      <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+      <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm print:hidden">
         <a href={dailyPath} className="text-brand-emerald no-underline hover:underline">
           {m.todayCta(name)} →
         </a>

@@ -17,7 +17,10 @@ import PrayerTimesMonthPage from './templates/PrayerTimesMonthPage.js';
 import BdDistrictsIndexPage from './templates/BdDistrictsIndexPage.js';
 import BdRamadanPage from './templates/BdRamadanPage.js';
 import { RAMADAN_BD } from './locales/ramadanBd.js';
-import { ramadanPlan } from './utils/ramadanBd.js';
+import { ramadanPagePath, ramadanPlan } from './utils/ramadanBd.js';
+import { qrPath } from './utils/qr.js';
+import { langPath } from './components/Layout.js';
+import { monthPagePath } from './templates/PrayerTimesMonthPage.js';
 import type { MoonSightingRecord } from '../utils/hijriOffset.js';
 import { BD_DISTRICTS } from './data/bdDistricts.js';
 import { MONTHLY, formatMonth, formatNumber, type MonthlyLang } from './locales/monthly.js';
@@ -91,6 +94,8 @@ export function ramadanGregorianYear(hijriYear: number): number {
   return ramadanRangeForHijriYear(hijriYear).start.getUTCFullYear();
 }
 
+const SITE_URL = 'https://bustandeen.com';
+
 export interface RenderResult {
   html: string;
   title: string;
@@ -136,6 +141,10 @@ export function renderRoute({
       const city = cityBySlug(route.citySlug);
       if (!city) throw new Error(`Unknown city slug: ${route.citySlug}`);
       const district = BD_DISTRICTS.find((d) => d.citySlug === city.slug);
+      // The A4 sheet's QR opens this page.
+      const qr = qrPath(
+        SITE_URL + langPath(lang, ramadanPagePath(city.slug, ramadanGregorianYear(route.hijriYear)))
+      );
       if (district && lang !== 'ar') {
         const plan = ramadanPlan(city, route.hijriYear, moonSighting);
         const name = lang === 'bn' ? district.bn : district.en;
@@ -148,6 +157,7 @@ export function renderRoute({
               city={city}
               plan={plan}
               ym={ymInZone(date)}
+              qr={qr}
             />
           ),
           title: `${RAMADAN_BD[lang].title(name, year)} | ${t.siteName}`,
@@ -157,7 +167,7 @@ export function renderRoute({
       const gYear = ramadanRangeForHijriYear(route.hijriYear).start.getUTCFullYear();
       return {
         html: renderToStaticMarkup(
-          <RamadanCalendarPage lang={lang} city={city} hijriYear={route.hijriYear} />
+          <RamadanCalendarPage lang={lang} city={city} hijriYear={route.hijriYear} qr={qr} />
         ),
         title: `${t.ramadan.heading(cityName(city, lang), gYear)} | ${t.siteName}`,
         description: t.ramadan.subheading(cityName(city, lang), cityCountry(city, lang)),
@@ -228,6 +238,7 @@ export function renderRoute({
             ym={route.ym}
             months={monthWindow(date)}
             ramadanYear={ramadanGregorianYear(currentRamadanHijriYear())}
+            qr={qrPath(SITE_URL + langPath(lang, monthPagePath(city.slug, route.ym)))}
           />
         ),
         title: `${m.title(name, month)} | ${t.siteName}`,

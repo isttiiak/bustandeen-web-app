@@ -2,6 +2,8 @@ import { cityCountry, cityLabel, cityName, type CityEntry } from '../data/cities
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
+import { DownloadPdfButton, PrintSheetHead } from '../components/PrintSheet.js';
+import type { QrPath } from '../utils/qr.js';
 import { computePrayerTimes, formatTimeInZone, ramadanRangeForHijriYear } from '../utils/calc.js';
 
 const LOCALE_BY_LANG: Record<SeoLang, string> = { en: 'en-US', bn: 'bn-BD', ar: 'ar-SA' };
@@ -10,9 +12,11 @@ interface Props {
   lang: SeoLang;
   city: CityEntry;
   hijriYear: number;
+  /** QR of the page URL for the A4 sheet (build time only). */
+  qr?: QrPath;
 }
 
-export default function RamadanCalendarPage({ lang, city, hijriYear }: Props) {
+export default function RamadanCalendarPage({ lang, city, hijriYear, qr }: Props) {
   const t = CHROME[lang];
   const locale = LOCALE_BY_LANG[lang];
   const { start, end } = ramadanRangeForHijriYear(hijriYear);
@@ -38,6 +42,7 @@ export default function RamadanCalendarPage({ lang, city, hijriYear }: Props) {
   return (
     <Layout
       lang={lang}
+      printable
       barePath={`/ramadan-calendar/${city.slug}/${gregorianYear}`}
       breadcrumbs={[
         { label: t.home, path: 'https://bustandeen.com/' },
@@ -45,17 +50,25 @@ export default function RamadanCalendarPage({ lang, city, hijriYear }: Props) {
         { label: cityLabel(city, lang) },
       ]}
     >
-      <h1 className="text-2xl sm:text-3xl font-black text-[#f1f5f9]">
+      <PrintSheetHead
+        lang={lang}
+        title={t.ramadan.heading(cityName(city, lang), gregorianYear)}
+        sub={t.ramadan.subheading(cityName(city, lang), cityCountry(city, lang))}
+        qr={qr}
+      />
+      <h1 className="text-2xl sm:text-3xl font-black text-[#f1f5f9] print:hidden">
         {t.ramadan.heading(cityName(city, lang), gregorianYear)}
       </h1>
-      <p className="text-[#94a3b8] mt-2">
+      <p className="text-[#94a3b8] mt-2 print:hidden">
         {t.ramadan.subheading(cityName(city, lang), cityCountry(city, lang))}
       </p>
-      <p className="text-xs text-[#94a3b8] mt-3 bg-[#0d1520] border border-[#1e2d42] rounded-xl p-3">
+      <p className="text-xs text-[#94a3b8] mt-3 bg-[#0d1520] border border-[#1e2d42] rounded-xl p-3 print:mt-0 print:mb-2 print:p-0 print:border-0 print:text-[8pt]">
         {t.ramadan.note}
       </p>
 
-      <div className="mt-6 rounded-2xl border border-[#1e2d42] bg-[#0d1520] overflow-x-auto">
+      <DownloadPdfButton lang={lang} className="mt-5 text-[#94a3b8]" />
+
+      <div className="mt-6 print:mt-0 rounded-2xl border border-[#1e2d42] bg-[#0d1520] overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-[#1e2d42] text-[#94a3b8] text-xs uppercase tracking-wide">
@@ -90,12 +103,12 @@ export default function RamadanCalendarPage({ lang, city, hijriYear }: Props) {
 
       <a
         href="https://bustandeen.com/fasting"
-        className="mt-5 inline-block rounded-xl bg-[#10b981] text-[#080c12] font-bold text-sm px-4 py-2.5 no-underline"
+        className="mt-5 inline-block print:hidden rounded-xl bg-[#10b981] text-[#080c12] font-bold text-sm px-4 py-2.5 no-underline"
       >
         {t.ramadan.liveAppCta}
       </a>
 
-      <div className="mt-6 flex flex-wrap gap-3 text-sm">
+      <div className="mt-6 flex flex-wrap gap-3 text-sm print:hidden">
         <a
           href={langPath(lang, `/prayer-times/${city.slug}`)}
           className="text-[#10b981] no-underline hover:underline"

@@ -32,6 +32,9 @@ interface LayoutProps {
   /** 'bustan': the app's Bustan Arch tokens, dark or light (T4.4 pages);
    * default: the original slate SEO palette, dark only. */
   look?: 'slate' | 'bustan';
+  /** The page has an A4 print sheet ("Download PDF", T4.4): global.css
+   * prints it black on white and drops the site chrome. */
+  printable?: boolean;
 }
 
 const LOOKS = {
@@ -66,6 +69,7 @@ export default function Layout({
   children,
   langs = SEO_LANGS,
   look = 'slate',
+  printable = false,
 }: LayoutProps) {
   const t = CHROME[lang];
   const s = LOOKS[look];
@@ -77,11 +81,12 @@ export default function Layout({
       className={s.page}
       // static-entry.ts applies the visitor's light/dark theme to these pages.
       data-follow-theme={look === 'bustan' ? '' : undefined}
+      data-print-page={printable ? '' : undefined}
     >
       {look === 'slate' && (
         <div
           aria-hidden
-          className="pointer-events-none fixed inset-0 opacity-40"
+          className="pointer-events-none fixed inset-0 opacity-40 print:hidden"
           style={{
             background:
               'radial-gradient(ellipse 60% 40% at 20% 10%, rgba(16,185,129,0.15), transparent), radial-gradient(ellipse 50% 40% at 80% 90%, rgba(245,158,11,0.08), transparent)',
@@ -89,7 +94,7 @@ export default function Layout({
         />
       )}
       <div className="relative">
-        <header className={s.header}>
+        <header className={`print:hidden ${s.header}`}>
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
             <a
               href="https://bustandeen.com/"
@@ -131,7 +136,7 @@ export default function Layout({
 
         <nav
           aria-label="Breadcrumb"
-          className={`max-w-3xl mx-auto px-4 sm:px-6 pt-4 text-xs ${s.muted}`}
+          className={`max-w-3xl mx-auto px-4 sm:px-6 pt-4 text-xs print:hidden ${s.muted}`}
         >
           <ol className="flex flex-wrap items-center gap-1.5">
             {breadcrumbs.map((crumb, i) => (
@@ -154,9 +159,11 @@ export default function Layout({
           </ol>
         </nav>
 
-        <main className="max-w-3xl mx-auto px-4 sm:px-6 py-6 pb-16">{children}</main>
+        <main className="max-w-3xl mx-auto px-4 sm:px-6 py-6 pb-16 print:max-w-none print:p-0">
+          {children}
+        </main>
 
-        <footer className={`mt-12 ${s.footer}`}>
+        <footer className={`mt-12 print:hidden ${s.footer}`}>
           <div className={`max-w-3xl mx-auto px-4 sm:px-6 py-8 text-xs space-y-2 ${s.muted}`}>
             <p>
               {t.siteName} - {t.tagline}
