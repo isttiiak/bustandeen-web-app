@@ -3,6 +3,7 @@
 // the tests. All "months" are calendar months in Bangladesh time.
 import type { CityEntry } from '../data/cities.js';
 import { computePrayerTimes, toHijri, type HijriDate, type PrayerTimesResult } from './calc.js';
+import { dateFormat } from './intl.js';
 
 export const BD_TZ = 'Asia/Dhaka';
 
@@ -24,7 +25,7 @@ export function isYearMonth(s: string): boolean {
 
 /** The calendar month `date` falls in, in `timeZone`. */
 export function ymInZone(date: Date, timeZone: string = BD_TZ): YearMonth {
-  const parts = new Intl.DateTimeFormat('en-CA', {
+  const parts = dateFormat('en-CA', {
     year: 'numeric',
     month: '2-digit',
     timeZone,
