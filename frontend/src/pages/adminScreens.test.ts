@@ -69,3 +69,18 @@ describe('admin screens', () => {
     expect(code.match(/<AdminHero\b/g)).toHaveLength(1);
   });
 });
+
+// U8 production check: the reject email box said "leave blank to send
+// nothing" but came pre-filled, so a rejection email went out by default.
+describe('zikr request reject email', () => {
+  it('starts blank; the draft is only fetched for Approve or on purpose', () => {
+    const start = zikrRequests.slice(
+      zikrRequests.indexOf('const startReview'),
+      zikrRequests.indexOf('const cancel')
+    );
+    expect(start).toMatch(/if \(type === 'approving'\) loadDraft\('approved'\)/);
+    expect(start).not.toMatch(/'rejected'/);
+    expect(zikrRequests).toMatch(/onClick=\{\(\) => loadDraft\('rejected'\)\}/);
+    expect(zikrRequests).toContain('Reject without email');
+  });
+});
