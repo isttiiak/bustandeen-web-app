@@ -14,6 +14,14 @@ const files = import.meta.glob<string>('../components/SalatSettings.tsx', {
   eager: true,
 });
 const code = Object.values(files)[0] ?? '';
+const statsHook =
+  Object.values(
+    import.meta.glob<string>('../hooks/useStatsResets.ts', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    })
+  )[0] ?? '';
 const DASH_OR_EMOJI = /—|\p{Extended_Pictographic}|[✓✔→]/u;
 const stripComments = (src: string) => src.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
 
@@ -87,7 +95,9 @@ describe('Salat reset date', () => {
   const body = stripComments(code);
 
   it('both resets send the tracking day through their hooks', () => {
-    expect(body).toMatch(/resetSalat\.mutate\(\s*\{\s*today: getTrackingDay\(\)\s*\}/);
+    // Stats reset (U7): the shared Fresh start row, whose hook sends the tracking day.
+    expect(body).toMatch(/<FreshStart areas=\{\['salat'\]\} \/>/);
+    expect(stripComments(statsHook)).toMatch(/today: getTrackingDay\(\)/);
     expect(body).toMatch(/resetDebt\.mutate\(\s*\{\s*today: getTrackingDay\(\)\s*\}/);
   });
 
