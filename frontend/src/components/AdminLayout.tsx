@@ -15,11 +15,13 @@ import {
   MegaphoneIcon,
   ChevronDownIcon,
   PaperAirplaneIcon,
+  KeyIcon,
 } from '@heroicons/react/24/outline';
 import { LeafIcon } from './icons/IslamicIcons.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminLogout } from '../hooks/useAdminAuth.js';
 import AdminReauthDialog from './admin/AdminReauthDialog.js';
+import AdminPasswordDialog from './admin/AdminPasswordDialog.js';
 
 /**
  * The admin panel's OWN chrome — deliberately never the main app's Navbar
@@ -113,6 +115,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { t } = useTranslation();
   const { email, role, ansarDomain } = useAdminStore();
   const logout = useAdminLogout();
+  const [passwordOpen, setPasswordOpen] = useState(false);
   const isServant = role === 'servant';
   const canSeeSadaqah = isServant || ansarDomain === 'sadaqah';
   const canSeeZikrRequests = isServant || ansarDomain === 'general';
@@ -187,6 +190,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 )}
               </span>
               <button
+                onClick={() => setPasswordOpen(true)}
+                title={t('adminLayout.changePassword', 'Change password')}
+                className="flex items-center gap-1 px-2 py-1 rounded-control text-white/70 hover:text-white hover:bg-brand-surface transition-colors"
+              >
+                <KeyIcon className="w-4 h-4" aria-hidden="true" />
+                <span className="hidden sm:inline">{t('adminLayout.password', 'Password')}</span>
+              </button>
+              <button
                 onClick={() => logout.mutate()}
                 title={t('adminGate.logOut', 'Log out')}
                 className="flex items-center gap-1 px-2 py-1 rounded-control text-white/70 hover:text-white hover:bg-brand-surface transition-colors"
@@ -246,6 +257,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </header>
       <main>{children}</main>
       <AdminReauthDialog />
+      {passwordOpen && <AdminPasswordDialog onClose={() => setPasswordOpen(false)} />}
     </div>
   );
 }

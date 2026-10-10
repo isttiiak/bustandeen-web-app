@@ -19,6 +19,7 @@ import {
   useCreateAdminAccount,
   useSetAdminAccountActive,
   useSetAdminAccountDomain,
+  useSendAdminPasswordReset,
   AdminAccountListItem,
   type AdminFirebaseLink,
 } from '../hooks/useAdminAccounts.js';
@@ -170,6 +171,7 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
   const myEmail = useAdminStore((s) => s.email);
   const setActive = useSetAdminAccountActive();
   const setDomain = useSetAdminAccountDomain();
+  const sendReset = useSendAdminPasswordReset();
   const isSelf = account.email === myEmail;
 
   return (
@@ -214,15 +216,36 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
       </td>
       <td className="px-3 py-2">
         {!isSelf && (
-          <button
-            onClick={() => setActive.mutate({ id: account.id, active: !account.active })}
-            disabled={setActive.isPending}
-            className={account.active ? BTN_DANGER : BTN_SMALL}
-          >
-            {account.active
-              ? t('adminAccounts.deactivate', 'Deactivate')
-              : t('adminAccounts.reactivate', 'Reactivate')}
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setActive.mutate({ id: account.id, active: !account.active })}
+              disabled={setActive.isPending}
+              className={account.active ? BTN_DANGER : BTN_SMALL}
+            >
+              {account.active
+                ? t('adminAccounts.deactivate', 'Deactivate')
+                : t('adminAccounts.reactivate', 'Reactivate')}
+            </button>
+            {account.active && (
+              <button
+                onClick={() => sendReset.mutate(account.id)}
+                disabled={sendReset.isPending || sendReset.isSuccess}
+                className={BTN_SMALL}
+                title={t('adminAccounts.sendResetHint', 'Emails them a link to set a new password')}
+              >
+                {sendReset.isSuccess
+                  ? t('adminAccounts.resetSent', 'Reset link sent')
+                  : sendReset.isPending
+                    ? '…'
+                    : t('adminAccounts.sendReset', 'Send reset link')}
+              </button>
+            )}
+            {sendReset.isError && (
+              <span role="alert" className="text-red-400 text-xs">
+                {t('adminAccounts.resetFailed', 'Could not send the link.')}
+              </span>
+            )}
+          </div>
         )}
       </td>
     </tr>

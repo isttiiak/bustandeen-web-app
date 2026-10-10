@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.143.0 - Admin passwords from the panel - 2026-10-10
+
+### Added
+
+- **Change your own admin password (U8.7, admin audit S5).** A Password button beside Log out, for every admin. It asks for the current password, then the new one twice (at least 8 characters). Afterwards every other device signed in to the panel with that account has to sign in again; this one stays.
+- **Send a reset link (Servant).** Each active account on Manage Ansars has "Send reset link": the Ansar gets an email from Istiak with a one-time link to set a new password, for a forgotten or still-temporary password. Needs a recent password entry, like the other account actions.
+- Reactivating a deactivated admin ends any sign-in from before the reactivation. All three are in the audit log.
+
 ## v5.142.0 - Admin sign-ins end after 12 hours, and big deletes ask for the password - 2026-10-10
 
 ### Changed

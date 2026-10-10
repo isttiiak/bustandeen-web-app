@@ -32,3 +32,7 @@ export const setAdminAccountDomainSchema = z.object({
     ansarDomain: z.enum(['sadaqah', 'general']),
   }),
 });
+
+export const adminAccountIdSchema = z.object({
+  params: z.object({ id: z.string().regex(/^[a-f0-9]{24}$/) }),
+});
