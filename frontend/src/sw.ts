@@ -11,6 +11,7 @@ import {
   createHandlerBoundToURL,
 } from 'workbox-precaching';
 import { registerRoute, NavigationRoute } from 'workbox-routing';
+import type { RouteHandlerCallback } from 'workbox-core';
 import { CacheFirst, NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
@@ -50,9 +51,11 @@ function startWorker(): void {
 
   cleanupOutdatedCaches();
 
-  // The Google Fonts cache from before fonts were self-hosted (v5.70.0).
+  // The Google Fonts cache from before fonts were self-hosted (v5.70.0), and
+  // the last build's network shell (see freshShell below): a new worker means
+  // a new deploy, whose shell names other main-*.js files.
   self.addEventListener('activate', (event) => {
-    event.waitUntil(caches.delete('fonts'));
+    event.waitUntil(Promise.all([caches.delete('fonts'), caches.delete('app-shell')]));
   });
   precacheAndRoute(self.__WB_MANIFEST);
 
@@ -67,7 +70,32 @@ function startWorker(): void {
   // app-shell.html, not index.html: index.html is the prerendered landing page
   // (served for `/` by the precache route above); every other route needs the
   // empty shell. See appShellCopy in vite.config.ts.
-  const navigationHandler = createHandlerBoundToURL('app-shell.html');
+  const precachedShell = createHandlerBoundToURL('app-shell.html');
+
+  // Online, the shell comes from the network (one small HTML request per full
+  // page load); the precached copy is only the offline/slow-network fallback.
+  // 2026-10-11 incident: right after a deploy a browser precached the
+  // PREVIOUS build's shell under the new revision key (Workbox never checks
+  // the content), so every load asked for main-*.js files that no longer
+  // existed and the app stayed blank until the next deploy. Served from the
+  // network, a bad precache entry can no longer lock anyone out.
+  const freshShell = new NetworkFirst({
+    cacheName: 'app-shell',
+    networkTimeoutSeconds: 3,
+    plugins: [new CacheableResponsePlugin({ statuses: [200] })],
+  });
+  const navigationHandler: RouteHandlerCallback = async (options) => {
+    try {
+      const response = await freshShell.handle({
+        event: options.event,
+        request: new Request('/app-shell.html', { credentials: 'same-origin' }),
+      });
+      if (response?.ok) return response;
+    } catch {
+      /* offline and never cached: use the precache */
+    }
+    return precachedShell(options);
+  };
 
   // The prerendered SEO pages and the Bangla landing `/bn` (audit PERF-01) are
   // real pages with their own light entry, so they come from the network (and
@@ -133,9 +161,9 @@ function startWorker(): void {
   // Build output the precache leaves out (vite.config.ts globIgnores: the
   // admin panel, the xlsx export, the SEO city list), kept once it has loaded
   // so it still works offline. Names are content-hashed, so cache-first is
-  // safe. Only real JS/CSS is kept: a chunk missing after a deploy gets the
-  // app shell (HTML, status 200) from vercel.json's catch-all, and caching
-  // that under a .js URL would break the page for good.
+  // safe. Only real JS/CSS is kept: until v5.153.3 a chunk missing after a
+  // deploy got the app shell (HTML, status 200) from vercel.json's catch-all
+  // (now a 404), and caching that under a .js URL would break the page for good.
   registerRoute(
     ({ url }) =>
       url.origin === self.location.origin &&

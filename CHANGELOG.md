@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.153.3 - The app can no longer get stuck on a blank page after a deploy - 2026-10-11
+
+### Fixed
+
+- **Blank app after a deploy (found during the v5.153.1 Production check).** Right after the deploy, a browser's service worker stored the previous build's app shell under the new version's key (the cache never checks the content). Every page load then asked for `main-*.js` files that no longer existed, so the app stayed blank until the next deploy. Online, the service worker now always takes the app shell from the network and keeps the stored copy only for offline use (or when the network takes over 3 seconds), and each new version clears the last version's copy. Anyone stuck like this recovers on their next load once this version is live.
+- **A missing script file now returns 404.** The catch-all rewrite in `vercel.json` answered missing `/assets/*` files with the app shell (HTML, status 200), which hid the real error. Missing files now return 404.
+
 ## v5.153.2 - Dev dependency patches and steadier local tests - 2026-10-11
 
 ### Security
