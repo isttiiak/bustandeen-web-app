@@ -183,4 +183,42 @@ describe('Admin update emails', () => {
     });
     expect(empty.status).toBe(400);
   });
+
+  test('a chunk already being sent is not sent again (U8.2)', async () => {
+    const created = await asServant(request(app).post('/api/admin/update-emails')).send({
+      subject: 'Lease test',
+      body: 'Assalamu alaikum.',
+      audience: 'brother',
+      notSetMode: 'skip',
+    });
+    expect(created.status).toBe(200);
+    const id = created.body.campaign._id;
+    const UpdateEmailCampaign = mongoose.model('UpdateEmailCampaign');
+
+    // Put recipients back to pending and pretend another request holds the lease.
+    await asServant(request(app).post(`/api/admin/update-emails/${id}/retry-failed`));
+    await UpdateEmailCampaign.updateOne(
+      { _id: id },
+      { $set: { sendingUntil: new Date(Date.now() + 60_000) } }
+    );
+
+    const busy = await asServant(request(app).post(`/api/admin/update-emails/${id}/continue`));
+    expect(busy.status).toBe(200);
+    expect(busy.body.busy).toBe(true);
+    expect(busy.body.campaign.pending).toBe(busy.body.campaign.total);
+
+    const retry = await asServant(request(app).post(`/api/admin/update-emails/${id}/retry-failed`));
+    expect(retry.status).toBe(409);
+
+    // An expired lease (its request died) no longer blocks.
+    await UpdateEmailCampaign.updateOne(
+      { _id: id },
+      { $set: { sendingUntil: new Date(Date.now() - 1000) } }
+    );
+    const sent = await asServant(request(app).post(`/api/admin/update-emails/${id}/continue`));
+    expect(sent.body.busy).toBe(false);
+    expect(sent.body.campaign.pending).toBe(0);
+    const stored = await UpdateEmailCampaign.findById(id);
+    expect(stored.sendingUntil).toBeNull();
+  });
 });

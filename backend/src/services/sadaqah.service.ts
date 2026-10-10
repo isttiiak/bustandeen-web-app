@@ -170,13 +170,26 @@ export const listAll = async (
   return { donations, total, page, limit };
 };
 
-const findPendingOrThrow = async (id: string): Promise<InstanceType<typeof Donation>> => {
-  const donation = await Donation.findById(id);
-  if (!donation) throw httpError(404, 'Donation not found');
-  if (donation.status !== 'pending') {
-    throw httpError(409, `Donation is already ${donation.status}`);
-  }
-  return donation;
+/**
+ * Moves a pending donation to its decision in one atomic step, so two clicks,
+ * two tabs, or the Servant and the sadaqah Ansar at the same moment can never
+ * both decide it (the stats would count it twice and the donor would get two
+ * emails). The loser gets the same 409 as before.
+ */
+const claimPendingOrThrow = async (
+  id: string,
+  decision: Record<string, unknown>
+): Promise<InstanceType<typeof Donation>> => {
+  const donation = await Donation.findOneAndUpdate(
+    { _id: id, status: 'pending' },
+    { $set: decision },
+    // Same schema checks the old save() ran (e.g. note length).
+    { returnDocument: 'after', runValidators: true }
+  );
+  if (donation) return donation;
+  const existing = await Donation.findById(id).select('status');
+  if (!existing) throw httpError(404, 'Donation not found');
+  throw httpError(409, `Donation is already ${existing.status}`);
 };
 
 /**
@@ -227,12 +240,11 @@ export const verifyDonation = async (
   emailBody: string,
   sender: EmailSender = 'sadaqah'
 ): Promise<DonationActionResult> => {
-  const donation = await findPendingOrThrow(id);
-
-  donation.status = 'verified';
-  donation.verifiedAt = new Date();
-  donation.verifiedBy = adminEmail;
-  await donation.save();
+  const donation = await claimPendingOrThrow(id, {
+    status: 'verified',
+    verifiedAt: new Date(),
+    verifiedBy: adminEmail,
+  });
 
   await getOrCreateStats();
   await DonationStats.updateOne(
@@ -335,14 +347,13 @@ export const rejectDonation = async (
   emailBody: string,
   sender: EmailSender = 'sadaqah'
 ): Promise<DonationActionResult> => {
-  const donation = await findPendingOrThrow(id);
-
-  donation.status = 'rejected';
-  donation.verifiedAt = new Date();
-  donation.verifiedBy = adminEmail;
-  // The record of "why" IS what was actually told the donor — same text.
-  donation.rejectionReason = emailBody;
-  await donation.save();
+  const donation = await claimPendingOrThrow(id, {
+    status: 'rejected',
+    verifiedAt: new Date(),
+    verifiedBy: adminEmail,
+    // The record of "why" IS what was actually told the donor — same text.
+    rejectionReason: emailBody,
+  });
 
   const messageId = await sendMail({
     to: donation.email,
@@ -365,7 +376,9 @@ export const rejectDonation = async (
  * overcounting a donation that no longer exists.
  */
 export const deleteDonation = async (id: string): Promise<void> => {
-  const donation = await Donation.findById(id);
+  // Delete first: only the request that actually removed the document
+  // reverses the stats, so two deletes can't subtract it twice.
+  const donation = await Donation.findOneAndDelete({ _id: id });
   if (!donation) throw httpError(404, 'Donation not found');
 
   if (donation.status === 'verified') {
@@ -378,8 +391,6 @@ export const deleteDonation = async (id: string): Promise<void> => {
       }
     );
   }
-
-  await donation.deleteOne();
 };
 
 /** Servant-only, admin view — every quarter including unpublished drafts,

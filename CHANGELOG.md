@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.141.2 - One decision per donation, zikr request and email chunk - 2026-10-10
+
+### Fixed
+
+- **Double decisions in the admin panel (U8.2, admin audit B1).** Verify/reject a donation, approve/reject a zikr request and the update-email sender all read the record, acted, then saved. Two clicks, two tabs, or the Servant and the sadaqah Ansar at the same moment could both go through:
+  - a donation verified twice raised the public sadaqah total twice and emailed the donor twice; now the decision is taken in one atomic step and the second click gets "already verified";
+  - two deletes of a verified donation subtracted it twice; now only the delete that removed it changes the total;
+  - a zikr request approved twice added the zikr to the library twice; now once, and if adding it fails the request goes back to the queue;
+  - two tabs sending the same update email could send a chunk twice; a short send lease now lets one request send at a time. The other tab waits and carries on, and "Retry failed" says so if a send is running.
+
 ## v5.141.1 - Adding an Ansar can no longer hand the panel to a stranger - 2026-10-10
 
 ### Fixed

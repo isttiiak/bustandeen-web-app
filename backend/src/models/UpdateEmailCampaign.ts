@@ -29,6 +29,10 @@ export interface IUpdateEmailCampaign extends Document {
   createdBy: string;
   createdAt: Date;
   recipients: IUpdateEmailRecipient[];
+  /** Set while one request sends a chunk (or resets failed ones), so a
+   *  second tab or a retried request never sends the same chunk again.
+   *  Expires on its own if that request dies. */
+  sendingUntil?: Date | null;
 }
 
 const recipientSchema = new Schema<IUpdateEmailRecipient>(
@@ -52,6 +56,7 @@ const campaignSchema = new Schema<IUpdateEmailCampaign>({
   createdBy: { type: String, required: true },
   createdAt: { type: Date, default: Date.now, index: true },
   recipients: { type: [recipientSchema], default: [] },
+  sendingUntil: { type: Date, default: null },
 });
 
 export default mongoose.model<IUpdateEmailCampaign>('UpdateEmailCampaign', campaignSchema);

@@ -445,4 +445,67 @@ describe('Sadaqah admin API', () => {
       .send({ date: '2026-09-01', amount: 100, description: '' });
     expect(badDesc.status).toBe(400);
   });
+
+  test('two verifies at the same moment: one wins, the public total moves once (U8.2)', async () => {
+    const before = await request(app).get('/api/sadaqah/stats');
+    const donation = validDonation({ amount: 777 });
+    const found = await submitAndFindPending(donation);
+
+    const [a, b] = await Promise.all(
+      [ownerToken, staffToken].map((token) =>
+        request(app)
+          .patch(`/api/admin/sadaqah/${found._id}/verify`)
+          .set('X-Admin-Token', token)
+          .send({ emailBody: 'Verified.' })
+      )
+    );
+    expect([a.status, b.status].sort()).toEqual([200, 409]);
+
+    const after = await request(app).get('/api/sadaqah/stats');
+    expect(after.body.totalVerifiedAmount - before.body.totalVerifiedAmount).toBe(777);
+  });
+
+  test('verify and reject at the same moment: exactly one decision sticks (U8.2)', async () => {
+    const found = await submitAndFindPending(validDonation());
+    const [v, r] = await Promise.all([
+      request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/verify`)
+        .set('X-Admin-Token', ownerToken)
+        .send({ emailBody: 'Verified.' }),
+      request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/reject`)
+        .set('X-Admin-Token', staffToken)
+        .send({ emailBody: 'Not found.' }),
+    ]);
+    expect([v.status, r.status].sort()).toEqual([200, 409]);
+    const stored = await Donation.findById(found._id);
+    expect(stored.status).toBe(v.status === 200 ? 'verified' : 'rejected');
+  });
+
+  test('two deletes of a verified donation subtract it from the total once (U8.2)', async () => {
+    const found = await submitAndFindPending(validDonation({ amount: 333 }));
+    await request(app)
+      .patch(`/api/admin/sadaqah/${found._id}/verify`)
+      .set('X-Admin-Token', ownerToken)
+      .send({ emailBody: 'Verified.' });
+    const before = await request(app).get('/api/sadaqah/stats');
+
+    const [a, b] = await Promise.all(
+      [0, 1].map(() =>
+        request(app).delete(`/api/admin/sadaqah/${found._id}`).set('X-Admin-Token', ownerToken)
+      )
+    );
+    expect([a.status, b.status].sort()).toEqual([200, 404]);
+
+    const after = await request(app).get('/api/sadaqah/stats');
+    expect(before.body.totalVerifiedAmount - after.body.totalVerifiedAmount).toBe(333);
+  });
+
+  test('a verify of an unknown donation is a 404, not a 409 (U8.2)', async () => {
+    const res = await request(app)
+      .patch(`/api/admin/sadaqah/${new mongoose.Types.ObjectId()}/verify`)
+      .set('X-Admin-Token', ownerToken)
+      .send({ emailBody: 'Verified.' });
+    expect(res.status).toBe(404);
+  });
 });

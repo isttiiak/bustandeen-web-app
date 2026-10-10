@@ -197,4 +197,31 @@ describe('Zikr request API', () => {
     const lib = await request(app).get('/api/zikr/library');
     expect(lib.body.items.some((i) => i.name === 'A rejected suggestion')).toBe(false);
   });
+
+  test('two approvals at the same moment add the zikr to the library once (U8.2)', async () => {
+    const submitted = await request(app)
+      .post('/api/zikr/requests')
+      .set('Authorization', `Bearer ${otherUserToken}`)
+      .send(validRequestBody({ name: 'Raced approval', arabic: 'سُبْحَانَ اللَّهِ' }));
+    expect(submitted.status).toBe(200);
+    const id = submitted.body.request._id;
+
+    const approve = () =>
+      request(app)
+        .post(`/api/admin/zikr-requests/${id}/approve`)
+        .set('X-Admin-Token', adminSessionToken)
+        .send({
+          name: 'Raced approval',
+          arabic: 'سُبْحَانَ اللَّهِ',
+          meaning: 'Glory be to Allah',
+          source: 'Muslim 2694',
+          sourceUrl: 'https://sunnah.com/muslim:2694',
+          emailBody: 'Added.',
+        });
+    const [a, b] = await Promise.all([approve(), approve()]);
+    expect([a.status, b.status].sort()).toEqual([200, 409]);
+
+    const lib = await request(app).get('/api/zikr/library');
+    expect(lib.body.items.filter((i) => i.name === 'Raced approval')).toHaveLength(1);
+  });
 });
