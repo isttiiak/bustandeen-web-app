@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import { CITIES } from '../data/cities.js';
+import { BD_DISTRICTS } from '../data/bdDistricts.js';
+import { RAMADAN_BD } from '../locales/ramadanBd.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
@@ -36,6 +38,14 @@ export default function RamadanCalendarIndexPage({ lang, gregorianYear }: Props)
   const popularCities = useMemo(
     () => POPULAR_SLUGS.map((slug) => CITIES.find((c) => c.slug === slug)).filter(Boolean),
     []
+  );
+
+  const bdDistricts = useMemo(
+    () =>
+      [...BD_DISTRICTS].sort((a, b) =>
+        lang === 'bn' ? a.bn.localeCompare(b.bn, 'bn') : a.en.localeCompare(b.en, 'en')
+      ),
+    [lang]
   );
 
   const normalized = query.trim().toLowerCase();
@@ -107,6 +117,25 @@ export default function RamadanCalendarIndexPage({ lang, gregorianYear }: Props)
           </div>
         </>
       )}
+
+      {/* Every district's calendar, for visitors and crawlers alike (T4.4). */}
+      <section id="bangladesh" aria-labelledby="bd-heading" className="mt-10">
+        <h2 id="bd-heading" className="text-lg font-bold text-[#f1f5f9]">
+          {RAMADAN_BD[lang === 'bn' ? 'bn' : 'en'].indexSection}
+        </h2>
+        <ul className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {bdDistricts.map((d) => (
+            <li key={d.id}>
+              <a
+                href={langPath(lang, `/ramadan-calendar/${d.citySlug}/${gregorianYear}`)}
+                className="block rounded-xl border border-[#1e2d42] bg-[#0d1520] px-3 py-2 text-sm text-[#f1f5f9] no-underline hover:border-[#10b981]/50"
+              >
+                {lang === 'bn' ? d.bn : d.en}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
 
       <JsonLd
         data={breadcrumbJsonLd([

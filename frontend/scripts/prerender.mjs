@@ -227,6 +227,24 @@ function writePage(path, html) {
   writeFileSync(join(outDir, 'index.html'), html);
 }
 
+// ── Moon sighting (T4.1) ────────────────────────────────────────────────────
+// The Bangladesh district Ramadan calendars follow the national committee's
+// records, read from the live public API at build time. Unreachable: build
+// anyway with Umm al-Qura dates (the pages then say the date is subject to
+// the committee), never fail a deploy over it.
+const MOON_SIGHTING_URL = process.env.MOON_SIGHTING_URL || `${SITE_URL}/api/calendar/moon-sighting`;
+let moonSighting = [];
+try {
+  const res = await fetch(MOON_SIGHTING_URL, { signal: AbortSignal.timeout(10_000) });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  moonSighting = ssr.bdMoonSighting(await res.json());
+  console.error(`Moon sighting: ${moonSighting.length} Bangladesh record(s).`);
+} catch (err) {
+  console.warn(
+    `prerender: moon-sighting records unavailable (${err.message}); Ramadan calendars use Umm al-Qura.`
+  );
+}
+
 // ── Build the route list ────────────────────────────────────────────────────
 const routes = []; // { kind, params }
 for (const city of ssr.CITIES) {
@@ -310,7 +328,7 @@ for (const { kind, params } of routes) {
       title,
       description,
       client,
-    } = ssr.renderRoute({ route: ssrRoute, lang, buildDate: BUILD_DATE });
+    } = ssr.renderRoute({ route: ssrRoute, lang, buildDate: BUILD_DATE, moonSighting });
     const path = routePath(kind, params, lang);
     const pageHtml = buildPageHtml({ lang, title, description, path, bodyHtml, client, langs });
     writePage(path, pageHtml);

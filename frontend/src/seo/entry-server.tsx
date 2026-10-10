@@ -15,8 +15,12 @@ import AsmaUlHusnaPage from './templates/AsmaUlHusnaPage.js';
 import ZakatCalculatorPage from './templates/ZakatCalculatorPage.js';
 import PrayerTimesMonthPage from './templates/PrayerTimesMonthPage.js';
 import BdDistrictsIndexPage from './templates/BdDistrictsIndexPage.js';
+import BdRamadanPage from './templates/BdRamadanPage.js';
+import { RAMADAN_BD } from './locales/ramadanBd.js';
+import { ramadanPlan } from './utils/ramadanBd.js';
+import type { MoonSightingRecord } from '../utils/hijriOffset.js';
 import { BD_DISTRICTS } from './data/bdDistricts.js';
-import { MONTHLY, formatMonth, type MonthlyLang } from './locales/monthly.js';
+import { MONTHLY, formatMonth, formatNumber, type MonthlyLang } from './locales/monthly.js';
 import { expiredMonths, monthWindow, ymInZone } from './utils/monthTable.js';
 import LandingPage, { landingT, type LandingLang } from './templates/LandingPage.js';
 import { LANDING_FAQ, POPULAR_CITY_LINKS } from '../components/LandingSeoSections.js';
@@ -41,6 +45,9 @@ export interface RenderInput {
   route: RouteKind;
   lang: SeoLang;
   buildDate: string; // ISO — passed as a string across the SSR/CLI boundary
+  /** Active moon-sighting records (T4.1), fetched by prerender.mjs: the
+   * Bangladesh district Ramadan calendars follow the BD ones. */
+  moonSighting?: readonly MoonSightingRecord[];
 }
 
 // Route-list building data, re-exported here so scripts/prerender.mjs can
@@ -66,6 +73,20 @@ export function bdMonthRoutes(buildDate: string): {
     expired: expiredMonths(date),
   };
 }
+/** The well-formed Bangladesh records from GET /api/calendar/moon-sighting
+ * (anything else in the response is ignored). */
+export function bdMoonSighting(body: unknown): MoonSightingRecord[] {
+  const records = (body as { records?: unknown } | null)?.records;
+  if (!Array.isArray(records)) return [];
+  return records.filter(
+    (r): r is MoonSightingRecord =>
+      !!r &&
+      r.country === 'BD' &&
+      typeof r.effectiveFrom === 'string' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(r.effectiveFrom) &&
+      (r.offset === -1 || r.offset === 0 || r.offset === 1)
+  );
+}
 export function ramadanGregorianYear(hijriYear: number): number {
   return ramadanRangeForHijriYear(hijriYear).start.getUTCFullYear();
 }
@@ -80,7 +101,12 @@ export interface RenderResult {
   client?: SeoClientPage;
 }
 
-export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResult {
+export function renderRoute({
+  route,
+  lang,
+  buildDate,
+  moonSighting = [],
+}: RenderInput): RenderResult {
   const date = new Date(buildDate);
   const t = CHROME[lang];
 
@@ -109,6 +135,25 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
     case 'ramadan-calendar': {
       const city = cityBySlug(route.citySlug);
       if (!city) throw new Error(`Unknown city slug: ${route.citySlug}`);
+      const district = BD_DISTRICTS.find((d) => d.citySlug === city.slug);
+      if (district && lang !== 'ar') {
+        const plan = ramadanPlan(city, route.hijriYear, moonSighting);
+        const name = lang === 'bn' ? district.bn : district.en;
+        const year = formatNumber(plan.days[0].noon.getUTCFullYear(), lang);
+        return {
+          html: renderToStaticMarkup(
+            <BdRamadanPage
+              lang={lang}
+              district={district}
+              city={city}
+              plan={plan}
+              ym={ymInZone(date)}
+            />
+          ),
+          title: `${RAMADAN_BD[lang].title(name, year)} | ${t.siteName}`,
+          description: RAMADAN_BD[lang].description(name, year),
+        };
+      }
       const gYear = ramadanRangeForHijriYear(route.hijriYear).start.getUTCFullYear();
       return {
         html: renderToStaticMarkup(
@@ -182,6 +227,7 @@ export function renderRoute({ route, lang, buildDate }: RenderInput): RenderResu
             city={city}
             ym={route.ym}
             months={monthWindow(date)}
+            ramadanYear={ramadanGregorianYear(currentRamadanHijriYear())}
           />
         ),
         title: `${m.title(name, month)} | ${t.siteName}`,

@@ -16,6 +16,7 @@ import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 import { BD_TZ, monthRows, type YearMonth } from '../utils/monthTable.js';
 import type { HijriDate } from '../utils/calc.js';
+import { ramadanPagePath } from '../utils/ramadanBd.js';
 
 interface Props {
   lang: MonthlyLang;
@@ -24,6 +25,8 @@ interface Props {
   ym: YearMonth;
   /** The live months (this month and the next two), for the month switcher. */
   months: YearMonth[];
+  /** Gregorian year of the Ramadan calendar the page links to. */
+  ramadanYear: number;
 }
 
 const SITE = 'https://bustandeen.com';
@@ -63,7 +66,14 @@ function Chevron({ dir }: { dir: 'prev' | 'next' }) {
   );
 }
 
-export default function PrayerTimesMonthPage({ lang, district, city, ym, months }: Props) {
+export default function PrayerTimesMonthPage({
+  lang,
+  district,
+  city,
+  ym,
+  months,
+  ramadanYear,
+}: Props) {
   const t = CHROME[lang];
   const m = MONTHLY[lang];
   const name = lang === 'bn' ? district.bn : district.en;
@@ -259,7 +269,7 @@ export default function PrayerTimesMonthPage({ lang, district, city, ym, months 
           {m.todayCta(name)} →
         </a>
         <a
-          href={langPath(lang, `/ramadan-calendar/${city.slug}`)}
+          href={langPath(lang, ramadanPagePath(city.slug, ramadanYear))}
           className="text-brand-emerald no-underline hover:underline"
         >
           {m.ramadanCta(name)} →
