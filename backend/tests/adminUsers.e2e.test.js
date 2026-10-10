@@ -151,4 +151,55 @@ describe('Admin users — directory + welcome-email backfill (servant only)', ()
     expect(res.body.total).toBe(1);
     expect(res.body.users[0].uid).toBe('already-welcomed');
   });
+
+  describe('staff logins are protected (U8.3)', () => {
+    beforeAll(async () => {
+      // A former Ansar: deactivated, so their app account is an ordinary user again.
+      await User.create({ uid: 'former-staff-uid', email: 'former@test.dev' });
+      await AdminAccount.create({
+        firebaseUid: 'former-staff-uid',
+        email: 'former@test.dev',
+        role: 'ansar',
+        ansarDomain: 'general',
+        active: false,
+        createdBy: 'test-seed',
+      });
+    });
+
+    test("the Servant cannot delete an active admin's app account", async () => {
+      const res = await request(app)
+        .delete('/api/admin/users/admin-uid-owner')
+        .set('X-Admin-Token', ownerToken);
+      expect(res.status).toBe(409);
+      expect(res.body.error).toMatch(/Deactivate it under Accounts/);
+      expect(await User.exists({ uid: 'admin-uid-owner' })).toBeTruthy();
+    });
+
+    test("the Servant cannot disable an active admin's app account", async () => {
+      const res = await request(app)
+        .post('/api/admin/users/admin-uid-owner/disable')
+        .set('X-Admin-Token', ownerToken)
+        .send({});
+      expect(res.status).toBe(409);
+      const user = await User.findOne({ uid: 'admin-uid-owner' });
+      expect(user.disabled).not.toBe(true);
+    });
+
+    test('an active admin cannot delete their own app account from Settings', async () => {
+      const res = await request(app)
+        .delete('/api/user/me')
+        .set('Authorization', `Bearer ${ownerToken}`);
+      expect(res.status).toBe(409);
+      expect(res.body.error).toBe('staff_account');
+      expect(await User.exists({ uid: 'admin-uid-owner' })).toBeTruthy();
+    });
+
+    test("a deactivated admin's app account can be disabled as usual", async () => {
+      const res = await request(app)
+        .post('/api/admin/users/former-staff-uid/disable')
+        .set('X-Admin-Token', ownerToken)
+        .send({});
+      expect(res.status).toBe(200);
+    });
+  });
 });

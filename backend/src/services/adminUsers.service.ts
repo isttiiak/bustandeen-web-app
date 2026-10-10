@@ -3,7 +3,12 @@ import { sendWelcomeEmail } from './welcomeEmail.service.js';
 import { welcomeEmail } from './welcomeEmail.templates.js';
 import { deleteAccount } from './user.service.js';
 import { sendMail } from './email.service.js';
-import { excludeAdminUids, getAdminTagsByUid, type AdminTag } from './adminAccount.service.js';
+import {
+  excludeAdminUids,
+  getAdminTagsByUid,
+  isActiveAdminUid,
+  type AdminTag,
+} from './adminAccount.service.js';
 import { REENGAGEMENT_SUBJECT, reengagementDraft, toSimpleHtml } from './userEmail.templates.js';
 
 const httpError = (status: number, message: string): Error & { status: number } => {
@@ -200,10 +205,19 @@ export const sendCustomEmail = async (
   });
 };
 
+const STAFF_ACCOUNT_MESSAGE =
+  'This is an active admin login. Deactivate it under Accounts first, otherwise the admin loses access to the panel too.';
+
+/** Refuses an action that would delete or block an active admin's login. */
+const refuseActiveAdmin = async (uid: string): Promise<void> => {
+  if (await isActiveAdminUid(uid)) throw httpError(409, STAFF_ACCOUNT_MESSAGE);
+};
+
 /** Servant-only — blocks sign-in without touching the account's data (see
  *  User.disabled, requireAuth, and /api/auth/verify). Reversible: use
  *  enableUser to restore access. */
 export const disableUser = async (uid: string, reason: string | undefined): Promise<void> => {
+  await refuseActiveAdmin(uid);
   const result = await User.updateOne(
     { uid },
     { $set: { disabled: true, disabledAt: new Date(), disabledReason: reason ?? null } }
@@ -271,6 +285,7 @@ export const sendReengagementEmail = async (
 export const deleteUserByAdmin = async (uid: string): Promise<void> => {
   const user = await User.findOne({ uid }).select('uid');
   if (!user) throw httpError(404, 'User not found');
+  await refuseActiveAdmin(uid);
   await deleteAccount(uid);
 };
 
