@@ -202,22 +202,9 @@ export default function AppRoutes({ revision }: { revision: number }) {
           </Protected>
         }
       />
-      <Route
-        path="/quran/browse"
-        element={
-          <Protected>
-            <QuranBrowse />
-          </Protected>
-        }
-      />
-      <Route
-        path="/quran/listen"
-        element={
-          <Protected>
-            <QuranListen />
-          </Protected>
-        }
-      />
+      {/* Public (U9): guests read and listen; nothing is saved for them. */}
+      <Route path="/quran/browse" element={<QuranBrowse />} />
+      <Route path="/quran/listen" element={<QuranListen />} />
       <Route
         path="/quran/analytics"
         element={
@@ -242,14 +229,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
           </Protected>
         }
       />
-      <Route
-        path="/quran/read/:surah"
-        element={
-          <Protected>
-            <QuranReader />
-          </Protected>
-        }
-      />
+      <Route path="/quran/read/:surah" element={<QuranReader />} />
       <Route
         path="/zikr/analytics"
         element={

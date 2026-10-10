@@ -69,3 +69,14 @@ test('a surah opened once reads with no network', async ({ page, context }) => {
   expect(await page.evaluate(async () => (await fetch('/quran/uthmani/112.json')).ok)).toBe(true);
   await context.setOffline(false);
 });
+
+test('a guest reads a surah without signing in, and is told nothing is saved (U9)', async ({
+  page,
+}) => {
+  await page.goto('/quran/read/112');
+  await expect(page.getByText(firstAyah, { exact: true })).toBeVisible();
+  await expect(page.getByText(/reading as a guest/)).toBeVisible();
+  await expect(page.getByText('Sign in required')).toHaveCount(0);
+  // No bookmark or tafsir for a guest: both need an account.
+  await expect(page.getByRole('button', { name: 'Bookmark this ayah' })).toHaveCount(0);
+});

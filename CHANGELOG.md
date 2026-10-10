@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.153.0 - Read the Quran without an account - 2026-10-11
+
+### Added
+
+- **Guests can read and listen to the Quran (U9).** Browsing the surahs, reading any surah and the listening room no longer ask for an account. Nothing is saved for a guest: a short line in the reader says so and offers sign-in, and bookmarks, the daily goal and tafsir stay with signed-in readers. The Quran text is bundled with the app, so this sends nothing new anywhere.
+
 ## v5.152.0 - Analytics in the demo, and demo changes undone - 2026-10-11
 
 ### Added
