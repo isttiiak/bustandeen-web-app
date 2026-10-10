@@ -664,6 +664,29 @@ export default function QuranReader() {
           </div>
         </div>
 
+        {/* A guest reads freely (U9); nothing is saved without an account. */}
+        {!user && (
+          <p className="text-xs text-white/70 leading-relaxed">
+            {t(
+              'quranReader.guestNote',
+              'You are reading as a guest. Sign in to save your place, bookmarks and daily goal.'
+            )}{' '}
+            <button
+              type="button"
+              className="font-semibold text-brand-emerald underline underline-offset-2"
+              onClick={() => {
+                sessionStorage.setItem(
+                  'bustandeen_redirect',
+                  window.location.pathname + window.location.search
+                );
+                navigate('/login');
+              }}
+            >
+              {t('app.signIn', 'Sign In')}
+            </button>
+          </p>
+        )}
+
         {/* info chips */}
         <div className="flex flex-wrap items-center gap-2 text-[11px]">
           <span className="px-2.5 py-1 rounded-full bg-brand-deep border border-brand-border text-white/70 font-bold">
@@ -678,7 +701,7 @@ export default function QuranReader() {
             {t('quranReader.juz', 'Juz')}{' '}
             {current ? formatLocaleNumber(juzOf(surahNo, current.numberInSurah)) : '–'}
           </span>
-          {countsGoal ? (
+          {!user ? null : countsGoal ? (
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald font-bold">
               <BookOpenIcon className="w-3.5 h-3.5" aria-hidden="true" />
               {t('quranReader.todayCount', '{{count}} āyāt today', { count: todayCount })}
