@@ -15,6 +15,7 @@ import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 import { LeafMark, monthPagePath } from './PrayerTimesMonthPage.js';
 import { BD_TZ, type YearMonth } from '../utils/monthTable.js';
 import { ramadanPagePath, type RamadanDay, type RamadanPlan } from '../utils/ramadanBd.js';
+import { dateFormat } from '../utils/intl.js';
 
 interface Props {
   lang: MonthlyLang;
@@ -39,7 +40,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym }: Props)
   const gregorianYear = first.noon.getUTCFullYear();
   const yearLabel = num(gregorianYear);
   const longDate = (d: RamadanDay) =>
-    new Intl.DateTimeFormat(m.locale, {
+    dateFormat(m.locale, {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -47,9 +48,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym }: Props)
       timeZone: 'UTC',
     }).format(d.noon);
   const shortDate = (d: RamadanDay) =>
-    new Intl.DateTimeFormat(m.locale, { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(
-      d.noon
-    );
+    dateFormat(m.locale, { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(d.noon);
 
   const barePath = ramadanPagePath(city.slug, gregorianYear);
   const url = `${SITE}${langPath(lang, barePath)}`;
