@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.138.0 - Pick your Home in the welcome setup - 2026-10-10
+
+### Changed
+
+- **Welcome setup, habits step (U5).** Each habit in your order now has its own "On Home" switch (Salat = the prayer timeline), plus a switch for Today's goals card. Every habit starts on, whichever comes first: the old rule that showed the timeline only when Salat was first is gone. With no habit on Home, the goals card stays on so Home is never empty. Running the setup again sets the goal rows back to your habit order (hidden rows and the badges switch are kept). English and Bangla.
+
 ## v5.137.0 - Choose what Home shows - 2026-10-10
 
 ### Added

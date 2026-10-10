@@ -4144,8 +4144,13 @@
     "orderIntro": "Home follows this order. Move a habit up or down; small and steady is the aim.",
     "moveUp": "Move {{habit}} up",
     "moveDown": "Move {{habit}} down",
-    "timelineTitle": "Show the prayer timeline on Home?",
-    "timelineDetail": "The five prayers of today with their times, Mark Done and Kaza. The prayer row in the arch always stays."
+    "onHome": "On Home",
+    "notOnHome": "Not on Home",
+    "salatOnHome": "As the prayer timeline. The prayer row in the arch always stays.",
+    "showOnHome": "Show {{habit}} on Home",
+    "goalsTitle": "Today's goals card",
+    "goalsDetail": "Your progress towards each daily goal.",
+    "goalsKept": "With no habit on Home, the goals card stays so Home is never empty."
   },
   "shareApp": {
     "menu": "Share Bustandeen",

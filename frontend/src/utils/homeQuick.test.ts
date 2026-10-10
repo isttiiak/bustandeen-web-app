@@ -8,6 +8,7 @@ import {
   goalsCardShown,
   homeSections,
   isSectionOn,
+  saveSetupHomeChoice,
   setHomeGoals,
   setSectionOn,
 } from './homeSections.js';
@@ -125,6 +126,33 @@ describe("Today's goals card (U5)", () => {
     });
     localStorage.setItem(HOME_GOALS_KEY, 'null');
     expect(getHomeGoals().on).toBe(true);
+  });
+});
+
+describe('welcome setup Home choice (U5)', () => {
+  const all = { salat: true, zikr: true, quran: true, fasting: true };
+  it('saves the sections, independent of which habit is first', () => {
+    localStorage.setItem(FOCUS_KEY, JSON.stringify(['zikr', 'salat', 'quran', 'fasting']));
+    saveSetupHomeChoice({ ...all, quran: false }, false);
+    expect(homeSections()).toEqual(['zikr', 'salat', 'fasting']);
+    expect(getHomeGoals().on).toBe(false);
+  });
+  it('no section on keeps the goals card on', () => {
+    saveSetupHomeChoice({ salat: false, zikr: false, quran: false, fasting: false }, false);
+    expect(homeSections()).toEqual([]);
+    expect(getHomeGoals().on).toBe(true);
+  });
+  it('goal rows follow the new habit order again; hidden rows and badges stay', () => {
+    setHomeGoals({
+      on: true,
+      order: ['fasting', 'quran', 'zikr', 'salat'],
+      off: ['zikr'],
+      badges: false,
+    });
+    localStorage.setItem(FOCUS_KEY, JSON.stringify(['quran', 'salat', 'zikr', 'fasting']));
+    saveSetupHomeChoice(all, true);
+    expect(getHomeGoals()).toEqual({ on: true, off: ['zikr'], badges: false });
+    expect(goalRows()).toEqual(['quran', 'salat', 'fasting']);
   });
 });
 

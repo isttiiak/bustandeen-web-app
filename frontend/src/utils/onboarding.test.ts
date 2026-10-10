@@ -3,7 +3,6 @@ import {
   FOCUS_KEY,
   HOME_TIMELINE_KEY,
   completeOrder,
-  defaultTimelineFor,
   getFocusHabits,
   getHomeTimeline,
   initialGoal,
@@ -105,10 +104,6 @@ describe('Home timeline preference', () => {
     expect(getHomeTimeline()).toBe(false);
     setHomeTimeline(true);
     expect(getHomeTimeline()).toBe(true);
-  });
-  it('the setup suggests it when Salat comes first', () => {
-    expect(defaultTimelineFor(['salat', 'zikr', 'quran', 'fasting'])).toBe(true);
-    expect(defaultTimelineFor(['zikr', 'salat', 'quran', 'fasting'])).toBe(false);
   });
 });
 
