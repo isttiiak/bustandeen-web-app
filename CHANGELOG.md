@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.149.0 - Broadcast for the Servant and the general Ansar - 2026-10-11
+
+### Changed
+
+- **Broadcast is no longer open to every Ansar (U8, admin audit S4).** The in-app banner, update emails and their audience list (users' names and emails) were open to any admin, including the sadaqah Ansar. They are now for the Servant and the general Ansar only, like moon sighting; the sadaqah Ansar no longer sees the Broadcast tab or card, and the API refuses them.
+
 ## v5.148.0 - The general Ansar can post a moon sighting - 2026-10-10
 
 ### Changed

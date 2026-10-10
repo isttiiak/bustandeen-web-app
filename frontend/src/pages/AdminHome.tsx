@@ -322,15 +322,17 @@ export default function AdminHome() {
             )}
           />
         )}
-        <AdminCard
-          to="/admin/broadcast"
-          icon={MegaphoneIcon}
-          title={t('adminHome.broadcastTitle', 'Broadcast')}
-          description={t(
-            'adminHome.broadcastDesc',
-            'Push a banner to every visitor, or send an update email.'
-          )}
-        />
+        {canSeeZikrRequests && (
+          <AdminCard
+            to="/admin/broadcast"
+            icon={MegaphoneIcon}
+            title={t('adminHome.broadcastTitle', 'Broadcast')}
+            description={t(
+              'adminHome.broadcastDesc',
+              'Push a banner to every visitor, or send an update email.'
+            )}
+          />
+        )}
       </div>
     </div>
   );
