@@ -77,6 +77,24 @@ async function seedEverything(uid, email) {
     salatResetHistory: [
       { date: '2026-09-01', note: 'After travel', resetAt: new Date('2026-09-01T10:00:00Z') },
     ],
+    statsResets: {
+      zikr: [
+        {
+          date: '2026-10-01',
+          note: 'Fresh',
+          resetAt: new Date('2026-10-01T03:00:00Z'),
+          prevStreak: { longestStreak: 12 },
+        },
+      ],
+      quran: [
+        {
+          date: '2026-10-02',
+          note: '',
+          resetAt: new Date('2026-10-02T03:00:00Z'),
+          surahBaseline: { 36: 2 },
+        },
+      ],
+    },
     totalCount: 1133,
     zikrTotals: { SubhanAllah: 1100, Alhamdulillah: 33 },
     zikrTypes: [{ name: 'My dua', createdAt: new Date('2026-08-01T00:00:00Z') }],
@@ -303,6 +321,11 @@ describe('Backup v3: export, wipe, import restores exactly', () => {
     expect(f.quran.sessions).toHaveLength(1);
     expect(f.hifz.entries).toHaveLength(1);
     expect(f.naseeh.plans).toHaveLength(1);
+    expect(f.freshStarts.zikr[0]).toMatchObject({
+      date: '2026-10-01',
+      prevStreak: { longestStreak: 12 },
+    });
+    expect(f.freshStarts.quran[0].surahBaseline).toEqual({ 36: 2 });
     expect(f.friends).toMatchObject({ visibility: 'streaks', secret: { zikr: true } });
     expect(f.records.friendCounts.friends).toBe(1);
     expect(f.records.messagesToUs).toHaveLength(1);

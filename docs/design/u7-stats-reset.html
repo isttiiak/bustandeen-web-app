@@ -1,0 +1,919 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Stats Fresh Start</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* U7 prototype: per-domain stats reset ("Fresh start") + past-day zikr correction.
+         Interactive static mock, not app code. Colours = the app's --c-* tokens. */
+      :root {
+        --page: #2b2a26;
+        --pageInk: #e8e2d4;
+      }
+      .t-dark {
+        --void: 14 13 10;
+        --deep: 26 24 18;
+        --surface: 33 31 22;
+        --border: 58 52 37;
+        --emerald: 122 158 110;
+        --gold: 201 169 110;
+        --ink: 255 255 255;
+        --shade: 0 0 0;
+        --red: 248 113 113;
+      }
+      .t-light {
+        --void: 237 239 226;
+        --deep: 248 248 239;
+        --surface: 226 231 211;
+        --border: 198 206 176;
+        --emerald: 54 81 46;
+        --gold: 95 74 24;
+        --ink: 31 36 24;
+        --shade: 120 135 100;
+        --red: 185 28 28;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--pageInk);
+        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      }
+      @media (prefers-color-scheme: light) {
+        :root:not([data-theme='dark']) {
+          --page: #d9dccd;
+          --pageInk: #1f2418;
+        }
+      }
+      :root[data-theme='light'] {
+        --page: #d9dccd;
+        --pageInk: #1f2418;
+      }
+      header.doc,
+      .notes {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 20px 16px 4px;
+      }
+      header.doc h1,
+      .notes h2 {
+        font-family: 'El Messiri', serif;
+        margin: 0 0 6px;
+        font-size: 26px;
+      }
+      .notes h2 {
+        font-size: 20px;
+        margin-top: 18px;
+      }
+      header.doc p,
+      .notes li,
+      .notes p {
+        font-size: 13px;
+        line-height: 1.55;
+        opacity: 0.88;
+        margin: 4px 0;
+      }
+      .bar {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+      }
+      .bar button {
+        font: inherit;
+        font-size: 12px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid currentColor;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+      }
+      .bar button.on {
+        background: var(--pageInk);
+        color: var(--page);
+      }
+      .stage {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: center;
+      }
+      .col > .cap {
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        opacity: 0.75;
+        margin: 0 0 8px 4px;
+      }
+      .phone {
+        width: 360px;
+        max-width: calc(100vw - 32px);
+        min-height: 640px;
+        border-radius: 28px;
+        background: rgb(var(--void));
+        color: rgb(var(--ink));
+        padding: 18px 14px 24px;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid rgb(var(--border));
+      }
+      .card {
+        background: rgb(var(--deep));
+        border: 1px solid rgb(var(--border));
+        border-radius: 20px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .card h3 {
+        margin: 0;
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .card .sub {
+        font-size: 12px;
+        color: rgb(var(--ink) / 0.65);
+        margin: 4px 0 10px;
+        line-height: 1.45;
+      }
+      .leaf {
+        width: 18px;
+        height: 18px;
+        color: rgb(var(--emerald));
+        flex: none;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 12px;
+        background: rgb(var(--shade) / 0.18);
+        margin-bottom: 6px;
+      }
+      .row .txt {
+        flex: 1;
+        min-width: 0;
+      }
+      .row b {
+        font-size: 13px;
+        display: block;
+      }
+      .row small {
+        font-size: 11px;
+        color: rgb(var(--ink) / 0.6);
+      }
+      .btn {
+        font: inherit;
+        font-size: 12px;
+        font-weight: 700;
+        border-radius: 12px;
+        padding: 7px 12px;
+        cursor: pointer;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--surface));
+        color: rgb(var(--ink));
+      }
+      .btn.primary {
+        background: rgb(var(--emerald));
+        border-color: rgb(var(--emerald));
+        color: #fff;
+      }
+      .btn.wide {
+        width: 100%;
+        padding: 11px;
+        margin-top: 6px;
+      }
+      .btn.ghost {
+        background: transparent;
+      }
+      .link {
+        font-size: 11px;
+        color: rgb(var(--emerald));
+        background: none;
+        border: 0;
+        padding: 0;
+        font: inherit;
+        font-size: 11px;
+        cursor: pointer;
+        text-decoration: underline;
+      }
+      .danger {
+        border-color: rgb(var(--red) / 0.5);
+      }
+      .danger h3 {
+        color: rgb(var(--red));
+      }
+      .muted {
+        opacity: 0.55;
+      }
+      .sheet-wrap {
+        position: absolute;
+        inset: 0;
+        background: rgb(0 0 0 / 0.55);
+        display: none;
+        align-items: flex-end;
+      }
+      .sheet-wrap.open {
+        display: flex;
+      }
+      .sheet {
+        width: 100%;
+        background: rgb(var(--deep));
+        border-top: 1px solid rgb(var(--border));
+        border-radius: 20px 20px 0 0;
+        padding: 16px 14px 18px;
+        max-height: 92%;
+        overflow: auto;
+      }
+      .sheet h4 {
+        margin: 0 0 4px;
+        font-family: 'El Messiri', serif;
+        font-size: 18px;
+      }
+      .sheet .lead {
+        font-size: 12px;
+        color: rgb(var(--ink) / 0.7);
+        margin: 0 0 10px;
+        line-height: 1.5;
+      }
+      .lists {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .lists div {
+        background: rgb(var(--shade) / 0.18);
+        border-radius: 12px;
+        padding: 8px 10px;
+      }
+      .lists p {
+        margin: 0 0 4px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+      }
+      .lists ul {
+        margin: 0;
+        padding-left: 14px;
+        font-size: 11px;
+        line-height: 1.5;
+        color: rgb(var(--ink) / 0.8);
+      }
+      .lists .chg p {
+        color: rgb(var(--gold));
+      }
+      .lists .stay p {
+        color: rgb(var(--emerald));
+      }
+      label.note {
+        display: block;
+        font-size: 11px;
+        margin: 10px 0 4px;
+        color: rgb(var(--ink) / 0.7);
+      }
+      input,
+      select {
+        font: inherit;
+        font-size: 13px;
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--void));
+        color: rgb(var(--ink));
+        padding: 9px 10px;
+      }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .actions .btn {
+        flex: 1;
+        padding: 10px;
+      }
+      .toast {
+        position: absolute;
+        left: 14px;
+        right: 14px;
+        bottom: 18px;
+        background: rgb(var(--surface));
+        border: 1px solid rgb(var(--border));
+        border-radius: 12px;
+        padding: 10px 12px;
+        font-size: 12px;
+        display: none;
+        align-items: center;
+        gap: 8px;
+      }
+      .toast.show {
+        display: flex;
+      }
+      .toast span {
+        flex: 1;
+      }
+      .stat {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .stat div {
+        background: rgb(var(--shade) / 0.18);
+        border-radius: 12px;
+        padding: 8px;
+        text-align: center;
+      }
+      .stat strong {
+        display: block;
+        font-size: 18px;
+        color: rgb(var(--gold));
+      }
+      .stat em {
+        font-style: normal;
+        font-size: 10px;
+        color: rgb(var(--ink) / 0.6);
+      }
+      .since {
+        font-size: 11px;
+        color: rgb(var(--ink) / 0.6);
+        margin-top: 6px;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .chip {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgb(var(--emerald) / 0.18);
+        color: rgb(var(--emerald));
+      }
+      .tabs {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 10px;
+      }
+      .tabs span {
+        flex: 1;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 7px;
+        border-radius: 12px;
+        background: rgb(var(--shade) / 0.18);
+        color: rgb(var(--ink) / 0.6);
+      }
+      .tabs span.on {
+        background: rgb(var(--emerald));
+        color: #fff;
+      }
+      .zrow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 0;
+        border-bottom: 1px solid rgb(var(--border) / 0.6);
+        font-size: 13px;
+      }
+      .zrow span {
+        flex: 1;
+      }
+      .zrow input {
+        width: 86px;
+        text-align: right;
+      }
+      .zrow .was {
+        font-size: 11px;
+        color: rgb(var(--ink) / 0.55);
+        width: 64px;
+        text-align: right;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 12px;
+        margin-top: 8px;
+      }
+      th,
+      td {
+        text-align: left;
+        vertical-align: top;
+        padding: 7px 8px;
+        border-bottom: 1px solid color-mix(in srgb, var(--pageInk) 25%, transparent);
+        line-height: 1.45;
+      }
+      th {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        opacity: 0.8;
+      }
+      .tablewrap {
+        overflow-x: auto;
+      }
+      .ask {
+        border-left: 3px solid #c9a96e;
+        padding-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="doc">
+      <h1>U7 Stats fresh start (prototype)</h1>
+      <p>
+        A reset never deletes anything. It stores a start date per area (like today's salat reset).
+        Totals, streaks and averages count from that date; history, calendars and day logs still
+        show every day, with a small "Fresh start" marker. Obligations (Kaza debt, qaḍāʾ fasts,
+        kaffārah, vows) and memorised āyāt are never touched by a stats reset.
+      </p>
+      <div class="bar" id="themeBar">
+        <button data-t="dark" class="on">Dark</button>
+        <button data-t="light">Light</button>
+        <button data-lang="en" class="on">English</button>
+        <button data-lang="bn">বাংলা</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <!-- 1. Settings: Fresh start section before Danger zone -->
+      <section class="col">
+        <p class="cap">1 · Settings, before Danger zone</p>
+        <div class="phone t-dark" id="p1">
+          <div class="card">
+            <h3>
+              <svg
+                class="leaf"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M4 20c8 0 14-6 14-16C8 4 4 10 4 20Z" />
+                <path d="M4 20 14 10" />
+              </svg>
+              <span data-i="title">Fresh start</span>
+            </h3>
+            <p class="sub" data-i="sub">
+              Start your counts again from today. Your history stays, nothing is deleted, and you
+              can undo.
+            </p>
+            <div id="rows"></div>
+            <button class="btn wide" data-domain="all" data-i="all">Reset all stats</button>
+          </div>
+          <div class="card danger">
+            <h3 data-i="danger">Danger zone</h3>
+            <p class="sub" data-i="dangerSub">Delete data for good, or delete your account.</p>
+          </div>
+
+          <div class="sheet-wrap" id="sheet">
+            <div class="sheet">
+              <h4 id="sTitle">Fresh start for Zikr?</h4>
+              <p class="lead" id="sLead"></p>
+              <div class="lists">
+                <div class="chg">
+                  <p data-i="changes">Starts again</p>
+                  <ul id="sChg"></ul>
+                </div>
+                <div class="stay">
+                  <p data-i="stays">Stays as it is</p>
+                  <ul id="sStay"></ul>
+                </div>
+              </div>
+              <label class="note" data-i="noteLabel">Note for yourself (optional)</label>
+              <input placeholder="e.g. After Ramadan" maxlength="200" />
+              <div class="actions">
+                <button class="btn ghost" id="sCancel" data-i="cancel">Cancel</button>
+                <button class="btn primary" id="sOk" data-i="confirm">Start fresh today</button>
+              </div>
+            </div>
+          </div>
+          <div class="toast" id="toast">
+            <span id="tMsg">Zikr starts fresh from today.</span>
+            <button class="link" id="tUndo" data-i="undo">Undo</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Inside a feature's own settings + how the stat card reads after -->
+      <section class="col">
+        <p class="cap">2 · Zikr settings + stat card after a reset</p>
+        <div class="phone t-dark" id="p2">
+          <div class="card">
+            <h3 data-i="zikrSettings">Zikr settings</h3>
+            <p class="sub">… counter, sound, goal …</p>
+            <div class="row">
+              <div class="txt">
+                <b data-i="title">Fresh start</b>
+                <small data-i="zikrRowSub">Counting since 3 Oct 2026 · Undo</small>
+              </div>
+              <button class="btn" data-i="reset">Reset</button>
+            </div>
+            <p class="sub" style="margin-top: 8px">
+              <span data-i="replaces"
+                >Replaces "Reset counters", which zeroed your totals and deleted your goal.</span
+              >
+            </p>
+          </div>
+          <div class="card">
+            <h3 data-i="zikrStats">Your zikr</h3>
+            <div class="stat">
+              <div><strong>2,140</strong><em data-i="total">Total</em></div>
+              <div><strong>6</strong><em data-i="streak">Streak</em></div>
+              <div><strong>6</strong><em data-i="best">Best</em></div>
+            </div>
+            <div class="since">
+              <span class="chip" data-i="sinceChip">Since 3 Oct</span>
+              <button class="link" data-i="allTime">See all time: 48,912</button>
+            </div>
+          </div>
+          <div class="card">
+            <h3 data-i="history">History</h3>
+            <p class="sub" data-i="historySub">
+              Calendar and charts still show every day. A thin gold line marks each fresh start.
+            </p>
+            <svg viewBox="0 0 300 70" width="100%" aria-hidden="true">
+              <g fill="rgb(122 158 110 / .55)">
+                <rect x="6" y="30" width="14" height="40" rx="3" />
+                <rect x="26" y="18" width="14" height="52" rx="3" />
+                <rect x="46" y="40" width="14" height="30" rx="3" />
+                <rect x="66" y="10" width="14" height="60" rx="3" />
+                <rect x="86" y="26" width="14" height="44" rx="3" />
+                <rect x="106" y="44" width="14" height="26" rx="3" />
+                <rect x="146" y="36" width="14" height="34" rx="3" />
+                <rect x="166" y="28" width="14" height="42" rx="3" />
+                <rect x="186" y="20" width="14" height="50" rx="3" />
+                <rect x="206" y="34" width="14" height="36" rx="3" />
+                <rect x="226" y="24" width="14" height="46" rx="3" />
+                <rect x="246" y="16" width="14" height="54" rx="3" />
+              </g>
+              <line
+                x1="134"
+                y1="2"
+                x2="134"
+                y2="70"
+                stroke="#c9a96e"
+                stroke-width="2"
+                stroke-dasharray="3 3"
+              />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. Correct a past zikr day (U4 gap) -->
+      <section class="col">
+        <p class="cap">3 · Log counts → Correct a past day</p>
+        <div class="phone t-dark" id="p3">
+          <div class="card">
+            <h3 data-i="logTitle">Log counts</h3>
+            <div class="tabs" style="margin-top: 10px">
+              <span data-i="tabAdd">Add counts</span>
+              <span class="on" data-i="tabFix">Correct a day</span>
+            </div>
+            <label class="note" data-i="dayLabel">Day</label>
+            <select>
+              <option>Thu 8 Oct</option>
+              <option>Wed 7 Oct</option>
+              <option>Tue 6 Oct</option>
+            </select>
+            <p class="sub" style="margin-top: 10px" data-i="fixSub">
+              Set the right count for each zikr on that day. Your totals, streak and Noor update to
+              match.
+            </p>
+            <div class="zrow">
+              <span>SubhanAllah</span><em class="was" data-i="was">was 3,300</em
+              ><input value="330" />
+            </div>
+            <div class="zrow">
+              <span>Alhamdulillah</span><em class="was" data-i="was2">was 100</em
+              ><input value="100" />
+            </div>
+            <div class="zrow">
+              <span>Astaghfirullah</span><em class="was" data-i="was3">was 0</em><input value="0" />
+            </div>
+            <p class="sub" style="margin-top: 10px" data-i="fixNote">
+              A count can go down to 0, never below. Counter sessions you timed on that day stay in
+              your time-of-day chart.
+            </p>
+            <button class="btn primary wide" data-i="saveFix">Save correction (−2,970)</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <section class="notes">
+      <h2>Exactly what each reset touches</h2>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Area</th>
+              <th>Starts again from the reset day</th>
+              <th>Never touched</th>
+            </tr>
+          </thead>
+          <tbody id="matrix"></tbody>
+        </table>
+      </div>
+      <h2>How it works</h2>
+      <ul>
+        <li>
+          One start date per area on the account (salat keeps its existing
+          <code>salatResetDate</code> and history, so old salat resets carry over). The date is
+          today's tracking day (Fajr / midnight / Maghrib setting).
+        </li>
+        <li>
+          Undo: the most recent reset of an area can be undone at any time (it only moves the date
+          back). Each reset is kept in a small list with its optional note, like the salat Journey
+          phases.
+        </li>
+        <li>"Reset all stats" = one confirm, same date for every area in the table.</li>
+        <li>
+          The old zikr "Reset counters" (zeroes lifetime totals, deletes the goal) and Quran "Reset
+          reading counts" (clears surah counts) are replaced by this, so no reset is destructive any
+          more.
+        </li>
+        <li>
+          Every reset and correction is in the backup file (U6), so a restore brings the same view
+          back.
+        </li>
+      </ul>
+      <h2 class="ask">Open choices (asked in chat)</h2>
+      <ul>
+        <li>Streaks: does Best streak restart too, or keep the old best?</li>
+        <li>Rayhanah: no reset (recommended), or a reset for cycle averages and predictions?</li>
+        <li>Noor: follows each area's reset, or always counts every deed?</li>
+        <li>Quran: does the khatm count stay?</li>
+        <li>Past-day zikr correction: how far back?</li>
+      </ul>
+    </section>
+
+    <script>
+      const DOMAINS = [
+        {
+          id: 'zikr',
+          en: 'Zikr',
+          bn: 'যিকির',
+          since: { en: 'Counting since 3 Oct 2026', bn: '৩ অক্টোবর ২০২৬ থেকে গণনা' },
+          chg: {
+            en: ['Total and per-zikr totals', 'Streak and best streak', 'Goal days met'],
+            bn: [
+              'মোট ও প্রতিটি যিকিরের মোট',
+              'ধারাবাহিকতা ও সেরা ধারাবাহিকতা',
+              'লক্ষ্য পূরণের দিন',
+            ],
+          },
+          stay: {
+            en: ['Every day you counted', 'Counter sessions', 'Your zikr list and goal'],
+            bn: ['প্রতিটি দিনের গণনা', 'কাউন্টার সেশন', 'আপনার যিকির তালিকা ও লক্ষ্য'],
+          },
+        },
+        {
+          id: 'salat',
+          en: 'Salat',
+          bn: 'সালাত',
+          since: { en: 'Never reset', bn: 'কখনও রিসেট হয়নি' },
+          chg: {
+            en: ['Done / Kaza / Miss rates', 'Per-prayer streaks', 'Mosque and jamāʿah counts'],
+            bn: [
+              'আদায় / কাযা / ছুটে যাওয়ার হার',
+              'প্রতিটি সালাতের ধারাবাহিকতা',
+              'মসজিদ ও জামাআতের সংখ্যা',
+            ],
+          },
+          stay: {
+            en: ['Every prayer you logged', 'Kaza debt (reset it in Kaza)', 'Musafir history'],
+            bn: ['লগ করা প্রতিটি সালাত', 'কাযা ঋণ (কাযা অংশে রিসেট হয়)', 'মুসাফির ইতিহাস'],
+          },
+        },
+        {
+          id: 'fasting',
+          en: 'Fasting',
+          bn: 'সিয়াম',
+          since: { en: 'Never reset', bn: 'কখনও রিসেট হয়নি' },
+          chg: {
+            en: ['Total, this month, last 30 days', 'Voluntary total', 'Mon/Thu streak and best'],
+            bn: ['মোট, এই মাস, গত ৩০ দিন', 'নফল সিয়ামের মোট', 'সোম/বৃহস্পতি ধারাবাহিকতা ও সেরা'],
+          },
+          stay: {
+            en: ['Every fast you logged', 'Qaḍāʾ owed and made up', 'Kaffārah run and vows'],
+            bn: ['লগ করা প্রতিটি সিয়াম', 'কাযা বাকি ও আদায়', 'কাফফারা ও মানত'],
+          },
+        },
+        {
+          id: 'quran',
+          en: 'Quran',
+          bn: 'কুরআন',
+          since: { en: 'Never reset', bn: 'কখনও রিসেট হয়নি' },
+          chg: {
+            en: ['Day streak and best', 'All-time pages and āyāt', 'Most-read surahs'],
+            bn: ['দৈনিক ধারাবাহিকতা ও সেরা', 'সর্বমোট পৃষ্ঠা ও আয়াত', 'সবচেয়ে বেশি পড়া সূরা'],
+          },
+          stay: {
+            en: [
+              'Every reading day and session',
+              'Khatm count (asked)',
+              'Khatm progress, bookmarks, hifz',
+            ],
+            bn: [
+              'প্রতিটি পড়ার দিন ও সেশন',
+              'খতমের সংখ্যা (জিজ্ঞাসা)',
+              'খতমের অগ্রগতি, বুকমার্ক, হিফয',
+            ],
+          },
+        },
+      ];
+      const T = {
+        en: {
+          title: 'Fresh start',
+          sub: 'Start your counts again from today. Your history stays, nothing is deleted, and you can undo.',
+          all: 'Reset all stats',
+          danger: 'Danger zone',
+          dangerSub: 'Delete data for good, or delete your account.',
+          changes: 'Starts again',
+          stays: 'Stays as it is',
+          noteLabel: 'Note for yourself (optional)',
+          cancel: 'Cancel',
+          confirm: 'Start fresh today',
+          undo: 'Undo',
+          reset: 'Reset',
+          zikrSettings: 'Zikr settings',
+          zikrRowSub: 'Counting since 3 Oct 2026 · Undo',
+          replaces: 'Replaces "Reset counters", which zeroed your totals and deleted your goal.',
+          zikrStats: 'Your zikr',
+          total: 'Total',
+          streak: 'Streak',
+          best: 'Best',
+          sinceChip: 'Since 3 Oct',
+          allTime: 'See all time: 48,912',
+          history: 'History',
+          historySub:
+            'Calendar and charts still show every day. A thin gold line marks each fresh start.',
+          logTitle: 'Log counts',
+          tabAdd: 'Add counts',
+          tabFix: 'Correct a day',
+          dayLabel: 'Day',
+          fixSub:
+            'Set the right count for each zikr on that day. Your totals, streak and Noor update to match.',
+          was: 'was 3,300',
+          was2: 'was 100',
+          was3: 'was 0',
+          fixNote:
+            'A count can go down to 0, never below. Counter sessions you timed on that day stay in your time-of-day chart.',
+          saveFix: 'Save correction (−2,970)',
+          sheetTitle: (d) => `Fresh start for ${d}?`,
+          sheetAll: 'Fresh start for all stats?',
+          lead: 'From today your counts begin again. Every past day stays in your history.',
+          done: (d) => `${d} starts fresh from today.`,
+          doneAll: 'All stats start fresh from today.',
+        },
+        bn: {
+          title: 'নতুন শুরু',
+          sub: 'আজ থেকে আবার গণনা শুরু করুন। আপনার ইতিহাস থাকবে, কিছুই মুছে যাবে না, আর চাইলে ফিরিয়ে নিতে পারবেন।',
+          all: 'সব পরিসংখ্যান রিসেট',
+          danger: 'বিপদ অঞ্চল',
+          dangerSub: 'ডেটা চিরতরে মুছুন, অথবা অ্যাকাউন্ট মুছুন।',
+          changes: 'আবার শুরু হবে',
+          stays: 'যেমন আছে থাকবে',
+          noteLabel: 'নিজের জন্য নোট (ঐচ্ছিক)',
+          cancel: 'বাতিল',
+          confirm: 'আজ থেকে নতুন শুরু',
+          undo: 'ফিরিয়ে নিন',
+          reset: 'রিসেট',
+          zikrSettings: 'যিকির সেটিংস',
+          zikrRowSub: '৩ অক্টোবর ২০২৬ থেকে গণনা · ফিরিয়ে নিন',
+          replaces: '"কাউন্টার রিসেট" এর বদলে, যা আপনার মোট শূন্য করত আর লক্ষ্য মুছে দিত।',
+          zikrStats: 'আপনার যিকির',
+          total: 'মোট',
+          streak: 'ধারাবাহিকতা',
+          best: 'সেরা',
+          sinceChip: '৩ অক্টোবর থেকে',
+          allTime: 'সর্বকালের মোট দেখুন: ৪৮,৯১২',
+          history: 'ইতিহাস',
+          historySub:
+            'ক্যালেন্ডার ও চার্টে প্রতিটি দিন থাকবে। প্রতিটি নতুন শুরু একটি সরু সোনালি রেখায় চিহ্নিত।',
+          logTitle: 'গণনা লিখুন',
+          tabAdd: 'গণনা যোগ',
+          tabFix: 'একটি দিন ঠিক করুন',
+          dayLabel: 'দিন',
+          fixSub:
+            'সেই দিনের প্রতিটি যিকিরের সঠিক সংখ্যা দিন। আপনার মোট, ধারাবাহিকতা ও নূর সেই অনুযায়ী বদলাবে।',
+          was: 'আগে ৩,৩০০',
+          was2: 'আগে ১০০',
+          was3: 'আগে ০',
+          fixNote:
+            'সংখ্যা ০ পর্যন্ত কমানো যায়, এর নিচে নয়। সেদিনের কাউন্টার সেশন সময়ের চার্টে থেকে যাবে।',
+          saveFix: 'সংশোধন সংরক্ষণ (−২,৯৭০)',
+          sheetTitle: (d) => `${d} নতুন করে শুরু করবেন?`,
+          sheetAll: 'সব পরিসংখ্যান নতুন করে শুরু করবেন?',
+          lead: 'আজ থেকে আপনার গণনা আবার শুরু হবে। আগের প্রতিটি দিন ইতিহাসে থাকবে।',
+          done: (d) => `${d} আজ থেকে নতুন করে শুরু হলো।`,
+          doneAll: 'সব পরিসংখ্যান আজ থেকে নতুন করে শুরু হলো।',
+        },
+      };
+      let lang = 'en';
+      let pending = null;
+
+      function renderRows() {
+        const box = document.getElementById('rows');
+        box.innerHTML = DOMAINS.map(
+          (
+            d
+          ) => `<div class="row"><div class="txt"><b>${d[lang]}</b><small>${d.since[lang]}</small></div>
+          <button class="btn" data-domain="${d.id}">${T[lang].reset}</button></div>`
+        ).join('');
+        const m = document.getElementById('matrix');
+        m.innerHTML =
+          DOMAINS.map(
+            (d) =>
+              `<tr><td><b>${d[lang]}</b></td><td>${d.chg[lang].join('<br>')}</td><td>${d.stay[lang].join('<br>')}</td></tr>`
+          ).join('') +
+          `<tr class="muted"><td><b>Rayhanah</b></td><td>(asked) recommended: no reset</td><td>Cycles, days, predictions</td></tr>
+           <tr class="muted"><td><b>Noor</b></td><td>(asked)</td><td>This week's Noor is weekly anyway</td></tr>
+           <tr class="muted"><td><b>Hifz, Adhkār</b></td><td>No reset</td><td>Memorised āyāt and review schedule; daily done flags</td></tr>`;
+      }
+      function applyLang() {
+        document.querySelectorAll('[data-i]').forEach((el) => {
+          const v = T[lang][el.dataset.i];
+          if (typeof v === 'string') el.textContent = v;
+        });
+        renderRows();
+      }
+      function openSheet(id) {
+        pending = id;
+        const t = T[lang];
+        const ds = id === 'all' ? DOMAINS : DOMAINS.filter((d) => d.id === id);
+        document.getElementById('sTitle').textContent =
+          id === 'all' ? t.sheetAll : t.sheetTitle(ds[0][lang]);
+        document.getElementById('sLead').textContent = t.lead;
+        const pick = (k) =>
+          ds
+            .flatMap((d) => (id === 'all' ? [`<b>${d[lang]}:</b> ${d[k][lang][0]}`] : d[k][lang]))
+            .map((x) => `<li>${x}</li>`)
+            .join('');
+        document.getElementById('sChg').innerHTML = pick('chg');
+        document.getElementById('sStay').innerHTML = pick('stay');
+        document.getElementById('sheet').classList.add('open');
+      }
+      document.addEventListener('click', (e) => {
+        const b = e.target.closest('[data-domain]');
+        if (b && b.closest('#p1')) openSheet(b.dataset.domain);
+      });
+      document.getElementById('sCancel').onclick = () =>
+        document.getElementById('sheet').classList.remove('open');
+      document.getElementById('sOk').onclick = () => {
+        document.getElementById('sheet').classList.remove('open');
+        const t = T[lang];
+        const d = DOMAINS.find((x) => x.id === pending);
+        document.getElementById('tMsg').textContent =
+          pending === 'all' ? t.doneAll : t.done(d[lang]);
+        const ds = pending === 'all' ? DOMAINS : [d];
+        ds.forEach(
+          (x) =>
+            (x.since = { en: 'Counting since today (10 Oct)', bn: 'আজ (১০ অক্টোবর) থেকে গণনা' })
+        );
+        renderRows();
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+      };
+      document.getElementById('themeBar').addEventListener('click', (e) => {
+        const b = e.target.closest('button');
+        if (!b) return;
+        if (b.dataset.t) {
+          document.querySelectorAll('[data-t]').forEach((x) => x.classList.toggle('on', x === b));
+          document.querySelectorAll('.phone').forEach((p) => {
+            p.classList.toggle('t-dark', b.dataset.t === 'dark');
+            p.classList.toggle('t-light', b.dataset.t === 'light');
+          });
+        }
+        if (b.dataset.lang) {
+          lang = b.dataset.lang;
+          document
+            .querySelectorAll('[data-lang]')
+            .forEach((x) => x.classList.toggle('on', x === b));
+          applyLang();
+        }
+      });
+      applyLang();
+    </script>
+  </body>
+</html>

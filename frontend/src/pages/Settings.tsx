@@ -87,9 +87,11 @@ import {
   RectangleStackIcon,
   QueueListIcon,
   TagIcon,
+  ArrowPathIcon,
 } from '@heroicons/react/24/outline';
 import type { HomeSpecialLayout } from '../utils/homeSpecial.js';
 import HomeLayoutEditor from '../components/home/HomeLayoutEditor.js';
+import FreshStart from '../components/FreshStart.js';
 import { getThemeMode, setThemeMode, THEME_MODE_EVENT, type ThemeMode } from '../utils/theme.js';
 import {
   CrescentIcon,
@@ -1292,6 +1294,16 @@ export default function Settings() {
             delay={0.22}
           >
             <ZikrLibrarySection />
+          </SectionCard>
+
+          {/* ── Fresh start (U7): stats restart from a day, nothing deleted ── */}
+          <SectionCard
+            icon={<ArrowPathIcon className="w-5 h-5 text-brand-emerald" />}
+            title={t('freshStart.title')}
+            subtitle={t('freshStart.sub')}
+            delay={0.24}
+          >
+            <FreshStart withAll />
           </SectionCard>
 
           {/* ── Your data ── */}

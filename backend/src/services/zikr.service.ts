@@ -1,6 +1,7 @@
 import User from '../models/User.js';
 import ZikrDaily from '../models/ZikrDaily.js';
 import ZikrEvent from '../models/ZikrEvent.js';
+import { resetAreas, resetDateFor } from './statsReset.service.js';
 import {
   truncateToTimezone,
   bucketDateForDayString,
@@ -152,6 +153,24 @@ export async function batchIncrementZikr(
   return applyIncrements(userId, increments, timezoneOffset);
 }
 
+/** Zikr totals from a fresh-start day on (U7), from the daily buckets. A
+ * bucket's UTC date part is the user's local day (timezone-flexible.ts), so
+ * a plain midnight-UTC bound selects exactly the days >= `day`. */
+export async function zikrTotalsSince(
+  userId: string,
+  day: string
+): Promise<{ totalCount: number; perType: Array<{ zikrType: string; total: number }> }> {
+  const rows = (await ZikrDaily.aggregate([
+    { $match: { userId, date: { $gte: new Date(`${day}T00:00:00.000Z`) } } },
+    { $group: { _id: '$zikrType', total: { $sum: '$count' } } },
+  ])) as Array<{ _id: string; total: number }>;
+  const perType = rows
+    .filter((r) => r.total > 0)
+    .map((r) => ({ zikrType: r._id, total: r.total }))
+    .sort((a, b) => b.total - a.total);
+  return { totalCount: perType.reduce((n, r) => n + r.total, 0), perType };
+}
+
 export async function getZikrSummary(
   userId: string,
   timezoneOffset: number = DEFAULT_TIMEZONE_OFFSET,
@@ -161,6 +180,10 @@ export async function getZikrSummary(
   perType: Array<{ zikrType: string; total: number }>;
   types: unknown[];
   today: { total: number; perType: Record<string, number> };
+  /** Fresh-start day the totals count from (U7), or null. */
+  since: string | null;
+  /** Every phase together (the stored running total). */
+  lifetimeTotal: number;
 }> {
   const user = await User.findOne({ uid: userId }).select(ZIKR_PROJECTION);
   if (!user) throw new Error('User not found');
@@ -187,11 +210,16 @@ export async function getZikrSummary(
     );
   }
 
+  const since = await resetDateFor(userId, 'zikr');
+  const sinceTotals = since ? await zikrTotalsSince(userId, since) : null;
+
   return {
-    totalCount: user.totalCount ?? 0,
-    perType: perType.sort((a, b) => b.total - a.total),
+    totalCount: sinceTotals ? sinceTotals.totalCount : (user.totalCount ?? 0),
+    perType: sinceTotals ? sinceTotals.perType : perType.sort((a, b) => b.total - a.total),
     types: user.zikrTypes,
     today: { total: todayTotal, perType: todayPerType },
+    since,
+    lifetimeTotal: user.totalCount ?? 0,
   };
 }
 
@@ -412,15 +440,13 @@ export async function deleteAllUserZikrData(userId: string): Promise<void> {
   );
 }
 
-/** Reset zikr counters without deleting history. Zeros the running totals
- *  and streak but keeps daily snapshots and zikr types intact. */
-export async function resetZikrCounters(userId: string): Promise<void> {
-  await User.updateOne({ uid: userId }, { $set: { totalCount: 0, zikrTotals: {} } });
-  const ZikrStreak = (await import('../models/ZikrStreak.js')).default;
-  await ZikrStreak.updateOne(
-    { userId },
-    { $set: { currentStreak: 0, longestStreak: 0, lastCompletedDate: null, isPaused: false } }
-  );
-  const ZikrGoal = (await import('../models/ZikrGoal.js')).default;
-  await ZikrGoal.deleteMany({ userId });
+/** The old "Reset counters" route. It used to zero the lifetime totals and
+ * delete the goal; since U7 it is a non-destructive fresh start from today. */
+export async function resetZikrCounters(userId: string, today?: string): Promise<void> {
+  const day = today && /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : todayKeyUtc();
+  await resetAreas(userId, ['zikr'], day);
+}
+
+function todayKeyUtc(): string {
+  return new Date().toISOString().slice(0, 10);
 }

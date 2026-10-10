@@ -14,6 +14,7 @@ import {
 import { useUpdateFastingProfile, useAddVow } from '../../hooks/useFasting.js';
 import { OBLIGATORY_META } from '../../utils/fastingRules.js';
 import { RefLink, ManageProgress } from './fastingParts.js';
+import FreshStart from '../FreshStart.js';
 
 export interface FastingSettingsSheetProps {
   addVow: ReturnType<typeof useAddVow>;
@@ -351,6 +352,14 @@ export default function FastingSettingsSheet({
                         <RefLink key={r.url} r={r} />
                       ))}
                     </div>
+                  </div>
+
+                  <div className="rounded-card border border-brand-border bg-brand-surface/50 p-4">
+                    <p className="text-white text-sm font-bold">{t('freshStart.title')}</p>
+                    <p className="text-white/70 text-[11px] mt-0.5 mb-2">
+                      {t('freshStart.subOne')}
+                    </p>
+                    <FreshStart areas={['fasting']} />
                   </div>
 
                   <Link

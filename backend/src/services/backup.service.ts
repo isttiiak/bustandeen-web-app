@@ -221,6 +221,8 @@ export async function exportBackup(uid: string): Promise<PlainDoc> {
       logs: cleanAll(hifzLogs),
     },
     naseeh: { plans: cleanAll(naseehPlans) },
+    // Fresh starts of zikr / fasting / quran (U7); salat's are in salat.*.
+    freshStarts: (u?.statsResets as PlainDoc | undefined) ?? null,
     friends: s
       ? {
           visibility: s.visibility ?? null,
@@ -334,6 +336,7 @@ export interface BackupFileV3 {
   quran?: { profile?: PlainDoc | null; logs?: PlainDoc[]; sessions?: PlainDoc[] };
   hifz?: { profile?: PlainDoc | null; entries?: PlainDoc[]; logs?: PlainDoc[] };
   naseeh?: { plans?: PlainDoc[] };
+  freshStarts?: Record<string, unknown> | null;
   friends?: { visibility?: unknown; invisible?: unknown; secret?: Record<string, unknown> } | null;
   rayhanah?: { profile?: PlainDoc | null; cycles?: PlainDoc[]; days?: PlainDoc[] };
 }
@@ -478,6 +481,9 @@ async function importUser(uid: string, data: BackupFileV3): Promise<number> {
     }
   }
 
+  const fresh = importFreshStarts(data.freshStarts);
+  if (fresh) set.statsResets = fresh;
+
   // App settings: stamped "now" so the restored values win on every device
   // (prefsSync is newest-wins per key).
   let settingsCount = 0;
@@ -495,6 +501,37 @@ async function importUser(uid: string, data: BackupFileV3): Promise<number> {
     await User.updateOne({ uid }, { $set: set }, { runValidators: true });
   return settingsCount;
 }
+
+/** Fresh-start entries (U7): kept only when well formed. */
+function importFreshStarts(raw: unknown): PlainDoc | null {
+  if (!isObj(raw)) return null;
+  const out: PlainDoc = {};
+  for (const [area, entries] of Object.entries(raw)) {
+    if (!FRESH_AREAS.has(area) || !Array.isArray(entries)) continue;
+    const list = entries
+      .filter(isObj)
+      .slice(0, 500)
+      .filter((e) => typeof e.date === 'string' && DATE_RE.test(e.date))
+      .map((e) => ({
+        date: e.date,
+        note: typeof e.note === 'string' ? e.note.slice(0, 200) : '',
+        resetAt: e.resetAt ? new Date(e.resetAt as string) : new Date(),
+        ...(isObj(e.prevStreak) ? { prevStreak: e.prevStreak } : {}),
+        ...(isObj(e.surahBaseline)
+          ? {
+              surahBaseline: Object.fromEntries(
+                Object.entries(e.surahBaseline).filter(
+                  ([k, v]) => /^\d{1,3}$/.test(k) && typeof v === 'number' && v >= 0
+                )
+              ),
+            }
+          : {}),
+      }));
+    Object.assign(out, { [area]: list });
+  }
+  return Object.keys(out).length ? out : null;
+}
+const FRESH_AREAS = new Set(['zikr', 'fasting', 'quran']);
 
 async function importRayhanah(uid: string, r: BackupFileV3['rayhanah']): Promise<number> {
   if (!isObj(r)) return 0;

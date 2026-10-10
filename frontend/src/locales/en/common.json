@@ -4252,5 +4252,68 @@
     "shareVia": "Share via apps",
     "copied": "Invitation copied",
     "shareError": "Couldn't open sharing. Try Copy instead."
+  },
+  "freshStart": {
+    "title": "Fresh start",
+    "sub": "Start your counts again from today. Your history stays, nothing is deleted, and you can undo.",
+    "subOne": "Counts, streaks and averages start again from today. Every past day stays in your history, nothing is deleted, and you can undo.",
+    "all": "Reset all stats",
+    "reset": "Reset",
+    "undo": "Undo",
+    "since": "Counting since {{date}}",
+    "never": "Counting from your first day",
+    "sinceChip": "Since {{date}}",
+    "sinceNote": "Totals and streaks count from your fresh start. History shows every day.",
+    "allTimeZikr": "All time: {{total}} zikr, best streak {{best}} days",
+    "sheetTitle": "Fresh start for {{area}}?",
+    "sheetAll": "Fresh start for all stats?",
+    "lead": "From today your counts begin again. Every past day stays in your history.",
+    "changes": "Starts again",
+    "stays": "Stays as it is",
+    "noteLabel": "Note for yourself (optional)",
+    "notePlaceholder": "e.g. After Ramadan",
+    "confirm": "Start fresh today",
+    "done": "{{area}} starts fresh from today.",
+    "doneAll": "All stats start fresh from today.",
+    "undone": "{{area}}: your previous count is back.",
+    "failed": "Could not save. Check your connection and try again.",
+    "area": {
+      "zikr": "Zikr",
+      "salat": "Salat",
+      "fasting": "Fasting",
+      "quran": "Quran"
+    },
+    "zikr": {
+      "chg1": "Total and per-zikr totals",
+      "chg2": "Streak and best streak",
+      "chg3": "Best day",
+      "stay1": "Every day you counted",
+      "stay2": "Counter sessions",
+      "stay3": "Your zikr list and goal"
+    },
+    "salat": {
+      "chg1": "Done, Kaza and Miss rates",
+      "chg2": "Per-prayer streaks",
+      "chg3": "Mosque and jamaah counts",
+      "stay1": "Every prayer you logged",
+      "stay2": "Kaza debt (it has its own reset)",
+      "stay3": "Musafir history"
+    },
+    "fasting": {
+      "chg1": "Total, this month and last 30 days",
+      "chg2": "Voluntary fasts total",
+      "chg3": "Mon and Thu streak and best",
+      "stay1": "Every fast you logged",
+      "stay2": "Qada owed and made up",
+      "stay3": "Kaffarah and vows"
+    },
+    "quran": {
+      "chg1": "Day streak and best streak",
+      "chg2": "All-time pages and ayat",
+      "chg3": "Most-read surahs",
+      "stay1": "Every reading day and session",
+      "stay2": "Khatm count",
+      "stay3": "Khatm progress, bookmarks and hifz"
+    }
   }
 }

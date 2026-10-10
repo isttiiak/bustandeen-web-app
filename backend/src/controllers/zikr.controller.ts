@@ -210,7 +210,7 @@ export const resetZikrCounters = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    await zikrService.resetZikrCounters(req.user.uid);
+    await zikrService.resetZikrCounters(req.user.uid, req.body?.today as string | undefined);
     res.json({ ok: true });
   } catch (err) {
     next(err);

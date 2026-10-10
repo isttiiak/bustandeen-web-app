@@ -2,6 +2,7 @@ import ZikrDaily from '../models/ZikrDaily.js';
 import ZikrGoal from '../models/ZikrGoal.js';
 import ZikrStreak, { IZikrStreak } from '../models/ZikrStreak.js';
 import { truncateToTimezone, DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
+import { resetDateFor } from './statsReset.service.js';
 
 /**
  * Streak rules (Istiak's spec, 2026-07-02; grace made configurable 2026-09-05):
@@ -72,9 +73,10 @@ export async function getStreakStatus(
   timezoneOffset: number = DEFAULT_TIMEZONE_OFFSET,
   todayStr?: string
 ): Promise<StreakStatus> {
-  const [goalDoc, doc] = await Promise.all([
+  const [goalDoc, doc, resetKey] = await Promise.all([
     ZikrGoal.findOne({ userId }),
     ZikrStreak.findOne({ userId }),
+    resetDateFor(userId, 'zikr'),
   ]);
   const goal = goalDoc?.dailyTarget ?? 100;
   const graceDays = goalDoc?.graceDays ?? 1;
@@ -86,10 +88,14 @@ export async function getStreakStatus(
       ? todayStr
       : keyOf(truncateToTimezone(Date.now(), timezoneOffset));
   const yesterdayKey = shiftKey(todayKey, -1);
-  const floorKey = shiftKey(todayKey, -365);
+  // A fresh start (U7) is a floor: no day before it extends the streak.
+  const yearKey = shiftKey(todayKey, -365);
+  const floorKey = resetKey && resetKey > yearKey ? resetKey : yearKey;
 
-  // Credit anchor (from pause/resume or legacy data)
-  const creditKey = doc?.lastCompletedDate ? keyOf(new Date(doc.lastCompletedDate)) : null;
+  // Credit anchor (from pause/resume or legacy data); one older than the
+  // fresh start belongs to the previous phase.
+  const anchorKey = doc?.lastCompletedDate ? keyOf(new Date(doc.lastCompletedDate)) : null;
+  const creditKey = anchorKey && anchorKey >= floorKey ? anchorKey : null;
   const credit = creditKey ? (doc?.currentStreak ?? 0) : 0;
   const sinceKey = creditKey && creditKey > floorKey ? creditKey : floorKey;
 

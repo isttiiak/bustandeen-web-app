@@ -192,7 +192,9 @@ export default function Home() {
   // Confirmed zero LIFETIME zikr count (not "zero today") — strict equality
   // against 0 means this stays false while analyticsData hasn't loaded yet,
   // so an existing user never sees a flash of the brand-new-user treatment.
-  const isNewZikrUser = analyticsData?.allTime?.totalCount === 0;
+  // Lifetime, not "since the fresh start": a reset must not look like a new user.
+  const isNewZikrUser =
+    (analyticsData?.allTime?.lifetime?.totalCount ?? analyticsData?.allTime?.totalCount) === 0;
   const zikrGoalPct =
     analyticsGoal && !isNewZikrUser
       ? Math.min(100, Math.round((effectiveToday / analyticsGoal) * 100))

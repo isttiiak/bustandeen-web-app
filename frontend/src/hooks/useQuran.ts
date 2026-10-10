@@ -57,6 +57,8 @@ export interface QuranSummary {
   pace: number | null;
   estDaysToKhatm: number | null;
   topSurahs: Array<{ surah: number; completions: number }>;
+  /** Fresh-start day streak, best, all-time and top surahs count from (U7). */
+  since?: string | null;
   bookmarks: QuranBookmark[];
 }
 

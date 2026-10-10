@@ -8,6 +8,8 @@ import {
   DEFAULT_TIMEZONE_OFFSET,
 } from '../utils/timezone-flexible.js';
 import { ChartDataPoint } from '../types/api.types.js';
+import { resetDateFor, zikrLifetimeBest } from './statsReset.service.js';
+import { zikrTotalsSince } from './zikr.service.js';
 
 export interface AnalyticsData {
   period: { days: number; startDate: string; endDate: string };
@@ -16,7 +18,15 @@ export interface AnalyticsData {
   today: { total: number; goalMet: boolean; perType: Array<{ zikrType: string; total: number }> };
   goal: IZikrGoal | { dailyTarget: number; isActive: boolean };
   streak: StreakResponse;
-  allTime: { totalCount: number; bestDay: { date: Date | null; count: number } };
+  /** Since the fresh start when there is one (U7), else lifetime. */
+  allTime: {
+    totalCount: number;
+    bestDay: { date: Date | null; count: number };
+    /** The fresh-start day the totals count from, or null. */
+    since: string | null;
+    /** Every phase together, for "see all time". */
+    lifetime: { totalCount: number; longestStreak: number };
+  };
   perType: Array<{ zikrType: string; total: number }>;
 }
 
@@ -77,11 +87,12 @@ export async function getAnalyticsData(
 
   // getStreak derives the live streak from buckets (2-consecutive-miss reset,
   // single-day grace) and refreshes the checkpoint — no cron needed.
-  const [goal, streak, todayRecords, user] = await Promise.all([
+  const [goal, streak, todayRecords, user, since] = await Promise.all([
     ZikrGoal.findOne({ userId }),
     getStreak(userId, timezoneOffset, todayStr),
     ZikrDaily.find({ userId, date: today }),
     User.findOne({ uid: userId }).select('totalCount zikrTotals'),
+    resetDateFor(userId, 'zikr'),
   ]);
 
   const todayTotal = todayRecords.reduce((sum, r) => sum + r.count, 0);
@@ -110,8 +121,15 @@ export async function getAnalyticsData(
     );
   }
 
+  // After a fresh start the totals and best day count from that day; the
+  // stored lifetime totals stay untouched for "see all time".
+  const sinceTotals = since ? await zikrTotalsSince(userId, since) : null;
+  if (sinceTotals) perType = sinceTotals.perType;
+
   const allDailyRecords = (await ZikrDaily.aggregate([
-    { $match: { userId } },
+    {
+      $match: { userId, ...(since ? { date: { $gte: new Date(`${since}T00:00:00.000Z`) } } : {}) },
+    },
     { $group: { _id: '$date', total: { $sum: '$count' } } },
     { $sort: { total: -1 } },
     { $limit: 1 },
@@ -142,7 +160,17 @@ export async function getAnalyticsData(
     },
     goal: goal ?? { dailyTarget: 100, isActive: true },
     streak,
-    allTime: { totalCount: user?.totalCount ?? 0, bestDay },
+    allTime: {
+      totalCount: sinceTotals ? sinceTotals.totalCount : (user?.totalCount ?? 0),
+      bestDay,
+      since,
+      lifetime: {
+        totalCount: user?.totalCount ?? 0,
+        longestStreak: since
+          ? await zikrLifetimeBest(userId, streak.longestStreak)
+          : streak.longestStreak,
+      },
+    },
     perType: perType.sort((a, b) => b.total - a.total),
   };
 }

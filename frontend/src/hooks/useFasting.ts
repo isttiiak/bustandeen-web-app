@@ -40,6 +40,8 @@ export interface FastingSummary {
     voluntaryTotal: number;
     monThuStreak: number;
     bestMonThuStreak: number;
+    /** Fresh-start day these stats count from (U7), or null. */
+    since?: string | null;
   };
   recentLogs: FastingLog[];
 }

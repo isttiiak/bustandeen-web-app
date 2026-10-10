@@ -64,9 +64,14 @@ export interface AnalyticsResponse {
   };
   goal: ZikrGoal;
   streak: ZikrStreak;
+  /** Since the fresh start when there is one (U7), else lifetime. */
   allTime: {
     totalCount: number;
     bestDay: { date: string | null; count: number };
+    /** The fresh-start day these count from, or null (older servers: absent). */
+    since?: string | null;
+    /** Every phase together, for "see all time". */
+    lifetime?: { totalCount: number; longestStreak: number };
   };
   perType: Array<{ zikrType: string; total: number }>;
 }

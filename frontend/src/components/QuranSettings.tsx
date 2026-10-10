@@ -8,6 +8,7 @@ import { XMarkIcon, ArrowPathIcon, BookOpenIcon, Cog6ToothIcon } from '@heroicon
 import { Trans, useTranslation } from 'react-i18next';
 import api from '../lib/api.js';
 import ConfirmDialog from './ConfirmDialog.js';
+import FreshStart from './FreshStart.js';
 import { useQuranSummary, useUpdateQuranProfile } from '../hooks/useQuran.js';
 import { TRANSLATIONS, selectedTranslations } from '../utils/quranData.js';
 import {
@@ -106,7 +107,6 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
   const { data: summary } = useQuranSummary();
   const updateProfile = useUpdateQuranProfile();
   const [confirmResetKhatam, setConfirmResetKhatam] = useState(false);
-  const [confirmResetReading, setConfirmResetReading] = useState(false);
   const [resetting, setResetting] = useState<string | null>(null);
 
   const savedGoal = summary?.profile.dailyGoalAyat ?? 0;
@@ -554,22 +554,9 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                     </button>
                   </div>
                   <div className="border-t border-brand-border pt-2.5">
-                    <p className="text-white/80 text-xs font-semibold">
-                      {t('quranSettings.readingProgress', 'Reading progress')}
-                    </p>
-                    <p className="text-white/70 text-[11px] mb-1.5">
-                      {t(
-                        'quranSettings.readingResetDesc',
-                        'Zero surah completion counts and reader positions. Logs, bookmarks and goal stay.'
-                      )}
-                    </p>
-                    <button
-                      onClick={() => setConfirmResetReading(true)}
-                      className="inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold border border-brand-gold/40 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 transition-colors disabled:opacity-40"
-                    >
-                      <ArrowPathIcon className="w-3 h-3" />{' '}
-                      {t('quranSettings.resetReading', 'Reset reading')}
-                    </button>
+                    <p className="text-white/80 text-xs font-semibold">{t('freshStart.title')}</p>
+                    <p className="text-white/70 text-[11px] mb-1.5">{t('freshStart.subOne')}</p>
+                    <FreshStart areas={['quran']} />
                   </div>
                 </div>
               </div>
@@ -613,36 +600,6 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                 .finally(() => setResetting(null));
             }}
             onCancel={() => setConfirmResetKhatam(false)}
-          />
-          <ConfirmDialog
-            open={confirmResetReading}
-            title={t('quranSettings.readingConfirmTitle', 'Reset reading progress?')}
-            message={t(
-              'quranSettings.readingConfirmMsg',
-              'Surah completion counts and reader positions will be zeroed. Your reading logs, bookmarks and goal are preserved.'
-            )}
-            confirmLabel={
-              resetting === 'reading'
-                ? t('quranSettings.resetting', 'Resetting…')
-                : t('quranSettings.yesReset', 'Yes, reset')
-            }
-            onConfirm={() => {
-              setResetting('reading');
-              api
-                .post('/api/quran/reset-reading')
-                .then(() => {
-                  queryClient.invalidateQueries({ queryKey: ['quran'] });
-                  toast.success(t('quranSettings.readingResetDone', 'Reading progress reset'), {
-                    icon: <BookOpenIcon className="w-5 h-5 text-brand-emerald" />,
-                  });
-                  setConfirmResetReading(false);
-                })
-                .catch(() =>
-                  toast.error(t('quranSettings.resetFail', 'Could not reset. Try again'))
-                )
-                .finally(() => setResetting(null));
-            }}
-            onCancel={() => setConfirmResetReading(false)}
           />
         </>
       )}
