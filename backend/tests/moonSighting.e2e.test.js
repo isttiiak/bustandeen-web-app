@@ -24,6 +24,12 @@ let ansarToken;
 
 const asServant = (r) => r.set('x-admin-token', servantToken);
 const asAnsar = (r) => r.set('x-admin-token', ansarToken);
+const sadaqahAnsarToken = (() => {
+  const header = Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url');
+  const body = Buffer.from(JSON.stringify({ uid: 'sadaqah-ansar-uid' })).toString('base64url');
+  return `${header}.${body}.`;
+})();
+const asSadaqahAnsar = (r) => r.set('x-admin-token', sadaqahAnsarToken);
 const userTok = (uid) => fakeJwt({ uid, email: `${uid}@test.dev`, name: uid });
 const asUser = (uid) => (r) => r.set('Authorization', `Bearer ${userTok(uid)}`);
 
@@ -52,6 +58,13 @@ describe('Moon-sighting overrides (T4.1)', () => {
       ansarDomain: 'general',
       createdBy: 'test-seed',
     });
+    await AdminAccount.create({
+      firebaseUid: 'sadaqah-ansar-uid',
+      email: 'sadaqah@moon-test.dev',
+      role: 'ansar',
+      ansarDomain: 'sadaqah',
+      createdBy: 'test-seed',
+    });
     servantToken = fakeJwt({ uid: 'servant-uid', email: SERVANT });
     ansarToken = fakeJwt({ uid: 'ansar-uid', email: ANSAR });
   });
@@ -71,10 +84,12 @@ describe('Moon-sighting overrides (T4.1)', () => {
     expect(res.headers['cache-control']).toMatch(/max-age/);
   });
 
-  test('only a Servant can add a record', async () => {
+  test('the sadaqah Ansar cannot add a record, and nobody signed out can', async () => {
     expect((await request(app).post('/api/admin/moon-sighting').send(BD)).status).toBe(401);
-    const ansar = await asAnsar(request(app).post('/api/admin/moon-sighting')).send(BD);
-    expect(ansar.status).toBe(403);
+    const sadaqah = await asSadaqahAnsar(request(app).post('/api/admin/moon-sighting')).send(BD);
+    expect(sadaqah.status).toBe(403);
+    const list = await asSadaqahAnsar(request(app).get('/api/admin/moon-sighting'));
+    expect(list.status).toBe(403);
     expect(await AdminAuditLog.countDocuments({ action: /moonSighting/ })).toBe(0);
   });
 
@@ -124,10 +139,10 @@ describe('Moon-sighting overrides (T4.1)', () => {
   });
 
   test('deactivating hides it publicly but keeps it, audited', async () => {
-    const ansar = await asAnsar(
+    const sadaqah = await asSadaqahAnsar(
       request(app).patch(`/api/admin/moon-sighting/${recordId}/deactivate`)
     );
-    expect(ansar.status).toBe(403);
+    expect(sadaqah.status).toBe(403);
 
     const res = await asServant(
       request(app).patch(`/api/admin/moon-sighting/${recordId}/deactivate`)
@@ -203,5 +218,25 @@ describe('Moon-sighting overrides (T4.1)', () => {
       hijriOffset: 2,
     });
     expect(bad.status).toBe(400);
+  });
+
+  test('the general Ansar can add and withdraw a record too, both audited (U8)', async () => {
+    const add = await asAnsar(request(app).post('/api/admin/moon-sighting')).send({
+      ...BD,
+      country: 'PK',
+      note: 'Ruet-e-Hilal: Shawwal moon seen tonight.',
+    });
+    expect(add.status).toBe(201);
+    const id = add.body.record._id;
+    expect(id).toBeTruthy();
+
+    const off = await asAnsar(request(app).patch(`/api/admin/moon-sighting/${id}/deactivate`));
+    expect(off.status).toBe(200);
+
+    const logged = await AdminAuditLog.find({ actorEmail: ANSAR, action: /moonSighting/ });
+    expect(logged.map((e) => e.action).sort()).toEqual([
+      'moonSighting.create',
+      'moonSighting.deactivate',
+    ]);
   });
 });

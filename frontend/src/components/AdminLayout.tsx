@@ -237,6 +237,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   {t('adminLayout.feedback', 'Feedback')}
                 </NavLink>
               )}
+              {/* The Servant reaches it from Tools; the general Ansar here. */}
+              {canSeeZikrRequests && !isServant && (
+                <NavLink to="/admin/moon-sighting" className={navItemClass}>
+                  <MoonIcon className="w-4 h-4" />
+                  {t('adminLayout.moonSighting', 'Moon sighting')}
+                </NavLink>
+              )}
               {/* Broadcast is open to every admin, Servant or Ansar */}
               <NavLink to="/admin/broadcast" className={navItemClass}>
                 <MegaphoneIcon className="w-4 h-4" />
