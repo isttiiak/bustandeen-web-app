@@ -1,0 +1,35 @@
+name: Scheduled rebuild
+
+# The prerendered pages are dated at build time: the district timetables
+# keep this month and the next two (T4.4), and the Ramadan calendars read
+# Bangladesh's moon-sighting records (T4.1). Without a deploy nothing rolls
+# over, so this asks Vercel for a fresh production build:
+# - on the 1st of every month (00:30 UTC = 06:30 in Bangladesh);
+# - by hand (Actions > Scheduled rebuild > Run workflow), e.g. right after a
+#   moon-sighting record is entered in Admin.
+# Needs the repository secret VERCEL_DEPLOY_HOOK_URL (Vercel > Project >
+# Settings > Git > Deploy Hooks, branch main). Until it exists this is a no-op.
+
+on:
+  schedule:
+    - cron: '30 0 1 * *'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  rebuild:
+    name: Trigger production deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Call the Vercel deploy hook
+        env:
+          HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$HOOK" ]; then
+            echo "::warning::VERCEL_DEPLOY_HOOK_URL is not set: nothing deployed."
+            exit 0
+          fi
+          curl --fail --silent --show-error --max-time 30 -X POST "$HOOK" > /dev/null
+          echo "Production deploy requested."
