@@ -14,6 +14,12 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - The QR library (`qrcode-generator`, MIT, no dependencies) is a build-time devDependency only: it never reaches the browser.
 
+## v5.131.1 - Faster site build (Ramadan calendars) - 2026-10-10
+
+### Fixed
+
+- **The production deploy of v5.131.0 timed out** (Vercel's 45-minute build limit) while prerendering the Ramadan calendars, so the live site stayed on v5.130.0. Each Ramadan page built about 200 date formatters (most of them Umm al-Qura ones) and looked up the same month again and again; the build now makes each formatter once and remembers Ramadan's dates per year. Rendering the Ramadan, monthly and daily pages takes 20 seconds instead of 287 locally, with byte-identical output (every page's HTML compared before and after).
+
 ## v5.131.0 - Ramadan 2027 sehri and iftar calendar for every district of Bangladesh - 2026-10-10
 
 ### Added

@@ -5,6 +5,7 @@ import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 import { DownloadPdfButton, PrintSheetHead } from '../components/PrintSheet.js';
 import type { QrPath } from '../utils/qr.js';
 import { computePrayerTimes, formatTimeInZone, ramadanRangeForHijriYear } from '../utils/calc.js';
+import { dateFormat } from '../utils/intl.js';
 
 const LOCALE_BY_LANG: Record<SeoLang, string> = { en: 'en-US', bn: 'bn-BD', ar: 'ar-SA' };
 
@@ -83,7 +84,7 @@ export default function RamadanCalendarPage({ lang, city, hijriYear, qr }: Props
               <tr key={d.day} className="border-b border-[#1e2d42] last:border-0">
                 <td className="px-4 py-2 text-[#f1f5f9] font-semibold tabular-nums">{d.day}</td>
                 <td className="px-4 py-2 text-[#94a3b8]">
-                  {new Intl.DateTimeFormat(locale, {
+                  {dateFormat(locale, {
                     month: 'short',
                     day: 'numeric',
                     timeZone: city.timezone,

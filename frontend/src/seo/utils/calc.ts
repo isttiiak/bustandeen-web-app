@@ -16,6 +16,7 @@ import {
   type AsrSchool,
   type CalcMethodId,
 } from '../../utils/countryDefaults.js';
+import { dateFormat } from './intl.js';
 
 export interface PrayerTimesResult {
   fajr: Date;
@@ -62,7 +63,7 @@ export function computePrayerTimes(
 }
 
 export function formatTimeInZone(date: Date, timezone: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale, {
+  return dateFormat(locale, {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
@@ -71,7 +72,7 @@ export function formatTimeInZone(date: Date, timezone: string, locale: string): 
 }
 
 export function formatDateInZone(date: Date, timezone: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale, {
+  return dateFormat(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -86,7 +87,7 @@ export interface HijriDate {
 }
 
 export function toHijri(date: Date): HijriDate {
-  const fmt = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', {
+  const fmt = dateFormat('en-US-u-ca-islamic-umalqura', {
     day: 'numeric',
     month: 'numeric',
     year: 'numeric',
@@ -157,7 +158,19 @@ export function distanceToKaabaKm(lat: number, lng: number): number {
  * direct formula isn't possible — this is the standard approach for
  * converting a specific Hijri month back to Gregorian dates via `Intl`.
  */
+const ramadanRanges = new Map<number, { start: Date; end: Date }>();
+
 export function ramadanRangeForHijriYear(hijriYear: number): { start: Date; end: Date } {
+  // Every Ramadan page asks for the same year: scan once, hand out copies.
+  let range = ramadanRanges.get(hijriYear);
+  if (!range) {
+    range = scanRamadanRange(hijriYear);
+    ramadanRanges.set(hijriYear, range);
+  }
+  return { start: new Date(range.start), end: new Date(range.end) };
+}
+
+function scanRamadanRange(hijriYear: number): { start: Date; end: Date } {
   // A Hijri year is ~354.37 Gregorian days; Ramadan is the 9th month, so it
   // starts roughly 8 * 29.53 ≈ 236 days into the Hijri year. Seed a guess,
   // then walk to the exact boundary.

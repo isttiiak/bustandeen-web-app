@@ -4,6 +4,7 @@
 // (locales/{en,bn}/common.json hijriMonths).
 import { bnOf } from './chrome.js';
 import { BD_TZ, type YearMonth } from '../utils/monthTable.js';
+import { dateFormat, numberFormat } from '../utils/intl.js';
 
 export type MonthlyLang = 'en' | 'bn';
 
@@ -164,7 +165,7 @@ export const MONTHLY: Record<MonthlyLang, MonthlyStrings> = {
 /** "October 2026" / "অক্টোবর ২০২৬". */
 export function formatMonth(ym: YearMonth, lang: MonthlyLang, withYear = true): string {
   const [y, m] = ym.split('-').map(Number);
-  return new Intl.DateTimeFormat(MONTHLY[lang].locale, {
+  return dateFormat(MONTHLY[lang].locale, {
     month: 'long',
     ...(withYear ? { year: 'numeric' } : {}),
     timeZone: 'UTC',
@@ -173,7 +174,7 @@ export function formatMonth(ym: YearMonth, lang: MonthlyLang, withYear = true): 
 
 /** "4:35" / "৪:৩৫": a timetable column needs no AM/PM. */
 export function formatClock(date: Date, lang: MonthlyLang): string {
-  const parts = new Intl.DateTimeFormat(MONTHLY[lang].locale, {
+  const parts = dateFormat(MONTHLY[lang].locale, {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
@@ -185,12 +186,12 @@ export function formatClock(date: Date, lang: MonthlyLang): string {
 }
 
 export function formatNumber(n: number, lang: MonthlyLang): string {
-  return new Intl.NumberFormat(MONTHLY[lang].locale, { useGrouping: false }).format(n);
+  return numberFormat(MONTHLY[lang].locale, { useGrouping: false }).format(n);
 }
 
 /** Short weekday of a noon-UTC date: "Thu" / "বৃহস্পতি". */
 export function formatWeekday(noon: Date, lang: MonthlyLang): string {
-  return new Intl.DateTimeFormat(MONTHLY[lang].locale, {
+  return dateFormat(MONTHLY[lang].locale, {
     weekday: 'short',
     timeZone: 'UTC',
   }).format(noon);
