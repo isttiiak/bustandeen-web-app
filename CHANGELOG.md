@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.141.0 - Correct a past zikr day - 2026-10-10
+
+### Added
+
+- **Correct a day (U7, the open U4 question).** Log counts now has two tabs: "Add counts" (as before) and "Correct a day". Pick a past day and set the right count for each zikr on it, lower (down to 0) or higher; the save button shows the difference. Your totals move by exactly that difference, and the streak, goal days and Noor follow because they are worked out from the days. Counter sessions you timed that day stay in the time-of-day chart. Not in demo mode.
+- **How far back:** 3 days by default (Istiak: exact counts are hard to remember), and a new **Analytics** group in Zikr settings offers 7, 14 or 30 days for people who keep careful counts. Synced across devices (`bustandeen_zikr_fix_days`, both whitelists). The server never accepts more than 30 days, today or the future.
+- **Zikr settings on Zikr analytics:** a settings button beside "Log counts" opens the same drawer as the counter (correction window and Fresh start live there).
+
 ## v5.140.0 - Fresh start for your stats - 2026-10-10
 
 ### Added

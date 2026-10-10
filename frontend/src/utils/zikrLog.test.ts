@@ -25,6 +25,10 @@ const {
   parseLogAmount,
   rejectedLogSummary,
   todaysLoggedCounts,
+  correctDayOptions,
+  correctionChanges,
+  getFixDays,
+  setFixDays,
 } = await import('./zikrLog.js');
 const { enqueueSyncOp, clearSyncOutbox } = await import('./syncOutbox.js');
 const { unsyncedCounts } = await import('../store/useZikrStore.js');
@@ -213,5 +217,42 @@ describe('rejectedLogSummary (U4: a queued log the server refused)', () => {
     expect(rejectedLogSummary({ date: '2026-10-01' })).toBeNull();
     expect(rejectedLogSummary({ increments: [{ amount: 5, ts: 1 }] })).toBeNull();
     expect(rejectedLogSummary({ increments: [{ amount: 0, ts: 1, manual: true }] })).toBeNull();
+  });
+});
+
+// U7 "Correct a day": which past days are offered and what is sent.
+describe('correct a day', () => {
+  it('offers yesterday back to the window, never today', () => {
+    // 2026-10-10 14:00 in Dhaka, Fajr mode: today is the 10th.
+    const days = correctDayOptions(3, at(2026, 10, 10, 14));
+    expect(days).toEqual(['2026-10-09', '2026-10-08', '2026-10-07']);
+  });
+
+  it('before Fajr the closing day is still "today", so yesterday is a day earlier', () => {
+    // 02:00 on the 10th belongs to the 9th until Fajr.
+    expect(correctDayOptions(1, at(2026, 10, 10, 2))).toEqual(['2026-10-08']);
+  });
+
+  it('the window defaults to 3 and only takes the offered choices', () => {
+    expect(getFixDays()).toBe(3);
+    setFixDays(30);
+    expect(getFixDays()).toBe(30);
+    store.setItem('bustandeen_zikr_fix_days', '999');
+    expect(getFixDays()).toBe(3);
+  });
+
+  it('sends only changed counts; empty means 0; bad input blocks saving', () => {
+    const was = { SubhanAllah: 3300, Alhamdulillah: 100 };
+    expect(correctionChanges(was, { SubhanAllah: '330', Alhamdulillah: '100' })).toEqual({
+      SubhanAllah: 330,
+    });
+    expect(correctionChanges(was, { SubhanAllah: '', Takbir: '34' })).toEqual({
+      SubhanAllah: 0,
+      Takbir: 34,
+    });
+    expect(correctionChanges(was, { SubhanAllah: '3300' })).toEqual({});
+    expect(correctionChanges(was, { SubhanAllah: '1.5' })).toBeNull();
+    expect(correctionChanges(was, { SubhanAllah: '-1' })).toBeNull();
+    expect(correctionChanges(was, { SubhanAllah: '1000001' })).toBeNull();
   });
 });

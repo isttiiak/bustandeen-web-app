@@ -15,6 +15,7 @@ import {
   ExclamationTriangleIcon,
   ListBulletIcon,
   PlusCircleIcon,
+  Cog6ToothIcon,
   PresentationChartLineIcon,
   TrophyIcon,
 } from '@heroicons/react/24/outline';
@@ -46,6 +47,7 @@ import { getTrackingDay } from '../utils/trackingDay.js';
 import { formatDayLabel, formatLocaleDate, formatLocaleTime } from '../utils/localeDate.js';
 import { useEscapeKey } from '../hooks/useEscapeKey.js';
 import ZikrLogCountsModal from '../components/zikr/ZikrLogCountsModal.js';
+import ZikrSettings from '../components/ZikrSettings.js';
 
 // ─── Heatmap Calendar ─────────────────────────────────────────────────────────
 
@@ -408,6 +410,7 @@ export default function ZikrAnalytics() {
   const { t, i18n } = useTranslation();
   const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const [selectedPeriod, setSelectedPeriod] = useState(7);
+  const [showSettings, setShowSettings] = useState(false);
   const [activeTab, setActiveTab] = useState<'today' | 'all'>('today');
   const [showGoalModal, setShowGoalModal] = useState(false);
   useEscapeKey(() => setShowGoalModal(false), showGoalModal);
@@ -589,15 +592,26 @@ export default function ZikrAnalytics() {
               ]}
             />
 
-            {/* Log missed counts button */}
-            <motion.button
-              whileTap={{ scale: 0.97 }}
-              onClick={() => setShowManualEntry(true)}
-              className={BTN_SECONDARY}
-            >
-              <PlusCircleIcon className="w-4 h-4 text-brand-emerald" />
-              {t('zikrAnalytics.logMissedCounts')}
-            </motion.button>
+            <div className="flex items-center gap-2">
+              {/* Log missed counts button */}
+              <motion.button
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowManualEntry(true)}
+                className={BTN_SECONDARY}
+              >
+                <PlusCircleIcon className="w-4 h-4 text-brand-emerald" />
+                {t('zikrAnalytics.logMissedCounts')}
+              </motion.button>
+              {/* Zikr settings here too (U7): the correction window and Fresh start live there */}
+              <button
+                onClick={() => setShowSettings(true)}
+                className={`${BTN_SECONDARY} !px-3`}
+                aria-label={t('zikrFix.openSettings')}
+                data-testid="zikr-analytics-settings"
+              >
+                <Cog6ToothIcon className="w-5 h-5" />
+              </button>
+            </div>
           </div>
           <IntentionLine />
 
@@ -1137,6 +1151,7 @@ export default function ZikrAnalytics() {
         onClose={() => setShowManualEntry(false)}
         todayPerType={todayTypes}
       />
+      <ZikrSettings open={showSettings} onClose={() => setShowSettings(false)} />
 
       <ChartInfoModal
         title={infoTopic ? (CHART_INFO[infoTopic]?.title ?? null) : null}

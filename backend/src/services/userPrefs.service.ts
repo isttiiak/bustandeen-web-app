@@ -35,6 +35,7 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_home_goals',
   'bustandeen_zikr_quick',
   'bustandeen_zikr_quick_action',
+  'bustandeen_zikr_fix_days',
   'bustandeen_quran_last',
   // Salat
   'bustandeen_tasbih_breakdown',

@@ -10,6 +10,8 @@ import {
   renameZikrTypeSchema,
   timeOfDaySchema,
   sessionsSchema,
+  getDaySchema,
+  correctDaySchema,
 } from '../validation/zikr.schemas.js';
 import { submitZikrRequestSchema } from '../validation/zikrRequest.schemas.js';
 import { idempotent } from '../middleware/idempotency.js';
@@ -31,6 +33,9 @@ router.post(
   zikrController.batchIncrementHandler
 );
 router.get('/summary', requireAuth, zikrController.getSummaryHandler);
+// "Correct a day" (U7): read a past day's counts, set them exactly.
+router.get('/day', requireAuth, validate(getDaySchema), zikrController.getDayHandler);
+router.put('/day', requireAuth, validate(correctDaySchema), zikrController.correctDayHandler);
 router.get(
   '/time-of-day',
   requireAuth,

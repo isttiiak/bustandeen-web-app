@@ -153,6 +153,94 @@ export async function batchIncrementZikr(
   return applyIncrements(userId, increments, timezoneOffset);
 }
 
+/** One tracking day's counts per zikr. A bucket's UTC date part is the
+ * user's local day (timezone-flexible.ts), so the day is a UTC-date range;
+ * that also catches a bucket written under another timezone offset. */
+export async function getDayCounts(userId: string, day: string): Promise<Record<string, number>> {
+  const from = new Date(`${day}T00:00:00.000Z`);
+  const to = new Date(from.getTime() + 86_400_000);
+  const docs = await ZikrDaily.find({ userId, date: { $gte: from, $lt: to } }).select(
+    'zikrType count'
+  );
+  const out = new Map<string, number>();
+  for (const d of docs) out.set(d.zikrType, (out.get(d.zikrType) ?? 0) + d.count);
+  return Object.fromEntries(out);
+}
+
+/**
+ * "Correct a day" (U7, the U4 gap): set the exact count of each given zikr
+ * on a PAST tracking day (yesterday back to 30 days). The day's buckets are
+ * set, and the lifetime totals move by the difference (never below 0).
+ * Streak, goal days and Noor are derived from the buckets, so they follow.
+ * Counter sessions (ZikrEvent) are left as they were.
+ */
+export async function correctDay(
+  userId: string,
+  day: string,
+  today: string,
+  counts: Record<string, number>,
+  maxDays: number
+): Promise<Record<string, number>> {
+  const DAY_MS = 86_400_000;
+  const dayMs = Date.parse(`${day}T00:00:00.000Z`);
+  const todayMs = Date.parse(`${today}T00:00:00.000Z`);
+  if (!(dayMs < todayMs && dayMs >= todayMs - maxDays * DAY_MS)) {
+    throw Object.assign(new Error(`Only the last ${maxDays} days can be corrected.`), {
+      statusCode: 400,
+    });
+  }
+  const from = new Date(dayMs);
+  const to = new Date(dayMs + DAY_MS);
+
+  const deltas = new Map<string, number>();
+  for (const [zikrType, target] of Object.entries(counts)) {
+    const docs = await ZikrDaily.find({ userId, zikrType, date: { $gte: from, $lt: to } }).sort({
+      date: 1,
+    });
+    const current = docs.reduce((n, d) => n + d.count, 0);
+    if (target === current) continue;
+    const [first, ...rest] = docs;
+    if (first) {
+      first.count = target;
+      await first.save();
+      for (const d of rest) {
+        d.count = 0;
+        await d.save();
+      }
+    } else {
+      // No bucket yet for that day: anchored like every other bucket
+      // (the date's own midnight UTC keeps the UTC date = the local day).
+      await ZikrDaily.create({ userId, date: from, zikrType, count: target });
+    }
+    deltas.set(zikrType, target - current);
+  }
+
+  if (deltas.size) {
+    // One update moves every running total by its difference, clamped at 0.
+    const clampAdd = (current: unknown, delta: number) => ({
+      $max: [0, { $add: [{ $ifNull: [current, 0] }, delta] }],
+    });
+    let totals: unknown = { $ifNull: ['$zikrTotals', {}] };
+    let sum = 0;
+    for (const [zikrType, delta] of deltas) {
+      sum += delta;
+      totals = {
+        $setField: {
+          field: { $literal: zikrType },
+          input: totals,
+          value: clampAdd({ $getField: { field: { $literal: zikrType }, input: totals } }, delta),
+        },
+      };
+    }
+    await User.updateOne(
+      { uid: userId },
+      [{ $set: { totalCount: clampAdd('$totalCount', sum), zikrTotals: totals } }],
+      { updatePipeline: true }
+    );
+  }
+  return getDayCounts(userId, day);
+}
+
 /** Zikr totals from a fresh-start day on (U7), from the daily buckets. A
  * bucket's UTC date part is the user's local day (timezone-flexible.ts), so
  * a plain midnight-UTC bound selects exactly the days >= `day`. */

@@ -124,3 +124,25 @@ export const renameZikrTypeSchema = z.object({
     newName: zikrTypeName.transform((s) => s.trim()),
   }),
 });
+
+// "Correct a day" (U7): set the exact counts of a past tracking day. The
+// client offers 3 days back by default (up to 30 in Zikr settings); the
+// server allows yesterday back to CORRECT_MAX_DAYS before `today`.
+export const CORRECT_MAX_DAYS = 30;
+const day = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+
+export const getDaySchema = z.object({
+  query: z.object({ date: day }),
+});
+
+export const correctDaySchema = z.object({
+  body: z.object({
+    date: day,
+    today: day,
+    counts: z
+      .record(zikrTypeName, z.number().int().min(0).max(1_000_000))
+      .refine((r) => Object.keys(r).length >= 1 && Object.keys(r).length <= 200, {
+        message: 'Between 1 and 200 zikr per correction',
+      }),
+  }),
+});
