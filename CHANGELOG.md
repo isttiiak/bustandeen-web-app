@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.133.0 - Go to top - 2026-10-10
+
+### Added
+
+- **"Go to top" button (U1)** on every app page that scrolls (analytics, trackers, Quran, Friends, Settings and the rest), bottom right, once you have scrolled down a little. It sits above the Naseeh quick-log button in one stack, so the two never overlap, and it keeps clear of the phone's home indicator. Not shown on the zikr counter (a tap-anywhere surface) or in Naseeh. Respects Reduce motion.
+
+### Fixed
+
+- The Quran surah list had its own scroll-to-top button that never appeared (the page scrolls inside `<body>`, not the window) and would have sat on top of the quick-log button. It is replaced by the shared one.
+
 ## v5.132.1 - Monthly site rebuild - 2026-10-10
 
 ### Added

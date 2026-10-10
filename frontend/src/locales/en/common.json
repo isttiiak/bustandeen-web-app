@@ -367,7 +367,8 @@
     "closePermanently": "Close permanently",
     "skipToContent": "Skip to main content",
     "mainNav": "Main",
-    "footerNav": "Footer"
+    "footerNav": "Footer",
+    "goToTop": "Go to top"
   },
   "confirmDialog": {
     "yesDelete": "Yes, delete"
@@ -1844,7 +1845,6 @@
   "quranBrowse": {
     "loadError": "Could not load surah list",
     "noMatch": "No surahs match your search",
-    "scrollToTop": "Scroll to top",
     "searchAriaLabel": "Search surahs",
     "searchPlaceholder": "Search surahs…",
     "title": "Browse"

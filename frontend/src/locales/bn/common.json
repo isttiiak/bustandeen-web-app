@@ -309,7 +309,8 @@
     "closePermanently": "চিরতরে বন্ধ করুন",
     "skipToContent": "মূল অংশে যান",
     "mainNav": "প্রধান",
-    "footerNav": "ফুটার"
+    "footerNav": "ফুটার",
+    "goToTop": "উপরে যান"
   },
   "confirmDialog": {
     "yesDelete": "হ্যাঁ, মুছুন"
@@ -1653,7 +1654,6 @@
   "quranBrowse": {
     "loadError": "সূরা তালিকা লোড করা যায়নি",
     "noMatch": "আপনার সন্ধানে কোনো সূরা মেলেনি",
-    "scrollToTop": "উপরে যান",
     "searchAriaLabel": "সূরা খুঁজুন",
     "searchPlaceholder": "সূরা খুঁজুন…",
     "title": "ব্রাউজ"
