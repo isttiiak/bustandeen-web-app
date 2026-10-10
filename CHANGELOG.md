@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.132.0 - Download PDF for Ramadan calendars and monthly timetables - 2026-10-10
+
+### Added
+
+- **"Download PDF" button (T4.4, part 4)** on every Ramadan calendar (all cities, English, Bangla and Arabic) and on every monthly district timetable. It opens the browser's print window on an A4 sheet: choose "Save as PDF", or print it. No PDF files are stored; the sheet is the page itself.
+- **The A4 sheet**: black on white, the whole month or Ramadan on one page, a header with the title, the Hijri range and a QR code back to the page ("View online"). The QR is drawn when the site is built, so the sheet makes no network request. Notes about the method, the moon sighting and your local mosque stay on the sheet; navigation, buttons and links do not.
+- **Daily prayer-time pages of the 64 districts** link to "Download the monthly timetable (PDF)", which opens the month and its print window.
+
+### Changed
+
+- The QR library (`qrcode-generator`, MIT, no dependencies) is a build-time devDependency only: it never reaches the browser.
+
 ## v5.131.1 - Faster site build (Ramadan calendars) - 2026-10-10
 
 ### Fixed

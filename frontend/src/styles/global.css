@@ -418,3 +418,65 @@ body {
     font-size: 0.875rem;
   }
 }
+
+/* A4 print sheet of the Ramadan calendars and the district timetables
+   ("Download PDF", audit T4.4): the browser's print window saves it as a
+   PDF. Black on white, no site chrome, the whole table on one page. The
+   tokens are pointed at paper, so both page looks print the same. */
+@media print {
+  @page {
+    size: A4;
+    margin: 10mm 12mm;
+  }
+  /* The dark theme's color-scheme would paint the page margins dark. */
+  html:has([data-print-page]) {
+    color-scheme: light !important;
+  }
+  html:has([data-print-page]),
+  body:has([data-print-page]) {
+    background: #fff !important;
+  }
+  [data-print-page] {
+    --c-void: 255 255 255;
+    --c-deep: 255 255 255;
+    --c-hero: 255 255 255;
+    --c-ink: 26 24 18;
+    --c-border: 200 200 190;
+    --c-emerald: 61 90 51;
+    --c-shade: 238 241 230;
+    min-height: 0;
+    background: #fff !important;
+    color: rgb(var(--c-ink));
+    font-size: 10pt;
+  }
+  [data-print-page] * {
+    color: inherit !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border-color: rgb(var(--c-border)) !important;
+  }
+  [data-print-page] [data-print-head] {
+    border-color: rgb(var(--c-emerald)) !important;
+  }
+  [data-print-page] table {
+    font-size: 9.5pt;
+  }
+  /* Never clip: a sheet too long breaks onto a second page instead. */
+  [data-print-page] .overflow-x-auto {
+    overflow: visible;
+  }
+  [data-print-page] thead th {
+    background: rgb(var(--c-shade)) !important;
+    padding-top: 1.2mm;
+    padding-bottom: 1.2mm;
+  }
+  [data-print-page] tbody th,
+  [data-print-page] tbody td {
+    padding-top: 0.5mm;
+    padding-bottom: 0.5mm;
+    line-height: 1.35;
+  }
+  [data-print-page] tr {
+    break-inside: avoid;
+  }
+}
