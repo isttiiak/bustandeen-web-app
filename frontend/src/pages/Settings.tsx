@@ -14,7 +14,7 @@ import {
   type AuthError,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase.js';
-import api, { API_BASE, getIdToken } from '../lib/api.js';
+import api from '../lib/api.js';
 import {
   setHijriAdjustment,
   setHijriAutomatic,
@@ -49,6 +49,12 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore, type ReduceMotionMode } from '../store/useUiStore.js';
 import { useUpdateProfile } from '../hooks/useUserProfile.js';
 import { useGroqKeyStatus, useSetGroqKey, useClearGroqKey } from '../hooks/useAi.js';
+import {
+  downloadBlob,
+  useExportBackup,
+  useImportBackup,
+  type BackupFile,
+} from '../hooks/useBackup.js';
 import { formatLocaleDate } from '../utils/localeDate.js';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import ZikrLibrarySection from '../components/ZikrLibrarySection.js';
@@ -762,10 +768,11 @@ export default function Settings() {
       return null;
     }
   });
-  const [exporting, setExporting] = useState(false);
   const [exportingXlsx, setExportingXlsx] = useState(false);
-  const [exportingAll, setExportingAll] = useState(false);
-  const [importing, setImporting] = useState(false);
+  const exportBackupMutation = useExportBackup();
+  const importBackupMutation = useImportBackup();
+  const exporting = exportBackupMutation.isPending && !exportingXlsx;
+  const importing = importBackupMutation.isPending;
   const [confirmTarget, setConfirmTarget] = useState<string | null>(null);
   const [deleting, setDeleting] = useState<string | null>(null);
   const [deleteAccountStep, setDeleteAccountStep] = useState<
@@ -795,125 +802,39 @@ export default function Settings() {
     if (user) updateProfile.mutateAsync({ dayStartMode: mode }).catch(() => {});
   };
 
-  // ── Data export / import ────────────────────────────────────────────────────
-  // ── Full-account backup: EVERYTHING in one file (v4.9 rebuild) ──────────────
-  const exportProfile = async () => {
-    setExporting(true);
+  // ── Data export / import (U6) ───────────────────────────────────────────
+  // Two exports from ONE server file (backup v3): the restorable .json backup
+  // and an Excel report built from it in the browser.
+  const today = () => new Date().toISOString().substring(0, 10);
+  const exportBackup = async () => {
     try {
-      const { data } = await api.get<{ ok: boolean; backup: unknown }>('/api/user/export');
-      const blob = new Blob([JSON.stringify(data.backup, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `bustandeen-backup-${new Date().toISOString().substring(0, 10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success('Backup downloaded. Keep it somewhere safe.');
+      const file = await exportBackupMutation.mutateAsync();
+      downloadBlob(
+        new Blob([JSON.stringify(file, null, 2)], { type: 'application/json' }),
+        `bustandeen-backup-${today()}.json`
+      );
+      toast.success(t('settings.backupDone'));
     } catch {
-      toast.error('Export failed. Check your connection and try again.');
-    } finally {
-      setExporting(false);
+      toast.error(t('settings.exportFailed'));
     }
   };
 
-  // ── Everything I have in the app, every feature (read-only copy) ───────────
-  const exportEverything = async () => {
-    setExportingAll(true);
-    try {
-      const { data } = await api.get<{ ok: boolean; data: unknown }>('/api/user/export/all');
-      const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `bustandeen-all-my-data-${new Date().toISOString().substring(0, 10)}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-      toast.success(t('settings.downloadAllDataDone'));
-    } catch {
-      toast.error(t('settings.downloadAllDataFailed'));
-    } finally {
-      setExportingAll(false);
-    }
-  };
-
-  // ── Excel (.xlsx) export ────────────────────────────────────────────────────
   const exportExcel = async () => {
     setExportingXlsx(true);
-    const idToken = await getIdToken();
-    const base = API_BASE;
-    const headers: Record<string, string> = idToken ? { Authorization: `Bearer ${idToken}` } : {};
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- exported API responses have varying, ad-hoc shapes read with optional chaining below
-    const getJson = async (path: string): Promise<any | null> => {
-      try {
-        const r = await fetch(`${base}${path}`, { headers });
-        return r.ok ? await r.json() : null;
-      } catch {
-        return null;
-      }
-    };
     try {
-      const XLSX = await import('xlsx');
-      const [profile, zikr, quran, fasting] = await Promise.all([
-        getJson('/api/user/me'),
-        getJson('/api/zikr/summary'),
-        getJson('/api/quran/summary'),
-        getJson('/api/fasting/summary'),
+      const file = await exportBackupMutation.mutateAsync();
+      const [XLSX, { buildExcelSheets }] = await Promise.all([
+        import('xlsx'),
+        import('../utils/backupExcel.js'),
       ]);
-
       const wb = XLSX.utils.book_new();
-      const addSheet = (name: string, rows: Array<Record<string, unknown>>) => {
-        if (!rows.length) return;
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows), name.slice(0, 31));
-      };
-
-      // Overview
-      addSheet('Overview', [
-        { Metric: 'Exported at', Value: new Date().toLocaleString() },
-        { Metric: 'Name', Value: profile?.displayName ?? profile?.user?.displayName ?? '-' },
-        { Metric: 'Email', Value: profile?.email ?? profile?.user?.email ?? '-' },
-        { Metric: 'Zikr: lifetime total', Value: zikr?.totalCount ?? 0 },
-        { Metric: 'Zikr: today', Value: zikr?.today?.total ?? 0 },
-        { Metric: 'Quran: day streak', Value: quran?.streak ?? 0 },
-        { Metric: 'Quran: khatms completed', Value: quran?.profile?.khatmCount ?? 0 },
-        { Metric: 'Quran: āyāt all-time', Value: quran?.stats?.allTimeUnits ?? 0 },
-      ]);
-
-      // Zikr lifetime per type
-      addSheet(
-        'Zikr (lifetime)',
-        (zikr?.perType ?? []).map((t: { zikrType: string; total: number }) => ({
-          Zikr: t.zikrType,
-          LifetimeCount: t.total,
-        }))
-      );
-
-      // Quran top surahs
-      addSheet(
-        'Quran top surahs',
-        (quran?.topSurahs ?? []).map((t: { surah: number; completions: number }) => ({
-          Surah: t.surah,
-          TimesCompleted: t.completions,
-        }))
-      );
-
-      // Fasting recent logs
-      addSheet(
-        'Fasting (recent)',
-        (fasting?.logs ?? []).map((l: { date: string; category: string; status: string }) => ({
-          Date: l.date,
-          Category: l.category,
-          Status: l.status,
-        }))
-      );
-
-      if (wb.SheetNames.length === 0) {
-        toast.error('Nothing to export yet.');
-        return;
+      for (const sheet of buildExcelSheets(file, t)) {
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(sheet.rows), sheet.name);
       }
-      XLSX.writeFile(wb, `bustandeen-export-${new Date().toISOString().substring(0, 10)}.xlsx`);
-      toast.success('Excel file downloaded.');
+      XLSX.writeFile(wb, `bustandeen-report-${today()}.xlsx`);
+      toast.success(t('settings.excelDone'));
     } catch {
-      toast.error('Excel export failed. Check your connection and try again.');
+      toast.error(t('settings.exportFailed'));
     } finally {
       setExportingXlsx(false);
     }
@@ -924,30 +845,34 @@ export default function Settings() {
     const file = e.target.files?.[0];
     e.target.value = ''; // allow re-selecting the same file
     if (!file) return;
-    setImporting(true);
+    let parsed: BackupFile;
     try {
-      const parsed = JSON.parse(await file.text()) as { app?: string; version?: number };
-      if (parsed?.app !== 'ihsan') {
-        toast.error('That is not a Bustandeen backup file. Export one from this page first.');
-        return;
-      }
-      const { data } = await api.post<{ ok: boolean; counts: Record<string, number> }>(
-        '/api/user/import',
-        parsed
-      );
-      await queryClient.invalidateQueries();
-      const c = data.counts ?? {};
+      parsed = JSON.parse(await file.text()) as BackupFile;
+    } catch {
+      toast.error(t('settings.notABackup'));
+      return;
+    }
+    // 'ihsan' is the backup data contract (CLAUDE.md, Deferred Migrations).
+    if (parsed?.app !== 'ihsan') {
+      toast.error(t('settings.notABackup'));
+      return;
+    }
+    try {
+      const c = await importBackupMutation.mutateAsync(parsed);
       toast.success(
-        `Restored: ${c.zikrDays ?? 0} zikr · ${c.salatDays ?? 0} salat · ${c.fastingDays ?? 0} fasting · ${c.quranDays ?? 0} quran day(s)`,
+        t('settings.restoreDone', {
+          zikr: c.zikrDays ?? 0,
+          salat: c.salatDays ?? 0,
+          fasting: c.fastingDays ?? 0,
+          quran: c.quranDays ?? 0,
+        }),
         { duration: 6000 }
       );
     } catch (err) {
-      // The version mismatch is the one import error worth naming specifically
-      // (backend/services/backup.service.ts) — an old export needs a fresh one.
-      const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      toast.error(msg ?? 'Import failed. The file may be damaged, or the connection dropped.');
-    } finally {
-      setImporting(false);
+      // The server names the one specific failure worth showing (an
+      // unsupported file version); anything else is a generic message.
+      const status = (err as { response?: { status?: number } })?.response?.status;
+      toast.error(status === 400 ? t('settings.restoreOldVersion') : t('settings.restoreFailed'));
     }
   };
 
@@ -1379,8 +1304,8 @@ export default function Settings() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
               <button
                 className={BTN_SECONDARY}
-                onClick={() => void exportProfile()}
-                disabled={exporting}
+                onClick={() => void exportBackup()}
+                disabled={exportBackupMutation.isPending}
               >
                 {exporting ? (
                   <span className="loading loading-spinner loading-xs" />
@@ -1392,7 +1317,7 @@ export default function Settings() {
               <button
                 className={BTN_SECONDARY}
                 onClick={() => void exportExcel()}
-                disabled={exportingXlsx}
+                disabled={exportBackupMutation.isPending}
               >
                 {exportingXlsx ? (
                   <span className="loading loading-spinner loading-xs" />
@@ -1400,18 +1325,6 @@ export default function Settings() {
                   <ArrowDownTrayIcon className="w-4 h-4" />
                 )}
                 {t('settings.exportExcel')}
-              </button>
-              <button
-                className={BTN_SECONDARY}
-                onClick={() => void exportEverything()}
-                disabled={exportingAll}
-              >
-                {exportingAll ? (
-                  <span className="loading loading-spinner loading-xs" />
-                ) : (
-                  <ArrowDownTrayIcon className="w-4 h-4" />
-                )}
-                {t('settings.downloadAllData')}
               </button>
               <label
                 className={`${BTN_SECONDARY} cursor-pointer ${importing ? 'pointer-events-none opacity-60' : ''}`}
@@ -1432,10 +1345,10 @@ export default function Settings() {
             </div>
             <p className="text-white/70 text-[11px] mb-2 leading-relaxed">
               {t('settings.backupNote')}
-              {user?.gender === 'female' ? t('settings.backupNoteCycle') : ''}
+              {user?.gender === 'female' ? ` ${t('settings.backupNoteCycle')}` : ''}
             </p>
             <p className="text-white/70 text-[11px] mb-4 leading-relaxed">
-              {t('settings.downloadAllDataNote')}
+              {t('settings.excelNote')}
             </p>
 
             {/* Saved prayer location (stored only in this browser) */}

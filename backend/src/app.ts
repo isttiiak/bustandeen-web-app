@@ -71,9 +71,15 @@ app.use(
   })
 );
 // Profile photos now go to Firebase Storage (frontend uploads directly, PATCH
-// receives only the short https URL). The backup IMPORT route is the heaviest
-// payload — 1 MB comfortably covers a full account history.
-app.use(express.json({ limit: '1mb' }));
+// receives only the short https URL), so 1 MB covers every route but one.
+// The backup IMPORT gets 20 MB (decoded): Settings sends the file gzipped
+// (Content-Encoding: gzip, which body-parser inflates), so it also stays
+// under Vercel's 4.5 MB request cap. Largest account at U6: ~0.4 MB.
+const jsonDefault = express.json({ limit: '1mb' });
+const jsonImport = express.json({ limit: '20mb' });
+app.use((req, res, next) =>
+  (req.path === '/api/user/import' ? jsonImport : jsonDefault)(req, res, next)
+);
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 const isProd = process.env.NODE_ENV === 'production';
@@ -105,7 +111,13 @@ app.use(
     // Auth uses Bearer tokens, not cookies — credentials false is correct here.
     credentials: false,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Admin-Token', 'X-Client-Op-Id'],
+    allowedHeaders: [
+      'Content-Type',
+      'Content-Encoding',
+      'Authorization',
+      'X-Admin-Token',
+      'X-Client-Op-Id',
+    ],
     optionsSuccessStatus: 204,
   })
 );
