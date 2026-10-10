@@ -224,4 +224,43 @@ describe('Zikr request API', () => {
     const lib = await request(app).get('/api/zikr/library');
     expect(lib.body.items.filter((i) => i.name === 'Raced approval')).toHaveLength(1);
   });
+
+  test('reopening an approval takes it out of the library and back to the queue (U8.9)', async () => {
+    const submitted = await request(app)
+      .post('/api/zikr/requests')
+      .set('Authorization', `Bearer ${otherUserToken}`)
+      .send(validRequestBody({ name: 'Reopened entry', arabic: 'الْحَمْدُ لِلَّهِ' }));
+    const id = submitted.body.request._id;
+    const approved = await request(app)
+      .post(`/api/admin/zikr-requests/${id}/approve`)
+      .set('X-Admin-Token', adminSessionToken)
+      .send({
+        name: 'Reopened entry',
+        arabic: 'الْحَمْدُ لِلَّهِ',
+        meaning: 'All praise is for Allah',
+        source: 'Muslim 223',
+        sourceUrl: 'https://sunnah.com/muslim:223',
+        emailBody: 'Added.',
+      });
+    expect(approved.status).toBe(200);
+
+    const res = await request(app)
+      .post(`/api/admin/zikr-requests/${id}/reopen`)
+      .set('X-Admin-Token', adminSessionToken);
+    expect(res.status).toBe(200);
+    expect(res.body.request.status).toBe('pending');
+    expect(res.body.request.reviewedBy).toBeUndefined();
+
+    const lib = await request(app).get('/api/zikr/library');
+    expect(lib.body.items.some((i) => i.name === 'Reopened entry')).toBe(false);
+
+    const again = await request(app)
+      .post(`/api/admin/zikr-requests/${id}/reopen`)
+      .set('X-Admin-Token', adminSessionToken);
+    expect(again.status).toBe(409);
+    const bad = await request(app)
+      .post('/api/admin/zikr-requests/not-an-id/reopen')
+      .set('X-Admin-Token', adminSessionToken);
+    expect(bad.status).toBe(400);
+  });
 });

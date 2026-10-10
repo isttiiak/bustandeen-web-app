@@ -508,4 +508,64 @@ describe('Sadaqah admin API', () => {
       .send({ emailBody: 'Verified.' });
     expect(res.status).toBe(404);
   });
+
+  describe('reopen a decision (U8.9)', () => {
+    test('a verified donation goes back to pending and off the public total', async () => {
+      const found = await submitAndFindPending(validDonation({ amount: 444 }));
+      await request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/verify`)
+        .set('X-Admin-Token', ownerToken)
+        .send({ emailBody: 'Verified.' });
+      const before = await request(app).get('/api/sadaqah/stats');
+
+      const res = await request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/reopen`)
+        .set('X-Admin-Token', ownerToken);
+      expect(res.status).toBe(200);
+      expect(res.body.donation.status).toBe('pending');
+      expect(res.body.donation.verifiedBy).toBeNull();
+
+      const after = await request(app).get('/api/sadaqah/stats');
+      expect(before.body.totalVerifiedAmount - after.body.totalVerifiedAmount).toBe(444);
+
+      // It can be decided again, and reopening a pending one is a 409.
+      const again = await request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/reopen`)
+        .set('X-Admin-Token', ownerToken);
+      expect(again.status).toBe(409);
+      const reject = await request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/reject`)
+        .set('X-Admin-Token', ownerToken)
+        .send({ emailBody: 'Not found.' });
+      expect(reject.status).toBe(200);
+    });
+
+    test('a rejected donation reopens without touching the total', async () => {
+      const found = await submitAndFindPending(validDonation());
+      await request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/reject`)
+        .set('X-Admin-Token', ownerToken)
+        .send({ emailBody: 'Not found.' });
+      const before = await request(app).get('/api/sadaqah/stats');
+      const res = await request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/reopen`)
+        .set('X-Admin-Token', ownerToken);
+      expect(res.status).toBe(200);
+      expect(res.body.donation.rejectionReason).toBeNull();
+      const after = await request(app).get('/api/sadaqah/stats');
+      expect(after.body.totalVerifiedAmount).toBe(before.body.totalVerifiedAmount);
+    });
+
+    test('only the Servant can reopen', async () => {
+      const found = await submitAndFindPending(validDonation());
+      await request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/reject`)
+        .set('X-Admin-Token', staffToken)
+        .send({ emailBody: 'Not found.' });
+      const res = await request(app)
+        .patch(`/api/admin/sadaqah/${found._id}/reopen`)
+        .set('X-Admin-Token', staffToken);
+      expect(res.status).toBe(403);
+    });
+  });
 });

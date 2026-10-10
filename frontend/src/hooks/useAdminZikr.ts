@@ -70,6 +70,19 @@ export function useApproveZikrRequest() {
   });
 }
 
+/** Servant-only — back to the queue; reopening an approval removes its
+ *  library item. No email goes to the requester. */
+export function useReopenZikrRequest() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.post(`/api/admin/zikr-requests/${id}/reopen`),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'zikr-requests'] });
+      void queryClient.invalidateQueries({ queryKey: ['zikr', 'library', 'global'] });
+    },
+  });
+}
+
 export function useRejectZikrRequest() {
   const queryClient = useQueryClient();
   return useMutation({

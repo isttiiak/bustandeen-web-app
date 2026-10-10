@@ -369,6 +369,39 @@ export const rejectDonation = async (
 };
 
 /**
+ * Servant-only: puts a verified or rejected donation back in the pending
+ * queue, for a decision taken by mistake. Atomic like the decision itself;
+ * a verified one comes off the public total. No email goes to the donor;
+ * the next verify/reject sends one as usual. Returns the status it had.
+ */
+export const reopenDonation = async (
+  id: string
+): Promise<{ donation: IDonation; from: 'verified' | 'rejected' }> => {
+  const before = await Donation.findOneAndUpdate(
+    { _id: id, status: { $in: ['verified', 'rejected'] } },
+    { $set: { status: 'pending', verifiedAt: null, verifiedBy: null, rejectionReason: null } },
+    { returnDocument: 'before' }
+  );
+  if (!before) {
+    if (!(await Donation.exists({ _id: id }))) throw httpError(404, 'Donation not found');
+    throw httpError(409, 'Donation is already pending');
+  }
+  const from = before.status as 'verified' | 'rejected';
+  if (from === 'verified') {
+    await getOrCreateStats();
+    await DonationStats.updateOne(
+      { _id: STATS_ID },
+      {
+        $inc: { totalVerifiedAmount: -before.amount, totalVerifiedCount: -1 },
+        $set: { lastUpdated: new Date() },
+      }
+    );
+  }
+  const donation = (await Donation.findById(id))!;
+  return { donation, from };
+};
+
+/**
  * Permanently removes a donation record (any status) — for erroneous/test
  * entries, not a donor-facing action. Reverses its effect on the cached
  * stats first if it had been verified, so deleting a mistaken "verified"

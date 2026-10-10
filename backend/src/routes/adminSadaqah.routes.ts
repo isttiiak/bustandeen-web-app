@@ -16,6 +16,7 @@ import {
   donorEmailDraftQuerySchema,
   donorEmailSendSchema,
   addExpenseSchema,
+  donationIdParamSchema,
 } from '../validation/sadaqah.schemas.js';
 import * as adminSadaqahController from '../controllers/adminSadaqah.controller.js';
 
@@ -42,6 +43,12 @@ router.get('/:id/receipt', adminSadaqahController.receiptHandler);
 // ansar@bustandeen.com) — open to any admin, not owner-restricted.
 router.patch('/:id/verify', validate(verifyDonationSchema), adminSadaqahController.verifyHandler);
 router.patch('/:id/reject', validate(rejectDonationSchema), adminSadaqahController.rejectHandler);
+router.patch(
+  '/:id/reopen',
+  requireServant,
+  validate(donationIdParamSchema),
+  adminSadaqahController.reopenDonationHandler
+);
 
 // Erroneous/test entries only — not a donor-facing action. Reverses the
 // stats impact first if the donation had been verified. Owner-only: a

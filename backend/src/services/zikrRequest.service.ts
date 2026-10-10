@@ -300,6 +300,34 @@ export const rejectRequest = async (
   return { request, emailSent };
 };
 
+/**
+ * Servant-only: puts an approved or rejected request back in the queue, for
+ * a decision taken by mistake. Reopening an approval also removes the library
+ * item it created, so the library never keeps a zikr without its approval.
+ * No email goes to the requester. Returns the status it had.
+ */
+export const reopenRequest = async (
+  id: string
+): Promise<{ request: IZikrRequest; from: 'approved' | 'rejected' }> => {
+  const before = await ZikrRequest.findOneAndUpdate(
+    { _id: id, status: { $in: ['approved', 'rejected'] } },
+    {
+      // userAcknowledged resets so the requester sees the next decision.
+      $set: { status: 'pending', audioAdded: false, userAcknowledged: false },
+      $unset: { reviewedAt: '', reviewedBy: '', adminNote: '' },
+    },
+    { returnDocument: 'before' }
+  );
+  if (!before) {
+    if (!(await ZikrRequest.exists({ _id: id }))) throw httpError(404, 'Request not found');
+    throw httpError(409, 'Request is already pending');
+  }
+  const from = before.status as 'approved' | 'rejected';
+  if (from === 'approved') await GlobalZikrLibraryItem.deleteMany({ requestId: before._id });
+  const request = (await ZikrRequest.findById(id))!;
+  return { request, from };
+};
+
 /** Ownership-checked — a user may only acknowledge their own request. */
 export const acknowledge = async (userId: string, id: string): Promise<void> => {
   const result = await ZikrRequest.updateOne(

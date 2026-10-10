@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.146.0 - Undo a decision on a donation or zikr request - 2026-10-10
+
+### Added
+
+- **Reopen (U8.9, admin audit M2).** A verified or rejected donation, and an approved or rejected zikr request, can go back to the queue when the decision was a mistake; before, the only way out was deleting the record. Servant only, with a second click to confirm. Reopening a verified donation takes it off the public sadaqah total; reopening an approved zikr request removes the library entry it created. No email is sent; the next decision sends one as usual, and the requester sees that decision again. Both are in the audit log.
+
 ## v5.145.0 - Who uses the app, on the admin home - 2026-10-10
 
 ### Added
