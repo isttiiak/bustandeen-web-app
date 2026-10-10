@@ -109,3 +109,46 @@ describe('Admin account management (servant only)', () => {
     expect(res.status).toBe(400);
   });
 });
+
+describe('Admin sessions from before the account became an admin (U8.1)', () => {
+  let mongo2;
+  beforeAll(async () => {
+    if (mongoose.connection.readyState === 0) {
+      mongo2 = await MongoMemoryServer.create();
+      await mongoose.connect(mongo2.getUri(), { dbName: 'ihsan_test_admin_sessions' });
+    }
+    await AdminAccount.create({
+      firebaseUid: 'late-uid',
+      email: 'late@test.dev',
+      role: 'servant',
+      createdBy: 'test-seed',
+      sessionsValidAfter: new Date('2026-10-01T00:00:00Z'),
+    });
+  });
+
+  afterAll(async () => {
+    if (mongo2) {
+      await mongoose.disconnect().catch(() => {});
+      await mongo2.stop();
+    }
+  });
+
+  const tokenAt = (iso) =>
+    fakeJwt({ uid: 'late-uid', auth_time: Math.floor(new Date(iso).getTime() / 1000) });
+
+  test('a sign-in from before sessionsValidAfter is refused', async () => {
+    const res = await request(app)
+      .get('/api/admin/auth/session')
+      .set('X-Admin-Token', tokenAt('2026-09-30T12:00:00Z'));
+    expect(res.status).toBe(401);
+    expect(res.body.error).toBe('admin_session_expired');
+  });
+
+  test('a sign-in after it is accepted', async () => {
+    const res = await request(app)
+      .get('/api/admin/auth/session')
+      .set('X-Admin-Token', tokenAt('2026-10-02T12:00:00Z'));
+    expect(res.status).toBe(200);
+    expect(res.body.role).toBe('servant');
+  });
+});

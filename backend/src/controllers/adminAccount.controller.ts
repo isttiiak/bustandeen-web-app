@@ -82,7 +82,7 @@ export const createHandler = async (
       role: 'servant' | 'ansar';
       ansarDomain?: 'sadaqah' | 'general';
     };
-    const account = await adminAccountService.createAdminAccount({
+    const { account, link } = await adminAccountService.createAdminAccount({
       email,
       password,
       displayName,
@@ -96,7 +96,12 @@ export const createHandler = async (
       action: 'account.create',
       targetType: 'AdminAccount',
       targetId: String(account._id),
-      metadata: { email: account.email, role: account.role, ansarDomain: account.ansarDomain },
+      metadata: {
+        email: account.email,
+        role: account.role,
+        ansarDomain: account.ansarDomain,
+        firebase: link,
+      },
     });
     res.status(201).json({
       ok: true,
@@ -108,6 +113,9 @@ export const createHandler = async (
         ansarDomain: account.ansarDomain,
         active: account.active,
       },
+      // 'linked': an existing, verified account that keeps its own password.
+      // 'reclaimed': an unverified one, now on the password typed here.
+      firebase: link,
     });
   } catch (err) {
     handleServiceError(err, res, next);

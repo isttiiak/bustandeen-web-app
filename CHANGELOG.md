@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.141.1 - Adding an Ansar can no longer hand the panel to a stranger - 2026-10-10
+
+### Fixed
+
+- **Admin takeover through a pre-registered email (U8.1, admin audit S1).** When the Servant added an Ansar whose email already had a Bustandeen account, that account was linked as is and the password typed in the form was silently ignored. The app lets anyone sign up with an address they don't own, so whoever registered the email first got into the admin panel with their own password. Now:
+  - an account that never verified its email is reclaimed: its password becomes the one the Servant typed, the email is marked verified and its sessions are ended;
+  - an account with a verified email is linked and keeps its own password, and the panel says so;
+  - the deploy-time bootstrap follows the same rule;
+  - every admin account records when it became an admin, and an admin sign-in from before that moment is refused (`admin_session_expired`), so an older session never carries over.
+
 ## v5.141.0 - Correct a past zikr day - 2026-10-10
 
 ### Added

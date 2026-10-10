@@ -20,6 +20,7 @@ import {
   useSetAdminAccountActive,
   useSetAdminAccountDomain,
   AdminAccountListItem,
+  type AdminFirebaseLink,
 } from '../hooks/useAdminAccounts.js';
 import type { AnsarDomain } from '../store/useAdminStore.js';
 
@@ -29,14 +30,23 @@ function AddAnsarForm() {
   const [form, setForm] = useState({ email: '', password: '', displayName: '' });
   const [ansarDomain, setAnsarDomain] = useState<'sadaqah' | 'general'>('general');
   const [open, setOpen] = useState(false);
+  const [linkNotice, setLinkNotice] = useState<{ email: string; link: AdminFirebaseLink } | null>(
+    null
+  );
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (!form.email || form.password.length < 8) return;
+    const email = form.email.trim().toLowerCase();
     create.mutate(
       { ...form, role: 'ansar', ansarDomain },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          setLinkNotice(
+            data.firebase === 'linked' || data.firebase === 'reclaimed'
+              ? { email, link: data.firebase }
+              : null
+          );
           setForm({ email: '', password: '', displayName: '' });
           setAnsarDomain('general');
           setOpen(false);
@@ -47,10 +57,33 @@ function AddAnsarForm() {
 
   if (!open) {
     return (
-      <button onClick={() => setOpen(true)} className={BTN_PRIMARY}>
-        <PlusIcon className="w-4 h-4" aria-hidden="true" />
-        {t('adminAccounts.addAnsar', 'Add Ansar')}
-      </button>
+      <div className="space-y-2">
+        {linkNotice && (
+          <p role="status" className="text-xs text-white/80 max-w-sm">
+            {linkNotice.link === 'linked'
+              ? t(
+                  'adminAccounts.linkedExisting',
+                  '{{email}} already had a verified Bustandeen account. It is now an Ansar and signs in to the panel with that account’s own password, not the one typed here.',
+                  { email: linkNotice.email }
+                )
+              : t(
+                  'adminAccounts.reclaimedExisting',
+                  '{{email}} had an unverified Bustandeen account. Its password is now the one typed here and any old sign-ins were ended.',
+                  { email: linkNotice.email }
+                )}
+          </p>
+        )}
+        <button
+          onClick={() => {
+            setLinkNotice(null);
+            setOpen(true);
+          }}
+          className={BTN_PRIMARY}
+        >
+          <PlusIcon className="w-4 h-4" aria-hidden="true" />
+          {t('adminAccounts.addAnsar', 'Add Ansar')}
+        </button>
+      </div>
     );
   }
 

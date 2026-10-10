@@ -133,9 +133,11 @@ export const requireAdminAuth = async (
 
     let uid: string;
     let verifiedEmail: string | undefined;
+    let authTime: number | undefined;
     if (isFirebaseInitialized()) {
       const decoded = await verifyFirebaseToken(token);
       uid = decoded.uid;
+      authTime = decoded.auth_time;
       if (decoded.email && decoded.email_verified) verifiedEmail = decoded.email.toLowerCase();
     } else if (devAuthBypassAllowed()) {
       const payload = decodeUnverifiedJwt(token);
@@ -144,6 +146,7 @@ export const requireAdminAuth = async (
         return;
       }
       uid = payload['uid'];
+      if (typeof payload['auth_time'] === 'number') authTime = payload['auth_time'];
     } else {
       res.status(500).json({ ok: false, error: 'Auth not configured' });
       return;
@@ -170,6 +173,17 @@ export const requireAdminAuth = async (
 
     if (!account) {
       res.status(401).json({ ok: false, error: 'admin_session_required' });
+      return;
+    }
+    // A sign-in from before the account became an admin (or before its
+    // sessions were last ended) never counts. A token without auth_time (a
+    // dev-bypass token that leaves it out) skips the check.
+    if (
+      authTime !== undefined &&
+      account.sessionsValidAfter &&
+      authTime * 1000 < account.sessionsValidAfter.getTime()
+    ) {
+      res.status(401).json({ ok: false, error: 'admin_session_expired' });
       return;
     }
     req.admin = { uid, email: account.email, role: account.role, ansarDomain: account.ansarDomain };
