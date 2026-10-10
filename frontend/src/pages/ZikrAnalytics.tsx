@@ -5,8 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import TabNav from '../components/TabNav.js';
-import DemoSignInGate from '../components/DemoSignInGate.js';
-import { useAuthStore } from '../store/useAuthStore.js';
 import {
   ArrowDownTrayIcon,
   CalendarDaysIcon,
@@ -152,7 +150,15 @@ function HeatmapCalendar({ data }: { data: HeatmapDay[] }) {
           </>
         )}
       </p>
-      <div ref={scrollRef} className="overflow-x-auto pb-1">
+      {/* Focusable, so the sideways scroll works from the keyboard (axe). */}
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto pb-1"
+        // eslint-disable-next-line jsx-a11y-x/no-noninteractive-tabindex -- a scrollable region must be focusable for keyboard users (axe scrollable-region-focusable)
+        tabIndex={0}
+        role="region"
+        aria-label={t('zikrAnalytics.heatmap', 'Activity heatmap')}
+      >
         <div className="min-w-max sm:min-w-0">
           <div className="grid gap-[3px] mb-1 overflow-hidden" style={grid}>
             {weeks.map((_, wi) => (
@@ -408,7 +414,6 @@ function exportCsv(data: ChartDataPointWithBreakdown[], allTypes: string[]) {
 
 export default function ZikrAnalytics() {
   const { t, i18n } = useTranslation();
-  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const [selectedPeriod, setSelectedPeriod] = useState(7);
   const [showSettings, setShowSettings] = useState(false);
   const [activeTab, setActiveTab] = useState<'today' | 'all'>('today');
@@ -556,31 +561,9 @@ export default function ZikrAnalytics() {
   // Last 7 days from chartData for the heatmap
   const last7Days = chartData?.slice(-7) ?? [];
 
-  if (isDemoMode) {
-    return (
-      <DemoSignInGate
-        icon={<ChartBarIcon className="w-7 h-7" />}
-        title={t('demoGate.analyticsTitle', 'Your personal analytics await')}
-        desc={t(
-          'demoGate.zikrDesc',
-          'Your zikr heatmap, per-type trends, and personal records are saved to your account.'
-        )}
-        backTo="/zikr"
-        backLabel={t('demoGate.backToZikr', 'Back to zikr counter')}
-        tabs={
-          <TabNav
-            items={[
-              { label: t('zikr.counter'), to: '/zikr' },
-              { label: t('zikr.analytics'), to: '/zikr/analytics', active: true },
-            ]}
-          />
-        }
-      />
-    );
-  }
-
   return (
     <AnimatedBackground variant="dark">
+      <h1 className="sr-only">{t('zikrAnalytics.srTitle', 'Zikr Analytics')}</h1>
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Tab navigation */}
@@ -986,7 +969,8 @@ export default function ZikrAnalytics() {
                 value={sessionsDate}
                 max={getTrackingDay()}
                 onChange={(e) => setSessionsDate(e.target.value)}
-                className="input input-xs input-bordered rounded-control bg-brand-surface border-brand-border text-white/80 text-xs"
+                aria-label={t('zikrAnalytics.sessions.dateLabel', 'Choose a day')}
+                className="input input-xs h-11 input-bordered rounded-control bg-brand-surface border-brand-border text-white/80 text-xs"
               />
             </div>
             {sessionsLoading ? (

@@ -9,8 +9,6 @@ import { m as motion, AnimatePresence } from 'framer-motion';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import QuranTabNav from '../components/QuranTabNav.js';
-import DemoSignInGate from '../components/DemoSignInGate.js';
-import { useAuthStore } from '../store/useAuthStore.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
 import {
   useQuranSummary,
@@ -39,7 +37,6 @@ import { ShareIcon } from '@heroicons/react/24/outline';
 export default function QuranBookmarks() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const { data: summary, isLoading } = useQuranSummary();
   const toggleBookmark = useToggleBookmark();
   const toggleDua = useToggleDuaBookmark();
@@ -106,22 +103,6 @@ export default function QuranBookmarks() {
   const metaOf = (n: number) => surahs.find((s) => s.number === n);
   const ayahText = (surah: number, ayah: number) =>
     texts[surah]?.find((a) => a.numberInSurah === ayah);
-
-  if (isDemoMode) {
-    return (
-      <DemoSignInGate
-        icon={<BookmarkIcon className="w-7 h-7" />}
-        title={t('demoGate.bookmarksTitle', 'Your saved āyāt await')}
-        desc={t(
-          'demoGate.bookmarksDesc',
-          'Bookmarks are saved to your account. Sign in to see every āyah you have marked across devices.'
-        )}
-        backTo="/quran"
-        backLabel={t('demoGate.backToQuran', 'Back to Quran')}
-        tabs={<QuranTabNav active="bookmarks" />}
-      />
-    );
-  }
 
   return (
     <AnimatedBackground variant="dark">

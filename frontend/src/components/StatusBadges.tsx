@@ -121,9 +121,8 @@ export function GoalBadge({
         ) : (
           <TargetIcon className="w-3.5 h-3.5 shrink-0 text-brand-emerald" />
         )}
-        <span className={met ? 'text-brand-emerald' : ''}>
-          {met ? `${formatLocaleNumber(100)}%` : `${formatLocaleNumber(pct)}%`}
-        </span>
+        {/* Ink, not sage: sage text on the sage tint fails contrast (axe). */}
+        <span>{met ? `${formatLocaleNumber(100)}%` : `${formatLocaleNumber(pct)}%`}</span>
       </span>
     </div>
   );

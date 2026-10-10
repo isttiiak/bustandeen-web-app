@@ -99,7 +99,7 @@ export default function StreakCard({
       <div className="p-4 sm:p-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-display text-base sm:text-lg font-bold flex items-center gap-2">
+          <h2 className="font-display text-base sm:text-lg font-bold flex items-center gap-2">
             {isPaused ? (
               <span className="inline-flex items-center gap-2">
                 <PauseIcon className="w-5 h-5 text-brand-pink" aria-hidden="true" />
@@ -113,7 +113,7 @@ export default function StreakCard({
                 {t('zikrAnalytics.streakCard.streakTitle', 'Streak')}
               </>
             )}
-          </h3>
+          </h2>
 
           <motion.button
             onClick={isPaused ? onResume : onPause}

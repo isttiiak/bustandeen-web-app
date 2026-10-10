@@ -40,10 +40,10 @@ export default function GoalCard({ goal, today, onEditGoal }: GoalCardProps) {
       <div className="p-4 sm:p-5">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <h3 className="font-display text-base sm:text-lg font-bold flex items-center gap-2">
+            <h2 className="font-display text-base sm:text-lg font-bold flex items-center gap-2">
               <FlagIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />
               {t('zikrAnalytics.goalCard.goalTitle', 'Goal')}
-            </h3>
+            </h2>
             {goalMet && (
               <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 bg-brand-emerald-dim text-on-color font-bold uppercase text-[10px] tracking-wider">
                 <CheckCircleIcon className="w-3.5 h-3.5" aria-hidden="true" />

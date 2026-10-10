@@ -50,7 +50,13 @@ api.interceptors.request.use((config) => {
   const isPublicCalendar = (config.url ?? '').startsWith('/api/calendar/');
   if (useAuthStore.getState().isDemoMode && !isPublicCalendar) {
     const method = (config.method ?? 'get').toLowerCase();
-    const url = config.url ?? '';
+    // Query params given separately (axios `params`) join the URL, so the
+    // mock can read them like the real server does.
+    const params = config.params
+      ? new URLSearchParams(config.params as Record<string, string>).toString()
+      : '';
+    const base = config.url ?? '';
+    const url = params ? `${base}${base.includes('?') ? '&' : '?'}${params}` : base;
     const gender = useAuthStore.getState().user?.gender ?? 'male';
     const mock = getDemoResponse(url, method, gender, config.data);
     config.adapter = () => {

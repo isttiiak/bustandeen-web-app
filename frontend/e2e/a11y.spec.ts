@@ -92,9 +92,9 @@ test('the navbar back button has a name', async ({ page }) => {
 test('a sage button keeps its colour on hover', async ({ page }) => {
   // DaisyUI's `.btn:hover` paints the base-300 grey over a plain `bg-*` class;
   // `hover:bg-brand-emerald-dim` has to win, or white text sits on grey.
-  await enterDemo(page);
-  await go(page, '/salat/analytics');
-  const button = page.getByRole('button', { name: 'Create Free Account' }).first();
+  // The guest "Sign in required" screen (the demo's analytics gate is gone, U9).
+  await page.goto('/settings');
+  const button = page.getByRole('button', { name: 'Sign In' }).first();
   await button.hover();
   await expect(button).toHaveCSS('background-color', 'rgb(90, 122, 80)');
 });

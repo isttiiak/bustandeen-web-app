@@ -269,7 +269,11 @@ export default function App() {
         // A real sign-in from inside the demo (its sign-in gate, or a Google
         // redirect back into a tab that kept the demo) ends the demo.
         if (!u) return;
+        // Settings go back to the device's own, and a fresh start drops what
+        // the demo left in memory (counts, prefs) before the account loads.
         useAuthStore.getState().exitDemoMode();
+        window.location.reload();
+        return;
       }
       if (!u) {
         localStorage.removeItem(SESSION_MARKER);

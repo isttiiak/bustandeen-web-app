@@ -5,10 +5,8 @@ import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import SinceChip from '../components/SinceChip.js';
 import TabNav from '../components/TabNav.js';
-import DemoSignInGate from '../components/DemoSignInGate.js';
-import { useAuthStore } from '../store/useAuthStore.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
-import { ChartBarIcon, CheckIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
 import { CARD, SECTION_TITLE } from '../components/bustanStyles.js';
 import { STATUS_ICON, fastIcon } from '../components/fasting/fastingIcons.js';
 import { formatLocaleDate } from '../utils/localeDate.js';
@@ -54,7 +52,6 @@ function monthLabel(ym: string): string {
 
 export default function FastingAnalytics() {
   const { t } = useTranslation();
-  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const { data: summary } = useFastingSummary();
   const { data: logs, isLoading } = useFastingHistory(365, true);
   const { data: correlation } = useWorshipCorrelation(90);
@@ -120,33 +117,6 @@ export default function FastingAnalytics() {
       note: l.note,
     });
   };
-
-  if (isDemoMode) {
-    return (
-      <DemoSignInGate
-        icon={<ChartBarIcon className="w-7 h-7" />}
-        title={t('demoGate.analyticsTitle', 'Your personal analytics await')}
-        desc={t(
-          'demoGate.fastingDesc',
-          'Your fasting stats, Mon/Thu streak, and charts are saved to your account.'
-        )}
-        backTo="/fasting"
-        backLabel={t('demoGate.backToFasting', 'Back to fasting tracker')}
-        tabs={
-          <TabNav
-            items={[
-              { label: t('fasting.tracker', 'Tracker'), to: '/fasting' },
-              {
-                label: t('fasting.analytics', 'Analytics'),
-                to: '/fasting/analytics',
-                active: true,
-              },
-            ]}
-          />
-        }
-      />
-    );
-  }
 
   return (
     <AnimatedBackground variant="dark">

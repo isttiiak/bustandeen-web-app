@@ -10,10 +10,8 @@ import {
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import SinceChip from '../components/SinceChip.js';
 import QuranTabNav from '../components/QuranTabNav.js';
-import DemoSignInGate from '../components/DemoSignInGate.js';
 import TimeOfDayChart from '../components/analytics/TimeOfDayChart.js';
 import ChartInfoModal, { InfoButton } from '../components/ChartInfoModal.js';
-import { useAuthStore } from '../store/useAuthStore.js';
 import {
   useQuranSummary,
   useQuranRange,
@@ -45,7 +43,6 @@ function shiftDate(dateStr: string, delta: number): string {
 /** The whole Quran journey in numbers: reading, listening, khatam, favourites. */
 export default function QuranAnalytics() {
   const { t, i18n } = useTranslation();
-  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const { data: summary } = useQuranSummary();
 
   // Range selector — current month by default (mirrors SalatAnalytics pattern)
@@ -184,22 +181,6 @@ export default function QuranAnalytics() {
       year: 'numeric',
     });
   }, [rangePeriod, selectedMonth, t]);
-
-  if (isDemoMode) {
-    return (
-      <DemoSignInGate
-        icon={<BookOpenIcon className="w-7 h-7" />}
-        title={t('demoGate.analyticsTitle', 'Your personal analytics await')}
-        desc={t(
-          'demoGate.quranDesc',
-          'Your Quran journey (pages read, khatam progress and recitation log) lives in your account.'
-        )}
-        backTo="/quran"
-        backLabel={t('demoGate.backToQuran', 'Back to Quran')}
-        tabs={<QuranTabNav active="analytics" />}
-      />
-    );
-  }
 
   return (
     <AnimatedBackground variant="dark">
