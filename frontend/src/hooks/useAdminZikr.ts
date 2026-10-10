@@ -2,14 +2,22 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 import type { GlobalZikrCategory, ZikrRequest, ZikrRequestStatus } from './useZikrRequests.js';
 
-export function useAdminZikrRequests(status?: ZikrRequestStatus) {
-  return useQuery<ZikrRequest[]>({
-    queryKey: ['admin', 'zikr-requests', status ?? 'all'],
+export interface AdminZikrRequestPage {
+  requests: ZikrRequest[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+/** Newest first, 50 per page (the server's page size). */
+export function useAdminZikrRequests(status?: ZikrRequestStatus, page = 1) {
+  return useQuery<AdminZikrRequestPage>({
+    queryKey: ['admin', 'zikr-requests', status ?? 'all', page],
     queryFn: async () => {
-      const res = await api.get<{ requests: ZikrRequest[] }>('/api/admin/zikr-requests', {
-        params: { status },
+      const res = await api.get<AdminZikrRequestPage>('/api/admin/zikr-requests', {
+        params: { status, page },
       });
-      return res.data.requests;
+      return res.data;
     },
     staleTime: 15_000,
   });

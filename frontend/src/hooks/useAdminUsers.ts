@@ -31,6 +31,8 @@ interface AdminUserListResult {
 }
 
 export type UserListSort = 'newest' | 'inactive';
+/** Server-side narrowing of the directory (adminUsers.service UserListShow). */
+export type UserListShow = 'all' | 'disabled' | 'staff' | 'neverWelcomed';
 
 /** Servant-only user directory — a simple paginated list with optional
  *  email/name search, not a full analytics view (see TODO-v3.md).
@@ -41,13 +43,14 @@ export function useAdminUserList(
   search: string,
   page: number,
   limit = 25,
-  sort: UserListSort = 'newest'
+  sort: UserListSort = 'newest',
+  show: UserListShow = 'all'
 ) {
   return useQuery<AdminUserListResult>({
-    queryKey: ['admin', 'users', 'list', search, page, limit, sort],
+    queryKey: ['admin', 'users', 'list', search, page, limit, sort, show],
     queryFn: async () => {
       const res = await api.get<AdminUserListResult>('/api/admin/users', {
-        params: { search: search || undefined, page, limit, sort },
+        params: { search: search || undefined, page, limit, sort, show },
       });
       return res.data;
     },

@@ -116,14 +116,27 @@ export const submitRequest = async (
   return request;
 };
 
-/** Bounded — an admin review queue realistically never approaches this.
- * Populates the duplicate hint (if any) so the admin card can show the
- * matched name/link without a second round-trip. */
-export const listRequests = async (status?: ZikrRequestStatus): Promise<IZikrRequest[]> =>
-  ZikrRequest.find(status ? { status } : {})
-    .sort({ createdAt: -1 })
-    .limit(300)
-    .populate('possibleDuplicateOf');
+/** Admin review list. Populates the duplicate hint (if any) so the admin card can show the
+ * matched name/link without a second round-trip. Paged, newest first, so
+ * older requests stay reachable (it used to stop at 300). */
+export const ZIKR_REQUESTS_PAGE_SIZE = 50;
+
+export const listRequests = async (
+  status: ZikrRequestStatus | undefined,
+  page = 1,
+  limit = ZIKR_REQUESTS_PAGE_SIZE
+): Promise<{ requests: IZikrRequest[]; total: number; page: number; limit: number }> => {
+  const filter = status ? { status } : {};
+  const [requests, total] = await Promise.all([
+    ZikrRequest.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .populate('possibleDuplicateOf'),
+    ZikrRequest.countDocuments(filter),
+  ]);
+  return { requests, total, page, limit };
+};
 
 export const listMine = async (userId: string): Promise<IZikrRequest[]> =>
   ZikrRequest.find({ userId }).sort({ createdAt: -1 }).limit(100);
