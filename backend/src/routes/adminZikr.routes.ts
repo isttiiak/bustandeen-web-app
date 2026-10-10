@@ -14,6 +14,7 @@ import {
   updateLibraryItemCategorySchema,
   updateLibraryItemSchema,
   libraryItemIdParamSchema,
+  zikrRequestIdParamSchema,
 } from '../validation/zikrRequest.schemas.js';
 import * as adminZikrController from '../controllers/adminZikr.controller.js';
 
@@ -31,6 +32,12 @@ router.get(
 );
 router.post('/:id/approve', validate(approveZikrRequestSchema), adminZikrController.approveHandler);
 router.post('/:id/reject', validate(rejectZikrRequestSchema), adminZikrController.rejectHandler);
+router.post(
+  '/:id/reopen',
+  requireServant,
+  validate(zikrRequestIdParamSchema),
+  adminZikrController.reopenHandler
+);
 
 // Editing an already-published library entry is Servant-only, unlike the
 // day-to-day approve/reject review job above.

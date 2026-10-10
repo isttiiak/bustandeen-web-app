@@ -128,3 +128,7 @@ export const addExpenseSchema = z.object({
     description: z.string().trim().min(1).max(300),
   }),
 });
+
+export const donationIdParamSchema = z.object({
+  params: z.object({ id: z.string().regex(/^[a-f0-9]{24}$/) }),
+});

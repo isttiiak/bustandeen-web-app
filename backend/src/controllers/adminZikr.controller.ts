@@ -185,3 +185,26 @@ export const deleteLibraryItemHandler = async (
     handleServiceError(err, res, next);
   }
 };
+
+/** Servant-only: back to the queue, for a decision taken by mistake. */
+export const reopenHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const id = paramString(req.params.id);
+    const { request, from } = await zikrRequestService.reopenRequest(id);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'zikrRequest.reopen',
+      targetType: 'ZikrRequest',
+      targetId: id,
+      metadata: { from, name: request.name },
+    });
+    res.json({ ok: true, request });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};

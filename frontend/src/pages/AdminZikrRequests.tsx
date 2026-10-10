@@ -19,6 +19,7 @@ import {
   useZikrRequestEmailDraft,
   useApproveZikrRequest,
   useRejectZikrRequest,
+  useReopenZikrRequest,
   useAdminZikrLibrary,
   useUpdateLibraryItem,
   useDeleteLibraryItem,
@@ -47,6 +48,9 @@ function RequestCard({ request }: { request: ZikrRequest }) {
   const draft = useZikrRequestEmailDraft();
   const approve = useApproveZikrRequest();
   const reject = useRejectZikrRequest();
+  const reopen = useReopenZikrRequest();
+  const isServant = useAdminStore((s) => s.role) === 'servant';
+  const [confirmReopen, setConfirmReopen] = useState(false);
   const [mode, setMode] = useState<ReviewMode>('idle');
   const [emailText, setEmailText] = useState('');
   const [adminNote, setAdminNote] = useState('');
@@ -210,6 +214,43 @@ function RequestCard({ request }: { request: ZikrRequest }) {
         <p className="text-white/70 text-[11px]">
           {t('adminZikr.reviewedBy', 'Reviewed by')} {request.reviewedBy}
         </p>
+      )}
+
+      {!isPending && isServant && (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => {
+              if (!confirmReopen) return setConfirmReopen(true);
+              setConfirmReopen(false);
+              reopen.mutate(request._id, {
+                onError: () => toast.error(t('adminZikr.reopenFailed', 'Could not reopen it.')),
+              });
+            }}
+            disabled={reopen.isPending}
+            className={`text-[11px] ${confirmReopen ? 'text-brand-gold font-bold' : 'text-white/70 hover:text-white'}`}
+            title={t(
+              'adminZikr.reopenHint',
+              'Back to the queue, for a decision taken by mistake. No email is sent.'
+            )}
+          >
+            {confirmReopen
+              ? request.status === 'approved'
+                ? t(
+                    'adminZikr.confirmReopenApproved',
+                    'Reopen and remove it from the library? Click again.'
+                  )
+                : t('adminZikr.confirmReopen', 'Reopen? Click again.')
+              : t('adminZikr.reopen', 'Reopen')}
+          </button>
+          {confirmReopen && (
+            <button
+              onClick={() => setConfirmReopen(false)}
+              className="text-[11px] text-white/70 hover:text-white"
+            >
+              {t('adminZikr.cancel', 'Cancel')}
+            </button>
+          )}
+        </div>
       )}
 
       {isPending && mode === 'idle' && (

@@ -364,3 +364,26 @@ export const deleteQuarterlyHandler = async (
     next(err);
   }
 };
+
+/** Servant-only: back to pending, for a decision taken by mistake. */
+export const reopenDonationHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const id = paramString(req.params.id);
+    const { donation, from } = await sadaqahService.reopenDonation(id);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'donation.reopen',
+      targetType: 'Donation',
+      targetId: id,
+      metadata: { from, amount: donation.amount },
+    });
+    res.json({ ok: true, donation });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};

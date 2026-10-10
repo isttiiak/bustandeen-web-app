@@ -88,3 +88,7 @@ export const libraryItemIdParamSchema = z.object({
     id: z.string().min(1),
   }),
 });
+
+export const zikrRequestIdParamSchema = z.object({
+  params: z.object({ id: z.string().regex(/^[a-f0-9]{24}$/) }),
+});

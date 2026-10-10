@@ -93,6 +93,19 @@ export function useRejectDonation() {
 
 /** Erroneous/test entries only — reverses the stats impact server-side if
  *  the donation had been verified. */
+/** Servant-only — a verified/rejected donation back to pending (a verified
+ *  one comes off the public total). No email goes to the donor. */
+export function useReopenDonation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.patch(`/api/admin/sadaqah/${id}/reopen`),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'sadaqah'] });
+      void queryClient.invalidateQueries({ queryKey: ['sadaqah', 'stats'] });
+    },
+  });
+}
+
 export function useDeleteDonation() {
   const queryClient = useQueryClient();
   return useMutation({

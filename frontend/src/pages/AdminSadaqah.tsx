@@ -22,6 +22,7 @@ import {
   useVerifyDonation,
   useRejectDonation,
   useDeleteDonation,
+  useReopenDonation,
   useDownloadReceipt,
   useAdminQuarterlyList,
   useQuarterlyPreview,
@@ -218,6 +219,17 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
     page
   );
   const deleteDonation = useDeleteDonation();
+  const reopenDonation = useReopenDonation();
+  const [confirmReopenId, setConfirmReopenId] = useState<string | null>(null);
+  const clickReopen = (id: string) => {
+    if (confirmReopenId !== id) {
+      setConfirmReopenId(id);
+      setTimeout(() => setConfirmReopenId((cur) => (cur === id ? null : cur)), 6000);
+      return;
+    }
+    setConfirmReopenId(null);
+    reopenDonation.mutate(id);
+  };
   const downloadReceipt = useDownloadReceipt();
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
   const clickDelete = (id: string) => {
@@ -352,6 +364,25 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
                     </td>
                     {isServant && (
                       <td className="px-3 py-2 text-right whitespace-nowrap">
+                        {d.status !== 'pending' && (
+                          <button
+                            onClick={() => clickReopen(d._id)}
+                            disabled={reopenDonation.isPending}
+                            title={t(
+                              'adminSadaqah.reopenHint',
+                              'Back to pending, for a decision taken by mistake. No email is sent.'
+                            )}
+                            className={`mr-3 ${
+                              confirmReopenId === d._id
+                                ? 'text-brand-gold text-xs font-bold'
+                                : 'text-white/70 hover:text-white text-xs'
+                            }`}
+                          >
+                            {confirmReopenId === d._id
+                              ? t('adminSadaqah.confirmReopen', 'Reopen?')
+                              : t('adminSadaqah.reopen', 'Reopen')}
+                          </button>
+                        )}
                         <button
                           onClick={() => clickDelete(d._id)}
                           title={t('adminSadaqah.deleteEntry', 'Permanently delete this entry')}
