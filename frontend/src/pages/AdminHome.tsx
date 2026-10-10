@@ -111,7 +111,7 @@ function ActivityPanel({ activity }: { activity: Activity }) {
               title={`${weekLabel(i)}: ${n}`}
             >
               <span className="text-white/70">{weekLabel(i)}</span>
-              <span className="h-3 rounded-full bg-white/5" aria-hidden="true">
+              <span className="h-3 rounded-full bg-brand-surface" aria-hidden="true">
                 <span
                   className="block h-3 rounded-full bg-brand-emerald"
                   style={{ width: `${(n / max) * 100}%`, minWidth: n > 0 ? 4 : 0 }}
@@ -121,7 +121,7 @@ function ActivityPanel({ activity }: { activity: Activity }) {
             </li>
           ))}
         </ul>
-        <p className="text-[11px] text-white/60 mt-3">
+        <p className="text-[11px] text-white/70 mt-3">
           {t(
             'adminHome.activityNote',
             'Active means the app was opened (or zikr was logged) in that time. Staff and disabled accounts are not counted.'

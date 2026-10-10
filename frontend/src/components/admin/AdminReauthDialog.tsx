@@ -47,7 +47,7 @@ export default function AdminReauthDialog() {
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm grid place-items-center p-4">
+    <div className="fixed inset-0 z-[80] bg-black/60 grid place-items-center p-4">
       <form
         onSubmit={submit}
         role="dialog"
@@ -58,10 +58,10 @@ export default function AdminReauthDialog() {
         <div className="w-11 h-11 mx-auto rounded-full grid place-items-center bg-brand-gold/10 text-brand-gold">
           <LockClosedIcon className="w-6 h-6" aria-hidden="true" />
         </div>
-        <h3 id="admin-reauth-title" className="text-white font-black text-base text-center">
+        <h3 id="admin-reauth-title" className="text-white font-bold text-base text-center">
           {t('adminReauth.title', 'Confirm it is you')}
         </h3>
-        <p className="text-white/75 text-xs text-center leading-relaxed">
+        <p className="text-white/80 text-xs text-center leading-relaxed">
           {t(
             'adminReauth.body',
             'This cannot be undone, so enter your admin password again. It is asked again after 5 minutes.'

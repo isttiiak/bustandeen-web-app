@@ -13,6 +13,8 @@ import zikrRequests from './AdminZikrRequests.tsx?raw';
 import sadaqah from './AdminSadaqah.tsx?raw';
 import opsHealth from './AdminOpsHealth.tsx?raw';
 import updateEmails from '../components/AdminUpdateEmails.tsx?raw';
+import reauthDialog from '../components/admin/AdminReauthDialog.tsx?raw';
+import passwordDialog from '../components/admin/AdminPasswordDialog.tsx?raw';
 
 // T3.2 Admin pages (staff only, English only): one arch hero per screen via
 // AdminHero, shared card/button classes, SVG icons, readable ink (no ink
@@ -36,6 +38,8 @@ const FILES: Record<string, string> = {
   AdminUpdateEmails: updateEmails,
   AdminSadaqah: sadaqah,
   AdminOpsHealth: opsHealth,
+  AdminReauthDialog: reauthDialog,
+  AdminPasswordDialog: passwordDialog,
 };
 const SCREENS: Record<string, string> = {
   AdminHome: home,
