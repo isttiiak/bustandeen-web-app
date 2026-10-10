@@ -240,3 +240,18 @@ export const ServantProtected = ({ children }: ProtectedProps) => {
   }
   return <>{children}</>;
 };
+
+/** Pages for the Servant and the 'general' Ansar (the sadaqah Ansar's API
+ *  calls are refused there). Nested inside AdminProtected like the above. */
+export const GeneralDomainProtected = ({ children }: ProtectedProps) => {
+  const role = useAdminStore((s) => s.role);
+  const ansarDomain = useAdminStore((s) => s.ansarDomain);
+  if (role !== 'servant' && ansarDomain !== 'general') {
+    return (
+      <div className="max-w-md mx-auto px-4 py-16 text-center text-white/60">
+        Not part of your area.
+      </div>
+    );
+  }
+  return <>{children}</>;
+};

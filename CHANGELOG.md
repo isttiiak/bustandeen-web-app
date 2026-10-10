@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.148.0 - The general Ansar can post a moon sighting - 2026-10-10
+
+### Changed
+
+- **Moon sighting for the general Ansar (U8, admin audit M3).** Adding or withdrawing a national moon-sighting record was Servant only, so an Eid or Ramadan night depended on one person being available. The general Ansar (zikr requests and feedback) can now do it too, from a Moon sighting tab and a home card; every add and withdrawal is in the audit log with who did it. The sadaqah Ansar still cannot.
+
 ## v5.147.0 - Filters on Users, pages on Zikr requests - 2026-10-10
 
 ### Added

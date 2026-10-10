@@ -10,6 +10,7 @@ import {
   Protected,
   RootRoute,
   ServantProtected,
+  GeneralDomainProtected,
 } from './routeGuards.js';
 
 // Route-level code splitting — keeps each tracker's page weight off the shell
@@ -423,9 +424,9 @@ export default function AppRoutes({ revision }: { revision: number }) {
         path="/admin/moon-sighting"
         element={
           <AdminProtected>
-            <ServantProtected>
+            <GeneralDomainProtected>
               <AdminMoonSighting />
-            </ServantProtected>
+            </GeneralDomainProtected>
           </AdminProtected>
         }
       />

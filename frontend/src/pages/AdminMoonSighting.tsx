@@ -32,7 +32,7 @@ function previewHijri(day: string, offset: number): string {
 }
 
 /**
- * Servant-only (T4.1, FIQH-02): national moon-sighting records. From the
+ * Servant and 'general' Ansar (T4.1, FIQH-02; U8): national moon-sighting records. From the
  * effective date until the next record for the same country, devices in that
  * country shift the Umm al-Qura date by the offset, unless the user set their
  * own. Every add and deactivation is in the audit log.

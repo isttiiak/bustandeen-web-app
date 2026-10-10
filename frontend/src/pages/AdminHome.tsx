@@ -10,6 +10,7 @@ import {
   HeartIcon,
   MegaphoneIcon,
   Squares2X2Icon,
+  MoonIcon,
 } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
 import { AdminHero } from '../components/admin/adminParts.js';
@@ -307,6 +308,17 @@ export default function AdminHome() {
             description={t(
               'adminHome.opsHealthDesc',
               'Email failures, DB/Firebase status, rate-limit hits.'
+            )}
+          />
+        )}
+        {canSeeZikrRequests && (
+          <AdminCard
+            to="/admin/moon-sighting"
+            icon={MoonIcon}
+            title={t('adminHome.moonTitle', 'Moon sighting')}
+            description={t(
+              'adminHome.moonDesc',
+              'Shift the Hijri date for a country after an official sighting.'
             )}
           />
         )}
