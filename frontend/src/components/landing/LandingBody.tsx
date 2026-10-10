@@ -41,13 +41,16 @@ const BODY = 'text-white/80 text-sm leading-relaxed';
 const LINK_CARD = `${CARD} block p-6 h-full transition-colors hover:border-brand-emerald/40`;
 const MORE = 'inline-flex items-center gap-1 mt-3 text-xs font-semibold';
 
+// "Try it" on a feature that needs an account opens it inside the demo
+// (U9: it used to land on "Sign in required"); the counter and prayer
+// times work for guests as they are.
 const FEATURES = [
-  { key: 'Salat', href: '/salat', Icon: MosqueIcon },
+  { key: 'Salat', href: '/demo/brother?to=/salat', Icon: MosqueIcon },
   { key: 'Zikr', href: '/zikr', Icon: TasbihIcon },
-  { key: 'Quran', href: '/quran', Icon: BookOpenIcon },
-  { key: 'Fasting', href: '/fasting', Icon: CrescentIcon },
+  { key: 'Quran', href: '/demo/brother?to=/quran', Icon: BookOpenIcon },
+  { key: 'Fasting', href: '/demo/brother?to=/fasting', Icon: CrescentIcon },
   { key: 'Prayer', href: '/prayer-times', Icon: ClockIcon },
-  { key: 'Friends', href: '/friends', Icon: UserGroupIcon },
+  { key: 'Friends', href: '/demo/brother?to=/friends', Icon: UserGroupIcon },
 ] as const;
 
 const PRIVACY = [
@@ -117,7 +120,7 @@ export default function LandingBody({
         ))}
       </section>
 
-      <A href="/cycle" className={`${LINK_CARD} sm:p-10 sm:flex items-start gap-8`}>
+      <A href="/demo/sister?to=/cycle" className={`${LINK_CARD} sm:p-10 sm:flex items-start gap-8`}>
         <div className="w-16 h-16 shrink-0 rounded-full grid place-items-center bg-brand-pink/10 border border-brand-pink/30 text-brand-pink mb-4 sm:mb-0">
           <FlowerIcon className="w-8 h-8" />
         </div>

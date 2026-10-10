@@ -1,12 +1,13 @@
 // Route guards and the root route (audit T2.4: moved out of App.tsx unchanged).
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
 import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 import { loadFirebase } from './authClient.js';
 import { BTN_PRIMARY, BTN_SECONDARY } from './components/bustanStyles.js';
 import { useAuthStore } from './store/useAuthStore.js';
 import { useAdminStore } from './store/useAdminStore.js';
+import { demoTarget } from './utils/demoTarget.js';
 import Home from './pages/Home.js';
 
 const Landing = lazy(() => import('./pages/Landing.js'));
@@ -87,17 +88,20 @@ function VerifyEmailGate({ email }: { email: string | null }) {
 }
 
 /** /demo/brother and /demo/sister: the demo links of the static landing
- * (audit PERF-01), which has no app to call enterDemoMode on. Someone already
- * signed in just goes Home. */
+ * (audit PERF-01), which has no app to call enterDemoMode on. `?to=` opens
+ * one feature in the demo (the landing's "Try it" cards, U9), from a fixed
+ * list. Someone already signed in goes straight there. */
 export const DemoEntry = () => {
   const { as } = useParams();
+  const [params] = useSearchParams();
   const { user, authLoading, enterDemoMode } = useAuthStore();
   const navigate = useNavigate();
+  const to = demoTarget(params.get('to'));
   useEffect(() => {
     if (authLoading) return;
     if (!user) enterDemoMode(as === 'sister' ? 'female' : 'male');
-    navigate('/', { replace: true });
-  }, [as, user, authLoading, enterDemoMode, navigate]);
+    navigate(to, { replace: true });
+  }, [as, to, user, authLoading, enterDemoMode, navigate]);
   return <RouteFallback />;
 };
 
