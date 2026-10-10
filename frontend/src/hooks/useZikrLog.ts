@@ -1,4 +1,5 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import api from '../lib/api.js';
 import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
@@ -47,6 +48,44 @@ export function useLogZikrCounts() {
     },
     onSuccess: ({ queued }) => {
       if (queued) return; // nothing changed on the server yet
+      void qc.invalidateQueries({ queryKey: ['analytics'] });
+      void qc.invalidateQueries({ queryKey: ['zikr'] });
+      void qc.invalidateQueries({ queryKey: ['social'] });
+    },
+  });
+}
+
+/** One past tracking day's counts per zikr, for "Correct a day" (U7). */
+export function useZikrDayCounts(date: string | null) {
+  return useQuery({
+    queryKey: ['zikr', 'day', date],
+    queryFn: async () => {
+      const { data } = await api.get<{ ok: boolean; counts: Record<string, number> }>(
+        `/api/zikr/day?date=${date}`
+      );
+      return data.counts;
+    },
+    enabled: !!date,
+    staleTime: 0,
+  });
+}
+
+/**
+ * "Correct a day" (U7): set the exact counts of a past day. Online only: it
+ * is a correction the user checks right away, and setting a number is safe
+ * to retry (the same request twice leaves the same result).
+ */
+export function useCorrectZikrDay() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { date: string; counts: Record<string, number> }) => {
+      const { data } = await api.put<{ ok: boolean; counts: Record<string, number> }>(
+        '/api/zikr/day',
+        { ...vars, today: getTrackingDay() }
+      );
+      return data.counts;
+    },
+    onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['analytics'] });
       void qc.invalidateQueries({ queryKey: ['zikr'] });
       void qc.invalidateQueries({ queryKey: ['social'] });

@@ -107,3 +107,55 @@ export function todaysLoggedCounts(
   }
   return out;
 }
+
+// ── Correct a day (U7) ─────────────────────────────────────────────────────
+// How far back a past day's counts can be set exactly. Istiak: 3 days by
+// default (people rarely remember exact counts), up to 30 in Zikr settings
+// for those who keep careful counts. The server allows 30 at most.
+export const ZIKR_FIX_DAYS_KEY = 'bustandeen_zikr_fix_days';
+export const FIX_DAY_CHOICES = [3, 7, 14, 30] as const;
+export const DEFAULT_FIX_DAYS = 3;
+
+export function getFixDays(): number {
+  try {
+    const n = Number(localStorage.getItem(ZIKR_FIX_DAYS_KEY));
+    return (FIX_DAY_CHOICES as readonly number[]).includes(n) ? n : DEFAULT_FIX_DAYS;
+  } catch {
+    return DEFAULT_FIX_DAYS;
+  }
+}
+
+export function setFixDays(n: number): void {
+  try {
+    localStorage.setItem(ZIKR_FIX_DAYS_KEY, String(n));
+  } catch {
+    // private mode: the default stays
+  }
+}
+
+/** The past tracking days that can be corrected, newest first (yesterday
+ * back to `fixDays`), from the moment the form opened. */
+export function correctDayOptions(fixDays: number, openedAt: Date): string[] {
+  return Array.from({ length: fixDays }, (_, i) => {
+    const d = new Date(getTrackingDayMiddayTsDaysBack(i + 1, openedAt));
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
+}
+
+/** The counts to send: only zikr whose number changed, as whole numbers
+ * (an empty box means 0). Null when a box holds something that is not a
+ * whole number from 0 to 1,000,000. */
+export function correctionChanges(
+  was: Record<string, number>,
+  typed: Record<string, string>
+): Record<string, number> | null {
+  const out: Record<string, number> = {};
+  for (const [type, raw] of Object.entries(typed)) {
+    const s = raw.trim();
+    if (s && !/^\d+$/.test(s)) return null;
+    const n = s ? Number(s) : 0;
+    if (n > 1_000_000) return null;
+    if (n !== (was[type] ?? 0)) out[type] = n;
+  }
+  return out;
+}

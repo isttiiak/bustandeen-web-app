@@ -5,12 +5,14 @@ import {
   XMarkIcon,
   ArrowPathIcon,
   ArrowsRightLeftIcon,
+  ChartBarIcon,
   SpeakerWaveIcon,
   MusicalNoteIcon,
   PencilSquareIcon,
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import FreshStart from './FreshStart.js';
+import { FIX_DAY_CHOICES, getFixDays, setFixDays } from '../utils/zikrLog.js';
 import ZikrQuickSettings from './zikr/ZikrQuickSettings.js';
 import { useUiStore } from '../store/useUiStore.js';
 
@@ -32,6 +34,7 @@ export default function ZikrSettings({
   const tasbihTarget = useUiStore((s) => s.tasbihTarget);
   const setTasbihTarget = useUiStore((s) => s.setTasbihTarget);
   const [customTarget, setCustomTarget] = useState('');
+  const [fixDays, setFixDaysState] = useState(getFixDays);
   const zikrSoundEnabled = useUiStore((s) => s.zikrSoundEnabled);
   const setZikrSoundEnabled = useUiStore((s) => s.setZikrSoundEnabled);
   const zikrAudioEnabled = useUiStore((s) => s.zikrAudioEnabled);
@@ -252,6 +255,39 @@ export default function ZikrSettings({
                     </span>
                   </div>
                 )}
+              </section>
+
+              <section className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <ChartBarIcon className="w-4 h-4 text-brand-emerald" />
+                  <h3 className="text-white font-bold text-sm">{t('zikrFix.settingsTitle')}</h3>
+                </div>
+                <p className="text-white/75 text-xs leading-relaxed mb-2">
+                  {t('zikrFix.settingsDesc')}
+                </p>
+                <div
+                  className="flex gap-1.5 flex-wrap"
+                  role="group"
+                  aria-label={t('zikrFix.settingsTitle')}
+                >
+                  {FIX_DAY_CHOICES.map((n) => (
+                    <button
+                      key={n}
+                      onClick={() => {
+                        setFixDaysState(n);
+                        setFixDays(n);
+                      }}
+                      aria-pressed={fixDays === n}
+                      className={`px-3 py-1.5 rounded-control text-xs font-bold border transition-colors ${
+                        fixDays === n
+                          ? 'border-brand-emerald bg-brand-emerald/10 text-white'
+                          : 'border-brand-border bg-brand-deep text-white/80 hover:border-brand-emerald/40'
+                      }`}
+                    >
+                      {t('zikrFix.daysChoice', { count: n })}
+                    </button>
+                  ))}
+                </div>
               </section>
 
               <section className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">

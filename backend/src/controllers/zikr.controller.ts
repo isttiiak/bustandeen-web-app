@@ -3,6 +3,7 @@ import * as zikrService from '../services/zikr.service.js';
 import * as streakService from '../services/streak.service.js';
 import { DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
 import type { ZikrIncrementItem } from '../types/api.types.js';
+import { CORRECT_MAX_DAYS } from '../validation/zikr.schemas.js';
 
 export const incrementHandler = async (
   req: Request,
@@ -122,6 +123,43 @@ export const getSessionsHandler = async (
       req.query.timezoneOffset !== undefined ? Number(req.query.timezoneOffset) : undefined;
     const sessions = await zikrService.getSessionsForDay(req.user.uid, date, timezoneOffset);
     res.json({ ok: true, sessions });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getDayHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const date = req.query.date as string;
+    res.json({ ok: true, date, counts: await zikrService.getDayCounts(req.user.uid, date) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const correctDayHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { date, today, counts } = req.body as {
+      date: string;
+      today: string;
+      counts: Record<string, number>;
+    };
+    const result = await zikrService.correctDay(
+      req.user.uid,
+      date,
+      today,
+      counts,
+      CORRECT_MAX_DAYS
+    );
+    res.json({ ok: true, date, counts: result });
   } catch (err) {
     next(err);
   }

@@ -4315,5 +4315,26 @@
       "stay2": "Khatm count",
       "stay3": "Khatm progress, bookmarks and hifz"
     }
+  },
+  "zikrFix": {
+    "tabAdd": "Add counts",
+    "tabFix": "Correct a day",
+    "subtitle": "Set the right count for a past day",
+    "day": "Day",
+    "windowNote": "You can correct the last {{count}} days. Change this in Zikr settings.",
+    "help": "Set the right count for each zikr on that day. Your totals, streak and Noor update to match.",
+    "was": "was {{n}}",
+    "inputLabel": "Count of {{zikr}} on that day",
+    "invalid": "Use whole numbers from 0 to 1,000,000.",
+    "note": "A count can go down to 0, never below. Counter sessions you timed that day stay in your time-of-day chart.",
+    "save": "Save correction",
+    "saveDelta": "Save correction ({{delta}})",
+    "done": "{{day}} is corrected.",
+    "saveError": "Could not save the correction. Check your connection and try again.",
+    "loadError": "Could not load that day. Check your connection and try again.",
+    "settingsTitle": "Analytics",
+    "settingsDesc": "How far back \"Correct a day\" in Log counts reaches. Most people only need a few days.",
+    "daysChoice": "{{count}} days",
+    "openSettings": "Zikr settings"
   }
 }
