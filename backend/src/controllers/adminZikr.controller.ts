@@ -23,8 +23,9 @@ export const listHandler = async (
 ): Promise<void> => {
   try {
     const status = req.query.status as ZikrRequestStatus | undefined;
-    const requests = await zikrRequestService.listRequests(status);
-    res.json({ ok: true, requests });
+    const page = Math.max(1, Number(req.query.page) || 1);
+    const result = await zikrRequestService.listRequests(status, page);
+    res.json({ ok: true, ...result });
   } catch (err) {
     next(err);
   }

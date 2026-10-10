@@ -6,7 +6,7 @@ import { CheckIcon, UsersIcon } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
 import { AdminHero, OPTION_CHIP } from '../components/admin/adminParts.js';
 import { OPTION_OFF, OPTION_ON } from '../components/bustanStyles.js';
-import { useAdminUserList, type UserListSort } from '../hooks/useAdminUsers.js';
+import { useAdminUserList, type UserListShow, type UserListSort } from '../hooks/useAdminUsers.js';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 const daysAgo = (iso: string): number =>
@@ -18,8 +18,9 @@ export default function AdminUsers() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState<UserListSort>('newest');
+  const [show, setShow] = useState<UserListShow>('all');
   const limit = 25;
-  const { data, isLoading } = useAdminUserList(search, page, limit, sort);
+  const { data, isLoading } = useAdminUserList(search, page, limit, sort, show);
   const totalPages = data ? Math.max(1, Math.ceil(data.total / limit)) : 1;
 
   return (
@@ -66,6 +67,22 @@ export default function AdminUsers() {
               {t('adminUsers.sortInactive', 'Most inactive first')}
             </button>
           </div>
+          <select
+            value={show}
+            onChange={(e) => {
+              setShow(e.target.value as UserListShow);
+              setPage(1);
+            }}
+            aria-label={t('adminUsers.showLabel', 'Show')}
+            className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors"
+          >
+            <option value="all">{t('adminUsers.showAll', 'Everyone')}</option>
+            <option value="disabled">{t('adminUsers.showDisabled', 'Disabled accounts')}</option>
+            <option value="staff">{t('adminUsers.showStaff', 'Staff logins')}</option>
+            <option value="neverWelcomed">
+              {t('adminUsers.showNeverWelcomed', 'Never sent a welcome email')}
+            </option>
+          </select>
           {data && (
             <span className="text-xs text-white/70">
               {t('adminUsers.total', '{{count}} users', { count: data.total })}

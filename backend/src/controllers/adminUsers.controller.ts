@@ -2,6 +2,13 @@ import { Request, Response, NextFunction } from 'express';
 import * as adminUsersService from '../services/adminUsers.service.js';
 import { logAdminAction } from '../services/adminAudit.service.js';
 
+const USER_LIST_SHOWS: adminUsersService.UserListShow[] = [
+  'all',
+  'disabled',
+  'staff',
+  'neverWelcomed',
+];
+
 const paramString = (v: string | string[] | undefined): string =>
   (Array.isArray(v) ? v[0] : v) ?? '';
 
@@ -24,7 +31,14 @@ export const listHandler = async (
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 25));
     const sortBy = req.query.sort === 'inactive' ? 'inactive' : 'newest';
-    const result = await adminUsersService.listUsers(search || undefined, page, limit, sortBy);
+    const show = USER_LIST_SHOWS.find((v) => v === req.query.show) ?? 'all';
+    const result = await adminUsersService.listUsers(
+      search || undefined,
+      page,
+      limit,
+      sortBy,
+      show
+    );
     res.json({ ok: true, ...result });
   } catch (err) {
     next(err);

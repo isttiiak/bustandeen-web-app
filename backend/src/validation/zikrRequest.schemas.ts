@@ -26,6 +26,7 @@ export const submitZikrRequestSchema = z.object({
 export const adminListZikrRequestsQuerySchema = z.object({
   query: z.object({
     status: z.enum(['pending', 'approved', 'rejected']).optional(),
+    page: z.coerce.number().int().min(1).max(10_000).optional(),
   }),
 });
 

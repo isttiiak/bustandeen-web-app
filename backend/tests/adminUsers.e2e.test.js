@@ -244,4 +244,37 @@ describe('Admin users — directory + welcome-email backfill (servant only)', ()
       expect(log.body.entries.some((e) => e.action === 'user.welcomeBackfill')).toBe(true);
     });
   });
+
+  describe('directory filters (U8.11)', () => {
+    beforeAll(async () => {
+      await User.create({ uid: 'blocked-1', email: 'blocked@test.dev', disabled: true });
+    });
+
+    const show = (value) =>
+      request(app).get('/api/admin/users').query({ show: value }).set('X-Admin-Token', ownerToken);
+
+    test('disabled shows only blocked accounts', async () => {
+      const res = await show('disabled');
+      expect(res.status).toBe(200);
+      expect(res.body.users.length).toBeGreaterThan(0);
+      expect(res.body.users.every((u) => u.disabled === true)).toBe(true);
+    });
+
+    test('staff shows only accounts with an admin login', async () => {
+      const res = await show('staff');
+      expect(res.body.users.map((u) => u.uid)).toContain('admin-uid-owner');
+      expect(res.body.users.every((u) => u.admin)).toBe(true);
+    });
+
+    test('neverWelcomed leaves out anyone already welcomed', async () => {
+      const res = await show('neverWelcomed');
+      expect(res.body.users.every((u) => !u.welcomeEmailSentAt)).toBe(true);
+    });
+
+    test('an unknown value lists everyone', async () => {
+      const all = await show('all');
+      const odd = await show('$where');
+      expect(odd.body.total).toBe(all.body.total);
+    });
+  });
 });

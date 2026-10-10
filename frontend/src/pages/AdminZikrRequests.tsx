@@ -581,7 +581,10 @@ export default function AdminZikrRequests() {
   const { t } = useTranslation();
   const isServant = useAdminStore((s) => s.role) === 'servant';
   const [filter, setFilter] = useState<ZikrRequestStatus | 'all'>('pending');
-  const { data: requests, isLoading } = useAdminZikrRequests(filter === 'all' ? undefined : filter);
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useAdminZikrRequests(filter === 'all' ? undefined : filter, page);
+  const requests = data?.requests;
+  const totalPages = data ? Math.max(1, Math.ceil(data.total / data.limit)) : 1;
 
   return (
     <AnimatedBackground variant="dark">
@@ -598,7 +601,10 @@ export default function AdminZikrRequests() {
           {(['pending', 'approved', 'rejected', 'all'] as const).map((s) => (
             <button
               key={s}
-              onClick={() => setFilter(s)}
+              onClick={() => {
+                setFilter(s);
+                setPage(1);
+              }}
               aria-pressed={filter === s}
               className={`${OPTION_CHIP} ${filter === s ? OPTION_ON : OPTION_OFF}`}
             >
@@ -618,6 +624,28 @@ export default function AdminZikrRequests() {
             <RequestCard key={r._id} request={r} />
           ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-3 text-sm text-white/70">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+              className={`${OPTION_CHIP} ${OPTION_OFF} disabled:opacity-50`}
+            >
+              {t('adminUsers.prev', 'Prev')}
+            </button>
+            <span>
+              {t('adminUsers.pageOf', 'Page {{page}} of {{total}}', { page, total: totalPages })}
+            </span>
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+              className={`${OPTION_CHIP} ${OPTION_OFF} disabled:opacity-50`}
+            >
+              {t('adminUsers.next', 'Next')}
+            </button>
+          </div>
+        )}
 
         {isServant && <ManageLibrarySection />}
       </div>

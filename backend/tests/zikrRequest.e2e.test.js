@@ -263,4 +263,28 @@ describe('Zikr request API', () => {
       .set('X-Admin-Token', adminSessionToken);
     expect(bad.status).toBe(400);
   });
+
+  test('the admin list is paged and reports the total (U8.11)', async () => {
+    const first = await request(app)
+      .get('/api/admin/zikr-requests')
+      .query({ page: 1 })
+      .set('X-Admin-Token', adminSessionToken);
+    expect(first.status).toBe(200);
+    expect(first.body.page).toBe(1);
+    expect(first.body.limit).toBe(50);
+    expect(first.body.total).toBeGreaterThanOrEqual(first.body.requests.length);
+
+    const beyond = await request(app)
+      .get('/api/admin/zikr-requests')
+      .query({ page: 99 })
+      .set('X-Admin-Token', adminSessionToken);
+    expect(beyond.body.requests).toHaveLength(0);
+    expect(beyond.body.total).toBe(first.body.total);
+
+    const bad = await request(app)
+      .get('/api/admin/zikr-requests')
+      .query({ page: 0 })
+      .set('X-Admin-Token', adminSessionToken);
+    expect(bad.status).toBe(400);
+  });
 });

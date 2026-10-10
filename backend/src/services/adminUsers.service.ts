@@ -68,13 +68,18 @@ const escapeRegex = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$
 
 export type UserListSort = 'newest' | 'inactive';
 
+/** Narrows the directory: blocked accounts, staff logins, or accounts that
+ *  have never been sent the welcome email. */
+export type UserListShow = 'all' | 'disabled' | 'staff' | 'neverWelcomed';
+
 export const listUsers = async (
   search: string | undefined,
   page: number,
   limit: number,
-  sortBy: UserListSort = 'newest'
+  sortBy: UserListSort = 'newest',
+  show: UserListShow = 'all'
 ): Promise<UserListResult> => {
-  const filter = search
+  const filter: Record<string, unknown> = search
     ? {
         $or: [
           { email: { $regex: escapeRegex(search), $options: 'i' } },
@@ -82,6 +87,9 @@ export const listUsers = async (
         ],
       }
     : {};
+  if (show === 'disabled') filter.disabled = true;
+  if (show === 'neverWelcomed') filter.welcomeEmailSentAt = null;
+  if (show === 'staff') filter.uid = { $in: [...(await getAdminTagsByUid()).keys()] };
   // 'inactive' sorts oldest-lastActiveAt-first — the least-recently-active
   // users surface at the top. Accounts with no lastActiveAt yet (never had a
   // real activity event since the field shipped) sort as missing/null, which

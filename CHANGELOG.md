@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.147.0 - Filters on Users, pages on Zikr requests - 2026-10-10
+
+### Added
+
+- **Users: a Show filter (U8.11, admin audit M4)** for disabled accounts, staff logins, or accounts never sent a welcome email.
+- **Zikr requests are paged (admin audit B4).** 50 per page with Prev and Next; the list used to stop at the newest 300, so older requests could not be reached.
+
 ## v5.146.0 - Undo a decision on a donation or zikr request - 2026-10-10
 
 ### Added
