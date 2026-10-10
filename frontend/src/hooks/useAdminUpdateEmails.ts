@@ -85,7 +85,29 @@ export interface SendUpdateInput {
   customEmails?: string[];
 }
 
-type CampaignResponse = { campaign: UpdateEmailCampaignSummary };
+type CampaignResponse = { campaign: UpdateEmailCampaignSummary; busy?: boolean };
+
+/** How long to wait when another tab or request is sending this campaign's
+ *  next chunk (the server answers `busy` instead of sending it twice). */
+export const BUSY_WAIT_MS = 3000;
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Asks for the next chunk until nothing is pending, waiting while busy. */
+async function sendRemaining(
+  campaign: UpdateEmailCampaignSummary,
+  onProgress?: (c: UpdateEmailCampaignSummary) => void
+): Promise<UpdateEmailCampaignSummary> {
+  while (campaign.pending > 0) {
+    const data = (
+      await api.post<CampaignResponse>(`/api/admin/update-emails/${campaign._id}/continue`)
+    ).data;
+    campaign = data.campaign;
+    onProgress?.(campaign);
+    if (data.busy) await wait(BUSY_WAIT_MS);
+  }
+  return campaign;
+}
 
 /** Creates the campaign (first chunk goes out with it), then keeps asking the
  * server for the next chunk until nothing is pending. Progress is reported so
@@ -94,15 +116,10 @@ export function useSendUpdateEmail(onProgress?: (c: UpdateEmailCampaignSummary) 
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: SendUpdateInput) => {
-      let { campaign } = (await api.post<CampaignResponse>('/api/admin/update-emails', input)).data;
+      const { campaign } = (await api.post<CampaignResponse>('/api/admin/update-emails', input))
+        .data;
       onProgress?.(campaign);
-      while (campaign.pending > 0) {
-        campaign = (
-          await api.post<CampaignResponse>(`/api/admin/update-emails/${campaign._id}/continue`)
-        ).data.campaign;
-        onProgress?.(campaign);
-      }
-      return campaign;
+      return sendRemaining(campaign, onProgress);
     },
     onSettled: () => void qc.invalidateQueries({ queryKey: ['admin', 'update-emails'] }),
   });
@@ -112,15 +129,10 @@ export function useRetryFailedUpdateEmail(onProgress?: (c: UpdateEmailCampaignSu
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      let { campaign } = (
+      const { campaign } = (
         await api.post<CampaignResponse>(`/api/admin/update-emails/${id}/retry-failed`)
       ).data;
-      while (campaign.pending > 0) {
-        campaign = (await api.post<CampaignResponse>(`/api/admin/update-emails/${id}/continue`))
-          .data.campaign;
-        onProgress?.(campaign);
-      }
-      return campaign;
+      return sendRemaining(campaign, onProgress);
     },
     onSettled: () => void qc.invalidateQueries({ queryKey: ['admin', 'update-emails'] }),
   });

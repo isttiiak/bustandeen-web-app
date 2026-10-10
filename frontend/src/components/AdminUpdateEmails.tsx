@@ -67,6 +67,12 @@ function CampaignRow({ c }: { c: UpdateEmailCampaignSummary }) {
           </button>
         )}
       </div>
+      {retry.isError && (
+        <p role="alert" className="mt-1 text-[11px] text-red-300">
+          {(retry.error as { response?: { data?: { error?: string } } }).response?.data?.error ??
+            'Retry did not start. Try again in a minute.'}
+        </p>
+      )}
       {open && (
         <div className="mt-2 rounded-control bg-shade/20 p-3 space-y-2">
           {detail.isLoading && <p className="text-white/70 text-xs">Loading…</p>}

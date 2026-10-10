@@ -161,45 +161,83 @@ export async function createCampaign(
   });
 }
 
-/** Sends the next CHUNK_SIZE pending recipients. Safe to call repeatedly. */
-export async function sendNextChunk(id: string): Promise<IUpdateEmailCampaign> {
+/** Longer than one chunk can take (the function's maxDuration is 30 s), so a
+ *  lease only expires on its own when the request holding it died. */
+export const SEND_LEASE_MS = 60_000;
+
+/** Takes the campaign's send lease, or returns null when another request
+ *  holds it. Throws 404 when the campaign does not exist. */
+async function takeLease(id: string): Promise<IUpdateEmailCampaign | null> {
+  const now = new Date();
+  const campaign = await UpdateEmailCampaign.findOneAndUpdate(
+    { _id: id, $or: [{ sendingUntil: null }, { sendingUntil: { $lt: now } }] },
+    { $set: { sendingUntil: new Date(now.getTime() + SEND_LEASE_MS) } },
+    { returnDocument: 'after' }
+  );
+  if (campaign) return campaign;
+  if (!(await UpdateEmailCampaign.exists({ _id: id }))) throw httpError(404, 'Campaign not found');
+  return null;
+}
+
+/** The campaign as it stands, for a caller that could not take the lease. */
+async function current(id: string): Promise<IUpdateEmailCampaign> {
   const campaign = await UpdateEmailCampaign.findById(id);
   if (!campaign) throw httpError(404, 'Campaign not found');
-
-  const batch = campaign.recipients.filter((r) => r.status === 'pending').slice(0, CHUNK_SIZE);
-  const sendOne = async (r: IUpdateEmailRecipient): Promise<void> => {
-    // One shared message for everyone: bulk updates address the whole community.
-    const text = campaign.body;
-    const messageId = await sendMail({
-      to: r.email,
-      subject: campaign.subject,
-      text,
-      html: toSimpleHtml(text),
-      from: 'ansar',
-    });
-    if (messageId) {
-      r.status = 'sent';
-      r.sentAt = new Date();
-      r.error = undefined;
-    } else {
-      r.status = 'failed';
-      r.error = 'Send failed (see System & ops health)';
-    }
-  };
-
-  for (let i = 0; i < batch.length; i += SEND_CONCURRENCY) {
-    await Promise.all(batch.slice(i, i + SEND_CONCURRENCY).map(sendOne));
-  }
-  campaign.markModified('recipients');
-  await campaign.save();
   return campaign;
 }
 
+/**
+ * Sends the next CHUNK_SIZE pending recipients. Safe to call repeatedly and
+ * from two tabs at once: only the request holding the lease sends; any other
+ * gets the campaign back with `busy: true` and nothing sent.
+ */
+export async function sendNextChunk(
+  id: string
+): Promise<{ campaign: IUpdateEmailCampaign; busy: boolean }> {
+  const campaign = await takeLease(id);
+  if (!campaign) return { campaign: await current(id), busy: true };
+
+  try {
+    const batch = campaign.recipients.filter((r) => r.status === 'pending').slice(0, CHUNK_SIZE);
+    const sendOne = async (r: IUpdateEmailRecipient): Promise<void> => {
+      // One shared message for everyone: bulk updates address the whole community.
+      const text = campaign.body;
+      const messageId = await sendMail({
+        to: r.email,
+        subject: campaign.subject,
+        text,
+        html: toSimpleHtml(text),
+        from: 'ansar',
+      });
+      if (messageId) {
+        r.status = 'sent';
+        r.sentAt = new Date();
+        r.error = undefined;
+      } else {
+        r.status = 'failed';
+        r.error = 'Send failed (see System & ops health)';
+      }
+    };
+
+    for (let i = 0; i < batch.length; i += SEND_CONCURRENCY) {
+      await Promise.all(batch.slice(i, i + SEND_CONCURRENCY).map(sendOne));
+    }
+  } finally {
+    campaign.markModified('recipients');
+    campaign.sendingUntil = null;
+    await campaign.save();
+  }
+  return { campaign, busy: false };
+}
+
+/** Puts failed recipients back to pending. Refused (409) while a chunk is
+ *  being sent, since that send saves the whole recipient list when it ends. */
 export async function retryFailed(id: string): Promise<IUpdateEmailCampaign> {
-  const campaign = await UpdateEmailCampaign.findById(id);
-  if (!campaign) throw httpError(404, 'Campaign not found');
+  const campaign = await takeLease(id);
+  if (!campaign) throw httpError(409, 'Sending is in progress. Try again in a minute.');
   for (const r of campaign.recipients) if (r.status === 'failed') r.status = 'pending';
   campaign.markModified('recipients');
+  campaign.sendingUntil = null;
   await campaign.save();
   return campaign;
 }

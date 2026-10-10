@@ -128,13 +128,25 @@ export const listRequests = async (status?: ZikrRequestStatus): Promise<IZikrReq
 export const listMine = async (userId: string): Promise<IZikrRequest[]> =>
   ZikrRequest.find({ userId }).sort({ createdAt: -1 }).limit(100);
 
-const findPendingOrThrow = async (id: string): Promise<InstanceType<typeof ZikrRequest>> => {
-  const request = await ZikrRequest.findById(id);
-  if (!request) throw httpError(404, 'Request not found');
-  if (request.status !== 'pending') {
-    throw httpError(409, `Request is already ${request.status}`);
-  }
-  return request;
+/**
+ * Moves a pending request to its decision in one atomic step, so a double
+ * click or two admins at once can never both decide it (an approval twice
+ * would add the zikr to the library twice). The loser gets a 409.
+ */
+const claimPendingOrThrow = async (
+  id: string,
+  decision: Record<string, unknown>
+): Promise<InstanceType<typeof ZikrRequest>> => {
+  const request = await ZikrRequest.findOneAndUpdate(
+    { _id: id, status: 'pending' },
+    { $set: decision },
+    // Same schema checks the old save() ran (e.g. note length).
+    { returnDocument: 'after', runValidators: true }
+  );
+  if (request) return request;
+  const existing = await ZikrRequest.findById(id).select('status');
+  if (!existing) throw httpError(404, 'Request not found');
+  throw httpError(409, `Request is already ${existing.status}`);
 };
 
 export const getEmailDraft = async (
@@ -198,27 +210,40 @@ export const approveRequest = async (
   input: ApproveZikrRequestInput,
   sender: EmailSender = 'ansar'
 ): Promise<ZikrRequestActionResult> => {
-  const request = await findPendingOrThrow(id);
-
-  const libraryItem = await GlobalZikrLibraryItem.create({
-    name: input.name.trim(),
-    arabic: input.arabic.trim(),
-    transliteration: input.transliteration?.trim() || undefined,
-    meaning: input.meaning.trim(),
-    source: input.source.trim(),
-    sourceUrl: input.sourceUrl.trim(),
-    grade: input.grade?.trim() || undefined,
-    virtue: input.virtue?.trim() || undefined,
-    category: input.category ?? 'uncategorized',
-    requestId: request._id,
-    addedBy: adminEmail,
+  const request = await claimPendingOrThrow(id, {
+    status: 'approved',
+    audioAdded: input.audioAdded ?? false,
+    reviewedAt: new Date(),
+    reviewedBy: adminEmail,
   });
 
-  request.status = 'approved';
-  request.audioAdded = input.audioAdded ?? false;
-  request.reviewedAt = new Date();
-  request.reviewedBy = adminEmail;
-  await request.save();
+  let libraryItem: InstanceType<typeof GlobalZikrLibraryItem>;
+  try {
+    libraryItem = await GlobalZikrLibraryItem.create({
+      name: input.name.trim(),
+      arabic: input.arabic.trim(),
+      transliteration: input.transliteration?.trim() || undefined,
+      meaning: input.meaning.trim(),
+      source: input.source.trim(),
+      sourceUrl: input.sourceUrl.trim(),
+      grade: input.grade?.trim() || undefined,
+      virtue: input.virtue?.trim() || undefined,
+      category: input.category ?? 'uncategorized',
+      requestId: request._id,
+      addedBy: adminEmail,
+    });
+  } catch (err) {
+    // The library item is the approval; without it the request goes back to
+    // the queue instead of showing approved with nothing in the library.
+    await ZikrRequest.updateOne(
+      { _id: request._id, status: 'approved' },
+      {
+        $set: { status: 'pending', audioAdded: false },
+        $unset: { reviewedAt: '', reviewedBy: '' },
+      }
+    );
+    throw err;
+  }
 
   let emailSent = true;
   if (request.userEmail) {
@@ -250,13 +275,13 @@ export const rejectRequest = async (
   emailBody: string | undefined,
   sender: EmailSender = 'ansar'
 ): Promise<ZikrRequestActionResult> => {
-  const request = await findPendingOrThrow(id);
-
-  request.status = 'rejected';
-  request.reviewedAt = new Date();
-  request.reviewedBy = adminEmail;
-  request.adminNote = adminNote?.trim() || undefined;
-  await request.save();
+  const note = adminNote?.trim();
+  const request = await claimPendingOrThrow(id, {
+    status: 'rejected',
+    reviewedAt: new Date(),
+    reviewedBy: adminEmail,
+    ...(note ? { adminNote: note } : {}),
+  });
 
   let emailSent = true;
   if (request.userEmail && emailBody?.trim()) {

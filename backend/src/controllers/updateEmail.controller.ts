@@ -15,7 +15,7 @@ const handle =
       await fn(req, res);
     } catch (err) {
       const status = (err as { status?: number }).status;
-      if (status === 400 || status === 404) {
+      if (status === 400 || status === 404 || status === 409) {
         res.status(status).json({ ok: false, error: (err as Error).message });
         return;
       }
@@ -42,7 +42,7 @@ export const createHandler = handle(async (req, res) => {
     req.body as CampaignInput,
     req.admin!.email
   );
-  const sent = await updateEmailService.sendNextChunk(campaign._id.toString());
+  const { campaign: sent } = await updateEmailService.sendNextChunk(campaign._id.toString());
   await logAdminAction({
     actorEmail: req.admin!.email,
     actorRole: req.admin!.role,
@@ -55,8 +55,9 @@ export const createHandler = handle(async (req, res) => {
 });
 
 export const continueHandler = handle(async (req, res) => {
-  const campaign = await updateEmailService.sendNextChunk(idParam(req));
-  res.json({ ok: true, campaign: updateEmailService.summarise(campaign) });
+  const { campaign, busy } = await updateEmailService.sendNextChunk(idParam(req));
+  // busy: another tab or request is sending this campaign's next chunk.
+  res.json({ ok: true, campaign: updateEmailService.summarise(campaign), busy });
 });
 
 export const retryHandler = handle(async (req, res) => {
