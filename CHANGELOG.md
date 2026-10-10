@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.151.0 - "Try it" opens the feature in the demo - 2026-10-11
+
+### Fixed
+
+- **"Try it" on the landing no longer hits a sign-in wall (U9).** The Quran, Friends and Rayhanah cards said "Try it" and opened "Sign in required"; Salat and Fasting opened pages where every tap asked to sign in. Each card now opens that feature inside the demo (Rayhanah in the sister demo), so a visitor can try it before making an account.
+
 ## v5.150.0 - The demo stays through a refresh - 2026-10-11
 
 ### Fixed
