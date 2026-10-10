@@ -69,6 +69,10 @@ describe('Zikr analytics screen', () => {
     expect(modal).not.toMatch(/lib\/api|api\.post|fetch\(/);
     // The Enter key path is guarded like the button, so it cannot post twice.
     expect(modal).toMatch(/if \(parsedAmount <= 0 \|\| savingRef\.current\) return;/);
+    // ...and stays closed after a save, while the dialog animates out; only a
+    // failed save reopens it.
+    expect(modal).not.toMatch(/finally \{\s*savingRef\.current = false/);
+    expect(modal).toMatch(/catch \{\s*savingRef\.current = false;/);
     // The day choices are pinned to when the form opened.
     expect(modal).toContain('const [openedAt] = useState(');
   });

@@ -82,7 +82,9 @@ function LogCountsForm({
   const [daysBack, setDaysBack] = useState<LogDaysBack>(0);
   const [submitError, setSubmitError] = useState('');
   // Guards the Enter key as well as the button: a second Enter while the
-  // first save is on its way used to post the same counts twice.
+  // first save is on its way used to post the same counts twice. After a
+  // successful save it stays closed: the form is still mounted (and focused)
+  // while the dialog animates out, and an Enter then would save again.
   const savingRef = useRef(false);
 
   const dayLabel = (n: number): string => {
@@ -133,9 +135,8 @@ function LogCountsForm({
       }
       onClose();
     } catch {
+      savingRef.current = false; // let the user try again
       setSubmitError(t('zikrAnalytics.saveError'));
-    } finally {
-      savingRef.current = false;
     }
   };
 

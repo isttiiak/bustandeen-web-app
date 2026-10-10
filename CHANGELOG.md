@@ -8,7 +8,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 Found in the U4 audit of the zikr "Log missed counts" flow (today or up to two tracking days back).
 
-- **Counted twice:** pressing Enter again while a save was on its way posted the same counts a second time. The Enter key is now guarded like the Save button.
+- **Counted twice:** pressing Enter again while a save was on its way, or right after it while the dialog closed, posted the same counts a second time. The Enter key is now guarded like the Save button, and the form accepts no second save once one has succeeded.
 - **Lost or doubled offline:** the log was a plain request with no op id, so a save whose answer was lost could be counted twice on a retry, and with no connection it just failed. It now goes through the offline outbox like fasting and Quran: each save carries an `X-Client-Op-Id` (the server applies it once), and offline it is kept on the device and syncs later. A log for today queued offline still shows in today's count meanwhile.
 - **Wrong day across the boundary:** a form opened just before Fajr (or Maghrib, or midnight, per your day-start setting) and saved just after put the counts on the new day while it said "Today" for the closing one. The day choices are now fixed when the form opens, so counts land on the day you picked.
 - **Too large or not whole:** more than 10,000 at once was refused by the server with a generic "Could not save"; "12.5" was silently saved as 12. Both now get a clear message before saving.
