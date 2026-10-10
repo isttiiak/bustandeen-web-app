@@ -16,8 +16,52 @@ export interface AdminOverviewStats {
     newUsersThisWeek: number;
     totalUsers: number;
     recentAuditLog: { actorEmail: string; action: string; createdAt: Date }[];
+    activity: UserActivity;
   };
 }
+
+/**
+ * How many people use the app, from User.lastActiveAt (stamped on every app
+ * open by /api/auth/verify, and on zikr logs). Staff and disabled accounts are
+ * left out. "Came back" looks at people who signed up 8 to 35 days ago and
+ * counts those seen again at least 7 days after signing up.
+ */
+export interface UserActivity {
+  today: number;
+  week: number;
+  month: number;
+  /** Sign-ups per rolling 7-day window, newest first: [0] is the last 7 days. */
+  signupsByWeek: number[];
+  cameBack: { cohort: number; returned: number };
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+export const SIGNUP_WEEKS = 8;
+
+export const getUserActivity = async (now = new Date()): Promise<UserActivity> => {
+  const base = { ...(await excludeAdminUids()), disabled: { $ne: true } };
+  const ago = (days: number) => new Date(now.getTime() - days * DAY_MS);
+  const activeSince = (days: number) =>
+    User.countDocuments({ ...base, lastActiveAt: { $gte: ago(days) } });
+
+  const [today, week, month, signupsByWeek, cohort, returned] = await Promise.all([
+    activeSince(1),
+    activeSince(7),
+    activeSince(30),
+    Promise.all(
+      Array.from({ length: SIGNUP_WEEKS }, (_, i) =>
+        User.countDocuments({ ...base, createdAt: { $gte: ago(7 * (i + 1)), $lt: ago(7 * i) } })
+      )
+    ),
+    User.countDocuments({ ...base, createdAt: { $gte: ago(35), $lt: ago(8) } }),
+    User.countDocuments({
+      ...base,
+      createdAt: { $gte: ago(35), $lt: ago(8) },
+      $expr: { $gte: ['$lastActiveAt', { $add: ['$createdAt', 7 * DAY_MS] }] },
+    }),
+  ]);
+  return { today, week, month, signupsByWeek, cameBack: { cohort, returned } };
+};
 
 /**
  * Returns a DIFFERENT shape per caller's role/domain — the only gate on this
@@ -66,7 +110,8 @@ export const getOverview = async (
         User.countDocuments({ ...notAdmin, createdAt: { $gte: weekAgo } }),
         User.countDocuments(notAdmin),
         AdminAuditLog.find().sort({ createdAt: -1 }).limit(5).select('actorEmail action createdAt'),
-      ]).then(([donationStats, newUsersThisWeek, totalUsers, recentAuditLog]) => {
+        getUserActivity(),
+      ]).then(([donationStats, newUsersThisWeek, totalUsers, recentAuditLog, activity]) => {
         stats.servant = {
           totalVerifiedAmount: donationStats?.totalVerifiedAmount ?? 0,
           newUsersThisWeek,
@@ -76,6 +121,7 @@ export const getOverview = async (
             action: e.action,
             createdAt: e.createdAt,
           })),
+          activity,
         };
       })
     );

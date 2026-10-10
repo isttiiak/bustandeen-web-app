@@ -34,7 +34,7 @@ export default function AdminPasswordDialog({ onClose }: { onClose: () => void }
   };
 
   return createPortal(
-    <div className="fixed inset-0 z-[80] bg-black/70 backdrop-blur-sm grid place-items-center p-4">
+    <div className="fixed inset-0 z-[80] bg-black/60 grid place-items-center p-4">
       <form
         onSubmit={submit}
         role="dialog"
@@ -44,7 +44,7 @@ export default function AdminPasswordDialog({ onClose }: { onClose: () => void }
       >
         <div className="flex items-center gap-2">
           <KeyIcon className="w-5 h-5 text-brand-gold" aria-hidden="true" />
-          <h3 id="admin-password-title" className="text-white font-black text-base">
+          <h3 id="admin-password-title" className="text-white font-bold text-base">
             {t('adminPassword.title', 'Change your admin password')}
           </h3>
         </div>
