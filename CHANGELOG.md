@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.132.1 - Monthly site rebuild - 2026-10-10
+
+### Added
+
+- **Scheduled rebuild** (`.github/workflows/scheduled-rebuild.yml`): on the 1st of every month (06:30 in Bangladesh) GitHub asks Vercel for a fresh production build through a deploy hook, so the district timetables roll to the new month without waiting for a code change. It can also be run by hand (Actions > Scheduled rebuild > Run workflow), for example right after a moon-sighting record is entered in Admin, so the Ramadan calendars follow the committee's announcement. Needs the repository secret `VERCEL_DEPLOY_HOOK_URL`; until it exists the workflow does nothing and says so.
+
 ## v5.132.0 - Download PDF for Ramadan calendars and monthly timetables - 2026-10-10
 
 ### Added
