@@ -10,6 +10,14 @@ export interface AdminOverviewStats {
     newUsersThisWeek: number;
     totalUsers: number;
     recentAuditLog: { actorEmail: string; action: string; createdAt: string }[];
+    activity: {
+      today: number;
+      week: number;
+      month: number;
+      /** Newest first: [0] is the last 7 days. */
+      signupsByWeek: number[];
+      cameBack: { cohort: number; returned: number };
+    };
   };
 }
 

@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.145.0 - Who uses the app, on the admin home - 2026-10-10
+
+### Added
+
+- **Activity on the Servant's overview (U8.8, admin audit M1).** How many people opened the app today, in the last 7 days and in the last 30 days; what share of those who joined 8 to 35 days ago came back after their first week; and sign-ups for each of the last 8 weeks as a bar list with the numbers beside it. Staff and disabled accounts are not counted. "Opened" comes from the last-seen time the app records on every launch and zikr log.
+
 ## v5.144.0 - A readable audit log - 2026-10-10
 
 ### Changed

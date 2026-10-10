@@ -15,7 +15,8 @@ import Seo from '../components/Seo.js';
 import { AdminHero } from '../components/admin/adminParts.js';
 import { CARD } from '../components/bustanStyles.js';
 import { useAdminStore } from '../store/useAdminStore.js';
-import { useAdminStats } from '../hooks/useAdminStats.js';
+import { useAdminStats, type AdminOverviewStats } from '../hooks/useAdminStats.js';
+import { cameBackPercent, weekLabel } from '../utils/adminActivity.js';
 
 function AdminCard({
   to,
@@ -68,6 +69,66 @@ function StatTile({
       </div>
       <div className="text-xs text-white/80 mt-0.5">{label}</div>
     </div>
+  );
+}
+
+type Activity = NonNullable<AdminOverviewStats['servant']>['activity'];
+
+/** Who uses the app (Servant only): opened it lately, came back after week
+ *  one, and sign-ups per week as a bar list that also reads as a table. */
+function ActivityPanel({ activity }: { activity: Activity }) {
+  const { t } = useTranslation();
+  const { today, week, month, signupsByWeek, cameBack } = activity;
+  const max = Math.max(1, ...signupsByWeek);
+  const percent = cameBackPercent(cameBack);
+  return (
+    <section className="space-y-3" aria-labelledby="admin-activity-title">
+      <h2 id="admin-activity-title" className="font-display font-bold text-white">
+        {t('adminHome.activityTitle', 'Who uses the app')}
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <StatTile label={t('adminHome.activeToday', 'Opened the app today')} value={today} />
+        <StatTile label={t('adminHome.activeWeek', 'In the last 7 days')} value={week} />
+        <StatTile label={t('adminHome.activeMonth', 'In the last 30 days')} value={month} />
+        <StatTile
+          label={t(
+            'adminHome.cameBack',
+            'Came back after week 1 ({{returned}} of {{cohort}} who joined 8 to 35 days ago)',
+            cameBack
+          )}
+          value={percent === null ? '–' : `${percent}%`}
+        />
+      </div>
+      <div className={`${CARD} p-4`}>
+        <h3 className="text-sm font-bold text-white mb-3">
+          {t('adminHome.signupsTitle', 'Sign-ups per week')}
+        </h3>
+        <ul className="space-y-1.5">
+          {signupsByWeek.map((n, i) => (
+            <li
+              key={i}
+              className="grid grid-cols-[6.5rem_1fr_2.5rem] items-center gap-2 text-xs"
+              title={`${weekLabel(i)}: ${n}`}
+            >
+              <span className="text-white/70">{weekLabel(i)}</span>
+              <span className="h-3 rounded-full bg-white/5" aria-hidden="true">
+                <span
+                  className="block h-3 rounded-full bg-brand-emerald"
+                  style={{ width: `${(n / max) * 100}%`, minWidth: n > 0 ? 4 : 0 }}
+                />
+              </span>
+              <span className="text-white text-right tabular-nums">{n}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="text-[11px] text-white/60 mt-3">
+          {t(
+            'adminHome.activityNote',
+            'Active means the app was opened (or zikr was logged) in that time. Staff and disabled accounts are not counted.'
+          )}
+        </p>
+      </div>
+    </section>
   );
 }
 
@@ -133,6 +194,8 @@ export default function AdminHome() {
           />
         </div>
       )}
+
+      {isServant && stats?.servant?.activity && <ActivityPanel activity={stats.servant.activity} />}
 
       {!isServant && ansarDomain === 'sadaqah' && (
         <Link
