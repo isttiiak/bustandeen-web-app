@@ -15,6 +15,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 ### Fixed
 
+- **Accessibility on the analytics screens** (found once the demo opened them to the automated checks): the zikr heatmap scrolls from the keyboard, the session-history day picker has a label and a full-size tap target, Zikr analytics has a page heading, the Hifz heatmap numbers and the "goal achieved" percentage are readable, and the oldest owed Kaza prayer reads clearly in the light theme.
 - The demo's zikr analytics, Kaza history, Salat journey and several other demo answers were missing or used an old shape, which would have crashed those screens once they opened.
 
 ## v5.151.0 - "Try it" opens the feature in the demo - 2026-10-11

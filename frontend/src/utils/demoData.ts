@@ -49,22 +49,21 @@ function buildChartData(days: number) {
 
 function buildZikrAnalytics(days: number): AnalyticsResponse {
   const chartData = buildChartData(days);
+  // Today starts at 0: Home shows the higher of this and the visitor's own
+  // demo taps, so their counts are what they see (e2e home-quick-sections).
+  const last = chartData[chartData.length - 1];
+  if (last) {
+    last.total = 0;
+    last.breakdown = { SubhanAllah: 0, Alhamdulillah: 0, 'Allahu Akbar': 0 };
+    last.status = 'pending';
+  }
   const total = chartData.reduce((s, d) => s + d.total, 0);
-  const todayTotal = chartData[chartData.length - 1]?.total ?? 0;
   return {
     ok: true,
     period: { days, startDate: dateStr(days - 1), endDate: dateStr(0) },
     chartData,
     stats: { average: Math.round(total / days), maxDay: dateStr(3), maxCount: 1400, total },
-    today: {
-      total: todayTotal,
-      goalMet: todayTotal >= 500,
-      perType: [
-        { zikrType: 'SubhanAllah', total: Math.floor(todayTotal * 0.33) },
-        { zikrType: 'Alhamdulillah', total: Math.floor(todayTotal * 0.33) },
-        { zikrType: 'Allahu Akbar', total: Math.floor(todayTotal * 0.34) },
-      ],
-    },
+    today: { total: 0, goalMet: false, perType: [] },
     goal: { dailyTarget: 500, isActive: true, graceDays: 1 },
     streak: { currentStreak: 12, longestStreak: 21, state: 'active' },
     allTime: { totalCount: 42300, bestDay: { date: dateStr(14), count: 2180 } },

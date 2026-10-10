@@ -3760,7 +3760,8 @@
       "title": "Session history",
       "empty": "No sessions logged for this day",
       "manualLog": "Manual log",
-      "note": "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
+      "note": "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here.",
+      "dateLabel": "Choose a day"
     },
     "noZikrToday": "No zikr logged today yet",
     "noZikrAllTime": "No zikr logged yet",
@@ -3784,7 +3785,8 @@
     "heatmapSub": "last 365 days",
     "perTypeTrend": "Per-type trends",
     "newUserHeatmap": "Not enough activity yet. This fills in as you go.",
-    "newUserTrend": "Your trend will appear here once you start counting zikr."
+    "newUserTrend": "Your trend will appear here once you start counting zikr.",
+    "srTitle": "Zikr Analytics"
   },
   "zikrLibrary": {
     "makeRequest": "Request for the library",

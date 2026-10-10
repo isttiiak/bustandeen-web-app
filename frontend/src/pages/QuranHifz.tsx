@@ -369,9 +369,13 @@ export default function QuranHifz() {
                     key={row.surah}
                     title={`${nameOf(row.surah)}: ${row.memorised}/${row.totalAyat} started · ${row.solid} solid`}
                     className="aspect-square rounded-md flex items-center justify-center text-[9px] font-bold text-white"
+                    // Strength and coverage both go into the tint: an opacity
+                    // on the cell faded its number below readable (axe).
                     style={{
-                      backgroundColor: `rgb(var(--c-data-good) / ${0.15 + (weakPct / 100) * 0.6})`,
-                      opacity: Math.max(0.35, row.memorised / heatmapMax + 0.35),
+                      backgroundColor: `rgb(var(--c-data-good) / ${
+                        (0.12 + (weakPct / 100) * 0.4) *
+                        Math.min(1, 0.5 + row.memorised / heatmapMax / 2)
+                      })`,
                     }}
                   >
                     {row.surah}

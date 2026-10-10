@@ -150,7 +150,15 @@ function HeatmapCalendar({ data }: { data: HeatmapDay[] }) {
           </>
         )}
       </p>
-      <div ref={scrollRef} className="overflow-x-auto pb-1">
+      {/* Focusable, so the sideways scroll works from the keyboard (axe). */}
+      <div
+        ref={scrollRef}
+        className="overflow-x-auto pb-1"
+        // eslint-disable-next-line jsx-a11y-x/no-noninteractive-tabindex -- a scrollable region must be focusable for keyboard users (axe scrollable-region-focusable)
+        tabIndex={0}
+        role="region"
+        aria-label={t('zikrAnalytics.heatmap', 'Activity heatmap')}
+      >
         <div className="min-w-max sm:min-w-0">
           <div className="grid gap-[3px] mb-1 overflow-hidden" style={grid}>
             {weeks.map((_, wi) => (
@@ -555,6 +563,7 @@ export default function ZikrAnalytics() {
 
   return (
     <AnimatedBackground variant="dark">
+      <h1 className="sr-only">{t('zikrAnalytics.srTitle', 'Zikr Analytics')}</h1>
       <div className="p-4 sm:p-6 lg:p-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Tab navigation */}
@@ -960,7 +969,8 @@ export default function ZikrAnalytics() {
                 value={sessionsDate}
                 max={getTrackingDay()}
                 onChange={(e) => setSessionsDate(e.target.value)}
-                className="input input-xs input-bordered rounded-control bg-brand-surface border-brand-border text-white/80 text-xs"
+                aria-label={t('zikrAnalytics.sessions.dateLabel', 'Choose a day')}
+                className="input input-xs h-11 input-bordered rounded-control bg-brand-surface border-brand-border text-white/80 text-xs"
               />
             </div>
             {sessionsLoading ? (

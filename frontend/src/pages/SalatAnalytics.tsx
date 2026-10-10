@@ -932,7 +932,7 @@ export default function SalatAnalytics() {
                                 <p className="text-white/70 text-[11px]">
                                   {t('salatAnalytics.kazaOldestOwed', 'Oldest still owed')}
                                 </p>
-                                <p className="text-data-none font-bold text-sm mt-0.5">
+                                <p className="text-white font-bold text-sm mt-0.5">
                                   {translateSalatName(
                                     kazaInsights.oldestOwed.prayer,
                                     kazaInsights.oldestOwed.prayer,
