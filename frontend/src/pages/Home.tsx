@@ -43,7 +43,7 @@ import {
   QuranQuickCard,
   ZikrQuickCard,
 } from '../components/home/QuickSections.js';
-import { homeSections } from '../utils/homeSections.js';
+import { getHomeGoals, goalRows, goalsCardShown, homeSections } from '../utils/homeSections.js';
 import toast from 'react-hot-toast';
 import {
   useMusafir,
@@ -77,11 +77,11 @@ import { getFridayHour, FRIDAY_HOUR_REF } from '../utils/fridayHour.js';
 import { HIGHLIGHT_CAP, orderHighlights, TODAY_SPECIAL_ID } from '../utils/homeSpecial.js';
 import { useUpdateProfile, useUserProfile } from '../hooks/useUserProfile.js';
 import {
-  getFocusHabits,
   isOnboardedLocally,
   markOnboardedLocally,
   onboardingMode,
   orderByFocus,
+  type Habit,
 } from '../utils/onboarding.js';
 
 /** The prayer arch links to /prayer-times as a stretched link: an overlay
@@ -144,9 +144,13 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- location.key is the trigger, not an input
     [location.key]
   );
-  const focusHabits = useMemo(
-    () => getFocusHabits(),
-    // Re-read when coming back from the setup screen.
+  // Today's goals card (U5): on/off, its own row order, rows, badges.
+  const goals = useMemo(
+    () => {
+      const g = getHomeGoals();
+      return { shown: goalsCardShown(g), rows: goalRows(g), badges: g.badges };
+    },
+    // Re-read when coming back from Settings or the setup screen.
     // eslint-disable-next-line react-hooks/exhaustive-deps -- location.key is the trigger, not an input
     [location.key]
   );
@@ -917,109 +921,121 @@ export default function Home() {
         )}
         {homeLayout === 'full' && specialBlock}
 
-        {/* Today's goals, in the order of the habits chosen at setup */}
-        <h2 className="font-display text-base font-semibold text-white mb-2">
-          {t('home.goalsTitle', "Today's goals")}
-        </h2>
-        <div className="grid gap-3 mb-2" data-testid="today-goals">
-          {orderByFocus(activities, focusHabits).map((a) => {
-            const isZikr = a.id === 'zikr';
-            const Icon = a.icon;
-            return (
-              <Link key={a.id} to={a.link} className="block group">
-                <div className="h-full rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-3.5 sm:p-4 hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Icon className="w-5 h-5 shrink-0 text-brand-emerald" />
-                    <h3 className="font-display text-sm sm:text-base font-semibold text-white flex-1 min-w-0 truncate">
-                      {a.title}
-                    </h3>
-                    <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/40 group-hover:text-white/70 transition-colors" />
-                  </div>
-                  <div className="flex items-baseline flex-wrap gap-x-2">
-                    <span className="font-display text-xl sm:text-2xl font-semibold text-white tabular-nums">
-                      {a.stats.value}
-                    </span>
-                    <span className="text-white/50 text-[11px] font-semibold uppercase tracking-wide">
-                      {a.stats.label}
-                    </span>
-                  </div>
-                  {a.progress != null && (
-                    <div
-                      className="h-1.5 rounded-full bg-brand-border overflow-hidden mt-2"
-                      role="progressbar"
-                      aria-valuemin={0}
-                      aria-valuemax={100}
-                      aria-valuenow={a.progress}
-                      aria-label={a.title}
-                    >
-                      <span
-                        className="block h-full bg-brand-emerald rounded-full"
-                        style={{ width: `${a.progress}%` }}
-                      />
-                    </div>
-                  )}
-
-                  {/* Badges: streak, goal, Ramadan */}
-                  {(isZikr || a.id === 'quran' || a.tag || a.id === 'fasting') && (
-                    <div className="mt-2.5 pt-2 border-t border-brand-border/60 flex flex-wrap items-center gap-1.5">
-                      {isZikr && (
-                        <>
-                          <StreakBadge
-                            streak={a.streakCount ?? 0}
-                            state={analyticsData?.streak?.state}
-                            size="sm"
+        {/* Today's goals: rows in their own order (Settings → Home) */}
+        {goals.shown && (
+          <>
+            <h2 className="font-display text-base font-semibold text-white mb-2">
+              {t('home.goalsTitle', "Today's goals")}
+            </h2>
+            <div className="grid gap-3 mb-2" data-testid="today-goals">
+              {orderByFocus(
+                activities.filter((a) => goals.rows.includes(a.id as Habit)),
+                goals.rows
+              ).map((a) => {
+                const isZikr = a.id === 'zikr';
+                const Icon = a.icon;
+                return (
+                  <Link key={a.id} to={a.link} className="block group">
+                    <div className="h-full rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-3.5 sm:p-4 hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Icon className="w-5 h-5 shrink-0 text-brand-emerald" />
+                        <h3 className="font-display text-sm sm:text-base font-semibold text-white flex-1 min-w-0 truncate">
+                          {a.title}
+                        </h3>
+                        <ChevronRightIcon className="w-4 h-4 shrink-0 text-white/40 group-hover:text-white/70 transition-colors" />
+                      </div>
+                      <div className="flex items-baseline flex-wrap gap-x-2">
+                        <span className="font-display text-xl sm:text-2xl font-semibold text-white tabular-nums">
+                          {a.stats.value}
+                        </span>
+                        <span className="text-white/50 text-[11px] font-semibold uppercase tracking-wide">
+                          {a.stats.label}
+                        </span>
+                      </div>
+                      {a.progress != null && (
+                        <div
+                          className="h-1.5 rounded-full bg-brand-border overflow-hidden mt-2"
+                          role="progressbar"
+                          aria-valuemin={0}
+                          aria-valuemax={100}
+                          aria-valuenow={a.progress}
+                          aria-label={a.title}
+                        >
+                          <span
+                            className="block h-full bg-brand-emerald rounded-full"
+                            style={{ width: `${a.progress}%` }}
                           />
-                          <GoalBadge pct={zikrGoalPct} met={goalCompleted} size="sm" />
-                        </>
+                        </div>
                       )}
-                      {/* A streak is only meaningful against a goal the user
+
+                      {/* Badges: streak, goal, Ramadan */}
+                      {goals.badges &&
+                        (isZikr || a.id === 'quran' || a.tag || a.id === 'fasting') && (
+                          <div className="mt-2.5 pt-2 border-t border-brand-border/60 flex flex-wrap items-center gap-1.5">
+                            {isZikr && (
+                              <>
+                                <StreakBadge
+                                  streak={a.streakCount ?? 0}
+                                  state={analyticsData?.streak?.state}
+                                  size="sm"
+                                />
+                                <GoalBadge pct={zikrGoalPct} met={goalCompleted} size="sm" />
+                              </>
+                            )}
+                            {/* A streak is only meaningful against a goal the user
                           actually set: with none, "streak" would just be
                           "days read at all," which isn't what this badge
                           communicates elsewhere (zikr/salat always have an
                           implicit goal). */}
-                      {a.id === 'quran' &&
-                        quranSummary &&
-                        quranSummary.profile.dailyGoalAyat > 0 && (
-                          <StreakBadge
-                            streak={quranSummary.streak}
-                            state={quranSummary.streak > 0 ? 'active' : 'none'}
-                            size="sm"
-                          />
+                            {a.id === 'quran' &&
+                              quranSummary &&
+                              quranSummary.profile.dailyGoalAyat > 0 && (
+                                <StreakBadge
+                                  streak={quranSummary.streak}
+                                  state={quranSummary.streak > 0 ? 'active' : 'none'}
+                                  size="sm"
+                                />
+                              )}
+                            {a.tag && (
+                              <StreakBadge
+                                streak={salatAnalytics?.currentStreak ?? 0}
+                                state={salatAnalytics?.currentStreak ? 'active' : 'none'}
+                                size="sm"
+                              />
+                            )}
+                            {a.id === 'fasting' && (
+                              <button
+                                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-control text-[11px] font-bold text-brand-gold border border-brand-gold/40 bg-brand-gold/10 hover:bg-brand-gold/20 transition-colors"
+                                title={
+                                  ramadan.active
+                                    ? 'Open the Ramadan tracker'
+                                    : 'Countdown to Ramadan'
+                                }
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  navigate('/ramadan');
+                                }}
+                              >
+                                <CrescentIcon className="w-3.5 h-3.5" />
+                                {ramadan.active
+                                  ? t('home.ramadanDay', {
+                                      day: formatLocaleNumber(ramadan.todayNumber ?? 0),
+                                    })
+                                  : t('home.ramadanIn', {
+                                      days: formatLocaleNumber(ramadan.daysUntil),
+                                    })}
+                              </button>
+                            )}
+                          </div>
                         )}
-                      {a.tag && (
-                        <StreakBadge
-                          streak={salatAnalytics?.currentStreak ?? 0}
-                          state={salatAnalytics?.currentStreak ? 'active' : 'none'}
-                          size="sm"
-                        />
-                      )}
-                      {a.id === 'fasting' && (
-                        <button
-                          className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-control text-[11px] font-bold text-brand-gold border border-brand-gold/40 bg-brand-gold/10 hover:bg-brand-gold/20 transition-colors"
-                          title={
-                            ramadan.active ? 'Open the Ramadan tracker' : 'Countdown to Ramadan'
-                          }
-                          onClick={(e) => {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            navigate('/ramadan');
-                          }}
-                        >
-                          <CrescentIcon className="w-3.5 h-3.5" />
-                          {ramadan.active
-                            ? t('home.ramadanDay', {
-                                day: formatLocaleNumber(ramadan.todayNumber ?? 0),
-                              })
-                            : t('home.ramadanIn', { days: formatLocaleNumber(ramadan.daysUntil) })}
-                        </button>
-                      )}
                     </div>
-                  )}
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        )}
 
         {/* Today's special days, Friday cards and sadaqah virtue: here unless
             the Home layout setting puts the full block under the arch */}

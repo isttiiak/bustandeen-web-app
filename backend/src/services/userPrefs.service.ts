@@ -32,6 +32,7 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_focus_habits',
   'bustandeen_home_timeline',
   'bustandeen_home_sections_off',
+  'bustandeen_home_goals',
   'bustandeen_zikr_quick',
   'bustandeen_zikr_quick_action',
   'bustandeen_quran_last',

@@ -140,7 +140,7 @@ test('Settings lists the sections in order with switches', async ({ page }) => {
     window.history.pushState({}, '', '/settings');
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
-  const group = page.getByRole('group', { name: 'Home sections' });
+  const group = page.getByRole('group', { name: 'Quick sections' });
   await expect(group.locator('[data-section]')).toHaveCount(4);
   const rows = () =>
     group

@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.137.0 - Choose what Home shows - 2026-10-10
+
+### Added
+
+- **Settings → Home (U5).** Turn any of the four quick sections (prayer timeline, Zikr, Quran, Fasting) on or off, in your habit order, including none. **Today's goals** can now be switched off too, its rows have their own order (separate from the habit order), any row can be hidden, and one switch hides the streaks and badges (streaks, zikr goal percent, Ramadan countdown). At least one quick section or the goals card always stays on, so Home is never empty; the last one left cannot be switched off, and if two devices ever sync into "nothing on", Home shows the goals card. "Adhkār on the timeline" is greyed out while the prayer timeline is off. Synced across devices (new `bustandeen_home_goals` key in both whitelists); the prayer row in the arch always stays. English and Bangla.
+
 ## v5.136.0 - Log counts from Home - 2026-10-10
 
 ### Added
