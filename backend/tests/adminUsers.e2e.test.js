@@ -202,4 +202,46 @@ describe('Admin users — directory + welcome-email backfill (servant only)', ()
       expect(res.status).toBe(200);
     });
   });
+
+  describe('input checks (U8.5)', () => {
+    test('emails need a non-empty string subject and body', async () => {
+      for (const body of [
+        { subject: 'Hi' },
+        { subject: '', body: 'x' },
+        { subject: 'Hi', body: 42 },
+      ]) {
+        const res = await request(app)
+          .post('/api/admin/users/old-1/custom-email')
+          .set('X-Admin-Token', ownerToken)
+          .send(body);
+        expect(res.status).toBe(400);
+      }
+    });
+
+    test('a disable reason is capped', async () => {
+      const res = await request(app)
+        .post('/api/admin/users/old-2/disable')
+        .set('X-Admin-Token', ownerToken)
+        .send({ reason: 'x'.repeat(501) });
+      expect(res.status).toBe(400);
+    });
+
+    test('the welcome backfill sends a small batch at most and is audit-logged', async () => {
+      const tooMany = await request(app)
+        .post('/api/admin/users/welcome-backfill')
+        .set('X-Admin-Token', ownerToken)
+        .send({ limit: 500 });
+      expect(tooMany.status).toBe(400);
+
+      const res = await request(app)
+        .post('/api/admin/users/welcome-backfill')
+        .set('X-Admin-Token', ownerToken)
+        .send({ limit: 1 });
+      expect(res.status).toBe(200);
+      expect(res.body.sent).toBeLessThanOrEqual(1);
+
+      const log = await request(app).get('/api/admin/audit-log').set('X-Admin-Token', ownerToken);
+      expect(log.body.entries.some((e) => e.action === 'user.welcomeBackfill')).toBe(true);
+    });
+  });
 });

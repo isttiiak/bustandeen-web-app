@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.141.4 - Checked input on the admin user tools - 2026-10-10
+
+### Fixed
+
+- **Admin user tools check what they are sent (U8.5, admin audit B2).** The welcome, re-engagement and custom emails to a user now need a subject (up to 200 characters) and a body (up to 10,000); a missing or non-text value is a clear 400 instead of a server error. A disable reason is capped at 500 characters.
+- **The welcome-email backfill sends at most 20 per call.** It used to try 200 one after another inside a request that stops after 30 seconds, so a large batch was cut off half way. Call it again for the next 20.
+- **More admin actions in the audit log:** the welcome backfill (how many were sent and how many remain) and "Retry failed" on an update email.
+
 ## v5.141.3 - An admin's own login is safe from Users - 2026-10-10
 
 ### Fixed

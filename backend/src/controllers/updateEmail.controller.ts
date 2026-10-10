@@ -60,7 +60,18 @@ export const continueHandler = handle(async (req, res) => {
   res.json({ ok: true, campaign: updateEmailService.summarise(campaign), busy });
 });
 
+/** Logged: it sends the campaign again to everyone it failed for. The
+ *  /continue calls that follow are the same send and are not logged one by one. */
 export const retryHandler = handle(async (req, res) => {
   const campaign = await updateEmailService.retryFailed(idParam(req));
-  res.json({ ok: true, campaign: updateEmailService.summarise(campaign) });
+  const summary = updateEmailService.summarise(campaign);
+  await logAdminAction({
+    actorEmail: req.admin!.email,
+    actorRole: req.admin!.role,
+    action: 'email.update.retry',
+    targetType: 'UpdateEmailCampaign',
+    targetId: summary._id,
+    metadata: { subject: summary.subject, recipients: summary.pending },
+  });
+  res.json({ ok: true, campaign: summary });
 });

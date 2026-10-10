@@ -2,6 +2,7 @@ import User, { IUser } from '../models/User.js';
 import { sendWelcomeEmail } from './welcomeEmail.service.js';
 import { welcomeEmail } from './welcomeEmail.templates.js';
 import { deleteAccount } from './user.service.js';
+import { WELCOME_BACKFILL_MAX } from '../validation/adminUsers.schemas.js';
 import { sendMail } from './email.service.js';
 import {
   excludeAdminUids,
@@ -299,7 +300,7 @@ export const deleteUserByAdmin = async (uid: string): Promise<void> => {
  * to trip Zoho's own rate limiting than a bounded batch sent one at a time.
  */
 export const sendWelcomeBackfill = async (
-  limit = 200
+  limit = WELCOME_BACKFILL_MAX
 ): Promise<{ sent: number; remaining: number }> => {
   const users = await User.find({ ...MISSING_WELCOME_FILTER, ...(await excludeAdminUids()) })
     .select('uid email displayName')

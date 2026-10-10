@@ -50,8 +50,17 @@ export const welcomeBackfillSendHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const limit = req.body?.limit ? Number(req.body.limit) : undefined;
+    // welcomeBackfillSchema already capped it at WELCOME_BACKFILL_MAX.
+    const limit = (req.body as { limit?: number } | undefined)?.limit;
     const result = await adminUsersService.sendWelcomeBackfill(limit);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'user.welcomeBackfill',
+      targetType: 'User',
+      targetId: 'batch',
+      metadata: { sent: result.sent, remaining: result.remaining },
+    });
     res.json({ ok: true, ...result });
   } catch (err) {
     next(err);
