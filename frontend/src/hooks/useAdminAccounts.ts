@@ -26,6 +26,11 @@ export function useAdminAccounts() {
   });
 }
 
+/** How the server set up the Firebase side of a new admin: a new account, an
+ *  existing verified one linked as is (keeps its own password), or an
+ *  unverified one reclaimed onto the password typed in the form. */
+export type AdminFirebaseLink = 'created' | 'linked' | 'reclaimed';
+
 /** Servant-only — registers a new admin, creating its Firebase account if
  *  one doesn't already exist for the email. This is the ONLY way to add an
  *  Ansar after the initial deploy-time bootstrap. */
@@ -38,7 +43,10 @@ export function useCreateAdminAccount() {
       displayName?: string;
       role: AdminRole;
       ansarDomain?: AnsarDomain;
-    }) => api.post('/api/admin/accounts', input),
+    }) =>
+      api
+        .post<{ ok: boolean; firebase?: AdminFirebaseLink }>('/api/admin/accounts', input)
+        .then((r) => r.data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
     },

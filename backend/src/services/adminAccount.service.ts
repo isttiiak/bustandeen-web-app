@@ -12,6 +12,84 @@ class AdminAccountError extends Error {
 
 let bootstrapAttempted = false;
 
+/** The slice of firebase-admin's Auth that linkFirebaseUser needs, so the
+ *  decision can be tested with a fake. */
+export interface FirebaseAuthLike {
+  getUserByEmail(email: string): Promise<{ uid: string; emailVerified: boolean }>;
+  createUser(props: {
+    email: string;
+    password: string;
+    displayName?: string;
+    emailVerified: boolean;
+  }): Promise<{ uid: string }>;
+  updateUser(
+    uid: string,
+    props: { password: string; emailVerified: boolean; displayName?: string }
+  ): Promise<unknown>;
+  revokeRefreshTokens(uid: string): Promise<void>;
+}
+
+/** How the Firebase side of a new admin was set up. */
+export type FirebaseLink = 'created' | 'linked' | 'reclaimed';
+
+const isUserNotFound = (err: unknown): boolean =>
+  (err as { code?: string })?.code === 'auth/user-not-found';
+
+/**
+ * Finds or creates the Firebase account behind a new admin.
+ *
+ * - No account for the email: create one with the given password ('created').
+ * - An email-verified account: its owner proved the address, so it is linked
+ *   as is and keeps its own password ('linked').
+ * - An account that never verified the email: anyone can sign up in the app
+ *   with an address they don't own, so linking it would hand the panel to
+ *   whoever registered it first. Its password is replaced with the one the
+ *   Servant chose, the email is marked verified and its sessions are revoked
+ *   ('reclaimed').
+ *
+ * Throws on any lookup error other than "not found"; never guesses.
+ */
+export const linkFirebaseUser = async (
+  auth: FirebaseAuthLike,
+  input: { email: string; password?: string; displayName?: string }
+): Promise<{ uid: string; link: FirebaseLink }> => {
+  let existing: { uid: string; emailVerified: boolean } | null = null;
+  try {
+    existing = await auth.getUserByEmail(input.email);
+  } catch (err) {
+    if (!isUserNotFound(err)) throw err;
+  }
+
+  if (!existing) {
+    if (!input.password) {
+      throw new AdminAccountError('A password is needed to create this account', 400);
+    }
+    const created = await auth.createUser({
+      email: input.email,
+      password: input.password,
+      displayName: input.displayName,
+      emailVerified: true,
+    });
+    return { uid: created.uid, link: 'created' };
+  }
+
+  if (existing.emailVerified) return { uid: existing.uid, link: 'linked' };
+
+  if (!input.password) {
+    throw new AdminAccountError(
+      'This email has an unverified account; a password is needed to take it over',
+      409
+    );
+  }
+  await auth.updateUser(existing.uid, {
+    password: input.password,
+    emailVerified: true,
+    ...(input.displayName ? { displayName: input.displayName } : {}),
+  });
+  await auth.revokeRefreshTokens(existing.uid);
+  return { uid: existing.uid, link: 'reclaimed' };
+};
+
 /**
  * Ensures the initial Servant and (optionally) first Ansar exist as
  * AdminAccount rows, so a fresh deploy has a working admin login without any
@@ -59,30 +137,25 @@ export const bootstrapAdminAccounts = async (): Promise<void> => {
     if (existing) continue;
 
     try {
-      let firebaseUser: admin.auth.UserRecord;
+      let linked: { uid: string; link: FirebaseLink };
       try {
-        firebaseUser = await admin.auth().getUserByEmail(normalizedEmail);
-      } catch {
-        if (!password) {
-          console.warn(
-            `[adminAccount] Skipping bootstrap for ${normalizedEmail}: no Firebase account exists and no bootstrap password was provided.`
-          );
+        linked = await linkFirebaseUser(admin.auth(), { email: normalizedEmail, password });
+      } catch (err) {
+        if (err instanceof AdminAccountError) {
+          console.warn(`[adminAccount] Skipping bootstrap for ${normalizedEmail}: ${err.message}.`);
           continue;
         }
-        firebaseUser = await admin.auth().createUser({
-          email: normalizedEmail,
-          password,
-          emailVerified: true,
-        });
+        throw err;
       }
 
       await AdminAccount.create({
-        firebaseUid: firebaseUser.uid,
+        firebaseUid: linked.uid,
         email: normalizedEmail,
         role,
         ansarDomain,
         active: true,
         createdBy: 'bootstrap',
+        sessionsValidAfter: new Date(),
       });
       console.warn(`[adminAccount] Bootstrapped ${role} account: ${normalizedEmail}`);
     } catch (err) {
@@ -126,9 +199,9 @@ export const listAdminAccounts = async (): Promise<IAdminAccount[]> =>
 
 /**
  * Servant-only: registers a new admin (normally an Ansar, though a Servant
- * could add another Servant too). Creates the Firebase account if an email
- * doesn't already have one — a fresh hire never needs a Firebase account set
- * up out-of-band first.
+ * could add another Servant too). The Firebase side goes through
+ * linkFirebaseUser, so an unverified account someone registered under the
+ * email first is reclaimed, never linked as is.
  */
 export const createAdminAccount = async (input: {
   email: string;
@@ -137,32 +210,28 @@ export const createAdminAccount = async (input: {
   role: AdminRole;
   ansarDomain?: AnsarDomain | null;
   createdBy: string;
-}): Promise<IAdminAccount> => {
+}): Promise<{ account: IAdminAccount; link: FirebaseLink }> => {
   const email = input.email.trim().toLowerCase();
   const existing = await AdminAccount.findOne({ email });
   if (existing) throw new AdminAccountError('An admin account with this email already exists', 409);
 
-  let firebaseUser: admin.auth.UserRecord;
-  try {
-    firebaseUser = await admin.auth().getUserByEmail(email);
-  } catch {
-    firebaseUser = await admin.auth().createUser({
-      email,
-      password: input.password,
-      displayName: input.displayName,
-      emailVerified: true,
-    });
-  }
+  const { uid, link } = await linkFirebaseUser(admin.auth(), {
+    email,
+    password: input.password,
+    displayName: input.displayName,
+  });
 
-  return AdminAccount.create({
-    firebaseUid: firebaseUser.uid,
+  const account = await AdminAccount.create({
+    firebaseUid: uid,
     email,
     displayName: input.displayName,
     role: input.role,
     ansarDomain: input.role === 'ansar' ? (input.ansarDomain ?? null) : null,
     active: true,
     createdBy: input.createdBy,
+    sessionsValidAfter: new Date(),
   });
+  return { account, link };
 };
 
 /**

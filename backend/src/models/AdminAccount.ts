@@ -30,6 +30,11 @@ export interface IAdminAccount extends Document {
   createdBy: string; // email of the servant who created this row, or 'bootstrap'
   createdAt: Date;
   lastLoginAt?: Date | null;
+  /** Admin tokens from a sign-in before this moment are refused
+   *  (requireAdminAuth). Set when the row is created or linked to a Firebase
+   *  account, so a session that existed before the account became an admin
+   *  never carries over. */
+  sessionsValidAfter?: Date | null;
 }
 
 const AdminAccountSchema = new Schema<IAdminAccount>({
@@ -42,6 +47,7 @@ const AdminAccountSchema = new Schema<IAdminAccount>({
   createdBy: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   lastLoginAt: { type: Date, default: null },
+  sessionsValidAfter: { type: Date, default: null },
 });
 
 export default mongoose.model<IAdminAccount>('AdminAccount', AdminAccountSchema);
