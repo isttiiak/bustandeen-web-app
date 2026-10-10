@@ -1,5 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { HOME_SECTIONS_OFF_KEY, homeSections, isSectionOn, setSectionOn } from './homeSections.js';
+import {
+  HOME_GOALS_KEY,
+  HOME_SECTIONS_OFF_KEY,
+  getHomeGoals,
+  goalOrder,
+  goalRows,
+  goalsCardShown,
+  homeSections,
+  isSectionOn,
+  setHomeGoals,
+  setSectionOn,
+} from './homeSections.js';
 import { FOCUS_KEY, HOME_TIMELINE_KEY } from './onboarding.js';
 import {
   DEFAULT_QUICK_ZIKR,
@@ -61,6 +72,59 @@ describe('homeSections', () => {
     expect(homeSections()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
     localStorage.setItem(HOME_SECTIONS_OFF_KEY, '{bad');
     expect(isSectionOn('zikr')).toBe(true);
+  });
+});
+
+describe("Today's goals card (U5)", () => {
+  const allSectionsOff = () => {
+    localStorage.setItem(HOME_TIMELINE_KEY, '0');
+    localStorage.setItem(HOME_SECTIONS_OFF_KEY, '["zikr","quran","fasting"]');
+  };
+
+  it('defaults to on, every row, badges, in the habit order', () => {
+    expect(getHomeGoals()).toEqual({ on: true, off: [], badges: true });
+    localStorage.setItem(FOCUS_KEY, JSON.stringify(['quran', 'salat']));
+    expect(goalRows()).toEqual(['quran', 'salat', 'zikr', 'fasting']);
+    expect(goalsCardShown()).toBe(true);
+  });
+  it('keeps its own row order once moved, independent of the habit order', () => {
+    setHomeGoals({ on: true, order: ['fasting', 'zikr', 'salat', 'quran'], off: [], badges: true });
+    localStorage.setItem(FOCUS_KEY, JSON.stringify(['quran', 'salat', 'zikr', 'fasting']));
+    expect(goalOrder()).toEqual(['fasting', 'zikr', 'salat', 'quran']);
+    expect(homeSections()).toEqual(['quran', 'salat', 'zikr', 'fasting']);
+  });
+  it('hides switched-off rows but never empties the card', () => {
+    setHomeGoals({ on: true, off: ['salat', 'fasting'], badges: false });
+    expect(goalRows()).toEqual(['zikr', 'quran']);
+    expect(getHomeGoals().badges).toBe(false);
+    setHomeGoals({ on: true, off: ['salat', 'zikr', 'quran', 'fasting'], badges: true });
+    expect(goalRows()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
+  });
+  it('off hides the card while a quick section is on', () => {
+    setHomeGoals({ on: false, off: [], badges: true });
+    expect(goalsCardShown()).toBe(false);
+  });
+  it('safety net: with every section off the card shows even if it is off', () => {
+    allSectionsOff();
+    expect(homeSections()).toEqual([]);
+    setHomeGoals({ on: false, off: [], badges: true });
+    expect(goalsCardShown()).toBe(true);
+  });
+  it('ignores junk and completes a partial order', () => {
+    localStorage.setItem(HOME_GOALS_KEY, '{bad');
+    expect(getHomeGoals()).toEqual({ on: true, off: [], badges: true });
+    localStorage.setItem(
+      HOME_GOALS_KEY,
+      JSON.stringify({ on: 'x', order: ['zikr', 'nope', 'zikr'], off: ['nope', 'quran'] })
+    );
+    expect(getHomeGoals()).toEqual({
+      on: true,
+      order: ['zikr', 'salat', 'quran', 'fasting'],
+      off: ['quran'],
+      badges: true,
+    });
+    localStorage.setItem(HOME_GOALS_KEY, 'null');
+    expect(getHomeGoals().on).toBe(true);
   });
 });
 
