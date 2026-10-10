@@ -52,9 +52,17 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
         }>(`${API_BASE}/api/admin/auth/session`, { headers: { 'X-Admin-Token': idToken } });
         setRejectedError(null);
         setSession(res.data.email, res.data.role, res.data.ansarDomain ?? null);
-      } catch {
+      } catch (err) {
+        const code = axios.isAxiosError(err)
+          ? (err.response?.data as { error?: string } | undefined)?.error
+          : undefined;
         setRejectedError(
-          t('adminGate.notRegistered', 'This account is not registered as a Bustandeen admin.')
+          code === 'admin_session_expired'
+            ? t(
+                'adminGate.sessionExpired',
+                'Your admin session ended (12 hours after sign-in). Please sign in again.'
+              )
+            : t('adminGate.notRegistered', 'This account is not registered as a Bustandeen admin.')
         );
         await signOut(adminAuth);
       }

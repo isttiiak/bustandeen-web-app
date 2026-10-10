@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { requireAdminAuth, requireServant, requireDomain } from '../middleware/auth.js';
+import {
+  requireAdminAuth,
+  requireAdminRecentAuth,
+  requireServant,
+  requireDomain,
+} from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import {
   adminListQuerySchema,
@@ -41,7 +46,12 @@ router.patch('/:id/reject', validate(rejectDonationSchema), adminSadaqahControll
 // Erroneous/test entries only — not a donor-facing action. Reverses the
 // stats impact first if the donation had been verified. Owner-only: a
 // permanent delete of a financial record.
-router.delete('/:id', requireServant, adminSadaqahController.deleteDonationHandler);
+router.delete(
+  '/:id',
+  requireServant,
+  requireAdminRecentAuth,
+  adminSadaqahController.deleteDonationHandler
+);
 
 // Financial cross-referencing (which donors are engaged app users, repeat
 // patterns, month-over-month trend) — owner-only per TODO-v3.md.
@@ -61,7 +71,12 @@ router.post(
 
 router.get('/expenses', adminSadaqahController.listExpensesHandler);
 router.post('/expenses', validate(addExpenseSchema), adminSadaqahController.addExpenseHandler);
-router.delete('/expenses/:id', requireServant, adminSadaqahController.deleteExpenseHandler);
+router.delete(
+  '/expenses/:id',
+  requireServant,
+  requireAdminRecentAuth,
+  adminSadaqahController.deleteExpenseHandler
+);
 
 // Owner-only: quarterly numbers are always recomputed fresh from verified
 // donations + the expense ledger (never manually typed) — publishing is
@@ -89,6 +104,7 @@ router.patch(
 router.delete(
   '/quarterly/:quarter',
   requireServant,
+  requireAdminRecentAuth,
   validate(quarterlyParamSchema),
   adminSadaqahController.deleteQuarterlyHandler
 );

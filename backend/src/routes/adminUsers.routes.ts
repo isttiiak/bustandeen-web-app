@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAdminAuth, requireServant } from '../middleware/auth.js';
+import { requireAdminAuth, requireAdminRecentAuth, requireServant } from '../middleware/auth.js';
 import * as adminUsersController from '../controllers/adminUsers.controller.js';
 import { validate } from '../middleware/validate.js';
 import {
@@ -44,6 +44,6 @@ router.post('/:uid/disable', validate(adminUserDisableSchema), adminUsersControl
 router.post('/:uid/enable', adminUsersController.enableHandler);
 // Single-UID only, explicit confirm required client-side — no bulk-delete
 // variant, per TODO-v3.md's explicit note.
-router.delete('/:uid', adminUsersController.deleteUserHandler);
+router.delete('/:uid', requireAdminRecentAuth, adminUsersController.deleteUserHandler);
 
 export default router;

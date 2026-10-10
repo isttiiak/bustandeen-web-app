@@ -80,6 +80,11 @@ export const requireAuth = async (
 
 const REAUTH_MAX_AGE_SECONDS = 5 * 60;
 
+/** An admin signs in again after this long, whatever they are doing. The
+ *  panel keeps its Firebase sign-in on the device, so without a limit a
+ *  left-open or stolen browser would stay in the panel indefinitely. */
+export const ADMIN_SESSION_MAX_SECONDS = 12 * 60 * 60;
+
 /**
  * Comma-separated ADMIN_EMAILS allowlist — used ONLY to set `isAdmin` on a
  * normal Firebase user's own profile response, purely so the main app's
@@ -176,17 +181,24 @@ export const requireAdminAuth = async (
       return;
     }
     // A sign-in from before the account became an admin (or before its
-    // sessions were last ended) never counts. A token without auth_time (a
+    // sessions were last ended), or older than ADMIN_SESSION_MAX_SECONDS,
+    // never counts. A token without auth_time (a
     // dev-bypass token that leaves it out) skips the check.
     if (
       authTime !== undefined &&
-      account.sessionsValidAfter &&
-      authTime * 1000 < account.sessionsValidAfter.getTime()
+      ((account.sessionsValidAfter && authTime * 1000 < account.sessionsValidAfter.getTime()) ||
+        Date.now() / 1000 - authTime > ADMIN_SESSION_MAX_SECONDS)
     ) {
       res.status(401).json({ ok: false, error: 'admin_session_expired' });
       return;
     }
-    req.admin = { uid, email: account.email, role: account.role, ansarDomain: account.ansarDomain };
+    req.admin = {
+      uid,
+      email: account.email,
+      role: account.role,
+      ansarDomain: account.ansarDomain,
+      authTime,
+    };
     req.user = { uid, email: account.email, isOwner: account.role === 'servant' };
     next();
   } catch {
@@ -228,6 +240,24 @@ export const requireDomain =
     }
     next();
   };
+
+/**
+ * Admin-panel twin of requireRecentAuth below, for the irreversible Servant
+ * actions (delete a user, a donation, an expense, a quarter or a library
+ * item; add an admin; activate or deactivate one): the admin must have
+ * entered their password in the last few minutes. The panel answers
+ * `admin_reauth_required` with a password prompt and repeats the request.
+ * A token without auth_time (dev bypass) passes, like requireRecentAuth.
+ * Must run after requireAdminAuth.
+ */
+export const requireAdminRecentAuth = (req: Request, res: Response, next: NextFunction): void => {
+  const authTime = req.admin?.authTime;
+  if (authTime !== undefined && Date.now() / 1000 - authTime > REAUTH_MAX_AGE_SECONDS) {
+    res.status(401).json({ ok: false, error: 'admin_reauth_required' });
+    return;
+  }
+  next();
+};
 
 /**
  * Gate for irreversible operations (account deletion): rejects unless the

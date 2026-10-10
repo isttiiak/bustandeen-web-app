@@ -147,7 +147,7 @@ describe('Admin sessions from before the account became an admin (U8.1)', () => 
   test('a sign-in after it is accepted', async () => {
     const res = await request(app)
       .get('/api/admin/auth/session')
-      .set('X-Admin-Token', tokenAt('2026-10-02T12:00:00Z'));
+      .set('X-Admin-Token', tokenAt(new Date().toISOString()));
     expect(res.status).toBe(200);
     expect(res.body.role).toBe('servant');
   });

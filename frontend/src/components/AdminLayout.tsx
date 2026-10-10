@@ -19,6 +19,7 @@ import {
 import { LeafIcon } from './icons/IslamicIcons.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminLogout } from '../hooks/useAdminAuth.js';
+import AdminReauthDialog from './admin/AdminReauthDialog.js';
 
 /**
  * The admin panel's OWN chrome — deliberately never the main app's Navbar
@@ -244,6 +245,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </header>
       <main>{children}</main>
+      <AdminReauthDialog />
     </div>
   );
 }

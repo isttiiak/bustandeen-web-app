@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 import { hasSessionHint, loadedAdminAuth, loadedFirebase, loadFirebase } from '../authClient.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useAdminStore } from '../store/useAdminStore.js';
+import { useAdminReauthStore } from '../store/useAdminReauthStore.js';
 import { getDemoResponse } from '../utils/demoData.js';
 
 /**
@@ -123,12 +124,35 @@ api.interceptors.response.use(
     }
     // Admin session rejected/expired — drop it so AdminGate re-prompts for
     // sign-in instead of admin requests just failing silently.
-    if (
-      axios.isAxiosError(err) &&
-      err.response?.status === 401 &&
-      (err.response.data as { error?: string } | undefined)?.error === 'admin_session_required'
-    ) {
+    const adminError =
+      axios.isAxiosError(err) && err.response?.status === 401
+        ? (err.response.data as { error?: string } | undefined)?.error
+        : undefined;
+    if (adminError === 'admin_session_required') {
       useAdminStore.getState().setSignedOut();
+    }
+    // Admin sign-ins end 12 hours after the password was entered (and when
+    // an account's sessions are ended): sign the panel out so the gate shows.
+    if (adminError === 'admin_session_expired') {
+      const adminAuth = loadedAdminAuth();
+      if (adminAuth) void signOutAdmin(adminAuth);
+      useAdminStore.getState().setSignedOut();
+      toast.error('Your admin session ended. Please sign in again.', { id: 'admin-session' });
+    }
+    // An irreversible admin action wants a recent password entry: ask once,
+    // then repeat the request with the refreshed token.
+    if (adminError === 'admin_reauth_required' && axios.isAxiosError(err) && err.config) {
+      const config = err.config as InternalAxiosRequestConfig & { _adminReauthed?: boolean };
+      if (!config._adminReauthed) {
+        return useAdminReauthStore
+          .getState()
+          .request()
+          .then((ok) => {
+            if (!ok) return Promise.reject(err);
+            config._adminReauthed = true;
+            return api(config);
+          });
+      }
     }
     // Rate limited — tell the user instead of failing silently.
     // Fixed toast id so a burst of 429s shows a single message.
@@ -141,5 +165,12 @@ api.interceptors.response.use(
     return Promise.reject(err);
   }
 );
+
+/** firebase/auth stays out of the main bundle: it is loaded only when an
+ *  admin session actually has to end. */
+async function signOutAdmin(auth: NonNullable<ReturnType<typeof loadedAdminAuth>>) {
+  const { signOut } = await import('firebase/auth');
+  await signOut(auth);
+}
 
 export default api;
