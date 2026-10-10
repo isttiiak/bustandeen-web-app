@@ -85,6 +85,33 @@ test('Zikr: with the "add" action a chip adds its number at once', async ({ page
   await expect(card).toContainText('100');
 });
 
+test('Zikr: "Log counts" beside "Open counter" adds to today in place (U4)', async ({ page }) => {
+  // 02:30 in Dhaka is before Fajr: the tracking day is still the 14th.
+  await demoHomeAt(page, '2026-10-15T02:30:00+06:00');
+  const card = page.getByTestId('quick-zikr');
+  await expect(card.getByRole('link', { name: 'Open counter' })).toHaveAttribute('href', '/zikr');
+  const count = card.getByTestId('habit-count');
+  await expect(count).toHaveText(/^0/);
+
+  await card.getByRole('button', { name: 'Log counts' }).click();
+  const dialog = page.getByRole('dialog', { name: 'Log Missed Counts' });
+  await expect(dialog).toBeVisible();
+  // Demo mode has no history to fill: Today only, no day picker.
+  await expect(dialog.getByText('Which day')).toHaveCount(0);
+
+  const amount = dialog.getByLabel('Counts to add');
+  await amount.fill('12.5');
+  await expect(dialog.getByText('Please enter a whole number.')).toBeVisible();
+  await expect(dialog.getByTestId('zikr-log-save')).toBeDisabled();
+
+  await amount.fill('33');
+  // Enter twice in a row must still save once.
+  await amount.press('Enter');
+  await amount.press('Enter').catch(() => {});
+  await expect(dialog).toHaveCount(0);
+  await expect(count).toHaveText(/^33(?!\d)/);
+});
+
 test('Fasting: Yes logs today’s sunnah fast, Broke marks it, a second tap undoes', async ({
   page,
 }) => {

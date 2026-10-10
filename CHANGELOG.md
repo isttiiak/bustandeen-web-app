@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.136.0 - Log counts from Home - 2026-10-10
+
+### Added
+
+- **"Log counts" on Home (U4).** The quick zikr section's full-width "Open counter" row is now two: "Open counter" and "Log counts". "Log counts" opens the same form as Zikr analytics right on Home (today or up to two days back), and today's number on the card updates as soon as you save. In demo mode it logs today only. English and Bangla.
+
 ## v5.135.1 - Zikr "Log counts" fixes - 2026-10-10
 
 ### Fixed
