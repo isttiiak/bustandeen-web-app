@@ -7,8 +7,6 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import SinceChip from '../components/SinceChip.js';
 import { useStatsResets } from '../hooks/useStatsResets.js';
 import TabNav from '../components/TabNav.js';
-import DemoSignInGate from '../components/DemoSignInGate.js';
-import { useAuthStore } from '../store/useAuthStore.js';
 import {
   ArrowPathIcon,
   ChartBarIcon,
@@ -71,7 +69,6 @@ function calendarCellClass(completed: number, hasData: boolean) {
 export default function SalatAnalytics() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const [days, setDays] = useState(30);
   // Defaults to the CURRENT calendar month, not a 30-day rolling window — a
   // fixed lookback can make someone who only recently started tracking (or
@@ -235,29 +232,6 @@ export default function SalatAnalytics() {
   // Same Fri-first ordering as DAY_LABELS, mapped to JS Date#getDay() indices
   // (0=Sun…6=Sat) — that's how the backend keys byWeekday.
   const FRI_FIRST_JS_DAYS = [5, 6, 0, 1, 2, 3, 4];
-
-  if (isDemoMode) {
-    return (
-      <DemoSignInGate
-        icon={<ChartBarIcon className="w-7 h-7" />}
-        title={t('demoGate.analyticsTitle', 'Your personal analytics await')}
-        desc={t(
-          'demoGate.salatDesc',
-          'Your prayer log, streaks, and debt history are saved to your account.'
-        )}
-        backTo="/salat"
-        backLabel={t('demoGate.backToSalat', 'Back to salat tracker')}
-        tabs={
-          <TabNav
-            items={[
-              { label: t('salat.tracker'), to: '/salat' },
-              { label: t('salat.analytics'), to: '/salat/analytics', active: true },
-            ]}
-          />
-        }
-      />
-    );
-  }
 
   return (
     <AnimatedBackground variant="dark">

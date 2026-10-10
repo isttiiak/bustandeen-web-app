@@ -21,7 +21,6 @@ import {
 } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import TabNav from '../components/TabNav.js';
-import DemoSignInGate from '../components/DemoSignInGate.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
 import {
   useCycleSummary,
@@ -270,35 +269,6 @@ export default function CycleAnalytics() {
       totalExcusedDays,
     };
   }, [summary, today]);
-
-  const isDemoMode = useAuthStore((s) => s.isDemoMode);
-
-  if (isDemoMode) {
-    return (
-      <DemoSignInGate
-        icon={<ChartBarIcon className="w-7 h-7" />}
-        title={t('demoGate.analyticsTitle', 'Your personal analytics await')}
-        desc={t(
-          'demoGate.cycleDesc',
-          'Cycle analytics (your patterns, predictions, and wellness insights) are available once you sign in.'
-        )}
-        backTo="/cycle"
-        backLabel={t('demoGate.backToCycle', 'Back to cycle tracker')}
-        tabs={
-          <TabNav
-            items={[
-              { label: t('cycleAnalytics.tabCycle', 'Cycle'), to: '/cycle' },
-              {
-                label: t('cycleAnalytics.tabAnalytics', 'Analytics'),
-                to: '/cycle/analytics',
-                active: true,
-              },
-            ]}
-          />
-        }
-      />
-    );
-  }
 
   if (!user || !isFemale) {
     return (

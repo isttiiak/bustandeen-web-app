@@ -5,6 +5,7 @@ import { m as motion } from 'framer-motion';
 import { EnvelopeIcon, LinkIcon, ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { CARD, SECTION_TITLE } from '../bustanStyles.js';
 import { GoogleLogo } from './profileParts.js';
+import { useAuthStore } from '../../store/useAuthStore.js';
 
 export interface ProfileAccountCardProps {
   accountError: string;
@@ -50,6 +51,8 @@ export default function ProfileAccountCard({
   user,
 }: ProfileAccountCardProps) {
   const { t } = useTranslation();
+  // The demo account is not a Firebase account: nothing to link (U9).
+  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const badge = (primary: boolean) => (
     <span className={primary ? BADGE_ON : BADGE_OFF}>
       {primary ? t('profile.primary', 'PRIMARY') : t('profile.secondary', 'SECONDARY')}
@@ -165,7 +168,7 @@ export default function ProfileAccountCard({
             </div>
             {badge(true)}
           </div>
-        ) : (
+        ) : isDemoMode ? null : (
           // Email/password account: offer to link Google.
           <button
             type="button"

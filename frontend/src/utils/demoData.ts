@@ -174,10 +174,34 @@ function buildSalatAnalytics(days: number) {
     },
     last7Days: cal.slice(-7),
     calendarData: cal,
-    weeklyMosqueTrend: Array.from({ length: 4 }, (_, i) => ({
-      week: dateStr(28 - i * 7),
-      mosqueRate: Math.round(20 + seedInt(i + 900, 0, 50)),
-    })),
+    weeklyMosqueTrend: Array.from({ length: 4 }, (_, i) => {
+      const prayedCount = 30 + seedInt(i + 950, 0, 5);
+      const mosqueCount = Math.round(prayedCount * (0.2 + seed(i + 900) * 0.4));
+      return {
+        weekStart: dateStr(27 - i * 7),
+        weekEnd: dateStr(21 - i * 7),
+        mosqueCount,
+        prayedCount,
+        rate: Math.round((mosqueCount / prayedCount) * 100),
+      };
+    }).reverse(),
+    fridayCount: Math.floor(days / 7),
+    jumuahAttendedCount: Math.max(0, Math.floor(days / 7) - 1),
+    byWeekday: Object.fromEntries(
+      Array.from({ length: 7 }, (_, wd) => {
+        const total = Math.round((logged.length / 7) * 5);
+        const missed = seedInt(wd + 960, 0, 3);
+        const kaza = seedInt(wd + 970, 0, 3);
+        return [wd, { completed: Math.max(0, total - missed - kaza), kaza, missed, total }];
+      })
+    ),
+    timeOfWindow: {
+      early: Math.floor(totalCompleted * 0.45),
+      mid: Math.floor(totalCompleted * 0.35),
+      late: Math.floor(totalCompleted * 0.15),
+      unknown: Math.floor(totalCompleted * 0.05),
+    },
+    missedReasons: { sleep: 4, busy: 3, travel: 2, forgot: 1 },
   };
 }
 
@@ -187,7 +211,14 @@ function buildFastingSummary() {
     profile: { qadaOwed: 3, kaffarah: { active: false, targetDays: 0 }, vows: [] },
     qadaCompleted: 7,
     kaffarah: { completed: 0, currentRun: 0, runStale: false },
-    stats: { total: 28, thisMonth: 3, last30: 5, voluntaryTotal: 18, monThuStreak: 7 },
+    stats: {
+      total: 28,
+      thisMonth: 3,
+      last30: 5,
+      voluntaryTotal: 18,
+      monThuStreak: 7,
+      bestMonThuStreak: 12,
+    },
     recentLogs: [],
   };
 }
@@ -221,11 +252,11 @@ function buildQuranSummary() {
     pace: 5,
     estDaysToKhatm: 819,
     topSurahs: [
+      { surah: 112, completions: 15 },
       { surah: 36, completions: 8 },
       { surah: 67, completions: 6 },
       { surah: 55, completions: 4 },
       { surah: 18, completions: 2 },
-      { surah: 112, completions: 15 },
     ],
     bookmarks: [],
   };
@@ -524,6 +555,292 @@ function buildSocialSummary(gender: string) {
   };
 }
 
+// ── Analytics for the demo (U9) ─────────────────────────────────────────────
+// Every analytics screen opens in the demo, so each endpoint those screens
+// read answers here with believable, fixed numbers.
+
+const queryParam = (url: string, key: string) =>
+  new URL(url, 'http://demo.local').searchParams.get(key);
+
+/** An ISO time on `day` (YYYY-MM-DD) at hh:mm, local time. */
+const atTime = (day: string, h: number, m: number) =>
+  new Date(`${day}T${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:00`).toISOString();
+
+function buildZikrTimeOfDay() {
+  return {
+    ok: true,
+    hours: Array.from({ length: 24 }, (_, hour) => {
+      let total = seedInt(hour + 700, 0, 120);
+      if (hour >= 5 && hour <= 7) total = seedInt(hour + 700, 250, 500);
+      else if (hour >= 20 && hour <= 22) total = seedInt(hour + 700, 150, 350);
+      else if (hour >= 1 && hour <= 3) total = 0;
+      return { hour, total };
+    }),
+  };
+}
+
+function buildZikrSessions(date: string | null) {
+  const day = date ?? dateStr(0);
+  return {
+    ok: true,
+    sessions: [
+      {
+        start: atTime(day, 5, 40),
+        end: atTime(day, 5, 52),
+        total: 300,
+        perType: { SubhanAllah: 100, Alhamdulillah: 100, 'Allahu Akbar': 100 },
+      },
+      {
+        start: atTime(day, 13, 20),
+        end: atTime(day, 13, 26),
+        total: 100,
+        perType: { Astaghfirullah: 100 },
+      },
+      {
+        start: atTime(day, 21, 5),
+        end: atTime(day, 21, 15),
+        total: 200,
+        perType: { 'La ilaha illallah': 100, 'Durud Ibrahim': 100 },
+      },
+    ],
+  };
+}
+
+const DEMO_STATS_RESETS = {
+  zikr: { date: null, history: [] },
+  salat: { date: null, history: [] },
+  fasting: { date: null, history: [] },
+  quran: { date: null, history: [] },
+};
+
+function buildSalatDebtHistory(days: number) {
+  const weeks = Math.max(1, Math.ceil(days / 7));
+  return {
+    ok: true,
+    weeks: Array.from({ length: weeks }, (_, i) => ({
+      weekStart: dateStr((weeks - i) * 7 - 1),
+      weekEnd: dateStr((weeks - i - 1) * 7),
+      accumulated: seedInt(i + 1100, 0, 4),
+      paidBack: seedInt(i + 1200, 0, 5),
+    })),
+  };
+}
+
+function buildSalatDebtInsights() {
+  return {
+    ok: true,
+    oldestOwed: { prayer: 'fajr', missedDate: dateStr(9) },
+    avgPayoffDays: 3.5,
+    itemizedOwedCount: 4,
+    itemizedPaidCount: 17,
+    perPrayer: {
+      fajr: { owedCount: 1, oldestOwedDate: dateStr(9), avgPayoffDays: 4.2, paidCount: 6 },
+      dhuhr: { owedCount: 1, oldestOwedDate: dateStr(5), avgPayoffDays: 2.8, paidCount: 3 },
+      asr: { owedCount: 1, oldestOwedDate: dateStr(2), avgPayoffDays: 3.1, paidCount: 3 },
+      maghrib: { owedCount: 0, oldestOwedDate: null, avgPayoffDays: 1.5, paidCount: 1 },
+      isha: { owedCount: 1, oldestOwedDate: dateStr(2), avgPayoffDays: 3.9, paidCount: 4 },
+    },
+  };
+}
+
+function buildSalatJourney() {
+  return {
+    ok: true,
+    phases: [
+      {
+        index: 1,
+        from: dateStr(120),
+        to: null,
+        days: 121,
+        done: 520,
+        missed: 38,
+        kaza: 47,
+        completionRate: 86,
+        resetNote: null,
+      },
+    ],
+  };
+}
+
+function buildSalatCorrelation() {
+  return {
+    ok: true,
+    available: true,
+    earlyIshaFajrRate: 82,
+    lateIshaFajrRate: 54,
+    earlySampleSize: 34,
+    lateSampleSize: 19,
+  };
+}
+
+function buildFastingHistory(days: number) {
+  const logs = [];
+  for (let i = days - 1; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const wd = d.getDay();
+    // Mondays and Thursdays, most weeks.
+    if ((wd === 1 || wd === 4) && seedInt(i + 1300, 0, 3) > 0) {
+      logs.push({
+        _id: `demo-fast-${i}`,
+        userId: 'demo',
+        date: dateStr(i),
+        category: 'voluntary',
+        voluntaryKind: 'monThu',
+        status: 'completed',
+      });
+    }
+  }
+  return { ok: true, logs };
+}
+
+function buildWorshipCorrelation(days: number) {
+  return {
+    ok: true,
+    windowDays: days,
+    fastingDays: { days: 9, avgSalatCompletionPct: 94, avgZikrCount: 820, avgQuranUnits: 14 },
+    nonFastingDays: {
+      days: Math.max(0, days - 9),
+      avgSalatCompletionPct: 81,
+      avgZikrCount: 560,
+      avgQuranUnits: 8,
+    },
+    insufficientData: false,
+  };
+}
+
+function buildQuranRange(url: string) {
+  const to = queryParam(url, 'to') ?? dateStr(0);
+  const fromParam = queryParam(url, 'from');
+  const toDate = new Date(`${to}T12:00:00`);
+  const fromDate = fromParam
+    ? new Date(`${fromParam}T12:00:00`)
+    : new Date(toDate.getTime() - 29 * 864e5);
+  // An "all time" window can start years back: the demo has 120 days.
+  const span = Math.min(
+    120,
+    Math.max(1, Math.round((toDate.getTime() - fromDate.getTime()) / 864e5) + 1)
+  );
+  const history = Array.from({ length: span }, (_, i) => {
+    const d = new Date(toDate.getTime() - (span - 1 - i) * 864e5);
+    const date = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const ayat = seedInt(i + 1400, 0, 4) === 0 ? 0 : seedInt(i + 1500, 4, 22);
+    return { date, ayat, pages: Math.round(ayat / 15), units: ayat };
+  });
+  const activeDays = history.filter((h) => h.units > 0).length;
+  return {
+    ok: true,
+    history,
+    stats: {
+      readSec: activeDays * 540,
+      listenSec: activeDays * 300,
+      readSessions: activeDays,
+      listenSessions: Math.round(activeDays * 0.6),
+      activeDays,
+      totalUnits: history.reduce((sum, h) => sum + h.units, 0),
+    },
+  };
+}
+
+function buildQuranSessions(date: string | null) {
+  const day = date ?? dateStr(0);
+  return {
+    ok: true,
+    sessions: [
+      {
+        start: atTime(day, 5, 55),
+        end: atTime(day, 6, 10),
+        activeDurationSec: 780,
+        ayahCount: 7,
+        pagesRead: 1,
+        surahs: [18],
+        source: 'read',
+      },
+      {
+        start: atTime(day, 22, 0),
+        end: atTime(day, 22, 8),
+        activeDurationSec: 470,
+        ayahCount: 30,
+        pagesRead: 0,
+        surahs: [67],
+        source: 'listen',
+      },
+    ],
+  };
+}
+
+function buildQuranTimeOfDay() {
+  return {
+    ok: true,
+    hours: Array.from({ length: 24 }, (_, hour) => {
+      let total = 0;
+      if (hour === 5 || hour === 6) total = seedInt(hour + 1600, 40, 90);
+      else if (hour === 21 || hour === 22) total = seedInt(hour + 1600, 20, 50);
+      return { hour, total };
+    }),
+  };
+}
+
+function buildHifzSummary() {
+  const row = (
+    surah: number,
+    totalAyat: number,
+    solid: number,
+    consolidating = 0,
+    learning = 0,
+    fresh = 0
+  ) => ({
+    surah,
+    totalAyat,
+    memorised: solid + consolidating + learning + fresh,
+    solid,
+    consolidating,
+    learning,
+    new: fresh,
+  });
+  return {
+    ok: true,
+    profile: { dailyNewTarget: 3, dailyRevisionTarget: 10, nextSurah: 78, nextAyah: 12 },
+    today: { newCount: 2, revisionCount: 6 },
+    newGoalMet: false,
+    revisionGoalMet: false,
+    dueCount: 4,
+    streak: 6,
+    bestStreak: 19,
+    totals: { new: 1, learning: 6, consolidating: 16, solid: 40, total: 63 },
+    heatmap: [
+      row(1, 7, 7),
+      row(112, 4, 4),
+      row(113, 5, 5),
+      row(114, 6, 6),
+      row(67, 30, 18, 12),
+      row(78, 40, 0, 4, 6, 1),
+    ],
+  };
+}
+
+function buildHifzQueue() {
+  const entry = (surah: number, ayah: number, state: string) => ({
+    surah,
+    ayah,
+    state,
+    dueDate: dateStr(0),
+    reps: 3,
+    lapses: 0,
+    lastResult: 'good',
+  });
+  return {
+    ok: true,
+    due: [
+      entry(67, 13, 'consolidating'),
+      entry(67, 14, 'consolidating'),
+      entry(78, 5, 'learning'),
+      entry(78, 6, 'learning'),
+    ],
+    nextNew: { surah: 78, ayah: 12 },
+  };
+}
+
 // Fasting logs written in the demo (Home's Fasting section, the Fasting
 // page), kept in memory for this page view so a "Yes" survives the refetch.
 const demoFastingLogs = new Map<string, Record<string, unknown>>();
@@ -562,6 +879,28 @@ export function getDemoResponse(
   if (method !== 'get') return { ok: true };
 
   if (url.includes('/api/zikr/analytics')) return buildZikrAnalytics(parseDays(url));
+  if (/\/api\/analytics(\?|$)/.test(url)) return buildZikrAnalytics(parseDays(url));
+  if (url.includes('/api/analytics/goal'))
+    return { ok: true, goal: { dailyTarget: 500, isActive: true, graceDays: 1 } };
+  if (url.includes('/api/analytics/streak'))
+    return { ok: true, streak: { currentStreak: 12, longestStreak: 21, state: 'active' } };
+  if (url.includes('/api/zikr/time-of-day')) return buildZikrTimeOfDay();
+  if (url.includes('/api/zikr/sessions')) return buildZikrSessions(queryParam(url, 'date'));
+  if (url.includes('/api/stats/resets')) return { ok: true, resets: DEMO_STATS_RESETS };
+  if (url.includes('/api/salat/debt/history')) return buildSalatDebtHistory(parseDays(url));
+  if (url.includes('/api/salat/debt/insights')) return buildSalatDebtInsights();
+  if (url.includes('/api/salat/journey')) return buildSalatJourney();
+  if (url.includes('/api/salat/correlations')) return buildSalatCorrelation();
+  if (url.includes('/api/fasting/history')) return buildFastingHistory(parseDays(url));
+  if (url.includes('/api/insights/worship-correlation'))
+    return buildWorshipCorrelation(parseDays(url));
+  if (url.includes('/api/quran/range')) return buildQuranRange(url);
+  if (url.includes('/api/quran/sessions')) return buildQuranSessions(queryParam(url, 'date'));
+  if (url.includes('/api/quran/time-of-day')) return buildQuranTimeOfDay();
+  if (url.includes('/api/cycle/body-stats'))
+    return { ok: true, heightCm: 160, weightKg: 55, bmi: 21.5 };
+  if (url.includes('/api/hifz/summary')) return buildHifzSummary();
+  if (url.includes('/api/hifz/queue')) return buildHifzQueue();
   if (url.includes('/api/salat/analytics')) return buildSalatAnalytics(parseDays(url));
   // Kaza debt: a small itemized debt, so the Kaza Debt and Travel kaza cards
   // have something real to show (the travel card only lists days that fall

@@ -1,4 +1,7 @@
-﻿import React from 'react';
+﻿// First: a demo whose tab was closed puts the device's settings back before
+// any store reads them (U9).
+import './utils/demoRestoreBoot.js';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 import { LazyMotion } from 'framer-motion';

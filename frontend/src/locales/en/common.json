@@ -373,25 +373,6 @@
   "confirmDialog": {
     "yesDelete": "Yes, delete"
   },
-  "demoGate": {
-    "analyticsTitle": "Your personal analytics await",
-    "backToCycle": "Back to cycle tracker",
-    "backToFasting": "Back to fasting tracker",
-    "backToQuran": "Back to Quran",
-    "backToRamadan": "Back to Ramadan",
-    "backToSalat": "Back to salat tracker",
-    "backToZikr": "Back to zikr counter",
-    "bookmarksTitle": "Your saved āyāt await",
-    "bookmarksDesc": "Bookmarks are saved to your account. Sign in to see every āyah you have marked across devices.",
-    "cycleDesc": "Cycle analytics (your patterns, predictions, and wellness insights) are available once you sign in.",
-    "fastingDesc": "Your fasting stats, Mon/Thu streak, and charts are saved to your account.",
-    "hifzTitle": "Your memorisation journey awaits",
-    "hifzDesc": "Your Hifz progress (memorised āyāt, revision schedule and weak spots) lives in your account.",
-    "quranDesc": "Your Quran journey (pages read, khatam progress and recitation log) lives in your account.",
-    "ramadanDesc": "Your Ramadan log and analytics are saved to your account.",
-    "salatDesc": "Your prayer log, streaks, and debt history are saved to your account.",
-    "zikrDesc": "Your zikr heatmap, per-type trends, and personal records are saved to your account."
-  },
   "connectFriend": {
     "alreadyConnected": "Already connected!",
     "connected": "Connected!",

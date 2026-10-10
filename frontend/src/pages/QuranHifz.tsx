@@ -2,11 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import QuranTabNav from '../components/QuranTabNav.js';
-import DemoSignInGate from '../components/DemoSignInGate.js';
 import HifzReviewModal from '../components/HifzReviewModal.js';
 import HifzLearnModal from '../components/HifzLearnModal.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
-import { useAuthStore } from '../store/useAuthStore.js';
 import {
   useHifzSummary,
   useHifzQueue,
@@ -48,7 +46,6 @@ const STATE_LABEL_KEY: Record<string, string> = {
 
 export default function QuranHifz() {
   const { t, i18n } = useTranslation();
-  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const { data: summary } = useHifzSummary();
   const { data: queue } = useHifzQueue();
   const addNext = useAddNextHifz();
@@ -95,22 +92,6 @@ export default function QuranHifz() {
     () => Math.max(1, ...(summary?.heatmap ?? []).map((h) => h.totalAyat)),
     [summary]
   );
-
-  if (isDemoMode) {
-    return (
-      <DemoSignInGate
-        icon={<AcademicCapIcon className="w-7 h-7" />}
-        title={t('demoGate.hifzTitle', 'Your memorisation journey awaits')}
-        desc={t(
-          'demoGate.hifzDesc',
-          'Your Hifz progress (memorised āyāt, revision schedule and weak spots) lives in your account.'
-        )}
-        backTo="/quran"
-        backLabel={t('demoGate.backToQuran', 'Back to Quran')}
-        tabs={<QuranTabNav active="hifz" />}
-      />
-    );
-  }
 
   const dueList = queue?.due ?? [];
 

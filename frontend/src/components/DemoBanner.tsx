@@ -1,11 +1,9 @@
-import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '../store/useAuthStore.js';
 
 export default function DemoBanner() {
   const { t } = useTranslation();
   const { isDemoMode, exitDemoMode } = useAuthStore();
-  const navigate = useNavigate();
 
   if (!isDemoMode) return null;
 
@@ -27,7 +25,8 @@ export default function DemoBanner() {
         className="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition"
         onClick={() => {
           exitDemoMode();
-          navigate('/signup');
+          // A full load, so nothing the demo left in memory reaches sign-up.
+          window.location.assign('/signup');
         }}
       >
         {t('demoBanner.signUpToSave')}

@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.152.0 - Analytics in the demo, and demo changes undone - 2026-10-11
+
+### Added
+
+- **Every analytics screen opens in the demo (U9).** Zikr, Salat, Fasting, Quran, Ramadan, Rayhanah, Hifz and Bookmarks used to show "Your personal analytics await" to a visitor in the demo. They now show the full screens with example numbers, so a visitor can see what tracking gives back before making an account.
+
+### Changed
+
+- **What a visitor changes in the demo is undone.** Settings changed in the demo (theme, language, Home layout, the setup card and so on) are copied when the demo starts and put back when it ends: on "Sign up to save", on a real sign-in, or on the next visit if the tab was closed during the demo. Nothing from the demo is ever saved to an account.
+- **No "Connect Google Account" in the demo**, since the demo account is not a real account.
+
+### Fixed
+
+- The demo's zikr analytics, Kaza history, Salat journey and several other demo answers were missing or used an old shape, which would have crashed those screens once they opened.
+
 ## v5.151.0 - "Try it" opens the feature in the demo - 2026-10-11
 
 ### Fixed

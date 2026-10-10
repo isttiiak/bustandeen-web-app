@@ -20,7 +20,6 @@ import {
   Star8Icon,
 } from '../components/icons/IslamicIcons.js';
 import TabNav from '../components/TabNav.js';
-import DemoSignInGate from '../components/DemoSignInGate.js';
 import DaifExplainer from '../components/DaifExplainer.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useFastingHistory } from '../hooks/useFasting.js';
@@ -91,7 +90,6 @@ function Stat({
 export default function RamadanAnalytics() {
   const { t, i18n } = useTranslation();
   const user = useAuthStore((s) => s.user);
-  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const today = getTrackingDay();
   const window_ = useMemo(() => getRamadanWindow(), []);
   const { data: history } = useFastingHistory(400, true);
@@ -198,22 +196,6 @@ export default function RamadanAnalytics() {
       ]}
     />
   );
-
-  if (isDemoMode) {
-    return (
-      <DemoSignInGate
-        icon={<CrescentIcon className="w-10 h-10 text-brand-gold" aria-hidden="true" />}
-        title={t('demoGate.analyticsTitle', 'Your personal analytics await')}
-        desc={t(
-          'demoGate.ramadanDesc',
-          'Your Ramadan log and analytics are saved to your account.'
-        )}
-        backTo="/ramadan"
-        backLabel={t('demoGate.backToRamadan', 'Back to Ramadan')}
-        tabs={tabs}
-      />
-    );
-  }
 
   return (
     <AnimatedBackground variant="dark">

@@ -1,7 +1,13 @@
 ﻿import { create } from 'zustand';
 import { AuthUser } from '../types/api.js';
 import { getDemoUser } from '../utils/demoData.js';
-import { clearDemoSession, readDemoSession, writeDemoSession } from '../utils/demoSession.js';
+import {
+  clearDemoSession,
+  readDemoSession,
+  restoreDeviceSettings,
+  snapshotDeviceSettings,
+  writeDemoSession,
+} from '../utils/demoSession.js';
 
 interface AuthState {
   user: AuthUser | null;
@@ -39,13 +45,16 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuthLoading: (authLoading) => set({ authLoading }),
 
   enterDemoMode: (gender: string) => {
-    // Kept for this tab (utils/demoSession.ts), so a refresh stays in the demo.
+    // Kept for this tab (utils/demoSession.ts), so a refresh stays in the demo;
+    // the device's settings are copied first and come back when it ends.
+    snapshotDeviceSettings();
     writeDemoSession(gender === 'female' ? 'female' : 'male');
     set({ user: getDemoUser(gender), isDemoMode: true, authLoading: false });
   },
 
   exitDemoMode: () => {
     clearDemoSession();
+    restoreDeviceSettings();
     set({ user: null, isDemoMode: false });
   },
 
@@ -62,7 +71,10 @@ export const useAuthStore = create<AuthState>((set) => ({
     const demo = readDemoSession();
     if (cachedUser?.uid) {
       // A real session always wins over a demo left in this tab.
-      if (demo) clearDemoSession();
+      if (demo) {
+        clearDemoSession();
+        restoreDeviceSettings();
+      }
       set({ aiEnabled: ai === '1', user: cachedUser, authLoading: false });
     } else if (demo && !hasToken) {
       // A refresh (or full page load) during the demo: carry on with it.
