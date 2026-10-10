@@ -157,11 +157,11 @@ export const sadaqahSubmitLimiter = makeLimit(
   'shared'
 );
 
-/** Full data export: 10 per hour per UID - it reads ~20 collections, so this
- *  keeps a script from hammering it. */
+/** Backup export: 20 per hour per UID - it reads ~25 collections, so this
+ *  keeps a script from hammering it (Backup and Excel each make one call). */
 export const dataExportLimiter = makeUidLimit(
   60 * 60 * 1000,
-  10,
+  20,
   { ok: false, error: 'Too many data exports. Try again in an hour.' },
   'dataExport'
 );

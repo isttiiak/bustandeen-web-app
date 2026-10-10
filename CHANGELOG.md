@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.139.0 - One backup with everything, and a real Excel report - 2026-10-10
+
+### Changed
+
+- **Your data: two exports instead of three (U6).** The audit found the restorable backup missed a lot: every app setting, Kaza debt, hifz, adhkār days, Quran reading sessions, the zikr streak and counter sessions, salat resets, friends privacy choices and Naseeh plans. "All my data" had most of it but could not be restored, and the Excel file was a thin summary with no salat at all. Now:
+  - **Backup (.json)**, version 3: everything above, plus a read-only "records" part (messages to us, sadaqah submissions, zikr library requests, friend counts) that import never touches. Restore still merges (days in the file win). The Kaza ledger is restored as a whole, so it never double counts. Rayhanah is written readable for its owner and encrypted again on restore. Restored settings reach every device at once. Old version-2 files still restore.
+  - **Excel report (.xlsx)**, built from the same file: an overview of your stats, then sheets for zikr by day and totals, salat, Kaza, fasting, Quran, Quran sessions, hifz, adhkār and settings. Rayhanah is left out of the spreadsheet. English and Bangla sheet names and headers.
+  - "Download all my data" is gone; its old route returns the new file until 2026-10-24 for PWAs that have not updated yet.
+- **Restore is stricter.** Every record in a file is checked against its schema before it is written: unknown fields are dropped and invalid records skipped. A file can no longer switch on Rayhanah partner sharing, and friend lists are never restored from a file. Large files go up gzipped (import accepts up to 20 MB decoded).
+
 ## v5.138.1 - A notice for a zikr log that waited too long - 2026-10-10
 
 ### Fixed

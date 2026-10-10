@@ -160,24 +160,23 @@ export const exportAllHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const backupService = await import('../services/backup.service.js');
-    const data = await backupService.exportAll(req.user.uid);
-    res.json({ ok: true, backup: data });
+    const { exportBackup } = await import('../services/backup.service.js');
+    res.json({ ok: true, backup: await exportBackup(req.user.uid) });
   } catch (err) {
     next(err);
   }
 };
 
-/** Read-only "download all my data" - broader than the restorable backup. */
+/** Old "All my data" route, kept for PWAs still running a pre-U6 Settings
+ * page: it now returns the same version-3 backup. Remove after 2026-10-24. */
 export const exportEverythingHandler = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { exportEverything } = await import('../services/dataExport.service.js');
-    const data = await exportEverything(req.user.uid);
-    res.json({ ok: true, data });
+    const { exportBackup } = await import('../services/backup.service.js');
+    res.json({ ok: true, data: await exportBackup(req.user.uid) });
   } catch (err) {
     next(err);
   }
@@ -191,17 +190,17 @@ export const importAllHandler = async (
   try {
     const body = req.body as { app?: string; version?: number } & Record<string, unknown>;
     const backupService = await import('../services/backup.service.js');
-    if (body?.app !== 'ihsan' || body?.version !== backupService.BACKUP_VERSION) {
+    if (
+      body?.app !== 'ihsan' ||
+      !backupService.SUPPORTED_BACKUP_VERSIONS.includes(body?.version as number)
+    ) {
       res.status(400).json({
         ok: false,
-        error: `Not a Bustandeen backup file (expected app "ihsan", version ${backupService.BACKUP_VERSION}).`,
+        error: `Not a Bustandeen backup file (expected app "ihsan", version ${backupService.SUPPORTED_BACKUP_VERSIONS.join(' or ')}).`,
       });
       return;
     }
-    const counts = await backupService.importAll(
-      req.user.uid,
-      body as unknown as import('../services/backup.service.js').BackupFile
-    );
+    const counts = await backupService.importBackup(req.user.uid, body);
     res.json({ ok: true, counts });
   } catch (err) {
     next(err);
