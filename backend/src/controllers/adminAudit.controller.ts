@@ -10,7 +10,12 @@ export const listHandler = async (
     const actorEmail = typeof req.query.actor === 'string' ? req.query.actor.trim() : undefined;
     const page = Math.max(1, Number(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 50));
-    const result = await adminAuditService.listAuditLog(actorEmail || undefined, page, limit);
+    const area = adminAuditService.isAuditArea(req.query.area) ? req.query.area : undefined;
+    const result = await adminAuditService.listAuditLog(
+      { actorEmail: actorEmail || undefined, area },
+      page,
+      limit
+    );
     res.json({ ok: true, ...result });
   } catch (err) {
     next(err);

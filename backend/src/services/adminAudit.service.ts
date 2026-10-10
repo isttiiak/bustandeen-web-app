@@ -30,18 +30,37 @@ export interface AuditLogListResult {
   limit: number;
 }
 
+/** The audit log's area filter: which action prefixes each area covers. */
+export const AUDIT_AREAS = {
+  sadaqah: ['donation', 'expense', 'quarterly', 'donor'],
+  zikr: ['zikrRequest', 'library'],
+  users: ['user'],
+  accounts: ['account'],
+  messages: ['feedback', 'mailbox', 'email'],
+  broadcast: ['announcement', 'moonSighting'],
+} as const;
+
+export type AuditArea = keyof typeof AUDIT_AREAS;
+
+export const isAuditArea = (v: unknown): v is AuditArea =>
+  typeof v === 'string' && Object.hasOwn(AUDIT_AREAS, v);
+
 export const listAuditLog = async (
-  actorEmail: string | undefined,
+  filter: { actorEmail?: string; area?: AuditArea },
   page: number,
   limit: number
 ): Promise<AuditLogListResult> => {
-  const filter = actorEmail ? { actorEmail } : {};
+  const query: Record<string, unknown> = {};
+  // Stored lower-case (AdminAccount.email is lowercase), so match that way.
+  if (filter.actorEmail) query.actorEmail = filter.actorEmail.toLowerCase();
+  // Built only from the fixed AUDIT_AREAS list, never from request text.
+  if (filter.area) query.action = { $regex: `^(${AUDIT_AREAS[filter.area].join('|')})\\.` };
   const [entries, total] = await Promise.all([
-    AdminAuditLog.find(filter)
+    AdminAuditLog.find(query)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit),
-    AdminAuditLog.countDocuments(filter),
+    AdminAuditLog.countDocuments(query),
   ]);
   return { entries, total, page, limit };
 };
