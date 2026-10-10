@@ -1084,6 +1084,7 @@
       "zikrAdd": "Add {{n}} {{name}}",
       "zikrOpen": "Count {{name}}, target {{n}}",
       "openCounter": "Open counter",
+      "logCounts": "Log counts",
       "fasting": "Fasting",
       "fastsThisMonth": "{{n}} fasts this month",
       "openRamadan": "Open the Ramadan tracker",

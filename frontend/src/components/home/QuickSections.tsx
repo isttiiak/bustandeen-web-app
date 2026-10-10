@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { BookOpenIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, ChevronRightIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 import { CrescentIcon, TasbihIcon } from '../icons/IslamicIcons.js';
 import { BTN_PRIMARY, BTN_SECONDARY } from '../bustanStyles.js';
 import { useQuranSummary } from '../../hooks/useQuran.js';
@@ -33,6 +33,7 @@ import { nextSunnahFast, quickFastPlan } from '../../utils/fastingQuick.js';
 import { getHijriToday } from '../../utils/islamicCalendar.js';
 import { calcPrayerTimes, formatTime } from '../../utils/prayerTimes.js';
 import { celebrateSmall } from '../../utils/celebrate.js';
+import ZikrLogCountsModal from '../zikr/ZikrLogCountsModal.js';
 
 /** Home's per-habit quick sections (T3.4 E): one compact card each, at most
  *  two rows of actions, in the user's habit order (utils/homeSections.ts). */
@@ -92,7 +93,10 @@ function Progress({ pct, tone }: { pct: number; tone: 'emerald' | 'gold' }) {
 
 function Count({ done, goal, unit }: { done: number; goal: number | null; unit?: string }) {
   return (
-    <span className="shrink-0 font-display font-bold text-lg text-white tabular-nums">
+    <span
+      data-testid="habit-count"
+      className="shrink-0 font-display font-bold text-lg text-white tabular-nums"
+    >
       {formatLocaleNumber(done)}
       {goal !== null && (
         <span className="text-white/60 text-xs font-body font-semibold">
@@ -185,6 +189,7 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
   const addCounts = useZikrStore((s) => s.addCounts);
   const chips = useMemo(() => getQuickZikr(), []);
   const action = useMemo(() => getQuickAction(), []);
+  const [logOpen, setLogOpen] = useState(false);
 
   const tap = (z: QuickZikr) => {
     if (action === 'add') {
@@ -239,13 +244,27 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
           </button>
         ))}
       </div>
-      <Link
-        to="/zikr"
-        className="mt-2 flex items-center justify-center gap-1 min-h-[44px] text-white/70 hover:text-white text-sm font-semibold"
-      >
-        {t('home.quick.openCounter', 'Open counter')}
-        <ChevronRightIcon className="w-4 h-4" aria-hidden="true" />
-      </Link>
+      {/* U4: counts made without the counter are logged right here. */}
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <Link
+          to="/zikr"
+          className="flex items-center justify-center gap-1 min-h-[44px] text-white/70 hover:text-white text-sm font-semibold"
+        >
+          {t('home.quick.openCounter', 'Open counter')}
+          <ChevronRightIcon className="w-4 h-4" aria-hidden="true" />
+        </Link>
+        <button
+          type="button"
+          onClick={() => setLogOpen(true)}
+          aria-haspopup="dialog"
+          data-testid="zikr-log-open"
+          className="flex items-center justify-center gap-1 min-h-[44px] text-white/70 hover:text-white text-sm font-semibold"
+        >
+          <PlusCircleIcon className="w-4 h-4" aria-hidden="true" />
+          {t('home.quick.logCounts', 'Log counts')}
+        </button>
+      </div>
+      <ZikrLogCountsModal open={logOpen} onClose={() => setLogOpen(false)} />
     </Shell>
   );
 }
