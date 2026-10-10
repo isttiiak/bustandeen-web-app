@@ -23,6 +23,7 @@ const {
   logDayOptions,
   logTargetDay,
   parseLogAmount,
+  rejectedLogSummary,
   todaysLoggedCounts,
 } = await import('./zikrLog.js');
 const { enqueueSyncOp, clearSyncOutbox } = await import('./syncOutbox.js');
@@ -198,5 +199,19 @@ describe('queued logs in the live "today" count', () => {
     expect(unsyncedCounts({ pending: { SubhanAllah: 2 }, inflight: null })).toEqual({
       SubhanAllah: 35,
     });
+  });
+});
+
+describe('rejectedLogSummary (U4: a queued log the server refused)', () => {
+  it('totals the manual counts and keeps the day anchor', () => {
+    const body = buildZikrLogBody('astaghfirullah', 250, 1, at(2026, 10, 10, 12));
+    const sum = rejectedLogSummary(body);
+    expect(sum).toEqual({ count: 250, ts: body.increments[0]!.ts });
+  });
+  it('ignores anything that is not a manual log', () => {
+    expect(rejectedLogSummary(null)).toBeNull();
+    expect(rejectedLogSummary({ date: '2026-10-01' })).toBeNull();
+    expect(rejectedLogSummary({ increments: [{ amount: 5, ts: 1 }] })).toBeNull();
+    expect(rejectedLogSummary({ increments: [{ amount: 0, ts: 1, manual: true }] })).toBeNull();
   });
 });

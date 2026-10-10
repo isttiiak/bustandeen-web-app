@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.138.1 - A notice for a zikr log that waited too long - 2026-10-10
+
+### Fixed
+
+- **Queued zikr logs older than 4 days (U4 follow-up).** The server accepts a logged count only within 4 days of its day, so a "Log counts" save that sat offline longer was refused on sync and silently dropped. It is still refused, but now a notice says which count and day could not be saved, so you can log it again from Zikr. English and Bangla.
+
 ## v5.138.0 - Pick your Home in the welcome setup - 2026-10-10
 
 ### Changed

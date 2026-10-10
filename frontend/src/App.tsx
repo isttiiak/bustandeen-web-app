@@ -16,7 +16,9 @@ import { useAuthStore } from './store/useAuthStore.js';
 import { useZikrStore, flushZikrLocalPersistence } from './store/useZikrStore.js';
 import { replaySalatOutbox } from './hooks/useSalatLog.js';
 import { clearSalatOutbox } from './utils/salatOutbox.js';
-import { clearSyncOutbox, replaySyncOutbox } from './utils/syncOutbox.js';
+import { clearSyncOutbox, onSyncRejected, replaySyncOutbox } from './utils/syncOutbox.js';
+import { rejectedLogSummary } from './utils/zikrLog.js';
+import { formatLocaleDate, formatLocaleNumber } from './utils/localeDate.js';
 import { setDayStartModeLocal, type DayStartMode } from './utils/trackingDay.js';
 import { idbRemove } from './utils/idbCache.js';
 import { startPrefsSync, stopPrefsSync } from './utils/prefsSync.js';
@@ -144,6 +146,30 @@ export default function App() {
       window.removeEventListener('focus', onFocus);
     };
   }, [checkAndResetIfNewDay, queryClient]);
+
+  // A zikr log queued offline that the server refuses on replay (older than
+  // its 4-day window): say so, with the count and day, so it can be logged
+  // again by hand (U4). Other trackers keep the console warning.
+  useEffect(
+    () =>
+      onSyncRejected((op) => {
+        if (op.tracker !== 'zikr') return;
+        const log = rejectedLogSummary(op.body);
+        if (!log) return;
+        toast.error(
+          t('zikrAnalytics.logRejected', {
+            count: formatLocaleNumber(log.count),
+            day: formatLocaleDate(new Date(log.ts), {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+            }),
+          }),
+          { duration: 10_000, id: `zikr-rejected-${op.id}` }
+        );
+      }),
+    [t]
+  );
 
   // Offline sync: zikr taps made while offline stay queued in `pending`
   // (persisted to localStorage, so a reload doesn't lose them either) — this

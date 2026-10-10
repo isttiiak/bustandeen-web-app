@@ -24,6 +24,7 @@ const {
   OfflineQueuedError,
   clearSyncOutbox,
   enqueueSyncOp,
+  onSyncRejected,
   peekSyncOutbox,
   replaySyncOutbox,
   sendOrQueue,
@@ -276,6 +277,19 @@ describe('replaySyncOutbox', () => {
       expect(request).toHaveBeenCalledTimes(2);
     }
   );
+
+  it('tells listeners about a rejected op, not about delivered ones (U4)', async () => {
+    enqueueSyncOp(fastLog('2026-03-01', 'bad'));
+    enqueueSyncOp(fastLog('2026-03-02', 'completed'));
+    request.mockRejectedValueOnce(httpError(400)).mockResolvedValueOnce({ data: {} });
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const seen: [string, number | undefined][] = [];
+    const off = onSyncRejected((op, status) => seen.push([op.url, status]));
+    await replaySyncOutbox();
+    off();
+    expect(seen).toHaveLength(1);
+    expect(seen[0]![1]).toBe(400);
+  });
 
   it("drops another account's (or the demo's) ops instead of replaying them", async () => {
     signIn('demo-001');
