@@ -3620,6 +3620,7 @@
     "amountTooLarge": "You can log up to {{max}} at a time.",
     "amountWhole": "Please enter a whole number.",
     "logQueuedOffline": "You're offline. Your counts are saved on this device and will sync when you're back online.",
+    "logRejected": "Your zikr log of {{count}} for {{day}} waited offline too long and could not be saved. Please log it again from Zikr.",
     "logTodaySubtitle": "Add counts you made without the counter",
     "nameLabel": "Name",
     "newDhikrType": "New dhikr type",

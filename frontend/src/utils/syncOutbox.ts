@@ -184,6 +184,16 @@ function scheduleReplay(delayMs = 5_000): void {
   replayTimer = setTimeout(() => void replaySyncOutbox(boundQc), delayMs);
 }
 
+/** Told about each op the server rejected on replay, so the app can say so
+ * instead of dropping it silently (U4: a zikr log queued > 4 days). */
+type RejectListener = (op: SyncOp, status: number | undefined) => void;
+const rejectListeners = new Set<RejectListener>();
+
+export function onSyncRejected(fn: RejectListener): () => void {
+  rejectListeners.add(fn);
+  return () => rejectListeners.delete(fn);
+}
+
 /**
  * Replays the queue in order. Stops at the first op the network still
  * cannot deliver (or one the server reports in progress) and leaves it and
@@ -220,6 +230,7 @@ export async function replaySyncOutbox(qc?: QueryClient): Promise<number> {
         console.warn(`Offline ${op.tracker} change was rejected (${status}); dropped`);
         touched.add(op.tracker);
         removeSyncOp(op.id);
+        for (const fn of rejectListeners) fn(op, status);
       }
     }
   } finally {

@@ -73,6 +73,22 @@ export function buildZikrLogBody(
   };
 }
 
+/** What a rejected queued log held, for the notice that asks to log it
+ * again: the total count and the day (its midday anchor). Null for anything
+ * that is not a manual log body. */
+export function rejectedLogSummary(body: unknown): { count: number; ts: number } | null {
+  const incs = (body as { increments?: unknown } | null | undefined)?.increments;
+  if (!Array.isArray(incs)) return null;
+  let count = 0;
+  let ts: number | null = null;
+  for (const inc of incs as { amount?: unknown; ts?: unknown; manual?: unknown }[]) {
+    if (!inc?.manual || typeof inc.amount !== 'number' || typeof inc.ts !== 'number') continue;
+    count += inc.amount;
+    ts ??= inc.ts;
+  }
+  return ts === null || count <= 0 ? null : { count, ts };
+}
+
 /** Counts in a (possibly queued) log body that belong to the current
  * tracking day: the live "today" count shows them before they sync. */
 export function todaysLoggedCounts(
