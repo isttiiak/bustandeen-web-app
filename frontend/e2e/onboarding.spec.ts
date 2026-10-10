@@ -52,16 +52,16 @@ test('the Home card walks through location, madhab and habits, then orders Home'
   const order = () =>
     page.locator('[data-habit]').evaluateAll((els) => els.map((e) => e.getAttribute('data-habit')));
   expect(await order()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
-  const timeline = page.getByRole('checkbox', { name: 'Show the prayer timeline on Home?' });
-  // On while Salat is first.
-  await expect(timeline).toBeChecked();
+  // U5: every habit is on Home to start, whatever comes first
+  const onHome = (h: string) => page.getByRole('checkbox', { name: `Show ${h} on Home` });
+  for (const h of ['Salat', 'Zikr', 'Quran', 'Fasting']) await expect(onHome(h)).toBeChecked();
   await page.getByRole('button', { name: 'Move Quran up' }).click();
   await page.getByRole('button', { name: 'Move Quran up' }).click();
   expect(await order()).toEqual(['quran', 'salat', 'zikr', 'fasting']);
   await expect(page.getByRole('button', { name: 'Move Quran up' })).toBeDisabled();
-  // The suggestion follows the order until the user sets it.
-  await expect(timeline).not.toBeChecked();
-  await timeline.check();
+  // Salat no longer first: the timeline stays on (no Salat-first rule)
+  await expect(onHome('Salat')).toBeChecked();
+  await onHome('Fasting').uncheck();
   await page
     .getByRole('radiogroup', { name: 'Daily Quran goal' })
     .getByRole('radio', { name: '20 āyāt' })
@@ -81,16 +81,20 @@ test('the Home card walks through location, madhab and habits, then orders Home'
     method: localStorage.getItem('bustandeen_calc_method'),
     focus: localStorage.getItem('bustandeen_focus_habits'),
     timeline: localStorage.getItem('bustandeen_home_timeline'),
+    off: localStorage.getItem('bustandeen_home_sections_off'),
     location: localStorage.getItem('bustandeen_location'),
   }));
   expect(stored.asr).toBe('standard');
   expect(stored.method).toBe('Karachi');
   expect(JSON.parse(stored.focus!)).toEqual(['quran', 'salat', 'zikr', 'fasting']);
   expect(stored.timeline).toBe('1');
+  expect(JSON.parse(stored.off!)).toEqual(['fasting']);
+  await expect(page.getByTestId('quick-fasting')).toHaveCount(0);
+  await expect(page.getByTestId('quick-quran')).toBeVisible();
   expect(stored.location).toContain('Dhaka');
 });
 
-test('the timeline can be left off; the arch prayer row always stays', async ({ page }) => {
+async function toHabitsStep(page: Page) {
   await demoHome(page);
   await setupCard(page).getByRole('link', { name: 'Set up' }).click();
   await page
@@ -98,10 +102,35 @@ test('the timeline can be left off; the arch prayer row always stays', async ({ 
     .first()
     .click();
   await page.getByRole('button', { name: 'Next', exact: true }).click();
-  await page.getByRole('checkbox', { name: 'Show the prayer timeline on Home?' }).uncheck();
+}
+
+test('the timeline can be left off; the arch prayer row always stays', async ({ page }) => {
+  await toHabitsStep(page);
+  await page.getByRole('checkbox', { name: 'Show Salat on Home' }).uncheck();
   await page.getByRole('button', { name: 'Start', exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   expect(await page.evaluate(() => localStorage.getItem('bustandeen_home_timeline'))).toBe('0');
+  await expect(page.getByTestId('today-timeline')).toHaveCount(0);
+});
+
+test('no habit on Home keeps the goals card; the card can go when one is on', async ({ page }) => {
+  await toHabitsStep(page);
+  const goals = page.getByRole('checkbox', { name: "Today's goals card" });
+  for (const h of ['Salat', 'Zikr', 'Quran', 'Fasting']) {
+    await page.getByRole('checkbox', { name: `Show ${h} on Home` }).uncheck();
+  }
+  await expect(goals).toBeChecked();
+  await expect(goals).toBeDisabled();
+  await page.getByRole('checkbox', { name: 'Show Zikr on Home' }).check();
+  await goals.uncheck();
+  await page.getByRole('button', { name: 'Start', exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByTestId('quick-zikr')).toBeVisible();
+  await expect(page.getByTestId('today-goals')).toHaveCount(0);
+  const goalsPref = await page.evaluate(() =>
+    JSON.parse(localStorage.getItem('bustandeen_home_goals') ?? 'null')
+  );
+  expect(goalsPref).toEqual({ on: false, off: [], badges: true });
 });
 
 test('"No thanks" hides the card for good', async ({ page }) => {

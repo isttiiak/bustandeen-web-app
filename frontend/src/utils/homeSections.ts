@@ -1,14 +1,15 @@
 // Home quick sections (T3.4 E, Istiak 2026-10-09): a short, few-tap section
 // per habit, shown in the habit order (utils/onboarding.ts). The Salat
 // section is the prayer timeline, switched by HOME_TIMELINE_KEY; Quran, Zikr
-// and Fasting are switched here. All on by default; any subset may be on (U5). Synced across devices
-// (utils/prefsSync.ts + the server whitelist).
+// and Fasting are switched here. All on by default; any subset may be on
+// (U5). Synced across devices (utils/prefsSync.ts + the server whitelist).
 
 import {
   HABITS,
   completeOrder,
   getFocusHabits,
   getHomeTimeline,
+  setHomeTimeline,
   type Habit,
 } from './onboarding.js';
 
@@ -114,4 +115,14 @@ export function anyQuickSectionOn(): boolean {
 /** Whether Home shows the goals card (the rule's safety net included). */
 export function goalsCardShown(goals: HomeGoals = getHomeGoals()): boolean {
   return goals.on || !anyQuickSectionOn();
+}
+
+/** The welcome setup's habits step (U5): which quick sections show and the
+ *  goals card. With no section on, the card stays on. The goal rows go back
+ *  to following the habit order the user just set. */
+export function saveSetupHomeChoice(on: Record<Habit, boolean>, goalsOn: boolean): void {
+  setHomeTimeline(on.salat);
+  for (const h of QUICK) setSectionOn(h, on[h]);
+  const { order: _order, ...goals } = getHomeGoals();
+  setHomeGoals({ ...goals, on: goalsOn || !HABITS.some((h) => on[h]) });
 }

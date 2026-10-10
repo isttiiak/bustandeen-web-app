@@ -81,11 +81,6 @@ export function setHomeTimeline(on: boolean): void {
   }
 }
 
-/** The setup's suggestion: show the timeline when Salat comes first. */
-export function defaultTimelineFor(order: Habit[]): boolean {
-  return order[0] === 'salat';
-}
-
 /** Home's worship cards in the user's habit order; anything not in it keeps
  * its usual place after them. */
 export function orderByFocus<T extends { id: string }>(items: T[], focus: Habit[]): T[] {

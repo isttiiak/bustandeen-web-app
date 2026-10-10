@@ -51,15 +51,16 @@ import {
   DEFAULT_ZIKR_GOAL,
   QURAN_AYAT_OPTIONS,
   ZIKR_GOAL_OPTIONS,
-  defaultTimelineFor,
+  HABITS,
   getFocusHabits,
+  getHomeTimeline,
   initialGoal,
   markOnboardedLocally,
   moveHabit,
   setFocusHabits,
-  setHomeTimeline,
   type Habit,
 } from '../utils/onboarding.js';
+import { getHomeGoals, isSectionOn, saveSetupHomeChoice } from '../utils/homeSections.js';
 
 const LOCATION_KEY = 'bustandeen_location';
 const STEPS = 3;
@@ -121,13 +122,21 @@ export default function Onboarding() {
     return asrBySchool(location.latitude, location.longitude, new Date(), method);
   }, [location, method]);
 
-  // Step 3: the order of the four habits + starting goals + the timeline
+  // Step 3: the order of the four habits + starting goals + what Home shows
   const { data: zikrGoal } = useGoal();
   const { data: quranSummary } = useQuranSummary();
   const [habits, setHabits] = useState<Habit[]>(getFocusHabits);
-  // Follows the order (on when Salat is first) until the user sets it.
-  const [timelinePick, setTimelinePick] = useState<boolean | null>(null);
-  const timelineOn = timelinePick ?? defaultTimelineFor(habits);
+  // U5: a switch per habit for its Home section (Salat = the timeline) and
+  // one for Today's goals. With no section on, the goals card stays on.
+  const [homeOn, setHomeOn] = useState<Record<Habit, boolean>>(() => ({
+    salat: getHomeTimeline(),
+    zikr: isSectionOn('zikr'),
+    quran: isSectionOn('quran'),
+    fasting: isSectionOn('fasting'),
+  }));
+  const [goalsPick, setGoalsPick] = useState(() => getHomeGoals().on);
+  const noSection = !HABITS.some((h) => homeOn[h]);
+  const goalsOn = goalsPick || noSection;
   const [zikrTarget, setZikrTarget] = useState<number | null>(null);
   const [quranAyat, setQuranAyat] = useState<number | null>(null);
   const zikrPick =
@@ -161,7 +170,7 @@ export default function Onboarding() {
   const finish = async () => {
     setSaving(true);
     setFocusHabits(habits);
-    setHomeTimeline(timelineOn);
+    saveSetupHomeChoice(homeOn, goalsOn);
     const writes: Promise<unknown>[] = [];
     if (zikrPick !== zikrGoal?.dailyTarget) {
       writes.push(updateGoal.mutateAsync({ dailyTarget: zikrPick }));
@@ -478,6 +487,34 @@ export default function Onboarding() {
                         }
                       />
                     )}
+                    <label className="flex items-center gap-3 px-4 py-1 border-t border-brand-border/60 cursor-pointer">
+                      <span className="flex-1 min-w-0 text-xs leading-snug">
+                        <span className="block text-white/85 font-semibold">
+                          {homeOn[h]
+                            ? t('onboarding.onHome', 'On Home')
+                            : t('onboarding.notOnHome', 'Not on Home')}
+                        </span>
+                        {h === 'salat' && (
+                          <span className="block text-white/60">
+                            {t(
+                              'onboarding.salatOnHome',
+                              'As the prayer timeline. The prayer row in the arch always stays.'
+                            )}
+                          </span>
+                        )}
+                      </span>
+                      <span className="w-11 h-11 shrink-0 flex items-center justify-center">
+                        <input
+                          type="checkbox"
+                          className="toggle toggle-success toggle-sm"
+                          checked={homeOn[h]}
+                          onChange={(e) => setHomeOn((cur) => ({ ...cur, [h]: e.target.checked }))}
+                          aria-label={t('onboarding.showOnHome', 'Show {{habit}} on Home', {
+                            habit: label,
+                          })}
+                        />
+                      </span>
+                    </label>
                   </li>
                 );
               })}
@@ -486,21 +523,24 @@ export default function Onboarding() {
             <label className="flex items-center gap-3 p-4 rounded-card border border-brand-border bg-brand-deep shadow-elev-1 cursor-pointer">
               <span className="flex-1 min-w-0">
                 <span className="block text-white font-bold text-sm">
-                  {t('onboarding.timelineTitle', 'Show the prayer timeline on Home?')}
+                  {t('onboarding.goalsTitle', "Today's goals card")}
                 </span>
                 <span className="block text-white/70 text-xs mt-0.5 leading-snug">
-                  {t(
-                    'onboarding.timelineDetail',
-                    'The five prayers of today with their times, Mark Done and Kaza. The prayer row in the arch always stays.'
-                  )}
+                  {noSection
+                    ? t(
+                        'onboarding.goalsKept',
+                        'With no habit on Home, the goals card stays so Home is never empty.'
+                      )
+                    : t('onboarding.goalsDetail', 'Your progress towards each daily goal.')}
                 </span>
               </span>
               <input
                 type="checkbox"
                 className="toggle toggle-success shrink-0"
-                checked={timelineOn}
-                onChange={(e) => setTimelinePick(e.target.checked)}
-                aria-label={t('onboarding.timelineTitle', 'Show the prayer timeline on Home?')}
+                checked={goalsOn}
+                disabled={noSection}
+                onChange={(e) => setGoalsPick(e.target.checked)}
+                aria-label={t('onboarding.goalsTitle', "Today's goals card")}
               />
             </label>
           </section>
