@@ -85,6 +85,16 @@ export default function App() {
     pathnameRef.current = location.pathname;
   });
 
+  // Entering or leaving the demo swaps mock data for real data (or back):
+  // drop the cached answers of the other side (U9).
+  useEffect(
+    () =>
+      useAuthStore.subscribe((s, prev) => {
+        if (s.isDemoMode !== prev.isDemoMode) queryClient.clear();
+      }),
+    [queryClient]
+  );
+
   // The backend now runs as a Vercel function on the SAME deployment — there
   // is no Render cold start to warm up, so the old health-ping + amber
   // "waking up the server" banner are gone.
@@ -255,7 +265,12 @@ export default function App() {
     init();
 
     const onUser = async (u: User | null) => {
-      if (useAuthStore.getState().isDemoMode) return;
+      if (useAuthStore.getState().isDemoMode) {
+        // A real sign-in from inside the demo (its sign-in gate, or a Google
+        // redirect back into a tab that kept the demo) ends the demo.
+        if (!u) return;
+        useAuthStore.getState().exitDemoMode();
+      }
       if (!u) {
         localStorage.removeItem(SESSION_MARKER);
         setUser(null);

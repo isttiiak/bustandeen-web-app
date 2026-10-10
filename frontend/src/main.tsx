@@ -18,6 +18,7 @@ import ThemeInit from './components/ThemeInit.js';
 import UiInit, { MotionPrefs } from './components/UiInit.js';
 import ErrorBoundary from './components/ErrorBoundary.js';
 import { idbGet, idbSet, idbRemove } from './utils/idbCache.js';
+import { useAuthStore } from './store/useAuthStore.js';
 import { initPwaUpdates } from './pwaUpdate.js';
 import { initStaleChunkReload } from './utils/staleChunkReload.js';
 import { initAnalytics } from './utils/analytics.js';
@@ -89,6 +90,12 @@ const render = () =>
           maxAge: 24 * 60 * 60 * 1000,
           // Bump to invalidate every persisted cache after a breaking shape change.
           buster: 'v1',
+          // Demo answers are mock data: never saved, so a later real sign-in
+          // on this device can't start from them (U9).
+          dehydrateOptions: {
+            shouldDehydrateQuery: (q) =>
+              !useAuthStore.getState().isDemoMode && q.state.status === 'success',
+          },
         }}
       >
         <LazyMotion features={loadMotionFeatures} strict>

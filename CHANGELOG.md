@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.150.0 - The demo stays through a refresh - 2026-10-11
+
+### Fixed
+
+- **The demo no longer vanishes on a refresh (U9).** It lived only in memory, so refreshing, or any full page load, dropped a visitor back on the landing. It is now kept for the browser tab and ends when the tab closes, on "Sign up to save", or on a real sign-in.
+- **Signing in from inside the demo works.** Signing in from a demo page (for example its analytics gate) kept showing the demo, because the app ignored a real sign-in while the demo was on.
+- **Demo numbers never reach a real account's screen.** Demo answers are no longer saved in the on-device cache, and the cache is emptied when the demo starts or ends.
+
 ## v5.149.0 - Broadcast for the Servant and the general Ansar - 2026-10-11
 
 ### Changed

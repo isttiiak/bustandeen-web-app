@@ -1,6 +1,7 @@
 ﻿import { create } from 'zustand';
 import { AuthUser } from '../types/api.js';
 import { getDemoUser } from '../utils/demoData.js';
+import { clearDemoSession, readDemoSession, writeDemoSession } from '../utils/demoSession.js';
 
 interface AuthState {
   user: AuthUser | null;
@@ -38,11 +39,13 @@ export const useAuthStore = create<AuthState>((set) => ({
   setAuthLoading: (authLoading) => set({ authLoading }),
 
   enterDemoMode: (gender: string) => {
-    // Pure in-memory — no sessionStorage, so a page refresh always shows the landing.
+    // Kept for this tab (utils/demoSession.ts), so a refresh stays in the demo.
+    writeDemoSession(gender === 'female' ? 'female' : 'male');
     set({ user: getDemoUser(gender), isDemoMode: true, authLoading: false });
   },
 
   exitDemoMode: () => {
+    clearDemoSession();
     set({ user: null, isDemoMode: false });
   },
 
@@ -55,13 +58,19 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch {
       // cachedUser already defaults to null
     }
+    const hasToken = !!localStorage.getItem('bustandeen_idToken');
+    const demo = readDemoSession();
     if (cachedUser?.uid) {
+      // A real session always wins over a demo left in this tab.
+      if (demo) clearDemoSession();
       set({ aiEnabled: ai === '1', user: cachedUser, authLoading: false });
+    } else if (demo && !hasToken) {
+      // A refresh (or full page load) during the demo: carry on with it.
+      set({ aiEnabled: ai === '1', user: getDemoUser(demo), isDemoMode: true, authLoading: false });
     } else {
       // No cached session — if there is also no token on disk, the user is
       // definitely signed out: show the landing immediately instead of flashing
       // a black spinner screen while Firebase confirms.
-      const hasToken = !!localStorage.getItem('bustandeen_idToken');
       set({ aiEnabled: ai === '1', ...(!hasToken && { authLoading: false }) });
     }
   },
