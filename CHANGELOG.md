@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.144.0 - A readable audit log - 2026-10-10
+
+### Changed
+
+- **Audit log (U8.6, admin audit B3).** Every admin action now has a plain label (update emails, composed emails, the founder mailbox, moon sightings, the welcome backfill, reopened decisions and password changes used to show raw keys). A new Details column shows what was recorded with the action, such as the reason, subject, amount or how many were sent. An area filter (Sadaqah, Zikr, Users, Admin accounts, Messages, Announcements and moon sighting) sits beside the email filter, which now ignores capital letters. Hovering the target shows its full id.
+
 ## v5.143.0 - Admin passwords from the panel - 2026-10-10
 
 ### Added

@@ -19,13 +19,16 @@ interface AdminAuditLogResult {
   limit: number;
 }
 
+/** The server's area filter (adminAudit.service AUDIT_AREAS); '' is all. */
+export type AuditArea = '' | 'sadaqah' | 'zikr' | 'users' | 'accounts' | 'messages' | 'broadcast';
+
 /** Servant-only trail of every mutating /api/admin/* action. */
-export function useAdminAuditLog(actor: string, page: number, limit = 50) {
+export function useAdminAuditLog(actor: string, page: number, limit = 50, area: AuditArea = '') {
   return useQuery<AdminAuditLogResult>({
-    queryKey: ['admin', 'audit-log', actor, page, limit],
+    queryKey: ['admin', 'audit-log', actor, area, page, limit],
     queryFn: async () => {
       const res = await api.get<AdminAuditLogResult>('/api/admin/audit-log', {
-        params: { actor: actor || undefined, page, limit },
+        params: { actor: actor.trim() || undefined, area: area || undefined, page, limit },
       });
       return res.data;
     },

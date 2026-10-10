@@ -4,7 +4,8 @@ import AnimatedBackground from '../components/AnimatedBackground.js';
 import { ClipboardDocumentListIcon } from '@heroicons/react/24/outline';
 import Seo from '../components/Seo.js';
 import { AdminHero } from '../components/admin/adminParts.js';
-import { useAdminAuditLog } from '../hooks/useAdminAudit.js';
+import { useAdminAuditLog, type AuditArea } from '../hooks/useAdminAudit.js';
+import { auditDetails } from '../utils/adminAuditDetails.js';
 
 const ACTION_LABELS: Record<string, string> = {
   'donation.verify': 'Verified donation',
@@ -38,14 +39,39 @@ const ACTION_LABELS: Record<string, string> = {
   'user.customEmail': 'Sent custom email to user',
   'announcement.create': 'Published announcement',
   'announcement.deactivate': 'Deactivated announcement',
+  'user.welcomeBackfill': 'Sent welcome emails to older accounts',
+  'email.compose.reply': 'Replied to feedback (composed email)',
+  'email.update.send': 'Sent an update email',
+  'email.update.retry': 'Retried a failed update email',
+  'mailbox.reply': 'Replied in the founder mailbox',
+  'mailbox.markRepliedExternal': 'Marked mailbox message replied (sent via Zoho)',
+  'mailbox.archive': 'Archived mailbox message',
+  'mailbox.delete': 'Deleted mailbox message',
+  'moonSighting.create': 'Added a moon sighting',
+  'moonSighting.deactivate': 'Withdrew a moon sighting',
+  'donation.reopen': 'Reopened a decided donation',
+  'zikrRequest.reopen': 'Reopened a decided zikr request',
+  'account.passwordChanged': 'Changed their own admin password',
+  'account.sendPasswordReset': 'Sent an admin a password reset link',
 };
+
+const AREAS: { value: AuditArea; label: string }[] = [
+  { value: '', label: 'All areas' },
+  { value: 'sadaqah', label: 'Sadaqah' },
+  { value: 'zikr', label: 'Zikr requests and library' },
+  { value: 'users', label: 'Users' },
+  { value: 'accounts', label: 'Admin accounts' },
+  { value: 'messages', label: 'Feedback, mailbox and emails' },
+  { value: 'broadcast', label: 'Announcements and moon sighting' },
+];
 
 export default function AdminAuditLog() {
   const { t } = useTranslation();
   const [actor, setActor] = useState('');
+  const [area, setArea] = useState<AuditArea>('');
   const [page, setPage] = useState(1);
   const limit = 50;
-  const { data, isLoading } = useAdminAuditLog(actor, page, limit);
+  const { data, isLoading } = useAdminAuditLog(actor, page, limit, area);
   const totalPages = data ? Math.max(1, Math.ceil(data.total / limit)) : 1;
 
   return (
@@ -66,16 +92,33 @@ export default function AdminAuditLog() {
           )}
         />
 
-        <input
-          value={actor}
-          onChange={(e) => {
-            setActor(e.target.value);
-            setPage(1);
-          }}
-          placeholder={t('adminAuditLog.filterPlaceholder', 'Filter by admin email…')}
-          aria-label={t('adminAuditLog.filterPlaceholder', 'Filter by admin email…')}
-          className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors w-full max-w-xs"
-        />
+        <div className="flex flex-wrap gap-2">
+          <input
+            value={actor}
+            onChange={(e) => {
+              setActor(e.target.value);
+              setPage(1);
+            }}
+            placeholder={t('adminAuditLog.filterPlaceholder', 'Filter by admin email…')}
+            aria-label={t('adminAuditLog.filterPlaceholder', 'Filter by admin email…')}
+            className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors w-full max-w-xs"
+          />
+          <select
+            value={area}
+            onChange={(e) => {
+              setArea(e.target.value as AuditArea);
+              setPage(1);
+            }}
+            aria-label={t('adminAuditLog.areaFilter', 'Filter by area')}
+            className="px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors"
+          >
+            {AREAS.map((a) => (
+              <option key={a.value} value={a.value}>
+                {t(`adminAuditLog.area_${a.value || 'all'}`, a.label)}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 overflow-x-auto">
           <table className="w-full text-sm">
@@ -85,19 +128,20 @@ export default function AdminAuditLog() {
                 <th className="px-3 py-2">{t('adminAuditLog.colActor', 'Actor')}</th>
                 <th className="px-3 py-2">{t('adminAuditLog.colAction', 'Action')}</th>
                 <th className="px-3 py-2">{t('adminAuditLog.colTarget', 'Target')}</th>
+                <th className="px-3 py-2">{t('adminAuditLog.colDetails', 'Details')}</th>
               </tr>
             </thead>
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={4} className="text-center text-white/70 py-6">
+                  <td colSpan={5} className="text-center text-white/70 py-6">
                     {t('common.loading', 'Loading…')}
                   </td>
                 </tr>
               )}
               {!isLoading && data?.entries.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="text-center text-white/70 py-6">
+                  <td colSpan={5} className="text-center text-white/70 py-6">
                     {t('adminAuditLog.empty', 'No admin actions recorded yet.')}
                   </td>
                 </tr>
@@ -120,8 +164,14 @@ export default function AdminAuditLog() {
                     </span>
                   </td>
                   <td className="px-3 py-2 text-white/70">{ACTION_LABELS[e.action] ?? e.action}</td>
-                  <td className="px-3 py-2 text-white/70 font-mono text-xs">
+                  <td
+                    className="px-3 py-2 text-white/70 font-mono text-xs"
+                    title={`${e.targetType}#${e.targetId}`}
+                  >
                     {e.targetType}#{e.targetId.slice(-6)}
+                  </td>
+                  <td className="px-3 py-2 text-white/70 text-xs max-w-xs break-words">
+                    {auditDetails(e.metadata)}
                   </td>
                 </tr>
               ))}
