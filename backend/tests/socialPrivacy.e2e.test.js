@@ -303,6 +303,44 @@ describe('Friends privacy (T3.6)', () => {
     });
   });
 
+  test('All time tab: me + full-detail friends only, secret areas left out', async () => {
+    const allTime = (uid) =>
+      as(uid)(request(app).get(`/api/social/alltime?today=${TODAY}&timezoneOffset=${TZ}`));
+    const worshipBefore = await worshipSnapshot();
+
+    const res = await allTime('viewer');
+    expect(res.status).toBe(200);
+    // newbie shares consistency only, oldHidden is hidden: neither is present
+    expect(Object.keys(res.body.allTime).sort()).toEqual(['oldOpen', 'viewer']);
+    const open = res.body.allTime.oldOpen;
+    expect(open).toBeGreaterThan(0);
+    // Only today has activity in this test: all-time equals today's score
+    expect(open).toBe(rowOf(await summary('viewer'), 'oldOpen').score);
+
+    // A secret area leaves the all-time Noor friends see, never your own
+    const ownNoor = (
+      await as('oldOpen')(request(app).get(`/api/social/noor?today=${TODAY}&timezoneOffset=${TZ}`))
+    ).body.allTime;
+    await as('oldOpen')(request(app).patch('/api/social/privacy')).send({
+      secret: { quran: true },
+    });
+    expect((await allTime('viewer')).body.allTime.oldOpen).toBe(open - 15);
+    expect((await allTime('oldOpen')).body.allTime.oldOpen).toBe(ownNoor);
+
+    // Consistency only: gone from the tab
+    await as('oldOpen')(request(app).patch('/api/social/privacy')).send({
+      visibility: 'streaks',
+    });
+    expect((await allTime('viewer')).body.allTime).not.toHaveProperty('oldOpen');
+
+    await as('oldOpen')(request(app).patch('/api/social/privacy')).send({
+      visibility: 'detail',
+      secret: { quran: false },
+    });
+    // Read-only: no worship data touched
+    expect(await worshipSnapshot()).toBe(worshipBefore);
+  });
+
   test('hidden hides from everyone; the old /invisible route still works as an alias', async () => {
     await as('oldOpen')(request(app).patch('/api/social/privacy')).send({ visibility: 'hidden' });
     expect(rowOf(await summary('viewer'), 'oldOpen')).toBeUndefined();

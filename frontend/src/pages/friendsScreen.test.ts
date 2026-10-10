@@ -63,6 +63,46 @@ describe('Friends screen', () => {
     expect(arches).toHaveLength(1);
   });
 
+  // U3 (Phase U): the cleanup Istiak asked for
+  const friends = stripComments(Object.values(files)[0] ?? '');
+
+  it('names a cycle only when it is true, never "not on her cycle"', () => {
+    expect(friends).toContain('f.onCycle === true &&');
+    expect(friends).not.toMatch(/notOnCycle|not on her cycle/);
+  });
+
+  it('has Today, This week and All time tabs; All time loads only when open', () => {
+    expect(friends).toContain("(['today', 'week', 'all'] as const)");
+    expect(friends).toContain("useCircleAllTime(board === 'all')");
+  });
+
+  it('keeps the arch clean: actions live in the top-right menu', () => {
+    const arch = friends.slice(
+      friends.indexOf('rounded-arch'),
+      friends.indexOf('</motion.section>')
+    );
+    expect(arch).toContain('<FriendsMenu');
+    expect(arch).not.toMatch(/BTN_PRIMARY|BTN_SECONDARY/);
+    expect(friends).toContain("label: t('friends.inviteFriend')");
+    expect(friends).toContain("label: t('friends.seeFriends')");
+    expect(friends).toContain("label: t('friends.privacy.title')");
+  });
+
+  it('"What friends see" is its own sheet, no longer inside See friends', () => {
+    const manage = friends.slice(
+      friends.indexOf('function ManageFriendsModal'),
+      friends.indexOf('function Chip(')
+    );
+    expect(manage).not.toContain('<PrivacySettingsBlock');
+    expect(friends).toMatch(/function PrivacySheet[\s\S]*<PrivacySettingsBlock \/>/);
+  });
+
+  it('"n friends" beside the circle title opens the friends list', () => {
+    expect(friends).toMatch(
+      /onClick=\{\(\) => setManageOpen\(true\)\}[\s\S]{0,200}friends\.circleCount/
+    );
+  });
+
   it.each([
     ['en', en],
     ['bn', bn],

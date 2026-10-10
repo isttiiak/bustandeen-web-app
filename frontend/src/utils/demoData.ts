@@ -594,7 +594,22 @@ export function getDemoResponse(
   if (url.includes('/api/cycle/active')) return { ok: true, active: null };
   if (url.includes('/api/cycle/summary')) return buildCycleSummary();
   if (url.includes('/api/social/summary')) return buildSocialSummary(gender);
-  if (url.includes('/api/social/noor')) return { ok: true, today: 88, allTime: 14250 };
+  if (url.includes('/api/social/alltime')) {
+    // A believable year: each full-detail person's today score, ~5 months over
+    const allTime: Record<string, number> = {};
+    const circle = buildSocialSummary(gender).circle as {
+      uid: string;
+      isMe: boolean;
+      visibility?: string;
+      score?: number | null;
+    }[];
+    for (const f of circle) {
+      if (typeof f.score === 'number' && (f.isMe || f.visibility !== 'streaks')) {
+        allTime[f.uid] = f.score * 150;
+      }
+    }
+    return { ok: true, allTime };
+  }
   if (url.includes('/api/social/friends')) return { ok: true, friends: [] };
   if (url.includes('/api/friends')) return { ok: true, friends: [] };
   // Sadaqah pages read these shapes; the demo shows them empty (no invented

@@ -15,7 +15,12 @@ const router = Router();
 // GET /api/social/summary?today=&timezoneOffset= — invite code + the circle (no ranking)
 router.get('/summary', requireAuth, validate(socialSummarySchema), socialController.getSummary);
 
-// GET /api/social/noor?today=&timezoneOffset= — viewer's Noor (today + all-time)
+// GET /api/social/alltime?today=&timezoneOffset= — the circle's All time tab (U3)
+router.get('/alltime', requireAuth, validate(socialSummarySchema), socialController.getAllTime);
+
+// GET /api/social/noor?today=&timezoneOffset= — viewer's Noor (today + all-time).
+// The navbar capsules that used it are gone (v5.135.0); kept for app versions
+// still cached on phones, remove after 2026-10-24.
 router.get('/noor', requireAuth, validate(socialSummarySchema), socialController.getNoor);
 
 // POST /api/social/connect { code } — connect with the invite link's owner

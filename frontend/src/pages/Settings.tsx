@@ -854,12 +854,8 @@ export default function Settings() {
   const updateProfile = useUpdateProfile();
   const {
     highContrast,
-    showNoorAllTime,
-    showNoorToday,
     vibrationEnabled,
     setHighContrast,
-    setShowNoorAllTime,
-    setShowNoorToday,
     setVibrationEnabled,
     homeAdhkar,
     setHomeAdhkar,
@@ -1289,31 +1285,6 @@ export default function Settings() {
               {t('settings.musafirOpen')}
               <ChevronRightIcon className="w-4 h-4 shrink-0" />
             </button>
-          </SectionCard>
-
-          {/* ── Noor display ── */}
-          <SectionCard
-            icon={<SparklesIcon className="w-5 h-5 text-brand-gold" />}
-            title={t('settings.noorSection')}
-            subtitle={t('settings.noorSubtitle')}
-            delay={0.05}
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Toggle
-                checked={showNoorToday}
-                onChange={setShowNoorToday}
-                title={t('settings.noorToday')}
-                detail={t('settings.noorTodayDetail')}
-                accent="toggle-success"
-              />
-              <Toggle
-                checked={showNoorAllTime}
-                onChange={setShowNoorAllTime}
-                title={t('settings.noorAllTime')}
-                detail={t('settings.noorAllTimeDetail')}
-                accent="toggle-warning"
-              />
-            </div>
           </SectionCard>
 
           {/* ── Islamic calendar ── */}

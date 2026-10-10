@@ -13,7 +13,7 @@ import FastingLog from '../models/FastingLog.js';
 import QuranLog from '../models/QuranLog.js';
 import QuranProfile from '../models/QuranProfile.js';
 import { getStreakStatus } from './streak.service.js';
-import { getNoorSummary, getAllTimeNoor } from './noor.service.js';
+import { getNoorSummary, getAllTimeNoor, type NoorMask } from './noor.service.js';
 import { getExcusedSet, getPartnerShareSet } from './cycle.service.js';
 import { DEFAULT_TIMEZONE_OFFSET, getTodayString } from '../utils/timezone-flexible.js';
 
@@ -600,6 +600,25 @@ export interface SocialSummary {
   pendingCount: number;
 }
 
+/**
+ * The privacy of each friend the viewer may see. A hidden friend is a full
+ * opt-out: excluded from EVERY friend's circle, not just new ones.
+ */
+async function visibleFriendPrivacy(friends: string[]): Promise<Map<string, PrivacySettings>> {
+  const friendUids = friends.slice(0, MAX_FRIENDS);
+  const friendProfiles = friendUids.length
+    ? await SocialProfile.find({ userId: { $in: friendUids } }).select(
+        'userId invisible visibility secret'
+      )
+    : [];
+  const privacyByUid = new Map<string, PrivacySettings>();
+  for (const p of friendProfiles) {
+    const pv = privacyOf(p);
+    if (pv.visibility !== 'hidden') privacyByUid.set(p.userId, pv);
+  }
+  return privacyByUid;
+}
+
 const longestStreak = (f: FriendStats): number => Math.max(f.zikrStreak ?? 0, f.quranStreak ?? 0);
 
 export async function getSummary(
@@ -615,20 +634,7 @@ export async function getSummary(
   // ordinary ones.
   const end = today ?? getTodayString(timezoneOffset);
   const profile = await getOrCreateProfile(userId);
-
-  // A hidden friend is a full opt-out — excluded from EVERY friend's circle,
-  // not just new ones. The viewer always sees their own row.
-  const friendUids = profile.friends.slice(0, MAX_FRIENDS);
-  const friendProfiles = friendUids.length
-    ? await SocialProfile.find({ userId: { $in: friendUids } }).select(
-        'userId invisible visibility secret'
-      )
-    : [];
-  const privacyByUid = new Map<string, PrivacySettings>();
-  for (const p of friendProfiles) {
-    const pv = privacyOf(p);
-    if (pv.visibility !== 'hidden') privacyByUid.set(p.userId, pv);
-  }
+  const privacyByUid = await visibleFriendPrivacy(profile.friends);
   const visibleFriendUids = [...privacyByUid.keys()];
 
   // Everyone is judged on the VIEWER's calendar date — one consistent basis.
@@ -669,6 +675,38 @@ export async function getSummary(
     invisible: privacy.visibility === 'hidden',
     pendingCount: profile.pendingIncoming.length,
   };
+}
+
+// ─── All time tab (U3) ────────────────────────────────────────────────────────
+
+/** 365-day series per person: a few at a time, not 51 at once. */
+const ALL_TIME_BATCH = 8;
+
+/**
+ * All-time Noor for the circle's "All time" tab: the viewer, plus each friend
+ * who shares full detail (the same rule as today's score). Consistency-only
+ * and hidden friends are absent; secret areas are left out, as for today's
+ * score. Keyed by uid; the client keeps the circle's order (no ranking).
+ */
+export async function getCircleAllTime(
+  userId: string,
+  today?: string,
+  timezoneOffset: number = DEFAULT_TIMEZONE_OFFSET
+): Promise<Record<string, number>> {
+  const end = today ?? getTodayString(timezoneOffset);
+  const profile = await getOrCreateProfile(userId);
+  const privacyByUid = await visibleFriendPrivacy(profile.friends);
+  const people: [string, NoorMask][] = [[userId, {}]];
+  for (const [uid, pv] of privacyByUid) {
+    if (pv.visibility === 'detail') people.push([uid, pv.secret]);
+  }
+  const out: Record<string, number> = {};
+  for (let i = 0; i < people.length; i += ALL_TIME_BATCH) {
+    const batch = people.slice(i, i + ALL_TIME_BATCH);
+    const totals = await Promise.all(batch.map(([uid, mask]) => getAllTimeNoor(uid, end, mask)));
+    batch.forEach(([uid], j) => (out[uid] = totals[j]));
+  }
+  return out;
 }
 
 // ─── Noor (navbar capsules) ───────────────────────────────────────────────────

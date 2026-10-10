@@ -5,9 +5,7 @@ import { loadFirebase, SESSION_MARKER } from '../authClient.js';
 import logo from '../assets/logo.svg';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useZikrStore } from '../store/useZikrStore.js';
-import { useNoor } from '../hooks/useSocial.js';
 import { useUiStore } from '../store/useUiStore.js';
-import { formatLocaleNumber } from '../utils/localeDate.js';
 import ThemeToggle from './ThemeToggle.js';
 import ShareAppSheet from './ShareAppSheet.js';
 import {
@@ -40,7 +38,6 @@ import {
   LeafIcon,
   MosqueIcon,
   NamesMedallionIcon,
-  Star8Icon,
   SunriseIcon,
   TasbihIcon,
 } from './icons/IslamicIcons.js';
@@ -195,12 +192,7 @@ export default function Navbar() {
     setDropdownOpen(false);
   }, [location.pathname]);
 
-  // Noor capsules: always on /friends; elsewhere per the Settings toggles
-  const { showNoorAllTime, showNoorToday, discreetMode } = useUiStore();
-  const onFriendsPage = location.pathname === '/friends';
-  const noorTodayVisible = onFriendsPage || showNoorToday;
-  const noorAllTimeVisible = onFriendsPage || showNoorAllTime;
-  const { data: noor } = useNoor(!!user && (noorTodayVisible || noorAllTimeVisible));
+  const discreetMode = useUiStore((s) => s.discreetMode);
 
   const firstName = user?.displayName?.split(' ')[0] ?? '';
   const greeting = `${t('home.greeting')}${firstName ? ', ' + firstName : ''}`;
@@ -295,7 +287,7 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* ── Right: lang + noor + profile ────────────────── */}
+          {/* ── Right: theme + lang + profile ───────────────── */}
           <div className="flex items-center gap-0.5 flex-shrink-0">
             <ThemeToggle />
             {/* Language toggle — cycles en ↔ bn */}
@@ -313,46 +305,6 @@ export default function Navbar() {
                 {i18n.resolvedLanguage === 'bn' ? 'EN' : 'বা'}
               </span>
             </button>
-            {user && noor && (noorTodayVisible || noorAllTimeVisible) && (
-              <div className="flex items-center gap-0.5 sm:gap-1">
-                {noorTodayVisible && (
-                  <div
-                    className="tooltip tooltip-bottom"
-                    data-tip={`${t('settings.noorToday')}: ${t('settings.noorTodayDetail')}`}
-                  >
-                    <span
-                      aria-label={`${t('settings.noorToday')}: ${formatLocaleNumber(noor.today)}`}
-                      className="px-1 sm:px-2 py-0.5 rounded-full bg-brand-emerald/15 border border-brand-emerald/40 text-brand-emerald text-xs font-bold flex items-center gap-0.5 sm:gap-1 whitespace-nowrap"
-                    >
-                      <SparklesIcon aria-hidden className="w-3.5 h-3.5" />
-                      {formatLocaleNumber(noor.today)}
-                    </span>
-                  </div>
-                )}
-                {noorAllTimeVisible && (
-                  // Hidden below sm (640px) — below that, the left (back+title)
-                  // and right (lang+noor+avatar) nav sections don't both fit at
-                  // their minimum widths even after trimming padding, and on
-                  // some pages (Friends, which forces both badges) both badges
-                  // together pushed the profile avatar fully off-screen behind
-                  // the global `overflow-x:hidden` even at 375px — a much wider
-                  // phone than the old 360px cutoff assumed. Today's Noor is the
-                  // more actionable one, so it stays; all-time drops first.
-                  <div
-                    className="hidden sm:block tooltip tooltip-bottom"
-                    data-tip={`${t('settings.noorAllTime')}: ${t('settings.noorAllTimeDetail')}`}
-                  >
-                    <span
-                      aria-label={`${t('settings.noorAllTime')}: ${formatLocaleNumber(noor.allTime ?? 0)}`}
-                      className="px-1.5 sm:px-2 py-0.5 rounded-full bg-brand-gold/15 border border-brand-gold/40 text-brand-gold text-xs font-bold flex items-center gap-0.5 sm:gap-1 whitespace-nowrap"
-                    >
-                      <Star8Icon aria-hidden className="w-3.5 h-3.5" />
-                      {formatLocaleNumber(noor.allTime ?? 0)}
-                    </span>
-                  </div>
-                )}
-              </div>
-            )}
             {user ? (
               <div className="relative shrink-0" ref={dropdownRef}>
                 <button

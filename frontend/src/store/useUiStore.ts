@@ -18,10 +18,6 @@ interface UiState {
   /** In force now: 'on', or 'auto' while the device asks for it */
   reduceMotion: boolean;
   highContrast: boolean;
-  /** Show all-time Noor in the navbar on every page (default: friends page only) */
-  showNoorAllTime: boolean;
-  /** Show today's Noor in the navbar on every page (default: friends page only) */
-  showNoorToday: boolean;
   /** Haptic pulse on each zikr count tap (mobile browsers only) */
   vibrationEnabled: boolean;
   /** Subtle click sound on each zikr count tap */
@@ -61,8 +57,6 @@ interface UiState {
   setReduceMotionMode: (mode: ReduceMotionMode) => void;
   setOsReducedMotion: (val: boolean) => void;
   setHighContrast: (val: boolean) => void;
-  setShowNoorAllTime: (val: boolean) => void;
-  setShowNoorToday: (val: boolean) => void;
   setVibrationEnabled: (val: boolean) => void;
   setZikrSoundEnabled: (val: boolean) => void;
   setTasbihMode: (val: boolean) => void;
@@ -95,8 +89,6 @@ type StoredPrefs = Pick<
   UiState,
   | 'reduceMotionMode'
   | 'highContrast'
-  | 'showNoorAllTime'
-  | 'showNoorToday'
   | 'vibrationEnabled'
   | 'zikrSoundEnabled'
   | 'tasbihMode'
@@ -118,8 +110,6 @@ function readStoredPrefs(): StoredPrefs {
   return {
     reduceMotionMode: parseReduceMotionMode(localStorage.getItem('bustandeen_reduce_motion')),
     highContrast: localStorage.getItem('bustandeen_high_contrast') === '1',
-    showNoorAllTime: localStorage.getItem('bustandeen_noor_alltime') === '1',
-    showNoorToday: localStorage.getItem('bustandeen_noor_today') === '1',
     vibrationEnabled: localStorage.getItem('bustandeen_vibration') !== '0',
     zikrSoundEnabled: localStorage.getItem('bustandeen_zikr_sound') === '1',
     tasbihMode: localStorage.getItem('bustandeen_tasbih_mode') === '1',
@@ -189,16 +179,6 @@ export const useUiStore = create<UiState>((set) => ({
   setHighContrast: (val) => {
     localStorage.setItem('bustandeen_high_contrast', val ? '1' : '0');
     set({ highContrast: !!val });
-  },
-
-  setShowNoorAllTime: (val) => {
-    localStorage.setItem('bustandeen_noor_alltime', val ? '1' : '0');
-    set({ showNoorAllTime: !!val });
-  },
-
-  setShowNoorToday: (val) => {
-    localStorage.setItem('bustandeen_noor_today', val ? '1' : '0');
-    set({ showNoorToday: !!val });
   },
 
   setVibrationEnabled: (val) => {

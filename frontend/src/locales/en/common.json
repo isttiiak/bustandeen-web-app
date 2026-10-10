@@ -851,7 +851,6 @@
     "copy": "Copy",
     "copyError": "Could not copy. Please try again.",
     "onCycle": "on her cycle",
-    "notOnCycle": "not on her cycle",
     "fastingToday": "Fasting today",
     "inviteCopied": "Invite message copied!",
     "inviteError": "Could not load your invite link",
@@ -945,7 +944,11 @@
     "framingRef": "Ṣaḥīḥ al-Bukhārī 6464",
     "consistencyOnly": "Shares consistency only",
     "quranStreakStat": "Quran {{count}} days",
-    "activeDaysStat": "Active {{active}} of {{days}} days this week"
+    "activeDaysStat": "Active {{active}} of {{days}} days this week",
+    "menu": "Friends menu",
+    "boardAll": "All time",
+    "allTimeNoor": "all-time Noor",
+    "privacySubtitle": "Choose what your friends can see of your day."
   },
   "genderGate": {
     "brother": "Brother",
@@ -2899,12 +2902,6 @@
     "locationSet": "{{name}}, stored only in this browser",
     "naseehSection": "Naseeh AI companion",
     "naseehSubtitle": "Personalised encouragement from your weekly activity, never a source of religious evidence",
-    "noorAllTime": "All-time Noor",
-    "noorAllTimeDetail": "Every day's light, gathered. Never resets",
-    "noorSection": "Noor in the navbar",
-    "noorSubtitle": "Your daily light. Always shown on the Friends page; turn these on to carry it everywhere",
-    "noorToday": "Today's Noor",
-    "noorTodayDetail": "Fresh every morning. Resets at midnight",
     "prayerLocation": "Prayer times location",
     "reduceMotion": "Reduce animations",
     "reduceMotionDetail": "Tone down motion effects and celebrations. Auto follows your phone's setting.",
