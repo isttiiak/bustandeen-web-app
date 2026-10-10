@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { createPortal } from 'react-dom';
-import toast from 'react-hot-toast';
 import {
   XMarkIcon,
   ArrowPathIcon,
@@ -10,10 +9,8 @@ import {
   MusicalNoteIcon,
   PencilSquareIcon,
 } from '@heroicons/react/24/outline';
-import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import api from '../lib/api.js';
-import ConfirmDialog from './ConfirmDialog.js';
+import FreshStart from './FreshStart.js';
 import ZikrQuickSettings from './zikr/ZikrQuickSettings.js';
 import { useUiStore } from '../store/useUiStore.js';
 
@@ -30,9 +27,6 @@ export default function ZikrSettings({
   onManageList?: () => void;
 }) {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
-  const [confirmReset, setConfirmReset] = useState(false);
-  const [resetting, setResetting] = useState(false);
   const tasbihMode = useUiStore((s) => s.tasbihMode);
   const setTasbihMode = useUiStore((s) => s.setTasbihMode);
   const tasbihTarget = useUiStore((s) => s.tasbihTarget);
@@ -46,22 +40,6 @@ export default function ZikrSettings({
   const setZikrAudioVolume = useUiStore((s) => s.setZikrAudioVolume);
   const zikrPlayOnTap = useUiStore((s) => s.zikrPlayOnTap);
   const setZikrPlayOnTap = useUiStore((s) => s.setZikrPlayOnTap);
-
-  const handleReset = async () => {
-    setResetting(true);
-    try {
-      await api.post('/api/zikr/reset');
-      queryClient.invalidateQueries({ queryKey: ['zikr'] });
-      queryClient.invalidateQueries({ queryKey: ['analytics'] });
-      toast.success(t('zikr.toast.resetDone', 'Counters reset. Your history is still there'));
-      setConfirmReset(false);
-      onClose();
-    } catch {
-      toast.error(t('zikr.toast.resetFail', 'Could not reset. Please try again'));
-    } finally {
-      setResetting(false);
-    }
-  };
 
   return createPortal(
     <AnimatePresence>
@@ -279,23 +257,12 @@ export default function ZikrSettings({
               <section className="rounded-card border border-brand-border bg-brand-surface/50 shadow-elev-1 p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <ArrowPathIcon className="w-4 h-4 text-brand-gold" />
-                  <h3 className="text-white font-bold text-sm">
-                    {t('zikr.resetCounters', 'Start fresh')}
-                  </h3>
+                  <h3 className="text-white font-bold text-sm">{t('freshStart.title')}</h3>
                 </div>
                 <p className="text-white/75 text-xs leading-relaxed mb-3">
-                  {t(
-                    'zikr.resetDesc',
-                    'Zero your counts, streak and goal to begin again. Your daily history stays saved in Analytics; nothing is deleted.'
-                  )}
+                  {t('freshStart.subOne')}
                 </p>
-                <button
-                  onClick={() => setConfirmReset(true)}
-                  className="inline-flex items-center gap-1.5 rounded-control px-3 py-2 text-xs font-bold border border-brand-gold/40 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20 transition-colors"
-                >
-                  <ArrowPathIcon className="w-3.5 h-3.5" />
-                  {t('zikr.resetCounters', 'Start fresh')}
-                </button>
+                <FreshStart areas={['zikr']} />
               </section>
 
               <p className="text-white/70 text-[11px] leading-relaxed border-t border-brand-border pt-4">
@@ -310,22 +277,6 @@ export default function ZikrSettings({
               </p>
             </div>
           </motion.aside>
-
-          <ConfirmDialog
-            open={confirmReset}
-            title={t('zikr.resetAllConfirmTitle', 'Start fresh?')}
-            message={t(
-              'zikr.resetConfirmMsg',
-              'Your counts, streak and goal progress will be zeroed. Your daily history will not be touched.'
-            )}
-            confirmLabel={
-              resetting
-                ? t('zikr.resetting', 'Resetting…')
-                : t('zikr.resetConfirm', 'Yes, start fresh')
-            }
-            onConfirm={() => void handleReset()}
-            onCancel={() => setConfirmReset(false)}
-          />
         </>
       )}
     </AnimatePresence>,

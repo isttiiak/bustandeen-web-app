@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import SinceChip from '../components/SinceChip.js';
+import { useStatsResets } from '../hooks/useStatsResets.js';
 import TabNav from '../components/TabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
 import { useAuthStore } from '../store/useAuthStore.js';
@@ -176,6 +178,7 @@ export default function SalatAnalytics() {
   };
 
   const { data, isLoading, isError } = useSalatAnalytics(analyticsDays, analyticsToday);
+  const { data: resets } = useStatsResets();
   const { data: debt } = useSalatDebt();
   const { data: debtHistory } = useSalatDebtHistory(analyticsDays, analyticsToday);
   const { data: kazaInsights } = useSalatDebtInsights();
@@ -268,6 +271,7 @@ export default function SalatAnalytics() {
             ]}
           />
           <IntentionLine />
+          <SinceChip since={resets?.salat.date} />
 
           {/* Title + view toggle + period selector */}
           <div className="flex items-center justify-between flex-wrap gap-3">

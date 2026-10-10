@@ -26,3 +26,12 @@ export function formatLocaleNumber(n: number, options?: Intl.NumberFormatOptions
   const lang = (i18n.language || 'en').split('-')[0]!;
   return n.toLocaleString(INTL_LOCALE[lang] ?? 'en-US', options);
 }
+
+/** A YYYY-MM-DD day as "8 Oct 2026" in the app language (U7 fresh-start labels). */
+export function formatDayLabel(day: string): string {
+  return formatLocaleDate(new Date(`${day}T12:00:00`), {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}

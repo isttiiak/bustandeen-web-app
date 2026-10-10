@@ -19,6 +19,25 @@ export interface ISalatResetEntry {
   resetAt: Date;
 }
 
+/** One "fresh start" of a stats area (U7). Nothing is deleted: totals,
+ * streaks and averages count from `date`; `prev*` hold what the reset set
+ * aside so Undo can put it back. */
+export interface IStatsResetEntry {
+  date: string; // YYYY-MM-DD tracking day the new count starts
+  note: string;
+  resetAt: Date;
+  /** zikr: the ZikrStreak fields before the reset */
+  prevStreak?: Record<string, unknown> | null;
+  /** quran: surahCounts at the reset (top surahs count above it) */
+  surahBaseline?: Record<string, number> | null;
+}
+
+export interface IStatsResets {
+  zikr?: IStatsResetEntry[];
+  fasting?: IStatsResetEntry[];
+  quran?: IStatsResetEntry[];
+}
+
 export interface IUser extends Document {
   uid: string;
   email: string;
@@ -99,12 +118,25 @@ export interface IUser extends Document {
   onboardedAt?: Date | null;
   salatResetDate?: string;
   salatResetHistory: ISalatResetEntry[];
+  /** Fresh starts for zikr / fasting / quran (salat keeps salatReset*). */
+  statsResets?: IStatsResets;
   totalCount: number;
   zikrTotals: Map<string, number>;
   zikrTypes: mongoose.Types.DocumentArray<IZikrTypeItem & Document>;
   createdAt: Date;
   updatedAt: Date;
 }
+
+const statsResetEntrySchema = new Schema(
+  {
+    date: { type: String, required: true, match: /^\d{4}-\d{2}-\d{2}$/ },
+    note: { type: String, default: '', maxlength: 200 },
+    resetAt: { type: Date, default: Date.now },
+    prevStreak: { type: Schema.Types.Mixed, default: undefined },
+    surahBaseline: { type: Schema.Types.Mixed, default: undefined },
+  },
+  { _id: false }
+);
 
 const userSchema = new Schema(
   {
@@ -166,6 +198,17 @@ const userSchema = new Schema(
         },
       ],
       default: [],
+    },
+    statsResets: {
+      type: new Schema(
+        {
+          zikr: { type: [statsResetEntrySchema], default: undefined },
+          fasting: { type: [statsResetEntrySchema], default: undefined },
+          quran: { type: [statsResetEntrySchema], default: undefined },
+        },
+        { _id: false }
+      ),
+      default: undefined,
     },
     totalCount: { type: Number, default: 0 },
     zikrTotals: { type: Map, of: Number, default: {} },

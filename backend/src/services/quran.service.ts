@@ -5,6 +5,8 @@ import QuranProfile, {
   QURAN_TOTAL_AYAT,
 } from '../models/QuranProfile.js';
 import QuranReadingSession from '../models/QuranReadingSession.js';
+import User from '../models/User.js';
+import { resetAreas } from './statsReset.service.js';
 import { DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
 
 /** Unit math: 1 mushaf page ≈ 10 ayat (6236/604). Units = ayat-equivalents. */
@@ -344,14 +346,12 @@ export async function resetKhatam(userId: string): Promise<IQuranProfile> {
   return profile;
 }
 
-/** Reset reading progress: zero counters and positions but keep logs,
- *  bookmarks, savedDuas. Goal + khatam stay — reset those separately. */
-export async function resetReading(userId: string): Promise<IQuranProfile> {
-  const profile = await getOrCreateProfile(userId);
-  profile.surahCounts = new Map();
-  profile.readerPos = new Map();
-  await profile.save();
-  return profile;
+/** The old "Reset reading counts" route. It used to clear surah counts and
+ * reading positions; since U7 it is a non-destructive Quran fresh start. */
+export async function resetReading(userId: string, today?: string): Promise<IQuranProfile> {
+  const day = today && /^\d{4}-\d{2}-\d{2}$/.test(today) ? today : todayDateString();
+  await resetAreas(userId, ['quran'], day);
+  return getOrCreateProfile(userId);
 }
 
 export interface QuranSummary {
@@ -391,6 +391,8 @@ export interface QuranSummary {
   estDaysToKhatm: number | null;
   /** Top-5 most-completed surahs (times read to the end) */
   topSurahs: Array<{ surah: number; completions: number }>;
+  /** Fresh-start day streak, best, all-time and top surahs count from (U7). */
+  since: string | null;
   bookmarks: Array<{ surah: number; ayah: number }>;
 }
 
@@ -398,13 +400,20 @@ export async function getSummary(userId: string, today?: string): Promise<QuranS
   const end = today ?? todayDateString();
   const windowSince = shiftDateStr(end, -364);
 
+  const resets = await User.findOne({ uid: userId }).select('statsResets.quran').lean();
+  const lastReset = resets?.statsResets?.quran?.at(-1) ?? null;
+  const since = lastReset?.date ?? null;
+  // A fresh start (U7) bounds streak, best streak, the 30-day and all-time
+  // totals and the top surahs. The khatm count and progress always stay.
+  const from = since && since > windowSince ? since : windowSince;
+
   const [profile, logs, allTimeAgg] = await Promise.all([
     getOrCreateProfile(userId),
-    QuranLog.find({ userId, date: { $gte: windowSince, $lte: end } })
+    QuranLog.find({ userId, date: { $gte: from, $lte: end } })
       .select('date pages ayat')
       .sort({ date: 1 }),
     QuranLog.aggregate([
-      { $match: { userId } },
+      { $match: { userId, ...(since ? { date: { $gte: since } } : {}) } },
       {
         $group: { _id: null, pages: { $sum: '$pages' }, ayat: { $sum: { $ifNull: ['$ayat', 0] } } },
       },
@@ -474,8 +483,9 @@ export async function getSummary(userId: string, today?: string): Promise<QuranS
   const remainingAyat = QURAN_TOTAL_AYAT - profile.currentAyah;
   const estDaysToKhatm = pace && pace > 0 ? Math.ceil(remainingAyat / pace) : null;
 
+  const baseline = new Map(Object.entries(lastReset?.surahBaseline ?? {}));
   const topSurahs = [...profile.surahCounts.entries()]
-    .map(([k, v]) => ({ surah: Number(k), completions: v }))
+    .map(([k, v]) => ({ surah: Number(k), completions: v - (baseline.get(k) ?? 0) }))
     .filter((t) => t.completions > 0)
     .sort((a, b) => b.completions - a.completions)
     .slice(0, 5);
@@ -523,6 +533,7 @@ export async function getSummary(userId: string, today?: string): Promise<QuranS
     estDaysToKhatm,
     topSurahs,
     bookmarks: profile.bookmarks,
+    since,
   };
 }
 

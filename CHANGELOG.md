@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.140.0 - Fresh start for your stats - 2026-10-10
+
+### Added
+
+- **Fresh start (U7).** A new Settings card, just above Your data, restarts the counts of Zikr, Salat, Fasting or Quran from today, or all of them with "Reset all stats". The same row sits in each feature's own settings. Nothing is deleted: each area keeps a start date, totals, streaks (current and best) and averages count from it, and every past day stays in your history. A confirm sheet lists exactly what starts again and what stays, with an optional note, and the latest reset of any area can be undone. Analytics pages show "Since <date>"; Zikr analytics also shows your all-time total and best streak. English and Bangla.
+- What never resets: Kaza debt (it has its own reset), qaḍāʾ owed and made up, kaffārah, vows, the khatm count and progress, memorised āyāt, Rayhanah and Noor (Noor always counts every deed). Salat keeps using its existing reset date, so earlier salat resets carry over.
+- Reset dates are in the backup file, so a restore brings the same view back.
+
+### Changed
+
+- The old zikr "Start fresh" (it zeroed your lifetime totals and deleted your goal) and Quran "Reset reading" (it cleared surah counts and reader positions) are replaced by Fresh start. Their old routes now do the non-destructive reset too, so no reset in the app loses data any more.
+- Home and Zikr analytics decide "new user" from your lifetime total, so a fresh start never shows the first-run screens.
+
 ## v5.139.0 - One backup with everything, and a real Excel report - 2026-10-10
 
 ### Changed

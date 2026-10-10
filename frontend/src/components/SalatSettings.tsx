@@ -35,7 +35,8 @@ import {
   setShowSalatAdhkar,
 } from '../utils/salatPrefs.js';
 import { translateReference } from '../utils/localeReference.js';
-import { useSalatDebt, useResetSalat, useResetSalatDebt } from '../hooks/useSalatLog.js';
+import { useSalatDebt, useResetSalatDebt } from '../hooks/useSalatLog.js';
+import FreshStart from './FreshStart.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 
 /**
@@ -56,32 +57,9 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
   const [showSunnah, setShowSunnah] = useState<boolean>(() => getShowSunnahGuide());
   const [showNafl, setShowNafl] = useState<boolean>(() => getShowNaflGuide());
   const [showAdhkar, setShowAdhkar] = useState<boolean>(() => getShowSalatAdhkar());
-  const [confirmReset, setConfirmReset] = useState(false);
-  const resetSalat = useResetSalat();
   const { data: debt } = useSalatDebt();
   const resetDebt = useResetSalatDebt();
   const [confirmDebtReset, setConfirmDebtReset] = useState(false);
-
-  // The reset date is the TRACKING day (CLAUDE.md "Salat today"): between
-  // midnight and Fajr the civil date is a day ahead, which put the reset after
-  // the still-open day and dropped the current phase from the journey.
-  const handleReset = () => {
-    if (resetSalat.isPending) return;
-    resetSalat.mutate(
-      { today: getTrackingDay() },
-      {
-        onSuccess: () => {
-          toast.success(
-            t('salatSettings.resetDone', 'Salat tracking reset. Your history is kept.')
-          );
-          setConfirmReset(false);
-          onClose();
-        },
-        onError: () =>
-          toast.error(t('salatSettings.resetFail', 'Could not reset. Please try again.')),
-      }
-    );
-  };
 
   const chooseTasbih = (m: TasbihMode) => {
     setTasbih(m);
@@ -398,21 +376,12 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
               <section>
                 <h3 className={SECTION_TITLE}>
                   <ArrowPathIcon className="w-4 h-4 text-brand-gold" aria-hidden="true" />
-                  {t('salatSettings.startFresh', 'Start fresh')}
+                  {t('freshStart.title')}
                 </h3>
                 <p className="text-white/70 text-xs leading-relaxed mt-1 mb-3">
-                  {t(
-                    'salatSettings.startFreshDesc',
-                    "Analytics and streaks will count from today. All past prayer logs stay intact: you can still view them, but they won't affect your new stats."
-                  )}
+                  {t('freshStart.subOne')}
                 </p>
-                <button
-                  onClick={() => setConfirmReset(true)}
-                  className={`${BTN_SECONDARY} !px-3 !py-2 !text-xs`}
-                >
-                  <ArrowPathIcon className="w-3.5 h-3.5" aria-hidden="true" />
-                  {t('salatSettings.resetTracking', 'Reset tracking')}
-                </button>
+                <FreshStart areas={['salat']} />
               </section>
 
               <p className="text-white/70 text-[11px] leading-relaxed border-t border-brand-border pt-4">
@@ -431,22 +400,6 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
               </p>
             </div>
           </motion.aside>
-
-          <ConfirmDialog
-            open={confirmReset}
-            title={t('salatSettings.resetConfirmTitle', 'Reset salat tracking?')}
-            message={t(
-              'salatSettings.resetConfirmMsg',
-              "Your streak and analytics will start fresh from today. All past prayer logs are kept; they just won't count toward the new stats."
-            )}
-            confirmLabel={
-              resetSalat.isPending
-                ? t('salatSettings.resetting', 'Resetting…')
-                : t('salatSettings.resetConfirm', 'Yes, start fresh')
-            }
-            onConfirm={handleReset}
-            onCancel={() => setConfirmReset(false)}
-          />
 
           <ConfirmDialog
             open={confirmDebtReset}

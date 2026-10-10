@@ -6,6 +6,7 @@ import FastingLog, {
 } from '../models/FastingLog.js';
 import FastingProfile, { IFastingProfile } from '../models/FastingProfile.js';
 import { getExcusedIntervals } from './cycle.service.js';
+import { resetDateFor } from './statsReset.service.js';
 
 function todayDateString(): string {
   return new Date().toISOString().substring(0, 10);
@@ -203,6 +204,8 @@ export interface FastingSummary {
     voluntaryTotal: number;
     monThuStreak: number;
     bestMonThuStreak: number;
+    /** Fresh-start day these stats count from (U7), or null. */
+    since: string | null;
   };
   /** Last 60 days of logs (plus tomorrow's intention if any) for the calendar strip */
   recentLogs: IFastingLog[];
@@ -222,7 +225,7 @@ export async function getSummary(userId: string, today?: string): Promise<Fastin
     { $set: { status: 'completed' } }
   );
 
-  const [profile, completedLogs, monThuLogs, recentLogs] = await Promise.all([
+  const [profile, completedLogs, monThuLogs, recentLogs, since] = await Promise.all([
     getOrCreateProfile(userId),
     FastingLog.find({ userId, status: 'completed' })
       .select('date category vowId')
@@ -234,10 +237,15 @@ export async function getSummary(userId: string, today?: string): Promise<Fastin
       voluntaryKind: 'mon_thu',
     }).select('date'),
     getHistory(userId, 60, end),
+    resetDateFor(userId, 'fasting'),
   ]);
-  const monThuDateSet = new Set(monThuLogs.map((l) => l.date));
+  // A fresh start (U7) bounds the running stats only. Qaḍāʾ made up,
+  // kaffārah and vows are obligations and always count every fast.
+  const inPhase = (date: string) => !since || date >= since;
+  const monThuDateSet = new Set(monThuLogs.map((l) => l.date).filter(inPhase));
 
   let qadaCompleted = 0;
+  let total = 0;
   let voluntaryTotal = 0;
   let thisMonth = 0;
   let last30 = 0;
@@ -246,11 +254,13 @@ export async function getSummary(userId: string, today?: string): Promise<Fastin
 
   for (const log of completedLogs) {
     if (log.category === 'qada') qadaCompleted++;
-    if (log.category === 'voluntary') voluntaryTotal++;
     if (log.category === 'kaffarah') kaffarahDates.push(log.date);
     if (log.category === 'nadhr' && log.vowId) {
       vowCompleted[log.vowId] = (vowCompleted[log.vowId] ?? 0) + 1;
     }
+    if (!inPhase(log.date)) continue;
+    total++;
+    if (log.category === 'voluntary') voluntaryTotal++;
     if (log.date.startsWith(monthPrefix) && log.date <= end) thisMonth++;
     if (log.date >= last30Since && log.date <= end) last30++;
   }
@@ -311,12 +321,13 @@ export async function getSummary(userId: string, today?: string): Promise<Fastin
       runStale,
     },
     stats: {
-      total: completedLogs.length,
+      total,
       thisMonth,
       last30,
       voluntaryTotal,
       monThuStreak: computeMonThuStreak(monThuDateSet, end),
       bestMonThuStreak: computeBestMonThuStreak(monThuDateSet, end),
+      since,
     },
     recentLogs,
   };

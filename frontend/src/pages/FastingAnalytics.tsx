@@ -3,6 +3,7 @@ import IntentionLine from '../components/analytics/IntentionLine.js';
 import { useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import SinceChip from '../components/SinceChip.js';
 import TabNav from '../components/TabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
 import { useAuthStore } from '../store/useAuthStore.js';
@@ -170,6 +171,7 @@ export default function FastingAnalytics() {
             </div>
           ) : (
             <>
+              <SinceChip since={summary?.stats.since} />
               {/* ── Stat tiles ── */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                 {[

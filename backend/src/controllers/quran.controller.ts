@@ -153,7 +153,7 @@ export const resetReading = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    await quranService.resetReading(req.user.uid);
+    await quranService.resetReading(req.user.uid, req.body?.today as string | undefined);
     res.json({ ok: true });
   } catch (err) {
     next(err);

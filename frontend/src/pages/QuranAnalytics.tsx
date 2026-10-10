@@ -8,6 +8,7 @@ import {
   ChevronRightIcon,
 } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
+import SinceChip from '../components/SinceChip.js';
 import QuranTabNav from '../components/QuranTabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
 import TimeOfDayChart from '../components/analytics/TimeOfDayChart.js';
@@ -207,6 +208,7 @@ export default function QuranAnalytics() {
         <QuranTabNav active="analytics" />
         <IntentionLine />
 
+        <SinceChip since={summary?.since} />
         {/* tiles */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <div className={TILE}>

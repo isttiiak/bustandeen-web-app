@@ -706,24 +706,6 @@ export function useSalatJourney(today?: string) {
   });
 }
 
-/** "Start fresh". `today` must be getTrackingDay(), never a civil date: the
- * server stores it as User.salatResetDate, the cutoff analytics and the journey
- * compare against the tracking day. */
-export function useResetSalat() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (vars: { today: string; note?: string }) => {
-      const { data } = await api.post<{ ok: boolean; resetDate: string }>('/api/salat/reset', vars);
-      return data;
-    },
-    // The reset moves the stats cutoff: streak, analytics, journey and the
-    // tracker's week strip all read it.
-    onSuccess: () => {
-      void qc.invalidateQueries({ queryKey: ['salat'] });
-    },
-  });
-}
-
 export function useSalatAnalytics(days = 30, todayOverride?: string) {
   const user = useAuthStore((s) => s.user);
   // The missed-prayer rollover sweep (ensureCaughtUp) this endpoint triggers

@@ -43,7 +43,7 @@ import { useUiStore } from '../store/useUiStore.js';
 import { zikrDisplayName } from '../utils/zikrLibrary.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
-import { formatLocaleDate, formatLocaleTime } from '../utils/localeDate.js';
+import { formatDayLabel, formatLocaleDate, formatLocaleTime } from '../utils/localeDate.js';
 import { useEscapeKey } from '../hooks/useEscapeKey.js';
 import ZikrLogCountsModal from '../components/zikr/ZikrLogCountsModal.js';
 
@@ -543,6 +543,10 @@ export default function ZikrAnalytics() {
     [...todayTypeMap.values()].reduce((a, b) => a + b, 0)
   );
   const allTimeTypes = analyticsData.perType ?? [];
+  // After a fresh start (U7) the totals count from `since`; history charts
+  // and the "new user" states still look at every phase.
+  const since = allTime?.since ?? null;
+  const lifetimeTotal = allTime?.lifetime?.totalCount ?? allTime?.totalCount ?? 0;
   const displayData = activeTab === 'today' ? todayTypes : allTimeTypes;
   const displayTotal = activeTab === 'today' ? todayTotal : (allTime?.totalCount ?? 0);
 
@@ -607,7 +611,7 @@ export default function ZikrAnalytics() {
               chartData={last7Days}
               dailyGoal={goal?.dailyTarget}
               todayTotal={todayTotal}
-              isNewUser={allTime?.totalCount === 0}
+              isNewUser={lifetimeTotal === 0}
             />
             <GoalCard
               goal={goal}
@@ -621,6 +625,20 @@ export default function ZikrAnalytics() {
           </div>
 
           {/* Overview Statistics */}
+          {since && (
+            <p
+              className="text-white/75 text-xs flex flex-wrap items-center gap-2 -mb-1"
+              data-testid="zikr-since"
+            >
+              <span className="rounded-full bg-brand-emerald/15 text-brand-emerald font-bold px-2.5 py-0.5 text-[11px]">
+                {t('freshStart.sinceChip', { date: formatDayLabel(since) })}
+              </span>
+              {t('freshStart.allTimeZikr', {
+                total: formatLocaleNumber(lifetimeTotal),
+                best: formatLocaleNumber(allTime?.lifetime?.longestStreak ?? 0),
+              })}
+            </p>
+          )}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               {
@@ -749,7 +767,7 @@ export default function ZikrAnalytics() {
                 ))}
               </div>
             </div>
-            {allTime?.totalCount === 0 ? (
+            {lifetimeTotal === 0 ? (
               <div className={`${CARD} p-6 text-center`}>
                 <p className="text-white/70 text-sm">
                   {t(
@@ -837,7 +855,7 @@ export default function ZikrAnalytics() {
                   label={CHART_INFO.heatmap!.title}
                 />
               </h2>
-              {allTime?.totalCount === 0 ? (
+              {lifetimeTotal === 0 ? (
                 <p className="text-white/70 text-sm text-center py-6">
                   {t(
                     'zikrAnalytics.newUserHeatmap',
