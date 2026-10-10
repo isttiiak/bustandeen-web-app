@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.135.0 - A calmer Friends page - 2026-10-10
+
+### Added
+
+- **"All time" tab (U3)** beside Today and This week: each person's all-time Noor (the last 365 days), for you and for every friend who shares full detail, the same rule as today's score. Consistency-only and hidden friends show no number, areas a friend keeps secret are left out, and the order stays the circle's order (no ranking). It loads only when you open the tab (`GET /api/social/alltime`).
+- **Friends menu** at the top right of the arch: Invite friends, See friends (the list with block and remove, and blocked users) and What friends see, which now has its own sheet instead of sitting inside See friends.
+- **"n friends"** beside Today's circle opens the friends list.
+
+### Changed
+
+- The arch is just the title and the Quranic line (2:148); its two buttons moved into the menu.
+- Rayhanah: a friend who shares her cycle status shows "on her cycle" only on those days; on other days her row shows nothing about it (never "not on her cycle").
+
+### Removed
+
+- The Noor pills in the navigation bar (today and all-time) and their two Settings switches, together with their synced preferences. Your own Noor stays on your card in the circle, and all-time Noor is in the new tab. `GET /api/social/noor` stays for app versions still cached on phones and goes after 2026-10-24.
+
 ## v5.134.0 - Share Bustandeen - 2026-10-10
 
 ### Added

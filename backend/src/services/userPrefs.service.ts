@@ -11,8 +11,6 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   // Zikr counter + display
   'bustandeen_reduce_motion',
   'bustandeen_high_contrast',
-  'bustandeen_noor_alltime',
-  'bustandeen_noor_today',
   'bustandeen_vibration',
   'bustandeen_zikr_sound',
   'bustandeen_tasbih_mode',

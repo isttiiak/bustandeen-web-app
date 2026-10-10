@@ -16,8 +16,6 @@ import i18n from '../i18n.js';
 export const SYNCED_KEYS: readonly string[] = [
   'bustandeen_reduce_motion',
   'bustandeen_high_contrast',
-  'bustandeen_noor_alltime',
-  'bustandeen_noor_today',
   'bustandeen_vibration',
   'bustandeen_zikr_sound',
   'bustandeen_tasbih_mode',

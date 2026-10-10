@@ -294,9 +294,14 @@ export async function getNoorSummary(
   return { today: todayNoor, weekPast, week: weekDays ? Math.round(weekSum / weekDays) : 0, usual };
 }
 
-/** Sum of daily Noor over the last 365 days (only ever grows). */
-export async function getAllTimeNoor(userId: string, end: string): Promise<number> {
-  const series = await loadNoorSeries(userId, shift(end, -364), end);
+/** Sum of daily Noor over the last 365 days. `mask` leaves out the areas a
+ * friend keeps secret (the All time tab, U3), never the user's own. */
+export async function getAllTimeNoor(
+  userId: string,
+  end: string,
+  mask: NoorMask = {}
+): Promise<number> {
+  const series = await loadNoorSeries(userId, shift(end, -364), end, mask);
   let total = 0;
   for (const v of series.values()) total += v.score;
   return total;

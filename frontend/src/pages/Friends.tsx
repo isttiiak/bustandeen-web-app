@@ -1,5 +1,5 @@
 import { UserAvatar } from '../components/icons/AvatarGlyphs.js';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -8,18 +8,13 @@ import toast from 'react-hot-toast';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { streakVisual } from '../components/StatusBadges.js';
 import { CountryFlag } from '../components/profile/profileParts.js';
-import {
-  BTN_PRIMARY,
-  BTN_SECONDARY,
-  CARD,
-  REF_LINK,
-  SECTION_TITLE,
-} from '../components/bustanStyles.js';
+import { BTN_PRIMARY, CARD, REF_LINK, SECTION_TITLE } from '../components/bustanStyles.js';
 import {
   CrescentIcon,
   FlowerIcon,
   LeafIcon,
   MosqueIcon,
+  Star8Icon,
   TasbihIcon,
 } from '../components/icons/IslamicIcons.js';
 import {
@@ -41,9 +36,11 @@ import {
   ShareIcon,
   LinkIcon,
   LockClosedIcon,
+  EllipsisVerticalIcon,
 } from '@heroicons/react/24/outline';
 import {
   useSocialSummary,
+  useCircleAllTime,
   type FriendStats,
   useUnfriend,
   useFriendsList,
@@ -340,6 +337,97 @@ function PrivacySettingsBlock() {
   );
 }
 
+/** "What friends see" (U3: its own sheet in the Friends menu). */
+function PrivacySheet({ onClose }: { onClose: () => void }) {
+  const { t } = useTranslation();
+  return (
+    <Sheet onClose={onClose} labelledBy="friends-privacy-title">
+      <SheetHeader
+        id="friends-privacy-title"
+        Icon={EyeIcon}
+        title={t('friends.privacy.title')}
+        subtitle={t('friends.privacySubtitle')}
+        onClose={onClose}
+      />
+      <PrivacySettingsBlock />
+    </Sheet>
+  );
+}
+
+/** The arch's top-right menu (U3): invite, see friends, what friends see. */
+function FriendsMenu({
+  onInvite,
+  onSeeFriends,
+  onPrivacy,
+}: {
+  onInvite: () => void;
+  onSeeFriends: () => void;
+  onPrivacy: () => void;
+}) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const items: { Icon: SvgIcon; label: string; onClick: () => void }[] = [
+    { Icon: UserPlusIcon, label: t('friends.inviteFriend'), onClick: onInvite },
+    { Icon: UsersIcon, label: t('friends.seeFriends'), onClick: onSeeFriends },
+    { Icon: EyeIcon, label: t('friends.privacy.title'), onClick: onPrivacy },
+  ];
+
+  return (
+    <div ref={ref} className="absolute top-3 right-3 z-20">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        aria-label={t('friends.menu')}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        className="w-11 h-11 grid place-items-center rounded-full text-white/80 hover:text-white hover:bg-brand-surface border border-transparent hover:border-brand-border transition-colors"
+      >
+        <EllipsisVerticalIcon className="w-6 h-6" />
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-full mt-1 w-64 max-w-[calc(100vw-3rem)] rounded-control border border-brand-border bg-brand-deep shadow-elev-3 p-1.5 text-left"
+        >
+          {items.map(({ Icon, label, onClick }) => (
+            <button
+              key={label}
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setOpen(false);
+                onClick();
+              }}
+              className="w-full min-h-[44px] flex items-center gap-2.5 px-3 py-2 text-left rounded-control text-sm font-semibold text-white/85 hover:text-white hover:bg-brand-surface transition-colors"
+            >
+              <Icon className="w-5 h-5 text-brand-emerald shrink-0" />
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /** Manage-friends modal: full list, connected-since date, two-step confirm delete. */
 function ManageFriendsModal({ onClose }: { onClose: () => void }) {
   const { t } = useTranslation();
@@ -516,8 +604,6 @@ function ManageFriendsModal({ onClose }: { onClose: () => void }) {
         </div>
       )}
 
-      <PrivacySettingsBlock />
-
       {/* Blocked users */}
       <div className="rounded-control border border-brand-border bg-brand-surface/50 overflow-hidden">
         <button
@@ -616,7 +702,22 @@ function Chip({
 
 /** One person in the circle. A friend who shares consistency only gets the
  * streak chips; an area a friend keeps secret is simply absent (T3.6). */
-function CircleRow({ f, i, board }: { f: FriendStats; i: number; board: 'today' | 'week' }) {
+type Board = 'today' | 'week' | 'all';
+
+function CircleRow({
+  f,
+  i,
+  board,
+  allTime,
+  allTimeLoading,
+}: {
+  f: FriendStats;
+  i: number;
+  board: Board;
+  /** All time tab: this person's all-time Noor (absent: not shared) */
+  allTime?: number;
+  allTimeLoading: boolean;
+}) {
   const { t } = useTranslation();
   const detail = f.visibility === 'detail' && f.score !== undefined;
   const shown = board === 'week' ? (f.weekScore ?? f.score ?? 0) : (f.score ?? 0);
@@ -642,19 +743,26 @@ function CircleRow({ f, i, board }: { f: FriendStats; i: number; board: 'today' 
               </span>
             )}
           </p>
-          {f.onCycle !== undefined && (
-            <span
-              className={`inline-flex items-center gap-1 mt-0.5 text-[11px] font-semibold ${
-                f.onCycle ? 'text-brand-pink' : 'text-white/70'
-              }`}
-            >
-              {f.onCycle && <FlowerIcon className="w-3.5 h-3.5" />}
-              {f.onCycle
-                ? t('friends.onCycle', 'on her cycle')
-                : t('friends.notOnCycle', 'not on her cycle')}
+          {/* U3: only ever "on her cycle"; nothing on other days */}
+          {f.onCycle === true && (
+            <span className="inline-flex items-center gap-1 mt-0.5 text-[11px] font-semibold text-brand-pink">
+              <FlowerIcon className="w-3.5 h-3.5" />
+              {t('friends.onCycle', 'on her cycle')}
             </span>
           )}
-          {detail ? (
+          {board === 'all' && detail ? (
+            <p className="inline-flex items-center gap-1 mt-1 text-xs text-white/70">
+              <Star8Icon className="w-3.5 h-3.5 text-brand-gold" />
+              {allTime !== undefined ? (
+                <b className="text-white text-sm tabular-nums">{formatLocaleNumber(allTime)}</b>
+              ) : allTimeLoading ? (
+                <span className="loading loading-dots loading-xs text-brand-gold" />
+              ) : (
+                '-'
+              )}{' '}
+              {t('friends.allTimeNoor')}
+            </p>
+          ) : detail ? (
             <>
               <div className="flex items-center gap-2 mt-1">
                 <div className="flex-1 bg-track rounded-full h-1.5 overflow-hidden">
@@ -716,7 +824,14 @@ function CircleRow({ f, i, board }: { f: FriendStats; i: number; board: 'today' 
             {t('friends.zikrStreakStat', { count: formatLocaleNumber(f.zikrStreak ?? 0) })}
           </Chip>
         )}
-        {!detail ? (
+        {board === 'all' ? (
+          // All time: the Noor number stands alone; only the streaks beside it
+          f.quranStreak !== undefined && (
+            <Chip Icon={BookOpenIcon}>
+              {t('friends.quranStreakStat', { count: formatLocaleNumber(f.quranStreak) })}
+            </Chip>
+          )
+        ) : !detail ? (
           <>
             {f.quranStreak !== undefined && (
               <Chip Icon={BookOpenIcon}>
@@ -794,6 +909,7 @@ export default function Friends() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [inviteOpen, setInviteOpen] = useState(false);
   const [manageOpen, setManageOpen] = useState(false);
+  const [privacyOpen, setPrivacyOpen] = useState(false);
   const [requestsOpen, setRequestsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [howOpen, setHowOpen] = useState(false);
@@ -821,7 +937,8 @@ export default function Friends() {
 
   // "Today" is the live daily Noor; "This week" is the Friday-to-Thursday
   // average, so someone who started late (or had a quiet day) still shows effort.
-  const [board, setBoard] = useState<'today' | 'week'>('today');
+  const [board, setBoard] = useState<Board>('today');
+  const allTime = useCircleAllTime(board === 'all');
   // Cycle wording is only ever shown to sisters (the public Privacy page aside).
   const isFemale = useIsFemale();
   // Server order: you first, then friends by longest streak. Never ranked
@@ -877,8 +994,15 @@ export default function Friends() {
           <motion.section
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-10 pb-6 text-center"
+            className="relative rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-10 pb-6 text-center"
           >
+            {!isDemoMode && (
+              <FriendsMenu
+                onInvite={() => setInviteOpen(true)}
+                onSeeFriends={() => setManageOpen(true)}
+                onPrivacy={() => setPrivacyOpen(true)}
+              />
+            )}
             <div className="w-16 h-16 mx-auto rounded-full grid place-items-center bg-brand-emerald/10 border border-brand-emerald/30">
               <UsersIcon className="w-8 h-8 text-brand-emerald" />
             </div>
@@ -896,17 +1020,6 @@ export default function Friends() {
             >
               {t('friends.quranRef')}
             </a>
-            {!isDemoMode && (
-              <div className="mt-5 flex flex-wrap justify-center gap-2">
-                <button type="button" onClick={() => setInviteOpen(true)} className={BTN_PRIMARY}>
-                  <UserPlusIcon className="w-4 h-4" /> {t('friends.inviteFriend')}
-                </button>
-                {/* Always shown: the privacy settings live in this sheet */}
-                <button type="button" onClick={() => setManageOpen(true)} className={BTN_SECONDARY}>
-                  <UsersIcon className="w-4 h-4" /> {t('friends.seeFriends')}
-                </button>
-              </div>
-            )}
           </motion.section>
 
           {/* Pending friend requests: shown regardless of friend count */}
@@ -960,14 +1073,26 @@ export default function Friends() {
                 <h2 className={SECTION_TITLE}>
                   <SparklesIcon className="w-5 h-5 text-brand-gold" />
                   {t('friends.todaysCircle')}
-                  <span className="text-white/70 text-sm font-normal font-sans">
-                    {t(friendsCount === 1 ? 'friends.circleCount' : 'friends.circleCountPlural', {
-                      count: friendsCount,
-                    })}
-                  </span>
+                  {isDemoMode ? (
+                    <span className="text-white/70 text-sm font-normal font-sans">
+                      {t(friendsCount === 1 ? 'friends.circleCount' : 'friends.circleCountPlural', {
+                        count: friendsCount,
+                      })}
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setManageOpen(true)}
+                      className="text-brand-emerald text-sm font-semibold font-sans underline-offset-2 hover:underline"
+                    >
+                      {t(friendsCount === 1 ? 'friends.circleCount' : 'friends.circleCountPlural', {
+                        count: friendsCount,
+                      })}
+                    </button>
+                  )}
                 </h2>
                 <div className="flex gap-1.5" role="tablist">
-                  {(['today', 'week'] as const).map((b) => (
+                  {(['today', 'week', 'all'] as const).map((b) => (
                     <button
                       type="button"
                       key={b}
@@ -980,14 +1105,23 @@ export default function Friends() {
                     >
                       {b === 'today'
                         ? t('friends.boardToday', 'Today')
-                        : t('friends.boardWeek', 'This week')}
+                        : b === 'week'
+                          ? t('friends.boardWeek', 'This week')
+                          : t('friends.boardAll')}
                     </button>
                   ))}
                 </div>
               </div>
 
               {circle.map((f, i) => (
-                <CircleRow key={f.uid} f={f} i={i} board={board} />
+                <CircleRow
+                  key={f.uid}
+                  f={f}
+                  i={i}
+                  board={board}
+                  allTime={allTime.data?.[f.uid]}
+                  allTimeLoading={allTime.isLoading}
+                />
               ))}
 
               {/* FIQH-03: the quiet framing under the circle */}
@@ -1121,7 +1255,7 @@ export default function Friends() {
             ) : inviteLink ? (
               <>
                 <div className="flex gap-2">
-                  <code className="flex-1 min-w-0 truncate px-3 py-2.5 rounded-control bg-shade border border-brand-border text-brand-emerald text-xs">
+                  <code className="flex-1 min-w-0 truncate px-3 py-2.5 rounded-control bg-shade/20 border border-brand-border text-brand-emerald text-xs">
                     {inviteLink}
                   </code>
                   <button
@@ -1163,6 +1297,10 @@ export default function Friends() {
 
       <AnimatePresence>
         {manageOpen && <ManageFriendsModal onClose={() => setManageOpen(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {privacyOpen && <PrivacySheet onClose={() => setPrivacyOpen(false)} />}
       </AnimatePresence>
 
       <AnimatePresence>

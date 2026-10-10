@@ -30,6 +30,22 @@ export const getNoor = async (req: Request, res: Response, next: NextFunction): 
   }
 };
 
+export const getAllTime = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const today = req.query['today'] as string | undefined;
+    const rawOffset = req.query['timezoneOffset'];
+    const offset = rawOffset !== undefined ? Number(rawOffset) : DEFAULT_TIMEZONE_OFFSET;
+    const allTime = await socialService.getCircleAllTime(req.user.uid, today, offset);
+    res.json({ ok: true, allTime });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const connect = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { code } = req.body as { code: string };

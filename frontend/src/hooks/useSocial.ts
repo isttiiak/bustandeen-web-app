@@ -98,22 +98,21 @@ export function useSocialSummary() {
   });
 }
 
-export interface NoorResult {
-  today: number;
-  allTime: number;
-}
-
-/** Viewer's Noor for the navbar capsules — light endpoint, cached 5 min */
-export function useNoor(enabled: boolean) {
+/**
+ * The circle's All time tab (U3): all-time Noor by uid, for you and each
+ * friend who shares full detail. Fetched only while the tab is open: it sums
+ * a year of days per person.
+ */
+export function useCircleAllTime(enabled: boolean) {
   const user = useAuthStore((s) => s.user);
   const today = localTodayStr();
   return useQuery({
-    queryKey: ['social', 'noor', today],
+    queryKey: ['social', 'alltime', today],
     queryFn: async () => {
-      const { data } = await api.get<NoorResult & { ok: boolean }>(
-        `/api/social/noor?today=${today}&timezoneOffset=${getUserTimezoneOffset()}`
+      const { data } = await api.get<{ ok: boolean; allTime: Record<string, number> }>(
+        `/api/social/alltime?today=${today}&timezoneOffset=${getUserTimezoneOffset()}`
       );
-      return data;
+      return data.allTime;
     },
     enabled: !!user && enabled,
     staleTime: 5 * 60_000,
