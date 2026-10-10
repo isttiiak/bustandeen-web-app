@@ -459,7 +459,15 @@
         <div class="phone t-dark" data-phone>
           <div class="card">
             <div class="card-title">
-              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11 12 4l9 7v9H5v-9" /></svg>
+              <svg
+                class="ico"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M3 11 12 4l9 7v9H5v-9" />
+              </svg>
               <div>
                 <b class="h">Home</b>
                 <div class="sub muted">Choose what your Home shows.</div>
@@ -486,7 +494,13 @@
                       >Morning on Fajr until sunrise, evening on Maghrib until ʿIshāʾ.</span
                     ></span
                   >
-                  <button class="sw" role="switch" id="adhkarSw" aria-checked="true" aria-label="Adhkār on the timeline"></button>
+                  <button
+                    class="sw"
+                    role="switch"
+                    id="adhkarSw"
+                    aria-checked="true"
+                    aria-label="Adhkār on the timeline"
+                  ></button>
                 </div>
               </div>
             </div>
@@ -498,7 +512,12 @@
                   ><span class="name">Show the goals card</span
                   ><span class="det">Progress towards each daily goal.</span></span
                 >
-                <button class="sw" role="switch" id="goalsSw" aria-label="Show the goals card"></button>
+                <button
+                  class="sw"
+                  role="switch"
+                  id="goalsSw"
+                  aria-label="Show the goals card"
+                ></button>
               </div>
               <div class="indent" id="goalsOpts">
                 <p class="sub muted" style="margin: 8px 0 0">Rows on the card, in this order</p>
@@ -508,13 +527,16 @@
                     ><span class="name">Streaks and badges</span
                     ><span class="det">Streak, goal percent and Ramadan countdown.</span></span
                   >
-                  <button class="sw" role="switch" id="badgesSw" aria-label="Streaks and badges"></button>
+                  <button
+                    class="sw"
+                    role="switch"
+                    id="badgesSw"
+                    aria-label="Streaks and badges"
+                  ></button>
                 </div>
               </div>
             </div>
-            <div class="hint" id="ruleHint" hidden>
-              <span>●</span><span id="ruleText"></span>
-            </div>
+            <div class="hint" id="ruleHint" hidden><span>●</span><span id="ruleText"></span></div>
 
             <div class="item" style="margin-top: 14px">
               <span class="grow"
@@ -544,7 +566,12 @@
               ><span class="name">Today's goals card</span
               ><span class="det" id="obGoalsDet">Your goal progress for the day.</span></span
             >
-            <button class="sw" role="switch" id="obGoalsSw" aria-label="Today's goals card"></button>
+            <button
+              class="sw"
+              role="switch"
+              id="obGoalsSw"
+              aria-label="Today's goals card"
+            ></button>
           </div>
           <div class="hint" id="obHint" hidden><span>●</span><span id="obHintText"></span></div>
           <span class="btn">Start</span>
@@ -572,25 +599,48 @@
           greyed out (Home has no other place for the adhkār card).
         </li>
         <li>
-          Goal rows have their own order (it starts as the habit order). At least one row while
-          the card is on. Unticking the last row is blocked with a
-          hint, not a silent switch-off.
+          Goal rows have their own order (it starts as the habit order). At least one row while the
+          card is on. Unticking the last row is blocked with a hint, not a silent switch-off.
         </li>
         <li>
           Synced prefs: existing <code>bustandeen_home_sections_off</code> +
           <code>bustandeen_home_timeline</code> (kept), new <code>bustandeen_home_goals</code>
-          (JSON: on, row order, rows off, badges). If a sync ever lands on "nothing on", Home shows the goals
-          card.
+          (JSON: on, row order, rows off, badges). If a sync ever lands on "nothing on", Home shows
+          the goals card.
         </li>
       </ol>
     </div>
 
     <script>
       const HABITS = {
-        salat: { name: 'Salat', quick: 'Prayer timeline', goal: '3 / 5 prayers', pct: 60, badge: '4-day streak' },
-        zikr: { name: 'Zikr', quick: 'Your zikr chips', goal: '66 / 100 today', pct: 66, badge: '66% goal' },
-        quran: { name: 'Quran', quick: 'Continue, Listen, Pick a surah', goal: '3 / 5 āyāt', pct: 60, badge: '2-day streak' },
-        fasting: { name: 'Fasting', quick: 'One tap: fasting today', goal: 'Not fasting today', pct: null, badge: 'Ramadan in 141 days' },
+        salat: {
+          name: 'Salat',
+          quick: 'Prayer timeline',
+          goal: '3 / 5 prayers',
+          pct: 60,
+          badge: '4-day streak',
+        },
+        zikr: {
+          name: 'Zikr',
+          quick: 'Your zikr chips',
+          goal: '66 / 100 today',
+          pct: 66,
+          badge: '66% goal',
+        },
+        quran: {
+          name: 'Quran',
+          quick: 'Continue, Listen, Pick a surah',
+          goal: '3 / 5 āyāt',
+          pct: 60,
+          badge: '2-day streak',
+        },
+        fasting: {
+          name: 'Fasting',
+          quick: 'One tap: fasting today',
+          goal: 'Not fasting today',
+          pct: null,
+          badge: 'Ramadan in 141 days',
+        },
       };
       const DEFAULTS = () => ({
         order: ['salat', 'zikr', 'quran', 'fasting'],
@@ -624,7 +674,8 @@
         render();
       }
       function setRow(h) {
-        if (s.rows[h] && rowCount() === 1) hint = 'The goals card needs at least one row. Turn the card off instead.';
+        if (s.rows[h] && rowCount() === 1)
+          hint = 'The goals card needs at least one row. Turn the card off instead.';
         else {
           s.rows[h] = !s.rows[h];
           hint = '';
@@ -650,7 +701,8 @@
         const sec = document.getElementById('sections');
         sec.innerHTML = '';
         s.order.forEach((h, i) => {
-          const blocked = s.quick[h] && !s.goalsOn && Object.values(s.quick).filter(Boolean).length === 1;
+          const blocked =
+            s.quick[h] && !s.goalsOn && Object.values(s.quick).filter(Boolean).length === 1;
           const n = el(`<div class="item">
             <div class="arrows"><button aria-label="Move up" ${i === 0 ? 'disabled' : ''}>▲</button><button aria-label="Move down" ${i === 3 ? 'disabled' : ''}>▼</button></div>
             <span class="grow"><span class="name">${HABITS[h].name}</span><span class="det">${HABITS[h].quick}</span></span>
@@ -713,7 +765,8 @@
               : h === 'quran'
                 ? '<div class="chips"><span class="chip" aria-pressed="true">5 āyāt</span><span class="chip">10 āyāt</span><span class="chip">20 āyāt</span></div>'
                 : '';
-          const n = el(`<div class="item" style="align-items:flex-start"><span style="font-weight:800;color:rgb(var(--emerald));width:14px">${i + 1}</span>
+          const n =
+            el(`<div class="item" style="align-items:flex-start"><span style="font-weight:800;color:rgb(var(--emerald));width:14px">${i + 1}</span>
             <span class="grow"><span class="name">${HABITS[h].name}</span><span class="det">${HABITS[h].quick}</span>${goalPick}
             <div style="margin-top:8px;display:flex;align-items:center;gap:8px"><button class="sw" role="switch" aria-checked="${s.quick[h]}" aria-label="${HABITS[h].name} on Home"></button><span class="det">${s.quick[h] ? 'On Home' : 'Not on Home'}</span></div></span>
             <div class="arrows"><button ${i === 0 ? 'disabled' : ''}>▲</button><button ${i === 3 ? 'disabled' : ''}>▼</button></div></div>`);
@@ -751,7 +804,9 @@
           .filter((h) => s.quick[h])
           .forEach((h) => {
             out += `<div class="mini"><b>${HABITS[h].name}</b> <span class="faint">· ${HABITS[h].quick}</span>${
-              h === 'salat' && s.adhkar ? '<div class="sub" style="color:rgb(var(--gold));margin-top:4px">Evening adhkār card (Maghrib to ʿIshāʾ)</div>' : ''
+              h === 'salat' && s.adhkar
+                ? '<div class="sub" style="color:rgb(var(--gold));margin-top:4px">Evening adhkār card (Maghrib to ʿIshāʾ)</div>'
+                : ''
             }</div>`;
           });
         if (s.goalsOn) {
@@ -777,7 +832,9 @@
             p.classList.toggle('t-dark', t === 'dark');
             p.classList.toggle('t-light', t === 'light');
           });
-          document.querySelectorAll('[data-theme-btn]').forEach((x) => x.classList.toggle('on', x === b));
+          document
+            .querySelectorAll('[data-theme-btn]')
+            .forEach((x) => x.classList.toggle('on', x === b));
         };
       });
       document.getElementById('reset').onclick = () => {
@@ -788,3 +845,4 @@
       render();
     </script>
   </body>
+</html>
