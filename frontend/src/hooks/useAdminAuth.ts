@@ -1,5 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import {
+  EmailAuthProvider,
+  reauthenticateWithCredential,
+  signInWithEmailAndPassword,
+  signOut,
+  updatePassword,
+} from 'firebase/auth';
+import api from '../lib/api.js';
 import { adminAuth } from '../adminFirebase.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 
@@ -23,5 +30,23 @@ export function useAdminLogout() {
   return useMutation({
     mutationFn: () => signOut(adminAuth),
     onSuccess: () => setSignedOut(),
+  });
+}
+
+/**
+ * Changes the signed-in admin's own password: confirms the current one,
+ * sets the new one, then tells the server so every other sign-in of this
+ * admin stops working (this one stays).
+ */
+export function useChangeAdminPassword() {
+  return useMutation({
+    mutationFn: async ({ current, next }: { current: string; next: string }) => {
+      const user = adminAuth.currentUser;
+      if (!user?.email) throw new Error('not_signed_in');
+      await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, current));
+      await updatePassword(user, next);
+      await user.getIdToken(true);
+      await api.post('/api/admin/auth/password-changed');
+    },
   });
 }

@@ -5,6 +5,7 @@ import {
   createAdminAccountSchema,
   setAdminAccountActiveSchema,
   setAdminAccountDomainSchema,
+  adminAccountIdSchema,
 } from '../validation/adminAccount.schemas.js';
 import * as adminAccountController from '../controllers/adminAccount.controller.js';
 
@@ -32,6 +33,13 @@ router.patch(
   '/:id/domain',
   validate(setAdminAccountDomainSchema),
   adminAccountController.setDomainHandler
+);
+
+router.post(
+  '/:id/password-reset',
+  requireAdminRecentAuth,
+  validate(adminAccountIdSchema),
+  adminAccountController.sendPasswordResetHandler
 );
 
 export default router;

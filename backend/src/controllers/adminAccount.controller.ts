@@ -171,3 +171,46 @@ export const setActiveHandler = async (
     handleServiceError(err, res, next);
   }
 };
+
+/** Any admin, right after changing their own password in the panel. */
+export const passwordChangedHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    await adminAccountService.endOtherSessions(req.admin!.uid, req.admin!.authTime);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'account.passwordChanged',
+      targetType: 'AdminAccount',
+      targetId: req.admin!.email,
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/** Servant-only: email an admin a link to set a new password. */
+export const sendPasswordResetHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const account = await adminAccountService.sendAdminPasswordReset(req.params.id as string);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: 'account.sendPasswordReset',
+      targetType: 'AdminAccount',
+      targetId: String(account._id),
+      metadata: { email: account.email },
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    handleServiceError(err, res, next);
+  }
+};

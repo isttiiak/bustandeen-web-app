@@ -79,3 +79,10 @@ export function useSetAdminAccountDomain() {
     },
   });
 }
+
+/** Servant-only — emails an admin a link to set a new password. */
+export function useSendAdminPasswordReset() {
+  return useMutation({
+    mutationFn: (id: string) => api.post(`/api/admin/accounts/${id}/password-reset`),
+  });
+}

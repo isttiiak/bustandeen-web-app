@@ -1,6 +1,8 @@
 import admin from 'firebase-admin';
 import AdminAccount, { AdminRole, AnsarDomain, IAdminAccount } from '../models/AdminAccount.js';
 import { isFirebaseInitialized } from '../config/firebaseAdmin.js';
+import { sendMail } from './email.service.js';
+import { escapeHtml } from './sadaqahEmail.templates.js';
 
 class AdminAccountError extends Error {
   status: number;
@@ -271,7 +273,76 @@ export const setAdminAccountActive = async (
     throw new AdminAccountError('You cannot deactivate your own account', 400);
   }
   account.active = active;
+  // Coming back after a deactivation: a sign-in from before it never counts.
+  if (active) account.sessionsValidAfter = new Date();
   await account.save();
+  return account;
+};
+
+/**
+ * After an admin changed their own password in the panel: sign-ins from
+ * before this one stop working (Firebase ends the other devices' refresh
+ * tokens, this also covers ID tokens they still hold for up to an hour).
+ * `authTimeSeconds` is the current token's sign-in, so this session stays.
+ */
+export const endOtherSessions = async (
+  firebaseUid: string,
+  authTimeSeconds: number | undefined
+): Promise<void> => {
+  const after = authTimeSeconds !== undefined ? new Date(authTimeSeconds * 1000) : new Date();
+  await AdminAccount.updateOne({ firebaseUid }, { $set: { sessionsValidAfter: after } });
+};
+
+/** The link-generating slice of firebase-admin's Auth (faked in tests). */
+export interface PasswordResetLinker {
+  generatePasswordResetLink(email: string): Promise<string>;
+}
+
+/**
+ * Servant-only: emails an admin a Firebase password-reset link, for an Ansar
+ * who forgot their password or still uses the temporary one. Sent from the
+ * Servant's own address so it is clearly a person, not an automated mail.
+ */
+export const sendAdminPasswordReset = async (
+  id: string,
+  linker: PasswordResetLinker | null = isFirebaseInitialized() ? admin.auth() : null
+): Promise<IAdminAccount> => {
+  const account = await AdminAccount.findById(id);
+  if (!account) throw new AdminAccountError('Admin account not found', 404);
+  if (!account.active) {
+    throw new AdminAccountError('Reactivate this account before resetting its password', 400);
+  }
+  if (!linker) throw new AdminAccountError('Password reset is not configured here', 503);
+
+  const link = await linker.generatePasswordResetLink(account.email);
+  const name = account.displayName || 'there';
+  const text = [
+    `Assalamu Alaikum ${name},`,
+    'Here is a link to set a new password for your Bustandeen admin account:',
+    link,
+    'It works once and expires soon. If you did not expect this, just ignore it and tell Istiak.',
+    'Istiak',
+  ].join('\n\n');
+  const html = [
+    `<p>Assalamu Alaikum ${escapeHtml(name)},</p>`,
+    '<p>Here is a link to set a new password for your Bustandeen admin account:</p>',
+    `<p><a href="${escapeHtml(link)}">Set a new password</a></p>`,
+    '<p>It works once and expires soon. If you did not expect this, just ignore it and tell Istiak.</p>',
+    '<p>Istiak</p>',
+  ].join('');
+  const messageId = await sendMail({
+    to: account.email,
+    subject: 'Set a new password for the Bustandeen admin panel',
+    text,
+    html,
+    from: 'istiak',
+  });
+  if (!messageId) {
+    throw new AdminAccountError(
+      'Send failed — check System & ops health for the logged error.',
+      502
+    );
+  }
   return account;
 };
 
