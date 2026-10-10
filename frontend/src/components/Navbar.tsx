@@ -9,6 +9,7 @@ import { useNoor } from '../hooks/useSocial.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import ThemeToggle from './ThemeToggle.js';
+import ShareAppSheet from './ShareAppSheet.js';
 import {
   Cog6ToothIcon,
   UserCircleIcon,
@@ -30,6 +31,7 @@ import {
   ClockIcon,
   EnvelopeIcon,
   CalculatorIcon,
+  ShareIcon,
 } from '@heroicons/react/24/outline';
 import {
   CompassIcon,
@@ -170,6 +172,7 @@ export default function Navbar() {
   const resetAll = useZikrStore((s) => s.resetAll);
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const isHome = location.pathname === '/';
@@ -485,6 +488,19 @@ export default function Navbar() {
                         {t('nav.sadaqah', 'Sadaqah')}
                       </Link>
 
+                      {/* U2: invite someone to the app (no friend link) */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          setShareOpen(true);
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-emerald/10 text-sm transition-colors"
+                      >
+                        <ShareIcon className="w-4 h-4 text-brand-emerald/70" />
+                        {t('shareApp.menu')}
+                      </button>
+
                       <div className="border-t border-brand-border/60 mt-1 pt-1">
                         <button
                           className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 text-sm transition-colors"
@@ -513,6 +529,13 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+
+      {shareOpen && user && (
+        <ShareAppSheet
+          displayName={isDemoMode ? null : user.displayName?.trim() || null}
+          onClose={() => setShareOpen(false)}
+        />
+      )}
 
       {/* ── Sign out confirmation ─────────────────────────────────────────── */}
       {confirmLogout && (

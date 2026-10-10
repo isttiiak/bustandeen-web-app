@@ -4135,5 +4135,18 @@
     "moveDown": "Move {{habit}} down",
     "timelineTitle": "Show the prayer timeline on Home?",
     "timelineDetail": "The five prayers of today with their times, Mark Done and Kaza. The prayer row in the arch always stays."
+  },
+  "shareApp": {
+    "menu": "Share Bustandeen",
+    "title": "Share Bustandeen",
+    "subtitle": "Invite someone to nourish their deen. This does not connect you as friends.",
+    "imageAlt": "Bustandeen: Nourish Your Deen",
+    "message": "Assalamu alaikum! Bustandeen is a free, private companion for salat, zikr, Quran and fasting, one small step each day. Come and nourish your deen: {{link}}",
+    "messageNamed": "Assalamu alaikum! {{name}} invites you to Bustandeen, a free, private companion for salat, zikr, Quran and fasting, one small step each day. Come and nourish your deen: {{link}}",
+    "addName": "Add my name",
+    "addNameDesc": "So they know the invitation is from you.",
+    "shareVia": "Share via apps",
+    "copied": "Invitation copied",
+    "shareError": "Couldn't open sharing. Try Copy instead."
   }
 }
