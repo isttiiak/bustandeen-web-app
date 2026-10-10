@@ -15,6 +15,7 @@ const fakeJwt = (payload) => {
 let mongo;
 let servant;
 let ansar;
+let sadaqahAnsar;
 
 describe('Admin update emails', () => {
   beforeAll(async () => {
@@ -33,7 +34,15 @@ describe('Admin update emails', () => {
       ansarDomain: 'general',
       createdBy: 'seed',
     });
+    await AdminAccount.create({
+      firebaseUid: 'sa-uid',
+      email: 'sadaqah@upd.dev',
+      role: 'ansar',
+      ansarDomain: 'sadaqah',
+      createdBy: 'seed',
+    });
     servant = fakeJwt({ uid: 's-uid', email: 'servant@upd.dev' });
+    sadaqahAnsar = fakeJwt({ uid: 'sa-uid', email: 'sadaqah@upd.dev' });
     ansar = fakeJwt({ uid: 'a-uid', email: 'ansar@upd.dev' });
     await User.create([
       { uid: 'b1', email: 'b1@t.dev', displayName: 'Bilal Khan', gender: 'male' },
@@ -60,11 +69,30 @@ describe('Admin update emails', () => {
     expect(res.status).toBe(401);
   });
 
-  test('an Ansar can use it too (Servant and Ansar both have broadcast access)', async () => {
+  test('the general Ansar can use it too', async () => {
     const a = await request(app)
       .get('/api/admin/update-emails/audience')
       .set('X-Admin-Token', ansar);
     expect(a.status).toBe(200);
+  });
+
+  test('the sadaqah Ansar gets neither update emails nor the banner (U8 S4)', async () => {
+    const as = (r) => r.set('X-Admin-Token', sadaqahAnsar);
+    const checks = [
+      await as(request(app).get('/api/admin/update-emails/audience')),
+      await as(request(app).get('/api/admin/update-emails')),
+      await as(
+        request(app)
+          .post('/api/admin/update-emails')
+          .send({ subject: 'Hi', body: 'Hello', customEmails: ['x@t.dev'] })
+      ),
+      await as(request(app).get('/api/admin/announcements')),
+      await as(request(app).post('/api/admin/announcements').send({ title: 'Hi', body: 'Hello' })),
+    ];
+    for (const res of checks) {
+      expect(res.status).toBe(403);
+      expect(res.body.error).toBe('wrong_domain');
+    }
   });
 
   test('audience counts brothers, sisters and not-set (disabled accounts excluded)', async () => {

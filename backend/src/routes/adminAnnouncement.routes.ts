@@ -1,13 +1,14 @@
 import { Router } from 'express';
-import { requireAdminAuth } from '../middleware/auth.js';
+import { requireAdminAuth, requireDomain } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { createAnnouncementSchema } from '../validation/announcement.schemas.js';
 import * as adminAnnouncementController from '../controllers/adminAnnouncement.controller.js';
 
 const router = Router();
 
-// Open to both Servant and Ansar accounts (the broadcast is a shared channel).
-router.use(requireAdminAuth);
+// The Servant and the 'general' Ansar (U8 S4): a banner reaches every user,
+// which is not part of the sadaqah Ansar's area.
+router.use(requireAdminAuth, requireDomain('general'));
 
 router.get('/', adminAnnouncementController.listHandler);
 router.post('/', validate(createAnnouncementSchema), adminAnnouncementController.createHandler);

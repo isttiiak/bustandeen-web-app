@@ -416,7 +416,9 @@ export default function AppRoutes({ revision }: { revision: number }) {
         path="/admin/broadcast"
         element={
           <AdminProtected>
-            <AdminBroadcast />
+            <GeneralDomainProtected>
+              <AdminBroadcast />
+            </GeneralDomainProtected>
           </AdminProtected>
         }
       />

@@ -1,14 +1,15 @@
 import { Router } from 'express';
-import { requireAdminAuth } from '../middleware/auth.js';
+import { requireAdminAuth, requireDomain } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { createUpdateEmailSchema } from '../validation/updateEmail.schemas.js';
 import * as updateEmailController from '../controllers/updateEmail.controller.js';
 
 const router = Router();
 
-// Any signed-in admin (Servant or Ansar), same as the in-app broadcast banner
-// it sits beside. Always sent from ansar@bustandeen.com.
-router.use(requireAdminAuth);
+// The Servant and the 'general' Ansar, same as the in-app banner it sits
+// beside (U8 S4): the audience lists users' names and emails. Always sent
+// from ansar@bustandeen.com.
+router.use(requireAdminAuth, requireDomain('general'));
 
 router.get('/audience', updateEmailController.audienceHandler);
 router.get('/', updateEmailController.listHandler);
