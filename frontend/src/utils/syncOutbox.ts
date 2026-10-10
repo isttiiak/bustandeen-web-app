@@ -3,7 +3,8 @@ import type { QueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 import { currentOutboxOwner, outboxOpOwnership } from './outboxOwner.js';
 
-// Offline outbox for the fasting, Quran and Rayhanah trackers (audit T2.3).
+// Offline outbox for the fasting, Quran and Rayhanah trackers (audit T2.3),
+// the adhkar routine and zikr "Log counts" (U4).
 // Same idea as salatOutbox.ts, generalised: a write that cannot reach the
 // server is stored here (localStorage, so it survives closing the app) and
 // replayed in order when the connection returns.
@@ -21,7 +22,7 @@ import { currentOutboxOwner, outboxOpOwnership } from './outboxOwner.js';
 
 const STORAGE_KEY = 'bustandeen_sync_outbox';
 
-export type SyncTracker = 'fasting' | 'quran' | 'cycle' | 'adhkar';
+export type SyncTracker = 'fasting' | 'quran' | 'cycle' | 'adhkar' | 'zikr';
 type Method = 'post' | 'put' | 'patch' | 'delete';
 
 export interface SyncOp {
@@ -166,6 +167,8 @@ const QUERY_ROOTS: Record<SyncTracker, string[][]> = {
   quran: [['quran']],
   cycle: [['cycle']],
   adhkar: [['adhkar']],
+  // A logged count moves the day totals, streak, goal, sessions and Noor.
+  zikr: [['analytics'], ['zikr'], ['social']],
 };
 
 let replaying = false;

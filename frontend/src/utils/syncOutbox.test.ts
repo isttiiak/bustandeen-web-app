@@ -215,6 +215,21 @@ describe('replaySyncOutbox', () => {
     expect(client.invalidateQueries).toHaveBeenCalledWith({ queryKey: ['quran'] });
   });
 
+  it('a replayed zikr log refreshes analytics, zikr and Noor (U4)', async () => {
+    enqueueSyncOp({
+      tracker: 'zikr',
+      method: 'post',
+      url: '/api/zikr/increment/batch',
+      body: { increments: [{ zikrType: 'SubhanAllah', amount: 33, manual: true }] },
+    });
+    request.mockResolvedValue({ data: { ok: true } });
+    const client = qc();
+    expect(await replaySyncOutbox(client as never)).toBe(1);
+    for (const queryKey of [['analytics'], ['zikr'], ['social']]) {
+      expect(client.invalidateQueries).toHaveBeenCalledWith({ queryKey });
+    }
+  });
+
   it('replays each op with the id it was queued under', async () => {
     const op = enqueueSyncOp({
       tracker: 'cycle',

@@ -2,9 +2,7 @@ import React, { useState, useMemo } from 'react';
 import IntentionLine from '../components/analytics/IntentionLine.js';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import toast from 'react-hot-toast';
-import { m as motion, AnimatePresence } from 'framer-motion';
-import { useQueryClient } from '@tanstack/react-query';
+import { m as motion } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import TabNav from '../components/TabNav.js';
 import DemoSignInGate from '../components/DemoSignInGate.js';
@@ -15,12 +13,10 @@ import {
   ChartBarIcon,
   ClockIcon,
   ExclamationTriangleIcon,
-  InformationCircleIcon,
   ListBulletIcon,
   PlusCircleIcon,
   PresentationChartLineIcon,
   TrophyIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline';
 import {
   BTN_PRIMARY,
@@ -42,274 +38,14 @@ import {
   useZikrTimeOfDay,
   useZikrSessions,
 } from '../hooks/useAnalytics.js';
-import { useZikrTypes } from '../hooks/useZikrTypes.js';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useUiStore } from '../store/useUiStore.js';
 import { zikrDisplayName } from '../utils/zikrLibrary.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
-import api from '../lib/api.js';
-import { getUserTimezoneOffset } from '../utils/timezone.js';
-import { getTrackingDay, getTrackingDayMiddayTsDaysBack } from '../utils/trackingDay.js';
+import { getTrackingDay } from '../utils/trackingDay.js';
 import { formatLocaleDate, formatLocaleTime } from '../utils/localeDate.js';
 import { useEscapeKey } from '../hooks/useEscapeKey.js';
-
-// ─── Manual Entry Modal ───────────────────────────────────────────────────────
-
-interface ManualEntryModalProps {
-  onClose: () => void;
-  todayPerType: Array<{ zikrType: string; total: number }>;
-  localCounts: Record<string, number>;
-}
-
-function ManualEntryModal({ onClose, todayPerType, localCounts }: ManualEntryModalProps) {
-  const { t, i18n } = useTranslation();
-  const queryClient = useQueryClient();
-  const { types, addConfirmedCounts } = useZikrStore();
-  const { data: fetchedTypes } = useZikrTypes();
-
-  // Merge store types + server types deduplicated
-  const allTypes = [...new Set([...types, ...(fetchedTypes ?? []).map((ft) => ft.name)])];
-
-  const [selectedType, setSelectedType] = useState(allTypes[0] ?? 'SubhanAllah');
-  const [amount, setAmount] = useState('');
-  // 0 = today, 1 = yesterday, 2 = two days ago — matches the streak grace
-  // window, so backfilling can repair a broken chain.
-  const [daysBack, setDaysBack] = useState<0 | 1 | 2>(0);
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState('');
-
-  const dayLabel = (n: number): string => {
-    if (n === 0) return t('common.today');
-    if (n === 1) return t('zikrAnalytics.yesterday');
-    return formatLocaleDate(new Date(getTrackingDayMiddayTsDaysBack(n)), {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
-  // Existing count for the selected type today
-  const serverCount = todayPerType.find((tp) => tp.zikrType === selectedType)?.total ?? 0;
-  const localCount = localCounts[selectedType] ?? 0;
-  const existingCount = Math.max(serverCount, localCount);
-
-  const parsedAmount = Math.max(0, parseInt(amount) || 0);
-  const newTotal = existingCount + parsedAmount;
-
-  const handleSubmit = async () => {
-    if (parsedAmount <= 0) return;
-    setSubmitting(true);
-    setSubmitError('');
-    try {
-      // Every day (incl. today) is anchored at the TRACKING day's midday so
-      // the count lands in the right Fajr-boundary bucket for any timezone.
-      const ts = getTrackingDayMiddayTsDaysBack(daysBack);
-      await api.post('/api/zikr/increment/batch', {
-        increments: [{ zikrType: selectedType, amount: parsedAmount, ts, manual: true }],
-        timezoneOffset: getUserTimezoneOffset(),
-        today: getTrackingDay(),
-      });
-      // Local live counter only reflects TODAY — don't inflate it with backfills
-      if (daysBack === 0) addConfirmedCounts(selectedType, parsedAmount);
-      // Close IMMEDIATELY — the modal used to await the full analytics
-      // refetch here, which made saving feel slow on mobile networks. The
-      // refetch happens in the background; the charts catch up on their own.
-      void queryClient.invalidateQueries({ queryKey: ['analytics'] });
-      toast.success(
-        `${t('zikrAnalytics.backfillToast', { amount: formatLocaleNumber(parsedAmount), type: zikrDisplayName(selectedType, i18n.language), day: dayLabel(daysBack).toLowerCase() })}`,
-        { id: 'zikr-backfill' }
-      );
-      onClose();
-    } catch {
-      setSubmitError(t('zikrAnalytics.saveError'));
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // Portaled to <body>: rendering inside the page's transformed/animated
-  // ancestors created a stacking context that let the sticky navbar float
-  // OVER the form. max-h + scroll keep it usable with the keyboard open.
-  return createPortal(
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[70] p-4"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <motion.div
-        initial={{ y: 40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 40, opacity: 0 }}
-        transition={{ type: 'spring', damping: 25 }}
-        className="bg-brand-deep rounded-card w-full max-w-md shadow-elev-3 border border-brand-border overflow-hidden max-h-[88vh] overflow-y-auto"
-        role="dialog"
-        aria-modal="true"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-brand-border/60">
-          <div>
-            <h3 className="font-display text-lg font-bold text-brand-emerald">
-              {t('zikrAnalytics.logMissedCounts')}
-            </h3>
-            <p className="text-white/70 text-xs mt-0.5">{t('zikrAnalytics.logMissedSubtitle')}</p>
-          </div>
-          <button
-            onClick={onClose}
-            aria-label={t('common.close')}
-            className="shrink-0 w-9 h-9 grid place-items-center rounded-full text-white/70 hover:text-white hover:bg-brand-surface transition-colors"
-          >
-            <XMarkIcon className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-6 space-y-5">
-          <>
-            {/* Which day — today or up to 2 days back (streak grace window) */}
-            <div className="space-y-1.5">
-              <label className="text-xs text-white/70 uppercase tracking-wider font-bold">
-                {t('zikrAnalytics.whichDay')}
-              </label>
-              <div className="flex gap-1.5">
-                {([0, 1, 2] as const).map((n) => (
-                  <button
-                    key={n}
-                    onClick={() => {
-                      setDaysBack(n);
-                      setSubmitError('');
-                    }}
-                    className={`flex-1 px-2 py-1.5 rounded-control text-xs font-bold border transition-colors ${
-                      daysBack === n
-                        ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
-                        : 'bg-brand-surface/50 border-brand-border text-white/70 hover:text-white'
-                    }`}
-                  >
-                    {dayLabel(n)}
-                  </button>
-                ))}
-              </div>
-              {daysBack > 0 && (
-                <p className="text-brand-info text-[11px] flex items-start gap-1">
-                  <InformationCircleIcon
-                    className="w-3.5 h-3.5 shrink-0 mt-px"
-                    aria-hidden="true"
-                  />
-                  {t('zikrAnalytics.backfillNote')}
-                </p>
-              )}
-            </div>
-
-            {/* Type selector */}
-            <div className="space-y-1.5">
-              <label className="text-xs text-white/70 uppercase tracking-wider font-bold">
-                {t('zikrAnalytics.zikrType')}
-              </label>
-              <select
-                value={selectedType}
-                onChange={(e) => {
-                  setSelectedType(e.target.value);
-                  setAmount('');
-                  setSubmitError('');
-                }}
-                className="select select-bordered w-full rounded-control bg-brand-surface/50 border-brand-border text-white focus:border-brand-emerald text-sm"
-              >
-                {allTypes.map((tn) => (
-                  <option key={tn} value={tn} className="bg-brand-deep text-white">
-                    {zikrDisplayName(tn, i18n.language)}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Amount FIRST (Istiak: type → save, fastest path), context after */}
-            <div className="space-y-1.5">
-              <label className="text-xs text-white/70 uppercase tracking-wider font-bold">
-                {t('zikrAnalytics.countsToAdd')}
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={amount}
-                onChange={(e) => {
-                  setAmount(e.target.value);
-                  setSubmitError('');
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') void handleSubmit();
-                }}
-                placeholder={t('zikrAnalytics.egAmount')}
-                className="input input-bordered w-full rounded-control bg-brand-surface/50 border-brand-border text-white focus:border-brand-emerald text-lg font-bold"
-                // eslint-disable-next-line jsx-a11y-x/no-autofocus -- opened by the user to type an amount; focus moves into the dialog
-                autoFocus
-              />
-            </div>
-
-            {/* Today's existing count (only meaningful for today) */}
-            {daysBack === 0 && (
-              <div className="flex items-center justify-between px-4 py-3 rounded-control bg-shade/10 border border-brand-border">
-                <span className="text-white/70 text-sm">{t('zikrAnalytics.todaysCountSoFar')}</span>
-                <span className="text-white font-black text-lg tabular-nums">
-                  {formatLocaleNumber(existingCount)}
-                </span>
-              </div>
-            )}
-
-            {/* Total preview */}
-            {parsedAmount > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center justify-between px-4 py-3 rounded-control bg-brand-emerald/10 border border-brand-emerald/30"
-              >
-                {daysBack === 0 ? (
-                  <>
-                    <span className="text-brand-emerald/80 text-sm font-semibold">
-                      {formatLocaleNumber(existingCount)} + {formatLocaleNumber(parsedAmount)}
-                    </span>
-                    <span className="text-brand-emerald font-black text-xl tabular-nums">
-                      = {formatLocaleNumber(newTotal)}
-                    </span>
-                  </>
-                ) : (
-                  <span className="text-brand-emerald font-bold text-sm">
-                    {t('zikrAnalytics.backfillPreview', {
-                      amount: formatLocaleNumber(parsedAmount),
-                      day: dayLabel(daysBack),
-                    })}
-                  </span>
-                )}
-              </motion.div>
-            )}
-
-            {submitError && <p className="text-red-400 text-xs">{submitError}</p>}
-
-            {/* Actions */}
-            <div className="flex gap-3 pt-1">
-              <button onClick={onClose} className={`${BTN_SECONDARY} flex-1`}>
-                {t('common.cancel')}
-              </button>
-              <button
-                onClick={() => void handleSubmit()}
-                disabled={parsedAmount <= 0 || submitting}
-                className={`${BTN_PRIMARY} flex-1`}
-              >
-                {submitting ? (
-                  <span className="loading loading-spinner loading-sm" />
-                ) : (
-                  t('zikrAnalytics.saveCounts')
-                )}
-              </button>
-            </div>
-          </>
-        </div>
-      </motion.div>
-    </motion.div>,
-    document.body
-  );
-}
+import ZikrLogCountsModal from '../components/zikr/ZikrLogCountsModal.js';
 
 // ─── Heatmap Calendar ─────────────────────────────────────────────────────────
 
@@ -1378,15 +1114,11 @@ export default function ZikrAnalytics() {
       </div>
 
       {/* Manual entry modal */}
-      <AnimatePresence>
-        {showManualEntry && (
-          <ManualEntryModal
-            onClose={() => setShowManualEntry(false)}
-            todayPerType={todayTypes}
-            localCounts={localCounts}
-          />
-        )}
-      </AnimatePresence>
+      <ZikrLogCountsModal
+        open={showManualEntry}
+        onClose={() => setShowManualEntry(false)}
+        todayPerType={todayTypes}
+      />
 
       <ChartInfoModal
         title={infoTopic ? (CHART_INFO[infoTopic]?.title ?? null) : null}

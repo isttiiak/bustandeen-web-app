@@ -412,6 +412,69 @@ describe('Zikr API', () => {
       expect(tod.body.hours.reduce((n, h) => n + h.total, 0)).toBe(80);
     });
 
+    // U4: the app's "Log counts" now posts through the offline outbox with an
+    // X-Client-Op-Id, anchored at the target tracking day's local noon.
+    test.each([360, 345, -300, 840, -720])(
+      'a "Log counts" backfill at UTC%+d lands on its day once, other days untouched',
+      async (offset) => {
+        const uid = `log${offset}`.replace('-', 'm');
+        const token = fakeJwt({ uid, email: `${uid}@test.dev`, name: uid });
+        const as = (r) => r.set('Authorization', `Bearer ${token}`);
+        await request(app).post(`/api/auth/verify`).send({ idToken: token });
+
+        const localDay = (back) =>
+          new Date(Date.now() + offset * 60_000 - back * 24 * 3600_000).toISOString().slice(0, 10);
+        const noon = (day) => Date.parse(`${day}T12:00:00.000Z`) - offset * 60_000;
+        const today = localDay(0);
+        const twoBack = localDay(2);
+
+        // Existing data: today's taps and yesterday's count.
+        await as(request(app).post(`/api/zikr/increment/batch`)).send({
+          increments: [
+            { zikrType: 'SubhanAllah', amount: 10, ts: noon(today) },
+            { zikrType: 'SubhanAllah', amount: 5, ts: noon(localDay(1)) },
+          ],
+          timezoneOffset: offset,
+          today,
+        });
+
+        const log = () =>
+          as(request(app).post(`/api/zikr/increment/batch`))
+            .set('X-Client-Op-Id', `log-${uid}-0001`)
+            .send({
+              increments: [
+                { zikrType: 'SubhanAllah', amount: 33, ts: noon(twoBack), manual: true },
+              ],
+              timezoneOffset: offset,
+              today,
+            });
+        expect((await log()).status).toBe(200);
+        // The response was lost and the outbox replays the same op.
+        const replay = await log();
+        expect(replay.status).toBe(200);
+        expect(replay.headers['idempotent-replayed']).toBe('true');
+
+        const daySum = async (day) => {
+          const res = await as(
+            request(app).get(`/api/zikr/sessions?date=${day}&timezoneOffset=${offset}`)
+          );
+          return res.body.sessions.reduce((n, s) => n + s.total, 0);
+        };
+        const summary = await as(
+          request(app).get(`/api/zikr/summary?timezoneOffset=${offset}&today=${today}`)
+        );
+        expect(summary.body.today.total).toBe(10); // today's bucket unchanged
+        expect(summary.body.totalCount).toBe(10 + 5 + 33); // counted once
+        const backfilled = await as(
+          request(app).get(`/api/zikr/sessions?date=${twoBack}&timezoneOffset=${offset}`)
+        );
+        expect(backfilled.body.sessions).toEqual([
+          expect.objectContaining({ manual: true, total: 33 }),
+        ]);
+        expect(await daySum(localDay(1))).toBe(5); // yesterday untouched
+      }
+    );
+
     test('sessions endpoint requires a date query param', async () => {
       const token = fakeJwt({ uid: 'sess2', email: 'sess2@test.dev', name: 'Sess2' });
       await request(app).post(`/api/auth/verify`).send({ idToken: token });
