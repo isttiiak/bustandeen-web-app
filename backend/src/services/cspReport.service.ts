@@ -1,8 +1,8 @@
 /**
  * Content-Security-Policy violation reports from the SPA (audit SEC-02).
  *
- * The SPA's CSP ships as Report-Only first; these reports show what the
- * policy WOULD block, so it can be tightened before it is enforced.
+ * The SPA's CSP shipped Report-Only first and is enforced since v5.158.2;
+ * these reports show what it blocks, so a legitimate source can be allowed.
  *
  * Privacy: a report can contain full URLs of the page and of the blocked
  * resource. Only ORIGINS (or a keyword such as "inline") are kept, never

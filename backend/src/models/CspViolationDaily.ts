@@ -3,8 +3,9 @@ import mongoose, { Document, Schema } from 'mongoose';
 /**
  * Daily count of Content-Security-Policy violation reports (audit T1.3b).
  *
- * The CSP ships Report-Only; before it is enforced, a week of reports has to
- * be reviewed, and Vercel Hobby keeps only one hour of logs. So each
+ * The CSP shipped Report-Only and is enforced since v5.158.2; reports show
+ * what it blocks (or would have), and Vercel Hobby keeps only one hour of
+ * logs. So each
  * (UTC day, directive, blocked origin, source origin, disposition) gets one
  * counter document. Origins only (see cspReport.service.ts originOnly):
  * never page paths, query strings, script samples, IPs or user ids.

@@ -10,13 +10,22 @@ function reducedMotion(): boolean {
   return document.documentElement.hasAttribute('data-reduce-motion');
 }
 
+// Drawn on the main thread: the library's default instance renders in a
+// worker built from a blob: URL, which the site CSP (worker-src 'self')
+// refuses (the only production CSP report, T1.3b). Created on first use.
+let instance: confetti.CreateTypes | null = null;
+function burst(options: confetti.Options): void {
+  instance ??= confetti.create(undefined, { resize: true, useWorker: false });
+  void instance(options);
+}
+
 const EMERALD_GOLD = ['#7a9e6e', '#c9a96e', '#9aba8e', '#d4be8a', '#ffffff'];
 const NIGHT_SKY = ['#c9a96e', '#5a9e8e', '#ffffff', '#e8d9b0'];
 
 /** Small pop — a single prayer marked done, small wins */
 export function celebrateSmall(): void {
   if (reducedMotion()) return;
-  void confetti({
+  burst({
     particleCount: 30,
     spread: 55,
     startVelocity: 28,
@@ -31,7 +40,7 @@ export function celebrateSmall(): void {
 /** Daily goal met (zikr / quran) */
 export function celebrateGoal(): void {
   if (reducedMotion()) return;
-  void confetti({
+  burst({
     particleCount: 90,
     spread: 75,
     startVelocity: 38,
@@ -45,7 +54,7 @@ export function celebrateGoal(): void {
 /** A completed fast — moonlit colors */
 export function celebrateFast(): void {
   if (reducedMotion()) return;
-  void confetti({
+  burst({
     particleCount: 80,
     spread: 70,
     startVelocity: 34,
@@ -61,8 +70,8 @@ export function celebrateFast(): void {
 export function celebrateAllPrayers(): void {
   if (reducedMotion()) return;
   const opts = { ticks: 160, colors: EMERALD_GOLD, disableForReducedMotion: true } as const;
-  void confetti({ ...opts, particleCount: 70, angle: 60, spread: 60, origin: { x: 0, y: 0.7 } });
-  void confetti({ ...opts, particleCount: 70, angle: 120, spread: 60, origin: { x: 1, y: 0.7 } });
+  burst({ ...opts, particleCount: 70, angle: 60, spread: 60, origin: { x: 0, y: 0.7 } });
+  burst({ ...opts, particleCount: 70, angle: 120, spread: 60, origin: { x: 1, y: 0.7 } });
 }
 
 /** Khatm complete — the grand one */
@@ -70,7 +79,7 @@ export function celebrateKhatm(): void {
   if (reducedMotion()) return;
   const end = Date.now() + 1200;
   const frame = (): void => {
-    void confetti({
+    burst({
       particleCount: 8,
       angle: 60 + Math.random() * 60,
       spread: 70,
