@@ -17,7 +17,7 @@ import {
   PaperAirplaneIcon,
   KeyIcon,
 } from '@heroicons/react/24/outline';
-import { LeafIcon } from './icons/IslamicIcons.js';
+import { BrandMark } from './BrandMark.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminLogout } from '../hooks/useAdminAuth.js';
 import AdminReauthDialog from './admin/AdminReauthDialog.js';
@@ -159,9 +159,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1.5 py-3 border-b border-brand-border/60">
             <NavLink
               to="/admin"
-              className="flex items-center gap-2 font-display font-bold text-white text-base"
+              className={`flex items-center gap-2 font-display font-bold text-base ${accent}`}
             >
-              <LeafIcon className={`w-5 h-5 ${accent}`} aria-hidden="true" />
+              <BrandMark variant="small" className="w-6 h-6" />
               {t('adminLayout.brand', 'Bustandeen Admin')}
             </NavLink>
             <div className="flex items-center gap-3 text-xs">

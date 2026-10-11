@@ -62,6 +62,17 @@
     0 18px 40px -14px rgb(0 0 0 / 0.95), 0 0 0 1px rgb(201 169 110 / 0.16),
     0 8px 30px -10px rgb(201 169 110 / 0.12);
   color-scheme: dark;
+  /* Logo (BrandMark, v5.155.0): the "Bright" set, mirrored in src/brand/brandMark.ts. */
+  --logo-moon-1: #bff59a;
+  --logo-moon-2: #239a6c;
+  --logo-star-1: #ffe38c;
+  --logo-star-2: #f5a22a;
+  --logo-spark: #ff7a4d;
+  --logo-leaf: #8fe070;
+  --logo-leaf-warm: #ff8a55;
+  --logo-petal-a: #ff7a4d;
+  --logo-petal-b: #ff9fc6;
+  --logo-flower-centre: #ffe38c;
 }
 
 /* Sage paper: darker greens and golds so they pass AA as text on paper,
@@ -110,6 +121,17 @@
   --elev-hover: 0 12px 26px -10px rgb(40 50 25 / 0.45);
   --elev-hero: 0 18px 36px -12px rgb(40 50 25 / 0.5);
   color-scheme: light;
+  /* Logo on paper: darker set (PAPER in src/brand/brandMark.ts). */
+  --logo-moon-1: #4f7d40;
+  --logo-moon-2: #1f3d1b;
+  --logo-star-1: #c28a1f;
+  --logo-star-2: #7a4f0a;
+  --logo-spark: #a3441c;
+  --logo-leaf: #356329;
+  --logo-leaf-warm: #a3441c;
+  --logo-petal-a: #a3441c;
+  --logo-petal-b: #9c3d63;
+  --logo-flower-centre: #c28a1f;
 }
 
 /* Bustan Arch: the one arch per screen, on its hero card (T3.2). */

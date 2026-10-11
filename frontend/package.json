@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.153.4",
+  "version": "5.155.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -11,11 +11,10 @@
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json && tsc --noEmit -p tsconfig.e2e.json",
     "data:cities": "node scripts/build-cities.mjs && node scripts/build-place-index.mjs",
     "quran:text": "node scripts/build-quran-text.mjs",
-    "og:image": "node scripts/generate-og-image.mjs",
+    "brand:assets": "node scripts/generate-brand-assets.mjs",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "pwa:icons": "node scripts/generate-pwa-icons.mjs",
     "pwa:screenshots": "node scripts/capture-pwa-screenshots.mjs",
     "i18n:check": "node scripts/check-i18n.mjs"
   },

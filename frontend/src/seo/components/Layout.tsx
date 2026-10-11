@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import type { SeoLang } from '../locales/chrome.js';
 import { CHROME, RTL_LANGS, SEO_LANGS } from '../locales/chrome.js';
+import { BrandMark } from '../../components/BrandMark.js';
 
 const LANG_LABEL: Record<SeoLang, string> = { en: 'EN', bn: 'বাং', ar: 'عربي' };
 
@@ -100,21 +101,7 @@ export default function Layout({
               href="https://bustandeen.com/"
               className={`flex items-center gap-2 font-black text-lg no-underline ${s.logo}`}
             >
-              {look === 'bustan' ? (
-                <svg
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.6"
-                  className="h-5 w-5 text-brand-gold"
-                >
-                  <path d="M5 19c0-8 5-13 14-14-1 9-6 14-14 14z" />
-                  <path d="M5 19l7-7" />
-                </svg>
-              ) : (
-                <span aria-hidden>🌙</span>
-              )}{' '}
+              <BrandMark variant="small" className="h-7 w-7" />
               {t.siteName}
             </a>
             <nav aria-label={t.languageLabel} className="flex items-center gap-1.5">

@@ -138,7 +138,7 @@ export default defineConfig({
           { src: '/pwa-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
           { src: '/pwa-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
           // Full-bleed with the mark inside the 80% safe zone, so launchers can
-          // crop to any shape (scripts/generate-pwa-icons.mjs).
+          // crop to any shape (scripts/generate-brand-assets.mjs).
           {
             src: '/pwa-maskable-192.png',
             sizes: '192x192',
