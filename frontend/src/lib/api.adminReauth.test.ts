@@ -80,6 +80,31 @@ describe('admin re-auth in the API client (U8.4)', () => {
   });
 });
 
+describe('admin second factor in the API client (T1.4)', () => {
+  it('a 403 mfa_required drops the stored proof and asks for a code again', async () => {
+    useAdminStore.getState().setSession('a@test.dev', 'servant', null);
+    localStorage.setItem('bustandeen_admin_mfa', 'stale.proof');
+    answer({ status: 403, data: { ok: false, error: 'mfa_required', mfa: 'verify' } });
+    await expect(api.get('/api/admin/users')).rejects.toBeInstanceOf(AxiosError);
+    expect(useAdminStore.getState()).toMatchObject({ status: 'mfa', mfaStep: 'verify' });
+    expect(localStorage.getItem('bustandeen_admin_mfa')).toBeNull();
+  });
+
+  it('a reset authenticator sends the admin to set one up', async () => {
+    useAdminStore.getState().setSession('a@test.dev', 'ansar', 'general');
+    answer({ status: 403, data: { ok: false, error: 'mfa_required', mfa: 'enroll' } });
+    await expect(api.get('/api/admin/feedback')).rejects.toBeInstanceOf(AxiosError);
+    expect(useAdminStore.getState().mfaStep).toBe('enroll');
+  });
+
+  it('any other 403 (wrong role) leaves the session alone', async () => {
+    useAdminStore.getState().setSession('a@test.dev', 'ansar', 'general');
+    answer({ status: 403, data: { ok: false, error: 'Servant only' } });
+    await expect(api.get('/api/admin/users')).rejects.toBeInstanceOf(AxiosError);
+    expect(useAdminStore.getState().status).toBe('ready');
+  });
+});
+
 describe('useAdminReauthStore', () => {
   it('two requests waiting on one prompt both get its outcome', async () => {
     useAdminReauthStore.setState({ open: false, resolve: null });

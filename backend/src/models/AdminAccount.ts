@@ -35,6 +35,19 @@ export interface IAdminAccount extends Document {
    *  account, so a session that existed before the account became an admin
    *  never carries over. */
   sessionsValidAfter?: Date | null;
+  /** Second factor (T1.4): the authenticator secret, encrypted with
+   *  fieldCrypto. Null until enrolment is confirmed with a first code. */
+  totpSecretEnc?: string | null;
+  /** A secret shown during enrolment but not yet confirmed (10 minutes). */
+  totpPendingSecretEnc?: string | null;
+  totpPendingAt?: Date | null;
+  totpEnabledAt?: Date | null;
+  /** Last accepted 30-second step: a code is never accepted twice. */
+  totpLastStep?: number | null;
+  /** SHA-256 of each unused backup code; one is removed when used. */
+  backupCodeHashes?: string[];
+  /** Bumped on every enrolment and reset, voiding older MFA proofs. */
+  mfaVersion: number;
 }
 
 const AdminAccountSchema = new Schema<IAdminAccount>({
@@ -48,6 +61,13 @@ const AdminAccountSchema = new Schema<IAdminAccount>({
   createdAt: { type: Date, default: Date.now },
   lastLoginAt: { type: Date, default: null },
   sessionsValidAfter: { type: Date, default: null },
+  totpSecretEnc: { type: String, default: null },
+  totpPendingSecretEnc: { type: String, default: null },
+  totpPendingAt: { type: Date, default: null },
+  totpEnabledAt: { type: Date, default: null },
+  totpLastStep: { type: Number, default: null },
+  backupCodeHashes: { type: [String], default: [] },
+  mfaVersion: { type: Number, default: 0 },
 });
 
 export default mongoose.model<IAdminAccount>('AdminAccount', AdminAccountSchema);

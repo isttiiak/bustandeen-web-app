@@ -6,8 +6,14 @@ import {
   setAdminAccountActiveSchema,
   setAdminAccountDomainSchema,
   adminAccountIdSchema,
+  adminMfaPolicySchema,
 } from '../validation/adminAccount.schemas.js';
 import * as adminAccountController from '../controllers/adminAccount.controller.js';
+import {
+  getPolicyHandler,
+  resetHandler as resetMfaHandler,
+  setPolicyHandler,
+} from '../controllers/adminMfa.controller.js';
 
 const router = Router();
 
@@ -17,6 +23,12 @@ const router = Router();
 router.use(requireAdminAuth, requireServant);
 
 router.get('/', adminAccountController.listHandler);
+
+// Two-step sign-in switch for every admin (T1.4). Switching it needs a
+// recent password entry (and, while it is on, the second factor too, like
+// every route here).
+router.get('/mfa-policy', getPolicyHandler);
+router.put('/mfa-policy', requireAdminRecentAuth, validate(adminMfaPolicySchema), setPolicyHandler);
 router.post(
   '/',
   requireAdminRecentAuth,
@@ -40,6 +52,14 @@ router.post(
   requireAdminRecentAuth,
   validate(adminAccountIdSchema),
   adminAccountController.sendPasswordResetHandler
+);
+
+// Lost authenticator: the admin sets it up again at their next sign-in.
+router.post(
+  '/:id/mfa-reset',
+  requireAdminRecentAuth,
+  validate(adminAccountIdSchema),
+  resetMfaHandler
 );
 
 export default router;

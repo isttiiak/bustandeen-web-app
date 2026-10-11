@@ -12,8 +12,15 @@ import {
   OPTION_CHIP,
   PILL_EMERALD,
   PILL_GOLD,
+  PILL_MUTED,
 } from '../components/admin/adminParts.js';
-import { BTN_PRIMARY, BTN_SECONDARY, OPTION_OFF, OPTION_ON } from '../components/bustanStyles.js';
+import {
+  BTN_PRIMARY,
+  BTN_SECONDARY,
+  CARD,
+  OPTION_OFF,
+  OPTION_ON,
+} from '../components/bustanStyles.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import {
   useAdminAccounts,
@@ -21,6 +28,9 @@ import {
   useSetAdminAccountActive,
   useSetAdminAccountDomain,
   useSendAdminPasswordReset,
+  useResetAdminMfa,
+  useAdminMfaPolicy,
+  useSetAdminMfaPolicy,
   AdminAccountListItem,
   type AdminFirebaseLink,
 } from '../hooks/useAdminAccounts.js';
@@ -167,12 +177,106 @@ function AddAnsarForm() {
   );
 }
 
+/**
+ * T1.4: one switch for every admin. Off (the launch default) = password only,
+ * handy during busy development; on = the authenticator code too. Set-up
+ * authenticators are kept while it is off.
+ */
+function TwoStepCard({ accounts }: { accounts: AdminAccountListItem[] | undefined }) {
+  const { t } = useTranslation();
+  const myEmail = useAdminStore((s) => s.email);
+  const startMfaSetup = useAdminStore((s) => s.startMfaSetup);
+  const { data: policy } = useAdminMfaPolicy();
+  const setPolicy = useSetAdminMfaPolicy();
+  const on = policy?.mfaRequired ?? false;
+  const me = accounts?.find((a) => a.email === myEmail);
+  const notSetUp = accounts?.filter((a) => a.active && !a.mfaEnabled).map((a) => a.email) ?? [];
+
+  const toggle = () => {
+    const ok = window.confirm(
+      on
+        ? t(
+            'adminAccounts.twoStepOffConfirm',
+            'Turn two-step sign-in off for every admin? A password alone will open the panel until you turn it back on.'
+          )
+        : me?.mfaEnabled
+          ? t(
+              'adminAccounts.twoStepOnConfirm',
+              'Turn two-step sign-in on for every admin? Each one needs their authenticator code at the next sign-in, and anyone without one sets it up first.'
+            )
+          : t(
+              'adminAccounts.twoStepOnSetupConfirm',
+              'Turn two-step sign-in on for every admin? You have no authenticator yet, so you set one up straight after this.'
+            )
+    );
+    if (ok) setPolicy.mutate(!on);
+  };
+
+  return (
+    <section className={`${CARD} p-4 sm:p-5 space-y-3`} aria-labelledby="two-step-title">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-1">
+          <h2 id="two-step-title" className="font-display text-white font-bold text-base">
+            {t('adminAccounts.twoStepTitle', 'Two-step sign-in')}{' '}
+            <span className={on ? PILL_EMERALD : PILL_MUTED}>
+              {on ? t('adminAccounts.twoStepOn', 'On') : t('adminAccounts.twoStepOff', 'Off')}
+            </span>
+          </h2>
+          <p className="text-sm text-white/80">
+            {on
+              ? t(
+                  'adminAccounts.twoStepOnText',
+                  'Every admin enters a code from their authenticator app after the password.'
+                )
+              : t(
+                  'adminAccounts.twoStepOffText',
+                  'Admins sign in with the password only. Turn it on before the panel is used by others.'
+                )}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={toggle}
+          disabled={!policy || setPolicy.isPending}
+          aria-pressed={on}
+          className={on ? BTN_DANGER : BTN_SMALL}
+        >
+          {setPolicy.isPending
+            ? '…'
+            : on
+              ? t('adminAccounts.twoStepTurnOff', 'Turn off')
+              : t('adminAccounts.twoStepTurnOn', 'Turn on')}
+        </button>
+      </div>
+      {notSetUp.length > 0 && (
+        <p className="text-xs text-white/70">
+          {t('adminAccounts.twoStepNotSetUp', {
+            defaultValue: 'No authenticator yet: {{emails}}.',
+            emails: notSetUp.join(', '),
+          })}
+        </p>
+      )}
+      {me && !me.mfaEnabled && !on && (
+        <button type="button" onClick={startMfaSetup} className={BTN_SMALL}>
+          {t('adminAccounts.setUpMine', 'Set up my authenticator now')}
+        </button>
+      )}
+      {setPolicy.isError && (
+        <p role="alert" className="text-red-400 text-xs">
+          {t('adminAccounts.twoStepFailed', 'Could not change two-step sign-in.')}
+        </p>
+      )}
+    </section>
+  );
+}
+
 function AccountRow({ account }: { account: AdminAccountListItem }) {
   const { t } = useTranslation();
   const myEmail = useAdminStore((s) => s.email);
   const setActive = useSetAdminAccountActive();
   const setDomain = useSetAdminAccountDomain();
   const sendReset = useSendAdminPasswordReset();
+  const resetMfa = useResetAdminMfa();
   const isSelf = account.email === myEmail;
 
   return (
@@ -213,6 +317,11 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
           : t('adminAccounts.inactive', 'Deactivated')}
       </td>
       <td className="px-3 py-2 text-white/70">
+        {account.mfaEnabled
+          ? t('adminAccounts.mfaOn', 'On')
+          : t('adminAccounts.mfaOff', 'Not set up')}
+      </td>
+      <td className="px-3 py-2 text-white/70">
         {account.lastLoginAt ? new Date(account.lastLoginAt).toLocaleString() : '-'}
       </td>
       <td className="px-3 py-2">
@@ -240,6 +349,35 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
                     ? '…'
                     : t('adminAccounts.sendReset', 'Send reset link')}
               </button>
+            )}
+            {account.mfaEnabled && (
+              <button
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      t(
+                        'adminAccounts.resetMfaConfirm',
+                        'Turn off their authenticator? They set up a new one at their next sign-in. Do this only if they lost their phone.'
+                      )
+                    )
+                  ) {
+                    resetMfa.mutate(account.id);
+                  }
+                }}
+                disabled={resetMfa.isPending}
+                className={BTN_SMALL}
+                title={t(
+                  'adminAccounts.resetMfaHint',
+                  'For a lost phone: they set up a new authenticator at their next sign-in'
+                )}
+              >
+                {resetMfa.isPending ? '…' : t('adminAccounts.resetMfa', 'Reset authenticator')}
+              </button>
+            )}
+            {resetMfa.isError && (
+              <span role="alert" className="text-red-400 text-xs">
+                {t('adminAccounts.resetMfaFailed', 'Could not reset the authenticator.')}
+              </span>
             )}
             {sendReset.isError && (
               <span role="alert" className="text-red-400 text-xs">
@@ -277,6 +415,8 @@ export default function AdminAccounts() {
           )}
         />
 
+        <TwoStepCard accounts={accounts} />
+
         <AddAnsarForm />
 
         <div className="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 overflow-x-auto">
@@ -287,6 +427,7 @@ export default function AdminAccounts() {
                 <th className="px-3 py-2">{t('adminAccounts.colRole', 'Role')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colDomain', 'Domain')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colStatus', 'Status')}</th>
+                <th className="px-3 py-2">{t('adminAccounts.colMfa', 'Authenticator')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colLastLogin', 'Last login')}</th>
                 <th className="px-3 py-2" />
               </tr>
@@ -294,7 +435,7 @@ export default function AdminAccounts() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={6} className="text-center text-white/70 py-6">
+                  <td colSpan={7} className="text-center text-white/70 py-6">
                     {t('common.loading', 'Loading…')}
                   </td>
                 </tr>

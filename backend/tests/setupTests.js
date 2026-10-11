@@ -23,3 +23,38 @@ try {
 if (typeof jasmine !== 'undefined') {
   jasmine.DEFAULT_TIMEOUT_INTERVAL = Math.max(jasmine.DEFAULT_TIMEOUT_INTERVAL || 5000, 120000);
 }
+
+// Admin second factor (T1.4). Every admin route needs an enrolled account and
+// a valid X-Admin-MFA proof. So the existing admin suites keep testing what
+// they test, admin accounts seeded with AdminAccount.create count as enrolled
+// unless they pass totpSecretEnc themselves, and a request that sets a
+// dev-bypass X-Admin-Token gets a matching proof (mfaVersion 0) unless it sets
+// X-Admin-MFA itself afterwards (tests/adminMfa.e2e.test.js does, incl. '').
+{
+  const { default: AdminAccount } = await import('../src/models/AdminAccount.js');
+  const { issueMfaProof } = await import('../src/utils/adminMfaProof.js');
+  const { Test } = await import('supertest');
+
+  const enrolled = (doc) =>
+    doc && typeof doc === 'object' && !('totpSecretEnc' in doc)
+      ? { ...doc, totpSecretEnc: 'test-enrolled' }
+      : doc;
+  const originalCreate = AdminAccount.create.bind(AdminAccount);
+  AdminAccount.create = (docs, ...rest) =>
+    originalCreate(Array.isArray(docs) ? docs.map(enrolled) : enrolled(docs), ...rest);
+
+  const originalSet = Test.prototype.set;
+  Test.prototype.set = function (field, value) {
+    const result = originalSet.call(this, field, value);
+    if (typeof field === 'string' && field.toLowerCase() === 'x-admin-token') {
+      try {
+        const body = JSON.parse(Buffer.from(String(value).split('.')[1], 'base64url').toString());
+        if (typeof body.uid === 'string')
+          originalSet.call(this, 'X-Admin-MFA', issueMfaProof(body.uid, 0));
+      } catch {
+        /* not a decodable token: no proof, the request fails as it would */
+      }
+    }
+    return result;
+  };
+}

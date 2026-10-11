@@ -23,6 +23,13 @@ declare global {
         /** When this admin last entered their password (the token's
          *  auth_time, seconds). Absent on a dev-bypass token without one. */
         authTime?: number;
+        /** Second factor state of this request (requireAdminAuth always
+         *  'ok'; requireAdminIdentity may be 'verify' or 'enroll'). */
+        mfa: 'ok' | 'verify' | 'enroll';
+        /** The Servant's switch: is the second factor required right now? */
+        mfaRequired: boolean;
+        /** This admin has an authenticator set up. */
+        mfaEnrolled: boolean;
       };
     }
   }

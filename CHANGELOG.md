@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.158.0 - Two-step sign-in for admins - 2026-10-11
+
+### Security
+
+- **Two-step sign-in for admin accounts** (audit T1.4, SEC-03): after the password, a 6-digit code from an authenticator app (Google Authenticator, Microsoft Authenticator, Aegis, 1Password). While it is on, a stolen admin password alone no longer opens the panel or any `/api/admin/*` route; without the second step they answer `403 mfa_required`.
+  - **The Servant switches it on or off for every admin** (Manage Ansars, "Two-step sign-in"). It starts **off**, so nothing changes at this update: admins keep signing in with the password until the Servant turns it on. Off is meant for busy development; switching needs a recent password entry and is audit-logged. Authenticators already set up are kept while it is off, so turning it back on asks for a code again without a new setup.
+  - **Setting up:** any admin can set it up early ("Set up my authenticator now" for the Servant while it is off); once it is on, anyone without one sets it up at the next sign-in (scan a QR code, type the first code) and gets 8 one-time backup codes to keep away from the phone. Setup needs a password entry from the last few minutes.
+  - Codes are checked by our own server (standard TOTP, RFC 6238), not by a new service, and with no new package. Firebase's own option would have capped the whole app at 3,000 daily users on the free plan. The authenticator secret is stored encrypted, backup codes only as hashes, each code works once, and code attempts are limited to 10 per 15 minutes.
+  - The second step lasts as long as the admin sign-in (12 hours) and is asked again in a new sign-in. Ending an admin's sessions (deactivation, password change) ends it too.
+  - **Lost phone:** sign in with a backup code, or the Servant uses **Reset authenticator** on Manage Ansars (the admin sets up a new one at their next sign-in). For the Servant's own account without any backup code: `npm run admin:reset-mfa --prefix backend -- --email <email>` (dry run by default, `--apply` to reset).
+  - Setup, backup-code sign-ins and resets appear in the audit log.
+- The server now logs a warning while a `SERVANT_BOOTSTRAP_PASSWORD` / `ANSAR_BOOTSTRAP_PASSWORD` is still set for an admin that already exists. Delete them from Vercel.
+
 ## v5.157.0 - Moon sighting by month start (a 30th day of Ramadan can show) - 2026-10-11
 
 ### Changed

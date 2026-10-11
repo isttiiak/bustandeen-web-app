@@ -53,6 +53,11 @@ const ACTION_LABELS: Record<string, string> = {
   'zikrRequest.reopen': 'Reopened a decided zikr request',
   'account.passwordChanged': 'Changed their own admin password',
   'account.sendPasswordReset': 'Sent an admin a password reset link',
+  'account.mfaEnrolled': 'Set up their authenticator',
+  'account.mfaBackupCodeUsed': 'Signed in with a backup code',
+  'account.mfaReset': "Reset an admin's authenticator",
+  'account.mfaPolicyOn': 'Turned two-step sign-in on',
+  'account.mfaPolicyOff': 'Turned two-step sign-in off',
 };
 
 const AREAS: { value: AuditArea; label: string }[] = [

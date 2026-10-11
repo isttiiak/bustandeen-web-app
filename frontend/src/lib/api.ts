@@ -5,6 +5,7 @@ import { hasSessionHint, loadedAdminAuth, loadedFirebase, loadFirebase } from '.
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminReauthStore } from '../store/useAdminReauthStore.js';
+import { clearAdminMfaProof, getAdminMfaProof } from './adminMfa.js';
 import { getDemoResponse } from '../utils/demoData.js';
 
 /**
@@ -110,6 +111,9 @@ api.interceptors.request.use(async (config) => {
     } catch {
       /* no admin token this request — the backend will 401 as usual */
     }
+    // Second factor (T1.4): the proof from the last accepted code.
+    const proof = getAdminMfaProof();
+    if (proof && !config.headers['X-Admin-MFA']) config.headers['X-Admin-MFA'] = proof;
   }
   return config;
 });
@@ -135,13 +139,24 @@ api.interceptors.response.use(
         ? (err.response.data as { error?: string } | undefined)?.error
         : undefined;
     if (adminError === 'admin_session_required') {
+      clearAdminMfaProof();
       useAdminStore.getState().setSignedOut();
+    }
+    // The second factor is missing or no longer valid (expired, reset by the
+    // Servant): the gate asks for a code (or a new enrolment) again.
+    if (axios.isAxiosError(err) && err.response?.status === 403) {
+      const body = err.response.data as { error?: string; mfa?: 'verify' | 'enroll' } | undefined;
+      if (body?.error === 'mfa_required') {
+        clearAdminMfaProof();
+        useAdminStore.getState().setMfaRequired(body.mfa === 'enroll' ? 'enroll' : 'verify');
+      }
     }
     // Admin sign-ins end 12 hours after the password was entered (and when
     // an account's sessions are ended): sign the panel out so the gate shows.
     if (adminError === 'admin_session_expired') {
       const adminAuth = loadedAdminAuth();
       if (adminAuth) void signOutAdmin(adminAuth);
+      clearAdminMfaProof();
       useAdminStore.getState().setSignedOut();
       toast.error('Your admin session ended. Please sign in again.', { id: 'admin-session' });
     }

@@ -1,6 +1,6 @@
-// Build-time QR codes for the A4 print sheets (audit T4.4). Imported only by
-// entry-server.tsx: qrcode-generator is a devDependency and never reaches a
-// browser. The page gets a plain SVG path, so printing needs no request.
+// QR codes as a plain SVG path: built at prerender time for the A4 print
+// sheets (audit T4.4, so printing needs no request), and in the browser only
+// for the admin authenticator setup (AdminMfaStep, lazy admin chunk).
 import qrcode from 'qrcode-generator';
 
 export interface QrPath {

@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
@@ -9,6 +9,7 @@ import {
 import api from '../lib/api.js';
 import { adminAuth } from '../adminFirebase.js';
 import { useAdminStore } from '../store/useAdminStore.js';
+import { clearAdminMfaProof, setAdminMfaProof } from '../lib/adminMfa.js';
 
 /**
  * Real Firebase sign-in against the SECOND, isolated admin Firebase app
@@ -29,7 +30,10 @@ export function useAdminLogout() {
   const setSignedOut = useAdminStore((s) => s.setSignedOut);
   return useMutation({
     mutationFn: () => signOut(adminAuth),
-    onSuccess: () => setSignedOut(),
+    onSuccess: () => {
+      clearAdminMfaProof();
+      setSignedOut();
+    },
   });
 }
 
@@ -46,7 +50,55 @@ export function useChangeAdminPassword() {
       await reauthenticateWithCredential(user, EmailAuthProvider.credential(user.email, current));
       await updatePassword(user, next);
       await user.getIdToken(true);
-      await api.post('/api/admin/auth/password-changed');
+      // Ending the other sessions also ended this one's MFA proof; the
+      // server hands back a fresh one.
+      const res = await api.post<{ mfaProof?: string }>('/api/admin/auth/password-changed');
+      if (res.data.mfaProof) setAdminMfaProof(res.data.mfaProof);
+    },
+  });
+}
+
+// ── Second factor (T1.4) ─────────────────────────────────────────────────────
+
+/** Sign-in step: a 6-digit authenticator code or a backup code. */
+export function useAdminMfaVerify() {
+  return useMutation({
+    mutationFn: (code: string) =>
+      api
+        .post<{
+          mfaProof: string;
+          usedBackupCode: boolean;
+          backupCodesLeft: number;
+        }>('/api/admin/auth/mfa/verify', { code })
+        .then((r) => r.data),
+    onSuccess: (data) => setAdminMfaProof(data.mfaProof),
+  });
+}
+
+/** Enrolment step 1: a new secret for the authenticator app. */
+export function useAdminMfaEnrolStart() {
+  return useMutation({
+    mutationFn: () =>
+      api
+        .post<{ secret: string; otpauthUri: string }>('/api/admin/auth/mfa/enroll/start')
+        .then((r) => r.data),
+  });
+}
+
+/** Enrolment step 2: the first code turns it on and returns the backup codes. */
+export function useAdminMfaEnrolConfirm() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (code: string) =>
+      api
+        .post<{
+          mfaProof: string;
+          backupCodes: string[];
+        }>('/api/admin/auth/mfa/enroll/confirm', { code })
+        .then((r) => r.data),
+    onSuccess: (data) => {
+      setAdminMfaProof(data.mfaProof);
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
     },
   });
 }
