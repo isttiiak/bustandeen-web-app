@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '../store/useAuthStore.js';
-import { signInWithEmailAndPassword, sendPasswordResetEmail, AuthError } from 'firebase/auth';
+import { signInWithEmailAndPassword, AuthError } from 'firebase/auth';
+import axios from 'axios';
+import { usePasswordResetEmail } from '../hooks/useAuthEmails.js';
 import { auth } from '../firebase.js';
 import { useSignInFlow } from '../utils/useSignInFlow.js';
 import SigningInOverlay from '../components/SigningInOverlay.js';
@@ -47,27 +49,24 @@ function mapFirebaseError(code: string, t: Translator): string {
   }
 }
 
-function mapResetError(code: string, t: Translator): string {
-  switch (code) {
-    case 'auth/user-not-found':
-    case 'auth/invalid-email':
-      return t('authSignIn.errResetNoAccount', 'No account found with this email address.');
-    case 'auth/too-many-requests':
-      return t(
-        'authSignIn.errTooManyRequestsReset',
-        'Too many requests. Please wait before trying again.'
-      );
-    case 'auth/network-request-failed':
-      return t('authSignIn.errNetwork', 'Network error. Check your connection and try again.');
-    default:
-      return t('authSignIn.errResetGeneric', 'Could not send reset email. Please try again.');
-  }
+/** Our server answers ok for any well-formed email (it never says whether an
+ *  account exists), so only throttling and network trouble show up here. */
+function mapResetError(err: unknown, t: Translator): string {
+  if (axios.isAxiosError(err) && err.response?.status === 429)
+    return t(
+      'authSignIn.errTooManyRequestsReset',
+      'Too many requests. Please wait before trying again.'
+    );
+  if (axios.isAxiosError(err) && !err.response)
+    return t('authSignIn.errNetwork', 'Network error. Check your connection and try again.');
+  return t('authSignIn.errResetGeneric', 'Could not send reset email. Please try again.');
 }
 
 export default function AuthSignIn() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
+  const sendResetEmail = usePasswordResetEmail();
   const [error, setError] = useState('');
   const { loading, setLoading, setFinishing, google, signingIn } = useSignInFlow((code) =>
     setError(mapFirebaseError(code, t))
@@ -117,15 +116,12 @@ export default function AuthSignIn() {
     if (!resetEmail.trim()) return;
     setResetLoading(true);
     try {
-      // handleCodeInApp:true redirects to our branded /auth/action with oobCode intact.
-      // After the password is reset, AuthAction navigates the user to /login.
-      await sendPasswordResetEmail(auth, resetEmail.trim(), {
-        url: 'https://bustandeen.com/auth/action',
-        handleCodeInApp: true,
-      });
+      // Our server sends the email (bustandeen.com link, our wording);
+      // AuthAction handles the link and sends the user to /login afterwards.
+      await sendResetEmail.mutateAsync(resetEmail.trim());
       setResetSent(true);
     } catch (err) {
-      setResetError(mapResetError((err as AuthError).code ?? '', t));
+      setResetError(mapResetError(err, t));
     }
     setResetLoading(false);
   };
@@ -147,9 +143,18 @@ export default function AuthSignIn() {
             title={t('authSignIn.checkEmail', 'Check your email')}
             subtitle={
               <>
-                <p>{t('authSignIn.resetLinkSentTo', 'We sent a password reset link to')}</p>
+                <p>
+                  {t(
+                    'authSignIn.resetLinkSentIfAccount',
+                    'If an account uses this email, a password reset link is on its way to'
+                  )}
+                </p>
                 <p className="text-brand-emerald font-semibold break-all mt-1">{resetEmail}</p>
                 <p className="text-white/70 text-xs mt-2">
+                  {t(
+                    'authSignIn.resetLinkExpiry',
+                    'The link works once and expires within 1 hour.'
+                  )}{' '}
                   {t(
                     'authSignIn.didntReceive',
                     "Didn't receive it? Check your spam folder or try again."

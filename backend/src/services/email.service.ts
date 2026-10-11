@@ -106,6 +106,9 @@ export interface SendMailOptions {
   /** Which mailbox sends this — defaults to 'sadaqah' so every existing
    *  caller (written before 'istiak' existed) keeps its current behavior. */
   from?: EmailSender;
+  /** Overrides the sender's display name (account emails show "Bustandeen"
+   *  while sent through the Ansar mailbox). */
+  fromName?: string;
   /** Explicit Message-ID for this send (angle-bracket form, e.g.
    *  "<sadaqah-<id>@bustandeen.com>") — set on the FIRST email in a thread so
    *  later replies can reference it via inReplyTo/references. */
@@ -138,7 +141,7 @@ export const sendMail = async (opts: SendMailOptions): Promise<string | null> =>
   const { displayName } = senderConfig(sender);
   try {
     const info = await t.sendMail({
-      from: `"${displayName}" <${user}>`,
+      from: `"${opts.fromName ?? displayName}" <${user}>`,
       to: opts.to,
       subject: opts.subject,
       html: opts.html,

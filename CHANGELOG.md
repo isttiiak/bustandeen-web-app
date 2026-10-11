@@ -11,8 +11,17 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 ### Added
 
-- **`brand/`** holds the master logo files and the social media images (profile photos for Facebook, Instagram, Reddit, X, LinkedIn and the email sender photo; covers for Facebook, X, Reddit and LinkedIn). Not part of the app build.
+- **`brand/`** holds the master logo files and the social media images (profile photos for Facebook, Instagram, Reddit, X, LinkedIn, YouTube and the email sender photo; covers for Facebook, X, Reddit, LinkedIn and YouTube). Not part of the app build.
 - **`npm run brand:assets`** (frontend) redraws every logo image from one source, `src/brand/brandMark.ts`, and fails if the installable icon leaves the safe zone. It replaces `og:image` and `pwa:icons`. A test keeps the in-app logo colours (`--logo-*` in global.css) in step with it.
+
+## v5.154.0 - Our own password reset and email confirmation emails - 2026-10-11
+
+### Changed
+
+- **Forgot password and sign-up email confirmation now send Bustandeen's own email**, in English or Bangla to match the app language. They used to be Firebase's built-in emails, whose link opened a plain page on `ihsan-9e89b.firebaseapp.com`. The new email is calm and clear: who asked, a "Set a new password" (or "Confirm my email") button, a plain link if the button does not work, the time limit (a reset link works once and expires within 1 hour), and what to do if you did not ask. The link opens the branded page on bustandeen.com.
+- **The reset screen no longer says whether an account exists** ("If an account uses this email, a password reset link is on its way"), and the server answers the same way for any email.
+- **Abuse limits:** 5 reset requests per hour per network, 3 per hour per email address, 3 confirmation emails per hour per account.
+- Privacy page: Zoho Mail's row now lists password reset and email confirmation links.
 
 ## v5.153.4 - Admin password reset links open on bustandeen.com - 2026-10-11
 

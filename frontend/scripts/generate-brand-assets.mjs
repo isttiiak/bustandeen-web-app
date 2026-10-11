@@ -108,6 +108,9 @@ for (const [size, use] of [
 ]) {
   await png(iconSvg(size, { scale: 0.78 }), join(BRAND, `profile-${size}-${use}.png`));
 }
+// YouTube shows the channel photo at 98 px: the small mark reads better there.
+await png(iconSvg(98, { scale: 0.78, variant: 'small' }), join(BRAND, 'profile-98-youtube.png'));
+await png(iconSvg(800, { scale: 0.78 }), join(BRAND, 'profile-800-youtube.png'));
 log('Wrote brand/ masters and profile photos');
 
 // ── Images with text ────────────────────────────────────────────────────────
@@ -117,7 +120,7 @@ const FEATURES = 'Salat  ·  Quran  ·  Fasting  ·  Zikr';
 /**
  * @param {number} w
  * @param {number} h
- * @param {{ layout: 'stack' | 'row', k: number, centreY?: number, features?: boolean, url?: [number, number, number] }} o
+ * @param {{ layout: 'stack' | 'row', k: number, centreY?: number, rowH?: number, features?: boolean, url?: [number, number, number] }} o
  */
 function coverSvg(w, h, o) {
   const k = o.k;
@@ -132,14 +135,16 @@ function coverSvg(w, h, o) {
         ? `<text x="0" y="${466 * k}" text-anchor="middle" font-size="${30 * k}" class="f">${FEATURES}</text>`
         : '');
   } else {
-    const m = h * 0.62;
-    const x = m + h * 0.1;
+    // Row height: the banner height, or a smaller safe band (YouTube).
+    const r = o.rowH ?? h;
+    const m = r * 0.62;
+    const x = m + r * 0.1;
     content =
       `<svg x="0" y="${-m / 2}" width="${m}" height="${m}" viewBox="0 0 512 512">${markSvg('full', BRIGHT, 'cv')}</svg>` +
-      `<text x="${x}" y="${-h * 0.02}" font-size="${h * 0.3}" class="w">Bustandeen</text>` +
-      `<text x="${x + h * 0.01}" y="${h * 0.13}" font-size="${h * 0.1}" letter-spacing="${h * 0.008}" class="t">Nourish Your Deen</text>` +
+      `<text x="${x}" y="${-r * 0.02}" font-size="${r * 0.3}" class="w">Bustandeen</text>` +
+      `<text x="${x + r * 0.01}" y="${r * 0.13}" font-size="${r * 0.1}" letter-spacing="${r * 0.008}" class="t">Nourish Your Deen</text>` +
       (o.features
-        ? `<text x="${x + h * 0.01}" y="${h * 0.26}" font-size="${h * 0.075}" class="f">${FEATURES}</text>`
+        ? `<text x="${x + r * 0.01}" y="${r * 0.26}" font-size="${r * 0.075}" class="f">${FEATURES}</text>`
         : '');
   }
   const url = o.url
@@ -191,6 +196,13 @@ const TEXT_IMAGES = [
     w: 1128,
     h: 191,
     o: { layout: 'row', k: 0.45 },
+  },
+  {
+    // Everything sits in the 1235 x 338 band YouTube shows on every device.
+    file: join(BRAND, 'cover-youtube-2048x1152.png'),
+    w: 2048,
+    h: 1152,
+    o: { layout: 'row', k: 1, rowH: 300, features: true },
   },
 ];
 

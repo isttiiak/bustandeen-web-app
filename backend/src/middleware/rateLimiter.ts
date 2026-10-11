@@ -188,6 +188,42 @@ export const feedbackSubmitLimiter = makeLimit(
   'shared'
 );
 
+/** Forgot password (public, sends an email): 5 per hour per IP, and 3 per
+ *  hour per email address so nobody can flood one inbox from many IPs. Both
+ *  shared (Mongo, keys hashed by the store). The answer is the same whether
+ *  or not the account exists. */
+const RESET_MESSAGE = {
+  ok: false,
+  error: 'Too many reset requests. Please try again in an hour.',
+};
+export const passwordResetIpLimiter = makeLimit(
+  60 * 60 * 1000,
+  5,
+  RESET_MESSAGE,
+  'passwordResetIp',
+  'shared'
+);
+export const passwordResetEmailLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: isDev ? 100_000 : 3,
+  ...storeFor('shared', 'passwordResetEmail'),
+  keyGenerator: (req: Request) =>
+    String((req.body as { email?: unknown })?.email ?? '').toLowerCase() || 'none',
+  validate: { keyGeneratorIpFallback: false },
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: RESET_MESSAGE,
+  handler: makeThrottledHandler('passwordResetEmail', RESET_MESSAGE),
+});
+
+/** Resend the verification email: 3 per hour per signed-in user. */
+export const verificationEmailLimiter = makeUidLimit(
+  60 * 60 * 1000,
+  3,
+  { ok: false, error: 'Too many emails sent. Please try again in an hour.' },
+  'verificationEmail'
+);
+
 /** Admin session confirm: 20 per 15 min per IP — the first admin-panel call
  *  after a Firebase sign-in (adminAccount.controller.ts's sessionHandler).
  *  Firebase itself throttles password guesses; this just stops someone with
