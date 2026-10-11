@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.158.4 - Easier to read Fasting cards - 2026-10-12
+
+### Changed
+
+- **Fasting page, readability** (Istiak approved the prototype): the Sunnah-fast explanation is 14px instead of 12px, the counters' labels ("This month", "Qada left", "All time", "Manage") are 12px in normal case instead of 10px capitals that wrapped on phones, and small grey texts (hadith grade, the Manage sheet's progress and finish estimate) are larger and no longer below the readable contrast level.
+- The hadith source and "Learn more" now share one row, removing an empty gap on phones (each link keeps its 44px tap height).
+
 ## v5.158.3 - App errors on devices are reported (no tracker) - 2026-10-12
 
 ### Added
