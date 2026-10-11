@@ -777,19 +777,19 @@ export default function FastingTracker() {
                         <div className="min-w-0 flex-1">
                           <p className="font-bold text-sm text-white leading-tight flex items-center gap-2 flex-wrap">
                             {t(`fastingRules.voluntary.${r.id}`, r.label)}
-                            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-brand-emerald/10 text-brand-emerald">
+                            <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-brand-emerald/10 text-brand-emerald">
                               {t('fasting.sunnahFast', 'Sunnah fast')}
                             </span>
                           </p>
-                          <p className="text-white/80 text-xs leading-snug mt-1">
+                          <p className="text-white/85 text-sm leading-relaxed mt-1">
                             {t(`fastingRules.voluntaryVirtue.${r.id}`, r.virtue)}
                           </p>
-                          <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                            <RefLink r={r.ref} />
+                          <div className="flex items-center gap-x-4 gap-y-1 mt-2 flex-wrap">
+                            <RefLink r={r.ref} inline />
                             {r.specialDayId && (
                               <Link
                                 to={`/special-day/${r.specialDayId}`}
-                                className="inline-flex items-center gap-0.5 text-brand-emerald text-[11px] font-bold underline underline-offset-2 hover:opacity-80"
+                                className="inline-flex items-center gap-0.5 text-brand-emerald text-xs font-bold underline underline-offset-2 hover:opacity-80"
                               >
                                 {t('fasting.learnMore', 'Learn more')}
                                 <ChevronRightIcon className="w-3 h-3" aria-hidden="true" />

@@ -70,9 +70,7 @@ export default function FastingProgressChips({
               <p className={`font-display font-bold text-2xl tabular-nums leading-none ${s.tone}`}>
                 {formatLocaleNumber(s.value)}
               </p>
-              <p className="text-white/70 text-[10px] uppercase tracking-wide font-bold mt-1.5">
-                {s.label}
-              </p>
+              <p className="text-white/80 text-xs font-semibold leading-tight mt-1.5">{s.label}</p>
             </div>
           ))}
         </div>
@@ -92,7 +90,7 @@ export default function FastingProgressChips({
           className={`${CARD} px-3 flex flex-col items-center justify-center gap-1 text-white/70 hover:text-white hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow,color]`}
         >
           <Cog6ToothIcon className="w-5 h-5" aria-hidden="true" />
-          <span className="text-[10px] font-bold uppercase">{t('fasting.manage', 'Manage')}</span>
+          <span className="text-xs font-semibold">{t('fasting.manage', 'Manage')}</span>
         </button>
       </div>
     </>
