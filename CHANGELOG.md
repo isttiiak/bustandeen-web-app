@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.153.4 - Admin password reset links open on bustandeen.com - 2026-10-11
+
+### Fixed
+
+- **Admin reset links opened Firebase's page on ihsan-9e89b.firebaseapp.com.** The Servant's "Send reset link" now emails a link to the app's own branded reset page (`bustandeen.com/auth/action`, the one users already get), and the page returns admins to the admin sign-in afterwards.
+- **A reset link was sent for a login switched off in Firebase**, which could never be used ("expired or already used" on save). The panel now refuses with the reason ("enable it in Firebase Authentication first"), and the reset page explains a switched-off account instead of a generic failure.
+- **"Could not send the link."** now shows the server's actual reason.
+- **The email states the time limit:** the link works once and expires within 1 hour (Firebase's default).
+
 ## v5.153.3 - The app can no longer get stuck on a blank page after a deploy - 2026-10-11
 
 ### Fixed

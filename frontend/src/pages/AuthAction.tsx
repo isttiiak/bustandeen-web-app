@@ -149,7 +149,9 @@ function VerifyEmailView({ oobCode }: { oobCode: string }) {
 }
 
 // ── Password Reset handler ───────────────────────────────────────────────────
-function ResetPasswordView({ oobCode }: { oobCode: string }) {
+/** Admin reset links (sent by the Servant) carry next=admin: back to the admin
+ * sign-in instead of the app's. A fixed path, never a URL from the link. */
+function ResetPasswordView({ oobCode, signInPath }: { oobCode: string; signInPath: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [verifyStatus, setVerifyStatus] = useState<'loading' | 'ready' | 'invalid'>('loading');
@@ -194,6 +196,13 @@ function ResetPasswordView({ oobCode }: { oobCode: string }) {
         setError(
           t('authAction.errExpiredLink', 'This reset link has expired. Please request a new one.')
         );
+      else if (code === 'auth/user-disabled')
+        setError(
+          t(
+            'authAction.errUserDisabled',
+            'This account is switched off, so its password cannot be changed. Please contact us.'
+          )
+        );
       else if (code === 'auth/weak-password')
         setError(t('authSignUp.errWeakPassword', 'Password must be at least 6 characters.'));
       else setError(t('authAction.errResetFailed', 'Failed to reset password. Please try again.'));
@@ -223,7 +232,7 @@ function ResetPasswordView({ oobCode }: { oobCode: string }) {
           <Actions
             primary={{
               label: t('authSignIn.backToSignIn', 'Back to sign in'),
-              onClick: () => navigate('/login'),
+              onClick: () => navigate(signInPath),
             }}
           />
         </AuthHero>
@@ -243,11 +252,12 @@ function ResetPasswordView({ oobCode }: { oobCode: string }) {
           )}
         >
           <Actions
-            primary={{ label: t('common.signIn'), onClick: () => navigate('/login') }}
-            secondary={{
-              label: t('authAction.goToApp', 'Go to App'),
-              onClick: () => navigate('/'),
-            }}
+            primary={{ label: t('common.signIn'), onClick: () => navigate(signInPath) }}
+            secondary={
+              signInPath === '/login'
+                ? { label: t('authAction.goToApp', 'Go to App'), onClick: () => navigate('/') }
+                : undefined
+            }
           />
         </AuthHero>
       </AuthShell>
@@ -336,7 +346,7 @@ function ResetPasswordView({ oobCode }: { oobCode: string }) {
 
         <p className="text-center text-white/80 text-xs">
           {t('authAction.rememberedPassword', 'Remembered your password?')}{' '}
-          <button type="button" onClick={() => navigate('/login')} className={TEXT_ACTION}>
+          <button type="button" onClick={() => navigate(signInPath)} className={TEXT_ACTION}>
             {t('common.signIn')}
           </button>
         </p>
@@ -380,7 +390,13 @@ export default function AuthAction() {
   }
 
   if (mode === 'verifyEmail') return <VerifyEmailView oobCode={oobCode} />;
-  if (mode === 'resetPassword') return <ResetPasswordView oobCode={oobCode} />;
+  if (mode === 'resetPassword')
+    return (
+      <ResetPasswordView
+        oobCode={oobCode}
+        signInPath={searchParams.get('next') === 'admin' ? '/admin' : '/login'}
+      />
+    );
 
   return (
     <AuthShell>
