@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.156.1 - Right day after midnight in Europe, special days under the arch - 2026-10-11
+
+### Fixed
+
+- **After midnight in summer time, Europe (and other places whose clock runs ahead of the sun) counted the previous day.** The day at the prayer location was read from its longitude, so in Sweden 00:00 to 01:00 (Spain up to 02:00) was treated as yesterday. That made the Home show the Monday/Thursday fast and the next Hijri date in the small hours of Sunday, and moved the tracking day forward before Fajr, so ʿIshāʾ prayed then could be counted on the wrong day. A location within 3 hours of the device's own time zone now always uses the device's calendar day; a saved city far away still uses its own day. Bangladesh was never affected (its clock matches the sun). Reported by a user in Sweden.
+
+### Changed
+
+- **Today's special days sit directly under the prayer arch** (both the compact strip and the detailed block), above the Musafir banner and the quick sections. Before, they came after the quick sections.
+
 ## v5.156.0 - No account until the email is confirmed - 2026-10-11
 
 ### Changed

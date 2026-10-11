@@ -828,6 +828,17 @@ export default function Home() {
           </Link>
         )}
 
+        {/* Today's special days sit directly under the arch, above everything else */}
+        {homeLayout === 'strip' && (
+          <TodayHighlights
+            variant="strip"
+            highlights={highlights}
+            days={todaySpecialDays}
+            fridayCountdown={fridayHour.countdown}
+          />
+        )}
+        {homeLayout === 'full' && specialBlock}
+
         {/* Musafir mode: the journey at a glance */}
         {musafir ? (
           <div className="mb-4">
@@ -912,16 +923,6 @@ export default function Home() {
             <FastingQuickCard key={s} excused={!!cycleActive} />
           )
         )}
-
-        {homeLayout === 'strip' && (
-          <TodayHighlights
-            variant="strip"
-            highlights={highlights}
-            days={todaySpecialDays}
-            fridayCountdown={fridayHour.countdown}
-          />
-        )}
-        {homeLayout === 'full' && specialBlock}
 
         {/* Today's goals: rows in their own order (Settings → Home) */}
         {goals.shown && (

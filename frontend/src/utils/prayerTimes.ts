@@ -44,18 +44,27 @@ export const PRAYER_META: PrayerInfo[] = [
  * device's actual timezone (e.g. a Bangladeshi phone with a Los Angeles
  * location set), that silently computes prayer times for the wrong
  * calendar day, producing nonsensical times (Fajr in the evening, etc).
- * We approximate the location's own calendar day from its longitude
+ * For such a far location we approximate its calendar day from its longitude
  * (15° ≈ 1 hour) and shift the instant so the device's local getters read
- * that day instead. This is a longitude-based approximation (no DST/political
- * timezone-boundary awareness) but is far more correct than using the
- * device's calendar day outright.
+ * that day instead. A location within 3 h of the device's zone keeps the
+ * device's own day (see below).
  */
-function calendarDateAtLocation(lng: number, date: Date): Date {
+export function calendarDateAtLocation(lng: number, date: Date): Date {
   const targetOffsetMin = Math.round(lng / 15) * 60;
   const systemOffsetMin = -date.getTimezoneOffset();
   const shiftMin = targetOffsetMin - systemOffsetMin;
+  // Within 3 h the location is (almost always) in the device's own zone: civil
+  // time runs ahead of solar time by DST and political zones (Sweden in
+  // summer +1 h, Spain +2 h, western China +3 h). Shifting there moved
+  // 00:00-01:00 in Stockholm back to the previous day: yesterday's Fajr made
+  // the tracking day jump ahead, yesterday's Maghrib made the Hijri date and
+  // the Monday/Thursday fast show a day early (Sweden report, 2026-10-11).
+  if (Math.abs(shiftMin) <= MAX_SAME_ZONE_DRIFT_MIN) return date;
   return new Date(date.getTime() + shiftMin * 60_000);
 }
+
+/** Largest gap between a zone's civil offset and its longitude's solar offset. */
+const MAX_SAME_ZONE_DRIFT_MIN = 180;
 
 export function calcPrayerTimes(
   lat: number,
