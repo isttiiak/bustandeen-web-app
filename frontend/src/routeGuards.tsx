@@ -3,10 +3,10 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
 import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-import { loadFirebase } from './authClient.js';
 import { BTN_PRIMARY, BTN_SECONDARY } from './components/bustanStyles.js';
 import { useAuthStore } from './store/useAuthStore.js';
 import { useAdminStore } from './store/useAdminStore.js';
+import { useVerificationEmail } from './hooks/useAuthEmails.js';
 import { demoTarget } from './utils/demoTarget.js';
 import Home from './pages/Home.js';
 
@@ -28,6 +28,7 @@ export function RouteFallback() {
 
 function VerifyEmailGate({ email }: { email: string | null }) {
   const { t } = useTranslation();
+  const sendVerification = useVerificationEmail();
   const [resent, setResent] = useState(false);
   const [resending, setResending] = useState(false);
 
@@ -35,12 +36,7 @@ function VerifyEmailGate({ email }: { email: string | null }) {
     if (resending) return;
     setResending(true);
     try {
-      const { auth, sendEmailVerification } = await loadFirebase();
-      if (!auth.currentUser) throw new Error('signed out');
-      await sendEmailVerification(auth.currentUser, {
-        url: 'https://bustandeen.com/auth/action',
-        handleCodeInApp: true,
-      });
+      await sendVerification.mutateAsync();
       setResent(true);
     } catch {
       /* non-fatal */
