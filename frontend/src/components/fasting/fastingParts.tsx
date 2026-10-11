@@ -33,12 +33,14 @@ export function friendlyDate(
 
 // ─── tiny pieces ──────────────────────────────────────────────────────────────
 
-export function RefLink({ r }: { r: FastingRef }) {
+/** `inline`: grade and source join the parent's flex row (so a sibling such
+ *  as "Learn more" can share the source's line) instead of their own box. */
+export function RefLink({ r, inline = false }: { r: FastingRef; inline?: boolean }) {
   const { i18n } = useTranslation();
   return (
-    <span className="inline-flex items-center gap-1.5 flex-wrap">
+    <span className={inline ? 'contents' : 'inline-flex items-center gap-1.5 flex-wrap'}>
       {r.grade && (
-        <span className="text-brand-emerald text-[10px] font-semibold bg-brand-emerald/10 px-1.5 py-0.5 rounded-full">
+        <span className="text-brand-emerald text-[11px] font-semibold bg-brand-emerald/10 px-2 py-0.5 rounded-full">
           {translateReference(r.grade, i18n.language)}
         </span>
       )}
@@ -46,7 +48,7 @@ export function RefLink({ r }: { r: FastingRef }) {
         href={r.url}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1 text-brand-gold text-[11px] underline underline-offset-2 hover:opacity-80 transition-opacity"
+        className="inline-flex items-center gap-1 text-brand-gold text-xs underline underline-offset-2 hover:opacity-80 transition-opacity"
       >
         {translateReference(r.source, i18n.language)}
         <ArrowTopRightOnSquareIcon className="w-3 h-3" aria-hidden="true" />
@@ -76,9 +78,9 @@ export function ManageProgress({
   finish.setDate(finish.getDate() + remaining);
   return (
     <div className="space-y-1">
-      <div className="flex justify-between items-baseline text-[11px]">
+      <div className="flex justify-between items-baseline text-xs">
         <span className="font-bold tabular-nums" style={{ color }}>
-          {done}/{target} <span className="text-white/60 font-semibold">({pct}%)</span>
+          {done}/{target} <span className="text-white/70 font-semibold">({pct}%)</span>
         </span>
         <span className={remaining === 0 ? 'text-brand-emerald font-bold' : 'text-white/70'}>
           {doneLabel}
@@ -92,7 +94,7 @@ export function ManageProgress({
           style={{ background: color }}
         />
       </div>
-      <div className="flex justify-between text-[10px] text-white/50">
+      <div className="flex justify-between text-[11px] text-white/70">
         <span>{extra ?? ''}</span>
         {remaining > 0 && (
           <span>
