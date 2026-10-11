@@ -74,7 +74,15 @@ function VerifyEmailView({ oobCode }: { oobCode: string }) {
 
   useEffect(() => {
     applyActionCode(auth, oobCode)
-      .then(() => {
+      .then(async () => {
+        // A signed-in account's token still says "unverified" until it is
+        // refreshed, and the server refuses unverified tokens.
+        try {
+          await auth.currentUser?.reload();
+          await auth.currentUser?.getIdToken(true);
+        } catch {
+          /* not signed in on this device: signing in later gets a fresh token */
+        }
         setStatus('success');
       })
       .catch(() => setStatus('error'));
@@ -86,13 +94,14 @@ function VerifyEmailView({ oobCode }: { oobCode: string }) {
       setCountdown((c) => {
         if (c <= 1) {
           clearInterval(id);
-          navigate('/');
+          // A full load, so the app picks up the now-verified account.
+          window.location.assign('/');
         }
         return c - 1;
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [status, navigate]);
+  }, [status]);
 
   return (
     <AuthShell>
@@ -123,7 +132,7 @@ function VerifyEmailView({ oobCode }: { oobCode: string }) {
           <Actions
             primary={{
               label: t('authAction.goToAppNow', 'Go to App Now'),
-              onClick: () => navigate('/'),
+              onClick: () => window.location.assign('/'),
             }}
           />
         </AuthHero>

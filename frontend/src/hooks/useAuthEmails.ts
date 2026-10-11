@@ -25,3 +25,46 @@ export function useVerificationEmail() {
     },
   });
 }
+
+export interface SignupStartInput {
+  firstName: string;
+  lastName: string;
+  email: string;
+  gender: 'male' | 'female';
+}
+
+/** Email-first sign-up step 1: emails a link; no account is created yet.
+ *  Same answer whether or not the email already has an account. */
+export function useSignupStart() {
+  return useMutation({
+    mutationFn: async (input: SignupStartInput) => {
+      await api.post('/api/auth/signup/start', { ...input, lang: emailLang() });
+    },
+  });
+}
+
+/** Whose sign-up a link finishes (the password page shows the email). A
+ *  mutation, not a query, so the token never lands in the persisted cache. */
+export function useSignupCheck() {
+  return useMutation({
+    mutationFn: async (token: string) => {
+      const res = await api.post<{ email: string; firstName: string }>('/api/auth/signup/check', {
+        token,
+      });
+      return res.data;
+    },
+  });
+}
+
+/** Step 2: creates the account (already verified) with the chosen password. */
+export function useSignupComplete() {
+  return useMutation({
+    mutationFn: async (input: { token: string; password: string }) => {
+      const res = await api.post<{ email: string; gender: 'male' | 'female' }>(
+        '/api/auth/signup/complete',
+        input
+      );
+      return res.data;
+    },
+  });
+}

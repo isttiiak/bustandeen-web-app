@@ -21,6 +21,7 @@ const Onboarding = lazy(() => import('./pages/Onboarding.js'));
 const AuthSignIn = lazy(() => import('./pages/AuthSignIn.js'));
 const AuthSignUp = lazy(() => import('./pages/AuthSignUp.js'));
 const AuthAction = lazy(() => import('./pages/AuthAction.js'));
+const AuthSignupComplete = lazy(() => import('./pages/AuthSignupComplete.js'));
 const Profile = lazy(() => import('./pages/Profile.js'));
 const SalatTracker = lazy(() => import('./pages/SalatTracker.js'));
 const SalatAnalytics = lazy(() => import('./pages/SalatAnalytics.js'));
@@ -434,6 +435,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route path="/login" element={<AuthSignIn />} />
       <Route path="/signup" element={<AuthSignUp />} />
       <Route path="/auth/action" element={<AuthAction />} />
+      <Route path="/signup/complete" element={<AuthSignupComplete />} />
       <Route path="/naseeh" element={<NaseehPage />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

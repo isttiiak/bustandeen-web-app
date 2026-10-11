@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.156.0 - No account until the email is confirmed - 2026-10-11
+
+### Changed
+
+- **Email sign-up now confirms the email first.** The sign-up form asks only for name, gender and email, then emails a link ("Finish sign-up", English or Bangla, works once, expires within 1 hour). The account is created only when that link is opened and a password chosen on bustandeen.com, and it is created already confirmed. Before, the form created the account at once and the confirmation came afterwards, so anyone could make accounts for addresses they did not own. Google sign-up is unchanged (Google emails are already confirmed).
+- **The sign-up form never reveals whether an email is registered.** A registered address gets a "you already have an account" email with a sign-in link instead of a sign-up link.
+- **Limits:** 5 sign-up requests per hour per network and 3 per address.
+
+### Security
+
+- **The server now refuses unconfirmed email/password accounts** (`email_not_verified`) on every protected route, and creates no database user for them. Only resending the confirmation email and deleting the account stay open to them. Before, only the screen blocked them; a script could still call the API.
+- **Confirming an email refreshes the session**, so a confirmed account is let in straight away.
+- `npm run cleanup:unverified` (dry run by default) lists older unconfirmed accounts. With `--apply` it deletes only those that never reached the app (no database user), after writing the list to a temp file.
+
 ## v5.155.0 - New Bustandeen logo - 2026-10-11
 
 ### Changed

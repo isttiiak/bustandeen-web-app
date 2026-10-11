@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { createUserWithEmailAndPassword, updateProfile, AuthError } from 'firebase/auth';
+import axios from 'axios';
 import { auth } from '../firebase.js';
-import { useVerificationEmail } from '../hooks/useAuthEmails.js';
+import {
+  type SignupStartInput,
+  useSignupStart,
+  useVerificationEmail,
+} from '../hooks/useAuthEmails.js';
 import { useSignInFlow } from '../utils/useSignInFlow.js';
 import SigningInOverlay from '../components/SigningInOverlay.js';
 import { useNavigate } from 'react-router';
@@ -21,8 +25,6 @@ import {
   INPUT_OK,
   LABEL,
   OrDivider,
-  PasswordField,
-  StrengthMeter,
   TEXT_ACTION,
 } from '../components/auth/authParts.js';
 import GoogleGlyph, { GOOGLE_BTN } from '../components/auth/GoogleGlyph.js';
@@ -57,6 +59,17 @@ function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim());
 }
 
+function signupStartError(err: unknown, t: Translator): string {
+  if (axios.isAxiosError(err) && err.response?.status === 429)
+    return t(
+      'authSignUp.errTooManyRequests',
+      'Too many attempts. Please wait a moment and try again.'
+    );
+  if (axios.isAxiosError(err) && !err.response)
+    return t('authSignUp.errNetwork', 'Network error. Check your connection and try again.');
+  return t('authSignUp.errGeneric', 'Account creation failed. Please try again.');
+}
+
 export default function AuthSignUp() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -66,9 +79,11 @@ export default function AuthSignUp() {
   const { loading, setLoading, google, signingIn } = useSignInFlow((code) =>
     setError(mapFirebaseError(code, t))
   );
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
-  const [confirmTouched, setConfirmTouched] = useState(false);
+  const signupStart = useSignupStart();
+  // Email-first sign-up: step 1 only emails a link; the account is created
+  // on /signup/complete once a password is chosen (AuthSignupComplete).
+  const [linkInput, setLinkInput] = useState<SignupStartInput | null>(null);
+  const [linkResent, setLinkResent] = useState(false);
   const [emailTouched, setEmailTouched] = useState(false);
   const [emailValue, setEmailValue] = useState('');
 
@@ -87,7 +102,6 @@ export default function AuthSignUp() {
     }
   }, [user, verificationSent]);
 
-  const confirmMismatch = confirmTouched && confirm !== password;
   const emailInvalid = emailTouched && emailValue.length > 0 && !isValidEmail(emailValue);
 
   const onGoogle = () => {
@@ -114,40 +128,26 @@ export default function AuthSignUp() {
       );
       return;
     }
-    if (password !== confirm) {
-      setError(t('authSignUp.errPasswordMismatch', 'Passwords do not match.'));
-      return;
-    }
-    if (password.length < 6) {
-      setError(t('authSignUp.errWeakPassword', 'Password must be at least 6 characters.'));
-      return;
-    }
 
     setLoading(true);
+    const input: SignupStartInput = { firstName, lastName, email, gender };
     try {
-      sessionStorage.setItem('bustandeen_pending_gender', gender);
-      const res = await createUserWithEmailAndPassword(auth, email, password);
-      const fullName = [firstName, lastName].filter(Boolean).join(' ');
-      if (fullName) {
-        try {
-          await updateProfile(res.user, { displayName: fullName });
-        } catch {
-          /* non-fatal */
-        }
-      }
-      // Our server sends the verification email (bustandeen.com/auth/action
-      // link, our wording) for the account that just signed in.
-      try {
-        await sendVerification.mutateAsync();
-      } catch {
-        /* non-fatal */
-      }
-      setVerificationEmail(email);
-      setVerificationSent(true);
-      setLoading(false);
+      await signupStart.mutateAsync(input);
+      setLinkInput(input);
     } catch (err) {
-      setError(mapFirebaseError((err as AuthError).code ?? '', t));
-      setLoading(false);
+      setError(signupStartError(err, t));
+    }
+    setLoading(false);
+  };
+
+  const resendLink = async () => {
+    if (!linkInput || signupStart.isPending) return;
+    setLinkResent(false);
+    try {
+      await signupStart.mutateAsync(linkInput);
+      setLinkResent(true);
+    } catch (err) {
+      setError(signupStartError(err, t));
     }
   };
 
@@ -180,8 +180,8 @@ export default function AuthSignUp() {
               <p className="text-brand-emerald font-semibold break-all mt-1">{verificationEmail}</p>
               <p className="text-white/70 text-xs mt-2">
                 {t(
-                  'authSignUp.verifyClickHint',
-                  'Click the link in the email to verify your address. You can use the app now. Some features require a verified email.'
+                  'authSignUp.verifyToContinue',
+                  'Click the link in the email to confirm your address. Your account opens once it is confirmed.'
                 )}
               </p>
             </>
@@ -205,13 +205,6 @@ export default function AuthSignUp() {
                   : t('app.resendVerification', 'Resend verification email')}
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              className={`${BTN_PRIMARY} w-full py-3`}
-            >
-              {t('authSignUp.continueToApp', 'Continue to App')}
-            </button>
             <p className="text-white/80 text-xs">
               {t('authSignUp.wrongEmail', 'Wrong email?')}{' '}
               <button
@@ -231,12 +224,69 @@ export default function AuthSignUp() {
     );
   }
 
+  // ── Sign-up link sent (email-first) ──────────────────────────────────────────
+  if (linkInput) {
+    return (
+      <AuthShell>
+        <AuthHero
+          icon={<EnvelopeIcon className="w-7 h-7" />}
+          titleAs="h1"
+          title={t('authSignUp.checkInbox', 'Check your inbox')}
+          subtitle={
+            <>
+              <p>
+                {t('authSignUp.linkSentTo', 'We sent a link to finish creating your account to')}
+              </p>
+              <p className="text-brand-emerald font-semibold break-all mt-1">{linkInput.email}</p>
+              <p className="text-white/70 text-xs mt-2">
+                {t(
+                  'authSignUp.linkSentHint',
+                  'Open it and choose your password. The link works once and expires within 1 hour. Your account is created only after that.'
+                )}
+              </p>
+            </>
+          }
+        >
+          <div className="mt-6 space-y-4">
+            {error && <ErrorNote>{error}</ErrorNote>}
+            {linkResent ? (
+              <p className="flex items-center justify-center gap-2 text-brand-emerald text-sm">
+                <CheckCircleIcon className="w-4 h-4" />
+                {t('authSignUp.linkResent', 'A new link is on its way.')}
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void resendLink()}
+                disabled={signupStart.isPending}
+                className={`${TEXT_ACTION} text-sm disabled:opacity-50`}
+              >
+                {signupStart.isPending
+                  ? t('authSignUp.sending', 'Sending…')
+                  : t('authSignIn.sendAgain', 'Send again')}
+              </button>
+            )}
+            <p className="text-white/80 text-xs">
+              {t('authSignUp.wrongEmail', 'Wrong email?')}{' '}
+              <button
+                type="button"
+                className={TEXT_ACTION}
+                onClick={() => {
+                  setLinkInput(null);
+                  setLinkResent(false);
+                  setError('');
+                }}
+              >
+                {t('authSignUp.goBack', 'Go back')}
+              </button>
+            </p>
+          </div>
+        </AuthHero>
+      </AuthShell>
+    );
+  }
+
   // ── Sign-up form ─────────────────────────────────────────────────────────────
-  const confirmState = confirmMismatch
-    ? 'bad'
-    : confirmTouched && confirm && confirm === password
-      ? 'ok'
-      : undefined;
   return (
     <AuthShell>
       <SigningInOverlay show={signingIn} />
@@ -357,60 +407,15 @@ export default function AuthSignUp() {
             )}
           </div>
 
-          <div className="space-y-1.5">
-            <label htmlFor="signup-password" className={LABEL}>
-              {t('authSignIn.password', 'Password')}
-            </label>
-            <PasswordField
-              id="signup-password"
-              name="password"
-              autoComplete="new-password"
-              placeholder={t('authSignUp.passwordPlaceholder', 'Create a strong password')}
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (error) setError('');
-              }}
-              required
-            />
-            <StrengthMeter password={password} />
-          </div>
-
-          <div className="space-y-1.5">
-            <label htmlFor="signup-confirm" className={LABEL}>
-              {t('authSignUp.confirmPassword', 'Confirm Password')}
-            </label>
-            <PasswordField
-              id="signup-confirm"
-              name="confirmPassword"
-              autoComplete="new-password"
-              placeholder={t('authSignUp.confirmPasswordPlaceholder', 'Repeat your password')}
-              value={confirm}
-              onChange={(e) => {
-                setConfirm(e.target.value);
-                if (error) setError('');
-              }}
-              onBlur={() => setConfirmTouched(true)}
-              state={confirmState}
-              aria-invalid={confirmMismatch || undefined}
-              required
-            />
-            {confirmMismatch && (
-              <p className="text-xs text-red-400">
-                {t('authSignUp.errPasswordMismatch', 'Passwords do not match.')}
-              </p>
-            )}
-          </div>
-
           <button
             type="submit"
-            disabled={loading || confirmMismatch || emailInvalid}
+            disabled={loading || emailInvalid}
             className={`${BTN_PRIMARY} w-full py-3`}
           >
             {loading ? (
               <span className="loading loading-spinner loading-md" />
             ) : (
-              t('authSignUp.createAccount', 'Create Account')
+              t('authSignUp.sendLink', 'Continue with email')
             )}
           </button>
         </form>

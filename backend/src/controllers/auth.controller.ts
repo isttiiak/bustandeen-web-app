@@ -5,13 +5,20 @@ import {
   decodeUnverifiedJwt,
 } from '../config/firebaseAdmin.js';
 import User from '../models/User.js';
-import { isAdminEmail } from '../middleware/auth.js';
+import { isAdminEmail, isUnverifiedPasswordAccount } from '../middleware/auth.js';
 import { toClientUser } from '../services/user.service.js';
 import {
   AuthEmailError,
   sendPasswordReset,
   sendVerification,
 } from '../services/authEmail.service.js';
+import {
+  SignupError,
+  checkSignup,
+  completeSignup,
+  startSignup,
+  type StartSignupInput,
+} from '../services/signup.service.js';
 
 export const verifyHandler = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -28,6 +35,12 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
 
     if (isFirebaseInitialized()) {
       decoded = (await verifyFirebaseToken(idToken)) as unknown as Record<string, unknown>;
+      // No database user for an unconfirmed email/password account (the
+      // client skips this call until the email is confirmed).
+      if (isUnverifiedPasswordAccount(decoded)) {
+        res.status(403).json({ ok: false, error: 'email_not_verified' });
+        return;
+      }
     } else if (process.env.NODE_ENV !== 'production' && process.env.DEV_AUTH_BYPASS === '1') {
       const payload = decodeUnverifiedJwt(idToken);
       if (!payload?.['uid']) {
@@ -133,5 +146,54 @@ export const sendVerificationHandler = async (
       return;
     }
     next(err);
+  }
+};
+
+const sendSignupError = (err: unknown, res: Response, next: NextFunction): void => {
+  if (err instanceof SignupError) {
+    res.status(err.status).json({ ok: false, error: err.message });
+    return;
+  }
+  next(err);
+};
+
+/** POST /api/auth/signup/start — same answer for new and registered emails. */
+export const signupStartHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    await startSignup(req.body as StartSignupInput);
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/** POST /api/auth/signup/check — the password page asks whose link this is. */
+export const signupCheckHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    res.json({ ok: true, ...(await checkSignup((req.body as { token: string }).token)) });
+  } catch (err) {
+    sendSignupError(err, res, next);
+  }
+};
+
+/** POST /api/auth/signup/complete — creates the verified account. */
+export const signupCompleteHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { token, password } = req.body as { token: string; password: string };
+    res.json({ ok: true, ...(await completeSignup(token, password)) });
+  } catch (err) {
+    sendSignupError(err, res, next);
   }
 };
