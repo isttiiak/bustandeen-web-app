@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.158.2 - Security policy enforced on the website - 2026-10-12
+
+### Security
+
+- **The website's Content-Security-Policy is now enforced** (audit T1.3b), after running in report-only mode since v5.62.0. Pages may load scripts, styles, fonts, images, audio and connections only from the sources the app actually uses. Anything else is blocked and reported (origins only, daily counts in Admin, Ops health).
+- Reviewed before switching, 9-11 Oct: the only report from the live site came from the celebration confetti, which drew in a background worker built from a `blob:` address. It now draws on the page itself, so the policy stays strict (`worker-src 'self'`). The other reports were the Vercel preview toolbar, a browser extension and preview builds.
+- Removed the inline-script hash kept for pages cached before v5.87.0.
+- The npm audit exception for node-forge (reached only through firebase-admin 12, used only to read our own key) is reviewed again and moved to 15 Jan 2027. firebase-admin 13.10 no longer needs node-forge; trying it on a preview is the next step.
+
 ## v5.158.1 - Old API routes removed - 2026-10-11
 
 ### Removed

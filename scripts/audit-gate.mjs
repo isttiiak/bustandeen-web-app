@@ -17,10 +17,13 @@ const EXCEPTIONS = [
     via: ['firebase-admin', 'node-forge'],
     reason:
       'firebase-admin 12 calls node-forge only to parse our own service-account key ' +
-      '(pki.privateKeyFromPem, app/credential-internal.js); it never verifies a ' +
-      'signature with it. The fix is firebase-admin 14, which crashed the Vercel ' +
-      'function on 2026-09-20 (see .github/dependabot.yml).',
-    reviewBy: '2026-11-01',
+      '(pki.privateKeyFromPem, app/credential-internal.js, re-checked 2026-10-12); ' +
+      'it never verifies a signature with it. No node-forge release fixes it (1.4.0 ' +
+      'is the latest). firebase-admin 13.10.0+ no longer depends on node-forge (14 ' +
+      'crashed the Vercel function on 2026-09-20, see .github/dependabot.yml); ' +
+      'Istiak kept 12 over his break (2026-10-12), so the upgrade to 13.10 on a ' +
+      'Vercel preview is the next step.',
+    reviewBy: '2027-01-15',
   },
 ];
 

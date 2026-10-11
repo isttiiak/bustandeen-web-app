@@ -162,8 +162,8 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
   );
 }
 
-/** CSP reports per UTC day, origins only (audit T1.3b): reviewed for a week
- *  before the Report-Only header in vercel.json is switched to enforcing. */
+/** CSP reports per UTC day, origins only (audit T1.3b). Enforced since
+ *  v5.158.2: a legitimate source listed here is being blocked. */
 function CspSection({ report }: { report: CspViolationReport }) {
   const { t } = useTranslation();
   const total = report.daily.reduce((sum, d) => sum + d.count, 0);
@@ -176,7 +176,7 @@ function CspSection({ report }: { report: CspViolationReport }) {
         <p className="text-white/70 text-xs leading-relaxed">
           {t(
             'adminOpsHealth.cspDesc',
-            'Counted per day from {{since}}, origins only (kept 30 days). The policy is still Report-Only: anything legitimate here must be allowed in vercel.json before enforcing.',
+            'Counted per day from {{since}}, origins only (kept 30 days). The policy is enforced: anything legitimate here is being blocked and must be allowed in vercel.json. vercel.live (preview toolbar) and browser extensions can be ignored.',
             { since: report.sinceDay }
           )}
         </p>
