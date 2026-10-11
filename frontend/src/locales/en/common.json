@@ -282,6 +282,8 @@
     "orContinueWithEmail": "or continue with email",
     "password": "Password",
     "resetLinkSentTo": "We sent a password reset link to",
+    "resetLinkSentIfAccount": "If an account uses this email, a password reset link is on its way to",
+    "resetLinkExpiry": "The link works once and expires within 1 hour.",
     "resetPassword": "Reset your password",
     "resetPasswordDesc": "Enter your account email and we'll send you a link to reset your password.",
     "sendAgain": "Send again",
@@ -1584,7 +1586,7 @@
         "zoho": {
           "name": "Zoho Mail",
           "why": "Sending our emails.",
-          "receives": "Your email address and the email we send you (welcome, replies, donation status)."
+          "receives": "Your email address and the email we send you (welcome, password reset and email confirmation links, replies, donation status)."
         },
         "quran": {
           "name": "alquran.cloud, Islamic Network, mp3quran",

@@ -1,4 +1,5 @@
 import admin from 'firebase-admin';
+import { brandedActionLink } from '../utils/authActionLink.js';
 import AdminAccount, { AdminRole, AnsarDomain, IAdminAccount } from '../models/AdminAccount.js';
 import { isFirebaseInitialized } from '../config/firebaseAdmin.js';
 import { sendMail } from './email.service.js';
@@ -299,20 +300,9 @@ export interface PasswordResetLinker {
   getUserByEmail(email: string): Promise<{ disabled: boolean }>;
 }
 
-const APP_URL = 'https://bustandeen.com';
-
-/**
- * Firebase's link opens its own page on ihsan-9e89b.firebaseapp.com. Keep
- * only the one-time code and send the admin to the app's branded reset page
- * (pages/AuthAction.tsx, the same one users' reset emails use); next=admin
- * returns them to the admin sign-in afterwards.
- */
-export const brandedAdminResetLink = (firebaseLink: string): string => {
-  const oobCode = new URL(firebaseLink).searchParams.get('oobCode');
-  if (!oobCode) return firebaseLink;
-  const params = new URLSearchParams({ mode: 'resetPassword', oobCode, next: 'admin' });
-  return `${APP_URL}/auth/action?${params.toString()}`;
-};
+/** Admin reset links open the branded page and return to the admin sign-in. */
+export const brandedAdminResetLink = (firebaseLink: string): string =>
+  brandedActionLink(firebaseLink, 'resetPassword', 'admin');
 
 /** Firebase's default reset-link lifetime (Authentication > Templates). */
 export const ADMIN_RESET_LINK_NOTE =

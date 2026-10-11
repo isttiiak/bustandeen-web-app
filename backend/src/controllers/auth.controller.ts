@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import {
   verifyFirebaseToken,
   isFirebaseInitialized,
@@ -7,6 +7,11 @@ import {
 import User from '../models/User.js';
 import { isAdminEmail } from '../middleware/auth.js';
 import { toClientUser } from '../services/user.service.js';
+import {
+  AuthEmailError,
+  sendPasswordReset,
+  sendVerification,
+} from '../services/authEmail.service.js';
 
 export const verifyHandler = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -93,5 +98,40 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
       console.error('/api/auth/verify error:', code, message);
     }
     res.status(401).json({ ok: false, error: 'Invalid token', code, message });
+  }
+};
+
+/** POST /api/auth/password-reset — always the same answer, so it never tells
+ *  anyone whether an email has an account. */
+export const passwordResetHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email, lang } = req.body as { email: string; lang: 'en' | 'bn' };
+    await sendPasswordReset(email, lang);
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/** POST /api/auth/send-verification — the signed-in user's own email only. */
+export const sendVerificationHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { lang } = req.body as { lang: 'en' | 'bn' };
+    await sendVerification(req.user?.email, lang);
+    res.json({ ok: true });
+  } catch (err) {
+    if (err instanceof AuthEmailError) {
+      res.status(err.status).json({ ok: false, error: err.message });
+      return;
+    }
+    next(err);
   }
 };

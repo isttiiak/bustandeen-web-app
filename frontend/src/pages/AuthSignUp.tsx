@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-  sendEmailVerification,
-  AuthError,
-} from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile, AuthError } from 'firebase/auth';
 import { auth } from '../firebase.js';
+import { useVerificationEmail } from '../hooks/useAuthEmails.js';
 import { useSignInFlow } from '../utils/useSignInFlow.js';
 import SigningInOverlay from '../components/SigningInOverlay.js';
 import { useNavigate } from 'react-router';
@@ -65,6 +61,7 @@ export default function AuthSignUp() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const sendVerification = useVerificationEmail();
   const [error, setError] = useState('');
   const { loading, setLoading, google, signingIn } = useSignInFlow((code) =>
     setError(mapFirebaseError(code, t))
@@ -138,15 +135,10 @@ export default function AuthSignUp() {
           /* non-fatal */
         }
       }
-      // Send verification email — redirect to home after verification
+      // Our server sends the verification email (bustandeen.com/auth/action
+      // link, our wording) for the account that just signed in.
       try {
-        // handleCodeInApp:true makes Firebase's intermediate page immediately
-        // redirect to our branded /auth/action with mode+oobCode still in the URL,
-        // so the user never sees Firebase's generic action page.
-        await sendEmailVerification(res.user, {
-          url: 'https://bustandeen.com/auth/action',
-          handleCodeInApp: true,
-        });
+        await sendVerification.mutateAsync();
       } catch {
         /* non-fatal */
       }
@@ -164,12 +156,8 @@ export default function AuthSignUp() {
     setResendLoading(true);
     setResendSuccess(false);
     try {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        await sendEmailVerification(currentUser, {
-          url: 'https://bustandeen.com/auth/action',
-          handleCodeInApp: true,
-        });
+      if (auth.currentUser) {
+        await sendVerification.mutateAsync();
         setResendSuccess(true);
       }
     } catch {
