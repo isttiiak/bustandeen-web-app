@@ -5,8 +5,8 @@
 import { calcPrayerTimes } from './prayerTimes.js';
 import {
   clampOffset,
-  resolveHijriOffset,
-  type HijriOffsetSource,
+  resolveHijriDay,
+  type HijriDaySource,
   type MoonSightingRecord,
 } from './hijriOffset.js';
 import i18n from '../i18n.js';
@@ -527,9 +527,10 @@ const HIJRI_MONTH_NAMES = [
 // month a day earlier or later (Bangladesh is frequently a day behind).
 // T4.1: in this order, the first that applies wins (all on-device):
 //   1. the user's own offset (Settings: -1, 0, +1 days);
-//   2. "Automatic": their country's moon-sighting record in force on that
-//      date, set by the admin from the national committee's announcement;
-//   3. 0 (plain Umm al-Qura): no guessed default (Istiak, T4.1).
+//   2. "Automatic": their country's month-start records ("Ramadan 1448 began
+//      on 9 Feb in BD"), entered by the admin from the national committee's
+//      announcement (rule in hijriOffset.ts resolveHijriDay);
+//   3. plain Umm al-Qura: no guessed default (Istiak, T4.1).
 
 const HIJRI_ADJUSTMENT_KEY = 'bustandeen_hijri_offset';
 /** '1' = the user picked their own offset; '0' = Automatic. Absent on devices
@@ -540,11 +541,7 @@ export const MOON_SIGHTING_KEY = 'bustandeen_moon_sighting';
 /** ISO country used for Automatic: profile country, else the time zone's */
 export const HIJRI_COUNTRY_KEY = 'bustandeen_hijri_country';
 
-export {
-  resolveHijriOffset,
-  type HijriOffsetSource,
-  type MoonSightingRecord,
-} from './hijriOffset.js';
+export { resolveHijriDay, type HijriDaySource, type MoonSightingRecord } from './hijriOffset.js';
 
 /** Local YYYY-MM-DD of a Date (the device's calendar day). */
 function localDay(d: Date): string {
@@ -574,17 +571,19 @@ export function readMoonSightingCache(): MoonSightingRecord[] {
       (r): r is MoonSightingRecord =>
         !!r &&
         typeof r.country === 'string' &&
-        typeof r.effectiveFrom === 'string' &&
-        typeof r.offset === 'number'
+        typeof r.startDate === 'string' &&
+        /^\d{4}-\d{2}-\d{2}$/.test(r.startDate) &&
+        typeof r.hijriYear === 'number' &&
+        typeof r.hijriMonth === 'number'
     );
   } catch {
     return [];
   }
 }
 
-/** The offset in force on `date`, and where it comes from. */
-export function getHijriOffsetSource(date: Date = new Date()): HijriOffsetSource {
-  return resolveHijriOffset({
+/** The Hijri date of `date`'s calendar day, and where it comes from. */
+export function getHijriOffsetSource(date: Date = new Date()): HijriDaySource {
+  return resolveHijriDay({
     manual: isHijriManual(),
     userOffset: readUserOffset(),
     country: localStorage.getItem(HIJRI_COUNTRY_KEY),
@@ -616,11 +615,21 @@ export function syncHijriFromServer(offset: number, manual: boolean | undefined)
 }
 
 export function getHijriDate(date: Date = new Date()): HijriDate | null {
-  return hijriDateWithOffset(date, getHijriAdjustment(date));
+  try {
+    const { hijri } = getHijriOffsetSource(date);
+    if (!hijri.year || !hijri.month || !hijri.day) return null;
+    return {
+      ...hijri,
+      monthName: HIJRI_MONTH_NAMES[hijri.month - 1] ?? '',
+      weekday: date.getDay(),
+    };
+  } catch {
+    return null;
+  }
 }
 
 /** Umm al-Qura date of `date` shifted by an explicit `offset` in days, ignoring
- * every setting (the admin preview uses it). */
+ * every setting. */
 export function hijriDateWithOffset(date: Date, offset: number): HijriDate | null {
   try {
     const adjusted = new Date(date.getTime() + offset * 86_400_000);

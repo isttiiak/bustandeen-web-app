@@ -12,11 +12,14 @@ const district = BD_DISTRICTS.find((d) => d.citySlug === 'dhaka-bangladesh')!;
 // Umm al-Qura: 1 Ramadan 1448 = 8 Feb 2027, 29 Ramadan = 8 Mar 2027.
 const HY = 1448;
 
-const rec = (effectiveFrom: string, offset: number, country = 'BD'): MoonSightingRecord => ({
-  id: effectiveFrom,
+const rec = (hijriMonth: number, startDate: string, country = 'BD'): MoonSightingRecord => ({
+  id: `${country}-${hijriMonth}`,
   country,
-  effectiveFrom,
-  offset,
+  hijriYear: HY,
+  hijriMonth,
+  startDate,
+  effectiveFrom: startDate,
+  offset: 0,
   note: '',
 });
 
@@ -46,38 +49,41 @@ describe('ramadanPlan', () => {
   });
 
   it("follows the committee's announced start (a day after Umm al-Qura)", () => {
-    const plan = ramadanPlan(dhaka, HY, [rec('2027-02-08', -1)]);
+    const plan = ramadanPlan(dhaka, HY, [rec(9, '2027-02-09')]);
     expect(plan.days[0].date).toBe('2027-02-09');
     expect(plan.days).toHaveLength(29);
-    expect(plan.startRecord?.effectiveFrom).toBe('2027-02-08');
+    expect(plan.startRecord?.startDate).toBe('2027-02-09');
+    expect(plan.endSettled).toBe(false);
     expect(plan.possible30?.date).toBe('2027-03-10');
   });
 
-  it('also when the record starts on the announced day itself', () => {
-    const plan = ramadanPlan(dhaka, HY, [rec('2027-02-09', -1)]);
-    expect(plan.days[0].date).toBe('2027-02-09');
-    expect(plan.days).toHaveLength(29);
-    expect(plan.startRecord?.effectiveFrom).toBe('2027-02-09');
-    expect(plan.possible30?.date).toBe('2027-03-10');
-  });
-
-  it('applies an older record but does not call it an announcement', () => {
-    const plan = ramadanPlan(dhaka, HY, [rec('2027-01-09', -1)]);
+  it("an older month's record moves the dates but is not this Ramadan's announcement", () => {
+    const plan = ramadanPlan(dhaka, HY, [rec(8, '2027-01-10')]);
+    // Sha'ban began 10 Jan: day 30 = 8 Feb, Ramadan from 9 Feb (forecast)
     expect(plan.days[0].date).toBe('2027-02-09');
     expect(plan.startRecord).toBeUndefined();
   });
 
-  it('a Shawwal record settles the length (no possible 30th fast)', () => {
-    const plan = ramadanPlan(dhaka, HY, [rec('2027-02-08', -1), rec('2027-03-10', 0)]);
-    // Eid on 10 Mar: 29 fasts, 9 Feb to 9 Mar.
+  it('a 29-day Shawwal record settles the length (no possible 30th fast)', () => {
+    const plan = ramadanPlan(dhaka, HY, [rec(9, '2027-02-09'), rec(10, '2027-03-10')]);
     expect(plan.days[0].date).toBe('2027-02-09');
     expect(plan.days[plan.days.length - 1].date).toBe('2027-03-09');
+    expect(plan.days).toHaveLength(29);
+    expect(plan.endSettled).toBe(true);
+    expect(plan.possible30).toBeUndefined();
+  });
+
+  it('a 30-day Ramadan after a 29-day Umm al-Qura one: 30 fasts, 9 Feb to 10 Mar', () => {
+    const plan = ramadanPlan(dhaka, HY, [rec(9, '2027-02-09'), rec(10, '2027-03-11')]);
+    expect(plan.days).toHaveLength(30);
+    expect(plan.days[0].date).toBe('2027-02-09');
+    expect(plan.days[29]).toMatchObject({ date: '2027-03-10', fast: 30 });
     expect(plan.endSettled).toBe(true);
     expect(plan.possible30).toBeUndefined();
   });
 
   it("ignores other countries' records", () => {
-    const plan = ramadanPlan(dhaka, HY, [rec('2027-02-07', 1, 'PK')]);
+    const plan = ramadanPlan(dhaka, HY, [rec(9, '2027-02-07', 'PK')]);
     expect(plan.days[0].date).toBe('2027-02-08');
     expect(plan.startRecord).toBeUndefined();
   });
@@ -107,7 +113,7 @@ describe('BdRamadanPage', () => {
   });
 
   it('names the announced start once a record exists', () => {
-    const html = render([{ ...rec('2027-02-09', -1), sourceUrl: 'https://example.org/a' }]);
+    const html = render([{ ...rec(9, '2027-02-09'), sourceUrl: 'https://example.org/a' }]);
     expect(html).toContain('জাতীয় চাঁদ দেখা কমিটির ঘোষণা অনুযায়ী বাংলাদেশে প্রথম রোজা');
     expect(html).toContain('https://example.org/a');
     expect(html).not.toContain('এক দিন পরেও');

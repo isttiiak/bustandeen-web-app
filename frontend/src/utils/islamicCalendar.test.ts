@@ -12,7 +12,6 @@ import {
   setHijriAdjustment,
   setHijriAutomatic,
   getHijriOffsetSource,
-  resolveHijriOffset,
   syncHijriFromServer,
   HIJRI_COUNTRY_KEY,
   MOON_SIGHTING_KEY,
@@ -80,11 +79,14 @@ describe('getHijriDate (Umm al-Qura)', () => {
     expect(getHijriDate(noon('2026-03-19'))!.weekday).toBe(4); // Thursday
   });
 
-  it('returns null if the platform cannot format the calendar', () => {
+  it('returns null if the platform cannot format the calendar', async () => {
+    // A fresh module: the Umm al-Qura formatter is created once and cached
+    vi.resetModules();
     vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(() => {
       throw new RangeError('no islamic-umalqura');
     });
-    expect(getHijriDate(noon('2026-03-20'))).toBeNull();
+    const fresh = await import('./islamicCalendar.js');
+    expect(fresh.getHijriDate(noon('2026-03-20'))).toBeNull();
     vi.restoreAllMocks();
   });
 });
@@ -113,64 +115,26 @@ describe('Hijri adjustment setting', () => {
   });
 });
 
-// T4.1: the user's own offset, else the country's moon-sighting record in
-// force on that day, else 0. Records here are test fixtures, not real
-// committee decisions.
+// T4.1: the user's own offset, else the country's month-start records, else
+// plain Umm al-Qura (the rule itself is tested in hijriOffset.test.ts).
+// Records here are test fixtures, not real committee decisions.
 describe('moon-sighting override (T4.1)', () => {
-  const rec = (country: string, effectiveFrom: string, offset: number): MoonSightingRecord => ({
-    id: `${country}-${effectiveFrom}`,
+  const rec = (country: string, hijriMonth: number, startDate: string): MoonSightingRecord => ({
+    id: `${country}-${hijriMonth}`,
     country,
-    effectiveFrom,
-    offset,
+    hijriYear: 1448,
+    hijriMonth,
+    startDate,
+    effectiveFrom: startDate,
+    offset: 0,
     note: 'fixture',
   });
+  // Bangladesh: Ramadan 1448 a day after Umm al-Qura, 30 days; Pakistan a day early
   const RECORDS = [
-    rec('BD', '2027-02-08', -1),
-    rec('BD', '2027-03-10', 0),
-    rec('PK', '2027-02-08', 1),
+    rec('BD', 9, '2027-02-09'),
+    rec('BD', 10, '2027-03-11'),
+    rec('PK', 9, '2027-02-07'),
   ];
-  const base = { manual: false, userOffset: 0, country: 'BD', records: RECORDS };
-
-  it('the record in force applies from its date until the next one', () => {
-    expect(resolveHijriOffset({ ...base, day: '2027-02-07' })).toMatchObject({
-      offset: 0,
-      source: 'none',
-    });
-    expect(resolveHijriOffset({ ...base, day: '2027-02-08' })).toMatchObject({
-      offset: -1,
-      source: 'country',
-    });
-    expect(resolveHijriOffset({ ...base, day: '2027-03-09' }).offset).toBe(-1);
-    expect(resolveHijriOffset({ ...base, day: '2027-03-10' })).toMatchObject({
-      offset: 0,
-      source: 'country',
-    });
-  });
-
-  it('only the device country counts; no country means no override', () => {
-    expect(resolveHijriOffset({ ...base, country: 'PK', day: '2027-02-20' }).offset).toBe(1);
-    expect(resolveHijriOffset({ ...base, country: 'IN', day: '2027-02-20' })).toMatchObject({
-      offset: 0,
-      source: 'none',
-    });
-    expect(resolveHijriOffset({ ...base, country: null, day: '2027-02-20' }).source).toBe('none');
-  });
-
-  it("the user's own choice wins, even 0", () => {
-    expect(
-      resolveHijriOffset({ ...base, manual: true, userOffset: 0, day: '2027-02-20' })
-    ).toMatchObject({ offset: 0, source: 'manual' });
-    expect(
-      resolveHijriOffset({ ...base, manual: true, userOffset: 1, day: '2027-02-20' }).offset
-    ).toBe(1);
-  });
-
-  it('a record out of range is clamped, never applied as is', () => {
-    expect(
-      resolveHijriOffset({ ...base, records: [rec('BD', '2027-01-01', 3)], day: '2027-02-01' })
-        .offset
-    ).toBe(0);
-  });
 
   it('devices from before T4.1: a non-zero offset counts as chosen, 0 follows the country', () => {
     store.setItem(MOON_SIGHTING_KEY, JSON.stringify(RECORDS));
@@ -204,6 +168,42 @@ describe('moon-sighting override (T4.1)', () => {
     expect(getHijriDate(noon('2027-02-09'))).toMatchObject({ day: 1, month: 9, year: 1448 });
     store.setItem(HIJRI_COUNTRY_KEY, 'SA');
     expect(getHijriDate(noon('2027-02-08'))).toMatchObject({ day: 1, month: 9, year: 1448 });
+  });
+
+  it('a 30-day Ramadan after a 29-day Umm al-Qura one: the 30th is a fast, Eid the day after', async () => {
+    store.setItem(MOON_SIGHTING_KEY, JSON.stringify(RECORDS));
+    store.setItem(HIJRI_COUNTRY_KEY, 'BD');
+    const { getDayRuling } = await import('./fastingRules.js');
+    expect(getHijriDate(noon('2027-03-10'))).toMatchObject({ day: 30, month: 9, year: 1448 });
+    expect(getDayRuling(noon('2027-03-10')).level).toBe('ramadan');
+    expect(getHijriDate(noon('2027-03-11'))).toMatchObject({ day: 1, month: 10, year: 1448 });
+    expect(getDayRuling(noon('2027-03-11'))).toMatchObject({
+      level: 'haram',
+      haram: { id: 'eid_fitr' },
+    });
+    // Umm al-Qura's Eid (9 Mar) is the 29th fast in Bangladesh
+    expect(getDayRuling(noon('2027-03-09')).level).toBe('ramadan');
+  });
+
+  it("Pakistan's early start: 1 Ramadan on 7 Feb", () => {
+    store.setItem(MOON_SIGHTING_KEY, JSON.stringify(RECORDS));
+    store.setItem(HIJRI_COUNTRY_KEY, 'PK');
+    expect(getHijriDate(noon('2027-02-07'))).toMatchObject({ day: 1, month: 9 });
+    expect(getHijriOffsetSource(noon('2027-02-07'))).toMatchObject({
+      offset: 1,
+      source: 'country',
+    });
+  });
+
+  it('old-shape cached records (before v5.157.0) are ignored, not misread', () => {
+    store.setItem(
+      MOON_SIGHTING_KEY,
+      JSON.stringify([
+        { id: 'x', country: 'BD', effectiveFrom: '2027-02-08', offset: -1, note: '' },
+      ])
+    );
+    store.setItem(HIJRI_COUNTRY_KEY, 'BD');
+    expect(getHijriDate(noon('2027-02-08'))).toMatchObject({ day: 1, month: 9 });
   });
 
   it('a broken cache never breaks the date', () => {
@@ -338,11 +338,14 @@ describe('getTodaySpecialDays', () => {
     expect(ids()).toEqual(['friday', 'eid_fitr']);
   });
 
-  it('still returns weekly days when the Hijri date is unavailable', () => {
+  it('still returns weekly days when the Hijri date is unavailable', async () => {
+    // A fresh module: the Umm al-Qura formatter is created once and cached
+    vi.resetModules();
     vi.spyOn(Intl, 'DateTimeFormat').mockImplementation(() => {
       throw new RangeError('no islamic-umalqura');
     });
-    expect(ids(noon('2026-03-20'))).toEqual(['friday']);
+    const fresh = await import('./islamicCalendar.js');
+    expect(fresh.getTodaySpecialDays(noon('2026-03-20')).map((d) => d.id)).toEqual(['friday']);
     vi.restoreAllMocks();
   });
 });

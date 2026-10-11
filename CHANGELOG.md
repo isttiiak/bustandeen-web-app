@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.157.0 - Moon sighting by month start (a 30th day of Ramadan can show) - 2026-10-11
+
+### Changed
+
+- **Moon-sighting records now say when a month began** ("Ramadan 1448 began on 9 Feb 2027 in Bangladesh"), as the national committee announces it, instead of shifting the Umm al-Qura date by a day. A Hijri month has 29 or 30 days and starts on the announced sighting. A shift could not show a 30th day when Umm al-Qura's month has only 29. Ramadan 1448 may be exactly that: Umm al-Qura's Eid is 9 Mar 2027; if Bangladesh starts on 9 Feb and fasts 30 days, 10 Mar must read "30 Ramaḍān" (a fasting day). Before, it read "1 Shawwāl" (Eid), whatever the record said. On Automatic, the app now:
+  - counts each announced month from its first day: days 1 to 29, and day 30 when the next month's announcement comes later;
+  - shows the day before a late start as the last day of the previous month, never an early "1 Ramaḍān" (before, a record entered from the announced first day left Umm al-Qura's 1st showing a day early);
+  - between announcements, follows Umm al-Qura shifted like the latest record (a forecast, as before);
+  - shows plain Umm al-Qura where no record exists (unchanged). A user's own offset still wins.
+- **Admin, Moon sighting:** pick the Hijri month and year, then the date its 1st fell on in that country. The form shows how far that is from Umm al-Qura and previews the resulting Hijri dates. The server refuses a start more than 2 days from Umm al-Qura's 1st, a second record for the same month (deactivate the old one first) and a month that would not have 29 or 30 days next to its neighbours.
+- **Settings, Hijri date:** Automatic shows the announced month's start and how far it is from Umm al-Qura (now also "two days after/before").
+- **Prerendered Ramadan calendars** (Bangladesh districts) use the same rule: 30 fasts once Shawwāl is announced after a 30-day month. Without records every page is byte-identical to before (all 4,440 Ramadan pages compared).
+- App builds from before this version still read the records through derived fields (shift and its first day). They can shift by only one day, so a 30th day after a 29-day Umm al-Qura month stays wrong on them.
+
 ## v5.156.1 - Right day after midnight in Europe, special days under the arch - 2026-10-11
 
 ### Fixed

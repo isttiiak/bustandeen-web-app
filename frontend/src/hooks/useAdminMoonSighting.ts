@@ -1,12 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 
-/** A national moon-sighting record as the Servant sees it (T4.1). */
+/** A national month-start record as the admin sees it (T4.1). */
 export interface AdminMoonSighting {
   _id: string;
   country: string;
-  effectiveFrom: string;
-  offset: number;
+  hijriYear: number;
+  hijriMonth: number;
+  startDate: string;
   note: string;
   sourceUrl?: string;
   active: boolean;
@@ -18,8 +19,9 @@ export interface AdminMoonSighting {
 
 export interface NewMoonSighting {
   country: string;
-  effectiveFrom: string;
-  offset: number;
+  hijriYear: number;
+  hijriMonth: number;
+  startDate: string;
   note: string;
   sourceUrl?: string;
 }

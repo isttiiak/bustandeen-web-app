@@ -2951,6 +2951,8 @@
     "hijriAutoSource": "Announcement",
     "hijriShiftBehind": "one day after Umm al-Qura",
     "hijriShiftAhead": "one day before Umm al-Qura",
+    "hijriShiftBehind2": "two days after Umm al-Qura",
+    "hijriShiftAhead2": "two days before Umm al-Qura",
     "hijriShiftSame": "the same as Umm al-Qura",
     "hijriManualLabel": "Or set it yourself (your choice always wins):",
     "excelNote": "The Excel report shows the same data as sheets you can read or chart (Rayhanah is left out). It cannot be restored; use the backup for that.",

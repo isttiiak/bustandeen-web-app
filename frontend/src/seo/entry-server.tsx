@@ -85,9 +85,12 @@ export function bdMoonSighting(body: unknown): MoonSightingRecord[] {
     (r): r is MoonSightingRecord =>
       !!r &&
       r.country === 'BD' &&
-      typeof r.effectiveFrom === 'string' &&
-      /^\d{4}-\d{2}-\d{2}$/.test(r.effectiveFrom) &&
-      (r.offset === -1 || r.offset === 0 || r.offset === 1)
+      typeof r.startDate === 'string' &&
+      /^\d{4}-\d{2}-\d{2}$/.test(r.startDate) &&
+      Number.isInteger(r.hijriYear) &&
+      Number.isInteger(r.hijriMonth) &&
+      r.hijriMonth >= 1 &&
+      r.hijriMonth <= 12
   );
 }
 export function ramadanGregorianYear(hijriYear: number): number {
