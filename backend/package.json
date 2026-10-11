@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.157.0",
+  "version": "5.158.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,6 +13,7 @@
     "migrate:social-visibility": "tsx src/scripts/migrateSocialVisibility.ts",
     "cleanup:orphans": "tsx src/scripts/cleanupOrphans.ts",
     "cleanup:unverified": "tsx src/scripts/cleanupUnverified.ts",
+    "admin:reset-mfa": "tsx src/scripts/resetAdminMfa.ts",
     "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules --max-old-space-size=4096\" NODE_ENV=test jest --runInBand"
   },
   "engines": {

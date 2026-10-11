@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import AdminAccount from '../models/AdminAccount.js';
 import * as adminAccountService from '../services/adminAccount.service.js';
+import * as adminMfaService from '../services/adminMfa.service.js';
 import { logAdminAction } from '../services/adminAudit.service.js';
 
 const handleServiceError = (err: unknown, res: Response, next: NextFunction): void => {
@@ -37,6 +38,8 @@ export const sessionHandler = async (
       email: req.admin.email,
       role: req.admin.role,
       ansarDomain: req.admin.ansarDomain,
+      // 'ok' | 'verify' (enter a code) | 'enroll' (set up the authenticator)
+      mfa: req.admin.mfa,
     });
   } catch (err) {
     next(err);
@@ -62,6 +65,7 @@ export const listHandler = async (
         createdBy: a.createdBy,
         createdAt: a.createdAt,
         lastLoginAt: a.lastLoginAt,
+        mfaEnabled: !!a.totpSecretEnc,
       })),
     });
   } catch (err) {
@@ -187,7 +191,9 @@ export const passwordChangedHandler = async (
       targetType: 'AdminAccount',
       targetId: req.admin!.email,
     });
-    res.json({ ok: true });
+    // Ending the other sessions also ended this one's MFA proof (issued
+    // before the new sign-in time): hand back a fresh one.
+    res.json({ ok: true, mfaProof: await adminMfaService.reissueProof(req.admin!.uid) });
   } catch (err) {
     next(err);
   }

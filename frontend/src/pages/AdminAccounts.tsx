@@ -21,6 +21,7 @@ import {
   useSetAdminAccountActive,
   useSetAdminAccountDomain,
   useSendAdminPasswordReset,
+  useResetAdminMfa,
   AdminAccountListItem,
   type AdminFirebaseLink,
 } from '../hooks/useAdminAccounts.js';
@@ -173,6 +174,7 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
   const setActive = useSetAdminAccountActive();
   const setDomain = useSetAdminAccountDomain();
   const sendReset = useSendAdminPasswordReset();
+  const resetMfa = useResetAdminMfa();
   const isSelf = account.email === myEmail;
 
   return (
@@ -213,6 +215,11 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
           : t('adminAccounts.inactive', 'Deactivated')}
       </td>
       <td className="px-3 py-2 text-white/70">
+        {account.mfaEnabled
+          ? t('adminAccounts.mfaOn', 'On')
+          : t('adminAccounts.mfaOff', 'Not set up')}
+      </td>
+      <td className="px-3 py-2 text-white/70">
         {account.lastLoginAt ? new Date(account.lastLoginAt).toLocaleString() : '-'}
       </td>
       <td className="px-3 py-2">
@@ -240,6 +247,35 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
                     ? '…'
                     : t('adminAccounts.sendReset', 'Send reset link')}
               </button>
+            )}
+            {account.mfaEnabled && (
+              <button
+                onClick={() => {
+                  if (
+                    window.confirm(
+                      t(
+                        'adminAccounts.resetMfaConfirm',
+                        'Turn off their authenticator? They set up a new one at their next sign-in. Do this only if they lost their phone.'
+                      )
+                    )
+                  ) {
+                    resetMfa.mutate(account.id);
+                  }
+                }}
+                disabled={resetMfa.isPending}
+                className={BTN_SMALL}
+                title={t(
+                  'adminAccounts.resetMfaHint',
+                  'For a lost phone: they set up a new authenticator at their next sign-in'
+                )}
+              >
+                {resetMfa.isPending ? '…' : t('adminAccounts.resetMfa', 'Reset authenticator')}
+              </button>
+            )}
+            {resetMfa.isError && (
+              <span role="alert" className="text-red-400 text-xs">
+                {t('adminAccounts.resetMfaFailed', 'Could not reset the authenticator.')}
+              </span>
             )}
             {sendReset.isError && (
               <span role="alert" className="text-red-400 text-xs">
@@ -287,6 +323,7 @@ export default function AdminAccounts() {
                 <th className="px-3 py-2">{t('adminAccounts.colRole', 'Role')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colDomain', 'Domain')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colStatus', 'Status')}</th>
+                <th className="px-3 py-2">{t('adminAccounts.colMfa', 'Authenticator')}</th>
                 <th className="px-3 py-2">{t('adminAccounts.colLastLogin', 'Last login')}</th>
                 <th className="px-3 py-2" />
               </tr>
@@ -294,7 +331,7 @@ export default function AdminAccounts() {
             <tbody>
               {isLoading && (
                 <tr>
-                  <td colSpan={6} className="text-center text-white/70 py-6">
+                  <td colSpan={7} className="text-center text-white/70 py-6">
                     {t('common.loading', 'Loading…')}
                   </td>
                 </tr>

@@ -253,6 +253,17 @@ export const adminSessionLimiter = makeLimit(
   'shared'
 );
 
+/** Admin second-factor codes: 10 per 15 min per admin (uid, set by
+ *  requireAdminIdentity before this runs), one count across instances. A
+ *  6-digit code has a million values; 10 tries per window keeps guessing
+ *  hopeless. Enrolment start/confirm share the count. */
+export const adminMfaLimiter = makeUidLimit(
+  15 * 60 * 1000,
+  10,
+  { ok: false, error: 'Too many code attempts. Please wait 15 minutes and try again.' },
+  'adminMfa'
+);
+
 /** CSP violation reports: 60 per 15 min per IP. Browsers send one report per
  *  violation, so a single misconfigured page can burst; anything beyond this
  *  is noise or abuse. Throttled requests still get a 429 (browsers ignore it). */

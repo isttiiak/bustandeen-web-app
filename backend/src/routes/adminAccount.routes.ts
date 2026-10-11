@@ -8,6 +8,7 @@ import {
   adminAccountIdSchema,
 } from '../validation/adminAccount.schemas.js';
 import * as adminAccountController from '../controllers/adminAccount.controller.js';
+import { resetHandler as resetMfaHandler } from '../controllers/adminMfa.controller.js';
 
 const router = Router();
 
@@ -40,6 +41,14 @@ router.post(
   requireAdminRecentAuth,
   validate(adminAccountIdSchema),
   adminAccountController.sendPasswordResetHandler
+);
+
+// Lost authenticator: the admin sets it up again at their next sign-in.
+router.post(
+  '/:id/mfa-reset',
+  requireAdminRecentAuth,
+  validate(adminAccountIdSchema),
+  resetMfaHandler
 );
 
 export default router;

@@ -18,6 +18,8 @@ import { adminAuth } from '../adminFirebase.js';
 import { API_BASE } from '../lib/api.js';
 import { useAdminStore, AdminRole, AnsarDomain } from '../store/useAdminStore.js';
 import { useAdminLogin } from '../hooks/useAdminAuth.js';
+import { clearAdminMfaProof, getAdminMfaProof } from '../lib/adminMfa.js';
+import AdminMfaStep from './admin/AdminMfaStep.js';
 
 /**
  * The ENTIRE gate on every admin page — real Firebase sign-in against a
@@ -31,6 +33,7 @@ import { useAdminLogin } from '../hooks/useAdminAuth.js';
 export default function AdminGate({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const status = useAdminStore((s) => s.status);
+  const mfaStep = useAdminStore((s) => s.mfaStep);
   const setSession = useAdminStore((s) => s.setSession);
   const setSignedOut = useAdminStore((s) => s.setSignedOut);
   const [form, setForm] = useState({ email: '', password: '' });
@@ -40,18 +43,26 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsub = onAuthStateChanged(adminAuth, async (user) => {
       if (!user) {
+        clearAdminMfaProof();
         setSignedOut();
         return;
       }
       try {
         const idToken = await user.getIdToken();
+        const proof = getAdminMfaProof();
         const res = await axios.get<{
           email: string;
           role: AdminRole;
           ansarDomain: AnsarDomain | null;
-        }>(`${API_BASE}/api/admin/auth/session`, { headers: { 'X-Admin-Token': idToken } });
+          mfa?: 'ok' | 'verify' | 'enroll';
+        }>(`${API_BASE}/api/admin/auth/session`, {
+          headers: { 'X-Admin-Token': idToken, ...(proof ? { 'X-Admin-MFA': proof } : {}) },
+        });
         setRejectedError(null);
-        setSession(res.data.email, res.data.role, res.data.ansarDomain ?? null);
+        // The second factor (T1.4): 'verify' / 'enroll' show AdminMfaStep.
+        const mfa = res.data.mfa ?? 'ok';
+        if (mfa !== 'ok') clearAdminMfaProof();
+        setSession(res.data.email, res.data.role, res.data.ansarDomain ?? null, mfa);
       } catch (err) {
         const code = axios.isAxiosError(err)
           ? (err.response?.data as { error?: string } | undefined)?.error
@@ -64,6 +75,7 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
               )
             : t('adminGate.notRegistered', 'This account is not registered as a Bustandeen admin.')
         );
+        clearAdminMfaProof();
         await signOut(adminAuth);
       }
     });
@@ -79,6 +91,10 @@ export default function AdminGate({ children }: { children: React.ReactNode }) {
         </div>
       </AnimatedBackground>
     );
+  }
+
+  if (status === 'mfa' && mfaStep) {
+    return <AdminMfaStep step={mfaStep} />;
   }
 
   if (status === 'ready') {

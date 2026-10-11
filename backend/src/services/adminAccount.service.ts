@@ -137,7 +137,16 @@ export const bootstrapAdminAccounts = async (): Promise<void> => {
     if (!email) continue;
     const normalizedEmail = email.trim().toLowerCase();
     const existing = await AdminAccount.findOne({ email: normalizedEmail });
-    if (existing) continue;
+    if (existing) {
+      // The env password only matters for the very first run; left in place
+      // it is a standing copy of an admin credential (audit SEC-03).
+      if (password) {
+        console.warn(
+          `[adminAccount] ${role.toUpperCase()}_BOOTSTRAP_PASSWORD is still set although ${normalizedEmail} exists. Delete it from the environment (Vercel).`
+        );
+      }
+      continue;
+    }
 
     try {
       let linked: { uid: string; link: FirebaseLink };

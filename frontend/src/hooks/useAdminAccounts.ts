@@ -12,6 +12,8 @@ export interface AdminAccountListItem {
   createdBy: string;
   createdAt: string;
   lastLoginAt?: string | null;
+  /** Authenticator (second factor) set up. */
+  mfaEnabled?: boolean;
 }
 
 /** Servant-only — the full Servant/Ansar roster (see adminAccount.routes.ts). */
@@ -74,6 +76,18 @@ export function useSetAdminAccountDomain() {
   return useMutation({
     mutationFn: ({ id, ansarDomain }: { id: string; ansarDomain: AnsarDomain }) =>
       api.patch(`/api/admin/accounts/${id}/domain`, { ansarDomain }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
+    },
+  });
+}
+
+/** Servant-only — an admin lost their authenticator: turn it off so they
+ *  set up a new one at their next sign-in. */
+export function useResetAdminMfa() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.post(`/api/admin/accounts/${id}/mfa-reset`),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
     },

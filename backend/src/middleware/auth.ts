@@ -5,6 +5,12 @@ import {
   decodeUnverifiedJwt,
 } from '../config/firebaseAdmin.js';
 import AdminAccount from '../models/AdminAccount.js';
+import { checkMfaProof } from '../utils/adminMfaProof.js';
+
+export type AdminMfaState = 'ok' | 'verify' | 'enroll';
+
+const headerValue = (h: string | string[] | undefined): string | undefined =>
+  Array.isArray(h) ? h[0] : h;
 import User from '../models/User.js';
 
 /**
@@ -147,88 +153,111 @@ export const isAdminEmail = (email: string | null | undefined): boolean => {
  * existing controller code that reads req.user.email for reviewedBy/
  * verifiedBy needs no changes).
  */
-export const requireAdminAuth = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const header = req.headers['x-admin-token'];
-    const token = Array.isArray(header) ? header[0] : header;
-    if (!token) {
-      res.status(401).json({ ok: false, error: 'admin_session_required' });
-      return;
-    }
-
-    let uid: string;
-    let verifiedEmail: string | undefined;
-    let authTime: number | undefined;
-    if (isFirebaseInitialized()) {
-      const decoded = await verifyFirebaseToken(token);
-      uid = decoded.uid;
-      authTime = decoded.auth_time;
-      if (decoded.email && decoded.email_verified) verifiedEmail = decoded.email.toLowerCase();
-    } else if (devAuthBypassAllowed()) {
-      const payload = decodeUnverifiedJwt(token);
-      if (typeof payload?.['uid'] !== 'string') {
+const makeRequireAdminAuth =
+  (requireMfa: boolean) =>
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const token = headerValue(req.headers['x-admin-token']);
+      if (!token) {
         res.status(401).json({ ok: false, error: 'admin_session_required' });
         return;
       }
-      uid = payload['uid'];
-      if (typeof payload['auth_time'] === 'number') authTime = payload['auth_time'];
-    } else {
-      res.status(500).json({ ok: false, error: 'Auth not configured' });
-      return;
-    }
 
-    let account = await AdminAccount.findOne({ firebaseUid: uid, active: true });
-
-    // Self-heal a stale link: someone deleted and recreated an admin's
-    // Firebase account (same email, new uid under the hood — Firebase never
-    // reuses uids). The OLD uid then matches nothing here even though the
-    // email is still a legitimate, verified admin identity. Re-point the
-    // existing (still-active) row at the new uid instead of locking the
-    // Servant/Ansar out until someone manually fixes the database — this is
-    // safe because `verifiedEmail` only comes from a Firebase-verified,
-    // email_verified token, never from the unverified dev-bypass path.
-    if (!account && verifiedEmail) {
-      const staleMatch = await AdminAccount.findOne({ email: verifiedEmail, active: true });
-      if (staleMatch) {
-        staleMatch.firebaseUid = uid;
-        await staleMatch.save();
-        account = staleMatch;
+      let uid: string;
+      let verifiedEmail: string | undefined;
+      let authTime: number | undefined;
+      if (isFirebaseInitialized()) {
+        const decoded = await verifyFirebaseToken(token);
+        uid = decoded.uid;
+        authTime = decoded.auth_time;
+        if (decoded.email && decoded.email_verified) verifiedEmail = decoded.email.toLowerCase();
+      } else if (devAuthBypassAllowed()) {
+        const payload = decodeUnverifiedJwt(token);
+        if (typeof payload?.['uid'] !== 'string') {
+          res.status(401).json({ ok: false, error: 'admin_session_required' });
+          return;
+        }
+        uid = payload['uid'];
+        if (typeof payload['auth_time'] === 'number') authTime = payload['auth_time'];
+      } else {
+        res.status(500).json({ ok: false, error: 'Auth not configured' });
+        return;
       }
-    }
 
-    if (!account) {
+      let account = await AdminAccount.findOne({ firebaseUid: uid, active: true });
+
+      // Self-heal a stale link: someone deleted and recreated an admin's
+      // Firebase account (same email, new uid under the hood — Firebase never
+      // reuses uids). The OLD uid then matches nothing here even though the
+      // email is still a legitimate, verified admin identity. Re-point the
+      // existing (still-active) row at the new uid instead of locking the
+      // Servant/Ansar out until someone manually fixes the database — this is
+      // safe because `verifiedEmail` only comes from a Firebase-verified,
+      // email_verified token, never from the unverified dev-bypass path.
+      if (!account && verifiedEmail) {
+        const staleMatch = await AdminAccount.findOne({ email: verifiedEmail, active: true });
+        if (staleMatch) {
+          staleMatch.firebaseUid = uid;
+          await staleMatch.save();
+          account = staleMatch;
+        }
+      }
+
+      if (!account) {
+        res.status(401).json({ ok: false, error: 'admin_session_required' });
+        return;
+      }
+      // A sign-in from before the account became an admin (or before its
+      // sessions were last ended), or older than ADMIN_SESSION_MAX_SECONDS,
+      // never counts. A token without auth_time (a
+      // dev-bypass token that leaves it out) skips the check.
+      if (
+        authTime !== undefined &&
+        ((account.sessionsValidAfter && authTime * 1000 < account.sessionsValidAfter.getTime()) ||
+          Date.now() / 1000 - authTime > ADMIN_SESSION_MAX_SECONDS)
+      ) {
+        res.status(401).json({ ok: false, error: 'admin_session_expired' });
+        return;
+      }
+      // Second factor (T1.4): every admin route needs a valid X-Admin-MFA
+      // proof except the few that exist to get one (requireAdminIdentity).
+      const mfa: AdminMfaState = !account.totpSecretEnc
+        ? 'enroll'
+        : checkMfaProof(headerValue(req.headers['x-admin-mfa']), {
+              uid,
+              mfaVersion: account.mfaVersion ?? 0,
+              maxAgeSeconds: ADMIN_SESSION_MAX_SECONDS,
+              notBefore: account.sessionsValidAfter,
+            })
+          ? 'ok'
+          : 'verify';
+      if (requireMfa && mfa !== 'ok') {
+        res.status(403).json({ ok: false, error: 'mfa_required', mfa });
+        return;
+      }
+      req.admin = {
+        uid,
+        email: account.email,
+        role: account.role,
+        ansarDomain: account.ansarDomain,
+        authTime,
+        mfa,
+      };
+      req.user = { uid, email: account.email, isOwner: account.role === 'servant' };
+      next();
+    } catch {
       res.status(401).json({ ok: false, error: 'admin_session_required' });
-      return;
     }
-    // A sign-in from before the account became an admin (or before its
-    // sessions were last ended), or older than ADMIN_SESSION_MAX_SECONDS,
-    // never counts. A token without auth_time (a
-    // dev-bypass token that leaves it out) skips the check.
-    if (
-      authTime !== undefined &&
-      ((account.sessionsValidAfter && authTime * 1000 < account.sessionsValidAfter.getTime()) ||
-        Date.now() / 1000 - authTime > ADMIN_SESSION_MAX_SECONDS)
-    ) {
-      res.status(401).json({ ok: false, error: 'admin_session_expired' });
-      return;
-    }
-    req.admin = {
-      uid,
-      email: account.email,
-      role: account.role,
-      ansarDomain: account.ansarDomain,
-      authTime,
-    };
-    req.user = { uid, email: account.email, isOwner: account.role === 'servant' };
-    next();
-  } catch {
-    res.status(401).json({ ok: false, error: 'admin_session_required' });
-  }
-};
+  };
+
+export const requireAdminAuth = makeRequireAdminAuth(true);
+
+/**
+ * requireAdminAuth without the second-factor check, for the routes that
+ * report the session's MFA state and let an admin enrol or enter a code.
+ * Never use it on a route that reads or changes data.
+ */
+export const requireAdminIdentity = makeRequireAdminAuth(false);
 
 /**
  * Servant-only tier — delete, financial-record edits, bulk/override
