@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { requireAdminAuth } from '../middleware/auth.js';
+import { requireAdminAuth, requireServant } from '../middleware/auth.js';
 import * as adminStatsController from '../controllers/adminStats.controller.js';
 
 const router = Router();
@@ -10,5 +10,10 @@ const router = Router();
 router.use(requireAdminAuth);
 
 router.get('/overview', adminStatsController.overviewHandler);
+
+// Daily activity (T4.6): people who opened the app and who logged each
+// worship area per day, last 90 days. Counts only; Servant only, like the
+// activity panel.
+router.get('/daily', requireServant, adminStatsController.dailyHandler);
 
 export default router;

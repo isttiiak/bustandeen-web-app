@@ -7,6 +7,7 @@ import {
   bucketDateForDayString,
   DEFAULT_TIMEZONE_OFFSET,
 } from '../utils/timezone-flexible.js';
+import { markActive } from './dailyActivity.service.js';
 import { ZikrIncrementItem } from '../types/api.types.js';
 
 export interface IncrementResult {
@@ -109,6 +110,7 @@ async function applyIncrements(
       { uid: userId },
       { $inc: { ...userInc, totalCount: totalAdded }, $set: { lastActiveAt: new Date() } }
     );
+    await markActive(userId);
   }
   if (events.length) {
     // Best-effort — never let analytics logging fail the actual increment.
