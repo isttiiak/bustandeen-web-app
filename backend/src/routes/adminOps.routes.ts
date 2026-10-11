@@ -11,5 +11,6 @@ router.get('/health', adminOpsController.healthHandler);
 router.get('/rate-limit-hits', adminOpsController.rateLimitHitsHandler);
 router.get('/storage', adminOpsController.storageHandler);
 router.get('/csp-violations', adminOpsController.cspViolationsHandler);
+router.get('/client-errors', adminOpsController.clientErrorsHandler);
 
 export default router;

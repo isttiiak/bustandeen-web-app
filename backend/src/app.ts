@@ -38,6 +38,7 @@ import adminMoonSightingRoutes from './routes/adminMoonSighting.routes.js';
 import updateEmailRoutes from './routes/updateEmail.routes.js';
 import composeEmailRoutes from './routes/composeEmail.routes.js';
 import cspReportRoutes from './routes/cspReport.routes.js';
+import clientErrorRoutes from './routes/clientError.routes.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
 import { isVercelPreviewOrigin, previewConfigFromEnv } from './utils/corsOrigins.js';
@@ -117,15 +118,17 @@ app.use(
       'Content-Encoding',
       'Authorization',
       'X-Admin-Token',
+      'X-Admin-MFA',
       'X-Client-Op-Id',
     ],
     optionsSuccessStatus: 204,
   })
 );
 
-// CSP violation reports have their own limiter and must not eat into a
+// CSP violation and app error reports have their own limiters and must not eat into a
 // visitor's general API allowance, so they are mounted before it.
 app.use('/api/csp-report', cspReportRoutes);
+app.use('/api/client-errors', clientErrorRoutes);
 
 // Apply general rate limiter globally
 app.use(generalLimiter);

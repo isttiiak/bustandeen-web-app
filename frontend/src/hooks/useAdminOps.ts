@@ -108,3 +108,34 @@ export function useCspViolations() {
     staleTime: 60_000,
   });
 }
+
+export interface ClientErrorSummary {
+  kind: 'error' | 'rejection' | 'render';
+  message: string;
+  where: string;
+  route: string;
+  version: string;
+  count: number;
+  days: number;
+  lastSeen: string;
+}
+
+export interface ClientErrorReport {
+  sinceDay: string;
+  daily: { day: string; count: number }[];
+  top: ClientErrorSummary[];
+}
+
+/** Servant-only: errors the app hit in visitors' browsers (scrubbed counts). */
+export function useClientErrors() {
+  return useQuery<ClientErrorReport>({
+    queryKey: ['admin', 'ops', 'client-errors'],
+    queryFn: async () => {
+      const res = await api.get<{ ok: boolean } & ClientErrorReport>(
+        '/api/admin/ops/client-errors'
+      );
+      return res.data;
+    },
+    staleTime: 60_000,
+  });
+}

@@ -26,7 +26,10 @@ import { initPwaUpdates } from './pwaUpdate.js';
 import { initStaleChunkReload } from './utils/staleChunkReload.js';
 import { initAnalytics } from './utils/analytics.js';
 import { migratePrayerDefaultsOnce } from './utils/salatPrefs.js';
+import { initErrorReporting } from './utils/errorReporting.js';
+import { API_BASE } from './lib/api.js';
 
+initErrorReporting(API_BASE);
 initStaleChunkReload();
 initPwaUpdates();
 initAnalytics();
