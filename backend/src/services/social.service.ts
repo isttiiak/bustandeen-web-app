@@ -319,16 +319,6 @@ export async function setPrivacy(
   return { ok: true, privacy: privacyOf(updated ?? { invisible: false, secret: NO_SECRET }) };
 }
 
-/** Pre-T3.6 alias (PATCH /api/social/invisible), kept one release for cached
- * clients: on = hidden; off = full detail, which is what that switch meant. */
-export async function setInvisible(
-  userId: string,
-  invisible: boolean
-): Promise<{ ok: boolean; invisible: boolean }> {
-  await setPrivacy(userId, { visibility: invisible ? 'hidden' : 'detail' });
-  return { ok: true, invisible };
-}
-
 export async function unfriend(userId: string, friendUid: string): Promise<{ ok: boolean }> {
   await Promise.all([
     SocialProfile.updateOne(
@@ -590,12 +580,8 @@ export interface SocialSummary {
   inviteCode: string;
   /** Me first, then friends by their longest shared streak, then name. No ranking. */
   circle: FriendStats[];
-  /** @deprecated alias of `circle` for clients cached before T3.6; remove next release */
-  leaderboard: FriendStats[];
   /** The VIEWER's own privacy choices */
   privacy: PrivacySettings;
-  /** @deprecated `privacy.visibility === 'hidden'`, for clients cached before T3.6 */
-  invisible: boolean;
   /** Count of incoming friend requests awaiting the viewer's accept/reject */
   pendingCount: number;
 }
@@ -670,9 +656,7 @@ export async function getSummary(
   return {
     inviteCode: profile.inviteCode,
     circle: stats,
-    leaderboard: stats,
     privacy,
-    invisible: privacy.visibility === 'hidden',
     pendingCount: profile.pendingIncoming.length,
   };
 }
@@ -707,32 +691,4 @@ export async function getCircleAllTime(
     batch.forEach(([uid], j) => (out[uid] = totals[j]));
   }
   return out;
-}
-
-// ─── Noor (navbar capsules) ───────────────────────────────────────────────────
-
-export interface NoorResult {
-  today: number;
-  allTime: number;
-}
-
-/**
- * Today's Noor = the viewer's own score in the circle.
- * All-time Noor = the daily formula applied to every recorded day of the last
- * 365 days and summed — it only ever grows. (A streak is a live property, so
- * the historical zikr component uses that day's goal progress instead;
- * current goals are applied to history — good enough for a motivation number.)
- */
-export async function getNoor(
-  userId: string,
-  today?: string,
-  timezoneOffset: number = DEFAULT_TIMEZONE_OFFSET
-): Promise<NoorResult> {
-  // See getSummary's identical fallback for why this must honor timezoneOffset.
-  const end = today ?? getTodayString(timezoneOffset);
-  const [summary, allTime] = await Promise.all([
-    getNoorSummary(userId, end),
-    getAllTimeNoor(userId, end),
-  ]);
-  return { today: summary.today.score, allTime };
 }

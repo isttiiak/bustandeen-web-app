@@ -18,18 +18,6 @@ export const getSummary = async (
   }
 };
 
-export const getNoor = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const today = req.query['today'] as string | undefined;
-    const rawOffset = req.query['timezoneOffset'];
-    const offset = rawOffset !== undefined ? Number(rawOffset) : DEFAULT_TIMEZONE_OFFSET;
-    const noor = await socialService.getNoor(req.user.uid, today, offset);
-    res.json({ ok: true, ...noor });
-  } catch (err) {
-    next(err);
-  }
-};
-
 export const getAllTime = async (
   req: Request,
   res: Response,
@@ -152,20 +140,6 @@ export const getBlockedList = async (
   try {
     const blocked = await socialService.getBlockedList(req.user.uid);
     res.json({ ok: true, blocked });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const setInvisible = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { invisible } = req.body as { invisible: boolean };
-    const result = await socialService.setInvisible(req.user.uid, invisible);
-    res.json(result);
   } catch (err) {
     next(err);
   }

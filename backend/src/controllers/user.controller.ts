@@ -174,21 +174,6 @@ export const exportAllHandler = async (
   }
 };
 
-/** Old "All my data" route, kept for PWAs still running a pre-U6 Settings
- * page: it now returns the same version-3 backup. Remove after 2026-10-24. */
-export const exportEverythingHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const { exportBackup } = await import('../services/backup.service.js');
-    res.json({ ok: true, data: await exportBackup(req.user.uid) });
-  } catch (err) {
-    next(err);
-  }
-};
-
 export const importAllHandler = async (
   req: Request,
   res: Response,

@@ -80,7 +80,7 @@ describe('Rayhanah Cycle — partner sync (opt-in, revocable, status-only)', () 
   test('no cycle status leaks to a friend before sync is enabled', async () => {
     await asHer(request(app).post('/api/cycle/start')).send({ date: TODAY, type: 'hayd' });
     const summary = await asHim(request(app).get('/api/social/summary?timezoneOffset=360'));
-    const herRow = summary.body.leaderboard.find((r) => r.uid === 'sync-her');
+    const herRow = summary.body.circle.find((r) => r.uid === 'sync-her');
     expect(herRow).toBeTruthy();
     expect(herRow.onCycle).toBeUndefined();
   });
@@ -100,12 +100,12 @@ describe('Rayhanah Cycle — partner sync (opt-in, revocable, status-only)', () 
 
   test('the linked partner sees onCycle:true; nobody else does', async () => {
     const himView = await asHim(request(app).get('/api/social/summary?timezoneOffset=360'));
-    const herRowForHim = himView.body.leaderboard.find((r) => r.uid === 'sync-her');
+    const herRowForHim = himView.body.circle.find((r) => r.uid === 'sync-her');
     expect(herRowForHim.onCycle).toBe(true);
 
     // Her own row, viewed by herself, never carries the flag either.
     const herView = await asHer(request(app).get('/api/social/summary?timezoneOffset=360'));
-    const herOwnRow = herView.body.leaderboard.find((r) => r.uid === 'sync-her');
+    const herOwnRow = herView.body.circle.find((r) => r.uid === 'sync-her');
     expect(herOwnRow.onCycle).toBeUndefined();
   });
 
@@ -114,7 +114,7 @@ describe('Rayhanah Cycle — partner sync (opt-in, revocable, status-only)', () 
     // day — fiqh-correct, not a bug: onCycle stays true through end-of-day.
     await asHer(request(app).post('/api/cycle/end')).send({ date: TODAY });
     const himView = await asHim(request(app).get('/api/social/summary?timezoneOffset=360'));
-    const herRow = himView.body.leaderboard.find((r) => r.uid === 'sync-her');
+    const herRow = himView.body.circle.find((r) => r.uid === 'sync-her');
     expect(herRow.onCycle).toBe(true);
     // No dates, symptoms, or notes ever appear on the leaderboard row.
     expect(herRow.startDate).toBeUndefined();
@@ -130,7 +130,7 @@ describe('Rayhanah Cycle — partner sync (opt-in, revocable, status-only)', () 
     expect(res.body.partnerUid).toBeNull();
 
     const himView = await asHim(request(app).get('/api/social/summary?timezoneOffset=360'));
-    const herRow = himView.body.leaderboard.find((r) => r.uid === 'sync-her');
+    const herRow = himView.body.circle.find((r) => r.uid === 'sync-her');
     expect(herRow.onCycle).toBeUndefined();
   });
 });

@@ -150,7 +150,6 @@ describe('Friends privacy (T3.6)', () => {
       visibility: 'detail',
       secret: { salat: false, zikr: false, quran: false, fasting: false },
     });
-    expect(res.body.invisible).toBe(false);
   });
 
   test('migration: dry run writes nothing; apply keeps visibility and relationships', async () => {
@@ -158,8 +157,10 @@ describe('Friends privacy (T3.6)', () => {
     const worshipBefore = await worshipSnapshot();
     const viewBefore = rowOf(await summary('viewer'), 'oldOpen');
     const ownNoorBefore = (
-      await as('oldOpen')(request(app).get(`/api/social/noor?today=${TODAY}&timezoneOffset=${TZ}`))
-    ).body;
+      await as('oldOpen')(
+        request(app).get(`/api/social/alltime?today=${TODAY}&timezoneOffset=${TZ}`)
+      )
+    ).body.allTime.oldOpen;
 
     const dry = await migrateSocialVisibility(col, { apply: false });
     expect(dry).toEqual({ toHidden: 1, toDetail: 2, reverted: 0 });
@@ -186,8 +187,10 @@ describe('Friends privacy (T3.6)', () => {
     const viewAfter = rowOf(await summary('viewer'), 'oldOpen');
     expect(viewAfter).toEqual(viewBefore);
     const ownNoorAfter = (
-      await as('oldOpen')(request(app).get(`/api/social/noor?today=${TODAY}&timezoneOffset=${TZ}`))
-    ).body;
+      await as('oldOpen')(
+        request(app).get(`/api/social/alltime?today=${TODAY}&timezoneOffset=${TZ}`)
+      )
+    ).body.allTime.oldOpen;
     expect(ownNoorAfter).toEqual(ownNoorBefore);
   });
 
@@ -284,10 +287,6 @@ describe('Friends privacy (T3.6)', () => {
     expect(own.quranPagesToday).toBe(25);
     expect(own.salatToday).toBe(2);
     expect(own.score).toBe(before.score);
-    const noor = await as('oldOpen')(
-      request(app).get(`/api/social/noor?today=${TODAY}&timezoneOffset=${TZ}`)
-    );
-    expect(noor.body.today).toBe(before.score);
 
     // Secret areas are also left out at consistency-only level
     await as('oldOpen')(request(app).patch('/api/social/privacy')).send({
@@ -318,9 +317,7 @@ describe('Friends privacy (T3.6)', () => {
     expect(open).toBe(rowOf(await summary('viewer'), 'oldOpen').score);
 
     // A secret area leaves the all-time Noor friends see, never your own
-    const ownNoor = (
-      await as('oldOpen')(request(app).get(`/api/social/noor?today=${TODAY}&timezoneOffset=${TZ}`))
-    ).body.allTime;
+    const ownNoor = (await allTime('oldOpen')).body.allTime.oldOpen;
     await as('oldOpen')(request(app).patch('/api/social/privacy')).send({
       secret: { quran: true },
     });
@@ -341,15 +338,16 @@ describe('Friends privacy (T3.6)', () => {
     expect(await worshipSnapshot()).toBe(worshipBefore);
   });
 
-  test('hidden hides from everyone; the old /invisible route still works as an alias', async () => {
+  test('hidden hides from everyone; back to detail shows again', async () => {
     await as('oldOpen')(request(app).patch('/api/social/privacy')).send({ visibility: 'hidden' });
     expect(rowOf(await summary('viewer'), 'oldOpen')).toBeUndefined();
+    // The stored mirror stays in step for profiles read the pre-T3.6 way
     expect((await col.findOne({ userId: 'oldOpen' })).invisible).toBe(true);
 
-    const off = await as('oldOpen')(request(app).patch('/api/social/invisible')).send({
-      invisible: false,
+    const off = await as('oldOpen')(request(app).patch('/api/social/privacy')).send({
+      visibility: 'detail',
     });
-    expect(off.body).toEqual({ ok: true, invisible: false });
+    expect(off.body.privacy.visibility).toBe('detail');
     const doc = await col.findOne({ userId: 'oldOpen' });
     expect(doc.visibility).toBe('detail');
     expect(doc.invisible).toBe(false);

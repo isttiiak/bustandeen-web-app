@@ -54,8 +54,6 @@ router.delete(
 // Backup file v3 (every domain + settings; also feeds the Excel report) and
 // the merge-restore of that file
 router.get('/export', requireAuth, dataExportLimiter, userController.exportAllHandler);
-// Old "All my data" route, now the same file. Remove after 2026-10-24.
-router.get('/export/all', requireAuth, dataExportLimiter, userController.exportEverythingHandler);
 // UID-keyed limiter after requireAuth — prevents backup-flood abuse
 router.post('/import', requireAuth, importLimiter, userController.importAllHandler);
 

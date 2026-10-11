@@ -5,7 +5,6 @@ import * as socialController from '../controllers/social.controller.js';
 import {
   connectSchema,
   socialSummarySchema,
-  setInvisibleSchema,
   setPrivacySchema,
 } from '../validation/social.schemas.js';
 import { socialConnectLimiter } from '../middleware/rateLimiter.js';
@@ -17,11 +16,6 @@ router.get('/summary', requireAuth, validate(socialSummarySchema), socialControl
 
 // GET /api/social/alltime?today=&timezoneOffset= — the circle's All time tab (U3)
 router.get('/alltime', requireAuth, validate(socialSummarySchema), socialController.getAllTime);
-
-// GET /api/social/noor?today=&timezoneOffset= — viewer's Noor (today + all-time).
-// The navbar capsules that used it are gone (v5.135.0); kept for app versions
-// still cached on phones, remove after 2026-10-24.
-router.get('/noor', requireAuth, validate(socialSummarySchema), socialController.getNoor);
 
 // POST /api/social/connect { code } — connect with the invite link's owner
 // UID-keyed limiter after requireAuth so req.user.uid is available
@@ -56,14 +50,5 @@ router.get('/blocked', requireAuth, socialController.getBlockedList);
 
 // PATCH /api/social/privacy { visibility?, secret? } — what friends see + secret deeds
 router.patch('/privacy', requireAuth, validate(setPrivacySchema), socialController.setPrivacy);
-
-// PATCH /api/social/invisible { invisible } — pre-T3.6 alias of /privacy for
-// cached clients (on = hidden, off = detail). Remove in the next release.
-router.patch(
-  '/invisible',
-  requireAuth,
-  validate(setInvisibleSchema),
-  socialController.setInvisible
-);
 
 export default router;
