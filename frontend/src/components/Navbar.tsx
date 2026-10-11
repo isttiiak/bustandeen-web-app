@@ -2,7 +2,7 @@
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { loadFirebase, SESSION_MARKER } from '../authClient.js';
-import logo from '../assets/logo.svg';
+import { BrandMark } from './BrandMark.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useZikrStore } from '../store/useZikrStore.js';
 import { useUiStore } from '../store/useUiStore.js';
@@ -226,7 +226,7 @@ export default function Navbar() {
               to="/"
               className="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group"
             >
-              <img src={logo as string} alt="Bustandeen" className="w-5 h-5 flex-shrink-0" />
+              <BrandMark variant="small" title="Bustandeen" className="w-6 h-6 flex-shrink-0" />
               <span className="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
                 Bustandeen
               </span>

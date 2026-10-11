@@ -14,13 +14,13 @@ import {
   DuaHandsIcon,
   FajrIcon,
   FlowerIcon,
-  LeafIcon,
   MosqueIcon,
   TasbihIcon,
 } from '../icons/IslamicIcons.js';
 import { BTN_PRIMARY, BTN_SECONDARY, CARD } from '../bustanStyles.js';
 import { translateReference } from '../../utils/localeReference.js';
 import LandingSeoSections, { type LandingT } from '../LandingSeoSections.js';
+import { BrandMark } from '../BrandMark.js';
 
 // The landing page body in the Bustan Arch design (audit T3.2), shared by the
 // prerendered `/` and `/bn` (seo/templates/LandingPage.tsx, what signed-out
@@ -72,9 +72,7 @@ export default function LandingBody({
     <div className="space-y-12">
       {/* The one arch hero of the page. */}
       <section className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-12 pb-8 sm:px-12 sm:pt-16 text-center">
-        <div className={`${BADGE} w-16 h-16 mx-auto mb-5`}>
-          <LeafIcon className="w-8 h-8" />
-        </div>
+        <BrandMark className="w-24 h-24 mx-auto mb-4" />
         <h1 className="font-display text-4xl sm:text-6xl font-bold text-white leading-tight">
           {t('landing.heroTitle1', 'Worship,')}{' '}
           <span className="text-brand-emerald">{t('landing.heroTitle2', 'beautifully kept')}</span>

@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.155.0 - New Bustandeen logo - 2026-10-11
+
+### Changed
+
+- **New logo everywhere.** The crescent and star (the deen) now hold a sprout with two leaves and two small flowers (the bustan), in our own colours instead of the old teal. It replaces the emoji-like crescent in the browser tab, the installed app icon, the app and admin headers, the landing page, the public pages and the shared-link preview image. Small places (the tab icon, headers) use a simpler version with one flower. On the light theme the logo uses darker greens and golds so it stays clear on paper.
+- **Shared-link preview image** redrawn to match the new social covers: logo, "Nourish Your Deen" and Salat · Quran · Fasting · Zikr.
+
+### Added
+
+- **`brand/`** holds the master logo files and the social media images (profile photos for Facebook, Instagram, Reddit, X, LinkedIn, YouTube and the email sender photo; covers for Facebook, X, Reddit, LinkedIn and YouTube). Not part of the app build.
+- **`npm run brand:assets`** (frontend) redraws every logo image from one source, `src/brand/brandMark.ts`, and fails if the installable icon leaves the safe zone. It replaces `og:image` and `pwa:icons`. A test keeps the in-app logo colours (`--logo-*` in global.css) in step with it.
+
 ## v5.154.0 - Our own password reset and email confirmation emails - 2026-10-11
 
 ### Changed
