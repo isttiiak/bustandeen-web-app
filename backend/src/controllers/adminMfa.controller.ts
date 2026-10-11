@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as adminMfaService from '../services/adminMfa.service.js';
 import { logAdminAction } from '../services/adminAudit.service.js';
+import * as adminSettingService from '../services/adminSetting.service.js';
 
 const handleServiceError = (err: unknown, res: Response, next: NextFunction): void => {
   const status = (err as { status?: number }).status;
@@ -75,6 +76,40 @@ export const verifyHandler = async (
     });
   } catch (err) {
     handleServiceError(err, res, next);
+  }
+};
+
+/** Servant-only: the two-step sign-in switch for every admin. */
+export const getPolicyHandler = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    res.json({ ok: true, ...(await adminSettingService.getAdminSettings()) });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const setPolicyHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { mfaRequired } = req.body as { mfaRequired: boolean };
+    const settings = await adminSettingService.setAdminMfaRequired(mfaRequired, req.admin!.email);
+    await logAdminAction({
+      actorEmail: req.admin!.email,
+      actorRole: req.admin!.role,
+      action: mfaRequired ? 'account.mfaPolicyOn' : 'account.mfaPolicyOff',
+      targetType: 'AdminSetting',
+      targetId: 'global',
+    });
+    res.json({ ok: true, ...settings });
+  } catch (err) {
+    next(err);
   }
 };
 

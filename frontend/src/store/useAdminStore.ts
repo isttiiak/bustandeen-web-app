@@ -22,6 +22,9 @@ interface AdminState {
   role: AdminRole | null;
   ansarDomain: AnsarDomain | null;
   mfaStep: AdminMfaStep | null;
+  /** The setup was opened on purpose while two-step sign-in is off, so the
+   *  admin may leave it ("Not now"). */
+  mfaVoluntary: boolean;
   setSignedOut: () => void;
   setSession: (
     email: string,
@@ -31,7 +34,10 @@ interface AdminState {
   ) => void;
   /** A request came back 403 mfa_required: ask for the second factor again. */
   setMfaRequired: (step: AdminMfaStep) => void;
-  /** The second factor passed (the proof is already stored). */
+  /** Set up an authenticator now, although it is not required yet. */
+  startMfaSetup: () => void;
+  /** The second factor passed (the proof is already stored), or a voluntary
+   *  setup was left. */
   setMfaPassed: () => void;
 }
 
@@ -41,8 +47,16 @@ export const useAdminStore = create<AdminState>((set) => ({
   role: null,
   ansarDomain: null,
   mfaStep: null,
+  mfaVoluntary: false,
   setSignedOut: () =>
-    set({ status: 'signedOut', email: null, role: null, ansarDomain: null, mfaStep: null }),
+    set({
+      status: 'signedOut',
+      email: null,
+      role: null,
+      ansarDomain: null,
+      mfaStep: null,
+      mfaVoluntary: false,
+    }),
   setSession: (email, role, ansarDomain, mfa = 'ok') =>
     set({
       status: mfa === 'ok' ? 'ready' : 'mfa',
@@ -50,8 +64,15 @@ export const useAdminStore = create<AdminState>((set) => ({
       role,
       ansarDomain,
       mfaStep: mfa === 'ok' ? null : mfa,
+      mfaVoluntary: false,
     }),
   setMfaRequired: (step) =>
-    set((s) => (s.status === 'signedOut' ? s : { status: 'mfa', mfaStep: step })),
-  setMfaPassed: () => set({ status: 'ready', mfaStep: null }),
+    set((s) =>
+      s.status === 'signedOut' ? s : { status: 'mfa', mfaStep: step, mfaVoluntary: false }
+    ),
+  startMfaSetup: () =>
+    set((s) =>
+      s.status === 'ready' ? { status: 'mfa', mfaStep: 'enroll', mfaVoluntary: true } : s
+    ),
+  setMfaPassed: () => set({ status: 'ready', mfaStep: null, mfaVoluntary: false }),
 }));

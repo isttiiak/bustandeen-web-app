@@ -326,6 +326,8 @@ function EnrolStep() {
 export default function AdminMfaStep({ step }: { step: Step }) {
   const { t } = useTranslation();
   const email = useAdminStore((s) => s.email);
+  const voluntary = useAdminStore((s) => s.mfaVoluntary);
+  const leave = useAdminStore((s) => s.setMfaPassed);
   const logout = useAdminLogout();
 
   return (
@@ -347,13 +349,23 @@ export default function AdminMfaStep({ step }: { step: Step }) {
       />
       <AuthCard>
         {step === 'enroll' ? <EnrolStep /> : <VerifyStep />}
-        <button
-          type="button"
-          onClick={() => logout.mutate()}
-          className={`${TEXT_ACTION} mt-2 w-full min-h-[44px]`}
-        >
-          {t('adminMfa.signOut', 'Sign out')}
-        </button>
+        {voluntary ? (
+          <button
+            type="button"
+            onClick={leave}
+            className={`${TEXT_ACTION} mt-2 w-full min-h-[44px]`}
+          >
+            {t('adminMfa.notNow', 'Not now, back to the panel')}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => logout.mutate()}
+            className={`${TEXT_ACTION} mt-2 w-full min-h-[44px]`}
+          >
+            {t('adminMfa.signOut', 'Sign out')}
+          </button>
+        )}
       </AuthCard>
       {/* Enrolment wants a recent password entry; the panel's own dialog
           (AdminLayout) is not mounted before the second factor passes. */}

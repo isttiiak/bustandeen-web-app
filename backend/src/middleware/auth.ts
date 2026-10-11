@@ -6,6 +6,7 @@ import {
 } from '../config/firebaseAdmin.js';
 import AdminAccount from '../models/AdminAccount.js';
 import { checkMfaProof } from '../utils/adminMfaProof.js';
+import { isAdminMfaRequired } from '../services/adminSetting.service.js';
 
 export type AdminMfaState = 'ok' | 'verify' | 'enroll';
 
@@ -219,18 +220,22 @@ const makeRequireAdminAuth =
         res.status(401).json({ ok: false, error: 'admin_session_expired' });
         return;
       }
-      // Second factor (T1.4): every admin route needs a valid X-Admin-MFA
-      // proof except the few that exist to get one (requireAdminIdentity).
-      const mfa: AdminMfaState = !account.totpSecretEnc
-        ? 'enroll'
-        : checkMfaProof(headerValue(req.headers['x-admin-mfa']), {
-              uid,
-              mfaVersion: account.mfaVersion ?? 0,
-              maxAgeSeconds: ADMIN_SESSION_MAX_SECONDS,
-              notBefore: account.sessionsValidAfter,
-            })
-          ? 'ok'
-          : 'verify';
+      // Second factor (T1.4): while the Servant's switch is on, every admin
+      // route needs a valid X-Admin-MFA proof except the few that exist to
+      // get one (requireAdminIdentity). Switched off: password only.
+      const mfaRequired = await isAdminMfaRequired();
+      const mfa: AdminMfaState = !mfaRequired
+        ? 'ok'
+        : !account.totpSecretEnc
+          ? 'enroll'
+          : checkMfaProof(headerValue(req.headers['x-admin-mfa']), {
+                uid,
+                mfaVersion: account.mfaVersion ?? 0,
+                maxAgeSeconds: ADMIN_SESSION_MAX_SECONDS,
+                notBefore: account.sessionsValidAfter,
+              })
+            ? 'ok'
+            : 'verify';
       if (requireMfa && mfa !== 'ok') {
         res.status(403).json({ ok: false, error: 'mfa_required', mfa });
         return;
@@ -242,6 +247,8 @@ const makeRequireAdminAuth =
         ansarDomain: account.ansarDomain,
         authTime,
         mfa,
+        mfaRequired,
+        mfaEnrolled: !!account.totpSecretEnc,
       };
       req.user = { uid, email: account.email, isOwner: account.role === 'servant' };
       next();

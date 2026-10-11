@@ -82,6 +82,36 @@ export function useSetAdminAccountDomain() {
   });
 }
 
+export interface AdminMfaPolicy {
+  mfaRequired: boolean;
+  updatedBy: string | null;
+  updatedAt: string | null;
+}
+
+/** Servant-only — the two-step sign-in switch for every admin (T1.4). */
+export function useAdminMfaPolicy() {
+  return useQuery<AdminMfaPolicy>({
+    queryKey: ['admin', 'mfa-policy'],
+    queryFn: async () => (await api.get<AdminMfaPolicy>('/api/admin/accounts/mfa-policy')).data,
+    staleTime: 10_000,
+  });
+}
+
+/** Servant-only — turn the second factor on or off for every admin. */
+export function useSetAdminMfaPolicy() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (mfaRequired: boolean) =>
+      api
+        .put<AdminMfaPolicy>('/api/admin/accounts/mfa-policy', { mfaRequired })
+        .then((r) => r.data),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['admin', 'mfa-policy'], data);
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
+    },
+  });
+}
+
 /** Servant-only — an admin lost their authenticator: turn it off so they
  *  set up a new one at their next sign-in. */
 export function useResetAdminMfa() {

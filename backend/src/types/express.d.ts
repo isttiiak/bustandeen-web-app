@@ -26,6 +26,10 @@ declare global {
         /** Second factor state of this request (requireAdminAuth always
          *  'ok'; requireAdminIdentity may be 'verify' or 'enroll'). */
         mfa: 'ok' | 'verify' | 'enroll';
+        /** The Servant's switch: is the second factor required right now? */
+        mfaRequired: boolean;
+        /** This admin has an authenticator set up. */
+        mfaEnrolled: boolean;
       };
     }
   }

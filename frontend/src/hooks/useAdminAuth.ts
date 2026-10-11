@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   EmailAuthProvider,
   reauthenticateWithCredential,
@@ -87,6 +87,7 @@ export function useAdminMfaEnrolStart() {
 
 /** Enrolment step 2: the first code turns it on and returns the backup codes. */
 export function useAdminMfaEnrolConfirm() {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (code: string) =>
       api
@@ -95,6 +96,9 @@ export function useAdminMfaEnrolConfirm() {
           backupCodes: string[];
         }>('/api/admin/auth/mfa/enroll/confirm', { code })
         .then((r) => r.data),
-    onSuccess: (data) => setAdminMfaProof(data.mfaProof),
+    onSuccess: (data) => {
+      setAdminMfaProof(data.mfaProof);
+      void queryClient.invalidateQueries({ queryKey: ['admin', 'accounts'] });
+    },
   });
 }

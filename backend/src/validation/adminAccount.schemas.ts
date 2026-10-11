@@ -37,6 +37,10 @@ export const adminAccountIdSchema = z.object({
   params: z.object({ id: z.string().regex(/^[a-f0-9]{24}$/) }),
 });
 
+export const adminMfaPolicySchema = z.object({
+  body: z.object({ mfaRequired: z.boolean() }),
+});
+
 /** A 6-digit authenticator code or a backup code (XXXXX-XXXXX). */
 export const adminMfaCodeSchema = z.object({
   body: z.object({ code: z.string().trim().min(6).max(20) }),

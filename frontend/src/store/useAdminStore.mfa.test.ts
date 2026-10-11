@@ -33,6 +33,27 @@ describe('admin store, second factor', () => {
     });
   });
 
+  it('a voluntary setup (switch off) can be left without passing a code', () => {
+    useAdminStore.getState().setSession('a@test.dev', 'servant', null, 'ok');
+    useAdminStore.getState().startMfaSetup();
+    expect(useAdminStore.getState()).toMatchObject({
+      status: 'mfa',
+      mfaStep: 'enroll',
+      mfaVoluntary: true,
+    });
+    useAdminStore.getState().setMfaPassed();
+    expect(useAdminStore.getState()).toMatchObject({ status: 'ready', mfaVoluntary: false });
+  });
+
+  it('a required step is never voluntary, and setup needs a ready session', () => {
+    useAdminStore.getState().startMfaSetup();
+    expect(useAdminStore.getState().status).toBe('signedOut');
+    useAdminStore.getState().setSession('a@test.dev', 'servant', null, 'ok');
+    useAdminStore.getState().startMfaSetup();
+    useAdminStore.getState().setMfaRequired('enroll');
+    expect(useAdminStore.getState().mfaVoluntary).toBe(false);
+  });
+
   it('never leaves the signed-out state on a late 403', () => {
     useAdminStore.getState().setMfaRequired('verify');
     expect(useAdminStore.getState().status).toBe('signedOut');

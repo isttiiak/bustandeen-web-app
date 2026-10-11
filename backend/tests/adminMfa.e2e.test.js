@@ -4,6 +4,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 import app from '../src/app.js';
 import AdminAccount from '../src/models/AdminAccount.js';
 import AdminAuditLog from '../src/models/AdminAuditLog.js';
+import AdminSetting from '../src/models/AdminSetting.js';
+import { resetAdminSettingCache } from '../src/services/adminSetting.service.js';
 import { base32Decode, hotp, totpStep } from '../src/utils/totp.js';
 import { issueMfaProof } from '../src/utils/adminMfaProof.js';
 
@@ -32,6 +34,9 @@ describe('Admin TOTP second factor (T1.4)', () => {
   beforeAll(async () => {
     mongo = await MongoMemoryServer.create();
     await mongoose.connect(mongo.getUri(), { dbName: 'ihsan_test_admin_mfa' });
+    // The Servant's switch is off by default; these tests need it on.
+    await AdminSetting.create({ _id: 'global', mfaRequired: true });
+    resetAdminSettingCache();
     await AdminAccount.create({
       firebaseUid: 'mfa-servant',
       email: 'servant@test.dev',
@@ -260,5 +265,104 @@ describe('Admin TOTP second factor (T1.4)', () => {
       code: '123456',
     });
     expect(res.status).toBe(401);
+  });
+
+  // ── The Servant's on/off switch (all admins) ───────────────────────────────
+  describe('two-step switch', () => {
+    const servantProof = async () => {
+      const account = await AdminAccount.findOne({ firebaseUid: 'mfa-servant' });
+      return issueMfaProof('mfa-servant', account.mfaVersion);
+    };
+
+    test('only the Servant can read or change it', async () => {
+      const read = await as(request(app).get('/api/admin/accounts/mfa-policy'), 'mfa-ansar');
+      // The Ansar is not enrolled (reset above) and the switch is on.
+      expect(read.status).toBe(403);
+      const res = await as(
+        request(app).get('/api/admin/accounts/mfa-policy'),
+        'mfa-servant',
+        await servantProof()
+      );
+      expect(res.status).toBe(200);
+      expect(res.body.mfaRequired).toBe(true);
+    });
+
+    test('switching needs a recent password entry', async () => {
+      // The password-change test above ended older sign-ins; this one is an
+      // hour old but still valid, just not recent.
+      await AdminAccount.updateOne(
+        { firebaseUid: 'mfa-servant' },
+        { $set: { sessionsValidAfter: null } }
+      );
+      const res = await as(
+        request(app).put('/api/admin/accounts/mfa-policy'),
+        'mfa-servant',
+        await servantProof(),
+        60 * 60
+      ).send({ mfaRequired: false });
+      expect(res.status).toBe(401);
+      expect(res.body.error).toBe('admin_reauth_required');
+    });
+
+    test('off: every admin signs in with the password alone, enrolled or not', async () => {
+      const res = await as(
+        request(app).put('/api/admin/accounts/mfa-policy'),
+        'mfa-servant',
+        await servantProof()
+      ).send({ mfaRequired: false });
+      expect(res.status).toBe(200);
+      expect(res.body).toMatchObject({ mfaRequired: false, updatedBy: 'servant@test.dev' });
+
+      const ansar = await as(request(app).get('/api/admin/feedback'), 'mfa-ansar');
+      expect(ansar.status).toBe(200);
+      const servant = await as(request(app).get('/api/admin/accounts'), 'mfa-servant');
+      expect(servant.status).toBe(200);
+      const session = await as(request(app).get('/api/admin/auth/session'), 'mfa-ansar');
+      expect(session.body).toMatchObject({ mfa: 'ok', mfaRequired: false, mfaEnrolled: false });
+      expect(await AdminAuditLog.countDocuments({ action: 'account.mfaPolicyOff' })).toBe(1);
+    });
+
+    test('an authenticator can still be set up while it is off, and is kept', async () => {
+      const ansar = await enrol('mfa-ansar');
+      expect(ansar.backupCodes).toHaveLength(8);
+      const session = await as(request(app).get('/api/admin/auth/session'), 'mfa-ansar');
+      expect(session.body).toMatchObject({ mfa: 'ok', mfaEnrolled: true });
+    });
+
+    test('on again: the code is asked again, existing authenticators still work', async () => {
+      const res = await as(request(app).put('/api/admin/accounts/mfa-policy'), 'mfa-servant').send({
+        mfaRequired: true,
+      });
+      expect(res.status).toBe(200);
+      expect(res.body.mfaRequired).toBe(true);
+      const blocked = await as(request(app).get('/api/admin/accounts'), 'mfa-servant');
+      expect(blocked.status).toBe(403);
+      expect(blocked.body.mfa).toBe('verify');
+      const ok = await as(
+        request(app).get('/api/admin/accounts'),
+        'mfa-servant',
+        await servantProof()
+      );
+      expect(ok.status).toBe(200);
+      expect(await AdminAuditLog.countDocuments({ action: 'account.mfaPolicyOn' })).toBe(1);
+    });
+
+    test('no setting stored = off (the launch default)', async () => {
+      await AdminSetting.deleteMany({});
+      resetAdminSettingCache();
+      await AdminAccount.updateOne(
+        { firebaseUid: 'mfa-servant' },
+        { $set: { totpSecretEnc: null } }
+      );
+      const res = await as(request(app).get('/api/admin/accounts'), 'mfa-servant');
+      expect(res.status).toBe(200);
+    });
+
+    test('the body must say true or false', async () => {
+      const res = await as(request(app).put('/api/admin/accounts/mfa-policy'), 'mfa-servant').send({
+        mfaRequired: 'no',
+      });
+      expect(res.status).toBe(400);
+    });
   });
 });

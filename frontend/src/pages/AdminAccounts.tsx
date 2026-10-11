@@ -12,8 +12,15 @@ import {
   OPTION_CHIP,
   PILL_EMERALD,
   PILL_GOLD,
+  PILL_MUTED,
 } from '../components/admin/adminParts.js';
-import { BTN_PRIMARY, BTN_SECONDARY, OPTION_OFF, OPTION_ON } from '../components/bustanStyles.js';
+import {
+  BTN_PRIMARY,
+  BTN_SECONDARY,
+  CARD,
+  OPTION_OFF,
+  OPTION_ON,
+} from '../components/bustanStyles.js';
 import { useAdminStore } from '../store/useAdminStore.js';
 import {
   useAdminAccounts,
@@ -22,6 +29,8 @@ import {
   useSetAdminAccountDomain,
   useSendAdminPasswordReset,
   useResetAdminMfa,
+  useAdminMfaPolicy,
+  useSetAdminMfaPolicy,
   AdminAccountListItem,
   type AdminFirebaseLink,
 } from '../hooks/useAdminAccounts.js';
@@ -165,6 +174,99 @@ function AddAnsarForm() {
         </button>
       </div>
     </form>
+  );
+}
+
+/**
+ * T1.4: one switch for every admin. Off (the launch default) = password only,
+ * handy during busy development; on = the authenticator code too. Set-up
+ * authenticators are kept while it is off.
+ */
+function TwoStepCard({ accounts }: { accounts: AdminAccountListItem[] | undefined }) {
+  const { t } = useTranslation();
+  const myEmail = useAdminStore((s) => s.email);
+  const startMfaSetup = useAdminStore((s) => s.startMfaSetup);
+  const { data: policy } = useAdminMfaPolicy();
+  const setPolicy = useSetAdminMfaPolicy();
+  const on = policy?.mfaRequired ?? false;
+  const me = accounts?.find((a) => a.email === myEmail);
+  const notSetUp = accounts?.filter((a) => a.active && !a.mfaEnabled).map((a) => a.email) ?? [];
+
+  const toggle = () => {
+    const ok = window.confirm(
+      on
+        ? t(
+            'adminAccounts.twoStepOffConfirm',
+            'Turn two-step sign-in off for every admin? A password alone will open the panel until you turn it back on.'
+          )
+        : me?.mfaEnabled
+          ? t(
+              'adminAccounts.twoStepOnConfirm',
+              'Turn two-step sign-in on for every admin? Each one needs their authenticator code at the next sign-in, and anyone without one sets it up first.'
+            )
+          : t(
+              'adminAccounts.twoStepOnSetupConfirm',
+              'Turn two-step sign-in on for every admin? You have no authenticator yet, so you set one up straight after this.'
+            )
+    );
+    if (ok) setPolicy.mutate(!on);
+  };
+
+  return (
+    <section className={`${CARD} p-4 sm:p-5 space-y-3`} aria-labelledby="two-step-title">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-1">
+          <h2 id="two-step-title" className="font-display text-white font-bold text-base">
+            {t('adminAccounts.twoStepTitle', 'Two-step sign-in')}{' '}
+            <span className={on ? PILL_EMERALD : PILL_MUTED}>
+              {on ? t('adminAccounts.twoStepOn', 'On') : t('adminAccounts.twoStepOff', 'Off')}
+            </span>
+          </h2>
+          <p className="text-sm text-white/80">
+            {on
+              ? t(
+                  'adminAccounts.twoStepOnText',
+                  'Every admin enters a code from their authenticator app after the password.'
+                )
+              : t(
+                  'adminAccounts.twoStepOffText',
+                  'Admins sign in with the password only. Turn it on before the panel is used by others.'
+                )}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={toggle}
+          disabled={!policy || setPolicy.isPending}
+          aria-pressed={on}
+          className={on ? BTN_DANGER : BTN_SMALL}
+        >
+          {setPolicy.isPending
+            ? '…'
+            : on
+              ? t('adminAccounts.twoStepTurnOff', 'Turn off')
+              : t('adminAccounts.twoStepTurnOn', 'Turn on')}
+        </button>
+      </div>
+      {notSetUp.length > 0 && (
+        <p className="text-xs text-white/70">
+          {t('adminAccounts.twoStepNotSetUp', {
+            defaultValue: 'No authenticator yet: {{emails}}.',
+            emails: notSetUp.join(', '),
+          })}
+        </p>
+      )}
+      {me && !me.mfaEnabled && !on && (
+        <button type="button" onClick={startMfaSetup} className={BTN_SMALL}>
+          {t('adminAccounts.setUpMine', 'Set up my authenticator now')}
+        </button>
+      )}
+      {setPolicy.isError && (
+        <p role="alert" className="text-red-400 text-xs">
+          {t('adminAccounts.twoStepFailed', 'Could not change two-step sign-in.')}
+        </p>
+      )}
+    </section>
   );
 }
 
@@ -312,6 +414,8 @@ export default function AdminAccounts() {
             'Servant-only. Add a new Ansar, change which area they manage, or revoke an existing one. Every change takes effect immediately.'
           )}
         />
+
+        <TwoStepCard accounts={accounts} />
 
         <AddAnsarForm />
 

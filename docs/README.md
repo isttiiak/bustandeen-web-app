@@ -41,8 +41,8 @@ Order matters:
 Each domain follows **routes → controllers → services → models**. Auth is `requireAuth` (Firebase ID
 token → `req.user`, rejects disabled users on every request) or `requireAdminAuth` (Firebase account +
 `AdminAccount` role: Servant or Ansar, plus a TOTP second factor: an `X-Admin-MFA` proof from
-`/api/admin/auth/mfa/*`, see `services/adminMfa.service.ts`; `requireAdminIdentity` skips it only for the
-session and MFA routes). Every write route is validated with Zod (`middleware/validate.ts`
+`/api/admin/auth/mfa/*`, see `services/adminMfa.service.ts`, required only while the Servant's switch
+`AdminSetting.mfaRequired` is on; `requireAdminIdentity` skips it only for the session and MFA routes). Every write route is validated with Zod (`middleware/validate.ts`
 
 - `validation/*.schemas.ts`).
 

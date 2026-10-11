@@ -40,6 +40,8 @@ export const sessionHandler = async (
       ansarDomain: req.admin.ansarDomain,
       // 'ok' | 'verify' (enter a code) | 'enroll' (set up the authenticator)
       mfa: req.admin.mfa,
+      mfaRequired: req.admin.mfaRequired,
+      mfaEnrolled: req.admin.mfaEnrolled,
     });
   } catch (err) {
     next(err);
