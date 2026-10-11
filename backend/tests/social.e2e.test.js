@@ -51,8 +51,8 @@ describe('Social API (share activities)', () => {
     );
     expect(res.status).toBe(200);
     expect(res.body.inviteCode).toMatch(/^[A-Za-z0-9_-]{6,}$/);
-    expect(res.body.leaderboard).toHaveLength(1);
-    expect(res.body.leaderboard[0].isMe).toBe(true);
+    expect(res.body.circle).toHaveLength(1);
+    expect(res.body.circle[0].isMe).toBe(true);
     codeA = res.body.inviteCode;
   });
 
@@ -81,8 +81,8 @@ describe('Social API (share activities)', () => {
     const sumB = await asB(
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=360`)
     );
-    expect(sumA.body.leaderboard).toHaveLength(1);
-    expect(sumB.body.leaderboard).toHaveLength(1);
+    expect(sumA.body.circle).toHaveLength(1);
+    expect(sumB.body.circle).toHaveLength(1);
 
     // Re-sending the same request is idempotent, not a duplicate
     const again = await asB(request(app).post(`/api/social/connect`)).send({ code: codeA });
@@ -126,29 +126,29 @@ describe('Social API (share activities)', () => {
     const sumB = await asB(
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=360`)
     );
-    expect(sumA.body.leaderboard.map((f) => f.uid).sort()).toEqual(['amir', 'bilal']);
-    expect(sumB.body.leaderboard.map((f) => f.uid).sort()).toEqual(['amir', 'bilal']);
+    expect(sumA.body.circle.map((f) => f.uid).sort()).toEqual(['amir', 'bilal']);
+    expect(sumB.body.circle.map((f) => f.uid).sort()).toEqual(['amir', 'bilal']);
   });
 
-  test('invisible friend is hidden from the leaderboard entirely, even for existing friends', async () => {
-    const set = await asB(request(app).patch(`/api/social/invisible`)).send({ invisible: true });
+  test('a hidden friend is left out of the circle entirely, even for existing friends', async () => {
+    const set = await asB(request(app).patch(`/api/social/privacy`)).send({ visibility: 'hidden' });
     expect(set.status).toBe(200);
-    expect(set.body.invisible).toBe(true);
+    expect(set.body.privacy.visibility).toBe('hidden');
 
     const sumA = await asA(
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=360`)
     );
-    expect(sumA.body.leaderboard.map((f) => f.uid)).toEqual(['amir']); // bilal hidden
+    expect(sumA.body.circle.map((f) => f.uid)).toEqual(['amir']); // bilal hidden
 
     // Invisible only hides YOU from OTHERS — Bilal still sees Amir (and
     // himself) on his own dashboard, since Amir hasn't gone invisible
     const sumB = await asB(
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=360`)
     );
-    expect(sumB.body.leaderboard.map((f) => f.uid).sort()).toEqual(['amir', 'bilal']);
+    expect(sumB.body.circle.map((f) => f.uid).sort()).toEqual(['amir', 'bilal']);
 
     // Turn it back off for the rest of the suite
-    await asB(request(app).patch(`/api/social/invisible`)).send({ invisible: false });
+    await asB(request(app).patch(`/api/social/privacy`)).send({ visibility: 'detail' });
   });
 
   test('the circle lists me first, never ranks, and shows a full-detail friend in full', async () => {
@@ -171,25 +171,27 @@ describe('Social API (share activities)', () => {
     const res = await asA(
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=360`)
     );
-    expect(res.body.circle).toEqual(res.body.leaderboard);
+    // The pre-T3.6 aliases are gone (removed 2026-10-11)
+    expect(res.body).not.toHaveProperty('leaderboard');
+    expect(res.body).not.toHaveProperty('invisible');
     const [first, second] = res.body.circle;
     // Amir (me) first even though Bilal's Noor is higher: no ranking
     expect(first.uid).toBe('amir');
     expect(second.uid).toBe('bilal');
-    // Bilal switched the old invisible toggle off above = full detail
+    // Bilal went back to full detail above
     expect(second.visibility).toBe('detail');
     expect(second.salatToday).toBe(2);
     expect(second.score).toBeGreaterThan(first.score);
     expect(second.score).toBeLessThanOrEqual(100);
   });
 
-  test("noor endpoint returns today's and all-time Noor", async () => {
-    const res = await asB(request(app).get(`/api/social/noor?today=${TODAY}&timezoneOffset=360`));
-    expect(res.status).toBe(200);
-    // Today's Noor is prayer-time-aware so exact value varies by time of day
-    expect(res.body.today).toBeGreaterThanOrEqual(0);
-    expect(res.body.today).toBeLessThanOrEqual(100);
-    expect(typeof res.body.allTime).toBe('number');
+  test('the removed pre-T3.6 / pre-U3 routes are gone', async () => {
+    const noor = await asB(request(app).get(`/api/social/noor?today=${TODAY}&timezoneOffset=360`));
+    expect(noor.status).toBe(404);
+    const invisible = await asB(request(app).patch(`/api/social/invisible`)).send({
+      invisible: true,
+    });
+    expect(invisible.status).toBe(404);
   });
 
   test('friends see a preset avatar id, never a data: photo', async () => {
@@ -227,8 +229,8 @@ describe('Social API (share activities)', () => {
     const sumB = await asB(
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=360`)
     );
-    expect(sumA.body.leaderboard).toHaveLength(1);
-    expect(sumB.body.leaderboard).toHaveLength(1);
+    expect(sumA.body.circle).toHaveLength(1);
+    expect(sumB.body.circle).toHaveLength(1);
 
     // Friends list is now empty on both sides
     const listA = await asA(request(app).get(`/api/social/friends`));

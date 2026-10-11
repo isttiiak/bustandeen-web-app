@@ -497,10 +497,8 @@ describe('Backup v3: export, wipe, import restores exactly', () => {
     }
   });
 
-  test('the old "All my data" route returns the same file', async () => {
+  test('the old "All my data" route is gone (removed 2026-10-11)', async () => {
     const res = await asA(request(app).get('/api/user/export/all'));
-    expect(res.status).toBe(200);
-    expect(res.body.data.version).toBe(3);
-    expect(res.body.data.kind).toBe('bustandeen-backup');
+    expect(res.status).toBe(404);
   });
 });

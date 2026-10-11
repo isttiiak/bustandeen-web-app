@@ -21,10 +21,6 @@ export const socialSummarySchema = z.object({
   body: z.object({}).optional(),
 });
 
-export const setInvisibleSchema = z.object({
-  body: z.object({ invisible: z.boolean() }),
-});
-
 export const setPrivacySchema = z.object({
   body: z
     .object({

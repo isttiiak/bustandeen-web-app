@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.158.1 - Old API routes removed - 2026-10-11
+
+### Removed
+
+- **Pre-T3.6 friends-privacy aliases:** `leaderboard` and `invisible` in `GET /api/social/summary` (use `circle` and `privacy.visibility`) and `PATCH /api/social/invisible` (use `PATCH /api/social/privacy`). They were kept for app versions cached before v5.125.0.
+- **`GET /api/social/noor`**, used by the navbar Noor capsules removed in v5.135.0. Today's Noor is the user's own row in the circle; all-time Noor is in `GET /api/social/alltime`.
+- **`GET /api/user/export/all`**, the old "All my data" route. Since the version-3 backup (U6) it returned the same file as `GET /api/user/export`.
+- Removed ahead of the planned dates (17 and 24 Oct) with Istiak's go: very few installed copies of the app exist. An installed app from before v5.135.0 should be reopened (or reinstalled) to load the current version.
+
 ## v5.158.0 - Two-step sign-in for admins - 2026-10-11
 
 ### Security

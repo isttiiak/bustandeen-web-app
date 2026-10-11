@@ -88,7 +88,7 @@ describe('Rayhanah Cycle API', () => {
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=${TZ}`)
     );
     expect(sum.status).toBe(200);
-    const me = sum.body.leaderboard.find((f) => f.isMe);
+    const me = sum.body.circle.find((f) => f.isMe);
 
     // Excused score: zikr goal met 40 + quran 0 + salawat 10 + steadiness 1 = 51
     expect(me.score).toBe(51);
@@ -120,19 +120,19 @@ describe('Rayhanah Cycle API', () => {
     const sumZ = await asZ(
       request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=${TZ}`)
     );
-    const zaid = sumZ.body.leaderboard.find((f) => f.isMe);
+    const zaid = sumZ.body.circle.find((f) => f.isMe);
     // zikr goal met 15 + istighfar extra 5 + steadiness 1; salat/fast/quran all 0
     expect(zaid.score).toBe(21);
   });
 
   test('all-time Noor uses the excused formula on cycle days', async () => {
-    const noor = await asM(
-      request(app).get(`/api/social/noor?today=${TODAY}&timezoneOffset=${TZ}`)
+    const res = await asM(
+      request(app).get(`/api/social/alltime?today=${TODAY}&timezoneOffset=${TZ}`)
     );
-    expect(noor.status).toBe(200);
-    expect(noor.body.today).toBe(51);
-    // Same formula for every day, so with one active day all-time equals today
-    expect(noor.body.allTime).toBe(51);
+    expect(res.status).toBe(200);
+    // Same formula for every day, so with one active day all-time equals
+    // today's excused score (51, see above)
+    expect(res.body.allTime.maryam).toBe(51);
   });
 
   test('end cycle; ending again rejected; end before start rejected', async () => {
