@@ -628,32 +628,6 @@ export function getHijriDate(date: Date = new Date()): HijriDate | null {
   }
 }
 
-/** Umm al-Qura date of `date` shifted by an explicit `offset` in days, ignoring
- * every setting. */
-export function hijriDateWithOffset(date: Date, offset: number): HijriDate | null {
-  try {
-    const adjusted = new Date(date.getTime() + offset * 86_400_000);
-    const fmt = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', {
-      day: 'numeric',
-      month: 'numeric',
-      year: 'numeric',
-    });
-    const parts = fmt.formatToParts(adjusted);
-    const day = parseInt(parts.find((p) => p.type === 'day')?.value ?? '0');
-    const month = parseInt(parts.find((p) => p.type === 'month')?.value ?? '0');
-    const year = parseInt(parts.find((p) => p.type === 'year')?.value ?? '0');
-    return {
-      day,
-      month,
-      year,
-      monthName: HIJRI_MONTH_NAMES[month - 1] ?? '',
-      weekday: date.getDay(),
-    };
-  } catch {
-    return null;
-  }
-}
-
 /** Format Hijri date for display: month name, day, and year all follow the
  * app's selected language (via the shared `hijriMonths.*` locale keys and
  * বাংলা digits in Bengali mode). */
