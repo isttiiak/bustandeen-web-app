@@ -12,6 +12,7 @@ import {
   sendPasswordReset,
   sendVerification,
 } from '../services/authEmail.service.js';
+import { markActive } from '../services/dailyActivity.service.js';
 import {
   SignupError,
   checkSignup,
@@ -97,6 +98,9 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
       res.status(403).json({ ok: false, error: 'account_disabled' });
       return;
     }
+
+    // Daily "opened the app" count for the admin retention view (T4.6).
+    await markActive(uid);
 
     res.json({ ok: true, user: toClientUser(user), isAdmin: isAdminEmail(email) });
   } catch (err) {

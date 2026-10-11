@@ -16,7 +16,12 @@ import Seo from '../components/Seo.js';
 import { AdminHero } from '../components/admin/adminParts.js';
 import { CARD } from '../components/bustanStyles.js';
 import { useAdminStore } from '../store/useAdminStore.js';
-import { useAdminStats, type AdminOverviewStats } from '../hooks/useAdminStats.js';
+import {
+  useAdminStats,
+  useDailyActivity,
+  type AdminOverviewStats,
+} from '../hooks/useAdminStats.js';
+import DailyActivityPanel from '../components/admin/DailyActivityPanel.js';
 import { cameBackPercent, weekLabel } from '../utils/adminActivity.js';
 
 function AdminCard({
@@ -137,6 +142,7 @@ export default function AdminHome() {
   const { t } = useTranslation();
   const { role, ansarDomain } = useAdminStore();
   const isServant = role === 'servant';
+  const { data: daily } = useDailyActivity(isServant);
   // Same domain-visibility rule AdminLayout.tsx's top nav uses — this card
   // grid must match it exactly, otherwise a domain-scoped Ansar sees a card
   // for a section the API will 403 them out of the moment they click it.
@@ -197,6 +203,7 @@ export default function AdminHome() {
       )}
 
       {isServant && stats?.servant?.activity && <ActivityPanel activity={stats.servant.activity} />}
+      {isServant && daily?.days?.length ? <DailyActivityPanel series={daily} /> : null}
 
       {!isServant && ansarDomain === 'sadaqah' && (
         <Link

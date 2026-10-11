@@ -95,6 +95,8 @@ export interface IUser extends Document {
    * (see adminUsers.service.ts's getDaysInactive). Null for accounts that
    * existed before this field shipped, until their next real activity. */
   lastActiveAt?: Date | null;
+  /** Bangladesh day of the last counted activity (T4.6 daily counts only). */
+  activeDay?: string | null;
   /** Set every time an admin sends a re-engagement email (adminUsers.service.ts)
    * — never implies the user actually came back, only that one was sent.
    * Paired with reengagementEmailCount so the admin can see "already emailed
@@ -181,6 +183,7 @@ const userSchema = new Schema(
     groqApiKeySetAt: { type: Date, default: null },
     welcomeEmailSentAt: { type: Date, default: null },
     lastActiveAt: { type: Date, default: null },
+    activeDay: { type: String, default: null },
     reengagementEmailSentAt: { type: Date, default: null },
     reengagementEmailCount: { type: Number, default: 0 },
     disabled: { type: Boolean, default: false },

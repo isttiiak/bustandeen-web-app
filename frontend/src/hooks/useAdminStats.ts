@@ -32,3 +32,31 @@ export function useAdminStats() {
     refetchInterval: 60_000,
   });
 }
+
+export interface DailyActivityPoint {
+  day: string;
+  /** People who opened the app; null before counting started. */
+  active: number | null;
+  salat: number;
+  zikr: number;
+  quran: number;
+  fasting: number;
+}
+
+export interface DailyActivitySeries {
+  days: DailyActivityPoint[];
+  activeSince: string | null;
+}
+
+/** Servant only: day-by-day counts for the last 90 days (T4.6). */
+export function useDailyActivity(enabled: boolean) {
+  return useQuery<DailyActivitySeries>({
+    queryKey: ['admin', 'stats', 'daily'],
+    queryFn: async () => {
+      const res = await api.get<{ ok: boolean } & DailyActivitySeries>('/api/admin/stats/daily');
+      return res.data;
+    },
+    enabled,
+    staleTime: 5 * 60_000,
+  });
+}

@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.158.5 - Day-by-day activity in Admin - 2026-10-12
+
+### Added
+
+- **Admin home, "Day by day (last 90 days)"** (audit T4.6, Servant only): one small chart per measure with today's number, the 7-day average, a hover value per day and a 30-day table.
+  - **Opened the app**: each person counted once per day (Bangladesh days), from this version on. A User field remembers only the day of the last count (`activeDay`); no history of who was active is kept.
+  - **Logged salat, zikr, Quran, a fast**: how many people logged each, from the worship logs (salat counts Done or Kaza and nafl, not the automatic Miss). Available for the last 90 days straight away; each finished day is computed once and saved (`DailyActivity`, one document per day), so the page does not scan the logs again.
+  - `GET /api/admin/stats/daily`. Counts only; no new index.
+
 ## v5.158.4 - Easier to read Fasting cards - 2026-10-12
 
 ### Changed
