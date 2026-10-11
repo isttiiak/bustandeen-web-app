@@ -3,7 +3,10 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../src/app.js';
 import AdminAccount from '../src/models/AdminAccount.js';
-import { sendAdminPasswordReset } from '../src/services/adminAccount.service.js';
+import {
+  brandedAdminResetLink,
+  sendAdminPasswordReset,
+} from '../src/services/adminAccount.service.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 const fakeJwt = (payload) => {
@@ -121,10 +124,36 @@ describe('Admin passwords (U8.7)', () => {
     test('asks Firebase for a link for that account and emails it', async () => {
       const linker = {
         generatePasswordResetLink: jest.fn(async () => 'https://example.test/reset?x=1'),
+        getUserByEmail: jest.fn(async () => ({ disabled: false })),
       };
       // SMTP is not configured under test, so the send itself reports 502.
       await expect(sendAdminPasswordReset(ansarId, linker)).rejects.toMatchObject({ status: 502 });
       expect(linker.generatePasswordResetLink).toHaveBeenCalledWith('ansar@pw.dev');
+    });
+
+    test('a login disabled in Firebase gets no link (it could never be used)', async () => {
+      const linker = {
+        generatePasswordResetLink: jest.fn(async () => 'https://example.test/reset?x=1'),
+        getUserByEmail: jest.fn(async () => ({ disabled: true })),
+      };
+      await expect(sendAdminPasswordReset(ansarId, linker)).rejects.toMatchObject({ status: 409 });
+      const missing = {
+        ...linker,
+        getUserByEmail: jest.fn(async () => Promise.reject(new Error('x'))),
+      };
+      await expect(sendAdminPasswordReset(ansarId, missing)).rejects.toMatchObject({ status: 404 });
+      expect(linker.generatePasswordResetLink).not.toHaveBeenCalled();
+    });
+
+    test('the emailed link opens the branded bustandeen.com page, not firebaseapp.com', () => {
+      const firebase =
+        'https://ihsan-9e89b.firebaseapp.com/__/auth/action?mode=resetPassword&oobCode=AbC-1_2&apiKey=k&lang=en';
+      expect(brandedAdminResetLink(firebase)).toBe(
+        'https://bustandeen.com/auth/action?mode=resetPassword&oobCode=AbC-1_2&next=admin'
+      );
+      expect(brandedAdminResetLink('https://example.test/reset?x=1')).toBe(
+        'https://example.test/reset?x=1'
+      );
     });
   });
 

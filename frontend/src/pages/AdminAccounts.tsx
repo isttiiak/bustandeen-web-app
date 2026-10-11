@@ -1,4 +1,5 @@
 import { useState, FormEvent } from 'react';
+import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import { PlusIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
@@ -242,7 +243,9 @@ function AccountRow({ account }: { account: AdminAccountListItem }) {
             )}
             {sendReset.isError && (
               <span role="alert" className="text-red-400 text-xs">
-                {t('adminAccounts.resetFailed', 'Could not send the link.')}
+                {axios.isAxiosError(sendReset.error) && sendReset.error.response?.data?.error
+                  ? String(sendReset.error.response.data.error)
+                  : t('adminAccounts.resetFailed', 'Could not send the link.')}
               </span>
             )}
           </div>

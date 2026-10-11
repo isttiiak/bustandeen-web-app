@@ -296,7 +296,27 @@ export const endOtherSessions = async (
 /** The link-generating slice of firebase-admin's Auth (faked in tests). */
 export interface PasswordResetLinker {
   generatePasswordResetLink(email: string): Promise<string>;
+  getUserByEmail(email: string): Promise<{ disabled: boolean }>;
 }
+
+const APP_URL = 'https://bustandeen.com';
+
+/**
+ * Firebase's link opens its own page on ihsan-9e89b.firebaseapp.com. Keep
+ * only the one-time code and send the admin to the app's branded reset page
+ * (pages/AuthAction.tsx, the same one users' reset emails use); next=admin
+ * returns them to the admin sign-in afterwards.
+ */
+export const brandedAdminResetLink = (firebaseLink: string): string => {
+  const oobCode = new URL(firebaseLink).searchParams.get('oobCode');
+  if (!oobCode) return firebaseLink;
+  const params = new URLSearchParams({ mode: 'resetPassword', oobCode, next: 'admin' });
+  return `${APP_URL}/auth/action?${params.toString()}`;
+};
+
+/** Firebase's default reset-link lifetime (Authentication > Templates). */
+export const ADMIN_RESET_LINK_NOTE =
+  'The link works once and expires within 1 hour. If it has expired, ask Istiak to send a new one.';
 
 /**
  * Servant-only: emails an admin a Firebase password-reset link, for an Ansar
@@ -314,20 +334,33 @@ export const sendAdminPasswordReset = async (
   }
   if (!linker) throw new AdminAccountError('Password reset is not configured here', 503);
 
-  const link = await linker.generatePasswordResetLink(account.email);
+  // A login switched off in the Firebase console still gets a link, but
+  // saving the new password then fails with "expired or already used".
+  const login = await linker.getUserByEmail(account.email).catch(() => null);
+  if (!login) throw new AdminAccountError('No Firebase login exists for this email', 404);
+  if (login.disabled) {
+    throw new AdminAccountError(
+      'This login is disabled in Firebase Authentication. Enable it there, then send the link.',
+      409
+    );
+  }
+
+  const link = brandedAdminResetLink(await linker.generatePasswordResetLink(account.email));
   const name = account.displayName || 'there';
   const text = [
     `Assalamu Alaikum ${name},`,
     'Here is a link to set a new password for your Bustandeen admin account:',
     link,
-    'It works once and expires soon. If you did not expect this, just ignore it and tell Istiak.',
+    ADMIN_RESET_LINK_NOTE,
+    'If you did not expect this, just ignore it and tell Istiak.',
     'Istiak',
   ].join('\n\n');
   const html = [
     `<p>Assalamu Alaikum ${escapeHtml(name)},</p>`,
     '<p>Here is a link to set a new password for your Bustandeen admin account:</p>',
     `<p><a href="${escapeHtml(link)}">Set a new password</a></p>`,
-    '<p>It works once and expires soon. If you did not expect this, just ignore it and tell Istiak.</p>',
+    `<p>${ADMIN_RESET_LINK_NOTE}</p>`,
+    '<p>If you did not expect this, just ignore it and tell Istiak.</p>',
     '<p>Istiak</p>',
   ].join('');
   const messageId = await sendMail({
