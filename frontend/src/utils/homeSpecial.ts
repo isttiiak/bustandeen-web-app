@@ -1,12 +1,13 @@
 // How Home shows today's special days (Settings → Home). Three levels of
 // guidance, picked by the user:
 //  - 'full'  : the whole special-day block (rows, sadaqah, Friday hour, Kahf)
-//              right under the prayer arch, above the worship cards.
+//              right under the prayer arch, above the quick sections.
 //  - 'strip' : a compact "Today" strip under the arch (default); the detailed
 //              cards stay below the worship cards.
 //  - 'pills' : small chips in the arch foot, no extra height; detailed cards
 //              stay below the worship cards.
-// Musafir / location prompts always sit directly under the arch, before any of these.
+// Both 'full' and 'strip' sit directly under the arch, before the Musafir
+// banner and the quick sections (Sweden report, 2026-10-11).
 
 export type HomeSpecialLayout = 'full' | 'strip' | 'pills';
 

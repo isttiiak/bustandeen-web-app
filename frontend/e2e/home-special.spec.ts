@@ -1,8 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 
 // Home: today's special days near the top (Settings → Home, utils/homeSpecial.ts).
-// Default 'strip' sits between the prayer arch and the worship cards; 'pills'
-// are chips inside the arch; 'full' moves the detailed block above the cards.
+// Default 'strip' sits directly under the prayer arch, above the quick
+// sections; 'pills' are chips inside the arch; 'full' moves the detailed block
+// there too.
 // Frozen clock in Dhaka: a Friday afternoon (hour of response on) and a Monday.
 
 const FRIDAY_ASR = new Date('2026-10-16T16:45:00+06:00'); // 5 Jumādā al-Ūlā 1448
@@ -56,7 +57,7 @@ test('Friday, default strip: hour of response first, between the arch and the wo
   await expect(page.locator('a[href="/special-day/friday"]')).toHaveCount(1);
 });
 
-test('Monday, default strip: the Sunnah fast row sits above the worship cards', async ({
+test('Monday, default strip: the Sunnah fast row sits above the quick sections', async ({
   page,
 }) => {
   await demoHome(page, MONDAY);
@@ -66,8 +67,9 @@ test('Monday, default strip: the Sunnah fast row sits above the worship cards', 
     '/special-day/fast_mon_thu'
   );
   const s = await box(page, '[data-testid="today-highlights"]');
-  const zikr = await box(page, '[data-testid="today-goals"] a[href="/zikr"]');
-  expect(s.y + s.height).toBeLessThanOrEqual(zikr.y);
+  // Directly under the arch: above the quick sections, not after them.
+  const quick = await box(page, '[data-testid^="quick-"]');
+  expect(s.y + s.height).toBeLessThanOrEqual(quick.y);
 });
 
 test('Friday, minimal: chips inside the arch, and the arch still opens prayer times', async ({
@@ -86,10 +88,10 @@ test('Friday, minimal: chips inside the arch, and the arch still opens prayer ti
   );
 });
 
-test('Monday, detailed: the full block sits above the worship cards', async ({ page }) => {
+test('Monday, detailed: the full block sits above the quick sections', async ({ page }) => {
   await demoHome(page, MONDAY, 'full');
   await expect(page.getByTestId('today-highlights')).toHaveCount(0);
   const details = await box(page, '#today-special');
-  const zikr = await box(page, '[data-testid="today-goals"] a[href="/zikr"]');
-  expect(details.y + details.height).toBeLessThanOrEqual(zikr.y);
+  const quick = await box(page, '[data-testid^="quick-"]');
+  expect(details.y + details.height).toBeLessThanOrEqual(quick.y);
 });
