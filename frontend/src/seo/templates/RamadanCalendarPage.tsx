@@ -27,12 +27,14 @@ export default function RamadanCalendarPage({ lang, city, hijriYear, qr }: Props
   let cursor = new Date(start);
   let day = 1;
   while (cursor.getTime() <= end.getTime()) {
-    // Noon UTC on the calendar day avoids DST-boundary date-shift surprises
-    // when computing prayer times for that day at the city's coordinates.
-    const noon = new Date(
-      Date.UTC(cursor.getUTCFullYear(), cursor.getUTCMonth(), cursor.getUTCDate(), 12)
+    // `cursor` is UTC midnight of the civil date (as toHijri reads it).
+    const times = computePrayerTimes(
+      city.lat,
+      city.lng,
+      cursor.toISOString().slice(0, 10),
+      city.timezone,
+      city.countryCode
     );
-    const times = computePrayerTimes(city.lat, city.lng, noon, city.countryCode);
     days.push({ day, date: cursor, imsak: times.fajr, iftar: times.maghrib });
     cursor = new Date(cursor.getTime() + 86_400_000);
     day++;
@@ -87,7 +89,9 @@ export default function RamadanCalendarPage({ lang, city, hijriYear, qr }: Props
                   {dateFormat(locale, {
                     month: 'short',
                     day: 'numeric',
-                    timeZone: city.timezone,
+                    // UTC midnight of the civil date: formatting it in a zone
+                    // west of UTC would show the day before.
+                    timeZone: 'UTC',
                   }).format(d.date)}
                 </td>
                 <td className="px-4 py-2 text-end text-[#10b981] font-bold tabular-nums">

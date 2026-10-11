@@ -41,11 +41,12 @@ export function ymd(d: Date): string {
 }
 
 function dayRow(city: CityEntry, noon: Date, fast: number): RamadanDay {
+  const date = ymd(noon);
   return {
     fast,
-    date: ymd(noon),
+    date,
     noon,
-    times: computePrayerTimes(city.lat, city.lng, noon, city.countryCode),
+    times: computePrayerTimes(city.lat, city.lng, date, city.timezone, city.countryCode),
   };
 }
 

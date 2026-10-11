@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.158.6 - City pages show the city's own day - 2026-10-12
+
+### Fixed
+
+- **Prayer times city pages** (`/prayer-times/<city>`): the times are now those of the city's own date at build time. The build runs in UTC, so a city west of UTC built between 00:00 UTC and its own midnight (the Americas, 00:00-08:00 UTC) showed the next day's times under today's date (about a minute off). On the date-line islands (clock UTC+13/+14 west of 180°: Samoa, Tonga, Kiribati Line Islands) the times would have been a whole day off; none of these cities is in the list today, but the rule now holds for them.
+- **Ramadan calendars** (`/ramadan-calendar/<city>/<year>`): in cities west of UTC (the Americas) every row's date showed the day before (1 Ramadan 1448 read "Feb 7" in New York instead of "Feb 8"); the times were already right there. On the date-line islands the times now match the row's date too.
+- How: as in the app (v5.159.0), a city's day is the calculation day whose Dhuhr falls on that date in the city's time zone (`computePrayerTimes` in `src/seo/utils/calc.ts` now takes the civil date and the zone). Same formatter cache as before, no new per-call formatter. The Bangladesh monthly timetables and Ramadan pages are unchanged (UTC+6).
+
 ## v5.158.5 - Day-by-day activity in Admin - 2026-10-12
 
 ### Added
