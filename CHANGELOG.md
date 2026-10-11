@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.158.3 - App errors on devices are reported (no tracker) - 2026-10-12
+
+### Added
+
+- **Errors the app hits on people's devices are now reported to our own server** (audit T1.1 follow-up; before, a crash in someone's browser was invisible to us). Uncaught errors, unhandled promise rejections and screens that crash (the "Something went wrong" page) send one short report each, at most 10 per page load, to `POST /api/client-errors`. No third-party service.
+  - The report holds the error message (addresses, emails and long numbers removed again on the server), our code file and line, the page type (private pages as `/private`, the same redaction as analytics) and the app version. No account, IP address, device ID or page address is stored.
+  - Daily counts are kept for 30 days and shown in Admin, Ops health, "App errors on devices".
+  - Not reported: errors from browser extensions or other sites' scripts, a missing file after an update (already handled), API errors (the server logs those), development builds.
+- The privacy page says so (English and Bangla).
+
+### Fixed
+
+- The API's CORS rules now allow the admin two-step header (`X-Admin-MFA`). Production was not affected (the app calls its own origin); local development would have failed admin requests once two-step sign-in is on.
+
 ## v5.158.2 - Security policy enforced on the website - 2026-10-12
 
 ### Security

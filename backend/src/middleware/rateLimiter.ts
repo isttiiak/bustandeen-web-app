@@ -267,6 +267,15 @@ export const adminMfaLimiter = makeUidLimit(
 /** CSP violation reports: 60 per 15 min per IP. Browsers send one report per
  *  violation, so a single misconfigured page can burst; anything beyond this
  *  is noise or abuse. Throttled requests still get a 429 (browsers ignore it). */
+/** App error reports: 30 per 15 min per IP (flood guard, per instance). The
+ *  app itself sends each distinct error once and at most 10 per page load. */
+export const clientErrorLimiter = makeLimit(
+  15 * 60 * 1000,
+  30,
+  { ok: false, error: 'Too many reports.' },
+  'clientError'
+);
+
 export const cspReportLimiter = makeLimit(
   15 * 60 * 1000,
   60,

@@ -8,6 +8,7 @@ import {
   isRecoveringFromStaleChunk,
   recoverFromStaleChunk,
 } from '../utils/staleChunkReload.js';
+import { reportClientError } from '../utils/errorReporting.js';
 
 interface Props {
   children: ReactNode;
@@ -38,6 +39,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error('Unhandled render error:', error, info.componentStack);
+    reportClientError(error, 'render');
   }
 
   render() {

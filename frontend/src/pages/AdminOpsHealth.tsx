@@ -14,7 +14,9 @@ import {
   useRateLimitHits,
   useStorageUsage,
   useCspViolations,
+  useClientErrors,
   type CspViolationReport,
+  type ClientErrorReport,
   type SenderDiagnostics,
   type StorageUsage,
 } from '../hooks/useAdminOps.js';
@@ -162,6 +164,67 @@ function StorageSection({ storage }: { storage: StorageUsage }) {
   );
 }
 
+/** Errors the app hit in visitors' browsers, last 7 UTC days (scrubbed). */
+function ClientErrorSection({ report }: { report: ClientErrorReport }) {
+  const { t } = useTranslation();
+  const total = report.daily.reduce((sum, d) => sum + d.count, 0);
+  return (
+    <section className="space-y-2">
+      <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
+        {t('adminOpsHealth.appErrorsTitle', 'App errors on devices (last 7 days, UTC)')}
+      </h2>
+      <div className={`${CARD} p-4 space-y-3`}>
+        <p className="text-white/70 text-xs leading-relaxed">
+          {t(
+            'adminOpsHealth.appErrorsDesc',
+            'Counted per day from {{since}} (kept 30 days): the message without addresses or long numbers, our file and line, the page type and the app version. No account, device or page address.',
+            { since: report.sinceDay }
+          )}
+        </p>
+        {total === 0 ? (
+          <p className="text-white/70 text-sm">
+            {t('adminOpsHealth.appErrorsNone', 'No app errors reported in this period.')}
+          </p>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-2">
+              {report.daily.map((d) => (
+                <span
+                  key={d.day}
+                  className="rounded-control border border-brand-border px-2 py-1 text-[11px] font-mono text-white/70"
+                >
+                  {d.day}: <span className="text-brand-gold font-bold">{d.count}</span>
+                </span>
+              ))}
+            </div>
+            <div className="space-y-2">
+              {report.top.map((r) => (
+                <div
+                  key={`${r.kind}|${r.message}|${r.where}|${r.route}|${r.version}`}
+                  className="flex items-start justify-between gap-3 border-b border-brand-border/60 pb-2 last:border-0 last:pb-0"
+                >
+                  <div className="min-w-0">
+                    <p className="text-white/80 text-xs font-bold break-words">{r.message}</p>
+                    <p className="text-white/70 text-[11px] font-mono truncate">
+                      {r.kind} · {r.where} · {r.route} · v{r.version}
+                    </p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-brand-gold text-sm font-bold">{r.count}</p>
+                    <p className="text-white/70 text-[10px]">
+                      {t('adminOpsHealth.cspDays', '{{count}} day(s)', { count: r.days })}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </section>
+  );
+}
+
 /** CSP reports per UTC day, origins only (audit T1.3b). Enforced since
  *  v5.158.2: a legitimate source listed here is being blocked. */
 function CspSection({ report }: { report: CspViolationReport }) {
@@ -235,6 +298,7 @@ export default function AdminOpsHealth() {
   const { data: hits } = useRateLimitHits();
   const { data: storage } = useStorageUsage();
   const { data: csp } = useCspViolations();
+  const { data: appErrors } = useClientErrors();
 
   // Defensive against a stale cached frontend bundle briefly calling into an
   // API response shape it wasn't built against (this page's response shape
@@ -323,6 +387,7 @@ export default function AdminOpsHealth() {
 
             {storage?.collections && <StorageSection storage={storage} />}
 
+            {appErrors?.daily && <ClientErrorSection report={appErrors} />}
             {csp?.daily && <CspSection report={csp} />}
 
             <div className="grid lg:grid-cols-2 gap-6">

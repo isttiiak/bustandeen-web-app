@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as adminOpsService from '../services/adminOps.service.js';
 import * as cspReportService from '../services/cspReport.service.js';
+import * as clientErrorService from '../services/clientError.service.js';
 
 export const healthHandler = async (
   _req: Request,
@@ -49,6 +50,19 @@ export const cspViolationsHandler = async (
   try {
     const report = await cspReportService.getViolationReport();
     res.json({ ok: true, ...report });
+  } catch (err) {
+    next(err);
+  }
+};
+
+/** App errors from visitors' browsers, last 7 UTC days (scrubbed counts). */
+export const clientErrorsHandler = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    res.json({ ok: true, ...(await clientErrorService.getClientErrorReport()) });
   } catch (err) {
     next(err);
   }

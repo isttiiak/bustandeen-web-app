@@ -260,6 +260,16 @@ describe('Admin TOTP second factor (T1.4)', () => {
     expect(res.status).toBe(409);
   });
 
+  test('browsers may send the proof header cross-origin (CORS preflight, local dev)', async () => {
+    const res = await request(app)
+      .options('/api/admin/accounts')
+      .set('Origin', 'http://localhost:5173')
+      .set('Access-Control-Request-Method', 'GET')
+      .set('Access-Control-Request-Headers', 'x-admin-token,x-admin-mfa');
+    expect(res.status).toBe(204);
+    expect(res.headers['access-control-allow-headers'].toLowerCase()).toContain('x-admin-mfa');
+  });
+
   test('a non-admin Firebase identity gets 401 on the MFA routes', async () => {
     const res = await as(request(app).post('/api/admin/auth/mfa/verify'), 'nobody').send({
       code: '123456',
