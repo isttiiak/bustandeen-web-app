@@ -40,6 +40,32 @@ const resolveDep = (pkgPath, dep) => {
   return lock.packages[`node_modules/${dep}`] ? `node_modules/${dep}` : null;
 };
 
+// A CommonJS package may reach an ESM-only one through a dynamic import(),
+// which Node and Vercel both support. Each entry names the files that load
+// the dependency; the test below fails if any of them require()s it.
+const DYNAMIC_IMPORT_ONLY = {
+  // firebase-admin 13.10 -> google-auth-library 10 -> gaxios 7: node-fetch 3
+  // is loaded only by `await import('node-fetch')` (build/cjs/src/gaxios.js).
+  'node_modules/firebase-admin/node_modules/gaxios -> node_modules/firebase-admin/node_modules/node-fetch':
+    { dir: 'node_modules/firebase-admin/node_modules/gaxios/build/cjs', dep: 'node-fetch' },
+};
+
+const jsFiles = (dir) =>
+  fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p = path.join(dir, e.name);
+    return e.isDirectory() ? jsFiles(p) : e.name.endsWith('.js') ? [p] : [];
+  });
+
+test.each(Object.entries(DYNAMIC_IMPORT_ONLY))(
+  '%s is loaded only by a dynamic import()',
+  (_edge, { dir, dep }) => {
+    const sources = jsFiles(path.join(root, dir)).map((f) => fs.readFileSync(f, 'utf8'));
+    const requireDep = new RegExp(String.raw`require\(\s*['"]${dep}['"]\s*\)`);
+    expect(sources.some((src) => src.includes(`import('${dep}')`))).toBe(true);
+    expect(sources.filter((src) => requireDep.test(src))).toEqual([]);
+  }
+);
+
 test('no CommonJS production dependency requires an ESM-only package', () => {
   const offenders = [];
   for (const [pkgPath, meta] of Object.entries(lock.packages)) {
@@ -48,7 +74,9 @@ test('no CommonJS production dependency requires an ESM-only package', () => {
     if (!pkg || pkg.type === 'module') continue;
     for (const dep of Object.keys(pkg.dependencies ?? {})) {
       const depPath = resolveDep(pkgPath, dep);
-      if (depPath && isEsmOnly(readPkg(depPath))) offenders.push(`${pkgPath} -> ${depPath}`);
+      const edge = `${pkgPath} -> ${depPath}`;
+      if (depPath && isEsmOnly(readPkg(depPath)) && !DYNAMIC_IMPORT_ONLY[edge])
+        offenders.push(edge);
     }
   }
   expect(offenders).toEqual([]);

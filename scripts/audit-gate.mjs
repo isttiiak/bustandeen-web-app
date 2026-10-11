@@ -9,23 +9,11 @@
 
 import { execFileSync } from 'node:child_process';
 
-const EXCEPTIONS = [
-  {
-    advisory: 'GHSA-86w9-cpqp-85rv',
-    // node-forge <= 1.4.0 (every release): RSA PKCS#1 v1.5 signature
-    // verification accepts extra nested DigestAlgorithm elements.
-    via: ['firebase-admin', 'node-forge'],
-    reason:
-      'firebase-admin 12 calls node-forge only to parse our own service-account key ' +
-      '(pki.privateKeyFromPem, app/credential-internal.js, re-checked 2026-10-12); ' +
-      'it never verifies a signature with it. No node-forge release fixes it (1.4.0 ' +
-      'is the latest). firebase-admin 13.10.0+ no longer depends on node-forge (14 ' +
-      'crashed the Vercel function on 2026-09-20, see .github/dependabot.yml); ' +
-      'Istiak kept 12 over his break (2026-10-12), so the upgrade to 13.10 on a ' +
-      'Vercel preview is the next step.',
-    reviewBy: '2027-01-15',
-  },
-];
+// None open. The last one (GHSA-86w9-cpqp-85rv, node-forge via firebase-admin
+// 12) ended with firebase-admin 13.10, which no longer uses node-forge.
+// Shape: { advisory: 'GHSA-…', via: ['pkg', …], reason: '…', reviewBy: 'YYYY-MM-DD' }
+/** @type {{ advisory: string, via: string[], reason: string, reviewBy: string }[]} */
+const EXCEPTIONS = [];
 
 const SEVERE = new Set(['high', 'critical']);
 const today = new Date().toISOString().slice(0, 10);
