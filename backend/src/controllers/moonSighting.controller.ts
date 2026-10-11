@@ -37,7 +37,7 @@ export const createHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const body = req.body as Parameters<typeof moonSightingService.create>[0];
+    const body = req.body as moonSightingService.NewMoonSighting;
     const record = await moonSightingService.create(body, req.admin!.email);
     await logAdminAction({
       actorEmail: req.admin!.email,
@@ -47,8 +47,9 @@ export const createHandler = async (
       targetId: String(record._id),
       metadata: {
         country: record.country,
-        effectiveFrom: record.effectiveFrom,
-        offset: record.offset,
+        hijriYear: record.hijriYear,
+        hijriMonth: record.hijriMonth,
+        startDate: record.startDate,
       },
     });
     res.status(201).json({ ok: true, record });
@@ -77,8 +78,9 @@ export const deactivateHandler = async (
       targetId: id,
       metadata: {
         country: record.country,
-        effectiveFrom: record.effectiveFrom,
-        offset: record.offset,
+        hijriYear: record.hijriYear,
+        hijriMonth: record.hijriMonth,
+        startDate: record.startDate,
       },
     });
     res.json({ ok: true, record });

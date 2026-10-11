@@ -22,7 +22,7 @@ import {
   isHijriManual,
   readMoonSightingCache,
   readUserOffset,
-  resolveHijriOffset,
+  resolveHijriDay,
   formatHijriDate,
   HIJRI_COUNTRY_KEY,
 } from '../utils/islamicCalendar.js';
@@ -492,7 +492,7 @@ function HijriAutoOption({
   const code = localStorage.getItem(HIJRI_COUNTRY_KEY);
   const country = code ? countryName(code, lang) : null;
   // What Automatic gives today, whichever option is chosen now
-  const auto = resolveHijriOffset({
+  const auto = resolveHijriDay({
     manual: false,
     userOffset: 0,
     country: code,
@@ -500,17 +500,21 @@ function HijriAutoOption({
     day: getTrackingDay(),
   });
   const shift =
-    auto.offset < 0
-      ? t('settings.hijriShiftBehind')
-      : auto.offset > 0
-        ? t('settings.hijriShiftAhead')
-        : t('settings.hijriShiftSame');
+    auto.offset <= -2
+      ? t('settings.hijriShiftBehind2')
+      : auto.offset < 0
+        ? t('settings.hijriShiftBehind')
+        : auto.offset >= 2
+          ? t('settings.hijriShiftAhead2')
+          : auto.offset > 0
+            ? t('settings.hijriShiftAhead')
+            : t('settings.hijriShiftSame');
   const detail = !country
     ? t('settings.hijriAutoNoCountry')
     : auto.record
       ? t('settings.hijriAutoRecord', {
           country,
-          date: formatLocaleDate(new Date(`${auto.record.effectiveFrom}T12:00:00`), {
+          date: formatLocaleDate(new Date(`${auto.record.startDate}T12:00:00`), {
             day: 'numeric',
             month: 'short',
             year: 'numeric',

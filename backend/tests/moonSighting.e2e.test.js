@@ -6,9 +6,11 @@ import AdminAuditLog from '../src/models/AdminAuditLog.js';
 import User from '../src/models/User.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
-// T4.1 (FEAT-03, FIQH-02): national moon-sighting records (Servant only,
-// audit-logged, public read) and the user's own Hijri offset winning over
+// T4.1 (FEAT-03, FIQH-02): national month-start moon-sighting records
+// (general admins, audit-logged, public read; validated against Umm al-Qura
+// and the neighbouring months) and the user's own Hijri offset winning over
 // them: legacy accounts keep a non-zero offset as their own choice.
+// Umm al-Qura 1448: 1 Ramadan = 8 Feb 2027, 1 Shawwal = 9 Mar 2027.
 
 const fakeJwt = (payload) => {
   const header = Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url');
@@ -35,8 +37,9 @@ const asUser = (uid) => (r) => r.set('Authorization', `Bearer ${userTok(uid)}`);
 
 const BD = {
   country: 'BD',
-  effectiveFrom: '2027-02-08',
-  offset: -1,
+  hijriYear: 1448,
+  hijriMonth: 9,
+  startDate: '2027-02-09',
   note: 'National Moon Sighting Committee: Ramadan begins one day after Saudi Arabia.',
 };
 
@@ -93,12 +96,16 @@ describe('Moon-sighting overrides (T4.1)', () => {
     expect(await AdminAuditLog.countDocuments({ action: /moonSighting/ })).toBe(0);
   });
 
-  test('input is validated: code, date, range, https source, no extra fields', async () => {
+  test('input is validated: code, date, month, https source, no extra fields', async () => {
     for (const bad of [
       { ...BD, country: 'Bangladesh' },
-      { ...BD, effectiveFrom: '8 Feb 2027' },
-      { ...BD, offset: 2 },
-      { ...BD, offset: 0.5 },
+      { ...BD, startDate: '9 Feb 2027' },
+      { ...BD, hijriMonth: 13 },
+      { ...BD, hijriMonth: 8.5 },
+      { ...BD, offset: -1 },
+      // 3 days from Umm al-Qura's 1 Ramadan, or the wrong month for the date
+      { ...BD, startDate: '2027-02-11' },
+      { ...BD, hijriMonth: 10 },
       { ...BD, note: '' },
       { ...BD, sourceUrl: 'http://example.com' },
       { ...BD, createdBy: 'someone' },
@@ -121,13 +128,22 @@ describe('Moon-sighting overrides (T4.1)', () => {
     const log = await AdminAuditLog.findOne({ action: 'moonSighting.create' });
     expect(log.actorEmail).toBe(SERVANT);
     expect(log.targetId).toBe(recordId);
-    expect(log.metadata).toEqual({ country: 'BD', effectiveFrom: '2027-02-08', offset: -1 });
+    expect(log.metadata).toEqual({
+      country: 'BD',
+      hijriYear: 1448,
+      hijriMonth: 9,
+      startDate: '2027-02-09',
+    });
 
     const pub = await request(app).get('/api/calendar/moon-sighting');
     expect(pub.body.records).toEqual([
       {
         id: recordId,
         country: 'BD',
+        hijriYear: 1448,
+        hijriMonth: 9,
+        startDate: '2027-02-09',
+        // For older app builds: the shift from the day before the late start
         effectiveFrom: '2027-02-08',
         offset: -1,
         note: BD.note,
@@ -136,6 +152,39 @@ describe('Moon-sighting overrides (T4.1)', () => {
     ]);
     // Who added it stays in the admin view only
     expect(JSON.stringify(pub.body)).not.toContain(SERVANT);
+  });
+
+  test('one record per month, and months of 29 or 30 days only', async () => {
+    const dup = await asServant(request(app).post('/api/admin/moon-sighting')).send(BD);
+    expect(dup.status).toBe(409);
+    // Shawwal two days after Umm al-Qura's: Ramadan of 30 days is fine...
+    const shawwal = { ...BD, hijriMonth: 10, startDate: '2027-03-11', note: 'Eid on 11 March.' };
+    // ...but 28 days is not (31 would start 12 Mar, 3 days from Umm al-Qura)
+    for (const startDate of ['2027-03-09']) {
+      const bad = await asServant(request(app).post('/api/admin/moon-sighting')).send({
+        ...shawwal,
+        startDate,
+      });
+      expect(bad.status).toBe(400);
+      expect(bad.body.error).toMatch(/29 or 30 days/);
+    }
+    const ok = await asServant(request(app).post('/api/admin/moon-sighting')).send(shawwal);
+    expect(ok.status).toBe(201);
+    const pub = await request(app).get('/api/calendar/moon-sighting');
+    const eid = pub.body.records.find((r) => r.hijriMonth === 10);
+    // Two days late: older builds can only shift one day
+    expect(eid).toMatchObject({ startDate: '2027-03-11', effectiveFrom: '2027-03-10', offset: -1 });
+    // A Sha'ban record that would make Ramadan 31 days is refused too
+    const shaban = await asServant(request(app).post('/api/admin/moon-sighting')).send({
+      ...BD,
+      hijriMonth: 8,
+      startDate: '2027-01-09',
+      note: "Sha'ban began 9 January.",
+    });
+    expect(shaban.status).toBe(400);
+    await asServant(
+      request(app).patch(`/api/admin/moon-sighting/${ok.body.record._id}/deactivate`)
+    );
   });
 
   test('deactivating hides it publicly but keeps it, audited', async () => {
@@ -152,14 +201,23 @@ describe('Moon-sighting overrides (T4.1)', () => {
     expect((await request(app).get('/api/calendar/moon-sighting')).body.records).toEqual([]);
 
     const admin = await asServant(request(app).get('/api/admin/moon-sighting'));
-    expect(admin.body.records).toHaveLength(1);
-    expect(admin.body.records[0].deactivatedBy).toBe(SERVANT);
-    expect(await AdminAuditLog.countDocuments({ action: 'moonSighting.deactivate' })).toBe(1);
+    const mine = admin.body.records.find((r) => r._id === recordId);
+    expect(mine.deactivatedBy).toBe(SERVANT);
+    expect(
+      await AdminAuditLog.countDocuments({ action: 'moonSighting.deactivate', targetId: recordId })
+    ).toBe(1);
 
     const again = await asServant(
       request(app).patch(`/api/admin/moon-sighting/${recordId}/deactivate`)
     );
     expect(again.status).toBe(404);
+
+    // Deactivated, the month can be recorded again
+    const readd = await asServant(request(app).post('/api/admin/moon-sighting')).send(BD);
+    expect(readd.status).toBe(201);
+    await asServant(
+      request(app).patch(`/api/admin/moon-sighting/${readd.body.record._id}/deactivate`)
+    );
   });
 
   test('legacy accounts: a non-zero offset stays their own, zero follows the country', async () => {
@@ -224,6 +282,8 @@ describe('Moon-sighting overrides (T4.1)', () => {
     const add = await asAnsar(request(app).post('/api/admin/moon-sighting')).send({
       ...BD,
       country: 'PK',
+      hijriMonth: 10,
+      startDate: '2027-03-10',
       note: 'Ruet-e-Hilal: Shawwal moon seen tonight.',
     });
     expect(add.status).toBe(201);

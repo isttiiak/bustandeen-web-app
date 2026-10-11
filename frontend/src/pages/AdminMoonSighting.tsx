@@ -2,13 +2,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MoonIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
-import { BTN_PRIMARY, CARD, OPTION_OFF, OPTION_ON } from '../components/bustanStyles.js';
-import {
-  ADMIN_INPUT_SM,
-  AdminHero,
-  BTN_SMALL,
-  OPTION_CHIP,
-} from '../components/admin/adminParts.js';
+import { BTN_PRIMARY, CARD } from '../components/bustanStyles.js';
+import { ADMIN_INPUT_SM, AdminHero, BTN_SMALL } from '../components/admin/adminParts.js';
 import Seo from '../components/Seo.js';
 import {
   useAdminMoonSighting,
@@ -16,58 +11,141 @@ import {
   useDeactivateMoonSighting,
 } from '../hooks/useAdminMoonSighting.js';
 import { countryName } from '../utils/countryDefaults.js';
-import { hijriDateWithOffset, formatHijriDate } from '../utils/islamicCalendar.js';
+import {
+  addDays,
+  nextHijriMonth,
+  recordShift,
+  resolveHijriDay,
+  ummAlQura,
+  type HijriYmd,
+  type MoonSightingRecord,
+} from '../utils/hijriOffset.js';
 
-const OFFSETS = [
-  { value: -1, label: 'A day after Umm al-Qura (-1)' },
-  { value: 0, label: 'Same as Umm al-Qura (0)' },
-  { value: 1, label: 'A day before Umm al-Qura (+1)' },
-] as const;
+const MONTHS = [
+  'Muharram',
+  'Safar',
+  "Rabi' al-Awwal",
+  "Rabi' al-Akhir",
+  'Jumada al-Ula',
+  'Jumada al-Akhirah',
+  'Rajab',
+  "Sha'ban",
+  'Ramadan',
+  'Shawwal',
+  "Dhul Qa'dah",
+  'Dhul Hijjah',
+];
 
-/** What devices in the country show on `day` with `offset` (plain Umm
- * al-Qura when 0), independent of this device's own setting. */
-function previewHijri(day: string, offset: number): string {
-  const h = hijriDateWithOffset(new Date(`${day}T12:00:00`), offset);
-  return h ? formatHijriDate(h) : '';
+const hijriText = (h: HijriYmd) => `${h.day} ${MONTHS[h.month - 1] ?? ''} ${h.year}`;
+
+const localToday = (): string => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
+/** The next Umm al-Qura month (the one an admin is most likely announcing). */
+function upcomingMonth(): { year: number; month: number } {
+  const h = ummAlQura(localToday());
+  return nextHijriMonth(h.year, h.month);
+}
+
+function shiftText(shift: number | null): string {
+  if (shift === null) return "more than 2 days from Umm al-Qura's 1st: check the month and date";
+  if (shift === 0) return 'the same day as Umm al-Qura';
+  const n = Math.abs(shift);
+  return `${n} day${n > 1 ? 's' : ''} ${shift < 0 ? 'after' : 'before'} Umm al-Qura`;
+}
+
+/** The server's reason (e.g. "a Hijri month has 29 or 30 days ..."), if any. */
+function errorMessage(err: unknown): string | null {
+  const msg = (err as { response?: { data?: { error?: unknown } } } | null)?.response?.data?.error;
+  return typeof msg === 'string' ? msg : null;
 }
 
 /**
- * Servant and 'general' Ansar (T4.1, FIQH-02; U8): national moon-sighting records. From the
- * effective date until the next record for the same country, devices in that
- * country shift the Umm al-Qura date by the offset, unless the user set their
- * own. Every add and deactivation is in the audit log.
+ * Servant and 'general' Ansar (T4.1, FIQH-02; U8): national month-start
+ * records ("Ramadan 1448 began on 9 Feb in BD"). Devices in that country count
+ * the month from its start unless the user set their own offset (rule:
+ * utils/hijriOffset.ts). Every add and deactivation is in the audit log.
  */
 export default function AdminMoonSighting() {
   const { t } = useTranslation();
   const { data: records, isLoading } = useAdminMoonSighting();
   const create = useCreateMoonSighting();
   const deactivate = useDeactivateMoonSighting();
-  const [form, setForm] = useState({
-    country: 'BD',
-    effectiveFrom: '',
-    offset: -1,
-    note: '',
-    sourceUrl: '',
+  const [form, setForm] = useState(() => {
+    const m = upcomingMonth();
+    return {
+      country: 'BD',
+      hijriYear: m.year,
+      hijriMonth: m.month,
+      startDate: '',
+      note: '',
+      sourceUrl: '',
+    };
   });
   const [confirmId, setConfirmId] = useState<string | null>(null);
 
+  const shift = form.startDate ? recordShift(form) : null;
   const valid =
     /^[A-Z]{2}$/.test(form.country) &&
-    /^\d{4}-\d{2}-\d{2}$/.test(form.effectiveFrom) &&
+    /^\d{4}-\d{2}-\d{2}$/.test(form.startDate) &&
+    shift !== null &&
     form.note.trim().length >= 3 &&
     (!form.sourceUrl || form.sourceUrl.startsWith('https://'));
+
+  // What devices in the country would show around the new month, with the
+  // active records plus this one.
+  const preview = (() => {
+    if (!form.startDate || shift === null) return [];
+    const toRecord = (
+      id: string,
+      r: { country: string; hijriYear: number; hijriMonth: number; startDate: string }
+    ): MoonSightingRecord => ({
+      id,
+      country: r.country,
+      hijriYear: r.hijriYear,
+      hijriMonth: r.hijriMonth,
+      startDate: r.startDate,
+      effectiveFrom: r.startDate,
+      offset: 0,
+      note: '',
+    });
+    const all = [
+      ...(records ?? [])
+        .filter(
+          (r) => r.active && !(r.hijriYear === form.hijriYear && r.hijriMonth === form.hijriMonth)
+        )
+        .map((r) => toRecord(r._id, r)),
+      toRecord('draft', form),
+    ];
+    const rows: { day: string; shown: HijriYmd; uq: HijriYmd }[] = [];
+    for (let i = -3; i <= 31; i++) {
+      const day = addDays(form.startDate, i);
+      const shown = resolveHijriDay({
+        manual: false,
+        userOffset: 0,
+        country: form.country,
+        records: all,
+        day,
+      }).hijri;
+      rows.push({ day, shown, uq: ummAlQura(day) });
+    }
+    return rows;
+  })();
 
   const submit = () => {
     if (!valid) return;
     create.mutate(
       {
         country: form.country,
-        effectiveFrom: form.effectiveFrom,
-        offset: form.offset,
+        hijriYear: form.hijriYear,
+        hijriMonth: form.hijriMonth,
+        startDate: form.startDate,
         note: form.note.trim(),
         ...(form.sourceUrl ? { sourceUrl: form.sourceUrl.trim() } : {}),
       },
-      { onSuccess: () => setForm((f) => ({ ...f, effectiveFrom: '', note: '', sourceUrl: '' })) }
+      { onSuccess: () => setForm((f) => ({ ...f, startDate: '', note: '', sourceUrl: '' })) }
     );
   };
 
@@ -91,7 +169,7 @@ export default function AdminMoonSighting() {
         <p className="text-sm text-white/80">
           {t(
             'adminMoonSighting.explain',
-            "From the effective date until the next record for the same country, every device in that country on Automatic shifts the Umm al-Qura date by the offset. A user's own offset always wins. Enter only what the committee announced, with the date the month began there. Every change is in the audit log."
+            "Record each month the committee announces: which Hijri month, and the Gregorian date its 1st fell on in that country. Devices on Automatic count the month from that day (29 or 30 days) and, until the next announcement, follow Umm al-Qura shifted the same way. Enter the next month as soon as it is announced, so a 30th day shows correctly. A user's own offset always wins. Every change is in the audit log."
           )}
         </p>
 
@@ -113,29 +191,47 @@ export default function AdminMoonSighting() {
               )}
             </label>
             <label className="block text-xs text-white/80 font-semibold">
-              {t('adminMoonSighting.effectiveFrom', 'Effective from (Gregorian)')}
-              <input
-                type="date"
-                value={form.effectiveFrom}
-                onChange={(e) => setForm((f) => ({ ...f, effectiveFrom: e.target.value }))}
-                className={`${ADMIN_INPUT_SM} w-full mt-1 h-11`}
-              />
+              {t('adminMoonSighting.month', 'Hijri month and year')}
+              <span className="flex gap-2 mt-1">
+                <select
+                  value={form.hijriMonth}
+                  onChange={(e) => setForm((f) => ({ ...f, hijriMonth: Number(e.target.value) }))}
+                  className={`${ADMIN_INPUT_SM} flex-1 min-w-0 h-11`}
+                >
+                  {MONTHS.map((m, i) => (
+                    <option key={m} value={i + 1}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="number"
+                  aria-label="Hijri year"
+                  value={form.hijriYear}
+                  min={1400}
+                  max={1600}
+                  onChange={(e) => setForm((f) => ({ ...f, hijriYear: Number(e.target.value) }))}
+                  className={`${ADMIN_INPUT_SM} w-24 h-11`}
+                />
+              </span>
             </label>
           </div>
-          <div role="radiogroup" aria-label="Offset" className="flex flex-wrap gap-2">
-            {OFFSETS.map((o) => (
-              <button
-                key={o.value}
-                type="button"
-                role="radio"
-                aria-checked={form.offset === o.value}
-                onClick={() => setForm((f) => ({ ...f, offset: o.value }))}
-                className={`${OPTION_CHIP} min-h-[44px] ${form.offset === o.value ? OPTION_ON : OPTION_OFF}`}
+          <label className="block text-xs text-white/80 font-semibold">
+            {t('adminMoonSighting.startDate', 'The 1st of the month in that country (Gregorian)')}
+            <input
+              type="date"
+              value={form.startDate}
+              onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
+              className={`${ADMIN_INPUT_SM} w-full mt-1 h-11`}
+            />
+            {form.startDate && (
+              <span
+                className={`block font-normal mt-1 ${shift === null ? 'text-red-300' : 'text-white/70'}`}
               >
-                {o.label}
-              </button>
-            ))}
-          </div>
+                {shiftText(shift)}
+              </span>
+            )}
+          </label>
           <label className="block text-xs text-white/80 font-semibold">
             {t('adminMoonSighting.note', 'Note shown to users (what was announced)')}
             <input
@@ -155,15 +251,34 @@ export default function AdminMoonSighting() {
               className={`${ADMIN_INPUT_SM} w-full mt-1 h-11`}
             />
           </label>
-          {form.effectiveFrom && (
-            <p className="text-xs text-brand-gold">
-              Preview: on {form.effectiveFrom} devices in {form.country} show{' '}
-              <b>{previewHijri(form.effectiveFrom, form.offset)}</b> (Umm al-Qura:{' '}
-              {previewHijri(form.effectiveFrom, 0)}).
-            </p>
+          {preview.length > 0 && (
+            <div className="text-xs">
+              <p className="text-white/80 font-semibold mb-1">
+                Preview: what devices in {form.country} on Automatic would show
+              </p>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 max-h-64 overflow-y-auto">
+                {preview.map((r) => {
+                  const differs =
+                    r.shown.day !== r.uq.day ||
+                    r.shown.month !== r.uq.month ||
+                    r.shown.year !== r.uq.year;
+                  return (
+                    <li key={r.day} className="flex justify-between gap-2 py-0.5 tabular-nums">
+                      <span className="text-white/70">{r.day}</span>
+                      <span className={differs ? 'text-brand-gold font-semibold' : 'text-white'}>
+                        {hijriText(r.shown)}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="text-white/70 mt-1">Gold: differs from Umm al-Qura.</p>
+            </div>
           )}
           {create.isError && (
-            <p className="text-xs text-red-300">Could not save. Check the fields and try again.</p>
+            <p className="text-xs text-red-300">
+              {errorMessage(create.error) ?? 'Could not save. Check the fields and try again.'}
+            </p>
           )}
           <button
             type="button"
@@ -190,10 +305,10 @@ export default function AdminMoonSighting() {
                   <b>
                     {countryName(r.country, 'en')} ({r.country})
                   </b>
-                  <span>from {r.effectiveFrom}</span>
-                  <span className="text-brand-gold">
-                    {r.offset > 0 ? '+1' : r.offset < 0 ? '-1' : '0'}
+                  <span>
+                    {MONTHS[r.hijriMonth - 1]} {r.hijriYear} began {r.startDate}
                   </span>
+                  <span className="text-brand-gold">{shiftText(recordShift(r))}</span>
                   {!r.active && <span className="text-xs text-white/70">(deactivated)</span>}
                 </div>
                 <p className="text-xs text-white/80 mt-1">{r.note}</p>

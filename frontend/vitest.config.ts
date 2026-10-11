@@ -28,7 +28,7 @@ export default defineConfig({
       // Enforced only on the fiqh rule files; the rest are reported so the
       // numbers stay visible.
       thresholds: {
-        'src/utils/{musafir,fastingRules,trackingDay,islamicCalendar,salatPrefs}.ts': {
+        'src/utils/{musafir,fastingRules,trackingDay,islamicCalendar,salatPrefs,hijriOffset}.ts': {
           lines: 90,
           perFile: true,
         },
