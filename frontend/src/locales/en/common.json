@@ -292,7 +292,23 @@
     "subtitle": "Log in to continue your spiritual journey",
     "welcomeBack": "Welcome Back"
   },
+  "authSignupComplete": {
+    "title": "Choose your password",
+    "finishingFor": "Finishing the account for",
+    "checking": "Checking your link…",
+    "invalidTitle": "This link has expired",
+    "invalidDesc": "Sign-up links work once and expire within 1 hour. Please sign up again to get a new link.",
+    "signUpAgain": "Sign up again",
+    "create": "Create my account",
+    "errExists": "This email already has an account. Please sign in instead.",
+    "errGeneric": "Could not create the account. Please try again."
+  },
   "authSignUp": {
+    "linkSentTo": "We sent a link to finish creating your account to",
+    "linkSentHint": "Open it and choose your password. The link works once and expires within 1 hour. Your account is created only after that.",
+    "linkResent": "A new link is on its way.",
+    "sendLink": "Continue with email",
+    "verifyToContinue": "Click the link in the email to confirm your address. Your account opens once it is confirmed.",
     "alreadyHaveAccount": "Already have an account?",
     "brother": "Brother",
     "checkInbox": "Check your inbox",

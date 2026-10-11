@@ -34,49 +34,73 @@ const isUserDisabled = async (uid: string): Promise<boolean> => {
   return user?.disabled === true;
 };
 
-export const requireAuth = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
-    const authHeader = req.headers.authorization ?? '';
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
-    if (!token) {
-      res.status(401).json({ ok: false, error: 'Missing Bearer token' });
-      return;
-    }
+/**
+ * An email/password account whose address was never confirmed. Since
+ * email-first sign-up (v5.156.0) new accounts are created verified; this
+ * catches older ones (and anything made around the sign-up flow). Google
+ * and other providers carry a verified email already.
+ */
+export const isUnverifiedPasswordAccount = (decoded: {
+  email?: string;
+  email_verified?: boolean;
+  firebase?: { sign_in_provider?: string };
+}): boolean =>
+  !!decoded.email &&
+  decoded.email_verified !== true &&
+  decoded.firebase?.sign_in_provider === 'password';
 
-    if (isFirebaseInitialized()) {
-      const decoded = await verifyFirebaseToken(token);
-      if (await isUserDisabled(decoded.uid)) {
-        res.status(403).json({ ok: false, error: 'account_disabled' });
+const makeRequireAuth =
+  (allowUnverified: boolean) =>
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const authHeader = req.headers.authorization ?? '';
+      const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null;
+      if (!token) {
+        res.status(401).json({ ok: false, error: 'Missing Bearer token' });
         return;
       }
-      req.user = { ...(decoded as Record<string, unknown>), uid: decoded.uid };
-      return next();
-    }
 
-    // Dev bypass: only in non-production environments
-    if (devAuthBypassAllowed()) {
-      const payload = decodeUnverifiedJwt(token);
-      if (!payload?.['uid']) {
-        res.status(401).json({ ok: false, error: 'Invalid token' });
-        return;
+      if (isFirebaseInitialized()) {
+        const decoded = await verifyFirebaseToken(token);
+        if (!allowUnverified && isUnverifiedPasswordAccount(decoded)) {
+          res.status(403).json({ ok: false, error: 'email_not_verified' });
+          return;
+        }
+        if (await isUserDisabled(decoded.uid)) {
+          res.status(403).json({ ok: false, error: 'account_disabled' });
+          return;
+        }
+        req.user = { ...(decoded as Record<string, unknown>), uid: decoded.uid };
+        return next();
       }
-      if (await isUserDisabled(payload['uid'] as string)) {
-        res.status(403).json({ ok: false, error: 'account_disabled' });
-        return;
-      }
-      req.user = { uid: payload['uid'] as string, ...payload };
-      return next();
-    }
 
-    res.status(500).json({ ok: false, error: 'Auth not configured' });
-  } catch {
-    res.status(401).json({ ok: false, error: 'Unauthorized' });
-  }
-};
+      // Dev bypass: only in non-production environments
+      if (devAuthBypassAllowed()) {
+        const payload = decodeUnverifiedJwt(token);
+        if (!payload?.['uid']) {
+          res.status(401).json({ ok: false, error: 'Invalid token' });
+          return;
+        }
+        if (await isUserDisabled(payload['uid'] as string)) {
+          res.status(403).json({ ok: false, error: 'account_disabled' });
+          return;
+        }
+        req.user = { uid: payload['uid'] as string, ...payload };
+        return next();
+      }
+
+      res.status(500).json({ ok: false, error: 'Auth not configured' });
+    } catch {
+      res.status(401).json({ ok: false, error: 'Unauthorized' });
+    }
+  };
+
+/** Every protected route: a signed-in user with a confirmed email. */
+export const requireAuth = makeRequireAuth(false);
+
+/** Only for what an unconfirmed account may still do: resend the
+ *  confirmation email and delete itself. */
+export const requireAuthAllowUnverified = makeRequireAuth(true);
 
 const REAUTH_MAX_AGE_SECONDS = 5 * 60;
 

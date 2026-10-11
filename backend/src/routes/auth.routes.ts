@@ -1,13 +1,21 @@
 import { Router } from 'express';
 import * as authController from '../controllers/auth.controller.js';
-import { requireAuth } from '../middleware/auth.js';
+import { requireAuthAllowUnverified } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import {
   passwordResetEmailLimiter,
   passwordResetIpLimiter,
+  signupEmailLimiter,
+  signupIpLimiter,
   verificationEmailLimiter,
 } from '../middleware/rateLimiter.js';
-import { passwordResetSchema, sendVerificationSchema } from '../validation/authEmail.schemas.js';
+import {
+  passwordResetSchema,
+  sendVerificationSchema,
+  signupCheckSchema,
+  signupCompleteSchema,
+  signupStartSchema,
+} from '../validation/authEmail.schemas.js';
 
 const router = Router();
 
@@ -24,12 +32,28 @@ router.post(
   passwordResetEmailLimiter,
   authController.passwordResetHandler
 );
+// Accounts made before email-first sign-up may still be unverified.
 router.post(
   '/send-verification',
-  requireAuth,
+  requireAuthAllowUnverified,
   verificationEmailLimiter,
   validate(sendVerificationSchema),
   authController.sendVerificationHandler
+);
+
+// Email-first sign-up: no account exists until the emailed link is used.
+router.post(
+  '/signup/start',
+  signupIpLimiter,
+  validate(signupStartSchema),
+  signupEmailLimiter,
+  authController.signupStartHandler
+);
+router.post('/signup/check', validate(signupCheckSchema), authController.signupCheckHandler);
+router.post(
+  '/signup/complete',
+  validate(signupCompleteSchema),
+  authController.signupCompleteHandler
 );
 
 export default router;

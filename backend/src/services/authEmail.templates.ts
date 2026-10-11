@@ -129,3 +129,91 @@ export function verifyEmailEmail(
     d.link
   );
 }
+
+/** Email-first sign-up: the link that lets someone choose a password and
+ *  only then creates the account. */
+export function signupLinkEmail(
+  lang: AuthEmailLang,
+  d: { name: string | null; email: string; link: string }
+): AuthEmail {
+  if (lang === 'bn') {
+    return render(
+      {
+        subject: 'আপনার Bustandeen অ্যাকাউন্ট তৈরি শেষ করুন',
+        greeting: greet('আসসালামু আলাইকুম', d.name),
+        before: [
+          `Bustandeen-এ যোগ দেওয়ার জন্য ধন্যবাদ। ${d.email} দিয়ে অ্যাকাউন্ট তৈরি শেষ করতে এই লিঙ্কটি খুলুন এবং একটি পাসওয়ার্ড বেছে নিন।`,
+        ],
+        cta: 'সাইন-আপ শেষ করুন',
+        copyHint: 'বাটনটি কাজ না করলে এই লিঙ্কটি ব্রাউজারে খুলুন:',
+        after: [
+          'লিঙ্কটি একবারই কাজ করবে এবং ১ ঘণ্টার মধ্যে এর মেয়াদ শেষ হবে। মেয়াদ শেষ হয়ে গেলে আবার সাইন-আপ করুন।',
+          'আপনি যদি সাইন-আপ করার চেষ্টা না করে থাকেন, তাহলে নিশ্চিন্তে এই ইমেইলটি উপেক্ষা করুন। লিঙ্কটি ব্যবহার না করলে কোনো অ্যাকাউন্ট তৈরি হবে না।',
+        ],
+        signOff: 'শুভেচ্ছান্তে,',
+      },
+      d.link
+    );
+  }
+  return render(
+    {
+      subject: 'Finish creating your Bustandeen account',
+      greeting: greet('Assalamu Alaikum', d.name),
+      before: [
+        `Thank you for joining Bustandeen. To finish creating your account for ${d.email}, open this link and choose your password.`,
+      ],
+      cta: 'Finish sign-up',
+      copyHint: 'If the button does not work, open this link in your browser:',
+      after: [
+        'This link works once and expires within 1 hour. If it has expired, just sign up again.',
+        'If you did not try to sign up, you can safely ignore this email. No account is created unless the link is used.',
+      ],
+      signOff: 'Warm regards,',
+    },
+    d.link
+  );
+}
+
+/** Sent instead of a sign-up link when the email already has an account, so
+ *  the sign-up form never reveals which emails are registered. */
+export function accountExistsEmail(
+  lang: AuthEmailLang,
+  d: { name: string | null; email: string; link: string }
+): AuthEmail {
+  if (lang === 'bn') {
+    return render(
+      {
+        subject: 'আপনার ইতিমধ্যে একটি Bustandeen অ্যাকাউন্ট আছে',
+        greeting: greet('আসসালামু আলাইকুম', d.name),
+        before: [
+          `${d.email} দিয়ে কেউ সাইন-আপ করার চেষ্টা করেছেন, কিন্তু এই ইমেইলে ইতিমধ্যে একটি Bustandeen অ্যাকাউন্ট আছে।`,
+        ],
+        cta: 'সাইন ইন করুন',
+        copyHint: 'বাটনটি কাজ না করলে এই লিঙ্কটি ব্রাউজারে খুলুন:',
+        after: [
+          'পাসওয়ার্ড মনে নেই? সাইন-ইন পেজে "পাসওয়ার্ড ভুলে গেছেন?" বেছে নিয়ে একটি রিসেট লিঙ্ক নিন।',
+          'এটি যদি আপনি না হয়ে থাকেন, তাহলে নিশ্চিন্তে এই ইমেইলটি উপেক্ষা করুন। আপনার অ্যাকাউন্টে কিছুই বদলায়নি।',
+        ],
+        signOff: 'শুভেচ্ছান্তে,',
+      },
+      d.link
+    );
+  }
+  return render(
+    {
+      subject: 'You already have a Bustandeen account',
+      greeting: greet('Assalamu Alaikum', d.name),
+      before: [
+        `Someone tried to sign up with ${d.email}, but this email already has a Bustandeen account.`,
+      ],
+      cta: 'Sign in',
+      copyHint: 'If the button does not work, open this link in your browser:',
+      after: [
+        'Forgot your password? On the sign-in page, choose "Forgot password?" to get a reset link.',
+        'If this was not you, you can safely ignore this email. Nothing has changed in your account.',
+      ],
+      signOff: 'Warm regards,',
+    },
+    d.link
+  );
+}

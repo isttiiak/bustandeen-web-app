@@ -348,6 +348,9 @@ export default function App() {
         try {
           const idToken = await u.getIdToken();
           localStorage.setItem('bustandeen_idToken', idToken);
+          // The server keeps no account for an unconfirmed email/password
+          // sign-in (403 email_not_verified); VerifyEmailGate covers the UI.
+          if (!u.emailVerified) return;
           const pendingGender = sessionStorage.getItem('bustandeen_pending_gender');
           if (pendingGender) sessionStorage.removeItem('bustandeen_pending_gender');
           const verifyRes = await fetch(`${API_BASE}/api/auth/verify`, {
@@ -458,7 +461,9 @@ export default function App() {
   // Bumped when a sign-in sync changed settings, so screens re-read them.
   const prefsRevision = useUiStore((s) => s.prefsRevision);
   const [quickLogOpen, setQuickLogOpen] = useState(false);
-  const isAuthPage = ['/login', '/signup', '/auth/action'].includes(location.pathname);
+  const isAuthPage = ['/login', '/signup', '/signup/complete', '/auth/action'].includes(
+    location.pathname
+  );
   // Programmatic-SEO static pages (src/seo/) ship their own self-contained
   // header/breadcrumb/footer (see src/seo/components/Layout.tsx) — the app
   // shell's Navbar/Footer would otherwise double up on top of it once

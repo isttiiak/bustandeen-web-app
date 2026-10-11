@@ -203,18 +203,35 @@ export const passwordResetIpLimiter = makeLimit(
   'passwordResetIp',
   'shared'
 );
-export const passwordResetEmailLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000,
-  max: isDev ? 100_000 : 3,
-  ...storeFor('shared', 'passwordResetEmail'),
-  keyGenerator: (req: Request) =>
-    String((req.body as { email?: unknown })?.email ?? '').toLowerCase() || 'none',
-  validate: { keyGeneratorIpFallback: false },
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: RESET_MESSAGE,
-  handler: makeThrottledHandler('passwordResetEmail', RESET_MESSAGE),
-});
+/** A shared limiter keyed by the (validated, lower-cased) body.email. */
+const makeEmailLimit = (windowMs: number, max: number, message: object, limiterName: string) =>
+  rateLimit({
+    windowMs,
+    max: isDev ? 100_000 : max,
+    ...storeFor('shared', limiterName),
+    keyGenerator: (req: Request) =>
+      String((req.body as { email?: unknown })?.email ?? '').toLowerCase() || 'none',
+    validate: { keyGeneratorIpFallback: false },
+    standardHeaders: true,
+    legacyHeaders: false,
+    message,
+    handler: makeThrottledHandler(limiterName, message),
+  });
+export const passwordResetEmailLimiter = makeEmailLimit(
+  60 * 60 * 1000,
+  3,
+  RESET_MESSAGE,
+  'passwordResetEmail'
+);
+
+/** Email-first sign-up step 1 (public, sends an email): 5 per hour per IP,
+ *  3 per hour per address. Same answer whether or not the email is known. */
+const SIGNUP_MESSAGE = {
+  ok: false,
+  error: 'Too many sign-up requests. Please try again in an hour.',
+};
+export const signupIpLimiter = makeLimit(60 * 60 * 1000, 5, SIGNUP_MESSAGE, 'signupIp', 'shared');
+export const signupEmailLimiter = makeEmailLimit(60 * 60 * 1000, 3, SIGNUP_MESSAGE, 'signupEmail');
 
 /** Resend the verification email: 3 per hour per signed-in user. */
 export const verificationEmailLimiter = makeUidLimit(
