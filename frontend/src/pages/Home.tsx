@@ -35,6 +35,15 @@ import { StreakBadge, GoalBadge } from '../components/StatusBadges.js';
 import ComebackNudge from '../components/ComebackNudge.js';
 import SadaqahVirtueCard from '../components/SadaqahVirtueCard.js';
 import MusafirBanner from '../components/MusafirBanner.js';
+import ZoneMismatchCard from '../components/home/ZoneMismatchCard.js';
+import { useAuthStore } from '../store/useAuthStore.js';
+import {
+  foreignPlaceZone,
+  placeShortName,
+  placeToday,
+  readSavedPlace,
+  ymdNoon,
+} from '../utils/placeClock.js';
 import TodayHighlights from '../components/home/TodayHighlights.js';
 import TodayTimeline from '../components/home/TodayTimeline.js';
 import PrayerRow from '../components/home/PrayerRow.js';
@@ -116,6 +125,7 @@ interface ActivityItem {
 }
 
 export default function Home() {
+  const isDemoMode = useAuthStore((s) => s.isDemoMode);
   const musafir = useMusafir();
   const rawTravelHint = useTravelHint(getTrackingDay(), !!musafir);
   const [hintDismissed, setHintDismissed] = useState(false);
@@ -388,9 +398,16 @@ export default function Home() {
     const h = getHijriToday();
     return h ? formatHijriDate(h) : null;
   })();
+  // Prayer times are shown on the saved place's clock when the phone is on
+  // another zone; the arch says so.
+  const placeClockZone = foreignPlaceZone(prayerNow);
   const todayDate = (
     <p className="text-[11px] text-white/60 font-medium">
-      {formatLocaleDate(prayerNow, { weekday: 'short', month: 'short', day: 'numeric' })}
+      {formatLocaleDate(ymdNoon(placeToday(prayerNow)), {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+      })}
       {hijriToday && (
         <>
           <span aria-hidden> · </span>
@@ -682,7 +699,16 @@ export default function Home() {
         {prayerWidgetData ? (
           <ArchShell label={t('nav.prayerTimes')}>
             <div className="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-8 pb-5 text-center group-hover:border-brand-emerald/40 transition-colors">
-              <div className="mb-2">{todayDate}</div>
+              <div className="mb-2">
+                {todayDate}
+                {placeClockZone && (
+                  <p className="text-[11px] text-brand-gold/80 font-medium mt-0.5">
+                    {t('home.placeClock', '{{place}} time', {
+                      place: placeShortName(readSavedPlace(), placeClockZone),
+                    })}
+                  </p>
+                )}
+              </div>
               {prayerWidgetData.forbiddenWindow ? (
                 <>
                   <NoSymbolIcon className="w-7 h-7 mx-auto text-red-400" />
@@ -827,6 +853,9 @@ export default function Home() {
             </div>
           </Link>
         )}
+
+        {/* The phone's clock is on another zone than the saved place */}
+        {prayerWidgetData && !isDemoMode && <ZoneMismatchCard now={prayerNow} />}
 
         {/* Today's special days sit directly under the arch, above everything else */}
         {homeLayout === 'strip' && (

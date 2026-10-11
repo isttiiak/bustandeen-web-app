@@ -7,6 +7,7 @@ import Seo from '../components/Seo.js';
 import { BTN_PRIMARY, CARD } from '../components/bustanStyles.js';
 import { CompassIcon, KaabaIcon } from '../components/icons/IslamicIcons.js';
 import { calcQiblaBearing } from '../utils/qibla.js';
+import { loadZoneLookup } from '../utils/placeClock.js';
 
 interface StoredLocation {
   latitude: number;
@@ -127,6 +128,7 @@ export default function QiblaCompass() {
           longitude: pos.coords.longitude,
         };
         localStorage.setItem('bustandeen_location', JSON.stringify(loc));
+        void loadZoneLookup();
         setLocation(loc);
         setLocLoading(false);
       },

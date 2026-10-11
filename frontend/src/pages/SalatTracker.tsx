@@ -44,6 +44,7 @@ import {
 import {
   PRAYER_META,
   calcPrayerTimes,
+  calcPrayerTimesForDay,
   getCurrentAndNextPrayer,
   getPrayerEndTime,
   formatTime,
@@ -173,8 +174,7 @@ export default function SalatTracker() {
     if (!stored) return null;
     try {
       const loc = JSON.parse(stored) as { latitude: number; longitude: number };
-      const prayerDate = new Date(selectedDate + 'T12:00:00');
-      const times = calcPrayerTimes(loc.latitude, loc.longitude, prayerDate);
+      const times = calcPrayerTimesForDay(loc.latitude, loc.longitude, selectedDate);
       const info = getCurrentAndNextPrayer(times, minuteNow);
       return {
         times: {

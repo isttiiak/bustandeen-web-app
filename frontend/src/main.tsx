@@ -26,6 +26,7 @@ import { initPwaUpdates } from './pwaUpdate.js';
 import { initStaleChunkReload } from './utils/staleChunkReload.js';
 import { initAnalytics } from './utils/analytics.js';
 import { migratePrayerDefaultsOnce } from './utils/salatPrefs.js';
+import { loadZoneLookup, readSavedPlace } from './utils/placeClock.js';
 import { initErrorReporting } from './utils/errorReporting.js';
 import { API_BASE } from './lib/api.js';
 
@@ -35,6 +36,9 @@ initPwaUpdates();
 initAnalytics();
 // Before the first render, so no screen ever shows a timetable that then jumps.
 migratePrayerDefaultsOnce();
+// The saved place's clock zone (far-zone fix): a small on-device map, loaded
+// in the background; until it arrives the day comes from an estimate.
+if (readSavedPlace()) void loadZoneLookup();
 
 const queryClient = new QueryClient({
   defaultOptions: {

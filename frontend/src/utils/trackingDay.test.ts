@@ -149,6 +149,16 @@ describe('getTrackingDay', () => {
       expect(getTrackingDay(at(2026, 3, 14, 23, 59))).toBe('2026-03-14');
     });
   });
+
+  it('polar day (Svalbard, June: no Fajr at all) keeps the calendar date', () => {
+    // Asia/Dhaka (pinned for this file) is far from Svalbard: its own date.
+    store.setItem(
+      'bustandeen_location',
+      JSON.stringify({ latitude: 78.22, longitude: 15.65, name: 'Longyearbyen' })
+    );
+    // 10:00 UTC = 12:00 in Longyearbyen (CEST).
+    expect(getTrackingDay(new Date('2026-06-21T10:00:00Z'))).toBe('2026-06-21');
+  });
 });
 
 describe('getTrackingDayMiddayTs', () => {

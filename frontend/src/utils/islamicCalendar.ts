@@ -2,7 +2,15 @@
 // Uses Intl.DateTimeFormat with the islamic-umalqura calendar.
 // The Islamic day starts at Maghrib: getHijriToday() accounts for this.
 
-import { calcPrayerTimes } from './prayerTimes.js';
+import { calcPrayerTimes, calcPrayerTimesForDay } from './prayerTimes.js';
+import {
+  addDaysYmd,
+  deviceYmd,
+  placeYmd,
+  readSavedPlace,
+  weekdayOfYmd,
+  ymdNoon,
+} from './placeClock.js';
 import {
   clampOffset,
   resolveHijriDay,
@@ -648,13 +656,37 @@ export function formatHijriDate(h: HijriDate): string {
  */
 export function isPostMaghrib(now: Date = new Date()): boolean {
   try {
-    const stored = localStorage.getItem('bustandeen_location');
-    if (!stored) return false;
-    const loc = JSON.parse(stored) as { latitude: number; longitude: number };
+    const loc = readSavedPlace();
+    if (!loc) return false;
     const times = calcPrayerTimes(loc.latitude, loc.longitude, now);
     return now >= times.maghrib;
   } catch {
     return false;
+  }
+}
+
+/**
+ * The calendar date (YYYY-MM-DD) whose Hijri date is the current ISLAMIC day:
+ * the day after the latest Maghrib at the saved place. Found by instants and
+ * named on the place's calendar, so it holds whatever zone the phone is on,
+ * and it moves by a calendar day, not 24 h (adding 24 h at a DST change
+ * skipped a day: London, the night of 28-29 March). Without a saved location:
+ * the phone's date.
+ */
+export function getIslamicDay(now: Date = new Date()): string {
+  const loc = readSavedPlace();
+  if (!loc) return deviceYmd(now);
+  try {
+    const today = placeYmd(loc.latitude, loc.longitude, now);
+    for (const n of [1, 0, -1]) {
+      const day = addDaysYmd(today, n);
+      const maghrib = calcPrayerTimesForDay(loc.latitude, loc.longitude, day).maghrib;
+      if (Number.isNaN(maghrib.getTime())) return today;
+      if (maghrib <= now) return addDaysYmd(day, 1);
+    }
+    return today;
+  } catch {
+    return deviceYmd(now);
   }
 }
 
@@ -664,21 +696,14 @@ export function isPostMaghrib(now: Date = new Date()): boolean {
  * For calendar/historical conversions, use getHijriDate(specificDate) instead.
  */
 export function getHijriToday(): HijriDate | null {
-  const now = new Date();
-  if (isPostMaghrib(now)) {
-    return getHijriDate(new Date(now.getTime() + 86_400_000));
-  }
-  return getHijriDate(now);
+  return getHijriDate(ymdNoon(getIslamicDay()));
 }
 
 /** Returns all special days active today (Maghrib-aware) */
 export function getTodaySpecialDays(date?: Date): SpecialDayInfo[] {
-  const now = date ?? new Date();
   const h = date ? getHijriDate(date) : getHijriToday();
   // Weekly events must also shift at Maghrib: after Maghrib on Wed → Islamic Thu
-  const postMaghrib = !date && isPostMaghrib(now);
-  const shifted = postMaghrib ? new Date(now.getTime() + 86_400_000) : now;
-  const weekday = shifted.getDay(); // 0=Sun, 5=Fri
+  const weekday = date ? date.getDay() : weekdayOfYmd(getIslamicDay()); // 0=Sun, 5=Fri
 
   const ids: string[] = [];
 
@@ -722,7 +747,5 @@ export function getTodaySpecialDays(date?: Date): SpecialDayInfo[] {
 
 /** Returns true if the current Islamic day is Friday (Jumu'ah), Maghrib-aware */
 export function isFriday(): boolean {
-  const now = new Date();
-  const shifted = isPostMaghrib(now) ? new Date(now.getTime() + 86_400_000) : now;
-  return shifted.getDay() === 5;
+  return weekdayOfYmd(getIslamicDay()) === 5;
 }

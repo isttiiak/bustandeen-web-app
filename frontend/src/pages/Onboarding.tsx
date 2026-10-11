@@ -61,6 +61,7 @@ import {
   type Habit,
 } from '../utils/onboarding.js';
 import { getHomeGoals, isSectionOn, saveSetupHomeChoice } from '../utils/homeSections.js';
+import { loadZoneLookup } from '../utils/placeClock.js';
 
 const LOCATION_KEY = 'bustandeen_location';
 const STEPS = 3;
@@ -102,6 +103,7 @@ export default function Onboarding() {
     setChangingLocation(false);
     try {
       localStorage.setItem(LOCATION_KEY, JSON.stringify(loc));
+      void loadZoneLookup();
     } catch {
       /* private mode: times work for this visit only */
     }

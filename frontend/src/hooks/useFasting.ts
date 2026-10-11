@@ -4,6 +4,7 @@ import api from '../lib/api.js';
 import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import type { FastingCategory, FastingStatus, VoluntaryKind } from '../utils/fastingRules.js';
+import { placeToday } from '../utils/placeClock.js';
 
 export interface FastingLog {
   _id: string;
@@ -49,8 +50,8 @@ export interface FastingSummary {
 // Fasting uses civil midnight, NOT the Fajr tracking day — a fast covers
 // dawn-to-sunset of a calendar date, so "today" must be the wall-clock date.
 export function localTodayStr(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  // The calendar date at the saved prayer place (the phone's without one).
+  return placeToday();
 }
 
 export function useFastingLog(date: string) {

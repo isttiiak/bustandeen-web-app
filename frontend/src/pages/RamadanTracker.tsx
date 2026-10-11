@@ -40,7 +40,8 @@ import { useAnalytics } from '../hooks/useAnalytics.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
 import { getRamadanWindow } from '../utils/ramadan.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
-import { calcPrayerTimes, formatTime } from '../utils/prayerTimes.js';
+import { calcPrayerTimes, calcPrayerTimesForDay, formatTime } from '../utils/prayerTimes.js';
+import { addDaysYmd, placeYmd } from '../utils/placeClock.js';
 import { celebrateFast } from '../utils/celebrate.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
@@ -217,9 +218,8 @@ export default function RamadanTracker() {
       const raw = localStorage.getItem('bustandeen_location');
       if (!raw) return null;
       const loc = JSON.parse(raw) as { latitude: number; longitude: number };
-      const d = new Date();
-      d.setDate(d.getDate() + 1);
-      return calcPrayerTimes(loc.latitude, loc.longitude, d).fajr;
+      const tomorrow = addDaysYmd(placeYmd(loc.latitude, loc.longitude, new Date()), 1);
+      return calcPrayerTimesForDay(loc.latitude, loc.longitude, tomorrow).fajr;
     } catch {
       return null;
     }
