@@ -194,6 +194,19 @@ export function placeClockOffsetMin(at: Date = new Date()): number {
   return loc ? placeOffsetMin(loc.latitude, loc.longitude, at) : -at.getTimezoneOffset();
 }
 
+/** Noon of a YYYY-MM-DD on the saved place's clock (the phone's without one).
+ * Zikr counts are anchored here: with the place offset sent too, the server
+ * files them under that day for any phone zone (v5.160.0). */
+export function placeNoonTs(ymd: string): number {
+  const loc = readSavedPlace();
+  if (!loc) return ymdNoon(ymd).getTime();
+  const [y, m, d] = ymd.split('-').map(Number);
+  const utcNoon = Date.UTC(y!, m! - 1, d!, 12);
+  const at = (t: number) => placeOffsetMin(loc.latitude, loc.longitude, new Date(t)) * 60_000;
+  // Twice: the offset at the guessed instant (a DST change never falls at noon)
+  return utcNoon - at(utcNoon - at(utcNoon));
+}
+
 /** Today's calendar date at the saved place (the phone's date without one). */
 export function placeToday(at: Date = new Date()): string {
   const loc = readSavedPlace();

@@ -5,6 +5,8 @@ import { getStreak, classifyDays, StreakResponse } from './streak.service.js';
 import {
   truncateToTimezone,
   bucketDateForDayString,
+  bucketDay,
+  dayRange,
   DEFAULT_TIMEZONE_OFFSET,
 } from '../utils/timezone-flexible.js';
 import { ChartDataPoint } from '../types/api.types.js';
@@ -49,9 +51,10 @@ export async function getAnalyticsData(
   // correct label — do NOT shift it by the offset again.
   const dateKey = (d: Date): string => d.toISOString().split('T')[0] ?? '';
 
+  // By date, so a bucket saved under another offset is not lost at the edges
   const records = await ZikrDaily.find({
     userId,
-    date: { $gte: startDate, $lte: today },
+    date: dayRange(bucketDay(startDate), bucketDay(today)),
   }).sort({ date: 1 });
 
   const dailyTotals = new Map<string, number>();
@@ -90,13 +93,17 @@ export async function getAnalyticsData(
   const [goal, streak, todayRecords, user, since] = await Promise.all([
     ZikrGoal.findOne({ userId }),
     getStreak(userId, timezoneOffset, todayStr),
-    ZikrDaily.find({ userId, date: today }),
+    ZikrDaily.find({ userId, date: dayRange(bucketDay(today)) }),
     User.findOne({ uid: userId }).select('totalCount zikrTotals'),
     resetDateFor(userId, 'zikr'),
   ]);
 
   const todayTotal = todayRecords.reduce((sum, r) => sum + r.count, 0);
-  const todayPerType = todayRecords.map((r) => ({ zikrType: r.zikrType, total: r.count }));
+  const todayByType = new Map<string, number>();
+  for (const r of todayRecords) {
+    todayByType.set(r.zikrType, (todayByType.get(r.zikrType) ?? 0) + r.count);
+  }
+  const todayPerType = [...todayByType].map(([zikrType, total]) => ({ zikrType, total }));
 
   // Tag each chart day for the weekly heatmap (grace days show a "chance" tag)
   {
@@ -130,14 +137,22 @@ export async function getAnalyticsData(
     {
       $match: { userId, ...(since ? { date: { $gte: new Date(`${since}T00:00:00.000Z`) } } : {}) },
     },
-    { $group: { _id: '$date', total: { $sum: '$count' } } },
+    // One group per DAY (UTC date part), not per bucket instant; `date` stays
+    // a stored bucket date of that day, so the response shape is unchanged.
+    {
+      $group: {
+        _id: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
+        date: { $min: '$date' },
+        total: { $sum: '$count' },
+      },
+    },
     { $sort: { total: -1 } },
     { $limit: 1 },
-  ])) as Array<{ _id: Date; total: number }>;
+  ])) as Array<{ _id: string; date: Date; total: number }>;
 
   const bestDay =
     allDailyRecords.length > 0
-      ? { date: allDailyRecords[0]?._id ?? null, count: allDailyRecords[0]?.total ?? 0 }
+      ? { date: allDailyRecords[0]?.date ?? null, count: allDailyRecords[0]?.total ?? 0 }
       : { date: null, count: 0 };
 
   return {

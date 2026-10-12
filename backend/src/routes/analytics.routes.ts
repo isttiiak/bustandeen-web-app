@@ -11,13 +11,11 @@ router.post('/goal', requireAuth, validate(setGoalSchema), analyticsController.s
 router.get('/streak', requireAuth, analyticsController.getStreakHandler);
 router.post('/streak/pause', requireAuth, analyticsController.pauseStreakHandler);
 router.post('/streak/resume', requireAuth, analyticsController.resumeStreakHandler);
-router.post('/streak/check', requireAuth, analyticsController.checkStreakHandler);
 router.get(
   '/',
   requireAuth,
   validate(analyticsQuerySchema),
   analyticsController.getAnalyticsHandler
 );
-router.get('/compare', requireAuth, analyticsController.compareAnalyticsHandler);
 
 export default router;

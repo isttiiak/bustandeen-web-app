@@ -11,9 +11,6 @@ const FLUSH_DELAY = 800; // ms
 const RETRY_DELAY = 20_000; // ms: retry a failed flush without waiting for another tap
 let retryTimer: ReturnType<typeof setTimeout> | undefined;
 
-// Timezone offset is stable for the whole session — compute once.
-const SESSION_TZ_OFFSET = getUserTimezoneOffset();
-
 // Debounce localStorage writes so rapid tapping doesn't block the main thread.
 // Reads are always synchronous (needed for hydration on mount).
 const PERSIST_DEBOUNCE_MS = 400;
@@ -245,7 +242,7 @@ export const useZikrStore = create<ZikrState>()(
         const idToken = await getIdToken();
         if (!idToken) return;
         try {
-          const tzOffset = get().timezoneOffset ?? SESSION_TZ_OFFSET;
+          const tzOffset = get().timezoneOffset ?? getUserTimezoneOffset();
           const res = await fetch(
             `${API_BASE}/api/zikr/summary?timezoneOffset=${tzOffset}&today=${getTrackingDay()}`,
             { headers: { Authorization: `Bearer ${idToken}` } }
@@ -412,7 +409,7 @@ export const useZikrStore = create<ZikrState>()(
           const entries = Object.entries(snapshot).filter(([, a]) => a !== 0);
           if (!entries.length) return;
 
-          const resolvedOffset = get().timezoneOffset ?? SESSION_TZ_OFFSET;
+          const resolvedOffset = get().timezoneOffset ?? getUserTimezoneOffset();
           // Anchor every increment INSIDE the current tracking day (midday ts):
           // with the Fajr boundary, a 1 AM tap belongs to the CLOSING day's
           // bucket — Date.now() would land it in the next civil day.
