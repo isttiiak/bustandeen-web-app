@@ -24,7 +24,7 @@
     "cors": "^2.8.6",
     "express": "^5.2.1",
     "express-rate-limit": "^8.7.0",
-    "firebase-admin": "^12.6.0",
+    "firebase-admin": "^13.10.0",
     "helmet": "^8.3.0",
     "imapflow": "^2.2.5",
     "mailparser": "^3.9.35",
@@ -60,6 +60,7 @@
   "allowScripts": {
     "mongodb-memory-server": true,
     "esbuild": true,
+    "@firebase/util": false,
     "@parcel/watcher": false,
     "protobufjs": false,
     "unrs-resolver": false
