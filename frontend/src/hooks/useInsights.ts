@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
+import { placeToday } from '../utils/placeClock.js';
 
 export interface WorshipGroup {
   days: number;
@@ -17,8 +18,8 @@ export interface WorshipCorrelation {
 }
 
 function localTodayStr(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  // The calendar date at the saved prayer place (the phone's without one).
+  return placeToday();
 }
 
 /** Compares worship consistency on fasting vs. non-fasting days over the

@@ -20,7 +20,7 @@
 import { useEffect, useState } from 'react';
 import type { PrayerId } from '../hooks/useSalatLog.js';
 import { getAsrMadhab } from './salatPrefs.js';
-import { calcPrayerTimes } from './prayerTimes.js';
+import { calcPrayerTimesForDay } from './prayerTimes.js';
 
 // ─── journey state ──────────────────────────────────────────────────────────
 
@@ -316,7 +316,7 @@ export function suggestStartAfter(date: string, now: Date = new Date()): PrayerI
     const raw = localStorage.getItem('bustandeen_location');
     if (!raw) return undefined;
     const loc = JSON.parse(raw) as { latitude: number; longitude: number };
-    const times = calcPrayerTimes(loc.latitude, loc.longitude, new Date(`${date}T12:00:00`));
+    const times = calcPrayerTimesForDay(loc.latitude, loc.longitude, date);
     const begun = PRAYER_ORDER.filter((p) => times[p] <= now);
     if (begun.length < 2) return undefined;
     return begun[begun.length - 2];

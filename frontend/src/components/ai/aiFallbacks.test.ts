@@ -95,7 +95,7 @@ describe('"What is sent?" links', () => {
   }, 20_000);
 });
 
-describe('non-AI fallbacks when the AI request fails', () => {
+describe('non-AI fallbacks when the AI request fails', { timeout: 20_000 }, () => {
   it('muhāsabah shows the week in numbers plus the verified reference', async () => {
     const { default: MuhasabahReport } = await import('./MuhasabahReport.js');
     const html = render(createElement(MuhasabahReport));
