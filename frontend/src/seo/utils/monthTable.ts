@@ -78,14 +78,15 @@ export function monthRows(city: CityEntry, ym: YearMonth): MonthRow[] {
   const [y, m] = ym.split('-').map(Number);
   return Array.from({ length: daysInMonth(ym) }, (_, i) => {
     const day = i + 1;
-    // Noon UTC is the same calendar day in Bangladesh (UTC+6) and on the
-    // build machine, the same choice the Ramadan calendar makes.
+    // Noon UTC of the date, for the weekday and the Umm al-Qura date; the
+    // times are the city's civil day, whatever the build machine's zone.
     const noon = new Date(Date.UTC(y, m - 1, day, 12));
+    const date = `${ym}-${String(day).padStart(2, '0')}`;
     return {
-      date: `${ym}-${String(day).padStart(2, '0')}`,
+      date,
       day,
       noon,
-      times: computePrayerTimes(city.lat, city.lng, noon, city.countryCode),
+      times: computePrayerTimes(city.lat, city.lng, date, city.timezone, city.countryCode),
       hijri: toHijri(noon),
     };
   });
