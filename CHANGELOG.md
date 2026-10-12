@@ -7,6 +7,11 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 ### Changed
 
 - **No more Mongoose deprecation warning in every function log**: the 29 `findOneAndUpdate`/`findByIdAndUpdate` calls that passed `new: true` now pass `returnDocument: 'after'`, the documented replacement. Same document returned, no behaviour change.
+## v5.159.1 - Duha ends at the same time on every screen - 2026-10-12
+
+### Fixed
+
+- **Home and Prayer Times showed different Duha end times** (Dhaka, 12 Oct: Home "Duha (Chasht) 06:40 - 11:32", Prayer Times "Ishraq / Duha 06:15 → 11:37", forbidden Istiwa' 11:37-11:47). Home ended Duha 15 minutes before Dhuhr, a number no cited rule gives, leaving a 5-minute gap before the forbidden window. Duha now ends where the Istiwa' (zenith) window starts (10 minutes before Dhuhr, Sahih Muslim 831, Sahih al-Bukhari 585) on both screens, from one shared helper (`getIstiwaStart`). Home keeps Ishraq (sunrise +20 to +45 min) and Duha (from +45 min) as separate labels. Tests pin both ends.
 
 ## v5.159.0 - Prayer times right wherever the phone's clock is set - 2026-10-12
 

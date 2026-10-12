@@ -23,6 +23,7 @@ import {
   calcPrayerTimesForDay,
   formatTime,
   getCurrentAndNextPrayer,
+  getIstiwaStart,
   getPrayerEndTime,
   PRAYER_META,
   PrayerTimesResult,
@@ -166,7 +167,7 @@ function buildTimeline(
       hadithUrl: 'https://sunnah.com/tirmidhi:586',
       glyph: 'ishraq',
       start: new Date(times.sunrise.getTime() + 20 * MIN),
-      end: new Date(times.dhuhr.getTime() - 10 * MIN),
+      end: getIstiwaStart(times),
     },
 
     // ── Forbidden: Istiwa (Solar Zenith) ──────────────────────────────────
@@ -182,7 +183,7 @@ function buildTimeline(
         '"At three times the Prophet ﷺ forbade us to pray ... when it is at its zenith." · Sahih Muslim 831; Ibn \'Umar: "Do not pray when the sun is rising, nor when it is setting, nor when it is at its peak (zenith)." · Sahih al-Bukhari 585'
       ),
       hadithUrl: 'https://sunnah.com/muslim:831',
-      start: new Date(times.dhuhr.getTime() - 10 * MIN),
+      start: getIstiwaStart(times),
       end: times.dhuhr,
     },
 
