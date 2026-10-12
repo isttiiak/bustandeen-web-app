@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { placeToday } from '../utils/placeClock.js';
+import { getUserTimezoneOffset } from '../utils/timezone.js';
 
 export interface WorshipGroup {
   days: number;
@@ -27,7 +28,7 @@ function localTodayStr(): string {
 export function useWorshipCorrelation(days = 90) {
   const user = useAuthStore((s) => s.user);
   const today = localTodayStr();
-  const timezoneOffset = -new Date().getTimezoneOffset();
+  const timezoneOffset = getUserTimezoneOffset();
   return useQuery({
     queryKey: ['insights', 'worshipCorrelation', days, today],
     queryFn: async () => {

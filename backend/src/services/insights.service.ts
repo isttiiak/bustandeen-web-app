@@ -4,11 +4,7 @@ import { PRAYER_IDS } from '../models/SalatLog.js';
 import QuranLog from '../models/QuranLog.js';
 import ZikrDaily from '../models/ZikrDaily.js';
 import { unitsOf } from './quran.service.js';
-import { bucketDateForDayString, DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
-
-function todayDateString(): string {
-  return new Date().toISOString().substring(0, 10);
-}
+import { dayRange, DEFAULT_TIMEZONE_OFFSET, getTodayString } from '../utils/timezone-flexible.js';
 
 /** Shift a YYYY-MM-DD date string by `delta` days (pure string math, no TZ). */
 function shiftDateStr(dateStr: string, delta: number): string {
@@ -53,17 +49,16 @@ export async function getWorshipCorrelation(
   today?: string,
   timezoneOffset: number = DEFAULT_TIMEZONE_OFFSET
 ): Promise<WorshipCorrelationResult> {
-  const end = today ?? todayDateString();
+  // Callers send the tracking day; without one, the user's civil day (was UTC)
+  const end = today ?? getTodayString(timezoneOffset);
   const start = shiftDateStr(end, -(days - 1));
-
-  const zikrStart = bucketDateForDayString(start, timezoneOffset) ?? new Date(start);
-  const zikrEnd = bucketDateForDayString(end, timezoneOffset) ?? new Date(end);
 
   const [fastingLogs, salatLogs, quranLogs, zikrRecords] = await Promise.all([
     FastingLog.find({ userId, date: { $gte: start, $lte: end }, status: 'completed' }),
     SalatLog.find({ userId, date: { $gte: start, $lte: end } }),
     QuranLog.find({ userId, date: { $gte: start, $lte: end } }),
-    ZikrDaily.find({ userId, date: { $gte: zikrStart, $lte: zikrEnd } }),
+    // By date: every bucket of these days, whatever offset it was saved under
+    ZikrDaily.find({ userId, date: dayRange(start, end) }),
   ]);
 
   const fastingSet = new Set(fastingLogs.map((f) => f.date));

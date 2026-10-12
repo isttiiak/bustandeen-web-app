@@ -25,7 +25,7 @@
 // and the phone on London time, the day still starts at Fajr in Dhaka and is
 // named by Dhaka's calendar (see utils/placeClock.ts).
 import { calcPrayerTimes, calcPrayerTimesForDay } from './prayerTimes.js';
-import { addDaysYmd, placeYmd, readSavedPlace } from './placeClock.js';
+import { addDaysYmd, placeNoonTs, placeYmd, readSavedPlace } from './placeClock.js';
 
 export type DayStartMode = 'fajr' | 'midnight' | 'maghrib';
 
@@ -115,13 +115,17 @@ export function getTrackingDay(now: Date = new Date()): string {
 
 /**
  * A timestamp safely INSIDE the current tracking day for server-side day
- * bucketing (12:00 local of the tracking day's civil date). Zikr flushes
- * anchor increments with this so a 1 AM tap lands in the closing day's
- * bucket, not the next civil day's.
+ * bucketing (12:00 of the tracking day on the saved place's clock). Zikr
+ * flushes anchor increments with this so a 1 AM tap lands in the closing
+ * day's bucket, not the next civil day's.
  */
 export function getTrackingDayMiddayTs(now: Date = new Date()): number {
-  const [y, m, d] = getTrackingDay(now).split('-').map(Number);
-  return new Date(y, m - 1, d, 12, 0, 0, 0).getTime();
+  return placeNoonTs(getTrackingDay(now));
+}
+
+/** The tracking day `daysBack` days before the current one (0 = today). */
+export function getTrackingDayDaysBack(daysBack: number, now: Date = new Date()): string {
+  return addDaysYmd(getTrackingDay(now), -daysBack);
 }
 
 /**
@@ -132,9 +136,7 @@ export function getTrackingDayMiddayTs(now: Date = new Date()): number {
  * mode).
  */
 export function getTrackingDayMiddayTsDaysBack(daysBack: number, now: Date = new Date()): number {
-  const d = new Date(getTrackingDayMiddayTs(now));
-  d.setDate(d.getDate() - daysBack);
-  return d.getTime();
+  return placeNoonTs(getTrackingDayDaysBack(daysBack, now));
 }
 
 export function isNewTrackingDay(lastDateString: string | null): boolean {

@@ -13,7 +13,8 @@ import { useZikrStore } from '../../store/useZikrStore.js';
 import { useAuthStore } from '../../store/useAuthStore.js';
 import { zikrDisplayName } from '../../utils/zikrLibrary.js';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
-import { getTrackingDayMiddayTsDaysBack } from '../../utils/trackingDay.js';
+import { getTrackingDayDaysBack } from '../../utils/trackingDay.js';
+import { ymdNoon } from '../../utils/placeClock.js';
 import {
   MAX_LOG_AMOUNT,
   logDayOptions,
@@ -93,7 +94,7 @@ function LogCountsForm({
   const dayLabel = (n: number): string => {
     if (n === 0) return t('common.today');
     if (n === 1) return t('zikrAnalytics.yesterday');
-    return formatLocaleDate(new Date(getTrackingDayMiddayTsDaysBack(n, openedAt)), {
+    return formatLocaleDate(ymdNoon(getTrackingDayDaysBack(n, openedAt)), {
       weekday: 'short',
       month: 'short',
       day: 'numeric',

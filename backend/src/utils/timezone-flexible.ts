@@ -72,6 +72,25 @@ export function bucketDateForDayString(
   );
 }
 
+/** The day (YYYY-MM-DD) a bucket belongs to: its UTC date part, for every
+ * offset it was saved under (truncateToTimezone / bucketDateForDayString). */
+export function bucketDay(date: Date): string {
+  return date.toISOString().slice(0, 10);
+}
+
+/**
+ * Every bucket of the days `fromDay`..`toDay` (inclusive), whatever offset
+ * each was saved under: [fromDay 00:00Z, toDay+1 00:00Z). Days are matched by
+ * date, never by the exact bucket instant (Option B, v5.160.0): a tab left
+ * open across a DST change or a phone that changed zone saves the same day
+ * under another instant.
+ */
+export function dayRange(fromDay: string, toDay: string = fromDay): { $gte: Date; $lt: Date } {
+  const from = new Date(`${fromDay}T00:00:00.000Z`);
+  const to = new Date(Date.parse(`${toDay}T00:00:00.000Z`) + 86_400_000);
+  return { $gte: from, $lt: to };
+}
+
 /**
  * Get "today" in specified timezone as a date string (YYYY-MM-DD)
  */

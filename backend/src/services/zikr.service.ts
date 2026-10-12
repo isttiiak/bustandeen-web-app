@@ -5,6 +5,8 @@ import { resetAreas, resetDateFor } from './statsReset.service.js';
 import {
   truncateToTimezone,
   bucketDateForDayString,
+  bucketDay,
+  dayRange,
   DEFAULT_TIMEZONE_OFFSET,
 } from '../utils/timezone-flexible.js';
 import { markActive } from './dailyActivity.service.js';
@@ -46,28 +48,41 @@ async function applyIncrements(
     if (!zikrType || !Number.isFinite(amount) || amount === 0) continue;
 
     const date = truncateToTimezone(ts ?? Date.now(), timezoneOffset);
+    // The day is matched by date: a bucket of this day saved under another
+    // offset is the same day (Option B). A new bucket gets the exact key.
+    const sameDay = { userId, zikrType, date: dayRange(bucketDay(date)) };
     // The delta actually applied to the day bucket — for decrements this can
     // be smaller in magnitude than `amount` (buckets clamp at 0), and the
     // lifetime totals must move by exactly the same applied delta.
     let applied = amount;
     try {
       if (amount > 0) {
-        await ZikrDaily.updateOne(
-          { userId, date, zikrType },
-          { $inc: { count: amount } },
-          { upsert: true }
-        );
+        const hit = await ZikrDaily.updateOne(sameDay, { $inc: { count: amount } });
+        if (hit.matchedCount === 0) {
+          await ZikrDaily.updateOne(
+            { userId, date, zikrType },
+            { $inc: { count: amount } },
+            { upsert: true }
+          );
+        }
       } else {
-        // Atomic clamp-at-zero via pipeline update. Mongoose v9 requires
-        // updatePipeline:true when the update is an array, and returnDocument
-        // instead of the deprecated `new` option.
-        const before = await ZikrDaily.findOneAndUpdate(
-          { userId, date, zikrType },
-          [{ $set: { count: { $max: [0, { $add: [{ $ifNull: ['$count', 0] }, amount] }] } } }],
-          { returnDocument: 'before', updatePipeline: true }
-        );
-        const prev = before?.count ?? 0;
-        applied = Math.max(0, prev + amount) - prev; // ≤ 0, never past the bucket
+        // Take from the day's buckets, largest first, each an atomic
+        // clamp-at-zero pipeline update (Mongoose v9: updatePipeline:true for
+        // an array update). One bucket per day is the usual case; a day saved
+        // under two offsets has two. `applied` never goes past what was there.
+        applied = 0;
+        let left = -amount;
+        while (left > 0) {
+          const before = await ZikrDaily.findOneAndUpdate(
+            { ...sameDay, count: { $gt: 0 } },
+            [{ $set: { count: { $max: [0, { $subtract: [{ $ifNull: ['$count', 0] }, left] }] } } }],
+            { returnDocument: 'before', updatePipeline: true, sort: { count: -1 } }
+          );
+          if (!before) break;
+          const took = Math.min(before.count, left);
+          left -= took;
+          applied -= took;
+        }
       }
     } catch {
       // Ignore duplicate key race conditions
@@ -283,11 +298,14 @@ export async function getZikrSummary(
   const todayDate =
     (todayStr ? bucketDateForDayString(todayStr, timezoneOffset) : null) ??
     truncateToTimezone(Date.now(), timezoneOffset);
-  const todayDocs = await ZikrDaily.find({ userId, date: todayDate }).select('zikrType count');
+  // By date: a bucket of today saved under another offset counts too
+  const todayDocs = await ZikrDaily.find({ userId, date: dayRange(bucketDay(todayDate)) }).select(
+    'zikrType count'
+  );
   const todayPerType: Record<string, number> = {};
   let todayTotal = 0;
   for (const d of todayDocs) {
-    todayPerType[d.zikrType] = d.count;
+    todayPerType[d.zikrType] = (todayPerType[d.zikrType] ?? 0) + d.count;
     todayTotal += d.count;
   }
 

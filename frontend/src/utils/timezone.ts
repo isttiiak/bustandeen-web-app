@@ -1,11 +1,15 @@
 // Timezone detection utility for frontend
-// Automatically detects user's browser timezone
+
+import { placeClockOffsetMin } from './placeClock.js';
 
 /**
- * Get user's timezone offset in minutes (positive for east of UTC)
+ * The offset sent to the server as `timezoneOffset` (minutes east of UTC):
+ * the saved place's clock, else the phone's. Same as the phone's for anyone
+ * whose phone is in the saved place's zone. The server matches zikr days by
+ * date (v5.160.0), so a changed offset moves no stored data.
  */
 export function getUserTimezoneOffset(): number {
-  return -new Date().getTimezoneOffset();
+  return placeClockOffsetMin();
 }
 
 /**

@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.0 - Zikr days matched by date, the saved place's clock everywhere - 2026-10-13
+
+### Fixed
+
+- **A zikr day saved under two time zone offsets was split** (a tab left open across a DST change, a phone that changed zone, or a phone on another zone than the saved place). A day's bucket is stored at "local midnight" for the offset that was sent (12 Oct at UTC+6 = 18:00 UTC, at UTC+1 = 23:00 UTC), and today's total, subtracting a count and the first/last day of the charts looked for that exact instant, so they missed the other bucket (today's count looked too low, a subtraction did nothing). Now the server matches a day by its date, as Correct-a-day, streaks and Noor already did: today's total and the charts count every bucket of the day, an add goes into the day's existing bucket, and a subtraction takes from the day's buckets (largest first, never below zero, lifetime totals move by what was actually taken). Best day groups by date. No stored data is changed or moved.
+- **Worship correlation** without a day sent used the UTC date; now the user's day.
+
+### Changed
+
+- **The app sends the saved place's clock offset everywhere** (it was the phone's) and anchors zikr counts at noon on the place's clock, so a far-zone phone's server-side "today", "prayers due" and Isha hour follow the place. For anyone whose phone is in the saved place's zone, or without a saved place, every value sent is exactly what it was (tested across five zones and both DST changes); the server's date matching means no day can split because of it.
+
+### Removed
+
+- Two unused API endpoints, `POST /api/analytics/streak/check` and `GET /api/analytics/compare` (no screen called them; both used a fixed Dhaka offset or the server's own clock for the day).
+
 ## v5.159.5 - Automatic Hijri date follows the saved place's country - 2026-10-12
 
 ### Fixed

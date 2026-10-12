@@ -8,6 +8,7 @@
 import {
   getTrackingDay,
   getTrackingDayMiddayTs,
+  getTrackingDayDaysBack,
   getTrackingDayMiddayTsDaysBack,
 } from './trackingDay.js';
 import { getUserTimezoneOffset } from './timezone.js';
@@ -42,8 +43,7 @@ export interface ZikrLogBody {
 
 /** The YYYY-MM-DD tracking day a log `daysBack` from `openedAt` lands in. */
 export function logTargetDay(daysBack: LogDaysBack, openedAt: Date): string {
-  const d = new Date(getTrackingDayMiddayTsDaysBack(daysBack, openedAt));
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  return getTrackingDayDaysBack(daysBack, openedAt);
 }
 
 /**
@@ -136,10 +136,7 @@ export function setFixDays(n: number): void {
 /** The past tracking days that can be corrected, newest first (yesterday
  * back to `fixDays`), from the moment the form opened. */
 export function correctDayOptions(fixDays: number, openedAt: Date): string[] {
-  return Array.from({ length: fixDays }, (_, i) => {
-    const d = new Date(getTrackingDayMiddayTsDaysBack(i + 1, openedAt));
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  });
+  return Array.from({ length: fixDays }, (_, i) => getTrackingDayDaysBack(i + 1, openedAt));
 }
 
 /** The counts to send: only zikr whose number changed, as whole numbers
