@@ -70,7 +70,7 @@ async function applyOwedDelta(
     const doc = await SalatDebt.findOneAndUpdate(
       { userId },
       { $inc: { [path]: delta } },
-      { upsert: true, new: true }
+      { upsert: true, returnDocument: 'after' }
     );
     return { doc, actualDelta: delta };
   }
@@ -79,7 +79,7 @@ async function applyOwedDelta(
     const full = await SalatDebt.findOneAndUpdate(
       { userId, [path]: { $gte: need } },
       { $inc: { [path]: delta } },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (full) return { doc: full, actualDelta: delta };
     const current = await SalatDebt.findOne({ userId });
@@ -88,7 +88,7 @@ async function applyOwedDelta(
     const partial = await SalatDebt.findOneAndUpdate(
       { userId, [path]: currentVal },
       { $set: { [path]: 0 } },
-      { new: true }
+      { returnDocument: 'after' }
     );
     if (partial) return { doc: partial, actualDelta: -currentVal };
     // The value moved under us; try again with the fresh count.
@@ -208,7 +208,7 @@ export async function setDebt(
   const doc = await SalatDebt.findOneAndUpdate(
     { userId },
     { $set: { [`owed.${prayer}`]: count } },
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: 'after' }
   );
   await logEvent(userId, prayer, actualDelta, date);
   return toSummary(doc);
@@ -392,7 +392,7 @@ export async function ensureCaughtUp(userId: string, today?: string): Promise<vo
   const doc = await SalatDebt.findOneAndUpdate(
     { userId },
     { $setOnInsert: { userId } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
 
   if (!doc.lastAccrualDate) {

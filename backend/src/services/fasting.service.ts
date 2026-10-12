@@ -114,7 +114,7 @@ export async function upsertLog(userId: string, input: UpsertLogInput): Promise<
   const log = await FastingLog.findOneAndUpdate(
     { userId, date },
     { $set: set, $unset: unset },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
   return log;
 }
@@ -179,7 +179,7 @@ export async function deleteVow(userId: string, vowId: string): Promise<IFasting
   return FastingProfile.findOneAndUpdate(
     { userId },
     { $pull: { vows: { _id: vowId } } },
-    { new: true }
+    { returnDocument: 'after' }
   );
 }
 

@@ -21,7 +21,7 @@ export async function getOrCreateProfile(userId: string): Promise<IHifzProfile> 
   return HifzProfile.findOneAndUpdate(
     { userId },
     { $setOnInsert: { userId } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
 }
 
@@ -29,7 +29,7 @@ async function getOrCreateLog(userId: string, date: string): Promise<IHifzLog> {
   return HifzLog.findOneAndUpdate(
     { userId, date },
     { $setOnInsert: { newCount: 0, revisionCount: 0 } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
 }
 

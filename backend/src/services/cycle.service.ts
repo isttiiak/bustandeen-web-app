@@ -52,7 +52,7 @@ export async function setMadhab(
   return await CycleProfile.findOneAndUpdate(
     { userId },
     { $set: { madhab } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
 }
 
@@ -73,7 +73,7 @@ export async function setPregnancy(
   return await CycleProfile.findOneAndUpdate(
     { userId },
     { $set: { pregnancy: active ? { active: true, dueDate } : { active: false } } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
 }
 
