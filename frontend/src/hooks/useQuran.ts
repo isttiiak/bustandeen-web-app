@@ -3,7 +3,7 @@ import api from '../lib/api.js';
 import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
-import { getUserTimezoneOffset } from '../utils/timezone.js';
+import { placeClockOffsetMin } from '../utils/placeClock.js';
 
 export const QURAN_TOTAL_AYAT = 6236;
 
@@ -337,7 +337,8 @@ export function useQuranSessions(dateStr: string) {
  * over the last `days` — mirrors useZikrTimeOfDay. */
 export function useQuranTimeOfDay(days = 30) {
   const user = useAuthStore((s) => s.user);
-  const timezoneOffset = getUserTimezoneOffset();
+  // Hours on the saved place's clock (a far-zone phone saw them shifted)
+  const timezoneOffset = placeClockOffsetMin();
   return useQuery({
     queryKey: ['quran', 'time-of-day', days, timezoneOffset],
     queryFn: async () => {

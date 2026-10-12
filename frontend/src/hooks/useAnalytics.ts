@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tansta
 import api from '../lib/api.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+import { placeClockOffsetMin } from '../utils/placeClock.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import type {
   AnalyticsResponse,
@@ -32,7 +33,8 @@ export function useAnalytics(days = 7) {
 
 export function useZikrTimeOfDay(days = 30) {
   const user = useAuthStore((s) => s.user);
-  const timezoneOffset = getUserTimezoneOffset();
+  // Hours on the saved place's clock (a far-zone phone saw them shifted)
+  const timezoneOffset = placeClockOffsetMin();
   return useQuery({
     queryKey: ['zikr', 'time-of-day', days, timezoneOffset],
     queryFn: async () => {

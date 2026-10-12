@@ -186,6 +186,14 @@ export function readSavedPlace(): SavedPlace | null {
   }
 }
 
+/** Minutes east of UTC on the saved place's clock (the phone's without one).
+ * Sent to the "time of day" charts, which group real moments by hour on the
+ * server. Not for day buckets: those keep the phone's offset (v5.159.4). */
+export function placeClockOffsetMin(at: Date = new Date()): number {
+  const loc = readSavedPlace();
+  return loc ? placeOffsetMin(loc.latitude, loc.longitude, at) : -at.getTimezoneOffset();
+}
+
 /** Today's calendar date at the saved place (the phone's date without one). */
 export function placeToday(at: Date = new Date()): string {
   const loc = readSavedPlace();
