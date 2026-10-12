@@ -2,6 +2,29 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.159.0 - Prayer times right wherever the phone's clock is set - 2026-10-12
+
+### Fixed
+
+- **A saved location far from the phone's time zone gave the wrong prayer, day and date** (report: a phone on UK time with Dhaka saved showed "Isha, ends in 4h 16m" after Fajr had begun in Dhaka). The prayer maths was right; the DAY around it came from the phone's clock:
+  - The **tracking day** (salat, zikr, Quran logs) was the phone's date compared with Dhaka's Fajr, so logs could land a day early or late, and the Salat page then computed that wrong day's times.
+  - The **Prayer Times page** only recomputed when the phone's date changed, so it kept yesterday's Dhaka times for hours.
+  - The **Hijri date, Friday and the special-day cards**, the **fast's date**, the Salat and Fasting pages' times for a chosen day, Ramadan's tomorrow Fajr and Musafir's "left after which prayer" all read the phone's date.
+  - Now **every day the app talks about is the saved place's day**: it starts at that place's Fajr (or Maghrib/midnight, per Settings) and is named by that place's calendar, decided by comparing instants, so it holds for any phone zone. A worldwide test checks 88 phone-zone and city pairs (date line, high latitude, DST, Beijing time in Tibet) every 50 minutes over three seasons against each city's real time zone.
+- **Hijri date and Friday jumped two days for an hour on the night clocks spring forward** (everyone in a DST country, e.g. London 28-29 March): the next Islamic day was found by adding 24 hours instead of one calendar day.
+- **Far north in summer, ʿIshāʾ after midnight**: with an 18° method ʿIshāʾ can begin after midnight (London in June: ~00:50, Fajr ~01:15). From midnight until then the arch said "ʿIshāʾ"; it is still Maghrib.
+- **Samoa, Tonga and Kiribati** (UTC+13/+14 at longitudes west of the date line): prayer times for a date were a day off.
+
+### Added
+
+- **The saved place's own time zone, found on the device**: a small zone map (`@photostructure/tz-lookup`, CC0, 29 KB, loaded in the background; the location never leaves the device). Until it has loaded, the old estimate is used (a place within 3 h of the phone shares its zone).
+- **Times on the place's clock**: when the phone is set to another zone, prayer times, the arch clock and dates are shown as people in that city read them, labelled "Dhaka time".
+- **"Your phone is on a different time zone" card** under the Home arch (most often a traveller whose location is still home): Update location (opens the location settings) or Keep Dhaka (asked again for another zone). Not shown in demo mode.
+
+### Changed
+
+- **Default calculation method and ʿAṣr school follow the saved place's country** (from its zone), not the phone's. Only for people who never picked them; a saved choice still wins.
+
 ## v5.158.7 - firebase-admin 13.10, node-forge gone - 2026-10-12
 
 ### Changed

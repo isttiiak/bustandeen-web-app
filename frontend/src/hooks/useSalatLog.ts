@@ -7,6 +7,7 @@ import { enqueueSalatOp, peekSalatOutbox, removeSalatOp } from '../utils/salatOu
 import { outboxOpOwnership } from '../utils/outboxOwner.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
+import { placeToday } from '../utils/placeClock.js';
 
 // Thrown from a mutationFn to tell onError/onSettled "this wasn't a real
 // failure — it's queued for replay, keep the optimistic UI as-is."
@@ -350,8 +351,8 @@ const EMPTY_NAFL: NaflEntry = { completed: false, types: [], rakat: 2 };
 // Salat is CIVIL-dated (midnight boundary) — NOT the Fajr tracking day. The
 // tracker always sends its own selectedDate; this is only the fallback/today.
 function localTodayStr(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  // The calendar date at the saved prayer place (the phone's without one).
+  return placeToday();
 }
 
 export function useSalatLog(date?: string) {

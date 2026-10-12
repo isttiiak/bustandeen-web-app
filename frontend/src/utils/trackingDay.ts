@@ -20,29 +20,18 @@
 // Fallback: 'fajr'/'maghrib' need coordinates. Users who haven't set a
 // location (localStorage `bustandeen_location`) keep the civil-midnight boundary
 // until they do, same as always.
-import { calcPrayerTimes } from './prayerTimes.js';
+//
+// The day is the saved PLACE's day (far-zone fix, 2026-10-12): with Dhaka saved
+// and the phone on London time, the day still starts at Fajr in Dhaka and is
+// named by Dhaka's calendar (see utils/placeClock.ts).
+import { calcPrayerTimes, calcPrayerTimesForDay } from './prayerTimes.js';
+import { addDaysYmd, placeYmd, readSavedPlace } from './placeClock.js';
 
 export type DayStartMode = 'fajr' | 'midnight' | 'maghrib';
 
 const DAY_START_MODE_KEY = 'bustandeen_day_start_mode';
 
-interface StoredLocation {
-  latitude: number;
-  longitude: number;
-  name?: string;
-}
-
-function readLocation(): StoredLocation | null {
-  try {
-    const raw = localStorage.getItem('bustandeen_location');
-    if (!raw) return null;
-    const loc = JSON.parse(raw) as StoredLocation;
-    if (typeof loc?.latitude !== 'number' || typeof loc?.longitude !== 'number') return null;
-    return loc;
-  } catch {
-    return null;
-  }
-}
+const readLocation = readSavedPlace;
 
 function toYMD(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -92,24 +81,36 @@ export function getMaghribTime(date: Date = new Date()): Date | null {
 
 /**
  * The current tracking day as YYYY-MM-DD, per the user's dayStartMode:
- * - 'midnight' → always the plain civil date.
- * - 'fajr'     → before today's Fajr is still yesterday's tracking day.
- * - 'maghrib'  → before today's Maghrib is still yesterday's tracking day
- *                (the Hijri day starts at sunset).
- * Both 'fajr' and 'maghrib' fall back to the civil date without a saved
- * location — there's no prayer-time math to anchor the boundary to.
+ * - 'midnight' → the calendar date at the saved place.
+ * - 'fajr'     → the place's day of the latest Fajr that has begun: before
+ *                today's Fajr it is still yesterday's tracking day.
+ * - 'maghrib'  → the place's day of the latest Maghrib that has begun (the
+ *                Hijri day starts at sunset).
+ * Without a saved location there is no place: the phone's civil date.
  */
 export function getTrackingDay(now: Date = new Date()): string {
+  const loc = readLocation();
+  if (!loc) return toYMD(now);
   const mode = getDayStartMode();
-  if (mode === 'midnight') return toYMD(now);
-
-  const boundary = mode === 'maghrib' ? getMaghribTime(now) : getFajrTime(now);
-  if (boundary && now < boundary) {
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    return toYMD(yesterday);
+  try {
+    const today = placeYmd(loc.latitude, loc.longitude, now);
+    if (mode === 'midnight') return today;
+    const key = mode === 'maghrib' ? 'maghrib' : 'fajr';
+    // Checked by instants, not by clock dates, so it holds wherever the
+    // phone's clock is set. Tomorrow first: far north in summer the next
+    // day's Fajr can come before midnight on the place's clock.
+    for (const n of [1, 0]) {
+      const day = addDaysYmd(today, n);
+      const boundary = calcPrayerTimesForDay(loc.latitude, loc.longitude, day)[key];
+      // No such time (polar day/night): keep the calendar date.
+      if (Number.isNaN(boundary.getTime())) return today;
+      if (boundary <= now) return day;
+    }
+    // Before today's boundary: still yesterday's tracking day.
+    return addDaysYmd(today, -1);
+  } catch {
+    return toYMD(now);
   }
-  return toYMD(now);
 }
 
 /**

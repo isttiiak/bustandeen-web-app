@@ -7,11 +7,13 @@
 import { TAHLIL_NAME } from './zikrLibrary.js';
 import {
   FALLBACK_PRAYER_DEFAULTS,
+  countryFromTimeZone,
   deviceCountry,
   prayerDefaultsForCountry,
   type CalcMethodId,
   type PrayerDefaults,
 } from './countryDefaults.js';
+import { placeZone, readSavedPlace } from './placeClock.js';
 
 // ─── after-ṣalāh tasbīḥ ─────────────────────────────────────────────────────
 
@@ -394,10 +396,18 @@ export function setCalcMethod(m: CalculationMethodId): void {
 // ─── Country-aware defaults (audit T1.9) ─────────────────────────────────────
 
 /** The defaults for someone who has not chosen a method or ʿAṣr school: what
- * most mosques in their country use, judged from the device's time zone
- * (utils/countryDefaults.ts). A saved choice always wins over this. */
+ * most mosques in the saved place's country use, judged from its time zone
+ * (utils/placeClock.ts), else from the device's (utils/countryDefaults.ts).
+ * A saved choice always wins over this. */
 export function regionPrayerDefaults(): PrayerDefaults {
-  return prayerDefaultsForCountry(deviceCountry());
+  return prayerDefaultsForCountry(regionCountry());
+}
+
+/** The saved place's country (from its zone), else the device's. */
+function regionCountry(): string | null {
+  const place = readSavedPlace();
+  const zone = place ? placeZone(place.latitude, place.longitude) : null;
+  return countryFromTimeZone(zone) ?? deviceCountry();
 }
 
 const DEFAULTS_MIGRATED_KEY = 'bustandeen_prayer_defaults_v1';
@@ -454,7 +464,7 @@ export function getPrayerDefaultsSuggestion(): PrayerDefaultsSuggestion | null {
   } catch {
     return null;
   }
-  const countryCode = deviceCountry();
+  const countryCode = regionCountry();
   if (!countryCode) return null;
   const suggested = regionPrayerDefaults();
   const current: PrayerDefaults = { method: getCalcMethod(), asr: getAsrMadhab() };

@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import AnimatedBackground from '../components/AnimatedBackground.js';
@@ -20,6 +20,7 @@ import { BTN_SECONDARY, CARD } from '../components/bustanStyles.js';
 import { CompassIcon, MosqueIcon, PrayerGlyph } from '../components/icons/IslamicIcons.js';
 import {
   calcPrayerTimes,
+  calcPrayerTimesForDay,
   formatTime,
   getCurrentAndNextPrayer,
   getPrayerEndTime,
@@ -28,6 +29,16 @@ import {
   PrayerKey,
 } from '../utils/prayerTimes.js';
 import { getHijriToday, formatHijriDate } from '../utils/islamicCalendar.js';
+import {
+  addDaysYmd,
+  foreignPlaceZone,
+  loadZoneLookup,
+  placeShortName,
+  placeToday,
+  placeYmd,
+  readSavedPlace,
+  ymdNoon,
+} from '../utils/placeClock.js';
 import { formatLocaleDate } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import {
@@ -97,8 +108,8 @@ function buildTimeline(
   let ishaTime: Date;
   let nightEnd: Date; // Fajr that closes this night
   if (isBeforeFajr && location) {
-    const yesterday = new Date(now.getTime() - 86_400_000);
-    const yTimes = calcPrayerTimes(location.latitude, location.longitude, yesterday);
+    const yesterday = addDaysYmd(placeYmd(location.latitude, location.longitude, now), -1);
+    const yTimes = calcPrayerTimesForDay(location.latitude, location.longitude, yesterday);
     ishaTime = yTimes.isha;
     nightEnd = times.fajr;
   } else {
@@ -322,6 +333,7 @@ function LiveClockCard({
   }, []);
 
   const info = times ? getCurrentAndNextPrayer(times, now) : null;
+  const placeZone = foreignPlaceZone(now);
   const currentMeta = PRAYER_META.find((p) => p.id === info?.current);
   const nextMeta = PRAYER_META.find((p) => p.id === info?.next);
   // During the sun-setting forbidden window Asr is technically over but
@@ -334,7 +346,9 @@ function LiveClockCard({
     times && info && isCurrentTrackable
       ? info.current === 'isha' && now < times.fajr
         ? times.fajr
-        : getPrayerEndTime(info.current, times)
+        : info.current === 'maghrib' && now < times.fajr
+          ? info.nextTime // last night's ʿIshāʾ (far north in summer)
+          : getPrayerEndTime(info.current, times)
       : null;
   const endMs = currentEnd ? currentEnd.getTime() - now.getTime() : null;
 
@@ -355,8 +369,17 @@ function LiveClockCard({
           minute: '2-digit',
           second: '2-digit',
           hour12: true,
+          // The saved place's clock when the phone is on another zone.
+          ...(placeZone ? { timeZone: placeZone } : {}),
         })}
       </div>
+      {placeZone && (
+        <p className="text-brand-gold/80 text-xs font-medium mt-1">
+          {t('home.placeClock', '{{place}} time', {
+            place: placeShortName(readSavedPlace(), placeZone),
+          })}
+        </p>
+      )}
 
       {info && currentMeta && nextMeta && (
         <div className="mt-5 rounded-control border border-brand-border bg-brand-surface/60 p-3 space-y-3">
@@ -507,7 +530,9 @@ export default function PrayerTimes() {
   });
   const [times, setTimes] = useState<PrayerTimesResult | null>(null);
   const [expandedEntry, setExpandedEntry] = useState<string | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
+  // ?settings=1 (the Home time-zone card's "Update location") opens the drawer.
+  const [searchParams] = useSearchParams();
+  const [showSettings, setShowSettings] = useState(() => searchParams.get('settings') === '1');
   // Bumped when the calc method / ʿAṣr school may have changed (settings
   // drawer closed, suggestion accepted) so the timetable recomputes at once.
   const [settingsRev, setSettingsRev] = useState(0);
@@ -521,15 +546,20 @@ export default function PrayerTimes() {
     return () => clearInterval(t);
   }, []);
 
+  // The saved place's calendar day: the times change when IT changes, not when
+  // the phone's date does (a phone on London time with Dhaka saved kept
+  // yesterday's Dhaka times until London's midnight: far-zone report).
+  const placeDay = location ? placeYmd(location.latitude, location.longitude, now) : '';
   useEffect(() => {
     if (!location) return;
     setTimes(calcPrayerTimes(location.latitude, location.longitude, now));
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, [location, now.toDateString(), settingsRev]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- recomputed once per place day; `now` itself ticks every minute
+  }, [location, placeDay, settingsRev]);
 
   const saveLocation = useCallback((loc: StoredLocation) => {
     setLocation(loc);
     localStorage.setItem('bustandeen_location', JSON.stringify(loc));
+    void loadZoneLookup();
   }, []);
 
   // Self-heal: a location saved while reverse geocoding failed (network
@@ -551,8 +581,8 @@ export default function PrayerTimes() {
 
   const timeline = useMemo(
     () => (times ? buildTimeline(times, t, now, location) : []),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- now.toDateString() is the correct granularity; finer ticks would unnecessarily rebuild the ~20-entry list
-    [times, t, now.toDateString(), now < (times?.fajr ?? new Date(0)), location]
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the place's day is the correct granularity; finer ticks would unnecessarily rebuild the ~20-entry list
+    [times, t, placeDay, now < (times?.fajr ?? new Date(0)), location]
   );
 
   return (
@@ -628,7 +658,7 @@ export default function PrayerTimes() {
                 {t('prayerTimes.title', 'Prayer Times')}
               </h1>
               <p className="text-white/75 text-sm mt-1">
-                {formatLocaleDate(now, {
+                {formatLocaleDate(ymdNoon(placeToday(now)), {
                   weekday: 'long',
                   year: 'numeric',
                   month: 'long',

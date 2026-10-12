@@ -1,5 +1,6 @@
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { calcPrayerTimes, calendarDateAtLocation } from './prayerTimes.js';
+import { calcPrayerTimes } from './prayerTimes.js';
+import { placeYmd } from './placeClock.js';
 import { getTrackingDay } from './trackingDay.js';
 import { getHijriToday, getTodaySpecialDays, isFriday, isPostMaghrib } from './islamicCalendar.js';
 import { MemoryStorage } from '../test/memoryStorage.js';
@@ -43,7 +44,7 @@ describe('Stockholm, 00:22 on Sunday 11 Oct 2026 (CEST)', () => {
   const now = () => new Date('2026-10-11T00:22:00+02:00');
 
   it('computes the prayer times of the device day (Sunday)', () => {
-    expect(ymd(calendarDateAtLocation(18.07, now()))).toBe('2026-10-11');
+    expect(placeYmd(59.33, 18.07, now())).toBe('2026-10-11');
     const t = calcPrayerTimes(59.33, 18.07, now());
     expect(ymd(t.fajr)).toBe('2026-10-11');
     expect(ymd(t.maghrib)).toBe('2026-10-11');
@@ -97,6 +98,6 @@ describe('a far-away saved location still uses its own day', () => {
   it('Dhaka device, Los Angeles location: 10:00 Sunday in Dhaka is Saturday in LA', () => {
     process.env.TZ = 'Asia/Dhaka';
     const now = new Date('2026-10-11T10:00:00+06:00');
-    expect(ymd(calendarDateAtLocation(-118.24, now))).toBe('2026-10-10');
+    expect(placeYmd(34.05, -118.24, now)).toBe('2026-10-10');
   });
 });

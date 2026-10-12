@@ -1,6 +1,7 @@
 import * as adhan from 'adhan';
 import { getAsrMadhab, getCalcMethod, type CalculationMethodId } from './salatPrefs.js';
 import i18n from '../i18n.js';
+import { addDaysYmd, foreignPlaceZone, placeYmd } from './placeClock.js';
 
 export type PrayerKey = 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
 
@@ -38,48 +39,39 @@ export const PRAYER_META: PrayerInfo[] = [
 ];
 
 /**
- * adhan.js reads the calendar day off the Date object using LOCAL getters
- * (getFullYear/getMonth/getDate) — i.e. the device's own timezone, not the
- * coordinates passed alongside it. For a saved location far from the
- * device's actual timezone (e.g. a Bangladeshi phone with a Los Angeles
- * location set), that silently computes prayer times for the wrong
- * calendar day, producing nonsensical times (Fajr in the evening, etc).
- * For such a far location we approximate its calendar day from its longitude
- * (15° ≈ 1 hour) and shift the instant so the device's local getters read
- * that day instead. A location within 3 h of the device's zone keeps the
- * device's own day (see below).
+ * adhan's date is the UTC day of solar noon, read off the Date with LOCAL
+ * getters (getFullYear/getMonth/getDate). Two things follow:
+ * - the day must come from the saved place's clock, not the phone's: a phone
+ *   on London time with Dhaka saved would otherwise compute the wrong day's
+ *   times for hours every night (far-zone report, 2026-10-12);
+ * - where the clock runs far from the sun (Samoa: UTC+13 at longitude -172)
+ *   adhan's day N holds the prayers of the civil day N+1.
+ * So a civil day of the place is the adhan day whose Dhuhr falls on it there.
  */
-export function calendarDateAtLocation(lng: number, date: Date): Date {
-  const targetOffsetMin = Math.round(lng / 15) * 60;
-  const systemOffsetMin = -date.getTimezoneOffset();
-  const shiftMin = targetOffsetMin - systemOffsetMin;
-  // Within 3 h the location is (almost always) in the device's own zone: civil
-  // time runs ahead of solar time by DST and political zones (Sweden in
-  // summer +1 h, Spain +2 h, western China +3 h). Shifting there moved
-  // 00:00-01:00 in Stockholm back to the previous day: yesterday's Fajr made
-  // the tracking day jump ahead, yesterday's Maghrib made the Hijri date and
-  // the Monday/Thursday fast show a day early (Sweden report, 2026-10-11).
-  if (Math.abs(shiftMin) <= MAX_SAME_ZONE_DRIFT_MIN) return date;
-  return new Date(date.getTime() + shiftMin * 60_000);
-}
-
-/** Largest gap between a zone's civil offset and its longitude's solar offset. */
-const MAX_SAME_ZONE_DRIFT_MIN = 180;
-
-export function calcPrayerTimes(
+function placeDay(
   lat: number,
   lng: number,
-  date: Date = new Date()
-): PrayerTimesResult {
-  const coords = new adhan.Coordinates(lat, lng);
+  ymd: string,
+  compute: (day: Date) => adhan.PrayerTimes
+): adhan.PrayerTimes {
+  let first: adhan.PrayerTimes | null = null;
+  for (const n of [0, -1, 1]) {
+    const day = addDaysYmd(ymd, n);
+    const [y, m, d] = day.split('-').map(Number);
+    const times = compute(new Date(y, m - 1, d));
+    first ??= times;
+    if (placeYmd(lat, lng, times.dhuhr) === ymd) return times;
+  }
+  return first!;
+}
+
+function methodParams(method: CalculationMethodId = getCalcMethod()) {
   // Read per call (not cached) so a settings change takes effect on the next
-  // minute tick without a reload — same reasoning as the Asr madhab below.
-  const params = adhan.CalculationMethod[getCalcMethod()]();
-  // ʿAṣr (and therefore the end of Ẓuhr) differs by school — see
-  // utils/salatPrefs.ts. Read per call so a settings change takes effect on
-  // the next minute tick without a reload.
-  if (getAsrMadhab() === 'hanafi') params.madhab = adhan.Madhab.Hanafi;
-  const times = new adhan.PrayerTimes(coords, calendarDateAtLocation(lng, date), params);
+  // minute tick without a reload.
+  return adhan.CalculationMethod[method]();
+}
+
+function toResult(times: adhan.PrayerTimes): PrayerTimesResult {
   // sunset: adhan exposes it; fall back to maghrib if missing
   const sunset: Date = (times as unknown as { sunset?: Date }).sunset ?? times.maghrib;
   return {
@@ -91,6 +83,29 @@ export function calcPrayerTimes(
     isha: times.isha,
     sunset,
   };
+}
+
+/** Prayer times of one calendar day (YYYY-MM-DD) AT THE PLACE. */
+export function calcPrayerTimesForDay(lat: number, lng: number, ymd: string): PrayerTimesResult {
+  const coords = new adhan.Coordinates(lat, lng);
+  return toResult(
+    placeDay(lat, lng, ymd, (day) => {
+      const params = methodParams();
+      // ʿAṣr (and therefore the end of Ẓuhr) differs by school — see
+      // utils/salatPrefs.ts. Read per call for the same reason as the method.
+      if (getAsrMadhab() === 'hanafi') params.madhab = adhan.Madhab.Hanafi;
+      return new adhan.PrayerTimes(coords, day, params);
+    })
+  );
+}
+
+/** Prayer times of the place's calendar day that contains the instant `date`. */
+export function calcPrayerTimes(
+  lat: number,
+  lng: number,
+  date: Date = new Date()
+): PrayerTimesResult {
+  return calcPrayerTimesForDay(lat, lng, placeYmd(lat, lng, date));
 }
 
 /**
@@ -106,12 +121,13 @@ export function asrBySchool(
   method: CalculationMethodId = getCalcMethod()
 ): { standard: Date; hanafi: Date } {
   const coords = new adhan.Coordinates(lat, lng);
-  const day = calendarDateAtLocation(lng, date);
-  const at = (madhab: (typeof adhan.Madhab)[keyof typeof adhan.Madhab]) => {
-    const params = adhan.CalculationMethod[method]();
-    params.madhab = madhab;
-    return new adhan.PrayerTimes(coords, day, params).asr;
-  };
+  const ymd = placeYmd(lat, lng, date);
+  const at = (madhab: (typeof adhan.Madhab)[keyof typeof adhan.Madhab]) =>
+    placeDay(lat, lng, ymd, (day) => {
+      const params = methodParams(method);
+      params.madhab = madhab;
+      return new adhan.PrayerTimes(coords, day, params);
+    }).asr;
   return { standard: at(adhan.Madhab.Shafi), hanafi: at(adhan.Madhab.Hanafi) };
 }
 
@@ -148,12 +164,19 @@ export function getForbiddenWindows(times: PrayerTimesResult): ForbiddenWindow[]
   ];
 }
 
+/**
+ * A prayer time as people at the saved place read it: on the place's own
+ * clock when the phone is set to another zone (see `foreignPlaceZone`; the
+ * screens label it "Dhaka time"), else on the phone's clock.
+ */
 export function formatTime(date: Date): string {
   const lang = (i18n.language || 'en').split('-')[0]!;
+  const zone = foreignPlaceZone(date);
   return date.toLocaleTimeString(lang === 'bn' ? 'bn' : 'en-US', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
+    ...(zone ? { timeZone: zone } : {}),
   });
 }
 
@@ -306,8 +329,19 @@ export function getIshaPhase(times: PrayerTimesResult, now: Date): IshaPhase {
     : { best: false, end: new Date(fajr) };
 }
 
+/**
+ * Before today's Fajr but also before last night's ʿIshāʾ began: still
+ * Maghrib. Far north in summer ʿIshāʾ can begin after midnight (London, June,
+ * with an 18° method: ʿIshāʾ 00:50, Fajr 01:15). Yesterday's ʿIshāʾ is taken
+ * as today's −24 h, as elsewhere in this file (it moves ~1 min a day).
+ */
+function beforeLastNightsIsha(times: PrayerTimesResult, now: Date): boolean {
+  return now < times.fajr && now.getTime() < times.isha.getTime() - 86_400_000;
+}
+
 /** Current mandatory prayer period (null if between periods or in a forbidden window) */
 function getCurrentMandatoryPeriod(times: PrayerTimesResult, now: Date): PrayerKey | null {
+  if (beforeLastNightsIsha(times, now)) return 'maghrib';
   // Before today's Fajr → we are in last night's Isha period (valid until Fajr)
   if (now < times.fajr) return 'isha';
   const asrEnd = getPrayerEndTime('asr', times);
@@ -324,6 +358,9 @@ function getNextMandatoryPrayer(
   times: PrayerTimesResult,
   now: Date
 ): { id: PrayerKey; time: Date } {
+  if (beforeLastNightsIsha(times, now)) {
+    return { id: 'isha', time: new Date(times.isha.getTime() - 86_400_000) };
+  }
   const ordered: { id: PrayerKey; time: Date }[] = [
     { id: 'fajr', time: times.fajr },
     { id: 'dhuhr', time: times.dhuhr },
@@ -363,7 +400,10 @@ export function getMandatoryWidget(
   // ʿIshāʾ counts down to Islamic midnight (its preferred time), then to Fajr.
   const isha = currentMandatory === 'isha' ? getIshaPhase(times, now) : null;
   const currentMandatoryEnd = currentMandatory
-    ? (isha?.end ?? getPrayerEndTime(currentMandatory, times))
+    ? (isha?.end ??
+      (beforeLastNightsIsha(times, now)
+        ? new Date(times.isha.getTime() - 86_400_000)
+        : getPrayerEndTime(currentMandatory, times)))
     : null;
   const naflWindow = getCurrentNaflWindow(times, now);
 
@@ -412,10 +452,14 @@ export function getCurrentAndNextPrayer(times: PrayerTimesResult, now: Date = ne
     }
   }
 
-  const next =
+  let next =
     nextIdx === -1
       ? { id: 'fajr' as PrayerKey, time: new Date(times.fajr.getTime() + 86400_000) }
       : ordered[nextIdx];
+  if (beforeLastNightsIsha(times, now)) {
+    current = 'maghrib';
+    next = { id: 'isha', time: new Date(times.isha.getTime() - 86_400_000) };
+  }
 
   // Asr's own prayer window ends ~17 min before sunset (the sun-setting
   // forbidden window) — after that point it's misleading to still call Asr

@@ -31,7 +31,8 @@ import { zikrDisplayName } from '../../utils/zikrLibrary.js';
 import { getDayRuling, VOLUNTARY_BY_ID } from '../../utils/fastingRules.js';
 import { nextSunnahFast, quickFastPlan } from '../../utils/fastingQuick.js';
 import { getHijriToday } from '../../utils/islamicCalendar.js';
-import { calcPrayerTimes, formatTime } from '../../utils/prayerTimes.js';
+import { calcPrayerTimesForDay, formatTime } from '../../utils/prayerTimes.js';
+import { deviceYmd, ymdNoon } from '../../utils/placeClock.js';
 import { celebrateSmall } from '../../utils/celebrate.js';
 import ZikrLogCountsModal from '../zikr/ZikrLogCountsModal.js';
 
@@ -286,21 +287,21 @@ export function FastingQuickCard({ excused }: { excused: boolean }) {
   const broke = log?.status === 'broken';
 
   const next = useMemo(() => {
-    const n = nextSunnahFast(new Date());
+    const n = nextSunnahFast(ymdNoon(date));
     if (!n) return null;
     let times: { fajr: Date; maghrib: Date } | null = null;
     try {
       const raw = localStorage.getItem('bustandeen_location');
       if (raw) {
         const loc = JSON.parse(raw) as { latitude: number; longitude: number };
-        const pt = calcPrayerTimes(loc.latitude, loc.longitude, n.date);
+        const pt = calcPrayerTimesForDay(loc.latitude, loc.longitude, deviceYmd(n.date));
         times = { fajr: pt.fajr, maghrib: pt.maghrib };
       }
     } catch {
       times = null;
     }
     return { ...n, times };
-  }, []);
+  }, [date]);
 
   const yes = () => {
     if (fasting || broke) {

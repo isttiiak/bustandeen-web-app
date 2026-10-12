@@ -54,7 +54,7 @@ import {
   VOLUNTARY_BY_ID,
   DayCaution,
 } from '../utils/fastingRules.js';
-import { calcPrayerTimes, formatTime } from '../utils/prayerTimes.js';
+import { calcPrayerTimesForDay, formatTime } from '../utils/prayerTimes.js';
 import { isPostMaghrib, getHijriToday } from '../utils/islamicCalendar.js';
 import { formatLocaleDate } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
@@ -166,12 +166,12 @@ export default function FastingTracker() {
       const stored = localStorage.getItem('bustandeen_location');
       if (!stored) return null;
       const loc = JSON.parse(stored) as { latitude: number; longitude: number };
-      const times = calcPrayerTimes(loc.latitude, loc.longitude, dateObj);
+      const times = calcPrayerTimesForDay(loc.latitude, loc.longitude, selectedDate);
       return { fajr: times.fajr, maghrib: times.maghrib };
     } catch {
       return null;
     }
-  }, [dateObj]);
+  }, [selectedDate]);
 
   const logsByDate = useMemo(() => {
     const map: Record<string, { status: string; category: string }> = {};
