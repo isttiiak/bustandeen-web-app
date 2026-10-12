@@ -29,7 +29,7 @@ import UnsavedWarning from './components/UnsavedWarning.js';
 import GenderGate from './components/GenderGate.js';
 import DemoBanner from './components/DemoBanner.js';
 import AnnouncementBanner from './components/AnnouncementBanner.js';
-import MoonSightingSync from './components/MoonSightingSync.js';
+import MoonSightingSync, { useHijriInputsVersion } from './components/MoonSightingSync.js';
 import { syncHijriFromServer } from './utils/islamicCalendar.js';
 import NaturalLogModal from './components/ai/NaturalLogModal.js';
 import FloatingActions from './components/FloatingActions.js';
@@ -460,6 +460,8 @@ export default function App() {
   const { authLoading, aiEnabled, isDemoMode } = useAuthStore();
   // Bumped when a sign-in sync changed settings, so screens re-read them.
   const prefsRevision = useUiStore((s) => s.prefsRevision);
+  // A new moon-sighting record or country redraws every Hijri date (no remount)
+  useHijriInputsVersion();
   const [quickLogOpen, setQuickLogOpen] = useState(false);
   const isAuthPage = ['/login', '/signup', '/signup/complete', '/auth/action'].includes(
     location.pathname

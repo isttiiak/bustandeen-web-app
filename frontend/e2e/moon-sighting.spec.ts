@@ -69,3 +69,24 @@ test("a 30th of Ramadan after Umm al-Qura's 29-day month (not Eid)", async ({ pa
   await expect(today).toContainText(/Rama/);
   await expect(today).toContainText('1448');
 });
+
+test('a record that arrives after the first paint redraws Home without a reload', async ({
+  page,
+}) => {
+  // 12 Oct 2026: Umm al-Qura's 1 Jumādā al-Ūlā; BD's record starts it on 13 Oct.
+  // Hold the records back until Home has drawn the Umm al-Qura date.
+  let release: () => void = () => {};
+  const held = new Promise<void>((r) => (release = r));
+  await page.route('**/api/calendar/moon-sighting', async (route) => {
+    await held;
+    await route.fulfill({ json: { ok: true, records: [rec(5, '2026-10-13')] } });
+  });
+  await page.clock.setFixedTime(new Date('2026-10-12T10:00:00+06:00'));
+  await page.goto('/');
+  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await expect(page.getByText('Demo Mode')).toBeVisible();
+  await expect(page.getByText(/1 Jumādā al-Ūlā 1448/).first()).toBeVisible();
+
+  release();
+  await expect(page.getByText(/30 Rab[īi]['ʿ] al-[ĀA]khir 1448/).first()).toBeVisible();
+});

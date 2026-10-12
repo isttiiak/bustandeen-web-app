@@ -551,6 +551,25 @@ export const HIJRI_COUNTRY_KEY = 'bustandeen_hijri_country';
 
 export { resolveHijriDay, type HijriDaySource, type MoonSightingRecord } from './hijriOffset.js';
 
+/** Fired when the cached records or the country change. The Hijri date is
+ * read during render, so without it a new committee record only showed after
+ * a reload (12 Oct 2026: 1 Jumādā al-Ūlā instead of 30 Rabīʿ al-Ākhir). */
+export const HIJRI_INPUTS_EVENT = 'bustandeen-hijri-inputs-change';
+
+/** Stores a Hijri input (null removes it). Fires HIJRI_INPUTS_EVENT and
+ * returns true only when the stored value actually changed. */
+export function writeHijriInput(key: string, value: string | null): boolean {
+  try {
+    if (localStorage.getItem(key) === value) return false;
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch {
+    return false; // private mode: nothing stored, nothing changed
+  }
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event(HIJRI_INPUTS_EVENT));
+  return true;
+}
+
 /** Local YYYY-MM-DD of a Date (the device's calendar day). */
 function localDay(d: Date): string {
   const y = d.getFullYear();
