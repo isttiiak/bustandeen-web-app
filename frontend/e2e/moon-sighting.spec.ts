@@ -90,3 +90,23 @@ test('a record that arrives after the first paint redraws Home without a reload'
   release();
   await expect(page.getByText(/30 Rab[īi]['ʿ] al-[ĀA]khir 1448/).first()).toBeVisible();
 });
+
+test.describe('a far-zone guest', () => {
+  test.use({ timezoneId: 'Europe/London' });
+
+  test('London phone with Dhaka saved follows the Bangladesh record', async ({ page }) => {
+    await page.route('**/api/calendar/moon-sighting', (route) =>
+      route.fulfill({ json: { ok: true, records: [rec(5, '2026-10-13')] } })
+    );
+    await page.clock.setFixedTime(new Date('2026-10-12T10:00:00+06:00'));
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'bustandeen_location',
+        JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
+      );
+    });
+    await page.goto('/prayer-times');
+    // Was GB (the phone's zone), so Umm al-Qura's 1 Jumādā al-Ūlā
+    await expect(page.getByText(/30 Rab[īi]['ʿ] al-[ĀA]khir 1448/).first()).toBeVisible();
+  });
+});

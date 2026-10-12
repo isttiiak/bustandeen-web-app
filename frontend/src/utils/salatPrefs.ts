@@ -403,8 +403,9 @@ export function regionPrayerDefaults(): PrayerDefaults {
   return prayerDefaultsForCountry(regionCountry());
 }
 
-/** The saved place's country (from its zone), else the device's. */
-function regionCountry(): string | null {
+/** The saved place's country (from its zone), else the device's. Also the
+ * country for the Automatic Hijri date when the profile has none. */
+export function regionCountry(): string | null {
   const place = readSavedPlace();
   const zone = place ? placeZone(place.latitude, place.longitude) : null;
   return countryFromTimeZone(zone) ?? deviceCountry();

@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.159.5 - Automatic Hijri date follows the saved place's country - 2026-10-12
+
+### Fixed
+
+- **A traveller or anyone with a saved place in another country got the phone's country for the Automatic Hijri date** (a guest on London time with Dhaka saved got GB, so the Bangladesh committee's record was ignored and the date was Umm al-Qura's). The country is now the profile country (unchanged, it still comes first), else the saved place's country (from its time zone, on the device), else the phone's zone. Same-zone users are unchanged. It is re-checked after navigation (where a location is saved), on focus and once the zone map has loaded; an unchanged country does nothing. Unit tests and a Playwright test (London phone, Dhaka saved, BD record: 30 Rabīʿ al-Ākhir on 12 Oct).
+
 ## v5.159.4 - Time-of-day charts on the saved place's clock - 2026-10-12
 
 ### Fixed
