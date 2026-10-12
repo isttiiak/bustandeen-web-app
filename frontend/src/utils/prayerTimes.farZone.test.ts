@@ -63,6 +63,9 @@ const WINDOWS = ['2026-10-11T00:00:00Z', '2026-06-20T00:00:00Z', '2026-03-28T00:
 const STEP_MIN = 50;
 const MIN = 60_000;
 const DAY = 86_400_000;
+// Each case runs ~150 instants x several adhan days; under a full parallel run
+// the date-line ones pass 5 s (vitest's default).
+const CASE_TIMEOUT = 30_000;
 
 type YMD = string;
 
@@ -279,10 +282,14 @@ describe('with the on-device zone map', () => {
   });
 
   describe.each(PHONE_ZONES)('phone clock on %s', (zone) => {
-    it.each(PLACES.map((p) => [p.name, p] as const))('saved place %s', (_name, place) => {
-      const problems = check(zone, place);
-      expect(problems.slice(0, 12), `${problems.length} wrong answers`).toEqual([]);
-    });
+    it.each(PLACES.map((p) => [p.name, p] as const))(
+      'saved place %s',
+      (_name, place) => {
+        const problems = check(zone, place);
+        expect(problems.slice(0, 12), `${problems.length} wrong answers`).toEqual([]);
+      },
+      CASE_TIMEOUT
+    );
   });
 });
 
@@ -294,10 +301,14 @@ describe("before the zone map has loaded: phone in the place's own zone", () => 
     resetZoneLookupForTests();
   });
 
-  it.each(PLACES.map((p) => [p.name, p] as const))('saved place %s', (_name, place) => {
-    const problems = check(place.tz, place);
-    expect(problems.slice(0, 12), `${problems.length} wrong answers`).toEqual([]);
-  });
+  it.each(PLACES.map((p) => [p.name, p] as const))(
+    'saved place %s',
+    (_name, place) => {
+      const problems = check(place.tz, place);
+      expect(problems.slice(0, 12), `${problems.length} wrong answers`).toEqual([]);
+    },
+    CASE_TIMEOUT
+  );
 });
 
 // Far north in summer an 18° method puts ʿIshāʾ after midnight (London,
@@ -322,7 +333,8 @@ describe('ʿIshāʾ after midnight far north (18° method chosen)', () => {
       store.setItem('bustandeen_calc_method', 'Karachi');
       const problems = check(zone, place);
       expect(problems.slice(0, 12), `${problems.length} wrong answers`).toEqual([]);
-    }
+    },
+    CASE_TIMEOUT
   );
 
   it('London 00:30 BST on 21 June 2026 is Maghrib, ʿIshāʾ next', () => {
