@@ -2,6 +2,11 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.159.2 - Quieter server logs - 2026-10-12
+
+### Changed
+
+- **No more Mongoose deprecation warning in every function log**: the 29 `findOneAndUpdate`/`findByIdAndUpdate` calls that passed `new: true` now pass `returnDocument: 'after'`, the documented replacement. Same document returned, no behaviour change.
 ## v5.159.1 - Duha ends at the same time on every screen - 2026-10-12
 
 ### Fixed

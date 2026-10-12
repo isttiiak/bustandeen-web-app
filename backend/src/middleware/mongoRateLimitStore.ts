@@ -105,7 +105,7 @@ export class MongoRateLimitStore implements Store {
     const run = () =>
       RateLimitCounter.findOneAndUpdate({ key: id }, update, {
         upsert: true,
-        new: true,
+        returnDocument: 'after',
         // Mongoose 9 rejects pipeline (array) updates unless asked explicitly.
         updatePipeline: true,
         maxTimeMS: OP_TIMEOUT_MS,

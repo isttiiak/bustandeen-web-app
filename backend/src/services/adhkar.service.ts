@@ -26,7 +26,7 @@ export async function markDone(
   const doc = await AdhkarDay.findOneAndUpdate(
     { userId, date },
     { $min: { [field]: new Date() } },
-    { upsert: true, new: true }
+    { upsert: true, returnDocument: 'after' }
   ).lean();
   return toState(date, doc);
 }

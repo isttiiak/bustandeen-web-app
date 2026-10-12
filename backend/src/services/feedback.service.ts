@@ -143,7 +143,11 @@ export const markRepliedExternally = async (
 };
 
 export const archiveFeedback = async (id: string): Promise<IFeedbackMessage> => {
-  const doc = await FeedbackMessage.findByIdAndUpdate(id, { status: 'archived' }, { new: true });
+  const doc = await FeedbackMessage.findByIdAndUpdate(
+    id,
+    { status: 'archived' },
+    { returnDocument: 'after' }
+  );
   if (!doc) throw httpError(404, 'Feedback message not found');
   return doc;
 };
