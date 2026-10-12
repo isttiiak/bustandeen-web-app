@@ -166,7 +166,11 @@ export async function linkGoogleProvider(
     email: googleEmail,
     providerUid: googleUid,
   };
-  return User.findOneAndUpdate({ uid }, { $addToSet: { linkedProviders: entry } }, { new: true });
+  return User.findOneAndUpdate(
+    { uid },
+    { $addToSet: { linkedProviders: entry } },
+    { returnDocument: 'after' }
+  );
 }
 
 export async function unlinkGoogleProvider(
@@ -176,12 +180,16 @@ export async function unlinkGoogleProvider(
   return User.findOneAndUpdate(
     { uid },
     { $pull: { linkedProviders: { providerUid } } },
-    { new: true }
+    { returnDocument: 'after' }
   );
 }
 
 export async function setPrimaryEmail(uid: string, email: string): Promise<IUser | null> {
-  return User.findOneAndUpdate({ uid }, { $set: { primaryEmail: email } }, { new: true });
+  return User.findOneAndUpdate(
+    { uid },
+    { $set: { primaryEmail: email } },
+    { returnDocument: 'after' }
+  );
 }
 
 /**
@@ -342,6 +350,6 @@ export async function updateUser(uid: string, fields: UserUpdateFields): Promise
   return User.findOneAndUpdate(
     { uid },
     Object.keys(unset).length ? { $set: updates, $unset: unset } : updates,
-    { new: true, runValidators: true }
+    { returnDocument: 'after', runValidators: true }
   );
 }

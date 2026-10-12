@@ -81,7 +81,7 @@ export const confirmEnrolment = async (
         totpPendingAt: null,
       },
     },
-    { new: true }
+    { returnDocument: 'after' }
   );
   if (!updated) throw new AdminMfaError('mfa_already_enabled', 409);
   return { backupCodes, proof: issueMfaProof(uid, mfaVersion, nowMs) };
@@ -125,7 +125,7 @@ export const verifyCode = async (
   const updated = await AdminAccount.findOneAndUpdate(
     { _id: account._id, mfaVersion, backupCodeHashes: hash },
     { $pull: { backupCodeHashes: hash } },
-    { new: true }
+    { returnDocument: 'after' }
   );
   if (!updated) throw new AdminMfaError('mfa_code_invalid', 400);
   return {

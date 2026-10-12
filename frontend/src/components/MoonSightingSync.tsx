@@ -1,8 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useMoonSightingRecords } from '../hooks/useMoonSighting.js';
 import { useUserProfile } from '../hooks/useUserProfile.js';
 import { deviceCountry } from '../utils/countryDefaults.js';
-import { HIJRI_COUNTRY_KEY } from '../utils/islamicCalendar.js';
+import {
+  HIJRI_COUNTRY_KEY,
+  HIJRI_INPUTS_EVENT,
+  writeHijriInput,
+} from '../utils/islamicCalendar.js';
 
 let nameToCode: Map<string, string> | null = null;
 
@@ -29,6 +33,18 @@ export function countryCodeFromName(name: string | undefined | null): string | n
   return nameToCode.get(name.trim().toLowerCase()) ?? null;
 }
 
+/** Re-renders the caller whenever the Hijri inputs change (new committee
+ * record, other country). App uses it so every screen draws the new date. */
+export function useHijriInputsVersion(): number {
+  const [version, setVersion] = useState(0);
+  useEffect(() => {
+    const bump = () => setVersion((v) => v + 1);
+    window.addEventListener(HIJRI_INPUTS_EVENT, bump);
+    return () => window.removeEventListener(HIJRI_INPUTS_EVENT, bump);
+  }, []);
+  return version;
+}
+
 /**
  * Keeps the on-device inputs of the Hijri date current (T4.1): the cached
  * moon-sighting records and the country they are matched against (profile
@@ -42,8 +58,7 @@ export default function MoonSightingSync() {
 
   useEffect(() => {
     const code = countryCodeFromName(profile?.country) ?? deviceCountry();
-    if (code) localStorage.setItem(HIJRI_COUNTRY_KEY, code);
-    else localStorage.removeItem(HIJRI_COUNTRY_KEY);
+    writeHijriInput(HIJRI_COUNTRY_KEY, code);
   }, [profile?.country]);
 
   return null;

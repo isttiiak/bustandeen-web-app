@@ -1,6 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api.js';
-import { MOON_SIGHTING_KEY, type MoonSightingRecord } from '../utils/islamicCalendar.js';
+import {
+  MOON_SIGHTING_KEY,
+  writeHijriInput,
+  type MoonSightingRecord,
+} from '../utils/islamicCalendar.js';
 
 /** Active national moon-sighting records (T4.1). Public and small; every
  * device downloads all of them and applies its own country's on-device, so
@@ -14,8 +18,9 @@ export function useMoonSightingRecords() {
       );
       const records = data.records ?? [];
       // Written here, before any subscriber re-renders: islamicCalendar.ts
-      // reads this cache synchronously when it formats a date.
-      localStorage.setItem(MOON_SIGHTING_KEY, JSON.stringify(records));
+      // reads this cache synchronously when it formats a date. A change
+      // redraws the screens that show a Hijri date (useHijriInputsVersion).
+      writeHijriInput(MOON_SIGHTING_KEY, JSON.stringify(records));
       return records;
     },
     staleTime: 60 * 60_000,

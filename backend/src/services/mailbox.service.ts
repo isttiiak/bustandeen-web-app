@@ -70,14 +70,18 @@ export const markMailboxRepliedExternally = async (
   const doc = await MailboxMessage.findByIdAndUpdate(
     id,
     { status: 'replied', repliedAt: new Date(), repliedBy },
-    { new: true }
+    { returnDocument: 'after' }
   );
   if (!doc) throw httpError(404, 'Message not found');
   return doc;
 };
 
 export const archiveMailbox = async (id: string): Promise<IMailboxMessage> => {
-  const doc = await MailboxMessage.findByIdAndUpdate(id, { status: 'archived' }, { new: true });
+  const doc = await MailboxMessage.findByIdAndUpdate(
+    id,
+    { status: 'archived' },
+    { returnDocument: 'after' }
+  );
   if (!doc) throw httpError(404, 'Message not found');
   return doc;
 };

@@ -53,7 +53,7 @@ const getOrCreateStats = async () => {
   const stats = await DonationStats.findOneAndUpdate(
     { _id: STATS_ID },
     { $setOnInsert: { _id: STATS_ID } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
   return stats!;
 };

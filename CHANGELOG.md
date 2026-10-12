@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.159.3 - A new moon-sighting record shows at once - 2026-10-12
+
+### Fixed
+
+- **A new committee record only showed after a reload**: on 12 Oct the Bangladesh record "Jumādā al-Ūlā 1448 began 13 Oct" was live, but the app kept Umm al-Qura's 1 Jumādā al-Ūlā (instead of 30 Rabīʿ al-Ākhir) until the page was reloaded. The Hijri date is read from the on-device copy of the records while a screen draws; the new copy was saved but nothing redrew. Now a changed record list or country fires a change event and the app redraws every Hijri date (no remount, nothing lost). Unchanged refetches do nothing. Unit tests, and a Playwright test that holds the record back until Home has drawn, then expects 30 Rabīʿ al-Ākhir without a reload (it failed before the fix).
+
+## v5.159.2 - Quieter server logs - 2026-10-12
+
+### Changed
+
+- **No more Mongoose deprecation warning in every function log**: the 29 `findOneAndUpdate`/`findByIdAndUpdate` calls that passed `new: true` now pass `returnDocument: 'after'`, the documented replacement. Same document returned, no behaviour change.
 ## v5.159.1 - Duha ends at the same time on every screen - 2026-10-12
 
 ### Fixed
