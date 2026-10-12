@@ -79,7 +79,7 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
       },
       {
         upsert: true,
-        new: true,
+        returnDocument: 'after',
         setDefaultsOnInsert: true,
         // Frontend only reads displayName/photoUrl here — don't ship the
         // zikr lifetime map and the rest of the doc on every session start.

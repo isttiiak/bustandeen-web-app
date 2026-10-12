@@ -111,7 +111,7 @@ export const syncMailbox = async (fetcher: MailFetcher = fetchFromImap): Promise
   const state = await MailboxSyncState.findOneAndUpdate(
     { key: STATE_KEY, $or: [{ lockedUntil: null }, { lockedUntil: { $lt: now } }] },
     { $set: { lockedUntil: new Date(now.getTime() + LOCK_MS) } },
-    { new: true }
+    { returnDocument: 'after' }
   );
   if (!state) return { ok: true, added: 0, skipped: 'busy' };
 

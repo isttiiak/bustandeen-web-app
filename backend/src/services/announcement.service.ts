@@ -22,7 +22,11 @@ export const listAnnouncements = async (): Promise<IAnnouncement[]> =>
   Announcement.find().sort({ createdAt: -1 }).limit(50);
 
 export const deactivateAnnouncement = async (id: string): Promise<IAnnouncement> => {
-  const doc = await Announcement.findByIdAndUpdate(id, { active: false }, { new: true });
+  const doc = await Announcement.findByIdAndUpdate(
+    id,
+    { active: false },
+    { returnDocument: 'after' }
+  );
   if (!doc) throw httpError(404, 'Announcement not found');
   return doc;
 };

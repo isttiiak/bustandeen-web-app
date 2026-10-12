@@ -60,7 +60,7 @@ export async function addReading(
   const log = await QuranLog.findOneAndUpdate(
     { userId, date },
     { $inc: { pages } },
-    { upsert: true, new: true, setDefaultsOnInsert: true }
+    { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
 
   const profile = await getOrCreateProfile(userId);
@@ -110,12 +110,12 @@ export async function addAyatReading(
       ? await QuranLog.findOneAndUpdate(
           { userId, date },
           { $inc: { ayat: count }, $setOnInsert: { pages: 0 } },
-          { upsert: true, new: true, setDefaultsOnInsert: true }
+          { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
         )
       : await QuranLog.findOneAndUpdate(
           { userId, date },
           { $setOnInsert: { pages: 0, ayat: 0 } },
-          { upsert: true, new: true, setDefaultsOnInsert: true }
+          { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
         );
 
   const profile = await getOrCreateProfile(userId);
