@@ -35,10 +35,37 @@ export interface PrayerTimesResult {
   asrSchool: AsrSchool;
 }
 
+/** `date`'s civil day (`YYYY-MM-DD`) on the clock of `timezone`. */
+export function ymdInZone(date: Date, timezone: string): string {
+  // en-CA formats as YYYY-MM-DD; one cached formatter per zone (intl.ts).
+  return dateFormat('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: timezone,
+  }).format(date);
+}
+
+/** adhan's own day `y-m-d`. adhan reads the day off the Date with local
+ * getters, so build it from local parts: the same day on any build machine
+ * (CI and Vercel run in UTC, the maintainer in Dhaka or London). */
+function adhanDay(y: number, m: number, d: number): Date {
+  return new Date(y, m - 1, d, 12);
+}
+
+/**
+ * Prayer times of the civil day `day` (`YYYY-MM-DD`) in `timezone`, the
+ * city's own date whatever the build machine's zone. adhan's "day N" is the
+ * UTC day of solar noon, which on the date-line islands (clock UTC+13/+14 at
+ * longitudes west of 180°) holds the prayers of civil day N+1. So, as in the
+ * app (utils/prayerTimes.ts calcPrayerTimesForDay), the civil day is the
+ * adhan day (tried N, N-1, N+1) whose Dhuhr falls on that date in the zone.
+ */
 export function computePrayerTimes(
   lat: number,
   lng: number,
-  date: Date = new Date(),
+  day: string,
+  timezone: string,
   countryCode?: string
 ): PrayerTimesResult {
   const { method, asr: asrSchool } = prayerDefaultsForCountry(countryCode);
@@ -46,7 +73,20 @@ export function computePrayerTimes(
   const standardParams = adhan.CalculationMethod[method]();
   const hanafiParams = adhan.CalculationMethod[method]();
   hanafiParams.madhab = adhan.Madhab.Hanafi;
-  const standard = new adhan.PrayerTimes(coords, date, standardParams);
+  const [y, m, d] = day.split('-').map(Number);
+  let date = adhanDay(y, m, d);
+  let standard = new adhan.PrayerTimes(coords, date, standardParams);
+  if (ymdInZone(standard.dhuhr, timezone) !== day) {
+    for (const off of [-1, 1]) {
+      const candidate = adhanDay(y, m, d + off);
+      const times = new adhan.PrayerTimes(coords, candidate, standardParams);
+      if (ymdInZone(times.dhuhr, timezone) === day) {
+        date = candidate;
+        standard = times;
+        break;
+      }
+    }
+  }
   const hanafi = new adhan.PrayerTimes(coords, date, hanafiParams);
   return {
     fajr: standard.fajr,

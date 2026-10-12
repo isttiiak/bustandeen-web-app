@@ -6,7 +6,7 @@ import { computePrayerTimes, formatTimeInZone } from './calc.js';
 // change in any of these times is a change in what thousands of static pages
 // tell people, so it must be deliberate (update the snapshot on purpose).
 
-const DATE = new Date('2026-03-15T12:00:00Z');
+const DATE = '2026-03-15';
 
 const CITIES = [
   { name: 'Dhaka', cc: 'BD', lat: 23.8103, lng: 90.4125, tz: 'Asia/Dhaka' },
@@ -18,7 +18,7 @@ const CITIES = [
 
 describe('computePrayerTimes (static city pages)', () => {
   it.each(CITIES)('$name: country method, both ʿAṣr times', ({ cc, lat, lng, tz }) => {
-    const t = computePrayerTimes(lat, lng, DATE, cc);
+    const t = computePrayerTimes(lat, lng, DATE, tz, cc);
     const fmt = (d: Date) => formatTimeInZone(d, tz, 'en-GB');
     expect({
       method: t.method,
@@ -35,7 +35,7 @@ describe('computePrayerTimes (static city pages)', () => {
 
   it('uses the expected convention per country', () => {
     const conv = (cc: string) => {
-      const t = computePrayerTimes(23.8, 90.4, DATE, cc);
+      const t = computePrayerTimes(23.8, 90.4, DATE, 'Asia/Dhaka', cc);
       return `${t.method}/${t.asrSchool}`;
     };
     expect(conv('BD')).toBe('Karachi/hanafi');
@@ -45,12 +45,14 @@ describe('computePrayerTimes (static city pages)', () => {
     expect(conv('GB')).toBe('MoonsightingCommittee/standard');
     // Unknown or missing country: the old worldwide default.
     expect(conv('ZZ')).toBe('MoonsightingCommittee/standard');
-    expect(`${computePrayerTimes(23.8, 90.4, DATE).method}`).toBe('MoonsightingCommittee');
+    expect(`${computePrayerTimes(23.8, 90.4, DATE, 'Asia/Dhaka').method}`).toBe(
+      'MoonsightingCommittee'
+    );
   });
 
   it('the Ḥanafī ʿAṣr is always later, and `asr` follows the country school', () => {
-    for (const { cc, lat, lng } of CITIES) {
-      const t = computePrayerTimes(lat, lng, DATE, cc);
+    for (const { cc, lat, lng, tz } of CITIES) {
+      const t = computePrayerTimes(lat, lng, DATE, tz, cc);
       expect(t.asrHanafi.getTime()).toBeGreaterThan(t.asrStandard.getTime());
       expect(t.asr.getTime()).toBe(
         (t.asrSchool === 'hanafi' ? t.asrHanafi : t.asrStandard).getTime()
