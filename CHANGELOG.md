@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.159.4 - Time-of-day charts on the saved place's clock - 2026-10-12
+
+### Fixed
+
+- **Zikr and Quran "time of day" charts were shifted for a phone in another time zone** (a phone on London time with Dhaka saved showed Dhaka mornings 5 hours early). These two charts now group by the saved place's clock, like the rest of the app since v5.159.0. Only these charts change: they regroup real moments by hour and write nothing. Day totals keep their stored keys (the phone's offset already agrees with the place's day), so no worship data moves. For anyone whose phone is in the saved place's zone, or without a saved place, the app sends exactly what it sent before (tested across five zones and both DST changes).
+
 ## v5.159.3 - A new moon-sighting record shows at once - 2026-10-12
 
 ### Fixed
