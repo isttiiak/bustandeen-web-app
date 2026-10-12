@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.158.7 - firebase-admin 13.10, node-forge gone - 2026-10-12
+
+### Changed
+
+- **Server: firebase-admin 12 -> 13.10** (sign-in token checks, account emails, admin accounts). 13.10 no longer uses node-forge, so the last production audit exception (GHSA-86w9-cpqp-85rv, never reachable: only our own key was parsed with it) is removed from `scripts/audit-gate.mjs`. Production audit: 0 advisories in both workspaces.
+- Checked on a Vercel preview with the function logs open before merging (firebase-admin 14 crashed the function at start-up on 2026-09-20; 13.10 is the version without node-forge that keeps CommonJS).
+- `tests/esmOnlyDeps.unit.test.js`: google-auth-library 10's gaxios loads node-fetch 3 (ESM-only) with `await import()`, which CommonJS supports. That one edge is allowed, and a test fails if gaxios ever `require()`s it.
+- `@firebase/util`'s install script is denied in the backend too (it only fills Firebase App Hosting config), as in the frontend.
 ## v5.158.6 - City pages show the city's own day - 2026-10-12
 
 ### Fixed
