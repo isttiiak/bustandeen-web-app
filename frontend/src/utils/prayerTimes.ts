@@ -132,6 +132,15 @@ export function asrBySchool(
 }
 
 /**
+ * Start of the Istiwa' (solar zenith) forbidden window, 10 minutes before
+ * Dhuhr. Duha runs until here on every screen (Home and Prayer Times), so the
+ * two can never show different end times (v5.160.0).
+ */
+export function getIstiwaStart(times: PrayerTimesResult): Date {
+  return new Date(times.dhuhr.getTime() - 10 * 60_000);
+}
+
+/**
  * Returns the three makrooh (forbidden) prayer windows for the day.
  * 1. Around sunrise: from sunrise until 20 minutes after
  * 2. Solar zenith (istiwa): from 10 minutes before Dhuhr until Dhuhr begins
@@ -149,7 +158,7 @@ export function getForbiddenWindows(times: PrayerTimesResult): ForbiddenWindow[]
     {
       label: 'Solar Zenith (Istiwa)',
       note: 'Sun directly overhead — just before Dhuhr',
-      start: new Date(times.dhuhr.getTime() - 10 * MIN),
+      start: getIstiwaStart(times),
       end: times.dhuhr,
     },
     {
@@ -219,7 +228,7 @@ export interface NaflWindow {
  * Windows (non-overlapping, in daily order):
  *  1. Tahajjud — last third of night until Fajr
  *  2. Ishraq   — 20–45 min after sunrise
- *  3. Dhuha    — 45 min after sunrise until 15 min before Dhuhr
+ *  3. Dhuha    — 45 min after sunrise until the Istiwa' window (10 min before Dhuhr)
  *  4. Awabeen  — after Maghrib until Isha
  */
 export function getCurrentNaflWindow(
@@ -227,7 +236,7 @@ export function getCurrentNaflWindow(
   now: Date = new Date()
 ): NaflWindow | null {
   const MIN = 60_000;
-  const { fajr, sunrise, dhuhr, maghrib, isha } = times;
+  const { fajr, sunrise, maghrib, isha } = times;
 
   // ── Tahajjud: last third of night → Fajr ───────────────────────────────────
   if (now < fajr) {
@@ -262,9 +271,9 @@ export function getCurrentNaflWindow(
     return { id: 'ishraq', name: 'Ishraq', icon: '🌅', start: ishraakStart, end: ishraakEnd };
   }
 
-  // Dhuha: 45 min after sunrise → 15 min before Dhuhr
+  // Dhuha: 45 min after sunrise → start of the Istiwa' forbidden window
   const dhuhaStart = new Date(sunrise.getTime() + 45 * MIN);
-  const dhuhaEnd = new Date(dhuhr.getTime() - 15 * MIN);
+  const dhuhaEnd = getIstiwaStart(times);
   if (now >= dhuhaStart && now < dhuhaEnd) {
     return { id: 'duha', name: 'Dhuha', icon: '☀️', start: dhuhaStart, end: dhuhaEnd };
   }
