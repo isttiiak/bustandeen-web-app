@@ -11,9 +11,7 @@ import { MemoryStorage } from '../test/memoryStorage.js';
 // 12 Oct 2026: the BD record "Jumādā al-Ūlā 1448 began 13 Oct" was live, but
 // screens kept 1 Jumādā al-Ūlā (Umm al-Qura) until a reload, because the date
 // is read during render and nothing redrew it when the record arrived.
-const BD_JUMADA_I = [
-  { country: 'BD', hijriYear: 1448, hijriMonth: 5, startDate: '2026-10-13' },
-];
+const BD_JUMADA_I = [{ country: 'BD', hijriYear: 1448, hijriMonth: 5, startDate: '2026-10-13' }];
 
 let store: MemoryStorage;
 let events: number;
