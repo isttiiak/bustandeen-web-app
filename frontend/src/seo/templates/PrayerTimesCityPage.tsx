@@ -7,7 +7,8 @@ import { ymInZone } from '../utils/monthTable.js';
 import { monthPagePath } from './PrayerTimesMonthPage.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd, faqJsonLd } from '../components/JsonLd.js';
-import { computePrayerTimes, formatTimeInZone } from '../utils/calc.js';
+import { computePrayerTimes, formatTimeInZone, ymdInZone } from '../utils/calc.js';
+import { dateFormat } from '../utils/intl.js';
 import { countryName } from '../../utils/countryDefaults.js';
 
 const LOCALE_BY_LANG: Record<SeoLang, string> = { en: 'en-US', bn: 'bn-BD', ar: 'ar-SA' };
@@ -35,7 +36,14 @@ const PRAYER_ROWS: { key: RowKey; icon: string }[] = [
 export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
   const t = CHROME[lang];
   const locale = LOCALE_BY_LANG[lang];
-  const times = computePrayerTimes(city.lat, city.lng, buildDate, city.countryCode);
+  // The city's own date at build time, not the build machine's.
+  const times = computePrayerTimes(
+    city.lat,
+    city.lng,
+    ymdInZone(buildDate, city.timezone),
+    city.timezone,
+    city.countryCode
+  );
   const localCountry = countryName(city.countryCode, locale);
   const bd = bdDistrictForCity(city.slug);
   const partOf = bd && !bd.isHq ? bd.district : undefined;
@@ -50,7 +58,7 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
   const isUsualAsr = (key: RowKey) =>
     (key === 'asrStandard' && times.asrSchool === 'standard') ||
     (key === 'asrHanafi' && times.asrSchool === 'hanafi');
-  const dateStr = new Intl.DateTimeFormat(locale, {
+  const dateStr = dateFormat(locale, {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
