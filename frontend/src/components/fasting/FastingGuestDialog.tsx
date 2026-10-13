@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { CrescentIcon } from '../icons/IslamicIcons.js';
@@ -15,7 +16,9 @@ export default function FastingGuestDialog({
   showGuestDialog,
 }: FastingGuestDialogProps) {
   const { t } = useTranslation();
-  return (
+  // Portaled: AnimatedBackground wraps the page in `relative z-10`, which kept
+  // this under the sticky navbar.
+  return createPortal(
     <>
       <AnimatePresence>
         {showGuestDialog && (
@@ -23,7 +26,7 @@ export default function FastingGuestDialog({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[70] p-4"
             onClick={(e) => {
               if (e.target === e.currentTarget) setShowGuestDialog(false);
             }}
@@ -77,6 +80,7 @@ export default function FastingGuestDialog({
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </>,
+    document.body
   );
 }
