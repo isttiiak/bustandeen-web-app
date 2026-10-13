@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.6 - The "Don't lose your counts" card fits a phone - 2026-10-13
+
+### Fixed
+
+- **The guest "Don't lose your counts" card ran off the side of a phone** (a guest with unsaved zikr counts on any page saw the message and the "Leave without saving" button cut off). It is now a card that fits the screen, in the Bustan style in both themes: Sign in to save and Create account side by side, Leave without saving under them.
+- **It no longer covers the Count button on the zikr counter.** The counter has its own sign-in prompt, so the card now shows only on the other pages.
+
 ## v5.160.5 - Zikr dialogs in the Bustan Arch style, reset confirm readable in dark - 2026-10-13
 
 ### Fixed
