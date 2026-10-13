@@ -12,6 +12,18 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - **Zikr dialogs and controls use the shared Bustan styles in both themes**: the sign-in prompt, "Set starting count", "My zikr list", the auto-play Start/Stop buttons and the reset confirm (they still used the old buttons and inputs). In the sign-in prompt, "Keep counting" now comes before "Leave without saving"; in "Set starting count", Cancel sits on the left like the app's other dialogs. Every button is at least 44 px tall, "My zikr list" has a labelled close button, and the three dialogs are announced as dialogs with their titles. The Zikr screen test checks all of this.
 
+## v5.160.4 - Sign-out confirm in the Bustan Arch style - 2026-10-13
+
+### Changed
+
+- **The "Sign out?" confirm** now uses the shared Bustan card and buttons in both themes (it still used the old card and a small red button). Signing out is not destructive, so the confirm button is the usual sage one, and Cancel sits beside it at full height. The dialog is now announced as a dialog with its title. A navbar test checks it.
+
+## v5.160.3 - The "page not found" screen in the Bustan Arch style - 2026-10-13
+
+### Changed
+
+- **The "page not found" screen** now uses the Bustan Arch style like the rest of the app: one arch card with the shared primary button, in both themes (it still used the old card, the large button and the glass shadow). The page heading is now its only `h1`. A new screen test checks it.
+
 ## v5.160.2 - Zikr sign-in prompt opens above the navbar - 2026-10-13
 
 ### Fixed
