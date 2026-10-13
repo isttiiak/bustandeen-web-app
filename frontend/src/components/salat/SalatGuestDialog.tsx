@@ -1,7 +1,9 @@
 import type { NavigateFunction } from 'react-router';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { MosqueIcon } from '../icons/IslamicIcons.js';
+import { BTN_PRIMARY, BTN_QUIET, BTN_SECONDARY, DIALOG } from '../bustanStyles.js';
 
 export interface SalatGuestDialogProps {
   navigate: NavigateFunction;
@@ -15,7 +17,9 @@ export default function SalatGuestDialog({
   showGuestDialog,
 }: SalatGuestDialogProps) {
   const { t } = useTranslation();
-  return (
+  // Portaled like the Fasting and Zikr dialogs, so no page layer can keep it
+  // under the sticky navbar.
+  return createPortal(
     <>
       <AnimatePresence>
         {showGuestDialog && (
@@ -33,21 +37,27 @@ export default function SalatGuestDialog({
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.92, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 22 }}
-              className="bg-brand-surface rounded-card p-6 w-full max-w-sm shadow-elev-3 border border-brand-border text-center"
+              className={`${DIALOG} p-6 w-full max-w-sm text-center`}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="salat-guest-title"
             >
-              <MosqueIcon className="w-12 h-12 mx-auto mb-4 text-brand-emerald" />
-              <h3 className="text-xl font-black text-white mb-2">
+              <MosqueIcon
+                className="w-12 h-12 mx-auto mb-4 text-brand-emerald"
+                aria-hidden="true"
+              />
+              <h3 id="salat-guest-title" className="font-display text-xl font-bold text-white mb-2">
                 {t('salatTracker.signInToTrack', 'Sign in to track prayers')}
               </h3>
-              <p className="text-white/50 text-sm mb-6 leading-relaxed">
+              <p className="text-white/75 text-sm mb-6 leading-relaxed">
                 {t(
                   'salatTracker.signInDesc',
                   'Your salat log is saved to your account so it syncs across devices. Create a free account to start tracking.'
                 )}
               </p>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <button
-                  className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 w-full"
+                  className={`${BTN_PRIMARY} w-full`}
                   onClick={() => {
                     sessionStorage.setItem('bustandeen_redirect', '/salat');
                     navigate('/login');
@@ -56,7 +66,7 @@ export default function SalatGuestDialog({
                   {t('common.signIn')}
                 </button>
                 <button
-                  className="btn btn-ghost text-brand-emerald border border-brand-emerald/30 w-full"
+                  className={`${BTN_SECONDARY} w-full`}
                   onClick={() => {
                     sessionStorage.setItem('bustandeen_redirect', '/salat');
                     navigate('/signup');
@@ -64,10 +74,7 @@ export default function SalatGuestDialog({
                 >
                   {t('salatTracker.createFreeAccount', 'Create Free Account')}
                 </button>
-                <button
-                  className="btn btn-ghost text-white/50 text-sm w-full"
-                  onClick={() => setShowGuestDialog(false)}
-                >
+                <button className={`${BTN_QUIET} w-full`} onClick={() => setShowGuestDialog(false)}>
                   {t('salatTracker.justLooking', 'Just looking around')}
                 </button>
               </div>
@@ -75,6 +82,7 @@ export default function SalatGuestDialog({
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </>,
+    document.body
   );
 }
