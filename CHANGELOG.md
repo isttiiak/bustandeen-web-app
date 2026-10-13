@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.4 - Sign-out confirm in the Bustan Arch style - 2026-10-13
+
+### Changed
+
+- **The "Sign out?" confirm** now uses the shared Bustan card and buttons in both themes (it still used the old card and a small red button). Signing out is not destructive, so the confirm button is the usual sage one, and Cancel sits beside it at full height. The dialog is now announced as a dialog with its title. A navbar test checks it.
+
 ## v5.160.2 - Zikr sign-in prompt opens above the navbar - 2026-10-13
 
 ### Fixed
