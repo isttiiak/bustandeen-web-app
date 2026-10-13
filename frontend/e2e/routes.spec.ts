@@ -18,7 +18,7 @@ const ROUTES = [
   '/qibla',
   '/quran',
   '/quran/khatam',
-  '/quran/browse',
+  '/quran/read',
   '/quran/listen',
   '/quran/analytics',
   '/quran/bookmarks',
@@ -67,8 +67,7 @@ test.beforeEach(async ({ context }) => {
 });
 
 async function enterDemo(page: Page) {
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Sister/ }).click();
+  await page.goto('/demo/sister');
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 

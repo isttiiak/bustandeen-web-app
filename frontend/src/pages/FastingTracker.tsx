@@ -68,7 +68,7 @@ import {
   STATUS_META,
   CATEGORY_LABEL,
 } from '../components/fasting/fastingParts.js';
-import FastingGuestDialog from '../components/fasting/FastingGuestDialog.js';
+import SignInSheet from '../components/SignInSheet.js';
 import FastingMakruhModal from '../components/fasting/FastingMakruhModal.js';
 import FastingSettingsSheet from '../components/fasting/FastingSettingsSheet.js';
 import FastingTypeSheet from '../components/fasting/FastingTypeSheet.js';
@@ -929,12 +929,13 @@ export default function FastingTracker() {
       {/* ── Makruh warning modal ── */}
       <FastingMakruhModal setWarnState={setWarnState} submitLog={submitLog} warnState={warnState} />
 
-      {/* ── Guest sign-in dialog ── */}
-      <FastingGuestDialog
-        navigate={navigate}
-        setShowGuestDialog={setShowGuestDialog}
-        showGuestDialog={showGuestDialog}
+      {/* ── Guest sign-in sheet (U10) ── */}
+      <SignInSheet
+        open={showGuestDialog}
+        onClose={() => setShowGuestDialog(false)}
+        feature="fasting"
       />
+
       {/* Second confirmation for deletes (app-wide rule) */}
       <ConfirmDialog
         open={!!confirmVowDelete}

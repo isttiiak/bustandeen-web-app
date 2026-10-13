@@ -220,8 +220,6 @@
     "createFreeAccount": "Create Free Account",
     "resendVerification": "Resend verification email",
     "signIn": "Sign In",
-    "signInRequired": "Sign in required",
-    "signInRequiredDesc": "This page is only available when you are signed in. Create a free account to keep your progress and see your analytics.",
     "verifyEmailCheckInbox": "Check your inbox (and spam folder) and click the link to unlock this page.",
     "verifyEmailResent": "Email resent! Check your inbox.",
     "verifyEmailSentTo": "A verification link was sent to",
@@ -583,7 +581,6 @@
     "completed": "Fasted",
     "completedIt": "I completed it!",
     "consecutiveRun": "Consecutive run: {{run}}/{{target}}",
-    "createFreeAccount": "Create Free Account",
     "daysDone": "{{completed}}/{{target}} days done",
     "daysOwedAriaLabel": "Days owed",
     "daysRemaining": "{{count}} days remaining",
@@ -601,7 +598,6 @@
     "illReconsider": "I'll reconsider",
     "intendTomorrow": "I intend to fast tomorrow",
     "intended": "Intending to fast",
-    "justLooking": "Just looking around",
     "kaffarah": "Kaffārah",
     "kaffarah3Days": "3 days (broken oath)",
     "kaffarah60Days": "60 consecutive days (Ramaḍān violation)",
@@ -655,8 +651,6 @@
     "settingsAriaLabel": "Fasting settings",
     "settingsSubtitle": "Obligations and vows. Each one gets a countdown on the main card.",
     "settingsTitle": "Fasting settings",
-    "signInDesc": "Your fasting record (make-up days, vows and sunnah fasts) is saved to your account so it syncs across devices.",
-    "signInToTrack": "Sign in to track fasting",
     "start": "Start",
     "stop": "Stop",
     "suhoorEnds": "Suhur ends",
@@ -1176,8 +1170,7 @@
     "seoDescription": "Track your zikr, salat, fasting and Quran reading - with authentic references, streaks, prayer times and a private circle of friends. Free, ad-free, and built for the Muslim community.",
     "brother": "Brother",
     "cta": "Begin your journey, free",
-    "ctaCounter": "Try the counter first",
-    "ctaExplore": "Explore the full app",
+    "ctaExplore": "Explore the app first",
     "fajrDesc": "Isha prayed after midnight and suhoor before dawn belong to the right day, because Bustandeen's tracking day flows the way a worship day actually does: dawn to dawn. Prefer midnight, or the Hijri sunset boundary instead? Change it anytime in Settings.",
     "fajrTitle": "Your day begins at Fajr, not midnight",
     "featureFasting": "Fasting + Ramadan",
@@ -1220,8 +1213,6 @@
     "tryIt": "Try it",
     "verifiedDesc": "Each Quran verse and hadith in Bustandeen links to quran.com or sunnah.com with its exact number, and grades are shown where they matter. No fabricated virtues, no folklore: if we can't verify it, we don't say it.",
     "verifiedTitle": "Every reference, verified",
-    "exploreAsBrother": "Explore as Brother",
-    "exploreAsSister": "Explore as Sister",
     "finalQuote": "So compete with one another in doing good."
   },
   "moodComfort": {
@@ -2639,7 +2630,6 @@
       "other": "Other"
     },
     "countsItselfNow": "Counts itself now",
-    "createFreeAccount": "Create Free Account",
     "daif": "ḍaʿīf",
     "datePrayers": "{{date}}'s Prayers",
     "details": "Details",
@@ -2653,7 +2643,6 @@
     "hourOfResponseNow": "The hour of response is now",
     "hourOfResponseQuote": "\"{{text}}\" Keep asking until the sun sets: for yourself, your parents, and the ummah.",
     "howItWorks": "How it works",
-    "justLooking": "Just looking around",
     "kaza": "Kaza",
     "legendAyatulKursiDesc": "toggle after marking Done/Kaza (tap Details)",
     "legendDone": "Done",
@@ -2696,8 +2685,6 @@
     "rakatCount": "{{count}} rak'ah",
     "selectWhatYouPrayed": "Select what you prayed",
     "settingsAria": "Salat settings",
-    "signInDesc": "Your salat log is saved to your account so it syncs across devices. Create a free account to start tracking.",
-    "signInToTrack": "Sign in to track prayers",
     "sunnahAfter": "{{rakat}} rakʿah sunnah after",
     "sunnahBefore": "{{rakat}} rakʿah sunnah before",
     "sunnahGhairMuakkadah": "Nafl (recommended)",
@@ -3549,7 +3536,6 @@
     "decreaseAriaLabel": "Decrease count by one",
     "dhikrName": "Dhikr Name",
     "dhikrNamePlaceholder": "e.g. Astaghfirullah",
-    "dontLoseCounts": "Don't lose your counts",
     "editAriaLabel": "Edit {{name}}",
     "editBtn": "Edit",
     "emptyList": "Your list is empty. Add one with ＋.",
@@ -3574,8 +3560,6 @@
       "subhanallahWaBihamdihi": "\"Whoever says 'SubhanAllahi wa bihamdihi' 100 times, his sins will be forgiven even if they were as much as the foam of the sea.\""
     },
     "hadithRef": "Hadith Reference",
-    "keepCounting": "Keep counting",
-    "leaveWithout": "Leave without saving",
     "lockedTitle": "Your salat tracker adds counts to this dhikr, so it stays in your list.",
     "manageListDesc": "Edit your own zikr, or remove ones you no longer want in the dropdown.",
     "manageList": "Manage my zikr list",
@@ -3618,7 +3602,6 @@
     "setCountDesc": "Jump straight to a number: start from 33, 99, or wherever you left off.",
     "setCountPlaceholder": "Enter a number",
     "setCountTitle": "Set starting count",
-    "signInToSave": "Sign In to Save",
     "spaceCount": "SPACE to count · ESC to exit",
     "spaceToCount": "Press Space to count",
     "spaceToCountKbd": "Press <1>Space</1> to count",
@@ -3662,7 +3645,6 @@
       "subhanallah": "Subḥāna-llāh",
       "subhanallahWaBihamdihi": "Subḥāna-llāhi wa bi-ḥamdih"
     },
-    "unsavedCounts": "You have {{count}} unsaved zikr counts. Sign in to save your progress and track your streaks.",
     "yesRemove": "Yes, remove",
     "resetAllConfirmTitle": "Start fresh?",
     "wantsAudio": "Want an audio recitation for this, if it's added?",
@@ -4347,5 +4329,58 @@
     "settingsDesc": "How far back \"Correct a day\" in Log counts reaches. Most people only need a few days.",
     "daysChoice": "{{count}} days",
     "openSettings": "Zikr settings"
+  },
+  "signInGate": {
+    "createAccount": "Create free account",
+    "signIn": "Sign in",
+    "keepExploring": "Keep exploring",
+    "seeExample": "See an example",
+    "example": "Example",
+    "exampleChart": "Prayers on time, this week",
+    "zikrNote": "{{n}} on this device, not in your record yet.",
+    "saveThem": "Save them",
+    "salat": {
+      "title": "Keep your prayer record",
+      "desc": "Your prayers, kaza and streaks are saved to your account, so they stay safe on every device. It is free and takes a minute."
+    },
+    "fasting": {
+      "title": "Keep your fasting record",
+      "desc": "Your fasts, make-up days and vows are saved to your account, so they stay safe on every device. It is free and takes a minute."
+    },
+    "zikr": {
+      "title": "Save your zikr",
+      "desc": "Your counts on this device are kept while you sign in, then added to your record with your streaks and goals. It is free and takes a minute."
+    },
+    "rayhanah": {
+      "title": "Start Rayhanah privately",
+      "desc": "Rayhanah needs your own account to keep your entries private. They are encrypted, never shared with friends and never sent to any AI.",
+      "pageTitle": "Rayhanah",
+      "tagline": "Your cycle, your worship, at peace.",
+      "logToday": "Log today",
+      "points": {
+        "excused": "Salat is excused on your days, so no kaza is added.",
+        "qada": "Missed Ramadan fasts flow into your make-up counter.",
+        "private": "Encrypted, never shared with friends, never sent to any AI."
+      }
+    },
+    "friends": {
+      "title": "Friends need an account",
+      "desc": "Friends find each other by name, so this part needs your own account.",
+      "pageTitle": "Friends",
+      "tagline": "Encourage each other in good, quietly.",
+      "points": {
+        "noor": "Send Noor to lift a friend's day.",
+        "choose": "You choose what friends see. Secret deeds stay secret.",
+        "noRank": "No ranking, no competing."
+      }
+    },
+    "analytics": {
+      "title": "See your journey take shape",
+      "desc": "Analytics are built from your own record. Sign in and they start filling in from your first day."
+    },
+    "page": {
+      "title": "This space is yours to fill",
+      "desc": "This page is built from your own record and settings, so it needs your account. It is free and takes a minute."
+    }
   }
 }

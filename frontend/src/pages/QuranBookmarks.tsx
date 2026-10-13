@@ -216,7 +216,7 @@ export default function QuranBookmarks() {
                 'While reading, tap the bookmark icon on any āyah that touches your heart. It will wait for you here, organized by surah.'
               )}
             </p>
-            <button className={BTN_PRIMARY} onClick={() => navigate('/quran/browse')}>
+            <button className={BTN_PRIMARY} onClick={() => navigate('/quran/read')}>
               {t('quranBookmarks.startReading', 'Start reading →')}
             </button>
           </div>

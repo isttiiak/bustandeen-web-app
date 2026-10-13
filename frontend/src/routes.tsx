@@ -1,8 +1,9 @@
 // The app's route table (audit T2.4: moved out of App.tsx unchanged).
 import { lazy } from 'react';
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import ZikrCounter from './pages/ZikrCounter.js';
 import NotFound from './pages/NotFound.js';
+import GuestFeaturePage from './components/GuestFeaturePage.js';
 import {
   AdminProtected,
   BanglaEntry,
@@ -204,7 +205,10 @@ export default function AppRoutes({ revision }: { revision: number }) {
         }
       />
       {/* Public (U9): guests read and listen; nothing is saved for them. */}
-      <Route path="/quran/browse" element={<QuranBrowse />} />
+      {/* The surah list shares the reader's path (/quran/read, /quran/read/7);
+          /quran/browse was its old name, kept so old links still open it. */}
+      <Route path="/quran/read" element={<QuranBrowse />} />
+      <Route path="/quran/browse" element={<Navigate to="/quran/read" replace />} />
       <Route path="/quran/listen" element={<QuranListen />} />
       <Route
         path="/quran/analytics"
@@ -267,7 +271,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route
         path="/friends"
         element={
-          <Protected>
+          <Protected guest={<GuestFeaturePage feature="friends" />}>
             <Friends />
           </Protected>
         }
@@ -275,7 +279,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route
         path="/cycle"
         element={
-          <Protected>
+          <Protected guest={<GuestFeaturePage feature="rayhanah" />}>
             <RayhanahCycle />
           </Protected>
         }

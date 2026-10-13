@@ -35,8 +35,7 @@ test.beforeEach(async ({ context }) => {
 });
 
 async function enterDemo(page: Page) {
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Sister/ }).click();
+  await page.goto('/demo/sister');
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 
@@ -92,9 +91,9 @@ test('the navbar back button has a name', async ({ page }) => {
 test('a sage button keeps its colour on hover', async ({ page }) => {
   // DaisyUI's `.btn:hover` paints the base-300 grey over a plain `bg-*` class;
   // `hover:bg-brand-emerald-dim` has to win, or white text sits on grey.
-  // The guest "Sign in required" screen (the demo's analytics gate is gone, U9).
+  // The guest PreviewGate (U10) on a signed-in-only page.
   await page.goto('/settings');
-  const button = page.getByRole('button', { name: 'Sign In' }).first();
+  const button = page.getByRole('button', { name: 'Create free account' });
   await button.hover();
   await expect(button).toHaveCSS('background-color', 'rgb(90, 122, 80)');
 });
@@ -103,7 +102,7 @@ test('a sage button keeps its colour on hover', async ({ page }) => {
 
 const AXE_ROUTES = [
   ...ROUTES,
-  '/quran/browse',
+  '/quran/read',
   '/prayer-times',
   '/qibla',
   '/ramadan',

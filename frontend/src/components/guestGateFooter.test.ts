@@ -2,15 +2,18 @@ import { describe, it, expect } from 'vitest';
 import en from '../locales/en/common.json';
 import bn from '../locales/bn/common.json';
 
-// T3.2: the guest "Sign in required" gate (routeGuards.tsx) and the app
+// T3.2: the guest gate (routeGuards.tsx, now PreviewGate, U10) and the app
 // footer draw SVG icons only (no lock emoji), keep text readable (no ink
 // below /60), use the shared buttons, and the footer heart no longer pulses
 // forever (nor does the footer carry a gradient).
-const files = import.meta.glob<string>(['../routeGuards.tsx', './Footer.tsx'], {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-});
+const files = import.meta.glob<string>(
+  ['../routeGuards.tsx', './PreviewGate.tsx', './Footer.tsx'],
+  {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  }
+);
 const DASH_OR_EMOJI = /—|\p{Extended_Pictographic}|[✓✔→]/u;
 const stripComments = (code: string) => code.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
 
@@ -22,24 +25,27 @@ describe('Guest sign-in gate and footer', () => {
     expect(code).not.toMatch(/bg-gradient|animate-pulse/);
   });
 
-  it('the gate uses an SVG lock and the shared buttons', () => {
-    const gate = files['../routeGuards.tsx']!;
-    expect(gate).toContain('<LockClosedIcon');
-    expect(gate).toContain('BTN_PRIMARY');
-    expect(gate).toContain('BTN_SECONDARY');
+  it('a guest gets the PreviewGate (a reason, no lock) with the shared buttons', () => {
+    const guards = files['../routeGuards.tsx']!;
+    const gate = files['./PreviewGate.tsx']!;
+    expect(guards).toContain('<PreviewGate />');
+    expect(guards).not.toContain('LockClosedIcon');
+    expect(gate).not.toContain('LockClosedIcon');
+    expect(gate).toContain('<SignInButtons');
+    expect(gate).toContain('enterDemoMode(');
   });
 
   it.each([
     ['en', en],
     ['bn', bn],
   ] as const)('%s: gate and footer link copy has no emoji or em dash', (_l, dict) => {
-    const app = (dict as { app: Record<string, string> }).app;
+    const gate = dict.signInGate;
     const footer = (dict as { footer: Record<string, string> }).footer;
     const keys = [
-      app.signInRequired,
-      app.signInRequiredDesc,
-      app.signIn,
-      app.createFreeAccount,
+      gate.analytics.title,
+      gate.analytics.desc,
+      gate.page.title,
+      gate.page.desc,
       footer.madeWith,
       footer.forTheUmmah,
       footer.feedbackContact,

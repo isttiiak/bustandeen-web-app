@@ -19,8 +19,7 @@ test.beforeEach(async ({ context }) => {
 });
 
 async function enterDemo(page: Page) {
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 
@@ -76,7 +75,18 @@ test('a guest reads a surah without signing in, and is told nothing is saved (U9
   await page.goto('/quran/read/112');
   await expect(page.getByText(firstAyah, { exact: true })).toBeVisible();
   await expect(page.getByText(/reading as a guest/)).toBeVisible();
-  await expect(page.getByText('Sign in required')).toHaveCount(0);
+  await expect(page.getByTestId('preview-gate')).toHaveCount(0);
   // No bookmark or tafsir for a guest: both need an account.
   await expect(page.getByRole('button', { name: 'Bookmark this ayah' })).toHaveCount(0);
+});
+
+test('the surah list is /quran/read, and the old /quran/browse still opens it', async ({
+  page,
+}) => {
+  await page.goto('/quran/browse');
+  await expect(page).toHaveURL(/\/quran\/read$/);
+  await expect(page.getByLabel('Search surahs')).toBeVisible();
+  // A surah keeps its own link under the same path.
+  await page.goto('/quran/read/112');
+  await expect(page.getByText(firstAyah, { exact: true })).toBeVisible();
 });

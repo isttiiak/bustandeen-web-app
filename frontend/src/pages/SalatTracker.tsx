@@ -105,7 +105,7 @@ import {
 import SalatLegend from '../components/salat/SalatLegend.js';
 import SalatKazaDebtCard from '../components/salat/SalatKazaDebtCard.js';
 import SalatNaflCard from '../components/salat/SalatNaflCard.js';
-import SalatGuestDialog from '../components/salat/SalatGuestDialog.js';
+import SignInSheet from '../components/SignInSheet.js';
 import SalatMonthCalendar from '../components/salat/SalatMonthCalendar.js';
 import SalatWeekStrip from '../components/salat/SalatWeekStrip.js';
 import FridayHourCard from '../components/salat/FridayHourCard.js';
@@ -1817,11 +1817,11 @@ export default function SalatTracker() {
         </div>
       </div>
 
-      {/* ── Guest sign-in dialog — salat logs are server-side only ── */}
-      <SalatGuestDialog
-        navigate={navigate}
-        setShowGuestDialog={setShowGuestDialog}
-        showGuestDialog={showGuestDialog}
+      {/* ── Guest sign-in sheet (U10): salat logs are server-side only ── */}
+      <SignInSheet
+        open={showGuestDialog}
+        onClose={() => setShowGuestDialog(false)}
+        feature="salat"
       />
     </div>
   );

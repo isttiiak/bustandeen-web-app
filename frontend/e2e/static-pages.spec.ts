@@ -26,10 +26,12 @@ test('a signed-out visitor of / gets the static landing, without the app', async
   const seen = scripts(page);
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.getByRole('link', { name: /Explore as Brother/ })).toHaveAttribute(
+  // U10: the landing opens the real app to explore, no demo buttons.
+  await expect(page.getByRole('link', { name: 'Explore the app first' })).toHaveAttribute(
     'href',
-    '/demo/brother'
+    '/salat'
   );
+  await expect(page.locator('a[href^="/demo/"]')).toHaveCount(0);
   await page.waitForLoadState('networkidle');
   expect(seen.some((s) => s.includes('/assets/static-'))).toBe(true);
   expect(appChunks(seen)).toEqual([]);

@@ -39,9 +39,11 @@ it('both landings share the body, which has the one arch hero', () => {
     expect(page).toContain('<LandingBody');
     expect(page).not.toContain('rounded-arch');
   }
-  // The e2e tests and the static page rely on the demo links.
-  expect(body).toContain('href="/demo/brother"');
-  expect(body).toContain('href="/demo/sister"');
+  // U10: no brother/sister demo buttons; "Try it" opens the real pages
+  // (the demo is behind "See an example" on the pages that need an account).
+  expect(body).not.toContain('/demo/');
+  for (const href of ['/salat', '/zikr', '/quran/read', '/fasting', '/friends', '/cycle'])
+    expect(body).toMatch(new RegExp(`href(: |=)['"]${href}['"]`));
   // BIZ-03: the positioning line sits in the hero, under the title.
   expect(body.indexOf("t('landing.positioning'")).toBeGreaterThan(body.indexOf('</h1>'));
   expect(body.indexOf("t('landing.positioning'")).toBeLessThan(

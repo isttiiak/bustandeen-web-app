@@ -18,8 +18,7 @@ async function demoHome(page: Page, at: Date, layout?: 'full' | 'strip' | 'pills
     );
     if (l) localStorage.setItem('bustandeen_home_special', l);
   }, layout);
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 
