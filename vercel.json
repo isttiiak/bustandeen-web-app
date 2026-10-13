@@ -13,6 +13,17 @@
   },
   "redirects": [
     {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "quran.bustandeen.com"
+        }
+      ],
+      "destination": "https://bustandeen.com/quran",
+      "statusCode": 301
+    },
+    {
       "source": "/((?!sw\\.js$).*)",
       "has": [
         {
