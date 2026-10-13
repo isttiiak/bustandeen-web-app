@@ -2,6 +2,7 @@ import React from 'react';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { PlayIcon, StopIcon, PlayPauseIcon } from '@heroicons/react/24/outline';
+import { BTN_PRIMARY, BTN_ROW_DANGER } from '../bustanStyles.js';
 
 export interface ZikrAutoPlayControlsProps {
   audio: import('../../hooks/useZikrAudio.js').ZikrAudioState;
@@ -43,7 +44,7 @@ export default function ZikrAutoPlayControls({
                 <PlayPauseIcon className="w-4 h-4" />
                 {t('zikr.autoPlay', 'Auto-play')}
               </motion.button>
-              <p className="text-white/50 text-[11px] text-center max-w-[240px]">
+              <p className="text-white/70 text-[11px] text-center max-w-[240px]">
                 {t('zikr.autoPlayHint', 'Plays the pronunciation and counts it for you, on repeat')}
               </p>
             </div>
@@ -65,7 +66,7 @@ export default function ZikrAutoPlayControls({
                     {t('zikr.autoPlayActive', 'Auto-playing')}
                   </span>
                 </div>
-                <span className="text-white/50 text-sm font-mono tabular-nums">
+                <span className="text-white/75 text-sm font-mono tabular-nums">
                   {audio.loopCount}
                   {audio.targetCount !== null ? ` / ${audio.targetCount}` : ''}
                 </span>
@@ -76,9 +77,9 @@ export default function ZikrAutoPlayControls({
                     audio.stopAutoPlay();
                     setShowAutoPlay(false);
                   }}
-                  className="btn btn-sm bg-red-500/20 hover:bg-red-500/30 border-red-500/30 text-red-400 gap-1.5"
+                  className={`${BTN_ROW_DANGER} border border-red-400/30 bg-red-400/10 !text-sm px-3`}
                 >
-                  <StopIcon className="w-4 h-4" />
+                  <StopIcon className="w-4 h-4" aria-hidden="true" />
                   {t('zikr.stop', 'Stop')}
                 </button>
                 <input
@@ -91,7 +92,7 @@ export default function ZikrAutoPlayControls({
                   className="range range-success range-xs flex-1"
                   aria-label={t('zikr.volume', 'Volume')}
                 />
-                <span className="text-white/50 text-xs w-8 text-right">
+                <span className="text-white/75 text-xs w-8 text-right">
                   {Math.round(zikrAudioVolume * 100)}%
                 </span>
               </div>
@@ -109,21 +110,25 @@ export default function ZikrAutoPlayControls({
               >
                 <div className="rounded-card border border-brand-border bg-brand-deep shadow-elev-1 p-4 space-y-3">
                   <div className="flex items-center gap-3">
-                    <label className="text-white/50 text-xs shrink-0">
+                    <label
+                      htmlFor="zikr-autoplay-target"
+                      className="text-white/75 text-xs shrink-0"
+                    >
                       {t('zikr.targetCount', 'Target count')}
                     </label>
                     <input
                       type="number"
                       inputMode="numeric"
                       min={1}
+                      id="zikr-autoplay-target"
                       placeholder="50"
                       value={autoPlayTarget}
                       onChange={(e) => setAutoPlayTarget(e.target.value)}
-                      className="input input-bordered input-sm flex-1 bg-brand-deep border-brand-border text-white text-center"
+                      className="flex-1 min-w-0 rounded-control border border-brand-border bg-brand-void text-white focus:border-brand-emerald focus:outline-none px-3 py-2 text-sm text-center"
                     />
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="text-white/50 text-xs shrink-0">
+                    <span className="text-white/75 text-xs shrink-0">
                       {t('zikr.volume', 'Volume')}
                     </span>
                     <input
@@ -136,7 +141,7 @@ export default function ZikrAutoPlayControls({
                       className="range range-success range-xs flex-1"
                       aria-label={t('zikr.volume', 'Volume')}
                     />
-                    <span className="text-white/50 text-xs w-8 text-right">
+                    <span className="text-white/75 text-xs w-8 text-right">
                       {Math.round(zikrAudioVolume * 100)}%
                     </span>
                   </div>
@@ -145,9 +150,9 @@ export default function ZikrAutoPlayControls({
                       const target = parseInt(autoPlayTarget, 10);
                       audio.startAutoPlay(target > 0 ? target : 50);
                     }}
-                    className="btn btn-sm w-full bg-brand-emerald/20 hover:bg-brand-emerald/30 border-brand-emerald/30 text-brand-emerald gap-2"
+                    className={`${BTN_PRIMARY} w-full`}
                   >
-                    <PlayIcon className="w-4 h-4" />
+                    <PlayIcon className="w-4 h-4" aria-hidden="true" />
                     {t('zikr.startAutoPlay', 'Start auto-play')}
                   </button>
                 </div>

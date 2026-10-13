@@ -4,6 +4,7 @@ import { createPortal } from 'react-dom';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { TasbihIcon } from '../icons/IslamicIcons.js';
+import { BTN_PRIMARY, BTN_QUIET, BTN_SECONDARY, DIALOG } from '../bustanStyles.js';
 
 export interface ZikrGuestDialogProps {
   navigate: NavigateFunction;
@@ -36,25 +37,28 @@ export default function ZikrGuestDialog({
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.92, opacity: 0, y: 20 }}
               transition={{ type: 'spring', damping: 22 }}
-              className="bg-brand-surface rounded-card p-6 w-full max-w-sm shadow-elev-3 border border-brand-border text-center"
+              className={`${DIALOG} p-6 w-full max-w-sm text-center`}
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="zikr-guest-title"
             >
               <TasbihIcon
                 className="w-12 h-12 mx-auto mb-4 text-brand-emerald"
                 aria-hidden="true"
               />
-              <h3 className="text-xl font-black text-white mb-2">
+              <h3 id="zikr-guest-title" className="font-display text-xl font-bold text-white mb-2">
                 {t('zikr.dontLoseCounts', "Don't lose your counts")}
               </h3>
-              <p className="text-white/60 text-sm mb-6 leading-relaxed">
+              <p className="text-white/75 text-sm mb-6 leading-relaxed">
                 {t(
                   'zikr.unsavedCounts',
                   'You have {{count}} unsaved zikr counts. Sign in to save your progress and track your streaks.',
                   { count: Object.values(pending ?? {}).reduce((a, b) => a + b, 0) }
                 )}
               </p>
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 <button
-                  className="btn bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 text-on-color border-0 w-full"
+                  className={`${BTN_PRIMARY} w-full`}
                   onClick={() => {
                     sessionStorage.setItem('bustandeen_redirect', '/zikr');
                     navigate('/login');
@@ -63,19 +67,19 @@ export default function ZikrGuestDialog({
                   {t('zikr.signInToSave', 'Sign In to Save')}
                 </button>
                 <button
-                  className="btn btn-ghost text-white/50 hover:text-white w-full"
+                  className={`${BTN_SECONDARY} w-full`}
+                  onClick={() => setShowGuestDialog(false)}
+                >
+                  {t('zikr.keepCounting', 'Keep counting')}
+                </button>
+                <button
+                  className={`${BTN_QUIET} w-full`}
                   onClick={() => {
                     setShowGuestDialog(false);
                     navigate('/');
                   }}
                 >
                   {t('zikr.leaveWithout', 'Leave without saving')}
-                </button>
-                <button
-                  className="btn btn-ghost text-brand-emerald text-sm w-full"
-                  onClick={() => setShowGuestDialog(false)}
-                >
-                  {t('zikr.keepCounting', 'Keep counting')}
                 </button>
               </div>
             </motion.div>
