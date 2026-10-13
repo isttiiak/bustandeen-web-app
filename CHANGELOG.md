@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.2 - Zikr sign-in prompt opens above the navbar - 2026-10-13
+
+### Fixed
+
+- **The Zikr "sign in to keep your counts" prompt opened under the navbar** (its top edge was hidden on a phone). Like the Fasting dialogs in v5.160.1, it now opens at the top level of the page. A new Zikr screen test checks that every full-screen Zikr overlay does this.
+
 ## v5.160.0 - Zikr days matched by date, the saved place's clock everywhere - 2026-10-13
 
 ### Fixed
