@@ -77,7 +77,11 @@ export default function LandingBody({
           {t('landing.heroTitle1', 'Worship,')}{' '}
           <span className="text-brand-emerald">{t('landing.heroTitle2', 'beautifully kept')}</span>
         </h1>
-        <p className="text-white/80 text-base sm:text-lg max-w-2xl mx-auto mt-5 leading-relaxed">
+        {/* BIZ-03: the one-line promise that sets Bustandeen apart. */}
+        <p className="font-display text-brand-gold text-lg sm:text-xl font-bold max-w-2xl mx-auto mt-4">
+          {t('landing.positioning', '')}
+        </p>
+        <p className="text-white/80 text-base sm:text-lg max-w-2xl mx-auto mt-4 leading-relaxed">
           {t('landing.heroDesc', '')}
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
