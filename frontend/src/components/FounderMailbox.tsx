@@ -11,14 +11,20 @@ import {
   type AdminMailboxMessage,
   type FeedbackStatus,
 } from '../hooks/useAdminFeedback.js';
+import { BTN_PRIMARY, CARD, OPTION_OFF, OPTION_ON } from './bustanStyles.js';
+import {
+  ADMIN_INPUT_SM,
+  BTN_DANGER,
+  BTN_SMALL,
+  OPTION_CHIP,
+  PILL_EMERALD,
+  PILL_GOLD,
+  PILL_MUTED,
+} from './admin/adminParts.js';
 
 const statusChip = (status: FeedbackStatus) =>
-  `shrink-0 text-[10px] font-black uppercase tracking-wide px-2 py-1 rounded-full ${
-    status === 'open'
-      ? 'bg-brand-gold/15 text-brand-gold'
-      : status === 'replied'
-        ? 'bg-brand-emerald/15 text-brand-emerald'
-        : 'bg-white/10 text-white/40'
+  `shrink-0 uppercase tracking-wide ${
+    status === 'open' ? PILL_GOLD : status === 'replied' ? PILL_EMERALD : PILL_MUTED
   }`;
 
 function MailboxCard({ message }: { message: AdminMailboxMessage }) {
@@ -39,27 +45,27 @@ function MailboxCard({ message }: { message: AdminMailboxMessage }) {
     <motion.div
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-brand-emerald/15 bg-white/[0.03] p-4 space-y-3"
+      className={`${CARD} p-4 space-y-3`}
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-white font-bold text-sm">
             {message.fromName || message.fromEmail}{' '}
             {message.fromName && (
-              <span className="text-white/30 font-normal">· {message.fromEmail}</span>
+              <span className="text-white/70 font-normal">· {message.fromEmail}</span>
             )}
           </p>
-          <p className="text-white/50 text-xs mt-0.5 break-words">
+          <p className="text-white/70 text-xs mt-0.5 break-words">
             {message.subject || t('adminFeedback.noSubject', '(no subject)')}
           </p>
         </div>
         <span className={statusChip(message.status)}>{message.status}</span>
       </div>
 
-      <p className="text-white/60 text-sm leading-relaxed whitespace-pre-wrap break-words">
+      <p className="text-white/90 text-sm leading-relaxed whitespace-pre-wrap break-words">
         {message.text || t('adminFeedback.noBody', '(no text content)')}
       </p>
-      <p className="text-white/25 text-[11px]">
+      <p className="text-white/70 text-[11px]">
         {new Date(message.receivedAt).toLocaleString()}
         {message.feedbackId && ` - ${t('adminFeedback.inThread', 'reply in a feedback thread')}`}
         {message.repliedBy &&
@@ -69,10 +75,7 @@ function MailboxCard({ message }: { message: AdminMailboxMessage }) {
       {!replying && (
         <div className="flex flex-wrap gap-2 pt-1">
           {message.status !== 'archived' && (
-            <button
-              onClick={() => setReplying(true)}
-              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
-            >
+            <button onClick={() => setReplying(true)} className={BTN_PRIMARY}>
               {t('adminFeedback.reply', 'Reply')}
             </button>
           )}
@@ -89,16 +92,13 @@ function MailboxCard({ message }: { message: AdminMailboxMessage }) {
                 )
                   markReplied.mutate(message._id);
               }}
-              className="btn btn-xs btn-ghost rounded-lg text-white/50"
+              className={BTN_SMALL}
             >
               {t('adminFeedback.markReplied', 'Mark replied (sent via Zoho)')}
             </button>
           )}
           {message.status !== 'archived' && (
-            <button
-              onClick={() => archive.mutate(message._id)}
-              className="btn btn-xs btn-ghost rounded-lg text-white/50"
-            >
+            <button onClick={() => archive.mutate(message._id)} className={BTN_SMALL}>
               {t('adminFeedback.archive', 'Archive')}
             </button>
           )}
@@ -114,7 +114,7 @@ function MailboxCard({ message }: { message: AdminMailboxMessage }) {
               )
                 del.mutate(message._id);
             }}
-            className="btn btn-xs btn-ghost rounded-lg text-red-400/70 hover:text-red-400"
+            className={BTN_DANGER}
           >
             {t('adminFeedback.delete', 'Delete')}
           </button>
@@ -124,7 +124,8 @@ function MailboxCard({ message }: { message: AdminMailboxMessage }) {
       {replying && (
         <div className="space-y-2 pt-2 border-t border-brand-emerald/10">
           <textarea
-            className="textarea textarea-xs w-full bg-white/5 border-brand-emerald/15 text-white rounded-lg"
+            className={`${ADMIN_INPUT_SM} w-full`}
+            aria-label={t('adminFeedback.replyPlaceholder', 'Your reply…')}
             rows={5}
             placeholder={t('adminFeedback.replyPlaceholder', 'Your reply…')}
             value={body}
@@ -136,17 +137,10 @@ function MailboxCard({ message }: { message: AdminMailboxMessage }) {
             </p>
           )}
           <div className="flex gap-2">
-            <button
-              onClick={sendReply}
-              disabled={reply.isPending}
-              className="btn btn-xs rounded-lg bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-brand-emerald-dim text-on-color font-bold"
-            >
+            <button onClick={sendReply} disabled={reply.isPending} className={BTN_PRIMARY}>
               {reply.isPending ? '…' : t('adminFeedback.send', 'Send reply')}
             </button>
-            <button
-              onClick={() => setReplying(false)}
-              className="btn btn-xs btn-ghost rounded-lg text-white/50"
-            >
+            <button onClick={() => setReplying(false)} className={BTN_SMALL}>
               {t('adminZikr.cancel', 'Cancel')}
             </button>
           </div>
@@ -175,7 +169,7 @@ export default function FounderMailbox() {
   return (
     <div className="space-y-4">
       {sync && !sync.enabled && (
-        <div className="rounded-xl border border-brand-gold/25 bg-brand-gold/5 px-4 py-3 text-sm text-brand-gold">
+        <div className="rounded-control border border-brand-gold/25 bg-brand-gold/5 px-4 py-3 text-sm text-brand-gold">
           {t(
             'adminMailbox.paused',
             'Founder mailbox sync is paused. Zoho’s free plan has no IMAP access, so it will be switched on once a paid plan is added. Nothing is fetched from Zoho until then; reply to mail from the Zoho app in the meantime.'
@@ -184,12 +178,8 @@ export default function FounderMailbox() {
       )}
 
       {enabled && (
-        <div className="flex flex-wrap items-center gap-3 text-xs text-white/40">
-          <button
-            onClick={() => syncMailbox()}
-            disabled={syncing}
-            className="btn btn-xs rounded-lg btn-ghost text-white/70"
-          >
+        <div className="flex flex-wrap items-center gap-3 text-xs text-white/70">
+          <button onClick={() => syncMailbox()} disabled={syncing} className={BTN_SMALL}>
             {syncing
               ? t('adminFeedback.syncing', 'Syncing…')
               : t('adminFeedback.syncNow', 'Sync now')}
@@ -216,12 +206,13 @@ export default function FounderMailbox() {
         </div>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {(['open', 'replied', 'archived', 'all'] as const).map((s) => (
           <button
             key={s}
             onClick={() => setFilter(s)}
-            className={`btn btn-xs rounded-lg ${filter === s ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'btn-ghost text-white/50'}`}
+            aria-pressed={filter === s}
+            className={`${OPTION_CHIP} capitalize ${filter === s ? OPTION_ON : OPTION_OFF}`}
           >
             {s}
           </button>
@@ -230,10 +221,10 @@ export default function FounderMailbox() {
 
       <div className="space-y-3">
         {mailbox.isLoading && (
-          <p className="text-white/40 text-sm">{t('adminZikr.loading', 'Loading…')}</p>
+          <p className="text-white/70 text-sm">{t('adminZikr.loading', 'Loading…')}</p>
         )}
         {!mailbox.isLoading && mailbox.data?.messages.length === 0 && (
-          <p className="text-white/40 text-sm">{t('adminZikr.empty', 'Nothing here.')}</p>
+          <p className="text-white/70 text-sm">{t('adminZikr.empty', 'Nothing here.')}</p>
         )}
         {mailbox.data?.messages.map((m) => (
           <MailboxCard key={m._id} message={m} />
