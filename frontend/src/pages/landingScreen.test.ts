@@ -42,6 +42,11 @@ it('both landings share the body, which has the one arch hero', () => {
   // The e2e tests and the static page rely on the demo links.
   expect(body).toContain('href="/demo/brother"');
   expect(body).toContain('href="/demo/sister"');
+  // BIZ-03: the positioning line sits in the hero, under the title.
+  expect(body.indexOf("t('landing.positioning'")).toBeGreaterThan(body.indexOf('</h1>'));
+  expect(body.indexOf("t('landing.positioning'")).toBeLessThan(
+    body.indexOf("t('landing.heroDesc'")
+  );
 });
 
 describe.each([
@@ -59,5 +64,6 @@ describe.each([
     expect(values.length).toBeGreaterThan(40);
     for (const v of [...values, dict.footer.platformNote]) expect(v).not.toMatch(DASH_OR_EMOJI);
     expect(dict.landing.finalQuote).toBeTruthy();
+    expect(dict.landing.positioning).toBeTruthy();
   });
 });
