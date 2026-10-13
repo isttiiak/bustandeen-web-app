@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.3 - The "page not found" screen in the Bustan Arch style - 2026-10-13
+
+### Changed
+
+- **The "page not found" screen** now uses the Bustan Arch style like the rest of the app: one arch card with the shared primary button, in both themes (it still used the old card, the large button and the glass shadow). The page heading is now its only `h1`. A new screen test checks it.
+
 ## v5.160.1 - Fasting dialogs open above the navbar - 2026-10-13
 
 ### Fixed
