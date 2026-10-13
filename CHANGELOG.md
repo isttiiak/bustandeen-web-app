@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.8 - Founder mailbox in the Bustan Arch style (admin) - 2026-10-13
+
+### Changed
+
+- **Admin: the founder mailbox on the compose page** now uses the same cards, buttons, status pills, filter chips and reply box as the Feedback inbox, in both themes (it still used the old small buttons and faint text). Its text is readable (no ink below 70%), the filter chips say which one is on, and the reply box has a label. It is now part of the admin screens test.
+
 ## v5.160.7 - Salat sign-in prompt in the Bustan Arch style - 2026-10-13
 
 ### Changed
