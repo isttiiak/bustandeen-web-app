@@ -8,6 +8,12 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - **The "Sign out?" confirm** now uses the shared Bustan card and buttons in both themes (it still used the old card and a small red button). Signing out is not destructive, so the confirm button is the usual sage one, and Cancel sits beside it at full height. The dialog is now announced as a dialog with its title. A navbar test checks it.
 
+## v5.160.3 - The "page not found" screen in the Bustan Arch style - 2026-10-13
+
+### Changed
+
+- **The "page not found" screen** now uses the Bustan Arch style like the rest of the app: one arch card with the shared primary button, in both themes (it still used the old card, the large button and the glass shadow). The page heading is now its only `h1`. A new screen test checks it.
+
 ## v5.160.2 - Zikr sign-in prompt opens above the navbar - 2026-10-13
 
 ### Fixed
