@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.10 - Node 24 pinned for production builds - 2026-10-13
+
+### Changed
+
+- **The server and build now ask for Node 24 exactly** (`"node": "24.x"`, was `>=22` / `>=18`). With `>=22`, Vercel builds with the newest Node it offers, so the day it adds Node 26 the site would switch to an untested major on its own. Now a Node upgrade happens only on purpose (planned for 2027, before Node 24's end of life on 30 April 2028). Matches `.nvmrc` and CI. Nothing changes for users.
+
 ## v5.160.8 - Founder mailbox in the Bustan Arch style (admin) - 2026-10-13
 
 ### Changed
