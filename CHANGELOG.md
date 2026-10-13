@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.162.0 - Quran habit and Ramadan open for guests, Status link (U10 follow-ups) - 2026-10-14
+
+### Changed
+
+- **Guests can now open the Quran habit, Khatam, Hifz, Bookmarks and Ramadan pages** instead of the "built from your own record" preview. They show what a brand-new account starts with (Hifz targets 3 new and 15 revision, khatam not started, no bookmarks yet), never sample data. The first save (start a khatam, save a dua, start memorising, change Hifz targets, bookmark an ayah in the reader, log a Ramadan fast, tarawih or a prayer in the Ramadan card) opens the same sign-in sheet as Salat and Fasting, with its own reason: "Keep your Quran journey" or "Keep your Ramadan record". Nothing is saved for a guest. Unverified accounts still see the verify-email step. Quran analytics and Ramadan analytics keep the preview gate.
+- **The reader's bookmark button now shows for guests too** (it used to be hidden); a tap asks to sign in.
+- **The zikr counter no longer shows the browser's "Leave site?" warning to guests.** Their counts have been kept on this device since v5.161.0 (saved on page hide), and the note under Count already offers to save them, so the warning only got in the way.
+
+### Added
+
+- **A "Status" link** in the footer and a "Is Bustandeen up?" card on the About page, both opening status.bustandeen.com (live uptime of the app, website and server). A plain link: nothing loads from it until it is opened.
+
+### Tests
+
+- `signInSheet.test.ts` covers the opened routes, a guard before every write on those pages (including the Ramadan prayer card) and the removed prompt; the Playwright gate spec starts a hifz ayah and a khatam as a guest and checks the sheet. New copy in English and Bangla, no em dashes.
+
 ## v5.161.0 - Explore freely, sign in to save (U10) - 2026-10-14
 
 ### Changed

@@ -1,10 +1,11 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { LockClosedIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
 import { BTN_PRIMARY, BTN_QUIET, BTN_SECONDARY, DIALOG } from './bustanStyles.js';
+import { useAuthStore } from '../store/useAuthStore.js';
 
 // U10 "explore freely, sign in to save": the one sheet a guest sees the first
 // time they save a record (Salat, Fasting, the zikr note, Rayhanah). It gives
@@ -12,7 +13,22 @@ import { BTN_PRIMARY, BTN_QUIET, BTN_SECONDARY, DIALOG } from './bustanStyles.js
 // the current page as the return path (bustandeen_redirect), so after sign-in
 // the person lands back where they were. "Keep exploring" changes nothing.
 
-export type SignInFeature = 'salat' | 'fasting' | 'zikr' | 'rayhanah';
+export type SignInFeature = 'salat' | 'fasting' | 'zikr' | 'rayhanah' | 'quran' | 'ramadan';
+
+/** For pages a guest can use until the first save (the Quran habit pages,
+ *  Ramadan): `canSave()` is true for an account, and for a guest it opens the
+ *  sheet instead. Render `sheet` once on the page. */
+export function useSignInGate(feature: SignInFeature) {
+  const user = useAuthStore((s) => s.user);
+  const [open, setOpen] = useState(false);
+  const canSave = () => {
+    if (user) return true;
+    setOpen(true);
+    return false;
+  };
+  const sheet = <SignInSheet open={open} onClose={() => setOpen(false)} feature={feature} />;
+  return { isGuest: !user, canSave, sheet };
+}
 
 /** Stores where to come back to, then opens sign-in or sign-up. */
 export function useSignInNav() {

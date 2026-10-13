@@ -8,6 +8,7 @@ import {
   ClockIcon,
   EnvelopeIcon,
   LockClosedIcon,
+  SignalIcon,
   SparklesIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
@@ -25,6 +26,7 @@ import {
 } from '../components/icons/IslamicIcons.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import ExtLink from '../components/ExtLink.js';
+import { STATUS_URL } from '../utils/siteLinks.js';
 
 const FEATURE_KEYS: { Icon: (p: IconProps) => React.ReactNode; key: string }[] = [
   { Icon: TasbihIcon, key: 'zikrCounter' },
@@ -175,6 +177,26 @@ export default function About() {
               {t('about.privacyLink')}
               <ChevronRightIcon className="w-3.5 h-3.5" aria-hidden="true" />
             </Link>
+          </section>
+
+          {/* Live uptime (status.bustandeen.com, an external Better Stack page) */}
+          <section className={`${CARD} p-5 flex items-center justify-between gap-3`}>
+            <div className="min-w-0">
+              <p className="text-white font-bold text-sm flex items-center gap-2">
+                <SignalIcon className="w-4 h-4 text-brand-emerald shrink-0" aria-hidden="true" />
+                {t('about.statusTitle')}
+              </p>
+              <p className="text-white/70 text-xs mt-0.5">{t('about.statusDesc')}</p>
+            </div>
+            <a
+              href={STATUS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${BTN_SECONDARY} !px-3 !py-1.5 !text-xs shrink-0`}
+            >
+              {t('about.statusLink')}
+              <ArrowTopRightOnSquareIcon className="w-3.5 h-3.5" aria-hidden="true" />
+            </a>
           </section>
 
           {/* Developer credit */}

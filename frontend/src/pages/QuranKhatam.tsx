@@ -17,6 +17,8 @@ import { translateReference } from '../utils/localeReference.js';
 import { BookOpenIcon } from '@heroicons/react/24/outline';
 import { Star8Icon } from '../components/icons/IslamicIcons.js';
 import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/bustanStyles.js';
+import { useSignInGate } from '../components/SignInSheet.js';
+import { GUEST_QURAN_SUMMARY } from '../utils/guestRecords.js';
 
 /**
  * The Khatam journey: a serial, self-paced read-through of the whole Quran.
@@ -26,7 +28,10 @@ import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/bustanStyl
 export default function QuranKhatam() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { data: summary, isLoading } = useQuranSummary();
+  const { data, isLoading } = useQuranSummary();
+  // Open to guests (U10): an empty record until the first save asks to sign in.
+  const gate = useSignInGate('quran');
+  const summary = data ?? (gate.isGuest ? GUEST_QURAN_SUMMARY : undefined);
   const startKhatam = useStartKhatam();
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
   // Opt-in (Istiak's spec): the journey exists only after the user begins it.
@@ -139,6 +144,7 @@ export default function QuranKhatam() {
                     className={`mt-5 w-full py-3 text-base ${BTN_PRIMARY}`}
                     disabled={startKhatam.isPending}
                     onClick={() =>
+                      gate.canSave() &&
                       startKhatam.mutate(undefined, {
                         onSuccess: () => navigate('/quran/read/1?start=1&mode=khatam'),
                       })
@@ -200,6 +206,7 @@ export default function QuranKhatam() {
           </>
         )}
       </div>
+      {gate.sheet}
     </AnimatedBackground>
   );
 }

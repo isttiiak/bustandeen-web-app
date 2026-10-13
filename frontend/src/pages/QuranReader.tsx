@@ -59,6 +59,7 @@ import { celebrateGoal, celebrateKhatm, celebrateSmall } from '../utils/celebrat
 import ShareAyahModal from '../components/ShareAyahModal.js';
 import { DuaHandsIcon } from '../components/icons/IslamicIcons.js';
 import { BTN_PRIMARY, BTN_SECONDARY } from '../components/bustanStyles.js';
+import { useSignInGate } from '../components/SignInSheet.js';
 
 /**
  * The ayah-by-ayah reading room (Istiak's design):
@@ -141,6 +142,7 @@ export default function QuranReader() {
   const { data: summary } = useQuranSummary();
   const { mutate: readAyat } = useReadAyat();
   const toggleBookmark = useToggleBookmark();
+  const gate = useSignInGate('quran');
   const { mutate: setResumeServer } = useSetResume();
   const resumeSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resumePromptDoneRef = useRef(false);
@@ -798,25 +800,26 @@ export default function QuranReader() {
                 <PlayIcon className="w-4 h-4 ml-0.5" />
               )}
             </button>
-            {user && (
-              <button
-                aria-label={
-                  isBookmarked
-                    ? t('quranReader.removeBookmark', 'Remove bookmark')
-                    : t('quranReader.bookmarkAyah', 'Bookmark this ayah')
-                }
-                onClick={() =>
-                  current && toggleBookmark.mutate({ surah: surahNo, ayah: current.numberInSurah })
-                }
-                className="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-brand-gold hover:border-brand-gold/50"
-              >
-                {isBookmarked ? (
-                  <BookmarkSolid className="w-4 h-4" />
-                ) : (
-                  <BookmarkOutline className="w-4 h-4" />
-                )}
-              </button>
-            )}
+            {/* A guest sees it too: the first save asks to sign in (U10). */}
+            <button
+              aria-label={
+                isBookmarked
+                  ? t('quranReader.removeBookmark', 'Remove bookmark')
+                  : t('quranReader.bookmarkAyah', 'Bookmark this ayah')
+              }
+              onClick={() =>
+                current &&
+                gate.canSave() &&
+                toggleBookmark.mutate({ surah: surahNo, ayah: current.numberInSurah })
+              }
+              className="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-brand-gold hover:border-brand-gold/50"
+            >
+              {isBookmarked ? (
+                <BookmarkSolid className="w-4 h-4" />
+              ) : (
+                <BookmarkOutline className="w-4 h-4" />
+              )}
+            </button>
             {current && (
               <button
                 aria-label={t('shareAyah.shareButton', 'Share as image')}
@@ -1351,6 +1354,7 @@ export default function QuranReader() {
           initialTranslit={showTranslit}
         />
       )}
+      {gate.sheet}
     </div>
   );
 }

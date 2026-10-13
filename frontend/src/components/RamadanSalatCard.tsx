@@ -78,6 +78,7 @@ export default function RamadanSalatCard({
   excused,
   tarawih,
   onToggleTarawih,
+  canSave = () => true,
 }: {
   date: string;
   excused: boolean;
@@ -86,6 +87,8 @@ export default function RamadanSalatCard({
    * props outside Ramadan and the row simply doesn't render. */
   tarawih?: boolean;
   onToggleTarawih?: () => void;
+  /** False for a guest: the owning page shows its sign-in sheet instead (U10). */
+  canSave?: () => boolean;
 }) {
   const { t, i18n } = useTranslation();
   const { data: log } = useSalatLog(date);
@@ -113,6 +116,7 @@ export default function RamadanSalatCard({
     raw === 'prayed' || raw === 'mosque' ? 'completed' : ((raw as PrayerStatus) ?? 'pending');
 
   const setStatus = (prayer: PrayerId, status: PrayerStatus) => {
+    if (!canSave()) return;
     const current = log?.prayers?.[prayer];
     const next: PrayerStatus = normalise(current?.status) === status ? 'pending' : status;
     updatePrayer.mutate({
@@ -141,6 +145,7 @@ export default function RamadanSalatCard({
    * `date` here is always today (see the component doc comment above), so
    * unlike the full tracker this never needs a back-dating guard. */
   const toggleTag = (prayer: PrayerId, kind: 'tasbeeh' | 'ayatulKursi') => {
+    if (!canSave()) return;
     const current = log?.prayers?.[prayer];
     const was = kind === 'tasbeeh' ? (current?.tasbeeh ?? false) : (current?.ayatulKursi ?? false);
     const on = !was;
@@ -191,6 +196,7 @@ export default function RamadanSalatCard({
   };
 
   const toggleNaflDone = () => {
+    if (!canSave()) return;
     const completed = !nafl.completed;
     const types = completed ? (nafl.types ?? []) : [];
     updateNafl.mutate({ completed, types, rakat: suggestedRakat(types), date });
@@ -198,6 +204,7 @@ export default function RamadanSalatCard({
   };
 
   const toggleNaflType = (t: NaflType) => {
+    if (!canSave()) return;
     const cur = nafl.types ?? [];
     const next = cur.includes(t) ? cur.filter((x) => x !== t) : [...cur, t];
     updateNafl.mutate({
@@ -209,6 +216,7 @@ export default function RamadanSalatCard({
   };
 
   const stepRakat = (delta: number) => {
+    if (!canSave()) return;
     const next = Math.max(MIN_RAKAT, (nafl.rakat ?? suggestedRakat(nafl.types ?? [])) + delta * 2);
     updateNafl.mutate({ completed: nafl.completed, types: nafl.types ?? [], rakat: next, date });
   };

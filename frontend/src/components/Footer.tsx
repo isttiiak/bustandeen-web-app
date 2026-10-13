@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
+import { STATUS_URL } from '../utils/siteLinks.js';
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -51,6 +52,17 @@ export default function Footer() {
             >
               {t('footer.terms')}
             </Link>
+            <span className="text-white/60" aria-hidden="true">
+              •
+            </span>
+            <a
+              href={STATUS_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+            >
+              {t('footer.status')}
+            </a>
           </nav>
           <p className="text-xs sm:text-sm text-white/70">
             {t('footer.copyright', { year: new Date().getFullYear() })}
