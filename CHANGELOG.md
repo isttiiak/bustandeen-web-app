@@ -8,6 +8,12 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - **The Zikr "sign in to keep your counts" prompt opened under the navbar** (its top edge was hidden on a phone). Like the Fasting dialogs in v5.160.1, it now opens at the top level of the page. A new Zikr screen test checks that every full-screen Zikr overlay does this.
 
+## v5.160.1 - Fasting dialogs open above the navbar - 2026-10-13
+
+### Fixed
+
+- **The Fasting sign-in prompt, the makruh-day note and the fast type sheet opened under the navbar** (their top edge and close button were hidden on a phone). The page sits in a layer below the navbar, so these three now open at the top level of the page, like the app's other dialogs. A screen test checks that every full-screen Fasting overlay does this.
+
 ## v5.160.0 - Zikr days matched by date, the saved place's clock everywhere - 2026-10-13
 
 ### Fixed

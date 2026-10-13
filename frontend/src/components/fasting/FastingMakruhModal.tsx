@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { LightBulbIcon, XMarkIcon } from '@heroicons/react/24/outline';
@@ -26,7 +27,9 @@ export default function FastingMakruhModal({
   warnState,
 }: FastingMakruhModalProps) {
   const { t } = useTranslation();
-  return (
+  // Portaled: AnimatedBackground wraps the page in `relative z-10`, which kept
+  // this under the sticky navbar.
+  return createPortal(
     <>
       <AnimatePresence>
         {warnState && (
@@ -34,7 +37,7 @@ export default function FastingMakruhModal({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[70] p-4"
             onClick={(e) => {
               if (e.target === e.currentTarget) setWarnState(null);
             }}
@@ -115,6 +118,7 @@ export default function FastingMakruhModal({
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </>,
+    document.body
   );
 }
