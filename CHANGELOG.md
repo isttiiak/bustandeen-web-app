@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.9 - One-line promise on the landing page (BIZ-03) - 2026-10-13
+
+### Added
+
+- **The landing page now says in one line what sets Bustandeen apart**, right under the title, in English and Bangla (on `/`, `/bn` and the in-app landing): "Every verse and hadith shown with its source. Your data, never sold." It repeats only what the app already does (every Quran verse and hadith links to quran.com or sunnah.com with its number; no ads, no data sales), so it stays true. A landing test keeps it in the hero.
+
 ## v5.160.7 - Salat sign-in prompt in the Bustan Arch style - 2026-10-13
 
 ### Changed
