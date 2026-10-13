@@ -17,6 +17,7 @@ import reauthDialog from '../components/admin/AdminReauthDialog.tsx?raw';
 import passwordDialog from '../components/admin/AdminPasswordDialog.tsx?raw';
 import dailyActivity from '../components/admin/DailyActivityPanel.tsx?raw';
 import mfaStep from '../components/admin/AdminMfaStep.tsx?raw';
+import founderMailbox from '../components/FounderMailbox.tsx?raw';
 
 // T3.2 Admin pages (staff only, English only): one arch hero per screen via
 // AdminHero, shared card/button classes, SVG icons, readable ink (no ink
@@ -44,6 +45,7 @@ const FILES: Record<string, string> = {
   AdminPasswordDialog: passwordDialog,
   DailyActivityPanel: dailyActivity,
   AdminMfaStep: mfaStep,
+  FounderMailbox: founderMailbox,
 };
 const SCREENS: Record<string, string> = {
   AdminHome: home,
