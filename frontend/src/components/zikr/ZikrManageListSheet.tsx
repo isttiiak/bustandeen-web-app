@@ -9,6 +9,7 @@ import {
   zikrDisplayName,
 } from '../../utils/zikrLibrary.js';
 import { PlusIcon, XMarkIcon, TrashIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
+import { BTN_ROW, BTN_ROW_DANGER, BTN_SECONDARY, DIALOG } from '../bustanStyles.js';
 
 export interface ZikrManageListSheetProps {
   setConfirmDelete: React.Dispatch<React.SetStateAction<string | null>>;
@@ -47,20 +48,24 @@ export default function ZikrManageListSheet({
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 40, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25 }}
-                className="bg-brand-surface rounded-card p-6 w-full max-w-md shadow-elev-3 border border-brand-border max-h-[80vh] flex flex-col"
+                className={`${DIALOG} p-6 w-full max-w-md max-h-[80vh] flex flex-col`}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="zikr-manage-title"
               >
                 <div className="flex items-center justify-between mb-1">
-                  <h3 className="text-xl font-bold text-brand-emerald">
+                  <h3 id="zikr-manage-title" className="font-display text-xl font-bold text-white">
                     {t('zikr.myZikrList', 'My zikr list')}
                   </h3>
                   <button
                     onClick={() => setShowManage(false)}
-                    className="p-1.5 rounded-lg text-white/40 hover:text-white hover:bg-white/10"
+                    aria-label={t('common.close')}
+                    className="w-11 h-11 -mr-2 grid place-items-center rounded-control text-white/75 hover:text-white hover:bg-brand-surface"
                   >
-                    <XMarkIcon className="w-5 h-5" />
+                    <XMarkIcon className="w-5 h-5" aria-hidden="true" />
                   </button>
                 </div>
-                <p className="text-white/40 text-xs mb-4">
+                <p className="text-white/75 text-xs leading-relaxed mb-4">
                   {t(
                     'zikr.manageNote',
                     'Custom zikr can be edited with the pencil. Renaming keeps all your counts. Removing only takes it out of your dropdown; saved counts stay in analytics.'
@@ -68,7 +73,7 @@ export default function ZikrManageListSheet({
                 </p>
                 <div className="space-y-1.5 overflow-y-auto pr-1">
                   {types.length === 0 && (
-                    <p className="text-white/40 text-sm text-center py-6">
+                    <p className="text-white/70 text-sm text-center py-6">
                       {t('zikr.emptyList', 'Your list is empty. Add one with ＋.')}
                     </p>
                   )}
@@ -80,9 +85,9 @@ export default function ZikrManageListSheet({
                     return (
                       <div
                         key={typ}
-                        className="flex items-center gap-2 p-2.5 rounded-control border border-brand-border bg-brand-deep/50"
+                        className="flex items-center gap-2 pl-3 pr-1 py-1 rounded-control border border-brand-border bg-brand-surface/50"
                       >
-                        <span className="flex-1 min-w-0 truncate text-white/80 text-sm font-semibold">
+                        <span className="flex-1 min-w-0 truncate text-white text-sm font-semibold">
                           {zikrDisplayName(typ, i18n.language)}
                         </span>
                         {isCustom && (
@@ -92,9 +97,10 @@ export default function ZikrManageListSheet({
                               setEditZikr(typ);
                             }}
                             aria-label={t('zikr.editAriaLabel', 'Edit {{name}}', { name: typ })}
-                            className="btn btn-xs btn-ghost text-brand-emerald/70 hover:text-brand-emerald hover:bg-brand-emerald/10 gap-1 shrink-0"
+                            className={BTN_ROW}
                           >
-                            <PencilSquareIcon className="w-3.5 h-3.5" /> {t('zikr.editBtn', 'Edit')}
+                            <PencilSquareIcon className="w-3.5 h-3.5" aria-hidden="true" />{' '}
+                            {t('zikr.editBtn', 'Edit')}
                           </button>
                         )}
                         {locked ? (
@@ -103,7 +109,7 @@ export default function ZikrManageListSheet({
                               'zikr.lockedTitle',
                               'Your salat tracker adds counts to this dhikr, so it stays in your list.'
                             )}
-                            className="shrink-0 flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-semibold text-brand-gold/70 bg-brand-gold/10 border border-brand-gold/20"
+                            className="shrink-0 flex items-center gap-1 mr-1.5 px-2 py-1 rounded-control text-[11px] font-semibold text-brand-gold bg-brand-gold/10 border border-brand-gold/20"
                           >
                             {t('zikr.alwaysOn', 'Always on')}
                           </span>
@@ -111,9 +117,10 @@ export default function ZikrManageListSheet({
                           <button
                             onClick={() => setConfirmDelete(typ)}
                             aria-label={t('zikr.removeAriaLabel', 'Remove {{name}}', { name: typ })}
-                            className="btn btn-xs btn-ghost text-red-400/60 hover:text-red-400 hover:bg-red-500/10 gap-1 shrink-0"
+                            className={BTN_ROW_DANGER}
                           >
-                            <TrashIcon className="w-3.5 h-3.5" /> {t('zikr.removeBtn', 'Remove')}
+                            <TrashIcon className="w-3.5 h-3.5" aria-hidden="true" />{' '}
+                            {t('zikr.removeBtn', 'Remove')}
                           </button>
                         )}
                       </div>
@@ -125,9 +132,10 @@ export default function ZikrManageListSheet({
                     setShowManage(false);
                     setShowAddCustom(true);
                   }}
-                  className="btn btn-sm mt-4 bg-brand-emerald/15 border border-brand-emerald/30 text-brand-emerald hover:bg-brand-emerald/25 gap-1.5"
+                  className={`${BTN_SECONDARY} mt-4`}
                 >
-                  <PlusIcon className="w-4 h-4" /> {t('zikr.addNewZikr', 'Add a new zikr')}
+                  <PlusIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />{' '}
+                  {t('zikr.addNewZikr', 'Add a new zikr')}
                 </button>
               </motion.div>
             </motion.div>

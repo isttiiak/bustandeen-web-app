@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.5 - Zikr dialogs in the Bustan Arch style, reset confirm readable in dark - 2026-10-13
+
+### Fixed
+
+- **The "Reset counter?" confirm's note was invisible in the dark theme** (white text on the white confirm card). It is now dark text, like the title.
+
+### Changed
+
+- **Zikr dialogs and controls use the shared Bustan styles in both themes**: the sign-in prompt, "Set starting count", "My zikr list", the auto-play Start/Stop buttons and the reset confirm (they still used the old buttons and inputs). In the sign-in prompt, "Keep counting" now comes before "Leave without saving"; in "Set starting count", Cancel sits on the left like the app's other dialogs. Every button is at least 44 px tall, "My zikr list" has a labelled close button, and the three dialogs are announced as dialogs with their titles. The Zikr screen test checks all of this.
+
 ## v5.160.2 - Zikr sign-in prompt opens above the navbar - 2026-10-13
 
 ### Fixed

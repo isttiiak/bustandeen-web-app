@@ -2,6 +2,7 @@ import React from 'react';
 import { createPortal } from 'react-dom';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { BTN_PRIMARY, BTN_SECONDARY, DIALOG } from '../bustanStyles.js';
 
 export interface ZikrSetCountModalProps {
   setCountValue: string;
@@ -38,12 +39,18 @@ export default function ZikrSetCountModal({
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: 40, opacity: 0 }}
                 transition={{ type: 'spring', damping: 25 }}
-                className="bg-brand-surface rounded-card p-6 w-full max-w-xs shadow-elev-3 border border-brand-border"
+                className={`${DIALOG} p-6 w-full max-w-xs`}
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="zikr-set-count-title"
               >
-                <h3 className="text-xl font-bold text-brand-emerald mb-1">
+                <h3
+                  id="zikr-set-count-title"
+                  className="font-display text-xl font-bold text-white mb-1"
+                >
                   {t('zikr.setCountTitle', 'Set starting count')}
                 </h3>
-                <p className="text-white/40 text-xs mb-4">
+                <p className="text-white/75 text-xs leading-relaxed mb-4">
                   {t(
                     'zikr.setCountDesc',
                     'Jump straight to a number: start from 33, 99, or wherever you left off.'
@@ -59,19 +66,20 @@ export default function ZikrSetCountModal({
                     if (e.key === 'Enter') submitSetCount();
                   }}
                   placeholder={t('zikr.setCountPlaceholder', 'Enter a number')}
-                  className="input input-bordered w-full bg-brand-deep border-brand-border text-white focus:border-brand-emerald text-lg text-center"
+                  aria-labelledby="zikr-set-count-title"
+                  className="w-full rounded-control border border-brand-border bg-brand-void text-white focus:border-brand-emerald focus:outline-none px-3 py-2.5 text-lg text-center"
                   // eslint-disable-next-line jsx-a11y-x/no-autofocus -- the dialog's only field; moving focus into a dialog is expected
                   autoFocus
                 />
                 <div className="flex gap-2 mt-4">
                   <button
-                    onClick={submitSetCount}
-                    className="btn flex-1 bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-90 border-0 text-on-color"
+                    onClick={() => setShowSetCount(false)}
+                    className={`${BTN_SECONDARY} flex-1`}
                   >
-                    {t('zikr.setCountBtn', 'Set')}
-                  </button>
-                  <button onClick={() => setShowSetCount(false)} className="btn btn-ghost flex-1">
                     {t('common.cancel')}
+                  </button>
+                  <button onClick={submitSetCount} className={`${BTN_PRIMARY} flex-1`}>
+                    {t('zikr.setCountBtn', 'Set')}
                   </button>
                 </div>
               </motion.div>

@@ -373,7 +373,9 @@ export default function ZikrCounter() {
           <p className="font-semibold text-ink-fixed text-sm">
             {t('zikr.resetConfirmTitle', { name: zikrDisplayName(selected, i18n.language) })}
             <br />
-            <span className="text-white text-xs">{t('zikr.resetConfirmNote')}</span>
+            <span className="text-ink-fixed/75 text-xs font-normal">
+              {t('zikr.resetConfirmNote')}
+            </span>
           </p>
           <div className="flex gap-2">
             <button
@@ -385,11 +387,14 @@ export default function ZikrCounter() {
                   duration: 2000,
                 });
               }}
-              className="btn btn-sm bg-red-500 hover:bg-red-600 text-on-color border-0"
+              className="btn-solid inline-flex items-center justify-center min-h-[44px] rounded-control px-4 text-sm font-bold text-on-color bg-red-600 hover:bg-red-700 transition-colors"
             >
               {t('zikr.resetBtn')}
             </button>
-            <button onClick={() => toast.dismiss(toastObj.id)} className="btn btn-sm btn-ghost">
+            <button
+              onClick={() => toast.dismiss(toastObj.id)}
+              className="inline-flex items-center justify-center min-h-[44px] rounded-control px-4 text-sm font-bold text-ink-fixed border border-ink-fixed/20 hover:bg-ink-fixed/5 transition-colors"
+            >
               {t('common.cancel')}
             </button>
           </div>
