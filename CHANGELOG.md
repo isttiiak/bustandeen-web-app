@@ -8,6 +8,12 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - **Admin: the founder mailbox on the compose page** now uses the same cards, buttons, status pills, filter chips and reply box as the Feedback inbox, in both themes (it still used the old small buttons and faint text). Its text is readable (no ink below 70%), the filter chips say which one is on, and the reply box has a label. It is now part of the admin screens test.
 
+## v5.160.4 - Sign-out confirm in the Bustan Arch style - 2026-10-13
+
+### Changed
+
+- **The "Sign out?" confirm** now uses the shared Bustan card and buttons in both themes (it still used the old card and a small red button). Signing out is not destructive, so the confirm button is the usual sage one, and Cancel sits beside it at full height. The dialog is now announced as a dialog with its title. A navbar test checks it.
+
 ## v5.160.3 - The "page not found" screen in the Bustan Arch style - 2026-10-13
 
 ### Changed

@@ -8,6 +8,7 @@ import { useZikrStore } from '../store/useZikrStore.js';
 import { useUiStore } from '../store/useUiStore.js';
 import ThemeToggle from './ThemeToggle.js';
 import ShareAppSheet from './ShareAppSheet.js';
+import { BTN_PRIMARY, BTN_SECONDARY, CARD } from './bustanStyles.js';
 import {
   Cog6ToothIcon,
   UserCircleIcon,
@@ -491,36 +492,38 @@ export default function Navbar() {
 
       {/* ── Sign out confirmation ─────────────────────────────────────────── */}
       {confirmLogout && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="card bg-brand-surface border border-brand-border shadow-2xl w-full max-w-sm">
-            <div className="card-body gap-4 p-6">
-              <h3 className="text-lg font-black text-brand-emerald">{t('nav.signOutConfirm')}</h3>
-              <p className="text-sm text-white/60">{t('nav.signOutMsg')}</p>
-              <div className="flex gap-3 justify-end">
-                <button
-                  className="btn btn-ghost btn-sm text-white/60"
-                  onClick={() => setConfirmLogout(false)}
-                >
-                  {t('common.cancel')}
-                </button>
-                <button
-                  className="btn btn-sm bg-red-500 hover:bg-red-600 text-on-color border-0"
-                  onClick={async () => {
-                    const { auth, signOut } = await loadFirebase();
-                    await signOut(auth);
-                    localStorage.removeItem(SESSION_MARKER);
-                    setUser(null);
-                    localStorage.removeItem('bustandeen_user');
-                    localStorage.removeItem('bustandeen_idToken');
-                    sessionStorage.removeItem('bustandeen_redirect');
-                    resetAll();
-                    setConfirmLogout(false);
-                    navigate('/', { replace: true });
-                  }}
-                >
-                  {t('nav.signOut')}
-                </button>
-              </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+          <div
+            className={`${CARD} w-full max-w-sm p-5`}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="sign-out-title"
+          >
+            <h3 id="sign-out-title" className="font-display text-white font-bold text-lg">
+              {t('nav.signOutConfirm')}
+            </h3>
+            <p className="text-white/75 text-sm leading-relaxed mt-1">{t('nav.signOutMsg')}</p>
+            <div className="flex gap-2 mt-4">
+              <button className={`${BTN_SECONDARY} flex-1`} onClick={() => setConfirmLogout(false)}>
+                {t('common.cancel')}
+              </button>
+              <button
+                className={`${BTN_PRIMARY} flex-1`}
+                onClick={async () => {
+                  const { auth, signOut } = await loadFirebase();
+                  await signOut(auth);
+                  localStorage.removeItem(SESSION_MARKER);
+                  setUser(null);
+                  localStorage.removeItem('bustandeen_user');
+                  localStorage.removeItem('bustandeen_idToken');
+                  sessionStorage.removeItem('bustandeen_redirect');
+                  resetAll();
+                  setConfirmLogout(false);
+                  navigate('/', { replace: true });
+                }}
+              >
+                {t('nav.signOut')}
+              </button>
             </div>
           </div>
         </div>
