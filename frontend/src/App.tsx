@@ -276,14 +276,21 @@ export default function App() {
         return;
       }
       if (!u) {
+        // Only a session ending wipes this device's zikr counts. A guest who
+        // never signed in here keeps their taps (U10: they carry through
+        // sign-in): Firebase reports "no user" on every guest load and when
+        // a sign-in page loads it, which used to clear them.
+        const endingSession = hasSessionHint() || !!useAuthStore.getState().user;
         localStorage.removeItem(SESSION_MARKER);
         setUser(null);
         stopPrefsSync();
-        resetAll();
-        // resetAll() only queues a debounced (400ms) localStorage write —
-        // force it through immediately so a fast re-sign-in on the same
-        // device can't hydrate against the outgoing account's stale blob.
-        flushZikrLocalPersistence();
+        if (endingSession) {
+          resetAll();
+          // resetAll() only queues a debounced (400ms) localStorage write —
+          // force it through immediately so a fast re-sign-in on the same
+          // device can't hydrate against the outgoing account's stale blob.
+          flushZikrLocalPersistence();
+        }
         clearSalatOutbox();
         clearSyncOutbox();
         localStorage.removeItem('bustandeen_user');

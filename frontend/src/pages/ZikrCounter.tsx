@@ -44,7 +44,8 @@ import {
 import { LeafIcon, TasbihIcon } from '../components/icons/IslamicIcons.js';
 import { DEFAULT_MEANINGS } from '../components/zikr/zikrCounterData.js';
 import ZikrManageListSheet from '../components/zikr/ZikrManageListSheet.js';
-import ZikrGuestDialog from '../components/zikr/ZikrGuestDialog.js';
+import SignInSheet from '../components/SignInSheet.js';
+import ZikrGuestNote from '../components/zikr/ZikrGuestNote.js';
 import ZikrAddCustomModal from '../components/zikr/ZikrAddCustomModal.js';
 import ZikrSetCountModal from '../components/zikr/ZikrSetCountModal.js';
 import ZikrFocusOverlay from '../components/zikr/ZikrFocusOverlay.js';
@@ -482,9 +483,6 @@ export default function ZikrCounter() {
                 {
                   label: t('zikr.analytics'),
                   to: '/zikr/analytics',
-                  ...(!user && Object.values(pending ?? {}).reduce((a, b) => a + b, 0) > 0
-                    ? { onClick: () => setShowGuestDialog(true) }
-                    : {}),
                 },
               ]}
             />
@@ -770,6 +768,12 @@ export default function ZikrCounter() {
           </motion.button>
         </div>
 
+        {/* U10: a guest's counts stay on this device (and through sign-in on
+            this browser). Below Count, so it never moves the button. */}
+        {!user && pendingTotal > 0 && (
+          <ZikrGuestNote count={pendingTotal} onSave={() => setShowGuestDialog(true)} />
+        )}
+
         {/* ── Auto-play controls ── */}
         <ZikrAutoPlayControls
           audio={audio}
@@ -843,12 +847,11 @@ export default function ZikrCounter() {
         showAddCustom={showAddCustom}
       />
 
-      {/* ── Guest data-loss dialog ── */}
-      <ZikrGuestDialog
-        navigate={navigate}
-        pending={pending}
-        setShowGuestDialog={setShowGuestDialog}
-        showGuestDialog={showGuestDialog}
+      {/* ── Guest sign-in sheet (U10), from the on-device note ── */}
+      <SignInSheet
+        open={showGuestDialog}
+        onClose={() => setShowGuestDialog(false)}
+        feature="zikr"
       />
 
       {/* ── Manage my zikr list (remove) — portaled above the navbar ── */}

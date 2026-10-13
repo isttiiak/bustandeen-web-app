@@ -32,8 +32,7 @@ test.beforeEach(async ({ context }) => {
 async function demoSettings(page: Page, at = '2027-02-08T10:00:00+06:00') {
   // Default: Umm al-Qura's 1 Ramaḍān 1448, Mon 8 Feb 2027 (morning, before Maghrib)
   await page.clock.setFixedTime(new Date(at));
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();
   await page.evaluate(() => {
     window.history.pushState({}, '', '/settings');
@@ -82,8 +81,7 @@ test('a record that arrives after the first paint redraws Home without a reload'
     await route.fulfill({ json: { ok: true, records: [rec(5, '2026-10-13')] } });
   });
   await page.clock.setFixedTime(new Date('2026-10-12T10:00:00+06:00'));
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();
   await expect(page.getByText(/1 Jumādā al-Ūlā 1448/).first()).toBeVisible();
 

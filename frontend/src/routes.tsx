@@ -3,6 +3,7 @@ import { lazy } from 'react';
 import { Route, Routes } from 'react-router';
 import ZikrCounter from './pages/ZikrCounter.js';
 import NotFound from './pages/NotFound.js';
+import GuestFeaturePage from './components/GuestFeaturePage.js';
 import {
   AdminProtected,
   BanglaEntry,
@@ -267,7 +268,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route
         path="/friends"
         element={
-          <Protected>
+          <Protected guest={<GuestFeaturePage feature="friends" />}>
             <Friends />
           </Protected>
         }
@@ -275,7 +276,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route
         path="/cycle"
         element={
-          <Protected>
+          <Protected guest={<GuestFeaturePage feature="rayhanah" />}>
             <RayhanahCycle />
           </Protected>
         }

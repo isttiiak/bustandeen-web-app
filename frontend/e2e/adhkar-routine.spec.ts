@@ -13,8 +13,7 @@ async function demoHomeAt(page: Page, at: string) {
       JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
     );
   });
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 

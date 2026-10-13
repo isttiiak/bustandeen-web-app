@@ -25,15 +25,15 @@ describe('Zikr screen', () => {
     if (/fixed inset-0/.test(code)) expect(code).toMatch(/createPortal\(/);
   });
 
-  // T3.2 leftovers: the guest, set-count and manage dialogs, the auto-play
+  // T3.2 leftovers: the set-count and manage dialogs, the guest note, the auto-play
   // controls and the reset confirm use the shared Bustan classes, not the old
   // daisyUI buttons and inputs.
   const T32 = [
     './ZikrCounter.tsx',
-    '../components/zikr/ZikrGuestDialog.tsx',
     '../components/zikr/ZikrSetCountModal.tsx',
     '../components/zikr/ZikrManageListSheet.tsx',
     '../components/zikr/ZikrAutoPlayControls.tsx',
+    '../components/zikr/ZikrGuestNote.tsx',
   ];
   it.each(T32)('%s has no old daisyUI button or input', (path) => {
     const code = files[path] ?? '';
@@ -41,7 +41,7 @@ describe('Zikr screen', () => {
     expect(code).not.toMatch(/className="btn[\s"]|\bbtn-(sm|xs|lg|ghost)\b|\binput-bordered\b/);
   });
 
-  it.each(T32.slice(1, 4))('%s is a labelled dialog on the shared panel', (path) => {
+  it.each(T32.slice(1, 3))('%s is a labelled dialog on the shared panel', (path) => {
     const code = files[path] ?? '';
     expect(code).toMatch(/\$\{DIALOG\}/);
     expect(code).toMatch(/role="dialog"[\s\S]*aria-labelledby=/);

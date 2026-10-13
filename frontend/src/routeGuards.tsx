@@ -1,9 +1,10 @@
 // Route guards and the root route (audit T2.4: moved out of App.tsx unchanged).
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
-import { EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
-import { BTN_PRIMARY, BTN_SECONDARY } from './components/bustanStyles.js';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
+import { EnvelopeIcon } from '@heroicons/react/24/outline';
+import { BTN_SECONDARY } from './components/bustanStyles.js';
+import PreviewGate from './components/PreviewGate.js';
 import { useAuthStore } from './store/useAuthStore.js';
 import { useAdminStore } from './store/useAdminStore.js';
 import { useVerificationEmail } from './hooks/useAuthEmails.js';
@@ -130,11 +131,10 @@ interface ProtectedProps {
   children: React.ReactNode;
 }
 
-export const Protected = ({ children }: ProtectedProps) => {
-  const { t } = useTranslation();
+/** A page for signed-in users. A guest gets `guest` (a view-only version of
+ *  the page, U10) or the PreviewGate: the reason for an account, never a lock. */
+export const Protected = ({ children, guest }: ProtectedProps & { guest?: React.ReactNode }) => {
   const { user, authLoading } = useAuthStore();
-  const location = useLocation();
-  const nav = useNavigate();
   const hadSession = !!localStorage.getItem('bustandeen_idToken');
   const [grace, setGrace] = useState(hadSession && !user);
   useEffect(() => {
@@ -147,7 +147,7 @@ export const Protected = ({ children }: ProtectedProps) => {
     // silently refresh it over the network before onAuthStateChanged confirms
     // them — on a slow/high-latency connection (e.g. freshly relocated,
     // patchy wifi) that can take noticeably longer than a couple of seconds.
-    // Too short a grace window here was flashing "Sign in required" at
+    // Too short a grace window here was flashing the sign-in gate at
     // legitimate users mid-refresh. 6s trades a slightly longer spinner for
     // not kicking a signed-in user back to the login screen.
     const t = setTimeout(() => setGrace(false), 6000);
@@ -157,47 +157,7 @@ export const Protected = ({ children }: ProtectedProps) => {
   // these early returns come after.
   if (authLoading) return null;
   if (grace) return <RouteFallback />;
-  if (!user) {
-    const redirectTarget = location.pathname + location.search;
-    return (
-      <div className="min-h-[60vh] flex items-center justify-center px-4">
-        <div className="text-center space-y-5 max-w-sm w-full">
-          <div className="mx-auto w-16 h-16 rounded-full grid place-items-center border border-brand-border bg-brand-deep shadow-elev-1">
-            <LockClosedIcon className="w-8 h-8 text-brand-gold" aria-hidden="true" />
-          </div>
-          <h2 className="font-display text-2xl font-bold text-white">
-            {t('app.signInRequired', 'Sign in required')}
-          </h2>
-          <p className="text-white/70 text-sm leading-relaxed">
-            {t(
-              'app.signInRequiredDesc',
-              'This page is only available when you are signed in. Create a free account to keep your progress and see your analytics.'
-            )}
-          </p>
-          <div className="flex flex-col gap-3">
-            <button
-              className={`${BTN_PRIMARY} w-full`}
-              onClick={() => {
-                sessionStorage.setItem('bustandeen_redirect', redirectTarget);
-                nav('/login');
-              }}
-            >
-              {t('app.signIn', 'Sign In')}
-            </button>
-            <button
-              className={`${BTN_SECONDARY} w-full`}
-              onClick={() => {
-                sessionStorage.setItem('bustandeen_redirect', redirectTarget);
-                nav('/signup');
-              }}
-            >
-              {t('app.createFreeAccount', 'Create Free Account')}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (!user) return <>{guest ?? <PreviewGate />}</>;
   if (user.emailVerified === false) {
     return <VerifyEmailGate email={user.email} />;
   }

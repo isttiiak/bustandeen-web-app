@@ -41,16 +41,15 @@ const BODY = 'text-white/80 text-sm leading-relaxed';
 const LINK_CARD = `${CARD} block p-6 h-full transition-colors hover:border-brand-emerald/40`;
 const MORE = 'inline-flex items-center gap-1 mt-3 text-xs font-semibold';
 
-// "Try it" on a feature that needs an account opens it inside the demo
-// (U9: it used to land on "Sign in required"); the counter and prayer
-// times work for guests as they are.
+// "Try it" opens the real page (U10, "explore freely, sign in to save"):
+// a guest looks around and is asked to sign in only when saving a record.
 const FEATURES = [
-  { key: 'Salat', href: '/demo/brother?to=/salat', Icon: MosqueIcon },
+  { key: 'Salat', href: '/salat', Icon: MosqueIcon },
   { key: 'Zikr', href: '/zikr', Icon: TasbihIcon },
-  { key: 'Quran', href: '/demo/brother?to=/quran', Icon: BookOpenIcon },
-  { key: 'Fasting', href: '/demo/brother?to=/fasting', Icon: CrescentIcon },
+  { key: 'Quran', href: '/quran/browse', Icon: BookOpenIcon },
+  { key: 'Fasting', href: '/fasting', Icon: CrescentIcon },
   { key: 'Prayer', href: '/prayer-times', Icon: ClockIcon },
-  { key: 'Friends', href: '/demo/brother?to=/friends', Icon: UserGroupIcon },
+  { key: 'Friends', href: '/friends', Icon: UserGroupIcon },
 ] as const;
 
 const PRIVACY = [
@@ -88,19 +87,10 @@ export default function LandingBody({
           <A href="/signup" className={`${BTN_PRIMARY} ${BIG}`}>
             {t('landing.cta', 'Begin your journey, free')}
           </A>
-          <A href="/zikr" className={`${BTN_SECONDARY} ${BIG}`}>
-            {t('landing.ctaCounter', 'Try the counter first')}
-          </A>
-        </div>
-        {/* Demo mode: /demo/:as (an app route) enters it and opens Home. */}
-        <div className="mt-3 flex flex-wrap justify-center gap-2">
-          <A href="/demo/brother" className={BTN_SECONDARY}>
-            <MosqueIcon className="w-4 h-4 text-brand-emerald" />
-            {t('landing.exploreAsBrother', 'Explore as Brother')}
-          </A>
-          <A href="/demo/sister" className={BTN_SECONDARY}>
-            <FlowerIcon className="w-4 h-4 text-brand-pink" />
-            {t('landing.exploreAsSister', 'Explore as Sister')}
+          {/* U10: the app itself, open to explore (the demo now lives behind
+              "See an example" on the pages that need an account). */}
+          <A href="/salat" className={`${BTN_SECONDARY} ${BIG}`}>
+            {t('landing.ctaExplore', 'Explore the app first')}
           </A>
         </div>
         <p className="text-white/70 text-xs mt-5">{t('landing.noAds', '')}</p>
@@ -122,7 +112,7 @@ export default function LandingBody({
         ))}
       </section>
 
-      <A href="/demo/sister?to=/cycle" className={`${LINK_CARD} sm:p-10 sm:flex items-start gap-8`}>
+      <A href="/cycle" className={`${LINK_CARD} sm:p-10 sm:flex items-start gap-8`}>
         <div className="w-16 h-16 shrink-0 rounded-full grid place-items-center bg-brand-pink/10 border border-brand-pink/30 text-brand-pink mb-4 sm:mb-0">
           <FlowerIcon className="w-8 h-8" />
         </div>

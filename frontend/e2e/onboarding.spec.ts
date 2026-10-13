@@ -6,8 +6,7 @@ import { expect, test, type Page } from '@playwright/test';
 // usual Ḥanafī ʿAṣr + Karachi method are preselected.
 
 async function demoHome(page: Page) {
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 
@@ -160,8 +159,7 @@ test('Skip setup returns Home and nothing is chosen for the user', async ({ page
 
 test('the setup is in Bangla when the app is', async ({ page, context }) => {
   await context.addInitScript(() => localStorage.setItem('bustandeen_lang', 'bn'));
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await page.goto('/demo/brother');
   await expect(page.getByText('ডেমো মোড')).toBeVisible();
   await setupCard(page).getByRole('link', { name: 'সাজিয়ে নিন' }).click();
   await expect(page.getByRole('heading', { name: 'আপনি কোথায় সালাত আদায় করেন?' })).toBeVisible();

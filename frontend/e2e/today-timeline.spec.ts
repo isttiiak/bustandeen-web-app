@@ -14,8 +14,7 @@ async function demoHomeAt(page: Page, at: string, dayStartMode?: string) {
     );
     if (mode) localStorage.setItem('bustandeen_day_start_mode', mode);
   }, dayStartMode);
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 

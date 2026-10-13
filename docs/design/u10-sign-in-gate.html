@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sign-in Gate Redesign</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* U10 prototype: "explore freely, sign in to save". Interactive static mock,
+         not app code. Colours = the app's --c-* tokens (dark + sage-paper light). */
+      :root {
+        --page: #2b2a26;
+        --pageInk: #e8e2d4;
+      }
+      @media (prefers-color-scheme: light) {
+        :root:not([data-theme='dark']) {
+          --page: #d9dccd;
+          --pageInk: #1f2418;
+        }
+      }
+      :root[data-theme='light'] {
+        --page: #d9dccd;
+        --pageInk: #1f2418;
+      }
+      .t-dark {
+        --void: 14 13 10;
+        --deep: 26 24 18;
+        --surface: 33 31 22;
+        --border: 58 52 37;
+        --emerald: 122 158 110;
+        --emerald-dim: 90 122 80;
+        --gold: 201 169 110;
+        --pink: 212 131 158;
+        --ink: 255 255 255;
+        --shade: 0 0 0;
+        --hero: 42 38 23;
+      }
+      .t-light {
+        --void: 237 239 226;
+        --deep: 248 248 239;
+        --surface: 226 231 211;
+        --border: 198 206 176;
+        --emerald: 54 81 46;
+        --emerald-dim: 58 86 50;
+        --gold: 95 74 24;
+        --pink: 132 57 90;
+        --ink: 31 36 24;
+        --shade: 120 135 100;
+        --hero: 217 227 198;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--pageInk);
+        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      }
+      header.doc,
+      .notes {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 20px 16px 4px;
+      }
+      h1,
+      h2 {
+        font-family: 'El Messiri', serif;
+        margin: 0 0 6px;
+      }
+      h1 {
+        font-size: 26px;
+      }
+      .notes h2 {
+        font-size: 20px;
+        margin-top: 18px;
+      }
+      header.doc p,
+      .notes li,
+      .notes p {
+        font-size: 13px;
+        line-height: 1.55;
+        opacity: 0.85;
+        max-width: 820px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        margin: 12px 0 4px;
+        flex-wrap: wrap;
+      }
+      .toolbar button {
+        font:
+          600 13px 'Plus Jakarta Sans',
+          sans-serif;
+        min-height: 40px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1px solid currentColor;
+        background: transparent;
+        color: var(--pageInk);
+        opacity: 0.6;
+        cursor: pointer;
+      }
+      .toolbar button[aria-pressed='true'] {
+        opacity: 1;
+        background: rgba(122, 158, 110, 0.18);
+      }
+      .grid {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 12px 16px 24px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 22px;
+      }
+      figure {
+        margin: 0;
+      }
+      figcaption {
+        font-size: 13px;
+        line-height: 1.45;
+        margin-bottom: 8px;
+        opacity: 0.9;
+      }
+      figcaption b {
+        font-family: 'El Messiri', serif;
+        font-size: 15px;
+        display: block;
+      }
+
+      /* ---------- phone ---------- */
+      .phone {
+        position: relative;
+        width: 100%;
+        max-width: 340px;
+        height: 640px;
+        border-radius: 28px;
+        overflow: hidden;
+        background: rgb(var(--void));
+        color: rgb(var(--ink));
+        border: 1px solid rgb(var(--border));
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+        display: flex;
+        flex-direction: column;
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid rgb(var(--border));
+        background: rgb(var(--deep));
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font:
+          700 16px 'El Messiri',
+          serif;
+      }
+      .brand svg {
+        width: 18px;
+        height: 18px;
+        color: rgb(var(--emerald));
+      }
+      .nav .signin {
+        font-size: 12px;
+        font-weight: 700;
+        min-height: 36px;
+        padding: 0 12px;
+        border-radius: 12px;
+        border: 1px solid rgb(var(--emerald) / 0.6);
+        color: rgb(var(--emerald));
+        background: transparent;
+      }
+      .body {
+        flex: 1;
+        overflow: auto;
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .card {
+        border-radius: 20px;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--deep));
+        padding: 14px;
+        box-shadow: 0 4px 14px rgb(var(--shade) / 0.18);
+      }
+      .arch {
+        border-radius: 120px 120px 20px 20px;
+        background: rgb(var(--hero));
+        border: 1px solid rgb(var(--border));
+        padding: 22px 16px 16px;
+        text-align: center;
+      }
+      .arch h3 {
+        font:
+          700 20px 'El Messiri',
+          serif;
+        margin: 0;
+      }
+      .muted {
+        color: rgb(var(--ink) / 0.7);
+        font-size: 12.5px;
+        line-height: 1.5;
+        margin: 4px 0 0;
+      }
+      .tiny {
+        font-size: 11px;
+        color: rgb(var(--ink) / 0.6);
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 9px 0;
+        border-bottom: 1px solid rgb(var(--border) / 0.7);
+        font-size: 13.5px;
+      }
+      .row:last-child {
+        border-bottom: 0;
+      }
+      .row .t {
+        font-size: 11px;
+        color: rgb(var(--ink) / 0.55);
+        margin-left: 6px;
+      }
+      .pill {
+        min-height: 36px;
+        min-width: 64px;
+        border-radius: 12px;
+        font:
+          700 12px 'Plus Jakarta Sans',
+          sans-serif;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--surface) / 0.6);
+        color: rgb(var(--ink) / 0.85);
+        cursor: pointer;
+      }
+      .pill:hover {
+        border-color: rgb(var(--emerald) / 0.6);
+      }
+      .btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        min-height: 44px;
+        border-radius: 12px;
+        font:
+          700 14px 'Plus Jakarta Sans',
+          sans-serif;
+        cursor: pointer;
+        border: 1px solid transparent;
+      }
+      .btn-primary {
+        background: rgb(var(--emerald-dim));
+        color: #fff;
+      }
+      .btn-secondary {
+        background: rgb(var(--deep));
+        border-color: rgb(var(--border));
+        color: rgb(var(--ink) / 0.85);
+      }
+      .btn-quiet {
+        background: transparent;
+        color: rgb(var(--ink) / 0.7);
+      }
+      .link {
+        color: rgb(var(--gold));
+        font-size: 12.5px;
+        font-weight: 700;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        background: none;
+        border: 0;
+        cursor: pointer;
+        min-height: 44px;
+      }
+      .icon-badge {
+        width: 52px;
+        height: 52px;
+        margin: 0 auto 10px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        background: rgb(var(--emerald) / 0.12);
+        border: 1px solid rgb(var(--emerald) / 0.4);
+        color: rgb(var(--emerald));
+      }
+      .icon-badge svg {
+        width: 26px;
+        height: 26px;
+      }
+      .icon-badge.pink {
+        background: rgb(var(--pink) / 0.12);
+        border-color: rgb(var(--pink) / 0.45);
+        color: rgb(var(--pink));
+      }
+      .icon-badge.gold {
+        background: rgb(var(--gold) / 0.12);
+        border-color: rgb(var(--gold) / 0.45);
+        color: rgb(var(--gold));
+      }
+      .stack {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 14px;
+      }
+
+      /* bottom sheet */
+      .scrim {
+        position: absolute;
+        inset: 0;
+        background: rgb(0 0 0 / 0.55);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s;
+      }
+      .sheet {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgb(var(--deep));
+        border-top: 1px solid rgb(var(--border));
+        border-radius: 22px 22px 0 0;
+        padding: 10px 16px 18px;
+        transform: translateY(105%);
+        transition: transform 0.25s ease;
+        text-align: center;
+      }
+      .open .scrim {
+        opacity: 1;
+        pointer-events: auto;
+      }
+      .open .sheet {
+        transform: translateY(0);
+      }
+      .grab {
+        width: 40px;
+        height: 4px;
+        border-radius: 4px;
+        background: rgb(var(--border));
+        margin: 0 auto 14px;
+      }
+      .sheet h3 {
+        font:
+          700 19px 'El Messiri',
+          serif;
+        margin: 0;
+      }
+
+      /* zikr */
+      .counter {
+        text-align: center;
+        padding: 22px 0 8px;
+      }
+      .counter .num {
+        font:
+          700 64px 'El Messiri',
+          serif;
+        line-height: 1;
+      }
+      .tap {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        margin: 14px auto 0;
+        display: grid;
+        place-items: center;
+        border: 2px solid rgb(var(--emerald) / 0.6);
+        background: rgb(var(--emerald) / 0.1);
+        color: rgb(var(--emerald));
+        font:
+          700 15px 'Plus Jakarta Sans',
+          sans-serif;
+        cursor: pointer;
+      }
+      .banner {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        border-radius: 12px;
+        padding: 10px 12px;
+        background: rgb(var(--gold) / 0.1);
+        border: 1px solid rgb(var(--gold) / 0.4);
+        font-size: 12.5px;
+        line-height: 1.4;
+      }
+      .banner.show {
+        display: flex;
+      }
+      .banner .grow {
+        flex: 1;
+      }
+      .banner button {
+        min-height: 36px;
+        padding: 0 10px;
+        border-radius: 10px;
+        border: 0;
+        background: rgb(var(--emerald-dim));
+        color: #fff;
+        font:
+          700 12px 'Plus Jakarta Sans',
+          sans-serif;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      /* analytics preview */
+      .preview {
+        position: relative;
+        border-radius: 16px;
+        border: 1px dashed rgb(var(--border));
+        padding: 14px 12px 10px;
+        background: rgb(var(--surface) / 0.4);
+      }
+      .preview .tag {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 99px;
+        background: rgb(var(--gold) / 0.15);
+        color: rgb(var(--gold));
+      }
+      .bars {
+        display: flex;
+        align-items: flex-end;
+        gap: 8px;
+        height: 90px;
+        margin-top: 8px;
+        opacity: 0.75;
+      }
+      .bars span {
+        flex: 1;
+        border-radius: 6px 6px 2px 2px;
+        background: rgb(var(--emerald) / 0.7);
+      }
+      .bars span.g {
+        background: rgb(var(--gold) / 0.7);
+      }
+      .days {
+        display: flex;
+        gap: 8px;
+        font-size: 10px;
+        color: rgb(var(--ink) / 0.5);
+        margin-top: 4px;
+      }
+      .days span {
+        flex: 1;
+        text-align: center;
+      }
+
+      /* view-only rows */
+      .feature {
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+        font-size: 13px;
+        line-height: 1.45;
+        padding: 8px 0;
+      }
+      .feature svg {
+        width: 18px;
+        height: 18px;
+        flex: none;
+        margin-top: 1px;
+        color: rgb(var(--emerald));
+      }
+      .pink .feature svg {
+        color: rgb(var(--pink));
+      }
+      .disabled-input {
+        border-radius: 12px;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--surface) / 0.4);
+        padding: 10px 12px;
+        font-size: 12.5px;
+        color: rgb(var(--ink) / 0.5);
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+      }
+
+      /* landing */
+      .land {
+        background: rgb(var(--void));
+      }
+      .land .arch {
+        padding-top: 30px;
+      }
+      .land h3 {
+        font-size: 22px;
+      }
+      .strike {
+        position: relative;
+        opacity: 0.5;
+      }
+      .strike::after {
+        content: '';
+        position: absolute;
+        left: 6%;
+        right: 6%;
+        top: 50%;
+        border-top: 2px solid rgb(248 113 113);
+      }
+      .trycards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .trycards div {
+        border-radius: 14px;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--deep));
+        padding: 10px;
+        font-size: 12px;
+      }
+      .trycards b {
+        display: block;
+        font-size: 13px;
+      }
+      .trycards em {
+        font-style: normal;
+        color: rgb(var(--emerald));
+        font-weight: 700;
+        font-size: 11px;
+      }
+      .divider {
+        font-size: 10.5px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgb(var(--ink) / 0.5);
+        margin: 4px 0 -4px;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="doc">
+      <h1>Explore freely, sign in to save</h1>
+      <p>
+        U10 prototype. Everything stays open to look at. Reading and reference (Quran, prayer times,
+        Qibla, Musafir, duas) never ask for anything. The first time someone saves a record, a calm
+        sheet explains why an account helps. No lock icons, no "required". Tap the buttons in the
+        frames: they work.
+      </p>
+      <div class="toolbar" role="group" aria-label="Theme">
+        <button type="button" data-theme-btn="dark" aria-pressed="true">Dark</button>
+        <button type="button" data-theme-btn="light" aria-pressed="false">
+          Light (sage paper)
+        </button>
+      </div>
+    </header>
+
+    <main class="grid" id="frames">
+      <!-- 1. Salat: sheet on first save -->
+      <figure>
+        <figcaption>
+          <b>1 · Salat: the sheet on the first tap</b>
+          The page is the real tracker. Tapping Done opens this sheet instead of saving. "Keep
+          exploring" closes it and changes nothing. Same sheet for Fasting and the Quran habit, with
+          their own title.
+        </figcaption>
+        <div class="phone t-dark" data-sheet-host>
+          <div class="nav">
+            <span class="brand"
+              ><svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2c4 3 7 7 7 11a7 7 0 0 1-14 0c0-4 3-8 7-11Zm0 4c-2.4 2.2-4 4.8-4 7a4 4 0 0 0 3 3.9V11h2v5.9A4 4 0 0 0 16 13c0-2.2-1.6-4.8-4-7Z"
+                /></svg
+              >Bustandeen</span
+            >
+            <button class="signin" type="button">Sign in</button>
+          </div>
+          <div class="body">
+            <div class="arch">
+              <h3>Today's prayers</h3>
+              <p class="muted">Tuesday · 2 Jumada al-Ula 1448</p>
+            </div>
+            <div class="card">
+              <div class="row">
+                <span>Fajr<span class="t">4:41</span></span
+                ><button class="pill" data-open-sheet>Done</button>
+              </div>
+              <div class="row">
+                <span>Dhuhr<span class="t">11:43</span></span
+                ><button class="pill" data-open-sheet>Done</button>
+              </div>
+              <div class="row">
+                <span>Asr<span class="t">3:05</span></span
+                ><button class="pill" data-open-sheet>Done</button>
+              </div>
+              <div class="row">
+                <span>Maghrib<span class="t">5:24</span></span
+                ><button class="pill" data-open-sheet>Done</button>
+              </div>
+              <div class="row">
+                <span>Isha<span class="t">6:38</span></span
+                ><button class="pill" data-open-sheet>Done</button>
+              </div>
+            </div>
+          </div>
+          <div class="scrim" data-close-sheet></div>
+          <div class="sheet" role="dialog" aria-label="Keep your prayer record">
+            <div class="grab"></div>
+            <div class="icon-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6L12 3Z" />
+                <path d="m8.8 12 2.3 2.3 4.2-4.6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </div>
+            <h3>Keep your prayer record</h3>
+            <p class="muted">
+              Your prayers, kaza and streaks are saved to your account, so they stay safe on every
+              device. It is free and takes a minute.
+            </p>
+            <div class="stack">
+              <button class="btn btn-primary" type="button">Create free account</button>
+              <button class="btn btn-secondary" type="button">Sign in</button>
+              <button class="btn btn-quiet" type="button" data-close-sheet>Keep exploring</button>
+            </div>
+          </div>
+        </div>
+      </figure>
+
+      <!-- 2. Zikr: never interrupt counting -->
+      <figure>
+        <figcaption>
+          <b>2 · Zikr: counting is never interrupted</b>
+          No sheet while counting. After the first tap a small note says the counts are only on this
+          device. They are kept through sign-in (same browser) and saved to the record then. Tap the
+          circle.
+        </figcaption>
+        <div class="phone t-dark">
+          <div class="nav">
+            <span class="brand"
+              ><svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2c4 3 7 7 7 11a7 7 0 0 1-14 0c0-4 3-8 7-11Zm0 4c-2.4 2.2-4 4.8-4 7a4 4 0 0 0 3 3.9V11h2v5.9A4 4 0 0 0 16 13c0-2.2-1.6-4.8-4-7Z"
+                /></svg
+              >Bustandeen</span
+            >
+            <button class="signin" type="button">Sign in</button>
+          </div>
+          <div class="body">
+            <div class="card counter">
+              <div class="tiny">SubhanAllah</div>
+              <div class="num" data-count>0</div>
+              <div class="tiny">of 33</div>
+              <button class="tap" type="button" data-tap>Tap</button>
+            </div>
+            <div class="banner" data-banner>
+              <span class="grow"><b data-count2>0</b> on this device, not in your record yet.</span>
+              <button type="button">Save them</button>
+            </div>
+          </div>
+        </div>
+      </figure>
+
+      <!-- 3. Analytics gate -->
+      <figure>
+        <figcaption>
+          <b>3 · Analytics: a preview, not a lock</b>
+          Replaces "Sign in required". A clearly marked example chart shows what they will get. "See
+          an example" opens the existing demo (option a), so demo moves from the landing page to
+          here.
+        </figcaption>
+        <div class="phone t-dark">
+          <div class="nav">
+            <span class="brand"
+              ><svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2c4 3 7 7 7 11a7 7 0 0 1-14 0c0-4 3-8 7-11Zm0 4c-2.4 2.2-4 4.8-4 7a4 4 0 0 0 3 3.9V11h2v5.9A4 4 0 0 0 16 13c0-2.2-1.6-4.8-4-7Z"
+                /></svg
+              >Bustandeen</span
+            >
+            <button class="signin" type="button">Sign in</button>
+          </div>
+          <div class="body">
+            <div class="card" style="text-align: center">
+              <div class="preview">
+                <span class="tag">Example</span>
+                <div class="tiny" style="text-align: left">Prayers on time, this week</div>
+                <div class="bars">
+                  <span style="height: 70%"></span><span style="height: 100%"></span
+                  ><span class="g" style="height: 55%"></span><span style="height: 85%"></span
+                  ><span style="height: 100%"></span><span class="g" style="height: 40%"></span
+                  ><span style="height: 90%"></span>
+                </div>
+                <div class="days">
+                  <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span
+                  ><span>F</span><span>S</span>
+                </div>
+              </div>
+              <h3
+                style="
+                  font:
+                    700 19px 'El Messiri',
+                    serif;
+                  margin: 16px 0 0;
+                "
+              >
+                See your journey take shape
+              </h3>
+              <p class="muted">
+                Analytics are built from your own record. Sign in and they start filling in from
+                your first day.
+              </p>
+              <div class="stack">
+                <button class="btn btn-primary" type="button">Create free account</button>
+                <button class="btn btn-secondary" type="button">Sign in</button>
+              </div>
+              <button class="link" type="button">See an example</button>
+            </div>
+          </div>
+        </div>
+      </figure>
+
+      <!-- 4. Rayhanah view only -->
+      <figure>
+        <figcaption>
+          <b>4 · Rayhanah: see it, start it after sign-in</b>
+          What it does is fully visible. Every input looks real but opens the sign-in sheet with a
+          privacy-first reason. Nothing is entered or kept for a guest.
+        </figcaption>
+        <div class="phone t-dark" data-sheet-host>
+          <div class="nav">
+            <span class="brand"
+              ><svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2c4 3 7 7 7 11a7 7 0 0 1-14 0c0-4 3-8 7-11Zm0 4c-2.4 2.2-4 4.8-4 7a4 4 0 0 0 3 3.9V11h2v5.9A4 4 0 0 0 16 13c0-2.2-1.6-4.8-4-7Z"
+                /></svg
+              >Bustandeen</span
+            >
+            <button class="signin" type="button">Sign in</button>
+          </div>
+          <div class="body pink">
+            <div class="arch">
+              <h3>Rayhanah</h3>
+              <p class="muted">Your cycle, your worship, at peace.</p>
+            </div>
+            <div class="card">
+              <div class="feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path
+                    d="m5 12 4.5 4.5L19 7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  /></svg
+                >Salat is excused on your days, so no kaza is added.
+              </div>
+              <div class="feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path
+                    d="m5 12 4.5 4.5L19 7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  /></svg
+                >Missed Ramadan fasts flow into your make-up counter.
+              </div>
+              <div class="feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path
+                    d="m5 12 4.5 4.5L19 7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  /></svg
+                >Encrypted, never shared with friends, never sent to any AI.
+              </div>
+            </div>
+            <div class="disabled-input" data-open-sheet><span>Log today</span><span>+</span></div>
+          </div>
+          <div class="scrim" data-close-sheet></div>
+          <div class="sheet" role="dialog" aria-label="Start Rayhanah">
+            <div class="grab"></div>
+            <div class="icon-badge pink">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                <rect x="5" y="10.5" width="14" height="10" rx="2.5" />
+                <path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" />
+              </svg>
+            </div>
+            <h3>Start Rayhanah privately</h3>
+            <p class="muted">
+              Rayhanah needs your own account to keep your entries private. They are encrypted,
+              never shared with friends and never sent to any AI.
+            </p>
+            <div class="stack">
+              <button class="btn btn-primary" type="button">Create free account</button>
+              <button class="btn btn-secondary" type="button">Sign in</button>
+              <button class="btn btn-quiet" type="button" data-close-sheet>Keep exploring</button>
+            </div>
+          </div>
+        </div>
+      </figure>
+
+      <!-- 5. Friends -->
+      <figure>
+        <figcaption>
+          <b>5 · Friends: the page, without add or invite</b>
+          Shows what friends are for and how private it stays. No "Add friend" or invite link for a
+          guest, only one card that says why an account is needed.
+        </figcaption>
+        <div class="phone t-dark">
+          <div class="nav">
+            <span class="brand"
+              ><svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2c4 3 7 7 7 11a7 7 0 0 1-14 0c0-4 3-8 7-11Zm0 4c-2.4 2.2-4 4.8-4 7a4 4 0 0 0 3 3.9V11h2v5.9A4 4 0 0 0 16 13c0-2.2-1.6-4.8-4-7Z"
+                /></svg
+              >Bustandeen</span
+            >
+            <button class="signin" type="button">Sign in</button>
+          </div>
+          <div class="body">
+            <div class="arch">
+              <h3>Friends</h3>
+              <p class="muted">Encourage each other in good, quietly.</p>
+            </div>
+            <div class="card">
+              <div class="feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path
+                    d="m5 12 4.5 4.5L19 7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  /></svg
+                >Send Noor to lift a friend's day.
+              </div>
+              <div class="feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path
+                    d="m5 12 4.5 4.5L19 7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  /></svg
+                >You choose what friends see. Secret deeds stay secret.
+              </div>
+              <div class="feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path
+                    d="m5 12 4.5 4.5L19 7"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  /></svg
+                >No ranking, no competing.
+              </div>
+            </div>
+            <div class="card" style="text-align: center">
+              <div class="icon-badge gold">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <circle cx="9" cy="8.5" r="3" />
+                  <circle cx="16.5" cy="9.5" r="2.4" />
+                  <path
+                    d="M3.5 19c.6-3 2.9-4.8 5.5-4.8s4.9 1.8 5.5 4.8M14.5 14.6c.6-.2 1.3-.3 2-.3 2.2 0 3.9 1.5 4.4 4.2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </div>
+              <h3
+                style="
+                  font:
+                    700 17px 'El Messiri',
+                    serif;
+                  margin: 0;
+                "
+              >
+                Friends need an account
+              </h3>
+              <p class="muted">
+                Friends find each other by name, so this part needs your own account.
+              </p>
+              <div class="stack">
+                <button class="btn btn-primary" type="button">Create free account</button>
+                <button class="btn btn-secondary" type="button">Sign in</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </figure>
+
+      <!-- 6. Landing -->
+      <figure>
+        <figcaption>
+          <b>6 · Landing: open the real app, no demo buttons</b>
+          "Try as a brother / sister" goes. The second button opens the app to explore. The "Try it"
+          cards open the real pages (1, 4, 5) instead of the demo.
+        </figcaption>
+        <div class="phone t-dark land">
+          <div class="nav">
+            <span class="brand"
+              ><svg viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 2c4 3 7 7 7 11a7 7 0 0 1-14 0c0-4 3-8 7-11Zm0 4c-2.4 2.2-4 4.8-4 7a4 4 0 0 0 3 3.9V11h2v5.9A4 4 0 0 0 16 13c0-2.2-1.6-4.8-4-7Z"
+                /></svg
+              >Bustandeen</span
+            >
+            <button class="signin" type="button">Sign in</button>
+          </div>
+          <div class="body">
+            <div class="arch">
+              <h3>Nourish your Deen</h3>
+              <p class="muted">
+                Prayer, Quran, zikr and fasting in one calm place. Free for the ummah.
+              </p>
+              <div class="stack">
+                <button class="btn btn-primary" type="button">Begin your journey, free</button>
+                <button class="btn btn-secondary" type="button">Explore the app first</button>
+              </div>
+            </div>
+            <div class="divider">Removed</div>
+            <div class="stack" style="margin-top: 0">
+              <button class="btn btn-secondary strike" type="button" tabindex="-1">
+                Try as a brother
+              </button>
+              <button class="btn btn-secondary strike" type="button" tabindex="-1">
+                Try as a sister
+              </button>
+            </div>
+            <div class="divider">Try it cards open the real page</div>
+            <div class="trycards">
+              <div><b>Salat</b>Track the five prayers <em>Try it → /salat</em></div>
+              <div><b>Quran</b>Read and listen <em>Try it → /quran</em></div>
+              <div><b>Fasting</b>Fasts and make-ups <em>Try it → /fasting</em></div>
+              <div><b>Friends</b>Noor, quietly <em>Try it → /friends</em></div>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </main>
+
+    <section class="notes">
+      <h2>What stays open, what asks</h2>
+      <ul>
+        <li>
+          <b>Never asks:</b> Quran read and listen, prayer times, Qibla, Musafir, special days,
+          sadaqah, all SEO pages, device-only settings (language, theme, prayer method).
+        </li>
+        <li>
+          <b>Asks on the first save (sheet, frame 1):</b> Salat, Fasting, Ramadan, Quran habit,
+          khatam, hifz, bookmarks.
+        </li>
+        <li>
+          <b>Never interrupts (frame 2):</b> the zikr counter. Counts carry through sign-in on the
+          same browser.
+        </li>
+        <li><b>Preview gate (frame 3):</b> every analytics page, Profile, the rest of Settings.</li>
+        <li><b>View only (frames 4, 5):</b> Rayhanah, Friends. Naseeh stays hidden for guests.</li>
+      </ul>
+      <h2>Notes for the build</h2>
+      <ul>
+        <li>
+          One shared <code>SignInSheet</code> (title + reason per feature) replaces
+          <code>SalatGuestDialog</code>, <code>FastingGuestDialog</code> and
+          <code>ZikrGuestDialog</code>; one <code>PreviewGate</code> replaces the lock card in
+          <code>Protected</code>.
+        </li>
+        <li>
+          Both buttons keep the current return path (<code>bustandeen_redirect</code>), so after
+          sign-in the person lands back on the same page.
+        </li>
+        <li>
+          Copy in English and Bangla, calm wording, no em dashes. Tap targets 44px (the e2e check).
+        </li>
+        <li>
+          Demo stays in the code: reached from "See an example" (frame 3) and still used by CI.
+        </li>
+      </ul>
+    </section>
+
+    <script>
+      // Theme switch for every frame.
+      const frames = document.querySelectorAll('.phone');
+      document.querySelectorAll('[data-theme-btn]').forEach((b) =>
+        b.addEventListener('click', () => {
+          const theme = b.dataset.themeBtn;
+          document.documentElement.dataset.theme = theme;
+          document
+            .querySelectorAll('[data-theme-btn]')
+            .forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+          frames.forEach((f) => {
+            f.classList.toggle('t-dark', theme === 'dark');
+            f.classList.toggle('t-light', theme === 'light');
+          });
+        })
+      );
+      // Sheets.
+      document.querySelectorAll('[data-sheet-host]').forEach((host) => {
+        host
+          .querySelectorAll('[data-open-sheet]')
+          .forEach((el) => el.addEventListener('click', () => host.classList.add('open')));
+        host
+          .querySelectorAll('[data-close-sheet]')
+          .forEach((el) => el.addEventListener('click', () => host.classList.remove('open')));
+      });
+      // Zikr counter.
+      let n = 0;
+      document.querySelector('[data-tap]').addEventListener('click', () => {
+        n += 1;
+        document.querySelector('[data-count]').textContent = n;
+        document.querySelector('[data-count2]').textContent = n;
+        document.querySelector('[data-banner]').classList.add('show');
+      });
+    </script>
+  </body>
+</html>

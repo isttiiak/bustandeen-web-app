@@ -16,8 +16,7 @@ test.beforeEach(async ({ context }) => {
 /** Demo mode lives in memory only, so after entering it every move must be a
  * client-side navigation; a reload drops back to the landing page. */
 async function enterDemo(page: Page) {
-  await page.goto('/');
-  await page.getByRole('link', { name: /Explore as Brother/ }).click();
+  await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 

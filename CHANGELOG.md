@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.161.0 - Explore freely, sign in to save (U10) - 2026-10-14
+
+### Changed
+
+- **Guests now see the real app and are asked to sign in only when they save something.** One shared sign-in sheet replaces the separate Salat, Fasting and Zikr prompts. It opens on the first save (Done, Kaza, Miss, a fast, a vow...), says why an account helps ("Keep your prayer record", "Keep your fasting record"), and offers Create free account, Sign in, or Keep exploring (which changes nothing). Both sign-in buttons bring the person back to the same page afterwards. No lock icons, no "required".
+- **Zikr counting is never interrupted.** After a guest's first tap, a small note under Count says how many counts are on this device and not in the record yet, with "Save them". The counts stay on this browser through sign-in and are saved to the account then (as before). The note sits below the Count button, so the button never moves.
+- **Pages built from your own record show a preview instead of "Sign in required".** Analytics pages show a clearly marked example chart and "See your journey take shape"; Settings, Profile, the Quran habit pages and Ramadan say the page is built from your own record. Each has "See an example", which opens the demo on that same page.
+- **Rayhanah and Friends are view only for guests.** Both show what the feature does. Rayhanah's "Log today" opens the sheet with its privacy reason (encrypted, never shared with friends, never sent to any AI); Friends shows one card that says why an account is needed, with no add or invite. Nothing is entered or kept for a guest.
+- **Landing page:** the "Explore as Brother / Sister" demo buttons are gone; the second button is now "Explore the app first" (opens Salat). The "Try it" cards open the real pages (Salat, Zikr, Quran reading, Fasting, Friends, Rayhanah) instead of the demo. The demo itself stays (`/demo/brother`, `/demo/sister`, "See an example") and the e2e tests open it directly.
+### Fixed
+
+- **A guest's zikr counts were wiped before they could be saved.** Firebase reports "no user" on every guest page load and when a sign-in page loads it, and the app treated that like a sign-out and cleared this device's counts. So the old "Sign in to save" promise never held. Now only a session ending (sign-out, or an expired session on a shared device) clears them; a guest's taps survive a reload and the trip to sign-in, and are saved once the account is there. Sign-out still clears them as before.
+
+### Tests
+
+- All new copy in English and Bangla, no em dashes, every button at least 44px. New unit test (`signInSheet.test.ts`) and Playwright spec (`sign-in-gate.spec.ts`, with axe and 44px checks on the sheet, gate and view-only pages).
+
 ## v5.160.10 - Node 24 pinned for production builds - 2026-10-13
 
 ### Changed

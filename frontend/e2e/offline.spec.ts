@@ -19,8 +19,7 @@ test.beforeEach(async ({ context }) => {
 });
 
 async function enterDemo(page: Page, as: 'Brother' | 'Sister') {
-  await page.goto('/');
-  await page.getByRole('link', { name: new RegExp(`Explore as ${as}`) }).click();
+  await page.goto(`/demo/${as.toLowerCase()}`);
   await expect(page.getByText('Demo Mode')).toBeVisible();
 }
 
