@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.1 - Fasting dialogs open above the navbar - 2026-10-13
+
+### Fixed
+
+- **The Fasting sign-in prompt, the makruh-day note and the fast type sheet opened under the navbar** (their top edge and close button were hidden on a phone). The page sits in a layer below the navbar, so these three now open at the top level of the page, like the app's other dialogs. A screen test checks that every full-screen Fasting overlay does this.
+
 ## v5.160.0 - Zikr days matched by date, the saved place's clock everywhere - 2026-10-13
 
 ### Fixed

@@ -31,6 +31,12 @@ describe('Fasting screens', () => {
     expect(code).not.toMatch(EMOJI);
   });
 
+  it.each(Object.keys(files))('%s portals any full-screen overlay', (path) => {
+    // AnimatedBackground's `relative z-10` would keep an inline overlay under the navbar.
+    const code = files[path] ?? '';
+    if (/fixed inset-0/.test(code)) expect(code).toMatch(/createPortal\(/);
+  });
+
   it.each([
     ['en', en],
     ['bn', bn],
