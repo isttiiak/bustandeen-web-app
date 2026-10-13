@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.160.7 - Salat sign-in prompt in the Bustan Arch style - 2026-10-13
+
+### Changed
+
+- **The Salat "Sign in to track prayers" prompt** now uses the shared Bustan dialog and buttons in both themes (it still used the old buttons and faint text), and opens at the top level of the page like the Fasting and Zikr dialogs, so no page layer can keep it under the navbar. It is announced as a dialog with its title. A new Salat screen test checks every full-screen Salat overlay and the prompt's style.
+
 ## v5.160.6 - The "Don't lose your counts" card fits a phone - 2026-10-13
 
 ### Fixed
