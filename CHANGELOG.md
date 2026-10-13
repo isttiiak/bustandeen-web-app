@@ -8,6 +8,12 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - **The "page not found" screen** now uses the Bustan Arch style like the rest of the app: one arch card with the shared primary button, in both themes (it still used the old card, the large button and the glass shadow). The page heading is now its only `h1`. A new screen test checks it.
 
+## v5.160.2 - Zikr sign-in prompt opens above the navbar - 2026-10-13
+
+### Fixed
+
+- **The Zikr "sign in to keep your counts" prompt opened under the navbar** (its top edge was hidden on a phone). Like the Fasting dialogs in v5.160.1, it now opens at the top level of the page. A new Zikr screen test checks that every full-screen Zikr overlay does this.
+
 ## v5.160.1 - Fasting dialogs open above the navbar - 2026-10-13
 
 ### Fixed

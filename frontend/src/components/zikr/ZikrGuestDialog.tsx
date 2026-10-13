@@ -1,5 +1,6 @@
 import type { NavigateFunction } from 'react-router';
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { TasbihIcon } from '../icons/IslamicIcons.js';
@@ -18,7 +19,9 @@ export default function ZikrGuestDialog({
   showGuestDialog,
 }: ZikrGuestDialogProps) {
   const { t } = useTranslation();
-  return (
+  // Portaled: AnimatedBackground wraps the Zikr page in `relative z-10`, which
+  // kept this under the sticky navbar.
+  return createPortal(
     <>
       <AnimatePresence>
         {showGuestDialog && (
@@ -26,7 +29,7 @@ export default function ZikrGuestDialog({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[70] p-4"
           >
             <motion.div
               initial={{ scale: 0.92, opacity: 0, y: 20 }}
@@ -79,6 +82,7 @@ export default function ZikrGuestDialog({
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </>,
+    document.body
   );
 }
