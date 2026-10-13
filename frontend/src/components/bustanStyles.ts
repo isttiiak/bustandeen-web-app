@@ -24,6 +24,21 @@ export const BTN_PRIMARY =
 export const BTN_SECONDARY =
   'inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors';
 
+/** A dialog or sheet panel above a dimmed page (highest elevation). */
+export const DIALOG = 'rounded-card border border-brand-border bg-brand-deep shadow-elev-3';
+
+/** A text-only action (a third choice under a primary/secondary pair). */
+export const BTN_QUIET =
+  'inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/75 hover:text-white hover:bg-brand-surface transition-colors';
+
+/** A small inline action in a list row (Edit). */
+export const BTN_ROW =
+  'inline-flex items-center gap-1 min-h-[44px] rounded-control px-2.5 text-xs font-bold text-brand-emerald hover:bg-brand-emerald/10 transition-colors shrink-0';
+
+/** A small inline action that removes or stops something. */
+export const BTN_ROW_DANGER =
+  'inline-flex items-center gap-1 min-h-[44px] rounded-control px-2.5 text-xs font-bold text-red-400 hover:bg-red-400/10 transition-colors shrink-0';
+
 /** A chosen / not chosen option tile or chip (Settings, Library, Share āyah). */
 export const OPTION_ON = 'bg-brand-emerald/10 border-brand-emerald text-white';
 export const OPTION_OFF =

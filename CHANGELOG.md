@@ -8,6 +8,29 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - **Admin: the founder mailbox on the compose page** now uses the same cards, buttons, status pills, filter chips and reply box as the Feedback inbox, in both themes (it still used the old small buttons and faint text). Its text is readable (no ink below 70%), the filter chips say which one is on, and the reply box has a label. It is now part of the admin screens test.
 
+## v5.160.7 - Salat sign-in prompt in the Bustan Arch style - 2026-10-13
+
+### Changed
+
+- **The Salat "Sign in to track prayers" prompt** now uses the shared Bustan dialog and buttons in both themes (it still used the old buttons and faint text), and opens at the top level of the page like the Fasting and Zikr dialogs, so no page layer can keep it under the navbar. It is announced as a dialog with its title. A new Salat screen test checks every full-screen Salat overlay and the prompt's style.
+
+## v5.160.6 - The "Don't lose your counts" card fits a phone - 2026-10-13
+
+### Fixed
+
+- **The guest "Don't lose your counts" card ran off the side of a phone** (a guest with unsaved zikr counts on any page saw the message and the "Leave without saving" button cut off). It is now a card that fits the screen, in the Bustan style in both themes: Sign in to save and Create account side by side, Leave without saving under them.
+- **It no longer covers the Count button on the zikr counter.** The counter has its own sign-in prompt, so the card now shows only on the other pages.
+
+## v5.160.5 - Zikr dialogs in the Bustan Arch style, reset confirm readable in dark - 2026-10-13
+
+### Fixed
+
+- **The "Reset counter?" confirm's note was invisible in the dark theme** (white text on the white confirm card). It is now dark text, like the title.
+
+### Changed
+
+- **Zikr dialogs and controls use the shared Bustan styles in both themes**: the sign-in prompt, "Set starting count", "My zikr list", the auto-play Start/Stop buttons and the reset confirm (they still used the old buttons and inputs). In the sign-in prompt, "Keep counting" now comes before "Leave without saving"; in "Set starting count", Cancel sits on the left like the app's other dialogs. Every button is at least 44 px tall, "My zikr list" has a labelled close button, and the three dialogs are announced as dialogs with their titles. The Zikr screen test checks all of this.
+
 ## v5.160.4 - Sign-out confirm in the Bustan Arch style - 2026-10-13
 
 ### Changed
