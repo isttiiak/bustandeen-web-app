@@ -1,10 +1,10 @@
 {
   "name": "bustandeen",
-  "version": "5.160.9",
+  "version": "5.160.10",
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": "24.x"
   },
   "devEngines": {
     "runtime": {
