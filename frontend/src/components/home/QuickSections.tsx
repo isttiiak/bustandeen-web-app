@@ -162,7 +162,7 @@ export function QuranQuickCard() {
     >
       {goal ? <Progress pct={(done / goal) * 100} tone="emerald" /> : null}
       <div className="flex gap-2 mt-3">
-        <Link to={href ?? '/quran/browse'} className={`${BTN_PRIMARY} flex-1 min-h-[44px] py-2`}>
+        <Link to={href ?? '/quran/read'} className={`${BTN_PRIMARY} flex-1 min-h-[44px] py-2`}>
           {href
             ? khatamOn
               ? t('home.quick.continueKhatam', 'Continue khatam')
@@ -174,7 +174,7 @@ export function QuranQuickCard() {
         <Link to="/quran/listen" className={`${BTN_SECONDARY} flex-1 min-h-[44px] py-2`}>
           {t('home.quick.listen', 'Listen')}
         </Link>
-        <Link to="/quran/browse" className={`${BTN_SECONDARY} flex-1 min-h-[44px] py-2`}>
+        <Link to="/quran/read" className={`${BTN_SECONDARY} flex-1 min-h-[44px] py-2`}>
           {t('home.quick.pickSurah', 'Pick a surah')}
         </Link>
       </div>

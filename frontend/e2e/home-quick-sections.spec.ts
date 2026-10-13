@@ -64,7 +64,7 @@ test('Quran: Continue (khatam in the demo), Listen and Pick a surah', async ({ p
   await expect(card.getByRole('link', { name: 'Listen' })).toHaveAttribute('href', '/quran/listen');
   await expect(card.getByRole('link', { name: 'Pick a surah' })).toHaveAttribute(
     'href',
-    '/quran/browse'
+    '/quran/read'
   );
 });
 

@@ -11,7 +11,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - **Pages built from your own record show a preview instead of "Sign in required".** Analytics pages show a clearly marked example chart and "See your journey take shape"; Settings, Profile, the Quran habit pages and Ramadan say the page is built from your own record. Each has "See an example", which opens the demo on that same page.
 - **Rayhanah and Friends are view only for guests.** Both show what the feature does. Rayhanah's "Log today" opens the sheet with its privacy reason (encrypted, never shared with friends, never sent to any AI); Friends shows one card that says why an account is needed, with no add or invite. Nothing is entered or kept for a guest.
 - **Landing page:** the "Explore as Brother / Sister" demo buttons are gone; the second button is now "Explore the app first" (opens Salat). The "Try it" cards open the real pages (Salat, Zikr, Quran reading, Fasting, Friends, Rayhanah) instead of the demo. The demo itself stays (`/demo/brother`, `/demo/sister`, "See an example") and the e2e tests open it directly.
-- **quran.bustandeen.com** now answers every path with a 301 to `bustandeen.com/quran` (vercel.json host redirect; the Quran stays on the main domain for sign-in, the PWA and SEO). It works once the domain is added in Vercel and DNS points at it. A test pins the redirect.
+- **The Quran surah list now lives at `/quran/read`** (was `/quran/browse`), the same path as each surah (`/quran/read/7`, or `/quran/read/7?start=10` to open at an ayah), so trimming a surah link back to `/quran/read` opens the list instead of a 404. Old `/quran/browse` links, bookmarks and installed apps still open it (redirect).
 
 ### Fixed
 
@@ -124,6 +124,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 ### Changed
 
 - **No more Mongoose deprecation warning in every function log**: the 29 `findOneAndUpdate`/`findByIdAndUpdate` calls that passed `new: true` now pass `returnDocument: 'after'`, the documented replacement. Same document returned, no behaviour change.
+
 ## v5.159.1 - Duha ends at the same time on every screen - 2026-10-12
 
 ### Fixed
@@ -161,6 +162,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - Checked on a Vercel preview with the function logs open before merging (firebase-admin 14 crashed the function at start-up on 2026-09-20; 13.10 is the version without node-forge that keeps CommonJS).
 - `tests/esmOnlyDeps.unit.test.js`: google-auth-library 10's gaxios loads node-fetch 3 (ESM-only) with `await import()`, which CommonJS supports. That one edge is allowed, and a test fails if gaxios ever `require()`s it.
 - `@firebase/util`'s install script is denied in the backend too (it only fills Firebase App Hosting config), as in the frontend.
+
 ## v5.158.6 - City pages show the city's own day - 2026-10-12
 
 ### Fixed

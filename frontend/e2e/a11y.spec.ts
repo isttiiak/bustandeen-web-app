@@ -102,7 +102,7 @@ test('a sage button keeps its colour on hover', async ({ page }) => {
 
 const AXE_ROUTES = [
   ...ROUTES,
-  '/quran/browse',
+  '/quran/read',
   '/prayer-times',
   '/qibla',
   '/ramadan',

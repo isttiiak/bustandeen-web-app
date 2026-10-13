@@ -182,7 +182,7 @@ export default function QuranHabit() {
                 {t('quranHabit.beginKhatam')}
               </button>
             )}
-            <Link to="/quran/browse" className={BTN_SECONDARY}>
+            <Link to="/quran/read" className={BTN_SECONDARY}>
               <QueueListIcon className="w-4 h-4" aria-hidden="true" />
               {t('quranHabit.pickSurah')}
             </Link>
@@ -377,7 +377,7 @@ export default function QuranHabit() {
 
         {/* Browse all surahs lives on the dedicated Read tab (no duplicate list here). */}
         <Link
-          to="/quran/browse"
+          to="/quran/read"
           className={`${CARD} flex items-center justify-center gap-2 p-4 text-white/80 text-sm font-bold hover:border-brand-emerald/40 hover:shadow-hover transition`}
         >
           <QueueListIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />

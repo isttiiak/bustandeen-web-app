@@ -46,7 +46,7 @@ const MORE = 'inline-flex items-center gap-1 mt-3 text-xs font-semibold';
 const FEATURES = [
   { key: 'Salat', href: '/salat', Icon: MosqueIcon },
   { key: 'Zikr', href: '/zikr', Icon: TasbihIcon },
-  { key: 'Quran', href: '/quran/browse', Icon: BookOpenIcon },
+  { key: 'Quran', href: '/quran/read', Icon: BookOpenIcon },
   { key: 'Fasting', href: '/fasting', Icon: CrescentIcon },
   { key: 'Prayer', href: '/prayer-times', Icon: ClockIcon },
   { key: 'Friends', href: '/friends', Icon: UserGroupIcon },

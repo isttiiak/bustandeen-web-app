@@ -42,7 +42,7 @@ it('both landings share the body, which has the one arch hero', () => {
   // U10: no brother/sister demo buttons; "Try it" opens the real pages
   // (the demo is behind "See an example" on the pages that need an account).
   expect(body).not.toContain('/demo/');
-  for (const href of ['/salat', '/zikr', '/quran/browse', '/fasting', '/friends', '/cycle'])
+  for (const href of ['/salat', '/zikr', '/quran/read', '/fasting', '/friends', '/cycle'])
     expect(body).toMatch(new RegExp(`href(: |=)['"]${href}['"]`));
   // BIZ-03: the positioning line sits in the hero, under the title.
   expect(body.indexOf("t('landing.positioning'")).toBeGreaterThan(body.indexOf('</h1>'));

@@ -39,7 +39,7 @@ const TAB_DEFS = [
     id: 'read',
     labelKey: 'quranTabs.read',
     fallback: 'Read',
-    to: '/quran/browse',
+    to: '/quran/read',
     Icon: QueueListIcon,
   },
   {

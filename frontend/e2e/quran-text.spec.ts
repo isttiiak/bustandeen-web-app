@@ -79,3 +79,14 @@ test('a guest reads a surah without signing in, and is told nothing is saved (U9
   // No bookmark or tafsir for a guest: both need an account.
   await expect(page.getByRole('button', { name: 'Bookmark this ayah' })).toHaveCount(0);
 });
+
+test('the surah list is /quran/read, and the old /quran/browse still opens it', async ({
+  page,
+}) => {
+  await page.goto('/quran/browse');
+  await expect(page).toHaveURL(/\/quran\/read$/);
+  await expect(page.getByLabel('Search surahs')).toBeVisible();
+  // A surah keeps its own link under the same path.
+  await page.goto('/quran/read/112');
+  await expect(page.getByText(firstAyah, { exact: true })).toBeVisible();
+});

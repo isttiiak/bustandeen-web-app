@@ -157,7 +157,7 @@ test('Friends is view only: no add or invite, one card with the reason', async (
 test('the landing opens the real pages, no brother/sister demo', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('a[href^="/demo/"]')).toHaveCount(0);
-  for (const href of ['/salat', '/zikr', '/quran/browse', '/fasting', '/friends', '/cycle'])
+  for (const href of ['/salat', '/zikr', '/quran/read', '/fasting', '/friends', '/cycle'])
     await expect(page.locator(`a[href="${href}"]`).first()).toBeVisible();
   await page.getByRole('link', { name: 'Explore the app first' }).click();
   await expect(page).toHaveURL(/\/salat$/);

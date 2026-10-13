@@ -18,7 +18,7 @@ const ROUTES = [
   '/qibla',
   '/quran',
   '/quran/khatam',
-  '/quran/browse',
+  '/quran/read',
   '/quran/listen',
   '/quran/analytics',
   '/quran/bookmarks',
