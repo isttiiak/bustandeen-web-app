@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
 import { createElement, type ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { MemoryRouter } from 'react-router';
@@ -72,33 +72,59 @@ const render = (el: ReactElement, url = '/naseeh') =>
 const NO_AI = 'No AI was used';
 const AI_LABEL = 'AI-generated encouragement';
 
+// The first dynamic import of a component graph can take over Vitest's 5 s
+// default on a cold (Windows) run. Warm every graph once here, under one long
+// hook timeout, so no single test pays for the cold import.
+let mods: {
+  AiDisclaimer: typeof import('./AiFlair.js').AiDisclaimer;
+  AiPrivacyPanel: typeof import('./AiPrivacyPanel.js').default;
+  MuhasabahReport: typeof import('./MuhasabahReport.js').default;
+  StreakCoaching: typeof import('./StreakCoaching.js').default;
+  FastingCompanion: typeof import('./FastingCompanion.js').default;
+  ComebackNudge: typeof import('../ComebackNudge.js').default;
+};
+
+beforeAll(async () => {
+  const [flair, privacy, muhasabah, streak, fasting, comeback] = await Promise.all([
+    import('./AiFlair.js'),
+    import('./AiPrivacyPanel.js'),
+    import('./MuhasabahReport.js'),
+    import('./StreakCoaching.js'),
+    import('./FastingCompanion.js'),
+    import('../ComebackNudge.js'),
+  ]);
+  mods = {
+    AiDisclaimer: flair.AiDisclaimer,
+    AiPrivacyPanel: privacy.default,
+    MuhasabahReport: muhasabah.default,
+    StreakCoaching: streak.default,
+    FastingCompanion: fasting.default,
+    ComebackNudge: comeback.default,
+  };
+}, 60_000);
+
 beforeEach(() => {
   ai.error = true;
 });
 
-// The first dynamic import of a component graph can take over Vitest's 5 s
-// default on a cold Windows run, hence the longer timeouts here.
 describe('"What is sent?" links', () => {
-  it('the disclaimer links to its feature row on /naseeh', async () => {
-    const { AiDisclaimer } = await import('./AiFlair.js');
-    const html = render(createElement(AiDisclaimer, { feature: 'patterns' }));
+  it('the disclaimer links to its feature row on /naseeh', () => {
+    const html = render(createElement(mods.AiDisclaimer, { feature: 'patterns' }));
     expect(html).toContain('href="/naseeh#ai-sends-patterns"');
     expect(html).toContain('What is sent?');
-  }, 20_000);
+  });
 
-  it('the privacy panel has a row for every feature a card links to', async () => {
-    const { default: AiPrivacyPanel } = await import('./AiPrivacyPanel.js');
-    const html = render(createElement(AiPrivacyPanel));
+  it('the privacy panel has a row for every feature a card links to', () => {
+    const html = render(createElement(mods.AiPrivacyPanel));
     for (const f of ['quickLog', 'summary', 'patterns', 'kaza', 'plan', 'chat', 'coaching']) {
       expect(html).toContain(`id="ai-sends-${f}"`);
     }
-  }, 20_000);
+  });
 });
 
-describe('non-AI fallbacks when the AI request fails', { timeout: 20_000 }, () => {
-  it('muhāsabah shows the week in numbers plus the verified reference', async () => {
-    const { default: MuhasabahReport } = await import('./MuhasabahReport.js');
-    const html = render(createElement(MuhasabahReport));
+describe('non-AI fallbacks when the AI request fails', () => {
+  it('muhāsabah shows the week in numbers plus the verified reference', () => {
+    const html = render(createElement(mods.MuhasabahReport));
     expect(html).toContain('This week you counted 1,200 dhikr.');
     expect(html).toContain('You logged 86% of this week&#x27;s prayers.');
     expect(html).toContain(NO_AI);
@@ -106,38 +132,34 @@ describe('non-AI fallbacks when the AI request fails', { timeout: 20_000 }, () =
     expect(html).toContain('href="/naseeh#ai-sends-summary"');
   });
 
-  it('muhāsabah renders nothing while there is no report and no failure', async () => {
+  it('muhāsabah renders nothing while there is no report and no failure', () => {
     ai.error = false;
-    const { default: MuhasabahReport } = await import('./MuhasabahReport.js');
-    expect(render(createElement(MuhasabahReport))).toBe('');
+    expect(render(createElement(mods.MuhasabahReport))).toBe('');
   });
 
-  it('streak coaching shows a fixed milestone note', async () => {
-    const { default: StreakCoaching } = await import('./StreakCoaching.js');
+  it('streak coaching shows a fixed milestone note', () => {
     const html = render(
-      createElement(StreakCoaching, { zikrStreak: 7, quranStreak: null, salatStreak: null })
+      createElement(mods.StreakCoaching, { zikrStreak: 7, quranStreak: null, salatStreak: null })
     );
     expect(html).toContain('7 days of Zikr in a row. Alhamdulillah.');
     expect(html).toContain(NO_AI);
     expect(html).toContain('href="/naseeh#ai-sends-coaching"');
   });
 
-  it('the fasting companion shows a fixed note, morning and evening', async () => {
-    const { default: FastingCompanion } = await import('./FastingCompanion.js');
+  it('the fasting companion shows a fixed note, morning and evening', () => {
     const morning = render(
-      createElement(FastingCompanion, { fastType: 'nafl', isPostMaghrib: false })
+      createElement(mods.FastingCompanion, { fastType: 'nafl', isPostMaghrib: false })
     );
     expect(morning).toContain('May Allah accept your fast today.');
     expect(morning).toContain(NO_AI);
     const evening = render(
-      createElement(FastingCompanion, { fastType: 'nafl', isPostMaghrib: true })
+      createElement(mods.FastingCompanion, { fastType: 'nafl', isPostMaghrib: true })
     );
     expect(evening).toContain('Iftar is close.');
   });
 
-  it('the welcome-back note shows a fixed note', async () => {
-    const { default: ComebackNudge } = await import('../ComebackNudge.js');
-    const html = render(createElement(ComebackNudge));
+  it('the welcome-back note shows a fixed note', () => {
+    const html = render(createElement(mods.ComebackNudge));
     expect(html).toContain('Welcome back. Begin again with something small');
     expect(html).toContain(NO_AI);
   });
