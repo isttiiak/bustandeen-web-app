@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.166.2 - Deep health check touches the database (LT-3) - 2026-10-14
+
+### Added
+
+- **`GET /api/health/deep`** (LT-3). The status page's API monitor watches `/api/health`, which never touches MongoDB, so a database outage (Atlas down, a changed password, the M0 cap) raised no alert. The deep check pings MongoDB and reads one collection's metadata (5 s timeout): `200 {ok, database: "up", latencyMs}` or `503 {ok: false, database: "down"}`. The reason is only logged, never returned. Results are cached for 15 s, so the public route cannot be used to load the database; `Cache-Control: no-store`. `/api/health` itself stays a no-database check.
+
+### Setup (Better Stack)
+
+- Add a 4th monitor: **Database**, `https://bustandeen.com/api/health/deep`, "URL becomes unavailable" (a 503 counts as down), same settings as the API monitor (3 min, alert after 2 failed checks, email), and add it to the status page as *Database*.
+
+### Tests
+
+- New `health.e2e.test.js`: `/api/health` unchanged, deep check 200 while MongoDB answers, 503 without details when the ping fails or the connection is gone, and one probe per 15 s.
+
 ## v5.166.1 - Weekly encrypted database backups (LT-6) - 2026-10-14
 
 ### Added
