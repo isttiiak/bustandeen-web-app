@@ -40,6 +40,7 @@ import composeEmailRoutes from './routes/composeEmail.routes.js';
 import cspReportRoutes from './routes/cspReport.routes.js';
 import clientErrorRoutes from './routes/clientError.routes.js';
 import cronRoutes from './routes/cron.routes.js';
+import * as healthController from './controllers/health.controller.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
 import {
@@ -151,6 +152,9 @@ app.use(generalLimiter);
 app.get('/api/health', (_req: Request, res: Response) => {
   res.json({ ok: true, message: 'Bustandeen API is healthy' });
 });
+
+// Deep check (LT-3): also asks MongoDB. 503 when the database does not answer.
+app.get('/api/health/deep', healthController.deepHandler);
 
 // Bot-only invite-link unfurl preview — NOT under /api; only reached in
 // production when vercel.json's User-Agent-matched rewrite routes a

@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.166.2',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'Faster notice when sync has trouble',
+        added: [
+          'Our status page now also checks the database itself, so if saving and syncing ever stop working, we hear about it within minutes.',
+        ],
+      },
+      bn: {
+        title: 'সিঙ্কে সমস্যা হলে দ্রুত জানা যায়',
+        added: [
+          'আমাদের স্ট্যাটাস পাতা এখন ডেটাবেসও সরাসরি পরীক্ষা করে, তাই কখনো সংরক্ষণ ও সিঙ্ক বন্ধ হয়ে গেলে আমরা কয়েক মিনিটের মধ্যেই জানতে পারি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.166.1',
     date: '2026-10-14',
     text: {
