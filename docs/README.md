@@ -198,3 +198,14 @@ entry before pushing.
 One Vercel project: `vercel.json` serves `frontend/dist` and `api/index.ts` as a serverless function (region `sin1`).
 Set the backend and `VITE_*` env vars in the Vercel dashboard. Root `package.json` must keep `"type": "module"`, and
 `firebase-admin` stays on v12 (v14 breaks `verifyIdToken()` in the bundle).
+
+**Admin site (v5.163.0).** The admin panel is its own page, `frontend/admin.html` → `src/admin-entry.tsx`,
+built by its own pass (`vite.admin.config.ts`, output `dist/assets/admin/`, after the app build so it never changes the app's chunks)
+(routes `src/adminRoutes.tsx`, guards `src/adminGuards.tsx`), served on `admin.bustandeen.com` for origin
+isolation: its Firebase sign-in and second-factor proof never share storage with the app, and it loads no app
+Firebase, service worker, manifest, analytics or persisted query cache. `vercel.json`: `bustandeen.com/admin*` 301s
+to `admin.bustandeen.com/admin*`; on the admin host `/` → `/admin` and every non-admin path goes back to
+bustandeen.com; `/admin*` → `admin.html` on every host (so previews and `vite`/`vite preview` serve it at `/admin`);
+the admin host has its own stricter header block (CSP `script-src 'self'`, `frame-src 'none'`, `noindex`).
+Backend: with `ADMIN_HOST=admin.bustandeen.com`, `/api/admin/*` answers only on that host (plus previews and
+localhost) and only the admin site may call it cross-origin (`utils/corsOrigins.ts`). Unset = no restriction.

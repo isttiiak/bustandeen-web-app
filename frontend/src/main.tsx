@@ -29,8 +29,11 @@ import { migratePrayerDefaultsOnce } from './utils/salatPrefs.js';
 import { loadZoneLookup, readSavedPlace } from './utils/placeClock.js';
 import { initErrorReporting } from './utils/errorReporting.js';
 import { API_BASE } from './lib/api.js';
+import { retireAdminSession } from './utils/retireAdminSession.js';
 
 initErrorReporting(API_BASE);
+// The admin panel moved to admin.bustandeen.com (v5.163.0): drop its old sign-in here.
+retireAdminSession(import.meta.env.VITE_FIREBASE_API_KEY);
 initStaleChunkReload();
 initPwaUpdates();
 initAnalytics();

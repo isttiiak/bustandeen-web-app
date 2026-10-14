@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, browserLocalPersistence, setPersistence } from 'firebase/auth';
+import { initializeAuth, browserLocalPersistence } from 'firebase/auth';
 import { markAdminAuthLoaded } from './authClient.js';
 
 /**
@@ -20,6 +20,11 @@ import { markAdminAuthLoaded } from './authClient.js';
  * keeps this separate from a regular account, not how long the session lives.
  * The session still ends on an explicit Log out (useAdminLogout), same as
  * the main app.
+ *
+ * initializeAuth, not getAuth (v5.163.0): the panel signs in with email and
+ * password only, so it needs no popup/redirect helper. getAuth's helper loads
+ * Firebase's auth iframe up front on phones and Safari, which the admin site's
+ * CSP (frame-src 'none') would block.
  */
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -31,7 +36,6 @@ const firebaseConfig = {
 };
 
 const adminApp = initializeApp(firebaseConfig, 'admin');
-export const adminAuth = getAuth(adminApp);
+export const adminAuth = initializeAuth(adminApp, { persistence: browserLocalPersistence });
 
-void setPersistence(adminAuth, browserLocalPersistence);
 markAdminAuthLoaded(adminAuth);

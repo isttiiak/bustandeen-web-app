@@ -6,7 +6,9 @@ import { VitePWA } from 'vite-plugin-pwa';
 // Root package.json is the single source of truth for the app version
 // (frontend/backend/root package.json versions are kept in sync manually on
 // each release) — read at build time so the footer never drifts from it.
-const rootPkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8')) as {
+export const rootPkg = JSON.parse(
+  readFileSync(new URL('../package.json', import.meta.url), 'utf-8')
+) as {
   version: string;
 };
 
@@ -30,7 +32,7 @@ const rootPkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.u
  * the Arabic faces (Amiri, Scheherazade New) are left exactly as they were,
  * because a range there would move the spaces in Quran text to another font.
  */
-function fontsourceUnicodeRanges(): Plugin {
+export function fontsourceUnicodeRanges(): Plugin {
   const file =
     /@fontsource\/(hind-siliguri|plus-jakarta-sans|el-messiri)\/(bengali|latin|latin-ext)-(\d+)\.css$/;
   return {
@@ -47,6 +49,28 @@ function fontsourceUnicodeRanges(): Plugin {
       const range = block && /unicode-range:[^;]+;/.exec(block)?.[0];
       if (!range) throw new Error(`No unicode-range for ${family} ${subset} ${weight}`);
       return { code: code.replace(/\}\s*$/, `  ${range}\n}\n`), map: null };
+    },
+  };
+}
+
+/**
+ * Serves admin.html for /admin and /admin/* in `vite` and `vite preview`, the
+ * way vercel.json does on previews (production sends bustandeen.com/admin to
+ * admin.bustandeen.com, which serves it for every /admin path). The page
+ * itself is built by its own pass, vite.admin.config.ts.
+ */
+function adminPage(): Plugin {
+  const rewrite = (req: { url?: string }, _res: unknown, next: () => void) => {
+    if (req.url && /^\/admin(\/|\?|$)/.test(req.url)) req.url = '/admin.html';
+    next();
+  };
+  return {
+    name: 'bustandeen:admin-page',
+    configureServer(server) {
+      server.middlewares.use(rewrite);
+    },
+    configurePreviewServer(server) {
+      server.middlewares.use(rewrite);
     },
   };
 }
@@ -108,6 +132,10 @@ export default defineConfig({
         // still work offline after one use. Keeps the first install small.
         globIgnores: [
           'screenshots/**',
+          // The admin panel is its own site (vite.admin.config.ts, built after
+          // this one): the app's worker never serves it.
+          'admin.html',
+          'assets/admin/**',
           'assets/Admin*.js',
           'assets/xlsx-*.js',
           'assets/seo-cities-*.js',
@@ -213,6 +241,7 @@ export default defineConfig({
         ],
       },
     }),
+    adminPage(),
   ],
   server: { port: 5173 },
   build: {

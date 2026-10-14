@@ -6,16 +6,11 @@ import { EnvelopeIcon } from '@heroicons/react/24/outline';
 import { BTN_SECONDARY } from './components/bustanStyles.js';
 import PreviewGate from './components/PreviewGate.js';
 import { useAuthStore } from './store/useAuthStore.js';
-import { useAdminStore } from './store/useAdminStore.js';
 import { useVerificationEmail } from './hooks/useAuthEmails.js';
 import { demoTarget } from './utils/demoTarget.js';
 import Home from './pages/Home.js';
 
 const Landing = lazy(() => import('./pages/Landing.js'));
-// Lazy, both: they bring the admin panel's own Firebase app (adminFirebase.ts,
-// through AdminGate and the logout in AdminLayout), which no other page needs.
-const AdminGate = lazy(() => import('./components/AdminGate.js'));
-const AdminLayout = lazy(() => import('./components/AdminLayout.js'));
 
 // Full height (audit PERF-01): at 60vh the Footer below it showed on screen
 // and was then pushed down when the page arrived (CLS 0.278 on Home).
@@ -160,58 +155,6 @@ export const Protected = ({ children, guest }: ProtectedProps & { guest?: React.
   if (!user) return <>{guest ?? <PreviewGate />}</>;
   if (user.emailVerified === false) {
     return <VerifyEmailGate email={user.email} />;
-  }
-  return <>{children}</>;
-};
-
-/**
- * Admin-only pages: gated by AdminGate's own real Firebase sign-in (a second,
- * isolated Firebase app — see adminFirebase.ts) confirmed against the
- * backend's AdminAccount collection — deliberately NOT wrapped in the main
- * app's Protected/Firebase account, since a Servant/Ansar should never need
- * a REGULAR app account to reach the admin panel, and the two identities
- * must never be conflated (see AdminLayout.tsx's doc comment for the
- * incident that motivated this separation). AdminLayout renders the admin
- * panel's own chrome — never the main app's Navbar (see isAdminPage below).
- * Real enforcement is always server-side (requireAdminAuth on every
- * /api/admin/* route); this route being reachable while signed out is
- * expected, not a hole.
- */
-export const AdminProtected = ({ children }: ProtectedProps) => (
-  <Suspense fallback={<RouteFallback />}>
-    <AdminGate>
-      <AdminLayout>{children}</AdminLayout>
-    </AdminGate>
-  </Suspense>
-);
-
-/** Servant-only pages (user directory, managing Ansars) — the backend
- *  already 403s an Ansar's API calls, this just avoids rendering a page that
- *  can't do anything for that role. Must be nested INSIDE AdminProtected so
- *  useAdminStore's role is populated by the time this checks it. */
-export const ServantProtected = ({ children }: ProtectedProps) => {
-  const role = useAdminStore((s) => s.role);
-  if (role !== 'servant') {
-    return (
-      <div className="max-w-md mx-auto px-4 py-16 text-center text-white/60">
-        Servant-only page.
-      </div>
-    );
-  }
-  return <>{children}</>;
-};
-
-/** Pages for the Servant and the 'general' Ansar (the sadaqah Ansar's API
- *  calls are refused there). Nested inside AdminProtected like the above. */
-export const GeneralDomainProtected = ({ children }: ProtectedProps) => {
-  const role = useAdminStore((s) => s.role);
-  const ansarDomain = useAdminStore((s) => s.ansarDomain);
-  if (role !== 'servant' && ansarDomain !== 'general') {
-    return (
-      <div className="max-w-md mx-auto px-4 py-16 text-center text-white/60">
-        Not part of your area.
-      </div>
-    );
   }
   return <>{children}</>;
 };

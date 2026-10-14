@@ -46,7 +46,6 @@ const ROUTES = [
   '/library/zakat-calculator',
   '/login',
   '/signup',
-  '/admin',
   // Prerendered SEO routes, taken over by the client router
   '/prayer-times/dhaka-bangladesh',
   '/bn/qibla/dhaka-bangladesh',
