@@ -1,7 +1,8 @@
 // "What's new" on bayan.bustandeen.com: each release in plain words, newest
 // first. Written for the people who use the app, not copied from CHANGELOG.md
-// (that one is for developers). Add an entry with every release a user would
-// notice; behind-the-scenes releases are left out.
+// (that one is for developers). EVERY version bump adds an entry here, in
+// English and Bangla: the newest entry must be the app's version (the footer
+// shows it), and bayan.test.ts fails the build otherwise.
 import type { BayanLang } from './guides.js';
 
 export interface ReleaseText {
@@ -11,7 +12,8 @@ export interface ReleaseText {
 }
 
 export interface Release {
-  version: string; // major.minor shown as "v5.161"
+  /** The full app version, as the app's footer shows it (e.g. 5.164.1). */
+  version: string;
   date: string; // YYYY-MM-DD
   text: Record<BayanLang, ReleaseText>;
 }
@@ -38,7 +40,81 @@ export const RELEASES: Release[] = [
     },
   },
   {
-    version: '5.162',
+    version: '5.164.2',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'What’s new lists every release',
+        added: [
+          'This page now has an entry for every version of the app, so the newest one here always matches the version in the app’s footer.',
+        ],
+      },
+      bn: {
+        title: 'নতুন কী পাতায় এখন প্রতিটি আপডেট',
+        added: [
+          'এই পাতায় এখন অ্যাপের প্রতিটি সংস্করণের জন্য একটি করে লেখা থাকে, তাই এখানকার সবচেয়ে নতুনটি সবসময় অ্যাপের ফুটারের সংস্করণের সাথে মেলে।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.164.1',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'Clear “not found” on this help site',
+        fixed: [
+          'A mistyped address on bayan.bustandeen.com now shows “not found” instead of an empty app page.',
+        ],
+      },
+      bn: {
+        title: 'সাহায্য সাইটে স্পষ্ট “পাওয়া যায়নি”',
+        fixed: [
+          'bayan.bustandeen.com-এ ভুল ঠিকানা লিখলে এখন খালি অ্যাপ পাতার বদলে “পাওয়া যায়নি” দেখায়।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.164.0',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'Help & updates',
+        added: [
+          'This site: short guides for every part of Bustandeen, what changed in each release, how prayer times, the Hijri date and kaza are worked out, and credits. In English and Bangla.',
+          'A “Help & updates” link in the app’s footer and on the About page.',
+        ],
+      },
+      bn: {
+        title: 'সাহায্য ও আপডেট',
+        added: [
+          'এই সাইট: Bustandeen-এর প্রতিটি অংশের ছোট নির্দেশিকা, প্রতিটি আপডেটে কী বদলেছে, নামাযের সময়, হিজরি তারিখ ও কাযা কীভাবে হিসাব হয়, আর কৃতজ্ঞতা। ইংরেজি ও বাংলায়।',
+          'অ্যাপের ফুটার ও পরিচিতি পাতায় “সাহায্য ও আপডেট” লিংক।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.163.0',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'The admin panel has its own address',
+        added: [
+          'The team’s admin panel moved to its own site, so its sign-ins are kept fully apart from yours. Nothing changes in the app for you.',
+        ],
+      },
+      bn: {
+        title: 'অ্যাডমিন প্যানেলের নিজস্ব ঠিকানা',
+        added: [
+          'দলের অ্যাডমিন প্যানেল নিজস্ব সাইটে সরে গেছে, তাই এর সাইন ইন আপনার সাইন ইন থেকে পুরোপুরি আলাদা থাকে। আপনার জন্য অ্যাপে কিছুই বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.162.0',
     date: '2026-10-14',
     text: {
       en: {
@@ -58,7 +134,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
-    version: '5.161',
+    version: '5.161.0',
     date: '2026-10-14',
     text: {
       en: {
@@ -80,7 +156,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
-    version: '5.160',
+    version: '5.160.0',
     date: '2026-10-13',
     text: {
       en: {
@@ -104,7 +180,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
-    version: '5.159',
+    version: '5.159.0',
     date: '2026-10-12',
     text: {
       en: {
@@ -124,7 +200,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
-    version: '5.157',
+    version: '5.157.0',
     date: '2026-10-11',
     text: {
       en: {
@@ -142,7 +218,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
-    version: '5.156',
+    version: '5.156.0',
     date: '2026-10-11',
     text: {
       en: {
@@ -160,7 +236,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
-    version: '5.155',
+    version: '5.155.0',
     date: '2026-10-11',
     text: {
       en: { title: 'A new Bustandeen logo', added: ['A new logo across the app and the website.'] },
@@ -171,7 +247,7 @@ export const RELEASES: Release[] = [
     },
   },
   {
-    version: '5.153',
+    version: '5.153.0',
     date: '2026-10-11',
     text: {
       en: {

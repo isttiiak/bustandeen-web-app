@@ -13,6 +13,16 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - `components/switch.test.ts`: the Switch is a 44px `role="switch"` checkbox on tokens, and no app `.tsx` uses daisyUI `toggle` or `card-body`. e2e specs find the switches by role `switch`.
 
+## v5.164.2 - What's new on bayan matches the app version - 2026-10-14
+
+### Fixed
+
+- **bayan.bustandeen.com's What's new stopped at v5.162** while the app was on v5.164.1. It now has entries for 5.163.0, 5.164.0, 5.164.1 and this release, and every entry shows the full version, as the app's footer does (5.164.2, not 5.164).
+
+### Added
+
+- **A guard:** `bayan.test.ts` fails if the newest What's new entry is not the app's version in `package.json`, so every version bump must add a plain-words entry in English and Bangla (`src/seo/bayan/releases.ts`). Versions must also be listed newest first.
+
 ## v5.164.1 - Unknown pages on bayan.bustandeen.com show "not found" - 2026-10-14
 
 ### Fixed
