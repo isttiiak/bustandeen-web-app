@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en" data-theme="bustandeen">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- The admin panel's own page (src/admin-entry.tsx), served on
+         admin.bustandeen.com. No inline script (its CSP allows none), no PWA
+         manifest and no service worker. -->
+    <title>Bustandeen Admin</title>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="theme-color" content="#1a1812" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/admin-entry.tsx"></script>
+  </body>
+</html>

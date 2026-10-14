@@ -45,6 +45,7 @@ import {
 import { UserAvatar } from './icons/AvatarGlyphs.js';
 import i18n from '../i18n.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
+import { adminUrl } from '../utils/siteLinks.js';
 
 // ── Page metadata ─────────────────────────────────────────────────────────────
 // i18n keys for the translatable page titles (fallback = the English title)
@@ -408,16 +409,17 @@ export default function Navbar() {
 
                       {/* One link, not one per admin section — the admin panel has its
                           own separate Servant/Ansar sign-in either way (see AdminGate),
-                          so a deep link here would only look like a shortcut it isn't. */}
+                          so a deep link here would only look like a shortcut it isn't.
+                          A full page load: the panel is its own site (v5.163.0). */}
                       {user.isAdmin && (
-                        <Link
-                          to="/admin"
+                        <a
+                          href={adminUrl('/admin')}
                           onClick={() => setDropdownOpen(false)}
                           className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-gold/10 text-sm transition-colors"
                         >
                           <LockClosedIcon className="w-4 h-4 text-brand-gold/70" />
                           {t('nav.adminPanel', 'Admin Panel')}
-                        </Link>
+                        </a>
                       )}
 
                       {/* Feedback — set apart with a thin, low-opacity border */}

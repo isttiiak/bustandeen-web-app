@@ -61,3 +61,50 @@ export function isVercelPreviewOrigin(origin: string, config: PreviewMatcherConf
   }
   return false;
 }
+
+/**
+ * The admin panel's own site (v5.163.0, origin isolation). With ADMIN_HOST set
+ * (production: admin.bustandeen.com), /api/admin/* answers only on that host,
+ * on this project's Vercel previews and on localhost, and only the admin site
+ * may call it cross-origin. The app's site (bustandeen.com) can no longer use
+ * the admin API at all, so nothing running there can, even with a leftover
+ * admin token. Unset (local dev, tests): no restriction, as before.
+ */
+export function adminHostFromEnv(env: NodeJS.ProcessEnv = process.env): string | null {
+  const host = (env.ADMIN_HOST ?? '').trim().toLowerCase();
+  const labels = host.split('.');
+  const ok = labels.length >= 2 && labels.every((l) => /^[a-z0-9][a-z0-9-]*$/.test(l));
+  return ok ? host : null;
+}
+
+const isLocalHost = (host: string) => host === 'localhost' || host === '127.0.0.1';
+
+export function isAdminRequestHostAllowed(
+  host: string | undefined,
+  adminHost: string | null,
+  preview: PreviewMatcherConfig
+): boolean {
+  if (!adminHost) return true;
+  const h = (host ?? '').toLowerCase().replace(/:\d+$/, '');
+  if (!h) return false;
+  return h === adminHost || isLocalHost(h) || isVercelPreviewOrigin(`https://${h}`, preview);
+}
+
+export function isAdminCorsOriginAllowed(
+  origin: string,
+  adminHost: string | null,
+  preview: PreviewMatcherConfig
+): boolean {
+  if (!adminHost) return false; // callers fall back to the app's allowlist
+  const o = origin.toLowerCase();
+  if (o === `https://${adminHost}`) return true;
+  if (o.startsWith('http://')) {
+    try {
+      const url = new URL(o);
+      return url.origin === o && isLocalHost(url.hostname);
+    } catch {
+      return false;
+    }
+  }
+  return isVercelPreviewOrigin(o, preview);
+}

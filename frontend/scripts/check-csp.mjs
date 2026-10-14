@@ -16,32 +16,42 @@ import { fileURLToPath } from 'node:url';
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const vercel = JSON.parse(readFileSync(join(root, 'vercel.json'), 'utf8'));
 
-const csp = (vercel.headers ?? [])
-  .flatMap((h) => h.headers ?? [])
-  .find((h) => /^content-security-policy(-report-only)?$/i.test(h.key))?.value;
+// The admin site (admin.bustandeen.com, v5.163.0) has its own, stricter
+// policy: the header block whose `has` names its host.
+const isAdminBlock = (h) =>
+  (h.has ?? []).some((c) => c.type === 'host' && /^admin\./.test(c.value));
+const cspOf = (blocks) =>
+  blocks
+    .flatMap((h) => h.headers ?? [])
+    .find((h) => /^content-security-policy(-report-only)?$/i.test(h.key))?.value;
+const csp = cspOf((vercel.headers ?? []).filter((h) => !isAdminBlock(h)));
+const adminCsp = cspOf((vercel.headers ?? []).filter(isAdminBlock));
 
-if (!csp) {
+if (!csp || !adminCsp) {
   console.error('check-csp: no Content-Security-Policy header found in vercel.json');
   process.exit(1);
 }
 
-const scriptSrc = csp
-  .split(';')
-  .map((d) => d.trim())
-  .find((d) => d.startsWith('script-src '));
+const scriptSrcOf = (policy) =>
+  policy
+    .split(';')
+    .map((d) => d.trim())
+    .find((d) => d.startsWith('script-src '));
 
 const pages = [
-  'frontend/dist/index.html',
-  'frontend/dist/prayer-times/dhaka-bangladesh/index.html',
-  'frontend/dist/bn/duas/index.html',
-  'frontend/dist/bn/index.html',
-].filter((p) => existsSync(join(root, p)));
+  ['frontend/dist/index.html', csp],
+  ['frontend/dist/prayer-times/dhaka-bangladesh/index.html', csp],
+  ['frontend/dist/bn/duas/index.html', csp],
+  ['frontend/dist/bn/index.html', csp],
+  ['frontend/dist/admin.html', adminCsp],
+].filter(([p]) => existsSync(join(root, p)));
 
 const inlineScript =
   /<script(?![^>]*\bsrc=)(?![^>]*type="application\/(?:ld\+)?json")[^>]*>([\s\S]*?)<\/script>/g;
 const missing = new Map();
 
-for (const page of pages) {
+for (const [page, policy] of pages) {
+  const scriptSrc = scriptSrcOf(policy);
   const html = readFileSync(join(root, page), 'utf8');
   for (const [, body] of html.matchAll(inlineScript)) {
     const hash = `'sha256-${createHash('sha256').update(body, 'utf8').digest('base64')}'`;

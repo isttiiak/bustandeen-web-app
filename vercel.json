@@ -22,6 +22,50 @@
       ],
       "destination": "https://bustandeen.com/$1",
       "permanent": true
+    },
+    {
+      "source": "/admin",
+      "has": [
+        {
+          "type": "host",
+          "value": "bustandeen.com"
+        }
+      ],
+      "destination": "https://admin.bustandeen.com/admin",
+      "permanent": true
+    },
+    {
+      "source": "/admin/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "bustandeen.com"
+        }
+      ],
+      "destination": "https://admin.bustandeen.com/admin/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "admin.bustandeen.com"
+        }
+      ],
+      "destination": "/admin",
+      "permanent": false
+    },
+    {
+      "source": "/((?!admin/|admin$|api/|assets/|favicon\\.svg$).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "admin.bustandeen.com"
+        }
+      ],
+      "destination": "https://bustandeen.com/$1",
+      "permanent": true
     }
   ],
   "rewrites": [
@@ -47,6 +91,14 @@
     {
       "source": "/__/firebase/:path*",
       "destination": "https://ihsan-9e89b.firebaseapp.com/__/firebase/:path*"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/admin.html"
     },
     {
       "source": "/((?!api/|__/|assets/).*)",
@@ -88,6 +140,59 @@
         {
           "key": "Content-Security-Policy",
           "value": "default-src 'self'; script-src 'self' 'sha256-scgEecEjGAYLuiYfT1kngcov2ar1nrkXtyy6RqJqhqo=' https://www.googletagmanager.com https://apis.google.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.googleusercontent.com https://flagcdn.com https://*.google-analytics.com https://*.googletagmanager.com; media-src 'self' blob: https://cdn.islamic.network https://*.mp3quran.net; connect-src 'self' https://*.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://api.alquran.cloud https://nominatim.openstreetmap.org https://cdn.islamic.network https://*.mp3quran.net; frame-src 'self' https://ihsan-9e89b.firebaseapp.com https://accounts.google.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp"
+        }
+      ],
+      "missing": [
+        {
+          "type": "host",
+          "value": "admin.bustandeen.com"
+        }
+      ]
+    },
+    {
+      "source": "/((?!api/).*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "admin.bustandeen.com"
+        }
+      ],
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "no-referrer"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), camera=(), microphone=(), payment=(), usb=(), browsing-topics=()"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        },
+        {
+          "key": "Reporting-Endpoints",
+          "value": "csp=\"/api/csp-report\""
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'none'; worker-src 'none'; manifest-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp"
         }
       ]
     },

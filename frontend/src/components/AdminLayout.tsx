@@ -22,6 +22,7 @@ import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminLogout } from '../hooks/useAdminAuth.js';
 import AdminReauthDialog from './admin/AdminReauthDialog.js';
 import AdminPasswordDialog from './admin/AdminPasswordDialog.js';
+import { publicSiteUrl } from '../utils/siteLinks.js';
 
 /**
  * The admin panel's OWN chrome — deliberately never the main app's Navbar
@@ -166,7 +167,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </NavLink>
             <div className="flex items-center gap-3 text-xs">
               <a
-                href="/"
+                href={publicSiteUrl()}
                 target="_blank"
                 rel="noreferrer"
                 className="hidden sm:flex items-center gap-1 text-white/70 hover:text-white transition-colors"

@@ -23,7 +23,7 @@ describe('Firebase popup and redirect calls', () => {
     const missing: string[] = [];
     let calls = 0;
     for (const [file, src] of Object.entries(sources)) {
-      if (file.includes('adminFirebase')) continue; // its own app, built with getAuth()
+      if (file.includes('adminFirebase')) continue; // its own app (email and password only)
       for (const m of src.matchAll(CALL)) {
         calls += 1;
         if (!m[2]?.includes('browserPopupRedirectResolver')) missing.push(`${file}: ${m[1]}`);

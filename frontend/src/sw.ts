@@ -126,8 +126,9 @@ function startWorker(): void {
   registerRoute(
     new NavigationRoute(navigationHandler, {
       // /__/ = Firebase's auth helper pages, proxied to Firebase by vercel.json:
-      // the app shell must never answer them.
-      denylist: [/^\/api\//, /^\/__\//, /^\/[^?]*\.[A-Za-z0-9]+(\?|$)/],
+      // the app shell must never answer them. /admin is the admin panel's own
+      // page (admin.html; on bustandeen.com a redirect to admin.bustandeen.com).
+      denylist: [/^\/api\//, /^\/__\//, /^\/admin(\/|\?|$)/, /^\/[^?]*\.[A-Za-z0-9]+(\?|$)/],
     })
   );
 

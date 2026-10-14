@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.163.0 - The admin panel moves to admin.bustandeen.com - 2026-10-14
+
+### Changed
+
+- **The admin panel is now its own site, admin.bustandeen.com** (origin isolation). Its sign-in and second-factor proof are stored only there, never next to the app's, and the page loads none of the app: no app Firebase, no service worker, no install manifest, no analytics, and admin data is no longer kept in this device's query cache. `bustandeen.com/admin` and every `/admin/...` link redirect there (301) with the same path; `admin.bustandeen.com/` opens the panel, and any other path on it goes back to bustandeen.com. Every admin signs in once more on the new site (with a code, if the second-factor switch is on). The sign-in, roles, TOTP and backup codes work as before.
+- **The admin site has its own, stricter security headers:** scripts only from itself, no frames, no workers, connections only to our API and Firebase sign-in, `noindex`, no location access. The admin Firebase app now uses email and password only (`initializeAuth`, no popup helper), so it never loads Firebase's auth frame.
+- **The admin API answers only on the admin site** once `ADMIN_HOST=admin.bustandeen.com` is set on Vercel (plus previews and local dev), and only the admin site may call it from a browser. bustandeen.com can no longer use it at all. Without the variable nothing changes.
+- **The old admin sign-in left on bustandeen.com is removed once** (the admin Firebase user and the second-factor proof), only on the production site. The app's own sign-in is untouched.
+- Inside the app, "Admin Panel" in the menu and the admin password-reset page open the admin site with a full page load. On previews and in local dev the panel stays at `/admin` on the same host.
+- **Build:** the admin page is built in its own Vite pass (`vite.admin.config.ts`, files under `assets/admin/`), so the app's own chunks, the static pages and the service worker's precache are exactly as before. As a second page inside the app's build it had re-split the app (the static pages' lazy import of the app ended up behind a facade) and picked up the app's install manifest.
+
+### Tests
+
+- New `adminSite.test.ts` (the app no longer contains the panel, the admin page has no app Firebase, worker, manifest or saved cache, the redirects, headers and links, the one-time cleanup) and backend `adminHost.unit.test.js` (host guard and admin CORS). New Playwright spec `admin-site.spec.ts` (no worker or manifest, axe, the hand-over from inside the app). `check-csp.mjs` also checks `admin.html` against the admin policy.
+
 ## v5.162.0 - Quran habit and Ramadan open for guests, Status link (U10 follow-ups) - 2026-10-14
 
 ### Changed

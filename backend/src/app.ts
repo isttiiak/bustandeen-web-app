@@ -41,7 +41,13 @@ import cspReportRoutes from './routes/cspReport.routes.js';
 import clientErrorRoutes from './routes/clientError.routes.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
-import { isVercelPreviewOrigin, previewConfigFromEnv } from './utils/corsOrigins.js';
+import {
+  adminHostFromEnv,
+  isAdminCorsOriginAllowed,
+  isAdminRequestHostAllowed,
+  isVercelPreviewOrigin,
+  previewConfigFromEnv,
+} from './utils/corsOrigins.js';
 
 // Vercel serves gzip and brotli compression automatically on all responses
 // (including JSON) — no express middleware needed. Verified 2026-09-02:
@@ -100,12 +106,19 @@ const allowedOrigins = String(rawOrigins)
   .map((o) => o.trim().replace(/\/$/, ''))
   .filter(Boolean);
 const previewConfig = previewConfigFromEnv();
+// The admin panel's own host (v5.163.0); see utils/corsOrigins.ts.
+const adminHost = adminHostFromEnv();
+const isAdminPath = (path: string) => path === '/api/admin' || path.startsWith('/api/admin/');
 
-app.use(
+app.use((req, res, next) =>
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
       const normalized = origin.replace(/\/$/, '');
+      // With ADMIN_HOST set, only the admin site may call the admin API.
+      if (adminHost && isAdminPath(req.path)) {
+        return callback(null, isAdminCorsOriginAllowed(normalized, adminHost, previewConfig));
+      }
       const ok =
         allowedOrigins.includes(normalized) || isVercelPreviewOrigin(normalized, previewConfig);
       return callback(null, ok);
@@ -122,7 +135,7 @@ app.use(
       'X-Client-Op-Id',
     ],
     optionsSuccessStatus: 204,
-  })
+  })(req, res, next)
 );
 
 // CSP violation and app error reports have their own limiters and must not eat into a
@@ -165,6 +178,12 @@ app.use('/api/sadaqah', sadaqahRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/calendar', moonSightingRoutes);
+// The admin API answers only on the admin site (and previews, localhost) once
+// ADMIN_HOST is set. 404, as if it were not there.
+app.use('/api/admin', (req: Request, res: Response, next: NextFunction) => {
+  if (isAdminRequestHostAllowed(req.hostname, adminHost, previewConfig)) return next();
+  res.status(404).json({ ok: false, error: 'Not found' });
+});
 app.use('/api/admin/sadaqah', adminSadaqahRoutes);
 app.use('/api/admin/zikr-requests', adminZikrRoutes);
 app.use('/api/admin/auth', adminAuthRoutes);

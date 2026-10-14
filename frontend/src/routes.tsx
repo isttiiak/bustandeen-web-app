@@ -4,15 +4,8 @@ import { Navigate, Route, Routes } from 'react-router';
 import ZikrCounter from './pages/ZikrCounter.js';
 import NotFound from './pages/NotFound.js';
 import GuestFeaturePage from './components/GuestFeaturePage.js';
-import {
-  AdminProtected,
-  BanglaEntry,
-  DemoEntry,
-  Protected,
-  RootRoute,
-  ServantProtected,
-  GeneralDomainProtected,
-} from './routeGuards.js';
+import { BanglaEntry, DemoEntry, Protected, RootRoute } from './routeGuards.js';
+import AdminRedirect from './components/AdminRedirect.js';
 
 // Route-level code splitting — keeps each tracker's page weight off the shell
 // and Profile/Settings are large; keep them out of the initial bundle.
@@ -59,18 +52,6 @@ const Sadaqah = lazy(() => import('./pages/Sadaqah.js'));
 const SadaqahDonate = lazy(() => import('./pages/SadaqahDonate.js'));
 const SadaqahThankYou = lazy(() => import('./pages/SadaqahThankYou.js'));
 const SadaqahVerify = lazy(() => import('./pages/SadaqahVerify.js'));
-const AdminSadaqah = lazy(() => import('./pages/AdminSadaqah.js'));
-const AdminZikrRequests = lazy(() => import('./pages/AdminZikrRequests.js'));
-const AdminHome = lazy(() => import('./pages/AdminHome.js'));
-const AdminUsers = lazy(() => import('./pages/AdminUsers.js'));
-const AdminAccounts = lazy(() => import('./pages/AdminAccounts.js'));
-const AdminAuditLog = lazy(() => import('./pages/AdminAuditLog.js'));
-const AdminFeedback = lazy(() => import('./pages/AdminFeedback.js'));
-const AdminUserDetail = lazy(() => import('./pages/AdminUserDetail.js'));
-const AdminOpsHealth = lazy(() => import('./pages/AdminOpsHealth.js'));
-const AdminBroadcast = lazy(() => import('./pages/AdminBroadcast.js'));
-const AdminMoonSighting = lazy(() => import('./pages/AdminMoonSighting.js'));
-const AdminComposeEmail = lazy(() => import('./pages/AdminComposeEmail.js'));
 const NaseehPage = lazy(() => import('./pages/NaseehPage.js'));
 
 // Programmatic-SEO static pages (prayer-times/qibla/ramadan-calendar by
@@ -315,118 +296,8 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route path="/sadaqah/donate" element={<SadaqahDonate />} />
       <Route path="/sadaqah/thank-you" element={<SadaqahThankYou />} />
       <Route path="/sadaqah/verify/:id" element={<SadaqahVerify />} />
-      <Route
-        path="/admin"
-        element={
-          <AdminProtected>
-            <AdminHome />
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/sadaqah"
-        element={
-          <AdminProtected>
-            <AdminSadaqah />
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/zikr-requests"
-        element={
-          <AdminProtected>
-            <AdminZikrRequests />
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/users"
-        element={
-          <AdminProtected>
-            <ServantProtected>
-              <AdminUsers />
-            </ServantProtected>
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/users/:uid"
-        element={
-          <AdminProtected>
-            <ServantProtected>
-              <AdminUserDetail />
-            </ServantProtected>
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/accounts"
-        element={
-          <AdminProtected>
-            <ServantProtected>
-              <AdminAccounts />
-            </ServantProtected>
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/feedback"
-        element={
-          <AdminProtected>
-            <AdminFeedback />
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/audit-log"
-        element={
-          <AdminProtected>
-            <ServantProtected>
-              <AdminAuditLog />
-            </ServantProtected>
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/ops-health"
-        element={
-          <AdminProtected>
-            <ServantProtected>
-              <AdminOpsHealth />
-            </ServantProtected>
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/broadcast"
-        element={
-          <AdminProtected>
-            <GeneralDomainProtected>
-              <AdminBroadcast />
-            </GeneralDomainProtected>
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/moon-sighting"
-        element={
-          <AdminProtected>
-            <GeneralDomainProtected>
-              <AdminMoonSighting />
-            </GeneralDomainProtected>
-          </AdminProtected>
-        }
-      />
-      <Route
-        path="/admin/compose-email"
-        element={
-          <AdminProtected>
-            <ServantProtected>
-              <AdminComposeEmail />
-            </ServantProtected>
-          </AdminProtected>
-        }
-      />
+      {/* The admin panel is its own site (admin.html, admin.bustandeen.com). */}
+      <Route path="/admin/*" element={<AdminRedirect />} />
       <Route path="/about" element={<About />} />
       <Route path="/library/duas" element={<DuaLibrary />} />
       <Route path="/library/adhkar" element={<AdhkarLibrary />} />
