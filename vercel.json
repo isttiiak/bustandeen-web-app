@@ -15,6 +15,10 @@
     {
       "path": "/api/cron/rebuild",
       "schedule": "30 0 1 * *"
+    },
+    {
+      "path": "/api/cron/email-check",
+      "schedule": "0 1 * * *"
     }
   ],
   "redirects": [

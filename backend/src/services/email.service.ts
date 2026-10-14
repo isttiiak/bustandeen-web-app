@@ -98,6 +98,31 @@ const getTransporter = (sender: EmailSender): Transporter | null => {
   return transporter;
 };
 
+export interface SenderCheck {
+  sender: EmailSender;
+  configured: boolean;
+  /** SMTP connection + login worked (null when not configured). */
+  ok: boolean | null;
+  error?: string;
+}
+
+/**
+ * LT-2: logs in to the sender's SMTP server without sending anything
+ * (nodemailer verify: connect, TLS, AUTH). A changed Zoho password or plan
+ * shows up here before a user's sign-up email silently fails.
+ */
+export const verifySender = async (sender: EmailSender): Promise<SenderCheck> => {
+  const t = getTransporter(sender);
+  if (!t) return { sender, configured: false, ok: null };
+  try {
+    await t.verify();
+    return { sender, configured: true, ok: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { sender, configured: true, ok: false, error: message.slice(0, 120) };
+  }
+};
+
 export interface SendMailOptions {
   to: string;
   subject: string;

@@ -155,6 +155,8 @@ app.get('/api/health', (_req: Request, res: Response) => {
 
 // Deep check (LT-3): also asks MongoDB. 503 when the database does not answer.
 app.get('/api/health/deep', healthController.deepHandler);
+// Last daily SMTP login check (LT-2). 503 when it failed or stopped running.
+app.get('/api/health/email', healthController.emailHandler);
 
 // Bot-only invite-link unfurl preview — NOT under /api; only reached in
 // production when vercel.json's User-Agent-matched rewrite routes a

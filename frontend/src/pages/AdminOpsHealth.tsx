@@ -295,6 +295,7 @@ function CspSection({ report }: { report: CspViolationReport }) {
 
 const CRON_LABELS: Record<string, string> = {
   rebuild: 'Monthly rebuild (1st, 06:30 BD)',
+  'email-check': 'Email login check (daily, 07:00 BD)',
 };
 
 function CronSection({ runs }: { runs: CronRunSummary[] }) {

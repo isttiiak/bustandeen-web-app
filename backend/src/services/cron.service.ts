@@ -1,6 +1,7 @@
 import CronRun from '../models/CronRun.js';
+import { verifySender, type EmailSender } from './email.service.js';
 
-export type CronJob = 'rebuild';
+export type CronJob = 'rebuild' | 'email-check';
 
 export interface CronResult {
   ok: boolean;
@@ -68,4 +69,27 @@ export const triggerRebuild = async (): Promise<CronResult> => {
     const name = err instanceof Error ? err.name : 'Error';
     return { ok: false, detail: `Deploy hook unreachable (${name})` };
   }
+};
+
+const EMAIL_SENDERS: EmailSender[] = ['ansar', 'sadaqah', 'istiak'];
+
+/**
+ * LT-2: email-first sign-up and password reset depend on Zoho SMTP alone, so
+ * once a day every configured sender logs in (nothing is sent). 'ansar' sends
+ * the account emails, so it must be configured; the others only count when set.
+ * /api/health/email turns a failed or missing run into a 503 for the status
+ * page, which alerts by its own email, not through Zoho.
+ */
+export const checkEmailSenders = async (): Promise<CronResult> => {
+  const checks = await Promise.all(EMAIL_SENDERS.map((s) => verifySender(s)));
+  const parts = checks.map((c) =>
+    c.ok === null
+      ? `${c.sender} not configured`
+      : c.ok
+        ? `${c.sender} ok`
+        : `${c.sender} FAILED (${c.error})`
+  );
+  const accountSender = checks.find((c) => c.sender === 'ansar');
+  const ok = accountSender?.ok === true && checks.every((c) => c.ok !== false);
+  return { ok, detail: parts.join('; ') };
 };

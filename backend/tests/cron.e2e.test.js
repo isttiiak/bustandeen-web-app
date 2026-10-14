@@ -91,6 +91,7 @@ describe('Vercel Cron jobs', () => {
   test('vercel.json schedules the job monthly, and GitHub has no schedule left', () => {
     const vercel = JSON.parse(fs.readFileSync(new URL('../../vercel.json', import.meta.url)));
     expect(vercel.crons).toContainEqual({ path: '/api/cron/rebuild', schedule: '30 0 1 * *' });
+    expect(vercel.crons).toContainEqual({ path: '/api/cron/email-check', schedule: '0 1 * * *' });
     const wf = fs.readFileSync(
       new URL('../../.github/workflows/scheduled-rebuild.yml', import.meta.url),
       'utf8'
