@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.166.1',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'Your data is now backed up every week',
+        added: [
+          "Once a week, the app's database is copied, locked with strong encryption, and kept in a private place. Each copy is opened and checked right after it is made, so we know it can be brought back if something goes wrong.",
+        ],
+      },
+      bn: {
+        title: 'আপনার ডেটার এখন প্রতি সপ্তাহে ব্যাকআপ হয়',
+        added: [
+          'সপ্তাহে একবার অ্যাপের ডেটাবেসের একটি কপি তৈরি হয়, শক্ত এনক্রিপশনে তালাবদ্ধ করে একটি ব্যক্তিগত জায়গায় রাখা হয়। প্রতিটি কপি তৈরির পরপরই খুলে পরীক্ষা করা হয়, যাতে কোনো সমস্যা হলে তা ফিরিয়ে আনা যায়।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.166.0',
     date: '2026-10-14',
     text: {

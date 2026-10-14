@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.166.1 - Weekly encrypted database backups (LT-6) - 2026-10-14
+
+### Added
+
+- **Weekly database backups** (LT-6). Atlas M0 has no backups and local dev writes to the live database, so a weekly GitHub Action in a PRIVATE repo (`isttiiak/bustandeen-backups`, Saturday 03:00 BD) runs `ops/backup/backup.sh`: `mongodump` of `ihsan` (gzip archive), encrypted with gpg (AES-256, symmetric passphrase), then **decrypted again and restored into a throwaway MongoDB** (`ihsan_restorecheck` on the job's service container) to prove it opens: no failed document and every collection back, else the run fails and GitHub emails. The encrypted file and its SHA-256 are committed to the private repo (newest 12 in the tree, older in history). The URI and passphrase reach the tools only through the environment; plaintext is deleted on exit.
+- **Why a private repo:** this repo is public (public Action logs and artifacts), and GitHub turns off a public repo's schedules after 60 quiet days. The reviewed copy of the private workflow is `ops/backup/backup-workflow.yml`.
+- **Restore note:** `ops/backup/README.md`: setup (read-only Atlas user, passphrase in a password manager, `gh` commands for the repo and secrets), and a restore that goes into `ihsan_restore` first, then one collection or everything with `--drop`; Windows tools (Git for Windows' gpg, MongoDB Database Tools).
+
+### Tests
+
+- New `backup-selftest.yml` (runs when `ops/backup/` changes): seeds a fake database in a `mongo:8` service, runs the script, checks 53 documents and 4 collections restored with 0 failed, no plaintext in the file, a wrong passphrase cannot open it, the checksum, the check database dropped and the source untouched.
+
 ## v5.166.0 - Monthly rebuild runs from Vercel Cron (LT-1) - 2026-10-14
 
 ### Changed
