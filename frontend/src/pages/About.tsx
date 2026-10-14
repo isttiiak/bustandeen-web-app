@@ -8,6 +8,7 @@ import {
   ClockIcon,
   EnvelopeIcon,
   LockClosedIcon,
+  QuestionMarkCircleIcon,
   SignalIcon,
   SparklesIcon,
   UsersIcon,
@@ -26,7 +27,7 @@ import {
 } from '../components/icons/IslamicIcons.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import ExtLink from '../components/ExtLink.js';
-import { STATUS_URL } from '../utils/siteLinks.js';
+import { HELP_URL, HELP_URL_BN, STATUS_URL } from '../utils/siteLinks.js';
 
 const FEATURE_KEYS: { Icon: (p: IconProps) => React.ReactNode; key: string }[] = [
   { Icon: TasbihIcon, key: 'zikrCounter' },
@@ -177,6 +178,27 @@ export default function About() {
               {t('about.privacyLink')}
               <ChevronRightIcon className="w-3.5 h-3.5" aria-hidden="true" />
             </Link>
+          </section>
+
+          {/* Help & Updates (bayan.bustandeen.com, our own static site) */}
+          <section className={`${CARD} p-5 flex items-center justify-between gap-3`}>
+            <div className="min-w-0">
+              <p className="text-white font-bold text-sm flex items-center gap-2">
+                <QuestionMarkCircleIcon
+                  className="w-4 h-4 text-brand-emerald shrink-0"
+                  aria-hidden="true"
+                />
+                {t('about.helpTitle')}
+              </p>
+              <p className="text-white/70 text-xs mt-0.5">{t('about.helpDesc')}</p>
+            </div>
+            <a
+              href={i18n.language === 'bn' ? HELP_URL_BN : HELP_URL}
+              className={`${BTN_SECONDARY} !px-3 !py-1.5 !text-xs shrink-0`}
+            >
+              {t('about.helpLink')}
+              <ChevronRightIcon className="w-3.5 h-3.5" aria-hidden="true" />
+            </a>
           </section>
 
           {/* Live uptime (status.bustandeen.com, an external Better Stack page) */}

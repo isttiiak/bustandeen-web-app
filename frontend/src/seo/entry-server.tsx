@@ -28,6 +28,14 @@ import { expiredMonths, monthWindow, ymInZone } from './utils/monthTable.js';
 import LandingPage, { landingT, type LandingLang } from './templates/LandingPage.js';
 import { LANDING_FAQ, POPULAR_CITY_LINKS } from '../components/LandingSeoSections.js';
 import type { SeoClientPage } from './entry-client.js';
+import BayanPage, {
+  BAYAN_LANGS,
+  bayanMeta,
+  bayanPath,
+  bayanRoutes,
+  type BayanRoute,
+} from './bayan/BayanPage.js';
+import type { BayanLang } from './bayan/guides.js';
 
 export type RouteKind =
   | { kind: 'prayer-times'; citySlug: string }
@@ -287,5 +295,24 @@ export function renderLanding(lang: LandingLang = 'en'): {
     description: t('landing.seoDescription', ''),
     faq: LANDING_FAQ.map(({ q, a }) => ({ q: t(q[0], q[1]), a: t(a[0], a[1]) })),
     citySlugs: POPULAR_CITY_LINKS.map((c) => c.slug),
+  };
+}
+
+/** bayan.bustandeen.com, Help & Updates: every page in both languages, for
+ * scripts/prerender.mjs (written to dist/bayan/, served on its own host). */
+export function bayanPages(): Array<{ lang: BayanLang; route: BayanRoute; path: string }> {
+  return BAYAN_LANGS.flatMap((lang) =>
+    bayanRoutes().map((route) => ({ lang, route, path: bayanPath(lang, route) }))
+  );
+}
+
+export function renderBayan(
+  lang: BayanLang,
+  route: BayanRoute
+): { html: string; title: string; description: string; alternates: Record<BayanLang, string> } {
+  return {
+    html: renderToStaticMarkup(<BayanPage lang={lang} route={route} />),
+    ...bayanMeta(lang, route),
+    alternates: { en: bayanPath('en', route), bn: bayanPath('bn', route) },
   };
 }

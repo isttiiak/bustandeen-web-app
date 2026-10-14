@@ -455,6 +455,89 @@ writeFileSync(join(DIST, 'sitemap.xml'), sitemapIndex);
 
 console.error(`Wrote sitemap-index.xml + ${Object.keys(sitemapFiles).length} category sitemaps.`);
 
+// ── Bayan: bayan.bustandeen.com, Help & Updates (v5.164.0) ─────────────────
+// Its own small HTML documents, not the app shell: no app script, no
+// analytics, no first-paint script, only the app's stylesheet (same Tailwind
+// classes) and, on the home pages, the guide filter (public/bayan/filter.js).
+// Written to dist/bayan/; vercel.json serves that folder as the root of the
+// bayan host. Canonical URLs and hreflang point at the bayan host.
+const BAYAN_ORIGIN = 'https://bayan.bustandeen.com';
+const appCss = /<link rel="stylesheet" crossorigin href="([^"]+)">/.exec(appShellHtml)?.[1];
+if (!appCss) {
+  console.error("prerender: the app's stylesheet link was not found in app-shell.html");
+  process.exit(1);
+}
+const BAYAN_OG_LOCALE = { en: 'en_US', bn: 'bn_BD' };
+function bayanDocument({ lang, path, title, description, alternates, bodyHtml }) {
+  const url = `${BAYAN_ORIGIN}${path}`;
+  const t = escapeHtml(title);
+  const d = escapeAttr(description);
+  const alt = Object.entries(alternates)
+    .map(([l, p]) => `<link rel="alternate" hreflang="${l}" href="${BAYAN_ORIGIN}${p}" />`)
+    .join('\n    ');
+  const filter = path.endsWith('/home') ? '\n    <script src="/filter.js" defer></script>' : '';
+  return `<!doctype html>
+<html lang="${lang}" data-theme="bustandeen" data-static>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>${t}</title>
+    <meta name="description" content="${d}" />
+    <meta name="theme-color" content="#1a1812" />
+    <meta name="robots" content="index, follow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href="${url}" />
+    ${alt}
+    <link rel="alternate" hreflang="x-default" href="${BAYAN_ORIGIN}${alternates.en}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Bustandeen" />
+    <meta property="og:title" content="${t}" />
+    <meta property="og:description" content="${d}" />
+    <meta property="og:url" content="${url}" />
+    <meta property="og:image" content="${SITE_URL}/og-image.jpg" />
+    <meta property="og:locale" content="${BAYAN_OG_LOCALE[lang]}" />
+    <link rel="stylesheet" href="${appCss}" />${filter}
+  </head>
+  <body>
+    ${bodyHtml}
+  </body>
+</html>
+`;
+}
+const bayanSitemap = [];
+for (const { lang, route, path } of ssr.bayanPages()) {
+  const page = ssr.renderBayan(lang, route);
+  writePage(
+    `/bayan${path}`,
+    bayanDocument({
+      lang,
+      path,
+      title: page.title,
+      description: page.description,
+      alternates: page.alternates,
+      bodyHtml: page.html,
+    })
+  );
+  if (lang === 'en') bayanSitemap.push(page.alternates);
+}
+writeFileSync(
+  join(DIST, 'bayan', 'sitemap-bayan.xml'),
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${bayanSitemap
+    .flatMap((alts) =>
+      Object.values(alts).map(
+        (p) =>
+          `  <url>\n    <loc>${BAYAN_ORIGIN}${p}</loc>${Object.entries(alts)
+            .map(
+              ([l, q]) =>
+                `\n    <xhtml:link rel="alternate" hreflang="${l}" href="${BAYAN_ORIGIN}${q}"/>`
+            )
+            .join('')}\n  </url>`
+      )
+    )
+    .join('\n')}\n</urlset>\n`
+);
+console.error(`Wrote ${bayanSitemap.length * 2} Bayan pages (dist/bayan) and their sitemap.`);
+
 // ── Prerendered landing: / and /bn ──────────────────────────────────────
 // `/` is written INTO dist/index.html, which Vercel serves for `/` (audit
 // SEO-01); `/bn` is the same page in Bangla. Since PERF-01 this is the whole

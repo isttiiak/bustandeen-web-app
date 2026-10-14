@@ -55,7 +55,9 @@ describe('admin site', () => {
   });
 
   it('vercel.json sends bustandeen.com/admin to the admin site and keeps it admin-only', () => {
-    const main = v.redirects.filter((r) => onHost(r, 'bustandeen.com'));
+    const main = v.redirects.filter(
+      (r) => onHost(r, 'bustandeen.com') && r.source.startsWith('/admin')
+    );
     expect(main.map((r) => [r.source, r.destination])).toEqual([
       ['/admin', 'https://admin.bustandeen.com/admin'],
       ['/admin/:path*', 'https://admin.bustandeen.com/admin/:path*'],
@@ -74,7 +76,7 @@ describe('admin site', () => {
 
   it('the admin site has its own strict headers; the app keeps its own', () => {
     const app = v.headers[0]!;
-    expect(app.missing).toEqual([{ type: 'host', value: 'admin.bustandeen.com' }]);
+    expect(app.missing).toContainEqual({ type: 'host', value: 'admin.bustandeen.com' });
     const admin = v.headers.find((h) => onHost(h, 'admin.bustandeen.com'))!;
     const get = (k: string) => admin.headers.find((h) => h.key === k)?.value ?? '';
     const csp = get('Content-Security-Policy');

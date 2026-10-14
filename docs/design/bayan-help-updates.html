@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Bayan Help Prototype</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;600;700&family=Hind+Siliguri:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* bayan.bustandeen.com prototype: Help & Updates. Static mock, not app
+         code. Colours = the app's dark --c-* tokens (static pages stay dark). */
+      :root {
+        --page: #2b2a26;
+        --pageInk: #e8e2d4;
+        --void: 14 13 10;
+        --deep: 26 24 18;
+        --surface: 33 31 22;
+        --border: 58 52 37;
+        --emerald: 122 158 110;
+        --gold: 201 169 110;
+        --warm: 196 130 90;
+        --ink: 232 226 212;
+        --hero: 42 38 23;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--pageInk);
+        font-family: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, sans-serif;
+      }
+      [lang='bn'] body,
+      .bn {
+        font-family: 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: 'El Messiri', 'Hind Siliguri', serif;
+        margin: 0 0 6px;
+      }
+      header.doc,
+      .notes {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 20px 16px 4px;
+      }
+      header.doc p,
+      .notes li,
+      .notes p {
+        font-size: 13px;
+        line-height: 1.55;
+        opacity: 0.85;
+        max-width: 860px;
+      }
+      .toolbar {
+        display: flex;
+        gap: 8px;
+        margin: 12px 0 4px;
+        flex-wrap: wrap;
+      }
+      .toolbar button {
+        font:
+          600 13px 'Plus Jakarta Sans',
+          sans-serif;
+        min-height: 44px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1px solid currentColor;
+        background: transparent;
+        color: var(--pageInk);
+        opacity: 0.6;
+        cursor: pointer;
+      }
+      .toolbar button[aria-pressed='true'] {
+        opacity: 1;
+        background: rgba(122, 158, 110, 0.18);
+      }
+      .stage {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 12px 16px 28px;
+        display: flex;
+        gap: 22px;
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+      .frame {
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--void));
+        color: rgb(var(--ink));
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+      }
+      .frame.desk {
+        flex: 1 1 640px;
+        min-width: 0;
+      }
+      .frame.phone {
+        width: 360px;
+        flex: 0 0 360px;
+        max-width: 100%;
+      }
+      .cap {
+        font-size: 12px;
+        opacity: 0.7;
+        margin: 0 0 6px;
+      }
+      .urlbar {
+        font:
+          500 12px 'Plus Jakarta Sans',
+          sans-serif;
+        padding: 8px 14px;
+        background: rgb(var(--deep));
+        border-bottom: 1px solid rgb(var(--border));
+        color: rgb(var(--ink) / 0.7);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      /* Site chrome */
+      .top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-bottom: 1px solid rgb(var(--border));
+      }
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font:
+          700 17px 'El Messiri',
+          serif;
+        color: rgb(var(--ink));
+        text-decoration: none;
+      }
+      .logo svg {
+        width: 26px;
+        height: 26px;
+      }
+      .logo small {
+        font:
+          600 11px 'Plus Jakarta Sans',
+          sans-serif;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgb(var(--gold));
+        margin-left: 2px;
+      }
+      .top nav {
+        display: flex;
+        gap: 4px;
+        margin-left: auto;
+        flex-wrap: wrap;
+      }
+      .top nav a,
+      .pill {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 12px;
+        border-radius: 12px;
+        font-size: 14px;
+        color: rgb(var(--ink) / 0.8);
+        text-decoration: none;
+        cursor: pointer;
+      }
+      .top nav a[aria-current='page'] {
+        background: rgb(var(--emerald) / 0.15);
+        color: rgb(var(--emerald));
+      }
+      .phone .top nav {
+        display: none;
+      }
+      .menu {
+        display: none;
+        margin-left: auto;
+        min-width: 44px;
+        min-height: 44px;
+        border-radius: 12px;
+        border: 1px solid rgb(var(--border));
+        background: transparent;
+        color: rgb(var(--ink));
+      }
+      .phone .menu {
+        display: grid;
+        place-items: center;
+      }
+      .lang {
+        min-height: 44px;
+        min-width: 44px;
+        padding: 0 10px;
+        border-radius: 12px;
+        border: 1px solid rgb(var(--border));
+        background: transparent;
+        color: rgb(var(--ink) / 0.85);
+        font:
+          600 13px 'Hind Siliguri',
+          sans-serif;
+        cursor: pointer;
+      }
+      .body {
+        padding: 18px 16px 22px;
+      }
+      .desk .body {
+        padding: 26px 32px 30px;
+      }
+      .arch {
+        border-radius: 120px 120px 20px 20px;
+        background: radial-gradient(120% 90% at 50% 0%, rgb(var(--hero)), rgb(var(--deep)));
+        border: 1px solid rgb(var(--border));
+        padding: 30px 20px 22px;
+        text-align: center;
+      }
+      .arch h1 {
+        font-size: 28px;
+      }
+      .arch p {
+        margin: 6px auto 14px;
+        max-width: 460px;
+        color: rgb(var(--ink) / 0.78);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        max-width: 420px;
+        margin: 0 auto;
+        min-height: 48px;
+        padding: 0 14px;
+        border-radius: 12px;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--void));
+        color: rgb(var(--ink) / 0.55);
+        font-size: 14px;
+      }
+      .grid4 {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .card {
+        border-radius: 20px;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--deep));
+        padding: 16px;
+        text-decoration: none;
+        color: rgb(var(--ink));
+        display: block;
+        min-height: 44px;
+        cursor: pointer;
+      }
+      .card:hover {
+        border-color: rgb(var(--emerald) / 0.6);
+      }
+      .card .ic {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: rgb(var(--emerald) / 0.14);
+        color: rgb(var(--emerald));
+        margin-bottom: 10px;
+      }
+      .card .ic svg {
+        width: 20px;
+        height: 20px;
+      }
+      .card h3 {
+        font-size: 17px;
+      }
+      .card p {
+        margin: 0;
+        font-size: 13px;
+        line-height: 1.5;
+        color: rgb(var(--ink) / 0.72);
+      }
+      .sec {
+        margin-top: 24px;
+      }
+      .sec > h2 {
+        font-size: 20px;
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .sec > h2 a {
+        margin-left: auto;
+        font:
+          600 13px 'Plus Jakarta Sans',
+          sans-serif;
+        color: rgb(var(--emerald));
+        text-decoration: none;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+      .list {
+        list-style: none;
+        margin: 8px 0 0;
+        padding: 0;
+        border: 1px solid rgb(var(--border));
+        border-radius: 20px;
+        background: rgb(var(--deep));
+        overflow: hidden;
+      }
+      .list li a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 52px;
+        padding: 10px 16px;
+        color: rgb(var(--ink));
+        text-decoration: none;
+        border-top: 1px solid rgb(var(--border));
+        font-size: 14px;
+      }
+      .list li:first-child a {
+        border-top: 0;
+      }
+      .list .v {
+        font:
+          700 11px 'Plus Jakarta Sans',
+          sans-serif;
+        color: rgb(var(--gold));
+        background: rgb(var(--gold) / 0.12);
+        border-radius: 8px;
+        padding: 3px 7px;
+        white-space: nowrap;
+      }
+      .list .d {
+        margin-left: auto;
+        font-size: 12px;
+        color: rgb(var(--ink) / 0.6);
+        white-space: nowrap;
+      }
+      /* Article */
+      .crumbs {
+        font-size: 13px;
+        color: rgb(var(--ink) / 0.7);
+        margin-bottom: 10px;
+      }
+      .crumbs a {
+        color: rgb(var(--emerald));
+        text-decoration: none;
+      }
+      .art {
+        display: grid;
+        grid-template-columns: 200px 1fr;
+        gap: 26px;
+      }
+      .phone .art {
+        grid-template-columns: 1fr;
+      }
+      .toc {
+        font-size: 13px;
+        border-left: 2px solid rgb(var(--border));
+        padding-left: 12px;
+        align-self: start;
+      }
+      .toc a {
+        display: block;
+        min-height: 36px;
+        padding: 8px 0;
+        color: rgb(var(--ink) / 0.72);
+        text-decoration: none;
+      }
+      .toc a.on {
+        color: rgb(var(--emerald));
+      }
+      .phone .toc {
+        display: none;
+      }
+      .prose h1 {
+        font-size: 26px;
+      }
+      .prose .meta {
+        font-size: 12px;
+        color: rgb(var(--ink) / 0.6);
+        margin-bottom: 14px;
+      }
+      .prose h2 {
+        font-size: 19px;
+        margin-top: 20px;
+      }
+      .prose p,
+      .prose li {
+        font-size: 14.5px;
+        line-height: 1.7;
+        color: rgb(var(--ink) / 0.86);
+      }
+      .prose ol {
+        padding-left: 20px;
+      }
+      .note {
+        border-radius: 12px;
+        border: 1px solid rgb(var(--gold) / 0.35);
+        background: rgb(var(--gold) / 0.08);
+        padding: 12px 14px;
+        font-size: 13.5px;
+        line-height: 1.6;
+        margin: 14px 0;
+      }
+      .note b {
+        color: rgb(var(--gold));
+      }
+      .shot {
+        border-radius: 16px;
+        border: 1px dashed rgb(var(--border));
+        background: rgb(var(--deep));
+        min-height: 130px;
+        display: grid;
+        place-items: center;
+        color: rgb(var(--ink) / 0.5);
+        font-size: 12px;
+        margin: 12px 0;
+      }
+      .cta {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+      .btn {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        padding: 0 16px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        text-decoration: none;
+      }
+      .btn.p {
+        background: rgb(var(--emerald));
+        color: #fff;
+      }
+      .btn.s {
+        border: 1px solid rgb(var(--border));
+        color: rgb(var(--ink));
+      }
+      /* What's new */
+      .rel {
+        border: 1px solid rgb(var(--border));
+        border-radius: 20px;
+        background: rgb(var(--deep));
+        padding: 16px;
+        margin-top: 12px;
+      }
+      .rel header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+      }
+      .rel h3 {
+        font-size: 18px;
+        margin: 0;
+      }
+      .tag {
+        font:
+          700 11px 'Plus Jakarta Sans',
+          sans-serif;
+        border-radius: 8px;
+        padding: 3px 8px;
+      }
+      .tag.new {
+        color: rgb(var(--emerald));
+        background: rgb(var(--emerald) / 0.14);
+      }
+      .tag.fix {
+        color: rgb(var(--warm));
+        background: rgb(var(--warm) / 0.14);
+      }
+      .rel ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+      .rel li {
+        font-size: 14px;
+        line-height: 1.65;
+        color: rgb(var(--ink) / 0.86);
+      }
+      /* Calculation table */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13.5px;
+        margin: 10px 0;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 10px 8px;
+        border-bottom: 1px solid rgb(var(--border));
+        vertical-align: top;
+      }
+      th {
+        color: rgb(var(--ink) / 0.7);
+        font-weight: 600;
+      }
+      .foot {
+        border-top: 1px solid rgb(var(--border));
+        padding: 14px 16px;
+        font-size: 12.5px;
+        color: rgb(var(--ink) / 0.65);
+        display: flex;
+        gap: 6px 14px;
+        flex-wrap: wrap;
+      }
+      .foot a {
+        color: rgb(var(--ink) / 0.8);
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+      }
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="doc">
+      <h1>bayan.bustandeen.com: Help &amp; Updates</h1>
+      <p>
+        Prototype for approval. One static, prerendered site (like the SEO pages: no app bundle, no
+        sign-in, no service worker), dark only, English and Bangla. Four parts: <b>Guides</b>,
+        <b>What's new</b>, <b>How we calculate</b>, <b>Credits</b>. help.bustandeen.com 301s here.
+        Pick a page and a language; the desktop and phone frames show the same page.
+      </p>
+      <div class="toolbar" role="group" aria-label="Page">
+        <button data-page="home" aria-pressed="true">Home</button>
+        <button data-page="guide" aria-pressed="false">A guide</button>
+        <button data-page="new" aria-pressed="false">What's new</button>
+        <button data-page="calc" aria-pressed="false">How we calculate</button>
+        <button data-page="credits" aria-pressed="false">Credits</button>
+      </div>
+      <div class="toolbar" role="group" aria-label="Language">
+        <button data-lang="en" aria-pressed="true">English</button>
+        <button data-lang="bn" aria-pressed="false">বাংলা</button>
+      </div>
+    </header>
+
+    <div class="stage">
+      <div style="flex: 1 1 640px; min-width: 0">
+        <p class="cap">Desktop</p>
+        <div class="frame desk" data-frame></div>
+      </div>
+      <div>
+        <p class="cap">Phone (360px)</p>
+        <div class="frame phone" data-frame></div>
+      </div>
+    </div>
+
+    <section class="notes">
+      <h2>How it is built (once approved)</h2>
+      <ul>
+        <li>
+          <b>Same pipeline as the SEO pages:</b> new templates in
+          <code>src/seo/templates/bayan/</code>, rendered by <code>entry-server.tsx</code> +
+          <code>prerender.mjs</code> into <code>dist/bayan/**</code>, hydrated by
+          <code>static-entry.ts</code> only for the language switch and the search box. No React
+          app, no Firebase, no API call.
+        </li>
+        <li>
+          <b>Hosting:</b> Vercel rewrite on host <code>bayan.bustandeen.com</code>:
+          <code>/(.*)</code> → <code>/bayan/$1</code>; Bangla at <code>/bn/...</code> on that host.
+          <code>help.bustandeen.com/*</code> → 301 <code>bayan.bustandeen.com/*</code>. On
+          bustandeen.com, <code>/bayan/*</code> 301s to the subdomain so there is one canonical URL.
+          Own sitemap, <code>hreflang</code> en/bn, canonical on every page.
+        </li>
+        <li>
+          <b>Content source:</b> guides and "How we calculate" are TSX content files in en + bn
+          (reviewed like any copy). "What's new" is written per release in plain words, not the raw
+          CHANGELOG (that one is for developers); the last ~12 releases, newest first. The app's
+          About page and footer link here ("Help & updates").
+        </li>
+        <li>
+          <b>Religious content:</b> "How we calculate" only states what the app does and which rule
+          source it follows. No rulings, no new Quran or hadith text; anything quoted later is
+          verified with its number and grade first.
+        </li>
+        <li>
+          <b>First set of guides (8):</b> Getting started, Salat and kaza, Fasting and make-up days,
+          Zikr counter and goals, Quran habit, khatam and hifz, Musafir (travel prayer), Rayhanah
+          privacy, Friends and Noor privacy. Screenshots are added later (placeholders now).
+        </li>
+        <li>
+          <b>Not in scope:</b> search beyond the page titles (a small on-page filter only),
+          comments, sign-in, any third-party script. Analytics: none on bayan for now.
+        </li>
+      </ul>
+    </section>
+
+    <script>
+      const T = {
+        en: {
+          home: 'Home',
+          guides: 'Guides',
+          news: "What's new",
+          calc: 'How we calculate',
+          credits: 'Credits',
+          open: 'Open the app',
+          heroT: 'Help & updates',
+          heroP:
+            'Short guides for every part of Bustandeen, what changed in each release, and exactly how prayer times, the Hijri date and kaza are worked out.',
+          search: 'Search the guides',
+          g: [
+            ['Getting started', 'Your first day: place, prayer times, what to track.'],
+            ['Salat and kaza', 'Done, Kaza, Miss, and how missed prayers are counted.'],
+            ['Fasting', 'Ramadan, make-up days, vows and voluntary fasts.'],
+            ['Zikr counter', 'Counting, goals, streaks and saving counts.'],
+            ['Quran habit', 'Reading time, khatam journeys and hifz review.'],
+            ['Musafir', 'Shortening and joining prayers while travelling.'],
+            ['Rayhanah', 'Your cycle, encrypted and never shared.'],
+            ['Friends and Noor', 'Three privacy levels, secret deeds, no ranking.'],
+          ],
+          latest: 'Latest releases',
+          all: 'All updates',
+          howT: 'How we calculate',
+          howP: 'Prayer times, the day boundary, the Hijri date, qasr and kaza.',
+          crT: 'Credits',
+          crP: 'The Quran text, audio, libraries and people this is built on.',
+          rels: [
+            ['5.161', 'Explore freely, sign in to save', '14 Oct 2026'],
+            ['5.160', 'Your saved place sets the day everywhere', '13 Oct 2026'],
+            ['5.159', 'Prayer times right wherever your phone clock is set', '12 Oct 2026'],
+          ],
+          // Guide
+          gCrumb: 'Guides',
+          gT: 'Salat and kaza',
+          gMeta: 'Updated 14 Oct 2026 · 4 min read',
+          toc: ['Marking a prayer', 'When a prayer is missed', 'Making up kaza', 'Travel'],
+          g1: 'Each prayer card has three choices. Done means you prayed it on time. Kaza means you prayed it after its time ended. Miss means it was not prayed yet; it stays in your make-up count until you pray it.',
+          g2: 'If a prayer time ends and the card is still empty, the app adds it to your make-up count on its own, so nothing is forgotten. You can change any day in the history if the app got it wrong.',
+          noteB: 'Your day starts at Fajr.',
+          noteP:
+            ' Isha prayed at 1 AM still belongs to the day before. You can change this to midnight or Maghrib in Settings.',
+          g3: 'Open Salat, then Make-up. Mark each kaza prayer as you pray it; the count goes down and the history keeps the date.',
+          shot: 'Screenshot: a prayer card with Done, Kaza, Miss',
+          tryIt: 'Open Salat',
+          next: 'Next: Fasting',
+          // News
+          nT: "What's new",
+          nP: 'Every release in plain words. Newest first.',
+          nNew: 'New',
+          nFix: 'Fixed',
+          n1: [
+            'Look around every page before you sign up. You are asked to sign in only when you save something.',
+            'The surah list is now at /quran/read, next to each surah.',
+          ],
+          n1f: ['Zikr counts made before signing in are no longer lost.'],
+          n2: [
+            'If you saved a place far from your phone clock, its day is used everywhere: zikr, salat and Quran.',
+          ],
+          // Calc
+          cT: 'How we calculate',
+          cP: 'Everything below is worked out on your device. Your location never leaves it.',
+          cRows: [
+            [
+              'Prayer times',
+              'The adhan library, with the method used in your country (Bangladesh, Pakistan, India: Karachi and Hanafi Asr; Saudi Arabia: Umm al-Qura; and so on). You can change both in Settings.',
+            ],
+            [
+              'Your day',
+              'Starts at Fajr by default, so night prayers and suhoor belong to the day before. Midnight or Maghrib if you prefer.',
+            ],
+            [
+              'Hijri date',
+              'Your own offset first, then the moon-sighting record for your country, then the Umm al-Qura calendar.',
+            ],
+            [
+              'Travel (qasr)',
+              'Musafir shortens four-rak‘ah prayers while you are on a journey, using the distance and days you set.',
+            ],
+            [
+              'Kaza',
+              'A prayer whose time ended without a mark is added to your make-up count. Fasts missed in Ramadan go to the fasting make-up count.',
+            ],
+          ],
+          cTh: ['What', 'How'],
+          cNote:
+            'These describe how the app works, not religious rulings. Ask a scholar you trust about your own case.',
+          // Credits
+          kT: 'Credits',
+          kP: 'With thanks to everyone whose work makes this possible.',
+          kRows: [
+            ['Quran text', 'Tanzil Project, Uthmani text v1.1 (shown exactly as published)'],
+            ['Translations and recitation', 'Al Quran Cloud, Islamic Network, mp3quran'],
+            ['Hadith references', 'sunnah.com'],
+            ['Quran references', 'quran.com'],
+            ['Prayer times', 'adhan (Batoul Apps), open source'],
+            ['Place names (only if you turn it on)', 'OpenStreetMap contributors'],
+            ['Fonts', 'El Messiri, Plus Jakarta Sans, Hind Siliguri, Amiri, Scheherazade New'],
+          ],
+          foot: ['About', 'Privacy', 'Status', 'Contact'],
+        },
+        bn: {
+          home: 'হোম',
+          guides: 'নির্দেশিকা',
+          news: 'নতুন কী',
+          calc: 'হিসাব যেভাবে হয়',
+          credits: 'কৃতজ্ঞতা',
+          open: 'অ্যাপ খুলুন',
+          heroT: 'সাহায্য ও আপডেট',
+          heroP:
+            'Bustandeen-এর প্রতিটি অংশের ছোট নির্দেশিকা, প্রতিটি আপডেটে কী বদলেছে, আর নামাযের সময়, হিজরি তারিখ ও কাযা ঠিক কীভাবে হিসাব হয়।',
+          search: 'নির্দেশিকায় খুঁজুন',
+          g: [
+            ['শুরু করা', 'প্রথম দিন: স্থান, নামাযের সময়, কী কী ট্র্যাক করবেন।'],
+            ['নামায ও কাযা', 'সম্পন্ন, কাযা, ছুটে গেছে, আর ছুটে যাওয়া নামায যেভাবে গোনা হয়।'],
+            ['রোজা', 'রমজান, কাযা রোজা, মানত ও নফল রোজা।'],
+            ['যিকির কাউন্টার', 'গণনা, লক্ষ্য, ধারাবাহিকতা ও সংরক্ষণ।'],
+            ['কুরআন অভ্যাস', 'তিলাওয়াতের সময়, খতম ও হিফয পুনরাবৃত্তি।'],
+            ['মুসাফির', 'সফরে নামায কসর ও একত্রে আদায়।'],
+            ['রায়হানাহ', 'আপনার চক্র, এনক্রিপ্ট করা, কারও সাথে শেয়ার হয় না।'],
+            ['বন্ধু ও নূর', 'তিন স্তরের গোপনীয়তা, গোপন আমল, কোনো র‍্যাংকিং নেই।'],
+          ],
+          latest: 'সাম্প্রতিক আপডেট',
+          all: 'সব আপডেট',
+          howT: 'হিসাব যেভাবে হয়',
+          howP: 'নামাযের সময়, দিনের শুরু, হিজরি তারিখ, কসর ও কাযা।',
+          crT: 'কৃতজ্ঞতা',
+          crP: 'কুরআনের পাঠ, অডিও, লাইব্রেরি ও যাদের কাজের ওপর এটি গড়া।',
+          rels: [
+            ['5.161', 'ঘুরে দেখুন, সংরক্ষণে সাইন ইন', '১৪ অক্টো ২০২৬'],
+            ['5.160', 'সংরক্ষিত স্থানই সব জায়গায় দিন ঠিক করে', '১৩ অক্টো ২০২৬'],
+            ['5.159', 'ফোনের ঘড়ি যেখানেই থাকুক, নামাযের সময় ঠিক', '১২ অক্টো ২০২৬'],
+          ],
+          gCrumb: 'নির্দেশিকা',
+          gT: 'নামায ও কাযা',
+          gMeta: 'হালনাগাদ ১৪ অক্টো ২০২৬ · ৪ মিনিটে পড়া',
+          toc: ['নামায চিহ্নিত করা', 'নামায ছুটে গেলে', 'কাযা আদায়', 'সফর'],
+          g1: 'প্রতিটি নামাযের কার্ডে তিনটি বিকল্প আছে। সম্পন্ন মানে সময়মতো পড়েছেন। কাযা মানে সময় শেষ হওয়ার পর পড়েছেন। ছুটে গেছে মানে এখনো পড়া হয়নি; পড়া না হওয়া পর্যন্ত এটি কাযার হিসাবে থাকে।',
+          g2: 'নামাযের সময় শেষ হলে কার্ড খালি থাকলে অ্যাপ নিজেই সেটি কাযার হিসাবে যোগ করে, যেন কিছু ভুলে না যান। অ্যাপ ভুল করলে ইতিহাস থেকে যেকোনো দিন বদলাতে পারেন।',
+          noteB: 'আপনার দিন শুরু হয় ফজরে।',
+          noteP:
+            ' রাত ১টায় পড়া এশা আগের দিনেরই থাকে। সেটিংসে এটি মধ্যরাত বা মাগরিবে বদলাতে পারেন।',
+          g3: 'নামায খুলুন, তারপর কাযা। প্রতিটি কাযা নামায পড়ার পর চিহ্ন দিন; সংখ্যা কমবে আর ইতিহাসে তারিখ থেকে যাবে।',
+          shot: 'স্ক্রিনশট: সম্পন্ন, কাযা, ছুটে গেছে সহ একটি নামাযের কার্ড',
+          tryIt: 'নামায খুলুন',
+          next: 'পরের নির্দেশিকা: রোজা',
+          nT: 'নতুন কী',
+          nP: 'প্রতিটি আপডেট সহজ ভাষায়। নতুনগুলো আগে।',
+          nNew: 'নতুন',
+          nFix: 'ঠিক করা হয়েছে',
+          n1: [
+            'সাইন আপের আগেই প্রতিটি পাতা ঘুরে দেখুন। কিছু সংরক্ষণ করতে গেলেই শুধু সাইন ইন চাওয়া হয়।',
+            'সূরার তালিকা এখন /quran/read এ, প্রতিটি সূরার পাশেই।',
+          ],
+          n1f: ['সাইন ইনের আগে করা যিকিরের গণনা আর হারায় না।'],
+          n2: [
+            'ফোনের ঘড়ি থেকে দূরের কোনো স্থান সংরক্ষণ করলে যিকির, নামায ও কুরআন সব জায়গায় সেই স্থানের দিন ধরা হয়।',
+          ],
+          cT: 'হিসাব যেভাবে হয়',
+          cP: 'নিচের সবকিছু আপনার ডিভাইসেই হিসাব হয়। আপনার অবস্থান ডিভাইসের বাইরে যায় না।',
+          cRows: [
+            [
+              'নামাযের সময়',
+              'adhan লাইব্রেরি দিয়ে, আপনার দেশের পদ্ধতিতে (বাংলাদেশ, পাকিস্তান, ভারত: করাচি ও হানাফি আসর; সৌদি আরব: উম্মুল কুরা; এভাবে)। দুটোই সেটিংসে বদলানো যায়।',
+            ],
+            [
+              'আপনার দিন',
+              'স্বাভাবিকভাবে ফজরে শুরু হয়, তাই রাতের নামায ও সাহরি আগের দিনের। চাইলে মধ্যরাত বা মাগরিব।',
+            ],
+            [
+              'হিজরি তারিখ',
+              'প্রথমে আপনার নিজের সমন্বয়, তারপর আপনার দেশের চাঁদ দেখার রেকর্ড, তারপর উম্মুল কুরা ক্যালেন্ডার।',
+            ],
+            [
+              'সফর (কসর)',
+              'মুসাফির সফরের সময় চার রাকাতের নামায সংক্ষেপ করে, আপনার ঠিক করা দূরত্ব ও দিন অনুযায়ী।',
+            ],
+            [
+              'কাযা',
+              'চিহ্ন ছাড়া যে নামাযের সময় শেষ হয়, সেটি কাযার হিসাবে যোগ হয়। রমজানে ছুটে যাওয়া রোজা কাযা রোজার হিসাবে যায়।',
+            ],
+          ],
+          cTh: ['কী', 'কীভাবে'],
+          cNote:
+            'এগুলো অ্যাপ কীভাবে কাজ করে তার বর্ণনা, কোনো শরঈ ফতোয়া নয়। নিজের বিষয়ে আস্থাভাজন কোনো আলেমকে জিজ্ঞেস করুন।',
+          kT: 'কৃতজ্ঞতা',
+          kP: 'যাদের কাজে এটি সম্ভব হয়েছে, সবার প্রতি কৃতজ্ঞতা।',
+          kRows: [
+            ['কুরআনের পাঠ', 'তানজিল প্রজেক্ট, উসমানি পাঠ v1.1 (প্রকাশিত রূপেই দেখানো)'],
+            ['অনুবাদ ও তিলাওয়াত', 'Al Quran Cloud, Islamic Network, mp3quran'],
+            ['হাদিসের সূত্র', 'sunnah.com'],
+            ['কুরআনের সূত্র', 'quran.com'],
+            ['নামাযের সময়', 'adhan (Batoul Apps), ওপেন সোর্স'],
+            ['স্থানের নাম (শুধু চালু করলে)', 'OpenStreetMap অবদানকারীরা'],
+            ['ফন্ট', 'El Messiri, Plus Jakarta Sans, Hind Siliguri, Amiri, Scheherazade New'],
+          ],
+          foot: ['পরিচিতি', 'গোপনীয়তা', 'স্ট্যাটাস', 'যোগাযোগ'],
+        },
+      };
+
+      const ICON = {
+        start:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v18M5 9l7-6 7 6"/></svg>',
+        salat:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 21V11a8 8 0 0 1 16 0v10M4 21h16M12 3v2"/></svg>',
+        moon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>',
+        beads:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="6" r="2"/><circle cx="7" cy="11" r="2"/><circle cx="17" cy="11" r="2"/><circle cx="12" cy="17" r="2"/></svg>',
+        book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 6c-2-1.5-5-2-8-1.5v14c3-.5 6 0 8 1.5 2-1.5 5-2 8-1.5v-14c-3-.5-6 0-8 1.5Zm0 0v14"/></svg>',
+        road: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M8 21 10 3M16 21 14 3M12 7v2M12 13v2"/></svg>',
+        leaf: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 19c0-9 6-14 15-14 0 9-5 15-14 15M5 19l7-7"/></svg>',
+        people:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.5 3-6 6-6s6 2.5 6 6M15 15c3 0 6 2 6 5"/></svg>',
+        calc: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 12h2M14 12h2M8 16h2M14 16h2"/></svg>',
+        heart:
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10Z"/></svg>',
+        search:
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="6"/><path d="m20 20-4-4"/></svg>',
+        menu: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+      };
+      const GI = ['start', 'salat', 'moon', 'beads', 'book', 'road', 'leaf', 'people'];
+      const LOGO =
+        '<svg viewBox="0 0 32 32"><path d="M6 28V15a10 10 0 0 1 20 0v13" fill="none" stroke="rgb(201 169 110)" stroke-width="2"/><path d="M16 24c-4-3-4-8 0-11 4 3 4 8 0 11Z" fill="rgb(122 158 110)"/></svg>';
+
+      let page = 'home';
+      let lang = 'en';
+      const PATHS = {
+        home: '',
+        guide: 'guides/salat-and-kaza',
+        new: 'whats-new',
+        calc: 'how-we-calculate',
+        credits: 'credits',
+      };
+
+      function chrome(t, inner) {
+        const url = `bayan.bustandeen.com/${lang === 'bn' ? 'bn/' : ''}${PATHS[page]}`;
+        const navKeys = [
+          ['home', t.home],
+          ['guide', t.guides],
+          ['new', t.news],
+          ['calc', t.calc],
+          ['credits', t.credits],
+        ];
+        return `<div class="urlbar">${url}</div>
+          <div class="top">
+            <a class="logo" data-go="home">${LOGO}<span>Bustandeen<small>Bayan</small></span></a>
+            <nav>${navKeys
+              .map(
+                ([k, l]) => `<a data-go="${k}" ${k === page ? 'aria-current="page"' : ''}>${l}</a>`
+              )
+              .join('')}</nav>
+            <button class="lang" data-flip>${lang === 'en' ? 'বাংলা' : 'English'}</button>
+            <button class="menu" aria-label="Menu">${ICON.menu}</button>
+          </div>
+          <div class="body">${inner}</div>
+          <div class="foot">${t.foot.map((f) => `<a>${f}</a>`).join('')}<span style="margin-left:auto">bustandeen.com</span></div>`;
+      }
+
+      function home(t) {
+        return `<div class="arch"><h1>${t.heroT}</h1><p>${t.heroP}</p>
+            <div class="search">${ICON.search}${t.search}</div></div>
+          <div class="sec"><h2>${t.guides}</h2><div class="grid4">${t.g
+            .map(
+              ([h, p], i) =>
+                `<a class="card" data-go="${i === 1 ? 'guide' : 'home'}"><div class="ic">${ICON[GI[i]]}</div><h3>${h}</h3><p>${p}</p></a>`
+            )
+            .join('')}</div></div>
+          <div class="sec"><h2>${t.latest}<a data-go="new">${t.all}</a></h2>
+            <ul class="list">${t.rels
+              .map(
+                ([v, h, d]) =>
+                  `<li><a data-go="new"><span class="v">v${v}</span><span>${h}</span><span class="d">${d}</span></a></li>`
+              )
+              .join('')}</ul></div>
+          <div class="grid4" style="margin-top:24px">
+            <a class="card" data-go="calc"><div class="ic">${ICON.calc}</div><h3>${t.howT}</h3><p>${t.howP}</p></a>
+            <a class="card" data-go="credits"><div class="ic">${ICON.heart}</div><h3>${t.crT}</h3><p>${t.crP}</p></a>
+          </div>`;
+      }
+
+      function guide(t) {
+        return `<div class="crumbs"><a data-go="home">${t.gCrumb}</a> / ${t.gT}</div>
+          <div class="art">
+            <nav class="toc">${t.toc
+              .map((x, i) => `<a class="${i === 0 ? 'on' : ''}">${x}</a>`)
+              .join('')}</nav>
+            <article class="prose">
+              <h1>${t.gT}</h1><div class="meta">${t.gMeta}</div>
+              <h2>${t.toc[0]}</h2><p>${t.g1}</p>
+              <div class="shot">${t.shot}</div>
+              <h2>${t.toc[1]}</h2><p>${t.g2}</p>
+              <div class="note"><b>${t.noteB}</b>${t.noteP}</div>
+              <h2>${t.toc[2]}</h2><p>${t.g3}</p>
+              <div class="cta"><a class="btn p">${t.tryIt}</a><a class="btn s">${t.next}</a></div>
+            </article>
+          </div>`;
+      }
+
+      function news(t) {
+        const rel = (v, h, d, items, fixes) => `<div class="rel"><header>
+            <span class="v tag" style="color:rgb(var(--gold));background:rgb(var(--gold)/.12)">v${v}</span>
+            <h3>${h}</h3><span class="d" style="margin-left:auto;font-size:12px;opacity:.65">${d}</span></header>
+            <p style="margin:6px 0 4px"><span class="tag new">${t.nNew}</span></p>
+            <ul>${items.map((x) => `<li>${x}</li>`).join('')}</ul>
+            ${
+              fixes
+                ? `<p style="margin:10px 0 4px"><span class="tag fix">${t.nFix}</span></p><ul>${fixes
+                    .map((x) => `<li>${x}</li>`)
+                    .join('')}</ul>`
+                : ''
+            }</div>`;
+        return `<div class="prose"><h1>${t.nT}</h1><p style="margin-top:0">${t.nP}</p></div>
+          ${rel(t.rels[0][0], t.rels[0][1], t.rels[0][2], t.n1, t.n1f)}
+          ${rel(t.rels[1][0], t.rels[1][1], t.rels[1][2], t.n2)}`;
+      }
+
+      function calc(t) {
+        return `<div class="prose"><h1>${t.cT}</h1><p style="margin-top:0">${t.cP}</p></div>
+          <table><thead><tr><th>${t.cTh[0]}</th><th>${t.cTh[1]}</th></tr></thead><tbody>${t.cRows
+            .map(
+              ([a, b]) =>
+                `<tr><td style="white-space:nowrap;font-weight:600">${a}</td><td>${b}</td></tr>`
+            )
+            .join('')}</tbody></table>
+          <div class="note">${t.cNote}</div>`;
+      }
+
+      function credits(t) {
+        return `<div class="prose"><h1>${t.kT}</h1><p style="margin-top:0">${t.kP}</p></div>
+          <ul class="list">${t.kRows
+            .map(
+              ([a, b]) =>
+                `<li><a style="display:block"><b style="display:block;font-size:13px;color:rgb(var(--ink)/.7)">${a}</b>${b}</a></li>`
+            )
+            .join('')}</ul>`;
+      }
+
+      function render() {
+        const t = T[lang];
+        const view = { home, guide, new: news, calc, credits }[page](t);
+        document.querySelectorAll('[data-frame]').forEach((f) => {
+          f.lang = lang;
+          f.classList.toggle('bn', lang === 'bn');
+          f.innerHTML = chrome(t, view);
+        });
+        document
+          .querySelectorAll('[data-page]')
+          .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.page === page)));
+        document
+          .querySelectorAll('[data-lang]')
+          .forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+      }
+
+      document.addEventListener('click', (e) => {
+        const el = e.target.closest('[data-page],[data-lang],[data-go],[data-flip]');
+        if (!el) return;
+        if (el.dataset.page) page = el.dataset.page;
+        if (el.dataset.go) page = el.dataset.go;
+        if (el.dataset.lang) lang = el.dataset.lang;
+        if (el.hasAttribute('data-flip')) lang = lang === 'en' ? 'bn' : 'en';
+        render();
+      });
+      render();
+    </script>
+  </body>
+</html>
