@@ -3,6 +3,7 @@ import EmailFailureLog from '../models/EmailFailureLog.js';
 import RateLimitHit from '../models/RateLimitHit.js';
 import { isFirebaseInitialized } from '../config/firebaseAdmin.js';
 import { getSenderDiagnostics, EmailSender, SenderDiagnostics } from './email.service.js';
+import { getCronRuns, CronRunSummary } from './cron.service.js';
 
 const SENDERS: EmailSender[] = ['sadaqah', 'ansar', 'istiak'];
 
@@ -22,6 +23,8 @@ export interface OpsHealth {
   }[];
   mongoConnected: boolean;
   firebaseInitialized: boolean;
+  /** Last run of each Vercel Cron job (LT-1). */
+  cronRuns: CronRunSummary[];
 }
 
 export const getOpsHealth = async (): Promise<OpsHealth> => {
@@ -29,6 +32,8 @@ export const getOpsHealth = async (): Promise<OpsHealth> => {
     .sort({ createdAt: -1 })
     .limit(20)
     .select('sender to subject error createdAt');
+
+  const cronRuns = await getCronRuns();
 
   const diagnostics = SENDERS.map((s) => [s, getSenderDiagnostics(s)] as const);
   const emailSenders = Object.fromEntries(diagnostics) as Record<EmailSender, SenderDiagnostics>;
@@ -49,6 +54,7 @@ export const getOpsHealth = async (): Promise<OpsHealth> => {
     recentEmailFailures,
     mongoConnected: mongoose.connection.readyState === 1,
     firebaseInitialized: isFirebaseInitialized(),
+    cronRuns,
   };
 };
 

@@ -18,6 +18,16 @@ export interface OpsHealth {
   }[];
   mongoConnected: boolean;
   firebaseInitialized: boolean;
+  /** Last run of each Vercel Cron job (LT-1). */
+  cronRuns?: CronRunSummary[];
+}
+
+export interface CronRunSummary {
+  job: string;
+  ok: boolean;
+  detail: string;
+  ranAt: string;
+  lastOkAt: string | null;
 }
 
 export function useOpsHealth() {

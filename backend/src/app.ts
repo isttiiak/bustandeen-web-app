@@ -39,6 +39,7 @@ import updateEmailRoutes from './routes/updateEmail.routes.js';
 import composeEmailRoutes from './routes/composeEmail.routes.js';
 import cspReportRoutes from './routes/cspReport.routes.js';
 import clientErrorRoutes from './routes/clientError.routes.js';
+import cronRoutes from './routes/cron.routes.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
 import {
@@ -178,6 +179,8 @@ app.use('/api/sadaqah', sadaqahRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/calendar', moonSightingRoutes);
+// Vercel Cron jobs (LT-1), CRON_SECRET bearer only.
+app.use('/api/cron', cronRoutes);
 // The admin API answers only on the admin site (and previews, localhost) once
 // ADMIN_HOST is set. 404, as if it were not there.
 app.use('/api/admin', (req: Request, res: Response, next: NextFunction) => {
