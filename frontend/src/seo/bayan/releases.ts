@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.166.0',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'Monthly page refresh made more reliable',
+        fixed: [
+          'The district prayer timetables and Ramadan calendars refresh on the 1st of every month. That refresh now runs on our own hosting, so it keeps going even in months with no app update.',
+        ],
+      },
+      bn: {
+        title: 'মাসিক পাতা হালনাগাদ আরও নির্ভরযোগ্য',
+        fixed: [
+          'জেলার নামাযের সময়সূচি ও রমজানের ক্যালেন্ডার প্রতি মাসের ১ তারিখে হালনাগাদ হয়। এই কাজ এখন আমাদের নিজের হোস্টিং থেকে চলে, তাই যে মাসে অ্যাপের কোনো আপডেট নেই সে মাসেও তা চলতে থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.165.0',
     date: '2026-10-14',
     text: {

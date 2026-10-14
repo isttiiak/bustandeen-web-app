@@ -11,6 +11,12 @@
       "maxDuration": 30
     }
   },
+  "crons": [
+    {
+      "path": "/api/cron/rebuild",
+      "schedule": "30 0 1 * *"
+    }
+  ],
   "redirects": [
     {
       "source": "/((?!sw\\.js$).*)",

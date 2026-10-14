@@ -17,6 +17,7 @@ import {
   useClientErrors,
   type CspViolationReport,
   type ClientErrorReport,
+  type CronRunSummary,
   type SenderDiagnostics,
   type StorageUsage,
 } from '../hooks/useAdminOps.js';
@@ -292,6 +293,53 @@ function CspSection({ report }: { report: CspViolationReport }) {
   );
 }
 
+const CRON_LABELS: Record<string, string> = {
+  rebuild: 'Monthly rebuild (1st, 06:30 BD)',
+};
+
+function CronSection({ runs }: { runs: CronRunSummary[] }) {
+  const { t } = useTranslation();
+  return (
+    <section className="space-y-2">
+      <h2 className="font-bold text-sm uppercase tracking-widest text-white/80">
+        {t('adminOpsHealth.cronJobs', 'Scheduled jobs (Vercel Cron)')}
+      </h2>
+      <div className={`${CARD} p-4 space-y-2`}>
+        {runs.length === 0 && (
+          <p className="text-white/70 text-sm">
+            {t('adminOpsHealth.noCronRuns', 'No scheduled job has run yet.')}
+          </p>
+        )}
+        {runs.map((r) => (
+          <div
+            key={r.job}
+            className="flex items-center justify-between gap-3 border-b border-brand-border/60 pb-2 last:border-0 last:pb-0"
+          >
+            <div className="min-w-0">
+              <p className="text-white/80 text-sm font-bold">{CRON_LABELS[r.job] ?? r.job}</p>
+              <p className="text-white/70 text-xs">{r.detail}</p>
+              <p className="text-white/70 text-[10px] mt-0.5">
+                {t('adminOpsHealth.cronLastRun', 'Last run')}: {new Date(r.ranAt).toLocaleString()}
+                {r.lastOkAt && !r.ok && (
+                  <>
+                    {' · '}
+                    {t('adminOpsHealth.cronLastOk', 'last success')}:{' '}
+                    {new Date(r.lastOkAt).toLocaleString()}
+                  </>
+                )}
+              </p>
+            </div>
+            <StatusPill
+              ok={r.ok}
+              label={r.ok ? t('adminOpsHealth.ok', 'ok') : t('adminOpsHealth.failed', 'failed')}
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function AdminOpsHealth() {
   const { t } = useTranslation();
   const { data: health, isLoading } = useOpsHealth();
@@ -384,6 +432,8 @@ export default function AdminOpsHealth() {
                 </div>
               </section>
             </div>
+
+            {health.cronRuns && <CronSection runs={health.cronRuns} />}
 
             {storage?.collections && <StorageSection storage={storage} />}
 

@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.166.0 - Monthly rebuild runs from Vercel Cron (LT-1) - 2026-10-14
+
+### Changed
+
+- **The monthly rebuild no longer depends on a GitHub schedule** (LT-1). The repo is public, and GitHub turns off scheduled workflows after 60 days without a commit, which would freeze the district timetables (this month and the next two) and the Ramadan calendars at their last build. A Vercel Cron (`vercel.json` `crons`) now calls `GET /api/cron/rebuild` on the 1st of every month at 00:30 UTC (06:30 in Bangladesh; Hobby runs it within that hour), and the API POSTs the Vercel Deploy Hook. The GitHub workflow stays for manual runs only (renamed "Manual rebuild").
+- **Cron routes are locked:** only a request with `Authorization: Bearer $CRON_SECRET` (which Vercel Cron sends) gets in; without `CRON_SECRET` set every cron route answers 503, so nobody can trigger a deploy. The hook URL is never logged or stored.
+- **Ops health shows scheduled jobs:** each job's last run, its outcome and the last success are kept in a new `CronRun` collection (one document per job, keyed by name, no new index), since Vercel Hobby keeps logs for only one hour.
+
+### Setup (Vercel > Project > Settings > Environment Variables, Production)
+
+- `CRON_SECRET`: a long random string.
+- `VERCEL_DEPLOY_HOOK_URL`: the same Deploy Hook URL as the GitHub secret.
+
+### Tests
+
+- New `cron.e2e.test.js`: 401 without the secret and 503 when none is set (no deploy called), a run POSTs the hook and is recorded without the URL, a failed hook answers 502 and keeps the last success, and `vercel.json` has the monthly cron while the GitHub workflow has no schedule left.
+
 ## v5.165.0 - One on/off switch everywhere, Salat analytics cards - 2026-10-14
 
 ### Changed
