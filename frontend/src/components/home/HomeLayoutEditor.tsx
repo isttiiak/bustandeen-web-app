@@ -20,6 +20,7 @@ import {
   type HomeGoals,
 } from '../../utils/homeSections.js';
 import { useUiStore } from '../../store/useUiStore.js';
+import Switch from '../Switch.js';
 
 type SvgIcon = ComponentType<SVGProps<SVGSVGElement>>;
 
@@ -92,17 +93,16 @@ function OrderList({
             >
               <ChevronDownIcon className="w-4 h-4" aria-hidden="true" />
             </button>
-            {/* A 44px label around the small toggle: the whole square taps it */}
-            <label className="w-11 h-11 shrink-0 flex items-center justify-center cursor-pointer">
-              <input
-                type="checkbox"
-                className="toggle toggle-success toggle-sm shrink-0"
+            {/* The switch's own input is a 44px square around the small track */}
+            <span className="w-11 h-11 shrink-0 flex items-center justify-center">
+              <Switch
+                size="sm"
                 checked={isOn(h)}
                 disabled={isOn(h) && locked(h)}
                 onChange={(e) => onToggle(h, e.target.checked)}
                 aria-label={switchLabel(h)}
               />
-            </label>
+            </span>
           </li>
         );
       })}
@@ -193,9 +193,7 @@ export default function HomeLayoutEditor() {
             on.salat ? 'cursor-pointer hover:border-brand-emerald/40' : 'opacity-60'
           }`}
         >
-          <input
-            type="checkbox"
-            className="toggle toggle-success"
+          <Switch
             checked={homeAdhkar && on.salat}
             disabled={!on.salat}
             onChange={(e) => setHomeAdhkar(e.target.checked)}
@@ -221,9 +219,7 @@ export default function HomeLayoutEditor() {
 
       <div role="group" aria-label={t('settings.homeGoals', "Today's goals")}>
         <label className="flex items-center gap-4 p-3 rounded-control border border-brand-border bg-brand-surface/50 cursor-pointer hover:border-brand-emerald/40">
-          <input
-            type="checkbox"
-            className="toggle toggle-success"
+          <Switch
             checked={goals.on}
             disabled={lastIsGoals}
             onChange={(e) => saveGoals({ ...goals, on: e.target.checked })}
@@ -258,9 +254,7 @@ export default function HomeLayoutEditor() {
               }
             />
             <label className="flex items-center gap-4 p-3 rounded-control border border-brand-border bg-brand-surface/50 cursor-pointer hover:border-brand-emerald/40">
-              <input
-                type="checkbox"
-                className="toggle toggle-success"
+              <Switch
                 checked={goals.badges}
                 onChange={(e) => saveGoals({ ...goals, badges: e.target.checked })}
               />

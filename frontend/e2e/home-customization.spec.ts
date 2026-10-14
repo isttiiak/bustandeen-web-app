@@ -80,27 +80,27 @@ test('Settings enforces the rule and saves the goals card', async ({ page }) => 
   await go(page, '/settings');
   const quick = page.getByRole('group', { name: 'Quick sections' });
   const goals = page.getByRole('group', { name: "Today's goals" });
-  const card = goals.getByRole('checkbox', { name: /Show Today's goals/ });
+  const card = goals.getByRole('switch', { name: /Show Today's goals/ });
 
   // Zikr is the last quick section: the card can go, then Zikr is locked
   await card.uncheck();
   await expect(goals.getByTestId('home-goal-rows')).toHaveCount(0);
-  await expect(quick.getByRole('checkbox', { name: 'Show Zikr on Home' })).toBeDisabled();
+  await expect(quick.getByRole('switch', { name: 'Show Zikr on Home' })).toBeDisabled();
   await expect(page.getByRole('note')).toContainText('at least one');
 
   // Card back on, Zikr off: now the card is the last one and is locked
   await card.check();
-  await quick.getByRole('checkbox', { name: 'Show Zikr on Home' }).uncheck();
+  await quick.getByRole('switch', { name: 'Show Zikr on Home' }).uncheck();
   await expect(card).toBeDisabled();
 
   // Adhkār needs the timeline
-  await expect(quick.getByRole('checkbox', { name: /Adhkār on the timeline/ })).toBeDisabled();
+  await expect(quick.getByRole('switch', { name: /Adhkār on the timeline/ })).toBeDisabled();
 
   // Reorder goal rows, hide one, badges off
   const rows = goals.getByTestId('home-goal-rows');
   await rows.getByRole('button', { name: 'Move Fasting up' }).click();
-  await rows.getByRole('checkbox', { name: 'Show Quran on the goals card' }).uncheck();
-  await goals.getByRole('checkbox', { name: /Streaks and badges/ }).uncheck();
+  await rows.getByRole('switch', { name: 'Show Quran on the goals card' }).uncheck();
+  await goals.getByRole('switch', { name: /Streaks and badges/ }).uncheck();
   const stored = await page.evaluate(() =>
     JSON.parse(localStorage.getItem('bustandeen_home_goals') ?? 'null')
   );
@@ -113,11 +113,9 @@ test('Settings enforces the rule and saves the goals card', async ({ page }) => 
 
   // The last goal row cannot be switched off
   for (const h of ['Salat', 'Zikr']) {
-    await rows.getByRole('checkbox', { name: `Show ${h} on the goals card` }).uncheck();
+    await rows.getByRole('switch', { name: `Show ${h} on the goals card` }).uncheck();
   }
-  await expect(
-    rows.getByRole('checkbox', { name: 'Show Fasting on the goals card' })
-  ).toBeDisabled();
+  await expect(rows.getByRole('switch', { name: 'Show Fasting on the goals card' })).toBeDisabled();
 
   await go(page, '/');
   expect(await goalLinks(page)).toEqual(['/fasting']);

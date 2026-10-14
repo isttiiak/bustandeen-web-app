@@ -15,6 +15,7 @@ import FreshStart from './FreshStart.js';
 import { FIX_DAY_CHOICES, getFixDays, setFixDays } from '../utils/zikrLog.js';
 import ZikrQuickSettings from './zikr/ZikrQuickSettings.js';
 import { useUiStore } from '../store/useUiStore.js';
+import Switch from './Switch.js';
 
 const TASBIH_TARGET_PRESETS = [33, 34, 99, 100];
 
@@ -107,9 +108,8 @@ export default function ZikrSettings({
                       {t('zikr.tasbihMode', 'Tasbih mode')}
                     </h3>
                   </div>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-success toggle-sm"
+                  <Switch
+                    size="sm"
                     checked={tasbihMode}
                     onChange={(e) => setTasbihMode(e.target.checked)}
                     aria-label={t('zikr.tasbihMode', 'Tasbih mode')}
@@ -178,9 +178,8 @@ export default function ZikrSettings({
                       {t('zikr.tapSound', 'Tap sound')}
                     </h3>
                   </div>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-success toggle-sm"
+                  <Switch
+                    size="sm"
                     checked={zikrSoundEnabled}
                     onChange={(e) => setZikrSoundEnabled(e.target.checked)}
                     aria-label={t('zikr.tapSound', 'Tap sound')}
@@ -199,9 +198,8 @@ export default function ZikrSettings({
                       {t('zikr.audioToggle', 'Zikr audio')}
                     </h3>
                   </div>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-success toggle-sm"
+                  <Switch
+                    size="sm"
                     checked={zikrAudioEnabled}
                     onChange={(e) => setZikrAudioEnabled(e.target.checked)}
                     aria-label={t('zikr.audioToggle', 'Zikr audio')}
@@ -219,9 +217,8 @@ export default function ZikrSettings({
                       <span className="text-white text-xs font-semibold">
                         {t('zikr.playOnTap', 'Play on every tap')}
                       </span>
-                      <input
-                        type="checkbox"
-                        className="toggle toggle-success toggle-xs"
+                      <Switch
+                        size="xs"
                         checked={zikrPlayOnTap}
                         onChange={(e) => setZikrPlayOnTap(e.target.checked)}
                         aria-label={t('zikr.playOnTap', 'Play on every tap')}

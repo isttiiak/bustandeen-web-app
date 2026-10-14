@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.165.0',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'One look for every on/off switch',
+        fixed: [
+          'Every on/off switch in the app now looks the same, in the dark and light themes, and is easier to tap.',
+          'The cards on Salat analytics now match the rest of the app.',
+        ],
+      },
+      bn: {
+        title: 'সব চালু/বন্ধ সুইচ এক রকম',
+        fixed: [
+          'অ্যাপের প্রতিটি চালু/বন্ধ সুইচ এখন গাঢ় ও হালকা দুই থিমেই এক রকম দেখায়, আর চাপতেও সহজ।',
+          'সালাত বিশ্লেষণের কার্ডগুলো এখন অ্যাপের বাকি অংশের সাথে মিলে যায়।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.164.2',
     date: '2026-10-14',
     text: {

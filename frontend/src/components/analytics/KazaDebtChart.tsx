@@ -82,7 +82,7 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
   if (!model) {
     return (
       <div className={CARD}>
-        <div className="card-body p-6">
+        <div className="flex flex-col gap-2 p-6">
           <div className="flex items-center justify-center h-40 text-white/70">
             <p>{t('zikrAnalytics.trendChart.noData', 'No data available')}</p>
           </div>
@@ -106,7 +106,7 @@ export default function KazaDebtChart({ data }: KazaDebtChartProps) {
 
   return (
     <div className={`${CARD} overflow-x-auto`}>
-      <div className="card-body p-5">
+      <div className="flex flex-col gap-2 p-5">
         <div className="flex items-center gap-3 text-[11px] text-white/70 mb-1">
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-sm bg-data-none/70 inline-block" />{' '}

@@ -10,6 +10,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { BTN_PRIMARY, BTN_SECONDARY } from './bustanStyles.js';
+import Switch from './Switch.js';
 
 /** Always the public site, never an invite link: sharing the app makes no
  * friend connection (U2). */
@@ -139,12 +140,7 @@ export default function ShareAppSheet({
               <span className="block text-sm font-bold text-white">{t('shareApp.addName')}</span>
               <span className="block text-xs text-white/70">{t('shareApp.addNameDesc')}</span>
             </span>
-            <input
-              type="checkbox"
-              className="toggle toggle-success shrink-0"
-              checked={withName}
-              onChange={(e) => setWithName(e.target.checked)}
-            />
+            <Switch checked={withName} onChange={(e) => setWithName(e.target.checked)} />
           </label>
         )}
 

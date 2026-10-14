@@ -38,6 +38,7 @@ import { translateReference } from '../utils/localeReference.js';
 import { useSalatDebt, useResetSalatDebt } from '../hooks/useSalatLog.js';
 import FreshStart from './FreshStart.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+import Switch from './Switch.js';
 
 /**
  * Salat settings: a right-side DRAWER in Bustan Arch (T3.2), same shape as
@@ -155,9 +156,7 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
                       'When on, tapping Tasbīḥ or Ayatul Kursi on a prayer adds the counts straight to your dhikr counter. Turn it off to just mark them as done, and count them yourself with Tasbih mode on the Zikr counter.'
                     )}
                   </span>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-success shrink-0"
+                  <Switch
                     checked={autoCount}
                     onChange={(e) => toggleAutoCount(e.target.checked)}
                     aria-label={t('salatSettings.autoCountTitle', 'Auto-count dhikr')}
@@ -296,9 +295,8 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
                         )}
                       </span>
                     </span>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-success toggle-sm shrink-0"
+                    <Switch
+                      size="sm"
                       checked={showSunnah}
                       onChange={(e) => toggleShowSunnah(e.target.checked)}
                       aria-label={t('salatSettings.sunnahMuakkadahToggle', 'Sunnah Muʾakkadah')}
@@ -317,9 +315,8 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
                         )}
                       </span>
                     </span>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-success toggle-sm shrink-0"
+                    <Switch
+                      size="sm"
                       checked={showNafl}
                       onChange={(e) => toggleShowNafl(e.target.checked)}
                       aria-label={t('salatSettings.naflGuideToggle', 'Nafl guidance')}
@@ -338,9 +335,8 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
                         )}
                       </span>
                     </span>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-success toggle-sm shrink-0"
+                    <Switch
+                      size="sm"
                       checked={showAdhkar}
                       onChange={(e) => toggleShowAdhkar(e.target.checked)}
                       aria-label={t('salatSettings.adhkarToggle', 'Morning and evening adhkār')}

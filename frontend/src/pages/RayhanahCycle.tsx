@@ -54,6 +54,7 @@ import {
   REF_LINK,
   SECTION_TITLE,
 } from '../components/bustanStyles.js';
+import Switch from '../components/Switch.js';
 
 // Rayhanah privacy rule: no cycle data (days, flow, symptoms, moods, dates)
 // is ever sent to an AI or shown to friends. Everything on this screen is
@@ -1122,10 +1123,10 @@ export default function RayhanahCycle() {
                   )}
                 </p>
               </div>
-              <input
-                type="checkbox"
+              <Switch
                 aria-label={t('rayhanah.partnerSyncTitle', 'Share cycle status')}
-                className="toggle toggle-sm border-brand-pink/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-pink checked:border-brand-pink shrink-0"
+                tone="pink"
+                size="sm"
                 checked={summary?.partnerSync?.enabled ?? false}
                 disabled={partnerSync.isPending}
                 onChange={(e) => {
@@ -1198,10 +1199,9 @@ export default function RayhanahCycle() {
                   )}
                 </p>
               </div>
-              <input
-                type="checkbox"
+              <Switch
                 aria-label={t('rayhanah.pregnancyToggleTitle', "I'm currently pregnant")}
-                className="toggle toggle-sm border-brand-emerald/40 [--tglbg:theme(colors.brand-surface)] checked:bg-brand-emerald checked:border-brand-emerald shrink-0"
+                size="sm"
                 checked={summary?.pregnancy?.active ?? false}
                 disabled={setPregnancy.isPending}
                 onChange={(e) => {
