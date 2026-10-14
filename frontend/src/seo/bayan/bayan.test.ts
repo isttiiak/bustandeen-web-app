@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement } from 'react';
 import vercel from '../../../../vercel.json';
+import rootPkg from '../../../../package.json';
 import robots from '../../../public/robots.txt?raw';
 import filterJs from '../../../public/bayan/filter.js?raw';
 import { GUIDES } from './guides.js';
@@ -72,6 +73,15 @@ describe('Bayan content', () => {
     const dates = RELEASES.map((r) => r.date);
     expect([...dates].sort().reverse()).toEqual(dates);
     expect(new Set(RELEASES.map((r) => r.version)).size).toBe(RELEASES.length);
+    const num = (v: string) => v.split('.').reduce((n, part) => n * 1000 + Number(part), 0);
+    for (const r of RELEASES) expect(r.version).toMatch(/^\d+\.\d+\.\d+$/);
+    const order = RELEASES.map((r) => num(r.version));
+    expect([...order].sort((a, b) => b - a)).toEqual(order);
+  });
+
+  it("What's new has an entry for the app's current version (every bump adds one)", () => {
+    // The footer shows this version; the newest entry must be it, in both languages.
+    expect(RELEASES[0]!.version).toBe(rootPkg.version);
   });
 
   it('pages render: links stay on the bayan site or go to the app, all targets 44px', () => {
