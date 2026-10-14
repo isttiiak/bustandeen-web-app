@@ -75,6 +75,13 @@ test('a fresh Home: only the Zikr section and the goals card (2026-10-14)', asyn
     expect(css.border).toBe('1px');
     expect(css.h).toBeLessThan(56);
   }
+  // The language button's globe sits in the middle of its box, like the theme button's.
+  const off = await page.getByRole('button', { name: 'Switch language' }).evaluate((b) => {
+    const r = b.getBoundingClientRect();
+    const i = b.querySelector('svg')!.getBoundingClientRect();
+    return Math.abs(r.left + r.width / 2 - (i.left + i.width / 2));
+  });
+  expect(off).toBeLessThan(1.5);
 });
 
 test('a custom order and a section turned off', async ({ page }) => {

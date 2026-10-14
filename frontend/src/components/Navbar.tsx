@@ -300,7 +300,7 @@ export default function Navbar() {
                 syncQuranTranslationWithLang(next);
               }}
               aria-label={t('nav.switchLang')}
-              className="flex items-center justify-center gap-1 min-w-8 h-8 sm:px-2 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all"
+              className="flex items-center justify-center gap-1 w-8 h-8 sm:w-auto sm:px-2 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all"
             >
               <GlobeAltIcon className="w-4 h-4 shrink-0" aria-hidden="true" />
               <span className="text-[10px] font-bold uppercase hidden sm:inline">
