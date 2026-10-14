@@ -1,0 +1,63 @@
+name: Backup self-test
+
+# LT-6: proves ops/backup/backup.sh on seeded data, with no secrets: dump,
+# encrypt, decrypt, restore and compare. The real weekly backup runs in the
+# PRIVATE backups repo (ops/backup/README.md), never here: this repo is public.
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ['ops/backup/**', '.github/workflows/backup-selftest.yml']
+  push:
+    branches: [main]
+    paths: ['ops/backup/**', '.github/workflows/backup-selftest.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  selftest:
+    name: Dump, encrypt, restore (seeded data)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      mongo:
+        image: mongo:8
+        ports: ['27017:27017']
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Seed a fake database
+        run: |
+          docker run --rm --network host mongo:8 mongosh mongodb://localhost:27017/ihsan --quiet --eval '
+            db.users.insertMany([{ email: "seed-marker-1@test.dev" }, { email: "seed-marker-2@test.dev" }]);
+            db.salatlogs.insertMany(Array.from({ length: 50 }, (_, i) => ({ day: i, fajr: "done" })));
+            db.zikrdailies.insertOne({ total: 33 });
+            db.emptycollection.insertOne({}); db.emptycollection.deleteMany({});'
+
+      - name: Run the backup
+        env:
+          MONGODB_URI: mongodb://localhost:27017
+          RESTORE_URI: mongodb://localhost:27017
+          BACKUP_PASSPHRASE: selftest-passphrase-not-a-secret
+          OUT_DIR: out
+        run: set -o pipefail; bash ops/backup/backup.sh | tee run.log
+
+      - name: Check the result
+        run: |
+          set -euo pipefail
+          f="$(ls out/*.archive.gz.gpg)"
+          grep -q 'restored 53 documents, 0 failed' run.log
+          grep -q '4 collections restored' run.log
+          # Encrypted: no plaintext marker, and a wrong passphrase cannot open it.
+          if grep -qa 'seed-marker' "$f"; then echo "::error::plaintext in the backup"; exit 1; fi
+          if echo 'wrong-passphrase-123456789' | gpg --batch --no-symkey-cache --pinentry-mode loopback --passphrase-fd 0 -d "$f" > /dev/null 2>&1; then
+            echo "::error::a wrong passphrase opened the backup"; exit 1
+          fi
+          sha256sum -c "$f.sha256"
+          # The check database is dropped again; the source is untouched.
+          docker run --rm --network host mongo:8 mongosh mongodb://localhost:27017 --quiet --eval '
+            const names = db.adminCommand({ listDatabases: 1 }).databases.map((d) => d.name);
+            if (names.includes("ihsan_restorecheck")) throw new Error("check db left behind");
+            if (db.getSiblingDB("ihsan").salatlogs.countDocuments() !== 50) throw new Error("source changed");'

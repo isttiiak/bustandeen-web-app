@@ -1,0 +1,62 @@
+# COPY of the workflow that runs in the PRIVATE backups repo
+# (isttiiak/bustandeen-backups, .github/workflows/backup.yml). It is kept here
+# so changes are reviewed with the script; it does nothing in this repo.
+# Setup and restore: ops/backup/README.md.
+name: Weekly database backup
+
+on:
+  # Saturday 03:00 in Bangladesh. A private repo's schedule is not switched off
+  # after 60 quiet days (that rule is for public repos), and every run commits.
+  schedule:
+    - cron: '0 21 * * 5'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: Encrypted mongodump + test restore
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      # Throwaway MongoDB: each backup is restored here to prove it opens.
+      mongo:
+        image: mongo:8
+        ports: ['27017:27017']
+    steps:
+      - name: Check out the backups repo
+        uses: actions/checkout@v4
+
+      - name: Get the backup script (public app repo, main)
+        uses: actions/checkout@v4
+        with:
+          repository: isttiiak/bustandeen-web-app
+          path: app
+          sparse-checkout: ops/backup
+
+      - name: Dump, encrypt, test restore
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+          RESTORE_URI: mongodb://localhost:27017
+          OUT_DIR: backups
+        run: bash app/ops/backup/backup.sh
+
+      - name: Keep the newest 12 (older ones stay in git history)
+        run: |
+          ls backups/*.archive.gz.gpg | sort | head -n -12 | while read -r f; do
+            git rm -q "$f" "$f.sha256"
+          done
+
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add backups
+          git commit -q -m "backup: $(date -u +%Y-%m-%d)"
+          git push -q
