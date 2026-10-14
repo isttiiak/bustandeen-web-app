@@ -11,15 +11,21 @@ test.beforeEach(async ({ context }) => {
   );
 });
 
+// A fresh Home shows only Zikr (+ goals); these tests start with every section on.
+const ALL_ON = { bustandeen_home_timeline: '1', bustandeen_home_sections_off: '[]' };
+
 async function demoAt(page: Page, storage: Record<string, string> = {}) {
   await page.clock.setFixedTime(new Date('2026-10-15T20:00:00+06:00'));
-  await page.context().addInitScript((extra) => {
-    localStorage.setItem(
-      'bustandeen_location',
-      JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
-    );
-    for (const [k, v] of Object.entries(extra)) localStorage.setItem(k, v);
-  }, storage);
+  await page.context().addInitScript(
+    (extra) => {
+      localStorage.setItem(
+        'bustandeen_location',
+        JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
+      );
+      for (const [k, v] of Object.entries(extra)) localStorage.setItem(k, v);
+    },
+    { ...ALL_ON, ...storage }
+  );
   await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode').first()).toBeVisible();
 }

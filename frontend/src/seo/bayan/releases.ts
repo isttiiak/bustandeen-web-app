@@ -20,6 +20,30 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.168.0',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'A calmer first Home',
+        fixed: [
+          "A new Home now starts with just the Zikr section and Today's goals. Turn on Salat, Quran or Fasting whenever you like, in the welcome setup or in Settings. Your own choices stay as they are.",
+          'The welcome setup explains what each Home section gives you.',
+          'The Zikr section is now sage green instead of yellow, and Open counter and Log counts look and feel like buttons.',
+          'The language button at the top is now the same size as the theme button, with its icon centred.',
+        ],
+      },
+      bn: {
+        title: 'আরও শান্ত প্রথম হোম',
+        fixed: [
+          'নতুন হোম এখন শুধু যিকির অংশ ও আজকের লক্ষ্য দিয়ে শুরু হয়। সালাত, কুরআন বা রোযা যখন খুশি চালু করুন, স্বাগত সেটআপে বা সেটিংসে। আপনার নিজের বেছে নেওয়া সব আগের মতোই থাকবে।',
+          'স্বাগত সেটআপ এখন বলে দেয় হোমের প্রতিটি অংশে কী পাবেন।',
+          'যিকির অংশ এখন হলুদের বদলে সবুজাভ, আর “কাউন্টার খুলুন” ও “গণনা লগ করুন” এখন সত্যিকারের বোতামের মতো দেখায়।',
+          'ওপরের ভাষার বোতাম এখন থিম বোতামের সমান, আর তার আইকন ঠিক মাঝখানে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.167.0',
     date: '2026-10-14',
     text: {

@@ -64,12 +64,14 @@ export function moveHabit(order: Habit[], habit: Habit, dir: -1 | 1): Habit[] {
  *  The arch's five-prayer row always stays. Synced across devices. */
 export const HOME_TIMELINE_KEY = 'bustandeen_home_timeline';
 
-/** On unless turned off (older accounts keep the timeline they have). */
+/** Off unless turned on (Istiak, 2026-10-14: a fresh Home shows only the Zikr
+ *  section and the goals card; all four looked crowded). Anyone who saved a
+ *  choice (the setup or Settings write '1' or '0') keeps it. */
 export function getHomeTimeline(): boolean {
   try {
-    return localStorage.getItem(HOME_TIMELINE_KEY) !== '0';
+    return localStorage.getItem(HOME_TIMELINE_KEY) === '1';
   } catch {
-    return true;
+    return false;
   }
 }
 

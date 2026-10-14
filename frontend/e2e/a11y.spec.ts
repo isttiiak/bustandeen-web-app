@@ -207,6 +207,11 @@ test('Arabic text is marked lang="ar"', async ({ page }) => {
 test('Home quick sections pass axe and 44px in both themes', async ({ page }) => {
   test.setTimeout(120_000);
   await page.setViewportSize({ width: 375, height: 812 });
+  // A fresh Home shows only Zikr (2026-10-14): turn every section on to check them all.
+  await page.addInitScript(() => {
+    localStorage.setItem('bustandeen_home_timeline', '1');
+    localStorage.setItem('bustandeen_home_sections_off', '[]');
+  });
   await enterDemo(page);
   for (const scheme of ['dark', 'light'] as const) {
     await page.emulateMedia({ colorScheme: scheme });

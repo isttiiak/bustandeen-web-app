@@ -12,6 +12,8 @@ async function demoHomeAt(page: Page, at: string) {
       'bustandeen_location',
       JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
     );
+    // The adhkār card lives in the prayer timeline, off on a fresh Home.
+    localStorage.setItem('bustandeen_home_timeline', '1');
   });
   await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();

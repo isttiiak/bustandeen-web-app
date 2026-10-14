@@ -51,16 +51,18 @@ test('the Home card walks through location, madhab and habits, then orders Home'
   const order = () =>
     page.locator('[data-habit]').evaluateAll((els) => els.map((e) => e.getAttribute('data-habit')));
   expect(await order()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
-  // U5: every habit is on Home to start, whatever comes first
+  // Only Zikr is on Home to start, with the goals card (Istiak, 2026-10-14)
   const onHome = (h: string) => page.getByRole('switch', { name: `Show ${h} on Home` });
-  for (const h of ['Salat', 'Zikr', 'Quran', 'Fasting']) await expect(onHome(h)).toBeChecked();
+  await expect(onHome('Zikr')).toBeChecked();
+  for (const h of ['Salat', 'Quran', 'Fasting']) await expect(onHome(h)).not.toBeChecked();
+  await expect(page.getByRole('switch', { name: "Today's goals card" })).toBeChecked();
+  await expect(page.getByText('Start small: Zikr and the goals card are on.')).toBeVisible();
   await page.getByRole('button', { name: 'Move Quran up' }).click();
   await page.getByRole('button', { name: 'Move Quran up' }).click();
   expect(await order()).toEqual(['quran', 'salat', 'zikr', 'fasting']);
   await expect(page.getByRole('button', { name: 'Move Quran up' })).toBeDisabled();
-  // Salat no longer first: the timeline stays on (no Salat-first rule)
-  await expect(onHome('Salat')).toBeChecked();
-  await onHome('Fasting').uncheck();
+  await onHome('Salat').check();
+  await onHome('Quran').check();
   await page
     .getByRole('radiogroup', { name: 'Daily Quran goal' })
     .getByRole('radio', { name: '20 āyāt' })

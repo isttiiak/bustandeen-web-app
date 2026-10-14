@@ -1,8 +1,9 @@
 // Home quick sections (T3.4 E, Istiak 2026-10-09): a short, few-tap section
 // per habit, shown in the habit order (utils/onboarding.ts). The Salat
 // section is the prayer timeline, switched by HOME_TIMELINE_KEY; Quran, Zikr
-// and Fasting are switched here. All on by default; any subset may be on
-// (U5). Synced across devices (utils/prefsSync.ts + the server whitelist).
+// and Fasting are switched here. By default only Zikr is on, with the goals
+// card (Istiak, 2026-10-14); any subset may be on (U5). Synced across devices
+// (utils/prefsSync.ts + the server whitelist).
 
 import {
   HABITS,
@@ -17,16 +18,19 @@ export const HOME_SECTIONS_OFF_KEY = 'bustandeen_home_sections_off';
 
 type QuickHabit = Exclude<Habit, 'salat'>;
 const QUICK: readonly QuickHabit[] = ['quran', 'zikr', 'fasting'];
+/** Until the user saves a choice: Zikr on, Quran and Fasting off. */
+const DEFAULT_OFF: readonly QuickHabit[] = ['quran', 'fasting'];
 
 function readOff(): QuickHabit[] {
   try {
     const raw = localStorage.getItem(HOME_SECTIONS_OFF_KEY);
-    const parsed = raw ? (JSON.parse(raw) as unknown) : [];
+    if (raw === null) return [...DEFAULT_OFF];
+    const parsed = JSON.parse(raw) as unknown;
     return Array.isArray(parsed)
       ? parsed.filter((h): h is QuickHabit => QUICK.includes(h as QuickHabit))
       : [];
   } catch {
-    return [];
+    return [...DEFAULT_OFF];
   }
 }
 

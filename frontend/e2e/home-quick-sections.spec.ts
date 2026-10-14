@@ -11,15 +11,21 @@ test.beforeEach(async ({ context }) => {
   );
 });
 
+// A fresh Home shows only Zikr (+ goals); these tests start with every section on.
+const ALL_ON = { bustandeen_home_timeline: '1', bustandeen_home_sections_off: '[]' };
+
 async function demoHomeAt(page: Page, at: string, storage: Record<string, string> = {}) {
   await page.clock.setFixedTime(new Date(at));
-  await page.context().addInitScript((extra) => {
-    localStorage.setItem(
-      'bustandeen_location',
-      JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
-    );
-    for (const [k, v] of Object.entries(extra)) localStorage.setItem(k, v);
-  }, storage);
+  await page.context().addInitScript(
+    (extra) => {
+      localStorage.setItem(
+        'bustandeen_location',
+        JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
+      );
+      for (const [k, v] of Object.entries(extra)) localStorage.setItem(k, v);
+    },
+    { ...ALL_ON, ...storage }
+  );
   await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode').first()).toBeVisible();
 }
@@ -42,6 +48,40 @@ test('sections follow the habit order; Today’s goals stay', async ({ page }) =
     'quick-fasting',
   ]);
   await expect(page.getByTestId('today-goals')).toBeVisible();
+});
+
+test('a fresh Home: only the Zikr section and the goals card (2026-10-14)', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-10-15T20:00:00+06:00'));
+  await page.context().addInitScript(() => {
+    localStorage.setItem(
+      'bustandeen_location',
+      JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
+    );
+  });
+  await page.goto('/demo/brother');
+  await expect(page.getByText('Demo Mode').first()).toBeVisible();
+  expect(await order(page)).toEqual(['quick-zikr']);
+  await expect(page.getByTestId('today-goals')).toBeVisible();
+  // Open counter and Log counts are bordered buttons, on one line each.
+  const zikr = page.getByTestId('quick-zikr');
+  for (const el of [
+    zikr.getByRole('link', { name: 'Open counter' }),
+    zikr.getByTestId('zikr-log-open'),
+  ]) {
+    const css = await el.evaluate((e) => {
+      const c = getComputedStyle(e);
+      return { border: c.borderTopWidth, h: e.getBoundingClientRect().height };
+    });
+    expect(css.border).toBe('1px');
+    expect(css.h).toBeLessThan(56);
+  }
+  // The language button's globe sits in the middle of its box, like the theme button's.
+  const off = await page.getByRole('button', { name: 'Switch language' }).evaluate((b) => {
+    const r = b.getBoundingClientRect();
+    const i = b.querySelector('svg')!.getBoundingClientRect();
+    return Math.abs(r.left + r.width / 2 - (i.left + i.width / 2));
+  });
+  expect(off).toBeLessThan(1.5);
 });
 
 test('a custom order and a section turned off', async ({ page }) => {
