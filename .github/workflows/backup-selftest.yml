@@ -42,7 +42,7 @@ jobs:
           RESTORE_URI: mongodb://localhost:27017
           BACKUP_PASSPHRASE: selftest-passphrase-not-a-secret
           OUT_DIR: out
-        run: bash ops/backup/backup.sh | tee run.log
+        run: set -o pipefail; bash ops/backup/backup.sh | tee run.log
 
       - name: Check the result
         run: |
