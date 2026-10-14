@@ -174,7 +174,13 @@
     },
     {
       "source": "/((?!api/|__/|assets/).*)",
-      "destination": "/app-shell.html"
+      "destination": "/app-shell.html",
+      "missing": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ]
     }
   ],
   "headers": [

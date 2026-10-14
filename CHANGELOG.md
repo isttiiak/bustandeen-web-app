@@ -2,6 +2,12 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.164.1 - Unknown pages on bayan.bustandeen.com show "not found" - 2026-10-14
+
+### Fixed
+
+- **A mistyped address on bayan.bustandeen.com showed the app's shell** (for example `/admin` or `/api/health`) instead of "not found". When a bayan page does not exist, Vercel goes on to the next rewrite, and the app's catch-all answered it. The catch-all now skips the bayan host, so those addresses return 404. Nothing could be signed into or saved there (the bayan security policy blocks every connection), and the admin panel was never served on that host.
+
 ## v5.164.0 - Help & Updates at bayan.bustandeen.com - 2026-10-14
 
 ### Added
