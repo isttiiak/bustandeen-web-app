@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.167.0 - Daily email login check and alert (LT-2) - 2026-10-14
+
+### Added
+
+- **A daily email check** (LT-2). Email-first sign-up and password reset depend on Zoho SMTP alone, and a changed password or plan made them stop silently. A second Vercel Cron, `GET /api/cron/email-check` (daily 01:00 UTC = 07:00 BD, CRON_SECRET only), logs in to SMTP for each sender with nodemailer `verify()` (connect, TLS, AUTH; nothing is sent). The run fails when the account-email sender (`ansar`) is not working or any configured sender is refused; the outcome per sender (e.g. `sadaqah FAILED (Invalid login: 535 ...)`) is kept in `CronRun` and shown in Admin, Ops health.
+- **The alert:** `GET /api/health/email` answers 200 only when the last check passed and is under 36 hours old; otherwise 503 with `state` `failed`, `stale` (the cron stopped) or `never-run`. It never says which sender or why. A status-page monitor on it emails through Better Stack, so the alert does not depend on the broken mail server.
+
+### Setup (Better Stack)
+
+- Add a 5th monitor: **Email**, `https://bustandeen.com/api/health/email`, "URL becomes unavailable", check every 30 min is enough, alert after 2 failed checks. Turn it on after the first daily run (or it shows down with `never-run`). Needs `CRON_SECRET` on Vercel (v5.166.0).
+
+### Tests
+
+- New `emailHealth.e2e.test.js` against a tiny fake SMTP server: the cron route needs the secret, never-run is 503, all logins ok gives 200, a refused login fails the run (502), keeps the last success and stores no password, the public endpoint hides the sender and reason, and a check older than 36 h is stale. `cron.e2e.test.js` checks the second cron in `vercel.json`.
+
 ## v5.166.2 - Deep health check touches the database (LT-3) - 2026-10-14
 
 ### Added

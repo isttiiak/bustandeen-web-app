@@ -9,5 +9,6 @@ const router = Router();
 router.use(requireCronSecret);
 
 router.get('/rebuild', cronController.rebuildHandler);
+router.get('/email-check', cronController.emailCheckHandler);
 
 export default router;

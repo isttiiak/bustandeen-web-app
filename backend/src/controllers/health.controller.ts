@@ -20,3 +20,19 @@ export const deepHandler = async (
     next(err);
   }
 };
+
+/** GET /api/health/email (LT-2): 200 when today's SMTP login check passed,
+ *  else 503 (failed, stale or never run), for a status-page monitor. */
+export const emailHandler = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const email = await healthService.emailHealth();
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(email.state === 'ok' ? 200 : 503).json({ ok: email.state === 'ok', ...email });
+  } catch (err) {
+    next(err);
+  }
+};

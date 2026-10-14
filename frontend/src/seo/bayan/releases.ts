@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.167.0',
+    date: '2026-10-14',
+    text: {
+      en: {
+        title: 'Sign-up emails watched every day',
+        added: [
+          'Every day the app checks that it can still send its emails (sign-up links and password resets). If that ever stops working, we are told right away instead of finding out from you.',
+        ],
+      },
+      bn: {
+        title: 'সাইন-আপ ইমেইল প্রতিদিন পরীক্ষা হয়',
+        added: [
+          'অ্যাপ প্রতিদিন পরীক্ষা করে যে সে এখনও ইমেইল (সাইন-আপের লিংক ও পাসওয়ার্ড রিসেট) পাঠাতে পারছে কি না। কখনো তা বন্ধ হয়ে গেলে আপনার কাছ থেকে জানার আগেই আমরা সাথে সাথে খবর পাই।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.166.2',
     date: '2026-10-14',
     text: {
