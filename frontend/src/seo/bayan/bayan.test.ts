@@ -109,10 +109,15 @@ describe('Bayan hosting', () => {
     expect(on(old, 'bustandeen.com')).toBe(true);
     const i = v.rewrites.findIndex((r) => on(r, B));
     expect(v.rewrites[i]).toMatchObject({ source: '/:path*', destination: '/bayan/:path*' });
-    // Before the app-shell catch-all; the API and the admin page skip this host.
+    // Before the app-shell catch-all. The API, the admin page and the catch-all
+    // itself skip this host: Vercel goes on to later rewrites when a bayan page
+    // does not exist, so without that a typo served the app shell (v5.164.1).
     expect(i).toBe(v.rewrites.length - 2);
     for (const r of v.rewrites.filter(
-      (x) => x.destination === '/admin.html' || x.source === '/api/(.*)'
+      (x) =>
+        x.destination === '/admin.html' ||
+        x.source === '/api/(.*)' ||
+        x.destination === '/app-shell.html'
     ))
       expect(r.missing).toEqual([{ type: 'host', value: B }]);
   });
