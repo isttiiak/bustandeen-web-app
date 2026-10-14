@@ -24,10 +24,14 @@ const cspOf = (blocks) =>
   blocks
     .flatMap((h) => h.headers ?? [])
     .find((h) => /^content-security-policy(-report-only)?$/i.test(h.key))?.value;
-const csp = cspOf((vercel.headers ?? []).filter((h) => !isAdminBlock(h)));
+const isBayanBlock = (h) =>
+  (h.has ?? []).some((c) => c.type === 'host' && /^bayan\./.test(c.value));
+const csp = cspOf((vercel.headers ?? []).filter((h) => !isAdminBlock(h) && !isBayanBlock(h)));
 const adminCsp = cspOf((vercel.headers ?? []).filter(isAdminBlock));
+// bayan.bustandeen.com (v5.164.0): Help & Updates, its own policy too.
+const bayanCsp = cspOf((vercel.headers ?? []).filter(isBayanBlock));
 
-if (!csp || !adminCsp) {
+if (!csp || !adminCsp || !bayanCsp) {
   console.error('check-csp: no Content-Security-Policy header found in vercel.json');
   process.exit(1);
 }
@@ -44,6 +48,8 @@ const pages = [
   ['frontend/dist/bn/duas/index.html', csp],
   ['frontend/dist/bn/index.html', csp],
   ['frontend/dist/admin.html', adminCsp],
+  ['frontend/dist/bayan/home/index.html', bayanCsp],
+  ['frontend/dist/bayan/bn/guides/salat-and-kaza/index.html', bayanCsp],
 ].filter(([p]) => existsSync(join(root, p)));
 
 const inlineScript =

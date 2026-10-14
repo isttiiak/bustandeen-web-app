@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.164.0 - Help & Updates at bayan.bustandeen.com - 2026-10-14
+
+### Added
+
+- **bayan.bustandeen.com, Help & Updates**, in English and Bangla (approved prototype `docs/design/bayan-help-updates.html`). Eight short guides (Getting started, Salat and kaza, Fasting, Zikr counter, Quran habit, Musafir, Rayhanah, Friends and Noor), What's new (each release in plain words, newest first), How we calculate (prayer times, the day boundary, the Hijri date, qaṣr, kaza: a description of what the app does, never a ruling) and Credits. Every guide says only what the app does today, checked against the code, in the app's own words for buttons and pages.
+- **Static and private:** prerendered with the SEO pages into `dist/bayan/` (24 pages), loading only the app's stylesheet and a 1 KB guide filter on the home pages. No app, no sign-in, no service worker, no analytics, no request to any other site. Its own security headers (scripts only from itself, no connections, no frames), canonical URLs and hreflang on the bayan host, and its own sitemap (listed in robots.txt).
+- **Addresses:** the home pages are `bayan.bustandeen.com/home` and `/bn/home`, and `bayan.bustandeen.com` opens the right one. (`/` and `/bn` on that host would otherwise serve the app's own landing pages, which Vercel serves as files before any rewrite.) `help.bustandeen.com` and `bustandeen.com/bayan/...` redirect there (301).
+- **In the app:** a "Help & updates" link in the footer and a card on About, opening the guides in the app's language.
+
+### Tests
+
+- New `src/seo/bayan/bayan.test.ts` (both languages complete, no em dash, Bangla in Bangla script, releases newest first, every page renders with one h1 and no script, the hosting rules and headers) and Playwright `bayan.spec.ts` on `bayan.localhost` (`vite preview` answers it like the real host): redirects, the filter, no app scripts, axe and 44px targets in English and Bangla. `check-csp.mjs` checks two bayan pages against their policy.
+
 ## v5.163.0 - The admin panel moves to admin.bustandeen.com - 2026-10-14
 
 ### Changed

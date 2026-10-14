@@ -209,3 +209,10 @@ bustandeen.com; `/admin*` → `admin.html` on every host (so previews and `vite`
 the admin host has its own stricter header block (CSP `script-src 'self'`, `frame-src 'none'`, `noindex`).
 Backend: with `ADMIN_HOST=admin.bustandeen.com`, `/api/admin/*` answers only on that host (plus previews and
 localhost) and only the admin site may call it cross-origin (`utils/corsOrigins.ts`). Unset = no restriction.
+
+**Bayan (v5.164.0).** Help & Updates on `bayan.bustandeen.com`: content in `src/seo/bayan/` (`guides.ts`, `releases.ts`
+for What's new, add one per user-visible release, and `pages.ts`), rendered by `BayanPage.tsx` through the SSR bundle and
+written by `scripts/prerender.mjs` to `dist/bayan/` as standalone documents (app stylesheet + `public/bayan/filter.js`
+only). `vercel.json` rewrites the bayan host to `/bayan/*`; `/` and `/bn` there redirect to `/home` and `/bn/home`
+because Vercel serves existing files (the app's landing pages) before rewrites. `help.` and `bustandeen.com/bayan/*`
+301 to it. Locally, `vite preview` answers `bayan.localhost` the same way.

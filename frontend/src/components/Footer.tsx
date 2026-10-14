@@ -2,10 +2,10 @@ import React from 'react';
 import { Link } from 'react-router';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import { useTranslation } from 'react-i18next';
-import { STATUS_URL } from '../utils/siteLinks.js';
+import { HELP_URL, HELP_URL_BN, STATUS_URL } from '../utils/siteLinks.js';
 
 export default function Footer() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   return (
     <footer className="bg-brand-deep text-white border-t border-brand-border mt-auto">
       <div className="footer footer-center p-6 sm:p-8">
@@ -52,6 +52,15 @@ export default function Footer() {
             >
               {t('footer.terms')}
             </Link>
+            <span className="text-white/60" aria-hidden="true">
+              •
+            </span>
+            <a
+              href={i18n.language === 'bn' ? HELP_URL_BN : HELP_URL}
+              className="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+            >
+              {t('footer.help')}
+            </a>
             <span className="text-white/60" aria-hidden="true">
               •
             </span>

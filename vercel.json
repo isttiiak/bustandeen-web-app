@@ -66,12 +66,62 @@
       ],
       "destination": "https://bustandeen.com/$1",
       "permanent": true
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ],
+      "destination": "/home",
+      "permanent": false
+    },
+    {
+      "source": "/bn",
+      "has": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ],
+      "destination": "/bn/home",
+      "permanent": false
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "help.bustandeen.com"
+        }
+      ],
+      "destination": "https://bayan.bustandeen.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/bayan/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "bustandeen.com"
+        }
+      ],
+      "destination": "https://bayan.bustandeen.com/:path*",
+      "permanent": true
     }
   ],
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index"
+      "destination": "/api/index",
+      "missing": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ]
     },
     {
       "source": "/connect/:code",
@@ -94,11 +144,33 @@
     },
     {
       "source": "/admin",
-      "destination": "/admin.html"
+      "destination": "/admin.html",
+      "missing": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ]
     },
     {
       "source": "/admin/:path*",
-      "destination": "/admin.html"
+      "destination": "/admin.html",
+      "missing": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ]
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ],
+      "destination": "/bayan/:path*"
     },
     {
       "source": "/((?!api/|__/|assets/).*)",
@@ -146,6 +218,10 @@
         {
           "type": "host",
           "value": "admin.bustandeen.com"
+        },
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
         }
       ]
     },
@@ -193,6 +269,45 @@
         {
           "key": "Content-Security-Policy",
           "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob:; connect-src 'self' https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src 'none'; worker-src 'none'; manifest-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; report-uri /api/csp-report; report-to csp"
+        }
+      ]
+    },
+    {
+      "source": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ],
+      "headers": [
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "geolocation=(), camera=(), microphone=(), payment=(), usb=(), browsing-topics=()"
+        },
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; report-uri https://bustandeen.com/api/csp-report"
         }
       ]
     },

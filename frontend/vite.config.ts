@@ -57,10 +57,30 @@ export function fontsourceUnicodeRanges(): Plugin {
  * Serves admin.html for /admin and /admin/* in `vite` and `vite preview`, the
  * way vercel.json does on previews (production sends bustandeen.com/admin to
  * admin.bustandeen.com, which serves it for every /admin path). The page
- * itself is built by its own pass, vite.admin.config.ts.
+ * itself is built by its own pass, vite.admin.config.ts. Also answers
+ * bayan.localhost the way vercel.json answers bayan.bustandeen.com.
  */
 function adminPage(): Plugin {
-  const rewrite = (req: { url?: string }, _res: unknown, next: () => void) => {
+  type Req = { url?: string; headers: Record<string, string | string[] | undefined> };
+  type Res = { statusCode: number; setHeader(k: string, v: string): void; end(): void };
+  const rewrite = (req: Req, res: Res, next: () => void) => {
+    // bayan.localhost stands in for bayan.bustandeen.com (vercel.json): /home,
+    // /guides/... come from dist/bayan/ (the folder form, as sirv wants it).
+    const host = String(req.headers.host ?? '');
+    if (host.startsWith('bayan.') && req.url) {
+      const path = req.url.split('?')[0]!;
+      if (path === '/' || path === '/bn' || path === '/bn/') {
+        res.statusCode = 307;
+        res.setHeader('Location', path === '/' ? '/home' : '/bn/home');
+        res.end();
+        return;
+      }
+      if (!path.startsWith('/assets/') && path !== '/favicon.svg') {
+        req.url = `/bayan${path}${/\.[a-z0-9]+$/i.test(path) || path.endsWith('/') ? '' : '/'}`;
+      }
+      next();
+      return;
+    }
     if (req.url && /^\/admin(\/|\?|$)/.test(req.url)) req.url = '/admin.html';
     next();
   };
@@ -136,6 +156,8 @@ export default defineConfig({
           // this one): the app's worker never serves it.
           'admin.html',
           'assets/admin/**',
+          // bayan.bustandeen.com (Help & Updates) is its own site too.
+          'bayan/**',
           'assets/Admin*.js',
           'assets/xlsx-*.js',
           'assets/seo-cities-*.js',

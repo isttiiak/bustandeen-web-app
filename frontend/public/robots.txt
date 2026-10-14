@@ -13,3 +13,4 @@ Disallow: /salat/analytics
 Disallow: /fasting/analytics
 
 Sitemap: https://bustandeen.com/sitemap-index.xml
+Sitemap: https://bayan.bustandeen.com/sitemap-bayan.xml

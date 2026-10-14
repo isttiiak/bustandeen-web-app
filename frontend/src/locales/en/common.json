@@ -208,7 +208,10 @@
     "bustandeenDefinition": "A name born of <ar>بستان</ar> (bustān, garden) and <ar>دين</ar> (dīn, religion/faith): a garden of faith, tended daily.",
     "statusTitle": "Is Bustandeen up?",
     "statusDesc": "Live status of the app, the website and the server, with past incidents.",
-    "statusLink": "Status"
+    "statusLink": "Status",
+    "helpTitle": "Help & updates",
+    "helpDesc": "Short guides, what is new in each release, and how prayer times and kaza are worked out.",
+    "helpLink": "Open"
   },
   "aiFlair": {
     "whatIsSent": "What is sent?",
@@ -831,7 +834,8 @@
     "sadaqah": "Sadaqah",
     "secure": "Your data is yours",
     "terms": "Terms",
-    "status": "Status"
+    "status": "Status",
+    "help": "Help & updates"
   },
   "friends": {
     "accept": "Accept",
