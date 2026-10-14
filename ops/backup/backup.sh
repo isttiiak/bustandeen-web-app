@@ -21,6 +21,7 @@ OUT_DIR="${OUT_DIR:-backups}"
 DB_NAME="${DB_NAME:-ihsan}"
 MONGO_IMAGE="${MONGO_IMAGE:-mongo:8}"
 CHECK_DB="${DB_NAME}_restorecheck"
+export DB_NAME CHECK_DB
 
 if [ "${#BACKUP_PASSPHRASE}" -lt 20 ]; then
   echo "::error::BACKUP_PASSPHRASE must be at least 20 characters." >&2
