@@ -4236,9 +4236,13 @@
     "onHome": "On Home",
     "notOnHome": "Not on Home",
     "salatOnHome": "As the prayer timeline. The prayer row in the arch always stays.",
+    "zikrOnHome": "Your chosen dhikr one tap away, and Log counts for what you said without the counter.",
+    "quranOnHome": "Continue where you stopped, listen, or pick a surah.",
+    "fastingOnHome": "Mark today's fast in one tap and see the next sunnah fast.",
+    "homeIntro": "Start small: Zikr and the goals card are on. Turn more on now or any time in Settings.",
     "showOnHome": "Show {{habit}} on Home",
     "goalsTitle": "Today's goals card",
-    "goalsDetail": "Your progress towards each daily goal.",
+    "goalsDetail": "Every habit's progress towards its daily goal, in one card. Recommended.",
     "goalsKept": "With no habit on Home, the goals card stays so Home is never empty."
   },
   "shareApp": {

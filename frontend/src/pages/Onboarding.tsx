@@ -497,14 +497,7 @@ export default function Onboarding() {
                             ? t('onboarding.onHome', 'On Home')
                             : t('onboarding.notOnHome', 'Not on Home')}
                         </span>
-                        {h === 'salat' && (
-                          <span className="block text-white/60">
-                            {t(
-                              'onboarding.salatOnHome',
-                              'As the prayer timeline. The prayer row in the arch always stays.'
-                            )}
-                          </span>
-                        )}
+                        <span className="block text-white/60">{t(`onboarding.${h}OnHome`)}</span>
                       </span>
                       <span className="w-11 h-11 shrink-0 flex items-center justify-center">
                         <Switch
@@ -522,6 +515,12 @@ export default function Onboarding() {
               })}
             </ol>
 
+            <p className="text-white/70 text-xs leading-relaxed px-1 pt-1">
+              {t(
+                'onboarding.homeIntro',
+                'Start small: Zikr and the goals card are on. Turn more on now or any time in Settings.'
+              )}
+            </p>
             <label className="flex items-center gap-3 p-4 rounded-card border border-brand-border bg-brand-deep shadow-elev-1 cursor-pointer">
               <span className="flex-1 min-w-0">
                 <span className="block text-white font-bold text-sm">

@@ -52,11 +52,28 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
+const allOn = () => {
+  localStorage.setItem(HOME_TIMELINE_KEY, '1');
+  localStorage.setItem(HOME_SECTIONS_OFF_KEY, '[]');
+};
+
 describe('homeSections', () => {
-  it('shows all four in the habit order by default', () => {
+  it('shows only Zikr until the user chooses (Istiak, 2026-10-14)', () => {
+    expect(homeSections()).toEqual(['zikr']);
+    expect(isSectionOn('salat')).toBe(false);
+    expect(isSectionOn('quran')).toBe(false);
+    expect(isSectionOn('fasting')).toBe(false);
+  });
+  it('a saved choice wins over the default, also "all on"', () => {
+    allOn();
     expect(homeSections()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
   });
+  it('turning one section on keeps the others at their default', () => {
+    setSectionOn('quran', true);
+    expect(homeSections()).toEqual(['zikr', 'quran']);
+  });
   it('follows the saved order and the on/off switches', () => {
+    allOn();
     localStorage.setItem(FOCUS_KEY, JSON.stringify(['fasting', 'quran', 'salat', 'zikr']));
     setSectionOn('quran', false);
     expect(homeSections()).toEqual(['fasting', 'salat', 'zikr']);
@@ -69,10 +86,12 @@ describe('homeSections', () => {
     expect(homeSections()).not.toContain('salat');
   });
   it('ignores junk in storage', () => {
+    localStorage.setItem(HOME_TIMELINE_KEY, '1');
     localStorage.setItem(HOME_SECTIONS_OFF_KEY, '["salat","nope"]');
     expect(homeSections()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
     localStorage.setItem(HOME_SECTIONS_OFF_KEY, '{bad');
     expect(isSectionOn('zikr')).toBe(true);
+    expect(isSectionOn('quran')).toBe(false);
   });
 });
 
@@ -89,6 +108,7 @@ describe("Today's goals card (U5)", () => {
     expect(goalsCardShown()).toBe(true);
   });
   it('keeps its own row order once moved, independent of the habit order', () => {
+    allOn();
     setHomeGoals({ on: true, order: ['fasting', 'zikr', 'salat', 'quran'], off: [], badges: true });
     localStorage.setItem(FOCUS_KEY, JSON.stringify(['quran', 'salat', 'zikr', 'fasting']));
     expect(goalOrder()).toEqual(['fasting', 'zikr', 'salat', 'quran']);

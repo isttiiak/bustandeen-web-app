@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.168.0 - A calmer first Home: Zikr and goals only - 2026-10-14
+
+### Changed
+
+- **New default Home** (Istiak, 2026-10-14): until the user chooses, Home shows only the **Zikr** quick section and **Today's goals** (every row). The Salat timeline, Quran and Fasting sections start off: with all four on, a first Home looked crowded. Anyone who saved a choice (the welcome setup or Settings write it) keeps it; a device that never saved one now starts from the new default. The arch's prayer row always stays. The adhkār card lives in the timeline, so it shows once the Salat section is turned on.
+- **Welcome setup, habits step:** starts from the same default (Zikr on, goals card on), each habit's switch now says what its Home section gives (Zikr: chosen dhikr one tap away and Log counts; Quran: continue, listen, pick a surah; Fasting: today's fast in one tap and the next sunnah fast), a short line explains the starting point, and the goals card says what it holds (Recommended). English and Bangla.
+- **Zikr quick section in sage, not gold:** icon, progress bar, chip numbers and hover use the primary sage, so the card no longer reads yellow.
+- **Open counter and Log counts are buttons now:** a border, a surface fill on hover and a sage border, on one line each on a phone.
+- **Navbar language button:** a 32x32 box like the theme button on phones, with the globe centred (it was 24 px wide with uneven padding).
+
+### Tests
+
+- `homeQuick.test.ts` / `onboarding.test.ts`: the new defaults, a saved choice (incl. all on) wins, turning one on keeps the rest at default, junk falls back to the default. e2e: a fresh demo Home shows only `quick-zikr` + goals, with bordered one-line buttons; the setup starts with only Zikr on; specs that need every section (quick sections, Home customisation, timeline, adhkār routine) turn them on first.
+
 ## v5.167.0 - Daily email login check and alert (LT-2) - 2026-10-14
 
 ### Added

@@ -13,6 +13,10 @@ async function demoHomeAt(page: Page, at: string, dayStartMode?: string) {
       JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
     );
     if (mode) localStorage.setItem('bustandeen_day_start_mode', mode);
+    // The timeline is off on a fresh Home; a test may have turned it off itself.
+    if (localStorage.getItem('bustandeen_home_timeline') === null) {
+      localStorage.setItem('bustandeen_home_timeline', '1');
+    }
   }, dayStartMode);
   await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();

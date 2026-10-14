@@ -97,8 +97,8 @@ describe('habit order', () => {
 });
 
 describe('Home timeline preference', () => {
-  it('is on unless turned off (older accounts keep it)', () => {
-    expect(getHomeTimeline()).toBe(true);
+  it('is off until turned on (a fresh Home shows only Zikr + goals)', () => {
+    expect(getHomeTimeline()).toBe(false);
     setHomeTimeline(false);
     expect(localStorage.getItem(HOME_TIMELINE_KEY)).toBe('0');
     expect(getHomeTimeline()).toBe(false);

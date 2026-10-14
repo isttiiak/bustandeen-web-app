@@ -184,6 +184,10 @@ export function QuranQuickCard() {
 
 // ── Zikr ─────────────────────────────────────────────────────────────────────
 
+/** Open counter / Log counts: bordered quiet buttons with a clear hover. */
+const ZIKR_LINK_BTN =
+  'inline-flex items-center justify-center gap-1 min-h-[44px] rounded-control border border-brand-border bg-brand-surface/40 px-2 py-2 whitespace-nowrap text-sm font-semibold text-white/80 hover:text-white hover:bg-brand-surface hover:border-brand-emerald/60 transition-colors';
+
 export function ZikrQuickCard({ today, goal }: { today: number; goal: number | null }) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -205,8 +209,8 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
   return (
     <Shell
       testId="quick-zikr"
-      tone="gold"
-      icon={<TasbihIcon className="w-5 h-5 text-brand-gold" aria-hidden="true" />}
+      tone="emerald"
+      icon={<TasbihIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />}
       title={t('home.quick.zikr', 'Zikr')}
       sub={
         goal
@@ -215,7 +219,7 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
       }
       aside={<Count done={today} goal={goal} />}
     >
-      {goal ? <Progress pct={(today / goal) * 100} tone="gold" /> : null}
+      {goal ? <Progress pct={(today / goal) * 100} tone="emerald" /> : null}
       <div className="grid grid-cols-3 gap-2 mt-3">
         {chips.map((z) => (
           <button
@@ -233,12 +237,12 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
                     name: zikrDisplayName(z.name, i18n.language),
                   })
             }
-            className="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-gold/50 px-1.5 py-1.5 text-center leading-tight transition-colors"
+            className="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors"
           >
             <span className="block text-white text-[11px] font-bold line-clamp-2">
               {zikrDisplayName(z.name, i18n.language)}
             </span>
-            <span className="block text-brand-gold text-xs font-black tabular-nums mt-0.5">
+            <span className="block text-brand-emerald text-xs font-black tabular-nums mt-0.5">
               {action === 'add' ? '+' : ''}
               {formatLocaleNumber(z.count)}
             </span>
@@ -247,10 +251,7 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
       </div>
       {/* U4: counts made without the counter are logged right here. */}
       <div className="mt-2 grid grid-cols-2 gap-2">
-        <Link
-          to="/zikr"
-          className="flex items-center justify-center gap-1 min-h-[44px] text-white/70 hover:text-white text-sm font-semibold"
-        >
+        <Link to="/zikr" className={ZIKR_LINK_BTN}>
           {t('home.quick.openCounter', 'Open counter')}
           <ChevronRightIcon className="w-4 h-4" aria-hidden="true" />
         </Link>
@@ -259,7 +260,7 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
           onClick={() => setLogOpen(true)}
           aria-haspopup="dialog"
           data-testid="zikr-log-open"
-          className="flex items-center justify-center gap-1 min-h-[44px] text-white/70 hover:text-white text-sm font-semibold"
+          className={ZIKR_LINK_BTN}
         >
           <PlusCircleIcon className="w-4 h-4" aria-hidden="true" />
           {t('home.quick.logCounts', 'Log counts')}
