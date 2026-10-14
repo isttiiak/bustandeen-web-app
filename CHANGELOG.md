@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.165.0 - One on/off switch everywhere, Salat analytics cards - 2026-10-14
+
+### Changed
+
+- **A shared Bustan `Switch`** (`components/Switch.tsx`) replaces all 22 daisyUI `toggle`s: Onboarding, Settings, Home layout, Salat/Zikr/Quran settings, Rayhanah (page + drawer), Share. It is a real checkbox with `role="switch"`, so wrapping labels still toggle it and screen readers announce on/off; the invisible input is a 44x44 tap target around the drawn track; colours come from theme tokens (sage by default, gold/info/pink tones), with a gold focus ring and a dimmed disabled state. Rayhanah's daisyUI `toggle-secondary` was the dark sage, kept as sage.
+- **No more daisyUI `card-body`** (T3.2 leftovers): Salat analytics cards use the app's usual `p-5 space-y-3` (a little tighter than card-body's extra flex gap); Kaza debt, Mosque trend and Zikr trend charts keep their exact spacing with `flex flex-col gap-2`.
+
+### Tests
+
+- `components/switch.test.ts`: the Switch is a 44px `role="switch"` checkbox on tokens, and no app `.tsx` uses daisyUI `toggle` or `card-body`. e2e specs find the switches by role `switch`.
+
 ## v5.164.1 - Unknown pages on bayan.bustandeen.com show "not found" - 2026-10-14
 
 ### Fixed

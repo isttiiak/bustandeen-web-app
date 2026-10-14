@@ -376,7 +376,7 @@ export default function SalatAnalytics() {
               )}
               {isError && (
                 <div className={CARD}>
-                  <div className="card-body text-center p-10">
+                  <div className="text-center p-10">
                     <p className="text-white/70">{t('salatAnalytics.loadError')}</p>
                   </div>
                 </div>
@@ -463,7 +463,7 @@ export default function SalatAnalytics() {
                     animate={{ opacity: 1, y: 0 }}
                     className={CARD}
                   >
-                    <div className="card-body p-5 space-y-3">
+                    <div className="p-5 space-y-3">
                       <div className="flex items-center gap-2">
                         <h2 className={SECTION_TITLE}>{t('salatAnalytics.overallBreakdown')}</h2>
                         <span className="text-white/70 text-xs">
@@ -710,7 +710,7 @@ export default function SalatAnalytics() {
                       animate={{ opacity: 1, y: 0 }}
                       className={CARD}
                     >
-                      <div className="card-body p-5 space-y-3">
+                      <div className="p-5 space-y-3">
                         <h2 className={SECTION_TITLE}>
                           <ChartBarIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />{' '}
                           {t('salatAnalytics.byWeekday', 'By Day of Week')}
@@ -769,7 +769,7 @@ export default function SalatAnalytics() {
                             animate={{ opacity: 1, y: 0 }}
                             className={CARD}
                           >
-                            <div className="card-body p-5 space-y-3">
+                            <div className="p-5 space-y-3">
                               <h2 className={SECTION_TITLE}>
                                 <ChartBarIcon
                                   className="w-5 h-5 text-brand-emerald"
@@ -849,7 +849,7 @@ export default function SalatAnalytics() {
                             animate={{ opacity: 1, y: 0 }}
                             className={CARD}
                           >
-                            <div className="card-body p-5 space-y-3">
+                            <div className="p-5 space-y-3">
                               <h2 className={SECTION_TITLE}>
                                 <ChartBarIcon
                                   className="w-5 h-5 text-brand-emerald"
@@ -914,7 +914,7 @@ export default function SalatAnalytics() {
                         animate={{ opacity: 1, y: 0 }}
                         className={CARD}
                       >
-                        <div className="card-body p-5 space-y-3">
+                        <div className="p-5 space-y-3">
                           <h2 className={SECTION_TITLE}>
                             <ChartBarIcon
                               className="w-5 h-5 text-brand-emerald"
@@ -1020,7 +1020,7 @@ export default function SalatAnalytics() {
                       animate={{ opacity: 1, y: 0 }}
                       className={CARD}
                     >
-                      <div className="card-body p-5 space-y-3">
+                      <div className="p-5 space-y-3">
                         <h2 className={SECTION_TITLE}>
                           <ChartBarIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />{' '}
                           {t('salatAnalytics.correlationTitle', 'Isha & Fajr connection')}

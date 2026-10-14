@@ -27,6 +27,7 @@ import {
   setReciterId,
 } from '../utils/quranPrefs.js';
 import ExtLink from './ExtLink.js';
+import Switch from './Switch.js';
 
 /** FontKind → the PATCH /api/quran/profile field it syncs to. */
 const FONT_SYNC_FIELD = {
@@ -434,9 +435,9 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                       )}
                     </p>
                   </div>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-sm toggle-warning"
+                  <Switch
+                    tone="gold"
+                    size="sm"
                     checked={translit}
                     onChange={(e) => {
                       setTranslit(e.target.checked);
@@ -461,9 +462,9 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
                       )}
                     </p>
                   </div>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-sm toggle-info"
+                  <Switch
+                    tone="info"
+                    size="sm"
                     checked={listenCounts}
                     onChange={(e) => {
                       setListenCounts(e.target.checked);

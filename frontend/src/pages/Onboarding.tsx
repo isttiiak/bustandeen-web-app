@@ -62,6 +62,7 @@ import {
 } from '../utils/onboarding.js';
 import { getHomeGoals, isSectionOn, saveSetupHomeChoice } from '../utils/homeSections.js';
 import { loadZoneLookup } from '../utils/placeClock.js';
+import Switch from '../components/Switch.js';
 
 const LOCATION_KEY = 'bustandeen_location';
 const STEPS = 3;
@@ -506,9 +507,8 @@ export default function Onboarding() {
                         )}
                       </span>
                       <span className="w-11 h-11 shrink-0 flex items-center justify-center">
-                        <input
-                          type="checkbox"
-                          className="toggle toggle-success toggle-sm"
+                        <Switch
+                          size="sm"
                           checked={homeOn[h]}
                           onChange={(e) => setHomeOn((cur) => ({ ...cur, [h]: e.target.checked }))}
                           aria-label={t('onboarding.showOnHome', 'Show {{habit}} on Home', {
@@ -536,9 +536,7 @@ export default function Onboarding() {
                     : t('onboarding.goalsDetail', 'Your progress towards each daily goal.')}
                 </span>
               </span>
-              <input
-                type="checkbox"
-                className="toggle toggle-success shrink-0"
+              <Switch
                 checked={goalsOn}
                 disabled={noSection}
                 onChange={(e) => setGoalsPick(e.target.checked)}

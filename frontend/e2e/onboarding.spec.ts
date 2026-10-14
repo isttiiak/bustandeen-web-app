@@ -52,7 +52,7 @@ test('the Home card walks through location, madhab and habits, then orders Home'
     page.locator('[data-habit]').evaluateAll((els) => els.map((e) => e.getAttribute('data-habit')));
   expect(await order()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
   // U5: every habit is on Home to start, whatever comes first
-  const onHome = (h: string) => page.getByRole('checkbox', { name: `Show ${h} on Home` });
+  const onHome = (h: string) => page.getByRole('switch', { name: `Show ${h} on Home` });
   for (const h of ['Salat', 'Zikr', 'Quran', 'Fasting']) await expect(onHome(h)).toBeChecked();
   await page.getByRole('button', { name: 'Move Quran up' }).click();
   await page.getByRole('button', { name: 'Move Quran up' }).click();
@@ -105,7 +105,7 @@ async function toHabitsStep(page: Page) {
 
 test('the timeline can be left off; the arch prayer row always stays', async ({ page }) => {
   await toHabitsStep(page);
-  await page.getByRole('checkbox', { name: 'Show Salat on Home' }).uncheck();
+  await page.getByRole('switch', { name: 'Show Salat on Home' }).uncheck();
   await page.getByRole('button', { name: 'Start', exact: true }).click();
   await expect(page).toHaveURL(/\/$/);
   expect(await page.evaluate(() => localStorage.getItem('bustandeen_home_timeline'))).toBe('0');
@@ -114,13 +114,13 @@ test('the timeline can be left off; the arch prayer row always stays', async ({ 
 
 test('no habit on Home keeps the goals card; the card can go when one is on', async ({ page }) => {
   await toHabitsStep(page);
-  const goals = page.getByRole('checkbox', { name: "Today's goals card" });
+  const goals = page.getByRole('switch', { name: "Today's goals card" });
   for (const h of ['Salat', 'Zikr', 'Quran', 'Fasting']) {
-    await page.getByRole('checkbox', { name: `Show ${h} on Home` }).uncheck();
+    await page.getByRole('switch', { name: `Show ${h} on Home` }).uncheck();
   }
   await expect(goals).toBeChecked();
   await expect(goals).toBeDisabled();
-  await page.getByRole('checkbox', { name: 'Show Zikr on Home' }).check();
+  await page.getByRole('switch', { name: 'Show Zikr on Home' }).check();
   await goals.uncheck();
   await page.getByRole('button', { name: 'Start', exact: true }).click();
   await expect(page).toHaveURL(/\/$/);

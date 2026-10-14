@@ -23,6 +23,7 @@ import {
   type HeightUnit,
   type WeightUnit,
 } from '../utils/bodyStats.js';
+import Switch from './Switch.js';
 
 interface Props {
   open: boolean;
@@ -321,9 +322,9 @@ export default function RayhanahSettingsDrawer({ open, onClose }: Props) {
                       )}
                     </span>
                   </span>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-sm toggle-secondary mt-0.5"
+                  <Switch
+                    size="sm"
+                    className="mt-0.5"
                     checked={discreetMode}
                     onChange={(e) => setDiscreetMode(e.target.checked)}
                   />
@@ -341,9 +342,9 @@ export default function RayhanahSettingsDrawer({ open, onClose }: Props) {
                       )}
                     </span>
                   </span>
-                  <input
-                    type="checkbox"
-                    className="toggle toggle-sm toggle-secondary mt-0.5"
+                  <Switch
+                    size="sm"
+                    className="mt-0.5"
                     checked={hideBmi}
                     onChange={(e) => setHideBmi(e.target.checked)}
                   />

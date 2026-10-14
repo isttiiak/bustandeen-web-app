@@ -92,6 +92,7 @@ import {
 import type { HomeSpecialLayout } from '../utils/homeSpecial.js';
 import HomeLayoutEditor from '../components/home/HomeLayoutEditor.js';
 import FreshStart from '../components/FreshStart.js';
+import Switch from '../components/Switch.js';
 import { getThemeMode, setThemeMode, THEME_MODE_EVENT, type ThemeMode } from '../utils/theme.js';
 import {
   CrescentIcon,
@@ -336,22 +337,17 @@ function Toggle({
   onChange,
   title,
   detail,
-  accent = 'toggle-success',
+  tone = 'sage',
 }: {
   checked: boolean;
   onChange: (v: boolean) => void;
   title: string;
   detail: string;
-  accent?: string;
+  tone?: 'sage' | 'gold' | 'info';
 }) {
   return (
     <label className="flex items-center gap-4 p-3 rounded-control border border-brand-border bg-brand-surface/50 cursor-pointer hover:border-brand-emerald/40 transition-colors">
-      <input
-        type="checkbox"
-        className={`toggle ${accent}`}
-        checked={checked}
-        onChange={(e) => onChange(e.target.checked)}
-      />
+      <Switch tone={tone} checked={checked} onChange={(e) => onChange(e.target.checked)} />
       <div className="min-w-0">
         <p className="font-semibold text-white text-sm">{title}</p>
         <p className="text-white/70 text-xs leading-snug mt-0.5">{detail}</p>
@@ -1070,7 +1066,7 @@ export default function Settings() {
                     })
                   : t('settings.musafirOffDetail')
               }
-              accent="toggle-info"
+              tone="info"
             />
             {musafir && (
               <p className="text-white/70 text-xs mt-2 px-1">
@@ -1257,7 +1253,7 @@ export default function Settings() {
                 onChange={setHighContrast}
                 title={t('settings.highContrast')}
                 detail={t('settings.highContrastDetail')}
-                accent="toggle-warning"
+                tone="gold"
               />
               <Toggle
                 checked={vibrationEnabled}
@@ -1285,7 +1281,7 @@ export default function Settings() {
                 }}
                 title={t('settings.enableNaseeh')}
                 detail={t('settings.enableNaseehDetail')}
-                accent="toggle-warning"
+                tone="gold"
               />
               {aiEnabled && <GroqKeySetting t={t} />}
             </div>

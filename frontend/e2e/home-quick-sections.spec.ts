@@ -149,7 +149,7 @@ test('Settings lists the sections in order with switches', async ({ page }) => {
   expect(await rows()).toEqual(['salat', 'zikr', 'quran', 'fasting']);
   await group.getByRole('button', { name: 'Move Fasting up' }).click();
   expect(await rows()).toEqual(['salat', 'zikr', 'fasting', 'quran']);
-  await group.getByRole('checkbox', { name: 'Show Zikr on Home' }).uncheck();
+  await group.getByRole('switch', { name: 'Show Zikr on Home' }).uncheck();
   const stored = await page.evaluate(() => ({
     order: localStorage.getItem('bustandeen_focus_habits'),
     off: localStorage.getItem('bustandeen_home_sections_off'),

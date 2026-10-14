@@ -83,7 +83,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
   if (!model) {
     return (
       <div className={CARD}>
-        <div className="card-body p-6">
+        <div className="flex flex-col gap-2 p-6">
           <div className="flex items-center justify-center h-40 text-white/70">
             <p>{t('zikrAnalytics.trendChart.noData', 'No data available')}</p>
           </div>
@@ -111,7 +111,7 @@ export default function MosqueTrendChart({ data }: MosqueTrendChartProps) {
 
   return (
     <div className={`${CARD} overflow-x-auto`}>
-      <div className="card-body p-5">
+      <div className="flex flex-col gap-2 p-5">
         <div className="min-h-[18px] mb-1">
           {active ? (
             <p className="text-xs text-white/70 tabular-nums">
