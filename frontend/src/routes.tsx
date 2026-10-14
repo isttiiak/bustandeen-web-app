@@ -191,7 +191,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route
         path="/quran"
         element={
-          <Protected>
+          <Protected guest={<QuranHabit />}>
             <QuranHabit />
           </Protected>
         }
@@ -199,7 +199,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route
         path="/quran/khatam"
         element={
-          <Protected>
+          <Protected guest={<QuranKhatam />}>
             <QuranKhatam />
           </Protected>
         }
@@ -221,7 +221,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route
         path="/quran/bookmarks"
         element={
-          <Protected>
+          <Protected guest={<QuranBookmarks />}>
             <QuranBookmarks />
           </Protected>
         }
@@ -229,7 +229,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route
         path="/quran/hifz"
         element={
-          <Protected>
+          <Protected guest={<QuranHifz />}>
             <QuranHifz />
           </Protected>
         }
@@ -287,7 +287,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route
         path="/ramadan"
         element={
-          <Protected>
+          <Protected guest={<RamadanTracker />}>
             <RamadanTracker />
           </Protected>
         }

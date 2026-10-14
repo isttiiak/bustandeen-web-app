@@ -29,7 +29,6 @@ import {
   TasbihIcon,
 } from '../components/icons/IslamicIcons.js';
 import ExcusedCard from '../components/ExcusedCard.js';
-import { useAuthStore } from '../store/useAuthStore.js';
 import { useFastingHistory, useUpsertFastingLog, useClearFastingLog } from '../hooks/useFasting.js';
 import { useCycleSummary } from '../hooks/useCycle.js';
 import { useSalatLog } from '../hooks/useSalatLog.js';
@@ -46,6 +45,7 @@ import { celebrateFast } from '../utils/celebrate.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import ExtLink from '../components/ExtLink.js';
+import { useSignInGate } from '../components/SignInSheet.js';
 
 /**
  * Dedicated Ramadan tracker (v3.1) — the month gets its own home:
@@ -156,7 +156,8 @@ function formatGregorian(dateStr: string): string {
 export default function RamadanTracker() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const user = useAuthStore((s) => s.user);
+  // Open to guests (U10): the first save asks to sign in.
+  const gate = useSignInGate('ramadan');
   const today = getTrackingDay();
   const window_ = useMemo(() => getRamadanWindow(), []);
 
@@ -325,6 +326,7 @@ export default function RamadanTracker() {
   }, [salatLog, zikrAnalytics, quranSummary, t]);
 
   const logToday = (status: 'completed' | 'intended') => {
+    if (!gate.canSave()) return;
     upsert.mutate(
       { date: today, category: 'ramadan', status, tarawih: todayLog?.tarawih ?? false },
       {
@@ -335,6 +337,7 @@ export default function RamadanTracker() {
     );
   };
   const toggleTarawih = () => {
+    if (!gate.canSave()) return;
     upsert.mutate({
       date: today,
       category: 'ramadan',
@@ -342,8 +345,6 @@ export default function RamadanTracker() {
       tarawih: !todayLog?.tarawih,
     });
   };
-
-  if (!user) return null;
 
   const tabs = (
     <TabNav
@@ -768,6 +769,7 @@ export default function RamadanTracker() {
           excused={excusedToday}
           tarawih={todayLog?.tarawih ?? false}
           onToggleTarawih={toggleTarawih}
+          canSave={gate.canSave}
         />
 
         {/* Laylat al-Qadr focus */}
@@ -978,6 +980,7 @@ export default function RamadanTracker() {
             defect, and who graded it (Istiak's rule). */}
         <DaifExplainer topics={['ramadan-ashra', 'nafl-fard-reward']} />
       </div>
+      {gate.sheet}
     </AnimatedBackground>
   );
 }

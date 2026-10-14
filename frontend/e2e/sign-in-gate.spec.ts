@@ -68,6 +68,21 @@ test('Salat: a guest tap on Done opens the sheet, Keep exploring changes nothing
   expect(await page.evaluate(() => sessionStorage.getItem('bustandeen_redirect'))).toBe('/salat');
 });
 
+test('Quran habit pages are open to a guest; the first save asks to sign in', async ({ page }) => {
+  await page.goto('/quran/hifz');
+  // A new account's targets, not a gate or "you've started every ayah".
+  await expect(page.getByText('0/3')).toBeVisible();
+  await page.getByRole('button', { name: 'Start memorising' }).click();
+  await page.getByRole('button', { name: "I've read it, start memorising" }).click();
+  await expect(sheet(page).getByRole('heading', { name: 'Keep your Quran journey' })).toBeVisible();
+  await sheet(page).getByRole('button', { name: 'Keep exploring' }).click();
+
+  await page.goto('/quran/khatam');
+  await page.getByRole('button', { name: 'Begin from Al-Fatihah' }).click();
+  await expect(sheet(page).getByRole('heading', { name: 'Keep your Quran journey' })).toBeVisible();
+  await expect(page).toHaveURL(/\/quran\/khatam$/);
+});
+
 test('Fasting: a guest save opens the same sheet with its own reason', async ({ page }) => {
   await page.goto('/fasting');
   await page.getByRole('button', { name: 'I fasted today' }).click();

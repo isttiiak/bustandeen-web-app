@@ -160,18 +160,9 @@ export default function ZikrCounter() {
     wasGoalMetRef.current = goalMet;
   }, [goalMet, dailyGoal, effectiveTotal]);
 
-  // Guest: warn before tab close if they have unsaved counts
-  useEffect(() => {
-    if (user) return; // only for guests
-    const totalPending = Object.values(pending ?? {}).reduce((a, b) => a + b, 0);
-    if (totalPending === 0) return;
-    const handler = (e: BeforeUnloadEvent) => {
-      e.preventDefault();
-      e.returnValue = '';
-    };
-    window.addEventListener('beforeunload', handler);
-    return () => window.removeEventListener('beforeunload', handler);
-  }, [user, pending]);
+  // No "Leave site?" prompt for a guest (U10 follow-up): their counts are kept
+  // on this device (flushed on pagehide) and the note under Count offers to
+  // save them, so the browser's generic warning only got in the way.
 
   // Escape key closes full-screen mode
   useEffect(() => {

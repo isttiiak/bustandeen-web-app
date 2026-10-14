@@ -28,6 +28,8 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { BTN_PRIMARY, CARD, SECTION_TITLE, TILE } from '../components/bustanStyles.js';
+import { useSignInGate } from '../components/SignInSheet.js';
+import { GUEST_HIFZ_QUEUE, GUEST_HIFZ_SUMMARY } from '../utils/guestRecords.js';
 
 // Data tokens: distinct hues in both themes (bright on paper).
 const STATE_COLOR: Record<string, string> = {
@@ -46,8 +48,12 @@ const STATE_LABEL_KEY: Record<string, string> = {
 
 export default function QuranHifz() {
   const { t, i18n } = useTranslation();
-  const { data: summary } = useHifzSummary();
-  const { data: queue } = useHifzQueue();
+  // Open to guests (U10): a new account's targets until the first save asks to sign in.
+  const gate = useSignInGate('quran');
+  const { data: summaryData } = useHifzSummary();
+  const { data: queueData } = useHifzQueue();
+  const summary = summaryData ?? (gate.isGuest ? GUEST_HIFZ_SUMMARY : undefined);
+  const queue = queueData ?? (gate.isGuest ? GUEST_HIFZ_QUEUE : undefined);
   const addNext = useAddNextHifz();
   const addEntry = useAddHifzEntry();
   const removeEntry = useRemoveHifzEntry();
@@ -157,6 +163,7 @@ export default function QuranHifz() {
                     0,
                     Math.min(1000, Number(revisionTargetInput) || 0)
                   );
+                  if (!gate.canSave()) return;
                   updateProfile.mutate(
                     { dailyNewTarget, dailyRevisionTarget },
                     { onSuccess: () => setTargetsOpen(false) }
@@ -417,6 +424,10 @@ export default function QuranHifz() {
           confirming={learning.mode === 'next' ? addNext.isPending : addEntry.isPending}
           onClose={() => setLearning(null)}
           onConfirm={() => {
+            if (!gate.canSave()) {
+              setLearning(null);
+              return;
+            }
             if (learning.mode === 'next') {
               addNext.mutate(undefined, { onSuccess: () => setLearning(null) });
             } else {
@@ -472,6 +483,7 @@ export default function QuranHifz() {
         }}
         onCancel={() => setPendingRemove(null)}
       />
+      {gate.sheet}
     </AnimatedBackground>
   );
 }

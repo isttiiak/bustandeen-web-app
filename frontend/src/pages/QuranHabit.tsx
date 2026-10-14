@@ -36,6 +36,8 @@ import {
   REF_LINK,
   SECTION_TITLE,
 } from '../components/bustanStyles.js';
+import { useSignInGate } from '../components/SignInSheet.js';
+import { GUEST_QURAN_SUMMARY } from '../utils/guestRecords.js';
 
 const RING = 2 * Math.PI * 42;
 
@@ -54,7 +56,10 @@ const STRETCHED_TITLE = `${STRETCHED} min-h-0 min-w-0`;
 export default function QuranHabit() {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-  const { data: summary, isLoading } = useQuranSummary();
+  const { data, isLoading } = useQuranSummary();
+  // Open to guests (U10): an empty record until the first save asks to sign in.
+  const gate = useSignInGate('quran');
+  const summary = data ?? (gate.isGuest ? GUEST_QURAN_SUMMARY : undefined);
   const [surahs, setSurahs] = useState<SurahMeta[]>([]);
 
   useEffect(() => {
@@ -175,6 +180,7 @@ export default function QuranHabit() {
                 className={BTN_PRIMARY}
                 disabled={startKhatam.isPending}
                 onClick={() =>
+                  gate.canSave() &&
                   startKhatam.mutate(undefined, { onSuccess: () => navigate('/quran/khatam') })
                 }
               >
@@ -361,7 +367,7 @@ export default function QuranHabit() {
                     }
                     aria-pressed={saved}
                     className={`hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors ${saved ? 'text-brand-gold' : 'text-white/40 hover:text-brand-gold'}`}
-                    onClick={() => toggleDua.mutate(d.id)}
+                    onClick={() => gate.canSave() && toggleDua.mutate(d.id)}
                   >
                     {saved ? (
                       <BookmarkSolidIcon className="w-4 h-4" />
@@ -407,6 +413,7 @@ export default function QuranHabit() {
           ).
         </p>
       </div>
+      {gate.sheet}
     </AnimatedBackground>
   );
 }

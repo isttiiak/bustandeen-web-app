@@ -205,7 +205,10 @@
     "intentionText": "Worship deserves better than noisy, gamified apps. Bustandeen is calm by design: it counts what you ask it to count, reminds you gently, celebrates sincerely, and never turns your dīn into a game. It is free, has no ads, and never sells your data. Built simply in the hope of being a ṣadaqah jāriyah.",
     "privacyLink": "Privacy",
     "srTitle": "About Bustandeen",
-    "bustandeenDefinition": "A name born of <ar>بستان</ar> (bustān, garden) and <ar>دين</ar> (dīn, religion/faith): a garden of faith, tended daily."
+    "bustandeenDefinition": "A name born of <ar>بستان</ar> (bustān, garden) and <ar>دين</ar> (dīn, religion/faith): a garden of faith, tended daily.",
+    "statusTitle": "Is Bustandeen up?",
+    "statusDesc": "Live status of the app, the website and the server, with past incidents.",
+    "statusLink": "Status"
   },
   "aiFlair": {
     "whatIsSent": "What is sent?",
@@ -827,7 +830,8 @@
     "privacy": "Privacy",
     "sadaqah": "Sadaqah",
     "secure": "Your data is yours",
-    "terms": "Terms"
+    "terms": "Terms",
+    "status": "Status"
   },
   "friends": {
     "accept": "Accept",
@@ -4350,6 +4354,14 @@
     "zikr": {
       "title": "Save your zikr",
       "desc": "Your counts on this device are kept while you sign in, then added to your record with your streaks and goals. It is free and takes a minute."
+    },
+    "quran": {
+      "title": "Keep your Quran journey",
+      "desc": "Your reading days, khatam, hifz and bookmarks are saved to your account, so they stay safe on every device. It is free and takes a minute."
+    },
+    "ramadan": {
+      "title": "Keep your Ramadan record",
+      "desc": "Your fasts, prayers and tarawih this Ramadan are saved to your account, so they stay safe on every device. It is free and takes a minute."
     },
     "rayhanah": {
       "title": "Start Rayhanah privately",

@@ -76,8 +76,9 @@ test('a guest reads a surah without signing in, and is told nothing is saved (U9
   await expect(page.getByText(firstAyah, { exact: true })).toBeVisible();
   await expect(page.getByText(/reading as a guest/)).toBeVisible();
   await expect(page.getByTestId('preview-gate')).toHaveCount(0);
-  // No bookmark or tafsir for a guest: both need an account.
-  await expect(page.getByRole('button', { name: 'Bookmark this ayah' })).toHaveCount(0);
+  // The bookmark shows, and a tap asks to sign in instead of saving (U10).
+  await page.getByRole('button', { name: 'Bookmark this ayah' }).click();
+  await expect(page.getByRole('heading', { name: 'Keep your Quran journey' })).toBeVisible();
 });
 
 test('the surah list is /quran/read, and the old /quran/browse still opens it', async ({

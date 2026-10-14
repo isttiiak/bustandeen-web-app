@@ -10,6 +10,12 @@ import salat from '../pages/SalatTracker.tsx?raw';
 import fasting from '../pages/FastingTracker.tsx?raw';
 import zikr from '../pages/ZikrCounter.tsx?raw';
 import app from '../App.tsx?raw';
+import habit from '../pages/QuranHabit.tsx?raw';
+import khatam from '../pages/QuranKhatam.tsx?raw';
+import hifz from '../pages/QuranHifz.tsx?raw';
+import reader from '../pages/QuranReader.tsx?raw';
+import ramadan from '../pages/RamadanTracker.tsx?raw';
+import ramadanSalat from './RamadanSalatCard.tsx?raw';
 
 // U10 "explore freely, sign in to save": one shared SignInSheet for every
 // first save, a PreviewGate instead of the lock card, Rayhanah and Friends
@@ -56,9 +62,42 @@ describe('U10 sign-in gate', () => {
     expect(routes).toMatch(
       /<Protected guest={<GuestFeaturePage feature="rayhanah" \/>}>\s*<RayhanahCycle \/>/
     );
-    expect(routes.match(/guest={/g)).toHaveLength(2);
+    // Plus the Quran habit pages and Ramadan, open until the first save (below).
+    expect(routes.match(/guest={/g)).toHaveLength(7);
     // The guest page never calls the API or keeps an entry.
     expect(guestPage).not.toMatch(/\bhooks\/|api\.|localStorage/);
+  });
+
+  it('the Quran habit pages and Ramadan are open; the first save opens the sheet', () => {
+    for (const page of [
+      'QuranHabit',
+      'QuranKhatam',
+      'QuranBookmarks',
+      'QuranHifz',
+      'RamadanTracker',
+    ])
+      expect(routes).toMatch(
+        new RegExp(`<Protected guest={<${page} />}>\\s*<${page} />\\s*</Protected>`)
+      );
+    for (const page of [habit, khatam, hifz, reader]) {
+      expect(page).toContain("useSignInGate('quran')");
+      expect(page).toContain('{gate.sheet}');
+    }
+    // Every write on these pages checks first.
+    expect(habit.match(/gate\.canSave\(\) &&/g)).toHaveLength(2);
+    expect(khatam).toMatch(/gate\.canSave\(\) &&\s*startKhatam\.mutate/);
+    expect(hifz.match(/gate\.canSave\(\)/g)).toHaveLength(2);
+    expect(reader).toMatch(/gate\.canSave\(\) &&\s*toggleBookmark\.mutate/);
+    expect(ramadan).toContain("useSignInGate('ramadan')");
+    expect(ramadan).toContain('canSave={gate.canSave}');
+    expect(ramadan).not.toMatch(/if \(!user\) return null/);
+    expect(ramadan.match(/if \(!gate\.canSave\(\)\) return;/g)).toHaveLength(2);
+    expect(ramadanSalat.match(/if \(!canSave\(\)\) return;/g)).toHaveLength(5);
+    expect(ramadanSalat.match(/\.mutate\(/g)).toHaveLength(5);
+  });
+
+  it('the zikr page no longer asks "Leave site?" (a guest\'s counts are kept)', () => {
+    expect(zikr).not.toContain('beforeunload');
   });
 
   it('a guest\'s taps survive Firebase\'s "no user" (only a session ending wipes them)', () => {
@@ -80,7 +119,17 @@ describe('U10 sign-in gate', () => {
   ] as const)('%s: every sheet, gate and note string exists, with no em dash', (_l, dict) => {
     const g = (dict as unknown as { signInGate: Record<string, Record<string, unknown>> })
       .signInGate;
-    for (const f of ['salat', 'fasting', 'zikr', 'rayhanah', 'friends', 'analytics', 'page'])
+    for (const f of [
+      'salat',
+      'fasting',
+      'zikr',
+      'rayhanah',
+      'quran',
+      'ramadan',
+      'friends',
+      'analytics',
+      'page',
+    ])
       expect(g[f]?.title, f).toBeTruthy();
     for (const f of ['rayhanah', 'friends'])
       expect(Object.keys(g[f]!.points as Dict)).toHaveLength(3);
