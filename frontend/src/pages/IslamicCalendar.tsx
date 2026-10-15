@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useReducer, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import {
@@ -15,7 +15,14 @@ import { DayDetails, EventList } from '../components/calendar/CalendarLists.js';
 import CalendarSettingsSheet from '../components/calendar/CalendarSettingsSheet.js';
 import DownloadSheet from '../components/calendar/DownloadSheet.js';
 import PrintSheets from '../components/calendar/print/PrintSheets.js';
-import { pageRule, printMonths, type PrintOptions } from '../utils/calendarPrint.js';
+import CalendarRequestDialog from '../components/calendar/CalendarRequestDialog.js';
+import {
+  downloadWindow,
+  includeFilters,
+  pageRule,
+  printMonths,
+  type PrintOptions,
+} from '../utils/calendarPrint.js';
 import {
   HIJRI_MONTHS_AR,
   bengaliLabel,
@@ -43,6 +50,7 @@ import {
 } from '../utils/calendarMonth.js';
 import {
   dayEvents,
+  hasHolidays,
   holidaySources,
   holidayYears,
   missingHolidayYears,
@@ -98,6 +106,8 @@ export default function IslamicCalendar() {
   const [selected, setSelected] = useState(today);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [downloadOpen, setDownloadOpen] = useState(false);
+  const [requestOpen, setRequestOpen] = useState(false);
+  const closeRequest = useCallback(() => setRequestOpen(false), []);
   // A download in progress: the sheets are drawn, then the print window opens.
   const [printJob, setPrintJob] = useState<PrintOptions | null>(null);
 
@@ -186,6 +196,21 @@ export default function IslamicCalendar() {
 
   // Status of each Hijri month on screen: announced, expected or Umm al-Qura.
   const records = readHijriInputs().records;
+
+  // The arch's "Next month": when the next Hijri month begins (its first
+  // daytime date; it starts at Maghrib the evening before), and whether that
+  // is announced, expected (can move a day with the moon) or plain Umm al-Qura.
+  const nextMonth = day(stepMonth(islamicDay, 'hijri', 1, day));
+  const nextMonthStatus: 'announced' | 'expected' | 'uq' = records.some(
+    (r) =>
+      r.country === country &&
+      r.hijriYear === nextMonth.hijri.year &&
+      r.hijriMonth === nextMonth.hijri.month
+  )
+    ? 'announced'
+    : nextMonth.hijriSource === 'none'
+      ? 'uq'
+      : 'expected';
   const hijriMonths = [
     ...new Map(days.map((d) => [`${d.hijri.year}-${d.hijri.month}`, d])).values(),
   ];
@@ -313,13 +338,24 @@ export default function IslamicCalendar() {
             <div className="grid grid-cols-2 gap-2 pt-2 text-left">
               {hijriOn && (
                 <>
-                  <Fact label={t('calendar.dayOfMonthLabel')}>
-                    {t('calendar.dayOfMonth', { n: num(nowDay.hijri.day, lang) })}
-                    <span className="block h-1.5 mt-1.5 rounded-full bg-brand-border overflow-hidden">
-                      <span
-                        className="block h-full rounded-full bg-brand-gold"
-                        style={{ width: `${Math.round((nowDay.hijri.day / 30) * 100)}%` }}
-                      />
+                  <Fact label={t('calendar.nextMonthLabel')} testId="calendar-next-month">
+                    {hijriMonthName(t, nextMonth.hijri.month)}
+                    <span className="block text-xs font-medium text-white/70">
+                      {t(
+                        nextMonthStatus === 'expected'
+                          ? 'calendar.nextExpected'
+                          : 'calendar.nextFrom',
+                        {
+                          date: gregShort(nextMonth.ymd),
+                        }
+                      )}
+                    </span>
+                    <span className="block text-xs font-medium text-white/70">
+                      {nextMonthStatus === 'announced'
+                        ? t('calendar.heroAnnounced', { country: countryLabel })
+                        : nextMonthStatus === 'uq'
+                          ? t('calendar.heroUq')
+                          : t('calendar.nextMayMove')}
                     </span>
                   </Fact>
                   {afterMaghrib ? (
@@ -513,6 +549,7 @@ export default function IslamicCalendar() {
         placeName={place?.name ?? null}
         onLocation={onLocation}
         onHijriChange={redraw}
+        onRequestCalendar={hasHolidays(country) ? undefined : () => setRequestOpen(true)}
       />
       <DownloadSheet
         key={String(downloadOpen)}
@@ -522,38 +559,52 @@ export default function IslamicCalendar() {
         grid={grid}
         anchor={anchor}
         day={day}
-        bounds={bounds}
+        today={today}
+        country={country}
+        countryLabel={countryLabel}
+        onRequestCalendar={() => setRequestOpen(true)}
         onPrint={(o) => {
           setDownloadOpen(false);
           setPrintJob(o);
         }}
       />
+      <CalendarRequestDialog open={requestOpen} onClose={closeRequest} country={country} />
       {printJob &&
-        createPortal(
-          <div id="pc-print-root" data-testid="calendar-print">
-            <PrintSheets
-              anchors={printMonths(anchor, printJob, day, bounds)}
-              options={printJob}
-              day={day}
-              eventsOf={eventsOf}
-              weekStart={prefs.weekStart}
-              weekend={prefs.weekend}
-              today={today}
-              countryLabel={countryLabel}
-              missingYears={(ds) => (prefs.show.holidays ? missingHolidayYears(country, ds) : [])}
-              kinds={(
-                [
-                  ['islamic', prefs.show.islamic],
-                  ['holiday', prefs.show.holidays && years.length > 0],
-                  ['national', prefs.show.national && years.length > 0],
-                ] as const
-              )
-                .filter(([, on]) => on)
-                .map(([k]) => k)}
-            />
-          </div>,
-          document.body
-        )}
+        (() => {
+          // The download lists what its own switches say, not the screen's settings.
+          const f = includeFilters(country, printJob.include);
+          const inside = printJob.inside === 'events';
+          return createPortal(
+            <div id="pc-print-root" data-testid="calendar-print">
+              <PrintSheets
+                anchors={printMonths(
+                  printJob.at,
+                  printJob,
+                  day,
+                  downloadWindow(today, inside && f.holidays)
+                )}
+                options={printJob}
+                day={day}
+                eventsOf={(d) => dayEvents(d, f)}
+                weekStart={prefs.weekStart}
+                weekend={prefs.weekend}
+                today={today}
+                countryLabel={countryLabel}
+                missingYears={(ds) => (f.holidays ? missingHolidayYears(country, ds) : [])}
+                kinds={(
+                  [
+                    ['islamic', f.islamic],
+                    ['holiday', f.holidays],
+                    ['national', f.national],
+                  ] as const
+                )
+                  .filter(([, on]) => on)
+                  .map(([k]) => k)}
+              />
+            </div>,
+            document.body
+          );
+        })()}
     </AnimatedBackground>
   );
 }

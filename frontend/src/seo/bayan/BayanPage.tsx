@@ -1,8 +1,9 @@
 // bayan.bustandeen.com, Help & Updates: rendered to plain HTML by
 // scripts/prerender.mjs (no React on the page). Same rules as the rest of
-// src/seo: SSR-safe, no app state, no Firebase. The only script is the small
-// guide filter in public/bayan/filter.js; without it the page loses nothing
-// but the search box.
+// src/seo: SSR-safe, no app state, no Firebase. The only scripts are the small
+// guide filter in public/bayan/filter.js and the "Request a language" form in
+// public/bayan/request.js; without them the page loses nothing but the search
+// box and that form.
 import type { ReactNode } from 'react';
 import { BrandMark } from '../../components/BrandMark.js';
 import { BTN_PRIMARY, BTN_SECONDARY, CARD } from '../../components/bustanStyles.js';
@@ -10,6 +11,7 @@ import { GUIDES, type BayanLang, type Guide, type GuideIcon } from './guides.js'
 import { RELEASES, type Release } from './releases.js';
 import { APP_ORIGIN, CALC_ROWS, CHROME, CREDITS } from './pages.js';
 import { STATUS_URL } from '../../utils/siteLinks.js';
+import { CHROME as SEO_CHROME } from '../locales/chrome.js';
 
 export type BayanRoute =
   | { page: 'home' }
@@ -184,9 +186,10 @@ function Shell({
           <nav aria-label={t.menu} className="hidden md:flex items-center gap-1 ml-auto">
             {navLinks}
           </nav>
-          {/* Globe menu, no language name in the header (2026-10-15). This host
-              allows no connections, so "Request a language" opens the app's
-              Feedback form with that type chosen. */}
+          {/* Globe menu, no language name in the header (2026-10-15). "Request
+              a language" opens a small form on this page (2026-10-16), sent by
+              public/bayan/request.js to this host's /api/feedback/language
+              (vercel.json routes only that path to the API here). */}
           <details className="relative ml-auto md:ml-1">
             <summary
               aria-label={t.language}
@@ -221,14 +224,17 @@ function Shell({
                   {l === 'en' ? 'English' : 'বাংলা'}
                 </a>
               ))}
-              <a
-                href={`${APP_ORIGIN}/feedback?type=language`}
-                className={`${NAV_LINK} border-t border-brand-border mt-1 pt-1`}
+              <button
+                type="button"
+                hidden
+                data-lang-request-open
+                className={`${NAV_LINK} text-left border-t border-brand-border mt-1 pt-1 [&[hidden]]:hidden`}
               >
                 {t.requestLanguage}
-              </a>
+              </button>
             </div>
           </details>
+          <LanguageRequestDialog lang={lang} />
           <details className="md:hidden relative">
             <summary
               aria-label={t.menu}
@@ -579,5 +585,67 @@ export default function BayanPage({ lang, route }: { lang: BayanLang; route: Bay
     <Shell lang={lang} route={route}>
       {body}
     </Shell>
+  );
+}
+
+/** The "Request a language" form; public/bayan/request.js opens and sends it. */
+function LanguageRequestDialog({ lang }: { lang: BayanLang }) {
+  const r = SEO_CHROME[lang].langRequest;
+  const input =
+    'mt-1.5 w-full min-h-[44px] rounded-control border border-brand-border bg-brand-surface px-3 text-white';
+  return (
+    <dialog
+      data-lang-request
+      aria-labelledby="lang-request-title"
+      className={`${CARD} w-[min(92vw,26rem)] p-0 text-white backdrop:bg-black/60`}
+    >
+      <form
+        data-lang-request-form
+        data-sending={r.sending}
+        data-sent={r.sent}
+        data-failed={r.failed}
+        className="p-5 space-y-4"
+      >
+        <h2 id="lang-request-title" className="font-display text-lg font-bold">
+          {r.title}
+        </h2>
+        <p className="text-sm leading-relaxed text-white/75">{r.intro}</p>
+        <label className="block text-sm font-semibold">
+          {r.typeLabel}
+          <input type="text" readOnly value={r.typeValue} className={`${input} opacity-70`} />
+        </label>
+        <label className="block text-sm font-semibold">
+          {r.languageLabel}
+          <input
+            type="text"
+            name="language"
+            required
+            minLength={2}
+            maxLength={60}
+            autoComplete="off"
+            placeholder={r.placeholder}
+            className={input}
+          />
+        </label>
+        {/* Honeypot: hidden from people, filled by bots, dropped by the server. */}
+        <input
+          type="text"
+          name="botcheck"
+          tabIndex={-1}
+          autoComplete="off"
+          aria-hidden="true"
+          className="hidden"
+        />
+        <p data-lang-request-status role="status" className="text-sm text-white/75" />
+        <div className="grid grid-cols-2 gap-2">
+          <button type="button" data-lang-request-cancel className={BTN_SECONDARY}>
+            {r.cancel}
+          </button>
+          <button type="submit" className={`${BTN_PRIMARY} disabled:opacity-60`}>
+            {r.send}
+          </button>
+        </div>
+      </form>
+    </dialog>
   );
 }

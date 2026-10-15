@@ -4,7 +4,12 @@
 // Layout "Corners" (approved prototype v3): the first calendar is the big
 // number, the second top right, the third under the big number.
 
-import type { CalendarEvent } from './calendarEvents.js';
+import {
+  hasHolidays,
+  hasNationalDays,
+  type CalendarEvent,
+  type EventFilters,
+} from './calendarEvents.js';
 import {
   monthDays,
   monthInWindow,
@@ -14,15 +19,31 @@ import {
   type CalendarWindow,
   type DayResolver,
 } from './calendarMonth.js';
+import { calendarWindow } from './calendarMonth.js';
 
 export type PrintRange =
   | { kind: 'month' }
   | { kind: 'year'; layout: 'pages' | 'glance' }
   | { kind: 'range'; from: string; to: string };
 
+/** What a download lists (the screen's own event settings are separate). */
+export interface PrintInclude {
+  islamic: boolean;
+  /** Under Islamic days: Monday and Thursday fasts and the White Days. */
+  sunnahFasts: boolean;
+  /** Under Islamic days: every Friday (Jumu'ah). */
+  fridays: boolean;
+  /** Government holidays: a curated list per year, so these keep the three-year window. */
+  holidays: boolean;
+  national: boolean;
+}
+
 export interface PrintOptions {
   /** 1 to 3 calendars; the first is the big number. */
   order: CalendarKind[];
+  /** A day in the month (or year) to print, chosen in the download sheet. */
+  at: string;
+  include: PrintInclude;
   range: PrintRange;
   /** Each day box shows its events, or ruled lines to write on. */
   inside: 'events' | 'blank';
@@ -32,7 +53,7 @@ export interface PrintOptions {
   template: 'bustan' | 'classic' | 'minimal';
 }
 
-export const DEFAULT_PRINT: Omit<PrintOptions, 'order'> = {
+export const DEFAULT_PRINT: Omit<PrintOptions, 'order' | 'at' | 'include'> = {
   range: { kind: 'month' },
   inside: 'events',
   paper: 'A4',
@@ -40,6 +61,77 @@ export const DEFAULT_PRINT: Omit<PrintOptions, 'order'> = {
   color: 'color',
   template: 'bustan',
 };
+
+/**
+ * What a download lists to start with: Islamic days everywhere; in a country
+ * with curated national days (Bangladesh) those too. Government holidays are
+ * never on by default: their lists are entered by hand each year.
+ */
+export function defaultInclude(country: string | null): PrintInclude {
+  return {
+    islamic: true,
+    sunnahFasts: false,
+    fridays: false,
+    holidays: false,
+    national: hasNationalDays(country),
+  };
+}
+
+/** The event filters a download prints with. */
+export function includeFilters(country: string | null, inc: PrintInclude): EventFilters {
+  return {
+    country,
+    islamic: inc.islamic,
+    holidays: inc.holidays && hasHolidays(country),
+    national: inc.national && hasNationalDays(country),
+    monThu: inc.sunnahFasts,
+    whiteDays: inc.sunnahFasts,
+    fridays: inc.fridays,
+  };
+}
+
+/** Years either side of today a download without government holidays can reach. */
+export const OPEN_YEARS = 25;
+
+/**
+ * The months a download may include: with government holidays, the screen's
+ * window (last year to next year, the years whose lists are entered by hand);
+ * without them, the Islamic days and national days follow rules, so any year
+ * within OPEN_YEARS of today.
+ */
+export function downloadWindow(today: string, holidays: boolean): CalendarWindow {
+  if (holidays) return calendarWindow(today);
+  const y = Number(today.slice(0, 4));
+  return { from: `${y - OPEN_YEARS}-01-01`, to: `${y + OPEN_YEARS}-12-31` };
+}
+
+/** At most this many months in one download (one year). */
+export const MAX_PRINT_MONTHS = 12;
+
+/** Downloads one device may start in an hour, so nothing runs away. */
+export const DOWNLOADS_PER_HOUR = 10;
+const HOUR = 60 * 60 * 1000;
+export const DOWNLOAD_LOG_KEY = 'bustandeen_calendar_downloads';
+
+/** Download times within the last hour, from the stored log (bad data reads as none). */
+export function recentDownloads(raw: string | null, now: number): number[] {
+  let list: unknown;
+  try {
+    list = JSON.parse(raw ?? '[]');
+  } catch {
+    return [];
+  }
+  return Array.isArray(list)
+    ? list.filter((t): t is number => typeof t === 'number' && t <= now && now - t < HOUR)
+    : [];
+}
+
+/** Minutes until the next download is allowed, or 0 when one is allowed now. */
+export function downloadWaitMinutes(recent: readonly number[], now: number): number {
+  if (recent.length < DOWNLOADS_PER_HOUR) return 0;
+  const oldest = Math.min(...recent);
+  return Math.max(1, Math.ceil((oldest + HOUR - now) / 60_000));
+}
 
 /** Sheet size in CSS px (96 per inch): A4 297 x 210 mm, Letter 11 x 8.5 in. */
 export function sheetSize(paper: PrintOptions['paper'], orient: PrintOptions['orient']) {
@@ -77,7 +169,7 @@ export function printMonths(
   bounds?: CalendarWindow
 ): string[] {
   const kind = o.order[0] ?? 'greg';
-  const all = allPrintMonths(anchor, o, day);
+  const all = allPrintMonths(anchor, o, day).slice(0, MAX_PRINT_MONTHS);
   return bounds ? all.filter((a) => monthInWindow(monthDays(a, kind, day), bounds)) : all;
 }
 
@@ -94,8 +186,8 @@ function allPrintMonths(anchor: string, o: PrintOptions, day: DayResolver): stri
   const to = first(o.range.to);
   const out = [from <= to ? from : to];
   const last = from <= to ? to : from;
-  // At most two years of pages.
-  while (out[out.length - 1]! < last && out.length < 24) {
+  // At most a year of pages.
+  while (out[out.length - 1]! < last && out.length < MAX_PRINT_MONTHS) {
     out.push(stepMonth(out[out.length - 1]!, kind, 1, day));
   }
   return out;

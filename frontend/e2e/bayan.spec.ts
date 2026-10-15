@@ -39,7 +39,7 @@ async function axe(page: Page) {
   return res.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' ')}`);
 }
 
-test('home: / opens /home, guides filter, no app scripts', async ({ page }) => {
+test('home: / opens /home, guides filter, only its own two scripts', async ({ page }) => {
   const scripts: string[] = [];
   page.on('request', (r) => {
     if (r.resourceType() === 'script') scripts.push(new URL(r.url()).pathname);
@@ -56,7 +56,7 @@ test('home: / opens /home, guides filter, no app scripts', async ({ page }) => {
   await expect(page.getByText('No guide matches.')).toBeVisible();
   await page.getByRole('searchbox').fill('');
 
-  expect(scripts).toEqual(['/filter.js']);
+  expect(scripts.sort()).toEqual(['/filter.js', '/request.js']);
   expect(await smallTargets(page)).toEqual([]);
   expect(await axe(page)).toEqual([]);
 });
@@ -76,12 +76,28 @@ test('a guide in Bangla, the language switch and the app link', async ({ page })
   expect(await smallTargets(page)).toEqual([]);
   expect(await axe(page)).toEqual([]);
 
-  // Globe menu: no language name in the header (2026-10-15).
+  // Globe menu: no language name in the header (2026-10-15). "Request a
+  // language" opens a form on this page (2026-10-16) and posts to this host.
+  let sent: unknown = null;
+  await page.route('**/api/feedback/language', async (route) => {
+    sent = route.request().postDataJSON();
+    await route.fulfill({ json: { ok: true } });
+  });
+  const url = page.url();
   await page.locator('summary[aria-label="ভাষা"]').click();
-  await expect(page.getByRole('link', { name: 'ভাষার অনুরোধ' })).toHaveAttribute(
-    'href',
-    'https://bustandeen.com/feedback?type=language'
-  );
+  await page.getByRole('button', { name: 'ভাষার অনুরোধ' }).click();
+  const dialog = page.locator('dialog[data-lang-request]');
+  await expect(dialog).toBeVisible();
+  expect(await axe(page)).toEqual([]);
+  await dialog.getByRole('textbox', { name: 'ভাষা', exact: true }).fill('উর্দু');
+  await dialog.getByRole('button', { name: 'পাঠান' }).click();
+  await expect(dialog).toContainText('আপনার অনুরোধ আমাদের কাছে পৌঁছেছে');
+  expect(sent).toEqual({ language: 'উর্দু', botcheck: '' });
+  expect(page.url()).toBe(url);
+  await dialog.getByRole('button', { name: 'বাতিল' }).click();
+  await expect(dialog).toBeHidden();
+
+  await page.locator('summary[aria-label="ভাষা"]').click();
   await page.getByRole('link', { name: 'English' }).click();
   await expect(page).toHaveURL(/\/guides\/salat-and-kaza$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Salat and kaza' })).toBeVisible();

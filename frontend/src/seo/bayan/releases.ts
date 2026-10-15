@@ -20,6 +20,38 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.175.0',
+    date: '2026-10-16',
+    text: {
+      en: {
+        title: 'Choose what your calendar download includes',
+        added: [
+          'When you download the Islamic calendar, choose what it lists: Islamic days, with Sunnah fasts and Fridays as extra choices, national days and, in Bangladesh, government holidays.',
+          'Without government holidays you can download any year nearby, up to 12 months at a time. Government holidays are added by hand each year, so with them the download stays within last year to next year.',
+          "Outside Bangladesh, ask for your country's holidays and national days with a short form, without leaving the calendar.",
+          'Request a language on the Help site now opens a short form on the same page.',
+          "The calendar's top card now shows the next Hijri month and when it begins: announced, or expected and able to move by a day with the moon sighting.",
+        ],
+        fixed: [
+          'Without a saved location, the calendar now says plainly that its Hijri date changes at midnight, and that saving your location makes it change at Maghrib.',
+        ],
+      },
+      bn: {
+        title: 'ক্যালেন্ডার ডাউনলোডে কী থাকবে, আপনি বাছুন',
+        added: [
+          'ইসলামী ক্যালেন্ডার ডাউনলোডের সময় বাছুন কী থাকবে: ইসলামী দিন (সাথে চাইলে সুন্নাত রোজা ও শুক্রবার), জাতীয় দিবস এবং বাংলাদেশে সরকারি ছুটি।',
+          'সরকারি ছুটি ছাড়া কাছাকাছি যেকোনো বছর ডাউনলোড করা যায়, একবারে সর্বোচ্চ ১২ মাস। সরকারি ছুটি প্রতি বছর হাতে যোগ করা হয়, তাই এগুলো থাকলে ডাউনলোড গত বছর থেকে আগামী বছরের মধ্যে থাকে।',
+          'বাংলাদেশের বাইরে থাকলে ছোট একটি ফর্মে আপনার দেশের ছুটি ও জাতীয় দিবস চেয়ে নিন, ক্যালেন্ডার ছেড়ে না গিয়েই।',
+          'সাহায্য সাইটে ভাষার অনুরোধ এখন একই পাতায় ছোট একটি ফর্ম খোলে।',
+          'ক্যালেন্ডারের ওপরের কার্ডে এখন পরের হিজরি মাস ও তা কবে শুরু হবে দেখায়: ঘোষিত, নাকি সম্ভাব্য এবং চাঁদ দেখার ওপর এক দিন এদিক-ওদিক হতে পারে।',
+        ],
+        fixed: [
+          'অবস্থান সংরক্ষণ না থাকলে ক্যালেন্ডার এখন স্পষ্ট বলে যে হিজরি তারিখ মধ্যরাতে বদলায়, আর অবস্থান সংরক্ষণ করলে তা মাগরিবে বদলাবে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.174.0',
     date: '2026-10-16',
     text: {

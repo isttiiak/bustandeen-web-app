@@ -28,6 +28,22 @@ export const submitLanguageRequestSchema = z.object({
   params: z.object({}).optional(),
 });
 
+/** "Request your country's calendar" from the Islamic calendar (2026-10-16):
+ * only the country (ISO 3166-1 alpha-2), no account, name or email. */
+export const CALENDAR_REQUEST_CATEGORY = 'Calendar request';
+export const submitCalendarRequestSchema = z.object({
+  body: z.object({
+    country: z
+      .string()
+      .trim()
+      .toUpperCase()
+      .regex(/^[A-Z]{2}$/),
+    botcheck: z.string().optional(),
+  }),
+  query: z.object({}).optional(),
+  params: z.object({}).optional(),
+});
+
 export const replyFeedbackSchema = z.object({
   body: z.object({
     body: z.string().trim().min(1).max(4000),

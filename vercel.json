@@ -173,6 +173,16 @@
       ]
     },
     {
+      "source": "/api/feedback/language",
+      "has": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ],
+      "destination": "/api/index"
+    },
+    {
       "source": "/:path*",
       "has": [
         {
@@ -333,7 +343,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'none'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; report-uri https://bustandeen.com/api/csp-report"
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'; frame-src 'none'; worker-src 'none'; manifest-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; report-uri https://bustandeen.com/api/csp-report"
         }
       ]
     },

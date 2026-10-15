@@ -39,6 +39,7 @@ export default function CalendarSettingsSheet({
   placeName,
   onLocation,
   onHijriChange,
+  onRequestCalendar,
 }: {
   open: boolean;
   onClose: () => void;
@@ -51,6 +52,8 @@ export default function CalendarSettingsSheet({
   placeName: string | null;
   onLocation: (loc: StoredLocation) => void;
   onHijriChange: () => void;
+  /** Set when the country has no holiday list: "Request your country's calendar". */
+  onRequestCalendar?: () => void;
 }) {
   const { t } = useTranslation();
   const [changingPlace, setChangingPlace] = useState(false);
@@ -207,6 +210,16 @@ export default function CalendarSettingsSheet({
                     />
                   </label>
                 ))}
+                {onRequestCalendar && (
+                  <button
+                    type="button"
+                    onClick={onRequestCalendar}
+                    className="inline-flex items-center min-h-[44px] text-xs font-bold text-brand-gold underline underline-offset-2"
+                    data-testid="calendar-settings-request"
+                  >
+                    {t('calendar.rOpen')}
+                  </button>
+                )}
                 {holidaySourceLinks.length > 0 && (
                   <div
                     className="text-xs text-white/70 space-y-1"

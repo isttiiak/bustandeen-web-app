@@ -44,7 +44,7 @@ const strings = (node: unknown, prefix: string): [string, string][] =>
 
 describe('Library screens', () => {
   it('finds the files', () => {
-    expect(Object.keys(files).length).toBe(11);
+    expect(Object.keys(files).length).toBe(12);
     expect(SCREENS.length).toBe(5);
   });
 

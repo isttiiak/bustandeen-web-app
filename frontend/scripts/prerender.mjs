@@ -459,7 +459,8 @@ console.error(`Wrote sitemap-index.xml + ${Object.keys(sitemapFiles).length} cat
 // ── Bayan: bayan.bustandeen.com, Help & Updates (v5.164.0) ─────────────────
 // Its own small HTML documents, not the app shell: no app script, no
 // analytics, no first-paint script, only the app's stylesheet (same Tailwind
-// classes) and, on the home pages, the guide filter (public/bayan/filter.js).
+// classes), on the home pages the guide filter (public/bayan/filter.js), and
+// on every page the "Request a language" form (public/bayan/request.js).
 // Written to dist/bayan/; vercel.json serves that folder as the root of the
 // bayan host. Canonical URLs and hreflang point at the bayan host.
 const BAYAN_ORIGIN = 'https://bayan.bustandeen.com';
@@ -476,7 +477,10 @@ function bayanDocument({ lang, path, title, description, alternates, bodyHtml })
   const alt = Object.entries(alternates)
     .map(([l, p]) => `<link rel="alternate" hreflang="${l}" href="${BAYAN_ORIGIN}${p}" />`)
     .join('\n    ');
-  const filter = path.endsWith('/home') ? '\n    <script src="/filter.js" defer></script>' : '';
+  // The guide filter on the home pages; the "Request a language" form everywhere.
+  const filter =
+    (path.endsWith('/home') ? '\n    <script src="/filter.js" defer></script>' : '') +
+    '\n    <script src="/request.js" defer></script>';
   return `<!doctype html>
 <html lang="${lang}" data-theme="bustandeen" data-static>
   <head>

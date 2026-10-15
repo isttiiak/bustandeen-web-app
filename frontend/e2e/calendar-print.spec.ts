@@ -78,6 +78,8 @@ test('this month: one A4 landscape page, the Corners layout, nothing overflows',
   page,
 }) => {
   await openDownload(page, 'greg,hijri,bn');
+  // Government holidays are off by default in a download (lists entered by hand).
+  await page.getByRole('switch', { name: 'Government holidays' }).check();
   await print(page);
   const sheets = page.locator('#pc-print-root [data-print-sheet]');
   await expect(sheets).toHaveCount(1);
@@ -181,9 +183,105 @@ test('a 2027 month says its holidays are not published yet; every sheet has the 
   for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Next month' }).click();
   await expect(page.getByTestId('calendar-month')).toHaveText('January 2027');
   await page.getByRole('button', { name: 'Download calendar' }).click();
+  await page.getByRole('switch', { name: 'Government holidays' }).check();
   await print(page);
   const sheet = page.locator('#pc-print-root [data-print-sheet]');
   await expect(sheet.locator('[data-print-missing]')).toContainText('2027');
   await expect(sheet.locator('[data-print-moon]')).toContainText('may differ by a day');
   expect(pdfPages(await pdf(page))).toBe(1);
+});
+
+test('what a download includes: Bangladesh defaults, nested switches, holidays keep three years', async ({
+  page,
+}) => {
+  await openDownload(page);
+  const sw = (name: string) => page.getByRole('switch', { name, exact: true });
+  await expect(sw('Islamic days')).toBeChecked();
+  await expect(sw('Sunnah fasts')).not.toBeChecked();
+  await expect(sw('Fridays')).not.toBeChecked();
+  await expect(sw('Government holidays')).not.toBeChecked();
+  await expect(sw('National days')).toBeChecked();
+  await expect(page.getByTestId('calendar-include-national')).toContainText('check your local');
+  // The nested switches follow Islamic days.
+  await sw('Islamic days').uncheck();
+  await expect(sw('Sunnah fasts')).toBeDisabled();
+  await sw('Islamic days').check();
+
+  // Without government holidays any nearby year: step past 2027.
+  const year = page.getByTestId('calendar-download-year');
+  for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Next year' }).click();
+  await expect(year).toContainText('2029');
+  // With them: back inside last year to next year, and the arrows stop there.
+  await sw('Government holidays').check();
+  await expect(year).toContainText('2026');
+  await expect(page.getByTestId('calendar-download-window')).toContainText('2025-2027');
+  await page.getByRole('button', { name: 'Next year' }).click();
+  await expect(year).toContainText('2027');
+  await expect(page.getByRole('button', { name: 'Next year' })).toBeDisabled();
+
+  // Fridays and Sunnah fasts reach the sheet when asked for.
+  await sw('Government holidays').uncheck();
+  await page.getByRole('button', { name: 'Previous year' }).click();
+  await sw('Fridays').check();
+  await sw('Sunnah fasts').check();
+  await print(page);
+  await expect(page.locator('[data-print-day="2026-10-23"] .pc-ev')).toContainText('Jumu');
+  await expect(page.locator('[data-print-day="2026-10-21"] .pc-ev')).toHaveCount(0);
+});
+
+test('several months: at most twelve in one download', async ({ page }) => {
+  await openDownload(page);
+  await page.getByRole('radio', { name: /Several months/ }).click();
+  const to = page.getByRole('combobox', { name: 'To' });
+  await expect(to.locator('option')).toHaveCount(12);
+  await to.selectOption({ index: 11 });
+  await print(page);
+  await expect(page.locator('#pc-print-root [data-print-sheet]')).toHaveCount(12);
+});
+
+test('ten downloads in an hour: the next one waits', async ({ page }) => {
+  await page.addInitScript(() => {
+    // The page's clock is fixed at this time (openDownload).
+    const now = Date.parse('2026-10-15T10:00:00+06:00');
+    localStorage.setItem(
+      'bustandeen_calendar_downloads',
+      JSON.stringify(Array.from({ length: 10 }, (_, i) => now - i * 60_000))
+    );
+  });
+  await openDownload(page);
+  await page.getByTestId('calendar-download-go').click();
+  await page
+    .getByTestId('calendar-notice')
+    .getByRole('button', { name: 'Open print sheet' })
+    .click();
+  await expect(page.getByTestId('calendar-download-limit')).toContainText('try again in');
+  expect(await page.evaluate(() => (window as unknown as { __prints: number }).__prints)).toBe(0);
+});
+
+test.describe('in Pakistan', () => {
+  // No profile country in the demo: the country follows the phone's zone.
+  test.use({ timezoneId: 'Asia/Karachi' });
+
+  test('another country: no holidays switch, a request form over the page', async ({ page }) => {
+    let sent: unknown = null;
+    await page.route('**/api/feedback/calendar', async (route) => {
+      sent = route.request().postDataJSON();
+      await route.fulfill({ json: { ok: true } });
+    });
+    await openDownload(page);
+    const sw = (name: string) => page.getByRole('switch', { name, exact: true });
+    await expect(sw('Islamic days')).toBeChecked();
+    await expect(sw('Government holidays')).toBeDisabled();
+    await expect(sw('National days')).toBeDisabled();
+    await expect(page.getByTestId('calendar-include-holidays')).toContainText('Not available for');
+    const url = page.url();
+    await page.getByTestId('calendar-request-open').click();
+    const form = page.getByTestId('calendar-request');
+    await expect(form).toBeVisible();
+    await expect(form.getByRole('combobox', { name: 'Country' })).toHaveValue('PK');
+    await page.getByTestId('calendar-request-send').click();
+    await expect(form).toContainText('Your request has reached us');
+    expect(sent).toEqual({ country: 'PK', botcheck: '' });
+    expect(page.url()).toBe(url);
+  });
 });

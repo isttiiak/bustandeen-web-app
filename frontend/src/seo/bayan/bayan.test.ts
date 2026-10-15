@@ -5,6 +5,7 @@ import vercel from '../../../../vercel.json';
 import rootPkg from '../../../../package.json';
 import robots from '../../../public/robots.txt?raw';
 import filterJs from '../../../public/bayan/filter.js?raw';
+import requestJs from '../../../public/bayan/request.js?raw';
 import { GUIDES } from './guides.js';
 import { RELEASES } from './releases.js';
 import { CALC_ROWS, CHROME, CREDITS } from './pages.js';
@@ -117,8 +118,12 @@ describe('Bayan hosting', () => {
     expect(help.destination).toBe('https://bayan.bustandeen.com/:path*');
     const old = v.redirects.find((r) => r.source === '/bayan/:path*')!;
     expect(on(old, 'bustandeen.com')).toBe(true);
-    const i = v.rewrites.findIndex((r) => on(r, B));
+    const i = v.rewrites.findIndex((r) => on(r, B) && r.source === '/:path*');
     expect(v.rewrites[i]).toMatchObject({ source: '/:path*', destination: '/bayan/:path*' });
+    // The one API path this host reaches: "Request a language" (2026-10-16).
+    const api = v.rewrites.filter((r) => on(r, B) && r.destination === '/api/index');
+    expect(api.map((r) => r.source)).toEqual(['/api/feedback/language']);
+    expect(v.rewrites.indexOf(api[0]!)).toBeLessThan(i);
     // Before the app-shell catch-all. The API, the admin page and the catch-all
     // itself skip this host: Vercel goes on to later rewrites when a bayan page
     // does not exist, so without that a typo served the app shell (v5.164.1).
@@ -133,11 +138,11 @@ describe('Bayan hosting', () => {
       expect(r.missing).toEqual([{ type: 'host', value: B }]);
   });
 
-  it('its own headers: scripts only from itself, no frames, no connections', () => {
+  it('its own headers: scripts only from itself, no frames, connections only to itself', () => {
     const block = v.headers.find((h) => on(h, 'bayan.bustandeen.com'))!;
     const csp = block.headers.find((h) => h.key === 'Content-Security-Policy')!.value;
     expect(csp).toContain("script-src 'self';");
-    expect(csp).toContain("connect-src 'none'");
+    expect(csp).toContain("connect-src 'self';");
     expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).not.toMatch(/google|alquran|nominatim/);
     expect(v.headers[0]!.missing).toContainEqual({ type: 'host', value: 'bayan.bustandeen.com' });
@@ -149,5 +154,12 @@ describe('Bayan hosting', () => {
 
   it('the filter script only filters (no network, no storage)', () => {
     expect(filterJs).not.toMatch(/fetch|XMLHttpRequest|localStorage|document\.cookie|innerHTML/);
+  });
+
+  it('the request script only sends the language request (no storage)', () => {
+    expect([...requestJs.matchAll(/fetch\('([^']+)'/g)].map((m) => m[1])).toEqual([
+      '/api/feedback/language',
+    ]);
+    expect(requestJs).not.toMatch(/XMLHttpRequest|localStorage|document\.cookie|innerHTML/);
   });
 });

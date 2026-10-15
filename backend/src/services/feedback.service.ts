@@ -8,7 +8,10 @@ import {
   REPLY_SUBJECT,
   toSimpleHtml,
 } from './feedbackEmail.templates.js';
-import { LANGUAGE_REQUEST_CATEGORY } from '../validation/feedback.schemas.js';
+import {
+  CALENDAR_REQUEST_CATEGORY,
+  LANGUAGE_REQUEST_CATEGORY,
+} from '../validation/feedback.schemas.js';
 
 const httpError = (status: number, message: string): Error & { status: number } => {
   const err = new Error(message) as Error & { status: number };
@@ -85,6 +88,39 @@ export const submitLanguageRequest = async (
     email: '',
     message: `Language request: ${language.trim()}`,
     category: [LANGUAGE_REQUEST_CATEGORY],
+    kind: 'feedback',
+    userId,
+    ipAddress,
+  });
+  await sendMail({
+    to: REVIEW_INBOX,
+    from: 'ansar',
+    ...feedbackNotifyAdminEmail(doc, doc._id.toString()),
+  });
+  return doc;
+};
+
+/** English name of a country code, for the inbox (the code alone if unknown). */
+const countryLabel = (code: string): string => {
+  try {
+    const name = new Intl.DisplayNames(['en'], { type: 'region' }).of(code);
+    return name && name !== code ? `${name} (${code})` : code;
+  } catch {
+    return code;
+  }
+};
+
+/** A country's government holidays and national days, asked for from the calendar. */
+export const submitCalendarRequest = async (
+  country: string,
+  ipAddress: string,
+  userId: string | null
+): Promise<IFeedbackMessage> => {
+  const doc = await FeedbackMessage.create({
+    name: 'Website visitor',
+    email: '',
+    message: `Calendar request: ${countryLabel(country)}, government holidays and national days`,
+    category: [CALENDAR_REQUEST_CATEGORY],
     kind: 'feedback',
     userId,
     ipAddress,

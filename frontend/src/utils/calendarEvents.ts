@@ -30,6 +30,12 @@ export interface EventFilters {
   islamic: boolean;
   holidays: boolean;
   national: boolean;
+  /** Monday and Thursday fasts (off unless asked for: they mark most weeks twice). */
+  monThu?: boolean;
+  /** The White Days, 13 to 15 of each Hijri month (on unless turned off). */
+  whiteDays?: boolean;
+  /** Fridays (off unless asked for: the grid already shades the weekend). */
+  fridays?: boolean;
 }
 
 interface CountryCalendar {
@@ -43,8 +49,23 @@ export const COUNTRY_CALENDARS: Readonly<Record<string, CountryCalendar>> = {
 };
 
 // The grid shades Fridays as the weekend and Monday/Thursday fasts are weekly:
-// as events they would mark most days, so the calendar leaves them out.
-const WEEKLY: ReadonlySet<SpecialDayId> = new Set(['friday', 'fast_mon_thu']);
+// as events they would mark most days, so the calendar leaves them out unless
+// a download asks for them (EventFilters.fridays / monThu).
+const shown = (id: SpecialDayId, f: EventFilters) =>
+  id === 'friday'
+    ? !!f.fridays
+    : id === 'fast_mon_thu'
+      ? !!f.monThu
+      : id === 'ayyam_al_bid'
+        ? f.whiteDays !== false
+        : true;
+
+/** Whether a country has curated government holiday lists. */
+export const hasHolidays = (country: string | null) => holidayYears(country).length > 0;
+
+/** Whether a country has curated national days. */
+export const hasNationalDays = (country: string | null) =>
+  !!country && (COUNTRY_CALENDARS[country]?.national.length ?? 0) > 0;
 
 /** Holiday list years a country has (the screen says when a year is missing). */
 export function holidayYears(country: string | null): number[] {
@@ -76,12 +97,16 @@ export function holidaySources(
     .flatMap((y) => y.sources.map((s) => ({ year: y.year, ...s })));
 }
 
-/** A day's events, Islamic first, then government holidays, then national days. */
+/**
+ * A day's events, Islamic first (yearly days before the ones that come every
+ * month or week), then government holidays, then national days.
+ */
 export function dayEvents(day: CalendarDay, filters: EventFilters): CalendarEvent[] {
   const out: CalendarEvent[] = [];
   if (filters.islamic) {
-    for (const id of specialDayIds(day.hijri, day.weekday)) {
-      if (WEEKLY.has(id)) continue;
+    const ids = specialDayIds(day.hijri, day.weekday).filter((id) => shown(id, filters));
+    const yearly = ids.filter((id) => !RECURRING_SPECIAL_DAYS.has(id));
+    for (const id of [...yearly, ...ids.filter((id) => RECURRING_SPECIAL_DAYS.has(id)).reverse()]) {
       out.push({
         type: 'islamic',
         id,
