@@ -4487,8 +4487,6 @@
     "sWeekStart": "Week starts on",
     "sWeekend": "Weekend",
     "sWeekendHint": "Shaded on the calendar",
-    "sHijri": "Hijri date",
-    "sHijriHint": "The same setting as in Settings.",
     "sLocation": "Location",
     "sLocationHint": "For Maghrib (when the Hijri date changes) and your country's moon sighting, holidays and weekend. It stays on this device.",
     "sLocationNone": "No location saved",
@@ -4541,6 +4539,9 @@
     "pThisMonth": "This month",
     "pGuide": "Colour guide",
     "pMore": "+{{n}} more",
-    "pYear": "Year at a glance"
+    "pYear": "Year at a glance",
+    "changedLabel": "Date changed",
+    "changedAt": "at Maghrib {{time}}",
+    "changedNoPlace": "at Maghrib"
   }
 }

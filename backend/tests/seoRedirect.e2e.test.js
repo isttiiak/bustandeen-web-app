@@ -26,11 +26,18 @@ describe('Removed SEO page redirects', () => {
     ['/ar/adhkar/morning', '/adhkar/morning'],
     ['/ar/zakat-calculator', '/zakat-calculator'],
     ['/ar', '/'],
+    ['/ar/', '/'],
   ];
   test.each(cases)('%s → 301 %s', async (from, to) => {
     const res = await request(app).get(from);
     expect(res.status).toBe(301);
     expect(res.headers.location).toBe(to);
+  });
+
+  test('paths that only start with "ar" are not Arabic pages', async () => {
+    for (const p of ['/arabic', '/ar-sa', '/area/dhaka']) {
+      expect((await request(app).get(p)).status).toBe(404);
+    }
   });
 
   test('the bare live pages are not redirected', async () => {

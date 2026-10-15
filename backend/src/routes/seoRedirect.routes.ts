@@ -22,7 +22,9 @@ const send = (res: Response, to: string) => {
 };
 
 router.get(/^\/(?:(?:bn|ar)\/)?qibla\/.+/, (_req: Request, res: Response) => send(res, '/qibla'));
-router.get(/^\/ar(?:\/.*)?$/, (req: Request, res: Response) =>
+// `/ar` or `/ar/...`, never `/arabic`. Same paths as /^\/ar(?:\/.*)?$/ but
+// with no repeat inside an optional group (security/detect-unsafe-regex).
+router.get(/^\/ar(?:\/|$)/, (req: Request, res: Response) =>
   send(res, req.path.replace(/^\/ar/, '') || '/')
 );
 router.get(/^\/bn\/(?:prayer-times|ramadan-calendar)\/.+/, (req: Request, res: Response) =>

@@ -153,23 +153,20 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
                 <span className={`pc-n1 ${isBn(c1)}`}>{dayNumber(c1, d, lang)}</span>
                 {c2 && <span className="pc-n2">{corner(c2, d)}</span>}
                 {c3 && <span className="pc-n3">{corner(c3, d)}</span>}
-                {p.options.inside === 'blank' ? (
-                  <div className="pc-lines" />
-                ) : (
-                  shown.length > 0 && (
-                    <div className="pc-evs">
-                      {shown.map((e, i) => (
-                        <div key={i} className={`pc-ev pc-${e.type}`}>
-                          {eventName(e, t, lang, true)}
-                        </div>
-                      ))}
-                      {more > 0 && (
-                        <div className="pc-ev pc-more">
-                          {t('calendar.pMore', { n: num(more, lang) })}
-                        </div>
-                      )}
-                    </div>
-                  )
+                {/* Blank for writing: the box stays empty (lines are in the side column). */}
+                {p.options.inside === 'events' && shown.length > 0 && (
+                  <div className="pc-evs">
+                    {shown.map((e, i) => (
+                      <div key={i} className={`pc-ev pc-${e.type}`}>
+                        {eventName(e, t, lang, true)}
+                      </div>
+                    ))}
+                    {more > 0 && (
+                      <div className="pc-ev pc-more">
+                        {t('calendar.pMore', { n: num(more, lang) })}
+                      </div>
+                    )}
+                  </div>
                 )}
               </div>
             );
@@ -228,6 +225,8 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
               </span>
             </div>
           </div>
+          {/* Blank for writing: faint lines fill the rest of the column. */}
+          {p.options.inside === 'blank' && <div className="pc-notes" data-print-notes />}
         </div>
       </div>
       <Foot />

@@ -265,8 +265,8 @@ export default function CalendarSettingsSheet({
 
               {/* The Hijri date (the same setting as Settings) */}
               <section className="space-y-2">
-                <h3 className={SECTION_TITLE}>{t('calendar.sHijri')}</h3>
-                <p className="text-xs text-white/70">{t('calendar.sHijriHint')}</p>
+                <h3 className={SECTION_TITLE}>{t('settings.hijriSection')}</h3>
+                <p className="text-xs text-white/70">{t('settings.hijriSubtitle')}</p>
                 <HijriDateSetting onChange={onHijriChange} />
               </section>
 
