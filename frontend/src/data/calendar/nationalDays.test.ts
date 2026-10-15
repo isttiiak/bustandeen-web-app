@@ -14,6 +14,7 @@ describe('national days outside Bangladesh', () => {
       [
         ...['AE', 'EG', 'GB', 'ID', 'IN', 'MY', 'PK', 'SA', 'TR', 'US'],
         ...['AU', 'BE', 'CA', 'DE', 'FR', 'IT', 'NL', 'SE'],
+        ...['AT', 'CH', 'DK', 'ES', 'NO'],
       ].sort()
     );
     for (const [code, c] of Object.entries(NATIONAL_DAYS)) {
@@ -67,5 +68,10 @@ describe('national days outside Bangladesh', () => {
     expect(md('SE')).toEqual(['06-06']);
     expect(md('CA')).toEqual(['07-01', '09-30', '11-11']);
     expect(md('AU')).toEqual(['01-26', '04-25']);
+    expect(md('ES')).toEqual(['10-12', '12-06']);
+    expect(md('AT')).toEqual(['10-26']);
+    expect(md('CH')).toEqual(['08-01']);
+    expect(md('NO')).toEqual(['05-17']);
+    expect(md('DK')).toEqual(['06-05']);
   });
 });

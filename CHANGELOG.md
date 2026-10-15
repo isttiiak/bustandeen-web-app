@@ -2,11 +2,11 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
-## v5.176.0 - Calendar: national days for eighteen more countries - 2026-10-16
+## v5.176.0 - Calendar: national days for twenty-three more countries - 2026-10-16
 
 ### Added
 
-- **National days outside Bangladesh** (Istiak, 2026-10-16): Pakistan, India, Saudi Arabia, UAE, Malaysia, Indonesia, United Kingdom, United States, Egypt, Türkiye, Germany, France, Italy, Netherlands, Belgium, Sweden, Canada and Australia (`data/calendar/nationalDays.ts`, registered in `COUNTRY_CALENDARS` with no holiday lists). Fixed-date national commemorations only (independence, national, republic, founding and similar days), also when they are public holidays there; never moon-based or religious days, New Year, May Day or Christmas. Each country lists its government source; dates and sources checked 2026-10-16. A day a country observes on a nearby weekday is listed on its own date. The UK has no national day, so it has Armistice Day only; the Netherlands' King's Day is left out because it moves to the 26th when the 27th is a Sunday.
+- **National days outside Bangladesh** (Istiak, 2026-10-16): Pakistan, India, Saudi Arabia, UAE, Malaysia, Indonesia, United Kingdom, United States, Egypt, Türkiye, Germany, France, Italy, Netherlands, Belgium, Sweden, Spain, Austria, Switzerland, Norway, Denmark, Canada and Australia (`data/calendar/nationalDays.ts`, registered in `COUNTRY_CALENDARS` with no holiday lists). Fixed-date national commemorations only (independence, national, republic, founding and similar days), also when they are public holidays there; never moon-based or religious days, New Year, May Day or Christmas. Each country lists its government source; dates and sources checked 2026-10-16. A day a country observes on a nearby weekday is listed on its own date. The UK has no national day, so it has Armistice Day only; the Netherlands' King's Day is left out because it moves to the 26th when the 27th is a Sunday; Ireland is left out because its national day, St Patrick's Day, is a saint's feast day. Denmark's Constitution Day is an official flag day, not a day off.
 - These countries get the **National days** switch on by default in a download, like Bangladesh (`defaultInclude` already follows `hasNationalDays`); government holidays stay Bangladesh only and keep the three-year window.
 
 ### Changed

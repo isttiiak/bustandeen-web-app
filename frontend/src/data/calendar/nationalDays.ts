@@ -8,6 +8,8 @@
 // May Day, Christmas): the Islamic days come from the rules, and government
 // holiday lists stay manual per year (bd.ts). A day that a country observes on
 // a nearby weekday is listed on its own date. Sources checked 2026-10-16.
+// Ireland is left out: its national day, St Patrick's Day, is a saint's
+// feast day (Istiak, 2026-10-16).
 //
 // Upkeep: when a country gets a government holiday list (like BD), take its
 // holiday national days out of here so a day is not listed twice.
@@ -287,6 +289,55 @@ export const NATIONAL_DAYS: Readonly<Record<string, CountryNationalDays>> = {
       },
     ],
     days: [{ monthDay: '06-06', en: 'National Day', bn: 'জাতীয় দিবস' }],
+  },
+  ES: {
+    sources: [
+      {
+        title: 'BOE, Resolution of 17 October 2025: public holidays for 2026',
+        url: 'https://www.boe.es/diario_boe/txt.php?id=BOE-A-2025-21667',
+      },
+    ],
+    days: [
+      { monthDay: '10-12', en: 'National Day of Spain', bn: 'স্পেনের জাতীয় দিবস' },
+      { monthDay: '12-06', en: 'Constitution Day', bn: 'সংবিধান দিবস' },
+    ],
+  },
+  AT: {
+    sources: [
+      {
+        title: 'RIS, Federal Act on the Austrian National Day',
+        url: 'https://www.ris.bka.gv.at/GeltendeFassung.wxe?Abfrage=Bundesnormen&Gesetzesnummer=10000426',
+      },
+    ],
+    days: [{ monthDay: '10-26', en: 'National Day', bn: 'জাতীয় দিবস' }],
+  },
+  CH: {
+    sources: [
+      {
+        title: 'Federal Department of Foreign Affairs, National Day and national anthem',
+        url: 'https://www.aboutswitzerland.eda.admin.ch/de/nationalfeiertag-und-nationalhymne',
+      },
+    ],
+    days: [{ monthDay: '08-01', en: 'Swiss National Day', bn: 'সুইস জাতীয় দিবস' }],
+  },
+  NO: {
+    sources: [
+      {
+        title: 'Lovdata, Act on 1 and 17 May as public holidays',
+        url: 'https://lovdata.no/dokument/NL/lov/1947-04-26-1',
+      },
+    ],
+    days: [{ monthDay: '05-17', en: 'Constitution Day', bn: 'সংবিধান দিবস' }],
+  },
+  DK: {
+    // Not a public holiday, an official flag day.
+    sources: [
+      {
+        title: 'Ministry of Justice, Official flag days',
+        url: 'https://www.justitsministeriet.dk/temaer/flagning/flagdage/',
+      },
+    ],
+    days: [{ monthDay: '06-05', en: 'Constitution Day', bn: 'সংবিধান দিবস' }],
   },
   CA: {
     sources: [

@@ -91,30 +91,13 @@ describe('dayEvents', () => {
   });
 
   it('which countries have what', () => {
-    for (const c of [
-      'BD',
-      'PK',
-      'IN',
-      'SA',
-      'AE',
-      'MY',
-      'ID',
-      'GB',
-      'US',
-      'EG',
-      'TR',
-      'DE',
-      'FR',
-      'IT',
-      'NL',
-      'BE',
-      'SE',
-      'CA',
-      'AU',
-    ]) {
+    const all = 'BD PK IN SA AE MY ID GB US EG TR DE FR IT NL BE SE ES AT CH NO DK CA AU';
+    for (const c of all.split(' ')) {
       expect(hasNationalDays(c), c).toBe(true);
     }
     expect(hasNationalDays('JP')).toBe(false);
+    // Ireland's national day is a saint's feast day: left out on purpose.
+    expect(hasNationalDays('IE')).toBe(false);
     expect(hasNationalDays(null)).toBe(false);
     expect(hasHolidays('BD')).toBe(true);
     expect(hasHolidays('PK')).toBe(false);
