@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.171.0 - Islamic calendar, part 1: the calendar logic - 2026-10-15
+
+First of three PRs for the Islamic calendar in the Library (`/library/calendar`; prototype `docs/design/hijri-calendar.html`, approved v3, included here). This one adds the tested logic only; nothing new shows in the app yet.
+
+### Added
+
+- **`utils/bengaliCalendar.ts`**: the Bangladesh national calendar (Bangla Academy 2019: 1 Boishakh = 14 April, Boishakh to Ashwin 31 days, Kartik to Magh 30, Falgun 29 or 30 in a leap year, Chaitra 30), always written in Bangla digits and month names (`formatBengaliDate`: "৩০ আশ্বিন ১৪৩৩ বঙ্গাব্দ").
+- **`utils/specialDayRules.ts`**: `specialDayIds(hijri, weekday)`, the special-day rules that `getTodaySpecialDays` used inline, as a pure function the calendar can ask for every day (same results; `getTodaySpecialDays` now calls it).
+- **`utils/calendarMonth.ts`**: a day with all three dates (`calendarDays`, one Hijri read per render through the new `readHijriInputs()` in `islamicCalendar.ts`), the days of a Gregorian, Hijri or Bengali month (`monthDays`), `stepMonth`, and the grid's week order and leading blanks. Hijri months follow the country's moon-sighting records exactly like the rest of the app.
+- **`utils/calendarEvents.ts`**: a day's events in priority order (Islamic day, government holiday, national day), filters, and the "next 30 days" list without monthly White Days. Fridays and Monday/Thursday fasts are not calendar events (the weekend is shaded instead).
+- **`data/calendar/bd.ts`**: Bangladesh's 2026 government holidays (Ministry of Public Administration notification of 9 Nov 2025 as reported by The Daily Star Bangla, plus the 22 Oct Durga Puja gazette), general vs executive order, moon-dependent flagged, short names for day boxes; national days that are not holidays (Armed Forces Day 21 Nov, Martyred Intellectuals' Day 14 Dec). The report says 14 general holidays but lists 12 dates; entered as listed, to check against the gazette PDF before PR 2 shows holidays. The 2027 list is not published yet.
+- **`utils/calendarPrefs.ts`**: calendars and their order (default English + Hijri), main grid, week start and weekend (Bangladesh: week from Saturday, Friday and Saturday off; other countries from the browser's locale data), which events to show. Five new keys in both cross-device sync lists.
+
+### Tests
+
+- New: `bengaliCalendar.test.ts` (fixed national dates, leap Falgun, twelve years without a skipped or repeated day), `specialDayRules.test.ts` (each rule, every returned id has content), `calendarMonth.test.ts` (the BD record month by month, Hijri months of 29 or 30 back to back for two years, stepping), `calendarEvents.test.ts`, `data/calendar/bd.test.ts`, `calendarPrefs.test.ts` (defaults, round trip, bad values, and the frontend and backend sync lists match exactly, a guard that did not exist).
+
 ## v5.170.3 - Vite 8 (Rolldown) and @vitejs/plugin-react 6 - 2026-10-15
 
 ### Changed

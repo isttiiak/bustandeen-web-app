@@ -61,6 +61,11 @@ export const SYNCED_KEYS: readonly string[] = [
   'bustandeen_reciter',
   'bustandeen_quran_translations',
   'bustandeen_tafsir_edition',
+  'bustandeen_calendar_layers',
+  'bustandeen_calendar_grid',
+  'bustandeen_calendar_week_start',
+  'bustandeen_calendar_weekend',
+  'bustandeen_calendar_show',
 ];
 
 const SYNCED = new Set(SYNCED_KEYS);
