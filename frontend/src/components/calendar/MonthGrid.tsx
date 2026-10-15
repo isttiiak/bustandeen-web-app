@@ -48,6 +48,11 @@ export interface MonthGridProps {
   onSelect: (ymd: string) => void;
   onPrev: () => void;
   onNext: () => void;
+  /** False at the ends of the calendar's years (last year to next year). */
+  canPrev: boolean;
+  canNext: boolean;
+  /** Notes under the legend (a missing holiday list, the moon line). */
+  notes?: ReactNode;
 }
 
 export default function MonthGrid(p: MonthGridProps) {
@@ -62,8 +67,9 @@ export default function MonthGrid(p: MonthGridProps) {
         <button
           type="button"
           onClick={p.onPrev}
+          disabled={!p.canPrev}
           aria-label={t('calendar.prev')}
-          className="w-11 h-11 grid place-items-center rounded-control border border-brand-border bg-brand-surface/50 text-white hover:border-brand-emerald/40"
+          className="w-11 h-11 grid place-items-center rounded-control border border-brand-border bg-brand-surface/50 text-white hover:border-brand-emerald/40 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
         </button>
@@ -84,8 +90,9 @@ export default function MonthGrid(p: MonthGridProps) {
         <button
           type="button"
           onClick={p.onNext}
+          disabled={!p.canNext}
           aria-label={t('calendar.next')}
-          className="w-11 h-11 grid place-items-center rounded-control border border-brand-border bg-brand-surface/50 text-white hover:border-brand-emerald/40"
+          className="w-11 h-11 grid place-items-center rounded-control border border-brand-border bg-brand-surface/50 text-white hover:border-brand-emerald/40 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
         </button>
@@ -167,6 +174,11 @@ export default function MonthGrid(p: MonthGridProps) {
       <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 pt-2 border-t border-brand-border text-[11px] text-white/70">
         {p.legend}
       </div>
+      {p.notes && (
+        <div className="px-2 space-y-1 text-center text-[11px] leading-snug text-white/70">
+          {p.notes}
+        </div>
+      )}
     </section>
   );
 }

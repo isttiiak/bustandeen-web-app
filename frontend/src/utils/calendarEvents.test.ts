@@ -3,7 +3,9 @@ import { addDays } from './hijriOffset.js';
 import { calendarDays, type HijriInputs } from './calendarMonth.js';
 import {
   dayEvents,
+  holidaySources,
   holidayYears,
+  missingHolidayYears,
   isHoliday,
   upcomingEvents,
   type CalendarEvent,
@@ -111,5 +113,23 @@ describe('upcomingEvents (next 30 days)', () => {
     expect(ids.filter((id) => id === 'dhul_hijjah_first10')).toHaveLength(1);
     expect(ids).toContain('arafah');
     expect(ids).toContain('eid_adha');
+  });
+});
+
+describe('holiday list years and sources', () => {
+  it('a year without a published list is reported (Bangladesh, January 2027)', () => {
+    const jan = Array.from({ length: 31 }, (_, i) => day(addDays('2027-01-01', i)));
+    expect(missingHolidayYears('BD', jan)).toEqual([2027]);
+    expect(missingHolidayYears('BD', [day('2026-10-15')])).toEqual([]);
+    // A country without any list: nothing to report (the settings say so)
+    expect(missingHolidayYears('GB', jan)).toEqual([]);
+    expect(missingHolidayYears(null, jan)).toEqual([]);
+  });
+  it('sources of the lists, newest year first, as https links', () => {
+    const s = holidaySources('BD');
+    expect(s.length).toBeGreaterThan(0);
+    expect(s[0]!.year).toBe(2026);
+    for (const x of s) expect(x.url).toMatch(/^https:\/\//);
+    expect(holidaySources('GB')).toEqual([]);
   });
 });

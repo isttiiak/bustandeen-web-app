@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.174.0 - Calendar: three years to browse, holiday-year note, moon note, sources - 2026-10-16
+
+### Changed
+
+- **The Islamic calendar covers last year, this year and next year** (Istiak, 2026-10-15; today 2025 to 2027): the month arrows stop at January of last year and December of next year, and downloads (range months, full year) keep only months in that window (a Hijri or Bengali month that overlaps the edge still counts). Further out, Hijri dates would only be Umm al-Qura estimates and no holiday list exists. `calendarWindow` / `monthInWindow` (`utils/calendarMonth.ts`); `printMonths` takes the window.
+
+### Added
+
+- **Missing holiday list note:** a month in a year that has no published list yet for the calendar's country (e.g. 2027 until the Ministry publishes it) says "Government holidays for 2027 are not published yet." under the grid and in the printed "This month" column (`missingHolidayYears`). Countries without any list are unchanged (the settings already say none is available).
+- **Moon note** under the grid and on every printed sheet (under the colour guide; under the year at a glance): "Dates that depend on the moon may differ by a day; follow your local announcement."
+- **Holiday sources** in the calendar settings, under the switches: links to where each year's list comes from (`holidaySources`; today the Ministry of Public Administration notification report and the Durga Puja gazette report).
+
+### Tests
+
+- Unit: the window (three years, months overlapping the edge, a Hijri month across New Year), downloads stopping at December 2027, missing years for Bangladesh and none for other countries, sources newest first.
+- e2e: browsing stops at December 2027 and January 2025, the 2027 note on screen and on the sheet, the moon line on screen and on the sheet, the source link in the drawer.
+
 ## v5.173.1 - Calendar follow-ups: the Hijri date after Maghrib, the drawer text, blank-for-writing sheets - 2026-10-15
 
 ### Fixed

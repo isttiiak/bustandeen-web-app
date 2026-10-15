@@ -117,3 +117,25 @@ describe('paper', () => {
     );
   });
 });
+
+describe('downloads stay within last year, this year and next year', () => {
+  const bounds = { from: '2025-01-01', to: '2027-12-31' };
+  it('a range past the end stops at December 2027', () => {
+    const m = printMonths(
+      '2027-10-15',
+      opts({ range: { kind: 'range', from: '2027-10-01', to: '2028-03-01' } }),
+      day,
+      bounds
+    );
+    expect(m).toEqual(['2027-10-01', '2027-11-01', '2027-12-01']);
+  });
+  it('a full year inside the window is untouched', () => {
+    const m = printMonths(
+      '2026-10-15',
+      opts({ range: { kind: 'year', layout: 'pages' } }),
+      day,
+      bounds
+    );
+    expect(m).toHaveLength(12);
+  });
+});

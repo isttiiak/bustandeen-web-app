@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.174.0',
+    date: '2026-10-16',
+    text: {
+      en: {
+        title: 'Clearer Islamic calendar dates',
+        added: [
+          'The Islamic calendar shows last year, this year and next year, where its dates are most reliable, and downloads cover the same years.',
+          'It tells you when a year has no government holiday list yet, reminds you that dates that depend on the moon can differ by a day, and links to where the holiday list comes from.',
+        ],
+      },
+      bn: {
+        title: 'ইসলামী ক্যালেন্ডারের তারিখ আরও স্পষ্ট',
+        added: [
+          'ইসলামী ক্যালেন্ডার এখন গত বছর, এই বছর ও আগামী বছর দেখায়, যেখানে এর তারিখ সবচেয়ে নির্ভরযোগ্য; ডাউনলোডও এই বছরগুলোর।',
+          'কোনো বছরের সরকারি ছুটির তালিকা এখনো না এলে তা জানায়, মনে করিয়ে দেয় যে চাঁদনির্ভর তারিখ এক দিন এদিক-ওদিক হতে পারে, আর ছুটির তালিকার সূত্রের লিংক দেয়।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.173.1',
     date: '2026-10-15',
     text: {

@@ -35,6 +35,7 @@ export default function CalendarSettingsSheet({
   prefs,
   onPrefs,
   holidaysHint,
+  holidaySourceLinks,
   placeName,
   onLocation,
   onHijriChange,
@@ -45,6 +46,8 @@ export default function CalendarSettingsSheet({
   onPrefs: (p: Partial<CalendarPrefs>) => void;
   /** "Bangladesh, official list: 2026", or that the country has none. */
   holidaysHint: string;
+  /** Where the holiday lists come from (shown as links under the switches). */
+  holidaySourceLinks: { year: number; title: string; url: string }[];
   placeName: string | null;
   onLocation: (loc: StoredLocation) => void;
   onHijriChange: () => void;
@@ -204,6 +207,28 @@ export default function CalendarSettingsSheet({
                     />
                   </label>
                 ))}
+                {holidaySourceLinks.length > 0 && (
+                  <div
+                    className="text-xs text-white/70 space-y-1"
+                    data-testid="calendar-holiday-sources"
+                  >
+                    <p className="font-semibold">{t('calendar.sHolidaySources')}</p>
+                    <ul>
+                      {holidaySourceLinks.map((s) => (
+                        <li key={s.url}>
+                          <a
+                            href={s.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center min-h-[44px] underline underline-offset-2 text-brand-gold"
+                          >
+                            {s.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </section>
 
               {/* Weekend + week start */}

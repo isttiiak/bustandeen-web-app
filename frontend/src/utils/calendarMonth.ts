@@ -100,3 +100,24 @@ export function weekdayOrder(weekStart: number): number[] {
 export function leadingBlanks(firstWeekday: number, weekStart: number): number {
   return (firstWeekday - weekStart + 7) % 7;
 }
+
+export interface CalendarWindow {
+  from: string;
+  to: string;
+}
+
+/**
+ * The years the calendar shows and downloads: last year, this year and next
+ * year (Istiak, 2026-10-15). Further out, Hijri dates are only Umm al-Qura
+ * estimates and no holiday list exists yet.
+ */
+export function calendarWindow(today: string): CalendarWindow {
+  const y = Number(today.slice(0, 4));
+  return { from: `${y - 1}-01-01`, to: `${y + 1}-12-31` };
+}
+
+/** Whether a month overlaps the window (a Hijri month at the edge still counts). */
+export function monthInWindow(days: readonly CalendarDay[], w: CalendarWindow): boolean {
+  if (!days.length) return false;
+  return days[0]!.ymd <= w.to && days[days.length - 1]!.ymd >= w.from;
+}

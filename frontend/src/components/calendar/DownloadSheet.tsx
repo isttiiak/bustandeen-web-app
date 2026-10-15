@@ -19,8 +19,10 @@ import {
 } from '../bustanStyles.js';
 import {
   monthDays,
+  monthInWindow,
   stepMonth,
   type CalendarKind,
+  type CalendarWindow,
   type DayResolver,
 } from '../../utils/calendarMonth.js';
 import { DEFAULT_PRINT, type PrintOptions } from '../../utils/calendarPrint.js';
@@ -45,6 +47,7 @@ export default function DownloadSheet({
   grid,
   anchor,
   day,
+  bounds,
   onPrint,
 }: {
   open: boolean;
@@ -54,6 +57,8 @@ export default function DownloadSheet({
   grid: CalendarKind;
   anchor: string;
   day: DayResolver;
+  /** Last year to next year: the months a download can include. */
+  bounds: CalendarWindow;
   onPrint: (o: PrintOptions) => void;
 }) {
   const { t, i18n } = useTranslation();
@@ -70,8 +75,8 @@ export default function DownloadSheet({
     const out = [monthDays(anchor, main, day)[0]!.ymd];
     for (let i = 0; i < 12; i++) out.unshift(stepMonth(out[0]!, main, -1, day));
     for (let i = 0; i < 12; i++) out.push(stepMonth(out[out.length - 1]!, main, 1, day));
-    return out;
-  }, [anchor, main, day]);
+    return out.filter((m) => monthInWindow(monthDays(m, main, day), bounds));
+  }, [anchor, main, day, bounds]);
   const current = monthDays(anchor, main, day)[0]!;
   const yearLabel =
     main === 'greg'

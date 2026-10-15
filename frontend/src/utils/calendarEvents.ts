@@ -51,6 +51,31 @@ export function holidayYears(country: string | null): number[] {
   return country ? (COUNTRY_CALENDARS[country]?.holidays.map((y) => y.year) ?? []) : [];
 }
 
+/**
+ * Years among `days` that have no holiday list yet, for a country that has
+ * lists (e.g. 2027 before the government publishes it). Empty for a country
+ * without any list: the settings already say none is available.
+ */
+export function missingHolidayYears(
+  country: string | null,
+  days: readonly CalendarDay[]
+): number[] {
+  const have = holidayYears(country);
+  if (!have.length) return [];
+  const years = [...new Set(days.map((d) => Number(d.ymd.slice(0, 4))))];
+  return years.filter((y) => !have.includes(y));
+}
+
+/** Where a country's holiday lists come from (newest year first). */
+export function holidaySources(
+  country: string | null
+): { year: number; title: string; url: string }[] {
+  const lists = country ? (COUNTRY_CALENDARS[country]?.holidays ?? []) : [];
+  return [...lists]
+    .sort((a, b) => b.year - a.year)
+    .flatMap((y) => y.sources.map((s) => ({ year: y.year, ...s })));
+}
+
 /** A day's events, Islamic first, then government holidays, then national days. */
 export function dayEvents(day: CalendarDay, filters: EventFilters): CalendarEvent[] {
   const out: CalendarEvent[] = [];

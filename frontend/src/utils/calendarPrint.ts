@@ -7,9 +7,11 @@
 import type { CalendarEvent } from './calendarEvents.js';
 import {
   monthDays,
+  monthInWindow,
   stepMonth,
   type CalendarDay,
   type CalendarKind,
+  type CalendarWindow,
   type DayResolver,
 } from './calendarMonth.js';
 
@@ -66,8 +68,20 @@ export function yearStart(anchor: string, kind: CalendarKind, day: DayResolver):
   return first;
 }
 
-/** The months to print, as the first day of each (in the first calendar). */
-export function printMonths(anchor: string, o: PrintOptions, day: DayResolver): string[] {
+/** The months to print, as the first day of each (in the first calendar),
+ * keeping only those in the calendar's window when one is given. */
+export function printMonths(
+  anchor: string,
+  o: PrintOptions,
+  day: DayResolver,
+  bounds?: CalendarWindow
+): string[] {
+  const kind = o.order[0] ?? 'greg';
+  const all = allPrintMonths(anchor, o, day);
+  return bounds ? all.filter((a) => monthInWindow(monthDays(a, kind, day), bounds)) : all;
+}
+
+function allPrintMonths(anchor: string, o: PrintOptions, day: DayResolver): string[] {
   const kind = o.order[0] ?? 'greg';
   const first = (ymd: string) => monthDays(ymd, kind, day)[0]!.ymd;
   if (o.range.kind === 'month') return [first(anchor)];

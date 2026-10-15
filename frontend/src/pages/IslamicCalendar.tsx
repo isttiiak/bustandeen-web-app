@@ -34,14 +34,18 @@ import { useMoonSightingRecords } from '../hooks/useMoonSighting.js';
 import { useUserProfile } from '../hooks/useUserProfile.js';
 import {
   calendarDays,
+  calendarWindow,
   monthDays,
+  monthInWindow,
   stepMonth,
   type CalendarDay,
   type CalendarKind,
 } from '../utils/calendarMonth.js';
 import {
   dayEvents,
+  holidaySources,
   holidayYears,
+  missingHolidayYears,
   upcomingEvents,
   type CalendarEvent,
   type EventFilters,
@@ -142,6 +146,11 @@ export default function IslamicCalendar() {
     filters
   );
   const days = monthDays(anchor, grid, day);
+  // Browsing and downloads stay within last year, this year and next year.
+  const bounds = calendarWindow(today);
+  const canStep = (step: -1 | 1) =>
+    monthInWindow(monthDays(stepMonth(anchor, grid, step, day), grid, day), bounds);
+  const missingYears = prefs.show.holidays ? missingHolidayYears(country, days) : [];
   const monthRows = days.flatMap((d) => eventsOf(d).map((event) => ({ day: d, event })));
   const pick = (ymd: string) => {
     setSelected(ymd);
@@ -448,6 +457,20 @@ export default function IslamicCalendar() {
             onSelect={setSelected}
             onPrev={() => setAnchor(stepMonth(anchor, grid, -1, day))}
             onNext={() => setAnchor(stepMonth(anchor, grid, 1, day))}
+            canPrev={canStep(-1)}
+            canNext={canStep(1)}
+            notes={
+              <>
+                {missingYears.length > 0 && (
+                  <p data-testid="calendar-holidays-missing">
+                    {t('calendar.holidaysMissing', {
+                      years: missingYears.map((y) => num(y, lang)).join(', '),
+                    })}
+                  </p>
+                )}
+                <p data-testid="calendar-moon-note">{t('calendar.moonNote')}</p>
+              </>
+            }
           />
 
           <DayDetails
@@ -486,6 +509,7 @@ export default function IslamicCalendar() {
         prefs={prefs}
         onPrefs={updatePrefs}
         holidaysHint={holidaysHint}
+        holidaySourceLinks={prefs.show.holidays ? holidaySources(country) : []}
         placeName={place?.name ?? null}
         onLocation={onLocation}
         onHijriChange={redraw}
@@ -498,6 +522,7 @@ export default function IslamicCalendar() {
         grid={grid}
         anchor={anchor}
         day={day}
+        bounds={bounds}
         onPrint={(o) => {
           setDownloadOpen(false);
           setPrintJob(o);
@@ -507,7 +532,7 @@ export default function IslamicCalendar() {
         createPortal(
           <div id="pc-print-root" data-testid="calendar-print">
             <PrintSheets
-              anchors={printMonths(anchor, printJob, day)}
+              anchors={printMonths(anchor, printJob, day, bounds)}
               options={printJob}
               day={day}
               eventsOf={eventsOf}
@@ -515,6 +540,7 @@ export default function IslamicCalendar() {
               weekend={prefs.weekend}
               today={today}
               countryLabel={countryLabel}
+              missingYears={(ds) => (prefs.show.holidays ? missingHolidayYears(country, ds) : [])}
               kinds={(
                 [
                   ['islamic', prefs.show.islamic],

@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import type { MoonSightingRecord } from './hijriOffset.js';
 import {
   calendarDays,
+  calendarWindow,
+  monthInWindow,
   leadingBlanks,
   monthDays,
   stepMonth,
@@ -119,5 +121,23 @@ describe('grid helpers', () => {
     expect(leadingBlanks(4, 0)).toBe(4);
     expect(leadingBlanks(4, 1)).toBe(3);
     expect(leadingBlanks(6, 6)).toBe(0);
+  });
+});
+
+describe('the calendar window: last year, this year and next year', () => {
+  const day = calendarDays(BD);
+  const w = calendarWindow('2026-10-15');
+  it('spans three Gregorian years', () => {
+    expect(w).toEqual({ from: '2025-01-01', to: '2027-12-31' });
+  });
+  it('a month counts when it overlaps the window', () => {
+    expect(monthInWindow(monthDays('2027-12-15', 'greg', day), w)).toBe(true);
+    expect(monthInWindow(monthDays('2028-01-15', 'greg', day), w)).toBe(false);
+    expect(monthInWindow(monthDays('2024-12-15', 'greg', day), w)).toBe(false);
+    // A Hijri month that starts in December 2027 and ends in January 2028
+    const edge = monthDays('2027-12-31', 'hijri', day);
+    expect(edge[0]!.ymd <= '2027-12-31' && edge[edge.length - 1]!.ymd >= '2028-01-01').toBe(true);
+    expect(monthInWindow(edge, w)).toBe(true);
+    expect(monthInWindow([], w)).toBe(false);
   });
 });
