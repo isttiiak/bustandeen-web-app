@@ -3,6 +3,8 @@ import { addDays } from './hijriOffset.js';
 import { calendarDays, type HijriInputs } from './calendarMonth.js';
 import {
   dayEvents,
+  hasHolidays,
+  hasNationalDays,
   holidaySources,
   holidayYears,
   missingHolidayYears,
@@ -73,6 +75,29 @@ describe('dayEvents', () => {
     // No holidays without a country, or for a country without a curated list
     expect(on('2026-10-21', { ...ALL, country: null })).toEqual([]);
     expect(on('2026-10-21', { ...ALL, country: 'GB' })).toEqual([]);
+  });
+
+  it('national days outside Bangladesh, on their fixed date every year', () => {
+    const pk = { ...ALL, country: 'PK' };
+    expect(on('2026-08-14', pk)).toContain('nat:Independence Day');
+    expect(on('2031-03-23', pk)).toContain('nat:Pakistan Day');
+    expect(on('2026-08-14', { ...pk, national: false })).not.toContain('nat:Independence Day');
+    expect(on('2026-09-23', { ...ALL, country: 'SA' })).toContain('nat:Saudi National Day');
+    expect(on('2026-10-29', { ...ALL, country: 'TR' })).toContain('nat:Republic Day');
+    // Never a government holiday there: those lists are Bangladesh only.
+    expect(on('2026-12-25', pk).some((l) => l.startsWith('hol:'))).toBe(false);
+  });
+
+  it('which countries have what', () => {
+    for (const c of ['BD', 'PK', 'IN', 'SA', 'AE', 'MY', 'ID', 'GB', 'US', 'EG', 'TR']) {
+      expect(hasNationalDays(c), c).toBe(true);
+    }
+    expect(hasNationalDays('FR')).toBe(false);
+    expect(hasNationalDays(null)).toBe(false);
+    expect(hasHolidays('BD')).toBe(true);
+    expect(hasHolidays('PK')).toBe(false);
+    expect(holidayYears('PK')).toEqual([]);
+    expect(missingHolidayYears('PK', [day('2027-01-01')])).toEqual([]);
   });
 
   it('a day with two holidays keeps both (20 Mar 2026, as listed)', () => {

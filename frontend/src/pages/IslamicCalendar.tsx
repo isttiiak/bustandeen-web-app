@@ -51,6 +51,7 @@ import {
 import {
   dayEvents,
   hasHolidays,
+  hasNationalDays,
   holidaySources,
   holidayYears,
   missingHolidayYears,
@@ -256,7 +257,7 @@ export default function IslamicCalendar() {
       {prefs.show.holidays && holidayYears(country).length > 0 && (
         <LegendItem type="holiday" label={t('calendar.kind.holiday')} />
       )}
-      {prefs.show.national && holidayYears(country).length > 0 && (
+      {prefs.show.national && hasNationalDays(country) && (
         <LegendItem type="national" label={t('calendar.kind.national')} />
       )}
       <span className="inline-flex items-center gap-1.5">

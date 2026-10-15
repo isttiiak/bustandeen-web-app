@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.176.0 - Calendar: national days for ten more countries - 2026-10-16
+
+### Added
+
+- **National days outside Bangladesh** (Istiak, 2026-10-16): Pakistan, India, Saudi Arabia, UAE, Malaysia, Indonesia, United Kingdom, United States, Egypt and Türkiye (`data/calendar/nationalDays.ts`, registered in `COUNTRY_CALENDARS` with no holiday lists). Fixed-date national commemorations only (independence, national, republic, founding and similar days), also when they are public holidays there; never moon-based or religious days, New Year, May Day or Christmas. Each country lists its government source; dates and sources checked 2026-10-16. A day a country observes on a nearby weekday is listed on its own date. The UK has no national day, so it has Armistice Day only.
+- These countries get the **National days** switch on by default in a download, like Bangladesh (`defaultInclude` already follows `hasNationalDays`); government holidays stay Bangladesh only and keep the three-year window.
+
+### Changed
+
+- Calendar settings hint for National days: "Fixed dates your country marks each year" (was "Days your country marks that are not holidays", which only held where a holiday list exists).
+
+### Fixed
+
+- The calendar legend showed the national-day mark only for a country with holiday lists; it now follows `hasNationalDays`.
+
+### Tests
+
+- Unit: every country has sources, real ordered month-days, Bangla-script names without em dashes, the checked dates; events on the fixed date in any year; defaults and filters for a country with national days only.
+- e2e: in Pakistan the National days switch is on and 9 Nov prints Iqbal Day.
+
 ## v5.175.0 - Calendar: what a download includes, next-month card, open years, requests in place; dependency sync check - 2026-10-16
 
 ### Added

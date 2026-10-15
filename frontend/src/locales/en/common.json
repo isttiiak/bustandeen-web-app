@@ -4481,7 +4481,7 @@
     "sHolidaysHint": "{{country}}, official list: {{years}}",
     "sHolidaysNone": "Not available for your country yet",
     "sNational": "National days",
-    "sNationalHint": "Days your country marks that are not holidays",
+    "sNationalHint": "Fixed dates your country marks each year",
     "sWeekStart": "Week starts on",
     "sWeekend": "Weekend",
     "sWeekendHint": "Shaded on the calendar",

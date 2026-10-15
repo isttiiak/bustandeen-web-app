@@ -1,0 +1,60 @@
+import { describe, expect, it } from 'vitest';
+import { NATIONAL_DAYS } from './nationalDays.js';
+
+const validMonthDay = (md: string) => {
+  // A leap year, so 29 Feb would pass; none is listed.
+  const d = new Date(`2028-${md}T12:00:00Z`);
+  return !Number.isNaN(d.getTime()) && d.toISOString().slice(5, 10) === md;
+};
+const texts = (o: object) => Object.values(o).filter((v): v is string => typeof v === 'string');
+
+describe('national days outside Bangladesh', () => {
+  it('the ten countries, each with a source; Bangladesh stays in bd.ts', () => {
+    expect(Object.keys(NATIONAL_DAYS).sort()).toEqual(
+      ['AE', 'EG', 'GB', 'ID', 'IN', 'MY', 'PK', 'SA', 'TR', 'US'].sort()
+    );
+    for (const [code, c] of Object.entries(NATIONAL_DAYS)) {
+      expect(c.sources.length, code).toBeGreaterThan(0);
+      for (const s of c.sources) expect(s.url).toMatch(/^https:\/\//);
+      expect(c.days.length, code).toBeGreaterThan(0);
+    }
+  });
+
+  it('real month-days, in order, one per date', () => {
+    for (const [code, c] of Object.entries(NATIONAL_DAYS)) {
+      let prev = '';
+      for (const d of c.days) {
+        expect(d.monthDay).toMatch(/^\d{2}-\d{2}$/);
+        expect(validMonthDay(d.monthDay), `${code} ${d.monthDay}`).toBe(true);
+        expect(d.monthDay > prev, `${code} ${d.monthDay}`).toBe(true);
+        prev = d.monthDay;
+      }
+    }
+  });
+
+  it('names in English and in Bangla script, no em dash', () => {
+    for (const c of Object.values(NATIONAL_DAYS)) {
+      for (const d of c.days) {
+        expect(d.en.length).toBeGreaterThan(2);
+        expect(d.bn).toMatch(/[ঀ-৿]/);
+        expect(d.bn).not.toMatch(/[A-Za-z]/);
+        if (d.shortBn) expect(d.shortBn).toMatch(/[ঀ-৿]/);
+        for (const t of texts(d)) expect(t).not.toContain('—');
+      }
+    }
+  });
+
+  it('checked dates (government sources, 2026-10-16)', () => {
+    const md = (code: string) => NATIONAL_DAYS[code]!.days.map((d) => d.monthDay);
+    expect(md('PK')).toEqual(['02-05', '03-23', '05-28', '08-14', '11-09', '12-25']);
+    expect(md('IN')).toEqual(['01-26', '08-15', '10-02']);
+    expect(md('SA')).toEqual(['02-22', '09-23']);
+    expect(md('AE')).toEqual(['11-30', '12-02']);
+    expect(md('MY')).toEqual(['08-31', '09-16']);
+    expect(md('ID')).toEqual(['06-01', '08-17']);
+    expect(md('GB')).toEqual(['11-11']);
+    expect(md('US')).toEqual(['06-19', '07-04', '11-11']);
+    expect(md('EG')).toEqual(['01-25', '04-25', '06-30', '07-23', '10-06']);
+    expect(md('TR')).toEqual(['04-23', '05-19', '07-15', '08-30', '10-29']);
+  });
+});
