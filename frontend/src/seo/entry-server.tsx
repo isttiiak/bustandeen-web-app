@@ -4,7 +4,6 @@ import { CITIES, cityBySlug, cityCountry, cityName } from './data/cities.js';
 import { DUAS } from './content/duas.js';
 import { currentHijriYear, ramadanRangeForHijriYear } from './utils/calc.js';
 import PrayerTimesCityPage from './templates/PrayerTimesCityPage.js';
-import QiblaCityPage from './templates/QiblaCityPage.js';
 import RamadanCalendarPage from './templates/RamadanCalendarPage.js';
 import RamadanCalendarIndexPage from './templates/RamadanCalendarIndexPage.js';
 import DuaSituationPage from './templates/DuaSituationPage.js';
@@ -39,7 +38,6 @@ import type { BayanLang } from './bayan/guides.js';
 
 export type RouteKind =
   | { kind: 'prayer-times'; citySlug: string }
-  | { kind: 'qibla'; citySlug: string }
   | { kind: 'ramadan-calendar'; citySlug: string; hijriYear: number }
   | { kind: 'ramadan-calendar-index' }
   | { kind: 'dua'; duaId: string }
@@ -137,15 +135,6 @@ export function renderRoute({
         title: `${t.prayerTimes.heading(cityName(city, lang))} | ${t.siteName}`,
         description: t.prayerTimes.subheading(cityName(city, lang), cityCountry(city, lang)),
         client: { kind: 'prayer-times', city },
-      };
-    }
-    case 'qibla': {
-      const city = cityBySlug(route.citySlug);
-      if (!city) throw new Error(`Unknown city slug: ${route.citySlug}`);
-      return {
-        html: renderToStaticMarkup(<QiblaCityPage lang={lang} city={city} />),
-        title: `${t.qibla.heading(cityName(city, lang))} | ${t.siteName}`,
-        description: t.qibla.subheading(cityName(city, lang), cityCountry(city, lang)),
       };
     }
     case 'ramadan-calendar': {

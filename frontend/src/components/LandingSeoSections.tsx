@@ -169,7 +169,7 @@ export default function LandingSeoSections({
         <p className="text-white/80 text-sm text-center mt-2">
           {t(
             'landing.citiesDesc',
-            'Today’s Fajr, Ẓuhr, ʿAṣr, Maghrib and ʿIshāʾ for 1,400+ cities, with both ʿAṣr times.'
+            'Today’s Fajr, Ẓuhr, ʿAṣr, Maghrib and ʿIshāʾ for 500+ cities, with both ʿAṣr times.'
           )}
         </p>
         <ul className="mt-5 flex flex-wrap justify-center gap-2">

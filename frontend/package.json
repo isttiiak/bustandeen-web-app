@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.168.0",
+  "version": "5.169.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,6 +10,7 @@
     "lint": "cd .. && eslint frontend --config eslint.config.js",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.worker.json && tsc --noEmit -p tsconfig.e2e.json",
     "data:cities": "node scripts/build-cities.mjs && node scripts/build-place-index.mjs",
+    "data:seo-cities": "node scripts/build-seo-cities.mjs",
     "quran:text": "node scripts/build-quran-text.mjs",
     "brand:assets": "node scripts/generate-brand-assets.mjs",
     "test": "vitest run",

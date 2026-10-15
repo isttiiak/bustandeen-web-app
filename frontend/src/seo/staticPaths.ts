@@ -4,7 +4,9 @@
 // never loaded for them) and the service worker (fetch them from the network
 // instead of answering with the app shell). Deliberately excludes the bare
 // `/prayer-times` and `/qibla` paths: those are the live, on-device tracker
-// pages of the app.
+// pages of the app. `qibla/` stays although the per-city Qibla pages are gone
+// (2026-10-15): the worker must fetch those old URLs, so the server's 301 to
+// /qibla reaches the visitor.
 
 const SEO_PAGE =
   /^\/(bn\/|ar\/)?(prayer-times\/|qibla\/|ramadan-calendar(\/|$)|duas(\/|$)|adhkar\/|hijri-date-converter|asma-ul-husna|zakat-calculator)/;

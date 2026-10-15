@@ -48,7 +48,7 @@ const ROUTES = [
   '/signup',
   // Prerendered SEO routes, taken over by the client router
   '/prayer-times/dhaka-bangladesh',
-  '/bn/qibla/dhaka-bangladesh',
+  '/bn/prayer-times/dhaka-bangladesh',
   '/ar/ramadan-calendar/dhaka-bangladesh/2027',
   '/duas/travel',
   '/bn/adhkar/evening',

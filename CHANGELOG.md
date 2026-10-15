@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.169.0 - City pages chosen by need: about 500 cities, no per-city Qibla pages - 2026-10-15
+
+### Changed
+
+- **City pages are chosen by need, not population** (Istiak, 2026-10-15). The prerendered prayer-time and Ramadan-calendar pages now cover **528 cities** instead of 1,480, picked by `scripts/seoCityPolicy.mjs` (built by `npm run data:seo-cities` into `src/data/seoCities.generated.json`):
+  - **Bangladesh:** every city as before (home market; the 64 district timetables and Ramadan calendars hang off these pages).
+  - **Muslim-majority countries:** 1 to 3 cities each (e.g. Pakistan: Karachi, Lahore, Islamabad; Saudi Arabia: Riyadh, Mecca, Medina). Local timetables are everywhere there. The old list had 151 Indonesian, 101 Turkish and 100 Nigerian towns.
+  - **Muslim-minority countries with real communities**, where a timetable is hard to find: many cities (UK, Germany, France 20 each; US 30; Canada 12; Netherlands 10; Sweden, Belgium 8; Japan 10; South Korea 6; India 15...). Before, Sweden, Belgium and the Netherlands had one city each.
+  - **Countries with very few Muslims:** one city, or none.
+  - Cities closer than 25 km to a bigger pick (suburbs, boroughs) are skipped; the GeoNames name Nur-Sultan shows as Astana. 281 cities that already had pages keep their URLs.
+- **The per-city Qibla pages are gone** (4,437 pages: mostly one bearing per page). The live Qibla compass at `/qibla` does the job for any place; city pages now link to it.
+- **Old URLs redirect (301)** instead of dying: a removed `/qibla/{city}` goes to `/qibla`, a removed `/prayer-times/{city}` to the on-device prayer times at `/prayer-times`, a removed `/ramadan-calendar/{city}/{year}` to the Ramadan calendar index in its language. `vercel.json` sends these paths to the API only when no prerendered file matched (files are served before rewrites), so a kept city is always its static page. The service worker still fetches `/qibla/...` from the network so the redirect reaches installed apps.
+- **The app's place search is unchanged:** `cities.generated.json` (still ~1,480 cities) keeps feeding the on-device place index; only the page list moved to its own file.
+- **Build:** 13,792 → 3,643 HTML files (prerender ~15 s locally); `sitemap-qibla.xml` is no longer written. Landing copy: "500+ cities".
+
+### Tests
+
+- New `seoCities.test.ts` (about 500 unique cities, at most 3 per Muslim-majority country except Bangladesh, at least 5 in Sweden, Belgium, Japan and South Korea, every Bangladesh city and district town kept, the landing's linked cities kept, existing slugs unchanged) and backend `seoRedirect.e2e.test.js` (the 301 targets in every language, bare pages untouched, the rewrite sits before the app-shell catch-all). `bayan.test.ts` checks the bayan rewrite comes before the catch-all and that the new rewrite skips the bayan host. e2e `routes.spec.ts` drops the Qibla city route.
+- `zikrDayByDate.e2e.test.js` used fixed dates (2026-10-11/12) while the server uses the real clock, and started failing on 2026-10-15 once the manual count fell outside the recent-days window. Its dates are now relative to today in Dhaka (test only; no zikr code changed).
+
 ## v5.168.0 - A calmer first Home: Zikr and goals only - 2026-10-14
 
 ### Changed

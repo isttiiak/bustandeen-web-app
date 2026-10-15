@@ -183,6 +183,16 @@
       "destination": "/bayan/:path*"
     },
     {
+      "source": "/((?:bn/|ar/)?(?:prayer-times|ramadan-calendar|qibla)/.+)",
+      "destination": "/api/index",
+      "missing": [
+        {
+          "type": "host",
+          "value": "bayan.bustandeen.com"
+        }
+      ]
+    },
+    {
       "source": "/((?!api/|__/|assets/).*)",
       "destination": "/app-shell.html",
       "missing": [

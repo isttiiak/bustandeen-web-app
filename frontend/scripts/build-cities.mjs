@@ -1,5 +1,6 @@
-// Builds the curated ~1,500-city dataset that backs /prayer-times/{city},
-// /qibla/{city} and /ramadan-calendar/{city}/{year}. Run on demand (not on
+// Builds the ~1,500-city dataset behind the app's on-device place search
+// (build-place-index.mjs). Until 2026-10-15 it also chose the SEO city pages;
+// those now come from build-seo-cities.mjs (need-based, ~500). Run on demand (not on
 // every build) via `npm run data:cities` — the output is checked in so
 // builds stay deterministic and the city list is reviewable in diffs.
 //
