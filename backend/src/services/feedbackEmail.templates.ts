@@ -32,7 +32,7 @@ export const feedbackNotifyAdminEmail = (
   const lines = [
     `A new ${d.kind} message was submitted.`,
     ``,
-    `From: ${d.name} <${d.email}>`,
+    d.email ? `From: ${d.name} <${d.email}>` : `From: ${d.name} (no email given)`,
     d.category.length ? `Category: ${d.category.join(', ')}` : null,
     ``,
     d.message,

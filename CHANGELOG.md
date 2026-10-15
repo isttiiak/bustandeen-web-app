@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.170.0 - English city pages, no Arabic pages, a globe language menu and "Request a language" - 2026-10-15
+
+### Changed
+
+- **City pages are English only, except Bangladesh** (Istiak, 2026-10-15). Prayer-time and Ramadan-calendar pages exist in English for all 527 cities and also in Bangla for Bangladesh's 75 (`cityLangs` in `seo/data/cities.ts`). The Ramadan index is English and Bangla.
+- **No Arabic pages at all**, and the duʿā, adhkār, Hijri converter, Asmāʾ al-Ḥusnā and zakat pages are English and Bangla only (`SEO_LANGS`). The Arabic strings stay in `chrome.ts`, unused.
+- **Build:** 1,634 prerendered pages (3,643 in v5.169.0, 13,792 before that), 1,663 HTML files in all: 602 prayer-time pages (527 + 75 Bangla), 602 Ramadan calendars, 384 Bangladesh monthly district timetables, 2 district indexes, 2 Ramadan indexes, 42 duʿā/adhkār/tool pages, plus Help & Updates (24), the landing (2), app shell, admin page and Google's verification file.
+- **Old URLs redirect (301):** any `/ar/...` to the same page in English (bare `/ar` to `/`); `/bn/prayer-times/...` and `/bn/ramadan-calendar/...` with no Bangla page to the English page; removed cities and Qibla pages as in v5.169.0. Only paths with no prerendered file reach the redirect (`vercel.json`). Links on Bangla pages to a city without a Bangla page go to its English page (`cityHref`); hreflang and the language menu list only the languages a page has.
+- **One globe button for language, no language name in any header** (room for more languages later):
+  - **Static pages** (city, duʿā and tool pages): the globe opens a menu of the page's languages (in their own script) and **Request a language**, a small form with "Language request" filled in and an empty Language field, Send or Cancel. It works without JavaScript as far as the menu (`<details>`); `src/seo/langRequest.ts` opens the form and sends it.
+  - **The app's navbar** and the **landing page**: the globe switches English and Bangla directly, as before, without the "EN / বা" or "বাংলা" text. A menu will come with a third language.
+  - **Help & Updates** (bayan): a globe menu with English, বাংলা and Request a language, which opens the app's Feedback page with that type chosen (that site may not connect anywhere).
+- **Feedback:** a new type **Request a language** on /feedback (`?type=language` selects it), and `POST /api/feedback/language` (language name only, 2 to 60 characters, honeypot, the feedback rate limit). It lands in Admin, Feedback with the category "Language request" and no email, so there is no confirmation email or reply; the review inbox is told. `FeedbackMessage.email` is no longer required by the model (the feedback form still requires it).
+- **Fixed:** the static pages' footer linked to `/bn/prayer-times` and `/ar/qibla`, which do not exist; it now opens the app's Prayer Times and Qibla pages.
+
+### Tests
+
+- New backend `languageRequest.e2e.test.js` (stored as a Language request without email, 2 to 60 characters, honeypot, the feedback form still needs an email); `seoRedirect.e2e.test.js` covers the Arabic and Bangla redirects. `seoCities.test.ts`: city languages and links. New e2e `language-menu.spec.ts` (globe only, the menu, Cancel sends nothing, Send posts the language and thanks, a failed send keeps the form, London vs Dhaka languages, the app navbar globe, Feedback `?type=language`); `static-pages.spec.ts`, `bayan.spec.ts` and `routes.spec.ts` updated.
+
 ## v5.169.0 - City pages chosen by need: about 500 cities, no per-city Qibla pages - 2026-10-15
 
 ### Changed

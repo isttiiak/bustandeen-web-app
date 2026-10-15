@@ -14,6 +14,7 @@
 import { initAnalytics, trackPageView } from './utils/analytics.js';
 import { isLandingPath, isSeoPagePath } from './seo/staticPaths.js';
 import { initStaleChunkReload } from './utils/staleChunkReload.js';
+import { wireLanguageRequest } from './seo/langRequest.js';
 // utils/theme.ts RESOLVED_THEME_KEY (not imported: theme.ts pulls in adhan).
 const RESOLVED_THEME_KEY = 'bustandeen_theme';
 
@@ -79,6 +80,7 @@ if (isLanding && signedIn && path !== '/') {
   if (document.querySelector('[data-follow-theme]')) followTheme();
   markToday();
   wirePrint();
+  wireLanguageRequest();
   void import('./pwaUpdate.js').then((m) => m.initPwaUpdates());
   initAnalytics();
   trackPageView(path);

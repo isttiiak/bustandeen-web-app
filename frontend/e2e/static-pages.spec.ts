@@ -44,7 +44,9 @@ test('the Bangla landing, and the language links remember the choice', async ({ 
     route.fulfill({ path: 'dist/bn/index.html', contentType: 'text/html' })
   );
   await page.goto('/');
-  await page.getByRole('link', { name: 'বাংলা' }).click();
+  // A globe, no language name (2026-10-15)
+  await expect(page.locator('header').first()).not.toContainText('বাংলা');
+  await page.getByRole('link', { name: 'বাংলায় দেখুন' }).click();
   await expect(page).toHaveURL(/\/bn\/?$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'bn');
   expect(await page.evaluate(() => localStorage.getItem('bustandeen_lang'))).toBe('bn');
@@ -53,7 +55,7 @@ test('the Bangla landing, and the language links remember the choice', async ({ 
   await page.goto('/');
   await expect(page).toHaveURL(/\/bn\/?$/);
 
-  await page.getByRole('link', { name: 'English' }).click();
+  await page.getByRole('link', { name: 'Switch to English' }).click();
   await expect(page).toHaveURL(/\/$/);
   await expect(page.locator('html')).toHaveAttribute('lang', 'en');
   expect(await page.evaluate(() => localStorage.getItem('bustandeen_lang'))).toBe('en');

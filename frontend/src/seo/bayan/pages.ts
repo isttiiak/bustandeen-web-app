@@ -13,7 +13,9 @@ export interface BayanChrome {
   news: string;
   calc: string;
   credits: string;
-  otherLang: string;
+  /** The globe menu (2026-10-15): its label and "Request a language". */
+  language: string;
+  requestLanguage: string;
   openApp: string;
   heroTitle: string;
   heroText: string;
@@ -78,7 +80,8 @@ export const CHROME: Record<BayanLang, BayanChrome> = {
     news: 'What’s new',
     calc: 'How we calculate',
     credits: 'Credits',
-    otherLang: 'বাংলা',
+    language: 'Language',
+    requestLanguage: 'Request a language',
     openApp: 'Open the app',
     heroTitle: 'Help & updates',
     heroText:
@@ -118,7 +121,8 @@ export const CHROME: Record<BayanLang, BayanChrome> = {
     news: 'নতুন কী',
     calc: 'হিসাব যেভাবে হয়',
     credits: 'কৃতজ্ঞতা',
-    otherLang: 'English',
+    language: 'ভাষা',
+    requestLanguage: 'ভাষার অনুরোধ',
     openApp: 'অ্যাপ খুলুন',
     heroTitle: 'সাহায্য ও আপডেট',
     heroText:

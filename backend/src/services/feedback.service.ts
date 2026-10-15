@@ -8,6 +8,7 @@ import {
   REPLY_SUBJECT,
   toSimpleHtml,
 } from './feedbackEmail.templates.js';
+import { LANGUAGE_REQUEST_CATEGORY } from '../validation/feedback.schemas.js';
 
 const httpError = (status: number, message: string): Error & { status: number } => {
   const err = new Error(message) as Error & { status: number };
@@ -68,6 +69,34 @@ export const submitFeedback = async (
   return doc;
 };
 
+/**
+ * A language request from the static pages' globe menu: stored in the
+ * Feedback inbox (category "Language request") with no name or email, so
+ * there is no confirmation email and nothing to reply to. The review inbox
+ * is still told.
+ */
+export const submitLanguageRequest = async (
+  language: string,
+  ipAddress: string,
+  userId: string | null
+): Promise<IFeedbackMessage> => {
+  const doc = await FeedbackMessage.create({
+    name: 'Website visitor',
+    email: '',
+    message: `Language request: ${language.trim()}`,
+    category: [LANGUAGE_REQUEST_CATEGORY],
+    kind: 'feedback',
+    userId,
+    ipAddress,
+  });
+  await sendMail({
+    to: REVIEW_INBOX,
+    from: 'ansar',
+    ...feedbackNotifyAdminEmail(doc, doc._id.toString()),
+  });
+  return doc;
+};
+
 export interface FeedbackListResult {
   messages: IFeedbackMessage[];
   total: number;
@@ -101,7 +130,10 @@ export const replyToFeedback = async (
   if (!doc) throw httpError(404, 'Feedback message not found');
   // Anonymised when the sender deleted their account (user.service deleteAccount).
   if (!doc.email)
-    throw httpError(400, 'The sender deleted their account, so there is no address to reply to.');
+    throw httpError(
+      400,
+      'No address to reply to: the sender deleted their account, or sent a language request without an email.'
+    );
 
   const messageId = await sendMail({
     to: doc.email,

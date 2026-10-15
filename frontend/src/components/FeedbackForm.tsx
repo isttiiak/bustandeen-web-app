@@ -30,10 +30,13 @@ export default function FeedbackForm({
   kind,
   types,
   submitLabel,
+  initialTypeIds = [],
 }: {
   kind: 'feedback' | 'contact';
   types: FormType[];
   submitLabel?: string;
+  /** Types chosen to start with (e.g. from /feedback?type=language). */
+  initialTypeIds?: string[];
 }) {
   const { t } = useTranslation();
   const user = useAuthStore((s) => s.user);
@@ -41,7 +44,7 @@ export default function FeedbackForm({
 
   const [name, setName] = useState(user?.displayName ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>(initialTypeIds);
   const [message, setMessage] = useState('');
   const [botcheck, setBotcheck] = useState('');
   const [sending, setSending] = useState(false);

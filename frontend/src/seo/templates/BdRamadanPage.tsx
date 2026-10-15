@@ -8,6 +8,7 @@ import {
   formatNumber,
   formatWeekday,
   type MonthlyLang,
+  MONTHLY_LANGS,
 } from '../locales/monthly.js';
 import { RAMADAN_BD } from '../locales/ramadanBd.js';
 import Layout, { langPath } from '../components/Layout.js';
@@ -92,6 +93,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
       look="bustan"
       printable
       barePath={barePath}
+      langs={MONTHLY_LANGS}
       breadcrumbs={[
         { label: t.home, path: `${SITE}/` },
         { label: t.breadcrumbRamadan, path: indexUrl },

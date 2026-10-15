@@ -147,6 +147,8 @@ export const LANDING_FAQ: { q: [string, string]; a: [string, string] }[] = [
   },
 ];
 
+// City pages are English only, Bangladesh's also in Bangla (seo/data/cities.ts
+// cityLangs): the Bangla landing links the others to their English page.
 /** `prefix` is the language prefix of the static Bangla landing (`/bn`): its
  * city and tool links go to the Bangla pages. The bare `/qibla` is an app page
  * with no language prefix. */
@@ -176,7 +178,7 @@ export default function LandingSeoSections({
           {POPULAR_CITY_LINKS.map((c) => (
             <li key={c.slug}>
               <a
-                href={`${prefix}/prayer-times/${c.slug}`}
+                href={`${c.slug.endsWith('-bangladesh') ? prefix : ''}/prayer-times/${c.slug}`}
                 className="inline-block px-3 py-1.5 rounded-full border border-brand-border bg-brand-deep text-white/80 text-sm hover:text-brand-emerald hover:border-brand-emerald/40 transition-colors"
               >
                 {c.name}

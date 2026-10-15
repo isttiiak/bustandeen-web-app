@@ -6,7 +6,9 @@
 import type { CalcMethodId } from '../../utils/countryDefaults.js';
 
 export type SeoLang = 'en' | 'bn' | 'ar';
-export const SEO_LANGS: SeoLang[] = ['en', 'bn', 'ar'];
+// The languages pages are published in. Arabic was dropped on 2026-10-15
+// (Istiak): its strings stay here, but no Arabic page is built or linked.
+export const SEO_LANGS: SeoLang[] = ['en', 'bn'];
 export const RTL_LANGS: SeoLang[] = ['ar'];
 
 export interface ChromeStrings {
@@ -15,6 +17,21 @@ export interface ChromeStrings {
   home: string;
   backToLiveApp: string;
   languageLabel: string;
+  /** The globe menu's "Request a language" and its form (2026-10-15). */
+  langRequest: {
+    open: string;
+    title: string;
+    intro: string;
+    typeLabel: string;
+    typeValue: string;
+    languageLabel: string;
+    placeholder: string;
+    cancel: string;
+    send: string;
+    sending: string;
+    sent: string;
+    failed: string;
+  };
   breadcrumbPrayerTimes: string;
   breadcrumbQibla: string;
   breadcrumbRamadan: string;
@@ -171,6 +188,20 @@ const en: ChromeStrings = {
   home: 'Home',
   backToLiveApp: 'Open the live, on-device calculator in the app',
   languageLabel: 'Language',
+  langRequest: {
+    open: 'Request a language',
+    title: 'Request a language',
+    intro: 'Tell us which language you would like Bustandeen in. We read every request.',
+    typeLabel: 'Request',
+    typeValue: 'Language request',
+    languageLabel: 'Language',
+    placeholder: 'e.g. Urdu',
+    cancel: 'Cancel',
+    send: 'Send',
+    sending: 'Sending...',
+    sent: 'JazakAllahu khayran. Your request has reached us.',
+    failed: 'It could not be sent. Please try again in a little while.',
+  },
   breadcrumbPrayerTimes: 'Prayer Times',
   breadcrumbQibla: 'Qibla Direction',
   breadcrumbRamadan: 'Ramadan Calendar',
@@ -421,6 +452,20 @@ const bn: ChromeStrings = {
   home: 'হোম',
   backToLiveApp: 'অ্যাপে লাইভ, অন-ডিভাইস ক্যালকুলেটর খুলুন',
   languageLabel: 'ভাষা',
+  langRequest: {
+    open: 'ভাষার অনুরোধ',
+    title: 'ভাষার অনুরোধ',
+    intro: 'কোন ভাষায় Bustandeen চান, আমাদের জানান। প্রতিটি অনুরোধ আমরা পড়ি।',
+    typeLabel: 'অনুরোধ',
+    typeValue: 'ভাষার অনুরোধ',
+    languageLabel: 'ভাষা',
+    placeholder: 'যেমন: উর্দু',
+    cancel: 'বাতিল',
+    send: 'পাঠান',
+    sending: 'পাঠানো হচ্ছে...',
+    sent: 'জাযাকাল্লাহু খাইরান। আপনার অনুরোধ আমাদের কাছে পৌঁছেছে।',
+    failed: 'পাঠানো যায়নি। কিছুক্ষণ পরে আবার চেষ্টা করুন।',
+  },
   breadcrumbPrayerTimes: 'নামাজের সময়',
   breadcrumbQibla: 'কিবলার দিক',
   breadcrumbRamadan: 'রমজান ক্যালেন্ডার',
@@ -641,6 +686,20 @@ const ar: ChromeStrings = {
   home: 'الرئيسية',
   backToLiveApp: 'افتح الحاسبة المباشرة في التطبيق',
   languageLabel: 'اللغة',
+  langRequest: {
+    open: 'اطلب لغة',
+    title: 'اطلب لغة',
+    intro: 'أخبرنا بأي لغة تريد Bustandeen. نقرأ كل طلب.',
+    typeLabel: 'الطلب',
+    typeValue: 'طلب لغة',
+    languageLabel: 'اللغة',
+    placeholder: 'مثال: الأردية',
+    cancel: 'إلغاء',
+    send: 'إرسال',
+    sending: 'جارٍ الإرسال...',
+    sent: 'جزاكم الله خيرًا. وصلنا طلبك.',
+    failed: 'تعذّر الإرسال. حاول مرة أخرى بعد قليل.',
+  },
   breadcrumbPrayerTimes: 'مواقيت الصلاة',
   breadcrumbQibla: 'اتجاه القبلة',
   breadcrumbRamadan: 'تقويم رمضان',

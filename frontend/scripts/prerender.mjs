@@ -97,10 +97,13 @@ function clientDataTag(client) {
   return `<script type="application/json" id="seo-page">${json}</script>`;
 }
 
-const LANGS = ['en', 'bn', 'ar'];
-// The Bangladesh district timetables (T4.4) exist in English and Bangla only.
+// English and Bangla (Arabic dropped 2026-10-15). City pages: English for
+// every city, Bangla too for Bangladesh (cityLangs in src/seo/data/cities.ts).
+const LANGS = ['en', 'bn'];
 const MONTHLY_KINDS = new Set(['prayer-times-month', 'bd-districts']);
-const langsFor = (kind) => (MONTHLY_KINDS.has(kind) ? ['en', 'bn'] : LANGS);
+const CITY_KINDS = new Set(['prayer-times', 'ramadan-calendar']);
+const langsFor = (kind, params = {}) =>
+  CITY_KINDS.has(kind) ? ssr.cityPageLangs(params.citySlug) : LANGS;
 const OG_LOCALE = { en: 'en_US', bn: 'bn_BD', ar: 'ar_SA' };
 const RTL = new Set(['ar']);
 
@@ -273,7 +276,7 @@ for (const citySlug of bdMonthly.citySlugs) {
     routes.push({ kind: 'prayer-times-month', params: { citySlug, ym } });
   }
 }
-const pageCount = routes.reduce((n, r) => n + langsFor(r.kind).length, 0);
+const pageCount = routes.reduce((n, r) => n + langsFor(r.kind, r.params).length, 0);
 
 console.error(
   `Prerendering ${routes.length} routes in up to ${LANGS.length} languages = ${pageCount} pages...`
@@ -298,7 +301,7 @@ const sitemapBucket = (kind) => {
 let count = 0;
 const start = Date.now();
 for (const { kind, params } of routes) {
-  const langs = langsFor(kind);
+  const langs = langsFor(kind, params);
   for (const lang of langs) {
     const ssrRoute =
       kind === 'prayer-times-month'

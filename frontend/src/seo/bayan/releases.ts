@@ -20,6 +20,30 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.170.0',
+    date: '2026-10-15',
+    text: {
+      en: {
+        title: 'One globe for language, and ask for yours',
+        added: [
+          'The language button is now a single globe. On the information pages it opens a short menu of languages, with Request a language: tell us which language you want Bustandeen in, without leaving the page. You can also choose Request a language on the Feedback page.',
+        ],
+        fixed: [
+          "City prayer-time and Ramadan pages are now in English, and Bangladesh's are in Bangla too. Arabic pages are gone, and old Arabic links open the English page.",
+        ],
+      },
+      bn: {
+        title: 'ভাষার জন্য একটি গ্লোব, আর নিজের ভাষা চেয়ে নিন',
+        added: [
+          'ভাষার বোতাম এখন শুধু একটি গ্লোব। তথ্যের পাতাগুলোতে এটি ভাষার একটি ছোট তালিকা খোলে, সাথে ভাষার অনুরোধ: পাতা না ছেড়েই জানান কোন ভাষায় Bustandeen চান। মতামতের পাতাতেও ভাষার অনুরোধ বেছে নিতে পারেন।',
+        ],
+        fixed: [
+          'শহরের নামাযের সময় ও রমজানের পাতা এখন ইংরেজিতে, আর বাংলাদেশের পাতা বাংলাতেও। আরবি পাতা আর নেই, পুরোনো আরবি লিংক ইংরেজি পাতা খোলে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.169.0',
     date: '2026-10-15',
     text: {

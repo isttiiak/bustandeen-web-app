@@ -16,6 +16,18 @@ export const submitFeedbackSchema = z.object({
   params: z.object({}).optional(),
 });
 
+/** "Request a language" from the globe menu on the static pages (2026-10-15):
+ * only the language's name, no account, name or email. */
+export const LANGUAGE_REQUEST_CATEGORY = 'Language request';
+export const submitLanguageRequestSchema = z.object({
+  body: z.object({
+    language: z.string().trim().min(2).max(60),
+    botcheck: z.string().optional(),
+  }),
+  query: z.object({}).optional(),
+  params: z.object({}).optional(),
+});
+
 export const replyFeedbackSchema = z.object({
   body: z.object({
     body: z.string().trim().min(1).max(4000),

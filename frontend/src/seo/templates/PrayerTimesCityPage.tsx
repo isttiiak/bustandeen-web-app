@@ -1,4 +1,4 @@
-import { cityCountry, cityLabel, cityName, type CityEntry } from '../data/cities.js';
+import { cityCountry, cityLabel, cityLangs, cityName, type CityEntry } from '../data/cities.js';
 import { bdDistrictForCity } from '../data/bdDistricts.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import { MONTHLY } from '../locales/monthly.js';
@@ -75,6 +75,7 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
     <Layout
       lang={lang}
       barePath={`/prayer-times/${city.slug}`}
+      langs={cityLangs(city)}
       breadcrumbs={[
         { label: t.home, path: 'https://bustandeen.com/' },
         { label: t.breadcrumbPrayerTimes, path: 'https://bustandeen.com/prayer-times' },

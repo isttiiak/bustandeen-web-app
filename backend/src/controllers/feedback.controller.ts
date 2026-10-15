@@ -32,3 +32,26 @@ export const submitHandler = async (
     next(err);
   }
 };
+
+/** POST /api/feedback/language: lands in the same Feedback inbox. */
+export const languageRequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { language, botcheck } = req.body as { language: string; botcheck?: string };
+    if (botcheck) {
+      res.json({ ok: true });
+      return;
+    }
+    await feedbackService.submitLanguageRequest(
+      language,
+      req.ip ?? 'unknown',
+      req.user?.uid ?? null
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+};

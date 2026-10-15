@@ -50,6 +50,19 @@ export function cityBySlug(slug: string): CityEntry | undefined {
   return BY_SLUG.get(slug);
 }
 
+/** The languages a city's pages exist in (Istiak, 2026-10-15): English for
+ * every city; Bangla too for Bangladesh, where people search in Bangla. No
+ * Arabic city pages. The landing page (LandingSeoSections) mirrors this rule. */
+export function cityLangs(city: Pick<CityEntry, 'countryCode'>): SeoLang[] {
+  return city.countryCode === 'BD' ? ['en', 'bn'] : ['en'];
+}
+
+/** A link to one of the city's pages in `lang`, or in English when the city
+ * has no page in that language. */
+export function cityHref(lang: SeoLang, city: CityEntry, path: string): string {
+  return lang !== 'en' && cityLangs(city).includes(lang) ? `/${lang}${path}` : path;
+}
+
 /** The city's name in the page language: Bangla district names on the
  * Bangla pages of district HQ towns, otherwise the English name. */
 export function cityName(city: CityEntry, lang: SeoLang): string {

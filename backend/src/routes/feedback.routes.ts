@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { validate } from '../middleware/validate.js';
-import { submitFeedbackSchema } from '../validation/feedback.schemas.js';
+import {
+  submitFeedbackSchema,
+  submitLanguageRequestSchema,
+} from '../validation/feedback.schemas.js';
 import { feedbackSubmitLimiter } from '../middleware/rateLimiter.js';
 import * as feedbackController from '../controllers/feedback.controller.js';
 
@@ -13,6 +16,14 @@ router.post(
   feedbackSubmitLimiter,
   validate(submitFeedbackSchema),
   feedbackController.submitHandler
+);
+
+// Public: a language request from the static pages' globe menu.
+router.post(
+  '/language',
+  feedbackSubmitLimiter,
+  validate(submitLanguageRequestSchema),
+  feedbackController.languageRequestHandler
 );
 
 export default router;
