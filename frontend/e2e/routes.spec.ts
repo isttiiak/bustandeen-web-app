@@ -44,6 +44,7 @@ const ROUTES = [
   '/library/adhkar',
   '/library/asma-ul-husna',
   '/library/zakat-calculator',
+  '/library/calendar',
   '/login',
   '/signup',
   // Prerendered SEO routes, taken over by the client router

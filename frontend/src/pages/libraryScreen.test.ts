@@ -7,7 +7,7 @@ import { DUAS } from '../seo/content/duas.js';
 import { MORNING_ADHKAR, EVENING_ADHKAR } from '../seo/content/adhkar.js';
 import { ASMA_UL_HUSNA } from '../seo/content/asmaUlHusna.js';
 
-// T3.2 Library (du'as, adhkar, 99 Names, zakat calculator): the four screens
+// T3.2 Library (du'as, adhkar, 99 Names, zakat calculator, Islamic calendar): the screens
 // and their shared parts draw SVG icons only, have one arch each, no emoji,
 // em dash, hard-coded colour or glow, and every string they show (library.*,
 // the zakat chrome, the du'a/adhkar/Names data) is free of emoji and em
@@ -19,11 +19,15 @@ const files = import.meta.glob<string>(
     './AdhkarLibrary.tsx',
     './AsmaUlHusnaLibrary.tsx',
     './ZakatCalculatorLibrary.tsx',
+    './IslamicCalendar.tsx',
     '../components/library/libraryParts.tsx',
+    '../components/calendar/*.tsx',
   ],
   { query: '?raw', import: 'default', eager: true }
 );
-const SCREENS = Object.keys(files).filter((p) => p.endsWith('Library.tsx'));
+const SCREENS = Object.keys(files).filter(
+  (p) => p.endsWith('Library.tsx') || p.endsWith('IslamicCalendar.tsx')
+);
 const DASH_OR_EMOJI = /—|\p{Extended_Pictographic}|[✓✔→←]/u;
 const stripComments = (code: string) => code.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
 /** Quran / du'a translations, quoted as translated. */
@@ -39,8 +43,8 @@ const strings = (node: unknown, prefix: string): [string, string][] =>
 
 describe('Library screens', () => {
   it('finds the files', () => {
-    expect(Object.keys(files).length).toBe(5);
-    expect(SCREENS.length).toBe(4);
+    expect(Object.keys(files).length).toBe(9);
+    expect(SCREENS.length).toBe(5);
   });
 
   it.each(Object.keys(files))('%s renders no emoji or em dash', (path) => {
@@ -67,6 +71,7 @@ describe('Library screens', () => {
       '/library/adhkar',
       '/library/asma-ul-husna',
       '/library/zakat-calculator',
+      '/library/calendar',
     ]) {
       const entries = navbar.split(`'${path}'`).length - 1;
       expect(entries, path).toBe(3); // PAGE_KEYS, PAGE_META, PARENT_ROUTES
