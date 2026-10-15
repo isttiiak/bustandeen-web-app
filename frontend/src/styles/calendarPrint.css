@@ -1,0 +1,509 @@
+/* Islamic calendar download (Library): the printed sheets. Drawn into
+   #pc-print-root only while printing; on screen the root is hidden. The page
+   size and orientation come from an @page rule injected for that print
+   (utils/calendarPrint.ts pageRule). Layout "Corners", approved prototype v3
+   (docs/design/hijri-calendar.html). The paper tokens below are print-only
+   colours (each template, and black and white). */
+
+#pc-print-root {
+  display: none;
+}
+
+@media print {
+  /* overflow-x: hidden on html/body (global.css) makes them scroll boxes,
+     and the browser then prints only their first page. */
+  html.pc-printing,
+  html.pc-printing body {
+    background: #fff !important;
+    color-scheme: light !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  html.pc-printing body > *:not(#pc-print-root) {
+    display: none !important;
+  }
+  html.pc-printing #pc-print-root {
+    display: block;
+  }
+}
+
+/* Paper tokens: Bustan (default) */
+.pc-page {
+  --pc-bg: #fbfaf3;
+  --pc-ink: #1f2418;
+  --pc-n2: #3f4636;
+  --pc-n3: #5b6450;
+  --pc-muted: #5b6450;
+  --pc-isl: #2f6b3a;
+  --pc-hol: #b3261e;
+  --pc-nat: #9a7417;
+  --pc-wkd: #8a5a2b;
+  --pc-wkdbg: #f5ede3;
+  --pc-line: #d6dcc4;
+  --pc-headbg: #36512e;
+  --pc-headink: #ffffff;
+  --pc-headsub: #e9dfc4;
+}
+.pc-page.pc-classic {
+  --pc-bg: #ffffff;
+  --pc-line: #d9d9d9;
+  --pc-wkdbg: #f7f0e8;
+}
+.pc-page.pc-minimal {
+  --pc-bg: #ffffff;
+  --pc-ink: #222222;
+  --pc-n2: #444444;
+  --pc-n3: #666666;
+  --pc-muted: #6b6b6b;
+  --pc-line: #e4e4e4;
+  --pc-wkdbg: #ffffff;
+  --pc-headbg: #ffffff;
+  --pc-headink: #222222;
+  --pc-headsub: #6b6b6b;
+}
+.pc-page.pc-mono {
+  --pc-bg: #ffffff;
+  --pc-ink: #000000;
+  --pc-n2: #222222;
+  --pc-n3: #444444;
+  --pc-muted: #444444;
+  --pc-isl: #000000;
+  --pc-hol: #000000;
+  --pc-nat: #000000;
+  --pc-wkd: #000000;
+  --pc-wkdbg: #ececec;
+  --pc-line: #9a9a9a;
+  --pc-headbg: #ffffff;
+  --pc-headink: #000000;
+  --pc-headsub: #333333;
+}
+
+.pc-page {
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 0 0 16px;
+  background: var(--pc-bg);
+  color: var(--pc-ink);
+  font-family: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  break-after: page;
+  page-break-after: always;
+}
+.pc-page:last-child {
+  break-after: auto;
+  page-break-after: auto;
+}
+.pc-page *,
+.pc-page *::before,
+.pc-page *::after {
+  box-sizing: border-box;
+}
+.pc-bn {
+  font-family: 'Hind Siliguri', 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Header */
+.pc-head {
+  background: var(--pc-headbg);
+  color: var(--pc-headink);
+  padding: 18px 40px 16px;
+  display: flex;
+  align-items: flex-end;
+  gap: 24px;
+}
+.pc-bustan .pc-head {
+  padding-bottom: 30px;
+  border-radius: 0 0 50% 50% / 0 0 22px 22px;
+}
+.pc-minimal .pc-head,
+.pc-mono .pc-head {
+  border-bottom: 2px solid var(--pc-ink);
+}
+.pc-title {
+  flex: 1;
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+.pc-title b {
+  font-family: 'El Messiri', Georgia, serif;
+  font-size: 34px;
+  line-height: 1.1;
+}
+.pc-title span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pc-headsub);
+}
+.pc-brand {
+  text-align: right;
+  font-size: 12px;
+  color: var(--pc-headsub);
+  display: grid;
+  gap: 2px;
+}
+.pc-brand b {
+  font-family: 'El Messiri', Georgia, serif;
+  font-size: 20px;
+  color: var(--pc-headink);
+}
+
+/* Body: grid + side column (below the grid in portrait) */
+.pc-body {
+  display: grid;
+  grid-template-columns: 1fr 230px;
+  gap: 22px;
+  padding: 16px 36px 0;
+  min-height: 0;
+}
+.pc-portrait .pc-body {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
+}
+.pc-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-top: 1px solid var(--pc-line);
+  border-left: 1px solid var(--pc-line);
+  min-height: 0;
+}
+.pc-grid > div {
+  border-right: 1px solid var(--pc-line);
+  border-bottom: 1px solid var(--pc-line);
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+.pc-wd {
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  display: grid;
+  place-items: center;
+  color: var(--pc-muted);
+}
+.pc-wd.pc-we {
+  color: var(--pc-wkd);
+  background: var(--pc-wkdbg);
+}
+.pc-c.pc-we {
+  background: var(--pc-wkdbg);
+}
+.pc-c.pc-blank {
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 6px,
+    color-mix(in srgb, var(--pc-line) 35%, transparent) 6px 7px
+  );
+}
+.pc-n1 {
+  position: absolute;
+  left: 8px;
+  top: 5px;
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--pc-ink);
+}
+.pc-c.pc-we .pc-n1 {
+  color: var(--pc-wkd);
+}
+.pc-c.pc-hol .pc-n1 {
+  color: var(--pc-hol);
+}
+.pc-mono .pc-c.pc-hol .pc-n1 {
+  text-decoration: underline;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 3px;
+}
+/* Second calendar top right (13px); third under the big number (12px). */
+.pc-n2 {
+  position: absolute;
+  right: 8px;
+  top: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--pc-n2);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+.pc-n3 {
+  position: absolute;
+  left: 9px;
+  top: 39px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  color: var(--pc-n3);
+  font-variant-numeric: tabular-nums;
+}
+.pc-mk {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 1px 4px;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+/* A month start in the top-right corner wraps instead of reaching the big number. */
+.pc-n2 .pc-mk {
+  display: inline-block;
+  white-space: normal;
+  max-width: 50px;
+  text-align: right;
+}
+.pc-evs {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 4px;
+  display: grid;
+  gap: 2px;
+}
+.pc-ev {
+  font-size: 9.5px;
+  font-weight: 700;
+  line-height: 1.15;
+  padding: 1px 4px 1px 5px;
+  border-left: 3px solid currentColor;
+  border-radius: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pc-ev.pc-islamic {
+  color: var(--pc-isl);
+  background: color-mix(in srgb, var(--pc-isl) 9%, transparent);
+}
+.pc-ev.pc-holiday {
+  color: var(--pc-hol);
+  background: color-mix(in srgb, var(--pc-hol) 9%, transparent);
+}
+.pc-ev.pc-national {
+  color: var(--pc-nat);
+  background: color-mix(in srgb, var(--pc-nat) 10%, transparent);
+}
+.pc-mono .pc-ev {
+  background: none;
+}
+.pc-mono .pc-ev.pc-islamic {
+  border-left-style: double;
+}
+.pc-mono .pc-ev.pc-national {
+  border-left-style: dotted;
+}
+.pc-ev.pc-more {
+  color: var(--pc-muted);
+  border-left-color: transparent;
+  background: none;
+}
+.pc-lines {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  height: 34px;
+  background: repeating-linear-gradient(
+    transparent 0 16px,
+    color-mix(in srgb, var(--pc-line) 80%, transparent) 16px 17px
+  );
+}
+
+/* Side column: This month + colour guide */
+.pc-side {
+  display: grid;
+  align-content: start;
+  gap: 16px;
+  font-size: 12px;
+  min-height: 0;
+}
+.pc-portrait .pc-side {
+  grid-template-columns: 1.4fr 1fr;
+  align-items: start;
+}
+.pc-side h4 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pc-muted);
+}
+.pc-side ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 5px;
+}
+.pc-side li {
+  display: grid;
+  /* The date column fits "20 Oct" and "২০ অক্টো" on one line. */
+  grid-template-columns: 10px minmax(40px, max-content) 1fr;
+  white-space: normal;
+  gap: 6px;
+  line-height: 1.3;
+  align-items: baseline;
+}
+.pc-side li b {
+  font-variant-numeric: tabular-nums;
+}
+.pc-side li.pc-islamic span {
+  color: var(--pc-isl);
+  font-weight: 700;
+}
+.pc-side li.pc-holiday span {
+  color: var(--pc-hol);
+  font-weight: 700;
+}
+.pc-side li.pc-national span {
+  color: var(--pc-nat);
+  font-weight: 700;
+}
+.pc-sw {
+  width: 9px;
+  height: 9px;
+  display: inline-block;
+  border-radius: 2px;
+}
+.pc-sw.pc-islamic {
+  background: var(--pc-isl);
+  border-radius: 50%;
+}
+.pc-sw.pc-holiday {
+  background: var(--pc-hol);
+}
+.pc-sw.pc-national {
+  background: var(--pc-nat);
+  transform: rotate(45deg) scale(0.85);
+}
+.pc-sw.pc-weekend {
+  background: var(--pc-wkdbg);
+  border: 1px solid var(--pc-wkd);
+}
+.pc-key {
+  display: grid;
+  gap: 5px;
+}
+.pc-key > span {
+  display: grid;
+  grid-template-columns: 10px 1fr;
+  gap: 7px;
+  align-items: center;
+}
+.pc-pos {
+  display: grid;
+  grid-template-columns: 54px 1fr;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.pc-pos .pc-box {
+  position: relative;
+  width: 54px;
+  height: 42px;
+  border: 1px solid var(--pc-line);
+  background: var(--pc-bg);
+}
+.pc-pos .pc-box i {
+  position: absolute;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1;
+}
+.pc-pos .pc-a {
+  left: 4px;
+  top: 3px;
+  font-size: 16px;
+}
+.pc-pos .pc-b {
+  right: 4px;
+  top: 4px;
+  font-size: 8px;
+  color: var(--pc-n2);
+}
+.pc-pos .pc-cc {
+  left: 5px;
+  top: 21px;
+  font-size: 7.5px;
+  color: var(--pc-n3);
+}
+.pc-pos ol {
+  margin: 0;
+  padding-left: 16px;
+  display: grid;
+  gap: 2px;
+  font-size: 11px;
+}
+
+.pc-foot {
+  padding: 8px 36px 0;
+  font-size: 10.5px;
+  color: var(--pc-muted);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* Year at a glance */
+.pc-yr {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 18px;
+  padding: 14px 36px 0;
+}
+.pc-portrait .pc-yr {
+  grid-template-columns: repeat(3, 1fr);
+}
+.pc-ym h5 {
+  margin: 0 0 4px;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+.pc-ym h5 small {
+  font-size: 9.5px;
+  color: var(--pc-n2);
+  font-weight: 700;
+  text-align: right;
+}
+.pc-g7 {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  font-variant-numeric: tabular-nums;
+}
+.pc-g7 span {
+  text-align: center;
+  font-size: 10.5px;
+  font-weight: 700;
+  line-height: 1.05;
+  padding: 2px 0;
+}
+.pc-g7 span small {
+  display: block;
+  font-size: 7.5px;
+  color: var(--pc-n2);
+}
+.pc-g7 .pc-w {
+  font-size: 8px;
+  color: var(--pc-muted);
+}
+.pc-g7 .pc-we {
+  background: var(--pc-wkdbg);
+  color: var(--pc-wkd);
+}
+.pc-g7 .pc-h {
+  color: var(--pc-hol);
+  text-decoration: underline;
+}

@@ -2,6 +2,31 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.173.0 - Islamic calendar, part 3: download as PDF - 2026-10-15
+
+Last of three PRs for the Islamic calendar (prototype `docs/design/hijri-calendar.html`, approved v3, layout "Corners").
+
+### Added
+
+- **Download** button on `/library/calendar` and its drawer (`components/calendar/DownloadSheet.tsx`):
+  - **Calendars in order** (1 to 3): the 1st is the big number, the 2nd sits top right, the 3rd under the big number one size smaller.
+  - **What:** this month, a full year (12 pages, or 1 page "year at a glance" with the first two calendars), or a range of months (From / To, up to two years).
+  - **Inside each day:** the day's events (colour coded, two lines then "+N more") or ruled lines to write on.
+  - **Paper** A4 (default) or Letter, **landscape** (default) or portrait, **colour** with three templates (Bustan, Classic in our green, Minimal) or **black and white** (line styles instead of colours, holidays underlined).
+  - **Before you save** notice (Hijri dates begin at Maghrib, expected months can move by a day, holidays from the official list, choose "Save as PDF") with Cancel or Open print sheet. The explanation is no longer printed on the sheet.
+- **The sheets** (`components/calendar/print/PrintSheets.tsx`, `styles/calendarPrint.css`): header with the month and the other calendars' months (Bustan's arch kept clear of the corner text), the grid with weekend shading and holidays in red, a side column "This month" (every event; White Days as one line) and a colour guide with a diagram of where each calendar's number sits, footer "Made with Bustandeen" / "bustandeen.com/calendar". Paper colours are print tokens in the stylesheet.
+- **How it prints:** the sheets are drawn only for the print, with an `@page` rule for the chosen paper and orientation, then the browser's print window opens (the same approach as the Ramadan "Download PDF"; the browser shapes Bangla and Arabic, nothing is uploaded, no PDF library).
+- `utils/calendarPrint.ts`: which months a download covers (an English year is January to December, a Hijri year Muharram to Dhul Hijjah, a Bengali year Boishakh to Chaitra), the day box and side column contents, sheet sizes, the `@page` rule.
+
+### Fixed
+
+- Printing a long calendar stopped after the first page: `overflow-x: hidden` on `html`/`body` (global.css) made them scroll boxes, which print one page. While a calendar prints they are `overflow: visible`.
+
+### Tests
+
+- New `calendarPrint.test.ts` (months for month / year in each calendar / range, "+N more", White Days as one list line, sheet sizes, `@page`).
+- New e2e `calendar-print.spec.ts` (`window.print` stubbed, real PDFs from `page.pdf`): Cancel prints nothing; this month is one A4 landscape page with all three calendars (1 Jumādā al-Ūlā top right on 13 Oct, its Bengali date ২৮ under the number, holidays in the box and the side column), no day box overflows and no corner label touches the big number; a full year is 12 pages; year at a glance in black and white is 1 page; portrait Letter with Hijri first and blank days is 1 page.
+
 ## v5.172.0 - Islamic calendar, part 2: the calendar screen - 2026-10-15
 
 Second of three PRs for the Islamic calendar (prototype `docs/design/hijri-calendar.html`, approved v3). The download (print to PDF) is part 3.

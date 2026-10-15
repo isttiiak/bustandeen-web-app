@@ -62,7 +62,8 @@ export function isMonthStart(kind: CalendarKind, d: CalendarDay): boolean {
   return d.bengali.day === 1;
 }
 
-const monthName = (kind: CalendarKind, d: CalendarDay, t: TFunction) =>
+/** The month name of a day in a calendar (Bengali in Bangla). */
+export const monthName = (kind: CalendarKind, d: CalendarDay, t: TFunction) =>
   kind === 'greg'
     ? gregLabel(d.ymd, { month: 'long' })
     : kind === 'hijri'

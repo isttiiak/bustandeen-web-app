@@ -22,6 +22,7 @@ const files = import.meta.glob<string>(
     './IslamicCalendar.tsx',
     '../components/library/libraryParts.tsx',
     '../components/calendar/*.tsx',
+    '../components/calendar/print/*.tsx',
   ],
   { query: '?raw', import: 'default', eager: true }
 );
@@ -43,7 +44,7 @@ const strings = (node: unknown, prefix: string): [string, string][] =>
 
 describe('Library screens', () => {
   it('finds the files', () => {
-    expect(Object.keys(files).length).toBe(9);
+    expect(Object.keys(files).length).toBe(11);
     expect(SCREENS.length).toBe(5);
   });
 

@@ -1,6 +1,11 @@
-import { useReducer, useState, type ReactNode } from 'react';
+import { useEffect, useReducer, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { AdjustmentsHorizontalIcon, CalendarDaysIcon } from '@heroicons/react/24/outline';
+import {
+  AdjustmentsHorizontalIcon,
+  ArrowDownTrayIcon,
+  CalendarDaysIcon,
+} from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
 import Seo from '../components/Seo.js';
 import { CARD, OPTION_OFF, OPTION_ON } from '../components/bustanStyles.js';
@@ -8,6 +13,9 @@ import { ARABIC_STYLE, LibraryHero } from '../components/library/libraryParts.js
 import MonthGrid, { EVENT_DOT } from '../components/calendar/MonthGrid.js';
 import { DayDetails, EventList } from '../components/calendar/CalendarLists.js';
 import CalendarSettingsSheet from '../components/calendar/CalendarSettingsSheet.js';
+import DownloadSheet from '../components/calendar/DownloadSheet.js';
+import PrintSheets from '../components/calendar/print/PrintSheets.js';
+import { pageRule, printMonths, type PrintOptions } from '../utils/calendarPrint.js';
 import {
   HIJRI_MONTHS_AR,
   bengaliLabel,
@@ -80,6 +88,34 @@ export default function IslamicCalendar() {
   const [anchor, setAnchor] = useState(today);
   const [selected, setSelected] = useState(today);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [downloadOpen, setDownloadOpen] = useState(false);
+  // A download in progress: the sheets are drawn, then the print window opens.
+  const [printJob, setPrintJob] = useState<PrintOptions | null>(null);
+
+  useEffect(() => {
+    if (!printJob) return;
+    const rule = document.createElement('style');
+    rule.textContent = pageRule(printJob);
+    document.head.appendChild(rule);
+    document.documentElement.classList.add('pc-printing');
+    let live = true;
+    const done = () => setPrintJob(null);
+    window.addEventListener('afterprint', done);
+    // Fonts first, then two frames so the sheets are laid out.
+    void document.fonts.ready.then(() =>
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          if (live) window.print();
+        })
+      )
+    );
+    return () => {
+      live = false;
+      window.removeEventListener('afterprint', done);
+      rule.remove();
+      document.documentElement.classList.remove('pc-printing');
+    };
+  }, [printJob]);
 
   const gridKinds = prefs.layers.filter((k): k is 'greg' | 'hijri' => k !== 'bn');
   const grid: CalendarKind = gridKinds.includes(prefs.grid as 'greg' | 'hijri')
@@ -364,6 +400,14 @@ export default function IslamicCalendar() {
             >
               <AdjustmentsHorizontalIcon className="w-5 h-5" aria-hidden="true" />
             </button>
+            <button
+              type="button"
+              onClick={() => setDownloadOpen(true)}
+              aria-label={t('calendar.download')}
+              className="btn-solid w-11 h-11 grid place-items-center rounded-control bg-brand-emerald-dim text-on-color shadow-elev-1"
+            >
+              <ArrowDownTrayIcon className="w-5 h-5" aria-hidden="true" />
+            </button>
           </div>
 
           <MonthGrid
@@ -425,6 +469,44 @@ export default function IslamicCalendar() {
         onLocation={onLocation}
         onHijriChange={redraw}
       />
+      <DownloadSheet
+        key={String(downloadOpen)}
+        open={downloadOpen}
+        onClose={() => setDownloadOpen(false)}
+        layers={prefs.layers}
+        grid={grid}
+        anchor={anchor}
+        day={day}
+        onPrint={(o) => {
+          setDownloadOpen(false);
+          setPrintJob(o);
+        }}
+      />
+      {printJob &&
+        createPortal(
+          <div id="pc-print-root" data-testid="calendar-print">
+            <PrintSheets
+              anchors={printMonths(anchor, printJob, day)}
+              options={printJob}
+              day={day}
+              eventsOf={eventsOf}
+              weekStart={prefs.weekStart}
+              weekend={prefs.weekend}
+              today={today}
+              countryLabel={countryLabel}
+              kinds={(
+                [
+                  ['islamic', prefs.show.islamic],
+                  ['holiday', prefs.show.holidays && years.length > 0],
+                  ['national', prefs.show.national && years.length > 0],
+                ] as const
+              )
+                .filter(([, on]) => on)
+                .map(([k]) => k)}
+            />
+          </div>,
+          document.body
+        )}
     </AnimatedBackground>
   );
 }
