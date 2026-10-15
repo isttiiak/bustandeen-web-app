@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.170.1 - No repeated Hijri day before a late moon sighting - 2026-10-15
+
+### Fixed
+
+- **A Hijri day could repeat before a month that began late** (found while prototyping the Islamic calendar). With Bangladesh's record "Jumādā al-Ūlā 1448 began 13 Oct 2026" and no record for Rabīʿ al-Ākhir, both 11 and 12 Oct read "30 Rabīʿ al-Ākhir" (a 31-day month), on Home and everywhere the Hijri date shows. A month has 29 or 30 days, so when a country begins a month a day after Umm al-Qura, the month before ended a day later too; `resolveHijriDay` (`utils/hijriOffset.ts`) now carries that day back to the nearest month that can take it (`approachRecord`): a 29-day Umm al-Qura month gets its 30th, and the days in between follow Umm al-Qura one day later. Now 12 Sep = 30 Rabīʿ al-Awwal, 13 Sep = 1 Rabīʿ al-Ākhir, 12 Oct = 30 Rabīʿ al-Ākhir, 13 Oct = 1 Jumādā al-Ūlā. The mirror case (a month that began early) drops the 30th of the nearest 30-day month; a shift of two days uses two months. Records that cannot fit any month within a year keep the old rule. The prerendered Ramadan calendars use the same function; with today's records their dates do not change.
+- Example from the tests: a Ramadan 1448 record of 9 Feb alone used to show "30 Shaʿbān" on both 7 and 8 Feb; now 7 Feb = 29 and 8 Feb = 30 Shaʿbān, and Jumādā al-Ākhirah gets its 30th on 10 Dec.
+
+### Tests
+
+- `hijriOffset.test.ts`: T12 (the live Bangladesh record, day by day around both month ends), T2 updated, and T13: for every month of 1447 and 1448 a record at each allowed shift (-2 to +2), and pairs of records with two months between them, every day is the day after the one before and every month has 29 or 30 days.
+
 ## v5.170.0 - English city pages, no Arabic pages, a globe language menu and "Request a language" - 2026-10-15
 
 ### Changed

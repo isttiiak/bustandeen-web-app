@@ -95,6 +95,62 @@ export function nextHijriMonth(year: number, month: number): { year: number; mon
   return month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
 }
 
+/** Umm al-Qura's 1st of the month that `day` falls in. */
+const uqMonthStart = (day: string): string => addDays(day, 1 - ummAlQura(day).day);
+
+/** Days [from, to) shown as Umm al-Qura shifted by `shift`; `from` itself is the
+ * 30th of the month before when `thirtieth` is set. */
+interface Approach {
+  from: string;
+  to: string;
+  shift: number;
+  thirtieth: boolean;
+}
+
+/**
+ * The days just before a record whose shift differs from the one in force
+ * (`base`: the previous record's shift, or 0). A late start means the month
+ * before it ended a day later, an early start a day sooner; since every month
+ * has 29 or 30 days, the difference goes back to the nearest month that can
+ * take it: a 29-day Umm al-Qura month gains its 30th, or a 30-day one loses
+ * it. Between that month and the record, days follow Umm al-Qura shifted by
+ * the record's shift. One step per day of difference (a shift of 2 needs two
+ * such months). `floor`: the first day the previous record no longer covers.
+ * null when no month within a year can take it (records that contradict
+ * each other): the caller then keeps the old rule.
+ */
+function approachRecord(
+  next: MoonSightingRecord,
+  base: number,
+  floor: string | null
+): Approach[] | null {
+  const out: Approach[] = [];
+  let shift = recordShift(next)!;
+  let to = next.startDate;
+  // Umm al-Qura month starts, newest first, from just after the record; each
+  // month can take one day only, so the next step looks further back.
+  let start = uqMonthStart(addDays(to, 2));
+  while (shift !== base) {
+    const late = shift < base;
+    let found: Approach | null = null;
+    for (let i = 0; i < 13 && !found; i++, start = uqMonthStart(addDays(start, -1))) {
+      const before = ummAlQura(addDays(start, -1)).day;
+      // late: the 29th of a 29-day month repeats on `from`, shown as its 30th;
+      // early: the 30th of a 30-day month is skipped at `from`.
+      const from = late ? addDays(start, -shift - 1) : addDays(start, -shift);
+      if (floor !== null && from < floor) break;
+      if (late ? before === 29 && from < to : before === 30 && from <= to) {
+        found = { from, to, shift, thirtieth: late };
+      }
+    }
+    if (!found) return null;
+    out.push(found);
+    to = found.from;
+    shift += late ? 1 : -1;
+  }
+  return out;
+}
+
 const isNextMonth = (a: MoonSightingRecord, b: MoonSightingRecord): boolean => {
   const n = nextHijriMonth(a.hijriYear, a.hijriMonth);
   return b.hijriYear === n.year && b.hijriMonth === n.month;
@@ -105,8 +161,10 @@ const isNextMonth = (a: MoonSightingRecord, b: MoonSightingRecord): boolean => {
  *   - The user's own offset wins: Umm al-Qura shifted by it.
  *   - R = the country's latest record that has started: its month, day n,
  *     for n up to 29, and day 30 when the next month's record starts later.
- *   - Just before a record that began late, its shift applies backwards, so
- *     Umm al-Qura's 1st never shows a day early ("30 Sha'ban", not "1 Ramadan").
+ *   - Before a record that began late (or early), its shift applies backwards
+ *     to the nearest month that can take the extra (or missing) day, so
+ *     Umm al-Qura's 1st never shows a day early ("30 Sha'ban", not "1 Ramadan")
+ *     and no day repeats (approachRecord).
  *   - Otherwise Umm al-Qura shifted by R's shift (a forecast until the next
  *     announcement), or plain Umm al-Qura before the country's first record.
  */
@@ -152,8 +210,20 @@ export function resolveHijriDay(input: {
     }
   }
   if (next) {
+    const base = prev ? recordShift(prev)! : 0;
+    const steps = approachRecord(next, base, prev ? addDays(prev.startDate, 29) : null);
+    const step = steps?.find((s) => s.from <= day && day < s.to);
+    if (step) {
+      const h = ummAlQura(addDays(day, step.shift));
+      return {
+        hijri: step.thirtieth && day === step.from ? { ...h, day: 30 } : h,
+        offset: step.shift,
+        source: 'country',
+        record: next,
+      };
+    }
     const offset = recordShift(next)!;
-    if (offset < 0 && daysBetween(day, next.startDate) <= -offset) {
+    if (!steps && offset < 0 && daysBetween(day, next.startDate) <= -offset) {
       return {
         hijri: ummAlQura(addDays(day, offset)),
         offset,
