@@ -2,8 +2,7 @@ import type { ReactNode } from 'react';
 import type { SeoLang } from '../locales/chrome.js';
 import { CHROME, RTL_LANGS, SEO_LANGS } from '../locales/chrome.js';
 import { BrandMark } from '../../components/BrandMark.js';
-
-const LANG_LABEL: Record<SeoLang, string> = { en: 'EN', bn: 'বাং', ar: 'عربي' };
+import LanguageMenu from './LanguageMenu.js';
 
 // Deliberately not importing AnimatedBackground, Zustand, Firebase or
 // React Query — this whole src/seo/ tree is rendered server-side via
@@ -28,7 +27,7 @@ interface LayoutProps {
   barePath: string;
   breadcrumbs: BreadcrumbItem[];
   children: ReactNode;
-  /** Languages this page exists in (default: all three). */
+  /** Languages this page exists in (default: English and Bangla). */
   langs?: readonly SeoLang[];
   /** 'bustan': the app's Bustan Arch tokens, dark or light (T4.4 pages);
    * default: the original slate SEO palette, dark only. */
@@ -43,8 +42,6 @@ const LOOKS = {
     page: 'min-h-screen bg-[#080c12] text-[#f1f5f9]',
     header: 'border-b border-[#1e2d42]',
     logo: 'text-[#f1f5f9]',
-    langOn: 'bg-[#10b981] text-[#080c12]',
-    langOff: 'text-[#94a3b8] border border-[#1e2d42] hover:text-[#10b981]',
     muted: 'text-[#94a3b8]',
     link: 'hover:text-[#10b981]',
     current: 'text-[#f1f5f9]',
@@ -54,8 +51,6 @@ const LOOKS = {
     page: 'min-h-screen bg-brand-void text-white',
     header: 'border-b border-brand-border',
     logo: 'text-white font-display',
-    langOn: 'bg-brand-emerald-dim text-on-color',
-    langOff: 'text-white/70 border border-brand-border hover:text-brand-emerald',
     muted: 'text-white/70',
     link: 'hover:text-brand-emerald',
     current: 'text-white',
@@ -104,20 +99,12 @@ export default function Layout({
               <BrandMark variant="small" className="h-7 w-7" />
               {t.siteName}
             </a>
-            <nav aria-label={t.languageLabel} className="flex items-center gap-1.5">
-              {langs.map((l) => (
-                <a
-                  key={l}
-                  href={langPath(l, barePath)}
-                  aria-current={l === lang ? 'page' : undefined}
-                  className={`rounded-lg px-2.5 py-1 text-xs font-bold no-underline ${
-                    l === lang ? s.langOn : s.langOff
-                  }`}
-                >
-                  {LANG_LABEL[l]}
-                </a>
-              ))}
-            </nav>
+            <LanguageMenu
+              lang={lang}
+              langs={langs}
+              hrefFor={(l) => langPath(l, barePath)}
+              look={look}
+            />
           </div>
         </header>
 
@@ -156,13 +143,18 @@ export default function Layout({
               {t.siteName} - {t.tagline}
             </p>
             <p className="flex flex-wrap gap-x-4 gap-y-1">
-              <a href={langPath(lang, '/prayer-times')} className={`no-underline ${s.link}`}>
+              {/* /prayer-times and /qibla are the app's live pages: no language
+                  prefix. The Ramadan index has no Arabic page (2026-10-15). */}
+              <a href="/prayer-times" className={`no-underline ${s.link}`}>
                 {t.breadcrumbPrayerTimes}
               </a>
-              <a href={langPath(lang, '/qibla')} className={`no-underline ${s.link}`}>
+              <a href="/qibla" className={`no-underline ${s.link}`}>
                 {t.breadcrumbQibla}
               </a>
-              <a href={langPath(lang, '/ramadan-calendar')} className={`no-underline ${s.link}`}>
+              <a
+                href={langPath(lang === 'ar' ? 'en' : lang, '/ramadan-calendar')}
+                className={`no-underline ${s.link}`}
+              >
                 {t.breadcrumbRamadan}
               </a>
               <a href={langPath(lang, '/duas')} className={`no-underline ${s.link}`}>

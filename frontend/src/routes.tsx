@@ -131,38 +131,28 @@ export default function AppRoutes({ revision }: { revision: number }) {
           once the client bundle loads. See TODO-v3.md. */}
       <Route path="/prayer-times/:city" element={<SeoPrayerTimesCity lang="en" />} />
       <Route path="/bn/prayer-times/:city" element={<SeoPrayerTimesCity lang="bn" />} />
-      <Route path="/ar/prayer-times/:city" element={<SeoPrayerTimesCity lang="ar" />} />
       <Route path="/prayer-times/bangladesh" element={<SeoBdDistricts lang="en" />} />
       <Route path="/bn/prayer-times/bangladesh" element={<SeoBdDistricts lang="bn" />} />
       <Route path="/prayer-times/:city/:month" element={<SeoPrayerTimesMonth lang="en" />} />
       <Route path="/bn/prayer-times/:city/:month" element={<SeoPrayerTimesMonth lang="bn" />} />
       <Route path="/ramadan-calendar" element={<SeoRamadanCalendarIndex lang="en" />} />
       <Route path="/bn/ramadan-calendar" element={<SeoRamadanCalendarIndex lang="bn" />} />
-      <Route path="/ar/ramadan-calendar" element={<SeoRamadanCalendarIndex lang="ar" />} />
       <Route path="/ramadan-calendar/:city/:year" element={<SeoRamadanCalendar lang="en" />} />
       <Route path="/bn/ramadan-calendar/:city/:year" element={<SeoRamadanCalendar lang="bn" />} />
-      <Route path="/ar/ramadan-calendar/:city/:year" element={<SeoRamadanCalendar lang="ar" />} />
       <Route path="/duas" element={<SeoDuasIndex lang="en" />} />
       <Route path="/bn/duas" element={<SeoDuasIndex lang="bn" />} />
-      <Route path="/ar/duas" element={<SeoDuasIndex lang="ar" />} />
       <Route path="/duas/:situation" element={<SeoDuaSituation lang="en" />} />
       <Route path="/bn/duas/:situation" element={<SeoDuaSituation lang="bn" />} />
-      <Route path="/ar/duas/:situation" element={<SeoDuaSituation lang="ar" />} />
       <Route path="/adhkar/morning" element={<SeoAdhkarMorning lang="en" />} />
       <Route path="/bn/adhkar/morning" element={<SeoAdhkarMorning lang="bn" />} />
-      <Route path="/ar/adhkar/morning" element={<SeoAdhkarMorning lang="ar" />} />
       <Route path="/adhkar/evening" element={<SeoAdhkarEvening lang="en" />} />
       <Route path="/bn/adhkar/evening" element={<SeoAdhkarEvening lang="bn" />} />
-      <Route path="/ar/adhkar/evening" element={<SeoAdhkarEvening lang="ar" />} />
       <Route path="/hijri-date-converter" element={<SeoHijriConverter lang="en" />} />
       <Route path="/bn/hijri-date-converter" element={<SeoHijriConverter lang="bn" />} />
-      <Route path="/ar/hijri-date-converter" element={<SeoHijriConverter lang="ar" />} />
       <Route path="/asma-ul-husna" element={<SeoAsmaUlHusna lang="en" />} />
       <Route path="/bn/asma-ul-husna" element={<SeoAsmaUlHusna lang="bn" />} />
-      <Route path="/ar/asma-ul-husna" element={<SeoAsmaUlHusna lang="ar" />} />
       <Route path="/zakat-calculator" element={<SeoZakatCalculator lang="en" />} />
       <Route path="/bn/zakat-calculator" element={<SeoZakatCalculator lang="bn" />} />
-      <Route path="/ar/zakat-calculator" element={<SeoZakatCalculator lang="ar" />} />
       <Route
         path="/quran"
         element={

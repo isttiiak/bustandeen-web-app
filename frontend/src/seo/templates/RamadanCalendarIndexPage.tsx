@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { CITIES } from '../data/cities.js';
+import { CITIES, cityHref } from '../data/cities.js';
 import { BD_DISTRICTS } from '../data/bdDistricts.js';
 import { RAMADAN_BD } from '../locales/ramadanBd.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
@@ -10,6 +10,9 @@ import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 // would just re-surface the same handful of megacities already dominating
 // crawl attention) but one popular city per major region so the page reads
 // as genuinely global, matching the site's actual coverage.
+/** City pages exist in English, Bangladesh's in Bangla too: no Arabic index. */
+export const INDEX_LANGS: SeoLang[] = ['en', 'bn'];
+
 const POPULAR_SLUGS = [
   'dhaka-bangladesh',
   'jakarta-indonesia',
@@ -60,6 +63,7 @@ export default function RamadanCalendarIndexPage({ lang, gregorianYear }: Props)
     <Layout
       lang={lang}
       barePath="/ramadan-calendar"
+      langs={INDEX_LANGS}
       breadcrumbs={[
         { label: t.home, path: 'https://bustandeen.com/' },
         { label: t.breadcrumbRamadan },
@@ -89,7 +93,7 @@ export default function RamadanCalendarIndexPage({ lang, gregorianYear }: Props)
             searchResults.map((c) => (
               <a
                 key={c.slug}
-                href={langPath(lang, `/ramadan-calendar/${c.slug}/${gregorianYear}`)}
+                href={cityHref(lang, c, `/ramadan-calendar/${c.slug}/${gregorianYear}`)}
                 className="rounded-xl border border-[#1e2d42] bg-[#0d1520] px-4 py-3 text-sm font-semibold text-[#f1f5f9] no-underline hover:border-[#10b981]/50"
               >
                 {c.name}
@@ -107,7 +111,7 @@ export default function RamadanCalendarIndexPage({ lang, gregorianYear }: Props)
             {popularCities.map((c) => (
               <a
                 key={c!.slug}
-                href={langPath(lang, `/ramadan-calendar/${c!.slug}/${gregorianYear}`)}
+                href={cityHref(lang, c!, `/ramadan-calendar/${c!.slug}/${gregorianYear}`)}
                 className="rounded-xl border border-[#1e2d42] bg-[#0d1520] px-4 py-3 text-sm font-semibold text-[#f1f5f9] no-underline hover:border-[#10b981]/50"
               >
                 {c!.name}

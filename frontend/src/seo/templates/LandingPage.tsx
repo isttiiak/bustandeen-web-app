@@ -2,6 +2,7 @@ import en from '../../locales/en/common.json';
 import bn from '../../locales/bn/common.json';
 import { type LandingT } from '../../components/LandingSeoSections.js';
 import LandingBody, { type LandingLink } from '../../components/landing/LandingBody.js';
+import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { LeafIcon } from '../../components/icons/IslamicIcons.js';
 import { BTN_PRIMARY } from '../../components/bustanStyles.js';
 
@@ -56,30 +57,18 @@ export default function LandingPage({ lang = 'en' }: { lang?: LandingLang }) {
           <LeafIcon className="w-6 h-6" /> Bustandeen
         </a>
         <div className="flex items-center gap-3">
-          {lang === 'bn' ? (
-            <a
-              href="/"
-              hrefLang="en"
-              lang="en"
-              data-set-lang="en"
-              className="inline-flex items-center text-white/80 hover:text-white text-sm font-semibold no-underline"
-            >
-              English
-            </a>
-          ) : (
-            <a
-              href="/bn"
-              hrefLang="bn"
-              lang="bn"
-              data-set-lang="bn"
-              // The system's Bangla font: this one word must not pull the
-              // Hind Siliguri web font into the English page.
-              style={{ fontFamily: 'system-ui, sans-serif' }}
-              className="inline-flex items-center text-white/80 hover:text-white text-sm font-semibold no-underline"
-            >
-              বাংলা
-            </a>
-          )}
+          {/* Globe only (2026-10-15): switches straight to the other language;
+              a menu comes once there are more than two. */}
+          <a
+            href={lang === 'bn' ? '/' : '/bn'}
+            hrefLang={lang === 'bn' ? 'en' : 'bn'}
+            data-set-lang={lang === 'bn' ? 'en' : 'bn'}
+            aria-label={lang === 'bn' ? 'Switch to English' : 'বাংলায় দেখুন'}
+            title={lang === 'bn' ? 'Switch to English' : 'বাংলায় দেখুন'}
+            className="grid place-items-center w-11 h-11 rounded-control border border-brand-border text-white/80 hover:text-white no-underline"
+          >
+            <GlobeAltIcon className="w-5 h-5" aria-hidden="true" />
+          </a>
           <a href="/login" className={`${BTN_PRIMARY} py-1.5 no-underline`}>
             {t('nav.signIn', 'Sign In')}
           </a>

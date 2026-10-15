@@ -4,7 +4,8 @@
 // `lang` passed explicitly — rather than parsing the URL prefix here.
 import { useParams } from 'react-router';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
-import { cityBySlug } from '../data/cities.js';
+import { cityBySlug, cityLangs } from '../data/cities.js';
+import { wireLanguageRequest } from '../langRequest.js';
 import { DUAS } from '../content/duas.js';
 import {
   hijriYearForRamadanGregorianYear,
@@ -28,6 +29,9 @@ import { BD_DISTRICTS } from '../data/bdDistricts.js';
 import type { MonthlyLang } from '../locales/monthly.js';
 import { monthWindow, ymInZone } from '../utils/monthTable.js';
 
+// The pages' globe menu form also works when the app's router draws them.
+wireLanguageRequest();
+
 function NotFoundInline({ lang }: { lang: SeoLang }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#080c12] text-[#f1f5f9] p-6 text-center">
@@ -44,7 +48,7 @@ function NotFoundInline({ lang }: { lang: SeoLang }) {
 export function PrayerTimesCityRoute({ lang }: { lang: SeoLang }) {
   const { city: citySlug } = useParams();
   const city = citySlug ? cityBySlug(citySlug) : undefined;
-  if (!city) return <NotFoundInline lang={lang} />;
+  if (!city || !cityLangs(city).includes(lang)) return <NotFoundInline lang={lang} />;
   return <PrayerTimesCityPage lang={lang} city={city} buildDate={new Date()} />;
 }
 
@@ -57,7 +61,9 @@ export function RamadanCalendarRoute({ lang }: { lang: SeoLang }) {
   const { city: citySlug, year } = useParams();
   const city = citySlug ? cityBySlug(citySlug) : undefined;
   const gregorianYear = year ? parseInt(year, 10) : NaN;
-  if (!city || Number.isNaN(gregorianYear)) return <NotFoundInline lang={lang} />;
+  if (!city || Number.isNaN(gregorianYear) || !cityLangs(city).includes(lang)) {
+    return <NotFoundInline lang={lang} />;
+  }
   const hijriYear = hijriYearForRamadanGregorianYear(gregorianYear);
   const district = BD_DISTRICTS.find((d) => d.citySlug === city.slug);
   if (district && lang !== 'ar') {

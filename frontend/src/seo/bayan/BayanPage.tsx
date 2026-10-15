@@ -147,7 +147,6 @@ function Shell({
   children: ReactNode;
 }) {
   const t = CHROME[lang];
-  const other: BayanLang = lang === 'en' ? 'bn' : 'en';
   const nav: Array<[BayanRoute, string]> = [
     [{ page: 'home' }, t.home],
     [{ page: 'news' }, t.news],
@@ -185,14 +184,51 @@ function Shell({
           <nav aria-label={t.menu} className="hidden md:flex items-center gap-1 ml-auto">
             {navLinks}
           </nav>
-          <a
-            href={bayanPath(other, route)}
-            hrefLang={other}
-            lang={other}
-            className={`${NAV_LINK} ml-auto md:ml-1 border border-brand-border`}
-          >
-            {t.otherLang}
-          </a>
+          {/* Globe menu, no language name in the header (2026-10-15). This host
+              allows no connections, so "Request a language" opens the app's
+              Feedback form with that type chosen. */}
+          <details className="relative ml-auto md:ml-1">
+            <summary
+              aria-label={t.language}
+              title={t.language}
+              className="list-none [&::-webkit-details-marker]:hidden cursor-pointer grid place-items-center w-11 h-11 rounded-control border border-brand-border"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418"
+                />
+              </svg>
+            </summary>
+            <div className={`${CARD} absolute right-0 top-full mt-2 w-56 p-2 flex flex-col z-10`}>
+              {(['en', 'bn'] as const).map((l) => (
+                <a
+                  key={l}
+                  href={bayanPath(l, route)}
+                  hrefLang={l}
+                  lang={l}
+                  aria-current={l === lang ? 'page' : undefined}
+                  className={`${NAV_LINK} ${l === lang ? NAV_ON : ''}`}
+                >
+                  {l === 'en' ? 'English' : 'বাংলা'}
+                </a>
+              ))}
+              <a
+                href={`${APP_ORIGIN}/feedback?type=language`}
+                className={`${NAV_LINK} border-t border-brand-border mt-1 pt-1`}
+              >
+                {t.requestLanguage}
+              </a>
+            </div>
+          </details>
           <details className="md:hidden relative">
             <summary
               aria-label={t.menu}

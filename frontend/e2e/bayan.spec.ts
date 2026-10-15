@@ -76,6 +76,12 @@ test('a guide in Bangla, the language switch and the app link', async ({ page })
   expect(await smallTargets(page)).toEqual([]);
   expect(await axe(page)).toEqual([]);
 
+  // Globe menu: no language name in the header (2026-10-15).
+  await page.locator('summary[aria-label="ভাষা"]').click();
+  await expect(page.getByRole('link', { name: 'ভাষার অনুরোধ' })).toHaveAttribute(
+    'href',
+    'https://bustandeen.com/feedback?type=language'
+  );
   await page.getByRole('link', { name: 'English' }).click();
   await expect(page).toHaveURL(/\/guides\/salat-and-kaza$/);
   await expect(page.getByRole('heading', { level: 1, name: 'Salat and kaza' })).toBeVisible();

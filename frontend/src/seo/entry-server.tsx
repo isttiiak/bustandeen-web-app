@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { CHROME, type SeoLang } from './locales/chrome.js';
-import { CITIES, cityBySlug, cityCountry, cityName } from './data/cities.js';
+import { CITIES, cityBySlug, cityCountry, cityLangs, cityName } from './data/cities.js';
 import { DUAS } from './content/duas.js';
 import { currentHijriYear, ramadanRangeForHijriYear } from './utils/calc.js';
 import PrayerTimesCityPage from './templates/PrayerTimesCityPage.js';
@@ -64,6 +64,12 @@ export interface RenderInput {
 // year mapping) from this one compiled SSR bundle instead of separately
 // re-parsing the TS source files in plain Node.
 export { CITIES };
+/** The languages a city's pages are written in (prerender.mjs). */
+export function cityPageLangs(slug: string): string[] {
+  const city = cityBySlug(slug);
+  if (!city) throw new Error(`Unknown city slug: ${slug}`);
+  return cityLangs(city);
+}
 export const DUA_IDS = DUAS.map((d) => d.id);
 export function currentRamadanHijriYear(): number {
   return currentHijriYear();

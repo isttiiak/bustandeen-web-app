@@ -29,7 +29,9 @@ export interface IFeedbackMessage extends Document {
 const feedbackMessageSchema = new Schema<IFeedbackMessage>(
   {
     name: { type: String, required: true, maxlength: 200 },
-    email: { type: String, required: true, maxlength: 200 },
+    // Empty for a language request (no email asked) and after account
+    // deletion; the feedback form itself always requires one (zod schema).
+    email: { type: String, default: '', maxlength: 200 },
     message: { type: String, required: true, maxlength: 4000 },
     category: { type: [String], default: [] },
     kind: { type: String, enum: ['feedback', 'contact'], required: true },

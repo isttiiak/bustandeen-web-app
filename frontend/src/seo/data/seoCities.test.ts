@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import seo from '../../data/seoCities.generated.json';
 import all from '../../data/cities.generated.json';
-import { CITIES, cityBySlug } from './cities.js';
+import { CITIES, cityBySlug, cityHref, cityLangs } from './cities.js';
 import { BD_DISTRICTS } from './bdDistricts.js';
 import { POPULAR_CITY_LINKS } from '../../components/LandingSeoSections.js';
 import { MUSLIM_MAJORITY } from '../../../scripts/countries.mjs';
@@ -43,6 +43,29 @@ describe('SEO city list', () => {
     for (const c of seo) {
       const prior = old.get(`${c.countryCode}:${c.name}`);
       if (prior) expect(c.slug).toBe(prior);
+    }
+  });
+
+  it('city pages are English, Bangladesh also Bangla, never Arabic', () => {
+    for (const c of CITIES) {
+      expect(cityLangs(c)).toEqual(c.countryCode === 'BD' ? ['en', 'bn'] : ['en']);
+    }
+    const london = cityBySlug('london-united-kingdom')!;
+    const dhaka = cityBySlug('dhaka-bangladesh')!;
+    expect(cityHref('bn', london, '/prayer-times/london-united-kingdom')).toBe(
+      '/prayer-times/london-united-kingdom'
+    );
+    expect(cityHref('bn', dhaka, '/prayer-times/dhaka-bangladesh')).toBe(
+      '/bn/prayer-times/dhaka-bangladesh'
+    );
+    expect(cityHref('ar', dhaka, '/prayer-times/dhaka-bangladesh')).toBe(
+      '/prayer-times/dhaka-bangladesh'
+    );
+  });
+
+  it('every Bangladesh slug ends in -bangladesh (the landing relies on it)', () => {
+    for (const c of CITIES) {
+      expect(c.slug.endsWith('-bangladesh'), c.slug).toBe(c.countryCode === 'BD');
     }
   });
 });

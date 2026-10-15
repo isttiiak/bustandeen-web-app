@@ -774,6 +774,10 @@
         "hint": "A feature that would help your worship",
         "label": "I have an idea"
       },
+      "language": {
+        "hint": "Ask for Bustandeen in your language",
+        "label": "Request a language"
+      },
       "other": {
         "hint": "Anything that doesn't fit above",
         "label": "Something else"

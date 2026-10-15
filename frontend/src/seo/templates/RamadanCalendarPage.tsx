@@ -1,4 +1,4 @@
-import { cityCountry, cityLabel, cityName, type CityEntry } from '../data/cities.js';
+import { cityCountry, cityLabel, cityLangs, cityName, type CityEntry } from '../data/cities.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
@@ -47,6 +47,7 @@ export default function RamadanCalendarPage({ lang, city, hijriYear, qr }: Props
       lang={lang}
       printable
       barePath={`/ramadan-calendar/${city.slug}/${gregorianYear}`}
+      langs={cityLangs(city)}
       breadcrumbs={[
         { label: t.home, path: 'https://bustandeen.com/' },
         { label: t.breadcrumbRamadan },

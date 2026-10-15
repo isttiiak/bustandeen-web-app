@@ -183,7 +183,7 @@
       "destination": "/bayan/:path*"
     },
     {
-      "source": "/((?:bn/|ar/)?(?:prayer-times|ramadan-calendar|qibla)/.+)",
+      "source": "/((?:bn/)?(?:prayer-times|ramadan-calendar|qibla)/.+|ar(?:/.*)?)",
       "destination": "/api/index",
       "missing": [
         {

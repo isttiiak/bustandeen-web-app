@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router';
 import {
   BookOpenIcon,
   BugAntIcon,
@@ -7,6 +8,7 @@ import {
   ExclamationTriangleIcon,
   HeartIcon,
   KeyIcon,
+  LanguageIcon,
   LightBulbIcon,
   LockClosedIcon,
   PaintBrushIcon,
@@ -29,6 +31,7 @@ const TYPE_KEYS: { id: string; Icon: FormType['Icon'] }[] = [
   { id: 'account', Icon: KeyIcon },
   { id: 'privacy', Icon: LockClosedIcon },
   { id: 'collab', Icon: UsersIcon },
+  { id: 'language', Icon: LanguageIcon },
   { id: 'appreciation', Icon: HeartIcon },
   { id: 'report', Icon: ExclamationTriangleIcon },
   { id: 'other', Icon: SparklesIcon },
@@ -42,6 +45,10 @@ const PROMISES = [
 
 export default function Feedback() {
   const { t } = useTranslation();
+  // /feedback?type=language (the Help site's "Request a language") starts
+  // with that type chosen.
+  const [params] = useSearchParams();
+  const preset = TYPE_KEYS.find((k) => k.id === params.get('type'))?.id;
 
   const types: FormType[] = TYPE_KEYS.map(({ id, Icon }) => ({
     id,
@@ -100,7 +107,12 @@ export default function Feedback() {
 
         {/* Form */}
         <div className={`${CARD} p-5 sm:p-7`}>
-          <FeedbackForm kind="feedback" types={types} submitLabel={t('feedback.submitLabel')} />
+          <FeedbackForm
+            kind="feedback"
+            types={types}
+            submitLabel={t('feedback.submitLabel')}
+            initialTypeIds={preset ? [preset] : []}
+          />
         </div>
 
         <p className="text-center text-white/70 text-[11px]">{t('feedback.disclaimer')}</p>
