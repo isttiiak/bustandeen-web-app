@@ -19,6 +19,7 @@ import insightsRoutes from './routes/insights.routes.js';
 import naturalLogRoutes from './routes/naturalLog.routes.js';
 import naseehRoutes from './routes/naseeh.routes.js';
 import connectPreviewRoutes from './routes/connectPreview.routes.js';
+import seoRedirectRoutes from './routes/seoRedirect.routes.js';
 import sadaqahRoutes from './routes/sadaqah.routes.js';
 import feedbackRoutes from './routes/feedback.routes.js';
 import announcementRoutes from './routes/announcement.routes.js';
@@ -163,6 +164,10 @@ app.get('/api/health/email', healthController.emailHandler);
 // link-unfurl crawler here instead of the normal SPA shell. See
 // connectPreview.routes.ts.
 app.use('/connect', connectPreviewRoutes);
+
+// Removed SEO page URLs (no prerendered file matched) → 301 to the live page.
+// Reached only through vercel.json's rewrites; see seoRedirect.routes.ts.
+app.use(seoRedirectRoutes);
 
 // Routes with per-route rate limiters
 app.use('/api/auth', authLimiter, authRoutes);

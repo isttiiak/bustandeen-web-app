@@ -54,7 +54,7 @@ const SadaqahThankYou = lazy(() => import('./pages/SadaqahThankYou.js'));
 const SadaqahVerify = lazy(() => import('./pages/SadaqahVerify.js'));
 const NaseehPage = lazy(() => import('./pages/NaseehPage.js'));
 
-// Programmatic-SEO static pages (prayer-times/qibla/ramadan-calendar by
+// Programmatic-SEO static pages (prayer-times/ramadan-calendar by
 // city, du'a library, adhkar, Hijri converter) — pre-rendered at build time
 // by scripts/prerender.mjs; these lazy wrappers let React Router take over
 // in-app navigation once the client bundle loads. One shared chunk (same
@@ -67,9 +67,6 @@ const SeoPrayerTimesMonth = lazy(() =>
 );
 const SeoBdDistricts = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.BdDistrictsRoute }))
-);
-const SeoQiblaCity = lazy(() =>
-  import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.QiblaCityRoute }))
 );
 const SeoRamadanCalendar = lazy(() =>
   import('./seo/routes/ClientRoutes.js').then((m) => ({ default: m.RamadanCalendarRoute }))
@@ -139,9 +136,6 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route path="/bn/prayer-times/bangladesh" element={<SeoBdDistricts lang="bn" />} />
       <Route path="/prayer-times/:city/:month" element={<SeoPrayerTimesMonth lang="en" />} />
       <Route path="/bn/prayer-times/:city/:month" element={<SeoPrayerTimesMonth lang="bn" />} />
-      <Route path="/qibla/:city" element={<SeoQiblaCity lang="en" />} />
-      <Route path="/bn/qibla/:city" element={<SeoQiblaCity lang="bn" />} />
-      <Route path="/ar/qibla/:city" element={<SeoQiblaCity lang="ar" />} />
       <Route path="/ramadan-calendar" element={<SeoRamadanCalendarIndex lang="en" />} />
       <Route path="/bn/ramadan-calendar" element={<SeoRamadanCalendarIndex lang="bn" />} />
       <Route path="/ar/ramadan-calendar" element={<SeoRamadanCalendarIndex lang="ar" />} />

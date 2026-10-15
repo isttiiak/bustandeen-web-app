@@ -12,7 +12,6 @@ import {
   ramadanRangeForHijriYear,
 } from '../utils/calc.js';
 import PrayerTimesCityPage from '../templates/PrayerTimesCityPage.js';
-import QiblaCityPage from '../templates/QiblaCityPage.js';
 import RamadanCalendarPage from '../templates/RamadanCalendarPage.js';
 import RamadanCalendarIndexPage from '../templates/RamadanCalendarIndexPage.js';
 import DuaSituationPage from '../templates/DuaSituationPage.js';
@@ -47,13 +46,6 @@ export function PrayerTimesCityRoute({ lang }: { lang: SeoLang }) {
   const city = citySlug ? cityBySlug(citySlug) : undefined;
   if (!city) return <NotFoundInline lang={lang} />;
   return <PrayerTimesCityPage lang={lang} city={city} buildDate={new Date()} />;
-}
-
-export function QiblaCityRoute({ lang }: { lang: SeoLang }) {
-  const { city: citySlug } = useParams();
-  const city = citySlug ? cityBySlug(citySlug) : undefined;
-  if (!city) return <NotFoundInline lang={lang} />;
-  return <QiblaCityPage lang={lang} city={city} />;
 }
 
 export function RamadanCalendarIndexRoute({ lang }: { lang: SeoLang }) {

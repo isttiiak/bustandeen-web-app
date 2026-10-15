@@ -1,0 +1,4932 @@
+[
+  {
+    "slug": "shanghai-china",
+    "name": "Shanghai",
+    "country": "China",
+    "countryCode": "CN",
+    "lat": 31.2222,
+    "lng": 121.4581,
+    "timezone": "Asia/Shanghai",
+    "population": 22315474
+  },
+  {
+    "slug": "istanbul-turkey",
+    "name": "Istanbul",
+    "country": "Turkey",
+    "countryCode": "TR",
+    "lat": 41.0138,
+    "lng": 28.9497,
+    "timezone": "Europe/Istanbul",
+    "population": 14804116
+  },
+  {
+    "slug": "buenos-aires-argentina",
+    "name": "Buenos Aires",
+    "country": "Argentina",
+    "countryCode": "AR",
+    "lat": -34.6131,
+    "lng": -58.3772,
+    "timezone": "America/Argentina/Buenos_Aires",
+    "population": 13076300
+  },
+  {
+    "slug": "mumbai-india",
+    "name": "Mumbai",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 19.0728,
+    "lng": 72.8826,
+    "timezone": "Asia/Kolkata",
+    "population": 12691836
+  },
+  {
+    "slug": "mexico-city-mexico",
+    "name": "Mexico City",
+    "country": "Mexico",
+    "countryCode": "MX",
+    "lat": 19.4285,
+    "lng": -99.1277,
+    "timezone": "America/Mexico_City",
+    "population": 12294193
+  },
+  {
+    "slug": "beijing-china",
+    "name": "Beijing",
+    "country": "China",
+    "countryCode": "CN",
+    "lat": 39.9075,
+    "lng": 116.3972,
+    "timezone": "Asia/Shanghai",
+    "population": 11716620
+  },
+  {
+    "slug": "karachi-pakistan",
+    "name": "Karachi",
+    "country": "Pakistan",
+    "countryCode": "PK",
+    "lat": 24.8608,
+    "lng": 67.0104,
+    "timezone": "Asia/Karachi",
+    "population": 11624219
+  },
+  {
+    "slug": "tianjin-china",
+    "name": "Tianjin",
+    "country": "China",
+    "countryCode": "CN",
+    "lat": 39.1422,
+    "lng": 117.1767,
+    "timezone": "Asia/Shanghai",
+    "population": 11090314
+  },
+  {
+    "slug": "guangzhou-china",
+    "name": "Guangzhou",
+    "country": "China",
+    "countryCode": "CN",
+    "lat": 23.1167,
+    "lng": 113.25,
+    "timezone": "Asia/Shanghai",
+    "population": 11071424
+  },
+  {
+    "slug": "delhi-india",
+    "name": "Delhi",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 28.652,
+    "lng": 77.2315,
+    "timezone": "Asia/Kolkata",
+    "population": 10927986
+  },
+  {
+    "slug": "moscow-russia",
+    "name": "Moscow",
+    "country": "Russia",
+    "countryCode": "RU",
+    "lat": 55.7522,
+    "lng": 37.6156,
+    "timezone": "Europe/Moscow",
+    "population": 10381222
+  },
+  {
+    "slug": "shenzhen-china",
+    "name": "Shenzhen",
+    "country": "China",
+    "countryCode": "CN",
+    "lat": 22.5455,
+    "lng": 114.0683,
+    "timezone": "Asia/Shanghai",
+    "population": 10358381
+  },
+  {
+    "slug": "dhaka-bangladesh",
+    "name": "Dhaka",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.7104,
+    "lng": 90.4074,
+    "timezone": "Asia/Dhaka",
+    "population": 10356500
+  },
+  {
+    "slug": "seoul-south-korea",
+    "name": "Seoul",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "lat": 37.566,
+    "lng": 126.9784,
+    "timezone": "Asia/Seoul",
+    "population": 10349312
+  },
+  {
+    "slug": "sao-paulo-brazil",
+    "name": "São Paulo",
+    "country": "Brazil",
+    "countryCode": "BR",
+    "lat": -23.5475,
+    "lng": -46.6361,
+    "timezone": "America/Sao_Paulo",
+    "population": 10021295
+  },
+  {
+    "slug": "wuhan-china",
+    "name": "Wuhan",
+    "country": "China",
+    "countryCode": "CN",
+    "lat": 30.5833,
+    "lng": 114.2667,
+    "timezone": "Asia/Shanghai",
+    "population": 9785388
+  },
+  {
+    "slug": "lagos-nigeria",
+    "name": "Lagos",
+    "country": "Nigeria",
+    "countryCode": "NG",
+    "lat": 6.4541,
+    "lng": 3.3947,
+    "timezone": "Africa/Lagos",
+    "population": 9000000
+  },
+  {
+    "slug": "jakarta-indonesia",
+    "name": "Jakarta",
+    "country": "Indonesia",
+    "countryCode": "ID",
+    "lat": -6.2146,
+    "lng": 106.8451,
+    "timezone": "Asia/Jakarta",
+    "population": 8540121
+  },
+  {
+    "slug": "tokyo-japan",
+    "name": "Tokyo",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 35.6895,
+    "lng": 139.6917,
+    "timezone": "Asia/Tokyo",
+    "population": 8336599
+  },
+  {
+    "slug": "new-york-city-united-states",
+    "name": "New York City",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 40.7143,
+    "lng": -74.006,
+    "timezone": "America/New_York",
+    "population": 8175133
+  },
+  {
+    "slug": "taipei-taiwan",
+    "name": "Taipei",
+    "country": "Taiwan",
+    "countryCode": "TW",
+    "lat": 25.0478,
+    "lng": 121.5319,
+    "timezone": "Asia/Taipei",
+    "population": 7871900
+  },
+  {
+    "slug": "kinshasa-dr-congo",
+    "name": "Kinshasa",
+    "country": "DR Congo",
+    "countryCode": "CD",
+    "lat": -4.3276,
+    "lng": 15.3136,
+    "timezone": "Africa/Lagos",
+    "population": 7785965
+  },
+  {
+    "slug": "lima-peru",
+    "name": "Lima",
+    "country": "Peru",
+    "countryCode": "PE",
+    "lat": -12.0432,
+    "lng": -77.0282,
+    "timezone": "America/Lima",
+    "population": 7737002
+  },
+  {
+    "slug": "cairo-egypt",
+    "name": "Cairo",
+    "country": "Egypt",
+    "countryCode": "EG",
+    "lat": 30.0626,
+    "lng": 31.2497,
+    "timezone": "Africa/Cairo",
+    "population": 7734614
+  },
+  {
+    "slug": "bogota-colombia",
+    "name": "Bogotá",
+    "country": "Colombia",
+    "countryCode": "CO",
+    "lat": 4.6097,
+    "lng": -74.0817,
+    "timezone": "America/Bogota",
+    "population": 7674366
+  },
+  {
+    "slug": "london-united-kingdom",
+    "name": "London",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.5085,
+    "lng": -0.1257,
+    "timezone": "Europe/London",
+    "population": 7556900
+  },
+  {
+    "slug": "baghdad-iraq",
+    "name": "Baghdad",
+    "country": "Iraq",
+    "countryCode": "IQ",
+    "lat": 33.3406,
+    "lng": 44.4009,
+    "timezone": "Asia/Baghdad",
+    "population": 7216000
+  },
+  {
+    "slug": "tehran-iran",
+    "name": "Tehran",
+    "country": "Iran",
+    "countryCode": "IR",
+    "lat": 35.6944,
+    "lng": 51.4215,
+    "timezone": "Asia/Tehran",
+    "population": 7153309
+  },
+  {
+    "slug": "hong-kong-hong-kong",
+    "name": "Hong Kong",
+    "country": "Hong Kong",
+    "countryCode": "HK",
+    "lat": 22.2783,
+    "lng": 114.1747,
+    "timezone": "Asia/Hong_Kong",
+    "population": 7012738
+  },
+  {
+    "slug": "lahore-pakistan",
+    "name": "Lahore",
+    "country": "Pakistan",
+    "countryCode": "PK",
+    "lat": 31.558,
+    "lng": 74.3507,
+    "timezone": "Asia/Karachi",
+    "population": 6310888
+  },
+  {
+    "slug": "rio-de-janeiro-brazil",
+    "name": "Rio de Janeiro",
+    "country": "Brazil",
+    "countryCode": "BR",
+    "lat": -22.9064,
+    "lng": -43.1822,
+    "timezone": "America/Sao_Paulo",
+    "population": 6023699
+  },
+  {
+    "slug": "bangkok-thailand",
+    "name": "Bangkok",
+    "country": "Thailand",
+    "countryCode": "TH",
+    "lat": 13.754,
+    "lng": 100.5014,
+    "timezone": "Asia/Jakarta",
+    "population": 5104476
+  },
+  {
+    "slug": "bengaluru-india",
+    "name": "Bengaluru",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 12.9719,
+    "lng": 77.5937,
+    "timezone": "Asia/Kolkata",
+    "population": 5104047
+  },
+  {
+    "slug": "saint-petersburg-russia",
+    "name": "Saint Petersburg",
+    "country": "Russia",
+    "countryCode": "RU",
+    "lat": 59.9386,
+    "lng": 30.3141,
+    "timezone": "Europe/Moscow",
+    "population": 5028000
+  },
+  {
+    "slug": "santiago-chile",
+    "name": "Santiago",
+    "country": "Chile",
+    "countryCode": "CL",
+    "lat": -33.4569,
+    "lng": -70.6483,
+    "timezone": "America/Santiago",
+    "population": 4837295
+  },
+  {
+    "slug": "kolkata-india",
+    "name": "Kolkata",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 22.5626,
+    "lng": 88.363,
+    "timezone": "Asia/Kolkata",
+    "population": 4631392
+  },
+  {
+    "slug": "sydney-australia",
+    "name": "Sydney",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -33.8678,
+    "lng": 151.2073,
+    "timezone": "Australia/Sydney",
+    "population": 4627345
+  },
+  {
+    "slug": "yangon-myanmar",
+    "name": "Yangon",
+    "country": "Myanmar",
+    "countryCode": "MM",
+    "lat": 16.8053,
+    "lng": 96.1561,
+    "timezone": "Asia/Yangon",
+    "population": 4477638
+  },
+  {
+    "slug": "chennai-india",
+    "name": "Chennai",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 13.0878,
+    "lng": 80.2785,
+    "timezone": "Asia/Kolkata",
+    "population": 4328063
+  },
+  {
+    "slug": "melbourne-australia",
+    "name": "Melbourne",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -37.814,
+    "lng": 144.9633,
+    "timezone": "Australia/Melbourne",
+    "population": 4246375
+  },
+  {
+    "slug": "riyadh-saudi-arabia",
+    "name": "Riyadh",
+    "country": "Saudi Arabia",
+    "countryCode": "SA",
+    "lat": 24.6877,
+    "lng": 46.7219,
+    "timezone": "Asia/Riyadh",
+    "population": 4205961
+  },
+  {
+    "slug": "los-angeles-united-states",
+    "name": "Los Angeles",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 34.0522,
+    "lng": -118.2437,
+    "timezone": "America/Los_Angeles",
+    "population": 3971883
+  },
+  {
+    "slug": "chittagong-bangladesh",
+    "name": "Chittagong",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 22.3384,
+    "lng": 91.8317,
+    "timezone": "Asia/Dhaka",
+    "population": 3920222
+  },
+  {
+    "slug": "alexandria-egypt",
+    "name": "Alexandria",
+    "country": "Egypt",
+    "countryCode": "EG",
+    "lat": 31.2018,
+    "lng": 29.9158,
+    "timezone": "Africa/Cairo",
+    "population": 3811516
+  },
+  {
+    "slug": "ahmedabad-india",
+    "name": "Ahmedabad",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 23.0258,
+    "lng": 72.5873,
+    "timezone": "Asia/Kolkata",
+    "population": 3719710
+  },
+  {
+    "slug": "busan-south-korea",
+    "name": "Busan",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "lat": 35.1017,
+    "lng": 129.03,
+    "timezone": "Asia/Seoul",
+    "population": 3678555
+  },
+  {
+    "slug": "abidjan-cote-d-ivoire",
+    "name": "Abidjan",
+    "country": "Cote d'Ivoire",
+    "countryCode": "CI",
+    "lat": 5.3544,
+    "lng": -4.0017,
+    "timezone": "Africa/Abidjan",
+    "population": 3677115
+  },
+  {
+    "slug": "kano-nigeria",
+    "name": "Kano",
+    "country": "Nigeria",
+    "countryCode": "NG",
+    "lat": 12.0001,
+    "lng": 8.5167,
+    "timezone": "Africa/Lagos",
+    "population": 3626068
+  },
+  {
+    "slug": "hyderabad-india",
+    "name": "Hyderabad",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 17.384,
+    "lng": 78.4564,
+    "timezone": "Asia/Kolkata",
+    "population": 3597816
+  },
+  {
+    "slug": "yokohama-japan",
+    "name": "Yokohama",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 35.4333,
+    "lng": 139.65,
+    "timezone": "Asia/Tokyo",
+    "population": 3574443
+  },
+  {
+    "slug": "singapore-singapore",
+    "name": "Singapore",
+    "country": "Singapore",
+    "countryCode": "SG",
+    "lat": 1.2897,
+    "lng": 103.8501,
+    "timezone": "Asia/Singapore",
+    "population": 3547809
+  },
+  {
+    "slug": "ankara-turkey",
+    "name": "Ankara",
+    "country": "Turkey",
+    "countryCode": "TR",
+    "lat": 39.9199,
+    "lng": 32.8543,
+    "timezone": "Europe/Istanbul",
+    "population": 3517182
+  },
+  {
+    "slug": "ho-chi-minh-city-vietnam",
+    "name": "Ho Chi Minh City",
+    "country": "Vietnam",
+    "countryCode": "VN",
+    "lat": 10.823,
+    "lng": 106.6297,
+    "timezone": "Asia/Ho_Chi_Minh",
+    "population": 3467331
+  },
+  {
+    "slug": "cape-town-south-africa",
+    "name": "Cape Town",
+    "country": "South Africa",
+    "countryCode": "ZA",
+    "lat": -33.9258,
+    "lng": 18.4232,
+    "timezone": "Africa/Johannesburg",
+    "population": 3433441
+  },
+  {
+    "slug": "berlin-germany",
+    "name": "Berlin",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 52.5244,
+    "lng": 13.4105,
+    "timezone": "Europe/Berlin",
+    "population": 3426354
+  },
+  {
+    "slug": "madrid-spain",
+    "name": "Madrid",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 40.4165,
+    "lng": -3.7026,
+    "timezone": "Europe/Madrid",
+    "population": 3255944
+  },
+  {
+    "slug": "casablanca-morocco",
+    "name": "Casablanca",
+    "country": "Morocco",
+    "countryCode": "MA",
+    "lat": 33.5883,
+    "lng": -7.6114,
+    "timezone": "Africa/Casablanca",
+    "population": 3144909
+  },
+  {
+    "slug": "durban-south-africa",
+    "name": "Durban",
+    "country": "South Africa",
+    "countryCode": "ZA",
+    "lat": -29.8579,
+    "lng": 31.0292,
+    "timezone": "Africa/Johannesburg",
+    "population": 3120282
+  },
+  {
+    "slug": "kabul-afghanistan",
+    "name": "Kabul",
+    "country": "Afghanistan",
+    "countryCode": "AF",
+    "lat": 34.5281,
+    "lng": 69.1723,
+    "timezone": "Asia/Kabul",
+    "population": 3043532
+  },
+  {
+    "slug": "caracas-venezuela",
+    "name": "Caracas",
+    "country": "Venezuela",
+    "countryCode": "VE",
+    "lat": 10.488,
+    "lng": -66.8792,
+    "timezone": "America/Caracas",
+    "population": 3000000
+  },
+  {
+    "slug": "dubai-united-arab-emirates",
+    "name": "Dubai",
+    "country": "United Arab Emirates",
+    "countryCode": "AE",
+    "lat": 25.0773,
+    "lng": 55.3093,
+    "timezone": "Asia/Dubai",
+    "population": 2956587
+  },
+  {
+    "slug": "pune-india",
+    "name": "Pune",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 18.5196,
+    "lng": 73.8554,
+    "timezone": "Asia/Kolkata",
+    "population": 2935744
+  },
+  {
+    "slug": "surat-india",
+    "name": "Sūrat",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 21.1959,
+    "lng": 72.8302,
+    "timezone": "Asia/Kolkata",
+    "population": 2894504
+  },
+  {
+    "slug": "kanpur-india",
+    "name": "Kanpur",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 26.4652,
+    "lng": 80.3498,
+    "timezone": "Asia/Kolkata",
+    "population": 2823249
+  },
+  {
+    "slug": "kyiv-ukraine",
+    "name": "Kyiv",
+    "country": "Ukraine",
+    "countryCode": "UA",
+    "lat": 50.4547,
+    "lng": 30.5238,
+    "timezone": "Europe/Kyiv",
+    "population": 2797553
+  },
+  {
+    "slug": "luanda-angola",
+    "name": "Luanda",
+    "country": "Angola",
+    "countryCode": "AO",
+    "lat": -8.8368,
+    "lng": 13.2343,
+    "timezone": "Africa/Lagos",
+    "population": 2776168
+  },
+  {
+    "slug": "quezon-city-philippines",
+    "name": "Quezon City",
+    "country": "Philippines",
+    "countryCode": "PH",
+    "lat": 14.6488,
+    "lng": 121.0509,
+    "timezone": "Asia/Manila",
+    "population": 2761720
+  },
+  {
+    "slug": "addis-ababa-ethiopia",
+    "name": "Addis Ababa",
+    "country": "Ethiopia",
+    "countryCode": "ET",
+    "lat": 9.025,
+    "lng": 38.7469,
+    "timezone": "Asia/Riyadh",
+    "population": 2757729
+  },
+  {
+    "slug": "nairobi-kenya",
+    "name": "Nairobi",
+    "country": "Kenya",
+    "countryCode": "KE",
+    "lat": -1.2833,
+    "lng": 36.8167,
+    "timezone": "Asia/Riyadh",
+    "population": 2750547
+  },
+  {
+    "slug": "chicago-united-states",
+    "name": "Chicago",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 41.85,
+    "lng": -87.65,
+    "timezone": "America/Chicago",
+    "population": 2720546
+  },
+  {
+    "slug": "salvador-brazil",
+    "name": "Salvador",
+    "country": "Brazil",
+    "countryCode": "BR",
+    "lat": -12.9711,
+    "lng": -38.5108,
+    "timezone": "America/Bahia",
+    "population": 2711840
+  },
+  {
+    "slug": "jaipur-india",
+    "name": "Jaipur",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 26.9196,
+    "lng": 75.7878,
+    "timezone": "Asia/Kolkata",
+    "population": 2711758
+  },
+  {
+    "slug": "dar-es-salaam-tanzania",
+    "name": "Dar es Salaam",
+    "country": "Tanzania",
+    "countryCode": "TZ",
+    "lat": -6.8235,
+    "lng": 39.2695,
+    "timezone": "Asia/Riyadh",
+    "population": 2698652
+  },
+  {
+    "slug": "incheon-south-korea",
+    "name": "Incheon",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "lat": 37.4565,
+    "lng": 126.7052,
+    "timezone": "Asia/Seoul",
+    "population": 2628000
+  },
+  {
+    "slug": "basrah-iraq",
+    "name": "Basrah",
+    "country": "Iraq",
+    "countryCode": "IQ",
+    "lat": 30.5085,
+    "lng": 47.7804,
+    "timezone": "Asia/Baghdad",
+    "population": 2600000
+  },
+  {
+    "slug": "toronto-canada",
+    "name": "Toronto",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 43.7001,
+    "lng": -79.4163,
+    "timezone": "America/Toronto",
+    "population": 2600000
+  },
+  {
+    "slug": "osaka-japan",
+    "name": "Osaka",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 34.6937,
+    "lng": 135.5022,
+    "timezone": "Asia/Tokyo",
+    "population": 2592413
+  },
+  {
+    "slug": "mogadishu-somalia",
+    "name": "Mogadishu",
+    "country": "Somalia",
+    "countryCode": "SO",
+    "lat": 2.0371,
+    "lng": 45.3438,
+    "timezone": "Asia/Riyadh",
+    "population": 2587183
+  },
+  {
+    "slug": "daegu-south-korea",
+    "name": "Daegu",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "lat": 35.8703,
+    "lng": 128.5911,
+    "timezone": "Asia/Seoul",
+    "population": 2566540
+  },
+  {
+    "slug": "izmir-turkey",
+    "name": "İzmir",
+    "country": "Turkey",
+    "countryCode": "TR",
+    "lat": 38.4127,
+    "lng": 27.1384,
+    "timezone": "Europe/Istanbul",
+    "population": 2500603
+  },
+  {
+    "slug": "dakar-senegal",
+    "name": "Dakar",
+    "country": "Senegal",
+    "countryCode": "SN",
+    "lat": 14.6937,
+    "lng": -17.4441,
+    "timezone": "Africa/Abidjan",
+    "population": 2476400
+  },
+  {
+    "slug": "lucknow-india",
+    "name": "Lucknow",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 26.8393,
+    "lng": 80.9231,
+    "timezone": "Asia/Kolkata",
+    "population": 2472011
+  },
+  {
+    "slug": "fortaleza-brazil",
+    "name": "Fortaleza",
+    "country": "Brazil",
+    "countryCode": "BR",
+    "lat": -3.7172,
+    "lng": -38.5431,
+    "timezone": "America/Fortaleza",
+    "population": 2400000
+  },
+  {
+    "slug": "cali-colombia",
+    "name": "Cali",
+    "country": "Colombia",
+    "countryCode": "CO",
+    "lat": 3.4372,
+    "lng": -76.5225,
+    "timezone": "America/Bogota",
+    "population": 2392877
+  },
+  {
+    "slug": "surabaya-indonesia",
+    "name": "Surabaya",
+    "country": "Indonesia",
+    "countryCode": "ID",
+    "lat": -7.2492,
+    "lng": 112.7508,
+    "timezone": "Asia/Jakarta",
+    "population": 2374658
+  },
+  {
+    "slug": "rome-italy",
+    "name": "Rome",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 41.8919,
+    "lng": 12.5113,
+    "timezone": "Europe/Rome",
+    "population": 2318895
+  },
+  {
+    "slug": "mashhad-iran",
+    "name": "Mashhad",
+    "country": "Iran",
+    "countryCode": "IR",
+    "lat": 36.3156,
+    "lng": 59.568,
+    "timezone": "Asia/Tehran",
+    "population": 2307177
+  },
+  {
+    "slug": "houston-united-states",
+    "name": "Houston",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 29.7633,
+    "lng": -95.3633,
+    "timezone": "America/Chicago",
+    "population": 2296224
+  },
+  {
+    "slug": "nagpur-india",
+    "name": "Nagpur",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 21.1463,
+    "lng": 79.0849,
+    "timezone": "Asia/Kolkata",
+    "population": 2228018
+  },
+  {
+    "slug": "maracaibo-venezuela",
+    "name": "Maracaibo",
+    "country": "Venezuela",
+    "countryCode": "VE",
+    "lat": 10.6666,
+    "lng": -71.6124,
+    "timezone": "America/Caracas",
+    "population": 2225000
+  },
+  {
+    "slug": "santo-domingo-dominican-republic",
+    "name": "Santo Domingo",
+    "country": "Dominican Republic",
+    "countryCode": "DO",
+    "lat": 18.4719,
+    "lng": -69.8923,
+    "timezone": "America/Santo_Domingo",
+    "population": 2201941
+  },
+  {
+    "slug": "nagoya-japan",
+    "name": "Nagoya",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 35.1815,
+    "lng": 136.9064,
+    "timezone": "Asia/Tokyo",
+    "population": 2191279
+  },
+  {
+    "slug": "brisbane-australia",
+    "name": "Brisbane",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -27.4679,
+    "lng": 153.0281,
+    "timezone": "Australia/Brisbane",
+    "population": 2189878
+  },
+  {
+    "slug": "havana-cuba",
+    "name": "Havana",
+    "country": "Cuba",
+    "countryCode": "CU",
+    "lat": 23.133,
+    "lng": -82.383,
+    "timezone": "America/Havana",
+    "population": 2163824
+  },
+  {
+    "slug": "paris-france",
+    "name": "Paris",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 48.8534,
+    "lng": 2.3488,
+    "timezone": "Europe/Paris",
+    "population": 2138551
+  },
+  {
+    "slug": "johannesburg-south-africa",
+    "name": "Johannesburg",
+    "country": "South Africa",
+    "countryCode": "ZA",
+    "lat": -26.2023,
+    "lng": 28.0436,
+    "timezone": "Africa/Johannesburg",
+    "population": 2026469
+  },
+  {
+    "slug": "almaty-kazakhstan",
+    "name": "Almaty",
+    "country": "Kazakhstan",
+    "countryCode": "KZ",
+    "lat": 43.2567,
+    "lng": 76.9286,
+    "timezone": "Asia/Almaty",
+    "population": 2000900
+  },
+  {
+    "slug": "tashkent-uzbekistan",
+    "name": "Tashkent",
+    "country": "Uzbekistan",
+    "countryCode": "UZ",
+    "lat": 41.2647,
+    "lng": 69.2163,
+    "timezone": "Asia/Tashkent",
+    "population": 1978028
+  },
+  {
+    "slug": "algiers-algeria",
+    "name": "Algiers",
+    "country": "Algeria",
+    "countryCode": "DZ",
+    "lat": 36.7323,
+    "lng": 3.0875,
+    "timezone": "Africa/Algiers",
+    "population": 1977663
+  },
+  {
+    "slug": "khartoum-sudan",
+    "name": "Khartoum",
+    "country": "Sudan",
+    "countryCode": "SD",
+    "lat": 15.5518,
+    "lng": 32.5324,
+    "timezone": "Africa/Khartoum",
+    "population": 1974647
+  },
+  {
+    "slug": "accra-ghana",
+    "name": "Accra",
+    "country": "Ghana",
+    "countryCode": "GH",
+    "lat": 5.556,
+    "lng": -0.1969,
+    "timezone": "Africa/Abidjan",
+    "population": 1963264
+  },
+  {
+    "slug": "guayaquil-ecuador",
+    "name": "Guayaquil",
+    "country": "Ecuador",
+    "countryCode": "EC",
+    "lat": -2.1962,
+    "lng": -79.8862,
+    "timezone": "America/Guayaquil",
+    "population": 1952029
+  },
+  {
+    "slug": "sanaa-yemen",
+    "name": "Sanaa",
+    "country": "Yemen",
+    "countryCode": "YE",
+    "lat": 15.3547,
+    "lng": 44.2067,
+    "timezone": "Asia/Riyadh",
+    "population": 1937451
+  },
+  {
+    "slug": "beirut-lebanon",
+    "name": "Beirut",
+    "country": "Lebanon",
+    "countryCode": "LB",
+    "lat": 33.8933,
+    "lng": 35.5016,
+    "timezone": "Asia/Beirut",
+    "population": 1916100
+  },
+  {
+    "slug": "perth-australia",
+    "name": "Perth",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -31.9522,
+    "lng": 115.8614,
+    "timezone": "Australia/Perth",
+    "population": 1896548
+  },
+  {
+    "slug": "sapporo-japan",
+    "name": "Sapporo",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 43.0667,
+    "lng": 141.35,
+    "timezone": "Asia/Tokyo",
+    "population": 1883027
+  },
+  {
+    "slug": "bucharest-romania",
+    "name": "Bucharest",
+    "country": "Romania",
+    "countryCode": "RO",
+    "lat": 44.4323,
+    "lng": 26.1063,
+    "timezone": "Europe/Bucharest",
+    "population": 1877155
+  },
+  {
+    "slug": "camayenne-guinea",
+    "name": "Camayenne",
+    "country": "Guinea",
+    "countryCode": "GN",
+    "lat": 9.535,
+    "lng": -13.6878,
+    "timezone": "Africa/Abidjan",
+    "population": 1871242
+  },
+  {
+    "slug": "indore-india",
+    "name": "Indore",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 22.7179,
+    "lng": 75.8333,
+    "timezone": "Asia/Kolkata",
+    "population": 1837041
+  },
+  {
+    "slug": "medan-indonesia",
+    "name": "Medan",
+    "country": "Indonesia",
+    "countryCode": "ID",
+    "lat": 3.5833,
+    "lng": 98.6667,
+    "timezone": "Asia/Jakarta",
+    "population": 1750971
+  },
+  {
+    "slug": "minsk-belarus",
+    "name": "Minsk",
+    "country": "Belarus",
+    "countryCode": "BY",
+    "lat": 53.9,
+    "lng": 27.5667,
+    "timezone": "Europe/Minsk",
+    "population": 1742124
+  },
+  {
+    "slug": "budapest-hungary",
+    "name": "Budapest",
+    "country": "Hungary",
+    "countryCode": "HU",
+    "lat": 47.4984,
+    "lng": 19.0405,
+    "timezone": "Europe/Budapest",
+    "population": 1741041
+  },
+  {
+    "slug": "hamburg-germany",
+    "name": "Hamburg",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 53.5507,
+    "lng": 9.993,
+    "timezone": "Europe/Berlin",
+    "population": 1739117
+  },
+  {
+    "slug": "warsaw-poland",
+    "name": "Warsaw",
+    "country": "Poland",
+    "countryCode": "PL",
+    "lat": 52.2298,
+    "lng": 21.0118,
+    "timezone": "Europe/Warsaw",
+    "population": 1702139
+  },
+  {
+    "slug": "vienna-austria",
+    "name": "Vienna",
+    "country": "Austria",
+    "countryCode": "AT",
+    "lat": 48.2085,
+    "lng": 16.3721,
+    "timezone": "Europe/Vienna",
+    "population": 1691468
+  },
+  {
+    "slug": "rabat-morocco",
+    "name": "Rabat",
+    "country": "Morocco",
+    "countryCode": "MA",
+    "lat": 34.0133,
+    "lng": -6.8325,
+    "timezone": "Africa/Casablanca",
+    "population": 1655753
+  },
+  {
+    "slug": "barcelona-spain",
+    "name": "Barcelona",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 41.3888,
+    "lng": 2.159,
+    "timezone": "Europe/Madrid",
+    "population": 1621537
+  },
+  {
+    "slug": "pretoria-south-africa",
+    "name": "Pretoria",
+    "country": "South Africa",
+    "countryCode": "ZA",
+    "lat": -25.7449,
+    "lng": 28.1878,
+    "timezone": "Africa/Johannesburg",
+    "population": 1619438
+  },
+  {
+    "slug": "aleppo-syria",
+    "name": "Aleppo",
+    "country": "Syria",
+    "countryCode": "SY",
+    "lat": 36.2012,
+    "lng": 37.1612,
+    "timezone": "Asia/Damascus",
+    "population": 1602264
+  },
+  {
+    "slug": "montreal-canada",
+    "name": "Montréal",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 45.5088,
+    "lng": -73.5878,
+    "timezone": "America/Toronto",
+    "population": 1600000
+  },
+  {
+    "slug": "phnom-penh-cambodia",
+    "name": "Phnom Penh",
+    "country": "Cambodia",
+    "countryCode": "KH",
+    "lat": 11.5625,
+    "lng": 104.916,
+    "timezone": "Asia/Jakarta",
+    "population": 1573544
+  },
+  {
+    "slug": "damascus-syria",
+    "name": "Damascus",
+    "country": "Syria",
+    "countryCode": "SY",
+    "lat": 33.5102,
+    "lng": 36.2913,
+    "timezone": "Asia/Damascus",
+    "population": 1569394
+  },
+  {
+    "slug": "philadelphia-united-states",
+    "name": "Philadelphia",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 39.9523,
+    "lng": -75.1638,
+    "timezone": "America/New_York",
+    "population": 1567442
+  },
+  {
+    "slug": "phoenix-united-states",
+    "name": "Phoenix",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 33.4484,
+    "lng": -112.074,
+    "timezone": "America/Phoenix",
+    "population": 1563025
+  },
+  {
+    "slug": "isfahan-iran",
+    "name": "Isfahan",
+    "country": "Iran",
+    "countryCode": "IR",
+    "lat": 32.6525,
+    "lng": 51.6746,
+    "timezone": "Asia/Tehran",
+    "population": 1547164
+  },
+  {
+    "slug": "harare-zimbabwe",
+    "name": "Harare",
+    "country": "Zimbabwe",
+    "countryCode": "ZW",
+    "lat": -17.8277,
+    "lng": 31.0534,
+    "timezone": "Africa/Johannesburg",
+    "population": 1542813
+  },
+  {
+    "slug": "kobe-japan",
+    "name": "Kobe",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 34.6913,
+    "lng": 135.183,
+    "timezone": "Asia/Tokyo",
+    "population": 1528478
+  },
+  {
+    "slug": "kaohsiung-taiwan",
+    "name": "Kaohsiung",
+    "country": "Taiwan",
+    "countryCode": "TW",
+    "lat": 22.6163,
+    "lng": 120.3133,
+    "timezone": "Asia/Taipei",
+    "population": 1519711
+  },
+  {
+    "slug": "stockholm-sweden",
+    "name": "Stockholm",
+    "country": "Sweden",
+    "countryCode": "SE",
+    "lat": 59.3294,
+    "lng": 18.0687,
+    "timezone": "Europe/Berlin",
+    "population": 1515017
+  },
+  {
+    "slug": "guadalajara-mexico",
+    "name": "Guadalajara",
+    "country": "Mexico",
+    "countryCode": "MX",
+    "lat": 20.6668,
+    "lng": -103.3918,
+    "timezone": "America/Mexico_City",
+    "population": 1495182
+  },
+  {
+    "slug": "daejeon-south-korea",
+    "name": "Daejeon",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "lat": 36.3491,
+    "lng": 127.3849,
+    "timezone": "Asia/Seoul",
+    "population": 1475221
+  },
+  {
+    "slug": "san-antonio-united-states",
+    "name": "San Antonio",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 29.4241,
+    "lng": -98.4936,
+    "timezone": "America/Chicago",
+    "population": 1469845
+  },
+  {
+    "slug": "kumasi-ghana",
+    "name": "Kumasi",
+    "country": "Ghana",
+    "countryCode": "GH",
+    "lat": 6.6885,
+    "lng": -1.6244,
+    "timezone": "Africa/Abidjan",
+    "population": 1468609
+  },
+  {
+    "slug": "kota-bharu-malaysia",
+    "name": "Kota Bharu",
+    "country": "Malaysia",
+    "countryCode": "MY",
+    "lat": 6.1236,
+    "lng": 102.2433,
+    "timezone": "Asia/Singapore",
+    "population": 1459994
+  },
+  {
+    "slug": "kyoto-japan",
+    "name": "Kyoto",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 35.0211,
+    "lng": 135.7539,
+    "timezone": "Asia/Tokyo",
+    "population": 1459640
+  },
+  {
+    "slug": "kuala-lumpur-malaysia",
+    "name": "Kuala Lumpur",
+    "country": "Malaysia",
+    "countryCode": "MY",
+    "lat": 3.1412,
+    "lng": 101.6865,
+    "timezone": "Asia/Singapore",
+    "population": 1453975
+  },
+  {
+    "slug": "kathmandu-nepal",
+    "name": "Kathmandu",
+    "country": "Nepal",
+    "countryCode": "NP",
+    "lat": 27.7017,
+    "lng": 85.3206,
+    "timezone": "Asia/Kathmandu",
+    "population": 1442271
+  },
+  {
+    "slug": "puebla-mexico",
+    "name": "Puebla",
+    "country": "Mexico",
+    "countryCode": "MX",
+    "lat": 19.0379,
+    "lng": -98.2035,
+    "timezone": "America/Mexico_City",
+    "population": 1434062
+  },
+  {
+    "slug": "hanoi-vietnam",
+    "name": "Hanoi",
+    "country": "Vietnam",
+    "countryCode": "VN",
+    "lat": 21.0245,
+    "lng": 105.8412,
+    "timezone": "Asia/Jakarta",
+    "population": 1431270
+  },
+  {
+    "slug": "kharkiv-ukraine",
+    "name": "Kharkiv",
+    "country": "Ukraine",
+    "countryCode": "UA",
+    "lat": 49.9808,
+    "lng": 36.2527,
+    "timezone": "Europe/Kyiv",
+    "population": 1430885
+  },
+  {
+    "slug": "cordoba-argentina",
+    "name": "Córdoba",
+    "country": "Argentina",
+    "countryCode": "AR",
+    "lat": -31.4135,
+    "lng": -64.181,
+    "timezone": "America/Argentina/Cordoba",
+    "population": 1428214
+  },
+  {
+    "slug": "novosibirsk-russia",
+    "name": "Novosibirsk",
+    "country": "Russia",
+    "countryCode": "RU",
+    "lat": 55.0415,
+    "lng": 82.9346,
+    "timezone": "Asia/Novosibirsk",
+    "population": 1419007
+  },
+  {
+    "slug": "gwangju-south-korea",
+    "name": "Gwangju",
+    "country": "South Korea",
+    "countryCode": "KR",
+    "lat": 35.1547,
+    "lng": 126.9156,
+    "timezone": "Asia/Seoul",
+    "population": 1416938
+  },
+  {
+    "slug": "san-diego-united-states",
+    "name": "San Diego",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 32.7157,
+    "lng": -117.1647,
+    "timezone": "America/Los_Angeles",
+    "population": 1394928
+  },
+  {
+    "slug": "fukuoka-japan",
+    "name": "Fukuoka",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 33.6,
+    "lng": 130.4167,
+    "timezone": "Asia/Tokyo",
+    "population": 1392289
+  },
+  {
+    "slug": "antananarivo-madagascar",
+    "name": "Antananarivo",
+    "country": "Madagascar",
+    "countryCode": "MG",
+    "lat": -18.9137,
+    "lng": 47.5361,
+    "timezone": "Asia/Riyadh",
+    "population": 1391433
+  },
+  {
+    "slug": "lubumbashi-dr-congo",
+    "name": "Lubumbashi",
+    "country": "DR Congo",
+    "countryCode": "CD",
+    "lat": -11.6609,
+    "lng": 27.4794,
+    "timezone": "Africa/Johannesburg",
+    "population": 1373770
+  },
+  {
+    "slug": "kampala-uganda",
+    "name": "Kampala",
+    "country": "Uganda",
+    "countryCode": "UG",
+    "lat": 0.3163,
+    "lng": 32.5822,
+    "timezone": "Asia/Riyadh",
+    "population": 1353189
+  },
+  {
+    "slug": "yekaterinburg-russia",
+    "name": "Yekaterinburg",
+    "country": "Russia",
+    "countryCode": "RU",
+    "lat": 56.8519,
+    "lng": 60.6122,
+    "timezone": "Asia/Yekaterinburg",
+    "population": 1349772
+  },
+  {
+    "slug": "khulna-bangladesh",
+    "name": "Khulna",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 22.8098,
+    "lng": 89.5644,
+    "timezone": "Asia/Dhaka",
+    "population": 1342339
+  },
+  {
+    "slug": "douala-cameroon",
+    "name": "Douala",
+    "country": "Cameroon",
+    "countryCode": "CM",
+    "lat": 4.0483,
+    "lng": 9.7043,
+    "timezone": "Africa/Lagos",
+    "population": 1338082
+  },
+  {
+    "slug": "mecca-saudi-arabia",
+    "name": "Mecca",
+    "country": "Saudi Arabia",
+    "countryCode": "SA",
+    "lat": 21.4266,
+    "lng": 39.8256,
+    "timezone": "Asia/Riyadh",
+    "population": 1323624
+  },
+  {
+    "slug": "dallas-united-states",
+    "name": "Dallas",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 32.7831,
+    "lng": -96.8067,
+    "timezone": "America/Chicago",
+    "population": 1300092
+  },
+  {
+    "slug": "medina-saudi-arabia",
+    "name": "Medina",
+    "country": "Saudi Arabia",
+    "countryCode": "SA",
+    "lat": 24.4686,
+    "lng": 39.6142,
+    "timezone": "Asia/Riyadh",
+    "population": 1300000
+  },
+  {
+    "slug": "yaounde-cameroon",
+    "name": "Yaoundé",
+    "country": "Cameroon",
+    "countryCode": "CM",
+    "lat": 3.8667,
+    "lng": 11.5167,
+    "timezone": "Africa/Lagos",
+    "population": 1299369
+  },
+  {
+    "slug": "bamako-mali",
+    "name": "Bamako",
+    "country": "Mali",
+    "countryCode": "ML",
+    "lat": 12.65,
+    "lng": -8,
+    "timezone": "Africa/Abidjan",
+    "population": 1297281
+  },
+  {
+    "slug": "brazzaville-congo",
+    "name": "Brazzaville",
+    "country": "Congo",
+    "countryCode": "CG",
+    "lat": -4.2661,
+    "lng": 15.2832,
+    "timezone": "Africa/Lagos",
+    "population": 1284609
+  },
+  {
+    "slug": "nizhniy-novgorod-russia",
+    "name": "Nizhniy Novgorod",
+    "country": "Russia",
+    "countryCode": "RU",
+    "lat": 56.3287,
+    "lng": 44.002,
+    "timezone": "Europe/Moscow",
+    "population": 1284164
+  },
+  {
+    "slug": "amman-jordan",
+    "name": "Amman",
+    "country": "Jordan",
+    "countryCode": "JO",
+    "lat": 31.9552,
+    "lng": 35.945,
+    "timezone": "Asia/Amman",
+    "population": 1275857
+  },
+  {
+    "slug": "budta-philippines",
+    "name": "Budta",
+    "country": "Philippines",
+    "countryCode": "PH",
+    "lat": 7.2042,
+    "lng": 124.4397,
+    "timezone": "Asia/Manila",
+    "population": 1273715
+  },
+  {
+    "slug": "belgrade-serbia",
+    "name": "Belgrade",
+    "country": "Serbia",
+    "countryCode": "RS",
+    "lat": 44.804,
+    "lng": 20.4651,
+    "timezone": "Europe/Belgrade",
+    "population": 1273651
+  },
+  {
+    "slug": "lusaka-zambia",
+    "name": "Lusaka",
+    "country": "Zambia",
+    "countryCode": "ZM",
+    "lat": -15.4067,
+    "lng": 28.2871,
+    "timezone": "Africa/Johannesburg",
+    "population": 1267440
+  },
+  {
+    "slug": "munich-germany",
+    "name": "Munich",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 48.1374,
+    "lng": 11.5755,
+    "timezone": "Europe/Berlin",
+    "population": 1260391
+  },
+  {
+    "slug": "milan-italy",
+    "name": "Milan",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 45.4643,
+    "lng": 9.1895,
+    "timezone": "Europe/Rome",
+    "population": 1236837
+  },
+  {
+    "slug": "adelaide-australia",
+    "name": "Adelaide",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -34.9287,
+    "lng": 138.5986,
+    "timezone": "Australia/Adelaide",
+    "population": 1225235
+  },
+  {
+    "slug": "davao-philippines",
+    "name": "Davao",
+    "country": "Philippines",
+    "countryCode": "PH",
+    "lat": 7.0731,
+    "lng": 125.6128,
+    "timezone": "Asia/Manila",
+    "population": 1212504
+  },
+  {
+    "slug": "mandalay-myanmar",
+    "name": "Mandalay",
+    "country": "Myanmar",
+    "countryCode": "MM",
+    "lat": 21.9747,
+    "lng": 96.0836,
+    "timezone": "Asia/Yangon",
+    "population": 1208099
+  },
+  {
+    "slug": "maputo-mozambique",
+    "name": "Maputo",
+    "country": "Mozambique",
+    "countryCode": "MZ",
+    "lat": -25.9655,
+    "lng": 32.5832,
+    "timezone": "Africa/Johannesburg",
+    "population": 1191613
+  },
+  {
+    "slug": "rosario-argentina",
+    "name": "Rosario",
+    "country": "Argentina",
+    "countryCode": "AR",
+    "lat": -32.9468,
+    "lng": -60.6393,
+    "timezone": "America/Argentina/Cordoba",
+    "population": 1173533
+  },
+  {
+    "slug": "prague-czechia",
+    "name": "Prague",
+    "country": "Czechia",
+    "countryCode": "CZ",
+    "lat": 50.088,
+    "lng": 14.4208,
+    "timezone": "Europe/Prague",
+    "population": 1165581
+  },
+  {
+    "slug": "copenhagen-denmark",
+    "name": "Copenhagen",
+    "country": "Denmark",
+    "countryCode": "DK",
+    "lat": 55.6759,
+    "lng": 12.5655,
+    "timezone": "Europe/Berlin",
+    "population": 1153615
+  },
+  {
+    "slug": "sofia-bulgaria",
+    "name": "Sofia",
+    "country": "Bulgaria",
+    "countryCode": "BG",
+    "lat": 42.6975,
+    "lng": 23.3242,
+    "timezone": "Europe/Sofia",
+    "population": 1152556
+  },
+  {
+    "slug": "tripoli-libya",
+    "name": "Tripoli",
+    "country": "Libya",
+    "countryCode": "LY",
+    "lat": 32.8874,
+    "lng": 13.1873,
+    "timezone": "Africa/Tripoli",
+    "population": 1150989
+  },
+  {
+    "slug": "hiroshima-japan",
+    "name": "Hiroshima",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 34.4,
+    "lng": 132.45,
+    "timezone": "Asia/Tokyo",
+    "population": 1143841
+  },
+  {
+    "slug": "samara-russia",
+    "name": "Samara",
+    "country": "Russia",
+    "countryCode": "RU",
+    "lat": 53.2001,
+    "lng": 50.15,
+    "timezone": "Europe/Samara",
+    "population": 1134730
+  },
+  {
+    "slug": "omsk-russia",
+    "name": "Omsk",
+    "country": "Russia",
+    "countryCode": "RU",
+    "lat": 54.9924,
+    "lng": 73.3686,
+    "timezone": "Asia/Omsk",
+    "population": 1129281
+  },
+  {
+    "slug": "baku-azerbaijan",
+    "name": "Baku",
+    "country": "Azerbaijan",
+    "countryCode": "AZ",
+    "lat": 40.3777,
+    "lng": 49.892,
+    "timezone": "Asia/Baku",
+    "population": 1116513
+  },
+  {
+    "slug": "kazan-russia",
+    "name": "Kazan",
+    "country": "Russia",
+    "countryCode": "RU",
+    "lat": 55.7887,
+    "lng": 49.1221,
+    "timezone": "Europe/Moscow",
+    "population": 1104738
+  },
+  {
+    "slug": "yerevan-armenia",
+    "name": "Yerevan",
+    "country": "Armenia",
+    "countryCode": "AM",
+    "lat": 40.1811,
+    "lng": 44.5136,
+    "timezone": "Asia/Yerevan",
+    "population": 1093485
+  },
+  {
+    "slug": "ouagadougou-burkina-faso",
+    "name": "Ouagadougou",
+    "country": "Burkina Faso",
+    "countryCode": "BF",
+    "lat": 12.3657,
+    "lng": -1.5339,
+    "timezone": "Africa/Abidjan",
+    "population": 1086505
+  },
+  {
+    "slug": "sendai-japan",
+    "name": "Sendai",
+    "country": "Japan",
+    "countryCode": "JP",
+    "lat": 38.2667,
+    "lng": 140.8667,
+    "timezone": "Asia/Tokyo",
+    "population": 1063103
+  },
+  {
+    "slug": "tbilisi-georgia",
+    "name": "Tbilisi",
+    "country": "Georgia",
+    "countryCode": "GE",
+    "lat": 41.6941,
+    "lng": 44.8337,
+    "timezone": "Asia/Tbilisi",
+    "population": 1049498
+  },
+  {
+    "slug": "dnipro-ukraine",
+    "name": "Dnipro",
+    "country": "Ukraine",
+    "countryCode": "UA",
+    "lat": 48.4593,
+    "lng": 35.0386,
+    "timezone": "Europe/Kyiv",
+    "population": 1032822
+  },
+  {
+    "slug": "san-jose-united-states",
+    "name": "San Jose",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 37.3394,
+    "lng": -121.895,
+    "timezone": "America/Los_Angeles",
+    "population": 1026908
+  },
+  {
+    "slug": "dublin-ireland",
+    "name": "Dublin",
+    "country": "Ireland",
+    "countryCode": "IE",
+    "lat": 53.3331,
+    "lng": -6.2489,
+    "timezone": "Europe/London",
+    "population": 1024027
+  },
+  {
+    "slug": "calgary-canada",
+    "name": "Calgary",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 51.0501,
+    "lng": -114.0853,
+    "timezone": "America/Edmonton",
+    "population": 1019942
+  },
+  {
+    "slug": "brussels-belgium",
+    "name": "Brussels",
+    "country": "Belgium",
+    "countryCode": "BE",
+    "lat": 50.8505,
+    "lng": 4.3488,
+    "timezone": "Europe/Brussels",
+    "population": 1019022
+  },
+  {
+    "slug": "birmingham-united-kingdom",
+    "name": "Birmingham",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.4814,
+    "lng": -1.8998,
+    "timezone": "Europe/London",
+    "population": 984333
+  },
+  {
+    "slug": "srinagar-india",
+    "name": "Srinagar",
+    "country": "India",
+    "countryCode": "IN",
+    "lat": 34.0857,
+    "lng": 74.8056,
+    "timezone": "Asia/Kolkata",
+    "population": 975857
+  },
+  {
+    "slug": "port-elizabeth-south-africa",
+    "name": "Port Elizabeth",
+    "country": "South Africa",
+    "countryCode": "ZA",
+    "lat": -33.9611,
+    "lng": 25.6149,
+    "timezone": "Africa/Johannesburg",
+    "population": 967677
+  },
+  {
+    "slug": "koln-germany",
+    "name": "Köln",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 50.9333,
+    "lng": 6.95,
+    "timezone": "Europe/Berlin",
+    "population": 963395
+  },
+  {
+    "slug": "naples-italy",
+    "name": "Naples",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 40.8522,
+    "lng": 14.2681,
+    "timezone": "Europe/Rome",
+    "population": 959470
+  },
+  {
+    "slug": "monrovia-liberia",
+    "name": "Monrovia",
+    "country": "Liberia",
+    "countryCode": "LR",
+    "lat": 6.3005,
+    "lng": -10.7969,
+    "timezone": "Africa/Monrovia",
+    "population": 939524
+  },
+  {
+    "slug": "kingston-jamaica",
+    "name": "Kingston",
+    "country": "Jamaica",
+    "countryCode": "JM",
+    "lat": 17.997,
+    "lng": -76.7936,
+    "timezone": "America/Jamaica",
+    "population": 937700
+  },
+  {
+    "slug": "austin-united-states",
+    "name": "Austin",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 30.2672,
+    "lng": -97.7431,
+    "timezone": "America/Chicago",
+    "population": 931830
+  },
+  {
+    "slug": "nay-pyi-taw-myanmar",
+    "name": "Nay Pyi Taw",
+    "country": "Myanmar",
+    "countryCode": "MM",
+    "lat": 19.745,
+    "lng": 96.1297,
+    "timezone": "Asia/Yangon",
+    "population": 925000
+  },
+  {
+    "slug": "bishkek-kyrgyzstan",
+    "name": "Bishkek",
+    "country": "Kyrgyzstan",
+    "countryCode": "KG",
+    "lat": 42.87,
+    "lng": 74.59,
+    "timezone": "Asia/Bishkek",
+    "population": 900000
+  },
+  {
+    "slug": "turin-italy",
+    "name": "Turin",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 45.0705,
+    "lng": 7.6868,
+    "timezone": "Europe/Rome",
+    "population": 870456
+  },
+  {
+    "slug": "jacksonville-united-states",
+    "name": "Jacksonville",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 30.3322,
+    "lng": -81.6556,
+    "timezone": "America/New_York",
+    "population": 868031
+  },
+  {
+    "slug": "san-francisco-united-states",
+    "name": "San Francisco",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 37.7749,
+    "lng": -122.4194,
+    "timezone": "America/Los_Angeles",
+    "population": 864816
+  },
+  {
+    "slug": "liverpool-united-kingdom",
+    "name": "Liverpool",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.4106,
+    "lng": -2.9779,
+    "timezone": "Europe/London",
+    "population": 864122
+  },
+  {
+    "slug": "columbus-united-states",
+    "name": "Columbus",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 39.9612,
+    "lng": -82.9988,
+    "timezone": "America/New_York",
+    "population": 850106
+  },
+  {
+    "slug": "ulan-bator-mongolia",
+    "name": "Ulan Bator",
+    "country": "Mongolia",
+    "countryCode": "MN",
+    "lat": 47.9077,
+    "lng": 106.8832,
+    "timezone": "Asia/Ulaanbaatar",
+    "population": 844818
+  },
+  {
+    "slug": "takeo-cambodia",
+    "name": "Takeo",
+    "country": "Cambodia",
+    "countryCode": "KH",
+    "lat": 10.9908,
+    "lng": 104.785,
+    "timezone": "Asia/Jakarta",
+    "population": 843931
+  },
+  {
+    "slug": "fort-worth-united-states",
+    "name": "Fort Worth",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 32.7254,
+    "lng": -97.3208,
+    "timezone": "America/Chicago",
+    "population": 833319
+  },
+  {
+    "slug": "indianapolis-united-states",
+    "name": "Indianapolis",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 39.7684,
+    "lng": -86.158,
+    "timezone": "America/Indiana/Indianapolis",
+    "population": 829718
+  },
+  {
+    "slug": "charlotte-united-states",
+    "name": "Charlotte",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 35.2271,
+    "lng": -80.8431,
+    "timezone": "America/New_York",
+    "population": 827097
+  },
+  {
+    "slug": "valencia-spain",
+    "name": "Valencia",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 39.4698,
+    "lng": -0.3774,
+    "timezone": "Europe/Madrid",
+    "population": 814208
+  },
+  {
+    "slug": "ottawa-canada",
+    "name": "Ottawa",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 45.4112,
+    "lng": -75.6981,
+    "timezone": "America/Toronto",
+    "population": 812129
+  },
+  {
+    "slug": "freetown-sierra-leone",
+    "name": "Freetown",
+    "country": "Sierra Leone",
+    "countryCode": "SL",
+    "lat": 8.4871,
+    "lng": -13.2356,
+    "timezone": "Africa/Abidjan",
+    "population": 802639
+  },
+  {
+    "slug": "jerusalem-israel",
+    "name": "Jerusalem",
+    "country": "Israel",
+    "countryCode": "IL",
+    "lat": 31.769,
+    "lng": 35.2163,
+    "timezone": "Asia/Jerusalem",
+    "population": 801000
+  },
+  {
+    "slug": "mombasa-kenya",
+    "name": "Mombasa",
+    "country": "Kenya",
+    "countryCode": "KE",
+    "lat": -4.0547,
+    "lng": 39.6636,
+    "timezone": "Asia/Riyadh",
+    "population": 799668
+  },
+  {
+    "slug": "cebu-city-philippines",
+    "name": "Cebu City",
+    "country": "Philippines",
+    "countryCode": "PH",
+    "lat": 10.3167,
+    "lng": 123.8907,
+    "timezone": "Asia/Manila",
+    "population": 798634
+  },
+  {
+    "slug": "muscat-oman",
+    "name": "Muscat",
+    "country": "Oman",
+    "countryCode": "OM",
+    "lat": 23.5841,
+    "lng": 58.4078,
+    "timezone": "Asia/Dubai",
+    "population": 797000
+  },
+  {
+    "slug": "marseille-france",
+    "name": "Marseille",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 43.297,
+    "lng": 5.3811,
+    "timezone": "Europe/Paris",
+    "population": 794811
+  },
+  {
+    "slug": "boumerdas-algeria",
+    "name": "Boumerdas",
+    "country": "Algeria",
+    "countryCode": "DZ",
+    "lat": 36.7664,
+    "lng": 3.4772,
+    "timezone": "Africa/Algiers",
+    "population": 786499
+  },
+  {
+    "slug": "cotonou-benin",
+    "name": "Cotonou",
+    "country": "Benin",
+    "countryCode": "BJ",
+    "lat": 6.3654,
+    "lng": 2.4183,
+    "timezone": "Africa/Lagos",
+    "population": 780000
+  },
+  {
+    "slug": "niamey-niger",
+    "name": "Niamey",
+    "country": "Niger",
+    "countryCode": "NE",
+    "lat": 13.5137,
+    "lng": 2.1098,
+    "timezone": "Africa/Lagos",
+    "population": 774235
+  },
+  {
+    "slug": "odz-poland",
+    "name": "Łódź",
+    "country": "Poland",
+    "countryCode": "PL",
+    "lat": 51.7706,
+    "lng": 19.4739,
+    "timezone": "Europe/Warsaw",
+    "population": 768755
+  },
+  {
+    "slug": "krakow-poland",
+    "name": "Kraków",
+    "country": "Poland",
+    "countryCode": "PL",
+    "lat": 50.0614,
+    "lng": 19.9366,
+    "timezone": "Europe/Warsaw",
+    "population": 755050
+  },
+  {
+    "slug": "pietermaritzburg-south-africa",
+    "name": "Pietermaritzburg",
+    "country": "South Africa",
+    "countryCode": "ZA",
+    "lat": -29.6168,
+    "lng": 30.3928,
+    "timezone": "Africa/Johannesburg",
+    "population": 750845
+  },
+  {
+    "slug": "lome-togo",
+    "name": "Lomé",
+    "country": "Togo",
+    "countryCode": "TG",
+    "lat": 6.1287,
+    "lng": 1.2215,
+    "timezone": "Africa/Abidjan",
+    "population": 749700
+  },
+  {
+    "slug": "kigali-rwanda",
+    "name": "Kigali",
+    "country": "Rwanda",
+    "countryCode": "RW",
+    "lat": -1.9499,
+    "lng": 30.0589,
+    "timezone": "Africa/Johannesburg",
+    "population": 745261
+  },
+  {
+    "slug": "riga-latvia",
+    "name": "Riga",
+    "country": "Latvia",
+    "countryCode": "LV",
+    "lat": 56.946,
+    "lng": 24.1059,
+    "timezone": "Europe/Riga",
+    "population": 742572
+  },
+  {
+    "slug": "amsterdam-netherlands",
+    "name": "Amsterdam",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 52.374,
+    "lng": 4.8897,
+    "timezone": "Europe/Brussels",
+    "population": 741636
+  },
+  {
+    "slug": "nottingham-united-kingdom",
+    "name": "Nottingham",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.9536,
+    "lng": -1.1505,
+    "timezone": "Europe/London",
+    "population": 729977
+  },
+  {
+    "slug": "ashgabat-turkmenistan",
+    "name": "Ashgabat",
+    "country": "Turkmenistan",
+    "countryCode": "TM",
+    "lat": 37.95,
+    "lng": 58.3833,
+    "timezone": "Asia/Ashgabat",
+    "population": 727700
+  },
+  {
+    "slug": "n-djamena-chad",
+    "name": "N'Djamena",
+    "country": "Chad",
+    "countryCode": "TD",
+    "lat": 12.1067,
+    "lng": 15.0444,
+    "timezone": "Africa/Ndjamena",
+    "population": 721081
+  },
+  {
+    "slug": "edmonton-canada",
+    "name": "Edmonton",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 53.5501,
+    "lng": -113.4687,
+    "timezone": "America/Edmonton",
+    "population": 712391
+  },
+  {
+    "slug": "sevilla-spain",
+    "name": "Sevilla",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 37.3828,
+    "lng": -5.9732,
+    "timezone": "Europe/Madrid",
+    "population": 703206
+  },
+  {
+    "slug": "rajshahi-bangladesh",
+    "name": "Rājshāhi",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.374,
+    "lng": 88.6011,
+    "timezone": "Asia/Dhaka",
+    "population": 700133
+  },
+  {
+    "slug": "zagreb-croatia",
+    "name": "Zagreb",
+    "country": "Croatia",
+    "countryCode": "HR",
+    "lat": 45.8144,
+    "lng": 15.978,
+    "timezone": "Europe/Belgrade",
+    "population": 698966
+  },
+  {
+    "slug": "sarajevo-bosnia-and-herzegovina",
+    "name": "Sarajevo",
+    "country": "Bosnia and Herzegovina",
+    "countryCode": "BA",
+    "lat": 43.8486,
+    "lng": 18.3564,
+    "timezone": "Europe/Belgrade",
+    "population": 696731
+  },
+  {
+    "slug": "tunis-tunisia",
+    "name": "Tunis",
+    "country": "Tunisia",
+    "countryCode": "TN",
+    "lat": 36.819,
+    "lng": 10.1658,
+    "timezone": "Africa/Tunis",
+    "population": 693210
+  },
+  {
+    "slug": "sheffield-united-kingdom",
+    "name": "Sheffield",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.383,
+    "lng": -1.4659,
+    "timezone": "Europe/London",
+    "population": 685368
+  },
+  {
+    "slug": "seattle-united-states",
+    "name": "Seattle",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 47.6062,
+    "lng": -122.3321,
+    "timezone": "America/Los_Angeles",
+    "population": 684451
+  },
+  {
+    "slug": "denver-united-states",
+    "name": "Denver",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 39.7392,
+    "lng": -104.9847,
+    "timezone": "America/Denver",
+    "population": 682545
+  },
+  {
+    "slug": "el-paso-united-states",
+    "name": "El Paso",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 31.7587,
+    "lng": -106.4869,
+    "timezone": "America/Denver",
+    "population": 681124
+  },
+  {
+    "slug": "general-santos-philippines",
+    "name": "General Santos",
+    "country": "Philippines",
+    "countryCode": "PH",
+    "lat": 6.1128,
+    "lng": 125.1717,
+    "timezone": "Asia/Manila",
+    "population": 679588
+  },
+  {
+    "slug": "dushanbe-tajikistan",
+    "name": "Dushanbe",
+    "country": "Tajikistan",
+    "countryCode": "TJ",
+    "lat": 38.5358,
+    "lng": 68.7791,
+    "timezone": "Asia/Dushanbe",
+    "population": 679400
+  },
+  {
+    "slug": "zaragoza-spain",
+    "name": "Zaragoza",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 41.6561,
+    "lng": -0.8773,
+    "timezone": "Europe/Madrid",
+    "population": 674317
+  },
+  {
+    "slug": "mississauga-canada",
+    "name": "Mississauga",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 43.5789,
+    "lng": -79.6583,
+    "timezone": "America/Toronto",
+    "population": 668549
+  },
+  {
+    "slug": "boston-united-states",
+    "name": "Boston",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 42.3584,
+    "lng": -71.0598,
+    "timezone": "America/New_York",
+    "population": 667137
+  },
+  {
+    "slug": "athens-greece",
+    "name": "Athens",
+    "country": "Greece",
+    "countryCode": "GR",
+    "lat": 37.9838,
+    "lng": 23.7278,
+    "timezone": "Europe/Athens",
+    "population": 664046
+  },
+  {
+    "slug": "nouakchott-mauritania",
+    "name": "Nouakchott",
+    "country": "Mauritania",
+    "countryCode": "MR",
+    "lat": 18.0858,
+    "lng": -15.9785,
+    "timezone": "Africa/Abidjan",
+    "population": 661400
+  },
+  {
+    "slug": "memphis-united-states",
+    "name": "Memphis",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 35.1495,
+    "lng": -90.049,
+    "timezone": "America/Chicago",
+    "population": 655770
+  },
+  {
+    "slug": "frankfurt-am-main-germany",
+    "name": "Frankfurt am Main",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 50.1155,
+    "lng": 8.6842,
+    "timezone": "Europe/Berlin",
+    "population": 650000
+  },
+  {
+    "slug": "palermo-italy",
+    "name": "Palermo",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 38.1321,
+    "lng": 13.3356,
+    "timezone": "Europe/Rome",
+    "population": 648260
+  },
+  {
+    "slug": "colombo-sri-lanka",
+    "name": "Colombo",
+    "country": "Sri Lanka",
+    "countryCode": "LK",
+    "lat": 6.9355,
+    "lng": 79.8487,
+    "timezone": "Asia/Colombo",
+    "population": 648034
+  },
+  {
+    "slug": "lilongwe-malawi",
+    "name": "Lilongwe",
+    "country": "Malawi",
+    "countryCode": "MW",
+    "lat": -13.9669,
+    "lng": 33.7873,
+    "timezone": "Africa/Johannesburg",
+    "population": 646750
+  },
+  {
+    "slug": "al-ahmadi-kuwait",
+    "name": "Al Aḩmadī",
+    "country": "Kuwait",
+    "countryCode": "KW",
+    "lat": 29.0769,
+    "lng": 48.0839,
+    "timezone": "Asia/Riyadh",
+    "population": 637411
+  },
+  {
+    "slug": "chisinau-moldova",
+    "name": "Chisinau",
+    "country": "Moldova",
+    "countryCode": "MD",
+    "lat": 47.0056,
+    "lng": 28.8575,
+    "timezone": "Europe/Chisinau",
+    "population": 635994
+  },
+  {
+    "slug": "portland-united-states",
+    "name": "Portland",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 45.5234,
+    "lng": -122.6762,
+    "timezone": "America/Los_Angeles",
+    "population": 632309
+  },
+  {
+    "slug": "winnipeg-canada",
+    "name": "Winnipeg",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 49.8844,
+    "lng": -97.147,
+    "timezone": "America/Winnipeg",
+    "population": 632063
+  },
+  {
+    "slug": "oklahoma-city-united-states",
+    "name": "Oklahoma City",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 35.4676,
+    "lng": -97.5164,
+    "timezone": "America/Chicago",
+    "population": 631346
+  },
+  {
+    "slug": "djibouti-djibouti",
+    "name": "Djibouti",
+    "country": "Djibouti",
+    "countryCode": "DJ",
+    "lat": 11.589,
+    "lng": 43.145,
+    "timezone": "Asia/Riyadh",
+    "population": 623891
+  },
+  {
+    "slug": "las-vegas-united-states",
+    "name": "Las Vegas",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 36.175,
+    "lng": -115.1372,
+    "timezone": "America/Los_Angeles",
+    "population": 623747
+  },
+  {
+    "slug": "baltimore-united-states",
+    "name": "Baltimore",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 39.2904,
+    "lng": -76.6122,
+    "timezone": "America/New_York",
+    "population": 621849
+  },
+  {
+    "slug": "bristol-united-kingdom",
+    "name": "Bristol",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.4552,
+    "lng": -2.5966,
+    "timezone": "Europe/London",
+    "population": 617280
+  },
+  {
+    "slug": "abu-dhabi-united-arab-emirates",
+    "name": "Abu Dhabi",
+    "country": "United Arab Emirates",
+    "countryCode": "AE",
+    "lat": 24.4512,
+    "lng": 54.397,
+    "timezone": "Asia/Dubai",
+    "population": 603492
+  },
+  {
+    "slug": "washington-d-c-united-states",
+    "name": "Washington, D.C.",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 38.8951,
+    "lng": -77.0364,
+    "timezone": "America/New_York",
+    "population": 601723
+  },
+  {
+    "slug": "islamabad-pakistan",
+    "name": "Islamabad",
+    "country": "Pakistan",
+    "countryCode": "PK",
+    "lat": 33.7215,
+    "lng": 73.0433,
+    "timezone": "Asia/Karachi",
+    "population": 601600
+  },
+  {
+    "slug": "milwaukee-united-states",
+    "name": "Milwaukee",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 43.0389,
+    "lng": -87.9065,
+    "timezone": "America/Chicago",
+    "population": 600155
+  },
+  {
+    "slug": "vancouver-canada",
+    "name": "Vancouver",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 49.2497,
+    "lng": -123.1193,
+    "timezone": "America/Vancouver",
+    "population": 600000
+  },
+  {
+    "slug": "rotterdam-netherlands",
+    "name": "Rotterdam",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 51.9225,
+    "lng": 4.4792,
+    "timezone": "Europe/Brussels",
+    "population": 598199
+  },
+  {
+    "slug": "essen-germany",
+    "name": "Essen",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 51.4566,
+    "lng": 7.0123,
+    "timezone": "Europe/Berlin",
+    "population": 593085
+  },
+  {
+    "slug": "glasgow-united-kingdom",
+    "name": "Glasgow",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 55.8652,
+    "lng": -4.2576,
+    "timezone": "Europe/London",
+    "population": 591620
+  },
+  {
+    "slug": "gold-coast-australia",
+    "name": "Gold Coast",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -28.0003,
+    "lng": 153.4309,
+    "timezone": "Australia/Brisbane",
+    "population": 591473
+  },
+  {
+    "slug": "abuja-nigeria",
+    "name": "Abuja",
+    "country": "Nigeria",
+    "countryCode": "NG",
+    "lat": 9.0579,
+    "lng": 7.4951,
+    "timezone": "Africa/Lagos",
+    "population": 590400
+  },
+  {
+    "slug": "stuttgart-germany",
+    "name": "Stuttgart",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 48.7823,
+    "lng": 9.177,
+    "timezone": "Europe/Berlin",
+    "population": 589793
+  },
+  {
+    "slug": "dortmund-germany",
+    "name": "Dortmund",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 51.5149,
+    "lng": 7.466,
+    "timezone": "Europe/Berlin",
+    "population": 588462
+  },
+  {
+    "slug": "genoa-italy",
+    "name": "Genoa",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 44.4048,
+    "lng": 8.9444,
+    "timezone": "Europe/Rome",
+    "population": 580223
+  },
+  {
+    "slug": "oslo-norway",
+    "name": "Oslo",
+    "country": "Norway",
+    "countryCode": "NO",
+    "lat": 59.9127,
+    "lng": 10.7461,
+    "timezone": "Europe/Berlin",
+    "population": 580000
+  },
+  {
+    "slug": "libreville-gabon",
+    "name": "Libreville",
+    "country": "Gabon",
+    "countryCode": "GA",
+    "lat": 0.3924,
+    "lng": 9.4536,
+    "timezone": "Africa/Lagos",
+    "population": 578156
+  },
+  {
+    "slug": "dusseldorf-germany",
+    "name": "Düsseldorf",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 51.2217,
+    "lng": 6.7762,
+    "timezone": "Europe/Berlin",
+    "population": 573057
+  },
+  {
+    "slug": "goteborg-sweden",
+    "name": "Göteborg",
+    "country": "Sweden",
+    "countryCode": "SE",
+    "lat": 57.7072,
+    "lng": 11.9668,
+    "timezone": "Europe/Berlin",
+    "population": 572799
+  },
+  {
+    "slug": "malaga-spain",
+    "name": "Málaga",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 36.7202,
+    "lng": -4.4203,
+    "timezone": "Europe/Madrid",
+    "population": 568305
+  },
+  {
+    "slug": "bouake-cote-d-ivoire",
+    "name": "Bouaké",
+    "country": "Cote d'Ivoire",
+    "countryCode": "CI",
+    "lat": 7.6939,
+    "lng": -5.0303,
+    "timezone": "Africa/Abidjan",
+    "population": 567481
+  },
+  {
+    "slug": "nyala-sudan",
+    "name": "Nyala",
+    "country": "Sudan",
+    "countryCode": "SD",
+    "lat": 12.0489,
+    "lng": 24.8807,
+    "timezone": "Africa/Khartoum",
+    "population": 565734
+  },
+  {
+    "slug": "asmara-eritrea",
+    "name": "Asmara",
+    "country": "Eritrea",
+    "countryCode": "ER",
+    "lat": 15.3381,
+    "lng": 38.9318,
+    "timezone": "Asia/Riyadh",
+    "population": 563930
+  },
+  {
+    "slug": "albuquerque-united-states",
+    "name": "Albuquerque",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 35.0845,
+    "lng": -106.6511,
+    "timezone": "America/Denver",
+    "population": 559121
+  },
+  {
+    "slug": "helsinki-finland",
+    "name": "Helsinki",
+    "country": "Finland",
+    "countryCode": "FI",
+    "lat": 60.1695,
+    "lng": 24.9355,
+    "timezone": "Europe/Helsinki",
+    "population": 558457
+  },
+  {
+    "slug": "pristina-kosovo",
+    "name": "Pristina",
+    "country": "Kosovo",
+    "countryCode": "XK",
+    "lat": 42.6727,
+    "lng": 21.1669,
+    "timezone": "Europe/Belgrade",
+    "population": 550000
+  },
+  {
+    "slug": "bremen-germany",
+    "name": "Bremen",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 53.0758,
+    "lng": 8.8072,
+    "timezone": "Europe/Berlin",
+    "population": 546501
+  },
+  {
+    "slug": "vilnius-lithuania",
+    "name": "Vilnius",
+    "country": "Lithuania",
+    "countryCode": "LT",
+    "lat": 54.6892,
+    "lng": 25.2798,
+    "timezone": "Europe/Vilnius",
+    "population": 542366
+  },
+  {
+    "slug": "port-said-egypt",
+    "name": "Port Said",
+    "country": "Egypt",
+    "countryCode": "EG",
+    "lat": 31.2653,
+    "lng": 32.3019,
+    "timezone": "Africa/Cairo",
+    "population": 538378
+  },
+  {
+    "slug": "beira-mozambique",
+    "name": "Beira",
+    "country": "Mozambique",
+    "countryCode": "MZ",
+    "lat": -19.8436,
+    "lng": 34.8389,
+    "timezone": "Africa/Johannesburg",
+    "population": 530604
+  },
+  {
+    "slug": "quebec-canada",
+    "name": "Québec",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 46.8123,
+    "lng": -71.2145,
+    "timezone": "America/Toronto",
+    "population": 528595
+  },
+  {
+    "slug": "hamilton-canada",
+    "name": "Hamilton",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 43.2501,
+    "lng": -79.8496,
+    "timezone": "America/Toronto",
+    "population": 519949
+  },
+  {
+    "slug": "lisbon-portugal",
+    "name": "Lisbon",
+    "country": "Portugal",
+    "countryCode": "PT",
+    "lat": 38.7167,
+    "lng": -9.1333,
+    "timezone": "Europe/Lisbon",
+    "population": 517802
+  },
+  {
+    "slug": "hannover-germany",
+    "name": "Hannover",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 52.3705,
+    "lng": 9.7332,
+    "timezone": "Europe/Berlin",
+    "population": 515140
+  },
+  {
+    "slug": "leicester-united-kingdom",
+    "name": "Leicester",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.6386,
+    "lng": -1.1317,
+    "timezone": "Europe/London",
+    "population": 508916
+  },
+  {
+    "slug": "leipzig-germany",
+    "name": "Leipzig",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 51.3396,
+    "lng": 12.3713,
+    "timezone": "Europe/Berlin",
+    "population": 504971
+  },
+  {
+    "slug": "nurnberg-germany",
+    "name": "Nürnberg",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 49.4542,
+    "lng": 11.0775,
+    "timezone": "Europe/Berlin",
+    "population": 499237
+  },
+  {
+    "slug": "dresden-germany",
+    "name": "Dresden",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 51.0509,
+    "lng": 13.7383,
+    "timezone": "Europe/Berlin",
+    "population": 486854
+  },
+  {
+    "slug": "skopje-north-macedonia",
+    "name": "Skopje",
+    "country": "North Macedonia",
+    "countryCode": "MK",
+    "lat": 41.9965,
+    "lng": 21.4314,
+    "timezone": "Europe/Belgrade",
+    "population": 474889
+  },
+  {
+    "slug": "lyon-france",
+    "name": "Lyon",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 45.7485,
+    "lng": 4.8467,
+    "timezone": "Europe/Paris",
+    "population": 472317
+  },
+  {
+    "slug": "edinburgh-united-kingdom",
+    "name": "Edinburgh",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 55.9521,
+    "lng": -3.1965,
+    "timezone": "Europe/London",
+    "population": 464990
+  },
+  {
+    "slug": "antwerpen-belgium",
+    "name": "Antwerpen",
+    "country": "Belgium",
+    "countryCode": "BE",
+    "lat": 51.2205,
+    "lng": 4.4003,
+    "timezone": "Europe/Brussels",
+    "population": 459805
+  },
+  {
+    "slug": "juba-south-sudan",
+    "name": "Juba",
+    "country": "South Sudan",
+    "countryCode": "SS",
+    "lat": 4.8517,
+    "lng": 31.5825,
+    "timezone": "Africa/Juba",
+    "population": 450000
+  },
+  {
+    "slug": "cardiff-united-kingdom",
+    "name": "Cardiff",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.48,
+    "lng": -3.18,
+    "timezone": "Europe/London",
+    "population": 447287
+  },
+  {
+    "slug": "murcia-spain",
+    "name": "Murcia",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 37.987,
+    "lng": -1.13,
+    "timezone": "Europe/Madrid",
+    "population": 436870
+  },
+  {
+    "slug": "mwanza-tanzania",
+    "name": "Mwanza",
+    "country": "Tanzania",
+    "countryCode": "TZ",
+    "lat": -2.5167,
+    "lng": 32.9,
+    "timezone": "Asia/Riyadh",
+    "population": 436801
+  },
+  {
+    "slug": "toulouse-france",
+    "name": "Toulouse",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 43.6043,
+    "lng": 1.4437,
+    "timezone": "Europe/Paris",
+    "population": 433055
+  },
+  {
+    "slug": "tel-aviv-israel",
+    "name": "Tel Aviv",
+    "country": "Israel",
+    "countryCode": "IL",
+    "lat": 32.0809,
+    "lng": 34.7806,
+    "timezone": "Asia/Jerusalem",
+    "population": 432892
+  },
+  {
+    "slug": "namangan-uzbekistan",
+    "name": "Namangan",
+    "country": "Uzbekistan",
+    "countryCode": "UZ",
+    "lat": 40.9983,
+    "lng": 71.6726,
+    "timezone": "Asia/Tashkent",
+    "population": 432456
+  },
+  {
+    "slug": "bratislava-slovakia",
+    "name": "Bratislava",
+    "country": "Slovakia",
+    "countryCode": "SK",
+    "lat": 48.1482,
+    "lng": 17.1067,
+    "timezone": "Europe/Prague",
+    "population": 423737
+  },
+  {
+    "slug": "san-juan-puerto-rico",
+    "name": "San Juan",
+    "country": "Puerto Rico",
+    "countryCode": "PR",
+    "lat": 18.4663,
+    "lng": -66.1057,
+    "timezone": "America/Puerto_Rico",
+    "population": 418140
+  },
+  {
+    "slug": "auckland-new-zealand",
+    "name": "Auckland",
+    "country": "New Zealand",
+    "countryCode": "NZ",
+    "lat": -36.8485,
+    "lng": 174.7635,
+    "timezone": "Pacific/Auckland",
+    "population": 417910
+  },
+  {
+    "slug": "gaza-palestine",
+    "name": "Gaza",
+    "country": "Palestine",
+    "countryCode": "PS",
+    "lat": 31.5016,
+    "lng": 34.4667,
+    "timezone": "Asia/Gaza",
+    "population": 410000
+  },
+  {
+    "slug": "panama-panama",
+    "name": "Panamá",
+    "country": "Panama",
+    "countryCode": "PA",
+    "lat": 8.9936,
+    "lng": -79.5197,
+    "timezone": "America/Panama",
+    "population": 408168
+  },
+  {
+    "slug": "zanzibar-tanzania",
+    "name": "Zanzibar",
+    "country": "Tanzania",
+    "countryCode": "TZ",
+    "lat": -6.1639,
+    "lng": 39.1979,
+    "timezone": "Asia/Riyadh",
+    "population": 403658
+  },
+  {
+    "slug": "palma-spain",
+    "name": "Palma",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 39.5694,
+    "lng": 2.6502,
+    "timezone": "Europe/Madrid",
+    "population": 401270
+  },
+  {
+    "slug": "manchester-united-kingdom",
+    "name": "Manchester",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.481,
+    "lng": -2.2374,
+    "timezone": "Europe/London",
+    "population": 395515
+  },
+  {
+    "slug": "surrey-canada",
+    "name": "Surrey",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 49.1064,
+    "lng": -122.8251,
+    "timezone": "America/Vancouver",
+    "population": 394976
+  },
+  {
+    "slug": "tallinn-estonia",
+    "name": "Tallinn",
+    "country": "Estonia",
+    "countryCode": "EE",
+    "lat": 59.437,
+    "lng": 24.7535,
+    "timezone": "Europe/Tallinn",
+    "population": 394024
+  },
+  {
+    "slug": "kandahar-afghanistan",
+    "name": "Kandahār",
+    "country": "Afghanistan",
+    "countryCode": "AF",
+    "lat": 31.6133,
+    "lng": 65.7101,
+    "timezone": "Asia/Kabul",
+    "population": 391190
+  },
+  {
+    "slug": "comilla-bangladesh",
+    "name": "Comilla",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.4619,
+    "lng": 91.185,
+    "timezone": "Asia/Dhaka",
+    "population": 389411
+  },
+  {
+    "slug": "bissau-guinea-bissau",
+    "name": "Bissau",
+    "country": "Guinea-Bissau",
+    "countryCode": "GW",
+    "lat": 11.8636,
+    "lng": -15.5977,
+    "timezone": "Africa/Bissau",
+    "population": 388028
+  },
+  {
+    "slug": "wellington-new-zealand",
+    "name": "Wellington",
+    "country": "New Zealand",
+    "countryCode": "NZ",
+    "lat": -41.2866,
+    "lng": 174.7756,
+    "timezone": "Pacific/Auckland",
+    "population": 381900
+  },
+  {
+    "slug": "las-palmas-de-gran-canaria-spain",
+    "name": "Las Palmas de Gran Canaria",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 28.0997,
+    "lng": -15.4134,
+    "timezone": "Atlantic/Canary",
+    "population": 381847
+  },
+  {
+    "slug": "shibganj-bangladesh",
+    "name": "Shibganj",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 25.0015,
+    "lng": 89.3227,
+    "timezone": "Asia/Dhaka",
+    "population": 378701
+  },
+  {
+    "slug": "tirana-albania",
+    "name": "Tirana",
+    "country": "Albania",
+    "countryCode": "AL",
+    "lat": 41.3275,
+    "lng": 19.8189,
+    "timezone": "Europe/Tirane",
+    "population": 374801
+  },
+  {
+    "slug": "stoke-on-trent-united-kingdom",
+    "name": "Stoke-on-Trent",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.0042,
+    "lng": -2.1854,
+    "timezone": "Europe/London",
+    "population": 372775
+  },
+  {
+    "slug": "brno-czechia",
+    "name": "Brno",
+    "country": "Czechia",
+    "countryCode": "CZ",
+    "lat": 49.1952,
+    "lng": 16.608,
+    "timezone": "Europe/Prague",
+    "population": 369559
+  },
+  {
+    "slug": "natore-bangladesh",
+    "name": "Natore",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.4111,
+    "lng": 88.9867,
+    "timezone": "Asia/Dhaka",
+    "population": 369138
+  },
+  {
+    "slug": "canberra-australia",
+    "name": "Canberra",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -35.2835,
+    "lng": 149.1281,
+    "timezone": "Australia/Sydney",
+    "population": 367752
+  },
+  {
+    "slug": "bologna-italy",
+    "name": "Bologna",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 44.4938,
+    "lng": 11.3387,
+    "timezone": "Europe/Rome",
+    "population": 366133
+  },
+  {
+    "slug": "christchurch-new-zealand",
+    "name": "Christchurch",
+    "country": "New Zealand",
+    "countryCode": "NZ",
+    "lat": -43.5333,
+    "lng": 172.6333,
+    "timezone": "Pacific/Auckland",
+    "population": 363926
+  },
+  {
+    "slug": "tamale-ghana",
+    "name": "Tamale",
+    "country": "Ghana",
+    "countryCode": "GH",
+    "lat": 9.4008,
+    "lng": -0.8393,
+    "timezone": "Africa/Abidjan",
+    "population": 360579
+  },
+  {
+    "slug": "coventry-united-kingdom",
+    "name": "Coventry",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 52.4066,
+    "lng": -1.5122,
+    "timezone": "Europe/London",
+    "population": 359262
+  },
+  {
+    "slug": "halifax-canada",
+    "name": "Halifax",
+    "country": "Canada",
+    "countryCode": "CA",
+    "lat": 44.6464,
+    "lng": -63.5729,
+    "timezone": "America/Halifax",
+    "population": 359111
+  },
+  {
+    "slug": "bilbao-spain",
+    "name": "Bilbao",
+    "country": "Spain",
+    "countryCode": "ES",
+    "lat": 43.2627,
+    "lng": -2.9253,
+    "timezone": "Europe/Madrid",
+    "population": 354860
+  },
+  {
+    "slug": "thessaloniki-greece",
+    "name": "Thessaloníki",
+    "country": "Greece",
+    "countryCode": "GR",
+    "lat": 40.6436,
+    "lng": 22.9309,
+    "timezone": "Europe/Athens",
+    "population": 354290
+  },
+  {
+    "slug": "florence-italy",
+    "name": "Florence",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 43.7793,
+    "lng": 11.2463,
+    "timezone": "Europe/Rome",
+    "population": 349296
+  },
+  {
+    "slug": "nur-sultan-kazakhstan",
+    "name": "Astana",
+    "country": "Kazakhstan",
+    "countryCode": "KZ",
+    "lat": 51.1801,
+    "lng": 71.446,
+    "timezone": "Asia/Almaty",
+    "population": 345604
+  },
+  {
+    "slug": "doha-qatar",
+    "name": "Doha",
+    "country": "Qatar",
+    "countryCode": "QA",
+    "lat": 25.2855,
+    "lng": 51.531,
+    "timezone": "Asia/Qatar",
+    "population": 344939
+  },
+  {
+    "slug": "rangpur-bangladesh",
+    "name": "Rangpur",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 25.7466,
+    "lng": 89.2517,
+    "timezone": "Asia/Dhaka",
+    "population": 343122
+  },
+  {
+    "slug": "zurich-switzerland",
+    "name": "Zürich",
+    "country": "Switzerland",
+    "countryCode": "CH",
+    "lat": 47.3667,
+    "lng": 8.55,
+    "timezone": "Europe/Zurich",
+    "population": 341730
+  },
+  {
+    "slug": "plovdiv-bulgaria",
+    "name": "Plovdiv",
+    "country": "Bulgaria",
+    "countryCode": "BG",
+    "lat": 42.15,
+    "lng": 24.75,
+    "timezone": "Europe/Sofia",
+    "population": 340494
+  },
+  {
+    "slug": "serekunda-gambia",
+    "name": "Serekunda",
+    "country": "Gambia",
+    "countryCode": "GM",
+    "lat": 13.4383,
+    "lng": -16.6781,
+    "timezone": "Africa/Abidjan",
+    "population": 340000
+  },
+  {
+    "slug": "nice-france",
+    "name": "Nice",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 43.7031,
+    "lng": 7.2661,
+    "timezone": "Europe/Paris",
+    "population": 338620
+  },
+  {
+    "slug": "tungi-bangladesh",
+    "name": "Tungi",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.8915,
+    "lng": 90.4023,
+    "timezone": "Asia/Dhaka",
+    "population": 337579
+  },
+  {
+    "slug": "sunderland-united-kingdom",
+    "name": "Sunderland",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 54.9047,
+    "lng": -1.3822,
+    "timezone": "Europe/London",
+    "population": 335415
+  },
+  {
+    "slug": "bielefeld-germany",
+    "name": "Bielefeld",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 52.0333,
+    "lng": 8.5333,
+    "timezone": "Europe/Berlin",
+    "population": 331906
+  },
+  {
+    "slug": "reading-united-kingdom",
+    "name": "Reading",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.4563,
+    "lng": -0.9711,
+    "timezone": "Europe/London",
+    "population": 318014
+  },
+  {
+    "slug": "iasi-romania",
+    "name": "Iaşi",
+    "country": "Romania",
+    "countryCode": "RO",
+    "lat": 47.1667,
+    "lng": 27.6,
+    "timezone": "Europe/Bucharest",
+    "population": 318012
+  },
+  {
+    "slug": "kingston-upon-hull-united-kingdom",
+    "name": "Kingston upon Hull",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.7446,
+    "lng": -0.3352,
+    "timezone": "Europe/London",
+    "population": 314018
+  },
+  {
+    "slug": "preston-united-kingdom",
+    "name": "Preston",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.7628,
+    "lng": -2.7045,
+    "timezone": "Europe/London",
+    "population": 313332
+  },
+  {
+    "slug": "antofagasta-chile",
+    "name": "Antofagasta",
+    "country": "Chile",
+    "countryCode": "CL",
+    "lat": -23.6524,
+    "lng": -70.3954,
+    "timezone": "America/Santiago",
+    "population": 309832
+  },
+  {
+    "slug": "newcastle-australia",
+    "name": "Newcastle",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -32.9295,
+    "lng": 151.7801,
+    "timezone": "Australia/Sydney",
+    "population": 308308
+  },
+  {
+    "slug": "mannheim-germany",
+    "name": "Mannheim",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 49.4891,
+    "lng": 8.4669,
+    "timezone": "Europe/Berlin",
+    "population": 307960
+  },
+  {
+    "slug": "malmo-sweden",
+    "name": "Malmö",
+    "country": "Sweden",
+    "countryCode": "SE",
+    "lat": 55.6059,
+    "lng": 13.0007,
+    "timezone": "Europe/Berlin",
+    "population": 301706
+  },
+  {
+    "slug": "swansea-united-kingdom",
+    "name": "Swansea",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.6208,
+    "lng": -3.9432,
+    "timezone": "Europe/London",
+    "population": 300352
+  },
+  {
+    "slug": "bradford-united-kingdom",
+    "name": "Bradford",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 53.7939,
+    "lng": -1.7521,
+    "timezone": "Europe/London",
+    "population": 299310
+  },
+  {
+    "slug": "southend-on-sea-united-kingdom",
+    "name": "Southend-on-Sea",
+    "country": "United Kingdom",
+    "countryCode": "GB",
+    "lat": 51.5378,
+    "lng": 0.7143,
+    "timezone": "Europe/London",
+    "population": 295310
+  },
+  {
+    "slug": "wollongong-australia",
+    "name": "Wollongong",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -34.424,
+    "lng": 150.8935,
+    "timezone": "Australia/Sydney",
+    "population": 292190
+  },
+  {
+    "slug": "catania-italy",
+    "name": "Catania",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 37.4922,
+    "lng": 15.0704,
+    "timezone": "Europe/Rome",
+    "population": 290927
+  },
+  {
+    "slug": "utrecht-netherlands",
+    "name": "Utrecht",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 52.0908,
+    "lng": 5.1222,
+    "timezone": "Europe/Brussels",
+    "population": 290529
+  },
+  {
+    "slug": "karlsruhe-germany",
+    "name": "Karlsruhe",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 49.0094,
+    "lng": 8.4044,
+    "timezone": "Europe/Berlin",
+    "population": 283799
+  },
+  {
+    "slug": "narsingdi-bangladesh",
+    "name": "Narsingdi",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.923,
+    "lng": 90.7177,
+    "timezone": "Asia/Dhaka",
+    "population": 281080
+  },
+  {
+    "slug": "bari-italy",
+    "name": "Bari",
+    "country": "Italy",
+    "countryCode": "IT",
+    "lat": 41.1207,
+    "lng": 16.8698,
+    "timezone": "Europe/Rome",
+    "population": 277387
+  },
+  {
+    "slug": "nantes-france",
+    "name": "Nantes",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 47.2173,
+    "lng": -1.5534,
+    "timezone": "Europe/Paris",
+    "population": 277269
+  },
+  {
+    "slug": "strasbourg-france",
+    "name": "Strasbourg",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 48.5839,
+    "lng": 7.7455,
+    "timezone": "Europe/Paris",
+    "population": 274845
+  },
+  {
+    "slug": "wiesbaden-germany",
+    "name": "Wiesbaden",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 50.0826,
+    "lng": 8.2493,
+    "timezone": "Europe/Berlin",
+    "population": 272432
+  },
+  {
+    "slug": "ljubljana-slovenia",
+    "name": "Ljubljana",
+    "country": "Slovenia",
+    "countryCode": "SI",
+    "lat": 46.0511,
+    "lng": 14.5051,
+    "timezone": "Europe/Belgrade",
+    "population": 272220
+  },
+  {
+    "slug": "munster-germany",
+    "name": "Münster",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 51.9624,
+    "lng": 7.6257,
+    "timezone": "Europe/Berlin",
+    "population": 270184
+  },
+  {
+    "slug": "haifa-israel",
+    "name": "Haifa",
+    "country": "Israel",
+    "countryCode": "IL",
+    "lat": 32.8184,
+    "lng": 34.9885,
+    "timezone": "Asia/Jerusalem",
+    "population": 267300
+  },
+  {
+    "slug": "bagerhat-bangladesh",
+    "name": "Bagerhat",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 22.6566,
+    "lng": 89.7912,
+    "timezone": "Asia/Dhaka",
+    "population": 266388
+  },
+  {
+    "slug": "aachen-germany",
+    "name": "Aachen",
+    "country": "Germany",
+    "countryCode": "DE",
+    "lat": 50.7766,
+    "lng": 6.0834,
+    "timezone": "Europe/Berlin",
+    "population": 265208
+  },
+  {
+    "slug": "nakuru-kenya",
+    "name": "Nakuru",
+    "country": "Kenya",
+    "countryCode": "KE",
+    "lat": -0.3072,
+    "lng": 36.0722,
+    "timezone": "Asia/Riyadh",
+    "population": 259903
+  },
+  {
+    "slug": "cox-s-bazar-bangladesh",
+    "name": "Cox’s Bāzār",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 21.4397,
+    "lng": 92.0096,
+    "timezone": "Asia/Dhaka",
+    "population": 253788
+  },
+  {
+    "slug": "dire-dawa-ethiopia",
+    "name": "Dire Dawa",
+    "country": "Ethiopia",
+    "countryCode": "ET",
+    "lat": 9.5931,
+    "lng": 41.8661,
+    "timezone": "Asia/Riyadh",
+    "population": 252279
+  },
+  {
+    "slug": "nis-serbia",
+    "name": "Niš",
+    "country": "Serbia",
+    "countryCode": "RS",
+    "lat": 43.3247,
+    "lng": 21.9033,
+    "timezone": "Europe/Belgrade",
+    "population": 250000
+  },
+  {
+    "slug": "porto-portugal",
+    "name": "Porto",
+    "country": "Portugal",
+    "countryCode": "PT",
+    "lat": 41.1496,
+    "lng": -8.611,
+    "timezone": "Europe/Lisbon",
+    "population": 249633
+  },
+  {
+    "slug": "montpellier-france",
+    "name": "Montpellier",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 43.6109,
+    "lng": 3.8772,
+    "timezone": "Europe/Paris",
+    "population": 248252
+  },
+  {
+    "slug": "udon-thani-thailand",
+    "name": "Udon Thani",
+    "country": "Thailand",
+    "countryCode": "TH",
+    "lat": 17.4157,
+    "lng": 102.7859,
+    "timezone": "Asia/Jakarta",
+    "population": 247231
+  },
+  {
+    "slug": "jessore-bangladesh",
+    "name": "Jessore",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.1697,
+    "lng": 89.2137,
+    "timezone": "Asia/Dhaka",
+    "population": 243987
+  },
+  {
+    "slug": "nagarpur-bangladesh",
+    "name": "Nāgarpur",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.0578,
+    "lng": 89.877,
+    "timezone": "Asia/Dhaka",
+    "population": 238422
+  },
+  {
+    "slug": "arhus-denmark",
+    "name": "Århus",
+    "country": "Denmark",
+    "countryCode": "DK",
+    "lat": 56.1567,
+    "lng": 10.2108,
+    "timezone": "Europe/Berlin",
+    "population": 237551
+  },
+  {
+    "slug": "djougou-benin",
+    "name": "Djougou",
+    "country": "Benin",
+    "countryCode": "BJ",
+    "lat": 9.7085,
+    "lng": 1.666,
+    "timezone": "Africa/Lagos",
+    "population": 237040
+  },
+  {
+    "slug": "sylhet-bangladesh",
+    "name": "Sylhet",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.899,
+    "lng": 91.872,
+    "timezone": "Asia/Dhaka",
+    "population": 237000
+  },
+  {
+    "slug": "georgetown-guyana",
+    "name": "Georgetown",
+    "country": "Guyana",
+    "countryCode": "GY",
+    "lat": 6.8045,
+    "lng": -58.1553,
+    "timezone": "America/Guyana",
+    "population": 235017
+  },
+  {
+    "slug": "bordeaux-france",
+    "name": "Bordeaux",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 44.8404,
+    "lng": -0.5805,
+    "timezone": "Europe/Paris",
+    "population": 231844
+  },
+  {
+    "slug": "gent-belgium",
+    "name": "Gent",
+    "country": "Belgium",
+    "countryCode": "BE",
+    "lat": 51.05,
+    "lng": 3.7167,
+    "timezone": "Europe/Brussels",
+    "population": 231493
+  },
+  {
+    "slug": "lille-france",
+    "name": "Lille",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 50.633,
+    "lng": 3.0586,
+    "timezone": "Europe/Paris",
+    "population": 228328
+  },
+  {
+    "slug": "geelong-australia",
+    "name": "Geelong",
+    "country": "Australia",
+    "countryCode": "AU",
+    "lat": -38.1471,
+    "lng": 144.3607,
+    "timezone": "Australia/Melbourne",
+    "population": 226034
+  },
+  {
+    "slug": "mymensingh-bangladesh",
+    "name": "Mymensingh",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.7564,
+    "lng": 90.4065,
+    "timezone": "Asia/Dhaka",
+    "population": 225126
+  },
+  {
+    "slug": "paramaribo-suriname",
+    "name": "Paramaribo",
+    "country": "Suriname",
+    "countryCode": "SR",
+    "lat": 5.8664,
+    "lng": -55.1668,
+    "timezone": "America/Paramaribo",
+    "population": 223757
+  },
+  {
+    "slug": "narayanganj-bangladesh",
+    "name": "Nārāyanganj",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.6135,
+    "lng": 90.503,
+    "timezone": "Asia/Dhaka",
+    "population": 223622
+  },
+  {
+    "slug": "graz-austria",
+    "name": "Graz",
+    "country": "Austria",
+    "countryCode": "AT",
+    "lat": 47.0667,
+    "lng": 15.45,
+    "timezone": "Europe/Vienna",
+    "population": 222326
+  },
+  {
+    "slug": "chon-buri-thailand",
+    "name": "Chon Buri",
+    "country": "Thailand",
+    "countryCode": "TH",
+    "lat": 13.3622,
+    "lng": 100.9835,
+    "timezone": "Asia/Jakarta",
+    "population": 219164
+  },
+  {
+    "slug": "eldoret-kenya",
+    "name": "Eldoret",
+    "country": "Kenya",
+    "countryCode": "KE",
+    "lat": 0.5204,
+    "lng": 35.2699,
+    "timezone": "Asia/Riyadh",
+    "population": 218446
+  },
+  {
+    "slug": "daloa-cote-d-ivoire",
+    "name": "Daloa",
+    "country": "Cote d'Ivoire",
+    "countryCode": "CI",
+    "lat": 6.8774,
+    "lng": -6.4502,
+    "timezone": "Africa/Abidjan",
+    "population": 215652
+  },
+  {
+    "slug": "mek-ele-ethiopia",
+    "name": "Mek'ele",
+    "country": "Ethiopia",
+    "countryCode": "ET",
+    "lat": 13.4967,
+    "lng": 39.4753,
+    "timezone": "Asia/Riyadh",
+    "population": 215546
+  },
+  {
+    "slug": "bergen-norway",
+    "name": "Bergen",
+    "country": "Norway",
+    "countryCode": "NO",
+    "lat": 60.393,
+    "lng": 5.3242,
+    "timezone": "Europe/Berlin",
+    "population": 213585
+  },
+  {
+    "slug": "bogra-bangladesh",
+    "name": "Bogra",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.851,
+    "lng": 89.3711,
+    "timezone": "Asia/Dhaka",
+    "population": 210000
+  },
+  {
+    "slug": "eindhoven-netherlands",
+    "name": "Eindhoven",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 51.4408,
+    "lng": 5.4778,
+    "timezone": "Europe/Brussels",
+    "population": 209620
+  },
+  {
+    "slug": "rennes-france",
+    "name": "Rennes",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 48.112,
+    "lng": -1.6743,
+    "timezone": "Europe/Paris",
+    "population": 209375
+  },
+  {
+    "slug": "nakhon-ratchasima-thailand",
+    "name": "Nakhon Ratchasima",
+    "country": "Thailand",
+    "countryCode": "TH",
+    "lat": 14.9707,
+    "lng": 102.102,
+    "timezone": "Asia/Jakarta",
+    "population": 208781
+  },
+  {
+    "slug": "dinajpur-bangladesh",
+    "name": "Dinājpur",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 25.6275,
+    "lng": 88.6378,
+    "timezone": "Asia/Dhaka",
+    "population": 206234
+  },
+  {
+    "slug": "linz-austria",
+    "name": "Linz",
+    "country": "Austria",
+    "countryCode": "AT",
+    "lat": 48.3064,
+    "lng": 14.2861,
+    "timezone": "Europe/Vienna",
+    "population": 204846
+  },
+  {
+    "slug": "debrecen-hungary",
+    "name": "Debrecen",
+    "country": "Hungary",
+    "countryCode": "HU",
+    "lat": 47.5317,
+    "lng": 21.6244,
+    "timezone": "Europe/Budapest",
+    "population": 204124
+  },
+  {
+    "slug": "tampere-finland",
+    "name": "Tampere",
+    "country": "Finland",
+    "countryCode": "FI",
+    "lat": 61.4991,
+    "lng": 23.7871,
+    "timezone": "Europe/Helsinki",
+    "population": 202687
+  },
+  {
+    "slug": "barisal-bangladesh",
+    "name": "Barisāl",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 22.705,
+    "lng": 90.3701,
+    "timezone": "Asia/Dhaka",
+    "population": 202242
+  },
+  {
+    "slug": "chiang-mai-thailand",
+    "name": "Chiang Mai",
+    "country": "Thailand",
+    "countryCode": "TH",
+    "lat": 18.7904,
+    "lng": 98.9847,
+    "timezone": "Asia/Jakarta",
+    "population": 200952
+  },
+  {
+    "slug": "nicosia-cyprus",
+    "name": "Nicosia",
+    "country": "Cyprus",
+    "countryCode": "CY",
+    "lat": 35.1753,
+    "lng": 33.3642,
+    "timezone": "Asia/Famagusta",
+    "population": 200452
+  },
+  {
+    "slug": "charleroi-belgium",
+    "name": "Charleroi",
+    "country": "Belgium",
+    "countryCode": "BE",
+    "lat": 50.4114,
+    "lng": 4.4445,
+    "timezone": "Europe/Brussels",
+    "population": 200132
+  },
+  {
+    "slug": "pokhara-nepal",
+    "name": "Pokhara",
+    "country": "Nepal",
+    "countryCode": "NP",
+    "lat": 28.2669,
+    "lng": 83.9685,
+    "timezone": "Asia/Kathmandu",
+    "population": 200000
+  },
+  {
+    "slug": "tilburg-netherlands",
+    "name": "Tilburg",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 51.5555,
+    "lng": 5.0913,
+    "timezone": "Europe/Brussels",
+    "population": 199613
+  },
+  {
+    "slug": "saidpur-bangladesh",
+    "name": "Saidpur",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 25.7777,
+    "lng": 88.8917,
+    "timezone": "Asia/Dhaka",
+    "population": 199422
+  },
+  {
+    "slug": "vientiane-laos",
+    "name": "Vientiane",
+    "country": "Laos",
+    "countryCode": "LA",
+    "lat": 17.9667,
+    "lng": 102.6,
+    "timezone": "Asia/Jakarta",
+    "population": 196731
+  },
+  {
+    "slug": "reims-france",
+    "name": "Reims",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 49.2653,
+    "lng": 4.0285,
+    "timezone": "Europe/Paris",
+    "population": 196565
+  },
+  {
+    "slug": "par-naogaon-bangladesh",
+    "name": "Pār Naogaon",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.8042,
+    "lng": 88.9488,
+    "timezone": "Asia/Dhaka",
+    "population": 192464
+  },
+  {
+    "slug": "cork-ireland",
+    "name": "Cork",
+    "country": "Ireland",
+    "countryCode": "IE",
+    "lat": 51.898,
+    "lng": -8.4706,
+    "timezone": "Europe/London",
+    "population": 190384
+  },
+  {
+    "slug": "pabna-bangladesh",
+    "name": "Pābna",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.0064,
+    "lng": 89.2372,
+    "timezone": "Asia/Dhaka",
+    "population": 186781
+  },
+  {
+    "slug": "le-havre-france",
+    "name": "Le Havre",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 49.4938,
+    "lng": 0.1077,
+    "timezone": "Europe/Paris",
+    "population": 185972
+  },
+  {
+    "slug": "paltan-bangladesh",
+    "name": "Paltan",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.7362,
+    "lng": 90.4143,
+    "timezone": "Asia/Dhaka",
+    "population": 184492
+  },
+  {
+    "slug": "geneve-switzerland",
+    "name": "Genève",
+    "country": "Switzerland",
+    "countryCode": "CH",
+    "lat": 46.2022,
+    "lng": 6.1457,
+    "timezone": "Europe/Zurich",
+    "population": 183981
+  },
+  {
+    "slug": "cergy-pontoise-france",
+    "name": "Cergy-Pontoise",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 49.0389,
+    "lng": 2.0781,
+    "timezone": "Europe/Paris",
+    "population": 183430
+  },
+  {
+    "slug": "liege-belgium",
+    "name": "Liège",
+    "country": "Belgium",
+    "countryCode": "BE",
+    "lat": 50.6337,
+    "lng": 5.5675,
+    "timezone": "Europe/Brussels",
+    "population": 182597
+  },
+  {
+    "slug": "groningen-netherlands",
+    "name": "Groningen",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 53.2192,
+    "lng": 6.5667,
+    "timezone": "Europe/Brussels",
+    "population": 181194
+  },
+  {
+    "slug": "tangail-bangladesh",
+    "name": "Tāngāil",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.2498,
+    "lng": 89.9166,
+    "timezone": "Asia/Dhaka",
+    "population": 180144
+  },
+  {
+    "slug": "kutaisi-georgia",
+    "name": "Kutaisi",
+    "country": "Georgia",
+    "countryCode": "GE",
+    "lat": 42.2679,
+    "lng": 42.6946,
+    "timezone": "Asia/Tbilisi",
+    "population": 178338
+  },
+  {
+    "slug": "saint-etienne-france",
+    "name": "Saint-Étienne",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 45.4339,
+    "lng": 4.39,
+    "timezone": "Europe/Paris",
+    "population": 176280
+  },
+  {
+    "slug": "turku-finland",
+    "name": "Turku",
+    "country": "Finland",
+    "countryCode": "FI",
+    "lat": 60.4515,
+    "lng": 22.2687,
+    "timezone": "Europe/Helsinki",
+    "population": 175945
+  },
+  {
+    "slug": "jaffna-sri-lanka",
+    "name": "Jaffna",
+    "country": "Sri Lanka",
+    "countryCode": "LK",
+    "lat": 9.6685,
+    "lng": 80.0074,
+    "timezone": "Asia/Colombo",
+    "population": 169102
+  },
+  {
+    "slug": "toulon-france",
+    "name": "Toulon",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 43.1244,
+    "lng": 5.9284,
+    "timezone": "Europe/Paris",
+    "population": 168701
+  },
+  {
+    "slug": "angers-france",
+    "name": "Angers",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 47.4738,
+    "lng": -0.5477,
+    "timezone": "Europe/Paris",
+    "population": 168279
+  },
+  {
+    "slug": "patra-greece",
+    "name": "Pátra",
+    "country": "Greece",
+    "countryCode": "GR",
+    "lat": 38.2444,
+    "lng": 21.7344,
+    "timezone": "Europe/Athens",
+    "population": 168034
+  },
+  {
+    "slug": "jamalpur-bangladesh",
+    "name": "Jamālpur",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.9197,
+    "lng": 89.9481,
+    "timezone": "Asia/Dhaka",
+    "population": 167900
+  },
+  {
+    "slug": "basel-switzerland",
+    "name": "Basel",
+    "country": "Switzerland",
+    "countryCode": "CH",
+    "lat": 47.5584,
+    "lng": 7.5733,
+    "timezone": "Europe/Zurich",
+    "population": 164488
+  },
+  {
+    "slug": "hebron-palestine",
+    "name": "Hebron",
+    "country": "Palestine",
+    "countryCode": "PS",
+    "lat": 31.5294,
+    "lng": 35.0938,
+    "timezone": "Asia/Hebron",
+    "population": 160470
+  },
+  {
+    "slug": "puthia-bangladesh",
+    "name": "Puthia",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.3654,
+    "lng": 88.8343,
+    "timezone": "Asia/Dhaka",
+    "population": 159406
+  },
+  {
+    "slug": "nijmegen-netherlands",
+    "name": "Nijmegen",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 51.8425,
+    "lng": 5.8528,
+    "timezone": "Europe/Brussels",
+    "population": 158732
+  },
+  {
+    "slug": "grenoble-france",
+    "name": "Grenoble",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 45.1787,
+    "lng": 5.7148,
+    "timezone": "Europe/Paris",
+    "population": 158552
+  },
+  {
+    "slug": "port-louis-mauritius",
+    "name": "Port Louis",
+    "country": "Mauritius",
+    "countryCode": "MU",
+    "lat": -20.1619,
+    "lng": 57.4989,
+    "timezone": "Indian/Mauritius",
+    "population": 155226
+  },
+  {
+    "slug": "limassol-cyprus",
+    "name": "Limassol",
+    "country": "Cyprus",
+    "countryCode": "CY",
+    "lat": 34.6841,
+    "lng": 33.0379,
+    "timezone": "Asia/Nicosia",
+    "population": 154000
+  },
+  {
+    "slug": "enschede-netherlands",
+    "name": "Enschede",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 52.2183,
+    "lng": 6.8958,
+    "timezone": "Europe/Brussels",
+    "population": 153655
+  },
+  {
+    "slug": "salzburg-austria",
+    "name": "Salzburg",
+    "country": "Austria",
+    "countryCode": "AT",
+    "lat": 47.7994,
+    "lng": 13.044,
+    "timezone": "Europe/Vienna",
+    "population": 153377
+  },
+  {
+    "slug": "dijon-france",
+    "name": "Dijon",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 47.3167,
+    "lng": 5.0167,
+    "timezone": "Europe/Paris",
+    "population": 149782
+  },
+  {
+    "slug": "uppsala-sweden",
+    "name": "Uppsala",
+    "country": "Sweden",
+    "countryCode": "SE",
+    "lat": 59.8588,
+    "lng": 17.6389,
+    "timezone": "Europe/Berlin",
+    "population": 149245
+  },
+  {
+    "slug": "nimes-france",
+    "name": "Nîmes",
+    "country": "France",
+    "countryCode": "FR",
+    "lat": 43.8338,
+    "lng": 4.3596,
+    "timezone": "Europe/Paris",
+    "population": 148236
+  },
+  {
+    "slug": "trondheim-norway",
+    "name": "Trondheim",
+    "country": "Norway",
+    "countryCode": "NO",
+    "lat": 63.4305,
+    "lng": 10.3951,
+    "timezone": "Europe/Berlin",
+    "population": 147139
+  },
+  {
+    "slug": "manama-bahrain",
+    "name": "Manama",
+    "country": "Bahrain",
+    "countryCode": "BH",
+    "lat": 26.2279,
+    "lng": 50.5857,
+    "timezone": "Asia/Qatar",
+    "population": 147074
+  },
+  {
+    "slug": "gulu-uganda",
+    "name": "Gulu",
+    "country": "Uganda",
+    "countryCode": "UG",
+    "lat": 2.7746,
+    "lng": 32.299,
+    "timezone": "Asia/Riyadh",
+    "population": 146858
+  },
+  {
+    "slug": "odense-denmark",
+    "name": "Odense",
+    "country": "Denmark",
+    "countryCode": "DK",
+    "lat": 55.3959,
+    "lng": 10.3883,
+    "timezone": "Europe/Berlin",
+    "population": 145931
+  },
+  {
+    "slug": "nawabganj-bangladesh",
+    "name": "Nawābganj",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.5903,
+    "lng": 88.2744,
+    "timezone": "Asia/Dhaka",
+    "population": 142361
+  },
+  {
+    "slug": "negombo-sri-lanka",
+    "name": "Negombo",
+    "country": "Sri Lanka",
+    "countryCode": "LK",
+    "lat": 7.2083,
+    "lng": 79.8358,
+    "timezone": "Asia/Colombo",
+    "population": 137223
+  },
+  {
+    "slug": "apeldoorn-netherlands",
+    "name": "Apeldoorn",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 52.21,
+    "lng": 5.9694,
+    "timezone": "Europe/Brussels",
+    "population": 136670
+  },
+  {
+    "slug": "podgorica-montenegro",
+    "name": "Podgorica",
+    "country": "Montenegro",
+    "countryCode": "ME",
+    "lat": 42.4411,
+    "lng": 19.2636,
+    "timezone": "Europe/Belgrade",
+    "population": 136473
+  },
+  {
+    "slug": "kushtia-bangladesh",
+    "name": "Kushtia",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.9028,
+    "lng": 89.1194,
+    "timezone": "Asia/Dhaka",
+    "population": 135724
+  },
+  {
+    "slug": "innsbruck-austria",
+    "name": "Innsbruck",
+    "country": "Austria",
+    "countryCode": "AT",
+    "lat": 47.2627,
+    "lng": 11.3945,
+    "timezone": "Europe/Vienna",
+    "population": 132493
+  },
+  {
+    "slug": "sonargaon-bangladesh",
+    "name": "Sonārgaon",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.65,
+    "lng": 90.6167,
+    "timezone": "Asia/Dhaka",
+    "population": 130000
+  },
+  {
+    "slug": "satkhira-bangladesh",
+    "name": "Sātkhira",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 22.7082,
+    "lng": 89.0719,
+    "timezone": "Asia/Dhaka",
+    "population": 128918
+  },
+  {
+    "slug": "oulu-finland",
+    "name": "Oulu",
+    "country": "Finland",
+    "countryCode": "FI",
+    "lat": 65.0124,
+    "lng": 25.4682,
+    "timezone": "Europe/Helsinki",
+    "population": 128618
+  },
+  {
+    "slug": "sirajganj-bangladesh",
+    "name": "Sirajganj",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.4577,
+    "lng": 89.708,
+    "timezone": "Asia/Dhaka",
+    "population": 127481
+  },
+  {
+    "slug": "maastricht-netherlands",
+    "name": "Maastricht",
+    "country": "Netherlands",
+    "countryCode": "NL",
+    "lat": 50.8483,
+    "lng": 5.6889,
+    "timezone": "Europe/Brussels",
+    "population": 122378
+  },
+  {
+    "slug": "aalborg-denmark",
+    "name": "Aalborg",
+    "country": "Denmark",
+    "countryCode": "DK",
+    "lat": 57.048,
+    "lng": 9.9187,
+    "timezone": "Europe/Berlin",
+    "population": 122219
+  },
+  {
+    "slug": "bern-switzerland",
+    "name": "Bern",
+    "country": "Switzerland",
+    "countryCode": "CH",
+    "lat": 46.9481,
+    "lng": 7.4474,
+    "timezone": "Europe/Zurich",
+    "population": 121631
+  },
+  {
+    "slug": "stavanger-norway",
+    "name": "Stavanger",
+    "country": "Norway",
+    "countryCode": "NO",
+    "lat": 58.9701,
+    "lng": 5.7333,
+    "timezone": "Europe/Berlin",
+    "population": 121610
+  },
+  {
+    "slug": "braga-portugal",
+    "name": "Braga",
+    "country": "Portugal",
+    "countryCode": "PT",
+    "lat": 41.5503,
+    "lng": -8.42,
+    "timezone": "Europe/Lisbon",
+    "population": 121394
+  },
+  {
+    "slug": "reykjavik-iceland",
+    "name": "Reykjavík",
+    "country": "Iceland",
+    "countryCode": "IS",
+    "lat": 64.1355,
+    "lng": -21.8954,
+    "timezone": "Africa/Abidjan",
+    "population": 118918
+  },
+  {
+    "slug": "vasteras-sweden",
+    "name": "Västerås",
+    "country": "Sweden",
+    "countryCode": "SE",
+    "lat": 59.6162,
+    "lng": 16.5528,
+    "timezone": "Europe/Berlin",
+    "population": 117746
+  },
+  {
+    "slug": "lausanne-switzerland",
+    "name": "Lausanne",
+    "country": "Switzerland",
+    "countryCode": "CH",
+    "lat": 46.516,
+    "lng": 6.6328,
+    "timezone": "Europe/Zurich",
+    "population": 116751
+  },
+  {
+    "slug": "brugge-belgium",
+    "name": "Brugge",
+    "country": "Belgium",
+    "countryCode": "BE",
+    "lat": 51.2089,
+    "lng": 3.2242,
+    "timezone": "Europe/Brussels",
+    "population": 116709
+  },
+  {
+    "slug": "orebro-sweden",
+    "name": "Örebro",
+    "country": "Sweden",
+    "countryCode": "SE",
+    "lat": 59.2741,
+    "lng": 15.2066,
+    "timezone": "Europe/Berlin",
+    "population": 115765
+  },
+  {
+    "slug": "faridpur-bangladesh",
+    "name": "Farīdpur",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.6061,
+    "lng": 89.8406,
+    "timezone": "Asia/Dhaka",
+    "population": 112187
+  },
+  {
+    "slug": "kandy-sri-lanka",
+    "name": "Kandy",
+    "country": "Sri Lanka",
+    "countryCode": "LK",
+    "lat": 7.2906,
+    "lng": 80.6336,
+    "timezone": "Asia/Colombo",
+    "population": 111701
+  },
+  {
+    "slug": "sherpur-bangladesh",
+    "name": "Sherpur",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 25.0188,
+    "lng": 90.0175,
+    "timezone": "Asia/Dhaka",
+    "population": 107419
+  },
+  {
+    "slug": "linkoping-sweden",
+    "name": "Linköping",
+    "country": "Sweden",
+    "countryCode": "SE",
+    "lat": 58.4109,
+    "lng": 15.6216,
+    "timezone": "Europe/Berlin",
+    "population": 106502
+  },
+  {
+    "slug": "namur-belgium",
+    "name": "Namur",
+    "country": "Belgium",
+    "countryCode": "BE",
+    "lat": 50.4669,
+    "lng": 4.8675,
+    "timezone": "Europe/Brussels",
+    "population": 106284
+  },
+  {
+    "slug": "bhairab-bazar-bangladesh",
+    "name": "Bhairab Bāzār",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.0524,
+    "lng": 90.9764,
+    "timezone": "Asia/Dhaka",
+    "population": 105457
+  },
+  {
+    "slug": "helsingborg-sweden",
+    "name": "Helsingborg",
+    "country": "Sweden",
+    "countryCode": "SE",
+    "lat": 56.0467,
+    "lng": 12.6944,
+    "timezone": "Europe/Berlin",
+    "population": 104250
+  },
+  {
+    "slug": "male-maldives",
+    "name": "Male",
+    "country": "Maldives",
+    "countryCode": "MV",
+    "lat": 4.1752,
+    "lng": 73.5092,
+    "timezone": "Indian/Maldives",
+    "population": 103693
+  },
+  {
+    "slug": "shahzadpur-bangladesh",
+    "name": "Shāhzādpur",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.1769,
+    "lng": 89.5988,
+    "timezone": "Asia/Dhaka",
+    "population": 102420
+  },
+  {
+    "slug": "bhola-bangladesh",
+    "name": "Bhola",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 22.6876,
+    "lng": 90.644,
+    "timezone": "Asia/Dhaka",
+    "population": 99079
+  },
+  {
+    "slug": "azimpur-bangladesh",
+    "name": "Azimpur",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 23.7298,
+    "lng": 90.3854,
+    "timezone": "Asia/Dhaka",
+    "population": 96641
+  },
+  {
+    "slug": "dearborn-united-states",
+    "name": "Dearborn",
+    "country": "United States",
+    "countryCode": "US",
+    "lat": 42.3223,
+    "lng": -83.1763,
+    "timezone": "America/Detroit",
+    "population": 95171
+  },
+  {
+    "slug": "mons-belgium",
+    "name": "Mons",
+    "country": "Belgium",
+    "countryCode": "BE",
+    "lat": 50.4541,
+    "lng": 3.9523,
+    "timezone": "Europe/Brussels",
+    "population": 91277
+  },
+  {
+    "slug": "drammen-norway",
+    "name": "Drammen",
+    "country": "Norway",
+    "countryCode": "NO",
+    "lat": 59.7439,
+    "lng": 10.2045,
+    "timezone": "Europe/Berlin",
+    "population": 90722
+  },
+  {
+    "slug": "kishorganj-bangladesh",
+    "name": "Kishorganj",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.4394,
+    "lng": 90.7829,
+    "timezone": "Asia/Dhaka",
+    "population": 90690
+  },
+  {
+    "slug": "luimneach-ireland",
+    "name": "Luimneach",
+    "country": "Ireland",
+    "countryCode": "IE",
+    "lat": 52.6647,
+    "lng": -8.6231,
+    "timezone": "Europe/London",
+    "population": 90054
+  },
+  {
+    "slug": "bibir-hat-bangladesh",
+    "name": "Bibir Hat",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 22.6835,
+    "lng": 91.7906,
+    "timezone": "Asia/Dhaka",
+    "population": 89030
+  },
+  {
+    "slug": "habiganj-bangladesh",
+    "name": "Habiganj",
+    "country": "Bangladesh",
+    "countryCode": "BD",
+    "lat": 24.3804,
+    "lng": 91.413,
+    "timezone": "Asia/Dhaka",
+    "population": 88760
+  },
+  {
+    "slug": "bitola-north-macedonia",
+    "name": "Bitola",
+    "country": "North Macedonia",
+    "countryCode": "MK",
+    "lat": 41.0314,
+    "lng": 21.3347,
+    "timezone": "Europe/Belgrade",
+    "population": 86528
+  },
+  {
+    "slug": "suva-fiji",
+    "name": "Suva",
+    "country": "Fiji",
+    "countryCode": "FJ",
+    "lat": -18.1416,
+    "lng": 178.4415,
+    "timezone": "Pacific/Fiji",
+    "population": 77366
+  },
+  {
+    "slug": "luxembourg-luxembourg",
+    "name": "Luxembourg",
+    "country": "Luxembourg",
+    "countryCode": "LU",
+    "lat": 49.6117,
+    "lng": 6.13,
+    "timezone": "Europe/Brussels",
+    "population": 76684
+  },
+  {
+    "slug": "esbjerg-denmark",
+    "name": "Esbjerg",
+    "country": "Denmark",
+    "countryCode": "DK",
+    "lat": 55.4703,
+    "lng": 8.4519,
+    "timezone": "Europe/Berlin",
+    "population": 72205
+  },
+  {
+    "slug": "sankt-gallen-switzerland",
+    "name": "Sankt Gallen",
+    "country": "Switzerland",
+    "countryCode": "CH",
+    "lat": 47.4239,
+    "lng": 9.3748,
+    "timezone": "Europe/Zurich",
+    "population": 70572
+  },
+  {
+    "slug": "chaguanas-trinidad-and-tobago",
+    "name": "Chaguanas",
+    "country": "Trinidad and Tobago",
+    "countryCode": "TT",
+    "lat": 10.5167,
+    "lng": -61.4167,
+    "timezone": "America/Puerto_Rico",
+    "population": 67433
+  },
+  {
+    "slug": "bandar-seri-begawan-brunei",
+    "name": "Bandar Seri Begawan",
+    "country": "Brunei",
+    "countryCode": "BN",
+    "lat": 4.8904,
+    "lng": 114.9401,
+    "timezone": "Asia/Makassar",
+    "population": 64409
+  },
+  {
+    "slug": "mon-repos-trinidad-and-tobago",
+    "name": "Mon Repos",
+    "country": "Trinidad and Tobago",
+    "countryCode": "TT",
+    "lat": 10.2798,
+    "lng": -61.4459,
+    "timezone": "America/Puerto_Rico",
+    "population": 56380
+  }
+]

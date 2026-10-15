@@ -1,4 +1,4 @@
-// Statically pre-renders /prayer-times/{city}, /qibla/{city},
+// Statically pre-renders /prayer-times/{city},
 // /ramadan-calendar/{city}/{year}, /duas/{situation}, /adhkar/morning|evening
 // and /hijri-date-converter into frontend/dist/, in en/bn/ar. Run after both
 // `vite build` (client bundle, produces dist/index.html) and
@@ -115,8 +115,6 @@ function routePath(kind, params, lang) {
   switch (kind) {
     case 'prayer-times':
       return `${p}/prayer-times/${params.citySlug}`;
-    case 'qibla':
-      return `${p}/qibla/${params.citySlug}`;
     case 'ramadan-calendar':
       return `${p}/ramadan-calendar/${params.citySlug}/${params.gregorianYear}`;
     case 'ramadan-calendar-index':
@@ -249,7 +247,6 @@ try {
 const routes = []; // { kind, params }
 for (const city of ssr.CITIES) {
   routes.push({ kind: 'prayer-times', params: { citySlug: city.slug } });
-  routes.push({ kind: 'qibla', params: { citySlug: city.slug } });
 }
 const hijriYear = ssr.currentRamadanHijriYear();
 const gregorianYear = ssr.ramadanGregorianYear(hijriYear);
@@ -285,7 +282,6 @@ console.error(
 const sitemapEntries = {
   pages: [],
   'prayer-times': [],
-  qibla: [],
   ramadan: [],
   duas: [],
   adhkar: [],
@@ -293,7 +289,6 @@ const sitemapEntries = {
 };
 const sitemapBucket = (kind) => {
   if (kind === 'prayer-times' || MONTHLY_KINDS.has(kind)) return 'prayer-times';
-  if (kind === 'qibla') return 'qibla';
   if (kind === 'ramadan-calendar' || kind === 'ramadan-calendar-index') return 'ramadan';
   if (kind === 'dua' || kind === 'duas-index') return 'duas';
   if (kind === 'asma-ul-husna' || kind === 'zakat-calculator') return 'utilities';
@@ -384,8 +379,8 @@ if (redirects) console.error(`Wrote ${redirects} redirect pages for past distric
 const today = new Date().toISOString().slice(0, 10);
 // <lastmod> only where the content really changes with each build (today's
 // prayer times, the Ramadan calendar for the coming year). Google ignores
-// lastmod across a site once it proves inaccurate, and the duʿā, adhkār,
-// Qibla and tool pages do not change from one deploy to the next.
+// lastmod across a site once it proves inaccurate, and the duʿā, adhkār
+// and tool pages do not change from one deploy to the next.
 const DATED_SITEMAPS = new Set(['sitemap-prayer-times.xml', 'sitemap-ramadan.xml']);
 function urlXml(path, entry, dated) {
   const links = entry.alternates
@@ -429,7 +424,6 @@ const staticPages = [
 const sitemapFiles = {
   'sitemap-pages.xml': staticPages,
   'sitemap-prayer-times.xml': sitemapEntries['prayer-times'],
-  'sitemap-qibla.xml': sitemapEntries.qibla,
   'sitemap-ramadan.xml': sitemapEntries.ramadan,
   'sitemap-duas.xml': sitemapEntries.duas,
   'sitemap-adhkar.xml': sitemapEntries.adhkar,

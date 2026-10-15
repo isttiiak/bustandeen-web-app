@@ -120,11 +120,8 @@ export default function RamadanCalendarPage({ lang, city, hijriYear, qr }: Props
         >
           {t.ramadan.prayerTimesCta(cityName(city, lang))} →
         </a>
-        <a
-          href={langPath(lang, `/qibla/${city.slug}`)}
-          className="text-[#10b981] no-underline hover:underline"
-        >
-          {t.ramadan.qiblaCta(cityName(city, lang))} →
+        <a href="/qibla" className="text-[#10b981] no-underline hover:underline">
+          {t.qibla.liveAppCta} →
         </a>
       </div>
 

@@ -24,9 +24,16 @@ const fakeJwt = (payload) => {
 const auth = (uid) => (r) =>
   r.set('Authorization', `Bearer ${fakeJwt({ uid, email: `${uid}@test.dev` })}`);
 
-const D = '2026-10-12';
 const DHAKA = 360;
 const LONDON = 60;
+// Relative to today (Dhaka): the server only takes manual counts for recent
+// days, so fixed dates made this suite fail once they were a few days old.
+const shift = (day, n) =>
+  new Date(Date.parse(`${day}T00:00:00.000Z`) + n * 86_400_000).toISOString().slice(0, 10);
+const D = new Date(Date.now() + DHAKA * 60_000).toISOString().slice(0, 10);
+const D1 = shift(D, -1);
+const D3 = shift(D, -3);
+const D6 = shift(D, -6);
 /** Bucket key of `day` for an offset (bucketDateForDayString). */
 const key = (day, offset) => {
   const utcMin = (((1440 - offset) % 1440) + 1440) % 1440;
@@ -77,7 +84,7 @@ describe('same offset every time: unchanged', () => {
     // Yesterday, typed in afterwards
     await batch(
       uid,
-      [{ zikrType: 'SubhanAllah', amount: 40, ts: noon('2026-10-11', DHAKA), manual: true }],
+      [{ zikrType: 'SubhanAllah', amount: 40, ts: noon(D1, DHAKA), manual: true }],
       DHAKA,
       D
     );
@@ -90,7 +97,7 @@ describe('same offset every time: unchanged', () => {
 
   it('stores exactly the same documents', async () => {
     expect(await docs(uid)).toEqual([
-      { date: key('2026-10-11', DHAKA).toISOString(), zikrType: 'SubhanAllah', count: 40 },
+      { date: key(D1, DHAKA).toISOString(), zikrType: 'SubhanAllah', count: 40 },
       { date: key(D, DHAKA).toISOString(), zikrType: 'Alhamdulillah', count: 0 },
       { date: key(D, DHAKA).toISOString(), zikrType: 'SubhanAllah', count: 30 },
     ]);
@@ -105,10 +112,10 @@ describe('same offset every time: unchanged', () => {
     const a = await analytics(uid, DHAKA);
     expect(a.body.today.total).toBe(30);
     const byDate = Object.fromEntries(a.body.chartData.map((p) => [p.date, p.total]));
-    expect(byDate['2026-10-11']).toBe(40);
+    expect(byDate[D1]).toBe(40);
     expect(byDate[D]).toBe(30);
     expect(a.body.allTime.bestDay).toEqual({
-      date: key('2026-10-11', DHAKA).toISOString(),
+      date: key(D1, DHAKA).toISOString(),
       count: 40,
     });
   });
@@ -123,7 +130,7 @@ describe('a day saved under two offsets', () => {
     await ZikrDaily.create([
       { userId: uid, date: key(D, LONDON), zikrType: 'SubhanAllah', count: 10 },
       // The first day of a 7-day chart, saved on London time
-      { userId: uid, date: key('2026-10-06', LONDON), zikrType: 'SubhanAllah', count: 15 },
+      { userId: uid, date: key(D6, LONDON), zikrType: 'SubhanAllah', count: 15 },
     ]);
   });
 
@@ -168,14 +175,14 @@ describe('a day saved under two offsets', () => {
 
   it('charts include the edge days and best day sums a day across offsets', async () => {
     await ZikrDaily.create([
-      { userId: uid, date: key('2026-10-09', LONDON), zikrType: 'SubhanAllah', count: 7 },
-      { userId: uid, date: key('2026-10-09', DHAKA), zikrType: 'Alhamdulillah', count: 9 },
+      { userId: uid, date: key(D3, LONDON), zikrType: 'SubhanAllah', count: 7 },
+      { userId: uid, date: key(D3, DHAKA), zikrType: 'Alhamdulillah', count: 9 },
     ]);
     const a = await analytics(uid, DHAKA);
     const byDate = Object.fromEntries(a.body.chartData.map((p) => [p.date, p.total]));
-    expect(byDate['2026-10-06']).toBe(15); // first day, other offset
-    expect(byDate['2026-10-09']).toBe(16);
+    expect(byDate[D6]).toBe(15); // first day, other offset
+    expect(byDate[D3]).toBe(16);
     expect(a.body.allTime.bestDay.count).toBe(16);
-    expect(a.body.allTime.bestDay.date.slice(0, 10)).toBe('2026-10-09');
+    expect(a.body.allTime.bestDay.date.slice(0, 10)).toBe(D3);
   });
 });

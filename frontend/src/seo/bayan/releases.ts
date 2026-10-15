@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.169.0',
+    date: '2026-10-15',
+    text: {
+      en: {
+        title: 'City pages where they help most',
+        fixed: [
+          'Prayer-time and Ramadan-calendar pages now cover about 500 cities chosen by need: every city in Bangladesh, many cities where Muslims are a minority (such as the UK, Germany, Sweden, Belgium, Japan and Korea), and one to three main cities in Muslim-majority countries.',
+          'For the Qibla, use the live Qibla compass in the app: it works for any place. Old city Qibla links now open it.',
+        ],
+      },
+      bn: {
+        title: 'যেখানে সবচেয়ে দরকার, সেখানে শহরের পাতা',
+        fixed: [
+          'নামাযের সময় ও রমজান ক্যালেন্ডারের পাতা এখন প্রয়োজন দেখে বাছাই করা প্রায় ৫০০ শহরের জন্য: বাংলাদেশের সব শহর, যেসব দেশে মুসলিমরা সংখ্যালঘু সেখানে অনেক শহর (যেমন যুক্তরাজ্য, জার্মানি, সুইডেন, বেলজিয়াম, জাপান ও কোরিয়া), আর মুসলিম-প্রধান দেশে এক থেকে তিনটি প্রধান শহর।',
+          'কিবলার জন্য অ্যাপের লাইভ কিবলা কম্পাস ব্যবহার করুন: এটি যেকোনো জায়গায় কাজ করে। শহরের পুরোনো কিবলা লিংক এখন এটিই খোলে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.168.0',
     date: '2026-10-14',
     text: {

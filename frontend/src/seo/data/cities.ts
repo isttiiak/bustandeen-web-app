@@ -1,4 +1,6 @@
-import raw from '../../data/cities.generated.json';
+// The cities with pages (need-based, ~500; scripts/seoCityPolicy.mjs). The
+// larger cities.generated.json stays for the app's on-device place search.
+import raw from '../../data/seoCities.generated.json';
 import { BD_DISTRICTS, bdDistrictForCity } from './bdDistricts.js';
 import type { SeoLang } from '../locales/chrome.js';
 

@@ -151,11 +151,8 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
       )}
 
       <div className="mt-6 flex flex-wrap gap-3 text-sm">
-        <a
-          href={langPath(lang, `/qibla/${city.slug}`)}
-          className="text-[#10b981] no-underline hover:underline"
-        >
-          {t.prayerTimes.qiblaCta(cityName(city, lang))} →
+        <a href="/qibla" className="text-[#10b981] no-underline hover:underline">
+          {t.qibla.liveAppCta} →
         </a>
         <a
           href={langPath(lang, `/ramadan-calendar/${city.slug}`)}
