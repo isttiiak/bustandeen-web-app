@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.173.0',
+    date: '2026-10-15',
+    text: {
+      en: {
+        title: 'Download the Islamic calendar',
+        added: [
+          'In Library, Islamic calendar, tap Download: save a month, a whole year or a range of months as a PDF to print or share. Choose which calendars and in what order, events in each day or space to write, A4 or Letter, landscape or portrait, and a colour template or black and white.',
+        ],
+      },
+      bn: {
+        title: 'ইসলামী ক্যালেন্ডার ডাউনলোড করুন',
+        added: [
+          'লাইব্রেরির ইসলামী ক্যালেন্ডারে ডাউনলোডে চাপুন: একটি মাস, পুরো বছর বা কয়েক মাস PDF হিসেবে সংরক্ষণ করুন, প্রিন্ট বা শেয়ার করার জন্য। কোন ক্যালেন্ডার ও কোন ক্রমে, প্রতিটি দিনে দিবস নাকি লেখার জায়গা, A4 নাকি Letter, আড়াআড়ি নাকি খাড়া, আর রঙিন নকশা নাকি সাদা-কালো, সবই বেছে নিতে পারবেন।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.172.0',
     date: '2026-10-15',
     text: {
