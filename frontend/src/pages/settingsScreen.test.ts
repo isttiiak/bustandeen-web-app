@@ -17,6 +17,7 @@ const files = import.meta.glob<string>(
     '../components/EditZikrModal.tsx',
     '../components/QuranSettings.tsx',
     '../components/TrackingDayInfoModal.tsx',
+    '../components/settings/HijriDateSetting.tsx',
     '../components/zikr/zikrCategoryIcons.tsx',
     '../utils/quranPrefs.ts',
   ],
@@ -41,7 +42,7 @@ const usedKeys = [
 
 describe('Settings screen', () => {
   it('finds the Settings files', () => {
-    expect(Object.keys(files).length).toBe(9);
+    expect(Object.keys(files).length).toBe(10);
     expect(usedKeys.length).toBeGreaterThan(100);
   });
 
@@ -71,10 +72,13 @@ describe('Settings screen', () => {
   });
 
   it('the Hijri offset and day-start mode save through useUpdateProfile, not api.patch', () => {
-    // Same stale-profile fix as #145, for the last two direct writes.
+    // Same stale-profile fix as #145, for the last two direct writes. The
+    // Hijri choice lives in HijriDateSetting (Settings and the calendar drawer).
     const code = stripComments(files['./Settings.tsx'] ?? '');
-    expect(code).not.toMatch(/api\.patch\([^)]*(hijriOffset|dayStartMode)/);
-    expect(code).toMatch(/updateProfile\.mutateAsync\(\{ hijriOffset: days \}\)/);
+    const hijri = stripComments(files['../components/settings/HijriDateSetting.tsx'] ?? '');
+    expect(code + hijri).not.toMatch(/api\.patch\([^)]*(hijriOffset|dayStartMode)/);
+    expect(code).toContain('<HijriDateSetting />');
+    expect(hijri).toMatch(/updateProfile\.mutateAsync\(\{ hijriOffset: days \}\)/);
     expect(code).toMatch(/updateProfile\.mutateAsync\(\{ dayStartMode: mode \}\)/);
   });
 });

@@ -2,6 +2,29 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.172.0 - Islamic calendar, part 2: the calendar screen - 2026-10-15
+
+Second of three PRs for the Islamic calendar (prototype `docs/design/hijri-calendar.html`, approved v3). The download (print to PDF) is part 3.
+
+### Added
+
+- **`/library/calendar`** (`pages/IslamicCalendar.tsx`, `components/calendar/*`), on the device only:
+  - **Today arch** (the screen's one `LibraryHero`): the Hijri date with its Arabic month, the English date, the Bengali date when on, where the Hijri date comes from ("Announced in Bangladesh", Umm al-Qura, or your adjustment), the day of the Hijri month with a bar, when the date changes (tonight's Maghrib at the saved place) and what is coming up with its kind ("Government holiday · Durga Puja (Mahanabami) · in 5 days").
+  - **Today strip**, only on a day with an event.
+  - **Month grid** in English or Hijri (switch above it), the other chosen calendars under each day (Hijri gold, Bengali in Bangla digits), the weekend shaded, government holidays in red, and a dot per kind (Islamic sage, holiday red, national day gold); for each Hijri month on screen whether it was announced in the country, is expected, or is Umm al-Qura. Month stepping in either calendar.
+  - **Selected day** card: its dates, its events (Islamic days link to their page; holidays say general or executive order and whether they depend on the moon), when its Hijri date began at Maghrib and where it comes from. **This month** and **Next 30 days** lists.
+  - **Settings drawer**: calendars and their order (1 to 3, Bengali off by default), Islamic days / government holidays / national days, weekend days and week start (Bangladesh: Friday and Saturday, from Saturday), the Hijri date setting, and the location (the same picker as Prayer Times; the country for moon sighting and holidays follows it). All synced across devices.
+- **Ways in:** a full-width Islamic calendar card above the Library cards on Home; the Hijri date in Home's arch and in the Salat date header open the calendar (a 44px tap target inside the line). Navbar title, icon and Home parent.
+
+### Changed
+
+- **The Hijri date setting** is one shared part (`components/settings/HijriDateSetting.tsx`) used by Settings and by the calendar drawer; same text, same profile sync as before.
+- **Home without a saved place:** the date line now sits above the "Enable prayer times" link instead of inside it (a link inside a link was invalid HTML and swallowed the new Hijri date link).
+
+### Tests
+
+- New e2e `calendar.spec.ts` (Bangladesh record fixture, clock pinned): today and the month follow the record (12 Oct = 30 Rabīʿ al-Ākhir, 13 Oct = 1 Jumādā al-Ūlā), the holiday strip and colours, White Days on 25 Oct, the next-30-days list without White Days, the Hijri grid of 30 days stepping to Jumādā al-Ākhirah, the drawer (Bengali in Bangla digits, weekend, saved order), and both Home layouts' Hijri date opening the calendar. `/library/calendar` joins the demo routes (render, axe dark and light, 44px targets). `libraryScreen.test.ts` covers the calendar page and its parts; `settingsScreen.test.ts` follows the Hijri setting to its new file.
+
 ## v5.171.0 - Islamic calendar, part 1: the calendar logic - 2026-10-15
 
 First of three PRs for the Islamic calendar in the Library (`/library/calendar`; prototype `docs/design/hijri-calendar.html`, approved v3, included here). This one adds the tested logic only; nothing new shows in the app yet.

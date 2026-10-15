@@ -1,6 +1,7 @@
 // Salat hero (audit T3.2, Bustan Arch): the screen's one arch. Day navigator,
 // Gregorian + Hijri date, and one leaf per fard prayer as the completion mark
 // (Done = sage, Kaza = gold, Miss = muted red outline, not logged = faint).
+import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
 import { LeafIcon, PrayerGlyph } from '../icons/IslamicIcons.js';
@@ -88,7 +89,17 @@ export default function SalatHero({
               year: 'numeric',
             })}
           </p>
-          {hijri && <p className="text-brand-gold text-[11px] mt-0.5">{formatHijriDate(hijri)}</p>}
+          {hijri && (
+            <p className="text-brand-gold text-[11px] mt-0.5">
+              {/* Opens the Islamic calendar; the padding makes a 44px tap target. */}
+              <Link
+                to="/library/calendar"
+                className="inline-block py-[14px] -my-[14px] hover:underline underline-offset-2"
+              >
+                {formatHijriDate(hijri)}
+              </Link>
+            </p>
+          )}
         </div>
         <button
           type="button"

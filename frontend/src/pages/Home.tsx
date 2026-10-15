@@ -10,6 +10,7 @@ import {
   BookOpenIcon,
   UserGroupIcon,
   CalculatorIcon,
+  CalendarDaysIcon,
   NoSymbolIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
@@ -411,7 +412,13 @@ export default function Home() {
       {hijriToday && (
         <>
           <span aria-hidden> · </span>
-          <span className="text-brand-gold/90">{hijriToday}</span>
+          {/* Opens the Islamic calendar; the padding makes a 44px tap target in the line. */}
+          <Link
+            to="/library/calendar"
+            className="relative z-10 text-brand-gold/90 inline-block py-[14px] -my-[14px] hover:underline underline-offset-2"
+          >
+            {hijriToday}
+          </Link>
         </>
       )}
     </p>
@@ -835,23 +842,26 @@ export default function Home() {
            * Deliberately NOT a native geolocation prompt fired straight
            * from this button: the user should see and choose between both
            * options before any permission dialog appears. */
-          <Link to="/prayer-times" className="block mb-4">
+          <>
+            {/* Outside the link: the Hijri date opens the calendar. */}
             <div className="mb-2 text-center">{todayDate}</div>
-            <div className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-card border border-dashed border-brand-border bg-brand-deep hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
-              <div className="flex items-center gap-3 min-w-0">
-                <MapPinIcon className="w-6 h-6 text-brand-emerald shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-white/80 font-semibold text-sm leading-none mb-1">
-                    {t('home.enablePrayerTimes')}
-                  </p>
-                  <p className="text-white/50 text-xs">{t('home.enablePrayerTimesDetail')}</p>
+            <Link to="/prayer-times" className="block mb-4">
+              <div className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-card border border-dashed border-brand-border bg-brand-deep hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
+                <div className="flex items-center gap-3 min-w-0">
+                  <MapPinIcon className="w-6 h-6 text-brand-emerald shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-white/80 font-semibold text-sm leading-none mb-1">
+                      {t('home.enablePrayerTimes')}
+                    </p>
+                    <p className="text-white/50 text-xs">{t('home.enablePrayerTimesDetail')}</p>
+                  </div>
                 </div>
+                <span className="text-brand-emerald text-xs font-semibold shrink-0">
+                  {t('home.setLocation')}
+                </span>
               </div>
-              <span className="text-brand-emerald text-xs font-semibold shrink-0">
-                {t('home.setLocation')}
-              </span>
-            </div>
-          </Link>
+            </Link>
+          </>
         )}
 
         {/* The phone's clock is on another zone than the saved place */}
@@ -1100,6 +1110,19 @@ export default function Home() {
             </h2>
             <p className="text-white/60 text-xs">{t('home.librarySubtitle')}</p>
           </div>
+          <Link to="/library/calendar" className="block group mb-3">
+            <div className="rounded-card border border-brand-border/70 bg-brand-deep shadow-elev-1 p-4 flex items-center gap-3 hover:border-brand-emerald/40 hover:shadow-hover transition-[border-color,box-shadow]">
+              <CalendarDaysIcon className="w-6 h-6 text-brand-emerald shrink-0" />
+              <div className="min-w-0">
+                <h3 className="text-sm font-bold text-white truncate">
+                  {t('home.libraryCalendarTitle')}
+                </h3>
+                <p className="text-white/60 text-xs mt-0.5 truncate">
+                  {t('home.libraryCalendarSubtitle')}
+                </p>
+              </div>
+            </div>
+          </Link>
           <div className="grid grid-cols-2 gap-3">
             {library.map(({ Icon, to, title, subtitle }) => (
               <Link key={to} to={to} className="block group">

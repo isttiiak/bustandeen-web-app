@@ -30,6 +30,7 @@ import {
   ClockIcon,
   EnvelopeIcon,
   CalculatorIcon,
+  CalendarDaysIcon,
   ShareIcon,
 } from '@heroicons/react/24/outline';
 import {
@@ -68,6 +69,7 @@ const PAGE_KEYS: Record<string, string> = {
   '/library/adhkar': 'home.libraryAdhkarTitle',
   '/library/asma-ul-husna': 'home.libraryAsmaTitle',
   '/library/zakat-calculator': 'home.libraryZakatTitle',
+  '/library/calendar': 'home.libraryCalendarTitle',
 };
 // Every screen carries an SVG `Icon` (audit T3.2; no emoji).
 const PAGE_META: Record<
@@ -97,6 +99,7 @@ const PAGE_META: Record<
   '/library/adhkar': { title: 'Adhkar', Icon: SunriseIcon },
   '/library/asma-ul-husna': { title: '99 Names of Allah', Icon: NamesMedallionIcon },
   '/library/zakat-calculator': { title: 'Zakat Calculator', Icon: CalculatorIcon },
+  '/library/calendar': { title: 'Islamic calendar', Icon: CalendarDaysIcon },
 };
 
 const HOME_META: (typeof PAGE_META)[string] = { title: 'Home', Icon: HomeIcon };
@@ -126,6 +129,7 @@ const PARENT_ROUTES: Record<string, string> = {
   '/library/adhkar': '/',
   '/library/asma-ul-husna': '/',
   '/library/zakat-calculator': '/',
+  '/library/calendar': '/',
 };
 
 // ── Typewriter greeting ───────────────────────────────────────────────────────

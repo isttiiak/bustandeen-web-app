@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.172.0',
+    date: '2026-10-15',
+    text: {
+      en: {
+        title: 'An Islamic calendar in the Library',
+        added: [
+          "Open Library, Islamic calendar (or tap the Hijri date on Home): today's Hijri date, when it changes at Maghrib, and what is coming up. Browse any month in English or Hijri, with special Islamic days, Bangladesh's government holidays and national days marked.",
+          "Calendar settings let you add the Bangla calendar, choose the order, your weekend days and your location. The Hijri date follows your country's moon sighting, as everywhere in the app.",
+        ],
+      },
+      bn: {
+        title: 'লাইব্রেরিতে ইসলামী ক্যালেন্ডার',
+        added: [
+          'লাইব্রেরি থেকে ইসলামী ক্যালেন্ডার খুলুন (বা হোমে হিজরি তারিখে চাপুন): আজকের হিজরি তারিখ, মাগরিবে তা কখন বদলায়, আর সামনে কী আছে। যেকোনো মাস ইংরেজি বা হিজরিতে দেখুন, ইসলামী বিশেষ দিন, বাংলাদেশের সরকারি ছুটি ও জাতীয় দিবস চিহ্নিত।',
+          'ক্যালেন্ডার সেটিংসে বাংলা সন যোগ করতে, ক্রম, সাপ্তাহিক ছুটির দিন ও অবস্থান বেছে নিতে পারবেন। হিজরি তারিখ অ্যাপের সব জায়গার মতোই আপনার দেশের চাঁদ দেখা অনুযায়ী চলে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.171.0',
     date: '2026-10-15',
     text: {
