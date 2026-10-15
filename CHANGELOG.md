@@ -2,7 +2,7 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
-## v5.175.0 - Calendar: what a download includes, open years, calendar and language requests in place - 2026-10-16
+## v5.175.0 - Calendar: what a download includes, next-month card, open years, requests in place; dependency sync check - 2026-10-16
 
 ### Added
 
@@ -13,6 +13,8 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 ### Changed
 
+- **The arch's "Hijri month: Day 4 of 29 or 30" card is now "Next month"** (Istiak, 2026-10-16: the title already says the day): the next Hijri month's name, the date it begins (its first daytime date) and whether that is announced for the country, expected (may move by a day with the moon sighting) or plain Umm al-Qura. The "Date changes" card stays.
+- **Dependencies must match the lockfiles** (Istiak, 2026-10-16, before a long break): this PC still had Vite 7 a week after #287 moved to Vite 8 (the build lost its static entry) and the backend ran older Express, Mongoose and Zod than CI. `scripts/check-deps.mjs` compares every top-level package with each package-lock.json and names the fix, `npm run sync-deps` (`npm ci` in the root, backend and frontend). It runs before `npm run dev` and each workspace's `npm test` (fails), and after a pull or branch switch (`.husky/post-merge`, `.husky/post-checkout`, warns). The repo itself was already on Vite 8; nothing to upgrade.
 - **Request a language on bayan.bustandeen.com** opens a form on the page instead of the app's Feedback page: `public/bayan/request.js` (every Bayan page) sends it to this host's `/api/feedback/language`, the only API path vercel.json routes on that host; its CSP `connect-src` is now `'self'` (was `'none'`).
 
 ### Fixed

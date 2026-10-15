@@ -14,6 +14,7 @@
     "cleanup:orphans": "tsx src/scripts/cleanupOrphans.ts",
     "cleanup:unverified": "tsx src/scripts/cleanupUnverified.ts",
     "admin:reset-mfa": "tsx src/scripts/resetAdminMfa.ts",
+    "pretest": "node ../scripts/check-deps.mjs backend",
     "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules --max-old-space-size=4096\" NODE_ENV=test jest --runInBand"
   },
   "engines": {

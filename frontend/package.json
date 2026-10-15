@@ -13,6 +13,7 @@
     "data:seo-cities": "node scripts/build-seo-cities.mjs",
     "quran:text": "node scripts/build-quran-text.mjs",
     "brand:assets": "node scripts/generate-brand-assets.mjs",
+    "pretest": "node ../scripts/check-deps.mjs frontend",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",

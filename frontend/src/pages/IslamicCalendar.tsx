@@ -196,6 +196,21 @@ export default function IslamicCalendar() {
 
   // Status of each Hijri month on screen: announced, expected or Umm al-Qura.
   const records = readHijriInputs().records;
+
+  // The arch's "Next month": when the next Hijri month begins (its first
+  // daytime date; it starts at Maghrib the evening before), and whether that
+  // is announced, expected (can move a day with the moon) or plain Umm al-Qura.
+  const nextMonth = day(stepMonth(islamicDay, 'hijri', 1, day));
+  const nextMonthStatus: 'announced' | 'expected' | 'uq' = records.some(
+    (r) =>
+      r.country === country &&
+      r.hijriYear === nextMonth.hijri.year &&
+      r.hijriMonth === nextMonth.hijri.month
+  )
+    ? 'announced'
+    : nextMonth.hijriSource === 'none'
+      ? 'uq'
+      : 'expected';
   const hijriMonths = [
     ...new Map(days.map((d) => [`${d.hijri.year}-${d.hijri.month}`, d])).values(),
   ];
@@ -323,13 +338,24 @@ export default function IslamicCalendar() {
             <div className="grid grid-cols-2 gap-2 pt-2 text-left">
               {hijriOn && (
                 <>
-                  <Fact label={t('calendar.dayOfMonthLabel')}>
-                    {t('calendar.dayOfMonth', { n: num(nowDay.hijri.day, lang) })}
-                    <span className="block h-1.5 mt-1.5 rounded-full bg-brand-border overflow-hidden">
-                      <span
-                        className="block h-full rounded-full bg-brand-gold"
-                        style={{ width: `${Math.round((nowDay.hijri.day / 30) * 100)}%` }}
-                      />
+                  <Fact label={t('calendar.nextMonthLabel')} testId="calendar-next-month">
+                    {hijriMonthName(t, nextMonth.hijri.month)}
+                    <span className="block text-xs font-medium text-white/70">
+                      {t(
+                        nextMonthStatus === 'expected'
+                          ? 'calendar.nextExpected'
+                          : 'calendar.nextFrom',
+                        {
+                          date: gregShort(nextMonth.ymd),
+                        }
+                      )}
+                    </span>
+                    <span className="block text-xs font-medium text-white/70">
+                      {nextMonthStatus === 'announced'
+                        ? t('calendar.heroAnnounced', { country: countryLabel })
+                        : nextMonthStatus === 'uq'
+                          ? t('calendar.heroUq')
+                          : t('calendar.nextMayMove')}
                     </span>
                   </Fact>
                   {afterMaghrib ? (

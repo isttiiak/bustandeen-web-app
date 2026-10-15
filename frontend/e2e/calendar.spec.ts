@@ -52,6 +52,12 @@ test('today and the month follow the Bangladesh record', async ({ page }) => {
   await expect(page.getByTestId('calendar-status')).toContainText(
     'Jumādā al-Ūlā: announced, began Oct 13'
   );
+  // Next month: not announced yet, so expected and it may move a day (2026-10-16)
+  const next = page.getByTestId('calendar-next-month');
+  await expect(next).toContainText('Next month');
+  await expect(next).toContainText('Jumādā al-Ākhirah');
+  await expect(next).toContainText(/Expected Nov \d+/);
+  await expect(next).toContainText('May move by a day');
   // Coming up: the Durga Puja holidays (a government holiday)
   await expect(page.getByTestId('calendar-coming')).toContainText('Government holiday');
   await expect(page.getByTestId('calendar-coming')).toContainText('Durga Puja');

@@ -4442,8 +4442,6 @@
     "heroAnnounced": "Announced in {{country}}",
     "heroUq": "Umm al-Qura calendar",
     "heroManual": "Your adjustment",
-    "dayOfMonthLabel": "Hijri month",
-    "dayOfMonth": "Day {{n}} of 29 or 30",
     "changesLabel": "Date changes",
     "changesAt": "from Maghrib {{time}}",
     "changesNoPlace": "at midnight here. Save your location to change it at Maghrib.",
@@ -4573,6 +4571,10 @@
     "rSending": "Sending...",
     "rSent": "JazakAllahu khayran. Your request has reached us.",
     "rFailed": "It could not be sent. Please try again in a little while.",
-    "rClose": "Close"
+    "rClose": "Close",
+    "nextMonthLabel": "Next month",
+    "nextExpected": "Expected {{date}}",
+    "nextFrom": "From {{date}}",
+    "nextMayMove": "May move by a day with the moon sighting"
   }
 }
