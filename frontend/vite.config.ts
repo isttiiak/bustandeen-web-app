@@ -269,7 +269,7 @@ export default defineConfig({
   build: {
     // scripts/prerender.mjs reads the manifest to find the static entry's file.
     manifest: true,
-    rollupOptions: {
+    rolldownOptions: {
       // Two entries (audit PERF-01): the app (index.html → src/main.tsx), and
       // src/static-entry.ts for the prerendered landing and SEO pages, which
       // must not load the app.
@@ -284,27 +284,40 @@ export default defineConfig({
         // CommonJS proxy) was not matched and ended up in the framer-motion
         // chunk, so every component, the SEO pages' too, needed it (audit
         // PERF-01).
-        manualChunks(id) {
-          // Vite gives module ids with forward slashes on every OS.
-          // The 300 KB city list (SEO prayer-times, Qibla and Ramadan pages).
-          // Named so the SW precache can leave it out by a stable pattern;
-          // Rollup otherwise named it after RamadanCalendarIndexPage.
-          if (/\/src\/(data\/cities\.generated\.json|seo\/data\/cities\.ts)$/.test(id)) {
-            return 'seo-cities';
-          }
-          if (!id.includes('/node_modules/')) return undefined;
-          // React changes far less often than our code — keeping it separate
-          // means an app deploy doesn't invalidate it.
-          if (/\/node_modules\/(react|react-dom|scheduler)\//.test(id)) {
-            return 'react-vendor';
-          }
-          // Apart from React so the SEO pages that render (seo/entry-client)
-          // don't download the router too.
-          if (/\/node_modules\/react-router\//.test(id)) return 'router';
-          if (/\/node_modules\/(firebase|@firebase|idb)\//.test(id)) return 'firebase';
-          // No chunk for framer-motion: a manual chunk would pull the lazily
-          // imported animation features (src/motionFeatures.ts) back into it.
-          return undefined;
+        // Rolldown groups (Vite 8). Not the Rollup-style manualChunks: under
+        // Rolldown a group also takes in its modules' dependencies, and Vite's
+        // dynamic-import preload helper ended up in the router chunk, so the
+        // static pages downloaded the router and React for it (PERF-01).
+        codeSplitting: {
+          includeDependenciesRecursively: true,
+          groups: [
+            // Vite's own helpers (dynamic-import preload, modulepreload polyfill).
+            { name: 'vite-helpers', test: /^\0vite\//, priority: 40 },
+            // The 300 KB city list (SEO prayer-times, Qibla and Ramadan pages).
+            // Named so the SW precache can leave it out by a stable pattern.
+            {
+              name: 'seo-cities',
+              test: /[\\/]src[\\/](data[\\/]seoCities\.generated\.json|seo[\\/]data[\\/]cities\.ts)$/,
+              priority: 30,
+            },
+            // React changes far less often than our code: keeping it separate
+            // means an app deploy doesn't invalidate it.
+            {
+              name: 'react-vendor',
+              test: /[\\/]node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+              priority: 20,
+            },
+            // Apart from React so the SEO pages that render (seo/entry-client)
+            // don't download the router too.
+            { name: 'router', test: /[\\/]node_modules[\\/]react-router[\\/]/, priority: 20 },
+            {
+              name: 'firebase',
+              test: /[\\/]node_modules[\\/](firebase|@firebase|idb)[\\/]/,
+              priority: 20,
+            },
+            // No group for framer-motion: it would pull the lazily imported
+            // animation features (src/motionFeatures.ts) back into it.
+          ],
         },
       },
     },

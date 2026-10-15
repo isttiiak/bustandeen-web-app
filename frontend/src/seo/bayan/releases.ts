@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.170.3',
+    date: '2026-10-15',
+    text: {
+      en: {
+        title: 'A faster first load',
+        fixed: [
+          'We moved to a newer build tool. The app now downloads less code before its first screen, and the information pages stay as light as before.',
+        ],
+      },
+      bn: {
+        title: 'প্রথমবার আরও দ্রুত খোলে',
+        fixed: [
+          'আমরা নতুন একটি বিল্ড টুলে গেছি। প্রথম পাতা দেখানোর আগে অ্যাপ এখন কম কোড ডাউনলোড করে, আর তথ্যের পাতাগুলো আগের মতোই হালকা থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.170.2',
     date: '2026-10-15',
     text: {

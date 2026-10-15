@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.170.3 - Vite 8 (Rolldown) and @vitejs/plugin-react 6 - 2026-10-15
+
+### Changed
+
+- **Build: Vite 7.3.7 -> 8.3.4 and @vitejs/plugin-react 5.2.0 -> 6.1.2** (Dependabot #276, which could not install on Vite 7; closed as included here). Vite 8 bundles with Rolldown.
+  - `vite.config.ts`: `build.rollupOptions` -> `build.rolldownOptions`, and the Rollup-style `manualChunks` function -> Rolldown `codeSplitting` groups with priorities (vite-helpers, seo-cities, react-vendor, router, firebase). Under Rolldown the old function put Vite's dynamic-import preload helper into the router chunk, so every static SEO page downloaded the router and React (caught by `e2e/static-pages.spec.ts`, PERF-01). The helpers now have their own small chunk. The `seo-cities` group also matches `seoCities.generated.json` (renamed in v5.169.0), so the city list stays in that chunk and out of the SW precache.
+  - `scripts/prerender.mjs`: Vite 8 writes a `<script type="module">` for every chunk an HTML entry imports when the entry holds only imports (ours does now), instead of one `main-*.js` script plus `modulepreload` links. The prerender now swaps that whole run of tags for the static entry, and still fails the build if the run has no `main-*.js`.
+  - `package.json` overrides `@babel/plugin-transform-runtime` to `^7.29.0`: an optional peer chain of plugin-react 6 (`@rolldown/plugin-babel`) otherwise picked the Babel 8 line and clashed with Babel 7 from workbox-build. Nothing installs it; the override only lets npm resolve.
+  - Sizes: the app's first chunk is 349 KB (926 KB on Vite 7, Rolldown splits better), total JS about the same (3.63 MB vs 3.57 MB), SW precache 3.27 MB vs 3.20 MB. Static pages load only the static entry and its three small chunks, as before.
+- `admin` and `ssr` builds keep their configs (still accepted by Vite 8).
+
 ## v5.170.2 - Dependency updates (Firebase 13, Express 5.3, Mongoose 9.11) - 2026-10-15
 
 ### Changed
