@@ -70,10 +70,14 @@ const staticTags = [
     (k) => `<link rel="modulepreload" crossorigin href="/${manifest[k].file}">`
   ),
 ].join('\n    ');
+// The app's block of tags: Vite 7 wrote one <script> for main-*.js plus
+// <link rel="modulepreload"> tags; Vite 8 (Rolldown) writes a <script> for
+// every chunk the entry imports when the entry itself holds only imports.
+// Either way it is one run of tags that includes main-*.js.
 const appEntryTags =
-  /<script type="module" crossorigin src="\/assets\/main-[^"]+\.js"><\/script>(\s*<link rel="modulepreload" crossorigin href="[^"]+">)*/;
-if (!appEntryTags.test(appShellHtml)) {
-  console.error("prerender: the app entry's <script> tag was not found in app-shell.html");
+  /<script type="module" crossorigin src="\/assets\/[^"]+\.js"><\/script>(?:\s*(?:<script type="module" crossorigin src="\/assets\/[^"]+\.js"><\/script>|<link rel="modulepreload" crossorigin href="[^"]+">))*/;
+if (!/\/assets\/main-[^"]+\.js/.test(appShellHtml.match(appEntryTags)?.[0] ?? '')) {
+  console.error("prerender: the app entry's <script> tags were not found in app-shell.html");
   process.exit(1);
 }
 // `data-static` keeps the landing and SEO pages on the dark theme: their
