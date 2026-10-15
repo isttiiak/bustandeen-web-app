@@ -1,5 +1,6 @@
 // National days for the Islamic calendar (Library) in the countries most
-// Bustandeen users come from, besides Bangladesh (bd.ts). Pure data.
+// Bustandeen users come from (South Asia, the Gulf, Muslim-majority countries,
+// Europe, North America, Australia), besides Bangladesh (bd.ts). Pure data.
 //
 // Only fixed-date national commemorations: independence, national, republic,
 // founding and similar days, whether or not they are also public holidays.
@@ -212,6 +213,114 @@ export const NATIONAL_DAYS: Readonly<Record<string, CountryNationalDays>> = {
       },
       { monthDay: '08-30', en: 'Victory Day', bn: 'বিজয় দিবস' },
       { monthDay: '10-29', en: 'Republic Day', bn: 'প্রজাতন্ত্র দিবস' },
+    ],
+  },
+  DE: {
+    sources: [
+      {
+        title: 'Federal Ministry of the Interior (BMI), Nationale Feiertage',
+        url: 'https://www.bmi.bund.de/DE/themen/verfassung/staatliche-symbole/nationale-feiertage/nationale-feiertage-node.html',
+      },
+    ],
+    days: [{ monthDay: '10-03', en: 'German Unity Day', bn: 'জার্মান ঐক্য দিবস' }],
+  },
+  FR: {
+    sources: [
+      {
+        title: 'Service-Public.fr, Jours fériés',
+        url: 'https://www.service-public.gouv.fr/particuliers/vosdroits/F2405',
+      },
+    ],
+    days: [
+      { monthDay: '05-08', en: 'Victory Day 1945', bn: 'বিজয় দিবস ১৯৪৫' },
+      { monthDay: '07-14', en: 'National Day', bn: 'জাতীয় দিবস' },
+      { monthDay: '11-11', en: 'Armistice Day 1918', bn: 'যুদ্ধবিরতি দিবস ১৯১৮' },
+    ],
+  },
+  IT: {
+    sources: [
+      {
+        title: 'Presidency of the Council of Ministers, Law 260 of 27 May 1949 (festive days)',
+        url: 'https://presidenza.governo.it/ufficio_cerimoniale/normativa/legge_19490527_260.pdf',
+      },
+    ],
+    days: [
+      { monthDay: '04-25', en: 'Liberation Day', bn: 'মুক্তি দিবস' },
+      { monthDay: '06-02', en: 'Republic Day', bn: 'প্রজাতন্ত্র দিবস' },
+    ],
+  },
+  NL: {
+    // King's Day (27 April) is left out: it moves to the 26th when the 27th
+    // is a Sunday.
+    sources: [
+      {
+        title: 'Rijksoverheid, Nationale herdenkingen Tweede Wereldoorlog',
+        url: 'https://www.rijksoverheid.nl/onderwerpen/tweede-wereldoorlog/nationale-herdenkingen',
+      },
+      {
+        title: 'Rijksoverheid, Bevrijdingsdag 5 mei',
+        url: 'https://www.rijksoverheid.nl/onderwerpen/tweede-wereldoorlog/bevrijdingsdag-5-mei',
+      },
+    ],
+    days: [
+      { monthDay: '05-04', en: 'Remembrance of the Dead', bn: 'স্মরণ দিবস' },
+      { monthDay: '05-05', en: 'Liberation Day', bn: 'মুক্তি দিবস' },
+    ],
+  },
+  BE: {
+    sources: [
+      {
+        title: 'FPS Employment, Labour and Social Dialogue, Public holidays',
+        url: 'https://employment.belgium.be/en/themes/international/posting/working-conditions-be-respected-case-posting-belgium/public-holidays',
+      },
+    ],
+    days: [
+      { monthDay: '07-21', en: 'National Day', bn: 'জাতীয় দিবস' },
+      { monthDay: '11-11', en: 'Armistice Day', bn: 'যুদ্ধবিরতি দিবস' },
+    ],
+  },
+  SE: {
+    sources: [
+      {
+        title: 'Government Offices of Sweden, Circular note 2/2025: public holidays 2026',
+        url: 'https://www.government.se/contentassets/71dfa63dd47749ea96e0cb7c3dedb18c/circular-note-2_2025---public-holidays-2026.pdf',
+      },
+    ],
+    days: [{ monthDay: '06-06', en: 'National Day', bn: 'জাতীয় দিবস' }],
+  },
+  CA: {
+    sources: [
+      {
+        title: 'Canada Revenue Agency, Public holidays',
+        url: 'https://www.canada.ca/en/revenue-agency/services/tax/public-holidays.html',
+      },
+    ],
+    days: [
+      { monthDay: '07-01', en: 'Canada Day', bn: 'কানাডা দিবস' },
+      {
+        monthDay: '09-30',
+        en: 'National Day for Truth and Reconciliation',
+        bn: 'সত্য ও পুনর্মিলনের জাতীয় দিবস',
+        shortEn: 'Truth and Reconciliation',
+        shortBn: 'সত্য ও পুনর্মিলন দিবস',
+      },
+      { monthDay: '11-11', en: 'Remembrance Day', bn: 'স্মরণ দিবস' },
+    ],
+  },
+  AU: {
+    sources: [
+      {
+        title: 'Fair Work Ombudsman, Public holidays',
+        url: 'https://www.fairwork.gov.au/employment-conditions/public-holidays/2027-public-holidays',
+      },
+      {
+        title: 'Department of Veterans’ Affairs, Days of commemoration in Australia',
+        url: 'https://anzacportal.dva.gov.au/commemoration/days',
+      },
+    ],
+    days: [
+      { monthDay: '01-26', en: 'Australia Day', bn: 'অস্ট্রেলিয়া দিবস' },
+      { monthDay: '04-25', en: 'Anzac Day', bn: 'অ্যানজাক দিবস' },
     ],
   },
 };

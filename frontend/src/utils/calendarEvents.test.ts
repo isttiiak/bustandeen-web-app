@@ -84,15 +84,37 @@ describe('dayEvents', () => {
     expect(on('2026-08-14', { ...pk, national: false })).not.toContain('nat:Independence Day');
     expect(on('2026-09-23', { ...ALL, country: 'SA' })).toContain('nat:Saudi National Day');
     expect(on('2026-10-29', { ...ALL, country: 'TR' })).toContain('nat:Republic Day');
+    expect(on('2027-07-14', { ...ALL, country: 'FR' })).toContain('nat:National Day');
+    expect(on('2026-07-01', { ...ALL, country: 'CA' })).toContain('nat:Canada Day');
     // Never a government holiday there: those lists are Bangladesh only.
     expect(on('2026-12-25', pk).some((l) => l.startsWith('hol:'))).toBe(false);
   });
 
   it('which countries have what', () => {
-    for (const c of ['BD', 'PK', 'IN', 'SA', 'AE', 'MY', 'ID', 'GB', 'US', 'EG', 'TR']) {
+    for (const c of [
+      'BD',
+      'PK',
+      'IN',
+      'SA',
+      'AE',
+      'MY',
+      'ID',
+      'GB',
+      'US',
+      'EG',
+      'TR',
+      'DE',
+      'FR',
+      'IT',
+      'NL',
+      'BE',
+      'SE',
+      'CA',
+      'AU',
+    ]) {
       expect(hasNationalDays(c), c).toBe(true);
     }
-    expect(hasNationalDays('FR')).toBe(false);
+    expect(hasNationalDays('JP')).toBe(false);
     expect(hasNationalDays(null)).toBe(false);
     expect(hasHolidays('BD')).toBe(true);
     expect(hasHolidays('PK')).toBe(false);

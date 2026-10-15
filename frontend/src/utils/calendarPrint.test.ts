@@ -161,7 +161,7 @@ describe('what a download includes (2026-10-16)', () => {
     });
     // National days but no holiday list: national days on, holidays still off.
     expect(defaultInclude('PK')).toMatchObject({ islamic: true, holidays: false, national: true });
-    expect(defaultInclude('FR')).toMatchObject({ islamic: true, holidays: false, national: false });
+    expect(defaultInclude('JP')).toMatchObject({ islamic: true, holidays: false, national: false });
     expect(defaultInclude(null)).toMatchObject({ islamic: true, national: false });
   });
 
@@ -175,7 +175,7 @@ describe('what a download includes (2026-10-16)', () => {
     };
     expect(includeFilters('BD', on)).toMatchObject({ holidays: true, national: true });
     expect(includeFilters('PK', on)).toMatchObject({ holidays: false, national: true });
-    expect(includeFilters('FR', on)).toMatchObject({ holidays: false, national: false });
+    expect(includeFilters('JP', on)).toMatchObject({ holidays: false, national: false });
   });
 
   it('Sunnah fasts and Fridays are their own switches', () => {

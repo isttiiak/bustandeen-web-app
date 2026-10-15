@@ -9,9 +9,12 @@ const validMonthDay = (md: string) => {
 const texts = (o: object) => Object.values(o).filter((v): v is string => typeof v === 'string');
 
 describe('national days outside Bangladesh', () => {
-  it('the ten countries, each with a source; Bangladesh stays in bd.ts', () => {
+  it('the countries, each with a source; Bangladesh stays in bd.ts', () => {
     expect(Object.keys(NATIONAL_DAYS).sort()).toEqual(
-      ['AE', 'EG', 'GB', 'ID', 'IN', 'MY', 'PK', 'SA', 'TR', 'US'].sort()
+      [
+        ...['AE', 'EG', 'GB', 'ID', 'IN', 'MY', 'PK', 'SA', 'TR', 'US'],
+        ...['AU', 'BE', 'CA', 'DE', 'FR', 'IT', 'NL', 'SE'],
+      ].sort()
     );
     for (const [code, c] of Object.entries(NATIONAL_DAYS)) {
       expect(c.sources.length, code).toBeGreaterThan(0);
@@ -56,5 +59,13 @@ describe('national days outside Bangladesh', () => {
     expect(md('US')).toEqual(['06-19', '07-04', '11-11']);
     expect(md('EG')).toEqual(['01-25', '04-25', '06-30', '07-23', '10-06']);
     expect(md('TR')).toEqual(['04-23', '05-19', '07-15', '08-30', '10-29']);
+    expect(md('DE')).toEqual(['10-03']);
+    expect(md('FR')).toEqual(['05-08', '07-14', '11-11']);
+    expect(md('IT')).toEqual(['04-25', '06-02']);
+    expect(md('NL')).toEqual(['05-04', '05-05']);
+    expect(md('BE')).toEqual(['07-21', '11-11']);
+    expect(md('SE')).toEqual(['06-06']);
+    expect(md('CA')).toEqual(['07-01', '09-30', '11-11']);
+    expect(md('AU')).toEqual(['01-26', '04-25']);
   });
 });

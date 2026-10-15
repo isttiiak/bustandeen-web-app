@@ -26,14 +26,14 @@ export const RELEASES: Release[] = [
       en: {
         title: 'National days for more countries',
         added: [
-          'The Islamic calendar now shows national days for Pakistan, India, Saudi Arabia, the UAE, Malaysia, Indonesia, the United Kingdom, the United States, Egypt and Türkiye, such as Independence Day or National Day.',
+          'The Islamic calendar now shows national days for Pakistan, India, Saudi Arabia, the UAE, Malaysia, Indonesia, Egypt, Türkiye, the United Kingdom, Germany, France, Italy, the Netherlands, Belgium, Sweden, the United States, Canada and Australia, such as Independence Day or National Day.',
           'Calendar downloads in these countries include national days unless you turn them off.',
         ],
       },
       bn: {
         title: 'আরও দেশের জাতীয় দিবস',
         added: [
-          'ইসলামী ক্যালেন্ডারে এখন পাকিস্তান, ভারত, সৌদি আরব, সংযুক্ত আরব আমিরাত, মালয়েশিয়া, ইন্দোনেশিয়া, যুক্তরাজ্য, যুক্তরাষ্ট্র, মিসর ও তুরস্কের জাতীয় দিবস দেখায়, যেমন স্বাধীনতা দিবস বা জাতীয় দিবস।',
+          'ইসলামী ক্যালেন্ডারে এখন পাকিস্তান, ভারত, সৌদি আরব, সংযুক্ত আরব আমিরাত, মালয়েশিয়া, ইন্দোনেশিয়া, মিসর, তুরস্ক, যুক্তরাজ্য, জার্মানি, ফ্রান্স, ইতালি, নেদারল্যান্ডস, বেলজিয়াম, সুইডেন, যুক্তরাষ্ট্র, কানাডা ও অস্ট্রেলিয়ার জাতীয় দিবস দেখায়, যেমন স্বাধীনতা দিবস বা জাতীয় দিবস।',
           'এসব দেশে ক্যালেন্ডার ডাউনলোডে জাতীয় দিবস থাকে, চাইলে বন্ধ করে দিতে পারেন।',
         ],
       },
