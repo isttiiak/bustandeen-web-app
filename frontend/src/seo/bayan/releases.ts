@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.170.1',
+    date: '2026-10-15',
+    text: {
+      en: {
+        title: 'The Hijri date no longer repeats a day',
+        fixed: [
+          'When a month began a day later than the Umm al-Qura calendar, the day before it could show the same Hijri date twice (11 and 12 October both read 30 Rabīʿ al-Ākhir). Every month now has 29 or 30 days, and each day has its own date.',
+        ],
+      },
+      bn: {
+        title: 'হিজরি তারিখ আর একই দিন দুবার দেখায় না',
+        fixed: [
+          'কোনো মাস উম্মুল কুরা ক্যালেন্ডারের এক দিন পরে শুরু হলে, তার আগের দিনগুলোতে একই হিজরি তারিখ দুবার দেখাতে পারত (১১ ও ১২ অক্টোবর দুই দিনই ৩০ রবিউল আখির)। এখন প্রতিটি মাস ২৯ বা ৩০ দিনের, আর প্রতিটি দিনের নিজের তারিখ।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.170.0',
     date: '2026-10-15',
     text: {

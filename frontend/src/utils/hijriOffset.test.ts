@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addDays,
+  daysBetween,
   recordShift,
   resolveHijriDay,
   ummAlQura,
@@ -82,9 +83,18 @@ describe('T1: no records = Umm al-Qura', () => {
 
 describe('T2: late start from 8 Feb (Ramadan record only)', () => {
   const R = [RAMADAN_LATE];
+  // Ramadan began a day after Umm al-Qura, so Sha'ban ended a day later. Umm al-Qura's
+  // Sha'ban and Rajab already have 30 days and cannot grow, so the extra day goes back
+  // to the nearest 29-day month: Jumada al-Akhirah gets its 30th on 10 Dec, and every
+  // day from there to 8 Feb is one day later than Umm al-Qura (v5.170.1; it used to
+  // show "30 Sha'ban" on both 7 and 8 Feb).
   it.each([
-    ['2027-02-06', '29/8/1448'],
-    ['2027-02-07', '30/8/1448'],
+    ['2026-12-09', '29/6/1448'],
+    ['2026-12-10', '30/6/1448'],
+    ['2026-12-11', '1/7/1448'],
+    ['2027-01-10', '1/8/1448'],
+    ['2027-02-06', '28/8/1448'],
+    ['2027-02-07', '29/8/1448'],
     // Umm al-Qura's 1 Ramadan, but Bangladesh has not started: never a day early
     ['2027-02-08', '30/8/1448'],
     ['2027-02-09', '1/9/1448'],
@@ -177,6 +187,92 @@ describe('T9 + T10: long after the last record, and the year boundary', () => {
     const R = [rec(1448, 12, '2027-05-08'), rec(1449, 1, '2027-06-07')];
     expect(ymdOf(R, '2027-06-06')).toBe('30/12/1448');
     expect(ymdOf(R, '2027-06-07')).toBe('1/1/1449');
+  });
+});
+
+describe('T12: the live Bangladesh record (Jumada al-Ula 1448 began 13 Oct 2026)', () => {
+  // Umm al-Qura: 1 Rabi' al-Akhir = 12 Sep (Rabi' al-Awwal 29 days), 1 Jumada al-Ula =
+  // 12 Oct. Bangladesh began Jumada al-Ula on 13 Oct, so Rabi' al-Akhir began 13 Sep
+  // and Rabi' al-Awwal had 30 days. Before v5.170.1, 11 and 12 Oct both read
+  // "30 Rabi' al-Akhir" (a 31-day month).
+  const R = [rec(1448, 5, '2026-10-13')];
+  it.each([
+    ['2026-09-11', '29/3/1448'],
+    ['2026-09-12', '30/3/1448'],
+    ['2026-09-13', '1/4/1448'],
+    ['2026-10-11', '29/4/1448'],
+    ['2026-10-12', '30/4/1448'],
+    ['2026-10-13', '1/5/1448'],
+    ['2026-11-10', '29/5/1448'],
+    ['2026-11-11', '30/5/1448'],
+    ['2026-11-12', '1/6/1448'],
+  ])('%s is %s', (day, want) => expect(ymdOf(R, day)).toBe(want));
+
+  it('the days before the record follow it, with its shift', () => {
+    expect(on(R, '2026-10-01')).toMatchObject({ source: 'country', offset: -1 });
+    expect(on(R, '2026-09-01').source).toBe('none');
+  });
+});
+
+// Every day is the day after the one before, and every month has 29 or 30 days.
+function expectWellFormed(records: MoonSightingRecord[], from: string, to: string) {
+  let prev = on(records, from).hijri;
+  let len = 0;
+  for (let day = addDays(from, 1); day <= to; day = addDays(day, 1)) {
+    const h = on(records, day).hijri;
+    if (h.day === 1) {
+      const next =
+        prev.month === 12 ? { y: prev.year + 1, m: 1 } : { y: prev.year, m: prev.month + 1 };
+      expect([29, 30], `${day}: month before had ${prev.day} days`).toContain(prev.day);
+      expect({ y: h.year, m: h.month }, day).toEqual(next);
+      if (len) expect([29, 30], `${day}: month length`).toContain(len);
+      len = 1;
+    } else {
+      expect(h, day).toEqual({ ...prev, day: prev.day + 1 });
+      if (len) len++;
+    }
+    prev = h;
+  }
+}
+
+// Umm al-Qura's 1st of a Hijri month, found by scanning (fixtures only).
+function uqFirst(year: number, month: number): string {
+  let day = '2025-01-01';
+  for (let i = 0; i < 2000; i++, day = addDays(day, 1)) {
+    const h = ummAlQura(day);
+    if (h.year === year && h.month === month && h.day === 1) return day;
+  }
+  throw new Error(`no UQ 1st for ${month}/${year}`);
+}
+
+describe('T13: no repeated or missing day, whatever the records', () => {
+  const months: [number, number][] = [];
+  for (let m = 1; m <= 12; m++) months.push([1447, m]);
+  for (let m = 1; m <= 12; m++) months.push([1448, m]);
+
+  it.each(months)('one record for %i/%i at every allowed shift', (year, month) => {
+    const first = uqFirst(year, month);
+    for (const k of [-2, -1, 1, 2]) {
+      const R = [rec(year, month, addDays(first, -k))];
+      expect(recordShift(R[0])).toBe(k);
+      expectWellFormed(R, addDays(first, -200), addDays(first, 120));
+    }
+  });
+
+  // Only pairs a committee could announce: three months of 29 or 30 days
+  // between the two starts (87 to 90 days).
+  it.each(months.slice(0, 20))('two records with two months between, from %i/%i', (year, month) => {
+    const first = uqFirst(year, month);
+    const m2 = month + 3 > 12 ? [year + 1, month + 3 - 12] : [year, month + 3];
+    const second = uqFirst(m2[0], m2[1]);
+    for (const a of [-1, 0, 1]) {
+      for (const b of [a - 1, a, a + 1]) {
+        const gap = daysBetween(addDays(first, -a), addDays(second, -b));
+        if (gap < 87 || gap > 90) continue;
+        const R = [rec(year, month, addDays(first, -a)), rec(m2[0], m2[1], addDays(second, -b))];
+        expectWellFormed(R, addDays(first, -60), addDays(second, 90));
+      }
+    }
   });
 });
 
