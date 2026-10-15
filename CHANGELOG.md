@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.170.2 - Dependency updates (Firebase 13, Express 5.3, Mongoose 9.11) - 2026-10-15
+
+### Changed
+
+- **Dependencies**, one release for four Dependabot PRs (#283, #281, #278, #279; they close as included here). Lockfiles resolve the newest patch in each range, so a few are a patch newer than the PR named.
+  - **Frontend:** firebase 12.19.0 -> 13.0.0 (major; its breaking changes are all in `firebase/ai`, which we do not use: we import only `firebase/app` and `firebase/auth`), TanStack Query 5.104.1 -> 5.104.3 (four packages), framer-motion 14.0.0 -> 14.2.0, i18next 26.4.2 -> 26.4.5, react-i18next 17.0.15 -> 17.0.16, vite 7.3.6 -> 7.3.7, postcss 8.5.28 -> 8.5.30, geo-tz 8.1.9 -> 8.1.10, @playwright/test 1.63.0 -> 1.64.1, @types/node 26.6.4 -> 26.6.5, baseline-browser-mapping 2.11.27 -> 2.11.28.
+  - **Backend:** express 5.2.1 -> 5.3.0, express-rate-limit 8.7.0 -> 8.7.1, mongoose 9.10.4 -> 9.11.2, imapflow 2.2.5 -> 2.4.3, mailparser 3.9.35 -> 3.9.39 (still on `he` 1.2.0 through the override; `esmOnlyDeps.unit.test.js` passes), nodemailer 10.0.14 -> 10.1.1, zod 4.6.5 -> 4.6.7, dotenv 18.0.5 -> 18.0.8, @types/node -> 26.6.5.
+  - **Root:** prettier 3.9.9 -> 3.9.10.
+- **Not included:** #276 (`@vitejs/plugin-react` 6) needs Vite 8; it waits for a Vite 7 -> 8 upgrade.
+
 ## v5.170.1 - No repeated Hijri day before a late moon sighting - 2026-10-15
 
 ### Fixed
