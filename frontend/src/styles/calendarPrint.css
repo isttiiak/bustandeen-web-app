@@ -517,3 +517,14 @@
   color: var(--pc-hol);
   text-decoration: underline;
 }
+
+/* Small print in the side column: a missing holiday list, the moon line. */
+.pc-fine {
+  margin: 8px 0 0;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--pc-muted);
+}
+.pc-glance-fine {
+  padding: 0 36px;
+}

@@ -168,3 +168,33 @@ test('the Hijri date on Home opens the calendar', async ({ page }) => {
   await expect(page).toHaveURL(/\/library\/calendar$/);
   await expect(page.getByTestId('calendar-grid')).toBeVisible();
 });
+
+test('browsing stops at next year, notes a missing holiday list, links the source', async ({
+  page,
+}) => {
+  await openCalendar(page);
+  const next = page.getByRole('button', { name: 'Next month' });
+  const prev = page.getByRole('button', { name: 'Previous month' });
+  await expect(page.getByTestId('calendar-moon-note')).toContainText(
+    'Dates that depend on the moon may differ by a day'
+  );
+  await expect(page.getByTestId('calendar-holidays-missing')).toHaveCount(0);
+  // October 2026 -> January 2027: no 2027 list yet
+  for (let i = 0; i < 3; i++) await next.click();
+  await expect(page.getByTestId('calendar-month')).toHaveText('January 2027');
+  await expect(page.getByTestId('calendar-holidays-missing')).toHaveText(
+    'Government holidays for 2027 are not published yet.'
+  );
+  // ... to December 2027, the last month
+  for (let i = 0; i < 11; i++) await next.click();
+  await expect(page.getByTestId('calendar-month')).toHaveText('December 2027');
+  await expect(next).toBeDisabled();
+  // Back to January 2025, the first month
+  for (let i = 0; i < 35; i++) await prev.click();
+  await expect(page.getByTestId('calendar-month')).toHaveText('January 2025');
+  await expect(prev).toBeDisabled();
+
+  await page.getByRole('button', { name: 'Calendar settings' }).click();
+  const sources = page.getByTestId('calendar-holiday-sources').getByRole('link');
+  await expect(sources.first()).toHaveAttribute('href', /^https:\/\/bangla\.thedailystar\.net\//);
+});

@@ -4542,6 +4542,9 @@
     "pYear": "Year at a glance",
     "changedLabel": "Date changed",
     "changedAt": "at Maghrib {{time}}",
-    "changedNoPlace": "at Maghrib"
+    "changedNoPlace": "at Maghrib",
+    "holidaysMissing": "Government holidays for {{years}} are not published yet.",
+    "moonNote": "Dates that depend on the moon may differ by a day; follow your local announcement.",
+    "sHolidaySources": "Source"
   }
 }

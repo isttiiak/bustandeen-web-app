@@ -44,6 +44,8 @@ interface SheetProps {
   countryLabel: string;
   /** Kinds of event shown (the colour guide lists only these). */
   kinds: CalendarEvent['type'][];
+  /** Years among a month's days without a published holiday list. */
+  missingYears: (days: readonly CalendarDay[]) => number[];
 }
 
 const pageClass = (o: PrintOptions) =>
@@ -118,6 +120,7 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
     );
 
   const list = monthListEvents(days, p.eventsOf);
+  const missing = p.missingYears(days);
   const subtitle = [c2, c3]
     .filter((k): k is CalendarKind => !!k)
     .map((k) => monthSpan(k, days, t, lang))
@@ -197,6 +200,13 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
                 </li>
               ))}
             </ul>
+            {missing.length > 0 && (
+              <p className="pc-fine" data-print-missing>
+                {t('calendar.holidaysMissing', {
+                  years: missing.map((y) => num(y, lang)).join(', '),
+                })}
+              </p>
+            )}
           </div>
           <div>
             <h4>{t('calendar.pGuide')}</h4>
@@ -224,6 +234,9 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
                 {t('calendar.kind.weekend')}
               </span>
             </div>
+            <p className="pc-fine" data-print-moon>
+              {t('calendar.moonNote')}
+            </p>
           </div>
           {/* Blank for writing: faint lines fill the rest of the column. */}
           {p.options.inside === 'blank' && <div className="pc-notes" data-print-notes />}
@@ -284,6 +297,9 @@ function YearGlance(p: SheetProps & { style: { width: number; height: number } }
           );
         })}
       </div>
+      <p className="pc-fine pc-glance-fine" data-print-moon>
+        {t('calendar.moonNote')}
+      </p>
       <Foot />
     </section>
   );

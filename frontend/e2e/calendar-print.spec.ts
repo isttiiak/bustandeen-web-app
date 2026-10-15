@@ -167,3 +167,23 @@ test('blank for writing, landscape: the lines fill the side column', async ({ pa
   expect(box).toEqual({ reachesBottom: true, tall: true, emptyBox: true });
   expect(pdfPages(await pdf(page))).toBe(1);
 });
+
+test('a 2027 month says its holidays are not published yet; every sheet has the moon line', async ({
+  page,
+}) => {
+  await page.clock.setFixedTime(new Date('2026-10-15T10:00:00+06:00'));
+  await page.goto('/demo/brother');
+  await expect(page.getByText('Demo Mode')).toBeVisible();
+  await page.evaluate(() => {
+    window.history.pushState({}, '', '/library/calendar');
+    window.dispatchEvent(new PopStateEvent('popstate'));
+  });
+  for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Next month' }).click();
+  await expect(page.getByTestId('calendar-month')).toHaveText('January 2027');
+  await page.getByRole('button', { name: 'Download calendar' }).click();
+  await print(page);
+  const sheet = page.locator('#pc-print-root [data-print-sheet]');
+  await expect(sheet.locator('[data-print-missing]')).toContainText('2027');
+  await expect(sheet.locator('[data-print-moon]')).toContainText('may differ by a day');
+  expect(pdfPages(await pdf(page))).toBe(1);
+});

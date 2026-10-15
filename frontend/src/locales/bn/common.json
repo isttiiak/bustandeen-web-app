@@ -4340,6 +4340,9 @@
     "pYear": "এক নজরে বছর",
     "changedLabel": "তারিখ বদলেছে",
     "changedAt": "মাগরিব {{time}}-এ",
-    "changedNoPlace": "মাগরিবে"
+    "changedNoPlace": "মাগরিবে",
+    "holidaysMissing": "{{years}} সালের সরকারি ছুটি এখনো প্রকাশিত হয়নি।",
+    "moonNote": "চাঁদের ওপর নির্ভর করা তারিখ এক দিন এদিক-ওদিক হতে পারে; স্থানীয় ঘোষণা অনুসরণ করুন।",
+    "sHolidaySources": "সূত্র"
   }
 }
