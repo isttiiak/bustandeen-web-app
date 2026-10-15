@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.170.2',
+    date: '2026-10-15',
+    text: {
+      en: {
+        title: 'Behind-the-scenes updates',
+        fixed: [
+          'We updated the building blocks the app runs on, including sign-in and the server. Nothing changes in how you use Bustandeen.',
+        ],
+      },
+      bn: {
+        title: 'ভেতরের কিছু হালনাগাদ',
+        fixed: [
+          'অ্যাপ যেসব উপকরণের ওপর চলে, সাইন ইন ও সার্ভারসহ সেগুলো হালনাগাদ করা হয়েছে। Bustandeen ব্যবহারে কিছুই বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.170.1',
     date: '2026-10-15',
     text: {
