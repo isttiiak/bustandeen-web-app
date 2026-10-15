@@ -140,8 +140,30 @@ test('portrait Letter, blank days, Hijri first', async ({ page }) => {
   await print(page);
   const sheet = page.locator('#pc-print-root [data-print-sheet]');
   await expect(sheet).toContainText('Jumādā al-Ūlā 1448 AH');
+  // Blank for writing: empty day boxes, writing lines under the guide.
   // (The print root is hidden on screen, so count rather than look.)
-  expect(await sheet.locator('.pc-lines').count()).toBeGreaterThan(27);
   await expect(sheet.locator('.pc-evs')).toHaveCount(0);
+  await expect(sheet.locator('[data-print-notes]')).toHaveCount(1);
+  expect(pdfPages(await pdf(page))).toBe(1);
+});
+
+test('blank for writing, landscape: the lines fill the side column', async ({ page }) => {
+  await openDownload(page);
+  await page.getByRole('button', { name: 'Blank for writing' }).click();
+  await print(page);
+  await page.emulateMedia({ media: 'print' });
+  const box = await page.evaluate(() => {
+    const side = document.querySelector('#pc-print-root .pc-side')!.getBoundingClientRect();
+    const notes = document
+      .querySelector('#pc-print-root [data-print-notes]')!
+      .getBoundingClientRect();
+    const cell = document.querySelector('#pc-print-root [data-print-day="2026-10-21"]')!;
+    return {
+      reachesBottom: Math.abs(side.bottom - notes.bottom) < 2,
+      tall: notes.height > 150,
+      emptyBox: cell.querySelectorAll('.pc-ev').length === 0,
+    };
+  });
+  expect(box).toEqual({ reachesBottom: true, tall: true, emptyBox: true });
   expect(pdfPages(await pdf(page))).toBe(1);
 });

@@ -307,17 +307,6 @@
   border-left-color: transparent;
   background: none;
 }
-.pc-lines {
-  position: absolute;
-  left: 8px;
-  right: 8px;
-  bottom: 8px;
-  height: 34px;
-  background: repeating-linear-gradient(
-    transparent 0 16px,
-    color-mix(in srgb, var(--pc-line) 80%, transparent) 16px 17px
-  );
-}
 
 /* Side column: This month + colour guide */
 .pc-side {
@@ -330,6 +319,27 @@
 .pc-portrait .pc-side {
   grid-template-columns: 1.4fr 1fr;
   align-items: start;
+}
+/* Landscape: a column, so the writing lines can take the rest of it. */
+.pc-page:not(.pc-portrait) .pc-side {
+  display: flex;
+  flex-direction: column;
+}
+/* "Blank for writing": thin, faint lines, 26px apart, to the bottom of the
+   side column (landscape), or a band under the guide (portrait). */
+.pc-notes {
+  flex: 1;
+  min-height: 78px;
+  border-top: 1px solid color-mix(in srgb, var(--pc-line) 45%, transparent);
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 25px,
+    color-mix(in srgb, var(--pc-muted) 22%, transparent) 25px 26px
+  );
+}
+.pc-portrait .pc-notes {
+  grid-column: 1 / -1;
+  min-height: 130px;
 }
 .pc-side h4 {
   margin: 0 0 6px;

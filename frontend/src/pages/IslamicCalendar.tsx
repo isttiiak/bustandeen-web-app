@@ -55,7 +55,12 @@ import { countryName } from '../utils/countryDefaults.js';
 import type { StoredLocation } from '../utils/geocode.js';
 import { autoHijriCountry } from '../utils/hijriCountry.js';
 import { addDays } from '../utils/hijriOffset.js';
-import { HIJRI_COUNTRY_KEY, readHijriInputs, writeHijriInput } from '../utils/islamicCalendar.js';
+import {
+  HIJRI_COUNTRY_KEY,
+  getIslamicDay,
+  readHijriInputs,
+  writeHijriInput,
+} from '../utils/islamicCalendar.js';
 import { loadZoneLookup, placeToday, readSavedPlace } from '../utils/placeClock.js';
 import { calcPrayerTimesForDay, formatTime } from '../utils/prayerTimes.js';
 
@@ -156,12 +161,17 @@ export default function IslamicCalendar() {
   })();
 
   const hijriOn = prefs.layers.includes('hijri');
+  // The arch's Hijri date is the Islamic day (it changes at Maghrib), as on
+  // Home and in Settings; the grid shows each day's daytime date.
+  const islamicDay = getIslamicDay();
+  const nowDay = day(islamicDay);
+  const afterMaghrib = islamicDay > today;
   const tomorrow = day(addDays(today, 1));
   const coming = next30[0];
   const heroSource =
-    todayDay.hijriSource === 'manual'
+    nowDay.hijriSource === 'manual'
       ? t('calendar.heroManual')
-      : todayDay.hijriSource === 'none'
+      : nowDay.hijriSource === 'none'
         ? t('calendar.heroUq')
         : t('calendar.heroAnnounced', { country: countryLabel });
 
@@ -266,12 +276,12 @@ export default function IslamicCalendar() {
         <div className="max-w-2xl mx-auto space-y-4 pb-10">
           <LibraryHero
             Icon={CalendarDaysIcon}
-            title={hijriOn ? hijriLabel(t, todayDay.hijri, lang) : gregLong(today)}
+            title={hijriOn ? hijriLabel(t, nowDay.hijri, lang) : gregLong(today)}
             subtitle={hijriOn ? gregLong(today) : ''}
           >
             {hijriOn && (
               <p lang="ar" dir="rtl" className="text-white/75 text-lg" style={ARABIC_STYLE}>
-                {HIJRI_MONTHS_AR[todayDay.hijri.month - 1]}
+                {HIJRI_MONTHS_AR[nowDay.hijri.month - 1]}
               </p>
             )}
             {prefs.layers.includes('bn') && (
@@ -286,7 +296,7 @@ export default function IslamicCalendar() {
               >
                 <span
                   aria-hidden="true"
-                  className={`w-2 h-2 rounded-full ${todayDay.hijriSource === 'country' ? 'bg-brand-emerald' : 'bg-white/40'}`}
+                  className={`w-2 h-2 rounded-full ${nowDay.hijriSource === 'country' ? 'bg-brand-emerald' : 'bg-white/40'}`}
                 />
                 {heroSource}
               </span>
@@ -295,22 +305,33 @@ export default function IslamicCalendar() {
               {hijriOn && (
                 <>
                   <Fact label={t('calendar.dayOfMonthLabel')}>
-                    {t('calendar.dayOfMonth', { n: num(todayDay.hijri.day, lang) })}
+                    {t('calendar.dayOfMonth', { n: num(nowDay.hijri.day, lang) })}
                     <span className="block h-1.5 mt-1.5 rounded-full bg-brand-border overflow-hidden">
                       <span
                         className="block h-full rounded-full bg-brand-gold"
-                        style={{ width: `${Math.round((todayDay.hijri.day / 30) * 100)}%` }}
+                        style={{ width: `${Math.round((nowDay.hijri.day / 30) * 100)}%` }}
                       />
                     </span>
                   </Fact>
-                  <Fact label={t('calendar.changesLabel')}>
-                    {num(tomorrow.hijri.day, lang)} {hijriMonthName(t, tomorrow.hijri.month)}
-                    <span className="block text-xs font-medium text-white/70">
-                      {maghrib
-                        ? t('calendar.changesAt', { time: maghrib })
-                        : t('calendar.changesNoPlace')}
-                    </span>
-                  </Fact>
+                  {afterMaghrib ? (
+                    <Fact label={t('calendar.changedLabel')} testId="calendar-change">
+                      {num(nowDay.hijri.day, lang)} {hijriMonthName(t, nowDay.hijri.month)}
+                      <span className="block text-xs font-medium text-white/70">
+                        {maghrib
+                          ? t('calendar.changedAt', { time: maghrib })
+                          : t('calendar.changedNoPlace')}
+                      </span>
+                    </Fact>
+                  ) : (
+                    <Fact label={t('calendar.changesLabel')} testId="calendar-change">
+                      {num(tomorrow.hijri.day, lang)} {hijriMonthName(t, tomorrow.hijri.month)}
+                      <span className="block text-xs font-medium text-white/70">
+                        {maghrib
+                          ? t('calendar.changesAt', { time: maghrib })
+                          : t('calendar.changesNoPlace')}
+                      </span>
+                    </Fact>
+                  )}
                 </>
               )}
               <Fact label={t('calendar.comingUp')} wide testId="calendar-coming">

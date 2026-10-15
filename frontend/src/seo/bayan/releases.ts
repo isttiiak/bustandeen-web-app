@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.173.1',
+    date: '2026-10-15',
+    text: {
+      en: {
+        title: 'Calendar fixes',
+        fixed: [
+          'After Maghrib the Islamic calendar now shows the new Hijri date, the same as Home and Settings.',
+          'A calendar downloaded with "Blank for writing" keeps the day boxes empty and gives you lined space for notes beside the month.',
+        ],
+      },
+      bn: {
+        title: 'ক্যালেন্ডারের সংশোধন',
+        fixed: [
+          'মাগরিবের পর ইসলামী ক্যালেন্ডার এখন নতুন হিজরি তারিখ দেখায়, হোম ও সেটিংসের মতোই।',
+          '"লেখার জন্য ফাঁকা" বেছে ডাউনলোড করা ক্যালেন্ডারে দিনের ঘরগুলো ফাঁকা থাকে, আর মাসের পাশে নোট লেখার জন্য দাগ টানা জায়গা পাবেন।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.173.0',
     date: '2026-10-15',
     text: {

@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.173.1 - Calendar follow-ups: the Hijri date after Maghrib, the drawer text, blank-for-writing sheets - 2026-10-15
+
+### Fixed
+
+- **The calendar's arch showed yesterday's Hijri date after Maghrib** (Istiak, 2026-10-15: Settings and Home said 4 Jumādā al-Ūlā, the calendar 3). Home and Settings use the Islamic day (it begins at Maghrib, `getIslamicDay`); the arch used the civil day. The arch now uses the Islamic day too, and after Maghrib its fact reads "Date changed · at Maghrib 5:32 PM" instead of "Date changes". The grid keeps each day's daytime date, as before; the English and Bengali dates in the arch stay on the civil day.
+- **The calendar drawer's Hijri section** said "Hijri date / The same setting as in Settings." It now has the same title and subtitle as Settings ("Hijri date adjustment / Match your country's moon sighting. Affects special days and fasting rules everywhere").
+- **Backend lint warning** (`security/detect-unsafe-regex`, `routes/seoRedirect.routes.ts`, from #284): `/^\/ar(?:\/.*)?$/` is now `/^\/ar(?:\/|$)/`, which matches the same paths (`/ar` and `/ar/...`, never `/arabic`) with no repeat inside an optional group. Lint is warning-free again.
+
+### Changed
+
+- **Download, "Blank for writing":** the day boxes stay empty (no ruled lines); instead faint, thin lines 26px apart fill the side column under the colour guide, to the bottom of the sheet (a band under the guide in portrait).
+
+### Tests
+
+- e2e: after Maghrib (8 pm Dhaka) Home and the arch both show 4 Jumādā al-Ūlā while the grid keeps 3 for 15 Oct; blank-for-writing in landscape has empty boxes and lines reaching the bottom of the side column, on one page. Backend: `/ar/` redirects to `/`, and `/arabic`, `/ar-sa`, `/area/dhaka` are not treated as Arabic pages.
+
 ## v5.173.0 - Islamic calendar, part 3: download as PDF - 2026-10-15
 
 Last of three PRs for the Islamic calendar (prototype `docs/design/hijri-calendar.html`, approved v3, layout "Corners").

@@ -130,6 +130,33 @@ test('with a saved place, the Hijri date in the prayer arch opens the calendar',
   await expect(page.getByTestId('calendar-coming')).toBeVisible();
 });
 
+test('after Maghrib the arch shows the new Hijri date, like Home', async ({ page }) => {
+  // 15 Oct 2026, 8 pm in Dhaka: Maghrib (about 5:32 pm) has passed, so the
+  // Islamic day is 4 Jumādā al-Ūlā on Home, in Settings and in the arch.
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'bustandeen_location',
+      JSON.stringify({ latitude: 23.81, longitude: 90.41, name: 'Dhaka' })
+    );
+  });
+  await page.clock.setFixedTime(new Date('2026-10-15T20:00:00+06:00'));
+  await page.goto('/demo/brother');
+  await expect(page.getByText('Demo Mode')).toBeVisible();
+  await expect(page.getByRole('link', { name: /4 Jumādā al-Ūlā 1448/ }).first()).toBeVisible();
+  await page
+    .getByRole('link', { name: /4 Jumādā al-Ūlā 1448/ })
+    .first()
+    .click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('4 Jumādā al-Ūlā 1448 AH');
+  await expect(page.getByTestId('calendar-change')).toContainText('Date changed');
+  await expect(page.getByTestId('calendar-change')).toContainText('4 Jumādā al-Ūlā');
+  // The grid keeps daytime dates: 15 Oct is still 3 Jumādā al-Ūlā
+  await expect(page.locator('[data-day="2026-10-15"]')).toHaveAttribute(
+    'aria-label',
+    /3 Jumādā al-Ūlā 1448/
+  );
+});
+
 test('the Hijri date on Home opens the calendar', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-10-15T10:00:00+06:00'));
   await page.goto('/demo/brother');
