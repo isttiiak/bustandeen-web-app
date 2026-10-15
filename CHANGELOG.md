@@ -2,6 +2,29 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.175.0 - Calendar: what a download includes, open years, calendar and language requests in place - 2026-10-16
+
+### Added
+
+- **What to include in a download** (Istiak, 2026-10-16), separate from the screen's settings: Islamic days, with two nested switches, **Sunnah fasts** (Mondays, Thursdays, the White Days) and **Fridays**; **Government holidays**; **National days**. Defaults: Bangladesh = Islamic days + national days; other countries = Islamic days only. `PrintOptions.include`, `defaultInclude`, `includeFilters` (`utils/calendarPrint.ts`); `EventFilters.monThu / whiteDays / fridays` (`utils/calendarEvents.ts`, the screen still shows the White Days and leaves out Mondays, Thursdays and Fridays). Yearly Islamic days now come before the monthly and weekly ones in a day's list.
+- **Open years without government holidays:** a year stepper in the download drawer. With government holidays on (hand-entered lists) a download stays within last year to next year, as decided in v5.174.0; without them any year within 25 years of today (`downloadWindow`, `OPEN_YEARS`). One download is at most 12 months (`MAX_PRINT_MONTHS`, was 24), and a device may start 10 downloads an hour (`bustandeen_calendar_downloads`, on-device only).
+- **Other countries:** the government holidays switch (and national days, until a country has them) is off with a message, and **"Request your country's calendar"** opens a form over the page (download drawer and calendar settings): country only, `POST /api/feedback/calendar`, stored in the Feedback inbox under **Calendar request** (`CALENDAR_REQUEST_CATEGORY`), same rate limit and honeypot as the language request.
+- **National days note** in the drawer and the print notice: fixed dates from public sources, check the local announcement.
+
+### Changed
+
+- **Request a language on bayan.bustandeen.com** opens a form on the page instead of the app's Feedback page: `public/bayan/request.js` (every Bayan page) sends it to this host's `/api/feedback/language`, the only API path vercel.json routes on that host; its CSP `connect-src` is now `'self'` (was `'none'`).
+
+### Fixed
+
+- **Hijri date without a saved location:** the arch said the date changes "at Maghrib", but without coordinates `getIslamicDay` falls back to civil midnight. It now says "at midnight here. Save your location to change it at Maghrib." (With a location the change at Maghrib was checked and is correct.)
+
+### Tests
+
+- Unit: download defaults per country, nested switches, yearly days first, the window with and without holidays, 12-month cap, the hourly limit (bad stored data, waiting time); Bayan rewrite and CSP, the request script's single endpoint.
+- Backend: calendar requests (inbox shape, two-letter code, honeypot).
+- e2e: drawer defaults and the year stepper, Fridays on the sheet, 12 months, the limit, another country's request form without leaving the page.
+
 ## v5.174.0 - Calendar: three years to browse, holiday-year note, moon note, sources - 2026-10-16
 
 ### Changed

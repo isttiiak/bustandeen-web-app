@@ -48,7 +48,10 @@ export async function getIdToken(): Promise<string | null> {
 api.interceptors.request.use((config) => {
   // Public calendar data (national moon-sighting records, T4.1) is the same
   // for everyone, so the demo reads the real list: its Hijri dates stay right.
-  const isPublicCalendar = (config.url ?? '').startsWith('/api/calendar/');
+  // A country calendar request needs no account and comes from a real person,
+  // so it is sent from the demo too.
+  const isPublicCalendar =
+    (config.url ?? '').startsWith('/api/calendar/') || config.url === '/api/feedback/calendar';
   if (useAuthStore.getState().isDemoMode && !isPublicCalendar) {
     const method = (config.method ?? 'get').toLowerCase();
     // Query params given separately (axios `params`) join the URL, so the

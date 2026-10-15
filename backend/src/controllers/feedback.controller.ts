@@ -33,6 +33,29 @@ export const submitHandler = async (
   }
 };
 
+/** POST /api/feedback/calendar: a country's calendar, in the Feedback inbox. */
+export const calendarRequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { country, botcheck } = req.body as { country: string; botcheck?: string };
+    if (botcheck) {
+      res.json({ ok: true });
+      return;
+    }
+    await feedbackService.submitCalendarRequest(
+      country,
+      req.ip ?? 'unknown',
+      req.user?.uid ?? null
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
 /** POST /api/feedback/language: lands in the same Feedback inbox. */
 export const languageRequestHandler = async (
   req: Request,

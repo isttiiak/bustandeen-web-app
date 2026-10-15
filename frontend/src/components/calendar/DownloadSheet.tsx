@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, m as motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -6,6 +6,8 @@ import {
   ArrowDownTrayIcon,
   CheckIcon,
   ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   ChevronUpIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
@@ -17,15 +19,27 @@ import {
   OPTION_ON,
   SECTION_TITLE,
 } from '../bustanStyles.js';
+import Switch from '../Switch.js';
 import {
   monthDays,
   monthInWindow,
   stepMonth,
   type CalendarKind,
-  type CalendarWindow,
   type DayResolver,
 } from '../../utils/calendarMonth.js';
-import { DEFAULT_PRINT, type PrintOptions } from '../../utils/calendarPrint.js';
+import { hasHolidays, hasNationalDays, holidayYears } from '../../utils/calendarEvents.js';
+import {
+  DEFAULT_PRINT,
+  DOWNLOAD_LOG_KEY,
+  MAX_PRINT_MONTHS,
+  defaultInclude,
+  downloadWaitMinutes,
+  downloadWindow,
+  recentDownloads,
+  yearStart,
+  type PrintInclude,
+  type PrintOptions,
+} from '../../utils/calendarPrint.js';
 import { bnDigits } from '../../utils/bengaliCalendar.js';
 import { monthTitle, num, type Lang } from './calendarText.js';
 
@@ -39,7 +53,22 @@ const TEMPLATE_TILE: Record<PrintOptions['template'], string> = {
   minimal: 'bg-transparent border-b-2 border-white/80',
 };
 
-/** The download drawer of the Islamic calendar, then a short notice before printing. */
+const readLog = () => {
+  try {
+    return localStorage.getItem(DOWNLOAD_LOG_KEY);
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * The download drawer of the Islamic calendar, then a short notice before
+ * printing. What it lists (Islamic days, Sunnah fasts, Fridays, government
+ * holidays, national days) is chosen here, apart from the screen's settings.
+ * Government holidays keep the download within last year to next year (their
+ * lists are entered by hand); without them any year within OPEN_YEARS. One
+ * download is at most 12 months, and a device may start DOWNLOADS_PER_HOUR.
+ */
 export default function DownloadSheet({
   open,
   onClose,
@@ -47,7 +76,10 @@ export default function DownloadSheet({
   grid,
   anchor,
   day,
-  bounds,
+  today,
+  country,
+  countryLabel,
+  onRequestCalendar,
   onPrint,
 }: {
   open: boolean;
@@ -57,37 +89,114 @@ export default function DownloadSheet({
   grid: CalendarKind;
   anchor: string;
   day: DayResolver;
-  /** Last year to next year: the months a download can include. */
-  bounds: CalendarWindow;
+  today: string;
+  /** The calendar's country (ISO code): government holidays and national days. */
+  country: string | null;
+  countryLabel: string;
+  /** Opens "Request your country's calendar" over the page. */
+  onRequestCalendar: () => void;
   onPrint: (o: PrintOptions) => void;
 }) {
   const { t, i18n } = useTranslation();
   const lang: Lang = i18n.language === 'bn' ? 'bn' : 'en';
   const startOrder = [grid, ...layers.filter((k) => k !== grid)];
   const [order, setOrder] = useState<CalendarKind[]>(startOrder);
-  const [o, setO] = useState<Omit<PrintOptions, 'order'>>(DEFAULT_PRINT);
+  const [o, setO] = useState<Omit<PrintOptions, 'order' | 'at' | 'include'>>(DEFAULT_PRINT);
+  const [include, setInclude] = useState<PrintInclude>(() => defaultInclude(country));
+  // A day in the year the sheet shows, and the month picked for "One month".
+  const [base, setBase] = useState(anchor);
+  const [monthAt, setMonthAt] = useState(anchor);
   const [notice, setNotice] = useState(false);
-  const set = (p: Partial<Omit<PrintOptions, 'order'>>) => setO((prev) => ({ ...prev, ...p }));
+  const [limitWait, setLimitWait] = useState(0);
+  const set = (p: Partial<typeof o>) => setO((prev) => ({ ...prev, ...p }));
+  const inc = (p: Partial<PrintInclude>) => setInclude((prev) => ({ ...prev, ...p }));
 
   const main = order[0] ?? 'greg';
-  // Month choices for a range: a year either side, in the first calendar.
-  const months = useMemo(() => {
-    const out = [monthDays(anchor, main, day)[0]!.ymd];
-    for (let i = 0; i < 12; i++) out.unshift(stepMonth(out[0]!, main, -1, day));
-    for (let i = 0; i < 12; i++) out.push(stepMonth(out[out.length - 1]!, main, 1, day));
-    return out.filter((m) => monthInWindow(monthDays(m, main, day), bounds));
-  }, [anchor, main, day, bounds]);
-  const current = monthDays(anchor, main, day)[0]!;
+  const first = (ymd: string) => monthDays(ymd, main, day)[0]!.ymd;
+  const holidaysOk = hasHolidays(country);
+  const nationalOk = hasNationalDays(country);
+  const restricted = include.holidays && holidaysOk && o.inside === 'events';
+  const win = useMemo(() => downloadWindow(today, restricted), [today, restricted]);
+  const inWin = (m: string) => monthInWindow(monthDays(m, main, day), win);
+  const yearOf = (b: string) => {
+    const out = [yearStart(b, main, day)];
+    while (out.length < 12) out.push(stepMonth(out[out.length - 1]!, main, 1, day));
+    return out;
+  };
+  const stepYear = (from: string, by: -1 | 1) => {
+    let d = from;
+    for (let i = 0; i < 12; i++) d = stepMonth(d, main, by, day);
+    return d;
+  };
+  const yearAll = yearOf(base);
+  const yearMonths = yearAll.filter(inWin);
+  const canYear = (by: -1 | 1) => yearOf(stepYear(base, by)).some(inWin);
+  const moveYear = (by: -1 | 1) => {
+    setBase(stepYear(base, by));
+    setMonthAt(stepYear(monthAt, by));
+  };
+
+  const head = day(yearAll[0]!);
   const yearLabel =
     main === 'greg'
-      ? num(current.ymd.slice(0, 4), lang)
+      ? num(head.ymd.slice(0, 4), lang)
       : main === 'hijri'
-        ? `${num(current.hijri.year, lang)} ${t('hijriMonths.ah')}`
-        : `${bnDigits(current.bengali.year)} বঙ্গাব্দ`;
-  const range =
-    o.range.kind === 'range'
-      ? o.range
-      : { kind: 'range' as const, from: current.ymd, to: current.ymd };
+        ? `${num(head.hijri.year, lang)} ${t('hijriMonths.ah')}`
+        : `${bnDigits(head.bengali.year)} বঙ্গাব্দ`;
+  const pickedMonth = yearMonths.includes(first(monthAt)) ? first(monthAt) : yearMonths[0]!;
+  // A range starts in the year shown and runs for up to a year.
+  const rangeFrom =
+    o.range.kind === 'range' && yearMonths.includes(first(o.range.from))
+      ? first(o.range.from)
+      : pickedMonth;
+  const toChoices = (() => {
+    const out = [rangeFrom];
+    while (out.length < MAX_PRINT_MONTHS) out.push(stepMonth(out[out.length - 1]!, main, 1, day));
+    return out.filter(inWin);
+  })();
+  const rangeTo =
+    o.range.kind === 'range' && toChoices.includes(first(o.range.to))
+      ? first(o.range.to)
+      : toChoices[Math.min(2, toChoices.length - 1)]!;
+
+  const toggleHolidays = (on: boolean) => {
+    inc({ holidays: on });
+    // Back to the screen's month when the year shown is outside the window.
+    if (on && o.inside === 'events') {
+      const w = downloadWindow(today, true);
+      if (!yearAll.some((m) => monthInWindow(monthDays(m, main, day), w))) {
+        setBase(anchor);
+        setMonthAt(anchor);
+      }
+    }
+  };
+
+  const go = () => {
+    const now = Date.now();
+    const recent = recentDownloads(readLog(), now);
+    const wait = downloadWaitMinutes(recent, now);
+    if (wait) {
+      setLimitWait(wait);
+      return;
+    }
+    try {
+      localStorage.setItem(DOWNLOAD_LOG_KEY, JSON.stringify([...recent, now]));
+    } catch {
+      // Private mode: this download just is not counted.
+    }
+    setNotice(false);
+    onPrint({
+      ...o,
+      range: o.range.kind === 'range' ? { kind: 'range', from: rangeFrom, to: rangeTo } : o.range,
+      order,
+      at: o.range.kind === 'month' ? pickedMonth : yearAll[0]!,
+      include: {
+        ...include,
+        holidays: include.holidays && holidaysOk,
+        national: include.national && nationalOk,
+      },
+    });
+  };
 
   const ordered = [...order, ...KINDS.filter((k) => !order.includes(k))];
   const toggle = (k: CalendarKind) => {
@@ -149,7 +258,12 @@ export default function DownloadSheet({
       </span>
     </button>
   );
-  const select = (value: string, pick: (v: string) => void, label: string, min?: string) => (
+  const select = (
+    value: string,
+    pick: (v: string) => void,
+    label: string,
+    months: readonly string[]
+  ) => (
     <label className="grid gap-1 text-xs font-bold text-white/70">
       {label}
       <select
@@ -157,16 +271,70 @@ export default function DownloadSheet({
         onChange={(e) => pick(e.target.value)}
         className="min-h-[44px] rounded-control border border-brand-border bg-brand-surface px-2 text-sm font-semibold text-white"
       >
-        {months
-          .filter((m) => !min || m >= min)
-          .map((m) => (
-            <option key={m} value={m}>
-              {monthTitle(main, day(m), t, lang)}
-            </option>
-          ))}
+        {months.map((m) => (
+          <option key={m} value={m}>
+            {monthTitle(main, day(m), t, lang)}
+          </option>
+        ))}
       </select>
     </label>
   );
+  const switchRow = ({
+    label,
+    hint,
+    checked,
+    onChange,
+    disabled,
+    nested,
+    testId,
+    children,
+  }: {
+    label: string;
+    hint?: string;
+    checked: boolean;
+    onChange: (on: boolean) => void;
+    disabled?: boolean;
+    nested?: boolean;
+    testId?: string;
+    children?: ReactNode;
+  }) => (
+    <div
+      className={`rounded-control border border-brand-border bg-brand-surface/40 px-3 py-2 ${
+        nested ? 'ml-6' : ''
+      }`}
+      data-testid={testId}
+    >
+      <label
+        className={`flex items-center gap-3 min-h-[40px] ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+      >
+        <span className={`flex-1 min-w-0 ${disabled ? 'opacity-60' : ''}`}>
+          <span className="block text-sm font-semibold text-white">{label}</span>
+          {hint && <span className="block text-xs text-white/70">{hint}</span>}
+        </span>
+        <Switch
+          size={nested ? 'sm' : 'md'}
+          checked={checked && !disabled}
+          disabled={disabled}
+          onChange={(e) => onChange(e.target.checked)}
+          aria-label={label}
+        />
+      </label>
+      {children}
+    </div>
+  );
+  const requestLink = (
+    <button
+      type="button"
+      onClick={onRequestCalendar}
+      className="mt-1 inline-flex items-center min-h-[44px] text-xs font-bold text-brand-gold underline underline-offset-2"
+      data-testid="calendar-request-open"
+    >
+      {t('calendar.rOpen')}
+    </button>
+  );
+  const place = countryLabel || t('calendar.iYourCountry');
+  const years = holidayYears(country);
+  const winYears = `${num(win.from.slice(0, 4), lang)}-${num(win.to.slice(0, 4), lang)}`;
 
   return createPortal(
     <AnimatePresence>
@@ -270,37 +438,42 @@ export default function DownloadSheet({
 
               <div className="space-y-2" role="radiogroup" aria-label={t('calendar.dWhat')}>
                 <h3 className={SECTION_TITLE}>{t('calendar.dWhat')}</h3>
-                {radio(
-                  o.range.kind === 'month',
-                  t('calendar.dMonth', { month: monthTitle(main, current, t, lang) }),
-                  () => set({ range: { kind: 'month' } })
+                <div
+                  className="flex items-center gap-2 rounded-control border border-brand-border bg-brand-surface/40 p-1"
+                  data-testid="calendar-download-year"
+                >
+                  <button
+                    type="button"
+                    onClick={() => moveYear(-1)}
+                    disabled={!canYear(-1)}
+                    aria-label={t('calendar.dPrevYear')}
+                    className="w-11 h-11 grid place-items-center rounded-control text-white disabled:opacity-40"
+                  >
+                    <ChevronLeftIcon className="w-5 h-5" aria-hidden="true" />
+                  </button>
+                  <span
+                    className="flex-1 text-center text-sm font-bold text-white"
+                    aria-live="polite"
+                  >
+                    {yearLabel}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => moveYear(1)}
+                    disabled={!canYear(1)}
+                    aria-label={t('calendar.dNextYear')}
+                    className="w-11 h-11 grid place-items-center rounded-control text-white disabled:opacity-40"
+                  >
+                    <ChevronRightIcon className="w-5 h-5" aria-hidden="true" />
+                  </button>
+                </div>
+                {radio(o.range.kind === 'month', t('calendar.dOneMonth'), () =>
+                  set({ range: { kind: 'month' } })
                 )}
+                {o.range.kind === 'month' &&
+                  select(pickedMonth, setMonthAt, t('calendar.dMonthPick'), yearMonths)}
                 {radio(o.range.kind === 'year', t('calendar.dYear', { year: yearLabel }), () =>
                   set({ range: { kind: 'year', layout: 'pages' } })
-                )}
-                {radio(o.range.kind === 'range', t('calendar.dRange'), () =>
-                  set({
-                    range: {
-                      kind: 'range',
-                      from: current.ymd,
-                      to: months[Math.min(months.indexOf(current.ymd) + 2, months.length - 1)]!,
-                    },
-                  })
-                )}
-                {o.range.kind === 'range' && (
-                  <div className="grid grid-cols-2 gap-2">
-                    {select(
-                      range.from,
-                      (v) => set({ range: { ...range, from: v, to: v > range.to ? v : range.to } }),
-                      t('calendar.dFrom')
-                    )}
-                    {select(
-                      range.to,
-                      (v) => set({ range: { ...range, to: v } }),
-                      t('calendar.dTo'),
-                      range.from
-                    )}
-                  </div>
                 )}
                 {o.range.kind === 'year' && (
                   <div
@@ -322,6 +495,33 @@ export default function DownloadSheet({
                     )}
                   </div>
                 )}
+                {radio(
+                  o.range.kind === 'range',
+                  t('calendar.dRange'),
+                  () => set({ range: { kind: 'range', from: rangeFrom, to: rangeTo } }),
+                  t('calendar.dRangeHint', { n: num(MAX_PRINT_MONTHS, lang) })
+                )}
+                {o.range.kind === 'range' && (
+                  <div className="grid grid-cols-2 gap-2">
+                    {select(
+                      rangeFrom,
+                      (v) => set({ range: { kind: 'range', from: v, to: rangeTo } }),
+                      t('calendar.dFrom'),
+                      yearMonths
+                    )}
+                    {select(
+                      rangeTo,
+                      (v) => set({ range: { kind: 'range', from: rangeFrom, to: v } }),
+                      t('calendar.dTo'),
+                      toChoices
+                    )}
+                  </div>
+                )}
+                {restricted && (
+                  <p className="text-xs text-white/70" data-testid="calendar-download-window">
+                    {t('calendar.dWindowHolidays', { years: winYears })}
+                  </p>
+                )}
               </div>
 
               <section className="space-y-2">
@@ -336,6 +536,64 @@ export default function DownloadSheet({
                   t('calendar.dInside')
                 )}
               </section>
+
+              {o.inside === 'events' && (
+                <section className="space-y-2" data-testid="calendar-download-include">
+                  <h3 className={SECTION_TITLE}>{t('calendar.iTitle')}</h3>
+                  {switchRow({
+                    label: t('calendar.sIslamic'),
+                    hint: t('calendar.iIslamicHint'),
+                    checked: include.islamic,
+                    onChange: (on) => inc({ islamic: on }),
+                    testId: 'calendar-include-islamic',
+                  })}
+                  {switchRow({
+                    label: t('calendar.iSunnahFasts'),
+                    hint: t('calendar.iSunnahFastsHint'),
+                    checked: include.sunnahFasts,
+                    onChange: (on) => inc({ sunnahFasts: on }),
+                    disabled: !include.islamic,
+                    nested: true,
+                    testId: 'calendar-include-fasts',
+                  })}
+                  {switchRow({
+                    label: t('calendar.iFridays'),
+                    hint: t('calendar.iFridaysHint'),
+                    checked: include.fridays,
+                    onChange: (on) => inc({ fridays: on }),
+                    disabled: !include.islamic,
+                    nested: true,
+                    testId: 'calendar-include-fridays',
+                  })}
+                  {switchRow({
+                    label: t('calendar.sHolidays'),
+                    hint: holidaysOk
+                      ? t('calendar.iHolidaysHint', {
+                          country: place,
+                          years: years.map((y) => num(y, lang)).join(', '),
+                        })
+                      : t('calendar.iHolidaysNone', { country: place }),
+                    checked: include.holidays,
+                    onChange: toggleHolidays,
+                    disabled: !holidaysOk,
+                    testId: 'calendar-include-holidays',
+                    children: !holidaysOk && requestLink,
+                  })}
+                  {switchRow({
+                    label: t('calendar.sNational'),
+                    hint: nationalOk
+                      ? t('calendar.iNationalNote')
+                      : t('calendar.iNationalNone', { country: place }),
+                    checked: include.national,
+                    onChange: (on) => inc({ national: on }),
+                    disabled: !nationalOk,
+                    testId: 'calendar-include-national',
+                    // One request asks for both lists: the link sits under the holidays.
+                    children: !nationalOk && holidaysOk && requestLink,
+                  })}
+                </section>
+              )}
+
               <section className="space-y-2">
                 <h3 className={SECTION_TITLE}>{t('calendar.dPaper')}</h3>
                 {seg(
@@ -402,7 +660,11 @@ export default function DownloadSheet({
 
               <button
                 type="button"
-                onClick={() => setNotice(true)}
+                onClick={() => {
+                  setLimitWait(0);
+                  setNotice(true);
+                }}
+                disabled={!yearMonths.length}
                 className={`${BTN_PRIMARY} w-full`}
                 data-testid="calendar-download-go"
               >
@@ -430,20 +692,35 @@ export default function DownloadSheet({
                 <ul className="list-disc pl-5 space-y-1.5 text-sm text-white/80 leading-relaxed">
                   <li>{t('calendar.nMaghrib')}</li>
                   <li>{t('calendar.nExpected')}</li>
-                  <li>{t('calendar.nHolidays')}</li>
+                  {o.inside === 'events' && include.holidays && holidaysOk && (
+                    <li>{t('calendar.nHolidays')}</li>
+                  )}
+                  {o.inside === 'events' && include.national && nationalOk && (
+                    <li>{t('calendar.iNationalNote')}</li>
+                  )}
                   <li>{t('calendar.nSave')}</li>
                 </ul>
+                {limitWait > 0 && (
+                  <p
+                    role="alert"
+                    className="rounded-control border border-brand-gold/40 bg-brand-gold/10 p-3 text-sm text-white"
+                    data-testid="calendar-download-limit"
+                  >
+                    {t('calendar.dLimit', {
+                      count: limitWait,
+                      n: num(limitWait, lang),
+                    })}
+                  </p>
+                )}
                 <div className="grid grid-cols-[1fr_1.4fr] gap-2 pt-1">
                   <button type="button" onClick={() => setNotice(false)} className={BTN_SECONDARY}>
                     {t('calendar.nCancel')}
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      setNotice(false);
-                      onPrint({ ...o, order });
-                    }}
-                    className={BTN_PRIMARY}
+                    onClick={go}
+                    disabled={limitWait > 0}
+                    className={`${BTN_PRIMARY} disabled:opacity-60`}
                   >
                     {t('calendar.nGo')}
                   </button>
