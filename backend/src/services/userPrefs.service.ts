@@ -61,6 +61,12 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_reciter',
   'bustandeen_quran_translations',
   'bustandeen_tafsir_edition',
+  // Islamic calendar (Library): calendars + order, grid, week, weekend, events
+  'bustandeen_calendar_layers',
+  'bustandeen_calendar_grid',
+  'bustandeen_calendar_week_start',
+  'bustandeen_calendar_weekend',
+  'bustandeen_calendar_show',
 ]);
 
 export type PrefEntry = { v: string; t: number };

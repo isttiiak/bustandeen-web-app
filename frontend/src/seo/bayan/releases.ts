@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.171.0',
+    date: '2026-10-15',
+    text: {
+      en: {
+        title: 'Getting the Islamic calendar ready',
+        added: [
+          'We are building an Islamic calendar for the Library: Hijri and English dates together, the Bangla calendar if you want it, special Islamic days and Bangladesh government holidays. This update lays its groundwork; nothing changes on your screen yet.',
+        ],
+      },
+      bn: {
+        title: 'ইসলামী ক্যালেন্ডারের প্রস্তুতি',
+        added: [
+          'লাইব্রেরির জন্য একটি ইসলামী ক্যালেন্ডার তৈরি হচ্ছে: হিজরি ও ইংরেজি তারিখ একসাথে, চাইলে বাংলা সন, ইসলামী বিশেষ দিন আর বাংলাদেশের সরকারি ছুটি। এই হালনাগাদে তার ভিত্তি তৈরি হলো; আপনার পর্দায় এখনো কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.170.3',
     date: '2026-10-15',
     text: {

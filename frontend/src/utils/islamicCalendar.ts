@@ -18,6 +18,8 @@ import {
   type MoonSightingRecord,
 } from './hijriOffset.js';
 import i18n from '../i18n.js';
+import { specialDayIds } from './specialDayRules.js';
+import type { HijriInputs } from './calendarMonth.js';
 
 export interface SpecialDayTodo {
   action: string;
@@ -608,15 +610,20 @@ export function readMoonSightingCache(): MoonSightingRecord[] {
   }
 }
 
-/** The Hijri date of `date`'s calendar day, and where it comes from. */
-export function getHijriOffsetSource(date: Date = new Date()): HijriDaySource {
-  return resolveHijriDay({
+/** Everything the Hijri date depends on, read from the device once (the
+ * calendar builds a month of days from one read: calendarMonth.ts). */
+export function readHijriInputs(): HijriInputs {
+  return {
     manual: isHijriManual(),
     userOffset: readUserOffset(),
     country: localStorage.getItem(HIJRI_COUNTRY_KEY),
     records: readMoonSightingCache(),
-    day: localDay(date),
-  });
+  };
+}
+
+/** The Hijri date of `date`'s calendar day, and where it comes from. */
+export function getHijriOffsetSource(date: Date = new Date()): HijriDaySource {
+  return resolveHijriDay({ ...readHijriInputs(), day: localDay(date) });
 }
 
 export function getHijriAdjustment(date: Date = new Date()): number {
@@ -724,42 +731,7 @@ export function getTodaySpecialDays(date?: Date): SpecialDayInfo[] {
   // Weekly events must also shift at Maghrib: after Maghrib on Wed → Islamic Thu
   const weekday = date ? date.getDay() : weekdayOfYmd(getIslamicDay()); // 0=Sun, 5=Fri
 
-  const ids: string[] = [];
-
-  // Friday
-  if (weekday === 5) ids.push('friday');
-
-  // Monday (1) or Thursday (4)
-  if (weekday === 1 || weekday === 4) ids.push('fast_mon_thu');
-
-  if (h) {
-    // Ayyam al-Bid: 13th, 14th, 15th of every month
-    if ([13, 14, 15].includes(h.day)) ids.push('ayyam_al_bid');
-
-    // Muharram
-    if (h.month === 1) {
-      if (h.day === 1) ids.push('islamic_new_year');
-      if (h.day === 9 || h.day === 10) ids.push('ashura');
-    }
-
-    // Sha'ban 14th/15th: Laylat al-Bara'ah
-    if (h.month === 8 && (h.day === 14 || h.day === 15)) ids.push('shab_e_barat');
-
-    // Ramadan (month 9): odd nights of last 10 = Laylat al-Qadr
-    if (h.month === 9 && h.day >= 21 && h.day % 2 === 1) ids.push('laylat_qadr');
-
-    // Shawwal 1st = Eid al-Fitr
-    if (h.month === 10 && h.day === 1) ids.push('eid_fitr');
-
-    // Dhul Hijjah
-    if (h.month === 12) {
-      if (h.day >= 1 && h.day <= 8) ids.push('dhul_hijjah_first10');
-      if (h.day === 9) ids.push('arafah');
-      if (h.day === 10) ids.push('eid_adha');
-    }
-  }
-
-  return ids
+  return specialDayIds(h, weekday)
     .map((id) => SPECIAL_DAYS.find((d) => d.id === id))
     .filter((d): d is SpecialDayInfo => d !== undefined);
 }
