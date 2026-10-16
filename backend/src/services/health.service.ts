@@ -35,10 +35,16 @@ const withTimeout = <T>(p: Promise<T>, ms: number): Promise<T> =>
 
 const probe = async (): Promise<DbHealth> => {
   const db = mongoose.connection.db;
-  if (mongoose.connection.readyState !== 1 || !db) {
+  if (!db) {
     console.error('Deep health: MongoDB is not connected');
     return { ok: false, latencyMs: null };
   }
+  // Do not trust readyState alone: Mongoose flips it to disconnected the moment
+  // a heartbeat misses (a Fluid instance thawing after idle, an Atlas primary
+  // step-down), while the driver reconnects within a second. The ping below
+  // waits for that reconnect, so only a real outage (no answer in TIMEOUT_MS)
+  // reports down. Overnight 2026-10-16 the old readyState check sent
+  // repeated false "Database down" alerts.
   const start = Date.now();
   try {
     await withTimeout(

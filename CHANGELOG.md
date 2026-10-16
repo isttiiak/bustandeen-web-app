@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.177.1 - Deep health check: no false "Database down" on a reconnect - 2026-10-17
+
+### Fixed
+
+- **False "Database down" alerts** (Better Stack, overnight 2026-10-16/17): `/api/health/deep` answered 503 whenever `mongoose.connection.readyState` was not 1. Mongoose flips it to disconnected on a single missed heartbeat (a Fluid instance thawing after idle, an Atlas primary step-down) while the driver reconnects within a second, so quiet-hour checks hit that window and opened an incident every 10 to 40 minutes, each resolving on the next check. The probe now only needs a client (`connection.db`) and lets the ping, still capped at 5 s, decide: a real outage still answers 503. `services/health.service.ts`.
+
+### Tests
+
+- `health.e2e.test.js`: readyState flipped to 0 with the client open answers 200 (fails on the old code); an explicit disconnect is still 503.
+
 ## v5.177.0 - Calendar print: recurring days as marks, blank mode keeps its marks, forbidden fast days - 2026-10-16
 
 ### Changed

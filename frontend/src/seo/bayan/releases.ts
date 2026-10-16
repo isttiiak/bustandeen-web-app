@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.177.1',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Fewer false alarms from our status check',
+        fixed: [
+          'Our server check sometimes said the database was down for a moment at night when it was not. Nothing was lost and the app kept working; the check now waits for a quick reconnect before it raises an alarm.',
+        ],
+      },
+      bn: {
+        title: 'স্ট্যাটাস চেকে ভুল সতর্কতা কমেছে',
+        fixed: [
+          'রাতে আমাদের সার্ভার চেক মাঝে মাঝে বলত ডাটাবেস বন্ধ, যদিও তা চালু ছিল। কোনো তথ্য হারায়নি, অ্যাপও ঠিকমতো চলেছে। এখন চেকটি সতর্কতা দেওয়ার আগে দ্রুত আবার সংযোগের জন্য অপেক্ষা করে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.177.0',
     date: '2026-10-16',
     text: {

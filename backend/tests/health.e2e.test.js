@@ -59,6 +59,16 @@ describe('Health checks', () => {
     ping.mockRestore();
   });
 
+  test('a missed heartbeat (readyState flips, client still open) is not down', async () => {
+    // Mongoose marks the connection disconnected on one missed heartbeat while
+    // the driver reconnects; 2026-10-16 this sent false "Database down" alerts.
+    mongoose.connection.readyState = 0;
+    const res = await request(app).get('/api/health/deep');
+    mongoose.connection.readyState = 1;
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchObject({ ok: true, database: 'up' });
+  });
+
   test('disconnected = down', async () => {
     const err = jest.spyOn(console, 'error').mockImplementation(() => {});
     await mongoose.disconnect();
