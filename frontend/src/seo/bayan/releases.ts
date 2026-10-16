@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.176.0',
+    date: '2026-10-16',
+    text: {
+      en: {
+        title: 'National days for more countries',
+        added: [
+          'The Islamic calendar now shows national days for Pakistan, India, Saudi Arabia, the UAE, Malaysia, Indonesia, Egypt, Türkiye, the United Kingdom, Germany, France, Italy, the Netherlands, Belgium, Sweden, Spain, Austria, Switzerland, Norway, Denmark, the United States, Canada and Australia, such as Independence Day or National Day.',
+          'Calendar downloads in these countries include national days unless you turn them off.',
+        ],
+      },
+      bn: {
+        title: 'আরও দেশের জাতীয় দিবস',
+        added: [
+          'ইসলামী ক্যালেন্ডারে এখন পাকিস্তান, ভারত, সৌদি আরব, সংযুক্ত আরব আমিরাত, মালয়েশিয়া, ইন্দোনেশিয়া, মিসর, তুরস্ক, যুক্তরাজ্য, জার্মানি, ফ্রান্স, ইতালি, নেদারল্যান্ডস, বেলজিয়াম, সুইডেন, স্পেন, অস্ট্রিয়া, সুইজারল্যান্ড, নরওয়ে, ডেনমার্ক, যুক্তরাষ্ট্র, কানাডা ও অস্ট্রেলিয়ার জাতীয় দিবস দেখায়, যেমন স্বাধীনতা দিবস বা জাতীয় দিবস।',
+          'এসব দেশে ক্যালেন্ডার ডাউনলোডে জাতীয় দিবস থাকে, চাইলে বন্ধ করে দিতে পারেন।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.175.0',
     date: '2026-10-16',
     text: {

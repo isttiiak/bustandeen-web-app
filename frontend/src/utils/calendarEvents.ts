@@ -11,6 +11,7 @@ import {
   type HolidayYear,
   type NationalDay,
 } from '../data/calendar/bd.js';
+import { NATIONAL_DAYS } from '../data/calendar/nationalDays.js';
 import type { CalendarDay } from './calendarMonth.js';
 import {
   NIGHT_SPECIAL_DAYS,
@@ -43,8 +44,14 @@ interface CountryCalendar {
   national: readonly NationalDay[];
 }
 
-/** Countries with curated holidays; others show Islamic days only. */
+/**
+ * Countries with curated holidays or national days; others show Islamic days
+ * only. Bangladesh has both; the others national days only (nationalDays.ts).
+ */
 export const COUNTRY_CALENDARS: Readonly<Record<string, CountryCalendar>> = {
+  ...Object.fromEntries(
+    Object.entries(NATIONAL_DAYS).map(([code, c]) => [code, { holidays: [], national: c.days }])
+  ),
   BD: { holidays: BD_HOLIDAY_YEARS, national: BD_NATIONAL_DAYS },
 };
 

@@ -4279,7 +4279,7 @@
     "sHolidaysHint": "{{country}}, সরকারি তালিকা: {{years}}",
     "sHolidaysNone": "আপনার দেশের জন্য এখনো নেই",
     "sNational": "জাতীয় দিবস",
-    "sNationalHint": "দেশে পালিত দিবস, যেগুলো ছুটি নয়",
+    "sNationalHint": "প্রতি বছর একই তারিখে দেশে পালিত দিবস",
     "sWeekStart": "সপ্তাহ শুরু",
     "sWeekend": "সাপ্তাহিক ছুটি",
     "sWeekendHint": "ক্যালেন্ডারে রঙ দিয়ে দেখানো হয়",

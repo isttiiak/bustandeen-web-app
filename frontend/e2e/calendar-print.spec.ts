@@ -272,7 +272,6 @@ test.describe('in Pakistan', () => {
     const sw = (name: string) => page.getByRole('switch', { name, exact: true });
     await expect(sw('Islamic days')).toBeChecked();
     await expect(sw('Government holidays')).toBeDisabled();
-    await expect(sw('National days')).toBeDisabled();
     await expect(page.getByTestId('calendar-include-holidays')).toContainText('Not available for');
     const url = page.url();
     await page.getByTestId('calendar-request-open').click();
@@ -283,5 +282,25 @@ test.describe('in Pakistan', () => {
     await expect(form).toContainText('Your request has reached us');
     expect(sent).toEqual({ country: 'PK', botcheck: '' });
     expect(page.url()).toBe(url);
+  });
+
+  test('national days: on by default, printed on their fixed date', async ({ page }) => {
+    await page.clock.setFixedTime(new Date('2026-10-15T10:00:00+05:00'));
+    await page.goto('/demo/brother');
+    await expect(page.getByText('Demo Mode')).toBeVisible();
+    await page.evaluate(() => {
+      window.history.pushState({}, '', '/library/calendar');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    await page.getByRole('button', { name: 'Next month' }).click();
+    await expect(page.getByTestId('calendar-month')).toHaveText('November 2026');
+    await page.getByRole('button', { name: 'Download calendar' }).click();
+    const sw = (name: string) => page.getByRole('switch', { name, exact: true });
+    await expect(sw('National days')).toBeEnabled();
+    await expect(sw('National days')).toBeChecked();
+    await expect(page.getByTestId('calendar-include-national')).toContainText('check your local');
+    await print(page);
+    await expect(page.locator('[data-print-day="2026-11-09"] .pc-ev')).toContainText('Iqbal Day');
+    await expect(page.locator('[data-print-day="2026-11-10"] .pc-ev')).toHaveCount(0);
   });
 });

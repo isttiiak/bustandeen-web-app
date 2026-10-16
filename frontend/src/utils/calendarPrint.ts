@@ -64,7 +64,7 @@ export const DEFAULT_PRINT: Omit<PrintOptions, 'order' | 'at' | 'include'> = {
 
 /**
  * What a download lists to start with: Islamic days everywhere; in a country
- * with curated national days (Bangladesh) those too. Government holidays are
+ * with curated national days (Bangladesh, Pakistan, ...) those too. Government holidays are
  * never on by default: their lists are entered by hand each year.
  */
 export function defaultInclude(country: string | null): PrintInclude {
