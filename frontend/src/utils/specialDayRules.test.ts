@@ -31,7 +31,12 @@ describe('specialDayIds: the rules behind getTodaySpecialDays', () => {
     ['8 Dhul Hijjah', h(12, 8), WED, ['dhul_hijjah_first10']],
     ['9 Dhul Hijjah', h(12, 9), WED, ['arafah']],
     ['10 Dhul Hijjah', h(12, 10), WED, ['eid_adha']],
-    ['13 Dhul Hijjah', h(12, 13), WED, ['ayyam_al_bid']],
+    ['13 Dhul Hijjah (Tashriq: no White Day fast)', h(12, 13), WED, []],
+    ['14 Dhul Hijjah', h(12, 14), WED, ['ayyam_al_bid']],
+    ['Eid al-Fitr on a Monday: no Sunnah fast', h(10, 1), 1, ['eid_fitr']],
+    ['Eid al-Adha on a Thursday: no Sunnah fast', h(12, 10), 4, ['eid_adha']],
+    ['11 Dhul Hijjah, a Monday (Tashriq)', h(12, 11), 1, []],
+    ['14 Dhul Hijjah, a Monday', h(12, 14), 1, ['fast_mon_thu', 'ayyam_al_bid']],
     ['Eid al-Fitr on a Friday', h(10, 1), 5, ['friday', 'eid_fitr']],
   ])('%s', (_name, hijri, weekday, want) => {
     expect(specialDayIds(hijri, weekday)).toEqual(want);

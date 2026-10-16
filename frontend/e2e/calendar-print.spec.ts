@@ -152,7 +152,14 @@ test('portrait Letter, blank days, Hijri first', async ({ page }) => {
 test('blank for writing, landscape: the lines fill the side column', async ({ page }) => {
   await openDownload(page);
   await page.getByRole('button', { name: 'Blank for writing' }).click();
+  // The include switches stay: blank boxes still get their colour marks.
+  await page.getByRole('switch', { name: 'Government holidays', exact: true }).check();
   await print(page);
+  // No names in the boxes, but 21 Oct has its holiday mark and the list names it.
+  await expect(
+    page.locator('[data-print-day="2026-10-21"] [data-print-marks] .pc-holiday')
+  ).toHaveCount(1);
+  await expect(page.locator('#pc-print-root .pc-side')).toContainText('Bijoya Dashami');
   await page.emulateMedia({ media: 'print' });
   const box = await page.evaluate(() => {
     const side = document.querySelector('#pc-print-root .pc-side')!.getBoundingClientRect();
@@ -225,7 +232,16 @@ test('what a download includes: Bangladesh defaults, nested switches, holidays k
   await sw('Fridays').check();
   await sw('Sunnah fasts').check();
   await print(page);
-  await expect(page.locator('[data-print-day="2026-10-23"] .pc-ev')).toContainText('Jumu');
+  // Recurring days: Jumu'ah once in the Friday header, a ring on Mondays and
+  // Thursdays, one line each in "Every week and month", no names in the boxes.
+  await expect(page.locator('#pc-print-root [data-print-jumuah]')).toHaveText("Jumu'ah");
+  await expect(page.locator('[data-print-day="2026-10-23"] .pc-ev')).toHaveCount(0);
+  await expect(page.locator('[data-print-day="2026-10-26"] .pc-m-fast')).toHaveCount(1);
+  await expect(page.locator('[data-print-day="2026-10-26"] .pc-m-white')).toHaveCount(1);
+  await expect(page.locator('[data-print-day="2026-10-26"] .pc-ev')).toHaveCount(0);
+  await expect(page.locator('#pc-print-root [data-print-repeats]')).toContainText(
+    'Sunnah Fast Day'
+  );
   await expect(page.locator('[data-print-day="2026-10-21"] .pc-ev')).toHaveCount(0);
 });
 

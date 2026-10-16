@@ -11,8 +11,12 @@ import {
 } from '../../../utils/calendarMonth.js';
 import {
   boxEvents,
+  dayMarks,
+  isRecurring,
   monthListEvents,
+  monthRecurring,
   sheetSize,
+  type DayMark,
   type PrintOptions,
 } from '../../../utils/calendarPrint.js';
 import { BENGALI_MONTHS, bnDigits } from '../../../utils/bengaliCalendar.js';
@@ -57,6 +61,9 @@ const weekdayName = (w: number) =>
   gregLabel(`2026-10-${String(11 + w).padStart(2, '0')}`, { weekday: 'short' });
 
 const isBn = (k: CalendarKind) => (k === 'bn' ? 'pc-bn' : '');
+
+/** A recurring day's sign: a ring for the Monday and Thursday fast, a full moon for the White Days. */
+const Mark = ({ m }: { m: DayMark }) => <i className={`pc-m pc-m-${m}`} aria-hidden="true" />;
 
 export default function PrintSheets(p: SheetProps) {
   const { width, height } = sheetSize(p.options.paper, p.options.orient);
@@ -120,6 +127,11 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
     );
 
   const list = monthListEvents(days, p.eventsOf);
+  const repeats = monthRecurring(days, p.eventsOf);
+  const blank = p.options.inside === 'blank';
+  // Every Friday is Jumu'ah: the column header says it once.
+  const jumuah = repeats.some((r) => r.id === 'friday');
+  const dateOf = (d: CalendarDay) => (c1 === 'greg' ? gregShort(d.ymd) : dayNumber(c1, d, lang));
   const missing = p.missingYears(days);
   const subtitle = [c2, c3]
     .filter((k): k is CalendarKind => !!k)
@@ -134,10 +146,16 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
         country={p.countryLabel}
       />
       <div className="pc-body">
-        <div className="pc-grid" style={{ gridTemplateRows: `28px repeat(${rows}, 1fr)` }}>
+        <div
+          className="pc-grid"
+          style={{ gridTemplateRows: `${jumuah ? 38 : 28}px repeat(${rows}, 1fr)` }}
+        >
           {order.map((w) => (
             <div key={`w${w}`} className={`pc-wd ${p.weekend.includes(w) ? 'pc-we' : ''}`}>
-              {weekdayName(w)}
+              <span>
+                {weekdayName(w)}
+                {jumuah && w === 5 && <small data-print-jumuah>{t('calendar.pJumuah')}</small>}
+              </span>
             </div>
           ))}
           {Array.from({ length: lead }, (_, i) => (
@@ -147,6 +165,22 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
             const events = p.eventsOf(d);
             const { shown, more } = boxEvents(events);
             const holiday = events.some((e) => e.type === 'holiday');
+            const marks = dayMarks(events);
+            // Blank for writing: no names, so each kind of named day gets its colour mark.
+            const kinds = blank
+              ? [...new Set(events.filter((e) => !isRecurring(e)).map((e) => e.type))]
+              : [];
+            const signs =
+              marks.length + kinds.length > 0 ? (
+                <span className="pc-marks" data-print-marks>
+                  {kinds.map((k) => (
+                    <i key={k} className={`pc-sw pc-${k}`} />
+                  ))}
+                  {marks.map((m) => (
+                    <Mark key={m} m={m} />
+                  ))}
+                </span>
+              ) : null;
             return (
               <div
                 key={d.ymd}
@@ -154,10 +188,16 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
                 data-print-day={d.ymd}
               >
                 <span className={`pc-n1 ${isBn(c1)}`}>{dayNumber(c1, d, lang)}</span>
-                {c2 && <span className="pc-n2">{corner(c2, d)}</span>}
+                {/* The second calendar top right, the day's signs under it. */}
+                {(c2 || signs) && (
+                  <span className="pc-n2">
+                    {c2 && corner(c2, d)}
+                    {signs}
+                  </span>
+                )}
                 {c3 && <span className="pc-n3">{corner(c3, d)}</span>}
-                {/* Blank for writing: the box stays empty (lines are in the side column). */}
-                {p.options.inside === 'events' && shown.length > 0 && (
+                {/* Blank for writing: no names in the box (the side column lists them). */}
+                {!blank && shown.length > 0 && (
                   <div className="pc-evs">
                     {shown.map((e, i) => (
                       <div key={i} className={`pc-ev pc-${e.type}`}>
@@ -179,49 +219,78 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
           ))}
         </div>
         <div className="pc-side">
-          <div>
-            <h4>{t('calendar.pThisMonth')}</h4>
-            <ul>
-              {list.length === 0 && (
-                <li>
-                  <i />
-                  <b />
-                  <span>{t('calendar.noneThisMonth')}</span>
-                </li>
+          {(list.length > 0 || repeats.length === 0) && (
+            <div>
+              <h4>{t('calendar.pThisMonth')}</h4>
+              <ul>
+                {list.length === 0 && (
+                  <li>
+                    <i />
+                    <b />
+                    <span>{t('calendar.noneThisMonth')}</span>
+                  </li>
+                )}
+                {list.map(({ day, event, span }, i) => (
+                  <li key={i} className={`pc-${event.type}`}>
+                    <i className={`pc-sw pc-${event.type}`} />
+                    <b>{dateOf(day)}</b>
+                    <span>
+                      {eventName(event, t, lang)}
+                      {span && ` (${num(span[0], lang)}-${num(span[1], lang)})`}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              {missing.length > 0 && (
+                <p className="pc-fine" data-print-missing>
+                  {t('calendar.holidaysMissing', {
+                    years: missing.map((y) => num(y, lang)).join(', '),
+                  })}
+                </p>
               )}
-              {list.map(({ day, event, span }, i) => (
-                <li key={i} className={`pc-${event.type}`}>
-                  <i className={`pc-sw pc-${event.type}`} />
-                  <b>{c1 === 'greg' ? gregShort(day.ymd) : dayNumber(c1, day, lang)}</b>
-                  <span>
-                    {eventName(event, t, lang)}
-                    {span && ` (${num(span[0], lang)}-${num(span[1], lang)})`}
-                  </span>
+            </div>
+          )}
+          {repeats.length > 0 && (
+            <div data-print-repeats>
+              <h4>{t('calendar.pRepeats')}</h4>
+              <ul>
+                {repeats.map((r, i) => (
+                  <li key={i} className="pc-islamic">
+                    {r.id === 'friday' ? (
+                      <i />
+                    ) : (
+                      <Mark m={r.id === 'fast_mon_thu' ? 'fast' : 'white'} />
+                    )}
+                    <b>
+                      {r.id !== 'ayyam_al_bid'
+                        ? r.weekdays.map(weekdayName).join(', ')
+                        : r.from === r.to
+                          ? dateOf(r.from)
+                          : `${dateOf(r.from)}-${dayNumber(c1, r.to, lang)}`}
+                    </b>
+                    <span>
+                      {r.id === 'friday' ? t('calendar.pJumuah') : t(`specialDays.${r.id}.name`)}
+                      {r.id === 'ayyam_al_bid' &&
+                        ` (${num(r.from.hijri.day, lang)}${
+                          r.to === r.from ? '' : `-${num(r.to.hijri.day, lang)}`
+                        })`}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div>
+            <h4>{t('calendar.pGuide')}</h4>
+            {/* Which number is which calendar, at the sizes of the day box. */}
+            <ul className="pc-cals">
+              {p.options.order.map((k, i) => (
+                <li key={k}>
+                  <i className={['pc-a', 'pc-b', 'pc-cc'][i]}>{num(i + 1, lang)}</i>
+                  <span>{t(`calendar.cal.${k}`)}</span>
                 </li>
               ))}
             </ul>
-            {missing.length > 0 && (
-              <p className="pc-fine" data-print-missing>
-                {t('calendar.holidaysMissing', {
-                  years: missing.map((y) => num(y, lang)).join(', '),
-                })}
-              </p>
-            )}
-          </div>
-          <div>
-            <h4>{t('calendar.pGuide')}</h4>
-            <div className="pc-pos">
-              <div className="pc-box">
-                <i className="pc-a">1</i>
-                {c2 && <i className="pc-b">2</i>}
-                {c3 && <i className="pc-cc">3</i>}
-              </div>
-              <ol>
-                {p.options.order.map((k) => (
-                  <li key={k}>{t(`calendar.calLong.${k}`)}</li>
-                ))}
-              </ol>
-            </div>
             <div className="pc-key">
               {p.kinds.map((k) => (
                 <span key={k}>
@@ -239,7 +308,7 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
             </p>
           </div>
           {/* Blank for writing: faint lines fill the rest of the column. */}
-          {p.options.inside === 'blank' && <div className="pc-notes" data-print-notes />}
+          {blank && <div className="pc-notes" data-print-notes />}
         </div>
       </div>
       <Foot />

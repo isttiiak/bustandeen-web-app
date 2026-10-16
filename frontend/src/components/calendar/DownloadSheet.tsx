@@ -115,7 +115,7 @@ export default function DownloadSheet({
   const first = (ymd: string) => monthDays(ymd, main, day)[0]!.ymd;
   const holidaysOk = hasHolidays(country);
   const nationalOk = hasNationalDays(country);
-  const restricted = include.holidays && holidaysOk && o.inside === 'events';
+  const restricted = include.holidays && holidaysOk;
   const win = useMemo(() => downloadWindow(today, restricted), [today, restricted]);
   const inWin = (m: string) => monthInWindow(monthDays(m, main, day), win);
   const yearOf = (b: string) => {
@@ -162,7 +162,7 @@ export default function DownloadSheet({
   const toggleHolidays = (on: boolean) => {
     inc({ holidays: on });
     // Back to the screen's month when the year shown is outside the window.
-    if (on && o.inside === 'events') {
+    if (on) {
       const w = downloadWindow(today, true);
       if (!yearAll.some((m) => monthInWindow(monthDays(m, main, day), w))) {
         setBase(anchor);
@@ -537,62 +537,61 @@ export default function DownloadSheet({
                 )}
               </section>
 
-              {o.inside === 'events' && (
-                <section className="space-y-2" data-testid="calendar-download-include">
-                  <h3 className={SECTION_TITLE}>{t('calendar.iTitle')}</h3>
-                  {switchRow({
-                    label: t('calendar.sIslamic'),
-                    hint: t('calendar.iIslamicHint'),
-                    checked: include.islamic,
-                    onChange: (on) => inc({ islamic: on }),
-                    testId: 'calendar-include-islamic',
-                  })}
-                  {switchRow({
-                    label: t('calendar.iSunnahFasts'),
-                    hint: t('calendar.iSunnahFastsHint'),
-                    checked: include.sunnahFasts,
-                    onChange: (on) => inc({ sunnahFasts: on }),
-                    disabled: !include.islamic,
-                    nested: true,
-                    testId: 'calendar-include-fasts',
-                  })}
-                  {switchRow({
-                    label: t('calendar.iFridays'),
-                    hint: t('calendar.iFridaysHint'),
-                    checked: include.fridays,
-                    onChange: (on) => inc({ fridays: on }),
-                    disabled: !include.islamic,
-                    nested: true,
-                    testId: 'calendar-include-fridays',
-                  })}
-                  {switchRow({
-                    label: t('calendar.sHolidays'),
-                    hint: holidaysOk
-                      ? t('calendar.iHolidaysHint', {
-                          country: place,
-                          years: years.map((y) => num(y, lang)).join(', '),
-                        })
-                      : t('calendar.iHolidaysNone', { country: place }),
-                    checked: include.holidays,
-                    onChange: toggleHolidays,
-                    disabled: !holidaysOk,
-                    testId: 'calendar-include-holidays',
-                    children: !holidaysOk && requestLink,
-                  })}
-                  {switchRow({
-                    label: t('calendar.sNational'),
-                    hint: nationalOk
-                      ? t('calendar.iNationalNote')
-                      : t('calendar.iNationalNone', { country: place }),
-                    checked: include.national,
-                    onChange: (on) => inc({ national: on }),
-                    disabled: !nationalOk,
-                    testId: 'calendar-include-national',
-                    // One request asks for both lists: the link sits under the holidays.
-                    children: !nationalOk && holidaysOk && requestLink,
-                  })}
-                </section>
-              )}
+              {/* Blank for writing lists the same days: the side column names them. */}
+              <section className="space-y-2" data-testid="calendar-download-include">
+                <h3 className={SECTION_TITLE}>{t('calendar.iTitle')}</h3>
+                {switchRow({
+                  label: t('calendar.sIslamic'),
+                  hint: t('calendar.iIslamicHint'),
+                  checked: include.islamic,
+                  onChange: (on) => inc({ islamic: on }),
+                  testId: 'calendar-include-islamic',
+                })}
+                {switchRow({
+                  label: t('calendar.iSunnahFasts'),
+                  hint: t('calendar.iSunnahFastsHint'),
+                  checked: include.sunnahFasts,
+                  onChange: (on) => inc({ sunnahFasts: on }),
+                  disabled: !include.islamic,
+                  nested: true,
+                  testId: 'calendar-include-fasts',
+                })}
+                {switchRow({
+                  label: t('calendar.iFridays'),
+                  hint: t('calendar.iFridaysHint'),
+                  checked: include.fridays,
+                  onChange: (on) => inc({ fridays: on }),
+                  disabled: !include.islamic,
+                  nested: true,
+                  testId: 'calendar-include-fridays',
+                })}
+                {switchRow({
+                  label: t('calendar.sHolidays'),
+                  hint: holidaysOk
+                    ? t('calendar.iHolidaysHint', {
+                        country: place,
+                        years: years.map((y) => num(y, lang)).join(', '),
+                      })
+                    : t('calendar.iHolidaysNone', { country: place }),
+                  checked: include.holidays,
+                  onChange: toggleHolidays,
+                  disabled: !holidaysOk,
+                  testId: 'calendar-include-holidays',
+                  children: !holidaysOk && requestLink,
+                })}
+                {switchRow({
+                  label: t('calendar.sNational'),
+                  hint: nationalOk
+                    ? t('calendar.iNationalNote')
+                    : t('calendar.iNationalNone', { country: place }),
+                  checked: include.national,
+                  onChange: (on) => inc({ national: on }),
+                  disabled: !nationalOk,
+                  testId: 'calendar-include-national',
+                  // One request asks for both lists: the link sits under the holidays.
+                  children: !nationalOk && holidaysOk && requestLink,
+                })}
+              </section>
 
               <section className="space-y-2">
                 <h3 className={SECTION_TITLE}>{t('calendar.dPaper')}</h3>
@@ -692,12 +691,8 @@ export default function DownloadSheet({
                 <ul className="list-disc pl-5 space-y-1.5 text-sm text-white/80 leading-relaxed">
                   <li>{t('calendar.nMaghrib')}</li>
                   <li>{t('calendar.nExpected')}</li>
-                  {o.inside === 'events' && include.holidays && holidaysOk && (
-                    <li>{t('calendar.nHolidays')}</li>
-                  )}
-                  {o.inside === 'events' && include.national && nationalOk && (
-                    <li>{t('calendar.iNationalNote')}</li>
-                  )}
+                  {include.holidays && holidaysOk && <li>{t('calendar.nHolidays')}</li>}
+                  {include.national && nationalOk && <li>{t('calendar.iNationalNote')}</li>}
                   <li>{t('calendar.nSave')}</li>
                 </ul>
                 {limitWait > 0 && (

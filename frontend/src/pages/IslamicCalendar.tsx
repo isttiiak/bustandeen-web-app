@@ -574,16 +574,10 @@ export default function IslamicCalendar() {
         (() => {
           // The download lists what its own switches say, not the screen's settings.
           const f = includeFilters(country, printJob.include);
-          const inside = printJob.inside === 'events';
           return createPortal(
             <div id="pc-print-root" data-testid="calendar-print">
               <PrintSheets
-                anchors={printMonths(
-                  printJob.at,
-                  printJob,
-                  day,
-                  downloadWindow(today, inside && f.holidays)
-                )}
+                anchors={printMonths(printJob.at, printJob, day, downloadWindow(today, f.holidays))}
                 options={printJob}
                 day={day}
                 eventsOf={(d) => dayEvents(d, f)}

@@ -20,6 +20,34 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.177.0',
+    date: '2026-10-16',
+    text: {
+      en: {
+        title: 'A calmer printed calendar',
+        added: [
+          'Days that come every week or month are no longer written in every box. Mondays and Thursdays get a small ring, the White Days a small full moon, and Jumu\'ah is named once above the Friday column. The side of the page lists them once under "Every week and month".',
+          '"Blank for writing" keeps the colour marks and the list of the month\'s days, so you still see which days are special. Only the names leave the boxes.',
+          'The colour guide now shows a big 1 next to the first calendar and a small 2 next to the second, like the day boxes.',
+        ],
+        fixed: [
+          'No Sunnah fast is marked on the two Eids or the days of Tashriq (11 to 13 Dhul Hijjah), when fasting is not allowed.',
+        ],
+      },
+      bn: {
+        title: 'আরও গোছানো ছাপা ক্যালেন্ডার',
+        added: [
+          'প্রতি সপ্তাহে বা প্রতি মাসে আসা দিনগুলো এখন আর প্রতিটি ঘরে লেখা থাকে না। সোম ও বৃহস্পতিবারে একটি ছোট বৃত্ত, আইয়ামুল বীযে একটি ছোট পূর্ণ চাঁদ, আর শুক্রবারের কলামের ওপরে একবার জুমু\'আহ লেখা থাকে। পাতার পাশে "প্রতি সপ্তাহে ও মাসে" অংশে এগুলো একবার করে লেখা থাকে।',
+          '"লেখার জন্য ফাঁকা" বেছে নিলেও রঙের চিহ্ন আর মাসের দিনগুলোর তালিকা থাকে, তাই কোন দিন বিশেষ তা দেখা যায়। শুধু নামগুলো ঘর থেকে সরে যায়।',
+          'রঙের নির্দেশিকায় এখন প্রথম ক্যালেন্ডারের পাশে বড় ১ আর দ্বিতীয়টির পাশে ছোট ২, ঠিক দিনের ঘরের মতো।',
+        ],
+        fixed: [
+          'দুই ঈদ ও আইয়ামুত তাশরীকে (১১ থেকে ১৩ যুলহিজ্জাহ) রোজা রাখা নিষেধ, তাই এসব দিনে আর সুন্নাত রোজার চিহ্ন দেখানো হয় না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.176.0',
     date: '2026-10-16',
     text: {
