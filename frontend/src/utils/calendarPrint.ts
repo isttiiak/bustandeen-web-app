@@ -193,18 +193,36 @@ function allPrintMonths(anchor: string, o: PrintOptions, day: DayResolver): stri
   return out;
 }
 
-/** A day box's events: at most two lines, then "+N more" (the side column lists all). */
+/**
+ * Islamic days that come every week or every month (Mondays and Thursdays,
+ * Fridays, the White Days). A printed month names them once in the side
+ * column and marks their days with a small sign instead of a label.
+ */
+export const isRecurring = (e: CalendarEvent) => e.type === 'islamic' && e.recurring;
+
+/** The small sign a recurring day gets in its box (Fridays get the column header instead). */
+export type DayMark = 'fast' | 'white';
+export function dayMarks(events: readonly CalendarEvent[]): DayMark[] {
+  const marks: DayMark[] = [];
+  if (events.some((e) => e.type === 'islamic' && e.id === 'fast_mon_thu')) marks.push('fast');
+  if (events.some((e) => e.type === 'islamic' && e.id === 'ayyam_al_bid')) marks.push('white');
+  return marks;
+}
+
+/** A day box's named events (recurring ones are marks): at most two lines, then "+N more". */
 export function boxEvents(events: readonly CalendarEvent[]): {
   shown: CalendarEvent[];
   more: number;
 } {
-  if (events.length <= 2) return { shown: [...events], more: 0 };
-  return { shown: events.slice(0, 2), more: events.length - 2 };
+  const named = events.filter((e) => !isRecurring(e));
+  if (named.length <= 2) return { shown: named, more: 0 };
+  return { shown: named.slice(0, 2), more: named.length - 2 };
 }
 
 /**
- * The side column's list for a month: every event once, with White Days and
- * the first ten days of Dhul Hijjah as one line each (on their first day).
+ * The side column's dated list for a month: every event that is not
+ * recurring, once, with the first ten days of Dhul Hijjah as one line (on
+ * their first day).
  */
 export function monthListEvents(
   days: readonly CalendarDay[],
@@ -213,11 +231,7 @@ export function monthListEvents(
   const out: { day: CalendarDay; event: CalendarEvent; span?: [number, number] }[] = [];
   for (const day of days) {
     for (const event of eventsOf(day)) {
-      if (event.type === 'islamic' && event.id === 'ayyam_al_bid') {
-        if (day.hijri.day !== 13 && !(day === days[0] && day.hijri.day > 13)) continue;
-        out.push({ day, event, span: [13, 15] });
-        continue;
-      }
+      if (isRecurring(event)) continue;
       if (event.type === 'islamic' && event.id === 'dhul_hijjah_first10') {
         if (day.hijri.day !== 1 && day !== days[0]) continue;
         out.push({ day, event, span: [1, 10] });
@@ -226,5 +240,47 @@ export function monthListEvents(
       out.push({ day, event });
     }
   }
+  return out;
+}
+
+export type RecurringLine =
+  /** Every week on these weekdays (0 = Sunday), e.g. Mondays and Thursdays. */
+  | { id: 'fast_mon_thu' | 'friday'; weekdays: number[] }
+  /** The White Days: one line per run of days in the month, with its Hijri days. */
+  | { id: 'ayyam_al_bid'; from: CalendarDay; to: CalendarDay };
+
+/**
+ * The side column's "Every week and month" lines: the recurring days that
+ * fall in this month (a Monday that is Eid has no fast, so it is not counted;
+ * its box simply has no mark).
+ */
+export function monthRecurring(
+  days: readonly CalendarDay[],
+  eventsOf: (d: CalendarDay) => CalendarEvent[]
+): RecurringLine[] {
+  const weekly = new Map<'fast_mon_thu' | 'friday', Set<number>>();
+  const runs: { from: CalendarDay; to: CalendarDay }[] = [];
+  let prev: CalendarDay | null = null;
+  for (const day of days) {
+    const ids = eventsOf(day).flatMap((e) => (e.type === 'islamic' && e.recurring ? [e.id] : []));
+    for (const id of ids) {
+      if (id === 'fast_mon_thu' || id === 'friday') {
+        if (!weekly.has(id)) weekly.set(id, new Set());
+        weekly.get(id)!.add(day.weekday);
+      }
+    }
+    if (ids.includes('ayyam_al_bid')) {
+      const last = runs[runs.length - 1];
+      if (last && last.to === prev) last.to = day;
+      else runs.push({ from: day, to: day });
+    }
+    prev = day;
+  }
+  const out: RecurringLine[] = [];
+  for (const id of ['fast_mon_thu', 'friday'] as const) {
+    const w = weekly.get(id);
+    if (w) out.push({ id, weekdays: [...w].sort((a, b) => a - b) });
+  }
+  for (const r of runs) out.push({ id: 'ayyam_al_bid', ...r });
   return out;
 }

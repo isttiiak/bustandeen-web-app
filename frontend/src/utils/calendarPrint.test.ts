@@ -6,6 +6,9 @@ import {
   DEFAULT_PRINT,
   DOWNLOADS_PER_HOUR,
   boxEvents,
+  dayMarks,
+  isRecurring,
+  monthRecurring,
   defaultInclude,
   downloadWaitMinutes,
   downloadWindow,
@@ -17,6 +20,7 @@ import {
   sheetSize,
   yearStart,
   type PrintOptions,
+  type RecurringLine,
 } from './calendarPrint.js';
 
 const BD: HijriInputs = {
@@ -85,21 +89,26 @@ describe('which months a download prints', () => {
 });
 
 describe('what a day box and the side column show', () => {
-  it('two events, then "+N more"', () => {
-    const e = dayEvents(day('2026-12-25'), ALL);
+  const FASTS: EventFilters = { ...ALL, monThu: true, fridays: true };
+
+  it('two named events, then "+N more"; recurring days are marks, not names', () => {
+    const e = dayEvents(day('2026-12-25'), ALL).filter((x) => !isRecurring(x));
     expect(boxEvents(e)).toEqual({ shown: e, more: 0 });
-    const three = [...e, ...e];
+    const three = [...e, ...e, ...e];
     expect(boxEvents(three).shown).toHaveLength(2);
-    expect(boxEvents(three).more).toBe(2);
+    expect(boxEvents(three).more).toBe(three.length - 2);
+    // 26 Oct 2026: a Monday in the White Days, nothing else.
+    const mon = dayEvents(day('2026-10-26'), FASTS);
+    expect(boxEvents(mon)).toEqual({ shown: [], more: 0 });
+    expect(dayMarks(mon)).toEqual(['fast', 'white']);
+    // 23 Oct: Friday is in the column header, so no mark.
+    expect(dayMarks(dayEvents(day('2026-10-23'), FASTS))).toEqual([]);
   });
 
-  it('White Days are one line in the month list', () => {
+  it('the dated list leaves out recurring days; holidays stay', () => {
     const oct = monthDays('2026-10-15', 'greg', day);
-    const list = monthListEvents(oct, (d) => dayEvents(d, ALL));
-    const white = list.filter((x) => x.event.type === 'islamic' && x.event.id === 'ayyam_al_bid');
-    expect(white).toHaveLength(1);
-    expect(white[0]!.day.ymd).toBe('2026-10-25');
-    expect(white[0]!.span).toEqual([13, 15]);
+    const list = monthListEvents(oct, (d) => dayEvents(d, FASTS));
+    expect(list.some((x) => isRecurring(x.event))).toBe(false);
     expect(list.filter((x) => x.event.type === 'holiday').map((x) => x.day.ymd)).toEqual([
       '2026-10-20',
       '2026-10-21',
@@ -107,13 +116,39 @@ describe('what a day box and the side column show', () => {
     ]);
   });
 
-  it('a month that opens inside the White Days still lists them', () => {
+  it('recurring days are one line each: weekdays, and the White Days with their dates', () => {
+    const oct = monthDays('2026-10-15', 'greg', day);
+    const lines = monthRecurring(oct, (d) => dayEvents(d, FASTS));
+    expect(lines.map((l) => l.id)).toEqual(['fast_mon_thu', 'friday', 'ayyam_al_bid']);
+    expect(lines[0]).toMatchObject({ weekdays: [1, 4] });
+    expect(lines[1]).toMatchObject({ weekdays: [5] });
+    const white = lines[2] as Extract<RecurringLine, { id: 'ayyam_al_bid' }>;
+    expect([white.from.ymd, white.to.ymd]).toEqual(['2026-10-25', '2026-10-27']);
+    expect([white.from.hijri.day, white.to.hijri.day]).toEqual([13, 15]);
+    // Only the switches that are on.
+    expect(monthRecurring(oct, (d) => dayEvents(d, ALL)).map((l) => l.id)).toEqual([
+      'ayyam_al_bid',
+    ]);
+  });
+
+  it('a month that opens inside the White Days lists the part it has', () => {
     // Hijri grid: Jumada al-Akhirah 1448 in BD begins 12 Nov; its White Days are 24-26 Nov.
     const m = monthDays('2026-11-25', 'greg', day).filter((d) => d.ymd >= '2026-11-25');
-    const list = monthListEvents(m, (d) => dayEvents(d, ALL));
-    expect(list.some((x) => x.event.type === 'islamic' && x.event.id === 'ayyam_al_bid')).toBe(
-      true
-    );
+    const lines = monthRecurring(m, (d) => dayEvents(d, ALL));
+    expect(lines).toHaveLength(1);
+    const white = lines[0] as Extract<RecurringLine, { id: 'ayyam_al_bid' }>;
+    expect([white.from.ymd, white.to.ymd]).toEqual(['2026-11-25', '2026-11-26']);
+  });
+
+  it('no Sunnah fast mark on Eid or the days of Tashriq', () => {
+    // Find the next Eid al-Adha and the three days after it.
+    const eid = Array.from({ length: 400 }, (_, i) => day(addDays('2026-10-16', i))).find(
+      (d) => d.hijri.month === 12 && d.hijri.day === 10
+    )!;
+    for (let i = 0; i < 4; i++) {
+      const d = day(addDays(eid.ymd, i));
+      expect(dayMarks(dayEvents(d, FASTS))).toEqual([]);
+    }
   });
 });
 

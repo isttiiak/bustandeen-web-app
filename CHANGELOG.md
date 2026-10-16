@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.177.0 - Calendar print: recurring days as marks, blank mode keeps its marks, forbidden fast days - 2026-10-16
+
+### Changed
+
+- **Recurring days are marks, not labels** (Istiak, 2026-10-16): with every switch on, "Sunnah Fast Day" and "Friday (Jumu'ah)" filled most boxes and the side list. Now one rule: colour says what kind of day it is, a small shape says it repeats, and only days that come once a year are named. Mondays and Thursdays get a ring, the White Days a full moon (shapes, so they also read in black and white), under the top-right number; Jumu'ah is named once under the Friday column header. The side column splits into **This month** (dated days only) and **Every week and month** (one line each: "Mon, Thu: Sunnah Fast Day", "Fri: Jumu'ah", "Oct 25-27: Ayyām al-Bīḍ (13-15)"). `isRecurring`, `dayMarks`, `monthRecurring` in `utils/calendarPrint.ts`; `boxEvents` and `monthListEvents` leave recurring days out.
+- **Blank for writing keeps the days**: only the names leave the boxes. Each box keeps its colour mark per kind of named day (Islamic, holiday, national) and its recurring marks, the holiday number stays red, and the side column still lists the month. The include switches stay in the download drawer in this mode, and government holidays keep the three-year window there too.
+- **Colour guide**: the small sample box is gone; each calendar is a row with its number at the size it has in a day box (big 1 English, small 2 Hijri, smaller 3 Bengali), using the short calendar names.
+
+### Fixed
+
+- **No Sunnah fast on a day fasting is forbidden**: Monday and Thursday fasts are no longer marked on Eid al-Fitr (1 Shawwal), Eid al-Adha or the days of Tashriq (10 to 13 Dhul Hijjah), and 13 Dhul Hijjah is not a White Day (Sahih al-Bukhari 1991, the two Eids; Sahih Muslim 1141, the days of Tashriq are days of eating and drinking). `isFastForbidden` in `utils/specialDayRules.ts`, so Home's special days follow it too.
+
+### Tests
+
+- Unit: forbidden days in `specialDayRules.test.ts`; marks, the dated list without recurring days, recurring lines (weekdays, White Days runs, a month opening inside them), no fast mark from Eid al-Adha to 13 Dhul Hijjah.
+- e2e: Jumu'ah header, ring and moon on 26 Oct, the "Every week and month" list; blank mode keeps the holiday mark and the list.
+
 ## v5.176.0 - Calendar: national days for twenty-three more countries - 2026-10-16
 
 ### Added

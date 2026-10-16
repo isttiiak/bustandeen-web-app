@@ -30,6 +30,14 @@ export const NIGHT_SPECIAL_DAYS: ReadonlySet<SpecialDayId> = new Set([
 ]);
 
 /**
+ * Days on which fasting is forbidden, so no Sunnah fast is marked on them:
+ * the two Eids (Sahih al-Bukhari 1991) and the days of Tashriq, 11 to 13
+ * Dhul Hijjah (Sahih Muslim 1141).
+ */
+export const isFastForbidden = ({ month, day }: { month: number; day: number }) =>
+  (month === 10 && day === 1) || (month === 12 && day >= 10 && day <= 13);
+
+/**
  * The special days on a day, in this order: weekly, then monthly, then yearly.
  * `hijri` is the day's Hijri date (null when unknown: weekly days only);
  * `weekday` is 0 = Sunday ... 5 = Friday.
@@ -43,13 +51,14 @@ export function specialDayIds(
   // Friday
   if (weekday === 5) ids.push('friday');
 
-  // Monday (1) or Thursday (4)
-  if (weekday === 1 || weekday === 4) ids.push('fast_mon_thu');
+  // Monday (1) or Thursday (4), never on a day fasting is forbidden
+  const noFast = !!hijri && isFastForbidden(hijri);
+  if ((weekday === 1 || weekday === 4) && !noFast) ids.push('fast_mon_thu');
 
   if (hijri) {
     const { month, day } = hijri;
-    // Ayyam al-Bid: 13th, 14th, 15th of every month
-    if (day === 13 || day === 14 || day === 15) ids.push('ayyam_al_bid');
+    // Ayyam al-Bid: 13th, 14th, 15th of every month (not 13 Dhul Hijjah, a day of Tashriq)
+    if ((day === 13 || day === 14 || day === 15) && !noFast) ids.push('ayyam_al_bid');
 
     // Muharram
     if (month === 1) {

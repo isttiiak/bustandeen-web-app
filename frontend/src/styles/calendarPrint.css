@@ -189,6 +189,19 @@
   place-items: center;
   color: var(--pc-muted);
 }
+.pc-wd > span {
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+}
+/* "Jumu'ah" once, under the Friday header, instead of in every Friday box. */
+.pc-wd small {
+  font-size: 9.5px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--pc-isl);
+}
 .pc-wd.pc-we {
   color: var(--pc-wkd);
   background: var(--pc-wkdbg);
@@ -235,6 +248,10 @@
   color: var(--pc-n2);
   font-variant-numeric: tabular-nums;
   text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
 }
 .pc-n3 {
   position: absolute;
@@ -261,6 +278,29 @@
   white-space: normal;
   max-width: 50px;
   text-align: right;
+}
+/* A day's signs, under the top-right number: a ring for the Monday and
+   Thursday fast, a full moon for the White Days, and in "Blank for writing"
+   the colour mark of each kind of named day. Shapes, so they read in mono. */
+.pc-marks {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+}
+.pc-m {
+  width: 9px;
+  height: 9px;
+  display: inline-block;
+  border-radius: 50%;
+}
+.pc-m-fast {
+  border: 1.6px solid var(--pc-isl);
+}
+.pc-m-white {
+  background: var(--pc-isl);
+}
+.pc-side li .pc-m {
+  align-self: center;
 }
 .pc-evs {
   position: absolute;
@@ -410,49 +450,32 @@
   gap: 7px;
   align-items: center;
 }
-.pc-pos {
-  display: grid;
-  grid-template-columns: 54px 1fr;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 6px;
+/* Colour guide: which number is which calendar, at the day box's sizes. */
+.pc-side .pc-cals {
+  margin-bottom: 10px;
 }
-.pc-pos .pc-box {
-  position: relative;
-  width: 54px;
-  height: 42px;
-  border: 1px solid var(--pc-line);
-  background: var(--pc-bg);
+.pc-side .pc-cals li {
+  grid-template-columns: 26px 1fr;
+  align-items: baseline;
 }
-.pc-pos .pc-box i {
-  position: absolute;
+.pc-cals i {
   font-style: normal;
   font-weight: 800;
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
-.pc-pos .pc-a {
-  left: 4px;
-  top: 3px;
-  font-size: 16px;
+.pc-cals .pc-a {
+  font-size: 26px;
 }
-.pc-pos .pc-b {
-  right: 4px;
-  top: 4px;
-  font-size: 8px;
+.pc-cals .pc-b {
+  font-size: 13px;
+  font-weight: 700;
   color: var(--pc-n2);
 }
-.pc-pos .pc-cc {
-  left: 5px;
-  top: 21px;
-  font-size: 7.5px;
+.pc-cals .pc-cc {
+  font-size: 12px;
+  font-weight: 600;
   color: var(--pc-n3);
-}
-.pc-pos ol {
-  margin: 0;
-  padding-left: 16px;
-  display: grid;
-  gap: 2px;
-  font-size: 11px;
 }
 
 .pc-foot {
