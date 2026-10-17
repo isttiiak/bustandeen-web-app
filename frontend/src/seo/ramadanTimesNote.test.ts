@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { renderRoute } from './entry-server.js';
 
-// R0d (v5.180.0): the world Ramadan page says how its two times are found.
+// R0d (v5.180.0) and R0c (v5.181.0): the world Ramadan page says how its two times are found.
 // Where the country default is matched to an official timetable, the note
 // names that timetable and the real minutes; elsewhere it says we add none.
 
@@ -40,19 +40,46 @@ describe('world Ramadan times note', () => {
     expect(n).not.toContain('no minutes of caution');
   });
 
-  it('London and Paris (not checked here): the method as is, no calibration claimed', () => {
-    const london = note('london-united-kingdom');
-    expect(london).toContain('Suhoor ends when Fajr begins');
-    expect(london).toContain('Iftar is at Maghrib, which this method sets 3 minutes after sunset.');
-    expect(london).toContain('We add no minutes of caution of our own');
+  it("Rabat: Morocco's own method, minutes, the Habous timetable", () => {
+    const n = note('rabat-morocco');
+    expect(n).toContain(
+      'Suhoor ends 1 minute before Fajr (Moroccan (Ministry of Habous) method, Fajr at 19°).'
+    );
+    expect(n).toContain('Iftar is at Maghrib, 4 minutes after sunset.');
+    expect(n).toContain("Checked against the Ministry of Habous's timetable");
+    expect(n).not.toContain('no minutes of caution');
+  });
+
+  it("London: the committee's 3 minutes plus 1, iftar only, and the masjid note", () => {
+    const n = note('london-united-kingdom');
+    expect(n).toContain('Suhoor ends when Fajr begins');
+    expect(n).toContain('Iftar is at Maghrib, 4 minutes after sunset.');
+    expect(n).toContain(
+      "Iftar is checked against East London Mosque's timetable and never comes earlier than it."
+    );
+    expect(n).toContain('Many UK masjids, for example East London Mosque, end suhoor earlier');
+  });
+
+  it("Jakarta: Kemenag's imsak line; Istanbul: 1 minute, singular", () => {
+    expect(note('jakarta-indonesia')).toContain(
+      "Kemenag's timetable also shows imsak, 10 minutes before Subuh, as a caution"
+    );
+    expect(note('istanbul-turkey')).toContain('Suhoor ends 1 minute before Fajr');
+  });
+
+  it('Paris (not checked): the method as is, no calibration claimed', () => {
     const paris = note('paris-france');
+    expect(paris).toContain('Suhoor ends when Fajr begins');
     expect(paris).toContain('Iftar is at Maghrib (sunset).');
+    expect(paris).toContain('We add no minutes of caution of our own');
     expect(paris).not.toContain('Checked against');
   });
 
   it('the suhoor column says "(Fajr)" only where suhoor ends at Fajr', () => {
-    expect(page('kuala-lumpur-malaysia')).toContain('>Suhoor ends</th>');
-    for (const slug of ['paris-france', 'london-united-kingdom', 'singapore-singapore']) {
+    for (const slug of ['kuala-lumpur-malaysia', 'rabat-morocco', 'istanbul-turkey']) {
+      expect(page(slug), slug).toContain('>Suhoor ends</th>');
+    }
+    for (const slug of ['paris-france', 'london-united-kingdom', 'jakarta-indonesia']) {
       expect(page(slug), slug).toContain('>Imsak / Suhoor ends (Fajr)</th>');
     }
   });

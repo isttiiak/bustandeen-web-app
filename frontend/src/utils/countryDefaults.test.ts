@@ -14,7 +14,8 @@ import { MemoryStorage } from '../test/memoryStorage.js';
 
 // Audit R0a (v5.179.0): Bangladesh's default times are calibrated to Islamic
 // Foundation Bangladesh, in the app and on the static pages alike, always to
-// the safe side. Malaysia (R0d, v5.180.0) is tested against JAKIM in
+// the safe side. Malaysia (R0d, v5.180.0) and nine more countries (R0c,
+// v5.181.0) are tested against their official tables in
 // countryCalibration.test.ts; the rest keep their method's own numbers.
 
 /** Islamic Foundation Bangladesh, Dhaka, Ramadan 1447 (2026): sehri ends /
@@ -94,14 +95,27 @@ describe('the calibration table', () => {
       sehri: -3,
       maghrib: 3,
     });
-    // Singapore and Indonesia share the method, not the calibration.
-    expect(countryTimeAdjustments('SG', 'Singapore')).toBeNull();
-    expect(countryTimeAdjustments('ID', 'Singapore')).toBeNull();
+    // Singapore and Indonesia share the method, not the Fajr angle.
+    expect(countryTimeAdjustments('SG', 'Singapore')?.fajrAngle).toBeUndefined();
+    expect(countryTimeAdjustments('ID', 'Singapore')?.fajrAngle).toBeUndefined();
   });
 
-  it('no other country is calibrated, Pakistan on Karachi included', () => {
+  it('Morocco: its own Fajr angle (19°), sehri 1 min before, Maghrib +4', () => {
+    expect(countryTimeAdjustments('MA', 'MuslimWorldLeague')).toMatchObject({
+      fajrAngle: 19,
+      sehri: -1,
+      maghrib: 4,
+    });
+  });
+
+  it('only the countries checked in R0c/R0d are calibrated; Pakistan on Karachi is not', () => {
+    expect(Object.keys(COUNTRY_TIME_ADJUSTMENTS).sort()).toEqual(
+      ['AE', 'BD', 'EG', 'GB', 'ID', 'MA', 'MY', 'QA', 'SA', 'SG', 'TR'].sort()
+    );
     for (const [cc, { method }] of Object.entries(COUNTRY_PRAYER_DEFAULTS)) {
-      if (cc !== 'BD' && cc !== 'MY') expect(countryTimeAdjustments(cc, method), cc).toBeNull();
+      if (!(cc in COUNTRY_TIME_ADJUSTMENTS)) {
+        expect(countryTimeAdjustments(cc, method), cc).toBeNull();
+      }
     }
     expect(countryTimeAdjustments('PK', 'Karachi')).toBeNull();
     expect(countryTimeAdjustments('ZZ', 'MoonsightingCommittee')).toBeNull();
@@ -251,14 +265,12 @@ describe("Dhaka in summer, against IF's permanent timetable", () => {
   });
 });
 
-describe('other countries keep their method numbers (static pages)', () => {
+describe('countries not calibrated keep their method numbers (static pages)', () => {
   const PLACES = [
     { cc: 'PK', lat: 24.8607, lng: 67.0011, tz: 'Asia/Karachi' },
     { cc: 'IN', lat: 22.5726, lng: 88.3639, tz: 'Asia/Kolkata' },
-    { cc: 'GB', lat: 51.5074, lng: -0.1278, tz: 'Europe/London' },
-    { cc: 'AE', lat: 25.2048, lng: 55.2708, tz: 'Asia/Dubai' },
-    { cc: 'TR', lat: 41.0082, lng: 28.9784, tz: 'Europe/Istanbul' },
-    { cc: 'SA', lat: 21.4225, lng: 39.8262, tz: 'Asia/Riyadh' },
+    { cc: 'KW', lat: 29.3697, lng: 47.9783, tz: 'Asia/Kuwait' },
+    { cc: 'FR', lat: 48.8534, lng: 2.3488, tz: 'Europe/Paris' },
     { cc: 'US', lat: 40.7128, lng: -74.006, tz: 'America/New_York' },
   ];
   it.each(PLACES)('$cc', ({ cc, lat, lng, tz }) => {
@@ -336,13 +348,47 @@ describe('the app shows the same minute as the pages', () => {
     expect(app.maghrib.getTime()).toBe(r.maghrib.getTime());
   });
 
-  it('London keeps the Moonsighting Committee numbers', () => {
+  it('London: Moonsighting Committee Fajr and sehri, Maghrib 1 min later (R0c)', () => {
     place(51.5074, -0.1278);
     const app = calcPrayerTimesForDay(51.5074, -0.1278, '2026-06-21');
     const r = raw(51.5074, -0.1278, '2026-06-21', 'MoonsightingCommittee');
     expect(app.fajr.getTime()).toBe(r.fajr.getTime());
     expect(app.sehri.getTime()).toBe(r.fajr.getTime());
-    expect(app.maghrib.getTime()).toBe(r.maghrib.getTime());
+    expect(app.maghrib.getTime()).toBe(r.maghrib.getTime() + 60_000);
+  });
+
+  it.each([
+    { cc: 'TR', slug: 'istanbul-turkey' },
+    { cc: 'MA', slug: 'rabat-morocco' },
+    { cc: 'QA', slug: 'doha-qatar' },
+    { cc: 'SA', slug: 'mecca-saudi-arabia' },
+  ])('$cc, country default: the app matches the static page', ({ cc, slug }) => {
+    const city = cityBySlug(slug)!;
+    place(city.lat, city.lng);
+    for (const day of ['2026-02-19', '2026-06-21', '2026-10-17']) {
+      const app = calcPrayerTimesForDay(city.lat, city.lng, day);
+      const page = computePrayerTimes(city.lat, city.lng, day, city.timezone, cc);
+      expect(
+        [app.fajr, app.sehri, app.maghrib].map((d) => d.getTime()),
+        day
+      ).toEqual([page.fajr, page.sehri, page.maghrib].map((d) => d.getTime()));
+    }
+  });
+
+  it('only Malaysia and Morocco move the Fajr prayer (their own angle); elsewhere sehri moves, Fajr does not', () => {
+    for (const slug of ['istanbul-turkey', 'doha-qatar', 'mecca-saudi-arabia', 'cairo-egypt']) {
+      const city = cityBySlug(slug)!;
+      const page = computePrayerTimes(
+        city.lat,
+        city.lng,
+        '2026-10-17',
+        city.timezone,
+        city.countryCode
+      );
+      expect(page.fajr.getTime(), slug).toBe(
+        raw(city.lat, city.lng, '2026-10-17', page.method).fajr.getTime()
+      );
+    }
   });
 
   it('Malaysia, country default: the app matches the static page, Fajr at 18° + 3', () => {

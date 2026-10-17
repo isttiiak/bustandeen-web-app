@@ -204,13 +204,15 @@ describe('worldwide Ramadan calendars (RamadanCalendarPage)', () => {
   it('notes the method, the minutes it adds, and the local masjid; no em dash', () => {
     const html = page(london, []);
     expect(html).toContain('Moonsighting Committee method, Fajr at 18°');
-    expect(html).toContain('3 minutes after sunset');
+    // The committee's 3 minutes + 1 matched to East London Mosque (R0c).
+    expect(html).toContain('4 minutes after sunset');
     expect(html).toContain('the convention most masjids in United Kingdom follow');
     expect(html).toContain('follow your local masjid');
     expect(html).toContain('by the Umm al-Qura calendar');
     expect(html).not.toContain('—');
     const istanbul = page(cityBySlug('istanbul-turkey')!, []);
-    expect(istanbul).toContain('7 minutes after sunset');
+    // Diyanet's 7 minutes + 1 (R0c).
+    expect(istanbul).toContain('8 minutes after sunset');
     const karachi = page(cityBySlug('karachi-pakistan')!, []);
     expect(karachi).toContain('Iftar is at Maghrib (sunset).');
     expect(karachi).toContain('Fajr at 18°');

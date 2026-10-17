@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.181.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Sehri and iftar checked in nine more countries',
+        fixed: [
+          'We compared our times with the timetables published in Turkey, Singapore, Indonesia, Saudi Arabia, Qatar, the UAE, Egypt, Morocco and the UK. Where ours ended sehri a little later or put iftar a little earlier, we moved them by a few minutes, so they are now on the safe side.',
+          'Morocco now uses its own way of finding Fajr and Maghrib, as the Ministry of Habous does. The Ramadan calendar pages of these countries say which timetable they were checked against.',
+        ],
+      },
+      bn: {
+        title: 'আরও নয়টি দেশে সেহরি ও ইফতার মিলিয়ে দেখা হয়েছে',
+        fixed: [
+          'তুরস্ক, সিঙ্গাপুর, ইন্দোনেশিয়া, সৌদি আরব, কাতার, আমিরাত, মিশর, মরক্কো ও যুক্তরাজ্যে প্রকাশিত সময়সূচির সঙ্গে আমাদের সময় মিলিয়ে দেখা হয়েছে। যেখানে সেহরি একটু দেরিতে শেষ হচ্ছিল বা ইফতার একটু আগে হচ্ছিল, সেখানে কয়েক মিনিট সরিয়ে নিরাপদ দিকে রাখা হয়েছে।',
+          'মরক্কোতে এখন সেখানকার হাবুস মন্ত্রণালয়ের নিয়মেই ফজর ও মাগরিবের সময় হিসাব হয়। এসব দেশের রমজান ক্যালেন্ডার পাতায় লেখা থাকে কোন সময়সূচির সঙ্গে মেলানো হয়েছে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.180.0',
     date: '2026-10-17',
     text: {
