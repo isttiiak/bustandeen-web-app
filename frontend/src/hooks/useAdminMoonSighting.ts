@@ -26,6 +26,19 @@ export interface NewMoonSighting {
   sourceUrl?: string;
 }
 
+/** R11a: what the server did about rebuilding the prerendered pages. */
+export interface MoonRebuild {
+  ok: boolean;
+  /** False when a request a moment ago already covers this change. */
+  requested: boolean;
+  detail: string;
+}
+
+interface SavedMoonSighting {
+  record: AdminMoonSighting;
+  rebuild?: MoonRebuild;
+}
+
 const KEY = ['admin', 'moon-sighting'] as const;
 
 export function useAdminMoonSighting() {
@@ -42,7 +55,8 @@ export function useAdminMoonSighting() {
 export function useCreateMoonSighting() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (input: NewMoonSighting) => api.post('/api/admin/moon-sighting', input),
+    mutationFn: async (input: NewMoonSighting) =>
+      (await api.post<SavedMoonSighting>('/api/admin/moon-sighting', input)).data,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: KEY });
       void queryClient.invalidateQueries({ queryKey: ['calendar', 'moon-sighting'] });
@@ -53,7 +67,8 @@ export function useCreateMoonSighting() {
 export function useDeactivateMoonSighting() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (id: string) => api.patch(`/api/admin/moon-sighting/${id}/deactivate`),
+    mutationFn: async (id: string) =>
+      (await api.patch<SavedMoonSighting>(`/api/admin/moon-sighting/${id}/deactivate`)).data,
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: KEY });
       void queryClient.invalidateQueries({ queryKey: ['calendar', 'moon-sighting'] });

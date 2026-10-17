@@ -1,7 +1,7 @@
 import CronRun from '../models/CronRun.js';
 import { verifySender, type EmailSender } from './email.service.js';
 
-export type CronJob = 'rebuild' | 'email-check';
+export type CronJob = 'rebuild' | 'email-check' | 'moon-rebuild';
 
 export interface CronResult {
   ok: boolean;
@@ -68,6 +68,43 @@ export const triggerRebuild = async (): Promise<CronResult> => {
   } catch (err) {
     const name = err instanceof Error ? err.name : 'Error';
     return { ok: false, detail: `Deploy hook unreachable (${name})` };
+  }
+};
+
+/** At most one moon-record rebuild per this gap (R11a). A build reads the
+ * records only near its end (prerender), several minutes after it starts, so
+ * a second save inside the gap is still in the build already requested. */
+export const MOON_REBUILD_MIN_GAP_MS = 3 * 60_000;
+
+export interface MoonRebuildResult extends CronResult {
+  /** False when a recent request already covers this change. */
+  requested: boolean;
+}
+
+/**
+ * R11a: saving or withdrawing a moon-sighting record rebuilds the prerendered
+ * pages (Ramadan calendars, district timetables), so they follow within
+ * minutes instead of waiting for the monthly rebuild. The same deploy hook as
+ * the monthly job; each request is recorded in CronRun as 'moon-rebuild'
+ * (Ops health shows it). Rate-limited by MOON_REBUILD_MIN_GAP_MS. Never
+ * throws: the record is saved whatever happens here.
+ */
+export const requestMoonRebuild = async (now = new Date()): Promise<MoonRebuildResult> => {
+  try {
+    const last = await CronRun.findById('moon-rebuild').lean();
+    if (last?.ok && now.getTime() - last.ranAt.getTime() < MOON_REBUILD_MIN_GAP_MS) {
+      return {
+        ok: true,
+        requested: false,
+        detail: `A rebuild was requested at ${last.ranAt.toISOString()}; it includes this change.`,
+      };
+    }
+    const result = await triggerRebuild();
+    await recordCronRun('moon-rebuild', result);
+    return { ...result, requested: result.ok };
+  } catch (err) {
+    const name = err instanceof Error ? err.name : 'Error';
+    return { ok: false, requested: false, detail: `Rebuild not requested (${name})` };
   }
 };
 
