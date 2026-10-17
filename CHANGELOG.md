@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.184.0 - A moon-sighting record rebuilds the website's calendars within minutes - 2026-10-17
+
+### Added
+
+- **R11a: saving or withdrawing a moon-sighting record (Admin, Moon sighting) asks Vercel to rebuild the prerendered pages**, so the Ramadan calendars and district timetables, which read the records at build time, follow within about 15 minutes. Before, only the monthly cron (or `gh workflow run scheduled-rebuild.yml` by hand) did. `requestMoonRebuild()` in `cron.service.ts`: the same `VERCEL_DEPLOY_HOOK_URL` as the monthly job (no new env or secret), recorded in CronRun as `moon-rebuild` (Ops health lists it), rate-limited to one request per 3 minutes (`MOON_REBUILD_MIN_GAP_MS`; a build reads the records near its end, so a second change inside the gap is in the build already requested). It never throws: the record is saved whatever the hook does, and a failed request does not hold back the next one.
+- The save and withdraw responses carry `rebuild: { ok, requested, detail }`; the admin page says "The website's calendars are being rebuilt", "A rebuild requested a moment ago includes this change", or that the rebuild failed and the workflow should be run by hand.
+
+### Tests
+
+- New backend `moonRebuild.e2e.test.js`: a new record POSTs the hook and records the run (the hook URL never stored or returned); a second change inside the gap is not requested again; a withdrawal after the gap is; a failed hook still saves the record, says so, and the next change retries; without the hook URL nothing is called.
+
 ## v5.183.0 - Ramadan odd nights: each night belongs to the fast that follows it - 2026-10-17
 
 ### Fixed

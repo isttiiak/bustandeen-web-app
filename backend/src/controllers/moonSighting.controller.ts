@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as moonSightingService from '../services/moonSighting.service.js';
 import { logAdminAction } from '../services/adminAudit.service.js';
+import { requestMoonRebuild } from '../services/cron.service.js';
 
 // Public: devices apply the record for their own country on-device; nothing
 // about the visitor is sent or needed.
@@ -53,7 +54,9 @@ export const createHandler = async (
         startDate: record.startDate,
       },
     });
-    res.status(201).json({ ok: true, record });
+    // R11a: the prerendered calendars follow within minutes.
+    const rebuild = await requestMoonRebuild();
+    res.status(201).json({ ok: true, record, rebuild });
   } catch (err) {
     next(err);
   }
@@ -85,7 +88,8 @@ export const deactivateHandler = async (
         startDate: record.startDate,
       },
     });
-    res.json({ ok: true, record });
+    const rebuild = await requestMoonRebuild();
+    res.json({ ok: true, record, rebuild });
   } catch (err) {
     next(err);
   }

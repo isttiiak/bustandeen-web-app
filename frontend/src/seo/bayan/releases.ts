@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.184.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Calendars follow the moon sighting sooner',
+        added: [
+          "When a moon-sighting announcement is entered, the website's Ramadan calendars and timetables now update within about 15 minutes, instead of waiting for the monthly update.",
+        ],
+      },
+      bn: {
+        title: 'চাঁদ দেখার ঘোষণার পর ক্যালেন্ডার আরও দ্রুত হালনাগাদ',
+        added: [
+          'চাঁদ দেখার ঘোষণা যোগ করার পর ওয়েবসাইটের রমজান ক্যালেন্ডার ও সময়সূচি এখন প্রায় ১৫ মিনিটের মধ্যেই হালনাগাদ হয়, মাসিক হালনাগাদের অপেক্ষা করতে হয় না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.183.0',
     date: '2026-10-17',
     text: {

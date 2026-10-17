@@ -9,6 +9,7 @@ import {
   useAdminMoonSighting,
   useCreateMoonSighting,
   useDeactivateMoonSighting,
+  type MoonRebuild,
 } from '../hooks/useAdminMoonSighting.js';
 import { countryName } from '../utils/countryDefaults.js';
 import {
@@ -134,6 +135,26 @@ export default function AdminMoonSighting() {
     return rows;
   })();
 
+  // R11a: whether the website's calendars are being rebuilt after a change.
+  const [rebuild, setRebuild] = useState<MoonRebuild | null>(null);
+  const rebuildNote = !rebuild
+    ? null
+    : !rebuild.ok
+      ? t(
+          'adminMoonSighting.rebuildFailed',
+          'Saved, but the website was not rebuilt ({{detail}}). Run the "Scheduled rebuild" workflow on GitHub so the calendars follow.',
+          { detail: rebuild.detail }
+        )
+      : rebuild.requested
+        ? t(
+            'adminMoonSighting.rebuildRequested',
+            "Saved. The website's calendars are being rebuilt and follow in about 15 minutes."
+          )
+        : t(
+            'adminMoonSighting.rebuildPending',
+            'Saved. A rebuild requested a moment ago includes this change.'
+          );
+
   const submit = () => {
     if (!valid) return;
     create.mutate(
@@ -145,7 +166,12 @@ export default function AdminMoonSighting() {
         note: form.note.trim(),
         ...(form.sourceUrl ? { sourceUrl: form.sourceUrl.trim() } : {}),
       },
-      { onSuccess: () => setForm((f) => ({ ...f, startDate: '', note: '', sourceUrl: '' })) }
+      {
+        onSuccess: (data) => {
+          setForm((f) => ({ ...f, startDate: '', note: '', sourceUrl: '' }));
+          setRebuild(data.rebuild ?? null);
+        },
+      }
     );
   };
 
@@ -166,6 +192,15 @@ export default function AdminMoonSighting() {
             "Set a country's Hijri dates from its national committee's announcement."
           )}
         />
+        {rebuildNote && (
+          <p
+            role="status"
+            data-testid="moon-rebuild-status"
+            className={`text-sm ${rebuild?.ok ? 'text-brand-emerald' : 'text-red-300'}`}
+          >
+            {rebuildNote}
+          </p>
+        )}
         <p className="text-sm text-white/80">
           {t(
             'adminMoonSighting.explain',
@@ -335,7 +370,10 @@ export default function AdminMoonSighting() {
                       <button
                         type="button"
                         onClick={() =>
-                          deactivate.mutate(r._id, { onSettled: () => setConfirmId(null) })
+                          deactivate.mutate(r._id, {
+                            onSuccess: (data) => setRebuild(data.rebuild ?? null),
+                            onSettled: () => setConfirmId(null),
+                          })
                         }
                         className={`${BTN_SMALL} min-h-[44px] text-red-300`}
                       >
