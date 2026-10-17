@@ -150,9 +150,17 @@ describe('Ramadan calendar rows are civil days of the city', () => {
         gregorianYear: 2027,
       })
     );
+    // The visible rows (only they carry data-fast), cells as plain text
+    // without the screen-reader "if Ramadan has 30 days" note.
     return [
-      ...html.matchAll(/<tr data-date="[^"]*" class="border-b[^"]*last:border-0">(.*?)<\/tr>/g),
-    ].map((m) => [...m[1].matchAll(/>([^<>]+)<\/td>/g)].map((c) => c[1]));
+      ...html.matchAll(
+        /<tr data-date="[^"]*" data-ramadan-row="\d+" data-fast="\d+"[^>]*>(.*?)<\/tr>/g
+      ),
+    ]
+      .map((m) => m[1].replace(/<span data-possible-note[^>]*>.*?<\/span>/g, ''))
+      .map((row) =>
+        [...row.matchAll(/<td[^>]*>(.*?)<\/td>/g)].map((c) => c[1].replace(/<[^>]+>/g, ''))
+      );
   };
 
   // Every row against the adhan day whose Dhuhr is on that civil date (one

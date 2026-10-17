@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { cityCountry, cityLabel, cityLangs, cityName, type CityEntry } from '../data/cities.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
@@ -12,6 +13,14 @@ import { RAMADAN_BD } from '../locales/ramadanBd.js';
 import { RAMADAN_WORLD } from '../locales/ramadanWorld.js';
 import { COUNTRY_PRAYER_DEFAULTS, countryTimeAdjustments } from '../../utils/countryDefaults.js';
 import type { RamadanDay, RamadanPlan } from '../utils/ramadanBd.js';
+import {
+  RamadanShiftControl,
+  RamadanShiftNotes,
+  possibleLabelRows,
+  ramadanRows,
+  ramadanTableAttrs,
+} from '../components/RamadanShift.js';
+import type { RowState } from '../ramadanShift.js';
 
 const LOCALE_BY_LANG: Record<SeoLang, string> = { en: 'en-US', bn: 'bn-BD', ar: 'ar-SA' };
 
@@ -57,15 +66,26 @@ export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, q
 
   const url = `https://bustandeen.com${langPath(lang, `/ramadan-calendar/${city.slug}/${gregorianYear}`)}`;
 
-  const row = (d: RamadanDay, possible = false) => (
+  // Rows that can be the 30th after a shift: the label and the note.
+  const labelRows = possibleLabelRows(plan);
+  const row = (d: RamadanDay, { visible, possible }: RowState) => (
     <tr
       key={d.date}
       data-date={d.date}
-      className={`border-b border-[#1e2d42] last:border-0${possible ? ' opacity-70' : ''}`}
+      data-ramadan-row={d.fast}
+      data-fast={visible ? d.fast : undefined}
+      data-possible={possible ? '' : undefined}
+      hidden={!visible}
+      className="border-b border-[#1e2d42] last:border-0 data-[possible]:opacity-70"
     >
       <td className="px-4 py-2 text-[#f1f5f9] font-semibold tabular-nums">
-        {d.fast}
-        {possible && <span className="sr-only"> ({possible30Label})</span>}
+        <span data-fast-num="">{visible ? d.fast : ''}</span>
+        {labelRows.includes(d.fast) && (
+          <span data-possible-note="" hidden={!possible} className="sr-only">
+            {' '}
+            ({possible30Label})
+          </span>
+        )}
       </td>
       <td className="px-4 py-2 text-[#94a3b8]">
         {/* Noon UTC of the civil date: formatted in UTC it is that date. */}
@@ -79,12 +99,13 @@ export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, q
       </td>
     </tr>
   );
+  const barePath = `/ramadan-calendar/${city.slug}/${gregorianYear}`;
 
   return (
     <Layout
       lang={lang}
       printable
-      barePath={`/ramadan-calendar/${city.slug}/${gregorianYear}`}
+      barePath={barePath}
       langs={cityLangs(city)}
       breadcrumbs={[
         { label: t.home, path: 'https://bustandeen.com/' },
@@ -113,11 +134,19 @@ export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, q
         linkClassName="text-[#10b981] underline underline-offset-2"
       />
 
+      <RamadanShiftNotes
+        lang={textLang}
+        plan={plan}
+        className="text-xs text-[#f1f5f9] mt-2 print:mt-0 print:mb-2 print:text-[8pt]"
+      />
+      <RamadanShiftControl lang={textLang} barePath={barePath} look="world" />
+
       <DownloadPdfButton lang={lang} className="mt-5 text-[#94a3b8]" />
       <OtherTownLink lang={lang} className="mt-2" linkClassName="text-[#10b981]" />
 
       <div className="mt-6 print:mt-0 rounded-2xl border border-[#1e2d42] bg-[#0d1520] overflow-x-auto">
-        <table className="w-full text-sm">
+        {/* Latin digits, as this template writes them in every language. */}
+        <table className="w-full text-sm" {...ramadanTableAttrs(plan, 'en')}>
           <thead>
             <tr className="border-b border-[#1e2d42] text-[#94a3b8] text-xs uppercase tracking-wide">
               <th className="text-start px-4 py-2.5">{t.ramadan.dayLabel}</th>
@@ -137,21 +166,22 @@ export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, q
             </tr>
           </thead>
           <tbody>
-            {plan.days.map((d) => row(d))}
-            {plan.possible30 && (
-              <>
-                <tr>
-                  <td
-                    colSpan={4}
-                    aria-hidden="true"
-                    className="border-b border-[#1e2d42] px-4 py-1 text-[11px] font-semibold text-[#f59e0b]"
-                  >
-                    {possible30Label}
-                  </td>
-                </tr>
-                {row(plan.possible30, true)}
-              </>
-            )}
+            {ramadanRows(plan).map(({ day, state }) => (
+              <Fragment key={day.date}>
+                {labelRows.includes(day.fast) && (
+                  <tr data-possible-label={day.fast} hidden={!(state.possible && day.fast === 30)}>
+                    <td
+                      colSpan={4}
+                      aria-hidden="true"
+                      className="border-b border-[#1e2d42] px-4 py-1 text-[11px] font-semibold text-[#f59e0b]"
+                    >
+                      {possible30Label}
+                    </td>
+                  </tr>
+                )}
+                {row(day, state)}
+              </Fragment>
+            ))}
           </tbody>
         </table>
       </div>

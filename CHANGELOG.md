@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.188.0 - Ramadan calendars: move the month by one day for your area - 2026-10-17
+
+### Added
+
+- **R12: "Did Ramadan begin on a different day where you live?"** on every prerendered Ramadan calendar (worldwide cities in English, Bangladesh districts and towns in English and Bangla). The pages are built from Umm al-Qura and the country's moon-sighting records; a visitor whose masjid began a day apart picks "One day earlier", "As shown" or "One day later". Sehri and iftar stay with their Gregorian date (they do not depend on the Hijri date); what moves is which date is fast 1, the fast numbers, and the "if Ramadan has 30 days" row. A settled 29-day month stays 29 days. The choice is remembered per city and year on the device (localStorage, shared by the page's languages, wrapped in try/catch), and the printed A4 sheet uses the shifted numbering with a line naming the first fast ("Adjusted on this device for your area: the first fast is on ...").
+- The templates prerender one hidden row before fast 1 and one after the last (`RamadanPlan.before` / `.after`) and the 30th-day label above rows 29, 30 and 31, so a shift never leaves a gap and the script only toggles attributes and text (no nodes move). Every visible row carries `data-fast` (its shifted number) for the printable-sheet work (odd-night stars, last ten) to follow.
+- The logic is `src/seo/ramadanShift.ts`, wired by `static-entry.ts` on the prerendered pages (no React, no inline script: no new CSP hash) and by the control's effect when the app's router draws the page. Without JavaScript the control stays hidden and the page is exactly as built.
+
+- The district calendars (`BdRamadanPage`) keep their own table rows, which the shift hides and renumbers in the browser; `seo/components/RamadanSheetTable.tsx` (v5.187.0) now draws only the app's own sheet, in the same look.
+
+### Tests
+
+- New `seo/ramadanShift.test.ts`: the shift of every row (29 + possible 30th, settled 29 and 30), fast 1 a day either way with the 30-day shape kept, the extra rows' times on their own date, Bangla digits, the storage key, and the prerendered markup of both templates (hidden extra rows, label rows, hidden control and notes).
+- New e2e `ramadan-shift.spec.ts`: London (en) and Dhaka (en + bn): one day later and earlier, kept on reload, times unchanged, print media with the shifted numbering and the note, still one A4 page, back to "As shown"; the page still loads no app chunk.
+
 ## v5.187.0 - A Ramadan timetable for any town, from the app - 2026-10-17
 
 ### Added

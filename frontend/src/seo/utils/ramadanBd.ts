@@ -39,6 +39,10 @@ export interface RamadanPlan {
   /** The day after a 29-day month, shown as "if Ramadan has 30 days" until
    * the Shawwal moon is announced. */
   possible30?: RamadanDay;
+  /** The day before fast 1 and the day after the last row (fast 0 and the
+   * last + 1): drawn hidden, for the visitor's one-day shift (R12). */
+  before: RamadanDay;
+  after: RamadanDay;
 }
 
 export function ramadanPagePath(citySlug: string, gregorianYear: number): string {
@@ -105,8 +109,22 @@ export function ramadanPlan(
       ? dayRow(city, new Date(noons[28].getTime() + DAY), 30)
       : undefined;
 
+  const last = possible30 ?? days[days.length - 1];
+  const before = dayRow(city, new Date(noons[0].getTime() - DAY), 0);
+  const after = dayRow(city, new Date(last.noon.getTime() + DAY), last.fast + 1);
+
   const basis: RamadanBasis = startRecord ? 'announced' : firstRecord ? 'forecast' : 'ummAlQura';
   const forecastRecord = basis === 'forecast' ? firstRecord : undefined;
 
-  return { hijriYear, days, basis, startRecord, forecastRecord, endSettled, possible30 };
+  return {
+    hijriYear,
+    days,
+    basis,
+    startRecord,
+    forecastRecord,
+    endSettled,
+    possible30,
+    before,
+    after,
+  };
 }

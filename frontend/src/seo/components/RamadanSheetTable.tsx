@@ -1,7 +1,8 @@
-// The Ramadan timetable of the A4 sheet (T4.4, Bustan look): the district
-// calendars (BdRamadanPage) and the app's own sheet for the saved place
-// (pages/RamadanTracker.tsx, audit R12) draw the same table. Plain strings
-// in, so it serves the prerender and the app alike.
+// The Ramadan timetable of the A4 sheet (T4.4, Bustan look) for the app's own
+// sheet for the saved place (pages/RamadanTracker.tsx, audit R12), drawn like
+// the district calendars' table (BdRamadanPage keeps its own rows: the
+// one-day shift of R12 hides and renumbers them in the browser). Plain
+// strings in.
 
 export interface RamadanSheetTableRow {
   /** `YYYY-MM-DD` */
