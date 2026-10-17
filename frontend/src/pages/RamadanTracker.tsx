@@ -37,7 +37,7 @@ import DaifExplainer from '../components/DaifExplainer.js';
 import TabNav from '../components/TabNav.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
-import { getRamadanWindow, ramadanStartBasis } from '../utils/ramadan.js';
+import { getRamadanWindow, nightFastDate, ramadanStartBasis } from '../utils/ramadan.js';
 import { getHijriOffsetSource } from '../utils/islamicCalendar.js';
 import { countryName } from '../utils/countryDefaults.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
@@ -236,6 +236,30 @@ export default function RamadanTracker() {
     return () => clearInterval(timer);
   }, []);
 
+  /** Whose night it is now (R10): a Ramadan night belongs to the fast that
+   * follows it, so after Maghrib it is tomorrow's fast (the 21st night begins
+   * at iftar of the 20th fast). `isNight`: between Maghrib and Fajr. Without
+   * a location, the tracking day. Recomputed once a minute. */
+  const nowMinute = Math.floor(nowTs / 60_000);
+  const night = useMemo(() => {
+    try {
+      const raw = localStorage.getItem('bustandeen_location');
+      if (!raw) return { date: today, isNight: false };
+      const loc = JSON.parse(raw) as { latitude: number; longitude: number };
+      const now = new Date(nowMinute * 60_000);
+      const placeDate = placeYmd(loc.latitude, loc.longitude, now);
+      const times = calcPrayerTimesForDay(loc.latitude, loc.longitude, placeDate);
+      return {
+        date: nightFastDate(now, placeDate, times.maghrib),
+        isNight: now >= times.maghrib || now < times.fajr,
+      };
+    } catch {
+      return { date: today, isNight: false };
+    }
+  }, [nowMinute, today]);
+  const nightDay = window_.days.find((d) => d.date === night.date) ?? null;
+  const nightLog = history?.find((l) => l.category === 'ramadan' && l.date === night.date);
+
   /** Where we are in the fasting day: counting down to suhoor closing (before
    * the end of sehri) or to iftar (between it and Maghrib). Null after Maghrib — the
    * fast is done, nothing left to count. */
@@ -342,13 +366,21 @@ export default function RamadanTracker() {
       }
     );
   };
+  // Tarawih is saved on the fast its night belongs to (R10), so night 21 is
+  // fast 21's row in every tracking-day mode. A fast with no row yet gets
+  // its intention with it (the niyyah is made the night before); a row that
+  // exists keeps its status, Hijri label and note.
+  const nightTarawih = !!(nightLog as { tarawih?: boolean } | undefined)?.tarawih;
   const toggleTarawih = () => {
+    if (!nightDay) return;
     if (!gate.canSave()) return;
     upsert.mutate({
-      date: today,
+      date: night.date,
       category: 'ramadan',
-      status: (todayLog?.status as 'completed' | 'intended' | 'broken') ?? 'intended',
-      tarawih: !todayLog?.tarawih,
+      status: (nightLog?.status as 'completed' | 'intended' | 'broken' | undefined) ?? 'intended',
+      hijri: nightLog?.hijri,
+      note: nightLog?.note,
+      tarawih: !nightTarawih,
     });
   };
 
@@ -536,7 +568,12 @@ export default function RamadanTracker() {
 
   // ────────────────────────── LIVE MODE ──────────────────────────
   const dayNo = window_.todayNumber ?? 1;
-  const inLastTen = dayNo >= 21;
+  // From iftar of the 20th fast: the 21st night has begun.
+  const inLastTen = dayNo >= 21 || (nightDay?.dayNumber ?? 0) >= 21;
+  // The night we are in (or, in the day, last night): its fast's number.
+  const nightNo = nightDay?.dayNumber ?? dayNo;
+  const tonightOdd =
+    night.isNight && nightDay && nightDay.isLastTen && nightDay.isOdd ? nightDay.dayNumber : null;
   const fastedPct = Math.round((fastedCount / Math.max(1, window_.days.length)) * 100);
   const ClockGlyph = fastClock?.phase === 'suhoor' ? FajrIcon : MaghribIcon;
 
@@ -798,8 +835,9 @@ export default function RamadanTracker() {
         <RamadanSalatCard
           date={today}
           excused={excusedToday}
-          tarawih={todayLog?.tarawih ?? false}
-          onToggleTarawih={toggleTarawih}
+          tarawih={nightTarawih}
+          tarawihNight={nightDay?.dayNumber}
+          onToggleTarawih={nightDay ? toggleTarawih : undefined}
           canSave={gate.canSave}
         />
 
@@ -833,14 +871,33 @@ export default function RamadanTracker() {
                 }}
               />
             </p>
+            {/* The night comes before its day (R10): say when each begins. */}
+            <p className="text-white/70 text-xs mt-1.5 leading-relaxed">
+              {t(
+                'ramadan.nightBeginsNote',
+                'Each night begins at Maghrib, the evening before its fast: the 21st night begins at iftar of the 20th fast. The marked fasts are the ones whose night is odd.'
+              )}
+            </p>
+            {tonightOdd && (
+              <p
+                className="text-brand-info text-xs font-bold mt-1.5"
+                data-testid="tonight-odd-night"
+              >
+                {t(
+                  'ramadan.tonightOddNight',
+                  'Tonight is night {{night}} of Ramadan, an odd night of the last ten.',
+                  { night: formatLocaleNumber(tonightOdd) }
+                )}
+              </p>
+            )}
             <div className="flex gap-1.5 mt-3">
               {[21, 23, 25, 27, 29].map((n) => (
                 <span
                   key={n}
                   className={`flex-1 text-center py-2 rounded-control text-sm font-bold tabular-nums border ${
-                    n === dayNo
+                    n === nightNo
                       ? 'bg-brand-info text-on-color border-brand-info shadow-elev-1'
-                      : n < dayNo
+                      : n < nightNo
                         ? 'bg-shade/20 text-white/55 border-brand-border'
                         : 'bg-brand-info/10 text-brand-info border-brand-info/40'
                   }`}

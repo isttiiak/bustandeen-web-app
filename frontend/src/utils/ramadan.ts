@@ -111,3 +111,21 @@ export function ramadanStartBasis(source: HijriDaySource, hijriYear: number): Ra
   const announced = r.hijriYear === hijriYear && r.hijriMonth === 9;
   return { kind: announced ? 'announced' : 'forecast', country: r.country };
 }
+
+/**
+ * The fast whose night it is now (audit R10). A Ramadan night comes before
+ * its day: the 21st night begins at Maghrib on the evening of the 20th fast
+ * (Bukhārī 2017: seek it in the odd nights of the last ten). So tarawih and
+ * the odd-night marks belong to the fast that FOLLOWS the night: after
+ * Maghrib it is tomorrow's fast, from midnight to Maghrib it is today's (its
+ * night was last night). The same in every tracking-day mode, which only
+ * moves the tracker's day, not the night.
+ *
+ * `placeDate`: the place's civil date now; `maghrib`: Maghrib on that date.
+ */
+export function nightFastDate(now: Date, placeDate: string, maghrib: Date): string {
+  if (Number.isNaN(maghrib.getTime()) || now < maghrib) return placeDate;
+  const d = new Date(`${placeDate}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + 1);
+  return d.toISOString().slice(0, 10);
+}
