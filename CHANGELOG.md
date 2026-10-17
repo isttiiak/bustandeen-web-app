@@ -14,6 +14,37 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - `utils/salatPrefs.test.ts`: a Dhaka phone with Garissa saved gets the fallback (same as `prayerDefaultsForCountry('KE')`) and no "your country usually uses" offer; Dhaka phone + London saved = GB; no saved place = the phone; zone map not loaded = the phone; one city per added zone maps to its country (Indianapolis, Louisville, Boise, Juneau, Moncton, Whitehorse, Las Palmas, Ceuta, Aktobe, Atyrau, Oral, Kyzylorda).
 
+## v5.188.0 - Ramadan calendars: move the month by one day for your area - 2026-10-17
+
+### Added
+
+- **R12: "Did Ramadan begin on a different day where you live?"** on every prerendered Ramadan calendar (worldwide cities in English, Bangladesh districts and towns in English and Bangla). The pages are built from Umm al-Qura and the country's moon-sighting records; a visitor whose masjid began a day apart picks "One day earlier", "As shown" or "One day later". Sehri and iftar stay with their Gregorian date (they do not depend on the Hijri date); what moves is which date is fast 1, the fast numbers, and the "if Ramadan has 30 days" row. A settled 29-day month stays 29 days. The choice is remembered per city and year on the device (localStorage, shared by the page's languages, wrapped in try/catch), and the printed A4 sheet uses the shifted numbering with a line naming the first fast ("Adjusted on this device for your area: the first fast is on ...").
+- The templates prerender one hidden row before fast 1 and one after the last (`RamadanPlan.before` / `.after`) and the 30th-day label above rows 29, 30 and 31, so a shift never leaves a gap and the script only toggles attributes and text (no nodes move). Every visible row carries `data-fast` (its shifted number) for the printable-sheet work (odd-night stars, last ten) to follow.
+- The logic is `src/seo/ramadanShift.ts`, wired by `static-entry.ts` on the prerendered pages (no React, no inline script: no new CSP hash) and by the control's effect when the app's router draws the page. Without JavaScript the control stays hidden and the page is exactly as built.
+
+- The district calendars (`BdRamadanPage`) keep their own table rows, which the shift hides and renumbers in the browser; `seo/components/RamadanSheetTable.tsx` (v5.187.0) now draws only the app's own sheet, in the same look.
+
+### Tests
+
+- New `seo/ramadanShift.test.ts`: the shift of every row (29 + possible 30th, settled 29 and 30), fast 1 a day either way with the 30-day shape kept, the extra rows' times on their own date, Bangla digits, the storage key, and the prerendered markup of both templates (hidden extra rows, label rows, hidden control and notes).
+- New e2e `ramadan-shift.spec.ts`: London (en) and Dhaka (en + bn): one day later and earlier, kept on reload, times unchanged, print media with the shifted numbering and the note, still one A4 page, back to "As shown"; the page still loads no app chunk.
+
+## v5.187.0 - A Ramadan timetable for any town, from the app - 2026-10-17
+
+### Added
+
+- **R12: "Download this Ramadan's timetable for {place}" on the app's Ramadan page** (countdown and live mode). The prerendered Ramadan sheets exist only for the need-based cities and the 64 Bangladesh districts; any other town now prints the same one-page A4 sheet from the app. Dates are the app's own Ramadan window (the user's Hijri offset, or the country's moon-sighting records), times the app's own (`calcPrayerTimesForDay`: the user's method, the country calibration, on the place's clock even when the phone is on another zone), so the sheet shows the minute the Ramadan page shows. A 29-day month gets the possible 30th row until a Shawwal record settles it. The footer names the place, its coordinates (two decimals), the method, the calibration when it applies and "follow your local masjid". Computed on the device: works for guests and offline. `utils/ramadanSheet.ts` (data), `components/RamadanSheetCard.tsx` (card + print root, the T4.4 `window.print` pattern), `#rp-print-root` rules in `global.css`. Without a saved location the card links to Prayer times to set one. en + bn.
+- **The static Ramadan pages say "Not your town? Use your location in the app"**, linking to `/ramadan` (`OtherTownLink` in `seo/components/PrintSheet.tsx`, en/bn/ar). No geolocation on the static pages.
+
+### Changed
+
+- The Bustan Ramadan table of the district calendars moved to `seo/components/RamadanSheetTable.tsx`, shared by `BdRamadanPage` and the app sheet (the district pages' SSR output is byte-identical before and after the move).
+
+### Tests
+
+- New `utils/ramadanSheet.test.ts`: a calibrated country (a Bangladesh town without a page: the static pages' minute on every row, sehri 3 min before Fajr), an uncalibrated one (Pakistan: sehri at Fajr), a zone with no known country (Kenya: no calibration borrowed), the user's own method dropping the calibration, the far-zone place clock (phone on Dhaka time, a UK town on the UK clock), the user's Hijri offset, BD records for a 30-day and a settled 29-day month.
+- New e2e `ramadan-sheet.spec.ts`: a demo user in Keighley prints one A4 page whose first row is 8 Feb 2027, 06:04 AM / 05:06 PM on the UK clock; a guest gets the same sheet; a static Ramadan page links to the app.
+
 ## v5.186.0 - Malaysia: Dhuhr, Asr, Isha and sunrise on the safe side of JAKIM - 2026-10-17
 
 ### Fixed

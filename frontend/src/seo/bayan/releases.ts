@@ -42,6 +42,44 @@ export const RELEASES: Release[] = [
     },
   },
   {
+    version: '5.188.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Adjust the Ramadan calendar for your area',
+        added: [
+          "Did Ramadan begin a day earlier or later where you live? On the website's Ramadan calendars you can now move the month by one day. Sehri and iftar times stay the same; only the fast numbers move, and your printed sheet follows. Your choice is kept on your device.",
+        ],
+      },
+      bn: {
+        title: 'আপনার এলাকার জন্য রমজান ক্যালেন্ডার মিলিয়ে নিন',
+        added: [
+          'আপনার এলাকায় রমজান কি এক দিন আগে বা পরে শুরু হয়েছে? ওয়েবসাইটের রমজান ক্যালেন্ডারে এখন মাসটি এক দিন সরিয়ে নেওয়া যায়। সেহরি ও ইফতারের সময় একই থাকে, শুধু রোজার নম্বর সরে যায়, আর প্রিন্ট করা শিটেও তা-ই আসে। আপনার পছন্দ আপনার ডিভাইসেই থাকে।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.187.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'A Ramadan timetable for your own town',
+        added: [
+          "The Ramadan page can now download this Ramadan's sehri and iftar timetable for your saved location, as one A4 page. It works for any town, even without internet once the app is open.",
+          'The Ramadan calendars on the website now point to the app when your town has no page of its own.',
+        ],
+      },
+      bn: {
+        title: 'আপনার নিজের এলাকার রমজানের সময়সূচি',
+        added: [
+          'রমজানের পাতা থেকে এখন আপনার সেভ করা অবস্থানের জন্য এবারের রমজানের সাহরি ও ইফতারের সময়সূচি এক পাতার A4-এ ডাউনলোড করা যায়। যেকোনো এলাকার জন্য চলে, অ্যাপ খোলা থাকলে ইন্টারনেট ছাড়াও।',
+          'ওয়েবসাইটের রমজান ক্যালেন্ডারে আপনার এলাকার আলাদা পাতা না থাকলে এখন অ্যাপে যাওয়ার পথ দেখানো হয়।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.186.0',
     date: '2026-10-17',
     text: {

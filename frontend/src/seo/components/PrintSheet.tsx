@@ -31,6 +31,31 @@ export function DownloadPdfButton({ lang, className = '' }: { lang: SeoLang; cla
   );
 }
 
+/** Ramadan calendars: a town without its own page gets the same sheet from
+ * the app, computed for the saved location (audit R12). No geolocation on
+ * the static pages: the app's location picker asks for it. */
+export function OtherTownLink({
+  lang,
+  className = '',
+  linkClassName = 'text-brand-emerald',
+}: {
+  lang: SeoLang;
+  className?: string;
+  linkClassName?: string;
+}) {
+  return (
+    <p className={`print:hidden text-sm ${className}`}>
+      <a
+        href="/ramadan"
+        data-other-town=""
+        className={`${linkClassName} underline underline-offset-2`}
+      >
+        {PRINT[lang].otherTown}
+      </a>
+    </p>
+  );
+}
+
 /** The head of the A4 sheet: only on paper. */
 export function PrintSheetHead({
   lang,
