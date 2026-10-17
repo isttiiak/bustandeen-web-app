@@ -1,7 +1,7 @@
 // Ramadan window resolution — fully client-side via getHijriDate (umalqura +
 // the user's ±1 day moon-sighting adjustment), consistent with every other
 // hijri-dependent feature (CLAUDE.md convention).
-import { getHijriDate } from './islamicCalendar.js';
+import { getHijriDate, type HijriDaySource } from './islamicCalendar.js';
 import { getTrackingDay } from './trackingDay.js';
 
 export interface RamadanDayInfo {
@@ -93,4 +93,21 @@ export function getRamadanWindow(): RamadanWindow {
       );
 
   return { active, todayNumber, days, daysUntil, hijriYear };
+}
+
+/** What "Expected around" rests on (v5.178.0), as the Ramadan calendars say it:
+ *  - `announced`: the country's record of this Ramadan's start;
+ *  - `forecast`: the country's latest record carried forward;
+ *  - `manual`: Umm al-Qura with the user's own day adjustment;
+ *  - `ummAlQura`: no record, Umm al-Qura alone. */
+export type RamadanStartBasis =
+  { kind: 'announced' | 'forecast'; country: string } | { kind: 'manual' | 'ummAlQura' };
+
+/** `source`: the Hijri source of Ramadan's first day (getHijriOffsetSource). */
+export function ramadanStartBasis(source: HijriDaySource, hijriYear: number): RamadanStartBasis {
+  if (source.source === 'manual') return { kind: 'manual' };
+  const r = source.record;
+  if (source.source !== 'country' || !r) return { kind: 'ummAlQura' };
+  const announced = r.hijriYear === hijriYear && r.hijriMonth === 9;
+  return { kind: announced ? 'announced' : 'forecast', country: r.country };
 }

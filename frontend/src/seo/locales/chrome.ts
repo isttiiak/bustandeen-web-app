@@ -309,7 +309,7 @@ const en: ChromeStrings = {
     liveAppCta: 'Track your fasts day-by-day in the app',
     prayerTimesCta: (city) => `Year-round prayer times for ${city}`,
     qiblaCta: (city) => `Qibla direction from ${city}`,
-    note: 'The Ramadan start date follows the Umm al-Qura (islamic-umalqura) calendar estimate and may shift by a day depending on local moon-sighting announcements — always confirm with your local moon-sighting authority.',
+    note: "The Ramadan dates follow the Umm al-Qura calendar, or Bangladesh's own moon sighting on the Bangladesh calendars. Where you live, Ramadan may begin a day earlier or later: follow the announcement of your local masjid or moon-sighting authority.",
   },
   duas: {
     heading: "Du'a Library",
@@ -572,7 +572,7 @@ const bn: ChromeStrings = {
     liveAppCta: 'অ্যাপে প্রতিদিনের রোজা ট্র্যাক করুন',
     prayerTimesCta: (city) => `${bnOf(city)} সারাবছরের নামাজের সময়`,
     qiblaCta: (city) => `${city} থেকে কিবলার দিক`,
-    note: 'রমজানের শুরুর তারিখ উম্মুল কুরা (islamic-umalqura) ক্যালেন্ডারের হিসাব অনুযায়ী দেখানো হয়েছে এবং স্থানীয় চাঁদ দেখা কমিটির ঘোষণা অনুযায়ী এক দিন কমবেশি হতে পারে — সবসময় আপনার স্থানীয় চাঁদ দেখা কর্তৃপক্ষের সাথে নিশ্চিত করুন।',
+    note: 'রমজানের তারিখ উম্মুল কুরা ক্যালেন্ডার অনুযায়ী, আর বাংলাদেশের ক্যালেন্ডারে বাংলাদেশের চাঁদ দেখা অনুযায়ী। আপনার এলাকায় রমজান এক দিন আগে বা পরে শুরু হতে পারে: স্থানীয় মসজিদ বা চাঁদ দেখা কর্তৃপক্ষের ঘোষণা অনুসরণ করুন।',
   },
   duas: {
     heading: 'দোয়া সংকলন',

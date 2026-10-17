@@ -3,44 +3,71 @@ import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 import { DownloadPdfButton, PrintSheetHead } from '../components/PrintSheet.js';
+import RamadanNotice from '../components/RamadanNotice.js';
 import type { QrPath } from '../utils/qr.js';
-import { computePrayerTimes, formatTimeInZone, ramadanRangeForHijriYear } from '../utils/calc.js';
+import { formatTimeInZone, methodFacts } from '../utils/calc.js';
 import { dateFormat } from '../utils/intl.js';
+import { ISLAMIC_FOUNDATION_URL, MONTHLY } from '../locales/monthly.js';
+import { RAMADAN_BD } from '../locales/ramadanBd.js';
+import { RAMADAN_WORLD } from '../locales/ramadanWorld.js';
+import { COUNTRY_PRAYER_DEFAULTS } from '../../utils/countryDefaults.js';
+import type { RamadanDay, RamadanPlan } from '../utils/ramadanBd.js';
 
 const LOCALE_BY_LANG: Record<SeoLang, string> = { en: 'en-US', bn: 'bn-BD', ar: 'ar-SA' };
 
 interface Props {
   lang: SeoLang;
   city: CityEntry;
-  hijriYear: number;
+  /** The month as the city's country counts it (ramadanPlan). */
+  plan: RamadanPlan;
+  /** The page's year: the Gregorian year Umm al-Qura's Ramadan begins in. */
+  gregorianYear: number;
   /** QR of the page URL for the A4 sheet (build time only). */
   qr?: QrPath;
 }
 
-export default function RamadanCalendarPage({ lang, city, hijriYear, qr }: Props) {
+export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, qr }: Props) {
   const t = CHROME[lang];
   const locale = LOCALE_BY_LANG[lang];
-  const { start, end } = ramadanRangeForHijriYear(hijriYear);
-  const gregorianYear = start.getUTCFullYear();
-
-  const days: { day: number; date: Date; imsak: Date; iftar: Date }[] = [];
-  let cursor = new Date(start);
-  let day = 1;
-  while (cursor.getTime() <= end.getTime()) {
-    // `cursor` is UTC midnight of the civil date (as toHijri reads it).
-    const times = computePrayerTimes(
-      city.lat,
-      city.lng,
-      cursor.toISOString().slice(0, 10),
-      city.timezone,
-      city.countryCode
-    );
-    days.push({ day, date: cursor, imsak: times.fajr, iftar: times.maghrib });
-    cursor = new Date(cursor.getTime() + 86_400_000);
-    day++;
-  }
+  // Bangladesh towns other than the district HQs: the committee's wording,
+  // in English and Bangla. Every other city: English only.
+  const bd = city.countryCode === 'BD';
+  const textLang = lang === 'bn' ? 'bn' : 'en';
+  const country = cityCountry(city, lang);
+  const method = plan.days[0].times.method;
+  const timesNote = bd
+    ? RAMADAN_BD[textLang].timesNote
+    : RAMADAN_WORLD.timesNote({
+        method: t.prayerTimes.methodNames[method],
+        ...methodFacts(method),
+        country: city.countryCode in COUNTRY_PRAYER_DEFAULTS ? country : undefined,
+      });
+  const possible30Label = bd ? RAMADAN_BD[textLang].possible30 : RAMADAN_WORLD.possible30;
 
   const url = `https://bustandeen.com${langPath(lang, `/ramadan-calendar/${city.slug}/${gregorianYear}`)}`;
+
+  const row = (d: RamadanDay, possible = false) => (
+    <tr
+      key={d.date}
+      data-date={d.date}
+      className={`border-b border-[#1e2d42] last:border-0${possible ? ' opacity-70' : ''}`}
+    >
+      <td className="px-4 py-2 text-[#f1f5f9] font-semibold tabular-nums">
+        {d.fast}
+        {possible && <span className="sr-only"> ({possible30Label})</span>}
+      </td>
+      <td className="px-4 py-2 text-[#94a3b8]">
+        {/* Noon UTC of the civil date: formatted in UTC it is that date. */}
+        {dateFormat(locale, { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(d.noon)}
+      </td>
+      <td className="px-4 py-2 text-end text-[#10b981] font-bold tabular-nums">
+        {formatTimeInZone(d.times.fajr, city.timezone, locale)}
+      </td>
+      <td className="px-4 py-2 text-end text-[#f59e0b] font-bold tabular-nums">
+        {formatTimeInZone(d.times.maghrib, city.timezone, locale)}
+      </td>
+    </tr>
+  );
 
   return (
     <Layout
@@ -66,9 +93,14 @@ export default function RamadanCalendarPage({ lang, city, hijriYear, qr }: Props
       <p className="text-[#94a3b8] mt-2 print:hidden">
         {t.ramadan.subheading(cityName(city, lang), cityCountry(city, lang))}
       </p>
-      <p className="text-xs text-[#94a3b8] mt-3 bg-[#0d1520] border border-[#1e2d42] rounded-xl p-3 print:mt-0 print:mb-2 print:p-0 print:border-0 print:text-[8pt]">
-        {t.ramadan.note}
-      </p>
+      <RamadanNotice
+        lang={textLang}
+        plan={plan}
+        bd={bd}
+        country={country}
+        className="text-xs text-[#94a3b8] mt-3 bg-[#0d1520] border border-[#1e2d42] rounded-xl p-3 print:mt-0 print:mb-2 print:p-0 print:border-0 print:text-[8pt]"
+        linkClassName="text-[#10b981] underline underline-offset-2"
+      />
 
       <DownloadPdfButton lang={lang} className="mt-5 text-[#94a3b8]" />
 
@@ -83,28 +115,43 @@ export default function RamadanCalendarPage({ lang, city, hijriYear, qr }: Props
             </tr>
           </thead>
           <tbody>
-            {days.map((d) => (
-              <tr key={d.day} className="border-b border-[#1e2d42] last:border-0">
-                <td className="px-4 py-2 text-[#f1f5f9] font-semibold tabular-nums">{d.day}</td>
-                <td className="px-4 py-2 text-[#94a3b8]">
-                  {dateFormat(locale, {
-                    month: 'short',
-                    day: 'numeric',
-                    // UTC midnight of the civil date: formatting it in a zone
-                    // west of UTC would show the day before.
-                    timeZone: 'UTC',
-                  }).format(d.date)}
-                </td>
-                <td className="px-4 py-2 text-end text-[#10b981] font-bold tabular-nums">
-                  {formatTimeInZone(d.imsak, city.timezone, locale)}
-                </td>
-                <td className="px-4 py-2 text-end text-[#f59e0b] font-bold tabular-nums">
-                  {formatTimeInZone(d.iftar, city.timezone, locale)}
-                </td>
-              </tr>
-            ))}
+            {plan.days.map((d) => row(d))}
+            {plan.possible30 && (
+              <>
+                <tr>
+                  <td
+                    colSpan={4}
+                    aria-hidden="true"
+                    className="border-b border-[#1e2d42] px-4 py-1 text-[11px] font-semibold text-[#f59e0b]"
+                  >
+                    {possible30Label}
+                  </td>
+                </tr>
+                {row(plan.possible30, true)}
+              </>
+            )}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-4 space-y-2 text-xs text-[#94a3b8] print:mt-2 print:space-y-0.5 print:text-[7.5pt]">
+        <p>{timesNote}</p>
+        {bd ? (
+          <p>
+            {MONTHLY[textLang].mosqueNote[0]}
+            <a
+              href={ISLAMIC_FOUNDATION_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#10b981] underline underline-offset-2"
+            >
+              {MONTHLY[textLang].mosqueNote[1]}
+            </a>
+            {MONTHLY[textLang].mosqueNote[2]}
+          </p>
+        ) : (
+          <p>{RAMADAN_WORLD.masjidNote}</p>
+        )}
       </div>
 
       <a

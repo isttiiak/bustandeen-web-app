@@ -20,6 +20,36 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.178.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Clearer Ramadan calendars',
+        fixed: [
+          "The Bangladesh Ramadan calendars now say why the first fast is 9 February: Bangladesh's latest moon sighting, not the Umm al-Qura calendar. When the committee announces Ramadan, the calendars follow its date.",
+          'Every Ramadan calendar in the world now has a row for a possible 30th fast, on the page and on the printed sheet.',
+          'Smaller towns in Bangladesh, like Tongi and Saidpur, now follow the same moon sighting as the district calendars.',
+        ],
+        added: [
+          'Ramadan calendars outside Bangladesh now say which calculation method they use and remind you to follow your local masjid.',
+          'The Ramadan countdown in the app now says what its expected date is based on.',
+        ],
+      },
+      bn: {
+        title: 'আরও স্পষ্ট রমজান ক্যালেন্ডার',
+        fixed: [
+          'বাংলাদেশের রমজান ক্যালেন্ডারে এখন লেখা থাকে প্রথম রোজা কেন ৯ ফেব্রুয়ারি: বাংলাদেশের সর্বশেষ চাঁদ দেখা অনুযায়ী, উম্মুল কুরা ক্যালেন্ডার অনুযায়ী নয়। কমিটি রমজানের ঘোষণা দিলে ক্যালেন্ডার সেই তারিখ অনুসরণ করবে।',
+          'পৃথিবীর সব রমজান ক্যালেন্ডারে এখন সম্ভাব্য ৩০তম রোজার একটি সারি আছে, পাতায় ও ছাপা শিটে।',
+          'টঙ্গী, সৈয়দপুরের মতো বাংলাদেশের ছোট শহরগুলো এখন জেলার ক্যালেন্ডারের মতোই একই চাঁদ দেখা অনুসরণ করে।',
+        ],
+        added: [
+          'বাংলাদেশের বাইরের রমজান ক্যালেন্ডারে এখন লেখা থাকে কোন হিসাব পদ্ধতি ব্যবহার করা হয়েছে, আর স্থানীয় মসজিদ অনুসরণ করার কথা।',
+          'অ্যাপের রমজান কাউন্টডাউনে এখন লেখা থাকে সম্ভাব্য তারিখটি কিসের ভিত্তিতে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.177.1',
     date: '2026-10-17',
     text: {

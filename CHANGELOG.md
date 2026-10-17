@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.178.0 - Ramadan calendars: the notice names its basis, a possible 30th fast everywhere - 2026-10-17
+
+### Fixed
+
+- **Wrong reason on the Bangladesh Ramadan calendars** (found 2026-10-17): `/bn/ramadan-calendar/dhaka-bangladesh/2027` said the first fast is 9 Feb "by the Umm al-Qura calendar ... may begin a day later". Umm al-Qura says 8 Feb; 9 Feb comes from Bangladesh's Jumada al-Ula 1448 record (13 Oct 2026) carried forward by `resolveHijriDay`. `ramadanPlan` now returns a `basis` (`announced` / `forecast` / `ummAlQura`, plus the `forecastRecord`), and one `RamadanNotice` component says it: Umm al-Qura with no record, "based on Bangladesh's latest moon sighting (Jumada al-Ula began on 13 October 2026)" for a forecast, the committee's announcement once a Ramadan record exists. (a) and (b) keep the "once the committee announces" wording; "a day later" is gone.
+- **No possible 30th fast outside Bangladesh**: Umm al-Qura's Ramadan 1448 has 29 days, so London and every worldwide calendar printed no last day for a country that fasts 30. Every city's page now comes from `ramadanPlan` (the city's own country's records), with the "If Ramadan has 30 days" row on screen and on the A4 sheet.
+- **11 smaller Bangladesh towns** (Tongi, Saidpur, Bhairab Bazar, Sonargaon and others, en + bn) used plain Umm al-Qura (first fast 8 Feb) while the district sheets 20 km away said 9 Feb. They now follow the committee's records and wording like the district sheets.
+- **In-app navigation** to a Ramadan calendar used no records at all; it now uses the moon-sighting records the app has cached.
+
+### Changed
+
+- **Worldwide Ramadan calendars** get the method note (method name and Fajr angle read from adhan's own parameters, the minutes the method itself adds to Maghrib: 3 for the Moonsighting Committee and Dubai, 7 for Turkey; the Moonsighting Committee's seasonal Fajr; suhoor ends at Fajr, iftar at Maghrib, no caution minutes of our own) and the "follow your local masjid" note. English only (`locales/ramadanWorld.ts`). `methodFacts()` in `seo/utils/calc.ts` is cached per method.
+- **Ramadan index note** rewritten without the em dash, en + bn.
+- **App**: under "Expected around" the Ramadan countdown now says what the date rests on (announced, latest moon sighting, Umm al-Qura, or your own adjustment). `ramadanStartBasis` in `utils/ramadan.ts`.
+
+### Tests
+
+- `ramadanBd.test.ts`: the three notice states in en and bn (the real 13 Oct record gives the forecast wording, not Umm al-Qura); London: 29 days + possible 30th on 9 Mar; method notes for London, Istanbul and Karachi; Tongi follows the committee; a Shawwal record leaves no possible row.
+- `utils/ramadan.test.ts`: `ramadanStartBasis` for all four cases.
+- Build: table data of every page diffed against v5.177.1: only the possible-30th rows and the 11 Bangladesh towns' dates changed.
+
 ## v5.177.1 - Deep health check: no false "Database down" on a reconnect - 2026-10-17
 
 ### Fixed

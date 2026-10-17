@@ -1,8 +1,8 @@
-// The Ramadan calendar of a Bangladesh district (audit T4.4). Dates follow
-// the app's own rule (T4.1, hijriOffset.ts resolveHijriDay): Bangladesh's
-// month-start records (prerender.mjs fetches the public records at build
-// time). Without a record the dates are Umm al-Qura's, and the page says
-// they are subject to the national committee.
+// The Ramadan calendar of a city (audit T4.4; every country since v5.178.0).
+// Dates follow the app's own rule (T4.1, hijriOffset.ts resolveHijriDay): the
+// country's month-start records (prerender.mjs fetches the public records at
+// build time; only Bangladesh has any). Without a record the dates are
+// Umm al-Qura's, and the page says they are subject to the moon sighting.
 import type { CityEntry } from '../data/cities.js';
 import { resolveHijriDay, type MoonSightingRecord } from '../../utils/hijriOffset.js';
 import { computePrayerTimes, ramadanRangeForHijriYear } from './calc.js';
@@ -13,18 +13,27 @@ const DAY = 86_400_000;
 export interface RamadanDay {
   /** 1-based number of the fast. */
   fast: number;
-  /** `YYYY-MM-DD`, the civil date in Bangladesh. */
+  /** `YYYY-MM-DD`, the civil date in the city. */
   date: string;
-  /** Noon UTC of the date: same calendar day in Bangladesh (UTC+6). */
+  /** Noon UTC of the date: format it with `timeZone: 'UTC'`. */
   noon: Date;
   times: PrayerTimesResult;
 }
 
+/** What the first fast's date rests on:
+ *  - `announced`: a record of this Ramadan's start;
+ *  - `forecast`: the country's latest record (an earlier month) carried forward;
+ *  - `ummAlQura`: no record for the country. */
+export type RamadanBasis = 'announced' | 'forecast' | 'ummAlQura';
+
 export interface RamadanPlan {
   hijriYear: number;
   days: RamadanDay[];
+  basis: RamadanBasis;
   /** The record that announced this Ramadan's start, if one exists. */
   startRecord?: MoonSightingRecord;
+  /** For a `forecast`: the latest record before Ramadan, which moved the dates. */
+  forecastRecord?: MoonSightingRecord;
   /** A record after the month (Shawwal) has fixed its length. */
   endSettled: boolean;
   /** The day after a 29-day month, shown as "if Ramadan has 30 days" until
@@ -54,7 +63,7 @@ export function ramadanPlan(
   city: CityEntry,
   hijriYear: number,
   records: readonly MoonSightingRecord[],
-  country = 'BD'
+  country = city.countryCode
 ): RamadanPlan {
   const uq = ramadanRangeForHijriYear(hijriYear);
   const uqStart = Date.UTC(
@@ -68,16 +77,20 @@ export function ramadanPlan(
   // may run to 30 days, so this window always holds the month as Bangladesh
   // counts it.
   const noons: Date[] = [];
+  let firstRecord: MoonSightingRecord | undefined;
   for (let i = -3; i <= 33; i++) {
     const noon = new Date(uqStart + i * DAY);
-    const { hijri } = resolveHijriDay({
+    const { hijri, record } = resolveHijriDay({
       manual: false,
       userOffset: 0,
       country,
       records,
       day: ymd(noon),
     });
-    if (hijri.year === hijriYear && hijri.month === 9) noons.push(noon);
+    if (hijri.year === hijriYear && hijri.month === 9) {
+      if (noons.length === 0) firstRecord = record;
+      noons.push(noon);
+    }
   }
   const days = noons.map((noon, i) => dayRow(city, noon, i + 1));
   const mine = records.filter((r) => r.country === country && r.hijriYear === hijriYear);
@@ -92,5 +105,8 @@ export function ramadanPlan(
       ? dayRow(city, new Date(noons[28].getTime() + DAY), 30)
       : undefined;
 
-  return { hijriYear, days, startRecord, endSettled, possible30 };
+  const basis: RamadanBasis = startRecord ? 'announced' : firstRecord ? 'forecast' : 'ummAlQura';
+  const forecastRecord = basis === 'forecast' ? firstRecord : undefined;
+
+  return { hijriYear, days, basis, startRecord, forecastRecord, endSettled, possible30 };
 }

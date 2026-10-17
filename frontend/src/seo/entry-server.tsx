@@ -170,10 +170,13 @@ export function renderRoute({
           description: RAMADAN_BD[lang].description(name, year),
         };
       }
-      const gYear = ramadanRangeForHijriYear(route.hijriYear).start.getUTCFullYear();
+      // Every other city: the month as its country counts it (the Bangladesh
+      // towns follow the committee's records like the district sheets).
+      const gYear = ramadanGregorianYear(route.hijriYear);
+      const plan = ramadanPlan(city, route.hijriYear, moonSighting);
       return {
         html: renderToStaticMarkup(
-          <RamadanCalendarPage lang={lang} city={city} hijriYear={route.hijriYear} qr={qr} />
+          <RamadanCalendarPage lang={lang} city={city} plan={plan} gregorianYear={gYear} qr={qr} />
         ),
         title: `${t.ramadan.heading(cityName(city, lang), gYear)} | ${t.siteName}`,
         description: t.ramadan.subheading(cityName(city, lang), cityCountry(city, lang)),
