@@ -80,6 +80,7 @@ import {
 import type { HomeSpecialLayout } from '../utils/homeSpecial.js';
 import HomeLayoutEditor from '../components/home/HomeLayoutEditor.js';
 import FreshStart from '../components/FreshStart.js';
+import KazaDebtReset from '../components/KazaDebtReset.js';
 import Switch from '../components/Switch.js';
 import { getThemeMode, setThemeMode, THEME_MODE_EVENT, type ThemeMode } from '../utils/theme.js';
 import {
@@ -1167,6 +1168,10 @@ export default function Settings() {
             delay={0.24}
           >
             <FreshStart withAll />
+            {/* Kaza debt: its own reset, never part of Reset all */}
+            <div className="mt-3">
+              <KazaDebtReset row />
+            </div>
           </SectionCard>
 
           {/* ── Your data ── */}

@@ -12,6 +12,7 @@
 import api from '../lib/api.js';
 import { useUiStore } from '../store/useUiStore.js';
 import i18n from '../i18n.js';
+import { applyTheme, THEME_MODE_EVENT, THEME_MODE_KEY } from './theme.js';
 
 export const SYNCED_KEYS: readonly string[] = [
   'bustandeen_reduce_motion',
@@ -66,6 +67,7 @@ export const SYNCED_KEYS: readonly string[] = [
   'bustandeen_calendar_week_start',
   'bustandeen_calendar_weekend',
   'bustandeen_calendar_show',
+  'bustandeen_theme_mode',
 ];
 
 const SYNCED = new Set(SYNCED_KEYS);
@@ -184,6 +186,7 @@ export async function syncPrefsNow(): Promise<boolean> {
   const toPush: Record<string, Entry> = {};
   let changed = false;
   let langChanged = false;
+  let themeChanged = false;
 
   for (const key of SYNCED_KEYS) {
     const local = getLocal(key);
@@ -195,6 +198,7 @@ export async function syncPrefsNow(): Promise<boolean> {
         rawSet.call(localStorage, key, remote.v);
         changed = true;
         if (key === 'bustandeen_lang') langChanged = true;
+        if (key === THEME_MODE_KEY) themeChanged = true;
       }
       ts[key] = remote.t;
     } else if (local !== null && (!remote || localT > remote.t)) {
@@ -212,6 +216,11 @@ export async function syncPrefsNow(): Promise<boolean> {
     }
   }
 
+  // Appearance chosen on another device: repaint and tell open controls.
+  if (themeChanged) {
+    applyTheme();
+    window.dispatchEvent(new Event(THEME_MODE_EVENT));
+  }
   if (langChanged) {
     const lng = getLocal('bustandeen_lang');
     if (lng) void i18n.changeLanguage(lng);

@@ -4,6 +4,8 @@ import { dayEvents, type EventFilters } from './calendarEvents.js';
 import { addDays } from './hijriOffset.js';
 import {
   DEFAULT_PRINT,
+  emptyMonthKey,
+  printWeekend,
   DOWNLOADS_PER_HOUR,
   boxEvents,
   dayMarks,
@@ -44,6 +46,7 @@ const day = calendarDays(BD);
 const ALL: EventFilters = { country: 'BD', islamic: true, holidays: true, national: true };
 const opts = (p: Partial<PrintOptions>): PrintOptions => ({
   ...DEFAULT_PRINT,
+  weekend: [5, 6],
   order: ['greg', 'hijri', 'bn'],
   at: '2026-10-15',
   include: defaultInclude('BD'),
@@ -285,5 +288,22 @@ describe('downloads per hour on one device', () => {
     expect(downloadWaitMinutes(nine, now)).toBe(0);
     const full = [...nine, now - 50 * 60_000];
     expect(downloadWaitMinutes(full, now)).toBe(10);
+  });
+});
+
+describe('the side column and the weekend', () => {
+  it('says "no holidays" only when government holidays are listed', () => {
+    expect(emptyMonthKey([])).toBeNull();
+    expect(emptyMonthKey(['islamic'])).toBe('noneSpecial');
+    expect(emptyMonthKey(['national'])).toBe('noneSpecial');
+    expect(emptyMonthKey(['holiday'])).toBe('noneHolidays');
+    expect(emptyMonthKey(['islamic', 'holiday', 'national'])).toBe('noneThisMonth');
+  });
+  it('shades the weekend by default, and none when it is turned off', () => {
+    expect(DEFAULT_PRINT.weekendOn).toBe(true);
+    expect(DEFAULT_PRINT.guide).toBe(false);
+    expect(DEFAULT_PRINT.lines).toBe(true);
+    expect(printWeekend(opts({}))).toEqual([5, 6]);
+    expect(printWeekend(opts({ weekendOn: false }))).toEqual([]);
   });
 });

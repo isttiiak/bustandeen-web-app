@@ -2,6 +2,38 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.189.0 - Journey page, reset tracker, calendar download options, suhoor and iftar on Prayer Times - 2026-10-18
+
+### Added
+
+- **Journey page** (`/journey`, menu between Settings and Naseeh): one overview card per area (Salat, Zikr, Quran, Fasting) since its last fresh start, each linking to its analytics, then the **reset tracker**: how many times each area was started fresh, the Kaza debt resets and the uses of "Reset all stats", with dates (3 shown, "Show all"). Entries made by Reset all carry a "Reset all" tag.
+- **Journey tab** on Zikr, Quran and Fasting analytics (Stats / Journey switch): the area's overview card and its own reset tracker. Salat's existing Journey tab gains two trackers: Salat fresh starts and Kaza debt resets.
+- **Kaza debt reset in the main Settings** (Fresh start card), as its own row: it is never part of "Reset all stats" (the debt records prayers owed). The button and confirm are one component (`KazaDebtReset.tsx`) shared with Salat settings.
+- Backend: `GET /api/stats/resets` now returns `kaza` (a log of Kaza debt resets, `User.statsResets.kaza`, written by `salatDebt.service resetDebt` with `owedBefore`) and an `all` flag on every entry. New Reset-all entries store `all: true`; older ones are recognised by the one `resetAt` instant shared by all four areas. Nothing is migrated; Kaza debt resets before this version were not logged and are not counted. Backup v3 keeps `all` and the kaza log.
+- **Suhoor and iftar on the Prayer Times arch**: "For today's fast" until Maghrib, then "For tomorrow's fast", with the same times as the Ramadan page (sehri is its own time, e.g. Fajr - 3 min in Bangladesh; iftar is Maghrib with the country's calibration).
+- **Calendar download**: a Weekend section (on by default, the screen's weekend days, editable; off = no shading and no weekend in the guide), a Side column section with "Lines for notes" (on by default, in both Events and Blank layouts) and "Guide" (off by default: which number is which calendar, only with two or more calendars, and the colours on the sheet).
+- **Hijri as the main calendar**: its day numbers use the heading font (El Messiri), on screen and in the PDF, so the switch is seen.
+- **Next 3 months** on the calendar screen replaces "Next 30 days" (which repeated "This month"): the three months after the one on screen, each under its own heading.
+
+### Changed
+
+- **Library: "Islamic calendar" is now "Bustandeen Calendar"** (it also carries English, Bengali, holidays and national days).
+- **The moon line** ("dates that depend on the moon may differ by a day") left the printed sheets and the year at a glance; it is in the "Before you save" notice, shown with the Maghrib and Umm al-Qura lines only when the Hijri calendar or Islamic days are in the download.
+- **"This month" on the sheet and screen** is left out when nothing is listed (all includes off), and its empty line says "No special days" or "No holidays" only for what is listed: "holidays" is named only when government holidays are on.
+- **Home: every special-day card sits under the arch** in all three layouts (the Friday hour and al-Kahf cards were below Today's goals in Compact and Minimal).
+- **Settings sync**: the Appearance mode (`bustandeen_theme_mode`) now syncs across devices, applied on pull. Other unsynced keys are device-only by design (location, reader zoom, volume, caches).
+
+### Fixed
+
+- **Home arch, ʿIshāʾ after Islamic midnight** said "Ends at Fajr, 04:41 AM" under "Current: Isha". It now says "Best time has passed, still valid until 04:41 AM", and the Next line drops its "(in 3h 53m)" when it repeats the countdown above it.
+- **Salat Journey info** said a new phase starts at a Kaza debt reset; phases start at a Salat fresh start.
+
+### Tests
+
+- Backend `statsReset.e2e.test.js`: Reset all marks its entries, legacy Reset all found by the shared instant (and not when one area's instant differs), a Kaza debt reset is logged with `owedBefore` and changes no worship document.
+- `utils/resetTracker.test.ts` (new), `utils/calendarPrint.test.ts` (empty-month wording, weekend and side-column defaults).
+- e2e `calendar-print.spec.ts`: nothing included + English only (no This month, no guide, no moon line, lines, weekend shaded), national days only (no "holiday" wording, weekend off, guide on), Hijri-first heading font, moon line only in the notice; `calendar.spec.ts`: Next 3 months.
+
 ## v5.188.1 - A saved place outside the country table no longer borrows the phone's country - 2026-10-17
 
 ### Fixed

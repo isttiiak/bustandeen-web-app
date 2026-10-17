@@ -19,7 +19,7 @@ import {
 } from './calendarText.js';
 
 // The selected day's card and the two lists under the grid (This month,
-// Next 30 days) of the Islamic calendar.
+// Next 3 months) of the calendar.
 
 function Mark({ type }: { type: CalendarEvent['type'] }) {
   return <span aria-hidden="true" className={`inline-block w-2 h-2 shrink-0 ${EVENT_DOT[type]}`} />;
@@ -143,11 +143,14 @@ export function DayDetails({
   );
 }
 
-/** A list of days with their events (This month, Next 30 days). */
+type EventRow = { day: CalendarDay; event: CalendarEvent };
+
+/** A list of days with their events (This month), or of months (Next 3 months). */
 export function EventList({
   title,
   subtitle,
   rows,
+  groups,
   empty,
   showWhen,
   today,
@@ -156,7 +159,9 @@ export function EventList({
 }: {
   title: string;
   subtitle: string;
-  rows: { day: CalendarDay; event: CalendarEvent }[];
+  rows?: EventRow[];
+  /** Rows under a heading each (a month); empty groups are left out. */
+  groups?: { key: string; title: string; rows: EventRow[] }[];
   empty: string;
   showWhen?: boolean;
   today: string;
@@ -173,49 +178,60 @@ export function EventList({
         <h2 className="font-display text-base font-bold text-white">{title}</h2>
         <p className="text-xs text-white/60">{subtitle}</p>
       </div>
-      {rows.length === 0 ? (
-        <p className="text-sm text-white/70">{empty}</p>
-      ) : (
-        <ul className="divide-y divide-brand-border">
-          {rows.map(({ day, event }, i) => (
-            <li key={`${day.ymd}-${i}`}>
-              <button
-                type="button"
-                onClick={() => onPick(day.ymd)}
-                className="w-full grid grid-cols-[44px_1fr_auto] items-center gap-3 min-h-[52px] py-1.5 text-left"
-              >
-                <span className="grid justify-items-center rounded-control bg-brand-surface/60 py-1 leading-none">
-                  <span className="text-base font-bold text-white tabular-nums">
-                    {num(Number(day.ymd.slice(8)), lang)}
-                  </span>
-                  <span className="text-[10px] font-bold uppercase text-white/60">
-                    {gregLabel(day.ymd, { weekday: 'short' })}
-                  </span>
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-sm font-semibold text-white">
-                    {eventName(event, t, lang)}
-                  </span>
-                  <span className="flex items-center gap-1.5 text-xs text-white/70">
-                    <Mark type={event.type} />
-                    {t(`calendar.kind.${event.type}`)}
-                    {' · '}
-                    {num(day.hijri.day, lang)} {hijriMonthName(t, day.hijri.month)}
-                  </span>
-                </span>
-                {showWhen && (
-                  <span className="text-xs font-bold text-white/70 whitespace-nowrap">
-                    {t('calendar.inDays', {
-                      count: daysUntil(day.ymd),
-                      n: num(daysUntil(day.ymd), lang),
-                    })}
-                  </span>
-                )}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      {(() => {
+        const list = groups
+          ? groups.filter((g) => g.rows.length > 0)
+          : [{ key: 'all', title: '', rows: rows ?? [] }].filter((g) => g.rows.length > 0);
+        if (list.length === 0) return <p className="text-sm text-white/70">{empty}</p>;
+        return list.map((g) => (
+          <div key={g.key}>
+            {g.title && (
+              <h3 className="pt-2 text-[11px] font-bold uppercase tracking-wider text-brand-gold">
+                {g.title}
+              </h3>
+            )}
+            <ul className="divide-y divide-brand-border">
+              {g.rows.map(({ day, event }, i) => (
+                <li key={`${day.ymd}-${i}`}>
+                  <button
+                    type="button"
+                    onClick={() => onPick(day.ymd)}
+                    className="w-full grid grid-cols-[44px_1fr_auto] items-center gap-3 min-h-[52px] py-1.5 text-left"
+                  >
+                    <span className="grid justify-items-center rounded-control bg-brand-surface/60 py-1 leading-none">
+                      <span className="text-base font-bold text-white tabular-nums">
+                        {num(Number(day.ymd.slice(8)), lang)}
+                      </span>
+                      <span className="text-[10px] font-bold uppercase text-white/60">
+                        {gregLabel(day.ymd, { weekday: 'short' })}
+                      </span>
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-sm font-semibold text-white">
+                        {eventName(event, t, lang)}
+                      </span>
+                      <span className="flex items-center gap-1.5 text-xs text-white/70">
+                        <Mark type={event.type} />
+                        {t(`calendar.kind.${event.type}`)}
+                        {' · '}
+                        {num(day.hijri.day, lang)} {hijriMonthName(t, day.hijri.month)}
+                      </span>
+                    </span>
+                    {showWhen && daysUntil(day.ymd) > 0 && (
+                      <span className="text-xs font-bold text-white/70 whitespace-nowrap">
+                        {t('calendar.inDays', {
+                          count: daysUntil(day.ymd),
+                          n: num(daysUntil(day.ymd), lang),
+                        })}
+                      </span>
+                    )}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ));
+      })()}
     </section>
   );
 }

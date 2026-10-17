@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+import AreaJourney from '../components/journey/AreaJourney.js';
+import JourneyTabs, { type AnalyticsView } from '../components/journey/JourneyTabs.js';
 import IntentionLine from '../components/analytics/IntentionLine.js';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -415,6 +417,7 @@ function exportCsv(data: ChartDataPointWithBreakdown[], allTypes: string[]) {
 export default function ZikrAnalytics() {
   const { t, i18n } = useTranslation();
   const [selectedPeriod, setSelectedPeriod] = useState(7);
+  const [view, setView] = useState<AnalyticsView>('stats');
   const [showSettings, setShowSettings] = useState(false);
   const [activeTab, setActiveTab] = useState<'today' | 'all'>('today');
   const [showGoalModal, setShowGoalModal] = useState(false);
@@ -597,455 +600,472 @@ export default function ZikrAnalytics() {
             </div>
           </div>
           <IntentionLine />
-
-          {/* Streak + Goal cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <StreakCard
-              streak={streak}
-              onPause={handlePauseStreak}
-              onResume={handleResumeStreak}
-              isLoading={isUpdating}
-              chartData={last7Days}
-              dailyGoal={goal?.dailyTarget}
-              todayTotal={todayTotal}
-              isNewUser={lifetimeTotal === 0}
-            />
-            <GoalCard
-              goal={goal}
-              today={today}
-              onEditGoal={() => {
-                setNewGoal(goal?.dailyTarget ?? 100);
-                setNewGraceDays(goal?.graceDays ?? 1);
-                setShowGoalModal(true);
-              }}
-            />
-          </div>
-
-          {/* Overview Statistics */}
-          {since && (
-            <p
-              className="text-white/75 text-xs flex flex-wrap items-center gap-2 -mb-1"
-              data-testid="zikr-since"
-            >
-              <span className="rounded-full bg-brand-emerald/15 text-brand-emerald font-bold px-2.5 py-0.5 text-[11px]">
-                {t('freshStart.sinceChip', { date: formatDayLabel(since) })}
-              </span>
-              {t('freshStart.allTimeZikr', {
-                total: formatLocaleNumber(lifetimeTotal),
-                best: formatLocaleNumber(allTime?.lifetime?.longestStreak ?? 0),
-              })}
-            </p>
-          )}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              {
-                label: t('zikrAnalytics.allTimeStat'),
-                value: allTime?.totalCount != null ? formatLocaleNumber(allTime.totalCount) : '0',
-                accent: 'text-brand-emerald',
-              },
-              {
-                label: t('common.today'),
-                value: formatLocaleNumber(todayTotal),
-                accent: 'text-brand-gold',
-              },
-              {
-                label: t('zikrAnalytics.bestDay'),
-                value:
-                  allTime?.bestDay?.count != null ? formatLocaleNumber(allTime.bestDay.count) : '0',
-                accent: 'text-brand-info',
-                sub: allTime?.bestDay?.date
-                  ? formatLocaleDate(new Date(allTime.bestDay.date), {
-                      month: 'short',
-                      day: 'numeric',
-                    })
-                  : undefined,
-              },
-              {
-                label: t('zikrAnalytics.typesUsed'),
-                value: allTimeTypes.filter((at) => at.total > 0).length,
-                accent: 'text-brand-warm',
-              },
-            ].map((s, i) => (
-              <motion.div
-                key={s.label}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className={TILE}
-              >
-                <p className={`text-2xl font-black ${s.accent}`}>{s.value}</p>
-                <p className="text-white/70 text-[10px] font-bold uppercase mt-1">{s.label}</p>
-                {s.sub && <p className="text-white/70 text-[10px] mt-0.5">{s.sub}</p>}
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Breakdown by Type */}
-          <div className={`${CARD} p-4 sm:p-5`}>
-            <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-              <h2 className={SECTION_TITLE}>
-                <ChartBarIcon className="w-5 h-5 text-brand-emerald" />
-                {t('zikrAnalytics.breakdownByType')}
-              </h2>
-              <div className="tabs tabs-boxed tabs-sm bg-brand-surface border border-brand-border">
-                {(['today', 'all'] as const).map((tab) => (
-                  <button
-                    key={tab}
-                    className={`tab text-xs ${activeTab === tab ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'}`}
-                    onClick={() => setActiveTab(tab)}
-                  >
-                    {tab === 'today' ? t('common.today') : t('zikrAnalytics.allTimeLabel')}
-                  </button>
-                ))}
+          <JourneyTabs view={view} onChange={setView} />
+          {view === 'journey' ? (
+            <AreaJourney area="zikr" />
+          ) : (
+            <>
+              {/* Streak + Goal cards */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <StreakCard
+                  streak={streak}
+                  onPause={handlePauseStreak}
+                  onResume={handleResumeStreak}
+                  isLoading={isUpdating}
+                  chartData={last7Days}
+                  dailyGoal={goal?.dailyTarget}
+                  todayTotal={todayTotal}
+                  isNewUser={lifetimeTotal === 0}
+                />
+                <GoalCard
+                  goal={goal}
+                  today={today}
+                  onEditGoal={() => {
+                    setNewGoal(goal?.dailyTarget ?? 100);
+                    setNewGraceDays(goal?.graceDays ?? 1);
+                    setShowGoalModal(true);
+                  }}
+                />
               </div>
-            </div>
 
-            {displayData?.length ? (
-              <div className="space-y-2">
-                {displayData.map((item, i) => {
-                  const pct = displayTotal > 0 ? (item.total / displayTotal) * 100 : 0;
-                  return (
-                    <motion.div
-                      key={item.zikrType}
-                      initial={{ opacity: 0, x: -8 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.03 }}
-                      className="group"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-white/70 text-xs font-bold truncate max-w-[60%]">
-                          {zikrDisplayName(item.zikrType, i18n.language)}
-                        </span>
-                        <span className="text-white font-black text-xs tabular-nums">
-                          {formatLocaleNumber(item.total)}
-                        </span>
-                      </div>
-                      <div className="w-full bg-track rounded-full h-2 overflow-hidden">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${pct > 0 ? Math.max(pct, 2) : 0}%` }}
-                          transition={{ duration: 0.6, delay: i * 0.03 }}
-                          className="h-full rounded-full bg-data-good"
-                        />
-                      </div>
-                      <p className="text-white/70 text-[10px] mt-0.5">{pct.toFixed(1)}%</p>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            ) : (
-              <p className="text-white/70 text-sm text-center py-8">
-                {t(
-                  activeTab === 'today'
-                    ? 'zikrAnalytics.noZikrToday'
-                    : 'zikrAnalytics.noZikrAllTime'
-                )}
-              </p>
-            )}
-          </div>
-
-          {/* Trend chart */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between flex-wrap gap-3">
-              <h2 className={SECTION_TITLE}>
-                <PresentationChartLineIcon className="w-5 h-5 text-brand-emerald" />
-                {t('zikrAnalytics.trend')}
-                <InfoButton onClick={() => setInfoTopic('trend')} label={CHART_INFO.trend!.title} />
-              </h2>
-              <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border">
-                {periods.map((p) => (
-                  <button
-                    key={p.value}
-                    className={`tab text-xs ${selectedPeriod === p.value ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'}`}
-                    onClick={() => setSelectedPeriod(p.value)}
-                  >
-                    {p.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {lifetimeTotal === 0 ? (
-              <div className={`${CARD} p-6 text-center`}>
-                <p className="text-white/70 text-sm">
-                  {t(
-                    'zikrAnalytics.newUserTrend',
-                    'Your trend will appear here once you start counting zikr.'
-                  )}
+              {/* Overview Statistics */}
+              {since && (
+                <p
+                  className="text-white/75 text-xs flex flex-wrap items-center gap-2 -mb-1"
+                  data-testid="zikr-since"
+                >
+                  <span className="rounded-full bg-brand-emerald/15 text-brand-emerald font-bold px-2.5 py-0.5 text-[11px]">
+                    {t('freshStart.sinceChip', { date: formatDayLabel(since) })}
+                  </span>
+                  {t('freshStart.allTimeZikr', {
+                    total: formatLocaleNumber(lifetimeTotal),
+                    best: formatLocaleNumber(allTime?.lifetime?.longestStreak ?? 0),
+                  })}
                 </p>
+              )}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {[
+                  {
+                    label: t('zikrAnalytics.allTimeStat'),
+                    value:
+                      allTime?.totalCount != null ? formatLocaleNumber(allTime.totalCount) : '0',
+                    accent: 'text-brand-emerald',
+                  },
+                  {
+                    label: t('common.today'),
+                    value: formatLocaleNumber(todayTotal),
+                    accent: 'text-brand-gold',
+                  },
+                  {
+                    label: t('zikrAnalytics.bestDay'),
+                    value:
+                      allTime?.bestDay?.count != null
+                        ? formatLocaleNumber(allTime.bestDay.count)
+                        : '0',
+                    accent: 'text-brand-info',
+                    sub: allTime?.bestDay?.date
+                      ? formatLocaleDate(new Date(allTime.bestDay.date), {
+                          month: 'short',
+                          day: 'numeric',
+                        })
+                      : undefined,
+                  },
+                  {
+                    label: t('zikrAnalytics.typesUsed'),
+                    value: allTimeTypes.filter((at) => at.total > 0).length,
+                    accent: 'text-brand-warm',
+                  },
+                ].map((s, i) => (
+                  <motion.div
+                    key={s.label}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className={TILE}
+                  >
+                    <p className={`text-2xl font-black ${s.accent}`}>{s.value}</p>
+                    <p className="text-white/70 text-[10px] font-bold uppercase mt-1">{s.label}</p>
+                    {s.sub && <p className="text-white/70 text-[10px] mt-0.5">{s.sub}</p>}
+                  </motion.div>
+                ))}
               </div>
-            ) : (
-              <TrendChart data={chartData} period={selectedPeriod} />
-            )}
-          </div>
 
-          {/* ── Per-type trend lines ─────────────────────────────────────────── */}
-          {(() => {
-            const allTypes = [...new Set(chartData.flatMap((d) => Object.keys(d.breakdown ?? {})))];
-            const topTypes = allTypes
-              .map((type) => ({
-                type,
-                total: chartData.reduce((s, d) => s + (d.breakdown?.[type] ?? 0), 0),
-              }))
-              .sort((a, b) => b.total - a.total)
-              .slice(0, 5)
-              .map((x) => x.type);
-            if (!topTypes.length) return null;
-            return (
+              {/* Breakdown by Type */}
+              <div className={`${CARD} p-4 sm:p-5`}>
+                <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
+                  <h2 className={SECTION_TITLE}>
+                    <ChartBarIcon className="w-5 h-5 text-brand-emerald" />
+                    {t('zikrAnalytics.breakdownByType')}
+                  </h2>
+                  <div className="tabs tabs-boxed tabs-sm bg-brand-surface border border-brand-border">
+                    {(['today', 'all'] as const).map((tab) => (
+                      <button
+                        key={tab}
+                        className={`tab text-xs ${activeTab === tab ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'}`}
+                        onClick={() => setActiveTab(tab)}
+                      >
+                        {tab === 'today' ? t('common.today') : t('zikrAnalytics.allTimeLabel')}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {displayData?.length ? (
+                  <div className="space-y-2">
+                    {displayData.map((item, i) => {
+                      const pct = displayTotal > 0 ? (item.total / displayTotal) * 100 : 0;
+                      return (
+                        <motion.div
+                          key={item.zikrType}
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: i * 0.03 }}
+                          className="group"
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-white/70 text-xs font-bold truncate max-w-[60%]">
+                              {zikrDisplayName(item.zikrType, i18n.language)}
+                            </span>
+                            <span className="text-white font-black text-xs tabular-nums">
+                              {formatLocaleNumber(item.total)}
+                            </span>
+                          </div>
+                          <div className="w-full bg-track rounded-full h-2 overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${pct > 0 ? Math.max(pct, 2) : 0}%` }}
+                              transition={{ duration: 0.6, delay: i * 0.03 }}
+                              className="h-full rounded-full bg-data-good"
+                            />
+                          </div>
+                          <p className="text-white/70 text-[10px] mt-0.5">{pct.toFixed(1)}%</p>
+                        </motion.div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-white/70 text-sm text-center py-8">
+                    {t(
+                      activeTab === 'today'
+                        ? 'zikrAnalytics.noZikrToday'
+                        : 'zikrAnalytics.noZikrAllTime'
+                    )}
+                  </p>
+                )}
+              </div>
+
+              {/* Trend chart */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <h2 className={SECTION_TITLE}>
+                    <PresentationChartLineIcon className="w-5 h-5 text-brand-emerald" />
+                    {t('zikrAnalytics.trend')}
+                    <InfoButton
+                      onClick={() => setInfoTopic('trend')}
+                      label={CHART_INFO.trend!.title}
+                    />
+                  </h2>
+                  <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border">
+                    {periods.map((p) => (
+                      <button
+                        key={p.value}
+                        className={`tab text-xs ${selectedPeriod === p.value ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'}`}
+                        onClick={() => setSelectedPeriod(p.value)}
+                      >
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                {lifetimeTotal === 0 ? (
+                  <div className={`${CARD} p-6 text-center`}>
+                    <p className="text-white/70 text-sm">
+                      {t(
+                        'zikrAnalytics.newUserTrend',
+                        'Your trend will appear here once you start counting zikr.'
+                      )}
+                    </p>
+                  </div>
+                ) : (
+                  <TrendChart data={chartData} period={selectedPeriod} />
+                )}
+              </div>
+
+              {/* ── Per-type trend lines ─────────────────────────────────────────── */}
+              {(() => {
+                const allTypes = [
+                  ...new Set(chartData.flatMap((d) => Object.keys(d.breakdown ?? {}))),
+                ];
+                const topTypes = allTypes
+                  .map((type) => ({
+                    type,
+                    total: chartData.reduce((s, d) => s + (d.breakdown?.[type] ?? 0), 0),
+                  }))
+                  .sort((a, b) => b.total - a.total)
+                  .slice(0, 5)
+                  .map((x) => x.type);
+                if (!topTypes.length) return null;
+                return (
+                  <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
+                    <h2 className={SECTION_TITLE}>
+                      <PresentationChartLineIcon className="w-5 h-5 text-brand-info" />
+                      {t('zikrAnalytics.perTypeTrend', 'Per-type trends')}
+                      <InfoButton
+                        onClick={() => setInfoTopic('perTypeTrend')}
+                        label={CHART_INFO.perTypeTrend!.title}
+                      />
+                    </h2>
+                    <div className="flex flex-wrap gap-3 mb-1">
+                      {topTypes.map((type, si) => (
+                        <div key={type} className="flex items-center gap-1.5">
+                          <span
+                            className="inline-block rounded-full"
+                            style={{
+                              width: 8,
+                              height: 8,
+                              background: TYPE_COLORS[si % TYPE_COLORS.length],
+                            }}
+                          />
+                          <span className="text-white/70 text-[11px]">
+                            {zikrDisplayName(type, i18n.language)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    <PerTypeTrendChart data={chartData} topTypes={topTypes} />
+                  </div>
+                );
+              })()}
+
+              {/* ── Time of day ───────────────────────────────────────────────────── */}
               <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
                 <h2 className={SECTION_TITLE}>
-                  <PresentationChartLineIcon className="w-5 h-5 text-brand-info" />
-                  {t('zikrAnalytics.perTypeTrend', 'Per-type trends')}
+                  <ClockIcon className="w-5 h-5 text-brand-gold" />
+                  {t('zikrAnalytics.timeOfDay.title', 'Time of day')}
+                  <span className="text-white/70 text-xs font-normal font-sans">
+                    {t('zikrAnalytics.timeOfDay.subtitle', 'last 30 days')}
+                  </span>
                   <InfoButton
-                    onClick={() => setInfoTopic('perTypeTrend')}
-                    label={CHART_INFO.perTypeTrend!.title}
+                    onClick={() => setInfoTopic('timeOfDay')}
+                    label={CHART_INFO.timeOfDay!.title}
                   />
                 </h2>
-                <div className="flex flex-wrap gap-3 mb-1">
-                  {topTypes.map((type, si) => (
-                    <div key={type} className="flex items-center gap-1.5">
-                      <span
-                        className="inline-block rounded-full"
-                        style={{
-                          width: 8,
-                          height: 8,
-                          background: TYPE_COLORS[si % TYPE_COLORS.length],
-                        }}
-                      />
-                      <span className="text-white/70 text-[11px]">
-                        {zikrDisplayName(type, i18n.language)}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-                <PerTypeTrendChart data={chartData} topTypes={topTypes} />
+                <TimeOfDayChart data={timeOfDayData} />
               </div>
-            );
-          })()}
 
-          {/* ── Time of day ───────────────────────────────────────────────────── */}
-          <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
-            <h2 className={SECTION_TITLE}>
-              <ClockIcon className="w-5 h-5 text-brand-gold" />
-              {t('zikrAnalytics.timeOfDay.title', 'Time of day')}
-              <span className="text-white/70 text-xs font-normal font-sans">
-                {t('zikrAnalytics.timeOfDay.subtitle', 'last 30 days')}
-              </span>
-              <InfoButton
-                onClick={() => setInfoTopic('timeOfDay')}
-                label={CHART_INFO.timeOfDay!.title}
-              />
-            </h2>
-            <TimeOfDayChart data={timeOfDayData} />
-          </div>
-
-          {/* ── Contribution heatmap ─────────────────────────────────────────── */}
-          {yearData?.chartData && yearData.chartData.length > 0 && (
-            <div className={`${CARD} p-4 sm:p-5 space-y-2`}>
-              <h2 className={SECTION_TITLE}>
-                <CalendarDaysIcon className="w-5 h-5 text-brand-emerald" />
-                {t('zikrAnalytics.heatmap', 'Activity heatmap')}
-                <span className="text-white/70 text-xs font-normal font-sans">
-                  {t('zikrAnalytics.heatmapSub', 'last 365 days')}
-                </span>
-                <InfoButton
-                  onClick={() => setInfoTopic('heatmap')}
-                  label={CHART_INFO.heatmap!.title}
-                />
-              </h2>
-              {lifetimeTotal === 0 ? (
-                <p className="text-white/70 text-sm text-center py-6">
-                  {t(
-                    'zikrAnalytics.newUserHeatmap',
-                    'Not enough activity yet. This fills in as you go.'
+              {/* ── Contribution heatmap ─────────────────────────────────────────── */}
+              {yearData?.chartData && yearData.chartData.length > 0 && (
+                <div className={`${CARD} p-4 sm:p-5 space-y-2`}>
+                  <h2 className={SECTION_TITLE}>
+                    <CalendarDaysIcon className="w-5 h-5 text-brand-emerald" />
+                    {t('zikrAnalytics.heatmap', 'Activity heatmap')}
+                    <span className="text-white/70 text-xs font-normal font-sans">
+                      {t('zikrAnalytics.heatmapSub', 'last 365 days')}
+                    </span>
+                    <InfoButton
+                      onClick={() => setInfoTopic('heatmap')}
+                      label={CHART_INFO.heatmap!.title}
+                    />
+                  </h2>
+                  {lifetimeTotal === 0 ? (
+                    <p className="text-white/70 text-sm text-center py-6">
+                      {t(
+                        'zikrAnalytics.newUserHeatmap',
+                        'Not enough activity yet. This fills in as you go.'
+                      )}
+                    </p>
+                  ) : (
+                    <HeatmapCalendar data={yearData.chartData} />
                   )}
-                </p>
-              ) : (
-                <HeatmapCalendar data={yearData.chartData} />
+                </div>
               )}
-            </div>
-          )}
 
-          {/* ── Personal records ─────────────────────────────────────────────── */}
-          {(() => {
-            const yearDays = yearData?.chartData ?? [];
-            const activeDays = yearDays.filter((d) => d.total > 0);
-            const avgActive = activeDays.length
-              ? Math.round(activeDays.reduce((s, d) => s + d.total, 0) / activeDays.length)
-              : 0;
-            const dayOfWeekTotals: number[] = [0, 0, 0, 0, 0, 0, 0];
-            for (const d of yearDays) {
-              const dow = new Date(d.date + 'T12:00:00').getDay();
-              dayOfWeekTotals[dow] = (dayOfWeekTotals[dow] ?? 0) + d.total;
-            }
-            const bestDow = dayOfWeekTotals.indexOf(Math.max(...dayOfWeekTotals));
-            // 7 Jan 2024 was a Sunday: weekday names in the UI language.
-            const dowName = (dow: number) =>
-              formatLocaleDate(new Date(2024, 0, 7 + dow, 12), { weekday: 'long' });
-            const records = [
-              {
-                label: t('zikrAnalytics.bestDayRecord', 'Best day'),
-                value: allTime?.bestDay?.count ? formatLocaleNumber(allTime.bestDay.count) : '-',
-                sub: allTime?.bestDay?.date
-                  ? formatLocaleDate(new Date(allTime.bestDay.date), {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })
-                  : '',
-                accent: 'text-brand-emerald',
-              },
-              {
-                label: t('zikrAnalytics.longestStreak', 'Longest streak'),
-                value: streak?.longestStreak
-                  ? t('zikrAnalytics.streakDaysValue', '{{n}} d', {
-                      n: formatLocaleNumber(streak.longestStreak),
-                    })
-                  : '-',
-                sub: '',
-                accent: 'text-brand-gold',
-              },
-              {
-                label: t('zikrAnalytics.avgActiveDay', 'Avg on active days'),
-                value: avgActive ? formatLocaleNumber(avgActive) : '-',
-                sub: t('zikrAnalytics.activeDaysCount', '{{n}} active days', {
-                  n: formatLocaleNumber(activeDays.length),
-                }),
-                accent: 'text-brand-info',
-              },
-              {
-                label: t('zikrAnalytics.mostActiveDay', 'Most active day'),
-                value: dayOfWeekTotals[bestDow] > 0 ? dowName(bestDow) : '-',
-                sub: '',
-                accent: 'text-brand-warm',
-              },
-            ];
-            return (
+              {/* ── Personal records ─────────────────────────────────────────────── */}
+              {(() => {
+                const yearDays = yearData?.chartData ?? [];
+                const activeDays = yearDays.filter((d) => d.total > 0);
+                const avgActive = activeDays.length
+                  ? Math.round(activeDays.reduce((s, d) => s + d.total, 0) / activeDays.length)
+                  : 0;
+                const dayOfWeekTotals: number[] = [0, 0, 0, 0, 0, 0, 0];
+                for (const d of yearDays) {
+                  const dow = new Date(d.date + 'T12:00:00').getDay();
+                  dayOfWeekTotals[dow] = (dayOfWeekTotals[dow] ?? 0) + d.total;
+                }
+                const bestDow = dayOfWeekTotals.indexOf(Math.max(...dayOfWeekTotals));
+                // 7 Jan 2024 was a Sunday: weekday names in the UI language.
+                const dowName = (dow: number) =>
+                  formatLocaleDate(new Date(2024, 0, 7 + dow, 12), { weekday: 'long' });
+                const records = [
+                  {
+                    label: t('zikrAnalytics.bestDayRecord', 'Best day'),
+                    value: allTime?.bestDay?.count
+                      ? formatLocaleNumber(allTime.bestDay.count)
+                      : '-',
+                    sub: allTime?.bestDay?.date
+                      ? formatLocaleDate(new Date(allTime.bestDay.date), {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        })
+                      : '',
+                    accent: 'text-brand-emerald',
+                  },
+                  {
+                    label: t('zikrAnalytics.longestStreak', 'Longest streak'),
+                    value: streak?.longestStreak
+                      ? t('zikrAnalytics.streakDaysValue', '{{n}} d', {
+                          n: formatLocaleNumber(streak.longestStreak),
+                        })
+                      : '-',
+                    sub: '',
+                    accent: 'text-brand-gold',
+                  },
+                  {
+                    label: t('zikrAnalytics.avgActiveDay', 'Avg on active days'),
+                    value: avgActive ? formatLocaleNumber(avgActive) : '-',
+                    sub: t('zikrAnalytics.activeDaysCount', '{{n}} active days', {
+                      n: formatLocaleNumber(activeDays.length),
+                    }),
+                    accent: 'text-brand-info',
+                  },
+                  {
+                    label: t('zikrAnalytics.mostActiveDay', 'Most active day'),
+                    value: dayOfWeekTotals[bestDow] > 0 ? dowName(bestDow) : '-',
+                    sub: '',
+                    accent: 'text-brand-warm',
+                  },
+                ];
+                return (
+                  <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
+                    <div className="flex items-center justify-between gap-3">
+                      <h2 className={SECTION_TITLE}>
+                        <TrophyIcon className="w-5 h-5 text-brand-gold" />
+                        {t('zikrAnalytics.personalRecords', 'Personal records')}
+                      </h2>
+                      <button
+                        onClick={() =>
+                          exportCsv(chartData, [
+                            ...new Set(chartData.flatMap((d) => Object.keys(d.breakdown ?? {}))),
+                          ])
+                        }
+                        className="flex items-center gap-1.5 text-white/70 hover:text-brand-emerald text-xs font-semibold transition-colors"
+                        title={t('zikrAnalytics.exportCsv', 'Export CSV')}
+                      >
+                        <ArrowDownTrayIcon className="w-4 h-4" aria-hidden="true" />
+                        CSV
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {records.map((r) => (
+                        <div
+                          key={r.label}
+                          className="rounded-control bg-brand-surface/60 border border-brand-border shadow-elev-1 p-3 text-center"
+                        >
+                          <p className={`text-xl font-black ${r.accent}`}>{r.value}</p>
+                          <p className="text-white/70 text-[10px] font-bold uppercase mt-1">
+                            {r.label}
+                          </p>
+                          {r.sub && <p className="text-white/70 text-[10px] mt-0.5">{r.sub}</p>}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* ── Session history ───────────────────────────────────────────────── */}
               <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
                 <div className="flex items-center justify-between gap-3">
                   <h2 className={SECTION_TITLE}>
-                    <TrophyIcon className="w-5 h-5 text-brand-gold" />
-                    {t('zikrAnalytics.personalRecords', 'Personal records')}
+                    <ListBulletIcon className="w-5 h-5 text-brand-info" />
+                    {t('zikrAnalytics.sessions.title', 'Session history')}
                   </h2>
-                  <button
-                    onClick={() =>
-                      exportCsv(chartData, [
-                        ...new Set(chartData.flatMap((d) => Object.keys(d.breakdown ?? {}))),
-                      ])
-                    }
-                    className="flex items-center gap-1.5 text-white/70 hover:text-brand-emerald text-xs font-semibold transition-colors"
-                    title={t('zikrAnalytics.exportCsv', 'Export CSV')}
-                  >
-                    <ArrowDownTrayIcon className="w-4 h-4" aria-hidden="true" />
-                    CSV
-                  </button>
+                  <input
+                    type="date"
+                    value={sessionsDate}
+                    max={getTrackingDay()}
+                    onChange={(e) => setSessionsDate(e.target.value)}
+                    aria-label={t('zikrAnalytics.sessions.dateLabel', 'Choose a day')}
+                    className="input input-xs h-11 input-bordered rounded-control bg-brand-surface border-brand-border text-white/80 text-xs"
+                  />
                 </div>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {records.map((r) => (
-                    <div
-                      key={r.label}
-                      className="rounded-control bg-brand-surface/60 border border-brand-border shadow-elev-1 p-3 text-center"
-                    >
-                      <p className={`text-xl font-black ${r.accent}`}>{r.value}</p>
-                      <p className="text-white/70 text-[10px] font-bold uppercase mt-1">
-                        {r.label}
-                      </p>
-                      {r.sub && <p className="text-white/70 text-[10px] mt-0.5">{r.sub}</p>}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            );
-          })()}
-
-          {/* ── Session history ───────────────────────────────────────────────── */}
-          <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
-            <div className="flex items-center justify-between gap-3">
-              <h2 className={SECTION_TITLE}>
-                <ListBulletIcon className="w-5 h-5 text-brand-info" />
-                {t('zikrAnalytics.sessions.title', 'Session history')}
-              </h2>
-              <input
-                type="date"
-                value={sessionsDate}
-                max={getTrackingDay()}
-                onChange={(e) => setSessionsDate(e.target.value)}
-                aria-label={t('zikrAnalytics.sessions.dateLabel', 'Choose a day')}
-                className="input input-xs h-11 input-bordered rounded-control bg-brand-surface border-brand-border text-white/80 text-xs"
-              />
-            </div>
-            {sessionsLoading ? (
-              <p className="text-white/70 text-xs text-center py-4">
-                {t('common.loading', 'Loading…')}
-              </p>
-            ) : sessionsData && sessionsData.length > 0 ? (
-              <div className="space-y-2">
-                {sessionsData.map((s, i) => {
-                  // Manual entries carry an explicit flag. Older ones (logged
-                  // before the flag existed) were anchored to the tracking
-                  // day's midday, so still detect those by both start and end
-                  // falling within 1 minute of noon.
-                  const startMs = new Date(s.start).getTime();
-                  const endMs = new Date(s.end).getTime();
-                  const startHour = new Date(s.start).getHours();
-                  const startMin = new Date(s.start).getMinutes();
-                  const isManualEntry =
-                    s.manual === true ||
-                    (endMs - startMs < 60_000 && startHour === 12 && startMin === 0);
-                  return (
-                    <div
-                      key={i}
-                      className="flex items-center justify-between gap-3 rounded-control bg-brand-surface/50 border border-brand-border p-3"
-                    >
-                      <div className="min-w-0">
-                        <p className="text-white/80 text-sm font-semibold tabular-nums">
-                          {isManualEntry ? (
-                            <span className="text-white/70 text-xs font-medium italic">
-                              {t('zikrAnalytics.sessions.manualLog', 'Manual log')}
-                            </span>
-                          ) : (
-                            <>
-                              {formatLocaleTime(new Date(s.start), {
-                                hour: 'numeric',
-                                minute: '2-digit',
-                              })}
-                              {' – '}
-                              {formatLocaleTime(new Date(s.end), {
-                                hour: 'numeric',
-                                minute: '2-digit',
-                              })}
-                            </>
-                          )}
-                        </p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {Object.entries(s.perType).map(([type, count]) => (
-                            <span
-                              key={type}
-                              className="px-1.5 py-0.5 rounded-md bg-shade/10 border border-brand-border text-[10px] text-white/70"
-                            >
-                              {zikrDisplayName(type, i18n.language)} ×{formatLocaleNumber(count)}
-                            </span>
-                          ))}
+                {sessionsLoading ? (
+                  <p className="text-white/70 text-xs text-center py-4">
+                    {t('common.loading', 'Loading…')}
+                  </p>
+                ) : sessionsData && sessionsData.length > 0 ? (
+                  <div className="space-y-2">
+                    {sessionsData.map((s, i) => {
+                      // Manual entries carry an explicit flag. Older ones (logged
+                      // before the flag existed) were anchored to the tracking
+                      // day's midday, so still detect those by both start and end
+                      // falling within 1 minute of noon.
+                      const startMs = new Date(s.start).getTime();
+                      const endMs = new Date(s.end).getTime();
+                      const startHour = new Date(s.start).getHours();
+                      const startMin = new Date(s.start).getMinutes();
+                      const isManualEntry =
+                        s.manual === true ||
+                        (endMs - startMs < 60_000 && startHour === 12 && startMin === 0);
+                      return (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between gap-3 rounded-control bg-brand-surface/50 border border-brand-border p-3"
+                        >
+                          <div className="min-w-0">
+                            <p className="text-white/80 text-sm font-semibold tabular-nums">
+                              {isManualEntry ? (
+                                <span className="text-white/70 text-xs font-medium italic">
+                                  {t('zikrAnalytics.sessions.manualLog', 'Manual log')}
+                                </span>
+                              ) : (
+                                <>
+                                  {formatLocaleTime(new Date(s.start), {
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                  })}
+                                  {' – '}
+                                  {formatLocaleTime(new Date(s.end), {
+                                    hour: 'numeric',
+                                    minute: '2-digit',
+                                  })}
+                                </>
+                              )}
+                            </p>
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {Object.entries(s.perType).map(([type, count]) => (
+                                <span
+                                  key={type}
+                                  className="px-1.5 py-0.5 rounded-md bg-shade/10 border border-brand-border text-[10px] text-white/70"
+                                >
+                                  {zikrDisplayName(type, i18n.language)} ×
+                                  {formatLocaleNumber(count)}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <p className="text-brand-emerald font-black text-lg shrink-0">
+                            {formatLocaleNumber(s.total)}
+                          </p>
                         </div>
-                      </div>
-                      <p className="text-brand-emerald font-black text-lg shrink-0">
-                        {formatLocaleNumber(s.total)}
-                      </p>
-                    </div>
-                  );
-                })}
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-white/70 text-xs text-center py-4">
+                    {t('zikrAnalytics.sessions.empty', 'No sessions logged for this day')}
+                  </p>
+                )}
+                <p className="text-white/70 text-[10px] leading-relaxed">
+                  {t(
+                    'zikrAnalytics.sessions.note',
+                    "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
+                  )}
+                </p>
               </div>
-            ) : (
-              <p className="text-white/70 text-xs text-center py-4">
-                {t('zikrAnalytics.sessions.empty', 'No sessions logged for this day')}
-              </p>
-            )}
-            <p className="text-white/70 text-[10px] leading-relaxed">
-              {t(
-                'zikrAnalytics.sessions.note',
-                "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
-              )}
-            </p>
-          </div>
+            </>
+          )}
         </div>
 
         {/* Set Goal modal: portaled above the navbar, like the other dialogs */}

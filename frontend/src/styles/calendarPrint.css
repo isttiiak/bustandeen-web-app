@@ -226,6 +226,11 @@
   font-variant-numeric: tabular-nums;
   color: var(--pc-ink);
 }
+/* Hijri as the main calendar: its numbers in the heading font (El Messiri), as on screen. */
+.pc-hj {
+  font-family: 'El Messiri', Georgia, serif;
+  font-weight: 700;
+}
 .pc-c.pc-we .pc-n1 {
   color: var(--pc-wkd);
 }
@@ -365,7 +370,7 @@
   display: flex;
   flex-direction: column;
 }
-/* "Blank for writing": thin, faint lines, 26px apart, to the bottom of the
+/* Lines for notes (a download switch): thin, faint lines, 26px apart, to the bottom of the
    side column (landscape), or a band under the guide (portrait). */
 .pc-notes {
   flex: 1;

@@ -453,6 +453,7 @@ async function importUser(uid: string, data: BackupFileV3): Promise<number> {
           date: e.date,
           note: typeof e.note === 'string' ? e.note.slice(0, 500) : '',
           resetAt: e.resetAt ? new Date(e.resetAt as string) : new Date(),
+          ...(e.all === true ? { all: true } : {}),
         }));
     }
   }
@@ -517,6 +518,10 @@ function importFreshStarts(raw: unknown): PlainDoc | null {
         note: typeof e.note === 'string' ? e.note.slice(0, 200) : '',
         resetAt: e.resetAt ? new Date(e.resetAt as string) : new Date(),
         ...(isObj(e.prevStreak) ? { prevStreak: e.prevStreak } : {}),
+        ...(e.all === true ? { all: true } : {}),
+        ...(typeof e.owedBefore === 'number' && e.owedBefore >= 0
+          ? { owedBefore: Math.round(e.owedBefore) }
+          : {}),
         ...(isObj(e.surahBaseline)
           ? {
               surahBaseline: Object.fromEntries(
@@ -531,7 +536,7 @@ function importFreshStarts(raw: unknown): PlainDoc | null {
   }
   return Object.keys(out).length ? out : null;
 }
-const FRESH_AREAS = new Set(['zikr', 'fasting', 'quran']);
+const FRESH_AREAS = new Set(['zikr', 'fasting', 'quran', 'kaza']);
 
 async function importRayhanah(uid: string, r: BackupFileV3['rayhanah']): Promise<number> {
   if (!isObj(r)) return 0;

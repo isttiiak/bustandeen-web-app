@@ -50,6 +50,8 @@ async function print(page: Page) {
   await page.getByTestId('calendar-download-go').click();
   const notice = page.getByTestId('calendar-notice');
   await expect(notice).toContainText('Hijri dates begin at Maghrib');
+  // The moon line lives in the notice now, not on the sheets.
+  await expect(notice.getByTestId('calendar-notice-moon')).toContainText('may differ by a day');
   await notice.getByRole('button', { name: 'Open print sheet' }).click();
   await expect
     .poll(() => page.evaluate(() => (window as unknown as { __prints: number }).__prints))
@@ -142,7 +144,10 @@ test('portrait Letter, blank days, Hijri first', async ({ page }) => {
   await print(page);
   const sheet = page.locator('#pc-print-root [data-print-sheet]');
   await expect(sheet).toContainText('Jumādā al-Ūlā 1448 AH');
-  // Blank for writing: empty day boxes, writing lines under the guide.
+  // Hijri first: its big numbers in the heading font.
+  await expect(sheet.locator('.pc-n1.pc-hj').first()).toBeVisible({ visible: false });
+  expect(await sheet.locator('.pc-n1.pc-hj').count()).toBeGreaterThan(28);
+  // Blank for writing: empty day boxes, writing lines under the list.
   // (The print root is hidden on screen, so count rather than look.)
   await expect(sheet.locator('.pc-evs')).toHaveCount(0);
   await expect(sheet.locator('[data-print-notes]')).toHaveCount(1);
@@ -177,7 +182,7 @@ test('blank for writing, landscape: the lines fill the side column', async ({ pa
   expect(pdfPages(await pdf(page))).toBe(1);
 });
 
-test('a 2027 month says its holidays are not published yet; every sheet has the moon line', async ({
+test('a 2027 month says its holidays are not published yet; the moon line is in the notice only', async ({
   page,
 }) => {
   await page.clock.setFixedTime(new Date('2026-10-15T10:00:00+06:00'));
@@ -194,7 +199,7 @@ test('a 2027 month says its holidays are not published yet; every sheet has the 
   await print(page);
   const sheet = page.locator('#pc-print-root [data-print-sheet]');
   await expect(sheet.locator('[data-print-missing]')).toContainText('2027');
-  await expect(sheet.locator('[data-print-moon]')).toContainText('may differ by a day');
+  await expect(sheet.locator('[data-print-moon]')).toHaveCount(0);
   expect(pdfPages(await pdf(page))).toBe(1);
 });
 
@@ -319,4 +324,57 @@ test.describe('in Pakistan', () => {
     await expect(page.locator('[data-print-day="2026-11-09"] .pc-ev')).toContainText('Iqbal Day');
     await expect(page.locator('[data-print-day="2026-11-10"] .pc-ev')).toHaveCount(0);
   });
+});
+
+test('nothing included, English only: no This month, no guide, no moon line, weekend switch', async ({
+  page,
+}) => {
+  await openDownload(page, 'greg');
+  const sw = (name: string) => page.getByRole('switch', { name, exact: true });
+  await sw('Islamic days').uncheck();
+  await sw('National days').uncheck();
+  await page.getByRole('button', { name: 'Blank for writing' }).click();
+  // Weekend on by default, guide off, lines on.
+  await expect(sw('Shade the weekend')).toBeChecked();
+  await expect(sw('Guide')).not.toBeChecked();
+  await expect(sw('Lines for notes')).toBeChecked();
+  await page.getByTestId('calendar-download-go').click();
+  const notice = page.getByTestId('calendar-notice');
+  // English only and no Islamic days: nothing about the moon to say.
+  await expect(notice.getByTestId('calendar-notice-moon')).toHaveCount(0);
+  await notice.getByRole('button', { name: 'Open print sheet' }).click();
+  const sheet = page.locator('#pc-print-root [data-print-sheet]');
+  await expect(sheet).toHaveCount(1);
+  await expect(sheet.locator('.pc-side')).not.toContainText('This month');
+  await expect(sheet.locator('.pc-side')).not.toContainText('No special days');
+  await expect(sheet.locator('[data-print-guide]')).toHaveCount(0);
+  await expect(sheet.locator('[data-print-moon]')).toHaveCount(0);
+  await expect(sheet.locator('[data-print-notes]')).toHaveCount(1);
+  // Bangladesh weekend (Friday, Saturday) shaded.
+  await expect(sheet.locator('.pc-c.pc-we')).not.toHaveCount(0);
+  expect(pdfPages(await pdf(page))).toBe(1);
+});
+
+test('national days only: "no special days" never mentions holidays; weekend off; guide on', async ({
+  page,
+}) => {
+  await openDownload(page);
+  const sw = (name: string) => page.getByRole('switch', { name, exact: true });
+  await sw('Islamic days').uncheck();
+  await sw('Shade the weekend').uncheck();
+  await sw('Lines for notes').uncheck();
+  await sw('Guide').check();
+  // October 2026 has no national day in Bangladesh.
+  await print(page);
+  const sheet = page.locator('#pc-print-root [data-print-sheet]');
+  await expect(sheet.locator('.pc-side')).toContainText('No special days this month.');
+  await expect(sheet.locator('.pc-side')).not.toContainText('holiday');
+  await expect(sheet.locator('.pc-we')).toHaveCount(0);
+  await expect(sheet.locator('[data-print-notes]')).toHaveCount(0);
+  // The guide: two calendars, the national colour, no weekend.
+  const guide = sheet.locator('[data-print-guide]');
+  await expect(guide).toContainText('Hijri');
+  await expect(guide).toContainText('National day');
+  await expect(guide).not.toContainText('Weekend');
+  expect(pdfPages(await pdf(page))).toBe(1);
 });

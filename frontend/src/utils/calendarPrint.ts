@@ -51,16 +51,46 @@ export interface PrintOptions {
   orient: 'landscape' | 'portrait';
   color: 'color' | 'mono';
   template: 'bustan' | 'classic' | 'minimal';
+  /** Shade the weekend days (`weekend`, 0 = Sunday). */
+  weekendOn: boolean;
+  weekend: number[];
+  /** The side column's guide: which number is which calendar, and the colours. Off by default. */
+  guide: boolean;
+  /** Faint lines to write on in the rest of the side column. */
+  lines: boolean;
 }
 
-export const DEFAULT_PRINT: Omit<PrintOptions, 'order' | 'at' | 'include'> = {
+export const DEFAULT_PRINT: Omit<PrintOptions, 'order' | 'at' | 'include' | 'weekend'> = {
   range: { kind: 'month' },
   inside: 'events',
   paper: 'A4',
   orient: 'landscape',
   color: 'color',
   template: 'bustan',
+  weekendOn: true,
+  guide: false,
+  lines: true,
 };
+
+/** The weekend days a sheet shades: none when the weekend is turned off. */
+export const printWeekend = (o: Pick<PrintOptions, 'weekendOn' | 'weekend'>): number[] =>
+  o.weekendOn ? o.weekend : [];
+
+/**
+ * What a month with no listed days says, by the kinds of days listed: it may
+ * only say "no holidays" when government holidays are listed. Null when
+ * nothing is listed at all (the "This month" block is then left out).
+ */
+export function emptyMonthKey(
+  kinds: readonly CalendarEvent['type'][]
+): 'noneThisMonth' | 'noneSpecial' | 'noneHolidays' | null {
+  const holidays = kinds.includes('holiday');
+  const special = kinds.includes('islamic') || kinds.includes('national');
+  if (holidays && special) return 'noneThisMonth';
+  if (holidays) return 'noneHolidays';
+  if (special) return 'noneSpecial';
+  return null;
+}
 
 /**
  * What a download lists to start with: Islamic days everywhere; in a country

@@ -41,7 +41,7 @@ import {
   type PrintOptions,
 } from '../../utils/calendarPrint.js';
 import { bnDigits } from '../../utils/bengaliCalendar.js';
-import { monthTitle, num, type Lang } from './calendarText.js';
+import { gregLabel, monthTitle, num, type Lang } from './calendarText.js';
 
 const KINDS: readonly CalendarKind[] = ['greg', 'hijri', 'bn'];
 const ROLES = ['dRoleBig', 'dRoleTopRight', 'dRoleUnder'] as const;
@@ -79,6 +79,8 @@ export default function DownloadSheet({
   today,
   country,
   countryLabel,
+  weekStart,
+  weekend,
   onRequestCalendar,
   onPrint,
 }: {
@@ -93,6 +95,9 @@ export default function DownloadSheet({
   /** The calendar's country (ISO code): government holidays and national days. */
   country: string | null;
   countryLabel: string;
+  /** The screen's week: the download starts with its weekend and can change it. */
+  weekStart: number;
+  weekend: readonly number[];
   /** Opens "Request your country's calendar" over the page. */
   onRequestCalendar: () => void;
   onPrint: (o: PrintOptions) => void;
@@ -101,7 +106,11 @@ export default function DownloadSheet({
   const lang: Lang = i18n.language === 'bn' ? 'bn' : 'en';
   const startOrder = [grid, ...layers.filter((k) => k !== grid)];
   const [order, setOrder] = useState<CalendarKind[]>(startOrder);
-  const [o, setO] = useState<Omit<PrintOptions, 'order' | 'at' | 'include'>>(DEFAULT_PRINT);
+  const [o, setO] = useState<Omit<PrintOptions, 'order' | 'at' | 'include'>>(() => ({
+    ...DEFAULT_PRINT,
+    weekend: [...weekend],
+    weekendOn: weekend.length > 0,
+  }));
   const [include, setInclude] = useState<PrintInclude>(() => defaultInclude(country));
   // A day in the year the sheet shows, and the month picked for "One month".
   const [base, setBase] = useState(anchor);
@@ -332,6 +341,9 @@ export default function DownloadSheet({
       {t('calendar.rOpen')}
     </button>
   );
+  const weekdayName = (w: number, style: 'short' | 'long') =>
+    gregLabel(`2026-10-${String(11 + w).padStart(2, '0')}`, { weekday: style });
+  const moonMatters = order.includes('hijri') || include.islamic;
   const place = countryLabel || t('calendar.iYourCountry');
   const years = holidayYears(country);
   const winYears = `${num(win.from.slice(0, 4), lang)}-${num(win.to.slice(0, 4), lang)}`;
@@ -593,6 +605,66 @@ export default function DownloadSheet({
                 })}
               </section>
 
+              <section className="space-y-2" data-testid="calendar-download-weekend">
+                <h3 className={SECTION_TITLE}>{t('calendar.sWeekend')}</h3>
+                {switchRow({
+                  label: t('calendar.dWeekendOn'),
+                  hint: t('calendar.dWeekendHint'),
+                  checked: o.weekendOn,
+                  onChange: (on) => set({ weekendOn: on }),
+                  testId: 'calendar-download-weekend-on',
+                })}
+                {o.weekendOn && (
+                  <div
+                    className="grid grid-cols-7 gap-1"
+                    role="group"
+                    aria-label={t('calendar.sWeekend')}
+                  >
+                    {[0, 1, 2, 3, 4, 5, 6]
+                      .map((i) => (i + weekStart) % 7)
+                      .map((w) => {
+                        const on = o.weekend.includes(w);
+                        return (
+                          <button
+                            key={w}
+                            type="button"
+                            aria-pressed={on}
+                            aria-label={weekdayName(w, 'long')}
+                            onClick={() =>
+                              set({
+                                weekend: on ? o.weekend.filter((x) => x !== w) : [...o.weekend, w],
+                              })
+                            }
+                            className={`min-h-[44px] rounded-control border text-xs font-bold transition-colors ${
+                              on ? 'bg-brand-warm/15 border-brand-warm text-brand-warm' : OPTION_OFF
+                            }`}
+                          >
+                            {weekdayName(w, 'short')}
+                          </button>
+                        );
+                      })}
+                  </div>
+                )}
+              </section>
+
+              <section className="space-y-2" data-testid="calendar-download-side">
+                <h3 className={SECTION_TITLE}>{t('calendar.dSide')}</h3>
+                {switchRow({
+                  label: t('calendar.dLines'),
+                  hint: t('calendar.dLinesHint'),
+                  checked: o.lines,
+                  onChange: (on) => set({ lines: on }),
+                  testId: 'calendar-download-lines',
+                })}
+                {switchRow({
+                  label: t('calendar.dGuide'),
+                  hint: t('calendar.dGuideHint'),
+                  checked: o.guide,
+                  onChange: (on) => set({ guide: on }),
+                  testId: 'calendar-download-guide',
+                })}
+              </section>
+
               <section className="space-y-2">
                 <h3 className={SECTION_TITLE}>{t('calendar.dPaper')}</h3>
                 {seg(
@@ -689,8 +761,11 @@ export default function DownloadSheet({
                   {t('calendar.nTitle')}
                 </h3>
                 <ul className="list-disc pl-5 space-y-1.5 text-sm text-white/80 leading-relaxed">
-                  <li>{t('calendar.nMaghrib')}</li>
-                  <li>{t('calendar.nExpected')}</li>
+                  {moonMatters && <li>{t('calendar.nMaghrib')}</li>}
+                  {moonMatters && <li>{t('calendar.nExpected')}</li>}
+                  {moonMatters && (
+                    <li data-testid="calendar-notice-moon">{t('calendar.moonNote')}</li>
+                  )}
                   {include.holidays && holidaysOk && <li>{t('calendar.nHolidays')}</li>}
                   {include.national && nationalOk && <li>{t('calendar.iNationalNote')}</li>}
                   <li>{t('calendar.nSave')}</li>
