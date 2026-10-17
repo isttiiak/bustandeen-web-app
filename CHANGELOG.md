@@ -2,7 +2,7 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
-## v5.185.0 - Ramadan calendars: move the month by one day for your area - 2026-10-17
+## v5.188.0 - Ramadan calendars: move the month by one day for your area - 2026-10-17
 
 ### Added
 
@@ -14,6 +14,19 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - New `seo/ramadanShift.test.ts`: the shift of every row (29 + possible 30th, settled 29 and 30), fast 1 a day either way with the 30-day shape kept, the extra rows' times on their own date, Bangla digits, the storage key, and the prerendered markup of both templates (hidden extra rows, label rows, hidden control and notes).
 - New e2e `ramadan-shift.spec.ts`: London (en) and Dhaka (en + bn): one day later and earlier, kept on reload, times unchanged, print media with the shifted numbering and the note, still one A4 page, back to "As shown"; the page still loads no app chunk.
+
+## v5.186.0 - Malaysia: Dhuhr, Asr, Isha and sunrise on the safe side of JAKIM - 2026-10-17
+
+### Fixed
+
+- **Malaysia's other prayer times were 0-3 minutes on the unsafe side of JAKIM's official timetable** (finishes R0d after v5.180.0 fixed Subuh and Maghrib). JAKIM adds about 2 minutes of caution (ihtiyat) to every prayer and takes it off syuruk; adhan's Singapore method does not. Measured against JAKIM e-Solat zone WLY01 (Kuala Lumpur / Putrajaya), all 365 days of 2026: Zohor was 1-2 min before JAKIM's, Asar and Isyak 0-3 min before, and sunrise (the end of Subuh) 1-2 min after syuruk. Now, with Malaysia's country default: Dhuhr +2, Asr +3 (Shafi'i and Hanafi alike), Isha +3, sunrise -2, the fewest whole minutes that keep every day of 2026 on the safe side: no prayer begins before JAKIM's time (0-3 min after it) and Fajr never ends after syuruk (0-1 min before it). Same table (`COUNTRY_TIME_ADJUSTMENTS.MY`) for the app and the Malaysian prayer-times, monthly and Ramadan pages; `TimeAdjustments` / `applyTimeAdjustments()` now take minutes for sunrise, Dhuhr, Asr and Isha too (adhan `methodAdjustments`). Someone in Malaysia who picked another method gets that method's own times, as before.
+- Because sunrise is 2 minutes earlier in Malaysia, the sunrise forbidden window and Ishraq / Duha (20 and 45 min after sunrise) start 2 minutes earlier there; the Istiwa' window (10 min before Dhuhr) moves 2 minutes later with Dhuhr.
+
+### Tests
+
+- `utils/countryCalibration.test.ts`: a JAKIM WLY01 table for Malaysia's syuruk, Zohor, Asar and Isyak (the first day of every month, the worst days before the fix, days already on JAKIM's minute): every prayer at or after JAKIM's, within 3 min; sunrise at or before syuruk, within 3 min.
+- `utils/countryDefaults.test.ts`: the MY row, and the app equals the static page for all seven times, each the method's own time moved by its minutes (Hanafi Asr too).
+- `seo/nonBdSsr.test.ts`: snapshot re-recorded; only `MY` changed.
 
 ## v5.184.0 - A moon-sighting record rebuilds the website's calendars within minutes - 2026-10-17
 
