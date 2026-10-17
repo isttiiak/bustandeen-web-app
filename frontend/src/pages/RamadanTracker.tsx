@@ -29,6 +29,7 @@ import {
   TasbihIcon,
 } from '../components/icons/IslamicIcons.js';
 import ExcusedCard from '../components/ExcusedCard.js';
+import RamadanSheetCard, { ramadanBasisText } from '../components/RamadanSheetCard.js';
 import { useFastingHistory, useUpsertFastingLog, useClearFastingLog } from '../hooks/useFasting.js';
 import { useCycleSummary } from '../hooks/useCycle.js';
 import { useSalatLog } from '../hooks/useSalatLog.js';
@@ -37,9 +38,7 @@ import DaifExplainer from '../components/DaifExplainer.js';
 import TabNav from '../components/TabNav.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
-import { getRamadanWindow, nightFastDate, ramadanStartBasis } from '../utils/ramadan.js';
-import { getHijriOffsetSource } from '../utils/islamicCalendar.js';
-import { countryName } from '../utils/countryDefaults.js';
+import { getRamadanWindow, nightFastDate } from '../utils/ramadan.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { calcPrayerTimes, calcPrayerTimesForDay, formatTime } from '../utils/prayerTimes.js';
 import { addDaysYmd, placeYmd } from '../utils/placeClock.js';
@@ -399,27 +398,7 @@ export default function RamadanTracker() {
   if (!window_.active) {
     const startStr = window_.days[0]?.date;
     // What the date rests on, as the Ramadan calendars say it.
-    const basis =
-      startStr && window_.hijriYear != null
-        ? ramadanStartBasis(
-            getHijriOffsetSource(new Date(`${startStr}T12:00:00`)),
-            window_.hijriYear
-          )
-        : null;
-    const basisText = !basis
-      ? null
-      : basis.kind === 'announced' || basis.kind === 'forecast'
-        ? t(
-            basis.kind === 'announced'
-              ? 'ramadan.expectedBasisAnnounced'
-              : 'ramadan.expectedBasisForecast',
-            { country: countryName(basis.country, i18n.language) }
-          )
-        : t(
-            basis.kind === 'manual'
-              ? 'ramadan.expectedBasisManual'
-              : 'ramadan.expectedBasisUmmAlQura'
-          );
+    const basisText = ramadanBasisText(t, i18n.language, window_);
     // A citation is drawn beside the row's link, not inside it: an <a> nested
     // in the row's <Link> is invalid HTML (React's validateDOMNesting warning).
     const prep: {
@@ -497,6 +476,8 @@ export default function RamadanTracker() {
               </a>
             </p>
           </motion.section>
+
+          <RamadanSheetCard window={window_} />
 
           <section className={`${CARD} p-5 space-y-3`}>
             <h2 className={SECTION_TITLE}>
@@ -1063,6 +1044,8 @@ export default function RamadanTracker() {
             />
           </p>
         </section>
+
+        <RamadanSheetCard window={window_} />
 
         {/* Every ḍaʿīf badge on this page is accounted for here: chain,
             defect, and who graded it (Istiak's rule). */}

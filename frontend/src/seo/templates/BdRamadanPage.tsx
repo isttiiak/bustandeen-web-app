@@ -15,11 +15,12 @@ import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 import { LeafMark, monthPagePath } from './PrayerTimesMonthPage.js';
 import { BD_TZ, type YearMonth } from '../utils/monthTable.js';
-import { DownloadPdfButton, PrintSheetHead } from '../components/PrintSheet.js';
+import { DownloadPdfButton, OtherTownLink, PrintSheetHead } from '../components/PrintSheet.js';
 import type { QrPath } from '../utils/qr.js';
 import { ramadanPagePath, type RamadanDay, type RamadanPlan } from '../utils/ramadanBd.js';
 import { dateFormat } from '../utils/intl.js';
 import RamadanNotice from '../components/RamadanNotice.js';
+import RamadanSheetTable, { type RamadanSheetTableRow } from '../components/RamadanSheetTable.js';
 
 interface Props {
   lang: MonthlyLang;
@@ -54,30 +55,14 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
   const dailyPath = langPath(lang, `/prayer-times/${city.slug}`);
   const monthlyPath = langPath(lang, monthPagePath(city.slug, ym));
 
-  const row = (d: RamadanDay, possible = false) => (
-    <tr
-      key={d.date}
-      data-date={d.date}
-      className={`border-t border-brand-border/60 text-white aria-[current=date]:bg-brand-emerald/15 ${
-        possible ? 'text-white/70' : ''
-      }`}
-    >
-      <th scope="row" className="py-2 ps-3 pe-1 text-start font-bold">
-        {num(d.fast)}
-        {possible && <span className="sr-only"> ({r.possible30})</span>}
-      </th>
-      <td className="px-2 py-2">
-        {shortDate(d)}{' '}
-        <small className="text-[11px] text-white/60">{formatWeekday(d.noon, lang)}</small>
-      </td>
-      <td className="px-2 py-2 text-center font-semibold text-brand-emerald">
-        {formatClock(d.times.sehri, lang)}
-      </td>
-      <td className="px-2 py-2 pe-3 text-center font-semibold text-brand-gold">
-        {formatClock(d.times.maghrib, lang)}
-      </td>
-    </tr>
-  );
+  const sheetRow = (d: RamadanDay): RamadanSheetTableRow => ({
+    date: d.date,
+    fast: num(d.fast),
+    dateLabel: shortDate(d),
+    weekday: formatWeekday(d.noon, lang),
+    sehri: formatClock(d.times.sehri, lang),
+    iftar: formatClock(d.times.maghrib, lang),
+  });
 
   return (
     <Layout
@@ -121,49 +106,16 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
       />
 
       <DownloadPdfButton lang={lang} className="mt-4" />
+      <OtherTownLink lang={lang} className="mt-2" />
 
-      <div className="mt-4 print:mt-0 overflow-x-auto rounded-card border border-brand-border bg-brand-deep shadow-elev-2">
-        <table
-          data-month-table=""
-          data-timezone={BD_TZ}
-          className="w-full border-collapse text-sm tabular-nums"
-        >
-          <caption className="sr-only">{r.caption(name, yearLabel)}</caption>
-          <thead>
-            <tr className="text-xs font-semibold text-white/70">
-              <th scope="col" className="py-2.5 ps-3 pe-1 text-start">
-                {r.columns.fast}
-              </th>
-              <th scope="col" className="px-2 py-2.5 text-start">
-                {r.columns.date}
-              </th>
-              <th scope="col" className="px-2 py-2.5 text-center">
-                {r.columns.sehri}
-              </th>
-              <th scope="col" className="px-2 py-2.5 pe-3 text-center">
-                {r.columns.iftar}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {plan.days.map((d) => row(d))}
-            {plan.possible30 && (
-              <>
-                <tr>
-                  <td
-                    colSpan={4}
-                    aria-hidden="true"
-                    className="border-t border-brand-border/60 bg-shade/20 px-3 py-1 text-[11px] font-semibold text-brand-gold"
-                  >
-                    {r.possible30}
-                  </td>
-                </tr>
-                {row(plan.possible30, true)}
-              </>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <RamadanSheetTable
+        caption={r.caption(name, yearLabel)}
+        columns={r.columns}
+        rows={plan.days.map(sheetRow)}
+        possible30={plan.possible30 && sheetRow(plan.possible30)}
+        possible30Label={r.possible30}
+        timezone={BD_TZ}
+      />
 
       <div className="mt-4 space-y-2 text-xs text-white/70 print:mt-2 print:space-y-0.5 print:text-[7.5pt]">
         <p>{r.timesNote}</p>
