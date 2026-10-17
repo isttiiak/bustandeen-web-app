@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.178.1 - Moon-sighting audit entries name the actor's uid - 2026-10-17
+
+### Changed
+
+- **R9a (decision D, 2026-10-17)**: the 'general' Ansar entering and withdrawing moon records was already live since v5.148.0 (U8, `requireDomain('general')` + `GeneralDomainProtected`). What was missing from decision D: the audit entry named the actor by email and role only. `AdminAuditLog` gets an optional `actorUid` (the AdminAccount's Firebase uid), written by `moonSighting.create` and `moonSighting.deactivate`. Older entries and other actions keep email + role. No index change.
+
+### Tests
+
+- Backend: the general Ansar's create + deactivate entries carry `actorUid` and `actorRole: 'ansar'`; signed out and a regular app account get 401 on both and nothing is logged.
+- Frontend: `adminGuards.test.ts`: `GeneralDomainProtected` renders for the Servant and the general Ansar, not the sadaqah Ansar or the signed out; `ServantProtected` stays Servant only; the Moon sighting route uses the general-domain guard.
+
 ## v5.178.0 - Ramadan calendars: the notice names its basis, a possible 30th fast everywhere - 2026-10-17
 
 ### Fixed
