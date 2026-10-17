@@ -25,6 +25,7 @@ import PrayerTimesMonthPage from '../templates/PrayerTimesMonthPage.js';
 import BdDistrictsIndexPage from '../templates/BdDistrictsIndexPage.js';
 import BdRamadanPage from '../templates/BdRamadanPage.js';
 import { ramadanPlan } from '../utils/ramadanBd.js';
+import { readMoonSightingCache } from '../../utils/islamicCalendar.js';
 import { BD_DISTRICTS } from '../data/bdDistricts.js';
 import type { MonthlyLang } from '../locales/monthly.js';
 import { monthWindow, ymInZone } from '../utils/monthTable.js';
@@ -66,20 +67,28 @@ export function RamadanCalendarRoute({ lang }: { lang: SeoLang }) {
   }
   const hijriYear = hijriYearForRamadanGregorianYear(gregorianYear);
   const district = BD_DISTRICTS.find((d) => d.citySlug === city.slug);
+  // In the app: the records the app has cached (useMoonSighting), as the
+  // prerendered page applies the ones it fetched at build time.
+  const plan = ramadanPlan(city, hijriYear, readMoonSightingCache());
   if (district && lang !== 'ar') {
-    // In the app the records are not at hand: Umm al-Qura, with the notice.
-    // The prerendered page (what visitors get) applies them.
     return (
       <BdRamadanPage
         lang={lang}
         district={district}
         city={city}
-        plan={ramadanPlan(city, hijriYear, [])}
+        plan={plan}
         ym={ymInZone(new Date())}
       />
     );
   }
-  return <RamadanCalendarPage lang={lang} city={city} hijriYear={hijriYear} />;
+  return (
+    <RamadanCalendarPage
+      lang={lang}
+      city={city}
+      plan={plan}
+      gregorianYear={ramadanRangeForHijriYear(hijriYear).start.getUTCFullYear()}
+    />
+  );
 }
 
 export function DuaSituationRoute({ lang }: { lang: SeoLang }) {

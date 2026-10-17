@@ -37,7 +37,9 @@ import DaifExplainer from '../components/DaifExplainer.js';
 import TabNav from '../components/TabNav.js';
 import { useAnalytics } from '../hooks/useAnalytics.js';
 import { useQuranSummary } from '../hooks/useQuran.js';
-import { getRamadanWindow } from '../utils/ramadan.js';
+import { getRamadanWindow, ramadanStartBasis } from '../utils/ramadan.js';
+import { getHijriOffsetSource } from '../utils/islamicCalendar.js';
+import { countryName } from '../utils/countryDefaults.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { calcPrayerTimes, calcPrayerTimesForDay, formatTime } from '../utils/prayerTimes.js';
 import { addDaysYmd, placeYmd } from '../utils/placeClock.js';
@@ -360,6 +362,28 @@ export default function RamadanTracker() {
   // ────────────────────────── COUNTDOWN MODE ──────────────────────────
   if (!window_.active) {
     const startStr = window_.days[0]?.date;
+    // What the date rests on, as the Ramadan calendars say it.
+    const basis =
+      startStr && window_.hijriYear != null
+        ? ramadanStartBasis(
+            getHijriOffsetSource(new Date(`${startStr}T12:00:00`)),
+            window_.hijriYear
+          )
+        : null;
+    const basisText = !basis
+      ? null
+      : basis.kind === 'announced' || basis.kind === 'forecast'
+        ? t(
+            basis.kind === 'announced'
+              ? 'ramadan.expectedBasisAnnounced'
+              : 'ramadan.expectedBasisForecast',
+            { country: countryName(basis.country, i18n.language) }
+          )
+        : t(
+            basis.kind === 'manual'
+              ? 'ramadan.expectedBasisManual'
+              : 'ramadan.expectedBasisUmmAlQura'
+          );
     // A citation is drawn beside the row's link, not inside it: an <a> nested
     // in the row's <Link> is invalid HTML (React's validateDOMNesting warning).
     const prep: {
@@ -420,6 +444,9 @@ export default function RamadanTracker() {
               <p className="text-white/70 text-xs">
                 {t('ramadan.expectedAround', { date: formatGregorian(startStr) })}
               </p>
+            )}
+            {basisText && (
+              <p className="text-white/70 text-xs max-w-md mx-auto leading-snug">{basisText}</p>
             )}
             <p className="text-white/85 text-sm pt-2 leading-relaxed max-w-md mx-auto">
               {t('ramadan.gatesHadith')}

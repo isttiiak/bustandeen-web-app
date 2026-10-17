@@ -19,6 +19,7 @@ import { DownloadPdfButton, PrintSheetHead } from '../components/PrintSheet.js';
 import type { QrPath } from '../utils/qr.js';
 import { ramadanPagePath, type RamadanDay, type RamadanPlan } from '../utils/ramadanBd.js';
 import { dateFormat } from '../utils/intl.js';
+import RamadanNotice from '../components/RamadanNotice.js';
 
 interface Props {
   lang: MonthlyLang;
@@ -44,14 +45,6 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
   const first = plan.days[0];
   const gregorianYear = first.noon.getUTCFullYear();
   const yearLabel = num(gregorianYear);
-  const longDate = (d: RamadanDay) =>
-    dateFormat(m.locale, {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      timeZone: 'UTC',
-    }).format(d.noon);
   const shortDate = (d: RamadanDay) =>
     dateFormat(m.locale, { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(d.noon);
 
@@ -60,7 +53,6 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
   const indexUrl = `${SITE}${langPath(lang, '/ramadan-calendar')}`;
   const dailyPath = langPath(lang, `/prayer-times/${city.slug}`);
   const monthlyPath = langPath(lang, monthPagePath(city.slug, ym));
-  const record = plan.startRecord;
 
   const row = (d: RamadanDay, possible = false) => (
     <tr
@@ -119,32 +111,14 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
         <p className="mt-2 text-sm text-white/70">{r.subheading(num(plan.hijriYear), yearLabel)}</p>
       </header>
 
-      <div
-        role="note"
+      <RamadanNotice
+        lang={lang}
+        plan={plan}
+        bd
+        country=""
         className="mt-4 rounded-card border border-brand-gold/40 bg-brand-gold/10 px-4 py-3 text-sm text-white print:mt-0 print:mb-2 print:px-0 print:py-0 print:border-0 print:text-[8pt]"
-      >
-        {record ? (
-          <p>
-            {r.announcedNotice(longDate(first))}
-            {record.sourceUrl && (
-              <>
-                {' '}
-                <a
-                  href={record.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-brand-gold underline underline-offset-2"
-                >
-                  {r.sourceLink}
-                </a>
-              </>
-            )}
-          </p>
-        ) : (
-          <p>{r.estimateNotice(longDate(first))}</p>
-        )}
-        {!plan.endSettled && <p className="mt-1.5 text-white/80">{r.eidNote}</p>}
-      </div>
+        linkClassName="text-brand-gold underline underline-offset-2"
+      />
 
       <DownloadPdfButton lang={lang} className="mt-4" />
 

@@ -102,6 +102,31 @@ export function computePrayerTimes(
   };
 }
 
+export interface MethodFacts {
+  fajrAngle: number;
+  /** Minutes the method itself adds to Maghrib after sunset. */
+  maghribMinutes: number;
+  /** The Moonsighting Committee's seasonal Fajr applies when it is later. */
+  seasonal: boolean;
+}
+
+const methodFactsCache = new Map<CalcMethodId, MethodFacts>();
+
+/** What a page's method note says, read from adhan's own parameters. */
+export function methodFacts(method: CalcMethodId): MethodFacts {
+  let facts = methodFactsCache.get(method);
+  if (!facts) {
+    const p = adhan.CalculationMethod[method]();
+    facts = {
+      fajrAngle: p.fajrAngle,
+      maghribMinutes: p.methodAdjustments.maghrib,
+      seasonal: method === 'MoonsightingCommittee',
+    };
+    methodFactsCache.set(method, facts);
+  }
+  return facts;
+}
+
 export function formatTimeInZone(date: Date, timezone: string, locale: string): string {
   return dateFormat(locale, {
     hour: 'numeric',

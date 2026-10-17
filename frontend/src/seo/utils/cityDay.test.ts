@@ -7,6 +7,7 @@ import { prayerDefaultsForCountry } from '../../utils/countryDefaults.js';
 import PrayerTimesCityPage from '../templates/PrayerTimesCityPage.js';
 import RamadanCalendarPage from '../templates/RamadanCalendarPage.js';
 import { formatTimeInZone } from './calc.js';
+import { ramadanPlan } from './ramadanBd.js';
 
 // The static pages are built on CI / Vercel, which run in UTC. A page must
 // show its city's civil day, whatever the build machine's zone: west of UTC
@@ -133,11 +134,16 @@ describe('Ramadan calendar rows are civil days of the city', () => {
   // Umm al-Qura: 1 Ramadan 1448 = 8 Feb 2027.
   const rows = (city: CityEntry) => {
     const html = renderToStaticMarkup(
-      createElement(RamadanCalendarPage, { lang: 'en', city, hijriYear: 1448 })
+      createElement(RamadanCalendarPage, {
+        lang: 'en',
+        city,
+        plan: ramadanPlan(city, 1448, []),
+        gregorianYear: 2027,
+      })
     );
-    return [...html.matchAll(/<tr class="border-b[^"]*last:border-0">(.*?)<\/tr>/g)].map((m) =>
-      [...m[1].matchAll(/>([^<>]+)<\/td>/g)].map((c) => c[1])
-    );
+    return [
+      ...html.matchAll(/<tr data-date="[^"]*" class="border-b[^"]*last:border-0">(.*?)<\/tr>/g),
+    ].map((m) => [...m[1].matchAll(/>([^<>]+)<\/td>/g)].map((c) => c[1]));
   };
 
   // Every row against the adhan day whose Dhuhr is on that civil date (one
