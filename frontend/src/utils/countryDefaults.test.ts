@@ -78,10 +78,10 @@ function raw(lat: number, lng: number, day: string, method: CalcMethodId) {
 }
 
 describe('the calibration table', () => {
-  it('Bangladesh: Fajr -1, Maghrib +2, only with its default method (Karachi)', () => {
-    expect(COUNTRY_TIME_ADJUSTMENTS).toEqual({ BD: { fajr: -1, maghrib: 2 } });
-    expect(countryTimeAdjustments('BD', 'Karachi')).toEqual({ fajr: -1, maghrib: 2 });
-    expect(countryTimeAdjustments('bd', 'Karachi')).toEqual({ fajr: -1, maghrib: 2 });
+  it('Bangladesh: Fajr -2, Maghrib +3 all year, only with its default method (Karachi)', () => {
+    expect(COUNTRY_TIME_ADJUSTMENTS).toEqual({ BD: { fajr: -2, maghrib: 3 } });
+    expect(countryTimeAdjustments('BD', 'Karachi')).toEqual({ fajr: -2, maghrib: 3 });
+    expect(countryTimeAdjustments('bd', 'Karachi')).toEqual({ fajr: -2, maghrib: 3 });
     expect(countryTimeAdjustments('BD', 'MuslimWorldLeague')).toBeNull();
     expect(countryTimeAdjustments(null, 'Karachi')).toBeNull();
   });
@@ -125,13 +125,84 @@ describe('Dhaka against Islamic Foundation, Ramadan 2026 (static pages)', () => 
   it('sunset itself is not moved, only Maghrib', () => {
     const t = computePrayerTimes(DHAKA.lat, DHAKA.lng, '2026-02-19', DHAKA.timezone, 'BD');
     const r = raw(DHAKA.lat, DHAKA.lng, '2026-02-19', 'Karachi');
-    expect(t.maghrib.getTime() - r.sunset.getTime()).toBe(2 * 60_000);
-    expect(r.fajr.getTime() - t.fajr.getTime()).toBe(60_000);
+    expect(t.maghrib.getTime() - r.sunset.getTime()).toBe(3 * 60_000);
+    expect(r.fajr.getTime() - t.fajr.getTime()).toBe(2 * 60_000);
     // The rest of the day is the method's own.
     expect(t.sunrise.getTime()).toBe(r.sunrise.getTime());
     expect(t.dhuhr.getTime()).toBe(r.dhuhr.getTime());
     expect(t.isha.getTime()).toBe(r.isha.getTime());
   });
+});
+
+/** IF's permanent Dhaka timetable ("সাহরী ও ইফতারসহ (ঢাকা) নামাজের স্থায়ী
+ * সময়সূচী", 2015 edition, mirrored at kivabe.com/namaz/islamicfoundation.php):
+ * sehri / "Maghrib and iftar", read 2026-10-17. It is stricter than IF's own
+ * 2026 Ramadan table, so it is only used for the SEASON: the rows both tables
+ * share give the offset between them, and the summer rows moved by that
+ * offset estimate IF's summer times. */
+const IF_PERMANENT_OVERLAP: [day: string, sehri: string, iftar: string][] = [
+  ['2026-02-24', '05:05', '18:02'],
+  ['2026-03-01', '05:01', '18:05'],
+  ['2026-03-06', '04:57', '18:07'],
+  ['2026-03-12', '04:51', '18:10'],
+  ['2026-03-18', '04:45', '18:12'],
+];
+const IF_PERMANENT_SUMMER: [day: string, sehri: string, iftar: string][] = [
+  ['2026-04-01', '04:29', '18:18'],
+  ['2026-04-06', '04:24', '18:20'],
+  ['2026-04-12', '04:18', '18:23'],
+  ['2026-04-18', '04:11', '18:25'],
+  ['2026-04-24', '04:05', '18:28'],
+  ['2026-04-30', '04:00', '18:30'],
+  ['2026-05-01', '03:59', '18:31'],
+  ['2026-05-06', '03:53', '18:33'],
+  ['2026-05-12', '03:49', '18:36'],
+  ['2026-05-18', '03:46', '18:39'],
+  ['2026-05-24', '03:42', '18:42'],
+  ['2026-05-30', '03:40', '18:45'],
+  ['2026-06-01', '03:39', '18:46'],
+  ['2026-06-06', '03:38', '18:47'],
+  ['2026-06-12', '03:38', '18:50'],
+  ['2026-06-18', '03:38', '18:51'],
+  // The scan prints 5-53 here: 6:53, between 6:51 and 6:53 around it.
+  ['2026-06-24', '03:39', '18:53'],
+  ['2026-06-30', '03:43', '18:53'],
+  ['2026-07-12', '03:48', '18:53'],
+  ['2026-07-18', '03:51', '18:52'],
+  ['2026-07-24', '03:55', '18:49'],
+  ['2026-07-30', '03:59', '18:46'],
+  ['2026-08-01', '04:00', '18:45'],
+  ['2026-08-06', '04:04', '18:42'],
+  ['2026-08-12', '04:07', '18:38'],
+  ['2026-08-18', '04:11', '18:33'],
+  ['2026-08-24', '04:14', '18:28'],
+  ['2026-08-30', '04:17', '18:22'],
+];
+
+describe("Dhaka in summer, against IF's permanent timetable", () => {
+  const ramadan2026 = new Map(IF_DHAKA_RAMADAN_2026.map(([day, s, i]) => [day, { s, i }]));
+  // IF 2026 minus the permanent table on the shared days. Iftar: the latest
+  // (most cautious) offset, so the estimate is never too early.
+  const iftarOffset = Math.max(
+    ...IF_PERMANENT_OVERLAP.map(
+      ([day, , iftar]) => toMinutes(ramadan2026.get(day)!.i) - toMinutes(iftar)
+    )
+  );
+
+  it('the two IF tables differ by a steady offset on the shared days', () => {
+    expect(iftarOffset).toBe(-2);
+    for (const [day, , iftar] of IF_PERMANENT_OVERLAP) {
+      expect(toMinutes(ramadan2026.get(day)!.i) - toMinutes(iftar), day).toBe(-2);
+    }
+  });
+
+  it.each(IF_PERMANENT_SUMMER)(
+    '%s: iftar never earlier than the estimate',
+    (day, _sehri, iftar) => {
+      const t = computePrayerTimes(DHAKA.lat, DHAKA.lng, day, DHAKA.timezone, 'BD');
+      expect(dhakaMinutes(t.maghrib) - (toMinutes(iftar) + iftarOffset)).toBeGreaterThanOrEqual(0);
+    }
+  );
 });
 
 describe('other countries keep their method numbers (static pages)', () => {

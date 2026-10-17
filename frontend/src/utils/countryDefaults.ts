@@ -101,15 +101,18 @@ export interface TimeAdjustments {
  * Bangladesh: Islamic Foundation Bangladesh's Dhaka Ramadan timetable for
  * 2026 (19 Feb - 20 Mar, dbcnews.tv/ramadan-2026, "source: Islamic
  * Foundation Bangladesh"). Plain Karachi ended sehri 0-1 min later and put
- * iftar 1-2 min earlier on all 30 days; with Fajr -1 and Maghrib +2 it is
- * never later / never earlier and within 2 min (utils/countryDefaults.test.ts).
+ * iftar 1-2 min earlier on all 30 days. IF's permanent Dhaka timetable shows
+ * the gap about a minute wider from April to August, so the adjustment is a
+ * flat Fajr -2 and Maghrib +3 all year (not seasonal): safe on the 2026
+ * Ramadan table, iftar also safe on the permanent table's summer months, at
+ * most about a minute of extra caution in winter (utils/countryDefaults.test.ts).
  * Decision: Istiak, 2026-10-17.
  *
  * The app (utils/prayerTimes.ts) and the static pages (seo/utils/calc.ts)
  * both read this table, so they always show the same minute.
  */
 export const COUNTRY_TIME_ADJUSTMENTS: Record<string, TimeAdjustments> = {
-  BD: { fajr: -1, maghrib: 2 },
+  BD: { fajr: -2, maghrib: 3 },
 };
 
 /** The calibration for times computed at a place in `countryCode` with

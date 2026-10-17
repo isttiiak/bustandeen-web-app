@@ -6,7 +6,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 ### Fixed
 
-- **Bangladesh sehri and iftar on the unsafe side of Islamic Foundation** (audit R0a): against Islamic Foundation Bangladesh's Dhaka Ramadan 2026 timetable (19 Feb to 20 Mar, via dbcnews.tv/ramadan-2026), plain Karachi ended sehri 1 min later on 28 of 30 days and put iftar 1 to 2 min earlier on all 30. The Bangladesh country default now adds Fajr -1 and Maghrib +2 (adhan `methodAdjustments` on top of Karachi): sehri is never later and iftar never earlier than IF's times, within 2 min. Sunrise, Dhuhr, Asr, Isha and the sunset forbidden window are unchanged.
+- **Bangladesh sehri and iftar on the unsafe side of Islamic Foundation** (audit R0a): against Islamic Foundation Bangladesh's Dhaka Ramadan 2026 timetable (19 Feb to 20 Mar, via dbcnews.tv/ramadan-2026), plain Karachi ended sehri 1 min later on 28 of 30 days and put iftar 1 to 2 min earlier on all 30. The Bangladesh country default now adds Fajr -2 and Maghrib +3 all year, not seasonal (adhan `methodAdjustments` on top of Karachi; Istiak, 2026-10-17). Reason: safe on IF's 2026 Ramadan table (sehri 1-2 min earlier, iftar 1-2 min later on all 30 days) and, for iftar, on the summer months of IF's permanent Dhaka timetable, where the gap is about a minute wider than in Feb-Mar; at most about a minute of extra caution in winter. Sunrise, Dhuhr, Asr, Isha and the sunset forbidden window are unchanged.
 - **One table for the app and the pages**: `COUNTRY_TIME_ADJUSTMENTS` + `countryTimeAdjustments()` + `applyTimeAdjustments()` in `utils/countryDefaults.ts`, read by `utils/prayerTimes.ts` (prayer times, Home, Ramadan tracker, fasting) and `seo/utils/calc.ts` (daily, monthly and Ramadan pages), so both show the same minute.
 - **Who gets it**: times at a place in Bangladesh (the place's own time zone; the phone's country only while the zone map is loading, `countryAt()` in `utils/salatPrefs.ts`) computed with Bangladesh's default method, Karachi. Onboarding saves the preselected Karachi for everyone, so a saved Karachi is treated as the default. Another method picked in Bangladesh keeps that method's own numbers; Karachi in Pakistan or India is not touched.
 
@@ -16,7 +16,7 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 ### Tests
 
-- `utils/countryDefaults.test.ts`: all 30 IF days (never later / never earlier, within 2 min), plain Karachi's unsafe days, only Fajr and Maghrib move, eight other countries keep their method's numbers, the app equals the pages on every IF day, a different method in Bangladesh and a Karachi place on a Dhaka phone stay uncalibrated.
+- `utils/countryDefaults.test.ts`: all 30 IF days (never later / never earlier, within 2 min), April-August against IF's permanent Dhaka timetable moved onto the 2026 table by their offset on the shared days (iftar never earlier), plain Karachi's unsafe days, only Fajr and Maghrib move, eight other countries keep their method's numbers, the app equals the pages on every IF day, a different method in Bangladesh and a Karachi place on a Dhaka phone stay uncalibrated.
 - `seo/nonBdSsr.test.ts`: one hash per country over every non-Bangladesh city's prayer-times and Ramadan 1448 page, recorded before the change: byte-identical.
 - Dhaka expectations moved by the calibration in `calc.test.ts`, `monthTable.test.ts` and `cityDay.test.ts`.
 
