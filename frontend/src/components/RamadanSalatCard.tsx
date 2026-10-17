@@ -25,6 +25,7 @@ import {
   setDhikrCredited,
 } from '../utils/salatPrefs.js';
 import { celebrateSmall, celebrateAllPrayers } from '../utils/celebrate.js';
+import { formatLocaleNumber } from '../utils/localeDate.js';
 import {
   BookOpenIcon,
   CheckIcon,
@@ -77,6 +78,7 @@ export default function RamadanSalatCard({
   date,
   excused,
   tarawih,
+  tarawihNight,
   onToggleTarawih,
   canSave = () => true,
 }: {
@@ -86,6 +88,9 @@ export default function RamadanSalatCard({
    * page passes it down rather than this card fetching it twice. Omit both
    * props outside Ramadan and the row simply doesn't render. */
   tarawih?: boolean;
+  /** The Ramadan night the toggle saves to (R10: after Maghrib, tomorrow's
+   * fast's night). */
+  tarawihNight?: number;
   onToggleTarawih?: () => void;
   /** False for a guest: the owning page shows its sign-in sheet instead (U10). */
   canSave?: () => boolean;
@@ -381,7 +386,11 @@ export default function RamadanSalatCard({
               <span className="flex-1 min-w-0 text-sm font-bold text-white/90">
                 {t('ramadanSalat.tarawih')}
                 <span className="block text-[11px] font-semibold text-white/65">
-                  {t('ramadanSalat.tarawihSub')}
+                  {tarawihNight
+                    ? t('ramadanSalat.tarawihNight', 'Night {{night}} of Ramadan', {
+                        night: formatLocaleNumber(tarawihNight),
+                      })
+                    : t('ramadanSalat.tarawihSub')}
                 </span>
               </span>
               <span

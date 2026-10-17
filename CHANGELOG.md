@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.183.0 - Ramadan odd nights: each night belongs to the fast that follows it - 2026-10-17
+
+### Fixed
+
+- **Tarawih was saved on the wrong night** (audit R10). A Ramadan night comes before its day: the 21st night begins at Maghrib on the evening of the 20th fast (Bukhārī 2017). The tarawih toggle saved to the current tracking day, so in the default Fajr mode the 21st night's tarawih (after the 20th fast's iftar) landed on the 20th fast, and Ramadan Analytics' "odd nights kept" counted the even nights. Now, in every tracking-day mode, from Maghrib the toggle saves to the next fast (night N lives on fast N's row), and the card names the night ("Night 21 of Ramadan"). An existing row keeps its status, Hijri label and note; a fast with no row yet gets its intention with it (the niyyah is made the night before), as the toggle already did for today. On the evening of the last fast (the next day is Eid) the toggle is not shown. Logs saved before this version keep their dates.
+- **The last ten begin at iftar of the 20th fast**: the "last ten nights" card now appears from then (it waited for the 21st fast), with "Tonight is night 21 of Ramadan, an odd night of the last ten." on odd nights, and a line on every day of the last ten: each night begins at Maghrib the evening before its fast; the marked fasts are the ones whose night is odd (decision 2: the star stays on the fast's own day, 21/23/25/27/29). The highlighted night follows the night, not the tracking day. The grid's star tooltip says the night begins the evening before. en + bn.
+
+### Tests
+
+- `utils/ramadan.test.ts`: `nightFastDate()` before and from Maghrib, across a month end, with no Maghrib, and the same night in the Fajr, midnight and Maghrib tracking-day modes while their days differ.
+- New e2e `ramadan-odd-nights.spec.ts` (demo, Dhaka, Umm al-Qura): the afternoon of the 20th fast (no last-ten card, "Night 20"), after its iftar ("Tonight is night 21", "Night 21"), the day of the 21st fast (no "tonight" line).
+
 ## v5.182.0 - Iftar labelled "Iftar (Maghrib)"; the app says when times are matched to an official timetable - 2026-10-17
 
 ### Changed

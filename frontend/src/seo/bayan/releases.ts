@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.183.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Ramadan nights in the right place',
+        fixed: [
+          'A Ramadan night comes before its day: the 21st night begins at iftar of the 20th fast. After iftar, tarawih now counts for the coming night, and the Ramadan page shows which night it is.',
+          'The last ten nights card now appears from iftar of the 20th fast, and on odd nights it says so.',
+        ],
+      },
+      bn: {
+        title: 'রমজানের রাত এখন সঠিক জায়গায়',
+        fixed: [
+          'রমজানের রাত আসে তার দিনের আগে: ২১তম রাত শুরু হয় ২০তম রোজার ইফতারে। ইফতারের পর তারাবীহ এখন আসন্ন রাতের হিসেবে গোনা হয়, আর রমজানের পাতায় দেখা যায় এটি কোন রাত।',
+          'শেষ দশ রাতের কার্ড এখন ২০তম রোজার ইফতার থেকেই দেখা যায়, আর বেজোড় রাতে তা জানিয়ে দেয়।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.182.0',
     date: '2026-10-17',
     text: {
