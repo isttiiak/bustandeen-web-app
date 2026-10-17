@@ -30,7 +30,7 @@ import {
 import { useGoal, useUpdateGoal } from '../hooks/useAnalytics.js';
 import { useQuranSummary, useUpdateQuranProfile } from '../hooks/useQuran.js';
 import { useUpdateProfile } from '../hooks/useUserProfile.js';
-import { countryName, deviceCountry } from '../utils/countryDefaults.js';
+import { countryName } from '../utils/countryDefaults.js';
 import type { StoredLocation } from '../utils/geocode.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
 import { asrBySchool, formatTime } from '../utils/prayerTimes.js';
@@ -40,6 +40,7 @@ import {
   dismissPrayerDefaultsSuggestion,
   getAsrMadhab,
   getCalcMethod,
+  regionCountry,
   regionPrayerDefaults,
   setAsrMadhab,
   setCalcMethod,
@@ -112,7 +113,7 @@ export default function Onboarding() {
 
   // Step 2: calculation method + ʿAṣr school, preselected to the saved
   // choice or this country's usual one (regionPrayerDefaults).
-  const country = deviceCountry();
+  const country = regionCountry();
   const region = regionPrayerDefaults();
   const usualLabel = country
     ? t('salatSettings.usualIn', 'Usual in {{country}}', { country: countryName(country, lang) })

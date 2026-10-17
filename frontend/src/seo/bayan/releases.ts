@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.185.1',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Prayer times follow your saved place',
+        fixed: [
+          "If you saved a place in a country the app has no usual method for, such as Kenya, the default prayer-time method came from your phone's country. It now uses the same worldwide default as our website. A method you chose yourself never changes.",
+          'More places in Kazakhstan, the United States, Canada and Spain now get their country’s usual method.',
+          'The "Usual in" label now names the country of your saved place.',
+        ],
+      },
+      bn: {
+        title: 'নামাজের সময় এখন আপনার সংরক্ষিত স্থান অনুযায়ী',
+        fixed: [
+          'যে দেশের প্রচলিত হিসাব পদ্ধতি অ্যাপে নেই (যেমন কেনিয়া), সেখানকার স্থান সংরক্ষণ করলে নামাজের সময়ের পদ্ধতি আপনার ফোনের দেশ অনুযায়ী ঠিক হতো। এখন আমাদের ওয়েবসাইটের মতোই বিশ্বব্যাপী পদ্ধতি ব্যবহার হয়। আপনি নিজে যে পদ্ধতি বেছে নিয়েছেন, তা কখনো বদলায় না।',
+          'কাজাখস্তান, যুক্তরাষ্ট্র, কানাডা ও স্পেনের আরও অনেক স্থান এখন নিজ দেশের প্রচলিত পদ্ধতি পায়।',
+          '"প্রচলিত" লেবেলে এখন আপনার সংরক্ষিত স্থানের দেশের নাম দেখায়।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.184.0',
     date: '2026-10-17',
     text: {

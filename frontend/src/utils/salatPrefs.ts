@@ -404,11 +404,13 @@ export function regionPrayerDefaults(): PrayerDefaults {
 }
 
 /** The saved place's country (from its zone), else the device's. Also the
- * country for the Automatic Hijri date when the profile has none. */
+ * country for the Automatic Hijri date when the profile has none. A known
+ * zone outside the table gives null (the worldwide fallback), never the
+ * phone's country: a Dhaka phone with Garissa, Kenya saved gets what the
+ * Kenya pages show, not Bangladesh's convention (countryAt below). */
 export function regionCountry(): string | null {
   const place = readSavedPlace();
-  const zone = place ? placeZone(place.latitude, place.longitude) : null;
-  return countryFromTimeZone(zone) ?? deviceCountry();
+  return place ? countryAt(place.latitude, place.longitude) : deviceCountry();
 }
 
 /** The country of the place at `lat`/`lng`, from its zone; the device's only
