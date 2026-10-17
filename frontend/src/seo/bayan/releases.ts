@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.182.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Iftar is labelled "Iftar (Maghrib)"',
+        fixed: [
+          'The Fasting page and Home now say "Iftar (Maghrib)", like the Ramadan page.',
+          "In Prayer time settings, a short line tells you when your country's times are matched to its published timetable and kept on the safe side.",
+        ],
+      },
+      bn: {
+        title: 'ইফতার এখন "ইফতার (মাগরিব)" নামে',
+        fixed: [
+          'রোজার পাতা আর হোমে এখন "ইফতার (মাগরিব)" লেখা থাকে, রমজানের পাতার মতোই।',
+          'নামাজের সময়ের সেটিংসে একটি ছোট লাইন জানায়, কখন আপনার দেশের সময় সেখানকার প্রকাশিত সময়সূচির সঙ্গে মিলিয়ে নিরাপদ দিকে রাখা হয়েছে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.181.0',
     date: '2026-10-17',
     text: {

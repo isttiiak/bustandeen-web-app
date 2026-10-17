@@ -214,7 +214,9 @@ describe('worldwide Ramadan calendars (RamadanCalendarPage)', () => {
     // Diyanet's 7 minutes + 1 (R0c).
     expect(istanbul).toContain('8 minutes after sunset');
     const karachi = page(cityBySlug('karachi-pakistan')!, []);
-    expect(karachi).toContain('Iftar is at Maghrib (sunset).');
+    expect(karachi).toContain(
+      'Iftar is at Maghrib, which this method puts at sunset with no minutes added.'
+    );
     expect(karachi).toContain('Fajr at 18°');
   });
 

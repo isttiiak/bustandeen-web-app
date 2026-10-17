@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.182.0 - Iftar labelled "Iftar (Maghrib)"; the app says when times are matched to an official timetable - 2026-10-17
+
+### Changed
+
+- **Iftar (Maghrib) everywhere** (audit R0b): the Fasting page's suhoor/iftar strip and the Home "next sunnah fast" line now say "Iftar (Maghrib)" / "ইফতার (মাগরিব)", like the Ramadan tracker and the pages.
+- **Prayer time settings**: under the calculation method, where the place's country default is matched to its official timetable (R0a/R0c/R0d), a line says so: "In {country}, these times are matched to the country's published timetable and kept on the safe side: suhoor never ends later, iftar never comes earlier." (UK: iftar only.) en + bn. Nothing is shown where the bare method is used.
+- **World Ramadan pages, no "sunset" claims**: "Iftar is at Maghrib (sunset)" is now "Iftar is at Maghrib, which this method puts at sunset with no minutes added". Iran's note was wrong: its method sets Maghrib when the sun is 4.5° below the horizon, some minutes after sunset; the page now says that. The method note reads the angle from adhan (`methodFacts().maghribAngle`).
+
+### Tests
+
+- `seo/ramadanTimesNote.test.ts`: Tehran, and no page says "(sunset)". `ramadanBd.test.ts` Karachi wording.
+- New e2e `prayer-settings-matched.spec.ts`: the settings note in Istanbul, the iftar-only note in London, nothing in Paris.
+- `seo/nonBdSsr.test.ts` re-recorded on purpose: the Ramadan pages of every uncalibrated country whose method adds no Maghrib minutes, plus Iran, changed (wording only, no time).
+
 ## v5.181.0 - Nine more countries: sehri and iftar on the safe side of their official timetables - 2026-10-17
 
 ### Fixed

@@ -600,7 +600,7 @@
     "fastingToday": "I'm fasting today (mark intention)",
     "iFasted": "I fasted {{day}}",
     "iOwe": "I owe",
-    "iftar": "Iftar",
+    "iftar": "Iftar (Maghrib)",
     "illReconsider": "I'll reconsider",
     "intendTomorrow": "I intend to fast tomorrow",
     "intended": "Intending to fast",
@@ -1105,7 +1105,7 @@
       "broken": "Broken",
       "broke": "Broke",
       "nextSunnah": "Next sunnah fast: {{day}}, {{kind}}",
-      "suhoorIftar": "suḥūr until {{fajr}}, ifṭār {{maghrib}}",
+      "suhoorIftar": "suḥūr until {{fajr}}, ifṭār (Maghrib) {{maghrib}}",
       "nextSunnahDay": "Next sunnah fast: {{day}}"
     },
     "adhkarProgress": "{{done}} of {{total}} read",
@@ -2591,6 +2591,8 @@
   },
   "salatSettings": {
     "usualIn": "Usual in {{country}}",
+    "matchedTimetable": "In {{country}}, these times are matched to the country's published timetable and kept on the safe side: suhoor never ends later, iftar never comes earlier.",
+    "matchedIftarOnly": "In {{country}}, iftar is matched to a published local timetable and never comes earlier than it.",
     "asrDesc": "Madhabs differ on when ʿAṣr begins. Because Ẓuhr lasts until ʿAṣr starts, this moves both. Follow your local mosque.",
     "asrTitle": "ʿAṣr timing (madhab)",
     "autoCountDesc": "When on, tapping Tasbīḥ or Ayatul Kursi on a prayer adds the counts straight to your dhikr counter. Turn it off to just mark them as done, and count them yourself with Tasbih mode on the Zikr counter.",
