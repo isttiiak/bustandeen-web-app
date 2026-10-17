@@ -41,6 +41,7 @@ export const createHandler = async (
     const record = await moonSightingService.create(body, req.admin!.email);
     await logAdminAction({
       actorEmail: req.admin!.email,
+      actorUid: req.admin!.uid,
       actorRole: req.admin!.role,
       action: 'moonSighting.create',
       targetType: 'MoonSighting',
@@ -72,6 +73,7 @@ export const deactivateHandler = async (
     }
     await logAdminAction({
       actorEmail: req.admin!.email,
+      actorUid: req.admin!.uid,
       actorRole: req.admin!.role,
       action: 'moonSighting.deactivate',
       targetType: 'MoonSighting',

@@ -298,5 +298,22 @@ describe('Moon-sighting overrides (T4.1)', () => {
       'moonSighting.create',
       'moonSighting.deactivate',
     ]);
+    // R9a (decision D): each entry names the actor by uid and role too.
+    for (const e of logged) {
+      expect(e.actorUid).toBe('ansar-uid');
+      expect(e.actorRole).toBe('ansar');
+    }
+  });
+
+  test('a non-admin is refused both actions and nothing is logged (R9a)', async () => {
+    const before = await AdminAuditLog.countDocuments({ action: /moonSighting/ });
+    const add = await request(app).post('/api/admin/moon-sighting').send(BD);
+    expect([401, 403]).toContain(add.status);
+    const off = await request(app).patch(`/api/admin/moon-sighting/${recordId}/deactivate`);
+    expect([401, 403]).toContain(off.status);
+    // A regular app account's token is not an admin token.
+    const user = await asUser('legacyZero')(request(app).post('/api/admin/moon-sighting')).send(BD);
+    expect([401, 403]).toContain(user.status);
+    expect(await AdminAuditLog.countDocuments({ action: /moonSighting/ })).toBe(before);
   });
 });
