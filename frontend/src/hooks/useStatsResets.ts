@@ -7,11 +7,25 @@ import { getTrackingDay } from '../utils/trackingDay.js';
 export const STATS_AREAS = ['zikr', 'salat', 'fasting', 'quran'] as const;
 export type StatsArea = (typeof STATS_AREAS)[number];
 
+/** The areas the reset tracker lists: the four stats areas and the Kaza debt. */
+export const TRACKED_AREAS = [...STATS_AREAS, 'kaza'] as const;
+export type TrackedArea = (typeof TRACKED_AREAS)[number];
+
+export interface ResetEntry {
+  date: string;
+  note: string;
+  resetAt: string;
+  /** Made by "Reset all stats" (older servers: absent). */
+  all?: boolean;
+  /** kaza only: prayers owed just before the reset. */
+  owedBefore?: number;
+}
 export interface AreaReset {
   date: string | null;
-  history: Array<{ date: string; note: string; resetAt: string }>;
+  history: ResetEntry[];
 }
-export type StatsResets = Record<StatsArea, AreaReset>;
+/** `kaza` is a log only (older servers: absent). */
+export type StatsResets = Record<StatsArea, AreaReset> & { kaza?: AreaReset };
 
 const KEY = ['statsResets'] as const;
 

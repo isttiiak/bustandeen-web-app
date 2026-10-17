@@ -3,6 +3,7 @@ import SalatDebtEvent from '../models/SalatDebtEvent.js';
 import SalatLog from '../models/SalatLog.js';
 import { PRAYER_IDS, PrayerId } from '../models/SalatLog.js';
 import KazaUnit from '../models/KazaUnit.js';
+import { logKazaReset } from './statsReset.service.js';
 import { getExcusedDaySet, getExcusedIntervals, isDayExcused } from './cycle.service.js';
 
 export interface SalatDebtSummary {
@@ -244,6 +245,8 @@ export async function resetDebt(userId: string, date?: string): Promise<SalatDeb
     { $set: { owed: EMPTY_OWED(), since: d, lastAccrualDate: shiftDateStr(d, -1) } },
     { upsert: true, setDefaultsOnInsert: true }
   );
+  // The reset tracker (Journey page) counts every Kaza debt reset.
+  await logKazaReset(userId, d, before.totalOwed);
   return getDebtReadOnly(userId);
 }
 

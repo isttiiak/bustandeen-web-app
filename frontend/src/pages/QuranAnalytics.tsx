@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import AreaJourney from '../components/journey/AreaJourney.js';
+import JourneyTabs, { type AnalyticsView } from '../components/journey/JourneyTabs.js';
 import IntentionLine from '../components/analytics/IntentionLine.js';
 import { useTranslation } from 'react-i18next';
 import {
@@ -44,6 +46,7 @@ function shiftDate(dateStr: string, delta: number): string {
 export default function QuranAnalytics() {
   const { t, i18n } = useTranslation();
   const { data: summary } = useQuranSummary();
+  const [view, setView] = useState<AnalyticsView>('stats');
 
   // Range selector — current month by default (mirrors SalatAnalytics pattern)
   const [rangePeriod, setRangePeriod] = useState<RangePeriod>('month');
@@ -188,409 +191,430 @@ export default function QuranAnalytics() {
       <div className="max-w-2xl mx-auto px-4 pt-3 pb-16 space-y-5">
         <QuranTabNav active="analytics" />
         <IntentionLine />
+        <JourneyTabs view={view} onChange={setView} />
+        {view === 'journey' ? (
+          <AreaJourney area="quran" />
+        ) : (
+          <>
+            <SinceChip since={summary?.since} />
+            {/* tiles */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className={TILE}>
+                <p className="font-display text-2xl font-bold text-brand-emerald">
+                  {summary ? formatLocaleNumber(summary.stats.allTimeUnits) : '-'}
+                </p>
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
+                  {t('quranAnalytics.ayatAllTime')}
+                </p>
+              </div>
+              <div className={TILE}>
+                <p className="font-display text-2xl font-bold text-brand-warm flex items-center justify-center gap-1">
+                  <FireIcon className="w-5 h-5" aria-hidden="true" />
+                  {formatLocaleNumber(summary?.streak ?? 0)}
+                </p>
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
+                  {t('quranAnalytics.dayStreak', {
+                    best: formatLocaleNumber(summary?.bestStreak ?? 0),
+                  })}
+                </p>
+              </div>
+              <div className={TILE}>
+                <p className="font-display text-2xl font-bold text-brand-info">
+                  {formatLocaleNumber(summary?.stats.last30Units ?? 0)}
+                </p>
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
+                  {t('quranAnalytics.ayatLast30')}
+                </p>
+              </div>
+              <div className={TILE}>
+                <p className="font-display text-2xl font-bold text-brand-gold flex items-center justify-center gap-1">
+                  <Star8Icon className="w-5 h-5" aria-hidden="true" />
+                  {formatLocaleNumber(summary?.profile.khatmCount ?? 0)}
+                </p>
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
+                  {t('quranAnalytics.khatmNow', {
+                    pct: formatLocaleNumber(Number(khatmPct.toFixed(0))),
+                  })}
+                </p>
+              </div>
+            </div>
 
-        <SinceChip since={summary?.since} />
-        {/* tiles */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className={TILE}>
-            <p className="font-display text-2xl font-bold text-brand-emerald">
-              {summary ? formatLocaleNumber(summary.stats.allTimeUnits) : '-'}
-            </p>
-            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
-              {t('quranAnalytics.ayatAllTime')}
-            </p>
-          </div>
-          <div className={TILE}>
-            <p className="font-display text-2xl font-bold text-brand-warm flex items-center justify-center gap-1">
-              <FireIcon className="w-5 h-5" aria-hidden="true" />
-              {formatLocaleNumber(summary?.streak ?? 0)}
-            </p>
-            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
-              {t('quranAnalytics.dayStreak', {
-                best: formatLocaleNumber(summary?.bestStreak ?? 0),
-              })}
-            </p>
-          </div>
-          <div className={TILE}>
-            <p className="font-display text-2xl font-bold text-brand-info">
-              {formatLocaleNumber(summary?.stats.last30Units ?? 0)}
-            </p>
-            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
-              {t('quranAnalytics.ayatLast30')}
-            </p>
-          </div>
-          <div className={TILE}>
-            <p className="font-display text-2xl font-bold text-brand-gold flex items-center justify-center gap-1">
-              <Star8Icon className="w-5 h-5" aria-hidden="true" />
-              {formatLocaleNumber(summary?.profile.khatmCount ?? 0)}
-            </p>
-            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
-              {t('quranAnalytics.khatmNow', {
-                pct: formatLocaleNumber(Number(khatmPct.toFixed(0))),
-              })}
-            </p>
-          </div>
-        </div>
-
-        {/* range selector */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border shadow-elev-1">
-            {(['month', 'last30', 'alltime'] as RangePeriod[]).map((p) => (
+            {/* range selector */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border shadow-elev-1">
+                {(['month', 'last30', 'alltime'] as RangePeriod[]).map((p) => (
+                  <button
+                    key={p}
+                    className={`tab text-xs ${rangePeriod === p && p !== 'month' ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'} ${rangePeriod === 'month' && p === 'month' ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : ''}`}
+                    onClick={() => {
+                      setRangePeriod(p);
+                      if (p !== 'month') setShowMonthPicker(false);
+                    }}
+                  >
+                    {p === 'month'
+                      ? t('quranAnalytics.periodCurrentMonth', 'This month')
+                      : p === 'last30'
+                        ? t('quranAnalytics.periodLast30', 'Last 30d')
+                        : t('quranAnalytics.periodAllTime', 'All time')}
+                  </button>
+                ))}
+              </div>
               <button
-                key={p}
-                className={`tab text-xs ${rangePeriod === p && p !== 'month' ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : 'text-white/60'} ${rangePeriod === 'month' && p === 'month' ? 'tab-active bg-brand-emerald-dim text-on-color font-bold' : ''}`}
                 onClick={() => {
-                  setRangePeriod(p);
-                  if (p !== 'month') setShowMonthPicker(false);
+                  setShowMonthPicker((v) => !v);
+                  setRangePeriod('month');
                 }}
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
+                  showMonthPicker
+                    ? 'bg-brand-emerald/20 border-brand-emerald/40 text-brand-emerald'
+                    : 'bg-brand-deep border-brand-border text-white/70 hover:text-white shadow-elev-1'
+                }`}
               >
-                {p === 'month'
-                  ? t('quranAnalytics.periodCurrentMonth', 'This month')
-                  : p === 'last30'
-                    ? t('quranAnalytics.periodLast30', 'Last 30d')
-                    : t('quranAnalytics.periodAllTime', 'All time')}
+                <CalendarDaysIcon className="w-3.5 h-3.5" />
+                {t('quranAnalytics.periodMonth', 'Month')}
               </button>
-            ))}
-          </div>
-          <button
-            onClick={() => {
-              setShowMonthPicker((v) => !v);
-              setRangePeriod('month');
-            }}
-            className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold border transition-all ${
-              showMonthPicker
-                ? 'bg-brand-emerald/20 border-brand-emerald/40 text-brand-emerald'
-                : 'bg-brand-deep border-brand-border text-white/70 hover:text-white shadow-elev-1'
-            }`}
-          >
-            <CalendarDaysIcon className="w-3.5 h-3.5" />
-            {t('quranAnalytics.periodMonth', 'Month')}
-          </button>
-        </div>
+            </div>
 
-        {/* month picker panel */}
-        {showMonthPicker &&
-          (() => {
-            const now = new Date();
-            const currentYear = now.getFullYear();
-            const currentMonth = now.getMonth() + 1;
-            return (
-              <div className={`${CARD} p-4 space-y-3`}>
-                <div className="flex items-center justify-between">
-                  <button
-                    onClick={() => setPickerYear((y) => y - 1)}
-                    className="p-1.5 text-white/60 hover:text-white hover:bg-shade/10 rounded-lg"
-                  >
-                    <ChevronLeftIcon className="w-4 h-4" />
-                  </button>
-                  <span className="text-white font-bold text-sm">{pickerYear}</span>
-                  <button
-                    onClick={() => setPickerYear((y) => y + 1)}
-                    disabled={pickerYear >= currentYear}
-                    className="p-1.5 text-white/60 hover:text-white hover:bg-shade/10 rounded-lg disabled:opacity-20"
-                  >
-                    <ChevronRightIcon className="w-4 h-4" />
-                  </button>
-                </div>
-                <div className="grid grid-cols-4 gap-1">
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
-                    const isFuture =
-                      pickerYear > currentYear || (pickerYear === currentYear && m > currentMonth);
-                    const isSel = selectedMonth.year === pickerYear && selectedMonth.month === m;
-                    return (
+            {/* month picker panel */}
+            {showMonthPicker &&
+              (() => {
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                const currentMonth = now.getMonth() + 1;
+                return (
+                  <div className={`${CARD} p-4 space-y-3`}>
+                    <div className="flex items-center justify-between">
                       <button
-                        key={m}
-                        disabled={isFuture}
-                        onClick={() => {
-                          setSelectedMonth({ year: pickerYear, month: m });
-                          setShowMonthPicker(false);
-                          setRangePeriod('month');
-                        }}
-                        className={`rounded-lg py-1.5 text-xs font-semibold transition-all ${
-                          isSel
-                            ? 'bg-brand-emerald-dim text-on-color'
-                            : isFuture
-                              ? 'text-white/30 cursor-not-allowed'
-                              : 'text-white/70 hover:bg-shade/10 hover:text-white'
-                        }`}
+                        onClick={() => setPickerYear((y) => y - 1)}
+                        className="p-1.5 text-white/60 hover:text-white hover:bg-shade/10 rounded-lg"
                       >
-                        {formatLocaleDate(new Date(pickerYear, m - 1, 15), { month: 'short' })}
+                        <ChevronLeftIcon className="w-4 h-4" />
                       </button>
+                      <span className="text-white font-bold text-sm">{pickerYear}</span>
+                      <button
+                        onClick={() => setPickerYear((y) => y + 1)}
+                        disabled={pickerYear >= currentYear}
+                        className="p-1.5 text-white/60 hover:text-white hover:bg-shade/10 rounded-lg disabled:opacity-20"
+                      >
+                        <ChevronRightIcon className="w-4 h-4" />
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-4 gap-1">
+                      {Array.from({ length: 12 }, (_, i) => i + 1).map((m) => {
+                        const isFuture =
+                          pickerYear > currentYear ||
+                          (pickerYear === currentYear && m > currentMonth);
+                        const isSel =
+                          selectedMonth.year === pickerYear && selectedMonth.month === m;
+                        return (
+                          <button
+                            key={m}
+                            disabled={isFuture}
+                            onClick={() => {
+                              setSelectedMonth({ year: pickerYear, month: m });
+                              setShowMonthPicker(false);
+                              setRangePeriod('month');
+                            }}
+                            className={`rounded-lg py-1.5 text-xs font-semibold transition-all ${
+                              isSel
+                                ? 'bg-brand-emerald-dim text-on-color'
+                                : isFuture
+                                  ? 'text-white/30 cursor-not-allowed'
+                                  : 'text-white/70 hover:bg-shade/10 hover:text-white'
+                            }`}
+                          >
+                            {formatLocaleDate(new Date(pickerYear, m - 1, 15), { month: 'short' })}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })()}
+
+            {/* range KPIs: time spent reading vs listening in the selected window */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className={TILE}>
+                <p className="font-display text-xl font-bold text-brand-emerald flex items-center justify-center gap-1">
+                  <BookOpenIcon className="w-4 h-4" aria-hidden="true" />
+                  {range ? fmtDuration(range.stats.readSec) : '-'}
+                </p>
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
+                  {t('quranAnalytics.kpi_readTime', 'Time reading')}
+                </p>
+              </div>
+              <div className={TILE}>
+                <p className="font-display text-xl font-bold text-brand-info flex items-center justify-center gap-1">
+                  <SpeakerWaveIcon className="w-4 h-4" aria-hidden="true" />
+                  {range ? fmtDuration(range.stats.listenSec) : '-'}
+                </p>
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
+                  {t('quranAnalytics.kpi_listenTime', 'Time listening')}
+                </p>
+              </div>
+              <div className={TILE}>
+                <p className="font-display text-xl font-bold text-brand-gold">
+                  {range
+                    ? formatLocaleNumber(range.stats.readSessions + range.stats.listenSessions)
+                    : '-'}
+                </p>
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
+                  {t('quranAnalytics.kpi_sessions', 'Sessions')}
+                </p>
+                {range && (
+                  <p className="text-white/60 text-[10px] mt-0.5 flex items-center justify-center gap-1">
+                    <BookOpenIcon
+                      className="w-3 h-3"
+                      aria-label={t('quranAnalytics.sessions.sourceRead', 'Reading')}
+                    />
+                    {formatLocaleNumber(range.stats.readSessions)} ·
+                    <SpeakerWaveIcon
+                      className="w-3 h-3"
+                      aria-label={t('quranAnalytics.sessions.sourceListen', 'Listening')}
+                    />
+                    {formatLocaleNumber(range.stats.listenSessions)}
+                  </p>
+                )}
+              </div>
+              <div className={TILE}>
+                <p className="font-display text-xl font-bold text-brand-warm">
+                  {range ? formatLocaleNumber(range.stats.activeDays) : '-'}
+                </p>
+                <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
+                  {t('quranAnalytics.kpi_activeDays', 'Active days')}
+                </p>
+                {range && (
+                  <p className="text-white/60 text-[10px] mt-0.5">
+                    {t('quranAnalytics.kpi_ayatInRange', '{{n}} āyāt', {
+                      n: formatLocaleNumber(range.stats.totalUnits),
+                    })}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* chart header */}
+            <div className={`${CARD} p-5`}>
+              <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+                <h2 className={`${SECTION_TITLE} flex-wrap`}>
+                  {chart.monthly
+                    ? t('quranAnalytics.chartTitleMonthly', 'Āyāt per month')
+                    : t('quranAnalytics.chartTitle', 'Āyāt per day')}
+                  <span className="font-sans text-white/60 text-xs font-normal">
+                    · {rangeLabel}
+                  </span>
+                  <InfoButton
+                    onClick={() => setInfoTopic('chart')}
+                    label={CHART_INFO.chart!.title}
+                  />
+                </h2>
+                <span className="text-white/60 text-xs">
+                  {t('quranAnalytics.daysWithQuran', {
+                    active: formatLocaleNumber(range?.stats.activeDays ?? 0),
+                  })}
+                </span>
+              </div>
+              <div className="flex items-end gap-[3px] h-28">
+                {chart.bars.map((d) => (
+                  <div
+                    key={d.key}
+                    title={`${d.label}: ${formatLocaleNumber(d.units)} āyāt`}
+                    className={`flex-1 rounded-t ${d.units > 0 ? 'bg-data-good' : 'bg-track'}`}
+                    style={{ height: `${Math.max(4, (d.units / chart.max) * 100)}%` }}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-between text-[10px] text-white/60 mt-1">
+                <span>{chart.bars[0]?.label.slice(chart.monthly ? 0 : 5)}</span>
+                <span>
+                  {rangeTo === civilToday
+                    ? t('common.today')
+                    : chart.bars[chart.bars.length - 1]?.label.slice(chart.monthly ? 0 : 5)}
+                </span>
+              </div>
+            </div>
+
+            {/* top surahs */}
+            <div className={`${CARD} p-5`}>
+              <h2 className={`${SECTION_TITLE} mb-3`}>
+                <Star8Icon className="w-4 h-4 text-brand-gold" aria-hidden="true" />
+                {t('quranAnalytics.topSurahsTitle')}
+              </h2>
+              {(summary?.topSurahs ?? []).length === 0 ? (
+                <p className="text-white/60 text-xs">{t('quranAnalytics.topSurahsEmpty')}</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {(summary?.topSurahs ?? []).map((t, i) => (
+                    <div key={t.surah} className="flex items-center gap-2 text-xs">
+                      <span className="w-5 text-white/60 font-bold tabular-nums">{i + 1}</span>
+                      <span className="text-white/80 font-bold w-32 truncate">
+                        {nameOf(t.surah)}
+                      </span>
+                      <div className="flex-1 h-4 rounded-full bg-track overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-data-good"
+                          style={{ width: `${(t.completions / maxTop) * 100}%` }}
+                        />
+                      </div>
+                      <span className="text-brand-emerald font-bold w-16 text-right">
+                        ×{formatLocaleNumber(t.completions)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* khatam projection */}
+            <div className={`${CARD} p-5`}>
+              <h2 className={`${SECTION_TITLE} mb-2`}>
+                <BookOpenIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
+                {t('quranAnalytics.khatamProjectionTitle')}
+              </h2>
+              <div className="h-2.5 rounded-full bg-track overflow-hidden">
+                <div
+                  className="h-full rounded-full bg-data-good"
+                  style={{ width: `${khatmPct}%` }}
+                />
+              </div>
+              <p className="text-white/70 text-xs mt-2">
+                {summary?.estDaysToKhatm
+                  ? t('quranAnalytics.paceEstimate', {
+                      pace: formatLocaleNumber(summary.pace ?? 0),
+                      days: formatLocaleNumber(summary.estDaysToKhatm),
+                    })
+                  : t('quranAnalytics.paceEmpty')}
+              </p>
+            </div>
+
+            {/* time of day */}
+            <div className={`${CARD} p-5 space-y-3`}>
+              <h2 className={SECTION_TITLE}>
+                {t('quranAnalytics.timeOfDayTitle', 'Time of day')}
+                <span className="font-sans text-white/60 text-[10px] font-normal">
+                  {t('quranAnalytics.timeOfDaySubtitle', 'last 30 days')}
+                </span>
+                <InfoButton
+                  onClick={() => setInfoTopic('timeOfDay')}
+                  label={CHART_INFO.timeOfDay!.title}
+                />
+              </h2>
+              <TimeOfDayChart data={timeOfDay} />
+            </div>
+
+            {/* reading session history */}
+            <div className={`${CARD} p-5`}>
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <h2 className={SECTION_TITLE}>
+                  <ClockIcon className="w-4 h-4 text-brand-info" />
+                  {t('quranAnalytics.sessions.title', 'Quran sessions')}
+                  <InfoButton
+                    onClick={() => setInfoTopic('sessions')}
+                    label={CHART_INFO.sessions!.title}
+                  />
+                </h2>
+                <input
+                  type="date"
+                  value={sessionsDate}
+                  max={getTrackingDay()}
+                  onChange={(e) => setSessionsDate(e.target.value)}
+                  className="input input-xs input-bordered bg-brand-surface border-brand-border text-white/80 text-xs"
+                />
+              </div>
+              {sessionsLoading ? (
+                <p className="text-white/60 text-xs text-center py-4">{t('common.loading')}</p>
+              ) : sessions && sessions.length > 0 ? (
+                <div className="space-y-2">
+                  {sessions.map((s, i) => {
+                    const wallClockMs = new Date(s.end).getTime() - new Date(s.start).getTime();
+                    const activeMin = Math.max(1, Math.round(s.activeDurationSec / 60));
+                    const wallClockMin = Math.round(wallClockMs / 60_000);
+                    // Flag sessions where the user was mostly idle (fell asleep, audio kept playing)
+                    const isLongIdle =
+                      wallClockMin > 0 && wallClockMin > activeMin * 2 && wallClockMin > 30;
+                    const h = Math.floor(activeMin / 60);
+                    const m = activeMin % 60;
+                    const duration =
+                      h > 0
+                        ? t('quranAnalytics.sessions.durationHm', { h, m })
+                        : t('quranAnalytics.sessions.durationM', { m });
+                    return (
+                      <div
+                        key={i}
+                        className="flex items-center justify-between gap-3 rounded-control bg-brand-surface/50 border border-brand-border p-3"
+                      >
+                        <div className="min-w-0">
+                          <p className="text-white text-sm font-semibold tabular-nums flex items-center gap-1.5">
+                            <span
+                              className="text-brand-emerald"
+                              title={
+                                s.source === 'listen'
+                                  ? t('quranAnalytics.sessions.sourceListen', 'Listening')
+                                  : t('quranAnalytics.sessions.sourceRead', 'Reading')
+                              }
+                            >
+                              {s.source === 'listen' ? (
+                                <SpeakerWaveIcon className="w-4 h-4" />
+                              ) : (
+                                <BookOpenIcon className="w-4 h-4" />
+                              )}
+                            </span>
+                            {formatLocaleTime(new Date(s.start), {
+                              hour: 'numeric',
+                              minute: '2-digit',
+                            })}
+                            {' – '}
+                            {formatLocaleTime(new Date(s.end), {
+                              hour: 'numeric',
+                              minute: '2-digit',
+                            })}
+                          </p>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {s.surahs.map((surahNo) => (
+                              <span
+                                key={surahNo}
+                                className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/70"
+                              >
+                                {nameOf(surahNo)}
+                              </span>
+                            ))}
+                            {s.ayahCount > 0 && (
+                              <span className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/70">
+                                {t('quranAnalytics.sessions.ayahCount', {
+                                  n: formatLocaleNumber(s.ayahCount),
+                                })}
+                              </span>
+                            )}
+                            {isLongIdle && (
+                              <span
+                                className="px-1.5 py-0.5 rounded-md bg-brand-gold/10 border border-brand-gold/20 text-[10px] text-brand-gold"
+                                title={t(
+                                  'quranAnalytics.sessions.idleHint',
+                                  'Audio kept playing while idle'
+                                )}
+                              >
+                                {t('quranAnalytics.sessions.idleNote', 'Active: {{duration}}', {
+                                  duration,
+                                })}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <p className="font-display text-brand-emerald font-bold text-lg shrink-0 whitespace-nowrap">
+                          {duration}
+                        </p>
+                      </div>
                     );
                   })}
                 </div>
-              </div>
-            );
-          })()}
-
-        {/* range KPIs: time spent reading vs listening in the selected window */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className={TILE}>
-            <p className="font-display text-xl font-bold text-brand-emerald flex items-center justify-center gap-1">
-              <BookOpenIcon className="w-4 h-4" aria-hidden="true" />
-              {range ? fmtDuration(range.stats.readSec) : '-'}
-            </p>
-            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
-              {t('quranAnalytics.kpi_readTime', 'Time reading')}
-            </p>
-          </div>
-          <div className={TILE}>
-            <p className="font-display text-xl font-bold text-brand-info flex items-center justify-center gap-1">
-              <SpeakerWaveIcon className="w-4 h-4" aria-hidden="true" />
-              {range ? fmtDuration(range.stats.listenSec) : '-'}
-            </p>
-            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
-              {t('quranAnalytics.kpi_listenTime', 'Time listening')}
-            </p>
-          </div>
-          <div className={TILE}>
-            <p className="font-display text-xl font-bold text-brand-gold">
-              {range
-                ? formatLocaleNumber(range.stats.readSessions + range.stats.listenSessions)
-                : '-'}
-            </p>
-            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
-              {t('quranAnalytics.kpi_sessions', 'Sessions')}
-            </p>
-            {range && (
-              <p className="text-white/60 text-[10px] mt-0.5 flex items-center justify-center gap-1">
-                <BookOpenIcon
-                  className="w-3 h-3"
-                  aria-label={t('quranAnalytics.sessions.sourceRead', 'Reading')}
-                />
-                {formatLocaleNumber(range.stats.readSessions)} ·
-                <SpeakerWaveIcon
-                  className="w-3 h-3"
-                  aria-label={t('quranAnalytics.sessions.sourceListen', 'Listening')}
-                />
-                {formatLocaleNumber(range.stats.listenSessions)}
-              </p>
-            )}
-          </div>
-          <div className={TILE}>
-            <p className="font-display text-xl font-bold text-brand-warm">
-              {range ? formatLocaleNumber(range.stats.activeDays) : '-'}
-            </p>
-            <p className="text-white/60 text-[10px] font-bold uppercase mt-1">
-              {t('quranAnalytics.kpi_activeDays', 'Active days')}
-            </p>
-            {range && (
-              <p className="text-white/60 text-[10px] mt-0.5">
-                {t('quranAnalytics.kpi_ayatInRange', '{{n}} āyāt', {
-                  n: formatLocaleNumber(range.stats.totalUnits),
-                })}
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* chart header */}
-        <div className={`${CARD} p-5`}>
-          <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
-            <h2 className={`${SECTION_TITLE} flex-wrap`}>
-              {chart.monthly
-                ? t('quranAnalytics.chartTitleMonthly', 'Āyāt per month')
-                : t('quranAnalytics.chartTitle', 'Āyāt per day')}
-              <span className="font-sans text-white/60 text-xs font-normal">· {rangeLabel}</span>
-              <InfoButton onClick={() => setInfoTopic('chart')} label={CHART_INFO.chart!.title} />
-            </h2>
-            <span className="text-white/60 text-xs">
-              {t('quranAnalytics.daysWithQuran', {
-                active: formatLocaleNumber(range?.stats.activeDays ?? 0),
-              })}
-            </span>
-          </div>
-          <div className="flex items-end gap-[3px] h-28">
-            {chart.bars.map((d) => (
-              <div
-                key={d.key}
-                title={`${d.label}: ${formatLocaleNumber(d.units)} āyāt`}
-                className={`flex-1 rounded-t ${d.units > 0 ? 'bg-data-good' : 'bg-track'}`}
-                style={{ height: `${Math.max(4, (d.units / chart.max) * 100)}%` }}
-              />
-            ))}
-          </div>
-          <div className="flex justify-between text-[10px] text-white/60 mt-1">
-            <span>{chart.bars[0]?.label.slice(chart.monthly ? 0 : 5)}</span>
-            <span>
-              {rangeTo === civilToday
-                ? t('common.today')
-                : chart.bars[chart.bars.length - 1]?.label.slice(chart.monthly ? 0 : 5)}
-            </span>
-          </div>
-        </div>
-
-        {/* top surahs */}
-        <div className={`${CARD} p-5`}>
-          <h2 className={`${SECTION_TITLE} mb-3`}>
-            <Star8Icon className="w-4 h-4 text-brand-gold" aria-hidden="true" />
-            {t('quranAnalytics.topSurahsTitle')}
-          </h2>
-          {(summary?.topSurahs ?? []).length === 0 ? (
-            <p className="text-white/60 text-xs">{t('quranAnalytics.topSurahsEmpty')}</p>
-          ) : (
-            <div className="space-y-1.5">
-              {(summary?.topSurahs ?? []).map((t, i) => (
-                <div key={t.surah} className="flex items-center gap-2 text-xs">
-                  <span className="w-5 text-white/60 font-bold tabular-nums">{i + 1}</span>
-                  <span className="text-white/80 font-bold w-32 truncate">{nameOf(t.surah)}</span>
-                  <div className="flex-1 h-4 rounded-full bg-track overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-data-good"
-                      style={{ width: `${(t.completions / maxTop) * 100}%` }}
-                    />
-                  </div>
-                  <span className="text-brand-emerald font-bold w-16 text-right">
-                    ×{formatLocaleNumber(t.completions)}
-                  </span>
-                </div>
-              ))}
+              ) : (
+                <p className="text-white/60 text-xs text-center py-4">
+                  {t('quranAnalytics.sessions.empty', 'No sessions logged for this day')}
+                </p>
+              )}
             </div>
-          )}
-        </div>
-
-        {/* khatam projection */}
-        <div className={`${CARD} p-5`}>
-          <h2 className={`${SECTION_TITLE} mb-2`}>
-            <BookOpenIcon className="w-4 h-4 text-brand-emerald" aria-hidden="true" />
-            {t('quranAnalytics.khatamProjectionTitle')}
-          </h2>
-          <div className="h-2.5 rounded-full bg-track overflow-hidden">
-            <div className="h-full rounded-full bg-data-good" style={{ width: `${khatmPct}%` }} />
-          </div>
-          <p className="text-white/70 text-xs mt-2">
-            {summary?.estDaysToKhatm
-              ? t('quranAnalytics.paceEstimate', {
-                  pace: formatLocaleNumber(summary.pace ?? 0),
-                  days: formatLocaleNumber(summary.estDaysToKhatm),
-                })
-              : t('quranAnalytics.paceEmpty')}
-          </p>
-        </div>
-
-        {/* time of day */}
-        <div className={`${CARD} p-5 space-y-3`}>
-          <h2 className={SECTION_TITLE}>
-            {t('quranAnalytics.timeOfDayTitle', 'Time of day')}
-            <span className="font-sans text-white/60 text-[10px] font-normal">
-              {t('quranAnalytics.timeOfDaySubtitle', 'last 30 days')}
-            </span>
-            <InfoButton
-              onClick={() => setInfoTopic('timeOfDay')}
-              label={CHART_INFO.timeOfDay!.title}
-            />
-          </h2>
-          <TimeOfDayChart data={timeOfDay} />
-        </div>
-
-        {/* reading session history */}
-        <div className={`${CARD} p-5`}>
-          <div className="flex items-center justify-between gap-3 mb-3">
-            <h2 className={SECTION_TITLE}>
-              <ClockIcon className="w-4 h-4 text-brand-info" />
-              {t('quranAnalytics.sessions.title', 'Quran sessions')}
-              <InfoButton
-                onClick={() => setInfoTopic('sessions')}
-                label={CHART_INFO.sessions!.title}
-              />
-            </h2>
-            <input
-              type="date"
-              value={sessionsDate}
-              max={getTrackingDay()}
-              onChange={(e) => setSessionsDate(e.target.value)}
-              className="input input-xs input-bordered bg-brand-surface border-brand-border text-white/80 text-xs"
-            />
-          </div>
-          {sessionsLoading ? (
-            <p className="text-white/60 text-xs text-center py-4">{t('common.loading')}</p>
-          ) : sessions && sessions.length > 0 ? (
-            <div className="space-y-2">
-              {sessions.map((s, i) => {
-                const wallClockMs = new Date(s.end).getTime() - new Date(s.start).getTime();
-                const activeMin = Math.max(1, Math.round(s.activeDurationSec / 60));
-                const wallClockMin = Math.round(wallClockMs / 60_000);
-                // Flag sessions where the user was mostly idle (fell asleep, audio kept playing)
-                const isLongIdle =
-                  wallClockMin > 0 && wallClockMin > activeMin * 2 && wallClockMin > 30;
-                const h = Math.floor(activeMin / 60);
-                const m = activeMin % 60;
-                const duration =
-                  h > 0
-                    ? t('quranAnalytics.sessions.durationHm', { h, m })
-                    : t('quranAnalytics.sessions.durationM', { m });
-                return (
-                  <div
-                    key={i}
-                    className="flex items-center justify-between gap-3 rounded-control bg-brand-surface/50 border border-brand-border p-3"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-white text-sm font-semibold tabular-nums flex items-center gap-1.5">
-                        <span
-                          className="text-brand-emerald"
-                          title={
-                            s.source === 'listen'
-                              ? t('quranAnalytics.sessions.sourceListen', 'Listening')
-                              : t('quranAnalytics.sessions.sourceRead', 'Reading')
-                          }
-                        >
-                          {s.source === 'listen' ? (
-                            <SpeakerWaveIcon className="w-4 h-4" />
-                          ) : (
-                            <BookOpenIcon className="w-4 h-4" />
-                          )}
-                        </span>
-                        {formatLocaleTime(new Date(s.start), {
-                          hour: 'numeric',
-                          minute: '2-digit',
-                        })}
-                        {' – '}
-                        {formatLocaleTime(new Date(s.end), { hour: 'numeric', minute: '2-digit' })}
-                      </p>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {s.surahs.map((surahNo) => (
-                          <span
-                            key={surahNo}
-                            className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/70"
-                          >
-                            {nameOf(surahNo)}
-                          </span>
-                        ))}
-                        {s.ayahCount > 0 && (
-                          <span className="px-1.5 py-0.5 rounded-md bg-shade/30 border border-brand-border text-[10px] text-white/70">
-                            {t('quranAnalytics.sessions.ayahCount', {
-                              n: formatLocaleNumber(s.ayahCount),
-                            })}
-                          </span>
-                        )}
-                        {isLongIdle && (
-                          <span
-                            className="px-1.5 py-0.5 rounded-md bg-brand-gold/10 border border-brand-gold/20 text-[10px] text-brand-gold"
-                            title={t(
-                              'quranAnalytics.sessions.idleHint',
-                              'Audio kept playing while idle'
-                            )}
-                          >
-                            {t('quranAnalytics.sessions.idleNote', 'Active: {{duration}}', {
-                              duration,
-                            })}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <p className="font-display text-brand-emerald font-bold text-lg shrink-0 whitespace-nowrap">
-                      {duration}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-white/60 text-xs text-center py-4">
-              {t('quranAnalytics.sessions.empty', 'No sessions logged for this day')}
-            </p>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       <ChartInfoModal

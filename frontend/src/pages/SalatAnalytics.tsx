@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import ResetTracker from '../components/journey/ResetTracker.js';
 import IntentionLine from '../components/analytics/IntentionLine.js';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -162,7 +163,7 @@ export default function SalatAnalytics() {
       title: t('salatAnalytics.info.journeyTitle', 'Journey'),
       body: t(
         'salatAnalytics.info.journeyBody',
-        "Your tracking history split into phases. A new phase starts each time you reset your kaza debt count. Each phase shows how many days it covered and your completion rate across them. The current phase updates live and already includes today's progress so far."
+        "Your tracking history split into phases. A new phase starts each time you start Salat fresh (Settings, Fresh start). Each phase shows how many days it covered and your completion rate across them. The current phase updates live and already includes today's progress so far. Under the phases, the reset tracker lists your Salat fresh starts and your Kaza debt resets, with dates."
       ),
     },
     kazaInsights: {
@@ -1398,6 +1399,8 @@ export default function SalatAnalytics() {
                   'Missed includes prayers left unmarked on past days.'
                 )}
               </p>
+              {/* Two trackers here: Salat's fresh starts and the Kaza debt resets */}
+              <ResetTracker areas={['salat', 'kaza']} />
             </div>
           )}
         </div>

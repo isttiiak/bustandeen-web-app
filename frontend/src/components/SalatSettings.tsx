@@ -6,7 +6,6 @@ import {
   XMarkIcon,
   ArrowPathIcon,
   ArrowTopRightOnSquareIcon,
-  ArrowUturnLeftIcon,
   AdjustmentsHorizontalIcon,
   BookOpenIcon,
   CheckIcon,
@@ -17,8 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
-import ConfirmDialog from './ConfirmDialog.js';
-import { BTN_SECONDARY, ITEM, REF_LINK, SECTION_TITLE } from './bustanStyles.js';
+import { ITEM, REF_LINK, SECTION_TITLE } from './bustanStyles.js';
 import {
   TASBIH_MODES,
   getTasbihMode,
@@ -35,9 +33,9 @@ import {
   setShowSalatAdhkar,
 } from '../utils/salatPrefs.js';
 import { translateReference } from '../utils/localeReference.js';
-import { useSalatDebt, useResetSalatDebt } from '../hooks/useSalatLog.js';
+import { useSalatDebt } from '../hooks/useSalatLog.js';
+import KazaDebtReset from './KazaDebtReset.js';
 import FreshStart from './FreshStart.js';
-import { getTrackingDay } from '../utils/trackingDay.js';
 import Switch from './Switch.js';
 
 /**
@@ -59,8 +57,6 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
   const [showNafl, setShowNafl] = useState<boolean>(() => getShowNaflGuide());
   const [showAdhkar, setShowAdhkar] = useState<boolean>(() => getShowSalatAdhkar());
   const { data: debt } = useSalatDebt();
-  const resetDebt = useResetSalatDebt();
-  const [confirmDebtReset, setConfirmDebtReset] = useState(false);
 
   const chooseTasbih = (m: TasbihMode) => {
     setTasbih(m);
@@ -86,22 +82,6 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
   const toggleShowAdhkar = (value: boolean) => {
     setShowAdhkar(value);
     setShowSalatAdhkar(value);
-  };
-
-  const handleDebtReset = () => {
-    resetDebt.mutate(
-      { today: getTrackingDay() },
-      {
-        onSuccess: () => {
-          toast.success(
-            t('salatTracker.kazaDebtResetDone', 'Kaza debt reset. Counting fresh from today.')
-          );
-        },
-        onError: () =>
-          toast.error(t('salatTracker.kazaDebtResetFail', 'Could not reset. Please try again.')),
-      }
-    );
-    setConfirmDebtReset(false);
   };
 
   return createPortal(
@@ -358,13 +338,7 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
                       "Fallen behind for a while? A running total can feel discouraging rather than useful, so reset it and count fresh from today. Your prayer history isn't affected, and you can always add debt back on the tracker if you need to."
                     )}
                   </p>
-                  <button
-                    onClick={() => setConfirmDebtReset(true)}
-                    className={`${BTN_SECONDARY} !px-3 !py-2 !text-xs`}
-                  >
-                    <ArrowUturnLeftIcon className="w-3.5 h-3.5" aria-hidden="true" />
-                    {t('salatTracker.kazaDebtReset', 'Reset kaza debt')}
-                  </button>
+                  <KazaDebtReset />
                 </section>
               )}
 
@@ -396,22 +370,6 @@ export default function SalatSettings({ open, onClose }: { open: boolean; onClos
               </p>
             </div>
           </motion.aside>
-
-          <ConfirmDialog
-            open={confirmDebtReset}
-            title={t('salatTracker.kazaDebtResetConfirmTitle', 'Reset kaza debt?')}
-            message={t(
-              'salatTracker.kazaDebtResetConfirmMsg',
-              'All prayers owed will be set to 0 and counting restarts from today. Nothing is deleted: your logged prayers stay as they are, and you can add debt back by hand afterward if you need to.'
-            )}
-            confirmLabel={
-              resetDebt.isPending
-                ? t('salatTracker.kazaDebtResetting', 'Resetting…')
-                : t('salatTracker.kazaDebtResetConfirm', 'Yes, start fresh')
-            }
-            onConfirm={handleDebtReset}
-            onCancel={() => setConfirmDebtReset(false)}
-          />
         </>
       )}
     </AnimatePresence>,

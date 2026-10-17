@@ -15,6 +15,8 @@ import {
   isRecurring,
   monthListEvents,
   monthRecurring,
+  emptyMonthKey,
+  printWeekend,
   sheetSize,
   type DayMark,
   type PrintOptions,
@@ -43,7 +45,6 @@ interface SheetProps {
   day: DayResolver;
   eventsOf: (d: CalendarDay) => CalendarEvent[];
   weekStart: number;
-  weekend: readonly number[];
   today: string;
   countryLabel: string;
   /** Kinds of event shown (the colour guide lists only these). */
@@ -61,6 +62,8 @@ const weekdayName = (w: number) =>
   gregLabel(`2026-10-${String(11 + w).padStart(2, '0')}`, { weekday: 'short' });
 
 const isBn = (k: CalendarKind) => (k === 'bn' ? 'pc-bn' : '');
+/** The big number in the heading font when the Hijri calendar leads, so the change is seen. */
+const bigClass = (k: CalendarKind) => (k === 'bn' ? 'pc-bn' : k === 'hijri' ? 'pc-hj' : '');
 
 /** A recurring day's sign: a ring for the Monday and Thursday fast, a full moon for the White Days. */
 const Mark = ({ m }: { m: DayMark }) => <i className={`pc-m pc-m-${m}`} aria-hidden="true" />;
@@ -110,6 +113,7 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
   const { t, i18n } = useTranslation();
   const lang: Lang = i18n.language === 'bn' ? 'bn' : 'en';
   const [c1 = 'greg', c2, c3] = p.options.order;
+  const weekend = printWeekend(p.options);
   const days = monthDays(p.anchor, c1, p.day);
   const order = weekdayOrder(p.weekStart);
   const lead = leadingBlanks(days[0]!.weekday, p.weekStart);
@@ -133,6 +137,15 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
   const jumuah = repeats.some((r) => r.id === 'friday');
   const dateOf = (d: CalendarDay) => (c1 === 'greg' ? gregShort(d.ymd) : dayNumber(c1, d, lang));
   const missing = p.missingYears(days);
+  // Nothing listed at all: no "This month" block. It says "no holidays" only
+  // when government holidays are listed.
+  const empty = emptyMonthKey(p.kinds);
+  const showMonth = !!empty && (list.length > 0 || repeats.length === 0);
+  // The guide (off by default): which number is which calendar (only with
+  // two or more), and the colours actually on the sheet.
+  const guideCals = p.options.order.length > 1;
+  const guideKey = p.kinds.length > 0 || weekend.length > 0;
+  const showGuide = p.options.guide && (guideCals || guideKey);
   const subtitle = [c2, c3]
     .filter((k): k is CalendarKind => !!k)
     .map((k) => monthSpan(k, days, t, lang))
@@ -151,7 +164,7 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
           style={{ gridTemplateRows: `${jumuah ? 38 : 28}px repeat(${rows}, 1fr)` }}
         >
           {order.map((w) => (
-            <div key={`w${w}`} className={`pc-wd ${p.weekend.includes(w) ? 'pc-we' : ''}`}>
+            <div key={`w${w}`} className={`pc-wd ${weekend.includes(w) ? 'pc-we' : ''}`}>
               <span>
                 {weekdayName(w)}
                 {jumuah && w === 5 && <small data-print-jumuah>{t('calendar.pJumuah')}</small>}
@@ -184,10 +197,10 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
             return (
               <div
                 key={d.ymd}
-                className={`pc-c ${p.weekend.includes(d.weekday) ? 'pc-we' : ''} ${holiday ? 'pc-hol' : ''}`}
+                className={`pc-c ${weekend.includes(d.weekday) ? 'pc-we' : ''} ${holiday ? 'pc-hol' : ''}`}
                 data-print-day={d.ymd}
               >
-                <span className={`pc-n1 ${isBn(c1)}`}>{dayNumber(c1, d, lang)}</span>
+                <span className={`pc-n1 ${bigClass(c1)}`}>{dayNumber(c1, d, lang)}</span>
                 {/* The second calendar top right, the day's signs under it. */}
                 {(c2 || signs) && (
                   <span className="pc-n2">
@@ -219,7 +232,7 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
           ))}
         </div>
         <div className="pc-side">
-          {(list.length > 0 || repeats.length === 0) && (
+          {showMonth && (
             <div>
               <h4>{t('calendar.pThisMonth')}</h4>
               <ul>
@@ -227,7 +240,7 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
                   <li>
                     <i />
                     <b />
-                    <span>{t('calendar.noneThisMonth')}</span>
+                    <span>{t(`calendar.${empty}`)}</span>
                   </li>
                 )}
                 {list.map(({ day, event, span }, i) => (
@@ -280,35 +293,40 @@ function MonthSheet(p: SheetProps & { anchor: string; style: { width: number; he
               </ul>
             </div>
           )}
-          <div>
-            <h4>{t('calendar.pGuide')}</h4>
-            {/* Which number is which calendar, at the sizes of the day box. */}
-            <ul className="pc-cals">
-              {p.options.order.map((k, i) => (
-                <li key={k}>
-                  <i className={['pc-a', 'pc-b', 'pc-cc'][i]}>{num(i + 1, lang)}</i>
-                  <span>{t(`calendar.cal.${k}`)}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="pc-key">
-              {p.kinds.map((k) => (
-                <span key={k}>
-                  <i className={`pc-sw pc-${k}`} />
-                  {t(`calendar.kind.${k}`)}
-                </span>
-              ))}
-              <span>
-                <i className="pc-sw pc-weekend" />
-                {t('calendar.kind.weekend')}
-              </span>
+          {showGuide && (
+            <div data-print-guide>
+              <h4>{t('calendar.pGuide')}</h4>
+              {/* Which number is which calendar, at the sizes of the day box. */}
+              {guideCals && (
+                <ul className="pc-cals">
+                  {p.options.order.map((k, i) => (
+                    <li key={k}>
+                      <i className={['pc-a', 'pc-b', 'pc-cc'][i]}>{num(i + 1, lang)}</i>
+                      <span>{t(`calendar.cal.${k}`)}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {guideKey && (
+                <div className="pc-key">
+                  {p.kinds.map((k) => (
+                    <span key={k}>
+                      <i className={`pc-sw pc-${k}`} />
+                      {t(`calendar.kind.${k}`)}
+                    </span>
+                  ))}
+                  {weekend.length > 0 && (
+                    <span>
+                      <i className="pc-sw pc-weekend" />
+                      {t('calendar.kind.weekend')}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
-            <p className="pc-fine" data-print-moon>
-              {t('calendar.moonNote')}
-            </p>
-          </div>
-          {/* Blank for writing: faint lines fill the rest of the column. */}
-          {blank && <div className="pc-notes" data-print-notes />}
+          )}
+          {/* Faint lines to write on fill the rest of the column. */}
+          {p.options.lines && <div className="pc-notes" data-print-notes />}
         </div>
       </div>
       <Foot />
@@ -320,6 +338,7 @@ function YearGlance(p: SheetProps & { style: { width: number; height: number } }
   const { t, i18n } = useTranslation();
   const lang: Lang = i18n.language === 'bn' ? 'bn' : 'en';
   const [main = 'greg', sub] = p.options.order;
+  const weekend = printWeekend(p.options);
   const order = weekdayOrder(p.weekStart);
   const first = p.day(p.anchors[0]!);
   const title =
@@ -353,9 +372,9 @@ function YearGlance(p: SheetProps & { style: { width: number; height: number } }
                 {days.map((d) => (
                   <span
                     key={d.ymd}
-                    className={`${p.weekend.includes(d.weekday) ? 'pc-we' : ''} ${
+                    className={`${weekend.includes(d.weekday) ? 'pc-we' : ''} ${
                       p.eventsOf(d).some((e) => e.type === 'holiday') ? 'pc-h' : ''
-                    } ${isBn(main)}`}
+                    } ${bigClass(main)}`}
                   >
                     {dayNumber(main, d, lang)}
                     {sub && <small className={isBn(sub)}>{dayNumber(sub, d, lang)}</small>}
@@ -366,9 +385,6 @@ function YearGlance(p: SheetProps & { style: { width: number; height: number } }
           );
         })}
       </div>
-      <p className="pc-fine pc-glance-fine" data-print-moon>
-        {t('calendar.moonNote')}
-      </p>
       <Foot />
     </section>
   );

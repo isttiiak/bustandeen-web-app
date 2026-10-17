@@ -11,6 +11,7 @@ import AdminRedirect from './components/AdminRedirect.js';
 // and Profile/Settings are large; keep them out of the initial bundle.
 const ZikrAnalytics = lazy(() => import('./pages/ZikrAnalytics.js'));
 const Settings = lazy(() => import('./pages/Settings.js'));
+const Journey = lazy(() => import('./pages/Journey.js'));
 const Onboarding = lazy(() => import('./pages/Onboarding.js'));
 const AuthSignIn = lazy(() => import('./pages/AuthSignIn.js'));
 const AuthSignUp = lazy(() => import('./pages/AuthSignUp.js'));
@@ -214,6 +215,14 @@ export default function AppRoutes({ revision }: { revision: number }) {
         element={
           <Protected>
             <Onboarding />
+          </Protected>
+        }
+      />
+      <Route
+        path="/journey"
+        element={
+          <Protected>
+            <Journey />
           </Protected>
         }
       />

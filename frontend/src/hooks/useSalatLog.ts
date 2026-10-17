@@ -621,6 +621,8 @@ export function useResetSalatDebt() {
     onSuccess: (data) => {
       qc.setQueryData(['salat', 'debt'], data);
       void qc.invalidateQueries({ queryKey: ['salat', 'debtHistory'] });
+      // The reset tracker (Journey) lists every Kaza debt reset.
+      void qc.invalidateQueries({ queryKey: ['statsResets'] });
     },
   });
 }

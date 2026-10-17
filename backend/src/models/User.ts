@@ -17,6 +17,8 @@ export interface ISalatResetEntry {
   date: string; // YYYY-MM-DD — first day of the new phase
   note: string;
   resetAt: Date;
+  /** Made by "Reset all stats" (Settings), not this area's own reset. */
+  all?: boolean;
 }
 
 /** One "fresh start" of a stats area (U7). Nothing is deleted: totals,
@@ -30,12 +32,18 @@ export interface IStatsResetEntry {
   prevStreak?: Record<string, unknown> | null;
   /** quran: surahCounts at the reset (top surahs count above it) */
   surahBaseline?: Record<string, number> | null;
+  /** Made by "Reset all stats" (Settings), not this area's own reset. */
+  all?: boolean;
+  /** kaza: prayers owed in total just before the debt was set to 0 */
+  owedBefore?: number;
 }
 
 export interface IStatsResets {
   zikr?: IStatsResetEntry[];
   fasting?: IStatsResetEntry[];
   quran?: IStatsResetEntry[];
+  /** Kaza debt resets (a log only: the debt itself lives in SalatDebt). */
+  kaza?: IStatsResetEntry[];
 }
 
 export interface IUser extends Document {
@@ -136,6 +144,8 @@ const statsResetEntrySchema = new Schema(
     resetAt: { type: Date, default: Date.now },
     prevStreak: { type: Schema.Types.Mixed, default: undefined },
     surahBaseline: { type: Schema.Types.Mixed, default: undefined },
+    all: { type: Boolean, default: undefined },
+    owedBefore: { type: Number, default: undefined, min: 0 },
   },
   { _id: false }
 );
@@ -198,6 +208,7 @@ const userSchema = new Schema(
           date: { type: String, required: true },
           note: { type: String, default: '' },
           resetAt: { type: Date, default: Date.now },
+          all: { type: Boolean, default: undefined },
         },
       ],
       default: [],
@@ -208,6 +219,7 @@ const userSchema = new Schema(
           zikr: { type: [statsResetEntrySchema], default: undefined },
           fasting: { type: [statsResetEntrySchema], default: undefined },
           quran: { type: [statsResetEntrySchema], default: undefined },
+          kaza: { type: [statsResetEntrySchema], default: undefined },
         },
         { _id: false }
       ),

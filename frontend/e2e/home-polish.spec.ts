@@ -40,11 +40,16 @@ test('ʿIshāʾ before Islamic midnight: "Best time" countdown above the divider
   await expect(divider).not.toContainText(/Best time|Ends in/);
 });
 
-test('ʿIshāʾ after Islamic midnight: no "best", it counts down to Fajr', async ({ page }) => {
+test('ʿIshāʾ after Islamic midnight: best time passed, valid until Fajr, no repeated countdown', async ({
+  page,
+}) => {
   await demoHomeAt(page, '2026-10-16T00:30:00+06:00');
-  await expect(arch(page)).toContainText(/Ends at Fajr/);
+  // 2026-10-18: no "Fajr" in what is on now; the Next line names it.
+  await expect(arch(page)).toContainText(/Best time has passed, still valid until \d/);
+  await expect(arch(page)).not.toContainText(/Ends at Fajr|Best until|Best time:/);
   await expect(arch(page)).toContainText(/Ends in/);
-  await expect(arch(page)).not.toContainText(/Best/);
+  // The countdown above already says it: the Next line has no "(in ...)".
+  await expect(arch(page)).not.toContainText(/\(in \d/);
 });
 
 test('navbar toggle switches Light/Dark and Settings shows the same mode', async ({ page }) => {

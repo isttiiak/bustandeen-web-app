@@ -31,6 +31,7 @@ import {
   EnvelopeIcon,
   CalculatorIcon,
   CalendarDaysIcon,
+  MapIcon,
   ShareIcon,
 } from '@heroicons/react/24/outline';
 import {
@@ -62,6 +63,7 @@ const PAGE_KEYS: Record<string, string> = {
   '/quran': 'nav.quranHabit',
   '/friends': 'nav.friends',
   '/settings': 'nav.settings',
+  '/journey': 'nav.journey',
   '/profile': 'nav.myProfile',
   '/naseeh': 'nav.naseeh',
   '/musafir': 'nav.musafir',
@@ -87,6 +89,7 @@ const PAGE_META: Record<
   '/quran': { title: 'Quran Habit', Icon: BookOpenIcon },
   '/friends': { title: 'Friends', Icon: UsersIcon },
   '/settings': { title: 'Settings', Icon: Cog6ToothIcon },
+  '/journey': { title: 'Journey', Icon: MapIcon },
   '/about': { title: 'About Bustandeen', Icon: LeafIcon },
   '/privacy': { title: 'Privacy', Icon: LockClosedIcon },
   '/terms': { title: 'Terms', Icon: DocumentTextIcon },
@@ -99,7 +102,7 @@ const PAGE_META: Record<
   '/library/adhkar': { title: 'Adhkar', Icon: SunriseIcon },
   '/library/asma-ul-husna': { title: '99 Names of Allah', Icon: NamesMedallionIcon },
   '/library/zakat-calculator': { title: 'Zakat Calculator', Icon: CalculatorIcon },
-  '/library/calendar': { title: 'Islamic calendar', Icon: CalendarDaysIcon },
+  '/library/calendar': { title: 'Bustandeen Calendar', Icon: CalendarDaysIcon },
 };
 
 const HOME_META: (typeof PAGE_META)[string] = { title: 'Home', Icon: HomeIcon };
@@ -117,6 +120,7 @@ const PARENT_ROUTES: Record<string, string> = {
   '/quran': '/',
   '/friends': '/',
   '/settings': '/',
+  '/journey': '/',
   '/about': '/',
   '/privacy': '/',
   '/terms': '/',
@@ -362,6 +366,15 @@ export default function Navbar() {
                       >
                         <Cog6ToothIcon className="w-4 h-4 text-white/40" />
                         {t('nav.settings')}
+                      </Link>
+                      <Link
+                        to="/journey"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/5 text-sm transition-colors"
+                        data-testid="nav-journey"
+                      >
+                        <MapIcon className="w-4 h-4 text-brand-emerald/70" />
+                        {t('nav.journey')}
                       </Link>
                       {aiEnabled && !isDemoMode && (
                         <Link

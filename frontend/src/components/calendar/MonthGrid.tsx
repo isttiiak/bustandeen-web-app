@@ -139,7 +139,13 @@ export default function MonthGrid(p: MonthGridProps) {
                     : 'border-transparent'
               } ${weekend && !isSel ? 'bg-brand-warm/10' : ''}`}
             >
-              <span className={`text-[15px] font-bold leading-tight tabular-nums ${numberColor}`}>
+              {/* Hijri as the main calendar: numbers in the heading font, so the switch is seen. */}
+              <span
+                className={`text-[15px] font-bold leading-tight tabular-nums ${numberColor} ${
+                  p.grid === 'hijri' ? 'font-display text-base' : ''
+                }`}
+                data-hijri-main={p.grid === 'hijri' || undefined}
+              >
                 {dayNumber(p.grid, d, lang)}
               </span>
               {p.others.map((k) => (

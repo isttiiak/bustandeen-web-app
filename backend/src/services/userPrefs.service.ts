@@ -67,6 +67,8 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_calendar_week_start',
   'bustandeen_calendar_weekend',
   'bustandeen_calendar_show',
+  // Appearance (Settings: system / dark / light / daylight)
+  'bustandeen_theme_mode',
 ]);
 
 export type PrefEntry = { v: string; t: number };
