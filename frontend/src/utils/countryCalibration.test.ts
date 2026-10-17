@@ -366,3 +366,78 @@ describe.each(TABLES)(
     });
   }
 );
+
+// Malaysia, the other prayers (v5.186.0): JAKIM adds a ~2 min caution to
+// every prayer and takes it off syuruk. Every prayer start must be at or after
+// JAKIM's, sunrise (the end of Fajr) at or before JAKIM's syuruk. Rows: JAKIM
+// e-Solat zone WLY01, 2026 (syuruk, Zohor, Asar, Isyak), read 2026-10-17: the
+// first day of every month, the worst days of each prayer before the fix
+// (Asar 3 min early 15 Sep - 5 Oct, Isyak 3 min early mid-May to July), and
+// days where Zohor or syuruk already sits on JAKIM's minute.
+const JAKIM_WLY01_OTHER: [day: string, syuruk: string, dhuhr: string, asr: string, isha: string][] =
+  [
+    ['2026-01-01', '07:18', '13:19', '16:42', '20:31'],
+    ['2026-01-05', '07:19', '13:21', '16:44', '20:33'],
+    ['2026-01-06', '07:20', '13:22', '16:44', '20:33'],
+    ['2026-01-24', '07:25', '13:28', '16:50', '20:39'],
+    ['2026-02-01', '07:26', '13:30', '16:51', '20:40'],
+    ['2026-02-12', '07:26', '13:30', '16:50', '20:40'],
+    ['2026-02-19', '07:25', '13:30', '16:48', '20:39'],
+    ['2026-02-20', '07:25', '13:30', '16:47', '20:39'],
+    ['2026-03-01', '07:23', '13:28', '16:43', '20:38'],
+    ['2026-03-13', '07:19', '13:26', '16:35', '20:36'],
+    ['2026-03-31', '07:12', '13:20', '16:22', '20:33'],
+    ['2026-04-01', '07:12', '13:20', '16:22', '20:33'],
+    ['2026-04-20', '07:05', '13:15', '16:28', '20:31'],
+    ['2026-04-28', '07:03', '13:14', '16:30', '20:31'],
+    ['2026-05-01', '07:03', '13:13', '16:31', '20:31'],
+    ['2026-05-17', '07:01', '13:12', '16:35', '20:34'],
+    ['2026-05-22', '07:01', '13:13', '16:36', '20:35'],
+    ['2026-05-29', '07:01', '13:13', '16:38', '20:37'],
+    ['2026-06-01', '07:02', '13:14', '16:39', '20:37'],
+    ['2026-06-09', '07:03', '13:15', '16:41', '20:40'],
+    ['2026-06-21', '07:05', '13:18', '16:44', '20:43'],
+    ['2026-06-26', '07:06', '13:19', '16:45', '20:44'],
+    ['2026-07-01', '07:07', '13:20', '16:45', '20:44'],
+    ['2026-07-04', '07:08', '13:20', '16:46', '20:45'],
+    ['2026-07-20', '07:10', '13:22', '16:46', '20:45'],
+    ['2026-07-27', '07:11', '13:23', '16:45', '20:44'],
+    ['2026-08-01', '07:11', '13:22', '16:43', '20:42'],
+    ['2026-09-01', '07:07', '13:16', '16:24', '20:30'],
+    ['2026-09-15', '07:04', '13:11', '16:12', '20:23'],
+    ['2026-09-17', '07:03', '13:11', '16:13', '20:22'],
+    ['2026-09-18', '07:03', '13:10', '16:13', '20:22'],
+    ['2026-09-20', '07:02', '13:10', '16:14', '20:21'],
+    ['2026-09-21', '07:02', '13:09', '16:14', '20:20'],
+    ['2026-09-24', '07:01', '13:08', '16:15', '20:19'],
+    ['2026-09-25', '07:01', '13:08', '16:15', '20:19'],
+    ['2026-09-29', '07:00', '13:06', '16:16', '20:17'],
+    ['2026-09-30', '07:00', '13:06', '16:16', '20:17'],
+    ['2026-10-01', '07:00', '13:06', '16:16', '20:16'],
+    ['2026-10-05', '06:59', '13:05', '16:17', '20:15'],
+    ['2026-10-17', '06:57', '13:01', '16:18', '20:11'],
+    ['2026-11-01', '06:56', '13:00', '16:20', '20:09'],
+    ['2026-12-01', '07:03', '13:05', '16:27', '20:16'],
+  ];
+
+describe('MY (kuala-lumpur-malaysia) against JAKIM e-Solat WLY01: sunrise, Dhuhr, Asr, Isha', () => {
+  const city = cityBySlug('kuala-lumpur-malaysia')!;
+  it.each(JAKIM_WLY01_OTHER)(
+    '%s: no prayer before JAKIM, sunrise never after syuruk',
+    (day, syuruk, dhuhr, asr, isha) => {
+      const t = computePrayerTimes(city.lat, city.lng, day, city.timezone, 'MY');
+      const sunriseGap = minutesIn(t.sunrise, city.timezone) - toMinutes(syuruk);
+      expect(sunriseGap, 'sunrise minus JAKIM syuruk').toBeLessThanOrEqual(0);
+      expect(sunriseGap).toBeGreaterThanOrEqual(-3);
+      for (const [name, ours, official] of [
+        ['Dhuhr', t.dhuhr, dhuhr],
+        ['Asr', t.asr, asr],
+        ['Isha', t.isha, isha],
+      ] as const) {
+        const gap = minutesIn(ours, city.timezone) - toMinutes(official);
+        expect(gap, `${name} minus JAKIM`).toBeGreaterThanOrEqual(0);
+        expect(gap, name).toBeLessThanOrEqual(3);
+      }
+    }
+  );
+});

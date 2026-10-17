@@ -88,12 +88,16 @@ describe('the calibration table', () => {
     expect(countryTimeAdjustments(null, 'Karachi')).toBeNull();
   });
 
-  it('Malaysia: JAKIM 18° Fajr with 3 min of caution, sehri 3 min before it, Maghrib +3', () => {
+  it('Malaysia: JAKIM 18° Fajr, every prayer on the safe side of JAKIM, sunrise 2 min earlier', () => {
     expect(countryTimeAdjustments('MY', 'Singapore')).toMatchObject({
       fajrAngle: 18,
       fajr: 3,
       sehri: -3,
+      sunrise: -2,
+      dhuhr: 2,
+      asr: 3,
       maghrib: 3,
+      isha: 3,
     });
     // Singapore and Indonesia share the method, not the Fajr angle.
     expect(countryTimeAdjustments('SG', 'Singapore')?.fajrAngle).toBeUndefined();
@@ -394,13 +398,13 @@ describe('the app shows the same minute as the pages', () => {
   it('Malaysia, country default: the app matches the static page, Fajr at 18° + 3', () => {
     const kl = cityBySlug('kuala-lumpur-malaysia')!;
     place(kl.lat, kl.lng);
+    const MIN = 60_000;
     for (const day of ['2026-02-19', '2026-06-21', '2026-10-17']) {
       const app = calcPrayerTimesForDay(kl.lat, kl.lng, day);
       const page = computePrayerTimes(kl.lat, kl.lng, day, kl.timezone, 'MY');
-      expect(
-        [app.fajr, app.sehri, app.maghrib, app.isha].map((d) => d.getTime()),
-        day
-      ).toEqual([page.fajr, page.sehri, page.maghrib, page.isha].map((d) => d.getTime()));
+      const all = (t: typeof app | typeof page) =>
+        [t.fajr, t.sehri, t.sunrise, t.dhuhr, t.asr, t.maghrib, t.isha].map((d) => d.getTime());
+      expect(all(app), day).toEqual(all(page));
       const [y, m, d] = day.split('-').map(Number);
       const p = adhan.CalculationMethod.Singapore();
       p.fajrAngle = 18;
@@ -411,8 +415,21 @@ describe('the app shows the same minute as the pages', () => {
       );
       expect(page.fajr.getTime()).toBe(at18.fajr.getTime() + 3 * 60_000);
       expect(page.sehri.getTime()).toBe(at18.fajr.getTime());
-      // ʿIshāʾ keeps the method's own time.
-      expect(page.isha.getTime()).toBe(raw(kl.lat, kl.lng, day, 'Singapore').isha.getTime());
+      // The other times move by whole minutes from the method's own (JAKIM's
+      // caution): prayers later, sunrise earlier; Asr the same for both schools.
+      const own = raw(kl.lat, kl.lng, day, 'Singapore');
+      expect(page.sunrise.getTime()).toBe(own.sunrise.getTime() - 2 * MIN);
+      expect(page.dhuhr.getTime()).toBe(own.dhuhr.getTime() + 2 * MIN);
+      expect(page.asrStandard.getTime()).toBe(own.asr.getTime() + 3 * MIN);
+      expect(page.isha.getTime()).toBe(own.isha.getTime() + 3 * MIN);
+      const hanafi = adhan.CalculationMethod.Singapore();
+      hanafi.madhab = adhan.Madhab.Hanafi;
+      const ownHanafi = new adhan.PrayerTimes(
+        new adhan.Coordinates(kl.lat, kl.lng),
+        new Date(y, m - 1, d, 12),
+        hanafi
+      );
+      expect(page.asrHanafi.getTime()).toBe(ownHanafi.asr.getTime() + 3 * MIN);
     }
   });
 });
