@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.180.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Malaysia: Fajr matches JAKIM',
+        fixed: [
+          "In Malaysia, Fajr now follows JAKIM's timetable and never begins before JAKIM's Subuh. Before, it could show up to 12 minutes early.",
+          "Sehri ends a little before Fajr and iftar is a little after sunset, so both stay on the safe side of JAKIM's times.",
+        ],
+      },
+      bn: {
+        title: 'মালয়েশিয়া: ফজর এখন জাকিমের সঙ্গে মিলিয়ে',
+        fixed: [
+          'মালয়েশিয়ায় ফজর এখন জাকিমের সময়সূচি অনুযায়ী, জাকিমের সুবহের আগে কখনো শুরু হয় না। আগে এটি ১২ মিনিট পর্যন্ত আগে দেখাতে পারত।',
+          'সেহরি ফজরের একটু আগে শেষ হয় আর ইফতার সূর্যাস্তের একটু পরে, তাই দুটোই জাকিমের সময়ের নিরাপদ দিকে থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.179.0',
     date: '2026-10-17',
     text: {

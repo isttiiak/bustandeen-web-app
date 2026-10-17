@@ -88,6 +88,8 @@ export interface ChromeStrings {
     heading: (city: string, year: number) => string;
     subheading: (city: string, country: string) => string;
     imsakLabel: string;
+    /** Where suhoor ends before Fajr (a calibrated country, audit R0c). */
+    suhoorEndsLabel: string;
     iftarLabel: string;
     dayLabel: string;
     dateLabel: string;
@@ -303,6 +305,7 @@ const en: ChromeStrings = {
     subheading: (city, country) =>
       `Suhoor (Imsak) and Iftar times for every day of Ramadan in ${city}, ${country}.`,
     imsakLabel: 'Imsak / Suhoor ends (Fajr)',
+    suhoorEndsLabel: 'Suhoor ends',
     iftarLabel: 'Iftar (Maghrib)',
     dayLabel: 'Day',
     dateLabel: 'Date',
@@ -566,6 +569,7 @@ const bn: ChromeStrings = {
     subheading: (city, country) =>
       `${city}, ${bnIn(country)} রমজানের প্রতিটি দিনের সেহরি (ইমসাক) ও ইফতারের সময়।`,
     imsakLabel: 'ইমসাক / সেহরি শেষ (ফজর)',
+    suhoorEndsLabel: 'সেহরির শেষ',
     iftarLabel: 'ইফতার (মাগরিব)',
     dayLabel: 'দিন',
     dateLabel: 'তারিখ',
@@ -801,6 +805,7 @@ const ar: ChromeStrings = {
     subheading: (city, country) =>
       `مواقيت الإمساك (السحور) والإفطار لكل يوم من رمضان في ${city}, ${country}.`,
     imsakLabel: 'الإمساك / نهاية السحور (الفجر)',
+    suhoorEndsLabel: 'نهاية السحور',
     iftarLabel: 'الإفطار (المغرب)',
     dayLabel: 'اليوم',
     dateLabel: 'التاريخ',

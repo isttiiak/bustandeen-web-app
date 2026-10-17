@@ -14,7 +14,8 @@ import { MemoryStorage } from '../test/memoryStorage.js';
 
 // Audit R0a (v5.179.0): Bangladesh's default times are calibrated to Islamic
 // Foundation Bangladesh, in the app and on the static pages alike, always to
-// the safe side. Every other country keeps its method's own numbers.
+// the safe side. Malaysia (R0d, v5.180.0) is tested against JAKIM in
+// countryCalibration.test.ts; the rest keep their method's own numbers.
 
 /** Islamic Foundation Bangladesh, Dhaka, Ramadan 1447 (2026): sehri ends /
  * iftar, Bangladesh time. Via https://dbcnews.tv/ramadan-2026 ("source:
@@ -79,16 +80,28 @@ function raw(lat: number, lng: number, day: string, method: CalcMethodId) {
 
 describe('the calibration table', () => {
   it('Bangladesh: sehri 3 min before Fajr, Maghrib +3, all year, only with its default method (Karachi)', () => {
-    expect(COUNTRY_TIME_ADJUSTMENTS).toEqual({ BD: { sehri: -3, maghrib: 3 } });
-    expect(countryTimeAdjustments('BD', 'Karachi')).toEqual({ sehri: -3, maghrib: 3 });
-    expect(countryTimeAdjustments('bd', 'Karachi')).toEqual({ sehri: -3, maghrib: 3 });
+    expect(COUNTRY_TIME_ADJUSTMENTS.BD).toMatchObject({ sehri: -3, maghrib: 3 });
+    expect(countryTimeAdjustments('BD', 'Karachi')).toMatchObject({ sehri: -3, maghrib: 3 });
+    expect(countryTimeAdjustments('bd', 'Karachi')).toMatchObject({ sehri: -3, maghrib: 3 });
     expect(countryTimeAdjustments('BD', 'MuslimWorldLeague')).toBeNull();
     expect(countryTimeAdjustments(null, 'Karachi')).toBeNull();
   });
 
+  it('Malaysia: JAKIM 18° Fajr with 3 min of caution, sehri 3 min before it, Maghrib +3', () => {
+    expect(countryTimeAdjustments('MY', 'Singapore')).toMatchObject({
+      fajrAngle: 18,
+      fajr: 3,
+      sehri: -3,
+      maghrib: 3,
+    });
+    // Singapore and Indonesia share the method, not the calibration.
+    expect(countryTimeAdjustments('SG', 'Singapore')).toBeNull();
+    expect(countryTimeAdjustments('ID', 'Singapore')).toBeNull();
+  });
+
   it('no other country is calibrated, Pakistan on Karachi included', () => {
     for (const [cc, { method }] of Object.entries(COUNTRY_PRAYER_DEFAULTS)) {
-      if (cc !== 'BD') expect(countryTimeAdjustments(cc, method), cc).toBeNull();
+      if (cc !== 'BD' && cc !== 'MY') expect(countryTimeAdjustments(cc, method), cc).toBeNull();
     }
     expect(countryTimeAdjustments('PK', 'Karachi')).toBeNull();
     expect(countryTimeAdjustments('ZZ', 'MoonsightingCommittee')).toBeNull();
@@ -247,7 +260,6 @@ describe('other countries keep their method numbers (static pages)', () => {
     { cc: 'TR', lat: 41.0082, lng: 28.9784, tz: 'Europe/Istanbul' },
     { cc: 'SA', lat: 21.4225, lng: 39.8262, tz: 'Asia/Riyadh' },
     { cc: 'US', lat: 40.7128, lng: -74.006, tz: 'America/New_York' },
-    { cc: 'MY', lat: 3.139, lng: 101.6869, tz: 'Asia/Kuala_Lumpur' },
   ];
   it.each(PLACES)('$cc', ({ cc, lat, lng, tz }) => {
     for (const day of ['2026-03-01', '2026-06-21', '2026-12-21']) {
@@ -331,5 +343,30 @@ describe('the app shows the same minute as the pages', () => {
     expect(app.fajr.getTime()).toBe(r.fajr.getTime());
     expect(app.sehri.getTime()).toBe(r.fajr.getTime());
     expect(app.maghrib.getTime()).toBe(r.maghrib.getTime());
+  });
+
+  it('Malaysia, country default: the app matches the static page, Fajr at 18° + 3', () => {
+    const kl = cityBySlug('kuala-lumpur-malaysia')!;
+    place(kl.lat, kl.lng);
+    for (const day of ['2026-02-19', '2026-06-21', '2026-10-17']) {
+      const app = calcPrayerTimesForDay(kl.lat, kl.lng, day);
+      const page = computePrayerTimes(kl.lat, kl.lng, day, kl.timezone, 'MY');
+      expect(
+        [app.fajr, app.sehri, app.maghrib, app.isha].map((d) => d.getTime()),
+        day
+      ).toEqual([page.fajr, page.sehri, page.maghrib, page.isha].map((d) => d.getTime()));
+      const [y, m, d] = day.split('-').map(Number);
+      const p = adhan.CalculationMethod.Singapore();
+      p.fajrAngle = 18;
+      const at18 = new adhan.PrayerTimes(
+        new adhan.Coordinates(kl.lat, kl.lng),
+        new Date(y, m - 1, d, 12),
+        p
+      );
+      expect(page.fajr.getTime()).toBe(at18.fajr.getTime() + 3 * 60_000);
+      expect(page.sehri.getTime()).toBe(at18.fajr.getTime());
+      // ʿIshāʾ keeps the method's own time.
+      expect(page.isha.getTime()).toBe(raw(kl.lat, kl.lng, day, 'Singapore').isha.getTime());
+    }
   });
 });

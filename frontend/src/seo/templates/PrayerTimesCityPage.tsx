@@ -9,7 +9,7 @@ import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd, faqJsonLd } from '../components/JsonLd.js';
 import { computePrayerTimes, formatTimeInZone, ymdInZone } from '../utils/calc.js';
 import { dateFormat } from '../utils/intl.js';
-import { countryName } from '../../utils/countryDefaults.js';
+import { countryName, countryTimeAdjustments } from '../../utils/countryDefaults.js';
 
 const LOCALE_BY_LANG: Record<SeoLang, string> = { en: 'en-US', bn: 'bn-BD', ar: 'ar-SA' };
 
@@ -111,7 +111,11 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
       </div>
 
       <p className="text-xs text-[#94a3b8] mt-3">
-        {t.prayerTimes.methodNote(t.prayerTimes.methodNames[times.method], localCountry)}
+        {t.prayerTimes.methodNote(
+          countryTimeAdjustments(city.countryCode, times.method)?.methodName ??
+            t.prayerTimes.methodNames[times.method],
+          localCountry
+        )}
       </p>
       <p className="text-xs text-[#94a3b8] mt-1">{t.prayerTimes.asrNote}</p>
       {city.countryCode === 'BD' && lang !== 'ar' && (

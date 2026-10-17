@@ -88,19 +88,37 @@ export function prayerDefaultsForCountry(countryCode: string | null | undefined)
 // ─── National timetable calibration (audit R0a) ─────────────────────────────
 
 export interface TimeAdjustments {
-  /** Minutes from Fajr at which sehri ends (negative = before Fajr). The
-   * Fajr prayer time itself is never moved: an earlier Fajr would be the
-   * unsafe side for the prayer. */
+  /** Minutes from Fajr at which sehri ends (negative = before Fajr). Only
+   * the end of sehri moves: an earlier Fajr would be the unsafe side for the
+   * prayer. */
   sehri?: number;
   /** Minutes added to Maghrib (= iftar) on top of the method's own, through
    * adhan `methodAdjustments`. */
   maghrib?: number;
+  /** The country's own Fajr angle, where its authority uses another one than
+   * the method (Malaysia: 18°). */
+  fajrAngle?: number;
+  /** Minutes added to the Fajr prayer time, so it never begins before the
+   * official time (only ever later). */
+  fajr?: number;
+  /** The timetable these minutes were checked against, as the world Ramadan
+   * pages name it (English). */
+  checkedAgainst: string;
+  /** Only iftar was matched (no national timetable for suhoor). */
+  iftarOnly?: boolean;
+  /** One more line for the world Ramadan pages (English). */
+  pageNote?: string;
+  /** The method's name on the pages, where the country's own parameters
+   * make it another method in effect (Malaysia: JAKIM). */
+  methodName?: string;
 }
 
 /**
  * Where a country's official timetable runs a little apart from its method,
  * the country default is moved onto it, always to the safe side: sehri never
- * ends later, iftar never comes earlier than the official time.
+ * ends later, iftar never comes earlier, the Fajr prayer never begins earlier
+ * than the official time. Each row is the fewest whole minutes that keep
+ * every compared official day on that side.
  *
  * Bangladesh: suhoor ends 3 minutes before Fajr; iftar is 3 minutes after
  * sunset; matched to Islamic Foundation Bangladesh's timetable. That is IF's
@@ -113,11 +131,30 @@ export interface TimeAdjustments {
  * stays on the safe side there too (utils/countryDefaults.test.ts). Decision:
  * Istiak, 2026-10-17.
  *
+ * Malaysia: JAKIM moved Subuh from 20° to 18° (116th MKI Muzakarah, November
+ * 2019); adhan's Singapore method still uses 20°, which put our Fajr prayer
+ * 8-12 min before JAKIM's Subuh on every day of 2026. At 18° it is 0-3 min
+ * before (JAKIM adds a few minutes of caution), so Fajr +3: never before
+ * Subuh. Sehri ends 3 min before that Fajr, at or before JAKIM's Subuh on
+ * every day. Iftar: Maghrib was 0-3 min before JAKIM's on 355 days, so
+ * Maghrib +3. Checked against JAKIM e-Solat zone WLY01, all of 2026
+ * (utils/countryCalibration.test.ts). Decision: Istiak, 2026-10-17.
+ *
  * The app (utils/prayerTimes.ts) and the static pages (seo/utils/calc.ts)
  * both read this table, so they always show the same minute.
  */
 export const COUNTRY_TIME_ADJUSTMENTS: Record<string, TimeAdjustments> = {
-  BD: { sehri: -3, maghrib: 3 },
+  BD: { sehri: -3, maghrib: 3, checkedAgainst: "Islamic Foundation Bangladesh's timetable" },
+  MY: {
+    fajrAngle: 18,
+    fajr: 3,
+    sehri: -3,
+    maghrib: 3,
+    checkedAgainst: "JAKIM's timetable",
+    methodName: 'JAKIM',
+    pageNote:
+      "JAKIM's timetable also shows imsak, 10 minutes before Subuh, as a caution; the fast itself begins at Subuh.",
+  },
 };
 
 /** The calibration for times computed at a place in `countryCode` with
@@ -133,13 +170,16 @@ export function countryTimeAdjustments(
   return adjustments && prayerDefaultsForCountry(cc).method === method ? adjustments : null;
 }
 
-/** Adds the Maghrib calibration to adhan calculation parameters, in place.
- * Typed structurally so this file stays free of adhan (pure data, see the
- * top). Sehri is not an adhan time: see `sehriEnd`. */
-export function applyTimeAdjustments<P extends { methodAdjustments: { maghrib?: number } }>(
-  params: P,
-  adjustments: TimeAdjustments | null
-): P {
+/** Adds the Fajr and Maghrib calibration to adhan calculation parameters, in
+ * place. Typed structurally so this file stays free of adhan (pure data, see
+ * the top). Sehri is not an adhan time: see `sehriEnd`. */
+export function applyTimeAdjustments<
+  P extends { fajrAngle: number; methodAdjustments: { fajr?: number; maghrib?: number } },
+>(params: P, adjustments: TimeAdjustments | null): P {
+  if (adjustments?.fajrAngle) params.fajrAngle = adjustments.fajrAngle;
+  if (adjustments?.fajr) {
+    params.methodAdjustments.fajr = (params.methodAdjustments.fajr ?? 0) + adjustments.fajr;
+  }
   if (adjustments?.maghrib) {
     params.methodAdjustments.maghrib =
       (params.methodAdjustments.maghrib ?? 0) + adjustments.maghrib;
