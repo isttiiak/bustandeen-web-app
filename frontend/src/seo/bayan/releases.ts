@@ -20,7 +20,7 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
-    version: '5.185.0',
+    version: '5.187.0',
     date: '2026-10-17',
     text: {
       en: {
@@ -35,6 +35,24 @@ export const RELEASES: Release[] = [
         added: [
           'রমজানের পাতা থেকে এখন আপনার সেভ করা অবস্থানের জন্য এবারের রমজানের সাহরি ও ইফতারের সময়সূচি এক পাতার A4-এ ডাউনলোড করা যায়। যেকোনো এলাকার জন্য চলে, অ্যাপ খোলা থাকলে ইন্টারনেট ছাড়াও।',
           'ওয়েবসাইটের রমজান ক্যালেন্ডারে আপনার এলাকার আলাদা পাতা না থাকলে এখন অ্যাপে যাওয়ার পথ দেখানো হয়।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.186.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Malaysia: every prayer time matches JAKIM',
+        fixed: [
+          "In Malaysia, Dhuhr, Asr and Isha now never begin before JAKIM's official times, and sunrise never comes after JAKIM's syuruk. Before, they could be up to 3 minutes off.",
+        ],
+      },
+      bn: {
+        title: 'মালয়েশিয়া: প্রতিটি নামাজের সময় এখন JAKIM অনুযায়ী',
+        fixed: [
+          'মালয়েশিয়ায় যোহর, আসর ও ইশা এখন কখনো JAKIM-এর সরকারি সময়ের আগে শুরু হয় না, আর সূর্যোদয় কখনো JAKIM-এর সূর্যোদয়ের সময়ের পরে আসে না। আগে এগুলো সর্বোচ্চ ৩ মিনিট এদিক-ওদিক হতে পারত।',
         ],
       },
     },
