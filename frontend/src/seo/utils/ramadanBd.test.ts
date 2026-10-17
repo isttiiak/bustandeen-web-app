@@ -111,7 +111,8 @@ describe('BdRamadanPage', () => {
     expect(html).toContain('জাতীয় চাঁদ দেখা কমিটির ঘোষণা অনুযায়ী, তাই তারিখে এক দিনের পার্থক্য');
     expect(html).toContain('রমজান ৩০ দিনের হলে');
     // 29 fasts + the possible 30th
-    expect(html.match(/data-date="/g)).toHaveLength(30);
+    // Visible rows (the shift's extra rows are hidden, with no data-fast).
+    expect(html.match(/data-fast="/g)).toHaveLength(30);
     expect(html).toContain('/bn/prayer-times/dhaka-bangladesh/2026-10');
     expect(html).not.toContain('—');
   });
@@ -196,7 +197,8 @@ describe('worldwide Ramadan calendars (RamadanCalendarPage)', () => {
     expect(plan.days[0].date).toBe('2027-02-08');
     expect(plan.possible30).toMatchObject({ date: '2027-03-09', fast: 30 });
     const html = page(london, []);
-    expect(html.match(/data-date="/g)).toHaveLength(30);
+    // Visible rows (the shift's extra rows are hidden, with no data-fast).
+    expect(html.match(/data-fast="/g)).toHaveLength(30);
     expect(html).toContain('If Ramadan has 30 days');
     expect(html).toContain('data-date="2027-03-09"');
   });
@@ -234,7 +236,8 @@ describe('worldwide Ramadan calendars (RamadanCalendarPage)', () => {
     const plan = ramadanPlan(tongi, HY, [rec(9, '2027-02-09'), rec(10, '2027-03-10')]);
     expect(plan.possible30).toBeUndefined();
     const html = page(tongi, [rec(9, '2027-02-09'), rec(10, '2027-03-10')]);
-    expect(html.match(/data-date="/g)).toHaveLength(29);
+    // Visible rows (the shift's extra rows are hidden, with no data-fast).
+    expect(html.match(/data-fast="/g)).toHaveLength(29);
     expect(html).not.toContain('If Ramadan has 30 days');
     expect(html).not.toContain('Shawwal moon');
   });

@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import type { CityEntry } from '../data/cities.js';
 import { BD_DIVISIONS, type BdDistrict } from '../data/bdDistricts.js';
 import { CHROME } from '../locales/chrome.js';
@@ -20,6 +21,14 @@ import type { QrPath } from '../utils/qr.js';
 import { ramadanPagePath, type RamadanDay, type RamadanPlan } from '../utils/ramadanBd.js';
 import { dateFormat } from '../utils/intl.js';
 import RamadanNotice from '../components/RamadanNotice.js';
+import {
+  RamadanShiftControl,
+  RamadanShiftNotes,
+  possibleLabelRows,
+  ramadanRows,
+  ramadanTableAttrs,
+} from '../components/RamadanShift.js';
+import type { RowState } from '../ramadanShift.js';
 
 interface Props {
   lang: MonthlyLang;
@@ -54,17 +63,26 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
   const dailyPath = langPath(lang, `/prayer-times/${city.slug}`);
   const monthlyPath = langPath(lang, monthPagePath(city.slug, ym));
 
-  const row = (d: RamadanDay, possible = false) => (
+  // Rows that can be the 30th after a shift: the label and the note.
+  const labelRows = possibleLabelRows(plan);
+  const row = (d: RamadanDay, { visible, possible }: RowState) => (
     <tr
       key={d.date}
       data-date={d.date}
-      className={`border-t border-brand-border/60 text-white aria-[current=date]:bg-brand-emerald/15 ${
-        possible ? 'text-white/70' : ''
-      }`}
+      data-ramadan-row={d.fast}
+      data-fast={visible ? d.fast : undefined}
+      data-possible={possible ? '' : undefined}
+      hidden={!visible}
+      className="border-t border-brand-border/60 text-white aria-[current=date]:bg-brand-emerald/15 data-[possible]:text-white/70"
     >
       <th scope="row" className="py-2 ps-3 pe-1 text-start font-bold">
-        {num(d.fast)}
-        {possible && <span className="sr-only"> ({r.possible30})</span>}
+        <span data-fast-num="">{visible ? num(d.fast) : ''}</span>
+        {labelRows.includes(d.fast) && (
+          <span data-possible-note="" hidden={!possible} className="sr-only">
+            {' '}
+            ({r.possible30})
+          </span>
+        )}
       </th>
       <td className="px-2 py-2">
         {shortDate(d)}{' '}
@@ -120,12 +138,20 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
         linkClassName="text-brand-gold underline underline-offset-2"
       />
 
+      <RamadanShiftNotes
+        lang={lang}
+        plan={plan}
+        className="mt-2 text-sm font-semibold text-white print:mt-0 print:mb-2 print:text-[8pt]"
+      />
+      <RamadanShiftControl lang={lang} barePath={barePath} look="bustan" />
+
       <DownloadPdfButton lang={lang} className="mt-4" />
 
       <div className="mt-4 print:mt-0 overflow-x-auto rounded-card border border-brand-border bg-brand-deep shadow-elev-2">
         <table
           data-month-table=""
           data-timezone={BD_TZ}
+          {...ramadanTableAttrs(plan, lang)}
           className="w-full border-collapse text-sm tabular-nums"
         >
           <caption className="sr-only">{r.caption(name, yearLabel)}</caption>
@@ -146,21 +172,22 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
             </tr>
           </thead>
           <tbody>
-            {plan.days.map((d) => row(d))}
-            {plan.possible30 && (
-              <>
-                <tr>
-                  <td
-                    colSpan={4}
-                    aria-hidden="true"
-                    className="border-t border-brand-border/60 bg-shade/20 px-3 py-1 text-[11px] font-semibold text-brand-gold"
-                  >
-                    {r.possible30}
-                  </td>
-                </tr>
-                {row(plan.possible30, true)}
-              </>
-            )}
+            {ramadanRows(plan).map(({ day, state }) => (
+              <Fragment key={day.date}>
+                {labelRows.includes(day.fast) && (
+                  <tr data-possible-label={day.fast} hidden={!(state.possible && day.fast === 30)}>
+                    <td
+                      colSpan={4}
+                      aria-hidden="true"
+                      className="border-t border-brand-border/60 bg-shade/20 px-3 py-1 text-[11px] font-semibold text-brand-gold"
+                    >
+                      {r.possible30}
+                    </td>
+                  </tr>
+                )}
+                {row(day, state)}
+              </Fragment>
+            ))}
           </tbody>
         </table>
       </div>

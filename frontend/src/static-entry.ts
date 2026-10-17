@@ -15,6 +15,7 @@ import { initAnalytics, trackPageView } from './utils/analytics.js';
 import { isLandingPath, isSeoPagePath } from './seo/staticPaths.js';
 import { initStaleChunkReload } from './utils/staleChunkReload.js';
 import { wireLanguageRequest } from './seo/langRequest.js';
+import { wireRamadanShift } from './seo/ramadanShift.js';
 // utils/theme.ts RESOLVED_THEME_KEY (not imported: theme.ts pulls in adhan).
 const RESOLVED_THEME_KEY = 'bustandeen_theme';
 
@@ -80,6 +81,8 @@ if (isLanding && signedIn && path !== '/') {
   if (document.querySelector('[data-follow-theme]')) followTheme();
   markToday();
   wirePrint();
+  // A Ramadan calendar: the visitor's one-day shift (R12).
+  wireRamadanShift();
   wireLanguageRequest();
   void import('./pwaUpdate.js').then((m) => m.initPwaUpdates());
   initAnalytics();
