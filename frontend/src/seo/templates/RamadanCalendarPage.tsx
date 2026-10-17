@@ -10,7 +10,7 @@ import { dateFormat } from '../utils/intl.js';
 import { ISLAMIC_FOUNDATION_URL, MONTHLY } from '../locales/monthly.js';
 import { RAMADAN_BD } from '../locales/ramadanBd.js';
 import { RAMADAN_WORLD } from '../locales/ramadanWorld.js';
-import { COUNTRY_PRAYER_DEFAULTS } from '../../utils/countryDefaults.js';
+import { COUNTRY_PRAYER_DEFAULTS, countryTimeAdjustments } from '../../utils/countryDefaults.js';
 import type { RamadanDay, RamadanPlan } from '../utils/ramadanBd.js';
 
 const LOCALE_BY_LANG: Record<SeoLang, string> = { en: 'en-US', bn: 'bn-BD', ar: 'ar-SA' };
@@ -35,12 +35,23 @@ export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, q
   const textLang = lang === 'bn' ? 'bn' : 'en';
   const country = cityCountry(city, lang);
   const method = plan.days[0].times.method;
+  // The country's match to its official timetable (audit R0c), if any.
+  const calibration = countryTimeAdjustments(city.countryCode, method);
+  const sehriBeforeFajr = (calibration?.sehri ?? 0) < 0;
+  const facts = methodFacts(method);
   const timesNote = bd
     ? RAMADAN_BD[textLang].timesNote
     : RAMADAN_WORLD.timesNote({
-        method: t.prayerTimes.methodNames[method],
-        ...methodFacts(method),
+        method: calibration?.methodName ?? t.prayerTimes.methodNames[method],
+        ...facts,
+        fajrAngle: calibration?.fajrAngle ?? facts.fajrAngle,
+        fajrMinutes: calibration?.fajr ?? 0,
+        maghribMinutes: facts.maghribMinutes + (calibration?.maghrib ?? 0),
+        sehriMinutes: calibration?.sehri ?? 0,
         country: city.countryCode in COUNTRY_PRAYER_DEFAULTS ? country : undefined,
+        checkedAgainst: calibration?.checkedAgainst,
+        iftarOnly: calibration?.iftarOnly,
+        pageNote: calibration?.pageNote,
       });
   const possible30Label = bd ? RAMADAN_BD[textLang].possible30 : RAMADAN_WORLD.possible30;
 
@@ -110,9 +121,14 @@ export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, q
             <tr className="border-b border-[#1e2d42] text-[#94a3b8] text-xs uppercase tracking-wide">
               <th className="text-start px-4 py-2.5">{t.ramadan.dayLabel}</th>
               <th className="text-start px-4 py-2.5">{t.ramadan.dateLabel}</th>
-              {/* Bangladesh: sehri ends before Fajr, so not "(Fajr)". */}
+              {/* Bangladesh, and the countries whose sehri ends before Fajr
+                  (audit R0c): not "(Fajr)". */}
               <th className="text-end px-4 py-2.5">
-                {bd ? RAMADAN_BD[textLang].columns.sehri : t.ramadan.imsakLabel}
+                {bd
+                  ? RAMADAN_BD[textLang].columns.sehri
+                  : sehriBeforeFajr
+                    ? t.ramadan.suhoorEndsLabel
+                    : t.ramadan.imsakLabel}
               </th>
               <th className="text-end px-4 py-2.5">
                 {bd ? RAMADAN_BD[textLang].columns.iftar : t.ramadan.iftarLabel}

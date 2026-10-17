@@ -9,6 +9,11 @@ import {
 } from './prayerTimes.js';
 import { loadZoneLookup, placeToday, resetZoneLookupForTests } from './placeClock.js';
 import { getAsrMadhab, getCalcMethod } from './salatPrefs.js';
+import {
+  applyTimeAdjustments,
+  countryFromTimeZone,
+  countryTimeAdjustments,
+} from './countryDefaults.js';
 import { getTrackingDay } from './trackingDay.js';
 import { getHijriDate, getHijriToday, isFriday } from './islamicCalendar.js';
 import { suggestStartAfter } from './musafir.js';
@@ -95,7 +100,12 @@ function adhanDay(p: Place, ymd: YMD): adhan.PrayerTimes {
   let t = adhanCache.get(key);
   if (!t) {
     const [y, m, d] = ymd.split('-').map(Number);
-    const params = adhan.CalculationMethod[getCalcMethod()]();
+    // The country's calibration to its official timetable (R0a/R0c), from
+    // the place's real zone, as the app does.
+    const params = applyTimeAdjustments(
+      adhan.CalculationMethod[getCalcMethod()](),
+      countryTimeAdjustments(countryFromTimeZone(p.tz), getCalcMethod())
+    );
     if (getAsrMadhab() === 'hanafi') params.madhab = adhan.Madhab.Hanafi;
     t = new adhan.PrayerTimes(new adhan.Coordinates(p.lat, p.lng), new Date(y, m - 1, d), params);
     adhanCache.set(key, t);

@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.180.0 - Malaysia: Fajr at JAKIM's 18°, never before Subuh; iftar on the safe side - 2026-10-17
+
+### Fixed
+
+- **Malaysia's Fajr prayer was 8-12 minutes before JAKIM's Subuh on every day of 2026** (audit R0d). JAKIM moved Subuh from 20° to 18° (116th MKI Muzakarah, November 2019); the Singapore method we used for Malaysia still uses 20°. Malaysia's default now uses 18° plus 3 minutes of caution: against JAKIM e-Solat zone WLY01 (Kuala Lumpur/Putrajaya), all 365 days of 2026, our Fajr is 0-3 minutes after Subuh, never before.
+- **Sehri** ends 3 minutes before that Fajr (= at 18° itself), at or before JAKIM's Subuh on every day (0-3 min before). Suhoor ends at Subuh, not at JAKIM's printed imsak (Istiak, 2026-10-17); the Ramadan page says JAKIM prints imsak 10 minutes earlier as a caution.
+- **Iftar**: our Maghrib was 0-3 minutes before JAKIM's on 355 of 365 days; Maghrib +3 (0-3 min after, never before).
+- Only for Malaysia's default (the Singapore method at a place in Malaysia). Singapore, Indonesia and Brunei keep the method's numbers. ʿIshāʾ, Dhuhr and ʿAṣr are unchanged (JAKIM also adds a little caution there: up to 3 minutes; not part of this change).
+
+### Changed
+
+- `COUNTRY_TIME_ADJUSTMENTS` rows can now set a country's own Fajr angle and Fajr caution minutes (`fajrAngle`, `fajr`), plus what the pages say about them (`checkedAgainst`, `methodName`, `pageNote`).
+- **World Ramadan pages**: for a calibrated country the method note gives the real minutes and names the timetable it was checked against ("kept on the safe side"); "We add no minutes of caution of our own" stays only where nothing was added. The suhoor column reads "Suhoor ends" (not "(Fajr)") where sehri ends before Fajr. Malaysia's pages name the JAKIM method.
+
+### Tests
+
+- New `utils/countryCalibration.test.ts`: JAKIM 2026 days (worst days + one per month): Fajr prayer never before Subuh (within 3 min), sehri never after it, iftar never before Maghrib.
+- `utils/countryDefaults.test.ts`: the Malaysia row; Singapore/Indonesia not calibrated; the app equals the pages for Kuala Lumpur (18° + 3, sehri at 18°, ʿIshāʾ unchanged).
+- `seo/ramadanTimesNote.test.ts`: the Kuala Lumpur note, column and daily method note; London and Paris unchanged.
+- `seo/nonBdSsr.test.ts` re-recorded on purpose: only MY changed. `prayerTimes.farZone.test.ts` ground truth now applies the place country's calibration.
+
 ## v5.179.0 - Bangladesh: suhoor 3 min before Fajr, iftar 3 min after sunset, matched to Islamic Foundation - 2026-10-17
 
 ### Fixed

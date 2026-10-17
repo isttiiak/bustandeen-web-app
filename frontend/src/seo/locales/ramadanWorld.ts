@@ -1,6 +1,8 @@
 // Strings for the Ramadan calendars of cities outside Bangladesh (v5.178.0).
 // Those pages are English only (2026-10-15), so there is no other language.
 
+const minutes = (n: number) => `${n} minute${n === 1 ? '' : 's'}`;
+
 export const RAMADAN_WORLD = {
   possible30: 'If Ramadan has 30 days',
   /** No record for the country: Umm al-Qura's date, subject to the moon sighting. */
@@ -14,26 +16,47 @@ export const RAMADAN_WORLD = {
   sourceLink: 'Announcement',
   eidNote: 'The last fast and Eid al-Fitr depend on the sighting of the Shawwal moon.',
   /**
-   * How the two times are found. `maghribMinutes`: minutes the method itself
-   * adds after sunset; `seasonal`: the Moonsighting Committee's seasonal Fajr;
-   * `country`: set when the method is that country's usual convention.
+   * How the two times are found. `maghribMinutes`: minutes after sunset in
+   * all (the method's own plus the country calibration); `sehriMinutes`:
+   * minutes from Fajr at which suhoor ends (negative = before);
+   * `seasonal`: the Moonsighting Committee's seasonal Fajr; `country`: set
+   * when the method is that country's usual convention; `checkedAgainst` /
+   * `iftarOnly`: the official timetable the country default was matched to;
+   * `fajrMinutes`, `pageNote`: the country's Fajr caution and extra line
+   * (utils/countryDefaults.ts, audits R0c/R0d).
    */
   timesNote: (o: {
     method: string;
     fajrAngle: number;
+    fajrMinutes?: number;
     maghribMinutes: number;
+    sehriMinutes: number;
     seasonal: boolean;
     country?: string;
+    checkedAgainst?: string;
+    iftarOnly?: boolean;
+    pageNote?: string;
   }) =>
     [
-      `Suhoor ends when Fajr begins (${o.method} method, Fajr at ${o.fajrAngle}°${
-        o.seasonal ? ", or the committee's seasonal time when that is later" : ''
-      }).`,
+      `${
+        o.sehriMinutes < 0
+          ? `Suhoor ends ${minutes(-o.sehriMinutes)} before Fajr`
+          : 'Suhoor ends when Fajr begins'
+      } (${o.method} method, Fajr at ${o.fajrAngle}°${
+        o.fajrMinutes ? ` and ${minutes(o.fajrMinutes)} of caution` : ''
+      }${o.seasonal ? ", or the committee's seasonal time when that is later" : ''}).`,
       o.maghribMinutes > 0
-        ? `Iftar is at Maghrib, which this method sets ${o.maghribMinutes} minutes after sunset.`
+        ? o.checkedAgainst
+          ? `Iftar is at Maghrib, ${minutes(o.maghribMinutes)} after sunset.`
+          : `Iftar is at Maghrib, which this method sets ${o.maghribMinutes} minutes after sunset.`
         : 'Iftar is at Maghrib (sunset).',
       o.country ? `This is the convention most masjids in ${o.country} follow.` : '',
-      'We add no minutes of caution of our own: many timetables end suhoor a few minutes earlier.',
+      o.checkedAgainst
+        ? o.iftarOnly
+          ? `Iftar is checked against ${o.checkedAgainst} and never comes earlier than it.`
+          : `Checked against ${o.checkedAgainst} and kept on the safe side: suhoor never ends later and iftar never comes earlier.`
+        : 'We add no minutes of caution of our own: many timetables end suhoor a few minutes earlier.',
+      o.pageNote ?? '',
     ]
       .filter(Boolean)
       .join(' '),
