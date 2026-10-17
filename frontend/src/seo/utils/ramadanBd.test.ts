@@ -114,6 +114,9 @@ describe('BdRamadanPage', () => {
     // Visible rows (the shift's extra rows are hidden, with no data-fast).
     expect(html.match(/data-fast="/g)).toHaveLength(30);
     expect(html).toContain('/bn/prayer-times/dhaka-bangladesh/2026-10');
+    // A town without a page: the app's sheet for the saved place (R12).
+    expect(html).toContain('href="/ramadan" data-other-town=""');
+    expect(html).toContain('আপনার এলাকা নয়? অ্যাপে আপনার অবস্থান দিয়ে দেখুন');
     expect(html).not.toContain('—');
   });
 
@@ -211,6 +214,7 @@ describe('worldwide Ramadan calendars (RamadanCalendarPage)', () => {
     expect(html).toContain('the convention most masjids in United Kingdom follow');
     expect(html).toContain('follow your local masjid');
     expect(html).toContain('by the Umm al-Qura calendar');
+    expect(html).toContain('Not your town? Use your location in the app');
     expect(html).not.toContain('—');
     const istanbul = page(cityBySlug('istanbul-turkey')!, []);
     // Diyanet's 7 minutes + 1 (R0c).

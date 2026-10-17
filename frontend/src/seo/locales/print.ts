@@ -7,6 +7,8 @@ export interface PrintStrings {
   viewOnline: string;
   /** Daily district page: link to this month's timetable as a PDF. */
   monthlyPdf: (district: string) => string;
+  /** Ramadan calendars: the app's sheet for any other place (audit R12). */
+  otherTown: string;
 }
 
 export const PRINT: Record<SeoLang, PrintStrings> = {
@@ -15,17 +17,20 @@ export const PRINT: Record<SeoLang, PrintStrings> = {
     hint: 'Opens the print window: choose "Save as PDF". A4, one page.',
     viewOnline: 'View online',
     monthlyPdf: (d) => `Download the ${d} monthly timetable (PDF)`,
+    otherTown: 'Not your town? Use your location in the app',
   },
   bn: {
     download: 'PDF ডাউনলোড',
     hint: 'প্রিন্ট উইন্ডো খুলবে: "PDF হিসেবে সেভ" বেছে নিন। A4, এক পাতা।',
     viewOnline: 'অনলাইনে দেখুন',
     monthlyPdf: (d) => `${d} জেলার মাসিক সময়সূচি ডাউনলোড (PDF)`,
+    otherTown: 'আপনার এলাকা নয়? অ্যাপে আপনার অবস্থান দিয়ে দেখুন',
   },
   ar: {
     download: 'تنزيل PDF',
     hint: 'تُفتح نافذة الطباعة: اختر "حفظ بتنسيق PDF". صفحة A4 واحدة.',
     viewOnline: 'اعرضها على الإنترنت',
     monthlyPdf: (d) => `تنزيل الجدول الشهري لـ ${d} (PDF)`,
+    otherTown: 'ليست مدينتك؟ استخدم موقعك في التطبيق',
   },
 };

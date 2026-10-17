@@ -3,7 +3,7 @@ import { cityCountry, cityLabel, cityLangs, cityName, type CityEntry } from '../
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
-import { DownloadPdfButton, PrintSheetHead } from '../components/PrintSheet.js';
+import { DownloadPdfButton, OtherTownLink, PrintSheetHead } from '../components/PrintSheet.js';
 import RamadanNotice from '../components/RamadanNotice.js';
 import type { QrPath } from '../utils/qr.js';
 import { formatTimeInZone, methodFacts } from '../utils/calc.js';
@@ -142,6 +142,7 @@ export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, q
       <RamadanShiftControl lang={textLang} barePath={barePath} look="world" />
 
       <DownloadPdfButton lang={lang} className="mt-5 text-[#94a3b8]" />
+      <OtherTownLink lang={lang} className="mt-2" linkClassName="text-[#10b981]" />
 
       <div className="mt-6 print:mt-0 rounded-2xl border border-[#1e2d42] bg-[#0d1520] overflow-x-auto">
         {/* Latin digits, as this template writes them in every language. */}

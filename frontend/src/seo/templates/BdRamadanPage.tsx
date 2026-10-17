@@ -16,7 +16,7 @@ import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 import { LeafMark, monthPagePath } from './PrayerTimesMonthPage.js';
 import { BD_TZ, type YearMonth } from '../utils/monthTable.js';
-import { DownloadPdfButton, PrintSheetHead } from '../components/PrintSheet.js';
+import { DownloadPdfButton, OtherTownLink, PrintSheetHead } from '../components/PrintSheet.js';
 import type { QrPath } from '../utils/qr.js';
 import { ramadanPagePath, type RamadanDay, type RamadanPlan } from '../utils/ramadanBd.js';
 import { dateFormat } from '../utils/intl.js';
@@ -146,6 +146,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
       <RamadanShiftControl lang={lang} barePath={barePath} look="bustan" />
 
       <DownloadPdfButton lang={lang} className="mt-4" />
+      <OtherTownLink lang={lang} className="mt-2" />
 
       <div className="mt-4 print:mt-0 overflow-x-auto rounded-card border border-brand-border bg-brand-deep shadow-elev-2">
         <table
