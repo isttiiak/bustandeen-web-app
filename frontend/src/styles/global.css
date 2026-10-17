@@ -502,3 +502,27 @@ body {
     break-inside: avoid;
   }
 }
+
+/* The app's own Ramadan sheet for the saved place (audit R12,
+   components/RamadanSheetCard.tsx): drawn into #rp-print-root only while
+   printing, and then it is the only thing on paper. */
+#rp-print-root {
+  display: none;
+}
+@media print {
+  /* overflow-x: hidden on html/body makes them scroll boxes, and the
+     browser then prints only their first page (as calendarPrint.css). */
+  html.rp-printing,
+  html.rp-printing body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+  }
+  html.rp-printing body > *:not(#rp-print-root) {
+    display: none !important;
+  }
+  html.rp-printing #rp-print-root {
+    display: block;
+  }
+}
