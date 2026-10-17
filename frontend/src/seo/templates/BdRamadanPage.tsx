@@ -16,10 +16,19 @@ import Layout, { langPath } from '../components/Layout.js';
 import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 import { LeafMark, monthPagePath } from './PrayerTimesMonthPage.js';
 import { BD_TZ, type YearMonth } from '../utils/monthTable.js';
-import { DownloadPdfButton, OtherTownLink, PrintSheetHead } from '../components/PrintSheet.js';
+import { OtherTownLink } from '../components/PrintSheet.js';
+import RamadanSheets from '../components/RamadanSheets.js';
+import {
+  FastingLengthTiles,
+  RamadanAbout,
+  RamadanDownloads,
+} from '../components/RamadanPageParts.js';
+import { FITRA_BD, RAMADAN_SHEET } from '../locales/ramadanSheet.js';
+import { eidDays, fastingLength, sheetRows } from '../utils/ramadanSheetData.js';
+import { isOddNightFast } from '../ramadanShift.js';
 import type { QrPath } from '../utils/qr.js';
 import { ramadanPagePath, type RamadanDay, type RamadanPlan } from '../utils/ramadanBd.js';
-import { dateFormat } from '../utils/intl.js';
+import { dateFormat, numberFormat } from '../utils/intl.js';
 import RamadanNotice from '../components/RamadanNotice.js';
 import {
   RamadanShiftControl,
@@ -56,6 +65,15 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
   const yearLabel = num(gregorianYear);
   const shortDate = (d: RamadanDay) =>
     dateFormat(m.locale, { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(d.noon);
+  const dayMonth = (noon: Date, year = false) =>
+    dateFormat(m.locale, {
+      day: 'numeric',
+      month: 'long',
+      ...(year ? { year: 'numeric' } : {}),
+      timeZone: 'UTC',
+    }).format(noon);
+  const sh = RAMADAN_SHEET[lang];
+  const numberWithGroups = (n: number) => numberFormat(m.locale, {}).format(n);
 
   const barePath = ramadanPagePath(city.slug, gregorianYear);
   const url = `${SITE}${langPath(lang, barePath)}`;
@@ -65,18 +83,33 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
 
   // Rows that can be the 30th after a shift: the label and the note.
   const labelRows = possibleLabelRows(plan);
-  const row = (d: RamadanDay, { visible, possible }: RowState) => (
+  const fitraLine = FITRA_BD.text[lang](
+    num(FITRA_BD.hijriYear),
+    dayMonth(new Date(`${FITRA_BD.announced}T12:00:00Z`), true),
+    num(FITRA_BD.minTaka),
+    numberWithGroups(FITRA_BD.maxTaka)
+  );
+  const row = (d: RamadanDay, { visible, possible, fast }: RowState) => (
     <tr
       key={d.date}
       data-date={d.date}
       data-ramadan-row={d.fast}
       data-fast={visible ? d.fast : undefined}
       data-possible={possible ? '' : undefined}
+      data-odd={visible && isOddNightFast(fast) ? '' : undefined}
       hidden={!visible}
-      className="border-t border-brand-border/60 text-white aria-[current=date]:bg-brand-emerald/15 data-[possible]:text-white/70"
+      className="border-t border-brand-border/60 text-white aria-[current=date]:bg-brand-emerald/15 data-[possible]:text-white/70 data-[odd]:bg-brand-gold/[0.07]"
     >
-      <th scope="row" className="py-2 ps-3 pe-1 text-start font-bold">
+      <th scope="row" className="py-2 ps-3 pe-1 text-start font-bold whitespace-nowrap">
         <span data-fast-num="">{visible ? num(d.fast) : ''}</span>
+        <span
+          data-odd-star=""
+          aria-hidden="true"
+          hidden={!(visible && isOddNightFast(fast))}
+          className="ms-1 text-brand-gold"
+        >
+          ★
+        </span>
         {labelRows.includes(d.fast) && (
           <span data-possible-note="" hidden={!possible} className="sr-only">
             {' '}
@@ -110,12 +143,6 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
         { label: m.districtCrumb(name) },
       ]}
     >
-      <PrintSheetHead
-        lang={lang}
-        title={r.title(name, yearLabel)}
-        sub={`${r.subheading(num(plan.hijriYear), yearLabel)} · ${m.division(divisionName)}`}
-        qr={qr}
-      />
       <header className="print:hidden rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-9 pb-5 text-center">
         <span className="inline-flex text-brand-gold">
           <LeafMark />
@@ -129,14 +156,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
         <p className="mt-2 text-sm text-white/70">{r.subheading(num(plan.hijriYear), yearLabel)}</p>
       </header>
 
-      <RamadanNotice
-        lang={lang}
-        plan={plan}
-        bd
-        country=""
-        className="mt-4 rounded-card border border-brand-gold/40 bg-brand-gold/10 px-4 py-3 text-sm text-white print:mt-0 print:mb-2 print:px-0 print:py-0 print:border-0 print:text-[8pt]"
-        linkClassName="text-brand-gold underline underline-offset-2"
-      />
+      <FastingLengthTiles lang={lang} length={fastingLength(plan, shortDate)} num={num} />
 
       <RamadanShiftNotes
         lang={lang}
@@ -145,7 +165,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
       />
       <RamadanShiftControl lang={lang} barePath={barePath} look="bustan" />
 
-      <DownloadPdfButton lang={lang} className="mt-4" />
+      <RamadanDownloads lang={lang} className="mt-4" />
       <OtherTownLink lang={lang} className="mt-2" />
 
       <div className="mt-4 print:mt-0 overflow-x-auto rounded-card border border-brand-border bg-brand-deep shadow-elev-2">
@@ -193,21 +213,60 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
         </table>
       </div>
 
-      <div className="mt-4 space-y-2 text-xs text-white/70 print:mt-2 print:space-y-0.5 print:text-[7.5pt]">
-        <p>{r.timesNote}</p>
-        <p>
-          {m.mosqueNote[0]}
-          <a
-            href={ISLAMIC_FOUNDATION_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-brand-gold underline underline-offset-2"
-          >
-            {m.mosqueNote[1]}
-          </a>
-          {m.mosqueNote[2]}
-        </p>
-      </div>
+      <RamadanAbout
+        lang={lang}
+        items={[
+          {
+            title: sh.aboutDates,
+            body: (
+              <RamadanNotice
+                lang={lang}
+                plan={plan}
+                bd
+                country=""
+                linkClassName="text-brand-gold underline underline-offset-2"
+              />
+            ),
+          },
+          { title: sh.aboutTimes, body: <p>{r.timesNote}</p> },
+          // Until the Shawwal moon fixes the month's length.
+          ...(plan.endSettled ? [] : [{ title: sh.about30, body: <p>{sh.about30Body}</p> }]),
+          { title: sh.aboutOdd, body: <p>{sh.aboutOddBody}</p> },
+          {
+            title: sh.aboutMasjid,
+            body: (
+              <p>
+                {m.mosqueNote[0]}
+                <a
+                  href={ISLAMIC_FOUNDATION_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-gold underline underline-offset-2"
+                >
+                  {m.mosqueNote[1]}
+                </a>
+                {m.mosqueNote[2]}
+              </p>
+            ),
+          },
+          {
+            title: sh.aboutFitra,
+            body: (
+              <p>
+                {sh.aboutFitraBody}{' '}
+                <a
+                  href={FITRA_BD.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-gold underline underline-offset-2"
+                >
+                  {fitraLine}
+                </a>
+              </p>
+            ),
+          },
+        ]}
+      />
 
       <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm print:hidden">
         <a href={dailyPath} className="text-brand-emerald no-underline hover:underline">
@@ -223,6 +282,39 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
           {r.allDistrictsCta} →
         </a>
       </div>
+
+      <RamadanSheets
+        lang={lang}
+        title={sh.title(yearLabel)}
+        checklistTitle={sh.checklistTitle(yearLabel)}
+        place={`${m.districtCrumb(name)} · ${m.division(divisionName)}, ${sh.bangladesh}`}
+        sub={sh.sub(
+          num(plan.hijriYear),
+          dayMonth(first.noon),
+          dayMonth(plan.days[plan.days.length - 1].noon, true),
+          plan.possible30 && dayMonth(plan.possible30.noon)
+        )}
+        url={url}
+        qr={qr}
+        rows={sheetRows(plan, {
+          fast: num,
+          dateLabel: shortDate,
+          weekday: (d) => formatWeekday(d.noon, lang),
+          clock: (t) => formatClock(t, lang),
+        })}
+        labelRows={labelRows}
+        possible30Label={r.possible30}
+        tableAttrs={ramadanTableAttrs(plan, lang)}
+        sehriBeforeFajr
+        eid={eidDays(plan)
+          .map((d) => dayMonth(d))
+          .join(` ${sh.or} `)}
+        fitra={{
+          line: fitraLine,
+          pending: FITRA_BD.pending[lang](num(plan.hijriYear)),
+          source: FITRA_BD.sourceLabel[lang],
+        }}
+      />
 
       <JsonLd
         data={breadcrumbJsonLd([

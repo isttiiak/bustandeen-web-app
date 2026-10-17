@@ -3,13 +3,18 @@ import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
 import type { TFunction } from 'i18next';
-import { ArrowDownTrayIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { BTN_PRIMARY, CARD, SECTION_TITLE } from './bustanStyles.js';
+import { ChevronRightIcon } from '@heroicons/react/24/outline';
+import { CARD, SECTION_TITLE } from './bustanStyles.js';
 import { CrescentIcon } from './icons/IslamicIcons.js';
-import { PrintSheetHead } from '../seo/components/PrintSheet.js';
-import RamadanSheetTable, {
-  type RamadanSheetTableRow,
-} from '../seo/components/RamadanSheetTable.js';
+import RamadanSheets, { type SheetRowData } from '../seo/components/RamadanSheets.js';
+import { RamadanDownloads } from '../seo/components/RamadanPageParts.js';
+import {
+  FITRA_BD,
+  RAMADAN_SHEET,
+  type SheetInk,
+  type SheetVariant,
+} from '../seo/locales/ramadanSheet.js';
+import { markSheetPrint } from '../seo/sheetPrint.js';
 import {
   buildRamadanSheet,
   formatCoordinates,
@@ -19,7 +24,6 @@ import { ramadanStartBasis, type RamadanWindow } from '../utils/ramadan.js';
 import { getHijriOffsetSource } from '../utils/islamicCalendar.js';
 import { countryName } from '../utils/countryDefaults.js';
 import { placeShortName, placeZone, readSavedPlace } from '../utils/placeClock.js';
-import { CALC_METHODS } from '../utils/salatPrefs.js';
 import { formatTime } from '../utils/prayerTimes.js';
 import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
 
@@ -42,13 +46,16 @@ export function ramadanBasisText(t: TFunction, lang: string, w: RamadanWindow): 
 }
 
 const day = (date: string) => new Date(`${date}T12:00:00`);
+const addDay = (date: string, n: number) =>
+  new Date(Date.parse(`${date}T12:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
 
 /**
- * "Download this Ramadan's timetable" (audit R12): the one-page A4 sheet of
- * the prerendered Ramadan calendars, for the saved location, from the times
- * computed on the device. Like the calendar download (IslamicCalendar.tsx),
- * the sheet is drawn into #rp-print-root only while the print window is
- * open; everything else on the page is hidden on paper (global.css).
+ * "Print this Ramadan" for the saved location (audit R12, sheets R2-R4): the
+ * three A4 sheets of the Ramadan calendars (timetable, timetable + checklist,
+ * Ramadan checklist), in colour or black and white, from the times computed
+ * on the device. Like the calendar download (IslamicCalendar.tsx), the sheets
+ * are drawn into #rp-print-root only while the print window is open;
+ * everything else on the page is hidden on paper (global.css).
  */
 export default function RamadanSheetCard({ window: w }: { window: RamadanWindow }) {
   const { t, i18n } = useTranslation();
@@ -58,17 +65,18 @@ export default function RamadanSheetCard({ window: w }: { window: RamadanWindow 
     ? placeShortName(place, placeZone(place.latitude, place.longitude)) ||
       formatCoordinates(place.latitude, place.longitude)
     : '';
-  const [printing, setPrinting] = useState(false);
+  const [printing, setPrinting] = useState<{ variant: SheetVariant; ink: SheetInk } | null>(null);
   const sheet = useMemo(
     () => (printing && place ? buildRamadanSheet(w, place) : null),
     [printing, place, w]
   );
 
   useEffect(() => {
-    if (!sheet) return;
+    if (!sheet || !printing) return;
     document.documentElement.classList.add('rp-printing');
+    const clearMarks = markSheetPrint(printing.variant, printing.ink);
     let live = true;
-    const done = () => setPrinting(false);
+    const done = () => setPrinting(null);
     window.addEventListener('afterprint', done);
     // Fonts first, then two frames so the sheet is laid out.
     void document.fonts.ready.then(() =>
@@ -81,88 +89,83 @@ export default function RamadanSheetCard({ window: w }: { window: RamadanWindow 
     return () => {
       live = false;
       window.removeEventListener('afterprint', done);
+      clearMarks();
       document.documentElement.classList.remove('rp-printing');
     };
-  }, [sheet]);
+  }, [sheet, printing]);
 
   if (w.hijriYear == null || w.days.length === 0) return null;
 
-  const tableRow = (r: RamadanSheetRow): RamadanSheetTableRow => ({
-    date: r.date,
-    fast: formatLocaleNumber(r.fast),
-    dateLabel: formatLocaleDate(day(r.date), { day: 'numeric', month: 'short' }),
-    weekday: formatLocaleDate(day(r.date), { weekday: 'short' }),
-    sehri: formatTime(r.sehri),
-    iftar: formatTime(r.iftar),
-  });
-
-  const longDate = (date: string) =>
-    formatLocaleDate(day(date), { day: 'numeric', month: 'long', year: 'numeric' });
+  const s = RAMADAN_SHEET[lang];
+  const num = (n: number) => formatLocaleNumber(n, { useGrouping: false });
+  const dayMonth = (date: string, year = false) =>
+    formatLocaleDate(day(date), {
+      day: 'numeric',
+      month: 'long',
+      ...(year ? { year: 'numeric' } : {}),
+    });
 
   const printSheet = (() => {
     if (!sheet) return null;
-    const year = formatLocaleNumber(sheet.hijriYear, { useGrouping: false });
-    const title = t('ramadan.sheetHeading', { year, place: shortName });
-    const last = sheet.possible30 ?? sheet.rows[sheet.rows.length - 1]!;
-    const sub = t('ramadan.sheetSub', {
-      from: longDate(sheet.rows[0]!.date),
-      to: longDate(last.date),
+    const year = num(Number(sheet.rows[0]!.date.slice(0, 4)));
+    const last = sheet.rows[sheet.rows.length - 1]!;
+    const toRow = (r: RamadanSheetRow, possible = false): SheetRowData => ({
+      row: r.fast,
+      date: r.date,
+      fast: r.fast,
+      visible: true,
+      possible,
+      fastLabel: num(r.fast),
+      dateLabel: formatLocaleDate(day(r.date), { day: 'numeric', month: 'short' }),
+      weekday: formatLocaleDate(day(r.date), { weekday: 'short' }),
+      sehri: formatTime(r.sehri),
+      iftar: formatTime(r.iftar),
     });
-    const method =
-      sheet.calibration?.methodName ??
-      CALC_METHODS.find((m) => m.id === sheet.method)?.label ??
-      sheet.method;
-    const basisText = ramadanBasisText(t, i18n.language, w);
+    const rows = [
+      ...sheet.rows.map((r) => toRow(r)),
+      ...(sheet.possible30 ? [toRow(sheet.possible30, true)] : []),
+    ];
+    const eid = sheet.possible30
+      ? [sheet.possible30.date, addDay(sheet.possible30.date, 1)]
+      : [addDay(last.date, 1)];
+    const bd = sheet.country === 'BD';
     return createPortal(
       <div id="rp-print-root" data-print-page="" data-testid="ramadan-print" lang={lang}>
-        <PrintSheetHead lang={lang} title={title} sub={sub} />
-        {basisText && <p className="mb-2 text-[8pt]">{basisText}</p>}
-        <RamadanSheetTable
-          caption={title}
-          columns={{
-            fast: t('ramadan.sheetFast'),
-            date: t('ramadan.sheetDate'),
-            sehri: t('ramadan.suhoorEndsFajr'),
-            iftar: t('ramadan.iftarMaghrib'),
-          }}
-          rows={sheet.rows.map(tableRow)}
-          possible30={sheet.possible30 && tableRow(sheet.possible30)}
+        <RamadanSheets
+          lang={lang}
+          title={s.title(year)}
+          checklistTitle={s.checklistTitle(year)}
+          place={`${place?.name || shortName} (${formatCoordinates(
+            sheet.place.latitude,
+            sheet.place.longitude
+          )})`}
+          sub={s.sub(
+            num(sheet.hijriYear),
+            dayMonth(sheet.rows[0]!.date),
+            dayMonth(last.date, true),
+            sheet.possible30 ? dayMonth(sheet.possible30.date) : undefined
+          )}
+          url="https://bustandeen.com/ramadan"
+          rows={rows}
+          labelRows={sheet.possible30 ? [30] : []}
           possible30Label={t('ramadan.sheetPossible30')}
-          timezone={sheet.zone ?? undefined}
+          sehriBeforeFajr={(sheet.calibration?.sehri ?? 0) < 0}
+          eid={eid.map((d) => dayMonth(d)).join(` ${s.or} `)}
+          fitra={
+            bd
+              ? {
+                  line: FITRA_BD.text[lang](
+                    num(FITRA_BD.hijriYear),
+                    dayMonth(FITRA_BD.announced, true),
+                    num(FITRA_BD.minTaka),
+                    formatLocaleNumber(FITRA_BD.maxTaka)
+                  ),
+                  pending: FITRA_BD.pending[lang](num(sheet.hijriYear)),
+                  source: FITRA_BD.sourceLabel[lang],
+                }
+              : undefined
+          }
         />
-        <div className="mt-2 space-y-0.5 text-[7.5pt]" data-sheet-footer="">
-          <p>
-            {t('ramadan.sheetPlace', {
-              place: place?.name || shortName,
-              coords: formatCoordinates(sheet.place.latitude, sheet.place.longitude),
-              method,
-            })}
-            {sheet.calibration && sheet.country && (
-              <>
-                {' '}
-                {t(
-                  sheet.calibration.iftarOnly
-                    ? 'ramadan.sheetCalibratedIftar'
-                    : 'ramadan.sheetCalibrated',
-                  {
-                    // The timetables' names are English (countryDefaults.ts);
-                    // Bangla says "the timetable used in {country}".
-                    source:
-                      lang === 'en'
-                        ? sheet.calibration.checkedAgainst
-                        : t('ramadan.sheetCountryTimetable', {
-                            country: countryName(sheet.country, i18n.language),
-                          }),
-                  }
-                )}
-              </>
-            )}
-            {/* The country's extra line is English, as on the website. */}
-            {lang === 'en' && sheet.calibration?.pageNote && <> {sheet.calibration.pageNote}</>}
-          </p>
-          <p>{t('ramadan.sheetMasjid')}</p>
-          <p>{t('ramadan.sheetFooter')}</p>
-        </div>
       </div>,
       document.body
     );
@@ -176,16 +179,10 @@ export default function RamadanSheetCard({ window: w }: { window: RamadanWindow 
       </h2>
       {place ? (
         <>
-          <p className="text-white/75 text-sm leading-snug">{t('ramadan.sheetLede')}</p>
-          <button
-            type="button"
-            className={`${BTN_PRIMARY} w-full sm:w-auto`}
-            onClick={() => setPrinting(true)}
-          >
-            <ArrowDownTrayIcon className="w-5 h-5" aria-hidden="true" />
-            {t('ramadan.sheetCta', { place: shortName })}
-          </button>
-          <p className="text-white/65 text-xs">{t('ramadan.sheetHint')}</p>
+          <p className="text-white/75 text-sm leading-snug">
+            {t('ramadan.sheetLede', { place: shortName })}
+          </p>
+          <RamadanDownloads lang={lang} onPrint={(variant, ink) => setPrinting({ variant, ink })} />
         </>
       ) : (
         <Link

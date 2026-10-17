@@ -27,19 +27,19 @@ test.beforeEach(async ({ context }) => {
 const pdfPages = (pdf: Buffer) =>
   (pdf.toString('latin1').match(/\/Type\s*\/Page(?!s)/g) ?? []).length;
 
-async function printSheet(page: Page) {
-  await page
-    .getByRole('button', { name: "Download this Ramadan's timetable for Keighley" })
-    .click();
+/** Click one of the card's three sheets; the print window (stubbed) opens. */
+async function printSheet(page: Page, variant = 'timetable', prints = 1) {
+  const card = page.getByTestId('ramadan-sheet-card');
+  await card.locator(`[data-sheet-print="${variant}"]`).click();
   await expect
     .poll(() => page.evaluate(() => (window as unknown as { __prints: number }).__prints))
-    .toBe(1);
-  const sheet = page.getByTestId('ramadan-print');
-  await expect(sheet).toHaveCount(1);
-  return sheet;
+    .toBe(prints);
+  const root = page.getByTestId('ramadan-print');
+  await expect(root).toHaveCount(1);
+  return root;
 }
 
-test('demo user in a town without a page: one A4 page, the right first row', async ({ page }) => {
+async function openRamadan(page: Page) {
   await page.clock.setFixedTime(new Date('2026-10-17T10:00:00+06:00'));
   await page.goto('/demo/brother');
   await expect(page.getByText('Demo Mode')).toBeVisible();
@@ -47,31 +47,53 @@ test('demo user in a town without a page: one A4 page, the right first row', asy
     window.history.pushState({}, '', '/ramadan');
     window.dispatchEvent(new PopStateEvent('popstate'));
   });
-  const sheet = await printSheet(page);
+}
 
-  await expect(sheet).toContainText('Ramadan 1448 AH timetable: Keighley');
+test('demo user in a town without a page: one A4 page, the right first row', async ({ page }) => {
+  await openRamadan(page);
+  const root = await printSheet(page);
+  const sheet = root.locator('[data-ramadan-sheet="timetable"]');
+
+  await expect(sheet).toContainText('Ramadan 2027 Suhoor & Iftar');
+  await expect(sheet).toContainText('Keighley, United Kingdom (53.87° N, 1.91° W)');
   const first = sheet.locator('tbody tr[data-date]').first();
   await expect(first).toHaveAttribute('data-date', '2027-02-08');
-  await expect(first.locator('th')).toHaveText('1');
-  await expect(first.locator('td').nth(1)).toHaveText('06:04 AM');
-  await expect(first.locator('td').nth(2)).toHaveText('05:06 PM');
-  // 29 fasts by Umm al-Qura, and the possible 30th.
+  await expect(first.locator('[data-fast-num]')).toHaveText('1');
+  await expect(first.locator('td').nth(2)).toHaveText('06:04 AM');
+  await expect(first.locator('td').nth(3)).toHaveText('05:06 PM');
+  // 29 fasts by Umm al-Qura, and the possible 30th; stars on 21-29 odd.
   await expect(sheet.locator('tbody tr[data-date]')).toHaveCount(30);
   await expect(sheet).toContainText('If Ramadan has 30 days');
-  await expect(sheet.locator('[data-sheet-footer]')).toContainText(
-    'Times for Keighley, United Kingdom (53.87° N, 1.91° W)'
-  );
-  // The UK calibration is iftar only, against a masjid, not a national table.
-  await expect(sheet.locator('[data-sheet-footer]')).toContainText(
-    "Iftar checked against East London Mosque's timetable"
-  );
-  await expect(sheet.locator('[data-sheet-footer]')).toContainText('follow your local masjid');
-  await expect(sheet.locator('table')).toHaveAttribute('data-timezone', 'Europe/London');
+  await expect(sheet.locator('tr[data-odd]')).toHaveCount(5);
+  // The two blocks Istiak chose, and the page address as the footer.
+  await expect(sheet.locator('[data-sheet-block]')).toHaveCount(2);
+  await expect(sheet.locator('.rs-foot')).toHaveText('bustandeen.com/ramadan');
 
   await page.emulateMedia({ media: 'print' });
-  // On paper the sheet is all there is.
+  // On paper the timetable is all there is.
   await expect(page.getByTestId('ramadan-sheet-card')).toBeHidden();
-  await expect(sheet.locator('[data-print-head]')).toBeVisible();
+  await expect(sheet).toBeVisible();
+  await expect(root.locator('[data-ramadan-sheet="combined"]')).toBeHidden();
+  const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: true });
+  expect(pdfPages(pdf)).toBe(1);
+});
+
+test('the checklist in black and white: the chosen sheet and ink go to paper', async ({ page }) => {
+  await openRamadan(page);
+  const card = page.getByTestId('ramadan-sheet-card');
+  await card.getByRole('button', { name: 'Black and white' }).click();
+  await expect(card.getByRole('button', { name: 'Black and white' })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  );
+  const root = await printSheet(page, 'checklist');
+  expect(await page.evaluate(() => ({ ...document.documentElement.dataset }))).toMatchObject({
+    printVariant: 'checklist',
+    printInk: 'bw',
+  });
+  await page.emulateMedia({ media: 'print' });
+  await expect(root.locator('[data-ramadan-sheet="checklist"]')).toBeVisible();
+  await expect(root.locator('[data-ramadan-sheet="timetable"]')).toBeHidden();
   const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: true });
   expect(pdfPages(pdf)).toBe(1);
 });
@@ -79,11 +101,10 @@ test('demo user in a town without a page: one A4 page, the right first row', asy
 test('a guest gets the same sheet', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-10-17T10:00:00+06:00'));
   await page.goto('/ramadan');
-  const sheet = await printSheet(page);
-  await expect(sheet.locator('tbody tr[data-date]').first()).toHaveAttribute(
-    'data-date',
-    '2027-02-08'
-  );
+  const root = await printSheet(page);
+  await expect(
+    root.locator('[data-ramadan-sheet="timetable"] tbody tr[data-date]').first()
+  ).toHaveAttribute('data-date', '2027-02-08');
 });
 
 test('a static Ramadan page links a town without a page to the app', async ({ page }) => {

@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.189.0',
+    date: '2026-10-18',
+    text: {
+      en: {
+        title: 'Print your Ramadan: three sheets',
+        added: [
+          'Every Ramadan calendar now prints one of three A4 pages: the timetable with the Laylat al-Qadr duʿā and a Zakat al-Fitr reminder, the timetable with boxes for your prayers, tarawih, Quran and nafl, or a Ramadan checklist. Each in colour or black and white.',
+          'The odd nights of the last ten are marked with a star, and the page shows your shortest and longest fast.',
+          'All the notes about dates and times are now in one place on the page, so the printed sheet stays clean.',
+        ],
+      },
+      bn: {
+        title: 'আপনার রমজান প্রিন্ট করুন: তিনটি পাতা',
+        added: [
+          'প্রতিটি রমজান ক্যালেন্ডার এখন তিন ধরনের A4 পাতা প্রিন্ট করে: লাইলাতুল কদরের দোয়া ও সাদাকাতুল ফিতরের কথাসহ সময়সূচি, নামাজ, তারাবীহ, কুরআন ও নফলের ঘরসহ সময়সূচি, অথবা রমজান চেকলিস্ট। প্রতিটি রঙিন বা সাদা-কালো।',
+          'শেষ দশকের বেজোড় রাত তারকা চিহ্নে দেখানো হয়, আর পাতায় সবচেয়ে ছোট ও সবচেয়ে বড় রোজার সময় দেখা যায়।',
+          'তারিখ ও সময়ের সব ব্যাখ্যা এখন পাতার এক জায়গায়, তাই প্রিন্ট করা পাতা পরিষ্কার থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.188.1',
     date: '2026-10-17',
     text: {
