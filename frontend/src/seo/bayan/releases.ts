@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.179.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Bangladesh sehri and iftar match Islamic Foundation',
+        fixed: [
+          'In Bangladesh, suhoor now ends 3 minutes before Fajr and iftar is 3 minutes after sunset, matched to the Islamic Foundation Bangladesh timetable. The Fajr prayer time itself does not change. The app and the website show the same times.',
+          'If you picked a different calculation method in Settings, your times stay as that method gives them.',
+        ],
+      },
+      bn: {
+        title: 'বাংলাদেশে সেহরি ও ইফতার ইসলামিক ফাউন্ডেশনের সঙ্গে মিলিয়ে',
+        fixed: [
+          'বাংলাদেশে সেহরি এখন শেষ হয় ফজরের ৩ মিনিট আগে, ইফতার সূর্যাস্তের ৩ মিনিট পরে, ইসলামিক ফাউন্ডেশন বাংলাদেশের সময়সূচির সঙ্গে মিলিয়ে। ফজরের নামাজের সময় বদলায়নি। অ্যাপ আর ওয়েবসাইটে একই সময় দেখায়।',
+          'সেটিংসে অন্য হিসাব পদ্ধতি বেছে নিয়ে থাকলে আপনার সময় সেই পদ্ধতি অনুযায়ীই থাকবে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.178.1',
     date: '2026-10-17',
     text: {

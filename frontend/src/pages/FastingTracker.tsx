@@ -167,7 +167,7 @@ export default function FastingTracker() {
       if (!stored) return null;
       const loc = JSON.parse(stored) as { latitude: number; longitude: number };
       const times = calcPrayerTimesForDay(loc.latitude, loc.longitude, selectedDate);
-      return { fajr: times.fajr, maghrib: times.maghrib };
+      return { sehri: times.sehri, maghrib: times.maghrib };
     } catch {
       return null;
     }
@@ -729,7 +729,7 @@ export default function FastingTracker() {
                       <FajrIcon className="w-4 h-4 text-brand-info" />
                       {t('fasting.suhoorEnds', 'Suhur ends')}
                       <span className="text-white font-bold tabular-nums">
-                        {formatTime(dayTimes.fajr)}
+                        {formatTime(dayTimes.sehri)}
                       </span>
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-white/70">

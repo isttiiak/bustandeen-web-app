@@ -61,7 +61,7 @@ export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, q
         {dateFormat(locale, { month: 'short', day: 'numeric', timeZone: 'UTC' }).format(d.noon)}
       </td>
       <td className="px-4 py-2 text-end text-[#10b981] font-bold tabular-nums">
-        {formatTimeInZone(d.times.fajr, city.timezone, locale)}
+        {formatTimeInZone(d.times.sehri, city.timezone, locale)}
       </td>
       <td className="px-4 py-2 text-end text-[#f59e0b] font-bold tabular-nums">
         {formatTimeInZone(d.times.maghrib, city.timezone, locale)}
@@ -110,8 +110,13 @@ export default function RamadanCalendarPage({ lang, city, plan, gregorianYear, q
             <tr className="border-b border-[#1e2d42] text-[#94a3b8] text-xs uppercase tracking-wide">
               <th className="text-start px-4 py-2.5">{t.ramadan.dayLabel}</th>
               <th className="text-start px-4 py-2.5">{t.ramadan.dateLabel}</th>
-              <th className="text-end px-4 py-2.5">{t.ramadan.imsakLabel}</th>
-              <th className="text-end px-4 py-2.5">{t.ramadan.iftarLabel}</th>
+              {/* Bangladesh: sehri ends before Fajr, so not "(Fajr)". */}
+              <th className="text-end px-4 py-2.5">
+                {bd ? RAMADAN_BD[textLang].columns.sehri : t.ramadan.imsakLabel}
+              </th>
+              <th className="text-end px-4 py-2.5">
+                {bd ? RAMADAN_BD[textLang].columns.iftar : t.ramadan.iftarLabel}
+              </th>
             </tr>
           </thead>
           <tbody>

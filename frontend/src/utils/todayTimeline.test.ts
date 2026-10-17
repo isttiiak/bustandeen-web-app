@@ -13,6 +13,7 @@ import {
 const at = (hhmm: string) => new Date(`2026-10-09T${hhmm}:00+06:00`);
 const TIMES: PrayerTimesResult = {
   fajr: at('04:38'),
+  sehri: at('04:38'),
   sunrise: at('05:52'),
   dhuhr: at('11:46'),
   asr: at('15:57'),

@@ -1,5 +1,11 @@
 import * as adhan from 'adhan';
-import { getAsrMadhab, getCalcMethod, type CalculationMethodId } from './salatPrefs.js';
+import { countryAt, getAsrMadhab, getCalcMethod, type CalculationMethodId } from './salatPrefs.js';
+import {
+  applyTimeAdjustments,
+  countryTimeAdjustments,
+  sehriEnd,
+  type TimeAdjustments,
+} from './countryDefaults.js';
 import i18n from '../i18n.js';
 import { addDaysYmd, foreignPlaceZone, placeYmd } from './placeClock.js';
 
@@ -7,6 +13,9 @@ export type PrayerKey = 'fajr' | 'sunrise' | 'dhuhr' | 'asr' | 'maghrib' | 'isha
 
 export interface PrayerTimesResult {
   fajr: Date;
+  /** When sehri ends: Fajr, or a few minutes before it where the country's
+   * timetable says so (Bangladesh: 3 min, utils/countryDefaults.ts). */
+  sehri: Date;
   sunrise: Date;
   dhuhr: Date;
   asr: Date;
@@ -65,17 +74,32 @@ function placeDay(
   return first!;
 }
 
-function methodParams(method: CalculationMethodId = getCalcMethod()) {
-  // Read per call (not cached) so a settings change takes effect on the next
-  // minute tick without a reload.
-  return adhan.CalculationMethod[method]();
+/** The place's country calibration (audit R0a, Bangladesh: Islamic
+ * Foundation), from the same table as the static pages, so the app and
+ * bustandeen.com show the same minute. */
+function placeAdjustments(
+  lat: number,
+  lng: number,
+  method: CalculationMethodId
+): TimeAdjustments | null {
+  return countryTimeAdjustments(countryAt(lat, lng), method);
 }
 
-function toResult(times: adhan.PrayerTimes): PrayerTimesResult {
+function methodParams(method: CalculationMethodId, adjustments: TimeAdjustments | null) {
+  // Read per call (not cached) so a settings change takes effect on the next
+  // minute tick without a reload.
+  return applyTimeAdjustments(adhan.CalculationMethod[method](), adjustments);
+}
+
+function toResult(
+  times: adhan.PrayerTimes,
+  adjustments: TimeAdjustments | null
+): PrayerTimesResult {
   // sunset: adhan exposes it; fall back to maghrib if missing
   const sunset: Date = (times as unknown as { sunset?: Date }).sunset ?? times.maghrib;
   return {
     fajr: times.fajr,
+    sehri: sehriEnd(times.fajr, adjustments),
     sunrise: times.sunrise,
     dhuhr: times.dhuhr,
     asr: times.asr,
@@ -88,14 +112,17 @@ function toResult(times: adhan.PrayerTimes): PrayerTimesResult {
 /** Prayer times of one calendar day (YYYY-MM-DD) AT THE PLACE. */
 export function calcPrayerTimesForDay(lat: number, lng: number, ymd: string): PrayerTimesResult {
   const coords = new adhan.Coordinates(lat, lng);
+  const method = getCalcMethod();
+  const adjustments = placeAdjustments(lat, lng, method);
   return toResult(
     placeDay(lat, lng, ymd, (day) => {
-      const params = methodParams();
+      const params = methodParams(method, adjustments);
       // ʿAṣr (and therefore the end of Ẓuhr) differs by school — see
       // utils/salatPrefs.ts. Read per call for the same reason as the method.
       if (getAsrMadhab() === 'hanafi') params.madhab = adhan.Madhab.Hanafi;
       return new adhan.PrayerTimes(coords, day, params);
-    })
+    }),
+    adjustments
   );
 }
 
@@ -122,9 +149,10 @@ export function asrBySchool(
 ): { standard: Date; hanafi: Date } {
   const coords = new adhan.Coordinates(lat, lng);
   const ymd = placeYmd(lat, lng, date);
+  const adjustments = placeAdjustments(lat, lng, method);
   const at = (madhab: (typeof adhan.Madhab)[keyof typeof adhan.Madhab]) =>
     placeDay(lat, lng, ymd, (day) => {
-      const params = methodParams(method);
+      const params = methodParams(method, adjustments);
       params.madhab = madhab;
       return new adhan.PrayerTimes(coords, day, params);
     }).asr;

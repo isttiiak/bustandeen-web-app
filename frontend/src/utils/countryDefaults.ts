@@ -85,6 +85,73 @@ export function prayerDefaultsForCountry(countryCode: string | null | undefined)
   return COUNTRY_PRAYER_DEFAULTS[countryCode.toUpperCase()] ?? FALLBACK_PRAYER_DEFAULTS;
 }
 
+// ─── National timetable calibration (audit R0a) ─────────────────────────────
+
+export interface TimeAdjustments {
+  /** Minutes from Fajr at which sehri ends (negative = before Fajr). The
+   * Fajr prayer time itself is never moved: an earlier Fajr would be the
+   * unsafe side for the prayer. */
+  sehri?: number;
+  /** Minutes added to Maghrib (= iftar) on top of the method's own, through
+   * adhan `methodAdjustments`. */
+  maghrib?: number;
+}
+
+/**
+ * Where a country's official timetable runs a little apart from its method,
+ * the country default is moved onto it, always to the safe side: sehri never
+ * ends later, iftar never comes earlier than the official time.
+ *
+ * Bangladesh: suhoor ends 3 minutes before Fajr; iftar is 3 minutes after
+ * sunset; matched to Islamic Foundation Bangladesh's timetable. That is IF's
+ * own rule (sehri ends 3 min before subh sadiq, iftar 3 min after sunset, "as
+ * a precaution": Dhaka Tribune, Ramadan 2025). Against IF's Dhaka Ramadan
+ * table for 2026 (19 Feb - 20 Mar, dbcnews.tv/ramadan-2026, "source: Islamic
+ * Foundation Bangladesh") plain Karachi ended sehri 0-1 min later and put
+ * iftar 1-2 min earlier on all 30 days. IF's permanent Dhaka timetable shows
+ * the gap about a minute wider from April to August; flat -3/+3 all year
+ * stays on the safe side there too (utils/countryDefaults.test.ts). Decision:
+ * Istiak, 2026-10-17.
+ *
+ * The app (utils/prayerTimes.ts) and the static pages (seo/utils/calc.ts)
+ * both read this table, so they always show the same minute.
+ */
+export const COUNTRY_TIME_ADJUSTMENTS: Record<string, TimeAdjustments> = {
+  BD: { sehri: -3, maghrib: 3 },
+};
+
+/** The calibration for times computed at a place in `countryCode` with
+ * `method`, or null. Only the country's own default method is calibrated:
+ * someone who picked another method gets that method's own numbers. */
+export function countryTimeAdjustments(
+  countryCode: string | null | undefined,
+  method: CalcMethodId
+): TimeAdjustments | null {
+  if (!countryCode) return null;
+  const cc = countryCode.toUpperCase();
+  const adjustments = COUNTRY_TIME_ADJUSTMENTS[cc];
+  return adjustments && prayerDefaultsForCountry(cc).method === method ? adjustments : null;
+}
+
+/** Adds the Maghrib calibration to adhan calculation parameters, in place.
+ * Typed structurally so this file stays free of adhan (pure data, see the
+ * top). Sehri is not an adhan time: see `sehriEnd`. */
+export function applyTimeAdjustments<P extends { methodAdjustments: { maghrib?: number } }>(
+  params: P,
+  adjustments: TimeAdjustments | null
+): P {
+  if (adjustments?.maghrib) {
+    params.methodAdjustments.maghrib =
+      (params.methodAdjustments.maghrib ?? 0) + adjustments.maghrib;
+  }
+  return params;
+}
+
+/** When sehri ends: Fajr, moved by the country calibration. */
+export function sehriEnd(fajr: Date, adjustments: TimeAdjustments | null): Date {
+  return adjustments?.sehri ? new Date(fajr.getTime() + adjustments.sehri * 60_000) : fajr;
+}
+
 /** IANA time zone → country, for the countries in the table above. Used in
  * the app, where the device's time zone is the only country hint that never
  * leaves the device. Zones not listed (e.g. most of the Americas outside the

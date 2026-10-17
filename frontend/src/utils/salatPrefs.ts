@@ -411,6 +411,15 @@ export function regionCountry(): string | null {
   return countryFromTimeZone(zone) ?? deviceCountry();
 }
 
+/** The country of the place at `lat`/`lng`, from its zone; the device's only
+ * while the place's zone is unknown (zone map not loaded yet). Picks the
+ * national timetable calibration in utils/prayerTimes.ts, so a known zone
+ * outside the table never borrows the phone's country. */
+export function countryAt(lat: number, lng: number): string | null {
+  const zone = placeZone(lat, lng);
+  return zone ? countryFromTimeZone(zone) : deviceCountry();
+}
+
 const DEFAULTS_MIGRATED_KEY = 'bustandeen_prayer_defaults_v1';
 const SUGGEST_KEY = 'bustandeen_prayer_defaults_suggest';
 

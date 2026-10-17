@@ -7,6 +7,7 @@ import { getIshaPhase, getMandatoryWidget, type PrayerTimesResult } from './pray
 const at = (hhmm: string, day = '2026-10-09') => new Date(`${day}T${hhmm}:00+06:00`);
 const TIMES: PrayerTimesResult = {
   fajr: at('04:30'),
+  sehri: at('04:30'),
   sunrise: at('05:45'),
   dhuhr: at('11:45'),
   asr: at('15:10'),

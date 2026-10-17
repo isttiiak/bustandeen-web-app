@@ -290,13 +290,13 @@ export function FastingQuickCard({ excused }: { excused: boolean }) {
   const next = useMemo(() => {
     const n = nextSunnahFast(ymdNoon(date));
     if (!n) return null;
-    let times: { fajr: Date; maghrib: Date } | null = null;
+    let times: { sehri: Date; maghrib: Date } | null = null;
     try {
       const raw = localStorage.getItem('bustandeen_location');
       if (raw) {
         const loc = JSON.parse(raw) as { latitude: number; longitude: number };
         const pt = calcPrayerTimesForDay(loc.latitude, loc.longitude, deviceYmd(n.date));
-        times = { fajr: pt.fajr, maghrib: pt.maghrib };
+        times = { sehri: pt.sehri, maghrib: pt.maghrib };
       }
     } catch {
       times = null;
@@ -419,7 +419,7 @@ export function FastingQuickCard({ excused }: { excused: boolean }) {
                 })}
             {next.times &&
               ` · ${t('home.quick.suhoorIftar', 'suḥūr until {{fajr}}, ifṭār {{maghrib}}', {
-                fajr: formatTime(next.times.fajr),
+                fajr: formatTime(next.times.sehri),
                 maghrib: formatTime(next.times.maghrib),
               })}`}
           </span>

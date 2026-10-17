@@ -32,7 +32,7 @@ export const RAMADAN_BD: Record<MonthlyLang, RamadanBdStrings> = {
     title: (d, y) => `Ramadan ${y} Sehri & Iftar Times in ${d} District`,
     description: (d, y) =>
       `Sehri end and iftar time for every day of Ramadan ${y} in ${d} district, Bangladesh, with the expected first fast.`,
-    columns: { fast: 'Fast', date: 'Date', sehri: 'Sehri ends', iftar: 'Iftar' },
+    columns: { fast: 'Fast', date: 'Date', sehri: 'Sehri ends', iftar: 'Iftar (Maghrib)' },
     caption: (d, y) => `${d}, Ramadan ${y}: sehri and iftar times`,
     possible30: 'If Ramadan has 30 days',
     estimateNotice: (s) =>
@@ -43,8 +43,7 @@ export const RAMADAN_BD: Record<MonthlyLang, RamadanBdStrings> = {
       `First fast in Bangladesh: ${s}, as announced by the National Moon Sighting Committee.`,
     sourceLink: 'Announcement',
     eidNote: 'The last fast and Eid al-Fitr depend on the sighting of the Shawwal moon.',
-    timesNote:
-      'Sehri ends when Fajr begins (Karachi method, 18°); iftar is at sunset (Maghrib). No minutes of caution are added: many calendars end sehri a few minutes earlier.',
+    timesNote: 'Times are calculated with the Karachi method (Fajr at 18°).',
     allDistrictsCta: 'Ramadan calendars for all 64 districts',
     monthlyCta: (d) => `Monthly prayer timetable for ${d}`,
     indexSection: 'Bangladesh: all 64 districts',
@@ -55,7 +54,7 @@ export const RAMADAN_BD: Record<MonthlyLang, RamadanBdStrings> = {
     title: (d, y) => `রমজান ${y}: ${d} জেলার সেহরি ও ইফতারের সময়সূচি`,
     description: (d, y) =>
       `${y} সালের রমজানে ${d} জেলার প্রতিদিনের সেহরির শেষ সময় ও ইফতারের সময়, সম্ভাব্য প্রথম রোজার তারিখসহ।`,
-    columns: { fast: 'রোজা', date: 'তারিখ', sehri: 'সেহরির শেষ', iftar: 'ইফতার' },
+    columns: { fast: 'রোজা', date: 'তারিখ', sehri: 'সেহরির শেষ', iftar: 'ইফতার (মাগরিব)' },
     caption: (d, y) => `${d}, রমজান ${y}: সেহরি ও ইফতারের সময়`,
     possible30: 'রমজান ৩০ দিনের হলে',
     estimateNotice: (s) =>
@@ -65,8 +64,7 @@ export const RAMADAN_BD: Record<MonthlyLang, RamadanBdStrings> = {
     announcedNotice: (s) => `জাতীয় চাঁদ দেখা কমিটির ঘোষণা অনুযায়ী বাংলাদেশে প্রথম রোজা ${s}।`,
     sourceLink: 'ঘোষণা',
     eidNote: 'শেষ রোজা ও ঈদুল ফিতর শাওয়ালের চাঁদ দেখার ওপর নির্ভর করে।',
-    timesNote:
-      'ফজরের ওয়াক্ত শুরু হলে সেহরির সময় শেষ (করাচি পদ্ধতি, ১৮°); ইফতার সূর্যাস্তে (মাগরিব)। সতর্কতার জন্য বাড়তি মিনিট যোগ করা হয়নি; অনেক ক্যালেন্ডারে সেহরি কয়েক মিনিট আগে শেষ ধরা হয়।',
+    timesNote: 'সময় করাচি পদ্ধতিতে হিসাব করা (ফজর ১৮°)।',
     allDistrictsCta: 'সব ৬৪ জেলার রমজান ক্যালেন্ডার',
     monthlyCta: (d) => `${d} জেলার মাসিক নামাজের সময়সূচি`,
     indexSection: 'বাংলাদেশ: সব ৬৪ জেলা',
