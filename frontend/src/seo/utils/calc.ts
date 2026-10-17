@@ -116,6 +116,9 @@ export interface MethodFacts {
   fajrAngle: number;
   /** Minutes the method itself adds to Maghrib after sunset. */
   maghribMinutes: number;
+  /** Where the method sets Maghrib by the sun's depression (Tehran: 4.5°),
+   * not by minutes after sunset; 0 otherwise. */
+  maghribAngle: number;
   /** The Moonsighting Committee's seasonal Fajr applies when it is later. */
   seasonal: boolean;
 }
@@ -130,6 +133,7 @@ export function methodFacts(method: CalcMethodId): MethodFacts {
     facts = {
       fajrAngle: p.fajrAngle,
       maghribMinutes: p.methodAdjustments.maghrib,
+      maghribAngle: p.maghribAngle,
       seasonal: method === 'MoonsightingCommittee',
     };
     methodFactsCache.set(method, facts);

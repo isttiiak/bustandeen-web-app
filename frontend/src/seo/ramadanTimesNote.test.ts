@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { renderRoute } from './entry-server.js';
 
-// R0d (v5.180.0) and R0c (v5.181.0): the world Ramadan page says how its two times are found.
+// R0d (v5.180.0), R0c (v5.181.0) and R0b (v5.182.0): the world Ramadan page says how its two times are found.
 // Where the country default is matched to an official timetable, the note
 // names that timetable and the real minutes; elsewhere it says we add none.
 
@@ -70,7 +70,9 @@ describe('world Ramadan times note', () => {
   it('Paris (not checked): the method as is, no calibration claimed', () => {
     const paris = note('paris-france');
     expect(paris).toContain('Suhoor ends when Fajr begins');
-    expect(paris).toContain('Iftar is at Maghrib (sunset).');
+    expect(paris).toContain(
+      'Iftar is at Maghrib, which this method puts at sunset with no minutes added.'
+    );
     expect(paris).toContain('We add no minutes of caution of our own');
     expect(paris).not.toContain('Checked against');
   });
@@ -91,6 +93,20 @@ describe('world Ramadan times note', () => {
       buildDate: BUILD_DATE,
     });
     expect(html).toContain('Calculated with the JAKIM method');
+  });
+
+  it("Tehran: Maghrib by the sun's angle, never called sunset", () => {
+    const n = note('tehran-iran');
+    expect(n).toContain(
+      'Iftar is at Maghrib, which this method sets when the sun is 4.5° below the horizon, some minutes after sunset.'
+    );
+    expect(n).not.toContain('(sunset)');
+  });
+
+  it('no page says iftar is "(sunset)"', () => {
+    for (const slug of ['paris-france', 'karachi-pakistan', 'new-york-city-united-states']) {
+      expect(note(slug), slug).not.toContain('(sunset)');
+    }
   });
 
   it('no em dash', () => {

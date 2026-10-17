@@ -30,6 +30,7 @@ export const RAMADAN_WORLD = {
     fajrAngle: number;
     fajrMinutes?: number;
     maghribMinutes: number;
+    maghribAngle?: number;
     sehriMinutes: number;
     seasonal: boolean;
     country?: string;
@@ -45,11 +46,13 @@ export const RAMADAN_WORLD = {
       } (${o.method} method, Fajr at ${o.fajrAngle}°${
         o.fajrMinutes ? ` and ${minutes(o.fajrMinutes)} of caution` : ''
       }${o.seasonal ? ", or the committee's seasonal time when that is later" : ''}).`,
-      o.maghribMinutes > 0
-        ? o.checkedAgainst
-          ? `Iftar is at Maghrib, ${minutes(o.maghribMinutes)} after sunset.`
-          : `Iftar is at Maghrib, which this method sets ${o.maghribMinutes} minutes after sunset.`
-        : 'Iftar is at Maghrib (sunset).',
+      o.maghribAngle
+        ? `Iftar is at Maghrib, which this method sets when the sun is ${o.maghribAngle}° below the horizon, some minutes after sunset.`
+        : o.maghribMinutes > 0
+          ? o.checkedAgainst
+            ? `Iftar is at Maghrib, ${minutes(o.maghribMinutes)} after sunset.`
+            : `Iftar is at Maghrib, which this method sets ${o.maghribMinutes} minutes after sunset.`
+          : 'Iftar is at Maghrib, which this method puts at sunset with no minutes added.',
       o.country ? `This is the convention most masjids in ${o.country} follow.` : '',
       o.checkedAgainst
         ? o.iftarOnly

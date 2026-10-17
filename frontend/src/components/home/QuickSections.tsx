@@ -418,10 +418,14 @@ export function FastingQuickCard({ excused }: { excused: boolean }) {
                   kind: kindLabel(next.kind),
                 })}
             {next.times &&
-              ` · ${t('home.quick.suhoorIftar', 'suḥūr until {{fajr}}, ifṭār {{maghrib}}', {
-                fajr: formatTime(next.times.sehri),
-                maghrib: formatTime(next.times.maghrib),
-              })}`}
+              ` · ${t(
+                'home.quick.suhoorIftar',
+                'suḥūr until {{fajr}}, ifṭār (Maghrib) {{maghrib}}',
+                {
+                  fajr: formatTime(next.times.sehri),
+                  maghrib: formatTime(next.times.maghrib),
+                }
+              )}`}
           </span>
         </p>
       )}

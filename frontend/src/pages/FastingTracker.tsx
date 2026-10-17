@@ -734,7 +734,7 @@ export default function FastingTracker() {
                     </span>
                     <span className="inline-flex items-center gap-1.5 text-white/70">
                       <MaghribIcon className="w-4 h-4 text-brand-gold" />
-                      {t('fasting.iftar', 'Iftar')}
+                      {t('fasting.iftar', 'Iftar (Maghrib)')}
                       <span className="text-brand-gold font-bold tabular-nums">
                         {formatTime(dayTimes.maghrib)}
                       </span>

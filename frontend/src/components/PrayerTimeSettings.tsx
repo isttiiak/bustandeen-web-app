@@ -29,8 +29,9 @@ import {
   type CalculationMethodId,
   regionPrayerDefaults,
   dismissPrayerDefaultsSuggestion,
+  countryAt,
 } from '../utils/salatPrefs.js';
-import { countryName, deviceCountry } from '../utils/countryDefaults.js';
+import { countryName, countryTimeAdjustments, deviceCountry } from '../utils/countryDefaults.js';
 
 /**
  * Prayer Times settings: a right-side DRAWER, same shape as SalatSettings.
@@ -65,6 +66,26 @@ export default function PrayerTimeSettings({
   const [madhab, setMadhab] = useState<AsrMadhab>(() => getAsrMadhab());
   const [calcMethod, setCalcMethodState] = useState<CalculationMethodId>(() => getCalcMethod());
   const [changingLocation, setChangingLocation] = useState(false);
+  // Where the place's country default is matched to its official timetable
+  // (audits R0a/R0c/R0d), say so: the times are not the bare method.
+  const placeCountry = location ? countryAt(location.latitude, location.longitude) : null;
+  const calibration = countryTimeAdjustments(placeCountry, calcMethod);
+  const placeCountryName = placeCountry
+    ? countryName(placeCountry, i18n.language === 'bn' ? 'bn' : 'en')
+    : '';
+  const calibrationNote = !calibration
+    ? null
+    : calibration.iftarOnly
+      ? t(
+          'salatSettings.matchedIftarOnly',
+          'In {{country}}, iftar is matched to a published local timetable and never comes earlier than it.',
+          { country: placeCountryName }
+        )
+      : t(
+          'salatSettings.matchedTimetable',
+          "In {{country}}, these times are matched to the country's published timetable and kept on the safe side: suhoor never ends later, iftar never comes earlier.",
+          { country: placeCountryName }
+        );
 
   // The drawer stays mounted while closed, so re-read the saved choices each
   // time it opens: they can change elsewhere (the "usual times" card, a
@@ -231,6 +252,14 @@ export default function PrayerTimeSettings({
                 <p className="text-white/70 text-xs mt-2 leading-relaxed">
                   {CALC_METHODS.find((m) => m.id === calcMethod)?.detail}
                 </p>
+                {calibrationNote && (
+                  <p
+                    className="text-white/70 text-xs mt-2 leading-relaxed"
+                    data-testid="calc-method-matched"
+                  >
+                    {calibrationNote}
+                  </p>
+                )}
               </section>
 
               {/* ── Asr madhab ─────────────────────────────────────────── */}
