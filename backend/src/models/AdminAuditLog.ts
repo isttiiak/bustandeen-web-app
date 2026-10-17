@@ -10,6 +10,10 @@ import mongoose, { Document, Schema } from 'mongoose';
  */
 export interface IAdminAuditLog extends Document {
   actorEmail: string;
+  /** Firebase uid of the AdminAccount (R9a): stays the same person if the
+   *  email is ever changed. Optional: older entries and most actions have
+   *  only the email. */
+  actorUid?: string;
   actorRole: 'servant' | 'ansar';
   action: string;
   targetType: string;
@@ -20,6 +24,7 @@ export interface IAdminAuditLog extends Document {
 
 const adminAuditLogSchema = new Schema<IAdminAuditLog>({
   actorEmail: { type: String, required: true },
+  actorUid: { type: String },
   actorRole: { type: String, enum: ['servant', 'ansar'], required: true },
   action: { type: String, required: true },
   targetType: { type: String, required: true },

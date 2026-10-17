@@ -10,6 +10,7 @@ import type { AdminRole } from '../models/AdminAccount.js';
  */
 export const logAdminAction = async (params: {
   actorEmail: string;
+  actorUid?: string;
   actorRole: AdminRole;
   action: string;
   targetType: string;

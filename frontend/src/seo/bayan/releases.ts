@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.178.1',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'A second person for moon sightings',
+        added: [
+          "A second member of our team can now enter Bangladesh's moon sighting each month, so the Hijri dates and the Ramadan calendars never wait on one person. Every entry is recorded with who made it. Nothing changes in the app for you.",
+        ],
+      },
+      bn: {
+        title: 'চাঁদ দেখার তথ্যে আরও একজন',
+        added: [
+          'আমাদের দলের আরও একজন সদস্য এখন প্রতি মাসে বাংলাদেশের চাঁদ দেখার তথ্য দিতে পারবেন, তাই হিজরি তারিখ ও রমজান ক্যালেন্ডার কখনো একজনের অপেক্ষায় থাকবে না। প্রতিটি তথ্য কে দিয়েছেন তা লেখা থাকে। অ্যাপে আপনার জন্য কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.178.0',
     date: '2026-10-17',
     text: {
