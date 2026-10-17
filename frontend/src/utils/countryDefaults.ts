@@ -140,6 +140,26 @@ export interface TimeAdjustments {
  * Maghrib +3. Checked against JAKIM e-Solat zone WLY01, all of 2026
  * (utils/countryCalibration.test.ts). Decision: Istiak, 2026-10-17.
  *
+ * Other countries (audit R0c, read 2026-10-17, approved by Istiak the same
+ * day), official days and sources in utils/countryCalibration.test.ts:
+ * - TR Diyanet, Istanbul, 366 days: Fajr up to 1 min later, Akşam up to
+ *   1 min earlier (outside Ramadan).
+ * - SG MUIS, all of 2026: both up to 1 min on the unsafe side.
+ * - ID Kemenag, Jakarta, Ramadan 2026: Maghrib 1-2 min earlier.
+ * - SA Umm al-Qura (KACST), Makkah + Riyadh, 1448: Fajr up to 1 later,
+ *   Maghrib up to 2 earlier.
+ * - QA Ministry of Awqaf, 2026: Fajr 0-2 later, Maghrib 1-3 earlier.
+ * - AE IACAD Dubai / Awqaf: both 1 min on the unsafe side.
+ * - EG Cairo, as printed in the press: Fajr up to 1 later.
+ * - MA Ministry of Habous, Rabat, 56 days from January 2025 to November
+ *   2026: Morocco's own convention, Fajr at 19° (then 0-1 min after Habous,
+ *   so sehri -1) and Maghrib a few minutes after sunset (+4: 0-1 min after).
+ * - GB East London Mosque: Maghrib up to 1 earlier. Suhoor stays at the
+ *   Moonsighting Committee's Fajr: the UK has no national timetable.
+ * Suhoor ends at the official Fajr, not at a printed imsak (Malaysia,
+ * Indonesia). Countries not listed were not checked against an official
+ * table.
+ *
  * The app (utils/prayerTimes.ts) and the static pages (seo/utils/calc.ts)
  * both read this table, so they always show the same minute.
  */
@@ -154,6 +174,32 @@ export const COUNTRY_TIME_ADJUSTMENTS: Record<string, TimeAdjustments> = {
     methodName: 'JAKIM',
     pageNote:
       "JAKIM's timetable also shows imsak, 10 minutes before Subuh, as a caution; the fast itself begins at Subuh.",
+  },
+  TR: { sehri: -1, maghrib: 1, checkedAgainst: "Diyanet's timetable" },
+  SG: { sehri: -1, maghrib: 1, checkedAgainst: "MUIS's timetable" },
+  ID: {
+    maghrib: 2,
+    checkedAgainst: "Kemenag's timetable",
+    pageNote:
+      "Kemenag's timetable also shows imsak, 10 minutes before Subuh, as a caution; the fast itself begins at Subuh.",
+  },
+  SA: { sehri: -1, maghrib: 2, checkedAgainst: 'the Umm al-Qura calendar' },
+  QA: { sehri: -2, maghrib: 3, checkedAgainst: "the Ministry of Awqaf's timetable" },
+  AE: { sehri: -1, maghrib: 1, checkedAgainst: 'the timetables of IACAD Dubai and Awqaf' },
+  EG: { sehri: -1, checkedAgainst: 'the published Cairo timetable' },
+  MA: {
+    fajrAngle: 19,
+    sehri: -1,
+    maghrib: 4,
+    checkedAgainst: "the Ministry of Habous's timetable",
+    methodName: 'Moroccan (Ministry of Habous)',
+  },
+  GB: {
+    maghrib: 1,
+    checkedAgainst: "East London Mosque's timetable",
+    iftarOnly: true,
+    pageNote:
+      'Many UK masjids, for example East London Mosque, end suhoor earlier than this: follow your local masjid.',
   },
 };
 

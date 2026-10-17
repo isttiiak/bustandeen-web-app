@@ -2,6 +2,30 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.181.0 - Nine more countries: sehri and iftar on the safe side of their official timetables - 2026-10-17
+
+### Fixed
+
+- **Country check (audit R0c)**: each country default compared with an official (or main published) timetable, read 2026-10-17, the whole year where the authority publishes one. Ours was on the unsafe side (sehri later or iftar earlier) in these countries; rows added to `COUNTRY_TIME_ADJUSTMENTS`, each the fewest whole minutes that make every compared day safe (Istiak, 2026-10-17):
+  - Turkey (Diyanet, Istanbul, 366 days; ±1 min outside Ramadan): sehri 1 min before Fajr, Maghrib +1.
+  - Singapore (MUIS, all of 2026; ±1): sehri -1, Maghrib +1.
+  - Indonesia (Kemenag, Jakarta, Ramadan 2026; iftar 1-2 min early every day): Maghrib +2. Suhoor stays at Subuh, not Kemenag's imsak; the page says Kemenag prints imsak 10 min earlier as a caution.
+  - Saudi Arabia (Umm al-Qura KACST, Makkah + Riyadh, 1448; Fajr up to 1 late, Maghrib up to 2 early): sehri -1, Maghrib +2.
+  - Qatar (Ministry of Awqaf, 2026; sehri 0-2 late, iftar 1-3 early): sehri -2, Maghrib +3.
+  - UAE (IACAD Dubai / Awqaf; 1 min): sehri -1, Maghrib +1.
+  - Egypt (Cairo, as printed in the press; Fajr 1 late once): sehri -1.
+  - **Morocco: its own method** (Ministry of Habous, Rabat, 56 days from January 2025 to November 2026, current month live + archived daily pages): with MWL 18° our Fajr was 5-7 min after Habous and Maghrib 3-4 min before it on every day. Now Morocco's Fajr angle, 19° (then 0-1 min after Habous, never before), sehri 1 min before it, and Maghrib 4 min after sunset (0-1 min after Habous). The Moroccan pages name the Ministry of Habous method.
+  - United Kingdom (East London Mosque; Maghrib up to 1 early): Maghrib +1. Suhoor stays at the Moonsighting Committee's Fajr (no national timetable); the page says many UK masjids, for example East London Mosque, end suhoor earlier: follow your local masjid.
+- Except Morocco (and Malaysia, v5.180.0), only the end of sehri moves; the Fajr prayer time does not.
+- Not checked (no official table reachable or none exists): Kuwait, the rest of the Gulf, the Levant and Iraq, India, Afghanistan, Ireland, North America, Europe on MWL, Central Asia, the rest of Africa; they keep their method's own numbers.
+
+### Tests
+
+- `utils/countryCalibration.test.ts`: every calibrated country against its official days (sehri never later, iftar never earlier, within 3 min; Morocco's Fajr never before Habous); every calibrated country must have a table there.
+- `utils/countryDefaults.test.ts`: the calibrated set is exactly these 11; uncalibrated countries keep their numbers; the app equals the pages for Istanbul, Rabat, Doha, Makkah; the Fajr prayer moves only in Malaysia and Morocco; London Maghrib +1.
+- `seo/ramadanTimesNote.test.ts`: Rabat, London, Jakarta, Istanbul, Paris notes and columns.
+- `seo/nonBdSsr.test.ts` re-recorded on purpose: exactly AE, EG, GB, ID, MA, QA, SA, SG, TR changed. London and Riyadh Maghrib moved in `calc.test.ts`; `ramadanBd.test.ts` London/Istanbul minutes.
+
 ## v5.180.0 - Malaysia: Fajr at JAKIM's 18°, never before Subuh; iftar on the safe side - 2026-10-17
 
 ### Fixed
