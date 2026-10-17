@@ -96,7 +96,7 @@ for (const p of PAGES) {
     const later = await table(page);
     expect(later[0]).toEqual([p.one, second]);
     expect(later).toHaveLength(built.length);
-    expect(await page.locator(`tr[data-date="${first}"]`).isHidden()).toBe(true);
+    expect(await page.locator(`tr[data-date="${first}"]`).first().isHidden()).toBe(true);
     await expect(page.locator('[data-shift-note]:visible')).toContainText(p.note);
     if (hasPossible) {
       expect(builtLabel).not.toBeNull();
@@ -119,11 +119,15 @@ for (const p of PAGES) {
     expect(earlier[1]).toEqual([p.two, first]);
     expect(await timesOf(page, first)).toEqual(firstTimes);
 
-    // Paper: the shifted numbering and the note, still one A4 page.
+    // Paper (the timetable sheet, R2-R4): the shifted numbering, and the
+    // odd-night stars moved with it (one row earlier), still one A4 page.
     await page.emulateMedia({ media: 'print' });
     expect((await table(page))[1]).toEqual([p.two, first]);
     await expect(group).toBeHidden();
-    await expect(page.locator('[data-shift-note]:visible')).toContainText(p.note);
+    const starredRows = await page
+      .locator('[data-ramadan-sheet="timetable"] tr[data-odd]')
+      .evaluateAll((trs) => trs.map((tr) => Number((tr as HTMLElement).dataset.fast)));
+    expect(starredRows).toEqual([21, 23, 25, 27, 29]);
     const pdf = await page.pdf({ preferCSSPageSize: true, printBackground: true });
     expect(pdfPages(pdf)).toBe(1);
     await page.emulateMedia({ media: 'screen' });

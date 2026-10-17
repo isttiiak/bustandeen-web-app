@@ -9,6 +9,9 @@ import RamadanCalendarPage from '../templates/RamadanCalendarPage.js';
 import type { CityEntry } from '../data/cities.js';
 import type { MoonSightingRecord } from '../../utils/hijriOffset.js';
 
+/** The page without its print sheets (R2-R4 draw three more tables). */
+const screenPart = (html: string) => html.split('<div data-ramadan-sheets')[0];
+
 const dhaka = cityBySlug('dhaka-bangladesh')!;
 const district = BD_DISTRICTS.find((d) => d.citySlug === 'dhaka-bangladesh')!;
 // Umm al-Qura: 1 Ramadan 1448 = 8 Feb 2027, 29 Ramadan = 8 Mar 2027.
@@ -93,14 +96,16 @@ describe('ramadanPlan', () => {
 
 describe('BdRamadanPage', () => {
   const render = (records: MoonSightingRecord[]) =>
-    renderToStaticMarkup(
-      createElement(BdRamadanPage, {
-        lang: 'bn',
-        district,
-        city: dhaka,
-        plan: ramadanPlan(dhaka, HY, records),
-        ym: '2026-10',
-      })
+    screenPart(
+      renderToStaticMarkup(
+        createElement(BdRamadanPage, {
+          lang: 'bn',
+          district,
+          city: dhaka,
+          plan: ramadanPlan(dhaka, HY, records),
+          ym: '2026-10',
+        })
+      )
     );
 
   it('says the date is subject to the committee until it announces', () => {
@@ -183,13 +188,15 @@ describe('worldwide Ramadan calendars (RamadanCalendarPage)', () => {
   const london = cityBySlug('london-united-kingdom')!;
   const tongi = cityBySlug('tungi-bangladesh')!;
   const page = (city: CityEntry, records: MoonSightingRecord[], lang: 'en' | 'bn' = 'en') =>
-    renderToStaticMarkup(
-      createElement(RamadanCalendarPage, {
-        lang,
-        city,
-        plan: ramadanPlan(city, HY, records),
-        gregorianYear: 2027,
-      })
+    screenPart(
+      renderToStaticMarkup(
+        createElement(RamadanCalendarPage, {
+          lang,
+          city,
+          plan: ramadanPlan(city, HY, records),
+          gregorianYear: 2027,
+        })
+      )
     );
 
   it("a 29-day Umm al-Qura month shows the 30th as possible (Umm al-Qura's Shawwal 1)", () => {

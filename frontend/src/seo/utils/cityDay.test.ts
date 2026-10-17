@@ -13,6 +13,9 @@ import RamadanCalendarPage from '../templates/RamadanCalendarPage.js';
 import { formatTimeInZone } from './calc.js';
 import { ramadanPlan } from './ramadanBd.js';
 
+/** The page without its print sheets (R2-R4 draw three more tables). */
+const screenPart = (html: string) => html.split('<div data-ramadan-sheets')[0];
+
 // The static pages are built on CI / Vercel, which run in UTC. A page must
 // show its city's civil day, whatever the build machine's zone: west of UTC
 // the city is still on "yesterday" for part of the UTC day, and on the
@@ -151,15 +154,22 @@ describe('Ramadan calendar rows are civil days of the city', () => {
       })
     );
     // The visible rows (only they carry data-fast), cells as plain text
-    // without the screen-reader "if Ramadan has 30 days" note.
+    // without the screen-reader "if Ramadan has 30 days" note, the weekday
+    // or the odd-night star.
     return [
-      ...html.matchAll(
+      ...screenPart(html).matchAll(
         /<tr data-date="[^"]*" data-ramadan-row="\d+" data-fast="\d+"[^>]*>(.*?)<\/tr>/g
       ),
     ]
-      .map((m) => m[1].replace(/<span data-possible-note[^>]*>.*?<\/span>/g, ''))
+      .map((m) =>
+        m[1]
+          .replace(/<span data-possible-note[^>]*>.*?<\/span>/g, '')
+          .replace(/ ?<small[^>]*>.*?<\/small>/g, '')
+      )
       .map((row) =>
-        [...row.matchAll(/<td[^>]*>(.*?)<\/td>/g)].map((c) => c[1].replace(/<[^>]+>/g, ''))
+        [...row.matchAll(/<t[hd][^>]*>(.*?)<\/t[hd]>/g)].map((c) =>
+          c[1].replace(/<span data-odd-star[^>]*>.*?<\/span>/g, '').replace(/<[^>]+>/g, '')
+        )
       );
   };
 

@@ -16,6 +16,9 @@ import BdRamadanPage from './templates/BdRamadanPage.js';
 import RamadanCalendarPage from './templates/RamadanCalendarPage.js';
 import type { MoonSightingRecord } from '../utils/hijriOffset.js';
 
+/** The page without its print sheets (R2-R4 draw three more tables). */
+const screenPart = (html: string) => html.split('<div data-ramadan-sheets')[0];
+
 const dhaka = cityBySlug('dhaka-bangladesh')!;
 const london = cityBySlug('london-united-kingdom')!;
 const district = BD_DISTRICTS.find((d) => d.citySlug === 'dhaka-bangladesh')!;
@@ -151,7 +154,7 @@ describe('prerendered markup (shift 0, before the script runs)', () => {
 
   for (const [name, render] of Object.entries(pages)) {
     it(`${name}: one hidden row either side, the control hidden until wired`, () => {
-      const html = render();
+      const html = screenPart(render());
       const rows = [...html.matchAll(/<tr [^>]*data-ramadan-row="(\d+)"[^>]*>/g)];
       expect(rows.map((m) => Number(m[1]))).toEqual(Array.from({ length: 32 }, (_, i) => i));
       const hidden = rows.filter((m) => /\shidden=""/.test(m[0])).map((m) => Number(m[1]));
