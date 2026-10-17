@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.188.1 - A saved place outside the country table no longer borrows the phone's country - 2026-10-17
+
+### Fixed
+
+- **The default calculation method and ʿAṣr school followed the phone's country when the saved place's time zone maps to no country** (found by R12's Ramadan sheet). A phone on Dhaka time with Garissa, Kenya (`Africa/Nairobi`) saved got Bangladesh's Karachi + Ḥanafī, while bustandeen.com shows the worldwide fallback (Moonsighting Committee + standard) for the same place. `regionCountry()` in `utils/salatPrefs.ts` now goes through `countryAt()`, as the national-timetable calibration already did: a known place zone outside `TIMEZONE_COUNTRY` gives no country (the fallback); the phone's zone is the hint only while no place is saved or its zone is not known yet. Decision by Istiak, 2026-10-17. Only people who never chose a method or school see a change; a saved choice always wins. The same country also drives the Automatic Hijri date, so such a place no longer follows the phone's country's moon-sighting records.
+- **Zones missing for countries already in the table**: west Kazakhstan (`Asia/Aqtobe`, `Aqtau`, `Atyrau`, `Oral`, `Qyzylorda`, `Qostanay`), more US zones (Indiana, Kentucky, North Dakota, Boise, Menominee, Alaska, Adak), more Canadian zones (Moncton, Glace Bay, Goose Bay, Whitehorse, Dawson, Iqaluit and others) and Spain's `Atlantic/Canary` and `Africa/Ceuta`. Places there got the phone's country; now they get their country's default, as their static pages do. No new country conventions were added: Kenya, Somalia, Ethiopia, Azerbaijan, Bosnia and others with no row keep the worldwide fallback until each is reviewed.
+- **"Usual in {country}" in Prayer Time settings and onboarding named the phone's country** even when the defaults came from the saved place (Dhaka phone + London saved said "Usual in Bangladesh" beside the UK default). It now names the same country the defaults come from, and no country where the fallback applies.
+
+### Tests
+
+- `utils/salatPrefs.test.ts`: a Dhaka phone with Garissa saved gets the fallback (same as `prayerDefaultsForCountry('KE')`) and no "your country usually uses" offer; Dhaka phone + London saved = GB; no saved place = the phone; zone map not loaded = the phone; one city per added zone maps to its country (Indianapolis, Louisville, Boise, Juneau, Moncton, Whitehorse, Las Palmas, Ceuta, Aktobe, Atyrau, Oral, Kyzylorda).
+
 ## v5.188.0 - Ramadan calendars: move the month by one day for your area - 2026-10-17
 
 ### Added

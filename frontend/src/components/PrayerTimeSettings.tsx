@@ -30,8 +30,9 @@ import {
   regionPrayerDefaults,
   dismissPrayerDefaultsSuggestion,
   countryAt,
+  regionCountry,
 } from '../utils/salatPrefs.js';
-import { countryName, countryTimeAdjustments, deviceCountry } from '../utils/countryDefaults.js';
+import { countryName, countryTimeAdjustments } from '../utils/countryDefaults.js';
 
 /**
  * Prayer Times settings: a right-side DRAWER, same shape as SalatSettings.
@@ -55,8 +56,10 @@ export default function PrayerTimeSettings({
 }) {
   const { t, i18n } = useTranslation();
   const musafir = useMusafir();
-  // What most mosques in this device's country use, marked in both pickers.
-  const country = deviceCountry();
+  // What most mosques in the saved place's country use (the phone's while no
+  // place is saved), marked in both pickers: the same country the defaults
+  // come from, so the label never names one country beside another's default.
+  const country = regionCountry();
   const region = regionPrayerDefaults();
   const usualLabel = country
     ? t('salatSettings.usualIn', 'Usual in {{country}}', {
