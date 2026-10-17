@@ -12,6 +12,8 @@
 // utils/qibla.ts has no such dependency and is reused as-is.
 import * as adhan from 'adhan';
 import {
+  applyTimeAdjustments,
+  countryTimeAdjustments,
   prayerDefaultsForCountry,
   type AsrSchool,
   type CalcMethodId,
@@ -70,8 +72,11 @@ export function computePrayerTimes(
 ): PrayerTimesResult {
   const { method, asr: asrSchool } = prayerDefaultsForCountry(countryCode);
   const coords = new adhan.Coordinates(lat, lng);
-  const standardParams = adhan.CalculationMethod[method]();
-  const hanafiParams = adhan.CalculationMethod[method]();
+  // The country's calibration to its official timetable (Bangladesh: Islamic
+  // Foundation), the same table the app uses.
+  const adjustments = countryTimeAdjustments(countryCode, method);
+  const standardParams = applyTimeAdjustments(adhan.CalculationMethod[method](), adjustments);
+  const hanafiParams = applyTimeAdjustments(adhan.CalculationMethod[method](), adjustments);
   hanafiParams.madhab = adhan.Madhab.Hanafi;
   const [y, m, d] = day.split('-').map(Number);
   let date = adhanDay(y, m, d);

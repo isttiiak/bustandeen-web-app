@@ -1,5 +1,6 @@
 import * as adhan from 'adhan';
-import { getAsrMadhab, getCalcMethod, type CalculationMethodId } from './salatPrefs.js';
+import { countryAt, getAsrMadhab, getCalcMethod, type CalculationMethodId } from './salatPrefs.js';
+import { applyTimeAdjustments, countryTimeAdjustments } from './countryDefaults.js';
 import i18n from '../i18n.js';
 import { addDaysYmd, foreignPlaceZone, placeYmd } from './placeClock.js';
 
@@ -65,10 +66,15 @@ function placeDay(
   return first!;
 }
 
-function methodParams(method: CalculationMethodId = getCalcMethod()) {
+function methodParams(lat: number, lng: number, method: CalculationMethodId = getCalcMethod()) {
   // Read per call (not cached) so a settings change takes effect on the next
-  // minute tick without a reload.
-  return adhan.CalculationMethod[method]();
+  // minute tick without a reload. The place's country calibration (audit
+  // R0a, Bangladesh: Islamic Foundation) comes from the same table as the
+  // static pages, so the app and bustandeen.com show the same minute.
+  return applyTimeAdjustments(
+    adhan.CalculationMethod[method](),
+    countryTimeAdjustments(countryAt(lat, lng), method)
+  );
 }
 
 function toResult(times: adhan.PrayerTimes): PrayerTimesResult {
@@ -90,7 +96,7 @@ export function calcPrayerTimesForDay(lat: number, lng: number, ymd: string): Pr
   const coords = new adhan.Coordinates(lat, lng);
   return toResult(
     placeDay(lat, lng, ymd, (day) => {
-      const params = methodParams();
+      const params = methodParams(lat, lng);
       // ʿAṣr (and therefore the end of Ẓuhr) differs by school — see
       // utils/salatPrefs.ts. Read per call for the same reason as the method.
       if (getAsrMadhab() === 'hanafi') params.madhab = adhan.Madhab.Hanafi;
@@ -124,7 +130,7 @@ export function asrBySchool(
   const ymd = placeYmd(lat, lng, date);
   const at = (madhab: (typeof adhan.Madhab)[keyof typeof adhan.Madhab]) =>
     placeDay(lat, lng, ymd, (day) => {
-      const params = methodParams(method);
+      const params = methodParams(lat, lng, method);
       params.madhab = madhab;
       return new adhan.PrayerTimes(coords, day, params);
     }).asr;

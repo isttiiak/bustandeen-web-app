@@ -1,7 +1,7 @@
 import { cityCountry, cityLabel, cityLangs, cityName, type CityEntry } from '../data/cities.js';
 import { bdDistrictForCity } from '../data/bdDistricts.js';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
-import { MONTHLY } from '../locales/monthly.js';
+import { ISLAMIC_FOUNDATION_URL, MONTHLY } from '../locales/monthly.js';
 import { PRINT } from '../locales/print.js';
 import { ymInZone } from '../utils/monthTable.js';
 import { monthPagePath } from './PrayerTimesMonthPage.js';
@@ -114,6 +114,20 @@ export default function PrayerTimesCityPage({ lang, city, buildDate }: Props) {
         {t.prayerTimes.methodNote(t.prayerTimes.methodNames[times.method], localCountry)}
       </p>
       <p className="text-xs text-[#94a3b8] mt-1">{t.prayerTimes.asrNote}</p>
+      {city.countryCode === 'BD' && lang !== 'ar' && (
+        <p className="text-xs text-[#94a3b8] mt-1">
+          {MONTHLY[lang].mosqueNote[0]}
+          <a
+            href={ISLAMIC_FOUNDATION_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[#10b981] underline underline-offset-2"
+          >
+            {MONTHLY[lang].mosqueNote[1]}
+          </a>
+          {MONTHLY[lang].mosqueNote[2]}
+        </p>
+      )}
 
       <a
         href="https://bustandeen.com/prayer-times"

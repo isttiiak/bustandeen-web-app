@@ -85,6 +85,60 @@ export function prayerDefaultsForCountry(countryCode: string | null | undefined)
   return COUNTRY_PRAYER_DEFAULTS[countryCode.toUpperCase()] ?? FALLBACK_PRAYER_DEFAULTS;
 }
 
+// ─── National timetable calibration (audit R0a) ─────────────────────────────
+
+/** Minutes added on top of the method's own (adhan `methodAdjustments`). */
+export interface TimeAdjustments {
+  fajr?: number;
+  maghrib?: number;
+}
+
+/**
+ * Where a country's official timetable runs a little apart from its method,
+ * the country default is moved onto it, always to the safe side: sehri
+ * (Fajr) never later, iftar (Maghrib) never earlier than the official time.
+ *
+ * Bangladesh: Islamic Foundation Bangladesh's Dhaka Ramadan timetable for
+ * 2026 (19 Feb - 20 Mar, dbcnews.tv/ramadan-2026, "source: Islamic
+ * Foundation Bangladesh"). Plain Karachi ended sehri 0-1 min later and put
+ * iftar 1-2 min earlier on all 30 days; with Fajr -1 and Maghrib +2 it is
+ * never later / never earlier and within 2 min (utils/countryDefaults.test.ts).
+ * Decision: Istiak, 2026-10-17.
+ *
+ * The app (utils/prayerTimes.ts) and the static pages (seo/utils/calc.ts)
+ * both read this table, so they always show the same minute.
+ */
+export const COUNTRY_TIME_ADJUSTMENTS: Record<string, TimeAdjustments> = {
+  BD: { fajr: -1, maghrib: 2 },
+};
+
+/** The calibration for times computed at a place in `countryCode` with
+ * `method`, or null. Only the country's own default method is calibrated:
+ * someone who picked another method gets that method's own numbers. */
+export function countryTimeAdjustments(
+  countryCode: string | null | undefined,
+  method: CalcMethodId
+): TimeAdjustments | null {
+  if (!countryCode) return null;
+  const cc = countryCode.toUpperCase();
+  const adjustments = COUNTRY_TIME_ADJUSTMENTS[cc];
+  return adjustments && prayerDefaultsForCountry(cc).method === method ? adjustments : null;
+}
+
+/** Adds `adjustments` to adhan calculation parameters, in place. Typed
+ * structurally so this file stays free of adhan (pure data, see the top). */
+export function applyTimeAdjustments<P extends { methodAdjustments: TimeAdjustments }>(
+  params: P,
+  adjustments: TimeAdjustments | null
+): P {
+  if (adjustments) {
+    params.methodAdjustments.fajr = (params.methodAdjustments.fajr ?? 0) + (adjustments.fajr ?? 0);
+    params.methodAdjustments.maghrib =
+      (params.methodAdjustments.maghrib ?? 0) + (adjustments.maghrib ?? 0);
+  }
+  return params;
+}
+
 /** IANA time zone → country, for the countries in the table above. Used in
  * the app, where the device's time zone is the only country hint that never
  * leaves the device. Zones not listed (e.g. most of the Americas outside the

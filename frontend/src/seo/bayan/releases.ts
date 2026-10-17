@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.179.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Bangladesh sehri and iftar match Islamic Foundation',
+        fixed: [
+          'In Bangladesh, sehri now ends a minute earlier and iftar comes two minutes later, matching the Islamic Foundation Bangladesh timetable: sehri never ends later and iftar never comes earlier than its times. The app and the website show the same times.',
+          'If you picked a different calculation method in Settings, your times stay as that method gives them.',
+        ],
+      },
+      bn: {
+        title: 'বাংলাদেশে সেহরি ও ইফতার ইসলামিক ফাউন্ডেশনের সঙ্গে মিলিয়ে',
+        fixed: [
+          'বাংলাদেশে সেহরি এখন এক মিনিট আগে শেষ হয়, ইফতার দুই মিনিট পরে, ইসলামিক ফাউন্ডেশন বাংলাদেশের সময়সূচির সঙ্গে মিলিয়ে: সেহরি তাদের সময়ের পরে শেষ হয় না, ইফতারও তাদের সময়ের আগে হয় না। অ্যাপ আর ওয়েবসাইটে একই সময় দেখায়।',
+          'সেটিংসে অন্য হিসাব পদ্ধতি বেছে নিয়ে থাকলে আপনার সময় সেই পদ্ধতি অনুযায়ীই থাকবে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.178.0',
     date: '2026-10-17',
     text: {

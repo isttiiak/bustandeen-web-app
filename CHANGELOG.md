@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.179.0 - Bangladesh times matched to Islamic Foundation, app and pages - 2026-10-17
+
+### Fixed
+
+- **Bangladesh sehri and iftar on the unsafe side of Islamic Foundation** (audit R0a): against Islamic Foundation Bangladesh's Dhaka Ramadan 2026 timetable (19 Feb to 20 Mar, via dbcnews.tv/ramadan-2026), plain Karachi ended sehri 1 min later on 28 of 30 days and put iftar 1 to 2 min earlier on all 30. The Bangladesh country default now adds Fajr -1 and Maghrib +2 (adhan `methodAdjustments` on top of Karachi): sehri is never later and iftar never earlier than IF's times, within 2 min. Sunrise, Dhuhr, Asr, Isha and the sunset forbidden window are unchanged.
+- **One table for the app and the pages**: `COUNTRY_TIME_ADJUSTMENTS` + `countryTimeAdjustments()` + `applyTimeAdjustments()` in `utils/countryDefaults.ts`, read by `utils/prayerTimes.ts` (prayer times, Home, Ramadan tracker, fasting) and `seo/utils/calc.ts` (daily, monthly and Ramadan pages), so both show the same minute.
+- **Who gets it**: times at a place in Bangladesh (the place's own time zone; the phone's country only while the zone map is loading, `countryAt()` in `utils/salatPrefs.ts`) computed with Bangladesh's default method, Karachi. Onboarding saves the preselected Karachi for everyone, so a saved Karachi is treated as the default. Another method picked in Bangladesh keeps that method's own numbers; Karachi in Pakistan or India is not touched.
+
+### Changed
+
+- **Bangladesh copy, en + bn**: "no minutes of caution are added" is gone from the Ramadan timesNote and the monthly method note. The Islamic Foundation line now says Fajr and Maghrib are matched to its timetable (sehri ends no later, iftar comes no earlier), and also shows on the daily Bangladesh city pages. The district Ramadan sheets label the column "Iftar (Maghrib)" / "ইফতার (মাগরিব)".
+
+### Tests
+
+- `utils/countryDefaults.test.ts`: all 30 IF days (never later / never earlier, within 2 min), plain Karachi's unsafe days, only Fajr and Maghrib move, eight other countries keep their method's numbers, the app equals the pages on every IF day, a different method in Bangladesh and a Karachi place on a Dhaka phone stay uncalibrated.
+- `seo/nonBdSsr.test.ts`: one hash per country over every non-Bangladesh city's prayer-times and Ramadan 1448 page, recorded before the change: byte-identical.
+- Dhaka expectations moved by the calibration in `calc.test.ts`, `monthTable.test.ts` and `cityDay.test.ts`.
+
 ## v5.178.0 - Ramadan calendars: the notice names its basis, a possible 30th fast everywhere - 2026-10-17
 
 ### Fixed

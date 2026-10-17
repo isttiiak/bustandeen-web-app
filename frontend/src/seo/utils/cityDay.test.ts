@@ -3,7 +3,11 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import * as adhan from 'adhan';
 import type { CityEntry } from '../data/cities.js';
-import { prayerDefaultsForCountry } from '../../utils/countryDefaults.js';
+import {
+  applyTimeAdjustments,
+  countryTimeAdjustments,
+  prayerDefaultsForCountry,
+} from '../../utils/countryDefaults.js';
 import PrayerTimesCityPage from '../templates/PrayerTimesCityPage.js';
 import RamadanCalendarPage from '../templates/RamadanCalendarPage.js';
 import { formatTimeInZone } from './calc.js';
@@ -48,7 +52,12 @@ const KEYS = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
 
 /** adhan's own day `y-m-d`, read the way adhan reads it (local getters). */
 function adhanDay(city: CityEntry, y: number, m: number, d: number) {
-  const params = adhan.CalculationMethod[prayerDefaultsForCountry(city.countryCode).method]();
+  const { method } = prayerDefaultsForCountry(city.countryCode);
+  // With the country's calibration to its official timetable (R0a).
+  const params = applyTimeAdjustments(
+    adhan.CalculationMethod[method](),
+    countryTimeAdjustments(city.countryCode, method)
+  );
   return new adhan.PrayerTimes(
     new adhan.Coordinates(city.lat, city.lng),
     new Date(y, m - 1, d, 12),
