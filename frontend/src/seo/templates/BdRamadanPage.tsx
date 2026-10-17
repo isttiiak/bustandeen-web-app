@@ -71,7 +71,7 @@ export default function BdRamadanPage({ lang, district, city, plan, ym, qr }: Pr
         <small className="text-[11px] text-white/60">{formatWeekday(d.noon, lang)}</small>
       </td>
       <td className="px-2 py-2 text-center font-semibold text-brand-emerald">
-        {formatClock(d.times.fajr, lang)}
+        {formatClock(d.times.sehri, lang)}
       </td>
       <td className="px-2 py-2 pe-3 text-center font-semibold text-brand-gold">
         {formatClock(d.times.maghrib, lang)}

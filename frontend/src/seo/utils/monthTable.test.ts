@@ -61,7 +61,7 @@ describe('monthRows', () => {
     expect(rows[30].date).toBe('2026-10-31');
   });
 
-  // R0a (v5.179.0): Fajr -2 and Maghrib +3 on top of Karachi, matched to
+  // R0a (v5.179.0): Maghrib +3 on top of Karachi (Fajr unchanged), matched to
   // Islamic Foundation Bangladesh (utils/countryDefaults.ts).
   it('matches the approved prototype for Dhaka, 1 October 2026', () => {
     const t = rows[0].times;
@@ -69,7 +69,7 @@ describe('monthRows', () => {
     expect(t.asrSchool).toBe('hanafi');
     expect(
       [t.fajr, t.sunrise, t.dhuhr, t.asr, t.maghrib, t.isha].map((d) => formatClock(d, 'en'))
-    ).toEqual(['4:33', '5:50', '11:49', '4:06', '5:49', '7:01']);
+    ).toEqual(['4:35', '5:50', '11:49', '4:06', '5:49', '7:01']);
   });
 
   it('keeps every day in prayer order', () => {
@@ -90,7 +90,7 @@ describe('monthly strings', () => {
   it('writes Bangla numbers and months in Bangla', () => {
     const dhaka = cityBySlug('dhaka-bangladesh')!;
     const fajr = monthRows(dhaka, '2026-10')[0].times.fajr;
-    expect(formatClock(fajr, 'bn')).toBe('৪:৩৩');
+    expect(formatClock(fajr, 'bn')).toBe('৪:৩৫');
     expect(formatMonth('2026-10', 'bn')).toBe('অক্টোবর ২০২৬');
     expect(formatNumber(1448, 'bn')).toBe('১৪৪৮');
   });

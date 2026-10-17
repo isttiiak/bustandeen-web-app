@@ -87,32 +87,37 @@ export function prayerDefaultsForCountry(countryCode: string | null | undefined)
 
 // ─── National timetable calibration (audit R0a) ─────────────────────────────
 
-/** Minutes added on top of the method's own (adhan `methodAdjustments`). */
 export interface TimeAdjustments {
-  fajr?: number;
+  /** Minutes from Fajr at which sehri ends (negative = before Fajr). The
+   * Fajr prayer time itself is never moved: an earlier Fajr would be the
+   * unsafe side for the prayer. */
+  sehri?: number;
+  /** Minutes added to Maghrib (= iftar) on top of the method's own, through
+   * adhan `methodAdjustments`. */
   maghrib?: number;
 }
 
 /**
  * Where a country's official timetable runs a little apart from its method,
- * the country default is moved onto it, always to the safe side: sehri
- * (Fajr) never later, iftar (Maghrib) never earlier than the official time.
+ * the country default is moved onto it, always to the safe side: sehri never
+ * ends later, iftar never comes earlier than the official time.
  *
- * Bangladesh: Islamic Foundation Bangladesh's Dhaka Ramadan timetable for
- * 2026 (19 Feb - 20 Mar, dbcnews.tv/ramadan-2026, "source: Islamic
- * Foundation Bangladesh"). Plain Karachi ended sehri 0-1 min later and put
+ * Bangladesh: suhoor ends 3 minutes before Fajr; iftar is 3 minutes after
+ * sunset; matched to Islamic Foundation Bangladesh's timetable. That is IF's
+ * own rule (sehri ends 3 min before subh sadiq, iftar 3 min after sunset, "as
+ * a precaution": Dhaka Tribune, Ramadan 2025). Against IF's Dhaka Ramadan
+ * table for 2026 (19 Feb - 20 Mar, dbcnews.tv/ramadan-2026, "source: Islamic
+ * Foundation Bangladesh") plain Karachi ended sehri 0-1 min later and put
  * iftar 1-2 min earlier on all 30 days. IF's permanent Dhaka timetable shows
- * the gap about a minute wider from April to August, so the adjustment is a
- * flat Fajr -2 and Maghrib +3 all year (not seasonal): safe on the 2026
- * Ramadan table, iftar also safe on the permanent table's summer months, at
- * most about a minute of extra caution in winter (utils/countryDefaults.test.ts).
- * Decision: Istiak, 2026-10-17.
+ * the gap about a minute wider from April to August; flat -3/+3 all year
+ * stays on the safe side there too (utils/countryDefaults.test.ts). Decision:
+ * Istiak, 2026-10-17.
  *
  * The app (utils/prayerTimes.ts) and the static pages (seo/utils/calc.ts)
  * both read this table, so they always show the same minute.
  */
 export const COUNTRY_TIME_ADJUSTMENTS: Record<string, TimeAdjustments> = {
-  BD: { fajr: -2, maghrib: 3 },
+  BD: { sehri: -3, maghrib: 3 },
 };
 
 /** The calibration for times computed at a place in `countryCode` with
@@ -128,18 +133,23 @@ export function countryTimeAdjustments(
   return adjustments && prayerDefaultsForCountry(cc).method === method ? adjustments : null;
 }
 
-/** Adds `adjustments` to adhan calculation parameters, in place. Typed
- * structurally so this file stays free of adhan (pure data, see the top). */
-export function applyTimeAdjustments<P extends { methodAdjustments: TimeAdjustments }>(
+/** Adds the Maghrib calibration to adhan calculation parameters, in place.
+ * Typed structurally so this file stays free of adhan (pure data, see the
+ * top). Sehri is not an adhan time: see `sehriEnd`. */
+export function applyTimeAdjustments<P extends { methodAdjustments: { maghrib?: number } }>(
   params: P,
   adjustments: TimeAdjustments | null
 ): P {
-  if (adjustments) {
-    params.methodAdjustments.fajr = (params.methodAdjustments.fajr ?? 0) + (adjustments.fajr ?? 0);
+  if (adjustments?.maghrib) {
     params.methodAdjustments.maghrib =
-      (params.methodAdjustments.maghrib ?? 0) + (adjustments.maghrib ?? 0);
+      (params.methodAdjustments.maghrib ?? 0) + adjustments.maghrib;
   }
   return params;
+}
+
+/** When sehri ends: Fajr, moved by the country calibration. */
+export function sehriEnd(fajr: Date, adjustments: TimeAdjustments | null): Date {
+  return adjustments?.sehri ? new Date(fajr.getTime() + adjustments.sehri * 60_000) : fajr;
 }
 
 /** IANA time zone → country, for the countries in the table above. Used in

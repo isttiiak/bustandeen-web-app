@@ -214,15 +214,15 @@ export default function RamadanTracker() {
     }
   }, []);
 
-  // Tomorrow's Fajr, for the post-Maghrib rollover below. Recomputed rather
-  // than reusing today's, because Fajr drifts a minute or two each day.
-  const tomorrowFajr = useMemo(() => {
+  // Tomorrow's end of sehri, for the post-Maghrib rollover below. Recomputed
+  // rather than reusing today's, because Fajr drifts a minute or two each day.
+  const tomorrowSehri = useMemo(() => {
     try {
       const raw = localStorage.getItem('bustandeen_location');
       if (!raw) return null;
       const loc = JSON.parse(raw) as { latitude: number; longitude: number };
       const tomorrow = addDaysYmd(placeYmd(loc.latitude, loc.longitude, new Date()), 1);
-      return calcPrayerTimesForDay(loc.latitude, loc.longitude, tomorrow).fajr;
+      return calcPrayerTimesForDay(loc.latitude, loc.longitude, tomorrow).sehri;
     } catch {
       return null;
     }
@@ -237,12 +237,12 @@ export default function RamadanTracker() {
   }, []);
 
   /** Where we are in the fasting day: counting down to suhoor closing (before
-   * Fajr) or to iftar (between Fajr and Maghrib). Null after Maghrib — the
+   * the end of sehri) or to iftar (between it and Maghrib). Null after Maghrib — the
    * fast is done, nothing left to count. */
   const fastClock = useMemo(() => {
     if (!prayerTimes) return null;
     const now = nowTs;
-    const fajr = prayerTimes.fajr.getTime();
+    const sehri = prayerTimes.sehri.getTime();
     const maghrib = prayerTimes.maghrib.getTime();
 
     const fmt = (ms: number) => {
@@ -255,11 +255,11 @@ export default function RamadanTracker() {
         : `${m}:${String(sec).padStart(2, '0')}`;
     };
 
-    if (now < fajr) {
-      return { phase: 'suhoor' as const, label: fmt(fajr - now), progressPct: 0 };
+    if (now < sehri) {
+      return { phase: 'suhoor' as const, label: fmt(sehri - now), progressPct: 0 };
     }
     if (now < maghrib) {
-      const pct = Math.round(((now - fajr) / (maghrib - fajr)) * 100);
+      const pct = Math.round(((now - sehri) / (maghrib - sehri)) * 100);
       return {
         phase: 'fasting' as const,
         label: fmt(maghrib - now),
@@ -268,12 +268,16 @@ export default function RamadanTracker() {
     }
     // After Maghrib the fast is done, but the pill must NOT disappear for the
     // rest of the night — that is the stretch when people are planning suhoor.
-    // Roll over to TOMORROW's Fajr (recomputed, since sunrise drifts daily).
-    if (tomorrowFajr) {
-      return { phase: 'suhoor' as const, label: fmt(tomorrowFajr.getTime() - now), progressPct: 0 };
+    // Roll over to TOMORROW's end of sehri (recomputed, since dawn drifts daily).
+    if (tomorrowSehri) {
+      return {
+        phase: 'suhoor' as const,
+        label: fmt(tomorrowSehri.getTime() - now),
+        progressPct: 0,
+      };
     }
     return null;
-  }, [prayerTimes, tomorrowFajr, nowTs]);
+  }, [prayerTimes, tomorrowSehri, nowTs]);
 
   // Live numbers for the worship strip, pulled from the trackers the user
   // already fills in — nothing new to log, just nothing to go hunting for.
@@ -568,7 +572,7 @@ export default function RamadanTracker() {
               title={
                 fastClock.phase === 'suhoor'
                   ? t('ramadan.suhoorClosesAt', 'Suhoor closes at {{time}}', {
-                      time: prayerTimes ? formatTime(prayerTimes.fajr) : '',
+                      time: prayerTimes ? formatTime(prayerTimes.sehri) : '',
                     })
                   : t('ramadan.iftarAt', 'Iftar at {{time}}', {
                       time: prayerTimes ? formatTime(prayerTimes.maghrib) : '',
@@ -632,8 +636,8 @@ export default function RamadanTracker() {
                   {
                     key: 'suhoor',
                     Glyph: FajrIcon,
-                    label: t('ramadan.suhoorEndsFajr', 'Suhoor ends (Fajr)'),
-                    time: formatTime(prayerTimes.fajr),
+                    label: t('ramadan.suhoorEndsFajr', 'Suhoor ends'),
+                    time: formatTime(prayerTimes.sehri),
                     quote: t('fastingRules.sunnahText.0'),
                     ref: 'Bukhārī 1923',
                     href: 'https://sunnah.com/bukhari:1923',

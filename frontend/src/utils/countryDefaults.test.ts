@@ -78,10 +78,10 @@ function raw(lat: number, lng: number, day: string, method: CalcMethodId) {
 }
 
 describe('the calibration table', () => {
-  it('Bangladesh: Fajr -2, Maghrib +3 all year, only with its default method (Karachi)', () => {
-    expect(COUNTRY_TIME_ADJUSTMENTS).toEqual({ BD: { fajr: -2, maghrib: 3 } });
-    expect(countryTimeAdjustments('BD', 'Karachi')).toEqual({ fajr: -2, maghrib: 3 });
-    expect(countryTimeAdjustments('bd', 'Karachi')).toEqual({ fajr: -2, maghrib: 3 });
+  it('Bangladesh: sehri 3 min before Fajr, Maghrib +3, all year, only with its default method (Karachi)', () => {
+    expect(COUNTRY_TIME_ADJUSTMENTS).toEqual({ BD: { sehri: -3, maghrib: 3 } });
+    expect(countryTimeAdjustments('BD', 'Karachi')).toEqual({ sehri: -3, maghrib: 3 });
+    expect(countryTimeAdjustments('bd', 'Karachi')).toEqual({ sehri: -3, maghrib: 3 });
     expect(countryTimeAdjustments('BD', 'MuslimWorldLeague')).toBeNull();
     expect(countryTimeAdjustments(null, 'Karachi')).toBeNull();
   });
@@ -97,15 +97,15 @@ describe('the calibration table', () => {
 
 describe('Dhaka against Islamic Foundation, Ramadan 2026 (static pages)', () => {
   it.each(IF_DHAKA_RAMADAN_2026)(
-    '%s: sehri never later, iftar never earlier, within 2 min',
+    '%s: sehri never later, iftar never earlier, within 3 min',
     (day, sehri, iftar) => {
       const t = computePrayerTimes(DHAKA.lat, DHAKA.lng, day, DHAKA.timezone, 'BD');
-      const fajrGap = dhakaMinutes(t.fajr) - toMinutes(sehri);
+      const sehriGap = dhakaMinutes(t.sehri) - toMinutes(sehri);
       const iftarGap = dhakaMinutes(t.maghrib) - toMinutes(iftar);
-      expect(fajrGap).toBeLessThanOrEqual(0);
-      expect(fajrGap).toBeGreaterThanOrEqual(-2);
+      expect(sehriGap).toBeLessThanOrEqual(0);
+      expect(sehriGap).toBeGreaterThanOrEqual(-3);
       expect(iftarGap).toBeGreaterThanOrEqual(0);
-      expect(iftarGap).toBeLessThanOrEqual(2);
+      expect(iftarGap).toBeLessThanOrEqual(3);
     }
   );
 
@@ -122,11 +122,13 @@ describe('Dhaka against Islamic Foundation, Ramadan 2026 (static pages)', () => 
     expect(earlier.length).toBe(30);
   });
 
-  it('sunset itself is not moved, only Maghrib', () => {
+  it('sehri ends 3 min before Fajr, iftar 3 min after sunset; Fajr itself never moves', () => {
     const t = computePrayerTimes(DHAKA.lat, DHAKA.lng, '2026-02-19', DHAKA.timezone, 'BD');
     const r = raw(DHAKA.lat, DHAKA.lng, '2026-02-19', 'Karachi');
     expect(t.maghrib.getTime() - r.sunset.getTime()).toBe(3 * 60_000);
-    expect(r.fajr.getTime() - t.fajr.getTime()).toBe(2 * 60_000);
+    expect(r.fajr.getTime() - t.sehri.getTime()).toBe(3 * 60_000);
+    // An earlier Fajr would be the unsafe side for the prayer: unchanged.
+    expect(t.fajr.getTime()).toBe(r.fajr.getTime());
     // The rest of the day is the method's own.
     expect(t.sunrise.getTime()).toBe(r.sunrise.getTime());
     expect(t.dhuhr.getTime()).toBe(r.dhuhr.getTime());
@@ -181,8 +183,14 @@ const IF_PERMANENT_SUMMER: [day: string, sehri: string, iftar: string][] = [
 
 describe("Dhaka in summer, against IF's permanent timetable", () => {
   const ramadan2026 = new Map(IF_DHAKA_RAMADAN_2026.map(([day, s, i]) => [day, { s, i }]));
-  // IF 2026 minus the permanent table on the shared days. Iftar: the latest
-  // (most cautious) offset, so the estimate is never too early.
+  // IF 2026 minus the permanent table on the shared days, the most cautious
+  // one for each: sehri the smallest (estimate never too late), iftar the
+  // largest (estimate never too early).
+  const sehriOffset = Math.min(
+    ...IF_PERMANENT_OVERLAP.map(
+      ([day, sehri]) => toMinutes(ramadan2026.get(day)!.s) - toMinutes(sehri)
+    )
+  );
   const iftarOffset = Math.max(
     ...IF_PERMANENT_OVERLAP.map(
       ([day, , iftar]) => toMinutes(ramadan2026.get(day)!.i) - toMinutes(iftar)
@@ -190,6 +198,11 @@ describe("Dhaka in summer, against IF's permanent timetable", () => {
   );
 
   it('the two IF tables differ by a steady offset on the shared days', () => {
+    expect(sehriOffset).toBe(3);
+    for (const [day, sehri] of IF_PERMANENT_OVERLAP) {
+      const offset = toMinutes(ramadan2026.get(day)!.s) - toMinutes(sehri);
+      expect([3, 4], day).toContain(offset);
+    }
     expect(iftarOffset).toBe(-2);
     for (const [day, , iftar] of IF_PERMANENT_OVERLAP) {
       expect(toMinutes(ramadan2026.get(day)!.i) - toMinutes(iftar), day).toBe(-2);
@@ -203,6 +216,26 @@ describe("Dhaka in summer, against IF's permanent timetable", () => {
       expect(dhakaMinutes(t.maghrib) - (toMinutes(iftar) + iftarOffset)).toBeGreaterThanOrEqual(0);
     }
   );
+
+  // 6 May reads 3:53, but the table's own neighbours (3:59 on 1 May, 3:49 on
+  // 12 May) put it at 3:54-3:55, and its gap to Karachi's Fajr is 7 min where
+  // every other summer row is 4-6 (the Fajr column, sehri + 6, repeats the
+  // slip). Treated as a one-minute slip in the table: kept out of the strict
+  // check, and held within 1 min below so it cannot drift further unseen.
+  const SCAN_SLIP = '2026-05-06';
+  it.each(IF_PERMANENT_SUMMER.filter(([day]) => day !== SCAN_SLIP))(
+    '%s: sehri never later than the estimate',
+    (day, sehri) => {
+      const t = computePrayerTimes(DHAKA.lat, DHAKA.lng, day, DHAKA.timezone, 'BD');
+      expect(dhakaMinutes(t.sehri) - (toMinutes(sehri) + sehriOffset)).toBeLessThanOrEqual(0);
+    }
+  );
+
+  it(`${SCAN_SLIP} (a slip in the table): within 1 min of the estimate`, () => {
+    const [day, sehri] = IF_PERMANENT_SUMMER.find(([d]) => d === SCAN_SLIP)!;
+    const t = computePrayerTimes(DHAKA.lat, DHAKA.lng, day, DHAKA.timezone, 'BD');
+    expect(dhakaMinutes(t.sehri) - (toMinutes(sehri) + sehriOffset)).toBeLessThanOrEqual(1);
+  });
 });
 
 describe('other countries keep their method numbers (static pages)', () => {
@@ -220,8 +253,9 @@ describe('other countries keep their method numbers (static pages)', () => {
     for (const day of ['2026-03-01', '2026-06-21', '2026-12-21']) {
       const t = computePrayerTimes(lat, lng, day, tz, cc);
       const r = raw(lat, lng, day, t.method);
-      expect([t.fajr, t.maghrib].map((d) => d.getTime())).toEqual(
-        [r.fajr, r.maghrib].map((d) => d.getTime())
+      // Sehri ends at Fajr itself.
+      expect([t.fajr, t.sehri, t.maghrib].map((d) => d.getTime())).toEqual(
+        [r.fajr, r.fajr, r.maghrib].map((d) => d.getTime())
       );
     }
   });
@@ -252,9 +286,9 @@ describe('the app shows the same minute as the pages', () => {
       const app = calcPrayerTimesForDay(DHAKA.lat, DHAKA.lng, day);
       const page = computePrayerTimes(DHAKA.lat, DHAKA.lng, day, DHAKA.timezone, 'BD');
       expect(
-        [app.fajr, app.maghrib, app.asr].map((d) => d.getTime()),
+        [app.fajr, app.sehri, app.maghrib, app.asr].map((d) => d.getTime()),
         day
-      ).toEqual([page.fajr, page.maghrib, page.asr].map((d) => d.getTime()));
+      ).toEqual([page.fajr, page.sehri, page.maghrib, page.asr].map((d) => d.getTime()));
     }
   });
 
@@ -263,7 +297,7 @@ describe('the app shows the same minute as the pages', () => {
     store.setItem('bustandeen_calc_method', 'Karachi');
     const app = calcPrayerTimesForDay(DHAKA.lat, DHAKA.lng, '2026-02-19');
     const page = computePrayerTimes(DHAKA.lat, DHAKA.lng, '2026-02-19', DHAKA.timezone, 'BD');
-    expect(app.fajr.getTime()).toBe(page.fajr.getTime());
+    expect(app.sehri.getTime()).toBe(page.sehri.getTime());
     expect(app.maghrib.getTime()).toBe(page.maghrib.getTime());
   });
 
@@ -273,6 +307,7 @@ describe('the app shows the same minute as the pages', () => {
     const app = calcPrayerTimesForDay(DHAKA.lat, DHAKA.lng, '2026-02-19');
     const r = raw(DHAKA.lat, DHAKA.lng, '2026-02-19', 'MuslimWorldLeague');
     expect(app.fajr.getTime()).toBe(r.fajr.getTime());
+    expect(app.sehri.getTime()).toBe(r.fajr.getTime());
     expect(app.maghrib.getTime()).toBe(r.maghrib.getTime());
   });
 
@@ -285,6 +320,7 @@ describe('the app shows the same minute as the pages', () => {
     const app = calcPrayerTimesForDay(karachi.lat, karachi.lng, '2026-02-19');
     const r = raw(karachi.lat, karachi.lng, '2026-02-19', 'Karachi');
     expect(app.fajr.getTime()).toBe(r.fajr.getTime());
+    expect(app.sehri.getTime()).toBe(r.fajr.getTime());
     expect(app.maghrib.getTime()).toBe(r.maghrib.getTime());
   });
 
@@ -293,6 +329,7 @@ describe('the app shows the same minute as the pages', () => {
     const app = calcPrayerTimesForDay(51.5074, -0.1278, '2026-06-21');
     const r = raw(51.5074, -0.1278, '2026-06-21', 'MoonsightingCommittee');
     expect(app.fajr.getTime()).toBe(r.fajr.getTime());
+    expect(app.sehri.getTime()).toBe(r.fajr.getTime());
     expect(app.maghrib.getTime()).toBe(r.maghrib.getTime());
   });
 });

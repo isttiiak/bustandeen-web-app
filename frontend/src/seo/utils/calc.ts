@@ -15,6 +15,7 @@ import {
   applyTimeAdjustments,
   countryTimeAdjustments,
   prayerDefaultsForCountry,
+  sehriEnd,
   type AsrSchool,
   type CalcMethodId,
 } from '../../utils/countryDefaults.js';
@@ -22,6 +23,9 @@ import { dateFormat } from './intl.js';
 
 export interface PrayerTimesResult {
   fajr: Date;
+  /** When sehri ends: Fajr, or a few minutes before it where the country's
+   * timetable says so (utils/countryDefaults.ts; Bangladesh: 3 min). */
+  sehri: Date;
   sunrise: Date;
   dhuhr: Date;
   /** ʿAṣr in the school most mosques in this country follow (`asrSchool`). */
@@ -73,7 +77,7 @@ export function computePrayerTimes(
   const { method, asr: asrSchool } = prayerDefaultsForCountry(countryCode);
   const coords = new adhan.Coordinates(lat, lng);
   // The country's calibration to its official timetable (Bangladesh: Islamic
-  // Foundation), the same table the app uses.
+  // Foundation), the same table the app uses: Maghrib here, sehri below.
   const adjustments = countryTimeAdjustments(countryCode, method);
   const standardParams = applyTimeAdjustments(adhan.CalculationMethod[method](), adjustments);
   const hanafiParams = applyTimeAdjustments(adhan.CalculationMethod[method](), adjustments);
@@ -95,6 +99,7 @@ export function computePrayerTimes(
   const hanafi = new adhan.PrayerTimes(coords, date, hanafiParams);
   return {
     fajr: standard.fajr,
+    sehri: sehriEnd(standard.fajr, adjustments),
     sunrise: standard.sunrise,
     dhuhr: standard.dhuhr,
     asr: asrSchool === 'hanafi' ? hanafi.asr : standard.asr,

@@ -90,9 +90,9 @@ export const MONTHLY: Record<MonthlyLang, MonthlyStrings> = {
     methodNote:
       'Karachi method (Fajr and Isha at 18°) with Hanafi Asr, the convention most mosques in Bangladesh follow.',
     mosqueNote: [
-      'Fajr and Maghrib are matched to the ',
+      'Suhoor ends 3 minutes before Fajr; iftar is 3 minutes after sunset; matched to the ',
       'Islamic Foundation Bangladesh',
-      ' timetable: sehri ends no later and iftar comes no earlier than its times. Your local mosque may differ by a few minutes; for congregational prayer, follow your mosque.',
+      ' timetable. Your local mosque may differ by a few minutes; for congregational prayer, follow your mosque.',
     ],
     hijriNote:
       'Hijri dates follow the Umm al-Qura calendar. In Bangladesh they can differ by a day, depending on the moon sighting.',
@@ -145,9 +145,9 @@ export const MONTHLY: Record<MonthlyLang, MonthlyStrings> = {
     methodNote:
       'করাচি পদ্ধতি (ফজর ও ইশা ১৮°) ও হানাফি আসর, বাংলাদেশের বেশিরভাগ মসজিদ যা অনুসরণ করে।',
     mosqueNote: [
-      'ফজর ও মাগরিবের সময় ',
+      'সেহরি শেষ হয় ফজরের ৩ মিনিট আগে; ইফতার সূর্যাস্তের ৩ মিনিট পরে; ',
       'ইসলামিক ফাউন্ডেশন বাংলাদেশ',
-      '-এর সময়সূচির সঙ্গে মিলিয়ে নেওয়া হয়েছে: সেহরি তাদের সময়ের পরে শেষ হয় না, ইফতারও তাদের সময়ের আগে হয় না। স্থানীয় মসজিদের সঙ্গে কয়েক মিনিট পার্থক্য হতে পারে; জামাতের জন্য আপনার মসজিদের সময় অনুসরণ করুন।',
+      '-এর সময়সূচির সঙ্গে মিলিয়ে। স্থানীয় মসজিদের সঙ্গে কয়েক মিনিট পার্থক্য হতে পারে; জামাতের জন্য আপনার মসজিদের সময় অনুসরণ করুন।',
     ],
     hijriNote:
       'হিজরি তারিখ উম্মুল কুরা ক্যালেন্ডার অনুযায়ী। বাংলাদেশে চাঁদ দেখার ওপর নির্ভর করে এক দিন পার্থক্য হতে পারে।',

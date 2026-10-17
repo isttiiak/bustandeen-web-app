@@ -43,8 +43,7 @@ export const RAMADAN_BD: Record<MonthlyLang, RamadanBdStrings> = {
       `First fast in Bangladesh: ${s}, as announced by the National Moon Sighting Committee.`,
     sourceLink: 'Announcement',
     eidNote: 'The last fast and Eid al-Fitr depend on the sighting of the Shawwal moon.',
-    timesNote:
-      'Sehri ends when Fajr begins and iftar is at Maghrib, calculated with the Karachi method (18°).',
+    timesNote: 'Times are calculated with the Karachi method (Fajr at 18°).',
     allDistrictsCta: 'Ramadan calendars for all 64 districts',
     monthlyCta: (d) => `Monthly prayer timetable for ${d}`,
     indexSection: 'Bangladesh: all 64 districts',
@@ -65,7 +64,7 @@ export const RAMADAN_BD: Record<MonthlyLang, RamadanBdStrings> = {
     announcedNotice: (s) => `জাতীয় চাঁদ দেখা কমিটির ঘোষণা অনুযায়ী বাংলাদেশে প্রথম রোজা ${s}।`,
     sourceLink: 'ঘোষণা',
     eidNote: 'শেষ রোজা ও ঈদুল ফিতর শাওয়ালের চাঁদ দেখার ওপর নির্ভর করে।',
-    timesNote: 'ফজরের ওয়াক্ত শুরু হলে সেহরির সময় শেষ, ইফতার মাগরিবে; হিসাব করাচি পদ্ধতিতে (১৮°)।',
+    timesNote: 'সময় করাচি পদ্ধতিতে হিসাব করা (ফজর ১৮°)।',
     allDistrictsCta: 'সব ৬৪ জেলার রমজান ক্যালেন্ডার',
     monthlyCta: (d) => `${d} জেলার মাসিক নামাজের সময়সূচি`,
     indexSection: 'বাংলাদেশ: সব ৬৪ জেলা',
