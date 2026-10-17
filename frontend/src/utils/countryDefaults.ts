@@ -101,6 +101,15 @@ export interface TimeAdjustments {
   /** Minutes added to the Fajr prayer time, so it never begins before the
    * official time (only ever later). */
   fajr?: number;
+  /** Minutes added to sunrise (the end of Fajr), only ever earlier
+   * (negative), so Fajr never ends after the official sunrise. */
+  sunrise?: number;
+  /** Minutes added to the Dhuhr, Asr and Isha prayer times, only ever
+   * later, so none begins before the official time. Asr moves the same for
+   * both schools. */
+  dhuhr?: number;
+  asr?: number;
+  isha?: number;
   /** The timetable these minutes were checked against, as the world Ramadan
    * pages name it (English). */
   checkedAgainst: string;
@@ -116,9 +125,10 @@ export interface TimeAdjustments {
 /**
  * Where a country's official timetable runs a little apart from its method,
  * the country default is moved onto it, always to the safe side: sehri never
- * ends later, iftar never comes earlier, the Fajr prayer never begins earlier
- * than the official time. Each row is the fewest whole minutes that keep
- * every compared official day on that side.
+ * ends later, iftar never comes earlier, a prayer never begins earlier than
+ * the official time, sunrise (the end of Fajr) never comes later. Each row is
+ * the fewest whole minutes that keep every compared official day on that
+ * side.
  *
  * Bangladesh: suhoor ends 3 minutes before Fajr; iftar is 3 minutes after
  * sunset; matched to Islamic Foundation Bangladesh's timetable. That is IF's
@@ -137,8 +147,14 @@ export interface TimeAdjustments {
  * before (JAKIM adds a few minutes of caution), so Fajr +3: never before
  * Subuh. Sehri ends 3 min before that Fajr, at or before JAKIM's Subuh on
  * every day. Iftar: Maghrib was 0-3 min before JAKIM's on 355 days, so
- * Maghrib +3. Checked against JAKIM e-Solat zone WLY01, all of 2026
- * (utils/countryCalibration.test.ts). Decision: Istiak, 2026-10-17.
+ * Maghrib +3. The other prayers (v5.186.0): JAKIM adds about 2 min of
+ * caution (ihtiyat) to every prayer and takes it off syuruk, so the method's
+ * Dhuhr was 1-2 min, Asr and Isha 0-3 min before JAKIM's, and sunrise 1-2 min
+ * after syuruk. Dhuhr +2, Asr +3 (both schools), Isha +3: never before JAKIM
+ * (0-3 min after); sunrise -2: never after syuruk (0-1 min before). Checked
+ * against JAKIM e-Solat zone WLY01 (e-solat.gov.my takwimsolat, period=year),
+ * all 365 days of 2026 (utils/countryCalibration.test.ts). Decision: Istiak,
+ * 2026-10-17.
  *
  * Other countries (audit R0c, read 2026-10-17, approved by Istiak the same
  * day), official days and sources in utils/countryCalibration.test.ts:
@@ -169,7 +185,11 @@ export const COUNTRY_TIME_ADJUSTMENTS: Record<string, TimeAdjustments> = {
     fajrAngle: 18,
     fajr: 3,
     sehri: -3,
+    sunrise: -2,
+    dhuhr: 2,
+    asr: 3,
     maghrib: 3,
+    isha: 3,
     checkedAgainst: "JAKIM's timetable",
     methodName: 'JAKIM',
     pageNote:
@@ -216,19 +236,23 @@ export function countryTimeAdjustments(
   return adjustments && prayerDefaultsForCountry(cc).method === method ? adjustments : null;
 }
 
-/** Adds the Fajr and Maghrib calibration to adhan calculation parameters, in
- * place. Typed structurally so this file stays free of adhan (pure data, see
- * the top). Sehri is not an adhan time: see `sehriEnd`. */
+/** The adhan times a calibration moves by whole minutes. */
+const ADJUSTED_TIMES = ['fajr', 'sunrise', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
+
+/** Adds the calibration (the Fajr angle and the minutes per time) to adhan
+ * calculation parameters, in place. Typed structurally so this file stays
+ * free of adhan (pure data, see the top). Sehri is not an adhan time: see
+ * `sehriEnd`. */
 export function applyTimeAdjustments<
-  P extends { fajrAngle: number; methodAdjustments: { fajr?: number; maghrib?: number } },
+  P extends {
+    fajrAngle: number;
+    methodAdjustments: Partial<Record<(typeof ADJUSTED_TIMES)[number], number>>;
+  },
 >(params: P, adjustments: TimeAdjustments | null): P {
   if (adjustments?.fajrAngle) params.fajrAngle = adjustments.fajrAngle;
-  if (adjustments?.fajr) {
-    params.methodAdjustments.fajr = (params.methodAdjustments.fajr ?? 0) + adjustments.fajr;
-  }
-  if (adjustments?.maghrib) {
-    params.methodAdjustments.maghrib =
-      (params.methodAdjustments.maghrib ?? 0) + adjustments.maghrib;
+  for (const time of ADJUSTED_TIMES) {
+    const minutes = adjustments?.[time];
+    if (minutes) params.methodAdjustments[time] = (params.methodAdjustments[time] ?? 0) + minutes;
   }
   return params;
 }

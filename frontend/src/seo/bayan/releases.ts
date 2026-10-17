@@ -20,7 +20,7 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
-    version: '5.185.1',
+    version: '5.188.1',
     date: '2026-10-17',
     text: {
       en: {
@@ -37,6 +37,24 @@ export const RELEASES: Release[] = [
           'যে দেশের প্রচলিত হিসাব পদ্ধতি অ্যাপে নেই (যেমন কেনিয়া), সেখানকার স্থান সংরক্ষণ করলে নামাজের সময়ের পদ্ধতি আপনার ফোনের দেশ অনুযায়ী ঠিক হতো। এখন আমাদের ওয়েবসাইটের মতোই বিশ্বব্যাপী পদ্ধতি ব্যবহার হয়। আপনি নিজে যে পদ্ধতি বেছে নিয়েছেন, তা কখনো বদলায় না।',
           'কাজাখস্তান, যুক্তরাষ্ট্র, কানাডা ও স্পেনের আরও অনেক স্থান এখন নিজ দেশের প্রচলিত পদ্ধতি পায়।',
           '"প্রচলিত" লেবেলে এখন আপনার সংরক্ষিত স্থানের দেশের নাম দেখায়।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.186.0',
+    date: '2026-10-17',
+    text: {
+      en: {
+        title: 'Malaysia: every prayer time matches JAKIM',
+        fixed: [
+          "In Malaysia, Dhuhr, Asr and Isha now never begin before JAKIM's official times, and sunrise never comes after JAKIM's syuruk. Before, they could be up to 3 minutes off.",
+        ],
+      },
+      bn: {
+        title: 'মালয়েশিয়া: প্রতিটি নামাজের সময় এখন JAKIM অনুযায়ী',
+        fixed: [
+          'মালয়েশিয়ায় যোহর, আসর ও ইশা এখন কখনো JAKIM-এর সরকারি সময়ের আগে শুরু হয় না, আর সূর্যোদয় কখনো JAKIM-এর সূর্যোদয়ের সময়ের পরে আসে না। আগে এগুলো সর্বোচ্চ ৩ মিনিট এদিক-ওদিক হতে পারত।',
         ],
       },
     },
