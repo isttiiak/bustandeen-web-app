@@ -2,7 +2,7 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
-## v5.189.0 - Journey page, reset tracker, calendar download options, suhoor and iftar on Prayer Times - 2026-10-18
+## v5.190.0 - Journey page, reset tracker, calendar download options, suhoor and iftar on Prayer Times - 2026-10-18
 
 ### Added
 
@@ -33,6 +33,29 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - Backend `statsReset.e2e.test.js`: Reset all marks its entries, legacy Reset all found by the shared instant (and not when one area's instant differs), a Kaza debt reset is logged with `owedBefore` and changes no worship document.
 - `utils/resetTracker.test.ts` (new), `utils/calendarPrint.test.ts` (empty-month wording, weekend and side-column defaults).
 - e2e `calendar-print.spec.ts`: nothing included + English only (no This month, no guide, no moon line, lines, weekend shaded), national days only (no "holiday" wording, weekend off, guide on), Hijri-first heading font, moon line only in the notice; `calendar.spec.ts`: Next 3 months.
+
+## v5.189.0 - Three printable Ramadan sheets, in colour or black and white - 2026-10-18
+
+### Added
+
+- **R2-R4: every Ramadan calendar (527 cities worldwide, the 64 Bangladesh districts and their towns, en + bn) and the app's sheet for any saved place now print one of three A4 sheets**, as approved in the prototype `docs/design/ramadan-print-sheet.html` (2026-10-17):
+  1. **Timetable**: fast, date, weekday, suhoor ends, iftar (Maghrib), a star on the fasts after the odd nights of the last ten (21, 23, 25, 27, 29), the dashed "if Ramadan has 30 days" row, and two side blocks: the **Laylat al-Qadr duʿā** (Arabic copied verbatim from the Ibn Majah 3850 / Tirmidhi 3513 matn, transliteration, meaning; Tirmidhi 3513 Sahih (Darussalam), Ibn Majah 3850) and **Zakat al-Fitr** ("before the Eid prayer", Bukhari 1503, the expected Eid dates; Bangladesh: Islamic Foundation's 1447 amounts, Tk 110 to Tk 2,805 per person, announced 25 Feb 2026, with the source, until the 1448 amounts are announced; elsewhere "ask your masjid").
+  2. **Timetable + checklist**: the same times with boxes for the five prayers, tarawih, nafl and a column for Quran pages.
+  3. **Ramadan checklist**: name, a 30-juz khatm tracker, intentions, and a row per fast for fasted, five prayers, tarawih, Quran pages, tahajjud, duha, morning and evening adhkar, sadaqah, plus "Zakat al-Fitr given before the Eid prayer".
+  Each in **colour** (light Bustan sage and gold tints, the default) or **black and white**. Header: city (Bangladesh: district and division), Ramadan Hijri year and Gregorian range, the page's QR code. Footer: the page address only. The paper carries no basis or first-fast box and no explanations: they moved to the live page.
+- **Live page**: a "Print this Ramadan" panel (three sheets + ink, the ink remembered on the device), **fasting-length tiles** (shortest fast, longest fast, how much the days grow, and a line with the first and last day), and **"About these dates and times"** (where the dates come from, how the times are found, the 30th fast, the odd nights, your local masjid, and in Bangladesh the fitra amounts). Stars on the screen table too.
+- **Worldwide Ramadan pages moved to the Bustan look** (arch hero, theme tokens, light and dark), like the Bangladesh district pages.
+
+### Changed
+
+- The one-day shift (v5.188.0) now moves every table on the page: the screen table and all three sheets, including the stars. The sheet chosen and the ink go on `<html>` (`data-print-variant`, `data-print-ink`) while the print window is open; a plain Ctrl+P prints the timetable in colour.
+- `seo/components/RamadanSheetTable.tsx` is gone: the app's sheet card draws the same `RamadanSheets` component as the static pages.
+
+### Tests
+
+- New `seo/ramadanSheets.test.ts`: three sheets, 29 fasts + the possible 30th on each, stars on 21-29 odd, the timetable's two blocks only (verbatim Arabic, Tirmidhi 3513, Bukhari 1503, Eid dates), the checklist's 30 juz and zakat tick, no "ad-free" line, Bangla district sheet with Islamic Foundation amounts and Bangla digits, a settled 30-day month (no possible row, one Eid date), fasting length.
+- New e2e `ramadan-print-sheets.spec.ts`: London (en) and Dhaka (bn): every sheet in both inks shows alone on paper, no overflow, **one A4 page**; Ctrl+P = timetable; the ink kept on reload; the About section, tiles and screen stars. `ramadan-sheet.spec.ts` (app): Keighley timetable (first row 06:04 AM / 05:06 PM, 30 rows, 5 stars, two blocks) and the checklist in black and white, one page each. `ramadan-shift.spec.ts`: on paper the stars move with the shift.
+- `nonBdSsr` snapshot updated: only the worldwide Ramadan pages changed (new look and sheets); the prayer-times pages use none of the changed files.
 
 ## v5.188.1 - A saved place outside the country table no longer borrows the phone's country - 2026-10-17
 

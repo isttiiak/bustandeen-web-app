@@ -2,8 +2,8 @@ import { expect, test, type Page } from '@playwright/test';
 
 // Home: today's special days near the top (Settings → Home, utils/homeSpecial.ts).
 // Default 'strip' sits directly under the prayer arch, above the quick
-// sections; 'pills' are chips inside the arch; 'full' moves the detailed block
-// there too.
+// sections; 'pills' are chips inside the arch. The detailed block sits under
+// the arch in every layout (v5.190.0).
 // Frozen clock in Dhaka: a Friday afternoon (hour of response on) and a Monday.
 
 const FRIDAY_ASR = new Date('2026-10-16T16:45:00+06:00'); // 5 Jumādā al-Ūlā 1448
@@ -35,7 +35,7 @@ test.beforeEach(async ({ context }) => {
   );
 });
 
-test('Friday, default strip: hour of response first, between the arch and the worship cards', async ({
+test('Friday, default strip: hour of response first, then the detailed cards, above the worship cards', async ({
   page,
 }) => {
   await demoHome(page, FRIDAY_ASR);
@@ -49,9 +49,11 @@ test('Friday, default strip: hour of response first, between the arch and the wo
   const zikr = await box(page, '[data-testid="today-goals"] a[href="/zikr"]');
   expect(s.y).toBeGreaterThanOrEqual(arch.y + arch.height);
   expect(s.y + s.height).toBeLessThanOrEqual(zikr.y);
-  // The detailed cards stay below the worship cards.
+  // The detailed cards sit right under the strip, above the worship cards
+  // (v5.190.0: every special-day card under the arch, in every layout).
   const details = await box(page, '#today-special');
-  expect(details.y).toBeGreaterThan(zikr.y);
+  expect(details.y).toBeGreaterThanOrEqual(s.y + s.height);
+  expect(details.y).toBeLessThan(zikr.y);
   // ...without repeating the day already in the strip.
   await expect(page.locator('a[href="/special-day/friday"]')).toHaveCount(1);
 });
