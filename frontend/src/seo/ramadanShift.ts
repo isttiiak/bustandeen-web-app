@@ -39,6 +39,12 @@ export function rowState(row: number, shift: RamadanShift, shape: RamadanShape):
   return { fast, visible, possible: visible && shape.possible30 && fast === 30 };
 }
 
+/** A fast that follows an odd night of the last ten (the 21st night begins
+ * at the iftar of fast 20, so fasts 21, 23, 25, 27, 29 carry the star). */
+export function isOddNightFast(fast: number): boolean {
+  return fast >= 21 && fast <= 29 && fast % 2 === 1;
+}
+
 export function parseShift(value: string | null | undefined): RamadanShift {
   return value === '-1' ? -1 : value === '1' ? 1 : 0;
 }
@@ -73,30 +79,37 @@ function saveShift(key: string, shift: RamadanShift): void {
   }
 }
 
-/** Draw the page's calendar under `shift`. */
+/** Draw the page's calendars under `shift`: the screen table and the
+ * print sheets (R2-R4) all carry `data-ramadan-table`. */
 export function applyRamadanShift(root: ParentNode, shift: RamadanShift): void {
-  const table = root.querySelector<HTMLElement>('[data-ramadan-table]');
-  if (!table) return;
-  const shape: RamadanShape = {
-    maxFast: Number(table.dataset.maxFast) || 29,
-    possible30: table.dataset.possible30 === '1',
-  };
-  const digits = table.dataset.digits;
+  const tables = root.querySelectorAll<HTMLElement>('[data-ramadan-table]');
+  if (!tables.length) return;
+  tables.forEach((table) => {
+    const shape: RamadanShape = {
+      maxFast: Number(table.dataset.maxFast) || 29,
+      possible30: table.dataset.possible30 === '1',
+    };
+    const digits = table.dataset.digits;
 
-  table.querySelectorAll<HTMLElement>('tr[data-ramadan-row]').forEach((tr) => {
-    const s = rowState(Number(tr.dataset.ramadanRow), shift, shape);
-    tr.hidden = !s.visible;
-    if (s.visible) tr.dataset.fast = String(s.fast);
-    else delete tr.dataset.fast;
-    tr.toggleAttribute('data-possible', s.possible);
-    const num = tr.querySelector<HTMLElement>('[data-fast-num]');
-    if (num) num.textContent = s.visible ? formatFast(s.fast, digits) : '';
-    const note = tr.querySelector<HTMLElement>('[data-possible-note]');
-    if (note) note.hidden = !s.possible;
-  });
-  // The "if Ramadan has 30 days" label sits above whichever row is the 30th.
-  table.querySelectorAll<HTMLElement>('tr[data-possible-label]').forEach((tr) => {
-    tr.hidden = !rowState(Number(tr.dataset.possibleLabel), shift, shape).possible;
+    table.querySelectorAll<HTMLElement>('tr[data-ramadan-row]').forEach((tr) => {
+      const s = rowState(Number(tr.dataset.ramadanRow), shift, shape);
+      tr.hidden = !s.visible;
+      if (s.visible) tr.dataset.fast = String(s.fast);
+      else delete tr.dataset.fast;
+      tr.toggleAttribute('data-possible', s.possible);
+      const odd = s.visible && isOddNightFast(s.fast);
+      tr.toggleAttribute('data-odd', odd);
+      const star = tr.querySelector<HTMLElement>('[data-odd-star]');
+      if (star) star.hidden = !odd;
+      const num = tr.querySelector<HTMLElement>('[data-fast-num]');
+      if (num) num.textContent = s.visible ? formatFast(s.fast, digits) : '';
+      const note = tr.querySelector<HTMLElement>('[data-possible-note]');
+      if (note) note.hidden = !s.possible;
+    });
+    // The "if Ramadan has 30 days" label sits above whichever row is the 30th.
+    table.querySelectorAll<HTMLElement>('tr[data-possible-label]').forEach((tr) => {
+      tr.hidden = !rowState(Number(tr.dataset.possibleLabel), shift, shape).possible;
+    });
   });
 
   root.querySelectorAll<HTMLElement>('[data-shift-note]').forEach((p) => {
