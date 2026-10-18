@@ -30,7 +30,9 @@ describe('TodayHighlights', () => {
   it('Home renders the strip, the arch chips and the full block', () => {
     expect(home).toContain('variant="strip"');
     expect(home).toContain('variant="pills"');
-    expect(home).toMatch(/homeLayout === 'full' && specialBlock/);
+    // Every layout keeps the detailed block (Friday cards too) under the arch.
+    expect(home).toMatch(/\{specialBlock\}/);
+    expect(home).not.toMatch(/homeLayout !== 'full' && hasSpecialBlock/);
     expect(home).toContain('id={TODAY_SPECIAL_ID}');
   });
 

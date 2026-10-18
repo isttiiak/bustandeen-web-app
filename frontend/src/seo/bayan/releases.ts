@@ -20,6 +20,50 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.0',
+    date: '2026-10-18',
+    text: {
+      en: {
+        title: 'Your Journey, suhoor and iftar times, and a better calendar download',
+        added: [
+          'A new Journey page in the menu: one card for each of Salat, Zikr, Quran and Fasting since your last fresh start, and a reset tracker that shows how many times you reset each one, and when.',
+          'Zikr, Quran and Fasting analytics have a Journey tab too. Salat Journey also lists your Kaza debt resets.',
+          'You can now reset your Kaza debt from the main Settings as well. It is never part of "Reset all stats".',
+          "Prayer Times now shows when suhoor ends and when iftar is, for today's fast or, after Maghrib, for tomorrow's.",
+          'Calendar download: choose to shade the weekend and pick its days, add lines for notes, and turn on a guide if you want one.',
+        ],
+        fixed: [
+          'The Library calendar is now called Bustandeen Calendar.',
+          'After the best time for Isha, Home now says the best time has passed and until when Isha is still valid.',
+          'Friday and other special-day cards now always sit right under the prayer times on Home.',
+          'When the Hijri calendar comes first, its dates use our heading font, on screen and in the PDF.',
+          'The printed calendar only says "no holidays" when government holidays are included, and leaves the list out when nothing is included. The moon note is now in the "Before you save" message.',
+          'The calendar screen shows the next 3 months instead of the next 30 days.',
+          'Your Appearance choice (light, dark, system or daylight) now follows you to your other devices.',
+        ],
+      },
+      bn: {
+        title: 'আপনার যাত্রা, সেহরি ও ইফতারের সময়, আর আরও ভালো ক্যালেন্ডার ডাউনলোড',
+        added: [
+          'মেনুতে নতুন "যাত্রা" পাতা: শেষ নতুন শুরুর পর থেকে সালাত, যিকির, কুরআন ও রোজার জন্য একটি করে কার্ড, আর রিসেটের হিসাব: কোনটি কতবার, কবে রিসেট করেছেন।',
+          'যিকির, কুরআন ও রোজার বিশ্লেষণেও এখন "যাত্রা" ট্যাব আছে। সালাতের যাত্রায় কাযা ঋণ রিসেটও দেখা যায়।',
+          'এখন মূল সেটিংস থেকেও কাযা ঋণ রিসেট করা যায়। এটি কখনো "সব হিসাব রিসেট"-এর অংশ নয়।',
+          'নামাজের সময় পাতায় এখন সেহরির শেষ সময় ও ইফতারের সময় দেখা যায়: আজকের রোজার, আর মাগরিবের পর আগামীকালের রোজার।',
+          'ক্যালেন্ডার ডাউনলোড: সাপ্তাহিক ছুটি রাঙানো ও তার দিন বেছে নেওয়া, নোটের জন্য লাইন, আর চাইলে নির্দেশিকা।',
+        ],
+        fixed: [
+          'লাইব্রেরির ক্যালেন্ডারের নাম এখন Bustandeen ক্যালেন্ডার।',
+          'এশার উত্তম সময় পেরিয়ে গেলে হোমে এখন লেখা থাকে উত্তম সময় পেরিয়ে গেছে, আর কখন পর্যন্ত আদায় করা যায়।',
+          'জুমা ও অন্যান্য বিশেষ দিনের কার্ড এখন হোমে সবসময় নামাজের সময়ের ঠিক নিচে থাকে।',
+          'হিজরি ক্যালেন্ডার প্রথমে থাকলে তার তারিখ আমাদের শিরোনামের ফন্টে দেখায়, পর্দায় ও PDF-এ।',
+          'ছাপা ক্যালেন্ডারে "কোনো ছুটি নেই" লেখা থাকে শুধু সরকারি ছুটি যুক্ত করলে, আর কিছুই যুক্ত না করলে তালিকাটি থাকে না। চাঁদ নিয়ে নোটটি এখন "সংরক্ষণের আগে" বার্তায়।',
+          'ক্যালেন্ডার পাতায় আগামী ৩০ দিনের বদলে আগামী ৩ মাস দেখা যায়।',
+          'আপনার চেহারার পছন্দ (লাইট, ডার্ক, সিস্টেম বা দিনের আলো) এখন আপনার অন্য ডিভাইসেও যায়।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.189.0',
     date: '2026-10-18',
     text: {

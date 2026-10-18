@@ -318,11 +318,13 @@ function LiveClockCard({
   times,
   timeline,
   hasLocation,
+  location,
   header,
 }: {
   times: PrayerTimesResult | null;
   timeline: TLEntry[];
   hasLocation: boolean;
+  location: { latitude: number; longitude: number } | null;
   /** Title and dates, drawn at the top of the arch. */
   header: React.ReactNode;
 }) {
@@ -334,6 +336,26 @@ function LiveClockCard({
   }, []);
 
   const info = times ? getCurrentAndNextPrayer(times, now) : null;
+
+  // Suhoor and iftar of the next fast: today's until Maghrib, then
+  // tomorrow's. The same times as the Ramadan page (sehri is its own time,
+  // e.g. Fajr - 3 min in Bangladesh; iftar is Maghrib with the country's
+  // calibration), never the bare Fajr.
+  const afterMaghrib = !!times && now >= times.maghrib;
+  const lat = location?.latitude;
+  const lng = location?.longitude;
+  const fast = useMemo(() => {
+    if (!times) return null;
+    if (!afterMaghrib || lat === undefined || lng === undefined) {
+      return { tomorrow: false, sehri: times.sehri, iftar: times.maghrib };
+    }
+    try {
+      const next = calcPrayerTimesForDay(lat, lng, addDaysYmd(placeYmd(lat, lng, times.dhuhr), 1));
+      return { tomorrow: true, sehri: next.sehri, iftar: next.maghrib };
+    } catch {
+      return null;
+    }
+  }, [times, afterMaghrib, lat, lng]);
   const placeZone = foreignPlaceZone(now);
   const currentMeta = PRAYER_META.find((p) => p.id === info?.current);
   const nextMeta = PRAYER_META.find((p) => p.id === info?.next);
@@ -435,6 +457,35 @@ function LiveClockCard({
               <p className="text-white/85 font-semibold text-sm tabular-nums">
                 {formatTime(info.nextTime)}
               </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {fast && (
+        <div
+          className="mt-3 rounded-control border border-brand-border bg-brand-surface/60 px-3 py-2.5"
+          data-testid="prayer-fast-times"
+        >
+          <p className="text-white/65 text-[11px] uppercase tracking-widest font-bold">
+            {fast.tomorrow
+              ? t('prayerTimes.fastTomorrow', "For tomorrow's fast")
+              : t('prayerTimes.fastToday', "For today's fast")}
+          </p>
+          <div className="mt-1.5 grid grid-cols-2 divide-x divide-brand-border">
+            <div>
+              <p className="text-white/65 text-xs">{t('prayerTimes.suhoorEnds', 'Suhoor ends')}</p>
+              <p
+                className={`font-bold tabular-nums ${
+                  !fast.tomorrow && now >= fast.sehri ? 'text-white/50' : 'text-brand-emerald'
+                }`}
+              >
+                {formatTime(fast.sehri)}
+              </p>
+            </div>
+            <div>
+              <p className="text-white/65 text-xs">{t('prayerTimes.iftar', 'Iftar (Maghrib)')}</p>
+              <p className="font-bold tabular-nums text-brand-gold">{formatTime(fast.iftar)}</p>
             </div>
           </div>
         </div>
@@ -650,6 +701,7 @@ export default function PrayerTimes() {
           times={times}
           timeline={timeline}
           hasLocation={!!location}
+          location={location}
           header={
             <>
               <div className="w-14 h-14 mx-auto rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/30">

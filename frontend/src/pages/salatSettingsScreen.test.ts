@@ -8,12 +8,13 @@ import { AYATUL_KURSI_REF, TASBIH_MODES } from '../utils/salatPrefs.js';
 // languages, it is portaled (the tracker sits under the sticky navbar), and
 // nothing hard-codes a colour or glows. The tasbīḥ and Ayatul Kursi wording
 // shown in the drawer comes from salatPrefs.ts.
-const files = import.meta.glob<string>('../components/SalatSettings.tsx', {
-  query: '?raw',
-  import: 'default',
-  eager: true,
-});
-const code = Object.values(files)[0] ?? '';
+// The Kaza debt reset (button + confirm) is its own component since it is
+// also in the main Settings; it is part of the drawer, so it is checked too.
+const files = import.meta.glob<string>(
+  ['../components/SalatSettings.tsx', '../components/KazaDebtReset.tsx'],
+  { query: '?raw', import: 'default', eager: true }
+);
+const code = Object.values(files).join('\n');
 const statsHook =
   Object.values(
     import.meta.glob<string>('../hooks/useStatsResets.ts', {
@@ -38,7 +39,7 @@ const usedKeys = [
 
 describe('Salat settings', () => {
   it('finds the file and keys', () => {
-    expect(Object.keys(files).length).toBe(1);
+    expect(Object.keys(files).length).toBe(2);
     expect(usedKeys.length).toBeGreaterThan(30);
   });
 

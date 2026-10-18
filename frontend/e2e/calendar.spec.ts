@@ -76,9 +76,12 @@ test('a holiday shows in the strip, in red, and in the lists', async ({ page }) 
   await cell(page, '2026-10-25').click();
   await expect(page.getByTestId('calendar-day')).toContainText('Ayyām al-Bīḍ');
   await expect(page.getByTestId('calendar-day')).toContainText('13 Jumādā al-Ūlā 1448 AH');
-  // Not in the next 30 days list (it comes every month)
-  await expect(page.getByTestId('calendar-next-30')).not.toContainText('Ayyām al-Bīḍ');
-  await expect(page.getByTestId('calendar-next-30')).toContainText('Durga Puja holiday');
+  // Next 3 months: the months after the one on screen, each under its heading,
+  // without the White Days (they come every month).
+  const later = page.getByTestId('calendar-next-months');
+  await expect(later).toContainText('November 2026');
+  await expect(later).not.toContainText('Ayyām al-Bīḍ');
+  await expect(later).not.toContainText('Durga Puja');
 });
 
 test('the Hijri grid shows a whole Hijri month and steps to the next', async ({ page }) => {

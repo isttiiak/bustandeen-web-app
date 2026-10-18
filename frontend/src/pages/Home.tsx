@@ -429,6 +429,15 @@ export default function Home() {
   // Islamic midnight (Sahih Muslim 612a), then it counts down to Fajr.
   const hasCountdown =
     !!prayerWidgetData && (prayerWidgetData.endHh > 0 || prayerWidgetData.endMm > 0);
+  const nowEnd =
+    prayerWidgetData &&
+    (prayerWidgetData.forbiddenWindow?.end ??
+      prayerWidgetData.currentMandatoryEnd ??
+      prayerWidgetData.naflWindow?.end);
+  const sameAsNowEnd =
+    hasCountdown &&
+    !!nowEnd &&
+    Math.abs(nowEnd.getTime() - prayerWidgetData.nextMandatoryTime.getTime()) < 60_000;
   const countdown = prayerWidgetData && hasCountdown && (
     <p className="text-sm text-white/70 mt-1">
       {prayerWidgetData.ishaBest ? (
@@ -482,8 +491,8 @@ export default function Home() {
 
   // Bustan Arch (audit T3.2): one arch hero (the prayer window), flat cards
   // with two radii and theme elevations, SVG icons only, no glows.
-  // The detailed special-day block (rows, sadaqah virtue, Friday hour, al-Kahf).
-  // Under the arch for the 'full' Home layout, below the worship cards otherwise.
+  // The detailed special-day block (rows, sadaqah virtue, Friday hour, al-Kahf),
+  // always under the arch (2026-10-18: the Friday cards were below the goals).
   const specialBlock = hasSpecialBlock ? (
     <div id={TODAY_SPECIAL_ID} className="scroll-mt-24">
       {blockDays.length > 0 && (
@@ -749,7 +758,7 @@ export default function Home() {
                           time: formatTime(prayerWidgetData.currentMandatoryEnd!),
                         })
                       : prayerWidgetData.ishaBest === false
-                        ? t('home.endsAtFajr', 'Ends at Fajr, {{time}}', {
+                        ? t('home.ishaLate', 'Best time has passed, still valid until {{time}}', {
                             time: formatTime(prayerWidgetData.currentMandatoryEnd!),
                           })
                         : `${t('common.ends')} ${formatTime(prayerWidgetData.currentMandatoryEnd!)}`}
@@ -813,9 +822,12 @@ export default function Home() {
                   {t('home.next')}{' '}
                   <b className="text-brand-emerald">{prayerName(prayerWidgetData.nextMandatory)}</b>{' '}
                   {formatTime(prayerWidgetData.nextMandatoryTime)}
-                  <span className="text-white/50">
-                    ({t('common.in')} {ends(prayerWidgetData.nextHh, prayerWidgetData.nextMm)})
-                  </span>
+                  {/* The countdown above already says this when "now" ends as "next" begins */}
+                  {!sameAsNowEnd && (
+                    <span className="text-white/50">
+                      ({t('common.in')} {ends(prayerWidgetData.nextHh, prayerWidgetData.nextMm)})
+                    </span>
+                  )}
                 </span>
               </div>
               {salatLog && (
@@ -876,7 +888,9 @@ export default function Home() {
             fridayCountdown={fridayHour.countdown}
           />
         )}
-        {homeLayout === 'full' && specialBlock}
+        {/* Every special-day card sits under the arch in every layout (the
+            strip and the arch chips only shorten the days already named). */}
+        {specialBlock}
 
         {/* Musafir mode: the journey at a glance */}
         {musafir ? (
@@ -1076,15 +1090,6 @@ export default function Home() {
                 );
               })}
             </div>
-          </>
-        )}
-
-        {/* Today's special days, Friday cards and sadaqah virtue: here unless
-            the Home layout setting puts the full block under the arch */}
-        {homeLayout !== 'full' && hasSpecialBlock && (
-          <>
-            <OrnamentDivider className="my-5" />
-            {specialBlock}
           </>
         )}
 

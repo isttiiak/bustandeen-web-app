@@ -228,6 +228,70 @@ describe('Stats fresh start (U7)', () => {
       expect(res.body.resets[a].date).toBe(RESET);
     const got = await as(request(app).get('/api/stats/resets'));
     expect(got.body.resets.quran.history).toHaveLength(1);
+    // The reset tracker: the entry this Reset all added is marked (areas
+    // already reset that day were skipped, so they keep their own entry).
+    // (zikr and salat were undone above, so this added theirs; quran and
+    // fasting were already reset that day.)
+    expect(got.body.resets.zikr.history.at(-1).all).toBe(true);
+    expect(got.body.resets.salat.history.at(-1).all).toBe(true);
+    expect(got.body.resets.quran.history.at(-1).all).toBe(false);
+  });
+
+  test('older Reset all entries (no flag) are found by their shared instant', async () => {
+    const at = new Date('2026-09-01T10:00:00Z');
+    const e = { date: '2026-09-01', note: '', resetAt: at };
+    const before = await User.findOne({ uid: U.uid }).lean();
+    await User.updateOne(
+      { uid: U.uid },
+      {
+        $push: {
+          salatResetHistory: { $each: [e], $position: 0 },
+          'statsResets.zikr': { $each: [e], $position: 0 },
+          'statsResets.fasting': { $each: [e], $position: 0 },
+          'statsResets.quran': {
+            $each: [{ ...e, resetAt: new Date(at.getTime() + 1) }],
+            $position: 0,
+          },
+        },
+      }
+    );
+    const got = await as(request(app).get('/api/stats/resets'));
+    // Quran's instant differs, so this one was not a Reset all.
+    expect(got.body.resets.zikr.history[0].all).toBe(false);
+    await User.updateOne({ uid: U.uid }, { $set: { 'statsResets.quran.0.resetAt': at } });
+    const again = await as(request(app).get('/api/stats/resets'));
+    for (const a of ['zikr', 'salat', 'fasting', 'quran'])
+      expect(again.body.resets[a].history[0].all).toBe(true);
+    // Put the user back as it was for the next test.
+    await User.updateOne(
+      { uid: U.uid },
+      {
+        $set: {
+          salatResetHistory: before.salatResetHistory,
+          statsResets: before.statsResets,
+        },
+      }
+    );
+  });
+
+  test('a Kaza debt reset is logged for the tracker, with what was owed', async () => {
+    const SalatDebt = (await import('../src/models/SalatDebt.js')).default;
+    await SalatDebt.findOneAndUpdate(
+      { userId: U.uid },
+      {
+        $set: { owed: { fajr: 2, dhuhr: 1, asr: 0, maghrib: 0, isha: 0 }, lastAccrualDate: TODAY },
+      },
+      { upsert: true }
+    );
+    const snap = await worshipSnapshot();
+    const res = await as(request(app).post('/api/salat/debt/reset')).send({ today: TODAY });
+    expect(res.status).toBe(200);
+    const got = await as(request(app).get('/api/stats/resets'));
+    const k = got.body.resets.kaza;
+    expect(k.date).toBe(TODAY);
+    expect(k.history.at(-1)).toMatchObject({ date: TODAY, owedBefore: 3, all: false });
+    // Logged prayers, fasts, Quran and zikr are untouched.
+    expect(await worshipSnapshot()).toBe(snap);
   });
 
   test('the old zikr "Reset counters" route no longer zeroes totals or deletes the goal', async () => {

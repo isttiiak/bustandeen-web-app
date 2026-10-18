@@ -18,6 +18,7 @@ import PrintSheets from '../components/calendar/print/PrintSheets.js';
 import CalendarRequestDialog from '../components/calendar/CalendarRequestDialog.js';
 import {
   downloadWindow,
+  emptyMonthKey,
   includeFilters,
   pageRule,
   printMonths,
@@ -163,6 +164,33 @@ export default function IslamicCalendar() {
     monthInWindow(monthDays(stepMonth(anchor, grid, step, day), grid, day), bounds);
   const missingYears = prefs.show.holidays ? missingHolidayYears(country, days) : [];
   const monthRows = days.flatMap((d) => eventsOf(d).map((event) => ({ day: d, event })));
+  // The kinds of day the screen lists: "no holidays" is said only when they are on.
+  const shownKinds = (
+    [
+      ['islamic', prefs.show.islamic],
+      ['holiday', prefs.show.holidays && holidayYears(country).length > 0],
+      ['national', prefs.show.national && hasNationalDays(country)],
+    ] as const
+  )
+    .filter(([, on]) => on)
+    .map(([k]) => k);
+  const emptyKey = emptyMonthKey(shownKinds);
+  // The three months after the one on screen, each under its own heading
+  // (This month already lists the one on screen).
+  const laterMonths: string[] = [];
+  for (let m = anchor, i = 0; i < 3; i++) {
+    m = stepMonth(m, grid, 1, day);
+    if (!monthInWindow(monthDays(m, grid, day), bounds)) break;
+    laterMonths.push(m);
+  }
+  const laterGroups = laterMonths.map((m) => {
+    const md = monthDays(m, grid, day);
+    return {
+      key: md[0]!.ymd,
+      title: monthTitle(grid, md[0]!, t, lang),
+      rows: upcomingEvents(md, filters),
+    };
+  });
   const pick = (ymd: string) => {
     setSelected(ymd);
     setAnchor(ymd);
@@ -260,13 +288,15 @@ export default function IslamicCalendar() {
       {prefs.show.national && hasNationalDays(country) && (
         <LegendItem type="national" label={t('calendar.kind.national')} />
       )}
-      <span className="inline-flex items-center gap-1.5">
-        <span
-          aria-hidden="true"
-          className="w-2.5 h-2.5 rounded-[3px] bg-brand-warm/30 border border-brand-warm"
-        />
-        {t('calendar.kind.weekend')}
-      </span>
+      {prefs.weekend.length > 0 && (
+        <span className="inline-flex items-center gap-1.5">
+          <span
+            aria-hidden="true"
+            className="w-2.5 h-2.5 rounded-[3px] bg-brand-warm/30 border border-brand-warm"
+          />
+          {t('calendar.kind.weekend')}
+        </span>
+      )}
     </>
   );
 
@@ -518,25 +548,33 @@ export default function IslamicCalendar() {
             country={countryLabel}
           />
 
-          <EventList
-            title={t('calendar.thisMonth')}
-            subtitle={t('calendar.thisMonthSub', { month: monthTitle(grid, days[0]!, t, lang) })}
-            rows={monthRows}
-            empty={t('calendar.noneThisMonth')}
-            today={today}
-            onPick={pick}
-            testId="calendar-this-month"
-          />
-          <EventList
-            title={t('calendar.next30')}
-            subtitle={t('calendar.next30Sub')}
-            rows={next30}
-            empty={t('calendar.nothingSoon')}
-            showWhen
-            today={today}
-            onPick={pick}
-            testId="calendar-next-30"
-          />
+          {emptyKey && (
+            <>
+              <EventList
+                title={t('calendar.thisMonth')}
+                subtitle={t('calendar.thisMonthSub', {
+                  month: monthTitle(grid, days[0]!, t, lang),
+                })}
+                rows={monthRows}
+                empty={t(`calendar.${emptyKey}`)}
+                today={today}
+                onPick={pick}
+                testId="calendar-this-month"
+              />
+              {laterGroups.length > 0 && (
+                <EventList
+                  title={t('calendar.nextMonths')}
+                  subtitle={t('calendar.nextMonthsSub')}
+                  groups={laterGroups}
+                  empty={t(`calendar.${LATER_EMPTY[emptyKey]}`)}
+                  showWhen
+                  today={today}
+                  onPick={pick}
+                  testId="calendar-next-months"
+                />
+              )}
+            </>
+          )}
         </div>
       </div>
 
@@ -563,6 +601,8 @@ export default function IslamicCalendar() {
         today={today}
         country={country}
         countryLabel={countryLabel}
+        weekStart={prefs.weekStart}
+        weekend={prefs.weekend}
         onRequestCalendar={() => setRequestOpen(true)}
         onPrint={(o) => {
           setDownloadOpen(false);
@@ -582,7 +622,6 @@ export default function IslamicCalendar() {
                 day={day}
                 eventsOf={(d) => dayEvents(d, f)}
                 weekStart={prefs.weekStart}
-                weekend={prefs.weekend}
                 today={today}
                 countryLabel={countryLabel}
                 missingYears={(ds) => (f.holidays ? missingHolidayYears(country, ds) : [])}
@@ -603,6 +642,13 @@ export default function IslamicCalendar() {
     </AnimatedBackground>
   );
 }
+
+/** What "Next 3 months" says when they list nothing (by the kinds listed). */
+const LATER_EMPTY = {
+  noneThisMonth: 'noneLater',
+  noneSpecial: 'noneLaterSpecial',
+  noneHolidays: 'noneLaterHolidays',
+} as const;
 
 /** The colour of each kind of event, as text. */
 const KIND_TEXT: Record<CalendarEvent['type'], string> = {
