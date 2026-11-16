@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as hifzService from '../services/hifz.service.js';
+import { runIdempotent } from '../middleware/idempotency.js';
 import { HifzResult } from '../models/HifzEntry.js';
 
 export const getSummary = async (
@@ -29,8 +30,11 @@ export const getQueue = async (req: Request, res: Response, next: NextFunction):
 export const addNext = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { date } = (req.body ?? {}) as { date?: string };
-    const result = await hifzService.addNext(req.user.uid, date);
-    res.json({ ok: true, ...result });
+    const body = await runIdempotent(res, async () => ({
+      ok: true,
+      ...(await hifzService.addNext(req.user.uid, date)),
+    }));
+    res.json(body);
   } catch (err) {
     next(err);
   }
@@ -39,8 +43,11 @@ export const addNext = async (req: Request, res: Response, next: NextFunction): 
 export const addEntry = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { surah, ayah, date } = req.body as { surah: number; ayah: number; date?: string };
-    const result = await hifzService.addEntry(req.user.uid, surah, ayah, date);
-    res.json({ ok: true, ...result });
+    const body = await runIdempotent(res, async () => ({
+      ok: true,
+      ...(await hifzService.addEntry(req.user.uid, surah, ayah, date)),
+    }));
+    res.json(body);
   } catch (err) {
     next(err);
   }
@@ -68,8 +75,11 @@ export const review = async (req: Request, res: Response, next: NextFunction): P
       result: HifzResult;
       date?: string;
     };
-    const out = await hifzService.review(req.user.uid, surah, ayah, result, date);
-    res.json({ ok: true, entry: out.entry });
+    const body = await runIdempotent(res, async () => {
+      const out = await hifzService.review(req.user.uid, surah, ayah, result, date);
+      return { ok: true, entry: out.entry };
+    });
+    res.json(body);
   } catch (err) {
     const status = (err as { statusCode?: number }).statusCode;
     if (status) {

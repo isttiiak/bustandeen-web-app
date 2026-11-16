@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
+import { idempotent } from '../middleware/idempotency.js';
 import {
   updatePrayerSchema,
   updateNaflSchema,
@@ -48,6 +49,7 @@ router.patch(
   '/debt/adjust',
   requireAuth,
   validate(adjustSalatDebtSchema),
+  idempotent(),
   salatController.adjustDebt
 );
 // PATCH /api/salat/debt/set — absolute set (initial estimate from before tracking)

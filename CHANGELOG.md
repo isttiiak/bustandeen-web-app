@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.16 - A retried write is recognised on every route that can be retried (audit P1-10) - 2026-11-17
+
+### Fixed
+
+- **Every kind of answer is recorded, not just `res.json`.** The op record was only written from a hooked `res.json`. A handler that answered with `res.send`, `res.sendStatus` or `res.end` left the op "in progress": the retry got 409 `op_in_progress` for a minute and then, the claim being treated as abandoned, ran the write a second time. Recording now also happens when the response finishes through `res.end` (which `send` and `sendStatus` use), before it is sent, and a body-less first answer is replayed as just its status.
+- **An op id cannot be reused on another route.** The record keeps the route, but a duplicate id only looked at the user and the id, so an id reused on a different route replayed the first route's answer for the second request. It is now refused with 422 `op_id_reused`.
+- **Five writes that ignored `X-Client-Op-Id` now honour it:** `PATCH /api/salat/debt/adjust`, `POST /api/hifz/next`, `POST /api/hifz/entries`, `POST /api/hifz/review` and `PUT /api/zikr/day`. Their handlers run in one transaction with the op record (`runIdempotent`, as P0-5 did for zikr and Quran), so a failure leaves nothing behind and the retry runs the whole write once. Without the header they behave as before.
+- Tests: `idempotencyGaps.e2e.test.js`, 7 cases; 6 failed on the old code (three non-JSON answers, route reuse, kaza adjust, hifz next); the zikr day case passed once its fixture was valid and stays as a guard.
+
+### Not changed
+
+- Clients: the app still sends the op id only from the offline outbox and the zikr flush. These five routes are ready for it; no frontend change was needed for the fix itself.
+- Stored data.
+
 ## v5.190.15 - Friend, rename and sadaqah totals change together or not at all (audit P1-9) - 2026-11-17
 
 ### Fixed

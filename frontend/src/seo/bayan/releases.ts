@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.16',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Retried saves are now recognised in more places',
+        fixed: [
+          'If a save reached our server but the reply was lost, and the app tried again, a few kinds of saves could be applied twice. Paying back a missed prayer, adding to your hifz, reviewing a hifz entry and correcting a day of zikr are now protected the same way as your other counts.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'আবার পাঠানো সংরক্ষণ এখন আরও জায়গায় চিনে নেওয়া হয়',
+        fixed: [
+          'কোনো সংরক্ষণ আমাদের সার্ভারে পৌঁছালেও উত্তর হারিয়ে গেলে এবং অ্যাপ আবার চেষ্টা করলে কয়েক ধরনের সংরক্ষণ দুইবার প্রযুক্ত হতে পারত। ছুটে যাওয়া নামাজ পূরণ করা, হিফয যোগ করা, হিফযের পুনরাবৃত্তি লেখা এবং কোনো দিনের যিকির সংশোধন এখন আপনার অন্য গণনার মতোই সুরক্ষিত।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.15',
     date: '2026-11-17',
     text: {
