@@ -158,14 +158,12 @@ export const correctDayHandler = async (
       today: string;
       counts: Record<string, number>;
     };
-    const result = await zikrService.correctDay(
-      req.user.uid,
+    const body = await runIdempotent(res, async () => ({
+      ok: true,
       date,
-      today,
-      counts,
-      CORRECT_MAX_DAYS
-    );
-    res.json({ ok: true, date, counts: result });
+      counts: await zikrService.correctDay(req.user.uid, date, today, counts, CORRECT_MAX_DAYS),
+    }));
+    res.json(body);
   } catch (err) {
     next(err);
   }

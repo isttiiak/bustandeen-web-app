@@ -35,9 +35,11 @@ export function idempotent(opts: { storeBody?: boolean } = {}) {
     }
     const uid = req.user?.uid;
     if (!uid) return next();
+    const route = `${req.method} ${req.baseUrl}${req.path}`;
 
     try {
       const existing = await ClientOp.findOne({ uid, opId: raw }).lean();
+      if (existing && existing.route !== route) return reusedOnAnotherRoute(res);
       if (existing && !isAbandoned(existing.status, existing.createdAt)) {
         replay(res, existing.status, existing.statusCode, existing.body);
         return;
@@ -47,13 +49,14 @@ export function idempotent(opts: { storeBody?: boolean } = {}) {
       await ClientOp.create({
         uid,
         opId: raw,
-        route: `${req.method} ${req.baseUrl}${req.path}`,
+        route,
         status: 'pending',
       });
     } catch (err) {
       // Lost a race with a concurrent duplicate (unique index): answer as a replay.
       if ((err as { code?: number }).code === 11000) {
         const winner = await ClientOp.findOne({ uid, opId: raw }).lean();
+        if (winner && winner.route !== route) return reusedOnAnotherRoute(res);
         replay(res, winner?.status ?? 'pending', winner?.statusCode, winner?.body);
         return;
       }
@@ -67,10 +70,15 @@ export function idempotent(opts: { storeBody?: boolean } = {}) {
     // Record the first answer BEFORE it is sent: on serverless the instance can
     // be frozen the moment the response leaves, so a write after 'finish' might
     // never happen and the op would look in flight for good.
-    const json = res.json.bind(res);
-    res.json = (body: unknown) => {
-      if ((res.locals.clientOp as ClientOpClaim | undefined)?.recorded) return json(body);
-      const code = res.statusCode;
+    //
+    // Both ways a handler can answer are covered (audit P1-10): `res.json`
+    // stores the body; anything else (`res.send`, `res.sendStatus`, `res.end`,
+    // all of which finish through `res.end`) stores just the status, because
+    // only `res.json` was hooked before and any other answer left the op
+    // "in progress" for a minute, after which a retry applied the write again.
+    let recorded = false;
+    const finalise = (code: number, body: unknown, hasBody: boolean): Promise<void> => {
+      recorded = true;
       const record =
         code >= 500
           ? ClientOp.deleteOne({ uid, opId: raw })
@@ -80,15 +88,32 @@ export function idempotent(opts: { storeBody?: boolean } = {}) {
                 $set: {
                   status: 'done',
                   statusCode: code,
-                  body: storeBody && fits(body) ? body : { ok: code < 400 },
+                  ...(hasBody ? { body: storeBody && fits(body) ? body : { ok: code < 400 } } : {}),
                 },
               }
             );
-      void record
-        .catch((e: unknown) => console.error('idempotency: could not record op', e))
-        .finally(() => json(body));
+      return record.then(
+        () => undefined,
+        (e: unknown) => console.error('idempotency: could not record op', e)
+      );
+    };
+
+    const json = res.json.bind(res);
+    res.json = (body: unknown) => {
+      if (recorded || (res.locals.clientOp as ClientOpClaim | undefined)?.recorded) {
+        return json(body);
+      }
+      void finalise(res.statusCode, body, true).finally(() => json(body));
       return res;
     };
+    const end = res.end.bind(res) as (...args: unknown[]) => Response;
+    res.end = ((...args: unknown[]) => {
+      if (recorded || (res.locals.clientOp as ClientOpClaim | undefined)?.recorded) {
+        return end(...args);
+      }
+      void finalise(res.statusCode, undefined, false).finally(() => end(...args));
+      return res;
+    }) as typeof res.end;
 
     next();
   };
@@ -155,5 +180,19 @@ function replay(res: Response, status: string, statusCode?: number, body?: unkno
     res.status(409).json({ ok: false, error: 'op_in_progress' });
     return;
   }
+  // A first answer recorded without a body (res.send / sendStatus / end) is
+  // replayed as just its status.
+  if (statusCode !== undefined && body === undefined) {
+    res.status(statusCode).end();
+    return;
+  }
   res.status(statusCode ?? 200).json(body ?? { ok: true });
+}
+
+function reusedOnAnotherRoute(res: Response): void {
+  res.status(422).json({
+    ok: false,
+    error: 'op_id_reused',
+    message: 'This X-Client-Op-Id was already used for a different request.',
+  });
 }

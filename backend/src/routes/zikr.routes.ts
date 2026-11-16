@@ -36,7 +36,13 @@ router.post(
 router.get('/summary', requireAuth, validate(dayQuerySchema), zikrController.getSummaryHandler);
 // "Correct a day" (U7): read a past day's counts, set them exactly.
 router.get('/day', requireAuth, validate(getDaySchema), zikrController.getDayHandler);
-router.put('/day', requireAuth, validate(correctDaySchema), zikrController.correctDayHandler);
+router.put(
+  '/day',
+  requireAuth,
+  validate(correctDaySchema),
+  idempotent(),
+  zikrController.correctDayHandler
+);
 router.get(
   '/time-of-day',
   requireAuth,

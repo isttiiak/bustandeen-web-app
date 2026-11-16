@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as salatService from '../services/salat.service.js';
+import { runIdempotent } from '../middleware/idempotency.js';
 import * as salatDebtService from '../services/salatDebt.service.js';
 import {
   PrayerId,
@@ -252,8 +253,11 @@ export const adjustDebt = async (
       date?: string;
       missedDate?: string;
     };
-    const debt = await salatDebtService.adjustDebt(req.user.uid, prayer, delta, date, missedDate);
-    res.json({ ok: true, ...debt });
+    const body = await runIdempotent(res, async () => ({
+      ok: true,
+      ...(await salatDebtService.adjustDebt(req.user.uid, prayer, delta, date, missedDate)),
+    }));
+    res.json(body);
   } catch (err) {
     next(err);
   }
