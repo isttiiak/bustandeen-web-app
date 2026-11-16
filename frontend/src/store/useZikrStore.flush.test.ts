@@ -129,6 +129,26 @@ describe('zikr batch flush', () => {
     expect(calls()).toHaveLength(2);
   });
 
+  it('saves the batch with its op id to localStorage before the request leaves (audit P1-3)', async () => {
+    tap('SubhanAllah', 12);
+    // What a reload would find, read at the moment the request is sent. The
+    // 400 ms debounced save has not fired (fake timers), so only an explicit
+    // write before the request can have put the batch there.
+    let stored: {
+      state: { pending: Record<string, number>; inflight: { opId: string } | null };
+    } | null = null;
+    fetchMock.mockImplementationOnce(() => {
+      const raw = localStorage.getItem('bustandeen_zikr_store');
+      stored = raw ? JSON.parse(raw) : null;
+      return ok();
+    });
+    await flush();
+    const opId = calls()[0]![1].headers['X-Client-Op-Id'];
+    expect(stored).not.toBeNull();
+    expect(stored!.state.inflight?.opId).toBe(opId);
+    expect(stored!.state.pending).toEqual({}); // not also still waiting as new taps
+  });
+
   it.each([401, 409, 429, 500])('keeps the batch on %i', async (code) => {
     tap('SubhanAllah', 4);
     fetchMock.mockImplementationOnce(() => status(code));

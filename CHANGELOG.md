@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.7 - Closing the tab no longer risks counting zikr twice (audit P1-3) - 2026-11-17
+
+### Fixed
+
+- **A zikr batch is saved to the device, with its op id, before it is sent.** When the tab closed, the app first forced the OLD state to disk (the taps still waiting in `pending`), then moved them into the in-flight batch and sent it with `keepalive`. That second save goes through the 400 ms debounce, so the page was usually gone before it ran. The request still reached the server, but on the next visit the taps were back in `pending` with no op id and were sent again under a new one, so they counted twice. The batch is now written to localStorage in the same step that creates it, before the request leaves; a reload resends it under the SAME op id and the server recognises the repeat (T2.3).
+- A test (`saves the batch with its op id to localStorage before the request leaves`) fails on the old code.
+
+### Not changed
+
+- A batch the server rejects with 400 is still dropped (P1-4). No stored data is touched and nothing is migrated.
+
 ## v5.190.6 - Buttons now say what they show (WCAG 2.5.3 Label in Name) - 2026-11-16
 
 ### Fixed

@@ -470,6 +470,15 @@ export const useZikrStore = create<ZikrState>()(
             }
             return { pending: newPending, untimed: newUntimed, tapSpan: newSpan, inflight: sent };
           });
+          // Write the new batch (with its op id) to localStorage NOW, before the
+          // request leaves. The normal save is debounced 400 ms, and on tab close
+          // the old state (taps still in `pending`) was forced out first. If the
+          // page then died after the request was delivered, the next load found
+          // the taps in `pending` with no op id and sent them again under a new
+          // one, so the server counted them twice (audit P1-3). With the batch
+          // saved here, a reload resends it under the SAME op id and the server
+          // recognises the repeat.
+          flushZikrLocalPersistence();
         }
 
         set({ isFlushing: true });
