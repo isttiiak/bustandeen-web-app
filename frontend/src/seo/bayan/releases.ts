@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.3',
+    date: '2026-11-16',
+    text: {
+      en: {
+        title: 'A safety fix behind the scenes',
+        fixed: [
+          "The server now ignores any extra information sent along with a request that it did not ask for. This is a security tightening for the app's administrators.",
+          'Nothing you see in the app changes, and nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে একটি নিরাপত্তা সংশোধন',
+        fixed: [
+          'অনুরোধের সঙ্গে সার্ভারের চাওয়া হয়নি এমন বাড়তি তথ্য এলে সার্ভার এখন সেটি উপেক্ষা করে। এটি অ্যাপের প্রশাসকদের জন্য একটি নিরাপত্তা জোরদার করা।',
+          'অ্যাপে আপনি যা দেখেন তাতে কোনো পরিবর্তন নেই, এবং আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.2',
     date: '2026-11-16',
     text: {
