@@ -11,7 +11,7 @@ import SalatLog, {
 } from '../models/SalatLog.js';
 import * as salatDebtService from './salatDebt.service.js';
 import { getExcusedDaySet } from './cycle.service.js';
-import { inTransaction, runInTransaction } from '../utils/transaction.js';
+import { inTransaction, runInTransactionRetryingDuplicates } from '../utils/transaction.js';
 
 export function todayDateString(): string {
   return new Date().toISOString().substring(0, 10);
@@ -78,15 +78,7 @@ export async function getOrCreateLog(userId: string, date?: string) {
  * the current state (audit P1-1). Two that both create the log hit a duplicate
  * key; the rerun then finds it.
  */
-async function withLogRace<T>(fn: () => Promise<T>): Promise<T> {
-  for (let attempt = 0; ; attempt++) {
-    try {
-      return await runInTransaction(fn);
-    } catch (err) {
-      if (!isDuplicateKey(err) || attempt >= 3) throw err;
-    }
-  }
-}
+const withLogRace = runInTransactionRetryingDuplicates;
 
 const EMPTY_ENTRY = { status: 'pending' as PrayerStatus };
 

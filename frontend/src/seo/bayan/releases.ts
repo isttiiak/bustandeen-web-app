@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.10',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Your missed-prayer count is safer after a long break',
+        fixed: [
+          'When you open the app after days away, it counts the prayers you did not mark. If something went wrong while it was counting, those days could be skipped for good. It now counts in steps and only moves on when each step is saved, so it picks up where it stopped.',
+          'If the counting fails, your prayer pages still open normally and it tries again next time.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'দীর্ঘ বিরতির পর কাজা নামাজের হিসাব এখন আরও নিরাপদ',
+        fixed: [
+          'কয়েক দিন পর অ্যাপ খুললে আপনি যে নামাজগুলো চিহ্নিত করেননি, অ্যাপ তা গুনে নেয়। গুনতে গিয়ে কিছু ভুল হলে সেই দিনগুলো চিরতরে বাদ পড়ে যেতে পারত। এখন ধাপে ধাপে গোনা হয় এবং প্রতিটি ধাপ সংরক্ষিত হলেই পরেরটিতে যাওয়া হয়, তাই যেখানে থেমেছিল সেখান থেকেই আবার শুরু হয়।',
+          'গণনা ব্যর্থ হলেও আপনার নামাজের পাতা স্বাভাবিকভাবেই খোলে এবং পরের বার আবার চেষ্টা করা হয়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.9',
     date: '2026-11-17',
     text: {

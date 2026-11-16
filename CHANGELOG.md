@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.10 - The missed-prayer sweep can no longer lose a window of debt (audit P1-2) - 2026-11-17
+
+### Fixed
+
+- **The day-rollover sweep moves its cursor only together with its work.** `ensureCaughtUp` set `lastAccrualDate` to yesterday FIRST, then read logs, saved them as `missed`, inserted events and kaza units, and added to `owed`. A timeout or error after the claim lost that whole window of debt for good (the next call saw nothing to sweep), and a failure part-way could leave logs saying `missed` with no debt behind them. The sweep now works in chunks of 31 days (`SWEEP_CHUNK_DAYS`), each one a transaction: the cursor compare-and-set, the log saves, the events, the kaza units and the `owed` increment land together or not at all. A failure rolls the chunk back and the next request resumes at the same day; a timeout between chunks keeps every finished chunk. Two concurrent sweeps conflict on the debt document, the later one reruns, finds the cursor moved and counts nothing.
+- **A failed kaza-unit write is no longer swallowed.** `KazaUnit.insertMany(...).catch(() => {})` hid every error, not just duplicate keys. Units are now written with upserts (`$setOnInsert`), so a unit that already exists is left alone and a real error fails the chunk.
+- **Restoring rest days is one transaction per day.** `restoreUncoveredDays` claimed a day with `$pull`, then saved the log, then counted it; a failure in between lost the day. The claim, the log and the debt now land together.
+- **A failed sweep no longer turns the salat screens into errors.** `ensureCaughtUpOrLog` (used by the salat routes and Naseeh insights) logs the failure and carries on with what is stored; the cursor did not move, so the next request retries. `ensureCaughtUp` itself still throws, for tests and callers that want it.
+- Shared helper `runInTransactionRetryingDuplicates` (P1-1's duplicate-key rerun) now lives in `utils/transaction.ts`.
+- Tests (`salatSweep.e2e.test.js`, 9 cases; 5 failed on the old code, the other 4 are concurrency and data-kept guards): a failure leaves cursor, logs, events, units and debt untouched and a retry counts once; a 100-day gap fails in chunk 2 and resumes without counting a day twice; a failed unit write is not swallowed; a failure on the last step rolls back everything; six parallel sweeps count a window once; a screen request answers 200 when the sweep fails; a failed restore keeps the day remembered.
+
+### Not changed
+
+- Stored data. Nothing is migrated or recalculated. Accounts that already lost a window keep their numbers; finding them is a separate read-only count (not run, not part of this release).
+
 ## v5.190.9 - Two taps at once can no longer count a missed prayer twice (audit P1-1) - 2026-11-17
 
 ### Fixed

@@ -6,6 +6,7 @@ import KazaUnit from '../models/KazaUnit.js';
 import { logKazaReset } from './statsReset.service.js';
 import { getExcusedDaySet, getExcusedIntervals, isDayExcused } from './cycle.service.js';
 import { latestPossibleToday } from '../validation/clientDay.js';
+import { runInTransactionRetryingDuplicates } from '../utils/transaction.js';
 
 export interface SalatDebtSummary {
   owed: Record<PrayerId, number>;
@@ -360,14 +361,19 @@ export async function restoreUncoveredDays(userId: string, today: string): Promi
   let restored = 0;
   for (const day of sorted) {
     if (stillExcused.has(day)) continue;
-    const claimed = await SalatDebt.updateOne(
-      { userId, skippedRestDays: day },
-      { $pull: { skippedRestDays: day } }
-    );
-    if (claimed.modifiedCount !== 1) continue; // another call already restored it
-    if (day < since) continue; // before a reset: not part of the counter
-    await countMissedDay(userId, day);
-    restored++;
+    // One transaction per day: the claim, the log and the debt land together,
+    // so a failure leaves the day remembered for the next call instead of lost.
+    const counted = await runInTransactionRetryingDuplicates(async () => {
+      const claimed = await SalatDebt.updateOne(
+        { userId, skippedRestDays: day },
+        { $pull: { skippedRestDays: day } }
+      );
+      if (claimed.modifiedCount !== 1) return false; // another call already restored it
+      if (day < since) return false; // before a reset: not part of the counter
+      await countMissedDay(userId, day);
+      return true;
+    });
+    if (counted) restored++;
   }
   // Days before a reset can never matter again.
   if (since) {
@@ -414,93 +420,131 @@ export async function ensureCaughtUp(userId: string, today?: string): Promise<vo
     return;
   }
 
-  const staleCursor = doc.lastAccrualDate;
-  if (shiftDateStr(staleCursor, 1) >= t) return;
-
-  // Atomic claim — see CONCURRENCY note above. Must happen BEFORE any of the
-  // work below, not after, or concurrent callers would all still do (and
-  // double-count) the work before any of them got around to writing back.
-  const claimed = await SalatDebt.findOneAndUpdate(
-    { userId, lastAccrualDate: staleCursor },
-    { $set: { lastAccrualDate: shiftDateStr(t, -1) } }
-  );
-  if (!claimed) return; // lost the race — another call already claimed this window
-
-  const cursor = shiftDateStr(staleCursor, 1);
-
-  const logs = await SalatLog.find({ userId, date: { $gte: cursor, $lt: t } });
-  const logMap = new Map(logs.map((l) => [l.date, l]));
-  const excusedDays = await getExcusedDaySet(userId, cursor, shiftDateStr(t, -1));
-  const totals = EMPTY_OWED();
-  const events: Array<{ userId: string; prayer: PrayerId; delta: number; date: string }> = [];
-  const dirtyLogs: typeof logs = [];
-
-  for (let day = cursor; day < t; day = shiftDateStr(day, 1)) {
-    if (excusedDays.has(day)) continue; // rest day: nothing is owed, nothing is "missed"
-    let log = logMap.get(day);
-    let logChanged = false;
-    for (const pid of PRAYER_IDS) {
-      const status = log?.prayers[pid]?.status ?? 'pending';
-      if (status === 'pending') {
-        totals[pid]++;
-        events.push({ userId, prayer: pid, delta: 1, date: day });
-        // A day the user never opened has no SalatLog row at all — the debt
-        // counter still needs incrementing, but without persisting 'missed'
-        // here, later marking that day's prayer "done" starts from a fresh
-        // 'pending' row (wasMissed=false), so updatePrayerStatus's
-        // missed<->non-missed transition never fires and the debt never
-        // decrements. Create the row now so that later edit sees 'missed'.
-        if (!log) {
-          log = new SalatLog({ userId, date: day });
-          logMap.set(day, log);
-        }
-        log.prayers[pid].status = 'missed';
-        logChanged = true;
-      }
-    }
-    if (log && logChanged) dirtyLogs.push(log);
+  // The sweep works in chunks, each one a transaction that moves the cursor
+  // only together with the work it stands for (audit P1-2). The cursor used to
+  // be claimed BEFORE the work, so a timeout or error afterwards lost that whole
+  // window for good, or left logs saying "missed" with no debt behind them.
+  // Now a failure rolls the chunk back and the next request resumes at the same
+  // day; a timeout between chunks keeps every finished chunk.
+  const target = shiftDateStr(t, -1); // the last day to count
+  let from = doc.lastAccrualDate;
+  while (from < target) {
+    const chunkEnd = minDate(shiftDateStr(from, SWEEP_CHUNK_DAYS), target);
+    const advanced = await sweepChunk(userId, from, chunkEnd);
+    if (!advanced) return; // another request moved the cursor and does the rest
+    from = chunkEnd;
   }
+}
 
-  const skippedNow = [...excusedDays].filter((d) => d >= (doc.since ?? ''));
-  if (skippedNow.length) {
-    await SalatDebt.updateOne(
-      { userId },
-      { $addToSet: { skippedRestDays: { $each: skippedNow } } }
+/**
+ * `ensureCaughtUp` for the screens that only want fresh numbers: a failed sweep
+ * is logged and the request carries on with what is stored. The cursor did not
+ * move, so the next request retries; nothing is lost, and a salat page that
+ * could be shown is not turned into an error (audit P1-2).
+ */
+export async function ensureCaughtUpOrLog(userId: string, today?: string): Promise<void> {
+  try {
+    await ensureCaughtUp(userId, today);
+  } catch (err) {
+    console.error('salat sweep failed (will retry on the next request):', (err as Error).message);
+  }
+}
+
+/** Most days one sweep transaction covers. */
+export const SWEEP_CHUNK_DAYS = 31;
+
+function minDate(a: string, b: string): string {
+  return a < b ? a : b;
+}
+
+/**
+ * Counts the days after `from` up to and including `to` (YYYY-MM-DD) and moves
+ * the cursor from `from` to `to`, all in one transaction. Returns false when
+ * the cursor was no longer `from` (another request got there first).
+ *
+ * The compare-and-set on the cursor is what keeps two concurrent sweeps from
+ * counting a day twice: they conflict on the debt document, the later one
+ * reruns, finds the cursor moved and counts nothing.
+ */
+async function sweepChunk(userId: string, from: string, to: string): Promise<boolean> {
+  return runInTransactionRetryingDuplicates(async () => {
+    const claimed = await SalatDebt.findOneAndUpdate(
+      { userId, lastAccrualDate: from },
+      { $set: { lastAccrualDate: to } }
     );
-  }
+    if (!claimed) return false;
 
-  for (const log of dirtyLogs) await log.save();
-  if (events.length) await SalatDebtEvent.insertMany(events);
-  if (events.length) {
-    // Every event here has a genuine specific date (the day it swept into
-    // 'missed') — the one caller where bulk itemization is exactly right.
-    // ordered:false so a duplicate (re-running the sweep over an already
-    // -processed day, which shouldn't happen given the cursor above, but
-    // this is cheap insurance) skips just that row instead of aborting the
-    // whole batch.
-    await KazaUnit.insertMany(
-      events.map((e) => ({
-        userId: e.userId,
-        prayer: e.prayer,
-        missedDate: e.date,
-        status: 'owed',
-      })),
-      { ordered: false }
-    ).catch(() => {
-      /* duplicate-key on an already-itemized day — safe to ignore */
-    });
-  }
+    const cursor = shiftDateStr(from, 1);
+    const end = shiftDateStr(to, 1); // exclusive
 
-  // lastAccrualDate was already advanced atomically by the claim above — this
-  // is now just the totals. No other caller can reach this line for the same
-  // window (they'd have lost the claim and returned already), so a plain
-  // $inc here is race-free.
-  const inc = Object.fromEntries(
-    PRAYER_IDS.filter((id) => totals[id] > 0).map((id) => [`owed.${id}`, totals[id]])
-  );
-  if (Object.keys(inc).length) {
-    await SalatDebt.updateOne({ userId }, { $inc: inc });
-  }
+    const logs = await SalatLog.find({ userId, date: { $gte: cursor, $lt: end } });
+    const logMap = new Map(logs.map((l) => [l.date, l]));
+    const excusedDays = await getExcusedDaySet(userId, cursor, to);
+    const totals = EMPTY_OWED();
+    const events: Array<{ userId: string; prayer: PrayerId; delta: number; date: string }> = [];
+    const dirtyLogs: typeof logs = [];
+
+    for (let day = cursor; day < end; day = shiftDateStr(day, 1)) {
+      if (excusedDays.has(day)) continue; // rest day: nothing is owed, nothing is "missed"
+      let log = logMap.get(day);
+      let logChanged = false;
+      for (const pid of PRAYER_IDS) {
+        const status = log?.prayers[pid]?.status ?? 'pending';
+        if (status === 'pending') {
+          totals[pid]++;
+          events.push({ userId, prayer: pid, delta: 1, date: day });
+          // A day the user never opened has no SalatLog row at all — the debt
+          // counter still needs incrementing, but without persisting 'missed'
+          // here, later marking that day's prayer "done" starts from a fresh
+          // 'pending' row (wasMissed=false), so updatePrayerStatus's
+          // missed<->non-missed transition never fires and the debt never
+          // decrements. Create the row now so that later edit sees 'missed'.
+          if (!log) {
+            log = new SalatLog({ userId, date: day });
+            logMap.set(day, log);
+          }
+          log.prayers[pid].status = 'missed';
+          logChanged = true;
+        }
+      }
+      if (log && logChanged) dirtyLogs.push(log);
+    }
+
+    const skippedNow = [...excusedDays].filter((d) => d >= (claimed.since ?? ''));
+    if (skippedNow.length) {
+      await SalatDebt.updateOne(
+        { userId },
+        { $addToSet: { skippedRestDays: { $each: skippedNow } } }
+      );
+    }
+
+    for (const log of dirtyLogs) await log.save();
+    if (events.length) {
+      await SalatDebtEvent.insertMany(events);
+      // Every event here has a genuine specific date (the day it swept into
+      // 'missed') — the one caller where bulk itemization is exactly right.
+      // An upsert leaves a unit that already exists as it is, so nothing needs
+      // swallowing: a real failure now fails the chunk and shows.
+      await KazaUnit.bulkWrite(
+        events.map((e) => ({
+          updateOne: {
+            filter: { userId: e.userId, prayer: e.prayer, missedDate: e.date },
+            update: { $setOnInsert: { status: 'owed' } },
+            upsert: true,
+          },
+        })),
+        { ordered: false }
+      );
+    }
+
+    const inc = Object.fromEntries(
+      PRAYER_IDS.filter((id) => totals[id] > 0).map((id) => [`owed.${id}`, totals[id]])
+    );
+    if (Object.keys(inc).length) {
+      await SalatDebt.updateOne({ userId }, { $inc: inc });
+    }
+    return true;
+  });
 }
 
 /** Shift a YYYY-MM-DD date string by `delta` days (pure string math, no TZ). */

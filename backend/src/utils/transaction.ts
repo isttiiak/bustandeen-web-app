@@ -68,3 +68,22 @@ export async function afterCommit(fn: () => Promise<unknown> | unknown): Promise
     console.error('after-commit step failed', (err as Error).message);
   }
 }
+
+/**
+ * `runInTransaction` for a read-change-save that may create a row another
+ * request creates at the same moment. A duplicate key aborts the whole
+ * transaction, so it is rerun from the start (the row now exists and is read
+ * instead of created), up to `attempts` times.
+ */
+export async function runInTransactionRetryingDuplicates<T>(
+  fn: () => Promise<T>,
+  attempts = 4
+): Promise<T> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return await runInTransaction(fn);
+    } catch (err) {
+      if ((err as { code?: number } | null)?.code !== 11000 || attempt >= attempts) throw err;
+    }
+  }
+}
