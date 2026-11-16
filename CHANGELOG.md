@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.8 - Zikr counts are no longer dropped without a word (audit P1-4) - 2026-11-17
+
+### Fixed
+
+- **A day rollover no longer throws away the taps not yet sent.** `checkAndResetIfNewDay` cleared `pending`, `untimed` and `tapSpan` the moment the tracking day changed (Fajr by default). Taps made in the last 800 ms of the day, or while offline, were gone with no error. The unsent taps are now staged as a batch counted on the day that just closed (midday anchor of that day, `today` set to it) and sent; a gap longer than yesterday files under yesterday, the oldest day the server takes. If an earlier batch is still stuck (only one can wait), the new taps carry into the new day: one day off rather than lost.
+- **A wrong device date no longer discards the batch.** The server refuses an impossible day with 400 `client_day_mismatch` (P0-3). The app treated every 400 as delivered, so the taps vanished. They now go back into `pending` (amounts, untimed part and tap times merged with anything tapped meanwhile), the person sees the existing device-date message, and the next tap sends them under the right day. No retry timer runs while the clock may still be wrong.
+- **Any other 400 is no longer silent.** The batch cannot be kept (it would block every later count), so a toast now says how many counts could not be saved and points to Log counts. New string `common.zikrBatchDropped` (en + bn).
+- Tests (`useZikrStore.rollover.test.ts`, 8 cases, 7 failed on the old code; `useZikrStore.deviceDate.test.ts` updated to the new behaviour).
+
+### Not changed
+
+- Anything already stored. No migration. 401/409/429/5xx still keep the batch and retry as before (outbox retry rules are P1-5).
+
 ## v5.190.7 - Closing the tab no longer risks counting zikr twice (audit P1-3) - 2026-11-17
 
 ### Fixed
