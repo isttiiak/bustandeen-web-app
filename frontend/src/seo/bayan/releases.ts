@@ -20,6 +20,30 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.15',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Friend requests, zikr renames and donation totals are safer',
+        fixed: [
+          'Accepting two friend requests at the same moment can no longer go past the 50-friend limit, and a request can no longer end up half accepted.',
+          'Renaming a zikr now moves its name, total and history together, so a problem part-way cannot leave them apart.',
+          'Behind the scenes, verifying or removing a donation now updates the public total at the same time as the donation itself.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'বন্ধুর অনুরোধ, যিকিরের নাম বদল ও অনুদানের মোট এখন আরও নিরাপদ',
+        fixed: [
+          'একই মুহূর্তে দুটি বন্ধুর অনুরোধ গ্রহণ করলেও এখন ৫০ বন্ধুর সীমা ছাড়ানো যায় না, আর কোনো অনুরোধ অর্ধেক গৃহীত অবস্থায় থেকে যায় না।',
+          'যিকিরের নাম বদলালে এখন নাম, মোট সংখ্যা ও ইতিহাস একসঙ্গে সরে যায়, তাই মাঝপথে সমস্যা হলে সেগুলো আলাদা হয়ে পড়ে না।',
+          'পর্দার আড়ালে, কোনো অনুদান যাচাই বা মুছে ফেললে এখন অনুদানের সঙ্গেই প্রকাশ্য মোটও একসঙ্গে হালনাগাদ হয়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.14',
     date: '2026-11-17',
     text: {
