@@ -1,3 +1,4 @@
+import { keepOneOpenCycle } from '../utils/cycleImport.js';
 import { isAvatarId } from '../utils/avatars.js';
 import User from '../models/User.js';
 import ZikrDaily from '../models/ZikrDaily.js';
@@ -231,14 +232,18 @@ export async function importV2(uid: string, data: BackupFileV2): Promise<ImportC
       await setProfile(CycleProfile, rest);
     }
     if (Array.isArray(data.cycle.logs) && data.cycle.logs.length) {
-      const ops = data.cycle.logs
+      const rows = data.cycle.logs
         .filter(
           (d) =>
             d &&
             typeof d.startDate === 'string' &&
             /^\d{4}-\d{2}-\d{2}$/.test(d.startDate as string)
         )
-        .slice(0, 2000)
+        .slice(0, 2000) as PlainDoc[];
+      // One open cycle per person: the database refuses a second (P1-8).
+      const allowed = new Set(keepOneOpenCycle(rows).kept);
+      const ops = rows
+        .filter((d) => allowed.has(d))
         .map((d) => {
           const { _id, __v, userId, createdAt, updatedAt, ...rest } = d as PlainDoc & {
             _id?: unknown;

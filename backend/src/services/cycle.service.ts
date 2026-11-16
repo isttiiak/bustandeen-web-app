@@ -257,8 +257,31 @@ export async function startCycle(
   });
   if (overlapping) return { ok: false, error: 'That date is inside an already-logged cycle.' };
 
-  const log = await CycleLog.create({ userId, type, startDate: date, endDate: null });
-  return { ok: true, log };
+  try {
+    const log = await CycleLog.create({ userId, type, startDate: date, endDate: null });
+    return { ok: true, log };
+  } catch (err) {
+    return duplicateCycleAnswer(err, userId);
+  }
+}
+
+/**
+ * A duplicate-key error from the cycle collection is an answer, not a crash:
+ * either another request opened a cycle first (the one-open-cycle index) or a
+ * cycle already starts on that day. Anything else is rethrown.
+ */
+async function duplicateCycleAnswer(
+  err: unknown,
+  userId: string
+): Promise<{ ok: boolean; error?: string }> {
+  if ((err as { code?: number } | null)?.code !== 11000) throw err;
+  const open = await CycleLog.findOne({ userId, endDate: null }).select('_id');
+  return {
+    ok: false,
+    error: open
+      ? 'A cycle is already active — end it first.'
+      : 'A cycle already starts on that date.',
+  };
 }
 
 /**
@@ -364,7 +387,12 @@ export async function editCycleLog(
 
   log.startDate = startDate;
   log.endDate = endDate;
-  await log.save();
+  try {
+    await log.save();
+  } catch (err) {
+    const answer = await duplicateCycleAnswer(err, userId);
+    return { ok: false, error: answer.error?.replace('A cycle is', 'Another cycle is') };
+  }
   return { ok: true, log };
 }
 

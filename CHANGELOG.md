@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.14 - Only one cycle can be open at a time, even when two requests arrive together (audit P1-8) - 2026-11-17
+
+### Fixed
+
+- **A partial unique index allows one open cycle per person.** `startCycle` asked "is a cycle open?" and then created one, with nothing stopping two requests at once (a double tap, two devices, an offline replay) from both passing the check and leaving two open cycles (a probe: six starts at once on different days made six). The new index `one_open_cycle_per_user` on `{ userId, endDate }`, restricted to `endDate: null`, makes the database refuse the second. It is keyed on `(userId, endDate)` rather than `userId` alone so it is a distinct index that `npm run sync-indexes` lists (the plain `userId` index already exists and would hide it).
+- **The service turns the refusal into an answer.** `startCycle` and the reopen path of `editCycleLog` catch the duplicate key and reply "A cycle is already active" (or "A cycle already starts on that date"), instead of a 500. Starting the same day twice at once used to hit the existing `{userId, startDate}` index and crash the same way.
+- **A restore keeps one open cycle.** A backup file (version 2 or 3) with several open cycles keeps the most recent one open and leaves the others out (counted in `counts.skippedRows`), so the restore does not fail on the new index.
+- **New read-only count, `npm run audit:open-cycles`** (add `-- --list` for uids only): how many accounts already have two or more open cycles. The index cannot be built while one exists. Not run on production.
+- Tests: `cycleOpenOnce.e2e.test.js`, 7 cases; 4 of the first 5 failed on the old code. Full backend suite passes.
+
+### Takes effect when the index is applied
+
+The code answers cleanly either way, but the guarantee comes from the index, which only exists on the live database after `npm run sync-indexes -- --apply`. That changes production and needs Istiak's yes, after `npm run audit:open-cycles` shows no account with two open cycles. Until then the race window is as it was.
+
+### Not changed
+
+- Stored data.
+
 ## v5.190.13 - Restoring a backup checks the file first and is all or nothing (audit P1-7) - 2026-11-17
 
 ### Fixed
