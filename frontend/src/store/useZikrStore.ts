@@ -1,12 +1,15 @@
 ﻿import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
-import { getTrackingDay, getTrackingDayMiddayTs } from '../utils/trackingDay.js';
+import { getTrackingDay } from '../utils/trackingDay.js';
+import { addDaysYmd, placeNoonTs } from '../utils/placeClock.js';
 import { API_BASE, getIdToken } from '../lib/api.js';
 import { newOpId, peekSyncOutbox } from '../utils/syncOutbox.js';
 import { currentOutboxOwner } from '../utils/outboxOwner.js';
 import { todaysLoggedCounts } from '../utils/zikrLog.js';
 import { isDeviceDateError, notifyDeviceDateWrong } from '../utils/deviceDate.js';
+import toast from 'react-hot-toast';
+import i18n from '../i18n.js';
 
 const FLUSH_DELAY = 800; // ms
 const RETRY_DELAY = 20_000; // ms: retry a failed flush without waiting for another tap
@@ -149,6 +152,150 @@ interface ZikrState {
   flush: (opts?: { keepalive?: boolean }) => Promise<void>;
 }
 
+type BatchBody = {
+  increments?: {
+    zikrType: string;
+    amount: number;
+    realTs?: number;
+    startTs?: number;
+    untimedAmount?: number;
+  }[];
+};
+
+function readBatch(batch: ZikrInflight): BatchBody['increments'] {
+  try {
+    return (JSON.parse(batch.body) as BatchBody).increments ?? [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Take everything in `pending` out of it and into a new in-flight batch
+ * counted as `day` (a tracking day, YYYY-MM-DD). Returns null when nothing is
+ * pending. The batch is written to localStorage before it can be sent
+ * (audit P1-3), and taps from here on start a new batch.
+ */
+function stageBatch(day: string): ZikrInflight | null {
+  const { pending, untimed, tapSpan, timezoneOffset } = useZikrStore.getState();
+  const snapshot = { ...pending };
+  const untimedSnap = { ...untimed };
+  const spanSnap = { ...tapSpan };
+  const entries = Object.entries(snapshot).filter(([, a]) => a !== 0);
+  if (!entries.length) return null;
+
+  const resolvedOffset = timezoneOffset ?? getUserTimezoneOffset();
+  // Anchor every increment INSIDE the tracking day (midday ts): with the Fajr
+  // boundary, a 1 AM tap belongs to the CLOSING day's bucket, and Date.now()
+  // would land it in the next civil day.
+  const anchorTs = placeNoonTs(day);
+  const flushedAt = Date.now();
+  const payload = entries.map(([zikrType, amount]) => {
+    const span = spanSnap[zikrType];
+    return {
+      zikrType,
+      amount,
+      ts: anchorTs,
+      // Real wall-clock moment of the LAST tap (for time-of-day/session
+      // analytics): `ts` above is anchored to the day's midday and can't tell us
+      // when during the day this actually happened. Not the flush time, since a
+      // retry after being offline, or a debounced flush after a long run of
+      // taps, would misplace it.
+      realTs: Math.min(span?.last ?? flushedAt, flushedAt),
+      startTs: span?.first,
+      untimedAmount: untimedSnap[zikrType] ?? 0,
+      timezoneOffset: resolvedOffset,
+    };
+  });
+  const batch: ZikrInflight = {
+    opId: newOpId(),
+    body: JSON.stringify({ increments: payload, timezoneOffset: resolvedOffset, today: day }),
+  };
+  // Move the batch out of `pending` (no clamping: pending can be negative, i.e.
+  // queued decrements). Taps from here on start a new batch; a day rollover
+  // cannot touch this one.
+  useZikrStore.setState((s) => {
+    const newPending = { ...s.pending };
+    const newUntimed = { ...s.untimed };
+    const newSpan = { ...s.tapSpan };
+    for (const [type, amount] of entries) {
+      newPending[type] = (newPending[type] ?? 0) - amount;
+      newUntimed[type] = (newUntimed[type] ?? 0) - (untimedSnap[type] ?? 0);
+      // Keep the span only if more taps arrived after the snapshot; those
+      // start where the batched run ended.
+      const batchedLast = spanSnap[type]?.last;
+      const cur = newSpan[type];
+      if (cur && batchedLast !== undefined && cur.last > batchedLast) {
+        newSpan[type] = { first: cur.last, last: cur.last };
+      } else {
+        delete newSpan[type];
+      }
+    }
+    for (const type of Object.keys(newPending)) {
+      if (!newPending[type]) delete newPending[type];
+    }
+    for (const type of Object.keys(newSpan)) {
+      if (!newPending[type]) delete newSpan[type];
+    }
+    return { pending: newPending, untimed: newUntimed, tapSpan: newSpan, inflight: batch };
+  });
+  // Write the new batch (with its op id) to localStorage NOW, before the request
+  // leaves. The normal save is debounced 400 ms, and on tab close the old state
+  // (taps still in `pending`) was forced out first. If the page then died after
+  // the request was delivered, the next load found the taps in `pending` with no
+  // op id and sent them again under a new one, so the server counted them twice
+  // (audit P1-3). With the batch saved here, a reload resends it under the SAME
+  // op id and the server recognises the repeat.
+  flushZikrLocalPersistence();
+  return batch;
+}
+
+/** Put a refused batch back into `pending`, added to whatever was tapped since. */
+function restoreBatchToPending(batch: ZikrInflight): void {
+  const incs = readBatch(batch) ?? [];
+  useZikrStore.setState((s) => {
+    const pending = { ...s.pending };
+    const untimed = { ...s.untimed };
+    const tapSpan = { ...s.tapSpan };
+    for (const inc of incs) {
+      pending[inc.zikrType] = (pending[inc.zikrType] ?? 0) + inc.amount;
+      if (inc.untimedAmount) {
+        untimed[inc.zikrType] = (untimed[inc.zikrType] ?? 0) + inc.untimedAmount;
+      }
+      if (inc.realTs !== undefined) {
+        const first = inc.startTs ?? inc.realTs;
+        const cur = tapSpan[inc.zikrType];
+        tapSpan[inc.zikrType] = {
+          first: cur ? Math.min(cur.first, first) : first,
+          last: cur ? Math.max(cur.last, inc.realTs) : inc.realTs,
+        };
+      }
+    }
+    for (const type of Object.keys(pending)) {
+      if (!pending[type]) delete pending[type];
+    }
+    return {
+      pending,
+      untimed,
+      tapSpan,
+      inflight: s.inflight?.opId === batch.opId ? null : s.inflight,
+    };
+  });
+  flushZikrLocalPersistence();
+}
+
+/** A refused batch that cannot be kept: tell the person how much was lost. */
+function notifyBatchDropped(batch: ZikrInflight): void {
+  const n = (readBatch(batch) ?? []).reduce((sum, inc) => sum + Math.abs(inc.amount), 0);
+  toast.error(
+    i18n.t('common.zikrBatchDropped', {
+      n,
+      defaultValue: '{{n}} zikr counts could not be saved. You can add them again with Log counts.',
+    }),
+    { id: 'zikr-batch-dropped', duration: 9000 }
+  );
+}
+
 export const useZikrStore = create<ZikrState>()(
   persist(
     (set, get) => ({
@@ -168,9 +315,21 @@ export const useZikrStore = create<ZikrState>()(
       checkAndResetIfNewDay: () => {
         const today = getTrackingDay();
         const lastReset = get().lastResetDate;
-        if (lastReset !== today) {
-          set({ counts: {}, pending: {}, untimed: {}, tapSpan: {}, lastResetDate: today });
+        if (lastReset === today) return;
+        // Taps not yet sent belong to the day that just closed: send them as
+        // that day instead of throwing them away (audit P1-4). The oldest day
+        // the server takes is yesterday, so a longer gap files under yesterday.
+        let staged = false;
+        if (lastReset && !get().inflight) {
+          const yesterday = addDaysYmd(today, -1);
+          staged = stageBatch(lastReset < yesterday ? yesterday : lastReset) !== null;
         }
+        // Staged: pending already moved into the batch, so only the day's
+        // display counts reset. Not staged because an earlier batch is still
+        // stuck (only one batch can wait): the taps carry into the new day,
+        // one day off rather than lost.
+        set({ counts: {}, lastResetDate: today });
+        if (staged) void get().flush();
       },
 
       setTypes: (types) => set({ types }),
@@ -404,85 +563,13 @@ export const useZikrStore = create<ZikrState>()(
         // same day), so the server can recognise a repeat.
         let batch = get().inflight;
         if (!batch) {
-          const snapshot = { ...get().pending };
-          const untimedSnap = { ...get().untimed };
-          const spanSnap = { ...get().tapSpan };
-          const entries = Object.entries(snapshot).filter(([, a]) => a !== 0);
-          if (!entries.length) return;
-
-          const resolvedOffset = get().timezoneOffset ?? getUserTimezoneOffset();
-          // Anchor every increment INSIDE the current tracking day (midday ts):
-          // with the Fajr boundary, a 1 AM tap belongs to the CLOSING day's
-          // bucket — Date.now() would land it in the next civil day.
-          const anchorTs = getTrackingDayMiddayTs();
-          const flushedAt = Date.now();
-          const payload = entries.map(([zikrType, amount]) => {
-            const span = spanSnap[zikrType];
-            return {
-              zikrType,
-              amount,
-              ts: anchorTs,
-              // Real wall-clock moment of the LAST tap (for time-of-day/session
-              // analytics): `ts` above is anchored to the tracking day's midday
-              // and can't tell us when during the day this actually happened.
-              // Not the flush time, since a retry after being offline, or a
-              // debounced flush after a long run of taps, would misplace it.
-              realTs: Math.min(span?.last ?? flushedAt, flushedAt),
-              startTs: span?.first,
-              untimedAmount: untimedSnap[zikrType] ?? 0,
-              timezoneOffset: resolvedOffset,
-            };
-          });
-          batch = {
-            opId: newOpId(),
-            body: JSON.stringify({
-              increments: payload,
-              timezoneOffset: resolvedOffset,
-              today: getTrackingDay(),
-            }),
-          };
-          // Move the batch out of `pending` (no clamping: pending can be
-          // negative, i.e. queued decrements). Taps from here on start a new
-          // batch; a day rollover that clears `pending` cannot touch this one.
-          const sent = batch;
-          set((s) => {
-            const newPending = { ...s.pending };
-            const newUntimed = { ...s.untimed };
-            const newSpan = { ...s.tapSpan };
-            for (const [type, amount] of entries) {
-              newPending[type] = (newPending[type] ?? 0) - amount;
-              newUntimed[type] = (newUntimed[type] ?? 0) - (untimedSnap[type] ?? 0);
-              // Keep the span only if more taps arrived after the snapshot;
-              // those start where the batched run ended.
-              const batchedLast = spanSnap[type]?.last;
-              const cur = newSpan[type];
-              if (cur && batchedLast !== undefined && cur.last > batchedLast) {
-                newSpan[type] = { first: cur.last, last: cur.last };
-              } else {
-                delete newSpan[type];
-              }
-            }
-            for (const type of Object.keys(newPending)) {
-              if (!newPending[type]) delete newPending[type];
-            }
-            for (const type of Object.keys(newSpan)) {
-              if (!newPending[type]) delete newSpan[type];
-            }
-            return { pending: newPending, untimed: newUntimed, tapSpan: newSpan, inflight: sent };
-          });
-          // Write the new batch (with its op id) to localStorage NOW, before the
-          // request leaves. The normal save is debounced 400 ms, and on tab close
-          // the old state (taps still in `pending`) was forced out first. If the
-          // page then died after the request was delivered, the next load found
-          // the taps in `pending` with no op id and sent them again under a new
-          // one, so the server counted them twice (audit P1-3). With the batch
-          // saved here, a reload resends it under the SAME op id and the server
-          // recognises the repeat.
-          flushZikrLocalPersistence();
+          batch = stageBatch(getTrackingDay());
+          if (!batch) return;
         }
 
         set({ isFlushing: true });
         let delivered = false;
+        let keepIdle = false; // refused for the device date: do not resend until the next tap
         try {
           const res = await fetch(`${API_BASE}/api/zikr/increment/batch`, {
             method: 'POST',
@@ -500,18 +587,28 @@ export const useZikrStore = create<ZikrState>()(
           if (res.ok) {
             delivered = true;
           } else if (res.status === 400) {
-            // The server will never accept this batch; holding it would block
-            // every later count.
-            console.warn('Zikr batch rejected (400) — dropped');
-            // A wrong device date is the one rejection the person can fix:
-            // say so (this path uses fetch, so the axios interceptor never sees it).
+            // The server will never accept this batch as it is; holding it would
+            // block every later count. Say so, never drop it silently (P1-4).
             let refusal: unknown = null;
             try {
               refusal = await res.clone().json();
             } catch {
-              /* not JSON: nothing to tell the person */
+              /* not JSON: treated as any other refusal */
             }
-            if (isDeviceDateError(refusal)) notifyDeviceDateWrong();
+            if (isDeviceDateError(refusal)) {
+              // A wrong device date is the one rejection the person can fix, and
+              // the batch carries that wrong day. Hand the taps back to `pending`
+              // so they are sent as the right day once the clock is set. No
+              // retry timer: the next tap tries again, and the clock may still
+              // be wrong.
+              console.warn('Zikr batch refused: device date is wrong — taps kept');
+              restoreBatchToPending(batch);
+              notifyDeviceDateWrong();
+              keepIdle = true;
+            } else {
+              console.warn('Zikr batch rejected (400) — dropped');
+              notifyBatchDropped(batch);
+            }
             delivered = true;
           } else {
             // 401/409/429/5xx: keep the batch (same op id) and try again.
@@ -528,7 +625,7 @@ export const useZikrStore = create<ZikrState>()(
         if (delivered) {
           set((s) => (s.inflight?.opId === batch.opId ? { inflight: null } : {}));
           // Taps made while this batch was in the air go out next.
-          if (!opts?.keepalive && Object.values(get().pending).some((a) => a !== 0)) {
+          if (!keepIdle && !opts?.keepalive && Object.values(get().pending).some((a) => a !== 0)) {
             void get().flush();
           }
         }

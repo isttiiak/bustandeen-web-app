@@ -61,16 +61,19 @@ describe('zikr flush: wrong device date', () => {
     await useZikrStore.getState().flush();
     expect(toastError).toHaveBeenCalledTimes(1);
     expect(toastError.mock.calls[0]![1]).toMatchObject({ id: 'device-date' });
-    expect(useZikrStore.getState().inflight).toBeNull(); // unchanged: P1-4 owns the drop
+    // The taps are kept (P1-4): back in `pending`, ready for the right day.
+    expect(useZikrStore.getState().inflight).toBeNull();
+    expect(useZikrStore.getState().pending).toEqual({ SubhanAllah: 4 });
   });
 
-  it('stays silent for any other 400', async () => {
+  it('any other 400 gets its own message, not the device-date one', async () => {
     fetchMock.mockImplementationOnce(refused({ ok: false, error: 'Validation failed' }));
     await useZikrStore.getState().flush();
-    expect(toastError).not.toHaveBeenCalled();
+    expect(toastError).toHaveBeenCalledTimes(1);
+    expect(toastError.mock.calls[0]![1]).toMatchObject({ id: 'zikr-batch-dropped' });
   });
 
-  it('stays silent, and still drops, when the 400 body is not JSON', async () => {
+  it('a 400 body that is not JSON is treated as any other refusal, and drops', async () => {
     fetchMock.mockImplementationOnce(() =>
       Promise.resolve({
         ok: false,
@@ -79,7 +82,8 @@ describe('zikr flush: wrong device date', () => {
       })
     );
     await useZikrStore.getState().flush();
-    expect(toastError).not.toHaveBeenCalled();
+    expect(toastError.mock.calls[0]![1]).toMatchObject({ id: 'zikr-batch-dropped' });
     expect(useZikrStore.getState().inflight).toBeNull();
+    expect(useZikrStore.getState().pending).toEqual({});
   });
 });

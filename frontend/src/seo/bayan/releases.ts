@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.8',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Zikr counts are no longer lost at the start of a new day',
+        fixed: [
+          'If the day changed (at Fajr by default) while some of your zikr taps were still waiting to be sent, those taps could disappear. They are now sent as the day they were counted on.',
+          'If your device date was wrong, your taps used to vanish. They are now kept, and you are asked to fix the date. If a count can never be saved, you are now told how many were affected.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'নতুন দিন শুরুর সময় যিকিরের গণনা আর হারাবে না',
+        fixed: [
+          'পাঠানোর অপেক্ষায় থাকা যিকিরের গণনা থাকতে দিন বদলে গেলে (ডিফল্টে ফজরে) সেই গণনা হারিয়ে যেতে পারত। এখন সেগুলো যে দিনে গণনা হয়েছিল সেই দিনেই পাঠানো হয়।',
+          'ডিভাইসের তারিখ ভুল থাকলে আপনার গণনা আগে হারিয়ে যেত। এখন তা রেখে দেওয়া হয় এবং তারিখ ঠিক করতে বলা হয়। কোনো গণনা কখনোই সংরক্ষণ করা না গেলে এখন জানানো হয় কতগুলো গণনা প্রভাবিত হয়েছে।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.7',
     date: '2026-11-17',
     text: {
