@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.14',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Rayhanah can no longer start two cycles at once',
+        fixed: [
+          'If you tapped "My period started" twice quickly, or on two devices at the same moment, Rayhanah could end up with two cycles open at once. Only one can be open now, and you get a clear message if one is already running.',
+          'Restoring a backup that held two open cycles keeps the most recent one.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'রায়হানায় এখন একসঙ্গে দুটি চক্র শুরু হতে পারে না',
+        fixed: [
+          '"আমার মাসিক শুরু হয়েছে" দ্রুত দুইবার চাপলে বা একই সময়ে দুই ডিভাইস থেকে চাপলে রায়হানায় একসঙ্গে দুটি চক্র চালু থাকতে পারত। এখন একটিই চালু থাকতে পারে, আর একটি চলমান থাকলে স্পষ্ট বার্তা দেখানো হয়।',
+          'দুটি চালু চক্র থাকা ব্যাকআপ পুনরুদ্ধার করলে সবচেয়ে সাম্প্রতিকটি রাখা হয়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.13',
     date: '2026-11-17',
     text: {

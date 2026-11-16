@@ -33,6 +33,7 @@ import { BACKUP_V2, importV2, type BackupFileV2 } from './backupV2.service.js';
 import { PRAYER_IDS } from '../models/SalatLog.js';
 import { latestPossibleToday } from '../validation/clientDay.js';
 import { runInTransaction } from '../utils/transaction.js';
+import { keepOneOpenCycle } from '../utils/cycleImport.js';
 
 /**
  * Backup file, version 3 (U6, v5.139.0): ONE file with everything the app
@@ -641,13 +642,10 @@ async function importRayhanah(
       await CycleProfile.updateOne({ userId: uid }, { $set: d }, { upsert: true });
     }
   }
-  let n = await upsertBy(
-    CycleLog,
-    keepDays(list(r.cycles, MAX.small), 'startDate', tally),
-    uid,
-    (d) => ({ startDate: d.startDate }),
-    tally
-  );
+  const oneOpen = keepOneOpenCycle(keepDays(list(r.cycles, MAX.small), 'startDate', tally));
+  tally.skipped += oneOpen.dropped;
+  const cycleRows = oneOpen.kept;
+  let n = await upsertBy(CycleLog, cycleRows, uid, (d) => ({ startDate: d.startDate }), tally);
   const days = keepDays(list(r.days, MAX.small), 'date', tally).map((d) => ({
     date: d.date,
     enc: isObj(d.note) ? encryptJson(d.note) : null,
