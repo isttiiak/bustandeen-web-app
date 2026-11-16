@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.5 - Read-only count of accounts pushed into the future (audit P0-3 repair, step 1) - 2026-11-16
+
+### Added
+
+- **`npm run audit:future-accrual`** (backend): a READ-ONLY report of what the unbounded client "today" left behind before v5.190.1. It counts accounts whose `SalatDebt.lastAccrualDate` is after the server's UTC date (with the furthest date and how many days ahead each is), the impossible rows the missed-prayer sweep wrote for those days (debt events and their `delta` sum, kaza units, salat logs), and accounts that have such rows but a normal cursor, which a repair keyed on the cursor alone would miss. `-- --list` also prints the affected uids (uids only).
+- It uses only counts, aggregates and finds, so it writes nothing, and it prints the cluster host and database it will read (never the credentials) before reading. `backend/.env` points at the live database: run it there only with the owner's yes. The repair itself is not written yet; it will be designed from this count, dry-run first.
+- Tests: `futureAccrual.e2e.test.js` (cursor boundary, real days near the boundary are not counted, rows without a future cursor, uid listing, nothing written).
+
+### Not changed
+
+- No app behaviour changes, no stored data is touched and nothing is migrated.
+
 ## v5.190.4 - A wrong device date now tells you so (audit P0-3, app side) - 2026-11-16
 
 ### Fixed
