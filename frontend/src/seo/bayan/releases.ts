@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.5',
+    date: '2026-11-16',
+    text: {
+      en: {
+        title: 'Behind-the-scenes check for your records',
+        fixed: [
+          'We added a private check that helps us find any prayer records that an earlier wrong device date may have affected, so we can look after them properly.',
+          'Nothing you see in the app changes, and nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'আপনার হিসাবের জন্য পর্দার আড়ালে একটি যাচাই',
+        fixed: [
+          'আগে ডিভাইসের তারিখ ভুল থাকার কারণে যে নামাজের হিসাবগুলো প্রভাবিত হয়ে থাকতে পারে, সেগুলো খুঁজে বের করার জন্য আমরা একটি ব্যক্তিগত যাচাই যোগ করেছি, যাতে সেগুলোর যত্ন নেওয়া যায়।',
+          'অ্যাপে আপনি যা দেখেন তাতে কোনো পরিবর্তন নেই, এবং আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.4',
     date: '2026-11-16',
     text: {
