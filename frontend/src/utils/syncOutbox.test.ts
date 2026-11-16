@@ -16,6 +16,12 @@ vi.hoisted(() => {
   });
 });
 
+const toastError = vi.hoisted(() => vi.fn());
+const toastDismiss = vi.hoisted(() => vi.fn());
+vi.mock('react-hot-toast', () => ({
+  default: { error: toastError, dismiss: toastDismiss, success: vi.fn() },
+}));
+
 const request = vi.fn();
 vi.mock('../lib/api.js', () => ({ default: { request: (...a: unknown[]) => request(...a) } }));
 
@@ -32,11 +38,11 @@ const {
 
 const cfg = { headers: new AxiosHeaders() } as InternalAxiosRequestConfig;
 const networkError = () => new AxiosError('Network Error', AxiosError.ERR_NETWORK, cfg);
-const httpError = (status: number) =>
+const httpError = (status: number, headers: Record<string, string> = {}) =>
   new AxiosError(`HTTP ${status}`, 'ERR_BAD_RESPONSE', cfg, undefined, {
     status,
     statusText: '',
-    headers: {},
+    headers,
     config: cfg,
     data: {},
   });
@@ -48,6 +54,8 @@ beforeEach(() => {
   vi.stubGlobal('localStorage', new MemoryStorage());
   vi.stubGlobal('navigator', { onLine: true });
   request.mockReset();
+  toastError.mockClear();
+  toastDismiss.mockClear();
   signIn('user-a');
 });
 afterEach(() => {
@@ -257,13 +265,16 @@ describe('replaySyncOutbox', () => {
     ]);
   });
 
-  it.each([409, 500, 503])('holds the queue on %i (try again later)', async (status) => {
-    vi.useFakeTimers();
-    enqueueSyncOp(fastLog('2026-03-01', 'completed'));
-    request.mockRejectedValueOnce(httpError(status));
-    await replaySyncOutbox();
-    expect(peekSyncOutbox()).toHaveLength(1);
-  });
+  it.each([401, 403, 408, 409, 425, 429, 500, 503])(
+    'holds the queue on %i (try again later)',
+    async (status) => {
+      vi.useFakeTimers();
+      enqueueSyncOp(fastLog('2026-03-01', 'completed'));
+      request.mockRejectedValueOnce(httpError(status));
+      await replaySyncOutbox();
+      expect(peekSyncOutbox()).toHaveLength(1);
+    }
+  );
 
   it.each([400, 404, 422])(
     'drops an op the server rejects (%i) so it cannot block the rest',
@@ -325,7 +336,7 @@ describe('replaySyncOutbox', () => {
           method: 'put',
           url: '/api/fasting/log',
           body: {},
-          queuedAt: 1,
+          queuedAt: Date.now(),
         },
       ])
     );
@@ -340,6 +351,110 @@ describe('replaySyncOutbox', () => {
     await sendOrQueue(fastLog('2026-03-01', 'completed')).catch(() => {});
     expect(peekSyncOutbox()).toHaveLength(1);
     await vi.advanceTimersByTimeAsync(5_000);
+    expect(peekSyncOutbox()).toEqual([]);
+  });
+});
+
+describe('replaySyncOutbox: retry rules (audit P1-5)', () => {
+  it.each([401, 403, 429])(
+    '%i keeps the op and the ops behind it, and none of them is sent',
+    async (status) => {
+      enqueueSyncOp(fastLog('2026-03-01', 'completed'));
+      enqueueSyncOp(fastLog('2026-03-02', 'completed'));
+      request.mockRejectedValueOnce(httpError(status));
+      expect(await replaySyncOutbox()).toBe(0);
+      expect(request).toHaveBeenCalledTimes(1);
+      expect(peekSyncOutbox().map((o) => (o.body as { date: string }).date)).toEqual([
+        '2026-03-01',
+        '2026-03-02',
+      ]);
+    }
+  );
+
+  it('retries by itself with a growing delay: 30 s, then 60 s, then 2 min', async () => {
+    vi.useFakeTimers();
+    enqueueSyncOp(fastLog('2026-03-01', 'completed'));
+    request.mockRejectedValue(httpError(429));
+    await replaySyncOutbox();
+    expect(request).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(29_000);
+    expect(request).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1_000); // 30 s: second try
+    expect(request).toHaveBeenCalledTimes(2);
+    await vi.advanceTimersByTimeAsync(59_000);
+    expect(request).toHaveBeenCalledTimes(2);
+    await vi.advanceTimersByTimeAsync(1_000); // 60 s later: third try
+    expect(request).toHaveBeenCalledTimes(3);
+    await vi.advanceTimersByTimeAsync(119_000);
+    expect(request).toHaveBeenCalledTimes(3);
+    await vi.advanceTimersByTimeAsync(1_000); // 2 min later: fourth try
+    expect(request).toHaveBeenCalledTimes(4);
+    expect(peekSyncOutbox()[0]!.attempts).toBe(4);
+  });
+
+  it('a 429 that says Retry-After is waited out, capped at 15 minutes', async () => {
+    vi.useFakeTimers();
+    enqueueSyncOp(fastLog('2026-03-01', 'completed'));
+    request
+      .mockRejectedValueOnce(httpError(429, { 'retry-after': '120' }))
+      .mockResolvedValue({ data: {} });
+    await replaySyncOutbox();
+    await vi.advanceTimersByTimeAsync(119_000);
+    expect(request).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1_000);
+    expect(request).toHaveBeenCalledTimes(2);
+    expect(peekSyncOutbox()).toEqual([]);
+  });
+
+  it('delivers once the server recovers, with the same op id as before', async () => {
+    enqueueSyncOp(fastLog('2026-03-01', 'completed'));
+    const id = peekSyncOutbox()[0]!.id;
+    request.mockRejectedValueOnce(httpError(401)).mockResolvedValueOnce({ data: {} });
+    await replaySyncOutbox();
+    expect(await replaySyncOutbox()).toBe(1);
+    expect(request.mock.calls[1]![0]).toMatchObject({ headers: { 'X-Client-Op-Id': id } });
+    expect(peekSyncOutbox()).toEqual([]);
+  });
+
+  it('says so when the queue stays stuck, once it has failed twice, and clears it when it drains', async () => {
+    vi.useFakeTimers();
+    enqueueSyncOp(fastLog('2026-03-01', 'completed'));
+    request.mockRejectedValue(httpError(503));
+    await replaySyncOutbox();
+    expect(toastError).not.toHaveBeenCalled(); // one blip is not news
+    await replaySyncOutbox();
+    expect(toastError).toHaveBeenCalledTimes(1);
+    expect(toastError.mock.calls[0]![1]).toMatchObject({ id: 'outbox-stuck' });
+
+    request.mockReset().mockResolvedValue({ data: {} });
+    await replaySyncOutbox();
+    expect(peekSyncOutbox()).toEqual([]);
+    expect(toastDismiss).toHaveBeenCalledWith('outbox-stuck');
+  });
+
+  it('an op that has waited longer than 14 days is dropped, and listeners are told', async () => {
+    vi.useFakeTimers();
+    enqueueSyncOp(fastLog('2026-03-01', 'completed'));
+    enqueueSyncOp(fastLog('2026-03-02', 'completed'));
+    vi.setSystemTime(Date.now() + 15 * 24 * 3600_000);
+    enqueueSyncOp(fastLog('2026-03-20', 'completed'));
+    request.mockResolvedValue({ data: {} });
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const seen: string[] = [];
+    const off = onSyncRejected((op) => seen.push((op.body as { date: string }).date));
+    await replaySyncOutbox();
+    off();
+    expect(seen).toEqual(['2026-03-01', '2026-03-02']);
+    expect(request).toHaveBeenCalledTimes(1);
+    expect(peekSyncOutbox()).toEqual([]);
+  });
+
+  it('a 400 still drops the op at once so it cannot block the rest', async () => {
+    enqueueSyncOp(fastLog('2026-03-01', 'bad'));
+    enqueueSyncOp(fastLog('2026-03-02', 'completed'));
+    request.mockRejectedValueOnce(httpError(400)).mockResolvedValueOnce({ data: {} });
+    vi.spyOn(console, 'warn').mockImplementation(() => {});
+    await replaySyncOutbox();
     expect(peekSyncOutbox()).toEqual([]);
   });
 });

@@ -15,6 +15,8 @@ interface QueuedPrayerOp {
   queuedAt: number;
   /** uid that made the change; see utils/outboxOwner.ts. */
   owner?: string;
+  /** Replays that failed with a "try again later" answer (P1-5): drives the backoff. */
+  attempts?: number;
 }
 interface QueuedNaflOp {
   id: string;
@@ -22,6 +24,7 @@ interface QueuedNaflOp {
   vars: UpdateNaflVars;
   queuedAt: number;
   owner?: string;
+  attempts?: number;
 }
 export type QueuedSalatOp = QueuedPrayerOp | QueuedNaflOp;
 
@@ -85,6 +88,16 @@ export function getSalatOutboxSize(): number {
 
 export function removeSalatOp(id: string): void {
   writeQueue(readQueue().filter((op) => op.id !== id));
+}
+
+/** Counts one more failed replay of an op; returns the new total. */
+export function bumpSalatOpAttempts(id: string): number {
+  const queue = readQueue();
+  const op = queue.find((q) => q.id === id);
+  if (!op) return 1;
+  op.attempts = (op.attempts ?? 0) + 1;
+  writeQueue(queue);
+  return op.attempts;
 }
 
 // Called on sign-out. Matches how the React Query cache and zikr store are

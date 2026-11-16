@@ -2,6 +2,8 @@ import axios from 'axios';
 import type { QueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 import { currentOutboxOwner, outboxOpOwnership } from './outboxOwner.js';
+import { backoffMs, isRetryableStatus, isTooOld } from './outboxRetry.js';
+import { clearOutboxStuck, notifyOutboxStuck } from './outboxStatus.js';
 
 // Offline outbox for the fasting, Quran and Rayhanah trackers (audit T2.3),
 // the adhkar routine and zikr "Log counts" (U4).
@@ -36,6 +38,8 @@ export interface SyncOp {
   queuedAt: number;
   /** uid that made the change (utils/outboxOwner.ts). */
   owner?: string;
+  /** Replays that failed with a "try again later" answer (P1-5): drives the backoff. */
+  attempts?: number;
 }
 
 export interface NewSyncOp {
@@ -111,6 +115,16 @@ export function peekSyncOutbox(): SyncOp[] {
 
 export function removeSyncOp(id: string): void {
   writeQueue(readQueue().filter((op) => op.id !== id));
+}
+
+/** Counts one more failed replay of an op; returns the new total. */
+function bumpAttempts(id: string): number {
+  const queue = readQueue();
+  const op = queue.find((q) => q.id === id);
+  if (!op) return 1;
+  op.attempts = (op.attempts ?? 0) + 1;
+  writeQueue(queue);
+  return op.attempts;
 }
 
 export function clearSyncOutbox(): void {
@@ -195,10 +209,12 @@ export function onSyncRejected(fn: RejectListener): () => void {
 }
 
 /**
- * Replays the queue in order. Stops at the first op the network still
- * cannot deliver (or one the server reports in progress) and leaves it and
- * everything after it for the next attempt. An op the server REJECTS (4xx)
- * is dropped: replaying it can never succeed, and it must not block the rest.
+ * Replays the queue in order. Stops at the first op the network cannot
+ * deliver, or that the server answers with "not now" (401, 403, 408, 409, 425,
+ * 429, 5xx: see outboxRetry.ts), and leaves it and everything after it for the
+ * next attempt, which comes by itself after a growing delay. An op the server
+ * REJECTS for good (other 4xx) is dropped: replaying it can never succeed, and
+ * it must not block the rest. So is one older than 14 days.
  * Returns the number of ops delivered.
  */
 export async function replaySyncOutbox(qc?: QueryClient): Promise<number> {
@@ -215,6 +231,12 @@ export async function replaySyncOutbox(qc?: QueryClient): Promise<number> {
         removeSyncOp(op.id);
         continue;
       }
+      if (isTooOld(op.queuedAt)) {
+        console.warn(`Offline ${op.tracker} change is older than 14 days; dropped`);
+        removeSyncOp(op.id);
+        for (const fn of rejectListeners) fn(op, undefined);
+        continue;
+      }
       try {
         await send(op);
         delivered++;
@@ -223,8 +245,14 @@ export async function replaySyncOutbox(qc?: QueryClient): Promise<number> {
       } catch (err) {
         if (isNetworkError(err)) break;
         const status = axios.isAxiosError(err) ? err.response?.status : undefined;
-        if (status === 409 || (status !== undefined && status >= 500)) {
-          scheduleReplay(30_000);
+        if (isRetryableStatus(status)) {
+          const attempts = bumpAttempts(op.id);
+          const retryAfter = axios.isAxiosError(err)
+            ? (err.response?.headers as Record<string, unknown> | undefined)?.['retry-after']
+            : undefined;
+          scheduleReplay(backoffMs(attempts, retryAfter));
+          // One blip is not news; a second failure in a row is.
+          if (attempts >= 2) notifyOutboxStuck();
           break;
         }
         console.warn(`Offline ${op.tracker} change was rejected (${status}); dropped`);
@@ -233,6 +261,7 @@ export async function replaySyncOutbox(qc?: QueryClient): Promise<number> {
         for (const fn of rejectListeners) fn(op, status);
       }
     }
+    if (delivered > 0 && readQueue().length === 0) clearOutboxStuck();
   } finally {
     replaying = false;
   }
