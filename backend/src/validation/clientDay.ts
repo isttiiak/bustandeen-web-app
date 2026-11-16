@@ -50,11 +50,19 @@ export function isPlausibleClientToday(day: string, now: number = Date.now()): b
 export const CLIENT_DAY_MESSAGE =
   "This date does not match today's date. Please check the date and time on your device.";
 
+/**
+ * Machine-readable marker on that refusal. `validate()` copies it to the top of
+ * the 400 body (`code`), so the app can tell the user to fix the device clock
+ * without matching English text. Do not rename it: the app reads it.
+ */
+export const CLIENT_DAY_CODE = 'client_day_mismatch';
+const clientDayIssue = { message: CLIENT_DAY_MESSAGE, params: { code: CLIENT_DAY_CODE } };
+
 /** Required client "today" (YYYY-MM-DD), bounded to the server clock. */
 export const clientToday = z
   .string()
   .regex(DAY_RE)
-  .refine((d) => isPlausibleClientToday(d), { message: CLIENT_DAY_MESSAGE });
+  .refine((d) => isPlausibleClientToday(d), clientDayIssue);
 
 /**
  * For writes the app may queue offline and replay days later (zikr batches,
@@ -65,4 +73,4 @@ export const clientToday = z
 export const replayedClientToday = z
   .string()
   .regex(DAY_RE)
-  .refine((d) => !enforceBound || d <= latestPossibleToday(), { message: CLIENT_DAY_MESSAGE });
+  .refine((d) => !enforceBound || d <= latestPossibleToday(), clientDayIssue);

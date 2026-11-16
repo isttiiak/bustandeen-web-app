@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.4',
+    date: '2026-11-16',
+    text: {
+      en: {
+        title: 'A clear message when your device date is wrong',
+        fixed: [
+          'If the date on your device is wrong, Bustandeen now tells you, instead of leaving screens empty or a count unsaved. Set the date and time on your device to automatic and it works as before.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'ডিভাইসের তারিখ ভুল থাকলে এখন পরিষ্কার বার্তা',
+        fixed: [
+          'আপনার ডিভাইসের তারিখ ভুল থাকলে বুস্তানদীন এখন তা জানিয়ে দেয়। আগে পর্দা খালি থাকত বা গণনা সংরক্ষণ হতো না, কিছুই বলা হতো না। ডিভাইসের তারিখ ও সময় স্বয়ংক্রিয় করে নিলে সব আগের মতোই চলবে।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.3',
     date: '2026-11-16',
     text: {
