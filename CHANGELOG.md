@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.15 - Friend, rename and sadaqah totals change together or not at all (audit P1-9) - 2026-11-17
+
+### Fixed
+
+- **Accepting a friend is one transaction with a real cap.** `acceptRequest` read both friend lists, checked `MAX_FRIENDS`, then ran two separate writes. Two people accepted at once both passed the check and took the 50th place (a probe: two accepts at once left both `ok`), and a failure between the two writes left one side a friend and the other not. Both sides now change in one transaction, and each side takes the new friend only while `friends.49` does not exist yet, so the limit holds under overlap; the person who did not fit stays in `pendingIncoming`, not lost.
+- **Renaming a zikr is one transaction.** The name, the lifetime total and every daily bucket moved with separate writes (user save, then `bulkWrite`, then `deleteMany`); a failure part-way left the name changed and the history under the old one. They now move together, and an increment racing the rename conflicts with it and reruns instead of landing on the old name.
+- **Sadaqah decisions and the public total change together.** `verifyDonation`, `reopenDonation` and `deleteDonation` claimed the donation and then adjusted `DonationStats` in a second write; a failure between them left a verified donation out of the public total (or a deleted one still in it). Claim and total are now one transaction (the email still goes after commit). `publishQuarterly`, `unpublishQuarterly` and `deleteQuarterly` read the shared stats document, changed it and saved it: in a transaction, two at once conflict and the later one reruns, so neither quarter overwrites the other.
+- **New read-only check, `npm run audit:donation-stats`:** compares the cached public totals with the verified donations behind them and prints the difference (amounts and counts only, no donor data). Not run on production. This stands in for the nightly reconcile job the tracker mentioned: it reports, a person decides.
+- Tests: `countersAtomic.e2e.test.js`, 8 cases; 4 failed on the old code (friend cap, friend half-write, rename half-write, verify half-write). The two quarter publishes at once and the Quran case passed before and stay as guards.
+
+### Reported finding that no longer holds
+
+- **Quran profile (`addAyatReading`)** was listed as a read-change-save race. Since PR 323 (P0-5) the read-ayat route runs in a transaction, so two overlapping requests conflict on the profile and the later one reruns. Eight read-ayat requests at once now give `currentAyah` 80, `surahCounts` 8 and 80 ayat in the day, which a test pins. No change made.
+
+### Not changed
+
+- Stored data. No nightly job was added; the check above is a script.
+
 ## v5.190.14 - Only one cycle can be open at a time, even when two requests arrive together (audit P1-8) - 2026-11-17
 
 ### Fixed

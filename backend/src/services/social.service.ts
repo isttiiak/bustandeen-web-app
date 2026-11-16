@@ -1,3 +1,4 @@
+import { runInTransaction } from '../utils/transaction.js';
 import { isAvatarId } from '../utils/avatars.js';
 import SocialProfile, {
   effectiveVisibility,
@@ -189,32 +190,40 @@ export async function acceptRequest(userId: string, requesterUid: string): Promi
   if (!mine.pendingIncoming.includes(requesterUid)) {
     return { ok: false, message: 'No pending request from this user.' };
   }
-  const requester = await SocialProfile.findOne({ userId: requesterUid });
-  if (
-    mine.friends.length >= MAX_FRIENDS ||
-    (requester && requester.friends.length >= MAX_FRIENDS)
-  ) {
-    return { ok: false, message: 'Friend limit reached.' };
-  }
   const now = new Date();
-  await Promise.all([
-    SocialProfile.updateOne(
-      { userId },
-      {
-        $pull: { pendingIncoming: requesterUid },
-        $addToSet: { friends: requesterUid },
-        $set: { [`friendSince.${requesterUid}`]: now },
-      }
-    ),
-    SocialProfile.updateOne(
-      { userId: requesterUid },
-      {
-        $pull: { pendingOutgoing: userId },
-        $addToSet: { friends: userId },
-        $set: { [`friendSince.${userId}`]: now },
-      }
-    ),
-  ]);
+  // Both sides change together, and each side takes the new friend only while
+  // it still has a free place (`friends.<MAX-1>` does not exist yet). The check
+  // used to be a read, then two separate writes, so two people accepted at once
+  // could both take the last place, and a failure between the writes left one
+  // side a friend and the other not (audit P1-9).
+  const freePlace = { [`friends.${MAX_FRIENDS - 1}`]: { $exists: false } };
+  try {
+    await runInTransaction(async () => {
+      const mineRes = await SocialProfile.updateOne(
+        { userId, pendingIncoming: requesterUid, ...freePlace },
+        {
+          $pull: { pendingIncoming: requesterUid },
+          $addToSet: { friends: requesterUid },
+          $set: { [`friendSince.${requesterUid}`]: now },
+        }
+      );
+      if (mineRes.modifiedCount !== 1) throw new FriendLimitError();
+      const theirs = await SocialProfile.findOne({ userId: requesterUid }).select('_id');
+      if (!theirs) return; // the requester's profile is gone: only my side changes, as before
+      const theirRes = await SocialProfile.updateOne(
+        { userId: requesterUid, ...freePlace },
+        {
+          $pull: { pendingOutgoing: userId },
+          $addToSet: { friends: userId },
+          $set: { [`friendSince.${userId}`]: now },
+        }
+      );
+      if (theirRes.modifiedCount !== 1) throw new FriendLimitError();
+    });
+  } catch (err) {
+    if (err instanceof FriendLimitError) return { ok: false, message: 'Friend limit reached.' };
+    throw err;
+  }
   const friendUser = await User.findOne({ uid: requesterUid }).select('displayName');
   return {
     ok: true,
@@ -223,6 +232,9 @@ export async function acceptRequest(userId: string, requesterUid: string): Promi
     friendName: friendUser?.displayName ?? 'your friend',
   };
 }
+
+/** Thrown inside the accept transaction to roll it back when a side is full. */
+class FriendLimitError extends Error {}
 
 export async function rejectRequest(
   userId: string,

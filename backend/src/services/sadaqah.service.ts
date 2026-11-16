@@ -1,3 +1,4 @@
+import { runInTransactionRetryingDuplicates as inTx } from '../utils/transaction.js';
 import mongoose from 'mongoose';
 import Donation, { IDonation } from '../models/Donation.js';
 import DonationStats, { IDonationStats, IQuarterlyEntry } from '../models/DonationStats.js';
@@ -17,7 +18,7 @@ import {
   verifyReceiptSignature,
 } from './sadaqahReceipt.service.js';
 
-const STATS_ID = 'current';
+export const STATS_ID = 'current';
 
 /** Deterministic, not nodemailer-generated — known before the first email is
  *  even sent, so verify/reject can always thread against it even if the
@@ -240,20 +241,24 @@ export const verifyDonation = async (
   emailBody: string,
   sender: EmailSender = 'sadaqah'
 ): Promise<DonationActionResult> => {
-  const donation = await claimPendingOrThrow(id, {
-    status: 'verified',
-    verifiedAt: new Date(),
-    verifiedBy: adminEmail,
+  // The decision and the public total land together (audit P1-9): a failure
+  // between them used to leave a verified donation missing from the total.
+  const donation = await inTx(async () => {
+    const claimed = await claimPendingOrThrow(id, {
+      status: 'verified',
+      verifiedAt: new Date(),
+      verifiedBy: adminEmail,
+    });
+    await getOrCreateStats();
+    await DonationStats.updateOne(
+      { _id: STATS_ID },
+      {
+        $inc: { totalVerifiedAmount: claimed.amount, totalVerifiedCount: 1 },
+        $set: { lastUpdated: new Date() },
+      }
+    );
+    return claimed;
   });
-
-  await getOrCreateStats();
-  await DonationStats.updateOne(
-    { _id: STATS_ID },
-    {
-      $inc: { totalVerifiedAmount: donation.amount, totalVerifiedCount: 1 },
-      $set: { lastUpdated: new Date() },
-    }
-  );
 
   // Best-effort: verification is already recorded, so a PDF failure (missing
   // signing key, font problem) must not block the confirmation email.
@@ -377,28 +382,31 @@ export const rejectDonation = async (
 export const reopenDonation = async (
   id: string
 ): Promise<{ donation: IDonation; from: 'verified' | 'rejected' }> => {
-  const before = await Donation.findOneAndUpdate(
-    { _id: id, status: { $in: ['verified', 'rejected'] } },
-    { $set: { status: 'pending', verifiedAt: null, verifiedBy: null, rejectionReason: null } },
-    { returnDocument: 'before' }
-  );
-  if (!before) {
-    if (!(await Donation.exists({ _id: id }))) throw httpError(404, 'Donation not found');
-    throw httpError(409, 'Donation is already pending');
-  }
-  const from = before.status as 'verified' | 'rejected';
-  if (from === 'verified') {
-    await getOrCreateStats();
-    await DonationStats.updateOne(
-      { _id: STATS_ID },
-      {
-        $inc: { totalVerifiedAmount: -before.amount, totalVerifiedCount: -1 },
-        $set: { lastUpdated: new Date() },
-      }
+  // Status and public total change together (audit P1-9).
+  return inTx(async () => {
+    const before = await Donation.findOneAndUpdate(
+      { _id: id, status: { $in: ['verified', 'rejected'] } },
+      { $set: { status: 'pending', verifiedAt: null, verifiedBy: null, rejectionReason: null } },
+      { returnDocument: 'before' }
     );
-  }
-  const donation = (await Donation.findById(id))!;
-  return { donation, from };
+    if (!before) {
+      if (!(await Donation.exists({ _id: id }))) throw httpError(404, 'Donation not found');
+      throw httpError(409, 'Donation is already pending');
+    }
+    const from = before.status as 'verified' | 'rejected';
+    if (from === 'verified') {
+      await getOrCreateStats();
+      await DonationStats.updateOne(
+        { _id: STATS_ID },
+        {
+          $inc: { totalVerifiedAmount: -before.amount, totalVerifiedCount: -1 },
+          $set: { lastUpdated: new Date() },
+        }
+      );
+    }
+    const donation = (await Donation.findById(id))!;
+    return { donation, from };
+  });
 };
 
 /**
@@ -409,21 +417,24 @@ export const reopenDonation = async (
  * overcounting a donation that no longer exists.
  */
 export const deleteDonation = async (id: string): Promise<void> => {
-  // Delete first: only the request that actually removed the document
-  // reverses the stats, so two deletes can't subtract it twice.
-  const donation = await Donation.findOneAndDelete({ _id: id });
-  if (!donation) throw httpError(404, 'Donation not found');
+  // Delete and reverse the stats in one transaction (audit P1-9). Only the
+  // request that actually removed the document reverses them, so two deletes
+  // can't subtract it twice, and a failure leaves the donation in place.
+  await inTx(async () => {
+    const donation = await Donation.findOneAndDelete({ _id: id });
+    if (!donation) throw httpError(404, 'Donation not found');
 
-  if (donation.status === 'verified') {
-    await getOrCreateStats();
-    await DonationStats.updateOne(
-      { _id: STATS_ID },
-      {
-        $inc: { totalVerifiedAmount: -donation.amount, totalVerifiedCount: -1 },
-        $set: { lastUpdated: new Date() },
-      }
-    );
-  }
+    if (donation.status === 'verified') {
+      await getOrCreateStats();
+      await DonationStats.updateOne(
+        { _id: STATS_ID },
+        {
+          $inc: { totalVerifiedAmount: -donation.amount, totalVerifiedCount: -1 },
+          $set: { lastUpdated: new Date() },
+        }
+      );
+    }
+  });
 };
 
 /** Servant-only, admin view — every quarter including unpublished drafts,
@@ -484,46 +495,53 @@ export const publishQuarterly = async (
   notes: string | undefined
 ): Promise<IDonationStats> => {
   const { received, spent } = await calculateQuarterlyPreview(quarter);
-  const stats = await getOrCreateStats();
-  const existing = stats.quarterlyBreakdown.find((q) => q.quarter === quarter);
-  if (existing) {
-    existing.received = received;
-    existing.spent = spent;
-    existing.published = true;
-    if (notes !== undefined) existing.notes = notes;
-  } else {
-    stats.quarterlyBreakdown.push({
-      quarter,
-      received,
-      spent,
-      notes: notes ?? '',
-      published: true,
-    });
-  }
-  await stats.save();
-  return stats;
+  // Read, change, save of one document that every quarter shares: in a
+  // transaction, two publishes at once conflict and the later one reruns, so
+  // neither quarter overwrites the other (audit P1-9).
+  return inTx(async () => {
+    const stats = await getOrCreateStats();
+    const existing = stats.quarterlyBreakdown.find((q) => q.quarter === quarter);
+    if (existing) {
+      existing.received = received;
+      existing.spent = spent;
+      existing.published = true;
+      if (notes !== undefined) existing.notes = notes;
+    } else {
+      stats.quarterlyBreakdown.push({
+        quarter,
+        received,
+        spent,
+        notes: notes ?? '',
+        published: true,
+      });
+    }
+    await stats.save();
+    return stats;
+  });
 };
 
 /** Reversible — hides a quarter from the public page without discarding its
  *  stored notes/numbers, unlike deleteQuarterly below. Publishing again
  *  (which recomputes fresh) is how you bring it back. */
-export const unpublishQuarterly = async (quarter: string): Promise<IDonationStats> => {
-  const stats = await getOrCreateStats();
-  const existing = stats.quarterlyBreakdown.find((q) => q.quarter === quarter);
-  if (!existing) throw httpError(404, 'Quarter not found');
-  existing.published = false;
-  await stats.save();
-  return stats;
-};
+export const unpublishQuarterly = async (quarter: string): Promise<IDonationStats> =>
+  inTx(async () => {
+    const stats = await getOrCreateStats();
+    const existing = stats.quarterlyBreakdown.find((q) => q.quarter === quarter);
+    if (!existing) throw httpError(404, 'Quarter not found');
+    existing.published = false;
+    await stats.save();
+    return stats;
+  });
 
-export const deleteQuarterly = async (quarter: string): Promise<IDonationStats> => {
-  const stats = await getOrCreateStats();
-  stats.quarterlyBreakdown = stats.quarterlyBreakdown.filter(
-    (q) => q.quarter !== quarter
-  ) as typeof stats.quarterlyBreakdown;
-  await stats.save();
-  return stats;
-};
+export const deleteQuarterly = async (quarter: string): Promise<IDonationStats> =>
+  inTx(async () => {
+    const stats = await getOrCreateStats();
+    stats.quarterlyBreakdown = stats.quarterlyBreakdown.filter(
+      (q) => q.quarter !== quarter
+    ) as typeof stats.quarterlyBreakdown;
+    await stats.save();
+    return stats;
+  });
 
 /**
  * Internal cost ledger — admin-only, never surfaced publicly. Separate from
