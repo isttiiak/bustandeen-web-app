@@ -36,6 +36,9 @@ export default function SalatWeekStrip({
             const isFutureDay = d.date > todayStr();
             const hasData = !isFutureDay;
             const dot = hasData ? dayDotClass(d.completed) : 'bg-white/15';
+            // The visible text of the button (weekday letter + date number); the
+            // accessible name must contain it, so voice control can say it.
+            const shortLabel = `${formatLocaleDate(new Date(d.date + 'T12:00:00'), { weekday: 'narrow' })} ${formatLocaleNumber(parseInt(d.date.slice(8), 10))}`;
             return (
               <motion.button
                 key={d.date}
@@ -45,7 +48,8 @@ export default function SalatWeekStrip({
                   setExpandedPrayer(null);
                   setCalendarOpen(false);
                 }}
-                aria-label={t('salatTracker.selectDay', 'Select {{day}}', {
+                aria-label={t('salatTracker.selectDay', 'Select {{short}} ({{day}})', {
+                  short: shortLabel,
                   day: friendlyDate(d.date, t),
                 })}
                 aria-pressed={isSel}
@@ -60,6 +64,8 @@ export default function SalatWeekStrip({
                 >
                   {formatLocaleDate(new Date(d.date + 'T12:00:00'), { weekday: 'narrow' })}
                 </span>
+                {/* Whitespace between the two flex items is not drawn, but it keeps
+                    the visible text "T 10" (not "T10") for the accessible name. */}{' '}
                 <span className={`text-xs font-bold ${isSel ? 'text-white' : 'text-white/70'}`}>
                   {formatLocaleNumber(parseInt(d.date.slice(8), 10))}
                 </span>

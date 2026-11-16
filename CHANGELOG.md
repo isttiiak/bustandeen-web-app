@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.6 - Buttons now say what they show (WCAG 2.5.3 Label in Name) - 2026-11-16
+
+### Fixed
+
+- **A button's accessible name now contains its visible text.** People who use voice control say the words they see ("click 10"), and screen-reader users hear a name that matches the screen. These controls had an `aria-label` that did not contain what is drawn on them, which axe 4.14 flags as `label-content-name-mismatch` (it failed Dependabot PR 320):
+  - Home and Naseeh zikr chips: "Count Astaghfirullah, target 100" is now "Astaghfirullah 100 target, tap to count"; the add action reads "Astaghfirullah +100, tap to add".
+  - Salat and Fasting week strips: "Select Tue, Nov 10" is now "Select T 10 (Tue, Nov 10)", with the weekday letter and number the button shows. A real space now sits between the two (invisible, axe joins child elements without one and read "T10").
+  - Journey overview cards: the link no longer replaces its text with `aria-label="Open Salat analytics"`; a screen-reader-only lead-in "Open Salat analytics." comes first, then the card's own text.
+  - Settings reset and delete rows: the name starts with the visible word, "Delete: All salat logs" (and "Reset", "Remove").
+- English and Bangla strings changed for `home.quick.zikrAdd`, `home.quick.zikrOpen`, `salatTracker.selectDay` and `fasting.selectDay`.
+
+### Tests
+
+- The e2e axe helper now enables `label-content-name-mismatch` explicitly. axe 4.13 ships it switched off, so without this nothing on `main` would catch a regression until the axe bump lands. Checked that the rule fires on the old label shape and passes the new one.
+- The two e2e locators for the zikr chips use the new names. All 162 e2e tests pass, also with `@axe-core/playwright` 4.14.0 installed locally (not saved), which is what Dependabot PR 320 brings.
+
+### Not changed
+
+- No stored data is touched and nothing is migrated.
 ## v5.190.5 - Read-only count of accounts pushed into the future (audit P0-3 repair, step 1) - 2026-11-16
 
 ### Added

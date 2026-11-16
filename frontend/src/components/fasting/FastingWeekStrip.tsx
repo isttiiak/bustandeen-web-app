@@ -37,12 +37,21 @@ export default function FastingWeekStrip({
                 : dayLog?.status === 'broken'
                   ? STATUS_TONE.broken.dot
                   : 'bg-track';
+          // Visible text of the button; the accessible name must contain it.
+          const weekdayText =
+            d === tomorrow
+              ? '+1'
+              : formatLocaleDate(new Date(d + 'T12:00:00'), { weekday: 'narrow' });
+          const shortLabel = `${weekdayText} ${parseInt(d.slice(8), 10)}`;
           return (
             <motion.button
               key={d}
               whileTap={{ scale: 0.94 }}
               onClick={() => setSelectedDate(d)}
-              aria-label={t('fasting.selectDay', 'Select {{day}}', { day: friendlyDate(d, t) })}
+              aria-label={t('fasting.selectDay', 'Select {{short}} ({{day}})', {
+                short: shortLabel,
+                day: friendlyDate(d, t),
+              })}
               aria-pressed={isSel}
               className={`hit-44 flex-1 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors ${
                 isSel
@@ -53,10 +62,8 @@ export default function FastingWeekStrip({
               <span
                 className={`text-[10px] uppercase font-bold ${isTod ? 'text-brand-emerald' : 'text-white/60'}`}
               >
-                {d === tomorrow
-                  ? '+1'
-                  : formatLocaleDate(new Date(d + 'T12:00:00'), { weekday: 'narrow' })}
-              </span>
+                {weekdayText}
+              </span>{' '}
               <span
                 className={`text-sm font-bold tabular-nums ${isSel ? 'text-white' : 'text-white/80'}`}
               >

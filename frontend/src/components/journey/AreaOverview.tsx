@@ -68,12 +68,12 @@ function Shell({
   );
   if (!link) return <section data-testid={`overview-${area}`}>{body}</section>;
   return (
-    <Link
-      to={link}
-      className="relative block group"
-      data-testid={`overview-${area}`}
-      aria-label={t('journey.openAnalytics', { area: t(`freshStart.area.${area}`) })}
-    >
+    <Link to={link} className="relative block group" data-testid={`overview-${area}`}>
+      {/* Not an aria-label: that would replace the card's visible text in the
+          link's name. This keeps the visible text and adds the purpose first. */}
+      <span className="sr-only">
+        {t('journey.openAnalytics', { area: t(`freshStart.area.${area}`) })}.{' '}
+      </span>
       {body}
       <ChevronRightIcon
         className="absolute right-3 bottom-3 w-4 h-4 text-white/50 group-hover:text-white"
