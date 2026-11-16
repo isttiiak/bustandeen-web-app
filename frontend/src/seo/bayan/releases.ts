@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.7',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Zikr counts are safer when you close the app',
+        fixed: [
+          'If you closed the tab or app right after counting, the same zikr could be counted twice the next time you opened it. Your taps are now saved to your device before they are sent, so they are counted once.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'অ্যাপ বন্ধ করলেও যিকিরের গণনা এখন আরও নিরাপদ',
+        fixed: [
+          'গণনার ঠিক পরে ট্যাব বা অ্যাপ বন্ধ করলে পরের বার খুললে একই যিকির দুইবার গণনা হতে পারত। এখন আপনার গণনা পাঠানোর আগেই ডিভাইসে সংরক্ষণ করা হয়, তাই তা একবারই গণনা হবে।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.6',
     date: '2026-11-16',
     text: {
