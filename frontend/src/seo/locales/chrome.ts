@@ -644,8 +644,7 @@ const bn: ChromeStrings = {
     liabilitiesLabel: 'আপনার দেনা (এখনই পরিশোধযোগ্য)',
     totalLabel: 'মোট সম্পদ',
     netZakatableLabel: 'নিট যাকাতযোগ্য সম্পদ',
-    belowNisabMsg:
-      'আপনার নিট সম্পদ নিসাবের নিচে - এ বছর যাকাত ফরজ নয়, তবে বৃদ্ধি পেলে খেয়াল রাখুন।',
+    belowNisabMsg: 'আপনার নিট সম্পদ নিসাবের নিচে - এ বছর যাকাত ফরজ নয়, তবে বৃদ্ধি পেলে খেয়াল রাখুন।',
     aboveNisabMsg: (amount) => `আপনার নিট সম্পদ নিসাবের বেশি। আনুমানিক যাকাত (২.৫%): ${amount}`,
     zakatDueLabel: 'প্রদেয় যাকাত (২.৫%)',
     rateNote:

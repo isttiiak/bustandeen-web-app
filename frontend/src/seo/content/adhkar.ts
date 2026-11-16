@@ -36,8 +36,7 @@ export interface AdhkarItem {
 const AYAT_AL_KURSI: AdhkarItem = {
   id: 'ayat-al-kursi',
   title: { en: 'Ayat al-Kursi', bn: 'আয়াতুল কুরসী', ar: 'آية الكرسي' },
-  arabic:
-    'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ',
+  arabic: 'اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ',
   quran: [{ surah: 2, from: 255, to: 255 }],
   transliteration: "Allahu la ilaha illa Huwal-Hayyul-Qayyum, la ta'khudhuhu sinatun wa la nawm...",
   translation: {
@@ -52,8 +51,7 @@ const AYAT_AL_KURSI: AdhkarItem = {
 const THREE_QULS: AdhkarItem = {
   id: 'three-quls',
   title: { en: 'The Three Quls', bn: 'তিন কুল', ar: 'المعوذات الثلاث' },
-  arabic:
-    'قُلْ هُوَ اللَّهُ أَحَدٌ ۝ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ قُلْ أَعُوذُ بِرَبِّ النَّاسِ',
+  arabic: 'قُلْ هُوَ اللَّهُ أَحَدٌ ۝ قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ ۝ قُلْ أَعُوذُ بِرَبِّ النَّاسِ',
   quran: [{ surah: 112 }, { surah: 113 }, { surah: 114 }],
   transliteration: 'Surah Al-Ikhlas, Al-Falaq, An-Nas, recited three times each',
   translation: {
@@ -96,8 +94,7 @@ const BISMILLAH: AdhkarItem = {
     bn: 'বিসমিল্লাহিল্লাযী লা ইয়াদুররু',
     ar: 'بسم الله الذي لا يضر مع اسمه شيء',
   },
-  arabic:
-    'بِسْمِ اللَّهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَىْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',
+  arabic: 'بِسْمِ اللَّهِ الَّذِي لاَ يَضُرُّ مَعَ اسْمِهِ شَىْءٌ فِي الأَرْضِ وَلاَ فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',
   transliteration:
     "Bismillahil-ladhi la yadurru ma'as-mihi shay'un fil-ardi wa la fis-sama'i, wa Huwas-Sami'ul-'Alim",
   translation: {
@@ -161,8 +158,7 @@ export const MORNING_ADHKAR: AdhkarItem[] = [
       bn: 'আল্লাহুম্মা বিকা আসবাহনা',
       ar: 'اللهم بك أصبحنا',
     },
-    arabic:
-      'اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ',
+    arabic: 'اللَّهُمَّ بِكَ أَصْبَحْنَا وَبِكَ أَمْسَيْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ الْمَصِيرُ',
     transliteration:
       'Allahumma bika asbahna, wa bika amsayna, wa bika nahya, wa bika namutu, wa ilaykal-masir',
     translation: {
@@ -215,8 +211,7 @@ export const EVENING_ADHKAR: AdhkarItem[] = [
       bn: 'আল্লাহুম্মা বিকা আমসাইনা',
       ar: 'اللهم بك أمسينا',
     },
-    arabic:
-      'اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ',
+    arabic: 'اللَّهُمَّ بِكَ أَمْسَيْنَا وَبِكَ أَصْبَحْنَا وَبِكَ نَحْيَا وَبِكَ نَمُوتُ وَإِلَيْكَ النُّشُورُ',
     transliteration:
       'Allahumma bika amsayna, wa bika asbahna, wa bika nahya, wa bika namutu, wa ilaykan-nushur',
     translation: {

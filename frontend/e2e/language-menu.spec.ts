@@ -58,9 +58,7 @@ test('a failed send says so and keeps the form', async ({ page }) => {
   const dialog = page.getByRole('dialog');
   await dialog.getByRole('textbox', { name: 'ভাষা' }).fill('উর্দু');
   await dialog.getByRole('button', { name: 'পাঠান' }).click();
-  await expect(dialog.getByRole('status')).toHaveText(
-    'পাঠানো যায়নি। কিছুক্ষণ পরে আবার চেষ্টা করুন।'
-  );
+  await expect(dialog.getByRole('status')).toHaveText('পাঠানো যায়নি। কিছুক্ষণ পরে আবার চেষ্টা করুন।');
   await expect(dialog.getByRole('textbox', { name: 'ভাষা' })).toBeEnabled();
 });
 

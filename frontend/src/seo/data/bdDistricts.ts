@@ -63,13 +63,7 @@ const ROWS: Record<BdDivisionId, Row[]> = {
   ],
   chattogram: [
     ['bandarban', 'Bandarban', 'বান্দরবান', null, hq(22.19534, 92.21946, 1185270, 54450)],
-    [
-      'brahmanbaria',
-      'Brahmanbaria',
-      'ব্রাহ্মণবাড়িয়া',
-      null,
-      hq(23.97464, 91.11228, 1336142, 264326),
-    ],
+    ['brahmanbaria', 'Brahmanbaria', 'ব্রাহ্মণবাড়িয়া', null, hq(23.97464, 91.11228, 1336142, 264326)],
     ['chandpur', 'Chandpur', 'চাঁদপুর', null, hq(23.22714, 90.65433, 1207337, 203000)],
     ['chattogram', 'Chattogram', 'চট্টগ্রাম', 'chittagong-bangladesh'],
     ['coxs-bazar', "Cox's Bazar", 'কক্সবাজার', 'cox-s-bazar-bangladesh'],

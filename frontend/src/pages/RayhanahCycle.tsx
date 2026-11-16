@@ -178,8 +178,7 @@ const EXCUSED_ADHKAR = [
   },
   {
     label: 'Morning/evening protection',
-    arabic:
-      'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ',
+    arabic: 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ',
     transliteration: 'Bismillāhilladhī lā yaḍurru maʿasmihi shayʾun fil-arḍi wa lā fis-samāʾ…',
     note: 'Say 3× morning and evening',
     ref: { text: 'Abū Dāwūd 5088', url: 'https://sunnah.com/abudawud:5088' },
