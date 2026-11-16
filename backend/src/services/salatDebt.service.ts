@@ -5,6 +5,7 @@ import { PRAYER_IDS, PrayerId } from '../models/SalatLog.js';
 import KazaUnit from '../models/KazaUnit.js';
 import { logKazaReset } from './statsReset.service.js';
 import { getExcusedDaySet, getExcusedIntervals, isDayExcused } from './cycle.service.js';
+import { latestPossibleToday } from '../validation/clientDay.js';
 
 export interface SalatDebtSummary {
   owed: Record<PrayerId, number>;
@@ -389,7 +390,12 @@ async function countMissedDay(userId: string, day: string): Promise<void> {
 }
 
 export async function ensureCaughtUp(userId: string, today?: string): Promise<void> {
-  const t = today ?? todayDateString();
+  // Never sweep past the latest day that can be "today" anywhere on earth: a
+  // cursor claimed in the future would skip every real day until then (audit
+  // 2026-11-16 P0-3). Routes already refuse such a day; this guards any caller.
+  const latest = latestPossibleToday();
+  const asked = today ?? todayDateString();
+  const t = asked > latest ? latest : asked;
   await releaseExcusedDebt(userId, t);
   await restoreUncoveredDays(userId, t);
   const doc = await SalatDebt.findOneAndUpdate(

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { replayedClientToday } from './clientDay.js';
 
 const dateField = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
 
@@ -33,7 +34,7 @@ export const pastCycleSchema = z.object({
     startDate: dateField,
     endDate: dateField,
     type: z.enum(['hayd', 'nifas']).default('hayd'),
-    today: dateField,
+    today: replayedClientToday,
   }),
 });
 

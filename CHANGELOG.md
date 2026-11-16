@@ -2,6 +2,39 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.1 - Security and data-safety fixes from the 2026-11-16 audit (Phase 0) - 2026-11-16
+
+### Security
+
+- **`validate()` now gives controllers the parsed query values.** Express 5 re-parses `req.query` on every read, so `Object.assign(req.query, ...)` changed a throwaway object and Zod's coercions, defaults and transforms never reached a controller. The parsed values are now defined on the request. Query keys a schema does not name are still passed through unchanged.
+- **Naseeh `?phrase=0` no longer reaches the model.** The controller read the raw string `"0"` as truthy while the rate limiter only counted `"1"`, so `GET /api/naseeh/pattern-insights?phrase=0` and `/kaza-plan?phrase=0` could call the model outside the daily AI limit. Both now read the same boolean.
+- **A client "today" must be possible right now** (`validation/clientDay.ts`). It has to be within 2 days back and 1 day ahead of the server's UTC date, or the request gets a 400. Applies to every `today` field in the salat, zikr, quran, fasting, hifz, insights, social, stats and naseeh schemas; `GET /api/analytics/streak`, its pause and resume routes, and `GET /api/zikr/summary` are now validated too. Before, `?today=2099-01-01` (or a wrong phone clock) made the missed-prayer sweep write rows for every day until then and left the cursor in the future, and "Correct a day" measured its 30-day window from the client's own `today`.
+- **Writes the app replays from an offline queue** (zikr increments, Rayhanah cycle start) are bounded on the future side only, since their `today` was true when the write was made.
+- **`ensureCaughtUp` never claims a cursor past the latest possible day**, whatever its caller passes.
+- **Open redirect closed.** `/ar//evil.com` produced `Location: //evil.com`; redirect targets built from the request path are now reduced to a single leading slash (`sameSitePath`).
+- **Dev auth bypass in `POST /api/auth/verify`** uses the same guard as the middleware (`devAuthBypassAllowed`), so it is off on every Vercel deployment.
+
+### Fixed
+
+- **Zikr: a failed day-bucket write no longer adds to the lifetime totals.** A bare `catch {}` hid every error, and the totals were still incremented. Only the duplicate-key race on a day's first bucket is retried; any other error fails the request, after the totals earned by earlier items in the same batch are written.
+- `GET /api/insights/...` treated a `timezoneOffset` of 0 (UTC) as missing once the offset arrived as a number.
+
+### Dependencies
+
+- Backend: `mongoose` 9.11.2 to 9.11.4 (GHSA-gg4r-jv3p-qx3c, GHSA-8332-j7wj-wjw4, GHSA-wr5m-5jph-8m96, GHSA-6972-9mcm-vhwj) and `body-parser` 2.3.0 to 2.4.0 (GHSA-27r3-jxmh-p828). Both were failing the CI audit gate.
+- Frontend (lockfile only): `follow-redirects` 1.16.0 to 1.16.3 (via axios; GHSA-q3jh-wrc6-jgq8, GHSA-8r9p-f939-6h3c, GHSA-mrwp-f3q8-3g9p) and `re2js` 2.8.6 to 2.10.0 (via firebase; GHSA-gg6h-894w-4m9c).
+- CI runs on Node 24.21.0 exactly: the prerendered prayer-time pages take their timezone rules from Node, and a newer runner version changed the Canadian pages against the `nonBdSsr` snapshot.
+
+### Not changed
+
+- No stored worship data is touched by this release, and nothing is migrated. An account whose missed-prayer cursor is already in the future is not repaired here.
+- A retry after a server error part-way through a multi-collection write can still count twice (audit P0-5, needs transactions).
+
+### Tests
+
+- `backend/tests/auditP0.e2e.test.js` (new): parsed query values, the allowed "today" window, a far-future `today` refused before the sweep, the sweep cursor clamp, a forged "Correct a day" window, an old `today` on a replayed zikr write, totals unchanged after a failed bucket write, the redirect, the bypass guard.
+- Ten suites that replay fixed calendar dates switch the live-clock bound off with `setClientDayBoundForTests(false)` (throws outside `NODE_ENV=test`).
+
 ## v5.190.0 - Journey page, reset tracker, calendar download options, suhoor and iftar on Prayer Times - 2026-10-18
 
 ### Added

@@ -59,11 +59,20 @@ async function applyIncrements(
       if (amount > 0) {
         const hit = await ZikrDaily.updateOne(sameDay, { $inc: { count: amount } });
         if (hit.matchedCount === 0) {
-          await ZikrDaily.updateOne(
-            { userId, date, zikrType },
-            { $inc: { count: amount } },
-            { upsert: true }
-          );
+          const createBucket = () =>
+            ZikrDaily.updateOne(
+              { userId, date, zikrType },
+              { $inc: { count: amount } },
+              { upsert: true }
+            );
+          try {
+            await createBucket();
+          } catch (err) {
+            // Two flushes created the day's first bucket at once: the loser of
+            // the unique index retries, and now increments the winner's bucket.
+            if ((err as { code?: number }).code !== 11000) throw err;
+            await createBucket();
+          }
         }
       } else {
         // Take from the day's buckets, largest first, each an atomic
@@ -84,8 +93,22 @@ async function applyIncrements(
           applied -= took;
         }
       }
-    } catch {
-      // Ignore duplicate key race conditions
+    } catch (err) {
+      // The day bucket was not written, so the lifetime totals must not move
+      // either (audit 2026-11-16 P0-6: every error used to be swallowed here
+      // and the totals were still added, drifting away from the day buckets
+      // for good). Totals already earned by earlier items in this batch are
+      // written before the error is passed on, so buckets and totals agree.
+      // A decrement can fail part-way: what it already took from the buckets
+      // (`applied`, negative) comes off the totals too.
+      if (amount < 0 && applied !== 0) {
+        userInc[`zikrTotals.${zikrType}`] = (userInc[`zikrTotals.${zikrType}`] ?? 0) + applied;
+        totalAdded += applied;
+      }
+      if (Object.keys(userInc).length) {
+        await User.updateOne({ uid: userId }, { $inc: { ...userInc, totalCount: totalAdded } });
+      }
+      throw err;
     }
 
     if (applied !== 0) {

@@ -1,16 +1,17 @@
 import { z } from 'zod';
+import { clientToday } from './clientDay.js';
 
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 const surahNum = z.number().int().min(1).max(114);
 const ayahNum = z.number().int().min(1).max(286);
 
 export const hifzSummarySchema = z.object({
-  query: z.object({ today: dateStr.optional() }),
+  query: z.object({ today: clientToday.optional() }),
   body: z.object({}).optional(),
 });
 
 export const hifzQueueSchema = z.object({
-  query: z.object({ today: dateStr.optional() }),
+  query: z.object({ today: clientToday.optional() }),
   body: z.object({}).optional(),
 });
 

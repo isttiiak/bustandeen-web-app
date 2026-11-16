@@ -1,8 +1,9 @@
 import { z } from 'zod';
+import { clientToday } from './clientDay.js';
 import { PRAYER_IDS } from '../models/SalatLog.js';
 import { DATA_QUERY_IDS, DATA_PERIODS } from '../services/naseehInsights.service.js';
 
-const today = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+const today = clientToday;
 const timezoneOffset = z.coerce.number().int().min(-840).max(840);
 
 // Query strings arrive as text: "phrase=1" asks for the model re-word, anything

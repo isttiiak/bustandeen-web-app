@@ -1,6 +1,11 @@
 import request from 'supertest';
 import mongoose from 'mongoose';
 import app from '../src/app.js';
+import { setClientDayBoundForTests } from '../src/validation/clientDay.js';
+
+// This suite replays fixed calendar dates as "today"; the live-clock bound on
+// the client day (audit 2026-11-16 P0-3) has its own tests in auditP0.e2e.test.js.
+setClientDayBoundForTests(false);
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import SalatDebtModel from '../src/models/SalatDebt.js';
 import SalatLogModel from '../src/models/SalatLog.js';

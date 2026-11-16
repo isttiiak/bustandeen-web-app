@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.1',
+    date: '2026-11-16',
+    text: {
+      en: {
+        title: 'Safety fixes for your records',
+        fixed: [
+          'If the date on your device is off by more than a day or two, the server no longer accepts it as today. This keeps your prayer and zikr records from being counted under a wrong day. Set the right date and time on your device and it works as before.',
+          'When saving a zikr count fails, it is no longer added to your lifetime total without being added to that day.',
+          'Several security fixes behind the scenes. Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'আপনার হিসাবের নিরাপত্তায় কিছু সংশোধন',
+        fixed: [
+          'আপনার ডিভাইসের তারিখ এক-দুই দিনের বেশি ভুল থাকলে সার্ভার আর সেটিকে আজকের তারিখ হিসেবে গ্রহণ করে না। এতে আপনার নামাজ ও যিকিরের হিসাব ভুল দিনে গণনা হওয়া থেকে রক্ষা পায়। ডিভাইসে সঠিক তারিখ ও সময় ঠিক করে নিলে সব আগের মতোই চলবে।',
+          'যিকিরের গণনা সংরক্ষণ ব্যর্থ হলে সেটি আর সেই দিনের হিসাবে যোগ না হয়ে মোট সংখ্যায় যোগ হয় না।',
+          'ভেতরে কিছু নিরাপত্তা সংশোধন করা হয়েছে। আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.0',
     date: '2026-10-18',
     text: {

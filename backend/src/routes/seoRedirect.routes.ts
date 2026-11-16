@@ -16,9 +16,18 @@ import { Router, Request, Response } from 'express';
  */
 const router = Router();
 
+/**
+ * A redirect target built from the request path must stay on this site.
+ * `/ar//evil.com` minus the `/ar` is `//evil.com`, which a browser reads as
+ * another host (audit 2026-11-16 P0-7); `/\evil.com` is read the same way.
+ * Backslashes become slashes and any run of leading slashes becomes one.
+ */
+export const sameSitePath = (path: string): string =>
+  '/' + path.replace(/\\/g, '/').replace(/^\/+/, '');
+
 const send = (res: Response, to: string) => {
   res.set('Cache-Control', 'public, max-age=86400');
-  res.redirect(301, to);
+  res.redirect(301, sameSitePath(to));
 };
 
 router.get(/^\/(?:(?:bn|ar)\/)?qibla\/.+/, (_req: Request, res: Response) => send(res, '/qibla'));

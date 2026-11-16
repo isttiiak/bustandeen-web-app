@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { clientToday } from './clientDay.js';
 
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
 
@@ -13,7 +14,7 @@ export const quranReadSchema = z.object({
 
 export const quranSummarySchema = z.object({
   query: z.object({
-    today: dateStr.optional(),
+    today: clientToday.optional(),
   }),
   body: z.object({}).optional(),
 });
@@ -80,7 +81,7 @@ export const quranBookmarkSchema = z.object({
 export const quranHistorySchema = z.object({
   query: z.object({
     days: z.coerce.number().int().min(1).max(365).default(30),
-    today: dateStr.optional(),
+    today: clientToday.optional(),
   }),
   body: z.object({}).optional(),
 });

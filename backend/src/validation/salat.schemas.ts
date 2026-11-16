@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { clientToday } from './clientDay.js';
 
 export const updatePrayerSchema = z.object({
   body: z.object({
@@ -32,30 +33,21 @@ export const getSalatLogSchema = z.object({
       .optional(),
     // The user's Fajr-tracking day — the server clock runs UTC civil time
     // and is the wrong "today" for the missed-prayer rollover sweep.
-    today: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/)
-      .optional(),
+    today: clientToday.optional(),
   }),
   body: z.object({}).optional(),
 });
 
 export const getSalatDebtSchema = z.object({
   query: z.object({
-    today: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/)
-      .optional(),
+    today: clientToday.optional(),
   }),
   body: z.object({}).optional(),
 });
 
 export const salatCorrelationsSchema = z.object({
   query: z.object({
-    today: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/)
-      .optional(),
+    today: clientToday.optional(),
     timezoneOffset: z.coerce.number().int().min(-720).max(840).optional(),
   }),
   body: z.object({}).optional(),
@@ -66,10 +58,7 @@ export const salatHistorySchema = z.object({
     days: z.coerce.number().int().positive().max(3650).default(30),
     // The user's local calendar date — the server clock runs UTC and is the
     // wrong "today" for part of every day in non-UTC timezones.
-    today: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/)
-      .optional(),
+    today: clientToday.optional(),
   }),
   body: z.object({}).optional(),
 });
@@ -105,30 +94,21 @@ export const setSalatDebtSchema = z.object({
 
 export const resetSalatDebtSchema = z.object({
   body: z.object({
-    today: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/)
-      .optional(),
+    today: clientToday.optional(),
   }),
 });
 
 export const salatDebtHistorySchema = z.object({
   query: z.object({
     days: z.coerce.number().int().positive().max(3650).default(30),
-    today: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/)
-      .optional(),
+    today: clientToday.optional(),
   }),
   body: z.object({}).optional(),
 });
 
 export const resetSalatSchema = z.object({
   body: z.object({
-    today: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/)
-      .optional(),
+    today: clientToday.optional(),
     note: z
       .string()
       .max(120)

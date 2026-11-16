@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { clientToday } from './clientDay.js';
 
 export const connectSchema = z.object({
   body: z.object({
@@ -12,10 +13,7 @@ export const connectSchema = z.object({
 
 export const socialSummarySchema = z.object({
   query: z.object({
-    today: z
-      .string()
-      .regex(/^\d{4}-\d{2}-\d{2}$/)
-      .optional(),
+    today: clientToday.optional(),
     timezoneOffset: z.coerce.number().min(-720).max(840).optional(),
   }),
   body: z.object({}).optional(),
