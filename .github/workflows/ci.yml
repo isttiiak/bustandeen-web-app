@@ -7,7 +7,12 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: '24'
+  # Exact version, not '24': the prerendered prayer-time pages take their
+  # timezone rules from the data bundled with Node, and seo/nonBdSsr.test.ts
+  # holds a snapshot of those pages recorded on this version. A newer Node
+  # changed the Canadian pages (2026-11-16). Raise this together with the
+  # snapshot, after checking which cities and dates moved.
+  NODE_VERSION: '24.21.0'
 
 jobs:
   ci:
