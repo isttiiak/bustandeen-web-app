@@ -4,6 +4,7 @@ import * as streakService from '../services/streak.service.js';
 import { DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
 import type { ZikrIncrementItem } from '../types/api.types.js';
 import { CORRECT_MAX_DAYS } from '../validation/zikr.schemas.js';
+import { runIdempotent } from '../middleware/idempotency.js';
 
 export const incrementHandler = async (
   req: Request,
@@ -29,23 +30,26 @@ export const incrementHandler = async (
     };
 
     const userOffset = timezoneOffset ?? DEFAULT_TIMEZONE_OFFSET;
-    const result = await zikrService.incrementZikr(
-      userId,
-      zikrType,
-      amount,
-      userOffset,
-      ts,
-      realTs
-    );
-    const streakResult = await streakService.checkAndUpdateStreak(userId, userOffset, today);
-
-    res.json({
-      ok: true,
-      ...result,
-      streak: streakResult?.streak,
-      todayTotal: streakResult?.todayTotal,
-      goalMet: streakResult?.goalMet,
+    // Counts, totals and the idempotency record commit together (P0-5).
+    const body = await runIdempotent(res, async () => {
+      const result = await zikrService.incrementZikr(
+        userId,
+        zikrType,
+        amount,
+        userOffset,
+        ts,
+        realTs
+      );
+      const streakResult = await streakService.checkAndUpdateStreak(userId, userOffset, today);
+      return {
+        ok: true,
+        ...result,
+        streak: streakResult?.streak,
+        todayTotal: streakResult?.todayTotal,
+        goalMet: streakResult?.goalMet,
+      };
     });
+    res.json(body);
   } catch (err) {
     next(err);
   }
@@ -65,16 +69,18 @@ export const batchIncrementHandler = async (
     };
 
     const userOffset = timezoneOffset ?? DEFAULT_TIMEZONE_OFFSET;
-    const result = await zikrService.batchIncrementZikr(userId, increments, userOffset);
-    const streakResult = await streakService.checkAndUpdateStreak(userId, userOffset, today);
-
-    res.json({
-      ok: true,
-      ...result,
-      streak: streakResult?.streak,
-      todayTotal: streakResult?.todayTotal,
-      goalMet: streakResult?.goalMet,
+    const body = await runIdempotent(res, async () => {
+      const result = await zikrService.batchIncrementZikr(userId, increments, userOffset);
+      const streakResult = await streakService.checkAndUpdateStreak(userId, userOffset, today);
+      return {
+        ok: true,
+        ...result,
+        streak: streakResult?.streak,
+        todayTotal: streakResult?.todayTotal,
+        goalMet: streakResult?.goalMet,
+      };
     });
+    res.json(body);
   } catch (err) {
     next(err);
   }

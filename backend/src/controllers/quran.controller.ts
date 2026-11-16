@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as quranService from '../services/quran.service.js';
+import { runIdempotent } from '../middleware/idempotency.js';
 
 export const read = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
@@ -8,8 +9,11 @@ export const read = async (req: Request, res: Response, next: NextFunction): Pro
       pages: number;
       advancePosition: boolean;
     };
-    const result = await quranService.addReading(req.user.uid, date, pages, advancePosition);
-    res.json({ ok: true, ...result });
+    const body = await runIdempotent(res, async () => {
+      const result = await quranService.addReading(req.user.uid, date, pages, advancePosition);
+      return { ok: true, ...result };
+    });
+    res.json(body);
   } catch (err) {
     next(err);
   }
@@ -24,19 +28,22 @@ export const readAyat = async (req: Request, res: Response, next: NextFunction):
       advanceKhatm?: boolean;
       completedSurah?: boolean;
     };
-    const result = await quranService.addAyatReading(req.user.uid, {
-      date,
-      count,
-      surah,
-      advanceKhatm,
-      completedSurah,
+    const body = await runIdempotent(res, async () => {
+      const result = await quranService.addAyatReading(req.user.uid, {
+        date,
+        count,
+        surah,
+        advanceKhatm,
+        completedSurah,
+      });
+      return {
+        ok: true,
+        khatmCompleted: result.khatmCompleted,
+        currentAyah: result.profile.currentAyah,
+        todayAyat: quranService.unitsOf(result.log),
+      };
     });
-    res.json({
-      ok: true,
-      khatmCompleted: result.khatmCompleted,
-      currentAyah: result.profile.currentAyah,
-      todayAyat: quranService.unitsOf(result.log),
-    });
+    res.json(body);
   } catch (err) {
     next(err);
   }
