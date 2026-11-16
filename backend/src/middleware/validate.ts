@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodSchema, ZodError } from 'zod';
+import { CLIENT_DAY_CODE } from '../validation/clientDay.js';
 
 export const validate =
   (schema: ZodSchema) =>
@@ -11,10 +12,17 @@ export const validate =
     });
 
     if (!result.success) {
+      const issues = (result.error as ZodError).issues;
+      // A wrong device clock is the one 400 the user can fix themselves; the
+      // app shows its own translated message for this code (audit P0-3).
+      const wrongDeviceDate = issues.some(
+        (e) => (e as { params?: { code?: string } }).params?.code === CLIENT_DAY_CODE
+      );
       res.status(400).json({
         ok: false,
         error: 'Validation failed',
-        details: (result.error as ZodError).issues.map((e) => ({
+        ...(wrongDeviceDate ? { code: CLIENT_DAY_CODE } : {}),
+        details: issues.map((e) => ({
           path: e.path.join('.'),
           message: e.message,
         })),

@@ -7,6 +7,7 @@ import { useAdminStore } from '../store/useAdminStore.js';
 import { useAdminReauthStore } from '../store/useAdminReauthStore.js';
 import { clearAdminMfaProof, getAdminMfaProof } from './adminMfa.js';
 import { getDemoResponse } from '../utils/demoData.js';
+import { isDeviceDateError, notifyDeviceDateWrong } from '../utils/deviceDate.js';
 
 /**
  * Backend origin. In production the API lives on the SAME Vercel deployment
@@ -177,6 +178,15 @@ api.interceptors.response.use(
             return api(config);
           });
       }
+    }
+    // A device clock on the wrong date: the server refuses the day the app
+    // sent. Say so, once, instead of leaving empty screens and unsaved taps.
+    if (
+      axios.isAxiosError(err) &&
+      err.response?.status === 400 &&
+      isDeviceDateError(err.response.data)
+    ) {
+      notifyDeviceDateWrong();
     }
     // Rate limited — tell the user instead of failing silently.
     // Fixed toast id so a burst of 429s shows a single message.

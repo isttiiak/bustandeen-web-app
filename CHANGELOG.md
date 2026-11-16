@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.4 - A wrong device date now tells you so (audit P0-3, app side) - 2026-11-16
+
+### Fixed
+
+- **The app now says so when the date on the device is wrong.** Since v5.190.1 the server refuses a "today" that no place on earth can have right now (a phone clock days off, or a forged date). The app showed nothing for that 400: reads came back empty and saves quietly did not happen. It now shows one calm message, in English or Bangla, asking the person to set the date and time to automatic. It appears once however many requests fail at the same time.
+- The 400 for this case carries `code: 'client_day_mismatch'` (the `details` message is unchanged), so the app does not have to match English text. Every other 400 is unchanged and shows nothing new.
+- The zikr flush uses `fetch` rather than the shared axios client, so it reads that code itself. It still drops a batch the server rejects (that is P1-4, not changed here); the person now at least sees why.
+
+### Tests
+
+- Backend `clientDayCode.unit.test.js`; frontend `api.deviceDate.test.ts` (shown once, silent for other 400s, en and bn strings exist) and `useZikrStore.deviceDate.test.ts`.
+
+### Not changed
+
+- No stored data is touched and nothing is migrated.
+
 ## v5.190.3 - validate() hands controllers only what the schema names (audit P0-10) - 2026-11-16
 
 ### Security

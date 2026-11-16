@@ -370,6 +370,7 @@
     "confirm": "Confirm",
     "day": "day",
     "days": "days",
+    "deviceDateWrong": "The date on your device does not match today's date, so some things may not load or save. Set the date and time on your device to automatic, then try again.",
     "delete": "Delete",
     "edit": "Edit",
     "ends": "ends",

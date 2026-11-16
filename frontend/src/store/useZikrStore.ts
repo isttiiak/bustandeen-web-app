@@ -6,6 +6,7 @@ import { API_BASE, getIdToken } from '../lib/api.js';
 import { newOpId, peekSyncOutbox } from '../utils/syncOutbox.js';
 import { currentOutboxOwner } from '../utils/outboxOwner.js';
 import { todaysLoggedCounts } from '../utils/zikrLog.js';
+import { isDeviceDateError, notifyDeviceDateWrong } from '../utils/deviceDate.js';
 
 const FLUSH_DELAY = 800; // ms
 const RETRY_DELAY = 20_000; // ms: retry a failed flush without waiting for another tap
@@ -493,6 +494,15 @@ export const useZikrStore = create<ZikrState>()(
             // The server will never accept this batch; holding it would block
             // every later count.
             console.warn('Zikr batch rejected (400) — dropped');
+            // A wrong device date is the one rejection the person can fix:
+            // say so (this path uses fetch, so the axios interceptor never sees it).
+            let refusal: unknown = null;
+            try {
+              refusal = await res.clone().json();
+            } catch {
+              /* not JSON: nothing to tell the person */
+            }
+            if (isDeviceDateError(refusal)) notifyDeviceDateWrong();
             delivered = true;
           } else {
             // 401/409/429/5xx: keep the batch (same op id) and try again.
