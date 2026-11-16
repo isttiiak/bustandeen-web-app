@@ -5,7 +5,11 @@ import {
   decodeUnverifiedJwt,
 } from '../config/firebaseAdmin.js';
 import User from '../models/User.js';
-import { isAdminEmail, isUnverifiedPasswordAccount } from '../middleware/auth.js';
+import {
+  devAuthBypassAllowed,
+  isAdminEmail,
+  isUnverifiedPasswordAccount,
+} from '../middleware/auth.js';
 import { toClientUser } from '../services/user.service.js';
 import {
   AuthEmailError,
@@ -42,7 +46,7 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
         res.status(403).json({ ok: false, error: 'email_not_verified' });
         return;
       }
-    } else if (process.env.NODE_ENV !== 'production' && process.env.DEV_AUTH_BYPASS === '1') {
+    } else if (devAuthBypassAllowed()) {
       const payload = decodeUnverifiedJwt(idToken);
       if (!payload?.['uid']) {
         res.status(401).json({ ok: false, error: 'Invalid token' });

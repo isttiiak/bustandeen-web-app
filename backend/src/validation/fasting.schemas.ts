@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { clientToday } from './clientDay.js';
 import { FASTING_CATEGORIES, VOLUNTARY_KINDS, FASTING_STATUSES } from '../models/FastingLog.js';
 
 const dateStr = z.string().regex(/^\d{4}-\d{2}-\d{2}$/);
@@ -37,7 +38,7 @@ export const clearFastingLogSchema = z.object({
 
 export const fastingSummarySchema = z.object({
   query: z.object({
-    today: dateStr.optional(),
+    today: clientToday.optional(),
   }),
   body: z.object({}).optional(),
 });
@@ -45,7 +46,7 @@ export const fastingSummarySchema = z.object({
 export const fastingHistorySchema = z.object({
   query: z.object({
     days: z.coerce.number().int().positive().max(400).default(60),
-    today: dateStr.optional(),
+    today: clientToday.optional(),
   }),
   body: z.object({}).optional(),
 });

@@ -22,7 +22,7 @@ import User from '../models/User.js';
  * every deployed environment (prod, preview, branch), so it's a second,
  * independent signal that can't be defeated by the same misconfiguration.
  */
-const devAuthBypassAllowed = (): boolean =>
+export const devAuthBypassAllowed = (): boolean =>
   process.env.NODE_ENV !== 'production' &&
   process.env.DEV_AUTH_BYPASS === '1' &&
   !process.env.VERCEL;

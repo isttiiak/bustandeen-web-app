@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { clientToday, replayedClientToday } from './clientDay.js';
 
 // zikrType is used as a Mongoose Map key and in $inc dot-paths — names
 // containing "." would corrupt the update path and "$" is a Mongo operator
@@ -48,10 +49,8 @@ const tsField = z
     { message: 'ts out of allowed range (max 2 days back)' }
   );
 
-const todayField = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/)
-  .optional();
+// Increments are flushed from an offline queue, so their `today` may be old.
+const todayField = replayedClientToday.optional();
 
 // Real wall-clock moment of the tap (for time-of-day/session analytics) —
 // same bounds as `ts` but not used for day-bucketing, so no Fajr-boundary
@@ -138,7 +137,7 @@ export const getDaySchema = z.object({
 export const correctDaySchema = z.object({
   body: z.object({
     date: day,
-    today: day,
+    today: clientToday,
     counts: z
       .record(zikrTypeName, z.number().int().min(0).max(1_000_000))
       .refine((r) => Object.keys(r).length >= 1 && Object.keys(r).length <= 200, {

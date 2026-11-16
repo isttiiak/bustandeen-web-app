@@ -25,7 +25,19 @@ export const validate =
     // Apply coerced/parsed values back to req
     const data = result.data as { body?: unknown; query?: unknown; params?: unknown };
     if (data.body) Object.assign(req.body, data.body);
-    if (data.query) Object.assign(req.query, data.query);
+    // Express 5 re-parses `req.query` from the URL on every read, so assigning
+    // onto it changes a throwaway object and controllers kept getting the raw
+    // strings (audit 2026-11-16 P0-1: "phrase=0" read as truthy). Define the
+    // parsed values on the request itself. Keys the schema does not name are
+    // kept as they arrived, so a controller reading one behaves as before.
+    if (data.query && typeof data.query === 'object') {
+      Object.defineProperty(req, 'query', {
+        value: { ...req.query, ...(data.query as Record<string, unknown>) },
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      });
+    }
 
     next();
   };

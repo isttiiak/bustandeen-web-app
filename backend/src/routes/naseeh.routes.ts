@@ -18,7 +18,9 @@ const router = Router();
  * counts against the daily AI limit. The plain computed answer is free, which
  * means a client that hits the limit still gets its data. */
 const limitWhenPhrasing = (req: Request, res: Response, next: NextFunction): void => {
-  if (req.query['phrase'] === '1') {
+  // Runs after validate(), which turns "phrase" into a boolean. The controller
+  // reads the same value, so a call that reaches the model is always counted.
+  if ((req.query as { phrase?: unknown })['phrase'] === true) {
     aiUserLimiter(req, res, next);
     return;
   }

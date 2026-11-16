@@ -9,9 +9,10 @@ export const getWorshipCorrelation = async (
   try {
     const days = Number(req.query['days'] ?? 30);
     const today = req.query['today'] as string | undefined;
-    const timezoneOffset = req.query['timezoneOffset']
-      ? Number(req.query['timezoneOffset'])
-      : undefined;
+    // `!== undefined`, not truthiness: the validated offset is a number, and 0
+    // (UTC) is a real offset, not "missing".
+    const timezoneOffset =
+      req.query['timezoneOffset'] !== undefined ? Number(req.query['timezoneOffset']) : undefined;
     const correlation = await insightsService.getWorshipCorrelation(
       req.user.uid,
       days,
