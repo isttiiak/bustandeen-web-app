@@ -19,6 +19,12 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - **Zikr: a failed day-bucket write no longer adds to the lifetime totals.** A bare `catch {}` hid every error, and the totals were still incremented. Only the duplicate-key race on a day's first bucket is retried; any other error fails the request, after the totals earned by earlier items in the same batch are written.
 - `GET /api/insights/...` treated a `timezoneOffset` of 0 (UTC) as missing once the offset arrived as a number.
 
+### Dependencies
+
+- Backend: `mongoose` 9.11.2 to 9.11.4 (GHSA-gg4r-jv3p-qx3c, GHSA-8332-j7wj-wjw4, GHSA-wr5m-5jph-8m96, GHSA-6972-9mcm-vhwj) and `body-parser` 2.3.0 to 2.4.0 (GHSA-27r3-jxmh-p828). Both were failing the CI audit gate.
+- Frontend (lockfile only): `follow-redirects` 1.16.0 to 1.16.3 (via axios; GHSA-q3jh-wrc6-jgq8, GHSA-8r9p-f939-6h3c, GHSA-mrwp-f3q8-3g9p) and `re2js` 2.8.6 to 2.10.0 (via firebase; GHSA-gg6h-894w-4m9c).
+- CI runs on Node 24.21.0 exactly: the prerendered prayer-time pages take their timezone rules from Node, and a newer runner version changed the Canadian pages against the `nonBdSsr` snapshot.
+
 ### Not changed
 
 - No stored worship data is touched by this release, and nothing is migrated. An account whose missed-prayer cursor is already in the future is not repaired here.
