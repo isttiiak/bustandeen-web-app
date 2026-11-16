@@ -1,3 +1,4 @@
+import PendingSignup from '../models/PendingSignup.js';
 import admin from 'firebase-admin';
 import { isFirebaseInitialized } from '../config/firebaseAdmin.js';
 import User, { IUser, ILinkedProvider } from '../models/User.js';
@@ -221,6 +222,11 @@ export async function deleteAccount(uid: string): Promise<void> {
 /** The database half of deleteAccount. Also used by the orphan cleanup
  * script for accounts deleted before v5.128.1 (scripts/cleanupOrphans.ts). */
 export async function purgeAccountData(uid: string): Promise<void> {
+  // The sign-in record goes LAST (audit P1-11). It used to be deleted in the same
+  // parallel batch, so a failure elsewhere could leave the person's data behind
+  // with no account to retry the deletion from. Everything below is safe to run
+  // again, so a failed attempt is finished by deleting once more.
+  const email = (await User.findOne({ uid }).select('email').lean())?.email;
   await Promise.all([
     // Personal data the user logged or that was derived from it.
     QuranReadingSession.deleteMany({ userId: uid }),
@@ -252,7 +258,17 @@ export async function purgeAccountData(uid: string): Promise<void> {
       { userId: uid },
       { $set: { userId: DELETED_ACCOUNT_ID }, $unset: { userEmail: '' } }
     ),
-    Donation.updateMany({ userId: uid }, { $set: { userId: null } }),
+    // The record stays for accountability with what the donor typed on the form
+    // (the /privacy page says so), unlinked from the account. The network
+    // address was never typed on the form, so it goes.
+    Donation.updateMany({ userId: uid }, { $set: { userId: null, ipAddress: null } }),
+    // Someone who linked this account as their partner no longer points at it.
+    CycleProfile.updateMany(
+      { partnerUid: uid },
+      { $set: { partnerSyncEnabled: false }, $unset: { partnerUid: '' } }
+    ),
+    // A sign-up for this email still waiting for its confirmation link.
+    ...(email ? [PendingSignup.deleteMany({ email: { $in: [email, email.toLowerCase()] } })] : []),
     scrubCampaignRecipients(uid),
 
     ZikrDaily.deleteMany({ userId: uid }),
@@ -274,8 +290,8 @@ export async function purgeAccountData(uid: string): Promise<void> {
     CycleDay.deleteMany({ userId: uid }),
     CycleProfile.deleteMany({ userId: uid }),
     SocialProfile.deleteMany({ userId: uid }),
-    User.deleteOne({ uid }),
   ]);
+  await User.deleteOne({ uid });
 }
 
 /** A recipient still pending in a campaign that is mid-send is marked failed

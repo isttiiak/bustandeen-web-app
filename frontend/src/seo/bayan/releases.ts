@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.17',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Deleting your account now clears more',
+        fixed: [
+          'When you delete your account, the network address saved with a donation is now removed, and anyone who had linked you as their partner no longer points to you.',
+          'If something goes wrong part-way through deleting, your account stays so you can simply delete again and finish.',
+          'The privacy page now says this.',
+        ],
+      },
+      bn: {
+        title: 'অ্যাকাউন্ট মুছলে এখন আরও কিছু মুছে যায়',
+        fixed: [
+          'আপনি অ্যাকাউন্ট মুছলে দানের সঙ্গে সংরক্ষিত নেটওয়ার্ক ঠিকানা এখন মুছে ফেলা হয়, আর যিনি আপনাকে সঙ্গী হিসেবে যুক্ত করেছিলেন তাঁর প্রোফাইল আর আপনার দিকে নির্দেশ করে না।',
+          'মুছে ফেলার মাঝপথে কোনো সমস্যা হলে আপনার অ্যাকাউন্ট থেকে যায়, যাতে আপনি আবার মুছে সম্পন্ন করতে পারেন।',
+          'গোপনীয়তা পাতায় এখন এ কথা লেখা আছে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.16',
     date: '2026-11-17',
     text: {
