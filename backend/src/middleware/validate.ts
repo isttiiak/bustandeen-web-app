@@ -24,7 +24,11 @@ export const validate =
 
     // Apply coerced/parsed values back to req
     const data = result.data as { body?: unknown; query?: unknown; params?: unknown };
-    if (data.body) Object.assign(req.body, data.body);
+    // Replace, do not merge (audit 2026-11-16 P0-10): merging kept every key
+    // the schema strips, so `Object.assign(doc, req.body)` style controllers
+    // could set fields the schema never allowed. A schema with no `body`
+    // leaves the request body alone.
+    if (data.body !== undefined) req.body = data.body;
     // Express 5 re-parses `req.query` from the URL on every read, so assigning
     // onto it changes a throwaway object and controllers kept getting the raw
     // strings (audit 2026-11-16 P0-1: "phrase=0" read as truthy). Define the

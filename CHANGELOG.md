@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.3 - validate() hands controllers only what the schema names (audit P0-10) - 2026-11-16
+
+### Security
+
+- **`validate()` now replaces `req.body` with the parsed body instead of merging into it.** Merging kept every key the schema strips, so a controller that spreads or assigns the body could write fields the schema never allowed. The one real case: `PATCH /api/admin/zikr-requests/library/:id` did `Object.assign(item, req.body)`, so a Servant could also set `addedBy`, `requestId` or `category` on a library entry through this route. It now applies only the eight fields its schema names. Parsed values (trim, coercion, defaults) reach controllers exactly as before. A schema with no `body` leaves the request body untouched.
+
+### Checked
+
+- Before the change, every `validate(schema)` route (142, 115 with a body schema) was compared with the keys its controller reads, and the 18 handlers that pass the body whole to a service were read by hand. No handler reads a key its schema does not name; the email-keyed rate limiters read `body.email`, which both of their schemas name.
+- Tests: `tests/validateBody.e2e.test.js` (a dropped key, parsed values, no-body schema, invalid body, and the library edit).
+
+### Not changed
+
+- No stored data is touched and nothing is migrated.
+
 ## v5.190.2 - Zikr and Quran saves are all-or-nothing (audit P0-5) - 2026-11-16
 
 ### Fixed
