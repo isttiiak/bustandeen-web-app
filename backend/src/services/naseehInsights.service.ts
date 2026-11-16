@@ -120,7 +120,7 @@ Reply ONLY as JSON: {"lines": string[${lines.length}]}.`,
 
 // ── Shared salat analytics loader (same window rules as the analytics page) ──
 export async function loadSalatAnalytics(userId: string, days: number, today: string) {
-  await salatDebtService.ensureCaughtUp(userId, today);
+  await salatDebtService.ensureCaughtUpOrLog(userId, today);
   const user = await User.findOne({ uid: userId }).select('salatResetDate createdAt').lean();
   const firstLog = await SalatLog.findOne({ userId }).sort({ date: 1 }).select('date').lean();
   const createdDate = user?.createdAt
@@ -361,7 +361,7 @@ export async function getKazaPlan(
   opts: { today?: string; phrase: boolean }
 ): Promise<KazaPlanResult> {
   const today = safeToday(opts.today);
-  await salatDebtService.ensureCaughtUp(userId, today);
+  await salatDebtService.ensureCaughtUpOrLog(userId, today);
   const [debt, insights, salat] = await Promise.all([
     salatDebtService.getDebtReadOnly(userId),
     salatDebtService.getKazaInsights(userId),
@@ -569,7 +569,7 @@ export async function runDataQuery(
     }
 
     case 'kaza_owed': {
-      await salatDebtService.ensureCaughtUp(userId, today);
+      await salatDebtService.ensureCaughtUpOrLog(userId, today);
       const debt = await salatDebtService.getDebtReadOnly(userId);
       if (q.prayer) {
         const n = debt.owed[q.prayer];

@@ -14,7 +14,7 @@ export const getLog = async (req: Request, res: Response, next: NextFunction): P
   try {
     const date = req.query['date'] as string | undefined;
     const today = req.query['today'] as string | undefined;
-    await salatDebtService.ensureCaughtUp(req.user.uid, today);
+    await salatDebtService.ensureCaughtUpOrLog(req.user.uid, today);
     const log = await salatService.getLogReadOnly(req.user.uid, date);
     res.json({ ok: true, log });
   } catch (err) {
@@ -99,7 +99,7 @@ export const getHistory = async (
   try {
     const days = Number(req.query['days'] ?? 30);
     const today = req.query['today'] as string | undefined;
-    await salatDebtService.ensureCaughtUp(req.user.uid, today);
+    await salatDebtService.ensureCaughtUpOrLog(req.user.uid, today);
     const logs = await salatService.getSalatHistory(req.user.uid, days);
     res.json({ ok: true, logs });
   } catch (err) {
@@ -115,7 +115,7 @@ export const getAnalytics = async (
   try {
     const days = Number(req.query['days'] ?? 30);
     const today = req.query['today'] as string | undefined;
-    await salatDebtService.ensureCaughtUp(req.user.uid, today);
+    await salatDebtService.ensureCaughtUpOrLog(req.user.uid, today);
     const User = (await import('../models/User.js')).default;
     const user = await User.findOne({ uid: req.user.uid })
       .select('salatResetDate createdAt')
@@ -222,7 +222,7 @@ export const getJourney = async (
 export const getDebt = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const today = req.query['today'] as string | undefined;
-    await salatDebtService.ensureCaughtUp(req.user.uid, today);
+    await salatDebtService.ensureCaughtUpOrLog(req.user.uid, today);
     const debt = await salatDebtService.getDebtReadOnly(req.user.uid);
     res.json({ ok: true, ...debt });
   } catch (err) {
