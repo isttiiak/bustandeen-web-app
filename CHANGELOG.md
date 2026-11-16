@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.17 - Deleting an account clears what the privacy page says it clears (audit P1-11) - 2026-11-17
+
+### Fixed
+
+- **The sign-in record is deleted last.** `purgeAccountData` removed the `User` in the same parallel batch as everything else, so a failure elsewhere could leave the person's data behind with no account to delete again from. Now the user row goes after everything else has succeeded; a failed attempt leaves the account in place and deleting again finishes the job (every step can be repeated).
+- **The network address saved with a donation is cleared.** A donation record stays "for accountability, with the details you entered on the form" (the privacy page says so), unlinked from the account. The address was never typed on the form, so it is now set to null along with the unlink.
+- **Partner links to the deleted account are removed.** Another person's cycle profile that named this account as partner kept `partnerUid` and `partnerSyncEnabled: true`. Both are cleared on deletion.
+- **A sign-up still waiting for its confirmation link for the same email is deleted.** Those rows expire by themselves, but need not wait.
+- **The privacy page (en + bn) says so:** the donation address and the partner link are now in the deletion paragraph.
+- Tests: `accountDeletion.e2e.test.js`, 4 cases; all 4 failed on the old code.
+
+### Reported, kept as policy and NOT changed here
+
+- **Donor email and phone stay on a donation.** The tracker listed them, but the privacy page already tells people the donation record is kept with the details typed on the form, and P1-13 (financial records) is where retention is decided. Not changed without that decision.
+- **The support mailbox mirror (`MailboxMessage`) and free text inside feedback messages** can contain a person's email or words. They are matched by address or text, not by account, and the privacy page promises "anonymous notes" only for feedback records. Left as is; a decision is needed on whether deletion should also remove mailbox copies for that address.
+- The deletion is not one database transaction: it spans around thirty collections and runs them in parallel by design. The last-step order above is what makes a retry safe.
+
+### Not changed
+
+- Stored data of existing accounts. Only future deletions behave differently.
+
 ## v5.190.16 - A retried write is recognised on every route that can be retried (audit P1-10) - 2026-11-17
 
 ### Fixed
