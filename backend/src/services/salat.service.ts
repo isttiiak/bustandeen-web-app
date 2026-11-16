@@ -11,6 +11,7 @@ import SalatLog, {
 } from '../models/SalatLog.js';
 import * as salatDebtService from './salatDebt.service.js';
 import { getExcusedDaySet } from './cycle.service.js';
+import { inTransaction, runInTransaction } from '../utils/transaction.js';
 
 export function todayDateString(): string {
   return new Date().toISOString().substring(0, 10);
@@ -42,15 +43,49 @@ function normaliseLegacyPrayers(log: InstanceType<typeof SalatLog>) {
   }
 }
 
+function isDuplicateKey(err: unknown): boolean {
+  return (err as { code?: number } | null)?.code === 11000;
+}
+
+/**
+ * The day's log, created if missing. Two requests creating it at once used to
+ * end in a duplicate-key 500 for the loser (audit P1-1). Outside a transaction
+ * the loser now reads the log the winner made. Inside one, a duplicate key
+ * aborts the whole transaction, so it is rethrown for `withLogRace` to rerun.
+ */
 export async function getOrCreateLog(userId: string, date?: string) {
   const d = date ?? todayDateString();
   let log = await SalatLog.findOne({ userId, date: d });
   if (!log) {
-    log = await SalatLog.create({ userId, date: d });
+    try {
+      log = await SalatLog.create({ userId, date: d });
+    } catch (err) {
+      if (!isDuplicateKey(err) || inTransaction()) throw err;
+      log = await SalatLog.findOne({ userId, date: d });
+      if (!log) throw err;
+      normaliseLegacyPrayers(log);
+    }
   } else {
     normaliseLegacyPrayers(log);
   }
   return log;
+}
+
+/**
+ * Runs a read-change-save of one day's log in a transaction. Two requests that
+ * change the same log at once conflict on the write, and the later one reruns
+ * from the start and reads what the first stored, so each change is applied to
+ * the current state (audit P1-1). Two that both create the log hit a duplicate
+ * key; the rerun then finds it.
+ */
+async function withLogRace<T>(fn: () => Promise<T>): Promise<T> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await runInTransaction(fn);
+    } catch (err) {
+      if (!isDuplicateKey(err) || attempt >= 3) throw err;
+    }
+  }
 }
 
 const EMPTY_ENTRY = { status: 'pending' as PrayerStatus };
@@ -98,74 +133,76 @@ export async function updatePrayerStatus(
   travel: { qasr?: boolean; jam?: JamKind | null } = {}
 ) {
   const d = date ?? todayDateString();
-  const log = await getOrCreateLog(userId, d);
+  return withLogRace(async () => {
+    const log = await getOrCreateLog(userId, d);
 
-  const entry = log.prayers[prayer];
-  const wasMissed = entry.status === 'missed';
-  entry.status = status;
-  entry.prayedAt = status !== 'pending' ? new Date() : undefined;
+    const entry = log.prayers[prayer];
+    const wasMissed = entry.status === 'missed';
+    entry.status = status;
+    entry.prayedAt = status !== 'pending' ? new Date() : undefined;
 
-  // Jumu'ah — Friday's Dhuhr is only valid as a congregational mosque prayer,
-  // so "Done" always means "at the mosque". If it's missed on time, it can
-  // only be made up as an ordinary (alone) Dhuhr — Jumu'ah itself has no kaza.
-  // A traveller (Musafir mode) owes no Jumu'ah: a shortened Friday Dhuhr is an
-  // ordinary Ẓuhr, so the location is whatever they chose.
-  // Only the four-rak'ah prayers can be shortened; Fajr and Maghrib never are.
-  if (!QASR_PRAYERS.has(prayer)) travel = { ...travel, qasr: undefined };
-  const isFriday = prayer === 'dhuhr' && new Date(d + 'T12:00:00').getDay() === 5;
-  const willBeQasr = travel.qasr ?? entry.qasr ?? false;
-  const isFridayDhuhr = isFriday && !willBeQasr;
+    // Jumu'ah — Friday's Dhuhr is only valid as a congregational mosque prayer,
+    // so "Done" always means "at the mosque". If it's missed on time, it can
+    // only be made up as an ordinary (alone) Dhuhr — Jumu'ah itself has no kaza.
+    // A traveller (Musafir mode) owes no Jumu'ah: a shortened Friday Dhuhr is an
+    // ordinary Ẓuhr, so the location is whatever they chose.
+    // Only the four-rak'ah prayers can be shortened; Fajr and Maghrib never are.
+    if (!QASR_PRAYERS.has(prayer)) travel = { ...travel, qasr: undefined };
+    const isFriday = prayer === 'dhuhr' && new Date(d + 'T12:00:00').getDay() === 5;
+    const willBeQasr = travel.qasr ?? entry.qasr ?? false;
+    const isFridayDhuhr = isFriday && !willBeQasr;
 
-  if (status === 'completed' || status === 'kaza') {
-    // Omitted = unchanged, so older clients and sub-tag taps keep the flags.
-    // false is kept on purpose: a traveller who prayed in full behind a local
-    // imam, or attended Jumu'ah, on a travel day.
-    if (travel.qasr !== undefined) entry.qasr = travel.qasr;
-    if (travel.jam !== undefined) entry.jam = travel.jam ?? undefined;
-    entry.location = isFridayDhuhr
-      ? status === 'completed'
-        ? 'mosque'
-        : 'home'
-      : (location ?? 'home');
-    entry.tasbeeh = tasbeeh ?? false;
-    entry.ayatulKursi = ayatulKursi ?? false;
-    // Window bounds come from the client's own adhan-library computation
-    // (only meaningful for the day being marked) — store them only when both
-    // are given, and only in this branch, so an older client that never
-    // sends them just leaves the field unset rather than storing a partial pair.
-    entry.windowStart = windowStart ? new Date(windowStart) : undefined;
-    entry.windowEnd = windowEnd ? new Date(windowEnd) : undefined;
-    entry.missedReason = undefined;
-  } else if (status === 'missed') {
-    entry.location = undefined;
-    entry.tasbeeh = false;
-    entry.ayatulKursi = false;
-    entry.windowStart = undefined;
-    entry.windowEnd = undefined;
-    entry.missedReason = missedReason;
-    entry.qasr = undefined;
-    entry.jam = undefined;
-  } else {
-    entry.location = undefined;
-    entry.tasbeeh = false;
-    entry.ayatulKursi = false;
-    entry.windowStart = undefined;
-    entry.windowEnd = undefined;
-    entry.missedReason = undefined;
-    entry.qasr = undefined;
-    entry.jam = undefined;
-  }
+    if (status === 'completed' || status === 'kaza') {
+      // Omitted = unchanged, so older clients and sub-tag taps keep the flags.
+      // false is kept on purpose: a traveller who prayed in full behind a local
+      // imam, or attended Jumu'ah, on a travel day.
+      if (travel.qasr !== undefined) entry.qasr = travel.qasr;
+      if (travel.jam !== undefined) entry.jam = travel.jam ?? undefined;
+      entry.location = isFridayDhuhr
+        ? status === 'completed'
+          ? 'mosque'
+          : 'home'
+        : (location ?? 'home');
+      entry.tasbeeh = tasbeeh ?? false;
+      entry.ayatulKursi = ayatulKursi ?? false;
+      // Window bounds come from the client's own adhan-library computation
+      // (only meaningful for the day being marked) — store them only when both
+      // are given, and only in this branch, so an older client that never
+      // sends them just leaves the field unset rather than storing a partial pair.
+      entry.windowStart = windowStart ? new Date(windowStart) : undefined;
+      entry.windowEnd = windowEnd ? new Date(windowEnd) : undefined;
+      entry.missedReason = undefined;
+    } else if (status === 'missed') {
+      entry.location = undefined;
+      entry.tasbeeh = false;
+      entry.ayatulKursi = false;
+      entry.windowStart = undefined;
+      entry.windowEnd = undefined;
+      entry.missedReason = missedReason;
+      entry.qasr = undefined;
+      entry.jam = undefined;
+    } else {
+      entry.location = undefined;
+      entry.tasbeeh = false;
+      entry.ayatulKursi = false;
+      entry.windowStart = undefined;
+      entry.windowEnd = undefined;
+      entry.missedReason = undefined;
+      entry.qasr = undefined;
+      entry.jam = undefined;
+    }
 
-  await log.save();
+    await log.save();
 
-  // Keep the kaza-debt counter in sync with explicit 'missed' taps only —
-  // a past day that was simply never logged does not silently add debt,
-  // matching how missedCount in analytics already works.
-  const isMissed = status === 'missed';
-  if (wasMissed && !isMissed) await salatDebtService.adjustDebt(userId, prayer, -1, d);
-  else if (!wasMissed && isMissed) await salatDebtService.adjustDebt(userId, prayer, 1, d);
+    // Keep the kaza-debt counter in sync with explicit 'missed' taps only —
+    // a past day that was simply never logged does not silently add debt,
+    // matching how missedCount in analytics already works.
+    const isMissed = status === 'missed';
+    if (wasMissed && !isMissed) await salatDebtService.adjustDebt(userId, prayer, -1, d);
+    else if (!wasMissed && isMissed) await salatDebtService.adjustDebt(userId, prayer, 1, d);
 
-  return log;
+    return log;
+  });
 }
 
 export async function updateNafl(
@@ -176,17 +213,19 @@ export async function updateNafl(
   date?: string
 ) {
   const d = date ?? todayDateString();
-  const log = await getOrCreateLog(userId, d);
+  return withLogRace(async () => {
+    const log = await getOrCreateLog(userId, d);
 
-  log.nafl = {
-    completed,
-    types,
-    rakat: Math.max(2, rakat),
-    completedAt: completed ? new Date() : undefined,
-  };
+    log.nafl = {
+      completed,
+      types,
+      rakat: Math.max(2, rakat),
+      completedAt: completed ? new Date() : undefined,
+    };
 
-  await log.save();
-  return log;
+    await log.save();
+    return log;
+  });
 }
 
 /** Shift a YYYY-MM-DD date string by `delta` days (pure string math, no TZ). */

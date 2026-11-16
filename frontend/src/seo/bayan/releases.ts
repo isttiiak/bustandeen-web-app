@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.9',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Missed prayers are no longer counted twice',
+        fixed: [
+          'If you marked a prayer as missed with a fast double tap, or from two devices at the same moment, it could be added to your kaza count more than once. It is now counted once.',
+          'Marking a prayer on a day that has no record yet could sometimes fail with an error. That is fixed.',
+          'Nothing in your saved records was changed. If an earlier double count is in your kaza total, you can still correct it with Set exact count.',
+        ],
+      },
+      bn: {
+        title: 'কাজা নামাজ আর দুইবার গণনা হবে না',
+        fixed: [
+          'দ্রুত দুইবার চাপ দিয়ে বা একই সময়ে দুই ডিভাইস থেকে কোনো নামাজ ছুটে গেছে বলে চিহ্নিত করলে তা আপনার কাজার হিসাবে একাধিকবার যোগ হতে পারত। এখন একবারই গণনা হয়।',
+          'যে দিনের কোনো রেকর্ড এখনো নেই সেই দিনে নামাজ চিহ্নিত করতে গিয়ে কখনো কখনো ত্রুটি আসত। তা ঠিক করা হয়েছে।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি। আগের কোনো দ্বিগুণ গণনা কাজার মোটে থেকে থাকলে “সঠিক সংখ্যা সেট করুন” দিয়ে তা ঠিক করে নিতে পারবেন।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.8',
     date: '2026-11-17',
     text: {
