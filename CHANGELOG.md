@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.12 - Signing out no longer throws away what is still waiting to be saved (audit P1-6) - 2026-11-17
+
+### Fixed
+
+- **The sign-out dialog says what would be lost, and offers to save it first.** Signing out wiped the zikr counts, the offline salat queue and the offline sync queue (`App.tsx` `onUser(null)`), and the dialog only said "Any unsynced counts will be lost" whether or not anything was waiting. It now reads what is waiting (zikr taps in `pending` and in an unsent batch, queued prayer updates, other offline changes of the signed-in account; the demo and other accounts' ops are ignored) and, when something is, shows it: "Some of your changes are not saved to your account yet: 12 zikr counts, 2 other changes. If you sign out now, they will be lost."
+- **"Save them, then sign out"** sends the zikr taps, replays both outboxes (waiting at most 8 s, and stopping when the network is still out) and signs out only when nothing is left. If something could not be sent it says so and offers "Try saving again", "Sign out anyway" or Cancel. When nothing is waiting the dialog is the same two buttons as before, with a calmer message ("Everything is saved to your account...").
+- New `utils/signOutSync.ts` (`summariseUnsynced`, `syncBeforeSignOut`), the sign-out steps moved into `doSignOut` in `Navbar.tsx` unchanged, and 9 new strings (en + bn).
+- Tests: `signOutSync.test.ts`, 6 cases (counts per source and per account, a full sync, offline gives up after one try without looping, a hanging request does not wait for ever). The dialog itself has no component test (the project has no DOM test setup) and was not driven in a browser: a signed-in account is needed to reach the unsynced state.
+
+### Not changed
+
+- Stored data. Sessions that end by themselves (expired token, disabled account) still clear the queues: there is no token left to send them with, and no dialog to warn in.
+- The 401/403 sign-out in `App.tsx` for a disabled account is untouched.
+
 ## v5.190.11 - Offline changes are kept when the server is busy, not dropped (audit P1-5) - 2026-11-17
 
 ### Fixed

@@ -1,6 +1,7 @@
 ﻿import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import { loadFirebase, SESSION_MARKER } from '../authClient.js';
 import { BrandMark } from './BrandMark.js';
 import { useAuthStore } from '../store/useAuthStore.js';
@@ -48,6 +49,11 @@ import { UserAvatar } from './icons/AvatarGlyphs.js';
 import i18n from '../i18n.js';
 import { syncQuranTranslationWithLang } from '../utils/quranData.js';
 import { adminUrl } from '../utils/siteLinks.js';
+import {
+  summariseUnsynced,
+  syncBeforeSignOut,
+  type UnsyncedSummary,
+} from '../utils/signOutSync.js';
 
 // ── Page metadata ─────────────────────────────────────────────────────────────
 // i18n keys for the translatable page titles (fallback = the English title)
@@ -177,10 +183,51 @@ export default function Navbar() {
     PAGE_KEYS[path] ? t(PAGE_KEYS[path]!, { defaultValue: fallback }) : fallback;
   const { user, setUser, aiEnabled, isDemoMode } = useAuthStore();
   const resetAll = useZikrStore((s) => s.resetAll);
+  const queryClient = useQueryClient();
   const [confirmLogout, setConfirmLogout] = useState(false);
+  // What would be lost by signing out right now (audit P1-6), and the state of
+  // the "sync first" attempt.
+  const [unsynced, setUnsynced] = useState<UnsyncedSummary | null>(null);
+  const [syncing, setSyncing] = useState(false);
+  const [syncFailed, setSyncFailed] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const hasUnsynced = (unsynced?.total ?? 0) > 0;
+  const unsyncedSummaryText = [
+    unsynced?.zikrCounts ? t('nav.unsyncedZikr', { n: unsynced.zikrCounts }) : '',
+    unsynced?.changes ? t('nav.unsyncedOther', { n: unsynced.changes }) : '',
+  ]
+    .filter(Boolean)
+    .join(', ');
+
+  const doSignOut = async () => {
+    const { auth, signOut } = await loadFirebase();
+    await signOut(auth);
+    localStorage.removeItem(SESSION_MARKER);
+    setUser(null);
+    localStorage.removeItem('bustandeen_user');
+    localStorage.removeItem('bustandeen_idToken');
+    sessionStorage.removeItem('bustandeen_redirect');
+    resetAll();
+    setConfirmLogout(false);
+    navigate('/', { replace: true });
+  };
+
+  // Send what is waiting first; sign out only when nothing would be lost.
+  const syncThenSignOut = async () => {
+    setSyncing(true);
+    setSyncFailed(false);
+    const left = await syncBeforeSignOut(queryClient);
+    setSyncing(false);
+    if (left.total === 0) {
+      await doSignOut();
+      return;
+    }
+    setUnsynced(left);
+    setSyncFailed(true);
+  };
 
   const isHome = location.pathname === '/';
   const pageMeta = PAGE_META[location.pathname];
@@ -478,6 +525,9 @@ export default function Navbar() {
                           className="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-red-400 hover:bg-red-500/10 text-sm transition-colors"
                           onClick={() => {
                             setDropdownOpen(false);
+                            // The demo never sends anything, so nothing can be lost there.
+                            setUnsynced(isDemoMode ? null : summariseUnsynced());
+                            setSyncFailed(false);
                             setConfirmLogout(true);
                           }}
                         >
@@ -521,28 +571,62 @@ export default function Navbar() {
             <h3 id="sign-out-title" className="font-display text-white font-bold text-lg">
               {t('nav.signOutConfirm')}
             </h3>
-            <p className="text-white/75 text-sm leading-relaxed mt-1">{t('nav.signOutMsg')}</p>
-            <div className="flex gap-2 mt-4">
-              <button className={`${BTN_SECONDARY} flex-1`} onClick={() => setConfirmLogout(false)}>
-                {t('common.cancel')}
-              </button>
-              <button
-                className={`${BTN_PRIMARY} flex-1`}
-                onClick={async () => {
-                  const { auth, signOut } = await loadFirebase();
-                  await signOut(auth);
-                  localStorage.removeItem(SESSION_MARKER);
-                  setUser(null);
-                  localStorage.removeItem('bustandeen_user');
-                  localStorage.removeItem('bustandeen_idToken');
-                  sessionStorage.removeItem('bustandeen_redirect');
-                  resetAll();
-                  setConfirmLogout(false);
-                  navigate('/', { replace: true });
-                }}
-              >
-                {t('nav.signOut')}
-              </button>
+            {hasUnsynced ? (
+              <div role="status" aria-live="polite">
+                <p className="text-white/75 text-sm leading-relaxed mt-1">
+                  {t('nav.signOutUnsyncedMsg', { summary: unsyncedSummaryText })}
+                </p>
+                {syncFailed && (
+                  <p className="text-red-300 text-sm leading-relaxed mt-2">
+                    {t('nav.signOutSyncFailed')}
+                  </p>
+                )}
+              </div>
+            ) : (
+              <p className="text-white/75 text-sm leading-relaxed mt-1">{t('nav.signOutMsg')}</p>
+            )}
+            <div className={hasUnsynced ? 'flex flex-col gap-2 mt-4' : 'flex gap-2 mt-4'}>
+              {hasUnsynced ? (
+                <>
+                  <button
+                    className={BTN_PRIMARY}
+                    disabled={syncing}
+                    onClick={() => void syncThenSignOut()}
+                  >
+                    {syncing
+                      ? t('nav.signOutSyncing')
+                      : syncFailed
+                        ? t('nav.signOutSyncAgain')
+                        : t('nav.signOutSyncFirst')}
+                  </button>
+                  <button
+                    className={`${BTN_SECONDARY} text-red-300`}
+                    disabled={syncing}
+                    onClick={() => void doSignOut()}
+                  >
+                    {t('nav.signOutAnyway')}
+                  </button>
+                  <button
+                    className={BTN_SECONDARY}
+                    disabled={syncing}
+                    onClick={() => setConfirmLogout(false)}
+                  >
+                    {t('common.cancel')}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    className={`${BTN_SECONDARY} flex-1`}
+                    onClick={() => setConfirmLogout(false)}
+                  >
+                    {t('common.cancel')}
+                  </button>
+                  <button className={`${BTN_PRIMARY} flex-1`} onClick={() => void doSignOut()}>
+                    {t('nav.signOut')}
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
