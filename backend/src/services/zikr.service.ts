@@ -11,6 +11,7 @@ import {
 } from '../utils/timezone-flexible.js';
 import { markActive } from './dailyActivity.service.js';
 import { ZikrIncrementItem } from '../types/api.types.js';
+import { afterCommit, inTransaction } from '../utils/transaction.js';
 
 export interface IncrementResult {
   totalCount: number;
@@ -101,12 +102,16 @@ async function applyIncrements(
       // written before the error is passed on, so buckets and totals agree.
       // A decrement can fail part-way: what it already took from the buckets
       // (`applied`, negative) comes off the totals too.
-      if (amount < 0 && applied !== 0) {
-        userInc[`zikrTotals.${zikrType}`] = (userInc[`zikrTotals.${zikrType}`] ?? 0) + applied;
-        totalAdded += applied;
-      }
-      if (Object.keys(userInc).length) {
-        await User.updateOne({ uid: userId }, { $inc: { ...userInc, totalCount: totalAdded } });
+      // Inside a transaction (P0-5) the rollback undoes the buckets and the
+      // totals together, so there is nothing to repair here.
+      if (!inTransaction()) {
+        if (amount < 0 && applied !== 0) {
+          userInc[`zikrTotals.${zikrType}`] = (userInc[`zikrTotals.${zikrType}`] ?? 0) + applied;
+          totalAdded += applied;
+        }
+        if (Object.keys(userInc).length) {
+          await User.updateOne({ uid: userId }, { $inc: { ...userInc, totalCount: totalAdded } });
+        }
       }
       throw err;
     }
@@ -148,11 +153,12 @@ async function applyIncrements(
       { uid: userId },
       { $inc: { ...userInc, totalCount: totalAdded }, $set: { lastActiveAt: new Date() } }
     );
-    await markActive(userId);
+    await afterCommit(() => markActive(userId));
   }
   if (events.length) {
-    // Best-effort — never let analytics logging fail the actual increment.
-    await ZikrEvent.insertMany(events).catch(() => {});
+    // Best-effort — never let analytics logging fail the actual increment, and
+    // inside a transaction never let it abort one: it runs after the commit.
+    await afterCommit(() => ZikrEvent.insertMany(events).catch(() => {}));
   }
 
   const user = await User.findOne({ uid: userId }).select(ZIKR_PROJECTION);

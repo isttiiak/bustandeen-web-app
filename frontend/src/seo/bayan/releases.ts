@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.2',
+    date: '2026-11-16',
+    text: {
+      en: {
+        title: 'Zikr and Quran saves can no longer count twice',
+        fixed: [
+          'If saving your zikr or Quran reading failed part-way and the app tried again, the same count could be added twice. A save now either goes through completely or not at all, so your totals stay true to what you did.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'যিকির ও কুরআনের হিসাব আর দুইবার গণনা হবে না',
+        fixed: [
+          'যিকির বা কুরআন পড়ার হিসাব সংরক্ষণ মাঝপথে ব্যর্থ হলে এবং অ্যাপ আবার চেষ্টা করলে একই গণনা দুইবার যোগ হতে পারত। এখন একটি সংরক্ষণ হয় পুরোপুরি হবে, নয়তো মোটেই হবে না। তাই আপনার মোট সংখ্যা আপনি যা করেছেন তা-ই থাকবে।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.1',
     date: '2026-11-16',
     text: {

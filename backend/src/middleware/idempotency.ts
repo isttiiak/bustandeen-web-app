@@ -1,5 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import ClientOp from '../models/ClientOp.js';
+import { runInTransaction } from '../utils/transaction.js';
 
 /**
  * Applies a write at most once per `X-Client-Op-Id` (audit T2.3).
@@ -59,11 +60,16 @@ export function idempotent(opts: { storeBody?: boolean } = {}) {
       return next(err);
     }
 
+    // A handler that wraps its writes in `runIdempotent` records the op inside
+    // its own transaction and flips `recorded`; this hook then only sends.
+    res.locals.clientOp = { uid, opId: raw, storeBody, recorded: false } satisfies ClientOpClaim;
+
     // Record the first answer BEFORE it is sent: on serverless the instance can
     // be frozen the moment the response leaves, so a write after 'finish' might
     // never happen and the op would look in flight for good.
     const json = res.json.bind(res);
     res.json = (body: unknown) => {
+      if ((res.locals.clientOp as ClientOpClaim | undefined)?.recorded) return json(body);
       const code = res.statusCode;
       const record =
         code >= 500
@@ -86,6 +92,47 @@ export function idempotent(opts: { storeBody?: boolean } = {}) {
 
     next();
   };
+}
+
+interface ClientOpClaim {
+  uid: string;
+  opId: string;
+  storeBody: boolean;
+  recorded: boolean;
+}
+
+/**
+ * Runs a handler's writes in ONE transaction together with the `ClientOp`
+ * update (audit 2026-11-16 P0-5). Without it, a failure after the first write
+ * left that write in place while the claim was deleted, so the client's retry
+ * counted it twice. Now an error rolls everything back, the claim is released
+ * by the response hook as before, and the retry runs the whole write once.
+ *
+ * `fn` returns the 200 response body; the caller sends it with `res.json`.
+ * It may run more than once (a write conflict with a concurrent request is
+ * retried), so keep side effects outside the database in `afterCommit`.
+ * Without an `X-Client-Op-Id` the writes are still atomic, just not deduped.
+ */
+export async function runIdempotent<T>(res: Response, fn: () => Promise<T>): Promise<T> {
+  const claim = res.locals.clientOp as ClientOpClaim | undefined;
+  const body = await runInTransaction(async () => {
+    const result = await fn();
+    if (claim) {
+      await ClientOp.updateOne(
+        { uid: claim.uid, opId: claim.opId },
+        {
+          $set: {
+            status: 'done',
+            statusCode: 200,
+            body: claim.storeBody && fits(result) ? result : { ok: true },
+          },
+        }
+      );
+    }
+    return result;
+  });
+  if (claim) claim.recorded = true;
+  return body;
 }
 
 /** A claim still pending after this long belongs to a request that died. */

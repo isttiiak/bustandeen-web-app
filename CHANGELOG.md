@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.2 - Zikr and Quran saves are all-or-nothing (audit P0-5) - 2026-11-16
+
+### Fixed
+
+- **A retry after a failed zikr or Quran save no longer counts twice.** `POST /api/zikr/increment`, `/api/zikr/increment/batch`, `/api/quran/read` and `/api/quran/read-ayat` wrote several collections one after the other (day bucket, lifetime totals, new type names, the Quran day log and profile) and recorded the `X-Client-Op-Id` result last, outside any transaction. If the request failed with a 5xx part-way, what was already written stayed, the claim was released, and the app's retry added the same taps again. These writes and the `ClientOp` record now run in one MongoDB transaction: a failure rolls everything back and the retry counts once. Requests without an op id are atomic too.
+- Concurrent flushes of one user (two tabs) can now conflict inside a transaction; the conflicting one is run again automatically, so all of them still apply.
+
+### Changed
+
+- `utils/transaction.ts`: `runInTransaction` and `afterCommit`. Mongoose is set to `transactionAsyncLocalStorage`, so queries inside the callback join the transaction without passing a session. Analytics events (`ZikrEvent`) and the daily-activity counter run after the commit and can no longer abort it.
+- `middleware/idempotency.ts`: `runIdempotent(res, fn)` writes the op record inside the handler's transaction; the response hook skips its own write once that is done. Routes that do not use it behave as before.
+- Tests: every suite's `MongoMemoryServer.create()` now starts a one-node replica set through a jest `moduleNameMapper` shim (`tests/support/mongoMemoryReplSetShim.js`); no test file changed. New: `tests/transactions.e2e.test.js`.
+
+### Not changed
+
+- No stored worship data is touched and nothing is migrated. Production runs on Atlas, which is already a replica set. `naturalLog.service` still calls the zikr and Quran services outside a transaction (it is not an idempotent route); to do under P1-9.
+
 ## v5.190.1 - Security and data-safety fixes from the 2026-11-16 audit (Phase 0) - 2026-11-16
 
 ### Security

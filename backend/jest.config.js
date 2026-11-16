@@ -6,6 +6,9 @@ export default {
   extensionsToTreatAsEsm: ['.ts'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    // Transactions need a replica set: every test's MongoMemoryServer.create()
+    // becomes a one-node replica set (audit P0-5).
+    '^mongodb-memory-server$': '<rootDir>/tests/support/mongoMemoryReplSetShim.js',
   },
   transform: {
     '^.+\\.ts$': ['ts-jest', { useESM: true }],
