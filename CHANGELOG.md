@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.9 - Two taps at once can no longer count a missed prayer twice (audit P1-1) - 2026-11-17
+
+### Fixed
+
+- **A prayer status change is now one transaction.** `updatePrayerStatus` read the day's log, changed it, saved it, then moved the kaza debt by comparing the OLD status with the new one. Two requests at once (a double tap, two devices, an offline replay) both read "not missed", both saved, and both added a unit to the debt: 8 identical "missed" taps left an owed count of 6. The log save, the debt change, the event and the itemised kaza unit now run in one transaction (the P0-5 helper). Two requests on the same log conflict on the write; the later one reruns from the start and sees what the first stored, so the debt moves once, and only when the stored status really changed.
+- **Creating the day's log no longer races to a 500.** Two requests creating the same day at once hit the unique index and the loser answered 500. A duplicate key now reruns the transaction (up to 3 times), which finds the log the winner made. `getOrCreateLog` does the same when used outside a transaction. `updateNafl` uses the same guard.
+- **A failed debt update no longer leaves the log changed.** Before, the log saved first and a later failure left the status and the debt out of step.
+- Tests (`salatRace.e2e.test.js`, 5 cases, all 5 failed on the old code: debt 6 instead of 1, duplicate-key errors, log changed after a failed debt write).
+
+### Not changed
+
+- Stored data: nothing is migrated and existing debts are not recalculated. An account that already double-counted keeps its number; the existing "set exact count" and restore tools still correct it.
+- The missed-prayer sweep (`ensureCaughtUp`) is P1-2 and is untouched.
+
 ## v5.190.8 - Zikr counts are no longer dropped without a word (audit P1-4) - 2026-11-17
 
 ### Fixed
