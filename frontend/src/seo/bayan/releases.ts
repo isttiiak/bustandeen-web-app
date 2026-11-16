@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.13',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Restoring a backup is now safer',
+        fixed: [
+          'When you restore a backup file, the app now checks every date and number in it first, and leaves out anything that makes no sense instead of saving it.',
+          'A restore now happens all at once. If something goes wrong part-way, your records stay exactly as they were, instead of being left half replaced.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'ব্যাকআপ পুনরুদ্ধার এখন আরও নিরাপদ',
+        fixed: [
+          'ব্যাকআপ ফাইল পুনরুদ্ধারের সময় অ্যাপ এখন তার প্রতিটি তারিখ ও সংখ্যা আগে যাচাই করে, এবং যা অর্থহীন তা সংরক্ষণ না করে বাদ দেয়।',
+          'পুনরুদ্ধার এখন একসঙ্গে সম্পন্ন হয়। মাঝপথে কিছু ভুল হলে আপনার হিসাব ঠিক আগের মতোই থাকে, অর্ধেক বদলানো অবস্থায় পড়ে থাকে না।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.12',
     date: '2026-11-17',
     text: {

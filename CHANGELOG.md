@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.13 - Restoring a backup checks the file first and is all or nothing (audit P1-7) - 2026-11-17
+
+### Fixed
+
+- **A restore is one transaction.** `importBackup` now runs the whole import inside `runInTransaction` (the P0-5 helper), version 2 and 3 alike. Before, the Kaza ledger was replaced with `deleteMany` then `insertMany`, with nothing around it: a file with two units for the same prayer and day passed validation, hit the unique index AFTER the delete, answered 409 and left the account with the new debt counter and part or none of its units (a probe showed `owed.fajr` going from 7 to 1 while the units insert failed). A failure anywhere now puts everything back as it was, day rows included.
+- **Dates must be real days.** `2026-02-30`, `2026-13-01`, `not-a-date`, a 2,000-character string, or a day before 2000 or beyond any "today" on earth are left out for salat, fasting, adhkar, Quran, hifz, Naseeh plans, cycle rows, reset history and fresh starts. Only the shape was checked before (and for most areas not even that).
+- **The Kaza counter of a file is made safe before it replaces the stored one.** `owed` per prayer must be a whole number from 0 to 1,000,000 (negatives, fractions and 99 billion are reset to 0); `since` and `lastAccrualDate` must be real days from 2000; a cursor ahead of the newest possible yesterday is pulled back to it (otherwise the sweep stops for good, as in P0-3); a cursor more than a day behind `since` is moved to just before it; `skippedRestDays` keeps real days only (at most 5,000). Units and events with an unknown prayer (`witr`), a bad day or a repeat of a prayer/day are dropped. The counters themselves are NOT recomputed from the unit rows: they also hold adjustments no row shows (the setup estimate, "set exact count"), so recomputing would silently lower a real debt.
+- **Zikr totals** (`totalCount`, per-type totals) must be whole numbers up to 1e12. `1e999` is valid JSON and parses to Infinity; it was stored.
+- **Skipped rows are counted.** The import answer gains an optional `counts.skippedRows` (older clients ignore it).
+- Tests: `backupHostile.e2e.test.js`, 9 cases; 7 failed on the old code. The existing backup round-trip suite passes unchanged.
+
+### Not changed
+
+- Stored data. Only what a FUTURE import accepts changes; no account is migrated or recalculated.
+- A very large restore is now one longer transaction (Atlas allows 60 s; the file is capped at 20 MB and 20,000 days, 50,000 events).
+
 ## v5.190.12 - Signing out no longer throws away what is still waiting to be saved (audit P1-6) - 2026-11-17
 
 ### Fixed

@@ -30,6 +30,9 @@ import Donation from '../models/Donation.js';
 import { getPrefs, SYNCED_PREF_KEYS } from './userPrefs.service.js';
 import { getOrCreateProfile as getOrCreateSocialProfile } from './social.service.js';
 import { BACKUP_V2, importV2, type BackupFileV2 } from './backupV2.service.js';
+import { PRAYER_IDS } from '../models/SalatLog.js';
+import { latestPossibleToday } from '../validation/clientDay.js';
+import { runInTransaction } from '../utils/transaction.js';
 
 /**
  * Backup file, version 3 (U6, v5.139.0): ONE file with everything the app
@@ -303,6 +306,8 @@ export interface ImportCounts {
   hifzItems?: number;
   kazaUnits?: number;
   settings?: number;
+  /** Rows of the file that were left out because a date, prayer or number was not usable. */
+  skippedRows?: number;
 }
 
 export interface BackupFileV3 {
@@ -345,6 +350,75 @@ const isObj = (v: unknown): v is PlainDoc => !!v && typeof v === 'object' && !Ar
 const list = (v: unknown, max: number): PlainDoc[] =>
   Array.isArray(v) ? v.filter(isObj).slice(0, max) : [];
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+/** The earliest day the app can hold: nothing in a backup is older than this. */
+const FIRST_DAY = '2000-01-01';
+
+/** True for a YYYY-MM-DD that is a day on the calendar ("2026-02-30" is not). */
+function isRealDay(v: unknown): v is string {
+  if (typeof v !== 'string' || !DATE_RE.test(v)) return false;
+  const [y, m, d] = v.split('-').map(Number);
+  const t = new Date(Date.UTC(y!, m! - 1, d!));
+  return t.getUTCFullYear() === y && t.getUTCMonth() === m! - 1 && t.getUTCDate() === d;
+}
+
+/** A real day the app could have written: from 2000, and not beyond any "today" on earth. */
+function usableDay(v: unknown): v is string {
+  return isRealDay(v) && v >= FIRST_DAY && v <= latestPossibleToday();
+}
+
+function shiftDay(day: string, delta: number): string {
+  const t = new Date(`${day}T00:00:00Z`);
+  t.setUTCDate(t.getUTCDate() + delta);
+  return t.toISOString().substring(0, 10);
+}
+
+/** A whole number from 0 to `max`, or null. Rejects NaN, Infinity (1e999 is valid JSON), fractions, negatives. */
+function wholeUpTo(v: unknown, max: number): number | null {
+  return typeof v === 'number' && Number.isInteger(v) && v >= 0 && v <= max ? v : null;
+}
+const MAX_OWED = 1_000_000; // per prayer: about 2,700 years of five-a-day
+const MAX_ZIKR_TOTAL = 1e12;
+
+/** Rows left out of this import (a usable date, prayer or number was missing). */
+interface Tally {
+  skipped: number;
+}
+function keepDays(rows: PlainDoc[], field: string, tally: Tally): PlainDoc[] {
+  const kept = rows.filter((r) => usableDay(Object.entries(r).find(([k]) => k === field)?.[1]));
+  tally.skipped += rows.length - kept.length;
+  return kept;
+}
+
+/**
+ * The Kaza counter of a file, made safe before it replaces the stored one. The
+ * counters stay as the person kept them (they hold adjustments no row shows),
+ * but only as whole numbers up to MAX_OWED; the dates must be real days, the
+ * cursor can never be ahead of the newest possible yesterday (the sweep would
+ * stop for good) and `since` never after it.
+ */
+function sanitiseDebt(raw: PlainDoc): PlainDoc {
+  const owedIn = new Map(Object.entries(isObj(raw.owed) ? raw.owed : {}));
+  const owed = Object.fromEntries(
+    PRAYER_IDS.map((p) => [p, wholeUpTo(owedIn.get(p), MAX_OWED) ?? 0])
+  );
+  const newest = shiftDay(latestPossibleToday(), -1);
+  const out: PlainDoc = { owed };
+  if (usableDay(raw.since)) out.since = raw.since;
+  if (usableDay(raw.lastAccrualDate)) {
+    let cursor = raw.lastAccrualDate > newest ? newest : raw.lastAccrualDate;
+    // The cursor is never more than a day behind the start of the period.
+    if (typeof out.since === 'string' && cursor < shiftDay(out.since, -1)) {
+      cursor = shiftDay(out.since, -1);
+    }
+    out.lastAccrualDate = cursor;
+  }
+  if (Array.isArray(raw.skippedRestDays)) {
+    out.skippedRestDays = [...new Set(raw.skippedRestDays.filter(usableDay))].slice(0, 5_000);
+  }
+  if (typeof raw.restDaysSeeded === 'boolean') out.restDaysSeeded = raw.restDaysSeeded;
+  return out;
+}
 /** Map keys may not contain "." or start with "$" (Mongo path rules). */
 const safeKey = (k: string) =>
   k.length > 0 && k.length <= 100 && !k.includes('.') && !k.startsWith('$');
@@ -371,13 +445,16 @@ async function upsertBy(
   M: AnyModel,
   raws: PlainDoc[],
   uid: string,
-  key: (d: PlainDoc) => PlainDoc
+  key: (d: PlainDoc) => PlainDoc,
+  tally?: Tally
 ): Promise<number> {
-  const ops = (await Promise.all(raws.map((r) => cast(M, r, uid))))
-    .filter((d): d is PlainDoc => !!d)
-    .map((d) => ({
-      replaceOne: { filter: { userId: uid, ...key(d) }, replacement: d, upsert: true },
-    }));
+  const cast_ = (await Promise.all(raws.map((r) => cast(M, r, uid)))).filter(
+    (d): d is PlainDoc => !!d
+  );
+  if (tally) tally.skipped += raws.length - cast_.length;
+  const ops = cast_.map((d) => ({
+    replaceOne: { filter: { userId: uid, ...key(d) }, replacement: d, upsert: true },
+  }));
   if (ops.length) await M.bulkWrite(ops as never, { ordered: false });
   return ops.length;
 }
@@ -392,10 +469,16 @@ async function replaceOneDoc(M: AnyModel, raw: unknown, uid: string): Promise<bo
 }
 
 /** Replace every doc of a collection for this user with the file's. */
-async function replaceAll(M: AnyModel, raws: PlainDoc[], uid: string): Promise<number> {
+async function replaceAll(
+  M: AnyModel,
+  raws: PlainDoc[],
+  uid: string,
+  tally?: Tally
+): Promise<number> {
   const docs = (await Promise.all(raws.map((r) => cast(M, r, uid)))).filter(
     (d): d is PlainDoc => !!d
   );
+  if (tally) tally.skipped += raws.length - docs.length;
   await M.deleteMany({ userId: uid });
   if (docs.length) await M.insertMany(docs, { ordered: false });
   return docs.length;
@@ -444,11 +527,10 @@ async function importUser(uid: string, data: BackupFileV3): Promise<number> {
 
   const s = data.salat;
   if (isObj(s)) {
-    if (typeof s.resetDate === 'string' && DATE_RE.test(s.resetDate))
-      set.salatResetDate = s.resetDate;
+    if (usableDay(s.resetDate)) set.salatResetDate = s.resetDate;
     if (Array.isArray(s.resetHistory)) {
       set.salatResetHistory = list(s.resetHistory, 500)
-        .filter((e) => typeof e.date === 'string' && DATE_RE.test(e.date))
+        .filter((e) => usableDay(e.date))
         .map((e) => ({
           date: e.date,
           note: typeof e.note === 'string' ? e.note.slice(0, 500) : '',
@@ -460,11 +542,12 @@ async function importUser(uid: string, data: BackupFileV3): Promise<number> {
 
   const z = data.zikr;
   if (isObj(z)) {
-    if (typeof z.totalCount === 'number' && z.totalCount >= 0) set.totalCount = z.totalCount;
+    const total = wholeUpTo(z.totalCount, MAX_ZIKR_TOTAL);
+    if (total !== null) set.totalCount = total;
     if (isObj(z.zikrTotals)) {
       set.zikrTotals = Object.fromEntries(
         Object.entries(z.zikrTotals).filter(
-          ([k, v]) => safeKey(k) && typeof v === 'number' && v >= 0
+          ([k, v]) => safeKey(k) && wholeUpTo(v, MAX_ZIKR_TOTAL) !== null
         )
       );
     }
@@ -512,7 +595,7 @@ function importFreshStarts(raw: unknown): PlainDoc | null {
     const list = entries
       .filter(isObj)
       .slice(0, 500)
-      .filter((e) => typeof e.date === 'string' && DATE_RE.test(e.date))
+      .filter((e) => usableDay(e.date))
       .map((e) => ({
         date: e.date,
         note: typeof e.note === 'string' ? e.note.slice(0, 200) : '',
@@ -538,7 +621,11 @@ function importFreshStarts(raw: unknown): PlainDoc | null {
 }
 const FRESH_AREAS = new Set(['zikr', 'fasting', 'quran', 'kaza']);
 
-async function importRayhanah(uid: string, r: BackupFileV3['rayhanah']): Promise<number> {
+async function importRayhanah(
+  uid: string,
+  r: BackupFileV3['rayhanah'],
+  tally: Tally
+): Promise<number> {
   if (!isObj(r)) return 0;
   if (isObj(r.profile)) {
     const { bodyStats, partnerUid, partnerSyncEnabled, ...rest } = r.profile;
@@ -556,16 +643,16 @@ async function importRayhanah(uid: string, r: BackupFileV3['rayhanah']): Promise
   }
   let n = await upsertBy(
     CycleLog,
-    list(r.cycles, MAX.small).filter(
-      (d) => typeof d.startDate === 'string' && DATE_RE.test(d.startDate)
-    ),
+    keepDays(list(r.cycles, MAX.small), 'startDate', tally),
     uid,
-    (d) => ({ startDate: d.startDate })
+    (d) => ({ startDate: d.startDate }),
+    tally
   );
-  const days = list(r.days, MAX.small)
-    .filter((d) => typeof d.date === 'string' && DATE_RE.test(d.date))
-    .map((d) => ({ date: d.date, enc: isObj(d.note) ? encryptJson(d.note) : null }));
-  n += await upsertBy(CycleDay, days, uid, (d) => ({ date: d.date }));
+  const days = keepDays(list(r.days, MAX.small), 'date', tally).map((d) => ({
+    date: d.date,
+    enc: isObj(d.note) ? encryptJson(d.note) : null,
+  }));
+  n += await upsertBy(CycleDay, days, uid, (d) => ({ date: d.date }), tally);
   return n;
 }
 
@@ -582,6 +669,7 @@ async function importV3(uid: string, data: BackupFileV3): Promise<ImportCounts> 
     settings: 0,
   };
 
+  const tally: Tally = { skipped: 0 };
   counts.settings = await importUser(uid, data);
 
   const z = data.zikr;
@@ -592,51 +680,96 @@ async function importV3(uid: string, data: BackupFileV3): Promise<ImportCounts> 
       ZikrDaily,
       list(z.daily, MAX.days).filter((d) => typeof d.zikrType === 'string' && safeKey(d.zikrType)),
       uid,
-      (d) => ({ date: d.date, zikrType: d.zikrType })
+      (d) => ({ date: d.date, zikrType: d.zikrType }),
+      tally
     );
-    await upsertBy(ZikrEvent, list(z.events, MAX.events), uid, (d) => ({
-      ts: d.ts,
-      zikrType: d.zikrType,
-    }));
+    await upsertBy(
+      ZikrEvent,
+      list(z.events, MAX.events),
+      uid,
+      (d) => ({
+        ts: d.ts,
+        zikrType: d.zikrType,
+      }),
+      tally
+    );
   }
 
   const s = data.salat;
   if (isObj(s)) {
-    counts.salatDays = await upsertBy(SalatLog, list(s.logs, MAX.days), uid, (d) => ({
-      date: d.date,
-    }));
+    counts.salatDays = await upsertBy(
+      SalatLog,
+      keepDays(list(s.logs, MAX.days), 'date', tally),
+      uid,
+      (d) => ({ date: d.date }),
+      tally
+    );
     // The Kaza ledger is one running balance: merging two would double count.
+    // Everything is checked first; the transaction around the whole import
+    // puts the old ledger back if any later step fails.
     if (isObj(s.kaza)) {
-      if (isObj(s.kaza.debt)) await replaceOneDoc(SalatDebt, s.kaza.debt, uid);
+      if (isObj(s.kaza.debt)) await replaceOneDoc(SalatDebt, sanitiseDebt(s.kaza.debt), uid);
       else await SalatDebt.deleteOne({ userId: uid });
-      await replaceAll(SalatDebtEvent, list(s.kaza.events, MAX.events), uid);
-      counts.kazaUnits = await replaceAll(KazaUnit, list(s.kaza.units, MAX.units), uid);
+      const events = keepDays(list(s.kaza.events, MAX.events), 'date', tally).filter((e) => {
+        const okEvent =
+          (PRAYER_IDS as readonly string[]).includes(e.prayer as string) &&
+          Number.isInteger(e.delta) &&
+          Math.abs(e.delta as number) <= MAX_OWED;
+        if (!okEvent) tally.skipped++;
+        return okEvent;
+      });
+      await replaceAll(SalatDebtEvent, events, uid, tally);
+      const seen = new Set<string>();
+      const units = keepDays(list(s.kaza.units, MAX.units), 'missedDate', tally).filter((u) => {
+        const key = `${String(u.prayer)}:${String(u.missedDate)}`;
+        const ok = (PRAYER_IDS as readonly string[]).includes(u.prayer as string) && !seen.has(key);
+        seen.add(key);
+        if (!ok) tally.skipped++;
+        return ok;
+      });
+      counts.kazaUnits = await replaceAll(KazaUnit, units, uid, tally);
     }
   }
 
   const f = data.fasting;
   if (isObj(f)) {
     await replaceOneDoc(FastingProfile, f.profile, uid);
-    counts.fastingDays = await upsertBy(FastingLog, list(f.logs, MAX.days), uid, (d) => ({
-      date: d.date,
-    }));
+    counts.fastingDays = await upsertBy(
+      FastingLog,
+      keepDays(list(f.logs, MAX.days), 'date', tally),
+      uid,
+      (d) => ({ date: d.date }),
+      tally
+    );
   }
 
   if (isObj(data.adhkar)) {
-    counts.adhkarDays = await upsertBy(AdhkarDay, list(data.adhkar.days, MAX.days), uid, (d) => ({
-      date: d.date,
-    }));
+    counts.adhkarDays = await upsertBy(
+      AdhkarDay,
+      keepDays(list(data.adhkar.days, MAX.days), 'date', tally),
+      uid,
+      (d) => ({ date: d.date }),
+      tally
+    );
   }
 
   const q = data.quran;
   if (isObj(q)) {
     await replaceOneDoc(QuranProfile, q.profile, uid);
-    counts.quranDays = await upsertBy(QuranLog, list(q.logs, MAX.days), uid, (d) => ({
-      date: d.date,
-    }));
-    await upsertBy(QuranReadingSession, list(q.sessions, MAX.events), uid, (d) => ({
-      clientSessionId: d.clientSessionId,
-    }));
+    counts.quranDays = await upsertBy(
+      QuranLog,
+      keepDays(list(q.logs, MAX.days), 'date', tally),
+      uid,
+      (d) => ({ date: d.date }),
+      tally
+    );
+    await upsertBy(
+      QuranReadingSession,
+      list(q.sessions, MAX.events),
+      uid,
+      (d) => ({ clientSessionId: d.clientSessionId }),
+      tally
+    );
   }
 
   const h = data.hifz;
@@ -646,13 +779,23 @@ async function importV3(uid: string, data: BackupFileV3): Promise<ImportCounts> 
       surah: d.surah,
       ayah: d.ayah,
     }));
-    await upsertBy(HifzLog, list(h.logs, MAX.days), uid, (d) => ({ date: d.date }));
+    await upsertBy(
+      HifzLog,
+      keepDays(list(h.logs, MAX.days), 'date', tally),
+      uid,
+      (d) => ({ date: d.date }),
+      tally
+    );
   }
 
   if (isObj(data.naseeh)) {
-    await upsertBy(NaseehPlan, list(data.naseeh.plans, MAX.small), uid, (d) => ({
-      weekStart: d.weekStart,
-    }));
+    await upsertBy(
+      NaseehPlan,
+      keepDays(list(data.naseeh.plans, MAX.small), 'weekStart', tally),
+      uid,
+      (d) => ({ weekStart: d.weekStart }),
+      tally
+    );
   }
 
   // Friends: only this person's own privacy choices. Friend lists involve
@@ -673,7 +816,8 @@ async function importV3(uid: string, data: BackupFileV3): Promise<ImportCounts> 
     if (Object.keys(set).length) await SocialProfile.updateOne({ userId: uid }, { $set: set });
   }
 
-  counts.cycleEntries = await importRayhanah(uid, data.rayhanah);
+  counts.cycleEntries = await importRayhanah(uid, data.rayhanah, tally);
+  counts.skippedRows = tally.skipped;
   return counts;
 }
 
@@ -682,8 +826,13 @@ export async function importBackup(
   uid: string,
   data: (BackupFileV3 | BackupFileV2) & { version?: number }
 ): Promise<ImportCounts> {
-  if (data.version === BACKUP_V2) return importV2(uid, data as BackupFileV2);
-  if (data.version === BACKUP_VERSION) return importV3(uid, data as BackupFileV3);
+  // One transaction for the whole restore (audit P1-7): a failure part-way puts
+  // the person's data back exactly as it was, instead of leaving the Kaza
+  // ledger half replaced. A conflict with a concurrent request reruns it.
+  if (data.version === BACKUP_V2)
+    return runInTransaction(() => importV2(uid, data as BackupFileV2));
+  if (data.version === BACKUP_VERSION)
+    return runInTransaction(() => importV3(uid, data as BackupFileV3));
   throw Object.assign(
     new Error(
       `Backup version mismatch: file is version ${data.version ?? 'unknown'}, ` +
