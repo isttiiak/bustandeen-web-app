@@ -1,3 +1,4 @@
+import { MAX_ZIKR_TOTAL_KEYS, MAX_ZIKR_TYPES, limitError } from '../utils/limits.js';
 import User from '../models/User.js';
 import ZikrDaily from '../models/ZikrDaily.js';
 import ZikrEvent from '../models/ZikrEvent.js';
@@ -168,6 +169,11 @@ async function applyIncrements(
   let typesChanged = false;
   for (const name of newTypeNames) {
     if (!user.zikrTypes.some((t) => t.name.toLowerCase() === name.toLowerCase())) {
+      // Only the list length is checked here: the increment above already
+      // created this name's total, and a refusal rolls the whole batch back.
+      if (user.zikrTypes.length >= MAX_ZIKR_TYPES) {
+        throw limitError(`Your zikr list is full (${MAX_ZIKR_TYPES}). Remove one to add another.`);
+      }
       user.zikrTypes.push({ name } as never);
       typesChanged = true;
     }
@@ -469,12 +475,41 @@ export async function getZikrTypes(userId: string): Promise<unknown[]> {
   return user?.zikrTypes ?? [];
 }
 
+/**
+ * Refuses a name that would push the zikr list or the lifetime-total keys past
+ * their limits (audit P1-12). A name already in the list is always fine.
+ */
+function assertRoomForType(
+  user: { zikrTypes: Array<{ name: string }>; zikrTotals?: unknown },
+  name: string
+): void {
+  const lower = name.toLowerCase();
+  if (user.zikrTypes.some((t) => t.name.toLowerCase() === lower)) return;
+  if (user.zikrTypes.length >= MAX_ZIKR_TYPES) {
+    throw limitError(`Your zikr list is full (${MAX_ZIKR_TYPES}). Remove one to add another.`);
+  }
+  const totals = user.zikrTotals;
+  const keys =
+    totals instanceof Map
+      ? totals.size
+      : totals && typeof totals === 'object'
+        ? Object.keys(totals).length
+        : 0;
+  const hasKey = totals instanceof Map ? totals.has(name) : false;
+  if (!hasKey && keys >= MAX_ZIKR_TOTAL_KEYS) {
+    throw limitError(
+      'Too many zikr names have been used on this account. Reuse one you already have.'
+    );
+  }
+}
+
 export async function addZikrType(userId: string, name: string): Promise<unknown[]> {
   const user = await User.findOne({ uid: userId }).select(ZIKR_PROJECTION);
   if (!user) throw new Error('User not found');
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Mongoose DocumentArray subdocument typing doesn't expose `.name` cleanly here
   if (!user.zikrTypes.some((t: any) => (t.name as string).toLowerCase() === name.toLowerCase())) {
+    assertRoomForType(user, name);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any -- DocumentArray#push rejects a plain object under the subdocument's strict type
     (user.zikrTypes as any).push({ name });
     await user.save();

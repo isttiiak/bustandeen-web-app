@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.18 - Lists that could grow without end now have limits (audit P1-12) - 2026-11-17
+
+### Fixed
+
+- **Zikr names.** The dropdown list stops at 200 names and the lifetime-total keys at 1,000 (`utils/limits.ts`). Removing a zikr keeps its total, so adding and removing names grew `zikrTotals` without end; a new name past either limit is refused with 409 and a clear message ("Your zikr list is full (200). Remove one to add another."), and a name already in the list is always fine. A batch of taps that would register a 201st name rolls back as a whole (it runs in a transaction), so counts are never half applied.
+- **Friend requests waiting for an answer.** Each direction stops at 100. Anyone holding an invite link could fill someone's `pendingIncoming` without end; the check is part of the write (`pendingIncoming.99` must not exist), so it holds when requests overlap, and both sides of a request are written in one transaction. The message to a sender is honest and kind ("This person has many requests waiting. Try again later.").
+- **Blocked people.** The list stops at 500, checked in the same write; blocking someone already on it still works.
+- Tests: `growthCaps.e2e.test.js`, 6 cases; 5 failed on the old code. The existing social suites pass unchanged.
+
+### Reported finding that needs no change
+
+- **`SalatDebt.skippedRestDays`** is already bounded: it only holds real rest days at or after `since`, `since` cannot be earlier than 2000 (P1-7), the restore path keeps at most 5,000, and the sweep adds at most the days of one 31-day chunk at a time. No cap added.
+
+### Not changed
+
+- Stored data. An account that is already over a limit keeps what it has; the limit only stops further growth.
+
 ## v5.190.17 - Deleting an account clears what the privacy page says it clears (audit P1-11) - 2026-11-17
 
 ### Fixed
