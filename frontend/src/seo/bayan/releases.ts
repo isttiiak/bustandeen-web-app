@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.12',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Signing out now warns you about changes that are not saved yet',
+        fixed: [
+          'If you had counts or prayer updates that were still waiting to be saved and you signed out, they were lost without telling you what. The sign-out screen now shows what is waiting and offers to save it first.',
+          'If it cannot be saved because you are offline, you can try again, cancel, or sign out anyway.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'সাইন আউটের সময় এখন সংরক্ষিত না হওয়া পরিবর্তনের কথা জানানো হয়',
+        fixed: [
+          'সংরক্ষণের অপেক্ষায় থাকা গণনা বা নামাজের পরিবর্তন থাকা অবস্থায় সাইন আউট করলে সেগুলো কী ছিল না জানিয়েই হারিয়ে যেত। এখন সাইন আউটের পর্দায় কী অপেক্ষা করছে তা দেখানো হয় এবং আগে সেগুলো সংরক্ষণ করার সুযোগ দেওয়া হয়।',
+          'ইন্টারনেট না থাকায় সংরক্ষণ করা না গেলে আপনি আবার চেষ্টা করতে পারেন, বাতিল করতে পারেন, অথবা তবুও সাইন আউট করতে পারেন।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.11',
     date: '2026-11-17',
     text: {
