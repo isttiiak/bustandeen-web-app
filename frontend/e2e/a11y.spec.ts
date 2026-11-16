@@ -121,6 +121,10 @@ async function axeViolations(page: Page, include?: string): Promise<string[]> {
     'wcag21aa',
     'best-practice',
   ]);
+  // WCAG 2.5.3 Label in Name: a button's accessible name must contain its visible
+  // text. axe 4.13 ships this rule switched off (experimental); 4.14 turns it on.
+  // Enabling it here keeps it checked whichever version is installed.
+  builder = builder.options({ rules: { 'label-content-name-mismatch': { enabled: true } } });
   if (include) builder = builder.include(include);
   const res = await builder.analyze();
   return res.violations.flatMap((v) =>

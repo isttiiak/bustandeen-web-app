@@ -651,6 +651,13 @@ export default function Settings() {
   // Rayhanah is a sisters-only feature — its delete group must not appear for
   // anyone else (a brother seeing a 🌸 cycle-data row was a bug).
   const dangerGroups = DANGER_GROUPS.filter((g) => g.id !== 'cycle' || user?.gender === 'female');
+  /** The visible word on a row's button; its accessible name starts with it. */
+  const dangerActionText = (row: DangerRow): string =>
+    row.method === 'delete'
+      ? t('common.delete')
+      : row.id === 'quran-khatam'
+        ? t('common.reset')
+        : t('common.remove');
   const { aiEnabled, setAiEnabled } = useAuthStore();
   const updateProfile = useUpdateProfile();
   const { highContrast, vibrationEnabled, setHighContrast, setVibrationEnabled } = useUiStore();
@@ -1309,15 +1316,11 @@ export default function Settings() {
                       ) : (
                         <button
                           onClick={() => setConfirmTarget(row.id)}
-                          aria-label={row.label}
+                          aria-label={`${dangerActionText(row)}: ${row.label}`}
                           className={`${BTN_DANGER_QUIET} shrink-0`}
                         >
-                          <TrashIcon className="w-3.5 h-3.5" />
-                          {row.method === 'delete'
-                            ? t('common.delete')
-                            : row.id === 'quran-khatam'
-                              ? t('common.reset')
-                              : t('common.remove')}
+                          <TrashIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                          {dangerActionText(row)}
                         </button>
                       )}
                     </div>

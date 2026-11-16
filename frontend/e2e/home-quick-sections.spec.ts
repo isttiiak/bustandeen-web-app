@@ -110,7 +110,7 @@ test('Quran: Continue (khatam in the demo), Listen and Pick a surah', async ({ p
 
 test('Zikr: a chip opens the counter with its number as the target', async ({ page }) => {
   await demoHomeAt(page, '2026-10-15T20:00:00+06:00');
-  const chip = page.getByRole('button', { name: 'Count Astaghfirullah, target 100' });
+  const chip = page.getByRole('button', { name: 'Astaghfirullah 100 target, tap to count' });
   await chip.click();
   await expect(page).toHaveURL(/\/zikr\?type=Astaghfirullah&target=100$/);
   await expect(page.getByText(/of 100/).first()).toBeVisible();
@@ -121,7 +121,7 @@ test('Zikr: with the "add" action a chip adds its number at once', async ({ page
     bustandeen_zikr_quick_action: 'add',
   });
   const card = page.getByTestId('quick-zikr');
-  await card.getByRole('button', { name: 'Add 100 La ilaha illallah' }).click();
+  await card.getByRole('button', { name: 'La ilaha illallah +100, tap to add' }).click();
   await expect(card).toContainText('100');
 });
 

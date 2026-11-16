@@ -228,11 +228,11 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
             onClick={() => tap(z)}
             aria-label={
               action === 'add'
-                ? t('home.quick.zikrAdd', 'Add {{n}} {{name}}', {
+                ? t('home.quick.zikrAdd', '{{name}} +{{n}}, tap to add', {
                     n: formatLocaleNumber(z.count),
                     name: zikrDisplayName(z.name, i18n.language),
                   })
-                : t('home.quick.zikrOpen', 'Count {{name}}, target {{n}}', {
+                : t('home.quick.zikrOpen', '{{name}} {{n}} target, tap to count', {
                     n: formatLocaleNumber(z.count),
                     name: zikrDisplayName(z.name, i18n.language),
                   })
@@ -242,6 +242,8 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
             <span className="block text-white text-[11px] font-bold line-clamp-2">
               {zikrDisplayName(z.name, i18n.language)}
             </span>
+            {/* A real space between the two lines: the button's visible text must
+                read "name count", which its accessible name starts with. */}{' '}
             <span className="block text-brand-emerald text-xs font-black tabular-nums mt-0.5">
               {action === 'add' ? '+' : ''}
               {formatLocaleNumber(z.count)}

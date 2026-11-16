@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.6',
+    date: '2026-11-16',
+    text: {
+      en: {
+        title: 'Buttons now match what you see',
+        fixed: [
+          'Several buttons now have names that match the words drawn on them, such as the days in the week strips and the zikr shortcuts on Home. This helps voice control (say what you see) and screen readers.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'বোতামের নাম এখন পর্দায় যা দেখেন তার সঙ্গে মেলে',
+        fixed: [
+          'সপ্তাহের দিনের সারি এবং হোমের যিকিরের শর্টকাটের মতো কয়েকটি বোতামের নাম এখন তাতে লেখা শব্দের সঙ্গে মেলে। এতে ভয়েস কন্ট্রোল (যা দেখছেন তা বলুন) ও স্ক্রিন রিডারে সুবিধা হয়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.5',
     date: '2026-11-16',
     text: {
