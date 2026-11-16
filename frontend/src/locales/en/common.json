@@ -372,6 +372,8 @@
     "days": "days",
     "deviceDateWrong": "The date on your device does not match today's date, so some things may not load or save. Set the date and time on your device to automatic, then try again.",
     "zikrBatchDropped": "{{n}} zikr counts could not be saved. You can add them again with Log counts.",
+    "outboxStuck": "Some of your changes are not saved to your account yet. They are kept on this device and we will keep trying.",
+    "salatUpdateDropped": "A prayer update you made earlier could not be saved. Please check that day and mark it again.",
     "delete": "Delete",
     "edit": "Edit",
     "ends": "ends",

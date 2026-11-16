@@ -20,6 +20,30 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.11',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Changes you make offline are no longer lost when the server is busy',
+        fixed: [
+          'If you marked a prayer or logged something while offline, and the server was busy or briefly unavailable when the app tried to send it, that change could be lost. It is now kept and sent again by itself after a short wait.',
+          'If your changes stay unsent for a while, you now see a calm message, and it goes away once everything is saved.',
+          'A prayer update that can never be saved now tells you, so you can mark it again.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'অফলাইনে করা পরিবর্তন সার্ভার ব্যস্ত থাকলেও আর হারাবে না',
+        fixed: [
+          'অফলাইনে থাকার সময় কোনো নামাজ চিহ্নিত করলে বা কিছু লিখলে, পাঠানোর সময় সার্ভার ব্যস্ত থাকলে বা কিছুক্ষণ না পাওয়া গেলে সেই পরিবর্তন হারিয়ে যেতে পারত। এখন তা রেখে দেওয়া হয় এবং অল্প অপেক্ষার পর নিজে থেকেই আবার পাঠানো হয়।',
+          'আপনার পরিবর্তন কিছুক্ষণ পাঠানো না গেলে এখন একটি শান্ত বার্তা দেখা যায়, আর সব সংরক্ষিত হয়ে গেলে তা সরে যায়।',
+          'কোনো নামাজের পরিবর্তন কখনোই সংরক্ষণ করা না গেলে এখন তা জানানো হয়, যাতে আপনি আবার চিহ্নিত করতে পারেন।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.10',
     date: '2026-11-17',
     text: {

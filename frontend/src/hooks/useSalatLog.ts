@@ -3,7 +3,18 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
-import { enqueueSalatOp, peekSalatOutbox, removeSalatOp } from '../utils/salatOutbox.js';
+import {
+  bumpSalatOpAttempts,
+  enqueueSalatOp,
+  peekSalatOutbox,
+  removeSalatOp,
+} from '../utils/salatOutbox.js';
+import { backoffMs, isRetryableStatus, isTooOld } from '../utils/outboxRetry.js';
+import {
+  clearOutboxStuck,
+  notifyOutboxStuck,
+  notifySalatUpdateDropped,
+} from '../utils/outboxStatus.js';
 import { outboxOpOwnership } from '../utils/outboxOwner.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
@@ -755,22 +766,34 @@ export function useSalatCorrelation() {
   });
 }
 
+let salatReplayTimer: ReturnType<typeof setTimeout> | undefined;
+
 // Replays queued prayer/nafl PATCHes in the order they were made — call this
-// on 'online' (see App.tsx). Stops at the first still-failing request rather
-// than skipping ahead, so a flaky reconnect doesn't reorder writes; a
-// non-network failure (e.g. a since-invalidated request) is dropped instead
-// of retried forever.
+// on 'online' (see App.tsx). Stops at the first request that cannot go through
+// right now: offline, or an answer that means "not now" (401, 403, 408, 425,
+// 429, 5xx: utils/outboxRetry.ts). That one and everything behind it stay
+// queued and are tried again by themselves after a growing delay, so a
+// flaky reconnect never reorders writes and a busy server never costs a tap
+// (audit 2026-11-16 P1-5). A request the server refuses for good (other 4xx), or
+// one older than 14 days, is dropped, and the person is told.
 export async function replaySalatOutbox(qc: QueryClient): Promise<void> {
+  clearTimeout(salatReplayTimer);
   const queue = peekSalatOutbox();
   if (!queue.length) return;
 
   let replayedAny = false;
+  let dropped = false;
   for (const op of queue) {
     // Only the account (or demo) that queued it may replay it.
     const ownership = outboxOpOwnership(op.owner);
     if (ownership === 'wait') continue;
     if (ownership === 'foreign') {
       removeSalatOp(op.id);
+      continue;
+    }
+    if (isTooOld(op.queuedAt)) {
+      removeSalatOp(op.id);
+      dropped = true;
       continue;
     }
     try {
@@ -783,11 +806,29 @@ export async function replaySalatOutbox(qc: QueryClient): Promise<void> {
       replayedAny = true;
     } catch (err) {
       if (isNetworkError(err)) return; // still offline — leave the rest queued
-      removeSalatOp(op.id); // real error (e.g. bad request) — don't retry forever
+      const status = axios.isAxiosError(err) ? err.response?.status : undefined;
+      if (isRetryableStatus(status)) {
+        const attempts = bumpSalatOpAttempts(op.id);
+        const retryAfter = axios.isAxiosError(err)
+          ? (err.response?.headers as Record<string, unknown> | undefined)?.['retry-after']
+          : undefined;
+        salatReplayTimer = setTimeout(
+          () => void replaySalatOutbox(qc),
+          backoffMs(attempts, retryAfter)
+        );
+        // One blip is not news; a second failure in a row is.
+        if (attempts >= 2) notifyOutboxStuck();
+        if (replayedAny) void qc.invalidateQueries({ queryKey: ['salat'] });
+        return;
+      }
+      removeSalatOp(op.id); // refused for good (e.g. bad request) — don't retry forever
+      dropped = true;
     }
   }
 
+  if (dropped) notifySalatUpdateDropped();
   if (replayedAny) {
+    clearOutboxStuck();
     toast.success('Synced your offline prayer updates.', { icon: '✅', id: 'salat-offline-sync' });
   }
   void qc.invalidateQueries({ queryKey: ['salat'] });

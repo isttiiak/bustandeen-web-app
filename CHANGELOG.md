@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.11 - Offline changes are kept when the server is busy, not dropped (audit P1-5) - 2026-11-17
+
+### Fixed
+
+- **The salat outbox no longer drops a tap on a temporary error.** `replaySalatOutbox` treated every error except "no network" as final: a 401 while the token refreshed, a 429 under load or a 503 during a deploy removed the queued prayer update for good. It now keeps the tap and the ones behind it (order is preserved) on 401, 403, 408, 425, 429 and 5xx, and tries again by itself after 30 s, 60 s, 2 min and so on up to 15 min, respecting `Retry-After`.
+- **The shared sync outbox (fasting, Quran, Rayhanah, adhkar, zikr Log counts) keeps 401, 403 and 429 too.** It already held 409 and 5xx; 401, 403 and 429 fell into the "rejected for good" branch and were dropped. Same rule list now, same backoff (it used a fixed 30 s), and a counter on each op (`attempts`) records how many tries it has had.
+- **It is no longer silent.** After a second failed try in a row a calm message says some changes are not saved yet and are kept on this device (`common.outboxStuck`, fixed toast id, en + bn); it goes away when the queue drains. A prayer update the server refuses for good, which used to vanish without a word, now says so (`common.salatUpdateDropped`).
+- **A write that can never go through cannot block the queue for ever.** An op older than 14 days is dropped (and listeners are told), the same way a 4xx is. Other 4xx answers (400, 404, 422...) still drop at once, so a bad write never holds the rest.
+- New `utils/outboxRetry.ts` (retryable statuses, backoff, 14-day limit) and `utils/outboxStatus.ts` (the messages) are shared by both outboxes.
+- Tests: `salatOutbox.test.ts` and `syncOutbox.test.ts` gain 36 cases for the retry rules, the backoff timing, Retry-After, the stuck message, the 14-day limit and the drop-for-good path; 24 of them failed on the old code. Two older fixtures that used `queuedAt: 1` as "an old op" now use the current time, since a 1970 op is rightly dropped now.
+
+### Not changed
+
+- Stored data. The server is untouched. The zikr counter's own batch (`useZikrStore.flush`) already kept 401/409/429/5xx and is not part of this change.
+- No persistent badge: the "not saved yet" state is a toast, not a permanent indicator in the layout. That would be a design change.
+
 ## v5.190.10 - The missed-prayer sweep can no longer lose a window of debt (audit P1-2) - 2026-11-17
 
 ### Fixed
