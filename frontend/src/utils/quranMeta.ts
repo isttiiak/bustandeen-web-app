@@ -106,8 +106,7 @@ export const AYAH_BUNDLES: AyahBundle[] = [
     fromAyah: 285,
     toAyah: 286,
     virtue: 'Whoever recites the last two verses of al-Baqarah at night — they suffice him.',
-    virtueBn:
-      'যে ব্যক্তি রাতে সূরা আল-বাকারার শেষ দুই আয়াত তেলাওয়াত করে — তা তার জন্য যথেষ্ট হয়ে যায়।',
+    virtueBn: 'যে ব্যক্তি রাতে সূরা আল-বাকারার শেষ দুই আয়াত তেলাওয়াত করে — তা তার জন্য যথেষ্ট হয়ে যায়।',
     ref: { text: 'Bukhārī 5009', url: 'https://sunnah.com/bukhari:5009' },
   },
   {
@@ -302,8 +301,7 @@ export const QURANIC_DUAS: QuranicDua[] = [
     titleBn: 'ক্ষমা করুন ও রহম করুন — শ্রেষ্ঠ দয়ালু',
     context: {
       text: 'The closing āyah of Sūrat al-Muʾminūn — the Quran ends the sūrah of the successful believers with this simple plea.',
-      textBn:
-        'সূরা আল-মুমিনূনের সমাপনী আয়াত — কুরআন সফল মুমিনদের সূরাটি এই সাধারণ আকুতি দিয়ে শেষ করে।',
+      textBn: 'সূরা আল-মুমিনূনের সমাপনী আয়াত — কুরআন সফল মুমিনদের সূরাটি এই সাধারণ আকুতি দিয়ে শেষ করে।',
       ref: { text: 'Quran 23:118', url: 'https://quran.com/23/118' },
     },
   },

@@ -118,8 +118,7 @@ export const DUAS: DuaEntry[] = [
   {
     id: 'entering-home',
     situation: { en: 'Entering the Home', bn: 'ঘরে প্রবেশ', ar: 'دخول المنزل' },
-    arabic:
-      'بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا',
+    arabic: 'بِسْمِ اللَّهِ وَلَجْنَا، وَبِسْمِ اللَّهِ خَرَجْنَا، وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا',
     transliteration: "Bismillahi walajna, wa bismillahi kharajna, wa 'alallahi Rabbina tawakkalna",
     translation: {
       en: 'In the name of Allah we enter, in the name of Allah we leave, and upon Allah, our Lord, we place our trust.',
@@ -131,8 +130,7 @@ export const DUAS: DuaEntry[] = [
   {
     id: 'leaving-home',
     situation: { en: 'Leaving the Home', bn: 'ঘর থেকে বের হওয়া', ar: 'الخروج من المنزل' },
-    arabic:
-      'بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
+    arabic: 'بِسْمِ اللَّهِ، تَوَكَّلْتُ عَلَى اللَّهِ، وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ',
     transliteration: "Bismillah, tawakkaltu 'alallah, wa la hawla wa la quwwata illa billah",
     translation: {
       en: 'In the name of Allah, I place my trust in Allah, and there is no power or might except with Allah.',
@@ -221,8 +219,7 @@ export const DUAS: DuaEntry[] = [
   {
     id: 'after-eating',
     situation: { en: 'After Eating', bn: 'খাবার পরে', ar: 'بعد الطعام' },
-    arabic:
-      'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ',
+    arabic: 'الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ',
     transliteration:
       "Alhamdu lillahil-ladhi at'amani hadha wa razaqanihi min ghayri hawlin minni wa la quwwah",
     translation: {

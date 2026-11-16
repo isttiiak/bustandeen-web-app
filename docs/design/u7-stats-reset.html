@@ -675,11 +675,7 @@
           since: { en: 'Counting since 3 Oct 2026', bn: '৩ অক্টোবর ২০২৬ থেকে গণনা' },
           chg: {
             en: ['Total and per-zikr totals', 'Streak and best streak', 'Goal days met'],
-            bn: [
-              'মোট ও প্রতিটি যিকিরের মোট',
-              'ধারাবাহিকতা ও সেরা ধারাবাহিকতা',
-              'লক্ষ্য পূরণের দিন',
-            ],
+            bn: ['মোট ও প্রতিটি যিকিরের মোট', 'ধারাবাহিকতা ও সেরা ধারাবাহিকতা', 'লক্ষ্য পূরণের দিন'],
           },
           stay: {
             en: ['Every day you counted', 'Counter sessions', 'Your zikr list and goal'],
@@ -733,11 +729,7 @@
               'Khatm count (asked)',
               'Khatm progress, bookmarks, hifz',
             ],
-            bn: [
-              'প্রতিটি পড়ার দিন ও সেশন',
-              'খতমের সংখ্যা (জিজ্ঞাসা)',
-              'খতমের অগ্রগতি, বুকমার্ক, হিফয',
-            ],
+            bn: ['প্রতিটি পড়ার দিন ও সেশন', 'খতমের সংখ্যা (জিজ্ঞাসা)', 'খতমের অগ্রগতি, বুকমার্ক, হিফয'],
           },
         },
       ];
@@ -887,8 +879,7 @@
           pending === 'all' ? t.doneAll : t.done(d[lang]);
         const ds = pending === 'all' ? DOMAINS : [d];
         ds.forEach(
-          (x) =>
-            (x.since = { en: 'Counting since today (10 Oct)', bn: 'আজ (১০ অক্টোবর) থেকে গণনা' })
+          (x) => (x.since = { en: 'Counting since today (10 Oct)', bn: 'আজ (১০ অক্টোবর) থেকে গণনা' })
         );
         renderRows();
         const toast = document.getElementById('toast');

@@ -475,8 +475,7 @@ export const SCHOOLS: SchoolMeta[] = [
     distance: 'About 80–89 km (4 burud, 48 Hāshimī miles)',
     distanceBn: 'প্রায় ৮০–৮৯ কিমি (৪ বারীদ, ৪৮ হাশিমী মাইল)',
     stay: 'Intend to stay 4 days or more (not counting the days of arriving and leaving) and you pray in full from arrival.',
-    stayBn:
-      'গন্তব্যে ৪ দিন বা বেশি থাকার নিয়ত করলে (আসা-যাওয়ার দিন বাদে) পৌঁছানো থেকেই পূর্ণ নামায।',
+    stayBn: 'গন্তব্যে ৪ দিন বা বেশি থাকার নিয়ত করলে (আসা-যাওয়ার দিন বাদে) পৌঁছানো থেকেই পূর্ণ নামায।',
     jam: 'Allowed: Ẓuhr with ʿAṣr and Maghrib with ʿIshāʾ, in either prayer’s time.',
     jamBn: 'জায়েয: যোহর-আসর ও মাগরিব-ইশা, যেকোনো একটির ওয়াক্তে।',
   },
@@ -492,8 +491,7 @@ export const SCHOOLS: SchoolMeta[] = [
     stay: 'Intend to stay 15 days or more at one place and you pray in full. Less than that, keep shortening.',
     stayBn: 'এক জায়গায় ১৫ দিন বা বেশি থাকার নিয়ত করলে পূর্ণ নামায। এর কম হলে কসর চলবে।',
     jam: 'Each prayer in its own time. Only a “formal” joining is allowed: Ẓuhr at the very end of its time, ʿAṣr at the very start of its own.',
-    jamBn:
-      'প্রত্যেক নামায নিজ ওয়াক্তে। শুধু “বাহ্যিক জমা”: যোহর তার শেষ ওয়াক্তে, আসর তার প্রথম ওয়াক্তে।',
+    jamBn: 'প্রত্যেক নামায নিজ ওয়াক্তে। শুধু “বাহ্যিক জমা”: যোহর তার শেষ ওয়াক্তে, আসর তার প্রথম ওয়াক্তে।',
   },
 ];
 
@@ -534,8 +532,7 @@ export const REF_REWARD_FLOWS: MusafirRef = {
 
 export const REF_DUA_ANSWERED: MusafirRef = {
   text: 'Three supplications are answered, there is no doubt about them: the supplication of the oppressed, the supplication of the traveller, and the supplication of a father for his child.',
-  textBn:
-    'তিনটি দু‘আ নিঃসন্দেহে কবুল হয়: মাযলুমের দু‘আ, মুসাফিরের দু‘আ এবং সন্তানের জন্য পিতার দু‘আ।',
+  textBn: 'তিনটি দু‘আ নিঃসন্দেহে কবুল হয়: মাযলুমের দু‘আ, মুসাফিরের দু‘আ এবং সন্তানের জন্য পিতার দু‘আ।',
   source: 'Jāmiʿ al-Tirmidhī 1905',
   url: 'https://sunnah.com/tirmidhi:1905',
   grade: 'Ḥasan (al-Albānī)',
@@ -830,8 +827,7 @@ export const MUSAFIR_RULINGS: MusafirRuling[] = [
     titleBn: 'যানবাহনে ফরয নামায',
     summary:
       'Pray fard facing the qiblah, standing if you can. Plan stops, or join prayers to catch a window.',
-    summaryBn:
-      'ফরয কিবলামুখী হয়ে, সম্ভব হলে দাঁড়িয়ে। বিরতির পরিকল্পনা করুন, বা জমা করে ওয়াক্ত ধরুন।',
+    summaryBn: 'ফরয কিবলামুখী হয়ে, সম্ভব হলে দাঁড়িয়ে। বিরতির পরিকল্পনা করুন, বা জমা করে ওয়াক্ত ধরুন।',
     points: [
       {
         en: 'The Prophet ﷺ dismounted and faced the qiblah for the obligatory prayers. On a train or plane where you can stand and turn to the qiblah, do so; if you truly cannot, pray as best you can rather than let the time pass.',
@@ -912,8 +908,7 @@ export const MUSAFIR_RULINGS: MusafirRuling[] = [
     titleBn: 'সফরে নামায ছুটে গেছে?',
     summary:
       'Make it up as a travel prayer: 2 rak’ahs while travelling. Back home, the schools differ.',
-    summaryBn:
-      'সফরের নামায হিসেবেই কাযা করুন: সফরে থাকলে দুই রাকআত। বাড়িতে ফিরলে মাযহাবে মতভেদ আছে।',
+    summaryBn: 'সফরের নামায হিসেবেই কাযা করুন: সফরে থাকলে দুই রাকআত। বাড়িতে ফিরলে মাযহাবে মতভেদ আছে।',
     points: [
       {
         en: 'No hadith names this exact case. Scholars reason from the rule that a missed prayer is made up when remembered, as it was owed (on a journey, Fajr missed in sleep was prayed “just as he did every day”).',

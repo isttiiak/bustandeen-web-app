@@ -271,8 +271,7 @@ export const ZIKR_LIBRARY: ZikrCategory[] = [
       },
       {
         name: 'Astaghfirullah alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh',
-        arabic:
-          'أَسْتَغْفِرُ اللَّهَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ',
+        arabic: 'أَسْتَغْفِرُ اللَّهَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ وَأَتُوبُ إِلَيْهِ',
         transliteration:
           'Astaghfiru-llāhal-ladhī lā ilāha illā huwal-Ḥayyul-Qayyūmu wa atūbu ilayh',
         meaning:
@@ -290,8 +289,7 @@ export const ZIKR_LIBRARY: ZikrCategory[] = [
       },
       {
         name: 'Astaghfirullahal-Azim alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh',
-        arabic:
-          'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيَّ الْقَيُّومَ وَأَتُوبُ إِلَيْهِ',
+        arabic: 'أَسْتَغْفِرُ اللَّهَ الْعَظِيمَ الَّذِي لَا إِلَهَ إِلَّا هُوَ الْحَيَّ الْقَيُّومَ وَأَتُوبُ إِلَيْهِ',
         transliteration:
           'Astaghfiru-llāhal-ʿAẓīmal-ladhī lā ilāha illā huwal-Ḥayyal-Qayyūma wa atūbu ilayh',
         meaning:
@@ -368,8 +366,7 @@ export const ZIKR_LIBRARY: ZikrCategory[] = [
       },
       {
         name: 'La ilaha illallahu wahdahu la sharika lah',
-        arabic:
-          'لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
+        arabic: 'لَا إِلَهَ إِلَّا اللهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ',
         transliteration:
           'Lā ilāha illā-llāhu waḥdahu lā sharīka lah, lahul-mulku wa lahul-ḥamdu wa huwa ʿalā kulli shayʾin qadīr',
         meaning:
@@ -423,8 +420,7 @@ export const ZIKR_LIBRARY: ZikrCategory[] = [
         arabic: 'يَا حَيُّ يَا قَيُّومُ بِرَحْمَتِكَ أَسْتَغِيثُ',
         transliteration: 'Yā Ḥayyu yā Qayyūm, bi-raḥmatika astaghīth',
         meaning: 'O Ever-Living, O Sustainer — by Your mercy I seek relief',
-        meaningBn:
-          'হে চিরঞ্জীব, হে সর্বসত্তার ধারক — তোমার দয়ার মাধ্যমে আমি সাহায্য প্রার্থনা করছি',
+        meaningBn: 'হে চিরঞ্জীব, হে সর্বসত্তার ধারক — তোমার দয়ার মাধ্যমে আমি সাহায্য প্রার্থনা করছি',
         virtue: 'The Prophet ﷺ said it in times of distress.',
         virtueBn: 'বিপদের সময় নবী ﷺ এটি পাঠ করতেন।',
         source: 'Tirmidhī 3524',
@@ -455,8 +451,7 @@ export const ZIKR_LIBRARY: ZikrCategory[] = [
     items: [
       {
         name: 'Bismillahilladhi la yadurru',
-        arabic:
-          'بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',
+        arabic: 'بِسْمِ اللهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ وَهُوَ السَّمِيعُ الْعَلِيمُ',
         transliteration:
           'Bismi-llāhil-ladhī lā yaḍurru maʿa-smihi shayʾun fil-arḍi wa lā fis-samāʾ, wa huwas-Samīʿul-ʿAlīm',
         meaning:
