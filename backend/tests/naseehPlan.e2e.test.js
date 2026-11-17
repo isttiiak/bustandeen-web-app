@@ -10,6 +10,7 @@ import QuranLog from '../src/models/QuranLog.js';
 import QuranProfile from '../src/models/QuranProfile.js';
 import NaseehPlan from '../src/models/NaseehPlan.js';
 import * as planService from '../src/services/naseehPlan.service.js';
+import { setClientDayBoundForTests } from '../src/validation/clientDay.js';
 
 // Weekly plan: sized from the user's own last four weeks, rest days neutral,
 // paused while today is a rest day, and no AI anywhere.
@@ -19,6 +20,13 @@ const fakeJwt = (payload) => {
   const body = Buffer.from(JSON.stringify(payload)).toString('base64url');
   return `${header}.${body}.`;
 };
+// The weekly-plan tests send a pinned "today" (this week's Monday), which from
+// Thursday on is more than two days back: the live-clock bound on the client day
+// (audit 2026-11-16 P0-3) would refuse it with 400. The bound has its own tests
+// in auditP0.e2e.test.js, so this suite switches it off, as the other suites that
+// replay fixed days do.
+setClientDayBoundForTests(false);
+
 // "Today" is pinned to the current week's Monday. The tests seed activity N
 // days back and assume none of it falls earlier in the same Mon-Sun week,
 // which is only true on a Monday; on other weekdays the seeded days also count

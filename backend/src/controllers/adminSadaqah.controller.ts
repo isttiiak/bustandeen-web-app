@@ -145,7 +145,7 @@ export const deleteDonationHandler = async (
 ): Promise<void> => {
   try {
     const id = paramString(req.params.id);
-    await sadaqahService.deleteDonation(id);
+    await sadaqahService.deleteDonation(id, req.admin!.email);
     await logAdminAction({
       actorEmail: req.admin!.email,
       actorRole: req.admin!.role,
