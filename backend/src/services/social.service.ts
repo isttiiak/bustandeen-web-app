@@ -1,3 +1,4 @@
+import { MAX_BLOCKED, MAX_PENDING_REQUESTS } from '../utils/limits.js';
 import { runInTransaction } from '../utils/transaction.js';
 import { isAvatarId } from '../utils/avatars.js';
 import SocialProfile, {
@@ -106,10 +107,27 @@ export async function connectByCode(userId: string, code: string): Promise<Conne
     return { ok: false, message: 'Friend limit reached.' };
   }
 
-  await Promise.all([
-    SocialProfile.updateOne({ userId }, { $addToSet: { pendingOutgoing: owner.userId } }),
-    SocialProfile.updateOne({ userId: owner.userId }, { $addToSet: { pendingIncoming: userId } }),
-  ]);
+  // Lists of waiting requests stop at MAX_PENDING_REQUESTS in each direction
+  // (audit P1-12): without it, anyone holding an invite link could fill someone's
+  // list. The check is part of the write, so it holds when requests overlap.
+  if (mine.pendingOutgoing.length >= MAX_PENDING_REQUESTS) {
+    return {
+      ok: false,
+      message: 'You have many requests waiting. Wait for answers, or cancel some, then try again.',
+    };
+  }
+  const sent = await runInTransaction(async () => {
+    const theirs = await SocialProfile.updateOne(
+      { userId: owner.userId, [`pendingIncoming.${MAX_PENDING_REQUESTS - 1}`]: { $exists: false } },
+      { $addToSet: { pendingIncoming: userId } }
+    );
+    if (theirs.matchedCount !== 1) return false;
+    await SocialProfile.updateOne({ userId }, { $addToSet: { pendingOutgoing: owner.userId } });
+    return true;
+  });
+  if (!sent) {
+    return { ok: false, message: 'This person has many requests waiting. Try again later.' };
+  }
 
   const friendUser = await User.findOne({ uid: owner.userId }).select('displayName');
   return {
@@ -253,24 +271,29 @@ export async function rejectRequest(
  * to reconnect (see connectByCode). */
 export async function blockUser(userId: string, targetUid: string): Promise<{ ok: boolean }> {
   if (userId === targetUid) return { ok: false };
-  await Promise.all([
-    SocialProfile.updateOne(
-      { userId },
+  // The list stops at MAX_BLOCKED (audit P1-12); someone already on it is fine.
+  return runInTransaction(async () => {
+    const mine = await SocialProfile.updateOne(
+      {
+        userId,
+        $or: [{ blocked: targetUid }, { [`blocked.${MAX_BLOCKED - 1}`]: { $exists: false } }],
+      },
       {
         $addToSet: { blocked: targetUid },
         $pull: { friends: targetUid, pendingIncoming: targetUid, pendingOutgoing: targetUid },
         $unset: { [`friendSince.${targetUid}`]: '' },
       }
-    ),
-    SocialProfile.updateOne(
+    );
+    if (mine.matchedCount !== 1) return { ok: false };
+    await SocialProfile.updateOne(
       { userId: targetUid },
       {
         $pull: { friends: userId, pendingIncoming: userId, pendingOutgoing: userId },
         $unset: { [`friendSince.${userId}`]: '' },
       }
-    ),
-  ]);
-  return { ok: true };
+    );
+    return { ok: true };
+  });
 }
 
 export async function unblockUser(userId: string, targetUid: string): Promise<{ ok: boolean }> {

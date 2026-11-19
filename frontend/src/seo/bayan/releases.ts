@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.18',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'A few lists now have sensible limits',
+        fixed: [
+          'Your zikr list can hold up to 200 names, your waiting friend requests up to 100, and your blocked list up to 500. These are far above normal use. If you ever reach one, the app tells you plainly.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'কয়েকটি তালিকার এখন যুক্তিসঙ্গত সীমা আছে',
+        fixed: [
+          'আপনার যিকিরের তালিকায় সর্বোচ্চ ২০০টি নাম, অপেক্ষমাণ বন্ধুর অনুরোধ সর্বোচ্চ ১০০টি এবং ব্লক তালিকায় সর্বোচ্চ ৫০০ জন থাকতে পারে। এগুলো স্বাভাবিক ব্যবহারের চেয়ে অনেক বেশি। কখনো সীমায় পৌঁছালে অ্যাপ স্পষ্ট করে জানাবে।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.17',
     date: '2026-11-17',
     text: {
