@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
+import { zikrRequestLimiter } from '../middleware/rateLimiter.js';
 import * as zikrController from '../controllers/zikr.controller.js';
 import * as zikrRequestController from '../controllers/zikrRequest.controller.js';
 import {
@@ -70,6 +71,7 @@ router.delete('/all', requireAuth, zikrController.deleteAllZikrData);
 router.post(
   '/requests',
   requireAuth,
+  zikrRequestLimiter,
   validate(submitZikrRequestSchema),
   zikrRequestController.submitHandler
 );

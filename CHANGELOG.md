@@ -2,6 +2,17 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.23 - Zikr suggestions are limited to five a day per person (audit P2-1) - 2026-11-20
+
+### Fixed
+
+- **`POST /api/zikr/requests` had no limit of its own.** Each call sends two emails (the review inbox and the requester) and the only cap was the 300-a-minute tapping limiter on the whole `/api/zikr` mount, so one signed-in account could send hundreds of emails a minute. A per-person limiter (`zikrRequestLimiter`, 5 per 24 hours, counted in MongoDB so it is one count across serverless instances) now runs after sign-in and before the body is checked or anything is saved or sent. A refused request creates no record and sends no email.
+- Test: `zikrRequestLimit.e2e.test.js` loads the app as production (the limiters switch themselves off otherwise), sends six suggestions as one person (the sixth gets 429, only five are stored) and one as another person (accepted). It failed before the change.
+
+### Not changed
+
+- Whether the duplicate-hint queries in `submitRequest` (two full-collection reads) should be bounded; they are admin-sized collections and not part of this item.
+
 ## v5.190.22 - Encrypted fields: key id, owner binding, and a failed read no longer looks like "empty" (audit P2-3) - 2026-11-20
 
 ### Fixed
