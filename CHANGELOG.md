@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.20 - Three reads no longer load everything a person ever wrote (audit P1-14) - 2026-11-17
+
+### Fixed
+
+- **The debt history chart is summed by the database.** `getDebtHistory` loaded every `SalatDebtEvent` in the window (up to 3,650 days) and added them in memory for each bucket. One `$group` per day now returns at most one row per day; the weekly and daily buckets are built from those and are identical to a plain recount (a test recomputes them from the raw events for 7, 30 and 90 days, and asserts no event is loaded).
+- **Kaza insights read only what they use.** `getKazaInsights` loaded the whole ledger as full documents, three times, on every call. It now selects `prayer missedDate paidAt`, returns plain objects and reads at most 20,000 units of each kind (the backup import's own limit). A test with 20,050 owed units confirms the bound.
+- **Releasing debt for rest days looks only at units inside a rest interval.** `releaseExcusedDebt` runs on every salat read for anyone with a cycle logged and loaded every owed unit to check each one in memory. The query now asks only for units dated inside one of the intervals (one lower bound when there are more than 100), and a test confirms the filter and the result.
+- **Fasting analytics read plain objects.** The two all-time reads of completed fasts return only their fields as lean objects.
+
+### Reported findings that need no further change
+
+- **The circle's "All time" tab (~357 queries)** is already done a few people at a time (`ALL_TIME_BATCH`, 8 at once, not all 51), so it no longer floods the database. The total query count is unchanged; a short cache would cut repeats but on serverless most requests land on a cold instance, so none was added.
+- **3650-day history** is a valid choice of the chart's range; with the aggregate above its cost no longer grows with the number of events.
+
+### Not changed
+
+- Stored data and every number shown.
 ## v5.190.19 - A deleted donation is kept as a record, not erased (audit P1-13) - 2026-11-17
 
 ### Fixed

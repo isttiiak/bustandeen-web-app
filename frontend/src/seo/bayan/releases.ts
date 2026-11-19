@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.20',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Your charts and kaza pages load faster for long histories',
+        fixed: [
+          'The missed-prayer chart, the kaza insights and the rest-day check now do their sums more efficiently, so they stay quick even after years of use.',
+          'Every number shown is the same as before. Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'দীর্ঘ ইতিহাস থাকলেও আপনার চার্ট ও কাজা পাতা দ্রুত খোলে',
+        fixed: [
+          'ছুটে যাওয়া নামাজের চার্ট, কাজার অন্তর্দৃষ্টি এবং বিশ্রামের দিনের যাচাই এখন আরও দক্ষভাবে হিসাব করে, তাই বছরের পর বছর ব্যবহারের পরেও দ্রুত থাকে।',
+          'দেখানো প্রতিটি সংখ্যা আগের মতোই। আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.19',
     date: '2026-11-17',
     text: {

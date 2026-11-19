@@ -227,15 +227,20 @@ export async function getSummary(userId: string, today?: string): Promise<Fastin
 
   const [profile, completedLogs, monThuLogs, recentLogs, since] = await Promise.all([
     getOrCreateProfile(userId),
+    // Plain objects with only the fields used: this reads every completed fast
+    // the person ever logged (audit P1-14), so each row should be cheap.
     FastingLog.find({ userId, status: 'completed' })
       .select('date category vowId')
-      .sort({ date: 1 }),
+      .sort({ date: 1 })
+      .lean(),
     FastingLog.find({
       userId,
       status: 'completed',
       category: 'voluntary',
       voluntaryKind: 'mon_thu',
-    }).select('date'),
+    })
+      .select('date')
+      .lean(),
     getHistory(userId, 60, end),
     resetDateFor(userId, 'fasting'),
   ]);
