@@ -291,7 +291,21 @@ export async function releaseExcusedDebt(userId: string, today: string): Promise
   const intervals = await getExcusedIntervals(userId);
   if (intervals.length === 0) return 0;
 
-  const owedUnits = await KazaUnit.find({ userId, status: 'owed' }).select('prayer missedDate');
+  // Only units dated inside a rest interval can be released, so ask for those
+  // (audit P1-14). It used to load every owed unit on every salat read for
+  // anyone with a cycle logged. With very many intervals one lower bound is
+  // used instead of a long $or.
+  const dateFilter =
+    intervals.length <= 100
+      ? {
+          $or: intervals.map((iv) => ({
+            missedDate: { $gte: iv.start, $lte: iv.end ?? today },
+          })),
+        }
+      : { missedDate: { $gte: intervals.reduce((m, iv) => (iv.start < m ? iv.start : m), today) } };
+  const owedUnits = await KazaUnit.find({ userId, status: 'owed', ...dateFilter }).select(
+    'prayer missedDate'
+  );
   // A manual reset zeroes the counter but leaves older ledger entries behind, so a
   // unit dated before `since` is not in the counter any more: remove the unit,
   // but do not lower a counter that never contained it.
@@ -581,7 +595,25 @@ export async function getDebtHistory(
 ): Promise<SalatDebtHistoryWeek[]> {
   const end = today ?? todayDateString();
   const start = shiftDateStr(end, -(days - 1));
-  const events = await SalatDebtEvent.find({ userId, date: { $gte: start, $lte: end } });
+  // Summed by the database, one row per day, instead of loading every event in
+  // the window (up to 3,650 days of them) just to add them up (audit P1-14).
+  const perDay = new Map(
+    (
+      await SalatDebtEvent.aggregate<{ _id: string; accumulated: number; paidBack: number }>([
+        { $match: { userId, date: { $gte: start, $lte: end } } },
+        {
+          $group: {
+            _id: '$date',
+            accumulated: { $sum: { $cond: [{ $gt: ['$delta', 0] }, '$delta', 0] } },
+            paidBack: {
+              $sum: { $cond: [{ $lt: ['$delta', 0] }, { $multiply: ['$delta', -1] }, 0] },
+            },
+          },
+        },
+      ])
+    ).map((r) => [r._id, r])
+  );
+  const events = [...perDay.entries()].map(([date, r]) => ({ date, ...r }));
 
   if (days < 14) {
     const buckets: SalatDebtHistoryWeek[] = [];
@@ -590,8 +622,8 @@ export async function getDebtHistory(
       let paidBack = 0;
       for (const ev of events) {
         if (ev.date !== day) continue;
-        if (ev.delta > 0) accumulated += ev.delta;
-        else paidBack += -ev.delta;
+        accumulated += ev.accumulated;
+        paidBack += ev.paidBack;
       }
       buckets.push({ weekStart: day, weekEnd: day, accumulated, paidBack });
     }
@@ -611,8 +643,8 @@ export async function getDebtHistory(
     let paidBack = 0;
     for (const ev of events) {
       if (ev.date < weekStart || ev.date > weekEnd) continue;
-      if (ev.delta > 0) accumulated += ev.delta;
-      else paidBack += -ev.delta;
+      accumulated += ev.accumulated;
+      paidBack += ev.paidBack;
     }
     weeks.push({ weekStart, weekEnd, accumulated, paidBack });
   }
@@ -652,11 +684,24 @@ export interface KazaInsights {
  * an anonymous running counter can't answer, e.g. "what's the oldest thing
  * you still owe" and "how long does it usually take you to catch up."
  */
+/** Most itemized units of one kind that the insights read. */
+const MAX_INSIGHT_UNITS = 20_000;
+
 export async function getKazaInsights(userId: string): Promise<KazaInsights> {
+  // Only the fields used, as plain objects, and at most MAX_INSIGHT_UNITS of
+  // each kind (the backup import allows 20,000 units): the whole ledger used to
+  // be loaded as full documents on every call (audit P1-14).
   const [oldestOwed, paidUnits, owedUnits] = await Promise.all([
-    KazaUnit.findOne({ userId, status: 'owed' }).sort({ missedDate: 1 }),
-    KazaUnit.find({ userId, status: 'paid', paidAt: { $exists: true } }),
-    KazaUnit.find({ userId, status: 'owed' }).sort({ missedDate: 1 }),
+    KazaUnit.findOne({ userId, status: 'owed' }).sort({ missedDate: 1 }).lean(),
+    KazaUnit.find({ userId, status: 'paid', paidAt: { $exists: true } })
+      .select('prayer missedDate paidAt')
+      .limit(MAX_INSIGHT_UNITS)
+      .lean(),
+    KazaUnit.find({ userId, status: 'owed' })
+      .select('prayer missedDate')
+      .sort({ missedDate: 1 })
+      .limit(MAX_INSIGHT_UNITS)
+      .lean(),
   ]);
 
   const avgOf = (units: typeof paidUnits): number | null => {
