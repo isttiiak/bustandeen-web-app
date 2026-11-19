@@ -1,5 +1,5 @@
 import AdminAccount, { IAdminAccount } from '../models/AdminAccount.js';
-import { decryptJson, encryptJson } from '../utils/fieldCrypto.js';
+import { decryptJson, encryptJson, fieldContexts } from '../utils/fieldCrypto.js';
 import { issueMfaProof } from '../utils/adminMfaProof.js';
 import {
   generateBackupCodes,
@@ -40,7 +40,10 @@ export const startEnrolment = async (
   const account = await findActive(uid);
   if (account.totpSecretEnc) throw new AdminMfaError('mfa_already_enabled', 409);
   const secret = generateTotpSecret();
-  account.totpPendingSecretEnc = encryptJson(secret);
+  account.totpPendingSecretEnc = encryptJson(
+    secret,
+    fieldContexts.adminTotpPending(String(account._id))
+  );
   account.totpPendingAt = new Date();
   await account.save();
   return { secret, otpauthUri: otpauthUri(secret, account.email) };
@@ -54,7 +57,10 @@ export const confirmEnrolment = async (
 ): Promise<{ backupCodes: string[]; proof: string }> => {
   const account = await findActive(uid);
   if (account.totpSecretEnc) throw new AdminMfaError('mfa_already_enabled', 409);
-  const secret = decryptJson<string>(account.totpPendingSecretEnc);
+  const secret = decryptJson<string>(
+    account.totpPendingSecretEnc,
+    fieldContexts.adminTotpPending(String(account._id))
+  );
   if (
     !secret ||
     !account.totpPendingAt ||
@@ -72,7 +78,7 @@ export const confirmEnrolment = async (
     { _id: account._id, totpSecretEnc: null },
     {
       $set: {
-        totpSecretEnc: encryptJson(secret),
+        totpSecretEnc: encryptJson(secret, fieldContexts.adminTotp(String(account._id))),
         totpEnabledAt: new Date(nowMs),
         totpLastStep: step,
         backupCodeHashes: backupCodes.map(hashBackupCode),
@@ -97,7 +103,10 @@ export const verifyCode = async (
   nowMs: number = Date.now()
 ): Promise<{ proof: string; usedBackupCode: boolean; backupCodesLeft: number }> => {
   const account = await findActive(uid);
-  const secret = decryptJson<string>(account.totpSecretEnc);
+  const secret = decryptJson<string>(
+    account.totpSecretEnc,
+    fieldContexts.adminTotp(String(account._id))
+  );
   if (!secret) throw new AdminMfaError('mfa_not_enrolled', 409);
   const mfaVersion = account.mfaVersion ?? 0;
   const code = rawCode.trim();

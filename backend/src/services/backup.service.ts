@@ -1,6 +1,6 @@
 import type { Model } from 'mongoose';
 import { isAvatarId } from '../utils/avatars.js';
-import { decryptJson, encryptJson } from '../utils/fieldCrypto.js';
+import { decryptJson, encryptJson, fieldContexts } from '../utils/fieldCrypto.js';
 import User from '../models/User.js';
 import ZikrDaily from '../models/ZikrDaily.js';
 import ZikrGoal from '../models/ZikrGoal.js';
@@ -234,7 +234,7 @@ export async function exportBackup(uid: string): Promise<PlainDoc> {
           secret: s.secret ?? {},
         }
       : null,
-    ...(hasCycle ? { rayhanah: exportRayhanah(cycleProfile, cycleLogs, cycleDays) } : {}),
+    ...(hasCycle ? { rayhanah: exportRayhanah(uid, cycleProfile, cycleLogs, cycleDays) } : {}),
     records: {
       account: u
         ? {
@@ -276,21 +276,37 @@ export async function exportBackup(uid: string): Promise<PlainDoc> {
   };
 }
 
-function exportRayhanah(profile: unknown, cycles: unknown[], days: unknown[]): PlainDoc {
+function exportRayhanah(
+  uid: string,
+  profile: unknown,
+  cycles: unknown[],
+  days: unknown[]
+): PlainDoc {
   const p = clean(profile);
   let outProfile: PlainDoc | null = null;
   if (p) {
     // The partner's uid is another person's id, and sharing is never
     // restored from a file, so neither is written.
     const { bodyStatsEncrypted, partnerUid, partnerSyncEnabled, ...rest } = p;
-    outProfile = { ...rest, bodyStats: decryptJson<unknown>(bodyStatsEncrypted as string) ?? null };
+    outProfile = {
+      ...rest,
+      bodyStats:
+        decryptJson<unknown>(bodyStatsEncrypted as string, fieldContexts.bodyStats(uid)) ?? null,
+    };
   }
   return {
     profile: outProfile,
     cycles: cleanAll(cycles),
     days: cleanAll(days).map((d) => {
       const { enc, ...rest } = d;
-      return { ...rest, note: decryptJson<PlainDoc>(enc as string | null) ?? null };
+      return {
+        ...rest,
+        note:
+          decryptJson<PlainDoc>(
+            enc as string | null,
+            fieldContexts.cycleDay(uid, String(d.date))
+          ) ?? null,
+      };
     }),
   };
 }
@@ -632,7 +648,12 @@ async function importRayhanah(
     const { bodyStats, partnerUid, partnerSyncEnabled, ...rest } = r.profile;
     const d = await cast(
       CycleProfile,
-      { ...rest, ...(isObj(bodyStats) ? { bodyStatsEncrypted: encryptJson(bodyStats) } : {}) },
+      {
+        ...rest,
+        ...(isObj(bodyStats)
+          ? { bodyStatsEncrypted: encryptJson(bodyStats, fieldContexts.bodyStats(uid)) }
+          : {}),
+      },
       uid
     );
     // $set, not replace: partner sharing stays as it is on this account.
@@ -648,7 +669,7 @@ async function importRayhanah(
   let n = await upsertBy(CycleLog, cycleRows, uid, (d) => ({ startDate: d.startDate }), tally);
   const days = keepDays(list(r.days, MAX.small), 'date', tally).map((d) => ({
     date: d.date,
-    enc: isObj(d.note) ? encryptJson(d.note) : null,
+    enc: isObj(d.note) ? encryptJson(d.note, fieldContexts.cycleDay(uid, String(d.date))) : null,
   }));
   n += await upsertBy(CycleDay, days, uid, (d) => ({ date: d.date }), tally);
   return n;

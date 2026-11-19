@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.190.21",
+  "version": "5.190.22",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,6 +13,7 @@
     "migrate:social-visibility": "tsx src/scripts/migrateSocialVisibility.ts",
     "audit:future-accrual": "tsx src/scripts/countFutureAccruals.ts",
     "audit:open-cycles": "tsx src/scripts/countOpenCycles.ts",
+    "rotate:field-key": "tsx src/scripts/rewrapFieldEncryption.ts",
     "audit:donation-stats": "tsx src/scripts/countDonationStatsDrift.ts",
     "cleanup:orphans": "tsx src/scripts/cleanupOrphans.ts",
     "cleanup:unverified": "tsx src/scripts/cleanupUnverified.ts",

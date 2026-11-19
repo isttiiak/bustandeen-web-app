@@ -17,7 +17,7 @@
  */
 
 import User from '../models/User.js';
-import { encryptJson, decryptJson } from '../utils/fieldCrypto.js';
+import { encryptJson, decryptJsonForDisplay, fieldContexts } from '../utils/fieldCrypto.js';
 
 interface Provider {
   name: string;
@@ -79,7 +79,10 @@ async function resolveAiAccess(userId?: string): Promise<{ enabled: boolean; cus
   const user = await User.findOne({ uid: userId }).select('aiEnabled groqApiKeyEnc');
   return {
     enabled: !!user?.aiEnabled,
-    customKey: decryptJson<string>(user?.groqApiKeyEnc) ?? undefined,
+    // Display-style read: an unreadable own key falls back to "no own key" (and is logged), it is not an error for the caller.
+    customKey:
+      decryptJsonForDisplay<string>(user?.groqApiKeyEnc, fieldContexts.groqKey(userId)) ??
+      undefined,
   };
 }
 
@@ -133,7 +136,12 @@ export async function setGroqKey(
   const setAt = new Date();
   await User.updateOne(
     { uid: userId },
-    { $set: { groqApiKeyEnc: encryptJson(newKey), groqApiKeySetAt: setAt } }
+    {
+      $set: {
+        groqApiKeyEnc: encryptJson(newKey, fieldContexts.groqKey(userId)),
+        groqApiKeySetAt: setAt,
+      },
+    }
   );
   return { ok: true, hasOwnKey: true, setAt };
 }

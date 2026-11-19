@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
-import { encryptJson } from '../utils/fieldCrypto.js';
+import { encryptJson, fieldContexts } from '../utils/fieldCrypto.js';
 
 /**
  * One-time migration: encrypts any CycleDay documents still holding
@@ -17,6 +17,8 @@ import { encryptJson } from '../utils/fieldCrypto.js';
 
 interface LegacyCycleDay {
   _id: mongoose.Types.ObjectId;
+  userId: string;
+  date: string;
   flow?: string | null;
   symptoms?: string[];
   moods?: string[];
@@ -61,7 +63,9 @@ async function migrate(): Promise<void> {
     await col.updateOne(
       { _id: doc._id },
       {
-        $set: { enc: encryptJson(content) },
+        $set: {
+          enc: encryptJson(content, fieldContexts.cycleDay(String(doc.userId), String(doc.date))),
+        },
         $unset: { flow: '', symptoms: '', moods: '', mood: '', garden: '' },
       }
     );
