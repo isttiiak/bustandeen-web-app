@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.21 - A new account west of UTC no longer loses its first day of missed prayers (audit P1-16, one of three items) - 2026-11-17
+
+### Fixed
+
+- **The first day of a new kaza record is the person's own first day.** `ensureCaughtUp` created the debt record with the schema defaults: `since` = the server's UTC date and `lastAccrualDate` = UTC yesterday. For someone west of UTC who first opens the app in the evening, the UTC date is already tomorrow, so their first local day sat at or before the cursor and was marked "already swept": it was never counted as missed, even if nothing was logged on it. East of UTC the default happened to land one day earlier and was fine (a test pins that too). The record now starts from the client's own day: `since` = that day, cursor = the day before. A probe at UTC-5 counted 0 of the 5 prayers of day one before the fix and counts all 5 now.
+- Tests: `salatFirstDay.e2e.test.js`, 3 cases; 2 failed on the old code (the third, UTC+6, passed and stays as a guard). The existing salat, sweep, excused-day and stats-reset suites pass unchanged.
+
+### Also fixed: a flaky test
+
+- **`emailHealth.e2e.test.js` failed about once in a thousand runs.** It checks that the public email-health answer never contains "535" (the refused-login code), but the answer includes a `checkedAt` timestamp whose milliseconds can read "535" (it did: `...:06.535Z`, which failed the Dependabot backend PR). The check now leaves the timestamp out and asserts it is a string. The endpoint was never wrong; only the test.
+
+### Investigated, not changed (a decision is needed)
+
+- **Salat is civil-dated while zikr is tracking-day-dated (`useSalatLog.ts` `localTodayStr` vs `TodayTimeline.tsx`).** This is deliberate and documented in the code ("Salat is CIVIL-dated (midnight boundary), NOT the Fajr tracking day"), and the sweep `today` the client sends is the tracking day (as the project notes require). The open question is whether Isha at 1 AM should count toward the day before. That is a fiqh-product decision for you, not something to change by default.
+- **Two tabs double-flushing zikr.** Both tabs read and write the same `localStorage` key (`bustandeen_zikr_store`) and zustand's persist does not sync across tabs, so each tab's `pending` can overwrite the other's, and both can send the same persisted unsent batch. The second send is safe (same op id, the server replays it). The overwrite is the real risk: taps in one tab can be lost. The usual fix is to let one tab own the flush (Web Locks API or `BroadcastChannel`) and merge `pending` through `storage` events; it touches the counter and needs a browser test with two tabs, so it is left for its own change.
+
+### Not changed
+
+- Existing debt records: only new ones start differently.
+
 ## v5.190.20 - Three reads no longer load everything a person ever wrote (audit P1-14) - 2026-11-17
 
 ### Fixed

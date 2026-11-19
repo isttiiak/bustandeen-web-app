@@ -418,9 +418,13 @@ export async function ensureCaughtUp(userId: string, today?: string): Promise<vo
   const t = asked > latest ? latest : asked;
   await releaseExcusedDebt(userId, t);
   await restoreUncoveredDays(userId, t);
+  // A new record starts on the PERSON's own day, not the server's UTC date (audit
+  // P1-16): west of UTC the UTC date is already tomorrow in the evening, so the
+  // schema's UTC defaults marked their first day as already swept and it was never
+  // counted. `since` is their first day; the cursor is the day before it.
   const doc = await SalatDebt.findOneAndUpdate(
     { userId },
-    { $setOnInsert: { userId } },
+    { $setOnInsert: { userId, since: t, lastAccrualDate: shiftDateStr(t, -1) } },
     { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
   );
 

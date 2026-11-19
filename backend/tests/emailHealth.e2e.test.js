@@ -100,7 +100,11 @@ describe('Email health (LT-2)', () => {
     expect(health.status).toBe(503);
     expect(health.body.state).toBe('failed');
     // The public endpoint never says which sender or why.
-    expect(JSON.stringify(health.body)).not.toMatch(/ansar|535/);
+    // `checkedAt` is a timestamp, and its milliseconds read "535" about once in a
+    // thousand runs, so it is left out of the text check (it failed CI that way).
+    const { checkedAt, ...visible } = health.body;
+    expect(typeof checkedAt).toBe('string');
+    expect(JSON.stringify(visible)).not.toMatch(/ansar|535/);
   });
 
   test('a check older than 36 hours is stale (the cron stopped)', async () => {

@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.21',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Your first day is now counted correctly in the Americas',
+        fixed: [
+          'If you started using the app in the evening in a place west of Greenwich, such as the Americas, the first day could be skipped when counting missed prayers. It now starts from your own first day.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'আমেরিকা অঞ্চলে আপনার প্রথম দিন এখন ঠিকভাবে গণনা হয়',
+        fixed: [
+          'গ্রিনিচের পশ্চিমে, যেমন আমেরিকায়, সন্ধ্যায় অ্যাপ ব্যবহার শুরু করলে ছুটে যাওয়া নামাজ গোনার সময় প্রথম দিনটি বাদ পড়তে পারত। এখন আপনার নিজের প্রথম দিন থেকেই গণনা শুরু হয়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.20',
     date: '2026-11-17',
     text: {
