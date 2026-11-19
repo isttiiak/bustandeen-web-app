@@ -28,7 +28,7 @@ import CycleProfile from '../src/models/CycleProfile.js';
 import SocialProfile from '../src/models/SocialProfile.js';
 import Donation from '../src/models/Donation.js';
 import FeedbackMessage from '../src/models/FeedbackMessage.js';
-import { encryptJson, decryptJson } from '../src/utils/fieldCrypto.js';
+import { encryptJson, decryptJson, fieldContexts } from '../src/utils/fieldCrypto.js';
 import { purgeAccountData } from '../src/services/user.service.js';
 
 const fakeJwt = (payload) => {
@@ -233,14 +233,17 @@ async function seedEverything(uid, email) {
     madhab: 'hanafi',
     partnerSyncEnabled: true,
     partnerUid: B.uid,
-    bodyStatsEncrypted: encryptJson({ heightCm: 160 }),
+    bodyStatsEncrypted: encryptJson({ heightCm: 160 }, fieldContexts.bodyStats(uid)),
   });
   await CycleLog.create({ userId: uid, startDate: '2026-09-20', type: 'hayd' });
   await CycleDay.create([
     {
       userId: uid,
       date: '2026-09-21',
-      enc: encryptJson({ flow: 'light', symptoms: ['cramps'], moods: [], garden: [] }),
+      enc: encryptJson(
+        { flow: 'light', symptoms: ['cramps'], moods: [], garden: [] },
+        fieldContexts.cycleDay(uid, '2026-09-21')
+      ),
     },
     { userId: uid, date: '2026-09-22', enc: null },
   ]);
@@ -390,7 +393,9 @@ describe('Backup v3: export, wipe, import restores exactly', () => {
     // Rayhanah is encrypted again at rest.
     const day = await CycleDay.findOne({ userId: A.uid, date: '2026-09-21' }).lean();
     expect(day.enc).not.toContain('cramps');
-    expect(decryptJson(day.enc)).toMatchObject({ flow: 'light' });
+    expect(decryptJson(day.enc, fieldContexts.cycleDay(A.uid, '2026-09-21'))).toMatchObject({
+      flow: 'light',
+    });
     // Partner sharing is never switched on by a file.
     const cp = await CycleProfile.findOne({ userId: A.uid }).lean();
     expect(cp.partnerSyncEnabled).toBe(false);

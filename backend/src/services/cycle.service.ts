@@ -2,7 +2,12 @@ import CycleLog, { ICycleLog } from '../models/CycleLog.js';
 import CycleProfile, { ICycleProfile } from '../models/CycleProfile.js';
 import CycleDay, { ICycleDayContent } from '../models/CycleDay.js';
 import SocialProfile from '../models/SocialProfile.js';
-import { encryptJson, decryptJson } from '../utils/fieldCrypto.js';
+import {
+  encryptJson,
+  decryptJson,
+  decryptJsonForDisplay,
+  fieldContexts,
+} from '../utils/fieldCrypto.js';
 
 const EMPTY_DAY_CONTENT: ICycleDayContent = { flow: null, symptoms: [], moods: [], garden: [] };
 
@@ -203,7 +208,10 @@ export async function getSummary(userId: string, today: string): Promise<CycleSu
       endDate: l.endDate,
     })),
     days: days.map((d) => {
-      const content = decryptJson<ICycleDayContent>(d.enc) ?? EMPTY_DAY_CONTENT;
+      // Display only: an unreadable note shows as empty here, and saving over it is refused (upsertDay).
+      const content =
+        decryptJsonForDisplay<ICycleDayContent>(d.enc, fieldContexts.cycleDay(userId, d.date)) ??
+        EMPTY_DAY_CONTENT;
       return { date: d.date, ...content };
     }),
   };
@@ -224,7 +232,10 @@ export async function upsertDay(
   }
 ): Promise<CycleDayResult> {
   const existing = await CycleDay.findOne({ userId, date: input.date }).select('enc');
-  const current = decryptJson<ICycleDayContent>(existing?.enc) ?? EMPTY_DAY_CONTENT;
+  // Strict: a note that exists but cannot be read throws, so it is never saved over as an empty day.
+  const current =
+    decryptJson<ICycleDayContent>(existing?.enc, fieldContexts.cycleDay(userId, input.date)) ??
+    EMPTY_DAY_CONTENT;
   const next: ICycleDayContent = {
     flow: input.flow !== undefined ? input.flow : current.flow,
     symptoms: input.symptoms !== undefined ? input.symptoms : current.symptoms,
@@ -233,7 +244,10 @@ export async function upsertDay(
   } as ICycleDayContent;
   await CycleDay.findOneAndUpdate(
     { userId, date: input.date },
-    { $set: { enc: encryptJson(next) }, $setOnInsert: { userId, date: input.date } },
+    {
+      $set: { enc: encryptJson(next, fieldContexts.cycleDay(userId, input.date)) },
+      $setOnInsert: { userId, date: input.date },
+    },
     { upsert: true, setDefaultsOnInsert: true }
   );
   return { date: input.date, ...next };
@@ -540,7 +554,10 @@ export interface BodyStats {
 export async function getBodyStats(userId: string): Promise<BodyStats> {
   const profile = await CycleProfile.findOne({ userId }).select('bodyStatsEncrypted');
   if (!profile?.bodyStatsEncrypted) return { heightCm: null, weightKg: null, bmi: null };
-  const raw = decryptJson<{ heightCm?: number; weightKg?: number }>(profile.bodyStatsEncrypted);
+  const raw = decryptJsonForDisplay<{ heightCm?: number; weightKg?: number }>(
+    profile.bodyStatsEncrypted,
+    fieldContexts.bodyStats(userId)
+  );
   const h = raw?.heightCm ?? null;
   const w = raw?.weightKg ?? null;
   const bmi = h && w ? Math.round((w / ((h / 100) * (h / 100))) * 10) / 10 : null;
@@ -553,7 +570,10 @@ export async function updateBodyStats(
 ): Promise<BodyStats> {
   const profile = await getOrCreateProfile(userId);
   const existing = profile.bodyStatsEncrypted
-    ? (decryptJson<{ heightCm?: number; weightKg?: number }>(profile.bodyStatsEncrypted) ?? {})
+    ? (decryptJson<{ heightCm?: number; weightKg?: number }>(
+        profile.bodyStatsEncrypted,
+        fieldContexts.bodyStats(userId)
+      ) ?? {})
     : {};
   const merged: { heightCm?: number; weightKg?: number } = { ...existing };
   // A number sets the value, null removes it, undefined leaves it untouched.
@@ -567,7 +587,9 @@ export async function updateBodyStats(
   }
   // Nothing left to store: drop the ciphertext entirely rather than keep an
   // encrypted empty object.
-  profile.bodyStatsEncrypted = Object.keys(merged).length ? encryptJson(merged) : undefined;
+  profile.bodyStatsEncrypted = Object.keys(merged).length
+    ? encryptJson(merged, fieldContexts.bodyStats(userId))
+    : undefined;
   await profile.save();
   const h = merged.heightCm ?? null;
   const w = merged.weightKg ?? null;

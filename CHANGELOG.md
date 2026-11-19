@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.22 - Encrypted fields: key id, owner binding, and a failed read no longer looks like "empty" (audit P2-3) - 2026-11-20
+
+### Fixed
+
+- **A note that could not be decrypted was treated as an empty day and saved over.** `decryptJson` returned `null` on any failure (wrong or rotated key, damaged value), and `cycle.service` then read `null` as "no data yet": the next save of that day (or of the body stats) wrote a fresh value on top of the unreadable one. `decryptJson` now returns `null` only for empty input and throws `FieldDecryptError` otherwise. Read-modify-write paths (`upsertDay`, `updateBodyStats`, backup export, admin authenticator secrets) fail loudly and leave the stored value untouched; screens that only display a value (`getSummary` days, `getBodyStats`, the saved Groq key) use `decryptJsonForDisplay`, which logs without the value and shows nothing.
+- **Values are bound to their owner and field.** New values are written as `v2.<keyId>.<iv+tag+ciphertext>` with the owner and field as GCM additional authenticated data (`fieldContexts` in `fieldCrypto.ts`): a ciphertext copied onto another user, day or field does not open. The key id is a short hash, not the key.
+- **A key can now be rotated.** `FIELD_ENCRYPTION_KEY` is the current key; `FIELD_ENCRYPTION_KEY_PREVIOUS` (comma separated) keeps retired keys readable. `npm run rotate:field-key` re-seals every field under the current key: a dry run by default, `--apply` writes, each write is conditional on the stored value being unchanged, unreadable values are counted and never touched. It has not been run against any database.
+
+### Not changed
+
+- **Existing stored values.** Values written before this version (no prefix, no binding) are still read, with any configured key, and become v2 the next time they are saved. Nothing was rewritten.
+- **Rollback caveat.** Once a value has been saved as v2, code from before this version cannot read it. If this release is rolled back, notes saved in the meantime would show as empty on the old code.
+- Receipts and log hashes already have their own domain-separated keys (`RECEIPT_SIGNING_KEY`, `LOG_HASH_KEY`, both optional); the item's request for separate keys is met by setting them in Vercel, which needs no code.
+
+### Tests
+
+- `fieldCrypto.unit.test.js` (round trip, owner/day/field binding, pre-v2 values, empty vs failure, wrong key, rotation), `fieldCryptoCycle.e2e.test.js` (an unreadable day or body stat is not saved over), `fieldCryptoRewrap.e2e.test.js` (dry run, apply, unreadable left alone, second run does nothing). The existing backup, projection and cycle suites pass with the new signature.
+
 ## v5.190.21 - A new account west of UTC no longer loses its first day of missed prayers (audit P1-16, one of three items) - 2026-11-17
 
 ### Fixed

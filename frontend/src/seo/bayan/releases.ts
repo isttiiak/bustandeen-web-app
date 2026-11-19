@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.22',
+    date: '2026-11-20',
+    text: {
+      en: {
+        title: 'Your private notes are better protected',
+        fixed: [
+          'Private Rayhanah notes and your own saved AI key are now locked to your account, so they cannot be opened if copied somewhere else.',
+          'If a private note ever cannot be read, the app now stops instead of replacing it with a blank one.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'আপনার ব্যক্তিগত নোট আরও ভালোভাবে সুরক্ষিত',
+        fixed: [
+          'রায়হানার ব্যক্তিগত নোট এবং আপনার নিজের সংরক্ষিত AI কী এখন আপনার অ্যাকাউন্টের সাথে বাঁধা, তাই অন্য কোথাও কপি করলে তা খোলা যাবে না।',
+          'কোনো ব্যক্তিগত নোট কখনো পড়া না গেলে অ্যাপ এখন সেটি ফাঁকা নোট দিয়ে বদলে না দিয়ে থেমে যায়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.21',
     date: '2026-11-17',
     text: {

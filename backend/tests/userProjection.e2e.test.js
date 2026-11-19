@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import app from '../src/app.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import User from '../src/models/User.js';
-import { encryptJson } from '../src/utils/fieldCrypto.js';
+import { encryptJson, fieldContexts } from '../src/utils/fieldCrypto.js';
 
 // /api/user/me (and the other user routes + auth/verify) return a whitelisted
 // projection (services/user.service.ts toClientUser), never the raw document.
@@ -55,7 +55,7 @@ describe('User API response projection', () => {
       { uid },
       {
         $set: {
-          groqApiKeyEnc: encryptJson('gsk_test_not_a_real_key'),
+          groqApiKeyEnc: encryptJson('gsk_test_not_a_real_key', fieldContexts.groqKey(uid)),
           groqApiKeySetAt: new Date(),
           welcomeEmailSentAt: new Date(),
           reengagementEmailSentAt: new Date(),
