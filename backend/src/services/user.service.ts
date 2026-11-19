@@ -261,7 +261,9 @@ export async function purgeAccountData(uid: string): Promise<void> {
     // The record stays for accountability with what the donor typed on the form
     // (the /privacy page says so), unlinked from the account. The network
     // address was never typed on the form, so it goes.
-    Donation.updateMany({ userId: uid }, { $set: { userId: null, ipAddress: null } }),
+    Donation.updateMany({ userId: uid }, { $set: { userId: null, ipAddress: null } })
+      // a soft-deleted donation is still the donor's data
+      .setOptions({ withDeleted: true } as never),
     // Someone who linked this account as their partner no longer points at it.
     CycleProfile.updateMany(
       { partnerUid: uid },

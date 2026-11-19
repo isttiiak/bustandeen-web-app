@@ -410,18 +410,32 @@ export const reopenDonation = async (
 };
 
 /**
- * Permanently removes a donation record (any status) — for erroneous/test
- * entries, not a donor-facing action. Reverses its effect on the cached
- * stats first if it had been verified, so deleting a mistaken "verified"
- * entry doesn't leave the public lifetime total or contributor count
- * overcounting a donation that no longer exists.
+ * Removes a donation from view: for erroneous or test entries, not a
+ * donor-facing action. The record is KEPT, marked with who deleted it and when
+ * (audit 2026-11-16 P1-13: a financial record used to vanish for good, leaving
+ * only an id in the admin log), and hidden from every read by the model. Its
+ * transaction id is freed (the original is kept in `deletedOriginalTransactionId`)
+ * so a mistaken entry cannot lock out the donor's real one. A verified donation
+ * comes off the cached public total, in the same transaction.
  */
-export const deleteDonation = async (id: string): Promise<void> => {
-  // Delete and reverse the stats in one transaction (audit P1-9). Only the
-  // request that actually removed the document reverses them, so two deletes
-  // can't subtract it twice, and a failure leaves the donation in place.
+export const deleteDonation = async (id: string, deletedBy = 'unknown'): Promise<void> => {
   await inTx(async () => {
-    const donation = await Donation.findOneAndDelete({ _id: id });
+    // Only the request that actually marked it deleted reverses the stats, so
+    // two deletes can't subtract it twice (the second finds it hidden: 404).
+    const donation = await Donation.findOneAndUpdate(
+      { _id: id },
+      [
+        {
+          $set: {
+            deletedAt: new Date(),
+            deletedBy,
+            deletedOriginalTransactionId: '$transactionId',
+            transactionId: { $concat: ['DELETED-', { $toString: '$_id' }] },
+          },
+        },
+      ],
+      { returnDocument: 'before', updatePipeline: true }
+    );
     if (!donation) throw httpError(404, 'Donation not found');
 
     if (donation.status === 'verified') {

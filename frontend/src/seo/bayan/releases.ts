@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.19',
+    date: '2026-11-17',
+    text: {
+      en: {
+        title: 'Donation records are no longer erased for good',
+        fixed: [
+          'When an administrator removes a donation entry, the record is now kept with who removed it and when, instead of disappearing. It stays hidden from every list and total.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'অনুদানের রেকর্ড আর চিরতরে মুছে যায় না',
+        fixed: [
+          'কোনো প্রশাসক অনুদানের এন্ট্রি সরালে এখন রেকর্ডটি হারিয়ে না গিয়ে কে কখন সরিয়েছেন সেই তথ্যসহ রাখা হয়। এটি সব তালিকা ও মোট থেকে লুকানো থাকে।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.18',
     date: '2026-11-17',
     text: {

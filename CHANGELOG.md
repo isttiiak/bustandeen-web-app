@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.19 - A deleted donation is kept as a record, not erased (audit P1-13) - 2026-11-17
+
+### Fixed
+
+- **`deleteDonation` no longer destroys a financial record.** It did `findOneAndDelete`, leaving only an id in the admin log. It now marks the donation deleted (`deletedAt`, `deletedBy` = the admin's email) and keeps every other field. The `Donation` model hides deleted rows from every `find`, `findOne`, `findOneAndUpdate`, `countDocuments`, update, delete and `aggregate` unless a query opts in with `{ withDeleted: true }`, so lists, public totals, donor analytics, the backup export, the quarterly preview and the drift check all behave as if it were gone. A second delete, a verify or a reopen of a deleted donation answers 404.
+- **Its transaction id is freed.** The unique index on `transactionId` (for pending and verified rows) would otherwise keep a mistaken entry blocking the donor's real transaction, which the old hard delete avoided. The live field becomes `DELETED-<id>` and the original is kept in `deletedOriginalTransactionId`. No index change.
+- **A verified donation still comes off the public total once**, in the same transaction as the mark (P1-9).
+- **Deleting the donor's account still unlinks and clears the IP of a soft-deleted donation** (`withDeleted`), so it stays the donor's data under the privacy page's rules.
+- Tests: `donationSoftDelete.e2e.test.js`, 5 cases; all 5 failed on the old code. The existing admin sadaqah delete tests pass unchanged.
+- **A test that broke with the calendar, fixed here.** `naseehPlan.e2e.test.js` sends "today" pinned to this week's Monday; from Thursday on that is more than two days back, and the live-clock bound on the client day (P0-3) answers 400. It passed on 17 and 18 November and failed on the 20th with no code change. The suite now switches the bound off, as the other suites that replay fixed days do; the bound itself is covered in `auditP0.e2e.test.js`.
+
+### Not changed
+
+- No way to undelete in the admin UI; the record is there for an owner to restore by hand or for an audit.
+- Stored data: nothing is migrated; donations written before the field existed have no `deletedAt` and are treated as live.
+
 ## v5.190.18 - Lists that could grow without end now have limits (audit P1-12) - 2026-11-17
 
 ### Fixed

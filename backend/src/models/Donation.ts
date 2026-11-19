@@ -22,6 +22,12 @@ export interface IDonation extends Document {
    *  thread against it — otherwise a donor sees 3 separate email threads for
    *  one donation instead of one conversation. */
   emailMessageId: string | null;
+  /** Soft delete (audit P1-13): a deleted donation stays as a record of who removed
+   *  it and when, and is hidden from every normal read. Absent while live. */
+  deletedAt?: Date;
+  deletedBy?: string;
+  /** Its transaction id before deletion; the live field is rewritten so the id is free again. */
+  deletedOriginalTransactionId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -51,6 +57,9 @@ const donationSchema = new Schema<IDonation>(
     // with .select('+ipAddress').
     ipAddress: { type: String, default: null, select: false },
     emailMessageId: { type: String, default: null },
+    deletedAt: { type: Date },
+    deletedBy: { type: String },
+    deletedOriginalTransactionId: { type: String },
   },
   { timestamps: true }
 );
@@ -68,5 +77,35 @@ donationSchema.index(
 
 // Admin pending-queue / all-submissions list: filter by status, newest first.
 donationSchema.index({ status: 1, createdAt: -1 });
+
+// A deleted donation is hidden from every read, write and count unless the query
+// opts in with `{ withDeleted: true }` (admin audit, account deletion). Documents
+// written before the field existed simply have no `deletedAt`, which `null` matches.
+type DeletedFilterQuery = {
+  getOptions(): Record<string, unknown>;
+  where(filter: Record<string, unknown>): unknown;
+};
+function hideDeleted(this: DeletedFilterQuery): void {
+  if (!this.getOptions().withDeleted) this.where({ deletedAt: null });
+}
+donationSchema.pre(
+  [
+    'find',
+    'findOne',
+    'findOneAndUpdate',
+    'findOneAndDelete',
+    'countDocuments',
+    'updateOne',
+    'updateMany',
+    'deleteOne',
+    'deleteMany',
+  ],
+  hideDeleted
+);
+donationSchema.pre('aggregate', function () {
+  if (!(this.options as { withDeleted?: boolean } | undefined)?.withDeleted) {
+    this.pipeline().unshift({ $match: { deletedAt: null } });
+  }
+});
 
 export default mongoose.model<IDonation>('Donation', donationSchema);
