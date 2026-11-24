@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.190.24",
+  "version": "5.190.25",
   "private": true,
   "type": "module",
   "scripts": {
@@ -34,7 +34,6 @@
     "imapflow": "^2.12.1",
     "mailparser": "^3.14.5",
     "mongoose": "^9.12.2",
-    "morgan": "^1.12.1",
     "nodemailer": "^10.1.1",
     "pdf-lib": "^1.17.1",
     "qrcode-generator": "^2.0.4",
@@ -44,7 +43,6 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/mailparser": "^3.9.0",
-    "@types/morgan": "^1.9.10",
     "@types/node": "^26.6.6",
     "@types/nodemailer": "^8.0.2",
     "cross-env": "^10.1.0",

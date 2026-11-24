@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.25 - Request logging no longer records URLs, IP addresses, browsers or accounts (audit P2-2) - 2026-11-24
+
+### Fixed
+
+- **Production logged every request with `morgan('combined')`.** Each line carried the full URL (query string included, so receipt signatures and ids), the caller's IP address, the browser string and, behind a proxy, more. It is replaced by `requestLogger()` in `lib/logger.ts`: one JSON line for each request that ends with status 400 or higher, holding only `tag`, `ts`, `method`, the route pattern (`/api/salat/:date`, never the concrete URL), `status` and `ms`. Successful requests, CORS preflights and the health checks are not logged (the host keeps its own request log). The route is read when the headers go out, because Express has unwound its routers by the time the response has finished and the `/api/...` prefix would be lost.
+- **`morgan` and `@types/morgan` are removed** from `backend/package.json` and its lockfile (76 lines removed, nothing else changed).
+- **`/privacy` says it** (en and bn): the request log keeps only failed requests and only the kind of page, the result code and the time.
+
+### Tests
+
+- `requestLog.unit.test.js`, 3 cases (a failed request through a mounted router logs exactly six fields and none of the signature, email, id, IP, browser or uid; successes, preflights and health checks are silent; `app.ts` no longer mentions morgan). It failed on the old code. `errorLogging.unit.test.js` passes unchanged.
+
+### Not changed
+
+- The 5xx error log (`logServerError`), which already hashed the uid and logged only the route pattern.
+- What the host (Vercel) keeps in its own request log. That is described on `/privacy` under the hosting provider and is outside this code.
+
 ## v5.190.24 - Naseeh: a cap on saving a Groq key, a deadline on every Groq call, numbers-only weekly stats (audit P2-5) - 2026-11-24
 
 ### Fixed
