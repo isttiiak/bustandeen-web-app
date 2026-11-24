@@ -25,6 +25,7 @@ import { useAuthStore } from './store/useAuthStore.js';
 import { initPwaUpdates } from './pwaUpdate.js';
 import { initStaleChunkReload } from './utils/staleChunkReload.js';
 import { initAnalytics } from './utils/analytics.js';
+import { mountConsentBanner } from './utils/consentBanner.js';
 import { migratePrayerDefaultsOnce } from './utils/salatPrefs.js';
 import { loadZoneLookup, readSavedPlace } from './utils/placeClock.js';
 import { initErrorReporting } from './utils/errorReporting.js';
@@ -37,6 +38,7 @@ retireAdminSession(import.meta.env.VITE_FIREBASE_API_KEY);
 initStaleChunkReload();
 initPwaUpdates();
 initAnalytics();
+mountConsentBanner();
 // Before the first render, so no screen ever shows a timetable that then jumps.
 migratePrayerDefaultsOnce();
 // The saved place's clock zone (far-zone fix): a small on-device map, loaded
