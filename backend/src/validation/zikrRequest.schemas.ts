@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { httpsUrl } from './httpsUrl.js';
 
 const zikrCategorySchema = z.enum([
   'tasbih',
@@ -18,7 +19,7 @@ export const submitZikrRequestSchema = z.object({
     arabic: z.string().trim().max(2000).optional(),
     meaning: z.string().trim().max(2000).optional(),
     source: z.string().trim().max(200).optional(),
-    sourceUrl: z.string().trim().url().max(500).optional().or(z.literal('')),
+    sourceUrl: httpsUrl(500).optional().or(z.literal('')),
     wantsAudio: z.boolean().optional(),
   }),
 });
@@ -43,7 +44,7 @@ export const approveZikrRequestSchema = z.object({
     transliteration: z.string().trim().max(500).optional(),
     meaning: z.string().trim().min(1).max(2000),
     source: z.string().trim().min(1).max(200),
-    sourceUrl: z.string().trim().url().max(500),
+    sourceUrl: httpsUrl(500),
     grade: z.string().trim().max(200).optional(),
     virtue: z.string().trim().max(1000).optional(),
     category: zikrCategorySchema.optional(),
@@ -78,7 +79,7 @@ export const updateLibraryItemSchema = z.object({
     transliteration: z.string().trim().max(500).optional(),
     meaning: z.string().trim().min(1).max(2000).optional(),
     source: z.string().trim().min(1).max(200).optional(),
-    sourceUrl: z.string().trim().min(1).max(500).optional(),
+    sourceUrl: httpsUrl(500).optional(),
     grade: z.string().trim().max(200).optional(),
     virtue: z.string().trim().max(1000).optional(),
   }),

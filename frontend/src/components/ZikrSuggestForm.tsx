@@ -13,6 +13,7 @@ import { useAddZikrType } from '../hooks/useZikrTypes.js';
 import { useSubmitZikrRequest } from '../hooks/useZikrRequests.js';
 import { LEGACY_NAME_ALIASES } from '../utils/zikrLibrary.js';
 import { useEscapeKey } from '../hooks/useEscapeKey.js';
+import { safeHttpsUrl } from '../utils/safeHttpsUrl.js';
 
 /**
  * The "suggest a zikr" form, shared by Settings and the counter's "+" modal so
@@ -58,9 +59,21 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
 
   // Personal-only add: never reviewed, never shared. The user has just
   // accepted responsibility for the wording in the consent modal.
+  // A source link must be a plain https address (audit P2-7); the server refuses anything else.
+  const sourceLinkOk = (): boolean => {
+    const link = reqSourceUrl.trim();
+    if (!link || safeHttpsUrl(link)) return true;
+    setShowConsent(false);
+    toast.error(t('zikrLibrary.linkNotHttps', 'The link must start with https://'), {
+      id: 'lib-link',
+    });
+    return false;
+  };
+
   const addToOwnList = () => {
     const name = reqName.trim();
     if (!name) return;
+    if (!sourceLinkOk()) return;
     if (inList(name)) {
       toast.error(t('zikrLibrary.alreadyInList', 'Already in your list'), { id: 'lib-add' });
       setShowConsent(false);
@@ -100,6 +113,7 @@ export default function ZikrSuggestForm({ onDone }: { onDone?: () => void }) {
   const submitRequest = () => {
     const name = reqName.trim();
     if (!name) return;
+    if (!sourceLinkOk()) return;
     submitZikrRequest.mutate(
       {
         name,

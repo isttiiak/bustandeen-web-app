@@ -10,6 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Star8Icon } from '../icons/IslamicIcons.js';
 import { DHIKR_HADITHS, FULL_PREDEFINED } from './zikrCounterData.js';
+import { safeHttpsUrl } from '../../utils/safeHttpsUrl.js';
 
 export interface ZikrReferencePanelProps {
   customMeanings: Record<string, import('../../store/useZikrStore.js').CustomMeaning>;
@@ -156,14 +157,14 @@ export default function ZikrReferencePanel({
                             {translateReference(builtin.source, i18n.language)}
                             <ExternalMark />
                           </a>
-                        ) : full?.sourceUrl ? (
+                        ) : safeHttpsUrl(full?.sourceUrl) ? (
                           <a
-                            href={full.sourceUrl}
+                            href={safeHttpsUrl(full?.sourceUrl) ?? undefined}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-brand-gold text-[11px] underline hover:text-brand-gold/80 transition-colors"
                           >
-                            {translateReference(full.source ?? '', i18n.language)}
+                            {translateReference(full?.source ?? '', i18n.language)}
                             <ExternalMark />
                           </a>
                         ) : full?.source ? (

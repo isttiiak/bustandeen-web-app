@@ -34,6 +34,7 @@ import { translateReference } from '../utils/localeReference.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import EditZikrModal from './EditZikrModal.js';
 import ZikrSuggestForm from './ZikrSuggestForm.js';
+import { safeHttpsUrl } from '../utils/safeHttpsUrl.js';
 
 /**
  * 📿 The zikr library (Istiak's plan) — a curated, categorized, hadith-
@@ -348,7 +349,7 @@ export default function ZikrLibrarySection() {
                             )}
                             <a
                               className="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2"
-                              href={item.sourceUrl}
+                              href={safeHttpsUrl(item.sourceUrl) ?? undefined}
                               target="_blank"
                               rel="noreferrer"
                             >
@@ -478,7 +479,7 @@ export default function ZikrLibrarySection() {
                                   )}
                                   <a
                                     className="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2"
-                                    href={item.sourceUrl}
+                                    href={safeHttpsUrl(item.sourceUrl) ?? undefined}
                                     target="_blank"
                                     rel="noreferrer"
                                   >
