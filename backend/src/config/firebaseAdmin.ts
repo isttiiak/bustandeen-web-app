@@ -51,6 +51,27 @@ export const verifyFirebaseToken = async (idToken: string): Promise<admin.auth.D
   return admin.auth().verifyIdToken(idToken);
 };
 
+export interface FirebaseProviderInfo {
+  providerId: string;
+  uid: string;
+  email: string | null;
+}
+
+/**
+ * The sign-in providers Firebase itself has linked to this account (Google, email/password...),
+ * with the uid and email the PROVIDER reported. This is the trustworthy record: anything the
+ * app sends about a linked provider is only a claim (audit 2026-11-16 P2-4).
+ */
+export const getFirebaseProviderData = async (uid: string): Promise<FirebaseProviderInfo[]> => {
+  if (!initialized) throw new Error('Firebase Admin not initialized');
+  const record = await admin.auth().getUser(uid);
+  return record.providerData.map((p) => ({
+    providerId: p.providerId,
+    uid: p.uid,
+    email: p.email ?? null,
+  }));
+};
+
 export const decodeUnverifiedJwt = (jwt: string): Record<string, unknown> | null => {
   try {
     const parts = jwt.split('.');

@@ -2,7 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import * as userService from '../services/user.service.js';
 import { isActiveAdminUid } from '../services/adminAccount.service.js';
 import * as userPrefsService from '../services/userPrefs.service.js';
-import { isAdminEmail } from '../middleware/auth.js';
+import { isAdminEmail, devAuthBypassAllowed } from '../middleware/auth.js';
+import { isFirebaseInitialized, getFirebaseProviderData } from '../config/firebaseAdmin.js';
 import type { AvatarId } from '../utils/avatars.js';
 
 export const getUserHandler = async (
@@ -104,7 +105,31 @@ export const linkGoogleHandler = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { googleEmail, googleUid } = req.body as { googleEmail: string; googleUid: string };
+    const claimed = req.body as { googleEmail?: string; googleUid?: string };
+    let googleEmail: string;
+    let googleUid: string;
+    if (isFirebaseInitialized()) {
+      // The Google account Firebase has really linked to this sign-in, never the app's say-so.
+      const google = (await getFirebaseProviderData(req.user.uid)).find(
+        (p) => p.providerId === 'google.com'
+      );
+      if (!google) {
+        res.status(400).json({
+          ok: false,
+          error: 'No Google account is connected to your sign-in yet. Please try connecting again.',
+        });
+        return;
+      }
+      googleEmail = google.email ?? '';
+      googleUid = google.uid;
+    } else if (devAuthBypassAllowed() && claimed.googleUid) {
+      // Local development without Firebase credentials only.
+      googleEmail = claimed.googleEmail ?? '';
+      googleUid = claimed.googleUid;
+    } else {
+      res.status(400).json({ ok: false, error: 'No Google account to link.' });
+      return;
+    }
     const user = await userService.linkGoogleProvider(req.user.uid, googleEmail, googleUid);
     res.json({ ok: true, user: user && userService.toClientUser(user) });
   } catch (err) {

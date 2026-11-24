@@ -3,8 +3,11 @@ import { AVATAR_IDS } from '../utils/avatars.js';
 
 export const linkGoogleSchema = z.object({
   body: z.object({
-    googleEmail: z.string().email(),
-    googleUid: z.string().min(1),
+    // Ignored when Firebase is configured: the server reads the real Google account from
+    // Firebase (audit P2-4). Still accepted so an older open tab keeps working, and used
+    // only by local development without Firebase credentials.
+    googleEmail: z.string().email().optional(),
+    googleUid: z.string().min(1).optional(),
   }),
 });
 

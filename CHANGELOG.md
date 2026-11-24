@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.28 - Linking Google now uses the Google account Firebase has really linked (audit P2-4) - 2026-11-25
+
+### Fixed
+
+- **`POST /api/user/link-google` stored the `googleUid` and `googleEmail` the app sent.** Nobody could take an account over with it (`linkedProviders` is only shown, never used to sign in or match accounts), but a signed-in person could show any Google address on their own profile, and could claim another person's Google uid so that person later got "already linked to another Bustandeen account" (a 409). The handler now asks Firebase (Admin SDK `getUser`, new `getFirebaseProviderData`) which Google account is really linked to the signed-in user, and stores that uid and email. This needs no token refresh on the app's side: the lookup reads Firebase's own record, so the sign-in token being a few minutes old does not matter. If Firebase has no Google account for that user, the answer is 400 with a "try connecting again" message and nothing is stored. The duplicate check (409) now compares real Google ids.
+- The two body fields are now optional and ignored when Firebase is configured, so an app tab opened before the update still works. Only local development without Firebase credentials (`DEV_AUTH_BYPASS`, never on Vercel or in production) still takes them from the request, as before.
+
+### Tests
+
+- `googleLink.e2e.test.js`, 6 cases against the real app with Firebase Admin mocked: the stored uid and email are Firebase's, not the app's; claiming a victim's uid neither works nor blocks the victim; no Google at Firebase gives 400 and stores nothing; a real duplicate gives 409; the app may send nothing; the local-development fallback is unchanged. 5 of 6 failed on the old code (the sixth pins the unchanged fallback).
+
+### Not changed
+
+- Providers already stored. Nothing is re-checked or rewritten; a value saved before this change stays as it is. I did not count how many differ from Firebase (that needs a read of production and of Firebase, not run).
+- `POST /api/user/unlink-google`: it only removes an entry from the caller's own list.
+- The app (frontend): it still sends the two fields; they are simply ignored.
+
 ## v5.190.27 - JSON-LD can no longer end its own script block; the offline caches keep only real 200s (audit P2-11) - 2026-11-24
 
 ### Fixed
