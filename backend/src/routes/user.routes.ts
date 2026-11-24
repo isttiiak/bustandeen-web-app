@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { requireAuth, requireRecentAuth, requireAuthAllowUnverified } from '../middleware/auth.js';
+import {
+  requireAuth,
+  requireRecentAuth,
+  requireAuthAllowUnverified,
+  requireNotRevoked,
+} from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import * as userController from '../controllers/user.controller.js';
 import {
@@ -25,18 +30,21 @@ router.put('/prefs', requireAuth, validate(putPrefsSchema), userController.putPr
 router.post(
   '/link-google',
   requireAuth,
+  requireNotRevoked,
   validate(linkGoogleSchema),
   userController.linkGoogleHandler
 );
 router.post(
   '/unlink-google',
   requireAuth,
+  requireNotRevoked,
   validate(unlinkGoogleSchema),
   userController.unlinkGoogleHandler
 );
 router.patch(
   '/primary-email',
   requireAuth,
+  requireNotRevoked,
   validate(setPrimaryEmailSchema),
   userController.setPrimaryEmailHandler
 );
@@ -47,14 +55,27 @@ router.patch(
 router.delete(
   '/me',
   requireAuthAllowUnverified,
+  requireNotRevoked,
   requireRecentAuth,
   userController.deleteAccountHandler
 );
 
 // Backup file v3 (every domain + settings; also feeds the Excel report) and
 // the merge-restore of that file
-router.get('/export', requireAuth, dataExportLimiter, userController.exportAllHandler);
+router.get(
+  '/export',
+  requireAuth,
+  dataExportLimiter,
+  requireNotRevoked,
+  userController.exportAllHandler
+);
 // UID-keyed limiter after requireAuth — prevents backup-flood abuse
-router.post('/import', requireAuth, importLimiter, userController.importAllHandler);
+router.post(
+  '/import',
+  requireAuth,
+  importLimiter,
+  requireNotRevoked,
+  userController.importAllHandler
+);
 
 export default router;

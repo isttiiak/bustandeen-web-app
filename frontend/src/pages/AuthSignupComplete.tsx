@@ -17,6 +17,7 @@ import {
   StrengthMeter,
   TEXT_ACTION,
 } from '../components/auth/authParts.js';
+import { passwordTooShort } from '../utils/passwordRules.js';
 
 // Email-first sign-up, step 2 (v5.156.0): the link from the sign-up email
 // lands here. Choosing a password creates the account (already verified) and
@@ -48,8 +49,8 @@ export default function AuthSignupComplete() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      setError(t('authSignUp.errWeakPassword', 'Password must be at least 6 characters.'));
+    if (passwordTooShort(password)) {
+      setError(t('authSignUp.errWeakPassword', 'Password must be at least 8 characters.'));
       return;
     }
     if (password !== confirm) {

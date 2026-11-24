@@ -168,7 +168,8 @@ const makeRequireAdminAuth =
       let verifiedEmail: string | undefined;
       let authTime: number | undefined;
       if (isFirebaseInitialized()) {
-        const decoded = await verifyFirebaseToken(token);
+        // The admin panel is small and powerful: a revoked admin sign-in stops at once.
+        const decoded = await verifyFirebaseToken(token, true);
         uid = decoded.uid;
         authTime = decoded.auth_time;
         if (decoded.email && decoded.email_verified) verifiedEmail = decoded.email.toLowerCase();
@@ -317,6 +318,43 @@ export const requireAdminRecentAuth = (req: Request, res: Response, next: NextFu
     return;
   }
   next();
+};
+
+/**
+ * For the account-level actions (export everything, restore a backup, delete the account, change
+ * a linked sign-in): the sign-in must not have been revoked (password reset, "sign out
+ * everywhere", account switched off). A token stays valid for up to an hour after that, which is
+ * fine for reading today's page but not for these. Everyday requests skip the check: it is an
+ * extra call to Firebase. Run after requireAuth. Audit 2026-11-16 P2-9.
+ */
+export const requireNotRevoked = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  // Dev-bypass tokens (no Firebase) cannot be revoked.
+  if (!isFirebaseInitialized()) return next();
+  const header = req.headers.authorization ?? '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : '';
+  try {
+    await verifyFirebaseToken(token, true);
+    next();
+  } catch (err) {
+    const code = (err as { code?: string }).code ?? '';
+    if (code === 'auth/id-token-revoked' || code === 'auth/user-disabled') {
+      res.status(401).json({
+        ok: false,
+        error: 'session_revoked',
+        message: 'Your sign-in has ended. Please sign in again.',
+      });
+      return;
+    }
+    // Firebase could not be asked, or the token is no good: do not sign anyone out for that.
+    const tokenProblem = code.startsWith('auth/') && code !== 'auth/internal-error';
+    res
+      .status(tokenProblem ? 401 : 503)
+      .json({ ok: false, error: tokenProblem ? 'Invalid token' : 'Please try again in a moment.' });
+  }
 };
 
 /**

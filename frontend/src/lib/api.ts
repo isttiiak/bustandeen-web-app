@@ -136,6 +136,18 @@ api.interceptors.response.use(
         window.location.href = '/login';
       }
     }
+    // The account was signed out elsewhere (password reset, "sign out everywhere", switched off)
+    // and the action needed a live sign-in (audit P2-9): end this one too and ask for a sign-in.
+    if (
+      axios.isAxiosError(err) &&
+      err.response?.status === 401 &&
+      (err.response.data as { error?: string } | undefined)?.error === 'session_revoked'
+    ) {
+      localStorage.removeItem('bustandeen_idToken');
+      void Promise.resolve(loadedFirebase()?.auth.signOut()).finally(() => {
+        window.location.href = '/login';
+      });
+    }
     // Admin session rejected/expired — drop it so AdminGate re-prompts for
     // sign-in instead of admin requests just failing silently.
     const adminError =

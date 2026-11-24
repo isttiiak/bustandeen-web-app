@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.29 - 8-character new passwords, revoked sign-ins stop at the sensitive actions, limits stay on in Vercel previews (audit P2-9) - 2026-11-25
+
+### Fixed
+
+- **A new password needs 8 characters, not 6.** `signupCompleteSchema` (`min(8)`), the sign-up completion page and the password-reset page (`utils/passwordRules.ts`, one number), and the message in en and bn. Signing in is never length-checked, so nobody with an older 6 or 7 character password is locked out. **Not done here, an owner step:** Firebase itself still accepts 6 characters on its own reset and sign-up endpoints; to make it refuse them too, set the password policy (minimum length 8) in the Firebase console (Authentication > Settings > Password policy).
+- **A revoked sign-in kept working for up to an hour.** `verifyIdToken` was called without `checkRevoked`, so after a password reset, "sign out everywhere" or switching an account off, the old token passed until it expired. The check costs an extra call to Firebase, so it is not on every request. New `requireNotRevoked` (401 `session_revoked`; 503 "try again" when Firebase cannot be asked, so an outage signs nobody out) runs on export, import, delete account, link and unlink Google, and the primary-email change. The admin panel's token check always uses `checkRevoked` (admin traffic is small and the access is wide). The app, on `session_revoked`, ends that device's sign-in and goes to `/login`.
+- **Rate limits could switch themselves off on a mis-set deployment.** `rateLimiter.ts` treated any `NODE_ENV` other than `production` as "development, no limits". It now also stays on whenever `VERCEL` is set, the same guard the dev sign-in bypass already uses. I could not read the Vercel project settings from here to confirm what `NODE_ENV` a preview gets; this makes the answer not matter.
+
+### Tests
+
+- `passwordAndRevoked.e2e.test.js` (12 cases: 7 refused, 8 and 128 accepted, 129 refused; ordinary requests do not check revocation; each of the six account actions answers 401 `session_revoked` for a revoked sign-in and works for another; Firebase down gives 503; the admin token is checked with `checkRevoked`), `limiterOnVercel.e2e.test.js`, `passwordRules.test.ts`. 10 of the 12 backend cases failed on the old code.
+
+### Not changed
+
+- Existing passwords. Nothing was reset or re-checked.
+- Common-password screening and "must contain a number": left out on purpose, to keep sign-up easy (the guidance is length first).
+- The interceptor that signs the device out on `session_revoked` (`lib/api.ts`) has no automated test and was not driven in a browser.
+
 ## v5.190.28 - Linking Google now uses the Google account Firebase has really linked (audit P2-4) - 2026-11-25
 
 ### Fixed

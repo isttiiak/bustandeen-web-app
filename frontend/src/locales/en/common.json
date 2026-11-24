@@ -328,7 +328,7 @@
     "errNetwork": "Network error. Check your connection and try again.",
     "errPasswordMismatch": "Passwords do not match.",
     "errTooManyRequests": "Too many attempts. Please wait a moment and try again.",
-    "errWeakPassword": "Password must be at least 6 characters.",
+    "errWeakPassword": "Password must be at least 8 characters.",
     "firstName": "First Name",
     "firstNamePlaceholder": "First name",
     "gender": "Gender",
