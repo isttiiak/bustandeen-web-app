@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.28',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Connecting Google is now checked more carefully',
+        fixed: [
+          'When you connect your Google account, the app now confirms which Google account you really connected, instead of relying on what your device reports.',
+          'Nothing in your saved records was changed, and accounts already connected stay as they are.',
+        ],
+      },
+      bn: {
+        title: 'গুগল সংযোগ এখন আরও যত্নে যাচাই হয়',
+        fixed: [
+          'আপনি গুগল অ্যাকাউন্ট যুক্ত করলে অ্যাপ এখন আপনার ডিভাইসের দেওয়া তথ্যের ওপর নির্ভর না করে নিজে যাচাই করে দেখে আসলে কোন গুগল অ্যাকাউন্টটি যুক্ত হয়েছে।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি, আর আগে যুক্ত করা অ্যাকাউন্ট যেমন ছিল তেমনই থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.27',
     date: '2026-11-24',
     text: {
