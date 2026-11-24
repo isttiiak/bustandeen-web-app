@@ -17,6 +17,7 @@
  */
 
 import User from '../models/User.js';
+import { muhasabahStatsForPrompt } from '../validation/muhasabahStats.js';
 import { encryptJson, decryptJsonForDisplay, fieldContexts } from '../utils/fieldCrypto.js';
 
 interface Provider {
@@ -100,12 +101,29 @@ export async function getGroqKeyStatus(
   return { hasOwnKey: !!user?.groqApiKeyEnc, setAt: user?.groqApiKeySetAt ?? null };
 }
 
+/** How long one Groq call may take before it is given up (the function itself has 30 s in
+ * vercel.json, and a reply tries two models in turn). AI_TIMEOUT_MS overrides it, for tests. */
+export const aiTimeoutMs = (): number => Number(process.env.AI_TIMEOUT_MS) || 10_000;
+
+/** fetch that gives up after `ms`; the timer is always cleared. */
+async function fetchWithTimeout(url: string, init: RequestInit, ms: number): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 /** A cheap, no-completion call — just confirms Groq accepts the key. */
 async function verifyGroqKey(apiKey: string): Promise<boolean> {
   try {
-    const res = await fetch('https://api.groq.com/openai/v1/models', {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
+    const res = await fetchWithTimeout(
+      'https://api.groq.com/openai/v1/models',
+      { headers: { Authorization: `Bearer ${apiKey}` } },
+      aiTimeoutMs()
+    );
     return res.ok;
   } catch {
     return false;
@@ -163,8 +181,12 @@ async function callProvider(
   user: string,
   maxTokens = 600
 ): Promise<string | null> {
+  // One deadline for the whole exchange, reply body included.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), aiTimeoutMs());
   try {
     const res = await fetch(p.url, {
+      signal: controller.signal,
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${p.key}` },
       body: JSON.stringify({
@@ -186,6 +208,8 @@ async function callProvider(
   } catch (e) {
     console.warn(`[ai] ${p.name} error`, (e as Error).message);
     return null;
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -775,7 +799,7 @@ export async function getMuhasabahReport(
 - "slipped": ONE sentence gently naming the ONE tracker that lagged most, framed as an honest observation, not a failure or guilt trip. If nothing meaningfully lagged, say so warmly instead of inventing a gap.
 - "suggestion": ONE small, CONCRETE action for next week tied to whatever slipped (not a vague platitude like "try harder").
 No hadith, no verse, no ruling, no citation of any kind — that is handled separately. Reply ONLY as JSON: {"wentWell": string, "slipped": string, "suggestion": string}.`,
-    `This week's numbers (JSON): ${JSON.stringify(stats).slice(0, 800)}`,
+    `This week's numbers (JSON): ${JSON.stringify(muhasabahStatsForPrompt(stats))}`,
     600,
     { feature: 'muhasabah', userId }
   );

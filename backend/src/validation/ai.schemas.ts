@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { muhasabahStatsSchema } from './muhasabahStats.js';
 import { FASTING_CATEGORIES, VOLUNTARY_KINDS } from '../models/FastingLog.js';
 
 // FastingCompanion.tsx only ever sends `voluntaryKind ?? 'voluntary'` or
@@ -14,7 +15,7 @@ export const aiSuggestSchema = z.object({
 
 export const aiMuhasabahSchema = z.object({
   body: z.object({
-    stats: z.record(z.string(), z.unknown()).optional(),
+    stats: muhasabahStatsSchema.optional(),
   }),
 });
 

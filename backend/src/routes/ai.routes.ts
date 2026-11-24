@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
-import { aiUserLimiter } from '../middleware/rateLimiter.js';
+import { aiUserLimiter, groqKeyLimiter } from '../middleware/rateLimiter.js';
 import * as aiController from '../controllers/ai.controller.js';
 import {
   aiSuggestSchema,
@@ -54,9 +54,16 @@ router.post(
 );
 
 // Bring-your-own Groq key (Settings > AI) — a settings write, not a Groq
-// call itself, so it doesn't sit behind aiUserLimiter.
+// completion itself, so it doesn't sit behind aiUserLimiter; saving one does
+// call Groq (to test the key), so that has its own per-user cap.
 router.get('/groq-key', requireAuth, aiController.groqKeyStatusHandler);
-router.put('/groq-key', requireAuth, validate(aiSetGroqKeySchema), aiController.setGroqKeyHandler);
+router.put(
+  '/groq-key',
+  requireAuth,
+  groqKeyLimiter,
+  validate(aiSetGroqKeySchema),
+  aiController.setGroqKeyHandler
+);
 router.delete('/groq-key', requireAuth, aiController.clearGroqKeyHandler);
 
 export default router;
