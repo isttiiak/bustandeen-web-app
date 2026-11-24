@@ -20,6 +20,30 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.32',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Hifz: a few small fixes',
+        fixed: [
+          'Your daily Hifz goal and streak are now counted on the same day the screen shows, including in the evening and after midnight.',
+          'The "next ayah" button now always adds a new ayah. It skips ones already in your list.',
+          'Tapping twice quickly no longer causes an error, and an ayah number that does not exist in a surah is no longer accepted.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'হিফজ: কিছু ছোট সংশোধন',
+        fixed: [
+          'আপনার দৈনিক হিফজ লক্ষ্য ও ধারা এখন ঠিক সেই দিনেই গোনা হয় যে দিন স্ক্রিনে দেখানো হয়, সন্ধ্যায় এবং মধ্যরাতের পরেও।',
+          '"পরের আয়াত" বোতাম এখন সবসময় নতুন একটি আয়াত যোগ করে। আপনার তালিকায় থাকা আয়াত এড়িয়ে যায়।',
+          'দ্রুত দুবার চাপলে আর ত্রুটি হয় না, আর কোনো সূরায় নেই এমন আয়াত নম্বর এখন গ্রহণ করা হয় না।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.31',
     date: '2026-11-25',
     text: {

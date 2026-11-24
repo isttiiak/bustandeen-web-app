@@ -18,6 +18,7 @@ import QuranLog from '../models/QuranLog.js';
 import QuranProfile from '../models/QuranProfile.js';
 import QuranReadingSession from '../models/QuranReadingSession.js';
 import HifzEntry from '../models/HifzEntry.js';
+import { ayahCountOf } from '../utils/surahAyahCounts.js';
 import HifzLog from '../models/HifzLog.js';
 import HifzProfile from '../models/HifzProfile.js';
 import NaseehPlan from '../models/NaseehPlan.js';
@@ -794,7 +795,17 @@ async function importV3(uid: string, data: BackupFileV3): Promise<ImportCounts> 
   const h = data.hifz;
   if (isObj(h)) {
     await replaceOneDoc(HifzProfile, h.profile, uid);
-    counts.hifzItems = await upsertBy(HifzEntry, list(h.entries, MAX.units), uid, (d) => ({
+    // Only ayat that exist and a real due date: a file cannot put 1:99 or "abc" in the list.
+    const realEntries = list(h.entries, MAX.units).filter(
+      (e) =>
+        Number.isInteger(e.surah) &&
+        Number.isInteger(e.ayah) &&
+        (e.ayah as number) >= 1 &&
+        (e.ayah as number) <= ayahCountOf(e.surah as number) &&
+        typeof e.dueDate === 'string' &&
+        DATE_RE.test(e.dueDate)
+    );
+    counts.hifzItems = await upsertBy(HifzEntry, realEntries, uid, (d) => ({
       surah: d.surah,
       ayah: d.ayah,
     }));
