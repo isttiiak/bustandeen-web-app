@@ -91,19 +91,30 @@ export async function addEntry(
   const existing = await HifzEntry.findOne({ userId, surah, ayah });
   if (existing) return { entry: existing, alreadyExists: true };
 
-  const entry = await HifzEntry.create({
-    userId,
-    surah,
-    ayah,
-    state: 'new',
-    interval: 0,
-    easeFactor: 2.5,
-    reps: 0,
-    lapses: 0,
-    dueDate: today,
-    lastResult: null,
-    lastReviewedAt: null,
-  });
+  let entry: IHifzEntry;
+  try {
+    entry = await HifzEntry.create({
+      userId,
+      surah,
+      ayah,
+      state: 'new',
+      interval: 0,
+      easeFactor: 2.5,
+      reps: 0,
+      lapses: 0,
+      dueDate: today,
+      lastResult: null,
+      lastReviewedAt: null,
+    });
+  } catch (err) {
+    // Two taps at once: the other one created it a moment ago. Same answer as the first check,
+    // not a 500, and no second count.
+    if ((err as { code?: number }).code === 11000) {
+      const winner = await HifzEntry.findOne({ userId, surah, ayah });
+      if (winner) return { entry: winner, alreadyExists: true };
+    }
+    throw err;
+  }
   await HifzLog.findOneAndUpdate(
     { userId, date: today },
     { $inc: { newCount: 1 }, $setOnInsert: { revisionCount: 0 } },
@@ -120,8 +131,25 @@ export interface AddNextResult extends AddEntryResult {
  * the khatam bookmark pattern so "add next ayah" needs no picker. */
 export async function addNext(userId: string, date?: string): Promise<AddNextResult> {
   const profile = await getOrCreateProfile(userId);
-  const surah = profile.nextSurah;
-  const ayah = profile.nextAyah;
+  // Skip ayat that are already in the list (added by hand, or by an earlier pass), so a tap
+  // always adds something new instead of doing nothing and moving the cursor by one.
+  const taken = new Set(
+    (await HifzEntry.find({ userId }).select('surah ayah').lean()).map(
+      (e) => e.surah * 1000 + e.ayah
+    )
+  );
+  let surah = profile.nextSurah;
+  let ayah = profile.nextAyah;
+  for (let steps = 0; taken.has(surah * 1000 + ayah) && steps < 6236; steps++) {
+    const step = nextAyahPosition(surah, ayah);
+    surah = step.surah;
+    ayah = step.ayah;
+  }
+  if (taken.has(surah * 1000 + ayah)) {
+    // Every ayah of the mushaf is already in the list.
+    const entry = await HifzEntry.findOne({ userId, surah, ayah });
+    if (entry) return { entry, alreadyExists: true, cursorExhausted: true };
+  }
   const result = await addEntry(userId, surah, ayah, date);
   const next = nextAyahPosition(surah, ayah);
   const cursorExhausted = next.surah === 1 && next.ayah === 1 && !(surah === 1 && ayah === 1);

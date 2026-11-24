@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+import { withHifzDay } from '../utils/hifzDay.js';
 
 export type HifzState = 'new' | 'learning' | 'consolidating' | 'solid';
 export type HifzResult = 'easy' | 'hesitant' | 'forgot';
@@ -96,7 +97,7 @@ export function useAddNextHifz() {
         entry: { surah: number; ayah: number };
         alreadyExists: boolean;
         cursorExhausted: boolean;
-      }>('/api/hifz/next');
+      }>('/api/hifz/next', withHifzDay({}));
       return data;
     },
     onSuccess: () => invalidateHifz(qc),
@@ -108,7 +109,7 @@ export function useAddHifzEntry() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (vars: { surah: number; ayah: number }) => {
-      const { data } = await api.post('/api/hifz/entries', vars);
+      const { data } = await api.post('/api/hifz/entries', withHifzDay(vars));
       return data;
     },
     onSuccess: () => invalidateHifz(qc),
@@ -130,7 +131,7 @@ export function useReviewHifz() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (vars: { surah: number; ayah: number; result: HifzResult }) => {
-      const { data } = await api.post('/api/hifz/review', vars);
+      const { data } = await api.post('/api/hifz/review', withHifzDay(vars));
       return data;
     },
     onSuccess: () => invalidateHifz(qc),

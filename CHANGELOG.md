@@ -2,6 +2,28 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.32 - Hifz: six small bug fixes (no new features) - 2026-11-25
+
+Hifz is a simple feature and is meant to stay one. This only fixes what was wrong; there was no test file for it before.
+
+### Fixed
+
+- **Hifz writes were dated by the server, the screens by the app.** `POST /hifz/next`, `/entries` and `/review` sent no day, so the server used its own UTC date, while the summary and queue use the app's tracking day. In the evening west of UTC, or after midnight east of it, a review was counted on a different day from the one shown: the daily goal looked unmet, the streak could break, and the next-due date was a day off. The app now sends its tracking day with all three (`utils/hifzDay.ts`).
+- **The day the app sends was not checked.** The body `date` was only a pattern, so any day (year 2099, a forged one) was accepted and used for the log and the due date, the same hole closed elsewhere in audit P0-3 and missed here. It now uses the shared believable-today rule (`clientToday`).
+- **An ayah that does not exist was accepted.** Only 1 to 286 was checked, so 1:8 (al-Fatiha has 7) or 112:5 could be added, reviewed or removed, and showed up in the heatmap beyond the surah's length. The ayah must now exist in that surah.
+- **Two taps at once gave an error.** `addEntry` looked, then created; the second of two simultaneous adds hit the unique index and returned a 500. It now answers "already in your list" and counts once.
+- **"Add next" could add nothing.** If the next ayah was already in the list (added by hand, or earlier), the tap did nothing and still moved the cursor by one. It now skips ayat already in the list, and when all 6,236 are there it says the list is complete and adds nothing.
+- **A backup could put impossible ayat in the list.** Restoring now keeps only entries whose ayah exists and whose due date is a real `YYYY-MM-DD`.
+
+### Tests
+
+- `hifz.e2e.test.js` (7 cases) all failed on the old code; `hifzDay.test.ts` (3). Existing backup suites pass.
+
+### Not changed (on purpose)
+
+- The spaced-repetition rules (SM-2), the "solid ayat leave the daily queue" rule, the 500-item queue limit, the streak rule, and the server's own date when an old app does not send one.
+- Anything stored: no data was rewritten. An impossible ayah that is already stored is left alone (I did not count whether any exist).
+
 ## v5.190.31 - Google Analytics now starts only after a yes (audit P2-10) - 2026-11-25
 
 ### Changed
