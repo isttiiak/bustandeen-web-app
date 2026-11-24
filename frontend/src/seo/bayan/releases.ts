@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.23',
+    date: '2026-11-20',
+    text: {
+      en: {
+        title: 'A small limit on zikr suggestions',
+        fixed: [
+          "You can now send up to five zikr or dua suggestions a day. This keeps the review team's inbox calm so each suggestion gets a careful look.",
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'যিকর প্রস্তাবে সামান্য সীমা',
+        fixed: [
+          'আপনি এখন দিনে পাঁচটি পর্যন্ত যিকর বা দোয়ার প্রস্তাব পাঠাতে পারবেন। এতে পর্যালোচনা দলের ইনবক্স শান্ত থাকে এবং প্রতিটি প্রস্তাব যত্ন নিয়ে দেখা যায়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.22',
     date: '2026-11-20',
     text: {

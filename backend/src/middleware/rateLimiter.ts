@@ -131,6 +131,16 @@ export const aiChatLimiter = makeUidLimit(
   'aiChat'
 );
 
+/** Zikr/dua suggestions: 5 per day per UID. Each one emails the review inbox
+ *  and the requester, so this is also an email-flood guard. Shared (Mongo) so
+ *  the count is one across serverless instances. */
+export const zikrRequestLimiter = makeUidLimit(
+  24 * 60 * 60 * 1000,
+  5,
+  { ok: false, error: 'You have sent several suggestions today. Please try again tomorrow.' },
+  'zikrRequest'
+);
+
 /** Friend-connect: 10 per hour per UID — prevents invite-code spam */
 export const socialConnectLimiter = makeUidLimit(
   60 * 60 * 1000,
