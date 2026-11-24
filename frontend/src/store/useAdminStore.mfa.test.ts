@@ -61,13 +61,19 @@ describe('admin store, second factor', () => {
 });
 
 describe('admin MFA proof storage', () => {
-  it('stores, reads and clears the proof', () => {
-    const items = new Map<string, string>();
+  const stubStorage = (initial: Record<string, string> = {}) => {
+    const items = new Map<string, string>(Object.entries(initial));
+    const setItem = vi.fn((k: string, v: string) => void items.set(k, v));
     vi.stubGlobal('localStorage', {
       getItem: (k: string) => items.get(k) ?? null,
-      setItem: (k: string, v: string) => void items.set(k, v),
+      setItem,
       removeItem: (k: string) => void items.delete(k),
     });
+    return { items, setItem };
+  };
+
+  it('stores, reads and clears the proof', () => {
+    stubStorage();
     clearAdminMfaProof();
     expect(getAdminMfaProof()).toBeNull();
     setAdminMfaProof('body.mac');
@@ -77,9 +83,25 @@ describe('admin MFA proof storage', () => {
     vi.unstubAllGlobals();
   });
 
-  it('without storage (private mode) it fails quietly', () => {
+  it('never writes the proof to browser storage (audit P2-8)', () => {
+    const { items, setItem } = stubStorage();
+    setAdminMfaProof('body.mac');
+    expect(setItem).not.toHaveBeenCalled();
+    expect([...items.values()]).not.toContain('body.mac');
+    vi.unstubAllGlobals();
+  });
+
+  it('clearing also removes a proof an older version left in localStorage', () => {
+    const { items } = stubStorage({ bustandeen_admin_mfa: 'old.proof' });
+    clearAdminMfaProof();
+    expect(items.has('bustandeen_admin_mfa')).toBe(false);
+    vi.unstubAllGlobals();
+  });
+
+  it('works without any storage (private mode)', () => {
     expect(() => setAdminMfaProof('x')).not.toThrow();
-    expect(getAdminMfaProof()).toBeNull();
+    expect(getAdminMfaProof()).toBe('x');
+    clearAdminMfaProof();
   });
 });
 

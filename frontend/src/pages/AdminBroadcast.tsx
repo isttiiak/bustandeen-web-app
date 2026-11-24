@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MegaphoneIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
@@ -12,6 +12,7 @@ import {
 import Seo from '../components/Seo.js';
 import AdminUpdateEmails from '../components/AdminUpdateEmails.js';
 import {
+  type AdminAnnouncement,
   useAdminAnnouncements,
   useCreateAnnouncement,
   useDeactivateAnnouncement,
@@ -24,12 +25,41 @@ export default function AdminBroadcast() {
   const deactivate = useDeactivateAnnouncement();
   const [form, setForm] = useState({ title: '', body: '' });
   const [tab, setTab] = useState<'banner' | 'email'>('banner');
+  const titleRef = useRef<HTMLInputElement>(null);
+  const [reopened, setReopened] = useState(false);
+
+  // "Reopen as new": copy an earlier banner into the form so it can be edited and published again.
+  // The old row stays as it is; publishing creates a new banner and switches the active one off.
+  const reopen = (a: AdminAnnouncement) => {
+    setForm({ title: a.title, body: a.body });
+    setReopened(true);
+    titleRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    titleRef.current?.focus();
+  };
+
+  const stop = (a: AdminAnnouncement) => {
+    if (
+      window.confirm(
+        t(
+          'adminBroadcast.deactivateConfirm',
+          'Deactivate "{{title}}"? Visitors stop seeing it right away.',
+          { title: a.title }
+        )
+      )
+    )
+      deactivate.mutate(a._id);
+  };
 
   const publish = () => {
     if (!form.title.trim() || !form.body.trim()) return;
     create.mutate(
       { title: form.title.trim(), body: form.body.trim() },
-      { onSuccess: () => setForm({ title: '', body: '' }) }
+      {
+        onSuccess: () => {
+          setForm({ title: '', body: '' });
+          setReopened(false);
+        },
+      }
     );
   };
 
@@ -85,7 +115,16 @@ export default function AdminBroadcast() {
             </div>
 
             <div className={`${CARD} p-4 space-y-3`}>
+              {reopened && (
+                <p className="text-white/80 text-xs">
+                  {t(
+                    'adminBroadcast.reopenedNote',
+                    'Copied from an earlier banner. Change what you need, then Publish: the new banner replaces the active one.'
+                  )}
+                </p>
+              )}
               <input
+                ref={titleRef}
                 value={form.title}
                 onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
                 placeholder={t('adminBroadcast.titlePlaceholder', 'e.g. Ramadan hours changed')}
@@ -164,14 +203,16 @@ export default function AdminBroadcast() {
                         {new Date(a.createdAt).toLocaleString()}, {a.createdBy}
                       </p>
                     </div>
-                    {a.active && (
-                      <button
-                        onClick={() => deactivate.mutate(a._id)}
-                        className={`${BTN_SMALL} shrink-0`}
-                      >
-                        {t('adminBroadcast.deactivate', 'Deactivate')}
+                    <div className="flex gap-2 shrink-0">
+                      <button onClick={() => reopen(a)} className={BTN_SMALL}>
+                        {t('adminBroadcast.reopen', 'Reopen as new')}
                       </button>
-                    )}
+                      {a.active && (
+                        <button onClick={() => stop(a)} className={BTN_SMALL}>
+                          {t('adminBroadcast.deactivate', 'Deactivate')}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>

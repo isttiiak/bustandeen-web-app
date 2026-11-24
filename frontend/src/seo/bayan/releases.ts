@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.34',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Safer admin tools behind the scenes',
+        fixed: [
+          'Our team panel now asks for a fresh password before deleting messages, and asks "are you sure?" before changing what the public sees.',
+          'A past announcement banner can be reopened, edited and published again in a few taps.',
+          'Nothing in your own records changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে আরও নিরাপদ অ্যাডমিন টুল',
+        fixed: [
+          'আমাদের টিমের প্যানেল এখন বার্তা মুছে ফেলার আগে নতুন করে পাসওয়ার্ড চায়, আর সবাই যা দেখে তা বদলানোর আগে "আপনি কি নিশ্চিত?" জিজ্ঞেস করে।',
+          'আগের কোনো ঘোষণার ব্যানার আবার খুলে সম্পাদনা করে কয়েকটি ট্যাপেই নতুন করে প্রকাশ করা যায়।',
+          'আপনার নিজের সংরক্ষিত তথ্যে কোনো পরিবর্তন হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.32',
     date: '2026-11-25',
     text: {

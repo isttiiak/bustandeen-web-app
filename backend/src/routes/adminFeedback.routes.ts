@@ -1,5 +1,10 @@
 import { Router } from 'express';
-import { requireAdminAuth, requireDomain, requireServant } from '../middleware/auth.js';
+import {
+  requireAdminAuth,
+  requireAdminRecentAuth,
+  requireDomain,
+  requireServant,
+} from '../middleware/auth.js';
 import { validate } from '../middleware/validate.js';
 import { replyFeedbackSchema } from '../validation/feedback.schemas.js';
 import * as adminFeedbackController from '../controllers/adminFeedback.controller.js';
@@ -17,6 +22,12 @@ router.patch('/:id/mark-replied-external', adminFeedbackController.markRepliedEx
 
 // Delete is Servant-only per TODO-v3.md's "Servant: full CRUD, Ansar:
 // read+reply, no delete" spec — unlike reply/archive above.
-router.delete('/:id', requireServant, adminFeedbackController.deleteHandler);
+// Permanent, so it also needs a recent password entry (audit P2-8).
+router.delete(
+  '/:id',
+  requireServant,
+  requireAdminRecentAuth,
+  adminFeedbackController.deleteHandler
+);
 
 export default router;
