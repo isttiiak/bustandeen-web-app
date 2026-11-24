@@ -81,18 +81,6 @@ app.use(
     },
   })
 );
-// Profile photos now go to Firebase Storage (frontend uploads directly, PATCH
-// receives only the short https URL), so 1 MB covers every route but one.
-// The backup IMPORT gets 20 MB (decoded): Settings sends the file gzipped
-// (Content-Encoding: gzip, which body-parser inflates), so it also stays
-// under Vercel's 4.5 MB request cap. Largest account at U6: ~0.4 MB.
-const jsonDefault = express.json({ limit: '1mb' });
-const jsonImport = express.json({ limit: '20mb' });
-app.use((req, res, next) =>
-  (req.path === '/api/user/import' ? jsonImport : jsonDefault)(req, res, next)
-);
-app.use(express.urlencoded({ extended: true, limit: '1mb' }));
-
 // Failed requests only, with no URL, IP, browser or uid (lib/logger.ts, audit P2-2). Quiet under test.
 if (process.env.NODE_ENV !== 'test') app.use(requestLogger());
 
@@ -148,6 +136,19 @@ app.use('/api/client-errors', clientErrorRoutes);
 
 // Apply general rate limiter globally
 app.use(generalLimiter);
+
+// Request bodies are read only after the general limit: a flood from one address is stopped
+// before any JSON is parsed (audit 2026-11-16 P2-6). The two public report routes above read
+// their own bodies. Profile photos go to Firebase Storage (the PATCH gets only a short https
+// URL), so 1 MB covers every route but one: the backup IMPORT (20 MB decoded; Settings sends it
+// gzipped, which body-parser inflates, so it also stays under Vercel's 4.5 MB request cap)
+// reads its own body in routes/user.routes.ts, after sign-in, its hourly limit and the
+// revocation check, so nobody can make the server read 20 MB without being signed in.
+const jsonDefault = express.json({ limit: '1mb' });
+app.use((req, res, next) =>
+  req.path === '/api/user/import' ? next() : jsonDefault(req, res, next)
+);
+app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
 // Health check (no auth, no rate limit beyond general)
 app.get('/api/health', (_req: Request, res: Response) => {
