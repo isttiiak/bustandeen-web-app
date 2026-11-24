@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.27',
+    date: '2026-11-24',
+    text: {
+      en: {
+        title: 'Small safety clean-ups on public pages and offline saving',
+        fixed: [
+          'Hidden page information for search engines is now written in a way that cannot break the page, whatever the text says.',
+          'Offline saving of Quran text now keeps only complete, successful answers, so a failed answer is never kept by mistake.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'পাবলিক পাতা ও অফলাইন সংরক্ষণে ছোট নিরাপত্তা পরিষ্কার',
+        fixed: [
+          'সার্চ ইঞ্জিনের জন্য পাতার লুকানো তথ্য এখন এমনভাবে লেখা হয় যাতে লেখা যা-ই হোক পাতা ভেঙে না যায়।',
+          'কুরআনের লেখা অফলাইনে সংরক্ষণে এখন শুধু সম্পূর্ণ ও সফল উত্তর রাখা হয়, তাই ব্যর্থ উত্তর ভুলে রয়ে যায় না।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.26',
     date: '2026-11-24',
     text: {

@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.27 - JSON-LD can no longer end its own script block; the offline caches keep only real 200s (audit P2-11) - 2026-11-24
+
+### Fixed
+
+- **`<JsonLd>` wrote `JSON.stringify(data)` straight into a `<script>`.** A `</script>` or `<!--` in any text in the data (city and place names, translated copy, FAQ answers) would end the block and run what follows as page markup. `jsonLdString()` now writes every `<` as `\u003c`: read back as JSON it is the same data, and the source has no `<` left. Nothing else is changed, so ordinary text stays byte for byte as before. I rendered the prayer-time and Ramadan pages of every city before and after: the per-country hashes in `nonBdSsr.test.ts` are identical (so the known Canada and Morocco drift is unchanged, nothing new moved), and a full build found no page with a `\u003c` in it.
+- **Two service-worker caches accepted status 0.** `quran-text` (the alquran.cloud translations) and `fonts-v2` listed `[0, 200]`. Status 0 is how an "opaque" cross-origin response looks: the worker cannot read its real status, so an error page could have been kept as content for 30 days (365 for fonts). The app fetches alquran.cloud with an ordinary CORS `fetch`, so its answers carry a real status; the fonts are same-origin and never opaque. Both now keep `[200]` only, like the other caches.
+
+### Tests
+
+- `jsonLd.test.ts` (4 cases: no `<` or `</script` left, same data read back, ordinary text unchanged, one script element rendered whatever the data says) and `swCache.test.ts` (no cache accepts status 0). Both failed before the change.
+
+### Not changed
+
+- Anything already cached on a device: those entries expire on their own; no cache name was changed.
+
 ## v5.190.26 - Zikr source links must be https (audit P2-7) - 2026-11-24
 
 ### Fixed

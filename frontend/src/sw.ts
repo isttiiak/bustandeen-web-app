@@ -154,7 +154,7 @@ function startWorker(): void {
       cacheName: 'quran-text',
       plugins: [
         new ExpirationPlugin({ maxEntries: 300, maxAgeSeconds: 30 * 24 * 60 * 60 }),
-        new CacheableResponsePlugin({ statuses: [0, 200] }),
+        new CacheableResponsePlugin({ statuses: [200] }),
       ],
     })
   );
@@ -195,7 +195,7 @@ function startWorker(): void {
       cacheName: 'fonts-v2',
       plugins: [
         new ExpirationPlugin({ maxEntries: 30, maxAgeSeconds: 365 * 24 * 60 * 60 }),
-        new CacheableResponsePlugin({ statuses: [0, 200] }),
+        new CacheableResponsePlugin({ statuses: [200] }),
       ],
     })
   );
