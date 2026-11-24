@@ -12,6 +12,7 @@
 //   and bring back only the SEO templates that need the client.
 
 import { initAnalytics, trackPageView } from './utils/analytics.js';
+import { mountConsentBanner } from './utils/consentBanner.js';
 import { isLandingPath, isSeoPagePath } from './seo/staticPaths.js';
 import { initStaleChunkReload } from './utils/staleChunkReload.js';
 import { wireLanguageRequest } from './seo/langRequest.js';
@@ -89,6 +90,7 @@ if (isLanding && signedIn && path !== '/') {
   wireLanguageRequest();
   void import('./pwaUpdate.js').then((m) => m.initPwaUpdates());
   initAnalytics();
+  mountConsentBanner();
   trackPageView(path);
   if (isLanding) {
     // The language links also set the app's language, so the app opens in it

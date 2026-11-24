@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.31',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Visit counting now starts only if you say yes',
+        added: [
+          'A small note now asks once whether we may count visits to our public pages. If you say no, or do not answer, nothing is loaded from Google and no cookie is set.',
+          'You can change your mind at any time in Settings, under Accessibility.',
+        ],
+        fixed: ['Nothing in your saved records was changed.'],
+      },
+      bn: {
+        title: 'ভিজিট গণনা এখন শুধু আপনি হ্যাঁ বললেই শুরু হয়',
+        added: [
+          'একটি ছোট বার্তা এখন একবার জিজ্ঞাসা করে আমরা আমাদের পাবলিক পাতার ভিজিট গুনতে পারি কি না। আপনি না বললে বা উত্তর না দিলে Google থেকে কিছুই লোড হয় না এবং কোনো কুকি বসানো হয় না।',
+          'আপনি যেকোনো সময় সেটিংসের অ্যাক্সেসিবিলিটি অংশে মত বদলাতে পারেন।',
+        ],
+        fixed: ['আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।'],
+      },
+    },
+  },
+  {
     version: '5.190.30',
     date: '2026-11-25',
     text: {

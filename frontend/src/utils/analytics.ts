@@ -19,6 +19,8 @@
 // set in the very first `config` call, before gtag.js has loaded and before
 // any automatic event can read the real URL.
 
+import { onConsentChange, readConsent } from './analyticsConsent.js';
+
 type Gtag = (...args: unknown[]) => void;
 
 interface GaWindow {
@@ -94,13 +96,41 @@ function gtag(): Gtag | null {
   return (window as unknown as GaWindow).gtag ?? null;
 }
 
-/** Loads gtag.js once. No-op when VITE_GA_MEASUREMENT_ID is unset (local dev,
- * previews) or the page is being prerendered. */
+/** True when this build reports to Google Analytics at all (a measurement id is set). */
+export function analyticsConfigured(): boolean {
+  return measurementId() !== null && typeof document !== 'undefined';
+}
+
+let wired = false;
+let active = false;
+
+/** Google Analytics runs only after a yes (utils/analyticsConsent.ts, audit P2-10): until then no
+ * script is fetched, no cookie is set and nothing is sent. A later yes starts it; a later no stops
+ * it and clears its cookies. No-op when VITE_GA_MEASUREMENT_ID is unset (local dev, previews) or
+ * the page is being prerendered. */
 export function initAnalytics(): void {
+  if (!analyticsConfigured()) return;
+  if (!wired) {
+    wired = true;
+    onConsentChange((c) => {
+      if (c === 'granted') {
+        startAnalytics();
+        trackPageView(window.location.pathname);
+      } else {
+        stopAnalytics();
+      }
+    });
+  }
+  if (readConsent() === 'granted') startAnalytics();
+}
+
+function startAnalytics(): void {
   const id = measurementId();
   if (!id || typeof document === 'undefined') return;
-  const w = window as unknown as GaWindow;
-  if (w.gtag) return;
+  const w = window as unknown as GaWindow & Record<string, unknown>;
+  active = true;
+  w[`ga-disable-${id}`] = false;
+  if (w.gtag) return; // already running, or paused by a no and now allowed again
 
   w.dataLayer = w.dataLayer ?? [];
   w.gtag = function gtagShim() {
@@ -113,9 +143,12 @@ export function initAnalytics(): void {
   // cookie_domain is pinned to the exact host: `vercel.app` is on the Public
   // Suffix List, so GA's default `auto` tries to write the _ga cookie to
   // `.vercel.app` and every browser rejects it ("invalid domain").
+  // No advertising features: page views only.
   w.gtag('config', id, {
     send_page_view: false,
     anonymize_ip: true,
+    allow_google_signals: false,
+    allow_ad_personalization_signals: false,
     cookie_domain: window.location.hostname,
     page_location: locationFor(path),
     page_referrer: safeReferrer(),
@@ -131,6 +164,26 @@ export function initAnalytics(): void {
     s.src = `https://www.googletagmanager.com/gtag/js?id=${id}`;
     document.head.appendChild(s);
   });
+}
+
+/** A no, given after a yes: Google's own switch (it stops sending even if gtag.js is already
+ * loaded), and its cookies for this site are removed. */
+function stopAnalytics(): void {
+  const id = measurementId();
+  active = false;
+  if (!id || typeof document === 'undefined') return;
+  (window as unknown as Record<string, unknown>)[`ga-disable-${id}`] = true;
+  try {
+    const host = window.location.hostname;
+    for (const part of document.cookie.split(';')) {
+      const name = part.split('=')[0].trim();
+      if (!/^(_ga(_.+)?|_gid|_gat.*)$/.test(name)) continue;
+      document.cookie = `${name}=; Max-Age=0; path=/; domain=${host}`;
+      document.cookie = `${name}=; Max-Age=0; path=/`;
+    }
+  } catch {
+    /* cookies unavailable: nothing to clear */
+  }
 }
 
 const INTERACTION_EVENTS = ['pointerdown', 'keydown', 'scroll', 'touchstart'] as const;
@@ -160,7 +213,7 @@ export function whenIdleOrInteracting(fn: () => void): void {
  * carry the real URL of a private page either. */
 export function trackPageView(pathname: string): void {
   const g = gtag();
-  if (!g) return;
+  if (!g || !active) return;
   const path = analyticsPath(pathname);
   const pageLocation = locationFor(path);
   const pageTitle = path ?? PRIVATE_PATH;

@@ -1592,7 +1592,7 @@
     },
     "thirdParty": {
       "title": "Services we rely on",
-      "body0": "Google Analytics 4 counts page views and anonymous usage patterns (with IP anonymised). It only sees general page addresses: private areas such as Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, the sadaqah forms and sign-in links are never reported, and no worship data is ever sent to it.",
+      "body0": "Only if you allow it, Google Analytics 4 counts page views (with IP anonymised). It is off by default: a banner asks once, Settings lets you change your mind at any time, and until you say yes nothing is loaded from Google and no cookie is set. It only sees general page addresses: private areas such as Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, the sadaqah forms and sign-in links are never reported, and no worship data is ever sent to it.",
       "body1": "Firebase (Google) handles sign-in, Vercel hosts the app, and MongoDB Atlas stores the database.",
       "body2": "The Arabic Quran text (from the Tanzil Project) is part of the app itself. Translations, tafsir and recitation audio come from quran.com, alquran.cloud, the Islamic Network and mp3quran; flags come from flagcdn. Fonts are part of the app itself, so loading them contacts no one. Like any website, those services can see your IP address when your device loads their files."
     },
@@ -1620,7 +1620,7 @@
         "ga": {
           "name": "Google Analytics 4",
           "why": "Counting page views.",
-          "receives": "General page addresses with your IP address anonymised. Never private areas (Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, sadaqah forms) and never worship data."
+          "receives": "Only if you allow it: general page addresses with your IP address anonymised. Never private areas (Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, sadaqah forms) and never worship data."
         },
         "groq": {
           "name": "Groq",
@@ -2945,6 +2945,8 @@
     "title": "Settings",
     "vibration": "Vibration feedback",
     "vibrationDetail": "Haptic pulse on each zikr tap (supported mobile browsers)",
+    "analyticsCount": "Count my visits to public pages",
+    "analyticsCountDetail": "Lets us count which public pages are read, using Google Analytics. Off unless you allow it. It never sees private areas or anything you log.",
     "yesDoIt": "Yes, do it",
     "zikrLibrary": "Zikr library",
     "zikrLibrarySubtitle": "Ṣalawāt, istighfār, the weighty words: verified adhkār to add to your counter",

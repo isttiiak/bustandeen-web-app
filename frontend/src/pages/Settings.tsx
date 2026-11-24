@@ -16,6 +16,9 @@ import {
 import { auth, googleProvider } from '../firebase.js';
 import api from '../lib/api.js';
 import HijriDateSetting from '../components/settings/HijriDateSetting.js';
+import { useAnalyticsConsent } from '../hooks/useAnalyticsConsent.js';
+import { analyticsConfigured } from '../utils/analytics.js';
+import { writeConsent } from '../utils/analyticsConsent.js';
 import {
   getDayStartMode,
   setDayStartModeLocal,
@@ -659,6 +662,7 @@ export default function Settings() {
         ? t('common.reset')
         : t('common.remove');
   const { aiEnabled, setAiEnabled } = useAuthStore();
+  const analyticsConsent = useAnalyticsConsent();
   const updateProfile = useUpdateProfile();
   const { highContrast, vibrationEnabled, setHighContrast, setVibrationEnabled } = useUiStore();
   const queryClient = useQueryClient();
@@ -1131,6 +1135,15 @@ export default function Settings() {
                 title={t('settings.vibration')}
                 detail={t('settings.vibrationDetail')}
               />
+              {/* Only where this build counts visits at all (P2-10). Off until allowed. */}
+              {analyticsConfigured() && (
+                <Toggle
+                  checked={analyticsConsent === 'granted'}
+                  onChange={(v) => writeConsent(v ? 'granted' : 'denied')}
+                  title={t('settings.analyticsCount')}
+                  detail={t('settings.analyticsCountDetail')}
+                />
+              )}
             </div>
           </SectionCard>
 

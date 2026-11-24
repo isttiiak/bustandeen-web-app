@@ -2,6 +2,28 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.31 - Google Analytics now starts only after a yes (audit P2-10) - 2026-11-25
+
+### Changed
+
+- **Analytics was on for everyone.** `initAnalytics()` ran at startup on every page and set up Google Analytics (cookies and the gtag.js download) with no question asked, which is not enough under EU rules (and not in the spirit of an open-source, privacy-first app). It is now opt-in: until the visitor says yes, no script is fetched, no cookie is set and nothing is sent. "Not answered" counts as no.
+- **A one-time question.** `utils/consentBanner.ts` shows a small, non-blocking note (not a modal) on the first visit: "May we count visits to our public pages?", with **Allow** and **No thanks** styled identically and the same size, nothing pre-chosen, and a link to /privacy. Plain DOM, so the same banner serves the prerendered pages (which never load the app) and the app (`static-entry.ts` and `main.tsx`). en, bn and ar copy (the ar text should get a native reader's look). It is shown only when this build has a measurement id at all, so previews, local development and CI never show it. It is hidden when printing.
+- **The answer lives on the device.** `utils/analyticsConsent.ts`: `localStorage` key `bustandeen_analytics_consent` (`granted` or `denied`), never sent to the server; if storage is blocked the answer holds for that visit only and the question comes back next time; another tab's change is followed through the `storage` event.
+- **Changing your mind.** A switch in Settings > Accessibility ("Count my visits to public pages", en and bn), shown only where analytics is configured. Turning it off sets Google's own `ga-disable-<id>` switch (so nothing more is sent even though gtag.js may already be loaded), removes the `_ga`, `_ga_*`, `_gid` and `_gat*` cookies for the site, and stops page views; turning it on again resumes without loading gtag.js twice.
+- **No advertising features.** The config call now also sets `allow_google_signals: false` and `allow_ad_personalization_signals: false` (page views only; `anonymize_ip` was already on).
+- **/privacy says so** (en and bn): opt-in, off by default, one question, Settings to change it, nothing loaded or set until yes; the data-flow entry for Google Analytics starts with "only if you allow it".
+
+### Tests
+
+- `analyticsConsent.test.ts` (5), `analyticsGate.test.ts` (6: unset and denied create nothing and load nothing; a yes starts it with the privacy-first config and loads gtag.js once; a yes given while the page is open starts it and reports the page; a no stops it, sets the switch and clears the cookies but not unrelated ones; yes after no does not load gtag.js twice), `consentBanner.test.ts` (copy complete in en, bn and ar, no em dash, Bangla in Bangla script, language choice). All failed or could not run before the change.
+- Driven in the browser (dev server with a test measurement id): before an answer no `googletagmanager` request, script, `gtag`, `dataLayer` or cookie; Allow loads gtag.js and sends the page view; the Settings switch off sets the disable flag and clears `_ga`/`_ga_*` while leaving another cookie; No thanks loads nothing, is remembered, and the question does not come back on another page; the banner follows the saved Bangla language; layout checked at phone width.
+
+### Not changed
+
+- Which pages are reported to analytics, and the redaction of paths, referrers and titles (`analyticsPath`), as before.
+- Whether to keep Google Analytics at all. If the project later prefers no analytics, deleting `utils/analytics.ts` and these files is all it takes.
+- The first-party error and CSP reports, which carry no account, IP address or device id and are described on /privacy; they are not analytics and are not behind this question.
+
 ## v5.190.30 - Request bodies are read after the limits; the 20 MB import only after sign-in (audit P2-6) - 2026-11-25
 
 ### Fixed
