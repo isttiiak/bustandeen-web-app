@@ -3853,6 +3853,7 @@
     "consentRequest": "Make request for review",
     "consentYes": "Yes, add it, I take responsibility",
     "addFail": "Could not add. Please try again.",
+    "linkNotHttps": "The link must start with https://",
     "addOwn": "Add your own zikr",
     "addOwnHint": "Name and meaning are required. Arabic and a reference make it complete.",
     "addToCounter": "Add to my counter",

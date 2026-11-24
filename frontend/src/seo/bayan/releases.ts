@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.26',
+    date: '2026-11-24',
+    text: {
+      en: {
+        title: 'Safer source links on zikr',
+        fixed: [
+          'Source links on suggested zikr and dua must now be secure web addresses starting with https://. Anything else is not accepted, and is never shown as a link.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'যিকরের সূত্র লিঙ্ক আরও নিরাপদ',
+        fixed: [
+          'প্রস্তাবিত যিকর ও দোয়ার সূত্র লিঙ্ক এখন https:// দিয়ে শুরু হওয়া নিরাপদ ওয়েব ঠিকানা হতে হবে। অন্য কিছু গ্রহণ করা হয় না, আর কখনো লিঙ্ক হিসেবে দেখানোও হয় না।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.25',
     date: '2026-11-24',
     text: {

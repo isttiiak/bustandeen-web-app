@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.26 - Zikr source links must be https (audit P2-7) - 2026-11-24
+
+### Fixed
+
+- **A suggestion's source link accepted any scheme.** `z.string().url()` allows `javascript:`, `data:` and `ftp:`, and the admin "edit a library item" schema had no URL check at all, only `min(1)`. All three zikr schemas (suggest, approve, edit) now use one validator, `httpsUrl()` (`validation/httpsUrl.ts`): the value must parse as an `https:` address with a host, no user name or password, and no whitespace or control characters (the URL parser quietly strips tabs and newlines). A suggestion may still leave the link empty; an edit may leave it unchanged but not blank it. The moon-sighting schema already required https and is unchanged.
+- **The app only makes a link from an https address.** `utils/safeHttpsUrl.ts` is used where a stored link becomes an `href`: the zikr reference panel, both spots in the library list, and the admin request card (which still shows the raw text, so a reviewer sees what was sent). Anything else renders as plain text, which also covers links already stored before this change.
+- **The suggest form says so.** A link that is not https now shows "The link must start with https://" (en + bn) before anything is sent or saved to the person's own list.
+
+### Tests
+
+- `httpsLinks.unit.test.js` (34 cases over the three schemas: `javascript:`, mixed-case `JaVaScRiPt:`, `data:`, `http:`, `ftp:`, protocol-relative, no scheme, credentials, space, newline; accepts https; empty/omitted rules); 29 failed on the old code. `safeHttpsUrl.test.ts` (same set on the frontend helper).
+
+### Not changed
+
+- Links already stored. No migration: a stored non-https link is simply shown as text, and an admin who edits that item must give an https link. I did not count how many exist (that needs a read of production, which I have not run).
+- The built-in library links (all `https://sunnah.com/...`, `quran.com`, and so on).
+
 ## v5.190.25 - Request logging no longer records URLs, IP addresses, browsers or accounts (audit P2-2) - 2026-11-24
 
 ### Fixed

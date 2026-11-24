@@ -30,6 +30,7 @@ import type {
   ZikrRequest,
   ZikrRequestStatus,
 } from '../hooks/useZikrRequests.js';
+import { safeHttpsUrl } from '../utils/safeHttpsUrl.js';
 
 type ReviewMode = 'idle' | 'approving' | 'rejecting';
 
@@ -165,7 +166,7 @@ function RequestCard({ request }: { request: ZikrRequest }) {
       {(request.source || request.sourceUrl) && (
         <a
           className="text-white/70 text-[10px] underline block"
-          href={request.sourceUrl}
+          href={safeHttpsUrl(request.sourceUrl) ?? undefined}
           target="_blank"
           rel="noreferrer"
         >
