@@ -46,9 +46,17 @@ export const initFirebaseAdmin = (): void => {
 
 export const isFirebaseInitialized = (): boolean => initialized;
 
-export const verifyFirebaseToken = async (idToken: string): Promise<admin.auth.DecodedIdToken> => {
+/**
+ * `checkRevoked` also asks Firebase whether this sign-in has been revoked (password reset,
+ * "sign out everywhere", account switched off). That is an extra round trip, so it is for
+ * the actions that matter (see requireNotRevoked), not every request (audit P2-9).
+ */
+export const verifyFirebaseToken = async (
+  idToken: string,
+  checkRevoked = false
+): Promise<admin.auth.DecodedIdToken> => {
   if (!initialized) throw new Error('Firebase Admin not initialized');
-  return admin.auth().verifyIdToken(idToken);
+  return admin.auth().verifyIdToken(idToken, checkRevoked);
 };
 
 export interface FirebaseProviderInfo {

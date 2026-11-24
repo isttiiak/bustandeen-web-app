@@ -3,8 +3,10 @@ import type { Request, Response } from 'express';
 import RateLimitHit from '../models/RateLimitHit.js';
 import { MongoRateLimitStore } from './mongoRateLimitStore.js';
 
-// In development all requests share localhost IP — disable rate limiting entirely
-const isDev = process.env.NODE_ENV !== 'production';
+// In development all requests share localhost IP — disable rate limiting entirely.
+// Never on Vercel, whatever NODE_ENV says: a preview or staging deployment with a wrong
+// NODE_ENV would otherwise have no limits at all (audit 2026-11-16 P2-9).
+const isDev = process.env.NODE_ENV !== 'production' && !process.env.VERCEL;
 
 /** Fired only when a request is actually throttled — see RateLimitHit.ts for
  *  why this is DB-backed instead of reading the limiter's own in-memory

@@ -38,7 +38,7 @@ export const signupCheckSchema = z.object({
 });
 
 export const signupCompleteSchema = z.object({
-  body: z.object({ token: signupToken, password: z.string().min(6).max(128) }),
+  body: z.object({ token: signupToken, password: z.string().min(8).max(128) }),
   query: z.object({}).optional(),
   params: z.object({}).optional(),
 });

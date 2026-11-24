@@ -41,7 +41,7 @@ function mapFirebaseError(code: string, t: Translator): string {
     case 'auth/invalid-email':
       return t('authSignUp.errInvalidEmail', 'Please enter a valid email address.');
     case 'auth/weak-password':
-      return t('authSignUp.errWeakPassword', 'Password must be at least 6 characters.');
+      return t('authSignUp.errWeakPassword', 'Password must be at least 8 characters.');
     case 'auth/too-many-requests':
       return t(
         'authSignUp.errTooManyRequests',

@@ -25,6 +25,7 @@ import {
   StrengthMeter,
   TEXT_ACTION,
 } from '../components/auth/authParts.js';
+import { passwordTooShort } from '../utils/passwordRules.js';
 
 // Firebase email action links (verify email, reset password) land here.
 // T3.2: the shared auth shell, one arch hero per state, theme card for the form.
@@ -186,8 +187,8 @@ function ResetPasswordView({ oobCode, signInPath }: { oobCode: string; signInPat
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      setError(t('authSignUp.errWeakPassword', 'Password must be at least 6 characters.'));
+    if (passwordTooShort(password)) {
+      setError(t('authSignUp.errWeakPassword', 'Password must be at least 8 characters.'));
       return;
     }
     if (password !== confirm) {
@@ -213,7 +214,7 @@ function ResetPasswordView({ oobCode, signInPath }: { oobCode: string; signInPat
           )
         );
       else if (code === 'auth/weak-password')
-        setError(t('authSignUp.errWeakPassword', 'Password must be at least 6 characters.'));
+        setError(t('authSignUp.errWeakPassword', 'Password must be at least 8 characters.'));
       else setError(t('authAction.errResetFailed', 'Failed to reset password. Please try again.'));
     }
     setSubmitting(false);

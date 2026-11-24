@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.29',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Stronger new passwords, and a signed-out device stays signed out',
+        fixed: [
+          'New passwords now need at least 8 characters. If your password is shorter, you can still sign in with it as usual.',
+          'If you reset your password or sign out everywhere, sensitive actions such as exporting or deleting your data now ask you to sign in again on a device that was signed out.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'নতুন পাসওয়ার্ড আরও শক্ত, আর সাইন-আউট হওয়া ডিভাইস সাইন-আউটই থাকে',
+        fixed: [
+          'নতুন পাসওয়ার্ড এখন কমপক্ষে ৮ অক্ষরের হতে হবে। আপনার পাসওয়ার্ড ছোট হলেও আগের মতোই সাইন ইন করতে পারবেন।',
+          'পাসওয়ার্ড রিসেট বা সব জায়গা থেকে সাইন-আউট করলে, যে ডিভাইস সাইন-আউট হয়েছে সেখানে ডেটা এক্সপোর্ট বা মুছে ফেলার মতো সংবেদনশীল কাজে এখন আবার সাইন ইন করতে বলা হয়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.28',
     date: '2026-11-25',
     text: {
