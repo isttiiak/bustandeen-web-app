@@ -20,6 +20,30 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.24',
+    date: '2026-11-24',
+    text: {
+      en: {
+        title: 'Naseeh is steadier and more careful',
+        fixed: [
+          'If the AI companion is slow to answer, the app now stops waiting after a few seconds and shows the usual plain message instead.',
+          'Saving your own AI key is now limited to a few times an hour.',
+          'The weekly reflection now only uses your own numbers.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'নাসীহ এখন আরও স্থিতিশীল ও সতর্ক',
+        fixed: [
+          'এআই সঙ্গী উত্তর দিতে দেরি করলে অ্যাপ এখন কয়েক সেকেন্ড পরে অপেক্ষা থামিয়ে সাধারণ বার্তাটি দেখায়।',
+          'নিজের এআই কী সংরক্ষণ এখন ঘণ্টায় কয়েকবারের মধ্যে সীমিত।',
+          'সাপ্তাহিক প্রতিফলনে এখন শুধু আপনার নিজের সংখ্যাগুলো ব্যবহার হয়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.23',
     date: '2026-11-20',
     text: {

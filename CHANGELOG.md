@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.24 - Naseeh: a cap on saving a Groq key, a deadline on every Groq call, numbers-only weekly stats (audit P2-5) - 2026-11-24
+
+### Fixed
+
+- **`PUT /api/ai/groq-key` had no limit.** Saving a key makes a call to Groq to test it, so the endpoint let any signed-in account check keys at our expense and from our address. New `groqKeyLimiter`: 10 per hour per user (MongoDB-backed), after sign-in and before validation.
+- **Groq calls could wait for ever.** `callProvider` and the key test used `fetch` with no deadline; a stalled Groq held the function until Vercel's 30 s limit, twice (two models are tried in turn). Each call now has one 10 s deadline covering the reply body too (`AI_TIMEOUT_MS` overrides it, for tests); a timeout is treated like any provider failure and the static fallback shows.
+- **The weekly muhasabah request took any JSON.** `stats` was `Record<string, unknown>`, cut to 800 characters and put into the model's prompt, a free-text channel past `sanitizeForPrompt`. It is now validated as the seven numbers and one date the app actually sends (`validation/muhasabahStats.ts`), unknown keys are dropped, and `getMuhasabahReport` applies the same allowlist again where the prompt is built.
+
+### Tests
+
+- `aiLimits.e2e.test.js`, 5 cases: the eleventh key save in an hour is refused and does not reach Groq (loads the app as production, since limiters are off otherwise); a Groq call that never answers ends with the fallback; a key test that never answers is a refusal; the stats schema accepts what the app sends and refuses text, nesting, huge numbers and long dates; the prompt carries only the allowed numbers. 4 of the 5 failed on the old code. The existing `ai.unit` suite passes unchanged.
+
+### Docs (local only, `docs/ai-guardrail-policy.md` is gitignored)
+
+- Brought in line with the code: the opt-in gate, the user's own key, the timeouts, the new limiters (`aiChatLimiter`, `groqKeyLimiter`, the natural-log route), the muhasabah allowlist, and the section that said no screen sends free text (the Naseeh question box and the natural-log note do; both are sanitized, wrapped, and capped).
+
+### Not changed
+
+- The 10 requests an hour per IP limiter on the whole `/api/ai` mount, and the 20 a day per user cap.
+
 ## v5.190.23 - Zikr suggestions are limited to five a day per person (audit P2-1) - 2026-11-20
 
 ### Fixed

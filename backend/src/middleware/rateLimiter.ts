@@ -131,6 +131,16 @@ export const aiChatLimiter = makeUidLimit(
   'aiChat'
 );
 
+/** Saving a bring-your-own Groq key: 10 per hour per UID. Each save makes a call to
+ *  Groq to test the key, so without a cap the endpoint would let anyone check
+ *  stolen keys at our expense and from our address. */
+export const groqKeyLimiter = makeUidLimit(
+  60 * 60 * 1000,
+  10,
+  { ok: false, error: 'Too many key changes. Try again in an hour.' },
+  'groqKey'
+);
+
 /** Zikr/dua suggestions: 5 per day per UID. Each one emails the review inbox
  *  and the requester, so this is also an email-flood guard. Shared (Mongo) so
  *  the count is one across serverless instances. */
