@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.33',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'The visit-counting question is in English and Bangla',
+        fixed: [
+          'The small question about counting visits to our public pages now shows in English or Bangla only. The Arabic wording is removed until a native reader has checked it.',
+          'Nothing about your choice or your saved records changed.',
+        ],
+      },
+      bn: {
+        title: 'ভিজিট গণনার প্রশ্নটি এখন ইংরেজি ও বাংলায়',
+        fixed: [
+          'আমাদের পাবলিক পাতার ভিজিট গণনার ছোট প্রশ্নটি এখন শুধু ইংরেজি বা বাংলায় দেখানো হয়। আরবি লেখাটি সরানো হয়েছে, কোনো আরবি-ভাষী পাঠক দেখে দেওয়ার আগে তা ফেরানো হবে না।',
+          'আপনার দেওয়া উত্তর বা সংরক্ষিত তথ্যে কোনো পরিবর্তন হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.32',
     date: '2026-11-25',
     text: {

@@ -19,7 +19,7 @@ export interface ConsentCopy {
   label: string;
 }
 
-export const CONSENT_COPY: Record<'en' | 'bn' | 'ar', ConsentCopy> = {
+export const CONSENT_COPY: Record<'en' | 'bn', ConsentCopy> = {
   en: {
     title: 'May we count visits to our public pages?',
     body: 'We use Google Analytics to count which public pages are read, so we can improve them. It stays off unless you allow it. It never sees private areas or anything you log, and your IP address is anonymised.',
@@ -36,28 +36,21 @@ export const CONSENT_COPY: Record<'en' | 'bn' | 'ar', ConsentCopy> = {
     privacy: 'গোপনীয়তা',
     label: 'ভিজিট গণনা',
   },
-  ar: {
-    title: 'هل يمكننا عدّ زيارات صفحاتنا العامة؟',
-    body: 'نستخدم Google Analytics لعدّ الصفحات العامة التي تُقرأ حتى نحسّنها. يبقى متوقفًا ما لم تسمح به. لا يرى الأجزاء الخاصة ولا أي شيء تسجّله، ويُخفى عنوان IP الخاص بك.',
-    allow: 'السماح',
-    deny: 'لا، شكرًا',
-    privacy: 'الخصوصية',
-    label: 'عدّ الزيارات',
-  },
 };
 
-/** A page that names its own language (a Bangla or Arabic prerendered page) wins; otherwise the
- * app's saved language (the app leaves <html lang> at "en" while it shows Bangla), else English. */
+/** A page that names Bangla wins; otherwise the app's saved language (the app leaves <html lang>
+ * at "en" while it shows Bangla), else English. Only English and Bangla exist: an old "ar" page
+ * or saved value falls back like any other language. */
 export function consentLang(
   htmlLang: string | null | undefined,
   saved: string | null
-): 'en' | 'bn' | 'ar' {
-  const pick = (v: string | null | undefined): 'en' | 'bn' | 'ar' | null => {
+): 'en' | 'bn' {
+  const pick = (v: string | null | undefined): 'en' | 'bn' | null => {
     const l = (v ?? '').toLowerCase().slice(0, 2);
-    return l === 'bn' || l === 'ar' || l === 'en' ? l : null;
+    return l === 'bn' || l === 'en' ? l : null;
   };
   const page = pick(htmlLang);
-  if (page === 'bn' || page === 'ar') return page;
+  if (page === 'bn') return page;
   return pick(saved) ?? page ?? 'en';
 }
 
@@ -80,7 +73,7 @@ export function mountConsentBanner(): void {
   root.id = BANNER_ID;
   root.setAttribute('role', 'region');
   root.setAttribute('aria-label', copy.label);
-  root.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+  root.setAttribute('dir', 'ltr');
   // Dark in both themes, like the app's other always-dark cards; the fallbacks are the same
   // token values for the prerendered pages, which do not load the app's stylesheet.
   root.setAttribute('data-theme', 'bustandeen');
