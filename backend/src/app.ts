@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import morgan from 'morgan';
 import authRoutes from './routes/auth.routes.js';
 import zikrRoutes from './routes/zikr.routes.js';
 import statsRoutes from './routes/stats.routes.js';
@@ -44,6 +43,7 @@ import cronRoutes from './routes/cron.routes.js';
 import * as healthController from './controllers/health.controller.js';
 import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
+import { requestLogger } from './lib/logger.js';
 import {
   adminHostFromEnv,
   isAdminCorsOriginAllowed,
@@ -93,8 +93,8 @@ app.use((req, res, next) =>
 );
 app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 
-const isProd = process.env.NODE_ENV === 'production';
-app.use(morgan(isProd ? 'combined' : 'dev'));
+// Failed requests only, with no URL, IP, browser or uid (lib/logger.ts, audit P2-2). Quiet under test.
+if (process.env.NODE_ENV !== 'test') app.use(requestLogger());
 
 // CORS — explicit allowlist.
 //

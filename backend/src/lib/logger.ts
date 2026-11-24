@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 import { createRequire } from 'node:module';
-import type { Request } from 'express';
+import type { Request, RequestHandler } from 'express';
 
 /**
  * Structured server-error logging for production (audit BE-01).
@@ -93,4 +93,47 @@ export function logServerError(err: Error, req: Request, status: number): void {
   } catch {
     // Logging must never turn one failure into two.
   }
+}
+
+/**
+ * One line per FAILED request (status 400 and up), replacing morgan('combined')
+ * (audit P2-2). It carries the method, the route pattern, the status and the
+ * time taken, and nothing else: no URL or query string (receipt signatures,
+ * ids), no IP address, no browser string, no uid. Successful requests are not
+ * logged here (the host keeps its own request log), nor are CORS preflights and
+ * the health checks, which monitors call every minute.
+ */
+export function requestLogger(): RequestHandler {
+  return (req, res, next) => {
+    const started = process.hrtime.bigint();
+    // The route is read when the headers go out: once the response has finished, Express has
+    // unwound its routers and req.baseUrl is empty again, which would drop the /api/... prefix.
+    let route = '';
+    const writeHead = res.writeHead.bind(res) as (...args: unknown[]) => typeof res;
+    res.writeHead = ((...args: unknown[]) => {
+      if (!route) route = routeOf(req);
+      return writeHead(...args);
+    }) as typeof res.writeHead;
+    res.on('finish', () => {
+      try {
+        if (res.statusCode < 400) return;
+        if (req.method === 'OPTIONS') return;
+        const path = req.originalUrl.split('?')[0];
+        if (path === '/api/health' || path.startsWith('/api/health/')) return;
+        console.warn(
+          JSON.stringify({
+            tag: 'http',
+            ts: new Date().toISOString(),
+            method: req.method,
+            route: route || routeOf(req),
+            status: res.statusCode,
+            ms: Math.round(Number(process.hrtime.bigint() - started) / 1e6),
+          })
+        );
+      } catch {
+        // Logging must never break a response.
+      }
+    });
+    next();
+  };
 }

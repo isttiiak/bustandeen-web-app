@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.25',
+    date: '2026-11-24',
+    text: {
+      en: {
+        title: 'Less kept in our server logs',
+        fixed: [
+          'Our server no longer writes a line for every visit. It now notes only failed requests, and only the kind of page, the result and how long it took. No page address, IP address, browser or account.',
+          'The privacy page now says this.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'আমাদের সার্ভার লগে আরও কম তথ্য থাকে',
+        fixed: [
+          'আমাদের সার্ভার এখন প্রতিটি ভিজিটের জন্য লাইন লেখে না। শুধু ব্যর্থ অনুরোধ লেখা হয়, আর তাতে থাকে কেবল পাতার ধরন, ফলাফল ও কত সময় লেগেছে। কোনো পেজের ঠিকানা, আইপি ঠিকানা, ব্রাউজার বা অ্যাকাউন্ট থাকে না।',
+          'গোপনীয়তা পাতায় এখন এটি লেখা আছে।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.24',
     date: '2026-11-24',
     text: {
