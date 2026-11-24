@@ -3,9 +3,20 @@
 // in the body alongside the visible content that backs them — keeps each
 // template self-contained instead of needing scripts/prerender.mjs to
 // thread head-only data back out of the React render.
+
+/**
+ * JSON for inside a <script>. A "<" in any text ("</script>", "<!--") would end the block
+ * early and let what follows run as page markup, so every "<" is written as \u003c: the
+ * same data once read as JSON, with no "<" left in the source. Nothing else changes, so
+ * ordinary text stays byte for byte as JSON.stringify wrote it (audit 2026-11-16 P2-11).
+ */
+export function jsonLdString(data: object): string {
+  return JSON.stringify(data).replace(/</g, '\\u003c');
+}
+
 export default function JsonLd({ data }: { data: object }) {
   return (
-    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
+    <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdString(data) }} />
   );
 }
 
