@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.30',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Restoring a backup is checked before the file is read',
+        fixed: [
+          'When you restore a backup file, the app now confirms it is you, and that you have not restored too many times, before it reads the file. A file that is not a Bustandeen backup is turned away with a clear message.',
+          'Nothing in your saved records was changed.',
+        ],
+      },
+      bn: {
+        title: 'ব্যাকআপ ফাইল পড়ার আগেই যাচাই করা হয়',
+        fixed: [
+          'ব্যাকআপ ফাইল পুনরুদ্ধার করার সময় অ্যাপ এখন ফাইল পড়ার আগেই নিশ্চিত করে নেয় যে এটি আপনি, এবং আপনি অনেকবার পুনরুদ্ধার করেননি। বুস্তানদীনের ব্যাকআপ নয় এমন ফাইল পরিষ্কার বার্তা দিয়ে ফিরিয়ে দেওয়া হয়।',
+          'আপনার সংরক্ষিত কোনো হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.29',
     date: '2026-11-25',
     text: {

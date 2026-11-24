@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import {
   requireAuth,
   requireRecentAuth,
@@ -13,6 +13,7 @@ import {
   unlinkGoogleSchema,
   setPrimaryEmailSchema,
   putPrefsSchema,
+  importBackupSchema,
 } from '../validation/user.schemas.js';
 import { importLimiter, dataExportLimiter } from '../middleware/rateLimiter.js';
 
@@ -75,6 +76,9 @@ router.post(
   requireAuth,
   importLimiter,
   requireNotRevoked,
+  // The one big body (20 MB decoded), read only now (audit P2-6); see app.ts.
+  express.json({ limit: '20mb' }),
+  validate(importBackupSchema),
   userController.importAllHandler
 );
 

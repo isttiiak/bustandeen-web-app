@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.30 - Request bodies are read after the limits; the 20 MB import only after sign-in (audit P2-6) - 2026-11-25
+
+### Fixed
+
+- **The 20 MB backup import was read and parsed for anyone.** `app.ts` ran the JSON parser first for every request, and gave `/api/user/import` a 20 MB limit, before sign-in, before the hourly import limit and before the revocation check. The default parser now runs after the general limit (one address flooding is stopped before any JSON is parsed), skips the import path, and the import reads its own body in `routes/user.routes.ts` only after `requireAuth`, `importLimiter` and `requireNotRevoked`. The two public report routes (`/api/csp-report`, `/api/client-errors`) already read their own bodies and sit before the general limiter, so they are unchanged. A side effect: CORS headers are now on the answer to a malformed body too.
+- **The import has a schema.** `importBackupSchema` (`validate()`): the body must be an object with `app: "ihsan"` and an integer `version`; every other key is kept untouched (loose object), because each section is read leniently by the importer, which skips a damaged row instead of failing. The existing check in the controller stays as the second line.
+
+### Tests
+
+- `parseAfterAuth.e2e.test.js` (9 cases; loads the app as production, since the limiters are off otherwise): nobody signed in gets 401 for a damaged file instead of a parse error; a signed-in person with a damaged file still gets 400; once the hourly limit is used up the answer is 429 and nothing is parsed; the schema accepts a backup file and keeps every section, and refuses an array, no app, another app, no version, a text version. The two ordering cases failed on the old code. The existing backup (round trip and hostile), CSP-report and client-error suites pass unchanged.
+
+### Not changed
+
+- Bodies under 1 MB are still read before sign-in on the other routes (after the general limit now). Reading them after sign-in on each route would mean a parser on all ~140 routes; the 1 MB cap and the general limit bound the cost.
+- What the importer accepts inside a file (P1-7).
+
 ## v5.190.29 - 8-character new passwords, revoked sign-ins stop at the sensitive actions, limits stay on in Vercel previews (audit P2-9) - 2026-11-25
 
 ### Fixed

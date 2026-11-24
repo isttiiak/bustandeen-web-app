@@ -11,6 +11,17 @@ export const linkGoogleSchema = z.object({
   }),
 });
 
+// The backup file (POST /api/user/import). Only the envelope is checked here: it must be an
+// object saying it is a Bustandeen backup of some version. Every section inside is read
+// leniently by the importer (a damaged row is skipped, not fatal), and those rules stay there.
+// Keys that are not named here are kept (loose object): the file has many sections.
+export const importBackupSchema = z.object({
+  body: z.looseObject({
+    app: z.literal('ihsan'),
+    version: z.number().int().min(1).max(1000),
+  }),
+});
+
 export const unlinkGoogleSchema = z.object({
   body: z.object({
     providerUid: z.string().min(1),
