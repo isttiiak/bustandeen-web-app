@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.40',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: exact package versions',
+        fixed: [
+          'When the app is built for the website, it now uses exactly the package versions we tested, instead of whatever is newest. Nothing changes in the app and your data is untouched.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: নির্দিষ্ট প্যাকেজ সংস্করণ',
+        fixed: [
+          'ওয়েবসাইটের জন্য অ্যাপ তৈরির সময় এখন আমরা যে প্যাকেজ সংস্করণগুলো পরীক্ষা করেছি ঠিক সেগুলোই ব্যবহার হয়, নতুনতম যেটা পাওয়া যায় সেটা নয়। অ্যাপে কিছু বদলায়নি এবং আপনার তথ্য অপরিবর্তিত।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.39',
     date: '2026-11-25',
     text: {
