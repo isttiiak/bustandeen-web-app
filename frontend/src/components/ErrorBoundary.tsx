@@ -49,7 +49,17 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-function ErrorScreen({ error }: { error: Error }) {
+interface ErrorScreenProps {
+  error: Error;
+  /** Sits inside the page (under the navbar) instead of replacing the whole screen. */
+  inline?: boolean;
+  /** Inline only: re-render the page that failed. */
+  onRetry?: () => void;
+  /** Where "Go to Home" goes; the default is a full page load of `/`. */
+  onHome?: () => void;
+}
+
+export function ErrorScreen({ error, inline = false, onRetry, onHome }: ErrorScreenProps) {
   const { t } = useTranslation();
   // The automatic path (staleChunkReload) is already updating and will
   // reload by itself; the cancelled import surfaces here meanwhile.
@@ -63,7 +73,14 @@ function ErrorScreen({ error }: { error: Error }) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-brand-void">
+    <div
+      className={
+        inline
+          ? 'flex items-center justify-center px-4 py-16'
+          : 'min-h-screen flex items-center justify-center px-4 bg-brand-void'
+      }
+      role={inline ? 'alert' : undefined}
+    >
       <div className="text-center space-y-5 max-w-sm w-full">
         <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-brand-border bg-brand-deep text-brand-emerald shadow-elev-1">
           {staleBuild ? (
@@ -86,10 +103,15 @@ function ErrorScreen({ error }: { error: Error }) {
                 'errorBoundary.newVersionBody',
                 'Bustandeen was updated while this page was open. Your worship data is safe. Tap Update to load the new version.'
               )
-            : t(
-                'errorBoundary.body',
-                'An unexpected error interrupted the app. Your worship data is safe. Try reloading.'
-              )}
+            : inline
+              ? t(
+                  'errorBoundary.routeBody',
+                  'This page ran into a problem. The rest of the app still works and your worship data is safe.'
+                )
+              : t(
+                  'errorBoundary.body',
+                  'An unexpected error interrupted the app. Your worship data is safe. Try reloading.'
+                )}
         </p>
         <div className="flex flex-col gap-3">
           {staleBuild ? (
@@ -98,6 +120,10 @@ function ErrorScreen({ error }: { error: Error }) {
                 ? t('errorBoundary.updating', 'Updating...')
                 : t('errorBoundary.update', 'Update')}
             </button>
+          ) : inline && onRetry ? (
+            <button className={`${BTN_PRIMARY} w-full`} onClick={onRetry}>
+              {t('errorBoundary.retry', 'Try again')}
+            </button>
           ) : (
             <button className={`${BTN_PRIMARY} w-full`} onClick={() => window.location.reload()}>
               {t('errorBoundary.reload', 'Reload')}
@@ -105,9 +131,12 @@ function ErrorScreen({ error }: { error: Error }) {
           )}
           <button
             className={`${BTN_SECONDARY} w-full`}
-            onClick={() => {
-              window.location.href = '/';
-            }}
+            onClick={
+              onHome ??
+              (() => {
+                window.location.href = '/';
+              })
+            }
           >
             {t('errorBoundary.home', 'Go to Home')}
           </button>

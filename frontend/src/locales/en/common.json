@@ -1434,6 +1434,8 @@
   "errorBoundary": {
     "title": "Something went wrong",
     "body": "An unexpected error interrupted the app. Your worship data is safe. Try reloading.",
+    "routeBody": "This page ran into a problem. The rest of the app still works and your worship data is safe.",
+    "retry": "Try again",
     "reload": "Reload",
     "home": "Go to Home",
     "newVersionTitle": "A new version is ready",
