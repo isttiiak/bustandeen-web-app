@@ -68,7 +68,7 @@ Spotted a mis-cited reference in the app? Use the "Report it" link beside it.
 
 ## 📄 License
 
-MIT
+The code is [MIT](LICENSE) licensed. The name and logos are not, and the Quran text, audio and some other items carry their own terms: see [NOTICE](NOTICE).
 
 ## 📧 Contact
 

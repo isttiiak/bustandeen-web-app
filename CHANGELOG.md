@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.47 - Licence and public repo basics (audit P3-3) - 2026-11-25
+
+The repository now says what it is licensed under, and its security policy is public.
+
+### What changed
+
+- **Licence:** `LICENSE` (MIT, as the README already said) and a `license` field in the three `package.json` files. The README's License section links it.
+- **NOTICE:** what the MIT licence does not cover: the name and logos (all rights reserved), the Tanzil Quran text (verbatim only, with attribution and a link to tanzil.net), the audio files, the fonts (OFL 1.1), dependencies, and content loaded from other services at run time.
+- **Security policy:** `SECURITY.md` was git-ignored, so GitHub showed no policy. It is now tracked (`!SECURITY.md` in `.gitignore`) and uses the Bustandeen name.
+- **Docs:** `README.md`, `backend/README.md` and `docs/README.md` no longer point readers at local-only files (`CLAUDE.md`). `backend/README.md` no longer says there is no staging database.
+- **Left as they are:** about 15 code comments that mention `CLAUDE.md`. They are harmless and not reader-facing.
+
+### Tests
+
+- `licence.test.ts` (10 cases): the MIT text and copyright line, the licence field in all three package files, the README links, the Tanzil terms and reserved name in NOTICE, `SECURITY.md` un-ignored, and the three READMEs free of local-only references. It fails on main and passes here.
+
 ## v5.190.46 - Staging database guard (audit P3-1) - 2026-11-25
 
 Previews of pull requests now run on their own staging database, and cannot start on the live one.

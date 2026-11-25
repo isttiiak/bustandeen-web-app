@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.47',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: clear terms for the code',
+        fixed: [
+          'We added a licence and a security policy to our public code page, so everyone knows how the code may be used and how to report a problem. Nothing in your data changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: কোডের জন্য স্পষ্ট শর্ত',
+        fixed: [
+          'আমাদের প্রকাশ্য কোড-পাতায় একটি লাইসেন্স ও নিরাপত্তা-নীতি যোগ করা হয়েছে, যাতে সবাই জানতে পারেন কোড কীভাবে ব্যবহার করা যাবে এবং কোনো সমস্যা কীভাবে জানাতে হবে। আপনার তথ্যে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.46',
     date: '2026-11-25',
     text: {

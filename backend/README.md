@@ -2,7 +2,7 @@
 
 Express + TypeScript + Mongoose (MongoDB Atlas) + Firebase Admin backend for Bustandeen.
 
-See the root [`CLAUDE.md`](../CLAUDE.md) for the full architecture, conventions, and environment variable reference — this file only covers what's specific to running and testing the backend in isolation.
+See the [architecture notes](../docs/README.md) and the root [`README.md`](../README.md) for the architecture, conventions and environment variables. This file only covers what's specific to running and testing the backend in isolation.
 
 ## Running
 
@@ -50,4 +50,4 @@ As a stopgap, point `MONGOMS_SYSTEM_BINARY` at any known-good `mongod` of the sa
 
 ## Deployment
 
-Deploys to Vercel as a serverless function alongside the frontend (same deployment, same origin — see `CLAUDE.md`). `MONGODB_URI` in production points at the live Atlas cluster; there is currently no separate staging database, so exercise care when testing against a deployed environment with a real account.
+Deploys to Vercel as a serverless function alongside the frontend (same deployment, same origin). `MONGODB_URI` in production points at the live Atlas cluster. Vercel preview deploys use a separate staging cluster and refuse the production host (see Environments in `docs/README.md`).

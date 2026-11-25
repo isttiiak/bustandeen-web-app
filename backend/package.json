@@ -1,7 +1,8 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.190.46",
+  "version": "5.190.47",
   "private": true,
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
