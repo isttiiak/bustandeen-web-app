@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.33 - Consent question: English and Bangla only (audit P2-10 follow-up) - 2026-11-25
+
+### Changed
+
+- **The Arabic text of the analytics question is gone.** It was never read by a native speaker, and Arabic pages no longer exist (old Arabic links open the English page). `utils/consentBanner.ts` now holds English and Bangla only; a page or saved language that is anything else gets English, and the banner is always left-to-right. Nothing else about the banner, the stored answer or the analytics gate changed.
+
+### Tests
+
+- `consentBanner.test.ts`: two new cases (only `en` and `bn` exist; an `ar` page or saved value falls back to English or the saved choice) failed on the old code and pass now.
+
 ## v5.190.32 - Hifz: six small bug fixes (no new features) - 2026-11-25
 
 Hifz is a simple feature and is meant to stay one. This only fixes what was wrong; there was no test file for it before.
