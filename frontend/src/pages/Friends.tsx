@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { UserAvatar } from '../components/icons/AvatarGlyphs.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -95,10 +96,7 @@ function Avatar({
   );
 }
 
-function formatConnectedSince(
-  iso: string | null,
-  translate: (key: string, opts?: Record<string, unknown>) => string
-): string {
+function formatConnectedSince(iso: string | null, translate: TFunction): string {
   if (!iso) return translate('friends.connectedAWhileAgo');
   const d = new Date(iso);
   return translate('friends.connectedSince', {

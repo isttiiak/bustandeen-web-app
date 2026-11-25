@@ -169,9 +169,7 @@ export default function SalatKazaDebtCard({
                       already fetched (completed < 5 = at least one gap). */}
                   <MissedDayChips
                     calendarDataMap={calendarDataMap}
-                    t={
-                      t as (key: string, fallback: string, opts?: Record<string, unknown>) => string
-                    }
+                    t={t}
                     setSelectedDate={setSelectedDate}
                     setExpandedPrayer={setExpandedPrayer}
                     setCalendarOpen={setCalendarOpen}
