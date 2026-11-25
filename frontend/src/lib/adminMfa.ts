@@ -2,32 +2,39 @@
  * The admin panel's second-factor proof (T1.4), issued by the server after a
  * valid authenticator or backup code and sent as X-Admin-MFA (lib/api.ts).
  * Worthless on its own: the server also needs that admin's Firebase sign-in,
- * and it expires with the 12-hour admin session. Kept in localStorage so a
- * second admin tab does not ask for a code again; cleared on every sign-out.
+ * and it expires with the 12-hour admin session.
+ *
+ * Kept in memory only (audit P2-8): never in localStorage or sessionStorage,
+ * where any script on the page, or anyone with the browser's storage, could
+ * read it. The price is that a page refresh or a second tab asks for the
+ * code again, which only matters while two-step sign-in is switched on.
+ * Cleared on every sign-out.
  */
 
-const KEY = 'bustandeen_admin_mfa';
+const LEGACY_KEY = 'bustandeen_admin_mfa';
 
-export function getAdminMfaProof(): string | null {
+let proof: string | null = null;
+
+/** Older versions kept the proof in localStorage: remove what they left behind. */
+function dropLegacyCopy(): void {
   try {
-    return localStorage.getItem(KEY);
+    localStorage.removeItem(LEGACY_KEY);
   } catch {
-    return null;
+    /* storage blocked: nothing was stored either */
   }
 }
 
-export function setAdminMfaProof(proof: string): void {
-  try {
-    localStorage.setItem(KEY, proof);
-  } catch {
-    /* private mode: the code is asked again on the next page load */
-  }
+dropLegacyCopy();
+
+export function getAdminMfaProof(): string | null {
+  return proof;
+}
+
+export function setAdminMfaProof(next: string): void {
+  proof = next;
 }
 
 export function clearAdminMfaProof(): void {
-  try {
-    localStorage.removeItem(KEY);
-  } catch {
-    /* nothing stored */
-  }
+  proof = null;
+  dropLegacyCopy();
 }

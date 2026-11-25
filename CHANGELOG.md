@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.34 - Admin panel: safer deletes, confirmations, reopen a banner (audit P2-8) - 2026-11-25
+
+Two-step sign-in for admins stays OFF by default (owner decision); nothing here changes that.
+
+### Changed
+
+- **Deleting a mailbox message or a feedback message now needs a recent password entry.** `DELETE /api/admin/feedback/mailbox/:id` and `DELETE /api/admin/feedback/:id` run `requireAdminRecentAuth`, like deleting a user, a donation or a quarter. An admin whose sign-in is older than a few minutes gets `admin_reauth_required`; the panel already answers that with its password prompt and repeats the request. A forgotten open admin tab can no longer wipe the inbox.
+- **The panel asks before it acts on three things that reach the public or cannot be undone:** deactivating the broadcast banner, and publishing, unpublishing or deleting a quarterly sadaqah report (delete still also needs the recent password).
+- **Reopen as new (broadcast).** Every row in the banner history has a button that copies its title and text into the form. The admin edits it and presses Publish; that creates a new banner and switches the active one off. The old row is not changed.
+- **The admin second-factor proof lives in memory only.** `lib/adminMfa.ts` no longer writes it to localStorage (it was never in sessionStorage); an older copy is removed on load and on sign-out. Cost: a refresh or a second tab asks for the code again, which only matters when two-step sign-in is on.
+
+### Tests
+
+- `adminSession.e2e.test.js`: both delete routes added to the stale-sign-in list (failed before, pass now).
+- `useAdminStore.mfa.test.ts`: the proof is never written to browser storage; a leftover localStorage copy is cleared. `api.adminReauth.test.ts` follows the new storage. `adminScreens.test.ts`: three new cases for the confirmations and Reopen as new. All failed on the old code.
+
+### Not changed
+
+- Admin MFA default (off). The confirmation dialogs are the browser's own, like the other admin ones. Not driven in a real browser session (the panel needs an admin sign-in).
+
 ## v5.190.33 - Consent question: English and Bangla only (audit P2-10 follow-up) - 2026-11-25
 
 ### Changed

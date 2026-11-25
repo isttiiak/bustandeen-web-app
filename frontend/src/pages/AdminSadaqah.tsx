@@ -586,11 +586,57 @@ function QuarterlyPublisher() {
     preview.mutate(quarter, { onSuccess: (d) => setPreviewData(d) });
   };
 
+  // Publishing puts the figures on the public page and deleting removes them for good, so each
+  // asks first (audit P2-8). Delete also needs a recent password entry, which the panel asks for.
+  const ask = (key: string, fallback: string, quarterName: string) =>
+    window.confirm(t(key, fallback, { quarter: quarterName }));
+
   const confirmPublish = () => {
+    if (
+      !ask(
+        'adminSadaqah.publishConfirm',
+        'Publish {{quarter}}? Its received and spent figures become visible on the public sadaqah page.',
+        quarter
+      )
+    )
+      return;
     publish.mutate(
       { quarter, notes: notes.trim() || undefined },
       { onSuccess: () => setPreviewData(null) }
     );
+  };
+
+  const publishListed = (q: string) => {
+    if (
+      ask(
+        'adminSadaqah.publishConfirm',
+        'Publish {{quarter}}? Its received and spent figures become visible on the public sadaqah page.',
+        q
+      )
+    )
+      publish.mutate({ quarter: q });
+  };
+
+  const unpublishListed = (q: string) => {
+    if (
+      ask(
+        'adminSadaqah.unpublishConfirm',
+        'Unpublish {{quarter}}? It disappears from the public sadaqah page until you publish it again.',
+        q
+      )
+    )
+      unpublish.mutate(q);
+  };
+
+  const deleteListed = (q: string) => {
+    if (
+      ask(
+        'adminSadaqah.deleteQuarterConfirm',
+        'Delete the {{quarter}} report for good? This cannot be undone.',
+        q
+      )
+    )
+      deleteQuarterly.mutate(q);
   };
 
   return (
@@ -640,18 +686,15 @@ function QuarterlyPublisher() {
               </div>
               <div className="flex gap-2 shrink-0">
                 {q.published ? (
-                  <button onClick={() => unpublish.mutate(q.quarter)} className={BTN_SMALL}>
+                  <button onClick={() => unpublishListed(q.quarter)} className={BTN_SMALL}>
                     {t('adminSadaqah.unpublish', 'Unpublish')}
                   </button>
                 ) : (
-                  <button
-                    onClick={() => publish.mutate({ quarter: q.quarter })}
-                    className={BTN_SMALL}
-                  >
+                  <button onClick={() => publishListed(q.quarter)} className={BTN_SMALL}>
                     {t('adminSadaqah.publish', 'Publish')}
                   </button>
                 )}
-                <button onClick={() => deleteQuarterly.mutate(q.quarter)} className={BTN_DANGER}>
+                <button onClick={() => deleteListed(q.quarter)} className={BTN_DANGER}>
                   {t('adminSadaqah.delete', 'Delete')}
                 </button>
               </div>
