@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { describe, it, expect } from 'vitest';
 import en from '../locales/en/common.json';
 import bn from '../locales/bn/common.json';
@@ -14,8 +15,12 @@ describe.each([
   ['en', en.shareApp],
   ['bn', bn.shareApp],
 ])('shareApp copy (%s)', (_lang, copy) => {
-  const t = (key: string, opts?: Record<string, unknown>) =>
-    fill((copy as Record<string, string>)[key.replace('shareApp.', '')], opts);
+  // A plain function stands in for i18next's t; TFunction is branded, hence the cast.
+  const t = ((key: string, opts?: Record<string, unknown>) =>
+    fill(
+      (copy as Record<string, string>)[key.replace('shareApp.', '')],
+      opts
+    )) as unknown as TFunction;
 
   it('keeps the name out unless asked, and always links the public site', () => {
     const plain = shareAppMessage(t, null);

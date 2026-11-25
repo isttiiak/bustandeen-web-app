@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.44',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: translation tools updated',
+        fixed: [
+          'We updated the tools that show the app in English and Bangla. Nothing should look different, and your data is untouched.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: অনুবাদ টুল হালনাগাদ',
+        fixed: [
+          'অ্যাপ ইংরেজি ও বাংলায় দেখানোর টুলগুলো হালনাগাদ করা হয়েছে। দেখতে কিছু আলাদা হওয়ার কথা নয়, আর আপনার তথ্য অপরিবর্তিত।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.43',
     date: '2026-11-25',
     text: {

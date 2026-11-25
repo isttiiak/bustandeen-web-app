@@ -57,6 +57,10 @@ export const i18nReady = i18n
     react: { useSuspense: false },
     defaultNS: 'common',
     fallbackLng: 'en',
+    // i18next 27 made an empty translation fall back like a missing one. The
+    // locale files hold deliberate empty strings (e.g. a special day's todo
+    // with no note), which must stay empty, not show the English text or the key.
+    returnEmptyString: true,
     // escapeValue: false — React escapes already. i18next ships a built-in
     // Intl.NumberFormat-backed `number` formatter, so any `{{value, number}}`
     // placeholder already renders বাংলা digits (০১২৩...) in Bengali mode with

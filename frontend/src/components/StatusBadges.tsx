@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import type { StreakState } from '../types/api.js';
@@ -16,7 +17,7 @@ import { FrostIcon, TargetIcon } from './icons/IslamicIcons.js';
 export function streakVisual(
   state: StreakState | undefined,
   streak: number,
-  t: (key: string, fallback: string, opts?: Record<string, unknown>) => string
+  t: TFunction
 ): {
   Icon: (p: { className?: string }) => React.ReactNode;
   cls: string;

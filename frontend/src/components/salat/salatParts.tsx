@@ -1,6 +1,7 @@
 // Salat tracker building blocks (audit T2.4: moved out of pages/SalatTracker.tsx
 // unchanged): date helpers, status styles, the sunnah guidance row and the
 // missed-day chips of the kaza panel.
+import type { TFunction } from 'i18next';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getTrackingDay } from '../../utils/trackingDay.js';
@@ -226,7 +227,7 @@ export function MissedDayChips({
   setCalendarOpen,
 }: {
   calendarDataMap: Map<string, number>;
-  t: (key: string, fallback: string, opts?: Record<string, unknown>) => string;
+  t: TFunction;
   setSelectedDate: (d: string) => void;
   setExpandedPrayer: (p: PrayerId | null) => void;
   setCalendarOpen: (v: boolean) => void;

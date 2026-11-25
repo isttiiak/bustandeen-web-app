@@ -1,8 +1,10 @@
+import type { TFunction } from 'i18next';
 import { describe, expect, it } from 'vitest';
 import { buildExcelSheets } from './backupExcel.js';
 
 // Echo translator: the key is the label, so tests read the structure.
-const t = (key: string) => key.replace('settings.xlsx.', '');
+// A plain function stands in for i18next's t; TFunction is branded, hence the cast.
+const t = ((key: string) => key.replace('settings.xlsx.', '')) as unknown as TFunction;
 
 const file = {
   exportedAt: '2026-10-10T08:00:00.000Z',
