@@ -90,3 +90,28 @@ describe('zikr request reject email', () => {
     expect(zikrRequests).toContain('Reject without email');
   });
 });
+
+// Audit P2-8: the irreversible or public-facing admin buttons ask first, and a past banner can be
+// reopened as a new, editable one.
+describe('admin confirmations and reopen', () => {
+  it('broadcast: Deactivate asks first, never calls the mutation straight from the click', () => {
+    expect(broadcast).not.toMatch(/onClick=\{\(\) => deactivate\.mutate/);
+    expect(broadcast).toMatch(/window\.confirm\(/);
+    expect(broadcast).toMatch(/onClick=\{\(\) => stop\(a\)\}/);
+  });
+
+  it('broadcast: Reopen as new copies the old text into the form and publishes as a new banner', () => {
+    expect(broadcast).toContain('Reopen as new');
+    expect(broadcast).toMatch(/setForm\(\{ title: a\.title, body: a\.body \}\)/);
+    expect(broadcast).toMatch(/onClick=\{\(\) => reopen\(a\)\}/);
+  });
+
+  it('quarterly report: publish, unpublish and delete each ask first', () => {
+    expect(sadaqah).not.toMatch(/onClick=\{\(\) => (publish|unpublish|deleteQuarterly)\.mutate/);
+    for (const handler of ['confirmPublish', 'publishListed', 'unpublishListed', 'deleteListed']) {
+      const body = sadaqah.slice(sadaqah.indexOf(`const ${handler} =`));
+      expect(body.slice(0, 400), handler).toMatch(/ask\(/);
+    }
+    expect(sadaqah).toMatch(/window\.confirm\(/);
+  });
+});

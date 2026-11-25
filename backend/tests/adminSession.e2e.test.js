@@ -54,6 +54,8 @@ describe('Admin session limit and re-auth (U8.4)', () => {
       ['delete', `/api/admin/sadaqah/${new mongoose.Types.ObjectId()}`],
       ['delete', `/api/admin/sadaqah/expenses/${new mongoose.Types.ObjectId()}`],
       ['delete', '/api/admin/sadaqah/quarterly/2026-Q3'],
+      ['delete', `/api/admin/feedback/${new mongoose.Types.ObjectId()}`],
+      ['delete', `/api/admin/feedback/mailbox/${new mongoose.Types.ObjectId()}`],
       ['delete', `/api/admin/zikr-requests/library/${new mongoose.Types.ObjectId()}`],
       ['post', '/api/admin/accounts'],
       ['patch', `/api/admin/accounts/${new mongoose.Types.ObjectId()}/active`],
