@@ -2,6 +2,29 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.35 - Two tabs no longer share unsent zikr counts (audit P1-16b / P1-15) - 2026-11-25
+
+### Fixed
+
+- **A second tab could send the first tab's unsent taps again.** Unsent zikr taps (the loose taps and the batch being sent) were kept in the one record both tabs share. A tab opened while another still held taps copied them, and each tab then sent them under its own op id, so the server counted them twice. A stale tab could also overwrite the batch the other tab had just staged. Both windows were short (under a second of tapping, or a stuck connection) but real.
+- **How it works now.** Each tab keeps its unsent taps in its own record (`bustandeen_zikr_unsent:<tab id>`) and is the only one that writes it. The shared record keeps display state only (counts, the zikr list, meanings). A tab holds a Web Lock for as long as its page lives, so another tab can tell a live record from the leftovers of a tab that closed or crashed, and takes those over once, under a second lock so two tabs cannot take the same one. A batch that was already staged is resent under the same op id, so a batch that had in fact reached the server is not counted again.
+- **A closed tab's loose taps from an earlier day** are sent as that day (never today), the oldest the server takes being yesterday: the same rule as a day rollover.
+- **Signing out** also drops the leftovers of closed tabs, so they cannot be sent under the next account.
+- **First load after this update:** unsent taps an older version left in the shared record are moved into their own record under the same lock, so two tabs opened together cannot both send them.
+- Browsers without Web Locks keep one fixed record, which is the old behaviour.
+
+### Tests
+
+- `useZikrStore.twoTabs.test.ts` (11 cases): two copies of the store on one fake browser profile with a fake server that applies each op id once. Covers no double send, a stale tab, a tab closed with a batch and loose taps, a batch delivered just before the tab died, a live tab's record being left alone, a day that has closed, the older version's record, and sign-out. All fail on the old store. `useZikrStore.flush.test.ts` now reads the tab's own record.
+- Not done: a Playwright run with two real pages (it needs a signed-in session, which demo mode does not have). The lock behaviour itself was checked in the Browser pane: a lock held in one tab is listed from another, and is gone once that tab closes.
+
+### Things to know
+
+- The other tab's unsent taps are not in this tab's counter until they reach the server (usually under a second).
+- A page holding a Web Lock may not be kept in the browser's back/forward cache.
+- Rolling back to an older version would not see taps saved in the per-tab records (they normally reach the server within about a second).
+- Nothing stored on the server changed.
+
 ## v5.190.34 - Admin panel: safer deletes, confirmations, reopen a banner (audit P2-8) - 2026-11-25
 
 Two-step sign-in for admins stays OFF by default (owner decision); nothing here changes that.
