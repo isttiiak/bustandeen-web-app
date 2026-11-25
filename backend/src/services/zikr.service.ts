@@ -1,5 +1,6 @@
 import { MAX_ZIKR_TOTAL_KEYS, MAX_ZIKR_TYPES, limitError } from '../utils/limits.js';
-import User from '../models/User.js';
+import type { Document } from 'mongoose';
+import User, { type IZikrTypeItem } from '../models/User.js';
 import ZikrDaily from '../models/ZikrDaily.js';
 import ZikrEvent from '../models/ZikrEvent.js';
 import { resetAreas, resetDateFor } from './statsReset.service.js';
@@ -470,7 +471,7 @@ export async function getSessionsForDay(
   return sessions;
 }
 
-export async function getZikrTypes(userId: string): Promise<unknown[]> {
+export async function getZikrTypes(userId: string): Promise<IZikrTypeItem[]> {
   const user = await User.findOne({ uid: userId }).select('zikrTypes');
   return user?.zikrTypes ?? [];
 }
@@ -503,15 +504,15 @@ function assertRoomForType(
   }
 }
 
-export async function addZikrType(userId: string, name: string): Promise<unknown[]> {
+export async function addZikrType(userId: string, name: string): Promise<IZikrTypeItem[]> {
   const user = await User.findOne({ uid: userId }).select(ZIKR_PROJECTION);
   if (!user) throw new Error('User not found');
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Mongoose DocumentArray subdocument typing doesn't expose `.name` cleanly here
-  if (!user.zikrTypes.some((t: any) => (t.name as string).toLowerCase() === name.toLowerCase())) {
+  if (!user.zikrTypes.some((t) => t.name.toLowerCase() === name.toLowerCase())) {
     assertRoomForType(user, name);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- DocumentArray#push rejects a plain object under the subdocument's strict type
-    (user.zikrTypes as any).push({ name });
+    // Mongoose builds the subdocument (id, createdAt) on push; the cast only
+    // tells TypeScript that a bare { name } is accepted there.
+    user.zikrTypes.push({ name } as IZikrTypeItem & Document);
     await user.save();
   }
   return user.zikrTypes;
@@ -591,15 +592,15 @@ export async function renameZikrType(
 
 /** Remove a custom zikr type from the user's list (case-insensitive). Lifetime
  * totals in the zikr Map are left untouched — only the dropdown entry is gone. */
-export async function removeZikrType(userId: string, name: string): Promise<unknown[]> {
+export async function removeZikrType(userId: string, name: string): Promise<IZikrTypeItem[]> {
   const user = await User.findOne({ uid: userId }).select(ZIKR_PROJECTION);
   if (!user) throw new Error('User not found');
 
   const before = user.zikrTypes.length;
-  user.zikrTypes = user.zikrTypes.filter(
-    (t: { name: string }) => t.name.toLowerCase() !== name.toLowerCase()
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- filter() returns a plain array, not the DocumentArray Mongoose expects back
-  ) as any;
+  user.set(
+    'zikrTypes',
+    user.zikrTypes.filter((t) => t.name.toLowerCase() !== name.toLowerCase())
+  );
   if (user.zikrTypes.length !== before) await user.save();
   return user.zikrTypes;
 }

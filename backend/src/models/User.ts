@@ -246,16 +246,18 @@ const userSchema = new Schema(
 );
 
 // Ensure uniqueness of zikrTypes.name per user (case-insensitive)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Mongoose v9: async pre-hook; `this` isn't typed as the hydrated document
-userSchema.pre('save', async function (this: any) {
+userSchema.pre('save', async function (this: IUser) {
   if (!this.isModified('zikrTypes')) return;
   const seen = new Set<string>();
-  this.zikrTypes = this.zikrTypes.filter((t: { name: string }) => {
-    const key = t.name.trim().toLowerCase();
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  this.set(
+    'zikrTypes',
+    this.zikrTypes.filter((t) => {
+      const key = t.name.trim().toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+  );
 });
 
 export default mongoose.model<IUser>('User', userSchema);

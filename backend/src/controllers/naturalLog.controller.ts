@@ -11,8 +11,7 @@ export const parseHandler = async (
 ): Promise<void> => {
   try {
     const { text } = req.body as { text: string };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- zikrTypes is a Mongoose subdocument array with a loosely-typed `.name`
-    const types = (await zikrService.getZikrTypes(req.user.uid)) as any[];
+    const types = await zikrService.getZikrTypes(req.user.uid);
     const typeNames = types.map((t) => String(t.name));
     const result = await aiService.parseNaturalLog(text, typeNames, req.user.uid);
     // Resolve each dhikr name against the user's own list, case-insensitively,

@@ -1,4 +1,4 @@
-import type { Model } from 'mongoose';
+import type { RestorableModel } from '../utils/modelShapes.js';
 import { isAvatarId } from '../utils/avatars.js';
 import { decryptJson, encryptJson, fieldContexts } from '../utils/fieldCrypto.js';
 import User from '../models/User.js';
@@ -61,8 +61,7 @@ import { keepOneOpenCycle } from '../utils/cycleImport.js';
 export const BACKUP_VERSION = 3;
 
 type PlainDoc = Record<string, unknown>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- one helper serves every domain model
-type AnyModel = Model<any>;
+type AnyModel = RestorableModel; // one helper serves every domain model
 
 const OMIT = new Set(['_id', '__v', 'userId', 'createdAt', 'updatedAt']);
 

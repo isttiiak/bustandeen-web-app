@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.50 - Backend code has no `any` (audit P4-5) - 2026-11-26
+
+The 8 places in the backend that used TypeScript's `any` (each had an `eslint-disable` with a reason) now have real types. No behaviour changed.
+
+### What changed
+
+- **Zikr types:** `getZikrTypes`, `addZikrType` and `removeZikrType` return `IZikrTypeItem[]`; the type checks in them and in the natural-log controller need no cast. Removing a type and the duplicate-name check on save use `set('zikrTypes', ...)` instead of assigning a plain array through `any`.
+- **Backup, restore and key re-wrap:** one shared structural type, `RestorableModel` (and `ScannableModel` for the re-wrap script) in `utils/modelShapes.ts`, replaces `Model<any>` / `Model: any`. Every domain model satisfies it as is.
+- **Guard:** `noExplicitAny.unit.test.js` fails if `any` or a `no-explicit-any` disable comes back anywhere in `backend/src`.
+
+### Tests
+
+- `noExplicitAny.unit.test.js` (2 cases) fails on main (8 offenders) and passes here.
+- `zikrTypesData.e2e.test.js` (4 cases): adding builds a real subdocument, removing is case-insensitive and leaves other types and every lifetime total alone, removing an unknown name changes nothing, and saving duplicate names keeps one. These pass on the old and the new code, which shows the data is unaffected.
+- Backend 956/956, lint 0 errors, typecheck clean.
+
 ## v5.190.49 - Ramadan print-sheet prototype tracked (audit P3-7) - 2026-11-26
 
 `docs/design/ramadan-print-sheet.html`, a planning prototype of an A4 Ramadan sheet, is now tracked next to the other design prototypes (Prettier-formatted, so the format check passes). Its generated output, `docs/design/ramadan-print-sheet/` (about 9 MB of PDFs and PNGs), is git-ignored and stays on the author's machine. No app code changed.
