@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.45',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: counter engine updated',
+        fixed: [
+          'We updated the part of the app that keeps your counters and settings in memory. We checked how it is used, and your counts and settings work as before. Nothing in your data changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: কাউন্টারের ইঞ্জিন হালনাগাদ',
+        fixed: [
+          'অ্যাপের যে অংশ আপনার কাউন্টার ও সেটিংস মনে রাখে সেটি হালনাগাদ করা হয়েছে। কীভাবে ব্যবহার হচ্ছে তা যাচাই করা হয়েছে, আপনার গণনা ও সেটিংস আগের মতোই কাজ করে। আপনার তথ্যে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.42',
     date: '2026-11-25',
     text: {
