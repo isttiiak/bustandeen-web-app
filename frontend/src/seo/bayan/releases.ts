@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.52',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Behind the scenes: tidier code for settings and feedback',
+        fixed: [
+          'We reorganised how the settings, feedback and prayer-name prompts talk to our servers, so the code is easier to keep correct. They look and work the same. Nothing in your data changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: সেটিংস ও মতামতের জন্য গোছানো কোড',
+        fixed: [
+          'সেটিংস, মতামত ও ছোট প্রশ্নের অংশগুলো আমাদের সার্ভারের সঙ্গে যেভাবে যোগাযোগ করে তা নতুন করে সাজানো হয়েছে, যাতে কোড ঠিক রাখা সহজ হয়। দেখতে ও কাজে আগের মতোই। আপনার তথ্যে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.51',
     date: '2026-11-26',
     text: {

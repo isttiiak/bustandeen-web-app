@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useAuthStore } from '../store/useAuthStore.js';
-import api from '../lib/api.js';
+import { useSetGender } from '../hooks/useUserProfile.js';
 import type { AuthUser } from '../types/api.js';
 import { BTN_SECONDARY } from './bustanStyles.js';
 
@@ -16,6 +16,7 @@ import { BTN_SECONDARY } from './bustanStyles.js';
 export default function GenderGate() {
   const { t } = useTranslation();
   const { user, setUser } = useAuthStore();
+  const setGender = useSetGender();
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [skipped, setSkipped] = useState(
@@ -28,7 +29,7 @@ export default function GenderGate() {
     setSaving(true);
     setError('');
     try {
-      await api.patch('/api/user/me', { gender });
+      await setGender.mutateAsync(gender);
       const updated: AuthUser = { ...user, gender };
       localStorage.setItem('bustandeen_user', JSON.stringify(updated));
       setUser(updated);

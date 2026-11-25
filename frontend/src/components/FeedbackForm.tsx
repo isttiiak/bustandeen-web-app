@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { BTN_PRIMARY, BTN_SECONDARY } from './bustanStyles.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { celebrateSmall } from '../utils/celebrate.js';
-import api from '../lib/api.js';
+import { useSendFeedback } from '../hooks/useFeedback.js';
 
 /**
  * Shared interactive form for /feedback and /contact.
@@ -47,6 +47,7 @@ export default function FeedbackForm({
   const [selectedIds, setSelectedIds] = useState<string[]>(initialTypeIds);
   const [message, setMessage] = useState('');
   const [botcheck, setBotcheck] = useState('');
+  const sendFeedback = useSendFeedback();
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +70,7 @@ export default function FeedbackForm({
     setSending(true);
     setError(null);
     try {
-      const res = await api.post<{ ok: boolean; error?: string }>('/api/feedback', {
+      await sendFeedback.mutateAsync({
         name: name.trim(),
         email: email.trim(),
         message: message.trim(),
@@ -77,7 +78,6 @@ export default function FeedbackForm({
         kind,
         botcheck,
       });
-      if (!res.data.ok) throw new Error(res.data.error ?? 'Failed');
       setSent(true);
       celebrateSmall();
     } catch {

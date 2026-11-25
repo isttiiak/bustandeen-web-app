@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.52 - Screens no longer call the API themselves (audit P4-4) - 2026-11-26
+
+The project rule is that all server data goes through React Query hooks. Four screens still called the Axios instance directly. Each call now lives in a hook; what is sent, and what the screen shows on success or failure, is unchanged.
+
+### What moved
+
+- **`GenderGate`** (the slim "brother or sister?" bar): `useSetGender` in `hooks/useUserProfile.ts` (`PATCH /api/user/me` with just the gender; the reply's user also refreshes the cached profile).
+- **`FeedbackForm`**: `useSendFeedback` in the new `hooks/useFeedback.ts` (`POST /api/feedback`; `ok: false` is an error).
+- **Settings:** `useDeleteAccount` (`DELETE /api/user/me`; the screen still reads `staff_account` / `reauth_required` from the refusal) and `useDangerAction` in the new `hooks/useDangerZone.ts` (the double-confirmed reset and delete rows).
+- **`QuranSettings`:** the khatam reset uses the existing, until now unused, `useResetKhatam` (it refreshes all `quran` queries, as the screen did).
+- **Offline:** each of these mutations uses `networkMode: 'always'`. React Query's default would pause a mutation while the browser says it is offline, leaving "Saving..." on screen; with `always` the request fails at once and each screen shows its own message, exactly as before.
+- **Left as they are on purpose:** the `utils/` fetches (Quran data, place lookup, error beacon, prefs sync), the sign-in `fetch` in `App.tsx`, the zikr store's keep-alive sends, `AdminGate`'s pre-auth session check, and `ShareAppSheet`'s static image.
+
+### Tests
+
+- `noDirectApi.test.ts` (3 cases): no screen in `components/` or `pages/` imports the Axios instance or uses `axios.get`/`post`/... or `fetch(` (two documented exceptions). Fails on main (4 files), passes here.
+- `hooks/directApiHooks.test.ts` (8 cases): each hook sends the same request as the screen did, fails at once when offline, treats a reply with no user (gender) or `ok: false` (feedback) as an error, passes a refusal through untouched, and the demo-mode reply is accepted.
+
 ## v5.190.51 - One broken page no longer blanks the app (audit P4-2) - 2026-11-26
 
 If a page crashes while it draws (a bad server answer, a missing value at day rollover), only that page is replaced by a short message. The navigation bar, banners and the other pages keep working, and going to another page, or tapping the same link again, loads it normally. Before, the app had a single safety net around everything, so one crash showed a full-screen error and hid the navigation too.

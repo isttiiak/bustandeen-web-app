@@ -88,9 +88,16 @@ export function useInvalidateUserProfile() {
 /** Shared by the account mutations: the reply's user replaces the cached copy.
  * A reply without one is an error, except in the demo (it answers every write
  * with a bare `{ ok: true }`, and there is nothing to save). */
-function useUserMutation<V>(send: (vars: V) => Promise<UserReply>) {
+function useUserMutation<V>(
+  send: (vars: V) => Promise<UserReply>,
+  /** 'always' = try the request even when the browser says it is offline, so a
+   * screen with its own "could not save" message gets it at once instead of the
+   * mutation waiting for the connection to return. */
+  options: { networkMode?: 'online' | 'always' } = {}
+) {
   const qc = useQueryClient();
   return useMutation({
+    networkMode: options.networkMode,
     mutationFn: async (vars: V): Promise<DBUserProfile | null> => {
       const data = await send(vars);
       if (data.ok && !data.user && useAuthStore.getState().isDemoMode) return null;
@@ -108,6 +115,27 @@ export function useUpdateProfile() {
   return useUserMutation((patch: ProfilePatch) =>
     api.patch<UserReply>('/api/user/me', patch).then((r) => r.data)
   );
+}
+
+/** Saves only the gender (the slim bar for signed-in users without one asks once).
+ * Fails at once when offline, so the bar can say so. */
+export function useSetGender() {
+  return useUserMutation(
+    (gender: 'male' | 'female') =>
+      api.patch<UserReply>('/api/user/me', { gender }).then((r) => r.data),
+    { networkMode: 'always' }
+  );
+}
+
+/** Deletes the signed-in account on the server (`DELETE /api/user/me`). The caller
+ * reads `err.response.data.error` (`staff_account`, `reauth_required`) to explain a refusal. */
+export function useDeleteAccount() {
+  return useMutation({
+    networkMode: 'always',
+    mutationFn: async () => {
+      await api.delete('/api/user/me');
+    },
+  });
 }
 
 /** Stores a Google account the user just linked in Firebase. */
