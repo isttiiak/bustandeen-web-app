@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.46',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: safer testing',
+        fixed: [
+          'We set up a separate practice space for trying new changes, so tests use practice data and never touch yours. Nothing in your data changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: নিরাপদ পরীক্ষা',
+        fixed: [
+          'নতুন পরিবর্তন যাচাই করার জন্য আলাদা একটি অনুশীলন-ক্ষেত্র তৈরি হয়েছে। পরীক্ষায় শুধু নমুনা তথ্য ব্যবহার হয়, আপনার তথ্যে হাত পড়ে না। আপনার তথ্যে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.45',
     date: '2026-11-25',
     text: {

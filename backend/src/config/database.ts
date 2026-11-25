@@ -30,8 +30,8 @@ export function isLocalMongoUri(uri: string): boolean {
 /**
  * Throws when a script that WRITES is pointed at a hosted database without
  * `--production` on the command line. Dry runs and read-only reports are never
- * stopped. There is no staging database yet, so for now every Atlas cluster
- * counts as production.
+ * stopped. Every hosted cluster counts as production here, the staging one
+ * included: a write there needs --production too.
  */
 export function assertWriteAllowed(uri: string, apply: boolean, argv: readonly string[]): void {
   if (!apply || isLocalMongoUri(uri) || argv.includes('--production')) return;
@@ -40,4 +40,45 @@ export function assertWriteAllowed(uri: string, apply: boolean, argv: readonly s
       'Run it against a local MongoDB, or add --production if you mean to change the live data ' +
       '(read the dry run first).'
   );
+}
+
+/** Cluster identity of a host: Atlas shard hosts and the SRV name share everything after the first label. */
+function clusterKey(host: string): string {
+  const h = host.replace(/:\d+$/, '').trim().toLowerCase();
+  return h.endsWith('.mongodb.net') ? h.split('.').slice(1).join('.') : h;
+}
+
+/**
+ * A Vercel preview deploy must never run on the production database (audit
+ * 2026-11-16 P3-1). On a preview, MONGODB_URI is the staging cluster, and
+ * PRODUCTION_MONGO_HOST (the production host only, no credentials, set for the
+ * Preview scope too) is what it is checked against. Production deploys and
+ * local development are not affected. It fails closed: a preview without
+ * PRODUCTION_MONGO_HOST cannot prove it is not production, so it does not start.
+ */
+export function assertNotProductionOnPreview(
+  uri: string,
+  env: Readonly<Record<string, string | undefined>> = process.env
+): void {
+  const vercelEnv = env.VERCEL_ENV;
+  if (!vercelEnv || vercelEnv === 'production') return;
+
+  const production = (env.PRODUCTION_MONGO_HOST ?? '')
+    .split(',')
+    .map((h) => mongoHost(h.trim()))
+    .filter(Boolean)
+    .map(clusterKey);
+  if (production.length === 0) {
+    throw new Error(
+      `Refusing to start a ${vercelEnv} deploy: PRODUCTION_MONGO_HOST is not set, so it cannot be ` +
+        'shown that MONGODB_URI is not the production database. Set it (host only) for the Preview scope.'
+    );
+  }
+  const hosts = mongoHost(uri).split(',');
+  if (hosts.some((h) => production.includes(clusterKey(h)))) {
+    throw new Error(
+      `Refusing to start a ${vercelEnv} deploy on "${mongoHost(uri)}": that is the production database. ` +
+        'Point MONGODB_URI at the staging cluster for the Preview scope.'
+    );
+  }
 }

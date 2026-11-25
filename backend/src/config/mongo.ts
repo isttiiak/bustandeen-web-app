@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { DB_NAME } from './database.js';
+import { DB_NAME, assertNotProductionOnPreview } from './database.js';
 
 /**
  * Serverless-safe connection: the connect promise is cached at module scope so
@@ -15,6 +15,7 @@ export const connectDB = async (): Promise<void> => {
   if (!cached) {
     const uri = process.env.MONGODB_URI;
     if (!uri) throw new Error('MONGODB_URI not set');
+    assertNotProductionOnPreview(uri); // a preview deploy never gets the live database
     mongoose.set('strictQuery', true);
     cached = mongoose
       .connect(uri, {

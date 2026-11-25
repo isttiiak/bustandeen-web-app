@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.46 - Staging database guard (audit P3-1) - 2026-11-25
+
+Previews of pull requests now run on their own staging database, and cannot start on the live one.
+
+### What changed
+
+- **Guard:** on a Vercel preview deploy the backend refuses to connect if `MONGODB_URI` is the production host (`PRODUCTION_MONGO_HOST`), including the same cluster written as shard hosts, with a port, or in another case. It fails closed: a preview without `PRODUCTION_MONGO_HOST` does not start. Production deploys and local development are not affected. Errors name the host, never the credentials.
+- **Staging:** a separate Atlas project (`bustandeen-staging`) with its own cluster, a `readWrite` user and the same 63 indexes (created with `sync-indexes`). The Preview scope in Vercel holds the staging `MONGODB_URI`, its own `FIELD_ENCRYPTION_KEY` and `DEV_AUTH_BYPASS=0`; the mailbox, AI, cron, deploy-hook and admin-password variables stay Production-only.
+- **Docs:** `docs/README.md` (Environments) and `backend/.env.example`.
+
+### Tests
+
+- `stagingGuard.unit.test.js` (9 cases): refuses the production host on a preview, never prints credentials, allows staging, fails closed without `PRODUCTION_MONGO_HOST`, leaves production and local alone, matches shard hosts, ports and case, accepts a URI or a list, ignores another Atlas project, and `connectDB` stops before `mongoose.connect`.
+
 ## v5.190.45 - zustand 5 (audit P3-6) - 2026-11-25
 
 `zustand` 4.5 to 5.1, the state library behind the zikr counter, the signed-in user, UI settings and the admin panel. Nothing visible changes. Dependabot's pull request (377) was green but the upgrade changes how stores behave, so this one was checked by hand first.

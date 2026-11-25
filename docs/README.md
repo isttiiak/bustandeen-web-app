@@ -168,6 +168,14 @@ npm run dev            # backend :5000 + frontend :5173 (the CORS allowlist expe
 - `frontend/.env`: `VITE_BACKEND_URL` (local dev only; production calls `/api` same-origin) and `VITE_FIREBASE_*`.
 - The `.env` files are gitignored; copy them to each machine. Claude Code worktrees copy only `frontend/.env*`
   (`.worktreeinclude`).
+- **Environments (audit P3-1).** Production (`bustandeen.com`) uses the Atlas project `Bustandeen`. Every Vercel preview
+  deploy uses the separate Atlas project `bustandeen-staging` (its own cluster, its own `readWrite` user, no real data).
+  Set these for the **Preview scope only**: `MONGODB_URI` (staging), a different `FIELD_ENCRYPTION_KEY`,
+  `DEV_AUTH_BYPASS=0`, and `PRODUCTION_MONGO_HOST` (the production host only, no credentials). Keep the mailbox/SMTP,
+  `GROQ_API_KEY`, `CRON_SECRET`, `VERCEL_DEPLOY_HOOK_URL` and bootstrap-password variables Production-only.
+  `config/database.ts` `assertNotProductionOnPreview` makes a preview refuse to start if its database host is the
+  production host, or if `PRODUCTION_MONGO_HOST` is missing. A new staging cluster has no indexes: run
+  `npm run sync-indexes --prefix backend` (dry run), then `-- --apply --production`, with its URI in `MONGODB_URI`.
 - npm 11 runs install scripts only for packages under `allowScripts`. If backend tests time out "Downloading MongoDB",
   run `node node_modules/mongodb-memory-server/postinstall.js` once in `backend/`.
 
