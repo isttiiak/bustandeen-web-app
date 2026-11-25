@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.42',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: up-to-date build tools',
+        fixed: [
+          'We updated the automatic tools that check each update before it reaches you. Nothing changes in the app and your data is untouched.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: হালনাগাদ বিল্ড টুল',
+        fixed: [
+          'প্রতিটি আপডেট আপনার কাছে পৌঁছানোর আগে যে স্বয়ংক্রিয় টুল তা যাচাই করে, সেগুলো হালনাগাদ করা হয়েছে। অ্যাপে কিছু বদলায়নি এবং আপনার তথ্য অপরিবর্তিত।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.41',
     date: '2026-11-25',
     text: {

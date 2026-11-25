@@ -2,6 +2,20 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.42 - GitHub Actions moved to their current majors (audit P3-6) - 2026-11-25
+
+Nothing in the app changes. Dependabot opened five separate pull requests for this (366, 368, 370, 371, 372); they edit the same workflow lines, so they are applied together here and those five are superseded.
+
+### Changed
+
+- `actions/checkout` 4.4.0 to 7.0.1, `actions/setup-node` 4.4.0 to 7.1.0, `actions/cache` 4.3.0 to 6.1.0, `actions/setup-java` 4.9.1 to 6.3.0, `gitleaks/gitleaks-action` 2.3.9 to 3.0.0. Still pinned to full commit SHAs with a version comment; each SHA was checked against its release tag.
+- What changed upstream, from their release notes: a move of the actions' own runtime to Node 24 / ESM (GitHub is retiring Node 20 for actions), plus checkout 7 refusing to check out a fork's code under `pull_request_target`, which these workflows do not use. No input or output changes for how we call them.
+- `actions/upload-artifact` (4.6.2) and `github/codeql-action` (4.39.5) had no newer version offered and stay.
+
+### Tests
+
+- No new test: `ciHardening.test.ts` already requires every action to be pinned to a 40-character SHA, and passes. The proof is this pull request's own CI run on the new versions.
+
 ## v5.190.41 - Dependency review: nodemon removed, decisions recorded (audit P3-6) - 2026-11-25
 
 Nothing in the app changes.
