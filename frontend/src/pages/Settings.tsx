@@ -14,7 +14,7 @@ import {
   type AuthError,
 } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase.js';
-import api from '../lib/api.js';
+import { useDangerAction } from '../hooks/useDangerZone.js';
 import HijriDateSetting from '../components/settings/HijriDateSetting.js';
 import { useAnalyticsConsent } from '../hooks/useAnalyticsConsent.js';
 import { analyticsConfigured } from '../utils/analytics.js';
@@ -38,7 +38,7 @@ import {
 import { translateSalatName } from '../utils/prayerTimes.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useUiStore, type ReduceMotionMode } from '../store/useUiStore.js';
-import { useUpdateProfile } from '../hooks/useUserProfile.js';
+import { useDeleteAccount, useUpdateProfile } from '../hooks/useUserProfile.js';
 import { useGroqKeyStatus, useSetGroqKey, useClearGroqKey } from '../hooks/useAi.js';
 import {
   downloadBlob,
@@ -664,6 +664,8 @@ export default function Settings() {
   const { aiEnabled, setAiEnabled } = useAuthStore();
   const analyticsConsent = useAnalyticsConsent();
   const updateProfile = useUpdateProfile();
+  const deleteAccount = useDeleteAccount();
+  const dangerAction = useDangerAction();
   const { highContrast, vibrationEnabled, setHighContrast, setVibrationEnabled } = useUiStore();
   const queryClient = useQueryClient();
 
@@ -792,7 +794,7 @@ export default function Settings() {
   const runDeleteAccount = async () => {
     setDeleteAccountStep('deleting');
     try {
-      await api.delete('/api/user/me');
+      await deleteAccount.mutateAsync();
       localStorage.removeItem('bustandeen_idToken');
       await signOut(auth);
       // Without this, staying on /settings after sign-out hits the Protected
@@ -866,9 +868,7 @@ export default function Settings() {
   const runDanger = async (row: DangerRow) => {
     setDeleting(row.id);
     try {
-      if (row.method === 'delete') await api.delete(row.endpoint);
-      else if (row.method === 'post') await api.post(row.endpoint, row.body ?? {});
-      else await api.patch(row.endpoint, row.body ?? {});
+      await dangerAction.mutateAsync(row);
       await queryClient.invalidateQueries();
       toast.success(`${row.label}: done.`);
     } catch {

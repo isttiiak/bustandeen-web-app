@@ -3,10 +3,9 @@ import { createPortal } from 'react-dom';
 import { BTN_PRIMARY } from './bustanStyles.js';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { useQueryClient } from '@tanstack/react-query';
 import { XMarkIcon, ArrowPathIcon, BookOpenIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { Trans, useTranslation } from 'react-i18next';
-import api from '../lib/api.js';
+import { useResetKhatam } from '../hooks/useQuran.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import FreshStart from './FreshStart.js';
 import { useQuranSummary, useUpdateQuranProfile } from '../hooks/useQuran.js';
@@ -104,7 +103,7 @@ const GOAL_PRESETS = [1, 3, 5, 10, 20];
 
 export default function QuranSettings({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { t } = useTranslation();
-  const queryClient = useQueryClient();
+  const resetKhatam = useResetKhatam();
   const { data: summary } = useQuranSummary();
   const updateProfile = useUpdateQuranProfile();
   const [confirmResetKhatam, setConfirmResetKhatam] = useState(false);
@@ -586,10 +585,9 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
             }
             onConfirm={() => {
               setResetting('khatam');
-              api
-                .post('/api/quran/khatam/reset')
+              resetKhatam
+                .mutateAsync()
                 .then(() => {
-                  queryClient.invalidateQueries({ queryKey: ['quran'] });
                   toast.success(t('quranSettings.khatamResetDone', 'Khatam journey reset'), {
                     icon: <BookOpenIcon className="w-5 h-5 text-brand-emerald" />,
                   });

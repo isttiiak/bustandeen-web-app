@@ -227,10 +227,11 @@ export function useStartKhatam() {
 export function useResetKhatam() {
   const qc = useQueryClient();
   return useMutation({
+    networkMode: 'always', // the settings screen shows its own "could not reset" when offline
     mutationFn: async () => {
       await api.post('/api/quran/khatam/reset');
     },
-    onSuccess: () => void qc.invalidateQueries({ queryKey: ['quran', 'summary'] }),
+    onSuccess: () => void qc.invalidateQueries({ queryKey: ['quran'] }),
   });
 }
 
