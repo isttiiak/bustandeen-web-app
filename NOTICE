@@ -1,0 +1,38 @@
+Bustandeen - notices
+====================
+
+The MIT licence in LICENSE covers the source code of this repository. The items
+below are NOT covered by it, or carry terms of their own.
+
+1. Name and logos (all rights reserved)
+   The names "Bustandeen" and "Ihsan", the logo and the brand artwork (the
+   brand/ directory, favicon, app icons and share images) are not licensed.
+   You may not use them in a way that suggests your app is ours or endorsed by
+   us. A fork must use its own name and artwork.
+
+2. Quran text (Tanzil Project)
+   The Arabic text under frontend/public/quran/uthmani/ is the Tanzil Project's
+   Uthmani text, version 1.1, (c) Tanzil Project, tanzil.net, distributed under
+   the Creative Commons Attribution 3.0 licence. It may be copied and
+   distributed only verbatim: changing it is not allowed. Use in a website or
+   app requires naming the Tanzil Project as the source and linking to
+   https://tanzil.net so users can track changes. Keep this notice with every
+   copy. Full terms: https://tanzil.net/docs/text_license
+
+3. Audio
+   The recordings under frontend/public/audio/ are not covered by the MIT
+   licence; all rights stay with their owners.
+
+4. Fonts
+   Plus Jakarta Sans, El Messiri, Amiri and Scheherazade New are used through
+   the @fontsource packages under the SIL Open Font License 1.1 (see each
+   package's licence file in node_modules).
+
+5. Dependencies
+   Third-party packages keep their own licences (mainly MIT, Apache-2.0, ISC,
+   OFL-1.1, CC0-1.0 and MIT-0). See each package's licence in node_modules.
+
+6. Content from other services
+   Translations, tafsir and recitation audio loaded at run time from quran.com,
+   alquran.cloud, the Islamic Network and mp3quran remain under those
+   services' terms. They are not part of this repository.

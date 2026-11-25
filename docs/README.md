@@ -1,7 +1,7 @@
 # Bustandeen Architecture
 
 Current as of v5.61.0 (2026-09-30). This replaces the old contents of this file, which described the
-Oct 2025 JavaScript codebase. For conventions and commands, see the root `CLAUDE.md` / `README.md`.
+Oct 2025 JavaScript codebase. For conventions and commands, see the root `README.md`.
 
 ---
 
@@ -58,7 +58,7 @@ per serverless instance (audit SEC-01). 429s are logged to `RateLimitHit`.
 
 ## 2. Data model (MongoDB Atlas, database `ihsan`)
 
-`dbName` stays `'ihsan'` on purpose (see CLAUDE.md, Deferred Migrations). `autoIndex: true` is on in
+`dbName` stays `'ihsan'` on purpose (the live database kept its original name; renaming it needs a dump, a restore and downtime). `autoIndex: true` is on in
 all environments (audit DB-02).
 
 | Area        | Collections                                                                                                                                                        | Key indexes                                                                                                                                                             |
