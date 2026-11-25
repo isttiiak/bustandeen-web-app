@@ -1,4 +1,5 @@
 import { keepOneOpenCycle } from '../utils/cycleImport.js';
+import type { RestorableModel } from '../utils/modelShapes.js';
 import { isAvatarId } from '../utils/avatars.js';
 import User from '../models/User.js';
 import ZikrDaily from '../models/ZikrDaily.js';
@@ -169,8 +170,7 @@ export async function importV2(uid: string, data: BackupFileV2): Promise<ImportC
   }
 
   const replaceByDate = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accepts any Mongoose model constructor, generic over the domain
-    Model: any,
+    Model: RestorableModel,
     docs: PlainDoc[] | undefined,
     max = 5000
   ): Promise<number> => {
@@ -194,7 +194,7 @@ export async function importV2(uid: string, data: BackupFileV2): Promise<ImportC
           },
         };
       });
-    if (ops.length) await Model.bulkWrite(ops);
+    if (ops.length) await Model.bulkWrite(ops as never);
     return ops.length;
   };
 
@@ -203,11 +203,7 @@ export async function importV2(uid: string, data: BackupFileV2): Promise<ImportC
   counts.quranDays = await replaceByDate(QuranLog, data.quran?.logs);
 
   // ── Profiles: whole-object overwrite (sanitized) ──
-  const setProfile = async (
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- accepts any Mongoose model constructor, generic over the domain
-    Model: any,
-    profile: PlainDoc | null | undefined
-  ) => {
+  const setProfile = async (Model: RestorableModel, profile: PlainDoc | null | undefined) => {
     if (!profile || typeof profile !== 'object') return;
     const { _id, __v, userId, createdAt, updatedAt, ...rest } = profile as PlainDoc & {
       _id?: unknown;

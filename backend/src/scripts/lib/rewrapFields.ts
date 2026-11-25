@@ -1,4 +1,4 @@
-import type { Model } from 'mongoose';
+import type { ScannableModel } from '../../utils/modelShapes.js';
 import CycleDay from '../../models/CycleDay.js';
 import CycleProfile from '../../models/CycleProfile.js';
 import User from '../../models/User.js';
@@ -35,7 +35,7 @@ export interface RewrapCounts {
 
 interface FieldSpec {
   name: string;
-  model: Model<any>; // eslint-disable-line @typescript-eslint/no-explicit-any -- one loop over several unrelated models
+  model: ScannableModel; // one loop over several unrelated models
   path: string;
   /** What the value is bound to; receives the raw document. */
   context: (doc: Record<string, unknown>) => string;

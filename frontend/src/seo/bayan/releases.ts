@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.50',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Behind the scenes: safer code for your counters',
+        fixed: [
+          'We tidied the code that handles your zikr list and backups so mistakes are caught before they reach you. Your counts and lists work exactly as before. Nothing in your data changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: আপনার কাউন্টারের জন্য আরও নিরাপদ কোড',
+        fixed: [
+          'আপনার জিকিরের তালিকা ও ব্যাকআপ সামলানোর কোড গুছিয়ে নেওয়া হয়েছে, যাতে ভুল আপনার কাছে পৌঁছানোর আগেই ধরা পড়ে। আপনার গণনা ও তালিকা আগের মতোই কাজ করে। আপনার তথ্যে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.49',
     date: '2026-11-26',
     text: {
