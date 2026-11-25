@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.51',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'One page having a problem no longer stops the whole app',
+        fixed: [
+          'If a single page runs into a problem, only that page shows a short message. The menu and the rest of the app keep working, and you can try again or go to another page. Your worship data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'একটি পৃষ্ঠায় সমস্যা হলে আর পুরো অ্যাপ থেমে যাবে না',
+        fixed: [
+          'কোনো একটি পৃষ্ঠায় সমস্যা হলে শুধু সেই পৃষ্ঠায় একটি ছোট বার্তা দেখাবে। মেনু ও অ্যাপের বাকি অংশ চলতেই থাকবে, আর আপনি আবার চেষ্টা করতে বা অন্য পৃষ্ঠায় যেতে পারবেন। আপনার ইবাদতের তথ্যে কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.50',
     date: '2026-11-26',
     text: {

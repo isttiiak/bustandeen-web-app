@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.51 - One broken page no longer blanks the app (audit P4-2) - 2026-11-26
+
+If a page crashes while it draws (a bad server answer, a missing value at day rollover), only that page is replaced by a short message. The navigation bar, banners and the other pages keep working, and going to another page, or tapping the same link again, loads it normally. Before, the app had a single safety net around everything, so one crash showed a full-screen error and hid the navigation too.
+
+### What changed
+
+- **`RouteErrorBoundary`** wraps the route table inside `<main>`, below the navbar. It clears itself when the path, the router's location key or the routes revision changes. Crashes are still logged and reported once through `reportClientError`, as before.
+- **Fallback:** the existing error screen, shown inline (`role="alert"`) with "Try again" and a "Go to Home" that navigates inside the app. A page that fails because the app was updated still says "A new version is ready" with the Update button.
+- **Strings:** `errorBoundary.routeBody` and `errorBoundary.retry`, English and Bangla.
+- The app-wide `ErrorBoundary` stays as the last resort for anything outside the routes.
+
+### Tests
+
+- `routeErrorBoundary.test.ts` (9 cases): the error is kept while the location is the same and cleared when it changes, App wraps the routes inside `<main>` below the navbar, the app-wide boundary remains, and both languages have the strings. Fails on main (no component), passes here.
+- `e2e/route-error.spec.ts`: the Salat page's code is replaced with a module that throws; the page shows the message, the navbar and the Demo banner stay, and going to `/zikr` loads it. Fails on main, passes here.
+
 ## v5.190.50 - Backend code has no `any` (audit P4-5) - 2026-11-26
 
 The 8 places in the backend that used TypeScript's `any` (each had an `eslint-disable` with a reason) now have real types. No behaviour changed.

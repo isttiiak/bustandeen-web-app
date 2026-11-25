@@ -38,6 +38,7 @@ import { trackPageView } from './utils/analytics.js';
 import { safeRedirect } from './utils/safeRedirect.js';
 import { isSeoPagePath } from './seo/staticPaths.js';
 import AppRoutes from './routes.js';
+import RouteErrorBoundary from './components/RouteErrorBoundary.js';
 import { RouteFallback } from './routeGuards.js';
 
 // `body { overflow-x: hidden }` (styles/global.css, added to stop mobile
@@ -534,9 +535,13 @@ export default function App() {
           {!isAuthPage && !isSeoPage && !isAdminPage && <GenderGate />}
           {/* SEO and admin pages bring their own <main> */}
           <MainLandmark plain={isSeoPage || isAdminPage}>
-            <Suspense fallback={<RouteFallback />}>
-              <AppRoutes revision={prefsRevision} />
-            </Suspense>
+            <RouteErrorBoundary
+              resetKey={`${location.pathname}${location.search}|${location.key}|${prefsRevision}`}
+            >
+              <Suspense fallback={<RouteFallback />}>
+                <AppRoutes revision={prefsRevision} />
+              </Suspense>
+            </RouteErrorBoundary>
             {/* Bottom-right stack (U1): "go to top" above the ✨ quick-log button.
                 Neither shows on /naseeh (its own chat UI) or the zikr counter: a
                 tap-anywhere surface where a corner button gets hit mid-count. */}
