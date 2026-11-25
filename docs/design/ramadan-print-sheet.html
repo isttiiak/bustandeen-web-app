@@ -1339,7 +1339,9 @@
 
       // ---------- state ----------
       const params = new URLSearchParams(location.search);
-      const pick = (k, list, d) => (list.includes(params.get(k)) ? params.get(k) : d);
+      // Return the matching entry of the allow-list itself (never the raw query
+      // value), so nothing from the URL reaches the innerHTML templates below.
+      const pick = (k, list, d) => list.find((x) => x === params.get(k)) ?? d;
       const state = {
         sheet: pick('sheet', Object.keys(SHEETS), 'dhaka-bn'),
         variant: pick('variant', ['timetable', 'combined', 'checklist'], 'timetable'),
