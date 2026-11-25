@@ -38,6 +38,24 @@ export const RELEASES: Release[] = [
     },
   },
   {
+    version: '5.190.37',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: steadier checks',
+        fixed: [
+          'We made the checks we run before every update use the same exact tool version everywhere. Nothing changes in the app and your data is untouched.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: আরও স্থির যাচাই',
+        fixed: [
+          'প্রতিটি আপডেটের আগে আমরা যে যাচাই চালাই, তা এখন সব জায়গায় একই সংস্করণের টুলে চলে। অ্যাপে কিছু বদলায়নি এবং আপনার তথ্য অপরিবর্তিত।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.36',
     date: '2026-11-25',
     text: {

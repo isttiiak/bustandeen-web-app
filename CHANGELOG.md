@@ -25,6 +25,19 @@ Nothing in the app changes and no stored data was touched: this is tooling for t
 
 - Nothing was run against the live database. The staging cluster (P3-1) is still to be created.
 
+## v5.190.37 - One exact Node version for the tests and for developers (audit P3-8) - 2026-11-25
+
+The prayer-time pages are prerendered with the timezone rules bundled inside Node, and one test holds a snapshot of them. CI already used an exact version (`24.21.0`); `.nvmrc` and the storage-rules workflow still said "24", so a developer on `nvm use` could run a different Node and see the 32 known frontend failures that CI does not. Nothing in the app changes.
+
+### Changed
+
+- `.nvmrc` and `.github/workflows/storage-rules.yml` now name `24.21.0`, the version `ci.yml` already used.
+- `frontend/src/nodePin.test.ts` (3 cases) fails if CI is not exact, or if `.nvmrc` or another workflow drifts from it. Raise all of them together with the `nonBdSsr` snapshot.
+
+### Not covered
+
+Vercel only lets a project choose the major (24.x), so the production build can still run a newer 24.x than CI. Whether to accept that or read zone rules from a pinned tz package is open (P3-8).
+
 ## v5.190.36 - Salat day: checked, pinned with tests, civil-date fallbacks removed (audit P1-16 a) - 2026-11-25
 
 The audit asked whether an Isha prayed at 1 AM counts for the day before, in line with the three day-start modes (Fajr, midnight, Maghrib). It already does: since 2026-09-03 every salat read, write and sweep sends the tracking day (`getTrackingDay()`). The audit pointed at a stale comment. Nothing about what the app counts changes in this release.
