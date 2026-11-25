@@ -2,6 +2,30 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.36 - Salat day: checked, pinned with tests, civil-date fallbacks removed (audit P1-16 a) - 2026-11-25
+
+The audit asked whether an Isha prayed at 1 AM counts for the day before, in line with the three day-start modes (Fajr, midnight, Maghrib). It already does: since 2026-09-03 every salat read, write and sweep sends the tracking day (`getTrackingDay()`). The audit pointed at a stale comment. Nothing about what the app counts changes in this release.
+
+### Changed
+
+- **Stale comments fixed** (`useSalatLog.ts`, `Home.tsx`): they still said salat is civil-dated.
+- **No civil-date fallback in the salat hook.** `useSalatLog(date)`, `UpdatePrayerVars.date` and `UpdateNaflVars.date` are now required, so a caller that forgets the day fails to compile instead of silently using the civil date. Every existing caller already passed one. The debt-history window ends on the tracking day by default (its only caller already passed it).
+
+### Checked on the live database, as a marked test user (rows deleted afterwards)
+
+Changing the day-start mode moves "today" by a day. With the local API and a test uid: a day already counted as missed is not counted again when "today" moves back; logging a prayer on it pays back exactly one unit; moving "today" forward counts the closing day once; going back counts nothing. Debt always equalled the missed prayers in the logs.
+
+### Tests
+
+- `salatDayModeSwitch.e2e.test.js` (backend, 2 cases) pins that behaviour. It passes on the old code too: it records verified behaviour, it does not fix a bug.
+- `hooks/salatDay.test.ts` (frontend, 7 cases): 3 fail on the old hook (no civil fallback, `date` required, the log read for a named day).
+
+### Not changed (on purpose)
+
+- The server still uses its own UTC date when a request names no day (only an old cached app does that).
+- Salat rows written before 2026-09-03, when salat was briefly midnight-dated, are left as they are: the server does not know a person's location, so it cannot tell which rows are affected. A repair would need your approval.
+- Switching from midnight to Fajr just after midnight shows the day that was already counted as missed with its prayers marked missed, until the person logs them. That is the existing rule.
+
 ## v5.190.32 - Hifz: six small bug fixes (no new features) - 2026-11-25
 
 Hifz is a simple feature and is meant to stay one. This only fixes what was wrong; there was no test file for it before.

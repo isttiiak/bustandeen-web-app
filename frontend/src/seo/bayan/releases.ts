@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.36',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Prayer days: checked, nothing changes',
+        fixed: [
+          'We checked that a prayer you log after midnight but before Fajr, such as Isha at 1 AM, counts for the day before. It already did, in all three day-start choices.',
+          'We added tests so this stays true. Your saved prayers were not changed.',
+        ],
+      },
+      bn: {
+        title: 'নামাজের দিন: যাচাই করা হয়েছে, কিছু বদলায়নি',
+        fixed: [
+          'মধ্যরাতের পরে কিন্তু ফজরের আগে, যেমন রাত ১টায় ইশার নামাজ লগ করলে সেটি আগের দিনের হিসাবে যায় কি না যাচাই করা হয়েছে। দিন শুরুর তিনটি পছন্দেই এটি আগে থেকেই ঠিক ছিল।',
+          'এটি যাতে ঠিক থাকে সেজন্য পরীক্ষা যোগ করা হয়েছে। আপনার সংরক্ষিত নামাজের হিসাব বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.32',
     date: '2026-11-25',
     text: {

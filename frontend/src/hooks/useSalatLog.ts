@@ -18,7 +18,6 @@ import {
 import { outboxOpOwnership } from '../utils/outboxOwner.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
-import { placeToday } from '../utils/placeClock.js';
 
 // Thrown from a mutationFn to tell onError/onSettled "this wasn't a real
 // failure — it's queued for replay, keep the optimistic UI as-is."
@@ -283,7 +282,8 @@ export interface SalatLog {
 export interface UpdatePrayerVars {
   prayer: PrayerId;
   status: PrayerStatus;
-  date?: string;
+  /** The tracking day the prayer belongs to (never a civil date). */
+  date: string;
   location?: PrayerLocation;
   tasbeeh?: boolean;
   ayatulKursi?: boolean;
@@ -300,7 +300,8 @@ export interface UpdateNaflVars {
   completed: boolean;
   types: NaflType[];
   rakat: number;
-  date?: string;
+  /** The tracking day the nafl belongs to (never a civil date). */
+  date: string;
 }
 
 export interface SalatAnalytics {
@@ -359,16 +360,13 @@ const EMPTY_PRAYERS: Record<PrayerId, PrayerEntry> = {
 
 const EMPTY_NAFL: NaflEntry = { completed: false, types: [], rakat: 2 };
 
-// Salat is CIVIL-dated (midnight boundary) — NOT the Fajr tracking day. The
-// tracker always sends its own selectedDate; this is only the fallback/today.
-function localTodayStr(): string {
-  // The calendar date at the saved prayer place (the phone's without one).
-  return placeToday();
-}
+// Salat is dated by the TRACKING day (utils/trackingDay.ts: Fajr by default,
+// midnight or Maghrib by choice), so Isha prayed at 1 AM belongs to the day
+// before. Every call passes its own date; there is no civil-date fallback.
 
-export function useSalatLog(date?: string) {
+export function useSalatLog(date: string) {
   const user = useAuthStore((s) => s.user);
-  const resolvedDate = date ?? localTodayStr();
+  const resolvedDate = date;
   return useQuery({
     queryKey: ['salat', 'log', resolvedDate],
     queryFn: async () => {
@@ -411,7 +409,7 @@ export function useUpdatePrayer() {
       }
     },
     onMutate: async (vars) => {
-      const key = ['salat', 'log', vars.date ?? localTodayStr()];
+      const key = ['salat', 'log', vars.date];
       await qc.cancelQueries({ queryKey: key });
       const previous = qc.getQueryData<SalatLog>(key);
       qc.setQueryData<SalatLog>(key, (old) => {
@@ -471,7 +469,7 @@ export function useUpdatePrayer() {
     },
     onSettled: (_data, err, vars) => {
       if (err instanceof OfflineQueuedError) return; // nothing changed server-side yet
-      void qc.invalidateQueries({ queryKey: ['salat', 'log', vars.date ?? localTodayStr()] });
+      void qc.invalidateQueries({ queryKey: ['salat', 'log', vars.date] });
       void qc.invalidateQueries({ queryKey: ['salat', 'analytics'] });
       // A prayer moving into/out of 'missed' auto-adjusts the kaza debt server-side.
       void qc.invalidateQueries({ queryKey: ['salat', 'debt'] });
@@ -498,7 +496,7 @@ export function useUpdateNafl() {
       }
     },
     onMutate: async (vars) => {
-      const key = ['salat', 'log', vars.date ?? localTodayStr()];
+      const key = ['salat', 'log', vars.date];
       await qc.cancelQueries({ queryKey: key });
       const previous = qc.getQueryData<SalatLog>(key);
       qc.setQueryData<SalatLog>(key, (old) => {
@@ -527,7 +525,7 @@ export function useUpdateNafl() {
     },
     onSettled: (_data, err, vars) => {
       if (err instanceof OfflineQueuedError) return;
-      void qc.invalidateQueries({ queryKey: ['salat', 'log', vars.date ?? localTodayStr()] });
+      void qc.invalidateQueries({ queryKey: ['salat', 'log', vars.date] });
       void qc.invalidateQueries({ queryKey: ['salat', 'analytics'] });
     },
   });
@@ -642,7 +640,7 @@ export function useSalatDebtHistory(days = 30, todayOverride?: string) {
   const user = useAuthStore((s) => s.user);
   // The window's END date — must follow the selected period (e.g. the last day
   // of a past month), not always today, or a past-month view charts the wrong days.
-  const endDate = todayOverride ?? localTodayStr();
+  const endDate = todayOverride ?? getTrackingDay();
   return useQuery({
     queryKey: ['salat', 'debtHistory', days, endDate],
     queryFn: async () => {
