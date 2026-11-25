@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
@@ -19,10 +20,7 @@ export const SHARE_APP_URL = 'https://bustandeen.com';
 const OG_IMAGE = '/og-image.jpg';
 
 /** The invitation text, with or without the sharer's name. */
-export function shareAppMessage(
-  t: (key: string, opts?: Record<string, unknown>) => string,
-  name: string | null
-): string {
+export function shareAppMessage(t: TFunction, name: string | null): string {
   return name
     ? t('shareApp.messageNamed', { name, link: SHARE_APP_URL })
     : t('shareApp.message', { link: SHARE_APP_URL });

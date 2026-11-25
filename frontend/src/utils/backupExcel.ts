@@ -6,13 +6,14 @@
  * Rayhanah is deliberately left out (Istiak, 2026-10-10): spreadsheets get
  * shared more casually than a backup file. Read-only `records` stay out too.
  */
+import type { TFunction } from 'i18next';
 
 type Row = Record<string, string | number | null>;
 export interface Sheet {
   name: string;
   rows: Row[];
 }
-type T = (key: string, opts?: Record<string, unknown>) => string;
+type T = TFunction;
 
 // Loose view of the backup file: the server owns its shape (backup.service.ts).
 type Doc = Record<string, unknown>;

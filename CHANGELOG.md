@@ -17,6 +17,33 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 
 - `zustandSelectors.test.ts` (3 cases): no store hook builds an object or array in its selector, no default `create` import, and the detector itself catches the bad shape. It passes now and fails if someone adds such a selector.
 
+## v5.190.44 - i18next 27 and react-i18next 18 (audit P3-6) - 2026-11-25
+
+The two packages that translate the app, moved together (they must be: Dependabot's separate pull requests 376 and 378 both failed). Nothing visible changes.
+
+### Changed
+
+- `i18next` 26.4 to 27.2 and `react-i18next` 17.0 to 18.0.
+- **`returnEmptyString: true`** in `i18n.ts`. i18next 27 makes an empty translation fall back like a missing one. The locale files hold 33 deliberate empty strings (a special day's todo with no note, in en and bn), which must stay empty instead of showing English or the key. Other release-note changes were checked against the code: `fallbackLng: 'en'` is already set; `returnObjects` is used in one place and still passes it; language codes are lowercase `en`/`bn`; the escape change (`/` no longer escaped) only fixes text, and our interpolation does not escape anyway.
+- Six hand-written `t` parameter types (`(key, opts) => string`) are now i18next's own `TFunction`, which is what the new typings require (`ShareAppSheet`, `StatusBadges`, `salatParts`, `SalatKazaDebtCard`, `Friends`, `backupExcel`). Two tests that pass a plain function as `t` cast it.
+
+### Tests
+
+- `i18nEmptyString.test.ts` (3 cases): the init keeps `returnEmptyString`, and an empty value stays empty with it on and falls back with it off. It fails without the option.
+- The prerendered-page snapshot test (`nonBdSsr`) runs in CI on the pinned Node and would catch any change in the SEO pages' text.
+
+## v5.190.43 - Storage-rules test tools: firebase 13 with rules-unit-testing 6 (audit P3-6) - 2026-11-25
+
+Nothing in the app changes. These two packages only run the Storage rules tests (`firebase/`, CI job "Storage rules").
+
+### Changed
+
+- `firebase` 12.19 to 13.4 and `@firebase/rules-unit-testing` 5.0 to 6.0, together. Dependabot opened them as two pull requests (373, 365) and both failed at `npm ci`: rules-unit-testing 6 needs firebase 13, and rules-unit-testing 5 needs firebase 12, so neither could move alone. Superseded here.
+
+### Tests
+
+- No new test: the existing Storage rules suite is the test (the same cases, run on the new libraries by this pull request's CI). It could not be run on this machine, which has Java 17 and firebase-tools 15 needs 21.
+
 ## v5.190.42 - GitHub Actions moved to their current majors (audit P3-6) - 2026-11-25
 
 Nothing in the app changes. Dependabot opened five separate pull requests for this (366, 368, 370, 371, 372); they edit the same workflow lines, so they are applied together here and those five are superseded.
