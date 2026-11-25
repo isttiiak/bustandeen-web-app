@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.41',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: a lighter toolbox',
+        fixed: [
+          'We removed a development tool that nothing was using. Nothing changes in the app and your data is untouched.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: হালকা টুলবক্স',
+        fixed: [
+          'আমরা এমন একটি ডেভেলপমেন্ট টুল সরিয়ে দিয়েছি যা কেউ ব্যবহার করছিল না। অ্যাপে কিছু বদলায়নি এবং আপনার তথ্য অপরিবর্তিত।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.40',
     date: '2026-11-25',
     text: {

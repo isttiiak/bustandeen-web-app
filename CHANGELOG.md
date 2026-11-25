@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.41 - Dependency review: nodemon removed, decisions recorded (audit P3-6) - 2026-11-25
+
+Nothing in the app changes.
+
+### Changed
+
+- **`nodemon` removed** from the backend dev dependencies (and about 250 lockfile lines of its tree). Nothing used it: `npm run dev` runs `tsx watch`, and there was no nodemon config.
+
+### Reviewed, no change (decisions for the record)
+
+- **`xlsx` from the SheetJS CDN** (0.20.3, the fixed release; npm carries only the old vulnerable 0.18.5). It is used only to WRITE the "Export to Excel" file from the user's own data, never to read an uploaded file, which is where its past advisories applied. The lockfile pins the tarball's SHA-512, so a changed file fails the install. Cost: a build needs cdn.sheetjs.com up, and Dependabot cannot update it. Kept.
+- **TypeScript 7 (frontend) vs 5.9 (backend).** The backend stays on 5.x on purpose: `ts-jest` (29.4.15, the latest) accepts TypeScript below 7 only. Move it when ts-jest does.
+- **Dependabot's first batch** (14 pull requests): which are safe and which are real migrations is in the pull request description.
+
+### Tests
+
+- `ciHardening.test.ts` gains a case that fails while `nodemon` is in the backend package or lockfile.
+
 ## v5.190.40 - Vercel installs exactly what the lockfiles pin (audit P3-5) - 2026-11-25
 
 `vercel.json` ran `npm install` for the backend and frontend, which can pick newer versions than `package-lock.json` and rewrite it during the build. It now runs `npm ci`: the build gets the same packages CI tested, and fails if a lockfile and its `package.json` disagree. Nothing in the app changes.
