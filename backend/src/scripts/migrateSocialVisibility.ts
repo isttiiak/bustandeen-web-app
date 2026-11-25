@@ -5,6 +5,7 @@ import {
   migrateSocialVisibility,
   revertSocialVisibility,
 } from './lib/socialVisibilityMigration.js';
+import { DB_NAME, assertWriteAllowed } from '../config/database.js';
 
 /**
  * T3.6: write an explicit friends visibility on every pre-T3.6 profile,
@@ -24,7 +25,8 @@ const REVERT = process.argv.includes('--revert');
 async function main(): Promise<void> {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error('MONGODB_URI is not set');
-  await mongoose.connect(uri, { dbName: 'ihsan' });
+  assertWriteAllowed(uri, APPLY, process.argv);
+  await mongoose.connect(uri, { dbName: DB_NAME });
   const col = mongoose.connection.collection<ProfileDoc>('socialprofiles');
   const report = REVERT
     ? await revertSocialVisibility(col, { apply: APPLY })

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { DB_NAME } from './database.js';
 
 /**
  * Serverless-safe connection: the connect promise is cached at module scope so
@@ -17,7 +18,7 @@ export const connectDB = async (): Promise<void> => {
     mongoose.set('strictQuery', true);
     cached = mongoose
       .connect(uri, {
-        dbName: 'ihsan',
+        dbName: DB_NAME,
         // Indexes are managed explicitly: `npm run sync-indexes` (dry run),
         // then `npm run sync-indexes -- --apply`. Never build them implicitly
         // on a cold start, and never from local dev either: backend/.env points

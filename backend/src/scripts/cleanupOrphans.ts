@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 import { initFirebaseAdmin, isFirebaseInitialized } from '../config/firebaseAdmin.js';
 import { purgeAccountData } from '../services/user.service.js';
 import { ORPHAN_SOURCES, findOrphans } from './lib/orphanAccounts.js';
+import { DB_NAME, assertWriteAllowed } from '../config/database.js';
 
 /**
  * Backfill for accounts deleted before v5.128.1: purge the rows they left
@@ -37,7 +38,8 @@ async function stillInFirebase(uid: string): Promise<boolean> {
 async function main(): Promise<void> {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error('MONGODB_URI is not set');
-  await mongoose.connect(uri, { dbName: 'ihsan' });
+  assertWriteAllowed(uri, APPLY, process.argv);
+  await mongoose.connect(uri, { dbName: DB_NAME });
 
   const report = await findOrphans();
   process.stdout.write(`Orphan uids (no User row): ${report.uids.length}\n`);

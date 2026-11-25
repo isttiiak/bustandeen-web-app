@@ -2,6 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import { connectDB } from '../config/mongo.js';
 import { rewrapAll } from './lib/rewrapFields.js';
+import { DB_NAME, assertWriteAllowed } from '../config/database.js';
 
 /**
  * Re-seals encrypted fields (Rayhanah notes and body stats, bring-your-own Groq
@@ -22,12 +23,13 @@ const APPLY = process.argv.includes('--apply');
 async function run(): Promise<void> {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error('MONGODB_URI is not set');
+  assertWriteAllowed(uri, APPLY, process.argv);
   const host = uri
     .replace(/^mongodb(\+srv)?:\/\//, '')
     .replace(/^[^@]*@/, '')
     .split(/[/?]/)[0];
   process.stdout.write(
-    `${APPLY ? 'APPLYING' : 'DRY RUN (no writes)'}. Database "ihsan" on ${host}\n`
+    `${APPLY ? 'APPLYING' : 'DRY RUN (no writes)'}. Database "${DB_NAME}" on ${host}\n`
   );
   await connectDB();
   const counts = await rewrapAll({ apply: APPLY });

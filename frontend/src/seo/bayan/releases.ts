@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.38',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: safer data tools',
+        fixed: [
+          'We added a safer way for us to make changes to stored data, with a practice run first, and a guard so a tool cannot change live data by accident. Nothing changes in the app and your data is untouched.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: আরও নিরাপদ ডেটা টুল',
+        fixed: [
+          'সংরক্ষিত তথ্যে পরিবর্তন আনার জন্য আমরা আরও নিরাপদ একটি পদ্ধতি যোগ করেছি, যেখানে আগে একটি মহড়া চলে, আর ভুলবশত আসল তথ্য বদলে ফেলা ঠেকাতে একটি সুরক্ষা আছে। অ্যাপে কিছু বদলায়নি এবং আপনার তথ্য অপরিবর্তিত।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.37',
     date: '2026-11-25',
     text: {

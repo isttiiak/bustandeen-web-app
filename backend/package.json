@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.190.37",
+  "version": "5.190.38",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,6 +10,7 @@
     "lint": "cd .. && eslint backend --config eslint.config.js",
     "typecheck": "tsc --noEmit",
     "sync-indexes": "tsx src/scripts/syncIndexes.ts",
+    "migrate": "tsx src/scripts/migrate.ts",
     "migrate:social-visibility": "tsx src/scripts/migrateSocialVisibility.ts",
     "audit:future-accrual": "tsx src/scripts/countFutureAccruals.ts",
     "audit:open-cycles": "tsx src/scripts/countOpenCycles.ts",
