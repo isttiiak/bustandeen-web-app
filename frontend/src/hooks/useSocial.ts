@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import i18n from '../i18n.js';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
@@ -147,7 +148,11 @@ export function useUnfriend() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['social'] });
     },
-    onError: () => toast.error('Could not remove friend — try again.', { id: 'social-unfriend' }),
+    onError: () =>
+      toast.error(
+        i18n.t('friends.toast.unfriendFail', 'Could not remove this friend. Please try again.'),
+        { id: 'social-unfriend' }
+      ),
   });
 }
 
@@ -209,7 +214,10 @@ export function useAcceptRequest() {
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['social'] }),
     onError: () =>
-      toast.error('Could not accept the request — try again.', { id: 'social-accept' }),
+      toast.error(
+        i18n.t('friends.toast.acceptFail', 'Could not accept the request. Please try again.'),
+        { id: 'social-accept' }
+      ),
   });
 }
 
@@ -222,7 +230,10 @@ export function useRejectRequest() {
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['social', 'requests'] }),
     onError: () =>
-      toast.error('Could not reject the request — try again.', { id: 'social-reject' }),
+      toast.error(
+        i18n.t('friends.toast.rejectFail', 'Could not reject the request. Please try again.'),
+        { id: 'social-reject' }
+      ),
   });
 }
 
@@ -250,7 +261,11 @@ export function useBlockUser() {
       return targetUid;
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['social'] }),
-    onError: () => toast.error('Could not block this user — try again.', { id: 'social-block' }),
+    onError: () =>
+      toast.error(
+        i18n.t('friends.toast.blockFail', 'Could not block this user. Please try again.'),
+        { id: 'social-block' }
+      ),
   });
 }
 
@@ -263,7 +278,10 @@ export function useUnblockUser() {
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['social', 'blocked'] }),
     onError: () =>
-      toast.error('Could not unblock this user — try again.', { id: 'social-unblock' }),
+      toast.error(
+        i18n.t('friends.toast.unblockFail', 'Could not unblock this user. Please try again.'),
+        { id: 'social-unblock' }
+      ),
   });
 }
 
@@ -283,8 +301,12 @@ export function useSetPrivacy() {
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['social'] }),
     onError: () =>
-      toast.error('Could not update your privacy setting. Please try again.', {
-        id: 'social-privacy',
-      }),
+      toast.error(
+        i18n.t(
+          'friends.toast.privacyFail',
+          'Could not update your privacy setting. Please try again.'
+        ),
+        { id: 'social-privacy' }
+      ),
   });
 }

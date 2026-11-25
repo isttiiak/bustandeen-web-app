@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.53',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Friends messages now appear in your language',
+        fixed: [
+          'When something goes wrong on the Friends page, such as removing a friend or accepting a request, the message now appears in Bangla if you use Bangla. Nothing in your data changed.',
+        ],
+      },
+      bn: {
+        title: 'বন্ধুদের পাতার বার্তা এখন আপনার ভাষায়',
+        fixed: [
+          'বন্ধুদের পাতায় কিছু ঠিকমতো না হলে, যেমন বন্ধু সরানো বা অনুরোধ গ্রহণ করা, আপনি বাংলা ব্যবহার করলে এখন বার্তাটি বাংলায় দেখাবে। আপনার তথ্যে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.52',
     date: '2026-11-26',
     text: {
