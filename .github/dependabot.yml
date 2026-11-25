@@ -73,3 +73,33 @@ updates:
         update-types: ['version-update:semver-major']
       - dependency-name: 'vite'
         update-types: ['version-update:semver-major']
+
+  # Pinned action SHAs (audit P3-4): Dependabot reads the "# vX.Y.Z" comment
+  # and moves both together. A new major arrives as its own PR to read first.
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+    groups:
+      actions:
+        patterns: ['*']
+        update-types: ['minor', 'patch']
+    open-pull-requests-limit: 5
+    labels:
+      - 'dependencies'
+      - 'ci'
+
+  # firebase/ holds the Storage-rules emulator tests (CI job "Storage rules").
+  - package-ecosystem: 'npm'
+    directory: '/firebase'
+    schedule:
+      interval: 'weekly'
+    groups:
+      minor-and-patch:
+        update-types:
+          - 'minor'
+          - 'patch'
+    open-pull-requests-limit: 5
+    labels:
+      - 'dependencies'
+      - 'firebase'

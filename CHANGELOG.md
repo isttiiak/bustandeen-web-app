@@ -2,6 +2,32 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.39 - CI hardening: least privilege, pinned actions, CodeQL, secret scan (audit P3-4) - 2026-11-25
+
+Nothing in the app changes. The workflows around it get safer; this repository is public and its workflows run on every pull request.
+
+### Changed
+
+- **Token permissions** (`permissions: contents: read`) on `ci.yml` and `storage-rules.yml`; the others already had them. The checkout token is no longer left in the workspace (`persist-credentials: false`).
+- **Actions pinned to full commit SHAs** (with a `# vX.Y.Z` comment), same majors as before: checkout v4.4.0, setup-node v4.4.0, cache v4.3.0, upload-artifact v4.6.2, setup-java v4.9.1. No upgrade happens in this release.
+- **`concurrency`** on CI: a new push to a pull request cancels its old run; runs on `main` are never cancelled. **`timeout-minutes`** on every job (30 min for the main job, which takes about 10).
+- **`api/index.ts`** (the Vercel function entry) is now linted and typechecked: `npm run lint` runs `lint:api`, `npm run typecheck` runs `typecheck:api` (new `api/tsconfig.json`). It was in neither before.
+
+### Added
+
+- **CodeQL** (`codeql.yml`): JavaScript/TypeScript and the workflows themselves, on pull requests, on `main` and weekly. Results appear under Security > Code scanning.
+- **Secret scan** (`gitleaks.yml`): fails a pull request that adds something that looks like a secret.
+- **Dependabot** for `github-actions` (reads the version comment, moves SHA and comment together) and for `/firebase`.
+
+### Tests
+
+- `frontend/src/ciHardening.test.ts` (21 cases): every workflow sets permissions, pins every action to a 40-character SHA, bounds every job, keeps no checkout token; CI cancels only pull-request runs; CodeQL covers code and workflows; Dependabot covers actions and `/firebase`; `api/` is in lint and typecheck. 15 of them fail on the old workflows.
+
+### Not done
+
+- OIDC instead of a service-account file: the deploy workflow is a no-op until a `FIREBASE_SERVICE_ACCOUNT` secret exists, so there is nothing to replace yet.
+- Branch protection (requiring these checks) and "Allow Actions only from selected sources": owner decisions, not changed.
+
 ## v5.190.38 - Migration runner, one database name, write scripts refuse a hosted database without --production (audit P3-1 code side, P3-2) - 2026-11-25
 
 Nothing in the app changes and no stored data was touched: this is tooling for the operator scripts.
