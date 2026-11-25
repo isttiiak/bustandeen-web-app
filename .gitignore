@@ -66,6 +66,9 @@ CLAUDE.md
 
 ihsan-feature-audit-2026.md
 
+# Generated print-sheet output (PDFs and PNGs, about 9 MB); the prototype HTML next to it is tracked
+docs/design/ramadan-print-sheet/
+
 # Markdown docs — keep only README files tracked (repo-facing); TODO lists,
 # changelogs, session notes and internal docs stay local-only.
 *.md

@@ -1,0 +1,1536 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ramadan Print Sheet</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=El+Messiri:wght@500;600;700&family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Prototype v2 (planning only, not app code), 2026-10-17.
+         ONE A4 Ramadan sheet for every SEO city, three print options:
+           1. Timetable (Laylat al-Qadr du'a + Zakat al-Fitr at the side)
+           2. Timetable + checklist (prayers, tarawih, Quran, nafl on the same rows)
+           3. A separate one-page Ramadan checklist
+         each in black and white or colour. Times are real: the site's own
+         ramadanPlan + calc.ts (country default method, v5.178.0). Iftar = the
+         country's Maghrib convention, method minutes kept (Istiak 2026-10-17,
+         decision C revised). Bangladesh calibrated to Islamic Foundation's
+         2026 Dhaka timetable: sehri -3 min, iftar +3 min (flat, all year), so ours is never
+         later for sehri nor earlier for iftar. Dhaka uses the live BD
+         moon-sighting records. QR codes
+         are real (seo/utils/qr.ts). The Arabic du'a is copied verbatim from
+         the Ibn Majah 3850 / Tirmidhi 3513 matn, never retyped. */
+      :root {
+        --page: #d9dccd;
+        --pageInk: #1f2418;
+        --pageMuted: #4b5440;
+        --display: 'El Messiri', 'Hind Siliguri', Georgia, serif;
+        --body: 'Plus Jakarta Sans', 'Hind Siliguri', system-ui, sans-serif;
+        --bn: 'Hind Siliguri', 'Plus Jakarta Sans', system-ui, sans-serif;
+        --ar: 'Amiri', 'Scheherazade New', serif;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme='light']) {
+          --page: #2b2a26;
+          --pageInk: #e8e2d4;
+          --pageMuted: #b5ad9b;
+          color-scheme: dark;
+        }
+      }
+      :root[data-theme='dark'] {
+        --page: #2b2a26;
+        --pageInk: #e8e2d4;
+        --pageMuted: #b5ad9b;
+        color-scheme: dark;
+      }
+      /* Bustan tokens (styles/global.css), RGB channels as in the app. */
+      .t-dark {
+        --void: 14 13 10;
+        --deep: 26 24 18;
+        --shade: 20 19 14;
+        --border: 58 52 37;
+        --emerald: 122 158 110;
+        --emerald-dim: 90 122 80;
+        --gold: 201 169 110;
+        --info: 90 158 142;
+        --ink: 255 255 255;
+        --hero: 42 38 23;
+        --elev: 0 4px 14px rgb(0 0 0 / 0.45);
+      }
+      .t-light {
+        --void: 237 239 226;
+        --deep: 248 248 239;
+        --shade: 230 234 216;
+        --border: 198 206 176;
+        --emerald: 54 81 46;
+        --emerald-dim: 58 86 50;
+        --gold: 95 74 24;
+        --info: 40 91 81;
+        --ink: 31 36 24;
+        --hero: 217 227 198;
+        --elev: 0 6px 18px rgb(60 70 40 / 0.18);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--page);
+        color: var(--pageInk);
+        font-family: var(--body);
+        padding: 20px 16px 48px;
+        overflow-x: hidden;
+      }
+      .doc {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      h1.proto {
+        font-family: var(--display);
+        font-size: 1.5rem;
+        margin: 0 0 4px;
+      }
+      .lede {
+        margin: 0 0 14px;
+        color: var(--pageMuted);
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      .bar .lbl {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--pageMuted);
+        width: 100%;
+      }
+      .seg {
+        display: inline-flex;
+        flex-wrap: wrap;
+        border: 1px solid color-mix(in srgb, var(--pageInk) 25%, transparent);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .seg button {
+        min-height: 44px;
+        padding: 0 14px;
+        border: 0;
+        background: transparent;
+        color: var(--pageInk);
+        font: 600 0.85rem var(--body);
+        cursor: pointer;
+      }
+      .seg button[aria-pressed='true'] {
+        background: var(--pageInk);
+        color: var(--page);
+      }
+      .proofs {
+        margin: 6px 0 16px;
+        font-size: 0.82rem;
+        color: var(--pageMuted);
+      }
+      .proofs a {
+        color: inherit;
+      }
+      .cap {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--pageMuted);
+        margin: 18px 0 8px;
+        text-align: center;
+      }
+      [hidden] {
+        display: none !important;
+      }
+
+      /* ---------- screen view (the live page, Bustan look) ---------- */
+      .screen {
+        background: rgb(var(--void));
+        color: rgb(var(--ink));
+        border-radius: 20px;
+        padding: 16px;
+        box-shadow: var(--elev);
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      [lang='bn'] {
+        font-family: var(--bn);
+      }
+      .ar {
+        font-family: var(--ar);
+        direction: rtl;
+        unicode-bidi: isolate;
+      }
+      .hero {
+        border: 1px solid rgb(var(--border));
+        border-radius: 999px 999px 20px 20px;
+        background: linear-gradient(rgb(var(--hero)), rgb(var(--deep)));
+        padding: 34px 18px 18px;
+        text-align: center;
+      }
+      .hero .leaf {
+        color: rgb(var(--gold));
+      }
+      .hero .kicker {
+        margin: 2px 0 0;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: rgb(var(--gold));
+        letter-spacing: 0.04em;
+      }
+      .hero h2 {
+        margin: 4px 0 0;
+        font-family: var(--display);
+        font-size: 1.5rem;
+        line-height: 1.3;
+      }
+      .hero p {
+        margin: 6px 0 0;
+        font-size: 0.875rem;
+        color: rgb(var(--ink) / 0.72);
+      }
+      .facts {
+        margin-top: 12px;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .fact {
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--deep));
+        border-radius: 12px;
+        padding: 8px 10px;
+        text-align: center;
+      }
+      .fact .k {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: rgb(var(--ink) / 0.62);
+      }
+      .fact .v {
+        margin-top: 2px;
+        font-size: 0.92rem;
+        font-weight: 800;
+        color: rgb(var(--gold));
+        font-variant-numeric: tabular-nums;
+      }
+      .fact .d {
+        font-size: 0.68rem;
+        color: rgb(var(--ink) / 0.62);
+      }
+      .durline {
+        margin: 8px 2px 0;
+        font-size: 0.8rem;
+        color: rgb(var(--ink) / 0.75);
+        text-align: center;
+      }
+      .dls {
+        margin-top: 14px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .dl {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 44px;
+        padding: 0 14px;
+        border: 1px solid rgb(var(--border));
+        border-radius: 12px;
+        background: rgb(var(--deep));
+        color: rgb(var(--ink));
+        font: 700 0.82rem inherit;
+        font-family: inherit;
+        cursor: pointer;
+      }
+      .dl.primary {
+        background: rgb(var(--emerald-dim));
+        border-color: transparent;
+        color: #fff;
+      }
+      .dlhint {
+        margin: 6px 0 0;
+        font-size: 0.75rem;
+        opacity: 0.7;
+      }
+      .tablecard {
+        margin-top: 14px;
+        border: 1px solid rgb(var(--border));
+        border-radius: 20px;
+        background: rgb(var(--deep));
+        overflow-x: auto;
+        box-shadow: var(--elev);
+      }
+      .screen table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        font-variant-numeric: tabular-nums;
+      }
+      .screen thead th {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: rgb(var(--ink) / 0.7);
+        padding: 10px 8px;
+        text-align: start;
+      }
+      .screen thead .c {
+        text-align: center;
+      }
+      .screen tbody td,
+      .screen tbody th {
+        border-top: 1px solid rgb(var(--border) / 0.6);
+        padding: 8px;
+        text-align: start;
+      }
+      .screen tbody th {
+        padding-inline-start: 12px;
+        white-space: nowrap;
+      }
+      .screen tbody td:nth-child(2) {
+        white-space: nowrap;
+      }
+      .screen .wd {
+        display: block;
+        font-size: 0.72rem;
+        color: rgb(var(--ink) / 0.6);
+      }
+      .screen .sh {
+        color: rgb(var(--emerald));
+        font-weight: 700;
+        text-align: center;
+      }
+      .screen .if {
+        color: rgb(var(--gold));
+        font-weight: 700;
+        text-align: center;
+      }
+      .screen .star {
+        color: rgb(var(--gold));
+        margin-inline-start: 3px;
+      }
+      .screen tr.odd th,
+      .screen tr.odd td {
+        background: rgb(var(--gold) / 0.07);
+      }
+      .screen tr.p30 td,
+      .screen tr.p30 th {
+        color: rgb(var(--ink) / 0.65);
+        border-top: 1px dashed rgb(var(--gold) / 0.6);
+      }
+      .screen tr.p30label td {
+        border-top: 1px solid rgb(var(--border) / 0.6);
+        background: rgb(var(--shade) / 0.35);
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: rgb(var(--gold));
+        padding: 5px 12px;
+      }
+      .blocks {
+        margin-top: 14px;
+        display: grid;
+        gap: 10px;
+      }
+      .block {
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--deep));
+        border-radius: 20px;
+        padding: 12px 14px;
+        font-size: 0.85rem;
+        line-height: 1.5;
+      }
+      .block h3 {
+        margin: 0 0 6px;
+        font-size: 0.8rem;
+        color: rgb(var(--gold));
+      }
+      .block .ar {
+        font-size: 1.45rem;
+        line-height: 1.7;
+        text-align: center;
+        margin: 2px 0 4px;
+      }
+      .block .tr {
+        font-style: italic;
+        font-weight: 600;
+      }
+      .block .src {
+        margin-top: 4px;
+        font-size: 0.72rem;
+        opacity: 0.75;
+      }
+      .screen a {
+        color: rgb(var(--gold));
+      }
+      .about {
+        margin-top: 14px;
+        border: 1px solid rgb(var(--border));
+        background: rgb(var(--deep));
+        border-radius: 20px;
+        overflow: hidden;
+      }
+      .about h3 {
+        margin: 0;
+        padding: 12px 14px 4px;
+        font-size: 0.9rem;
+        font-family: var(--display);
+      }
+      .about details {
+        border-top: 1px solid rgb(var(--border) / 0.6);
+      }
+      .about details:first-of-type {
+        border-top: 0;
+      }
+      .about summary {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        padding: 0 14px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .about details p {
+        margin: 0;
+        padding: 0 14px 12px;
+        font-size: 0.82rem;
+        line-height: 1.55;
+        color: rgb(var(--ink) / 0.8);
+      }
+
+      /* ---------- A4 paper ---------- */
+      .paperwrap {
+        margin: 0 auto;
+        width: fit-content;
+      }
+      .paper {
+        /* Ink tokens: black and white by default, colour with .ink-color. */
+        --p-ink: #111;
+        --p-head: #111;
+        --p-rule: #111;
+        --p-thin: #bbb;
+        --p-thead: #e6e6e6;
+        --p-zebra: #f2f2f2;
+        --p-sh: #111;
+        --p-if: #111;
+        --p-star: #111;
+        --p-odd: transparent;
+        --p-boxline: #111;
+        --p-boxhead: #111;
+        width: 210mm;
+        height: 297mm;
+        background: #fff;
+        color: var(--p-ink);
+        padding: 9mm 11mm 8mm;
+        box-shadow: 0 6px 24px rgb(0 0 0 / 0.25);
+        display: flex;
+        flex-direction: column;
+        font-size: 9pt;
+        line-height: 1.3;
+        overflow: hidden;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .paper.ink-color {
+        --p-ink: #1f2418;
+        --p-head: #36512e;
+        --p-rule: #36512e;
+        --p-thin: #d3d9c2;
+        --p-thead: #dfe8d3;
+        --p-zebra: #f5f6ee;
+        --p-sh: #36512e;
+        --p-if: #8a5418;
+        --p-star: #b07d1e;
+        --p-odd: #fbf1dc;
+        --p-boxline: #9fb08c;
+        --p-boxhead: #7a5512;
+      }
+      .ph {
+        display: flex;
+        justify-content: space-between;
+        gap: 6mm;
+        border-bottom: 0.8mm solid var(--p-rule);
+        padding-bottom: 2.5mm;
+      }
+      .ph .brand {
+        display: flex;
+        align-items: center;
+        gap: 1.5mm;
+        font: 700 8.5pt var(--display);
+        letter-spacing: 0.04em;
+        color: var(--p-head);
+      }
+      .ph .ttl {
+        margin: 1mm 0 0;
+        font: 700 18pt/1.15 var(--display);
+        color: var(--p-head);
+      }
+      .paper[lang='bn'] .ph .ttl {
+        font-family: var(--bn);
+        font-size: 17pt;
+      }
+      .ph .place {
+        margin: 1mm 0 0;
+        font-size: 12.5pt;
+        font-weight: 700;
+      }
+      .ph .sub {
+        margin: 0.6mm 0 0;
+        font-size: 9.5pt;
+      }
+      .ph .name {
+        margin: 2mm 0 0;
+        font-size: 10pt;
+      }
+      .ph .name span {
+        display: inline-block;
+        width: 70mm;
+        border-bottom: 0.3mm solid var(--p-ink);
+      }
+      .ph figure {
+        margin: 0;
+        width: 26mm;
+        flex: none;
+        text-align: center;
+      }
+      .ph figure svg {
+        display: block;
+        width: 24mm;
+        height: 24mm;
+        margin: 0 auto;
+      }
+      .ph figcaption {
+        font-size: 7pt;
+        line-height: 1.2;
+        margin-top: 0.5mm;
+      }
+      .pbody {
+        margin-top: 3mm;
+        flex: 1;
+        display: grid;
+        grid-template-columns: 112mm minmax(0, 1fr);
+        gap: 5mm;
+        align-items: start;
+      }
+      .pbody.full {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      .ptable {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-variant-numeric: tabular-nums;
+      }
+      .ptable thead th {
+        background: var(--p-thead);
+        border-top: 0.4mm solid var(--p-rule);
+        border-bottom: 0.4mm solid var(--p-rule);
+        font-size: 8.5pt;
+        font-weight: 700;
+        padding: 1.2mm 1.2mm;
+        text-align: start;
+        line-height: 1.15;
+        vertical-align: bottom;
+        color: var(--p-head);
+      }
+      .ptable thead th.c {
+        text-align: center;
+      }
+      .ptable thead th.grp {
+        border-bottom: 0.2mm solid var(--p-rule);
+        text-align: center;
+        padding: 0.8mm;
+      }
+      .ptable tbody td,
+      .ptable tbody th {
+        border-bottom: 0.2mm solid var(--p-thin);
+        padding: 0 1.2mm;
+        height: var(--rowh, 7.1mm);
+        font-size: 11pt;
+        text-align: start;
+        line-height: 1;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .ptable tbody tr:nth-child(even of :not(.p30label)) > * {
+        background: var(--p-zebra);
+      }
+      .ptable tbody tr.odd > * {
+        background: var(--p-odd);
+      }
+      .paper:not(.ink-color) .ptable tbody tr.odd > * {
+        background: inherit;
+      }
+      .ptable th.n {
+        font-weight: 700;
+      }
+      .ptable .t {
+        text-align: center;
+        font-weight: 700;
+        font-size: 13pt;
+      }
+      .ptable td.sh {
+        color: var(--p-sh);
+      }
+      .ptable td.if {
+        color: var(--p-if);
+      }
+      .ptable .star {
+        color: var(--p-star);
+        font-size: 9.5pt;
+        margin-inline-start: 0.8mm;
+      }
+      .ptable tr.wk > * {
+        border-bottom: 0.4mm solid var(--p-rule);
+      }
+      .ptable tr.p30label td {
+        background: #fff;
+        border-bottom: 0;
+        padding-top: 1.2mm;
+        height: auto;
+        font-size: 8pt;
+        font-weight: 700;
+        font-style: italic;
+        white-space: normal;
+        line-height: 1.25;
+      }
+      .ptable tr.p30 > * {
+        background: #fff !important;
+        border-top: 0.35mm dashed var(--p-rule);
+        border-bottom: 0.35mm dashed var(--p-rule);
+      }
+      /* checklist cells */
+      .ptable td.ck {
+        text-align: center;
+        padding: 0;
+      }
+      .box {
+        display: inline-block;
+        width: 4.2mm;
+        height: 4.2mm;
+        border: 0.3mm solid var(--p-ink);
+        border-radius: 0.8mm;
+        vertical-align: middle;
+        background: #fff;
+      }
+      .ptable td.wr {
+        border-left: 0.2mm solid var(--p-thin);
+      }
+      .ptable.compact tbody td,
+      .ptable.compact tbody th {
+        font-size: 10pt;
+      }
+      .ptable.combined {
+        --rowh: 7mm;
+      }
+      .ptable.dense {
+        --rowh: 5.75mm;
+      }
+      .ptable.dense .box {
+        width: 3.8mm;
+        height: 3.8mm;
+      }
+      .ptable thead tr + tr th {
+        font-size: 7.2pt;
+        padding: 0.8mm 0.2mm;
+      }
+      .ptable.dense thead th {
+        white-space: normal;
+        font-size: 7pt;
+        padding: 0.8mm 0.4mm;
+      }
+      .ptable.compact .t {
+        font-size: 11.5pt;
+      }
+      .ptable.compact thead th {
+        font-size: 7.6pt;
+      }
+      .pfootnote {
+        margin: 1.6mm 0 0;
+        font-size: 8pt;
+      }
+      .paside {
+        display: flex;
+        flex-direction: column;
+        gap: 3mm;
+      }
+      .pblock {
+        border: 0.35mm solid var(--p-boxline);
+        border-radius: 2.5mm;
+        padding: 2.4mm 3mm;
+        font-size: 9pt;
+        line-height: 1.38;
+      }
+      .pblock h4 {
+        margin: 0 0 1.2mm;
+        font-size: 10pt;
+        color: var(--p-boxhead);
+      }
+      .pblock .ar {
+        font-size: 15pt;
+        white-space: nowrap;
+        line-height: 1.75;
+        text-align: center;
+        margin: 0.5mm 0 1mm;
+      }
+      .pblock .tr {
+        font-style: italic;
+        font-weight: 700;
+      }
+      .pblock .src {
+        margin-top: 1mm;
+        font-size: 7.8pt;
+      }
+      .pblock p {
+        margin: 0 0 1mm;
+      }
+      .pfoot {
+        margin-top: 2mm;
+        border-top: 0.3mm solid var(--p-rule);
+        padding-top: 1.2mm;
+        font-size: 7.5pt;
+      }
+      /* separate checklist */
+      .goals {
+        margin-top: 3mm;
+        display: grid;
+        grid-template-columns: 1.15fr 1fr;
+        gap: 4mm;
+      }
+      .goal {
+        border: 0.35mm solid var(--p-boxline);
+        border-radius: 2.5mm;
+        padding: 2mm 3mm;
+        font-size: 8.5pt;
+      }
+      .goal h4 {
+        margin: 0 0 1.2mm;
+        font-size: 9.5pt;
+        color: var(--p-boxhead);
+      }
+      .juz {
+        display: grid;
+        grid-template-columns: repeat(15, 1fr);
+        gap: 1mm;
+      }
+      .juz span {
+        aspect-ratio: 1;
+        border: 0.3mm solid var(--p-ink);
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-size: 7.5pt;
+        font-weight: 700;
+      }
+      .lines div {
+        border-bottom: 0.25mm solid var(--p-thin);
+        height: 6mm;
+      }
+      .eidline {
+        margin-top: 2mm;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2mm 7mm;
+        font-size: 9.5pt;
+        font-weight: 600;
+      }
+      .eidline .box {
+        margin-inline-end: 1.5mm;
+      }
+
+      @media print {
+        @page {
+          size: A4;
+          margin: 0;
+        }
+        html,
+        body {
+          background: #fff !important;
+          padding: 0 !important;
+          margin: 0 !important;
+          color-scheme: light !important;
+        }
+        body > .doc > :not(#printTarget) {
+          display: none !important;
+        }
+        #printTarget .cap,
+        #screenCol {
+          display: none !important;
+        }
+        #printCol {
+          display: block !important;
+        }
+        .paperwrap {
+          zoom: 1 !important;
+        }
+        .paper {
+          box-shadow: none;
+        }
+        .doc {
+          max-width: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="doc">
+      <div id="intro">
+        <h1 class="proto">One Ramadan sheet for every city</h1>
+        <p class="lede">
+          Prototype v2 for approval (Ramadan 1448 / 2027). Pick a city, a print option and the ink.
+          The screen view is the live page: every explanation lives there now, so the paper only
+          carries times, the star marks and the two blocks you chose. Iftar follows each country's
+          Maghrib convention.
+        </p>
+        <div class="bar">
+          <span class="lbl">City</span>
+          <div class="seg" id="segCity"></div>
+        </div>
+        <div class="bar">
+          <span class="lbl">Print option</span>
+          <div class="seg" id="segVariant">
+            <button type="button" data-v="timetable">1. Timetable</button>
+            <button type="button" data-v="combined">2. Timetable + checklist</button>
+            <button type="button" data-v="checklist">3. Separate checklist</button>
+          </div>
+          <div class="seg" id="segInk">
+            <button type="button" data-v="color">Colour</button>
+            <button type="button" data-v="bw">Black and white</button>
+          </div>
+        </div>
+        <div class="bar">
+          <span class="lbl">Screen</span>
+          <div class="seg" id="segTheme">
+            <button type="button" data-v="dark">Dark</button>
+            <button type="button" data-v="light">Light</button>
+          </div>
+          <div class="seg" id="segView">
+            <button type="button" data-v="both">Screen + paper</button>
+            <button type="button" data-v="screen">Screen</button>
+            <button type="button" data-v="print">Paper</button>
+          </div>
+        </div>
+        <p class="proofs">
+          Proof (Playwright page.pdf): one A4 page for every city x option x ink. PDFs and
+          screenshots in <a href="ramadan-print-sheet/">ramadan-print-sheet/</a>.
+        </p>
+      </div>
+      <div id="printTarget">
+        <div id="screenCol">
+          <p class="cap">Screen view (live page)</p>
+          <div id="screen"></div>
+        </div>
+        <div id="printCol">
+          <p class="cap" id="paperCap">Paper (A4)</p>
+          <div class="paperwrap" id="paperwrap"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const DATA = {
+        'dhaka-bangladesh': {
+          lat: 23.7104,
+          lng: 90.4074,
+          tz: 'Asia/Dhaka',
+          method: 'Karachi',
+          fajrAngle: 18,
+          methodMaghribMinutes: 0,
+          adj: { fajr: -3, maghrib: 3 },
+          days: [
+            { fast: 1, date: '2027-02-09', fajr: '05:16', maghrib: '17:53', mins: 757 },
+            { fast: 2, date: '2027-02-10', fajr: '05:15', maghrib: '17:54', mins: 759 },
+            { fast: 3, date: '2027-02-11', fajr: '05:15', maghrib: '17:54', mins: 759 },
+            { fast: 4, date: '2027-02-12', fajr: '05:14', maghrib: '17:55', mins: 761 },
+            { fast: 5, date: '2027-02-13', fajr: '05:14', maghrib: '17:55', mins: 761 },
+            { fast: 6, date: '2027-02-14', fajr: '05:13', maghrib: '17:56', mins: 763 },
+            { fast: 7, date: '2027-02-15', fajr: '05:13', maghrib: '17:57', mins: 764 },
+            { fast: 8, date: '2027-02-16', fajr: '05:12', maghrib: '17:57', mins: 765 },
+            { fast: 9, date: '2027-02-17', fajr: '05:11', maghrib: '17:58', mins: 767 },
+            { fast: 10, date: '2027-02-18', fajr: '05:11', maghrib: '17:58', mins: 767 },
+            { fast: 11, date: '2027-02-19', fajr: '05:10', maghrib: '17:59', mins: 769 },
+            { fast: 12, date: '2027-02-20', fajr: '05:09', maghrib: '17:59', mins: 770 },
+            { fast: 13, date: '2027-02-21', fajr: '05:09', maghrib: '18:00', mins: 771 },
+            { fast: 14, date: '2027-02-22', fajr: '05:08', maghrib: '18:00', mins: 772 },
+            { fast: 15, date: '2027-02-23', fajr: '05:07', maghrib: '18:01', mins: 774 },
+            { fast: 16, date: '2027-02-24', fajr: '05:07', maghrib: '18:02', mins: 775 },
+            { fast: 17, date: '2027-02-25', fajr: '05:06', maghrib: '18:02', mins: 776 },
+            { fast: 18, date: '2027-02-26', fajr: '05:05', maghrib: '18:03', mins: 778 },
+            { fast: 19, date: '2027-02-27', fajr: '05:04', maghrib: '18:03', mins: 779 },
+            { fast: 20, date: '2027-02-28', fajr: '05:03', maghrib: '18:04', mins: 781 },
+            { fast: 21, date: '2027-03-01', fajr: '05:03', maghrib: '18:04', mins: 781 },
+            { fast: 22, date: '2027-03-02', fajr: '05:02', maghrib: '18:05', mins: 783 },
+            { fast: 23, date: '2027-03-03', fajr: '05:01', maghrib: '18:05', mins: 784 },
+            { fast: 24, date: '2027-03-04', fajr: '05:00', maghrib: '18:05', mins: 785 },
+            { fast: 25, date: '2027-03-05', fajr: '04:59', maghrib: '18:06', mins: 787 },
+            { fast: 26, date: '2027-03-06', fajr: '04:58', maghrib: '18:06', mins: 788 },
+            { fast: 27, date: '2027-03-07', fajr: '04:57', maghrib: '18:07', mins: 790 },
+            { fast: 28, date: '2027-03-08', fajr: '04:57', maghrib: '18:07', mins: 790 },
+            { fast: 29, date: '2027-03-09', fajr: '04:56', maghrib: '18:08', mins: 792 },
+          ],
+          possible30: { fast: 30, date: '2027-03-10', fajr: '04:55', maghrib: '18:08', mins: 793 },
+          url: 'https://bustandeen.com/bn/ramadan-calendar/dhaka-bangladesh/2027',
+          qr: {
+            size: 41,
+            d: 'M2 2h7v1h-7zM11 2h4v1h-4zM19 2h1v1h-1zM30 2h1v1h-1zM32 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM13 3h2v1h-2zM16 3h1v1h-1zM18 3h1v1h-1zM22 3h1v1h-1zM24 3h3v1h-3zM28 3h3v1h-3zM32 3h1v1h-1zM38 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM10 4h1v1h-1zM14 4h1v1h-1zM16 4h1v1h-1zM23 4h1v1h-1zM25 4h1v1h-1zM28 4h1v1h-1zM32 4h1v1h-1zM34 4h3v1h-3zM38 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM10 5h1v1h-1zM12 5h3v1h-3zM16 5h1v1h-1zM19 5h1v1h-1zM25 5h5v1h-5zM32 5h1v1h-1zM34 5h3v1h-3zM38 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h2v1h-2zM15 6h2v1h-2zM18 6h4v1h-4zM23 6h1v1h-1zM25 6h1v1h-1zM27 6h1v1h-1zM30 6h1v1h-1zM32 6h1v1h-1zM34 6h3v1h-3zM38 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h2v1h-2zM15 7h2v1h-2zM19 7h1v1h-1zM23 7h1v1h-1zM26 7h1v1h-1zM29 7h1v1h-1zM32 7h1v1h-1zM38 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM30 8h1v1h-1zM32 8h7v1h-7zM10 9h2v1h-2zM13 9h2v1h-2zM16 9h1v1h-1zM19 9h8v1h-8zM29 9h2v1h-2zM2 10h1v1h-1zM4 10h5v1h-5zM11 10h4v1h-4zM16 10h3v1h-3zM21 10h1v1h-1zM23 10h1v1h-1zM27 10h1v1h-1zM29 10h2v1h-2zM32 10h5v1h-5zM3 11h5v1h-5zM9 11h4v1h-4zM15 11h3v1h-3zM20 11h1v1h-1zM22 11h1v1h-1zM24 11h1v1h-1zM26 11h1v1h-1zM30 11h1v1h-1zM33 11h1v1h-1zM35 11h3v1h-3zM3 12h3v1h-3zM8 12h1v1h-1zM13 12h2v1h-2zM17 12h5v1h-5zM24 12h1v1h-1zM28 12h3v1h-3zM32 12h2v1h-2zM35 12h1v1h-1zM37 12h2v1h-2zM2 13h3v1h-3zM6 13h1v1h-1zM9 13h2v1h-2zM14 13h2v1h-2zM17 13h1v1h-1zM21 13h4v1h-4zM26 13h1v1h-1zM28 13h3v1h-3zM38 13h1v1h-1zM3 14h3v1h-3zM8 14h3v1h-3zM13 14h1v1h-1zM15 14h5v1h-5zM21 14h1v1h-1zM24 14h1v1h-1zM26 14h4v1h-4zM31 14h2v1h-2zM34 14h5v1h-5zM3 15h2v1h-2zM7 15h1v1h-1zM10 15h1v1h-1zM13 15h1v1h-1zM18 15h1v1h-1zM20 15h3v1h-3zM24 15h2v1h-2zM27 15h1v1h-1zM30 15h2v1h-2zM33 15h1v1h-1zM3 16h2v1h-2zM7 16h2v1h-2zM10 16h1v1h-1zM12 16h2v1h-2zM16 16h3v1h-3zM20 16h1v1h-1zM22 16h1v1h-1zM24 16h1v1h-1zM27 16h3v1h-3zM31 16h1v1h-1zM33 16h3v1h-3zM37 16h2v1h-2zM3 17h1v1h-1zM10 17h1v1h-1zM13 17h1v1h-1zM17 17h1v1h-1zM25 17h1v1h-1zM28 17h1v1h-1zM30 17h1v1h-1zM33 17h2v1h-2zM38 17h1v1h-1zM3 18h4v1h-4zM8 18h1v1h-1zM11 18h2v1h-2zM14 18h1v1h-1zM17 18h1v1h-1zM20 18h1v1h-1zM22 18h6v1h-6zM31 18h2v1h-2zM34 18h1v1h-1zM36 18h3v1h-3zM2 19h2v1h-2zM6 19h1v1h-1zM10 19h1v1h-1zM14 19h1v1h-1zM17 19h2v1h-2zM23 19h1v1h-1zM27 19h2v1h-2zM30 19h1v1h-1zM33 19h1v1h-1zM35 19h1v1h-1zM37 19h1v1h-1zM4 20h2v1h-2zM7 20h4v1h-4zM12 20h1v1h-1zM14 20h2v1h-2zM20 20h1v1h-1zM22 20h1v1h-1zM25 20h5v1h-5zM31 20h2v1h-2zM34 20h1v1h-1zM37 20h2v1h-2zM3 21h5v1h-5zM10 21h1v1h-1zM12 21h1v1h-1zM14 21h2v1h-2zM18 21h1v1h-1zM23 21h1v1h-1zM25 21h1v1h-1zM29 21h4v1h-4zM38 21h1v1h-1zM2 22h1v1h-1zM8 22h1v1h-1zM10 22h1v1h-1zM13 22h2v1h-2zM19 22h1v1h-1zM24 22h4v1h-4zM29 22h1v1h-1zM31 22h2v1h-2zM34 22h3v1h-3zM2 23h1v1h-1zM4 23h3v1h-3zM9 23h5v1h-5zM15 23h2v1h-2zM18 23h6v1h-6zM25 23h2v1h-2zM30 23h2v1h-2zM35 23h1v1h-1zM3 24h8v1h-8zM13 24h3v1h-3zM17 24h1v1h-1zM19 24h1v1h-1zM23 24h1v1h-1zM27 24h1v1h-1zM29 24h7v1h-7zM37 24h2v1h-2zM2 25h2v1h-2zM6 25h1v1h-1zM12 25h1v1h-1zM14 25h7v1h-7zM22 25h3v1h-3zM29 25h1v1h-1zM31 25h1v1h-1zM33 25h2v1h-2zM37 25h1v1h-1zM2 26h1v1h-1zM6 26h1v1h-1zM8 26h4v1h-4zM14 26h2v1h-2zM17 26h2v1h-2zM23 26h1v1h-1zM25 26h3v1h-3zM29 26h1v1h-1zM31 26h2v1h-2zM34 26h1v1h-1zM36 26h2v1h-2zM2 27h1v1h-1zM6 27h1v1h-1zM12 27h1v1h-1zM16 27h2v1h-2zM19 27h2v1h-2zM22 27h3v1h-3zM26 27h3v1h-3zM30 27h1v1h-1zM33 27h1v1h-1zM35 27h2v1h-2zM2 28h1v1h-1zM4 28h1v1h-1zM7 28h2v1h-2zM10 28h1v1h-1zM12 28h2v1h-2zM16 28h3v1h-3zM21 28h1v1h-1zM23 28h1v1h-1zM27 28h4v1h-4zM32 28h2v1h-2zM36 28h3v1h-3zM2 29h1v1h-1zM4 29h1v1h-1zM9 29h1v1h-1zM11 29h1v1h-1zM13 29h3v1h-3zM17 29h1v1h-1zM20 29h6v1h-6zM29 29h1v1h-1zM31 29h1v1h-1zM33 29h2v1h-2zM38 29h1v1h-1zM2 30h1v1h-1zM5 30h1v1h-1zM7 30h3v1h-3zM12 30h1v1h-1zM14 30h4v1h-4zM19 30h1v1h-1zM21 30h1v1h-1zM24 30h1v1h-1zM26 30h11v1h-11zM38 30h1v1h-1zM10 31h1v1h-1zM12 31h1v1h-1zM14 31h3v1h-3zM18 31h1v1h-1zM20 31h3v1h-3zM25 31h1v1h-1zM29 31h2v1h-2zM34 31h2v1h-2zM2 32h7v1h-7zM11 32h1v1h-1zM13 32h2v1h-2zM17 32h1v1h-1zM20 32h1v1h-1zM22 32h1v1h-1zM24 32h1v1h-1zM30 32h1v1h-1zM32 32h1v1h-1zM34 32h1v1h-1zM36 32h1v1h-1zM38 32h1v1h-1zM2 33h1v1h-1zM8 33h1v1h-1zM10 33h1v1h-1zM14 33h1v1h-1zM16 33h1v1h-1zM18 33h1v1h-1zM25 33h1v1h-1zM30 33h1v1h-1zM34 33h2v1h-2zM2 34h1v1h-1zM4 34h3v1h-3zM8 34h1v1h-1zM10 34h1v1h-1zM13 34h2v1h-2zM16 34h1v1h-1zM20 34h1v1h-1zM22 34h4v1h-4zM27 34h1v1h-1zM29 34h6v1h-6zM36 34h1v1h-1zM38 34h1v1h-1zM2 35h1v1h-1zM4 35h3v1h-3zM8 35h1v1h-1zM10 35h1v1h-1zM13 35h6v1h-6zM25 35h2v1h-2zM28 35h2v1h-2zM31 35h2v1h-2zM34 35h2v1h-2zM38 35h1v1h-1zM2 36h1v1h-1zM4 36h3v1h-3zM8 36h1v1h-1zM10 36h3v1h-3zM15 36h1v1h-1zM22 36h3v1h-3zM26 36h2v1h-2zM31 36h1v1h-1zM37 36h2v1h-2zM2 37h1v1h-1zM8 37h1v1h-1zM11 37h1v1h-1zM13 37h1v1h-1zM18 37h1v1h-1zM23 37h4v1h-4zM28 37h4v1h-4zM34 37h2v1h-2zM38 37h1v1h-1zM2 38h7v1h-7zM10 38h5v1h-5zM16 38h1v1h-1zM19 38h1v1h-1zM24 38h1v1h-1zM26 38h3v1h-3zM32 38h1v1h-1zM34 38h5v1h-5z',
+          },
+        },
+        'london-united-kingdom': {
+          lat: 51.5085,
+          lng: -0.1257,
+          tz: 'Europe/London',
+          method: 'MoonsightingCommittee',
+          fajrAngle: 18,
+          methodMaghribMinutes: 3,
+          adj: { fajr: 0, maghrib: 0 },
+          days: [
+            { fast: 1, date: '2027-02-08', fajr: '05:51', maghrib: '17:05', mins: 674 },
+            { fast: 2, date: '2027-02-09', fajr: '05:49', maghrib: '17:07', mins: 678 },
+            { fast: 3, date: '2027-02-10', fajr: '05:47', maghrib: '17:09', mins: 682 },
+            { fast: 4, date: '2027-02-11', fajr: '05:45', maghrib: '17:11', mins: 686 },
+            { fast: 5, date: '2027-02-12', fajr: '05:44', maghrib: '17:13', mins: 689 },
+            { fast: 6, date: '2027-02-13', fajr: '05:42', maghrib: '17:14', mins: 692 },
+            { fast: 7, date: '2027-02-14', fajr: '05:40', maghrib: '17:16', mins: 696 },
+            { fast: 8, date: '2027-02-15', fajr: '05:38', maghrib: '17:18', mins: 700 },
+            { fast: 9, date: '2027-02-16', fajr: '05:37', maghrib: '17:20', mins: 703 },
+            { fast: 10, date: '2027-02-17', fajr: '05:35', maghrib: '17:22', mins: 707 },
+            { fast: 11, date: '2027-02-18', fajr: '05:33', maghrib: '17:24', mins: 711 },
+            { fast: 12, date: '2027-02-19', fajr: '05:31', maghrib: '17:25', mins: 714 },
+            { fast: 13, date: '2027-02-20', fajr: '05:29', maghrib: '17:27', mins: 718 },
+            { fast: 14, date: '2027-02-21', fajr: '05:27', maghrib: '17:29', mins: 722 },
+            { fast: 15, date: '2027-02-22', fajr: '05:25', maghrib: '17:31', mins: 726 },
+            { fast: 16, date: '2027-02-23', fajr: '05:23', maghrib: '17:33', mins: 730 },
+            { fast: 17, date: '2027-02-24', fajr: '05:21', maghrib: '17:34', mins: 733 },
+            { fast: 18, date: '2027-02-25', fajr: '05:19', maghrib: '17:36', mins: 737 },
+            { fast: 19, date: '2027-02-26', fajr: '05:17', maghrib: '17:38', mins: 741 },
+            { fast: 20, date: '2027-02-27', fajr: '05:15', maghrib: '17:40', mins: 745 },
+            { fast: 21, date: '2027-02-28', fajr: '05:13', maghrib: '17:42', mins: 749 },
+            { fast: 22, date: '2027-03-01', fajr: '05:11', maghrib: '17:43', mins: 752 },
+            { fast: 23, date: '2027-03-02', fajr: '05:09', maghrib: '17:45', mins: 756 },
+            { fast: 24, date: '2027-03-03', fajr: '05:07', maghrib: '17:47', mins: 760 },
+            { fast: 25, date: '2027-03-04', fajr: '05:05', maghrib: '17:49', mins: 764 },
+            { fast: 26, date: '2027-03-05', fajr: '05:03', maghrib: '17:50', mins: 767 },
+            { fast: 27, date: '2027-03-06', fajr: '05:01', maghrib: '17:52', mins: 771 },
+            { fast: 28, date: '2027-03-07', fajr: '04:59', maghrib: '17:54', mins: 775 },
+            { fast: 29, date: '2027-03-08', fajr: '04:56', maghrib: '17:56', mins: 780 },
+          ],
+          possible30: { fast: 30, date: '2027-03-09', fajr: '04:54', maghrib: '17:57', mins: 783 },
+          url: 'https://bustandeen.com/ramadan-calendar/london-united-kingdom/2027',
+          qr: {
+            size: 41,
+            d: 'M2 2h7v1h-7zM10 2h10v1h-10zM21 2h2v1h-2zM27 2h4v1h-4zM32 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM11 3h2v1h-2zM14 3h1v1h-1zM16 3h3v1h-3zM21 3h1v1h-1zM25 3h3v1h-3zM30 3h1v1h-1zM32 3h1v1h-1zM38 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM11 4h1v1h-1zM14 4h1v1h-1zM16 4h1v1h-1zM19 4h1v1h-1zM23 4h1v1h-1zM26 4h1v1h-1zM28 4h1v1h-1zM32 4h1v1h-1zM34 4h3v1h-3zM38 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM10 5h4v1h-4zM16 5h2v1h-2zM20 5h1v1h-1zM27 5h4v1h-4zM32 5h1v1h-1zM34 5h3v1h-3zM38 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM10 6h1v1h-1zM14 6h4v1h-4zM19 6h2v1h-2zM25 6h1v1h-1zM27 6h4v1h-4zM32 6h1v1h-1zM34 6h3v1h-3zM38 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM18 7h2v1h-2zM21 7h1v1h-1zM26 7h2v1h-2zM32 7h1v1h-1zM38 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM30 8h1v1h-1zM32 8h7v1h-7zM10 9h2v1h-2zM13 9h1v1h-1zM17 9h2v1h-2zM23 9h1v1h-1zM29 9h1v1h-1zM2 10h1v1h-1zM6 10h1v1h-1zM8 10h5v1h-5zM14 10h3v1h-3zM18 10h1v1h-1zM21 10h2v1h-2zM26 10h1v1h-1zM31 10h5v1h-5zM38 10h1v1h-1zM3 11h1v1h-1zM7 11h1v1h-1zM10 11h2v1h-2zM13 11h1v1h-1zM20 11h2v1h-2zM23 11h2v1h-2zM26 11h5v1h-5zM34 11h4v1h-4zM4 12h5v1h-5zM13 12h5v1h-5zM19 12h3v1h-3zM23 12h1v1h-1zM25 12h2v1h-2zM28 12h4v1h-4zM3 13h1v1h-1zM5 13h1v1h-1zM9 13h1v1h-1zM11 13h2v1h-2zM15 13h1v1h-1zM17 13h7v1h-7zM26 13h1v1h-1zM28 13h1v1h-1zM31 13h3v1h-3zM36 13h2v1h-2zM3 14h1v1h-1zM5 14h4v1h-4zM11 14h3v1h-3zM15 14h1v1h-1zM19 14h1v1h-1zM22 14h3v1h-3zM29 14h1v1h-1zM31 14h3v1h-3zM36 14h3v1h-3zM12 15h1v1h-1zM14 15h1v1h-1zM16 15h3v1h-3zM20 15h1v1h-1zM23 15h1v1h-1zM25 15h1v1h-1zM28 15h4v1h-4zM34 15h2v1h-2zM7 16h2v1h-2zM10 16h1v1h-1zM12 16h1v1h-1zM14 16h1v1h-1zM17 16h3v1h-3zM22 16h1v1h-1zM25 16h6v1h-6zM33 16h4v1h-4zM2 17h1v1h-1zM6 17h1v1h-1zM10 17h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM17 17h1v1h-1zM19 17h3v1h-3zM24 17h1v1h-1zM26 17h1v1h-1zM28 17h1v1h-1zM33 17h2v1h-2zM36 17h2v1h-2zM6 18h7v1h-7zM15 18h1v1h-1zM17 18h1v1h-1zM20 18h2v1h-2zM24 18h2v1h-2zM29 18h1v1h-1zM31 18h2v1h-2zM35 18h4v1h-4zM3 19h2v1h-2zM7 19h1v1h-1zM10 19h4v1h-4zM16 19h1v1h-1zM18 19h2v1h-2zM21 19h2v1h-2zM25 19h2v1h-2zM28 19h3v1h-3zM34 19h4v1h-4zM2 20h2v1h-2zM5 20h1v1h-1zM7 20h2v1h-2zM10 20h1v1h-1zM12 20h2v1h-2zM15 20h2v1h-2zM18 20h1v1h-1zM20 20h1v1h-1zM22 20h4v1h-4zM27 20h3v1h-3zM33 20h1v1h-1zM35 20h1v1h-1zM3 21h1v1h-1zM5 21h3v1h-3zM9 21h5v1h-5zM15 21h2v1h-2zM19 21h1v1h-1zM23 21h1v1h-1zM29 21h2v1h-2zM34 21h4v1h-4zM2 22h3v1h-3zM8 22h1v1h-1zM10 22h1v1h-1zM12 22h2v1h-2zM15 22h3v1h-3zM19 22h1v1h-1zM21 22h4v1h-4zM26 22h1v1h-1zM28 22h2v1h-2zM31 22h3v1h-3zM36 22h1v1h-1zM2 23h1v1h-1zM5 23h2v1h-2zM9 23h1v1h-1zM11 23h2v1h-2zM15 23h6v1h-6zM25 23h2v1h-2zM28 23h4v1h-4zM33 23h2v1h-2zM3 24h6v1h-6zM10 24h1v1h-1zM14 24h2v1h-2zM17 24h1v1h-1zM20 24h1v1h-1zM22 24h5v1h-5zM28 24h2v1h-2zM33 24h4v1h-4zM6 25h2v1h-2zM9 25h2v1h-2zM12 25h1v1h-1zM14 25h2v1h-2zM22 25h2v1h-2zM25 25h2v1h-2zM28 25h4v1h-4zM33 25h2v1h-2zM36 25h3v1h-3zM2 26h1v1h-1zM8 26h2v1h-2zM12 26h1v1h-1zM14 26h2v1h-2zM17 26h2v1h-2zM22 26h1v1h-1zM25 26h1v1h-1zM28 26h1v1h-1zM32 26h2v1h-2zM35 26h3v1h-3zM2 27h2v1h-2zM11 27h1v1h-1zM14 27h1v1h-1zM16 27h1v1h-1zM20 27h2v1h-2zM24 27h3v1h-3zM28 27h3v1h-3zM34 27h3v1h-3zM5 28h1v1h-1zM8 28h1v1h-1zM10 28h1v1h-1zM12 28h6v1h-6zM19 28h3v1h-3zM23 28h1v1h-1zM25 28h1v1h-1zM27 28h3v1h-3zM31 28h1v1h-1zM34 28h1v1h-1zM36 28h1v1h-1zM6 29h2v1h-2zM9 29h1v1h-1zM12 29h1v1h-1zM16 29h4v1h-4zM21 29h5v1h-5zM30 29h1v1h-1zM32 29h3v1h-3zM36 29h3v1h-3zM2 30h2v1h-2zM6 30h1v1h-1zM8 30h2v1h-2zM14 30h1v1h-1zM19 30h1v1h-1zM22 30h3v1h-3zM26 30h1v1h-1zM29 30h8v1h-8zM38 30h1v1h-1zM10 31h2v1h-2zM13 31h2v1h-2zM16 31h2v1h-2zM20 31h1v1h-1zM22 31h2v1h-2zM25 31h1v1h-1zM28 31h1v1h-1zM30 31h1v1h-1zM34 31h1v1h-1zM2 32h7v1h-7zM10 32h1v1h-1zM12 32h2v1h-2zM16 32h4v1h-4zM25 32h4v1h-4zM30 32h1v1h-1zM32 32h1v1h-1zM34 32h1v1h-1zM2 33h1v1h-1zM8 33h1v1h-1zM13 33h1v1h-1zM15 33h1v1h-1zM18 33h5v1h-5zM24 33h1v1h-1zM26 33h1v1h-1zM28 33h1v1h-1zM30 33h1v1h-1zM34 33h3v1h-3zM38 33h1v1h-1zM2 34h1v1h-1zM4 34h3v1h-3zM8 34h1v1h-1zM10 34h1v1h-1zM13 34h1v1h-1zM16 34h1v1h-1zM20 34h1v1h-1zM24 34h2v1h-2zM28 34h1v1h-1zM30 34h8v1h-8zM2 35h1v1h-1zM4 35h3v1h-3zM8 35h1v1h-1zM12 35h1v1h-1zM14 35h1v1h-1zM16 35h1v1h-1zM18 35h1v1h-1zM21 35h2v1h-2zM25 35h3v1h-3zM31 35h3v1h-3zM35 35h1v1h-1zM38 35h1v1h-1zM2 36h1v1h-1zM4 36h3v1h-3zM8 36h1v1h-1zM13 36h1v1h-1zM15 36h2v1h-2zM18 36h2v1h-2zM22 36h4v1h-4zM27 36h1v1h-1zM30 36h1v1h-1zM32 36h1v1h-1zM36 36h1v1h-1zM2 37h1v1h-1zM8 37h1v1h-1zM12 37h1v1h-1zM19 37h2v1h-2zM23 37h1v1h-1zM28 37h2v1h-2zM32 37h1v1h-1zM34 37h1v1h-1zM36 37h2v1h-2zM2 38h7v1h-7zM10 38h1v1h-1zM12 38h4v1h-4zM17 38h3v1h-3zM21 38h4v1h-4zM26 38h1v1h-1zM29 38h1v1h-1zM31 38h3v1h-3zM36 38h3v1h-3z',
+          },
+        },
+        'dubai-united-arab-emirates': {
+          lat: 25.0773,
+          lng: 55.3093,
+          tz: 'Asia/Dubai',
+          method: 'Dubai',
+          fajrAngle: 18.2,
+          methodMaghribMinutes: 3,
+          adj: { fajr: 0, maghrib: 0 },
+          days: [
+            { fast: 1, date: '2027-02-08', fajr: '05:39', maghrib: '18:11', mins: 752 },
+            { fast: 2, date: '2027-02-09', fajr: '05:39', maghrib: '18:12', mins: 753 },
+            { fast: 3, date: '2027-02-10', fajr: '05:38', maghrib: '18:12', mins: 754 },
+            { fast: 4, date: '2027-02-11', fajr: '05:38', maghrib: '18:13', mins: 755 },
+            { fast: 5, date: '2027-02-12', fajr: '05:37', maghrib: '18:14', mins: 757 },
+            { fast: 6, date: '2027-02-13', fajr: '05:37', maghrib: '18:14', mins: 757 },
+            { fast: 7, date: '2027-02-14', fajr: '05:36', maghrib: '18:15', mins: 759 },
+            { fast: 8, date: '2027-02-15', fajr: '05:36', maghrib: '18:16', mins: 760 },
+            { fast: 9, date: '2027-02-16', fajr: '05:35', maghrib: '18:16', mins: 761 },
+            { fast: 10, date: '2027-02-17', fajr: '05:34', maghrib: '18:17', mins: 763 },
+            { fast: 11, date: '2027-02-18', fajr: '05:34', maghrib: '18:17', mins: 763 },
+            { fast: 12, date: '2027-02-19', fajr: '05:33', maghrib: '18:18', mins: 765 },
+            { fast: 13, date: '2027-02-20', fajr: '05:32', maghrib: '18:19', mins: 767 },
+            { fast: 14, date: '2027-02-21', fajr: '05:32', maghrib: '18:19', mins: 767 },
+            { fast: 15, date: '2027-02-22', fajr: '05:31', maghrib: '18:20', mins: 769 },
+            { fast: 16, date: '2027-02-23', fajr: '05:30', maghrib: '18:20', mins: 770 },
+            { fast: 17, date: '2027-02-24', fajr: '05:29', maghrib: '18:21', mins: 772 },
+            { fast: 18, date: '2027-02-25', fajr: '05:28', maghrib: '18:21', mins: 773 },
+            { fast: 19, date: '2027-02-26', fajr: '05:28', maghrib: '18:22', mins: 774 },
+            { fast: 20, date: '2027-02-27', fajr: '05:27', maghrib: '18:23', mins: 776 },
+            { fast: 21, date: '2027-02-28', fajr: '05:26', maghrib: '18:23', mins: 777 },
+            { fast: 22, date: '2027-03-01', fajr: '05:25', maghrib: '18:24', mins: 779 },
+            { fast: 23, date: '2027-03-02', fajr: '05:24', maghrib: '18:24', mins: 780 },
+            { fast: 24, date: '2027-03-03', fajr: '05:23', maghrib: '18:25', mins: 782 },
+            { fast: 25, date: '2027-03-04', fajr: '05:22', maghrib: '18:25', mins: 783 },
+            { fast: 26, date: '2027-03-05', fajr: '05:22', maghrib: '18:26', mins: 784 },
+            { fast: 27, date: '2027-03-06', fajr: '05:21', maghrib: '18:26', mins: 785 },
+            { fast: 28, date: '2027-03-07', fajr: '05:20', maghrib: '18:27', mins: 787 },
+            { fast: 29, date: '2027-03-08', fajr: '05:19', maghrib: '18:27', mins: 788 },
+          ],
+          possible30: { fast: 30, date: '2027-03-09', fajr: '05:18', maghrib: '18:28', mins: 790 },
+          url: 'https://bustandeen.com/ramadan-calendar/dubai-united-arab-emirates/2027',
+          qr: {
+            size: 41,
+            d: 'M2 2h7v1h-7zM10 2h2v1h-2zM14 2h1v1h-1zM18 2h1v1h-1zM20 2h2v1h-2zM23 2h1v1h-1zM26 2h3v1h-3zM32 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM12 3h1v1h-1zM16 3h3v1h-3zM20 3h2v1h-2zM26 3h1v1h-1zM28 3h1v1h-1zM30 3h1v1h-1zM32 3h1v1h-1zM38 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM10 4h1v1h-1zM12 4h4v1h-4zM17 4h4v1h-4zM23 4h1v1h-1zM27 4h1v1h-1zM29 4h1v1h-1zM32 4h1v1h-1zM34 4h3v1h-3zM38 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM11 5h1v1h-1zM15 5h1v1h-1zM19 5h3v1h-3zM23 5h3v1h-3zM27 5h3v1h-3zM32 5h1v1h-1zM34 5h3v1h-3zM38 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM14 6h1v1h-1zM16 6h2v1h-2zM19 6h2v1h-2zM23 6h2v1h-2zM27 6h2v1h-2zM32 6h1v1h-1zM34 6h3v1h-3zM38 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h4v1h-4zM16 7h3v1h-3zM22 7h2v1h-2zM28 7h1v1h-1zM32 7h1v1h-1zM38 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM30 8h1v1h-1zM32 8h7v1h-7zM11 9h2v1h-2zM16 9h3v1h-3zM20 9h1v1h-1zM25 9h1v1h-1zM28 9h1v1h-1zM30 9h1v1h-1zM2 10h1v1h-1zM4 10h1v1h-1zM8 10h2v1h-2zM11 10h3v1h-3zM16 10h1v1h-1zM18 10h4v1h-4zM24 10h3v1h-3zM29 10h2v1h-2zM33 10h1v1h-1zM36 10h1v1h-1zM38 10h1v1h-1zM2 11h5v1h-5zM11 11h2v1h-2zM14 11h3v1h-3zM18 11h1v1h-1zM20 11h1v1h-1zM23 11h3v1h-3zM29 11h1v1h-1zM32 11h2v1h-2zM36 11h3v1h-3zM3 12h3v1h-3zM7 12h3v1h-3zM11 12h1v1h-1zM13 12h4v1h-4zM18 12h2v1h-2zM21 12h1v1h-1zM23 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM29 12h4v1h-4zM34 12h1v1h-1zM36 12h1v1h-1zM38 12h1v1h-1zM2 13h1v1h-1zM5 13h2v1h-2zM9 13h2v1h-2zM12 13h1v1h-1zM14 13h1v1h-1zM16 13h3v1h-3zM20 13h1v1h-1zM24 13h2v1h-2zM28 13h2v1h-2zM32 13h2v1h-2zM4 14h1v1h-1zM6 14h3v1h-3zM11 14h1v1h-1zM13 14h3v1h-3zM21 14h2v1h-2zM25 14h1v1h-1zM29 14h2v1h-2zM32 14h2v1h-2zM35 14h1v1h-1zM38 14h1v1h-1zM3 15h2v1h-2zM7 15h1v1h-1zM10 15h1v1h-1zM13 15h1v1h-1zM17 15h3v1h-3zM21 15h2v1h-2zM25 15h3v1h-3zM29 15h5v1h-5zM35 15h1v1h-1zM38 15h1v1h-1zM2 16h1v1h-1zM4 16h2v1h-2zM8 16h1v1h-1zM12 16h1v1h-1zM14 16h5v1h-5zM21 16h1v1h-1zM23 16h3v1h-3zM27 16h1v1h-1zM29 16h2v1h-2zM32 16h1v1h-1zM35 16h2v1h-2zM38 16h1v1h-1zM2 17h2v1h-2zM6 17h2v1h-2zM9 17h1v1h-1zM14 17h2v1h-2zM18 17h2v1h-2zM21 17h1v1h-1zM25 17h2v1h-2zM28 17h3v1h-3zM33 17h3v1h-3zM37 17h1v1h-1zM3 18h2v1h-2zM7 18h4v1h-4zM12 18h3v1h-3zM17 18h1v1h-1zM19 18h1v1h-1zM21 18h2v1h-2zM24 18h1v1h-1zM30 18h4v1h-4zM37 18h2v1h-2zM3 19h1v1h-1zM5 19h3v1h-3zM11 19h1v1h-1zM16 19h1v1h-1zM19 19h1v1h-1zM22 19h1v1h-1zM24 19h4v1h-4zM29 19h2v1h-2zM32 19h2v1h-2zM35 19h4v1h-4zM2 20h1v1h-1zM4 20h1v1h-1zM7 20h2v1h-2zM11 20h1v1h-1zM14 20h2v1h-2zM17 20h1v1h-1zM22 20h4v1h-4zM29 20h1v1h-1zM32 20h3v1h-3zM36 20h1v1h-1zM38 20h1v1h-1zM4 21h2v1h-2zM11 21h3v1h-3zM15 21h1v1h-1zM21 21h2v1h-2zM24 21h1v1h-1zM26 21h1v1h-1zM31 21h1v1h-1zM33 21h1v1h-1zM35 21h1v1h-1zM2 22h2v1h-2zM8 22h1v1h-1zM11 22h4v1h-4zM17 22h2v1h-2zM22 22h1v1h-1zM25 22h2v1h-2zM28 22h3v1h-3zM32 22h2v1h-2zM37 22h1v1h-1zM2 23h3v1h-3zM9 23h1v1h-1zM13 23h1v1h-1zM15 23h4v1h-4zM21 23h2v1h-2zM25 23h1v1h-1zM27 23h1v1h-1zM29 23h4v1h-4zM38 23h1v1h-1zM3 24h3v1h-3zM7 24h6v1h-6zM16 24h2v1h-2zM19 24h3v1h-3zM24 24h2v1h-2zM27 24h3v1h-3zM35 24h2v1h-2zM38 24h1v1h-1zM2 25h1v1h-1zM6 25h1v1h-1zM11 25h2v1h-2zM14 25h1v1h-1zM16 25h3v1h-3zM20 25h1v1h-1zM22 25h1v1h-1zM26 25h1v1h-1zM28 25h1v1h-1zM31 25h1v1h-1zM33 25h3v1h-3zM38 25h1v1h-1zM2 26h2v1h-2zM6 26h3v1h-3zM15 26h1v1h-1zM18 26h3v1h-3zM24 26h1v1h-1zM26 26h1v1h-1zM29 26h2v1h-2zM32 26h1v1h-1zM37 26h2v1h-2zM3 27h1v1h-1zM6 27h1v1h-1zM9 27h2v1h-2zM12 27h1v1h-1zM14 27h1v1h-1zM18 27h1v1h-1zM20 27h1v1h-1zM24 27h7v1h-7zM32 27h2v1h-2zM35 27h1v1h-1zM38 27h1v1h-1zM2 28h5v1h-5zM8 28h5v1h-5zM16 28h1v1h-1zM18 28h2v1h-2zM21 28h1v1h-1zM23 28h1v1h-1zM25 28h2v1h-2zM29 28h4v1h-4zM34 28h1v1h-1zM36 28h1v1h-1zM38 28h1v1h-1zM5 29h2v1h-2zM11 29h5v1h-5zM17 29h2v1h-2zM26 29h1v1h-1zM29 29h1v1h-1zM31 29h2v1h-2zM34 29h2v1h-2zM37 29h2v1h-2zM2 30h9v1h-9zM12 30h5v1h-5zM18 30h1v1h-1zM21 30h2v1h-2zM25 30h2v1h-2zM29 30h7v1h-7zM38 30h1v1h-1zM10 31h2v1h-2zM13 31h1v1h-1zM15 31h3v1h-3zM19 31h1v1h-1zM21 31h1v1h-1zM25 31h2v1h-2zM30 31h1v1h-1zM34 31h1v1h-1zM38 31h1v1h-1zM2 32h7v1h-7zM10 32h1v1h-1zM14 32h1v1h-1zM17 32h2v1h-2zM21 32h2v1h-2zM25 32h1v1h-1zM28 32h1v1h-1zM30 32h1v1h-1zM32 32h1v1h-1zM34 32h1v1h-1zM38 32h1v1h-1zM2 33h1v1h-1zM8 33h1v1h-1zM13 33h2v1h-2zM17 33h1v1h-1zM19 33h1v1h-1zM21 33h2v1h-2zM24 33h3v1h-3zM29 33h2v1h-2zM34 33h1v1h-1zM37 33h1v1h-1zM2 34h1v1h-1zM4 34h3v1h-3zM8 34h1v1h-1zM11 34h1v1h-1zM13 34h2v1h-2zM16 34h2v1h-2zM19 34h1v1h-1zM22 34h3v1h-3zM29 34h6v1h-6zM38 34h1v1h-1zM2 35h1v1h-1zM4 35h3v1h-3zM8 35h1v1h-1zM11 35h1v1h-1zM14 35h3v1h-3zM22 35h1v1h-1zM25 35h2v1h-2zM31 35h1v1h-1zM34 35h3v1h-3zM2 36h1v1h-1zM4 36h3v1h-3zM8 36h1v1h-1zM10 36h1v1h-1zM13 36h2v1h-2zM17 36h1v1h-1zM19 36h2v1h-2zM22 36h4v1h-4zM28 36h1v1h-1zM30 36h1v1h-1zM33 36h3v1h-3zM38 36h1v1h-1zM2 37h1v1h-1zM8 37h1v1h-1zM11 37h3v1h-3zM15 37h1v1h-1zM20 37h3v1h-3zM24 37h1v1h-1zM28 37h3v1h-3zM34 37h2v1h-2zM2 38h7v1h-7zM10 38h1v1h-1zM15 38h3v1h-3zM22 38h1v1h-1zM25 38h2v1h-2zM30 38h1v1h-1zM32 38h2v1h-2zM35 38h1v1h-1zM38 38h1v1h-1z',
+          },
+        },
+        'mecca-saudi-arabia': {
+          lat: 21.4266,
+          lng: 39.8256,
+          tz: 'Asia/Riyadh',
+          method: 'UmmAlQura',
+          fajrAngle: 18.5,
+          methodMaghribMinutes: 0,
+          adj: { fajr: 0, maghrib: 0 },
+          days: [
+            { fast: 1, date: '2027-02-08', fajr: '05:38', maghrib: '18:15', mins: 757 },
+            { fast: 2, date: '2027-02-09', fajr: '05:37', maghrib: '18:15', mins: 758 },
+            { fast: 3, date: '2027-02-10', fajr: '05:37', maghrib: '18:16', mins: 759 },
+            { fast: 4, date: '2027-02-11', fajr: '05:36', maghrib: '18:16', mins: 760 },
+            { fast: 5, date: '2027-02-12', fajr: '05:36', maghrib: '18:17', mins: 761 },
+            { fast: 6, date: '2027-02-13', fajr: '05:35', maghrib: '18:17', mins: 762 },
+            { fast: 7, date: '2027-02-14', fajr: '05:35', maghrib: '18:18', mins: 763 },
+            { fast: 8, date: '2027-02-15', fajr: '05:34', maghrib: '18:18', mins: 764 },
+            { fast: 9, date: '2027-02-16', fajr: '05:34', maghrib: '18:19', mins: 765 },
+            { fast: 10, date: '2027-02-17', fajr: '05:33', maghrib: '18:19', mins: 766 },
+            { fast: 11, date: '2027-02-18', fajr: '05:33', maghrib: '18:20', mins: 767 },
+            { fast: 12, date: '2027-02-19', fajr: '05:32', maghrib: '18:20', mins: 768 },
+            { fast: 13, date: '2027-02-20', fajr: '05:32', maghrib: '18:21', mins: 769 },
+            { fast: 14, date: '2027-02-21', fajr: '05:31', maghrib: '18:21', mins: 770 },
+            { fast: 15, date: '2027-02-22', fajr: '05:30', maghrib: '18:22', mins: 772 },
+            { fast: 16, date: '2027-02-23', fajr: '05:30', maghrib: '18:22', mins: 772 },
+            { fast: 17, date: '2027-02-24', fajr: '05:29', maghrib: '18:23', mins: 774 },
+            { fast: 18, date: '2027-02-25', fajr: '05:28', maghrib: '18:23', mins: 775 },
+            { fast: 19, date: '2027-02-26', fajr: '05:28', maghrib: '18:24', mins: 776 },
+            { fast: 20, date: '2027-02-27', fajr: '05:27', maghrib: '18:24', mins: 777 },
+            { fast: 21, date: '2027-02-28', fajr: '05:26', maghrib: '18:24', mins: 778 },
+            { fast: 22, date: '2027-03-01', fajr: '05:26', maghrib: '18:25', mins: 779 },
+            { fast: 23, date: '2027-03-02', fajr: '05:25', maghrib: '18:25', mins: 780 },
+            { fast: 24, date: '2027-03-03', fajr: '05:24', maghrib: '18:26', mins: 782 },
+            { fast: 25, date: '2027-03-04', fajr: '05:23', maghrib: '18:26', mins: 783 },
+            { fast: 26, date: '2027-03-05', fajr: '05:22', maghrib: '18:26', mins: 784 },
+            { fast: 27, date: '2027-03-06', fajr: '05:22', maghrib: '18:27', mins: 785 },
+            { fast: 28, date: '2027-03-07', fajr: '05:21', maghrib: '18:27', mins: 786 },
+            { fast: 29, date: '2027-03-08', fajr: '05:20', maghrib: '18:28', mins: 788 },
+          ],
+          possible30: { fast: 30, date: '2027-03-09', fajr: '05:19', maghrib: '18:28', mins: 789 },
+          url: 'https://bustandeen.com/ramadan-calendar/mecca-saudi-arabia/2027',
+          qr: {
+            size: 41,
+            d: 'M2 2h7v1h-7zM10 2h1v1h-1zM15 2h1v1h-1zM17 2h1v1h-1zM19 2h3v1h-3zM24 2h1v1h-1zM26 2h4v1h-4zM32 2h7v1h-7zM2 3h1v1h-1zM8 3h1v1h-1zM11 3h2v1h-2zM14 3h2v1h-2zM17 3h1v1h-1zM22 3h1v1h-1zM27 3h1v1h-1zM30 3h1v1h-1zM32 3h1v1h-1zM38 3h1v1h-1zM2 4h1v1h-1zM4 4h3v1h-3zM8 4h1v1h-1zM11 4h2v1h-2zM14 4h3v1h-3zM18 4h2v1h-2zM21 4h3v1h-3zM25 4h1v1h-1zM28 4h3v1h-3zM32 4h1v1h-1zM34 4h3v1h-3zM38 4h1v1h-1zM2 5h1v1h-1zM4 5h3v1h-3zM8 5h1v1h-1zM10 5h3v1h-3zM15 5h1v1h-1zM17 5h2v1h-2zM20 5h2v1h-2zM25 5h1v1h-1zM27 5h4v1h-4zM32 5h1v1h-1zM34 5h3v1h-3zM38 5h1v1h-1zM2 6h1v1h-1zM4 6h3v1h-3zM8 6h1v1h-1zM10 6h3v1h-3zM14 6h2v1h-2zM17 6h1v1h-1zM20 6h1v1h-1zM23 6h1v1h-1zM25 6h1v1h-1zM28 6h3v1h-3zM32 6h1v1h-1zM34 6h3v1h-3zM38 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM18 7h1v1h-1zM20 7h2v1h-2zM23 7h2v1h-2zM26 7h1v1h-1zM32 7h1v1h-1zM38 7h1v1h-1zM2 8h7v1h-7zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM30 8h1v1h-1zM32 8h7v1h-7zM10 9h1v1h-1zM13 9h3v1h-3zM18 9h3v1h-3zM24 9h1v1h-1zM28 9h2v1h-2zM2 10h1v1h-1zM6 10h1v1h-1zM8 10h5v1h-5zM14 10h1v1h-1zM16 10h2v1h-2zM20 10h2v1h-2zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM31 10h5v1h-5zM38 10h1v1h-1zM3 11h2v1h-2zM7 11h1v1h-1zM11 11h1v1h-1zM14 11h3v1h-3zM18 11h1v1h-1zM21 11h3v1h-3zM27 11h1v1h-1zM29 11h2v1h-2zM33 11h2v1h-2zM37 11h1v1h-1zM3 12h2v1h-2zM6 12h3v1h-3zM11 12h4v1h-4zM16 12h1v1h-1zM18 12h3v1h-3zM22 12h2v1h-2zM28 12h2v1h-2zM31 12h1v1h-1zM33 12h1v1h-1zM36 12h1v1h-1zM4 13h1v1h-1zM7 13h1v1h-1zM10 13h3v1h-3zM16 13h1v1h-1zM19 13h2v1h-2zM23 13h1v1h-1zM26 13h1v1h-1zM28 13h5v1h-5zM34 13h4v1h-4zM3 14h1v1h-1zM5 14h2v1h-2zM8 14h2v1h-2zM11 14h2v1h-2zM14 14h1v1h-1zM17 14h1v1h-1zM19 14h1v1h-1zM21 14h5v1h-5zM29 14h1v1h-1zM31 14h3v1h-3zM36 14h3v1h-3zM2 15h1v1h-1zM4 15h4v1h-4zM15 15h1v1h-1zM17 15h4v1h-4zM25 15h1v1h-1zM27 15h5v1h-5zM34 15h2v1h-2zM2 16h2v1h-2zM5 16h2v1h-2zM8 16h2v1h-2zM13 16h1v1h-1zM15 16h1v1h-1zM17 16h1v1h-1zM20 16h1v1h-1zM22 16h6v1h-6zM29 16h2v1h-2zM32 16h5v1h-5zM4 17h2v1h-2zM7 17h1v1h-1zM10 17h1v1h-1zM13 17h3v1h-3zM17 17h1v1h-1zM21 17h1v1h-1zM23 17h1v1h-1zM26 17h1v1h-1zM33 17h2v1h-2zM36 17h1v1h-1zM38 17h1v1h-1zM3 18h2v1h-2zM7 18h2v1h-2zM10 18h1v1h-1zM12 18h2v1h-2zM15 18h1v1h-1zM17 18h2v1h-2zM21 18h2v1h-2zM25 18h1v1h-1zM28 18h2v1h-2zM31 18h3v1h-3zM35 18h2v1h-2zM38 18h1v1h-1zM2 19h1v1h-1zM7 19h1v1h-1zM9 19h2v1h-2zM12 19h1v1h-1zM14 19h3v1h-3zM19 19h3v1h-3zM24 19h1v1h-1zM26 19h1v1h-1zM29 19h2v1h-2zM34 19h4v1h-4zM6 20h1v1h-1zM8 20h1v1h-1zM10 20h1v1h-1zM14 20h4v1h-4zM20 20h2v1h-2zM23 20h8v1h-8zM36 20h1v1h-1zM3 21h3v1h-3zM9 21h2v1h-2zM13 21h1v1h-1zM15 21h1v1h-1zM17 21h3v1h-3zM21 21h3v1h-3zM25 21h1v1h-1zM30 21h1v1h-1zM33 21h1v1h-1zM36 21h2v1h-2zM2 22h5v1h-5zM8 22h4v1h-4zM19 22h1v1h-1zM22 22h3v1h-3zM26 22h1v1h-1zM28 22h1v1h-1zM31 22h3v1h-3zM35 22h2v1h-2zM2 23h1v1h-1zM4 23h1v1h-1zM7 23h1v1h-1zM12 23h3v1h-3zM16 23h3v1h-3zM20 23h1v1h-1zM23 23h1v1h-1zM25 23h7v1h-7zM33 23h2v1h-2zM2 24h3v1h-3zM8 24h1v1h-1zM12 24h1v1h-1zM14 24h2v1h-2zM17 24h1v1h-1zM19 24h1v1h-1zM22 24h1v1h-1zM25 24h2v1h-2zM29 24h1v1h-1zM31 24h1v1h-1zM33 24h4v1h-4zM2 25h4v1h-4zM9 25h6v1h-6zM19 25h2v1h-2zM22 25h1v1h-1zM24 25h3v1h-3zM29 25h2v1h-2zM33 25h2v1h-2zM36 25h1v1h-1zM38 25h1v1h-1zM8 26h1v1h-1zM11 26h3v1h-3zM15 26h3v1h-3zM20 26h1v1h-1zM24 26h3v1h-3zM28 26h1v1h-1zM31 26h3v1h-3zM35 26h2v1h-2zM38 26h1v1h-1zM2 27h2v1h-2zM6 27h1v1h-1zM10 27h3v1h-3zM14 27h3v1h-3zM18 27h1v1h-1zM21 27h2v1h-2zM29 27h3v1h-3zM34 27h1v1h-1zM4 28h2v1h-2zM7 28h2v1h-2zM10 28h1v1h-1zM13 28h2v1h-2zM16 28h1v1h-1zM18 28h3v1h-3zM22 28h2v1h-2zM27 28h3v1h-3zM31 28h1v1h-1zM33 28h1v1h-1zM4 29h2v1h-2zM7 29h1v1h-1zM9 29h4v1h-4zM16 29h1v1h-1zM19 29h1v1h-1zM23 29h2v1h-2zM26 29h1v1h-1zM29 29h2v1h-2zM32 29h2v1h-2zM36 29h1v1h-1zM38 29h1v1h-1zM2 30h5v1h-5zM8 30h1v1h-1zM10 30h5v1h-5zM17 30h1v1h-1zM19 30h1v1h-1zM21 30h6v1h-6zM30 30h5v1h-5zM36 30h2v1h-2zM10 31h1v1h-1zM13 31h1v1h-1zM16 31h2v1h-2zM19 31h2v1h-2zM22 31h1v1h-1zM25 31h1v1h-1zM27 31h2v1h-2zM30 31h1v1h-1zM34 31h1v1h-1zM2 32h7v1h-7zM10 32h1v1h-1zM13 32h1v1h-1zM15 32h1v1h-1zM17 32h2v1h-2zM20 32h1v1h-1zM23 32h5v1h-5zM30 32h1v1h-1zM32 32h1v1h-1zM34 32h1v1h-1zM2 33h1v1h-1zM8 33h1v1h-1zM11 33h2v1h-2zM14 33h1v1h-1zM16 33h1v1h-1zM18 33h1v1h-1zM21 33h3v1h-3zM26 33h1v1h-1zM30 33h1v1h-1zM34 33h3v1h-3zM2 34h1v1h-1zM4 34h3v1h-3zM8 34h1v1h-1zM10 34h3v1h-3zM15 34h1v1h-1zM18 34h1v1h-1zM22 34h1v1h-1zM25 34h2v1h-2zM28 34h1v1h-1zM30 34h9v1h-9zM2 35h1v1h-1zM4 35h3v1h-3zM8 35h1v1h-1zM11 35h1v1h-1zM20 35h2v1h-2zM24 35h1v1h-1zM26 35h2v1h-2zM31 35h3v1h-3zM37 35h1v1h-1zM2 36h1v1h-1zM4 36h3v1h-3zM8 36h1v1h-1zM11 36h1v1h-1zM13 36h1v1h-1zM15 36h3v1h-3zM19 36h1v1h-1zM21 36h1v1h-1zM23 36h5v1h-5zM30 36h1v1h-1zM32 36h1v1h-1zM36 36h2v1h-2zM2 37h1v1h-1zM8 37h1v1h-1zM11 37h1v1h-1zM15 37h9v1h-9zM26 37h1v1h-1zM28 37h2v1h-2zM31 37h1v1h-1zM34 37h1v1h-1zM36 37h2v1h-2zM2 38h7v1h-7zM10 38h2v1h-2zM14 38h2v1h-2zM18 38h2v1h-2zM22 38h3v1h-3zM26 38h1v1h-1zM29 38h1v1h-1zM33 38h1v1h-1zM35 38h4v1h-4z',
+          },
+        },
+      };
+      const QADR_AR = 'اللَّهُمَّ إِنَّكَ عَفُوٌّ تُحِبُّ الْعَفْوَ فَاعْفُ عَنِّي';
+
+      const LEAF =
+        '<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21c0-7 3-12 8-15-1 8-4 13-8 15zM12 21C12 14 9 9 4 6c1 8 4 13 8 15z"/></svg>';
+
+      // ---------- copy (en + bn). Plain words, no em dashes. ----------
+      const T = {
+        en: {
+          locale: 'en-GB',
+          kicker: 'Ramadan timetable',
+          title: (y) => `Ramadan ${y} Suhoor & Iftar`,
+          checklistTitle: (y) => `My Ramadan ${y}`,
+          range: (a, b, c) => `${a} to ${b} (${c} if Ramadan has 30 days)`,
+          hijri: (h) => `Ramadan ${h} AH`,
+          cols: { fast: 'Fast', date: 'Date', day: 'Day', sh: 'Suhoor ends', if: 'Iftar' },
+          shFull: 'Suhoor ends (Fajr)',
+          ifFull: 'Iftar (Maghrib)',
+          prayers: ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'],
+          prayersGroup: 'Prayers',
+          tarawih: 'Tarawih',
+          quran: 'Quran',
+          quranPages: 'Quran (pages)',
+          nafl: 'Nafl',
+          tahajjud: 'Tahajjud',
+          duha: 'Duha',
+          adhkarAm: 'Morning adhkar',
+          adhkarPm: 'Evening adhkar',
+          sadaqah: 'Sadaqah',
+          fasted: 'Fasted',
+          p30: 'Only if Ramadan has 30 days',
+          footnote: (m) => `★ Odd nights of the last ten · ${m}`,
+          scan: 'Scan to open online',
+          scanApp: 'Track it in the app',
+          name: 'Name',
+          juzT: 'Quran khatm: tick each juz you finish',
+          intentT: 'My intentions and du’as this Ramadan',
+          zakatGiven: 'Zakat al-Fitr given before the Eid prayer',
+          download: {
+            timetable: 'Timetable PDF',
+            combined: 'Timetable + checklist PDF',
+            checklist: 'Ramadan checklist PDF',
+          },
+          hint: 'Opens the print window: choose "Save as PDF". A4, one page.',
+          firstFact: 'First fast',
+          shortFact: 'Shortest fast',
+          longFact: 'Longest fast',
+          dur: (h, m) => `${h} h ${m} min`,
+          durLine: (a, b, c) =>
+            `Fasting time, suhoor end to iftar: ${a} on the first day, ${b} on the 29th. ${c}`,
+          durGrow: (n) => `The days grow about ${n} minutes longer over the month.`,
+          duaQadrT: 'Duʿā for Laylat al-Qadr',
+          duaQadr: 'Allāhumma innaka ʿafuwwun tuḥibbul-ʿafwa faʿfu ʿannī.',
+          duaQadrM: 'O Allah, You are the One who pardons and You love to pardon, so pardon me.',
+          duaQadrS: 'Tirmidhi 3513 (Sahih, Darussalam), Ibn Majah 3850',
+          zakatT: 'Zakat al-Fitr',
+          zakat: (eid) =>
+            `Give it before the Eid prayer (Bukhari 1503). Eid is expected on ${eid}. Ask your masjid for this year's amount.`,
+          aboutT: 'About these dates and times',
+          aboutItems: [],
+          masjidShort: 'Follow your local masjid',
+        },
+        bn: {
+          locale: 'bn-BD',
+          kicker: 'রমজানের সময়সূচি',
+          title: (y) => `রমজান ${y}: সেহরি ও ইফতার`,
+          checklistTitle: (y) => `আমার রমজান ${y}`,
+          range: (a, b, c) => `${a} থেকে ${b} (রমজান ৩০ দিনের হলে ${c})`,
+          hijri: (h) => `রমজান ${h} হিজরি`,
+          cols: { fast: 'রোজা', date: 'তারিখ', day: 'বার', sh: 'সেহরির শেষ', if: 'ইফতার' },
+          shFull: 'সেহরির শেষ (ফজর)',
+          ifFull: 'ইফতার (মাগরিব)',
+          prayers: ['ফজর', 'যুহর', 'আসর', 'মাগরিব', 'ইশা'],
+          prayersGroup: 'নামাজ',
+          tarawih: 'তারাবীহ',
+          quran: 'কুরআন',
+          quranPages: 'কুরআন (পৃষ্ঠা)',
+          nafl: 'নফল',
+          tahajjud: 'তাহাজ্জুদ',
+          duha: 'দুহা',
+          adhkarAm: 'সকালের আযকার',
+          adhkarPm: 'সন্ধ্যার আযকার',
+          sadaqah: 'সদকা',
+          fasted: 'রোজা',
+          p30: 'শুধু রমজান ৩০ দিনের হলে',
+          footnote: (m) => `★ শেষ দশকের বেজোড় রাত · ${m}`,
+          scan: 'স্ক্যান করে অনলাইনে দেখুন',
+          scanApp: 'অ্যাপে ট্র্যাক করুন',
+          name: 'নাম',
+          juzT: 'কুরআন খতম: প্রতিটি পারা শেষ হলে টিক দিন',
+          intentT: 'এই রমজানে আমার নিয়ত ও দোয়া',
+          zakatGiven: 'ঈদের নামাজের আগে সাদাকাতুল ফিতর আদায় করেছি',
+          download: {
+            timetable: 'সময়সূচি PDF',
+            combined: 'সময়সূচি + চেকলিস্ট PDF',
+            checklist: 'রমজান চেকলিস্ট PDF',
+          },
+          hint: 'প্রিন্ট উইন্ডো খুলবে: "PDF হিসেবে সেভ" বেছে নিন। A4, এক পাতা।',
+          firstFact: 'প্রথম রোজা',
+          shortFact: 'সবচেয়ে ছোট রোজা',
+          longFact: 'সবচেয়ে বড় রোজা',
+          dur: (h, m) => `${h} ঘণ্টা ${m} মিনিট`,
+          durLine: (a, b, c) =>
+            `রোজার সময়, সেহরির শেষ থেকে ইফতার: প্রথম দিন ${a}, ২৯তম দিন ${b}। ${c}`,
+          durGrow: (n) => `মাস জুড়ে দিন প্রায় ${n} মিনিট বড় হয়।`,
+          duaQadrT: 'লাইলাতুল কদরের দোয়া',
+          duaQadr: 'আল্লাহুম্মা ইন্নাকা আফুউউন তুহিব্বুল আফওয়া ফাফু আন্নি।',
+          duaQadrM: 'হে আল্লাহ, তুমি ক্ষমাশীল, ক্ষমা করতে ভালোবাসো, তাই আমাকে ক্ষমা করো।',
+          duaQadrS: 'তিরমিজি ৩৫১৩ (সহিহ, দারুসসালাম), ইবনে মাজাহ ৩৮৫০',
+          zakatT: 'সাদাকাতুল ফিতর (ফিতরা)',
+          zakat: (eid) => `ঈদের নামাজের আগে আদায় করুন (বুখারি ১৫০৩)। সম্ভাব্য ঈদ ${eid}।`,
+          aboutT: 'এই তারিখ ও সময় সম্পর্কে',
+          masjidShort: 'স্থানীয় মসজিদ অনুসরণ করুন',
+        },
+      };
+
+      // Bangladesh: Islamic Foundation's announced fitra (1447 shown until the 1448 announcement).
+      const FITRA_BD = {
+        en: '<p><b>Islamic Foundation, 1447 AH</b> (announced 25 Feb 2026): Tk 110 to Tk 2,805 per person. The 1448 amounts are announced during Ramadan; this sheet shows them once announced.</p><p class="src">Source: Islamic Foundation via prothomalo.com · islamicfoundation.gov.bd</p>',
+        bn: '<p><b>ইসলামিক ফাউন্ডেশন, ১৪৪৭ হিজরি</b> (ঘোষণা ২৫ ফেব্রুয়ারি ২০২৬): জনপ্রতি ১১০ টাকা থেকে ২,৮০৫ টাকা। ১৪৪৮ হিজরির হার রমজানে ঘোষণা হয়; ঘোষণার পর এই সময়সূচিতে দেখানো হবে।</p><p class="src">সূত্র: ইসলামিক ফাউন্ডেশন (প্রথম আলো) · islamicfoundation.gov.bd</p>',
+      };
+
+      // Country parts. `about` = the explanations that left the paper (live page only).
+      const SHEETS = {
+        'dhaka-bn': {
+          slug: 'dhaka-bangladesh',
+          lang: 'bn',
+          label: 'Dhaka (bn)',
+          place: 'ঢাকা জেলা · ঢাকা বিভাগ, বাংলাদেশ',
+          fitra: FITRA_BD.bn,
+          about: [
+            [
+              'তারিখ কোথা থেকে',
+              'জাতীয় চাঁদ দেখা কমিটির সর্বশেষ ঘোষণা (জমাদিউল আউয়াল ১৪৪৮ শুরু ১৩ অক্টোবর ২০২৬) থেকে হিসাব করা পূর্বাভাস। রমজানের চাঁদ দেখার ঘোষণার পর এই পাতা ও PDF সেই তারিখে বদলে যাবে।',
+            ],
+            [
+              'সময় কীভাবে হিসাব করা',
+              'সেহরির শেষ: ফজরের শুরু (করাচি পদ্ধতি, ১৮°) থেকে ৩ মিনিট আগে। ইফতার: মাগরিব, সূর্যাস্তের ৩ মিনিট পরে। ইসলামিক ফাউন্ডেশনের ২০২৬ সালের ঢাকার সময়সূচির সঙ্গে প্রতিটি দিন মিলিয়ে দেখা হয়েছে: আমাদের সেহরির শেষ কখনো ইফার চেয়ে পরে নয়, ইফতার কখনো ইফার চেয়ে আগে নয়। সময় জেলা সদরের (২৩.৭১, ৯০.৪১)।',
+            ],
+            [
+              '৩০তম রোজা',
+              'রমজান ২৯ বা ৩০ দিনের হয়। ২৯তম রোজার সন্ধ্যায় শাওয়ালের চাঁদ দেখা না গেলে ৩০তম রোজা রাখা হয় (বুখারি ১৯০৯)। ঘোষণার পর সারিটি থাকবে বা মুছে যাবে।',
+            ],
+            [
+              '★ বেজোড় রাত',
+              'শেষ দশকের বেজোড় রাতে লাইলাতুল কদর তালাশ করা হয় (বুখারি ২০১৭)। ইসলামি রাত দিনের আগে আসে: ২১তম রাত শুরু হয় ২০তম রোজার ইফতারের পর।',
+            ],
+            [
+              'স্থানীয় মসজিদ',
+              'জামাত ও সময়ের জন্য আপনার মসজিদ অনুসরণ করুন। ইসলামিক ফাউন্ডেশন বাংলাদেশ: islamicfoundation.gov.bd',
+            ],
+            [
+              'ফিতরার হার',
+              'ইসলামিক ফাউন্ডেশনের জাতীয় ফিতরা নির্ধারণ কমিটি প্রতি বছর রমজানে হার ঘোষণা করে। ঘোষণার তারিখ ও লিংকসহ এখানে দেখানো হয়।',
+            ],
+          ],
+        },
+        'dhaka-en': {
+          slug: 'dhaka-bangladesh',
+          lang: 'en',
+          label: 'Dhaka (en)',
+          place: 'Dhaka District · Dhaka Division, Bangladesh',
+          fitra: FITRA_BD.en,
+          about: [
+            [
+              'Where the dates come from',
+              'A forecast from the National Moon Sighting Committee’s latest announcement (Jumada al-Ula 1448 began on 13 October 2026). Once the committee announces the Ramadan moon, this page and the PDF follow its date.',
+            ],
+            [
+              'How the times are found',
+              'Suhoor ends 3 minutes before Fajr (Karachi method, 18°). Iftar is at Maghrib, 3 minutes after sunset. Every day was checked against Islamic Foundation’s 2026 Dhaka timetable: our suhoor end is never later than theirs and our iftar never earlier. Times are for the district headquarters (23.71, 90.41).',
+            ],
+            [
+              'The 30th fast',
+              'Ramadan has 29 or 30 days. If the Shawwal moon is not seen on the evening of fast 29, a 30th fast is kept (Bukhari 1909). After the announcement the row stays or goes.',
+            ],
+            [
+              '★ Odd nights',
+              'Laylat al-Qadr is sought in the odd nights of the last ten (Bukhari 2017). The Islamic night comes before its day: the 21st night begins at the iftar of fast 20.',
+            ],
+            [
+              'Your local masjid',
+              'Follow your masjid for prayer times and jamaat. Islamic Foundation Bangladesh: islamicfoundation.gov.bd',
+            ],
+            [
+              'Fitra amounts',
+              'The Islamic Foundation’s national fitra committee announces the amounts each Ramadan. We show them here with the date and a link.',
+            ],
+          ],
+        },
+        'london-en': {
+          slug: 'london-united-kingdom',
+          lang: 'en',
+          label: 'London',
+          place: 'London, United Kingdom',
+          about: [
+            [
+              'Where the dates come from',
+              'The Umm al-Qura calendar. Ramadan begins with the moon-sighting announcement your masjid follows (in the UK some follow Saudi Arabia, some a local sighting), so it may begin a day later.',
+            ],
+            [
+              'How the times are found',
+              'Suhoor ends when Fajr begins (Moonsighting Committee method, Fajr at 18°, or the committee’s seasonal time when that is later). Iftar is at Maghrib, which this method sets 3 minutes after sunset as a precaution, like most UK masjid timetables. Times are for central London (51.51, -0.13).',
+            ],
+            [
+              'The 30th fast',
+              'Ramadan has 29 or 30 days. If the Shawwal moon is not seen on the evening of fast 29, a 30th fast is kept (Bukhari 1909).',
+            ],
+            [
+              '★ Odd nights',
+              'Laylat al-Qadr is sought in the odd nights of the last ten (Bukhari 2017). The 21st night begins at the iftar of fast 20.',
+            ],
+            [
+              'Your local masjid',
+              'Follow your local masjid for the start of Ramadan, tarawih and Eid.',
+            ],
+          ],
+        },
+        'dubai-en': {
+          slug: 'dubai-united-arab-emirates',
+          lang: 'en',
+          label: 'Dubai',
+          place: 'Dubai, United Arab Emirates',
+          about: [
+            [
+              'Where the dates come from',
+              'The Umm al-Qura calendar. In the UAE, Ramadan begins with the official moon-sighting announcement, so it may begin a day later.',
+            ],
+            [
+              'How the times are found',
+              'Suhoor ends when Fajr begins (Dubai method, 18.2°). Iftar is at Maghrib, which this method sets 3 minutes after sunset as a precaution. The official UAE timetable can show it a minute later: follow it. Times are for central Dubai (25.08, 55.31).',
+            ],
+            [
+              'The 30th fast',
+              'Ramadan has 29 or 30 days. If the Shawwal moon is not seen on the evening of fast 29, a 30th fast is kept (Bukhari 1909).',
+            ],
+            [
+              '★ Odd nights',
+              'Laylat al-Qadr is sought in the odd nights of the last ten (Bukhari 2017). The 21st night begins at the iftar of fast 20.',
+            ],
+            ['Your local masjid', 'Follow your local masjid and the official UAE timetable.'],
+          ],
+        },
+        'makkah-en': {
+          slug: 'mecca-saudi-arabia',
+          lang: 'en',
+          label: 'Makkah',
+          place: 'Makkah, Saudi Arabia',
+          about: [
+            [
+              'Where the dates come from',
+              'The Umm al-Qura calendar, Saudi Arabia’s official calendar. Ramadan itself begins with the announcement of the Saudi moon sighting, so it may differ by a day.',
+            ],
+            [
+              'How the times are found',
+              'Suhoor ends when Fajr begins (Umm al-Qura method, 18.5°). Iftar is at Maghrib, at sunset as in the Umm al-Qura timetable. Checked against published Makkah times (within 1 to 2 minutes). Times are for central Makkah (21.43, 39.83).',
+            ],
+            [
+              'The 30th fast',
+              'Ramadan has 29 or 30 days. If the Shawwal moon is not seen on the evening of fast 29, a 30th fast is kept (Bukhari 1909).',
+            ],
+            [
+              '★ Odd nights',
+              'Laylat al-Qadr is sought in the odd nights of the last ten (Bukhari 2017). The 21st night begins at the iftar of fast 20.',
+            ],
+            ['Your local masjid', 'Follow your local masjid and the Haram’s announced times.'],
+          ],
+        },
+      };
+
+      // ---------- helpers ----------
+      const fmtCache = {};
+      const fmt = (locale, opts) => {
+        const k = locale + JSON.stringify(opts);
+        return (fmtCache[k] ??= new Intl.DateTimeFormat(locale, { timeZone: 'UTC', ...opts }));
+      };
+      const noon = (ymd) => new Date(ymd + 'T12:00:00Z');
+      const num = (n, lang) =>
+        new Intl.NumberFormat(lang === 'bn' ? 'bn-BD' : 'en-GB', { useGrouping: false }).format(n);
+      const bnDigits = (s) => s.replace(/\d/g, (d) => '০১২৩৪৫৬৭৮৯'[d]);
+      function clock(hhmm, lang) {
+        const [h, m] = hhmm.split(':').map(Number);
+        const h12 = ((h + 11) % 12) + 1;
+        const mm = String(m).padStart(2, '0');
+        if (lang === 'bn') return bnDigits(`${h12}:${mm}`);
+        return `${h12}:${mm} ${h < 12 ? 'am' : 'pm'}`;
+      }
+      const shortDate = (ymd, lang) =>
+        fmt(T[lang].locale, { day: 'numeric', month: 'short' }).format(noon(ymd));
+      const weekday = (ymd, lang) =>
+        fmt(T[lang].locale, { weekday: lang === 'bn' ? 'long' : 'short' })
+          .format(noon(ymd))
+          .replace('বার', '');
+      const longDate = (ymd, lang) =>
+        fmt(T[lang].locale, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        }).format(noon(ymd));
+      const dayMonth = (ymd, lang) =>
+        fmt(T[lang].locale, { day: 'numeric', month: 'long' }).format(noon(ymd));
+      const dayMonthYear = (ymd, lang) =>
+        fmt(T[lang].locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(noon(ymd));
+      const addDay = (ymd, n) =>
+        new Date(Date.parse(ymd + 'T12:00:00Z') + n * 864e5).toISOString().slice(0, 10);
+      const dur = (mins, lang) =>
+        T[lang].dur(num(Math.floor(mins / 60), lang), num(mins % 60, lang));
+      const isOdd = (n) => n >= 21 && n % 2 === 1;
+
+      // ---------- state ----------
+      const params = new URLSearchParams(location.search);
+      // Return the matching entry of the allow-list itself (never the raw query
+      // value), so nothing from the URL reaches the innerHTML templates below.
+      const pick = (k, list, d) => list.find((x) => x === params.get(k)) ?? d;
+      const state = {
+        sheet: pick('sheet', Object.keys(SHEETS), 'dhaka-bn'),
+        variant: pick('variant', ['timetable', 'combined', 'checklist'], 'timetable'),
+        ink: pick('ink', ['color', 'bw'], 'color'),
+        theme: pick('theme', ['dark', 'light'], 'dark'),
+        view: pick('view', ['both', 'screen', 'print'], 'both'),
+      };
+
+      function blocks(s, d, lang, cls) {
+        const t = T[lang];
+        const h = cls === 'block' ? 'h3' : 'h4';
+        const last = d.days[d.days.length - 1].date;
+        const eid = `${dayMonth(addDay(last, 1), lang)} ${lang === 'bn' ? 'অথবা' : 'or'} ${dayMonth(addDay(last, 2), lang)}`;
+        return [
+          `<div class="${cls}"><${h}>${t.duaQadrT}</${h}><div class="ar" lang="ar">${QADR_AR}</div><div class="tr">${t.duaQadr}</div><div>${t.duaQadrM}</div><div class="src">${t.duaQadrS}</div></div>`,
+          `<div class="${cls}"><${h}>${t.zakatT}</${h}><p>${t.zakat(eid)}</p>${s.fitra ?? ''}</div>`,
+        ];
+      }
+
+      function renderScreen(s, d, lang, t) {
+        const days = d.days;
+        const first = days[0];
+        const p30 = d.possible30;
+        const gYear = num(Number(first.date.slice(0, 4)), lang);
+        const range = t.range(
+          dayMonth(first.date, lang),
+          dayMonthYear(days[days.length - 1].date, lang),
+          dayMonth(p30.date, lang)
+        );
+        const shortest = days.reduce((a, b) => (b.mins < a.mins ? b : a));
+        const longest = days.reduce((a, b) => (b.mins > a.mins ? b : a));
+        const grow = days[days.length - 1].mins - first.mins;
+        const row = (r, cls = '') =>
+          `<tr class="${cls}${isOdd(r.fast) ? ' odd' : ''}"><th scope="row">${num(r.fast, lang)}${isOdd(r.fast) ? '<span class="star" aria-label="odd night">★</span>' : ''}</th><td>${shortDate(r.date, lang)}<span class="wd">${weekday(r.date, lang)}</span></td><td class="sh">${clock(r.fajr, lang)}</td><td class="if">${clock(r.maghrib, lang)}</td></tr>`;
+        document.getElementById('screen').innerHTML = `
+          <div class="screen t-${state.theme}" lang="${lang}">
+            <header class="hero">
+              <span class="leaf">${LEAF}</span>
+              <p class="kicker">${t.kicker} · ${s.place}</p>
+              <h2>${t.title(gYear)}</h2>
+              <p>${t.hijri(num(1448, lang))} · ${range}</p>
+            </header>
+            <div class="facts">
+              <div class="fact"><div class="k">${t.firstFact}</div><div class="v">${dayMonth(first.date, lang)}</div><div class="d">${weekday(first.date, lang)}</div></div>
+              <div class="fact"><div class="k">${t.shortFact}</div><div class="v">${dur(shortest.mins, lang)}</div><div class="d">${shortDate(shortest.date, lang)}</div></div>
+              <div class="fact"><div class="k">${t.longFact}</div><div class="v">${dur(longest.mins, lang)}</div><div class="d">${shortDate(longest.date, lang)}</div></div>
+            </div>
+            <p class="durline">${t.durLine(dur(first.mins, lang), dur(days[days.length - 1].mins, lang), t.durGrow(num(grow, lang)))}</p>
+            <div class="dls">
+              ${['timetable', 'combined', 'checklist'].map((v) => `<button type="button" class="dl${v === state.variant ? ' primary' : ''}" data-dl="${v}">${t.download[v]}</button>`).join('')}
+            </div>
+            <p class="dlhint">${t.hint}</p>
+            <div class="tablecard"><table>
+              <thead><tr><th>${t.cols.fast}</th><th>${t.cols.date}</th><th class="c">${t.shFull}</th><th class="c">${t.ifFull}</th></tr></thead>
+              <tbody>${days.map((r) => row(r)).join('')}
+                <tr class="p30label"><td colspan="4">${t.p30}</td></tr>${row(p30, 'p30')}</tbody>
+            </table></div>
+            <div class="blocks">${blocks(s, d, lang, 'block').join('')}</div>
+            <section class="about"><h3>${t.aboutT}</h3>
+              ${s.about.map(([q, a], i) => `<details${i === 0 ? ' open' : ''}><summary>${q}</summary><p>${a}</p></details>`).join('')}
+            </section>
+          </div>`;
+        for (const b of document.querySelectorAll('[data-dl]'))
+          b.addEventListener('click', () => {
+            state.variant = b.dataset.dl;
+            render();
+            window.print();
+          });
+      }
+
+      function renderPaper(s, d, lang, t) {
+        const days = d.days;
+        const p30 = d.possible30;
+        const gYear = num(Number(days[0].date.slice(0, 4)), lang);
+        const range = t.range(
+          dayMonth(days[0].date, lang),
+          dayMonthYear(days[days.length - 1].date, lang),
+          dayMonth(p30.date, lang)
+        );
+        const url = d.url.replace('https://', '');
+        const box = '<span class="box"></span>';
+        const v = state.variant;
+        const star = (r) => (isOdd(r.fast) ? '<span class="star">★</span>' : '');
+        const cls = (r, extra = '') =>
+          `${extra}${r.fast % 7 === 0 && r.fast < 29 ? ' wk' : ''}${isOdd(r.fast) ? ' odd' : ''}`;
+        const qr = `<figure><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${d.qr.size} ${d.qr.size}" shape-rendering="crispEdges" role="img" aria-label="QR"><path fill="#000" d="${d.qr.d}"/></svg><figcaption>${v === 'checklist' ? t.scanApp : t.scan}<br>bustandeen.com</figcaption></figure>`;
+        const head = (title, extra = '') => `
+          <div class="ph"><div>
+            <div class="brand">${LEAF.replace(/22/g, '13')} Bustandeen</div>
+            <p class="ttl">${title}</p>
+            <p class="place">${s.place}</p>
+            <p class="sub">${t.hijri(num(1448, lang))} · ${range}</p>${extra}
+          </div>${qr}</div>`;
+        let body = '';
+        if (v === 'timetable') {
+          const row = (r, c = '') =>
+            `<tr class="${cls(r, c)}"><th class="n" scope="row">${num(r.fast, lang)}${star(r)}</th><td>${shortDate(r.date, lang)}</td><td>${weekday(r.date, lang)}</td><td class="t sh">${clock(r.fajr, lang)}</td><td class="t if">${clock(r.maghrib, lang)}</td></tr>`;
+          body = `<div class="pbody"><div>
+            <table class="ptable"><colgroup><col style="width:13mm"><col style="width:22mm"><col style="width:23mm"><col><col></colgroup>
+              <thead><tr><th>${t.cols.fast}</th><th>${t.cols.date}</th><th>${t.cols.day}</th><th class="c">${t.shFull}</th><th class="c">${t.ifFull}</th></tr></thead>
+              <tbody>${days.map((r) => row(r)).join('')}<tr class="p30label"><td colspan="5">${t.p30}</td></tr>${row(p30, 'p30')}</tbody>
+            </table>
+            <p class="pfootnote">${t.footnote(t.masjidShort)}</p></div>
+            <aside class="paside">${blocks(s, d, lang, 'pblock').join('')}</aside></div>`;
+        } else if (v === 'combined') {
+          const row = (r, c = '') =>
+            `<tr class="${cls(r, c)}"><th class="n" scope="row">${num(r.fast, lang)}${star(r)}</th><td>${shortDate(r.date, lang)}</td><td>${weekday(r.date, lang)}</td><td class="t sh">${clock(r.fajr, lang)}</td><td class="t if">${clock(r.maghrib, lang)}</td>${'<td class="ck">' + box + '</td>'.repeat(1)}${('<td class="ck">' + box + '</td>').repeat(4)}<td class="ck">${box}</td><td class="wr"></td><td class="ck">${box}</td></tr>`;
+          body = `<div class="pbody full"><div>
+            <table class="ptable compact combined"><colgroup><col style="width:11mm"><col style="width:16mm"><col style="width:16mm"><col style="width:21mm"><col style="width:21mm"><col span="5" style="width:12mm"><col style="width:14mm"><col><col style="width:12mm"></colgroup>
+              <thead>
+                <tr><th rowspan="2">${t.cols.fast}</th><th rowspan="2">${t.cols.date}</th><th rowspan="2">${t.cols.day}</th><th rowspan="2" class="c">${t.cols.sh}</th><th rowspan="2" class="c">${t.cols.if}</th><th colspan="5" class="grp">${t.prayersGroup}</th><th rowspan="2" class="c">${t.tarawih}</th><th rowspan="2" class="c">${t.quranPages}</th><th rowspan="2" class="c">${t.nafl}</th></tr>
+                <tr>${t.prayers.map((p) => `<th class="c">${p}</th>`).join('')}</tr>
+              </thead>
+              <tbody>${days.map((r) => row(r)).join('')}<tr class="p30label"><td colspan="13">${t.p30}</td></tr>${row(p30, 'p30')}</tbody>
+            </table>
+            <p class="pfootnote">${t.footnote(t.masjidShort)}</p></div></div>`;
+        } else {
+          const row = (r, c = '') =>
+            `<tr class="${cls(r, c)}"><th class="n" scope="row">${num(r.fast, lang)}${star(r)}</th><td>${shortDate(r.date, lang)}</td><td class="ck">${box}</td>${('<td class="ck">' + box + '</td>').repeat(5)}<td class="ck">${box}</td><td class="wr"></td><td class="ck">${box}</td><td class="ck">${box}</td><td class="ck">${box}</td><td class="ck">${box}</td><td class="ck">${box}</td></tr>`;
+          body = `
+            <div class="goals">
+              <div class="goal"><h4>${t.juzT}</h4><div class="juz">${Array.from({ length: 30 }, (_, i) => `<span>${num(i + 1, lang)}</span>`).join('')}</div></div>
+              <div class="goal"><h4>${t.intentT}</h4><div class="lines"><div></div><div></div></div></div>
+            </div>
+            <div class="pbody full"><div>
+            <table class="ptable compact dense"><colgroup><col style="width:11mm"><col style="width:16mm"><col style="width:12mm"><col span="5" style="width:11.5mm"><col style="width:13mm"><col><col span="5" style="width:12.6mm"></colgroup>
+              <thead>
+                <tr><th rowspan="2">${t.cols.fast}</th><th rowspan="2">${t.cols.date}</th><th rowspan="2" class="c">${t.fasted}</th><th colspan="5" class="grp">${t.prayersGroup}</th><th rowspan="2" class="c">${t.tarawih}</th><th rowspan="2" class="c">${t.quranPages}</th><th rowspan="2" class="c">${t.tahajjud}</th><th rowspan="2" class="c">${t.duha}</th><th rowspan="2" class="c">${t.adhkarAm}</th><th rowspan="2" class="c">${t.adhkarPm}</th><th rowspan="2" class="c">${t.sadaqah}</th></tr>
+                <tr>${t.prayers.map((p) => `<th class="c">${p}</th>`).join('')}</tr>
+              </thead>
+              <tbody>${days.map((r) => row(r)).join('')}<tr class="p30label"><td colspan="15">${t.p30}</td></tr>${row(p30, 'p30')}</tbody>
+            </table>
+            <p class="pfootnote">${t.footnote(t.masjidShort).split(' · ')[0]}</p>
+            <div class="eidline"><span>${box}${t.zakatGiven}</span></div></div></div>`;
+        }
+        const title = v === 'checklist' ? t.checklistTitle(gYear) : t.title(gYear);
+        const extra = v === 'checklist' ? `<p class="name">${t.name}: <span></span></p>` : '';
+        document.getElementById('paperwrap').innerHTML = `
+          <div class="paper ink-${state.ink === 'color' ? 'color' : 'bw'}" lang="${lang}" data-sheet="${state.sheet}" data-variant="${v}">
+            ${head(title, extra)}${body}
+            <div class="pfoot">${url}</div>
+          </div>`;
+      }
+
+      function render() {
+        const s = SHEETS[state.sheet];
+        const d = DATA[s.slug];
+        const lang = s.lang;
+        const t = T[lang];
+        document.documentElement.lang = lang;
+        renderScreen(s, d, lang, t);
+        renderPaper(s, d, lang, t);
+        for (const [id, key] of [
+          ['segCity', 'sheet'],
+          ['segVariant', 'variant'],
+          ['segInk', 'ink'],
+          ['segTheme', 'theme'],
+          ['segView', 'view'],
+        ])
+          for (const b of document.querySelectorAll(`#${id} button`))
+            b.setAttribute('aria-pressed', b.dataset.v === state[key]);
+        document.getElementById('screenCol').hidden = state.view === 'print';
+        document.getElementById('printCol').hidden = state.view === 'screen';
+        fit();
+      }
+
+      // Scale the 210 mm sheet down on narrow screens (never wider than the page).
+      function fit() {
+        const wrap = document.getElementById('paperwrap');
+        const avail = document.querySelector('.doc').clientWidth;
+        wrap.style.zoom = Math.min(1, avail / 800).toFixed(3);
+      }
+
+      document.getElementById('segCity').innerHTML = Object.entries(SHEETS)
+        .map(([k, s]) => `<button type="button" data-v="${k}">${s.label}</button>`)
+        .join('');
+      for (const [id, key] of [
+        ['segCity', 'sheet'],
+        ['segVariant', 'variant'],
+        ['segInk', 'ink'],
+        ['segTheme', 'theme'],
+        ['segView', 'view'],
+      ])
+        document.getElementById(id).addEventListener('click', (e) => {
+          const v = e.target.closest('button')?.dataset.v;
+          if (v) ((state[key] = v), render());
+        });
+      addEventListener('resize', fit);
+      render();
+    </script>
+  </body>
+</html>

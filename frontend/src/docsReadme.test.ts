@@ -68,3 +68,12 @@ describe('docs/README.md', () => {
     for (const m of models) expect(docs, m).toContain('`' + m + '`');
   });
 });
+
+describe('design prototypes', () => {
+  it('track the Ramadan print-sheet prototype but not its generated PDFs and PNGs', () => {
+    expect(repoFile('.gitignore')).toMatch(/^docs\/design\/ramadan-print-sheet\/$/m);
+    expect(repoFile('docs/design/ramadan-print-sheet.html')).toContain(
+      '<title>Ramadan Print Sheet</title>'
+    );
+  });
+});
