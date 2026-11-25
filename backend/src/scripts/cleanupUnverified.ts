@@ -6,6 +6,7 @@ import admin from 'firebase-admin';
 import mongoose from 'mongoose';
 import { initFirebaseAdmin, isFirebaseInitialized } from '../config/firebaseAdmin.js';
 import User from '../models/User.js';
+import { DB_NAME, assertWriteAllowed } from '../config/database.js';
 
 /**
  * Email/password accounts that never confirmed their email, from before
@@ -33,7 +34,8 @@ async function main(): Promise<void> {
   if (!uri) throw new Error('MONGODB_URI is not set');
   initFirebaseAdmin();
   if (!isFirebaseInitialized()) throw new Error('Firebase Admin credentials are required');
-  await mongoose.connect(uri, { dbName: 'ihsan' });
+  assertWriteAllowed(uri, APPLY, process.argv);
+  await mongoose.connect(uri, { dbName: DB_NAME });
 
   const cutoff = Date.now() - MIN_AGE_HOURS * 3_600_000;
   const unverified: admin.auth.UserRecord[] = [];

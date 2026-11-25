@@ -2,6 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import AdminAccount from '../models/AdminAccount.js';
 import { resetMfa } from '../services/adminMfa.service.js';
+import { DB_NAME, assertWriteAllowed } from '../config/database.js';
 
 /**
  * Last-resort recovery for an admin's second factor (T1.4): the Servant lost
@@ -25,7 +26,8 @@ async function main(): Promise<void> {
   }
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error('MONGODB_URI is not set');
-  await mongoose.connect(uri, { dbName: 'ihsan' });
+  assertWriteAllowed(uri, APPLY, process.argv);
+  await mongoose.connect(uri, { dbName: DB_NAME });
 
   const email = emailArg.trim().toLowerCase();
   const account = await AdminAccount.findOne({ email });

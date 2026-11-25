@@ -2,6 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import { connectDB } from '../config/mongo.js';
 import { reportFutureAccrual } from './lib/futureAccrual.js';
+import { DB_NAME } from '../config/database.js';
 
 /**
  * READ-ONLY: how many accounts did the unbounded client "today" push into the
@@ -28,7 +29,7 @@ async function run(): Promise<void> {
     .replace(/^mongodb(\+srv)?:\/\//, '')
     .replace(/^[^@]*@/, '')
     .split(/[/?]/)[0];
-  process.stdout.write(`READ-ONLY. Reading database "ihsan" on ${host}\n`);
+  process.stdout.write(`READ-ONLY. Reading database "${DB_NAME}" on ${host}\n`);
 
   await connectDB();
   const report = await reportFutureAccrual(Date.now(), { withUids: LIST });

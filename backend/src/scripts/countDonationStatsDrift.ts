@@ -2,6 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import { connectDB } from '../config/mongo.js';
 import { reportDonationStatsDrift } from './lib/donationStatsDrift.js';
+import { DB_NAME } from '../config/database.js';
 
 /**
  * READ-ONLY: do the cached public sadaqah totals match the verified donations?
@@ -18,7 +19,7 @@ async function run(): Promise<void> {
     .replace(/^mongodb(\+srv)?:\/\//, '')
     .replace(/^[^@]*@/, '')
     .split(/[/?]/)[0];
-  process.stdout.write(`READ-ONLY. Reading database "ihsan" on ${host}\n`);
+  process.stdout.write(`READ-ONLY. Reading database "${DB_NAME}" on ${host}\n`);
   await connectDB();
   process.stdout.write(`${JSON.stringify(await reportDonationStatsDrift(), null, 2)}\n`);
 }

@@ -2,6 +2,7 @@ import 'dotenv/config';
 import mongoose from 'mongoose';
 import { connectDB } from '../config/mongo.js';
 import { reportOpenCycles } from './lib/openCycles.js';
+import { DB_NAME } from '../config/database.js';
 
 /**
  * READ-ONLY: does any account have more than one open cycle? (audit 2026-11-16
@@ -24,7 +25,7 @@ async function run(): Promise<void> {
     .replace(/^mongodb(\+srv)?:\/\//, '')
     .replace(/^[^@]*@/, '')
     .split(/[/?]/)[0];
-  process.stdout.write(`READ-ONLY. Reading database "ihsan" on ${host}\n`);
+  process.stdout.write(`READ-ONLY. Reading database "${DB_NAME}" on ${host}\n`);
 
   await connectDB();
   const report = await reportOpenCycles({ withUids: LIST });

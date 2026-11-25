@@ -3,6 +3,7 @@ import { readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import mongoose from 'mongoose';
+import { DB_NAME, assertWriteAllowed } from '../config/database.js';
 
 /**
  * Brings the database's indexes in line with the Mongoose schemas.
@@ -49,7 +50,8 @@ async function run(): Promise<void> {
   if (!uri) throw new Error('MONGODB_URI is not set');
 
   await loadModels();
-  await mongoose.connect(uri, { dbName: 'ihsan', autoIndex: false });
+  assertWriteAllowed(uri, APPLY, process.argv);
+  await mongoose.connect(uri, { dbName: DB_NAME, autoIndex: false });
   process.stdout.write(
     APPLY ? 'Applying index changes\n\n' : 'Dry run (pass --apply to change anything)\n\n'
   );

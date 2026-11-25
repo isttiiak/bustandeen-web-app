@@ -2,6 +2,29 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.38 - Migration runner, one database name, write scripts refuse a hosted database without --production (audit P3-1 code side, P3-2) - 2026-11-25
+
+Nothing in the app changes and no stored data was touched: this is tooling for the operator scripts.
+
+### Added
+
+- **Migration runner** (`npm run migrate`, `src/migrations/`). Dry run by default (counts only); `--apply` writes. Applied ids are kept in a `schemaversions` collection and skipped next time. It stops at the first failure and records nothing for the failed one. Every migration must be idempotent.
+- The two old one-off scripts are now migrations `001-cycle-day-encryption` and `002-remove-zikr-audio-links`, and both gained a dry run. The cycle-day one now connects to the `ihsan` database explicitly (it used the database named in the connection string). Their old script files are removed.
+- **Write guard.** Every script that can write (`sync-indexes`, `rotate:field-key`, `cleanup:*`, `admin:reset-mfa`, `migrate:social-visibility`, `migrate`) now refuses a hosted database unless `--production` is on the command line. Dry runs and read-only reports are never stopped. The refusal names the host, never the credentials.
+
+### Changed
+
+- `DB_NAME` (`config/database.ts`) is the only place the database is named; the seven hard-coded `'ihsan'` literals and the one in `config/mongo.ts` use it. The value is still `ihsan` (renaming needs a dump and restore, see CLAUDE.md "Deferred Migrations").
+
+### Tests
+
+- `dbGuard.unit.test.js` (17 cases): local vs hosted hosts, the guard, and two source scans (the database is named in one place; every script with `--apply` checks its target). The two scans fail on the old scripts.
+- `migrations.e2e.test.js` (6 cases, mongodb-memory-server): a dry run changes and records nothing; apply encrypts legacy cycle days and drops the audio data; a second run changes nothing; data already in the new shape is untouched; a failing migration stops the run.
+
+### Not done
+
+- Nothing was run against the live database. The staging cluster (P3-1) is still to be created.
+
 ## v5.190.36 - Salat day: checked, pinned with tests, civil-date fallbacks removed (audit P1-16 a) - 2026-11-25
 
 The audit asked whether an Isha prayed at 1 AM counts for the day before, in line with the three day-start modes (Fajr, midnight, Maghrib). It already does: since 2026-09-03 every salat read, write and sweep sends the tracking day (`getTrackingDay()`). The audit pointed at a stale comment. Nothing about what the app counts changes in this release.
