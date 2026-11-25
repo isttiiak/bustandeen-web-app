@@ -73,3 +73,12 @@ describe('the Vercel function entry (api/index.ts)', () => {
     expect(read('api/tsconfig.json')).toContain('index.ts');
   });
 });
+
+describe('Vercel install', () => {
+  it('installs exactly what the lockfiles pin (npm ci, not npm install)', () => {
+    const cfg = JSON.parse(read('vercel.json')) as { installCommand: string };
+    expect(cfg.installCommand).not.toMatch(/npm install/);
+    expect(cfg.installCommand).toContain('npm ci --prefix backend');
+    expect(cfg.installCommand).toContain('npm ci --prefix frontend');
+  });
+});

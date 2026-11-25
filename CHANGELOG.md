@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.40 - Vercel installs exactly what the lockfiles pin (audit P3-5) - 2026-11-25
+
+`vercel.json` ran `npm install` for the backend and frontend, which can pick newer versions than `package-lock.json` and rewrite it during the build. It now runs `npm ci`: the build gets the same packages CI tested, and fails if a lockfile and its `package.json` disagree. Nothing in the app changes.
+
+### Changed
+
+- `installCommand`: `npm ci --prefix backend && npm ci --prefix frontend`. Checked first with `npm ci --dry-run` in both workspaces (lockfiles in sync) and proven by this pull request's Vercel preview build.
+
+### Tests
+
+- `ciHardening.test.ts` gains a case that fails if `installCommand` goes back to `npm install`.
+
+### Not done
+
+- Branch protection on `main` and deleting merged branches: owner decisions.
+
 ## v5.190.39 - CI hardening: least privilege, pinned actions, CodeQL, secret scan (audit P3-4) - 2026-11-25
 
 Nothing in the app changes. The workflows around it get safer; this repository is public and its workflows run on every pull request.
