@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.48 - Architecture notes brought up to date (audit P3-7) - 2026-11-26
+
+`docs/README.md`, the architecture reference, said "current as of v5.61.0" and described several things that had since changed. Each claim was checked against the code and rewritten. No app code changed.
+
+### What was wrong, and is now right
+
+- **Request flow:** the catch-all serves `app-shell.html`, not `index.html` (the landing page); added the admin page, the bayan host, the Firebase auth proxy and the redirect for removed SEO URLs.
+- **Express order and routes:** the real middleware order, and the route groups that were missing (`adhkar`, `stats`, `calendar`, `cron`, `csp-report`, `client-errors`, `admin/moon-sighting`).
+- **Rate limiting:** money- and abuse-sensitive limits use the shared Mongo store, not only the in-memory one.
+- **Data model:** `autoIndex` is off outside tests (indexes come from `sync-indexes`); the collection table now lists every model, and the TTLs (`RateLimitHit`, `EmailFailureLog`, `ClientOp` and others) replace "no TTL".
+- **Client state and PWA:** `syncOutbox` covers fasting, Quran, Rayhanah, adhkar and zikr; the shell is fetched network-first; the real runtime caches.
+- **Build, deployment and CI:** the five build steps, `firebase-admin` v13 (not v12), `npm ci` on Vercel, branch protection, CodeQL and gitleaks, pinned Node and Actions, the write guard and `npm run migrate`, and the Node-patch drift on Vercel.
+
+### Tests
+
+- `docsReadme.test.ts` (10 cases): a "last verified" version, none of the stale claims, the guards, environments and CI written down, and every model named. It fails on the old file and passes now.
+
+### Not changed
+
+- `docs/design/ramadan-print-sheet*` stays untracked: whether to track or ignore it is still your decision.
+
 ## v5.190.47 - Licence and public repo basics (audit P3-3) - 2026-11-25
 
 The repository now says what it is licensed under, and its security policy is public.
