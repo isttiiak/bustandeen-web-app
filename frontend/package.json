@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.190.44",
+  "version": "5.190.45",
   "private": true,
   "type": "module",
   "scripts": {
@@ -48,7 +48,7 @@
     "react-i18next": "^18.0.3",
     "react-router": "^7.18.6",
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
-    "zustand": "^4.5.5"
+    "zustand": "^5.1.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

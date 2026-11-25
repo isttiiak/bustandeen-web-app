@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.45 - zustand 5 (audit P3-6) - 2026-11-25
+
+`zustand` 4.5 to 5.1, the state library behind the zikr counter, the signed-in user, UI settings and the admin panel. Nothing visible changes. Dependabot's pull request (377) was green but the upgrade changes how stores behave, so this one was checked by hand first.
+
+### What was checked
+
+- **Imports:** v5 drops the default export. All 6 stores already use the named `create`; the one `persist` and `createJSONStorage` import is unchanged.
+- **Selectors:** v5 turns "a selector that returns a new object or array each call" into an infinite re-render. Every one of the 60-odd store hook calls was read: they return a single stored value, a boolean or a function. None builds an object or array.
+- **`persist`:** only the zikr store uses it. v5 no longer writes the initial state at creation, so the record appears on the first change instead of at start-up; the store reads a missing record as "defaults" and the unsent taps live in their own per-tab records (v5.190.35), so nothing depends on it.
+- **Types:** `tsc` is clean without changes. All store tests pass on v5, including the zikr flush, day-rollover and two-tab suites.
+
+### Tests
+
+- `zustandSelectors.test.ts` (3 cases): no store hook builds an object or array in its selector, no default `create` import, and the detector itself catches the bad shape. It passes now and fails if someone adds such a selector.
+
 ## v5.190.44 - i18next 27 and react-i18next 18 (audit P3-6) - 2026-11-25
 
 The two packages that translate the app, moved together (they must be: Dependabot's separate pull requests 376 and 378 both failed). Nothing visible changes.
