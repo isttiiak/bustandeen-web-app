@@ -27,7 +27,7 @@ jobs:
       - uses: actions/setup-node@v4
         if: env.HAS_SECRET == 'true'
         with:
-          node-version: '24'
+          node-version: '24.21.0'
 
       - name: Install
         if: env.HAS_SECRET == 'true'
