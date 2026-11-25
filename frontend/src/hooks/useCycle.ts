@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import i18n from '../i18n.js';
 import api from '../lib/api.js';
 import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useAuthStore } from '../store/useAuthStore.js';
@@ -74,10 +75,16 @@ export function useCycleActive(): CycleActive | null {
 // past episode carry an op id the server dedupes (it never stores their
 // responses); a day note merges per date, so flow then mood both survive.
 const cycleOfflineToast = () =>
-  toast("You're offline. Saved on this device, it will sync when you're back online.", {
-    icon: '📶',
-    id: 'cycle-offline',
-  });
+  toast(
+    i18n.t(
+      'rayhanah.toast.offline',
+      "You're offline. Saved on this device, it will sync when you're back online."
+    ),
+    {
+      icon: '📶',
+      id: 'cycle-offline',
+    }
+  );
 
 const errorMessage = (err: unknown) =>
   (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
@@ -91,7 +98,10 @@ export function useStartCycle() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {
       if (err instanceof OfflineQueuedError) return cycleOfflineToast();
-      toast.error(errorMessage(err) ?? 'Could not save — try again.', { id: 'cycle-start' });
+      toast.error(
+        errorMessage(err) ?? i18n.t('rayhanah.toast.saveFail', 'Could not save. Please try again.'),
+        { id: 'cycle-start' }
+      );
     },
   });
 }
@@ -105,7 +115,10 @@ export function useEndCycle() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {
       if (err instanceof OfflineQueuedError) return cycleOfflineToast();
-      toast.error(errorMessage(err) ?? 'Could not save — try again.', { id: 'cycle-end' });
+      toast.error(
+        errorMessage(err) ?? i18n.t('rayhanah.toast.saveFail', 'Could not save. Please try again.'),
+        { id: 'cycle-end' }
+      );
     },
   });
 }
@@ -125,7 +138,10 @@ export function usePartnerSync() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {
       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      toast.error(msg ?? 'Could not update — try again.', { id: 'cycle-partner-sync' });
+      toast.error(
+        msg ?? i18n.t('rayhanah.toast.updateFail', 'Could not update. Please try again.'),
+        { id: 'cycle-partner-sync' }
+      );
     },
   });
 }
@@ -138,7 +154,11 @@ export function useSetMadhab() {
       return data;
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
-    onError: () => toast.error('Could not update setting.', { id: 'cycle-madhab' }),
+    onError: () =>
+      toast.error(
+        i18n.t('rayhanah.toast.settingFail', 'Could not update this setting. Please try again.'),
+        { id: 'cycle-madhab' }
+      ),
   });
 }
 
@@ -154,7 +174,14 @@ export function useSetPregnancy() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {
       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      toast.error(msg ?? 'Could not update pregnancy status.', { id: 'cycle-pregnancy' });
+      toast.error(
+        msg ??
+          i18n.t(
+            'rayhanah.toast.pregnancyFail',
+            'Could not update pregnancy status. Please try again.'
+          ),
+        { id: 'cycle-pregnancy' }
+      );
     },
   });
 }
@@ -172,12 +199,19 @@ export function useAddPastCycle() {
         body: { ...vars, today: getTrackingDay() },
       }),
     onSuccess: () => {
-      toast.success('Past cycle added — predictions just got smarter 🌸', { id: 'cycle-past' });
+      toast.success(
+        i18n.t('rayhanah.toast.pastAdded', 'Past cycle added. Your predictions will improve.'),
+        { id: 'cycle-past' }
+      );
       void qc.invalidateQueries({ queryKey: ['cycle'] });
     },
     onError: (err: unknown) => {
       if (err instanceof OfflineQueuedError) return cycleOfflineToast();
-      toast.error(errorMessage(err) ?? 'Could not add that cycle.', { id: 'cycle-past' });
+      toast.error(
+        errorMessage(err) ??
+          i18n.t('rayhanah.toast.pastFail', 'Could not add that cycle. Please try again.'),
+        { id: 'cycle-past' }
+      );
     },
   });
 }
@@ -230,7 +264,10 @@ export function useUpsertCycleDay() {
     },
     onError: (err) => {
       if (err instanceof OfflineQueuedError) return cycleOfflineToast(); // keep the optimistic note
-      toast.error('Could not save your note — try again.', { id: 'cycle-day' });
+      toast.error(
+        i18n.t('rayhanah.toast.noteFail', 'Could not save your note. Please try again.'),
+        { id: 'cycle-day' }
+      );
       void qc.invalidateQueries({ queryKey: ['cycle'] });
     },
     onSettled: (_d, err) => {
@@ -253,7 +290,10 @@ export function useEditCycleLog() {
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {
       const msg = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
-      toast.error(msg ?? 'Could not update the cycle — try again.', { id: 'cycle-edit' });
+      toast.error(
+        msg ?? i18n.t('rayhanah.toast.editFail', 'Could not update the cycle. Please try again.'),
+        { id: 'cycle-edit' }
+      );
     },
   });
 }
@@ -266,7 +306,11 @@ export function useDeleteCycleLog() {
       return logId;
     },
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
-    onError: () => toast.error('Could not delete entry.', { id: 'cycle-del' }),
+    onError: () =>
+      toast.error(
+        i18n.t('rayhanah.toast.deleteFail', 'Could not delete this entry. Please try again.'),
+        { id: 'cycle-del' }
+      ),
   });
 }
 
@@ -301,6 +345,13 @@ export function useUpdateBodyStats() {
     onSuccess: (data) => {
       qc.setQueryData(['cycle', 'bodyStats'], data);
     },
-    onError: () => toast.error('Could not save body stats — try again.', { id: 'cycle-body' }),
+    onError: () =>
+      toast.error(
+        i18n.t(
+          'rayhanah.toast.bodyFail',
+          'Could not save your body measurements. Please try again.'
+        ),
+        { id: 'cycle-body' }
+      ),
   });
 }
