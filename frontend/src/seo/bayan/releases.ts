@@ -38,6 +38,24 @@ export const RELEASES: Release[] = [
     },
   },
   {
+    version: '5.190.43',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: updated test tools',
+        fixed: [
+          'We updated the tools we use to test our file-storage safety rules. Nothing changes in the app and your data is untouched.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: হালনাগাদ পরীক্ষার টুল',
+        fixed: [
+          'ফাইল সংরক্ষণের নিরাপত্তা নিয়ম পরীক্ষা করার জন্য যে টুল ব্যবহার করি তা হালনাগাদ করা হয়েছে। অ্যাপে কিছু বদলায়নি এবং আপনার তথ্য অপরিবর্তিত।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.42',
     date: '2026-11-25',
     text: {
