@@ -20,6 +20,28 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.35',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Zikr counts when the app is open in two tabs',
+        fixed: [
+          'If Bustandeen is open in two tabs or windows, your zikr taps can no longer be counted twice. Each tab now looks after its own unsent taps.',
+          'If a tab closes before its taps are saved, another open tab or your next visit sends them once, on the right day.',
+          'Your saved counts were not changed.',
+        ],
+      },
+      bn: {
+        title: 'দুটি ট্যাবে অ্যাপ খোলা থাকলে যিকিরের গণনা',
+        fixed: [
+          'বুস্তানদীন দুটি ট্যাব বা উইন্ডোতে খোলা থাকলে আপনার যিকিরের গণনা আর দুবার যোগ হবে না। এখন প্রতিটি ট্যাব নিজের না-পাঠানো গণনা নিজে সামলায়।',
+          'কোনো ট্যাব গণনা সংরক্ষণের আগেই বন্ধ হয়ে গেলে, খোলা থাকা অন্য ট্যাব বা আপনার পরের বার ঢোকার সময় সেটি ঠিক দিনে একবারই পাঠানো হয়।',
+          'আপনার সংরক্ষিত কোনো গণনা বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.32',
     date: '2026-11-25',
     text: {

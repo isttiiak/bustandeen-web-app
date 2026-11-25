@@ -10,6 +10,19 @@ import { todaysLoggedCounts } from '../utils/zikrLog.js';
 import { isDeviceDateError, notifyDeviceDateWrong } from '../utils/deviceDate.js';
 import toast from 'react-hot-toast';
 import i18n from '../i18n.js';
+import {
+  UNSENT_PREFIX,
+  hasLooseTaps,
+  holdTabLock,
+  isEmptyRecord,
+  isSoloTab,
+  orphanKeys,
+  ownUnsentKey,
+  parseUnsentRecord,
+  toUnsentRecord,
+  withAdoptionLock,
+  type UnsentRecord,
+} from './zikrUnsent.js';
 
 const FLUSH_DELAY = 800; // ms
 const RETRY_DELAY = 20_000; // ms: retry a failed flush without waiting for another tap
@@ -171,23 +184,19 @@ function readBatch(batch: ZikrInflight): BatchBody['increments'] {
 }
 
 /**
- * Take everything in `pending` out of it and into a new in-flight batch
- * counted as `day` (a tracking day, YYYY-MM-DD). Returns null when nothing is
- * pending. The batch is written to localStorage before it can be sent
- * (audit P1-3), and taps from here on start a new batch.
+ * One batch from `entries` (type, amount pairs, none zero), counted as `day`.
+ * Anchored INSIDE the tracking day (midday ts): with the Fajr boundary, a 1 AM
+ * tap belongs to the CLOSING day's bucket, and Date.now() would land it in the
+ * next civil day.
  */
-function stageBatch(day: string): ZikrInflight | null {
-  const { pending, untimed, tapSpan, timezoneOffset } = useZikrStore.getState();
-  const snapshot = { ...pending };
-  const untimedSnap = { ...untimed };
-  const spanSnap = { ...tapSpan };
-  const entries = Object.entries(snapshot).filter(([, a]) => a !== 0);
-  if (!entries.length) return null;
-
+function buildBatch(
+  day: string,
+  entries: [string, number][],
+  untimedSnap: Record<string, number>,
+  spanSnap: Record<string, { first: number; last: number }>,
+  timezoneOffset: number | undefined
+): ZikrInflight {
   const resolvedOffset = timezoneOffset ?? getUserTimezoneOffset();
-  // Anchor every increment INSIDE the tracking day (midday ts): with the Fajr
-  // boundary, a 1 AM tap belongs to the CLOSING day's bucket, and Date.now()
-  // would land it in the next civil day.
   const anchorTs = placeNoonTs(day);
   const flushedAt = Date.now();
   const payload = entries.map(([zikrType, amount]) => {
@@ -207,10 +216,27 @@ function stageBatch(day: string): ZikrInflight | null {
       timezoneOffset: resolvedOffset,
     };
   });
-  const batch: ZikrInflight = {
+  return {
     opId: newOpId(),
     body: JSON.stringify({ increments: payload, timezoneOffset: resolvedOffset, today: day }),
   };
+}
+
+/**
+ * Take everything in `pending` out of it and into a new in-flight batch
+ * counted as `day` (a tracking day, YYYY-MM-DD). Returns null when nothing is
+ * pending. The batch is written to localStorage before it can be sent
+ * (audit P1-3), and taps from here on start a new batch.
+ */
+function stageBatch(day: string): ZikrInflight | null {
+  const { pending, untimed, tapSpan, timezoneOffset } = useZikrStore.getState();
+  const snapshot = { ...pending };
+  const untimedSnap = { ...untimed };
+  const spanSnap = { ...tapSpan };
+  const entries = Object.entries(snapshot).filter(([, a]) => a !== 0);
+  if (!entries.length) return null;
+
+  const batch = buildBatch(day, entries, untimedSnap, spanSnap, timezoneOffset);
   // Move the batch out of `pending` (no clamping: pending can be negative, i.e.
   // queued decrements). Taps from here on start a new batch; a day rollover
   // cannot touch this one.
@@ -383,7 +409,10 @@ export const useZikrStore = create<ZikrState>()(
       setCustomMeaning: (name, data) =>
         set((s) => ({ customMeanings: { ...s.customMeanings, [name]: data } })),
 
-      resetAll: () =>
+      resetAll: () => {
+        // Sign-out wipes unsent taps; a crashed tab's leftovers must not be sent
+        // later under the next account.
+        void discardOrphanRecords();
         set({
           counts: {},
           pending: {},
@@ -395,7 +424,8 @@ export const useZikrStore = create<ZikrState>()(
           selected: 'SubhanAllah',
           types: ['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'La ilaha illallah'],
           customMeanings: {},
-        }),
+        });
+      },
 
       hydrate: async () => {
         get().checkAndResetIfNewDay();
@@ -624,6 +654,8 @@ export const useZikrStore = create<ZikrState>()(
 
         if (delivered) {
           set((s) => (s.inflight?.opId === batch.opId ? { inflight: null } : {}));
+          // A closed tab's batch waited for this one to clear.
+          if (orphanBatchWaiting) void adoptUnsentRecords();
           // Taps made while this batch was in the air go out next.
           if (!keepIdle && !opts?.keepalive && Object.values(get().pending).some((a) => a !== 0)) {
             void get().flush();
@@ -634,19 +666,255 @@ export const useZikrStore = create<ZikrState>()(
     {
       name: 'bustandeen_zikr_store',
       storage: debouncedStorage,
+      // Display state only. The unsent taps (pending, untimed, tapSpan, inflight)
+      // are kept per tab in their own record (zikrUnsent.ts, audit P1-16b), so a
+      // second tab can neither copy nor overwrite them.
       partialize: (state) => ({
         selected: state.selected,
         types: state.types,
         counts: state.counts,
         lifetimeTotals: state.lifetimeTotals,
-        pending: state.pending,
-        untimed: state.untimed,
-        tapSpan: state.tapSpan,
-        inflight: state.inflight,
         total: state.total,
         lastResetDate: state.lastResetDate,
         customMeanings: state.customMeanings,
       }),
+      // A record saved by an older version still holds the unsent fields. Do not
+      // load them here: adoptUnsentRecords() takes them over exactly once, under
+      // the cross-tab lock, so two tabs opened after the update cannot both send
+      // the same old batch.
+      merge: (persisted, current) => {
+        const display = { ...((persisted ?? {}) as Partial<ZikrState>) };
+        delete display.pending;
+        delete display.untimed;
+        delete display.tapSpan;
+        delete display.inflight;
+        return { ...current, ...display };
+      },
     }
   )
 );
+
+// ---------------------------------------------------------------------------
+// Per-tab unsent taps (audit 2026-11-16 P1-16b). See zikrUnsent.ts.
+// ---------------------------------------------------------------------------
+
+const LEGACY_KEY = 'bustandeen_zikr_store';
+const ADOPT_EVERY = 30_000; // ms: look for a closed tab's leftovers
+/** Records are written only once this tab's lock is held (see holdTabLock). A
+ * single-record (solo) tab waits for its first adoption pass as well. */
+let recordsLive = false;
+/** A closed tab's batch is waiting for this tab's own batch to clear. */
+let orphanBatchWaiting = false;
+
+function snapshotRecord(s: ZikrState): UnsentRecord {
+  return {
+    pending: s.pending,
+    untimed: s.untimed,
+    tapSpan: s.tapSpan,
+    inflight: s.inflight,
+    day: s.lastResetDate,
+  };
+}
+
+/** Save (or, when empty, remove) this tab's record. Debounced like the rest. */
+function persistUnsent(s: ZikrState): void {
+  if (!recordsLive) return;
+  const rec = snapshotRecord(s);
+  try {
+    if (isEmptyRecord(rec)) rawDebouncedStorage.removeItem(ownUnsentKey());
+    else rawDebouncedStorage.setItem(ownUnsentKey(), JSON.stringify(rec));
+  } catch {
+    /* storage full or blocked: the taps stay in memory and are still sent */
+  }
+}
+
+useZikrStore.subscribe((s, prev) => {
+  if (
+    s.pending !== prev.pending ||
+    s.untimed !== prev.untimed ||
+    s.tapSpan !== prev.tapSpan ||
+    s.inflight !== prev.inflight ||
+    s.lastResetDate !== prev.lastResetDate
+  ) {
+    persistUnsent(s);
+  }
+});
+
+/**
+ * An older version kept the unsent fields inside the shared record. Move them
+ * into a record of their own so they are adopted like any closed tab's.
+ */
+function moveLegacyUnsent(): void {
+  try {
+    const raw = localStorage.getItem(LEGACY_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw) as { state?: Record<string, unknown> } | null;
+    const st = parsed?.state;
+    if (!st || typeof st !== 'object') return;
+    if (!('pending' in st || 'untimed' in st || 'tapSpan' in st || 'inflight' in st)) return;
+    const rec = toUnsentRecord({ ...st, day: st.lastResetDate });
+    if (rec && !isEmptyRecord(rec)) {
+      const id = `legacy-${Date.now().toString(36)}`;
+      localStorage.setItem(UNSENT_PREFIX + id, JSON.stringify(rec));
+    }
+    delete st.pending;
+    delete st.untimed;
+    delete st.tapSpan;
+    delete st.inflight;
+    localStorage.setItem(LEGACY_KEY, JSON.stringify(parsed));
+  } catch {
+    /* unreadable: nothing to move */
+  }
+}
+
+/** Take over one record whose tab is gone. Runs inside the adoption lock. */
+function adoptRecord(key: string): void {
+  let rec: UnsentRecord | null;
+  try {
+    rec = parseUnsentRecord(localStorage.getItem(key));
+  } catch {
+    return;
+  }
+  if (!rec) {
+    // Not JSON: there is nothing in it to send.
+    try {
+      localStorage.removeItem(key);
+    } catch {
+      /* ignore */
+    }
+    return;
+  }
+
+  const s = useZikrStore.getState();
+  const today = getTrackingDay();
+  const left: UnsentRecord = {
+    pending: {},
+    untimed: {},
+    tapSpan: {},
+    inflight: null,
+    day: rec.day,
+  };
+  let inflight = s.inflight;
+  let { pending, untimed, tapSpan } = s;
+
+  // A staged batch keeps its op id, so a repeat is recognised by the server.
+  // Only one batch can wait here: a second one stays for the next pass.
+  if (rec.inflight) {
+    if (!inflight) inflight = rec.inflight;
+    else left.inflight = rec.inflight;
+  }
+
+  if (hasLooseTaps(rec)) {
+    if (!rec.day || rec.day >= today) {
+      pending = { ...pending };
+      untimed = { ...untimed };
+      tapSpan = { ...tapSpan };
+      for (const [type, amount] of Object.entries(rec.pending)) {
+        if (!amount) continue;
+        pending[type] = (pending[type] ?? 0) + amount;
+        if (rec.untimed[type]) untimed[type] = (untimed[type] ?? 0) + rec.untimed[type]!;
+        const span = rec.tapSpan[type];
+        if (span) {
+          const cur = tapSpan[type];
+          tapSpan[type] = {
+            first: cur ? Math.min(cur.first, span.first) : span.first,
+            last: cur ? Math.max(cur.last, span.last) : span.last,
+          };
+        }
+      }
+    } else if (!inflight) {
+      // Taps from a day that has closed go out as that day (never today's), the
+      // oldest the server takes being yesterday: the same rule as a day rollover.
+      const yesterday = addDaysYmd(today, -1);
+      const entries = Object.entries(rec.pending).filter(([, a]) => a !== 0);
+      inflight = buildBatch(
+        rec.day < yesterday ? yesterday : rec.day,
+        entries,
+        rec.untimed,
+        rec.tapSpan,
+        s.timezoneOffset
+      );
+    } else {
+      left.pending = rec.pending;
+      left.untimed = rec.untimed;
+      left.tapSpan = rec.tapSpan;
+    }
+  }
+
+  useZikrStore.setState({ pending, untimed, tapSpan, inflight });
+  // Our record is on disk before the old one is touched, so a crash here at
+  // worst leaves the taps in two places, never in none.
+  flushZikrLocalPersistence();
+  // A single-record (solo) tab takes back its own previous record: it is saved
+  // again from memory right after this pass, so there is nothing to clear.
+  if (key === ownUnsentKey()) return;
+  try {
+    if (isEmptyRecord(left)) localStorage.removeItem(key);
+    else localStorage.setItem(key, JSON.stringify(left));
+  } catch {
+    /* ignore */
+  }
+  if (!isEmptyRecord(left)) orphanBatchWaiting = true;
+}
+
+let firstAdoption = true;
+
+/**
+ * Take over the unsent taps of tabs that have closed or crashed (and, once, of
+ * an older version's shared record). Safe to call from any tab at any time.
+ */
+export async function adoptUnsentRecords(): Promise<void> {
+  const includeOwn = firstAdoption;
+  firstAdoption = false;
+  try {
+    await withAdoptionLock((live) => {
+      orphanBatchWaiting = false;
+      moveLegacyUnsent();
+      const keys = orphanKeys(live, includeOwn);
+      if (!keys.length) return;
+      useZikrStore.getState().checkAndResetIfNewDay();
+      for (const key of keys) adoptRecord(key);
+    });
+  } catch (e) {
+    console.error('Zikr: could not check for unsent counts of a closed tab', e);
+    return;
+  }
+  const s = useZikrStore.getState();
+  if (s.inflight || hasLooseTaps(s)) s.scheduleFlush();
+}
+
+/** Sign-out: leftovers of closed tabs are dropped with everything else. */
+async function discardOrphanRecords(): Promise<void> {
+  try {
+    await withAdoptionLock((live) => {
+      moveLegacyUnsent();
+      for (const key of orphanKeys(live, false)) localStorage.removeItem(key);
+    });
+  } catch {
+    /* nothing to drop */
+  }
+}
+
+async function startTabRecords(): Promise<void> {
+  await holdTabLock();
+  if (!isSoloTab()) {
+    // Records are written from here on; taps made in the first moments, before
+    // the lock was ours, are saved now.
+    recordsLive = true;
+    persistUnsent(useZikrStore.getState());
+  }
+  await adoptUnsentRecords();
+  if (isSoloTab()) {
+    // Only now: saving first would overwrite the previous record, which is
+    // what this tab has just taken back.
+    recordsLive = true;
+    persistUnsent(useZikrStore.getState());
+  }
+  if (typeof document === 'undefined' || isSoloTab()) return;
+  setInterval(() => void adoptUnsentRecords(), ADOPT_EVERY);
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) void adoptUnsentRecords();
+  });
+}
+
+void startTabRecords();

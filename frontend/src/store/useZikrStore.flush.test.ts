@@ -5,6 +5,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.hoisted(() => {
   const m = new Map<string, string>();
+  // Newer Node has navigator.locks; this file tests the single-record (solo)
+  // path a browser without Web Locks takes. Two tabs: zikrTwoTabs.test.ts.
+  Object.defineProperty(globalThis, 'navigator', { value: {}, configurable: true });
   Object.assign(globalThis, {
     localStorage: {
       getItem: (k: string) => m.get(k) ?? null,
@@ -133,20 +136,24 @@ describe('zikr batch flush', () => {
     tap('SubhanAllah', 12);
     // What a reload would find, read at the moment the request is sent. The
     // 400 ms debounced save has not fired (fake timers), so only an explicit
-    // write before the request can have put the batch there.
+    // write before the request can have put the batch there. Unsent taps are
+    // kept in this tab's own record, not the shared one (audit P1-16b).
     let stored: {
-      state: { pending: Record<string, number>; inflight: { opId: string } | null };
+      pending: Record<string, number>;
+      inflight: { opId: string } | null;
     } | null = null;
     fetchMock.mockImplementationOnce(() => {
-      const raw = localStorage.getItem('bustandeen_zikr_store');
+      const raw = localStorage.getItem('bustandeen_zikr_unsent:solo');
       stored = raw ? JSON.parse(raw) : null;
       return ok();
     });
     await flush();
     const opId = calls()[0]![1].headers['X-Client-Op-Id'];
     expect(stored).not.toBeNull();
-    expect(stored!.state.inflight?.opId).toBe(opId);
-    expect(stored!.state.pending).toEqual({}); // not also still waiting as new taps
+    expect(stored!.inflight?.opId).toBe(opId);
+    expect(stored!.pending).toEqual({}); // not also still waiting as new taps
+    // The shared record carries display state only.
+    expect(localStorage.getItem('bustandeen_zikr_store') ?? '').not.toContain(opId);
   });
 
   it.each([401, 409, 429, 500])('keeps the batch on %i', async (code) => {
