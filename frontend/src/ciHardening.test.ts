@@ -82,3 +82,15 @@ describe('Vercel install', () => {
     expect(cfg.installCommand).toContain('npm ci --prefix frontend');
   });
 });
+
+describe('backend dev tooling', () => {
+  it('does not carry nodemon (the dev server is `tsx watch`)', () => {
+    const pkg = JSON.parse(read('backend/package.json')) as {
+      scripts: Record<string, string>;
+      devDependencies: Record<string, string>;
+    };
+    expect(pkg.devDependencies).not.toHaveProperty('nodemon');
+    expect(pkg.scripts.dev).toContain('tsx watch');
+    expect(read('backend/package-lock.json')).not.toContain('"node_modules/nodemon"');
+  });
+});
