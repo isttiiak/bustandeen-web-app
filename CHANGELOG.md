@@ -2,6 +2,14 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.49 - Ramadan print-sheet prototype tracked (audit P3-7) - 2026-11-26
+
+`docs/design/ramadan-print-sheet.html`, a planning prototype of an A4 Ramadan sheet, is now tracked next to the other design prototypes (Prettier-formatted, so the format check passes). Its generated output, `docs/design/ramadan-print-sheet/` (about 9 MB of PDFs and PNGs), is git-ignored and stays on the author's machine. No app code changed.
+
+### Tests
+
+- `docsReadme.test.ts` gained a case: the output folder is ignored and the prototype is present. It fails on main and passes here.
+
 ## v5.190.48 - Architecture notes brought up to date (audit P3-7) - 2026-11-26
 
 `docs/README.md`, the architecture reference, said "current as of v5.61.0" and described several things that had since changed. Each claim was checked against the code and rewritten. No app code changed.

@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.49',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Behind the scenes: planning notes saved',
+        fixed: [
+          'We saved a design sketch for a printable Ramadan sheet with our other planning notes. It is only a sketch and the app does not use it yet. Nothing in your data changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: পরিকল্পনার নোট সংরক্ষিত',
+        fixed: [
+          'ছাপার উপযোগী রমজানের ছকের একটি নকশার খসড়া আমাদের অন্যান্য পরিকল্পনার নোটের সঙ্গে সংরক্ষণ করা হয়েছে। এটি শুধু খসড়া, অ্যাপ এখনো এটি ব্যবহার করে না। আপনার তথ্যে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.48',
     date: '2026-11-26',
     text: {
