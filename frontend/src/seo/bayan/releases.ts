@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.39',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Behind the scenes: stronger safety checks',
+        fixed: [
+          'We tightened the automatic safety checks that run before every update, including a scan for accidentally exposed secrets. Nothing changes in the app and your data is untouched.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: আরও শক্ত নিরাপত্তা যাচাই',
+        fixed: [
+          'প্রতিটি আপডেটের আগে যে স্বয়ংক্রিয় নিরাপত্তা যাচাই চলে তা আরও কঠোর করা হয়েছে, এর মধ্যে ভুলবশত প্রকাশ হয়ে যাওয়া গোপন তথ্যের স্ক্যানও আছে। অ্যাপে কিছু বদলায়নি এবং আপনার তথ্য অপরিবর্তিত।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.38',
     date: '2026-11-25',
     text: {

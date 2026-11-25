@@ -1,6 +1,6 @@
 {
   "name": "bustandeen",
-  "version": "5.190.38",
+  "version": "5.190.39",
   "private": true,
   "type": "module",
   "engines": {
@@ -26,8 +26,10 @@
     "install:all": "npm install --prefix backend && npm install --prefix frontend",
     "sync-deps": "npm ci && npm ci --prefix backend && npm ci --prefix frontend && node backend/node_modules/mongodb-memory-server/postinstall.js",
     "check-deps": "node scripts/check-deps.mjs",
-    "lint": "npm run lint --prefix backend && npm run lint --prefix frontend",
-    "typecheck": "npm run typecheck --prefix backend && npm run typecheck --prefix frontend",
+    "lint": "npm run lint --prefix backend && npm run lint --prefix frontend && npm run lint:api",
+    "lint:api": "eslint api --config eslint.config.js",
+    "typecheck": "npm run typecheck --prefix backend && npm run typecheck --prefix frontend && npm run typecheck:api",
+    "typecheck:api": "backend/node_modules/.bin/tsc -p api/tsconfig.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky"
