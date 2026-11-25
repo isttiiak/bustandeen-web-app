@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.48',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Behind the scenes: guide for builders updated',
+        fixed: [
+          'We brought the technical guide for people who build and maintain the app up to date, so it matches how the app works today. Nothing in your data changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: নির্মাতাদের নির্দেশিকা হালনাগাদ',
+        fixed: [
+          'যাঁরা অ্যাপটি বানান ও দেখভাল করেন তাঁদের জন্য কারিগরি নির্দেশিকা হালনাগাদ করা হয়েছে, যাতে তা আজকের অ্যাপের সঙ্গে মেলে। আপনার তথ্যে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.47',
     date: '2026-11-25',
     text: {
