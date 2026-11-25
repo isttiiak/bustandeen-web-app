@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.43 - Storage-rules test tools: firebase 13 with rules-unit-testing 6 (audit P3-6) - 2026-11-25
+
+Nothing in the app changes. These two packages only run the Storage rules tests (`firebase/`, CI job "Storage rules").
+
+### Changed
+
+- `firebase` 12.19 to 13.4 and `@firebase/rules-unit-testing` 5.0 to 6.0, together. Dependabot opened them as two pull requests (373, 365) and both failed at `npm ci`: rules-unit-testing 6 needs firebase 13, and rules-unit-testing 5 needs firebase 12, so neither could move alone. Superseded here.
+
+### Tests
+
+- No new test: the existing Storage rules suite is the test (the same cases, run on the new libraries by this pull request's CI). It could not be run on this machine, which has Java 17 and firebase-tools 15 needs 21.
+
 ## v5.190.42 - GitHub Actions moved to their current majors (audit P3-6) - 2026-11-25
 
 Nothing in the app changes. Dependabot opened five separate pull requests for this (366, 368, 370, 371, 372); they edit the same workflow lines, so they are applied together here and those five are superseded.
