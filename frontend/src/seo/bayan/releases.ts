@@ -40,6 +40,70 @@ export const RELEASES: Release[] = [
     },
   },
   {
+    version: '5.190.35',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Zikr counts when the app is open in two tabs',
+        fixed: [
+          'If Bustandeen is open in two tabs or windows, your zikr taps can no longer be counted twice. Each tab now looks after its own unsent taps.',
+          'If a tab closes before its taps are saved, another open tab or your next visit sends them once, on the right day.',
+          'Your saved counts were not changed.',
+        ],
+      },
+      bn: {
+        title: 'দুটি ট্যাবে অ্যাপ খোলা থাকলে যিকিরের গণনা',
+        fixed: [
+          'বুস্তানদীন দুটি ট্যাব বা উইন্ডোতে খোলা থাকলে আপনার যিকিরের গণনা আর দুবার যোগ হবে না। এখন প্রতিটি ট্যাব নিজের না-পাঠানো গণনা নিজে সামলায়।',
+          'কোনো ট্যাব গণনা সংরক্ষণের আগেই বন্ধ হয়ে গেলে, খোলা থাকা অন্য ট্যাব বা আপনার পরের বার ঢোকার সময় সেটি ঠিক দিনে একবারই পাঠানো হয়।',
+          'আপনার সংরক্ষিত কোনো গণনা বদলানো হয়নি।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.190.34',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'Safer admin tools behind the scenes',
+        fixed: [
+          'Our team panel now asks for a fresh password before deleting messages, and asks "are you sure?" before changing what the public sees.',
+          'A past announcement banner can be reopened, edited and published again in a few taps.',
+          'Nothing in your own records changed.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে আরও নিরাপদ অ্যাডমিন টুল',
+        fixed: [
+          'আমাদের টিমের প্যানেল এখন বার্তা মুছে ফেলার আগে নতুন করে পাসওয়ার্ড চায়, আর সবাই যা দেখে তা বদলানোর আগে "আপনি কি নিশ্চিত?" জিজ্ঞেস করে।',
+          'আগের কোনো ঘোষণার ব্যানার আবার খুলে সম্পাদনা করে কয়েকটি ট্যাপেই নতুন করে প্রকাশ করা যায়।',
+          'আপনার নিজের সংরক্ষিত তথ্যে কোনো পরিবর্তন হয়নি।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.190.33',
+    date: '2026-11-25',
+    text: {
+      en: {
+        title: 'The visit-counting question is in English and Bangla',
+        fixed: [
+          'The small question about counting visits to our public pages now shows in English or Bangla only. The Arabic wording is removed until a native reader has checked it.',
+          'Nothing about your choice or your saved records changed.',
+        ],
+      },
+      bn: {
+        title: 'ভিজিট গণনার প্রশ্নটি এখন ইংরেজি ও বাংলায়',
+        fixed: [
+          'আমাদের পাবলিক পাতার ভিজিট গণনার ছোট প্রশ্নটি এখন শুধু ইংরেজি বা বাংলায় দেখানো হয়। আরবি লেখাটি সরানো হয়েছে, কোনো আরবি-ভাষী পাঠক দেখে দেওয়ার আগে তা ফেরানো হবে না।',
+          'আপনার দেওয়া উত্তর বা সংরক্ষিত তথ্যে কোনো পরিবর্তন হয়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.32',
     date: '2026-11-25',
     text: {

@@ -26,6 +26,59 @@ Changing the day-start mode moves "today" by a day. With the local API and a tes
 - Salat rows written before 2026-09-03, when salat was briefly midnight-dated, are left as they are: the server does not know a person's location, so it cannot tell which rows are affected. A repair would need your approval.
 - Switching from midnight to Fajr just after midnight shows the day that was already counted as missed with its prayers marked missed, until the person logs them. That is the existing rule.
 
+## v5.190.35 - Two tabs no longer share unsent zikr counts (audit P1-16b / P1-15) - 2026-11-25
+
+### Fixed
+
+- **A second tab could send the first tab's unsent taps again.** Unsent zikr taps (the loose taps and the batch being sent) were kept in the one record both tabs share. A tab opened while another still held taps copied them, and each tab then sent them under its own op id, so the server counted them twice. A stale tab could also overwrite the batch the other tab had just staged. Both windows were short (under a second of tapping, or a stuck connection) but real.
+- **How it works now.** Each tab keeps its unsent taps in its own record (`bustandeen_zikr_unsent:<tab id>`) and is the only one that writes it. The shared record keeps display state only (counts, the zikr list, meanings). A tab holds a Web Lock for as long as its page lives, so another tab can tell a live record from the leftovers of a tab that closed or crashed, and takes those over once, under a second lock so two tabs cannot take the same one. A batch that was already staged is resent under the same op id, so a batch that had in fact reached the server is not counted again.
+- **A closed tab's loose taps from an earlier day** are sent as that day (never today), the oldest the server takes being yesterday: the same rule as a day rollover.
+- **Signing out** also drops the leftovers of closed tabs, so they cannot be sent under the next account.
+- **First load after this update:** unsent taps an older version left in the shared record are moved into their own record under the same lock, so two tabs opened together cannot both send them.
+- Browsers without Web Locks keep one fixed record, which is the old behaviour.
+
+### Tests
+
+- `useZikrStore.twoTabs.test.ts` (11 cases): two copies of the store on one fake browser profile with a fake server that applies each op id once. Covers no double send, a stale tab, a tab closed with a batch and loose taps, a batch delivered just before the tab died, a live tab's record being left alone, a day that has closed, the older version's record, and sign-out. All fail on the old store. `useZikrStore.flush.test.ts` now reads the tab's own record.
+- Not done: a Playwright run with two real pages (it needs a signed-in session, which demo mode does not have). The lock behaviour itself was checked in the Browser pane: a lock held in one tab is listed from another, and is gone once that tab closes.
+
+### Things to know
+
+- The other tab's unsent taps are not in this tab's counter until they reach the server (usually under a second).
+- A page holding a Web Lock may not be kept in the browser's back/forward cache.
+- Rolling back to an older version would not see taps saved in the per-tab records (they normally reach the server within about a second).
+- Nothing stored on the server changed.
+
+## v5.190.34 - Admin panel: safer deletes, confirmations, reopen a banner (audit P2-8) - 2026-11-25
+
+Two-step sign-in for admins stays OFF by default (owner decision); nothing here changes that.
+
+### Changed
+
+- **Deleting a mailbox message or a feedback message now needs a recent password entry.** `DELETE /api/admin/feedback/mailbox/:id` and `DELETE /api/admin/feedback/:id` run `requireAdminRecentAuth`, like deleting a user, a donation or a quarter. An admin whose sign-in is older than a few minutes gets `admin_reauth_required`; the panel already answers that with its password prompt and repeats the request. A forgotten open admin tab can no longer wipe the inbox.
+- **The panel asks before it acts on three things that reach the public or cannot be undone:** deactivating the broadcast banner, and publishing, unpublishing or deleting a quarterly sadaqah report (delete still also needs the recent password).
+- **Reopen as new (broadcast).** Every row in the banner history has a button that copies its title and text into the form. The admin edits it and presses Publish; that creates a new banner and switches the active one off. The old row is not changed.
+- **The admin second-factor proof lives in memory only.** `lib/adminMfa.ts` no longer writes it to localStorage (it was never in sessionStorage); an older copy is removed on load and on sign-out. Cost: a refresh or a second tab asks for the code again, which only matters when two-step sign-in is on.
+
+### Tests
+
+- `adminSession.e2e.test.js`: both delete routes added to the stale-sign-in list (failed before, pass now).
+- `useAdminStore.mfa.test.ts`: the proof is never written to browser storage; a leftover localStorage copy is cleared. `api.adminReauth.test.ts` follows the new storage. `adminScreens.test.ts`: three new cases for the confirmations and Reopen as new. All failed on the old code.
+
+### Not changed
+
+- Admin MFA default (off). The confirmation dialogs are the browser's own, like the other admin ones. Not driven in a real browser session (the panel needs an admin sign-in).
+
+## v5.190.33 - Consent question: English and Bangla only (audit P2-10 follow-up) - 2026-11-25
+
+### Changed
+
+- **The Arabic text of the analytics question is gone.** It was never read by a native speaker, and Arabic pages no longer exist (old Arabic links open the English page). `utils/consentBanner.ts` now holds English and Bangla only; a page or saved language that is anything else gets English, and the banner is always left-to-right. Nothing else about the banner, the stored answer or the analytics gate changed.
+
+### Tests
+
+- `consentBanner.test.ts`: two new cases (only `en` and `bn` exist; an `ar` page or saved value falls back to English or the saved choice) failed on the old code and pass now.
+
 ## v5.190.32 - Hifz: six small bug fixes (no new features) - 2026-11-25
 
 Hifz is a simple feature and is meant to stay one. This only fixes what was wrong; there was no test file for it before.

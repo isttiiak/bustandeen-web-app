@@ -16,6 +16,7 @@ vi.hoisted(() => {
 const { default: api } = await import('./api.js');
 const { useAdminReauthStore } = await import('../store/useAdminReauthStore.js');
 const { useAdminStore } = await import('../store/useAdminStore.js');
+const { getAdminMfaProof, setAdminMfaProof } = await import('./adminMfa.js');
 
 /** Answers each request in turn with the given status and body. */
 function answer(...replies: { status: number; data: unknown }[]) {
@@ -83,11 +84,11 @@ describe('admin re-auth in the API client (U8.4)', () => {
 describe('admin second factor in the API client (T1.4)', () => {
   it('a 403 mfa_required drops the stored proof and asks for a code again', async () => {
     useAdminStore.getState().setSession('a@test.dev', 'servant', null);
-    localStorage.setItem('bustandeen_admin_mfa', 'stale.proof');
+    setAdminMfaProof('stale.proof');
     answer({ status: 403, data: { ok: false, error: 'mfa_required', mfa: 'verify' } });
     await expect(api.get('/api/admin/users')).rejects.toBeInstanceOf(AxiosError);
     expect(useAdminStore.getState()).toMatchObject({ status: 'mfa', mfaStep: 'verify' });
-    expect(localStorage.getItem('bustandeen_admin_mfa')).toBeNull();
+    expect(getAdminMfaProof()).toBeNull();
   });
 
   it('a reset authenticator sends the admin to set one up', async () => {
