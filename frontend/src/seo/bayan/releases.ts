@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.54',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Cycle and fasting messages now appear in your language',
+        fixed: [
+          'When something goes wrong while saving in Rayhanah or the fasting tracker, or when you are offline, the message now appears in Bangla if you use Bangla. Your data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'রায়হানাহ ও রোজার বার্তা এখন আপনার ভাষায়',
+        fixed: [
+          'রায়হানাহ বা রোজা ট্র্যাকারে সংরক্ষণের সময় কিছু ঠিকমতো না হলে, কিংবা আপনি অফলাইনে থাকলে, আপনি বাংলা ব্যবহার করলে এখন বার্তাটি বাংলায় দেখাবে। আপনার তথ্যে কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.53',
     date: '2026-11-26',
     text: {

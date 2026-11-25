@@ -13,8 +13,6 @@ import { describe, expect, it } from 'vitest';
 const REMAINING: Record<string, number> = {
   'App.tsx': 1,
   'components/QuranSettings.tsx': 2,
-  'hooks/useCycle.ts': 6,
-  'hooks/useFasting.ts': 6,
   'hooks/useSalatLog.ts': 3,
   'lib/api.ts': 2,
   'pages/Settings.tsx': 6,
@@ -26,7 +24,9 @@ const walk = (dir: string): string[] =>
     e.isDirectory() ? walk(join(dir, e.name)) : /\.tsx?$/.test(e.name) ? [join(dir, e.name)] : []
   );
 
-const LITERAL = /toast(\.(error|success|loading|custom))?\(\s*['"`]/g;
+// A literal first argument, or a literal fallback after ?? or || (e.g. `msg ?? 'Could not save'`).
+const LITERAL =
+  /toast(\.(error|success|loading|custom))?\(\s*(['"`]|[^()'"`]*?(\?\?|\|\|)\s*['"`])/g;
 
 const found: Record<string, number> = {};
 for (const f of walk(root)) {
@@ -41,31 +41,55 @@ describe('toasts go through i18n', () => {
   });
 });
 
-describe('the social toasts', () => {
-  const read = (lang: string) =>
-    JSON.parse(
-      readFileSync(join(root, `locales/${lang}/common.json`), 'utf8').replace(/^\uFEFF/, '')
-    );
-  const KEYS = [
-    'unfriendFail',
-    'acceptFail',
-    'rejectFail',
-    'blockFail',
-    'unblockFail',
-    'privacyFail',
-  ];
+const SECTIONS: Record<string, { file: string; keys: string[] }> = {
+  'friends.toast': {
+    file: 'hooks/useSocial.ts',
+    keys: ['unfriendFail', 'acceptFail', 'rejectFail', 'blockFail', 'unblockFail', 'privacyFail'],
+  },
+  'rayhanah.toast': {
+    file: 'hooks/useCycle.ts',
+    keys: [
+      'offline',
+      'saveFail',
+      'updateFail',
+      'settingFail',
+      'pregnancyFail',
+      'pastAdded',
+      'pastFail',
+      'noteFail',
+      'editFail',
+      'deleteFail',
+      'bodyFail',
+    ],
+  },
+  'fasting.toast': {
+    file: 'hooks/useFasting.ts',
+    keys: ['offline', 'saveFail', 'clearFail', 'profileFail', 'vowAddFail', 'vowDeleteFail'],
+  },
+};
 
-  it.each(KEYS)('friends.toast.%s exists in English and in Bangla script', (key) => {
-    const en = read('en').friends.toast[key] as string;
-    const bn = read('bn').friends.toast[key] as string;
+const read = (lang: string) =>
+  JSON.parse(
+    readFileSync(join(root, `locales/${lang}/common.json`), 'utf8').replace(/^\uFEFF/, '')
+  );
+const at = (o: Record<string, unknown>, path: string): Record<string, string> =>
+  path.split('.').reduce<unknown>((a, k) => (a as Record<string, unknown>)?.[k], o) as Record<
+    string,
+    string
+  >;
+
+describe.each(Object.entries(SECTIONS))('%s', (section, { file, keys }) => {
+  it.each(keys)('%s exists in English and in Bangla script', (key) => {
+    const en = at(read('en'), section)[key];
+    const bn = at(read('bn'), section)[key];
     expect(en).toBeTruthy();
-    expect(en).not.toContain('—');
-    expect(bn).toMatch(/[ঀ-৿]/);
+    expect(en).not.toContain('\u2014'); // no em dash in new copy
+    expect(bn).toMatch(/[\u0980-\u09FF]/);
     expect(bn).not.toMatch(/[A-Za-z]/);
   });
 
-  it('useSocial uses every one of them', () => {
-    const src = readFileSync(join(root, 'hooks/useSocial.ts'), 'utf8');
-    for (const key of KEYS) expect(src, key).toContain(`friends.toast.${key}`);
+  it(`${file} uses every key`, () => {
+    const src = readFileSync(join(root, file), 'utf8');
+    for (const key of keys) expect(src, key).toContain(`${section}.${key}`);
   });
 });

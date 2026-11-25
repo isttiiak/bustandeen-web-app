@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import i18n from '../i18n.js';
 import api from '../lib/api.js';
 import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useAuthStore } from '../store/useAuthStore.js';
@@ -98,10 +99,16 @@ export interface UpsertFastingVars {
 }
 
 const offlineToast = () =>
-  toast("You're offline. Your fast is saved here and will sync when you're back online.", {
-    icon: '📶',
-    id: 'fasting-offline',
-  });
+  toast(
+    i18n.t(
+      'fasting.toast.offline',
+      "You're offline. Your fast is saved here and will sync when you're back online."
+    ),
+    {
+      icon: '📶',
+      id: 'fasting-offline',
+    }
+  );
 
 // Both writes carry the day's full end state, so offline they coalesce per
 // date: the last one for a day is the one that syncs (a clear after a log
@@ -143,9 +150,13 @@ export function useUpsertFastingLog() {
       if (e instanceof OfflineQueuedError) return offlineToast(); // keep the optimistic state
       // Roll back AND tell the user — a silent revert looks like a broken button
       if (ctx) qc.setQueryData(ctx.key, ctx.previous);
-      toast.error('Could not save your fast — check your connection and try again.', {
-        id: 'fasting-save',
-      });
+      toast.error(
+        i18n.t(
+          'fasting.toast.saveFail',
+          'Could not save your fast. Check your connection and try again.'
+        ),
+        { id: 'fasting-save' }
+      );
     },
     onSettled: (_d, e, vars) => {
       if (e instanceof OfflineQueuedError) return; // nothing changed server-side yet
@@ -180,7 +191,10 @@ export function useClearFastingLog() {
     onError: (e, _v, ctx) => {
       if (e instanceof OfflineQueuedError) return offlineToast();
       if (ctx) qc.setQueryData(ctx.key, ctx.previous);
-      toast.error('Could not remove the log — try again.', { id: 'fasting-clear' });
+      toast.error(
+        i18n.t('fasting.toast.clearFail', 'Could not remove the log. Please try again.'),
+        { id: 'fasting-clear' }
+      );
     },
     onSettled: (_d, e, date) => {
       if (e instanceof OfflineQueuedError) return;
@@ -221,7 +235,11 @@ export function useUpdateFastingProfile() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['fasting', 'summary'] });
     },
-    onError: () => toast.error('Could not update settings — try again.', { id: 'fasting-profile' }),
+    onError: () =>
+      toast.error(
+        i18n.t('fasting.toast.profileFail', 'Could not update settings. Please try again.'),
+        { id: 'fasting-profile' }
+      ),
   });
 }
 
@@ -235,7 +253,10 @@ export function useAddVow() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['fasting', 'summary'] });
     },
-    onError: () => toast.error('Could not add the vow — try again.', { id: 'fasting-vow' }),
+    onError: () =>
+      toast.error(i18n.t('fasting.toast.vowAddFail', 'Could not add the vow. Please try again.'), {
+        id: 'fasting-vow',
+      }),
   });
 }
 
@@ -249,6 +270,10 @@ export function useDeleteVow() {
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ['fasting', 'summary'] });
     },
-    onError: () => toast.error('Could not delete the vow — try again.', { id: 'fasting-vow' }),
+    onError: () =>
+      toast.error(
+        i18n.t('fasting.toast.vowDeleteFail', 'Could not delete the vow. Please try again.'),
+        { id: 'fasting-vow' }
+      ),
   });
 }

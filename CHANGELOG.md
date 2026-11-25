@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.54 - Rayhanah and fasting messages in Bangla (audit P4-3, part 2) - 2026-11-26
+
+The messages shown after saving in the cycle tracker (Rayhanah) and the fasting tracker were typed into the code in English. They now come from the language files, in English and in Bangla script. Part 2 of 3.
+
+### What changed
+
+- **`hooks/useCycle.ts`** (11 messages, under `rayhanah.toast.*`): the offline notice, save, update, setting, pregnancy-status, past-cycle (added and failed), note, edit, delete and body-measurement failures. A reason sent by the server (`errorMessage(err)`) still wins over the fallback, as before.
+- **`hooks/useFasting.ts`** (6 messages, under `fasting.toast.*`): the offline notice, save, remove-log, settings, add-vow and delete-vow failures. Vow is "নযর", as elsewhere in the app.
+- **Wording:** no em dashes; the past-cycle success lost its flower emoji and reads "Past cycle added. Your predictions will improve." The small signal icon on the two offline notices is unchanged. Bangla for the offline notices matches the zikr one ("আপনি এখন অফলাইনে। ...").
+- **The ratchet test got stricter:** it now also catches a literal after `??` or `||` (`toast.error(msg ?? 'Could not save')`), which the first version missed. 14 literals remain in 5 files (`App.tsx`, `QuranSettings`, `useSalatLog`, `lib/api.ts`, `Settings`).
+- Nothing about cycle data changed: it is still never sent to AI or friends.
+
+### Tests
+
+- `toastsTranslated.test.ts` (27 cases): the ratchet, and for each of the 23 new keys plus the earlier 6: it exists, no em dash in English, Bangla only in Bangla script, and the hook uses it. Fails on main, passes here.
+- `i18n:check` complete (17 new keys in each language).
+
 ## v5.190.53 - Friends error messages in Bangla (audit P4-3, part 1) - 2026-11-26
 
 The six error messages the Friends screen shows when something fails (remove a friend, accept or reject a request, block, unblock, change what friends see) were typed into the code in English, so a Bangla reader saw English. They now come from the language files, in English and in Bangla script. This is the first of three parts: the cycle, fasting, salat, Quran-settings and account toasts follow.
