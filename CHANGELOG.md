@@ -2,6 +2,21 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.53 - Friends error messages in Bangla (audit P4-3, part 1) - 2026-11-26
+
+The six error messages the Friends screen shows when something fails (remove a friend, accept or reject a request, block, unblock, change what friends see) were typed into the code in English, so a Bangla reader saw English. They now come from the language files, in English and in Bangla script. This is the first of three parts: the cycle, fasting, salat, Quran-settings and account toasts follow.
+
+### What changed
+
+- `hooks/useSocial.ts` uses `friends.toast.unfriendFail`, `acceptFail`, `rejectFail`, `blockFail`, `unblockFail` and `privacyFail` (`i18n.t`, with the English as the fallback).
+- English wording lost its em dashes ("Could not remove friend — try again." is now "Could not remove this friend. Please try again."). Bangla is new: for example "বন্ধুকে সরানো গেল না। আবার চেষ্টা করুন।".
+- **A ratchet test:** `toastsTranslated.test.ts` lists the files that still pass a literal string to `toast()` (32 uses in 7 files after this part; the audit counted 24-30) and fails if any file has more than listed or a new file appears. Each following part removes its files from the list.
+
+### Tests
+
+- `toastsTranslated.test.ts` (8 cases): the ratchet, and for each of the six keys: it exists, the English has no em dash, the Bangla is Bangla script only, and `useSocial` uses it. Fails on main, passes here.
+- `i18n:check` complete (6 new keys in each language).
+
 ## v5.190.52 - Screens no longer call the API themselves (audit P4-4) - 2026-11-26
 
 The project rule is that all server data goes through React Query hooks. Four screens still called the Axios instance directly. Each call now lives in a hook; what is sent, and what the screen shows on success or failure, is unchanged.

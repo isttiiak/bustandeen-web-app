@@ -903,6 +903,14 @@
     "shareMessage": "Assalamu alaikum! Join me on Bustandeen to race each other in good deeds. {{link}}",
     "srTitle": "Friends",
     "todaysCircle": "Today's circle",
+    "toast": {
+      "unfriendFail": "Could not remove this friend. Please try again.",
+      "acceptFail": "Could not accept the request. Please try again.",
+      "rejectFail": "Could not reject the request. Please try again.",
+      "blockFail": "Could not block this user. Please try again.",
+      "unblockFail": "Could not unblock this user. Please try again.",
+      "privacyFail": "Could not update your privacy setting. Please try again."
+    },
     "tryAgain": "Try again",
     "unblock": "Unblock",
     "verseCompete": "So race each other in good deeds",
