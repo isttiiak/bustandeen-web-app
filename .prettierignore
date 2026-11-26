@@ -13,3 +13,5 @@ frontend/playwright-report
 frontend/index.html
 # Tanzil Quran text: verbatim, never reformatted (audit T2.6).
 frontend/data/tanzil
+# Recorded render output (audit P4-1): compared byte for byte, never reformatted.
+frontend/src/pages/adminSadaqahRender.baselines

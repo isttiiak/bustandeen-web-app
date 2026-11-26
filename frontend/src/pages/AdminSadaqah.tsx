@@ -58,7 +58,7 @@ function currentQuarter(): string {
   return `${now.getFullYear()}-Q${Math.floor(now.getMonth() / 3) + 1}`;
 }
 
-function PendingCard({ donation }: { donation: Donation }) {
+export function PendingCard({ donation }: { donation: Donation }) {
   const { t } = useTranslation();
   const draft = useEmailDraft();
   const verify = useVerifyDonation();
@@ -206,7 +206,7 @@ function PendingCard({ donation }: { donation: Donation }) {
   );
 }
 
-function SubmissionsTab({ isServant }: { isServant: boolean }) {
+export function SubmissionsTab({ isServant }: { isServant: boolean }) {
   const { t } = useTranslation();
   const { data: stats } = useSadaqahStats();
   const { data: pending, isLoading: pendingLoading } = usePendingDonations();
@@ -434,7 +434,7 @@ function SubmissionsTab({ isServant }: { isServant: boolean }) {
   );
 }
 
-function ExpensesTab({ isServant }: { isServant: boolean }) {
+export function ExpensesTab({ isServant }: { isServant: boolean }) {
   const { t } = useTranslation();
   const { data: expenses } = useExpenses();
   const [expForm, setExpForm] = useState({
@@ -568,7 +568,7 @@ function ExpensesTab({ isServant }: { isServant: boolean }) {
   );
 }
 
-function QuarterlyPublisher() {
+export function QuarterlyPublisher() {
   const { t } = useTranslation();
   const { data: quarterlyList } = useAdminQuarterlyList();
   const preview = useQuarterlyPreview();
@@ -767,7 +767,7 @@ function QuarterlyPublisher() {
   );
 }
 
-function DonorEmailAction({ email }: { email: string }) {
+export function DonorEmailAction({ email }: { email: string }) {
   const { t } = useTranslation();
   const draft = useDonorEmailDraft();
   const send = useSendDonorEmail();
@@ -828,7 +828,7 @@ function DonorEmailAction({ email }: { email: string }) {
   );
 }
 
-function AnalyticsTab({ isServant }: { isServant: boolean }) {
+export function AnalyticsTab({ isServant }: { isServant: boolean }) {
   const { t } = useTranslation();
   const { data: donorAnalytics } = useDonorAnalytics(isServant);
 
