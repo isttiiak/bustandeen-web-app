@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.61 - Friends page split into parts (audit P4-1, step 1) - 2026-11-26
+
+`pages/Friends.tsx` was 1,309 lines with seven components inside it. It is now 140 lines, and each part lives in `components/friends/`. Nothing changes for anyone: same markup, same copy, same requests.
+
+### What moved (verbatim, only imports, `export` and prop names added)
+
+- `friendsParts.tsx`: `Sheet`, `SheetHeader`, `Avatar`, `Spinner` and the shared row and option styles.
+- `PendingRequestsModal`, `PrivacySheet` (with its settings block), `FriendsMenu`, `ManageFriendsModal`, `CircleRow` (with `Chip` and the `Board` type).
+- New thin components cut out of the page body: `FriendsInviteSheet`, `FriendsCircleSection`, `NoorHowItWorks`.
+- `useFriendsPage.ts`: the page's state (dialogs open, invite link and copy, the board tab, the summary and the all-time query). `NoorHowItWorks` now holds its own open/closed state and the `useIsFemale` call, since nothing else used them.
+
+### Proof
+
+- The 57 page baselines from v5.190.60 pass untouched (the Friends ones: default en and bn, how Noor works, all-time board), and a 58th, the invite dialog (`/friends?invite=1`, reachable in the demo), was recorded on the OLD code first and passes on the split. Built the way CI builds.
+- **Not covered by a browser test:** the Friends menu, manage-friends, privacy and pending-requests dialogs only exist for a signed-in user (`!isDemoMode`), and the e2e suite has no signed-in session. They were moved verbatim: every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords, the two `setInviteOpen`/`setManageOpen` calls that became props, and re-wrapped JSX. `tsc` and eslint are clean.
+- `friendsScreen.test.ts` (reads source text, so it still guards the signed-in-only dialogs): now reads the page and all ten files of `components/friends/` and its 42 checks pass (no emoji or em dash, every locale key present in en and bn, overlays portaled, one arch hero, the menu, privacy sheet and "n friends" button wiring). Two checks were re-pointed from "in this file" to "in the file that now holds it".
+- `fileSize.test.ts`: the `Friends.tsx` entry is removed (under 600 lines). All new files are under 280 lines.
+- Frontend unit tests 154 files, 2484 tests; full e2e 221 passed; lint (2 existing warnings), typecheck, format, i18n and knip clean.
+
 ## v5.190.60 - Safety net for splitting the big pages (audit P4-1, step 0) - 2026-11-26
 
 Thirteen pages are over 1,000 lines and will be split into smaller parts, one page per release. Splitting must change nothing a person sees or any data a page writes, so this release adds the tests that prove it before any page is touched. The app itself is unchanged.

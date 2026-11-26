@@ -234,6 +234,11 @@ test('friends: how Noor works', async ({ page }) => {
   await expectBaseline(page, 'friends.noor-how');
 });
 
+test('friends: the invite dialog opens from ?invite=1', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/friends?invite=1');
+  await expectBaseline(page, 'friends.invite');
+});
+
 test('friends: the all-time board', async ({ page }) => {
   await open(page, { as: 'sister' }, '/friends');
   await declineBanner(page);
