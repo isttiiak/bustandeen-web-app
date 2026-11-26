@@ -1,0 +1,369 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Home" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "Home"
+       <div class="flex items-center gap-1 min-w-0 pl-1">
+        <span class="text-white/15 text-sm hidden sm:inline">
+         "|"
+        <span aria-hidden="true" class="text-sm shrink-0">
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<377:bf388f92>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="font-semibold text-white/70 text-xs sm:text-sm truncate max-w-[70px] sm:max-w-[130px]">
+         "Friends"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "K"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+     <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl" style="transform: none">
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl" style="transform: none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl" style="transform: rotate(360deg)">
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px">
+     <div class="relative z-10">
+      <div class="p-4 sm:p-6 lg:p-8 pb-16">
+       <div class="max-w-xl mx-auto space-y-5">
+        <section class="relative rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-10 pb-6 text-center" style="opacity: 1; transform: none">
+         <div class="w-16 h-16 mx-auto rounded-full grid place-items-center bg-brand-emerald/10 border border-brand-emerald/30">
+          <svg aria-hidden="true" class="w-8 h-8 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<377:bf388f92>" stroke-linecap="round" stroke-linejoin="round">
+         <h1 class="font-display text-2xl sm:text-3xl font-bold text-white mt-4">
+          "Friends"
+         <p class="font-display text-lg text-white/85 mt-2 leading-snug">
+          "So race each other in good deeds"
+         <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2" href="https://quran.com/2/148" rel="noopener noreferrer" target="_blank">
+          "Quran 2:148"
+        <section class="space-y-3">
+         <div class="flex flex-wrap items-center justify-between gap-2 px-1">
+          <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+           <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<611:a68d29de>" stroke-linecap="round" stroke-linejoin="round">
+           "Today's circle"
+           <span class="text-white/70 text-sm font-normal font-sans">
+            "3 friends"
+          <div class="flex gap-1.5" role="tablist">
+           <button aria-selected="true" class="px-3 py-1 rounded-full text-xs font-bold border transition-colors bg-brand-emerald/10 border-brand-emerald text-white" role="tab" type="button">
+            "Today"
+           <button aria-selected="false" class="px-3 py-1 rounded-full text-xs font-bold border transition-colors bg-brand-surface/50 border-brand-border text-white/80 hover:text-white hover:border-brand-emerald/40" role="tab" type="button">
+            "This week"
+           <button aria-selected="false" class="px-3 py-1 rounded-full text-xs font-bold border transition-colors bg-brand-surface/50 border-brand-border text-white/80 hover:text-white hover:border-brand-emerald/40" role="tab" type="button">
+            "All time"
+         <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-3.5 border-brand-emerald/60" style="opacity: 1; transform: none">
+          <div class="flex items-center gap-3">
+           <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-10 h-10 text-sm ring-2 ring-brand-border shrink-0">
+            "K"
+           <div class="flex-1 min-w-0">
+            <p class="text-white font-bold text-sm flex items-center gap-1.5 min-w-0">
+             <span class="truncate">
+              "Khadijah"
+             <img alt="Bangladesh" class="inline-block rounded-sm align-middle" src="https://flagcdn.com/w20/bd.png" srcset="https://flagcdn.com/w40/bd.png 2x" title="Bangladesh" width="20">
+             <span class="text-[10px] px-1.5 py-0.5 rounded-full border border-brand-emerald/50 bg-brand-emerald/10 text-brand-emerald shrink-0">
+              "You"
+            <div class="flex items-center gap-2 mt-1">
+             <div class="flex-1 bg-track rounded-full h-1.5 overflow-hidden">
+              <div class="h-full rounded-full bg-brand-emerald" style="width: 90%">
+             <span class="inline-flex items-center gap-0.5 text-white text-xs font-bold tabular-nums w-12 justify-end">
+              <svg aria-hidden="true" class="w-3.5 h-3.5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+               <path d="<611:a68d29de>" stroke-linecap="round" stroke-linejoin="round">
+              "90"
+          <div class="flex flex-wrap gap-1.5 mt-2.5 pl-[52px]">
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold text-white/85 bg-brand-gold/20 border-brand-gold/40">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<145:47f495d8>" stroke-linecap="round" stroke-linejoin="round">
+             <path d="<114:42918bcf>" stroke-linecap="round" stroke-linejoin="round">
+            "12-day streak"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<105:cc4257f9>">
+            "2"
+            "/"
+            "5"
+            "prayers"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+             <path d="<27:5bfdcc38>">
+            "500 today"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-gold/15 border-brand-gold/50 text-brand-gold">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<48:f4c03581>">
+            "Fasting today"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+            "2/1 āyāt"
+         <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-3.5 " style="opacity: 1; transform: none">
+          <div class="flex items-center gap-3">
+           <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-10 h-10 text-sm ring-2 ring-brand-border shrink-0">
+            "A"
+           <div class="flex-1 min-w-0">
+            <p class="text-white font-bold text-sm flex items-center gap-1.5 min-w-0">
+             <span class="truncate">
+              "Aisha"
+             <img alt="Egypt" class="inline-block rounded-sm align-middle" src="https://flagcdn.com/w20/eg.png" srcset="https://flagcdn.com/w40/eg.png 2x" title="Egypt" width="20">
+            <div class="flex items-center gap-2 mt-1">
+             <div class="flex-1 bg-track rounded-full h-1.5 overflow-hidden">
+              <div class="h-full rounded-full bg-brand-emerald" style="width: 95%">
+             <span class="inline-flex items-center gap-0.5 text-white text-xs font-bold tabular-nums w-12 justify-end">
+              <svg aria-hidden="true" class="w-3.5 h-3.5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+               <path d="<611:a68d29de>" stroke-linecap="round" stroke-linejoin="round">
+              "95"
+          <div class="flex flex-wrap gap-1.5 mt-2.5 pl-[52px]">
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold text-white/85 bg-brand-gold/20 border-brand-gold/40">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<145:47f495d8>" stroke-linecap="round" stroke-linejoin="round">
+             <path d="<114:42918bcf>" stroke-linecap="round" stroke-linejoin="round">
+            "21-day streak"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<105:cc4257f9>">
+            "2"
+            "/"
+            "5"
+            "prayers"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+             <path d="<27:5bfdcc38>">
+            "612 today"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-gold/15 border-brand-gold/50 text-brand-gold">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<48:f4c03581>">
+            "Fasting today"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+            "3/2 āyāt"
+         <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-3.5 " style="opacity: 1; transform: none">
+          <div class="flex items-center gap-3">
+           <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-10 h-10 text-sm ring-2 ring-brand-border shrink-0">
+            "M"
+           <div class="flex-1 min-w-0">
+            <p class="text-white font-bold text-sm flex items-center gap-1.5 min-w-0">
+             <span class="truncate">
+              "Maryam"
+             <img alt="Turkey" class="inline-block rounded-sm align-middle" src="https://flagcdn.com/w20/tr.png" srcset="https://flagcdn.com/w40/tr.png 2x" title="Turkey" width="20">
+            <p class="text-[11px] mt-0.5 text-white/70">
+             "Shares consistency only"
+          <div class="flex flex-wrap gap-1.5 mt-2.5 pl-[52px]">
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold text-white/85 bg-brand-gold/20 border-brand-gold/40">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<145:47f495d8>" stroke-linecap="round" stroke-linejoin="round">
+             <path d="<114:42918bcf>" stroke-linecap="round" stroke-linejoin="round">
+            "5-day streak"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+            "Quran 2 days"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<37:61ad81e8>">
+             <path d="<11:81e625cc>">
+            "Active 6 of 7 days this week"
+         <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-3.5 " style="opacity: 1; transform: none">
+          <div class="flex items-center gap-3">
+           <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-10 h-10 text-sm ring-2 ring-brand-border shrink-0">
+            "F"
+           <div class="flex-1 min-w-0">
+            <p class="text-white font-bold text-sm flex items-center gap-1.5 min-w-0">
+             <span class="truncate">
+              "Fatimah"
+             <img alt="Pakistan" class="inline-block rounded-sm align-middle" src="https://flagcdn.com/w20/pk.png" srcset="https://flagcdn.com/w40/pk.png 2x" title="Pakistan" width="20">
+            <div class="flex items-center gap-2 mt-1">
+             <div class="flex-1 bg-track rounded-full h-1.5 overflow-hidden">
+              <div class="h-full rounded-full bg-brand-emerald" style="width: 48%">
+             <span class="inline-flex items-center gap-0.5 text-white text-xs font-bold tabular-nums w-12 justify-end">
+              <svg aria-hidden="true" class="w-3.5 h-3.5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+               <path d="<611:a68d29de>" stroke-linecap="round" stroke-linejoin="round">
+              "48"
+          <div class="flex flex-wrap gap-1.5 mt-2.5 pl-[52px]">
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold text-white/85 bg-brand-info/15 border-brand-info/50">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<78:fe1855dc>">
+            "3-day streak"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<105:cc4257f9>">
+            "0"
+            "/"
+            "5"
+            "prayers"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+             <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+             <path d="<27:5bfdcc38>">
+            "80 today"
+           <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full border text-[11px] font-bold bg-brand-surface/60 border-brand-border text-white/80">
+            <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 " fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<48:f4c03581>">
+            "Not fasting"
+         <figure class="px-2 pt-1 text-center text-xs text-white/70 leading-relaxed">
+          <p>
+           "Noor is your consistency, not your worth. Acceptance is with Allah alone."
+          <blockquote class="mt-1 italic">
+           ""The most beloved deeds to Allah are the most consistent, even if small.""
+          <figcaption>
+           <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2" href="https://sunnah.com/bukhari:6464" rel="noopener noreferrer" target="_blank">
+            "Ṣaḥīḥ al-Bukhārī 6464"
+        <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 overflow-hidden">
+         <button aria-expanded="true" class="w-full px-5 py-4 flex items-center justify-between gap-2 text-left" type="button">
+          <span class="font-display text-white font-bold text-base flex items-center gap-2">
+           <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<611:a68d29de>" stroke-linecap="round" stroke-linejoin="round">
+           "What is Noor?"
+          <svg aria-hidden="true" class="w-5 h-5 text-white/70 transition-transform rotate-180" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="overflow-hidden" style="height: auto; opacity: 1">
+          <div class="px-5 pb-5 pt-3 space-y-2.5 text-sm text-white/80 leading-relaxed border-t border-brand-border">
+           <p>
+            "Your Noor starts at 0 every day and only ever goes up. Up to 100:"
+           <ul class="space-y-2">
+            <li class="flex items-start gap-2.5">
+             <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+              <path d="<105:cc4257f9>">
+             <span>
+              <b class="text-white tabular-nums">
+               "50"
+              "Prayers: 10 for each of the five fard (kaza counts)"
+            <li class="flex items-start gap-2.5">
+             <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+              <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+              <path d="<27:5bfdcc38>">
+             <span>
+              <b class="text-white tabular-nums">
+               "15"
+              "Dhikr: today's count against your own daily goal"
+            <li class="flex items-start gap-2.5">
+             <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-info" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+             <span>
+              <b class="text-white tabular-nums">
+               "15"
+              "Quran: reading or listening against your own daily goal"
+            <li class="flex items-start gap-2.5">
+             <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+              <path d="<37:61ad81e8>">
+              <path d="<11:81e625cc>">
+             <span>
+              <b class="text-white tabular-nums">
+               "10"
+              "Steadiness: 1 for each day in a row you show up, up to 10, once you have done something today"
+            <li class="flex items-start gap-2.5">
+             <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+              <path d="<48:f4c03581>">
+             <span>
+              <b class="text-white tabular-nums">
+               "10"
+              "Extras, 5 each (best two): a completed fast, nafl prayer, ṣalawāt or istighfār"
+            <li class="flex items-start gap-2.5">
+             <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+              <circle cx="12.00" cy="7.80" r="3">
+              <circle cx="15.99" cy="10.70" r="3">
+              <circle cx="14.47" cy="15.40" r="3">
+              <circle cx="9.53" cy="15.40" r="3">
+              <circle cx="8.01" cy="10.70" r="3">
+              <circle cx="12" cy="12" r="1.6">
+             <span>
+              "Rayhanah days (for sisters): prayer and fasting are excused, not lost. Dhikr and Quran count for more, and Noor still reaches 100."
+           <p>
+            <b class="text-white">
+             "Today"
+            "= today's light only, resets at Fajr."
+            <b class="text-white">
+             "This week"
+            "= your average daily Noor since Friday, counting today so far. A day with nothing counts 0. "Active X of Y days" means days with at least one prayer, dhikr, Quran or extra."
+            <b class="text-white">
+             "All-time"
+            "= every day's light, gathered."
+           <p>
+            ""Usually" is your average Noor on the active days of the last 14 days (shown once you have 3). "Above their usual" means today is already higher, so everyone races their own best. Bars show Noor out of 100."
+    <div class="fixed right-4 z-40 flex flex-col items-center gap-3 pointer-events-none" style="bottom: calc(5rem + env(safe-area-inset-bottom, 0px))">
+     <button aria-label="Go to top" class="pointer-events-auto w-11 h-11 rounded-full grid place-items-center bg-brand-deep text-white border border-brand-border shadow-elev-2 hover:border-brand-emerald hover:text-brand-emerald transition-colors" title="Go to top" type="button">
+      <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+       <path clip-rule="evenodd" d="<143:a4c237d7>" fill-rule="evenodd">

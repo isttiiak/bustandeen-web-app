@@ -1,0 +1,37 @@
+{
+ "sync": [],
+ "salat": [
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "fajr",
+    "status": "pending",
+    "date": "2026-10-15"
+   },
+   "owner": "demo-001"
+  },
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "dhuhr",
+    "status": "kaza",
+    "date": "2026-10-15",
+    "location": "home",
+    "tasbeeh": false,
+    "ayatulKursi": false,
+    "windowStart": "2026-10-15T05:49:00.000Z",
+    "windowEnd": "2026-10-15T09:04:00.000Z"
+   },
+   "owner": "demo-001"
+  },
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "asr",
+    "status": "missed",
+    "date": "2026-10-15"
+   },
+   "owner": "demo-001"
+  }
+ ]
+}

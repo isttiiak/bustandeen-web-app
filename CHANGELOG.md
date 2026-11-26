@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.60 - Safety net for splitting the big pages (audit P4-1, step 0) - 2026-11-26
+
+Thirteen pages are over 1,000 lines and will be split into smaller parts, one page per release. Splitting must change nothing a person sees or any data a page writes, so this release adds the tests that prove it before any page is touched. The app itself is unchanged.
+
+### What was added
+
+- **`e2e/characterize.spec.ts` and `characterize-states.spec.ts` (57 Playwright tests):** each of the 12 pages that run in demo mode is dumped as normalized DOM text (English and Bangla, frozen clock, Asia/Dhaka), plus the states a refactor can break: dialogs and tabs, a journey under way (Musafir, Salat, Home), Friday and Ramadan, Hanafi view. Ids that React derives from the tree position, SVG path data and the app version are normalized so only real differences show.
+- **Write requests:** with the network off, the Salat (Done, Kaza, Miss), Ramadan (fast, prayer) and Quran reader scripts also save the exact method, URL and body each handler queued in the outboxes, so a moved handler cannot change a request unseen.
+- **Baselines in `e2e/__baselines__` (65 files, 3.5 MB).** They run in CI with the other e2e specs and must stay byte-identical across every page split. `AdminSadaqah` is not covered by them (the admin panel is its own bundle with no demo); its PR gets a render test instead.
+- **Checked that it can fail:** a one-class change on Home failed its baselines, and wrapping Friends in an extra component did not.
+- **`fileSize.test.ts`:** a page may not be over 600 lines unless listed, a listed page may not grow, and a cap more than 30 lines above the real length fails, so each split must lower its cap. New components and hooks stay under 450 lines (eight older files are listed at their size).
+- **`cyclePrivacy.test.ts`:** no Rayhanah or cycle file may import the AI or Naseeh hooks, or anything from the social hooks except `useFriendsList` (the opt-in "share my status with one friend" picker).
+- `playwright.config.ts` stores baselines without a per-OS suffix.
+- **Build the way CI does before comparing:** a local `frontend/.env` that sets `VITE_GA_MEASUREMENT_ID` shows the "Visit counting" banner on every page, which CI never shows (it also makes three older e2e specs fail locally, `references` and `signup-email-first`). The baselines are recorded without it; the header of `e2e/characterize.ts` says how.
+- Full e2e suite on that build: 220 passed. Frontend unit suite: 154 files, 2445 tests.
+
 ## v5.190.59 - Backend unused code removed, and CI checks both sides (audit P4-5) - 2026-11-26
 
 The backend had 60 unused exports and 54 unused exported types (in 65 files). They are cleared, and CI now fails on a new one in either package, so the knip work of the last three releases is finished.
