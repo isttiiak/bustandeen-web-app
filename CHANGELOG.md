@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.65 - Salat analytics page split into parts (audit P4-1, step 5) - 2026-11-27
+
+`pages/SalatAnalytics.tsx` was 1,416 lines in one component. It is now 206 lines, and the rest lives in `components/salat/` (eight files, largest 315 lines). Nothing changes for anyone: same markup, copy and requests. This page only reads data.
+
+### What moved (verbatim, only imports, `export`, prop names and the `CHART_INFO` to `chartInfo` rename added)
+
+- `useSalatAnalyticsPage.ts`: the screen's state (period, month, picker, view, info topic), the month-to-days derivation that keeps `today` on the Fajr tracking day and never past it, the "how to read this" texts, and the seven queries. The page still has no early returns and no hook after a condition.
+- `SalatAnalyticsControls.tsx` (title, view toggle, period tabs, month button, and the month picker panel), `SalatAnalyticsSummary.tsx` (period note, stat tiles, breakdown strip), `SalatPerPrayerCards.tsx`.
+- `SalatAnalyticsPatterns.tsx` (weekday, prayer timing with missed reasons, Isha and Fajr, mosque trend), `SalatKazaAnalytics.tsx` (kaza debt chart and kaza insights), `SalatPrayerCalendar.tsx` (with `calendarCellClass`; the week and month-label grouping moved into it), `SalatJourneyView.tsx`.
+- The page keeps the header, the loading and error cards, the weekday labels and the composition.
+
+### Proof
+
+- The 74 baselines of v5.190.64 pass untouched, and five new Salat analytics tests (eleven snapshots) were recorded on the OLD code first and pass on the split: a 90-day range; the month picker open, then an earlier month; the five chart info dialogs (weekday, timing, kaza insights, Isha and Fajr, calendar); the journey view and its info dialog; a calendar day, which opens the tracker on that date. Built the way CI builds.
+- **Not recorded:** the "All" range. Its 3,650 calendar cells animate in one after another for about fifteen seconds, so the page never settles for a snapshot; the code that builds it is the same as for 90 days, only more cells.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords, the removed `(() => {` wrappers around the month picker, `CHART_INFO` renamed to a `chartInfo` prop, and prettier re-wrapping.
+- `salatAnalyticsScreen.test.ts` (no emoji or em dash, faint ink, raw colours, shared classes, the portaled info dialog) now reads the page and the eight new files. `salatAnalyticsToday.test.ts` (today comes from the Fajr tracking day, never past it) now reads them too; the `lastDay > today ? today : lastDay` guard is in the hook. The `SalatAnalytics.tsx` cap is removed from `fileSize.test.ts`.
+- Frontend unit tests 155 files, 2594 tests; full e2e 242 passed; lint (2 existing warnings), typecheck, format, i18n and knip clean.
+
 ## v5.190.64 - Sadaqah admin page split into parts (audit P4-1, step 4) - 2026-11-27
 
 `pages/AdminSadaqah.tsx` was 989 lines with six components inside it. It is now 58 lines (the page and its three tabs), and each part lives in `components/admin/sadaqah/` (largest 251 lines). Nothing changes for staff: same markup, copy and requests.

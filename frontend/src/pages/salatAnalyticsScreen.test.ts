@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import en from '../locales/en/common.json';
 import bn from '../locales/bn/common.json';
 
-// T3.2 Salat analytics: the page, its two charts and the shared chart-info
+// T3.2 Salat analytics: the page, its parts (components/salat/), its two charts and the shared chart-info
 // dialog use theme cards and the theme's data colours (no hard-coded rgba/hex,
 // no glow), draw SVG icons only, keep text readable (no ink below /60), and
 // every salatAnalytics string is free of emoji and em dashes in en + bn. The
@@ -10,6 +10,14 @@ import bn from '../locales/bn/common.json';
 const files = import.meta.glob<string>(
   [
     './SalatAnalytics.tsx',
+    '../components/salat/SalatAnalyticsControls.tsx',
+    '../components/salat/SalatAnalyticsSummary.tsx',
+    '../components/salat/SalatPerPrayerCards.tsx',
+    '../components/salat/SalatAnalyticsPatterns.tsx',
+    '../components/salat/SalatKazaAnalytics.tsx',
+    '../components/salat/SalatPrayerCalendar.tsx',
+    '../components/salat/SalatJourneyView.tsx',
+    '../components/salat/useSalatAnalyticsPage.ts',
     '../components/ChartInfoModal.tsx',
     '../components/analytics/KazaDebtChart.tsx',
     '../components/analytics/MosqueTrendChart.tsx',
@@ -40,7 +48,11 @@ describe('Salat analytics screen', () => {
   );
 
   it('uses the shared card, tile and heading classes', () => {
-    const page = files['./SalatAnalytics.tsx']!;
+    // The page and the files P4-1 cut out of it.
+    const page = Object.entries(files)
+      .filter(([p]) => p === './SalatAnalytics.tsx' || p.includes('/salat/'))
+      .map(([, code]) => code)
+      .join('\n');
     expect(page).toContain('className={CARD}');
     expect(page).toContain('className={TILE}');
     expect(page).toContain('className={SECTION_TITLE}');
