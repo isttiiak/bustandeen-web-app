@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import i18n from '../i18n.js';
 import api from '../lib/api.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import {
@@ -459,10 +460,13 @@ export function useUpdatePrayer() {
     },
     onError: (err, _vars, context) => {
       if (err instanceof OfflineQueuedError) {
-        toast("You're offline — this will sync automatically once you're back online.", {
-          icon: '📶',
-          id: 'salat-offline',
-        });
+        toast(
+          i18n.t(
+            'salat.toast.offline',
+            "You're offline. This will sync automatically once you're back online."
+          ),
+          { icon: '📶', id: 'salat-offline' }
+        );
         return; // keep the optimistic state; don't roll back a change that's just queued
       }
       if (context?.previous !== undefined) qc.setQueryData(context.key, context.previous);
@@ -515,10 +519,13 @@ export function useUpdateNafl() {
     },
     onError: (err, _vars, context) => {
       if (err instanceof OfflineQueuedError) {
-        toast("You're offline — this will sync automatically once you're back online.", {
-          icon: '📶',
-          id: 'salat-offline',
-        });
+        toast(
+          i18n.t(
+            'salat.toast.offline',
+            "You're offline. This will sync automatically once you're back online."
+          ),
+          { icon: '📶', id: 'salat-offline' }
+        );
         return;
       }
       if (context?.previous !== undefined) qc.setQueryData(context.key, context.previous);
@@ -827,7 +834,10 @@ export async function replaySalatOutbox(qc: QueryClient): Promise<void> {
   if (dropped) notifySalatUpdateDropped();
   if (replayedAny) {
     clearOutboxStuck();
-    toast.success('Synced your offline prayer updates.', { icon: '✅', id: 'salat-offline-sync' });
+    toast.success(i18n.t('salat.toast.synced', 'Synced your offline prayer updates.'), {
+      icon: '✅',
+      id: 'salat-offline-sync',
+    });
   }
   void qc.invalidateQueries({ queryKey: ['salat'] });
 }

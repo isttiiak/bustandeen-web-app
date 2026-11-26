@@ -1,6 +1,7 @@
 ﻿import axios, { AxiosError } from 'axios';
 import type { InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
 import toast from 'react-hot-toast';
+import i18n from '../i18n.js';
 import { hasSessionHint, loadedAdminAuth, loadedFirebase, loadFirebase } from '../authClient.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { useAdminStore } from '../store/useAdminStore.js';
@@ -174,7 +175,10 @@ api.interceptors.response.use(
       if (adminAuth) void signOutAdmin(adminAuth);
       clearAdminMfaProof();
       useAdminStore.getState().setSignedOut();
-      toast.error('Your admin session ended. Please sign in again.', { id: 'admin-session' });
+      toast.error(
+        i18n.t('adminNotices.sessionEnded', 'Your admin session ended. Please sign in again.'),
+        { id: 'admin-session' }
+      );
     }
     // An irreversible admin action wants a recent password entry: ask once,
     // then repeat the request with the refreshed token.
@@ -203,10 +207,10 @@ api.interceptors.response.use(
     // Rate limited — tell the user instead of failing silently.
     // Fixed toast id so a burst of 429s shows a single message.
     if (axios.isAxiosError(err) && err.response?.status === 429) {
-      toast.error('Too many requests — please wait a moment and try again.', {
-        id: 'rate-limit',
-        duration: 4000,
-      });
+      toast.error(
+        i18n.t('common.tooManyRequests', 'Too many requests. Please wait a moment and try again.'),
+        { id: 'rate-limit', duration: 4000 }
+      );
     }
     return Promise.reject(err);
   }

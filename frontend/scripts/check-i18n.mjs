@@ -17,7 +17,8 @@ const LOCALES = join(__dirname, '..', 'src', 'locales');
 
 /** Namespaces that are English-only on purpose. */
 const ENGLISH_ONLY = new Set([
-  // Admin pages (Servant/Ansar only).
+  // Admin pages (Servant/Ansar only), and the notices only staff ever see.
+  'adminNotices',
   'adminSadaqah',
   // Naseeh AI is English only (decision 2026-09): hidden in Bangla mode.
   'aiFlair',

@@ -4,19 +4,9 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 // Audit 2026-11-16 P4-3: a toast is user-facing text, so it goes through i18n
-// (en + bn) instead of being typed into the code. This is a ratchet: the files
-// below still pass a literal string to toast(), each with how many. Translating
-// one shrinks its number; the test fails if any file is not in the list or has
-// MORE than listed, so no new hard-coded toast can slip in. When a file reaches
-// 0, delete its line.
-
-const REMAINING: Record<string, number> = {
-  'App.tsx': 1,
-  'components/QuranSettings.tsx': 2,
-  'hooks/useSalatLog.ts': 3,
-  'lib/api.ts': 2,
-  'pages/Settings.tsx': 6,
-};
+// (en + bn) instead of being typed into the code. No file may pass a literal
+// English string to toast(); the keys it uses must exist in both languages
+// (staff-only notices are English-only on purpose, see check-i18n.mjs).
 
 const root = fileURLToPath(new URL('.', import.meta.url));
 const walk = (dir: string): string[] =>
@@ -36,18 +26,18 @@ for (const f of walk(root)) {
 }
 
 describe('toasts go through i18n', () => {
-  it('no file has more hard-coded toasts than the list allows, and none outside it', () => {
-    expect(found).toEqual(REMAINING);
+  it('no file passes a literal English string to toast()', () => {
+    expect(found).toEqual({});
   });
 });
 
-const SECTIONS: Record<string, { file: string; keys: string[] }> = {
+const SECTIONS: Record<string, { files: string[]; keys: string[] }> = {
   'friends.toast': {
-    file: 'hooks/useSocial.ts',
+    files: ['hooks/useSocial.ts'],
     keys: ['unfriendFail', 'acceptFail', 'rejectFail', 'blockFail', 'unblockFail', 'privacyFail'],
   },
   'rayhanah.toast': {
-    file: 'hooks/useCycle.ts',
+    files: ['hooks/useCycle.ts'],
     keys: [
       'offline',
       'saveFail',
@@ -62,8 +52,25 @@ const SECTIONS: Record<string, { file: string; keys: string[] }> = {
       'bodyFail',
     ],
   },
+  common: { files: ['App.tsx', 'lib/api.ts'], keys: ['accountDisabled', 'tooManyRequests'] },
+  'salat.toast': { files: ['hooks/useSalatLog.ts'], keys: ['offline', 'synced'] },
+  'quranSettings.toast': {
+    files: ['components/QuranSettings.tsx'],
+    keys: ['goalUnchanged', 'goalSet', 'goalSetPlural', 'goalRemoved', 'goalSaveFail'],
+  },
+  'settings.toast': {
+    files: ['pages/Settings.tsx'],
+    keys: [
+      'reauthRequired',
+      'deleteAccountFailed',
+      'deleteBlockedStaff',
+      'dangerDone',
+      'dangerFail',
+      'locationCleared',
+    ],
+  },
   'fasting.toast': {
-    file: 'hooks/useFasting.ts',
+    files: ['hooks/useFasting.ts'],
     keys: ['offline', 'saveFail', 'clearFail', 'profileFail', 'vowAddFail', 'vowDeleteFail'],
   },
 };
@@ -78,18 +85,33 @@ const at = (o: Record<string, unknown>, path: string): Record<string, string> =>
     string
   >;
 
-describe.each(Object.entries(SECTIONS))('%s', (section, { file, keys }) => {
+describe.each(Object.entries(SECTIONS))('%s', (section, { files, keys }) => {
   it.each(keys)('%s exists in English and in Bangla script', (key) => {
     const en = at(read('en'), section)[key];
     const bn = at(read('bn'), section)[key];
     expect(en).toBeTruthy();
     expect(en).not.toContain('\u2014'); // no em dash in new copy
     expect(bn).toMatch(/[\u0980-\u09FF]/);
-    expect(bn).not.toMatch(/[A-Za-z]/);
+    expect(bn.replace(/\{\{[^}]*\}\}/g, '')).not.toMatch(/[A-Za-z]/); // placeholders are fine
   });
 
-  it(`${file} uses every key`, () => {
-    const src = readFileSync(join(root, file), 'utf8');
+  it(`${files.join(' or ')} uses every key`, () => {
+    const src = files.map((f) => readFileSync(join(root, f), 'utf8')).join('\n');
     for (const key of keys) expect(src, key).toContain(`${section}.${key}`);
+  });
+});
+
+describe('staff-only notices stay English on purpose', () => {
+  const KEYS = ['sessionEnded'];
+
+  it.each(KEYS)('adminNotices.%s is English only, and the code uses it', (key) => {
+    expect(at(read('en'), 'adminNotices')[key]).toBeTruthy();
+    expect(read('bn').adminNotices).toBeUndefined();
+    expect(readFileSync(join(root, 'lib/api.ts'), 'utf8')).toContain(`adminNotices.${key}`);
+  });
+
+  it('the i18n check lists the namespace as English-only', () => {
+    const check = readFileSync(join(root, '..', 'scripts/check-i18n.mjs'), 'utf8');
+    expect(check).toContain("'adminNotices'");
   });
 });
