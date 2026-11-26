@@ -89,7 +89,7 @@ type CampaignResponse = { campaign: UpdateEmailCampaignSummary; busy?: boolean }
 
 /** How long to wait when another tab or request is sending this campaign's
  *  next chunk (the server answers `busy` instead of sending it twice). */
-export const BUSY_WAIT_MS = 3000;
+const BUSY_WAIT_MS = 3000;
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 

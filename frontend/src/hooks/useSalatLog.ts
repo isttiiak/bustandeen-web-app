@@ -248,7 +248,7 @@ export const NAFL_TYPE_META: NaflTypeMeta[] = [
  * that is otherwise all pairs. Historic logs containing it still display. */
 export const SELECTABLE_NAFL_TYPES: NaflTypeMeta[] = NAFL_TYPE_META.filter((m) => m.id !== 'witr');
 
-export interface PrayerEntry {
+interface PrayerEntry {
   status: PrayerStatus;
   prayedAt?: string;
   location?: PrayerLocation;
@@ -263,7 +263,7 @@ export interface PrayerEntry {
   jam?: JamKind;
 }
 
-export type JamKind = 'taqdim' | 'takhir';
+type JamKind = 'taqdim' | 'takhir';
 
 export interface NaflEntry {
   completed: boolean;

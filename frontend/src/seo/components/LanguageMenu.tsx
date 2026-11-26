@@ -2,7 +2,7 @@ import { GlobeAltIcon } from '@heroicons/react/24/outline';
 import { CHROME, type SeoLang } from '../locales/chrome.js';
 
 /** Each language in its own script, shown only inside the menu. */
-export const NATIVE_NAME: Record<SeoLang, string> = {
+const NATIVE_NAME: Record<SeoLang, string> = {
   en: 'English',
   bn: 'বাংলা',
   ar: 'العربية',

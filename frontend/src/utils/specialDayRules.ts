@@ -34,7 +34,7 @@ export const NIGHT_SPECIAL_DAYS: ReadonlySet<SpecialDayId> = new Set([
  * the two Eids (Sahih al-Bukhari 1991) and the days of Tashriq, 11 to 13
  * Dhul Hijjah (Sahih Muslim 1141).
  */
-export const isFastForbidden = ({ month, day }: { month: number; day: number }) =>
+const isFastForbidden = ({ month, day }: { month: number; day: number }) =>
   (month === 10 && day === 1) || (month === 12 && day >= 10 && day <= 13);
 
 /**

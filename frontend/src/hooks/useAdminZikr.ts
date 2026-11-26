@@ -176,15 +176,3 @@ export function useDeleteLibraryItem() {
     },
   });
 }
-
-/** Servant-only — re-categorize an already-published library item. */
-export function useUpdateLibraryItemCategory() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, category }: { id: string; category: GlobalZikrCategory }) =>
-      api.patch(`/api/admin/zikr-requests/library/${id}/category`, { category }),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['zikr', 'library', 'global'] });
-    },
-  });
-}

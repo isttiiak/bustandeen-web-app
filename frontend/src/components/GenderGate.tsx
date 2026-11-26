@@ -104,10 +104,3 @@ export default function GenderGate() {
     </motion.div>
   );
 }
-
-/** Returns the active gender: authenticated user's gender, or the guest preference. */
-export function getActiveGender(): 'male' | 'female' | undefined {
-  const { user } = useAuthStore.getState();
-  if (user?.gender === 'male' || user?.gender === 'female') return user.gender;
-  return undefined;
-}

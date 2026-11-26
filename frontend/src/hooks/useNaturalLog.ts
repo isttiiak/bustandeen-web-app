@@ -9,8 +9,8 @@ import api from '../lib/api.js';
  * no AI involved) actually applies it — see naturalLog.service.ts.
  */
 
-export type ParsedPrayer = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
-export type ParsedLocation = 'home' | 'mosque' | 'jamat';
+type ParsedPrayer = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
+type ParsedLocation = 'home' | 'mosque' | 'jamat';
 
 export interface ParsedSalatEntry {
   prayer: ParsedPrayer;

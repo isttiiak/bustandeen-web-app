@@ -80,11 +80,6 @@ export function useUserProfile({ fresh = false }: { fresh?: boolean } = {}) {
   });
 }
 
-export function useInvalidateUserProfile() {
-  const qc = useQueryClient();
-  return () => qc.invalidateQueries({ queryKey: PROFILE_KEY });
-}
-
 /** Shared by the account mutations: the reply's user replaces the cached copy.
  * A reply without one is an error, except in the demo (it answers every write
  * with a bare `{ ok: true }`, and there is nothing to save). */

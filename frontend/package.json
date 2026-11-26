@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.190.57",
+  "version": "5.190.58",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -73,6 +73,7 @@
     "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.0.3",
     "workbox-cacheable-response": "^7.4.1",
+    "workbox-core": "^7.4.1",
     "workbox-expiration": "^7.4.1",
     "workbox-precaching": "^7.4.1",
     "workbox-routing": "^7.4.1",

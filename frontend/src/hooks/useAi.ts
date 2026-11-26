@@ -7,12 +7,6 @@ import api from '../lib/api.js';
  * hadith/āyah citation, grade, or ruling.
  */
 
-export interface SuggestResult {
-  suggestions: string[];
-  motivation: string;
-  ai: boolean;
-  provider?: string;
-}
 export interface MuhasabahResult {
   wentWell: string;
   slipped: string;
@@ -35,17 +29,6 @@ export interface FastingCompanionResult {
   message: string;
   ai: boolean;
   provider?: string;
-}
-
-export function useAiSuggest() {
-  return useMutation({
-    mutationFn: async (userSummary: string) => {
-      const { data } = await api.post<SuggestResult & { ok: boolean }>('/api/ai/suggest', {
-        userSummary,
-      });
-      return data;
-    },
-  });
 }
 
 export function useAiMuhasabah() {

@@ -16,9 +16,9 @@ import { isSeoPagePath } from '../seo/staticPaths.js';
 export type ThemeMode = 'system' | 'dark' | 'light' | 'daylight';
 export type ResolvedTheme = 'bustandeen' | 'bustandeen-light';
 
-export const THEME_MODES: ThemeMode[] = ['system', 'dark', 'light', 'daylight'];
+const THEME_MODES: ThemeMode[] = ['system', 'dark', 'light', 'daylight'];
 export const THEME_MODE_KEY = 'bustandeen_theme_mode';
-export const RESOLVED_THEME_KEY = 'bustandeen_theme';
+const RESOLVED_THEME_KEY = 'bustandeen_theme';
 /** Fired on window after the mode is saved, so every open control (the
  *  navbar toggle, Settings) can show the new choice. */
 export const THEME_MODE_EVENT = 'bustandeen:theme-mode';

@@ -27,7 +27,7 @@ export const TEXT_ACTION =
   'text-brand-emerald font-semibold hover:underline underline-offset-2 transition-colors';
 
 /** The arch hero: icon, title, optional subtitle, and anything below them. */
-export const ARCH_HERO =
+const ARCH_HERO =
   'rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-10 pb-6 sm:px-8 text-center';
 
 export function AuthShell({ children }: { children: ReactNode }) {
@@ -144,7 +144,7 @@ export function PasswordField({
 
 type Translator = (key: string, fallback: string) => string;
 
-export function getPasswordStrength(
+function getPasswordStrength(
   pw: string,
   t: Translator
 ): { score: number; label: string; color: string } {

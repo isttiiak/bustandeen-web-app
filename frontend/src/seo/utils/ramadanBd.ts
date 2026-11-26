@@ -24,7 +24,7 @@ export interface RamadanDay {
  *  - `announced`: a record of this Ramadan's start;
  *  - `forecast`: the country's latest record (an earlier month) carried forward;
  *  - `ummAlQura`: no record for the country. */
-export type RamadanBasis = 'announced' | 'forecast' | 'ummAlQura';
+type RamadanBasis = 'announced' | 'forecast' | 'ummAlQura';
 
 export interface RamadanPlan {
   hijriYear: number;
@@ -49,7 +49,7 @@ export function ramadanPagePath(citySlug: string, gregorianYear: number): string
   return `/ramadan-calendar/${citySlug}/${gregorianYear}`;
 }
 
-export function ymd(d: Date): string {
+function ymd(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
 

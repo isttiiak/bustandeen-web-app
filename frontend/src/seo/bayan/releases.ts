@@ -5,7 +5,7 @@
 // shows it), and bayan.test.ts fails the build otherwise.
 import type { BayanLang } from './guides.js';
 
-export interface ReleaseText {
+interface ReleaseText {
   title: string;
   added?: string[];
   fixed?: string[];
@@ -19,6 +19,24 @@ export interface Release {
 }
 
 export const RELEASES: Release[] = [
+  {
+    version: '5.190.58',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Behind the scenes: unused code removed',
+        fixed: [
+          'We removed code the app no longer uses and added a check so unused code cannot pile up again. Nothing looks or works differently, and your data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: অব্যবহৃত কোড সরানো হয়েছে',
+        fixed: [
+          'অ্যাপ আর যে কোড ব্যবহার করে না তা সরিয়ে ফেলা হয়েছে, আর নতুন করে অব্যবহৃত কোড জমে না ওঠার জন্য একটি যাচাই যোগ করা হয়েছে। দেখতে বা কাজে কিছু বদলায়নি, আপনার তথ্যেও কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
   {
     version: '5.190.57',
     date: '2026-11-26',

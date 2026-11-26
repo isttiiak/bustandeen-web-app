@@ -58,7 +58,7 @@ interface ExcelSource {
   hifz?: { entries?: Array<{ surah: number; ayah: number; state: string; dueDate: string }> };
 }
 
-export const PRAYERS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
+const PRAYERS = ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] as const;
 
 const day = (iso: unknown): string => (typeof iso === 'string' ? iso.slice(0, 10) : '');
 const time = (iso: unknown): string =>

@@ -81,7 +81,7 @@ function saveShift(key: string, shift: RamadanShift): void {
 
 /** Draw the page's calendars under `shift`: the screen table and the
  * print sheets (R2-R4) all carry `data-ramadan-table`. */
-export function applyRamadanShift(root: ParentNode, shift: RamadanShift): void {
+function applyRamadanShift(root: ParentNode, shift: RamadanShift): void {
   const tables = root.querySelectorAll<HTMLElement>('[data-ramadan-table]');
   if (!tables.length) return;
   tables.forEach((table) => {

@@ -25,7 +25,7 @@ export const BAYAN_LANGS: readonly BayanLang[] = ['en', 'bn'];
 /** The page's path on bayan.bustandeen.com, without the language prefix.
  *  `/` and `/bn` redirect to the home pages (vercel.json): on that host they
  *  would otherwise serve the app's own landing pages, which exist as files. */
-export function bayanBarePath(route: BayanRoute): string {
+function bayanBarePath(route: BayanRoute): string {
   switch (route.page) {
     case 'home':
       return '/home';

@@ -3,7 +3,6 @@
 // a description, never a ruling.
 import type { BayanLang } from './guides.js';
 
-export const BAYAN_ORIGIN = 'https://bayan.bustandeen.com';
 export const APP_ORIGIN = 'https://bustandeen.com';
 
 export interface BayanChrome {

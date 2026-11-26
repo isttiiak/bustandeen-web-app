@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.58 - Frontend unused code removed, and CI now checks it (audit P4-5) - 2026-11-26
+
+Code that nothing used is gone from the frontend, and CI fails if a new unused export is added. (The v5.190.57 note said "68 unused exports" and "33 types"; those were counts of files. There were 103 unused exports and 45 unused types in 88 files.)
+
+### What was removed
+
+- **Exports nobody imported (148):** the `export` keyword was removed. Where the name was still used in its own file nothing else changed.
+- **Dead code (about 30 items) deleted outright,** found because un-exporting left them unused: hooks never called (`useStreak`, `useAiSuggest`, `useQuranHistory`, `useWelcomeBackfillStatus`, `useSendWelcomeBackfill`, `useUpdateLibraryItemCategory`, `useResetHifzCursor`, `useInvalidateUserProfile`, the whole `useZikrSummary.ts` file), helpers (`getTimezoneInfo`, `getTodayLocal`, `getUserTimezoneName`, `isNewDayLocal`, `unhideZikr`, `getSalatOutboxSize`, `globalIndexOf`, `juzForPage`, `bdDistrictById`, `isYearMonth`, `resetErrorReporting`, `getActiveGender`), constants and types (`BAYAN_ORIGIN`, `MAX_RECORD_SHIFT`, `SHARE_CARD_WIDTH`, `YM`, `ZikrSummaryResponse`, `UserProfile`, `DBUser`, `UserResponse`, `SuggestResult`, `AvatarId`).
+- **Left alone on purpose:** unused names in `utils/salatPrefs.ts`, `seo/utils/calc.ts` and `hooks/useSalatLog.ts` (calculation defaults and helpers in fiqh-sensitive files, and one constant used only as a type). `frontend/knip.json` excuses those three files from the unused-exports check.
+- **Dependencies:** `workbox-core` is now listed (the service worker imports it; it was only there as a dependency of another package), and the brand-asset script imports `chromium` from `@playwright/test` instead of the unlisted `playwright`.
+- **Nothing in the app changes:** no behaviour, no data, no strings. Production, SSR and admin builds all succeed.
+
+### CI and tests
+
+- New step "Unused code (knip, frontend)" runs `npm run knip:frontend:check` (it fails on any finding). The backend still has its own list to clear, so it stays report only.
+- `knipConfig.test.ts` (6 cases): the strict script exists and CI runs it, and only the three documented files are excused. Fails on main, passes here.
+- Lint 0 errors, typecheck clean, frontend suite 152 files / 2432 tests, `vite build` for the app, SSR and admin all pass, and `knip` exits 0 for the frontend.
+
 ## v5.190.57 - knip reports unused code (audit P4-5) - 2026-11-26
 
 `npm run knip` now lists code that nothing uses: unused files, exports, types and dependencies, for the frontend and the backend. It only reports: the scripts never fail (`--no-exit-code`) and it is not part of CI yet, so nothing was deleted and no build can break. The point is a list to work through, then to tighten into a check.

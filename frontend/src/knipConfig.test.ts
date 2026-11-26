@@ -23,6 +23,21 @@ describe('knip', () => {
     }
   });
 
+  it('the frontend is clean, so CI checks it (and a new unused export fails the build)', () => {
+    expect(root.scripts['knip:frontend:check']).toBeTruthy();
+    expect(root.scripts['knip:frontend:check']).not.toContain('--no-exit-code');
+    expect(read('.github/workflows/ci.yml')).toContain('npm run knip:frontend:check');
+  });
+
+  it('only three files are excused from the unused-exports check, on purpose', () => {
+    // salat/calculation modules: their unused names are kept (documented defaults and helpers)
+    expect(Object.keys(JSON.parse(read('frontend/knip.json')).ignoreIssues ?? {}).sort()).toEqual([
+      'src/hooks/useSalatLog.ts',
+      'src/seo/utils/calc.ts',
+      'src/utils/salatPrefs.ts',
+    ]);
+  });
+
   it.each(['frontend', 'backend'])('%s/knip.json names entry files that exist', (pkg) => {
     const cfg = JSON.parse(read(`${pkg}/knip.json`));
     const literal = (cfg.entry as string[]).filter((e) => !/[*{]/.test(e));

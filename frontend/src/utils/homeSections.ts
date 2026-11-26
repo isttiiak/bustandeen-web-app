@@ -112,7 +112,7 @@ export function goalRows(goals: HomeGoals = getHomeGoals()): Habit[] {
   return rows.length ? rows : order;
 }
 
-export function anyQuickSectionOn(): boolean {
+function anyQuickSectionOn(): boolean {
   return HABITS.some(isSectionOn);
 }
 

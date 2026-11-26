@@ -6,11 +6,11 @@
 
 import type { CalendarKind } from './calendarMonth.js';
 
-export const CALENDAR_LAYERS_KEY = 'bustandeen_calendar_layers';
-export const CALENDAR_GRID_KEY = 'bustandeen_calendar_grid';
-export const CALENDAR_WEEK_START_KEY = 'bustandeen_calendar_week_start';
-export const CALENDAR_WEEKEND_KEY = 'bustandeen_calendar_weekend';
-export const CALENDAR_SHOW_KEY = 'bustandeen_calendar_show';
+const CALENDAR_LAYERS_KEY = 'bustandeen_calendar_layers';
+const CALENDAR_GRID_KEY = 'bustandeen_calendar_grid';
+const CALENDAR_WEEK_START_KEY = 'bustandeen_calendar_week_start';
+const CALENDAR_WEEKEND_KEY = 'bustandeen_calendar_weekend';
+const CALENDAR_SHOW_KEY = 'bustandeen_calendar_show';
 
 export const CALENDAR_PREF_KEYS = [
   CALENDAR_LAYERS_KEY,
@@ -22,9 +22,9 @@ export const CALENDAR_PREF_KEYS = [
 
 const KINDS: readonly CalendarKind[] = ['greg', 'hijri', 'bn'];
 /** English and Hijri; the Bengali calendar only when chosen in settings. */
-export const DEFAULT_LAYERS: readonly CalendarKind[] = ['greg', 'hijri'];
+const DEFAULT_LAYERS: readonly CalendarKind[] = ['greg', 'hijri'];
 
-export type CalendarShow = 'islamic' | 'holidays' | 'national';
+type CalendarShow = 'islamic' | 'holidays' | 'national';
 const SHOWS: readonly CalendarShow[] = ['islamic', 'holidays', 'national'];
 
 export interface CalendarPrefs {

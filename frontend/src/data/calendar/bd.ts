@@ -21,7 +21,7 @@
 // Upkeep: the next year's list is published around November; add it as a new
 // entry in BD_HOLIDAY_YEARS with its source.
 
-export type HolidayKind = 'general' | 'executive';
+type HolidayKind = 'general' | 'executive';
 
 export interface Holiday {
   date: string; // YYYY-MM-DD

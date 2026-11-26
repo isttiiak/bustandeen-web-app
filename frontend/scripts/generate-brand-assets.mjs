@@ -16,7 +16,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { mkdirSync, writeFileSync } from 'fs';
 import sharp from 'sharp';
-import { chromium } from 'playwright';
+import { chromium } from '@playwright/test';
 import { BRIGHT, PAPER, markSvg } from '../src/brand/brandMark.ts';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));

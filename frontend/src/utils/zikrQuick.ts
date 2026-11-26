@@ -4,7 +4,7 @@
 // add the number at once. Synced across devices.
 
 export const ZIKR_QUICK_KEY = 'bustandeen_zikr_quick';
-export const ZIKR_QUICK_ACTION_KEY = 'bustandeen_zikr_quick_action';
+const ZIKR_QUICK_ACTION_KEY = 'bustandeen_zikr_quick_action';
 
 export interface QuickZikr {
   /** The counter's dhikr name (its key in the zikr store). */
@@ -14,7 +14,7 @@ export interface QuickZikr {
 
 export type QuickAction = 'open' | 'add';
 
-export const QUICK_SLOTS = 3;
+const QUICK_SLOTS = 3;
 export const QUICK_MAX_COUNT = 1000;
 
 /** Default: istighfār, tahlīl and ṣalawāt, 100 each. */

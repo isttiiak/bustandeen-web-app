@@ -31,7 +31,7 @@ function lookup(strings: unknown, key: string): string | undefined {
   return typeof value === 'string' ? value : undefined;
 }
 
-export const enT: LandingT = (key, fallback) => lookup(en, key) ?? fallback;
+const enT: LandingT = (key, fallback) => lookup(en, key) ?? fallback;
 
 /** Bangla where translated, English otherwise (as i18next does in the app). */
 const bnT: LandingT = (key, fallback) => lookup(bn, key) ?? enT(key, fallback);

@@ -292,13 +292,3 @@ export function locateGlobalAyah(
   }
   return { surah: 114, ayah: 6 };
 }
-
-/** 0-based global index of surah:ayah (inverse of locateGlobalAyah). */
-export function globalIndexOf(surah: number, ayah: number, surahs: SurahMeta[]): number {
-  let idx = 0;
-  for (const s of surahs) {
-    if (s.number === surah) return idx + (ayah - 1);
-    idx += s.numberOfAyahs;
-  }
-  return 0;
-}

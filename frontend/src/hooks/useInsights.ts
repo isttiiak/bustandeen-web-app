@@ -4,7 +4,7 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import { placeToday } from '../utils/placeClock.js';
 import { getUserTimezoneOffset } from '../utils/timezone.js';
 
-export interface WorshipGroup {
+interface WorshipGroup {
   days: number;
   avgSalatCompletionPct: number | null;
   avgZikrCount: number | null;

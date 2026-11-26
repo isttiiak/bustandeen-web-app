@@ -12,8 +12,8 @@
 export type HomeSpecialLayout = 'full' | 'strip' | 'pills';
 
 export const HOME_SPECIAL_KEY = 'bustandeen_home_special';
-export const HOME_SPECIAL_LAYOUTS: readonly HomeSpecialLayout[] = ['full', 'strip', 'pills'];
-export const HOME_SPECIAL_DEFAULT: HomeSpecialLayout = 'strip';
+const HOME_SPECIAL_LAYOUTS: readonly HomeSpecialLayout[] = ['full', 'strip', 'pills'];
+const HOME_SPECIAL_DEFAULT: HomeSpecialLayout = 'strip';
 /** Rows (strip) or chips (pills) shown before the "N more" link. */
 export const HIGHLIGHT_CAP = 2;
 /** Anchor of the detailed special-day block that "N more" scrolls to. */

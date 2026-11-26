@@ -21,9 +21,3 @@ export function hideZikr(name: string): string[] {
   localStorage.setItem(KEY, JSON.stringify(next));
   return next;
 }
-
-export function unhideZikr(name: string): string[] {
-  const next = getHiddenZikr().filter((n) => n !== name);
-  localStorage.setItem(KEY, JSON.stringify(next));
-  return next;
-}

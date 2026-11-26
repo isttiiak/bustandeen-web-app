@@ -15,7 +15,7 @@
 import { getTodaySpecialDays } from './islamicCalendar.js';
 import { getRamadanWindow } from './ramadan.js';
 
-export interface SadaqahVirtueReference {
+interface SadaqahVirtueReference {
   text: string;
   url: string;
   grade: string;
@@ -29,7 +29,7 @@ export interface SadaqahVirtueDay {
   reference: SadaqahVirtueReference;
 }
 
-export const SADAQAH_VIRTUE_DAYS: SadaqahVirtueDay[] = [
+const SADAQAH_VIRTUE_DAYS: SadaqahVirtueDay[] = [
   {
     id: 'friday',
     icon: '🤲',

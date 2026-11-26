@@ -14,7 +14,7 @@ export type Habit = (typeof HABITS)[number];
 /** Synced across devices (utils/prefsSync.ts + the server whitelist). */
 export const FOCUS_KEY = 'bustandeen_focus_habits';
 /** This device only: the server's onboardedAt is the real record. */
-export const ONBOARDED_KEY = 'bustandeen_onboarded';
+const ONBOARDED_KEY = 'bustandeen_onboarded';
 
 /** Starting goals offered on the habits step. */
 export const ZIKR_GOAL_OPTIONS = [33, 100, 300] as const;

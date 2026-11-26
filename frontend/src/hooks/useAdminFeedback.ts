@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 
-export type FeedbackKind = 'feedback' | 'contact';
+type FeedbackKind = 'feedback' | 'contact';
 export type FeedbackStatus = 'open' | 'replied' | 'archived';
 
 export interface AdminFeedbackMessage {
@@ -93,7 +93,7 @@ export function useDeleteFeedback() {
 
 // ---- Founder mailbox (Servant-only; istiak@bustandeen.com via IMAP sync) ----
 
-export interface MailboxSyncStatus {
+interface MailboxSyncStatus {
   /** Master switch (server env MAILBOX_SYNC_ENABLED). Off = paused, no Zoho calls. */
   enabled: boolean;
   configured: boolean;

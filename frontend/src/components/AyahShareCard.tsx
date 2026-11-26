@@ -22,7 +22,7 @@ import {
 } from '../utils/shareCardDesign.js';
 import { OrnamentLayer, PatternLayer } from './ShareCardGraphics.js';
 
-export interface AyahShareCardProps {
+interface AyahShareCardProps {
   surahMeta: SurahMeta | null;
   surahNo: number;
   ayah: AyahText | null;

@@ -4,8 +4,6 @@ import type { ComponentType, ReactNode } from 'react';
 // arch hero per screen, then theme cards. Shared so every admin page keeps the
 // same header, inputs and status pills in both themes.
 
-export { INPUT as ADMIN_INPUT, LABEL as ADMIN_LABEL } from '../auth/authParts.js';
-
 /** A compact text input/select for filters and inline forms. */
 export const ADMIN_INPUT_SM =
   'px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/70 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors';
@@ -15,7 +13,7 @@ export const OPTION_CHIP =
   'inline-flex items-center gap-1.5 rounded-control border px-3 py-1.5 text-xs font-bold transition-colors';
 
 /** Small pill for a status or role. */
-export const PILL = 'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold';
+const PILL = 'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold';
 export const PILL_GOLD = `${PILL} bg-brand-gold/15 text-brand-gold`;
 export const PILL_EMERALD = `${PILL} bg-brand-emerald/15 text-brand-emerald`;
 export const PILL_RED = `${PILL} bg-red-400/15 text-red-400`;

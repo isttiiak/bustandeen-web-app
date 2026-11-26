@@ -112,9 +112,9 @@ export function todaysLoggedCounts(
 // How far back a past day's counts can be set exactly. Istiak: 3 days by
 // default (people rarely remember exact counts), up to 30 in Zikr settings
 // for those who keep careful counts. The server allows 30 at most.
-export const ZIKR_FIX_DAYS_KEY = 'bustandeen_zikr_fix_days';
+const ZIKR_FIX_DAYS_KEY = 'bustandeen_zikr_fix_days';
 export const FIX_DAY_CHOICES = [3, 7, 14, 30] as const;
-export const DEFAULT_FIX_DAYS = 3;
+const DEFAULT_FIX_DAYS = 3;
 
 export function getFixDays(): number {
   try {

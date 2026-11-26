@@ -4,7 +4,7 @@
 import { getHijriDate, type HijriDaySource } from './islamicCalendar.js';
 import { getTrackingDay } from './trackingDay.js';
 
-export interface RamadanDayInfo {
+interface RamadanDayInfo {
   /** Gregorian local date string YYYY-MM-DD */
   date: string;
   /** 1..30 */

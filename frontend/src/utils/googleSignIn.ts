@@ -20,7 +20,7 @@ import type { AuthUser } from '../types/api.js';
 // kept everywhere (no change in behaviour).
 
 /** The app was launched from the home screen (Android, desktop, or iOS). */
-export function isStandaloneDisplay(): boolean {
+function isStandaloneDisplay(): boolean {
   const iosStandalone = (navigator as Navigator & { standalone?: boolean }).standalone === true;
   return iosStandalone || !!window.matchMedia?.('(display-mode: standalone)').matches;
 }

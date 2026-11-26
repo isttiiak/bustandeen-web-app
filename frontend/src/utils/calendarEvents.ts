@@ -48,7 +48,7 @@ interface CountryCalendar {
  * Countries with curated holidays or national days; others show Islamic days
  * only. Bangladesh has both; the others national days only (nationalDays.ts).
  */
-export const COUNTRY_CALENDARS: Readonly<Record<string, CountryCalendar>> = {
+const COUNTRY_CALENDARS: Readonly<Record<string, CountryCalendar>> = {
   ...Object.fromEntries(
     Object.entries(NATIONAL_DAYS).map(([code, c]) => [code, { holidays: [], national: c.days }])
   ),

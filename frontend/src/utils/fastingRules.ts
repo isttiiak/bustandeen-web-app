@@ -411,7 +411,7 @@ export const FASTING_SUNNAH: FastingRef[] = [
 
 // ─── Day ruling ──────────────────────────────────────────────────────────────
 
-export interface HaramRuling {
+interface HaramRuling {
   id: string;
   title: string;
   detail: string;

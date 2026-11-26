@@ -12,16 +12,10 @@ export type YearMonth = string;
 
 /** The first month that had monthly pages: older months never existed, so
  * they need no redirect. */
-export const MONTHLY_SINCE: YearMonth = '2026-10';
+const MONTHLY_SINCE: YearMonth = '2026-10';
 
 /** How many months are live at once: this month and the next two. */
-export const MONTH_WINDOW = 3;
-
-const YM = /^(\d{4})-(0[1-9]|1[0-2])$/;
-
-export function isYearMonth(s: string): boolean {
-  return YM.test(s);
-}
+const MONTH_WINDOW = 3;
 
 /** The calendar month `date` falls in, in `timeZone`. */
 export function ymInZone(date: Date, timeZone: string = BD_TZ): YearMonth {

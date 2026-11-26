@@ -7,7 +7,6 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import type {
   AnalyticsResponse,
   ZikrGoal,
-  ZikrStreak,
   ZikrTimeOfDayResponse,
   ZikrSessionsResponse,
 } from '../types/api.js';
@@ -74,21 +73,6 @@ export function useGoal() {
     },
     enabled: !!user,
     staleTime: 60_000,
-  });
-}
-
-export function useStreak() {
-  const user = useAuthStore((s) => s.user);
-  return useQuery<ZikrStreak>({
-    queryKey: ['analytics', 'streak'],
-    queryFn: async () => {
-      const res = await api.get<{ streak: ZikrStreak }>('/api/analytics/streak', {
-        params: { timezoneOffset: getUserTimezoneOffset(), today: getTrackingDay() },
-      });
-      return res.data.streak;
-    },
-    enabled: !!user,
-    staleTime: 30_000,
   });
 }
 

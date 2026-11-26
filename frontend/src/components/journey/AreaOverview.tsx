@@ -177,7 +177,7 @@ const CARDS: Record<StatsArea, (p: { link?: string }) => ReactNode> = {
   fasting: FastingOverview,
 };
 
-export const ANALYTICS_PATH: Record<StatsArea, string> = {
+const ANALYTICS_PATH: Record<StatsArea, string> = {
   salat: '/salat/analytics',
   zikr: '/zikr/analytics',
   quran: '/quran/analytics',

@@ -2,7 +2,7 @@
 // (R2-R4): the shift's rows as plain strings, the fasting length, the
 // expected Eid. Shared by RamadanCalendarPage and BdRamadanPage.
 import type { RamadanDay, RamadanPlan } from './ramadanBd.js';
-import { possibleLabelRows, ramadanRows } from '../components/RamadanShift.js';
+import { ramadanRows } from '../components/RamadanShift.js';
 import type { SheetRowData } from '../components/RamadanSheets.js';
 import type { FastingLength } from '../components/RamadanPageParts.js';
 
@@ -29,8 +29,6 @@ export function sheetRows(plan: RamadanPlan, f: SheetFormat): SheetRowData[] {
     iftar: f.clock(day.times.maghrib),
   }));
 }
-
-export { possibleLabelRows };
 
 const minutes = (d: RamadanDay) =>
   Math.round((d.times.maghrib.getTime() - d.times.sehri.getTime()) / 60_000);

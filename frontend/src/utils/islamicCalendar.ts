@@ -21,12 +21,12 @@ import i18n from '../i18n.js';
 import { specialDayIds } from './specialDayRules.js';
 import type { HijriInputs } from './calendarMonth.js';
 
-export interface SpecialDayTodo {
+interface SpecialDayTodo {
   action: string;
   note?: string;
 }
 
-export interface SpecialDayRef {
+interface SpecialDayRef {
   text: string;
   url: string;
   grade?: string; // e.g. "Ṣaḥīḥ", "Ḥasan"

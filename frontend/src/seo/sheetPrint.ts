@@ -38,7 +38,7 @@ export function markSheetPrint(variant: SheetVariant, ink: SheetInk): () => void
   return clear;
 }
 
-export function printSheet(variant: SheetVariant, ink: SheetInk): void {
+function printSheet(variant: SheetVariant, ink: SheetInk): void {
   markSheetPrint(variant, ink);
   window.print();
 }

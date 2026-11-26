@@ -116,7 +116,7 @@ export function zikrDisplayName(name: string, lang: string): string {
  * of them would break that wiring. Istighfār is included at Istiak's request
  * (the Prophet ﷺ sought forgiveness more than seventy times a day —
  * Ṣaḥīḥ al-Bukhārī 6307). These cannot be deleted from the counter list. */
-export const CORE_ZIKR = [
+const CORE_ZIKR = [
   'SubhanAllah',
   'Alhamdulillah',
   'Allahu Akbar',

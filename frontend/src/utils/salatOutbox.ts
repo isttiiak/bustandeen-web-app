@@ -82,10 +82,6 @@ export function peekSalatOutbox(): QueuedSalatOp[] {
   return readQueue();
 }
 
-export function getSalatOutboxSize(): number {
-  return readQueue().length;
-}
-
 export function removeSalatOp(id: string): void {
   writeQueue(readQueue().filter((op) => op.id !== id));
 }

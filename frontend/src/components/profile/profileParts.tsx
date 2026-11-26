@@ -315,28 +315,6 @@ export interface LinkedProvider {
   providerUid: string;
 }
 
-export interface DBUser {
-  displayName?: string;
-  firstName?: string;
-  lastName?: string;
-  photoUrl?: string;
-  avatarId?: string;
-  gender?: string;
-  birthDate?: string;
-  occupation?: string;
-  bio?: string;
-  city?: string;
-  country?: string;
-  totalCount?: number;
-  createdAt?: string;
-  primaryEmail?: string;
-  linkedProviders?: LinkedProvider[];
-}
-
-export interface UserResponse {
-  user?: DBUser;
-}
-
 // Inline Google logo SVG
 export function GoogleLogo({ className = 'w-4 h-4' }: { className?: string }) {
   return (

@@ -168,10 +168,6 @@ export const BD_PART_OF: Record<string, string> = {
 const BY_ID = new Map(BD_DISTRICTS.map((d) => [d.id, d]));
 const BY_CITY = new Map(BD_DISTRICTS.map((d) => [d.citySlug, d]));
 
-export function bdDistrictById(id: string): BdDistrict | undefined {
-  return BY_ID.get(id);
-}
-
 /** The district a BD city page belongs to, and whether it is the HQ page. */
 export function bdDistrictForCity(
   citySlug: string

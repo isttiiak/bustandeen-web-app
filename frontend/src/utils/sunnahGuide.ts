@@ -15,7 +15,7 @@
 
 import type { PrayerId } from '../hooks/useSalatLog.js';
 
-export type SunnahEmphasis = 'muakkadah' | 'ghairMuakkadah';
+type SunnahEmphasis = 'muakkadah' | 'ghairMuakkadah';
 
 export interface SunnahSlot {
   rakat: number;
