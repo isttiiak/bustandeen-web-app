@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.57 - knip reports unused code (audit P4-5) - 2026-11-26
+
+`npm run knip` now lists code that nothing uses: unused files, exports, types and dependencies, for the frontend and the backend. It only reports: the scripts never fail (`--no-exit-code`) and it is not part of CI yet, so nothing was deleted and no build can break. The point is a list to work through, then to tighten into a check.
+
+### What was added
+
+- `knip` as a root dev dependency (6.48), with `frontend/knip.json` and `backend/knip.json`. The frontend config names the real entry points the build starts from (`main.tsx`, `admin-entry.tsx`, `static-entry.ts`, `sw.ts`, the SSR entry, the build scripts and the e2e specs); the backend one names `index.ts`, the operator scripts, the migrations and the tests. `@jest/globals` and `mongodb-memory-server-core` (used by tests, supplied by Jest) and `baseline-browser-mapping` (a build-warning silencer) are ignored on purpose.
+- Scripts: `npm run knip` (both), `knip:frontend`, `knip:backend`.
+- `docs/README.md` lists it with the other gates.
+
+### First report (2026-11-26)
+
+- **Frontend:** 2 unlisted dependencies (`playwright` in `scripts/generate-brand-assets.mjs`, `workbox-core` in `src/sw.ts`), 68 unused exports, 33 unused exported types.
+- **Backend:** 1 unused dev dependency (`@types/mailparser`), 36 unused exports, 41 unused exported types.
+- No unused files in either. Exports used only by a test are not counted as unused, because tests are entry points. Many "unused" constants and helpers may be kept on purpose (a documented limit, a function a later change will use); each needs a look before it is deleted.
+
+### Tests
+
+- `knipConfig.test.ts` (4 cases): knip is a root dev dependency, the scripts never fail a build, and each config's entry files exist (a typo there would make live code look unused). Fails on main, passes here.
+- npm audit at the repo root reports the same 3 findings before and after adding knip (all in other dev tools, none in the production audit CI runs).
+
 ## v5.190.56 - Effect dependency suppressions reviewed (audit P4-5) - 2026-11-26
 
 React's `exhaustive-deps` rule warns when an effect uses a value that is not in its dependency list, because that is how stale-value bugs happen. The app had 33 places where the rule was switched off, and 13 of them carried one boilerplate sentence ("deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily") that said nothing. Every one was read.

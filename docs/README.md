@@ -219,6 +219,7 @@ npm test --prefix frontend     # Vitest (TZ pinned to Asia/Dhaka)
 npm run i18n:check --prefix frontend   # Bangla keys complete
 npm run build --prefix frontend
 npm run test:e2e --prefix frontend     # Playwright against the built dist, demo mode
+npm run knip                           # unused files, exports, dependencies: report only, not in CI yet
 ```
 
 CI also runs CodeQL (JS/TS and Actions), gitleaks, the Firebase storage-rules emulator tests and

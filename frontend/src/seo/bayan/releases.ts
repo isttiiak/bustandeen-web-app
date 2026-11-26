@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.57',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Behind the scenes: a tool to find unused code',
+        fixed: [
+          'We added a tool that lists code nothing uses any more, so the app stays lean and easier to keep correct. It only reports for now. Nothing looks or works differently, and your data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: অব্যবহৃত কোড খুঁজে বের করার সরঞ্জাম',
+        fixed: [
+          'আমরা এমন একটি সরঞ্জাম যোগ করেছি যা যে কোডগুলো আর কোথাও ব্যবহার হয় না তার তালিকা দেয়, যাতে অ্যাপ হালকা থাকে এবং ঠিক রাখা সহজ হয়। আপাতত এটি শুধু তালিকা দেখায়। দেখতে বা কাজে কিছু বদলায়নি, আপনার তথ্যেও কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.56',
     date: '2026-11-26',
     text: {
