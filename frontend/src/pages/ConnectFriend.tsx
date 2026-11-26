@@ -52,8 +52,7 @@ export default function ConnectFriend() {
         setResult({ ok: false, message: msg });
       },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, [authLoading, user, code]);
+  }, [authLoading, user, code, connect, t]); // firedRef makes any re-run a no-op
 
   return (
     <AnimatedBackground variant="dark">

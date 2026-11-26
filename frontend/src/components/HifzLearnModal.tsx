@@ -71,7 +71,7 @@ export default function HifzLearnModal({
     return () => {
       alive = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; editions is read fresh each call but shouldn't retrigger the fetch
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- load the ayah only when the surah or ayah changes; editions (a prop that may be a new array each render) is read at that moment and must not refetch the text
   }, [surah, ayah]);
 
   const editionLabel = (id: string) => TRANSLATIONS.find((tr) => tr.id === id)?.label ?? id;

@@ -95,7 +95,7 @@ export default function ComebackNudge() {
         },
       }
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- asks once per show/daysAway change; comeback is a new object every render and a failed request must not retry on every render; message and bestStreak are read at that moment
   }, [show, daysAway]);
 
   if (!show || (!message && !failed)) return null;

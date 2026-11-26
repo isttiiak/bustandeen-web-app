@@ -110,8 +110,7 @@ export default function QiblaCompass() {
     const evtName =
       'ondeviceorientationabsolute' in window ? 'deviceorientationabsolute' : 'deviceorientation';
     return () => window.removeEventListener(evtName, handleOrientation as EventListener);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- run once per location; startCompass/handleOrientation are stable
-  }, [location]);
+  }, [location, startCompass, handleOrientation]);
 
   const requestLocation = useCallback(() => {
     setLocLoading(true);

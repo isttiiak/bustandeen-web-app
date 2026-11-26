@@ -43,7 +43,7 @@ export default function EditZikrModal({
     setTranslit(m?.transliteration ?? '');
     setSource(m?.source ?? '');
     setSourceUrl(m?.sourceUrl ?? '');
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- prefill only when a different zikr is opened; customMeanings changes after every save and would overwrite what is being typed
   }, [name]);
 
   const save = async () => {

@@ -51,7 +51,7 @@ export default function CalendarRequestDialog({
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
     // send.reset is stable enough; only reopen should reset the form.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when the dialog opens
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset the form only when the dialog opens; send.reset and onClose are read at that moment and are new functions on every render
   }, [open, country]);
 
   useEffect(() => {

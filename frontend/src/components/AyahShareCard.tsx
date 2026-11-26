@@ -97,7 +97,7 @@ function ClampedText({
   useLayoutEffect(() => {
     const el = ref.current;
     if (el) setClipped(el.scrollHeight > el.clientHeight + 2);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-measure when layout inputs change
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- re-measure when the caller's layout inputs change; they arrive as a spread array that cannot be checked statically
   }, [text, lines, ...deps]);
 
   return (

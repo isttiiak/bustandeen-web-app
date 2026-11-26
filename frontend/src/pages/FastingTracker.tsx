@@ -108,6 +108,7 @@ export default function FastingTracker() {
   const { data: log } = useFastingLog(selectedDate);
   const { data: summary } = useFastingSummary();
   const upsert = useUpsertFastingLog();
+  const upsertFast = upsert.mutate; // stable across renders (TanStack Query)
   const clearLog = useClearFastingLog();
   const updateProfile = useUpdateFastingProfile();
   const addVow = useAddVow();
@@ -191,7 +192,7 @@ export default function FastingTracker() {
     if (!dayTimes || selectedDate !== today) return;
     if (new Date() <= dayTimes.maghrib) return;
     autoCompletedRef.current = true;
-    upsert.mutate({
+    upsertFast({
       date: log.date,
       category: log.category as FastingCategory,
       voluntaryKind: log.voluntaryKind,
@@ -199,8 +200,7 @@ export default function FastingTracker() {
       status: 'completed',
       hijri: log.hijri,
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, [log, dayTimes, selectedDate, today]);
+  }, [log, dayTimes, selectedDate, today, upsertFast]);
 
   // ── Active obligation countdowns (hero capsules) ───────────────────────────
   const debtCapsules = useMemo(() => {

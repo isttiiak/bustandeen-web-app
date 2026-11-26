@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.56 - Effect dependency suppressions reviewed (audit P4-5) - 2026-11-26
+
+React's `exhaustive-deps` rule warns when an effect uses a value that is not in its dependency list, because that is how stale-value bugs happen. The app had 33 places where the rule was switched off, and 13 of them carried one boilerplate sentence ("deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily") that said nothing. Every one was read.
+
+### What changed
+
+- **Four suppressions are gone, because the list is now complete and nothing re-runs that did not before:**
+  - `Home` adds `hydrate` (a zustand action, which keeps its identity; a new test proves it).
+  - `QiblaCompass` adds `startCompass` and `handleOrientation` (both `useCallback` with stable inputs).
+  - `FastingTracker` uses `upsert.mutate` through a constant (TanStack Query's `mutate` is stable).
+  - `ConnectFriend` adds `connect` and `t`; its `firedRef` already stops a second run, so any re-run is a no-op.
+- **Twenty-nine stay, each with a reason that says exactly what is left out and why.** The commonest real reason: an AI card (`FastingCompanion`, `ComebackNudge`, `MuhasabahReport`, `StreakCoaching`) must ask once, and including the request object (new on every render) would make a failed request retry on every render. Others: `t` changes with the language (the auth subscription), a form that must reset only when it opens, and `prayerNow` ticking every minute.
+- **Not changed, to flag:** a few of the 29 are really "use the latest value" patterns that a `useEffectEvent`-style ref would express better. Doing that touches behaviour, so it is left for a later, tested change.
+
+### Tests
+
+- `effectDeps.test.ts` (2 cases): no more than 29 suppressions, and none with a reason under 40 characters or the old boilerplate. Fails on main (33 and 13 boilerplate), passes here.
+- `store/useZikrStore.stableActions.test.ts`: `hydrate` keeps its identity across store updates.
+- Lint 0 errors; no app behaviour intended to change (the Playwright suite runs in CI).
+
 ## v5.190.55 - The last hard-coded messages in Bangla (audit P4-3, part 3) - 2026-11-26
 
 The remaining 14 messages typed into the code in English now come from the language files. With this, no screen passes a literal English string to a toast: P4-3 is done (6 in part 1, 17 in part 2, 14 here).

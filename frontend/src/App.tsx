@@ -461,7 +461,7 @@ export default function App() {
       unsub?.();
     };
     // Subscribe exactly once — navigation is handled via refs above.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- subscribe to Firebase auth once: t changes with the language and a re-subscribe would replay the sign-in sync; queryClient is stable
   }, [setUser, init, resetAll, hydrate, setAuthLoading]);
 
   const { authLoading, aiEnabled, isDemoMode } = useAuthStore();
