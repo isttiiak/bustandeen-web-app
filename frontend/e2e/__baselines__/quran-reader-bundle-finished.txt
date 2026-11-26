@@ -1,0 +1,537 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+    <div class="go318030988" style="left: 0px; right: 0px; display: flex; position: absolute; transition: 230ms cubic-bezier(0.21, 1.02, 0.73, 1); transform: translateY(<px>); top: 0px; justify-content: center">
+     <div class="go1131771667" style="animation: 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards running go1697577655">
+      <div class="go1744123236">
+       <div class="go920402962">
+       <div class="go1899046132">
+        <div class="go4158415268">
+      <div aria-live="polite" class="go3615723686" role="status">
+       "Complete. May it protect and bless you"
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Home" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "Home"
+       <div class="flex items-center gap-1 min-w-0 pl-1">
+        <span class="text-white/15 text-sm hidden sm:inline">
+         "|"
+        <span aria-hidden="true" class="text-sm shrink-0">
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="font-semibold text-white/70 text-xs sm:text-sm truncate max-w-[70px] sm:max-w-[130px]">
+         "Quran Habit"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "A"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+     <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl" style="transform: none">
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl" style="transform: none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl" style="transform: rotate(360deg)">
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px">
+     <div class="relative z-10">
+      <h1 class="sr-only">
+       "Quran"
+      <div class="max-w-2xl mx-auto px-4 pt-3 pb-16 space-y-5">
+       <div class="relative">
+        <div class="sm:hidden flex items-center gap-2">
+         <button aria-expanded="false" aria-haspopup="menu" class="flex-1 flex items-center justify-between gap-2 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 px-3.5 py-2.5 text-white font-bold text-sm">
+          <span class="flex items-center gap-2 min-w-0">
+           <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="truncate">
+            "Quran"
+          <svg aria-hidden="true" class="w-5 h-5 text-white/50 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<44:76232f88>" stroke-linecap="round" stroke-linejoin="round">
+         <button aria-label="Quran settings" class="p-2.5 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/70 hover:text-white hover:border-brand-emerald/40 transition-colors shrink-0">
+          <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<999:41ef0701>" stroke-linecap="round" stroke-linejoin="round">
+           <path d="<35:449f351c>" stroke-linecap="round" stroke-linejoin="round">
+        <div class="hidden sm:flex items-center gap-2">
+         <div class="flex-1 overflow-x-auto flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10">
+          <span aria-current="page" class="shrink-0 flex items-center gap-1.5 text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">
+           <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+           "Quran"
+          <a class="shrink-0 flex items-center gap-1.5 text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/quran/khatam">
+           <svg aria-hidden="true" class="w-4 h-4 shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <rect height="11" width="11" x="6.5" y="6.5">
+            <rect height="11" transform="rotate(45 12 12)" width="11" x="6.5" y="6.5">
+           "Khatam"
+          <a class="shrink-0 flex items-center gap-1.5 text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/quran/read">
+           <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<117:912c1428>" stroke-linecap="round" stroke-linejoin="round">
+           "Read"
+          <a class="shrink-0 flex items-center gap-1.5 text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/quran/listen">
+           <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<273:27a516e6>" stroke-linecap="round" stroke-linejoin="round">
+           "Listen"
+          <a class="shrink-0 flex items-center gap-1.5 text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/quran/bookmarks">
+           <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+           "Saved"
+          <a class="shrink-0 flex items-center gap-1.5 text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/quran/hifz">
+           <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<464:653c4152>" stroke-linecap="round" stroke-linejoin="round">
+           "Hifz"
+          <a class="shrink-0 flex items-center gap-1.5 text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/quran/analytics">
+           <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
+           "Analytics"
+         <button aria-label="Quran settings" class="p-2 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/70 hover:text-white hover:border-brand-emerald/40 transition-colors shrink-0">
+          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<999:41ef0701>" stroke-linecap="round" stroke-linejoin="round">
+           <path d="<35:449f351c>" stroke-linecap="round" stroke-linejoin="round">
+       <section class="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-6 pt-10 pb-6 text-center" style="opacity: 1; transform: none">
+        <div class="relative w-28 h-28 mx-auto">
+         <svg aria-hidden="true" class="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+          <circle class="text-track" cx="50" cy="50" fill="none" r="42" stroke="currentColor" stroke-width="8">
+          <circle class="text-data-good" cx="50" cy="50" fill="none" r="42" stroke="currentColor" stroke-dasharray="263.89378290154264" stroke-dashoffset="79.16813487046281" stroke-linecap="round" stroke-width="8">
+         <div class="absolute inset-0 grid place-items-center">
+          <div>
+           <p class="font-display text-3xl font-bold text-white leading-none tabular-nums">
+            "7"
+           <p class="text-[10px] text-white/60 font-bold mt-1">
+            "of 10 goal"
+        <h2 class="font-display text-xl font-bold text-white mt-4">
+         "Today's reading"
+        <p class="text-white/70 text-sm mt-1 leading-relaxed max-w-sm mx-auto">
+         "Every ayah counts toward your daily goal: reader, khatam and listening all add up."
+        <div class="flex flex-col sm:flex-row sm:justify-center gap-2 mt-5">
+         <button class="btn-solid inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 transition disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+          "Continue khatam"
+         <a class="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors" data-discover="true" href="/quran/read">
+          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<117:912c1428>" stroke-linecap="round" stroke-linejoin="round">
+          "Pick a surah to read"
+       <div class="grid grid-cols-2 gap-3">
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4">
+         <p class="text-white font-bold text-sm flex items-center gap-1.5">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-warm shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<145:47f495d8>" stroke-linecap="round" stroke-linejoin="round">
+           <path d="<114:42918bcf>" stroke-linecap="round" stroke-linejoin="round">
+          "5 day streak"
+         <div class="flex items-end gap-1 h-10 mt-3">
+          <div class="flex-1 rounded-t bg-data-mid" style="height: 57.1429%" title="2026-10-09: 8 ayat">
+          <div class="flex-1 rounded-t bg-data-mid" style="height: 100%" title="2026-10-10: 14 ayat">
+          <div class="flex-1 rounded-t bg-data-mid" style="height: 78.5714%" title="2026-10-11: 11 ayat">
+          <div class="flex-1 rounded-t bg-data-mid" style="height: 57.1429%" title="2026-10-12: 8 ayat">
+          <div class="flex-1 rounded-t bg-data-mid" style="height: 42.8571%" title="2026-10-13: 6 ayat">
+          <div class="flex-1 rounded-t bg-data-mid" style="height: 92.8571%" title="2026-10-14: 13 ayat">
+          <div class="flex-1 rounded-t bg-data-mid" style="height: 71.4286%" title="2026-10-15: 10 ayat">
+         <p class="text-white/60 text-[11px] mt-1.5">
+          "Best streak: 14"
+        <a class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 hover:border-brand-emerald/40 hover:shadow-hover transition" data-discover="true" href="/quran/khatam">
+         <p class="text-white font-bold text-sm flex items-center gap-1.5">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <rect height="11" width="11" x="6.5" y="6.5">
+           <rect height="11" transform="rotate(45 12 12)" width="11" x="6.5" y="6.5">
+          "34.3% complete"
+         <div class="h-2 rounded-full bg-track overflow-hidden mt-3">
+          <div class="h-full rounded-full bg-data-good" style="width: 34.3169%">
+         <p class="text-white/60 text-[11px] mt-2">
+          "Begin your Quran journey"
+          "·"
+          "0 completed"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <rect height="11" width="11" x="6.5" y="6.5">
+          <rect height="11" transform="rotate(45 12 12)" width="11" x="6.5" y="6.5">
+         "Beloved surahs"
+        <div class="grid sm:grid-cols-2 gap-2 mt-3">
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "Al-Mulk"
+           <span class="text-white/50 font-normal">
+            "·"
+            "67"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "Thirty verses that intercede for their reciter until he is forgiven."
+          <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/tirmidhi:2891" rel="noreferrer" target="_blank">
+           "Tirmidhī 2891 (ḥasan)"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "Al-Kahf"
+           <span class="text-white/50 font-normal">
+            "·"
+            "18"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "Its first ten verses are a protection from the Dajjāl; beloved on Fridays."
+          <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/muslim:809" rel="noreferrer" target="_blank">
+           "Muslim 809"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "Al-Baqarah"
+           <span class="text-white/50 font-normal">
+            "·"
+            "2"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "Shayṭān flees the home in which Sūrat al-Baqarah is recited."
+          <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/muslim:780" rel="noreferrer" target="_blank">
+           "Muslim 780"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "Yā-Sīn"
+           <span class="text-white/50 font-normal">
+            "·"
+            "36"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "A beloved recitation for reflection on revelation and resurrection."
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "Ar-Raḥmān"
+           <span class="text-white/50 font-normal">
+            "·"
+            "55"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           ""Which of the favours of your Lord will you deny?" — the surah of gratitude."
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "Al-Wāqiʿah"
+           <span class="text-white/50 font-normal">
+            "·"
+            "56"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "A vivid journey through the Day when ranks are decided."
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "As-Sajdah"
+           <span class="text-white/50 font-normal">
+            "·"
+            "32"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "The Prophet ﷺ would not sleep until he recited it with al-Mulk."
+          <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/tirmidhi:2892" rel="noreferrer" target="_blank">
+           "Tirmidhī 2892 (ḥasan)"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<210:4c0d6329>" stroke-linecap="round" stroke-linejoin="round">
+         "Daily protection"
+        <p class="text-white/60 text-xs mt-1">
+         "The Prophet's ﷺ prescribed surahs, one tap to read"
+        <div class="grid sm:grid-cols-2 gap-2 mt-3">
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "Āyatul Kursī"
+           <span class="text-white/50 font-normal">
+            "·"
+            "2"
+            ":"
+            "255"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "The greatest āyah in the Book of Allah; recited at night, a guardian remains with you."
+          <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/muslim:810" rel="noreferrer" target="_blank">
+           "Muslim 810 · Bukhārī 2311"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "Last verses of al-Baqarah"
+           <span class="text-white/50 font-normal">
+            "·"
+            "2"
+            ":"
+            "285"
+            "–286"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "Whoever recites the last two verses of al-Baqarah at night — they suffice him."
+          <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/bukhari:5009" rel="noreferrer" target="_blank">
+           "Bukhārī 5009"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "First ten of al-Kahf"
+           <span class="text-white/50 font-normal">
+            "·"
+            "18"
+            ":"
+            "1"
+            "–10"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "Memorised, they are a protection from the Dajjāl."
+          <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/muslim:809" rel="noreferrer" target="_blank">
+           "Muslim 809"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors relative">
+          <p class="text-white text-sm font-bold">
+           <button class="text-left after:absolute after:inset-0 after:rounded-control min-h-0 min-w-0" type="button">
+            "Last three of al-Ḥashr"
+           <span class="text-white/50 font-normal">
+            "·"
+            "59"
+            ":"
+            "22"
+            "–24"
+          <p class="text-white/70 text-xs mt-1 leading-relaxed">
+           "The names of Allah gathered — recited morning and evening."
+          <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/tirmidhi:2922" rel="noreferrer" target="_blank">
+           "Tirmidhī 2922 (gharīb — noted)"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 scroll-mt-20" id="id5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<95:b6cd9399>">
+          <path d="<97:b115fe97>">
+         "Saved duas"
+        <p class="text-white/60 text-xs mt-1">
+         "Your bookmarked du'a ayat from the Quran"
+        <div class="grid sm:grid-cols-2 gap-1.5 mt-3">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Good in this world & the next"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "2"
+           ":"
+           "201"
+          <button aria-label="Save dua: Good in this world & the next" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Keep my heart firm after guidance"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "3"
+           ":"
+           "8"
+          <button aria-label="Save dua: Keep my heart firm after guidance" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "The duʿā of Ādam — forgive us"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "7"
+           ":"
+           "23"
+          <button aria-label="Save dua: The duʿā of Ādam — forgive us" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Make me steadfast in prayer"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "14"
+           ":"
+           "40"
+          <button aria-label="Save dua: Make me steadfast in prayer" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "The cave companions — mercy & guidance"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "18"
+           ":"
+           "10"
+          <button aria-label="Save dua: The cave companions — mercy & guidance" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Mūsā — expand my chest, ease my task"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "20"
+           ":"
+           "25"
+          <button aria-label="Save dua: Mūsā — expand my chest, ease my task" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Rabbi zidnī ʿilmā — increase me in knowledge"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "20"
+           ":"
+           "114"
+          <button aria-label="Save dua: Rabbi zidnī ʿilmā — increase me in knowledge" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Yūnus in the darkness — lā ilāha illā anta"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "21"
+           ":"
+           "87"
+          <button aria-label="Save dua: Yūnus in the darkness — lā ilāha illā anta" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Refuge from the whispers of devils"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "23"
+           ":"
+           "97"
+          <button aria-label="Save dua: Refuge from the whispers of devils" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Forgive and have mercy — the best of the merciful"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "23"
+           ":"
+           "118"
+          <button aria-label="Save dua: Forgive and have mercy — the best of the merciful" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Spouses & children — coolness of eyes"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "25"
+           ":"
+           "74"
+          <button aria-label="Save dua: Spouses & children — coolness of eyes" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Mūsā — I am in need of whatever good You send"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "28"
+           ":"
+           "24"
+          <button aria-label="Save dua: Mūsā — I am in need of whatever good You send" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Zakariyyā — grant me pure offspring"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "3"
+           ":"
+           "38"
+          <button aria-label="Save dua: Zakariyyā — grant me pure offspring" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="group relative flex items-center gap-2.5 rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface px-3 py-2 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          <button class="flex-1 text-white/80 group-hover:text-white text-xs transition-colors text-left after:absolute after:inset-0 after:rounded-control" type="button">
+           "Pour patience upon us, make our feet firm"
+          <span class="text-white/50 text-[10px] tabular-nums">
+           "2"
+           ":"
+           "250"
+          <button aria-label="Save dua: Pour patience upon us, make our feet firm" aria-pressed="false" class="hit-44 z-10 p-1.5 -m-1 rounded-lg hover:bg-shade/10 transition-colors text-white/40 hover:text-brand-gold">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+       <a class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 flex items-center justify-center gap-2 p-4 text-white/80 text-sm font-bold hover:border-brand-emerald/40 hover:shadow-hover transition" data-discover="true" href="/quran/read">
+        <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<117:912c1428>" stroke-linecap="round" stroke-linejoin="round">
+        "Browse all 114 surahs →"
+       <p class="text-white/60 text-xs leading-relaxed px-1">
+        ""Whoever recites a letter from the Book of Allah will have a hasanah, and each hasanah is multiplied ten-fold.""
+        "("
+        <a class="underline" href="https://sunnah.com/tirmidhi:2910" rel="noreferrer" target="_blank">
+         "Tirmidhi 2910 (sahih)"
+        ")."
+        ""The best of you are those who learn the Quran and teach it.""
+        "("
+        <a class="underline" href="https://sunnah.com/bukhari:5027" rel="noreferrer" target="_blank">
+         "Bukhari 5027"
+        ")."

@@ -489,6 +489,135 @@ test('settings (sister): the cycle row of the danger zone', async ({ page }) => 
   await expectBaseline(page, 'settings.sister-danger-confirm');
 });
 
+// ---- Quran reader: modes, navigation, writes, fullscreen ---------------------
+
+test('quran reader: a surah read to its end offline credits the surah, then opens the next', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother' }, '/quran/read/112');
+  await context.setOffline(true);
+  for (let i = 0; i < 3; i++) await press(page, 'Next ayah');
+  await expectBaseline(page, 'quran-reader.112-last-ayah');
+  await press(page, 'Next ayah'); // "Next surah"
+  await expect(page).toHaveURL(/\/quran\/read\/113\?mode=free/);
+  await expectBaseline(page, 'quran-reader.113-after-112');
+  expectText(await outbox(page), 'quran-reader.112-to-113.outbox');
+});
+
+test('quran reader: a batch of five is flushed, and Previous steps back', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother' }, '/quran/read/2');
+  await context.setOffline(true);
+  for (let i = 0; i < 6; i++) await press(page, 'Next ayah');
+  await press(page, 'Previous ayah');
+  await expectBaseline(page, 'quran-reader.2-after-six-next');
+  expectText(await outbox(page), 'quran-reader.2-batch.outbox');
+});
+
+test('quran reader: the khatam journey reads in order and advances the bookmark', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother' }, '/quran/read/1?mode=khatam');
+  await expectBaseline(page, 'quran-reader.khatam');
+  await context.setOffline(true);
+  for (let i = 0; i < 5; i++) await press(page, 'Next ayah');
+  expectText(await outbox(page), 'quran-reader.khatam.outbox');
+});
+
+test('quran reader: a bundle shows no goal, and finishing returns to the Quran home', async ({
+  page,
+}) => {
+  await open(page, { as: 'brother' }, '/quran/read/1?mode=bundle&start=2&end=4');
+  await expectBaseline(page, 'quran-reader.bundle');
+  for (let i = 0; i < 3; i++) await press(page, 'Next ayah');
+  await page.waitForTimeout(1500);
+  await expect(page).toHaveURL(/\/quran$/);
+  await expectBaseline(page, 'quran-reader.bundle-finished');
+});
+
+test('quran reader: a duʿā with its story and evidence', async ({ page }) => {
+  await open(
+    page,
+    { as: 'brother' },
+    '/quran/read/2?mode=bundle&start=201&end=201&dua=dua-both-worlds'
+  );
+  await press(page, /Why this du/);
+  await expectBaseline(page, 'quran-reader.dua-context');
+});
+
+test('quran reader: a single beloved surah finishes back to the Quran home', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/quran/read/112?mode=single');
+  for (let i = 0; i < 4; i++) await press(page, 'Next ayah');
+  await page.waitForTimeout(1500);
+  await expect(page).toHaveURL(/\/quran$/);
+});
+
+test('quran reader: continue where you left off', async ({ page }) => {
+  await enterDemo(page, {
+    as: 'brother',
+    storage: { bustandeen_reader_pos: JSON.stringify({ '2': 3 }) },
+  });
+  await go(page, '/quran/read/2');
+  await expectBaseline(page, 'quran-reader.resume-prompt');
+  await press(page, 'Continue');
+  await expectBaseline(page, 'quran-reader.resume-continued');
+});
+
+test('quran reader: start over from the resume prompt', async ({ page }) => {
+  await enterDemo(page, {
+    as: 'brother',
+    storage: { bustandeen_reader_pos: JSON.stringify({ '2': 3 }) },
+  });
+  await go(page, '/quran/read/2');
+  await press(page, 'Start over');
+  await expectBaseline(page, 'quran-reader.resume-started-over');
+});
+
+test('quran reader: zoom, volume, the jump menu and keyboard shortcuts', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/quran/read/1');
+  await press(page, 'Zoom in');
+  await press(page, 'Zoom in');
+  await press(page, 'Volume');
+  await declineBanner(page);
+  await page.locator('#jump-ayah').selectOption('5');
+  await page.waitForTimeout(300);
+  await page.keyboard.press('ArrowRight');
+  await page.waitForTimeout(300);
+  await expectBaseline(page, 'quran-reader.zoom-volume-jump');
+  await page.keyboard.press('ArrowLeft');
+  await page.waitForTimeout(300);
+  await press(page, 'Reset zoom');
+  await expectBaseline(page, 'quran-reader.zoom-reset-left');
+});
+
+test('quran reader: bookmark an ayah and open the share dialog', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/quran/read/1');
+  await press(page, 'Bookmark this ayah');
+  await expectBaseline(page, 'quran-reader.bookmarked');
+  await press(page, 'Share as image');
+  await expectBaseline(page, 'quran-reader.share-open');
+});
+
+test('quran reader: fullscreen with the tafsir beside the ayah', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/quran/read/1');
+  await press(page, 'Fullscreen');
+  await expectBaseline(page, 'quran-reader.fullscreen');
+  await press(page, 'Read tafsir');
+  await expectBaseline(page, 'quran-reader.fullscreen-tafsir');
+  await press(page, 'Exit fullscreen');
+  await expectBaseline(page, 'quran-reader.fullscreen-exited');
+});
+
+test('quran reader: the tafsir panel under the card', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/quran/read/1');
+  await press(page, 'Tafsir', 0);
+  await expectBaseline(page, 'quran-reader.tafsir-panel');
+});
+
 test('quran reader: the next ayah, offline, writes the same requests', async ({
   page,
   context,

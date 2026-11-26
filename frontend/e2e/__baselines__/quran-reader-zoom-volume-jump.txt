@@ -1,0 +1,179 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Home" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "Home"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "A"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen bg-brand-void pb-16">
+     <div class="max-w-3xl mx-auto px-4 pt-4 space-y-4">
+      <div class="flex items-center justify-between text-xs">
+       <button class="text-white/60 hover:text-white">
+        "← Back"
+       <div class="flex items-center gap-2 text-white/60">
+        <span class="hidden sm:inline">
+         "Keys: ← → · F fullscreen"
+      <div class="flex flex-wrap items-center gap-2 text-[11px]">
+       <span class="px-2.5 py-1 rounded-full bg-brand-deep border border-brand-border text-white/70 font-bold">
+        "1"
+        "."
+        "…"
+        <span class="text-white/60">
+         "·"
+         "–"
+         "āyāt"
+       <span class="px-2.5 py-1 rounded-full bg-brand-deep border border-brand-border text-white/50">
+        "Juz"
+        "1"
+       <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-emerald/10 border border-brand-emerald/30 text-brand-emerald font-bold">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+        "8 āyāt today"
+        "/ 10 goal"
+      <div class="relative rounded-card border border-brand-border shadow-elev-2 bg-gradient-to-br from-reader-from via-reader-via to-reader-to overflow-hidden p-4 sm:p-10">
+       <div class="flex items-center justify-end gap-2 z-20 sm:absolute sm:top-4 sm:right-4 mb-2 sm:mb-0">
+        <div class="flex items-center rounded-full bg-brand-deep border border-brand-border overflow-hidden">
+         <button aria-label="Zoom out" class="w-8 h-9 sm:h-10 grid place-items-center text-white/50 hover:text-white disabled:opacity-25 text-base font-black">
+          "−"
+         <button aria-label="Reset zoom" class="px-1 text-[10px] font-bold tabular-nums text-brand-emerald" title="Reset zoom">
+          "120"
+          "%"
+         <button aria-label="Zoom in" class="w-8 h-9 sm:h-10 grid place-items-center text-white/50 hover:text-white disabled:opacity-25 text-base font-black">
+          "＋"
+        <button aria-label="Recite this ayah" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all bg-brand-deep text-brand-emerald border-brand-emerald/10 hover:border-brand-emerald/50" title="Recite only this ayah">
+         <svg aria-hidden="true" class="w-4 h-4 ml-0.5" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path clip-rule="evenodd" d="<134:209135f7>" fill-rule="evenodd">
+        <button aria-label="Bookmark this ayah" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-brand-gold hover:border-brand-gold/50">
+         <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+        <button aria-label="Share as image" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-white/50 hover:text-white hover:border-brand-emerald/50" title="Share as image">
+         <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<261:468cc947>" stroke-linecap="round" stroke-linejoin="round">
+        <button aria-label="Fullscreen" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-white/50 hover:text-white">
+         <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<149:fc91cdc0>" stroke-linecap="round" stroke-linejoin="round">
+       <div class="contents">
+        <div class=" w-full text-center space-y-6 sm:space-y-8 pt-2 sm:pt-8" style="opacity: 1; transform: none">
+         <div class="space-y-0.5">
+          <p class="text-white/50 text-xs font-bold tracking-widest">
+           "·"
+           <span class="text-brand-emerald/80 text-sm">
+            "6"
+           <span class="text-white/50">
+            "/"
+         <p class="leading-[2.1] text-reader-text" dir="rtl" lang="ar" style="font-size: 36px; font-family: Tahoma, "Segoe UI", "Noto Naskh Arabic", system-ui, sans-serif">
+          <span class="transition-colors duration-150 rounded px-0.5 cursor-default hover:bg-shade/15">
+           "ٱهْدِنَا"
+          <span class="transition-colors duration-150 rounded px-0.5 cursor-default hover:bg-shade/15">
+           "ٱلصِّرَٰطَ"
+          <span class="transition-colors duration-150 rounded px-0.5 cursor-default hover:bg-shade/15">
+           "ٱلْمُسْتَقِيمَ"
+         <div class="space-y-3 max-w-2xl mx-auto">
+          <p class="text-white/60 leading-relaxed" style="font-size: 18px">
+         <p class="text-white/50 text-[10px]">
+          <a class="underline" href="https://tanzil.net" rel="noreferrer" target="_blank">
+           "Tanzil"
+          "·"
+          "English: Ṣaḥīḥ International"
+          "·"
+          <a class="underline" href="https://quran.com/1/6" rel="noreferrer" target="_blank">
+           "quran.com/"
+           "1"
+           "/"
+           "6"
+        <div class="flex items-center justify-between gap-3 w-full max-w-4xl mx-auto mt-8 ">
+         <button aria-label="Previous ayah" class="flex items-center gap-1.5 min-w-0 px-4 py-2.5 rounded-control bg-brand-deep border border-brand-border shadow-elev-1 text-white/80 hover:text-white disabled:opacity-30 text-sm font-bold">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<27:f0982344>" stroke-linecap="round" stroke-linejoin="round">
+          <span class="truncate">
+           "Previous"
+         <button aria-label="Next ayah" class="flex items-center gap-1.5 min-w-0 px-5 py-2.5 rounded-control bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 text-on-color text-sm font-bold border-0">
+          <span class="truncate">
+           "Next"
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="flex items-center justify-between gap-3 text-xs text-white/60">
+       <div class="flex items-center gap-2">
+        <label class="font-bold" for="id5">
+         "Jump to āyah"
+        <select class="select select-xs bg-brand-surface/60 border-brand-border text-white/80 rounded-lg" id="id5" value="6">
+         <option value="1">
+          "1"
+         <option value="2">
+          "2"
+         <option value="3">
+          "3"
+         <option value="4">
+          "4"
+         <option value="5">
+          "5"
+         <option value="6">
+          "6"
+         <option value="7">
+          "7"
+       <div class="flex items-center gap-1.5 shrink-0">
+        <button aria-label="Volume off" class="text-white/50 hover:text-white">
+         <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<272:ea5d367e>" stroke-linecap="round" stroke-linejoin="round">
+        <input aria-label="Recitation volume" class="range range-xs w-24 [--range-shdw:theme(colors.brand.emerald-dim)]" max="100" min="0" type="range" value="0" value="0">
+      <div class="space-y-3">
+       <div class="flex gap-2">
+        <button class="flex-1 flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold border shadow-elev-1 transition-colors bg-brand-deep border-brand-border text-white/80 hover:text-white">
+         <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+         "Tafsir"

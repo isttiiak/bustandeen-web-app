@@ -2,6 +2,28 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.67 - Quran reader page split into parts (audit P4-1, step 7) - 2026-11-27
+
+`pages/QuranReader.tsx` was 1,360 lines in one component with 17 `useState`, 9 `useEffect`, 14 `useCallback` and 10 refs. It is now 100 lines. The logic moved into six hooks and the screen into eight components under `components/quran/` (17 files, largest 241 lines). Nothing changes for readers: same markup, copy, saved places and the same requests. Reading counts, the daily goal and resume positions are untouched.
+
+### What moved (verbatim, only imports, `export`, hook plumbing and prop names added)
+
+- **Hooks:** `useReaderPrefs` (typography, zoom, translations), `useReaderText` (the surah text, the position, the "continue?" offer), `useReaderAudio` (recite one ayah, the word highlight, volume), `useReaderNavigation` (counting what is read, flushing batches of five and the surah completion, saving the place, Next and Previous, finishing), `useReaderFullscreen` (fullscreen, the tafsir split, the divider), `useReaderTafsir`, and `useQuranReader`, which calls them in a fixed order and derives the rest. The resume cache moved to `utils/quranReaderResume.ts`.
+- **Shared refs:** `seenRef` and `suppressSaveRef` are created once in `useQuranReader` and passed to the two hooks that use them, so the effects and callbacks still share them.
+- **Components:** the top bar and guest note, the info chips, the card controls, the ayah pane with Previous and Next, the split tafsir pane, the bottom controls, the tafsir section and the resume prompt. The page keeps the card shell (it owns the fullscreen ref), the share dialog and the sign-in sheet.
+- **One deliberate edit to dependency lists:** the two refs and `setIdx` now arrive as parameters, so the linter could no longer see they are stable. They are, so `seenRef`, `suppressSaveRef` and `setIdx` were added to four `useCallback` dependency arrays (`markRead`, `goToIdx`, `finishAndRedirect`, `goNext`). No callback changes identity. No `eslint-disable` was added; the suppression count (29) is unchanged.
+
+### Proof
+
+- The 84 browser baselines of v5.190.66 pass untouched, and 12 new Quran reader tests (21 snapshots) were recorded on the OLD code first, stable over repeated runs, and pass on the split. They drive:
+  - **What is written:** a surah read to its end offline credits the surah and opens the next (the queued request: `count 4, surah 112, completedSurah true`); five ayat flush as one batch (`count 5, surah 2`) and Previous steps back; the khatam journey advances the bookmark (`advanceKhatm true`).
+  - **Modes:** a bundle (no goal chip) that returns to the Quran home when finished; a single surah that does the same; a duʿā with its story and evidence.
+  - **The reader itself:** continue and start over from the resume prompt; zoom, volume, the jump menu and the arrow keys; bookmark and share; fullscreen with the tafsir beside the ayah, then exit; the tafsir panel.
+- **Not recorded:** audio playback (a headless browser cannot play the recitation, and the word timer depends on its length), and a signed-out reader (the demo is always signed in; `ReaderGuestNote` is a moved block). The reading-time chip is shown only for a signed-in non-demo user.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords, section comments that moved with their component and prettier re-wrapping.
+- `signInSheet.test.ts` (the first save asks to sign in) now reads the page for the gate and the sheet and `ReaderCardControls.tsx` for the bookmark check. `quranRooms.test.ts` also checks the new files for emoji. The `QuranReader.tsx` cap is removed from `fileSize.test.ts`.
+- Frontend unit tests 156 files, 2649 tests; full e2e 259 passed; lint (2 existing warnings), typecheck, format, i18n and knip clean.
+
 ## v5.190.66 - Rayhanah analytics page split into parts (audit P4-1, step 6) - 2026-11-27
 
 `pages/CycleAnalytics.tsx` was 1,151 lines in one component. It is now 196 lines. The statistics moved into a pure function and the cards into `components/cycle/` (nine files, largest 214 lines). Nothing changes for anyone: same markup, copy, requests and the same CSV file. The numbers are still computed on the device; nothing here goes to an AI or to friends.
