@@ -15,3 +15,4 @@ frontend/index.html
 frontend/data/tanzil
 # Recorded render output (audit P4-1): compared byte for byte, never reformatted.
 frontend/src/pages/adminSadaqahRender.baselines
+frontend/src/pages/cycleAnalyticsRender.baselines

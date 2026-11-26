@@ -1,0 +1,833 @@
+<div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+<div class="absolute inset-0 overflow-hidden pointer-events-none">
+<div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl">
+</div>
+<div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl">
+</div>
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl">
+</div>
+<div class="absolute inset-0 opacity-[0.015]" style="background-image:linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px);background-size:50px 50px">
+</div>
+</div>
+<div class="relative z-10">
+<h1 class="sr-only">Rayhanah Analytics</h1>
+<div class="px-4 pt-3">
+<div class="max-w-2xl mx-auto flex items-center gap-2">
+<div class="flex-1 min-w-0">
+<div class="flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10 max-w-xs">
+<a class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" href="/cycle" data-discover="true">Cycle</a>
+<span aria-current="page" class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">Analytics</span>
+</div>
+</div>
+<button aria-label="Settings" title="Settings" class="shrink-0 p-2 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/70 hover:text-brand-pink hover:border-brand-pink/40 transition-colors">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z">
+</path>
+<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z">
+</path>
+</svg>
+</button>
+</div>
+</div>
+<div class="max-w-2xl mx-auto px-4 pt-4 pb-16 space-y-5">
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+<p class="font-display text-2xl font-bold text-brand-pink">9</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">cycles tracked</p>
+</div>
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+<p class="font-display text-2xl font-bold text-brand-pink">32</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">avg cycle days</p>
+</div>
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+<p class="font-display text-2xl font-bold text-brand-pink">6</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">avg period days</p>
+</div>
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+<p class="text-sm font-bold mt-1.5 text-brand-gold">Somewhat variable</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1 mt-1.5">regularity<!-- --> <span class="normal-case">(±<!-- -->7<!-- -->d)</span>
+</p>
+</div>
+</div>
+<section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-white/70 text-xs font-bold uppercase tracking-wide flex items-center gap-1.5">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 3v17.25m0 0c-1.472 0-2.882.265-4.185.75M12 20.25c1.472 0 2.882.265 4.185.75M18.75 4.97A48.416 48.416 0 0 0 12 4.5c-2.291 0-4.545.16-6.75.47m13.5 0c1.01.143 2.01.317 3 .52m-3-.52 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.988 5.988 0 0 1-2.031.352 5.988 5.988 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L18.75 4.971Zm-16.5.52c.99-.203 1.99-.377 3-.52m0 0 2.62 10.726c.122.499-.106 1.028-.589 1.202a5.989 5.989 0 0 1-2.031.352 5.989 5.989 0 0 1-2.031-.352c-.483-.174-.711-.703-.59-1.202L5.25 4.971Z">
+</path>
+</svg>BMI</p>
+<p class="font-display text-4xl font-bold text-red-400">32.8</p>
+</div>
+<div class="text-right">
+<p class="text-lg font-bold text-red-400">Well above range</p>
+<p class="text-white/70 text-xs mt-0.5 leading-relaxed">Significantly above the healthy weight range.</p>
+</div>
+</div>
+<div class="space-y-1.5">
+<div class="relative h-2.5">
+<div class="absolute inset-0 flex rounded-full overflow-hidden">
+<div class="bg-brand-info/60" style="width:24.3%">
+</div>
+<div class="bg-brand-emerald/70" style="width:18.6%">
+</div>
+<div class="bg-brand-gold/70" style="width:14.3%">
+</div>
+<div class="bg-red-400/60 flex-1">
+</div>
+</div>
+<div class="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-white border-2 border-brand-deep shadow-elev-1" style="left:calc(65.14285714285714% - 7px)">
+</div>
+</div>
+<div class="flex justify-between text-[10px] text-white/70 font-bold">
+<span>10</span>
+<span>18.5</span>
+<span>25</span>
+<span>30</span>
+<span>45</span>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3 pt-1">
+<div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+<p class="text-white font-bold text-sm">158<!-- --> cm</p>
+<p class="text-white/70 text-[10px] mt-0.5">5&#x27;2&quot;</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">Height</p>
+</div>
+<div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+<p class="text-white font-bold text-sm">82<!-- --> kg</p>
+<p class="text-white/70 text-[10px] mt-0.5">180.8<!-- --> lbs</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">Weight</p>
+</div>
+<div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+<p class="font-bold text-sm text-red-400">32.8</p>
+<p class="text-white/70 text-[10px] mt-0.5">18.5–24.9 = Normal</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">BMI</p>
+</div>
+</div>
+<p class="text-white/70 text-[10px] leading-relaxed">BMI is a general guide, not a medical diagnosis. Your doctor knows your full picture.</p>
+</section>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+<p class="font-display text-2xl font-bold text-brand-info">27</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">shortest cycle</p>
+</div>
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+<p class="font-display text-2xl font-bold text-brand-info">45</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">longest cycle</p>
+</div>
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+<p class="font-display text-2xl font-bold text-brand-info">18</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">range (days)</p>
+</div>
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+<p class="text-sm font-bold mt-1.5 text-brand-gold">
+<span class="inline-flex items-center gap-1">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941">
+</path>
+</svg>Getting longer</span>
+</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1 mt-1.5">trend</p>
+</div>
+</div>
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 border-brand-gold/40 p-4 text-brand-gold text-xs leading-relaxed flex gap-3">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 shrink-0">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z">
+</path>
+</svg>
+<div>
+<p class="font-bold">Cycle length change noticed</p>
+<p class="text-white/80 mt-1">Your last cycle was 14 days longer than average. Worth noting if this continues.</p>
+</div>
+</div>
+<section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+<h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>Expected windows</h2>
+<p class="text-white/70 text-xs mt-0.5 leading-relaxed">Mean cycle ± variability: a window, not a promise. Your body sets the truth.</p>
+<div class="mt-3 space-y-2">
+<div class="flex items-center gap-3 rounded-control bg-brand-pink/10 border border-brand-pink/40 px-4 py-2.5" style="opacity:0;transform:translateX(-8px)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<div class="flex-1">
+<p class="text-brand-pink text-sm font-bold">Oct 5<!-- --> – <!-- -->Oct 19</p>
+<p class="text-white/70 text-[10px]">most likely around Oct 12, 2026</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-control bg-brand-pink/10 border border-brand-pink/40 px-4 py-2.5" style="opacity:0;transform:translateX(-8px)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<div class="flex-1">
+<p class="text-brand-pink text-sm font-bold">Nov 5<!-- --> – <!-- -->Nov 19</p>
+<p class="text-white/70 text-[10px]">most likely around Nov 12, 2026</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-control bg-brand-pink/10 border border-brand-pink/40 px-4 py-2.5" style="opacity:0;transform:translateX(-8px)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<div class="flex-1">
+<p class="text-brand-pink text-sm font-bold">Dec 7<!-- --> – <!-- -->Dec 21</p>
+<p class="text-white/70 text-[10px]">most likely around Dec 14, 2026</p>
+</div>
+</div>
+</div>
+</section>
+<section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+<h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5 text-brand-info">
+<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z">
+</path>
+<path d="M4 20 14 10">
+</path>
+</svg>Fertile window</h2>
+<p class="text-white/70 text-xs mt-0.5 leading-relaxed">Estimated ovulation ~14 days before the next period. The fertile window spans ~5 days around it.</p>
+<div class="mt-3 space-y-2">
+<div class="flex items-center gap-3 rounded-control bg-brand-info/10 border border-brand-info/40 px-4 py-2.5" style="opacity:0;transform:translateX(-8px)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5 shrink-0 text-brand-info">
+<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z">
+</path>
+<path d="M4 20 14 10">
+</path>
+</svg>
+<div class="flex-1">
+<p class="text-brand-info text-sm font-bold">Sep 26<!-- --> – <!-- -->Sep 30</p>
+<p class="text-white/70 text-[10px]">ovulation estimated around Sep 28, 2026</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-control bg-brand-info/10 border border-brand-info/40 px-4 py-2.5" style="opacity:0;transform:translateX(-8px)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5 shrink-0 text-brand-info">
+<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z">
+</path>
+<path d="M4 20 14 10">
+</path>
+</svg>
+<div class="flex-1">
+<p class="text-brand-info text-sm font-bold">Oct 27<!-- --> – <!-- -->Oct 31</p>
+<p class="text-white/70 text-[10px]">ovulation estimated around Oct 29, 2026</p>
+</div>
+</div>
+<div class="flex items-center gap-3 rounded-control bg-brand-info/10 border border-brand-info/40 px-4 py-2.5" style="opacity:0;transform:translateX(-8px)">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5 shrink-0 text-brand-info">
+<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z">
+</path>
+<path d="M4 20 14 10">
+</path>
+</svg>
+<div class="flex-1">
+<p class="text-brand-info text-sm font-bold">Nov 28<!-- --> – <!-- -->Dec 2</p>
+<p class="text-white/70 text-[10px]">ovulation estimated around Nov 30, 2026</p>
+</div>
+</div>
+</div>
+<p class="text-white/70 text-[11px] mt-3 leading-relaxed">These are estimates based on your cycle history, not medical advice. The actual ovulation day can vary. For precise tracking, consult a healthcare professional.</p>
+</section>
+<section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+<h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-brand-gold">
+<path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z">
+</path>
+</svg>Your pre-period pattern</h2>
+<p class="text-white/70 text-xs mt-0.5 leading-relaxed">Symptoms and moods that tend to appear in the week before your period (based on 8 cycle(s)).</p>
+<div class="mt-3 space-y-1.5">
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/80 w-28 truncate">Cramps</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+<div class="h-full rounded-full bg-brand-gold/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-gold font-bold w-10 text-right tabular-nums">100<!-- -->%</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/80 w-28 truncate">Fatigue</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+<div class="h-full rounded-full bg-brand-gold/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-gold font-bold w-10 text-right tabular-nums">100<!-- -->%</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/80 w-28 truncate">Headache</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+<div class="h-full rounded-full bg-brand-gold/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-gold font-bold w-10 text-right tabular-nums">100<!-- -->%</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/80 w-28 truncate">low mood</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+<div class="h-full rounded-full bg-brand-gold/70" style="width:50%">
+</div>
+</div>
+<span class="text-brand-gold font-bold w-10 text-right tabular-nums">50<!-- -->%</span>
+</div>
+</div>
+<p class="text-white/70 text-[11px] mt-3 leading-relaxed">These patterns strengthen with every cycle you track.</p>
+</section>
+<section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+<h2 class="font-display text-white font-bold text-base flex items-center gap-2 mb-3">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-brand-pink">
+<path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z">
+</path>
+</svg>Cycle length history</h2>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Jan 1</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:60%">
+</div>
+</div>
+<span class="text-brand-pink font-bold w-8 text-right tabular-nums">27<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Jan 28</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:62.22222222222222%">
+</div>
+</div>
+<span class="text-brand-pink font-bold w-8 text-right tabular-nums">28<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Feb 25</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:64.44444444444444%">
+</div>
+</div>
+<span class="text-brand-pink font-bold w-8 text-right tabular-nums">29<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Mar 26</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:62.22222222222222%">
+</div>
+</div>
+<span class="text-brand-pink font-bold w-8 text-right tabular-nums">28<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Apr 23</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:60%">
+</div>
+</div>
+<span class="text-brand-pink font-bold w-8 text-right tabular-nums">27<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">May 20</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:66.66666666666666%">
+</div>
+</div>
+<span class="text-brand-pink font-bold w-8 text-right tabular-nums">30<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Jun 19</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:84.44444444444444%">
+</div>
+</div>
+<span class="text-brand-pink font-bold w-8 text-right tabular-nums">38<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Jul 27</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-pink font-bold w-8 text-right tabular-nums">45<!-- -->d</span>
+</div>
+</div>
+<h3 class="text-white/80 font-bold text-xs uppercase tracking-wide mt-4 mb-2">Period length</h3>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Jan 28</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-warm/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-warm font-bold w-8 text-right tabular-nums">6<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Feb 25</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-warm/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-warm font-bold w-8 text-right tabular-nums">6<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Mar 26</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-warm/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-warm font-bold w-8 text-right tabular-nums">6<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Apr 23</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-warm/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-warm font-bold w-8 text-right tabular-nums">6<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">May 20</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-warm/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-warm font-bold w-8 text-right tabular-nums">6<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Jun 19</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-warm/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-warm font-bold w-8 text-right tabular-nums">6<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Jul 27</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-warm/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-warm font-bold w-8 text-right tabular-nums">6<!-- -->d</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/70 w-14">Sep 10</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+<div class="h-full rounded-full bg-brand-warm/70" style="width:100%">
+</div>
+</div>
+<span class="text-brand-warm font-bold w-8 text-right tabular-nums">6<!-- -->d</span>
+</div>
+</div>
+</section>
+<section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 space-y-4">
+<h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-brand-pink">
+<path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z">
+</path>
+</svg>Your body&#x27;s patterns<!-- --> <span class="text-white/70 text-[11px] font-normal font-body">(last 60 days)</span>
+</h2>
+<div class="space-y-1.5">
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/80 w-28">Cramps</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:100%">
+</div>
+</div>
+<span class="text-white/70 w-14 text-right whitespace-nowrap">33 day(s)</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/80 w-28">Fatigue</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:100%">
+</div>
+</div>
+<span class="text-white/70 w-14 text-right whitespace-nowrap">24 day(s)</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/80 w-28">Headache</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:100%">
+</div>
+</div>
+<span class="text-white/70 w-14 text-right whitespace-nowrap">16 day(s)</span>
+</div>
+<div class="flex items-center gap-2 text-xs">
+<span class="text-white/80 w-28">Backache</span>
+<div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+<div class="h-full rounded-full bg-brand-pink/70" style="width:100%">
+</div>
+</div>
+<span class="text-white/70 w-14 text-right whitespace-nowrap">9 day(s)</span>
+</div>
+</div>
+<div>
+<p class="text-white/70 text-[11px] font-bold uppercase tracking-wide mb-1.5">Flow mix</p>
+<div class="flex h-3 rounded-full overflow-hidden">
+<div class="bg-brand-pink/60" style="width:25%">
+</div>
+<div class="bg-brand-pink/70" style="width:50%">
+</div>
+<div class="bg-brand-pink-dim/80" style="width:25%">
+</div>
+</div>
+<p class="text-white/70 text-[10px] mt-1">9 light · 18 medium · 9 heavy</p>
+</div>
+</section>
+<section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+<h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5 text-brand-gold">
+<path d="M15 3.5a8.5 8.5 0 1 0 5.5 14.2A7 7 0 0 1 15 3.5z">
+</path>
+</svg>Fasting makeup</h2>
+<p class="text-white/70 text-xs mt-0.5 leading-relaxed">Ramadan fasts missed during cycles are made up later<!-- --> <!-- -->(<a class="underline" href="https://sunnah.com/muslim:335" target="_blank" rel="noreferrer">Muslim 335</a>).</p>
+<div class="mt-3 grid grid-cols-3 gap-3">
+<div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+<p class="font-display text-2xl font-bold text-brand-gold">0</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">owed</p>
+</div>
+<div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+<p class="font-display text-2xl font-bold text-brand-emerald">0</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">made up</p>
+</div>
+<div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+<p class="font-display text-2xl font-bold text-white">0</p>
+<p class="text-white/70 text-[10px] font-bold uppercase mt-1">remaining</p>
+</div>
+</div>
+<button class="mt-3 w-full inline-flex items-center justify-center gap-0.5 text-brand-gold text-xs font-bold hover:underline">Open fasting tracker<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5">
+</path>
+</svg>
+</button>
+</section>
+<section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+<div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+<h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-brand-pink">
+<path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z">
+</path>
+</svg>Full history</h2>
+<div class="flex items-center gap-2">
+<button class="inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold border border-brand-border bg-brand-surface/50 text-white/85 hover:border-brand-info/50 transition-colors">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3">
+</path>
+</svg>Export CSV</button>
+<button class="inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold border border-brand-pink/50 bg-brand-pink/10 text-brand-pink hover:bg-brand-pink/20 transition-colors">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15">
+</path>
+</svg>Log a past period</button>
+</div>
+</div>
+<div class="space-y-1.5">
+<div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<span class="text-white/85 flex-1">Jan 1, 2026<!-- --> –<!-- --> <!-- -->Jan 6, 2026<span class="text-white/70"> <!-- -->· <!-- -->6<!-- -->d</span>
+</span>
+<button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
+</path>
+</svg>
+</button>
+<button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0">
+</path>
+</svg>
+</button>
+</div>
+<div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<span class="text-white/85 flex-1">Jan 28, 2026<!-- --> –<!-- --> <!-- -->Feb 2, 2026<span class="text-white/70"> <!-- -->· <!-- -->6<!-- -->d</span>
+</span>
+<button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
+</path>
+</svg>
+</button>
+<button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0">
+</path>
+</svg>
+</button>
+</div>
+<div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<span class="text-white/85 flex-1">Feb 25, 2026<!-- --> –<!-- --> <!-- -->Mar 2, 2026<span class="text-white/70"> <!-- -->· <!-- -->6<!-- -->d</span>
+</span>
+<button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
+</path>
+</svg>
+</button>
+<button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0">
+</path>
+</svg>
+</button>
+</div>
+<div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<span class="text-white/85 flex-1">Mar 26, 2026<!-- --> –<!-- --> <!-- -->Mar 31, 2026<span class="text-white/70"> <!-- -->· <!-- -->6<!-- -->d</span>
+</span>
+<button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
+</path>
+</svg>
+</button>
+<button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0">
+</path>
+</svg>
+</button>
+</div>
+<div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<span class="text-white/85 flex-1">Apr 23, 2026<!-- --> –<!-- --> <!-- -->Apr 28, 2026<span class="text-white/70"> <!-- -->· <!-- -->6<!-- -->d</span>
+</span>
+<button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
+</path>
+</svg>
+</button>
+<button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0">
+</path>
+</svg>
+</button>
+</div>
+<div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<span class="text-white/85 flex-1">May 20, 2026<!-- --> –<!-- --> <!-- -->May 25, 2026<span class="text-white/70"> <!-- -->· <!-- -->6<!-- -->d</span>
+</span>
+<button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
+</path>
+</svg>
+</button>
+<button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0">
+</path>
+</svg>
+</button>
+</div>
+<div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<span class="text-white/85 flex-1">Jun 19, 2026<!-- --> –<!-- --> <!-- -->Jun 24, 2026<span class="text-white/70"> <!-- -->· <!-- -->6<!-- -->d</span>
+</span>
+<button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
+</path>
+</svg>
+</button>
+<button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0">
+</path>
+</svg>
+</button>
+</div>
+<div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<span class="text-white/85 flex-1">Jul 27, 2026<!-- --> –<!-- --> <!-- -->Aug 1, 2026<span class="text-white/70"> <!-- -->· <!-- -->6<!-- -->d</span>
+</span>
+<button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
+</path>
+</svg>
+</button>
+<button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0">
+</path>
+</svg>
+</button>
+</div>
+<div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 shrink-0 text-brand-pink">
+<circle cx="12.00" cy="7.80" r="3">
+</circle>
+<circle cx="15.99" cy="10.70" r="3">
+</circle>
+<circle cx="14.47" cy="15.40" r="3">
+</circle>
+<circle cx="9.53" cy="15.40" r="3">
+</circle>
+<circle cx="8.01" cy="10.70" r="3">
+</circle>
+<circle cx="12" cy="12" r="1.6">
+</circle>
+</svg>
+<span class="text-white/85 flex-1">Sep 10, 2026<!-- --> –<!-- --> <!-- -->Sep 15, 2026<span class="text-white/70"> <!-- -->· <!-- -->6<!-- -->d</span>
+</span>
+<button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10">
+</path>
+</svg>
+</button>
+<button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4">
+<path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0">
+</path>
+</svg>
+</button>
+</div>
+</div>
+<p class="text-white/70 text-[11px] mt-3 leading-relaxed">Estimates only. They help you prepare; they never define you. If bleeding patterns worry you, speak to a doctor; for the fiqh of unusual bleeding see the istiḥāḍa note on the Cycle page.</p>
+</section>
+</div>
+</div>
+</div>
