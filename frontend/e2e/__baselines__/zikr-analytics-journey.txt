@@ -1,0 +1,170 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Zikr Counter" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+          <path d="<27:5bfdcc38>">
+         "Zikr Counter"
+       <div class="flex items-center gap-1 min-w-0 pl-1">
+        <span class="text-white/15 text-sm hidden sm:inline">
+         "|"
+        <span aria-hidden="true" class="text-sm shrink-0">
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="font-semibold text-white/70 text-xs sm:text-sm truncate max-w-[70px] sm:max-w-[130px]">
+         "Zikr Analytics"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "A"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+     <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl" style="transform: none">
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl" style="transform: none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl" style="transform: rotate(360deg)">
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px">
+     <div class="relative z-10">
+      <h1 class="sr-only">
+       "Zikr Analytics"
+      <div class="p-4 sm:p-6 lg:p-8">
+       <div class="max-w-4xl mx-auto space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+         <div class="flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10 max-w-xs">
+          <a class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/zikr">
+           "Counter"
+          <span aria-current="page" class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">
+           "Analytics"
+         <div class="flex items-center gap-2">
+          <button class="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors" tabindex="0">
+           <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<49:2c00743c>" stroke-linecap="round" stroke-linejoin="round">
+           "Log Missed Counts"
+          <button aria-label="Zikr settings" class="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors !px-3" data-testid="zikr-analytics-settings">
+           <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<999:41ef0701>" stroke-linecap="round" stroke-linejoin="round">
+            <path d="<35:449f351c>" stroke-linecap="round" stroke-linejoin="round">
+        <p class="text-white/60 text-xs text-center leading-relaxed italic">
+         "A private mirror for your own growth. Only Allah knows what each deed is worth."
+        <div aria-label="Journey" class="grid grid-cols-2 gap-1 rounded-control border border-brand-border bg-brand-deep p-1" data-testid="analytics-view" role="group">
+         <button aria-pressed="false" class="min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-control text-sm font-bold transition-colors text-white/70 hover:text-white" type="button">
+          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
+          "Stats"
+         <button aria-pressed="true" class="min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-control text-sm font-bold transition-colors bg-brand-emerald-dim text-on-color" type="button">
+          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<324:631e4b82>" stroke-linecap="round" stroke-linejoin="round">
+          "Journey"
+        <div class="space-y-4" data-testid="area-journey">
+         <section data-testid="overview-zikr">
+          <div class="rounded-card border border-brand-emerald/30 bg-brand-emerald/10 shadow-elev-2 p-4 space-y-3">
+           <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-2.5 min-w-0">
+             <svg aria-hidden="true" class="w-6 h-6 shrink-0 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+              <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+              <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+              <path d="<27:5bfdcc38>">
+             <div class="min-w-0">
+              <p class="font-display text-white font-bold text-base leading-tight">
+               "Zikr"
+              <p class="text-white/70 text-xs">
+               "Counting from your first day"
+            <div class="text-right shrink-0">
+             <p class="text-2xl font-black text-brand-emerald tabular-nums leading-none">
+              "42,300"
+             <p class="text-white/70 text-[10px] mt-1">
+              "zikr"
+           <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+            <span class="font-bold tabular-nums text-white">
+             "12"
+             <span class="font-normal text-white/70">
+              "day streak"
+            <span class="font-bold tabular-nums text-white">
+             "21"
+             <span class="font-normal text-white/70">
+              "best streak"
+            <span class="font-bold tabular-nums text-white">
+             "2,180"
+             <span class="font-normal text-white/70">
+              "best day"
+         <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 space-y-3" data-testid="reset-tracker">
+          <div>
+           <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+            <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<167:bedeb2e8>" stroke-linecap="round" stroke-linejoin="round">
+            "Reset tracker"
+           <p class="text-white/70 text-xs mt-1">
+            "How many times you started each area fresh, and when. Nothing was deleted by any of them."
+          <ul class="divide-y divide-brand-border">
+           <li class="py-2.5" data-testid="reset-tracker-zikr">
+            <div class="flex items-baseline justify-between gap-3">
+             <p class="text-white text-sm font-bold">
+              "Zikr"
+             <p class="text-xs font-bold text-brand-gold tabular-nums">
+              "Never reset"

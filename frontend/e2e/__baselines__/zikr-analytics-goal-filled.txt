@@ -1,0 +1,1099 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Zikr Counter" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+          <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+          <path d="<27:5bfdcc38>">
+         "Zikr Counter"
+       <div class="flex items-center gap-1 min-w-0 pl-1">
+        <span class="text-white/15 text-sm hidden sm:inline">
+         "|"
+        <span aria-hidden="true" class="text-sm shrink-0">
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="font-semibold text-white/70 text-xs sm:text-sm truncate max-w-[70px] sm:max-w-[130px]">
+         "Zikr Analytics"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "A"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+     <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl" style="transform: none">
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl" style="transform: none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl" style="transform: rotate(360deg)">
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px">
+     <div class="relative z-10">
+      <h1 class="sr-only">
+       "Zikr Analytics"
+      <div class="p-4 sm:p-6 lg:p-8">
+       <div class="max-w-4xl mx-auto space-y-6">
+        <div class="flex items-center justify-between flex-wrap gap-3">
+         <div class="flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10 max-w-xs">
+          <a class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/zikr">
+           "Counter"
+          <span aria-current="page" class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">
+           "Analytics"
+         <div class="flex items-center gap-2">
+          <button class="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors" tabindex="0">
+           <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<49:2c00743c>" stroke-linecap="round" stroke-linejoin="round">
+           "Log Missed Counts"
+          <button aria-label="Zikr settings" class="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors !px-3" data-testid="zikr-analytics-settings">
+           <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<999:41ef0701>" stroke-linecap="round" stroke-linejoin="round">
+            <path d="<35:449f351c>" stroke-linecap="round" stroke-linejoin="round">
+        <p class="text-white/60 text-xs text-center leading-relaxed italic">
+         "A private mirror for your own growth. Only Allah knows what each deed is worth."
+        <div aria-label="Journey" class="grid grid-cols-2 gap-1 rounded-control border border-brand-border bg-brand-deep p-1" data-testid="analytics-view" role="group">
+         <button aria-pressed="true" class="min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-control text-sm font-bold transition-colors bg-brand-emerald-dim text-on-color" type="button">
+          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
+          "Stats"
+         <button aria-pressed="false" class="min-h-[44px] inline-flex items-center justify-center gap-1.5 rounded-control text-sm font-bold transition-colors text-white/70 hover:text-white" type="button">
+          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<324:631e4b82>" stroke-linecap="round" stroke-linejoin="round">
+          "Journey"
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+         <div class="h-full rounded-card border bg-brand-deep text-white shadow-elev-2 border-brand-border" style="opacity: 1; transform: none">
+          <div class="p-4 sm:p-5">
+           <div class="flex items-center justify-between mb-3">
+            <h2 class="font-display text-base sm:text-lg font-bold flex items-center gap-2">
+             <svg aria-hidden="true" class="w-5 h-5 text-brand-warm" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path clip-rule="evenodd" d="<293:6e6649c6>" fill-rule="evenodd">
+             "Streak"
+            <button aria-label="Pause Streak" class="w-10 h-10 rounded-control grid place-items-center border shadow-elev-1 transition-colors border-brand-border bg-brand-surface text-white/70 hover:text-white hover:border-brand-emerald/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-emerald/50 disabled:opacity-60 disabled:cursor-not-allowed" tabindex="0" title="Pause Streak">
+             <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<31:ca836ed8>" stroke-linecap="round" stroke-linejoin="round">
+           <div class="grid grid-cols-2 gap-3 mb-4">
+            <div class="text-center">
+             <div class="font-display text-6xl sm:text-5xl font-bold leading-none text-brand-gold tabular-nums">
+              "12"
+             <p class="mt-1.5 text-xs font-bold text-white/80">
+              "Day Streak"
+            <div class="text-center border-l border-brand-border">
+             <div class="font-display text-5xl sm:text-4xl font-bold leading-none text-white tabular-nums pt-1">
+              "21"
+             <p class="mt-1.5 text-xs font-bold text-white/80 flex items-center justify-center gap-1">
+              "Best"
+              <svg aria-hidden="true" class="w-3.5 h-3.5 text-brand-gold" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+               <path clip-rule="evenodd" d="<783:77555595>" fill-rule="evenodd">
+           <div class="mb-3">
+            <p class="text-[10px] text-white/70 uppercase tracking-widest mb-1.5 font-bold">
+             "Last 7 days"
+            <div class="flex gap-1.5 items-end">
+             <div class="tooltip flex-1" data-tip="Fri, Oct 9: 980 zikr (196% of goal)">
+              <p class="flex justify-center leading-none mb-0.5 h-3">
+               <svg aria-hidden="true" aria-label="goal met" class="w-3 h-3 text-data-good" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+              <div class="w-full rounded-t-sm " style="height: 28px; background: rgb(var(--c-data-good) / 0.85); transform: none; transform-origin: 50% 100% 0px">
+              <p class="text-[9px] text-center mt-0.5 text-white/70">
+               "F"
+             <div class="tooltip flex-1" data-tip="Sat, Oct 10: 1,292 zikr (258% of goal)">
+              <p class="flex justify-center leading-none mb-0.5 h-3">
+               <svg aria-hidden="true" aria-label="goal met" class="w-3 h-3 text-data-good" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+              <div class="w-full rounded-t-sm " style="height: 28px; background: rgb(var(--c-data-good) / 0.85); transform: none; transform-origin: 50% 100% 0px">
+              <p class="text-[9px] text-center mt-0.5 text-white/70">
+               "S"
+             <div class="tooltip flex-1" data-tip="Sun, Oct 11: 432 zikr (86% of goal) - in progress">
+              <p class="flex justify-center leading-none mb-0.5 h-3">
+              <div class="w-full rounded-t-sm " style="height: 25px; background: rgb(var(--c-data-good) / 0.45); transform: none; transform-origin: 50% 100% 0px">
+              <p class="text-[9px] text-center mt-0.5 text-white/70">
+               "S"
+             <div class="tooltip flex-1" data-tip="Mon, Oct 12: 1,258 zikr (252% of goal)">
+              <p class="flex justify-center leading-none mb-0.5 h-3">
+               <svg aria-hidden="true" aria-label="goal met" class="w-3 h-3 text-data-good" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+              <div class="w-full rounded-t-sm " style="height: 28px; background: rgb(var(--c-data-good) / 0.85); transform: none; transform-origin: 50% 100% 0px">
+              <p class="text-[9px] text-center mt-0.5 text-white/70">
+               "M"
+             <div class="tooltip flex-1" data-tip="Tue, Oct 13: 626 zikr (125% of goal)">
+              <p class="flex justify-center leading-none mb-0.5 h-3">
+               <svg aria-hidden="true" aria-label="goal met" class="w-3 h-3 text-data-good" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+              <div class="w-full rounded-t-sm " style="height: 28px; background: rgb(var(--c-data-good) / 0.85); transform: none; transform-origin: 50% 100% 0px">
+              <p class="text-[9px] text-center mt-0.5 text-white/70">
+               "T"
+             <div class="tooltip flex-1" data-tip="Wed, Oct 14: 246 zikr (49% of goal) - in progress">
+              <p class="flex justify-center leading-none mb-0.5 h-3">
+              <div class="w-full rounded-t-sm " style="height: 18px; background: rgb(var(--c-data-mid) / 0.6); transform: none; transform-origin: 50% 100% 0px">
+              <p class="text-[9px] text-center mt-0.5 text-white/70">
+               "W"
+             <div class="tooltip flex-1" data-tip="Thu, Oct 15: 0 zikr (0% of goal) - in progress">
+              <p class="flex justify-center leading-none mb-0.5 h-3">
+              <div class="w-full rounded-t-sm ring-1 ring-white/40" style="height: 8px; background: var(--track); transform: none; transform-origin: 50% 100% 0px">
+              <p class="text-[9px] text-center mt-0.5 text-white font-bold">
+               "T"
+            <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+             <div class="flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded-sm inline-block" style="background: rgb(var(--c-data-good) / 0.85)">
+              <span class="text-[10px] text-white/60">
+               "goal met"
+             <div class="flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded-sm inline-block" style="background: rgb(var(--c-info) / 0.5)">
+              <span class="text-[10px] text-white/60">
+               "grace (chance used)"
+             <div class="flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded-sm inline-block" style="background: rgb(var(--c-data-none) / 0.45)">
+              <span class="text-[10px] text-white/60">
+               "missed"
+             <div class="flex items-center gap-1">
+              <span class="w-2.5 h-2.5 rounded-sm inline-block" style="background: rgb(var(--c-data-mid) / 0.6)">
+              <span class="text-[10px] text-white/60">
+               "partial"
+            <button class="mt-1.5 inline-flex items-center gap-1 text-[11px] text-white/60 hover:text-white transition-colors">
+             <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<152:ad11e729>" stroke-linecap="round" stroke-linejoin="round">
+             "How streaks & grace days work"
+           <div class="p-2 rounded-control border border-brand-emerald/30 bg-brand-emerald/10 mb-2" style="opacity: 1; transform: none">
+            <p class="text-xs text-center font-semibold text-brand-emerald flex items-center justify-center gap-1.5">
+             <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<62:8edbabc4>" stroke-linecap="round" stroke-linejoin="round">
+             "Keep it up! Strong habit."
+           <div class="rounded-control border border-brand-border bg-shade/10 overflow-hidden">
+            <button class="w-full p-3 flex items-center justify-between gap-2 text-left">
+             <span class="text-sm font-bold text-white/90 flex items-center gap-1.5">
+              <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+               <path d="<59:51ffc57d>" stroke-linecap="round" stroke-linejoin="round">
+              "How Streaks Work:"
+             <svg aria-hidden="true" class="w-4 h-4 text-white/70 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<152:ad11e729>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="h-full rounded-card border border-brand-border bg-brand-deep text-white shadow-elev-2" style="opacity: 1; transform: none">
+          <div class="p-4 sm:p-5">
+           <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+             <h2 class="font-display text-base sm:text-lg font-bold flex items-center gap-2">
+              <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+               <path d="<199:998a6b4b>" stroke-linecap="round" stroke-linejoin="round">
+              "Goal"
+            <button aria-label="Edit Goal" class="w-10 h-10 rounded-control grid place-items-center border border-brand-border bg-brand-surface text-white/70 shadow-elev-1 hover:text-white hover:border-brand-emerald/40 transition-colors" style="transform: none" tabindex="0" title="Edit Goal">
+             <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<163:e1be508a>" stroke-linecap="round" stroke-linejoin="round">
+           <div class="flex flex-col items-center justify-center mb-3">
+            <div class="relative w-28 h-28 sm:w-32 sm:h-32">
+             <svg aria-hidden="true" class="w-full h-full -rotate-90" viewBox="0 0 120 120">
+              <circle class="text-track" cx="60" cy="60" fill="none" r="50" stroke="currentColor" stroke-width="8">
+              <circle class="text-data-mid" cx="60" cy="60" fill="none" r="50" stroke="currentColor" stroke-dasharray="314.1592653589793" stroke-dashoffset="314.1592653589793" stroke-linecap="round" stroke-width="8">
+             <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <div class="font-display text-4xl sm:text-5xl font-bold leading-none tabular-nums">
+               "0"
+              <div class="text-xs font-semibold text-white/70 mt-0.5">
+               "/"
+               "500"
+            <div class="mt-2 text-3xl font-bold tracking-tight text-white tabular-nums">
+             "0"
+             "%"
+           <div class="text-center p-2 rounded-control border border-brand-border bg-shade/10">
+            <p class="text-sm font-semibold text-white/90">
+             "500 more to reach goal"
+           <div class="mt-3 text-center text-sm font-semibold text-white/70 flex items-center justify-center gap-1.5">
+            <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <circle cx="12" cy="12" r="8">
+             <circle cx="12" cy="12" r="4.5">
+             <circle cx="12" cy="12" r="1">
+            "Target: 500 zikr/day"
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+         <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center" style="opacity: 1; transform: none">
+          <p class="text-2xl font-black text-brand-emerald">
+           "42,300"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "All Time"
+         <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center" style="opacity: 1; transform: none">
+          <p class="text-2xl font-black text-brand-gold">
+           "0"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "Today"
+         <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center" style="opacity: 1; transform: none">
+          <p class="text-2xl font-black text-brand-info">
+           "2,180"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "Best Day"
+          <p class="text-white/70 text-[10px] mt-0.5">
+           "Oct 1"
+         <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center" style="opacity: 1; transform: none">
+          <p class="text-2xl font-black text-brand-warm">
+           "3"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "Types Used"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5">
+         <div class="flex items-center justify-between mb-4 flex-wrap gap-3">
+          <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+           <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
+           "Breakdown by Type"
+          <div class="tabs tabs-boxed tabs-sm bg-brand-surface border border-brand-border">
+           <button class="tab text-xs tab-active bg-brand-emerald-dim text-on-color font-bold">
+            "Today"
+           <button class="tab text-xs text-white/60">
+            "All time"
+         <p class="text-white/70 text-sm text-center py-8">
+          "No zikr logged today yet"
+        <div class="space-y-3">
+         <div class="flex items-center justify-between flex-wrap gap-3">
+          <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+           <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<235:a0dee89a>" stroke-linecap="round" stroke-linejoin="round">
+           "Trend"
+           <button aria-label="Zikr Trend" class="shrink-0 w-6 h-6 -m-1 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald transition-colors" title="Zikr Trend">
+            <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<152:ad11e729>" stroke-linecap="round" stroke-linejoin="round">
+          <div class="tabs tabs-boxed tabs-sm bg-brand-deep border border-brand-border">
+           <button class="tab text-xs tab-active bg-brand-emerald-dim text-on-color font-bold">
+            "7d"
+           <button class="tab text-xs text-white/60">
+            "30d"
+           <button class="tab text-xs text-white/60">
+            "90d"
+           <button class="tab text-xs text-white/60">
+            "1y"
+         <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2" style="opacity: 1; transform: none">
+          <div class="flex flex-col gap-2 p-6">
+           <div class="flex items-baseline justify-between gap-3 mb-4">
+            <h3 class="text-lg font-bold text-brand-emerald">
+             "7-Day Trend"
+           <svg aria-label="7-day zikr trend" class="w-full h-[300px] overflow-visible" preserveAspectRatio="none" role="img" viewBox="0 0 720 300">
+            <defs>
+             <lineargradient id="id5" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="5%" stop-color="var(--brand-emerald)" stop-opacity="0.35">
+              <stop offset="95%" stop-color="var(--brand-emerald)" stop-opacity="0">
+            <g>
+             <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="272" y2="272">
+             <text class="fill-white/70" style="font-size: 11px" text-anchor="end" x="26" y="276">
+              "0"
+            <g>
+             <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="208" y2="208">
+             <text class="fill-white/70" style="font-size: 11px" text-anchor="end" x="26" y="212">
+              "500"
+            <g>
+             <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="144" y2="144">
+             <text class="fill-white/70" style="font-size: 11px" text-anchor="end" x="26" y="148">
+              "1,000"
+            <g>
+             <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="80" y2="80">
+             <text class="fill-white/70" style="font-size: 11px" text-anchor="end" x="26" y="84">
+              "1,500"
+            <g>
+             <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="16" y2="16">
+             <text class="fill-white/70" style="font-size: 11px" text-anchor="end" x="26" y="20">
+              "2,000"
+            <path d="<609:ea8d2e1b>" fill="url(#trendGradient)">
+            <path d="<588:8ad1ce9d>" fill="none" stroke="var(--brand-emerald)" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" vector-effect="non-scaling-stroke">
+            <circle cx="704" cy="272" fill="var(--brand-emerald)" r="3.5" stroke="var(--brand-deep)" stroke-width="2" vector-effect="non-scaling-stroke">
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="34" y="292">
+             "Oct 9"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="145.66666666666669" y="292">
+             "Oct 10"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="257.33333333333337" y="292">
+             "Oct 11"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="369" y="292">
+             "Oct 12"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="480.6666666666667" y="292">
+             "Oct 13"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="592.3333333333334" y="292">
+             "Oct 14"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="704" y="292">
+             "Oct 15"
+            <rect fill="transparent" height="300" width="111.66666666666667" x="-21.833333333333336" y="0">
+            <rect fill="transparent" height="300" width="111.66666666666667" x="89.83333333333334" y="0">
+            <rect fill="transparent" height="300" width="111.66666666666667" x="201.50000000000003" y="0">
+            <rect fill="transparent" height="300" width="111.66666666666667" x="313.1666666666667" y="0">
+            <rect fill="transparent" height="300" width="111.66666666666667" x="424.83333333333337" y="0">
+            <rect fill="transparent" height="300" width="111.66666666666667" x="536.5" y="0">
+            <rect fill="transparent" height="300" width="111.66666666666667" x="648.1666666666666" y="0">
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5 space-y-3">
+         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-info" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<235:a0dee89a>" stroke-linecap="round" stroke-linejoin="round">
+          "Per-type trends"
+          <button aria-label="Per-Type Trends" class="shrink-0 w-6 h-6 -m-1 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald transition-colors" title="Per-Type Trends">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<152:ad11e729>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="flex flex-wrap gap-3 mb-1">
+          <div class="flex items-center gap-1.5">
+           <span class="inline-block rounded-full" style="width: 8px; height: 8px; background: rgb(var(--c-data-good))">
+           <span class="text-white/70 text-[11px]">
+            "Allahu Akbar"
+          <div class="flex items-center gap-1.5">
+           <span class="inline-block rounded-full" style="width: 8px; height: 8px; background: rgb(var(--c-data-mid))">
+           <span class="text-white/70 text-[11px]">
+            "SubhanAllah"
+          <div class="flex items-center gap-1.5">
+           <span class="inline-block rounded-full" style="width: 8px; height: 8px; background: var(--brand-info)">
+           <span class="text-white/70 text-[11px]">
+            "Alhamdulillah"
+         <svg class="w-full h-[220px] overflow-visible" preserveAspectRatio="none" viewBox="0 0 720 260">
+          <g>
+           <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="232" y2="232">
+           <text class="fill-white/70" style="font-size: 10px" text-anchor="end" x="28" y="236">
+            "0"
+          <g>
+           <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="177" y2="177">
+           <text class="fill-white/70" style="font-size: 10px" text-anchor="end" x="28" y="181">
+            "125"
+          <g>
+           <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="122" y2="122">
+           <text class="fill-white/70" style="font-size: 10px" text-anchor="end" x="28" y="126">
+            "250"
+          <g>
+           <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="67" y2="67">
+           <text class="fill-white/70" style="font-size: 10px" text-anchor="end" x="28" y="71">
+            "375"
+          <g>
+           <line stroke="var(--track)" stroke-dasharray="3 3" stroke-width="1" vector-effect="non-scaling-stroke" x1="34" x2="704" y1="12" y2="12">
+           <text class="fill-white/70" style="font-size: 10px" text-anchor="end" x="28" y="16">
+            "500"
+          <path d="<589:bb8ebee2>" fill="none" stroke="rgb(var(--c-data-good))" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" vector-effect="non-scaling-stroke">
+          <path d="<600:90c7c014>" fill="none" stroke="rgb(var(--c-data-mid))" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" vector-effect="non-scaling-stroke">
+          <path d="<600:90c7c014>" fill="none" stroke="var(--brand-info)" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" vector-effect="non-scaling-stroke">
+          <text class="fill-white/70" style="font-size: 10px" text-anchor="middle" x="34" y="254">
+           "Oct 9"
+          <text class="fill-white/70" style="font-size: 10px" text-anchor="middle" x="145.66666666666669" y="254">
+           "Oct 10"
+          <text class="fill-white/70" style="font-size: 10px" text-anchor="middle" x="257.33333333333337" y="254">
+           "Oct 11"
+          <text class="fill-white/70" style="font-size: 10px" text-anchor="middle" x="369" y="254">
+           "Oct 12"
+          <text class="fill-white/70" style="font-size: 10px" text-anchor="middle" x="480.6666666666667" y="254">
+           "Oct 13"
+          <text class="fill-white/70" style="font-size: 10px" text-anchor="middle" x="592.3333333333334" y="254">
+           "Oct 14"
+          <text class="fill-white/70" style="font-size: 10px" text-anchor="middle" x="704" y="254">
+           "Oct 15"
+          <rect fill="transparent" height="260" width="111.66666666666667" x="-21.833333333333336" y="0">
+          <rect fill="transparent" height="260" width="111.66666666666667" x="89.83333333333334" y="0">
+          <rect fill="transparent" height="260" width="111.66666666666667" x="201.50000000000003" y="0">
+          <rect fill="transparent" height="260" width="111.66666666666667" x="313.1666666666667" y="0">
+          <rect fill="transparent" height="260" width="111.66666666666667" x="424.83333333333337" y="0">
+          <rect fill="transparent" height="260" width="111.66666666666667" x="536.5" y="0">
+          <rect fill="transparent" height="260" width="111.66666666666667" x="648.1666666666666" y="0">
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5 space-y-3">
+         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<48:d9d3fbc7>" stroke-linecap="round" stroke-linejoin="round">
+          "Time of day"
+          <span class="text-white/70 text-xs font-normal font-sans">
+           "last 30 days"
+          <button aria-label="Time of Day" class="shrink-0 w-6 h-6 -m-1 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald transition-colors" title="Time of Day">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<152:ad11e729>" stroke-linecap="round" stroke-linejoin="round">
+         <div>
+          <div>
+           <div class="flex items-baseline justify-end gap-3 mb-2 h-4">
+           <svg aria-label="Time of day" class="w-full h-[180px] overflow-visible" preserveAspectRatio="none" role="img" viewBox="0 0 720 220">
+            <rect fill="var(--brand-emerald)" height="52.57142857142857" opacity="1" rx="2" width="27.333333333333332" x="8" y="143.42857142857144">
+            <rect fill="var(--brand-emerald)" height="0" opacity="0.15" rx="2" width="27.333333333333332" x="37.33333333333333" y="196">
+            <rect fill="var(--brand-emerald)" height="0" opacity="0.15" rx="2" width="27.333333333333332" x="66.66666666666666" y="196">
+            <rect fill="var(--brand-emerald)" height="0" opacity="0.15" rx="2" width="27.333333333333332" x="96" y="196">
+            <rect fill="var(--brand-emerald)" height="36.25615763546798" opacity="1" rx="2" width="27.333333333333332" x="125.33333333333333" y="159.74384236453201">
+            <rect fill="var(--brand-emerald)" height="159.98029556650246" opacity="1" rx="2" width="27.333333333333332" x="154.66666666666666" y="36.01970443349754">
+            <rect fill="var(--brand-emerald)" height="157.7142857142857" opacity="1" rx="2" width="27.333333333333332" x="184" y="38.285714285714306">
+            <rect fill="var(--brand-emerald)" height="184" opacity="1" rx="2" width="27.333333333333332" x="213.33333333333331" y="12">
+            <rect fill="var(--brand-emerald)" height="32.63054187192118" opacity="1" rx="2" width="27.333333333333332" x="242.66666666666666" y="163.3694581280788">
+            <rect fill="var(--brand-emerald)" height="50.30541871921182" opacity="1" rx="2" width="27.333333333333332" x="272" y="145.69458128078819">
+            <rect fill="var(--brand-emerald)" height="25.379310344827587" opacity="1" rx="2" width="27.333333333333332" x="301.3333333333333" y="170.6206896551724">
+            <rect fill="var(--brand-emerald)" height="48.039408866995075" opacity="1" rx="2" width="27.333333333333332" x="330.66666666666663" y="147.96059113300493">
+            <rect fill="var(--brand-emerald)" height="32.63054187192118" opacity="1" rx="2" width="27.333333333333332" x="360" y="163.3694581280788">
+            <rect fill="var(--brand-emerald)" height="49.85221674876847" opacity="1" rx="2" width="27.333333333333332" x="389.3333333333333" y="146.14778325123154">
+            <rect fill="var(--brand-emerald)" height="15.408866995073891" opacity="1" rx="2" width="27.333333333333332" x="418.66666666666663" y="180.59113300492612">
+            <rect fill="var(--brand-emerald)" height="40.33497536945813" opacity="1" rx="2" width="27.333333333333332" x="448" y="155.66502463054186">
+            <rect fill="var(--brand-emerald)" height="31.724137931034484" opacity="1" rx="2" width="27.333333333333332" x="477.3333333333333" y="164.27586206896552">
+            <rect fill="var(--brand-emerald)" height="24.926108374384235" opacity="1" rx="2" width="27.333333333333332" x="506.66666666666663" y="171.07389162561577">
+            <rect fill="var(--brand-emerald)" height="43.960591133004925" opacity="1" rx="2" width="27.333333333333332" x="536" y="152.03940886699507">
+            <rect fill="var(--brand-emerald)" height="5.438423645320197" opacity="1" rx="2" width="27.333333333333332" x="565.3333333333333" y="190.5615763546798">
+            <rect fill="var(--brand-emerald)" height="93.8128078817734" opacity="1" rx="2" width="27.333333333333332" x="594.6666666666666" y="102.1871921182266">
+            <rect fill="var(--brand-emerald)" height="107.86206896551724" opacity="1" rx="2" width="27.333333333333332" x="624" y="88.13793103448276">
+            <rect fill="var(--brand-emerald)" height="139.13300492610838" opacity="1" rx="2" width="27.333333333333332" x="653.3333333333333" y="56.866995073891616">
+            <rect fill="var(--brand-emerald)" height="54.38423645320198" opacity="1" rx="2" width="27.333333333333332" x="682.6666666666666" y="141.615763546798">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="8" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="37.33333333333333" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="66.66666666666666" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="96" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="125.33333333333333" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="154.66666666666666" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="184" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="213.33333333333331" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="242.66666666666666" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="272" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="301.3333333333333" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="330.66666666666663" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="360" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="389.3333333333333" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="418.66666666666663" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="448" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="477.3333333333333" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="506.66666666666663" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="536" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="565.3333333333333" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="594.6666666666666" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="624" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="653.3333333333333" y="0">
+            <rect fill="transparent" height="196" width="27.333333333333332" x="682.6666666666666" y="0">
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="21.666666666666664" y="214">
+             "12AM"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="109.66666666666667" y="214">
+             "3AM"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="197.66666666666666" y="214">
+             "6AM"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="285.6666666666667" y="214">
+             "9AM"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="373.6666666666667" y="214">
+             "12PM"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="461.6666666666667" y="214">
+             "3PM"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="549.6666666666666" y="214">
+             "6PM"
+            <text class="fill-white/70" style="font-size: 11px" text-anchor="middle" x="637.6666666666666" y="214">
+             "9PM"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5 space-y-2">
+         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<555:678fdcb9>" stroke-linecap="round" stroke-linejoin="round">
+          "Activity heatmap"
+          <span class="text-white/70 text-xs font-normal font-sans">
+           "last 365 days"
+          <button aria-label="Activity Heatmap" class="shrink-0 w-6 h-6 -m-1 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald transition-colors" title="Activity Heatmap">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<152:ad11e729>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="space-y-2">
+          <p class="text-xs text-white/60 h-4">
+          <div aria-label="Activity heatmap" class="overflow-x-auto pb-1" role="region" tabindex="0">
+           <div class="min-w-max sm:min-w-0">
+            <div class="grid gap-[3px] mb-1 overflow-hidden" style="grid-template-columns: repeat(53, minmax(10px, 1fr))">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Nov"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Dec"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Jan"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Feb"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Mar"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Apr"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "May"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Jun"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Jul"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Aug"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Sep"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+              "Oct"
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+             <span class="text-[10px] leading-none text-white/60 whitespace-nowrap">
+            <div class="grid grid-rows-7 grid-flow-col gap-[3px]" style="grid-template-columns: repeat(53, minmax(10px, 1fr))">
+             <div class="aspect-square">
+             <div class="aspect-square">
+             <div class="aspect-square">
+             <div class="aspect-square">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-10-16: 348">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-10-17: 350">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-10-18: 964">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-10-19: 291">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-10-20: 635">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-10-21: 488">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-10-22: 642">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-10-23: 563">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-10-24: 684">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-10-25: 403">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-10-26: 745">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-10-27: 910">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-10-28: 411">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-10-29: 455">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-10-30: 952">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-10-31: 933">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-11-01: 1,244">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-02: 821">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-03: 685">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-04: 715">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-11-05: 410">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-11-06: 1,281">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-11-07: 1,311">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-11-08: 301">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-09: 768">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-11-10: 1,106">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-11-11: 1,117">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-11-12: 850">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-11-13: 958">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-11-14: 1,379">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-15: 650">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-16: 776">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-11-17: 1,148">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-18: 598">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-11-19: 932">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-11-20: 1,358">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-11-21: 1,208">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-22: 619">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-11-23: 1,225">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-11-24: 1,102">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-11-25: 975">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-11-26: 398">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-11-27: 1,002">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-28: 639">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-11-29: 279">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-11-30: 768">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-12-01: 1,256">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-12-02: 1,223">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-12-03: 1,347">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-12-04: 382">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-12-05: 512">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-12-06: 1,276">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-12-07: 320">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-12-08: 1,136">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-12-09: 644">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-12-10: 1,139">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-12-11: 591">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-12-12: 887">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-12-13: 1,369">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-12-14: 1,183">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-12-15: 273">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-12-16: 557">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-12-17: 1,075">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-12-18: 667">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-12-19: 1,055">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-12-20: 731">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-12-21: 1,034">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-12-22: 972">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-12-23: 1,081">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-12-24: 457">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2025-12-25: 1,361">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-12-26: 833">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2025-12-27: 1,002">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-12-28: 396">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2025-12-29: 479">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-12-30: 701">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2025-12-31: 570">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-01-01: 362">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-01-02: 1,199">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-01-03: 695">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-04: 985">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-01-05: 1,143">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-01-06: 644">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-01-07: 620">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-08: 965">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-01-09: 304">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-10: 1,087">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-11: 1,060">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-01-12: 1,114">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-01-13: 621">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-01-14: 1,364">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-01-15: 1,264">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-16: 841">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-17: 959">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-01-18: 1,275">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-01-19: 1,206">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-20: 992">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-21: 902">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-01-22: 1,384">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-01-23: 675">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-01-24: 255">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-25: 867">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-01-26: 1,136">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-01-27: 1,037">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-01-28: 527">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-01-29: 589">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-01-30: 739">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-01-31: 447">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-02-01: 621">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-02-02: 655">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-02-03: 1,126">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-02-04: 1,106">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-02-05: 781">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-02-06: 1,016">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-02-07: 916">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-02-08: 1,045">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-02-09: 371">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-02-10: 415">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-02-11: 1,374">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-02-12: 394">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-02-13: 562">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-02-14: 1,305">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-02-15: 568">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-02-16: 1,189">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-02-17: 1,044">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-02-18: 313">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-02-19: 747">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-02-20: 359">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-02-21: 322">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-02-22: 958">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-02-23: 1,174">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-02-24: 413">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-02-25: 749">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-02-26: 1,016">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-02-27: 514">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-02-28: 1,371">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-01: 1,134">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-02: 1,321">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-03-03: 468">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-03-04: 656">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-03-05: 603">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-03-06: 317">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-03-07: 719">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-03-08: 808">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-03-09: 341">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-10: 1,330">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-11: 1,155">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-03-12: 611">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-13: 1,325">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-14: 1,292">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-03-15: 1,053">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-03-16: 343">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-03-17: 432">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-03-18: 342">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-03-19: 966">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-20: 1,318">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-21: 1,344">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-03-22: 313">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-03-23: 1,013">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-24: 1,201">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-03-25: 717">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-03-26: 843">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-03-27: 1,061">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-03-28: 1,320">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-03-29: 873">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-03-30: 455">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-03-31: 1,061">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-01: 514">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-04-02: 838">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-03: 752">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-04-04: 490">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-04-05: 472">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-04-06: 922">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-04-07: 1,253">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-04-08: 984">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-09: 582">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-10: 556">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-04-11: 909">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-04-12: 1,286">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-04-13: 1,176">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-04-14: 886">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-04-15: 298">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-16: 743">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-04-17: 1,395">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-04-18: 950">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-04-19: 880">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-04-20: 248">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-04-21: 399">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-04-22: 1,142">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-23: 780">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-24: 535">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-25: 542">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-04-26: 289">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-04-27: 372">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-28: 726">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-04-29: 580">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-04-30: 829">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-05-01: 532">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-05-02: 926">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-05-03: 1,086">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-04: 380">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-05-05: 691">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-05-06: 1,031">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-05-07: 729">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-08: 437">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-05-09: 888">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-05-10: 1,375">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-05-11: 641">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-12: 202">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-05-13: 697">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-05-14: 760">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-15: 464">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-05-16: 813">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-17: 285">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-18: 512">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-19: 420">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-20: 468">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-05-21: 1,070">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-22: 422">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-05-23: 888">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-05-24: 1,375">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-25: 296">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-05-26: 1,082">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-05-27: 1,293">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-05-28: 1,354">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-05-29: 903">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-05-30: 530">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-05-31: 502">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-06-01: 1,118">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-06-02: 846">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-06-03: 1,172">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-06-04: 460">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-06-05: 684">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-06-06: 911">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-06-07: 469">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-06-08: 1,096">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-06-09: 783">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-06-10: 804">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-06-11: 666">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-06-12: 905">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-06-13: 1,212">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-06-14: 1,145">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-06-15: 1,383">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-06-16: 1,119">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-06-17: 1,186">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-06-18: 333">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-06-19: 1,327">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-06-20: 692">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-06-21: 697">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-06-22: 852">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-06-23: 850">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-06-24: 504">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-06-25: 259">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-06-26: 282">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-06-27: 353">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-06-28: 288">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-06-29: 1,297">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-06-30: 963">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-01: 1,280">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-07-02: 537">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-07-03: 325">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-07-04: 1,062">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-05: 1,295">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-07-06: 813">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-07-07: 959">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-07-08: 675">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-07-09: 887">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-10: 1,166">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-07-11: 1,067">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-12: 1,152">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-13: 1,202">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-14: 1,322">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-07-15: 952">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-16: 1,137">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-07-17: 230">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-07-18: 1,069">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-07-19: 947">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-07-20: 812">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-21: 1,144">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-07-22: 496">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-07-23: 995">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-07-24: 1,086">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-07-25: 500">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-07-26: 542">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-07-27: 468">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-07-28: 769">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-07-29: 580">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-30: 1,324">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-07-31: 1,212">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-01: 325">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-08-02: 1,168">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-08-03: 701">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-04: 409">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-05: 353">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-08-06: 1,082">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-08-07: 1,363">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-08: 363">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-08-09: 1,317">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-08-10: 1,274">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-08-11: 844">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-12: 427">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-08-13: 1,132">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-14: 374">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-08-15: 646">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-08-16: 822">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-17: 277">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-08-18: 827">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-19: 428">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-08-20: 603">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-08-21: 1,373">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-22: 415">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-23: 469">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-08-24: 754">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-08-25: 1,307">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-08-26: 661">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-27: 314">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-08-28: 609">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-08-29: 783">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-08-30: 837">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-08-31: 458">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-09-01: 277">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-09-02: 1,353">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-09-03: 307">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-09-04: 278">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-09-05: 605">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-09-06: 628">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-09-07: 823">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-09-08: 856">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-09-09: 221">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-09-10: 214">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-09-11: 544">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-09-12: 694">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-09-13: 1,269">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-09-14: 661">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-09-15: 305">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-09-16: 431">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-09-17: 567">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-09-18: 910">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-09-19: 1,108">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-09-20: 924">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-09-21: 1,080">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-09-22: 911">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-09-23: 1,398">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-09-24: 378">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-09-25: 581">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-09-26: 1,284">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-09-27: 1,183">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-09-28: 236">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-09-29: 1,298">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-09-30: 1,355">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-10-01: 944">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-10-02: 960">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-10-03: 850">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-10-04: 892">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-10-05: 1,329">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-10-06: 1,010">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-10-07: 281">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-10-08: 1,111">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.75)" title="2026-10-09: 980">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-10-10: 1,292">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-10-11: 432">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 1)" title="2026-10-12: 1,258">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.5)" title="2026-10-13: 626">
+             <div class="aspect-square rounded-[3px] cursor-default " style="background: rgb(var(--c-data-good) / 0.3)" title="2026-10-14: 246">
+             <div class="aspect-square rounded-[3px] cursor-default ring-1 ring-brand-gold ring-offset-1 ring-offset-brand-deep" style="background: rgb(var(--c-ink) / 0.07)" title="2026-10-15: 0">
+             <div class="aspect-square">
+             <div class="aspect-square">
+          <div class="flex items-center gap-1.5 justify-end">
+           <span class="text-white/60 text-[10px]">
+            "Less"
+           <div class="rounded-[3px] w-[11px] h-[11px]" style="background: rgb(var(--c-ink) / 0.07)">
+           <div class="rounded-[3px] w-[11px] h-[11px]" style="background: rgb(var(--c-data-good) / 0.3)">
+           <div class="rounded-[3px] w-[11px] h-[11px]" style="background: rgb(var(--c-data-good) / 0.5)">
+           <div class="rounded-[3px] w-[11px] h-[11px]" style="background: rgb(var(--c-data-good) / 0.75)">
+           <div class="rounded-[3px] w-[11px] h-[11px]" style="background: rgb(var(--c-data-good) / 1)">
+           <span class="text-white/60 text-[10px]">
+            "More"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5 space-y-3">
+         <div class="flex items-center justify-between gap-3">
+          <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+           <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<645:d9601a5f>" stroke-linecap="round" stroke-linejoin="round">
+           "Personal records"
+          <button class="flex items-center gap-1.5 text-white/70 hover:text-brand-emerald text-xs font-semibold transition-colors" title="Export CSV">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<108:fee7c9f9>" stroke-linecap="round" stroke-linejoin="round">
+           "CSV"
+         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="rounded-control bg-brand-surface/60 border border-brand-border shadow-elev-1 p-3 text-center">
+           <p class="text-xl font-black text-brand-emerald">
+            "2,180"
+           <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+            "Best day"
+           <p class="text-white/70 text-[10px] mt-0.5">
+            "Oct 1, 2026"
+          <div class="rounded-control bg-brand-surface/60 border border-brand-border shadow-elev-1 p-3 text-center">
+           <p class="text-xl font-black text-brand-gold">
+            "21 d"
+           <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+            "Longest streak"
+          <div class="rounded-control bg-brand-surface/60 border border-brand-border shadow-elev-1 p-3 text-center">
+           <p class="text-xl font-black text-brand-info">
+            "810"
+           <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+            "Avg on active days"
+           <p class="text-white/70 text-[10px] mt-0.5">
+            "364 active days"
+          <div class="rounded-control bg-brand-surface/60 border border-brand-border shadow-elev-1 p-3 text-center">
+           <p class="text-xl font-black text-brand-warm">
+            "Sunday"
+           <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+            "Most active day"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5 space-y-3">
+         <div class="flex items-center justify-between gap-3">
+          <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+           <svg aria-hidden="true" class="w-5 h-5 text-brand-info" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<277:66538121>" stroke-linecap="round" stroke-linejoin="round">
+           "Session history"
+          <input aria-label="Choose a day" class="input input-xs h-11 input-bordered rounded-control bg-brand-surface border-brand-border text-white/80 text-xs" max="2026-10-15" type="date" value="2026-10-15" value="2026-10-15">
+         <div class="space-y-2">
+          <div class="flex items-center justify-between gap-3 rounded-control bg-brand-surface/50 border border-brand-border p-3">
+           <div class="min-w-0">
+            <p class="text-white/80 text-sm font-semibold tabular-nums">
+             "5:40 AM"
+             "–"
+             "5:52 AM"
+            <div class="flex flex-wrap gap-1 mt-1">
+             <span class="px-1.5 py-0.5 rounded-md bg-shade/10 border border-brand-border text-[10px] text-white/70">
+              "SubhanAllah"
+              "×"
+              "100"
+             <span class="px-1.5 py-0.5 rounded-md bg-shade/10 border border-brand-border text-[10px] text-white/70">
+              "Alhamdulillah"
+              "×"
+              "100"
+             <span class="px-1.5 py-0.5 rounded-md bg-shade/10 border border-brand-border text-[10px] text-white/70">
+              "Allahu Akbar"
+              "×"
+              "100"
+           <p class="text-brand-emerald font-black text-lg shrink-0">
+            "300"
+          <div class="flex items-center justify-between gap-3 rounded-control bg-brand-surface/50 border border-brand-border p-3">
+           <div class="min-w-0">
+            <p class="text-white/80 text-sm font-semibold tabular-nums">
+             "1:20 PM"
+             "–"
+             "1:26 PM"
+            <div class="flex flex-wrap gap-1 mt-1">
+             <span class="px-1.5 py-0.5 rounded-md bg-shade/10 border border-brand-border text-[10px] text-white/70">
+              "Astaghfirullah"
+              "×"
+              "100"
+           <p class="text-brand-emerald font-black text-lg shrink-0">
+            "100"
+          <div class="flex items-center justify-between gap-3 rounded-control bg-brand-surface/50 border border-brand-border p-3">
+           <div class="min-w-0">
+            <p class="text-white/80 text-sm font-semibold tabular-nums">
+             "9:05 PM"
+             "–"
+             "9:15 PM"
+            <div class="flex flex-wrap gap-1 mt-1">
+             <span class="px-1.5 py-0.5 rounded-md bg-shade/10 border border-brand-border text-[10px] text-white/70">
+              "La ilaha illallah"
+              "×"
+              "100"
+             <span class="px-1.5 py-0.5 rounded-md bg-shade/10 border border-brand-border text-[10px] text-white/70">
+              "Durud Ibrahim"
+              "×"
+              "100"
+           <p class="text-brand-emerald font-black text-lg shrink-0">
+            "200"
+         <p class="text-white/70 text-[10px] leading-relaxed">
+          "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
+    <div class="fixed right-4 z-40 flex flex-col items-center gap-3 pointer-events-none" style="bottom: calc(5rem + env(safe-area-inset-bottom, 0px))">
+     <button aria-label="Go to top" class="pointer-events-auto w-11 h-11 rounded-full grid place-items-center bg-brand-deep text-white border border-brand-border shadow-elev-2 hover:border-brand-emerald hover:text-brand-emerald transition-colors" title="Go to top" type="button">
+      <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+       <path clip-rule="evenodd" d="<143:a4c237d7>" fill-rule="evenodd">
+ <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[70] p-4" role="presentation">
+  <div aria-modal="true" class="bg-brand-deep border border-brand-border shadow-elev-3 rounded-card w-full max-w-md p-6 max-h-[88vh] overflow-y-auto" role="dialog" style="opacity: 1; transform: none">
+   <h3 class="font-display font-bold text-xl mb-6 text-brand-emerald">
+    "Set Daily Goal"
+   <div class="form-control">
+    <label class="label">
+     <span class="label-text text-white/70 font-semibold">
+      "Daily target"
+    <input class="input input-bordered rounded-control bg-brand-surface/50 border-brand-border text-white focus:border-brand-emerald" min="1" placeholder="Enter your daily goal" type="number" value="500" value="150">
+   <div class="form-control mt-4">
+    <label class="label">
+     <span class="label-text text-white/70 font-semibold">
+      "Grace days"
+    <select class="select select-bordered rounded-control bg-brand-surface/50 border-brand-border text-white focus:border-brand-emerald" value="2">
+     <option value="0">
+      "0: any missed day resets the streak"
+     <option value="1">
+      "1 day (default)"
+     <option value="2">
+      "2 days"
+     <option value="3">
+      "3 days"
+    <label class="label">
+     <span class="label-text-alt text-white/70">
+      "How many consecutive missed days your streak forgives before resetting."
+   <div class="flex gap-3 mt-6">
+    <button class="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors flex-1">
+     "Cancel"
+    <button class="btn-solid inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 transition disabled:opacity-50 disabled:cursor-not-allowed flex-1">
+     "Save Goal"

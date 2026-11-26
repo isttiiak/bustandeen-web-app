@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.63 - Zikr analytics page split into parts (audit P4-1, step 3) - 2026-11-27
+
+`pages/ZikrAnalytics.tsx` was 1,167 lines. It is now 367 lines, and the rest is in `components/zikr/` and `components/analytics/` (largest new file 271 lines). Nothing changes for anyone: same markup, copy, requests and the same CSV file.
+
+### What moved (verbatim, only imports, `export`, hook plumbing and prop names added)
+
+- `components/analytics/HeatmapCalendar.tsx` and `PerTypeTrendChart.tsx` (with `TYPE_COLORS`): the two charts that were already components inside the page.
+- `components/zikr/useZikrAnalyticsPage.ts`: the screen's state, its queries (analytics, the year, time of day, sessions) and the handlers. All hooks stay in one place before the page's loading and error returns, so the queries start when the page opens, as before.
+- `components/zikr/ZikrAnalyticsCards.tsx`: the breakdown, trend, per-type trend, time of day and heatmap cards. `ZikrRecordsCard.tsx` (records and the CSV export), `ZikrSessionsCard.tsx`, `ZikrGoalDialog.tsx`.
+- The page keeps the header, the streak and goal cards, the stat tiles, the loading and error screens and the derived numbers ("today" blended with the local counts).
+
+### Proof
+
+- The 68 baselines of v5.190.62 pass untouched, and six new Zikr analytics tests (eight snapshots, one of them the CSV file contents) were recorded on the OLD code first and pass on the split: the all-time breakdown, a year range and a chart explained; the journey view; pausing the streak and the settings drawer; another day in the session history with a heatmap cell hovered; a new goal filled in and saved; the CSV export. Built the way CI builds.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, section divider comments, the `export` keywords, `CHART_INFO` renamed to a `chartInfo` prop, the goal dialog's `setShowGoalModal(false)` calls that became `onClose`, and re-wrapped JSX.
+- `zikrAnalyticsScreen.test.ts` reads source text; it now reads the page and the seven new files (same checks: no emoji or em dash, no faint ink or raw colour, shared classes, both dialogs portaled, translated records). The `ZikrAnalytics.tsx` cap is removed from `fileSize.test.ts`.
+- Frontend unit tests 154 files, 2545 tests; full e2e 237 passed; lint (2 existing warnings), typecheck, format, i18n and knip clean.
+
 ## v5.190.62 - Settings page split into parts (audit P4-1, step 2) - 2026-11-27
 
 `pages/Settings.tsx` was 1,499 lines. It is now 127 lines, and the rest lives in `components/settings/` (17 files, the largest 182 lines). Nothing changes for anyone: same markup, copy, requests and toasts.
