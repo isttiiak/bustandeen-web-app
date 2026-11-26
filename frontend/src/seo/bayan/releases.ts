@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.64',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: the Sadaqah admin page tidied up',
+        fixed: [
+          'We reorganised the code behind the Sadaqah admin page into smaller pieces so it is easier to maintain. Nothing looks or works differently, and your data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: সদকা অ্যাডমিন পাতার কোড গোছানো হয়েছে',
+        fixed: [
+          'সদকা অ্যাডমিন পাতার পেছনের কোড ছোট ছোট অংশে ভাগ করা হয়েছে, যাতে রক্ষণাবেক্ষণ সহজ হয়। দেখতে বা কাজে কিছু বদলায়নি, আপনার তথ্যেও কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.63',
     date: '2026-11-27',
     text: {

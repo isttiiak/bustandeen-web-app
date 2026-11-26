@@ -47,7 +47,6 @@ const PAGE_CAPS: Record<string, number> = {
   'pages/MusafirMode.tsx': 1086,
   'pages/RamadanTracker.tsx': 1057,
   'pages/PrayerTimes.tsx': 1018,
-  'pages/AdminSadaqah.tsx': 989,
   // Not part of P4-1 (under 1,000 lines), held where they are.
   'pages/FastingTracker.tsx': 960,
   'pages/ZikrCounter.tsx': 873,

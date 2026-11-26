@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.64 - Sadaqah admin page split into parts (audit P4-1, step 4) - 2026-11-27
+
+`pages/AdminSadaqah.tsx` was 989 lines with six components inside it. It is now 58 lines (the page and its three tabs), and each part lives in `components/admin/sadaqah/` (largest 251 lines). Nothing changes for staff: same markup, copy and requests.
+
+### What moved (verbatim, only imports and `export` added)
+
+`PendingCard`, `SubmissionsTab`, `ExpensesTab`, `QuarterlyPublisher`, `DonorEmailAction` and `AnalyticsTab`, plus the small `donorLabel` helper they share. The "is this month", "current quarter" helpers moved into the one file that uses each. The admin panel is a separate bundle (`admin.html`); `npm run build` builds it too and it still builds.
+
+### Proof (different from the other pages, because the admin panel has no demo and no signed-in session in e2e)
+
+- **Commit 1 (before any move):** `adminSadaqahRender.test.ts` server-renders the page and the six inner components, as a servant and as an ansar, from seeded query data with a fixed clock (14 cases: each tab full, empty and loading, the pending card, the donor email button, the quarterly publisher), and records the HTML in `adminSadaqahRender.baselines/` (~68 KB). The six components were exported for that commit only. The harness was checked: a one-class change in the expenses tab failed exactly the three expenses cases.
+- **Commit 2 (the move):** the same 14 files match byte for byte; the temporary exports are gone.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths and one `export` on `donorLabel`.
+- `adminScreens.test.ts` (source-text checks: no emoji or em dash, faint ink, old styles, and that publish, unpublish and delete each ask first) now also reads the seven new files; the quarterly "asks first" check reads `QuarterlyPublisher.tsx`. The `AdminSadaqah.tsx` cap is removed from `fileSize.test.ts`.
+- **Not exercised by a test:** the handlers (verify, reject with the editable email, the two-step reopen and delete, saving a cost, previewing and publishing a quarter, sending a donor email). They are moved verbatim, and the "asks first" source checks still pass. A rendered baseline of them would need a signed-in admin session.
+- `.prettierignore` skips the recorded HTML. Frontend unit tests 155 files (2572 tests); lint (2 existing warnings), typecheck, format, i18n and knip clean; the full CI-style build, including the admin bundle, and the full e2e suite pass.
+
 ## v5.190.63 - Zikr analytics page split into parts (audit P4-1, step 3) - 2026-11-27
 
 `pages/ZikrAnalytics.tsx` was 1,167 lines. It is now 367 lines, and the rest is in `components/zikr/` and `components/analytics/` (largest new file 271 lines). Nothing changes for anyone: same markup, copy, requests and the same CSV file.
