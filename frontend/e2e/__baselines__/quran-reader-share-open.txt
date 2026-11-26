@@ -303,19 +303,14 @@
     <label class="flex items-center gap-2 text-white/70 text-xs font-bold cursor-pointer">
      <input class="checkbox checkbox-xs checkbox-success" type="checkbox" checked=false>
      "Include transliteration"
-   <div class="grid gap-2 mt-5" style="grid-template-columns: repeat(3, minmax(0px, 1fr))">
+   <div class="grid gap-2 mt-5" style="grid-template-columns: repeat(2, minmax(0px, 1fr))">
     <button class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-control border bg-brand-deep border-brand-border text-white/80 hover:text-white shadow-elev-1 transition-colors disabled:opacity-50">
      <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="<562:34eceb69>" stroke-linecap="round" stroke-linejoin="round">
      <span class="text-[11px] font-bold">
       "Copy"
-    <button class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-control border transition-colors disabled:opacity-50 bg-brand-deep border-brand-border text-white/80 hover:text-white shadow-elev-1">
+    <button class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-control border transition-colors disabled:opacity-50 btn-solid border-0 text-on-color bg-brand-emerald-dim shadow-elev-1">
      <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="<108:fee7c9f9>" stroke-linecap="round" stroke-linejoin="round">
      <span class="text-[11px] font-bold">
       "Download"
-    <button class="flex flex-col items-center justify-center gap-1 py-2.5 rounded-control btn-solid border-0 text-on-color bg-brand-emerald-dim shadow-elev-1 disabled:opacity-50">
-     <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-      <path d="<261:468cc947>" stroke-linecap="round" stroke-linejoin="round">
-     <span class="text-[11px] font-bold">
-      "Share"

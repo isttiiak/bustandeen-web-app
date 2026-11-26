@@ -595,6 +595,11 @@ test('quran reader: zoom, volume, the jump menu and keyboard shortcuts', async (
 });
 
 test('quran reader: bookmark an ayah and open the share dialog', async ({ page }) => {
+  // The dialog offers "Share" only where the browser can share files (a Mac's Chrome
+  // can, CI's Linux Chromium cannot), so pin it off to make the dump the same everywhere.
+  await page.context().addInitScript(() => {
+    Object.defineProperty(navigator, 'canShare', { value: () => false, configurable: true });
+  });
   await open(page, { as: 'brother' }, '/quran/read/1');
   await press(page, 'Bookmark this ayah');
   await expectBaseline(page, 'quran-reader.bookmarked');
