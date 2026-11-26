@@ -2,7 +2,12 @@ import { describe, it, expect } from 'vitest';
 import en from '../../locales/en/common.json';
 import bn from '../../locales/bn/common.json';
 import code from './TodayHighlights.tsx?raw';
-import home from '../../pages/Home.tsx?raw';
+import homePage from '../../pages/Home.tsx?raw';
+import homeHero from './HomePrayerHero.tsx?raw';
+import homeSpecialBlock from './HomeSpecialBlock.tsx?raw';
+
+// Home was split into parts (audit P4-1): the page, the arch and the special-day block.
+const home = [homePage, homeHero, homeSpecialBlock].join('\n');
 
 // Home special-day layouts (Settings → Home): SVG icons and theme tokens only,
 // new copy without em dashes in en + bn, and Home renders every layout.
@@ -31,7 +36,7 @@ describe('TodayHighlights', () => {
     expect(home).toContain('variant="strip"');
     expect(home).toContain('variant="pills"');
     // Every layout keeps the detailed block (Friday cards too) under the arch.
-    expect(home).toMatch(/\{specialBlock\}/);
+    expect(homePage).toMatch(/<HomeSpecialBlock/);
     expect(home).not.toMatch(/homeLayout !== 'full' && hasSpecialBlock/);
     expect(home).toContain('id={TODAY_SPECIAL_ID}');
   });

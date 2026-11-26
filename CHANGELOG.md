@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.68 - Home page split into parts (audit P4-1, step 8) - 2026-11-27
+
+`pages/Home.tsx` was 1,145 lines in one component. It is now 127 lines. The queries and everything derived from them moved into one hook, and the screen into eight components under `components/home/` (largest 285 lines). Nothing changes for anyone: same markup, copy, prayer window and requests.
+
+### What moved (verbatim, only imports, `export`, hook plumbing and prop names added)
+
+- `useHomeData.ts`: the queries (zikr, salat, fasting, Quran, cycle, profile), the minute clock, the prayer-widget calculation, the section and goals settings, the special-day layout and the pre-period countdown, with their two `useMemo` dependency suppressions and reasons unchanged. The page has no early return and no hook after a condition.
+- `HomeSetupCard`, `HomeCycleBanners` (the pre-period heads-up and the Rayhanah days banner, with the discreet wording), `HomePrayerHero` (the arch: forbidden time, current prayer, nafl, free time, next prayer, the countdown, or the invitation to set a place), `HomeSpecialBlock`, `HomeMusafirGlance`, `HomeGoals` (the four goal rows and their badges) and `HomeLinks` (friends, library, footer).
+- The page keeps the comfort nudge, the zone-mismatch card, the special-day strip, the quick sections and the composition.
+
+### Proof
+
+- **Commit 1 (before any move):** `homeRender.test.ts` server-renders the unmodified page for the states the demo cannot reach (the demo does not keep a started period): the Rayhanah days banner (normal and discreet), the "period may begin" notice for today, one and two days away (and discreet), four days away (no notice), the first-run setup card, no saved place and a brother. It records the HTML in `homeRender.baselines/` (250 KB). A one-character change to the three-day rule failed exactly the two-days cases.
+- **Commit 2 (the move):** the same ten files match byte for byte.
+- The 96 browser baselines of v5.190.67 pass untouched, and 18 new Home tests (18 snapshots) were recorded on the OLD code first and pass on the split: the prayer window at ten times of the day (just after sunrise and just after sunset, forbidden; Duha; ʿAṣr; the 11:37 zenith try; Maghrib; ʿIshāʾ early, close to midnight and after Islamic midnight; Tahajjud), every quick section on, a custom goals card (order, one row off, no badges), the goals card off, no saved place, Friday with the pills and the full special-day layouts, the setup card dismissed, and the Ramadan pill opening the tracker. Built the way CI builds.
+- **Not recorded:** the zone-mismatch card (only for a signed-in non-demo user with the phone on another zone) and the "Travelling?" hint (needs the location permission); both are moved blocks. The 11:37 case did not land inside the zenith window, so that forbidden time is only covered through the sunrise and sunset cases.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords, `const specialBlock = ... ? (` and `{specialBlock}` (now `<HomeSpecialBlock />`) and prettier re-wrapping.
+- `todayHighlights.test.ts` (Home renders the strip, the arch chips and the full block) now reads the page, the hero and the special block. The `Home.tsx` cap is removed from `fileSize.test.ts`; `.prettierignore` skips the recorded HTML.
+- Frontend unit tests 157 files, 2666 tests; full e2e 277 passed; lint (2 existing warnings), typecheck, format, i18n and knip clean.
+
 ## v5.190.67 - Quran reader page split into parts (audit P4-1, step 7) - 2026-11-27
 
 `pages/QuranReader.tsx` was 1,360 lines in one component with 17 `useState`, 9 `useEffect`, 14 `useCallback` and 10 refs. It is now 100 lines. The logic moved into six hooks and the screen into eight components under `components/quran/` (17 files, largest 241 lines). Nothing changes for readers: same markup, copy, saved places and the same requests. Reading counts, the daily goal and resume positions are untouched.
