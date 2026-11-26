@@ -218,6 +218,61 @@ test('zikr analytics: a shorter range', async ({ page }) => {
   await expectBaseline(page, 'zikr-analytics.7d');
 });
 
+test('zikr analytics: the all-time breakdown, a year, and a chart explained', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/zikr/analytics');
+  await press(page, 'All time');
+  await press(page, '1y');
+  await press(page, 'Zikr Trend');
+  await expectBaseline(page, 'zikr-analytics.all-1y-info');
+});
+
+test('zikr analytics: the journey view', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/zikr/analytics');
+  await press(page, 'Journey');
+  await expectBaseline(page, 'zikr-analytics.journey');
+});
+
+test('zikr analytics: pausing the streak, and the settings drawer', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/zikr/analytics');
+  await press(page, 'Pause Streak');
+  await expectBaseline(page, 'zikr-analytics.streak-paused');
+  await press(page, 'Zikr settings');
+  await expectBaseline(page, 'zikr-analytics.settings-drawer');
+});
+
+test('zikr analytics: another day in the session history, and a heatmap cell', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/zikr/analytics');
+  await declineBanner(page);
+  await page.getByLabel('Choose a day').fill('2026-10-14');
+  await page.waitForTimeout(400);
+  await page.locator('[title^="2026-10-13"]').hover();
+  await expectBaseline(page, 'zikr-analytics.day-and-heat');
+});
+
+test('zikr analytics: a new goal is saved', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/zikr/analytics');
+  await press(page, 'Edit Goal');
+  const dialog = page.getByRole('dialog');
+  await dialog.getByRole('spinbutton').fill('150');
+  await dialog.getByRole('combobox').selectOption('2');
+  await expectBaseline(page, 'zikr-analytics.goal-filled');
+  await press(page, 'Save Goal');
+  await expectBaseline(page, 'zikr-analytics.goal-saved');
+});
+
+test('zikr analytics: the CSV export has the same rows', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/zikr/analytics');
+  await declineBanner(page);
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'CSV' }).click();
+  const file = await download;
+  const { readFileSync } = await import('node:fs');
+  expectText(
+    `${file.suggestedFilename()}\n${readFileSync((await file.path())!, 'utf8')}`,
+    'zikr-analytics.csv'
+  );
+});
+
 test('salat analytics: a shorter range and a day opened', async ({ page }) => {
   await open(page, { as: 'brother' }, '/salat/analytics');
   await press(page, '7d');

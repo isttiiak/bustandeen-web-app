@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import en from '../locales/en/common.json';
 import bn from '../locales/bn/common.json';
 
-// T3.2 Zikr analytics: the page and its streak, goal, trend and time-of-day
+// T3.2 Zikr analytics: the page, its parts (components/zikr/ and components/analytics/) and its streak, goal, trend and time-of-day
 // cards use theme cards and the theme's data colours (no hard-coded rgba/hex,
 // no glow or gradient bar), draw SVG icons only, keep text readable (no ink
 // below /60), and every zikrAnalytics string is free of emoji and em dashes in
@@ -12,6 +12,13 @@ const files = import.meta.glob<string>(
   [
     './ZikrAnalytics.tsx',
     '../components/zikr/ZikrLogCountsModal.tsx',
+    '../components/zikr/ZikrAnalyticsCards.tsx',
+    '../components/zikr/ZikrGoalDialog.tsx',
+    '../components/zikr/ZikrRecordsCard.tsx',
+    '../components/zikr/ZikrSessionsCard.tsx',
+    '../components/zikr/useZikrAnalyticsPage.ts',
+    '../components/analytics/HeatmapCalendar.tsx',
+    '../components/analytics/PerTypeTrendChart.tsx',
     '../components/analytics/StreakCard.tsx',
     '../components/analytics/GoalCard.tsx',
     '../components/analytics/TrendChart.tsx',
@@ -19,6 +26,17 @@ const files = import.meta.glob<string>(
   ],
   { query: '?raw', import: 'default', eager: true }
 );
+// The page and the files P4-1 cut out of it, for checks that do not care which holds the code.
+const PAGE_FILES = [
+  './ZikrAnalytics.tsx',
+  '../components/zikr/ZikrAnalyticsCards.tsx',
+  '../components/zikr/ZikrGoalDialog.tsx',
+  '../components/zikr/ZikrRecordsCard.tsx',
+  '../components/zikr/ZikrSessionsCard.tsx',
+  '../components/zikr/useZikrAnalyticsPage.ts',
+  '../components/analytics/HeatmapCalendar.tsx',
+  '../components/analytics/PerTypeTrendChart.tsx',
+];
 const DASH_OR_EMOJI = /—|\p{Extended_Pictographic}|[✓✔→↓]/u;
 const stripComments = (code: string) => code.replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
 
@@ -43,8 +61,8 @@ describe('Zikr analytics screen', () => {
   );
 
   it('uses the shared card, tile and heading classes', () => {
-    const page = files['./ZikrAnalytics.tsx']!;
-    expect(page).toContain('className={TILE}');
+    const page = PAGE_FILES.map((p) => files[p]!).join('\n');
+    expect(files['./ZikrAnalytics.tsx']).toContain('className={TILE}');
     expect(page).toContain('className={SECTION_TITLE}');
     expect(page).toContain('${CARD} p-4 sm:p-5');
     expect(page).toContain('BTN_PRIMARY');
@@ -52,8 +70,11 @@ describe('Zikr analytics screen', () => {
   });
 
   it('both dialogs are portaled above the navbar', () => {
-    // The goal dialog lives in the page; "Log counts" is shared with Home (U4).
-    for (const p of ['./ZikrAnalytics.tsx', '../components/zikr/ZikrLogCountsModal.tsx']) {
+    // The goal dialog has its own file; "Log counts" is shared with Home (U4).
+    for (const p of [
+      '../components/zikr/ZikrGoalDialog.tsx',
+      '../components/zikr/ZikrLogCountsModal.tsx',
+    ]) {
       const code = files[p]!;
       expect(code).toMatch(/createPortal\(/);
       expect(code).toMatch(/z-\[70\]/);
@@ -78,7 +99,7 @@ describe('Zikr analytics screen', () => {
   });
 
   it('records are translated, not hard-coded English', () => {
-    const page = files['./ZikrAnalytics.tsx']!;
+    const page = PAGE_FILES.map((p) => files[p]!).join('\n');
     expect(page).not.toMatch(/'(Sunday|Monday|Friday)'/);
     expect(page).not.toContain('active days`');
   });

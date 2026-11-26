@@ -42,7 +42,6 @@ const PAGE_CAPS: Record<string, number> = {
   'pages/RayhanahCycle.tsx': 1628,
   'pages/SalatAnalytics.tsx': 1416,
   'pages/QuranReader.tsx': 1360,
-  'pages/ZikrAnalytics.tsx': 1167,
   'pages/CycleAnalytics.tsx': 1151,
   'pages/Home.tsx': 1145,
   'pages/MusafirMode.tsx': 1086,
