@@ -1,0 +1,14 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": [
+    "src/main.tsx",
+    "src/admin-entry.tsx",
+    "src/static-entry.ts",
+    "src/sw.ts",
+    "src/seo/entry-server.tsx",
+    "scripts/*.mjs",
+    "e2e/*.ts"
+  ],
+  "project": ["src/**/*.{ts,tsx}", "scripts/**/*.mjs", "e2e/**/*.ts"],
+  "ignoreDependencies": ["baseline-browser-mapping"]
+}

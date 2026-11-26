@@ -1,0 +1,6 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["src/index.ts", "src/scripts/*.ts", "src/migrations/index.ts", "tests/**/*.js"],
+  "project": ["src/**/*.ts", "tests/**/*.js"],
+  "ignoreDependencies": ["@jest/globals", "mongodb-memory-server-core"]
+}
