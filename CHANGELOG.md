@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.66 - Rayhanah analytics page split into parts (audit P4-1, step 6) - 2026-11-27
+
+`pages/CycleAnalytics.tsx` was 1,151 lines in one component. It is now 196 lines. The statistics moved into a pure function and the cards into `components/cycle/` (nine files, largest 214 lines). Nothing changes for anyone: same markup, copy, requests and the same CSV file. The numbers are still computed on the device; nothing here goes to an AI or to friends.
+
+### What moved (verbatim, only imports, `export`, prop names and the hook plumbing added)
+
+- `utils/cycleStats.ts`: `computeCycleStats(summary, today)`, the 156-line statistics body of the old `useMemo` (gaps, lengths, regularity, expected and fertile windows, the pre-period pattern, trend, the irregularity alert, excused days), with `shiftStr`, `daysBetween` and `SYMPTOM_LABEL`. The page hook calls it inside the same `useMemo` with the same dependencies (`[summary, today]`).
+- `components/cycle/useCycleAnalyticsPage.ts` (queries, dialog state, `stats`), `cycleAnalyticsParts.ts` (the shared styles and date formatters), and the cards: `CycleAnalyticsOverview` (tiles, insight tiles, the irregularity alert), `CycleBmiCard`, `CycleAnalyticsPredictions` (expected and fertile windows, pre-period pattern), `CycleAnalyticsPatterns` (length history, body patterns, fasting makeup), `CycleHistoryCard` (history, edit, delete, "log a past period", the CSV export), `CyclePastPeriodDialog`.
+- The page keeps the "for sisters only" screen, the header, the loading card and the modals. Every hook still runs before the page's one early return.
+
+### Proof
+
+- **Commit 1 (before any move):** `cycleAnalyticsRender.test.ts` server-renders the unmodified page from eight fixtures that reach every branch of its statistics (regular cycles with BMI and fasting makeup, irregular with the alert and a "longer" trend and a high BMI, nothing yet, one ongoing cycle with an underweight BMI, a nifas log with pregnancy, not for brothers, signed out, loading) and records the HTML in `cycleAnalyticsRender.baselines/` (156 KB). A one-line change to the trend rule failed exactly the irregular case.
+- **Commit 2 (the move):** the same eight files match byte for byte.
+- The 79 browser baselines of v5.190.65 pass untouched, and five new Cycle analytics tests (six snapshots, one of them the CSV file) were recorded on the OLD code first and pass on the split: editing an entry, deleting one (the confirmation), a past nifas filled in and added, the settings drawer, the CSV export. Built the way CI builds.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords, the memo wrapper (now a call to `computeCycleStats`), the removed `(() => {` wrapper around the BMI card, and prettier re-wrapping.
+- `rayhanahScreen.test.ts` (no emoji or em dash, **no file imports anything that talks to an AI**) now reads the nine new files too (17 in all). `cyclePrivacy.test.ts` now covers `utils/cycle*.ts`. The `CycleAnalytics.tsx` cap is removed from `fileSize.test.ts`; `.prettierignore` skips the recorded HTML.
+- Frontend unit tests 156 files, 2626 tests; full e2e 247 passed; lint (2 existing warnings), typecheck, format, i18n and knip clean.
+
 ## v5.190.65 - Salat analytics page split into parts (audit P4-1, step 5) - 2026-11-27
 
 `pages/SalatAnalytics.tsx` was 1,416 lines in one component. It is now 206 lines, and the rest lives in `components/salat/` (eight files, largest 315 lines). Nothing changes for anyone: same markup, copy and requests. This page only reads data.

@@ -1,0 +1,10 @@
+rayhanah-cycle-export-2026-10-15.csv
+Type,Start Date,End Date,Duration (days),Flow,Symptoms,Moods
+"hayd","2026-09-14","2026-09-15","7","medium","cramps","low"
+"hayd","2026-09-13","2026-09-15","7","heavy","cramps; fatigue","low; irritable"
+"hayd","2026-09-12","2026-09-15","7","medium","headache","tired"
+"hayd","2026-09-11","2026-09-15","7","light","","calm"
+"hayd","2026-09-10","2026-09-15","7","light","","calm"
+"hayd","2026-08-12","2026-08-18","7","","",""
+"hayd","2026-07-15","2026-07-21","7","","",""
+"hayd","2026-06-17","2026-06-22","6","","",""

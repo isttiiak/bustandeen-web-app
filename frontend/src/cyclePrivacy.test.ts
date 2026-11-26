@@ -16,7 +16,7 @@ const walk = (dir: string): string[] =>
   );
 
 const CYCLE_FILE =
-  /(^pages\/(Rayhanah|Cycle)[A-Za-z]*\.tsx$)|(^components\/(cycle|rayhanah)\/)|(^components\/(Cycle|Rayhanah)[A-Za-z]*\.tsx$)/;
+  /(^pages\/(Rayhanah|Cycle)[A-Za-z]*\.tsx$)|(^components\/(cycle|rayhanah)\/)|(^components\/(Cycle|Rayhanah)[A-Za-z]*\.tsx$)|(^utils\/cycle[A-Za-z]*\.ts$)/;
 
 /** Modules a cycle file must never import at all. */
 const AI_MODULE =
@@ -46,6 +46,8 @@ describe('cycle privacy', () => {
   it('finds the cycle files', () => {
     expect(cycleFiles).toContain('pages/RayhanahCycle.tsx');
     expect(cycleFiles).toContain('pages/CycleAnalytics.tsx');
+    expect(cycleFiles).toContain('utils/cycleStats.ts');
+    expect(cycleFiles).toContain('components/cycle/useCycleAnalyticsPage.ts');
   });
 
   it('no cycle file imports an AI hook', () => {

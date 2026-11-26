@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.66',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: the Rayhanah analytics page tidied up',
+        fixed: [
+          'We reorganised the code behind the Rayhanah analytics page into smaller pieces so it is easier to maintain. Nothing looks or works differently, your data stays private on your device, and it is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: রায়হানা বিশ্লেষণ পাতার কোড গোছানো হয়েছে',
+        fixed: [
+          'রায়হানা বিশ্লেষণ পাতার পেছনের কোড ছোট ছোট অংশে ভাগ করা হয়েছে, যাতে রক্ষণাবেক্ষণ সহজ হয়। দেখতে বা কাজে কিছু বদলায়নি, আপনার তথ্য আগের মতোই আপনার ডিভাইসে গোপন থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.65',
     date: '2026-11-27',
     text: {

@@ -166,6 +166,48 @@ test('cycle: analytics, logging a past period', async ({ page }) => {
   await expectBaseline(page, 'cycle-analytics.past-dialog');
 });
 
+test('cycle analytics: editing a history entry', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/cycle/analytics');
+  await press(page, 'Edit entry', 0);
+  await expectBaseline(page, 'cycle-analytics.edit-dialog');
+});
+
+test('cycle analytics: deleting a history entry asks first', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/cycle/analytics');
+  await press(page, 'Delete entry', 0);
+  await expectBaseline(page, 'cycle-analytics.delete-confirm');
+});
+
+test('cycle analytics: a past nifas filled in and added', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/cycle/analytics');
+  await press(page, 'Log a past period');
+  await page.locator('#past-start').fill('2026-06-01');
+  await page.locator('#past-end').fill('2026-06-20');
+  await page.getByRole('button', { name: 'Nifās', exact: true }).click();
+  await expectBaseline(page, 'cycle-analytics.past-filled');
+  await press(page, 'Add to my history');
+  await expectBaseline(page, 'cycle-analytics.past-added');
+});
+
+test('cycle analytics: the settings drawer', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/cycle/analytics');
+  await press(page, 'Settings');
+  await expectBaseline(page, 'cycle-analytics.settings-drawer');
+});
+
+test('cycle analytics: the CSV export has the same rows', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/cycle/analytics');
+  await declineBanner(page);
+  const download = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Export CSV' }).click();
+  const file = await download;
+  const { readFileSync } = await import('node:fs');
+  expectText(
+    `${file.suggestedFilename()}\n${readFileSync((await file.path())!, 'utf8')}`,
+    'cycle-analytics.csv'
+  );
+});
+
 // ---- Ramadan -------------------------------------------------------------
 
 test('ramadan: a fast and a prayer, offline, write the same requests', async ({
