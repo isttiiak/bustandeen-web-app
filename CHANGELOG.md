@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.69 - A test that keeps the saved place on the device - 2026-11-27
+
+No app change. CodeQL flags the saved prayer place (latitude and longitude) being kept in `localStorage` as "clear text storage of sensitive data" (open alerts 12 and 13 in `placeClock.ts`, and about a dozen like them elsewhere). That storage is how the app works: the place lives in the browser so prayer times are worked out on the device, and encrypting it in the same page would protect nothing. What matters is that it never leaves. `locationStaysOnDevice.test.ts` now checks that, so the build fails if it ever could.
+
+### What it checks (15 tests)
+
+1. **The server has no place for coordinates:** no file under `backend/src` (models, validation schemas, routes, services) names `latitude`, `longitude`, `lat`, `lng` or `lon`.
+2. **Files that read the saved place do not call the network.** Any frontend file that reads `bustandeen_location` or a latitude, longitude or `lat` and also uses `api.*`, `axios`, `fetch(`, `sendBeacon`, `useQuery(`, `useMutation(` and the like must be on a short allow-list with its reason. Today only `utils/geocode.ts` is. A second check keeps the Salat tracker's write calls free of coordinates (its `location` is the prayer venue: home, mosque, jamaat).
+3. **Synced settings never carry the place:** neither the browser's `SYNCED_KEYS` nor the server's `SYNCED_PREF_KEYS` names a location, coordinate, zone or mismatch key (the on/off switch for the place-name lookup is the one allowed exception).
+4. **The one request that carries coordinates is narrow:** the place-name lookup goes only to `nominatim.openstreetmap.org`, rounds both coordinates to two decimals (about 1 km) before sending, runs only when the person chose OpenStreetMap, and the default is the index inside the app.
+5. **Analytics and the data backup never read the saved place** (`analytics.ts`, `analyticsConsent.ts`, `useBackup.ts`, `backupExcel.ts`).
+
+### It can fail
+
+Five deliberate leaks were introduced one at a time and each was caught by the right check: a `latitude` field in a backend schema, a `fetch` added to `placeClock.ts`, the place added to the synced settings, the OpenStreetMap lookup sending unrounded coordinates, and analytics reading the place. Each file was restored.
+
+### What it cannot prove
+
+It cannot see a value derived from the place being passed into a hook or request by name. Review, the Privacy page and this test together cover that; CodeQL's dismissed alerts (to follow once this is merged) point here.
+
 ## v5.190.67 - Quran reader page split into parts (audit P4-1, step 7) - 2026-11-27
 
 `pages/QuranReader.tsx` was 1,360 lines in one component with 17 `useState`, 9 `useEffect`, 14 `useCallback` and 10 refs. It is now 100 lines. The logic moved into six hooks and the screen into eight components under `components/quran/` (17 files, largest 241 lines). Nothing changes for readers: same markup, copy, saved places and the same requests. Reading counts, the daily goal and resume positions are untouched.
