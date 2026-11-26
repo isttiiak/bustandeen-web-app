@@ -1,0 +1,576 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "মূল অংশে যান"
+   <div aria-label="ডেমো মোড" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "ডেমো মোড"
+    <span class="text-white/50 hidden sm:inline">
+     "পরিবর্তন সংরক্ষিত হবে না"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "সংরক্ষণ করতে সাইন আপ →"
+   <nav aria-label="প্রধান" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="ফিরুন: হোম" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "হোম"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="লাইট মোডে যান" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="লাইট মোডে যান" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="ভাষা পরিবর্তন" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="ভাষা পরিবর্তন">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="অ্যাকাউন্ট মেনু খুলুন" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "K"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+     <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl" style="transform: none">
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl" style="transform: none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl" style="transform: rotate(360deg)">
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px">
+     <div class="relative z-10">
+      <h1 class="sr-only">
+       "রায়হানাহ বিশ্লেষণ"
+      <div class="px-4 pt-3">
+       <div class="max-w-2xl mx-auto flex items-center gap-2">
+        <div class="flex-1 min-w-0">
+         <div class="flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10 max-w-xs">
+          <a class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/cycle">
+           "চক্র"
+          <span aria-current="page" class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">
+           "বিশ্লেষণ"
+        <button aria-label="সেটিংস" class="shrink-0 p-2 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/70 hover:text-brand-pink hover:border-brand-pink/40 transition-colors" title="সেটিংস">
+         <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<999:41ef0701>" stroke-linecap="round" stroke-linejoin="round">
+          <path d="<35:449f351c>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="max-w-2xl mx-auto px-4 pt-4 pb-16 space-y-5">
+       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-pink">
+          "৪"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "ট্র্যাক করা চক্র"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-pink">
+          "২৮"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "গড় চক্র দিন"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-pink">
+          "৭"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "গড় ঋতুস্রাব দিন"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="text-sm font-bold mt-1.5 text-brand-emerald">
+          "অত্যন্ত নিয়মিত"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1 mt-1.5">
+          "নিয়মিততা"
+          <span class="normal-case">
+           "(±"
+           "০"
+           "d)"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 space-y-4">
+        <div class="flex items-center justify-between">
+         <div>
+          <p class="text-white/70 text-xs font-bold uppercase tracking-wide flex items-center gap-1.5">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<506:b817b43f>" stroke-linecap="round" stroke-linejoin="round">
+           "বিএমআই"
+          <p class="font-display text-4xl font-bold text-brand-emerald">
+           "21.5"
+         <div class="text-right">
+          <p class="text-lg font-bold text-brand-emerald">
+           "স্বাভাবিক ওজন"
+          <p class="text-white/70 text-xs mt-0.5 leading-relaxed">
+           "স্বাস্থ্যকর ওজনের সীমার মধ্যে।"
+        <div class="space-y-1.5">
+         <div class="relative h-2.5">
+          <div class="absolute inset-0 flex rounded-full overflow-hidden">
+           <div class="bg-brand-info/60" style="width: 24.3%">
+           <div class="bg-brand-emerald/70" style="width: 18.6%">
+           <div class="bg-brand-gold/70" style="width: 14.3%">
+           <div class="bg-red-400/60 flex-1">
+          <div class="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-white border-2 border-brand-deep shadow-elev-1" style="left: calc(32.8571% - 7px)">
+         <div class="flex justify-between text-[10px] text-white/70 font-bold">
+          <span>
+           "10"
+          <span>
+           "18.5"
+          <span>
+           "25"
+          <span>
+           "30"
+          <span>
+           "45"
+        <div class="grid grid-cols-3 gap-3 pt-1">
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="text-white font-bold text-sm">
+           "160"
+           "cm"
+          <p class="text-white/70 text-[10px] mt-0.5">
+           "5'3""
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "উচ্চতা"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="text-white font-bold text-sm">
+           "55"
+           "kg"
+          <p class="text-white/70 text-[10px] mt-0.5">
+           "121.3"
+           "lbs"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "ওজন"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="font-bold text-sm text-brand-emerald">
+           "21.5"
+          <p class="text-white/70 text-[10px] mt-0.5">
+           "১৮.৫–২৪.৯ = স্বাভাবিক"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "BMI"
+        <p class="text-white/70 text-[10px] leading-relaxed">
+         "বিএমআই একটি সাধারণ ধারণা মাত্র, চিকিৎসা নির্ণয় নয়। আপনার ডাক্তার আপনার পুরো অবস্থা ভালো জানেন।"
+       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-info">
+          "২৮"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "সংক্ষিপ্ততম চক্র"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-info">
+          "২৮"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "দীর্ঘতম চক্র"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-info">
+          "০"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "পরিসীমা (দিন)"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <circle cx="12.00" cy="7.80" r="3">
+          <circle cx="15.99" cy="10.70" r="3">
+          <circle cx="14.47" cy="15.40" r="3">
+          <circle cx="9.53" cy="15.40" r="3">
+          <circle cx="8.01" cy="10.70" r="3">
+          <circle cx="12" cy="12" r="1.6">
+         "প্রত্যাশিত সময়সীমা"
+        <p class="text-white/70 text-xs mt-0.5 leading-relaxed">
+         "গড় চক্র ± পরিবর্তনশীলতা: এটি একটি সময়সীমা, প্রতিশ্রুতি নয়। আপনার শরীরই সত্য নির্ধারণ করে।"
+        <div class="mt-3 space-y-2">
+         <div class="flex items-center gap-3 rounded-control bg-brand-pink/10 border border-brand-pink/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <div class="flex-1">
+           <p class="text-brand-pink text-sm font-bold">
+            "৬ অক্টো"
+            "–"
+            "৮ অক্টো"
+           <p class="text-white/70 text-[10px]">
+            "সম্ভবত ৭ অক্টো, ২০২৬-এর আশেপাশে"
+         <div class="flex items-center gap-3 rounded-control bg-brand-pink/10 border border-brand-pink/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <div class="flex-1">
+           <p class="text-brand-pink text-sm font-bold">
+            "৩ নভে"
+            "–"
+            "৫ নভে"
+           <p class="text-white/70 text-[10px]">
+            "সম্ভবত ৪ নভে, ২০২৬-এর আশেপাশে"
+         <div class="flex items-center gap-3 rounded-control bg-brand-pink/10 border border-brand-pink/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <div class="flex-1">
+           <p class="text-brand-pink text-sm font-bold">
+            "১ ডিসে"
+            "–"
+            "৩ ডিসে"
+           <p class="text-white/70 text-[10px]">
+            "সম্ভবত ২ ডিসে, ২০২৬-এর আশেপাশে"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<37:61ad81e8>">
+          <path d="<11:81e625cc>">
+         "গর্ভধারণের উপযুক্ত সময়"
+        <p class="text-white/70 text-xs mt-0.5 leading-relaxed">
+         "পরবর্তী মাসিকের আনুমানিক ১৪ দিন আগে ডিম্বস্ফোটন অনুমান করা হয়। উর্বর সময়সীমা এর চারপাশে প্রায় ৫ দিন বিস্তৃত।"
+        <div class="mt-3 space-y-2">
+         <div class="flex items-center gap-3 rounded-control bg-brand-info/10 border border-brand-info/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<37:61ad81e8>">
+           <path d="<11:81e625cc>">
+          <div class="flex-1">
+           <p class="text-brand-info text-sm font-bold">
+            "২১ সেপ"
+            "–"
+            "২৫ সেপ"
+           <p class="text-white/70 text-[10px]">
+            "ডিম্বস্ফোটন আনুমানিক ২৩ সেপ, ২০২৬-এর আশেপাশে"
+         <div class="flex items-center gap-3 rounded-control bg-brand-info/10 border border-brand-info/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<37:61ad81e8>">
+           <path d="<11:81e625cc>">
+          <div class="flex-1">
+           <p class="text-brand-info text-sm font-bold">
+            "১৯ অক্টো"
+            "–"
+            "২৩ অক্টো"
+           <p class="text-white/70 text-[10px]">
+            "ডিম্বস্ফোটন আনুমানিক ২১ অক্টো, ২০২৬-এর আশেপাশে"
+         <div class="flex items-center gap-3 rounded-control bg-brand-info/10 border border-brand-info/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<37:61ad81e8>">
+           <path d="<11:81e625cc>">
+          <div class="flex-1">
+           <p class="text-brand-info text-sm font-bold">
+            "১৬ নভে"
+            "–"
+            "২০ নভে"
+           <p class="text-white/70 text-[10px]">
+            "ডিম্বস্ফোটন আনুমানিক ১৮ নভে, ২০২৬-এর আশেপাশে"
+        <p class="text-white/70 text-[11px] mt-3 leading-relaxed">
+         "এগুলো আপনার চক্রের ইতিহাসের উপর ভিত্তি করে অনুমান, চিকিৎসা পরামর্শ নয়। প্রকৃত ডিম্বস্ফোটনের দিন ভিন্ন হতে পারে। সুনির্দিষ্ট ট্র্যাকিংয়ের জন্য একজন স্বাস্থ্যসেবা পেশাদারের সাথে পরামর্শ করুন।"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2 mb-3">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-pink" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
+         "চক্রের দৈর্ঘ্যের ইতিহাস"
+        <div class="space-y-1.5">
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "১৭ জুন"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 100%">
+          <span class="text-brand-pink font-bold w-8 text-right tabular-nums">
+           "২৮"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "১৫ জুল"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 100%">
+          <span class="text-brand-pink font-bold w-8 text-right tabular-nums">
+           "২৮"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "১২ আগ"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 100%">
+          <span class="text-brand-pink font-bold w-8 text-right tabular-nums">
+           "২৮"
+           "d"
+        <h3 class="text-white/80 font-bold text-xs uppercase tracking-wide mt-4 mb-2">
+         "মাসিকের দৈর্ঘ্য"
+        <div class="space-y-1.5">
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "১৭ জুন"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-warm/70" style="width: 85.7143%">
+          <span class="text-brand-warm font-bold w-8 text-right tabular-nums">
+           "৬"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "১৫ জুল"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-warm/70" style="width: 100%">
+          <span class="text-brand-warm font-bold w-8 text-right tabular-nums">
+           "৭"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "১২ আগ"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-warm/70" style="width: 100%">
+          <span class="text-brand-warm font-bold w-8 text-right tabular-nums">
+           "৭"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "৯ সেপ"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-warm/70" style="width: 100%">
+          <span class="text-brand-warm font-bold w-8 text-right tabular-nums">
+           "৭"
+           "d"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 space-y-4">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-pink" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<157:3e248d37>" stroke-linecap="round" stroke-linejoin="round">
+         "আপনার শরীরের ধরন"
+         <span class="text-white/70 text-[11px] font-normal font-body">
+          "(গত ৬০ দিন)"
+        <div class="space-y-1.5">
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/80 w-28">
+           "পেট ব্যথা"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 24%">
+          <span class="text-white/70 w-14 text-right whitespace-nowrap">
+           "২ দিন"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/80 w-28">
+           "ক্লান্তি"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 12%">
+          <span class="text-white/70 w-14 text-right whitespace-nowrap">
+           "১ দিন"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/80 w-28">
+           "মাথাব্যথা"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 12%">
+          <span class="text-white/70 w-14 text-right whitespace-nowrap">
+           "১ দিন"
+        <div>
+         <p class="text-white/70 text-[11px] font-bold uppercase tracking-wide mb-1.5">
+          "প্রবাহের মিশ্রণ"
+         <div class="flex h-3 rounded-full overflow-hidden">
+          <div class="bg-brand-pink/60" style="width: 40%">
+          <div class="bg-brand-pink/70" style="width: 40%">
+          <div class="bg-brand-pink-dim/80" style="width: 20%">
+         <p class="text-white/70 text-[10px] mt-1">
+          "২ হালকা · ২ মাঝারি · ১ ভারী"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<48:f4c03581>">
+         "রোজার কাযা"
+        <p class="text-white/70 text-xs mt-0.5 leading-relaxed">
+         "চক্রের সময় বাদ পড়া রামাদানের রোজা পরে কাযা করা হয়"
+         "("
+         <a class="underline" href="https://sunnah.com/muslim:335" rel="noreferrer" target="_blank">
+          "মুসলিম ৩৩৫"
+         ")."
+        <div class="mt-3 grid grid-cols-3 gap-3">
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="font-display text-2xl font-bold text-brand-gold">
+           "৩"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "বাকি"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="font-display text-2xl font-bold text-brand-emerald">
+           "৭"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "কাযা করা হয়েছে"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="font-display text-2xl font-bold text-white">
+           "০"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "বাকি"
+        <button class="mt-3 w-full inline-flex items-center justify-center gap-0.5 text-brand-gold text-xs font-bold hover:underline">
+         "রোজা ট্র্যাকার খুলুন"
+         <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-pink" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<555:678fdcb9>" stroke-linecap="round" stroke-linejoin="round">
+          "সম্পূর্ণ ইতিহাস"
+         <div class="flex items-center gap-2">
+          <button class="inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold border border-brand-border bg-brand-surface/50 text-white/85 hover:border-brand-info/50 transition-colors">
+           <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<108:fee7c9f9>" stroke-linecap="round" stroke-linejoin="round">
+           "CSV এক্সপোর্ট করুন"
+          <button class="inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold border border-brand-pink/50 bg-brand-pink/10 text-brand-pink hover:bg-brand-pink/20 transition-colors">
+           <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<22:6e48e65f>" stroke-linecap="round" stroke-linejoin="round">
+           "অতীতের মাসিক লগ করুন"
+        <div class="space-y-1.5">
+         <div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <span class="text-white/85 flex-1">
+           "৯ সেপ, ২০২৬"
+           "–"
+           "১৫ সেপ, ২০২৬"
+           <span class="text-white/70">
+            "·"
+            "৭"
+            "d"
+          <button aria-label="এন্ট্রি সম্পাদনা করুন" class="p-1 text-white/70 hover:text-brand-pink">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<256:398848a9>" stroke-linecap="round" stroke-linejoin="round">
+          <button aria-label="এন্ট্রি মুছুন" class="p-1 text-white/70 hover:text-red-300">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<413:79e5785c>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <span class="text-white/85 flex-1">
+           "১২ আগ, ২০২৬"
+           "–"
+           "১৮ আগ, ২০২৬"
+           <span class="text-white/70">
+            "·"
+            "৭"
+            "d"
+          <button aria-label="এন্ট্রি সম্পাদনা করুন" class="p-1 text-white/70 hover:text-brand-pink">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<256:398848a9>" stroke-linecap="round" stroke-linejoin="round">
+          <button aria-label="এন্ট্রি মুছুন" class="p-1 text-white/70 hover:text-red-300">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<413:79e5785c>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <span class="text-white/85 flex-1">
+           "১৫ জুল, ২০২৬"
+           "–"
+           "২১ জুল, ২০২৬"
+           <span class="text-white/70">
+            "·"
+            "৭"
+            "d"
+          <button aria-label="এন্ট্রি সম্পাদনা করুন" class="p-1 text-white/70 hover:text-brand-pink">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<256:398848a9>" stroke-linecap="round" stroke-linejoin="round">
+          <button aria-label="এন্ট্রি মুছুন" class="p-1 text-white/70 hover:text-red-300">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<413:79e5785c>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <span class="text-white/85 flex-1">
+           "১৭ জুন, ২০২৬"
+           "–"
+           "২২ জুন, ২০২৬"
+           <span class="text-white/70">
+            "·"
+            "৬"
+            "d"
+          <button aria-label="এন্ট্রি সম্পাদনা করুন" class="p-1 text-white/70 hover:text-brand-pink">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<256:398848a9>" stroke-linecap="round" stroke-linejoin="round">
+          <button aria-label="এন্ট্রি মুছুন" class="p-1 text-white/70 hover:text-red-300">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<413:79e5785c>" stroke-linecap="round" stroke-linejoin="round">
+        <p class="text-white/70 text-[11px] mt-3 leading-relaxed">
+         "শুধু অনুমান। এগুলো আপনাকে প্রস্তুত হতে সাহায্য করে, কখনো আপনাকে সংজ্ঞায়িত করে না। রক্তক্ষরণের ধরন নিয়ে দুশ্চিন্তা হলে ডাক্তারের সাথে কথা বলুন; অস্বাভাবিক রক্তক্ষরণের ফিকহের জন্য চক্র পৃষ্ঠায় ইস্তিহাযার নোট দেখুন।"
+   <footer class="bg-brand-deep text-white border-t border-brand-border mt-auto">
+    <div class="footer footer-center p-6 sm:p-8">
+     <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center gap-2 text-sm sm:text-base">
+       <span>
+        "ভালোবাসায় তৈরি"
+       <svg aria-hidden="true" class="w-4 h-4 text-red-300" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<384:b0396863>">
+       <span>
+        "উম্মাহর জন্য"
+      <nav aria-label="ফুটার" class="flex flex-wrap justify-center items-center gap-x-3 gap-y-1.5 text-xs">
+       <a class="inline-flex items-center text-white/60 hover:text-brand-emerald underline underline-offset-2 transition-colors" data-discover="true" href="/feedback">
+        "মতামত ও যোগাযোগ"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-brand-gold underline underline-offset-2 transition-colors" data-discover="true" href="/about">
+        "সম্পর্কে"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/privacy">
+        "গোপনীয়তা"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/terms">
+        "শর্তাবলি"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://bayan.bustandeen.com/bn/home">
+        "সাহায্য ও আপডেট"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://status.bustandeen.com" rel="noopener noreferrer" target="_blank">
+        "স্ট্যাটাস"
+      <p class="text-xs sm:text-sm text-white/70">
+       "Bustandeen"
+      <div class="flex gap-4 text-xs opacity-70">
+       <span>
+        "অবাণিজ্যিক"
+       <span>
+        "•"
+       <span>
+        "ফ্রি · বিজ্ঞাপনমুক্ত · ওপেন-সোর্স"
+       <span>
+        "•"
+       <span>
+        "আপনার ডেটা আপনার"
+      <p class="text-[10px] text-white/60 tabular-nums">
+       "v"
+       "<version>"

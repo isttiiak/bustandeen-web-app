@@ -19,6 +19,9 @@ export default defineConfig({
   workers: 2,
   reporter: isCI ? [['github'], ['list']] : 'list',
   timeout: 30_000,
+  // Characterization baselines (e2e/characterize.ts) are plain text of the DOM,
+  // so one file serves every OS; the default would add -chromium-darwin etc.
+  snapshotPathTemplate: '{testDir}/__baselines__/{arg}{ext}',
   // Generous for a cold production build under parallel load.
   expect: { timeout: 10_000 },
   use: {

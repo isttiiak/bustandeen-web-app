@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.60',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Behind the scenes: preparing to tidy the biggest pages',
+        fixed: [
+          'We added automatic checks that photograph every main screen before we reorganise the code behind them, so we can prove nothing changes for you. Nothing looks or works differently, and your data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: বড় পাতাগুলো গোছানোর প্রস্তুতি',
+        fixed: [
+          'প্রধান পাতাগুলোর পেছনের কোড নতুন করে সাজানোর আগে আমরা প্রতিটি পাতার ছবি তুলে রাখার স্বয়ংক্রিয় যাচাই যোগ করেছি, যাতে আপনার জন্য কিছুই বদলায়নি তা প্রমাণ করা যায়। দেখতে বা কাজে কিছু বদলায়নি, আপনার তথ্যেও কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.59',
     date: '2026-11-26',
     text: {

@@ -1,0 +1,741 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Home" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "Home"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "A"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+     <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl" style="transform: none">
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl" style="transform: none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl" style="transform: rotate(360deg)">
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px">
+     <div class="relative z-10">
+      <h1 class="sr-only">
+       "Ramadan"
+      <div class="max-w-2xl mx-auto px-4 pt-3">
+       <div class="flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10 max-w-xs">
+        <span aria-current="page" class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">
+         "Tracker"
+        <a class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/ramadan/analytics">
+         "Analytics"
+      <div class="max-w-2xl mx-auto px-4 pt-4 pb-16 space-y-5">
+       <section class="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-10 pb-5 sm:px-6 text-center space-y-4" style="opacity: 1; transform: none">
+        <div>
+         <p class="text-brand-gold text-xs font-bold uppercase tracking-widest">
+          "Ramadan 1448"
+          "AH"
+         <h2 class="font-display text-4xl font-bold text-white mt-1">
+          "Day 13"
+          <span class="text-white/70 text-lg font-semibold">
+           "of 29"
+        <div class="mx-auto inline-flex items-center gap-2.5 pl-3 pr-4 py-2 rounded-full border shadow-elev-1 bg-brand-deep border-brand-gold/50" title="Iftar at 05:59 PM">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<62:a39a7253>">
+         <span class="text-left leading-tight">
+          <span class="block text-[10px] font-bold uppercase tracking-wider text-white/70">
+           "Iftar in"
+          <span class="block text-white font-bold text-base tabular-nums">
+           "1:59:00"
+        <div class="text-left">
+         <div aria-valuemax="100" aria-valuemin="0" aria-valuenow="0" class="h-2.5 rounded-full bg-shade/30 overflow-hidden" role="progressbar">
+          <div class="h-full rounded-full bg-brand-gold" style="width: 0%">
+         <p class="text-white/75 text-xs mt-1.5">
+          "0 fasted · 0 tarawih nights"
+        <div class="grid grid-cols-2 gap-2.5">
+         <div class="rounded-control bg-shade/20 border border-brand-border p-3">
+          <p class="flex items-center justify-center gap-1.5 text-white/75 text-[10px] font-bold uppercase tracking-wide">
+           <svg aria-hidden="true" class="w-3.5 h-3.5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <path d="<53:0688da6a>">
+           "Suhoor ends"
+          <p class="text-white font-bold text-xl tabular-nums mt-0.5">
+           "05:12 AM"
+          <p class="text-white/70 text-[11px] leading-snug mt-1">
+           ""Take suḥūr, for in suḥūr there is a blessing.""
+           <a class="text-brand-gold underline underline-offset-2" href="https://sunnah.com/bukhari:1923" rel="noreferrer" target="_blank">
+            "Bukhārī 1923"
+         <div class="rounded-control bg-shade/20 border border-brand-border p-3">
+          <p class="flex items-center justify-center gap-1.5 text-white/75 text-[10px] font-bold uppercase tracking-wide">
+           <svg aria-hidden="true" class="w-3.5 h-3.5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <path d="<62:a39a7253>">
+           "Iftar (Maghrib)"
+          <p class="text-white font-bold text-xl tabular-nums mt-0.5">
+           "05:59 PM"
+          <p class="text-white/70 text-[11px] leading-snug mt-1">
+           ""The people will remain upon good as long as they hasten the breaking of the fast.""
+           <a class="text-brand-gold underline underline-offset-2" href="https://sunnah.com/bukhari:1957" rel="noreferrer" target="_blank">
+            "Bukhārī 1957"
+        <button class="btn-solid inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 transition disabled:opacity-50 disabled:cursor-not-allowed w-full h-12 text-base">
+         <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+         "I fasted today"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2 mb-3">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<48:d9d3fbc7>" stroke-linecap="round" stroke-linejoin="round">
+         "Today's worship"
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+         <button class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors">
+          <p class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/70">
+           <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <path d="<105:cc4257f9>">
+           <span class="truncate">
+            "Fard salat"
+          <p class="font-bold text-2xl leading-tight mt-1 tabular-nums text-brand-emerald">
+           "3"
+           <span class="text-white/60 text-sm font-bold">
+            "/5"
+          <p class="text-white/65 text-[11px] mt-0.5 flex items-center gap-1">
+           <span class="truncate">
+            "Tap to log"
+           <svg aria-hidden="true" class="w-3 h-3 ml-auto shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
+         <button class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors">
+          <p class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/70">
+           <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <path d="<48:f4c03581>">
+           <span class="truncate">
+            "Nafl rak'ahs"
+          <p class="font-bold text-2xl leading-tight mt-1 tabular-nums text-brand-info">
+           "8"
+           <span class="text-white/60 text-sm font-bold">
+            "rak'ah"
+          <p class="text-white/65 text-[11px] mt-0.5 flex items-center gap-1">
+           <span class="truncate">
+            "sunnah · nafl · tahajjud"
+           <svg aria-hidden="true" class="w-3 h-3 ml-auto shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
+         <button class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors">
+          <p class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/70">
+           <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 text-brand-info" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="truncate">
+            "Quran today"
+          <p class="font-bold text-2xl leading-tight mt-1 tabular-nums text-brand-info">
+           "7"
+           <span class="text-white/60 text-sm font-bold">
+            "/10"
+          <p class="text-white/65 text-[11px] mt-0.5 flex items-center gap-1">
+           <span class="truncate">
+            "Keep reading"
+           <svg aria-hidden="true" class="w-3 h-3 ml-auto shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
+         <button class="rounded-control border border-brand-border bg-brand-surface/50 hover:border-brand-gold/40 hover:bg-brand-surface p-3 text-left transition-colors">
+          <p class="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white/70">
+           <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+            <path d="<27:5bfdcc38>">
+           <span class="truncate">
+            "Dhikr today"
+          <p class="font-bold text-2xl leading-tight mt-1 tabular-nums text-brand-gold">
+           "0"
+           <span class="text-white/60 text-sm font-bold">
+            "/500"
+          <p class="text-white/65 text-[11px] mt-0.5 flex items-center gap-1">
+           <span class="truncate">
+            "Tap to count"
+           <svg aria-hidden="true" class="w-3 h-3 ml-auto shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
+        <p class="text-white/65 text-[11px] mt-3 leading-relaxed">
+         "Nafl carries the reward of a farḍ in Ramadan, and a farḍ the reward of seventy ("
+         <a class="underline text-brand-gold" href="https://islamqa.info/en/answers/21364" rel="noopener noreferrer" target="_blank">
+          "Ibn Khuzaymah 1887"
+         ", a ḍaʿīf chain, widely cited; the month's general virtue is established in"
+         <a class="underline text-brand-gold" href="https://sunnah.com/bukhari:1899" rel="noopener noreferrer" target="_blank">
+          "Bukhārī 1899"
+         ")."
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <div class="flex items-center justify-between gap-3 mb-3">
+         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<105:cc4257f9>">
+          "Today's Salat"
+         <span class="text-white/80 text-sm font-bold tabular-nums">
+          "3"
+          "/5"
+        <div class="space-y-1.5">
+         <div class="rounded-control border transition-colors border-data-good/40 bg-data-good/10">
+          <div class="flex items-center gap-2 p-2.5">
+           <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-data-good" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <path d="<53:0688da6a>">
+           <span class="flex-1 min-w-0 truncate text-sm font-bold text-white">
+            "Fajr"
+           <svg aria-hidden="true" aria-label="Tasbeeh" class="w-4 h-4 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
+            <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
+            <path d="<27:5bfdcc38>">
+           <div class="flex gap-1 shrink-0">
+            <button aria-pressed="true" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-data-good/20 border-data-good/60 text-data-good">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+             "Done"
+            <button aria-pressed="false" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<48:d9d3fbc7>" stroke-linecap="round" stroke-linejoin="round">
+             "Kaza"
+            <button aria-expanded="false" aria-label="After-salat options for Fajr" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border transition-colors border-data-good/40 bg-data-good/10">
+          <div class="flex items-center gap-2 p-2.5">
+           <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-data-good" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4">
+            <path d="<87:743e93f6>">
+           <span class="flex-1 min-w-0 truncate text-sm font-bold text-white">
+            "Dhuhr"
+           <div class="flex gap-1 shrink-0">
+            <button aria-pressed="true" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-data-good/20 border-data-good/60 text-data-good">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+             "Done"
+            <button aria-pressed="false" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<48:d9d3fbc7>" stroke-linecap="round" stroke-linejoin="round">
+             "Kaza"
+            <button aria-expanded="false" aria-label="After-salat options for Dhuhr" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border transition-colors border-brand-border bg-brand-surface/50">
+          <div class="flex items-center gap-2 p-2.5">
+           <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <circle cx="17" cy="7" r="3">
+            <path d="<59:a1c35ffe>">
+           <span class="flex-1 min-w-0 truncate text-sm font-bold text-white/85">
+            "Asr"
+           <div class="flex gap-1 shrink-0">
+            <button aria-pressed="false" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+             "Done"
+            <button aria-pressed="false" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<48:d9d3fbc7>" stroke-linecap="round" stroke-linejoin="round">
+             "Kaza"
+         <div class="rounded-control border transition-colors border-data-good/40 bg-data-good/10">
+          <div class="flex items-center gap-2 p-2.5">
+           <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-data-good" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <path d="<62:a39a7253>">
+           <span class="flex-1 min-w-0 truncate text-sm font-bold text-white">
+            "Maghrib"
+           <div class="flex gap-1 shrink-0">
+            <button aria-pressed="true" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-data-good/20 border-data-good/60 text-data-good">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+             "Done"
+            <button aria-pressed="false" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<48:d9d3fbc7>" stroke-linecap="round" stroke-linejoin="round">
+             "Kaza"
+            <button aria-expanded="false" aria-label="After-salat options for Maghrib" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border transition-colors border-brand-border bg-brand-surface/50">
+          <div class="flex items-center gap-2 p-2.5">
+           <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <path d="<48:d4b5bdae>">
+            <path d="<57:113b21ba>">
+           <span class="flex-1 min-w-0 truncate text-sm font-bold text-white/85">
+            "Isha"
+           <div class="flex gap-1 shrink-0">
+            <button aria-pressed="false" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+             "Done"
+            <button aria-pressed="false" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+             <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<48:d9d3fbc7>" stroke-linecap="round" stroke-linejoin="round">
+             "Kaza"
+        <button aria-pressed="false" class="mt-1.5 w-full flex items-center gap-2 rounded-control border p-2.5 text-left transition-colors border-brand-border bg-brand-surface/50 hover:border-brand-info/40">
+         <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<105:cc4257f9>">
+         <span class="flex-1 min-w-0 text-sm font-bold text-white/90">
+          "Tarawih"
+          <span class="block text-[11px] font-semibold text-white/65">
+           "Night 13 of Ramadan"
+         <span class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+          "Mark done"
+        <div class="mt-2.5 rounded-control border p-2.5 border-brand-info/50 bg-brand-info/10">
+         <div class="flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+          <span class="flex-1 min-w-0 text-sm font-bold text-white/90">
+           "Nafl"
+           <span class="text-white/70 font-semibold">
+            "·"
+            "8"
+            "rak'ah"
+          <button aria-pressed="true" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-info/20 border-brand-info/60 text-brand-info">
+           <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+           "Done"
+          <button aria-expanded="false" aria-label="Nafl details" class="inline-flex items-center gap-1 px-2 py-1 rounded-control text-[11px] font-bold border transition-colors bg-brand-deep border-brand-border text-white/75 hover:text-white">
+           <svg aria-hidden="true" class="w-3.5 h-3.5 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2 mb-3">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<48:f4c03581>">
+         "Your month"
+        <div class="border-t border-brand-border first:border-t-0 pt-3 first:pt-0 mt-3 first:mt-0">
+         <div class="flex items-baseline gap-2 flex-wrap mb-2">
+          <span class="text-brand-gold font-bold text-sm">
+           "Raḥmah"
+          <span class="text-white/70 text-[11px]">
+           "days of mercy"
+          <span class="text-white/55 text-[10px] tabular-nums">
+           "·"
+           "days 1-10"
+          <span class="text-[9px] uppercase tracking-wide text-brand-gold border border-brand-gold/40 rounded px-1 py-px" title="The mercy / forgiveness / freedom split comes from a narration in Ibn Khuzaymah (1887) with a weak chain. The names are widely used to organise the month; treat them as a framing, not as a graded promise. The last ten's virtue is separately authentic (Bukhārī 2017).">
+           "ḍaʿīf"
+         <div class="grid grid-cols-5 gap-2">
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 1, Monday, February 8, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "1"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Mon"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 8"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 2, Tuesday, February 9, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "2"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Tue"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 9"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 3, Wednesday, February 10, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "3"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Wed"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 10"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 4, Thursday, February 11, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "4"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Thu"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 11"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 5, Friday, February 12, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "5"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Fri"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 12"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 6, Saturday, February 13, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "6"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Sat"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 13"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 7, Sunday, February 14, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "7"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Sun"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 14"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 8, Monday, February 15, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "8"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Mon"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 15"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 9, Tuesday, February 16, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "9"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Tue"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 16"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 10, Wednesday, February 17, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "10"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Wed"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 17"
+        <div class="border-t border-brand-border first:border-t-0 pt-3 first:pt-0 mt-3 first:mt-0">
+         <div class="flex items-baseline gap-2 flex-wrap mb-2">
+          <span class="text-brand-gold font-bold text-sm">
+           "Maghfirah"
+          <span class="text-white/70 text-[11px]">
+           "days of forgiveness"
+          <span class="text-white/55 text-[10px] tabular-nums">
+           "·"
+           "days 11-20"
+          <span class="text-[9px] uppercase tracking-wide text-brand-gold border border-brand-gold/40 rounded px-1 py-px" title="The mercy / forgiveness / freedom split comes from a narration in Ibn Khuzaymah (1887) with a weak chain. The names are widely used to organise the month; treat them as a framing, not as a graded promise. The last ten's virtue is separately authentic (Bukhārī 2017).">
+           "ḍaʿīf"
+         <div class="grid grid-cols-5 gap-2">
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 11, Thursday, February 18, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "11"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Thu"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 18"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-shade/20 border-brand-border text-white/55 " title="Ramadan 12, Friday, February 19, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "12"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Fri"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 19"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 ring-2 ring-brand-gold ring-offset-1 ring-offset-brand-deep" title="Ramadan 13, Saturday, February 20, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "13"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Sat"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 20"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 14, Sunday, February 21, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "14"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Sun"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 21"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 15, Monday, February 22, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "15"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Mon"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 22"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 16, Tuesday, February 23, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "16"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Tue"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 23"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 17, Wednesday, February 24, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "17"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Wed"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 24"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 18, Thursday, February 25, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "18"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Thu"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 25"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 19, Friday, February 26, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "19"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Fri"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 26"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 20, Saturday, February 27, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "20"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Sat"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 27"
+        <div class="border-t border-brand-border first:border-t-0 pt-3 first:pt-0 mt-3 first:mt-0">
+         <div class="flex items-baseline gap-2 flex-wrap mb-2">
+          <span class="text-brand-gold font-bold text-sm">
+           "ʿItq min an-Nār"
+          <span class="text-white/70 text-[11px]">
+           "days of freedom"
+          <span class="text-white/55 text-[10px] tabular-nums">
+           "·"
+           "days 21-29"
+          <span class="text-[9px] uppercase tracking-wide text-brand-gold border border-brand-gold/40 rounded px-1 py-px" title="The mercy / forgiveness / freedom split comes from a narration in Ibn Khuzaymah (1887) with a weak chain. The names are widely used to organise the month; treat them as a framing, not as a graded promise. The last ten's virtue is separately authentic (Bukhārī 2017).">
+           "ḍaʿīf"
+         <p class="text-brand-info text-[11px] -mt-1 mb-2">
+          "The last ten's virtue is separately authentic (Bukhari 2017)"
+         <div class="grid grid-cols-5 gap-2">
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-info/10 border-brand-info/50 text-white/90 " title="Ramadan 21, Sunday, February 28, 2027 · its night, an odd night of the last ten, begins at Maghrib the evening before">
+           <svg aria-hidden="true" class="absolute top-1 left-1 w-2.5 h-2.5 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <rect height="11" width="11" x="6.5" y="6.5">
+            <rect height="11" transform="rotate(45 12 12)" width="11" x="6.5" y="6.5">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "21"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Sun"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Feb 28"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 22, Monday, March 1, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "22"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Mon"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Mar 1"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-info/10 border-brand-info/50 text-white/90 " title="Ramadan 23, Tuesday, March 2, 2027 · its night, an odd night of the last ten, begins at Maghrib the evening before">
+           <svg aria-hidden="true" class="absolute top-1 left-1 w-2.5 h-2.5 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <rect height="11" width="11" x="6.5" y="6.5">
+            <rect height="11" transform="rotate(45 12 12)" width="11" x="6.5" y="6.5">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "23"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Tue"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Mar 2"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 24, Wednesday, March 3, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "24"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Wed"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Mar 3"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-info/10 border-brand-info/50 text-white/90 " title="Ramadan 25, Thursday, March 4, 2027 · its night, an odd night of the last ten, begins at Maghrib the evening before">
+           <svg aria-hidden="true" class="absolute top-1 left-1 w-2.5 h-2.5 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <rect height="11" width="11" x="6.5" y="6.5">
+            <rect height="11" transform="rotate(45 12 12)" width="11" x="6.5" y="6.5">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "25"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Thu"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Mar 4"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 26, Friday, March 5, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "26"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Fri"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Mar 5"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-info/10 border-brand-info/50 text-white/90 " title="Ramadan 27, Saturday, March 6, 2027 · its night, an odd night of the last ten, begins at Maghrib the evening before">
+           <svg aria-hidden="true" class="absolute top-1 left-1 w-2.5 h-2.5 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <rect height="11" width="11" x="6.5" y="6.5">
+            <rect height="11" transform="rotate(45 12 12)" width="11" x="6.5" y="6.5">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "27"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Sat"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Mar 6"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-surface/60 border-brand-border text-white/80 " title="Ramadan 28, Sunday, March 7, 2027">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "28"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Sun"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Mar 7"
+          <div class="relative aspect-square rounded-control border flex flex-col items-center justify-center gap-0.5 bg-brand-info/10 border-brand-info/50 text-white/90 " title="Ramadan 29, Monday, March 8, 2027 · its night, an odd night of the last ten, begins at Maghrib the evening before">
+           <svg aria-hidden="true" class="absolute top-1 left-1 w-2.5 h-2.5 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <rect height="11" width="11" x="6.5" y="6.5">
+            <rect height="11" transform="rotate(45 12 12)" width="11" x="6.5" y="6.5">
+           <span class="text-base sm:text-lg font-bold leading-none tabular-nums">
+            "29"
+           <span class="text-[9px] leading-none opacity-90 font-semibold">
+            "Mon"
+           <span class="text-[9px] leading-none opacity-75 tabular-nums">
+            "Mar 8"
+        <div class="flex flex-wrap gap-x-4 gap-y-1.5 mt-4 text-[11px] text-white/75">
+         <span class="inline-flex items-center gap-1">
+          <svg aria-hidden="true" class="w-3.5 h-3.5 text-data-good" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+          "fasted"
+         <span class="inline-flex items-center gap-1">
+          <svg aria-hidden="true" class="w-3.5 h-3.5 text-red-400" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<20:bdc9e2a5>" stroke-linecap="round" stroke-linejoin="round">
+          "broken"
+         <span class="inline-flex items-center gap-1">
+          <svg aria-hidden="true" class="w-3.5 h-3.5 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          "excused → qaḍā"
+         <span class="inline-flex items-center gap-1">
+          <svg aria-hidden="true" class="w-3.5 h-3.5 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<105:cc4257f9>">
+          "tarawih"
+         <span class="inline-flex items-center gap-1">
+          <svg aria-hidden="true" class="w-3.5 h-3.5 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <rect height="11" width="11" x="6.5" y="6.5">
+           <rect height="11" transform="rotate(45 12 12)" width="11" x="6.5" y="6.5">
+          "odd night of the last ten"
+        <p class="text-white/65 text-[11px] mt-2 leading-relaxed">
+         "Rayhanah days are excused with zero guilt. When the cycle ends, those Ramadan days are offered to your qaḍā counter automatically ("
+         <a class="underline text-brand-gold" href="https://sunnah.com/muslim:335" rel="noopener noreferrer" target="_blank">
+          "Muslim 335"
+         ")."
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 space-y-3" data-testid="ramadan-sheet-card">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<48:f4c03581>">
+         "Ramadan timetable"
+        <p class="text-white/75 text-sm leading-snug">
+         "Sehri and iftar for every fast in Dhaka, on one A4 page: the timetable, the timetable with a checklist, or a Ramadan checklist."
+        <section aria-labelledby="id5" class="print:hidden rounded-card border border-brand-border bg-brand-deep p-4 shadow-elev-1 " data-sheet-downloads="">
+         <h2 class="font-display text-base font-bold text-white" id="id5">
+          "Print this Ramadan"
+         <div class="mt-3 grid gap-2 sm:grid-cols-3">
+          <button class="flex min-h-11 flex-col items-start gap-1 rounded-control px-3 py-2.5 text-start text-sm font-bold bg-brand-emerald-dim text-on-color shadow-elev-1" data-sheet-print="timetable" type="button">
+           <span class="inline-flex items-center gap-2">
+            <svg aria-hidden="true" class="h-4 w-4 flex-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+             <path d="<43:4ae5b46a>">
+            "Timetable"
+           <span class="text-xs font-normal opacity-80">
+            "Suhoor and iftar, the Laylat al-Qadr duʿā and Zakat al-Fitr."
+          <button class="flex min-h-11 flex-col items-start gap-1 rounded-control px-3 py-2.5 text-start text-sm font-bold border border-brand-border text-white" data-sheet-print="combined" type="button">
+           <span class="inline-flex items-center gap-2">
+            <svg aria-hidden="true" class="h-4 w-4 flex-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+             <path d="<43:4ae5b46a>">
+            "Timetable + checklist"
+           <span class="text-xs font-normal opacity-80">
+            "The same times with boxes for prayers, tarawih, Quran and nafl."
+          <button class="flex min-h-11 flex-col items-start gap-1 rounded-control px-3 py-2.5 text-start text-sm font-bold border border-brand-border text-white" data-sheet-print="checklist" type="button">
+           <span class="inline-flex items-center gap-2">
+            <svg aria-hidden="true" class="h-4 w-4 flex-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+             <path d="<43:4ae5b46a>">
+            "Ramadan checklist"
+           <span class="text-xs font-normal opacity-80">
+            "A page to tick your fasts, prayers, Quran, adhkar and sadaqah."
+         <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-white/75">
+          <span id="id6">
+           "Ink"
+          <div aria-labelledby="id6" class="flex gap-2" role="group">
+           <button aria-pressed="true" class="min-h-11 rounded-control border border-brand-border px-3 py-2 text-xs font-semibold text-white aria-pressed:border-brand-emerald aria-pressed:bg-brand-emerald/15" data-ink-value="color" type="button">
+            "Colour"
+           <button aria-pressed="false" class="min-h-11 rounded-control border border-brand-border px-3 py-2 text-xs font-semibold text-white aria-pressed:border-brand-emerald aria-pressed:bg-brand-emerald/15" data-ink-value="bw" type="button">
+            "Black and white"
+         <p class="mt-2 text-xs text-white/65">
+          "Opens the print window: choose "Save as PDF". A4, one page."
+       <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 border-brand-gold/40 overflow-hidden">
+        <button aria-expanded="false" class="w-full flex items-center gap-3 px-5 py-4 text-left">
+         <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<506:b817b43f>" stroke-linecap="round" stroke-linejoin="round">
+         <span class="flex-1 min-w-0">
+          <span class="block text-brand-gold font-bold text-sm">
+           "Why some things on this page are marked"
+           <span class="italic">
+            "ḍaʿīf"
+          <span class="block text-white/65 text-[11px] mt-0.5">
+           "2 narrations: the chain, the defect, and who graded it"
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-gold shrink-0 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+   <footer class="bg-brand-deep text-white border-t border-brand-border mt-auto">
+    <div class="footer footer-center p-6 sm:p-8">
+     <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center gap-2 text-sm sm:text-base">
+       <span>
+        "Made with love"
+       <svg aria-hidden="true" class="w-4 h-4 text-red-300" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<384:b0396863>">
+       <span>
+        "for the ummah"
+      <nav aria-label="Footer" class="flex flex-wrap justify-center items-center gap-x-3 gap-y-1.5 text-xs">
+       <a class="inline-flex items-center text-white/60 hover:text-brand-emerald underline underline-offset-2 transition-colors" data-discover="true" href="/feedback">
+        "Feedback & Contact"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-brand-gold underline underline-offset-2 transition-colors" data-discover="true" href="/about">
+        "About"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/privacy">
+        "Privacy"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/terms">
+        "Terms"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://bayan.bustandeen.com/home">
+        "Help & updates"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://status.bustandeen.com" rel="noopener noreferrer" target="_blank">
+        "Status"
+      <p class="text-xs sm:text-sm text-white/70">
+       "Bustandeen"
+      <div class="flex gap-4 text-xs opacity-70">
+       <span>
+        "Non-commercial"
+       <span>
+        "•"
+       <span>
+        "Free · Ad-free · Open-source"
+       <span>
+        "•"
+       <span>
+        "Your data is yours"
+      <p class="text-[10px] text-white/60 tabular-nums">
+       "v"
+       "<version>"

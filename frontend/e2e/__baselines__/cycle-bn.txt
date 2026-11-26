@@ -1,0 +1,477 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "মূল অংশে যান"
+   <div aria-label="ডেমো মোড" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "ডেমো মোড"
+    <span class="text-white/50 hidden sm:inline">
+     "পরিবর্তন সংরক্ষিত হবে না"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "সংরক্ষণ করতে সাইন আপ →"
+   <nav aria-label="প্রধান" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="ফিরুন: হোম" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "হোম"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="লাইট মোডে যান" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="লাইট মোডে যান" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="ভাষা পরিবর্তন" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="ভাষা পরিবর্তন">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="অ্যাকাউন্ট মেনু খুলুন" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "K"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+     <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl" style="transform: none">
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl" style="transform: none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl" style="transform: rotate(360deg)">
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px">
+     <div class="relative z-10">
+      <h1 class="sr-only">
+       "রায়হানাহ চক্র"
+      <div class="px-4 pt-3">
+       <div class="max-w-2xl mx-auto flex items-center gap-2">
+        <div class="flex-1 min-w-0">
+         <div class="flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10 max-w-xs">
+          <span aria-current="page" class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">
+           "চক্র"
+          <a class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/cycle/analytics">
+           "বিশ্লেষণ"
+        <button aria-label="সেটিংস" class="shrink-0 p-2 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/70 hover:text-brand-pink hover:border-brand-pink/40 transition-colors" title="সেটিংস">
+         <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<999:41ef0701>" stroke-linecap="round" stroke-linejoin="round">
+          <path d="<35:449f351c>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative max-w-2xl mx-auto px-4 pt-4 pb-16 space-y-5">
+       <section class="rounded-arch border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 pt-10 pb-6 sm:px-8 text-center border-brand-border space-y-4" style="opacity: 1; transform: none">
+        <span class="mx-auto w-16 h-16 rounded-full grid place-items-center border bg-brand-emerald/10 border-brand-emerald/40 text-brand-emerald">
+         <svg aria-hidden="true" class="w-8 h-8" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<37:61ad81e8>">
+          <path d="<11:81e625cc>">
+        <div>
+         <p class="text-brand-emerald text-xs font-bold uppercase tracking-widest">
+          "পবিত্রতার দিন"
+         <h2 class="font-display text-2xl font-bold text-white mt-2 leading-tight">
+          "আসসালামু আলাইকুম, Khadijah"
+        <p class="text-white/75 text-sm leading-relaxed max-w-md mx-auto">
+         "আপনার ইতিহাসের ভিত্তিতে, আপনার পরবর্তী মাসিক প্রত্যাশিত"
+         <span class="text-brand-pink font-bold">
+          "৩০ অক্টো, ২০২৬"
+         "(গড় চক্র ২৮ দিন)।"
+        <div class="rounded-control bg-brand-info/10 border border-brand-info/40 p-3 text-left text-xs leading-relaxed">
+         <p class="font-bold text-brand-info flex items-center gap-1.5">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<37:61ad81e8>">
+           <path d="<11:81e625cc>">
+          "উর্বর সময়ের আনুমানিক হিসাব"
+         <p class="text-white/75 mt-1">
+          "~"
+          "১৪ অক্টো, ২০২৬"
+          "–"
+          "১৮ অক্টো, ২০২৬"
+          <span class="text-white/70">
+           "·"
+           "ডিম্বস্ফোটন ~১৬ অক্টো, ২০২৬"
+        <button class="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold border border-brand-pink/50 bg-brand-pink/10 hover:bg-brand-pink/20 text-brand-pink shadow-elev-1 transition-colors disabled:opacity-50 w-full h-12 text-base">
+         <svg aria-hidden="true" class="w-5 h-5" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <circle cx="12.00" cy="7.80" r="3">
+          <circle cx="15.99" cy="10.70" r="3">
+          <circle cx="14.47" cy="15.40" r="3">
+          <circle cx="9.53" cy="15.40" r="3">
+          <circle cx="8.01" cy="10.70" r="3">
+          <circle cx="12" cy="12" r="1.6">
+         "আমার মাসিক শুরু হয়েছে"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <div class="flex items-center justify-between gap-2 mb-3">
+         <h2 class="font-display text-white font-bold text-base flex items-center gap-2 whitespace-nowrap">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-pink" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<555:678fdcb9>" stroke-linecap="round" stroke-linejoin="round">
+          "চক্র ক্যালেন্ডার"
+         <div class="flex items-center gap-1">
+          <button aria-label="আগের মাস" class="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-brand-surface">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<27:f0982344>" stroke-linecap="round" stroke-linejoin="round">
+          <span class="text-white text-sm font-bold min-w-[6.5rem] text-center whitespace-nowrap">
+           "অক্টোবর ২০২৬"
+          <button aria-label="পরের মাস" class="p-1.5 rounded-lg text-white/70 hover:text-white hover:bg-brand-surface">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
+        <div class="grid grid-cols-7 gap-1 text-center">
+         <span class="text-white/60 text-[10px] font-bold uppercase py-1">
+          "র"
+         <span class="text-white/60 text-[10px] font-bold uppercase py-1">
+          "সো"
+         <span class="text-white/60 text-[10px] font-bold uppercase py-1">
+          "ম"
+         <span class="text-white/60 text-[10px] font-bold uppercase py-1">
+          "বু"
+         <span class="text-white/60 text-[10px] font-bold uppercase py-1">
+          "বৃ"
+         <span class="text-white/60 text-[10px] font-bold uppercase py-1">
+          "শু"
+         <span class="text-white/60 text-[10px] font-bold uppercase py-1">
+          "শ"
+         <span>
+         <span>
+         <span>
+         <span>
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 " title="প্রস্তাবিত রোজার দিন">
+          "১"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "২"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "৩"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "৪"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 " title="প্রস্তাবিত রোজার দিন">
+          "৫"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "৬"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "৭"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 " title="প্রস্তাবিত রোজার দিন">
+          "৮"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "৯"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "১০"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "১১"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 " title="প্রস্তাবিত রোজার দিন">
+          "১২"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "১৩"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-info/15 text-brand-info/80 " title="উর্বর উইন্ডো">
+          "১৪"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-info/15 text-brand-info/80 ring-2 ring-white/70" title="উর্বর উইন্ডো">
+          "১৫"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-info/30 text-brand-info ring-1 ring-brand-info/40 " title="আনুমানিক ডিম্বস্ফোটন">
+          "১৬"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-info/15 text-brand-info/80 " title="উর্বর উইন্ডো">
+          "১৭"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-info/15 text-brand-info/80 " title="উর্বর উইন্ডো">
+          "১৮"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 " title="প্রস্তাবিত রোজার দিন">
+          "১৯"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "২০"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 ">
+          "২১"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors text-white/75 bg-brand-surface/50 " title="প্রস্তাবিত রোজার দিন">
+          "২২"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-gold/10 text-brand-gold/80 " title="PMS উইন্ডো">
+          "২৩"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-gold/10 text-brand-gold/80 " title="PMS উইন্ডো">
+          "২৪"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-gold/10 text-brand-gold/80 " title="PMS উইন্ডো">
+          "২৫"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-gold/10 text-brand-gold/80 " title="PMS উইন্ডো">
+          "২৬"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-gold/10 text-brand-gold/80 " title="PMS উইন্ডো">
+          "২৭"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-gold/10 text-brand-gold/80 " title="PMS উইন্ডো">
+          "২৮"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors bg-brand-gold/10 text-brand-gold/80 " title="PMS উইন্ডো">
+          "২৯"
+          <svg aria-hidden="true" class="absolute top-0.5 right-0.5 w-2.5 h-2.5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors border border-dashed border-brand-pink/50 text-brand-pink/80 " title="প্রত্যাশিত হায়েয">
+          "৩০"
+         <div class="relative aspect-square rounded-lg grid place-items-center text-[11px] font-bold transition-colors border border-dashed border-brand-pink/50 text-brand-pink/80 " title="প্রত্যাশিত হায়েয">
+          "৩১"
+        <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-[11px] text-white/70">
+         <span>
+          <span class="inline-block w-2.5 h-2.5 rounded bg-brand-pink/50 align-middle mr-1">
+          "হায়েয"
+         <span>
+          <span class="inline-block w-2.5 h-2.5 rounded bg-brand-warm/50 align-middle mr-1">
+          "নিফাস"
+         <span>
+          <span class="inline-block w-2.5 h-2.5 rounded border border-dashed border-brand-pink/60 align-middle mr-1">
+          "প্রত্যাশিত"
+         <span>
+          <span class="inline-block w-2.5 h-2.5 rounded bg-brand-info/30 align-middle mr-1">
+          "উর্বর"
+         <span>
+          <span class="inline-block w-2.5 h-2.5 rounded bg-brand-gold/15 align-middle mr-1">
+          "PMS"
+         <span>
+          <span class="inline-block w-2.5 h-2.5 rounded ring-2 ring-white/70 align-middle mr-1">
+          "আজ"
+         <span>
+          <svg aria-hidden="true" class="inline-block w-3 h-3 align-middle mr-1 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:f4c03581>">
+          "প্রস্তাবিত রোজা"
+        <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1.5 text-[11px] text-white/70">
+         <span class="text-white/60">
+          "ফ্লো ও নোট"
+          ":"
+         <span>
+          <span class="inline-block w-1.5 h-1.5 rounded-full align-middle mr-1 bg-brand-pink/50">
+          "হালকা"
+         <span>
+          <span class="inline-block w-1.5 h-1.5 rounded-full align-middle mr-1 bg-brand-pink/80">
+          "মাঝারি"
+         <span>
+          <span class="inline-block w-1.5 h-1.5 rounded-full align-middle mr-1 bg-brand-pink-dim">
+          "ভারী"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 space-y-4">
+        <div>
+         <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+           <p class="text-white font-bold text-sm flex items-center gap-1.5">
+            <svg aria-hidden="true" class="w-4 h-4 text-brand-pink" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<510:812a6806>" stroke-linecap="round" stroke-linejoin="round">
+            "চক্রের অবস্থা শেয়ার করুন"
+           <p class="text-white/70 text-xs leading-relaxed mt-0.5">
+            "একজন বন্ধু শুধু "তার চক্রে" বা "না" দেখতে পাবে, কখনো তারিখ, উপসর্গ বা নোট নয়। যেকোনো সময় বন্ধ করুন।"
+          <span class="relative inline-flex shrink-0 items-center w-9 h-5 ">
+           <input aria-label="চক্রের অবস্থা শেয়ার করুন" class="peer absolute left-1/2 top-1/2 z-10 m-0 h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed" role="switch" type="checkbox" checked=false>
+           <span aria-hidden="true" class="absolute inset-0 rounded-full border border-brand-border bg-brand-surface transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-brand-gold peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-brand-deep peer-disabled:opacity-50 peer-checked:bg-brand-pink peer-checked:border-brand-pink">
+           <span aria-hidden="true" class="absolute left-[3px] top-1/2 -translate-y-1/2 rounded-full bg-white/60 shadow-elev-1 transition-transform motion-reduce:transition-none peer-checked:bg-on-color peer-disabled:opacity-50 w-3.5 h-3.5 peer-checked:translate-x-4">
+        <div class="pt-4 border-t border-brand-border">
+         <div class="flex items-center justify-between gap-3">
+          <div class="min-w-0">
+           <p class="text-white font-bold text-sm flex items-center gap-1.5">
+            <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<157:3e248d37>" stroke-linecap="round" stroke-linejoin="round">
+            "আমি বর্তমানে গর্ভবতী"
+           <p class="text-white/70 text-xs leading-relaxed mt-0.5">
+            "মাসিকের পূর্বাভাস স্থগিত রাখে এবং পরিবর্তে সপ্তাহ সংখ্যা দেখায়। এটি আপনার সালাত বা রোযা ট্র্যাকিং পরিবর্তন করে না।"
+          <span class="relative inline-flex shrink-0 items-center w-9 h-5 ">
+           <input aria-label="আমি বর্তমানে গর্ভবতী" class="peer absolute left-1/2 top-1/2 z-10 m-0 h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed" role="switch" type="checkbox" checked=false>
+           <span aria-hidden="true" class="absolute inset-0 rounded-full border border-brand-border bg-brand-surface transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-brand-gold peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-brand-deep peer-disabled:opacity-50 peer-checked:bg-brand-emerald peer-checked:border-brand-emerald">
+           <span aria-hidden="true" class="absolute left-[3px] top-1/2 -translate-y-1/2 rounded-full bg-white/60 shadow-elev-1 transition-transform motion-reduce:transition-none peer-checked:bg-on-color peer-disabled:opacity-50 w-3.5 h-3.5 peer-checked:translate-x-4">
+        <p class="text-white/70 text-[11px] leading-relaxed border-t border-brand-border pt-4 flex gap-2">
+         <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<175:6aa1ffbb>" stroke-linecap="round" stroke-linejoin="round">
+         <span>
+          "আপনার চক্রের তথ্য শুধু আপনিই দেখতে পান। বন্ধুদের কাছে তা কখনো দেখানো হয় না, শুধু আপনি নিজে কোনো এক বন্ধুর সাথে সহজ একটি হ্যাঁ বা না ভাগ করতে চাইলে ছাড়া। বন্ধুদের বৃত্তে আপনার নূর অন্য যেকোনো দিনের মতোই আপনার যিকির, কুরআন ও দরূদ থেকে আসে।"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 space-y-4">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+         "আপনার ফিকহ সঙ্গী"
+        <div class="grid sm:grid-cols-2 gap-3 text-xs leading-relaxed">
+         <div class="rounded-control bg-brand-pink/10 border border-brand-pink/40 p-4">
+          <p class="font-bold text-brand-pink mb-1.5 flex items-center gap-1.5">
+           <svg aria-hidden="true" class="w-4 h-4" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <path d="<48:f4c03581>">
+           "আপাতত স্থগিত"
+          <ul class="space-y-1 text-white/80 list-disc pl-4 marker:text-brand-pink">
+           <li>
+            "সালাত: সম্পূর্ণ অব্যাহতি,"
+            <span class="font-bold text-brand-pink">
+             "কখনো কাযা করা হয় না"
+            "("
+            <a class="underline underline-offset-2" href="https://sunnah.com/muslim:335" rel="noreferrer" target="_blank">
+             "মুসলিম ৩৩৫"
+            ")"
+           <li>
+            "রোজা: এখন অব্যাহতি, পরে কাযা করা"
+            "("
+            <a class="underline underline-offset-2" href="https://sunnah.com/muslim:335" rel="noreferrer" target="_blank">
+             "মুসলিম ৩৩৫"
+            ")"
+           <li>
+            "কাবাঘরের চারপাশে তাওয়াফ"
+            "("
+            <a class="underline underline-offset-2" href="https://sunnah.com/bukhari:305" rel="noreferrer" target="_blank">
+             "বুখারী ৩০৫"
+            ")"
+           <li>
+            "মাসিকের সময় সহবাস"
+            "("
+            <a class="underline underline-offset-2" href="https://quran.com/2/222" rel="noreferrer" target="_blank">
+             "কুরআন ২:২২২"
+            ")"
+         <div class="rounded-control bg-brand-emerald/10 border border-brand-emerald/40 p-4">
+          <p class="font-bold text-brand-emerald mb-1.5 flex items-center gap-1.5">
+           <svg aria-hidden="true" class="w-4 h-4" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <circle cx="12.00" cy="7.80" r="3">
+            <circle cx="15.99" cy="10.70" r="3">
+            <circle cx="14.47" cy="15.40" r="3">
+            <circle cx="9.53" cy="15.40" r="3">
+            <circle cx="8.01" cy="10.70" r="3">
+            <circle cx="12" cy="12" r="1.6">
+           "আপনার জন্য পুরোপুরি উন্মুক্ত"
+          <ul class="space-y-1 text-white/80 list-disc pl-4 marker:text-brand-emerald">
+           <li>
+            "সব যিকির, দুআ ও সালাওয়াত"
+            "("
+            <a class="underline underline-offset-2" href="https://sunnah.com/muslim:373" rel="noreferrer" target="_blank">
+             "মুসলিম ৩৭৩"
+            ")"
+           <li>
+            "কুরআন, তাফসীর ও জ্ঞান শোনা"
+           <li>
+            "কল্যাণ ও দুআর মজলিসে উপস্থিত থাকা"
+            "("
+            <a class="underline underline-offset-2" href="https://sunnah.com/bukhari:971" rel="noreferrer" target="_blank">
+             "বুখারী ৯৭১"
+            ")"
+           <li>
+            "দান, দয়া, এবং অন্যের সেবা করা"
+        <p class="text-white/70 text-[11px] leading-relaxed">
+         "নবী ﷺ হজ্জের সময় আয়েশা (রাঃ)-কে বলেছিলেন: হাজীরা যা করে তা সবই করো, শুধু তাওয়াফ ছাড়া"
+         "("
+         <a class="underline underline-offset-2" href="https://sunnah.com/bukhari:305" rel="noreferrer" target="_blank">
+          "সহীহ বুখারী ৩০৫"
+         ")."
+         "মুখস্থ থেকে কুরআন তিলাওয়াত করা আলেমদের মতভেদের বিষয়; শোনা সবার ঐক্যমতে সম্মত। বিশ্বস্ত একজন আলেমের কাছে জিজ্ঞাসা করুন।"
+        <details class="group rounded-control bg-brand-gold/10 border border-brand-gold/40 p-4">
+         <summary class="list-none flex items-center justify-between cursor-pointer">
+          <p class="font-bold text-brand-gold text-sm flex items-center gap-1.5">
+           <svg aria-hidden="true" class="w-4 h-4" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+            <path d="<71:0249aea7>">
+            <path d="<31:734cf3fb>">
+           "ইস্তিহাযা কী?"
+          <svg aria-hidden="true" class="w-4 h-4 text-white/60 group-open:rotate-180 transition-transform" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="mt-3 space-y-2 text-xs leading-relaxed text-white/80">
+          <p>
+           <span class="font-bold text-white">
+            "ইস্তিহাযা"
+           "(অনিয়মিত/মাসিক-বহির্ভূত রক্তক্ষরণ) হলো এমন রক্তক্ষরণ যা সর্বোচ্চ মাসিক দৈর্ঘ্য (হানাফী: ১০ দিন, সংখ্যাগরিষ্ঠ: ১৫ দিন) অতিক্রম করে, অথবা স্বাভাবিক মাসিক ধরনের বাইরে ঘটে।"
+          <p>
+           "নবী ﷺ বলেছিলেন"
+           <span class="font-bold">
+            "ফাতিমা বিনতে আবি হুবাইশ"
+           ":"
+           <span class="italic text-white">
+            ""এটি একটি শিরা, মাসিক নয়। আপনার মাসিক শুরু হলে নামায বন্ধ করুন, আর শেষ হলে রক্ত ধুয়ে ফেলে নামায পড়ুন।""
+           "("
+           <a class="underline underline-offset-2" href="https://sunnah.com/bukhari:306" rel="noreferrer" target="_blank">
+            "বুখারী ৩০৬"
+           ")"
+          <div class="rounded-control bg-brand-deep/60 border border-brand-border p-3 space-y-1.5">
+           <p class="font-bold text-brand-gold">
+            "ইস্তিহাযার সময়:"
+           <ul class="space-y-1 list-disc pl-4 marker:text-brand-gold">
+            <li>
+             <span class="font-bold text-white">
+              "সালাত পুনরায় শুরু হয়"
+             ":"
+             "প্রতিটি নামাযের সময় ওযু করুন"
+            <li>
+             <span class="font-bold text-white">
+              "রোজা বৈধ"
+             ":"
+             "এই দিনগুলোর জন্য কাযার দরকার নেই"
+            <li>
+             <span class="font-bold text-white">
+              "সহবাস অনুমোদিত"
+             "(সংখ্যাগরিষ্ঠ মত)"
+            <li>
+             <span class="font-bold text-white">
+              "কুরআন তিলাওয়াত অনুমোদিত"
+          <p class="text-white/70 text-[11px]">
+           "আপনার চক্র বেছে নেওয়া মাযহাবের সর্বোচ্চ সীমা অতিক্রম করলে রায়হানাহ স্বয়ংক্রিয়ভাবে তা চিহ্নিত করে। নিশ্চিত না হলে বিশ্বস্ত একজন আলেমের সাথে পরামর্শ করুন।"
+   <footer class="bg-brand-deep text-white border-t border-brand-border mt-auto">
+    <div class="footer footer-center p-6 sm:p-8">
+     <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center gap-2 text-sm sm:text-base">
+       <span>
+        "ভালোবাসায় তৈরি"
+       <svg aria-hidden="true" class="w-4 h-4 text-red-300" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<384:b0396863>">
+       <span>
+        "উম্মাহর জন্য"
+      <nav aria-label="ফুটার" class="flex flex-wrap justify-center items-center gap-x-3 gap-y-1.5 text-xs">
+       <a class="inline-flex items-center text-white/60 hover:text-brand-emerald underline underline-offset-2 transition-colors" data-discover="true" href="/feedback">
+        "মতামত ও যোগাযোগ"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-brand-gold underline underline-offset-2 transition-colors" data-discover="true" href="/about">
+        "সম্পর্কে"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/privacy">
+        "গোপনীয়তা"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/terms">
+        "শর্তাবলি"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://bayan.bustandeen.com/bn/home">
+        "সাহায্য ও আপডেট"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://status.bustandeen.com" rel="noopener noreferrer" target="_blank">
+        "স্ট্যাটাস"
+      <p class="text-xs sm:text-sm text-white/70">
+       "Bustandeen"
+      <div class="flex gap-4 text-xs opacity-70">
+       <span>
+        "অবাণিজ্যিক"
+       <span>
+        "•"
+       <span>
+        "ফ্রি · বিজ্ঞাপনমুক্ত · ওপেন-সোর্স"
+       <span>
+        "•"
+       <span>
+        "আপনার ডেটা আপনার"
+      <p class="text-[10px] text-white/60 tabular-nums">
+       "v"
+       "<version>"
