@@ -11,6 +11,13 @@ import broadcast from './AdminBroadcast.tsx?raw';
 import compose from './AdminComposeEmail.tsx?raw';
 import zikrRequests from './AdminZikrRequests.tsx?raw';
 import sadaqah from './AdminSadaqah.tsx?raw';
+import sadaqahPending from '../components/admin/sadaqah/PendingCard.tsx?raw';
+import sadaqahSubmissions from '../components/admin/sadaqah/SubmissionsTab.tsx?raw';
+import sadaqahExpenses from '../components/admin/sadaqah/ExpensesTab.tsx?raw';
+import sadaqahQuarterly from '../components/admin/sadaqah/QuarterlyPublisher.tsx?raw';
+import sadaqahDonorEmail from '../components/admin/sadaqah/DonorEmailAction.tsx?raw';
+import sadaqahAnalytics from '../components/admin/sadaqah/AnalyticsTab.tsx?raw';
+import sadaqahUtils from '../components/admin/sadaqah/adminSadaqahUtils.ts?raw';
 import opsHealth from './AdminOpsHealth.tsx?raw';
 import updateEmails from '../components/AdminUpdateEmails.tsx?raw';
 import reauthDialog from '../components/admin/AdminReauthDialog.tsx?raw';
@@ -40,6 +47,14 @@ const FILES: Record<string, string> = {
   AdminZikrRequests: zikrRequests,
   AdminUpdateEmails: updateEmails,
   AdminSadaqah: sadaqah,
+  // The Sadaqah admin tabs, cut out of the page (audit P4-1).
+  AdminSadaqahPendingCard: sadaqahPending,
+  AdminSadaqahSubmissionsTab: sadaqahSubmissions,
+  AdminSadaqahExpensesTab: sadaqahExpenses,
+  AdminSadaqahQuarterlyPublisher: sadaqahQuarterly,
+  AdminSadaqahDonorEmailAction: sadaqahDonorEmail,
+  AdminSadaqahAnalyticsTab: sadaqahAnalytics,
+  AdminSadaqahUtils: sadaqahUtils,
   AdminOpsHealth: opsHealth,
   AdminReauthDialog: reauthDialog,
   AdminPasswordDialog: passwordDialog,
@@ -107,11 +122,14 @@ describe('admin confirmations and reopen', () => {
   });
 
   it('quarterly report: publish, unpublish and delete each ask first', () => {
-    expect(sadaqah).not.toMatch(/onClick=\{\(\) => (publish|unpublish|deleteQuarterly)\.mutate/);
+    // The publisher lives in components/admin/sadaqah/ (audit P4-1).
+    expect(sadaqahQuarterly).not.toMatch(
+      /onClick=\{\(\) => (publish|unpublish|deleteQuarterly)\.mutate/
+    );
     for (const handler of ['confirmPublish', 'publishListed', 'unpublishListed', 'deleteListed']) {
-      const body = sadaqah.slice(sadaqah.indexOf(`const ${handler} =`));
+      const body = sadaqahQuarterly.slice(sadaqahQuarterly.indexOf(`const ${handler} =`));
       expect(body.slice(0, 400), handler).toMatch(/ask\(/);
     }
-    expect(sadaqah).toMatch(/window\.confirm\(/);
+    expect(sadaqahQuarterly).toMatch(/window\.confirm\(/);
   });
 });

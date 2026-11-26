@@ -29,14 +29,13 @@ vi.mock('../store/useAdminStore.js', () => ({
   useAdminStore: (select: (s: { role: string }) => unknown) => select({ role: session.role }),
 }));
 
-import AdminSadaqah, {
-  AnalyticsTab,
-  DonorEmailAction,
-  ExpensesTab,
-  PendingCard,
-  QuarterlyPublisher,
-  SubmissionsTab,
-} from './AdminSadaqah.js';
+import AdminSadaqah from './AdminSadaqah.js';
+import { AnalyticsTab } from '../components/admin/sadaqah/AnalyticsTab.js';
+import { DonorEmailAction } from '../components/admin/sadaqah/DonorEmailAction.js';
+import { ExpensesTab } from '../components/admin/sadaqah/ExpensesTab.js';
+import { PendingCard } from '../components/admin/sadaqah/PendingCard.js';
+import { QuarterlyPublisher } from '../components/admin/sadaqah/QuarterlyPublisher.js';
+import { SubmissionsTab } from '../components/admin/sadaqah/SubmissionsTab.js';
 import type { Donation } from '../types/api.js';
 
 // Audit P4-1: the admin panel is its own bundle with no demo and no signed-in
