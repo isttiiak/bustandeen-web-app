@@ -15,6 +15,7 @@ import { expect, type Page } from '@playwright/test';
 // Normalized on purpose, so only real differences show:
 //  - ids and the attributes that point at them are renumbered (React derives
 //    `useId` values from the tree position, which an extraction moves);
+//  - toast offsets (translateY in px, measured from the font);
 //  - SVG path data and data: URLs are replaced by their length and a hash;
 //  - the app version (the footer shows it) is replaced by a placeholder.
 
@@ -133,7 +134,10 @@ async function dumpOnce(page: Page): Promise<string> {
             .split(';')
             .map((s) => s.trim())
             .filter((s) => s && !s.startsWith('will-change'))
-            .join('; ');
+            .join('; ')
+            // The toast library positions each toast by its measured height,
+            // which depends on the font (a Mac and CI's Linux differ).
+            .replace(/translateY\(-?[\d.]+px\)/g, 'translateY(<px>)');
         attrs.push(`${a.name}="${v}"`);
       }
       // Live form state lives in properties, not attributes.
