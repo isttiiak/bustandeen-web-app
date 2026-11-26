@@ -43,7 +43,6 @@ const PAGE_CAPS: Record<string, number> = {
   'pages/Settings.tsx': 1499,
   'pages/SalatAnalytics.tsx': 1416,
   'pages/QuranReader.tsx': 1360,
-  'pages/Friends.tsx': 1309,
   'pages/ZikrAnalytics.tsx': 1167,
   'pages/CycleAnalytics.tsx': 1151,
   'pages/Home.tsx': 1145,

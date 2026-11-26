@@ -2,12 +2,12 @@ import { describe, it, expect } from 'vitest';
 import en from '../locales/en/common.json';
 import bn from '../locales/bn/common.json';
 
-// T3.2 Friends: the page and its dialogs draw SVG
+// T3.2 Friends: the page, its parts (components/friends/) and its dialogs draw SVG
 // icons only, their copy (and every locale string they use) has no emoji or em
 // dashes, every key they use exists in both languages, every full-screen
 // overlay is portaled (the page sits in AnimatedBackground's `relative z-10`,
 // under the sticky navbar), and nothing hard-codes a colour, glows or floats.
-const files = import.meta.glob<string>(['./Friends.tsx'], {
+const files = import.meta.glob<string>(['./Friends.tsx', '../components/friends/*.{ts,tsx}'], {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -36,7 +36,8 @@ const usedKeys = [
 
 describe('Friends screen', () => {
   it('finds the Friends file', () => {
-    expect(Object.keys(files).length).toBe(1);
+    // The page plus the ten files of components/friends/ (audit P4-1).
+    expect(Object.keys(files).length).toBe(11);
     expect(usedKeys.length).toBeGreaterThan(60);
   });
 
@@ -64,7 +65,16 @@ describe('Friends screen', () => {
   });
 
   // U3 (Phase U): the cleanup Istiak asked for
-  const friends = stripComments(Object.values(files)[0] ?? '');
+  const source = (name: string) => {
+    const path = Object.keys(files).find((p) => p.endsWith(`/${name}`));
+    return stripComments(path ? (files[path] ?? '') : '');
+  };
+  const page = source('Friends.tsx');
+  /** The page and every part, for checks that do not care which file holds the code. */
+  const friends = Object.keys(files)
+    .sort()
+    .map((p) => stripComments(files[p] ?? ''))
+    .join('\n');
 
   it('names a cycle only when it is true, never "not on her cycle"', () => {
     expect(friends).toContain('f.onCycle === true &&');
@@ -77,10 +87,7 @@ describe('Friends screen', () => {
   });
 
   it('keeps the arch clean: actions live in the top-right menu', () => {
-    const arch = friends.slice(
-      friends.indexOf('rounded-arch'),
-      friends.indexOf('</motion.section>')
-    );
+    const arch = page.slice(page.indexOf('rounded-arch'), page.indexOf('</motion.section>'));
     expect(arch).toContain('<FriendsMenu');
     expect(arch).not.toMatch(/BTN_PRIMARY|BTN_SECONDARY/);
     expect(friends).toContain("label: t('friends.inviteFriend')");
@@ -89,17 +96,17 @@ describe('Friends screen', () => {
   });
 
   it('"What friends see" is its own sheet, no longer inside See friends', () => {
-    const manage = friends.slice(
-      friends.indexOf('function ManageFriendsModal'),
-      friends.indexOf('function Chip(')
+    expect(source('ManageFriendsModal.tsx')).not.toContain('<PrivacySettingsBlock');
+    expect(source('PrivacySheet.tsx')).toMatch(
+      /function PrivacySheet[\s\S]*<PrivacySettingsBlock \/>/
     );
-    expect(manage).not.toContain('<PrivacySettingsBlock');
-    expect(friends).toMatch(/function PrivacySheet[\s\S]*<PrivacySettingsBlock \/>/);
   });
 
   it('"n friends" beside the circle title opens the friends list', () => {
-    expect(friends).toMatch(
-      /onClick=\{\(\) => setManageOpen\(true\)\}[\s\S]{0,200}friends\.circleCount/
+    // The page passes the opener down; the circle title button calls it.
+    expect(page).toContain('onManage={() => setManageOpen(true)}');
+    expect(source('FriendsCircleSection.tsx')).toMatch(
+      /onClick=\{\(\) => onManage\(\)\}[\s\S]{0,200}friends\.circleCount/
     );
   });
 
