@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.69',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: a check that your location stays on your device',
+        fixed: [
+          'We added an automatic check that fails our build if anything could ever send your saved location to our servers. Prayer times are still worked out on your device, and nothing looks or works differently.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: আপনার অবস্থান আপনার ডিভাইসেই থাকে, তার স্বয়ংক্রিয় যাচাই',
+        fixed: [
+          'আপনার সংরক্ষিত অবস্থান কখনো আমাদের সার্ভারে যাওয়ার মতো কিছু ঘটলে আমাদের বিল্ড ব্যর্থ করে দেবে, এমন একটি স্বয়ংক্রিয় যাচাই যোগ করা হয়েছে। নামাজের সময় আগের মতোই আপনার ডিভাইসে হিসাব করা হয়, আর দেখতে বা কাজে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.67',
     date: '2026-11-27',
     text: {
