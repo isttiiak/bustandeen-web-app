@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.55',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Settings, prayer and Quran-goal messages now appear in your language',
+        fixed: [
+          'Messages in Settings, the Quran reading goal, offline prayer logging and "too many requests" now appear in Bangla if you use Bangla. With this, every message the app shows can follow your language. Your data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'সেটিংস, নামায ও কুরআনের লক্ষ্যের বার্তা এখন আপনার ভাষায়',
+        fixed: [
+          'সেটিংস, কুরআন পড়ার লক্ষ্য, অফলাইনে নামায লগ করা এবং “অনেকগুলো অনুরোধ” এর বার্তা এখন বাংলা ব্যবহার করলে বাংলায় দেখাবে। এর ফলে অ্যাপের প্রতিটি বার্তাই আপনার ভাষা অনুসরণ করতে পারে। আপনার তথ্যে কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.54',
     date: '2026-11-26',
     text: {

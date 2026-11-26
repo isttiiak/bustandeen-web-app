@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.55 - The last hard-coded messages in Bangla (audit P4-3, part 3) - 2026-11-26
+
+The remaining 14 messages typed into the code in English now come from the language files. With this, no screen passes a literal English string to a toast: P4-3 is done (6 in part 1, 17 in part 2, 14 here).
+
+### What changed
+
+- **Settings (7):** delete-account failures ("sign-in too old", "deletion failed", and "this login is also an admin account"), the double-confirmed reset messages (`{{label}}: done.` and `Could not complete "{{label}}".`) and "Saved location cleared".
+- **Quran settings (3 messages, 5 keys):** goal unchanged, goal set (singular and plural, with the number in the reader's digits), goal removed, goal could not be saved.
+- **Salat (2):** the offline notice (it was in two places) and "Synced your offline prayer updates".
+- **Everyone (2):** "Too many requests" (`common.tooManyRequests`) and the disabled-account notice (`common.accountDisabled`, with the support address as a placeholder).
+- **Staff only (1), English on purpose:** "Your admin session ended" now lives in a new `adminNotices` namespace, listed as English-only in `scripts/check-i18n.mjs` like the other admin pages.
+- **Known gap:** the danger-zone row names ("All salat logs", "Reset khatam journey", ...) are still English in the code, so those two messages show a Bangla sentence around an English name until that screen is translated.
+- **Wording:** no em dashes in new copy ("Too many requests — please wait" is now two sentences). The small icons on the offline and synced notices are unchanged.
+
+### Tests
+
+- `toastsTranslated.test.ts` (48 cases): no file passes a literal English string to `toast()` (the ratchet list is now empty and stays enforced); every new key exists in English and in Bangla script (placeholders aside); the code uses every key; the staff notice is English only and listed as such. Fails on main, passes here.
+- `toastsInterpolation.test.ts` (3 cases): the label, the goal number (singular and plural) and the support address fill in correctly, in English and in Bangla.
+- `i18n:check` complete (3985 English keys, 3807 Bangla, 14 English-only namespaces).
+
 ## v5.190.54 - Rayhanah and fasting messages in Bangla (audit P4-3, part 2) - 2026-11-26
 
 The messages shown after saving in the cycle tracker (Rayhanah) and the fasting tracker were typed into the code in English. They now come from the language files, in English and in Bangla script. Part 2 of 3.

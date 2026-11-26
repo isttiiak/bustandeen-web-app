@@ -806,15 +806,28 @@ export default function Settings() {
         ?.error;
       if (errorCode === 'staff_account') {
         toast.error(
-          'This login is also an admin account. Ask the Servant to deactivate it in the admin panel first.'
+          t(
+            'settings.toast.deleteBlockedStaff',
+            'This login is also an admin account. Ask the Servant to deactivate it in the admin panel first.'
+          )
         );
         setDeleteAccountStep('idle');
       } else if (errorCode === 'reauth_required') {
-        toast.error('Your sign-in is too old for this. Please verify again.');
+        toast.error(
+          t(
+            'settings.toast.reauthRequired',
+            'Your sign-in is too old for this. Please verify again.'
+          )
+        );
         setReauthError(null);
         setDeleteAccountStep('reauth');
       } else {
-        toast.error('Account deletion failed. Please try again or contact support.');
+        toast.error(
+          t(
+            'settings.toast.deleteAccountFailed',
+            'Account deletion failed. Please try again or contact support.'
+          )
+        );
         setDeleteAccountStep('idle');
       }
     }
@@ -870,9 +883,16 @@ export default function Settings() {
     try {
       await dangerAction.mutateAsync(row);
       await queryClient.invalidateQueries();
-      toast.success(`${row.label}: done.`);
+      toast.success(
+        t('settings.toast.dangerDone', { label: row.label, defaultValue: '{{label}}: done.' })
+      );
     } catch {
-      toast.error(`Could not complete "${row.label}". Please try again.`);
+      toast.error(
+        t('settings.toast.dangerFail', {
+          label: row.label,
+          defaultValue: 'Could not complete "{{label}}". Please try again.',
+        })
+      );
     } finally {
       setDeleting(null);
       setConfirmTarget(null);
@@ -1267,7 +1287,7 @@ export default function Settings() {
                   onClick={() => {
                     localStorage.removeItem('bustandeen_location');
                     setSavedLocation(null);
-                    toast.success('Saved location cleared.');
+                    toast.success(t('settings.toast.locationCleared', 'Saved location cleared.'));
                   }}
                   className={`${BTN_DANGER_QUIET} shrink-0`}
                 >

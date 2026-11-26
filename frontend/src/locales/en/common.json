@@ -98,6 +98,9 @@
       "desc": "Any charity given tonight is multiplied beyond a thousand months of ordinary worship."
     }
   },
+  "adminNotices": {
+    "sessionEnded": "Your admin session ended. Please sign in again."
+  },
   "adminSadaqah": {
     "seoTitle": "Sadaqah Admin",
     "title": "Sadaqah Admin",
@@ -362,6 +365,7 @@
     "welcomeBack": "Welcome back — your journey continues"
   },
   "common": {
+    "accountDisabled": "This account has been disabled. Contact {{email}} if you think this is a mistake.",
     "analyticsIntention": "A private mirror for your own growth. Only Allah knows what each deed is worth.",
     "add": "Add",
     "back": "Back",
@@ -371,6 +375,7 @@
     "day": "day",
     "days": "days",
     "deviceDateWrong": "The date on your device does not match today's date, so some things may not load or save. Set the date and time on your device to automatic, then try again.",
+    "tooManyRequests": "Too many requests. Please wait a moment and try again.",
     "zikrBatchDropped": "{{n}} zikr counts could not be saved. You can add them again with Log counts.",
     "outboxStuck": "Some of your changes are not saved to your account yet. They are kept on this device and we will keep trying.",
     "salatUpdateDropped": "A prayer update you made earlier could not be saved. Please check that day and mark it again.",
@@ -2077,6 +2082,13 @@
     "secondary": "Second (optional)",
     "textSizes": "Text sizes",
     "title": "Quran settings",
+    "toast": {
+      "goalUnchanged": "Goal unchanged",
+      "goalSet": "Daily goal set: {{count}} āyah",
+      "goalSetPlural": "Daily goal set: {{count}} āyahs",
+      "goalRemoved": "Goal removed. Read freely.",
+      "goalSaveFail": "Could not save the goal. Please try again."
+    },
     "translationsHint": "(up to two shown together)",
     "translationsLabel": "Translations",
     "translitDesc": "Latin pronunciation under the Arabic, for readers still learning the script.",
@@ -2524,6 +2536,10 @@
     "salatSettings": "Salat settings",
     "startFresh": "Start fresh",
     "startFreshNote": "Analytics and streaks will count from today. All past prayer logs stay intact — you can still view them, but they won't affect your new stats.",
+    "toast": {
+      "offline": "You're offline. This will sync automatically once you're back online.",
+      "synced": "Synced your offline prayer updates."
+    },
     "tracker": "Tracker",
     "yesStartFresh": "Yes, start fresh",
     "yesterday": "Yesterday"
@@ -2906,6 +2922,14 @@
     "deleteAccount": "Delete account",
     "deleteAccountDetail": "Permanently removes everything you logged and your login. Messages you sent us stay without your name or email (see Privacy). This cannot be undone.",
     "deleteAccountConfirm": "This will erase everything. Are you sure?",
+    "toast": {
+      "reauthRequired": "Your sign-in is too old for this. Please verify again.",
+      "deleteAccountFailed": "Account deletion failed. Please try again or contact support.",
+      "deleteBlockedStaff": "This login is also an admin account. Ask the Servant to deactivate it in the admin panel first.",
+      "dangerDone": "{{label}}: done.",
+      "dangerFail": "Could not complete \"{{label}}\". Please try again.",
+      "locationCleared": "Saved location cleared."
+    },
     "yesDeleteAccount": "Yes, delete my account",
     "reauthPrompt": "For your security, please verify it’s really you before we delete everything.",
     "reauthPasswordPlaceholder": "Your password",

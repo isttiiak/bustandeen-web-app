@@ -5,6 +5,7 @@ import { m as motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { XMarkIcon, ArrowPathIcon, BookOpenIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { Trans, useTranslation } from 'react-i18next';
+import { formatLocaleNumber } from '../utils/localeDate.js';
 import { useResetKhatam } from '../hooks/useQuran.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import FreshStart from './FreshStart.js';
@@ -176,7 +177,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
     const g = Math.min(6236, Math.max(0, Math.round(goal) || 0));
     setGoal(g);
     if (g === savedGoal) {
-      toast('Goal unchanged', { id: 'quran-goal' });
+      toast(t('quranSettings.toast.goalUnchanged', 'Goal unchanged'), { id: 'quran-goal' });
       return;
     }
     updateProfile.mutate(
@@ -184,10 +185,24 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
       {
         onSuccess: () =>
           toast.success(
-            g > 0 ? `Daily goal set: ${g} āyah${g > 1 ? 's' : ''}` : 'Goal removed. Read freely.',
+            g > 1
+              ? t('quranSettings.toast.goalSetPlural', {
+                  count: formatLocaleNumber(g),
+                  defaultValue: 'Daily goal set: {{count}} āyahs',
+                })
+              : g === 1
+                ? t('quranSettings.toast.goalSet', {
+                    count: formatLocaleNumber(g),
+                    defaultValue: 'Daily goal set: {{count}} āyah',
+                  })
+                : t('quranSettings.toast.goalRemoved', 'Goal removed. Read freely.'),
             { id: 'quran-goal' }
           ),
-        onError: () => toast.error('Could not save the goal. Try again.', { id: 'quran-goal' }),
+        onError: () =>
+          toast.error(
+            t('quranSettings.toast.goalSaveFail', 'Could not save the goal. Please try again.'),
+            { id: 'quran-goal' }
+          ),
       }
     );
   };

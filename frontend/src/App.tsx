@@ -373,10 +373,9 @@ export default function App() {
             // Only sign out on genuine auth failures — not rate limits (429) or server errors (5xx)
             if (verifyRes.status === 401 || verifyRes.status === 403) {
               if (errorText.includes('account_disabled')) {
-                toast.error(
-                  'This account has been disabled. Contact ansar@bustandeen.com if this seems wrong.',
-                  { duration: 8000 }
-                );
+                toast.error(t('common.accountDisabled', { email: 'ansar@bustandeen.com' }), {
+                  duration: 8000,
+                });
               }
               await loadedFirebase()?.auth.signOut();
               return;
