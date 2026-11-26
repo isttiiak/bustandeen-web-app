@@ -10,7 +10,7 @@ import { PRAYER_IDS, type PrayerId } from './SalatLog.js';
  * target can be met on (worked out on the server when the plan is read), and
  * no plan text is ever sent to an AI.
  */
-export type PlanKind = 'zikr' | 'quran' | 'salat';
+type PlanKind = 'zikr' | 'quran' | 'salat';
 
 export interface IPlanTarget {
   kind: PlanKind;
@@ -22,7 +22,7 @@ export interface IPlanTarget {
   daysTarget: number;
 }
 
-export interface INaseehPlan extends Document {
+interface INaseehPlan extends Document {
   userId: string;
   /** Monday of the week, YYYY-MM-DD. */
   weekStart: string;

@@ -23,11 +23,11 @@ const EMPTY_DAY_CONTENT: ICycleDayContent = { flow: null, symptoms: [], moods: [
  *   fresh wudu per prayer (Bukhari 306).
  */
 
-export const HAYD_MAX: Record<ICycleProfile['madhab'], number> = {
+const HAYD_MAX: Record<ICycleProfile['madhab'], number> = {
   hanafi: 10,
   majority: 15,
 };
-export const NIFAS_MAX = 40; // Abu Dawud 311 (Shafi'i position of 60 noted in UI)
+const NIFAS_MAX = 40; // Abu Dawud 311 (Shafi'i position of 60 noted in UI)
 
 const DAY_STR_RE = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -44,7 +44,7 @@ function daysBetween(a: string, b: string): number {
   );
 }
 
-export async function getOrCreateProfile(userId: string): Promise<ICycleProfile> {
+async function getOrCreateProfile(userId: string): Promise<ICycleProfile> {
   let profile = await CycleProfile.findOne({ userId });
   if (!profile) profile = await CycleProfile.create({ userId });
   return profile;
@@ -91,7 +91,7 @@ function weeksAlong(dueDate: string, today: string): number | null {
   return Math.max(0, Math.min(42, weeks));
 }
 
-export interface CycleStatus {
+interface CycleStatus {
   active: {
     type: 'hayd' | 'nifas';
     startDate: string;
@@ -111,7 +111,7 @@ export interface CycleStatus {
   pregnancy: { active: boolean; dueDate: string | null; weeksAlong: number | null };
 }
 
-export async function getStatus(userId: string, today: string): Promise<CycleStatus> {
+async function getStatus(userId: string, today: string): Promise<CycleStatus> {
   const [profile, logs] = await Promise.all([
     getOrCreateProfile(userId),
     CycleLog.find({ userId }).sort({ startDate: -1 }).limit(13),

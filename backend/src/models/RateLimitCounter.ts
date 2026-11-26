@@ -10,7 +10,7 @@ import mongoose, { Schema } from 'mongoose';
  * the counter shortly after, so nothing outlives its window (the longest
  * window is 24 hours).
  */
-export interface IRateLimitCounter {
+interface IRateLimitCounter {
   key: string;
   hits: number;
   resetAt: Date;

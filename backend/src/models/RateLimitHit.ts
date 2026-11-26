@@ -9,7 +9,7 @@ import mongoose, { Document, Schema } from 'mongoose';
  * a live-counter view would be misleading there. This is event-driven
  * instead, so it works the same regardless of how many instances are live.
  */
-export interface IRateLimitHit extends Document {
+interface IRateLimitHit extends Document {
   limiterName: string;
   path: string;
   ip: string;

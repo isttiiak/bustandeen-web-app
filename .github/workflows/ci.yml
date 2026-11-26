@@ -79,8 +79,8 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
-      - name: Unused code (knip, frontend)
-        run: npm run knip:frontend:check
+      - name: Unused code (knip, frontend and backend)
+        run: npm run knip:frontend:check && npm run knip:backend:check
 
       - name: i18n completeness (Bangla)
         working-directory: frontend

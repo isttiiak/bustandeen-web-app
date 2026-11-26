@@ -96,13 +96,13 @@ export const getRateLimitSummary = async (): Promise<RateLimitHitSummary[]> => {
 /** Atlas M0 caps a free cluster at 512 MB of uncompressed BSON plus index
  *  bytes (not the compressed `storageSize` on disk). */
 export const M0_STORAGE_CAP_BYTES = 512 * 1024 * 1024;
-export const STORAGE_WARN_RATIO = 0.7;
+const STORAGE_WARN_RATIO = 0.7;
 
 /** True once usage reaches 70% of the cap. */
 export const isStorageNearCap = (totalBytes: number, capBytes = M0_STORAGE_CAP_BYTES): boolean =>
   totalBytes / capBytes >= STORAGE_WARN_RATIO;
 
-export interface CollectionSize {
+interface CollectionSize {
   name: string;
   documents: number;
   dataBytes: number;
@@ -110,7 +110,7 @@ export interface CollectionSize {
   totalBytes: number;
 }
 
-export interface DatabaseSize {
+interface DatabaseSize {
   name: string;
   totalBytes: number;
 }

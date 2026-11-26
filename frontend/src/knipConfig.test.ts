@@ -23,13 +23,25 @@ describe('knip', () => {
     }
   });
 
-  it('the frontend is clean, so CI checks it (and a new unused export fails the build)', () => {
-    expect(root.scripts['knip:frontend:check']).toBeTruthy();
-    expect(root.scripts['knip:frontend:check']).not.toContain('--no-exit-code');
-    expect(read('.github/workflows/ci.yml')).toContain('npm run knip:frontend:check');
+  it.each(['frontend', 'backend'])(
+    'the %s is clean, so CI checks it (and a new unused export fails the build)',
+    (pkg) => {
+      const script = root.scripts[`knip:${pkg}:check`];
+      expect(script).toBeTruthy();
+      expect(script).not.toContain('--no-exit-code');
+      expect(read('.github/workflows/ci.yml')).toContain(`npm run knip:${pkg}:check`);
+    }
+  );
+
+  it('only two backend model files are excused from the unused-exports check, on purpose', () => {
+    // the cycle and social domain constants: their lists are kept as documentation
+    expect(Object.keys(JSON.parse(read('backend/knip.json')).ignoreIssues ?? {}).sort()).toEqual([
+      'src/models/CycleDay.ts',
+      'src/models/SocialProfile.ts',
+    ]);
   });
 
-  it('only three files are excused from the unused-exports check, on purpose', () => {
+  it('only three frontend files are excused from the unused-exports check, on purpose', () => {
     // salat/calculation modules: their unused names are kept (documented defaults and helpers)
     expect(Object.keys(JSON.parse(read('frontend/knip.json')).ignoreIssues ?? {}).sort()).toEqual([
       'src/hooks/useSalatLog.ts',

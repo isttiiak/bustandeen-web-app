@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 /** Single-document checkpoint for the IMAP sync (key is always 'inbox'). */
-export interface IMailboxSyncState extends Document {
+interface IMailboxSyncState extends Document {
   key: string;
   uidValidity: string | null;
   lastUid: number;

@@ -26,7 +26,7 @@ export interface AdminOverviewStats {
  * left out. "Came back" looks at people who signed up 8 to 35 days ago and
  * counts those seen again at least 7 days after signing up.
  */
-export interface UserActivity {
+interface UserActivity {
   today: number;
   week: number;
   month: number;
@@ -36,9 +36,9 @@ export interface UserActivity {
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-export const SIGNUP_WEEKS = 8;
+const SIGNUP_WEEKS = 8;
 
-export const getUserActivity = async (now = new Date()): Promise<UserActivity> => {
+const getUserActivity = async (now = new Date()): Promise<UserActivity> => {
   const base = { ...(await excludeAdminUids()), disabled: { $ne: true } };
   const ago = (days: number) => new Date(now.getTime() - days * DAY_MS);
   const activeSince = (days: number) =>

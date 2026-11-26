@@ -7,8 +7,8 @@ import crypto from 'crypto';
  * 1Password, Microsoft Authenticator) uses by default.
  */
 
-export const TOTP_STEP_SECONDS = 30;
-export const TOTP_DIGITS = 6;
+const TOTP_STEP_SECONDS = 30;
+const TOTP_DIGITS = 6;
 /** Steps accepted either side of now, for a phone clock that is a little off. */
 const DRIFT_STEPS = 1;
 
@@ -107,7 +107,7 @@ export function otpauthUri(secretBase32: string, accountEmail: string): string {
 // the verify rate limit, so a plain SHA-256 of the normalised code is enough
 // to store (unlike a password, there is no small space to brute-force).
 
-export const BACKUP_CODE_COUNT = 8;
+const BACKUP_CODE_COUNT = 8;
 
 export function generateBackupCodes(): string[] {
   return Array.from({ length: BACKUP_CODE_COUNT }, () => {
@@ -116,7 +116,7 @@ export function generateBackupCodes(): string[] {
   });
 }
 
-export function normaliseBackupCode(code: string): string {
+function normaliseBackupCode(code: string): string {
   return code.replace(/[\s-]/g, '').toUpperCase();
 }
 

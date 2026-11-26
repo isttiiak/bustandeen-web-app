@@ -4,17 +4,6 @@
 export const DEFAULT_TIMEZONE_OFFSET = 6 * 60; // Dhaka: UTC+6 in minutes (default)
 
 /**
- * Get current date/time in specified timezone
- */
-export function getLocalDate(
-  dateLike: number | Date = Date.now(),
-  offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET
-): Date {
-  const date = new Date(dateLike);
-  return new Date(date.getTime() + offsetMinutes * 60 * 1000);
-}
-
-/**
  * Truncate to start of day in specified timezone (local midnight)
  */
 export function truncateToTimezone(
@@ -104,20 +93,3 @@ export function getTodayString(offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET):
 
   return `${year}-${month}-${day}`;
 }
-
-/**
- * Check if it's a new day in specified timezone
- */
-export function isNewDay(
-  lastDateString: string,
-  offsetMinutes: number = DEFAULT_TIMEZONE_OFFSET
-): boolean {
-  return lastDateString !== getTodayString(offsetMinutes);
-}
-
-// Backward compatibility aliases
-export const truncateDhakaDate = (dateLike: number | Date): Date =>
-  truncateToTimezone(dateLike, DEFAULT_TIMEZONE_OFFSET);
-export const getTodayDhakaString = (): string => getTodayString(DEFAULT_TIMEZONE_OFFSET);
-export const getDhakaDate = (dateLike: number | Date): Date =>
-  getLocalDate(dateLike, DEFAULT_TIMEZONE_OFFSET);

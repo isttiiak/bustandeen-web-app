@@ -23,7 +23,7 @@ export const STATS_AREAS = ['zikr', 'salat', 'fasting', 'quran'] as const;
 export type StatsArea = (typeof STATS_AREAS)[number];
 type StoredArea = Exclude<StatsArea, 'salat'>;
 
-export interface ResetHistoryEntry {
+interface ResetHistoryEntry {
   date: string;
   note: string;
   resetAt: Date;
@@ -32,7 +32,7 @@ export interface ResetHistoryEntry {
   /** kaza only: prayers owed just before the reset. */
   owedBefore?: number;
 }
-export interface AreaReset {
+interface AreaReset {
   /** The day the current count starts, or null when never reset. */
   date: string | null;
   history: ResetHistoryEntry[];
@@ -51,11 +51,6 @@ export async function resetDateFor(uid: string, area: StatsArea): Promise<string
   const u = await User.findOne({ uid }).select(`statsResets.${area}`).lean();
   const list = u?.statsResets?.[area as StoredArea] ?? [];
   return list.length ? (list[list.length - 1]?.date ?? null) : null;
-}
-
-/** Latest of two YYYY-MM-DD strings (either may be missing). */
-export function laterDay(a: string | null | undefined, b: string | null | undefined): string {
-  return (a ?? '') > (b ?? '') ? (a ?? '') : (b ?? '');
 }
 
 export async function getResets(uid: string): Promise<StatsResets> {

@@ -6,7 +6,7 @@ export type AdhkarPeriod = (typeof ADHKAR_PERIODS)[number];
 /** One row per person per tracking day: when the morning / evening adhkar
  * routine was completed (T4.3). Only the done flags sync; the per-item tap
  * counts stay on the device. Nothing here feeds zikr totals, Noor or streaks. */
-export interface IAdhkarDay extends Document {
+interface IAdhkarDay extends Document {
   userId: string;
   /** Tracking day (getTrackingDay on the client), YYYY-MM-DD */
   date: string;

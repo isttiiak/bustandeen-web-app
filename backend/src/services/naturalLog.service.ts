@@ -4,12 +4,12 @@ import * as quranService from './quran.service.js';
 import { PrayerId, PrayerLocation, IPrayerEntry } from '../models/SalatLog.js';
 import { DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
 
-export interface CommitSalatEntry {
+interface CommitSalatEntry {
   prayer: PrayerId;
   status: 'completed' | 'kaza';
   location?: PrayerLocation;
 }
-export interface CommitZikrEntry {
+interface CommitZikrEntry {
   typeName: string;
   count: number;
 }

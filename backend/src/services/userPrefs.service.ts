@@ -71,7 +71,7 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_theme_mode',
 ]);
 
-export type PrefEntry = { v: string; t: number };
+type PrefEntry = { v: string; t: number };
 export type PrefsMap = Record<string, PrefEntry>;
 
 /** Tolerate a little client clock skew, but never let a bogus far-future

@@ -32,7 +32,7 @@ export interface AuditLogListResult {
 }
 
 /** The audit log's area filter: which action prefixes each area covers. */
-export const AUDIT_AREAS = {
+const AUDIT_AREAS = {
   sadaqah: ['donation', 'expense', 'quarterly', 'donor'],
   zikr: ['zikrRequest', 'library'],
   users: ['user'],

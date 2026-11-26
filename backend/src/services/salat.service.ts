@@ -53,7 +53,7 @@ function isDuplicateKey(err: unknown): boolean {
  * the loser now reads the log the winner made. Inside one, a duplicate key
  * aborts the whole transaction, so it is rethrown for `withLogRace` to rerun.
  */
-export async function getOrCreateLog(userId: string, date?: string) {
+async function getOrCreateLog(userId: string, date?: string) {
   const d = date ?? todayDateString();
   let log = await SalatLog.findOne({ userId, date: d });
   if (!log) {

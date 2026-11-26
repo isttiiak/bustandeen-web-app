@@ -419,7 +419,7 @@ export async function getFriendsList(userId: string): Promise<FriendListItem[]> 
  * friend keeps secret is left out entirely (absent, not zero), as is its share
  * of the Noor friends see.
  */
-export interface FriendStats {
+interface FriendStats {
   uid: string;
   displayName: string;
   /** Only http(s) URLs — base64 data-URL photos are skipped to keep the payload small */

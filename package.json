@@ -1,6 +1,6 @@
 {
   "name": "bustandeen",
-  "version": "5.190.58",
+  "version": "5.190.59",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -35,6 +35,7 @@
     "knip:frontend": "cd frontend && ../node_modules/.bin/knip --no-progress --no-exit-code --reporter compact",
     "knip:frontend:check": "cd frontend && ../node_modules/.bin/knip --no-progress --reporter compact",
     "knip:backend": "cd backend && ../node_modules/.bin/knip --no-progress --no-exit-code --reporter compact",
+    "knip:backend:check": "cd backend && ../node_modules/.bin/knip --no-progress --reporter compact",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky"

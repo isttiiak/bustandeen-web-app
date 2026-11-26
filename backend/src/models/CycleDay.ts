@@ -33,7 +33,7 @@ export interface ICycleDayContent {
   garden: string[];
 }
 
-export interface ICycleDay extends Document {
+interface ICycleDay extends Document {
   userId: string;
   date: string; // YYYY-MM-DD (local, client-authoritative)
   /** AES-256-GCM ciphertext of ICycleDayContent; null when no note logged yet. */

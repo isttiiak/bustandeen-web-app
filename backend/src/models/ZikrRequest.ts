@@ -1,7 +1,7 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export type ZikrRequestStatus = 'pending' | 'approved' | 'rejected';
-export type PossibleDuplicateModel = 'GlobalZikrLibraryItem' | 'ZikrRequest';
+type PossibleDuplicateModel = 'GlobalZikrLibraryItem' | 'ZikrRequest';
 
 export interface IZikrRequest extends Document {
   userId: string;

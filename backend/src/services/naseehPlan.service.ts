@@ -16,7 +16,7 @@
 import User from '../models/User.js';
 import ZikrDaily from '../models/ZikrDaily.js';
 import QuranLog from '../models/QuranLog.js';
-import NaseehPlan, { type INaseehPlan, type IPlanTarget } from '../models/NaseehPlan.js';
+import NaseehPlan, { type IPlanTarget } from '../models/NaseehPlan.js';
 import SalatLog, { PRAYER_IDS, type PrayerId } from '../models/SalatLog.js';
 import { getExcusedDaySet } from './cycle.service.js';
 import { getAnalyticsData, setGoal } from './analytics.service.js';
@@ -60,9 +60,9 @@ const roundTo = (n: number, step: number): number => Math.round(n / step) * step
 const clamp = (n: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, n));
 
 // ── Public shapes ────────────────────────────────────────────────────────────
-export type PlanStatus = 'paused' | 'not-enough-data' | 'steady' | 'ready' | 'accepted';
+type PlanStatus = 'paused' | 'not-enough-data' | 'steady' | 'ready' | 'accepted';
 
-export interface PlanTargetView extends IPlanTarget {
+interface PlanTargetView extends IPlanTarget {
   title: string;
   /** Why this target, in plain words, from the user's own last four weeks. */
   reason: string;
@@ -434,5 +434,3 @@ export async function acceptPlan(
 
   return getPlan(userId, { today, timezoneOffset: opts.timezoneOffset });
 }
-
-export type { INaseehPlan };

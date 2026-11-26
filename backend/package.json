@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.190.58",
+  "version": "5.190.59",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -44,7 +44,6 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/mailparser": "^3.9.0",
     "@types/node": "^26.6.6",
     "@types/nodemailer": "^8.0.2",
     "cross-env": "^10.1.0",

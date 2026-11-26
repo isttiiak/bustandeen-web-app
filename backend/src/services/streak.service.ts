@@ -24,7 +24,7 @@ import { resetDateFor } from './statsReset.service.js';
  * the user can still backfill.
  */
 
-export type StreakState = 'active' | 'grace' | 'none' | 'paused';
+type StreakState = 'active' | 'grace' | 'none' | 'paused';
 
 export interface StreakStatus {
   currentStreak: number;

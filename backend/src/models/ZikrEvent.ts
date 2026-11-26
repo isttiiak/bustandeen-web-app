@@ -11,7 +11,7 @@ import mongoose, { Document, Schema } from 'mongoose';
  * TTL-capped at 90 days — this is a UX feature (recent patterns), not
  * long-term history like ZikrDaily, so it doesn't need to grow forever.
  */
-export interface IZikrEvent extends Document {
+interface IZikrEvent extends Document {
   userId: string;
   zikrType: string;
   amount: number;

@@ -290,7 +290,7 @@ export const verifyDonation = async (
 };
 
 /** Signed PDF receipt for a verified donation. Only verified ones have one. */
-export const generateReceipt = async (donation: IDonation): Promise<Uint8Array> => {
+const generateReceipt = async (donation: IDonation): Promise<Uint8Array> => {
   if (donation.status !== 'verified' || !donation.verifiedAt) {
     throw httpError(409, 'A receipt exists only for a verified donation');
   }

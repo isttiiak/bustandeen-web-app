@@ -119,7 +119,7 @@ export const submitRequest = async (
 /** Admin review list. Populates the duplicate hint (if any) so the admin card can show the
  * matched name/link without a second round-trip. Paged, newest first, so
  * older requests stay reachable (it used to stop at 300). */
-export const ZIKR_REQUESTS_PAGE_SIZE = 50;
+const ZIKR_REQUESTS_PAGE_SIZE = 50;
 
 export const listRequests = async (
   status: ZikrRequestStatus | undefined,

@@ -541,10 +541,7 @@ export async function getSummary(userId: string, today?: string): Promise<QuranS
 /** Whitelisted tafsir editions (id → {name, language, slug}) available to the
  * reader. Sourced from api.quran.com; text is real scholarly tafsir, never
  * AI-generated. */
-export const TAFSIR_EDITIONS: Record<
-  number,
-  { name: string; language: 'en' | 'bn'; slug: string }
-> = {
+const TAFSIR_EDITIONS: Record<number, { name: string; language: 'en' | 'bn'; slug: string }> = {
   169: { name: 'Ibn Kathir (Abridged)', language: 'en', slug: 'en-tafisr-ibn-kathir' },
   168: { name: "Ma'arif al-Qur'an", language: 'en', slug: 'en-tafsir-maarif-ul-quran' },
   817: { name: 'Tazkirul Quran', language: 'en', slug: 'tazkirul-quran-en' },

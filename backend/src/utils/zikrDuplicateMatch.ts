@@ -8,7 +8,7 @@
  */
 
 /** Lowercase, strip diacritics/punctuation, collapse whitespace. */
-export const normalizeZikrName = (name: string): string =>
+const normalizeZikrName = (name: string): string =>
   name
     .normalize('NFKD')
     .replace(/[̀-ͯ]/g, '') // combining diacritics
@@ -43,7 +43,7 @@ const levenshtein = (a: string, b: string): number => {
  * relative to length, since short common phrases ("SubhanAllah") would
  * otherwise produce noisy false positives against each other.
  */
-export const isLikelyDuplicateName = (a: string, b: string): boolean => {
+const isLikelyDuplicateName = (a: string, b: string): boolean => {
   const na = normalizeZikrName(a);
   const nb = normalizeZikrName(b);
   if (!na || !nb) return false;

@@ -82,7 +82,7 @@ export interface ClientUser {
 /** Whether the user chose their own Hijri offset (T4.1). Accounts from before
  * the flag existed count as manual only with a non-zero offset: 0 was the
  * default almost nobody picked, so those follow their country. */
-export function hijriIsManual(u: Pick<IUser, 'hijriOffset' | 'hijriOffsetSet'>): boolean {
+function hijriIsManual(u: Pick<IUser, 'hijriOffset' | 'hijriOffsetSet'>): boolean {
   return u.hijriOffsetSet ?? (u.hijriOffset ?? 0) !== 0;
 }
 

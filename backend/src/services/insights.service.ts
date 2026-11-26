@@ -14,7 +14,7 @@ function shiftDateStr(dateStr: string, delta: number): string {
   return dt.toISOString().substring(0, 10);
 }
 
-export interface WorshipGroup {
+interface WorshipGroup {
   /** Number of days in this group within the window. */
   days: number;
   /** Mean salat completion rate (0-100) across the group's days — a day

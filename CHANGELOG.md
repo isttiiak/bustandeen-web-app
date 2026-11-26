@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.59 - Backend unused code removed, and CI checks both sides (audit P4-5) - 2026-11-26
+
+The backend had 60 unused exports and 54 unused exported types (in 65 files). They are cleared, and CI now fails on a new one in either package, so the knip work of the last three releases is finished.
+
+### What was removed
+
+- **114 exports and types** lose the `export` keyword (nothing imported them).
+- **Dead code deleted (14 items):** `STALE_AFTER_MS`, `laterDay`, five unused timezone helpers in `utils/timezone-flexible.ts` (`getLocalDate`, `isNewDay`, `truncateDhakaDate` and the `getTodayDhakaString` / `getDhakaDate` aliases), six unused types in `types/api.types.ts` (`ZikrSummaryResponse`, `AnalyticsResponse`, `UserProfile`, `ZikrTypeItem`, `StreakData`, `GoalData`) and a stray `type { INaseehPlan }` re-export.
+- **Dependency:** `@types/mailparser` is removed; `mailparser` 3.15 ships its own types (`types` in its package.json), so `tsc` still passes.
+- **Left alone on purpose:** the lists in `models/CycleDay.ts` (`CYCLE_FLOWS`, `CYCLE_SYMPTOMS`, `CYCLE_MOODS`) and `models/SocialProfile.ts` (`SECRET_AREAS`), kept as documentation of the allowed values (the cycle and privacy domains). `backend/knip.json` excuses those two files. The fiqh services (`salat`, `fasting`, `cycle`) only lost `export` keywords; no calculation changed.
+- **Nothing in the app changes:** no behaviour, no data, no strings.
+
+### CI and tests
+
+- The knip step now runs `npm run knip:frontend:check && npm run knip:backend:check`. Both fail on any finding.
+- `knipConfig.test.ts` (7 cases): each package has a strict script that CI runs, and only the documented files (three in the frontend, two in the backend) are excused. Fails on main, passes here.
+- Backend: 110 suites, 960 tests pass; `tsc` and lint are clean; `knip` exits 0 for both packages.
+
 ## v5.190.58 - Frontend unused code removed, and CI now checks it (audit P4-5) - 2026-11-26
 
 Code that nothing used is gone from the frontend, and CI fails if a new unused export is added. (The v5.190.57 note said "68 unused exports" and "33 types"; those were counts of files. There were 103 unused exports and 45 unused types in 88 files.)

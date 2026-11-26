@@ -16,7 +16,7 @@ import {
  * Spark plan.
  */
 
-export class AdminMfaError extends Error {
+class AdminMfaError extends Error {
   status: number;
   constructor(message: string, status = 400) {
     super(message);
@@ -25,7 +25,7 @@ export class AdminMfaError extends Error {
 }
 
 /** How long a secret shown during enrolment can still be confirmed. */
-export const ENROL_PENDING_MS = 10 * 60 * 1000;
+const ENROL_PENDING_MS = 10 * 60 * 1000;
 
 const findActive = async (uid: string): Promise<IAdminAccount> => {
   const account = await AdminAccount.findOne({ firebaseUid: uid, active: true });

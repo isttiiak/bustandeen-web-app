@@ -17,7 +17,7 @@ type Db = mongoose.mongo.Db;
 
 export const VERSIONS_COLLECTION = 'schemaversions';
 
-export interface MigrationContext {
+interface MigrationContext {
   db: Db;
   /** false = dry run: count what would change, write nothing. */
   apply: boolean;
@@ -30,7 +30,7 @@ export interface Migration {
   up(ctx: MigrationContext): Promise<Record<string, number>>;
 }
 
-export type MigrationStatus = 'applied' | 'would-apply' | 'already-applied';
+type MigrationStatus = 'applied' | 'would-apply' | 'already-applied';
 
 export interface MigrationResult {
   id: string;

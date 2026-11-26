@@ -5,7 +5,7 @@ import mongoose, { Schema } from 'mongoose';
  * the job's name in `_id` (so no extra index). Vercel Hobby keeps logs for one
  * hour, so this is the only lasting record that a job ran: Ops health shows it.
  */
-export interface ICronRun {
+interface ICronRun {
   _id: string;
   ok: boolean;
   /** Short, secret-free outcome ("deploy requested", "hook not set"). */
