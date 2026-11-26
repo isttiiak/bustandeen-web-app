@@ -281,6 +281,55 @@ test('salat analytics: a shorter range and a day opened', async ({ page }) => {
   await expectBaseline(page, 'salat-analytics.1y');
 });
 
+// Salat analytics: the controls, the month picker, the info dialogs, the journey
+// view and a calendar day (which opens the tracker on that day).
+test('salat analytics: a 90-day range', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/salat/analytics');
+  // (Not "All": its 3,650 calendar cells animate in one after another for
+  // about fifteen seconds, so the page has no settled state to record.)
+  await press(page, '90d');
+  await expectBaseline(page, 'salat-analytics.90d');
+});
+
+test('salat analytics: the month picker, and an earlier month', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/salat/analytics');
+  await press(page, /Oct 2026/);
+  await expectBaseline(page, 'salat-analytics.month-picker');
+  await press(page, 'Sep');
+  await expectBaseline(page, 'salat-analytics.month-sep');
+});
+
+test('salat analytics: the chart info dialogs', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/salat/analytics');
+  for (const [name, file] of [
+    ['By Day of Week', 'weekday'],
+    ['Prayer Timing', 'timing'],
+    ['Kaza Insights', 'kaza-insights'],
+    ['Isha & Fajr Connection', 'correlation'],
+    ['Prayer Calendar', 'calendar'],
+  ] as const) {
+    await press(page, name);
+    await expectBaseline(page, `salat-analytics.info-${file}`);
+    await page.getByRole('button', { name: 'Close', exact: true }).first().click();
+    await page.waitForTimeout(400);
+  }
+});
+
+test('salat analytics: the journey view and its info dialog', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/salat/analytics');
+  await press(page, 'Journey');
+  await expectBaseline(page, 'salat-analytics.journey');
+  await press(page, 'Journey', 1);
+  await expectBaseline(page, 'salat-analytics.journey-info');
+});
+
+test('salat analytics: a calendar day opens the tracker on that day', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/salat/analytics');
+  await press(page, '2026-10-12: 5/5');
+  await expect(page).toHaveURL(/\/salat\?date=2026-10-12/);
+  await expectBaseline(page, 'salat-analytics.calendar-day-opens-salat');
+});
+
 // ---- Friends, Settings, Quran -------------------------------------------
 
 test('friends: how Noor works', async ({ page }) => {
