@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import en from '../locales/en/common.json';
 import bn from '../locales/bn/common.json';
 
-// T3.2 Settings: the page, its Zikr library, the Quran and Zikr settings
+// T3.2 Settings: the page, its parts (components/settings/), its Zikr library, the Quran and Zikr settings
 // drawers and the zikr edit/info dialogs draw SVG icons only, their copy (and
 // every locale string they use) has no emoji or em dashes, every key they use
 // exists in both languages, and every full-screen overlay is portaled (the
@@ -17,7 +17,7 @@ const files = import.meta.glob<string>(
     '../components/EditZikrModal.tsx',
     '../components/QuranSettings.tsx',
     '../components/TrackingDayInfoModal.tsx',
-    '../components/settings/HijriDateSetting.tsx',
+    '../components/settings/*.{ts,tsx}',
     '../components/zikr/zikrCategoryIcons.tsx',
     '../utils/quranPrefs.ts',
   ],
@@ -42,7 +42,9 @@ const usedKeys = [
 
 describe('Settings screen', () => {
   it('finds the Settings files', () => {
-    expect(Object.keys(files).length).toBe(10);
+    // The page, eight other screens' files and the seventeen files of components/settings/
+    // (audit P4-1 split the page into them).
+    expect(Object.keys(files).length).toBe(26);
     expect(usedKeys.length).toBeGreaterThan(100);
   });
 
@@ -66,7 +68,7 @@ describe('Settings screen', () => {
 
   it('the Naseeh toggle saves through useUpdateProfile, not api.patch', () => {
     // A direct api.patch left the cached profile stale (same fix as #141).
-    const code = stripComments(files['./Settings.tsx'] ?? '');
+    const code = stripComments(files['../components/settings/SettingsNaseehSection.tsx'] ?? '');
     expect(code).not.toMatch(/api\.patch\([^)]*aiEnabled/);
     expect(code).toMatch(/updateProfile\.mutateAsync\(\{ aiEnabled: v \}\)/);
   });
@@ -74,11 +76,14 @@ describe('Settings screen', () => {
   it('the Hijri offset and day-start mode save through useUpdateProfile, not api.patch', () => {
     // Same stale-profile fix as #145, for the last two direct writes. The
     // Hijri choice lives in HijriDateSetting (Settings and the calendar drawer).
-    const code = stripComments(files['./Settings.tsx'] ?? '');
+    const page = stripComments(files['./Settings.tsx'] ?? '');
+    const dayStart = stripComments(
+      files['../components/settings/SettingsDayStartSection.tsx'] ?? ''
+    );
     const hijri = stripComments(files['../components/settings/HijriDateSetting.tsx'] ?? '');
-    expect(code + hijri).not.toMatch(/api\.patch\([^)]*(hijriOffset|dayStartMode)/);
-    expect(code).toContain('<HijriDateSetting />');
+    expect(page + dayStart + hijri).not.toMatch(/api\.patch\([^)]*(hijriOffset|dayStartMode)/);
+    expect(page).toContain('<HijriDateSetting />');
     expect(hijri).toMatch(/updateProfile\.mutateAsync\(\{ hijriOffset: days \}\)/);
-    expect(code).toMatch(/updateProfile\.mutateAsync\(\{ dayStartMode: mode \}\)/);
+    expect(dayStart).toMatch(/updateProfile\.mutateAsync\(\{ dayStartMode: mode \}\)/);
   });
 });

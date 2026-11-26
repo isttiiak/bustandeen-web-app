@@ -2,6 +2,26 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.62 - Settings page split into parts (audit P4-1, step 2) - 2026-11-27
+
+`pages/Settings.tsx` was 1,499 lines. It is now 127 lines, and the rest lives in `components/settings/` (17 files, the largest 182 lines). Nothing changes for anyone: same markup, copy, requests and toasts.
+
+### What moved (verbatim, only imports, `export`, hook plumbing and prop names added)
+
+- **Data and styles:** `dangerGroups.ts` (the danger-zone list), `settingsParts.tsx` (`SectionCard`, `Toggle`, option and button styles).
+- **Pickers:** `AppearancePickers.tsx` (theme, reduce motion, Home layout), `GroqKeySetting.tsx`.
+- **Hooks:** `useAccountDeletion.ts` (delete account, the fresh re-authentication, the purge), `useBackupActions.ts` (JSON backup, Excel report, restore), `useDangerRows.ts` (rows, confirm step, executor).
+- **Sections:** `SettingsLanguageSection`, `SettingsMusafirSection`, `SettingsDayStartSection`, `SettingsDisplaySections` (appearance, Home, accessibility), `SettingsNaseehSection`, `SettingsBackupControls`, `SavedLocationRow`, `SettingsDangerZone`, `DeleteAccountPanel`.
+- State that only one section used moved into it (the day-start choice and its info dialog). The saved location stays in the page because two sections read it. No hook runs conditionally, and the delete-account, backup and danger-zone logic is the same code in the same order.
+
+### Proof
+
+- The 58 baselines of v5.190.61 pass untouched, and ten new Settings tests (eleven snapshots) were recorded on the OLD code first and pass on the split: theme, motion and Home layout choices; high contrast and vibration; day start at midnight; switching to Bangla; Musafir mode on; Naseeh on (the key box); clearing the saved location; a danger row confirmed and run; delete account, confirm and the re-authentication step; the cycle row for sisters. Built the way CI builds.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths and `export` keywords, re-wrapped JSX, and two intended edits: the Excel import path (`../../utils/backupExcel.js`) and one prop (`exportPending` for `exportBackupMutation.isPending`).
+- `settingsScreen.test.ts` and `toastsTranslated.test.ts` read source text; they now read the files that hold the code (26 files for the screen test; the settings toasts across `useAccountDeletion.ts`, `useDangerRows.ts` and `SavedLocationRow.tsx`). The `Settings.tsx` cap in `fileSize.test.ts` is removed.
+- Frontend unit tests 154 files, 2528 tests; full e2e 231 passed; lint (2 existing warnings), typecheck, format, i18n and knip clean.
+- **Not reachable in the demo:** the real Firebase re-authentication (the password and Google popup steps) and the account purge itself. They are covered by the line check, `tsc`, eslint and the source-text tests.
+
 ## v5.190.61 - Friends page split into parts (audit P4-1, step 1) - 2026-11-26
 
 `pages/Friends.tsx` was 1,309 lines with seven components inside it. It is now 140 lines, and each part lives in `components/friends/`. Nothing changes for anyone: same markup, same copy, same requests.

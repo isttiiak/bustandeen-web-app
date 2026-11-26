@@ -59,7 +59,11 @@ const SECTIONS: Record<string, { files: string[]; keys: string[] }> = {
     keys: ['goalUnchanged', 'goalSet', 'goalSetPlural', 'goalRemoved', 'goalSaveFail'],
   },
   'settings.toast': {
-    files: ['pages/Settings.tsx'],
+    files: [
+      'components/settings/useAccountDeletion.ts',
+      'components/settings/useDangerRows.ts',
+      'components/settings/SavedLocationRow.tsx',
+    ],
     keys: [
       'reauthRequired',
       'deleteAccountFailed',

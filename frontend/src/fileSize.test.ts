@@ -40,7 +40,6 @@ const sizes = (dir: string): Record<string, number> =>
 const PAGE_CAPS: Record<string, number> = {
   'pages/SalatTracker.tsx': 1828,
   'pages/RayhanahCycle.tsx': 1628,
-  'pages/Settings.tsx': 1499,
   'pages/SalatAnalytics.tsx': 1416,
   'pages/QuranReader.tsx': 1360,
   'pages/ZikrAnalytics.tsx': 1167,
