@@ -179,8 +179,7 @@ export default function Home() {
       window.removeEventListener('focus', onFocus);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
-  }, [location.pathname]);
+  }, [location.pathname, hydrate]);
 
   const { data: analyticsData } = useAnalytics(1);
   // Salat is dated by the tracking day (see useSalatLog), and the dashboard
@@ -254,7 +253,7 @@ export default function Home() {
     } catch {
       return null;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- recalculate once a minute: the minute of prayerNow stands in for prayerNow itself, which is a new Date on every tick
   }, [prayerNow.getMinutes()]); // recalc every minute is enough for widget
 
   const cycleActive = useCycleActive();
@@ -266,7 +265,7 @@ export default function Home() {
   const isFridayToday = useMemo(() => isFriday(), []);
   const fridayHour = useMemo(
     () => getFridayHour(prayerWidgetData?.times.asr, prayerWidgetData?.times.maghrib, prayerNow),
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- recalculate once a minute with the widget: the minute of prayerNow stands in for prayerNow, and the asr and maghrib times only change with the widget data
     [prayerNow.getMinutes()]
   );
 

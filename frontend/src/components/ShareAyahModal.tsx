@@ -77,7 +77,7 @@ export default function ShareAyahModal({
     setEditions(initialEditions.slice(0, 2));
     setTranslitOn(initialTranslit);
     setPrefs(getShareCardPrefs());
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when the modal opens
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset the picks only when the modal opens; initialEditions and initialTranslit are read at that moment, so later prop changes must not overwrite the user's choices
   }, [open]);
 
   const updatePrefs = (patch: Partial<ShareCardPrefs>) => {

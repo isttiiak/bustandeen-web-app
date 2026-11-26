@@ -84,7 +84,7 @@ export default function FastingCompanion({
         },
       }
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- asks once per day, period and fast type; companion is a new object every render and a failed request must not retry on every render; message and the request fields are read at that moment
   }, [user, aiEnabled, id]);
 
   if (!user || !aiEnabled || dismissed || (!message && !companion.isPending && !failed)) {

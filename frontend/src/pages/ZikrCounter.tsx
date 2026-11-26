@@ -99,7 +99,7 @@ export default function ZikrCounter() {
 
   useEffect(() => {
     if (linkType && types.includes(linkType)) selectType(linkType);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per link; types arrive after merge
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- select the linked dhikr once per link: types arrives after the merge, and selectType is read at that moment
   }, [linkType, types.includes(linkType ?? '')]);
 
   const currentCount = counts?.[selected] ?? 0;
@@ -257,7 +257,7 @@ export default function ZikrCounter() {
     if (merged.length !== types.length || merged.some((name, i) => name !== types[i])) {
       setTypes(merged);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- merge again only when the server's names or the hidden list change: fetchedTypes is a new array every render (its joined names stand in for it), setTypes is stable, and types must be read fresh because setTypes(merged) would loop if it were a dependency
   }, [fetchedTypes?.map((item) => item.name).join('|'), hiddenTypes]);
 
   // Tasbih mode: a SESSION-scoped countdown, independent of the dhikr's

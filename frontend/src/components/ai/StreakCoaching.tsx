@@ -172,7 +172,7 @@ export default function StreakCoaching({
         },
       }
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- asks once per day and streak event; coach is a new object every render (a failed request must not retry on every render) and the event's other fields are read at that moment
   }, [day, streakEvent?.feature, streakEvent?.event]);
 
   if (!streakEvent || dismissed || (!result && !coach.isPending && !failed)) return null;

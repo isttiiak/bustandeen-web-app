@@ -153,7 +153,7 @@ export default function MuhasabahReport() {
         writeCache(entry);
       },
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs when the user, week or whether stats exist changes; muhasabahMut is a new object every render (a failed request must not retry on every render) and weeklyStats is read at that moment
   }, [user, aiEnabled, wk, !!weeklyStats]);
 
   if (!user || !aiEnabled || dismissed) return null;

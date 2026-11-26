@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.56',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Behind the scenes: safer page logic',
+        fixed: [
+          'We reviewed the places where a page updates itself in the background and wrote down why each one is correct. Nothing looks or works differently, and your data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: পাতার ভেতরের কাজে আরও নিরাপত্তা',
+        fixed: [
+          'যেসব জায়গায় কোনো পাতা নিজে নিজে হালনাগাদ হয় সেগুলো খতিয়ে দেখা হয়েছে এবং প্রতিটি কেন ঠিক তা লিখে রাখা হয়েছে। দেখতে বা কাজে কিছু বদলায়নি, আপনার তথ্যেও কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.55',
     date: '2026-11-26',
     text: {

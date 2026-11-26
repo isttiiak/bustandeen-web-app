@@ -276,7 +276,7 @@ export default function QuranReader() {
     return () => {
       alive = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reload the surah text only when the surah number changes; showTranslit, startAyah and t are read at that moment, so a language or option change must not reload it and reset the reading position
   }, [surahNo]);
 
   // Offer "continue where you left off?" once text (and, when signed in, the
@@ -291,7 +291,7 @@ export default function QuranReader() {
       saveResume(surahNo, saved); // refresh the local cache from the server
       setResumeAyah(saved);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- deps intentionally narrowed; the omitted values are stable or would retrigger this effect unnecessarily
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- offer the resume prompt once the text and the server summary are ready (resumePromptDoneRef stops repeats); ayat.length is read at that moment
   }, [loading, summary, surahNo, usesResume, hasStart, user]);
 
   // Push the resume position to the server, debounced — cheap and idempotent.
