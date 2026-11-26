@@ -4,7 +4,7 @@ import { ArrowUpIcon } from '@heroicons/react/24/solid';
 import { useUiStore } from '../store/useUiStore.js';
 
 /** Scrolled this far (px) before "go to top" appears: half a phone screen. */
-export const GO_TOP_THRESHOLD = 400;
+const GO_TOP_THRESHOLD = 400;
 
 /**
  * The bottom-right corner stack (U1). One flex column, so the "go to top"

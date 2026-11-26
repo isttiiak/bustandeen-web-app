@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import api from '../lib/api.js';
 
-export interface AdminUserListItem {
+interface AdminUserListItem {
   uid: string;
   email: string;
   displayName?: string;
@@ -55,17 +55,6 @@ export function useAdminUserList(
       return res.data;
     },
     staleTime: 15_000,
-  });
-}
-
-export function useWelcomeBackfillStatus() {
-  return useQuery<{ missing: number }>({
-    queryKey: ['admin', 'users', 'welcome-backfill'],
-    queryFn: async () => {
-      const res = await api.get<{ missing: number }>('/api/admin/users/welcome-backfill');
-      return res.data;
-    },
-    staleTime: 30_000,
   });
 }
 
@@ -174,23 +163,6 @@ export function useEnableUser() {
     mutationFn: (uid: string) => api.post(`/api/admin/users/${uid}/enable`),
     onSuccess: (_data, uid) => {
       void queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'detail', uid] });
-    },
-  });
-}
-
-/** Owner-only, deliberately manual — sending a batch of real emails is
- *  something the admin should trigger on purpose, never a side effect. */
-export function useSendWelcomeBackfill() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async () => {
-      const res = await api.post<{ sent: number; remaining: number }>(
-        '/api/admin/users/welcome-backfill'
-      );
-      return res.data;
-    },
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['admin', 'users', 'welcome-backfill'] });
     },
   });
 }

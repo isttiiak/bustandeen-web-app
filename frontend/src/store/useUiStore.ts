@@ -71,7 +71,7 @@ export type ReduceMotionMode = 'auto' | 'on' | 'off';
 
 /** 'on' / 'off' / 'auto'. Before T3.5 the key held '1' (on) or '0' (the
  * default, never chosen), so '1' stays on and anything else is auto. */
-export function parseReduceMotionMode(raw: string | null): ReduceMotionMode {
+function parseReduceMotionMode(raw: string | null): ReduceMotionMode {
   if (raw === 'on' || raw === '1') return 'on';
   if (raw === 'off') return 'off';
   return 'auto';
@@ -81,7 +81,7 @@ function osPrefersReducedMotion(): boolean {
   return window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 }
 
-export function effectiveReduceMotion(mode: ReduceMotionMode, os: boolean): boolean {
+function effectiveReduceMotion(mode: ReduceMotionMode, os: boolean): boolean {
   return mode === 'on' || (mode === 'auto' && os);
 }
 

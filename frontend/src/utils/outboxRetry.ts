@@ -27,7 +27,7 @@ const BACKOFF_MAX_MS = 15 * 60_000;
 
 /** A write that has waited this long is dropped, so one that can never go
  * through cannot hold the queue for ever. */
-export const MAX_OP_AGE_MS = 14 * 24 * 3600_000;
+const MAX_OP_AGE_MS = 14 * 24 * 3600_000;
 
 export function isTooOld(queuedAt: number, now = Date.now()): boolean {
   return now - queuedAt > MAX_OP_AGE_MS;

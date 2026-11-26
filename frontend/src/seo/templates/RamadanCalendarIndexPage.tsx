@@ -11,7 +11,7 @@ import JsonLd, { breadcrumbJsonLd } from '../components/JsonLd.js';
 // crawl attention) but one popular city per major region so the page reads
 // as genuinely global, matching the site's actual coverage.
 /** City pages exist in English, Bangladesh's in Bangla too: no Arabic index. */
-export const INDEX_LANGS: SeoLang[] = ['en', 'bn'];
+const INDEX_LANGS: SeoLang[] = ['en', 'bn'];
 
 const POPULAR_SLUGS = [
   'dhaka-bangladesh',

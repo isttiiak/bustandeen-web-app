@@ -7,12 +7,6 @@ import { placeClockOffsetMin } from '../utils/placeClock.js';
 
 export const QURAN_TOTAL_AYAT = 6236;
 
-/** Juz number for a mushaf page (standard Madani layout: juz 2 starts p.22, then every 20 pages) */
-export function juzForPage(page: number): number {
-  if (page < 22) return 1;
-  return Math.min(30, Math.floor((page - 2) / 20) + 1);
-}
-
 export interface QuranBookmark {
   surah: number;
   ayah: number;
@@ -63,7 +57,7 @@ export interface QuranSummary {
 }
 
 // Fajr-boundary tracking day (falls back to civil midnight without a location)
-export function localTodayStr(): string {
+function localTodayStr(): string {
   return getTrackingDay();
 }
 
@@ -256,23 +250,6 @@ export function useTafsir(surah: number, ayah: number, editionId: number, enable
     },
     enabled: !!user && enabled && surah > 0 && ayah > 0,
     staleTime: 24 * 60 * 60_000, // tafsir text never changes
-  });
-}
-
-export function useQuranHistory(days = 30, enabled = true) {
-  const user = useAuthStore((s) => s.user);
-  const today = localTodayStr();
-  return useQuery({
-    queryKey: ['quran', 'history', days, today],
-    queryFn: async () => {
-      const { data } = await api.get<{
-        ok: boolean;
-        history: Array<{ date: string; ayat: number; pages: number; units: number }>;
-      }>(`/api/quran/history?days=${days}&today=${today}`);
-      return data.history;
-    },
-    enabled: !!user && enabled,
-    staleTime: 60_000,
   });
 }
 

@@ -270,7 +270,7 @@ export function wasTravelPrayer(
  * A prayer missed AT HOME is made up in full, even on a journey.
  */
 export type TravelKazaRule = 'short' | 'full';
-export const MUSAFIR_KAZA_RULE_KEY = 'bustandeen_musafir_kaza_rule';
+const MUSAFIR_KAZA_RULE_KEY = 'bustandeen_musafir_kaza_rule';
 
 export function getTravelKazaRule(): TravelKazaRule {
   try {

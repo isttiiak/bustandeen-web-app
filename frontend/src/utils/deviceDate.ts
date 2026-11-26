@@ -7,7 +7,7 @@ import i18n from '../i18n.js';
  * The usual cause is a device clock set to the wrong date. Without a message the
  * app looked broken: reads came back empty and saves quietly did not happen.
  */
-export const DEVICE_DATE_CODE = 'client_day_mismatch';
+const DEVICE_DATE_CODE = 'client_day_mismatch';
 
 /** True when a 400 response body is the server's wrong-device-date refusal. */
 export function isDeviceDateError(data: unknown): boolean {

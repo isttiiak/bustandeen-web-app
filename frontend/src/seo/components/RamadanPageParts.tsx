@@ -112,7 +112,7 @@ export interface FastingLength {
 }
 
 /** "12 h 31 min" in the page's digits. */
-export function formatDuration(lang: SheetLang, minutes: number, num: (n: number) => string) {
+function formatDuration(lang: SheetLang, minutes: number, num: (n: number) => string) {
   const s = RAMADAN_SHEET[lang];
   const h = Math.floor(Math.abs(minutes) / 60);
   const m = Math.abs(minutes) % 60;

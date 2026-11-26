@@ -155,9 +155,3 @@ export function initErrorReporting(apiBase: string): void {
   });
   window.addEventListener('unhandledrejection', (e) => reportClientError(e.reason, 'rejection'));
 }
-
-/** Test helper. */
-export function resetErrorReporting(): void {
-  seen.clear();
-  sent = 0;
-}

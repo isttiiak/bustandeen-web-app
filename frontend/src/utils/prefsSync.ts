@@ -14,7 +14,7 @@ import { useUiStore } from '../store/useUiStore.js';
 import i18n from '../i18n.js';
 import { applyTheme, THEME_MODE_EVENT, THEME_MODE_KEY } from './theme.js';
 
-export const SYNCED_KEYS: readonly string[] = [
+const SYNCED_KEYS: readonly string[] = [
   'bustandeen_reduce_motion',
   'bustandeen_high_contrast',
   'bustandeen_vibration',

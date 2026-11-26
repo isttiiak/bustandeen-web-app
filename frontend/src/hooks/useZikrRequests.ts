@@ -10,7 +10,7 @@ export type GlobalZikrCategory =
 /** Populated shape of a possible-duplicate match — only `_id`/`name` are
  * needed for the admin UI, which both GlobalZikrLibraryItem and ZikrRequest
  * (the two possible referenced models) have in common. */
-export interface PossibleDuplicateRef {
+interface PossibleDuplicateRef {
   _id: string;
   name: string;
 }

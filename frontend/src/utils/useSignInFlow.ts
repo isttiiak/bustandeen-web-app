@@ -10,10 +10,10 @@ import {
 } from './googleSignIn.js';
 
 /** "Signing you in" never stays up longer than this, whatever happens. */
-export const FINISH_TIMEOUT_MS = 20_000;
+const FINISH_TIMEOUT_MS = 20_000;
 /** After the Google popup closes, how long a sign-in may take to arrive
  *  before the buttons are given back (the popup was most likely cancelled). */
-export const POPUP_RETURN_GRACE_MS = 2_500;
+const POPUP_RETURN_GRACE_MS = 2_500;
 
 const CANCELLED = new Set(['auth/popup-closed-by-user', 'auth/cancelled-popup-request']);
 

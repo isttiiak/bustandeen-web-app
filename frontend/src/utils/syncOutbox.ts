@@ -24,7 +24,7 @@ import { clearOutboxStuck, notifyOutboxStuck } from './outboxStatus.js';
 
 const STORAGE_KEY = 'bustandeen_sync_outbox';
 
-export type SyncTracker = 'fasting' | 'quran' | 'cycle' | 'adhkar' | 'zikr';
+type SyncTracker = 'fasting' | 'quran' | 'cycle' | 'adhkar' | 'zikr';
 type Method = 'post' | 'put' | 'patch' | 'delete';
 
 export interface SyncOp {
@@ -113,7 +113,7 @@ export function peekSyncOutbox(): SyncOp[] {
   return readQueue();
 }
 
-export function removeSyncOp(id: string): void {
+function removeSyncOp(id: string): void {
   writeQueue(readQueue().filter((op) => op.id !== id));
 }
 
@@ -136,7 +136,7 @@ export function clearSyncOutbox(): void {
 }
 
 /** No response at all: offline, DNS, timeout. A 4xx/5xx is a real answer. */
-export function isNetworkError(err: unknown): boolean {
+function isNetworkError(err: unknown): boolean {
   return axios.isAxiosError(err) && !err.response;
 }
 

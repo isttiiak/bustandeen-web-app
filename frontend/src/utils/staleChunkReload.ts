@@ -19,7 +19,7 @@
 
 const KEY = 'bustandeen_chunk_reloads';
 const MAX_REMEMBERED = 20;
-export const SW_UPDATE_TIMEOUT_MS = 5_000;
+const SW_UPDATE_TIMEOUT_MS = 5_000;
 
 /** The failing chunk's file name ("AdminUsers-Ab12Cd.js"), or 'unknown'. */
 export function chunkKey(message: string | undefined): string {

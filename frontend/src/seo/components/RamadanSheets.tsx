@@ -32,7 +32,7 @@ export interface SheetRowData {
   iftar: string;
 }
 
-export interface SheetFitra {
+interface SheetFitra {
   line: string;
   pending: string;
   source: string;

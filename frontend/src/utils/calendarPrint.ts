@@ -21,7 +21,7 @@ import {
 } from './calendarMonth.js';
 import { calendarWindow } from './calendarMonth.js';
 
-export type PrintRange =
+type PrintRange =
   | { kind: 'month' }
   | { kind: 'year'; layout: 'pages' | 'glance' }
   | { kind: 'range'; from: string; to: string };
@@ -121,7 +121,7 @@ export function includeFilters(country: string | null, inc: PrintInclude): Event
 }
 
 /** Years either side of today a download without government holidays can reach. */
-export const OPEN_YEARS = 25;
+const OPEN_YEARS = 25;
 
 /**
  * The months a download may include: with government holidays, the screen's

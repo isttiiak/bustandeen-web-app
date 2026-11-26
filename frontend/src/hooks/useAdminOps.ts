@@ -59,7 +59,7 @@ export function useRateLimitHits() {
   });
 }
 
-export interface CollectionSize {
+interface CollectionSize {
   name: string;
   documents: number;
   dataBytes: number;
@@ -89,7 +89,7 @@ export function useStorageUsage() {
   });
 }
 
-export interface CspViolationSummary {
+interface CspViolationSummary {
   directive: string;
   blocked: string;
   source: string;
@@ -119,7 +119,7 @@ export function useCspViolations() {
   });
 }
 
-export interface ClientErrorSummary {
+interface ClientErrorSummary {
   kind: 'error' | 'rejection' | 'render';
   message: string;
   where: string;

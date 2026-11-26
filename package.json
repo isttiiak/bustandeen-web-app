@@ -1,6 +1,6 @@
 {
   "name": "bustandeen",
-  "version": "5.190.57",
+  "version": "5.190.58",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -33,6 +33,7 @@
     "typecheck:api": "backend/node_modules/.bin/tsc -p api/tsconfig.json",
     "knip": "npm run knip:frontend && npm run knip:backend",
     "knip:frontend": "cd frontend && ../node_modules/.bin/knip --no-progress --no-exit-code --reporter compact",
+    "knip:frontend:check": "cd frontend && ../node_modules/.bin/knip --no-progress --reporter compact",
     "knip:backend": "cd backend && ../node_modules/.bin/knip --no-progress --no-exit-code --reporter compact",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

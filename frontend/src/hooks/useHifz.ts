@@ -4,10 +4,10 @@ import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
 import { withHifzDay } from '../utils/hifzDay.js';
 
-export type HifzState = 'new' | 'learning' | 'consolidating' | 'solid';
+type HifzState = 'new' | 'learning' | 'consolidating' | 'solid';
 export type HifzResult = 'easy' | 'hesitant' | 'forgot';
 
-export interface HifzHeatmapRow {
+interface HifzHeatmapRow {
   surah: number;
   totalAyat: number;
   memorised: number;
@@ -143,17 +143,6 @@ export function useUpdateHifzProfile() {
   return useMutation({
     mutationFn: async (vars: { dailyNewTarget?: number; dailyRevisionTarget?: number }) => {
       const { data } = await api.patch('/api/hifz/profile', vars);
-      return data;
-    },
-    onSuccess: () => invalidateHifz(qc),
-  });
-}
-
-export function useResetHifzCursor() {
-  const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async () => {
-      const { data } = await api.post('/api/hifz/cursor/reset');
       return data;
     },
     onSuccess: () => invalidateHifz(qc),

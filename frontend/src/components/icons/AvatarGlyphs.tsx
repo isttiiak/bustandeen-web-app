@@ -123,8 +123,6 @@ export const AVATARS = [
   { id: 'book', label: 'Book', Icon: OpenBookIcon, tint: 'bg-brand-gold/20 text-brand-gold' },
 ] as const;
 
-export type AvatarId = (typeof AVATARS)[number]['id'];
-
 export function avatarById(id: string | null | undefined) {
   return AVATARS.find((a) => a.id === id);
 }

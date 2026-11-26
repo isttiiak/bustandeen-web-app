@@ -8,9 +8,9 @@ export const HELP_URL_BN = 'https://bayan.bustandeen.com/bn/home';
 
 /** The production app and the admin panel's own site (v5.163.0, origin
  *  isolation: the panel's sign-in never shares storage with the app's). */
-export const MAIN_HOST = 'bustandeen.com';
-export const MAIN_ORIGIN = `https://${MAIN_HOST}`;
-export const ADMIN_ORIGIN = 'https://admin.bustandeen.com';
+const MAIN_HOST = 'bustandeen.com';
+const MAIN_ORIGIN = `https://${MAIN_HOST}`;
+const ADMIN_ORIGIN = 'https://admin.bustandeen.com';
 
 /** Where an /admin path opens from this host: the admin site in production,
  *  the same host elsewhere (previews and local dev serve admin.html at /admin). */

@@ -204,7 +204,7 @@ export function DropIcon(p: IconProps) {
 }
 
 /** A path that forks in two: istikhārah, asking Allah to choose. */
-export function ForkPathIcon(p: IconProps) {
+function ForkPathIcon(p: IconProps) {
   return (
     <Svg {...p}>
       <path d="M12 21v-7M12 14 6.5 8.5M12 14l5.5-5.5M4.5 9.5V6.5h3M19.5 9.5V6.5h-3" />

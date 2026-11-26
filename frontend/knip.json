@@ -10,5 +10,10 @@
     "e2e/*.ts"
   ],
   "project": ["src/**/*.{ts,tsx}", "scripts/**/*.mjs", "e2e/**/*.ts"],
-  "ignoreDependencies": ["baseline-browser-mapping"]
+  "ignoreDependencies": ["baseline-browser-mapping"],
+  "ignoreIssues": {
+    "src/hooks/useSalatLog.ts": ["exports"],
+    "src/utils/salatPrefs.ts": ["exports"],
+    "src/seo/utils/calc.ts": ["exports"]
+  }
 }

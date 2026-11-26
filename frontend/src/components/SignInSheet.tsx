@@ -31,7 +31,7 @@ export function useSignInGate(feature: SignInFeature) {
 }
 
 /** Stores where to come back to, then opens sign-in or sign-up. */
-export function useSignInNav() {
+function useSignInNav() {
   const navigate = useNavigate();
   const location = useLocation();
   return (to: '/login' | '/signup') => {

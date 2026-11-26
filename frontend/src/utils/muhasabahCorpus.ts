@@ -12,7 +12,7 @@
 // Arabic + alquran.cloud translations), so no verse text is ever
 // hand-transcribed here.
 
-export interface MuhasabahQuranRef {
+interface MuhasabahQuranRef {
   type: 'quran';
   surah: number;
   ayahStart: number;
@@ -20,7 +20,7 @@ export interface MuhasabahQuranRef {
   surahName: string;
 }
 
-export interface MuhasabahHadithRef {
+interface MuhasabahHadithRef {
   type: 'hadith';
   textEn: string;
   textBn: string;
@@ -31,7 +31,7 @@ export interface MuhasabahHadithRef {
 
 export type MuhasabahRef = MuhasabahQuranRef | MuhasabahHadithRef;
 
-export const MUHASABAH_CORPUS: MuhasabahRef[] = [
+const MUHASABAH_CORPUS: MuhasabahRef[] = [
   {
     type: 'hadith',
     textEn:

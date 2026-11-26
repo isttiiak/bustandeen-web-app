@@ -5,7 +5,7 @@
  * ornaments × ratios × intensities) and are remembered as one prefs object.
  */
 
-export type ShareCardRatioId = 'square' | 'portrait' | 'story';
+type ShareCardRatioId = 'square' | 'portrait' | 'story';
 export type ShareCardPatternId = 'none' | 'star' | 'lattice' | 'dots' | 'waves' | 'rays';
 export type ShareCardOrnamentId = 'none' | 'frame' | 'corners' | 'skyline' | 'arch' | 'crescent';
 export type ShareCardIntensityId = 'subtle' | 'medium' | 'bold';
@@ -18,8 +18,6 @@ export interface ShareCardRatio {
   /** multiplies the base font sizes, since a taller frame has room to breathe */
   fontBoost: number;
 }
-
-export const SHARE_CARD_WIDTH = 1080;
 
 export const SHARE_CARD_RATIOS: ShareCardRatio[] = [
   { id: 'square', label: 'Square', width: 1080, height: 1080, fontBoost: 1 },
@@ -76,10 +74,10 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } {
 }
 
 export const CUSTOM_THEME_ID = 'custom';
-export const DEFAULT_CUSTOM_ACCENT = '#38bdf8';
+const DEFAULT_CUSTOM_ACCENT = '#38bdf8';
 
 /** A dark theme derived from any accent colour the user picks. */
-export function makeCustomTheme(accent: string): ShareCardTheme {
+function makeCustomTheme(accent: string): ShareCardTheme {
   return {
     ...glowTheme(CUSTOM_THEME_ID, 'Custom', accent, ['#0d1218', '#0a0e14', '#0b0d12']),
     translit: accent,
@@ -117,7 +115,7 @@ export const SHARE_CARD_THEMES: ShareCardTheme[] = [
   },
 ];
 
-export const DEFAULT_SHARE_CARD_THEME = SHARE_CARD_THEMES[0]!;
+const DEFAULT_SHARE_CARD_THEME = SHARE_CARD_THEMES[0]!;
 
 export const SHARE_CARD_PATTERNS: { id: ShareCardPatternId; label: string }[] = [
   { id: 'none', label: 'None' },
@@ -152,7 +150,7 @@ export interface ShareCardPrefs {
   ratio: ShareCardRatioId;
 }
 
-export const DEFAULT_SHARE_CARD_PREFS: ShareCardPrefs = {
+const DEFAULT_SHARE_CARD_PREFS: ShareCardPrefs = {
   themeId: DEFAULT_SHARE_CARD_THEME.id,
   customAccent: DEFAULT_CUSTOM_ACCENT,
   pattern: 'star',

@@ -190,7 +190,7 @@ const INTERACTION_EVENTS = ['pointerdown', 'keydown', 'scroll', 'touchstart'] as
 
 /** Runs `fn` once: on the first tap, key or scroll, or once the page has
  * loaded and the browser is idle (at most ~4 s after load). */
-export function whenIdleOrInteracting(fn: () => void): void {
+function whenIdleOrInteracting(fn: () => void): void {
   let done = false;
   const run = () => {
     if (done) return;

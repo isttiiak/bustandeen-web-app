@@ -35,7 +35,7 @@ export interface SalatRecitation {
   fridayOnly?: boolean;
 }
 
-export const SALAT_RECITATIONS: SalatRecitation[] = [
+const SALAT_RECITATIONS: SalatRecitation[] = [
   {
     id: 'ayatul-kursi',
     label: 'Ayatul Kursi',

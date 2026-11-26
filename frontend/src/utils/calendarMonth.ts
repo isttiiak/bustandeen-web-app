@@ -58,7 +58,7 @@ export function calendarDays(inputs: HijriInputs): DayResolver {
 }
 
 /** The month a day belongs to in a calendar, as a comparable key. */
-export function monthKey(day: CalendarDay, kind: CalendarKind): string {
+function monthKey(day: CalendarDay, kind: CalendarKind): string {
   if (kind === 'greg') return day.ymd.slice(0, 7);
   if (kind === 'hijri') return `${day.hijri.year}-${day.hijri.month}`;
   return `${day.bengali.year}-${day.bengali.month}`;

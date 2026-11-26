@@ -6,13 +6,6 @@ export interface ZikrTypeItem {
   createdAt: string;
 }
 
-export interface ZikrSummaryResponse {
-  ok: boolean;
-  totalCount: number;
-  perType: Array<{ zikrType: string; total: number }>;
-  types: ZikrTypeItem[];
-}
-
 export interface ChartDataPoint {
   date: string;
   total: number;
@@ -31,7 +24,7 @@ export interface ZikrGoal {
   graceDays: number;
 }
 
-export interface ZikrStreak {
+interface ZikrStreak {
   userId?: string;
   currentStreak: number;
   longestStreak: number;
@@ -81,7 +74,7 @@ export interface ZikrTimeOfDayResponse {
   hours: Array<{ hour: number; total: number }>;
 }
 
-export interface ZikrSession {
+interface ZikrSession {
   start: string;
   end: string;
   total: number;
@@ -93,26 +86,6 @@ export interface ZikrSession {
 export interface ZikrSessionsResponse {
   ok: boolean;
   sessions: ZikrSession[];
-}
-
-export interface UserProfile {
-  uid: string;
-  email: string;
-  displayName?: string;
-  photoUrl?: string;
-  avatarId?: string;
-  firstName?: string;
-  lastName?: string;
-  occupation?: string;
-  gender?: 'male' | 'female' | 'other' | 'prefer_not_say';
-  birthDate?: string;
-  aiEnabled?: boolean;
-  /** T3.3: true only on accounts created after onboarding shipped. */
-  onboardingRequired?: boolean;
-  /** ISO time onboarding was finished, skipped or dismissed; null until then. */
-  onboardedAt?: string | null;
-  totalCount?: number;
-  zikrTypes?: ZikrTypeItem[];
 }
 
 export interface AuthUser {
@@ -155,7 +128,7 @@ export interface Donation {
   updatedAt: string;
 }
 
-export interface QuarterlyEntry {
+interface QuarterlyEntry {
   quarter: string;
   received: number;
   spent: number;

@@ -25,7 +25,7 @@ import { placeZone, readSavedPlace } from './placeClock.js';
  */
 export type TasbihMode = 'tahlil' | 'takbir34';
 
-export interface TasbihStep {
+interface TasbihStep {
   /** Counter key in the zikr list — must match a CORE_ZIKR name exactly. */
   zikr: string;
   count: number;
@@ -131,7 +131,7 @@ export const AYATUL_KURSI_REF = {
 const AUTO_COUNT_KEY = 'bustandeen_salat_auto_count';
 /** Existing behaviour for everyone today — tapping a tag has always also
  * credited the zikr counter until this setting existed. */
-export const DEFAULT_AUTO_COUNT_DHIKR = true;
+const DEFAULT_AUTO_COUNT_DHIKR = true;
 
 export function getAutoCountDhikr(): boolean {
   try {
@@ -214,7 +214,7 @@ export function setDhikrCredited(
  * shown once each prayer's time has started. On by default — same
  * always-visible precedent as the existing Witr reminder. */
 const SHOW_SUNNAH_KEY = 'bustandeen_show_sunnah_guide';
-export const DEFAULT_SHOW_SUNNAH_GUIDE = true;
+const DEFAULT_SHOW_SUNNAH_GUIDE = true;
 
 export function getShowSunnahGuide(): boolean {
   try {
@@ -237,7 +237,7 @@ export function setShowSunnahGuide(value: boolean): void {
  * Maghrib) — a separate toggle since these carry a lighter emphasis than
  * the confirmed rawātib and some users may only want the confirmed set. */
 const SHOW_NAFL_KEY = 'bustandeen_show_nafl_guide';
-export const DEFAULT_SHOW_NAFL_GUIDE = false;
+const DEFAULT_SHOW_NAFL_GUIDE = false;
 
 export function getShowNaflGuide(): boolean {
   try {

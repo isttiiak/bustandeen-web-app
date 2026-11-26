@@ -45,9 +45,6 @@ const DAY = 86_400_000;
 /** The user's own offset (Settings): -1, 0 or +1. */
 export const clampOffset = (n: number): number => (n === -1 || n === 1 ? n : 0);
 
-/** How far a record's start may be from Umm al-Qura's 1st of that month. */
-export const MAX_RECORD_SHIFT = 2;
-
 export function addDays(day: string, n: number): string {
   return new Date(Date.parse(`${day}T12:00:00Z`) + n * DAY).toISOString().slice(0, 10);
 }

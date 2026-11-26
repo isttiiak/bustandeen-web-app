@@ -6,12 +6,12 @@
 
 export type BayanLang = 'en' | 'bn';
 
-export interface GuideSection {
+interface GuideSection {
   heading: string;
   paragraphs: string[];
 }
 
-export interface GuideText {
+interface GuideText {
   title: string;
   summary: string;
   sections: GuideSection[];

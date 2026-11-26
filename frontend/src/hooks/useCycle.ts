@@ -17,7 +17,7 @@ export interface CycleActive {
 export type CycleFlow = 'light' | 'medium' | 'heavy';
 export type CycleMood = 'calm' | 'happy' | 'low' | 'irritable' | 'anxious' | 'tired';
 
-export interface CycleDayNote {
+interface CycleDayNote {
   date: string;
   flow: CycleFlow | null;
   symptoms: string[];

@@ -10,8 +10,8 @@
 // Structural types so this file compiles under both the DOM and the WebWorker
 // tsconfigs and can be unit-tested with plain fakes.
 
-export const RETIRED_HOSTS: readonly string[] = ['www.bustandeen.com'];
-export const RETIRE_TARGET_ORIGIN = 'https://bustandeen.com';
+const RETIRED_HOSTS: readonly string[] = ['www.bustandeen.com'];
+const RETIRE_TARGET_ORIGIN = 'https://bustandeen.com';
 
 interface RetireWindowClient {
   url: string;

@@ -7,7 +7,7 @@ let nameToCode: Map<string, string> | null = null;
 
 /** ISO code for an English country name from the profile (e.g. "Bangladesh"
  * → "BD"), built once from the browser's own region names. */
-export function countryCodeFromName(name: string | undefined | null): string | null {
+function countryCodeFromName(name: string | undefined | null): string | null {
   if (!name) return null;
   if (!nameToCode) {
     nameToCode = new Map();

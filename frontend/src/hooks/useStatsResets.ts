@@ -20,7 +20,7 @@ export interface ResetEntry {
   /** kaza only: prayers owed just before the reset. */
   owedBefore?: number;
 }
-export interface AreaReset {
+interface AreaReset {
   date: string | null;
   history: ResetEntry[];
 }
