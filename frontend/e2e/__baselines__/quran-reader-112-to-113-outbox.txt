@@ -1,0 +1,18 @@
+{
+ "sync": [
+  {
+   "tracker": "quran",
+   "method": "post",
+   "url": "/api/quran/read-ayat",
+   "body": {
+    "date": "2026-10-15",
+    "count": 4,
+    "surah": 112,
+    "advanceKhatm": false,
+    "completedSurah": true
+   },
+   "owner": "demo-001"
+  }
+ ],
+ "salat": []
+}

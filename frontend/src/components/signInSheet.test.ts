@@ -14,6 +14,7 @@ import habit from '../pages/QuranHabit.tsx?raw';
 import khatam from '../pages/QuranKhatam.tsx?raw';
 import hifz from '../pages/QuranHifz.tsx?raw';
 import reader from '../pages/QuranReader.tsx?raw';
+import readerControls from './quran/ReaderCardControls.tsx?raw';
 import ramadan from '../pages/RamadanTracker.tsx?raw';
 import ramadanSalat from './RamadanSalatCard.tsx?raw';
 
@@ -87,7 +88,8 @@ describe('U10 sign-in gate', () => {
     expect(habit.match(/gate\.canSave\(\) &&/g)).toHaveLength(2);
     expect(khatam).toMatch(/gate\.canSave\(\) &&\s*startKhatam\.mutate/);
     expect(hifz.match(/gate\.canSave\(\)/g)).toHaveLength(2);
-    expect(reader).toMatch(/gate\.canSave\(\) &&\s*toggleBookmark\.mutate/);
+    // The bookmark button lives in the reader's card controls (audit P4-1 split).
+    expect(readerControls).toMatch(/gate\.canSave\(\) &&\s*toggleBookmark\.mutate/);
     expect(ramadan).toContain("useSignInGate('ramadan')");
     expect(ramadan).toContain('canSave={gate.canSave}');
     expect(ramadan).not.toMatch(/if \(!user\) return null/);

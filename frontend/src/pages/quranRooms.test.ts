@@ -7,6 +7,12 @@ const pages = import.meta.glob<string>('./Quran*.tsx', {
   import: 'default',
   eager: true,
 });
+// The reading room's parts (components/quran/, cut out of QuranReader in audit P4-1).
+const readerParts = import.meta.glob<string>('../components/quran/*.{ts,tsx}', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+});
 const src = (name: string) => pages[`./${name}.tsx`] ?? '';
 const EMOJI = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B50}\u{2B55}]/u;
 
@@ -14,6 +20,11 @@ describe('Quran rooms', () => {
   it.each(Object.keys(pages))('%s renders no emoji', (path) => {
     // comments may mention emoji; JSX and strings may not
     const code = (pages[path] ?? '').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
+    expect(code).not.toMatch(EMOJI);
+  });
+
+  it.each(Object.keys(readerParts))('%s renders no emoji', (path) => {
+    const code = (readerParts[path] ?? '').replace(/\/\*[\s\S]*?\*\/|\/\/.*$/gm, '');
     expect(code).not.toMatch(EMOJI);
   });
 
