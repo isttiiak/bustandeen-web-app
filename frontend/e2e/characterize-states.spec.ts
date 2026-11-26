@@ -259,6 +259,90 @@ test('settings: the delete-all-zikr confirmation', async ({ page }) => {
   await expectBaseline(page, 'settings.delete-confirm');
 });
 
+// Settings: every control the split will move. English only; the Bangla dump of
+// the page as it opens is in characterize.spec.ts.
+const radio = (page: Page, name: string | RegExp) =>
+  page.getByRole('radio', { name, exact: typeof name === 'string' });
+
+async function pick(page: Page, name: string | RegExp) {
+  await declineBanner(page);
+  await radio(page, name).click();
+  await page.waitForTimeout(400);
+}
+
+async function toggle(page: Page, name: RegExp) {
+  await declineBanner(page);
+  // The switch itself is visually hidden; its label is what a finger taps.
+  await page.locator('label', { hasText: name }).first().click();
+  await page.waitForTimeout(400);
+}
+
+test('settings: theme, motion and Home layout choices', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/settings');
+  await pick(page, /^Light/);
+  await pick(page, 'Auto');
+  await pick(page, /^Minimal/);
+  await expectBaseline(page, 'settings.display-choices');
+});
+
+test('settings: the accessibility toggles', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/settings');
+  await toggle(page, /High contrast/);
+  await toggle(page, /Vibration feedback/);
+  await expectBaseline(page, 'settings.accessibility');
+});
+
+test('settings: the day starts at midnight', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/settings');
+  await press(page, /^Midnight/);
+  await expectBaseline(page, 'settings.day-start-midnight');
+});
+
+test('settings: switching to Bangla', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/settings');
+  await press(page, 'বাংলা (Bengali)');
+  await expectBaseline(page, 'settings.language-bn');
+});
+
+test('settings: Musafir mode on from Settings', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/settings');
+  await toggle(page, /travelling/);
+  await expectBaseline(page, 'settings.musafir-on');
+});
+
+test('settings: Naseeh on shows the key box', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/settings');
+  await toggle(page, /Enable Naseeh/);
+  await expectBaseline(page, 'settings.naseeh-on');
+});
+
+test('settings: the saved location is cleared', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/settings');
+  await press(page, 'Clear');
+  await expectBaseline(page, 'settings.location-cleared');
+});
+
+test('settings: a danger row runs after its confirmation', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/settings');
+  await press(page, 'Delete: All zikr data');
+  await press(page, 'Yes, do it');
+  await expectBaseline(page, 'settings.danger-run');
+});
+
+test('settings: delete account asks, then asks who you are', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/settings');
+  await press(page, 'Delete account');
+  await expectBaseline(page, 'settings.delete-account-confirm');
+  await press(page, 'Yes, delete my account');
+  await expectBaseline(page, 'settings.delete-account-reauth');
+});
+
+test('settings (sister): the cycle row of the danger zone', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/settings');
+  await press(page, 'Delete: All cycle data');
+  await expectBaseline(page, 'settings.sister-danger-confirm');
+});
+
 test('quran reader: the next ayah, offline, writes the same requests', async ({
   page,
   context,
