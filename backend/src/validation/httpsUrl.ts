@@ -6,7 +6,7 @@ import { z } from 'zod';
  * Also refused: whitespace and control characters (the URL parser quietly strips tabs and
  * newlines), and addresses carrying a user name or password.
  */
-export function isHttpsUrl(value: string): boolean {
+function isHttpsUrl(value: string): boolean {
   // eslint-disable-next-line no-control-regex -- refusing control characters is the point
   if (/[\u0000- \u007f]/.test(value)) return false;
   try {

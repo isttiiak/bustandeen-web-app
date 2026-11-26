@@ -17,8 +17,8 @@ const httpError = (status: number, message: string): Error & { status: number } 
 
 /** Emails per request. Small on purpose: each is a real SMTP round trip, and a
  * serverless request has a hard time limit, so the admin page loops. */
-export const CHUNK_SIZE = 20;
-export const MAX_RECIPIENTS = 2000;
+const CHUNK_SIZE = 20;
+const MAX_RECIPIENTS = 2000;
 const SEND_CONCURRENCY = 4;
 
 type Group = 'male' | 'female' | 'unset' | 'custom';
@@ -115,7 +115,7 @@ export function withTrailer(body: string): string {
 }
 
 /** Lower-cased, de-duplicated addresses from the custom list. */
-export function normaliseEmails(emails: string[]): string[] {
+function normaliseEmails(emails: string[]): string[] {
   return [...new Set(emails.map((e) => e.trim().toLowerCase()).filter(Boolean))];
 }
 
@@ -163,7 +163,7 @@ export async function createCampaign(
 
 /** Longer than one chunk can take (the function's maxDuration is 30 s), so a
  *  lease only expires on its own when the request holding it died. */
-export const SEND_LEASE_MS = 60_000;
+const SEND_LEASE_MS = 60_000;
 
 /** Takes the campaign's send lease, or returns null when another request
  *  holds it. Throws 404 when the campaign does not exist. */

@@ -7,7 +7,7 @@ import mongoose, { Document, Schema } from 'mongoose';
  * unnoticed. Written from that same catch block so nothing new can fail
  * silently going forward.
  */
-export interface IEmailFailureLog extends Document {
+interface IEmailFailureLog extends Document {
   sender: string;
   to: string;
   subject: string;

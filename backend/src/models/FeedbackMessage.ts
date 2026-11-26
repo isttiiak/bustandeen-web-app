@@ -6,7 +6,7 @@ import mongoose, { Document, Schema } from 'mongoose';
  * /feedback and /contact submit here now; `kind` distinguishes them for
  * filtering only, the review flow is identical.
  */
-export type FeedbackKind = 'feedback' | 'contact';
+type FeedbackKind = 'feedback' | 'contact';
 export type FeedbackStatus = 'open' | 'replied' | 'archived';
 
 export interface IFeedbackMessage extends Document {

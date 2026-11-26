@@ -128,7 +128,7 @@ export async function persistDailyCounts(violations: CspViolation[], now = new D
   }
 }
 
-export interface CspViolationSummary {
+interface CspViolationSummary {
   directive: string;
   blocked: string;
   source: string;

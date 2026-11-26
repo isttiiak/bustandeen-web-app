@@ -17,7 +17,7 @@ function shiftDateStr(dateStr: string, delta: number): string {
 /** Atomic upsert — `summary` and `queue` both call this on page load and can
  * race a plain findOne-then-create, which throws a duplicate-key error when
  * both requests see no profile and both try to insert it. */
-export async function getOrCreateProfile(userId: string): Promise<IHifzProfile> {
+async function getOrCreateProfile(userId: string): Promise<IHifzProfile> {
   return HifzProfile.findOneAndUpdate(
     { userId },
     { $setOnInsert: { userId } },
@@ -194,7 +194,7 @@ export async function review(
   return { entry };
 }
 
-export interface QueueEntry {
+interface QueueEntry {
   surah: number;
   ayah: number;
   state: HifzState;
@@ -268,7 +268,7 @@ export async function resetCursor(userId: string): Promise<IHifzProfile> {
   return profile;
 }
 
-export interface HeatmapRow {
+interface HeatmapRow {
   surah: number;
   totalAyat: number;
   memorised: number;

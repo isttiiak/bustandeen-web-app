@@ -115,7 +115,7 @@ export async function computeFeatureCounts(days: string[]): Promise<Map<string, 
   );
 }
 
-export interface DailyActivityPoint {
+interface DailyActivityPoint {
   day: string;
   /** People who opened the app; null before counting started. */
   active: number | null;

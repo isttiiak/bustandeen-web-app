@@ -136,7 +136,7 @@ export async function getHistory(
   return FastingLog.find({ userId, date: { $gte: since, $lte: until } }).sort({ date: 1 });
 }
 
-export async function getOrCreateProfile(userId: string): Promise<IFastingProfile> {
+async function getOrCreateProfile(userId: string): Promise<IFastingProfile> {
   let profile = await FastingProfile.findOne({ userId });
   if (!profile) profile = await FastingProfile.create({ userId });
   return profile;

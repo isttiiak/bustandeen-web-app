@@ -247,7 +247,7 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 /** `lastActiveAt` (falling back to `createdAt` for accounts with no recorded
  * activity yet) is the "last active" proxy — see User.lastActiveAt's comment
  * for why this is a dedicated field rather than Mongoose's `updatedAt`. */
-export const getDaysInactive = (lastActiveAt: Date | null | undefined, createdAt: Date): number =>
+const getDaysInactive = (lastActiveAt: Date | null | undefined, createdAt: Date): number =>
   Math.max(0, Math.floor((Date.now() - (lastActiveAt ?? createdAt).getTime()) / DAY_MS));
 
 /** Servant-only — drafts a gentle re-engagement email personalized with the

@@ -20,7 +20,7 @@ export interface FetchedMail {
   receivedAt: Date;
 }
 
-export interface FetchResult {
+interface FetchResult {
   uidValidity: string;
   mails: FetchedMail[];
   /** Highest UID this run covered (also when a message was unparseable), so

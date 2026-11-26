@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IFastingVow {
+interface IFastingVow {
   _id: mongoose.Types.ObjectId;
   title: string;
   targetDays: number;

@@ -9,7 +9,7 @@ import { PrayerId } from './SalatLog.js';
  * accumulation vs payback over time; SalatDebt.owed itself is still the
  * single source of truth for the current total.
  */
-export interface ISalatDebtEvent extends Document {
+interface ISalatDebtEvent extends Document {
   userId: string;
   date: string;
   prayer: PrayerId;

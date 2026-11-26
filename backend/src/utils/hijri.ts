@@ -4,7 +4,7 @@
 
 const DAY = 86_400_000;
 
-export interface HijriYmd {
+interface HijriYmd {
   year: number;
   month: number;
   day: number;
@@ -24,7 +24,7 @@ export function daysBetween(from: string, to: string): number {
 }
 
 /** Umm al-Qura date of a civil day (YYYY-MM-DD). */
-export function ummAlQura(day: string): HijriYmd {
+function ummAlQura(day: string): HijriYmd {
   uqFormat ??= new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', {
     day: 'numeric',
     month: 'numeric',

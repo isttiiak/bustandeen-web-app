@@ -38,7 +38,7 @@ const amountField = z
 // and the tracking day can lag the civil date (Maghrib mode: until sunset
 // "today" is still yesterday). Two days back from a Maghrib-mode afternoon
 // is noon three civil days ago, i.e. more than 72h, and was refused.
-export const TS_MAX_AGE_MS = 4 * 24 * 60 * 60 * 1000;
+const TS_MAX_AGE_MS = 4 * 24 * 60 * 60 * 1000;
 const tsField = z
   .number()
   .optional()

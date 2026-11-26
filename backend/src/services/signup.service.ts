@@ -13,7 +13,7 @@ import { type AuthEmailLang, accountExistsEmail, signupLinkEmail } from './authE
  * verified. An email that is never confirmed never gets an account.
  */
 
-export const SIGNUP_LINK_MINUTES = 60;
+const SIGNUP_LINK_MINUTES = 60;
 
 export interface SignupLinker {
   getUserByEmail(email: string): Promise<{ email?: string; displayName?: string }>;

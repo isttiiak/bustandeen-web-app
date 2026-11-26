@@ -46,7 +46,7 @@ clientErrorDailySchema.index(
 
 /** Retention: 30 days. Built by `npm run sync-indexes` (autoIndex is off in
  *  production). */
-export const CLIENT_ERROR_TTL_SECONDS = 30 * 24 * 60 * 60;
+const CLIENT_ERROR_TTL_SECONDS = 30 * 24 * 60 * 60;
 clientErrorDailySchema.index({ firstSeen: 1 }, { expireAfterSeconds: CLIENT_ERROR_TTL_SECONDS });
 
 export default mongoose.model<IClientErrorDaily>('ClientErrorDaily', clientErrorDailySchema);

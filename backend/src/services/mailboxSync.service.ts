@@ -10,8 +10,6 @@ import {
 
 const STATE_KEY = 'inbox';
 const LOCK_MS = 60_000;
-/** Opening the panel triggers a sync only when the last one is older than this. */
-export const STALE_AFTER_MS = 3 * 60_000;
 const MAX_TEXT = 20_000;
 
 /** Our own notification mail sometimes lands here too (e.g. a reply sent to

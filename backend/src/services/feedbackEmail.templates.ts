@@ -22,7 +22,7 @@ interface FeedbackData {
  * (received, reply, and the admin-notify copy) keeps each submission's
  * conversation distinct end to end.
  */
-export const feedbackRef = (id: string): string => id.slice(-6).toUpperCase();
+const feedbackRef = (id: string): string => id.slice(-6).toUpperCase();
 
 /** Fixed notification to the review inbox — mirrors zikrRequestNotifyAdminEmail. */
 export const feedbackNotifyAdminEmail = (

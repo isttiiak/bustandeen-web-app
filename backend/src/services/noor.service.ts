@@ -34,7 +34,7 @@ export type NoorMask = Partial<Record<SecretArea, boolean>>;
  *
  * An "active day" (for steadiness) is any day with a non-zero base score.
  */
-export const NOOR_WEIGHTS = {
+const NOOR_WEIGHTS = {
   salatEach: 10,
   zikr: 15,
   quran: 15,
@@ -116,7 +116,7 @@ const SALAWAT_DB_REGEX = 'salawat|ṣalawāt|durud|darood|salat.?.?ala|istighfar
  * Loads a few extra days before `from` so the steadiness run is right on the
  * first day requested. Days with no activity are present with score 0.
  */
-export async function loadNoorSeries(
+async function loadNoorSeries(
   userId: string,
   from: string,
   to: string,
@@ -236,7 +236,7 @@ export function weekStartFriday(day: string): string {
 }
 
 /** Totals for the days of this Fri-Thu week BEFORE today (today's chips are added by the caller). */
-export interface WeekTotals {
+interface WeekTotals {
   salat: number;
   zikr: number;
   quran: number;

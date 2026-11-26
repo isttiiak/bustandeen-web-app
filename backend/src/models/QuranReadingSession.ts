@@ -8,7 +8,7 @@ import mongoose, { Schema, Document } from 'mongoose';
  * the tab was hidden or the reader was idle — see useQuranReadingSession on
  * the frontend for how that's measured.
  */
-export interface IQuranReadingSession extends Document {
+interface IQuranReadingSession extends Document {
   userId: string;
   clientSessionId: string;
   /** Tracking day (Fajr/Maghrib-aware, client-authoritative) the session started in */

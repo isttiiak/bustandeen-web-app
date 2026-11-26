@@ -7,7 +7,7 @@ import mongoose, { Document, Schema } from 'mongoose';
  * of the link's token is stored; the row expires with the link (TTL), and a
  * new request for the same email replaces it, so older links stop working.
  */
-export interface IPendingSignup extends Document {
+interface IPendingSignup extends Document {
   email: string;
   tokenHash: string;
   firstName: string;

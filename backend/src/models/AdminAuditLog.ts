@@ -8,7 +8,7 @@ import mongoose, { Document, Schema } from 'mongoose';
  * small and cheap (e.g. a status transition), never a full before/after
  * document dump.
  */
-export interface IAdminAuditLog extends Document {
+interface IAdminAuditLog extends Document {
   actorEmail: string;
   /** Firebase uid of the AdminAccount (R9a): stays the same person if the
    *  email is ever changed. Optional: older entries and most actions have

@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.59',
+    date: '2026-11-26',
+    text: {
+      en: {
+        title: 'Behind the scenes: more unused code removed',
+        fixed: [
+          'We finished clearing out code the server no longer uses, and the automatic checks now guard both the app and the server against it coming back. Nothing looks or works differently, and your data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: আরও অব্যবহৃত কোড সরানো হয়েছে',
+        fixed: [
+          'সার্ভার আর যে কোড ব্যবহার করে না তা পুরোপুরি সরানো হয়েছে, আর স্বয়ংক্রিয় যাচাই এখন অ্যাপ ও সার্ভার দুই দিকেই তা ফিরে আসা ঠেকাবে। দেখতে বা কাজে কিছু বদলায়নি, আপনার তথ্যেও কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.58',
     date: '2026-11-26',
     text: {

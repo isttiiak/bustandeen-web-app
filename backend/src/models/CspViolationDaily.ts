@@ -10,7 +10,7 @@ import mongoose, { Document, Schema } from 'mongoose';
  * counter document. Origins only (see cspReport.service.ts originOnly):
  * never page paths, query strings, script samples, IPs or user ids.
  */
-export interface ICspViolationDaily extends Document {
+interface ICspViolationDaily extends Document {
   /** UTC calendar day, YYYY-MM-DD. */
   day: string;
   directive: string;

@@ -18,7 +18,7 @@ import { PrayerId } from './SalatLog.js';
  * portions of a user's debt simply have no itemized record, same as before
  * this model existed; SalatDebt.owed stays the authoritative total either way.
  */
-export interface IKazaUnit extends Document {
+interface IKazaUnit extends Document {
   userId: string;
   prayer: PrayerId;
   /** Civil date (YYYY-MM-DD) this specific prayer was missed on. */

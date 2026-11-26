@@ -6,7 +6,7 @@ import { z } from 'zod';
  * was cut to 800 characters and put into the model's prompt, so it was a free-text
  * channel past sanitizeForPrompt. Now it is numbers and one date, nothing else.
  */
-export const MUHASABAH_NUMERIC_KEYS = [
+const MUHASABAH_NUMERIC_KEYS = [
   'zikrTotal7d',
   'zikrStreak',
   'salatStreak',

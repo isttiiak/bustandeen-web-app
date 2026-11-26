@@ -152,8 +152,8 @@ function peakWindow(hours: Array<{ hour: number; total: number }>): {
 // ═════════════════════════════════════════════════════════════════════════════
 // 1. Pattern insights
 // ═════════════════════════════════════════════════════════════════════════════
-export type FindingKind = 'strength' | 'timing' | 'attention';
-export interface PatternFinding {
+type FindingKind = 'strength' | 'timing' | 'attention';
+interface PatternFinding {
   id: string;
   kind: FindingKind;
   text: string;

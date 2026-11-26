@@ -9,7 +9,7 @@ import mongoose, { Document, Schema } from 'mongoose';
  * return private data (Rayhanah) opt out with `storeBody: false` and replay a
  * bare `{ ok: true }` instead, so no cycle data is ever copied here unencrypted.
  */
-export interface IClientOp extends Document {
+interface IClientOp extends Document {
   uid: string;
   opId: string;
   /** "POST /api/zikr/increment/batch", for debugging only. */
@@ -34,7 +34,7 @@ const clientOpSchema = new Schema<IClientOp>({
 clientOpSchema.index({ uid: 1, opId: 1 }, { unique: true });
 
 /** An outbox replays within days, not months: 30 days is ample. */
-export const CLIENT_OP_TTL_SECONDS = 30 * 24 * 60 * 60;
+const CLIENT_OP_TTL_SECONDS = 30 * 24 * 60 * 60;
 clientOpSchema.index({ createdAt: 1 }, { expireAfterSeconds: CLIENT_OP_TTL_SECONDS });
 
 export default mongoose.model<IClientOp>('ClientOp', clientOpSchema);

@@ -25,7 +25,7 @@ export interface ClientErrorReport {
 
 const MAX_MESSAGE = 200;
 /** At most this many counter documents per UTC day (junk cannot grow it). */
-export const MAX_DAILY_KEYS = 500;
+const MAX_DAILY_KEYS = 500;
 
 /** Removes what could identify someone or something private from a message. */
 export function scrubMessage(raw: string): string {

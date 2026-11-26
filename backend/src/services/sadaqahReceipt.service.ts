@@ -17,8 +17,8 @@ import { EL_MESSIRI_BOLD_B64, EL_MESSIRI_MEDIUM_B64 } from './receiptFonts.js';
  * a PDF reader would show as "signed" — that needs a purchased certificate.
  */
 
-export const RECEIPT_CONTACT_EMAIL = 'sadaqah@bustandeen.com';
-export const RECEIPT_ORIGIN = 'Dhaka, Bangladesh';
+const RECEIPT_CONTACT_EMAIL = 'sadaqah@bustandeen.com';
+const RECEIPT_ORIGIN = 'Dhaka, Bangladesh';
 const SITE = 'bustandeen.com';
 
 // ── Signing ─────────────────────────────────────────────────────────────────
@@ -68,7 +68,7 @@ const siteOrigin = (): string => {
 export const receiptFilename = (id: string): string =>
   `Bustandeen-Sadaqah-Receipt-${sadaqahRef(id)}.pdf`;
 
-export const receiptVerifyUrl = (id: string, sig: string): string =>
+const receiptVerifyUrl = (id: string, sig: string): string =>
   `${siteOrigin()}/sadaqah/verify/${id}?s=${sig}`;
 
 // ── Drawing helpers (designed in top-down coordinates, like SVG) ────────────

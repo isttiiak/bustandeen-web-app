@@ -4,7 +4,7 @@ import mongoose, { Schema } from 'mongoose';
  * Admin-panel switches the Servant controls. A single document with
  * `_id: 'global'` (so no extra index to sync); absent = every default.
  */
-export interface IAdminSetting {
+interface IAdminSetting {
   _id: string;
   /** T1.4: admins need the authenticator code at sign-in. Off by default
    *  (Istiak, 2026-10-11): the Servant turns it on when ready, and may turn

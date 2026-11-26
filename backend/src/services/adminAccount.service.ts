@@ -314,7 +314,7 @@ export const brandedAdminResetLink = (firebaseLink: string): string =>
   brandedActionLink(firebaseLink, 'resetPassword', 'admin');
 
 /** Firebase's default reset-link lifetime (Authentication > Templates). */
-export const ADMIN_RESET_LINK_NOTE =
+const ADMIN_RESET_LINK_NOTE =
   'The link works once and expires within 1 hour. If it has expired, ask Istiak to send a new one.';
 
 /**

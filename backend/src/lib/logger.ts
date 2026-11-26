@@ -46,7 +46,7 @@ export function hashUid(uid: string | undefined): string | undefined {
 /** The matched route pattern (/api/salat/:date), never the concrete URL. An
  * error thrown before routing (no match yet) falls back to the path with
  * id-looking segments masked. */
-export function routeOf(req: Request): string {
+function routeOf(req: Request): string {
   const pattern = (req.route as { path?: unknown } | undefined)?.path;
   if (typeof pattern === 'string') return `${req.baseUrl}${pattern}`;
   return (req.originalUrl ?? req.url ?? '')
@@ -56,7 +56,7 @@ export function routeOf(req: Request): string {
     .join('/');
 }
 
-export interface ServerErrorLog {
+interface ServerErrorLog {
   level: 'error';
   ts: string;
   release: string;
@@ -69,7 +69,7 @@ export interface ServerErrorLog {
   stack?: string[];
 }
 
-export function buildServerErrorLog(err: Error, req: Request, status: number): ServerErrorLog {
+function buildServerErrorLog(err: Error, req: Request, status: number): ServerErrorLog {
   return {
     level: 'error',
     ts: new Date().toISOString(),

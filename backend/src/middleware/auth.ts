@@ -8,7 +8,7 @@ import AdminAccount from '../models/AdminAccount.js';
 import { checkMfaProof } from '../utils/adminMfaProof.js';
 import { isAdminMfaRequired } from '../services/adminSetting.service.js';
 
-export type AdminMfaState = 'ok' | 'verify' | 'enroll';
+type AdminMfaState = 'ok' | 'verify' | 'enroll';
 
 const headerValue = (h: string | string[] | undefined): string | undefined =>
   Array.isArray(h) ? h[0] : h;
@@ -114,7 +114,7 @@ const REAUTH_MAX_AGE_SECONDS = 5 * 60;
 /** An admin signs in again after this long, whatever they are doing. The
  *  panel keeps its Firebase sign-in on the device, so without a limit a
  *  left-open or stolen browser would stay in the panel indefinitely. */
-export const ADMIN_SESSION_MAX_SECONDS = 12 * 60 * 60;
+const ADMIN_SESSION_MAX_SECONDS = 12 * 60 * 60;
 
 /**
  * Comma-separated ADMIN_EMAILS allowlist — used ONLY to set `isAdmin` on a

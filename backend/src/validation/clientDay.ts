@@ -16,8 +16,8 @@ import { z } from 'zod';
  * date. Without this bound a wrong phone clock (or a forged request) pushed the
  * missed-prayer cursor years ahead and opened any past day for "correct a day".
  */
-export const CLIENT_DAY_MAX_BACK = 2;
-export const CLIENT_DAY_MAX_AHEAD = 1;
+const CLIENT_DAY_MAX_BACK = 2;
+const CLIENT_DAY_MAX_AHEAD = 1;
 
 const DAY_MS = 86_400_000;
 const DAY_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -47,7 +47,7 @@ export function isPlausibleClientToday(day: string, now: number = Date.now()): b
   return day >= utcDayStr(now - CLIENT_DAY_MAX_BACK * DAY_MS) && day <= latestPossibleToday(now);
 }
 
-export const CLIENT_DAY_MESSAGE =
+const CLIENT_DAY_MESSAGE =
   "This date does not match today's date. Please check the date and time on your device.";
 
 /**
