@@ -1,0 +1,604 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Home" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "Home"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "K"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+     <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl" style="transform: none">
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl" style="transform: none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl" style="transform: rotate(360deg)">
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px">
+     <div class="relative z-10">
+      <h1 class="sr-only">
+       "Rayhanah Analytics"
+      <div class="px-4 pt-3">
+       <div class="max-w-2xl mx-auto flex items-center gap-2">
+        <div class="flex-1 min-w-0">
+         <div class="flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10 max-w-xs">
+          <a class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/cycle">
+           "Cycle"
+          <span aria-current="page" class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">
+           "Analytics"
+        <button aria-label="Settings" class="shrink-0 p-2 rounded-control border border-brand-border bg-brand-deep shadow-elev-1 text-white/70 hover:text-brand-pink hover:border-brand-pink/40 transition-colors" title="Settings">
+         <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<999:41ef0701>" stroke-linecap="round" stroke-linejoin="round">
+          <path d="<35:449f351c>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="max-w-2xl mx-auto px-4 pt-4 pb-16 space-y-5">
+       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-pink">
+          "4"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "cycles tracked"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-pink">
+          "28"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "avg cycle days"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-pink">
+          "7"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "avg period days"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="text-sm font-bold mt-1.5 text-brand-emerald">
+          "Very regular"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1 mt-1.5">
+          "regularity"
+          <span class="normal-case">
+           "(±"
+           "0"
+           "d)"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 space-y-4">
+        <div class="flex items-center justify-between">
+         <div>
+          <p class="text-white/70 text-xs font-bold uppercase tracking-wide flex items-center gap-1.5">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<506:b817b43f>" stroke-linecap="round" stroke-linejoin="round">
+           "BMI"
+          <p class="font-display text-4xl font-bold text-brand-emerald">
+           "21.5"
+         <div class="text-right">
+          <p class="text-lg font-bold text-brand-emerald">
+           "Healthy weight"
+          <p class="text-white/70 text-xs mt-0.5 leading-relaxed">
+           "Within the healthy weight range."
+        <div class="space-y-1.5">
+         <div class="relative h-2.5">
+          <div class="absolute inset-0 flex rounded-full overflow-hidden">
+           <div class="bg-brand-info/60" style="width: 24.3%">
+           <div class="bg-brand-emerald/70" style="width: 18.6%">
+           <div class="bg-brand-gold/70" style="width: 14.3%">
+           <div class="bg-red-400/60 flex-1">
+          <div class="absolute top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-white border-2 border-brand-deep shadow-elev-1" style="left: calc(32.8571% - 7px)">
+         <div class="flex justify-between text-[10px] text-white/70 font-bold">
+          <span>
+           "10"
+          <span>
+           "18.5"
+          <span>
+           "25"
+          <span>
+           "30"
+          <span>
+           "45"
+        <div class="grid grid-cols-3 gap-3 pt-1">
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="text-white font-bold text-sm">
+           "160"
+           "cm"
+          <p class="text-white/70 text-[10px] mt-0.5">
+           "5'3""
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "Height"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="text-white font-bold text-sm">
+           "55"
+           "kg"
+          <p class="text-white/70 text-[10px] mt-0.5">
+           "121.3"
+           "lbs"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "Weight"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="font-bold text-sm text-brand-emerald">
+           "21.5"
+          <p class="text-white/70 text-[10px] mt-0.5">
+           "18.5–24.9 = Normal"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "BMI"
+        <p class="text-white/70 text-[10px] leading-relaxed">
+         "BMI is a general guide, not a medical diagnosis. Your doctor knows your full picture."
+       <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-info">
+          "28"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "shortest cycle"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-info">
+          "28"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "longest cycle"
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 text-center">
+         <p class="font-display text-2xl font-bold text-brand-info">
+          "0"
+         <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+          "range (days)"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <circle cx="12.00" cy="7.80" r="3">
+          <circle cx="15.99" cy="10.70" r="3">
+          <circle cx="14.47" cy="15.40" r="3">
+          <circle cx="9.53" cy="15.40" r="3">
+          <circle cx="8.01" cy="10.70" r="3">
+          <circle cx="12" cy="12" r="1.6">
+         "Expected windows"
+        <p class="text-white/70 text-xs mt-0.5 leading-relaxed">
+         "Mean cycle ± variability: a window, not a promise. Your body sets the truth."
+        <div class="mt-3 space-y-2">
+         <div class="flex items-center gap-3 rounded-control bg-brand-pink/10 border border-brand-pink/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <div class="flex-1">
+           <p class="text-brand-pink text-sm font-bold">
+            "Oct 6"
+            "–"
+            "Oct 8"
+           <p class="text-white/70 text-[10px]">
+            "most likely around Oct 7, 2026"
+         <div class="flex items-center gap-3 rounded-control bg-brand-pink/10 border border-brand-pink/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <div class="flex-1">
+           <p class="text-brand-pink text-sm font-bold">
+            "Nov 3"
+            "–"
+            "Nov 5"
+           <p class="text-white/70 text-[10px]">
+            "most likely around Nov 4, 2026"
+         <div class="flex items-center gap-3 rounded-control bg-brand-pink/10 border border-brand-pink/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <div class="flex-1">
+           <p class="text-brand-pink text-sm font-bold">
+            "Dec 1"
+            "–"
+            "Dec 3"
+           <p class="text-white/70 text-[10px]">
+            "most likely around Dec 2, 2026"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<37:61ad81e8>">
+          <path d="<11:81e625cc>">
+         "Fertile window"
+        <p class="text-white/70 text-xs mt-0.5 leading-relaxed">
+         "Estimated ovulation ~14 days before the next period. The fertile window spans ~5 days around it."
+        <div class="mt-3 space-y-2">
+         <div class="flex items-center gap-3 rounded-control bg-brand-info/10 border border-brand-info/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<37:61ad81e8>">
+           <path d="<11:81e625cc>">
+          <div class="flex-1">
+           <p class="text-brand-info text-sm font-bold">
+            "Sep 21"
+            "–"
+            "Sep 25"
+           <p class="text-white/70 text-[10px]">
+            "ovulation estimated around Sep 23, 2026"
+         <div class="flex items-center gap-3 rounded-control bg-brand-info/10 border border-brand-info/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<37:61ad81e8>">
+           <path d="<11:81e625cc>">
+          <div class="flex-1">
+           <p class="text-brand-info text-sm font-bold">
+            "Oct 19"
+            "–"
+            "Oct 23"
+           <p class="text-white/70 text-[10px]">
+            "ovulation estimated around Oct 21, 2026"
+         <div class="flex items-center gap-3 rounded-control bg-brand-info/10 border border-brand-info/40 px-4 py-2.5" style="opacity: 1; transform: none">
+          <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<37:61ad81e8>">
+           <path d="<11:81e625cc>">
+          <div class="flex-1">
+           <p class="text-brand-info text-sm font-bold">
+            "Nov 16"
+            "–"
+            "Nov 20"
+           <p class="text-white/70 text-[10px]">
+            "ovulation estimated around Nov 18, 2026"
+        <p class="text-white/70 text-[11px] mt-3 leading-relaxed">
+         "These are estimates based on your cycle history, not medical advice. The actual ovulation day can vary. For precise tracking, consult a healthcare professional."
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2 mb-3">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-pink" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
+         "Cycle length history"
+        <div class="space-y-1.5">
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "Jun 17"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 100%">
+          <span class="text-brand-pink font-bold w-8 text-right tabular-nums">
+           "28"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "Jul 15"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 100%">
+          <span class="text-brand-pink font-bold w-8 text-right tabular-nums">
+           "28"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "Aug 12"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 100%">
+          <span class="text-brand-pink font-bold w-8 text-right tabular-nums">
+           "28"
+           "d"
+        <h3 class="text-white/80 font-bold text-xs uppercase tracking-wide mt-4 mb-2">
+         "Period length"
+        <div class="space-y-1.5">
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "Jun 17"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-warm/70" style="width: 85.7143%">
+          <span class="text-brand-warm font-bold w-8 text-right tabular-nums">
+           "6"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "Jul 15"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-warm/70" style="width: 100%">
+          <span class="text-brand-warm font-bold w-8 text-right tabular-nums">
+           "7"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "Aug 12"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-warm/70" style="width: 100%">
+          <span class="text-brand-warm font-bold w-8 text-right tabular-nums">
+           "7"
+           "d"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/70 w-14">
+           "Sep 9"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-4">
+           <div class="h-full rounded-full bg-brand-warm/70" style="width: 100%">
+          <span class="text-brand-warm font-bold w-8 text-right tabular-nums">
+           "7"
+           "d"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 space-y-4">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-pink" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<157:3e248d37>" stroke-linecap="round" stroke-linejoin="round">
+         "Your body's patterns"
+         <span class="text-white/70 text-[11px] font-normal font-body">
+          "(last 60 days)"
+        <div class="space-y-1.5">
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/80 w-28">
+           "Cramps"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 24%">
+          <span class="text-white/70 w-14 text-right whitespace-nowrap">
+           "2 day(s)"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/80 w-28">
+           "Fatigue"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 12%">
+          <span class="text-white/70 w-14 text-right whitespace-nowrap">
+           "1 day(s)"
+         <div class="flex items-center gap-2 text-xs">
+          <span class="text-white/80 w-28">
+           "Headache"
+          <div class="flex-1 rounded-full bg-brand-surface overflow-hidden h-3">
+           <div class="h-full rounded-full bg-brand-pink/70" style="width: 12%">
+          <span class="text-white/70 w-14 text-right whitespace-nowrap">
+           "1 day(s)"
+        <div>
+         <p class="text-white/70 text-[11px] font-bold uppercase tracking-wide mb-1.5">
+          "Flow mix"
+         <div class="flex h-3 rounded-full overflow-hidden">
+          <div class="bg-brand-pink/60" style="width: 40%">
+          <div class="bg-brand-pink/70" style="width: 40%">
+          <div class="bg-brand-pink-dim/80" style="width: 20%">
+         <p class="text-white/70 text-[10px] mt-1">
+          "2 light · 2 medium · 1 heavy"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<48:f4c03581>">
+         "Fasting makeup"
+        <p class="text-white/70 text-xs mt-0.5 leading-relaxed">
+         "Ramadan fasts missed during cycles are made up later"
+         "("
+         <a class="underline" href="https://sunnah.com/muslim:335" rel="noreferrer" target="_blank">
+          "Muslim 335"
+         ")."
+        <div class="mt-3 grid grid-cols-3 gap-3">
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="font-display text-2xl font-bold text-brand-gold">
+           "3"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "owed"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="font-display text-2xl font-bold text-brand-emerald">
+           "7"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "made up"
+         <div class="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center">
+          <p class="font-display text-2xl font-bold text-white">
+           "0"
+          <p class="text-white/70 text-[10px] font-bold uppercase mt-1">
+           "remaining"
+        <button class="mt-3 w-full inline-flex items-center justify-center gap-0.5 text-brand-gold text-xs font-bold hover:underline">
+         "Open fasting tracker"
+         <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-pink" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<555:678fdcb9>" stroke-linecap="round" stroke-linejoin="round">
+          "Full history"
+         <div class="flex items-center gap-2">
+          <button class="inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold border border-brand-border bg-brand-surface/50 text-white/85 hover:border-brand-info/50 transition-colors">
+           <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<108:fee7c9f9>" stroke-linecap="round" stroke-linejoin="round">
+           "Export CSV"
+          <button class="inline-flex items-center gap-1 rounded-control px-2.5 py-1.5 text-xs font-bold border border-brand-pink/50 bg-brand-pink/10 text-brand-pink hover:bg-brand-pink/20 transition-colors">
+           <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<22:6e48e65f>" stroke-linecap="round" stroke-linejoin="round">
+           "Log a past period"
+        <div class="space-y-1.5">
+         <div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <span class="text-white/85 flex-1">
+           "Sep 9, 2026"
+           "–"
+           "Sep 15, 2026"
+           <span class="text-white/70">
+            "·"
+            "7"
+            "d"
+          <button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<256:398848a9>" stroke-linecap="round" stroke-linejoin="round">
+          <button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<413:79e5785c>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <span class="text-white/85 flex-1">
+           "Aug 12, 2026"
+           "–"
+           "Aug 18, 2026"
+           <span class="text-white/70">
+            "·"
+            "7"
+            "d"
+          <button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<256:398848a9>" stroke-linecap="round" stroke-linejoin="round">
+          <button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<413:79e5785c>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <span class="text-white/85 flex-1">
+           "Jul 15, 2026"
+           "–"
+           "Jul 21, 2026"
+           <span class="text-white/70">
+            "·"
+            "7"
+            "d"
+          <button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<256:398848a9>" stroke-linecap="round" stroke-linejoin="round">
+          <button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<413:79e5785c>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2 text-xs">
+          <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-pink" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12.00" cy="7.80" r="3">
+           <circle cx="15.99" cy="10.70" r="3">
+           <circle cx="14.47" cy="15.40" r="3">
+           <circle cx="9.53" cy="15.40" r="3">
+           <circle cx="8.01" cy="10.70" r="3">
+           <circle cx="12" cy="12" r="1.6">
+          <span class="text-white/85 flex-1">
+           "Jun 17, 2026"
+           "–"
+           "Jun 22, 2026"
+           <span class="text-white/70">
+            "·"
+            "6"
+            "d"
+          <button aria-label="Edit entry" class="p-1 text-white/70 hover:text-brand-pink">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<256:398848a9>" stroke-linecap="round" stroke-linejoin="round">
+          <button aria-label="Delete entry" class="p-1 text-white/70 hover:text-red-300">
+           <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<413:79e5785c>" stroke-linecap="round" stroke-linejoin="round">
+        <p class="text-white/70 text-[11px] mt-3 leading-relaxed">
+         "Estimates only. They help you prepare; they never define you. If bleeding patterns worry you, speak to a doctor; for the fiqh of unusual bleeding see the istiḥāḍa note on the Cycle page."
+    <div class="fixed right-4 z-40 flex flex-col items-center gap-3 pointer-events-none" style="bottom: calc(5rem + env(safe-area-inset-bottom, 0px))">
+     <button aria-label="Go to top" class="pointer-events-auto w-11 h-11 rounded-full grid place-items-center bg-brand-deep text-white border border-brand-border shadow-elev-2 hover:border-brand-emerald hover:text-brand-emerald transition-colors" title="Go to top" type="button">
+      <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+       <path clip-rule="evenodd" d="<143:a4c237d7>" fill-rule="evenodd">
+   <footer class="bg-brand-deep text-white border-t border-brand-border mt-auto">
+    <div class="footer footer-center p-6 sm:p-8">
+     <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center gap-2 text-sm sm:text-base">
+       <span>
+        "Made with love"
+       <svg aria-hidden="true" class="w-4 h-4 text-red-300" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<384:b0396863>">
+       <span>
+        "for the ummah"
+      <nav aria-label="Footer" class="flex flex-wrap justify-center items-center gap-x-3 gap-y-1.5 text-xs">
+       <a class="inline-flex items-center text-white/60 hover:text-brand-emerald underline underline-offset-2 transition-colors" data-discover="true" href="/feedback">
+        "Feedback & Contact"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-brand-gold underline underline-offset-2 transition-colors" data-discover="true" href="/about">
+        "About"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/privacy">
+        "Privacy"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/terms">
+        "Terms"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://bayan.bustandeen.com/home">
+        "Help & updates"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://status.bustandeen.com" rel="noopener noreferrer" target="_blank">
+        "Status"
+      <p class="text-xs sm:text-sm text-white/70">
+       "Bustandeen"
+      <div class="flex gap-4 text-xs opacity-70">
+       <span>
+        "Non-commercial"
+       <span>
+        "•"
+       <span>
+        "Free · Ad-free · Open-source"
+       <span>
+        "•"
+       <span>
+        "Your data is yours"
+      <p class="text-[10px] text-white/60 tabular-nums">
+       "v"
+       "<version>"
+ <div class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-4" role="presentation">
+  <div aria-label="Log a past period" class="w-full max-w-sm rounded-card bg-brand-deep border border-brand-pink/40 shadow-elev-3 p-6 space-y-4" role="dialog">
+   <h3 class="font-display text-white font-bold text-xl flex items-center gap-2">
+    <svg aria-hidden="true" class="w-6 h-6 text-brand-pink" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+     <path d="<555:678fdcb9>" stroke-linecap="round" stroke-linejoin="round">
+    "Log a past period"
+   <div class="grid grid-cols-2 gap-3">
+    <div>
+     <label class="text-white/75 text-xs font-bold" for="id5">
+      "Started"
+     <input class="input input-bordered input-sm w-full mt-1 rounded-control bg-brand-surface/50 border-brand-border text-white" id="id5" max="2026-10-15" type="date" value="2026-06-01" value="2026-06-01">
+    <div>
+     <label class="text-white/75 text-xs font-bold" for="id6">
+      "Ended"
+     <input class="input input-bordered input-sm w-full mt-1 rounded-control bg-brand-surface/50 border-brand-border text-white" id="id6" max="2026-10-15" type="date" value="2026-06-20" value="2026-06-20">
+   <div class="flex gap-2">
+    <button aria-pressed="false" class="flex-1 rounded-control border px-3 py-2 text-xs font-bold transition-colors bg-brand-surface/50 border-brand-border text-white/75 hover:text-white">
+     "Period"
+    <button aria-pressed="true" class="flex-1 rounded-control border px-3 py-2 text-xs font-bold transition-colors bg-brand-pink/15 border-brand-pink/60 text-brand-pink">
+     "Nifās"
+   <button class="btn-solid inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 transition disabled:opacity-50 disabled:cursor-not-allowed w-full">
+    "Add to my history"
+   <p class="text-white/70 text-[10px] text-center">
+    "Add your last 3–6 periods and the predictions become genuinely yours."
