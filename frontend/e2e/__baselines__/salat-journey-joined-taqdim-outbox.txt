@@ -1,0 +1,33 @@
+{
+ "sync": [],
+ "salat": [
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "dhuhr",
+    "status": "completed",
+    "date": "2026-10-15",
+    "location": "home",
+    "tasbeeh": false,
+    "ayatulKursi": false,
+    "qasr": true,
+    "jam": "taqdim"
+   },
+   "owner": "demo-001"
+  },
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "asr",
+    "status": "completed",
+    "date": "2026-10-15",
+    "location": "home",
+    "tasbeeh": false,
+    "ayatulKursi": false,
+    "qasr": true,
+    "jam": "taqdim"
+   },
+   "owner": "demo-001"
+  }
+ ]
+}
