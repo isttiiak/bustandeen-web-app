@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildTimeline } from './PrayerTimes.js';
+import { buildTimeline } from '../components/prayerTimes/timeline.js';
 import { calcPrayerTimes } from '../utils/prayerTimes.js';
 
 // Audit P4-1: buildTimeline is the page's fiqh table (the forbidden windows, the

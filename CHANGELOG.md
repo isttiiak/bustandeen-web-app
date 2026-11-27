@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.72 - Prayer Times page split into parts (audit P4-1, step 10) - 2026-11-27
+
+`pages/PrayerTimes.tsx` was 1,018 lines. It is now 208. The timeline table moved to its own file and the screen into three components under `components/prayerTimes/` (largest 264 lines). Nothing changes for anyone: same times, windows, copy, requests and clock.
+
+### What moved (verbatim, only imports, `export`, and prop names added)
+
+- `timeline.ts`: the timeline types and `buildTimeline`, the fiqh table (the forbidden windows around sunrise, the zenith and sunset, the Ishraq/Duha, Awwabin and Tahajjud windows, and the ʿIshāʾ and night arithmetic with yesterday's ʿIshāʾ before Fajr). No instant, wording or hadith link was touched.
+- `LiveClockCard` (the arch: the self-ticking clock, current and next prayer, the fast's suhoor and iftar, the active forbidden or nafl window), `PrayerTimeline` (the rows and the tap-to-open evidence) and `PrayerSources`. The open-entry and sources state stay in the page, as before.
+- The page keeps the saved place, the minute tick, the calculation effect, the self-heal rename of a coordinates-only name, the toolbar, the settings sheet and the composition.
+
+### Proof
+
+- **Commit 1 (before any move):** `prayerTimeline.test.ts` records `buildTimeline`'s output (as ISO instants, with the translation keys and fallbacks) for five places (Dhaka, London, Makkah, Sydney, Tromsø) at seven moments (before Fajr, after Islamic midnight, late morning, afternoon, night, midsummer noon, midwinter dawn) and with no saved place: 36 files in `prayerTimeline.baselines/`. 20 browser baselines were also recorded on the OLD page: the timeline at eleven times of the day (every window), before dawn in Bangla, no saved place, a place on another time zone (London), a name that is only coordinates (renamed on the device), an open forbidden entry and an open nafl entry (and closed again), a changed calculation method (the times recompute when the sheet closes), and the Qibla link. Built the way CI builds. The only change to old code in that commit is the word `export` on `buildTimeline`.
+- **Commit 2 (the move):** the 36 files match byte for byte, and the 4 existing Prayer Times baselines and the 20 new ones pass untouched.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths and `export` keywords.
+- **Noted, not changed:** at Tromsø (69.6°N) in midsummer and midwinter some calculated times are invalid dates, so those entries show no time. This is how the page behaved before; the baselines pin it.
+- `prayerTimesScreen.test.ts` (no emoji or em dash, one arch, no hex colour, every key in both languages) now reads the page and its four parts together. `locationStaysOnDevice.test.ts` passes: none of the new files makes a network call. The `PrayerTimes.tsx` cap is removed from `fileSize.test.ts`.
+
 ## v5.190.71 - Ramadan tracker split into parts (audit P4-1, step 9) - 2026-11-27
 
 `pages/RamadanTracker.tsx` was 1,057 lines in one component. It is now 100 lines. The state moved into one hook and the screen into six parts under `components/ramadan/` (largest 298 lines). Nothing changes for anyone: same markup, copy, suhoor and iftar times, nights and requests.

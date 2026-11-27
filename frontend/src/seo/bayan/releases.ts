@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.72',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: the Prayer Times screen tidied up',
+        fixed: [
+          'We reorganised the code behind the Prayer Times screen into smaller pieces so it is easier to maintain. Nothing looks or works differently, and the times you see are exactly the same.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: নামাযের সময় পাতার কোড গোছানো হয়েছে',
+        fixed: [
+          'নামাযের সময় পাতার পেছনের কোড ছোট ছোট অংশে ভাগ করা হয়েছে, যাতে রক্ষণাবেক্ষণ সহজ হয়। দেখতে বা কাজে কিছু বদলায়নি, আপনি যে সময়গুলো দেখেন তা হুবহু একই থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.71',
     date: '2026-11-27',
     text: {

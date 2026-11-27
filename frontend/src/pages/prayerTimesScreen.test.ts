@@ -1,7 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import en from '../locales/en/common.json';
 import bn from '../locales/bn/common.json';
-import page from './PrayerTimes.tsx?raw';
+import pageFile from './PrayerTimes.tsx?raw';
+import timeline from '../components/prayerTimes/timeline.ts?raw';
+import liveClock from '../components/prayerTimes/LiveClockCard.tsx?raw';
+import timelineList from '../components/prayerTimes/PrayerTimeline.tsx?raw';
+import sources from '../components/prayerTimes/PrayerSources.tsx?raw';
+
+// The page and the parts it was split into (audit P4-1) are checked as one.
+const page = [pageFile, timeline, liveClock, timelineList, sources].join('\n');
 
 // T3.2 Prayer Times: the page draws SVG icons only (PrayerGlyph by id, no
 // emoji in the timeline data), its copy and every locale string it uses has
