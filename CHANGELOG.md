@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.71 - Ramadan tracker split into parts (audit P4-1, step 9) - 2026-11-27
+
+`pages/RamadanTracker.tsx` was 1,057 lines in one component. It is now 100 lines. The state moved into one hook and the screen into six parts under `components/ramadan/` (largest 298 lines). Nothing changes for anyone: same markup, copy, suhoor and iftar times, nights and requests.
+
+### What moved (verbatim, only imports, `export`, hook plumbing and prop names added)
+
+- `useRamadanPage.ts`: the queries (fasting history, cycle summary, salat, zikr, Quran), the excused-day check, suhoor and iftar from the saved place, tomorrow's end of sehri, the one-second clock and the once-a-minute night (`nightFastDate`, the R10 rule that a night belongs to the fast that follows it), the suhoor/iftar countdown (`fastClock`, with the post-Maghrib rollover to tomorrow), the worship strip numbers, and the two writes (log today's fast, toggle tarawih on its night's fast) with their sign-in checks. No hook comes after a condition.
+- `ramadanShared.ts`: the three ʿashra table with its ḍaʿīf note, the four worship tiles, the two shared class strings and the three date formatters.
+- `RamadanCountdown` (before the month: days away, the basis note, prepare rows, citations), `RamadanDayArch` (today's arch: the countdown pill, month progress, suhoor and iftar, the "I fasted today" and "logged by mistake" actions), `RamadanWorshipStrip`, `RamadanLastTen` (the odd nights) and `RamadanMonthGrid` (the 30 days in three ʿashra, the legend and the Rayhanah note).
+- The page keeps the tabs, the early return for the countdown, the salat card, the sheet card and the ḍaʿīf explainer.
+
+### Proof
+
+- **Commit 1 (before any move):** `ramadanRender.test.ts` server-renders the unmodified page for what the demo cannot show (it never keeps a logged fast or a started period): today fasted with "logged by mistake", an excused day today, excused days in the past, tarawih saved on the eve of the last ten, the last ten with marks, a guest and no saved place. The HTML is in `ramadanRender.baselines/`. 12 browser states were recorded on the OLD code too: no saved place, before dawn, after Maghrib (the rollover), the eve of the last ten (English and Bangla), a day in the last ten, the sister view, the preview flag, tarawih saved offline (the request is recorded), and a worship tile opening its tracker. Built the way CI builds.
+- **Commit 2 (the move):** the same files match byte for byte, and the existing Ramadan baselines (countdown and in-month, English and Bangla, fasted and salat done offline) pass untouched.
+- **Not recorded in a browser:** the confirm-and-remove step of "logged by mistake" (the offline demo never shows a logged fast, so the button is unreachable); its markup is covered by the server render and its handler is a moved block.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords, the `inLastTen` condition now written around `<RamadanLastTen />`, and prettier re-wrapping. No fiqh util was touched (`utils/ramadan.ts`, `prayerTimes.ts`, `placeClock.ts` are unchanged).
+- `ramadanScreen.test.ts` (no emoji, the prepare-row citation rule) now also reads the new folder, and its citation checks read `RamadanCountdown`; `signInSheet.test.ts` reads the page and its hook (the gate, `{gate.sheet}` and both save checks). The `RamadanTracker.tsx` cap is removed from `fileSize.test.ts`.
+
 ## v5.190.70 - Home page split into parts (audit P4-1, step 8) - 2026-11-27
 
 `pages/Home.tsx` was 1,145 lines in one component. It is now 127 lines. The queries and everything derived from them moved into one hook, and the screen into eight components under `components/home/` (largest 285 lines). Nothing changes for anyone: same markup, copy, prayer window and requests.

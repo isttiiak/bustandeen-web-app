@@ -15,7 +15,8 @@ import khatam from '../pages/QuranKhatam.tsx?raw';
 import hifz from '../pages/QuranHifz.tsx?raw';
 import reader from '../pages/QuranReader.tsx?raw';
 import readerControls from './quran/ReaderCardControls.tsx?raw';
-import ramadan from '../pages/RamadanTracker.tsx?raw';
+import ramadanPage from '../pages/RamadanTracker.tsx?raw';
+import ramadanState from './ramadan/useRamadanPage.ts?raw';
 import ramadanSalat from './RamadanSalatCard.tsx?raw';
 
 // U10 "explore freely, sign in to save": one shared SignInSheet for every
@@ -90,10 +91,12 @@ describe('U10 sign-in gate', () => {
     expect(hifz.match(/gate\.canSave\(\)/g)).toHaveLength(2);
     // The bookmark button lives in the reader's card controls (audit P4-1 split).
     expect(readerControls).toMatch(/gate\.canSave\(\) &&\s*toggleBookmark\.mutate/);
-    expect(ramadan).toContain("useSignInGate('ramadan')");
-    expect(ramadan).toContain('canSave={gate.canSave}');
-    expect(ramadan).not.toMatch(/if \(!user\) return null/);
-    expect(ramadan.match(/if \(!gate\.canSave\(\)\) return;/g)).toHaveLength(2);
+    // The page's state hook holds the gate and the two checks (audit P4-1 split).
+    expect(ramadanState).toContain("useSignInGate('ramadan')");
+    expect(ramadanPage).toContain('canSave={gate.canSave}');
+    expect(ramadanPage).toContain('{gate.sheet}');
+    expect(ramadanPage).not.toMatch(/if \(!user\) return null/);
+    expect(ramadanState.match(/if \(!gate\.canSave\(\)\) return;/g)).toHaveLength(2);
     expect(ramadanSalat.match(/if \(!canSave\(\)\) return;/g)).toHaveLength(5);
     expect(ramadanSalat.match(/\.mutate\(/g)).toHaveLength(5);
   });
