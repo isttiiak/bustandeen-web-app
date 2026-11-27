@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.83',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: a security review',
+        fixed: [
+          'We reviewed every warning from our automatic security scanner and fixed the two small ones that were real. Nothing looks or works differently.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: নিরাপত্তা পর্যালোচনা',
+        fixed: [
+          'আমাদের স্বয়ংক্রিয় নিরাপত্তা স্ক্যানারের প্রতিটি সতর্কবার্তা পর্যালোচনা করে যে দুটি ছোট সমস্যা সত্যি ছিল, তা ঠিক করা হলো। দেখতে বা কাজে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.82',
     date: '2026-11-27',
     text: {

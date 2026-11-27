@@ -7,6 +7,7 @@ import {
   updateNaflSchema,
   getSalatLogSchema,
   getSalatDebtSchema,
+  getSalatJourneySchema,
   salatHistorySchema,
   adjustSalatDebtSchema,
   setSalatDebtSchema,
@@ -70,7 +71,7 @@ router.get('/debt/insights', requireAuth, salatController.getDebtInsights);
 router.get('/debt/units', requireAuth, salatController.getDebtUnits);
 
 // GET /api/salat/journey — full history of phases (account creation → each reset → today)
-router.get('/journey', requireAuth, salatController.getJourney);
+router.get('/journey', requireAuth, validate(getSalatJourneySchema), salatController.getJourney);
 // POST /api/salat/reset — start fresh without deleting history
 router.post('/reset', requireAuth, validate(resetSalatSchema), salatController.resetSalat);
 // DELETE /api/salat/all — delete all salat logs for the authenticated user

@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.83 - CodeQL triage: two real fixes - 2026-11-27
+
+CodeQL was switched on in audit P3-4 (2026-11-25) and left 355 alerts open. All were triaged: two are real and fixed here; the rest are false positives, tests, or a design file that is not deployed (the full list and reasons are in the PR).
+
+### Fixed
+
+- **The landing page's FAQ structured data now escapes "<".** `frontend/scripts/prerender.mjs` built the landing FAQ JSON-LD with `.replace(/</g, '\u003c')`, which in a JavaScript string replaces "<" with "<", so it escaped nothing. A "</script>" in a FAQ answer could have ended the script block early. The text is our own, so it was never exploitable, but the escape now matches `jsonLdString` (audit P2-11), which every other page already used. Today's FAQ has no "<", so the built page is byte-for-byte the same. Test: `seo/prerenderJsonLd.test.ts`.
+- **`GET /api/salat/journey` now validates `today`** like every other Salat read (`clientToday`, audit P0-3). It read the value straight from the query string, so a malformed or repeated `today` reached the history query. It was read-only and limited to the caller's own records, but it was the one Salat read without the check. Test in `auditP0.e2e.test.js`.
+
 ## v5.190.82 - A timing-safe Salat details test - 2026-11-27
 
 Tests only, nothing changes in the app.

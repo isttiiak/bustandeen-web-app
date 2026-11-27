@@ -577,7 +577,7 @@ for (const lang of ['en', 'bn']) {
       name: f.q,
       acceptedAnswer: { '@type': 'Answer', text: f.a },
     })),
-  }).replace(/</g, '\u003c');
+  }).replace(/</g, '\\u003c'); // as jsonLdString: no "<" may end the script early (P2-11)
   let html = baseHtml
     .replace('<div id="root"></div>', `<div id="root">${landing.html}</div>`)
     .replace(

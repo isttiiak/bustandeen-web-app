@@ -92,6 +92,14 @@ describe('P0-3 / P0-4: the client "today" must be possible right now', () => {
     expect(!debt?.lastAccrualDate || debt.lastAccrualDate <= latestPossibleToday()).toBe(true);
   });
 
+  // CodeQL triage 2026-11-27: /journey read `today` straight from the query string.
+  test('the salat journey refuses an impossible or malformed today', async () => {
+    for (const bad of ['2099-01-01', '0000-00-00', 'not-a-date'])
+      expect((await as(request(app).get(`/api/salat/journey?today=${bad}`))).status).toBe(400);
+    expect((await as(request(app).get('/api/salat/journey?today=a&today=b'))).status).toBe(400);
+    expect((await as(request(app).get(`/api/salat/journey?today=${TODAY}`))).status).not.toBe(400);
+  });
+
   test('a real today still works', async () => {
     expect((await as(request(app).get(`/api/salat?today=${TODAY}`))).status).toBe(200);
     expect((await as(request(app).get(`/api/salat/debt?today=${utcDay(-1)}`))).status).toBe(200);
