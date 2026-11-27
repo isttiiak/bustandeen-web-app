@@ -398,6 +398,101 @@ test('prayer times: a timeline entry opens, and the sources', async ({ page }) =
   await expectBaseline(page, 'prayer-times.expanded');
 });
 
+// Audit P4-1 (PR 10, PrayerTimes): the timeline at every kind of moment, a place on
+// another zone, a name that is only coordinates, a changed calculation method.
+const PRAYER_TIMES_AT: Array<[string, string]> = [
+  ...HOME_TIMES,
+  ['1400', '2026-10-15T14:00:00+06:00'], // Dhuhr, the plain afternoon
+];
+for (const [name, at] of PRAYER_TIMES_AT) {
+  test(`prayer times: the timeline at ${name}`, async ({ page }) => {
+    await open(page, { as: 'brother', at }, '/prayer-times');
+    await expectBaseline(page, `prayer-times.at-${name}`);
+  });
+}
+
+test('prayer times: before dawn, in Bangla', async ({ page }) => {
+  await open(page, { as: 'brother', at: '2026-10-16T03:30:00+06:00', lang: 'bn' }, '/prayer-times');
+  await expectBaseline(page, 'prayer-times.at-0330.bn');
+});
+
+test('prayer times: no saved place asks for one', async ({ page }) => {
+  await open(page, { as: 'brother', noLocation: true }, '/prayer-times');
+  await expectBaseline(page, 'prayer-times.no-place');
+});
+
+test('prayer times: a place on another time zone shows its own clock', async ({ page }) => {
+  await open(
+    page,
+    {
+      as: 'brother',
+      storage: {
+        bustandeen_location: JSON.stringify({
+          latitude: 51.5074,
+          longitude: -0.1278,
+          name: 'London',
+        }),
+      },
+    },
+    '/prayer-times'
+  );
+  await expectBaseline(page, 'prayer-times.london');
+});
+
+test('prayer times: a place saved as bare coordinates is renamed on the device', async ({
+  page,
+}) => {
+  await open(
+    page,
+    {
+      as: 'brother',
+      storage: {
+        bustandeen_location: JSON.stringify({
+          latitude: 23.8103,
+          longitude: 90.4125,
+          name: '23.81, 90.41',
+        }),
+      },
+    },
+    '/prayer-times'
+  );
+  await page.waitForTimeout(800);
+  await expectBaseline(page, 'prayer-times.raw-coordinates-name');
+});
+
+test('prayer times: an expanded forbidden time, then a nafl time', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/prayer-times');
+  await declineBanner(page);
+  await page.getByText('Forbidden: Around Sunrise', { exact: true }).click();
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'prayer-times.forbidden-open');
+  await page.getByText('Salat al-Awwabin', { exact: true }).click();
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'prayer-times.awwabin-open');
+  await page.getByText('Salat al-Awwabin', { exact: true }).click();
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'prayer-times.entry-closed');
+});
+
+test('prayer times: changing the calculation method recomputes when the sheet closes', async ({
+  page,
+}) => {
+  await open(page, { as: 'brother' }, '/prayer-times?settings=1');
+  await declineBanner(page);
+  await page.getByLabel('Calculation method').selectOption({ index: 3 });
+  await page.waitForTimeout(300);
+  await press(page, 'Close prayer time settings');
+  await page.waitForTimeout(500);
+  await expectBaseline(page, 'prayer-times.method-changed');
+});
+
+test('prayer times: the Qibla link opens the compass', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/prayer-times');
+  await declineBanner(page);
+  await page.getByRole('link', { name: 'Qibla Compass' }).click();
+  await expect(page).toHaveURL(/\/qibla$/);
+});
+
 // ---- Analytics -----------------------------------------------------------
 
 test('zikr analytics: the goal and missed-count dialogs', async ({ page }) => {

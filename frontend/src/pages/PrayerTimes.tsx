@@ -94,7 +94,8 @@ function entryTime(e: TLEntry): number {
   return e.kind === 'prayer' || e.kind === 'event' ? e.time.getTime() : e.start.getTime();
 }
 
-function buildTimeline(
+// Exported only so the golden test can record it before the split (audit P4-1).
+export function buildTimeline(
   times: PrayerTimesResult,
   t: (k: string, fallback: string) => string,
   now: Date,
