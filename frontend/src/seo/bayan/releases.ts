@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.77',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: the Salat tracker tidied up (part 2)',
+        fixed: [
+          'We kept reorganising the code behind the Salat tracker into smaller pieces so it is easier to maintain. Nothing looks or works differently, and your prayer logs are exactly as you left them.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: নামাযের ট্র্যাকারের কোড গোছানো (দ্বিতীয় ভাগ)',
+        fixed: [
+          'নামাযের ট্র্যাকারের পেছনের কোড ছোট ছোট অংশে ভাগ করার কাজ চলছে, যাতে রক্ষণাবেক্ষণ সহজ হয়। দেখতে বা কাজে কিছু বদলায়নি, আপনার নামাযের হিসাব ঠিক আগের মতোই থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.76',
     date: '2026-11-27',
     text: {

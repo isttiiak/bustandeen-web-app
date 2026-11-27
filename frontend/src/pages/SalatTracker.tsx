@@ -1,9 +1,9 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { m as motion, AnimatePresence } from 'framer-motion';
+import { m as motion } from 'framer-motion';
 import TabNav from '../components/TabNav.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { celebrateSmall, celebrateAllPrayers } from '../utils/celebrate.js';
@@ -13,13 +13,10 @@ import {
   CheckIcon,
   ClockIcon,
   Cog6ToothIcon,
-  ExclamationTriangleIcon,
   LinkIcon,
   LockClosedIcon,
-  ScissorsIcon,
-  XMarkIcon,
 } from '@heroicons/react/24/outline';
-import { MosqueIcon, PrayerGlyph, TasbihIcon } from '../components/icons/IslamicIcons.js';
+import { MosqueIcon, TasbihIcon } from '../components/icons/IslamicIcons.js';
 import {
   useSalatLog,
   useUpdatePrayer,
@@ -28,7 +25,6 @@ import {
   useSalatDebt,
   useSetSalatDebt,
   NAFL_TYPE_META,
-  MISSED_REASONS,
   type PrayerId,
   type PrayerStatus,
   type PrayerLocation,
@@ -60,9 +56,7 @@ import {
   wasDhikrCredited,
   setDhikrCredited,
 } from '../utils/salatPrefs.js';
-import { recitationsFor, recitationHref } from '../utils/postSalatQuran.js';
 import { getFridayHour } from '../utils/fridayHour.js';
-import { formatLocaleNumber } from '../utils/localeDate.js';
 import MusafirBanner from '../components/MusafirBanner.js';
 import TravelKazaCard from '../components/TravelKazaCard.js';
 import {
@@ -72,8 +66,6 @@ import {
   isQasrPrayer,
   jamAllowed,
   jamPartner,
-  FARD_RAKAT,
-  travelRakat,
 } from '../utils/musafir.js';
 import {
   MIN_RAKAT,
@@ -82,9 +74,7 @@ import {
   offsetDate,
   isFuturePrayer,
   isCurrentPrayer,
-  LOCATION_TAGS,
   STATUS_STYLE,
-  DisclosureLabel,
 } from '../components/salat/salatParts.js';
 import SalatLegend from '../components/salat/SalatLegend.js';
 import SalatKazaDebtCard from '../components/salat/SalatKazaDebtCard.js';
@@ -94,6 +84,10 @@ import SalatMonthCalendar from '../components/salat/SalatMonthCalendar.js';
 import SalatWeekStrip from '../components/salat/SalatWeekStrip.js';
 import FridayHourCard from '../components/salat/FridayHourCard.js';
 import SalatHero from '../components/salat/SalatHero.js';
+import SalatPrayerRow from '../components/salat/SalatPrayerRow.js';
+import SalatFridayTravel from '../components/salat/SalatFridayTravel.js';
+import SalatPrayerDetails from '../components/salat/SalatPrayerDetails.js';
+import SalatPrayerToggle from '../components/salat/SalatPrayerToggle.js';
 import SalatCardTop from '../components/salat/SalatCardTop.js';
 import SalatCardJoining from '../components/salat/SalatCardJoining.js';
 import SalatCardGuidance from '../components/salat/SalatCardGuidance.js';
@@ -103,7 +97,6 @@ import SalatCardGuidance from '../components/salat/SalatCardGuidance.js';
 export default function SalatTracker() {
   const { t } = useTranslation();
   const cycleActive = useCycleActive();
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { user } = useAuthStore();
 
@@ -963,485 +956,68 @@ export default function SalatTracker() {
                         }`}
                       >
                         {/* Main row */}
-                        <div className="p-3 flex items-center gap-3">
-                          {/* Prayer info */}
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <span
-                              className={`w-10 h-10 shrink-0 rounded-full border flex items-center justify-center ${
-                                isCurrent
-                                  ? 'border-brand-emerald/50 text-brand-emerald'
-                                  : isOverdue
-                                    ? 'border-brand-gold/40 text-brand-gold'
-                                    : `border-brand-border ${style.text}`
-                              }`}
-                            >
-                              <PrayerGlyph id={prayerId} className="w-5 h-5" />
-                            </span>
-                            <div className="min-w-0">
-                              <p
-                                className={`font-bold text-sm leading-none ${isCurrent ? 'text-brand-emerald' : isOverdue ? 'text-brand-gold' : style.text}`}
-                              >
-                                {isJumuah
-                                  ? t('salatNames.jumuah', "Jumu'ah")
-                                  : translateSalatName(prayer.id, prayer.name, t)}
-                                {isCurrent && (
-                                  <span className="ml-2 inline-flex items-center gap-1 text-xs font-normal text-brand-emerald">
-                                    <span
-                                      className="w-1.5 h-1.5 rounded-full bg-brand-emerald"
-                                      aria-hidden="true"
-                                    />
-                                    {t('salatTracker.nowTag', 'now')}
-                                  </span>
-                                )}
-                                {isOverdue && (
-                                  <span className="ml-2 inline-flex items-center gap-1 text-xs font-normal text-brand-gold">
-                                    <ExclamationTriangleIcon
-                                      className="w-3.5 h-3.5"
-                                      aria-hidden="true"
-                                    />
-                                    {prayerId === 'isha'
-                                      ? t('salatTracker.ishaLateTag', 'better before midnight')
-                                      : t('salatTracker.overdueTag', 'window closed')}
-                                  </span>
-                                )}
-                                {(isQasrRow || (rowTravel && !isQasrPrayer(prayerId))) && (
-                                  <span
-                                    className={`mt-1 flex items-center gap-1 w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md ${
-                                      isQasrRow
-                                        ? 'bg-brand-info/15 text-brand-info'
-                                        : 'bg-white/10 text-white/60'
-                                    }`}
-                                  >
-                                    {isQasrRow && (
-                                      <ScissorsIcon className="w-3 h-3" aria-hidden="true" />
-                                    )}
-                                    {isQasrRow
-                                      ? t('salatTracker.qasrBadge', '{{n}} · qaṣr', {
-                                          n: formatLocaleNumber(travelRakat(prayerId)),
-                                        })
-                                      : t('salatTracker.rakatBadge', '{{n}} rakʿah', {
-                                          n: formatLocaleNumber(FARD_RAKAT[prayerId]),
-                                        })}
-                                  </span>
-                                )}
-                                {entry?.jam && hasSubTag && (
-                                  <span className="mt-1 flex items-center gap-1 w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-brand-gold/15 text-brand-gold">
-                                    <LinkIcon className="w-3 h-3" aria-hidden="true" />
-                                    {t('salatTracker.jamBadge', 'joined')}
-                                  </span>
-                                )}
-                              </p>
-                              {prayerStartTime && isToday && (
-                                <div className="mt-0.5 space-y-px">
-                                  <p className="text-white/60 text-xs leading-none tabular-nums">
-                                    {prayerStartTime}
-                                    {prayerEndTime && (
-                                      <>
-                                        <span className="text-white/40"> → </span>
-                                        <span className="text-white/50">{prayerEndTime}</span>
-                                        {ishaFinalEndTime && (
-                                          <span className="text-white/40 text-[10px]">
-                                            {' '}
-                                            ({t('salatTracker.best', 'best')})
-                                          </span>
-                                        )}
-                                      </>
-                                    )}
-                                  </p>
-                                  {ishaFinalEndTime && (
-                                    <p className="text-white/40 text-[10px] leading-none">
-                                      {t('salatTracker.ishaFinalWindow', 'window → {{time}}', {
-                                        time: ishaFinalEndTime,
-                                      })}
-                                    </p>
-                                  )}
-                                </div>
-                              )}
-                              {isJumuah && (
-                                <p className="text-brand-emerald text-xs mt-0.5">
-                                  {t(
-                                    'salatTracker.jumuahReplacesDhuhr',
-                                    'Replaces Dhuhr, prayed at the mosque'
-                                  )}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Primary actions: Done / Kaza / Miss (future prayers locked for today) */}
-                          {isFuture && !joinedEarly ? (
-                            <span className="inline-flex items-center gap-1 text-white/50 text-xs font-medium px-2 py-1 rounded-control border border-brand-border">
-                              <LockClosedIcon className="w-3.5 h-3.5" aria-hidden="true" />
-                              {t('salatTracker.notYet', 'not yet')}
-                            </span>
-                          ) : (
-                            <div
-                              className="flex items-center gap-1"
-                              role="group"
-                              aria-label={translateSalatName(prayer.id, prayer.name, t)}
-                            >
-                              {(
-                                [
-                                  {
-                                    s: 'completed',
-                                    Icon: CheckIcon,
-                                    label: t('salatTracker.done', 'Done'),
-                                    on: 'bg-brand-emerald/10 border-brand-emerald text-brand-emerald',
-                                    hover: 'hover:border-brand-emerald/50',
-                                  },
-                                  {
-                                    s: 'kaza',
-                                    Icon: ClockIcon,
-                                    label: t('salatTracker.kaza', 'Kaza'),
-                                    on: 'bg-brand-gold/20 border-brand-gold text-brand-gold',
-                                    hover: 'hover:border-brand-gold/50',
-                                  },
-                                  {
-                                    s: 'missed',
-                                    Icon: XMarkIcon,
-                                    label: t('salatTracker.miss', 'Miss'),
-                                    on: 'bg-red-400/15 border-red-400 text-red-400',
-                                    hover: 'hover:border-red-400/50',
-                                  },
-                                ] as const
-                              ).map((b) => (
-                                <motion.button
-                                  key={b.s}
-                                  type="button"
-                                  whileTap={{ scale: 0.92 }}
-                                  onClick={() => handleStatus(prayerId, b.s)}
-                                  aria-pressed={status === b.s}
-                                  className={`hit-44 flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-bold border transition-colors ${
-                                    status === b.s
-                                      ? b.on
-                                      : `bg-brand-deep border-brand-border text-white/60 hover:text-white ${b.hover}`
-                                  }`}
-                                >
-                                  <b.Icon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                                  {b.label}
-                                </motion.button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
+                        <SalatPrayerRow
+                          prayer={prayer}
+                          prayerId={prayerId}
+                          entry={entry}
+                          status={status}
+                          style={style}
+                          isCurrent={isCurrent}
+                          isOverdue={isOverdue}
+                          isToday={isToday}
+                          isFuture={isFuture}
+                          isJumuah={isJumuah}
+                          isQasrRow={isQasrRow}
+                          rowTravel={rowTravel}
+                          joinedEarly={joinedEarly}
+                          hasSubTag={hasSubTag}
+                          prayerStartTime={prayerStartTime}
+                          prayerEndTime={prayerEndTime}
+                          ishaFinalEndTime={ishaFinalEndTime}
+                          handleStatus={handleStatus}
+                        />
 
                         {/* Travelling on a Friday: a full-width strip rather than a
                             line in the narrow name column, which on small phones
                             wrapped to five lines beside the buttons. */}
-                        {prayerId === 'dhuhr' && isCivilFriday && rowTravel && !isJumuah && (
-                          <div className="px-3 py-1.5 border-t border-brand-info/15 bg-brand-info/5 text-[11px] sm:text-xs text-brand-info flex items-center gap-1.5">
-                            <BriefcaseIcon className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                            {t(
-                              'salatTracker.travelFriday',
-                              "Travelling: Ẓuhr instead of Jumu'ah (Muslim 1218a)"
-                            )}
-                          </div>
-                        )}
+                        <SalatFridayTravel
+                          prayerId={prayerId}
+                          isCivilFriday={isCivilFriday}
+                          rowTravel={rowTravel}
+                          isJumuah={isJumuah}
+                        />
 
-                        {/* Sub-tags row (only for completed/kaza) */}
-                        <AnimatePresence>
-                          {hasSubTag && isExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.18 }}
-                              className="overflow-hidden border-t border-brand-border/70"
-                            >
-                              <div className="px-3 py-2.5 space-y-2">
-                                {/* Location tags — only for completed (kaza is always prayed alone).
-                                Friday's Dhuhr (Jumu'ah) is skipped entirely: it's only valid as a
-                                mosque congregation prayer, so the location is set automatically
-                                instead of asking the user to pick it. */}
-                                {status === 'completed' && isJumuah && (
-                                  <p className="flex items-start gap-1.5 text-brand-emerald text-[11px] sm:text-xs">
-                                    <MosqueIcon className="w-3.5 h-3.5 mt-px shrink-0" />
-                                    {t(
-                                      'salatTracker.jumuahAutoMosque',
-                                      "Marked at the mosque automatically. Jumu'ah is only valid in congregation."
-                                    )}
-                                  </p>
-                                )}
-                                {status === 'completed' && !isJumuah && (
-                                  <div className="flex items-center gap-1.5 flex-wrap">
-                                    <span className="text-white/60 text-[11px] sm:text-xs">
-                                      {t('salatTracker.whereLabel', 'Where:')}
-                                    </span>
-                                    {LOCATION_TAGS.map((tag) => {
-                                      const { label, note } = locationTagText(tag.value);
-                                      return (
-                                        <motion.button
-                                          key={tag.value}
-                                          whileTap={{ scale: 0.9 }}
-                                          onClick={() =>
-                                            handleSubTag(prayerId, 'location', tag.value)
-                                          }
-                                          aria-pressed={
-                                            entry?.location === tag.value ||
-                                            (!entry?.location && tag.value === 'home')
-                                          }
-                                          className={`flex items-center gap-1 px-2 py-1 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-semibold border transition-colors ${
-                                            entry?.location === tag.value ||
-                                            (!entry?.location && tag.value === 'home')
-                                              ? 'bg-brand-emerald/20 border-brand-emerald/60 text-brand-emerald'
-                                              : 'bg-brand-deep border-brand-border text-white/60 hover:text-white'
-                                          }`}
-                                        >
-                                          <tag.Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                                          {label}
-                                          <span className="text-white/50 text-xs hidden sm:inline">
-                                            ({note})
-                                          </span>
-                                        </motion.button>
-                                      );
-                                    })}
-                                  </div>
-                                )}
-                                {status === 'kaza' && isJumuah && (
-                                  <p className="flex items-start gap-1.5 text-brand-gold text-[11px] sm:text-xs">
-                                    <ClockIcon
-                                      className="w-3.5 h-3.5 mt-px shrink-0"
-                                      aria-hidden="true"
-                                    />
-                                    {t(
-                                      'salatTracker.jumuahKazaAlone',
-                                      "Made up as an ordinary Dhuhr, prayed alone. Jumu'ah itself has no kaza."
-                                    )}
-                                  </p>
-                                )}
-                                {/* Musafir: 2 (qaṣr) or in full — behind a local
-                                imam, or Jumu'ah on a Friday. */}
-                                {(rowTravel || entry?.qasr !== undefined) &&
-                                  isQasrPrayer(prayerId) && (
-                                    <div className="flex items-center gap-1.5 flex-wrap">
-                                      <span className="inline-flex items-center gap-1 text-white/60 text-[11px] sm:text-xs">
-                                        <BriefcaseIcon className="w-3.5 h-3.5" aria-hidden="true" />
-                                        {t('salatTracker.prayedAs', 'Prayed as:')}
-                                      </span>
-                                      {[true, false].map((q) => {
-                                        const on = q ? isQasrRow : !isQasrRow;
-                                        const label = q
-                                          ? t('salatTracker.asQasr', '2 · qaṣr')
-                                          : prayerId === 'dhuhr' && isCivilFriday
-                                            ? t('salatTracker.asJumuah', "Jumu'ah")
-                                            : t('salatTracker.asFull', '4 · behind a local imam');
-                                        const Icon = q
-                                          ? ScissorsIcon
-                                          : prayerId === 'dhuhr' && isCivilFriday
-                                            ? MosqueIcon
-                                            : null;
-                                        return (
-                                          <motion.button
-                                            key={String(q)}
-                                            whileTap={{ scale: 0.9 }}
-                                            onClick={() => !on && setQasr(prayerId, q)}
-                                            aria-pressed={on}
-                                            className={`flex items-center gap-1 px-2 py-1 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-semibold border transition-colors ${
-                                              on
-                                                ? 'bg-brand-info/10 border-brand-info/60 text-brand-info'
-                                                : 'bg-brand-deep border-brand-border text-white/60 hover:text-white'
-                                            }`}
-                                          >
-                                            {Icon && (
-                                              <Icon className="w-3.5 h-3.5" aria-hidden="true" />
-                                            )}
-                                            {label}
-                                          </motion.button>
-                                        );
-                                      })}
-                                    </div>
-                                  )}
-                                {/* Musafir jamʿ taʾkhīr — flag the pair as joined */}
-                                {canJoin(prayerId) &&
-                                  (prayerId === 'asr' || prayerId === 'isha') &&
-                                  jamWith &&
-                                  ['completed', 'kaza'].includes(
-                                    normaliseStatus(log?.prayers[jamWith]?.status)
-                                  ) && (
-                                    <motion.button
-                                      whileTap={{ scale: 0.95 }}
-                                      onClick={() => toggleJoined(prayerId)}
-                                      aria-pressed={!!entry?.jam}
-                                      className={`flex items-center gap-1.5 px-2.5 py-1 rounded-control text-xs font-semibold border transition-colors ${
-                                        entry?.jam
-                                          ? 'bg-brand-gold/20 border-brand-gold/60 text-brand-gold'
-                                          : 'bg-brand-deep border-brand-border text-white/60 hover:text-white'
-                                      }`}
-                                    >
-                                      <LinkIcon className="w-3.5 h-3.5" aria-hidden="true" />
-                                      {t('salatTracker.joinedWith', 'Joined with {{name}}', {
-                                        name: translateSalatName(jamWith, jamWith, t),
-                                      })}
-                                    </motion.button>
-                                  )}
-                                {/* After-salat toggles */}
-                                <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="text-white/60 text-xs shrink-0">
-                                    {t('salatTracker.afterSalat', 'After salat:')}
-                                  </span>
-                                  <motion.button
-                                    whileTap={{ scale: 0.9 }}
-                                    onClick={() =>
-                                      handleSubTag(prayerId, 'tasbeeh', !(entry?.tasbeeh ?? false))
-                                    }
-                                    aria-pressed={!!entry?.tasbeeh}
-                                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-control text-xs font-semibold border transition-colors ${
-                                      entry?.tasbeeh
-                                        ? 'bg-brand-info/10 border-brand-info/60 text-brand-info'
-                                        : 'bg-brand-deep border-brand-border text-white/60 hover:text-white'
-                                    }`}
-                                  >
-                                    <TasbihIcon className="w-3.5 h-3.5" />
-                                    {t('salatTracker.tasbeeh', 'Tasbeeh')}
-                                  </motion.button>
-                                  <motion.button
-                                    whileTap={{ scale: 0.9 }}
-                                    onClick={() =>
-                                      handleSubTag(
-                                        prayerId,
-                                        'ayatulKursi',
-                                        !(entry?.ayatulKursi ?? false)
-                                      )
-                                    }
-                                    aria-pressed={!!entry?.ayatulKursi}
-                                    className={`flex items-center gap-1.5 px-2.5 py-1 rounded-control text-xs font-semibold border transition-colors ${
-                                      entry?.ayatulKursi
-                                        ? 'bg-brand-gold/20 border-brand-gold/60 text-brand-gold'
-                                        : 'bg-brand-deep border-brand-border text-white/60 hover:text-white'
-                                    }`}
-                                  >
-                                    <BookOpenIcon className="w-3.5 h-3.5" aria-hidden="true" />
-                                    {t('salatTracker.ayatulKursi', 'Ayatul Kursi')}
-                                  </motion.button>
-                                </div>
+                        <SalatPrayerDetails
+                          hasSubTag={hasSubTag}
+                          isExpanded={isExpanded}
+                          status={status}
+                          isJumuah={isJumuah}
+                          entry={entry}
+                          prayerId={prayerId}
+                          rowTravel={rowTravel}
+                          isQasrRow={isQasrRow}
+                          isCivilFriday={isCivilFriday}
+                          isFridayToday={isFridayToday}
+                          canJoin={canJoin}
+                          jamWith={jamWith}
+                          log={log}
+                          normaliseStatus={normaliseStatus}
+                          locationTagText={locationTagText}
+                          handleSubTag={handleSubTag}
+                          handleMissedReason={handleMissedReason}
+                          setQasr={setQasr}
+                          toggleJoined={toggleJoined}
+                        />
 
-                                {/* Read now — authentic recitations tied to this prayer,
-                                each opening directly in the Quran reader. */}
-                                {(() => {
-                                  const recs = recitationsFor(prayerId, isFridayToday);
-                                  if (recs.length === 0) return null;
-                                  // Deliberately understated: plain inline links, no
-                                  // button chrome. These are optional sunnah, and a
-                                  // row of chunky buttons read as a to-do list —
-                                  // the opposite of the intent.
-                                  return (
-                                    <div className="pt-1.5 border-t border-brand-border/50">
-                                      <p className="text-white/50 text-[11px] leading-relaxed">
-                                        <span className="text-white/50">
-                                          {t('salatTracker.optionalPrefix', 'Optional')} ·{' '}
-                                        </span>
-                                        {recs.map((r, i) => (
-                                          <span key={r.id}>
-                                            {i > 0 && <span className="text-white/40"> · </span>}
-                                            <button
-                                              onClick={() => navigate(recitationHref(r))}
-                                              title={
-                                                r.weak
-                                                  ? `${r.note}: ${r.source} (${r.grade}). ${r.caveat ?? ''}`
-                                                  : `${r.note}: ${r.source} (${r.grade})`
-                                              }
-                                              className={`underline underline-offset-2 decoration-dotted transition-colors ${
-                                                r.fridayOnly
-                                                  ? 'text-brand-gold hover:text-brand-gold'
-                                                  : 'text-white/60 hover:text-brand-emerald'
-                                              }`}
-                                            >
-                                              {r.label}
-                                            </button>
-                                            {/* A weak narration must never sit next
-                                            to ṣaḥīḥ ones unmarked. */}
-                                            {r.weak && (
-                                              <span
-                                                title={r.caveat}
-                                                className="ml-1 text-[9px] uppercase tracking-wide text-brand-gold border border-brand-gold/40 rounded px-1 py-px align-middle"
-                                              >
-                                                {t('salatTracker.daif', 'ḍaʿīf')}
-                                              </span>
-                                            )}
-                                          </span>
-                                        ))}
-                                      </p>
-                                    </div>
-                                  );
-                                })()}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-
-                        {/* Optional "why missed" reason picker — never required */}
-                        <AnimatePresence>
-                          {status === 'missed' && isExpanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.18 }}
-                              className="overflow-hidden border-t border-brand-border/70"
-                            >
-                              <div className="px-3 py-2.5 flex items-center gap-1.5 flex-wrap">
-                                <span className="text-white/60 text-[11px] sm:text-xs">
-                                  {t('salatTracker.missedReasonLabel', 'Why? (optional)')}
-                                </span>
-                                {MISSED_REASONS.map((reason) => (
-                                  <motion.button
-                                    key={reason}
-                                    whileTap={{ scale: 0.9 }}
-                                    onClick={() => handleMissedReason(prayerId, reason)}
-                                    aria-pressed={entry?.missedReason === reason}
-                                    className={`px-2 py-1 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-semibold border transition-colors ${
-                                      entry?.missedReason === reason
-                                        ? 'bg-red-400/15 border-red-400/60 text-red-400'
-                                        : 'bg-brand-deep border-brand-border text-white/60 hover:text-white'
-                                    }`}
-                                  >
-                                    {t(`salatTracker.missedReason.${reason}`, reason)}
-                                  </motion.button>
-                                ))}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-
-                        {/* Expand/collapse toggle for sub-tags (completed/kaza) or the
-                        optional missed-reason picker */}
-                        {(hasSubTag || status === 'missed') && !isFuture && (
-                          <button
-                            onClick={() => setExpandedPrayer(isExpanded ? null : prayerId)}
-                            aria-expanded={isExpanded}
-                            className="w-full flex items-center justify-center gap-1.5 py-1.5 border-t border-brand-border/50 text-white/50 hover:text-white text-xs transition-colors"
-                          >
-                            <DisclosureLabel open={isExpanded} />
-                            {status === 'completed' &&
-                              entry?.location &&
-                              entry.location !== 'home' &&
-                              (() => {
-                                const LocIcon = LOCATION_TAGS.find(
-                                  (loc) => loc.value === entry.location
-                                )?.Icon;
-                                return LocIcon ? (
-                                  <LocIcon className="w-3.5 h-3.5 text-brand-emerald" />
-                                ) : null;
-                              })()}
-                            {entry?.tasbeeh && (
-                              <TasbihIcon className="w-3.5 h-3.5 text-brand-info" />
-                            )}
-                            {entry?.ayatulKursi && (
-                              <BookOpenIcon
-                                className="w-3.5 h-3.5 text-brand-gold"
-                                aria-hidden="true"
-                              />
-                            )}
-                            {entry?.missedReason && (
-                              <span className="text-red-400">
-                                {t(
-                                  `salatTracker.missedReason.${entry.missedReason}`,
-                                  entry.missedReason
-                                )}
-                              </span>
-                            )}
-                          </button>
-                        )}
+                        <SalatPrayerToggle
+                          hasSubTag={hasSubTag}
+                          status={status}
+                          isFuture={isFuture}
+                          isExpanded={isExpanded}
+                          entry={entry}
+                          prayerId={prayerId}
+                          setExpandedPrayer={setExpandedPrayer}
+                        />
 
                         <SalatCardTop
                           prayerId={prayerId}
