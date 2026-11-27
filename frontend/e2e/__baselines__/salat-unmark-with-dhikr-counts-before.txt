@@ -1,0 +1,17 @@
+{
+ "counts": {
+  "SubhanAllah": 33,
+  "Alhamdulillah": 33,
+  "Allahu Akbar": 34,
+  "Ayatul Kursi": 1
+ },
+ "total": 101,
+ "unsent": [
+  {
+   "SubhanAllah": 33,
+   "Alhamdulillah": 33,
+   "Allahu Akbar": 34,
+   "Ayatul Kursi": 1
+  }
+ ]
+}

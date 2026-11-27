@@ -1,0 +1,27 @@
+{
+ "sync": [],
+ "salat": [
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "maghrib",
+    "status": "completed",
+    "date": "2026-10-15",
+    "location": "home",
+    "tasbeeh": false,
+    "ayatulKursi": false,
+    "jam": null
+   },
+   "owner": "demo-001"
+  },
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "isha",
+    "status": "pending",
+    "date": "2026-10-15"
+   },
+   "owner": "demo-001"
+  }
+ ]
+}
