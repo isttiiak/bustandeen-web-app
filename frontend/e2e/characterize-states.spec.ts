@@ -1069,6 +1069,11 @@ test('salat: the details toggle opens and closes, and shows what was marked', as
   await context.setOffline(true);
   await press(page, 'Done', 2);
   await press(page, 'Tasbeeh');
+  // Let the dhikr and offline toasts (2.2 s and 4 s, recorded by the tests above)
+  // run out first: a slow runner otherwise caught one mid-exit (CI, PR 420).
+  await expect(page.locator('[data-rht-toaster] [role="status"]')).toHaveCount(0, {
+    timeout: 15_000,
+  });
   await press(page, 'Less', 0);
   await expectBaseline(page, 'salat.details-closed-with-badges');
   await press(page, 'Details', 2);
