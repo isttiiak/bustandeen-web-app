@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.70',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: the Home screen tidied up',
+        fixed: [
+          'We reorganised the code behind the Home screen into smaller pieces so it is easier to maintain. Nothing looks or works differently, and your data is unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: হোম পাতার কোড গোছানো হয়েছে',
+        fixed: [
+          'হোম পাতার পেছনের কোড ছোট ছোট অংশে ভাগ করা হয়েছে, যাতে রক্ষণাবেক্ষণ সহজ হয়। দেখতে বা কাজে কিছু বদলায়নি, আপনার তথ্যেও কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.69',
     date: '2026-11-27',
     text: {

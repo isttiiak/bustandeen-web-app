@@ -152,6 +152,98 @@ test('home: in Ramadan', async ({ page }) => {
   await expectBaseline(page, 'home.ramadan');
 });
 
+// ---- Home: every prayer window, the layouts, the goals card -------------------
+
+const HOME_TIMES: Array<[string, string]> = [
+  ['0558', '2026-10-15T05:58:00+06:00'], // just after sunrise: a forbidden time
+  ['1000', '2026-10-15T10:00:00+06:00'], // after sunrise: Ishraq and Duha
+  ['1137', '2026-10-15T11:37:00+06:00'], // the sun at its zenith: forbidden
+  ['1540', '2026-10-15T15:40:00+06:00'], // ʿAṣr
+  ['1720', '2026-10-15T17:20:00+06:00'], // just after sunset: forbidden, then Maghrib
+  ['1750', '2026-10-15T17:50:00+06:00'], // Maghrib
+  ['1900', '2026-10-15T19:00:00+06:00'], // ʿIshāʾ, the best time
+  ['2350', '2026-10-15T23:50:00+06:00'], // ʿIshāʾ, close to Islamic midnight
+  ['0040', '2026-10-16T00:40:00+06:00'], // after Islamic midnight, a Friday
+  ['0330', '2026-10-16T03:30:00+06:00'], // Tahajjud time, a Friday
+];
+
+for (const [name, at] of HOME_TIMES) {
+  test(`home: the prayer window at ${name}`, async ({ page }) => {
+    await enterDemo(page, { as: 'brother', at });
+    await expectBaseline(page, `home.at-${name}`);
+  });
+}
+
+test('home: every quick section on', async ({ page }) => {
+  await enterDemo(page, {
+    as: 'sister',
+    storage: { bustandeen_home_sections_off: '[]' },
+  });
+  await expectBaseline(page, 'home.all-sections');
+});
+
+test('home: a custom goals card (order, one row off, no badges)', async ({ page }) => {
+  await enterDemo(page, {
+    as: 'brother',
+    storage: {
+      bustandeen_home_sections_off: '[]',
+      bustandeen_home_goals: JSON.stringify({
+        on: true,
+        order: ['fasting', 'quran', 'zikr', 'salat'],
+        off: ['salat'],
+        badges: false,
+      }),
+    },
+  });
+  await expectBaseline(page, 'home.goals-custom');
+});
+
+test('home: the goals card off', async ({ page }) => {
+  await enterDemo(page, {
+    as: 'brother',
+    storage: {
+      bustandeen_home_sections_off: '[]',
+      bustandeen_home_goals: JSON.stringify({ on: false, off: [], badges: true }),
+    },
+  });
+  await expectBaseline(page, 'home.goals-off');
+});
+
+test('home: no saved place asks for one', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', noLocation: true });
+  await expectBaseline(page, 'home.no-location');
+});
+
+for (const layout of ['pills', 'full'] as const) {
+  test(`home: Friday with the ${layout} special-day layout`, async ({ page }) => {
+    await enterDemo(page, {
+      as: 'brother',
+      at: AT.friday,
+      storage: { bustandeen_home_special: layout },
+    });
+    await expectBaseline(page, `home.friday-${layout}`);
+  });
+}
+
+test('home: the setup card can be dismissed', async ({ page }) => {
+  await enterDemo(page, { as: 'brother' });
+  // (Not `press`: its banner helper would take "No thanks" for the visit-counting banner's.)
+  await page.getByRole('button', { name: 'No thanks', exact: true }).click();
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'home.setup-dismissed');
+});
+
+test('home: the Ramadan pill on the fasting goal opens the tracker', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', storage: { bustandeen_home_sections_off: '[]' } });
+  await declineBanner(page);
+  await page
+    .getByRole('button', { name: /Ramadan/ })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/\/ramadan$/);
+  await expectBaseline(page, 'home.ramadan-pill-opens-tracker');
+});
+
 // ---- Rayhanah (cycle) ----------------------------------------------------
 
 test('cycle: starting a period, then the pages that follow it', async ({ page }) => {

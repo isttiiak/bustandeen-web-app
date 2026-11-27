@@ -44,13 +44,15 @@ export interface DemoOptions {
   lang?: 'en' | 'bn';
   /** Extra localStorage entries, set before the app starts. */
   storage?: Record<string, string>;
+  /** Start without a saved place (the prayer window then asks for one). */
+  noLocation?: boolean;
 }
 
 /** Enters the demo with a frozen clock, a saved place and reduced motion. */
 export async function enterDemo(page: Page, o: DemoOptions) {
   await page.clock.setFixedTime(new Date(o.at ?? AT.day));
   await page.context().addInitScript(
-    ([lang, extra]) => {
+    ([lang, extra, noLocation]) => {
       localStorage.setItem(
         'bustandeen_location',
         JSON.stringify({ latitude: 23.8103, longitude: 90.4125, name: 'Dhaka' })
@@ -58,8 +60,9 @@ export async function enterDemo(page: Page, o: DemoOptions) {
       localStorage.setItem('bustandeen_reduce_motion', 'on');
       localStorage.setItem('bustandeen_lang', lang);
       for (const [k, v] of Object.entries(extra)) localStorage.setItem(k, v);
+      if (noLocation) localStorage.removeItem('bustandeen_location');
     },
-    [o.lang ?? 'en', o.storage ?? {}] as const
+    [o.lang ?? 'en', o.storage ?? {}, !!o.noLocation] as const
   );
   await page.goto(`/demo/${o.as}`);
   // The demo banner names itself in the active language; wait for the app.
