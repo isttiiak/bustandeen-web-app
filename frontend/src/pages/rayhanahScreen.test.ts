@@ -32,6 +32,12 @@ const files = import.meta.glob<string>(
     '../components/cycle/RayhanahFiqhCompanion.tsx',
     '../components/cycle/RayhanahGarden.tsx',
     '../components/cycle/rayhanahShared.ts',
+    '../components/cycle/RayhanahArch.tsx',
+    '../components/cycle/RayhanahDialogs.tsx',
+    '../components/cycle/RayhanahLastEnded.tsx',
+    '../components/cycle/RayhanahSharing.tsx',
+    '../components/cycle/RayhanahTodayNote.tsx',
+    '../components/cycle/useRayhanahPage.ts',
   ],
   { query: '?raw', import: 'default', eager: true }
 );
@@ -50,7 +56,7 @@ function strings(node: Tree, path: string, out: Array<[string, string]>) {
 
 describe('Rayhanah screens', () => {
   it('finds the Rayhanah files', () => {
-    expect(Object.keys(files).length).toBe(23);
+    expect(Object.keys(files).length).toBe(29);
   });
 
   it.each(Object.keys(files))('%s renders no emoji or em dash', (path) => {

@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.74',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: the Rayhanah Cycle screen tidied up (part 2)',
+        fixed: [
+          'We finished reorganising the code behind the Rayhanah Cycle screen into smaller pieces so it is easier to maintain. Nothing looks or works differently, and your data stays private and unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: রায়হানা সাইকেল পাতার কোড গোছানো (দ্বিতীয় ভাগ)',
+        fixed: [
+          'রায়হানা সাইকেল পাতার পেছনের কোড ছোট ছোট অংশে ভাগ করার কাজ শেষ হয়েছে, যাতে রক্ষণাবেক্ষণ সহজ হয়। দেখতে বা কাজে কিছু বদলায়নি, আপনার তথ্য আগের মতোই গোপন ও অক্ষত থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.73',
     date: '2026-11-27',
     text: {

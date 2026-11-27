@@ -2,6 +2,24 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.74 - Rayhanah Cycle page, second half of the split (audit P4-1, step 12) - 2026-11-27
+
+`pages/RayhanahCycle.tsx` was 1,119 lines after the first half and is now 145 (it was 1,628 before the split began). The state moved into one hook and the rest of the screen into five components, all under `components/cycle/`. Nothing changes for anyone: same markup, copy, requests and behaviour. The Rayhanah privacy rule is untouched: nothing here imports an AI hook, and the only thing taken from the social hooks is the friends list for the opt-in "share my status with one friend" picker (`cyclePrivacy.test.ts` checks both for every file in `components/cycle/`).
+
+### What moved (verbatim, only imports, `export`, hook plumbing and prop names added)
+
+- `useRayhanahPage.ts` (263 lines): the queries and writes, the day navigation, the Garden of Light toggles and its one-time move of an old local checklist to the server (with its one `exhaustive-deps` suppression and reason unchanged), the "not done yet" offer, the flow, symptom and mood handlers, ending a period (the ghusl guide and the Ramadan qaḍā prompt, also for an end saved offline), adding qaḍā, the prediction and PMS countdown, the fasting makeup numbers and every dialog's open state. No hook comes after a condition; the signed-out and gender gates stay in the page, after the hook.
+- `RayhanahArch` (loading, error, active period, pregnancy and quiet states), `RayhanahTodayNote` ("How are you today?" with the day navigation), `RayhanahLastEnded` (the "Ended too early?" offer), `RayhanahSharing` (the share-status switch and friend picker, the pregnancy switch and form, the privacy note) and `RayhanahDialogs` (the start dialog, the ghusl guide and the qaḍā prompt, still portaled to the body).
+- The page keeps the tabs, the settings button, the gates and the composition.
+
+### Proof
+
+- **Commit 1 (before any move):** 13 browser tests recorded on the OLD page with a started period. The demo keeps none, so the test rewrites the demo's cycle summary in the built script before it runs (the page code is untouched, and the test fails loudly if the text it rewrites is not found). They cover: an active period in English and Bangla; past the maximum; a pregnancy and turning it off; a garden item, then a flow, a symptom and a mood (and the one request they queue); going back a day, editing it, back to the start and back to today; ending the period and the ghusl guide's steps (and the end request); a period that fell in Ramadan and its qaḍā prompt, added and dismissed; a cycle ended two days ago and reopened; the old local Garden checklist moved up and cleared; and the start dialog with a chosen date and a backdrop tap. Built the way CI builds.
+- **Commit 2 (the move):** all of them pass untouched, with the 23 server-rendered baselines and the 9 browser baselines from v5.190.73, and the existing cycle baselines.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords, the page's `<RayhanahArch />` and the like, `return createPortal(` and prettier re-wrapping.
+- **Noted, not changed:** adding qaḍā offline writes nothing to the outbox, so the prompt stays open until the request succeeds. This is how the page behaved before; the baselines pin it.
+- `rayhanahScreen.test.ts` (no emoji or em dash, no AI import) now reads the six new files too. The `RayhanahCycle.tsx` cap is removed from `fileSize.test.ts`.
+
 ## v5.190.73 - Rayhanah Cycle page, first half of the split (audit P4-1, step 11) - 2026-11-27
 
 `pages/RayhanahCycle.tsx` was 1,628 lines in one component. This first half takes out everything that holds no state of its own: it is now 1,119 lines, and the second half (the state and the dialogs) follows in the next release. Nothing changes for anyone: same markup, copy, du'a, references and requests. The Rayhanah privacy rule is untouched: no cycle data goes to an AI or to friends (`cyclePrivacy.test.ts` already covers every file in `components/cycle/`).
