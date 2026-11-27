@@ -1,13 +1,11 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { m as motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import {
-  BookOpenIcon,
   CheckIcon,
-  ChevronDownIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   Cog6ToothIcon,
@@ -37,216 +35,47 @@ import CycleCalendar from '../components/CycleCalendar.js';
 import TabNav from '../components/TabNav.js';
 import { useFastingSummary, useUpdateFastingProfile } from '../hooks/useFasting.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
-import { getHijriDate } from '../utils/islamicCalendar.js';
 import { getRamadanWindow } from '../utils/ramadan.js';
 import { celebrateSmall } from '../utils/celebrate.js';
-import { formatLocaleDate, formatLocaleNumber } from '../utils/localeDate.js';
-import { translateReference } from '../utils/localeReference.js';
+import { formatLocaleNumber } from '../utils/localeDate.js';
 import MoodComfort from '../components/MoodComfort.js';
 import CycleGuidance from '../components/CycleGuidance.js';
 import { OfflineQueuedError } from '../utils/syncOutbox.js';
 import { CrescentIcon, DropIcon, FlowerIcon, LeafIcon } from '../components/icons/IslamicIcons.js';
-import { ADHKAR_ICON, FlowDrops, GARDEN_ICON } from '../components/cycle/cycleIcons.js';
-import {
-  BTN_PRIMARY,
-  BTN_SECONDARY,
-  CARD,
-  REF_LINK,
-  SECTION_TITLE,
-} from '../components/bustanStyles.js';
+import { FlowDrops } from '../components/cycle/cycleIcons.js';
+import { BTN_PRIMARY, BTN_SECONDARY, CARD, SECTION_TITLE } from '../components/bustanStyles.js';
 import Switch from '../components/Switch.js';
+import {
+  PHRASES,
+  phraseOfDayIdx,
+  GHUSL_STEPS,
+  FLOW_OPTIONS,
+  SYMPTOM_OPTIONS,
+  MOOD_OPTIONS,
+  CHIP,
+  CHIP_IDLE,
+  CHIP_PINK,
+  CHIP_INFO,
+  BTN_PINK,
+  NOTE,
+  LABEL,
+  DIALOG,
+  BACKDROP,
+  formatDay,
+  shiftStr,
+  daysBetween,
+  ramadanDaysIn,
+} from '../components/cycle/rayhanahShared.js';
+import { Ref, Medallion } from '../components/cycle/RayhanahBits.js';
+import RayhanahGarden from '../components/cycle/RayhanahGarden.js';
+import RayhanahAdhkar from '../components/cycle/RayhanahAdhkar.js';
+import RayhanahFastingMakeup from '../components/cycle/RayhanahFastingMakeup.js';
+import RayhanahFiqhCompanion from '../components/cycle/RayhanahFiqhCompanion.js';
 
 // Rayhanah privacy rule: no cycle data (days, flow, symptoms, moods, dates)
 // is ever sent to an AI or shown to friends. Everything on this screen is
 // fixed text chosen on the device; the only network calls are the user's own
 // cycle/fasting endpoints and the opt-in partner status.
-
-// ─── Sweet, powerful phrases for excused days (Istiak's spec) ─────────────────
-const PHRASES = [
-  'Your rest is written by the Most Merciful, and your reward never pauses.',
-  'Allah lifted the prayer from you these days; He never lifted His love.',
-  'A heart that remembers Allah blooms in every season.',
-  'These days are not a gap in your worship. They are a different garden of it.',
-  'Dhikr, duʿā, gratitude: your garden is still growing.',
-  "What is with Allah is never lost. He sees every gentle 'SubhanAllah'.",
-  'Ease is also from Him. Rest, remember, and let your heart do the worshipping.',
-  'The Beloved ﷺ said the deeds most loved by Allah are the constant ones. Your dhikr counts.',
-];
-
-function phraseOfDayIdx(offset = 0): number {
-  const day = Math.floor(new Date(getTrackingDay() + 'T12:00:00').getTime() / 86_400_000);
-  return (day + offset) % PHRASES.length;
-}
-
-// ─── Garden of Light: daily checklist (server-synced, see toggleGarden) ───────
-interface GardenItem {
-  id: string;
-  label: string;
-  link?: string;
-}
-const GARDEN_ITEMS: GardenItem[] = [
-  { id: 'adhkar', label: 'Morning & evening adhkār' },
-  { id: 'dhikr', label: 'A dhikr session (any amount counts)', link: '/zikr' },
-  { id: 'salawat', label: 'Ṣalawāt upon the Prophet ﷺ', link: '/zikr' },
-  { id: 'istighfar', label: 'Istighfār: seek forgiveness', link: '/zikr' },
-  { id: 'listen', label: 'Listen to Quran (log it as pages)', link: '/quran' },
-  { id: 'learn', label: 'Learn one thing (tafsīr, a lecture, a hadith)' },
-  { id: 'kindness', label: 'One act of kindness or charity' },
-];
-
-// ─── Ghusl steps (Bukhari 248, ʿĀʾishah's description) ───────────────────────
-const GHUSL_STEPS = [
-  'Make the intention (niyyah) in your heart to purify yourself',
-  'Wash both hands, then wash away any traces of blood',
-  'Perform a complete wuḍū as for prayer',
-  'Pour water over your head three times, massaging it to the roots of the hair',
-  'Pour water over your whole body, right side first, then left',
-];
-
-// ─── "How are you today?" chips ───────────────────────────────────────────────
-const FLOW_OPTIONS: Array<{ id: CycleFlow; label: string; drops: 1 | 2 | 3 }> = [
-  { id: 'light', label: 'Light', drops: 1 },
-  { id: 'medium', label: 'Medium', drops: 2 },
-  { id: 'heavy', label: 'Heavy', drops: 3 },
-];
-const SYMPTOM_OPTIONS: Array<{ id: string; label: string }> = [
-  { id: 'cramps', label: 'Cramps' },
-  { id: 'headache', label: 'Headache' },
-  { id: 'fatigue', label: 'Fatigue' },
-  { id: 'nausea', label: 'Nausea' },
-  { id: 'backache', label: 'Backache' },
-  { id: 'bloating', label: 'Bloating' },
-  { id: 'tenderness', label: 'Tenderness' },
-  { id: 'insomnia', label: 'Insomnia' },
-];
-const MOOD_OPTIONS: Array<{ id: CycleMood; label: string }> = [
-  { id: 'calm', label: 'Calm' },
-  { id: 'happy', label: 'Happy' },
-  { id: 'low', label: 'Low' },
-  { id: 'irritable', label: 'Irritable' },
-  { id: 'anxious', label: 'Anxious' },
-  { id: 'tired', label: 'Tired' },
-];
-
-// Shared classes for this screen (theme tokens only, both themes).
-const CHIP =
-  'inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors';
-const CHIP_IDLE =
-  'bg-brand-surface/50 border-brand-border text-white/75 hover:text-white hover:border-brand-pink/40';
-const CHIP_PINK = 'bg-brand-pink/15 border-brand-pink/60 text-brand-pink';
-const CHIP_INFO = 'bg-brand-info/15 border-brand-info/60 text-brand-info';
-const BTN_PINK =
-  'inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold border border-brand-pink/50 bg-brand-pink/10 hover:bg-brand-pink/20 text-brand-pink shadow-elev-1 transition-colors disabled:opacity-50';
-const NOTE = 'text-white/70 text-xs leading-relaxed';
-const LABEL = 'text-white/70 text-[11px] font-bold uppercase tracking-wide mb-1.5';
-const DIALOG = 'w-full max-w-sm rounded-card bg-brand-deep border shadow-elev-3 p-6 space-y-4';
-const BACKDROP = 'fixed inset-0 z-50 bg-black/70 backdrop-blur-sm grid place-items-center p-4';
-
-function formatDay(dateStr: string): string {
-  return formatLocaleDate(new Date(dateStr + 'T12:00:00'), {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
-}
-function shiftStr(dateStr: string, delta: number): string {
-  const d = new Date(dateStr + 'T12:00:00');
-  d.setDate(d.getDate() + delta);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-function daysBetween(a: string, b: string): number {
-  return Math.round(
-    (new Date(b + 'T12:00:00').getTime() - new Date(a + 'T12:00:00').getTime()) / 86_400_000
-  );
-}
-
-// ─── Curated du'a/adhkar for excused days (verified references) ──────────────
-const EXCUSED_ADHKAR = [
-  {
-    label: 'Sayyid al-Istighfār',
-    arabic: 'اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ',
-    transliteration: 'Allāhumma anta rabbī, lā ilāha illā anta, khalaqtanī wa ana ʿabduka…',
-    note: 'The master of seeking forgiveness',
-    ref: { text: 'Bukhārī 6306', url: 'https://sunnah.com/bukhari:6306' },
-  },
-  {
-    label: 'Ṣalawāt upon the Prophet ﷺ',
-    arabic: 'اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ وَعَلَى آلِ مُحَمَّدٍ',
-    transliteration: 'Allāhumma ṣalli ʿalā Muḥammad wa ʿalā āli Muḥammad…',
-    note: 'Especially on Friday, and open to you always',
-    ref: { text: 'Bukhārī 3370', url: 'https://sunnah.com/bukhari:3370' },
-  },
-  {
-    label: 'Morning/evening protection',
-    arabic: 'بِسْمِ اللَّهِ الَّذِي لَا يَضُرُّ مَعَ اسْمِهِ شَيْءٌ فِي الْأَرْضِ وَلَا فِي السَّمَاءِ',
-    transliteration: 'Bismillāhilladhī lā yaḍurru maʿasmihi shayʾun fil-arḍi wa lā fis-samāʾ…',
-    note: 'Say 3× morning and evening',
-    ref: { text: 'Abū Dāwūd 5088', url: 'https://sunnah.com/abudawud:5088' },
-  },
-  {
-    label: 'When in pain or discomfort',
-    arabic: 'أَعُوذُ بِاللَّهِ وَقُدْرَتِهِ مِنْ شَرِّ مَا أَجِدُ وَأُحَاذِرُ',
-    transliteration: 'Aʿūdhu billāhi wa qudratihi min sharri mā ajidu wa uḥādhiru',
-    note: 'Place hand on the area of pain, say Bismillāh (3×), then this (7×)',
-    ref: { text: 'Muslim 2202', url: 'https://sunnah.com/muslim:2202a' },
-  },
-  {
-    label: 'Istighfār: constant forgiveness',
-    arabic: 'أَسْتَغْفِرُ اللَّهَ وَأَتُوبُ إِلَيْهِ',
-    transliteration: 'Astaghfirullāha wa atūbu ilayh',
-    note: 'The Prophet ﷺ sought forgiveness 100× daily',
-    ref: { text: 'Muslim 2702', url: 'https://sunnah.com/muslim:2702a' },
-  },
-  {
-    label: 'SubḥānAllāh wa biḥamdih',
-    arabic: 'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ سُبْحَانَ اللَّهِ الْعَظِيمِ',
-    transliteration: 'SubḥānAllāhi wa biḥamdih, SubḥānAllāhil-ʿAẓīm',
-    note: 'Two phrases heavy on the scales, light on the tongue',
-    ref: { text: 'Bukhārī 6406', url: 'https://sunnah.com/bukhari:6406' },
-  },
-];
-
-/** Count days in [start..end] that fall in (adjusted) Ramadan, for auto-qada */
-function ramadanDaysIn(start: string, end: string): number {
-  let n = 0;
-  const d = new Date(start + 'T12:00:00');
-  const stop = new Date(end + 'T12:00:00');
-  let guard = 0;
-  while (d <= stop && guard < 90) {
-    if (getHijriDate(d)?.month === 9) n++;
-    d.setDate(d.getDate() + 1);
-    guard++;
-  }
-  return n;
-}
-
-/** A sunnah.com / quran.com citation link. */
-function Ref({ href, label, block }: { href: string; label: string; block?: boolean }) {
-  const { i18n } = useTranslation();
-  return (
-    <a
-      className={block ? REF_LINK : 'underline underline-offset-2'}
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-    >
-      {translateReference(label, i18n.language)}
-    </a>
-  );
-}
-
-/** The medallion at the top of the arch. */
-function Medallion({ tone, children }: { tone: 'pink' | 'emerald'; children: ReactNode }) {
-  const cls =
-    tone === 'pink'
-      ? 'bg-brand-pink/10 border-brand-pink/40 text-brand-pink'
-      : 'bg-brand-emerald/10 border-brand-emerald/40 text-brand-emerald';
-  return (
-    <span className={`mx-auto w-16 h-16 rounded-full grid place-items-center border ${cls}`}>
-      {children}
-    </span>
-  );
-}
 
 export default function RayhanahCycle() {
   const { t } = useTranslation();
@@ -696,70 +525,7 @@ export default function RayhanahCycle() {
 
         {/* ── Garden of Light (only during excused days) ────────────────────── */}
         {active && (
-          <section className={`${CARD} p-5`}>
-            <div className="flex items-center justify-between gap-2">
-              <h2 className={SECTION_TITLE}>
-                <FlowerIcon className="w-5 h-5 text-brand-pink" />
-                {t('rayhanah.gardenOfLight', 'Garden of Light')}
-              </h2>
-              <span className="text-xs font-bold text-brand-pink tabular-nums">
-                {t('rayhanah.gardenProgress', '{{done, number}}/{{total, number}} today', {
-                  done: gardenDone,
-                  total: GARDEN_ITEMS.length,
-                })}
-              </span>
-            </div>
-            <p className={`${NOTE} mt-1`}>
-              {t(
-                'rayhanah.gardenIntro',
-                'Everything here remains fully open to you. The Prophet ﷺ remembered Allah in all states'
-              )}{' '}
-              (<Ref href="https://sunnah.com/muslim:373" label="Muslim 373" />
-              ).
-            </p>
-            <div className="mt-3 space-y-1.5">
-              {GARDEN_ITEMS.map((g) => {
-                const gLabel = t(`rayhanah.garden.${g.id}`, g.label);
-                const GIcon = GARDEN_ICON[g.id] ?? LeafIcon;
-                const done = !!garden[g.id];
-                return (
-                  <div
-                    key={g.id}
-                    className="flex items-center gap-3 rounded-control border border-brand-border bg-brand-surface/50 px-3 py-2.5"
-                  >
-                    <button
-                      aria-label={t('rayhanah.markItem', 'Mark {{label}}', { label: gLabel })}
-                      aria-pressed={done}
-                      onClick={() => toggleGarden(g.id)}
-                      className={`w-7 h-7 rounded-full grid place-items-center border transition-colors flex-shrink-0 ${done ? 'bg-brand-emerald-dim border-brand-emerald-dim text-on-color' : 'border-brand-border text-transparent hover:border-brand-pink/60'}`}
-                    >
-                      <CheckIcon className="w-4 h-4" />
-                    </button>
-                    <GIcon className="w-4 h-4 shrink-0 text-brand-pink" aria-hidden="true" />
-                    <span
-                      className={`text-sm flex-1 ${done ? 'text-white/60 line-through' : 'text-white/85'}`}
-                    >
-                      {gLabel}
-                    </span>
-                    {g.link && (
-                      <button
-                        className="inline-flex items-center gap-0.5 text-xs font-bold text-brand-gold hover:underline"
-                        onClick={() => navigate(g.link!)}
-                      >
-                        {t('rayhanah.openArrow', 'Open')}
-                        <ChevronRightIcon className="w-3.5 h-3.5" />
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-            {gardenDone === GARDEN_ITEMS.length && (
-              <p className="text-center text-brand-pink text-sm font-bold mt-3">
-                {t('rayhanah.gardenComplete', 'Mā shāʾ Allāh, a full garden today!')}
-              </p>
-            )}
-          </section>
+          <RayhanahGarden garden={garden} gardenDone={gardenDone} toggleGarden={toggleGarden} />
         )}
 
         {/* ── How are you today? (private wellness note) ────────────────────── */}
@@ -908,157 +674,20 @@ export default function RayhanahCycle() {
         )}
 
         {/* ── Du'a & adhkar for excused days ────────────────────────────── */}
-        {active && (
-          <section className={`${CARD} p-5 space-y-3`}>
-            <h2 className={SECTION_TITLE}>
-              <BookOpenIcon className="w-5 h-5 text-brand-gold" />
-              {t('rayhanah.adhkarGardenTitle', 'Your adhkār garden')}
-            </h2>
-            <p className={NOTE}>
-              {t(
-                'rayhanah.adhkarGardenIntro',
-                "Curated authentic du'a you can recite right now. Dhikr, istighfār and ṣalawāt are fully open to you in every state"
-              )}{' '}
-              (<Ref href="https://sunnah.com/muslim:373" label="Muslim 373" />
-              ).
-            </p>
-            <div className="space-y-2">
-              {EXCUSED_ADHKAR.map((dua, i) => {
-                const DIcon = ADHKAR_ICON[i] ?? LeafIcon;
-                return (
-                  <details
-                    key={dua.label}
-                    className="group rounded-control border border-brand-border bg-brand-surface/50 overflow-hidden"
-                  >
-                    <summary className="flex items-center gap-3 px-4 py-3 cursor-pointer list-none">
-                      <span className="w-8 h-8 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 text-brand-gold">
-                        <DIcon className="w-4 h-4" aria-hidden="true" />
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-white text-sm font-bold">
-                          {t(`rayhanah.adhkar.${i}.label`, dua.label)}
-                        </p>
-                        <p className="text-white/70 text-[11px]">
-                          {t(`rayhanah.adhkar.${i}.note`, dua.note)}
-                        </p>
-                      </div>
-                      <ChevronDownIcon className="w-4 h-4 text-white/60 group-open:rotate-180 transition-transform" />
-                    </summary>
-                    <div className="px-4 pb-4 space-y-2">
-                      <p
-                        className="font-serif text-xl text-white leading-loose text-right"
-                        dir="rtl"
-                        lang="ar"
-                      >
-                        {dua.arabic}
-                      </p>
-                      <p className="text-white/75 text-xs italic">{dua.transliteration}</p>
-                      <Ref href={dua.ref.url} label={dua.ref.text} block />
-                    </div>
-                  </details>
-                );
-              })}
-            </div>
-            <div className="rounded-control bg-brand-info/10 border border-brand-info/40 p-3 space-y-1.5">
-              <p className="text-brand-info text-xs font-bold flex items-center gap-1.5">
-                <BookOpenIcon className="w-4 h-4" />
-                {t('rayhanah.reciteQuranQ', 'Can I recite the Quran?')}
-              </p>
-              <p className="text-white/75 text-[11px] leading-relaxed">
-                <span className="font-bold text-white">{t('rayhanah.listening', 'Listening')}</span>{' '}
-                {t('rayhanah.listeningAgreed', 'is agreed upon by all scholars.')}{' '}
-                <span className="font-bold text-white">
-                  {t('rayhanah.recitingFromMemory', 'Reciting from memory')}
-                </span>{' '}
-                {t(
-                  'rayhanah.recitingDifference',
-                  'is a matter of scholarly difference: the majority (Ḥanafī, Shāfiʿī, Ḥanbalī) say it is not permitted during menses, while the Mālikī school and Ibn Taymiyyah permit it.'
-                )}{' '}
-                {t(
-                  'rayhanah.duaConsensus',
-                  "Du'ā using Quranic phrases is permitted by consensus. Ask a scholar you trust for your situation."
-                )}
-              </p>
-            </div>
-          </section>
-        )}
+        {active && <RayhanahAdhkar />}
 
         {/* ── Fasting makeup summary ─────────────────────────────────────────
             Gated on qadaRemaining (not qadaOwed, which is the lifetime total)
             so the card disappears once every owed fast is made up, instead of
             leaving a stale "0 remaining" reminder around forever. */}
         {qadaRemaining > 0 && (
-          <section className={`${CARD} p-5`}>
-            <div className="flex items-center justify-between gap-2">
-              <h2 className={SECTION_TITLE}>
-                <CrescentIcon className="w-5 h-5 text-brand-gold" />
-                {t('rayhanah.fastingMakeupTitle', 'Fasting makeup')}
-              </h2>
-              <button
-                className="inline-flex items-center gap-0.5 text-brand-gold text-xs font-bold hover:underline"
-                onClick={() => navigate('/fasting')}
-              >
-                {t('rayhanah.openTrackerArrow', 'Open tracker')}
-                <ChevronRightIcon className="w-3.5 h-3.5" />
-              </button>
-            </div>
-            <p className={`${NOTE} mt-1`}>
-              {t('rayhanah.missedFastsMadeUp', 'Missed Ramadan fasts are made up after')} (
-              <Ref href="https://sunnah.com/muslim:335" label="Muslim 335" />
-              ).
-            </p>
-            {showRamadanQadaWarning && (
-              <p className="text-brand-gold text-xs mt-2 leading-relaxed flex items-start gap-1.5">
-                <CrescentIcon className="w-4 h-4 shrink-0" />
-                {t(
-                  'rayhanah.ramadanQadaWarning',
-                  'Ramadan starts in {{days, number}} days, and {{count, number}} still to go before then.',
-                  {
-                    days: ramadanWindow.daysUntil,
-                    count: qadaRemaining,
-                  }
-                )}
-              </p>
-            )}
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              {[
-                {
-                  n: qadaOwed,
-                  label: t('rayhanah.owed', 'owed'),
-                  tone: 'text-brand-gold',
-                },
-                {
-                  n: qadaCompleted,
-                  label: t('rayhanah.madeUp', 'made up'),
-                  tone: 'text-brand-emerald',
-                },
-                {
-                  n: qadaRemaining,
-                  label: t('rayhanah.remaining', 'remaining'),
-                  tone: 'text-white',
-                },
-              ].map((s) => (
-                <div
-                  key={s.label}
-                  className="rounded-control border border-brand-border bg-brand-surface/50 p-3 text-center"
-                >
-                  <p className={`font-display text-2xl font-bold ${s.tone}`}>
-                    {formatLocaleNumber(s.n)}
-                  </p>
-                  <p className="text-white/70 text-[10px] font-bold uppercase mt-1">{s.label}</p>
-                </div>
-              ))}
-            </div>
-            <p className="text-white/70 text-[11px] mt-3 leading-relaxed">
-              {qadaRemaining === 1
-                ? t('rayhanah.oneDayToGo', 'One more day to go. You can do it!')
-                : t(
-                    'rayhanah.daysRemainingNote',
-                    '{{count, number}} days remaining. Take your time; every made-up fast counts.',
-                    { count: qadaRemaining }
-                  )}
-            </p>
-          </section>
+          <RayhanahFastingMakeup
+            qadaOwed={qadaOwed}
+            qadaCompleted={qadaCompleted}
+            qadaRemaining={qadaRemaining}
+            showRamadanQadaWarning={showRamadanQadaWarning}
+            ramadanWindow={ramadanWindow}
+          />
         )}
 
         {/* ── "I'm not done yet": ABOVE the calendar so it's the first thing
@@ -1263,145 +892,7 @@ export default function RayhanahCycle() {
         </section>
 
         {/* ── What changes / what stays (education) ─────────────────────────── */}
-        <section className={`${CARD} p-5 space-y-4`}>
-          <h2 className={SECTION_TITLE}>
-            <BookOpenIcon className="w-5 h-5 text-brand-gold" />
-            {t('rayhanah.fiqhCompanionTitle', 'Your fiqh companion')}
-          </h2>
-          <div className="grid sm:grid-cols-2 gap-3 text-xs leading-relaxed">
-            <div className="rounded-control bg-brand-pink/10 border border-brand-pink/40 p-4">
-              <p className="font-bold text-brand-pink mb-1.5 flex items-center gap-1.5">
-                <CrescentIcon className="w-4 h-4" />
-                {t('rayhanah.pausedForNow', 'Paused for now')}
-              </p>
-              <ul className="space-y-1 text-white/80 list-disc pl-4 marker:text-brand-pink">
-                <li>
-                  {t('rayhanah.salatExcusedPre', 'Ṣalāt: fully excused,')}{' '}
-                  <span className="font-bold text-brand-pink">
-                    {t('rayhanah.neverMadeUp', 'never made up')}
-                  </span>{' '}
-                  (<Ref href="https://sunnah.com/muslim:335" label="Muslim 335" />)
-                </li>
-                <li>
-                  {t('rayhanah.fastingExcusedLater', 'Fasting: excused now, made up later')} (
-                  <Ref href="https://sunnah.com/muslim:335" label="Muslim 335" />)
-                </li>
-                <li>
-                  {t('rayhanah.tawafExcused', 'Ṭawāf around the Kaʿbah')} (
-                  <Ref href="https://sunnah.com/bukhari:305" label="Bukhārī 305" />)
-                </li>
-                <li>
-                  {t('rayhanah.intimacyExcused', 'Intimacy during menses')} (
-                  <Ref href="https://quran.com/2/222" label="Quran 2:222" />)
-                </li>
-              </ul>
-            </div>
-            <div className="rounded-control bg-brand-emerald/10 border border-brand-emerald/40 p-4">
-              <p className="font-bold text-brand-emerald mb-1.5 flex items-center gap-1.5">
-                <FlowerIcon className="w-4 h-4" />
-                {t('rayhanah.fullyOpenToYou', 'Fully open to you')}
-              </p>
-              <ul className="space-y-1 text-white/80 list-disc pl-4 marker:text-brand-emerald">
-                <li>
-                  {t('rayhanah.dhikrDuaSalawat', 'All dhikr, duʿā & ṣalawāt')} (
-                  <Ref href="https://sunnah.com/muslim:373" label="Muslim 373" />)
-                </li>
-                <li>
-                  {t('rayhanah.listeningQuranTafsir', 'Listening to the Quran, tafsīr & knowledge')}
-                </li>
-                <li>
-                  {t('rayhanah.attendingGatherings', 'Attending gatherings of good & duʿā')} (
-                  <Ref href="https://sunnah.com/bukhari:971" label="Bukhārī 971" />)
-                </li>
-                <li>{t('rayhanah.charityKindness', 'Charity, kindness, and serving others')}</li>
-              </ul>
-            </div>
-          </div>
-          <p className="text-white/70 text-[11px] leading-relaxed">
-            {t(
-              'rayhanah.aishahHajjStory',
-              'The Prophet ﷺ told ʿĀʾishah (may Allah be pleased with her) during Hajj: do everything the pilgrim does, except ṭawāf'
-            )}{' '}
-            (<Ref href="https://sunnah.com/bukhari:305" label="Ṣaḥīḥ al-Bukhārī 305" />
-            ).{' '}
-            {t(
-              'rayhanah.recitingScholarlyDifference',
-              'Reciting Quran from memory is a matter of scholarly difference; listening is agreed upon. Ask a scholar you trust.'
-            )}
-          </p>
-
-          {/* Istihadah guide */}
-          <details className="group rounded-control bg-brand-gold/10 border border-brand-gold/40 p-4">
-            <summary className="list-none flex items-center justify-between cursor-pointer">
-              <p className="font-bold text-brand-gold text-sm flex items-center gap-1.5">
-                <DropIcon className="w-4 h-4" />
-                {t('rayhanah.istihadaQ', 'What is istiḥāḍa?')}
-              </p>
-              <ChevronDownIcon className="w-4 h-4 text-white/60 group-open:rotate-180 transition-transform" />
-            </summary>
-            <div className="mt-3 space-y-2 text-xs leading-relaxed text-white/80">
-              <p>
-                <span className="font-bold text-white">
-                  {t('rayhanah.istihadaTerm', 'Istiḥāḍa')}
-                </span>{' '}
-                {t(
-                  'rayhanah.istihadaDefinition',
-                  '(irregular/non-menstrual bleeding) is bleeding that goes beyond the maximum period length (Ḥanafī: 10 days, majority: 15 days), or that occurs outside the normal menstrual pattern.'
-                )}
-              </p>
-              <p>
-                {t('rayhanah.fatimahHadithIntro', 'The Prophet ﷺ told')}{' '}
-                <span className="font-bold">
-                  {t('rayhanah.fatimahName', 'Fāṭimah bint Abī Ḥubaysh')}
-                </span>
-                :{' '}
-                <span className="italic text-white">
-                  {t(
-                    'rayhanah.fatimahHadithQuote',
-                    '"That is a vein, not menstruation. When your period comes, stop praying, and when it ends, wash the blood off and pray."'
-                  )}
-                </span>{' '}
-                (<Ref href="https://sunnah.com/bukhari:306" label="Bukhārī 306" />)
-              </p>
-              <div className="rounded-control bg-brand-deep/60 border border-brand-border p-3 space-y-1.5">
-                <p className="font-bold text-brand-gold">
-                  {t('rayhanah.duringIstihada', 'During istiḥāḍa:')}
-                </p>
-                <ul className="space-y-1 list-disc pl-4 marker:text-brand-gold">
-                  <li>
-                    <span className="font-bold text-white">
-                      {t('rayhanah.salatResumes', 'Ṣalāt resumes')}
-                    </span>
-                    : {t('rayhanah.salatResumesDesc', 'perform wuḍū for each prayer time')}
-                  </li>
-                  <li>
-                    <span className="font-bold text-white">
-                      {t('rayhanah.fastingValid', 'Fasting is valid')}
-                    </span>
-                    : {t('rayhanah.fastingValidDesc', 'no makeup needed for these days')}
-                  </li>
-                  <li>
-                    <span className="font-bold text-white">
-                      {t('rayhanah.intimacyPermitted', 'Intimacy is permitted')}
-                    </span>{' '}
-                    {t('rayhanah.majorityView', '(majority view)')}
-                  </li>
-                  <li>
-                    <span className="font-bold text-white">
-                      {t('rayhanah.quranRecitationPermitted', 'Quran recitation is permitted')}
-                    </span>
-                  </li>
-                </ul>
-              </div>
-              <p className="text-white/70 text-[11px]">
-                {t(
-                  'rayhanah.istihadaAutoFlag',
-                  "Rayhanah automatically flags when your cycle exceeds the maximum for your chosen madhab. If you're unsure, consult a scholar you trust."
-                )}
-              </p>
-            </div>
-          </details>
-        </section>
+        <RayhanahFiqhCompanion />
       </div>
 
       <RayhanahSettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
