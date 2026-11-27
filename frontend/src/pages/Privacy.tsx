@@ -22,7 +22,7 @@ type HeroIcon = typeof LockClosedIcon;
 
 const SECTION_KEYS: { Icon: HeroIcon; key: string; bodyCount: number }[] = [
   { Icon: ArrowDownTrayIcon, key: 'whatWeStore', bodyCount: 8 },
-  { Icon: DevicePhoneMobileIcon, key: 'deviceOnly', bodyCount: 3 },
+  { Icon: DevicePhoneMobileIcon, key: 'deviceOnly', bodyCount: 4 },
   { Icon: UsersIcon, key: 'friendsSee', bodyCount: 5 },
   { Icon: SparklesIcon, key: 'naseeh', bodyCount: 4 },
   { Icon: GlobeAltIcon, key: 'thirdParty', bodyCount: 3 },

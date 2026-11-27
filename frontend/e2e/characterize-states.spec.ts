@@ -346,8 +346,9 @@ test.describe('cycle with a period', () => {
             'pregnancy:{active:!0,dueDate:`2027-02-10`,weeksAlong:20}'
           );
         if (o.endedRecently)
+          // The day helper's minified name changes with the bundle, so match any.
           body = body.replace(
-            'startDate:v(36),endDate:v(30)',
+            /startDate:([\w$]+)\(36\),endDate:\1\(30\)/,
             'startDate:`2026-10-08`,endDate:`2026-10-13`'
           );
         if (body === before)
@@ -1781,6 +1782,8 @@ test('quran reader: bookmark an ayah and open the share dialog', async ({ page }
   });
   await open(page, { as: 'brother' }, '/quran/read/1');
   await press(page, 'Bookmark this ayah');
+  // The demo keeps the bookmark (v5.190.81), so the icon fills and offers removal.
+  await expect(button(page, 'Remove bookmark')).toBeVisible();
   await expectBaseline(page, 'quran-reader.bookmarked');
   await press(page, 'Share as image');
   await expectBaseline(page, 'quran-reader.share-open');

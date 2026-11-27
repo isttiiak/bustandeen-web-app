@@ -1596,7 +1596,8 @@
       "title": "Stays on your device only",
       "body0": "Your prayer-times location (latitude and longitude). It is used to calculate times on your device and is never sent to our servers.",
       "body1": "Place names (showing your location as \"Dhaka, Bangladesh\", or finding a city you type) come from a city list inside the app by default, so nothing leaves your device. If you switch place names to OpenStreetMap, your location rounded to about 1 km, or the city you type, goes to OpenStreetMap's Nominatim service.",
-      "body2": "Preferences (language, units, discreet mode, hide BMI), cached Quran text, counts waiting to sync while you are offline, and your sign-in token."
+      "body2": "Preferences (language, units, discreet mode, hide BMI), cached Quran text, counts waiting to sync while you are offline, and your sign-in token.",
+      "body3": "A copy of your recent records (prayers, Quran, fasting, zikr), kept for up to a day so the app opens instantly, and wiped when you sign out. Rayhanah (cycle) data is never kept in this copy: it is fetched fresh each time."
     },
     "friendsSee": {
       "title": "What friends can see",

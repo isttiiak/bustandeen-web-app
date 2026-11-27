@@ -257,7 +257,7 @@ function buildQuranSummary() {
       { surah: 55, completions: 4 },
       { surah: 18, completions: 2 },
     ],
-    bookmarks: [],
+    bookmarks: [...demoBookmarks],
   };
 }
 
@@ -846,6 +846,25 @@ const demoFastingLogs = new Map<string, Record<string, unknown>>();
 const demoAdhkarDays = new Map<string, { date: string; morning: boolean; evening: boolean }>();
 const queryDate = (url: string) => new URL(url, 'http://demo.local').searchParams.get('date');
 
+// Quran bookmarks set in the demo, kept for this page view and toggled the way
+// the server does (newest first, at most 100), so the bookmark icon fills.
+const demoBookmarks: Array<{ surah: number; ayah: number }> = [];
+function demoToggleBookmark(body: unknown) {
+  const b = (typeof body === 'string' ? JSON.parse(body) : (body ?? {})) as {
+    surah?: number;
+    ayah?: number;
+  };
+  if (typeof b.surah === 'number' && typeof b.ayah === 'number') {
+    const i = demoBookmarks.findIndex((x) => x.surah === b.surah && x.ayah === b.ayah);
+    if (i >= 0) demoBookmarks.splice(i, 1);
+    else {
+      demoBookmarks.unshift({ surah: b.surah, ayah: b.ayah });
+      if (demoBookmarks.length > 100) demoBookmarks.length = 100;
+    }
+  }
+  return { ok: true, bookmarks: [...demoBookmarks] };
+}
+
 // The demo's kaza debt, kept for this page view like the fasting logs. The debt
 // writes answer with the whole debt, as the server does: the Salat tracker puts
 // that answer straight into its cache, and a bare `{ ok: true }` (no counts)
@@ -908,6 +927,8 @@ export function getDemoResponse(
     if (method === 'put' && b?.period) demoAdhkarDays.set(date, { ...day, [b.period]: true });
     return { ok: true, day: demoAdhkarDays.get(date) ?? day };
   }
+  if (method === 'post' && /\/api\/quran\/bookmark(\?|$)/.test(url))
+    return demoToggleBookmark(body);
   if (method !== 'get' && /\/api\/salat\/debt\/(set|adjust|reset)(\?|$)/.test(url))
     return demoDebtWrite(url, body);
   if (method !== 'get') return { ok: true };
