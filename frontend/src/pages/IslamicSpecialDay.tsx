@@ -17,6 +17,8 @@ import ReportReference from '../components/ReportReference.js';
 import { Star8Icon } from '../components/icons/IslamicIcons.js';
 import { BTN_PRIMARY, CARD, SECTION_TITLE } from '../components/bustanStyles.js';
 import { SPECIAL_DAYS } from '../utils/islamicCalendar.js';
+import { groupTodos } from '../utils/specialDayAudience.js';
+import { useAuthStore } from '../store/useAuthStore.js';
 
 const TYPE_BADGE: Record<string, string> = {
   weekly: 'Weekly Sunnah',
@@ -45,6 +47,8 @@ export default function IslamicSpecialDay() {
   const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const day = SPECIAL_DAYS.find((d) => d.id === id);
+  // Brothers and sisters each see their own guidance; a guest sees both, labelled.
+  const gender = useAuthStore((s) => s.user?.gender);
 
   if (!day) {
     return (
@@ -124,30 +128,41 @@ export default function IslamicSpecialDay() {
               <ClipboardDocumentListIcon className="w-5 h-5 text-brand-gold" aria-hidden="true" />
               {t('specialDays.whatToDoLabel', 'What to do today')}
             </h2>
-            <div className="space-y-3">
-              {day.todos.map((todo, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, x: -12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.14 + i * 0.05 }}
-                  className="flex items-start gap-3 p-3 rounded-control border border-brand-border bg-brand-surface/50"
-                >
-                  <CheckCircleIcon
-                    className="w-5 h-5 shrink-0 mt-0.5 text-brand-emerald"
-                    aria-hidden="true"
-                  />
-                  <div className="min-w-0">
-                    <p className="text-white text-sm font-semibold leading-snug">
-                      {t(`specialDays.${day.id}.todos.${i}.action`, todo.action)}
-                    </p>
-                    {todo.note && (
-                      <p className="text-white/70 text-xs mt-0.5 leading-relaxed">
-                        {t(`specialDays.${day.id}.todos.${i}.note`, todo.note)}
-                      </p>
-                    )}
-                  </div>
-                </motion.div>
+            <div className="space-y-4">
+              {groupTodos(day.todos, gender).map((group) => (
+                <div key={group.audience ?? 'all'} className="space-y-3">
+                  {group.audience && (
+                    <h3 className="text-brand-gold text-xs font-bold uppercase tracking-wide pt-1">
+                      {group.audience === 'brothers'
+                        ? t('specialDays.forBrothers', 'For brothers')
+                        : t('specialDays.forSisters', 'For sisters')}
+                    </h3>
+                  )}
+                  {group.items.map(({ todo, index: i }) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -12 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.14 + i * 0.05 }}
+                      className="flex items-start gap-3 p-3 rounded-control border border-brand-border bg-brand-surface/50"
+                    >
+                      <CheckCircleIcon
+                        className="w-5 h-5 shrink-0 mt-0.5 text-brand-emerald"
+                        aria-hidden="true"
+                      />
+                      <div className="min-w-0">
+                        <p className="text-white text-sm font-semibold leading-snug">
+                          {t(`specialDays.${day.id}.todos.${i}.action`, todo.action)}
+                        </p>
+                        {todo.note && (
+                          <p className="text-white/70 text-xs mt-0.5 leading-relaxed">
+                            {t(`specialDays.${day.id}.todos.${i}.note`, todo.note)}
+                          </p>
+                        )}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               ))}
             </div>
           </motion.div>

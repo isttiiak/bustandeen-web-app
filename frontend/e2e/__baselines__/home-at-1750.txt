@@ -166,7 +166,7 @@
          <span class="block text-white font-bold text-sm leading-tight truncate">
           "Friday (Jumu'ah)"
          <span class="block text-white/60 text-xs leading-snug truncate mt-0.5">
-          "The master of days. Attend Jumu'ah, read Surah Al-Kahf, send abundant ṣalawāt."
+          "The master of days. Read Surah Al-Kahf, send abundant ṣalawāt, and brothers attend Jumu'ah."
         <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-white/40" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
          <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
       <div class="scroll-mt-24" id="id6">

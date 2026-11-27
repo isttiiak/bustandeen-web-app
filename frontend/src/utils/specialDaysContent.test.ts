@@ -10,7 +10,9 @@ import { SPECIAL_DAYS } from './islamicCalendar.js';
 // them; changing a word fails here on purpose. Religious text: re-verify the
 // source before updating a fingerprint. Updated 2026-10-09 for the verified
 // citation fixes (Tirmidhī 747, Bukhārī 963, Ibn Mājah 1390, grade notes,
-// Friday ṣalawāt note, Laylat al-Qadr ṣadaqah line from 97:3).
+// Friday ṣalawāt note, Laylat al-Qadr ṣadaqah line from 97:3). Friday updated 2026-11-28:
+// brothers' and sisters' guidance (Abū Dāwūd 1067, 567, 1052; Bukhārī 879, 881, 900, 934;
+// Muslim 443b, 873a; Quran 24:31; Ibn al-Mundhir, al-Ijmāʿ), each checked on sunnah.com / quran.com.
 type Dict = Record<string, unknown>;
 
 const strings = (v: unknown): string[] =>
@@ -47,7 +49,7 @@ const FINGERPRINTS = {
     eid_adha: '45e163cc',
     eid_fitr: 'fae33661',
     fast_mon_thu: 'd5f918b7',
-    friday: '9c77c04e',
+    friday: '96283b96',
     islamic_new_year: 'b32b49f8',
     laylat_qadr: 'fa72e189',
     shab_e_barat: 'c4364e98',
@@ -61,7 +63,7 @@ const FINGERPRINTS = {
     eid_adha: 'df65baf6',
     eid_fitr: 'f8dd1b3b',
     fast_mon_thu: 'b4698aeb',
-    friday: 'fe5a21ed',
+    friday: 'ec4571cb',
     islamic_new_year: '32540f2b',
     laylat_qadr: '2b2c86cd',
     shab_e_barat: 'b8e7b46a',
