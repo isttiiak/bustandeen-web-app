@@ -1,0 +1,447 @@
+<div class="min-h-screen bg-brand-void">
+<h1 class="sr-only">Salat Tracker</h1>
+<div class="px-4 pt-3 pb-0 flex items-center gap-2">
+<div class="flex-1 min-w-0">
+<div class="flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10 max-w-xs">
+<span aria-current="page" class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">Tracker</span>
+<a class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" href="/salat/analytics" data-discover="true">Analytics</a>
+</div>
+</div>
+<a aria-label="Musafir mode" title="Musafir mode" class="shrink-0 p-2 rounded-control border transition-colors border-brand-info/60 bg-brand-info/10 text-brand-info" href="/musafir" data-discover="true">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z">
+</path>
+</svg>
+</a>
+<button aria-label="Salat settings" title="Salat settings" class="shrink-0 p-2 rounded-control border border-brand-border bg-brand-deep text-white/60 hover:text-brand-emerald hover:border-brand-emerald/40 transition-colors">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z">
+</path>
+<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z">
+</path>
+</svg>
+</button>
+</div>
+<div class="p-4 sm:p-6 lg:p-8">
+<div class="max-w-xl mx-auto space-y-5">
+<section aria-label="Today&#x27;s Prayers" class="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-4 pt-8 pb-5 text-center">
+<div class="flex items-center justify-between gap-2">
+<button type="button" title="Previous day" aria-label="Previous day" class="p-2 rounded-control border border-brand-border bg-brand-deep/60 text-white/60 hover:text-white hover:border-brand-emerald/40 disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5">
+</path>
+</svg>
+</button>
+<div class="min-w-0">
+<p class="font-display text-2xl font-semibold text-white leading-tight">Today</p>
+<p class="text-white/60 text-xs mt-0.5">Friday, October 16, 2026</p>
+<p class="text-brand-gold text-[11px] mt-0.5">
+<a class="inline-block py-[14px] -my-[14px] hover:underline underline-offset-2" href="/library/calendar" data-discover="true">5 Jumādā al-Ūlā 1448 AH</a>
+</p>
+</div>
+<button type="button" disabled="" aria-label="Next day" class="p-2 rounded-control border border-brand-border bg-brand-deep/60 text-white/60 hover:text-white hover:border-brand-emerald/40 disabled:opacity-20 disabled:cursor-not-allowed transition-colors">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5">
+<path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5">
+</path>
+</svg>
+</button>
+</div>
+<div class="mt-4 pt-4 border-t border-brand-border/70">
+<ul class="flex items-start justify-center gap-3 sm:gap-5">
+<li class="flex flex-col items-center gap-1 w-12">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 text-white/50">
+<path d="M3 17h18M8.5 17a3.5 3.5 0 0 1 7 0M12 7v4M10 9l2-2 2 2">
+</path>
+</svg>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-6 h-6 text-white/25">
+<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z">
+</path>
+<path d="M4 20 14 10">
+</path>
+</svg>
+<span class="text-[10px] text-white/60 leading-none truncate max-w-full">Fajr<span class="sr-only">: <!-- -->Not logged</span>
+</span>
+</li>
+<li class="flex flex-col items-center gap-1 w-12">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 text-white/50">
+<circle cx="12" cy="12" r="4">
+</circle>
+<path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4">
+</path>
+</svg>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-6 h-6 text-white/25">
+<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z">
+</path>
+<path d="M4 20 14 10">
+</path>
+</svg>
+<span class="text-[10px] text-white/60 leading-none truncate max-w-full">Dhuhr<span class="sr-only">: <!-- -->Not logged</span>
+</span>
+</li>
+<li class="flex flex-col items-center gap-1 w-12">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 text-white/50">
+<circle cx="17" cy="7" r="3">
+</circle>
+<path d="M17 2.5v1M21.5 7h-1M20.2 3.8l-.7.7M3 20h18M7 20v-7M7 20l9-2">
+</path>
+</svg>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-6 h-6 text-white/25">
+<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z">
+</path>
+<path d="M4 20 14 10">
+</path>
+</svg>
+<span class="text-[10px] text-white/60 leading-none truncate max-w-full">Asr<span class="sr-only">: <!-- -->Not logged</span>
+</span>
+</li>
+<li class="flex flex-col items-center gap-1 w-12">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 text-white/50">
+<path d="M3 17h18M6.5 17a5.5 5.5 0 0 1 11 0M12 5v4M10 7l2 2 2-2M5 21h14">
+</path>
+</svg>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-6 h-6 text-white/25">
+<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z">
+</path>
+<path d="M4 20 14 10">
+</path>
+</svg>
+<span class="text-[10px] text-white/60 leading-none truncate max-w-full">Maghrib<span class="sr-only">: <!-- -->Not logged</span>
+</span>
+</li>
+<li class="flex flex-col items-center gap-1 w-12">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-4 h-4 text-white/50">
+<path d="M14.5 4.5a7.5 7.5 0 1 0 5 12.5 6 6 0 0 1-5-12.5z">
+</path>
+<path d="M18.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z">
+</path>
+</svg>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-6 h-6 text-white/25">
+<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z">
+</path>
+<path d="M4 20 14 10">
+</path>
+</svg>
+<span class="text-[10px] text-white/60 leading-none truncate max-w-full">Isha<span class="sr-only">: <!-- -->Not logged</span>
+</span>
+</li>
+</ul>
+<p class="mt-3 text-sm text-white/60">0 of 5 prayed</p>
+</div>
+</section>
+<div style="opacity:0;transform:translateY(-6px)">
+<a class="flex items-center gap-3 rounded-card border border-brand-border bg-brand-deep shadow-elev-1 px-4 py-3 hover:border-brand-gold/40 transition-colors" href="/musafir" data-discover="true">
+<span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/30">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 text-brand-gold">
+<path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z">
+</path>
+</svg>
+</span>
+<span class="min-w-0 flex-1">
+<span class="block text-brand-gold font-bold text-sm leading-tight">Musafir · day 3<span class="text-white/65 font-semibold"> · <!-- -->Chattogram</span>
+</span>
+<span class="block text-white/75 text-xs mt-0.5 leading-snug">Ẓuhr, ʿAṣr and ʿIshāʾ are 2 rak’ahs today.</span>
+</span>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5 shrink-0 text-white/60">
+<path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5">
+</path>
+</svg>
+</a>
+</div>
+<div class="space-y-2">
+<div class="rounded-card border overflow-hidden shadow-elev-1 hover:shadow-hover transition-[border-color,box-shadow] bg-brand-gold/[0.07] border-brand-gold/40" style="opacity:0;transform:translateY(12px)">
+<div class="p-3 flex items-center gap-3">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<span class="w-10 h-10 shrink-0 rounded-full border flex items-center justify-center border-brand-gold/40 text-brand-gold">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5">
+<path d="M3 17h18M8.5 17a3.5 3.5 0 0 1 7 0M12 7v4M10 9l2-2 2 2">
+</path>
+</svg>
+</span>
+<div class="min-w-0">
+<p class="font-bold text-sm leading-none text-brand-gold">Fajr<span class="ml-2 inline-flex items-center gap-1 text-xs font-normal text-brand-gold">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z">
+</path>
+</svg>window closed</span>
+<span class="mt-1 flex items-center gap-1 w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-white/10 text-white/60">2 rakʿah</span>
+</p>
+<div class="mt-0.5 space-y-px">
+<p class="text-white/60 text-xs leading-none tabular-nums">04:41 AM<span class="text-white/40"> → </span>
+<span class="text-white/50">05:56 AM</span>
+</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1" role="group" aria-label="Fajr">
+<button type="button" aria-pressed="false" class="hit-44 flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-bold border transition-colors bg-brand-deep border-brand-border text-white/60 hover:text-white hover:border-brand-emerald/50" tabindex="0">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5 shrink-0">
+<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5">
+</path>
+</svg>Done</button>
+<button type="button" aria-pressed="false" class="hit-44 flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-bold border transition-colors bg-brand-deep border-brand-border text-white/60 hover:text-white hover:border-brand-gold/50" tabindex="0">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5 shrink-0">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z">
+</path>
+</svg>Kaza</button>
+<button type="button" aria-pressed="false" class="hit-44 flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-bold border transition-colors bg-brand-deep border-brand-border text-white/60 hover:text-white hover:border-red-400/50" tabindex="0">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5 shrink-0">
+<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12">
+</path>
+</svg>Miss</button>
+</div>
+</div>
+</div>
+<div class="rounded-card border overflow-hidden shadow-elev-1 hover:shadow-hover transition-[border-color,box-shadow] bg-brand-emerald/[0.08] border-brand-emerald/60" style="opacity:0;transform:translateY(12px)">
+<div class="p-3 flex items-center gap-3">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<span class="w-10 h-10 shrink-0 rounded-full border flex items-center justify-center border-brand-emerald/50 text-brand-emerald">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5">
+<circle cx="12" cy="12" r="4">
+</circle>
+<path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4">
+</path>
+</svg>
+</span>
+<div class="min-w-0">
+<p class="font-bold text-sm leading-none text-brand-emerald">Dhuhr<span class="ml-2 inline-flex items-center gap-1 text-xs font-normal text-brand-emerald">
+<span class="w-1.5 h-1.5 rounded-full bg-brand-emerald" aria-hidden="true">
+</span>now</span>
+<span class="mt-1 flex items-center gap-1 w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-brand-info/15 text-brand-info">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3 h-3">
+<path stroke-linecap="round" stroke-linejoin="round" d="m7.848 8.25 1.536.887M7.848 8.25a3 3 0 1 1-5.196-3 3 3 0 0 1 5.196 3Zm1.536.887a2.165 2.165 0 0 1 1.083 1.839c.005.351.054.695.14 1.024M9.384 9.137l2.077 1.199M7.848 15.75l1.536-.887m-1.536.887a3 3 0 1 1-5.196 3 3 3 0 0 1 5.196-3Zm1.536-.887a2.165 2.165 0 0 0 1.083-1.838c.005-.352.054-.695.14-1.025m-1.223 2.863 2.077-1.199m0-3.328a4.323 4.323 0 0 1 2.068-1.379l5.325-1.628a4.5 4.5 0 0 1 2.48-.044l.803.215-7.794 4.5m-2.882-1.664A4.33 4.33 0 0 0 10.607 12m3.736 0 7.794 4.5-.802.215a4.5 4.5 0 0 1-2.48-.043l-5.326-1.629a4.324 4.324 0 0 1-2.068-1.379M14.343 12l-2.882 1.664">
+</path>
+</svg>2 · qaṣr</span>
+</p>
+<div class="mt-0.5 space-y-px">
+<p class="text-white/60 text-xs leading-none tabular-nums">11:45 AM<span class="text-white/40"> → </span>
+<span class="text-white/50">03:54 PM</span>
+</p>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1" role="group" aria-label="Dhuhr">
+<button type="button" aria-pressed="false" class="hit-44 flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-bold border transition-colors bg-brand-deep border-brand-border text-white/60 hover:text-white hover:border-brand-emerald/50" tabindex="0">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5 shrink-0">
+<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5">
+</path>
+</svg>Done</button>
+<button type="button" aria-pressed="false" class="hit-44 flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-bold border transition-colors bg-brand-deep border-brand-border text-white/60 hover:text-white hover:border-brand-gold/50" tabindex="0">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5 shrink-0">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z">
+</path>
+</svg>Kaza</button>
+<button type="button" aria-pressed="false" class="hit-44 flex items-center gap-1 px-1.5 py-1.5 sm:px-2.5 rounded-control text-[11px] sm:text-xs font-bold border transition-colors bg-brand-deep border-brand-border text-white/60 hover:text-white hover:border-red-400/50" tabindex="0">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5 shrink-0">
+<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12">
+</path>
+</svg>Miss</button>
+</div>
+</div>
+<div class="px-3 py-1.5 border-t border-brand-info/15 bg-brand-info/5 text-[11px] sm:text-xs text-brand-info flex items-center gap-1.5">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5 shrink-0">
+<path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z">
+</path>
+</svg>Travelling: Ẓuhr instead of Jumu&#x27;ah (Muslim 1218a)</div>
+<div class="px-3 py-2.5 border-t border-brand-gold/20 bg-brand-gold/5">
+<div class="flex items-center gap-3">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4 shrink-0 text-brand-gold">
+<path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244">
+</path>
+</svg>
+<p class="flex-1 min-w-0 text-white/70 text-xs leading-snug">On the move? Pray dhuhr and asr together now, in dhuhr time (jamʿ taqdīm).</p>
+<button class="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-control text-xs font-bold bg-brand-gold/20 border border-brand-gold/60 text-brand-gold hover:bg-brand-gold/30" tabindex="0">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5">
+</path>
+</svg>dhuhr + asr</button>
+</div>
+<a href="https://sunnah.com/tirmidhi:553" target="_blank" rel="noopener noreferrer" class="ml-7 mt-1 inline-block text-brand-gold/80 text-[11px] underline hover:text-brand-gold">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="inline w-3.5 h-3.5 mr-1 -mt-0.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25">
+</path>
+</svg>Jāmiʿ al-Tirmidhī 553 · Ṣaḥīḥ (al-Albānī)</a>
+</div>
+<div class="px-3 py-2.5 border-t border-brand-info/20 flex items-start gap-2 bg-brand-info/5">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-4 h-4 mt-px shrink-0 text-brand-info">
+<path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 0 0 .75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 0 0-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0 1 12 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 0 1-.673-.38m0 0A2.18 2.18 0 0 1 3 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 0 1 3.413-.387m7.5 0V5.25A2.25 2.25 0 0 0 13.5 3h-3a2.25 2.25 0 0 0-2.25 2.25v.894m7.5 0a48.667 48.667 0 0 0-7.5 0M12 12.75h.008v.008H12v-.008Z">
+</path>
+</svg>
+<div class="min-w-0">
+<p class="text-brand-info font-bold text-xs leading-tight">On a journey, the sunnah is light</p>
+<p class="text-white/60 text-xs leading-relaxed mt-0.5">The Prophet ﷺ left the regular sunnah of Ẓuhr, Maghrib and ʿIshāʾ on journeys; he kept Fajr&#x27;s two and Witr. Any nafl is still yours to pray.</p>
+<a href="https://sunnah.com/muslim:689a" target="_blank" rel="noopener noreferrer" class="text-brand-info/80 text-xs underline hover:text-brand-info transition-colors mt-0.5 inline-block">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="inline w-3.5 h-3.5 mr-1 -mt-0.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25">
+</path>
+</svg>Ṣaḥīḥ Muslim 689a</a>
+</div>
+</div>
+</div>
+<div class="rounded-card border overflow-hidden shadow-elev-1 hover:shadow-hover transition-[border-color,box-shadow] bg-brand-deep border-brand-border" style="opacity:0;transform:translateY(12px)">
+<div class="p-3 flex items-center gap-3">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<span class="w-10 h-10 shrink-0 rounded-full border flex items-center justify-center border-brand-border text-white/70">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5">
+<circle cx="17" cy="7" r="3">
+</circle>
+<path d="M17 2.5v1M21.5 7h-1M20.2 3.8l-.7.7M3 20h18M7 20v-7M7 20l9-2">
+</path>
+</svg>
+</span>
+<div class="min-w-0">
+<p class="font-bold text-sm leading-none text-white/70">Asr<span class="mt-1 flex items-center gap-1 w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-brand-info/15 text-brand-info">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3 h-3">
+<path stroke-linecap="round" stroke-linejoin="round" d="m7.848 8.25 1.536.887M7.848 8.25a3 3 0 1 1-5.196-3 3 3 0 0 1 5.196 3Zm1.536.887a2.165 2.165 0 0 1 1.083 1.839c.005.351.054.695.14 1.024M9.384 9.137l2.077 1.199M7.848 15.75l1.536-.887m-1.536.887a3 3 0 1 1-5.196 3 3 3 0 0 1 5.196-3Zm1.536-.887a2.165 2.165 0 0 0 1.083-1.838c.005-.352.054-.695.14-1.025m-1.223 2.863 2.077-1.199m0-3.328a4.323 4.323 0 0 1 2.068-1.379l5.325-1.628a4.5 4.5 0 0 1 2.48-.044l.803.215-7.794 4.5m-2.882-1.664A4.33 4.33 0 0 0 10.607 12m3.736 0 7.794 4.5-.802.215a4.5 4.5 0 0 1-2.48-.043l-5.326-1.629a4.324 4.324 0 0 1-2.068-1.379M14.343 12l-2.882 1.664">
+</path>
+</svg>2 · qaṣr</span>
+</p>
+<div class="mt-0.5 space-y-px">
+<p class="text-white/60 text-xs leading-none tabular-nums">03:54 PM<span class="text-white/40"> → </span>
+<span class="text-white/50">05:15 PM</span>
+</p>
+</div>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 text-white/50 text-xs font-medium px-2 py-1 rounded-control border border-brand-border">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z">
+</path>
+</svg>not yet</span>
+</div>
+</div>
+<div class="rounded-card border overflow-hidden shadow-elev-1 hover:shadow-hover transition-[border-color,box-shadow] bg-brand-deep border-brand-border" style="opacity:0;transform:translateY(12px)">
+<div class="p-3 flex items-center gap-3">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<span class="w-10 h-10 shrink-0 rounded-full border flex items-center justify-center border-brand-border text-white/70">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5">
+<path d="M3 17h18M6.5 17a5.5 5.5 0 0 1 11 0M12 5v4M10 7l2 2 2-2M5 21h14">
+</path>
+</svg>
+</span>
+<div class="min-w-0">
+<p class="font-bold text-sm leading-none text-white/70">Maghrib<span class="mt-1 flex items-center gap-1 w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-white/10 text-white/60">3 rakʿah</span>
+</p>
+<div class="mt-0.5 space-y-px">
+<p class="text-white/60 text-xs leading-none tabular-nums">05:35 PM<span class="text-white/40"> → </span>
+<span class="text-white/50">06:47 PM</span>
+</p>
+</div>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 text-white/50 text-xs font-medium px-2 py-1 rounded-control border border-brand-border">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z">
+</path>
+</svg>not yet</span>
+</div>
+</div>
+<div class="rounded-card border overflow-hidden shadow-elev-1 hover:shadow-hover transition-[border-color,box-shadow] bg-brand-deep border-brand-border" style="opacity:0;transform:translateY(12px)">
+<div class="p-3 flex items-center gap-3">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<span class="w-10 h-10 shrink-0 rounded-full border flex items-center justify-center border-brand-border text-white/70">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5">
+<path d="M14.5 4.5a7.5 7.5 0 1 0 5 12.5 6 6 0 0 1-5-12.5z">
+</path>
+<path d="M18.5 3.5l.6 1.4 1.4.6-1.4.6-.6 1.4-.6-1.4-1.4-.6 1.4-.6z">
+</path>
+</svg>
+</span>
+<div class="min-w-0">
+<p class="font-bold text-sm leading-none text-white/70">Isha<span class="mt-1 flex items-center gap-1 w-fit whitespace-nowrap text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-brand-info/15 text-brand-info">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3 h-3">
+<path stroke-linecap="round" stroke-linejoin="round" d="m7.848 8.25 1.536.887M7.848 8.25a3 3 0 1 1-5.196-3 3 3 0 0 1 5.196 3Zm1.536.887a2.165 2.165 0 0 1 1.083 1.839c.005.351.054.695.14 1.024M9.384 9.137l2.077 1.199M7.848 15.75l1.536-.887m-1.536.887a3 3 0 1 1-5.196 3 3 3 0 0 1 5.196-3Zm1.536-.887a2.165 2.165 0 0 0 1.083-1.838c.005-.352.054-.695.14-1.025m-1.223 2.863 2.077-1.199m0-3.328a4.323 4.323 0 0 1 2.068-1.379l5.325-1.628a4.5 4.5 0 0 1 2.48-.044l.803.215-7.794 4.5m-2.882-1.664A4.33 4.33 0 0 0 10.607 12m3.736 0 7.794 4.5-.802.215a4.5 4.5 0 0 1-2.48-.043l-5.326-1.629a4.324 4.324 0 0 1-2.068-1.379M14.343 12l-2.882 1.664">
+</path>
+</svg>2 · qaṣr</span>
+</p>
+<div class="mt-0.5 space-y-px">
+<p class="text-white/60 text-xs leading-none tabular-nums">06:47 PM<span class="text-white/40"> → </span>
+<span class="text-white/50">11:44 PM</span>
+<span class="text-white/40 text-[10px]"> <!-- -->(<!-- -->best<!-- -->)</span>
+</p>
+<p class="text-white/40 text-[10px] leading-none">window → 04:41 AM</p>
+</div>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 text-white/50 text-xs font-medium px-2 py-1 rounded-control border border-brand-border">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3.5 h-3.5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z">
+</path>
+</svg>not yet</span>
+</div>
+</div>
+</div>
+<div class="rounded-card border overflow-hidden shadow-elev-1 hover:shadow-hover transition-[border-color,box-shadow] bg-brand-deep border-brand-border" style="opacity:0;transform:translateY(12px)">
+<div class="p-3.5 flex items-center gap-3">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<span class="w-10 h-10 shrink-0 rounded-full border flex items-center justify-center border-brand-border text-white/70">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" class="w-5 h-5">
+<circle cx="8.18" cy="14.26" r="1.5" fill="currentColor" stroke="none">
+</circle>
+<circle cx="5.82" cy="11.01" r="1.5" fill="currentColor" stroke="none">
+</circle>
+<circle cx="5.82" cy="6.99" r="1.5" fill="currentColor" stroke="none">
+</circle>
+<circle cx="8.18" cy="3.74" r="1.5" fill="currentColor" stroke="none">
+</circle>
+<circle cx="12.00" cy="2.50" r="1.5" fill="currentColor" stroke="none">
+</circle>
+<circle cx="15.82" cy="3.74" r="1.5" fill="currentColor" stroke="none">
+</circle>
+<circle cx="18.18" cy="6.99" r="1.5" fill="currentColor" stroke="none">
+</circle>
+<circle cx="18.18" cy="11.01" r="1.5" fill="currentColor" stroke="none">
+</circle>
+<circle cx="15.82" cy="14.26" r="1.5" fill="currentColor" stroke="none">
+</circle>
+<path d="M12 15.5v3M10 21.5l2-3 2 3z">
+</path>
+</svg>
+</span>
+<div class="min-w-0">
+<p class="font-bold text-sm leading-none text-white/70">Nafl Prayer</p>
+<p class="text-white/60 text-xs mt-0.5">voluntary prayers</p>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0">
+<button aria-pressed="false" class="flex items-center gap-1 px-2.5 py-1.5 rounded-control text-xs font-bold border transition-colors bg-brand-deep border-brand-border text-white/60 hover:border-brand-info/50 hover:text-white" tabindex="0">Mark Done</button>
+</div>
+</div>
+</div>
+<div class="rounded-card border overflow-hidden shadow-elev-1 hover:shadow-hover transition-[border-color,box-shadow] bg-brand-deep border-brand-border" style="opacity:0;transform:translateY(12px)">
+<button aria-expanded="false" class="w-full p-3.5 flex items-center gap-3 text-left">
+<div class="flex items-center gap-3 flex-1 min-w-0">
+<span class="w-10 h-10 shrink-0 rounded-full border flex items-center justify-center border-brand-border text-white/70">
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-5 h-5">
+<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z">
+</path>
+</svg>
+</span>
+<div class="min-w-0">
+<p class="font-bold text-sm leading-none text-white/70">Kaza Debt</p>
+<p class="text-white/60 text-xs mt-0.5">Nothing owed, MashaAllah</p>
+</div>
+</div>
+<span class="text-white/50 text-xs shrink-0">
+<span class="inline-flex items-center gap-1">Details<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3 h-3">
+<path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5">
+</path>
+</svg>
+</span>
+</span>
+</button>
+</div>
+<div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-1 overflow-hidden">
+<button aria-expanded="false" class="w-full p-4 flex items-center justify-between gap-3 text-left">
+<p class="text-white/60 text-xs font-semibold uppercase tracking-wide">How it works</p>
+<span class="text-white/50 text-xs shrink-0">
+<span class="inline-flex items-center gap-1">Details<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" class="w-3 h-3">
+<path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5">
+</path>
+</svg>
+</span>
+</span>
+</button>
+</div>
+</div>
+</div>
+</div>

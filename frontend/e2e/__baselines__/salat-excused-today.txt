@@ -1,0 +1,176 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Home" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "Home"
+       <div class="flex items-center gap-1 min-w-0 pl-1">
+        <span class="text-white/15 text-sm hidden sm:inline">
+         "|"
+        <span aria-hidden="true" class="text-sm shrink-0">
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<105:cc4257f9>">
+        <span class="font-semibold text-white/70 text-xs sm:text-sm truncate max-w-[70px] sm:max-w-[130px]">
+         "Salat Tracker"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "K"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen bg-brand-void">
+     <h1 class="sr-only">
+      "Salat Tracker"
+     <div class="px-4 pt-3 pb-0 flex items-center gap-2">
+      <div class="flex-1 min-w-0">
+       <div class="flex gap-1 rounded-control p-1 border border-brand-border bg-shade/10 max-w-xs">
+        <span aria-current="page" class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg bg-brand-deep text-white font-bold shadow-elev-1">
+         "Tracker"
+        <a class="flex-1 text-center text-xs py-1.5 whitespace-nowrap px-3 rounded-lg text-white/60 font-semibold hover:text-white hover:bg-brand-deep/60 transition-colors" data-discover="true" href="/salat/analytics">
+         "Analytics"
+      <a aria-label="Musafir mode" class="shrink-0 p-2 rounded-control border transition-colors border-brand-border bg-brand-deep text-white/60 hover:text-brand-info hover:border-brand-info/40" data-discover="true" href="/musafir" title="Musafir mode">
+       <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<587:fc8297e1>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Salat settings" class="shrink-0 p-2 rounded-control border border-brand-border bg-brand-deep text-white/60 hover:text-brand-emerald hover:border-brand-emerald/40 transition-colors" title="Salat settings">
+       <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<999:41ef0701>" stroke-linecap="round" stroke-linejoin="round">
+        <path d="<35:449f351c>" stroke-linecap="round" stroke-linejoin="round">
+     <div class="p-4 sm:p-6 lg:p-8">
+      <div class="max-w-xl mx-auto space-y-5">
+       <section aria-label="Today's Prayers" class="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-4 pt-8 pb-5 text-center">
+        <div class="flex items-center justify-between gap-2">
+         <button aria-label="Previous day" class="p-2 rounded-control border border-brand-border bg-brand-deep/60 text-white/60 hover:text-white hover:border-brand-emerald/40 disabled:opacity-20 disabled:cursor-not-allowed transition-colors" title="Previous day" type="button">
+          <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<27:f0982344>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="min-w-0">
+          <p class="font-display text-2xl font-semibold text-white leading-tight">
+           "Today"
+          <p class="text-white/60 text-xs mt-0.5">
+           "Thursday, October 15, 2026"
+          <p class="text-brand-gold text-[11px] mt-0.5">
+           <a class="inline-block py-[14px] -my-[14px] hover:underline underline-offset-2" data-discover="true" href="/library/calendar">
+            "4 Jumādā al-Ūlā 1448 AH"
+         <button aria-label="Next day" class="p-2 rounded-control border border-brand-border bg-brand-deep/60 text-white/60 hover:text-white hover:border-brand-emerald/40 disabled:opacity-20 disabled:cursor-not-allowed transition-colors" disabled="" type="button">
+          <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<25:4a69be8b>" stroke-linecap="round" stroke-linejoin="round">
+       <div class="flex items-stretch gap-1">
+        <button aria-label="Select F 9 (Fri, Oct 9)" aria-pressed="false" class="hit-44 flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors bg-brand-deep/50 border-brand-border/60 hover:border-brand-emerald/30" tabindex="0">
+         <span class="text-[9px] uppercase font-bold text-white/50">
+          "F"
+         <span class="text-xs font-bold text-white/70">
+          "9"
+         <span aria-hidden="true" class="w-2 h-2 rounded-full bg-data-good" title="5 of 5 prayed">
+        <button aria-label="Select S 10 (Sat, Oct 10)" aria-pressed="false" class="hit-44 flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors bg-brand-deep/50 border-brand-border/60 hover:border-brand-emerald/30" tabindex="0">
+         <span class="text-[9px] uppercase font-bold text-white/50">
+          "S"
+         <span class="text-xs font-bold text-white/70">
+          "10"
+         <span aria-hidden="true" class="w-2 h-2 rounded-full bg-data-low" title="1 of 5 prayed">
+        <button aria-label="Select S 11 (Sun, Oct 11)" aria-pressed="false" class="hit-44 flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors bg-brand-deep/50 border-brand-border/60 hover:border-brand-emerald/30" tabindex="0">
+         <span class="text-[9px] uppercase font-bold text-white/50">
+          "S"
+         <span class="text-xs font-bold text-white/70">
+          "11"
+         <span aria-hidden="true" class="w-2 h-2 rounded-full bg-data-none" title="0 of 5 prayed">
+        <button aria-label="Select M 12 (Mon, Oct 12)" aria-pressed="false" class="hit-44 flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors bg-brand-deep/50 border-brand-border/60 hover:border-brand-emerald/30" tabindex="0">
+         <span class="text-[9px] uppercase font-bold text-white/50">
+          "M"
+         <span class="text-xs font-bold text-white/70">
+          "12"
+         <span aria-hidden="true" class="w-2 h-2 rounded-full bg-data-good" title="5 of 5 prayed">
+        <button aria-label="Select T 13 (Tue, Oct 13)" aria-pressed="false" class="hit-44 flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors bg-brand-deep/50 border-brand-border/60 hover:border-brand-emerald/30" tabindex="0">
+         <span class="text-[9px] uppercase font-bold text-white/50">
+          "T"
+         <span class="text-xs font-bold text-white/70">
+          "13"
+         <span aria-hidden="true" class="w-2 h-2 rounded-full bg-data-good" title="5 of 5 prayed">
+        <button aria-label="Select W 14 (Yesterday)" aria-pressed="false" class="hit-44 flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors bg-brand-deep/50 border-brand-border/60 hover:border-brand-emerald/30" tabindex="0">
+         <span class="text-[9px] uppercase font-bold text-white/50">
+          "W"
+         <span class="text-xs font-bold text-white/70">
+          "14"
+         <span aria-hidden="true" class="w-2 h-2 rounded-full bg-data-mid" title="3 of 5 prayed">
+        <button aria-label="Select T 15 (Today)" aria-pressed="true" class="hit-44 flex-1 min-w-0 flex flex-col items-center gap-1 py-2 rounded-control border transition-colors bg-brand-deep border-brand-emerald/50 shadow-elev-1" tabindex="0">
+         <span class="text-[9px] uppercase font-bold text-brand-emerald">
+          "T"
+         <span class="text-xs font-bold text-white">
+          "15"
+         <span aria-hidden="true" class="w-2 h-2 rounded-full bg-data-mid" title="4 of 5 prayed">
+        <button aria-expanded="false" aria-label="Open month calendar" class="shrink-0 flex flex-col items-center justify-center gap-1 px-2 py-2 rounded-control border transition-colors bg-brand-deep/50 border-brand-border/60 text-white/60 hover:border-brand-emerald/30 hover:text-white" title="Open month calendar">
+         <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<555:678fdcb9>" stroke-linecap="round" stroke-linejoin="round">
+         <span class="text-[9px] font-bold uppercase">
+          "O"
+       <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 border-brand-pink/40 p-6 sm:p-8 text-center space-y-3">
+        <span class="mx-auto w-14 h-14 rounded-full grid place-items-center bg-brand-pink/10 border border-brand-pink/40 text-brand-pink">
+         <svg aria-hidden="true" class="w-7 h-7" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <circle cx="12.00" cy="7.80" r="3">
+          <circle cx="15.99" cy="10.70" r="3">
+          <circle cx="14.47" cy="15.40" r="3">
+          <circle cx="9.53" cy="15.40" r="3">
+          <circle cx="8.01" cy="10.70" r="3">
+          <circle cx="12" cy="12" r="1.6">
+        <h2 class="font-display text-xl font-bold text-white">
+         "You are excused today"
+        <p class="text-brand-pink text-sm leading-relaxed max-w-md mx-auto">
+         "He knows, and He has excused you"
+        <p class="text-white/70 text-xs leading-relaxed max-w-md mx-auto">
+         "Allah has lifted salat from you during this time. Your Noor keeps shining from dhikr, Quran, and ṣalawāt."
+         <br>
+         <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2" href="https://sunnah.com/muslim:335" rel="noreferrer" target="_blank">
+          "Ṣaḥīḥ Muslim 335"
+        <div class="flex flex-wrap justify-center gap-2 pt-2">
+         <a class="inline-flex items-center rounded-control px-3 py-2 text-sm font-bold border border-brand-pink/40 bg-brand-pink/10 hover:bg-brand-pink/20 text-brand-pink transition-colors" data-discover="true" href="/cycle">
+          "Open your Garden of Light →"
+         <a class="inline-flex items-center rounded-control px-3 py-2 text-sm font-bold border border-brand-border bg-brand-surface/50 hover:bg-brand-surface text-white/80 transition-colors" data-discover="true" href="/zikr">
+          "Do some dhikr →"

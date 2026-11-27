@@ -809,6 +809,161 @@ test('prayer times: a timeline entry opens, and the sources', async ({ page }) =
   await expectBaseline(page, 'prayer-times.expanded');
 });
 
+// Audit P4-1 (PR 14 onwards, SalatTracker): the prayer cards at every kind of moment, and
+// what each card shows besides its buttons (adhkar, Tarawih, joining, the Hanafi note,
+// the travel sunnah, the sunnah guidance, the Witr reminder).
+const SALAT_TIMES: Array<[string, string]> = [
+  ['0450', '2026-10-15T04:50:00+06:00'], // Fajr, adhkar window open
+  ...HOME_TIMES,
+  ['1200', '2026-10-15T12:00:00+06:00'], // Dhuhr
+  ['1400', '2026-10-15T14:00:00+06:00'], // Dhuhr, later
+];
+for (const [name, at] of SALAT_TIMES) {
+  test(`salat: the cards at ${name}`, async ({ page }) => {
+    await open(page, { as: 'brother', at }, '/salat');
+    await expectBaseline(page, `salat.at-${name}`);
+  });
+}
+
+test('salat: before dawn, in Bangla', async ({ page }) => {
+  await open(page, { as: 'brother', at: '2026-10-16T04:50:00+06:00', lang: 'bn' }, '/salat');
+  await expectBaseline(page, 'salat.at-0450.bn');
+});
+
+test('salat: with no saved place there are no times and no current prayer', async ({ page }) => {
+  await open(page, { as: 'brother', noLocation: true }, '/salat');
+  await expectBaseline(page, 'salat.no-place');
+});
+
+test('salat: the sunnah and nafl guidance and the adhkar can be switched off', async ({ page }) => {
+  await open(
+    page,
+    {
+      as: 'brother',
+      at: '2026-10-15T04:50:00+06:00',
+      storage: {
+        bustandeen_show_sunnah_guide: '0',
+        bustandeen_show_nafl_guide: '0',
+        bustandeen_salat_adhkar: '0',
+      },
+    },
+    '/salat'
+  );
+  await expectBaseline(page, 'salat.guidance-off');
+});
+
+test('salat: Tarawih shows after Isha in Ramadan and is saved on the fast', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother', at: '2027-02-20T20:00:00+06:00' }, '/salat');
+  await expectBaseline(page, 'salat.ramadan-isha');
+  await context.setOffline(true);
+  await press(page, /Tarawih tonight/);
+  expectText(await outbox(page), 'salat.tarawih.outbox');
+});
+
+test('salat: a journey at Dhuhr offers to join Dhuhr and Asr, and the tap logs both', async ({
+  page,
+  context,
+}) => {
+  await enterDemo(page, { as: 'brother', at: '2026-10-15T12:00:00+06:00', storage: JOURNEY });
+  await go(page, '/salat');
+  await expectBaseline(page, 'salat.journey-dhuhr-offer');
+  await context.setOffline(true);
+  await press(page, /Dhuhr \+ Asr/);
+  await expectBaseline(page, 'salat.journey-joined-taqdim');
+  expectText(await outbox(page), 'salat.journey-joined-taqdim.outbox');
+});
+
+test('salat: a journey at Asr with Dhuhr unprayed offers joining in Asr time', async ({
+  page,
+  context,
+}) => {
+  await enterDemo(page, { as: 'brother', at: '2026-10-15T15:40:00+06:00', storage: JOURNEY });
+  await go(page, '/salat');
+  // The demo has Dhuhr done already: no offer. Un-marking it makes Asr time's offer appear.
+  await expectBaseline(page, 'salat.journey-asr-no-offer');
+  await context.setOffline(true);
+  await press(page, 'Done', 1);
+  await expectBaseline(page, 'salat.journey-asr-offer');
+  await press(page, /Dhuhr \+ Asr/);
+  expectText(await outbox(page), 'salat.journey-joined-takhir.outbox');
+  await expectBaseline(page, 'salat.journey-joined-takhir');
+});
+
+test('salat: on a journey at Maghrib, joining Maghrib and Isha is offered', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', at: '2026-10-15T17:50:00+06:00', storage: JOURNEY });
+  await go(page, '/salat');
+  await expectBaseline(page, 'salat.journey-maghrib-offer');
+});
+
+test('salat: Hanafi at Dhuhr says joining is not part of the view, and can switch the view', async ({
+  page,
+}) => {
+  await enterDemo(page, {
+    as: 'brother',
+    at: '2026-10-15T12:00:00+06:00',
+    storage: {
+      bustandeen_musafir: JSON.stringify({
+        active: true,
+        startedAt: '2026-10-14',
+        startAfter: 'fajr',
+        destination: 'Chattogram',
+        plannedStay: 3,
+        school: 'hanafi',
+      }),
+    },
+  });
+  await go(page, '/salat');
+  await expectBaseline(page, 'salat.journey-hanafi-note');
+  await press(page, /Follow the majority view/);
+  await expectBaseline(page, 'salat.journey-hanafi-switched');
+  expectText(await musafirStorage(page), 'salat.journey-hanafi-switched.storage');
+});
+
+test('salat: a journey shows the light travel sunnah and "prayed as" choices', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', at: '2026-10-15T19:00:00+06:00', storage: JOURNEY });
+  await go(page, '/salat');
+  await press(page, 'Done', 4); // Isha
+  await expectBaseline(page, 'salat.journey-isha-done');
+});
+
+test.describe('salat during a Rayhanah period', () => {
+  test.use({ serviceWorkers: 'block' });
+
+  test.beforeEach(async ({ page }) => {
+    await page.route('**/assets/*.js', async (route) => {
+      const res = await route.fetch();
+      let body = await res.text();
+      if (body.includes('basedOnCycles:4')) {
+        const before = body;
+        body = body.replace(
+          'active:null,partnerSync',
+          'active:{type:`hayd`,startDate:`2026-10-13`,dayCount:3,maxDays:15,beyondMax:!1},partnerSync'
+        );
+        if (body === before) throw new Error('the demo cycle summary was not found');
+      }
+      await route.fulfill({ response: res, body });
+    });
+  });
+
+  test('the day is excused', async ({ page }) => {
+    await open(page, { as: 'sister' }, '/salat');
+    await expectBaseline(page, 'salat.excused-today');
+  });
+
+  test('a day before the period is not', async ({ page }) => {
+    await enterDemo(page, { as: 'sister' });
+    await page.evaluate(() => {
+      window.history.pushState({}, '', '/salat?date=2026-10-12');
+      window.dispatchEvent(new PopStateEvent('popstate'));
+    });
+    await page.waitForTimeout(600);
+    await expectBaseline(page, 'salat.before-the-period');
+  });
+});
+
 // Audit P4-1 (PR 10, PrayerTimes): the timeline at every kind of moment, a place on
 // another zone, a name that is only coordinates, a changed calculation method.
 const PRAYER_TIMES_AT: Array<[string, string]> = [

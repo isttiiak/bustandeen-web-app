@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.76 - Salat Tracker, first third of the split (audit P4-1, step 14) - 2026-11-27
+
+`pages/SalatTracker.tsx` is the last and largest of the 13 pages (1,828 lines in one component). It is being split in three careful steps; this first one takes out the notes under each prayer card and leaves it at 1537 lines. Nothing changes for anyone: same markup, copy, hadith and references, and the same requests. The tap handlers, the Done / Kaza / Miss logic and the dhikr crediting have NOT moved yet; they move last, with the most proof.
+
+### What moved (verbatim, only imports, `export` and prop names added)
+
+Three components in `components/salat/`, each a plain list of the cards that follow a prayer row, in the same order:
+
+- `SalatCardTop`: the morning/evening adhkār while its window is open, and Tarawih in Ramadan (it writes the same fasting record as the Ramadan page).
+- `SalatCardJoining`: on a journey, the offer to pray a pair together (jamʿ taqdīm and taʾkhīr, with their hadith) and the Ḥanafī note with its one-tap switch to the majority view.
+- `SalatCardGuidance`: the light travel sunnah, the sunnah and nafl guidance (including Jumuʿah's), the Witr reminder and the istiḥāḍa wuḍū reminder.
+
+### Proof
+
+- **Commit 1 (before any move):** 24 browser tests (13 times of the day for the cards, one in Bangla, no saved place, the guidance and adhkar switched off, Tarawih in Ramadan and the request it writes, a journey at Dhuhr, Asr and Maghrib with the joining offers and the requests they write, the Ḥanafī note and its switch, a journey's Isha, a Rayhanah period and the day before it), and 16 server-rendered HTML files (`salatTrackerRender.baselines/`) for what the demo cannot reach: a guest; a full day with every tag; all five done with nafl; a past day (unlogged reads as missed) and the day tracking began; a bad date in the address; a Rayhanah day; the istiḥāḍa reminder; Tarawih not yet and done; a journey with shortened and joined prayers; the Ḥanafī view; a journey on Friday; Friday's hour of response; no saved place. Recorded on the OLD page, built the way CI builds.
+- **Commit 2 (the move):** all of them pass untouched, with the existing Salat baselines.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords, the three component tags and two lines prettier re-wrapped.
+- The `SalatTracker.tsx` cap in `fileSize.test.ts` is lowered to 1537.
+
 ## v5.190.75 - Musafir Mode page split into parts (audit P4-1, step 13) - 2026-11-27
 
 `pages/MusafirMode.tsx` was 1,086 lines in one component. It is now 110. The state moved into one hook and the screen into eleven small files under `components/musafir/` (largest 193 lines). Nothing changes for anyone: same markup, copy, hadith and references, and the same journey saved in the same place. `utils/musafir.ts` (the qaṣr, jamʿ and resident rules) is untouched.
