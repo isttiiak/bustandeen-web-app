@@ -25,6 +25,13 @@ const files = import.meta.glob<string>(
     '../components/cycle/cycleAnalyticsParts.ts',
     '../components/cycle/useCycleAnalyticsPage.ts',
     '../utils/cycleStats.ts',
+    // The cycle page's parts (audit P4-1).
+    '../components/cycle/RayhanahAdhkar.tsx',
+    '../components/cycle/RayhanahBits.tsx',
+    '../components/cycle/RayhanahFastingMakeup.tsx',
+    '../components/cycle/RayhanahFiqhCompanion.tsx',
+    '../components/cycle/RayhanahGarden.tsx',
+    '../components/cycle/rayhanahShared.ts',
   ],
   { query: '?raw', import: 'default', eager: true }
 );
@@ -43,7 +50,7 @@ function strings(node: Tree, path: string, out: Array<[string, string]>) {
 
 describe('Rayhanah screens', () => {
   it('finds the Rayhanah files', () => {
-    expect(Object.keys(files).length).toBe(17);
+    expect(Object.keys(files).length).toBe(23);
   });
 
   it.each(Object.keys(files))('%s renders no emoji or em dash', (path) => {

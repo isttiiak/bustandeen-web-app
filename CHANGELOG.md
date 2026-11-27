@@ -2,6 +2,25 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.73 - Rayhanah Cycle page, first half of the split (audit P4-1, step 11) - 2026-11-27
+
+`pages/RayhanahCycle.tsx` was 1,628 lines in one component. This first half takes out everything that holds no state of its own: it is now 1,119 lines, and the second half (the state and the dialogs) follows in the next release. Nothing changes for anyone: same markup, copy, du'a, references and requests. The Rayhanah privacy rule is untouched: no cycle data goes to an AI or to friends (`cyclePrivacy.test.ts` already covers every file in `components/cycle/`).
+
+### What moved (verbatim, only imports, `export` and prop names added)
+
+- `rayhanahShared.ts`: the constants and helpers: the eight daily phrases, the Garden of Light items, the ghusl steps (Bukhārī 248), the flow, symptom and mood options, the shared class strings, the three date helpers, the six curated du'a with their references (`EXCUSED_ADHKAR`) and `ramadanDaysIn`.
+- `RayhanahBits.tsx`: the citation link (`Ref`) and the arch medallion.
+- `RayhanahGarden`, `RayhanahAdhkar`, `RayhanahFastingMakeup` and `RayhanahFiqhCompanion` (the "Paused for now / Fully open to you" card and the istiḥāḍa guide). The page still decides when each one shows.
+- The page keeps the hooks, the effects, the arch, "How are you today?", the sharing and pregnancy card and the three dialogs (next release).
+
+### Proof
+
+- **Commit 1 (before any move):** `rayhanahRender.test.ts` server-renders the unmodified page for 23 states the demo cannot reach (the demo keeps no started period): loading; an active day with notes and a half-full Garden, with no notes, and a full garden; past the maximum (majority) and (Ḥanafī nifās); pregnant with and without a week; quiet with no history, with a prediction and the fertile window, and a period possibly starting today, tomorrow and in three days; a cycle ended two days ago (the "not done yet" offer) and four days ago (none); owed fasts (three, one and none remaining, and with Ramadan 19 days away); sharing with a friend and with a friend not yet loaded; a brother (the gate); signed out. The HTML is in `rayhanahRender.baselines/`. Nine browser states were recorded on the OLD page too: a nifās start begun offline (and the request it writes), the pregnancy form and its save offline, the share picker and cancel, the settings drawer, the istiḥāḍa guide, the Analytics tab and a brother's gate. Built the way CI builds.
+- **Commit 2 (the move):** all of those match byte for byte, with the existing cycle baselines.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths and `export` keywords.
+- **Not covered by a test:** the one-time move of an old local Garden checklist to the server and the day-by-day navigation (effects and clicks that need a started period); both stay in the page in this release and move with the state next.
+- `rayhanahScreen.test.ts` (no emoji or em dash, no AI import) now also reads the six new files. The `RayhanahCycle.tsx` cap in `fileSize.test.ts` is lowered to 1,119.
+
 ## v5.190.72 - Prayer Times page split into parts (audit P4-1, step 10) - 2026-11-27
 
 `pages/PrayerTimes.tsx` was 1,018 lines. It is now 208. The timeline table moved to its own file and the screen into three components under `components/prayerTimes/` (largest 264 lines). Nothing changes for anyone: same times, windows, copy, requests and clock.
