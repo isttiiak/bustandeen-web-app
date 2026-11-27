@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.71',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: the Ramadan tracker tidied up',
+        fixed: [
+          'We reorganised the code behind the Ramadan tracker into smaller pieces so it is easier to maintain. Nothing looks or works differently, and your fasts and prayers are unaffected.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: রমযান ট্র্যাকারের কোড গোছানো হয়েছে',
+        fixed: [
+          'রমযান ট্র্যাকারের পেছনের কোড ছোট ছোট অংশে ভাগ করা হয়েছে, যাতে রক্ষণাবেক্ষণ সহজ হয়। দেখতে বা কাজে কিছু বদলায়নি, আপনার রোযা ও নামাযের তথ্যেও কোনো প্রভাব পড়ে না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.70',
     date: '2026-11-27',
     text: {

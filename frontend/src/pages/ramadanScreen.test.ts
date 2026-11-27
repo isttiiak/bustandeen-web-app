@@ -7,6 +7,11 @@ import { formatLocaleNumber } from '../utils/localeDate.js';
 // icons only, and their copy has no emoji or em dashes.
 const files = {
   ...import.meta.glob<string>('./Ramadan*.tsx', { query: '?raw', import: 'default', eager: true }),
+  ...import.meta.glob<string>('../components/ramadan/*.{ts,tsx}', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  }),
   ...import.meta.glob<string>(
     [
       '../components/RamadanSalatCard.tsx',
@@ -30,7 +35,7 @@ function strings(node: Tree, path: string, out: Array<[string, string]>) {
 
 describe('Ramadan screens', () => {
   it('finds the Ramadan files', () => {
-    expect(Object.keys(files).length).toBeGreaterThanOrEqual(5);
+    expect(Object.keys(files).length).toBeGreaterThanOrEqual(10);
   });
 
   it.each(Object.keys(files))('%s renders no emoji', (path) => {
@@ -61,7 +66,7 @@ describe('Ramadan screens', () => {
 // citation once sat INSIDE the row's <Link>: an <a> in an <a> is invalid HTML
 // (React validateDOMNesting) and the tap went to /fasting, not the source.
 describe('Ramadan prepare rows', () => {
-  const src = Object.entries(files).find(([k]) => k.endsWith('RamadanTracker.tsx'))?.[1] ?? '';
+  const src = Object.entries(files).find(([k]) => k.endsWith('RamadanCountdown.tsx'))?.[1] ?? '';
   const prepBlock = src.slice(src.indexOf('const prep:'), src.indexOf('const virtues:'));
 
   it('keep the citation out of the row label', () => {
