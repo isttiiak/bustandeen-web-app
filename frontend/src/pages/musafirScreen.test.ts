@@ -10,7 +10,13 @@ import { MUSAFIR_ICON_IDS } from '../components/musafir/musafirIcons.js';
 // portaled (ConfirmDialog), and nothing hard-codes a colour, glows, floats or
 // animates forever (the old floating plane and the bus driving on a loop).
 const files = import.meta.glob<string>(
-  ['./MusafirMode.tsx', '../components/MusafirBanner.tsx', '../components/musafir/*.tsx'],
+  [
+    './MusafirMode.tsx',
+    '../components/MusafirBanner.tsx',
+    // The page's parts (audit P4-1).
+    '../components/musafir/*.tsx',
+    '../components/musafir/*.ts',
+  ],
   { query: '?raw', import: 'default', eager: true }
 );
 const page = './MusafirMode.tsx';
@@ -32,7 +38,7 @@ const usedKeys = [
 
 describe('Musafir screen', () => {
   it('finds the Musafir files', () => {
-    expect(Object.keys(files)).toHaveLength(3);
+    expect(Object.keys(files)).toHaveLength(15);
     expect(usedKeys.length).toBeGreaterThan(60);
   });
 
@@ -52,7 +58,13 @@ describe('Musafir screen', () => {
   );
 
   it('the page has exactly one arch hero and no local fixed overlay', () => {
-    const code = stripComments(files[page] ?? '');
+    // The page and its parts together (the arch is in MusafirHero).
+    const code = stripComments(
+      Object.entries(files)
+        .filter(([path]) => path === page || path.includes('/musafir/'))
+        .map(([, src]) => src)
+        .join('\n')
+    );
     expect(code.match(/rounded-arch/g)).toHaveLength(1);
     // Full-screen overlays go through ConfirmDialog (portaled to <body>).
     expect(code).not.toMatch(/\bfixed inset-0\b/);
