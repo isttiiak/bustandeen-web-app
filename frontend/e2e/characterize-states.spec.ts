@@ -964,6 +964,165 @@ test.describe('salat during a Rayhanah period', () => {
   });
 });
 
+// Audit P4-1 (PR 15, SalatTracker): what the prayer card's own controls do. Each write is
+// compared as the requests it queues (offline) and the toasts and badges it leaves.
+const dhikrStorage = (page: Page) =>
+  page.evaluate(() =>
+    JSON.stringify(
+      Object.fromEntries(
+        Object.keys(localStorage)
+          .filter((k) => /dhikr|credit/i.test(k))
+          .sort()
+          .map((k) => [k, localStorage.getItem(k)])
+      ),
+      null,
+      1
+    )
+  );
+
+const ASR_NOW = '2026-10-15T15:40:00+06:00'; // Asr has begun and the demo has not logged it yet
+
+test('salat: where a prayer was prayed is saved, with the congregation toast', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await context.setOffline(true);
+  await press(page, 'Done', 2);
+  await expectBaseline(page, 'salat.sub-tags-open');
+  await press(page, /At Mosque/);
+  await expectBaseline(page, 'salat.location-mosque');
+  expectText(await outbox(page), 'salat.location-mosque.outbox');
+  await press(page, /In Jamat/);
+  await expectBaseline(page, 'salat.location-jamat');
+  expectText(await outbox(page), 'salat.location-jamat.outbox');
+});
+
+test('salat: tasbeeh and Ayatul Kursi mark a prayer and credit the dhikr', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await context.setOffline(true);
+  await press(page, 'Done', 2);
+  await press(page, 'Tasbeeh');
+  await expectBaseline(page, 'salat.tasbeeh-on');
+  await press(page, 'Ayatul Kursi');
+  await expectBaseline(page, 'salat.ayatul-kursi-on');
+  expectText(await outbox(page), 'salat.tasbeeh-kursi.outbox');
+  expectText(await dhikrStorage(page), 'salat.tasbeeh-kursi.dhikr-storage');
+  await press(page, 'Tasbeeh');
+  await expectBaseline(page, 'salat.tasbeeh-off');
+  expectText(await dhikrStorage(page), 'salat.tasbeeh-off.dhikr-storage');
+});
+
+test('salat: with auto-count off, the tag is marked but nothing is counted', async ({
+  page,
+  context,
+}) => {
+  await open(
+    page,
+    { as: 'brother', at: ASR_NOW, storage: { bustandeen_salat_auto_count: '0' } },
+    '/salat'
+  );
+  await context.setOffline(true);
+  await press(page, 'Done', 2);
+  await press(page, 'Tasbeeh');
+  await expectBaseline(page, 'salat.tasbeeh-no-auto-count');
+  expectText(await dhikrStorage(page), 'salat.tasbeeh-no-auto-count.dhikr-storage');
+});
+
+test('salat: marking a prayer on an earlier day writes that day, not today', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await context.setOffline(true);
+  await press(page, /Select W 14/);
+  await expectBaseline(page, 'salat.yesterday');
+  await press(page, 'Done', 2);
+  await expectBaseline(page, 'salat.yesterday-asr-done');
+  expectText(await outbox(page), 'salat.yesterday-asr-done.outbox');
+});
+
+test('salat: a missed prayer offers an optional reason, and tapping it again clears it', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await context.setOffline(true);
+  await press(page, 'Miss', 2);
+  await expectBaseline(page, 'salat.missed-reasons');
+  await press(page, 'Overslept');
+  await expectBaseline(page, 'salat.missed-reason-chosen');
+  expectText(await outbox(page), 'salat.missed-reason.outbox');
+  await press(page, 'Overslept');
+  await expectBaseline(page, 'salat.missed-reason-cleared');
+});
+
+test('salat: the details toggle opens and closes, and shows what was marked', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await context.setOffline(true);
+  await press(page, 'Done', 2);
+  await press(page, 'Tasbeeh');
+  await press(page, 'Less', 0);
+  await expectBaseline(page, 'salat.details-closed-with-badges');
+  await press(page, 'Details', 2);
+  await expectBaseline(page, 'salat.details-reopened');
+});
+
+test('salat: on a journey, "prayed as" switches a prayer to full', async ({ page, context }) => {
+  await enterDemo(page, { as: 'brother', at: '2026-10-15T19:00:00+06:00', storage: JOURNEY });
+  await go(page, '/salat');
+  await context.setOffline(true);
+  await press(page, 'Done', 4);
+  await press(page, /behind a local imam/);
+  await expectBaseline(page, 'salat.journey-prayed-full');
+  expectText(await outbox(page), 'salat.journey-prayed-full.outbox');
+  await press(page, /2 · qaṣr/);
+  await expectBaseline(page, 'salat.journey-prayed-qasr');
+});
+
+test('salat: on a journey, two finished prayers can be flagged as joined, and un-flagged', async ({
+  page,
+  context,
+}) => {
+  await enterDemo(page, { as: 'brother', at: '2026-10-15T19:00:00+06:00', storage: JOURNEY });
+  await go(page, '/salat');
+  await context.setOffline(true);
+  await press(page, 'Done', 4);
+  await press(page, /Joined with Maghrib/);
+  await expectBaseline(page, 'salat.journey-joined-flag');
+  expectText(await outbox(page), 'salat.journey-joined-flag.outbox');
+  await press(page, /Joined with Maghrib/);
+  await expectBaseline(page, 'salat.journey-joined-unflagged');
+});
+
+test('salat: the day cannot go back past the day tracking began', async ({ page }) => {
+  await open(
+    page,
+    { as: 'brother', at: ASR_NOW, storage: { bustandeen_salat_start_date: '2026-10-14' } },
+    '/salat'
+  );
+  await press(page, 'Previous day');
+  await expect(button(page, 'Previous day')).toBeVisible();
+  await button(page, 'Previous day').click({ force: true });
+  await page.waitForTimeout(300);
+  await expectBaseline(page, 'salat.at-the-start-date');
+});
+
+test('salat: the next-day arrow moves forward and the date opens the calendar', async ({
+  page,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await press(page, 'Previous day');
+  await press(page, 'Next day');
+  await expectBaseline(page, 'salat.back-then-forward');
+});
+
 // Audit P4-1 (PR 10, PrayerTimes): the timeline at every kind of moment, a place on
 // another zone, a name that is only coordinates, a changed calculation method.
 const PRAYER_TIMES_AT: Array<[string, string]> = [

@@ -2,6 +2,27 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.77 - Salat Tracker, second third of the split (audit P4-1, step 15) - 2026-11-27
+
+`pages/SalatTracker.tsx` goes from 1,537 to 1113 lines (1,828 before the split began). This step takes out the prayer card itself: its row, its strip for a traveller's Friday, its two drawers and its Details toggle. Nothing changes for anyone: same markup, copy, hadith and requests. The state and the tap handlers (Done / Kaza / Miss, the sub-tags, the joining, the dhikr crediting, the nafl and kaza-debt edits) have NOT moved; they are the last third.
+
+### What moved (verbatim, only imports, `export` and prop names added)
+
+Four components in `components/salat/`:
+
+- `SalatPrayerRow`: the name with its "now", "window closed", qaṣr and joined badges, the start and end times (and ʿIshāʾ's final window), "not yet" for a locked prayer, and the Done / Kaza / Miss buttons.
+- `SalatFridayTravel`: the full-width strip for a traveller praying Ẓuhr on a Friday.
+- `SalatPrayerDetails`: the sub-tags drawer (where it was prayed, the Jumuʿah and Kaza notes, "prayed as" 2 or 4, "joined with", the after-salat tasbeeh and Ayatul Kursi, the optional recitations with their ḍaʿīf badge) and the optional "why was it missed" drawer.
+- `SalatPrayerToggle`: the Details / Less button, with a badge for what was marked.
+
+### Proof
+
+- **Commit 1 (before any move):** 10 new browser tests on the OLD page (the cards' own controls, compared as the requests they queue and the toasts and badges they leave): where a prayer was prayed (mosque, then jamat) with the congregation toast; tasbeeh and Ayatul Kursi on and off, with the dhikr credited and taken back (and the stored credit record after each); auto-count off (marked, nothing counted); a prayer marked on yesterday (it writes yesterday's date); the optional missed reason, chosen and cleared; the Details toggle, closed with its badges and reopened; on a journey, "prayed as" full and qaṣr; two prayers flagged as joined and un-flagged; the arrow stopping at the day tracking began; back then forward. Together with the 24 browser tests and the 16 server-rendered pages recorded for the first third. Built the way CI builds.
+- **Commit 2 (the move):** every one of them passes untouched.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords, the four component tags and four lines prettier re-wrapped.
+- **Noted, not changed:** on an earlier day, marking a prayer offline does not show as marked until it syncs (the request is queued with that day's date), so the "dhikr counts are only added for today" toast cannot be reached offline. This is how the page behaved before.
+- The `SalatTracker.tsx` cap in `fileSize.test.ts` is lowered to 1113.
+
 ## v5.190.76 - Salat Tracker, first third of the split (audit P4-1, step 14) - 2026-11-27
 
 `pages/SalatTracker.tsx` is the last and largest of the 13 pages (1,828 lines in one component). It is being split in three careful steps; this first one takes out the notes under each prayer card and leaves it at 1537 lines. Nothing changes for anyone: same markup, copy, hadith and references, and the same requests. The tap handlers, the Done / Kaza / Miss logic and the dhikr crediting have NOT moved yet; they move last, with the most proof.

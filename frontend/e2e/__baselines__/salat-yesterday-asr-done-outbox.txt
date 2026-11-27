@@ -1,0 +1,19 @@
+{
+ "sync": [],
+ "salat": [
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "asr",
+    "status": "completed",
+    "date": "2026-10-14",
+    "location": "home",
+    "tasbeeh": false,
+    "ayatulKursi": false,
+    "windowStart": "2026-10-14T09:04:00.000Z",
+    "windowEnd": "2026-10-14T11:16:00.000Z"
+   },
+   "owner": "demo-001"
+  }
+ ]
+}
