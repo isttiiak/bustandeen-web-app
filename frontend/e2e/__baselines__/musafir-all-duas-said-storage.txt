@@ -1,0 +1,5 @@
+{
+ "bustandeen_musafir": "{\"active\":true,\"startedAt\":\"2026-10-14\",\"startAfter\":\"fajr\",\"destination\":\"Chattogram\",\"plannedStay\":3,\"school\":\"majority\"}",
+ "bustandeen_musafir_duas_said": "{\"date\":\"2026-10-15\",\"ids\":[\"returning\",\"stopping\",\"up_down\",\"riding\",\"farewell\",\"leaving_home\"]}",
+ "bustandeen_musafir_history": "[{\"from\":\"2026-09-02\",\"to\":\"2026-09-05\",\"destination\":\"Sylhet\",\"days\":4}]"
+}

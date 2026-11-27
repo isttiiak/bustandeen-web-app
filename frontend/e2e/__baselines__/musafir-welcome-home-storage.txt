@@ -1,0 +1,4 @@
+{
+ "bustandeen_musafir": "{\"active\":false}",
+ "bustandeen_musafir_history": "[{\"from\":\"2026-10-14\",\"to\":\"2026-10-15\",\"destination\":\"Chattogram\",\"days\":2,\"startAfter\":\"fajr\",\"endAfter\":\"fajr\"},{\"from\":\"2026-09-02\",\"to\":\"2026-09-05\",\"destination\":\"Sylhet\",\"days\":4}]"
+}

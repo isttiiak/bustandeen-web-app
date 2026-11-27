@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.75 - Musafir Mode page split into parts (audit P4-1, step 13) - 2026-11-27
+
+`pages/MusafirMode.tsx` was 1,086 lines in one component. It is now 110. The state moved into one hook and the screen into eleven small files under `components/musafir/` (largest 193 lines). Nothing changes for anyone: same markup, copy, hadith and references, and the same journey saved in the same place. `utils/musafir.ts` (the qaṣr, jamʿ and resident rules) is untouched.
+
+### What moved (verbatim, only imports, `export`, hook plumbing and prop names added)
+
+- `useMusafirPage.ts`: the form (start, edit, back-dating up to 60 days), ending a journey, the du'a checklist, the open cards and the numbers the screen derives (day of the journey, resident or traveller, may-be-joined, rak'ahs saved).
+- `musafirShared.ts` (the prayer list, stay presets and class strings), `MusafirBits.tsx` (the cited quote and the journey road), and the cards: `MusafirHero` (the arch), `MusafirReturned` (welcome home), `MusafirForm`, `MusafirPrayers`, `MusafirRewards`, `MusafirDuas`, `MusafirRulings` (the concessions with their evidence), `MusafirSchools` (where the madhabs differ) and `MusafirHistory` (travel history).
+- The page keeps the "coming home" card, the disclaimer and the two confirmation dialogs.
+
+### Proof
+
+- **Commit 1 (before any move):** 13 new browser tests on the OLD page, with the journey kept in storage and compared after each write: a journey in Bangla; a Ḥanafī 20-day stay (a resident, and joining not allowed); starting a journey with a chosen last prayer, stay and destination (and a date older than 60 days being ignored); cancelling the form; editing a journey from the "change" link; "I'm home" asked, cancelled and confirmed (the welcome and what it leaves in the history); removing a past journey (asked, cancelled, confirmed); every du'a marked said and another opened; a concession card opened and closed; and the link to the Salat tracker. Built the way CI builds.
+- **Commit 2 (the move):** these 13, the 3 earlier Musafir baselines and the other pages that show the journey (Home, Salat, Settings) pass untouched.
+- Every non-blank line of the old file is accounted for in the new ones, apart from import paths, `export` keywords and one line prettier re-wrapped.
+- `musafirScreen.test.ts` (no emoji or em dash, no hex colour, every key in both languages, one arch hero, an icon for every ruling and du'a) now reads all fifteen files, and counts the arch across the page and its parts. The `MusafirMode.tsx` cap is removed from `fileSize.test.ts`.
+
 ## v5.190.74 - Rayhanah Cycle page, second half of the split (audit P4-1, step 12) - 2026-11-27
 
 `pages/RayhanahCycle.tsx` was 1,119 lines after the first half and is now 145 (it was 1,628 before the split began). The state moved into one hook and the rest of the screen into five components, all under `components/cycle/`. Nothing changes for anyone: same markup, copy, requests and behaviour. The Rayhanah privacy rule is untouched: nothing here imports an AI hook, and the only thing taken from the social hooks is the friends list for the opt-in "share my status with one friend" picker (`cyclePrivacy.test.ts` checks both for every file in `components/cycle/`).
