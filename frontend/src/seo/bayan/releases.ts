@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.79',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Kaza debt: Escape now keeps your count',
+        fixed: [
+          'In the Kaza debt card, pressing Escape while typing a count now keeps the count you had. Before, the typed number was saved anyway.',
+          'Editing the Kaza debt in the demo no longer shows an error.',
+        ],
+      },
+      bn: {
+        title: 'কাযা ঋণ: Escape চাপলে আগের সংখ্যাই থাকে',
+        fixed: [
+          'কাযা ঋণের কার্ডে সংখ্যা লেখার সময় Escape চাপলে এখন আগের সংখ্যাটিই থেকে যায়। আগে লেখা সংখ্যাটি তবুও সংরক্ষিত হয়ে যেত।',
+          'ডেমোতে কাযা ঋণ বদলালে এখন আর কোনো ত্রুটি দেখায় না।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.78',
     date: '2026-11-27',
     text: {
