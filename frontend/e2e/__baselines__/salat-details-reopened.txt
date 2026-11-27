@@ -2,27 +2,6 @@
  <div id="id1">
   <div class="min-h-screen flex flex-col bg-base-100">
    <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
-    <div class="go318030988" style="left: 0px; right: 0px; display: flex; position: absolute; transition: 230ms cubic-bezier(0.21, 1.02, 0.73, 1); transform: translateY(<px>); top: 0px; justify-content: center">
-     <div class="go1131771667" style="animation: 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards running go1697577655">
-      <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-info" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
-       <circle cx="8.18" cy="14.26" fill="currentColor" r="1.5" stroke="none">
-       <circle cx="5.82" cy="11.01" fill="currentColor" r="1.5" stroke="none">
-       <circle cx="5.82" cy="6.99" fill="currentColor" r="1.5" stroke="none">
-       <circle cx="8.18" cy="3.74" fill="currentColor" r="1.5" stroke="none">
-       <circle cx="12.00" cy="2.50" fill="currentColor" r="1.5" stroke="none">
-       <circle cx="15.82" cy="3.74" fill="currentColor" r="1.5" stroke="none">
-       <circle cx="18.18" cy="6.99" fill="currentColor" r="1.5" stroke="none">
-       <circle cx="18.18" cy="11.01" fill="currentColor" r="1.5" stroke="none">
-       <circle cx="15.82" cy="14.26" fill="currentColor" r="1.5" stroke="none">
-       <path d="<27:5bfdcc38>">
-      <div aria-live="polite" class="go3615723686" role="status">
-       "33 · 33 · 34 added to your dhikr"
-    <div class="go318030988" style="left: 0px; right: 0px; display: flex; position: absolute; transition: 230ms cubic-bezier(0.21, 1.02, 0.73, 1); transform: translateY(<px>); top: 0px; justify-content: center">
-     <div class="go1131771667" style="animation: 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards running go1697577655">
-      <div class="go3110673986">
-       "📶"
-      <div aria-live="polite" class="go3615723686" role="status">
-       "You're offline. This will sync automatically once you're back online."
    <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
     "Skip to main content"
    <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">

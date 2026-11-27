@@ -2,6 +2,13 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.82 - A timing-safe Salat details test - 2026-11-27
+
+Tests only, nothing changes in the app.
+
+- `salat: the details toggle opens and closes, and shows what was marked` (from PR 416) took its snapshots while the dhikr toast (2.2 s) and the offline toast (4 s) were still on screen. On a slow CI runner the dhikr toast was caught mid-exit, which failed PR 420's first run (it passed on re-run). The test now waits until every toast is gone before its two snapshots, so `salat.details-closed-with-badges` and `salat.details-reopened` no longer hold toasts. Both toasts stay recorded by the tests that are about them (`salat.tasbeeh-on`, the offline outbox tests). The page content in the two baselines is unchanged.
+- Stress-checked locally: 8 parallel runs passed 32 of 32. With 16 browsers on one preview server, some runs timed out loading the page before the first tap; none failed at the toast wait or a snapshot.
+
 ## v5.190.81 - Rayhanah data no longer kept in the on-device cache; Salat handler unit tests; demo bookmarks - 2026-11-27
 
 Owner decisions of 2026-11-27 on the four items left open after audit P4-1.

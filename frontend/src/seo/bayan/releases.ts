@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.82',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: steadier checks',
+        fixed: [
+          'We made one of the automatic checks behind the Salat tracker more reliable. Nothing looks or works differently.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: আরও নির্ভরযোগ্য পরীক্ষা',
+        fixed: [
+          'নামাযের ট্র্যাকারের পেছনের একটি স্বয়ংক্রিয় পরীক্ষা আরও নির্ভরযোগ্য করা হলো। দেখতে বা কাজে কিছু বদলায়নি।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.81',
     date: '2026-11-27',
     text: {
