@@ -1,0 +1,17 @@
+{
+ "sync": [
+  {
+   "tracker": "cycle",
+   "method": "put",
+   "url": "/api/cycle/day",
+   "body": {
+    "date": "2026-10-14",
+    "flow": "heavy"
+   },
+   "key": "cycle:day:2026-10-14",
+   "coalesce": "merge",
+   "owner": "demo-001"
+  }
+ ],
+ "salat": []
+}

@@ -1,0 +1,14 @@
+{
+ "sync": [
+  {
+   "tracker": "cycle",
+   "method": "post",
+   "url": "/api/cycle/end",
+   "body": {
+    "date": "2027-02-20"
+   },
+   "owner": "demo-001"
+  }
+ ],
+ "salat": []
+}
