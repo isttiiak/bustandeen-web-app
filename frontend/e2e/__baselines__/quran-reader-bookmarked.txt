@@ -98,9 +98,9 @@
         <button aria-label="Recite this ayah" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border transition-all bg-brand-deep text-brand-emerald border-brand-emerald/10 hover:border-brand-emerald/50" title="Recite only this ayah">
          <svg aria-hidden="true" class="w-4 h-4 ml-0.5" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path clip-rule="evenodd" d="<134:209135f7>" fill-rule="evenodd">
-        <button aria-label="Bookmark this ayah" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-brand-gold hover:border-brand-gold/50">
-         <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="<130:6944eb92>" stroke-linecap="round" stroke-linejoin="round">
+        <button aria-label="Remove bookmark" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-brand-gold hover:border-brand-gold/50">
+         <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path clip-rule="evenodd" d="<174:1bac0529>" fill-rule="evenodd">
         <button aria-label="Share as image" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full grid place-items-center border bg-brand-deep border-brand-border shadow-elev-1 text-white/50 hover:text-white hover:border-brand-emerald/50" title="Share as image">
          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="<261:468cc947>" stroke-linecap="round" stroke-linejoin="round">

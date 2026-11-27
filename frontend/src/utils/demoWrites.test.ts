@@ -39,3 +39,26 @@ describe('the demo kaza debt', () => {
     expect(get().totalOwed).toBe(0);
   });
 });
+
+describe('the demo Quran bookmarks', () => {
+  type Summary = { bookmarks: Array<{ surah: number; ayah: number }> };
+  const summary = () => getDemoResponse('/api/quran/summary', 'get') as Summary;
+  const toggle = (surah: number, ayah: number) =>
+    getDemoResponse('/api/quran/bookmark', 'post', 'male', JSON.stringify({ surah, ayah })) as {
+      ok: boolean;
+      bookmarks: Summary['bookmarks'];
+    };
+
+  it('a toggle adds the ayah (newest first), the summary shows it, a second toggle removes it', () => {
+    expect(summary().bookmarks).toEqual([]);
+    toggle(1, 1);
+    expect(toggle(2, 255).bookmarks).toEqual([
+      { surah: 2, ayah: 255 },
+      { surah: 1, ayah: 1 },
+    ]);
+    expect(summary().bookmarks).toHaveLength(2);
+    expect(toggle(1, 1).bookmarks).toEqual([{ surah: 2, ayah: 255 }]);
+    toggle(2, 255);
+    expect(summary().bookmarks).toEqual([]);
+  });
+});

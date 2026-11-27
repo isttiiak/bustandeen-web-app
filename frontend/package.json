@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.190.80",
+  "version": "5.190.81",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -54,6 +54,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@playwright/test": "^1.65.1",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/react": "16.3.3",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^26.6.6",
     "@types/react": "^18.3.5",
@@ -65,6 +67,7 @@
     "baseline-browser-mapping": "^2.11.39",
     "eslint": "^10.15.0",
     "geo-tz": "^8.1.11",
+    "jsdom": "31.0.1",
     "postcss": "^8.5.33",
     "sharp": "^0.35.5",
     "tailwindcss": "^3.4.19",

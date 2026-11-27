@@ -20,6 +20,26 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.81',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'More privacy for Rayhanah',
+        fixed: [
+          'Your Rayhanah (cycle) data is no longer kept in the copy the app saves on your device to open faster. It is fetched fresh each time, so it cannot be read from a shared or borrowed phone. The privacy page now explains this copy.',
+          'In the demo, a bookmarked ayah now shows as bookmarked.',
+        ],
+      },
+      bn: {
+        title: 'রায়হানাহর জন্য আরও গোপনীয়তা',
+        fixed: [
+          'অ্যাপ দ্রুত খোলার জন্য আপনার ডিভাইসে যে কপি রাখে, তাতে আর রায়হানাহর (মাসিক চক্রের) তথ্য থাকে না। প্রতিবার নতুন করে আনা হয়, তাই অন্যের সাথে ভাগ করা বা ধার করা ফোন থেকে তা পড়া যায় না। গোপনীয়তার পাতায় এখন এই কপির কথা বলা আছে।',
+          'ডেমোতে বুকমার্ক করা আয়াত এখন বুকমার্ক করা হিসেবেই দেখায়।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.80',
     date: '2026-11-27',
     text: {

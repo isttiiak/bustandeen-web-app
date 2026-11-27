@@ -2,6 +2,29 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.81 - Rayhanah data no longer kept in the on-device cache; Salat handler unit tests; demo bookmarks - 2026-11-27
+
+Owner decisions of 2026-11-27 on the four items left open after audit P4-1.
+
+### Privacy
+
+- **Rayhanah (cycle) data is no longer saved in the browser's on-device query cache.** The app saves its recent answers to IndexedDB, in plain text for up to a day, so a reload paints at once. That included cycle data, which the server keeps encrypted. On a shared or borrowed device it could be read from the browser's storage. Queries under the `cycle` key are now never saved and are fetched fresh each visit (`utils/persistPolicy.ts`, tested). The cache `buster` goes from `v1` to `v2`, so copies saved before this change are thrown away at the next load. Trade-off, accepted: after a reload, Rayhanah and the Salat tracker's excused card wait for the network instead of painting at once, and offline they show only after reconnecting.
+- `/privacy` ("Stays on your device only") now says what the cache keeps, how long, that sign-out wipes it, and that Rayhanah data is never in it (en + bn).
+- The six CodeQL `js/clear-text-storage-of-sensitive-data` alerts about gender (#4, #5, #6, #8, #9, #11) were dismissed as "won't fix", with the reason recorded. Gender is kept only in the user's own browser, the app needs it at first paint to choose which features show, and encrypting it inside the same page would give no protection.
+
+### Tests
+
+- `jsdom` and `@testing-library/react` (+ `@testing-library/dom`) added as **dev dependencies only**, pinned. Nothing ships to users. `npm audit --omit=dev` still reports 0, and the dev audit shows the same 7 low/moderate findings as before.
+- New `components/salat/salatHandlers.test.ts` (22 tests) runs the Salat tracker's handler hooks directly:
+  - Every write opens the sign-in sheet for a guest instead of writing (13 taps, including sub-tags, qaṣr and joining, which the demo cannot reach).
+  - The kaza debt clamp (0..9999), and that an unchanged count sends nothing.
+  - The hard block on a prayer whose time has not come (and its jamʿ exception).
+  - Un-marking takes the credited dhikr back first.
+  - Un-marking one half of a joined pair un-joins the other first.
+  - Qaṣr defaults on a travel day; `joinPair`, `toggleJoined` and "prayed as".
+  - Checked by breaking the clamp and one guest check on purpose: both failures were caught.
+- The demo now keeps Quran bookmarks for the visit and answers a toggle with the list, as the server does. The bookmark browser test now checks that the icon fills ("Remove bookmark"); before, the demo answered `{ ok: true }` and the icon never changed, so the test proved nothing. The `quran-reader.bookmarked` and `quran-reader.share-open` baselines were re-recorded for the filled icon. `utils/demoDebt.test.ts` becomes `demoWrites.test.ts` and also covers the bookmarks.
+
 ## v5.190.80 - Big pages split: close-out (audit P4-1 done) - 2026-11-27
 
 Audit P4-1 is done. The 13 pages that were over (or near) 1,000 lines were split into small files by pure extraction, one page per PR (#400 to #417, three pages in more than one step). No behaviour, markup, copy, data, requests or routes changed. This PR only tightens the guard and tidies the proof.
