@@ -1,0 +1,709 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Salat Tracker" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+          <path d="<105:cc4257f9>">
+         "Salat Tracker"
+       <div class="flex items-center gap-1 min-w-0 pl-1">
+        <span class="text-white/15 text-sm hidden sm:inline">
+         "|"
+        <span aria-hidden="true" class="text-sm shrink-0">
+         <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<587:fc8297e1>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="font-semibold text-white/70 text-xs sm:text-sm truncate max-w-[70px] sm:max-w-[130px]">
+         "Musafir Mode"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "A"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-screen relative bg-gradient-to-br from-brand-void to-brand-void via-brand-deep">
+     <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute top-0 left-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-emerald/10 to-brand-info/[0.07] blur-3xl" style="transform: none">
+      <div class="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-gradient-to-r from-brand-gold/[0.07] to-brand-gold/5 blur-3xl" style="transform: none">
+      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 rounded-full bg-gradient-to-r from-brand-warm/5 to-purple-800/[0.03] blur-3xl" style="transform: rotate(360deg)">
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 50px 50px">
+     <div class="relative z-10">
+      <h1 class="sr-only">
+       "Musafir mode"
+      <div class="max-w-2xl mx-auto px-4 pt-5 pb-16 space-y-4">
+       <section class="rounded-arch border border-brand-border bg-gradient-to-b from-hero to-brand-deep shadow-hero px-5 sm:px-7 pt-10 pb-6 text-center">
+        <div class="w-16 h-16 mx-auto rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/30">
+         <svg aria-hidden="true" class="w-8 h-8 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<587:fc8297e1>" stroke-linecap="round" stroke-linejoin="round">
+        <p class="mt-3 text-xs font-bold uppercase tracking-widest text-brand-gold inline-flex items-center gap-2">
+         "Musafir mode"
+         <span class="inline-flex items-center gap-1 normal-case tracking-normal font-semibold text-brand-emerald">
+          <span class="w-1.5 h-1.5 rounded-full bg-brand-emerald">
+          "on"
+        <h2 class="font-display text-3xl font-bold text-white mt-1">
+         "Day 2 of your safar"
+        <p class="text-white/75 text-sm mt-1">
+         "On the way to Chattogram"
+         <span class="text-white/60">
+          "·"
+          "since Oct 14, after Fajr"
+          <button class="underline underline-offset-2 text-white/70 hover:text-white">
+           "change"
+        <div aria-hidden="true" class="flex items-center gap-2 mt-4 max-w-xs mx-auto">
+         <svg aria-hidden="true" class="w-5 h-5 text-white/70 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         <span class="flex-1 border-t-2 border-dashed border-brand-border">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<587:fc8297e1>" stroke-linecap="round" stroke-linejoin="round">
+         <span class="flex-1 border-t-2 border-dashed border-brand-border">
+         <svg aria-hidden="true" class="w-5 h-5 text-white/70 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<37:85aca009>" stroke-linecap="round" stroke-linejoin="round">
+          <path d="<78:3543606e>" stroke-linecap="round" stroke-linejoin="round">
+        <div class="flex flex-wrap justify-center items-center gap-2 mt-3">
+         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border border-brand-border bg-brand-surface/60 text-white/80">
+          <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+          "Shāfiʿī · Mālikī · Ḥanbalī"
+         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border border-brand-border bg-brand-surface/60 text-white/80">
+          <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<181:524da663>" stroke-linecap="round" stroke-linejoin="round">
+          "staying 3 days"
+        <div class="mt-4 rounded-control border p-3 text-xs sm:text-sm leading-relaxed text-left flex gap-2 border-brand-emerald/40 bg-brand-emerald/10 text-white/85">
+         <svg aria-hidden="true" class="w-4 h-4 mt-0.5 shrink-0 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<573:bd7b4ae2>" stroke-linecap="round" stroke-linejoin="round">
+         <span>
+          "Qaṣr applies: pray Ẓuhr, ʿAṣr and ʿIshāʾ as 2 rak’ahs. Your salat tracker already knows."
+        <div class="flex flex-wrap justify-center gap-2 mt-4">
+         <a class="btn-solid inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 transition disabled:opacity-50 disabled:cursor-not-allowed" data-discover="true" href="/salat">
+          <svg aria-hidden="true" class="w-4 h-4" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<105:cc4257f9>">
+          "Log today’s prayers"
+         <button class="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors">
+          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<256:398848a9>" stroke-linecap="round" stroke-linejoin="round">
+          "Edit journey"
+         <button class="inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-white/80 hover:text-white bg-brand-deep border border-brand-border hover:border-brand-emerald/40 shadow-elev-1 transition-colors !text-brand-gold !border-brand-gold/40">
+          <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+          "I’m home"
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5">
+        <div class="flex items-baseline justify-between gap-2 flex-wrap">
+         <h3 class="font-display text-white font-bold text-base flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<105:cc4257f9>">
+          "Your prayers on the road"
+         <span class="text-brand-emerald text-[11px] font-bold">
+          "6 rak’ahs lighter a day"
+        <div class="grid grid-cols-5 gap-1.5 sm:gap-2 mt-3">
+         <div class="min-w-0 rounded-control border text-center py-2.5 sm:py-3 px-0.5 sm:px-1 border-brand-border bg-brand-surface/50">
+          <svg aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-white/70" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<53:0688da6a>">
+          <p class="text-white/80 text-[9px] min-[360px]:text-[10px] sm:text-[11px] font-bold mt-1 leading-tight tracking-tight sm:tracking-normal whitespace-nowrap">
+           "Fajr"
+          <p class="mt-1 leading-none">
+           <span class="font-display text-xl sm:text-2xl font-bold text-white/85">
+            "2"
+          <p class="text-white/60 text-[8px] sm:text-[9px] mt-1 uppercase sm:tracking-wide">
+           "same"
+         <div class="min-w-0 rounded-control border text-center py-2.5 sm:py-3 px-0.5 sm:px-1 border-brand-emerald/50 bg-brand-emerald/10">
+          <svg aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="12" cy="12" r="4">
+           <path d="<87:743e93f6>">
+          <p class="text-white/80 text-[9px] min-[360px]:text-[10px] sm:text-[11px] font-bold mt-1 leading-tight tracking-tight sm:tracking-normal whitespace-nowrap">
+           "Dhuhr"
+          <p class="mt-1 leading-none">
+           <span class="text-white/50 text-[10px] sm:text-xs line-through mr-0.5 sm:mr-1">
+            "4"
+           <span class="font-display text-xl sm:text-2xl font-bold text-brand-emerald">
+            "2"
+          <p class="text-white/60 text-[8px] sm:text-[9px] mt-1 uppercase sm:tracking-wide">
+           "qaṣr"
+         <div class="min-w-0 rounded-control border text-center py-2.5 sm:py-3 px-0.5 sm:px-1 border-brand-emerald/50 bg-brand-emerald/10">
+          <svg aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <circle cx="17" cy="7" r="3">
+           <path d="<59:a1c35ffe>">
+          <p class="text-white/80 text-[9px] min-[360px]:text-[10px] sm:text-[11px] font-bold mt-1 leading-tight tracking-tight sm:tracking-normal whitespace-nowrap">
+           "Asr"
+          <p class="mt-1 leading-none">
+           <span class="text-white/50 text-[10px] sm:text-xs line-through mr-0.5 sm:mr-1">
+            "4"
+           <span class="font-display text-xl sm:text-2xl font-bold text-brand-emerald">
+            "2"
+          <p class="text-white/60 text-[8px] sm:text-[9px] mt-1 uppercase sm:tracking-wide">
+           "qaṣr"
+         <div class="min-w-0 rounded-control border text-center py-2.5 sm:py-3 px-0.5 sm:px-1 border-brand-border bg-brand-surface/50">
+          <svg aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-white/70" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<62:a39a7253>">
+          <p class="text-white/80 text-[9px] min-[360px]:text-[10px] sm:text-[11px] font-bold mt-1 leading-tight tracking-tight sm:tracking-normal whitespace-nowrap">
+           "Maghrib"
+          <p class="mt-1 leading-none">
+           <span class="font-display text-xl sm:text-2xl font-bold text-white/85">
+            "3"
+          <p class="text-white/60 text-[8px] sm:text-[9px] mt-1 uppercase sm:tracking-wide">
+           "same"
+         <div class="min-w-0 rounded-control border text-center py-2.5 sm:py-3 px-0.5 sm:px-1 border-brand-emerald/50 bg-brand-emerald/10">
+          <svg aria-hidden="true" class="w-5 h-5 sm:w-6 sm:h-6 mx-auto text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<48:d4b5bdae>">
+           <path d="<57:113b21ba>">
+          <p class="text-white/80 text-[9px] min-[360px]:text-[10px] sm:text-[11px] font-bold mt-1 leading-tight tracking-tight sm:tracking-normal whitespace-nowrap">
+           "Isha"
+          <p class="mt-1 leading-none">
+           <span class="text-white/50 text-[10px] sm:text-xs line-through mr-0.5 sm:mr-1">
+            "4"
+           <span class="font-display text-xl sm:text-2xl font-bold text-brand-emerald">
+            "2"
+          <p class="text-white/60 text-[8px] sm:text-[9px] mt-1 uppercase sm:tracking-wide">
+           "qaṣr"
+        <div class="mt-3 rounded-control border border-brand-border bg-shade/20 p-3">
+         <div class="flex flex-wrap items-center gap-2 text-xs">
+          <span class="text-white/75 font-bold inline-flex items-center gap-1.5">
+           <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<169:50f54e3a>" stroke-linecap="round" stroke-linejoin="round">
+           "May be joined:"
+          <span class="px-2 py-0.5 rounded-lg bg-brand-gold/15 text-brand-gold font-bold">
+           "Dhuhr"
+           "+"
+           "Asr"
+          <span class="px-2 py-0.5 rounded-lg bg-brand-gold/15 text-brand-gold font-bold">
+           "Maghrib"
+           "+"
+           "Isha"
+       <div class="grid sm:grid-cols-2 gap-3">
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4">
+         <h3 class="font-display text-white font-bold text-base flex items-center gap-2 !text-sm">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<611:a68d29de>" stroke-linecap="round" stroke-linejoin="round">
+          "Your good deeds keep flowing"
+         <p class="text-white/70 text-[11px] mt-0.5 mb-2">
+          "Can’t keep your usual adhkar or nafl on the road? The reward is still written."
+         <div>
+          <p class="text-white/80 text-xs sm:text-sm leading-relaxed">
+           "“"
+           "When a servant falls ill or travels, the like of what he used to do while resident and healthy is written for him."
+           "”"
+          <a class="inline-flex items-center gap-1 mt-1 text-[11px] text-brand-gold underline underline-offset-2" href="https://sunnah.com/bukhari:2996" rel="noreferrer" target="_blank">
+           <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+           "Ṣaḥīḥ al-Bukhārī 2996"
+           "· Ṣaḥīḥ"
+           <svg aria-hidden="true" class="w-3 h-3 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<132:60070bd8>" stroke-linecap="round" stroke-linejoin="round">
+        <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4">
+         <h3 class="font-display text-white font-bold text-base flex items-center gap-2 !text-sm">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          "Your du‘ā is answered"
+         <p class="text-white/70 text-[11px] mt-0.5 mb-2">
+          "Use the journey: ask for your parents, your family, the ummah and your own heart."
+         <div>
+          <p class="text-white/80 text-xs sm:text-sm leading-relaxed">
+           "“"
+           "Three supplications are answered, there is no doubt about them: the supplication of the oppressed, the supplication of the traveller, and the supplication of a father for his child."
+           "”"
+          <a class="inline-flex items-center gap-1 mt-1 text-[11px] text-brand-gold underline underline-offset-2" href="https://sunnah.com/tirmidhi:1905" rel="noreferrer" target="_blank">
+           <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+           "Jāmiʿ al-Tirmidhī 1905"
+           "· Ḥasan (al-Albānī)"
+           <svg aria-hidden="true" class="w-3 h-3 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<132:60070bd8>" stroke-linecap="round" stroke-linejoin="round">
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5">
+        <div class="flex items-center justify-between gap-2">
+         <h3 class="font-display text-white font-bold text-base flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+           <path d="<95:b6cd9399>">
+           <path d="<97:b115fe97>">
+          "Du‘ās of the journey"
+         <span class="text-brand-emerald text-xs font-bold tabular-nums">
+          "6"
+          "/"
+          "6"
+        <div class="h-1.5 rounded-full bg-brand-surface mt-2 overflow-hidden">
+         <div class="h-full rounded-full bg-brand-emerald transition-[width] duration-500" style="width: 100%">
+        <p class="text-white/65 text-[11px] mt-1.5">
+         "MashaAllah, every travel sunnah du‘ā today!"
+        <ul class="mt-3 space-y-2">
+         <li class="rounded-control border transition-colors border-brand-emerald/50 bg-brand-emerald/10">
+          <div class="flex items-center gap-3 p-3">
+           <button aria-label="Mark as said" aria-pressed="true" class="shrink-0 w-8 h-8 rounded-full border-2 grid place-items-center transition-colors active:scale-90 bg-brand-emerald-dim border-brand-emerald-dim text-on-color">
+            <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+           <button aria-expanded="false" class="flex-1 min-w-0 text-left flex items-center gap-2">
+            <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+            <span class="min-w-0">
+             <span class="block text-sm font-bold leading-tight text-brand-emerald">
+              "Stepping out of the house"
+            <svg aria-hidden="true" class="ml-auto w-4 h-4 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <li class="rounded-control border transition-colors border-brand-emerald/50 bg-brand-emerald/10">
+          <div class="flex items-center gap-3 p-3">
+           <button aria-label="Mark as said" aria-pressed="true" class="shrink-0 w-8 h-8 rounded-full border-2 grid place-items-center transition-colors active:scale-90 bg-brand-emerald-dim border-brand-emerald-dim text-on-color">
+            <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+           <button aria-expanded="false" class="flex-1 min-w-0 text-left flex items-center gap-2">
+            <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<444:a69ee5f3>" stroke-linecap="round" stroke-linejoin="round">
+            <span class="min-w-0">
+             <span class="block text-sm font-bold leading-tight text-brand-emerald">
+              "Bidding farewell to family and friends"
+            <svg aria-hidden="true" class="ml-auto w-4 h-4 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <li class="rounded-control border transition-colors border-brand-emerald/50 bg-brand-emerald/10">
+          <div class="flex items-center gap-3 p-3">
+           <button aria-label="Mark as said" aria-pressed="true" class="shrink-0 w-8 h-8 rounded-full border-2 grid place-items-center transition-colors active:scale-90 bg-brand-emerald-dim border-brand-emerald-dim text-on-color">
+            <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+           <button aria-expanded="false" class="flex-1 min-w-0 text-left flex items-center gap-2">
+            <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<417:e877107a>" stroke-linecap="round" stroke-linejoin="round">
+            <span class="min-w-0">
+             <span class="block text-sm font-bold leading-tight text-brand-emerald">
+              "Once seated in the car, bus, train or plane"
+            <svg aria-hidden="true" class="ml-auto w-4 h-4 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <li class="rounded-control border transition-colors border-brand-emerald/50 bg-brand-emerald/10">
+          <div class="flex items-center gap-3 p-3">
+           <button aria-label="Mark as said" aria-pressed="true" class="shrink-0 w-8 h-8 rounded-full border-2 grid place-items-center transition-colors active:scale-90 bg-brand-emerald-dim border-brand-emerald-dim text-on-color">
+            <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+           <button aria-expanded="false" class="flex-1 min-w-0 text-left flex items-center gap-2">
+            <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<36:da7da998>">
+             <path d="<22:2c76e020>">
+            <span class="min-w-0">
+             <span class="block text-sm font-bold leading-tight text-brand-emerald">
+              "Going up (take-off, a hill) and coming down"
+            <svg aria-hidden="true" class="ml-auto w-4 h-4 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <li class="rounded-control border transition-colors border-brand-emerald/50 bg-brand-emerald/10">
+          <div class="flex items-center gap-3 p-3">
+           <button aria-label="Mark as said" aria-pressed="true" class="shrink-0 w-8 h-8 rounded-full border-2 grid place-items-center transition-colors active:scale-90 bg-brand-emerald-dim border-brand-emerald-dim text-on-color">
+            <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+           <button aria-expanded="false" class="flex-1 min-w-0 text-left flex items-center gap-2">
+            <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<37:85aca009>" stroke-linecap="round" stroke-linejoin="round">
+             <path d="<78:3543606e>" stroke-linecap="round" stroke-linejoin="round">
+            <span class="min-w-0">
+             <span class="block text-sm font-bold leading-tight text-brand-emerald">
+              "Arriving at a hotel, rest stop or any new place"
+            <svg aria-hidden="true" class="ml-auto w-4 h-4 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <li class="rounded-control border transition-colors border-brand-emerald/50 bg-brand-emerald/10">
+          <div class="flex items-center gap-3 p-3">
+           <button aria-label="Mark as said" aria-pressed="true" class="shrink-0 w-8 h-8 rounded-full border-2 grid place-items-center transition-colors active:scale-90 bg-brand-emerald-dim border-brand-emerald-dim text-on-color">
+            <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<21:2edcb7cd>" stroke-linecap="round" stroke-linejoin="round">
+           <button aria-expanded="true" class="flex-1 min-w-0 text-left flex items-center gap-2">
+            <svg aria-hidden="true" class="w-5 h-5 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<233:5f4926ff>" stroke-linecap="round" stroke-linejoin="round">
+            <span class="min-w-0">
+             <span class="block text-sm font-bold leading-tight text-brand-emerald">
+              "On the way home (the riding du‘ā, then add this)"
+             <span class="text-brand-gold text-[10px] font-bold uppercase tracking-wide">
+              "on return"
+            <svg aria-hidden="true" class="ml-auto w-4 h-4 shrink-0 text-white/60 transition-transform rotate-180" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+          <div class="overflow-hidden" style="height: auto; opacity: 1">
+           <div class="px-4 pb-4 space-y-2">
+            <p class="text-white text-xl leading-loose font-arabic text-right" dir="rtl" lang="ar">
+             "آيِبُونَ، تَائِبُونَ، عَابِدُونَ، لِرَبِّنَا حَامِدُونَ"
+            <p class="text-brand-gold text-xs italic leading-relaxed">
+             "Āyibūna, tāʾibūna, ʿābidūna, li-rabbinā ḥāmidūn"
+            <p class="text-white/75 text-xs leading-relaxed">
+             "We return, repenting, worshipping, and praising our Lord."
+            <a class="inline-flex items-center gap-1 text-[11px] text-brand-gold underline underline-offset-2" href="https://sunnah.com/muslim:1342" rel="noreferrer" target="_blank">
+             <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+             "Ṣaḥīḥ Muslim 1342"
+             "·"
+             "Ṣaḥīḥ"
+             <svg aria-hidden="true" class="w-3 h-3 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<132:60070bd8>" stroke-linecap="round" stroke-linejoin="round">
+       <section>
+        <h3 class="font-display text-white font-bold text-base flex items-center gap-2 px-1">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<316:07ba3a20>" stroke-linecap="round" stroke-linejoin="round">
+         "The traveller’s concessions"
+        <p class="text-white/70 text-xs px-1 mt-0.5 mb-3">
+         "Tap any card for the details and the hadith behind it."
+        <div class="space-y-2">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<573:bd7b4ae2>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Qaṣr: shorten the four-rak’ah prayers"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "Ẓuhr, ʿAṣr and ʿIshāʾ become 2 rak’ahs. Fajr stays 2, Maghrib stays 3."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<324:631e4b82>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "When does it start and end?"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "Start once you leave your town’s built-up area; stop when you are back inside it."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<181:524da663>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Staying somewhere: how long are you still a musafir?"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "Depends on your intention to stay: 4+ days (majority) or 15+ days (Ḥanafī) makes you a resident."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<169:50f54e3a>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Jamʿ: joining two prayers"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "Ẓuhr with ʿAṣr, Maghrib with ʿIshāʾ, in the earlier time (taqdīm) or the later (taʾkhīr)."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<180:c33b6451>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Sunnah prayers: lighten, but keep two"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "The rawātib may be left on a journey. Keep Fajr’s two sunnah and Witr."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<417:e877107a>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Fard prayer in a vehicle"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "Pray fard facing the qiblah, standing if you can. Plan stops, or join prayers to catch a window."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<105:cc4257f9>">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Behind a local (resident) imam"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "Follow the imam and pray all four. Shorten only when you pray alone or lead other travellers."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<555:678fdcb9>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Friday on the road"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "Jumuʿah is not obligatory on a traveller: pray Ẓuhr (2). If you can join a Jumuʿah, it counts."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<48:d9d3fbc7>" stroke-linecap="round" stroke-linejoin="round">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Missed a prayer on the journey?"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "Make it up as a travel prayer: 2 rak’ahs while travelling. Back home, the schools differ."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<48:f4c03581>">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Fasting on a journey"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "You may fast or break it, and make up the missed days later. If it is hard, breaking it is better."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<71:0249aea7>">
+             <path d="<31:734cf3fb>">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "Wiping over socks: 3 days"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "Put them on with wuḍūʾ, then wipe over them for up to 3 days and nights (1 day at home)."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+         <div class="rounded-control border bg-brand-deep shadow-elev-1 overflow-hidden transition-colors border-brand-border">
+          <button aria-expanded="false" class="w-full text-left p-3.5 flex items-start gap-3">
+           <span class="w-9 h-9 shrink-0 rounded-full grid place-items-center bg-brand-gold/10 border border-brand-gold/25">
+            <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+             <path d="<36:da7da998>">
+             <path d="<22:2c76e020>">
+           <span class="flex-1 min-w-0">
+            <span class="block text-white font-bold text-sm leading-snug">
+             "No water? Tayammum"
+            <span class="block text-white/70 text-xs mt-0.5 leading-relaxed">
+             "If you cannot find or use water, strike clean earth and wipe your face and hands."
+           <svg aria-hidden="true" class="w-4 h-4 mt-1 shrink-0 text-white/60 transition-transform " data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<26:34b8616b>" stroke-linecap="round" stroke-linejoin="round">
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5">
+        <h3 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+         "Where the madhabs differ"
+        <p class="text-white/70 text-xs mt-0.5">
+         "Both are valid scholarly positions. Your choice is highlighted."
+        <div class="mt-3 space-y-3">
+         <div>
+          <p class="text-white/75 text-[11px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+           <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<324:631e4b82>" stroke-linecap="round" stroke-linejoin="round">
+           "Minimum distance"
+          <div class="grid sm:grid-cols-2 gap-2">
+           <div class="rounded-control border p-2.5 border-brand-emerald/60 bg-brand-emerald/10">
+            <p class="text-[10px] font-bold uppercase text-brand-emerald">
+             "Shāfiʿī · Mālikī · Ḥanbalī"
+            <p class="text-white/80 text-xs mt-0.5 leading-relaxed">
+             "About 80–89 km (4 burud, 48 Hāshimī miles)"
+           <div class="rounded-control border p-2.5 border-brand-border bg-shade/20">
+            <p class="text-[10px] font-bold uppercase text-white/60">
+             "Ḥanafī"
+            <p class="text-white/80 text-xs mt-0.5 leading-relaxed">
+             "About 77–78 km (three days’ walk, 48 miles)"
+         <div>
+          <p class="text-white/75 text-[11px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+           <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<181:524da663>" stroke-linecap="round" stroke-linejoin="round">
+           "Staying at one place"
+          <div class="grid sm:grid-cols-2 gap-2">
+           <div class="rounded-control border p-2.5 border-brand-emerald/60 bg-brand-emerald/10">
+            <p class="text-[10px] font-bold uppercase text-brand-emerald">
+             "Shāfiʿī · Mālikī · Ḥanbalī"
+            <p class="text-white/80 text-xs mt-0.5 leading-relaxed">
+             "Intend to stay 4 days or more (not counting the days of arriving and leaving) and you pray in full from arrival."
+           <div class="rounded-control border p-2.5 border-brand-border bg-shade/20">
+            <p class="text-[10px] font-bold uppercase text-white/60">
+             "Ḥanafī"
+            <p class="text-white/80 text-xs mt-0.5 leading-relaxed">
+             "Intend to stay 15 days or more at one place and you pray in full. Less than that, keep shortening."
+         <div>
+          <p class="text-white/75 text-[11px] font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+           <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="<169:50f54e3a>" stroke-linecap="round" stroke-linejoin="round">
+           "Joining prayers"
+          <div class="grid sm:grid-cols-2 gap-2">
+           <div class="rounded-control border p-2.5 border-brand-emerald/60 bg-brand-emerald/10">
+            <p class="text-[10px] font-bold uppercase text-brand-emerald">
+             "Shāfiʿī · Mālikī · Ḥanbalī"
+            <p class="text-white/80 text-xs mt-0.5 leading-relaxed">
+             "Allowed: Ẓuhr with ʿAṣr and Maghrib with ʿIshāʾ, in either prayer’s time."
+           <div class="rounded-control border p-2.5 border-brand-border bg-shade/20">
+            <p class="text-[10px] font-bold uppercase text-white/60">
+             "Ḥanafī"
+            <p class="text-white/80 text-xs mt-0.5 leading-relaxed">
+             "Each prayer in its own time. Only a “formal” joining is allowed: Ẓuhr at the very end of its time, ʿAṣr at the very start of its own."
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5 space-y-3">
+        <h3 class="font-display text-white font-bold text-base flex items-center gap-2">
+         <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "When the work is done, go home"
+        <div>
+         <p class="text-white/80 text-xs sm:text-sm leading-relaxed">
+          "“"
+          "Travel is a piece of torment: it keeps you from your food, drink and sleep. So when one of you has finished his business, let him hurry back to his family."
+          "”"
+         <a class="inline-flex items-center gap-1 mt-1 text-[11px] text-brand-gold underline underline-offset-2" href="https://sunnah.com/bukhari:1804" rel="noreferrer" target="_blank">
+          <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+          "Ṣaḥīḥ al-Bukhārī 1804"
+          "· Ṣaḥīḥ"
+          <svg aria-hidden="true" class="w-3 h-3 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<132:60070bd8>" stroke-linecap="round" stroke-linejoin="round">
+        <div>
+         <p class="text-white/80 text-xs sm:text-sm leading-relaxed">
+          "“"
+          "Whenever the Prophet ﷺ returned from a journey, he would first go to the mosque and pray two rak’ahs in it before sitting down."
+          "”"
+         <a class="inline-flex items-center gap-1 mt-1 text-[11px] text-brand-gold underline underline-offset-2" href="https://sunnah.com/bukhari:3088" rel="noreferrer" target="_blank">
+          <svg aria-hidden="true" class="w-3.5 h-3.5 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
+          "Ṣaḥīḥ al-Bukhārī 3088"
+          "· Ṣaḥīḥ"
+          <svg aria-hidden="true" class="w-3 h-3 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<132:60070bd8>" stroke-linecap="round" stroke-linejoin="round">
+       <p class="text-white/60 text-[11px] leading-relaxed px-1">
+        "Every reference links to its source. Details (exact distance, socks, special cases like a job that keeps you travelling) differ between scholars: when in doubt, ask a scholar you trust. Your journey is saved to your account settings and stays private."
+       <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-4 sm:p-5">
+        <div class="flex items-baseline justify-between gap-2 flex-wrap">
+         <h3 class="font-display text-white font-bold text-base flex items-center gap-2">
+          <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+           <path d="<324:631e4b82>" stroke-linecap="round" stroke-linejoin="round">
+          "Travel history"
+         <span class="text-white/65 text-[11px] font-bold">
+          "2 journeys · 6 days on the road"
+        <ol class="mt-3 relative border-l border-brand-border ml-2 space-y-3">
+         <li class="pl-4 relative">
+          <span class="absolute -left-[7px] top-1 w-3 h-3 rounded-full bg-brand-emerald ring-4 ring-brand-emerald/20">
+          <div class="flex items-center gap-2 flex-wrap">
+           <span class="text-white/90 text-sm font-bold min-w-0 break-words inline-flex items-center gap-1">
+            <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<37:85aca009>" stroke-linecap="round" stroke-linejoin="round">
+             <path d="<78:3543606e>" stroke-linecap="round" stroke-linejoin="round">
+            "Chattogram"
+           <span class="text-[10px] font-bold uppercase px-1.5 py-0.5 rounded-md bg-brand-emerald/15 text-brand-emerald">
+            "ongoing"
+          <p class="text-white/65 text-xs mt-0.5">
+           "Oct 14"
+           "(after Fajr)"
+           "→"
+           "now"
+           "·"
+           "2d"
+         <li class="pl-4 relative">
+          <span class="absolute -left-[5px] top-1.5 w-2 h-2 rounded-full bg-white/40">
+          <div class="flex items-start gap-2">
+           <div class="min-w-0 flex-1">
+            <p class="text-white/85 text-sm font-bold break-words inline-flex items-center gap-1">
+             <svg aria-hidden="true" class="w-4 h-4 shrink-0 text-white/60" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="<37:85aca009>" stroke-linecap="round" stroke-linejoin="round">
+              <path d="<78:3543606e>" stroke-linecap="round" stroke-linejoin="round">
+             "Sylhet"
+            <p class="text-white/65 text-xs mt-0.5">
+             "Sep 2"
+             "→"
+             "Sep 5"
+             "·"
+             "4d"
+           <button aria-label="Remove this journey" class="shrink-0 w-7 h-7 rounded-lg grid place-items-center text-white/60 hover:text-red-400 hover:bg-red-400/10" title="Remove this journey">
+            <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+             <path d="<20:bdc9e2a5>" stroke-linecap="round" stroke-linejoin="round">
+    <div class="fixed right-4 z-40 flex flex-col items-center gap-3 pointer-events-none" style="bottom: calc(5rem + env(safe-area-inset-bottom, 0px))">
+     <button aria-label="Go to top" class="pointer-events-auto w-11 h-11 rounded-full grid place-items-center bg-brand-deep text-white border border-brand-border shadow-elev-2 hover:border-brand-emerald hover:text-brand-emerald transition-colors" title="Go to top" type="button">
+      <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+       <path clip-rule="evenodd" d="<143:a4c237d7>" fill-rule="evenodd">
+   <footer class="bg-brand-deep text-white border-t border-brand-border mt-auto">
+    <div class="footer footer-center p-6 sm:p-8">
+     <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center gap-2 text-sm sm:text-base">
+       <span>
+        "Made with love"
+       <svg aria-hidden="true" class="w-4 h-4 text-red-300" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<384:b0396863>">
+       <span>
+        "for the ummah"
+      <nav aria-label="Footer" class="flex flex-wrap justify-center items-center gap-x-3 gap-y-1.5 text-xs">
+       <a class="inline-flex items-center text-white/60 hover:text-brand-emerald underline underline-offset-2 transition-colors" data-discover="true" href="/feedback">
+        "Feedback & Contact"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-brand-gold underline underline-offset-2 transition-colors" data-discover="true" href="/about">
+        "About"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/privacy">
+        "Privacy"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/terms">
+        "Terms"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://bayan.bustandeen.com/home">
+        "Help & updates"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://status.bustandeen.com" rel="noopener noreferrer" target="_blank">
+        "Status"
+      <p class="text-xs sm:text-sm text-white/70">
+       "Bustandeen"
+      <div class="flex gap-4 text-xs opacity-70">
+       <span>
+        "Non-commercial"
+       <span>
+        "•"
+       <span>
+        "Free · Ad-free · Open-source"
+       <span>
+        "•"
+       <span>
+        "Your data is yours"
+      <p class="text-[10px] text-white/60 tabular-nums">
+       "v"
+       "<version>"

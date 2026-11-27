@@ -561,6 +561,156 @@ test('cycle analytics: the CSV export has the same rows', async ({ page }) => {
   );
 });
 
+// Audit P4-1 (PR 13, MusafirMode): the form, the journey's edits, coming home, deleting a
+// past journey and the evidence cards. The journey lives in localStorage, so each
+// write is compared as the storage it leaves behind.
+const musafirStorage = (page: Page) =>
+  page.evaluate(() =>
+    JSON.stringify(
+      Object.fromEntries(
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith('bustandeen_musafir'))
+          .sort()
+          .map((k) => [k, localStorage.getItem(k)])
+      ),
+      null,
+      1
+    )
+  );
+
+const HANAFI_LONG_STAY = {
+  bustandeen_musafir: JSON.stringify({
+    active: true,
+    startedAt: '2026-10-14',
+    startAfter: 'fajr',
+    destination: 'Chattogram',
+    plannedStay: 20,
+    school: 'hanafi',
+  }),
+};
+
+test('musafir: a journey under way, in Bangla', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', at: AT.day, lang: 'bn', storage: JOURNEY });
+  await go(page, '/musafir');
+  await expectBaseline(page, 'musafir.journey.bn');
+});
+
+test('musafir: a Hanafi long stay is a resident, and prayers may not be joined', async ({
+  page,
+}) => {
+  await enterDemo(page, { as: 'brother', at: AT.day, storage: HANAFI_LONG_STAY });
+  await go(page, '/musafir');
+  await expectBaseline(page, 'musafir.hanafi-resident');
+});
+
+test('musafir: starting a journey with chosen options saves it', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/musafir');
+  await press(page, 'Start my journey');
+  await page.getByPlaceholder(/Makkah/).fill('Sylhet');
+  await press(page, /Asr/);
+  await press(page, '5 days');
+  await expectBaseline(page, 'musafir.form-filled');
+  // A date older than the 60 days allowed is ignored.
+  await page.locator('input[type="date"]').fill('2026-07-01');
+  await expectBaseline(page, 'musafir.form-old-date-ignored');
+  await press(page, /Bismillah/);
+  await expectBaseline(page, 'musafir.started');
+  expectText(await musafirStorage(page), 'musafir.started.storage');
+});
+
+test('musafir: the form can be cancelled', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/musafir');
+  await press(page, 'Start my journey');
+  await press(page, 'Cancel');
+  await expectBaseline(page, 'musafir.form-cancelled');
+});
+
+test('musafir: editing a journey (the change link) saves the new values', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', at: AT.day, storage: JOURNEY });
+  await go(page, '/musafir');
+  await press(page, 'change');
+  await expectBaseline(page, 'musafir.edit-open');
+  await page.getByPlaceholder(/Makkah/).fill('Cox’s Bazar');
+  await press(page, /Hanafi|Ḥanafī/);
+  await press(page, 'Save');
+  await expectBaseline(page, 'musafir.edit-saved');
+  expectText(await musafirStorage(page), 'musafir.edit-saved.storage');
+});
+
+test('musafir: "I’m home" asks, then ends the journey and welcomes you back', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', at: AT.day, storage: JOURNEY });
+  await go(page, '/musafir');
+  await press(page, 'I’m home');
+  await expectBaseline(page, 'musafir.home-confirm');
+  await press(page, 'Cancel');
+  await expectBaseline(page, 'musafir.home-cancelled');
+  await press(page, 'I’m home');
+  await press(page, 'Yes, I’m home');
+  await expectBaseline(page, 'musafir.welcome-home');
+  expectText(await musafirStorage(page), 'musafir.welcome-home.storage');
+  await press(page, 'Close');
+  await expectBaseline(page, 'musafir.welcome-closed');
+});
+
+test('musafir: removing a past journey asks first', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', at: AT.day, storage: JOURNEY });
+  await go(page, '/musafir');
+  await press(page, 'Remove this journey');
+  await expectBaseline(page, 'musafir.delete-confirm');
+  await press(page, 'Cancel');
+  expectText(await musafirStorage(page), 'musafir.delete-cancelled.storage');
+  await press(page, 'Remove this journey');
+  await press(page, 'Remove', 0);
+  await expectBaseline(page, 'musafir.deleted');
+  expectText(await musafirStorage(page), 'musafir.deleted.storage');
+});
+
+test('musafir: every du‘ā marked said, then one opened', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', at: AT.day, storage: JOURNEY });
+  await go(page, '/musafir');
+  await declineBanner(page);
+  const marks = page.getByRole('button', { name: 'Mark as said' });
+  for (let i = (await marks.count()) - 1; i >= 0; i--) await marks.nth(i).click();
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'musafir.all-duas-said');
+  expectText(await musafirStorage(page), 'musafir.all-duas-said.storage');
+  await page
+    .getByRole('button', { name: /on return/ })
+    .first()
+    .click();
+  await page.waitForTimeout(300);
+  await expectBaseline(page, 'musafir.dua-other-open');
+});
+
+test('musafir: a concession card opens with its evidence, and closes', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', at: AT.day, storage: JOURNEY });
+  await go(page, '/musafir');
+  await declineBanner(page);
+  const cards = page.locator('button[aria-expanded]').filter({ hasText: /./ });
+  const rulings = page.getByRole('heading', { name: /traveller’s concessions/ });
+  await rulings.scrollIntoViewIfNeeded();
+  const first = page
+    .locator('section')
+    .filter({ has: rulings })
+    .locator('button[aria-expanded]')
+    .first();
+  await first.click();
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'musafir.ruling-open');
+  await first.click();
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'musafir.ruling-closed');
+  void cards;
+});
+
+test('musafir: the Log prayers link opens the Salat tracker', async ({ page }) => {
+  await enterDemo(page, { as: 'brother', at: AT.day, storage: JOURNEY });
+  await go(page, '/musafir');
+  await declineBanner(page);
+  await page.getByRole('link', { name: /Log today’s prayers/ }).click();
+  await expect(page).toHaveURL(/\/salat$/);
+});
+
 // ---- Ramadan -------------------------------------------------------------
 
 test('ramadan: a fast and a prayer, offline, write the same requests', async ({
