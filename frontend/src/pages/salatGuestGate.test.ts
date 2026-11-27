@@ -6,7 +6,14 @@ import { describe, expect, it } from 'vitest';
 // of these cannot be driven in a browser test: this reads the source and checks that
 // every handler that writes opens the sheet and returns before its first write.
 
-const FILES = ['./SalatTracker.tsx'];
+// The page and the hooks its state and handlers moved into (audit P4-1, PR 16).
+const FILES = [
+  './SalatTracker.tsx',
+  '../components/salat/useSalatTrackerState.ts',
+  '../components/salat/useSalatNaflDebt.ts',
+  '../components/salat/useSalatDhikrCredit.tsx',
+  '../components/salat/useSalatPrayerHandlers.tsx',
+];
 const src = FILES.map((f) => readFileSync(new URL(f, import.meta.url), 'utf8')).join('\n');
 
 const GUARD = /if \(!user\) \{\s*setShowGuestDialog\(true\);\s*return;\s*\}/;

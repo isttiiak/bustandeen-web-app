@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import hook from './useSalatLog.ts?raw';
-import tracker from '../pages/SalatTracker.tsx?raw';
+import trackerPage from '../pages/SalatTracker.tsx?raw';
+// The tracker's state and handlers moved into these hooks (audit P4-1, PR 16).
+import trackerState from '../components/salat/useSalatTrackerState.ts?raw';
+import trackerNaflDebt from '../components/salat/useSalatNaflDebt.ts?raw';
+import trackerCredit from '../components/salat/useSalatDhikrCredit.tsx?raw';
+import trackerHandlers from '../components/salat/useSalatPrayerHandlers.tsx?raw';
 import timeline from '../components/home/TodayTimeline.tsx?raw';
 import ramadanCard from '../components/RamadanSalatCard.tsx?raw';
 
@@ -10,6 +15,9 @@ import ramadanCard from '../components/RamadanSalatCard.tsx?raw';
 // utils/trackingDay.test.ts; this keeps a civil-date fallback from creeping back
 // into the salat hook or the screens that write prayers.
 
+const tracker = [trackerPage, trackerState, trackerNaflDebt, trackerCredit, trackerHandlers].join(
+  '\n'
+);
 const surfaces = { hook, tracker, timeline, ramadanCard };
 
 describe('salat is dated by the tracking day', () => {
