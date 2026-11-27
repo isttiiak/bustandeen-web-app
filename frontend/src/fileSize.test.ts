@@ -3,9 +3,9 @@ import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-// Audit 2026-11-16 P4-1: thirteen pages were over 1,000 lines. They are being
-// split one by one (pure extraction, no behaviour change), and this keeps them
-// from growing back. The caps only go down:
+// Audit 2026-11-16 P4-1: thirteen pages were over 1,000 lines. All were split
+// (pure extraction, no behaviour change, PRs 400-417), and this keeps them from
+// growing back. The caps only go down:
 //  - a page is at most PAGE_LIMIT lines unless it is listed in PAGE_CAPS;
 //  - a listed cap is at most CAP_SLACK above the real length, so the PR that
 //    shrinks a file must lower its cap too (the "cap is stale" test fails
@@ -17,7 +17,8 @@ import { describe, expect, it } from 'vitest';
 const root = fileURLToPath(new URL('.', import.meta.url));
 const PAGE_LIMIT = 600;
 const PART_LIMIT = 450;
-const CAP_SLACK = 30;
+// 30 while the split was under way; tightened once it was done (v5.190.80).
+const CAP_SLACK = 10;
 
 const walk = (dir: string): string[] =>
   readdirSync(dir, { withFileTypes: true }).flatMap((e) =>
@@ -36,9 +37,8 @@ const sizes = (dir: string): Record<string, number> =>
       .map((f) => [f.slice(root.length), lineCount(f)])
   );
 
-/** Pages over the limit, at their length when this guard was added. */
+/** Pages over the limit (none of them part of P4-1), at their length today. */
 const PAGE_CAPS: Record<string, number> = {
-  // Not part of P4-1 (under 1,000 lines), held where they are.
   'pages/FastingTracker.tsx': 960,
   'pages/ZikrCounter.tsx': 873,
   'pages/IslamicCalendar.tsx': 692,

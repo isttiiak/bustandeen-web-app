@@ -612,7 +612,7 @@ test('musafir: starting a journey with chosen options saves it', async ({ page }
   await expectBaseline(page, 'musafir.form-filled');
   // A date older than the 60 days allowed is ignored.
   await page.locator('input[type="date"]').fill('2026-07-01');
-  await expectBaseline(page, 'musafir.form-old-date-ignored');
+  await expectBaseline(page, 'musafir.form-filled'); // unchanged
   await press(page, /Bismillah/);
   await expectBaseline(page, 'musafir.started');
   expectText(await musafirStorage(page), 'musafir.started.storage');
@@ -643,7 +643,7 @@ test('musafir: "I’m home" asks, then ends the journey and welcomes you back', 
   await press(page, 'I’m home');
   await expectBaseline(page, 'musafir.home-confirm');
   await press(page, 'Cancel');
-  await expectBaseline(page, 'musafir.home-cancelled');
+  await expectBaseline(page, 'musafir.journey'); // back to the journey as it was
   await press(page, 'I’m home');
   await press(page, 'Yes, I’m home');
   await expectBaseline(page, 'musafir.welcome-home');
@@ -1120,7 +1120,7 @@ test('salat: the next-day arrow moves forward and the date opens the calendar', 
   await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
   await press(page, 'Previous day');
   await press(page, 'Next day');
-  await expectBaseline(page, 'salat.back-then-forward');
+  await expectBaseline(page, 'salat.at-1540'); // today again, as it first opened
 });
 
 // Audit P4-1 (PR 16, SalatTracker part 3): the page's state and tap handlers move into
@@ -1166,7 +1166,7 @@ test('salat: nafl off and on, a type chosen, its rakah changed, then removed', a
   await press(page, 'More rakʿah');
   await press(page, 'Fewer rakʿah');
   await expectBaseline(page, 'salat.nafl-duha-rakat');
-  expectText(await outbox(page), 'salat.nafl-duha-rakat.outbox');
+  expectText(await outbox(page), 'salat.nafl-duha-more.outbox'); // +2 -2: back to 4
   await press(page, /^Tahajjud/);
   expectText(await outbox(page), 'salat.nafl-two-types.outbox');
   await press(page, /^Duha \(Chasht\)/);
@@ -1217,7 +1217,7 @@ test('salat: the kaza debt card opens, an unchanged count sends nothing, a day c
   await fajr.fill('01');
   await fajr.press('Enter'); // still 1: no request, the draft is dropped
   await page.waitForTimeout(400);
-  await expectBaseline(page, 'salat.debt-unchanged');
+  await expectBaseline(page, 'salat.debt-open'); // as it was
   const chip = page.getByText('Quick-mark kaza').locator('xpath=..').getByRole('button').first();
   await chip.click();
   await page.waitForTimeout(500);
