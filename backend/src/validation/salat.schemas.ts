@@ -45,6 +45,15 @@ export const getSalatDebtSchema = z.object({
   body: z.object({}).optional(),
 });
 
+// GET /journey reads the caller's history up to `today`: the same bound as every other
+// salat read (audit P0-3; flagged by CodeQL js/sql-injection triage 2026-11-27).
+export const getSalatJourneySchema = z.object({
+  query: z.object({
+    today: clientToday.optional(),
+  }),
+  body: z.object({}).optional(),
+});
+
 export const salatCorrelationsSchema = z.object({
   query: z.object({
     today: clientToday.optional(),
