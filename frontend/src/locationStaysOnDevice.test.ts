@@ -97,7 +97,16 @@ describe('files that read the saved place', () => {
   });
 
   it('no mutate call in the Salat tracker names the place (its writes carry prayer ids, statuses, venue tags and window instants)', () => {
-    const src = frontendFiles.find((f) => f.rel === 'pages/SalatTracker.tsx')!.src;
+    // The page's writes moved into its hooks (audit P4-1, PR 16): scan all of them.
+    const src = [
+      'pages/SalatTracker.tsx',
+      'components/salat/useSalatTrackerState.ts',
+      'components/salat/useSalatNaflDebt.ts',
+      'components/salat/useSalatDhikrCredit.tsx',
+      'components/salat/useSalatPrayerHandlers.tsx',
+    ]
+      .map((rel) => frontendFiles.find((f) => f.rel === rel)!.src)
+      .join('\n');
     const calls = [...src.matchAll(/\.mutate(?:Async)?\(/g)];
     expect(calls.length).toBeGreaterThan(0);
     for (const m of calls) {

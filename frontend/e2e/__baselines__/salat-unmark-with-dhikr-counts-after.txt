@@ -1,0 +1,10 @@
+{
+ "counts": {
+  "SubhanAllah": 0,
+  "Alhamdulillah": 0,
+  "Allahu Akbar": 0,
+  "Ayatul Kursi": 0
+ },
+ "total": 0,
+ "unsent": []
+}

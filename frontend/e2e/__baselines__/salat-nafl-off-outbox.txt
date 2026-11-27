@@ -1,0 +1,15 @@
+{
+ "sync": [],
+ "salat": [
+  {
+   "kind": "nafl",
+   "vars": {
+    "completed": false,
+    "types": [],
+    "rakat": 2,
+    "date": "2026-10-15"
+   },
+   "owner": "demo-001"
+  }
+ ]
+}

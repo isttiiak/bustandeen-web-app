@@ -1123,6 +1123,210 @@ test('salat: the next-day arrow moves forward and the date opens the calendar', 
   await expectBaseline(page, 'salat.back-then-forward');
 });
 
+// Audit P4-1 (PR 16, SalatTracker part 3): the page's state and tap handlers move into
+// hooks, so every handler not yet driven above is recorded here first, on the old page.
+const naflButton = (page: Page) => page.getByRole('button', { name: /^(Done|Mark Done)$/ }).last();
+
+/** The zikr counts on the device: the shown counts and the taps not yet sent. */
+const zikrCounts = (page: Page) =>
+  page.evaluate(() => {
+    const store = JSON.parse(localStorage.getItem('bustandeen_zikr_store') ?? '{}') as {
+      state?: { counts?: unknown; total?: unknown };
+    };
+    const unsent = Object.keys(localStorage)
+      .filter((k) => k.startsWith('bustandeen_zikr_unsent:'))
+      .map((k) => (JSON.parse(localStorage.getItem(k)!) as { pending?: unknown }).pending);
+    return JSON.stringify(
+      { counts: store.state?.counts, total: store.state?.total, unsent },
+      null,
+      1
+    );
+  });
+
+test('salat: nafl off and on, a type chosen, its rakah changed, then removed', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await context.setOffline(true);
+  await declineBanner(page);
+  await naflButton(page).click(); // the demo's nafl is done: this turns it off
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'salat.nafl-off');
+  expectText(await outbox(page), 'salat.nafl-off.outbox');
+  await naflButton(page).click(); // Mark Done: opens the type tiles
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'salat.nafl-on');
+  expectText(await outbox(page), 'salat.nafl-on.outbox');
+  await press(page, /^Duha \(Chasht\)/);
+  await expectBaseline(page, 'salat.nafl-duha');
+  expectText(await outbox(page), 'salat.nafl-duha.outbox');
+  await press(page, 'More rakʿah');
+  expectText(await outbox(page), 'salat.nafl-duha-more.outbox');
+  await press(page, 'More rakʿah');
+  await press(page, 'Fewer rakʿah');
+  await expectBaseline(page, 'salat.nafl-duha-rakat');
+  expectText(await outbox(page), 'salat.nafl-duha-rakat.outbox');
+  await press(page, /^Tahajjud/);
+  expectText(await outbox(page), 'salat.nafl-two-types.outbox');
+  await press(page, /^Duha \(Chasht\)/);
+  await expectBaseline(page, 'salat.nafl-duha-removed');
+  expectText(await outbox(page), 'salat.nafl.outbox');
+  await press(page, /^about$/);
+  await expectBaseline(page, 'salat.nafl-about');
+});
+
+test('salat: un-marking a prayer with tasbeeh and Ayatul Kursi takes the dhikr back', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await context.setOffline(true);
+  await press(page, 'Done', 2);
+  await press(page, 'Tasbeeh');
+  await press(page, 'Ayatul Kursi');
+  expectText(await zikrCounts(page), 'salat.unmark-with-dhikr.counts-before');
+  await press(page, 'Done', 2); // the same status again clears it
+  await expectBaseline(page, 'salat.unmark-with-dhikr');
+  expectText(await outbox(page), 'salat.unmark-with-dhikr.outbox');
+  expectText(await dhikrStorage(page), 'salat.unmark-with-dhikr.dhikr-storage');
+  expectText(await zikrCounts(page), 'salat.unmark-with-dhikr.counts-after');
+});
+
+test('salat: un-marking one prayer of a joined pair un-joins the other first', async ({
+  page,
+  context,
+}) => {
+  await enterDemo(page, { as: 'brother', at: '2026-10-15T19:00:00+06:00', storage: JOURNEY });
+  await go(page, '/salat');
+  await context.setOffline(true);
+  await press(page, 'Done', 4);
+  await press(page, /Joined with Maghrib/);
+  await press(page, 'Done', 4); // Isha back to not logged
+  await expectBaseline(page, 'salat.unmark-joined');
+  expectText(await outbox(page), 'salat.unmark-joined.outbox');
+});
+
+test('salat: the kaza debt card opens, an unchanged count sends nothing, a day chip jumps', async ({
+  page,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await press(page, /Kaza Debt/);
+  await expectBaseline(page, 'salat.debt-open');
+  const fajr = page.locator('#kaza-debt-fajr');
+  await fajr.fill('01');
+  await fajr.press('Enter'); // still 1: no request, the draft is dropped
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'salat.debt-unchanged');
+  const chip = page.getByText('Quick-mark kaza').locator('xpath=..').getByRole('button').first();
+  await chip.click();
+  await page.waitForTimeout(500);
+  await expectBaseline(page, 'salat.debt-chip-jump');
+});
+
+// Known quirks, pinned and not fixed here: the demo answers the debt write with
+// `{ ok: true }` and no counts, so the page that reads them breaks into the error card
+// (which proves the write was sent); and Escape drops the draft, but the blur after it
+// still saves the typed number.
+test('salat: a changed kaza debt count is sent (the demo then shows its error card)', async ({
+  page,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await press(page, /Kaza Debt/);
+  const asr = page.locator('#kaza-debt-asr');
+  await asr.fill('12000'); // clamped to 9999
+  await asr.press('Enter');
+  await page.waitForTimeout(600);
+  await expectBaseline(page, 'salat.debt-changed');
+});
+
+test('salat: Escape on a typed kaza debt count still saves it on blur (quirk)', async ({
+  page,
+}) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await press(page, /Kaza Debt/);
+  const fajr = page.locator('#kaza-debt-fajr');
+  await fajr.fill('7');
+  await fajr.press('Escape');
+  await page.waitForTimeout(600);
+  await expectBaseline(page, 'salat.debt-escape');
+});
+
+test('salat: the debt card points to the reset in the settings drawer', async ({ page }) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await press(page, /Kaza Debt/);
+  await press(page, 'Reset it in Salat settings');
+  await expectBaseline(page, 'salat.debt-reset-pointer');
+});
+
+test('salat: the month calendar opens, changes month and picks a day', async ({ page }) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await press(page, 'Open month calendar');
+  await expectBaseline(page, 'salat.calendar-open');
+  await press(page, 'Previous month');
+  await expectBaseline(page, 'salat.calendar-previous-month');
+  await press(page, 'Next month');
+  await press(page, '12');
+  await expectBaseline(page, 'salat.calendar-picked-12');
+});
+
+test('salat: the legend opens, and the cog opens the settings drawer', async ({ page }) => {
+  await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
+  await press(page, /How it works/);
+  await expectBaseline(page, 'salat.legend-open');
+  await press(page, 'Salat settings');
+  await expectBaseline(page, 'salat.settings-open');
+});
+
+// Signed out (not the demo): /salat is open to a guest, and every save opens the sign-in
+// sheet instead of writing.
+async function openAsGuest(page: Page, at: string) {
+  await page.clock.setFixedTime(new Date(at));
+  await page.context().addInitScript(() => {
+    localStorage.setItem(
+      'bustandeen_location',
+      JSON.stringify({ latitude: 23.8103, longitude: 90.4125, name: 'Dhaka' })
+    );
+    localStorage.setItem('bustandeen_reduce_motion', 'on');
+    localStorage.setItem('bustandeen_lang', 'en');
+  });
+  await page.goto('/salat');
+  await page.waitForFunction(() => document.querySelector('main, nav') !== null);
+  await page.waitForTimeout(800);
+}
+
+async function guestTapOpensSheet(page: Page, tap: () => Promise<void>) {
+  await declineBanner(page);
+  await tap();
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+}
+
+test('salat as a guest: Done, Kaza, Miss and nafl open the sign-in sheet, nothing is saved', async ({
+  page,
+}) => {
+  await openAsGuest(page, ASR_NOW);
+  await expectBaseline(page, 'salat.guest');
+  for (const [name, nth] of [
+    ['Done', 0],
+    ['Kaza', 1],
+    ['Miss', 2],
+  ] as const)
+    await guestTapOpensSheet(page, () => button(page, name, nth).click());
+  await guestTapOpensSheet(page, () => naflButton(page).click());
+  await naflButton(page).click();
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'salat.guest-sheet');
+  expectText(await outbox(page), 'salat.guest.outbox');
+});
+
+test('salat as a guest: Tarawih in Ramadan opens the sign-in sheet', async ({ page }) => {
+  await openAsGuest(page, '2027-02-20T20:00:00+06:00');
+  await guestTapOpensSheet(page, () => button(page, /Tarawih tonight/).click());
+  expectText(await outbox(page), 'salat.guest-tarawih.outbox');
+});
+
 // Audit P4-1 (PR 10, PrayerTimes): the timeline at every kind of moment, a place on
 // another zone, a name that is only coordinates, a changed calculation method.
 const PRAYER_TIMES_AT: Array<[string, string]> = [

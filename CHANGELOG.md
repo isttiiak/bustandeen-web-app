@@ -2,6 +2,28 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.78 - Salat Tracker, last third of the split (audit P4-1, step 16) - 2026-11-27
+
+`pages/SalatTracker.tsx` goes from 1,113 to 476 lines (1,828 before the split began), so its entry in `fileSize.test.ts` is removed. This last step moves the page's state and its tap handlers into four hooks. Nothing changes for anyone: same markup, copy, requests and order of requests.
+
+### What moved (verbatim, only imports, `export`, hook signatures, destructuring and returns added)
+
+Four hooks in `components/salat/`, called by the page in this order, so React sees its state in the same sequence as before:
+
+- `useSalatTrackerState`: the selected day (from `?date=`), the Musafir helpers, the start date, the minute tick, today's times and the adhkar window, the calendar, the log and analytics queries, Tarawih (with `toggleTarawih`), the Friday hour, the zikr store selectors, and the nafl and kaza debt state.
+- `useSalatNaflDebt`: `commitDebtEdit` and the nafl toggle, type and rakʿah handlers.
+- `useSalatDhikrCredit`: `creditDhikr` (Salat to Zikr), handed to the handlers explicitly.
+- `useSalatPrayerHandlers`: `handleStatus`, `handleMissedReason`, `setQasr`, `joinPair`, `toggleJoined`, `handleSubTag`, plus `normaliseStatus`, `locationTagText` and `completedCount`.
+
+The handlers stay plain functions recreated every render (no `useCallback`, no changed dependency lists). `useAuthStore()` keeps its whole-store call.
+
+### Proof
+
+- **Commit 1 (before any move):** 11 new browser tests on the OLD page: nafl off and on, a type chosen, its rakʿah up and down, removed (the queued request after every step); un-marking a prayer that had tasbeeh and Ayatul Kursi (the dhikr counts and the credit record before and after); un-marking one half of a joined pair (the partner is un-joined first, then the prayer); the kaza debt card opened, an unchanged count (nothing sent), a changed count, a day chip, the reset pointer; the month calendar (open, previous and next month, a day picked); the legend and the settings drawer; and as a signed-out guest, Done, Kaza, Miss, nafl and Tarawih in Ramadan open the sign-in sheet and queue nothing. Plus `salatGuestGate.test.ts`: every write in the page sits after the guest check of its handler (11 handlers, one check each). Built the way CI builds.
+- **Commit 2 (the move):** these and the 34 earlier Salat browser tests and 16 server renders pass untouched; the guest and location guard tests now read the page and the four hooks.
+- Every non-blank line of the old file is in the new ones, apart from 33 import lines regrouped per file.
+- **Noted, not changed:** in the demo, a changed kaza debt count breaks the page into its error card, because the demo answers the write with no counts; and Escape in a debt field drops the draft, but the blur that follows still saves the typed number. Both are pinned by the tests as they are.
+
 ## v5.190.77 - Salat Tracker, second third of the split (audit P4-1, step 15) - 2026-11-27
 
 `pages/SalatTracker.tsx` goes from 1,537 to 1113 lines (1,828 before the split began). This step takes out the prayer card itself: its row, its strip for a traveller's Friday, its two drawers and its Details toggle. Nothing changes for anyone: same markup, copy, hadith and requests. The state and the tap handlers (Done / Kaza / Miss, the sub-tags, the joining, the dhikr crediting, the nafl and kaza-debt edits) have NOT moved; they are the last third.

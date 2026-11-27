@@ -1,0 +1,14 @@
+{
+ "sync": [],
+ "salat": [
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "asr",
+    "status": "pending",
+    "date": "2026-10-15"
+   },
+   "owner": "demo-001"
+  }
+ ]
+}

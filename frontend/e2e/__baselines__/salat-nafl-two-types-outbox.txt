@@ -1,0 +1,18 @@
+{
+ "sync": [],
+ "salat": [
+  {
+   "kind": "nafl",
+   "vars": {
+    "completed": true,
+    "types": [
+     "duha",
+     "tahajjud"
+    ],
+    "rakat": 6,
+    "date": "2026-10-15"
+   },
+   "owner": "demo-001"
+  }
+ ]
+}
