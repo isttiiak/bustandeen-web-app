@@ -2,6 +2,19 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.79 - Kaza debt: Escape keeps the saved count; the demo's debt edits work - 2026-11-27
+
+Two bugs found while recording the Salat tracker for audit P4-1 (PR 16), fixed here.
+
+### Fixed
+
+- **Escape in a Kaza debt field now keeps the saved count.** It dropped the typed draft, but the blur that follows still read the typed number from the field and saved it. The field now holds the saved count again before the blur, so the blur sees no change and sends nothing (`SalatKazaDebtCard.tsx`).
+- **Editing the Kaza debt in the demo no longer breaks the page.** The demo answered every debt write with `{ ok: true }`. The tracker puts the answer straight into its cache as the debt, found no counts, and showed its error card. The demo now keeps its debt for the visit and answers set, adjust and reset with the whole debt, the same shape the server sends (`utils/demoData.ts`, tested in `utils/demoDebt.test.ts`).
+
+### Tests
+
+- The two browser tests that pinned the bugs now check the fixed behaviour. A changed count shows 9999 (clamped) and the `salat.debt-changed` baseline shows the card instead of the error card. Escape leaves the field at the saved count, and the page matches the `salat.debt-open` baseline. The old `salat.debt-escape` baseline is removed.
+
 ## v5.190.78 - Salat Tracker, last third of the split (audit P4-1, step 16) - 2026-11-27
 
 `pages/SalatTracker.tsx` goes from 1,113 to 476 lines (1,828 before the split began), so its entry in `fileSize.test.ts` is removed. This last step moves the page's state and its tap handlers into four hooks. Nothing changes for anyone: same markup, copy, requests and order of requests.

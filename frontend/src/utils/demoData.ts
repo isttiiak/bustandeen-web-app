@@ -846,6 +846,39 @@ const demoFastingLogs = new Map<string, Record<string, unknown>>();
 const demoAdhkarDays = new Map<string, { date: string; morning: boolean; evening: boolean }>();
 const queryDate = (url: string) => new URL(url, 'http://demo.local').searchParams.get('date');
 
+// The demo's kaza debt, kept for this page view like the fasting logs. The debt
+// writes answer with the whole debt, as the server does: the Salat tracker puts
+// that answer straight into its cache, and a bare `{ ok: true }` (no counts)
+// broke the page after any edit.
+type DemoPrayer = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
+let demoDebt: { owed: Record<DemoPrayer, number>; since: string } | null = null;
+function demoDebtNow() {
+  demoDebt ??= { owed: { fajr: 1, dhuhr: 1, asr: 1, maghrib: 0, isha: 1 }, since: dateStr(30) };
+  const owed = { ...demoDebt.owed };
+  const totalOwed = Object.values(owed).reduce((a, b) => a + b, 0);
+  return { ok: true, owed, totalOwed, since: demoDebt.since };
+}
+function demoDebtWrite(url: string, body: unknown) {
+  const b = (typeof body === 'string' ? JSON.parse(body) : (body ?? {})) as {
+    prayer?: DemoPrayer;
+    count?: number;
+    delta?: number;
+    today?: string;
+  };
+  demoDebtNow();
+  const debt = demoDebt!;
+  if (url.includes('/api/salat/debt/reset')) {
+    debt.owed = { fajr: 0, dhuhr: 0, asr: 0, maghrib: 0, isha: 0 };
+    debt.since = b.today ?? dateStr(0);
+  } else if (b.prayer && b.prayer in debt.owed) {
+    const next = url.includes('/api/salat/debt/set')
+      ? (b.count ?? 0)
+      : debt.owed[b.prayer] + (b.delta ?? 0);
+    debt.owed[b.prayer] = Math.max(0, Math.min(9999, next));
+  }
+  return demoDebtNow();
+}
+
 export function getDemoResponse(
   url: string,
   method: string,
@@ -875,6 +908,8 @@ export function getDemoResponse(
     if (method === 'put' && b?.period) demoAdhkarDays.set(date, { ...day, [b.period]: true });
     return { ok: true, day: demoAdhkarDays.get(date) ?? day };
   }
+  if (method !== 'get' && /\/api\/salat\/debt\/(set|adjust|reset)(\?|$)/.test(url))
+    return demoDebtWrite(url, body);
   if (method !== 'get') return { ok: true };
 
   if (url.includes('/api/zikr/analytics')) return buildZikrAnalytics(parseDays(url));
@@ -914,13 +949,7 @@ export function getDemoResponse(
         { prayer: 'fajr', missedDate: dateStr(9) },
       ],
     };
-  if (/\/api\/salat\/debt(\?|$)/.test(url))
-    return {
-      ok: true,
-      owed: { fajr: 1, dhuhr: 1, asr: 1, maghrib: 0, isha: 1 },
-      totalOwed: 4,
-      since: dateStr(30),
-    };
+  if (/\/api\/salat\/debt(\?|$)/.test(url)) return demoDebtNow();
   if (url.includes('/api/salat')) return buildSalatLog();
   if (url.includes('/api/fasting/summary')) return buildFastingSummary();
   if (url.includes('/api/fasting')) {

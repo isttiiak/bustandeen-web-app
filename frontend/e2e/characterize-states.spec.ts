@@ -1224,32 +1224,29 @@ test('salat: the kaza debt card opens, an unchanged count sends nothing, a day c
   await expectBaseline(page, 'salat.debt-chip-jump');
 });
 
-// Known quirks, pinned and not fixed here: the demo answers the debt write with
-// `{ ok: true }` and no counts, so the page that reads them breaks into the error card
-// (which proves the write was sent); and Escape drops the draft, but the blur after it
-// still saves the typed number.
-test('salat: a changed kaza debt count is sent (the demo then shows its error card)', async ({
-  page,
-}) => {
+// A changed count is sent and the card shows what the demo saved (it used to break the
+// page into its error card: the demo answered with no counts). Escape keeps the saved
+// count: the blur after it used to save the typed number.
+test('salat: a changed kaza debt count is saved, clamped to 9999', async ({ page }) => {
   await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
   await press(page, /Kaza Debt/);
   const asr = page.locator('#kaza-debt-asr');
   await asr.fill('12000'); // clamped to 9999
   await asr.press('Enter');
   await page.waitForTimeout(600);
+  await expect(asr).toHaveValue('9999');
   await expectBaseline(page, 'salat.debt-changed');
 });
 
-test('salat: Escape on a typed kaza debt count still saves it on blur (quirk)', async ({
-  page,
-}) => {
+test('salat: Escape on a typed kaza debt count keeps the saved count', async ({ page }) => {
   await open(page, { as: 'brother', at: ASR_NOW }, '/salat');
   await press(page, /Kaza Debt/);
   const fajr = page.locator('#kaza-debt-fajr');
   await fajr.fill('7');
   await fajr.press('Escape');
   await page.waitForTimeout(600);
-  await expectBaseline(page, 'salat.debt-escape');
+  await expect(fajr).toHaveValue('1');
+  await expectBaseline(page, 'salat.debt-open');
 });
 
 test('salat: the debt card points to the reset in the settings drawer', async ({ page }) => {

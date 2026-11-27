@@ -146,6 +146,10 @@ export default function SalatKazaDebtCard({
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') e.currentTarget.blur();
                             if (e.key === 'Escape') {
+                              // Put the saved count back first: the blur below
+                              // commits what the field holds, and Escape means
+                              // "keep what was there".
+                              e.currentTarget.value = String(owed);
                               setDebtDrafts((d) => {
                                 const next = { ...d };
                                 delete next[prayerId];
