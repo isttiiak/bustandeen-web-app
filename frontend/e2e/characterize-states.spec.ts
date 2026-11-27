@@ -316,6 +316,72 @@ test('ramadan: a fast and a prayer, offline, write the same requests', async ({
   expectText(await outbox(page), 'ramadan.salat-done.outbox');
 });
 
+// Audit P4-1 (PR 9, RamadanTracker): the live month in every part of its day.
+// Dates are inside Ramadan 1448 (day 1 is 8 Feb 2027, so the 20th fast is 27 Feb).
+const RAMADAN_AT = {
+  beforeDawn: '2027-02-20T04:00:00+06:00',
+  afterMaghrib: '2027-02-20T19:00:00+06:00',
+  eveOfLastTen: '2027-02-27T19:30:00+06:00',
+  lastTenDay: '2027-03-01T16:00:00+06:00',
+};
+
+test('ramadan: no saved place asks for one', async ({ page }) => {
+  await open(page, { as: 'brother', at: AT.ramadan, noLocation: true }, '/ramadan');
+  await expectBaseline(page, 'ramadan.no-place');
+});
+
+test('ramadan: before dawn counts down to the end of suhoor', async ({ page }) => {
+  await open(page, { as: 'brother', at: RAMADAN_AT.beforeDawn }, '/ramadan');
+  await expectBaseline(page, 'ramadan.before-dawn');
+});
+
+test('ramadan: after Maghrib the countdown rolls over to tomorrow', async ({ page }) => {
+  await open(page, { as: 'brother', at: RAMADAN_AT.afterMaghrib }, '/ramadan');
+  await expectBaseline(page, 'ramadan.after-maghrib');
+});
+
+test('ramadan: the eve of the last ten, the 21st night begins', async ({ page }) => {
+  await open(page, { as: 'brother', at: RAMADAN_AT.eveOfLastTen }, '/ramadan');
+  await expectBaseline(page, 'ramadan.eve-of-last-ten');
+});
+
+test('ramadan: a day in the last ten', async ({ page }) => {
+  await open(page, { as: 'brother', at: RAMADAN_AT.lastTenDay }, '/ramadan');
+  await expectBaseline(page, 'ramadan.last-ten-day');
+});
+
+test('ramadan: the eve of the last ten, in Bangla', async ({ page }) => {
+  await open(page, { as: 'brother', at: RAMADAN_AT.eveOfLastTen, lang: 'bn' }, '/ramadan');
+  await expectBaseline(page, 'ramadan.eve-of-last-ten.bn');
+});
+
+test('ramadan: the sister view', async ({ page }) => {
+  await open(page, { as: 'sister', at: AT.ramadan }, '/ramadan');
+  await expectBaseline(page, 'ramadan.sister');
+});
+
+test('ramadan: the preview flag pretends the month has begun', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/ramadan?preview=live');
+  await expectBaseline(page, 'ramadan.preview-live');
+});
+
+test('ramadan: tarawih on the eve of the last ten is saved on the 21st fast', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'brother', at: RAMADAN_AT.eveOfLastTen }, '/ramadan');
+  await context.setOffline(true);
+  await press(page, /Tarawih/);
+  await expectBaseline(page, 'ramadan.tarawih-marked');
+  expectText(await outbox(page), 'ramadan.tarawih.outbox');
+});
+
+test('ramadan: a worship tile opens its tracker', async ({ page }) => {
+  await open(page, { as: 'brother', at: AT.ramadan }, '/ramadan');
+  await press(page, /Quran today/i);
+  await expect(page).toHaveURL(/\/quran$/);
+});
+
 // ---- Prayer times --------------------------------------------------------
 
 test('prayer times: the settings sheet', async ({ page }) => {

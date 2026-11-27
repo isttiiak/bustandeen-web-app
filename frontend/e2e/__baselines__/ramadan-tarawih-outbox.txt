@@ -1,0 +1,19 @@
+{
+ "sync": [
+  {
+   "tracker": "fasting",
+   "method": "put",
+   "url": "/api/fasting/log",
+   "body": {
+    "date": "2027-02-28",
+    "category": "ramadan",
+    "status": "intended",
+    "tarawih": true
+   },
+   "key": "fasting:log:2027-02-28",
+   "coalesce": "replace",
+   "owner": "demo-001"
+  }
+ ],
+ "salat": []
+}
