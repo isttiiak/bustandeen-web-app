@@ -38,7 +38,7 @@ const sizes = (dir: string): Record<string, number> =>
 
 /** Pages over the limit, at their length when this guard was added. */
 const PAGE_CAPS: Record<string, number> = {
-  'pages/SalatTracker.tsx': 1828,
+  'pages/SalatTracker.tsx': 1537,
   // Not part of P4-1 (under 1,000 lines), held where they are.
   'pages/FastingTracker.tsx': 960,
   'pages/ZikrCounter.tsx': 873,

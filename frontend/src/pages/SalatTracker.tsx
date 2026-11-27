@@ -19,13 +19,7 @@ import {
   ScissorsIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
-import {
-  FlowerIcon,
-  IshaIcon,
-  MosqueIcon,
-  PrayerGlyph,
-  TasbihIcon,
-} from '../components/icons/IslamicIcons.js';
+import { MosqueIcon, PrayerGlyph, TasbihIcon } from '../components/icons/IslamicIcons.js';
 import {
   useSalatLog,
   useUpdatePrayer,
@@ -33,13 +27,13 @@ import {
   useSalatAnalytics,
   useSalatDebt,
   useSetSalatDebt,
-  PrayerId,
-  PrayerStatus,
-  PrayerLocation,
-  NaflType,
   NAFL_TYPE_META,
   MISSED_REASONS,
-  MissedReason,
+  type PrayerId,
+  type PrayerStatus,
+  type PrayerLocation,
+  type NaflType,
+  type MissedReason,
 } from '../hooks/useSalatLog.js';
 import {
   PRAYER_META,
@@ -54,7 +48,6 @@ import { useCycleActive } from '../hooks/useCycle.js';
 import { useFastingHistory, useUpsertFastingLog } from '../hooks/useFasting.js';
 import ExcusedCard from '../components/ExcusedCard.js';
 import SalatSettings from '../components/SalatSettings.js';
-import { AdhkarCard } from '../components/home/TodayTimeline.js';
 import { openAdhkar } from '../utils/todayTimeline.js';
 import Seo from '../components/Seo.js';
 import { useZikrStore } from '../store/useZikrStore.js';
@@ -66,29 +59,22 @@ import {
   getAutoCountDhikr,
   wasDhikrCredited,
   setDhikrCredited,
-  getShowSunnahGuide,
-  getShowNaflGuide,
-  getShowSalatAdhkar,
 } from '../utils/salatPrefs.js';
 import { recitationsFor, recitationHref } from '../utils/postSalatQuran.js';
-import { SUNNAH_GUIDE, JUMUAH_SUNNAH_GUIDE, type SunnahSlot } from '../utils/sunnahGuide.js';
 import { getFridayHour } from '../utils/fridayHour.js';
 import { formatLocaleNumber } from '../utils/localeDate.js';
-import { translateReference } from '../utils/localeReference.js';
 import MusafirBanner from '../components/MusafirBanner.js';
 import TravelKazaCard from '../components/TravelKazaCard.js';
 import {
   useMusafir,
   musafirAppliesOn,
   musafirAppliesTo,
-  updateMusafir,
   isQasrPrayer,
   jamAllowed,
   jamPartner,
   FARD_RAKAT,
   travelRakat,
 } from '../utils/musafir.js';
-
 import {
   MIN_RAKAT,
   isRamadanNow,
@@ -96,11 +82,9 @@ import {
   offsetDate,
   isFuturePrayer,
   isCurrentPrayer,
-  SunnahGuidanceRow,
   LOCATION_TAGS,
   STATUS_STYLE,
   DisclosureLabel,
-  RefIcon,
 } from '../components/salat/salatParts.js';
 import SalatLegend from '../components/salat/SalatLegend.js';
 import SalatKazaDebtCard from '../components/salat/SalatKazaDebtCard.js';
@@ -110,11 +94,14 @@ import SalatMonthCalendar from '../components/salat/SalatMonthCalendar.js';
 import SalatWeekStrip from '../components/salat/SalatWeekStrip.js';
 import FridayHourCard from '../components/salat/FridayHourCard.js';
 import SalatHero from '../components/salat/SalatHero.js';
+import SalatCardTop from '../components/salat/SalatCardTop.js';
+import SalatCardJoining from '../components/salat/SalatCardJoining.js';
+import SalatCardGuidance from '../components/salat/SalatCardGuidance.js';
 
 // ─── component ───────────────────────────────────────────────────────────────
 
 export default function SalatTracker() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const cycleActive = useCycleActive();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -1456,318 +1443,40 @@ export default function SalatTracker() {
                           </button>
                         )}
 
-                        {/* Morning/evening adhkār while its window is open */}
-                        {adhkarNow?.prayer === prayerId && getShowSalatAdhkar() && (
-                          <div className="px-3 pb-2.5 border-t border-brand-border/50">
-                            <AdhkarCard period={adhkarNow.period} until={adhkarNow.until} />
-                          </div>
-                        )}
+                        <SalatCardTop
+                          prayerId={prayerId}
+                          isToday={isToday}
+                          adhkarNow={adhkarNow}
+                          ramadanTodayLog={ramadanTodayLog}
+                          toggleTarawih={toggleTarawih}
+                        />
 
-                        {/* Tarawih — only during Ramadan, attached to Isha because
-                        that is when it is prayed. Writes to the SAME
-                        FastingLog.tarawih field as /ramadan, so marking it in
-                        either place shows in both. */}
-                        {prayerId === 'isha' && isRamadanNow() && isToday && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              toggleTarawih();
-                            }}
-                            className={`w-full px-3 py-2.5 border-t flex items-center gap-2 text-left transition-colors ${
-                              ramadanTodayLog?.tarawih
-                                ? 'border-brand-info/30 bg-brand-info/15'
-                                : 'border-brand-info/15 bg-brand-info/[0.06] hover:bg-brand-info/10'
-                            }`}
-                          >
-                            <MosqueIcon className="w-5 h-5 shrink-0 text-brand-info" />
-                            <span className="flex-1 min-w-0">
-                              <span className="block font-bold text-xs text-brand-info">
-                                {t('salatTracker.tarawihTonight', 'Tarawih tonight')}
-                              </span>
-                              <span className="block text-white/60 text-[11px]">
-                                {t('salatTracker.tarawihDesc', 'Ramadan nights, prayed after Isha')}
-                              </span>
-                            </span>
-                            <span
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-control text-[11px] font-bold border shrink-0 ${
-                                ramadanTodayLog?.tarawih
-                                  ? 'bg-brand-info/10 border-brand-info/50 text-brand-info'
-                                  : 'bg-brand-deep border-brand-border text-white/60'
-                              }`}
-                            >
-                              {ramadanTodayLog?.tarawih && (
-                                <CheckIcon className="w-3.5 h-3.5" aria-hidden="true" />
-                              )}
-                              {ramadanTodayLog?.tarawih
-                                ? t('salatTracker.prayed', 'Prayed')
-                                : t('salatTracker.markDone', 'Mark done')}
-                            </span>
-                          </button>
-                        )}
+                        <SalatCardJoining
+                          prayerId={prayerId}
+                          isToday={isToday}
+                          isCurrent={isCurrent}
+                          hasSubTag={hasSubTag}
+                          status={status}
+                          jamWith={jamWith}
+                          rowTravel={rowTravel}
+                          canJoin={canJoin}
+                          travelPrayer={travelPrayer}
+                          normaliseStatus={normaliseStatus}
+                          log={log}
+                          todayPrayerTimes={todayPrayerTimes}
+                          musafir={musafir}
+                          joinPair={joinPair}
+                        />
 
-                        {/* Sunnah/nafl rak'ah guidance — tied to the prayer's
-                            OWN window (isCurrent), not "any time from when it
-                            started onward" (!isFuture): the latter never
-                            closed once a prayer's time had passed, so Fajr's
-                            guidance was still showing at Isha. Independently
-                            toggleable per emphasis (Salat settings). */}
-                        {/* Musafir jamʿ — pray the pair together. On Ẓuhr/Maghrib
-                            (its own time, partner not yet due): taqdīm. On ʿAṣr/ʿIshāʾ
-                            (its own time, partner still unprayed): taʾkhīr. */}
-                        {canJoin(prayerId) &&
-                          isToday &&
-                          jamWith &&
-                          (() => {
-                            const partnerStatus = normaliseStatus(log?.prayers[jamWith]?.status);
-                            const isFirst = prayerId === 'dhuhr' || prayerId === 'maghrib';
-                            const offer = isFirst
-                              ? (isCurrent || hasSubTag) &&
-                                status !== 'missed' &&
-                                partnerStatus === 'pending' &&
-                                isFuturePrayer(jamWith, todayPrayerTimes?.times)
-                              : isCurrent && status !== 'missed' && partnerStatus === 'pending';
-                            if (!offer) return null;
-                            const first = isFirst ? prayerId : jamWith;
-                            const second = isFirst ? jamWith : prayerId;
-                            const names = {
-                              a: translateSalatName(first, first, t),
-                              b: translateSalatName(second, second, t),
-                            };
-                            return (
-                              <div className="px-3 py-2.5 border-t border-brand-gold/20 bg-brand-gold/5">
-                                <div className="flex items-center gap-3">
-                                  <LinkIcon
-                                    className="w-4 h-4 shrink-0 text-brand-gold"
-                                    aria-hidden="true"
-                                  />
-                                  <p className="flex-1 min-w-0 text-white/70 text-xs leading-snug">
-                                    {isFirst
-                                      ? t(
-                                          'salatTracker.jamOfferTaqdim',
-                                          'On the move? Pray {{a}} and {{b}} together now, in {{a}} time (jamʿ taqdīm).',
-                                          names
-                                        )
-                                      : t(
-                                          'salatTracker.jamOfferTakhir',
-                                          '{{a}} not prayed yet? Pray {{a}} and {{b}} together now, in {{b}} time (jamʿ taʾkhīr).',
-                                          names
-                                        )}
-                                  </p>
-                                  <motion.button
-                                    whileTap={{ scale: 0.92 }}
-                                    onClick={() => joinPair(first, isFirst ? 'taqdim' : 'takhir')}
-                                    className="shrink-0 inline-flex items-center gap-1 px-3 py-1.5 rounded-control text-xs font-bold bg-brand-gold/20 border border-brand-gold/60 text-brand-gold hover:bg-brand-gold/30"
-                                  >
-                                    <CheckIcon className="w-3.5 h-3.5" aria-hidden="true" />
-                                    {t('salatTracker.jamBoth', '{{a}} + {{b}}', names)}
-                                  </motion.button>
-                                </div>
-                                <a
-                                  href={
-                                    isFirst
-                                      ? 'https://sunnah.com/tirmidhi:553'
-                                      : 'https://sunnah.com/bukhari:1111'
-                                  }
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="ml-7 mt-1 inline-block text-brand-gold/80 text-[11px] underline hover:text-brand-gold"
-                                >
-                                  <RefIcon />
-                                  {translateReference(
-                                    isFirst
-                                      ? 'Jāmiʿ al-Tirmidhī 553 · Ṣaḥīḥ (al-Albānī)'
-                                      : 'Ṣaḥīḥ al-Bukhārī 1111 · Ṣaḥīḥ',
-                                    i18n.language
-                                  )}
-                                </a>
-                              </div>
-                            );
-                          })()}
-
-                        {/* Ḥanafī view: no real joining, so say so here (instead of
-                            silently showing nothing) and offer the formal way plus
-                            a one-tap switch to the majority view for this journey. */}
-                        {isToday &&
-                          musafir?.school === 'hanafi' &&
-                          (prayerId === 'dhuhr' || prayerId === 'maghrib') &&
-                          isCurrent &&
-                          jamWith &&
-                          rowTravel &&
-                          travelPrayer(jamWith) &&
-                          normaliseStatus(log?.prayers[jamWith]?.status) === 'pending' &&
-                          isFuturePrayer(jamWith, todayPrayerTimes?.times) && (
-                            <div className="px-3 py-2.5 border-t border-brand-gold/20 bg-brand-gold/5">
-                              <div className="flex items-start gap-2">
-                                <LinkIcon
-                                  className="w-4 h-4 mt-px shrink-0 text-brand-gold"
-                                  aria-hidden="true"
-                                />
-                                <p className="flex-1 min-w-0 text-white/70 text-xs leading-snug">
-                                  {t(
-                                    'salatTracker.jamHanafi',
-                                    'Joining {{a}} and {{b}} in one time is not part of the Ḥanafī view you follow. The Ḥanafī way: pray {{a}} near the end of its time and {{b}} as soon as it begins.',
-                                    {
-                                      a: translateSalatName(prayerId, prayerId, t),
-                                      b: translateSalatName(jamWith, jamWith, t),
-                                    }
-                                  )}
-                                </p>
-                              </div>
-                              <button
-                                onClick={() => {
-                                  updateMusafir({ school: 'majority' });
-                                  toast.success(
-                                    t(
-                                      'salatTracker.jamSwitched',
-                                      'Now following the majority view for this journey.'
-                                    ),
-                                    {
-                                      icon: (
-                                        <LinkIcon className="w-4 h-4 shrink-0 text-brand-gold" />
-                                      ),
-                                    }
-                                  );
-                                }}
-                                className="mt-2 ml-6 px-2.5 py-1 rounded-control text-[11px] font-bold bg-brand-gold/15 border border-brand-gold/50 text-brand-gold hover:bg-brand-gold/25"
-                              >
-                                {t(
-                                  'salatTracker.jamUseMajority',
-                                  'Follow the majority view (allows joining)'
-                                )}
-                              </button>
-                            </div>
-                          )}
-
-                        {/* Musafir: the regular sunnah may be left on a journey
-                            (Ibn ʿUmar, Muslim 689a) — Fajr's two are kept, so
-                            Fajr falls through to its normal guidance below. */}
-                        {isCurrent && rowTravel && prayerId !== 'fajr' && (
-                          <div className="px-3 py-2.5 border-t border-brand-info/20 flex items-start gap-2 bg-brand-info/5">
-                            <BriefcaseIcon
-                              className="w-4 h-4 mt-px shrink-0 text-brand-info"
-                              aria-hidden="true"
-                            />
-                            <div className="min-w-0">
-                              <p className="text-brand-info font-bold text-xs leading-tight">
-                                {t(
-                                  'salatTracker.travelSunnahTitle',
-                                  'On a journey, the sunnah is light'
-                                )}
-                              </p>
-                              <p className="text-white/60 text-xs leading-relaxed mt-0.5">
-                                {t(
-                                  'salatTracker.travelSunnahDesc',
-                                  "The Prophet ﷺ left the regular sunnah of Ẓuhr, Maghrib and ʿIshāʾ on journeys; he kept Fajr's two and Witr. Any nafl is still yours to pray."
-                                )}
-                              </p>
-                              <a
-                                href="https://sunnah.com/muslim:689a"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="text-brand-info/80 text-xs underline hover:text-brand-info transition-colors mt-0.5 inline-block"
-                              >
-                                <RefIcon />
-                                {translateReference('Ṣaḥīḥ Muslim 689a', i18n.language)}
-                              </a>
-                            </div>
-                          </div>
-                        )}
-
-                        {isCurrent &&
-                          !(rowTravel && prayerId !== 'fajr') &&
-                          (() => {
-                            // Friday's Dhuhr slot IS Jumu'ah — its sunnah
-                            // guidance is genuinely different, not a fallback
-                            // to Dhuhr's own rawātib (see sunnahGuide.ts).
-                            const guide = isJumuah ? JUMUAH_SUNNAH_GUIDE : SUNNAH_GUIDE[prayerId];
-                            if (!guide) return null;
-                            const showMuakkadah = getShowSunnahGuide();
-                            const showNafl = getShowNaflGuide();
-                            const slots: Array<{ slot: SunnahSlot; position: 'before' | 'after' }> =
-                              [];
-                            if (guide.before)
-                              slots.push({ slot: guide.before, position: 'before' });
-                            if (guide.after) slots.push({ slot: guide.after, position: 'after' });
-                            return slots.map(({ slot, position }) => {
-                              const visible =
-                                slot.emphasis === 'muakkadah' ? showMuakkadah : showNafl;
-                              if (!visible) return null;
-                              return (
-                                <SunnahGuidanceRow
-                                  key={`${prayerId}-${position}`}
-                                  slot={slot}
-                                  position={position}
-                                  lang={i18n.language}
-                                />
-                              );
-                            });
-                          })()}
-
-                        {/* Witr reminder — only once Isha has actually started (not
-                            while it's still upcoming today) */}
-                        {prayerId === 'isha' && !isFuture && (
-                          <div className="px-3 py-2.5 border-t border-brand-gold/20 flex items-start gap-2 bg-brand-gold/5">
-                            <IshaIcon className="w-4 h-4 mt-px shrink-0 text-brand-gold" />
-                            <div className="min-w-0">
-                              <p className="text-brand-gold font-bold text-xs leading-tight">
-                                {t(
-                                  'salatTracker.witrReminderTitle',
-                                  "Don't forget Witr, it's wājib!"
-                                )}
-                              </p>
-                              <p className="text-white/60 text-xs leading-relaxed mt-0.5">
-                                {t(
-                                  'salatTracker.witrReminderDesc',
-                                  "Pray Witr after Isha before Fajr, usually 3 rak'ahs with Qunūt du'ā. The Prophet ﷺ never abandoned it, even while travelling."
-                                )}
-                              </p>
-                              <a
-                                href="https://sunnah.com/bukhari:998"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                onClick={(e) => e.stopPropagation()}
-                                className="text-brand-gold/80 text-xs underline hover:text-brand-gold transition-colors mt-0.5 inline-block"
-                              >
-                                <RefIcon />
-                                {translateReference('Ṣaḥīḥ al-Bukhārī 998', i18n.language)}
-                              </a>
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Istihadha wudu-renewal reminder — only for TODAY's
-                        prayers, and only while her logged cycle is actively
-                        flagged beyond the madhab's hayd/nifas maximum. */}
-                        {isToday && !isFuture && cycleActive?.beyondMax && (
-                          <div className="px-3 py-2.5 border-t border-brand-pink/20 flex items-start gap-2 bg-brand-pink/5">
-                            <FlowerIcon className="w-4 h-4 mt-px shrink-0 text-brand-pink" />
-                            <div className="min-w-0">
-                              <p className="text-brand-pink font-bold text-xs leading-tight">
-                                {t(
-                                  'salatTracker.istihadaReminderTitle',
-                                  'Fresh wuḍū for this prayer'
-                                )}
-                              </p>
-                              <p className="text-white/60 text-xs leading-relaxed mt-0.5">
-                                {t(
-                                  'salatTracker.istihadaReminderDesc',
-                                  "You're in istiḥāḍa. Perform wuḍū again right before this prayer, then pray as usual."
-                                )}
-                              </p>
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate('/cycle');
-                                }}
-                                className="text-brand-pink/80 text-xs underline hover:text-brand-pink transition-colors mt-0.5 inline-block"
-                              >
-                                {t('salatTracker.istihadaReminderLink', 'Learn more in Rayhanah')}
-                              </button>
-                            </div>
-                          </div>
-                        )}
+                        <SalatCardGuidance
+                          prayerId={prayerId}
+                          isToday={isToday}
+                          isCurrent={isCurrent}
+                          isFuture={isFuture}
+                          isJumuah={isJumuah}
+                          rowTravel={rowTravel}
+                          cycleActive={cycleActive}
+                        />
                       </motion.div>
                     );
                   })}
