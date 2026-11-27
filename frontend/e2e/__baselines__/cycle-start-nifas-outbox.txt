@@ -1,0 +1,15 @@
+{
+ "sync": [
+  {
+   "tracker": "cycle",
+   "method": "post",
+   "url": "/api/cycle/start",
+   "body": {
+    "date": "2026-10-15",
+    "type": "nifas"
+   },
+   "owner": "demo-001"
+  }
+ ],
+ "salat": []
+}

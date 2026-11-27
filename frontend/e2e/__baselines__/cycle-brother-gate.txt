@@ -1,0 +1,126 @@
+<body>
+ <div id="id1">
+  <div class="min-h-screen flex flex-col bg-base-100">
+   <div data-rht-toaster="" style="position: fixed; z-index: 9999; inset: 16px; pointer-events: none">
+   <a class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-3 focus:rounded-control focus:bg-brand-deep focus:text-white focus:border focus:border-brand-emerald" href="#main">
+    "Skip to main content"
+   <div aria-label="Demo Mode" class="sticky top-0 z-[45] flex items-center justify-center gap-3 px-4 py-2 bg-brand-gold/15 border-b border-brand-gold/20 text-sm backdrop-blur-sm" role="region">
+    <span class="text-brand-gold font-semibold">
+     "Demo Mode"
+    <span class="text-white/50 hidden sm:inline">
+     "Changes won't be saved"
+    <button class="hit-44 ml-2 px-3 py-0.5 rounded-full bg-brand-emerald-dim text-on-color text-xs font-bold hover:brightness-110 transition" type="button">
+     "Sign up to save →"
+   <nav aria-label="Main" class="sticky top-0 z-40 bg-brand-deep/70 backdrop-blur-md backdrop-saturate-150 border-b border-brand-border/60 shadow-elev-1">
+    <div class="flex items-center h-14 px-2 sm:px-4 gap-1 sm:gap-2">
+     <div class="flex items-center gap-0.5 flex-shrink-0 min-w-0">
+      <a class="flex items-center gap-1.5 px-2 py-1.5 rounded-xl hover:bg-white/10 hover:shadow-hover transition-all group" data-discover="true" href="/">
+       <svg aria-label="Bustandeen" class="w-6 h-6 flex-shrink-0" role="img" viewBox="0 0 512 512">
+        <defs>
+         <lineargradient id="id2" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-moon-1)">
+          <stop offset="1" style="stop-color: var(--logo-moon-2)">
+         <lineargradient id="id3" x1="0" x2="0" y1="0" y2="1">
+          <stop offset="0" style="stop-color: var(--logo-star-1)">
+          <stop offset="1" style="stop-color: var(--logo-star-2)">
+        <g transform="translate(-8 -4)">
+         <path d="<32:15a35a5e>" fill="none" stroke-linecap="round" stroke-width="12" style="stroke: var(--logo-leaf)">
+         <path d="<65:992db646>" fill="url(#bmr0-moon)">
+         <path d="<57:9a50a3b4>" style="fill: var(--logo-leaf)">
+         <path d="<57:673f977d>" style="fill: var(--logo-leaf-warm)">
+         <g>
+          <g style="fill: var(--logo-petal-a)">
+           <circle cx="296.7" cy="303.9" r="14">
+           <circle cx="311.6" cy="314.8" r="14">
+           <circle cx="305.9" cy="332.3" r="14">
+           <circle cx="287.5" cy="332.3" r="14">
+           <circle cx="281.8" cy="314.8" r="14">
+          <circle cx="296.7" cy="319.6" r="9.5" style="fill: var(--logo-flower-centre)">
+         <path d="<71:93e0361f>" fill="url(#bmr0-star)">
+       <span class="font-display font-bold text-white text-sm hidden sm:inline group-hover:text-brand-emerald transition-colors">
+        "Bustandeen"
+      <div class="flex items-center gap-0.5 min-w-0">
+       <button aria-label="Back: Home" class="flex items-center gap-1 px-2 py-1.5 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all text-xs font-medium flex-shrink-0">
+        <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+         <path d="<35:e79ca031>" stroke-linecap="round" stroke-linejoin="round">
+        <span class="hidden sm:inline">
+         <svg aria-hidden="true" class="inline w-3.5 h-3.5 -mt-0.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="<234:521fdc1c>" stroke-linecap="round" stroke-linejoin="round">
+         "Home"
+     <div class="flex-1 flex justify-center items-center overflow-hidden px-1">
+     <div class="flex items-center gap-0.5 flex-shrink-0">
+      <button aria-label="Switch to light" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch to light" type="button">
+       <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<193:b72741e0>" stroke-linecap="round" stroke-linejoin="round">
+      <button aria-label="Switch language" class="flex items-center justify-center w-8 h-8 rounded-xl border border-brand-border/60 bg-brand-deep/60 hover:shadow-hover text-white/80 hover:text-white hover:bg-white/10 transition-all" title="Switch language">
+       <svg aria-hidden="true" class="w-4 h-4 shrink-0" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<475:a1eb6981>" stroke-linecap="round" stroke-linejoin="round">
+      <div class="relative shrink-0">
+       <button aria-expanded="false" aria-label="Open account menu" class="flex items-center justify-center w-8 h-8 rounded-full transition-all ring-2 ring-brand-emerald/30 hover:ring-brand-emerald/70 hover:shadow-hover">
+        <span class="inline-flex items-center justify-center rounded-full bg-brand-emerald/20 text-brand-emerald font-bold w-8 h-8 text-xs">
+         "A"
+   <main class="flex-1 focus:outline-none" id="id4" tabindex="-1">
+    <div class="min-h-[60vh] grid place-items-center px-4 text-center">
+     <div>
+      <span class="mx-auto mb-4 w-14 h-14 rounded-full grid place-items-center bg-brand-pink/10 border border-brand-pink/40 text-brand-pink">
+       <svg aria-hidden="true" class="w-7 h-7" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">
+        <circle cx="12.00" cy="7.80" r="3">
+        <circle cx="15.99" cy="10.70" r="3">
+        <circle cx="14.47" cy="15.40" r="3">
+        <circle cx="9.53" cy="15.40" r="3">
+        <circle cx="8.01" cy="10.70" r="3">
+        <circle cx="12" cy="12" r="1.6">
+      <p class="text-white/70 text-sm max-w-sm">
+       "Rayhanah Cycle is a private space for our sisters. Set your gender to female in"
+       <button class="text-brand-emerald underline">
+        "your profile"
+       "to open it."
+   <footer class="bg-brand-deep text-white border-t border-brand-border mt-auto">
+    <div class="footer footer-center p-6 sm:p-8">
+     <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center gap-2 text-sm sm:text-base">
+       <span>
+        "Made with love"
+       <svg aria-hidden="true" class="w-4 h-4 text-red-300" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="<384:b0396863>">
+       <span>
+        "for the ummah"
+      <nav aria-label="Footer" class="flex flex-wrap justify-center items-center gap-x-3 gap-y-1.5 text-xs">
+       <a class="inline-flex items-center text-white/60 hover:text-brand-emerald underline underline-offset-2 transition-colors" data-discover="true" href="/feedback">
+        "Feedback & Contact"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-brand-gold underline underline-offset-2 transition-colors" data-discover="true" href="/about">
+        "About"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/privacy">
+        "Privacy"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/terms">
+        "Terms"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://bayan.bustandeen.com/home">
+        "Help & updates"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" href="https://status.bustandeen.com" rel="noopener noreferrer" target="_blank">
+        "Status"
+      <p class="text-xs sm:text-sm text-white/70">
+       "Bustandeen"
+      <div class="flex gap-4 text-xs opacity-70">
+       <span>
+        "Non-commercial"
+       <span>
+        "•"
+       <span>
+        "Free · Ad-free · Open-source"
+       <span>
+        "•"
+       <span>
+        "Your data is yours"
+      <p class="text-[10px] text-white/60 tabular-nums">
+       "v"
+       "<version>"

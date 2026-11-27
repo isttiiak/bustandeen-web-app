@@ -252,6 +252,72 @@ test('cycle: starting a period, then the pages that follow it', async ({ page })
   await expectBaseline(page, 'cycle.start-dialog');
 });
 
+// Audit P4-1 (PR 11, RayhanahCycle): the quiet page's dialogs and switches. The demo
+// keeps no started period, so the pages with one are baselined by the server render
+// in src/pages/rayhanahRender.test.ts.
+test('cycle: a nifas start, begun offline, writes one request', async ({ page, context }) => {
+  await open(page, { as: 'sister' }, '/cycle');
+  await context.setOffline(true);
+  await press(page, 'My period started');
+  await press(page, 'Post-natal (nifās)');
+  await expectBaseline(page, 'cycle.start-nifas-chosen');
+  await press(page, 'Begin Rayhanah days');
+  await expectBaseline(page, 'cycle.start-nifas-queued');
+  expectText(await outbox(page), 'cycle.start-nifas.outbox');
+});
+
+test('cycle: the pregnancy switch asks for a due date, then saves it offline', async ({
+  page,
+  context,
+}) => {
+  await open(page, { as: 'sister' }, '/cycle');
+  await context.setOffline(true);
+  await declineBanner(page);
+  await page.getByRole('switch', { name: "I'm currently pregnant" }).click();
+  await page.waitForTimeout(300);
+  await expectBaseline(page, 'cycle.pregnancy-form');
+  await page.getByLabel('Expected due date').fill('2027-02-10');
+  await press(page, 'Save');
+  await expectBaseline(page, 'cycle.pregnancy-saved');
+  expectText(await outbox(page), 'cycle.pregnancy.outbox');
+});
+
+test('cycle: the share switch opens the friend picker, and cancel closes it', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/cycle');
+  await declineBanner(page);
+  await page.getByRole('switch', { name: 'Share cycle status' }).click();
+  await page.waitForTimeout(400);
+  await expectBaseline(page, 'cycle.share-picker');
+  await press(page, 'Cancel');
+  await expectBaseline(page, 'cycle.share-picker-closed');
+});
+
+test('cycle: the settings drawer opens from the cog', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/cycle');
+  await press(page, 'Settings');
+  await expectBaseline(page, 'cycle.settings-drawer');
+});
+
+test('cycle: the istihada guide opens', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/cycle');
+  await declineBanner(page);
+  await page.getByText('What is istiḥāḍa?').click();
+  await page.waitForTimeout(300);
+  await expectBaseline(page, 'cycle.istihada-open');
+});
+
+test('cycle: the Analytics tab opens the analytics', async ({ page }) => {
+  await open(page, { as: 'sister' }, '/cycle');
+  await declineBanner(page);
+  await page.getByRole('link', { name: 'Analytics' }).first().click();
+  await expect(page).toHaveURL(/\/cycle\/analytics$/);
+});
+
+test('cycle: a brother is shown the gentle gate', async ({ page }) => {
+  await open(page, { as: 'brother' }, '/cycle');
+  await expectBaseline(page, 'cycle.brother-gate');
+});
+
 test('cycle: analytics, logging a past period', async ({ page }) => {
   await open(page, { as: 'sister' }, '/cycle/analytics');
   await press(page, 'Log a past period');
