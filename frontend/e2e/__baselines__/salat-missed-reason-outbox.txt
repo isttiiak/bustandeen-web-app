@@ -1,0 +1,15 @@
+{
+ "sync": [],
+ "salat": [
+  {
+   "kind": "prayer",
+   "vars": {
+    "prayer": "asr",
+    "status": "missed",
+    "date": "2026-10-15",
+    "missedReason": "sleep"
+   },
+   "owner": "demo-001"
+  }
+ ]
+}
