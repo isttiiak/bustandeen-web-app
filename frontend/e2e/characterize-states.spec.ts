@@ -318,6 +318,201 @@ test('cycle: a brother is shown the gentle gate', async ({ page }) => {
   await expectBaseline(page, 'cycle.brother-gate');
 });
 
+// ---- Rayhanah with a started period (audit P4-1, PR 12) ------------------------
+// The demo keeps no started period, so these tests rewrite the demo's cycle summary
+// in the built script before it runs (the page code itself is untouched). The
+// writes are made offline and compared as the requests they queue.
+test.describe('cycle with a period', () => {
+  test.use({ serviceWorkers: 'block' });
+
+  const ACTIVE = (start: string, day = 3, beyond = false) =>
+    `{type:\`hayd\`,startDate:\`${start}\`,dayCount:${day},maxDays:15,beyondMax:${beyond ? '!0' : '!1'}}`;
+
+  async function rewriteDemoCycle(
+    page: Page,
+    o: { active?: string; pregnant?: boolean; endedRecently?: boolean }
+  ) {
+    if (!o.active && !o.pregnant && !o.endedRecently) return;
+    await page.route('**/assets/*.js', async (route) => {
+      const res = await route.fetch();
+      let body = await res.text();
+      if (body.includes('basedOnCycles:4')) {
+        const before = body;
+        if (o.active)
+          body = body.replace('active:null,partnerSync', `active:${o.active},partnerSync`);
+        if (o.pregnant)
+          body = body.replace(
+            'pregnancy:{active:!1,dueDate:null,weeksAlong:null}',
+            'pregnancy:{active:!0,dueDate:`2027-02-10`,weeksAlong:20}'
+          );
+        if (o.endedRecently)
+          body = body.replace(
+            'startDate:v(36),endDate:v(30)',
+            'startDate:`2026-10-08`,endDate:`2026-10-13`'
+          );
+        if (body === before)
+          throw new Error('the demo cycle summary was not found in the built script');
+      }
+      await route.fulfill({ response: res, body });
+    });
+  }
+
+  async function openCycle(
+    page: Page,
+    o: Parameters<typeof rewriteDemoCycle>[1],
+    demo: Partial<DemoOptions> = {}
+  ) {
+    await rewriteDemoCycle(page, o);
+    await open(page, { as: 'sister', ...demo }, '/cycle');
+  }
+
+  test('an active period (English)', async ({ page }) => {
+    await openCycle(page, { active: ACTIVE('2026-10-13') });
+    await expectBaseline(page, 'cycle.active');
+  });
+
+  test('an active period (Bangla)', async ({ page }) => {
+    await openCycle(page, { active: ACTIVE('2026-10-13') }, { lang: 'bn' });
+    await expectBaseline(page, 'cycle.active.bn');
+  });
+
+  test('a period past the maximum shows the istihada note', async ({ page }) => {
+    await openCycle(page, { active: ACTIVE('2026-09-29', 17, true) });
+    await expectBaseline(page, 'cycle.active-beyond-max');
+  });
+
+  test('a pregnancy shows the week and the due date', async ({ page }) => {
+    await openCycle(page, { pregnant: true });
+    await expectBaseline(page, 'cycle.pregnant');
+  });
+
+  test('turning the pregnancy switch off writes one request', async ({ page, context }) => {
+    await openCycle(page, { pregnant: true });
+    await context.setOffline(true);
+    await declineBanner(page);
+    await page.getByRole('switch', { name: "I'm currently pregnant" }).click();
+    await page.waitForTimeout(300);
+    expectText(await outbox(page), 'cycle.pregnancy-off.outbox');
+  });
+
+  test('a garden item is ticked, then a flow, a symptom and a mood', async ({ page, context }) => {
+    await openCycle(page, { active: ACTIVE('2026-10-13') });
+    await context.setOffline(true);
+    await press(page, /Mark Morning & evening adhkār/);
+    await expectBaseline(page, 'cycle.garden-ticked');
+    await press(page, 'Medium');
+    await press(page, 'Cramps');
+    await press(page, 'Calm');
+    await expectBaseline(page, 'cycle.note-chips');
+    expectText(await outbox(page), 'cycle.note-chips.outbox');
+  });
+
+  test('going back a day edits that day, and back to today returns', async ({ page, context }) => {
+    await openCycle(page, { active: ACTIVE('2026-10-13') });
+    await context.setOffline(true);
+    await press(page, 'Previous day');
+    await expectBaseline(page, 'cycle.day-back-one');
+    await press(page, 'Heavy');
+    expectText(await outbox(page), 'cycle.day-back-one.outbox');
+    await press(page, 'Previous day');
+    await expectBaseline(page, 'cycle.day-back-to-start');
+    await press(page, 'Back to today');
+    await expectBaseline(page, 'cycle.day-back-to-today');
+  });
+
+  test('ending the period opens the ghusl guide', async ({ page, context }) => {
+    await openCycle(page, { active: ACTIVE('2026-10-13') });
+    await context.setOffline(true);
+    await press(page, 'My period has ended');
+    await expectBaseline(page, 'cycle.ghusl-open');
+    await press(page, /Make the intention/);
+    await press(page, /Wash both hands/);
+    await expectBaseline(page, 'cycle.ghusl-two-steps');
+    expectText(await outbox(page), 'cycle.end-period.outbox');
+    await press(page, 'Alhamdulillah');
+    await expectBaseline(page, 'cycle.ghusl-closed');
+  });
+
+  test('a period that fell in Ramadan offers to add the days to qada', async ({
+    page,
+    context,
+  }) => {
+    await openCycle(page, { active: ACTIVE('2027-02-18') }, { at: AT.ramadan });
+    await context.setOffline(true);
+    await press(page, 'My period has ended');
+    await press(page, 'Alhamdulillah');
+    await expectBaseline(page, 'cycle.qada-prompt');
+    await press(page, 'Add to qaḍā');
+    await expectBaseline(page, 'cycle.qada-added');
+    expectText(await outbox(page), 'cycle.qada-added.outbox');
+  });
+
+  test('the qada prompt can be dismissed with Not now', async ({ page, context }) => {
+    await openCycle(page, { active: ACTIVE('2027-02-18') }, { at: AT.ramadan });
+    await context.setOffline(true);
+    await press(page, 'My period has ended');
+    await press(page, 'Alhamdulillah');
+    await press(page, 'Not now');
+    await expectBaseline(page, 'cycle.qada-dismissed');
+  });
+
+  test('a period ended two days ago can be reopened', async ({ page, context }) => {
+    await openCycle(page, { endedRecently: true });
+    await expectBaseline(page, 'cycle.ended-recently');
+    await context.setOffline(true);
+    await press(page, "I'm not done yet");
+    expectText(await outbox(page), 'cycle.reopen.outbox');
+  });
+
+  test('an old local Garden checklist is moved up once, then cleared', async ({
+    page,
+    context,
+  }) => {
+    await rewriteDemoCycle(page, { active: ACTIVE('2026-10-13') });
+    await enterDemo(page, { as: 'sister' });
+    await context.setOffline(true);
+    await page.evaluate(() => {
+      localStorage.setItem(
+        'bustandeen_rayhanah_garden_2026-10-15',
+        JSON.stringify({ adhkar: true, dhikr: true, istighfar: false })
+      );
+      localStorage.setItem(
+        'bustandeen_rayhanah_garden_2026-10-14',
+        JSON.stringify({ kindness: true })
+      );
+    });
+    await go(page, '/cycle');
+    await page.waitForTimeout(500);
+    expectText(
+      await page.evaluate(
+        () =>
+          Object.keys(localStorage)
+            .filter((k) => k.startsWith('bustandeen_rayhanah_garden_'))
+            .join('\n') || '(none left)'
+      ),
+      'cycle.legacy-garden.keys-left'
+    );
+    expectText(await outbox(page), 'cycle.legacy-garden.outbox');
+    await expectBaseline(page, 'cycle.legacy-garden');
+  });
+
+  test('the start dialog: a chosen date is sent, and a backdrop tap closes it', async ({
+    page,
+    context,
+  }) => {
+    await openCycle(page, {});
+    await context.setOffline(true);
+    await press(page, 'My period started');
+    await page.getByLabel('Start date').fill('2026-10-10');
+    await press(page, 'Begin Rayhanah days');
+    expectText(await outbox(page), 'cycle.start-hayd-dated.outbox');
+    await press(page, 'My period started');
+    await page.mouse.click(5, 5);
+    await page.waitForTimeout(400);
+    await expectBaseline(page, 'cycle.start-backdrop-closed');
+  });
+});
+
 test('cycle: analytics, logging a past period', async ({ page }) => {
   await open(page, { as: 'sister' }, '/cycle/analytics');
   await press(page, 'Log a past period');

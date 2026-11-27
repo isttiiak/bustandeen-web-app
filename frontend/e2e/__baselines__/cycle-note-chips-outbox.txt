@@ -1,0 +1,26 @@
+{
+ "sync": [
+  {
+   "tracker": "cycle",
+   "method": "put",
+   "url": "/api/cycle/day",
+   "body": {
+    "date": "2026-10-15",
+    "garden": [
+     "adhkar"
+    ],
+    "flow": "medium",
+    "symptoms": [
+     "cramps"
+    ],
+    "moods": [
+     "calm"
+    ]
+   },
+   "key": "cycle:day:2026-10-15",
+   "coalesce": "merge",
+   "owner": "demo-001"
+  }
+ ],
+ "salat": []
+}
