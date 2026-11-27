@@ -2,6 +2,36 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.80 - Big pages split: close-out (audit P4-1 done) - 2026-11-27
+
+Audit P4-1 is done. The 13 pages that were over (or near) 1,000 lines were split into small files by pure extraction, one page per PR (#400 to #417, three pages in more than one step). No behaviour, markup, copy, data, requests or routes changed. This PR only tightens the guard and tidies the proof.
+
+### The series in numbers
+
+| Page | Before | After |
+|---|---|---|
+| SalatTracker | 1,828 | 466 |
+| RayhanahCycle | 1,628 | 145 |
+| Settings | 1,499 | 127 |
+| SalatAnalytics | 1,416 | 206 |
+| QuranReader | 1,360 | 100 |
+| Friends | 1,309 | 142 |
+| ZikrAnalytics | 1,167 | 367 |
+| CycleAnalytics | 1,151 | 196 |
+| Home | 1,145 | 127 |
+| MusafirMode | 1,086 | 111 |
+| RamadanTracker | 1,057 | 100 |
+| PrayerTimes | 1,018 | 208 |
+| AdminSadaqah | 989 | 58 |
+| **Total** | **16,653** | **2,353** |
+
+The proof: 217 browser characterization tests (normalised DOM dumps and the exact requests each write queues), 323 browser baselines and 114 server-render or golden files, each recorded on the old page before its move and passing unchanged after it. Line checks show every moved line accounted for. Two real bugs found along the way were fixed separately (v5.190.79).
+
+### Changed
+
+- `fileSize.test.ts`: `CAP_SLACK` goes from 30 to 10, so a capped file that shrinks must lower its cap sooner. The comments say the split is done. The six pages and eight parts still listed are not part of P4-1 and are held at their current length.
+- Five browser baselines were byte-identical to another one by design (the test's point was "back to how it was"). Those tests now compare against the original name, and the copies are deleted: `salat.debt-unchanged` (now `salat.debt-open`), `salat.back-then-forward` (now `salat.at-1540`), `musafir.home-cancelled` (now `musafir.journey`), `musafir.form-old-date-ignored` (now `musafir.form-filled`), `salat.nafl-duha-rakat.outbox` (now `salat.nafl-duha-more.outbox`). No baseline is orphaned: a logged run shows all 323 in use.
+
 ## v5.190.79 - Kaza debt: Escape keeps the saved count; the demo's debt edits work - 2026-11-27
 
 Two bugs found while recording the Salat tracker for audit P4-1 (PR 16), fixed here.

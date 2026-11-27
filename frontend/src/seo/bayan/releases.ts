@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.80',
+    date: '2026-11-27',
+    text: {
+      en: {
+        title: 'Behind the scenes: the big code tidy-up is finished',
+        fixed: [
+          'We finished splitting the largest screens of the app into smaller pieces, so they are easier to look after and to improve. Nothing looks or works differently, and your worship records are exactly as you left them.',
+        ],
+      },
+      bn: {
+        title: 'পর্দার আড়ালে: বড় কোড গোছানোর কাজ শেষ',
+        fixed: [
+          'অ্যাপের সবচেয়ে বড় পাতাগুলোর কোড ছোট ছোট অংশে ভাগ করার কাজ শেষ হলো, যাতে এগুলোর দেখাশোনা ও উন্নতি সহজ হয়। দেখতে বা কাজে কিছু বদলায়নি, আপনার ইবাদতের হিসাব ঠিক আগের মতোই থাকে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.79',
     date: '2026-11-27',
     text: {
