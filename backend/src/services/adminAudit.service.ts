@@ -39,6 +39,7 @@ const AUDIT_AREAS = {
   accounts: ['account'],
   messages: ['feedback', 'mailbox', 'email'],
   broadcast: ['announcement', 'moonSighting'],
+  references: ['reference'],
 } as const;
 
 export type AuditArea = keyof typeof AUDIT_AREAS;

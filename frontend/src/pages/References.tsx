@@ -8,12 +8,12 @@ import ReferenceCard, { KIND_KEYS } from '../components/references/ReferenceCard
 import { BTN_SECONDARY, CARD, OPTION_OFF, OPTION_ON, TILE } from '../components/bustanStyles.js';
 import { DESK_CHECK, type RefKind } from '../data/references/registry.js';
 import { mappedReferences } from '../data/references/referenceExport.js';
+import { useReferenceChecks } from '../hooks/useReferenceChecks.js';
 import { REF_PAGES } from '../data/references/pages.js';
 
 type StatusFilter = 'all' | 'needsManual' | 'manual' | 'corrected' | 'weak' | 'unverified';
 
 const KINDS: (RefKind | 'all')[] = ['all', 'quran', 'hadith', 'scholarly', 'fiqh', 'data'];
-const ALL = mappedReferences();
 
 const FIELD =
   'min-h-[44px] px-3 py-2 rounded-control bg-brand-surface border border-brand-border text-white text-sm placeholder:text-white/60 focus:outline-none focus:border-brand-emerald focus:ring-2 focus:ring-brand-emerald/30 transition-colors';
@@ -31,6 +31,11 @@ export default function References() {
   const [kind, setKind] = useState<RefKind | 'all'>('all');
   const [status, setStatus] = useState<StatusFilter>('all');
 
+  // Manual checks come from the server, so a mark set in the admin panel
+  // shows here at once. Until they load (or offline) the list shows without.
+  const { data: checks } = useReferenceChecks();
+  const ALL = useMemo(() => mappedReferences(checks ?? {}), [checks]);
+
   const stats = useMemo(
     () => ({
       total: ALL.length,
@@ -38,7 +43,7 @@ export default function References() {
       weak: ALL.filter((r) => r.desk === 'weak').length,
       manual: ALL.filter((r) => r.manual && r.manual.status !== 'needs-correction').length,
     }),
-    []
+    [ALL]
   );
 
   const shown = useMemo(() => {
@@ -61,7 +66,7 @@ export default function References() {
         .toLowerCase()
         .includes(q);
     });
-  }, [query, kind, status]);
+  }, [ALL, query, kind, status]);
 
   const num = (n: number) => n.toLocaleString(bn ? 'bn-BD' : 'en');
 

@@ -1,9 +1,10 @@
 {
-  "about": "Bustandeen reference map: every Quran, hadith, scholarly, fiqh and data source the app cites, what it is used for, where, and how it was checked. Desk checks are not a scholar’s review; see manual for checks by a person at the source or a scholar.",
+  "about": "Bustandeen reference map: every Quran, hadith, scholarly, fiqh and data source the app cites, what it is used for, where it appears, and how it was desk-checked. Desk checks are not a scholar’s review. Manual checks (a person at the source, or a scholar) are live at manualChecksUrl.",
   "deskCheck": {
     "date": "2026-11-28",
     "method": "Every hadith number was opened in the hadith-api dataset (sunnah.com English text and grades) or, where it has none, on sunnah.com and the grading literature; every Quran citation was compared with quran.com (Sahih International) and the bundled Tanzil text."
   },
+  "manualChecksUrl": "https://bustandeen.com/api/references/checks",
   "pages": {
     "home": {
       "label": "Home",

@@ -32,6 +32,8 @@ import adminStatsRoutes from './routes/adminStats.routes.js';
 import adminOpsRoutes from './routes/adminOps.routes.js';
 import adminAnnouncementRoutes from './routes/adminAnnouncement.routes.js';
 import adminMoonSightingRoutes from './routes/adminMoonSighting.routes.js';
+import referenceCheckRoutes from './routes/referenceCheck.routes.js';
+import adminReferenceCheckRoutes from './routes/adminReferenceCheck.routes.js';
 import updateEmailRoutes from './routes/updateEmail.routes.js';
 import composeEmailRoutes from './routes/composeEmail.routes.js';
 import cspReportRoutes from './routes/cspReport.routes.js';
@@ -190,6 +192,7 @@ app.use('/api/sadaqah', sadaqahRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/announcements', announcementRoutes);
 app.use('/api/calendar', moonSightingRoutes);
+app.use('/api/references', referenceCheckRoutes);
 // Vercel Cron jobs (LT-1), CRON_SECRET bearer only.
 app.use('/api/cron', cronRoutes);
 // The admin API answers only on the admin site (and previews, localhost) once
@@ -211,6 +214,7 @@ app.use('/api/admin/stats', adminStatsRoutes);
 app.use('/api/admin/ops', adminOpsRoutes);
 app.use('/api/admin/announcements', adminAnnouncementRoutes);
 app.use('/api/admin/moon-sighting', adminMoonSightingRoutes);
+app.use('/api/admin/references', adminReferenceCheckRoutes);
 app.use('/api/admin/compose-email', composeEmailRoutes);
 app.use('/api/admin/update-emails', updateEmailRoutes);
 

@@ -2,6 +2,22 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.193.0 - Mark references as checked from the admin panel - 2026-11-28
+
+### Added
+
+- **Manual reference checks are saved from the admin panel and show at once.** In **Tools → Reference checks** (Servant only), choose "Checked at the source", "Confirmed by a scholar" or "Needs correction" next to a reference, with who checked it and a note. It saves straight to the server and the public reference map (`/references`) shows it within a minute. No file to paste, no command, no deploy.
+- **Server:** `ReferenceCheck` model (one per reference id, unique index on `refId`), `GET /api/references/checks` (public, cached 60 s), and Servant-only `GET`/`PUT /api/admin/references/checks` and `DELETE /api/admin/references/checks/:refId`. Every save and clear is in the admin audit log with the values before and after, under the new "Reference checks" area. Clearing a mark asks first. Tests: `tests/referenceCheck.e2e.test.js`.
+- **Native app:** `/references.json` keeps the references and where each is used; manual checks are live at `manualChecksUrl` (`/api/references/checks`).
+
+### Removed
+
+- `frontend/src/data/references/manualChecks.json` and the copy-and-paste flow (it held no marks yet). `npm run refs:update` is still needed only when a reference is added to or moved in the code.
+
+### Deploy note
+
+- The `refId` unique index is created with `npm run sync-indexes --prefix backend -- --apply --production` (staging first). Saving works without it; the index guards against a duplicate from two saves at the same moment.
+
 ## v5.192.1 - The reference map shows where in the app - 2026-11-28
 
 ### Changed
