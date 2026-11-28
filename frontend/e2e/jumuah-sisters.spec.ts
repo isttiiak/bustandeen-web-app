@@ -106,3 +106,21 @@ test("salat analytics shows a sister no Jumu'ah attendance rate", async ({ page 
   await expect(page.getByText(/Kaza Owed/i).first()).toBeVisible();
   await expect(page.getByText(/Jumu'ah attendance/i)).toHaveCount(0);
 });
+
+test('the Eid page invites a sister to the gathering, also during her period', async ({ page }) => {
+  await enterDemo(page, { as: 'sister' });
+  await go(page, '/special-day/eid_fitr');
+  await expect(page.getByRole('heading', { name: 'For sisters' })).toBeVisible();
+  await expect(page.getByText('Attend the Eid gathering', { exact: true })).toBeVisible();
+  await expect(page.getByText(/during your period, attend and join the takbīr/)).toBeVisible();
+});
+
+test('Laylat al-Qadr: Fajr in congregation for a brother, not shown to a sister', async ({
+  page,
+}) => {
+  await enterDemo(page, { as: 'brother' });
+  await go(page, '/special-day/laylat_qadr');
+  await expect(page.getByText('Pray Fajr in congregation, completing the night')).toBeVisible();
+  await expect(page.getByText('Pray Fajr on time, completing the night')).toHaveCount(0);
+  await expect(page.getByText('Attend the Eid gathering')).toHaveCount(0);
+});

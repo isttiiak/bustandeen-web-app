@@ -2,6 +2,16 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.85 - Eid and Laylat al-Qadr guidance for sisters - 2026-11-28
+
+Part 2 of the 2026-11-28 ruling work (part 1 is v5.190.84). References checked on sunnah.com.
+
+### Changed
+
+- **Eid al-Fiṭr and Eid al-Aḍḥā:** a sisters' item, "Attend the Eid gathering". Sisters are encouraged to attend; during your period, attend and join the takbīr and du'ā, but keep away from the prayer place (Ṣaḥīḥ al-Bukhārī 324, 971, 974). Two references added to each Eid. "Attend Eid prayer in congregation" stays for everyone.
+- **Laylat al-Qadr:** "Pray Fajr in congregation, completing the night" is now shown to brothers; sisters see "Pray Fajr on time, completing the night". A guest sees both, labelled.
+- English and Bangla. The words of the other eight special days are unchanged (fingerprint test).
+
 ## v5.190.84 - Jumu'ah for sisters, and Friday guidance for brothers and sisters - 2026-11-28
 
 Owner's ruling of 2026-11-28: Jumu'ah is not obligatory for women. A sister prays Ẓuhr (4 rakʿahs) at home, or may attend Jumu'ah at the mosque with proper covering. Every reference below was checked on sunnah.com or quran.com (wording, number, grade).

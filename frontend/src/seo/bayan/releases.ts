@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.85',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Eid and Laylat al-Qadr guidance for sisters',
+        added: [
+          "The Eid pages now tell sisters they are encouraged to attend the Eid gathering, and that during the period you still attend and join the takbīr and du'ā, keeping away from the prayer place. On Laylat al-Qadr, sisters are reminded to pray Fajr on time.",
+        ],
+      },
+      bn: {
+        title: 'বোনদের জন্য ঈদ ও লাইলাতুল কদরের নির্দেশনা',
+        added: [
+          "ঈদের পাতায় এখন বোনদের জানানো হয় যে ঈদের জমায়েতে অংশ নিতে তাদের উৎসাহিত করা হয়েছে, আর মাসিকের সময়ও অংশ নিয়ে তাকবীর ও দু'আয় শরিক হওয়া যায়, তবে সালাতের স্থান থেকে দূরে থেকে। লাইলাতুল কদরে বোনদের সময়মতো ফজর আদায়ের কথা মনে করিয়ে দেওয়া হয়।",
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.84',
     date: '2026-11-28',
     text: {

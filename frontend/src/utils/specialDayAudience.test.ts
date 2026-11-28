@@ -65,4 +65,29 @@ describe('special-day guidance per person', () => {
       { audience: null, items: ashura.todos.map((todo, index) => ({ todo, index })) },
     ]);
   });
+
+  it('Eid: a sister is told she may attend, also during her period; a brother is not', () => {
+    for (const id of ['eid_fitr', 'eid_adha']) {
+      const day = SPECIAL_DAYS.find((d) => d.id === id)!;
+      const text = (g: string) =>
+        JSON.stringify(groupTodos(day.todos, g).flatMap((x) => x.items.map((i) => i.todo.action)));
+      expect(text('female'), id).toContain('Attend the Eid gathering');
+      expect(text('male'), id).not.toContain('Attend the Eid gathering');
+      // Eid prayer itself stays for everyone.
+      expect(text('female'), id).toContain('Attend Eid prayer in congregation');
+      const refs = day.references.map((r) => r.text).join('\n');
+      for (const cite of ['Ṣaḥīḥ al-Bukhārī 971', 'Ṣaḥīḥ al-Bukhārī 324, 974'])
+        expect(refs, `${id} ${cite}`).toContain(cite);
+    }
+  });
+
+  it('Laylat al-Qadr: Fajr in congregation for brothers, Fajr on time for sisters', () => {
+    const day = SPECIAL_DAYS.find((d) => d.id === 'laylat_qadr')!;
+    const text = (g: string) =>
+      JSON.stringify(groupTodos(day.todos, g).flatMap((x) => x.items.map((i) => i.todo.action)));
+    expect(text('male')).toContain('Pray Fajr in congregation, completing the night');
+    expect(text('male')).not.toContain('Pray Fajr on time, completing the night');
+    expect(text('female')).toContain('Pray Fajr on time, completing the night');
+    expect(text('female')).not.toContain('Pray Fajr in congregation');
+  });
 });
