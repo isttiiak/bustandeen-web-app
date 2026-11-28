@@ -45,7 +45,7 @@ export function SunriseIcon(p: IconProps) {
 }
 
 /** Midday sun: ẓuhr, also ḍuḥā. */
-export function DhuhrIcon(p: IconProps) {
+function DhuhrIcon(p: IconProps) {
   return (
     <Svg {...p}>
       <circle cx="12" cy="12" r="4" />
