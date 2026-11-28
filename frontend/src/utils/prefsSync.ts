@@ -61,6 +61,7 @@ const SYNCED_KEYS: readonly string[] = [
   'bustandeen_quran_listen_counts',
   'bustandeen_reciter',
   'bustandeen_quran_translations',
+  'bustandeen_quran_translations_manual',
   'bustandeen_tafsir_edition',
   'bustandeen_calendar_layers',
   'bustandeen_calendar_grid',

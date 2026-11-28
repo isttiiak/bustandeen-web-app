@@ -2,6 +2,28 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.192.0 - Friend nudges, quick dhikr confirmation, honest analytics - 2026-11-28
+
+A batch from daily use.
+
+### Added
+
+- **Friend nudge:** a friend with no active day this week shows a **Nudge** button in the circle. The sender may add a short message (140 characters); the friend sees a dismissible dialog with who nudged, how many times, a kind predefined line and the note. One nudge per friend per day, ten a day, only to connected friends who are visible in the circle; removed on unfriend, block, account deletion and after 90 days. New `Nudge` model, `/api/social/nudge/:uid`, `/api/social/nudges`, `/api/social/nudges/dismiss`. Web shows the dialog only; the app will deliver it its own way.
+- **Quick dhikr asks first:** the three Home chips open a dialog: open the counter with that number as the target, or add it to the list. The old "one tap does" setting is gone.
+- **Home arch shows the time now** after its label ("Current · 03:45 PM"), on the saved place's clock, ticking on the minute.
+- **Logged counts keep their time:** Zikr session history lists each Log counts entry as its own row with the time it was logged (and the day, when it counts for another day) instead of one "Manual log" row.
+- **Salat "How You Prayed"** replaces "Prayer Timing": Done, Kaza and kaza debt repaid in the period. `GET /api/salat/analytics` drops `timeOfWindow` and adds `debtRepaidCount`.
+- **Privacy and Terms** name the content sources (Quran Foundation / Quran.com, sunnah.com, Islamic Network, IRD Foundation, King Fahd Complex, QUL by Tarteel), what each receives (nothing about the user), and the no-redistribution rule. Both pages updated in English and Bangla. The nudge is described under "What friends can see".
+
+### Fixed
+
+- **Quran reading timer** started when the screen opened, before the surah loaded (up to 10 to 12 seconds). It now starts when the āyāt are on screen.
+- **Quran settings across devices:** the server returned the legacy profile copy of a setting (stamped with the profile's last update, which moves on every read) instead of a newer saved choice, so translations and other choices reverted. A saved choice now always wins.
+- **Translation and the language button:** the language button no longer rewrites the translation setting. Until the user chooses translations in Quran settings, the first one follows the app language; a choice is kept and synced (`bustandeen_quran_translations_manual`). The open reader swaps translations when the language changes.
+- **Top surahs** no longer count surahs finished in the khatam journey (server and client), and a surah listened to the end on the Listen page now counts. Counts already recorded from khatam cannot be separated and stay.
+- **Friends:** the three-dot menu sat outside the arch's curve; it is now level with the icon, inside the arch.
+- The "Allāhu Akbar" card hadith was already fixed in v5.191.0.
+
 ## v5.191.0 - Reference audit and the reference map - 2026-11-28
 
 Every Quran, hadith, scholarly and data reference in the web app was audited, and the app now has a public reference map. Each hadith number was opened in the hadith-api dataset (the sunnah.com English text and grades) or, where it has none, on sunnah.com and in the grading literature; each Quran citation was compared with quran.com (Sahih International) and the bundled Tanzil text. 250 references in all.

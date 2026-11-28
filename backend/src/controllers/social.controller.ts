@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import * as socialService from '../services/social.service.js';
+import * as nudgeService from '../services/nudge.service.js';
 import { DEFAULT_TIMEZONE_OFFSET } from '../utils/timezone-flexible.js';
 
 export const getSummary = async (
@@ -154,6 +155,53 @@ export const setPrivacy = async (
     const body = req.body as Parameters<typeof socialService.setPrivacy>[1];
     const result = await socialService.setPrivacy(req.user.uid, body);
     res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const sendNudge = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const friendUid = req.params['friendUid'] as string;
+    const body = req.body as { message?: string; today?: string; timezoneOffset?: number };
+    const result = await nudgeService.sendNudge(
+      req.user.uid,
+      friendUid,
+      body.message,
+      body.today,
+      body.timezoneOffset
+    );
+    if (result.ok) {
+      res.json(result);
+      return;
+    }
+    // One generic "unavailable" for every reason the friend cannot be nudged,
+    // so the answer never tells more than the circle already shows.
+    const status = result.reason === 'unavailable' ? 400 : 429;
+    res.status(status).json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getNudges = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const nudges = await nudgeService.getIncomingNudges(req.user.uid);
+    res.json({ ok: true, nudges });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const dismissNudges = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { fromUids } = req.body as { fromUids?: string[] };
+    await nudgeService.dismissNudges(req.user.uid, fromUids);
+    res.json({ ok: true });
   } catch (err) {
     next(err);
   }

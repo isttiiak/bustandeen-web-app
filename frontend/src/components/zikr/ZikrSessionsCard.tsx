@@ -3,7 +3,7 @@ import { ListBulletIcon } from '@heroicons/react/24/outline';
 import { CARD, SECTION_TITLE } from '../bustanStyles.js';
 import type { useZikrSessions } from '../../hooks/useAnalytics.js';
 import { zikrDisplayName } from '../../utils/zikrLibrary.js';
-import { formatLocaleNumber, formatLocaleTime } from '../../utils/localeDate.js';
+import { formatLocaleDate, formatLocaleNumber, formatLocaleTime } from '../../utils/localeDate.js';
 import { getTrackingDay } from '../../utils/trackingDay.js';
 
 /** Session history for one chosen day. */
@@ -19,6 +19,22 @@ export function ZikrSessionsCard({
   sessionsLoading: boolean;
 }) {
   const { t, i18n } = useTranslation();
+  // A logged count shows WHEN it was logged (the day too, when that is not the
+  // day being viewed), instead of a start-to-end duration.
+  const loggedLabel = (iso: string | undefined) => {
+    if (!iso) return t('zikrAnalytics.sessions.manualLog', 'Logged');
+    const at = new Date(iso);
+    const time = formatLocaleTime(at, { hour: 'numeric', minute: '2-digit' });
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const sameDay =
+      `${at.getFullYear()}-${pad(at.getMonth() + 1)}-${pad(at.getDate())}` === sessionsDate;
+    return sameDay
+      ? t('zikrAnalytics.sessions.loggedAt', 'Logged at {{time}}', { time })
+      : t('zikrAnalytics.sessions.loggedOn', 'Logged {{day}}, {{time}}', {
+          time,
+          day: formatLocaleDate(at, { weekday: 'short', day: 'numeric', month: 'short' }),
+        });
+  };
   return (
     <div className={`${CARD} p-4 sm:p-5 space-y-3`}>
       <div className="flex items-center justify-between gap-3">
@@ -58,8 +74,8 @@ export function ZikrSessionsCard({
                 <div className="min-w-0">
                   <p className="text-white/80 text-sm font-semibold tabular-nums">
                     {isManualEntry ? (
-                      <span className="text-white/70 text-xs font-medium italic">
-                        {t('zikrAnalytics.sessions.manualLog', 'Manual log')}
+                      <span className="text-white/70 text-xs font-medium">
+                        {loggedLabel(s.loggedAt)}
                       </span>
                     ) : (
                       <>

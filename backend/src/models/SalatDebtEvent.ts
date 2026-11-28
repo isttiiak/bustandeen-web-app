@@ -14,6 +14,8 @@ interface ISalatDebtEvent extends Document {
   date: string;
   prayer: PrayerId;
   delta: number;
+  /** 'reset': the clean-slate zeroing, which is not a repayment. */
+  kind?: 'reset';
   createdAt: Date;
 }
 
@@ -23,6 +25,7 @@ const salatDebtEventSchema = new Schema<ISalatDebtEvent>(
     date: { type: String, required: true },
     prayer: { type: String, required: true, enum: ['fajr', 'dhuhr', 'asr', 'maghrib', 'isha'] },
     delta: { type: Number, required: true },
+    kind: { type: String, enum: ['reset'] },
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

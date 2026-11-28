@@ -240,6 +240,7 @@ export async function resetDebt(userId: string, date?: string): Promise<SalatDeb
     prayer: id,
     delta: -before.owed[id],
     date: d,
+    kind: 'reset' as const,
   }));
   if (events.length) await SalatDebtEvent.insertMany(events);
   await SalatDebt.findOneAndUpdate(
@@ -563,6 +564,22 @@ async function sweepChunk(userId: string, from: string, to: string): Promise<boo
     }
     return true;
   });
+}
+
+/** Prayers of kaza debt repaid between two dates (inclusive): repayment taps
+ * and counts lowered by hand. The clean-slate reset is not a repayment. */
+export async function getDebtRepaidTotal(
+  userId: string,
+  from: string,
+  to: string
+): Promise<number> {
+  const [row] = await SalatDebtEvent.aggregate<{ repaid: number }>([
+    {
+      $match: { userId, date: { $gte: from, $lte: to }, delta: { $lt: 0 }, kind: { $ne: 'reset' } },
+    },
+    { $group: { _id: null, repaid: { $sum: { $multiply: ['$delta', -1] } } } },
+  ]);
+  return row?.repaid ?? 0;
 }
 
 /** Shift a YYYY-MM-DD date string by `delta` days (pure string math, no TZ). */

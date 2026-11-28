@@ -1,18 +1,16 @@
 // Zikr quick chips on Home (T3.4 E, Istiak 2026-10-09). Three dhikr chosen
-// in Zikr settings, each with a number. What one tap does is also a setting:
-// open the counter on that dhikr with the number as its target (default), or
-// add the number at once. Synced across devices.
+// in Zikr settings, each with a number, synced across devices. A tap asks
+// first (ZikrQuickConfirm): open the counter on that dhikr with the number as
+// its target, or add the number to today's list. (The old "one tap" action
+// setting is gone: the question replaced it, 2026-11-28.)
 
 export const ZIKR_QUICK_KEY = 'bustandeen_zikr_quick';
-const ZIKR_QUICK_ACTION_KEY = 'bustandeen_zikr_quick_action';
 
 export interface QuickZikr {
   /** The counter's dhikr name (its key in the zikr store). */
   name: string;
   count: number;
 }
-
-export type QuickAction = 'open' | 'add';
 
 const QUICK_SLOTS = 3;
 export const QUICK_MAX_COUNT = 1000;
@@ -48,22 +46,6 @@ export function getQuickZikr(): QuickZikr[] {
 export function setQuickZikr(chips: QuickZikr[]): void {
   try {
     localStorage.setItem(ZIKR_QUICK_KEY, JSON.stringify(chips.slice(0, QUICK_SLOTS)));
-  } catch {
-    /* private mode */
-  }
-}
-
-export function getQuickAction(): QuickAction {
-  try {
-    return localStorage.getItem(ZIKR_QUICK_ACTION_KEY) === 'add' ? 'add' : 'open';
-  } catch {
-    return 'open';
-  }
-}
-
-export function setQuickAction(action: QuickAction): void {
-  try {
-    localStorage.setItem(ZIKR_QUICK_ACTION_KEY, action);
   } catch {
     /* private mode */
   }

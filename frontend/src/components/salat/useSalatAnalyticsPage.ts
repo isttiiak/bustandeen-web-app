@@ -87,11 +87,11 @@ export function useSalatAnalyticsPage() {
         'Your completion rate for each day of the week, added up across the whole period you\'re viewing. It is not a timeline. It answers "which day am I weakest on", for example Friday afternoons or Monday Fajr. A day with no bar yet just has no data in this window.'
       ),
     },
-    prayerTiming: {
-      title: t('salatAnalytics.info.prayerTimingTitle', 'Prayer Timing'),
+    howPrayed: {
+      title: t('salatAnalytics.info.howPrayedTitle', 'How You Prayed'),
       body: t(
-        'salatAnalytics.info.prayerTimingBody',
-        "Of the prayers you've marked done, how far into that prayer's time window you tended to pray it: early, mid or late. Only counts prayers where your location was set at the time (the window is calculated from prayer times, which need a location)."
+        'salatAnalytics.info.howPrayedBody',
+        'How many prayers you marked Done, how many you marked Kaza, and how many you paid back from your kaza debt in this period. It does not look at the time you tapped the button, because many people fill in the whole day at night and that would say nothing true about when they prayed.'
       ),
     },
     kazaDebtChart: {

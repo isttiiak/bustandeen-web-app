@@ -49,12 +49,6 @@ export function useQuranReader() {
   const { mutate: setResumeServer } = useSetResume();
   const [tafsirOpen, setTafsirOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
-  const readingSession = useQuranReadingSession({
-    extendedIdle: tafsirOpen,
-    // Designing a share card isn't reading time.
-    paused: shareOpen,
-    enabled: !!user && !isDemoMode,
-  });
   const { arabicFont, showTranslit, zoom, changeZoom, fs, editions, editionLabel } =
     useReaderPrefs();
 
@@ -92,6 +86,14 @@ export function useQuranReader() {
     t,
   });
 
+  // The clock starts when the āyāt are on screen: a surah that takes 10 seconds
+  // to load must not count as reading (Istiak, 2026-11-28).
+  const readingSession = useQuranReadingSession({
+    extendedIdle: tafsirOpen,
+    // Designing a share card isn't reading time either.
+    paused: shareOpen || loading,
+    enabled: !!user && !isDemoMode,
+  });
   const { registerSurah, registerAyahRead } = readingSession;
   useEffect(() => {
     registerSurah(surahNo);

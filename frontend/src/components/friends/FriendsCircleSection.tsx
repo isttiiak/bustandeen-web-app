@@ -19,6 +19,7 @@ export function FriendsCircleSection({
   allTime,
   onInvite,
   onManage,
+  onNudge,
 }: {
   isLoading: boolean;
   friendsCount: number;
@@ -29,6 +30,7 @@ export function FriendsCircleSection({
   allTime: ReturnType<typeof useCircleAllTime>;
   onInvite: () => void;
   onManage: () => void;
+  onNudge: (f: FriendStats) => void;
 }) {
   const { t } = useTranslation();
   return (
@@ -111,6 +113,7 @@ export function FriendsCircleSection({
               board={board}
               allTime={allTime.data?.[f.uid]}
               allTimeLoading={allTime.isLoading}
+              onNudge={isDemoMode ? undefined : onNudge}
             />
           ))}
 

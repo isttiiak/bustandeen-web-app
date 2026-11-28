@@ -17,10 +17,8 @@ import {
   DEFAULT_QUICK_ZIKR,
   ZIKR_QUICK_KEY,
   counterHref,
-  getQuickAction,
   getQuickZikr,
   parseTarget,
-  setQuickAction,
   setQuickZikr,
 } from './zikrQuick.js';
 import { QURAN_LAST_KEY, continueHref, getLastRead, setLastRead } from './quranLastRead.js';
@@ -177,20 +175,17 @@ describe('welcome setup Home choice (U5)', () => {
 });
 
 describe('zikr quick chips', () => {
-  it('defaults to istighfār, tahlīl and ṣalawāt, 100 each, opening the counter', () => {
+  it('defaults to istighfār, tahlīl and ṣalawāt, 100 each', () => {
     expect(getQuickZikr()).toEqual(DEFAULT_QUICK_ZIKR);
     expect(DEFAULT_QUICK_ZIKR.map((z) => z.count)).toEqual([100, 100, 100]);
-    expect(getQuickAction()).toBe('open');
   });
-  it('round-trips a choice and the add action', () => {
+  it('round-trips a choice', () => {
     setQuickZikr([
       { name: 'SubhanAllah', count: 33 },
       { name: 'Alhamdulillah', count: 33 },
       { name: 'Allahu Akbar', count: 34 },
     ]);
     expect(getQuickZikr().map((z) => z.count)).toEqual([33, 33, 34]);
-    setQuickAction('add');
-    expect(getQuickAction()).toBe('add');
   });
   it('a bad slot falls back to its default', () => {
     localStorage.setItem(

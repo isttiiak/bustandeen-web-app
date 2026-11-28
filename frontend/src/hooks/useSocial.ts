@@ -63,6 +63,10 @@ export interface FriendStats {
   /** Present ONLY for the one friend who has opted in to share her cycle
    * status with you specifically — see Rayhanah's partner-sync setting. */
   onCycle?: boolean;
+  /** Not on your own row: this friend has no active day this week, so you may nudge them. */
+  canNudge?: boolean;
+  /** You already nudged this friend within the last day. */
+  nudged?: boolean;
 }
 
 export interface SocialSummary {
@@ -118,6 +122,77 @@ export function useCircleAllTime(enabled: boolean) {
     enabled: !!user && enabled,
     staleTime: 5 * 60_000,
   });
+}
+
+/** A friend's nudge waiting for me: who, how many times, their note. */
+export interface IncomingNudge {
+  fromUid: string;
+  displayName: string;
+  photoUrl?: string;
+  avatarId?: string;
+  count: number;
+  message: string;
+  nudgedAt: string;
+}
+
+export const NUDGE_MESSAGE_MAX = 140;
+
+/** Nudges I have not dismissed yet. Checked on open and when the app regains focus. */
+export function useIncomingNudges() {
+  const user = useAuthStore((s) => s.user);
+  const isDemoMode = useAuthStore((s) => s.isDemoMode);
+  return useQuery({
+    queryKey: ['social', 'nudges'],
+    queryFn: async () => {
+      const { data } = await api.get<{ ok: boolean; nudges: IncomingNudge[] }>(
+        '/api/social/nudges'
+      );
+      return data.nudges;
+    },
+    enabled: !!user && !isDemoMode,
+    staleTime: 5 * 60_000,
+  });
+}
+
+export function useDismissNudges() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (fromUids?: string[]) => {
+      await api.post('/api/social/nudges/dismiss', fromUids?.length ? { fromUids } : {});
+    },
+    onSuccess: () => {
+      qc.setQueryData(['social', 'nudges'], []);
+    },
+  });
+}
+
+export type NudgeFailure = 'cooldown' | 'unavailable' | 'error';
+
+/** Sends a nudge to a quiet friend, with an optional short message. */
+export function useSendNudge() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (vars: { friendUid: string; message: string }) => {
+      await api.post(`/api/social/nudge/${encodeURIComponent(vars.friendUid)}`, {
+        ...(vars.message.trim() ? { message: vars.message.trim() } : {}),
+        today: localTodayStr(),
+        timezoneOffset: getUserTimezoneOffset(),
+      });
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ['social', 'summary'] });
+    },
+  });
+}
+
+/** What went wrong with a nudge, from the server's answer. */
+export function nudgeFailure(err: unknown): NudgeFailure {
+  const reason = (err as { response?: { data?: { reason?: string } } })?.response?.data?.reason;
+  return reason === 'cooldown' || reason === 'limit'
+    ? 'cooldown'
+    : reason === 'unavailable'
+      ? 'unavailable'
+      : 'error';
 }
 
 export function useConnectFriend() {

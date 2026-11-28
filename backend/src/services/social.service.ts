@@ -18,6 +18,7 @@ import { getStreakStatus } from './streak.service.js';
 import { getNoorSummary, getAllTimeNoor, type NoorMask } from './noor.service.js';
 import { getExcusedSet, getPartnerShareSet } from './cycle.service.js';
 import { DEFAULT_TIMEZONE_OFFSET, getTodayString } from '../utils/timezone-flexible.js';
+import { recentlyNudged, removeNudgesBetween } from './nudgeStore.service.js';
 
 function shiftDateStr(dateStr: string, delta: number): string {
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -168,7 +169,7 @@ export async function getInvitePreview(code: string): Promise<InvitePreview | nu
 
 /** What friends may see of someone's picture: an https photo (never a data:
  * URL, which can be large) or a preset avatar id. */
-function publicPicture(u: { photoUrl?: string; avatarId?: string } | null | undefined): {
+export function publicPicture(u: { photoUrl?: string; avatarId?: string } | null | undefined): {
   photoUrl?: string;
   avatarId?: string;
 } {
@@ -292,6 +293,7 @@ export async function blockUser(userId: string, targetUid: string): Promise<{ ok
         $unset: { [`friendSince.${userId}`]: '' },
       }
     );
+    await removeNudgesBetween(userId, targetUid);
     return { ok: true };
   });
 }
@@ -364,6 +366,7 @@ export async function unfriend(userId: string, friendUid: string): Promise<{ ok:
       { userId: friendUid },
       { $pull: { friends: userId }, $unset: { [`friendSince.${userId}`]: '' } }
     ),
+    removeNudgesBetween(userId, friendUid),
   ]);
   return { ok: true };
 }
@@ -473,6 +476,11 @@ interface FriendStats {
    * absent for everyone else, preserving the same "cannot tell from the
    * circle" privacy the excused-day score substitution relies on. */
   onCycle?: boolean;
+  /** Viewer-specific (never on the viewer's own row): this friend has no active
+   * day this week, so the viewer may nudge them. Mirrors what the row shows. */
+  canNudge?: boolean;
+  /** The viewer already nudged this friend within the last day. */
+  nudged?: boolean;
 }
 
 /**
@@ -625,7 +633,9 @@ export interface SocialSummary {
  * The privacy of each friend the viewer may see. A hidden friend is a full
  * opt-out: excluded from EVERY friend's circle, not just new ones.
  */
-async function visibleFriendPrivacy(friends: string[]): Promise<Map<string, PrivacySettings>> {
+export async function visibleFriendPrivacy(
+  friends: string[]
+): Promise<Map<string, PrivacySettings>> {
   const friendUids = friends.slice(0, MAX_FRIENDS);
   const friendProfiles = friendUids.length
     ? await SocialProfile.find({ userId: { $in: friendUids } }).select(
@@ -686,6 +696,17 @@ export async function getSummary(
       longestStreak(b) - longestStreak(a) ||
       a.displayName.localeCompare(b.displayName)
   );
+
+  // A quiet friend can be nudged (once a day). Judged from the same numbers the
+  // row shows, so the button never says more than the circle already does.
+  const nudgedUids = await recentlyNudged(userId);
+  for (const row of stats) {
+    if (row.isMe) continue;
+    if (row.activeDays === 0) {
+      row.canNudge = true;
+      if (nudgedUids.has(row.uid)) row.nudged = true;
+    }
+  }
 
   const privacy = privacyOf(profile);
   return {

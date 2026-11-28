@@ -77,7 +77,7 @@ export function SalatWeekdayCard({
   );
 }
 
-/** Prayer timing and the missed reasons, side by side on wider screens. */
+/** How you prayed and the missed reasons, side by side on wider screens. */
 export function SalatTimingAndReasons({
   data,
   chartInfo,
@@ -90,84 +90,80 @@ export function SalatTimingAndReasons({
   const { t } = useTranslation();
   return (
     <>
-      {(data.timeOfWindow || data.missedReasons) && (
+      {(data.completedCount + data.kazaCount > 0 || data.missedReasons) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          {/* Prayer timing: how far into the window prayers were marked done */}
-          {data.timeOfWindow &&
-            data.timeOfWindow.early + data.timeOfWindow.mid + data.timeOfWindow.late > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={CARD}
-              >
-                <div className="p-5 space-y-3">
-                  <h2 className={SECTION_TITLE}>
-                    <ChartBarIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />{' '}
-                    {t('salatAnalytics.prayerTiming', 'Prayer Timing')}
-                    <InfoButton
-                      onClick={() => setInfoTopic('prayerTiming')}
-                      label={chartInfo.prayerTiming!.title}
-                    />
-                  </h2>
-                  {(() => {
-                    const { early, mid, late } = data.timeOfWindow;
-                    const known = early + mid + late;
-                    return (
-                      <>
-                        <div className="w-full h-4 rounded-full overflow-hidden flex bg-track">
-                          {[
-                            { count: early, color: 'bg-brand-emerald' },
-                            { count: mid, color: 'bg-brand-gold' },
-                            { count: late, color: 'bg-data-none' },
-                          ].map(({ count, color }, i) => (
-                            <motion.div
-                              key={i}
-                              initial={{ width: 0 }}
-                              animate={{ width: `${(count / known) * 100}%` }}
-                              transition={{ duration: 0.7 }}
-                              className={`h-full ${color}`}
-                            />
-                          ))}
-                        </div>
-                        <div className="flex flex-wrap gap-3 text-xs">
-                          {[
-                            {
-                              label: t('salatAnalytics.timingEarly', 'Early'),
-                              count: early,
-                              color: 'bg-brand-emerald',
-                            },
-                            {
-                              label: t('salatAnalytics.timingMid', 'Mid-window'),
-                              count: mid,
-                              color: 'bg-brand-gold',
-                            },
-                            {
-                              label: t('salatAnalytics.timingLate', 'Late'),
-                              count: late,
-                              color: 'bg-data-none',
-                            },
-                          ].map(({ label, count, color }) => (
-                            <div key={label} className="flex items-center gap-1.5">
-                              <span className={`w-2.5 h-2.5 rounded-sm ${color}`} />
-                              <span className="text-white/70">{label}</span>
-                              <span className="text-white font-bold">
-                                {formatLocaleNumber(count)}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                        <p className="text-white/70 text-[10px]">
-                          {t(
-                            'salatAnalytics.timingHint',
-                            "How far into each prayer's window it was marked done. Only counted when your location was set at the time."
-                          )}
-                        </p>
-                      </>
-                    );
-                  })()}
-                </div>
-              </motion.div>
-            )}
+          {/* How you prayed: Done, Kaza and kaza debt repaid. Not the time the
+              Done button was tapped: many people fill the whole day in at night. */}
+          {data.completedCount + data.kazaCount + (data.debtRepaidCount ?? 0) > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={CARD}
+            >
+              <div className="p-5 space-y-3">
+                <h2 className={SECTION_TITLE}>
+                  <ChartBarIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />{' '}
+                  {t('salatAnalytics.howPrayed', 'How You Prayed')}
+                  <InfoButton
+                    onClick={() => setInfoTopic('howPrayed')}
+                    label={chartInfo.howPrayed!.title}
+                  />
+                </h2>
+                {(() => {
+                  const rows = [
+                    {
+                      label: t('salatAnalytics.howPrayedDone', 'Done'),
+                      count: data.completedCount,
+                      color: 'bg-brand-emerald',
+                    },
+                    {
+                      label: t('salatAnalytics.howPrayedKaza', 'Kaza'),
+                      count: data.kazaCount,
+                      color: 'bg-brand-gold',
+                    },
+                    {
+                      label: t('salatAnalytics.howPrayedRepaid', 'Kaza debt repaid'),
+                      count: data.debtRepaidCount ?? 0,
+                      color: 'bg-brand-info',
+                    },
+                  ];
+                  const total = rows.reduce((n, r) => n + r.count, 0);
+                  return (
+                    <>
+                      <div className="w-full h-4 rounded-full overflow-hidden flex bg-track">
+                        {rows.map(({ count, color, label }) => (
+                          <motion.div
+                            key={label}
+                            initial={{ width: 0 }}
+                            animate={{ width: `${(count / total) * 100}%` }}
+                            transition={{ duration: 0.7 }}
+                            className={`h-full ${color}`}
+                          />
+                        ))}
+                      </div>
+                      <div className="flex flex-wrap gap-3 text-xs">
+                        {rows.map(({ label, count, color }) => (
+                          <div key={label} className="flex items-center gap-1.5">
+                            <span className={`w-2.5 h-2.5 rounded-sm ${color}`} />
+                            <span className="text-white/70">{label}</span>
+                            <span className="text-white font-bold">
+                              {formatLocaleNumber(count)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-white/70 text-[10px]">
+                        {t(
+                          'salatAnalytics.howPrayedHint',
+                          'Prayers marked Done, prayers marked Kaza, and prayers you paid back from your kaza debt, in this period.'
+                        )}
+                      </p>
+                    </>
+                  );
+                })()}
+              </div>
+            </motion.div>
+          )}
 
           {/* Missed reasons — only the ones the user actually picked */}
           {data.missedReasons && Object.values(data.missedReasons).some((c) => c > 0) && (

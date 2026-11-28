@@ -60,6 +60,7 @@ export const SYNCED_PREF_KEYS: ReadonlySet<string> = new Set([
   'bustandeen_quran_listen_counts',
   'bustandeen_reciter',
   'bustandeen_quran_translations',
+  'bustandeen_quran_translations_manual',
   'bustandeen_tafsir_edition',
   // Islamic calendar (Library): calendars + order, grid, week, weekend, events
   'bustandeen_calendar_layers',
@@ -81,7 +82,7 @@ const MAX_FUTURE_SKEW_MS = 5 * 60_000;
 /**
  * Before this feature, Quran display prefs synced through QuranProfile. Surface
  * those as prefs (stamped with the profile's last update) for any key the user
- * has no newer entry for, so nobody loses their Quran setup on the move.
+ * has no saved entry for, so nobody loses their Quran setup on the move.
  */
 async function quranProfileSeed(uid: string): Promise<Map<string, PrefEntry>> {
   const p = await QuranProfile.findOne({ userId: uid }).lean();
@@ -112,9 +113,11 @@ export async function getPrefs(uid: string): Promise<PrefsMap> {
   const out = new Map(seed);
   for (const [k, e] of Object.entries(stored)) {
     if (!SYNCED_PREF_KEYS.has(k)) continue;
-    // A stored entry only beats the legacy seed if it is at least as new.
-    const legacy = out.get(k);
-    if (!legacy || e.t >= legacy.t) out.set(k, e);
+    // A saved entry ALWAYS beats the legacy seed. The seed is stamped with the
+    // profile's updatedAt, which moves on every read, so comparing times let a
+    // stale profile copy (e.g. the translation) override a newer choice made
+    // on another device (2026-11-28).
+    out.set(k, e);
   }
   return Object.fromEntries(out);
 }

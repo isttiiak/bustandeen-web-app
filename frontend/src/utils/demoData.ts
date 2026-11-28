@@ -194,12 +194,7 @@ function buildSalatAnalytics(days: number) {
         return [wd, { completed: Math.max(0, total - missed - kaza), kaza, missed, total }];
       })
     ),
-    timeOfWindow: {
-      early: Math.floor(totalCompleted * 0.45),
-      mid: Math.floor(totalCompleted * 0.35),
-      late: Math.floor(totalCompleted * 0.15),
-      unknown: Math.floor(totalCompleted * 0.05),
-    },
+    debtRepaidCount: 6,
     missedReasons: { sleep: 4, busy: 3, travel: 2, forgot: 1 },
   };
 }

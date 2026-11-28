@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
-import { useCircleAllTime, useSocialSummary } from '../../hooks/useSocial.js';
+import { useCircleAllTime, useSocialSummary, type FriendStats } from '../../hooks/useSocial.js';
 import type { Board } from './CircleRow.js';
 
 /** The Friends screen's state: which dialogs are open, the invite link, the board tab. */
@@ -14,6 +14,8 @@ export function useFriendsPage() {
   const [manageOpen, setManageOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [requestsOpen, setRequestsOpen] = useState(false);
+  // The quiet friend being nudged (the compose sheet is open while set)
+  const [nudgeTarget, setNudgeTarget] = useState<FriendStats | null>(null);
   const [copied, setCopied] = useState(false);
 
   // The navbar "Connect a friend" button links to /friends?invite=1
@@ -60,6 +62,8 @@ export function useFriendsPage() {
     setPrivacyOpen,
     requestsOpen,
     setRequestsOpen,
+    nudgeTarget,
+    setNudgeTarget,
     copied,
     inviteLink,
     copyLink,

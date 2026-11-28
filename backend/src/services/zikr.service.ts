@@ -407,8 +407,11 @@ export interface ZikrSession {
   end: Date;
   total: number;
   perType: Record<string, number>;
-  /** Counts typed in afterwards ("Log missed counts") — no real clock time. */
+  /** Counts typed in afterwards ("Log counts"): one row per log, never merged. */
   manual?: boolean;
+  /** For a manual log: the real moment it was logged (start and end are just
+   * that same moment). The counted day is the one asked for; this can be later. */
+  loggedAt?: Date;
 }
 
 /** Groups the day's raw taps into sessions (a run of taps with no gap longer
@@ -433,23 +436,26 @@ export async function getSessionsForDay(
 
   const events = await ZikrEvent.find({ userId, ts: { $gte: start, $lt: end } })
     .sort({ ts: 1 })
-    .select('zikrType amount ts startTs manual');
+    .select('zikrType amount ts startTs manual createdAt');
 
   const sessions: ZikrSession[] = [];
   let current: ZikrSession | null = null;
   let lastEnd = 0;
-  const manualEntry: ZikrSession = {
-    start: start,
-    end: start,
-    total: 0,
-    perType: {},
-    manual: true,
-  };
+  const manualLogs: ZikrSession[] = [];
 
   for (const e of events) {
     if (e.manual) {
-      manualEntry.total += e.amount;
-      manualEntry.perType[e.zikrType] = (manualEntry.perType[e.zikrType] ?? 0) + e.amount;
+      // Every log is its own row with the time it was made: what was logged,
+      // how many, and when (Istiak, 2026-11-28). `ts` is only the day anchor.
+      const at = e.createdAt ?? e.ts;
+      manualLogs.push({
+        start: at,
+        end: at,
+        total: e.amount,
+        perType: { [e.zikrType]: e.amount },
+        manual: true,
+        loggedAt: at,
+      });
       continue;
     }
     const evStart = e.startTs && e.startTs < e.ts ? e.startTs : e.ts;
@@ -464,9 +470,9 @@ export async function getSessionsForDay(
     lastEnd = Math.max(lastEnd, e.ts.getTime());
   }
 
-  // Manually logged counts have no clock time, so they sit after the timed
-  // sessions as a single "logged manually" row for the day.
-  if (manualEntry.total > 0) sessions.push(manualEntry);
+  // Logged counts sit after the timed sessions, oldest log first.
+  manualLogs.sort((a, b) => a.start.getTime() - b.start.getTime());
+  sessions.push(...manualLogs);
 
   return sessions;
 }

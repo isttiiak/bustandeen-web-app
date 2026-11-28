@@ -6,6 +6,7 @@ import { getResume, saveResume } from '../../utils/quranReaderResume.js';
 import {
   loadSurahList,
   loadSurahText,
+  selectedTranslations,
   type AyahText,
   type SurahMeta,
 } from '../../utils/quranData.js';
@@ -46,6 +47,11 @@ export function useReaderText({
   const [loading, setLoading] = useState(true);
   const [idx, setIdx] = useState(0); // index within `ayat`
   const [resumeAyah, setResumeAyah] = useState<number | null>(null); // continue-or-restart prompt
+  // Which translations the loaded text carries, to notice a language switch.
+  const loadedEditionsRef = useRef<string | null>(null);
+  // Read on every render (a small storage read): the app re-renders when the
+  // language changes, and that is when the default translation changes.
+  const editionsKey = selectedTranslations().join(',');
 
   const surahMeta = useMemo(
     () => surahs.find((s) => s.number === surahNo) ?? null,
@@ -64,6 +70,7 @@ export function useReaderText({
     resumePromptDoneRef.current = false;
     suppressSaveRef.current = false;
     seenRef.current = new Set();
+    loadedEditionsRef.current = selectedTranslations().join(',');
     // The surah list is only the header (name, ayah count); the Arabic is
     // bundled, so a failed list (offline before it was ever cached) must not
     // stop the surah from opening.
@@ -93,6 +100,26 @@ export function useReaderText({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reload the surah text only when the surah number changes; showTranslit, startAyah and t are read at that moment, so a language or option change must not reload it and reset the reading position
   }, [surahNo]);
+
+  // The language button changes the default translation: swap the translations
+  // in place, keeping the position. A translation the user chose in settings
+  // does not follow the language, so the key stays the same and nothing reloads.
+  useEffect(() => {
+    if (loadedEditionsRef.current === null || loadedEditionsRef.current === editionsKey) return;
+    let alive = true;
+    loadSurahText(surahNo, undefined, showTranslit)
+      .then((text) => {
+        if (!alive) return;
+        loadedEditionsRef.current = editionsKey;
+        setAyat(text);
+      })
+      .catch(() => {
+        /* keep the translations already on screen */
+      });
+    return () => {
+      alive = false;
+    };
+  }, [editionsKey, surahNo, showTranslit]);
 
   // Offer "continue where you left off?" once text (and, when signed in, the
   // server summary) is available. Server position wins over the local cache.

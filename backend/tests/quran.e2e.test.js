@@ -172,8 +172,26 @@ describe('Quran API', () => {
 
     const sum = await auth(request(app).get(`/api/quran/summary?today=2026-07-03`));
     expect(sum.body.todayAyat).toBe(7);
-    // Top surahs now track COMPLETIONS, not raw āyāt
-    expect(sum.body.topSurahs[0]).toEqual({ surah: 1, completions: 1 });
+    // Khatam is its own journey: finishing a surah there never counts toward top surahs
+    expect((sum.body.topSurahs ?? []).some((t) => t.surah === 1)).toBe(false);
+
+    // Top surahs track COMPLETIONS (not raw āyāt) read anywhere but the khatam route
+    const free = await auth(request(app).post(`/api/quran/read-ayat`)).send({
+      date: '2026-07-03',
+      count: 0,
+      surah: 1,
+      completedSurah: true,
+    });
+    expect(free.status).toBe(200);
+    // ...and a listen to the end (count 0) credits one as well
+    await auth(request(app).post(`/api/quran/read-ayat`)).send({
+      date: '2026-07-03',
+      count: 0,
+      surah: 1,
+      completedSurah: true,
+    });
+    const sum2 = await auth(request(app).get(`/api/quran/summary?today=2026-07-03`));
+    expect(sum2.body.topSurahs[0]).toEqual({ surah: 1, completions: 2 });
     expect(sum.body.profile.currentAyah).toBe(7);
     expect(sum.body.profile.totalAyat).toBe(6236);
   });

@@ -10,7 +10,7 @@ import { useResetKhatam } from '../hooks/useQuran.js';
 import ConfirmDialog from './ConfirmDialog.js';
 import FreshStart from './FreshStart.js';
 import { useQuranSummary, useUpdateQuranProfile } from '../hooks/useQuran.js';
-import { TRANSLATIONS, selectedTranslations } from '../utils/quranData.js';
+import { TRANSLATIONS, saveTranslationChoice, selectedTranslations } from '../utils/quranData.js';
 import {
   ARABIC_FONTS,
   getArabicFont,
@@ -124,6 +124,12 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
     tafsir: getFontPx('tafsir'),
   });
 
+  // The default translation follows the app's language, and a choice made on
+  // another device may have arrived: re-read whenever the drawer opens.
+  useEffect(() => {
+    if (open) setTranslations(selectedTranslations());
+  }, [open]);
+
   // Keep the local goal field in sync when the drawer (re)opens with fresh data
   useEffect(() => {
     if (open) setGoal(summary?.profile.dailyGoalAyat ?? 0);
@@ -151,7 +157,7 @@ export default function QuranSettings({ open, onClose }: { open: boolean; onClos
   // reading settings" button. persistTranslations keeps localStorage in
   // sync with whatever selectedTranslations() will read back next time.
   const persistTranslations = (next: string[]) => {
-    localStorage.setItem('bustandeen_quran_translations', JSON.stringify(next));
+    saveTranslationChoice(next);
     updateProfile.mutate({ translations: next });
   };
 

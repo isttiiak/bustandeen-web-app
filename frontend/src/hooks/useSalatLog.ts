@@ -347,7 +347,7 @@ export interface SalatAnalytics {
     rate: number;
   }>;
   byWeekday: Record<number, { completed: number; kaza: number; missed: number; total: number }>;
-  timeOfWindow: { early: number; mid: number; late: number; unknown: number };
+  debtRepaidCount: number;
   missedReasons: Record<string, number>;
 }
 

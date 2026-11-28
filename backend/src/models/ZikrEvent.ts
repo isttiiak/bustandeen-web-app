@@ -22,7 +22,8 @@ interface IZikrEvent extends Document {
   startTs?: Date;
   /** Counts the user typed in afterwards ("Log missed counts"), not tapped in
    * real time. They keep no meaningful time, so they are excluded from the
-   * time-of-day chart and shown in session history without a clock time. */
+   * time-of-day chart; session history shows each as its own row with the
+   * time it was logged (`createdAt`). */
   manual?: boolean;
   createdAt: Date;
 }

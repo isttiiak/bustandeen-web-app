@@ -56,6 +56,7 @@ vi.mock('../store/useUiStore.js', () => {
 
 // Portaled even while closed, which a server render cannot do; not part of the split.
 vi.mock('../components/zikr/ZikrLogCountsModal.js', () => ({ default: () => null }));
+vi.mock('../components/zikr/ZikrQuickConfirm.js', () => ({ default: () => null }));
 
 import Home from './Home.js';
 import { getTrackingDay } from '../utils/trackingDay.js';

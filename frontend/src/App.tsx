@@ -27,6 +27,7 @@ import Navbar from './components/Navbar.js';
 import Footer from './components/Footer.js';
 import UnsavedWarning from './components/UnsavedWarning.js';
 import GenderGate from './components/GenderGate.js';
+import NudgeDialog from './components/friends/NudgeDialog.js';
 import DemoBanner from './components/DemoBanner.js';
 import AnnouncementBanner from './components/AnnouncementBanner.js';
 import MoonSightingSync, { useHijriInputsVersion } from './components/MoonSightingSync.js';
@@ -532,6 +533,7 @@ export default function App() {
           {!isAuthPage && !isSeoPage && !isAdminPage && <Navbar />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <UnsavedWarning />}
           {!isAuthPage && !isSeoPage && !isAdminPage && <GenderGate />}
+          {!isAuthPage && !isSeoPage && !isAdminPage && <NudgeDialog />}
           {/* SEO and admin pages bring their own <main> */}
           <MainLandmark plain={isSeoPage || isAdminPage}>
             <RouteErrorBoundary

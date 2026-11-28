@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import i18n, { LANGUAGES } from '../../i18n.js';
 import { LanguageIcon } from '@heroicons/react/24/outline';
-import { syncQuranTranslationWithLang } from '../../utils/quranData.js';
 import { OPTION_OFF, OPTION_ON, SectionCard } from './settingsParts.js';
 
 export function SettingsLanguageSection() {
@@ -17,10 +16,7 @@ export function SettingsLanguageSection() {
         {LANGUAGES.map((l) => (
           <button
             key={l.id}
-            onClick={() => {
-              void i18n.changeLanguage(l.id);
-              syncQuranTranslationWithLang(l.id);
-            }}
+            onClick={() => void i18n.changeLanguage(l.id)}
             aria-pressed={i18n.resolvedLanguage === l.id}
             className={`p-3 rounded-control border text-sm font-bold transition-colors ${
               i18n.resolvedLanguage === l.id ? OPTION_ON : OPTION_OFF

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router';
 import { Trans, useTranslation } from 'react-i18next';
 import { ClockIcon, MapPinIcon, NoSymbolIcon } from '@heroicons/react/24/outline';
@@ -25,6 +26,33 @@ function ArchShell({ label, children }: { label: string; children: React.ReactNo
       {children}
       <Link to="/prayer-times" aria-label={label} className="absolute inset-0 rounded-arch" />
     </div>
+  );
+}
+
+/** The time right now, after the arch's label (for example "Current · 03.45 PM"), on the
+ * saved place's clock like every other time in the arch. It ticks on the
+ * minute, not 60 seconds after the screen opened, so it never lags the clock. */
+function ArchNow() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    let id: ReturnType<typeof setTimeout>;
+    const next = () => {
+      id = setTimeout(
+        () => {
+          setNow(new Date());
+          next();
+        },
+        60_000 - (Date.now() % 60_000) + 50
+      );
+    };
+    next();
+    return () => clearTimeout(id);
+  }, []);
+  return (
+    <>
+      <span aria-hidden> · </span>
+      <span className="tabular-nums">{formatTime(now)}</span>
+    </>
   );
 }
 
@@ -135,6 +163,7 @@ export function HomePrayerHero({ home }: { home: HomeState }) {
                 <NoSymbolIcon className="w-7 h-7 mx-auto text-red-400" />
                 <p className="mt-2 text-[11px] uppercase tracking-widest font-bold text-red-400">
                   {t('home.forbiddenTime')}
+                  <ArchNow />
                 </p>
                 <p className="font-display text-2xl font-semibold text-red-300 leading-tight mt-0.5">
                   {prayerWidgetData.forbiddenWindow.label.replace('Forbidden — ', '')}
@@ -153,6 +182,7 @@ export function HomePrayerHero({ home }: { home: HomeState }) {
                 />
                 <p className="mt-2 text-[11px] uppercase tracking-widest font-bold text-white/60">
                   {t('home.current')}
+                  <ArchNow />
                 </p>
                 <p className="font-display text-3xl font-semibold text-white leading-tight mt-0.5">
                   {prayerName(prayerWidgetData.currentMandatory)}
@@ -191,6 +221,7 @@ export function HomePrayerHero({ home }: { home: HomeState }) {
                 />
                 <p className="mt-2 text-[11px] uppercase tracking-widest font-bold text-brand-info">
                   {t('home.naflTime')}
+                  <ArchNow />
                 </p>
                 <p className="font-display text-3xl font-semibold text-white leading-tight mt-0.5">
                   {translateSalatName(
@@ -210,6 +241,7 @@ export function HomePrayerHero({ home }: { home: HomeState }) {
                 <ClockIcon className="w-7 h-7 mx-auto text-white/60" />
                 <p className="mt-2 text-[11px] uppercase tracking-widest font-bold text-white/60">
                   {t('home.freeTime')}
+                  <ArchNow />
                 </p>
                 <p className="font-display text-2xl font-semibold text-white leading-tight mt-0.5">
                   {t('home.nextPrayerComing')}

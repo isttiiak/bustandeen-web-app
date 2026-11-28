@@ -9,6 +9,7 @@ import { FriendsMenu } from '../components/friends/FriendsMenu.js';
 import { ManageFriendsModal } from '../components/friends/ManageFriendsModal.js';
 import { NoorHowItWorks } from '../components/friends/NoorHowItWorks.js';
 import { PendingRequestsModal } from '../components/friends/PendingRequestsModal.js';
+import { NudgeSheet } from '../components/friends/NudgeSheet.js';
 import { PrivacySheet } from '../components/friends/PrivacySheet.js';
 import { useFriendsPage } from '../components/friends/useFriendsPage.js';
 import { useAuthStore } from '../store/useAuthStore.js';
@@ -29,6 +30,8 @@ export default function Friends() {
     setPrivacyOpen,
     requestsOpen,
     setRequestsOpen,
+    nudgeTarget,
+    setNudgeTarget,
     copied,
     inviteLink,
     copyLink,
@@ -105,6 +108,7 @@ export default function Friends() {
             allTime={allTime}
             onInvite={() => setInviteOpen(true)}
             onManage={() => setManageOpen(true)}
+            onNudge={setNudgeTarget}
           />
 
           {/* How Noor works */}
@@ -136,6 +140,10 @@ export default function Friends() {
 
       <AnimatePresence>
         {requestsOpen && <PendingRequestsModal onClose={() => setRequestsOpen(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {nudgeTarget && <NudgeSheet friend={nudgeTarget} onClose={() => setNudgeTarget(null)} />}
       </AnimatePresence>
     </AnimatedBackground>
   );

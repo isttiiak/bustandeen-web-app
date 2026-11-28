@@ -45,14 +45,17 @@ export function FriendsMenu({
   ];
 
   return (
-    <div ref={ref} className="absolute top-3 right-3 z-20">
+    // The arch's top corners curve across half its width, so a button 12px
+    // from the top corner floated outside the shape. Level with the round icon
+    // (centre at 4.5rem) and 12px from the straight edge, it sits inside it.
+    <div ref={ref} className="absolute top-[3.125rem] right-3 z-20">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label={t('friends.menu')}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="w-11 h-11 grid place-items-center rounded-full text-white/80 hover:text-white hover:bg-brand-surface border border-transparent hover:border-brand-border transition-colors"
+        className="w-11 h-11 grid place-items-center rounded-full text-white/85 hover:text-white bg-brand-surface/50 hover:bg-brand-surface border border-brand-border transition-colors"
       >
         <EllipsisVerticalIcon className="w-6 h-6" />
       </button>

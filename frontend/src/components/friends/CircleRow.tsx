@@ -1,7 +1,13 @@
 import type React from 'react';
 import { useTranslation } from 'react-i18next';
 import { m as motion } from 'framer-motion';
-import { ArrowUpIcon, BookOpenIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import {
+  ArrowUpIcon,
+  BookOpenIcon,
+  CheckIcon,
+  HandRaisedIcon,
+  SparklesIcon,
+} from '@heroicons/react/24/outline';
 import { streakVisual } from '../StatusBadges.js';
 import { CountryFlag } from '../profile/profileParts.js';
 import { CARD } from '../bustanStyles.js';
@@ -56,6 +62,7 @@ export function CircleRow({
   board,
   allTime,
   allTimeLoading,
+  onNudge,
 }: {
   f: FriendStats;
   i: number;
@@ -63,6 +70,8 @@ export function CircleRow({
   /** All time tab: this person's all-time Noor (absent: not shared) */
   allTime?: number;
   allTimeLoading: boolean;
+  /** Opens the nudge sheet for a quiet friend. Absent in demo mode. */
+  onNudge?: (f: FriendStats) => void;
 }) {
   const { t } = useTranslation();
   const detail = f.visibility === 'detail' && f.score !== undefined;
@@ -157,6 +166,31 @@ export function CircleRow({
             <p className="text-[11px] mt-0.5 text-white/70">{t('friends.consistencyOnly')}</p>
           )}
         </div>
+        {/* A friend with no active day this week can be nudged, once a day */}
+        {f.canNudge && onNudge && !f.isMe && (
+          <button
+            type="button"
+            onClick={() => onNudge(f)}
+            disabled={f.nudged}
+            aria-label={
+              f.nudged
+                ? t('friends.nudge.sentAria', 'You nudged {{name}} today', { name: f.displayName })
+                : t('friends.nudge.buttonAria', 'Nudge {{name}}', { name: f.displayName })
+            }
+            className={`shrink-0 inline-flex items-center gap-1 min-h-[44px] rounded-control border px-3 text-xs font-bold transition-colors ${
+              f.nudged
+                ? 'border-brand-border text-white/60 cursor-default'
+                : 'border-brand-gold/50 bg-brand-gold/10 text-brand-gold hover:bg-brand-gold/20'
+            }`}
+          >
+            {f.nudged ? (
+              <CheckIcon className="w-4 h-4" aria-hidden="true" />
+            ) : (
+              <HandRaisedIcon className="w-4 h-4" aria-hidden="true" />
+            )}
+            {f.nudged ? t('friends.nudge.sent', 'Nudged') : t('friends.nudge.button', 'Nudge')}
+          </button>
+        )}
       </div>
       {/* Stat chips: today's numbers on "Today", week-so-far totals on "This
           week", so the chips always explain the Noor shown. */}

@@ -299,11 +299,13 @@ export interface SalatAnalyticsResult {
   /** Completion by day of week (JS getDay(): 0=Sun … 6=Sat), across the
    * whole window — e.g. "you miss Fajr on weekends more than weekdays". */
   byWeekday: Record<number, { completed: number; kaza: number; missed: number; total: number }>;
-  /** How far into a prayer's window it was marked done, for prayers where
-   * both the window bounds and the mark timestamp are known (older logs,
-   * or ones marked without a saved location, are simply not counted here —
-   * see IPrayerEntry.windowStart/windowEnd). */
-  timeOfWindow: { early: number; mid: number; late: number; unknown: number };
+  /** Kaza debt repaid in the window (repayment taps on the debt card; the
+   * clean-slate reset is not a repayment). Together with `completedCount`
+   * (Done) and `kazaCount` (Kaza) it is the "How you prayed" breakdown.
+   * This replaced the old "Prayer Timing" split, which was read from the
+   * moment the Done button was tapped: people who fill in the whole day at
+   * night would look late however they prayed (2026-11-28). */
+  debtRepaidCount: number;
   /** Counts of the optional reason tag on prayers explicitly marked missed.
    * Prayers swept into 'missed' by the day-rollover, or marked missed
    * without picking a reason, are not counted here. */
@@ -381,12 +383,6 @@ export async function getSalatAnalytics(
 
   const byWeekday: SalatAnalyticsResult['byWeekday'] = {};
   for (let w = 0; w < 7; w++) byWeekday[w] = { completed: 0, kaza: 0, missed: 0, total: 0 };
-  const timeOfWindow: SalatAnalyticsResult['timeOfWindow'] = {
-    early: 0,
-    mid: 0,
-    late: 0,
-    unknown: 0,
-  };
   const missedReasons: Record<string, number> = {};
   for (const r of MISSED_REASONS) missedReasons[r] = 0;
 
@@ -455,24 +451,6 @@ export async function getSalatAnalytics(
           tasbeehCount++;
           perPrayer[pid].tasbeeh++;
         }
-
-        // Punctuality within the prayer's window — only computable when the
-        // client sent both bounds at mark time AND we have the mark timestamp.
-        if (entry?.windowStart && entry.windowEnd && entry.prayedAt) {
-          const winStart = entry.windowStart.getTime();
-          const winEnd = entry.windowEnd.getTime();
-          const span = winEnd - winStart;
-          if (span > 0) {
-            const frac = Math.min(1, Math.max(0, (entry.prayedAt.getTime() - winStart) / span));
-            if (frac <= 1 / 3) timeOfWindow.early++;
-            else if (frac <= 2 / 3) timeOfWindow.mid++;
-            else timeOfWindow.late++;
-          } else {
-            timeOfWindow.unknown++;
-          }
-        } else {
-          timeOfWindow.unknown++;
-        }
       }
     }
     if (log.nafl?.completed) naflDays++;
@@ -489,6 +467,8 @@ export async function getSalatAnalytics(
       }
     }
   }
+
+  const debtRepaidCount = await salatDebtService.getDebtRepaidTotal(userId, statsCutoff, today);
 
   const totalDays = Math.max(0, effectiveDays - excused.size);
   const totalPossiblePrayers = totalDays * 5;
@@ -650,7 +630,7 @@ export async function getSalatAnalytics(
     calendarData,
     weeklyMosqueTrend,
     byWeekday,
-    timeOfWindow,
+    debtRepaidCount,
     missedReasons,
   };
 }
