@@ -623,6 +623,16 @@ export const REFERENCES: ReferenceEntry[] = [
     desk: 'verified',
   },
   {
+    id: 'bukhari:324',
+    kind: 'hadith',
+    citation: 'Ṣaḥīḥ al-Bukhārī 324',
+    url: 'https://sunnah.com/bukhari:324',
+    grade: 'Ṣaḥīḥ',
+    purpose:
+      'Eid for sisters: women, including those on their period, come out to the Eid gathering; the menstruating keep away from the prayer place.',
+    desk: 'verified',
+  },
+  {
     id: 'bukhari:350',
     kind: 'hadith',
     citation: 'Ṣaḥīḥ al-Bukhārī 350',
@@ -770,7 +780,18 @@ export const REFERENCES: ReferenceEntry[] = [
     citation: 'Ṣaḥīḥ al-Bukhārī 971',
     url: 'https://sunnah.com/bukhari:971',
     grade: 'Ṣaḥīḥ',
-    purpose: 'Rayhanah: menstruating women attended the Eid gathering and its duʿā.',
+    purpose:
+      'Rayhanah and Eid for sisters: women, menstruating women included, attended the Eid gathering, its takbīr and duʿā.',
+    desk: 'verified',
+  },
+  {
+    id: 'bukhari:974',
+    kind: 'hadith',
+    citation: 'Ṣaḥīḥ al-Bukhārī 974',
+    url: 'https://sunnah.com/bukhari:974',
+    grade: 'Ṣaḥīḥ',
+    purpose:
+      'Eid for sisters: all women were told to come out on Eid; menstruating women keep away from the musallā.',
     desk: 'verified',
   },
   {

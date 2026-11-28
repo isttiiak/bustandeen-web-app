@@ -34,6 +34,16 @@ Every Quran, hadith, scholarly and data reference in the web app was audited, an
 - Page or item numbers that could not be checked against a printed edition: Ibn al-Mundhir, al-Ijmāʿ 52–53; al-Mustadrak 2/399 (sources give 2/399 or 2/368); Ibn al-Qayyim, Zād al-Maʿād (no page cited).
 - Fiqh positions stated without a book citation: qaṣr distance, the stay that ends travel, the longest menses, nifās (Shāfiʿī 60 days), the ʿAṣr shadow; and the Mālikī / Ibn Taymiyyah view on reciting Quran during menses.
 
+## v5.190.85 - Eid and Laylat al-Qadr guidance for sisters - 2026-11-28
+
+Part 2 of the 2026-11-28 ruling work (part 1 is v5.190.84). References checked on sunnah.com.
+
+### Changed
+
+- **Eid al-Fiṭr and Eid al-Aḍḥā:** a sisters' item, "Attend the Eid gathering". Sisters are encouraged to attend; during your period, attend and join the takbīr and du'ā, but keep away from the prayer place (Ṣaḥīḥ al-Bukhārī 324, 971, 974). Two references added to each Eid. "Attend Eid prayer in congregation" stays for everyone.
+- **Laylat al-Qadr:** "Pray Fajr in congregation, completing the night" is now shown to brothers; sisters see "Pray Fajr on time, completing the night". A guest sees both, labelled.
+- English and Bangla. The words of the other eight special days are unchanged (fingerprint test).
+
 ## v5.190.84 - Jumu'ah for sisters, and Friday guidance for brothers and sisters - 2026-11-28
 
 Owner's ruling of 2026-11-28: Jumu'ah is not obligatory for women. A sister prays Ẓuhr (4 rakʿahs) at home, or may attend Jumu'ah at the mosque with proper covering. Every reference below was checked on sunnah.com or quran.com (wording, number, grade).
@@ -58,6 +68,7 @@ Owner's ruling of 2026-11-28: Jumu'ah is not obligatory for women. A sister pray
   - CodeQL's trace for #370 started at the Authorization header, went through this dev reader into `req.user.uid`, and ended in the query.
   - For this rule CodeQL reports any user-controlled value in a query, so a type check cannot satisfy it while the dev reader is analysed.
   - Every other file keeps the full default suite.
+- **Backend tests run in one recycled worker instead of in-band.** The CI job ran out of memory twice in a row on this PR: one in-band process collected memory across 112 test files and hit the 4 GB heap. It now uses `jest --maxWorkers=1 --workerIdleMemoryLimit=1536MB`, so files still run one at a time, but Jest restarts the worker once it grows past 1.5 GB. Locally 112 suites and 980 tests pass, peaking at about 2.5 GB.
 
 ## v5.190.83 - CodeQL triage: two real fixes - 2026-11-27
 

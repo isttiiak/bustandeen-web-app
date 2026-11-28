@@ -13,6 +13,7 @@ import { SPECIAL_DAYS } from './islamicCalendar.js';
 // Friday ṣalawāt note, Laylat al-Qadr ṣadaqah line from 97:3). Friday updated 2026-11-28:
 // brothers' and sisters' guidance (Abū Dāwūd 1067, 567, 1052; Bukhārī 879, 881, 900, 934;
 // Muslim 443b, 873a; Quran 24:31; Ibn al-Mundhir, al-Ijmāʿ), each checked on sunnah.com / quran.com.
+// Eid al-Fiṭr, Eid al-Aḍḥā and Laylat al-Qadr: the sisters' items (Bukhārī 324, 971, 974).
 // Updated again 2026-11-28 (reference audit): quotes now in the cited hadith's own words
 // (Muslim 852, Abū Dāwūd 2449, Bukhārī 1979, 953), the Dhul Ḥijjah quote cites Tirmidhī 757,
 // and Qurbānī cites Muslim 1966 (the sacrifice) instead of 1977 (hair and nails).
@@ -49,12 +50,12 @@ const FINGERPRINTS = {
     ashura: '45f26ec3',
     ayyam_al_bid: '39a8efaf',
     dhul_hijjah_first10: '09c6fe9f',
-    eid_adha: 'e394a10a',
-    eid_fitr: 'f0e6cf6d',
+    eid_adha: '4f7e1764',
+    eid_fitr: '1a05457b',
     fast_mon_thu: 'd5f918b7',
     friday: '4a0760eb',
     islamic_new_year: 'b32b49f8',
-    laylat_qadr: 'fa72e189',
+    laylat_qadr: 'c1c14633',
     shab_e_barat: 'c4364e98',
     typeBadge: '5bfd8f7e',
   },
@@ -63,12 +64,12 @@ const FINGERPRINTS = {
     ashura: 'f5a954ee',
     ayyam_al_bid: '94c14779',
     dhul_hijjah_first10: '238d1f0f',
-    eid_adha: '3e5024cb',
-    eid_fitr: 'f1e36478',
+    eid_adha: '90be8d72',
+    eid_fitr: '168248af',
     fast_mon_thu: 'b4698aeb',
     friday: '15b7e4d5',
     islamic_new_year: '32540f2b',
-    laylat_qadr: '2b2c86cd',
+    laylat_qadr: 'ceb80c5b',
     shab_e_barat: 'b8e7b46a',
     typeBadge: '6ccd5a4d',
   },

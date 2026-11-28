@@ -433,6 +433,11 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
       },
       { action: 'Visit family, exchange gifts, spread joy', note: '' },
       { action: 'Do NOT fast today: fasting is ḥarām on Eid al-Fiṭr', note: '' },
+      {
+        action: 'Attend the Eid gathering',
+        note: "Sisters are encouraged to attend; during your period, attend and join the takbīr and du'ā but keep away from the prayer place (Ṣaḥīḥ al-Bukhārī 324, 971, 974)",
+        for: 'sisters',
+      },
     ],
     references: [
       {
@@ -443,6 +448,16 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
       {
         text: '"The Messenger of Allah ﷺ never went out on the day of Eid al-Fiṭr until he had eaten some dates, and he ate an odd number." · Ṣaḥīḥ al-Bukhārī 953',
         url: 'https://sunnah.com/bukhari:953',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: '"We used to be ordered to come out on the Day of `Id and even bring out the virgin girls from their houses and menstruating women so that they might stand behind the men and say Takbir along with them and invoke Allah along with them." · Ṣaḥīḥ al-Bukhārī 971',
+        url: 'https://sunnah.com/bukhari:971',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: 'Menstruating women attend the Eid gathering but keep away from the prayer place · Ṣaḥīḥ al-Bukhārī 324, 974',
+        url: 'https://sunnah.com/bukhari:974',
         grade: 'Ṣaḥīḥ',
       },
     ],
@@ -473,6 +488,11 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
         note: '',
       },
       { action: 'Do NOT fast today: fasting is ḥarām on Eid al-Aḍḥā', note: '' },
+      {
+        action: 'Attend the Eid gathering',
+        note: "Sisters are encouraged to attend; during your period, attend and join the takbīr and du'ā but keep away from the prayer place (Ṣaḥīḥ al-Bukhārī 324, 971, 974)",
+        for: 'sisters',
+      },
     ],
     references: [
       {
@@ -483,6 +503,16 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
       {
         text: 'Eid al-Adha prayer · Ṣaḥīḥ al-Bukhārī 956',
         url: 'https://sunnah.com/bukhari:956',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: '"We used to be ordered to come out on the Day of `Id and even bring out the virgin girls from their houses and menstruating women so that they might stand behind the men and say Takbir along with them and invoke Allah along with them." · Ṣaḥīḥ al-Bukhārī 971',
+        url: 'https://sunnah.com/bukhari:971',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: 'Menstruating women attend the Eid gathering but keep away from the prayer place · Ṣaḥīḥ al-Bukhārī 324, 974',
+        url: 'https://sunnah.com/bukhari:974',
         grade: 'Ṣaḥīḥ',
       },
     ],
@@ -510,7 +540,12 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
         action: 'Give ṣadaqah: this night is better than a thousand months (Quran 97:3)',
         note: '',
       },
-      { action: 'Pray Fajr in congregation, completing the night', note: '' },
+      { action: 'Pray Fajr in congregation, completing the night', note: '', for: 'brothers' },
+      {
+        action: 'Pray Fajr on time, completing the night',
+        note: '',
+        for: 'sisters',
+      },
     ],
     references: [
       {

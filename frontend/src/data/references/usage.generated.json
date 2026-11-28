@@ -577,6 +577,16 @@
       "frontend/src/utils/musafir.ts"
     ]
   },
+  "bukhari:324": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
   "bukhari:3282": {
     "pages": [
       "duas"
@@ -923,10 +933,24 @@
   },
   "bukhari:971": {
     "pages": [
+      "calendar",
+      "home",
       "rayhanah"
     ],
     "files": [
-      "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx"
+      "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bukhari:974": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
     ]
   },
   "bukhari:998": {

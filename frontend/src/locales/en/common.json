@@ -3298,6 +3298,14 @@
         "1": {
           "grade": "Ṣaḥīḥ",
           "text": "Eid al-Adha prayer · Ṣaḥīḥ al-Bukhārī 956"
+        },
+        "2": {
+          "grade": "Ṣaḥīḥ",
+          "text": "\"We used to be ordered to come out on the Day of `Id and even bring out the virgin girls from their houses and menstruating women so that they might stand behind the men and say Takbir along with them and invoke Allah along with them.\" · Ṣaḥīḥ al-Bukhārī 971"
+        },
+        "3": {
+          "grade": "Ṣaḥīḥ",
+          "text": "Menstruating women attend the Eid gathering but keep away from the prayer place · Ṣaḥīḥ al-Bukhārī 324, 974"
         }
       },
       "shortDesc": "10th Dhul Ḥijjah: the greater Eid. Eid prayer, Qurbānī, and celebration.",
@@ -3322,6 +3330,10 @@
         "4": {
           "action": "Do NOT fast today: fasting is ḥarām on Eid al-Aḍḥā",
           "note": ""
+        },
+        "5": {
+          "action": "Attend the Eid gathering",
+          "note": "Sisters are encouraged to attend; during your period, attend and join the takbīr and du'ā but keep away from the prayer place (Ṣaḥīḥ al-Bukhārī 324, 971, 974)"
         }
       }
     },
@@ -3335,6 +3347,14 @@
         "1": {
           "grade": "Ṣaḥīḥ",
           "text": "\"The Messenger of Allah ﷺ never went out on the day of Eid al-Fiṭr until he had eaten some dates, and he ate an odd number.\" · Ṣaḥīḥ al-Bukhārī 953"
+        },
+        "2": {
+          "grade": "Ṣaḥīḥ",
+          "text": "\"We used to be ordered to come out on the Day of `Id and even bring out the virgin girls from their houses and menstruating women so that they might stand behind the men and say Takbir along with them and invoke Allah along with them.\" · Ṣaḥīḥ al-Bukhārī 971"
+        },
+        "3": {
+          "grade": "Ṣaḥīḥ",
+          "text": "Menstruating women attend the Eid gathering but keep away from the prayer place · Ṣaḥīḥ al-Bukhārī 324, 974"
         }
       },
       "shortDesc": "1st Shawwāl: celebrate the completion of Ramadan. Eid prayer is wājib.",
@@ -3363,6 +3383,10 @@
         "5": {
           "action": "Do NOT fast today: fasting is ḥarām on Eid al-Fiṭr",
           "note": ""
+        },
+        "6": {
+          "action": "Attend the Eid gathering",
+          "note": "Sisters are encouraged to attend; during your period, attend and join the takbīr and du'ā but keep away from the prayer place (Ṣaḥīḥ al-Bukhārī 324, 971, 974)"
         }
       }
     },
@@ -3598,6 +3622,10 @@
         },
         "5": {
           "action": "Pray Fajr in congregation, completing the night",
+          "note": ""
+        },
+        "6": {
+          "action": "Pray Fajr on time, completing the night",
           "note": ""
         }
       }
