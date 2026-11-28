@@ -207,8 +207,8 @@
           <p class="text-white/85 text-sm leading-relaxed">
            "Prayer is not allowed from sunrise until ~20 min after the sun has fully cleared the horizon."
           <p class="text-white/70 text-xs italic leading-relaxed">
-           ""There is no prayer after the morning prayer until the sun rises." · Sahih al-Bukhari 581; "At three times the Prophet ﷺ forbade us to pray: when the sun begins to rise ... when it is at its zenith ... and when it is about to set." · Sahih Muslim 831"
-          <a class="inline-flex items-center gap-1 text-xs text-brand-gold underline underline-offset-2" href="https://sunnah.com/bukhari:581" rel="noopener noreferrer" target="_blank">
+           ""There is no prayer after the morning prayer until the sun rises." · Sahih al-Bukhari 586; "At three times the Prophet ﷺ forbade us to pray: when the sun begins to rise ... when it is at its zenith ... and when it is about to set." · Sahih Muslim 831"
+          <a class="inline-flex items-center gap-1 text-xs text-brand-gold underline underline-offset-2" href="https://sunnah.com/bukhari:586" rel="noopener noreferrer" target="_blank">
            <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">
            "View on sunnah.com"

@@ -231,8 +231,8 @@ export const VOLUNTARY_META: VoluntaryMeta[] = [
     virtue: 'No days in which righteous deeds are more beloved to Allah than these.',
     ref: {
       text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days."',
-      source: 'Ṣaḥīḥ al-Bukhārī 969',
-      url: 'https://sunnah.com/bukhari:969',
+      source: 'Jāmiʿ al-Tirmidhī 757',
+      url: 'https://sunnah.com/tirmidhi:757',
       grade: 'Ṣaḥīḥ',
     },
     color: '#c9a96e',

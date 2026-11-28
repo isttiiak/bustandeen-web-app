@@ -2,7 +2,7 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
-## v5.191.0 - Naseeh retired, no more third-party AI - 2026-11-28
+## v5.192.0 - Naseeh retired, no more third-party AI - 2026-11-28
 
 Owner's decision of 2026-11-28: Bustandeen no longer sends anything to a third-party AI service. Naseeh (the optional AI companion) was built entirely on Groq's hosted models, which are not Islamic models and run outside our control, so the whole feature is removed rather than hidden. The source before removal is kept as git tag `naseeh-final` and as a local zip (`archive/naseeh-backup-2026-11-28.zip`).
 
@@ -25,6 +25,38 @@ Owner's decision of 2026-11-28: Bustandeen no longer sends anything to a third-p
 ### Owner actions
 
 - Delete `GROQ_API_KEY` from Vercel (Production and Preview) and revoke it at console.groq.com. Run migration `003-retire-naseeh` so users' own saved Groq keys are removed from the database.
+
+## v5.191.0 - Reference audit and the reference map - 2026-11-28
+
+Every Quran, hadith, scholarly and data reference in the web app was audited, and the app now has a public reference map. Each hadith number was opened in the hadith-api dataset (the sunnah.com English text and grades) or, where it has none, on sunnah.com and in the grading literature; each Quran citation was compared with quran.com (Sahih International) and the bundled Tanzil text. 250 references in all.
+
+### Added
+
+- **Reference map at `/references`** (public, no sign-in): every reference with its grade (and who graded it), what the app uses it for, the screens it shows on, the desk-check result and note, and a manual-check mark. Search, filters by type and check status, English and Bangla page text (citations stay in English to match the sources). Linked in the account menu directly above Sign out, in the footer, and on About. Also in the sitemap and `llms.txt`.
+- **`/references.json`**: the same map as one file, for the native app (`bustandeen-app`) to reuse instead of finding the sources again.
+- **Manual checks:** `frontend/src/data/references/manualChecks.json` holds marks made by a person at the source or confirmed by a scholar (status, who, date, note). A Servant-only admin page, **Tools → Reference checks** (`/admin/references`), drafts those marks in the browser and copies the finished file; nothing is sent to the server.
+- **The map stays current by test:** `src/data/references/references.test.ts` scans the code and fails on a Quran or hadith citation the registry (`registry.ts`) does not know, on a registry entry nothing uses any more, on a citing file without a screen (`pages.ts`), and when `usage.generated.json` or `public/references.json` is out of date. After adding a reference: `npm run refs:update --prefix frontend`.
+
+### Fixed (wrong number, wrong grade, or wording that did not match the cited hadith)
+
+- **Ṣalāt al-Istikhārah** cited Bukhārī 1162 (talking after the Fajr sunnah). It is Bukhārī 1166.
+- **Ḍuḥā, four rakʿahs** cited Muslim 717 (ʿĀʾishah on Ḍuḥā after journeys). It is Muslim 719 (nafl list, prayer-times card and sources).
+- **Forbidden times:** the zenith quote put "nor when it is at its peak" into Bukhārī 585, which only mentions sunrise and sunset; the zenith now cites Muslim 831 alone. The sunrise quote's wording is Bukhārī 586, not 581.
+- **Āyat al-Kursī after every prayer** linked to `sunnah.com/nasai:9928`, which does not exist. It is an-Nasāʾī, al-Sunan al-Kubrā 9848 (ṣaḥīḥ; Ibn Ḥibbān, al-Albānī); the link opens Bulūgh al-Marām, which quotes it. The salat legend's "Read now" line now names it next to Abū Dāwūd 1523 (the Muʿawwidhāt).
+- **Weak narrations shown without their grade now say so:** six rakʿahs after Maghrib (Ibn Mājah 1167, very weak), Ṣalāt al-Ḥājah (Ibn Mājah 1384, very weak), the last three verses of al-Ḥashr morning and evening (Tirmidhī 2922, ḍaʿīf; it said "gharīb, noted"). Ishrāq (Tirmidhī 586) now shows "ḥasan".
+- **Weekly muḥāsabah:** Tirmidhī 2459 ("the wise one takes account of himself") was labelled "Ḥasan (al-Albānī)"; al-Albānī and Darussalam grade it ḍaʿīf. It was removed from the rotation (the six Quran passages stay).
+- **Entering the home duʿā** (Abū Dāwūd 5096) was labelled Ṣaḥīḥ; al-Albānī grades it ḍaʿīf. The page shows that, and points to Muslim 2018 (saying Bismillāh on entering).
+- **Zikr counter cards:** the "Allāhu Akbar" card quoted a hadith about lā ilāha illā-llāh; it now quotes Muslim 2695, which names Allāhu akbar. The "Lā ilāha illā-llāh" card quoted "renew your faith" (Musnad Aḥmad 8695, weak chain per Darussalam) with "Ḥasan"; it now quotes Tirmidhī 3383 (the best dhikr is lā ilāha illā-llāh, ḥasan).
+- **Zikr library:** "Aʿūdhu bikalimātillāhit-tāmmāti…" said it protects "in the evening"; Muslim 2708 is about stopping at a place (the evening story is Muslim 2709). Tirmidhī 3525 and 3577 now show al-Albānī's ṣaḥīḥ.
+- **Quran duʿās:** Tirmidhī 2892 (as-Sajdah and al-Mulk before sleep) now shows both grades instead of ḥasan, because the graders differ: ṣaḥīḥ per al-Albānī (al-Ṣaḥīḥah 585), ḍaʿīf per Darussalam on sunnah.com (owner's decision, 2026-11-28); the 3:8 note said the Prophet ﷺ "swore" by "O Turner of the hearts", it now says he often said it (Tirmidhī 2140); the 3:38 note said Yaḥyā was "given" while Zakariyyā prayed, it now says the angels gave the glad tidings then (3:39). English and Bangla.
+- **Islamic calendar quotes now use the cited hadith's own words:** the hour on Friday (Muslim 852), the white days (Abū Dāwūd 2449), three days a month (Bukhārī 1979), dates before Eid al-Fiṭr (Bukhārī 953). The Dhul Ḥijjah quote ("no days in which righteous deeds are more beloved to Allah") is Tirmidhī 757's wording, not Bukhārī 969's; it now cites Tirmidhī 757 (calendar, fasting guide, sadaqah). Qurbānī cited Muslim 1977 (not cutting hair and nails); it now cites Muslim 1966 (the Prophet ﷺ sacrificed two rams). English and Bangla. `specialDaysContent.test.ts` fingerprints updated with the reason.
+- **Small grade labels:** Abū Dāwūd 3767 (Bismillāh before eating) Ḥasan → Ṣaḥīḥ (al-Albānī); the morning adhkar card named "Ṣaḥīḥ Muslim 2723" but opened Ḥiṣn al-Muslim 77, it now names both.
+- A code note cited Bukhārī 2010 for the Prophet ﷺ praying Tarāwīḥ with the people; that is Bukhārī 1129.
+
+### Still open (marked on the map for a manual check)
+
+- Page or item numbers that could not be checked against a printed edition: Ibn al-Mundhir, al-Ijmāʿ 52–53; al-Mustadrak 2/399 (sources give 2/399 or 2/368); Ibn al-Qayyim, Zād al-Maʿād (no page cited).
+- Fiqh positions stated without a book citation: qaṣr distance, the stay that ends travel, the longest menses, nifās (Shāfiʿī 60 days), the ʿAṣr shadow; and the Mālikī / Ibn Taymiyyah view on reciting Quran during menses.
 
 ## v5.190.86 - Rayhanah: an expected period that has passed - 2026-11-28
 

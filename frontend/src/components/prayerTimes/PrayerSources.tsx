@@ -25,15 +25,15 @@ const SOURCE_REFS: {
     labelKey: 'prayerTimes.sourcesIshraqLabel',
     labelFallback: 'Ishraq/Duha',
     refs: [
-      { cite: 'Tirmidhī 586', url: 'https://sunnah.com/tirmidhi:586' },
-      { cite: 'Ṣaḥīḥ Muslim 717', url: 'https://sunnah.com/muslim:717' },
+      { cite: 'Tirmidhī 586 (ḥasan)', url: 'https://sunnah.com/tirmidhi:586' },
+      { cite: 'Ṣaḥīḥ Muslim 719', url: 'https://sunnah.com/muslim:719' },
     ],
   },
   {
     key: 'awwabin',
     labelKey: 'prayerTimes.sourcesAwwabinLabel',
     labelFallback: 'Awwabin',
-    refs: [{ cite: 'Ibn Mājah 1167', url: 'https://sunnah.com/ibnmajah:1167' }],
+    refs: [{ cite: 'Ibn Mājah 1167 (very weak)', url: 'https://sunnah.com/ibnmajah:1167' }],
   },
   {
     key: 'tahajjud',

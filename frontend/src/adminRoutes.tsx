@@ -17,6 +17,7 @@ const AdminOpsHealth = lazy(() => import('./pages/AdminOpsHealth.js'));
 const AdminBroadcast = lazy(() => import('./pages/AdminBroadcast.js'));
 const AdminMoonSighting = lazy(() => import('./pages/AdminMoonSighting.js'));
 const AdminComposeEmail = lazy(() => import('./pages/AdminComposeEmail.js'));
+const AdminReferences = lazy(() => import('./pages/AdminReferences.js'));
 
 export default function AdminRoutes() {
   return (
@@ -129,6 +130,16 @@ export default function AdminRoutes() {
           <AdminProtected>
             <ServantProtected>
               <AdminComposeEmail />
+            </ServantProtected>
+          </AdminProtected>
+        }
+      />
+      <Route
+        path="/admin/references"
+        element={
+          <AdminProtected>
+            <ServantProtected>
+              <AdminReferences />
             </ServantProtected>
           </AdminProtected>
         }

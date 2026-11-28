@@ -12,6 +12,7 @@ Bustandeen helps Muslims build consistent worship habits with authentic Quran an
 - [Fasting Tracker](https://bustandeen.com/fasting): Fiqh-aware tracker for obligatory, qada (makeup), and voluntary (Sunnah) fasts, including Ramadan.
 - [Qibla Compass](https://bustandeen.com/qibla): Device-orientation compass pointing to the Kaaba in Makkah.
 - [About](https://bustandeen.com/about): The app's mission and feature overview.
+- [Reference map](https://bustandeen.com/references): Every Quran, hadith, scholarly and data source the app cites, with its purpose and check status ([JSON](https://bustandeen.com/references.json)).
 - [Privacy Policy](https://bustandeen.com/privacy): What data is collected, what stays on-device, and user controls.
 
 ## Reference pages (public, no account needed)

@@ -114,17 +114,17 @@ export const DHIKR_HADITHS: Record<
   'Allahu Akbar': {
     textKey: 'zikr.hadith.allahuAkbar',
     textFallback:
-      '"The best dhikr is Lā ilāha illā-llāh, and the best supplication is Al-ḥamdu li-llāh."',
-    source: 'Sunan al-Tirmidhī 3383',
-    url: 'https://sunnah.com/tirmidhi:3383',
-    grade: 'Ḥasan',
+      '"Saying SubḥānAllāh, al-ḥamdu lillāh, lā ilāha illā-llāh and Allāhu akbar is dearer to me than everything the sun rises upon."',
+    source: 'Ṣaḥīḥ Muslim 2695',
+    url: 'https://sunnah.com/muslim:2695',
+    grade: 'Ṣaḥīḥ',
   },
   'La ilaha illallah': {
     textKey: 'zikr.hadith.laIlahaIllallah',
     textFallback:
-      '"Renew your faith." They asked: "How?" He said: "Say: Lā ilāha illā-llāh frequently."',
-    source: 'Musnad Aḥmad 8695',
-    url: 'https://sunnah.com/ahmad:8695',
+      '"The best dhikr is Lā ilāha illā-llāh, and the best supplication is Al-ḥamdu li-llāh."',
+    source: 'Jāmiʿ al-Tirmidhī 3383',
+    url: 'https://sunnah.com/tirmidhi:3383',
     grade: 'Ḥasan',
   },
   Astaghfirullah: {
@@ -163,8 +163,8 @@ export const DHIKR_HADITHS: Record<
     textKey: 'zikr.hadith.ayatulKursi',
     textFallback:
       '"Whoever recites Āyat al-Kursī after every obligatory prayer, nothing prevents him from entering Jannah except death."',
-    source: "al-Nasā'ī (al-Sunan al-Kubrā) · Ṣaḥīḥ by al-Albānī",
-    url: 'https://sunnah.com/nasai:9928',
+    source: 'an-Nasāʾī, al-Sunan al-Kubrā 9848 · Ṣaḥīḥ (Ibn Ḥibbān, al-Albānī)',
+    url: 'https://sunnah.com/bulugh/2/220',
     grade: 'Ṣaḥīḥ',
   },
   'Durud Ibrahim': {

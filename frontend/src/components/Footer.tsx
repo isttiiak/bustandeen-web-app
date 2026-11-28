@@ -38,6 +38,15 @@ export default function Footer() {
               •
             </span>
             <Link
+              to="/references"
+              className="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors"
+            >
+              {t('footer.references', 'References')}
+            </Link>
+            <span className="text-white/60" aria-hidden="true">
+              •
+            </span>
+            <Link
               to="/privacy"
               className="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors"
             >

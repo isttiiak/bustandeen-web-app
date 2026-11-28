@@ -21,7 +21,7 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
-    version: '5.191.0',
+    version: '5.192.0',
     date: '2026-11-28',
     text: {
       en: {
@@ -34,6 +34,32 @@ export const RELEASES: Release[] = [
         title: 'নাসীহ সরিয়ে দেওয়া হয়েছে',
         removed: [
           'আমরা এআই সহচর নাসীহ সরিয়ে দিয়েছি। এটি একটি বাইরের এআই সেবার ওপর নির্ভর করত, যা ইসলামী জ্ঞানের জন্য তৈরি নয় এবং আমাদের নিয়ন্ত্রণের বাইরে, আর আমরা মনে করি আপনার ইবাদতের তথ্য কখনো সেখানে যাওয়া উচিত নয়। আপনি যা লিখেন তা এখন কোনো এআই সেবায় পাঠানো হয় না। আপনার ট্র্যাকার, লক্ষ্য ও তথ্য আগের মতোই আছে।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.191.0',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Every reference, checked and mapped',
+        added: [
+          'A new Reference map lists every Quran verse, hadith and source the app uses: what it is for, where it appears, and how it was checked. Open it from the menu, just above Sign out.',
+        ],
+        fixed: [
+          'We checked every reference against its source and corrected the ones that were wrong: a few hadith numbers (such as Istikhārah and Ḍuḥā), some grades, and quotes that did not match the hadith they cite.',
+          'Weak narrations now say they are weak wherever they appear, and one weak hadith was removed from the weekly reflection.',
+        ],
+      },
+      bn: {
+        title: 'প্রতিটি রেফারেন্স যাচাই করা ও এক জায়গায় সাজানো',
+        added: [
+          'নতুন রেফারেন্স ম্যাপে অ্যাপে ব্যবহৃত প্রতিটি আয়াত, হাদিস ও সূত্র আছে: কী কাজে লাগে, কোথায় দেখা যায় এবং কীভাবে যাচাই হয়েছে। মেনু থেকে, সাইন আউটের ঠিক উপরে খুলুন।',
+        ],
+        fixed: [
+          'প্রতিটি রেফারেন্স মূল সূত্রের সাথে মিলিয়ে ভুলগুলো সংশোধন করা হয়েছে: কয়েকটি হাদিস নম্বর (যেমন ইস্তিখারা ও দুহা), কিছু হাদিসের মান, এবং যেসব উদ্ধৃতি উল্লিখিত হাদিসের সাথে মেলেনি।',
+          'দুর্বল বর্ণনা এখন যেখানেই আসে, দুর্বল বলে উল্লেখ থাকে; সাপ্তাহিক আত্মসমালোচনা থেকে একটি দুর্বল হাদিস সরানো হয়েছে।',
         ],
       },
     },

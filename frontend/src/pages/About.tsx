@@ -158,6 +158,10 @@ export default function About() {
                 }}
               />
             </p>
+            <Link to="/references" className={`${BTN_SECONDARY} !px-3 !py-1.5 !text-xs`}>
+              {t('about.referencesLink', 'See every reference and how it was checked')}
+              <ChevronRightIcon className="w-3.5 h-3.5" aria-hidden="true" />
+            </Link>
           </section>
 
           {/* Privacy pointer */}

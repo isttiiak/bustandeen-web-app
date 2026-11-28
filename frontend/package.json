@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-frontend",
-  "version": "5.191.0",
+  "version": "5.192.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -19,7 +19,8 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
     "pwa:screenshots": "node scripts/capture-pwa-screenshots.mjs",
-    "i18n:check": "node scripts/check-i18n.mjs"
+    "i18n:check": "node scripts/check-i18n.mjs",
+    "refs:update": "UPDATE_REFS=1 vitest run src/data/references"
   },
   "dependencies": {
     "@fontsource/amiri": "^5.3.0",
