@@ -66,7 +66,11 @@ export const SPECIAL_SURAHS: SpecialSurah[] = [
     emoji: '🌙',
     note: 'The Prophet ﷺ would not sleep until he recited it with al-Mulk.',
     noteBn: 'নবী ﷺ আল-মুলকের সাথে এটি তেলাওয়াত না করে ঘুমাতেন না।',
-    ref: { text: 'Tirmidhī 2892 (ṣaḥīḥ, al-Albānī)', url: 'https://sunnah.com/tirmidhi:2892' },
+    // Graders differ: owner's decision (2026-11-28) is to show both.
+    ref: {
+      text: 'Tirmidhī 2892 (ṣaḥīḥ: al-Albānī; ḍaʿīf: Darussalam)',
+      url: 'https://sunnah.com/tirmidhi:2892',
+    },
   },
 ];
 

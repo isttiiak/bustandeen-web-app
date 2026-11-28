@@ -2091,11 +2091,11 @@ export const REFERENCES: ReferenceEntry[] = [
     kind: 'hadith',
     citation: 'Jāmiʿ at-Tirmidhī 2892',
     url: 'https://sunnah.com/tirmidhi:2892',
-    grade: 'Ṣaḥīḥ (al-Albānī, al-Ṣaḥīḥah 585)',
+    grade: 'Ṣaḥīḥ (al-Albānī, al-Ṣaḥīḥah 585); Ḍaʿīf (Darussalam, sunnah.com)',
     purpose: 'Quran: the Prophet ﷺ slept only after reciting as-Sajdah and al-Mulk.',
     desk: 'corrected',
     deskNote:
-      'Label changed from ḥasan to ṣaḥīḥ (al-Albānī). sunnah.com shows Darussalam’s ḍaʿīf for the Ṭāwūs addition in the same entry.',
+      'Was labelled ḥasan. Graders differ, so both are shown (owner, 2026-11-28): al-Albānī grades it ṣaḥīḥ (al-Ṣaḥīḥah 585); sunnah.com shows Darussalam’s ḍaʿīf, which may refer to the Ṭāwūs addition in the same entry.',
   },
   {
     id: 'tirmidhi:2910',

@@ -265,7 +265,7 @@
           <p class="text-white/70 text-xs mt-1 leading-relaxed">
            "The Prophet ﷺ would not sleep until he recited it with al-Mulk."
           <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/tirmidhi:2892" rel="noreferrer" target="_blank">
-           "Tirmidhī 2892 (ṣaḥīḥ, al-Albānī)"
+           "Tirmidhī 2892 (ṣaḥīḥ: al-Albānī; ḍaʿīf: Darussalam)"
        <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
          <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
