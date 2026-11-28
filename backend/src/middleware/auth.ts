@@ -84,15 +84,20 @@ const makeRequireAuth =
       // Dev bypass: only in non-production environments
       if (devAuthBypassAllowed()) {
         const payload = decodeUnverifiedJwt(token);
-        if (!payload?.['uid']) {
+        // The unverified token is the request's own text: its uid must be a plain,
+        // non-empty string. An object such as {"$ne": null} would otherwise reach every
+        // query as a MongoDB operator (CodeQL js/sql-injection, triage 2026-11-28).
+        const uid = payload?.['uid'];
+        if (typeof uid !== 'string' || !uid) {
           res.status(401).json({ ok: false, error: 'Invalid token' });
           return;
         }
-        if (await isUserDisabled(payload['uid'] as string)) {
+        if (await isUserDisabled(uid)) {
           res.status(403).json({ ok: false, error: 'account_disabled' });
           return;
         }
-        req.user = { uid: payload['uid'] as string, ...payload };
+        // uid last, so nothing else in the token can replace it.
+        req.user = { ...payload, uid };
         return next();
       }
 
