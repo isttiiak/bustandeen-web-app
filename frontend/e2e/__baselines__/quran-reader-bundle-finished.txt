@@ -265,7 +265,7 @@
           <p class="text-white/70 text-xs mt-1 leading-relaxed">
            "The Prophet ﷺ would not sleep until he recited it with al-Mulk."
           <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/tirmidhi:2892" rel="noreferrer" target="_blank">
-           "Tirmidhī 2892 (ḥasan)"
+           "Tirmidhī 2892 (ṣaḥīḥ, al-Albānī)"
        <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5">
         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
          <svg aria-hidden="true" class="w-4 h-4 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -326,9 +326,9 @@
             "22"
             "–24"
           <p class="text-white/70 text-xs mt-1 leading-relaxed">
-           "The names of Allah gathered — recited morning and evening."
+           "The names of Allah gathered. The narration on reciting them morning and evening is weak."
           <a class="inline-block mt-1 text-brand-gold text-[11px] underline underline-offset-2 relative z-10" href="https://sunnah.com/tirmidhi:2922" rel="noreferrer" target="_blank">
-           "Tirmidhī 2922 (gharīb — noted)"
+           "Tirmidhī 2922 (ḍaʿīf)"
        <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 scroll-mt-20" id="id5">
         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
          <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">

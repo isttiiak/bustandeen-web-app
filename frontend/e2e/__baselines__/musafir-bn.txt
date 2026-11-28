@@ -629,6 +629,10 @@
         "সম্পর্কে"
        <span aria-hidden="true" class="text-white/60">
         "•"
+       <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/references">
+        "রেফারেন্স"
+       <span aria-hidden="true" class="text-white/60">
+        "•"
        <a class="inline-flex items-center text-white/60 hover:text-white underline underline-offset-2 transition-colors" data-discover="true" href="/privacy">
         "গোপনীয়তা"
        <span aria-hidden="true" class="text-white/60">

@@ -575,7 +575,7 @@
             <span>
              <span class="text-white/90 font-medium">
               "Read now"
-             "under each prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd 1523, ṣaḥīḥ)."
+             "under each prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd 1523 and an-Nasāʾī, al-Kubrā 9848, ṣaḥīḥ)."
            <p class="flex items-start gap-2">
             <span class="mt-px shrink-0">
              <svg aria-hidden="true" class="w-4 h-4 text-brand-gold" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">

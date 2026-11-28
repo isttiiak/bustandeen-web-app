@@ -432,22 +432,22 @@
             "Ishraq/Duha"
             ":"
            <span>
-            "Tirmidhī 586"
+            "Tirmidhī 586 (ḥasan)"
             "·"
             <a class="text-brand-gold underline underline-offset-2" href="https://sunnah.com/tirmidhi:586" rel="noopener noreferrer" target="_blank">
              "sunnah.com/tirmidhi:586"
            <span>
             "·"
-            "Ṣaḥīḥ Muslim 717"
+            "Ṣaḥīḥ Muslim 719"
             "·"
-            <a class="text-brand-gold underline underline-offset-2" href="https://sunnah.com/muslim:717" rel="noopener noreferrer" target="_blank">
-             "sunnah.com/muslim:717"
+            <a class="text-brand-gold underline underline-offset-2" href="https://sunnah.com/muslim:719" rel="noopener noreferrer" target="_blank">
+             "sunnah.com/muslim:719"
           <p>
            <span class="text-white/90 font-semibold">
             "Awwabin"
             ":"
            <span>
-            "Ibn Mājah 1167"
+            "Ibn Mājah 1167 (very weak)"
             "·"
             <a class="text-brand-gold underline underline-offset-2" href="https://sunnah.com/ibnmajah:1167" rel="noopener noreferrer" target="_blank">
              "sunnah.com/ibnmajah:1167"
