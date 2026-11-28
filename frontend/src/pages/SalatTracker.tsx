@@ -3,7 +3,9 @@ import { m as motion } from 'framer-motion';
 import TabNav from '../components/TabNav.js';
 import { BriefcaseIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { type PrayerId, type PrayerStatus } from '../hooks/useSalatLog.js';
-import { getPrayerEndTime, formatTime } from '../utils/prayerTimes.js';
+import { getPrayerEndTime, formatTime, translateSalatName } from '../utils/prayerTimes.js';
+import { FlowerIcon } from '../components/icons/IslamicIcons.js';
+import { useExcusedPrayers } from '../hooks/useCycle.js';
 import ExcusedCard from '../components/ExcusedCard.js';
 import SalatSettings from '../components/SalatSettings.js';
 import Seo from '../components/Seo.js';
@@ -101,7 +103,6 @@ export default function SalatTracker() {
   const {
     locationTagText,
     trackablePrayers,
-    completedCount,
     normaliseStatus,
     handleStatus,
     handleMissedReason,
@@ -110,6 +111,8 @@ export default function SalatTracker() {
     toggleJoined,
     handleSubTag,
   } = useSalatPrayerHandlers(state, creditDhikr);
+  // Prayers a Rayhanah episode excuses on the day it started or ended
+  const endDayExcused = useExcusedPrayers(selectedDate);
 
   return (
     // Bustan Arch (audit T3.2): one arch hero (day + leaf marks), flat cards
@@ -173,9 +176,17 @@ export default function SalatTracker() {
               return {
                 id: p.id,
                 name: p.name,
-                status: (isPastDay && raw === 'pending' ? 'missed' : raw) as PrayerStatus,
+                // A prayer excused on the day the episode ended is a flower, and counts as done
+                status: (endDayExcused.includes(p.id as PrayerId)
+                  ? 'excused'
+                  : isPastDay && raw === 'pending'
+                    ? 'missed'
+                    : raw) as PrayerStatus | 'excused',
               };
             });
+            const doneCount = marks.filter(
+              (m) => m.status === 'completed' || m.status === 'kaza' || m.status === 'excused'
+            ).length;
             return (
               <SalatHero
                 selectedDate={selectedDate}
@@ -192,7 +203,7 @@ export default function SalatTracker() {
                   setExpandedPrayer(null);
                 }}
                 marks={marks}
-                completedCount={completedCount}
+                completedCount={doneCount}
                 excused={excused}
               />
             );
@@ -244,6 +255,29 @@ export default function SalatTracker() {
                 <div className="space-y-2">
                   {trackablePrayers.map((prayer, i) => {
                     const prayerId = prayer.id as PrayerId;
+                    // Not owed: excused by the Rayhanah episode that started or ended today
+                    if (endDayExcused.includes(prayerId)) {
+                      return (
+                        <div
+                          key={prayer.id}
+                          data-testid={`excused-prayer-${prayer.id}`}
+                          className="rounded-card border border-brand-pink/30 bg-brand-pink/[0.06] shadow-elev-1 px-4 py-3 flex items-center gap-3"
+                        >
+                          <FlowerIcon className="w-6 h-6 text-brand-pink shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-white font-bold text-sm">
+                              {translateSalatName(prayer.id, prayer.name, t)}
+                            </p>
+                            <p className="text-white/70 text-xs">
+                              {t(
+                                'salatTracker.excusedPrayerNote',
+                                'Excused: its time ended before your Rayhanah days did. Nothing to log.'
+                              )}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    }
                     const entry = log?.prayers[prayerId];
                     // Normalise legacy DB values (old model used 'prayed'/'mosque') to new schema
                     const rawStatus = (entry?.status ?? 'pending') as string;

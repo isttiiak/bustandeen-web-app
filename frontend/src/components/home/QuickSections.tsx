@@ -21,12 +21,7 @@ import {
   type SurahMeta,
 } from '../../utils/quranData.js';
 import { continueHref, getLastRead } from '../../utils/quranLastRead.js';
-import {
-  counterHref,
-  getQuickAction,
-  getQuickZikr,
-  type QuickZikr,
-} from '../../utils/zikrQuick.js';
+import { counterHref, getQuickZikr, type QuickZikr } from '../../utils/zikrQuick.js';
 import { zikrDisplayName } from '../../utils/zikrLibrary.js';
 import { getDayRuling, VOLUNTARY_BY_ID } from '../../utils/fastingRules.js';
 import { nextSunnahFast, quickFastPlan } from '../../utils/fastingQuick.js';
@@ -35,6 +30,7 @@ import { calcPrayerTimesForDay, formatTime } from '../../utils/prayerTimes.js';
 import { deviceYmd, ymdNoon } from '../../utils/placeClock.js';
 import { celebrateSmall } from '../../utils/celebrate.js';
 import ZikrLogCountsModal from '../zikr/ZikrLogCountsModal.js';
+import ZikrQuickConfirm from '../zikr/ZikrQuickConfirm.js';
 
 /** Home's per-habit quick sections (T3.4 E): one compact card each, at most
  *  two rows of actions, in the user's habit order (utils/homeSections.ts). */
@@ -193,17 +189,19 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
   const navigate = useNavigate();
   const addCounts = useZikrStore((s) => s.addCounts);
   const chips = useMemo(() => getQuickZikr(), []);
-  const action = useMemo(() => getQuickAction(), []);
   const [logOpen, setLogOpen] = useState(false);
+  // A tap only opens the question: nothing is added until the user chooses.
+  const [pending, setPending] = useState<QuickZikr | null>(null);
 
-  const tap = (z: QuickZikr) => {
-    if (action === 'add') {
-      // Self-reported, so it is counted as untimed (no session), like Set count.
-      addCounts({ [z.name]: z.count });
-      celebrateSmall();
-    } else {
-      navigate(counterHref(z));
-    }
+  const add = (z: QuickZikr) => {
+    // Self-reported, so it is counted as untimed (no session), like Set count.
+    addCounts({ [z.name]: z.count });
+    celebrateSmall();
+    setPending(null);
+  };
+  const openCounter = (z: QuickZikr) => {
+    setPending(null);
+    navigate(counterHref(z));
   };
 
   return (
@@ -225,18 +223,12 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
           <button
             key={z.name}
             type="button"
-            onClick={() => tap(z)}
-            aria-label={
-              action === 'add'
-                ? t('home.quick.zikrAdd', '{{name}} +{{n}}, tap to add', {
-                    n: formatLocaleNumber(z.count),
-                    name: zikrDisplayName(z.name, i18n.language),
-                  })
-                : t('home.quick.zikrOpen', '{{name}} {{n}} target, tap to count', {
-                    n: formatLocaleNumber(z.count),
-                    name: zikrDisplayName(z.name, i18n.language),
-                  })
-            }
+            onClick={() => setPending(z)}
+            aria-haspopup="dialog"
+            aria-label={t('home.quick.zikrChoose', '{{name}} {{n}}, tap to choose', {
+              n: formatLocaleNumber(z.count),
+              name: zikrDisplayName(z.name, i18n.language),
+            })}
             className="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors"
           >
             <span className="block text-white text-[11px] font-bold line-clamp-2">
@@ -245,7 +237,6 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
             {/* A real space between the two lines: the button's visible text must
                 read "name count", which its accessible name starts with. */}{' '}
             <span className="block text-brand-emerald text-xs font-black tabular-nums mt-0.5">
-              {action === 'add' ? '+' : ''}
               {formatLocaleNumber(z.count)}
             </span>
           </button>
@@ -269,6 +260,12 @@ export function ZikrQuickCard({ today, goal }: { today: number; goal: number | n
         </button>
       </div>
       <ZikrLogCountsModal open={logOpen} onClose={() => setLogOpen(false)} />
+      <ZikrQuickConfirm
+        chip={pending}
+        onOpenCounter={openCounter}
+        onAdd={add}
+        onCancel={() => setPending(null)}
+      />
     </Shell>
   );
 }

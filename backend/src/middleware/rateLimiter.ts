@@ -119,6 +119,15 @@ export const socialConnectLimiter = makeUidLimit(
   'socialConnect'
 );
 
+/** Nudges: 30 attempts per hour per UID. The service also allows one nudge per
+ *  friend per day and ten friends a day; this only stops hammering. */
+export const socialNudgeLimiter = makeUidLimit(
+  60 * 60 * 1000,
+  30,
+  { ok: false, error: 'Too many nudges. Try again later.' },
+  'socialNudge'
+);
+
 /** Account import: 10 per hour per UID — prevents backup-flood abuse */
 export const importLimiter = makeUidLimit(
   60 * 60 * 1000,

@@ -74,9 +74,18 @@ test('Rayhanah: a period start saved offline is queued once, then synced', async
 }) => {
   await enterDemo(page, 'Sister');
   await go(page, '/cycle');
+  // The visit-counting banner, when it shows, would sit over the taller start dialog
+  await page
+    .getByRole('button', { name: 'No thanks', exact: true })
+    .click({ timeout: 1500 })
+    .catch(() => {});
   await page.getByRole('button', { name: /My period started/ }).click();
   const begin = page.getByRole('button', { name: 'Begin Rayhanah days' });
   await expect(begin).toBeVisible();
+  // Before or after which prayer it started: needed before Begin is enabled
+  await expect(begin).toBeDisabled();
+  await page.getByTestId('moment-morning').click();
+  await expect(begin).toBeEnabled();
 
   await context.setOffline(true);
   await begin.click();
@@ -87,7 +96,7 @@ test('Rayhanah: a period start saved offline is queued once, then synced', async
     tracker: 'cycle',
     method: 'post',
     url: '/api/cycle/start',
-    body: { type: 'hayd' },
+    body: { type: 'hayd', startMark: { slot: 'morning' } },
   });
 
   await expectDrainsOnReconnect(page, context);

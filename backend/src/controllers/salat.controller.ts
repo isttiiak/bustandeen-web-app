@@ -150,21 +150,15 @@ export const getAnalytics = async (
   }
 };
 
-export const getCorrelations = async (
+export const getBounceBack = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const today = req.query['today'] as string | undefined;
-    const rawOffset = Number(req.query['timezoneOffset']);
-    const timezoneOffset = Number.isFinite(rawOffset) ? rawOffset : 0;
-    const correlation = await salatService.getIshaFajrCorrelation(
-      req.user.uid,
-      timezoneOffset,
-      today
-    );
-    res.json({ ok: true, ...correlation });
+    const bounceBack = await salatService.getBounceBack(req.user.uid, today);
+    res.json({ ok: true, ...bounceBack });
   } catch (err) {
     next(err);
   }

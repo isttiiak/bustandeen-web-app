@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import i18n from '../i18n.js';
@@ -5,6 +6,26 @@ import api from '../lib/api.js';
 import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+
+/** Where in the day it happened: in a prayer's time, or after sunrise and before Dhuhr. */
+export type MomentSlot = 'fajr' | 'morning' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
+export type FardId = 'fajr' | 'dhuhr' | 'asr' | 'maghrib' | 'isha';
+
+/** Before or after which salat the episode began (never a clock time). */
+export interface StartMark {
+  slot: MomentSlot;
+  /** Had she already prayed that prayer? */
+  prayed?: boolean | null;
+  /** Majority school: had at least one rak'ah's time passed before it began? */
+  enough?: boolean | null;
+}
+
+/** Before or after which salat the episode ended. */
+export interface EndMark {
+  slot: MomentSlot;
+  /** Was enough time left in that prayer's time? */
+  enough?: boolean | null;
+}
 
 export interface CycleActive {
   type: 'hayd' | 'nifas';
@@ -35,7 +56,16 @@ export interface CycleSummary {
     basedOnCycles: number;
   };
   madhab: 'hanafi' | 'majority';
-  logs: Array<{ _id: string; type: 'hayd' | 'nifas'; startDate: string; endDate: string | null }>;
+  logs: Array<{
+    _id: string;
+    type: 'hayd' | 'nifas';
+    startDate: string;
+    endDate: string | null;
+    startMark?: StartMark | null;
+    endMark?: EndMark | null;
+  }>;
+  /** Start and end days that excuse only some prayers, with the prayers excused (computed on the server). */
+  partialDays?: Array<{ date: string; excused: FardId[] }>;
   days: CycleDayNote[];
   partnerSync: { enabled: boolean; partnerUid: string | null };
   pregnancy: { active: boolean; dueDate: string | null; weeksAlong: number | null };
@@ -62,6 +92,13 @@ export function useCycleSummary(enabled = true) {
     enabled: !!user && isFemale && enabled,
     staleTime: 60_000,
   });
+}
+
+/** The fard prayers excused on `date` because an episode started or ended that day (the
+ * server works them out from her answers and her school). Empty on an ordinary day. */
+export function useExcusedPrayers(date: string): FardId[] {
+  const days = useCycleSummary().data?.partialDays;
+  return useMemo(() => days?.find((d) => d.date === date)?.excused ?? [], [days, date]);
 }
 
 /** Just the active state — for Salat/Fasting/Home excused checks. */
@@ -93,7 +130,7 @@ export function useStartCycle() {
   const qc = useQueryClient();
   return useMutation({
     networkMode: 'always',
-    mutationFn: (vars: { date: string; type: 'hayd' | 'nifas' }) =>
+    mutationFn: (vars: { date: string; type: 'hayd' | 'nifas'; startMark?: StartMark }) =>
       sendOrQueue({ tracker: 'cycle', method: 'post', url: '/api/cycle/start', body: vars }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {
@@ -110,7 +147,7 @@ export function useEndCycle() {
   const qc = useQueryClient();
   return useMutation({
     networkMode: 'always',
-    mutationFn: (vars: { date: string }) =>
+    mutationFn: (vars: { date: string; endMark?: EndMark }) =>
       sendOrQueue({ tracker: 'cycle', method: 'post', url: '/api/cycle/end', body: vars }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {

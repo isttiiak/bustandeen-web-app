@@ -10,7 +10,7 @@ import SalatLog, {
   JamKind,
 } from '../models/SalatLog.js';
 import * as salatDebtService from './salatDebt.service.js';
-import { getExcusedDaySet } from './cycle.service.js';
+import { getExcusedDaySet, getPartialExcusedMap } from './cycle.service.js';
 import { inTransaction, runInTransactionRetryingDuplicates } from '../utils/transaction.js';
 
 export function todayDateString(): string {
@@ -299,11 +299,13 @@ export interface SalatAnalyticsResult {
   /** Completion by day of week (JS getDay(): 0=Sun … 6=Sat), across the
    * whole window — e.g. "you miss Fajr on weekends more than weekdays". */
   byWeekday: Record<number, { completed: number; kaza: number; missed: number; total: number }>;
-  /** How far into a prayer's window it was marked done, for prayers where
-   * both the window bounds and the mark timestamp are known (older logs,
-   * or ones marked without a saved location, are simply not counted here —
-   * see IPrayerEntry.windowStart/windowEnd). */
-  timeOfWindow: { early: number; mid: number; late: number; unknown: number };
+  /** Kaza debt repaid in the window (repayment taps on the debt card; the
+   * clean-slate reset is not a repayment). Together with `completedCount`
+   * (Done) and `kazaCount` (Kaza) it is the "How you prayed" breakdown.
+   * This replaced the old "Prayer Timing" split, which was read from the
+   * moment the Done button was tapped: people who fill in the whole day at
+   * night would look late however they prayed (2026-11-28). */
+  debtRepaidCount: number;
   /** Counts of the optional reason tag on prayers explicitly marked missed.
    * Prayers swept into 'missed' by the day-rollover, or marked missed
    * without picking a reason, are not counted here. */
@@ -352,6 +354,16 @@ export async function getSalatAnalytics(
   // Rest days (Rayhanah): salat is excused, so these days are neither missed nor
   // pending, do not count towards totals, and neither break nor extend a streak.
   const excused = await getExcusedDaySet(userId, statsCutoff, today);
+  // The start and end day of a Rayhanah episode: only some prayers are excused. Those
+  // prayers are not owed (neither done nor missed, left out of the totals) and count as
+  // done for a full day and for the streaks (utils/cycleExcusal.ts).
+  const partialExcused = await getPartialExcusedMap(
+    userId,
+    shiftDateStr(today, -Math.max(calendarDays, days)),
+    today
+  );
+  const excusedHere = (date: string, pid: PrayerId): boolean =>
+    partialExcused.get(date)?.has(pid) ?? false;
 
   let completedCount = 0;
   let kazaCount = 0;
@@ -381,12 +393,6 @@ export async function getSalatAnalytics(
 
   const byWeekday: SalatAnalyticsResult['byWeekday'] = {};
   for (let w = 0; w < 7; w++) byWeekday[w] = { completed: 0, kaza: 0, missed: 0, total: 0 };
-  const timeOfWindow: SalatAnalyticsResult['timeOfWindow'] = {
-    early: 0,
-    mid: 0,
-    late: 0,
-    unknown: 0,
-  };
   const missedReasons: Record<string, number> = {};
   for (const r of MISSED_REASONS) missedReasons[r] = 0;
 
@@ -403,16 +409,18 @@ export async function getSalatAnalytics(
     if (!log) {
       // No log row for this date. Past days = fully missed; today = all pending.
       if (isPast) {
-        missedCount += 5;
-        for (const pid of PRAYER_IDS) perPrayer[pid].missed++;
-        byWeekday[weekday]!.missed += 5;
-        byWeekday[weekday]!.total += 5;
+        const owed = PRAYER_IDS.filter((pid) => !excusedHere(dateStr, pid));
+        missedCount += owed.length;
+        for (const pid of owed) perPrayer[pid].missed++;
+        byWeekday[weekday]!.missed += owed.length;
+        byWeekday[weekday]!.total += owed.length;
       }
       // (today with no log: 5 pending — don't count against completion)
       continue;
     }
 
     for (const pid of PRAYER_IDS) {
+      if (excusedHere(dateStr, pid)) continue; // not owed today
       const entry = log.prayers[pid];
       const s = entry?.status ?? 'pending';
       const loc = entry?.location;
@@ -455,24 +463,6 @@ export async function getSalatAnalytics(
           tasbeehCount++;
           perPrayer[pid].tasbeeh++;
         }
-
-        // Punctuality within the prayer's window — only computable when the
-        // client sent both bounds at mark time AND we have the mark timestamp.
-        if (entry?.windowStart && entry.windowEnd && entry.prayedAt) {
-          const winStart = entry.windowStart.getTime();
-          const winEnd = entry.windowEnd.getTime();
-          const span = winEnd - winStart;
-          if (span > 0) {
-            const frac = Math.min(1, Math.max(0, (entry.prayedAt.getTime() - winStart) / span));
-            if (frac <= 1 / 3) timeOfWindow.early++;
-            else if (frac <= 2 / 3) timeOfWindow.mid++;
-            else timeOfWindow.late++;
-          } else {
-            timeOfWindow.unknown++;
-          }
-        } else {
-          timeOfWindow.unknown++;
-        }
       }
     }
     if (log.nafl?.completed) naflDays++;
@@ -490,15 +480,22 @@ export async function getSalatAnalytics(
     }
   }
 
+  const debtRepaidCount = await salatDebtService.getDebtRepaidTotal(userId, statsCutoff, today);
+
   const totalDays = Math.max(0, effectiveDays - excused.size);
-  const totalPossiblePrayers = totalDays * 5;
+  let partialExcusedCount = 0;
+  for (let i = 0; i < effectiveDays; i++) {
+    partialExcusedCount += partialExcused.get(shiftDateStr(statsCutoff, i))?.size ?? 0;
+  }
+  const totalPossiblePrayers = totalDays * 5 - partialExcusedCount;
   const prayedTotal = completedCount + kazaCount;
 
   const isAllDone = (date: string): boolean => {
     const log = logMap.get(date);
-    if (!log) return false; // a day with no log breaks the streak
+    if (!log && !partialExcused.has(date)) return false; // a day with no log breaks the streak
     return PRAYER_IDS.every((pid) => {
-      const s = log.prayers[pid]?.status;
+      if (excusedHere(date, pid)) return true;
+      const s = log?.prayers[pid]?.status;
       return s === 'completed' || s === 'kaza';
     });
   };
@@ -527,6 +524,7 @@ export async function getSalatAnalytics(
   // Per-prayer streaks — same best/current-run logic as the all-5 streak
   // above, but for one prayer at a time (e.g. "42-day Fajr streak").
   const isPrayerDone = (pid: PrayerId, date: string): boolean => {
+    if (excusedHere(date, pid)) return true;
     const log = logMap.get(date);
     if (!log) return false;
     const s = log.prayers[pid]?.status;
@@ -598,11 +596,10 @@ export async function getSalatAnalytics(
 
   const countDone = (dateStr: string): number => {
     const log = logMap.get(dateStr);
-    if (!log) return 0;
     let done = 0;
     for (const pid of PRAYER_IDS) {
-      const s = log.prayers[pid]?.status;
-      if (s === 'completed' || s === 'kaza') done++;
+      const s = log?.prayers[pid]?.status;
+      if (excusedHere(dateStr, pid) || s === 'completed' || s === 'kaza') done++;
     }
     return done;
   };
@@ -650,7 +647,7 @@ export async function getSalatAnalytics(
     calendarData,
     weeklyMosqueTrend,
     byWeekday,
-    timeOfWindow,
+    debtRepaidCount,
     missedReasons,
   };
 }
@@ -715,75 +712,88 @@ export async function getSalatJourney(
   return phases.reverse(); // newest first
 }
 
-export interface IshaFajrCorrelation {
-  /** False when there isn't enough data yet to say anything meaningful —
-   * render nothing rather than a shaky/misleading percentage. */
+export interface BounceBack {
+  /** False until there are enough days on both sides to say something real. */
   available: boolean;
-  /** % of days Fajr was prayed on time (not kaza/missed) the morning after
-   * an Isha logged before local 11pm. */
-  earlyIshaFajrRate: number | null;
-  /** Same, for mornings after an Isha logged at/after local 11pm. */
-  lateIshaFajrRate: number | null;
-  earlySampleSize: number;
-  lateSampleSize: number;
+  /** % of days with all five prayers done, among the days that followed a day with a missed prayer. */
+  afterSlipRate: number | null;
+  /** The same, among the days that followed a day with all five done. */
+  afterFullRate: number | null;
+  /** Days that followed a day with a missed prayer / a day with all five done. */
+  afterSlipDays: number;
+  afterFullDays: number;
 }
 
-const CORRELATION_MIN_SAMPLE = 5;
-const ISHA_CUTOFF_HOUR = 23; // 11pm local
+const BOUNCE_MIN_SAMPLE = 5;
+const BOUNCE_WINDOW_DAYS = 90;
 
 /**
- * The one correlation insight actually shippable from data already
- * collected (no new "log your bedtime" feature needed): does praying Isha
- * before local 11pm correlate with an on-time Fajr the next morning?
- * Reads `prayedAt` (UTC) off both entries and converts to the user's local
- * hour via the same `timezoneOffset` param every other analytics endpoint
- * already takes. Looks back up to 90 days; needs at least
- * `CORRELATION_MIN_SAMPLE` days in EACH bucket before showing anything —
- * a 2-data-point "71%" would be noise dressed up as insight.
+ * How you recover: after a day with a missed prayer, how often is the next day
+ * a full one, next to how often a full day follows a full day. It reads only the
+ * Done / Kaza / Miss marks, never the time a button was tapped (many people fill
+ * a day in at night, so tap times say nothing about when they prayed). Replaced
+ * the Isha-time vs Fajr card, which read tap times (2026-11-29).
+ *
+ * Only finished days are used (before today, and the day after must be before
+ * today too), only from the first day anything was logged, and rest days
+ * (Rayhanah) on either side are left out. A past day with nothing logged is a
+ * day with missed prayers, as everywhere in the analytics.
  */
-export async function getIshaFajrCorrelation(
-  userId: string,
-  timezoneOffset: number,
-  today?: string
-): Promise<IshaFajrCorrelation> {
+export async function getBounceBack(userId: string, today?: string): Promise<BounceBack> {
   const end = today ?? todayDateString();
-  const since = shiftDateStr(end, -90);
-  const logs = await SalatLog.find({ userId, date: { $gte: since, $lte: end } })
-    .select('date prayers.isha.prayedAt prayers.fajr.status')
-    .sort({ date: 1 });
+  const since = shiftDateStr(end, -BOUNCE_WINDOW_DAYS);
+  const [logs, excused] = await Promise.all([
+    SalatLog.find({ userId, date: { $gte: since, $lte: end } })
+      .select('date prayers')
+      .sort({ date: 1 }),
+    getExcusedDaySet(userId, since, end),
+  ]);
+  // A prayer excused on the start or end day of a Rayhanah episode counts as done.
+  const partialExcused = await getPartialExcusedMap(userId, since, end);
+  const first = logs[0]?.date;
+  const none: BounceBack = {
+    available: false,
+    afterSlipRate: null,
+    afterFullRate: null,
+    afterSlipDays: 0,
+    afterFullDays: 0,
+  };
+  if (!first) return none;
 
   const byDate = new Map(logs.map((l) => [l.date, l]));
+  const isFull = (date: string): boolean => {
+    const log = byDate.get(date);
+    if (!log) return false;
+    return PRAYER_IDS.every((pid) => {
+      if (partialExcused.get(date)?.has(pid)) return true;
+      const st = log.prayers[pid]?.status;
+      return st === 'completed' || st === 'kaza';
+    });
+  };
 
-  let earlyOnTime = 0,
-    earlyTotal = 0,
-    lateOnTime = 0,
-    lateTotal = 0;
-
-  for (const log of logs) {
-    const ishaAt = log.prayers.isha?.prayedAt;
-    if (!ishaAt) continue;
-    const nextDate = shiftDateStr(log.date, 1);
-    const nextLog = byDate.get(nextDate);
-    const fajrStatus = nextLog?.prayers.fajr?.status;
-    if (!fajrStatus || fajrStatus === 'pending') continue; // next day not resolved yet
-
-    const localHour = new Date(ishaAt.getTime() + timezoneOffset * 60_000).getUTCHours();
-    const onTime = fajrStatus === 'completed';
-    if (localHour < ISHA_CUTOFF_HOUR) {
-      earlyTotal++;
-      if (onTime) earlyOnTime++;
+  let slipDays = 0;
+  let slipThenFull = 0;
+  let fullDays = 0;
+  let fullThenFull = 0;
+  // Both days must be over: `d` and `d + 1` before today.
+  for (let d = first; shiftDateStr(d, 1) < end; d = shiftDateStr(d, 1)) {
+    const next = shiftDateStr(d, 1);
+    if (excused.has(d) || excused.has(next)) continue;
+    if (isFull(d)) {
+      fullDays++;
+      if (isFull(next)) fullThenFull++;
     } else {
-      lateTotal++;
-      if (onTime) lateOnTime++;
+      slipDays++;
+      if (isFull(next)) slipThenFull++;
     }
   }
 
   return {
-    available: earlyTotal >= CORRELATION_MIN_SAMPLE && lateTotal >= CORRELATION_MIN_SAMPLE,
-    earlyIshaFajrRate: earlyTotal ? Math.round((earlyOnTime / earlyTotal) * 100) : null,
-    lateIshaFajrRate: lateTotal ? Math.round((lateOnTime / lateTotal) * 100) : null,
-    earlySampleSize: earlyTotal,
-    lateSampleSize: lateTotal,
+    available: slipDays >= BOUNCE_MIN_SAMPLE && fullDays >= BOUNCE_MIN_SAMPLE,
+    afterSlipRate: slipDays ? Math.round((slipThenFull / slipDays) * 100) : null,
+    afterFullRate: fullDays ? Math.round((fullThenFull / fullDays) * 100) : null,
+    afterSlipDays: slipDays,
+    afterFullDays: fullDays,
   };
 }
 

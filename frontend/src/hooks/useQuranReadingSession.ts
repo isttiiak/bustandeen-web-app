@@ -66,7 +66,8 @@ export interface UseQuranReadingSessionOptions {
   isActiveOverride?: boolean;
   /** Hard pause: time doesn't accrue while true, whatever else is going on
    * (e.g. the āyah share modal is open, so card-designing isn't counted as
-   * reading). Resumes on its own when it goes back to false. */
+   * reading, or the surah is still loading). Resumes on its own when it goes
+   * back to false. */
   paused?: boolean;
 }
 
@@ -197,6 +198,9 @@ export function useQuranReadingSession(
       }
       setIsPaused(paused);
       if (!paused) {
+        // The visit starts when time first counts, not when the screen mounted
+        // (a surah that takes seconds to load is not reading time).
+        if (activeSecRef.current === 0) startedAtRef.current = new Date();
         lastActiveAtRef.current = Date.now();
         activeSecRef.current += 1;
         setActiveSec(activeSecRef.current);

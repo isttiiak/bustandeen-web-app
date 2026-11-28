@@ -6,8 +6,10 @@ import {
   connectSchema,
   socialSummarySchema,
   setPrivacySchema,
+  sendNudgeSchema,
+  dismissNudgesSchema,
 } from '../validation/social.schemas.js';
-import { socialConnectLimiter } from '../middleware/rateLimiter.js';
+import { socialConnectLimiter, socialNudgeLimiter } from '../middleware/rateLimiter.js';
 
 const router = Router();
 
@@ -50,5 +52,35 @@ router.get('/blocked', requireAuth, socialController.getBlockedList);
 
 // PATCH /api/social/privacy { visibility?, secret? } — what friends see + secret deeds
 router.patch('/privacy', requireAuth, validate(setPrivacySchema), socialController.setPrivacy);
+
+// POST /api/social/nudge/:friendUid { message?, today? } — a gentle "come back to the journey"
+// to a friend who has been quiet (once a day per friend)
+router.post(
+  '/nudge/:friendUid',
+  requireAuth,
+  socialNudgeLimiter,
+  validate(sendNudgeSchema),
+  socialController.sendNudge
+);
+
+// GET /api/social/nudges — nudges I have not dismissed yet
+router.get('/nudges', requireAuth, socialController.getNudges);
+
+// POST /api/social/nudges/dismiss { fromUids? } — dismiss what I have seen
+router.post(
+  '/nudges/dismiss',
+  requireAuth,
+  validate(dismissNudgesSchema),
+  socialController.dismissNudges
+);
+
+// GET /api/social/nudges/history — every nudge I have received and not deleted
+router.get('/nudges/history', requireAuth, socialController.getNudgeHistory);
+
+// DELETE /api/social/nudges/history — delete my whole nudge history
+router.delete('/nudges/history', requireAuth, socialController.clearNudgeHistory);
+
+// DELETE /api/social/nudges/history/:id — delete one nudge from my history
+router.delete('/nudges/history/:id', requireAuth, socialController.deleteNudge);
 
 export default router;

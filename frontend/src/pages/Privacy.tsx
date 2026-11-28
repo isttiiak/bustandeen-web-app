@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowDownTrayIcon,
+  BookOpenIcon,
   DevicePhoneMobileIcon,
   GlobeAltIcon,
   LockClosedIcon,
@@ -22,8 +23,9 @@ type HeroIcon = typeof LockClosedIcon;
 const SECTION_KEYS: { Icon: HeroIcon; key: string; bodyCount: number }[] = [
   { Icon: ArrowDownTrayIcon, key: 'whatWeStore', bodyCount: 8 },
   { Icon: DevicePhoneMobileIcon, key: 'deviceOnly', bodyCount: 4 },
-  { Icon: UsersIcon, key: 'friendsSee', bodyCount: 5 },
+  { Icon: UsersIcon, key: 'friendsSee', bodyCount: 6 },
   { Icon: GlobeAltIcon, key: 'thirdParty', bodyCount: 3 },
+  { Icon: BookOpenIcon, key: 'sources', bodyCount: 6 },
   { Icon: NoSymbolIcon, key: 'neverDo', bodyCount: 3 },
   { Icon: TrashIcon, key: 'yourControl', bodyCount: 4 },
   { Icon: ShieldCheckIcon, key: 'protected', bodyCount: 4 },
@@ -43,6 +45,10 @@ const DATA_FLOW_ROWS = [
   'ga',
   'zoho',
   'quran',
+  'quranFoundation',
+  'sunnah',
+  'ird',
+  'qul',
   'flagcdn',
   'osm',
 ] as const;
@@ -144,6 +150,7 @@ export default function Privacy() {
                 ansar@bustandeen.com
               </a>
             </p>
+            <p className="text-white/75 text-xs">{t('privacy.contactAddress')}</p>
             <Link to="/about" className="text-white/70 text-xs underline hover:text-white">
               {t('privacy.aboutLink')}
             </Link>

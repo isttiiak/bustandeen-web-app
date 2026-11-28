@@ -131,7 +131,7 @@
           <a class="underline" href="https://tanzil.net" rel="noreferrer" target="_blank">
            "Tanzil"
           "·"
-          "English: Ṣaḥīḥ International"
+          "Bengali: মুহিউদ্দীন খান"
           "·"
           <a class="underline" href="https://quran.com/1/1" rel="noreferrer" target="_blank">
            "quran.com/"

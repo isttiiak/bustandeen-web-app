@@ -5,7 +5,10 @@
    "method": "post",
    "url": "/api/cycle/end",
    "body": {
-    "date": "2026-10-15"
+    "date": "2026-10-15",
+    "endMark": {
+     "slot": "morning"
+    }
    },
    "owner": "demo-001"
   }

@@ -1,9 +1,11 @@
 import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getArabicFont, getFontPx, translitEnabled } from '../../utils/quranPrefs.js';
 import { selectedTranslations, TRANSLATIONS } from '../../utils/quranData.js';
 
 /** The reader's typography, in-app zoom and the translations in use. */
 export function useReaderPrefs() {
+  useTranslation();
   // Typography prefs — read once per mount (the settings drawer writes them)
   const arabicFont = useMemo(() => getArabicFont(), []);
   const baseFs = useMemo(
@@ -38,7 +40,9 @@ export function useReaderPrefs() {
     }),
     [baseFs, zoom]
   );
-  const editions = useMemo(() => selectedTranslations(), []);
+  // The default translation follows the app's language: this hook re-renders
+  // on a switch (useTranslation), and the read is a small storage lookup.
+  const editions = selectedTranslations();
   const editionLabel = (id: string) => TRANSLATIONS.find((tf) => tf.id === id)?.label ?? id;
 
   return { arabicFont, showTranslit, zoom, changeZoom, fs, editions, editionLabel };

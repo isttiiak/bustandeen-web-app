@@ -23,7 +23,7 @@ export default function RayhanahArch({
     isError,
     refetch,
     active,
-    handleEndConfirmed,
+    openEnd,
     endCycle,
     nextStartLabel,
     daysUntilNext,
@@ -108,7 +108,7 @@ export default function RayhanahArch({
       <div>
         <button
           className={`${BTN_PRIMARY} w-full h-12 text-base`}
-          onClick={handleEndConfirmed}
+          onClick={openEnd}
           disabled={endCycle.isPending}
         >
           {endCycle.isPending ? (

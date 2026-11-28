@@ -5,22 +5,18 @@ import { useZikrStore } from '../../store/useZikrStore.js';
 import { zikrDisplayName } from '../../utils/zikrLibrary.js';
 import { formatLocaleNumber } from '../../utils/localeDate.js';
 import {
-  getQuickAction,
   getQuickZikr,
   QUICK_MAX_COUNT,
-  setQuickAction,
   setQuickZikr,
-  type QuickAction,
   type QuickZikr,
 } from '../../utils/zikrQuick.js';
 
-/** Zikr settings → the three dhikr chips on Home and what one tap does
- *  (T3.4 E, Istiak 2026-10-09). */
+/** Zikr settings → the three dhikr chips on Home
+ *  (T3.4 E, Istiak 2026-10-09; the tap asks first since 2026-11-28). */
 export default function ZikrQuickSettings() {
   const { t, i18n } = useTranslation();
   const types = useZikrStore((s) => s.types);
   const [chips, setChips] = useState<QuickZikr[]>(getQuickZikr);
-  const [action, setAction] = useState<QuickAction>(getQuickAction);
   const [drafts, setDrafts] = useState<string[]>(() => chips.map((c) => String(c.count)));
 
   const save = (next: QuickZikr[]) => {
@@ -36,10 +32,6 @@ export default function ZikrQuickSettings() {
     } else {
       setDrafts((d) => d.map((v, j) => (j === i ? String(chips[i]!.count) : v)));
     }
-  };
-  const choose = (a: QuickAction) => {
-    setAction(a);
-    setQuickAction(a);
   };
   // A chip's dhikr may have been removed from the list: keep it selectable.
   const options = (current: string) => (types.includes(current) ? types : [current, ...types]);
@@ -88,40 +80,12 @@ export default function ZikrQuickSettings() {
           </div>
         ))}
       </div>
-      <div
-        className="mt-3 space-y-2"
-        role="radiogroup"
-        aria-label={t('zikr.quick.actionLabel', 'One tap on a chip')}
-      >
-        <p className="text-white text-xs font-semibold">
-          {t('zikr.quick.actionLabel', 'One tap on a chip')}
-        </p>
-        {(['open', 'add'] as const).map((a) => (
-          <button
-            key={a}
-            type="button"
-            role="radio"
-            aria-checked={action === a}
-            onClick={() => choose(a)}
-            className={`w-full text-left rounded-control border px-3 py-2 text-xs transition-colors ${
-              action === a
-                ? 'border-brand-emerald/60 bg-brand-emerald/10 text-white'
-                : 'border-brand-border text-white/80 hover:border-brand-emerald/40'
-            }`}
-          >
-            <span className="block font-bold">
-              {a === 'open'
-                ? t('zikr.quick.open', 'Open the counter with that number as the target')
-                : t('zikr.quick.add', 'Add that number at once')}
-            </span>
-            <span className="block text-white/70 mt-0.5">
-              {a === 'open'
-                ? t('zikr.quick.openDesc', 'You count each one yourself. The default.')
-                : t('zikr.quick.addDesc', 'Logged in one tap, without counting on screen.')}
-            </span>
-          </button>
-        ))}
-      </div>
+      <p className="text-white/70 text-xs leading-relaxed mt-3">
+        {t(
+          'zikr.quick.askNote',
+          'Tapping one on Home asks first: open the counter with that number as the target, or add it to your list.'
+        )}
+      </p>
     </section>
   );
 }

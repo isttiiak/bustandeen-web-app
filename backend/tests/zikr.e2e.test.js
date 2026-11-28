@@ -397,6 +397,8 @@ describe('Zikr API', () => {
       expect(new Date(timed[0].end) - new Date(timed[0].start)).toBe(3 * 60_000);
       expect(manual).toHaveLength(1);
       expect(manual[0].perType['Allahu Akbar']).toBe(100);
+      // each log carries the real moment it was logged
+      expect(Math.abs(new Date(manual[0].loggedAt).getTime() - Date.now())).toBeLessThan(60_000);
 
       // Everything still counts toward the day's totals...
       const summary = await request(app)
@@ -410,6 +412,32 @@ describe('Zikr API', () => {
         .get(`/api/zikr/time-of-day?timezoneOffset=${tz}&days=7`)
         .set('Authorization', `Bearer ${token}`);
       expect(tod.body.hours.reduce((n, h) => n + h.total, 0)).toBe(80);
+    });
+
+    test('every log is its own row with the time it was logged', async () => {
+      const token = fakeJwt({ uid: 'sess4', email: 'sess4@test.dev', name: 'Sess4' });
+      await request(app).post(`/api/auth/verify`).send({ idToken: token });
+      const todayStr = new Date(Date.now() + tz * 60 * 1000).toISOString().slice(0, 10);
+      const localNoonMs = new Date(`${todayStr}T12:00:00.000Z`).getTime() - tz * 60 * 1000;
+      for (const [type, amount] of [
+        ['SubhanAllah', 33],
+        ['SubhanAllah', 33],
+        ['Alhamdulillah', 10],
+      ]) {
+        await request(app)
+          .post(`/api/zikr/increment/batch`)
+          .set('Authorization', `Bearer ${token}`)
+          .send({
+            increments: [{ zikrType: type, amount, ts: localNoonMs, manual: true }],
+            timezoneOffset: tz,
+          });
+      }
+      const res = await request(app)
+        .get(`/api/zikr/sessions?date=${todayStr}&timezoneOffset=${tz}`)
+        .set('Authorization', `Bearer ${token}`);
+      const manual = res.body.sessions.filter((s) => s.manual);
+      expect(manual.map((s) => s.total)).toEqual([33, 33, 10]);
+      expect(manual.every((s) => typeof s.loggedAt === 'string')).toBe(true);
     });
 
     // U4: the app's "Log counts" now posts through the offline outbox with an

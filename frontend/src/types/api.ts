@@ -79,8 +79,10 @@ interface ZikrSession {
   end: string;
   total: number;
   perType: Record<string, number>;
-  /** Counts typed in afterwards ("Log missed counts"): no real clock time. */
+  /** Counts typed in afterwards ("Log counts"): one row per log. */
   manual?: boolean;
+  /** For a manual log: when it was logged (ISO). Can be later than the day it counts for. */
+  loggedAt?: string;
 }
 
 export interface ZikrSessionsResponse {

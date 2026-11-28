@@ -2,6 +2,32 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.194.0 - Friend nudges, quick dhikr confirmation, honest analytics - 2026-11-28
+
+A batch from daily use.
+
+### Added
+
+- **Friend nudge:** a friend with no active day this week shows a **Nudge** button in the circle. The sender may add a short message (140 characters); the friend sees a dismissible dialog with who nudged, how many times, a kind predefined line and the note. One nudge per friend per day, ten a day, only to connected friends who are visible in the circle. Each nudge is its own `Nudge` record. Endpoints: `POST /api/social/nudge/:uid`, `GET /api/social/nudges`, `POST /api/social/nudges/dismiss`. Web shows the dialog only; the app will deliver it its own way.
+- **Nudge history** in the Friends menu: every nudge received, delete one or all. Deleting only hides it for the recipient (the sender's one-a-day limit still counts it); unfriend, block, account deletion and the 90-day expiry remove records for real. `GET/DELETE /api/social/nudges/history`, `DELETE /api/social/nudges/history/:id`.
+- **Friends menu** is three horizontal lines (was three dots).
+- **How you bounce back** replaces the Isha-and-Fajr card (which read the time Done was tapped): after a day with a missed prayer, how often the next day has all five done, next to how often a full day follows a full day. Only Done/Kaza/Miss marks, finished days, rest days left out. `GET /api/salat/correlations` is now `GET /api/salat/bounce-back`.
+- **Rayhanah, the day an episode starts and the day it ends:** counted by the school's rule (Hanafi or majority, from Rayhanah settings), not by the time a button was tapped. Starting and ending an episode now ask "before or after which prayer?" (in Fajr time, after sunrise before Dhuhr, in Dhuhr, Asr, Maghrib or Isha time) with one or two yes/no follow-ups; the answers are kept on the episode (`startMark`, `endMark`). The rule is `backend/src/utils/cycleExcusal.ts`: prayers whose whole time ended before she became pure are excused, the prayer she became pure in is owed when enough time was left (Hanafi: ghusl, dressing and the takbir; majority: one rakʿah) and the majority also owe Dhuhr with Asr and Maghrib with Isha; on the start day, prayers whose time ended before it began stay owed, the prayer in whose time it began is not owed (Hanafi) or owed only if one rakʿah's time had passed (majority), later prayers are excused. Excused prayers are not missed and add no kaza (the sweep and the debt release work per prayer), count as done in the day and the streaks, show as a Rayhanah flower (instead of a leaf) on the Salat page and the Home arch, and need no logging. Episodes without answers (older ones, or entered by date only) keep excusing their whole start and end day. The server returns the excused prayers per day in the cycle summary (`partialDays`). The rule is awaiting a scholar's review: GitHub issue 431 lists the sources and open points.
+- **Privacy** now shows the postal address (Gazipur-1750, Dhaka, Bangladesh) and the 30-day answer promise.
+- **Quick dhikr asks first:** the three Home chips open a dialog: open the counter with that number as the target, or add it to the list. The old "one tap does" setting is gone.
+- **Home arch shows the time now** after its label ("Current · 03:45 PM"), on the saved place's clock, ticking on the minute.
+- **Logged counts keep their time:** Zikr session history lists each Log counts entry as its own row with the time it was logged (and the day, when it counts for another day) instead of one "Manual log" row.
+- **Salat "How You Prayed"** replaces "Prayer Timing": Done, Kaza and kaza debt repaid in the period. `GET /api/salat/analytics` drops `timeOfWindow` and adds `debtRepaidCount`.
+- **Privacy and Terms** name the content sources (Quran Foundation / Quran.com, sunnah.com, Islamic Network, IRD Foundation, King Fahd Complex, QUL by Tarteel), what each receives (nothing about the user), and the no-redistribution rule. Both pages updated in English and Bangla. The nudge is described under "What friends can see".
+
+### Fixed
+
+- **Quran reading timer** started when the screen opened, before the surah loaded (up to 10 to 12 seconds). It now starts when the āyāt are on screen.
+- **Quran settings across devices:** the server returned the legacy profile copy of a setting (stamped with the profile's last update, which moves on every read) instead of a newer saved choice, so translations and other choices reverted. A saved choice now always wins.
+- **Translation and the language button:** the language button no longer rewrites the translation setting. Until the user chooses translations in Quran settings, the first one follows the app language; a choice is kept and synced (`bustandeen_quran_translations_manual`). The open reader swaps translations when the language changes.
+- **Top surahs** no longer count surahs finished in the khatam journey (server and client), and a surah listened to the end on the Listen page now counts. Counts already recorded from khatam cannot be separated and stay.
+- **Friends:** the three-dot menu sat outside the arch's curve; it is now level with the icon, inside the arch.
+- The "Allāhu Akbar" card hadith was already fixed in v5.191.0.
 ## v5.193.1 - Reference map links highlight the citation - 2026-11-28
 
 ### Changed

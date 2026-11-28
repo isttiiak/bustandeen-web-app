@@ -69,27 +69,58 @@ const LANG_TO_TRANSLATION: Record<string, string> = {
   bn: 'bn.bengali',
 };
 
-export function selectedTranslations(): string[] {
+const TRANSLATIONS_KEY = 'bustandeen_quran_translations';
+/** Set ('1') the moment the user picks translations in Quran settings. */
+const TRANSLATIONS_MANUAL_KEY = 'bustandeen_quran_translations_manual';
+
+/** The translation that goes with the app's current language. */
+function languageTranslation(): string {
+  let lang = 'en';
   try {
-    const raw = JSON.parse(
-      localStorage.getItem('bustandeen_quran_translations') ?? '["en.sahih"]'
-    ) as string[];
-    const valid = raw.filter((id) => TRANSLATIONS.some((t) => t.id === id)).slice(0, 2);
-    return valid.length ? valid : ['en.sahih'];
+    lang = localStorage.getItem('bustandeen_lang') ?? document.documentElement.lang ?? 'en';
   } catch {
-    return ['en.sahih'];
+    /* private mode: English */
+  }
+  return LANG_TO_TRANSLATION[lang.slice(0, 2).toLowerCase()] ?? 'en.sahih';
+}
+
+/**
+ * The translations the reader shows (up to two).
+ *
+ * Until the user chooses in Quran settings, the first one follows the app's
+ * language (Bangla app, Bangla translation), worked out on every read and never
+ * stored: the global language button does NOT write this setting. A choice
+ * made in settings is saved (and synced across devices) and then stays, whatever
+ * the language button does (Istiak, 2026-11-28).
+ *
+ * Older builds wrote the language's translation into the same key when the
+ * language changed. Such a lone default (no manual flag) still follows the
+ * language; any other saved value is treated as a real choice.
+ */
+export function selectedTranslations(): string[] {
+  const byLanguage = languageTranslation();
+  try {
+    const raw = localStorage.getItem(TRANSLATIONS_KEY);
+    if (raw === null) return [byLanguage];
+    const valid = (JSON.parse(raw) as string[])
+      .filter((id) => TRANSLATIONS.some((t) => t.id === id))
+      .slice(0, 2);
+    if (!valid.length) return [byLanguage];
+    const manual = localStorage.getItem(TRANSLATIONS_MANUAL_KEY) === '1';
+    const legacyAuto =
+      valid.length === 1 && Object.values(LANG_TO_TRANSLATION).includes(valid[0] ?? '');
+    return manual || !legacyAuto ? valid : [byLanguage];
+  } catch {
+    return [byLanguage];
   }
 }
 
-/** When the app language changes, update the Quran primary translation to match. */
-export function syncQuranTranslationWithLang(lang: string): void {
-  const target = LANG_TO_TRANSLATION[lang];
-  if (!target) return;
-  const current = selectedTranslations();
-  if (current[0] === target) return;
-  const secondary = current[1] && current[1] !== target ? current[1] : undefined;
-  const next = secondary ? [target, secondary] : [target];
-  localStorage.setItem('bustandeen_quran_translations', JSON.stringify(next));
+/** Saves a translation choice made in Quran settings as a deliberate one. */
+export function saveTranslationChoice(next: string[]): void {
+  // The flag first, so a device that pulls only one of the two never sees a
+  // choice without its flag.
+  localStorage.setItem(TRANSLATIONS_MANUAL_KEY, '1');
+  localStorage.setItem(TRANSLATIONS_KEY, JSON.stringify(next));
 }
 
 const SURAH_META_KEY = 'bustandeen_surah_meta_v1';

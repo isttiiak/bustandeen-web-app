@@ -18,7 +18,6 @@ import {
 } from '../utils/outboxStatus.js';
 import { outboxOpOwnership } from '../utils/outboxOwner.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
-import { getUserTimezoneOffset } from '../utils/timezone.js';
 
 // Thrown from a mutationFn to tell onError/onSettled "this wasn't a real
 // failure — it's queued for replay, keep the optimistic UI as-is."
@@ -347,7 +346,7 @@ export interface SalatAnalytics {
     rate: number;
   }>;
   byWeekday: Record<number, { completed: number; kaza: number; missed: number; total: number }>;
-  timeOfWindow: { early: number; mid: number; late: number; unknown: number };
+  debtRepaidCount: number;
   missedReasons: Record<string, number>;
 }
 
@@ -744,25 +743,24 @@ export function useSalatAnalytics(days = 30, todayOverride?: string) {
   });
 }
 
-export interface IshaFajrCorrelation {
+export interface BounceBack {
   available: boolean;
-  earlyIshaFajrRate: number | null;
-  lateIshaFajrRate: number | null;
-  earlySampleSize: number;
-  lateSampleSize: number;
+  afterSlipRate: number | null;
+  afterFullRate: number | null;
+  afterSlipDays: number;
+  afterFullDays: number;
 }
 
-/** Isha-time vs next-day Fajr on-time rate — derived from prayedAt data
- * already collected, no separate "log your bedtime" step needed. */
-export function useSalatCorrelation() {
+/** How a day with a missed prayer is followed, from the Done / Kaza / Miss
+ * marks alone (never the time a button was tapped). */
+export function useSalatBounceBack() {
   const user = useAuthStore((s) => s.user);
   const today = getTrackingDay();
-  const timezoneOffset = getUserTimezoneOffset();
   return useQuery({
-    queryKey: ['salat', 'correlations', today, timezoneOffset],
+    queryKey: ['salat', 'bounce-back', today],
     queryFn: async () => {
-      const { data } = await api.get<IshaFajrCorrelation & { ok: boolean }>(
-        `/api/salat/correlations?today=${today}&timezoneOffset=${timezoneOffset}`
+      const { data } = await api.get<BounceBack & { ok: boolean }>(
+        `/api/salat/bounce-back?today=${today}`
       );
       return data;
     },

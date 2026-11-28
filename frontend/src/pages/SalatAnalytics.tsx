@@ -10,7 +10,7 @@ import {
   SalatMonthPicker,
 } from '../components/salat/SalatAnalyticsControls.js';
 import {
-  SalatCorrelationCard,
+  SalatBounceBackCard,
   SalatMosqueTrendSection,
   SalatTimingAndReasons,
   SalatWeekdayCard,
@@ -51,7 +51,7 @@ export default function SalatAnalytics() {
     kazaInsights,
     journeyPhases,
     journeyLoading,
-    correlation,
+    bounceBack,
   } = useSalatAnalyticsPage();
 
   const todayStr = trackingToday;
@@ -156,10 +156,9 @@ export default function SalatAnalytics() {
                     setInfoTopic={setInfoTopic}
                   />
 
-                  {/* Isha-time vs next-day Fajr correlation — derived from prayedAt
-                      timestamps already logged, no new logging UI needed */}
-                  <SalatCorrelationCard
-                    correlation={correlation}
+                  {/* How a missed prayer is followed: from the Done / Kaza / Miss marks only */}
+                  <SalatBounceBackCard
+                    bounceBack={bounceBack}
                     chartInfo={chartInfo}
                     setInfoTopic={setInfoTopic}
                   />

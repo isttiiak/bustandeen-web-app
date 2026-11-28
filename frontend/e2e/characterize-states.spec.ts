@@ -42,6 +42,15 @@ async function press(page: Page, name: string | RegExp, nth = 0) {
   await page.waitForTimeout(400);
 }
 
+/** The end dialog asks before or after which prayer it stopped: answer it and confirm. */
+async function endViaDialog(page: Page) {
+  const dialog = page.getByRole('dialog', { name: 'Log the end' });
+  await expect(dialog).toBeVisible();
+  await dialog.getByTestId('moment-morning').click();
+  await dialog.getByRole('button', { name: 'My period has ended' }).click();
+  await page.waitForTimeout(400);
+}
+
 async function open(page: Page, o: DemoOptions, path: string) {
   await enterDemo(page, o);
   await go(page, path);
@@ -260,6 +269,7 @@ test('cycle: a nifas start, begun offline, writes one request', async ({ page, c
   await context.setOffline(true);
   await press(page, 'My period started');
   await press(page, 'Post-natal (nifās)');
+  await page.getByTestId('moment-morning').click();
   await expectBaseline(page, 'cycle.start-nifas-chosen');
   await press(page, 'Begin Rayhanah days');
   await expectBaseline(page, 'cycle.start-nifas-queued');
@@ -425,6 +435,7 @@ test.describe('cycle with a period', () => {
     await openCycle(page, { active: ACTIVE('2026-10-13') });
     await context.setOffline(true);
     await press(page, 'My period has ended');
+    await endViaDialog(page);
     await expectBaseline(page, 'cycle.ghusl-open');
     await press(page, /Make the intention/);
     await press(page, /Wash both hands/);
@@ -441,6 +452,7 @@ test.describe('cycle with a period', () => {
     await openCycle(page, { active: ACTIVE('2027-02-18') }, { at: AT.ramadan });
     await context.setOffline(true);
     await press(page, 'My period has ended');
+    await endViaDialog(page);
     await press(page, 'Alhamdulillah');
     await expectBaseline(page, 'cycle.qada-prompt');
     await press(page, 'Add to qaḍā');
@@ -452,6 +464,7 @@ test.describe('cycle with a period', () => {
     await openCycle(page, { active: ACTIVE('2027-02-18') }, { at: AT.ramadan });
     await context.setOffline(true);
     await press(page, 'My period has ended');
+    await endViaDialog(page);
     await press(page, 'Alhamdulillah');
     await press(page, 'Not now');
     await expectBaseline(page, 'cycle.qada-dismissed');
@@ -505,6 +518,7 @@ test.describe('cycle with a period', () => {
     await context.setOffline(true);
     await press(page, 'My period started');
     await page.getByLabel('Start date').fill('2026-10-10');
+    await page.getByTestId('moment-morning').click();
     await press(page, 'Begin Rayhanah days');
     expectText(await outbox(page), 'cycle.start-hayd-dated.outbox');
     await press(page, 'My period started');
@@ -1530,9 +1544,9 @@ test('salat analytics: the chart info dialogs', async ({ page }) => {
   await open(page, { as: 'brother' }, '/salat/analytics');
   for (const [name, file] of [
     ['By Day of Week', 'weekday'],
-    ['Prayer Timing', 'timing'],
+    ['How You Prayed', 'how-prayed'],
     ['Kaza Insights', 'kaza-insights'],
-    ['Isha & Fajr Connection', 'correlation'],
+    ['How You Bounce Back', 'bounce-back'],
     ['Prayer Calendar', 'calendar'],
   ] as const) {
     await press(page, name);

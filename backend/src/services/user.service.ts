@@ -22,6 +22,7 @@ import CycleLog from '../models/CycleLog.js';
 import CycleDay from '../models/CycleDay.js';
 import CycleProfile from '../models/CycleProfile.js';
 import SocialProfile from '../models/SocialProfile.js';
+import { removeNudgesOf } from './nudgeStore.service.js';
 import QuranReadingSession from '../models/QuranReadingSession.js';
 import ZikrEvent from '../models/ZikrEvent.js';
 import NaseehPlan from '../models/NaseehPlan.js';
@@ -292,6 +293,7 @@ export async function purgeAccountData(uid: string): Promise<void> {
     CycleDay.deleteMany({ userId: uid }),
     CycleProfile.deleteMany({ userId: uid }),
     SocialProfile.deleteMany({ userId: uid }),
+    removeNudgesOf(uid),
   ]);
   await User.deleteOne({ uid });
 }

@@ -4,6 +4,7 @@ import { m as motion, AnimatePresence } from 'framer-motion';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { celebrateSmall } from '../../utils/celebrate.js';
 import { formatLocaleNumber } from '../../utils/localeDate.js';
+import { addDaysYmd } from '../../utils/placeClock.js';
 import { OfflineQueuedError } from '../../utils/syncOutbox.js';
 import { CrescentIcon, DropIcon, FlowerIcon } from '../icons/IslamicIcons.js';
 import { BTN_PRIMARY, BTN_SECONDARY } from '../bustanStyles.js';
@@ -17,7 +18,9 @@ import {
   BACKDROP,
 } from './rayhanahShared.js';
 import { Ref } from './RayhanahBits.js';
+import CycleMomentQuestions, { isMarkComplete } from './CycleMomentQuestions.js';
 import { type RayhanahPage } from './useRayhanahPage.js';
+import type { EndMark, StartMark } from '../../hooks/useCycle.js';
 
 export default function RayhanahDialogs({ page }: { page: RayhanahPage }) {
   const { t } = useTranslation();
@@ -30,6 +33,17 @@ export default function RayhanahDialogs({ page }: { page: RayhanahPage }) {
     setStartDate,
     startType,
     setStartType,
+    startMark,
+    setStartMark,
+    endCycle,
+    endOpen,
+    setEndOpen,
+    endOn,
+    setEndOn,
+    endMark,
+    setEndMark,
+    handleEndConfirmed,
+    summary,
     ghuslOpen,
     setGhuslOpen,
     ghuslChecked,
@@ -39,6 +53,8 @@ export default function RayhanahDialogs({ page }: { page: RayhanahPage }) {
     updateFastingProfile,
     addQada,
   } = page;
+
+  const school = summary?.madhab ?? 'majority';
 
   return createPortal(
     <>
@@ -92,12 +108,18 @@ export default function RayhanahDialogs({ page }: { page: RayhanahPage }) {
                   </button>
                 ))}
               </div>
+              <CycleMomentQuestions
+                mode="start"
+                school={school}
+                value={startMark}
+                onChange={(m) => setStartMark(m as StartMark)}
+              />
               <button
                 className={`${BTN_PRIMARY} w-full`}
-                disabled={startCycle.isPending}
+                disabled={startCycle.isPending || !isMarkComplete('start', school, startMark)}
                 onClick={() =>
                   startCycle.mutate(
-                    { date: startDate, type: startType },
+                    { date: startDate, type: startType, startMark: startMark ?? undefined },
                     {
                       onSuccess: () => setStartOpen(false),
                       // Saved on the device; it syncs when back online.
@@ -120,6 +142,75 @@ export default function RayhanahDialogs({ page }: { page: RayhanahPage }) {
                   'Salat and fasting pause automatically. Your Noor continues from dhikr, Quran and ṣalawāt.'
                 )}
               </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── End modal: which day, and before or after which prayer it stopped ───── */}
+      <AnimatePresence>
+        {endOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className={BACKDROP}
+            onClick={() => setEndOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 10 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 10 }}
+              className={`${DIALOG} border-brand-pink/40`}
+              role="dialog"
+              aria-label={t('rayhanah.logTheEnd', 'Log the end')}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="font-display text-white font-bold text-xl flex items-center gap-2">
+                <FlowerIcon className="w-6 h-6 text-brand-pink" />
+                {t('rayhanah.logTheEnd', 'Log the end')}
+              </h3>
+              <div
+                className="flex gap-2"
+                role="group"
+                aria-label={t('rayhanah.endDayLabel', 'Which day did it stop?')}
+              >
+                {(['today', 'yesterday'] as const).map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    aria-pressed={endOn === item}
+                    disabled={
+                      item === 'yesterday' &&
+                      !!summary?.active &&
+                      addDaysYmd(today, -1) < summary.active.startDate
+                    }
+                    className={`flex-1 justify-center ${CHIP} rounded-control py-2 ${endOn === item ? CHIP_PINK : CHIP_IDLE}`}
+                    onClick={() => setEndOn(item)}
+                  >
+                    {item === 'today'
+                      ? t('rayhanah.endToday', 'Today')
+                      : t('rayhanah.endYesterday', 'Yesterday')}
+                  </button>
+                ))}
+              </div>
+              <CycleMomentQuestions
+                mode="end"
+                school={school}
+                value={endMark}
+                onChange={(m) => setEndMark(m as EndMark)}
+              />
+              <button
+                className={`${BTN_PRIMARY} w-full`}
+                disabled={endCycle.isPending || !isMarkComplete('end', school, endMark)}
+                onClick={handleEndConfirmed}
+              >
+                {endCycle.isPending ? (
+                  <span className="loading loading-spinner loading-sm" />
+                ) : (
+                  t('rayhanah.endPeriod', 'My period has ended')
+                )}
+              </button>
             </motion.div>
           </motion.div>
         )}

@@ -13,10 +13,13 @@ import {
   useSetPregnancy,
   type CycleFlow,
   type CycleMood,
+  type EndMark,
+  type StartMark,
 } from '../../hooks/useCycle.js';
 import { useFriendsList } from '../../hooks/useSocial.js';
 import { useFastingSummary, useUpdateFastingProfile } from '../../hooks/useFasting.js';
 import { getTrackingDay } from '../../utils/trackingDay.js';
+import { addDaysYmd } from '../../utils/placeClock.js';
 import { getRamadanWindow } from '../../utils/ramadan.js';
 import { celebrateSmall } from '../../utils/celebrate.js';
 import { OfflineQueuedError } from '../../utils/syncOutbox.js';
@@ -47,6 +50,12 @@ export function useRayhanahPage() {
   const [startOpen, setStartOpen] = useState(false);
   const [startDate, setStartDate] = useState(today);
   const [startType, setStartType] = useState<'hayd' | 'nifas'>('hayd');
+  // Before or after which prayer it started (the start dialog asks)
+  const [startMark, setStartMark] = useState<StartMark | null>(null);
+  // The end dialog: which day, and before or after which prayer it stopped
+  const [endOpen, setEndOpen] = useState(false);
+  const [endOn, setEndOn] = useState<'today' | 'yesterday'>('today');
+  const [endMark, setEndMark] = useState<EndMark | null>(null);
   const [ghuslOpen, setGhuslOpen] = useState(false);
   const [ghuslChecked, setGhuslChecked] = useState<boolean[]>(GHUSL_STEPS.map(() => false));
   const [qadaPrompt, setQadaPrompt] = useState<{ days: number } | null>(null);
@@ -133,6 +142,17 @@ export function useRayhanahPage() {
     });
   };
 
+  // A fresh question each time the start dialog opens
+  useEffect(() => {
+    if (startOpen) setStartMark(null);
+  }, [startOpen]);
+
+  const openEnd = () => {
+    setEndOn('today');
+    setEndMark(null);
+    setEndOpen(true);
+  };
+
   const handleEndConfirmed = () => {
     const startedOn = active?.startDate;
     // The ghusl guidance and the qaḍāʾ prompt follow the END of the period, so
@@ -145,12 +165,17 @@ export function useRayhanahPage() {
         if (n > 0) setQadaPrompt({ days: n });
       }
     };
+    const date = endOn === 'yesterday' ? addDaysYmd(today, -1) : today;
+    const done = () => {
+      setEndOpen(false);
+      afterEnd();
+    };
     endCycle.mutate(
-      { date: today },
+      { date, ...(endMark ? { endMark } : {}) },
       {
-        onSuccess: afterEnd,
+        onSuccess: done,
         onError: (e) => {
-          if (e instanceof OfflineQueuedError) afterEnd();
+          if (e instanceof OfflineQueuedError) done();
         },
       }
     );
@@ -253,6 +278,15 @@ export function useRayhanahPage() {
     setStartDate,
     startType,
     setStartType,
+    startMark,
+    setStartMark,
+    endOpen,
+    setEndOpen,
+    endOn,
+    setEndOn,
+    endMark,
+    setEndMark,
+    openEnd,
     ghuslOpen,
     setGhuslOpen,
     ghuslChecked,

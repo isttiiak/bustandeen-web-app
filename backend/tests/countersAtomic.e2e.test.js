@@ -73,6 +73,19 @@ describe('Quran profile', () => {
       )
     );
     expect(res.map((r) => r.status)).toEqual(Array(8).fill(200));
+    // Completions sent from the khatam route never count toward top surahs...
+    expect((await QuranProfile.findOne({ userId: u })).surahCounts.get('1')).toBeUndefined();
+    // ...while eight at once from anywhere else all land.
+    const free = await Promise.all(
+      Array.from({ length: 8 }, () =>
+        request(app)
+          .post('/api/quran/read-ayat')
+          .set('Authorization', `Bearer ${token}`)
+          .set('X-Client-Op-Id', randomUUID())
+          .send({ date: '2026-03-01', count: 0, surah: 1, completedSurah: true })
+      )
+    );
+    expect(free.map((r) => r.status)).toEqual(Array(8).fill(200));
     const profile = await QuranProfile.findOne({ userId: u });
     expect(profile.currentAyah).toBe(80);
     expect(profile.surahCounts.get('1')).toBe(8);

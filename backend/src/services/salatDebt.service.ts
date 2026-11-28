@@ -4,7 +4,12 @@ import SalatLog from '../models/SalatLog.js';
 import { PRAYER_IDS, PrayerId } from '../models/SalatLog.js';
 import KazaUnit from '../models/KazaUnit.js';
 import { logKazaReset } from './statsReset.service.js';
-import { getExcusedDaySet, getExcusedIntervals, isDayExcused } from './cycle.service.js';
+import {
+  getExcusedDaySet,
+  getExcusedIntervals,
+  getExcusedPrayersByDay,
+  getPartialExcusedMap,
+} from './cycle.service.js';
 import { latestPossibleToday } from '../validation/clientDay.js';
 import { runInTransactionRetryingDuplicates } from '../utils/transaction.js';
 
@@ -240,6 +245,7 @@ export async function resetDebt(userId: string, date?: string): Promise<SalatDeb
     prayer: id,
     delta: -before.owed[id],
     date: d,
+    kind: 'reset' as const,
   }));
   if (events.length) await SalatDebtEvent.insertMany(events);
   await SalatDebt.findOneAndUpdate(
@@ -311,8 +317,11 @@ export async function releaseExcusedDebt(userId: string, today: string): Promise
   // but do not lower a counter that never contained it.
   const since = (await SalatDebt.findOne({ userId }).select('since'))?.since ?? '';
   let released = 0;
+  // Per prayer: on the start and end day of an episode only some prayers are excused.
+  const earliest = owedUnits.reduce((m, u) => (u.missedDate < m ? u.missedDate : m), today);
+  const excusedBy = await getExcusedPrayersByDay(userId, earliest, today);
   for (const u of owedUnits) {
-    if (!isDayExcused(intervals, u.missedDate, today)) continue;
+    if (!excusedBy.get(u.missedDate)?.has(u.prayer)) continue;
     const claimed = await KazaUnit.findOneAndDelete({ _id: u._id, status: 'owed' });
     if (!claimed) continue; // another call released it first
     released++;
@@ -399,8 +408,10 @@ export async function restoreUncoveredDays(userId: string, today: string): Promi
 /** Count one ordinary past day: every prayer still 'pending' becomes owed. */
 async function countMissedDay(userId: string, day: string): Promise<void> {
   let log = await SalatLog.findOne({ userId, date: day });
+  // The prayers a Rayhanah episode excuses on its start or end day are not owed.
+  const excused = (await getPartialExcusedMap(userId, day, day)).get(day);
   const pending = PRAYER_IDS.filter(
-    (pid) => (log?.prayers[pid]?.status ?? 'pending') === 'pending'
+    (pid) => !excused?.has(pid) && (log?.prayers[pid]?.status ?? 'pending') === 'pending'
   );
   if (pending.length === 0) return;
   if (!log) log = new SalatLog({ userId, date: day });
@@ -498,6 +509,7 @@ async function sweepChunk(userId: string, from: string, to: string): Promise<boo
     const logs = await SalatLog.find({ userId, date: { $gte: cursor, $lt: end } });
     const logMap = new Map(logs.map((l) => [l.date, l]));
     const excusedDays = await getExcusedDaySet(userId, cursor, to);
+    const partialExcused = await getPartialExcusedMap(userId, cursor, to);
     const totals = EMPTY_OWED();
     const events: Array<{ userId: string; prayer: PrayerId; delta: number; date: string }> = [];
     const dirtyLogs: typeof logs = [];
@@ -506,7 +518,9 @@ async function sweepChunk(userId: string, from: string, to: string): Promise<boo
       if (excusedDays.has(day)) continue; // rest day: nothing is owed, nothing is "missed"
       let log = logMap.get(day);
       let logChanged = false;
+      const excusedHere = partialExcused.get(day);
       for (const pid of PRAYER_IDS) {
+        if (excusedHere?.has(pid)) continue; // excused by an episode that starts or ends this day
         const status = log?.prayers[pid]?.status ?? 'pending';
         if (status === 'pending') {
           totals[pid]++;
@@ -563,6 +577,22 @@ async function sweepChunk(userId: string, from: string, to: string): Promise<boo
     }
     return true;
   });
+}
+
+/** Prayers of kaza debt repaid between two dates (inclusive): repayment taps
+ * and counts lowered by hand. The clean-slate reset is not a repayment. */
+export async function getDebtRepaidTotal(
+  userId: string,
+  from: string,
+  to: string
+): Promise<number> {
+  const [row] = await SalatDebtEvent.aggregate<{ repaid: number }>([
+    {
+      $match: { userId, date: { $gte: from, $lte: to }, delta: { $lt: 0 }, kind: { $ne: 'reset' } },
+    },
+    { $group: { _id: null, repaid: { $sum: { $multiply: ['$delta', -1] } } } },
+  ]);
+  return row?.repaid ?? 0;
 }
 
 /** Shift a YYYY-MM-DD date string by `delta` days (pure string math, no TZ). */

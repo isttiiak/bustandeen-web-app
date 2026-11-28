@@ -21,6 +21,52 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.194.0',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Nudge a friend, and a calmer Home',
+        added: [
+          'You can now nudge a friend who has been quiet this week, with a short message if you like. They see a gentle note the next time they open the app, and can close it with the cross.',
+          'The quick dhikr buttons on Home now ask before they add anything: open the counter with that number, or add it to your list.',
+          'Home now shows the current time under the arch label.',
+          'Counts you log yourself now show the time you logged them, one by one, in your zikr history.',
+          'Salat analytics now show how many prayers you marked Done, Kaza, and paid back from your kaza debt, instead of guessing from the time you tapped the button.',
+          'The Friends menu now has a nudge history where you can delete one nudge or all of them.',
+          'Salat analytics now show how you bounce back after a missed prayer, instead of guessing from when you tapped a button.',
+          'Privacy and Terms now list where the Quran and hadith content comes from, with our postal address.',
+        ],
+        fixed: [
+          "Rayhanah now asks before or after which prayer your days started and stopped, instead of using the time you tapped. The prayers that are not owed on those two days follow your school, show as a flower, and count as done, so a day can read five of five. This is awaiting a scholar's review.",
+          'The Quran reading timer no longer runs while a surah is still loading.',
+          'Your Quran settings, including your translation, now stay the same on every device. Changing the app language no longer changes the translation you picked.',
+          'Top surahs no longer count surahs you read in the khatam journey, and a surah you listen to all the way through now counts.',
+          'The menu on Friends now sits properly inside the arch.',
+        ],
+      },
+      bn: {
+        title: 'বন্ধুকে মনে করিয়ে দিন, আর আরও শান্ত হোম',
+        added: [
+          'এই সপ্তাহে নীরব থাকা বন্ধুকে এখন মনে করিয়ে দিতে পারেন, চাইলে ছোট একটি বার্তাসহ। পরের বার অ্যাপ খুললে তিনি একটি কোমল বার্তা দেখবেন এবং ক্রস চেপে বন্ধ করতে পারবেন।',
+          'হোমের দ্রুত যিকির বোতামগুলো এখন কিছু যোগ করার আগে জিজ্ঞেস করে: ওই সংখ্যা নিয়ে কাউন্টার খুলবেন, নাকি তালিকায় যোগ করবেন।',
+          'হোমের আর্চের লেবেলের পাশে এখন বর্তমান সময় দেখা যায়।',
+          'আপনি নিজে যে গণনা লগ করেন, যিকির ইতিহাসে তা এখন একটি একটি করে, লগ করার সময়সহ দেখা যায়।',
+          'নামাযের বিশ্লেষণে এখন বাটন চাপার সময় আন্দাজ না করে দেখানো হয় কয়টি নামায সম্পন্ন, কয়টি কাযা এবং কাযা ঋণ থেকে কয়টি আদায় হয়েছে।',
+          'বন্ধু মেনুতে এখন মনে করানোর ইতিহাস আছে, যেখান থেকে একটি বা সবকটি মুছতে পারবেন।',
+          'নামাযের বিশ্লেষণে এখন বাটন চাপার সময় আন্দাজ না করে দেখানো হয় নামায ছুটে যাওয়ার পর আপনি কীভাবে ঘুরে দাঁড়ান।',
+          'গোপনীয়তা নীতি ও শর্তে এখন কুরআন ও হাদিসের বিষয়বস্তু কোথা থেকে আসে তা এবং আমাদের ডাক ঠিকানা লেখা আছে।',
+        ],
+        fixed: [
+          'রায়হানাহ এখন বাটন চাপার সময় ব্যবহার না করে জানতে চায় কোন নামাযের আগে বা পরে আপনার দিন শুরু ও শেষ হয়েছে। ওই দুই দিনে যে নামায আপনার ওপর নেই তা আপনার মাযহাব অনুযায়ী ঠিক হয়, ফুলের চিহ্নসহ দেখায় ও সম্পন্ন গোনা হয়, ফলে দিনটি পাঁচের মধ্যে পাঁচ দেখাতে পারে। এটি আলিমের পর্যালোচনার অপেক্ষায় আছে।',
+          'সূরা লোড হওয়ার সময় কুরআন পড়ার টাইমার আর চলে না।',
+          'অনুবাদসহ আপনার কুরআন সেটিংস এখন সব ডিভাইসে একই থাকে। অ্যাপের ভাষা বদলালে আপনার বেছে নেওয়া অনুবাদ আর বদলায় না।',
+          'খতম যাত্রায় পড়া সূরা আর শীর্ষ সূরার তালিকায় গোনা হয় না, আর শুরু থেকে শেষ পর্যন্ত শোনা সূরা এখন গোনা হয়।',
+          'বন্ধু পাতার মেনু এখন আর্চের ভেতরে ঠিক জায়গায় বসে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.193.1',
     date: '2026-11-28',
     text: {

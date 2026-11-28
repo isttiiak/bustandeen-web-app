@@ -87,6 +87,19 @@ describe('Cross-device preferences', () => {
     expect(res.body.prefs.bustandeen_reciter.v).toBe('alafasy');
   });
 
+  test('a saved Quran pref beats a newer legacy profile copy', async () => {
+    const tokenD = fakeJwt({ uid: 'pd', email: 'pd@test.dev', name: 'PD' });
+    await as(tokenD, request(app).post('/api/auth/verify')).send({});
+    // The profile still holds English (and its updatedAt is "now")...
+    await as(tokenD, request(app).patch('/api/quran/profile')).send({
+      translations: ['en.sahih'],
+    });
+    // ...but the device's own, older-stamped choice is Bengali.
+    await put(tokenD, { bustandeen_quran_translations: { v: '["bn.hoque"]', t: 1000 } });
+    const res = await as(tokenD, request(app).get('/api/user/prefs'));
+    expect(res.body.prefs.bustandeen_quran_translations.v).toBe('["bn.hoque"]');
+  });
+
   test('rejects malformed bodies', async () => {
     const res = await as(tokenA, request(app).put('/api/user/prefs')).send({ prefs: { a: 1 } });
     expect(res.status).toBe(400);

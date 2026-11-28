@@ -79,10 +79,17 @@ export function useReaderNavigation({
   const flush = useCallback(
     (completedSurah = false) => {
       const n = pendingRef.current;
-      if ((n <= 0 && !completedSurah) || !user || !countsGoal) return;
+      // Khatam is its own journey: its surahs never count toward "top surahs".
+      const credit = completedSurah && mode !== 'khatam';
+      if ((n <= 0 && !credit) || !user || !countsGoal) return;
       pendingRef.current = 0;
       readAyat(
-        { count: n, surah: surahNo, advanceKhatm: mode === 'khatam', completedSurah },
+        {
+          count: n,
+          surah: surahNo,
+          advanceKhatm: mode === 'khatam',
+          completedSurah: credit,
+        },
         {
           onSuccess: (r) => {
             if (r.khatmCompleted) celebrateKhatm();

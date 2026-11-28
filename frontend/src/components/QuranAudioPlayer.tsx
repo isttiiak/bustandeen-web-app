@@ -216,6 +216,17 @@ export default function QuranAudioPlayer() {
     }
   };
 
+  // Listening to a surah from start to finish counts as one completion toward
+  // "top surahs", like reading it to the end does. Needs real continuous
+  // listening (seeking to the end does not add up to it).
+  const creditFullListen = () => {
+    const a = audioRef.current;
+    if (!user || isDemoMode || !a || !Number.isFinite(a.duration) || a.duration <= 0) return;
+    if (listenedRef.current < a.duration * 0.9) return;
+    listenedRef.current = 0; // a replay needs a whole new listen
+    readAyat.mutate({ count: 0, surah: surahNo, completedSurah: true });
+  };
+
   const changeSurah = (n: number) => {
     const clamped = Math.min(114, Math.max(1, n));
     setSurahNo(clamped);
@@ -435,7 +446,10 @@ export default function QuranAudioPlayer() {
               onPlaying={() => setBuffering(false)}
               onTimeUpdate={onTimeUpdate}
               onLoadedMetadata={(e) => setDuration((e.target as HTMLAudioElement).duration)}
-              onEnded={() => setPlaying(false)} // one surah at a time — no autoplay (Istiak's spec)
+              onEnded={() => {
+                setPlaying(false); // one surah at a time — no autoplay (Istiak's spec)
+                creditFullListen();
+              }}
             />
 
             <p className="text-white/60 text-[11px] leading-relaxed">

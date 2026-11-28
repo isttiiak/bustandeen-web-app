@@ -92,6 +92,10 @@
          <path d="<87:743e93f6>">
         <p class="mt-2 text-[11px] uppercase tracking-widest font-bold text-white/60">
          "বর্তমান"
+         <span aria-hidden="true">
+          "·"
+         <span class="tabular-nums">
+          "০২:০০ PM"
         <p class="font-display text-3xl font-semibold text-white leading-tight mt-0.5">
          "যোহর"
         <p class="text-white/60 text-sm mt-1">
@@ -188,17 +192,17 @@
        <div aria-hidden="true" class="mt-2.5 h-1.5 rounded-full bg-brand-border overflow-hidden">
         <div class="h-full rounded-full bg-brand-emerald" style="width: 0%">
        <div class="grid grid-cols-3 gap-2 mt-3">
-        <button aria-label="আস্তাগফিরুল্লাহ ১০০ লক্ষ্য, গুনতে চাপুন" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
+        <button aria-haspopup="dialog" aria-label="আস্তাগফিরুল্লাহ ১০০, বেছে নিতে চাপুন" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
          <span class="block text-white text-[11px] font-bold line-clamp-2">
           "আস্তাগফিরুল্লাহ"
          <span class="block text-brand-emerald text-xs font-black tabular-nums mt-0.5">
           "১০০"
-        <button aria-label="লা ইলাহা ইল্লাল্লাহ ১০০ লক্ষ্য, গুনতে চাপুন" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
+        <button aria-haspopup="dialog" aria-label="লা ইলাহা ইল্লাল্লাহ ১০০, বেছে নিতে চাপুন" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
          <span class="block text-white text-[11px] font-bold line-clamp-2">
           "লা ইলাহা ইল্লাল্লাহ"
          <span class="block text-brand-emerald text-xs font-black tabular-nums mt-0.5">
           "১০০"
-        <button aria-label="দরুদে ইব্রাহীম ১০০ লক্ষ্য, গুনতে চাপুন" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
+        <button aria-haspopup="dialog" aria-label="দরুদে ইব্রাহীম ১০০, বেছে নিতে চাপুন" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
          <span class="block text-white text-[11px] font-bold line-clamp-2">
           "দরুদে ইব্রাহীম"
          <span class="block text-brand-emerald text-xs font-black tabular-nums mt-0.5">

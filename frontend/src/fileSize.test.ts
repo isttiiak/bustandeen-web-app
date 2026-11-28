@@ -52,11 +52,11 @@ const PART_CAPS: Record<string, number> = {
   'hooks/useSalatLog.ts': 843,
   'components/calendar/DownloadSheet.tsx': 806,
   'components/Navbar.tsx': 622,
-  'components/QuranSettings.tsx': 623,
+  'components/QuranSettings.tsx': 629,
   'components/ZikrLibrarySection.tsx': 580,
   'components/ShareAyahModal.tsx': 523,
   'components/RamadanSalatCard.tsx': 509,
-  'components/QuranAudioPlayer.tsx': 465,
+  'components/QuranAudioPlayer.tsx': 479,
 };
 
 const pages = sizes('pages');

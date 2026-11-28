@@ -46,7 +46,6 @@ import {
 } from './icons/IslamicIcons.js';
 import { UserAvatar } from './icons/AvatarGlyphs.js';
 import i18n from '../i18n.js';
-import { syncQuranTranslationWithLang } from '../utils/quranData.js';
 import { adminUrl } from '../utils/siteLinks.js';
 import {
   summariseUnsynced,
@@ -348,7 +347,6 @@ export default function Navbar() {
               onClick={() => {
                 const next = i18n.resolvedLanguage === 'bn' ? 'en' : 'bn';
                 void i18n.changeLanguage(next);
-                syncQuranTranslationWithLang(next);
               }}
               aria-label={t('nav.switchLang')}
               title={t('nav.switchLang')}

@@ -203,6 +203,24 @@ describe('Salat API', () => {
     expect(debt.body.owed.fajr).toBe(2);
   });
 
+  test('GET /analytics counts kaza debt repaid, not the reset, and has no click-time timing split', async () => {
+    const tokenR = fakeJwt({ uid: 'salRepaid', email: 'salrepaid@test.dev', name: 'SalRepaid' });
+    const authR = (r) => r.set('Authorization', `Bearer ${tokenR}`);
+    await request(app).post('/api/auth/verify').send({ idToken: tokenR });
+    const adjust = (delta) =>
+      authR(
+        request(app).patch('/api/salat/debt/adjust').send({ prayer: 'fajr', delta, date: today })
+      );
+    await adjust(5);
+    await adjust(-2); // two paid back
+    // The clean slate zeroes the remaining 3, which is not a repayment.
+    await authR(request(app).post('/api/salat/debt/reset').send({ today }));
+    const res = await authR(request(app).get(`/api/salat/analytics?days=7&today=${today}`));
+    expect(res.status).toBe(200);
+    expect(res.body.debtRepaidCount).toBe(2);
+    expect(res.body.timeOfWindow).toBeUndefined();
+  });
+
   test('DELETE /all removes all salat data', async () => {
     const token5 = fakeJwt({ uid: 'sal5', email: 'sal5@test.dev', name: 'Sal5' });
     const auth5 = (r) => r.set('Authorization', `Bearer ${token5}`);

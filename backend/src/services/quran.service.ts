@@ -92,6 +92,9 @@ export interface AyatReadResult {
  * a khatm — and, when `completedSurah` is set, credit ONE completion of that
  * surah toward the "top surahs" list. Reading duas/bundles passes count 0 and
  * completedSurah false, so they never touch the goal (Istiak's spec).
+ * A surah read inside the khatam journey never counts toward the top surahs:
+ * khatam is its own journey (Istiak, 2026-11-28), so completedSurah is ignored
+ * whenever the read advances the khatam bookmark.
  */
 export async function addAyatReading(
   userId: string,
@@ -121,7 +124,7 @@ export async function addAyatReading(
   const profile = await getOrCreateProfile(userId);
   // Top-surah counter now tracks how many times a surah was READ TO THE END,
   // not raw ayat — a far more meaningful "most-read" signal.
-  if (completedSurah && surah && surah >= 1 && surah <= 114) {
+  if (completedSurah && !advanceKhatm && surah && surah >= 1 && surah <= 114) {
     const key = String(surah);
     profile.surahCounts.set(key, (profile.surahCounts.get(key) ?? 0) + 1);
   }
