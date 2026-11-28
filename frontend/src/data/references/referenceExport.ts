@@ -3,7 +3,7 @@
 // /references.json (which the native app reads instead of hunting for the
 // same sources again).
 import { DESK_CHECK, REFERENCES, type ReferenceEntry } from './registry.js';
-import { REF_PAGES, type RefPageKey } from './pages.js';
+import { REF_PAGES, type RefPlace } from './pages.js';
 import usageJson from './usage.generated.json';
 import manualJson from './manualChecks.json';
 
@@ -19,16 +19,21 @@ export interface ManualCheck {
 }
 
 export interface MappedReference extends ReferenceEntry {
-  pages: RefPageKey[];
+  /** Where people see it: screen, section and item, with a link. */
+  places: RefPlace[];
+  /** Code comments citing it, when no screen shows it (a rule in the code). */
+  codeNotes: number;
+  /** Source files that cite it (for the admin checklist and the native app). */
   files: string[];
   manual?: ManualCheck;
 }
 
-const USAGE = usageJson as Record<string, { pages: string[]; files: string[] }>;
+type Usage = Record<string, { places: RefPlace[]; files: string[]; codeNotes?: number }>;
+const USAGE = usageJson as Usage;
 const MANUAL = manualJson as Record<string, ManualCheck>;
 
 export function mappedReferences(
-  usage: Record<string, { pages: string[]; files: string[] }> = USAGE,
+  usage: Usage = USAGE,
   manual: Record<string, ManualCheck> = MANUAL
 ): MappedReference[] {
   return REFERENCES.map((r) => {
@@ -36,7 +41,8 @@ export function mappedReferences(
     const m = manual[r.id];
     return {
       ...r,
-      pages: (u?.pages ?? []).filter((p): p is RefPageKey => p in REF_PAGES),
+      places: (u?.places ?? []).filter((p) => p.page in REF_PAGES),
+      codeNotes: u?.codeNotes ?? 0,
       files: u?.files ?? [],
       ...(m ? { manual: m } : {}),
     };
@@ -45,7 +51,7 @@ export function mappedReferences(
 
 /** The /references.json document. Stable key order so diffs stay readable. */
 export function referencesDocument(
-  usage: Record<string, { pages: string[]; files: string[] }> = USAGE,
+  usage: Usage = USAGE,
   manual: Record<string, ManualCheck> = MANUAL
 ) {
   return {

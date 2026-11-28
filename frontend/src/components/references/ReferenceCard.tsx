@@ -9,7 +9,7 @@ import {
   UserIcon,
 } from '@heroicons/react/24/outline';
 import { CARD } from '../bustanStyles.js';
-import { REF_PAGES } from '../../data/references/pages.js';
+import { REF_PAGES, type RefPage, type RefPlace } from '../../data/references/pages.js';
 import { DESK_CHECK, type DeskResult, type RefKind } from '../../data/references/registry.js';
 import type { ManualStatus, MappedReference } from '../../data/references/referenceExport.js';
 
@@ -57,6 +57,76 @@ function DeskIcon({ result }: { result: DeskResult }) {
   return <QuestionMarkCircleIcon className={cls} aria-hidden="true" />;
 }
 
+/** The places a reference appears, grouped by screen, each linked. */
+function WhereInApp({ entry, bn }: { entry: MappedReference; bn: boolean }) {
+  const { t } = useTranslation();
+  if (entry.places.length === 0) {
+    return (
+      <p className="text-xs text-white/70 leading-relaxed">
+        <span className="text-white/60">{t('references.whereTitle', 'Where in the app')}: </span>
+        {entry.codeNotes > 0
+          ? t(
+              'references.ruleOnly',
+              'not quoted on a screen; it is the basis of a rule the app follows in its calculations.'
+            )
+          : t('references.notShown', 'not shown on any screen right now.')}
+      </p>
+    );
+  }
+  const groups = new Map<string, RefPlace[]>();
+  for (const p of entry.places) groups.set(p.page, [...(groups.get(p.page) ?? []), p]);
+  return (
+    <div className="text-xs text-white/80 leading-relaxed">
+      <p className="text-white/60 mb-1">{t('references.whereTitle', 'Where in the app')}:</p>
+      <ul className="space-y-1.5 border-l-2 border-brand-emerald/30 pl-3">
+        {[...groups].map(([key, places]) => {
+          const page = REF_PAGES[key as keyof typeof REF_PAGES] as RefPage;
+          const label = bn ? page.labelBn : page.label;
+          return (
+            <li key={key}>
+              {page.path ? (
+                <Link
+                  to={page.path}
+                  className="font-bold text-brand-emerald underline underline-offset-2"
+                >
+                  {label}
+                </Link>
+              ) : (
+                <span className="font-bold text-white">{label}</span>
+              )}
+              <ul className="mt-0.5 space-y-0.5">
+                {places.map((p) => {
+                  const section = bn ? p.sectionBn : p.section;
+                  // A deep link (a special day) names its own page: put it first.
+                  const text = p.item
+                    ? p.path
+                      ? `${p.item} › ${section}`
+                      : `${section} › ${p.item}`
+                    : section;
+                  return (
+                    <li
+                      key={`${p.path ?? ''}${p.section}${p.item ?? ''}`}
+                      className="text-white/75"
+                    >
+                      {p.path ? (
+                        <Link to={p.path} className="underline underline-offset-2 hover:text-white">
+                          {text}
+                        </Link>
+                      ) : (
+                        text
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
 export default function ReferenceCard({ entry }: { entry: MappedReference }) {
   const { t, i18n } = useTranslation();
   const bn = i18n.language === 'bn';
@@ -95,27 +165,7 @@ export default function ReferenceCard({ entry }: { entry: MappedReference }) {
         {entry.purpose}
       </p>
 
-      {entry.pages.length > 0 && (
-        <p className="text-xs text-white/70 leading-relaxed">
-          <span className="text-white/60">{t('references.usedOn', 'Shown on')}: </span>
-          {entry.pages.map((key, i) => {
-            const page = REF_PAGES[key];
-            const label = bn ? page.labelBn : page.label;
-            return (
-              <span key={key}>
-                {i > 0 && ', '}
-                {'path' in page && page.path ? (
-                  <Link to={page.path} className="text-brand-emerald underline underline-offset-2">
-                    {label}
-                  </Link>
-                ) : (
-                  label
-                )}
-              </span>
-            );
-          })}
-        </p>
-      )}
+      <WhereInApp entry={entry} bn={bn} />
 
       <div className="flex flex-wrap gap-2">
         <span
@@ -151,21 +201,6 @@ export default function ReferenceCard({ entry }: { entry: MappedReference }) {
             </p>
           )}
         </div>
-      )}
-
-      {entry.files.length > 0 && (
-        <details className="text-[11px] text-white/60">
-          <summary className="cursor-pointer min-h-[44px] flex items-center hover:text-white/80">
-            {t('references.inCode', 'Where in the code ({{count}} files)', {
-              count: entry.files.length,
-            })}
-          </summary>
-          <ul className="font-mono break-all space-y-0.5 pb-1">
-            {entry.files.map((f) => (
-              <li key={f}>{f}</li>
-            ))}
-          </ul>
-        </details>
       )}
     </li>
   );

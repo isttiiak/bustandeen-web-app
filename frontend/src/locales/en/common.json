@@ -4651,7 +4651,6 @@
     "showing": "Showing {{shown}} of {{total}}",
     "grade": "Grade",
     "purpose": "Used for",
-    "usedOn": "Shown on",
     "desk": {
       "verified": "Desk check: matches the source",
       "corrected": "Desk check: corrected in this audit",
@@ -4665,7 +4664,8 @@
       "needs-correction": "Needs correction"
     },
     "manualNote": "Manual note",
-    "inCode_one": "Where in the code ({{count}} file)",
-    "inCode_other": "Where in the code ({{count}} files)"
+    "whereTitle": "Where in the app",
+    "ruleOnly": "not quoted on a screen; it is the basis of a rule the app follows in its calculations.",
+    "notShown": "not shown on any screen right now."
   }
 }
