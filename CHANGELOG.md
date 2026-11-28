@@ -36,6 +36,7 @@ Owner's ruling of 2026-11-28: Jumu'ah is not obligatory for women. A sister pray
   - CodeQL's trace for #370 started at the Authorization header, went through this dev reader into `req.user.uid`, and ended in the query.
   - For this rule CodeQL reports any user-controlled value in a query, so a type check cannot satisfy it while the dev reader is analysed.
   - Every other file keeps the full default suite.
+- **Backend tests run in one recycled worker instead of in-band.** The CI job ran out of memory twice in a row on this PR: one in-band process collected memory across 112 test files and hit the 4 GB heap. It now uses `jest --maxWorkers=1 --workerIdleMemoryLimit=1536MB`, so files still run one at a time, but Jest restarts the worker once it grows past 1.5 GB. Locally 112 suites and 980 tests pass, peaking at about 2.5 GB.
 
 ## v5.190.83 - CodeQL triage: two real fixes - 2026-11-27
 
