@@ -34,6 +34,7 @@ export default function SalatPrayerDetails({
   isQasrRow,
   isCivilFriday,
   isFridayToday,
+  sisterFriday,
   canJoin,
   jamWith,
   log,
@@ -54,6 +55,8 @@ export default function SalatPrayerDetails({
   isQasrRow: boolean;
   isCivilFriday: boolean;
   isFridayToday: boolean;
+  /** A sister's Friday Ẓuhr: Jumu'ah is optional for her, so it is an ordinary Ẓuhr. */
+  sisterFriday: boolean;
   canJoin: (p: PrayerId) => boolean;
   jamWith: ReturnType<typeof jamPartner>;
   log: SalatLog | undefined;
@@ -94,6 +97,15 @@ export default function SalatPrayerDetails({
                   {t(
                     'salatTracker.jumuahAutoMosque',
                     "Marked at the mosque automatically. Jumu'ah is only valid in congregation."
+                  )}
+                </p>
+              )}
+              {status === 'completed' && sisterFriday && (
+                <p className="flex items-start gap-1.5 text-white/60 text-[11px] sm:text-xs">
+                  <MosqueIcon className="w-3.5 h-3.5 mt-px shrink-0" aria-hidden="true" />
+                  {t(
+                    'salatTracker.sisterJumuahHint',
+                    "Prayed Jumu'ah with the imam at the mosque? Choose At Mosque."
                   )}
                 </p>
               )}

@@ -2,6 +2,32 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.84 - Jumu'ah for sisters, and Friday guidance for brothers and sisters - 2026-11-28
+
+Owner's ruling of 2026-11-28: Jumu'ah is not obligatory for women. A sister prays Ẓuhr (4 rakʿahs) at home, or may attend Jumu'ah at the mosque with proper covering. Every reference below was checked on sunnah.com or quran.com (wording, number, grade).
+
+### Changed
+
+- **Salat tracker, a sister's Friday:** Friday's Dhuhr is shown as Ẓuhr, not "Jumu'ah, replaces Dhuhr, prayed at the mosque". It gets the normal Ẓuhr sunnah guidance and the "Where" picker, with a hint: "Prayed Jumu'ah with the imam at the mosque? Choose At Mosque." A travelling sister no longer sees "Ẓuhr instead of Jumu'ah". Brothers, and anyone without a saved gender, see Friday exactly as before.
+- **Server:** a sister's Friday Ẓuhr keeps the place she picked; it was always saved as "mosque" (Done) or "home" (Kaza). Gender is read only for a Friday Ẓuhr marked Done or Kaza. Brothers' Friday Ẓuhr is unchanged, and so are records saved before this change (`tests/jumuahSisters.e2e.test.js`).
+- **Salat analytics:** sisters no longer see a "Jumu'ah Attendance" rate.
+- **The Friday page (`/special-day/friday`) now has guidance for brothers and for sisters.** Each person sees their own, and a guest sees both under "For brothers" and "For sisters". Shared items (Sūrat al-Kahf, ṣalawāt, the hour of du'ā, dhikr, grooming) stay for everyone.
+  - **Brothers:** ghusl and attending Jumu'ah (existing), going early (Bukhārī 881), listening in silence (Bukhārī 934), not leaving it out of carelessness (Abū Dāwūd 1052).
+  - **Sisters:** pray Ẓuhr at home; Jumu'ah is not obligatory, and the home is better (Abū Dāwūd 1067, 567). Or attend Jumu'ah if you wish: women heard the Prophet's ﷺ khutbah (Muslim 873a), and prayed with the imam it replaces Ẓuhr (Ibn al-Mundhir, al-Ijmāʿ 52-53, quoted by IslamQA 73339 and listed with the grade "Reference", as the project does for sources outside quran.com and sunnah.com). If you go, dress modestly and fully covered, without perfume (Quran 24:31, Muslim 443b).
+  - Eleven references added (also Bukhārī 879, 900). The short description no longer tells everyone to attend Jumu'ah, and the significance text adds that it is not obligatory for women. English and Bangla.
+
+### Security
+
+- **The dev and test sign-in now accepts only a plain string user ID.** With `DEV_AUTH_BYPASS` the token is read without verification, and its `uid` went into `req.user` unchecked. A token whose `uid` was an object such as `{"$ne": null}` reached every MongoDB query as an operator ("any user"). Now `requireAuth` and `/api/auth/verify` refuse anything but a non-empty string (401), and `uid` is set last so nothing else in the token can replace it.
+  - Production verifies tokens with Firebase and never allows the bypass, so it was not exposed there.
+  - This is the source CodeQL traced into its `js/sql-injection` alerts, including the new #370 on this PR.
+  - Test `tests/devAuthUid.e2e.test.js`: five of its cases fail on the old code.
+- **CodeQL now analyses the production sign-in path only.** The unverified token reader moved to `backend/src/dev/unverifiedJwt.ts` (still exported from `config/firebaseAdmin.ts`, so the code and the test mocks are unchanged). `.github/codeql/codeql-config.yml` excludes that one folder, with the reason written in it.
+  - CodeQL's trace for #370 started at the Authorization header, went through this dev reader into `req.user.uid`, and ended in the query.
+  - For this rule CodeQL reports any user-controlled value in a query, so a type check cannot satisfy it while the dev reader is analysed.
+  - Every other file keeps the full default suite.
+- **Backend tests run in one recycled worker instead of in-band.** The CI job ran out of memory twice in a row on this PR: one in-band process collected memory across 112 test files and hit the 4 GB heap. It now uses `jest --maxWorkers=1 --workerIdleMemoryLimit=1536MB`, so files still run one at a time, but Jest restarts the worker once it grows past 1.5 GB. Locally 112 suites and 980 tests pass, peaking at about 2.5 GB.
+
 ## v5.190.83 - CodeQL triage: two real fixes - 2026-11-27
 
 CodeQL was switched on in audit P3-4 (2026-11-25) and left 355 alerts open. All were triaged: two are real and fixed here; the rest are false positives, tests, or a design file that is not deployed (the full list and reasons are in the PR).

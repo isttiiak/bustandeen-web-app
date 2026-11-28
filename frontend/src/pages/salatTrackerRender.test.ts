@@ -307,6 +307,22 @@ const CASES: Array<[string, () => string]> = [
     },
   ],
   [
+    'friday-for-a-sister-is-an-ordinary-zuhr',
+    () => {
+      // Jumu'ah is not obligatory for women (Abū Dāwūd 1067): Ẓuhr, her chosen place.
+      session.user = { uid: 'u2', gender: 'female', displayName: 'Maryam' };
+      at('2026-10-16T13:30:00+06:00');
+      return render([
+        seedLog(
+          logOf('2026-10-16', {
+            fajr: { status: 'completed' },
+            dhuhr: { status: 'completed', location: 'home' },
+          })
+        ),
+      ]);
+    },
+  ],
+  [
     'friday-the-hour-of-response',
     () => {
       at('2026-10-16T15:50:00+06:00');

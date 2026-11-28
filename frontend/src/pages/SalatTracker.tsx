@@ -267,7 +267,10 @@ export default function SalatTracker() {
                       entry?.qasr === true ||
                       (rowTravel && isQasrPrayer(prayerId) && entry?.qasr !== false);
                     // Friday's Dhuhr is Jumu'ah — unless a traveller prays Ẓuhr instead.
-                    const isJumuah = prayerId === 'dhuhr' && isCivilFriday && !isQasrRow;
+                    // Jumu'ah is not obligatory for women (Sunan Abū Dāwūd 1067): a sister's
+                    // Friday Dhuhr is an ordinary Ẓuhr, at home or with the imam if she goes.
+                    const isJumuahDay = isCivilFriday && user?.gender !== 'female';
+                    const isJumuah = prayerId === 'dhuhr' && isJumuahDay && !isQasrRow;
                     // Joined early (jamʿ taqdīm): logged before its own time came.
                     const joinedEarly = isFuture && !!entry?.jam;
                     const jamWith = jamPartner(prayerId);
@@ -335,7 +338,7 @@ export default function SalatTracker() {
                             wrapped to five lines beside the buttons. */}
                         <SalatFridayTravel
                           prayerId={prayerId}
-                          isCivilFriday={isCivilFriday}
+                          isCivilFriday={isJumuahDay}
                           rowTravel={rowTravel}
                           isJumuah={isJumuah}
                         />
@@ -349,7 +352,8 @@ export default function SalatTracker() {
                           prayerId={prayerId}
                           rowTravel={rowTravel}
                           isQasrRow={isQasrRow}
-                          isCivilFriday={isCivilFriday}
+                          isCivilFriday={isJumuahDay}
+                          sisterFriday={prayerId === 'dhuhr' && isCivilFriday && !isJumuahDay}
                           isFridayToday={isFridayToday}
                           canJoin={canJoin}
                           jamWith={jamWith}

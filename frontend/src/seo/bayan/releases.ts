@@ -20,6 +20,30 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.84',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Friday guidance for brothers and sisters',
+        added: [
+          "The Friday page now gives brothers and sisters their own guidance, each with its references. Sisters: Jumu'ah is not obligatory for you; pray Ẓuhr at home, or attend Jumu'ah at the mosque if you wish, modestly covered and without perfume.",
+        ],
+        fixed: [
+          "For sisters, Friday's Dhuhr in the Salat tracker is now an ordinary Ẓuhr, saved at the place you choose, instead of Jumu'ah at the mosque.",
+        ],
+      },
+      bn: {
+        title: "ভাই ও বোনদের জন্য জুমু'আহর নির্দেশনা",
+        added: [
+          "জুমু'আহর পাতায় এখন ভাই ও বোনদের জন্য আলাদা নির্দেশনা আছে, প্রতিটির দলিলসহ। বোনেরা: আপনার জন্য জুমু'আহ বাধ্যতামূলক নয়; ঘরে যুহর আদায় করুন, অথবা চাইলে শালীন পর্দা করে, সুগন্ধি ছাড়া মসজিদে জুমু'আহয় অংশ নিন।",
+        ],
+        fixed: [
+          "বোনদের জন্য সালাত ট্র্যাকারে শুক্রবারের যুহর এখন সাধারণ যুহর, আপনার বেছে নেওয়া স্থানে সংরক্ষিত হয়, মসজিদে জুমু'আহ হিসেবে নয়।",
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.83',
     date: '2026-11-27',
     text: {

@@ -1,6 +1,6 @@
 {
   "name": "bustandeen-backend",
-  "version": "5.190.83",
+  "version": "5.190.84",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -21,7 +21,7 @@
     "cleanup:unverified": "tsx src/scripts/cleanupUnverified.ts",
     "admin:reset-mfa": "tsx src/scripts/resetAdminMfa.ts",
     "pretest": "node ../scripts/check-deps.mjs backend",
-    "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules --max-old-space-size=4096\" NODE_ENV=test jest --runInBand"
+    "test": "cross-env NODE_OPTIONS=\"--experimental-vm-modules --max-old-space-size=4096\" NODE_ENV=test jest --maxWorkers=1 --workerIdleMemoryLimit=1536MB"
   },
   "engines": {
     "node": "24.x"

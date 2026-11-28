@@ -5,6 +5,7 @@ import { CARD, SECTION_TITLE, TILE } from '../bustanStyles.js';
 import type { SalatAnalytics, useSalatDebt } from '../../hooks/useSalatLog.js';
 import { formatLocaleNumber } from '../../utils/localeDate.js';
 import { ALL_TIME_DAYS } from './useSalatAnalyticsPage.js';
+import { useAuthStore } from '../../store/useAuthStore.js';
 
 /** The period note, the stat tiles and the overall breakdown strip. */
 export function SalatAnalyticsSummary({
@@ -17,6 +18,7 @@ export function SalatAnalyticsSummary({
   debt: ReturnType<typeof useSalatDebt>['data'];
 }) {
   const { t } = useTranslation();
+  const isSister = useAuthStore((s) => s.user?.gender === 'female');
   return (
     <>
       {/* Period note — shown when tracking start or a reset shortened the window (not for "All time", which is expected to) */}
@@ -62,7 +64,8 @@ export function SalatAnalyticsSummary({
             value: formatLocaleNumber(debt?.totalOwed ?? 0),
             accent: 'text-brand-pink',
           },
-          ...(data.fridayCount > 0
+          // Jumu'ah is not obligatory for women (Sunan Abū Dāwūd 1067), so no attendance rate.
+          ...(data.fridayCount > 0 && !isSister
             ? [
                 {
                   label: t('salatAnalytics.jumuahAttendance'),

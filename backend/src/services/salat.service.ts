@@ -111,6 +111,17 @@ export async function getLogReadOnly(userId: string, date?: string) {
 
 const QASR_PRAYERS: ReadonlySet<PrayerId> = new Set<PrayerId>(['dhuhr', 'asr', 'isha']);
 
+/**
+ * Jumu'ah is not obligatory for women (Sunan Abū Dāwūd 1067, ṣaḥīḥ): a sister prays Ẓuhr,
+ * at home or, if she chooses, Jumu'ah with the imam at the mosque. So her Friday Ẓuhr keeps
+ * the place she picked instead of being set to "mosque". Read only for a Friday Ẓuhr.
+ */
+async function isSister(userId: string): Promise<boolean> {
+  const User = (await import('../models/User.js')).default;
+  const user = await User.findOne({ uid: userId }).select('gender').lean();
+  return user?.gender === 'female';
+}
+
 export async function updatePrayerStatus(
   userId: string,
   prayer: PrayerId,
@@ -133,7 +144,8 @@ export async function updatePrayerStatus(
     entry.status = status;
     entry.prayedAt = status !== 'pending' ? new Date() : undefined;
 
-    // Jumu'ah — Friday's Dhuhr is only valid as a congregational mosque prayer,
+    // Jumu'ah, for brothers (a sister's Friday Ẓuhr is an ordinary Ẓuhr, see isSister):
+    // Friday's Dhuhr is only valid as a congregational mosque prayer,
     // so "Done" always means "at the mosque". If it's missed on time, it can
     // only be made up as an ordinary (alone) Dhuhr — Jumu'ah itself has no kaza.
     // A traveller (Musafir mode) owes no Jumu'ah: a shortened Friday Dhuhr is an
@@ -142,7 +154,11 @@ export async function updatePrayerStatus(
     if (!QASR_PRAYERS.has(prayer)) travel = { ...travel, qasr: undefined };
     const isFriday = prayer === 'dhuhr' && new Date(d + 'T12:00:00').getDay() === 5;
     const willBeQasr = travel.qasr ?? entry.qasr ?? false;
-    const isFridayDhuhr = isFriday && !willBeQasr;
+    const isFridayDhuhr =
+      isFriday &&
+      !willBeQasr &&
+      (status === 'completed' || status === 'kaza') &&
+      !(await isSister(userId));
 
     if (status === 'completed' || status === 'kaza') {
       // Omitted = unchanged, so older clients and sub-tag taps keep the flags.

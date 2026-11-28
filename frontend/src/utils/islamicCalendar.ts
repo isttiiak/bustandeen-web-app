@@ -24,6 +24,8 @@ import type { HijriInputs } from './calendarMonth.js';
 interface SpecialDayTodo {
   action: string;
   note?: string;
+  /** Shown only to brothers or only to sisters (both, labelled, when gender is unknown). */
+  for?: 'brothers' | 'sisters';
 }
 
 interface SpecialDayRef {
@@ -56,17 +58,22 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     color: '#7a9e6e',
     type: 'weekly',
     replaceDhuhrWithJumah: true,
-    shortDesc: "The master of days. Attend Jumu'ah, read Surah Al-Kahf, send abundant ṣalawāt.",
+    shortDesc:
+      "The master of days. Read Surah Al-Kahf, send abundant ṣalawāt, and brothers attend Jumu'ah.",
     significance:
-      "Friday is the best day the sun rises upon. Allah made it a day of gathering (Jumu'ah), supplication, ṣalawāt on the Prophet ﷺ, and the reading of Surah Al-Kahf. There is a hidden hour on Friday in which any du'ā is accepted. The Jumu'ah prayer (khutbah + 2 rak'ahs in congregation) replaces Dhuhr for adult Muslim men.",
+      "Friday is the best day the sun rises upon. Allah made it a day of gathering (Jumu'ah), supplication, ṣalawāt on the Prophet ﷺ, and the reading of Surah Al-Kahf. There is a hidden hour on Friday in which any du'ā is accepted. The Jumu'ah prayer (khutbah + 2 rak'ahs in congregation) replaces Dhuhr for adult Muslim men. For women it is not obligatory: they pray Ẓuhr at home, or may pray Jumu'ah with the imam.",
     todos: [
       {
         action: "Perform ghusl (ritual bath) before Jumu'ah",
         note: 'Sunnah, highly recommended',
+
+        for: 'brothers',
       },
       {
         action: "Attend Jumu'ah prayer in congregation at a mosque",
         note: 'Farḍ: obligatory for adult Muslim men',
+
+        for: 'brothers',
       },
       {
         action: 'Read Surah Al-Kahf (Quran 18)',
@@ -87,6 +94,36 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
       {
         action: 'Cut nails, wear best clothes, use miswāk and fragrance',
         note: 'Sunnah of the day',
+      },
+      {
+        action: 'Go early to the mosque',
+        note: 'Going in the first hour is like offering a camel (Ṣaḥīḥ al-Bukhārī 881)',
+        for: 'brothers',
+      },
+      {
+        action: 'Listen to the khutbah in silence',
+        note: 'Even asking someone to keep quiet during it is wrong (Ṣaḥīḥ al-Bukhārī 934)',
+        for: 'brothers',
+      },
+      {
+        action: "Never leave Jumu'ah out of carelessness",
+        note: 'Leaving three in a row out of slackness seals the heart (Sunan Abū Dāwūd 1052)',
+        for: 'brothers',
+      },
+      {
+        action: 'Pray Ẓuhr, 4 rakʿahs, at home',
+        note: "Jumu'ah is not obligatory for women, and your home is better for prayer (Sunan Abū Dāwūd 1067, 567)",
+        for: 'sisters',
+      },
+      {
+        action: "Or attend Jumu'ah at the mosque, if you wish",
+        note: "Women heard the Prophet's ﷺ khutbah (Ṣaḥīḥ Muslim 873a). Prayed with the imam, it replaces Ẓuhr (Ibn al-Mundhir, al-Ijmāʿ)",
+        for: 'sisters',
+      },
+      {
+        action: 'If you go, dress modestly and fully covered, without perfume',
+        note: 'Quran 24:31; Ṣaḥīḥ Muslim 443b',
+        for: 'sisters',
       },
     ],
     references: [
@@ -114,6 +151,61 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
         text: '"Send abundant ṣalawāt on me on Fridays, for your ṣalawāt is presented to me." · Sunan Abū Dāwūd 1047',
         url: 'https://sunnah.com/abudawud:1047',
         grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: '"The Friday prayer in congregation is a necessary duty for every Muslim, with four exceptions: a slave, a woman, a boy, and a sick person." · Sunan Abū Dāwūd 1067',
+        url: 'https://sunnah.com/abudawud:1067',
+        grade: 'Ṣaḥīḥ (al-Albānī)',
+      },
+      {
+        text: '"Do not prevent your women from visiting the mosque; but their houses are better for them." · Sunan Abū Dāwūd 567',
+        url: 'https://sunnah.com/abudawud:567',
+        grade: 'Ṣaḥīḥ (al-Albānī)',
+      },
+      {
+        text: '"Do not stop Allah\'s women-slaves from going to Allah\'s mosques." · Ṣaḥīḥ al-Bukhārī 900',
+        url: 'https://sunnah.com/bukhari:900',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: 'Umm Hishām learnt Sūrah Qāf from the Prophet ﷺ reciting it on the pulpit every Friday · Ṣaḥīḥ Muslim 873a',
+        url: 'https://sunnah.com/muslim:873a',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: '"When any one of you comes to the mosque, she should not apply perfume." · Ṣaḥīḥ Muslim 443b',
+        url: 'https://sunnah.com/muslim:443b',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: "Women's modest dress and covering · Quran 24:31",
+        url: 'https://quran.com/24/31',
+        grade: 'Quran',
+      },
+      {
+        text: "Scholars agree that a woman who prays Jumu'ah with the imam has fulfilled her duty · Ibn al-Mundhir, al-Ijmāʿ 52-53",
+        url: 'https://islamqa.info/en/answers/73339',
+        grade: 'Reference',
+      },
+      {
+        text: '"The taking of a bath on Friday is compulsory for every male (Muslim) who has attained the age of puberty." · Ṣaḥīḥ al-Bukhārī 879',
+        url: 'https://sunnah.com/bukhari:879',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: "Going to Jumu'ah in the first hour is like sacrificing a camel · Ṣaḥīḥ al-Bukhārī 881",
+        url: 'https://sunnah.com/bukhari:881',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: '"When the Imam is delivering the Khutba, and you ask your companion to keep quiet and listen, then no doubt you have done an evil act." · Ṣaḥīḥ al-Bukhārī 934',
+        url: 'https://sunnah.com/bukhari:934',
+        grade: 'Ṣaḥīḥ',
+      },
+      {
+        text: '"He who leaves the Friday prayer (continuously) for three Fridays on account of slackness, Allah will print a stamp on his heart." · Sunan Abū Dāwūd 1052',
+        url: 'https://sunnah.com/abudawud:1052',
+        grade: 'Ḥasan Ṣaḥīḥ (al-Albānī)',
       },
     ],
   },
