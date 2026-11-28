@@ -2129,6 +2129,28 @@
     "afterSalatFor": "After-salat options for {{name}}"
   },
   "rayhanah": {
+    "logTheEnd": "Log the end",
+    "endDayLabel": "Which day did it stop?",
+    "endToday": "Today",
+    "endYesterday": "Yesterday",
+    "moment": {
+      "askStart": "Before or after which prayer did it start?",
+      "askEnd": "Before or after which prayer did it stop?",
+      "which": "Which time of day?",
+      "fajr": "In Fajr time (before sunrise)",
+      "morning": "After sunrise, before Dhuhr",
+      "dhuhr": "In Dhuhr time",
+      "asr": "In Asr time",
+      "maghrib": "In Maghrib time",
+      "isha": "In Isha time (night, until Fajr)",
+      "prayed": "Had you already prayed {{prayer}} before it started?",
+      "startedEnough": "Had time for at least one rakʿah of {{prayer}} passed before it started?",
+      "endedEnough": "Was there still time to pray at least one rakʿah of {{prayer}} before its time ended?",
+      "endedEnoughHanafi": "Was there still time to take ghusl, dress and begin {{prayer}} before its time ended?",
+      "yes": "Yes",
+      "no": "No",
+      "why": "Your answers decide which of that day’s prayers are not owed, following the school chosen in Rayhanah settings. The time you tap is not used."
+    },
     "addItToQada": "Add it to your qaḍā counter?",
     "addThemToQada": "Add them to your qaḍā counter?",
     "addToQada": "Add to qaḍā",
@@ -2598,7 +2620,7 @@
   },
   "salatTracker": {
     "excusedPrayer": "Excused",
-    "excusedPrayerNote": "Excused: its time ended before your Rayhanah days did. Nothing to log.",
+    "excusedPrayerNote": "Excused: not owed because of your Rayhanah days. Nothing to log.",
     "seoTitle": "Salat Tracker: Log Your 5 Daily Prayers",
     "seoDescription": "Track Fajr, Dhuhr, Asr, Maghrib and Isha with on-time/late/kaza logging, Jumu'ah tracking, streaks and automatic missed-prayer (kaza) debt accrual.",
     "about": "about",

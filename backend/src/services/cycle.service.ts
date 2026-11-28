@@ -1,6 +1,14 @@
 import CycleLog, { ICycleLog } from '../models/CycleLog.js';
 import CycleProfile, { ICycleProfile } from '../models/CycleProfile.js';
 import CycleDay, { ICycleDayContent } from '../models/CycleDay.js';
+import {
+  PRAYER_ORDER,
+  excusedPrayersOn,
+  type CycleSchool,
+  type EndMark,
+  type FardPrayer,
+  type StartMark,
+} from '../utils/cycleExcusal.js';
 import SocialProfile from '../models/SocialProfile.js';
 import {
   encryptJson,
@@ -186,9 +194,12 @@ export interface CycleSummary extends CycleStatus {
     type: string;
     startDate: string;
     endDate: string | null;
-    endedAt: string | null;
+    startMark: StartMark | null;
+    endMark: EndMark | null;
   }>;
   /** Wellness notes for the last ~60 days (flow/symptoms/moods/garden) */
+  /** The start and end days that excuse only SOME prayers, with the prayers excused. */
+  partialDays: Array<{ date: string; excused: FardPrayer[] }>;
   days: Array<{
     date: string;
     flow: string | null;
@@ -205,17 +216,30 @@ export async function getSummary(userId: string, today: string): Promise<CycleSu
     CycleLog.find({ userId })
       .sort({ startDate: -1 })
       .limit(24)
-      .select('type startDate endDate endedAt'),
+      .select('type startDate endDate startMark endMark'),
     CycleDay.find({ userId, date: { $gte: daysSince, $lte: today } }).select('date enc'),
   ]);
+  const earliest = logs.reduce((m, l) => (l.startDate < m ? l.startDate : m), today);
+  const partial = await getPartialExcusedMap(userId, earliest, today);
   return {
     ...status,
+    partialDays: [...partial].map(([date, excused]) => ({
+      date,
+      excused: PRAYER_ORDER.filter((p) => excused.has(p)),
+    })),
     logs: logs.map((l) => ({
       _id: String(l._id),
       type: l.type,
       startDate: l.startDate,
       endDate: l.endDate,
-      endedAt: l.endedAt ? l.endedAt.toISOString() : null,
+      startMark: l.startMark
+        ? {
+            slot: l.startMark.slot,
+            prayed: l.startMark.prayed ?? null,
+            enough: l.startMark.enough ?? null,
+          }
+        : null,
+      endMark: l.endMark ? { slot: l.endMark.slot, enough: l.endMark.enough ?? null } : null,
     })),
     days: days.map((d) => {
       // Display only: an unreadable note shows as empty here, and saving over it is refused (upsertDay).
@@ -266,7 +290,8 @@ export async function upsertDay(
 export async function startCycle(
   userId: string,
   date: string,
-  type: 'hayd' | 'nifas'
+  type: 'hayd' | 'nifas',
+  startMark?: StartMark
 ): Promise<{ ok: boolean; error?: string; log?: ICycleLog }> {
   if (!DAY_STR_RE.test(date)) return { ok: false, error: 'Invalid date' };
 
@@ -282,7 +307,13 @@ export async function startCycle(
   if (overlapping) return { ok: false, error: 'That date is inside an already-logged cycle.' };
 
   try {
-    const log = await CycleLog.create({ userId, type, startDate: date, endDate: null });
+    const log = await CycleLog.create({
+      userId,
+      type,
+      startDate: date,
+      endDate: null,
+      startMark: startMark ?? null,
+    });
     return { ok: true, log };
   } catch (err) {
     return duplicateCycleAnswer(err, userId);
@@ -341,19 +372,10 @@ export async function addPastCycle(
   return { ok: true, log };
 }
 
-/** The client's "marked finished" moment, kept only when it is believable: not in the future
- * (5 minutes of clock drift allowed) and within the last 3 days (a queued offline write). */
-function believableEndedAt(raw: string | undefined, now = Date.now()): Date {
-  const t = raw ? Date.parse(raw) : NaN;
-  return Number.isFinite(t) && t <= now + 5 * 60_000 && t >= now - 3 * 86_400_000
-    ? new Date(t)
-    : new Date(now);
-}
-
 export async function endCycle(
   userId: string,
   date: string,
-  endedAt?: string
+  endMark?: EndMark
 ): Promise<{ ok: boolean; error?: string; log?: ICycleLog }> {
   if (!DAY_STR_RE.test(date)) return { ok: false, error: 'Invalid date' };
 
@@ -362,7 +384,7 @@ export async function endCycle(
   if (date < open.startDate) return { ok: false, error: 'End date is before the start date.' };
 
   open.endDate = date;
-  open.endedAt = believableEndedAt(endedAt);
+  open.endMark = endMark ?? null;
   await open.save();
   return { ok: true, log: open };
 }
@@ -420,8 +442,9 @@ export async function editCycleLog(
   });
   if (clash) return { ok: false, error: 'Those dates overlap another logged cycle.' };
 
-  // A different end date no longer matches the moment it was marked finished.
-  if (endDate !== log.endDate) log.endedAt = null;
+  // Different dates no longer match the answers about when it began and ended.
+  if (startDate !== log.startDate) log.startMark = null;
+  if (endDate !== log.endDate) log.endMark = null;
   log.startDate = startDate;
   log.endDate = endDate;
   try {
@@ -467,34 +490,88 @@ export async function getExcusedIntervals(
   return rows.map((r) => ({ start: r.startDate, end: r.endDate }));
 }
 
-/** True if `day` falls inside any excused interval (an open one runs to `through`). */
-export function isDayExcused(
-  intervals: Array<{ start: string; end: string | null }>,
-  day: string,
-  through: string
-): boolean {
-  return intervals.some((iv) => iv.start <= day && day <= (iv.end ?? through));
+/** Every episode with its answers, and the user's school: what the prayer-level rules read. */
+async function loadExcusal(userId: string): Promise<{
+  school: CycleSchool;
+  episodes: Array<{
+    startDate: string;
+    endDate: string | null;
+    startMark: StartMark | null;
+    endMark: EndMark | null;
+  }>;
+}> {
+  const [rows, profile] = await Promise.all([
+    CycleLog.find({ userId }).select('startDate endDate startMark endMark'),
+    CycleProfile.findOne({ userId }).select('madhab'),
+  ]);
+  return {
+    school: profile?.madhab ?? 'majority',
+    episodes: rows.map((r) => ({
+      startDate: r.startDate,
+      endDate: r.endDate,
+      startMark: r.startMark
+        ? {
+            slot: r.startMark.slot,
+            prayed: r.startMark.prayed ?? null,
+            enough: r.startMark.enough ?? null,
+          }
+        : null,
+      endMark: r.endMark ? { slot: r.endMark.slot, enough: r.endMark.enough ?? null } : null,
+    })),
+  };
+}
+
+/** The prayers excused on each day from..to that is not an ordinary day: the whole day
+ * (five prayers) or part of it (the start and end day of an episode with answers). */
+export async function getExcusedPrayersByDay(
+  userId: string,
+  from: string,
+  to: string
+): Promise<Map<string, Set<FardPrayer>>> {
+  const { school, episodes } = await loadExcusal(userId);
+  const out = new Map<string, Set<FardPrayer>>();
+  for (const ep of episodes) {
+    const start = ep.startDate > from ? ep.startDate : from;
+    const end = (ep.endDate ?? to) < to ? (ep.endDate ?? to) : to;
+    for (let d = start; d <= end; d = nextDay(d)) {
+      const excused = excusedPrayersOn(ep, d, school, to);
+      if (excused.size > 0) out.set(d, excused);
+    }
+  }
+  return out;
 }
 
 /**
- * The set of excused (Rayhanah rest) days between `from` and `to` inclusive.
- * Salat is not owed and cannot be "missed" on these days, so kaza accrual and
- * the salat analytics leave them out. Server-side only: this never goes into a
- * response, an AI prompt or any social endpoint.
+ * The set of excused (Rayhanah rest) days between `from` and `to` inclusive: the days
+ * on which ALL five prayers are excused. Salat is not owed and cannot be "missed" on
+ * these days, so kaza accrual and the salat analytics leave them out. The start and
+ * end day of an episode whose answers excuse only some prayers are ordinary days here:
+ * see getPartialExcusedMap for their excused prayers. Server-side only: this never
+ * goes into a response to anyone but the user.
  */
 export async function getExcusedDaySet(
   userId: string,
   from: string,
   to: string
 ): Promise<Set<string>> {
-  const intervals = await getExcusedIntervals(userId);
   const days = new Set<string>();
-  for (const iv of intervals) {
-    const start = iv.start > from ? iv.start : from;
-    const end = (iv.end ?? to) < to ? (iv.end ?? to) : to;
-    for (let d = start; d <= end; d = nextDay(d)) days.add(d);
+  for (const [day, excused] of await getExcusedPrayersByDay(userId, from, to)) {
+    if (excused.size === PRAYER_ORDER.length) days.add(day);
   }
   return days;
+}
+
+/** Days with only SOME prayers excused (the start and end day of an episode), by day. */
+export async function getPartialExcusedMap(
+  userId: string,
+  from: string,
+  to: string
+): Promise<Map<string, Set<FardPrayer>>> {
+  const partial = new Map<string, Set<FardPrayer>>();
+  for (const [day, excused] of await getExcusedPrayersByDay(userId, from, to)) {
+    if (excused.size < PRAYER_ORDER.length) partial.set(day, excused);
+  }
+  return partial;
 }
 
 function nextDay(dateStr: string): string {

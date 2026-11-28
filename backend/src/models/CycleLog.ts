@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
+import { MOMENT_SLOTS, type StartMark, type EndMark } from '../utils/cycleExcusal.js';
 
 /**
  * One menstrual (hayd) or post-natal (nifas) bleeding episode.
@@ -14,10 +15,13 @@ export interface ICycleLog extends Document {
   type: 'hayd' | 'nifas';
   startDate: string;
   endDate: string | null;
-  /** The moment the user marked the episode finished. On the end day, prayers whose
-   * time had already run out by then were not owed (the app shows them as excused).
-   * Absent on episodes ended before this field, or entered or edited by date only. */
-  endedAt?: Date | null;
+  /** Before or after which salat it began, as she answered (not a clock time: people
+   * do not tap the button when it happens). Decides which prayers of the start day
+   * are excused (utils/cycleExcusal.ts). Absent on older episodes and ones entered by
+   * date only: their whole start day stays excused. */
+  startMark?: StartMark | null;
+  /** The same for the day it ended. */
+  endMark?: EndMark | null;
   note?: string;
 }
 
@@ -27,7 +31,27 @@ const CycleLogSchema = new Schema<ICycleLog>(
     type: { type: String, enum: ['hayd', 'nifas'], default: 'hayd' },
     startDate: { type: String, required: true },
     endDate: { type: String, default: null },
-    endedAt: { type: Date, default: null },
+    startMark: {
+      type: new Schema(
+        {
+          slot: { type: String, enum: MOMENT_SLOTS, required: true },
+          prayed: { type: Boolean, default: null },
+          enough: { type: Boolean, default: null },
+        },
+        { _id: false }
+      ),
+      default: null,
+    },
+    endMark: {
+      type: new Schema(
+        {
+          slot: { type: String, enum: MOMENT_SLOTS, required: true },
+          enough: { type: Boolean, default: null },
+        },
+        { _id: false }
+      ),
+      default: null,
+    },
     note: { type: String, maxlength: 500 },
   },
   { timestamps: true }

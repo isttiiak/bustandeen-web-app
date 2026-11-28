@@ -144,14 +144,13 @@ describe('Rayhanah Cycle API', () => {
     const bad = await asM(request(app).post(`/api/cycle/end`)).send({ date: shift(TODAY, -10) });
     expect(bad.status).toBe(400);
 
-    const markedAt = new Date(Date.now() - 60_000).toISOString();
     const ended = await asM(request(app).post(`/api/cycle/end`)).send({
       date: TODAY,
-      endedAt: markedAt,
+      endMark: { slot: 'asr', enough: true },
     });
     expect(ended.status).toBe(200);
     expect(ended.body.log.endDate).toBe(TODAY);
-    expect(new Date(ended.body.log.endedAt).toISOString()).toBe(markedAt);
+    expect(ended.body.log.endMark).toEqual({ slot: 'asr', enough: true });
 
     const again = await asM(request(app).post(`/api/cycle/end`)).send({ date: TODAY });
     expect(again.status).toBe(400);
@@ -159,22 +158,35 @@ describe('Rayhanah Cycle API', () => {
     const sum = await asM(request(app).get(`/api/cycle/summary?today=${shift(TODAY, 1)}`));
     expect(sum.body.active).toBeNull();
     expect(sum.body.logs).toHaveLength(1);
-    // the summary carries when it was marked finished (the app uses it on the end day)
-    expect(sum.body.logs[0].endedAt).toBe(markedAt);
+    // the summary carries the answer, and which prayers the end day excuses
+    expect(sum.body.logs[0].endMark).toEqual({ slot: 'asr', enough: true });
+    const endDay = sum.body.partialDays.find((d) => d.date === TODAY);
+    expect(endDay.excused).toContain('fajr'); // its time had run out
+    expect(endDay.excused).not.toContain('asr'); // enough time was left: still owed
+    expect(endDay.excused).not.toContain('maghrib');
   });
 
-  test('a made-up or future "marked finished" time is replaced by now', async () => {
-    const tokenE = fakeJwt({ uid: 'endedAtSister', email: 'ea@test.dev', name: 'EA' });
+  test('start and end answers must name a real slot; a start answer is kept', async () => {
+    const tokenE = fakeJwt({ uid: 'markSister', email: 'ms@test.dev', name: 'MS' });
     const asE = (r) => r.set('Authorization', `Bearer ${tokenE}`);
     await request(app).post(`/api/auth/verify`).send({ idToken: tokenE });
-    await asE(request(app).post(`/api/cycle/start`)).send({ date: shift(TODAY, -4) });
-    const future = new Date(Date.now() + 3 * 86_400_000).toISOString();
-    const res = await asE(request(app).post(`/api/cycle/end`)).send({
-      date: TODAY,
-      endedAt: future,
+    const bad = await asE(request(app).post(`/api/cycle/start`)).send({
+      date: shift(TODAY, -4),
+      startMark: { slot: 'midnight' },
     });
-    expect(res.status).toBe(200);
-    expect(Math.abs(new Date(res.body.log.endedAt).getTime() - Date.now())).toBeLessThan(60_000);
+    expect(bad.status).toBe(400);
+    const ok = await asE(request(app).post(`/api/cycle/start`)).send({
+      date: shift(TODAY, -4),
+      startMark: { slot: 'dhuhr', prayed: false, enough: true },
+    });
+    expect(ok.status).toBe(200);
+    expect(ok.body.log.startMark).toEqual({ slot: 'dhuhr', prayed: false, enough: true });
+    const sum = await asE(request(app).get(`/api/cycle/summary?today=${TODAY}`));
+    // majority school: Dhuhr owed (enough time passed), the rest of the day excused
+    expect(sum.body.partialDays).toContainEqual({
+      date: shift(TODAY, -4),
+      excused: ['asr', 'maghrib', 'isha'],
+    });
   });
 
   test('nifas uses the 40-day maximum', async () => {

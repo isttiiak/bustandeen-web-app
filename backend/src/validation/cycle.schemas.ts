@@ -1,20 +1,36 @@
 import { z } from 'zod';
 import { replayedClientToday } from './clientDay.js';
 
+import { MOMENT_SLOTS } from '../utils/cycleExcusal.js';
+
 const dateField = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
+
+const slotField = z.enum(MOMENT_SLOTS);
+/** Before or after which salat it started (see utils/cycleExcusal.ts). */
+const startMarkField = z
+  .object({
+    slot: slotField,
+    prayed: z.boolean().nullable().optional(),
+    enough: z.boolean().nullable().optional(),
+  })
+  .strict();
+/** Before or after which salat it ended. */
+const endMarkField = z
+  .object({ slot: slotField, enough: z.boolean().nullable().optional() })
+  .strict();
 
 export const startCycleSchema = z.object({
   body: z.object({
     date: dateField,
     type: z.enum(['hayd', 'nifas']).default('hayd'),
+    startMark: startMarkField.optional(),
   }),
 });
 
 export const endCycleSchema = z.object({
   body: z.object({
     date: dateField,
-    /** When the user marked it finished (ISO). The server keeps it only when it is recent and not in the future. */
-    endedAt: z.string().datetime().optional(),
+    endMark: endMarkField.optional(),
   }),
 });
 

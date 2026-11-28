@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as cycleService from '../services/cycle.service.js';
 import { getTodayString } from '../utils/timezone-flexible.js';
+import type { StartMark, EndMark } from '../utils/cycleExcusal.js';
 
 const dayOrToday = (raw: unknown): string =>
   typeof raw === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(raw) ? raw : getTodayString();
@@ -25,8 +26,12 @@ export const startCycle = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { date, type } = req.body as { date: string; type: 'hayd' | 'nifas' };
-    const result = await cycleService.startCycle(req.user.uid, date, type);
+    const { date, type, startMark } = req.body as {
+      date: string;
+      type: 'hayd' | 'nifas';
+      startMark?: StartMark;
+    };
+    const result = await cycleService.startCycle(req.user.uid, date, type, startMark);
     if (!result.ok) {
       res.status(400).json({ ok: false, error: result.error });
       return;
@@ -39,8 +44,8 @@ export const startCycle = async (
 
 export const endCycle = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { date, endedAt } = req.body as { date: string; endedAt?: string };
-    const result = await cycleService.endCycle(req.user.uid, date, endedAt);
+    const { date, endMark } = req.body as { date: string; endMark?: EndMark };
+    const result = await cycleService.endCycle(req.user.uid, date, endMark);
     if (!result.ok) {
       res.status(400).json({ ok: false, error: result.error });
       return;

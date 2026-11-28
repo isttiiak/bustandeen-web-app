@@ -37,7 +37,7 @@ export const RELEASES: Release[] = [
           'Privacy and Terms now list where the Quran and hadith content comes from, with our postal address.',
         ],
         fixed: [
-          'On the day you mark your Rayhanah days finished, the prayers whose time had already ended now show as excused with a flower and count as done, so the day can read five of five.',
+          "Rayhanah now asks before or after which prayer your days started and stopped, instead of using the time you tapped. The prayers that are not owed on those two days follow your school, show as a flower, and count as done, so a day can read five of five. This is awaiting a scholar's review.",
           'The Quran reading timer no longer runs while a surah is still loading.',
           'Your Quran settings, including your translation, now stay the same on every device. Changing the app language no longer changes the translation you picked.',
           'Top surahs no longer count surahs you read in the khatam journey, and a surah you listen to all the way through now counts.',
@@ -57,7 +57,7 @@ export const RELEASES: Release[] = [
           'গোপনীয়তা নীতি ও শর্তে এখন কুরআন ও হাদিসের বিষয়বস্তু কোথা থেকে আসে তা এবং আমাদের ডাক ঠিকানা লেখা আছে।',
         ],
         fixed: [
-          'রায়হানাহর দিন শেষ করার দিনে, যে নামাযের সময় আগেই শেষ হয়ে গিয়েছিল তা এখন ফুলের চিহ্নসহ অব্যাহতি হিসেবে দেখায় এবং সম্পন্ন গোনা হয়, ফলে দিনটি পাঁচের মধ্যে পাঁচ দেখাতে পারে।',
+          'রায়হানাহ এখন বাটন চাপার সময় ব্যবহার না করে জানতে চায় কোন নামাযের আগে বা পরে আপনার দিন শুরু ও শেষ হয়েছে। ওই দুই দিনে যে নামায আপনার ওপর নেই তা আপনার মাযহাব অনুযায়ী ঠিক হয়, ফুলের চিহ্নসহ দেখায় ও সম্পন্ন গোনা হয়, ফলে দিনটি পাঁচের মধ্যে পাঁচ দেখাতে পারে। এটি আলিমের পর্যালোচনার অপেক্ষায় আছে।',
           'সূরা লোড হওয়ার সময় কুরআন পড়ার টাইমার আর চলে না।',
           'অনুবাদসহ আপনার কুরআন সেটিংস এখন সব ডিভাইসে একই থাকে। অ্যাপের ভাষা বদলালে আপনার বেছে নেওয়া অনুবাদ আর বদলায় না।',
           'খতম যাত্রায় পড়া সূরা আর শীর্ষ সূরার তালিকায় গোনা হয় না, আর শুরু থেকে শেষ পর্যন্ত শোনা সূরা এখন গোনা হয়।',

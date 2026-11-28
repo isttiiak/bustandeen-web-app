@@ -5,7 +5,7 @@ import { BriefcaseIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
 import { type PrayerId, type PrayerStatus } from '../hooks/useSalatLog.js';
 import { getPrayerEndTime, formatTime, translateSalatName } from '../utils/prayerTimes.js';
 import { FlowerIcon } from '../components/icons/IslamicIcons.js';
-import { useEndDayExcused } from '../hooks/useCycle.js';
+import { useExcusedPrayers } from '../hooks/useCycle.js';
 import ExcusedCard from '../components/ExcusedCard.js';
 import SalatSettings from '../components/SalatSettings.js';
 import Seo from '../components/Seo.js';
@@ -111,8 +111,8 @@ export default function SalatTracker() {
     toggleJoined,
     handleSubTag,
   } = useSalatPrayerHandlers(state, creditDhikr);
-  // Prayers excused on the day a Rayhanah episode was marked finished
-  const endDayExcused = useEndDayExcused(selectedDate);
+  // Prayers a Rayhanah episode excuses on the day it started or ended
+  const endDayExcused = useExcusedPrayers(selectedDate);
 
   return (
     // Bustan Arch (audit T3.2): one arch hero (day + leaf marks), flat cards
@@ -255,7 +255,7 @@ export default function SalatTracker() {
                 <div className="space-y-2">
                   {trackablePrayers.map((prayer, i) => {
                     const prayerId = prayer.id as PrayerId;
-                    // Not owed: its time had run out before she marked the episode finished
+                    // Not owed: excused by the Rayhanah episode that started or ended today
                     if (endDayExcused.includes(prayerId)) {
                       return (
                         <div
