@@ -41,6 +41,19 @@ export const RELEASES: Release[] = [
         fixed: [
           'প্রতিটি রেফারেন্স মূল সূত্রের সাথে মিলিয়ে ভুলগুলো সংশোধন করা হয়েছে: কয়েকটি হাদিস নম্বর (যেমন ইস্তিখারা ও দুহা), কিছু হাদিসের মান, এবং যেসব উদ্ধৃতি উল্লিখিত হাদিসের সাথে মেলেনি।',
           'দুর্বল বর্ণনা এখন যেখানেই আসে, দুর্বল বলে উল্লেখ থাকে; সাপ্তাহিক আত্মসমালোচনা থেকে একটি দুর্বল হাদিস সরানো হয়েছে।',
+    version: '5.190.86',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Rayhanah: when an expected period has passed',
+        fixed: [
+          'When the date your period was expected has passed and nothing is logged yet, Rayhanah now says so gently instead of still showing that date as expected, and hides the fertile window that has passed.',
+        ],
+      },
+      bn: {
+        title: 'রায়হানাহ: প্রত্যাশিত মাসিকের তারিখ পেরিয়ে গেলে',
+        fixed: [
+          'মাসিকের প্রত্যাশিত তারিখ পেরিয়ে গেলে এবং এখনো কিছু লগ না হলে, রায়হানাহ এখন সেই তারিখকে প্রত্যাশিত হিসেবে না দেখিয়ে কোমলভাবে তা জানায়, আর পেরিয়ে যাওয়া উর্বর সময়টি লুকিয়ে রাখে।',
         ],
       },
     },

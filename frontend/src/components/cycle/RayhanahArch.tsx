@@ -27,6 +27,7 @@ export default function RayhanahArch({
     endCycle,
     nextStartLabel,
     daysUntilNext,
+    predictionPassed,
     pmsAlert,
     setStartDate,
     setStartType,
@@ -177,7 +178,13 @@ export default function RayhanahArch({
         </h2>
       </div>
       <p className="text-white/75 text-sm leading-relaxed max-w-md mx-auto">
-        {nextStartLabel ? (
+        {nextStartLabel && predictionPassed ? (
+          t(
+            'rayhanah.nextPeriodPassed',
+            'Your period was expected around {{date}}. Cycles vary, so log it when it starts.',
+            { date: nextStartLabel }
+          )
+        ) : nextStartLabel ? (
           <>
             {t(
               'rayhanah.nextPeriodPrediction',
@@ -217,7 +224,8 @@ export default function RayhanahArch({
       )}
       {summary?.prediction?.nextStart &&
         (summary?.prediction?.basedOnCycles ?? 0) > 0 &&
-        !pmsAlert && (
+        !pmsAlert &&
+        !predictionPassed && (
           <div className="rounded-control bg-brand-info/10 border border-brand-info/40 p-3 text-left text-xs leading-relaxed">
             <p className="font-bold text-brand-info flex items-center gap-1.5">
               <LeafIcon className="w-4 h-4 shrink-0" />

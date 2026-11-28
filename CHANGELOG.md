@@ -33,6 +33,17 @@ Every Quran, hadith, scholarly and data reference in the web app was audited, an
 
 - Page or item numbers that could not be checked against a printed edition: Ibn al-Mundhir, al-Ijmāʿ 52–53; al-Mustadrak 2/399 (sources give 2/399 or 2/368); Ibn al-Qayyim, Zād al-Maʿād (no page cited).
 - Fiqh positions stated without a book citation: qaṣr distance, the stay that ends travel, the longest menses, nifās (Shāfiʿī 60 days), the ʿAṣr shadow; and the Mālikī / Ibn Taymiyyah view on reciting Quran during menses.
+## v5.190.86 - Rayhanah: an expected period that has passed - 2026-11-28
+
+Part 3 of the 2026-11-28 work.
+
+### Fixed
+
+- **Rayhanah no longer shows a past date as "expected".** The prediction is the last start plus the average cycle length, and once that day had gone by the card still said "your next period is expected around" it, with a fertile window that had also passed (seen on 2026-11-27: "expected around Nov 8").
+  - Now, while no period is logged, it says "Your period was expected around {date}. Cycles vary, so log it when it starts." and hides the past fertile window.
+  - The PMS countdown already stopped after the date.
+  - No medical or pregnancy wording, as agreed. English and Bangla.
+  - New server render `quiet-expected-period-has-passed`; the other Rayhanah renders are unchanged. Cycle Analytics already drops windows that are well past.
 
 ## v5.190.85 - Eid and Laylat al-Qadr guidance for sisters - 2026-11-28
 
