@@ -1,0 +1,4449 @@
+{
+  "about": "Bustandeen reference map: every Quran, hadith, scholarly, fiqh and data source the app cites, what it is used for, where, and how it was checked. Desk checks are not a scholar’s review; see manual for checks by a person at the source or a scholar.",
+  "deskCheck": {
+    "date": "2026-11-28",
+    "method": "Every hadith number was opened in the hadith-api dataset (sunnah.com English text and grades) or, where it has none, on sunnah.com and the grading literature; every Quran citation was compared with quran.com (Sahih International) and the bundled Tanzil text."
+  },
+  "pages": {
+    "home": {
+      "label": "Home",
+      "labelBn": "হোম",
+      "path": "/"
+    },
+    "landing": {
+      "label": "Landing page",
+      "labelBn": "ল্যান্ডিং পেজ",
+      "path": "/"
+    },
+    "salat": {
+      "label": "Salat tracker",
+      "labelBn": "সালাত ট্র্যাকার",
+      "path": "/salat"
+    },
+    "salatAnalytics": {
+      "label": "Salat analytics",
+      "labelBn": "সালাত বিশ্লেষণ",
+      "path": "/salat/analytics"
+    },
+    "prayerTimes": {
+      "label": "Prayer times",
+      "labelBn": "নামাযের সময়",
+      "path": "/prayer-times"
+    },
+    "musafir": {
+      "label": "Musafir (travel)",
+      "labelBn": "মুসাফির (সফর)",
+      "path": "/musafir"
+    },
+    "fasting": {
+      "label": "Fasting",
+      "labelBn": "রোজা",
+      "path": "/fasting"
+    },
+    "ramadan": {
+      "label": "Ramadan",
+      "labelBn": "রমজান",
+      "path": "/ramadan"
+    },
+    "ramadanAnalytics": {
+      "label": "Ramadan analytics",
+      "labelBn": "রমজান বিশ্লেষণ",
+      "path": "/ramadan/analytics"
+    },
+    "ramadanCalendar": {
+      "label": "Ramadan calendars (public)",
+      "labelBn": "রমজান ক্যালেন্ডার (পাবলিক)",
+      "path": "/ramadan-calendar"
+    },
+    "prayerTimesPublic": {
+      "label": "Prayer time pages (public)",
+      "labelBn": "নামাযের সময়ের পেজ (পাবলিক)",
+      "path": "/prayer-times/bangladesh"
+    },
+    "zikr": {
+      "label": "Zikr counter",
+      "labelBn": "যিকির কাউন্টার",
+      "path": "/zikr"
+    },
+    "zikrAnalytics": {
+      "label": "Zikr analytics",
+      "labelBn": "যিকির বিশ্লেষণ",
+      "path": "/zikr/analytics"
+    },
+    "quran": {
+      "label": "Quran habit",
+      "labelBn": "কুরআন অভ্যাস",
+      "path": "/quran"
+    },
+    "quranKhatam": {
+      "label": "Quran khatam",
+      "labelBn": "কুরআন খতম",
+      "path": "/quran/khatam"
+    },
+    "quranListen": {
+      "label": "Quran listen",
+      "labelBn": "কুরআন শোনা",
+      "path": "/quran/listen"
+    },
+    "quranReader": {
+      "label": "Quran reader",
+      "labelBn": "কুরআন রিডার",
+      "path": "/quran/read"
+    },
+    "rayhanah": {
+      "label": "Rayhanah",
+      "labelBn": "রায়হানাহ",
+      "path": "/cycle"
+    },
+    "cycleAnalytics": {
+      "label": "Rayhanah analytics",
+      "labelBn": "রায়হানাহ বিশ্লেষণ",
+      "path": "/cycle/analytics"
+    },
+    "friends": {
+      "label": "Friends & Noor",
+      "labelBn": "বন্ধু ও নূর",
+      "path": "/friends"
+    },
+    "calendar": {
+      "label": "Islamic calendar & special days",
+      "labelBn": "ইসলামিক ক্যালেন্ডার ও বিশেষ দিন",
+      "path": "/library/calendar"
+    },
+    "duas": {
+      "label": "Duʿā library",
+      "labelBn": "দুআ লাইব্রেরি",
+      "path": "/library/duas"
+    },
+    "adhkar": {
+      "label": "Morning & evening adhkar",
+      "labelBn": "সকাল-সন্ধ্যার যিকির",
+      "path": "/library/adhkar"
+    },
+    "asma": {
+      "label": "Asmāʾ al-Ḥusnā",
+      "labelBn": "আসমাউল হুসনা",
+      "path": "/library/asma-ul-husna"
+    },
+    "sadaqah": {
+      "label": "Sadaqah",
+      "labelBn": "সদকা",
+      "path": "/sadaqah"
+    },
+    "naseeh": {
+      "label": "Naseeh (weekly muḥāsabah)",
+      "labelBn": "নাসীহ (সাপ্তাহিক মুহাসাবা)",
+      "path": "/naseeh"
+    },
+    "about": {
+      "label": "About",
+      "labelBn": "আমাদের সম্পর্কে",
+      "path": "/about"
+    },
+    "bayan": {
+      "label": "Bayān help site (Credits, How we calculate)",
+      "labelBn": "বায়ান হেল্প সাইট (কৃতজ্ঞতা, হিসাব পদ্ধতি)"
+    },
+    "admin": {
+      "label": "Admin site",
+      "labelBn": "অ্যাডমিন সাইট"
+    },
+    "email": {
+      "label": "Welcome email",
+      "labelBn": "স্বাগত ইমেইল"
+    },
+    "code": {
+      "label": "Code notes only",
+      "labelBn": "শুধু কোডের নোট"
+    }
+  },
+  "references": [
+    {
+      "id": "quran:2:37",
+      "kind": "quran",
+      "citation": "Quran 2:37",
+      "url": "https://quran.com/2/37",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: Ādam received words from his Lord and was forgiven.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:2:148",
+      "kind": "quran",
+      "citation": "Quran 2:148",
+      "url": "https://quran.com/2/148",
+      "grade": "Quran",
+      "purpose": "Friends: race each other to good deeds.",
+      "desk": "verified",
+      "pages": [
+        "friends",
+        "home",
+        "landing"
+      ],
+      "files": [
+        "backend/src/controllers/connectPreview.controller.ts",
+        "frontend/src/components/friends/FriendsInviteSheet.tsx",
+        "frontend/src/components/landing/LandingBody.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/pages/Friends.tsx"
+      ]
+    },
+    {
+      "id": "quran:2:184",
+      "kind": "quran",
+      "citation": "Quran 2:184",
+      "url": "https://quran.com/2/184",
+      "grade": "Quran",
+      "purpose": "Fasting: missed Ramadan days are made up (qaḍāʾ).",
+      "desk": "verified",
+      "aliases": [
+        "quran:2:184-185"
+      ],
+      "pages": [
+        "code",
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/components/fasting/FastingLearn.tsx",
+        "frontend/src/components/fasting/FastingSettingsSheet.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/fastingRules.ts",
+        "frontend/src/utils/localeReference.ts"
+      ]
+    },
+    {
+      "id": "quran:2:185",
+      "kind": "quran",
+      "citation": "Quran 2:185",
+      "url": "https://quran.com/2/185",
+      "grade": "Quran",
+      "purpose": "Musafir & fasting: whoever is ill or travelling makes up the days; Allah wants ease.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/pages/FastingTracker.tsx",
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "quran:2:222",
+      "kind": "quran",
+      "citation": "Quran 2:222",
+      "url": "https://quran.com/2/222",
+      "grade": "Quran",
+      "purpose": "Rayhanah: the verse on menstruation.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx"
+      ]
+    },
+    {
+      "id": "quran:2:249-251",
+      "kind": "quran",
+      "citation": "Quran 2:249–251",
+      "url": "https://quran.com/2/249",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: Ṭālūt’s band, \"pour patience upon us\".",
+      "desk": "verified",
+      "aliases": [
+        "quran:2:250"
+      ],
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:2:255",
+      "kind": "quran",
+      "citation": "Quran 2:255",
+      "url": "https://quran.com/2/255",
+      "grade": "Quran",
+      "purpose": "Āyat al-Kursī (zikr counter, adhkar, after salat).",
+      "desk": "verified",
+      "pages": [
+        "adhkar",
+        "salat",
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/seo/content/adhkar.ts",
+        "frontend/src/utils/postSalatQuran.ts"
+      ]
+    },
+    {
+      "id": "quran:3:7-8",
+      "kind": "quran",
+      "citation": "Quran 3:7–8",
+      "url": "https://quran.com/3/7",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: \"let not our hearts deviate\".",
+      "desk": "verified",
+      "aliases": [
+        "quran:3:8"
+      ],
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:3:37-39",
+      "kind": "quran",
+      "citation": "Quran 3:37–39",
+      "url": "https://quran.com/3/37",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: Zakariyyā asks for pure offspring.",
+      "desk": "corrected",
+      "deskNote": "Context line said Yaḥyā was \"given\" while Zakariyyā stood in prayer; 3:39 says the angels gave the glad tidings then. Fixed (en + bn).",
+      "aliases": [
+        "quran:3:38"
+      ],
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:3:173",
+      "kind": "quran",
+      "citation": "Quran 3:173",
+      "url": "https://quran.com/3/173",
+      "grade": "Quran",
+      "purpose": "Zikr analytics: example source \"Quran 3:173\" in the custom zikr form.",
+      "desk": "verified",
+      "pages": [
+        "zikrAnalytics"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "quran:4:101",
+      "kind": "quran",
+      "citation": "Quran 4:101",
+      "url": "https://quran.com/4/101",
+      "grade": "Quran",
+      "purpose": "Musafir: no blame in shortening the prayer when travelling.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "quran:5:3",
+      "kind": "quran",
+      "citation": "Quran 5:3",
+      "url": "https://quran.com/5/3",
+      "grade": "Quran",
+      "purpose": "ʿArafah: \"Today I have perfected your religion\".",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "quran:5:6",
+      "kind": "quran",
+      "citation": "Quran 5:6",
+      "url": "https://quran.com/5/6",
+      "grade": "Quran",
+      "purpose": "Musafir: wuḍūʾ and tayammum.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "quran:5:89",
+      "kind": "quran",
+      "citation": "Quran 5:89",
+      "url": "https://quran.com/5/89",
+      "grade": "Quran",
+      "purpose": "Fasting: the expiation of a broken oath.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/components/fasting/FastingSettingsSheet.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "quran:7:23",
+      "kind": "quran",
+      "citation": "Quran 7:23",
+      "url": "https://quran.com/7/23",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: the duʿā of Ādam and Ḥawwāʾ.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:7:204",
+      "kind": "quran",
+      "citation": "Quran 7:204",
+      "url": "https://quran.com/7/204",
+      "grade": "Quran",
+      "purpose": "Quran listen: when the Quran is recited, listen.",
+      "desk": "verified",
+      "pages": [
+        "quranListen"
+      ],
+      "files": [
+        "frontend/src/pages/QuranListen.tsx"
+      ]
+    },
+    {
+      "id": "quran:9:36",
+      "kind": "quran",
+      "citation": "Quran 9:36",
+      "url": "https://quran.com/9/36",
+      "grade": "Quran",
+      "purpose": "Islamic new year: the four sacred months.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "quran:14:35-41",
+      "kind": "quran",
+      "citation": "Quran 14:35–41",
+      "url": "https://quran.com/14/35",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: Ibrāhīm, \"make me an establisher of prayer\".",
+      "desk": "verified",
+      "aliases": [
+        "quran:14:40"
+      ],
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:18:9-26",
+      "kind": "quran",
+      "citation": "Quran 18:9–26",
+      "url": "https://quran.com/18/9",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: the youths of the Cave.",
+      "desk": "verified",
+      "aliases": [
+        "quran:18:10"
+      ],
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:20:14",
+      "kind": "quran",
+      "citation": "Quran 20:14",
+      "url": "https://quran.com/20/14",
+      "grade": "Quran",
+      "purpose": "Kaza: \"establish prayer for My remembrance\".",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "quran:20:24-36",
+      "kind": "quran",
+      "citation": "Quran 20:24–36",
+      "url": "https://quran.com/20/24",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: Mūsā, \"expand my chest\".",
+      "desk": "verified",
+      "aliases": [
+        "quran:20:25"
+      ],
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:20:114",
+      "kind": "quran",
+      "citation": "Quran 20:114",
+      "url": "https://quran.com/20/114",
+      "grade": "Quran",
+      "purpose": "Duʿā library & Quran duʿās: \"My Lord, increase me in knowledge\" (also the custom zikr form example).",
+      "desk": "verified",
+      "pages": [
+        "duas",
+        "quran",
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/ZikrSuggestForm.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/seo/content/duas.ts",
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:23:97-98",
+      "kind": "quran",
+      "citation": "Quran 23:97–98",
+      "url": "https://quran.com/23/97",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: refuge from the whispers of devils.",
+      "desk": "verified",
+      "aliases": [
+        "quran:23:97"
+      ],
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:23:118",
+      "kind": "quran",
+      "citation": "Quran 23:118",
+      "url": "https://quran.com/23/118",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: \"forgive and have mercy\".",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:24:31",
+      "kind": "quran",
+      "citation": "Quran 24:31",
+      "url": "https://quran.com/24/31",
+      "grade": "Quran",
+      "purpose": "Jumuʿah for sisters: modest dress.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "quran:25:63-77",
+      "kind": "quran",
+      "citation": "Quran 25:63–77",
+      "url": "https://quran.com/25/63",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: ʿIbād ar-Raḥmān, spouses and children.",
+      "desk": "verified",
+      "aliases": [
+        "quran:25:74"
+      ],
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:28:22-28",
+      "kind": "quran",
+      "citation": "Quran 28:22–28",
+      "url": "https://quran.com/28/22",
+      "grade": "Quran",
+      "purpose": "Quran duʿās: Mūsā, \"I am in need of whatever good You send\".",
+      "desk": "verified",
+      "aliases": [
+        "quran:28:24"
+      ],
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:50:39",
+      "kind": "quran",
+      "citation": "Quran 50:39",
+      "url": "https://quran.com/50/39",
+      "grade": "Quran",
+      "purpose": "Home timeline: glorify your Lord before sunrise and before sunset (adhkar times).",
+      "desk": "verified",
+      "pages": [
+        "home"
+      ],
+      "files": [
+        "frontend/src/utils/todayTimeline.ts"
+      ]
+    },
+    {
+      "id": "quran:56",
+      "kind": "quran",
+      "citation": "Quran, Sūrah 56",
+      "url": "https://quran.com/56",
+      "grade": "Quran",
+      "purpose": "After salat: Sūrat al-Wāqiʿah (link to the sūrah).",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/postSalatQuran.ts"
+      ]
+    },
+    {
+      "id": "quran:62:9",
+      "kind": "quran",
+      "citation": "Quran 62:9",
+      "url": "https://quran.com/62/9",
+      "grade": "Quran",
+      "purpose": "Friday: hasten to the remembrance of Allah when the call is made.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "quran:64:16",
+      "kind": "quran",
+      "citation": "Quran 64:16",
+      "url": "https://quran.com/64/16",
+      "grade": "Quran",
+      "purpose": "Musafir: fear Allah as much as you can (praying on a moving vehicle).",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "quran:73:4",
+      "kind": "quran",
+      "citation": "Quran 73:4",
+      "url": "https://quran.com/73/4",
+      "grade": "Quran",
+      "purpose": "Quran khatam: recite with measured recitation (code note on an old mis-citation).",
+      "desk": "verified",
+      "pages": [
+        "quran",
+        "quranKhatam"
+      ],
+      "files": [
+        "frontend/src/pages/QuranKhatam.tsx",
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "quran:76:7",
+      "kind": "quran",
+      "citation": "Quran 76:7",
+      "url": "https://quran.com/76/7",
+      "grade": "Quran",
+      "purpose": "Fasting: they fulfil their vows.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "quran:89:1-2",
+      "kind": "quran",
+      "citation": "Quran 89:1–2",
+      "url": "https://quran.com/89/1",
+      "grade": "Quran",
+      "purpose": "Dhul Ḥijjah: \"by the dawn and the ten nights\".",
+      "desk": "verified",
+      "aliases": [
+        "quran:89:2",
+        "quran:89"
+      ],
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "quran:97:3",
+      "kind": "quran",
+      "citation": "Quran 97:3",
+      "url": "https://quran.com/97/3",
+      "grade": "Quran",
+      "purpose": "Ramadan: Laylat al-Qadr is better than a thousand months.",
+      "desk": "verified",
+      "aliases": [
+        "quran:97"
+      ],
+      "pages": [
+        "calendar",
+        "home",
+        "ramadan",
+        "sadaqah"
+      ],
+      "files": [
+        "frontend/src/components/ramadan/RamadanCountdown.tsx",
+        "frontend/src/components/ramadan/RamadanLastTen.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts",
+        "frontend/src/utils/sadaqahVirtueDays.ts"
+      ]
+    },
+    {
+      "id": "abudawud:311",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 311",
+      "url": "https://sunnah.com/abudawud:311",
+      "grade": "Ḥasan ṣaḥīḥ (al-Albānī)",
+      "purpose": "Rayhanah: nifās (post-natal bleeding) lasts up to 40 days.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "backend/src/models/CycleProfile.ts",
+        "backend/src/services/cycle.service.ts"
+      ]
+    },
+    {
+      "id": "abudawud:567",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 567",
+      "url": "https://sunnah.com/abudawud:567",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Jumuʿah for sisters: women may attend the mosque, and the home is better for their prayer.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "abudawud:1047",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1047",
+      "url": "https://sunnah.com/abudawud:1047",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Friday: send abundant ṣalawāt on the Prophet ﷺ.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "abudawud:1048",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1048",
+      "url": "https://sunnah.com/abudawud:1048",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Friday: the hour of response, sought in the last hour after ʿAṣr (the live Friday reminder).",
+      "desk": "verified",
+      "pages": [
+        "home",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/home/HomeSpecialBlock.tsx",
+        "frontend/src/components/salat/SalatLegend.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/pages/SalatTracker.tsx",
+        "frontend/src/utils/fridayHour.ts"
+      ]
+    },
+    {
+      "id": "abudawud:1052",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1052",
+      "url": "https://sunnah.com/abudawud:1052",
+      "grade": "Ḥasan ṣaḥīḥ (al-Albānī)",
+      "purpose": "Friday: leaving Jumuʿah three times out of slackness seals the heart.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "abudawud:1067",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1067",
+      "url": "https://sunnah.com/abudawud:1067",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Jumuʿah is obligatory on every Muslim except a slave, a woman, a child and the sick (Jumuʿah for sisters).",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home",
+        "salat",
+        "salatAnalytics"
+      ],
+      "files": [
+        "backend/src/services/salat.service.ts",
+        "frontend/src/components/salat/SalatAnalyticsSummary.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/pages/SalatTracker.tsx",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "abudawud:1220",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1220",
+      "url": "https://sunnah.com/abudawud:1220",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Musafir: joining Ẓuhr and ʿAṣr on a journey (code note behind the jamʿ buttons).",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/salat/useSalatPrayerHandlers.tsx"
+      ]
+    },
+    {
+      "id": "abudawud:1235",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1235",
+      "url": "https://sunnah.com/abudawud:1235",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Musafir: the Prophet ﷺ shortened for twenty days at Tabūk (no fixed stay = still a traveller).",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "abudawud:1501",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1501",
+      "url": "https://sunnah.com/abudawud:1501",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Zikr counter: counting tasbīḥ on the fingertips, for the fingers will be asked to speak.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/ZikrReferencePanel.tsx",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "abudawud:1502",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1502",
+      "url": "https://sunnah.com/abudawud:1502",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Zikr counter: the Prophet ﷺ counted tasbīḥ on his hand.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/ZikrReferencePanel.tsx",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "abudawud:1517",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1517",
+      "url": "https://sunnah.com/abudawud:1517",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Zikr library: the istighfār \"Astaghfirullāh alladhī lā ilāha illā huwa…\" forgives even one who fled battle.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "abudawud:1523",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 1523",
+      "url": "https://sunnah.com/abudawud:1523",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "After salat: recite the Muʿawwidhāt after every prayer (\"Read now\" under each prayer).",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/salat/SalatLegend.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/postSalatQuran.ts"
+      ]
+    },
+    {
+      "id": "abudawud:2449",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 2449",
+      "url": "https://sunnah.com/abudawud:2449",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Ayyām al-bīḍ: fasting the 13th, 14th and 15th.",
+      "desk": "corrected",
+      "deskNote": "The quote is now the hadith’s own wording (\"used to command us to fast the white days…\"); it was paraphrased as a direct command.",
+      "pages": [
+        "calendar",
+        "fasting",
+        "home",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/fastingRules.ts",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "abudawud:2600",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 2600",
+      "url": "https://sunnah.com/abudawud:2600",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Musafir duʿā: bidding farewell, \"Astawdiʿullāha dīnaka…\".",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "abudawud:3767",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 3767",
+      "url": "https://sunnah.com/abudawud:3767",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Duʿā library: saying Bismillāh before eating (and if you forget, at its end).",
+      "desk": "corrected",
+      "deskNote": "Grade raised from Ḥasan to Ṣaḥīḥ (al-Albānī).",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "abudawud:4023",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 4023",
+      "url": "https://sunnah.com/abudawud:4023",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Duʿā library: the duʿā after eating, \"al-ḥamdu lillāhil-ladhī aṭʿamanī…\".",
+      "desk": "verified",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "abudawud:5072",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 5072",
+      "url": "https://sunnah.com/abudawud:5072",
+      "grade": "Ḍaʿīf (al-Albānī)",
+      "purpose": "Removed earlier (2026-10-10): \"Raḍītu billāhi Rabba\" cited this number, which is ḍaʿīf. Only a code note remains.",
+      "desk": "weak",
+      "pages": [
+        "adhkar"
+      ],
+      "files": [
+        "frontend/src/seo/content/adhkar.ts"
+      ]
+    },
+    {
+      "id": "abudawud:5088",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 5088",
+      "url": "https://sunnah.com/abudawud:5088",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Adhkar & Rayhanah: \"Bismillāhil-ladhī lā yaḍurru…\" three times morning and evening.",
+      "desk": "verified",
+      "pages": [
+        "adhkar",
+        "rayhanah"
+      ],
+      "files": [
+        "frontend/src/components/cycle/rayhanahShared.ts",
+        "frontend/src/seo/content/adhkar.ts"
+      ]
+    },
+    {
+      "id": "abudawud:5095",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 5095",
+      "url": "https://sunnah.com/abudawud:5095",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Leaving the home: \"Bismillāh, tawakkaltu ʿalallāh…\" (Duʿā library, Musafir).",
+      "desk": "verified",
+      "pages": [
+        "duas",
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts",
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "abudawud:5096",
+      "kind": "hadith",
+      "citation": "Sunan Abī Dāwūd 5096",
+      "url": "https://sunnah.com/abudawud:5096",
+      "grade": "Ḍaʿīf (al-Albānī)",
+      "purpose": "Duʿā library: the entering-the-home duʿā \"Bismillāhi walajnā…\".",
+      "desk": "corrected",
+      "deskNote": "Was labelled Ṣaḥīḥ; al-Albānī grades it ḍaʿīf. The page now shows the weak grade and points to Ṣaḥīḥ Muslim 2018 for saying Bismillāh on entering.",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "bayhaqi-shuab:2269",
+      "kind": "hadith",
+      "citation": "al-Bayhaqī, Shuʿab al-Īmān 2269",
+      "url": "https://islamweb.net/en/fatwa/348835/",
+      "grade": "Ḍaʿīf",
+      "purpose": "Sūrat al-Wāqiʿah and poverty: shown only as weak, with the Ḍaʿīf explainer.",
+      "desk": "weak",
+      "pages": [
+        "calendar",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx",
+        "frontend/src/utils/postSalatQuran.ts"
+      ]
+    },
+    {
+      "id": "bukhari:37",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 37",
+      "url": "https://sunnah.com/bukhari:37",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Nafl list: Tarāwīḥ, \"whoever prays in Ramadan with faith… his past sins are forgiven\".",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/hooks/useSalatLog.ts"
+      ]
+    },
+    {
+      "id": "bukhari:248",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 248",
+      "url": "https://sunnah.com/bukhari:248",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Rayhanah: how to perform ghusl, ʿĀʾishah’s description.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "frontend/src/components/cycle/RayhanahDialogs.tsx",
+        "frontend/src/components/cycle/rayhanahShared.ts"
+      ]
+    },
+    {
+      "id": "bukhari:305",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 305",
+      "url": "https://sunnah.com/bukhari:305",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Rayhanah: during menses everything a pilgrim does except ṭawāf; fasting is made up later.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "backend/src/services/cycle.service.ts",
+        "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:306",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 306",
+      "url": "https://sunnah.com/bukhari:306",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Rayhanah: istiḥāḍah (\"that is a vein, not menstruation\"): prayer resumes.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "backend/src/services/cycle.service.ts",
+        "frontend/src/components/cycle/RayhanahArch.tsx",
+        "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:324",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 324",
+      "url": "https://sunnah.com/bukhari:324",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Eid for sisters: women, including those on their period, come out to the Eid gathering; the menstruating keep away from the prayer place.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:350",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 350",
+      "url": "https://sunnah.com/bukhari:350",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: prayer was first two rakʿahs; the travel prayer stayed that way.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:581",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 581",
+      "url": "https://sunnah.com/bukhari:581",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Prayer times sources: no prayer after Fajr until sunrise and after ʿAṣr until sunset.",
+      "desk": "verified",
+      "pages": [
+        "prayerTimes"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/PrayerSources.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:585",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 585",
+      "url": "https://sunnah.com/bukhari:585",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Prayer times sources: do not pray at sunrise or sunset.",
+      "desk": "corrected",
+      "deskNote": "A quote attributed this number to the zenith as well; Bukhārī 585 only mentions sunrise and sunset. The zenith now cites Muslim 831 only.",
+      "pages": [
+        "prayerTimes"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/PrayerSources.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:586",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 586",
+      "url": "https://sunnah.com/bukhari:586",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Forbidden times: no prayer after the morning prayer till the sun rises, and after ʿAṣr till it sets.",
+      "desk": "corrected",
+      "deskNote": "The sunrise quote cited 581; its wording is 586, so it now cites 586.",
+      "pages": [
+        "prayerTimes"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/timeline.ts",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "bukhari:597",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 597",
+      "url": "https://sunnah.com/bukhari:597",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Kaza: whoever forgets a prayer prays it when he remembers.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:627",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 627",
+      "url": "https://sunnah.com/bukhari:627",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sunnah guide: \"between every two adhāns there is a prayer, for whoever wishes\" (before Jumuʿah, before Maghrib).",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/sunnahGuide.ts"
+      ]
+    },
+    {
+      "id": "bukhari:645",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 645",
+      "url": "https://sunnah.com/bukhari:645",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Salat tracker: prayer in congregation is 27 times superior.",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/salat/useSalatPrayerHandlers.tsx",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "bukhari:879",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 879",
+      "url": "https://sunnah.com/bukhari:879",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Friday: ghusl on Friday for every adult male.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:881",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 881",
+      "url": "https://sunnah.com/bukhari:881",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Friday: going to Jumuʿah in the first hour is like sacrificing a camel.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:900",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 900",
+      "url": "https://sunnah.com/bukhari:900",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Jumuʿah for sisters: do not stop Allah's women-slaves from going to the mosques.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:934",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 934",
+      "url": "https://sunnah.com/bukhari:934",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Friday: even telling someone to be quiet during the khuṭbah is wrong.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:937",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 937",
+      "url": "https://sunnah.com/bukhari:937",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sunnah guide: two rakʿahs after Jumuʿah at home (code note).",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/sunnahGuide.ts"
+      ]
+    },
+    {
+      "id": "bukhari:953",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 953",
+      "url": "https://sunnah.com/bukhari:953",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Eid al-Fiṭr: eat an odd number of dates before going out.",
+      "desk": "corrected",
+      "deskNote": "The quote now follows the hadith’s wording (two narrations of Anas in one entry).",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:956",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 956",
+      "url": "https://sunnah.com/bukhari:956",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Eid al-Aḍḥā: the Eid prayer comes before the khuṭbah.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:963",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 963",
+      "url": "https://sunnah.com/bukhari:963",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Eid: the Prophet ﷺ, Abū Bakr and ʿUmar prayed before the khuṭbah.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:971",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 971",
+      "url": "https://sunnah.com/bukhari:971",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Rayhanah and Eid for sisters: women, menstruating women included, attended the Eid gathering, its takbīr and duʿā.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home",
+        "rayhanah"
+      ],
+      "files": [
+        "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:974",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 974",
+      "url": "https://sunnah.com/bukhari:974",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Eid for sisters: all women were told to come out on Eid; menstruating women keep away from the musallā.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:998",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 998",
+      "url": "https://sunnah.com/bukhari:998",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Witr: make Witr the last of your night prayers.",
+      "desk": "verified",
+      "pages": [
+        "code",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/salat/SalatCardGuidance.tsx",
+        "frontend/src/hooks/useSalatLog.ts",
+        "frontend/src/utils/localeReference.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1000",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1000",
+      "url": "https://sunnah.com/bukhari:1000",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: voluntary prayer on a moving mount, not the obligatory.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1032",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1032",
+      "url": "https://sunnah.com/bukhari:1032",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Duʿā library: rain, \"Allāhumma ṣayyiban nāfiʿā\".",
+      "desk": "verified",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1080",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1080",
+      "url": "https://sunnah.com/bukhari:1080",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: the Prophet ﷺ stayed nineteen days, shortening the prayer.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1081",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1081",
+      "url": "https://sunnah.com/bukhari:1081",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: ten days in Makkah, praying two rakʿahs until returning.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1089",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1089",
+      "url": "https://sunnah.com/bukhari:1089",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: Ẓuhr four in Madinah, ʿAṣr two at Dhul-Ḥulayfah (when shortening starts).",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1099",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1099",
+      "url": "https://sunnah.com/bukhari:1099",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: dismount and face the qiblah for the obligatory prayer.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1111",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1111",
+      "url": "https://sunnah.com/bukhari:1111",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: delaying Ẓuhr to ʿAṣr and joining them on a journey.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/salat/SalatCardJoining.tsx",
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1129",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1129",
+      "url": "https://sunnah.com/bukhari:1129",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Ramadan: Tarāwīḥ sits under ʿIshāʾ (\"he prayed, and people gathered\"; code note).",
+      "desk": "corrected",
+      "deskNote": "The code note cited 2010 (ʿUmar gathering the people); the Prophet’s ﷺ own praying with the people is 1129.",
+      "pages": [
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/components/RamadanSalatCard.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:1145",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1145",
+      "url": "https://sunnah.com/bukhari:1145",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Tahajjud: Allah descends in the last third of every night.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "prayerTimes",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx",
+        "frontend/src/components/prayerTimes/PrayerSources.tsx",
+        "frontend/src/components/prayerTimes/timeline.ts",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "bukhari:1149",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1149",
+      "url": "https://sunnah.com/bukhari:1149",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Nafl list: two rakʿahs after wuḍūʾ (Bilāl’s footsteps in Paradise).",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/hooks/useSalatLog.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1166",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1166",
+      "url": "https://sunnah.com/bukhari:1166",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Nafl list: Ṣalāt al-Istikhārah, taught like a sūrah of the Quran.",
+      "desk": "corrected",
+      "deskNote": "Was cited as 1162 (talking after the Fajr sunnah). The Istikhārah hadith is 1166.",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/hooks/useSalatLog.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1183",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1183",
+      "url": "https://sunnah.com/bukhari:1183",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sunnah guide: \"pray before Maghrib… for whoever wishes\".",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/sunnahGuide.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1503",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1503",
+      "url": "https://sunnah.com/bukhari:1503",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Ramadan sheets: give zakāt al-fiṭr before the Eid prayer.",
+      "desk": "verified",
+      "pages": [
+        "ramadanCalendar"
+      ],
+      "files": [
+        "frontend/src/seo/locales/ramadanSheet.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1804",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1804",
+      "url": "https://sunnah.com/bukhari:1804",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: travel is a piece of torment, so hurry back home.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1899",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1899",
+      "url": "https://sunnah.com/bukhari:1899",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Ramadan: the gates of Paradise open, the gates of Hell close (the month’s authentic virtue).",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx",
+        "frontend/src/components/ramadan/RamadanCountdown.tsx",
+        "frontend/src/components/ramadan/RamadanWorshipStrip.tsx",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "bukhari:1901",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1901",
+      "url": "https://sunnah.com/bukhari:1901",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Ramadan: Laylat al-Qadr and the fast of Ramadan with faith forgive past sins.",
+      "desk": "verified",
+      "pages": [
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/components/ramadan/RamadanCountdown.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:1902",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1902",
+      "url": "https://sunnah.com/bukhari:1902",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sadaqah: the Prophet ﷺ was most generous in Ramadan.",
+      "desk": "verified",
+      "pages": [
+        "sadaqah"
+      ],
+      "files": [
+        "frontend/src/utils/sadaqahVirtueDays.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1909",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1909",
+      "url": "https://sunnah.com/bukhari:1909",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Ramadan sheets: Ramadan is 29 or 30 days; complete 30 if the moon is not seen.",
+      "desk": "verified",
+      "pages": [
+        "ramadanCalendar"
+      ],
+      "files": [
+        "frontend/src/seo/locales/ramadanSheet.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1923",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1923",
+      "url": "https://sunnah.com/bukhari:1923",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting & Ramadan: take suḥūr, there is blessing in it.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/components/ramadan/RamadanDayArch.tsx",
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1936",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1936",
+      "url": "https://sunnah.com/bukhari:1936",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting: kaffārah for breaking a fast by intercourse (two consecutive months).",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "backend/src/services/fasting.service.ts",
+        "frontend/src/components/fasting/FastingSettingsSheet.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1943",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1943",
+      "url": "https://sunnah.com/bukhari:1943",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: fast on a journey if you wish, or break it.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/MusafirBanner.tsx",
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1946",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1946",
+      "url": "https://sunnah.com/bukhari:1946",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: \"it is not righteousness to fast on a journey\" (when it is hard).",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1957",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1957",
+      "url": "https://sunnah.com/bukhari:1957",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting & Ramadan: people remain upon good as long as they hasten ifṭār.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/components/ramadan/RamadanDayArch.tsx",
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1965",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1965",
+      "url": "https://sunnah.com/bukhari:1965",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting: al-wiṣāl (joining fasts without ifṭār) is forbidden.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1969",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1969",
+      "url": "https://sunnah.com/bukhari:1969",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting & Ramadan: the Prophet ﷺ fasted most in Shaʿbān after Ramadan.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/components/ramadan/RamadanCountdown.tsx",
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1979",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1979",
+      "url": "https://sunnah.com/bukhari:1979",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Ayyām al-bīḍ: three days a month equal fasting the whole year.",
+      "desk": "corrected",
+      "deskNote": "The quote now follows the hadith’s wording.",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1981",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1981",
+      "url": "https://sunnah.com/bukhari:1981",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Prayer times: Ḍuḥā and Witr before sleeping (Abū Hurayrah’s advice).",
+      "desk": "verified",
+      "pages": [
+        "prayerTimes"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/timeline.ts",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "bukhari:1985",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1985",
+      "url": "https://sunnah.com/bukhari:1985",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting: do not single out Friday for fasting.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "bukhari:1991",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 1991",
+      "url": "https://sunnah.com/bukhari:1991",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting & calendar: fasting on the two Eids is forbidden.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/utils/fastingRules.ts",
+        "frontend/src/utils/specialDayRules.ts"
+      ]
+    },
+    {
+      "id": "bukhari:2017",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 2017",
+      "url": "https://sunnah.com/bukhari:2017",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Ramadan: seek Laylat al-Qadr in the odd nights of the last ten.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home",
+        "ramadan",
+        "ramadanAnalytics",
+        "ramadanCalendar",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx",
+        "frontend/src/components/ramadan/RamadanLastTen.tsx",
+        "frontend/src/components/ramadan/ramadanShared.ts",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/pages/RamadanAnalytics.tsx",
+        "frontend/src/seo/locales/ramadanSheet.ts",
+        "frontend/src/utils/islamicCalendar.ts",
+        "frontend/src/utils/ramadan.ts"
+      ]
+    },
+    {
+      "id": "bukhari:2311",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 2311",
+      "url": "https://sunnah.com/bukhari:2311",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Quran: Āyat al-Kursī before sleep (Abū Hurayrah and the thief).",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "bukhari:2736",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 2736",
+      "url": "https://sunnah.com/bukhari:2736",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr library: Allah has ninety-nine names.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "bukhari:2840",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 2840",
+      "url": "https://sunnah.com/bukhari:2840",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting: one day’s fast for Allah keeps the face from the Fire seventy years.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "bukhari:2993",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 2993",
+      "url": "https://sunnah.com/bukhari:2993",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: takbīr going up, tasbīḥ coming down.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:2996",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 2996",
+      "url": "https://sunnah.com/bukhari:2996",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: the traveller is still written the deeds he did at home.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:3088",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 3088",
+      "url": "https://sunnah.com/bukhari:3088",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: on return, pray two rakʿahs in the mosque first.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "bukhari:3282",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 3282",
+      "url": "https://sunnah.com/bukhari:3282",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Duʿā library: seeking refuge from Shayṭān when angry.",
+      "desk": "verified",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "bukhari:3293",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 3293",
+      "url": "https://sunnah.com/bukhari:3293",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr library: the tahlīl 100 times a day (ten slaves freed, protection from Shayṭān).",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "bukhari:3370",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 3370",
+      "url": "https://sunnah.com/bukhari:3370",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr library & Rayhanah: Durūd Ibrāhīm, the full ṣalawāt.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah",
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/cycle/rayhanahShared.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "bukhari:4205",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 4205",
+      "url": "https://sunnah.com/bukhari:4205",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr: \"Lā ḥawla wa lā quwwata illā billāh\" is a treasure of Paradise.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "bukhari:4563",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 4563",
+      "url": "https://sunnah.com/bukhari:4563",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr library: \"Ḥasbunallāhu wa niʿmal-wakīl\", said by Ibrāhīm and by the Prophet ﷺ.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "bukhari:5009",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 5009",
+      "url": "https://sunnah.com/bukhari:5009",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Quran: the last two verses of al-Baqarah at night suffice.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "bukhari:5027",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 5027",
+      "url": "https://sunnah.com/bukhari:5027",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Quran habit: the best of you learn the Quran and teach it.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/pages/QuranHabit.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:5049",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 5049",
+      "url": "https://sunnah.com/bukhari:5049",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Quran listen: earlier mis-citation, kept in a code note (the page now cites Quran 7:204).",
+      "desk": "verified",
+      "pages": [
+        "quranListen"
+      ],
+      "files": [
+        "frontend/src/pages/QuranListen.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:5641",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 5641",
+      "url": "https://sunnah.com/bukhari:5641",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Rayhanah: no fatigue or pain touches a Muslim but sins are wiped away.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "frontend/src/components/cycle/RayhanahTodayNote.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:6306",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6306",
+      "url": "https://sunnah.com/bukhari:6306",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sayyid al-istighfār, morning and evening (Zikr library, adhkar, Duʿā library, Rayhanah).",
+      "desk": "verified",
+      "pages": [
+        "adhkar",
+        "admin",
+        "duas",
+        "rayhanah",
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/cycle/rayhanahShared.ts",
+        "frontend/src/pages/AdminZikrRequests.tsx",
+        "frontend/src/seo/content/adhkar.ts",
+        "frontend/src/seo/content/duas.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6307",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6307",
+      "url": "https://sunnah.com/bukhari:6307",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr: the Prophet ﷺ sought forgiveness more than seventy times a day.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6324",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6324",
+      "url": "https://sunnah.com/bukhari:6324",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Duʿā library: before sleeping and on waking.",
+      "desk": "verified",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6346",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6346",
+      "url": "https://sunnah.com/bukhari:6346",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Duʿā library: the duʿā of distress.",
+      "desk": "verified",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6369",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6369",
+      "url": "https://sunnah.com/bukhari:6369",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Duʿā library: refuge from worry, grief and debt.",
+      "desk": "verified",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6389",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6389",
+      "url": "https://sunnah.com/bukhari:6389",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Quran duʿās: \"Rabbanā ātinā…\", the duʿā he made most often.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6405",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6405",
+      "url": "https://sunnah.com/bukhari:6405",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr: \"SubḥānAllāhi wa biḥamdih\" 100 times, sins wiped away.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6406",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6406",
+      "url": "https://sunnah.com/bukhari:6406",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Rayhanah adhkar: two words light on the tongue, heavy on the scale.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "frontend/src/components/cycle/rayhanahShared.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6464",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6464",
+      "url": "https://sunnah.com/bukhari:6464",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "About & Friends (Noor): the most beloved deeds are the most consistent, even if small.",
+      "desk": "verified",
+      "pages": [
+        "about",
+        "friends"
+      ],
+      "files": [
+        "frontend/src/components/friends/FriendsCircleSection.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/pages/About.tsx"
+      ]
+    },
+    {
+      "id": "bukhari:6465",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6465",
+      "url": "https://sunnah.com/bukhari:6465",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Welcome email: the most beloved deeds are the most regular.",
+      "desk": "verified",
+      "pages": [
+        "email"
+      ],
+      "files": [
+        "backend/src/services/welcomeEmail.templates.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6682",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6682",
+      "url": "https://sunnah.com/bukhari:6682",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr: two words light on the tongue, heavy on the scale.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "bukhari:6696",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 6696",
+      "url": "https://sunnah.com/bukhari:6696",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting: a vow (nadhr) of obedience must be kept.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/components/fasting/FastingSettingsSheet.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "bukhari:7392",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ al-Bukhārī 7392",
+      "url": "https://sunnah.com/bukhari:7392",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Asmāʾ al-Ḥusnā: Allah has 99 names; whoever memorises them enters Paradise.",
+      "desk": "verified",
+      "pages": [
+        "asma"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/seo/content/asmaUlHusna.ts",
+        "frontend/src/seo/locales/chrome.ts"
+      ]
+    },
+    {
+      "id": "hisn:77",
+      "kind": "hadith",
+      "citation": "Ḥiṣn al-Muslim 77",
+      "url": "https://sunnah.com/hisn:77",
+      "grade": "Ṣaḥīḥ (Muslim 2723)",
+      "purpose": "Adhkar: morning wording of \"Aṣbaḥnā wa aṣbaḥal-mulku lillāh\" (from Muslim 2723).",
+      "desk": "corrected",
+      "deskNote": "The card said \"Ṣaḥīḥ Muslim 2723\" but linked to Ḥiṣn al-Muslim 77; it now names both.",
+      "pages": [
+        "adhkar"
+      ],
+      "files": [
+        "frontend/src/seo/content/adhkar.ts"
+      ]
+    },
+    {
+      "id": "hisn:98",
+      "kind": "hadith",
+      "citation": "Ḥiṣn al-Muslim 98",
+      "url": "https://sunnah.com/hisn:98",
+      "grade": "As listed in Ḥiṣn al-Muslim",
+      "purpose": "Zikr library: the short ṣalawāt \"Allāhumma ṣalli wa sallim ʿalā Nabiyyinā Muḥammad\".",
+      "desk": "unverified",
+      "deskNote": "The page exists on sunnah.com (morning and evening, ten times). The underlying grade was not checked.",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "ibnkhuzaymah:1887",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Ibn Khuzaymah 1887",
+      "url": "https://islamqa.info/en/answers/21364",
+      "grade": "Ḍaʿīf",
+      "purpose": "Ramadan: the Salmān al-Fārisī sermon (three ʿashras, nafl = farḍ). Shown only as weak, with the Ḍaʿīf explainer.",
+      "desk": "weak",
+      "pages": [
+        "calendar",
+        "ramadan",
+        "ramadanAnalytics",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx",
+        "frontend/src/components/ramadan/RamadanMonthGrid.tsx",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "ibnmajah:1167",
+      "kind": "hadith",
+      "citation": "Sunan Ibn Mājah 1167",
+      "url": "https://sunnah.com/ibnmajah:1167",
+      "grade": "Very weak (ḍaʿīf jiddan) (al-Albānī)",
+      "purpose": "Awwābīn: six rakʿahs after Maghrib equal twelve years of worship.",
+      "desk": "corrected",
+      "deskNote": "Very weak (al-Albānī, Darussalam). Shown before without a grade; it now says \"very weak\" everywhere it appears.",
+      "pages": [
+        "prayerTimes",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/PrayerSources.tsx",
+        "frontend/src/components/prayerTimes/timeline.ts",
+        "frontend/src/hooks/useSalatLog.ts",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "ibnmajah:1384",
+      "kind": "hadith",
+      "citation": "Sunan Ibn Mājah 1384",
+      "url": "https://sunnah.com/ibnmajah:1384",
+      "grade": "Very weak (ḍaʿīf jiddan) (al-Albānī)",
+      "purpose": "Nafl list: Ṣalāt al-Ḥājah.",
+      "desk": "corrected",
+      "deskNote": "Very weak (al-Albānī). It now carries that label.",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/hooks/useSalatLog.ts"
+      ]
+    },
+    {
+      "id": "ibnmajah:1390",
+      "kind": "hadith",
+      "citation": "Sunan Ibn Mājah 1390",
+      "url": "https://sunnah.com/ibnmajah:1390",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Shaʿbān 15: Allah forgives all except a mushrik or one who holds enmity.",
+      "desk": "weak",
+      "deskNote": "Ḥasan per al-Albānī, ḍaʿīf per Darussalam; both are shown, with the Ḍaʿīf explainer.",
+      "pages": [
+        "calendar",
+        "home",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "ibnmajah:1753",
+      "kind": "hadith",
+      "citation": "Sunan Ibn Mājah 1753",
+      "url": "https://sunnah.com/ibnmajah:1753",
+      "grade": "Ḍaʿīf (al-Albānī)",
+      "purpose": "Iftar: the fasting person’s duʿā at ifṭār is not rejected.",
+      "desk": "weak",
+      "deskNote": "Ḍaʿīf per al-Albānī, ḥasan per Darussalam; both are shown, with the Ḍaʿīf explainer.",
+      "pages": [
+        "calendar",
+        "home",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "ibnmajah:3850",
+      "kind": "hadith",
+      "citation": "Sunan Ibn Mājah 3850",
+      "url": "https://sunnah.com/ibnmajah:3850",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Ramadan calendars: the Laylat al-Qadr duʿā (with Tirmidhī 3513).",
+      "desk": "verified",
+      "pages": [
+        "ramadanCalendar"
+      ],
+      "files": [
+        "frontend/src/seo/content/ramadanDuas.ts"
+      ]
+    },
+    {
+      "id": "muslim:223",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 223",
+      "url": "https://sunnah.com/muslim:223",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr: al-ḥamdu lillāh fills the scale.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "muslim:276",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 276",
+      "url": "https://sunnah.com/muslim:276",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: wiping over socks, three days for the traveller.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "muslim:335",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 335",
+      "url": "https://sunnah.com/muslim:335",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Rayhanah: prayers missed in menses are not made up; fasts are.",
+      "desk": "verified",
+      "pages": [
+        "cycleAnalytics",
+        "fasting",
+        "ramadan",
+        "ramadanAnalytics",
+        "rayhanah",
+        "salat"
+      ],
+      "files": [
+        "backend/src/services/cycle.service.ts",
+        "frontend/src/components/ExcusedCard.tsx",
+        "frontend/src/components/cycle/CycleAnalyticsPatterns.tsx",
+        "frontend/src/components/cycle/RayhanahDialogs.tsx",
+        "frontend/src/components/cycle/RayhanahFastingMakeup.tsx",
+        "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx",
+        "frontend/src/components/ramadan/RamadanMonthGrid.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/pages/RamadanAnalytics.tsx"
+      ]
+    },
+    {
+      "id": "muslim:373",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 373",
+      "url": "https://sunnah.com/muslim:373",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Rayhanah: the Prophet ﷺ remembered Allah at all times (dhikr stays open).",
+      "desk": "verified",
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "backend/src/services/cycle.service.ts",
+        "frontend/src/components/cycle/RayhanahAdhkar.tsx",
+        "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx",
+        "frontend/src/components/cycle/RayhanahGarden.tsx"
+      ]
+    },
+    {
+      "id": "muslim:408",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 408",
+      "url": "https://sunnah.com/muslim:408",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr library: one ṣalawāt brings ten from Allah.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "muslim:443",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 443",
+      "url": "https://sunnah.com/muslim:443",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Jumuʿah for sisters: no perfume when going to the mosque.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "muslim:596",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 596",
+      "url": "https://sunnah.com/muslim:596",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Salat: 33·33·34 tasbīḥ after prayer.",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/salat/SalatLegend.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/salatPrefs.ts"
+      ]
+    },
+    {
+      "id": "muslim:597",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 597",
+      "url": "https://sunnah.com/muslim:597",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Salat & zikr: 33·33·33 plus the tahlīl after prayer.",
+      "desk": "verified",
+      "pages": [
+        "salat",
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/salat/SalatLegend.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/salatPrefs.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "muslim:612",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 612",
+      "url": "https://sunnah.com/muslim:612",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Prayer times & home: ʿIshāʾ’s time lasts until the middle of the night.",
+      "desk": "verified",
+      "pages": [
+        "home",
+        "prayerTimes"
+      ],
+      "files": [
+        "frontend/src/components/home/HomePrayerHero.tsx",
+        "frontend/src/utils/prayerTimes.ts"
+      ]
+    },
+    {
+      "id": "muslim:681",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 681",
+      "url": "https://sunnah.com/muslim:681",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir & kaza: the caravan slept through Fajr and prayed it as on every day.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "muslim:684",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 684",
+      "url": "https://sunnah.com/muslim:684",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Kaza: whoever forgets or sleeps through a prayer prays it when he remembers.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "muslim:686",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 686",
+      "url": "https://sunnah.com/muslim:686",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: shortening is a charity from Allah, so accept it.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "muslim:688",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 688",
+      "url": "https://sunnah.com/muslim:688",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: two rakʿahs in Makkah when not behind the imam.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "muslim:689",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 689",
+      "url": "https://sunnah.com/muslim:689",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: Ibn ʿUmar did not pray sunnah after the shortened prayer.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/salat/SalatCardGuidance.tsx",
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "muslim:706",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 706",
+      "url": "https://sunnah.com/muslim:706",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: joining prayers at Tabūk so the Ummah is not put in hardship.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "muslim:713",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 713",
+      "url": "https://sunnah.com/muslim:713",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Duʿā library: entering and leaving the mosque.",
+      "desk": "verified",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "muslim:714",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 714",
+      "url": "https://sunnah.com/muslim:714",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Nafl list: two rakʿahs on entering the mosque.",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/hooks/useSalatLog.ts"
+      ]
+    },
+    {
+      "id": "muslim:719",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 719",
+      "url": "https://sunnah.com/muslim:719",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Prayer times & nafl list: the Prophet ﷺ prayed Ḍuḥā four rakʿahs, sometimes more.",
+      "desk": "corrected",
+      "deskNote": "Replaces the earlier citation of 717.",
+      "pages": [
+        "prayerTimes",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/PrayerSources.tsx",
+        "frontend/src/components/prayerTimes/timeline.ts",
+        "frontend/src/hooks/useSalatLog.ts",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "muslim:725",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 725",
+      "url": "https://sunnah.com/muslim:725",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sunnah guide: the two rakʿahs before Fajr are better than the world.",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/sunnahGuide.ts"
+      ]
+    },
+    {
+      "id": "muslim:728",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 728",
+      "url": "https://sunnah.com/muslim:728",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sunnah guide: twelve daily rawātib build a house in Paradise.",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/sunnahGuide.ts"
+      ]
+    },
+    {
+      "id": "muslim:758",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 758",
+      "url": "https://sunnah.com/muslim:758",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Tahajjud: Allah descends in the last third of the night.",
+      "desk": "verified",
+      "pages": [
+        "prayerTimes"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/PrayerSources.tsx",
+        "frontend/src/components/prayerTimes/timeline.ts",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "muslim:780",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 780",
+      "url": "https://sunnah.com/muslim:780",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Quran: Shayṭān flees the house where al-Baqarah is recited.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "muslim:782",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 782",
+      "url": "https://sunnah.com/muslim:782",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Welcome email: the most beloved deed is the one done continuously.",
+      "desk": "verified",
+      "pages": [
+        "email"
+      ],
+      "files": [
+        "backend/src/services/welcomeEmail.templates.ts"
+      ]
+    },
+    {
+      "id": "muslim:804",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 804",
+      "url": "https://sunnah.com/muslim:804",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Quran khatam: the Quran will intercede for its reciters.",
+      "desk": "verified",
+      "pages": [
+        "quranKhatam"
+      ],
+      "files": [
+        "frontend/src/pages/QuranKhatam.tsx"
+      ]
+    },
+    {
+      "id": "muslim:809",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 809",
+      "url": "https://sunnah.com/muslim:809",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Quran: the first ten verses of al-Kahf protect from the Dajjāl.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "muslim:810",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 810",
+      "url": "https://sunnah.com/muslim:810",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Quran: Āyat al-Kursī is the greatest verse.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "muslim:831",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 831",
+      "url": "https://sunnah.com/muslim:831",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Forbidden times: sunrise, the zenith and sunset.",
+      "desk": "verified",
+      "pages": [
+        "home",
+        "prayerTimes"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/PrayerSources.tsx",
+        "frontend/src/components/prayerTimes/timeline.ts",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/prayerTimes.ts"
+      ]
+    },
+    {
+      "id": "muslim:852",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 852",
+      "url": "https://sunnah.com/muslim:852",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Friday: the hour on Friday when duʿā is answered.",
+      "desk": "corrected",
+      "deskNote": "The quote now follows the hadith’s wording.",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "muslim:854",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 854",
+      "url": "https://sunnah.com/muslim:854",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Friday: the best day the sun rises on.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "muslim:873",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 873",
+      "url": "https://sunnah.com/muslim:873",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Jumuʿah for sisters: Umm Hishām learnt Sūrah Qāf from the Friday khuṭbah.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "muslim:881",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 881",
+      "url": "https://sunnah.com/muslim:881",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sunnah guide: four rakʿahs after Jumuʿah (when praying in the mosque).",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/sunnahGuide.ts"
+      ]
+    },
+    {
+      "id": "muslim:882",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 882",
+      "url": "https://sunnah.com/muslim:882",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sunnah guide: two rakʿahs after Jumuʿah at home.",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/sunnahGuide.ts"
+      ]
+    },
+    {
+      "id": "muslim:1134",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 1134",
+      "url": "https://sunnah.com/muslim:1134",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "ʿĀshūrāʾ: fast the 9th as well.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "muslim:1141",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 1141",
+      "url": "https://sunnah.com/muslim:1141",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting & calendar: the days of Tashrīq are for eating, drinking and remembrance.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/utils/fastingRules.ts",
+        "frontend/src/utils/specialDayRules.ts"
+      ]
+    },
+    {
+      "id": "muslim:1159",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 1159",
+      "url": "https://sunnah.com/muslim:1159",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting: the fast of Dāwūd, one day on, one day off.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "muslim:1162",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 1162",
+      "url": "https://sunnah.com/muslim:1162",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "ʿArafah and ʿĀshūrāʾ fasts expiate sins.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "fasting",
+        "home",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/fastingRules.ts",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "muslim:1163",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 1163",
+      "url": "https://sunnah.com/muslim:1163",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Tahajjud and Muḥarram: the best prayer after the obligatory, and the best fast after Ramadan.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "fasting",
+        "home",
+        "prayerTimes",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/PrayerSources.tsx",
+        "frontend/src/components/prayerTimes/timeline.ts",
+        "frontend/src/hooks/useSalatLog.ts",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/fastingRules.ts",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "muslim:1164",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 1164",
+      "url": "https://sunnah.com/muslim:1164",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Fasting: six days of Shawwāl.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "muslim:1218",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 1218",
+      "url": "https://sunnah.com/muslim:1218",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir: at ʿArafah on a Friday the Prophet ﷺ prayed Ẓuhr and ʿAṣr (travellers pray Ẓuhr, not Jumuʿah).",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/salat/SalatFridayTravel.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "muslim:1342",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 1342",
+      "url": "https://sunnah.com/muslim:1342",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Musafir & Duʿā library: the travel duʿā and the return duʿā.",
+      "desk": "verified",
+      "pages": [
+        "duas",
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts",
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "muslim:1966",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 1966",
+      "url": "https://sunnah.com/muslim:1966",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Eid al-Aḍḥā: the Prophet ﷺ sacrificed two rams with his own hand.",
+      "desk": "corrected",
+      "deskNote": "Replaces Muslim 1977, which is about not cutting hair and nails before the sacrifice, not the sacrifice itself.",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "muslim:2018",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2018",
+      "url": "https://sunnah.com/muslim:2018",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Duʿā library: mentioning Allah on entering the home keeps Shayṭān out (authentic alternative to Abū Dāwūd 5096).",
+      "desk": "corrected",
+      "deskNote": "Added in this audit.",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "muslim:2137",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2137",
+      "url": "https://sunnah.com/muslim:2137",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr: the four most beloved words to Allah.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "muslim:2202",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2202",
+      "url": "https://sunnah.com/muslim:2202",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Rayhanah: the duʿā for pain, hand on the place of pain.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "frontend/src/components/cycle/rayhanahShared.ts"
+      ]
+    },
+    {
+      "id": "muslim:2588",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2588",
+      "url": "https://sunnah.com/muslim:2588",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Sadaqah: charity does not decrease wealth.",
+      "desk": "verified",
+      "pages": [
+        "sadaqah"
+      ],
+      "files": [
+        "frontend/src/utils/sadaqahVirtueDays.ts"
+      ]
+    },
+    {
+      "id": "muslim:2677",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2677",
+      "url": "https://sunnah.com/muslim:2677",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Asmāʾ al-Ḥusnā: Allah has 99 names.",
+      "desk": "verified",
+      "pages": [
+        "asma"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/seo/content/asmaUlHusna.ts",
+        "frontend/src/seo/locales/chrome.ts"
+      ]
+    },
+    {
+      "id": "muslim:2692",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2692",
+      "url": "https://sunnah.com/muslim:2692",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Adhkar: SubḥānAllāhi wa biḥamdih 100 times morning and evening.",
+      "desk": "verified",
+      "pages": [
+        "adhkar"
+      ],
+      "files": [
+        "frontend/src/seo/content/adhkar.ts"
+      ]
+    },
+    {
+      "id": "muslim:2695",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2695",
+      "url": "https://sunnah.com/muslim:2695",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr counter (\"Allāhu Akbar\" card): the four phrases are dearer than all the sun rises upon.",
+      "desk": "corrected",
+      "deskNote": "The \"Allāhu Akbar\" card showed a hadith about lā ilāha illā-llāh; it now shows Muslim 2695, which names Allāhu akbar.",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts"
+      ]
+    },
+    {
+      "id": "muslim:2698",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2698",
+      "url": "https://sunnah.com/muslim:2698",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr library: 100 tasbīḥ, a thousand good deeds or a thousand sins erased.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "muslim:2702",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2702",
+      "url": "https://sunnah.com/muslim:2702",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr: the Prophet ﷺ sought forgiveness a hundred times a day.",
+      "desk": "verified",
+      "pages": [
+        "rayhanah",
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/EditZikrModal.tsx",
+        "frontend/src/components/cycle/rayhanahShared.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "muslim:2708",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2708",
+      "url": "https://sunnah.com/muslim:2708",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr library & Musafir: \"Aʿūdhu bikalimātillāhit-tāmmāti…\" on stopping at a place.",
+      "desk": "corrected",
+      "deskNote": "The Zikr library said it protects \"in the evening\"; Muslim 2708 is about stopping at a place. The evening scorpion story is Muslim 2709.",
+      "pages": [
+        "musafir",
+        "salat",
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "muslim:2709",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2709",
+      "url": "https://sunnah.com/muslim:2709",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Adhkar: the same words in the evening (the scorpion’s sting).",
+      "desk": "verified",
+      "pages": [
+        "adhkar"
+      ],
+      "files": [
+        "frontend/src/seo/content/adhkar.ts"
+      ]
+    },
+    {
+      "id": "muslim:2723",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2723",
+      "url": "https://sunnah.com/muslim:2723",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Adhkar & home timeline: the evening dhikr \"Amsaynā wa amsal-mulku lillāh\".",
+      "desk": "verified",
+      "pages": [
+        "adhkar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/seo/content/adhkar.ts",
+        "frontend/src/utils/todayTimeline.ts"
+      ]
+    },
+    {
+      "id": "muslim:2726",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2726",
+      "url": "https://sunnah.com/muslim:2726",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Zikr library: \"SubḥānAllāhi ʿadada khalqih…\", taught to Juwayriyah.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "muslim:2730",
+      "kind": "hadith",
+      "citation": "Ṣaḥīḥ Muslim 2730",
+      "url": "https://sunnah.com/muslim:2730",
+      "grade": "Ṣaḥīḥ",
+      "purpose": "Duʿā library: the duʿā of distress (with Bukhārī 6346).",
+      "desk": "verified",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "nasai:1297",
+      "kind": "hadith",
+      "citation": "Sunan an-Nasāʾī 1297",
+      "url": "https://sunnah.com/nasai:1297",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Zikr counter: one ṣalawāt brings ten blessings, ten sins erased, ten degrees.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts"
+      ]
+    },
+    {
+      "id": "nasai-kubra:9848",
+      "kind": "hadith",
+      "citation": "an-Nasāʾī, al-Sunan al-Kubrā 9848",
+      "url": "https://sunnah.com/bulugh/2/220",
+      "grade": "Ṣaḥīḥ (Ibn Ḥibbān; al-Albānī)",
+      "purpose": "Āyat al-Kursī after every obligatory prayer: only death stands between him and Paradise.",
+      "desk": "corrected",
+      "deskNote": "The link pointed to sunnah.com/nasai:9928, which does not exist (sunnah.com carries the Sughrā, not the Kubrā). The number is 9848; the link now opens Bulūgh al-Marām, which quotes it.",
+      "aliases": [
+        "bulugh/2/220"
+      ],
+      "pages": [
+        "salat",
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/salat/SalatLegend.tsx",
+        "frontend/src/components/zikr/zikrCounterData.ts",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "targhib:736",
+      "kind": "hadith",
+      "citation": "al-Ḥākim, al-Mustadrak 2/399 · Ṣaḥīḥ at-Targhīb 736",
+      "url": "https://sunnah.com/virtues:36",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Sūrat al-Kahf on Friday: a light between the two Fridays.",
+      "desk": "unverified",
+      "deskNote": "Wording and grade confirmed (sunnah.com virtues:36, Ṣaḥīḥ al-Jāmiʿ 6470). Sources differ on the Mustadrak page (2/399 or 2/368): check the printed edition.",
+      "aliases": [
+        "virtues:36"
+      ],
+      "match": [
+        "al-Mustadrak 2/399"
+      ],
+      "pages": [
+        "calendar",
+        "home",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/home/HomeSpecialBlock.tsx",
+        "frontend/src/utils/islamicCalendar.ts",
+        "frontend/src/utils/postSalatQuran.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:415",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 415",
+      "url": "https://sunnah.com/tirmidhi:415",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Sunnah guide: the twelve rawātib listed by number (code note).",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/sunnahGuide.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:430",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 430",
+      "url": "https://sunnah.com/tirmidhi:430",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Sunnah guide: four rakʿahs before ʿAṣr.",
+      "desk": "verified",
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/sunnahGuide.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:553",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 553",
+      "url": "https://sunnah.com/tirmidhi:553",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Musafir: bringing ʿAṣr forward to Ẓuhr on a journey (jamʿ taqdīm).",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/salat/SalatCardJoining.tsx",
+        "frontend/src/components/salat/useSalatPrayerHandlers.tsx",
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:586",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 586",
+      "url": "https://sunnah.com/tirmidhi:586",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Prayer times & nafl list: Ishrāq, the reward of a complete Ḥajj and ʿUmrah.",
+      "desk": "corrected",
+      "deskNote": "The grade (ḥasan, al-Albānī) is now shown next to the quote.",
+      "pages": [
+        "prayerTimes",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/prayerTimes/PrayerSources.tsx",
+        "frontend/src/components/prayerTimes/timeline.ts",
+        "frontend/src/hooks/useSalatLog.ts",
+        "frontend/src/locales/en/common.json"
+      ]
+    },
+    {
+      "id": "tirmidhi:686",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 686",
+      "url": "https://sunnah.com/tirmidhi:686",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Fasting: do not fast the day of doubt.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:744",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 744",
+      "url": "https://sunnah.com/tirmidhi:744",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Fasting: do not single out Saturday except for an obligatory fast.",
+      "desk": "verified",
+      "pages": [
+        "fasting",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/pages/FastingTracker.tsx",
+        "frontend/src/utils/fastingRules.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:747",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 747",
+      "url": "https://sunnah.com/tirmidhi:747",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Monday and Thursday fasts: deeds are presented on those days.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "fasting",
+        "home",
+        "ramadan"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/fastingRules.ts",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:757",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 757",
+      "url": "https://sunnah.com/tirmidhi:757",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Dhul Ḥijjah: no days in which righteous deeds are more beloved to Allah than these ten.",
+      "desk": "corrected",
+      "deskNote": "This wording was attributed to Bukhārī 969, whose wording differs; the quote now cites Tirmidhī 757 (ṣaḥīḥ, al-Albānī), which has it exactly.",
+      "pages": [
+        "calendar",
+        "fasting",
+        "home",
+        "ramadan",
+        "sadaqah"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/fastingRules.ts",
+        "frontend/src/utils/islamicCalendar.ts",
+        "frontend/src/utils/sadaqahVirtueDays.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:1905",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 1905",
+      "url": "https://sunnah.com/tirmidhi:1905",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Musafir: the traveller’s duʿā is answered.",
+      "desk": "verified",
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:2083",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 2083",
+      "url": "https://sunnah.com/tirmidhi:2083",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Duʿā library: visiting the sick, \"Asʾalullāhal-ʿAẓīm…\" seven times.",
+      "desk": "verified",
+      "pages": [
+        "duas"
+      ],
+      "files": [
+        "frontend/src/seo/content/duas.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:2140",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 2140",
+      "url": "https://sunnah.com/tirmidhi:2140",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Quran duʿās: \"Yā Muqallibal-qulūb…\", keep my heart firm.",
+      "desk": "corrected",
+      "deskNote": "The context line said he \"swore\" by it; Tirmidhī 2140 says he often said it as a duʿā. Wording fixed (en + bn).",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:2459",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 2459",
+      "url": "https://sunnah.com/tirmidhi:2459",
+      "grade": "Ḍaʿīf (al-Albānī)",
+      "purpose": "Removed from the weekly muḥāsabah card (\"the wise one takes account of himself\").",
+      "desk": "corrected",
+      "deskNote": "Was labelled ḥasan (al-Albānī); al-Albānī and Darussalam grade it ḍaʿīf. Removed; only a code note remains.",
+      "pages": [
+        "naseeh"
+      ],
+      "files": [
+        "frontend/src/utils/muhasabahCorpus.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:2891",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 2891",
+      "url": "https://sunnah.com/tirmidhi:2891",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Quran & after salat: Sūrat al-Mulk intercedes for its reciter.",
+      "desk": "verified",
+      "pages": [
+        "code",
+        "quran",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/localeReference.ts",
+        "frontend/src/utils/postSalatQuran.ts",
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:2892",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 2892",
+      "url": "https://sunnah.com/tirmidhi:2892",
+      "grade": "Ṣaḥīḥ (al-Albānī, al-Ṣaḥīḥah 585); Ḍaʿīf (Darussalam, sunnah.com)",
+      "purpose": "Quran: the Prophet ﷺ slept only after reciting as-Sajdah and al-Mulk.",
+      "desk": "corrected",
+      "deskNote": "Was labelled ḥasan. Graders differ, so both are shown (owner, 2026-11-28): al-Albānī grades it ṣaḥīḥ (al-Ṣaḥīḥah 585); sunnah.com shows Darussalam’s ḍaʿīf, which may refer to the Ṭāwūs addition in the same entry.",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:2910",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 2910",
+      "url": "https://sunnah.com/tirmidhi:2910",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Quran habit: ten rewards for every letter.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/pages/QuranHabit.tsx"
+      ]
+    },
+    {
+      "id": "tirmidhi:2922",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 2922",
+      "url": "https://sunnah.com/tirmidhi:2922",
+      "grade": "Ḍaʿīf (al-Albānī)",
+      "purpose": "Quran: the last three verses of al-Ḥashr, morning and evening.",
+      "desk": "corrected",
+      "deskNote": "Was labelled \"gharīb — noted\"; graded ḍaʿīf by al-Albānī. Label and virtue line now say it is weak.",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3383",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3383",
+      "url": "https://sunnah.com/tirmidhi:3383",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Zikr: the best dhikr is lā ilāha illā-llāh (now on the \"Lā ilāha illā-llāh\" card).",
+      "desk": "corrected",
+      "deskNote": "Moved from the \"Allāhu Akbar\" card to the \"Lā ilāha illā-llāh\" card, replacing a weak Musnad Aḥmad narration.",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/components/zikr/zikrCounterData.ts",
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3388",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3388",
+      "url": "https://sunnah.com/tirmidhi:3388",
+      "grade": "Ḥasan ṣaḥīḥ (al-Albānī)",
+      "purpose": "Zikr library: \"Bismillāhil-ladhī lā yaḍurru…\" three times.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3391",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3391",
+      "url": "https://sunnah.com/tirmidhi:3391",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Adhkar: \"Allāhumma bika aṣbaḥnā…\" morning and evening.",
+      "desk": "verified",
+      "pages": [
+        "adhkar"
+      ],
+      "files": [
+        "frontend/src/seo/content/adhkar.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3505",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3505",
+      "url": "https://sunnah.com/tirmidhi:3505",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Quran duʿās: the duʿā of Yūnus is answered.",
+      "desk": "verified",
+      "pages": [
+        "quran"
+      ],
+      "files": [
+        "frontend/src/utils/quranMeta.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3507",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3507",
+      "url": "https://sunnah.com/tirmidhi:3507",
+      "grade": "Ḍaʿīf (al-Albānī)",
+      "purpose": "Asmāʾ al-Ḥusnā: the listed 99 names come from this weak narration (said on the page).",
+      "desk": "weak",
+      "deskNote": "The page already says the enumerated list is weak; the 99-names virtue itself is Bukhārī 7392 / Muslim 2677.",
+      "pages": [
+        "asma"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/seo/locales/chrome.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3513",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3513",
+      "url": "https://sunnah.com/tirmidhi:3513",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Ramadan: the Laylat al-Qadr duʿā \"Allāhumma innaka ʿafuwwun…\".",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home",
+        "ramadan",
+        "ramadanCalendar"
+      ],
+      "files": [
+        "frontend/src/components/ramadan/RamadanLastTen.tsx",
+        "frontend/src/locales/en/common.json",
+        "frontend/src/seo/content/ramadanDuas.ts",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3524",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3524",
+      "url": "https://sunnah.com/tirmidhi:3524",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Zikr library: \"Yā Ḥayyu yā Qayyūm…\" in distress.",
+      "desk": "verified",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3525",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3525",
+      "url": "https://sunnah.com/tirmidhi:3525",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Zikr library: \"Yā Dhal-Jalāli wal-Ikrām\", hold fast to it.",
+      "desk": "corrected",
+      "deskNote": "Grade label raised from Ḥasan to Ṣaḥīḥ (al-Albānī).",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3575",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3575",
+      "url": "https://sunnah.com/tirmidhi:3575",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "Adhkar: the three Quls three times morning and evening.",
+      "desk": "verified",
+      "pages": [
+        "adhkar"
+      ],
+      "files": [
+        "frontend/src/seo/content/adhkar.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3577",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3577",
+      "url": "https://sunnah.com/tirmidhi:3577",
+      "grade": "Ṣaḥīḥ (al-Albānī)",
+      "purpose": "Zikr library: \"Astaghfirullāhal-ʿAẓīm…\", forgiven even if he fled battle.",
+      "desk": "corrected",
+      "deskNote": "Grade label raised from Ḥasan to Ṣaḥīḥ (al-Albānī).",
+      "pages": [
+        "zikr"
+      ],
+      "files": [
+        "frontend/src/utils/zikrLibrary.ts"
+      ]
+    },
+    {
+      "id": "tirmidhi:3585",
+      "kind": "hadith",
+      "citation": "Jāmiʿ at-Tirmidhī 3585",
+      "url": "https://sunnah.com/tirmidhi:3585",
+      "grade": "Ḥasan (al-Albānī)",
+      "purpose": "ʿArafah: the best duʿā is the duʿā of ʿArafah.",
+      "desk": "verified",
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/locales/en/common.json",
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "scholar:ibn-rajab-lataif",
+      "kind": "scholarly",
+      "citation": "Ibn Rajab, Laṭāʾif al-Maʿārif (via IslamQA 8907)",
+      "url": "https://islamqa.info/en/answers/8907",
+      "purpose": "Shaʿbān 15: the scholarly discussion of the night's virtue.",
+      "desk": "unverified",
+      "deskNote": "Link goes to IslamQA’s summary, not the book itself.",
+      "match": [
+        "Laṭā'if al-Ma'ārif"
+      ],
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "scholar:ibn-al-mundhir-ijma",
+      "kind": "scholarly",
+      "citation": "Ibn al-Mundhir, al-Ijmāʿ 52–53 (quoted by IslamQA 73339)",
+      "url": "https://islamqa.info/en/answers/73339",
+      "purpose": "Jumuʿah for sisters: scholars agree that a woman who prays Jumuʿah with the imam has fulfilled her duty (it replaces Ẓuhr).",
+      "desk": "unverified",
+      "deskNote": "The ruling is the well-known consensus. The item numbers 52–53 were not checked against a printed edition.",
+      "match": [
+        "Ibn al-Mundhir, al-Ijmāʿ"
+      ],
+      "pages": [
+        "calendar",
+        "home"
+      ],
+      "files": [
+        "frontend/src/utils/islamicCalendar.ts"
+      ]
+    },
+    {
+      "id": "scholar:ibn-al-qayyim-zad",
+      "kind": "scholarly",
+      "citation": "Ibn al-Qayyim, Zād al-Maʿād",
+      "purpose": "Sadaqah: charity on Friday has extra merit over other days, as Ramadan over other months (scholarly teaching, not a hadith).",
+      "desk": "unverified",
+      "deskNote": "Attributed as Ibn al-Qayyim’s own teaching, not a hadith. Volume and page not cited yet.",
+      "match": [
+        "Zād al-Maʿād"
+      ],
+      "pages": [
+        "sadaqah"
+      ],
+      "files": [
+        "frontend/src/utils/sadaqahVirtueDays.ts"
+      ]
+    },
+    {
+      "id": "scholar:ibn-taymiyyah-menses-quran",
+      "kind": "scholarly",
+      "citation": "Ibn Taymiyyah and the Mālikī school",
+      "purpose": "Rayhanah: reciting the Quran during menses is a scholarly difference (majority: not permitted; Mālikīs and Ibn Taymiyyah: permitted).",
+      "desk": "unverified",
+      "deskNote": "Positions are stated without a book reference. Scholar check recommended.",
+      "match": [
+        "Mālikī school and Ibn Taymiyyah"
+      ],
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "frontend/src/components/cycle/RayhanahAdhkar.tsx"
+      ]
+    },
+    {
+      "id": "web:hadithanswers-ramadan",
+      "kind": "scholarly",
+      "citation": "HadithAnswers: the famous Ramadan hadith",
+      "url": "https://hadithanswers.com/the-famous-hadith-on-the-virtues-of-ramadan-radiyallahu-anhu/",
+      "purpose": "Ḍaʿīf explainer: grading of the Salmān al-Fārisī sermon.",
+      "desk": "verified",
+      "match": [
+        "hadithanswers.com/the-famous-hadith"
+      ],
+      "pages": [
+        "calendar",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx"
+      ]
+    },
+    {
+      "id": "web:qandabenefits-688",
+      "kind": "scholarly",
+      "citation": "Q&A Benefits 688",
+      "url": "https://qandabenefits.com/688/is-the-supplication-at-the-time-of-breaking-fast-accepted",
+      "purpose": "Ḍaʿīf explainer: is the duʿā at ifṭār accepted?",
+      "desk": "verified",
+      "match": [
+        "qandabenefits.com/688"
+      ],
+      "pages": [
+        "calendar",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx"
+      ]
+    },
+    {
+      "id": "web:islamqa-21364",
+      "kind": "scholarly",
+      "citation": "IslamQA 21364",
+      "url": "https://islamqa.info/en/answers/21364",
+      "purpose": "Ḍaʿīf explainer: the Ramadan sermon of Salmān al-Fārisī.",
+      "desk": "verified",
+      "match": [
+        "islamqa.info/en/answers/21364"
+      ],
+      "pages": [
+        "calendar",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx",
+        "frontend/src/components/ramadan/RamadanWorshipStrip.tsx"
+      ]
+    },
+    {
+      "id": "web:islamqa-49678",
+      "kind": "scholarly",
+      "citation": "IslamQA 49678",
+      "url": "https://islamqa.info/en/answers/49678",
+      "purpose": "Ḍaʿīf explainer: the night of mid-Shaʿbān.",
+      "desk": "verified",
+      "match": [
+        "islamqa.info/en/answers/49678"
+      ],
+      "pages": [
+        "calendar",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx"
+      ]
+    },
+    {
+      "id": "web:islamweb-348835",
+      "kind": "scholarly",
+      "citation": "IslamWeb fatwa 348835",
+      "url": "https://islamweb.net/en/fatwa/348835/",
+      "purpose": "Ḍaʿīf explainer: Sūrat al-Wāqiʿah and poverty.",
+      "desk": "verified",
+      "match": [
+        "islamweb.net/en/fatwa/348835"
+      ],
+      "pages": [
+        "calendar",
+        "ramadan",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/components/DaifExplainer.tsx"
+      ]
+    },
+    {
+      "id": "fiqh:qasr-distance",
+      "kind": "fiqh",
+      "citation": "Qaṣr distance by madhab",
+      "purpose": "Musafir: shortening starts at about 80–89 km (4 burud, majority) or 77–78 km (three days’ walk, Ḥanafī).",
+      "desk": "unverified",
+      "deskNote": "Standard school positions, stated without a book citation (e.g. al-Mughnī, al-Hidāyah). Scholar check recommended.",
+      "match": [
+        "QASR_DISTANCE_KM: Record"
+      ],
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "fiqh:residence-days",
+      "kind": "fiqh",
+      "citation": "Intended stay that ends travel, by madhab",
+      "purpose": "Musafir: an intended stay of 4+ days (majority) or 15+ days (Ḥanafī) makes you a resident.",
+      "desk": "unverified",
+      "deskNote": "Standard school positions, stated without a book citation. Scholar check recommended.",
+      "match": [
+        "residentAfterDays: 15"
+      ],
+      "pages": [
+        "musafir",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/musafir.ts"
+      ]
+    },
+    {
+      "id": "fiqh:hayd-max",
+      "kind": "fiqh",
+      "citation": "Maximum length of menses, by madhab",
+      "purpose": "Rayhanah: menses lasts at most 10 days (Ḥanafī) or 15 days (majority); beyond that is istiḥāḍah.",
+      "desk": "unverified",
+      "deskNote": "Standard school positions, stated without a book citation. Scholar check recommended.",
+      "match": [
+        "const HAYD_MAX"
+      ],
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "backend/src/services/cycle.service.ts"
+      ]
+    },
+    {
+      "id": "fiqh:nifas-max",
+      "kind": "fiqh",
+      "citation": "Maximum length of nifās",
+      "purpose": "Rayhanah: nifās lasts at most 40 days (Abū Dāwūd 311); the Shāfiʿī 60 days is noted in the app.",
+      "desk": "unverified",
+      "deskNote": "The 40-day limit follows Abū Dāwūd 311 (ḥasan ṣaḥīḥ, al-Albānī). The Shāfiʿī 60 days needs a book citation.",
+      "match": [
+        "const NIFAS_MAX"
+      ],
+      "pages": [
+        "rayhanah"
+      ],
+      "files": [
+        "backend/src/services/cycle.service.ts"
+      ]
+    },
+    {
+      "id": "fiqh:asr-shadow",
+      "kind": "fiqh",
+      "citation": "ʿAṣr start time, by madhab",
+      "purpose": "Salat & prayer times: ʿAṣr begins when the shadow equals the object (Shāfiʿī, Mālikī, Ḥanbalī) or twice its length (Ḥanafī).",
+      "desk": "unverified",
+      "deskNote": "Standard school positions, computed by adhan-js. Scholar check recommended for the wording.",
+      "match": [
+        "export type AsrMadhab"
+      ],
+      "pages": [
+        "salat"
+      ],
+      "files": [
+        "frontend/src/utils/salatPrefs.ts"
+      ]
+    },
+    {
+      "id": "data:tanzil",
+      "kind": "data",
+      "citation": "Tanzil Quran text (Uthmani, v1.1)",
+      "url": "https://tanzil.net",
+      "purpose": "The Arabic Quran text shown everywhere in the app, bundled verbatim and never edited.",
+      "desk": "verified",
+      "deskNote": "Checked: the bundled text is Tanzil’s, used under its licence.",
+      "match": [
+        "tanzil.net"
+      ],
+      "pages": [
+        "about",
+        "adhkar",
+        "bayan",
+        "quranReader"
+      ],
+      "files": [
+        "frontend/src/components/QuranSettings.tsx",
+        "frontend/src/components/library/adhkarParts.tsx",
+        "frontend/src/components/quran/ReaderAyahPane.tsx",
+        "frontend/src/pages/About.tsx",
+        "frontend/src/seo/bayan/pages.ts"
+      ]
+    },
+    {
+      "id": "data:tafsir",
+      "kind": "data",
+      "citation": "Tafsīr Ibn Kathīr (abridged), Abu Bakr Zakaria (Bangla)",
+      "purpose": "Quran reader: tafsīr panel.",
+      "desk": "verified",
+      "match": [
+        "Ibn Kathir (Abridged)",
+        "Abu Bakr Zakaria (Bangla)"
+      ],
+      "pages": [
+        "quranReader"
+      ],
+      "files": [
+        "backend/src/services/quran.service.ts",
+        "frontend/src/utils/tafsir.ts"
+      ]
+    },
+    {
+      "id": "data:alquran-cloud",
+      "kind": "data",
+      "citation": "Al Quran Cloud (translations, transliteration)",
+      "url": "https://alquran.cloud",
+      "purpose": "Quran reader: English and Bangla translations and the transliteration line.",
+      "desk": "verified",
+      "match": [
+        "api.alquran.cloud"
+      ],
+      "pages": [
+        "code",
+        "quranReader"
+      ],
+      "files": [
+        "frontend/src/sw.ts",
+        "frontend/src/utils/quranData.ts"
+      ]
+    },
+    {
+      "id": "data:quran-audio",
+      "kind": "data",
+      "citation": "Islamic Network and mp3quran.net (recitation audio)",
+      "url": "https://alquran.cloud",
+      "purpose": "Quran listen and reader: recitation audio files.",
+      "desk": "verified",
+      "match": [
+        "cdn.islamic.network",
+        "mp3quran.net/"
+      ],
+      "pages": [
+        "quranListen",
+        "quranReader"
+      ],
+      "files": [
+        "frontend/src/components/QuranAudioPlayer.tsx",
+        "frontend/src/utils/quranData.ts"
+      ]
+    },
+    {
+      "id": "data:adhan-js",
+      "kind": "data",
+      "citation": "adhan-js (Batoul Apps) and the calculation methods",
+      "url": "https://github.com/batoulapps/adhan-js",
+      "purpose": "Prayer times: computed on the device with adhan-js and the chosen method (MWL, ISNA, Umm al-Qura, Karachi, Egyptian…).",
+      "desk": "verified",
+      "match": [
+        "batoulapps/adhan-js"
+      ],
+      "pages": [
+        "bayan"
+      ],
+      "files": [
+        "frontend/src/seo/bayan/pages.ts"
+      ]
+    },
+    {
+      "id": "data:umm-al-qura",
+      "kind": "data",
+      "citation": "Umm al-Qura calendar",
+      "purpose": "Islamic calendar: Hijri dates, with your own day offset and the moon-sighting announcements.",
+      "desk": "verified",
+      "match": [
+        "Umm al-Qura calendar"
+      ],
+      "pages": [
+        "asma",
+        "bayan",
+        "prayerTimes",
+        "prayerTimesPublic",
+        "ramadanCalendar",
+        "salat"
+      ],
+      "files": [
+        "frontend/src/seo/bayan/pages.ts",
+        "frontend/src/seo/bayan/releases.ts",
+        "frontend/src/seo/locales/chrome.ts",
+        "frontend/src/seo/locales/monthly.ts",
+        "frontend/src/seo/locales/ramadanBd.ts",
+        "frontend/src/seo/locales/ramadanWorld.ts",
+        "frontend/src/seo/utils/calc.ts",
+        "frontend/src/utils/countryDefaults.ts"
+      ]
+    },
+    {
+      "id": "data:islamic-foundation-bd",
+      "kind": "data",
+      "citation": "Islamic Foundation Bangladesh",
+      "url": "https://islamicfoundation.gov.bd/",
+      "purpose": "Bangladesh Ramadan sheets and district timetables.",
+      "desk": "verified",
+      "match": [
+        "islamicfoundation.gov.bd"
+      ],
+      "pages": [
+        "prayerTimesPublic",
+        "ramadanCalendar"
+      ],
+      "files": [
+        "frontend/src/seo/locales/monthly.ts",
+        "frontend/src/seo/locales/ramadanSheet.ts"
+      ]
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink, useLocation } from 'react-router';
 import {
+  BookOpenIcon,
   BanknotesIcon,
   InboxStackIcon,
   UsersIcon,
@@ -148,6 +149,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       to: '/admin/compose-email',
       icon: PaperAirplaneIcon,
       label: t('adminLayout.composeEmail', 'Email Istiak'),
+    },
+    {
+      to: '/admin/references',
+      icon: BookOpenIcon,
+      label: t('adminLayout.references', 'Reference checks'),
     },
   ];
 

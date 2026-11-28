@@ -421,6 +421,7 @@ const staticPages = [
   { path: '/qibla', priority: '0.7' },
   { path: '/about', priority: '0.6' },
   { path: '/privacy', priority: '0.3' },
+  { path: '/references', priority: '0.4' },
   { path: '/terms', priority: '0.3' },
   { path: '/feedback', priority: '0.4' },
   { path: '/sadaqah', priority: '0.5' },

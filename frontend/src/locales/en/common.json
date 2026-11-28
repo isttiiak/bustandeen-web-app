@@ -214,7 +214,8 @@
     "statusLink": "Status",
     "helpTitle": "Help & updates",
     "helpDesc": "Short guides, what is new in each release, and how prayer times and kaza are worked out.",
-    "helpLink": "Open"
+    "helpLink": "Open",
+    "referencesLink": "See every reference and how it was checked"
   },
   "aiFlair": {
     "whatIsSent": "What is sent?",
@@ -856,7 +857,8 @@
     "secure": "Your data is yours",
     "terms": "Terms",
     "status": "Status",
-    "help": "Help & updates"
+    "help": "Help & updates",
+    "references": "References"
   },
   "friends": {
     "accept": "Accept",
@@ -1447,7 +1449,8 @@
     "musafir": "Musafir Mode",
     "terms": "Terms",
     "themeToDark": "Switch to dark",
-    "themeToLight": "Switch to light"
+    "themeToLight": "Switch to light",
+    "references": "References"
   },
   "navbar": {
     "openAccountMenu": "Open account menu"
@@ -1510,7 +1513,7 @@
     "after": "After",
     "asr": "Asr",
     "awwabin": "Salat al-Awwabin",
-    "awwabinHadith": "\"Whoever prays six rak'ahs after Maghrib without speaking anything bad between them, those six rak'ahs will be counted for him as equivalent to twelve years of worship.\" · Sunan Ibn Majah 1167; Abu Hurayrah (RA): \"My close friend advised me to pray two rak'ahs of Duha and not to sleep before praying Witr.\" · Sahih al-Bukhari 1981",
+    "awwabinHadith": "\"Whoever prays six rak'ahs after Maghrib without speaking anything bad between them, those six rak'ahs will be counted for him as equivalent to twelve years of worship.\" · Sunan Ibn Majah 1167 (very weak: ḍaʿīf jiddan, al-Albānī); Abu Hurayrah (RA): \"My close friend advised me to pray two rak'ahs of Duha and not to sleep before praying Witr.\" · Sahih al-Bukhari 1981",
     "awwabinNote": "2–6 voluntary rak'ahs between Maghrib and Isha. Recommended for those who often return (awwab) to Allah with remembrance and repentance.",
     "change": "Change",
     "cityNotFound": "City not found. Try a different name.",
@@ -1523,20 +1526,20 @@
     "endsIn": "Ends in",
     "fajr": "Fajr",
     "forbiddenSunrise": "Forbidden: Around Sunrise",
-    "forbiddenSunriseHadith": "\"There is no prayer after the morning prayer until the sun rises.\" · Sahih al-Bukhari 581; \"At three times the Prophet ﷺ forbade us to pray: when the sun begins to rise ... when it is at its zenith ... and when it is about to set.\" · Sahih Muslim 831",
+    "forbiddenSunriseHadith": "\"There is no prayer after the morning prayer until the sun rises.\" · Sahih al-Bukhari 586; \"At three times the Prophet ﷺ forbade us to pray: when the sun begins to rise ... when it is at its zenith ... and when it is about to set.\" · Sahih Muslim 831",
     "forbiddenSunriseNote": "Prayer is not allowed from sunrise until ~20 min after the sun has fully cleared the horizon.",
     "forbiddenSunset": "Forbidden: At Sunset",
     "forbiddenSunsetHadith": "\"At three times the Prophet ﷺ forbade us to pray: ... when it is about to set.\" · Sahih Muslim 831; Sahih al-Bukhari 586",
     "forbiddenSunsetNote": "Prayer is forbidden during the ~17 minutes the sun visibly sets (turns yellow and descends to the horizon). This is the \"time of sunset\" mentioned in the hadith. Nafl is allowed between Asr and this window. Obligatory (qada) make-up prayers are permitted. Maghrib begins shortly after sunset.",
     "forbiddenZenith": "Forbidden: Istiwa' (Solar Zenith)",
-    "forbiddenZenithHadith": "\"At three times the Prophet ﷺ forbade us to pray ... when it is at its zenith.\" · Sahih Muslim 831; Ibn 'Umar: \"Do not pray when the sun is rising, nor when it is setting, nor when it is at its peak (zenith).\" · Sahih al-Bukhari 585",
+    "forbiddenZenithHadith": "\"At three times the Prophet ﷺ forbade us to pray ... when it is at its zenith.\" · Sahih Muslim 831",
     "forbiddenZenithNote": "The sun is directly overhead (~10 min before Dhuhr). Prayer is forbidden until Dhuhr time begins.",
     "geoNotSupported": "Location is not available in this browser. Search for your city instead.",
     "gpsDenied": "GPS denied. Type your city below.",
     "gpsDesc": "Most accurate. Requires browser location permission.",
     "isha": "Isha",
     "ishraqDuha": "Salat al-Ishraq / Duha",
-    "ishraqDuhaHadith": "\"Whoever prays Fajr in congregation, then sits remembering Allah until the sun rises, then prays two rak'ahs — he will have a reward like that of Hajj and 'Umrah, complete, complete, complete.\" · Tirmidhi 586; Duha: \"The Prophet ﷺ used to pray Duha four rak'ahs and would add more as Allah willed.\" · Sahih Muslim 717",
+    "ishraqDuhaHadith": "\"Whoever prays Fajr in congregation, then sits remembering Allah until the sun rises, then prays two rak'ahs — he will have a reward like that of Hajj and 'Umrah, complete, complete, complete.\" · Tirmidhi 586 (ḥasan, al-Albānī); Duha: \"The Prophet ﷺ used to pray Duha four rak'ahs and would add more as Allah willed.\" · Sahih Muslim 719",
     "ishraqDuhaNote": "2–8 voluntary rak'ahs. Best time is when the sun has risen well (Ishraq = 20 min after sunrise). Duha can continue until just before the solar zenith. Immense reward equivalent to Hajj and 'Umrah.",
     "locationPrivacy": "Your location is stored only in this browser and never sent to our servers.",
     "maghrib": "Maghrib",
@@ -2753,7 +2756,7 @@
     "legendNaflDesc": "mark voluntary prayers and pick type + rak'ahs",
     "legendOr": "or",
     "legendAutoCountInfo": "Prefer to count by hand? Turn off <1>Auto-count dhikr</1> in salat settings. Tags still mark as done, and Tasbih mode on the Zikr counter becomes your manual way to count them.",
-    "legendReadNowInfo": "<1>Read now</1> under each prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd 1523, ṣaḥīḥ).",
+    "legendReadNowInfo": "<1>Read now</1> under each prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd 1523 and an-Nasāʾī, al-Kubrā 9848, ṣaḥīḥ).",
     "legendTasbeehInfo": "Tapping <1>Tasbeeh</1> adds the full after-ṣalāh count to your dhikr automatically, so there is no more logging 33s by hand. Ayatul Kursi adds one. Un-tap to undo.",
     "legendAyatulKursiAutoInfo": "Tapping <1>Ayatul Kursi</1> (in Details) also auto-counts 1 recitation in your dhikr log, the same rule as Tasbeeh. Un-tap to undo.",
     "legendTasbihModeInfo": "Choose <1>33·33·33 + tahlīl</1> (Muslim 597a) or <3>33·33·34</3> (Muslim 596a) in salat settings. Both are authentic. Your ʿAṣr school lives there too.",
@@ -3220,11 +3223,11 @@
       "references": {
         "0": {
           "grade": "Ṣaḥīḥ",
-          "text": "\"Fast three days of every month: the 13th, 14th, and 15th.\" · Sunan Abū Dāwūd 2449"
+          "text": "\"The Messenger of Allah ﷺ used to command us to fast the white days: the thirteenth, fourteenth and fifteenth.\" · Sunan Abū Dāwūd 2449"
         },
         "1": {
           "grade": "Ṣaḥīḥ",
-          "text": "\"Fasting three days of every month is like fasting the whole year.\" · Ṣaḥīḥ al-Bukhārī 1979"
+          "text": "\"The fasting of three days a month is equal to the fasting of the whole year.\" · Ṣaḥīḥ al-Bukhārī 1979"
         }
       },
       "shortDesc": "13th, 14th, 15th of every Islamic month: fasting equivalent to fasting the whole month.",
@@ -3250,7 +3253,7 @@
       "references": {
         "0": {
           "grade": "Ṣaḥīḥ",
-          "text": "\"There are no days in which righteous deeds are more beloved to Allah than these ten days.\" · Ṣaḥīḥ al-Bukhārī 969"
+          "text": "\"There are no days in which righteous deeds are more beloved to Allah than these ten days.\" · Jāmiʿ al-Tirmidhī 757"
         },
         "1": {
           "grade": "Quran",
@@ -3291,7 +3294,7 @@
       "references": {
         "0": {
           "grade": "Ṣaḥīḥ",
-          "text": "Qurbānī (Uḍḥiyyah) · Ṣaḥīḥ Muslim 1977"
+          "text": "Qurbānī (Uḍḥiyyah): the Prophet ﷺ sacrificed two horned rams with his own hand · Ṣaḥīḥ Muslim 1966"
         },
         "1": {
           "grade": "Ṣaḥīḥ",
@@ -3344,7 +3347,7 @@
         },
         "1": {
           "grade": "Ṣaḥīḥ",
-          "text": "\"The Messenger of Allah ﷺ would eat an odd number of dates before going out on the morning of Eid al-Fiṭr.\" · Ṣaḥīḥ al-Bukhārī 953"
+          "text": "\"The Messenger of Allah ﷺ never went out on the day of Eid al-Fiṭr until he had eaten some dates, and he ate an odd number.\" · Ṣaḥīḥ al-Bukhārī 953"
         },
         "2": {
           "grade": "Ṣaḥīḥ",
@@ -3438,7 +3441,7 @@
         },
         "3": {
           "grade": "Ṣaḥīḥ",
-          "text": "\"On Friday there is a time in which a Muslim does not ask Allah for anything but He gives it to him.\" · Ṣaḥīḥ Muslim 852"
+          "text": "\"There is a time on Friday at which no Muslim servant would pray and ask Allah for a good thing but He would give it to him.\" · Ṣaḥīḥ Muslim 852"
         },
         "4": {
           "grade": "Ṣaḥīḥ",
@@ -3751,13 +3754,13 @@
     "goalLabel": "Goal",
     "hadith": {
       "alhamdulillah": "\"Al-ḥamdu li-llāh fills the scale.\"",
-      "allahuAkbar": "\"The best dhikr is Lā ilāha illā-llāh, and the best supplication is Al-ḥamdu li-llāh.\"",
+      "allahuAkbar": "\"Saying SubḥānAllāh, al-ḥamdu lillāh, lā ilāha illā-llāh and Allāhu akbar is dearer to me than everything the sun rises upon.\"",
       "astaghfirullah": "\"I seek forgiveness from Allah and turn to Him in repentance more than seventy times a day.\"",
       "ayatulKursi": "\"Whoever recites Āyat al-Kursī after every obligatory prayer, nothing prevents him from entering Jannah except death.\"",
       "durudIbrahim": "\"Whoever sends blessings upon me once, Allah will send blessings upon him tenfold, and erase ten sins, and raise him ten degrees.\"",
       "fourBeloved": "\"The most beloved words to Allah are four: SubhanAllah, Alhamdulillah, La ilaha illallah, Allahu Akbar — it does not matter which you begin with.\"",
       "laHawla": "\"Shall I not guide you to a treasure from the treasures of Paradise? Say: Lā ḥawla wa lā quwwata illā bi-llāh.\"",
-      "laIlahaIllallah": "\"Renew your faith.\" They asked: \"How?\" He said: \"Say: Lā ilāha illā-llāh frequently.\"",
+      "laIlahaIllallah": "\"The best dhikr is Lā ilāha illā-llāh, and the best supplication is Al-ḥamdu li-llāh.\"",
       "subhanallah": "\"Two words are light on the tongue, heavy on the scale, beloved to the Most Merciful: SubhanAllah wa bihamdihi, SubhanAllah al-Azim.\"",
       "subhanallahWaBihamdihi": "\"Whoever says 'SubhanAllahi wa bihamdihi' 100 times, his sins will be forgiven even if they were as much as the foam of the sea.\""
     },
@@ -4816,5 +4819,63 @@
     "nextExpected": "Expected {{date}}",
     "nextFrom": "From {{date}}",
     "nextMayMove": "May move by a day with the moon sighting"
+  },
+  "references": {
+    "seoTitle": "Reference map: every source Bustandeen cites",
+    "seoDescription": "Every Quran verse, hadith, scholarly work and data source in Bustandeen, what it is used for, where it appears, and how it was checked.",
+    "title": "Reference map",
+    "intro": "Every Quran verse, hadith, scholarly work and data source Bustandeen relies on: what it is used for, where it shows in the app, and how it was checked.",
+    "stat": {
+      "total": "References",
+      "corrected": "Corrected in the audit",
+      "weak": "Weak, shown as weak",
+      "manual": "Checked by hand"
+    },
+    "howTitle": "How each reference is checked",
+    "deskLabel": "Desk check",
+    "deskText": "the hadith number was opened and its text and grade compared with what the app says; Quran citations were compared with quran.com and the bundled Tanzil text. Wrong numbers, grades and wordings were corrected. A desk check is not a scholar’s review.",
+    "manualLabel": "Manual check",
+    "manualText": "a person opens the source, or asks a scholar, and marks the reference. These marks are added slowly and on purpose; until then a reference shows \"Manual check: not yet\".",
+    "dataNote": "Citations, purposes and grades are kept in English so they match the sources word for word.",
+    "download": "Download as JSON",
+    "searchLabel": "Search references",
+    "searchPlaceholder": "Search: Bukhārī 998, Witr, Musafir…",
+    "kindFilter": "Type",
+    "statusFilter": "Check status",
+    "kind": {
+      "all": "All",
+      "quran": "Quran",
+      "hadith": "Hadith",
+      "scholarly": "Scholarly",
+      "fiqh": "Fiqh position",
+      "data": "Data source"
+    },
+    "status": {
+      "all": "Any check status",
+      "needsManual": "Waiting for a manual check",
+      "manual": "Checked by hand",
+      "corrected": "Corrected in the audit",
+      "weak": "Weak narrations",
+      "unverified": "Desk check incomplete"
+    },
+    "showing": "Showing {{shown}} of {{total}}",
+    "grade": "Grade",
+    "purpose": "Used for",
+    "usedOn": "Shown on",
+    "desk": {
+      "verified": "Desk check: matches the source",
+      "corrected": "Desk check: corrected in this audit",
+      "weak": "Weak narration, shown as weak",
+      "unverified": "Desk check incomplete"
+    },
+    "manual": {
+      "none": "Manual check: not yet",
+      "source-verified": "Checked at the source",
+      "scholar-confirmed": "Confirmed by a scholar",
+      "needs-correction": "Needs correction"
+    },
+    "manualNote": "Manual note",
+    "inCode_one": "Where in the code ({{count}} file)",
+    "inCode_other": "Where in the code ({{count}} files)"
   }
 }

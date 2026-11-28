@@ -352,7 +352,7 @@
           <p class="text-white/85 text-sm leading-relaxed">
            "2–6 voluntary rak'ahs between Maghrib and Isha. Recommended for those who often return (awwab) to Allah with remembrance and repentance."
           <p class="text-white/70 text-xs italic leading-relaxed">
-           ""Whoever prays six rak'ahs after Maghrib without speaking anything bad between them, those six rak'ahs will be counted for him as equivalent to twelve years of worship." · Sunan Ibn Majah 1167; Abu Hurayrah (RA): "My close friend advised me to pray two rak'ahs of Duha and not to sleep before praying Witr." · Sahih al-Bukhari 1981"
+           ""Whoever prays six rak'ahs after Maghrib without speaking anything bad between them, those six rak'ahs will be counted for him as equivalent to twelve years of worship." · Sunan Ibn Majah 1167 (very weak: ḍaʿīf jiddan, al-Albānī); Abu Hurayrah (RA): "My close friend advised me to pray two rak'ahs of Duha and not to sleep before praying Witr." · Sahih al-Bukhari 1981"
           <a class="inline-flex items-center gap-1 text-xs text-brand-gold underline underline-offset-2" href="https://sunnah.com/ibnmajah:1167" rel="noopener noreferrer" target="_blank">
            <svg aria-hidden="true" class="w-3.5 h-3.5" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="<242:0072c23c>" stroke-linecap="round" stroke-linejoin="round">

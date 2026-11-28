@@ -29,7 +29,7 @@ describe('admin site', () => {
     expect(routes).not.toMatch(/pages\/Admin|AdminProtected/);
     expect(routes).toContain('<Route path="/admin/*" element={<AdminRedirect />} />');
     expect(routeGuards).not.toMatch(/AdminGate|AdminLayout|useAdminStore/);
-    expect(adminRoutes.match(/<AdminProtected>/g)).toHaveLength(12);
+    expect(adminRoutes.match(/<AdminProtected>/g)).toHaveLength(13);
   });
 
   it('the admin page has no app Firebase, service worker, analytics or saved cache', () => {

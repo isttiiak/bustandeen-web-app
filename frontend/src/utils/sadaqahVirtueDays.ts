@@ -58,8 +58,8 @@ const SADAQAH_VIRTUE_DAYS: SadaqahVirtueDay[] = [
     title: 'The first 10 days of Dhul Ḥijjah: give generously',
     desc: 'No days are more beloved to Allah for righteous deeds than these ten, so charity given now is counted among the best deeds of the entire year.',
     reference: {
-      text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." · Ṣaḥīḥ al-Bukhārī 969',
-      url: 'https://sunnah.com/bukhari:969',
+      text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." · Jāmiʿ al-Tirmidhī 757',
+      url: 'https://sunnah.com/tirmidhi:757',
       grade: 'Ṣaḥīḥ',
     },
   },
@@ -69,8 +69,8 @@ const SADAQAH_VIRTUE_DAYS: SadaqahVirtueDay[] = [
     title: 'Day of Arafah: the best day of the year',
     desc: 'Arafah falls within the ten days most beloved to Allah for righteous deeds, so charity given today shares in that same virtue.',
     reference: {
-      text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." · Ṣaḥīḥ al-Bukhārī 969',
-      url: 'https://sunnah.com/bukhari:969',
+      text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." · Jāmiʿ al-Tirmidhī 757',
+      url: 'https://sunnah.com/tirmidhi:757',
       grade: 'Ṣaḥīḥ',
     },
   },

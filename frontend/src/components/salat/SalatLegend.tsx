@@ -159,7 +159,7 @@ export default function SalatLegend({ legendExpanded, setLegendExpanded }: Salat
                   <Row icon={<BookOpenIcon className={`${ICON} text-brand-emerald`} />}>
                     <Trans
                       i18nKey="salatTracker.legendReadNowInfo"
-                      defaults="<1>Read now</1> under each prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd 1523, ṣaḥīḥ)."
+                      defaults="<1>Read now</1> under each prayer opens Ayatul Kursi and the three Quls straight in the reader (Abū Dāwūd 1523 and an-Nasāʾī, al-Kubrā 9848, ṣaḥīḥ)."
                       components={{ 1: EMPHASIS }}
                     />
                   </Row>

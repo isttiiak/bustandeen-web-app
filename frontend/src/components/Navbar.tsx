@@ -98,6 +98,7 @@ const PAGE_META: Record<
   '/journey': { title: 'Journey', Icon: MapIcon },
   '/about': { title: 'About Bustandeen', Icon: LeafIcon },
   '/privacy': { title: 'Privacy', Icon: LockClosedIcon },
+  '/references': { title: 'Reference Map', Icon: BookOpenIcon },
   '/terms': { title: 'Terms', Icon: DocumentTextIcon },
   '/feedback': { title: 'Feedback', Icon: ChatBubbleLeftRightIcon },
   '/contact': { title: 'Contact Us', Icon: EnvelopeIcon },
@@ -110,9 +111,7 @@ const PAGE_META: Record<
   '/library/zakat-calculator': { title: 'Zakat Calculator', Icon: CalculatorIcon },
   '/library/calendar': { title: 'Bustandeen Calendar', Icon: CalendarDaysIcon },
 };
-
 const HOME_META: (typeof PAGE_META)[string] = { title: 'Home', Icon: HomeIcon };
-
 // Maps each page to its logical parent for the back button
 const PARENT_ROUTES: Record<string, string> = {
   '/zikr': '/',
@@ -129,6 +128,7 @@ const PARENT_ROUTES: Record<string, string> = {
   '/journey': '/',
   '/about': '/',
   '/privacy': '/',
+  '/references': '/about',
   '/terms': '/',
   '/feedback': '/',
   '/contact': '/',
@@ -433,30 +433,23 @@ export default function Navbar() {
                           {t('nav.naseeh', 'Naseeh')}
                         </Link>
                       )}
-                      <Link
-                        to="/about"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/5 text-sm transition-colors"
-                      >
-                        <InformationCircleIcon className="w-4 h-4 text-brand-gold/60" />
-                        {t('nav.aboutUs')}
-                      </Link>
-                      <Link
-                        to="/privacy"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/5 text-sm transition-colors"
-                      >
-                        <ShieldCheckIcon className="w-4 h-4 text-brand-info/60" />
-                        {t('nav.privacy')}
-                      </Link>
-                      <Link
-                        to="/terms"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/5 text-sm transition-colors"
-                      >
-                        <DocumentTextIcon className="w-4 h-4 text-brand-gold/60" />
-                        {t('nav.terms')}
-                      </Link>
+                      {(
+                        [
+                          ['/about', InformationCircleIcon, 'text-brand-gold/60', 'nav.aboutUs'],
+                          ['/privacy', ShieldCheckIcon, 'text-brand-info/60', 'nav.privacy'],
+                          ['/terms', DocumentTextIcon, 'text-brand-gold/60', 'nav.terms'],
+                        ] as const
+                      ).map(([to, Icon, tone, key]) => (
+                        <Link
+                          key={to}
+                          to={to}
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-white/5 text-sm transition-colors"
+                        >
+                          <Icon className={`w-4 h-4 ${tone}`} />
+                          {t(key)}
+                        </Link>
+                      ))}
 
                       {user.gender === 'female' && (
                         <Link
@@ -496,17 +489,6 @@ export default function Navbar() {
                         {t('nav.feedbackContact')}
                       </Link>
 
-                      {/* Sadaqah — visible to everyone, not just admins, right
-                          before sign-out so it's seen without being loud. */}
-                      <Link
-                        to="/sadaqah"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-gold/10 text-sm transition-colors"
-                      >
-                        <HeartIcon className="w-4 h-4 text-brand-gold/70" />
-                        {t('nav.sadaqah', 'Sadaqah')}
-                      </Link>
-
                       {/* U2: invite someone to the app (no friend link) */}
                       <button
                         type="button"
@@ -519,6 +501,24 @@ export default function Navbar() {
                         <ShareIcon className="w-4 h-4 text-brand-emerald/70" />
                         {t('shareApp.menu')}
                       </button>
+
+                      {/* Sadaqah and the reference map, right before sign-out. */}
+                      {(
+                        [
+                          ['/sadaqah', HeartIcon, 'nav.sadaqah', 'Sadaqah'],
+                          ['/references', BookOpenIcon, 'nav.references', 'References'],
+                        ] as const
+                      ).map(([to, Icon, key, fallback]) => (
+                        <Link
+                          key={to}
+                          to={to}
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-gold/10 text-sm transition-colors"
+                        >
+                          <Icon className="w-4 h-4 text-brand-gold/70" />
+                          {t(key, fallback)}
+                        </Link>
+                      ))}
 
                       <div className="border-t border-brand-border/60 mt-1 pt-1">
                         <button

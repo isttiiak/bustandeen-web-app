@@ -124,9 +124,9 @@ export const NAFL_TYPE_META: NaflTypeMeta[] = [
       'Minimum 2 rak\'ahs; 4 is preferred in the Ḥanafī school. "The Prophet ﷺ used to pray Duha four rak\'ahs and would add more as Allah willed." Maximum is 12.',
     fullNoteBn:
       'সর্বনিম্ন ২ রাকাত; হানাফী মাযহাবে ৪ রাকাত উত্তম। "নবী ﷺ চাশতের নামায চার রাকাত পড়তেন এবং আল্লাহ যতটা চাইতেন ততটা বাড়াতেন।" সর্বোচ্চ ১২ রাকাত।',
-    hadith: 'Ṣaḥīḥ Muslim 717',
-    hadithBn: 'সহীহ মুসলিম ৭১৭',
-    hadithUrl: 'https://sunnah.com/muslim:717',
+    hadith: 'Ṣaḥīḥ Muslim 719',
+    hadithBn: 'সহীহ মুসলিম ৭১৯',
+    hadithUrl: 'https://sunnah.com/muslim:719',
     defaultRakat: 2,
   },
   {
@@ -139,8 +139,8 @@ export const NAFL_TYPE_META: NaflTypeMeta[] = [
     fullNote: 'Prayed between Maghrib and Isha. For those who frequently return (awwāb) to Allah.',
     fullNoteBn:
       'মাগরিব ও এশার মধ্যবর্তী সময়ে পড়া হয়। যারা বারবার আল্লাহর দিকে ফিরে আসে (আউয়াব) তাদের জন্য।',
-    hadith: 'Ibn Mājah 1167',
-    hadithBn: 'ইবনে মাজাহ ১১৬৭',
+    hadith: 'Ibn Mājah 1167 · very weak (ḍaʿīf jiddan, al-Albānī)',
+    hadithBn: 'ইবনে মাজাহ ১১৬৭ · অত্যন্ত দুর্বল (যঈফ জিদ্দান, আলবানী)',
     hadithUrl: 'https://sunnah.com/ibnmajah:1167',
     defaultRakat: 6,
   },
@@ -203,8 +203,8 @@ export const NAFL_TYPE_META: NaflTypeMeta[] = [
       '"Whoever has a need with Allah or any human being, let him perform wudu, pray two rak\'ahs, then praise Allah, send blessings upon the Prophet ﷺ, then make du\'a."',
     fullNoteBn:
       '"যার আল্লাহর কাছে অথবা কোনো মানুষের কাছে কোনো প্রয়োজন আছে, সে যেন ওযু করে, দুই রাকাত নামায পড়ে, তারপর আল্লাহর প্রশংসা করে, নবী ﷺ-এর প্রতি দরুদ পাঠ করে, তারপর দু\'আ করে।"',
-    hadith: 'Sunan Ibn Mājah 1384',
-    hadithBn: 'সুনান ইবনে মাজাহ ১৩৮৪',
+    hadith: 'Sunan Ibn Mājah 1384 · very weak (ḍaʿīf jiddan, al-Albānī)',
+    hadithBn: 'সুনান ইবনে মাজাহ ১৩৮৪ · অত্যন্ত দুর্বল (যঈফ জিদ্দান, আলবানী)',
     hadithUrl: 'https://sunnah.com/ibnmajah:1384',
     defaultRakat: 2,
   },
@@ -219,9 +219,9 @@ export const NAFL_TYPE_META: NaflTypeMeta[] = [
       "\"The Prophet ﷺ used to teach us Istikharah for all our affairs as he would teach a surah of the Qur'an.\" Pray two rak'ahs then recite the Istikharah du'a.",
     fullNoteBn:
       '"নবী ﷺ আমাদের সকল বিষয়ে ইস্তিখারা শেখাতেন, যেমন তিনি কুরআনের একটি সূরা শেখাতেন।" দুই রাকাত নামায পড়ে ইস্তিখারার দু\'আ পড়ুন।',
-    hadith: 'Ṣaḥīḥ al-Bukhārī 1162',
-    hadithBn: 'সহীহ বুখারী ১১৬২',
-    hadithUrl: 'https://sunnah.com/bukhari:1162',
+    hadith: 'Ṣaḥīḥ al-Bukhārī 1166',
+    hadithBn: 'সহীহ বুখারী ১১৬৬',
+    hadithUrl: 'https://sunnah.com/bukhari:1166',
     defaultRakat: 2,
   },
   {

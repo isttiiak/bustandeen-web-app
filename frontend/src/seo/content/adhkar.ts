@@ -149,7 +149,11 @@ export const MORNING_ADHKAR: AdhkarItem[] = [
     },
     repeat: 1,
     arabicNote: 'ذكر الصباح المأثور عن النبي ﷺ، يُقابله في المساء: أمسينا وأمسى الملك لله.',
-    reference: { text: 'Ṣaḥīḥ Muslim 2723', url: 'https://sunnah.com/hisn:77', grade: 'Ṣaḥīḥ' },
+    reference: {
+      text: 'Ḥiṣn al-Muslim 77 (from Ṣaḥīḥ Muslim 2723)',
+      url: 'https://sunnah.com/hisn:77',
+      grade: 'Ṣaḥīḥ',
+    },
   },
   {
     id: 'bika-asbahna',
