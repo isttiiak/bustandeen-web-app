@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.193.1 - Reference map links highlight the citation - 2026-11-28
+
+### Changed
+
+- **Every place on the reference map now opens the screen with the citation highlighted.** The links use URL text fragments (`/special-day/friday#:~:text=Sunan%20Abū%20Dāwūd%201052`): the browser scrolls to the citation and marks it, as on `/friends#:~:text=…`. 393 of 402 places carry the exact text shown there (the citation, or the card title where a card names its source only, such as the Duʿā library); the rest open the screen without a highlight.
+- In Bangla the link carries the Bangla form of the citation and the English one; the browser highlights the one it finds.
+- The links are plain page loads, since browsers apply text fragments only on a load. A citation inside a closed panel (such as a nafl card or the prayer-time Sources) opens the screen; the highlight shows once the panel is open only if the browser finds it on load.
+- The scan records the visible text per place (`places[].text` in `usage.generated.json` and `/references.json`). Tests check the encoding, the Bangla second directive, and that over 95% of places have text.
+
 ## v5.193.0 - Mark references as checked from the admin panel - 2026-11-28
 
 ### Added

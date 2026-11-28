@@ -4666,6 +4666,7 @@
     "manualNote": "Manual note",
     "whereTitle": "Where in the app",
     "ruleOnly": "not quoted on a screen; it is the basis of a rule the app follows in its calculations.",
-    "notShown": "not shown on any screen right now."
+    "notShown": "not shown on any screen right now.",
+    "highlightHint": "Opens the screen with “{{text}}” highlighted"
   }
 }

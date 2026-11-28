@@ -1,4 +1,3 @@
-import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowTopRightOnSquareIcon,
@@ -9,7 +8,8 @@ import {
   UserIcon,
 } from '@heroicons/react/24/outline';
 import { CARD } from '../bustanStyles.js';
-import { REF_PAGES, type RefPage, type RefPlace } from '../../data/references/pages.js';
+import { REF_PAGES, placeHref, type RefPage, type RefPlace } from '../../data/references/pages.js';
+import { translateReference } from '../../utils/localeReference.js';
 import { DESK_CHECK, type DeskResult, type RefKind } from '../../data/references/registry.js';
 import type { ManualStatus, MappedReference } from '../../data/references/referenceExport.js';
 
@@ -85,12 +85,12 @@ function WhereInApp({ entry, bn }: { entry: MappedReference; bn: boolean }) {
           return (
             <li key={key}>
               {page.path ? (
-                <Link
-                  to={page.path}
+                <a
+                  href={page.path}
                   className="font-bold text-brand-emerald underline underline-offset-2"
                 >
                   {label}
-                </Link>
+                </a>
               ) : (
                 <span className="font-bold text-white">{label}</span>
               )}
@@ -103,15 +103,34 @@ function WhereInApp({ entry, bn }: { entry: MappedReference; bn: boolean }) {
                       ? `${p.item} › ${section}`
                       : `${section} › ${p.item}`
                     : section;
+                  // Opens the screen and highlights the citation there (text fragment).
+                  const href = placeHref(
+                    p,
+                    bn && p.text ? translateReference(p.text, 'bn') : undefined
+                  );
                   return (
                     <li
                       key={`${p.path ?? ''}${p.section}${p.item ?? ''}`}
                       className="text-white/75"
                     >
-                      {p.path ? (
-                        <Link to={p.path} className="underline underline-offset-2 hover:text-white">
+                      {href ? (
+                        <a
+                          href={href}
+                          className="underline underline-offset-2 decoration-brand-gold/50 hover:text-white hover:decoration-brand-gold"
+                          title={
+                            p.text
+                              ? t(
+                                  'references.highlightHint',
+                                  'Opens the screen with “{{text}}” highlighted',
+                                  {
+                                    text: p.text,
+                                  }
+                                )
+                              : undefined
+                          }
+                        >
                           {text}
-                        </Link>
+                        </a>
                       ) : (
                         text
                       )}
