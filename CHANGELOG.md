@@ -32,6 +32,10 @@ Owner's ruling of 2026-11-28: Jumu'ah is not obligatory for women. A sister pray
   - Production verifies tokens with Firebase and never allows the bypass, so it was not exposed there.
   - This is the source CodeQL traced into its `js/sql-injection` alerts, including the new #370 on this PR.
   - Test `tests/devAuthUid.e2e.test.js`: five of its cases fail on the old code.
+- **CodeQL now analyses the production sign-in path only.** The unverified token reader moved to `backend/src/dev/unverifiedJwt.ts` (still exported from `config/firebaseAdmin.ts`, so the code and the test mocks are unchanged). `.github/codeql/codeql-config.yml` excludes that one folder, with the reason written in it.
+  - CodeQL's trace for #370 started at the Authorization header, went through this dev reader into `req.user.uid`, and ended in the query.
+  - For this rule CodeQL reports any user-controlled value in a query, so a type check cannot satisfy it while the dev reader is analysed.
+  - Every other file keeps the full default suite.
 
 ## v5.190.83 - CodeQL triage: two real fixes - 2026-11-27
 

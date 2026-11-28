@@ -1,0 +1,12 @@
+# CodeQL configuration (audit P3-4; CodeQL triage 2026-11-28, PR 423).
+name: bustandeen CodeQL config
+
+# backend/src/dev holds code that production refuses to run: the unverified token
+# reader behind DEV_AUTH_BYPASS (devAuthBypassAllowed() is false when
+# NODE_ENV=production). Production signs users in only through Firebase Admin's
+# verified tokens. Analysed, the dev reader made the request's own text the source
+# of every user id, so each query using req.user.uid was reported as NoSQL
+# injection (300+ alerts) although no production request can reach it. Nothing
+# else is excluded, and every query keeps the default suite.
+paths-ignore:
+  - backend/src/dev
