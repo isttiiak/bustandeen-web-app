@@ -5,13 +5,17 @@ import {
   ArrowDownTrayIcon,
   BookOpenIcon,
   DevicePhoneMobileIcon,
+  EyeSlashIcon,
   GlobeAltIcon,
+  GlobeAsiaAustraliaIcon,
   LockClosedIcon,
   MapIcon,
   NoSymbolIcon,
   PencilSquareIcon,
+  ScaleIcon,
   ShieldCheckIcon,
   TrashIcon,
+  UserIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
 import AnimatedBackground from '../components/AnimatedBackground.js';
@@ -22,14 +26,18 @@ type HeroIcon = typeof LockClosedIcon;
 
 const SECTION_KEYS: { Icon: HeroIcon; key: string; bodyCount: number }[] = [
   { Icon: ArrowDownTrayIcon, key: 'whatWeStore', bodyCount: 8 },
+  { Icon: EyeSlashIcon, key: 'sensitive', bodyCount: 1 },
   { Icon: DevicePhoneMobileIcon, key: 'deviceOnly', bodyCount: 4 },
   { Icon: UsersIcon, key: 'friendsSee', bodyCount: 6 },
   { Icon: GlobeAltIcon, key: 'thirdParty', bodyCount: 3 },
+  { Icon: GlobeAsiaAustraliaIcon, key: 'whereData', bodyCount: 2 },
   { Icon: BookOpenIcon, key: 'sources', bodyCount: 6 },
-  { Icon: NoSymbolIcon, key: 'neverDo', bodyCount: 3 },
+  { Icon: NoSymbolIcon, key: 'neverDo', bodyCount: 5 },
   { Icon: TrashIcon, key: 'yourControl', bodyCount: 4 },
-  { Icon: ShieldCheckIcon, key: 'protected', bodyCount: 4 },
-  { Icon: PencilSquareIcon, key: 'changes', bodyCount: 1 },
+  { Icon: ScaleIcon, key: 'rights', bodyCount: 2 },
+  { Icon: ShieldCheckIcon, key: 'protected', bodyCount: 5 },
+  { Icon: UserIcon, key: 'children', bodyCount: 1 },
+  { Icon: PencilSquareIcon, key: 'changes', bodyCount: 3 },
 ];
 
 /** Section heading inside a privacy card, with its icon. */
@@ -52,6 +60,24 @@ const DATA_FLOW_ROWS = [
   'flagcdn',
   'osm',
 ] as const;
+
+/** Each provider's own privacy policy, opened in a new tab. Only addresses that
+ * loaded and named the provider's policy on 2026-11-28 are listed. A row with
+ * no entry has no policy link: sunnah.com, IRD Foundation and flagcdn publish
+ * none we could find; the alquran.cloud / Islamic Network / mp3quran row names
+ * three providers and only mp3quran has a policy page, so it has none rather
+ * than one that covers a third of the row. Never guess an address. The QUL row
+ * links to Tarteel, QUL's owner. */
+const POLICY_URLS: Partial<Record<(typeof DATA_FLOW_ROWS)[number], string>> = {
+  vercel: 'https://vercel.com/legal/privacy-notice',
+  atlas: 'https://www.mongodb.com/legal/privacy/privacy-policy',
+  firebase: 'https://firebase.google.com/support/privacy',
+  ga: 'https://policies.google.com/privacy',
+  zoho: 'https://www.zoho.com/privacy.html',
+  quranFoundation: 'https://quran.com/privacy',
+  qul: 'https://tarteel.ai/privacy',
+  osm: 'https://osmfoundation.org/wiki/Privacy_Policy',
+};
 
 function DataFlowTable() {
   const { t } = useTranslation();
@@ -80,6 +106,19 @@ function DataFlowTable() {
               </span>
               {t(`privacy.dataFlow.rows.${row}.receives`)}
             </dd>
+            {POLICY_URLS[row] && (
+              <dd className="text-xs mt-0.5">
+                <a
+                  href={POLICY_URLS[row]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-emerald underline"
+                >
+                  {t('privacy.dataFlow.policyLink')}
+                  <span className="sr-only"> {t('privacy.dataFlow.policyNewTab')}</span>
+                </a>
+              </dd>
+            )}
           </div>
         ))}
       </dl>
