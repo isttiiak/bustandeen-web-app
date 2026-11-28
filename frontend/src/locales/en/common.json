@@ -2510,7 +2510,8 @@
     "phrase5": "What is with Allah is never lost. He sees every gentle 'SubhanAllah'.",
     "phrase6": "Ease is also from Him. Rest, remember, and let your heart do the worshipping.",
     "phrase7": "The Beloved ﷺ said the deeds most loved by Allah are the constant ones. Your dhikr counts.",
-    "pregnancyDueDateLabel": "Expected due date"
+    "pregnancyDueDateLabel": "Expected due date",
+    "nextPeriodPassed": "Your period was expected around {{date}}. Cycles vary, so log it when it starts."
   },
   "reportRef": {
     "cardBody": "If you believe a verse number, hadith reference, or grading is incorrect, please let us know — we take this seriously.",

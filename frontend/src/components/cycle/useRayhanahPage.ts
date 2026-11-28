@@ -188,6 +188,9 @@ export function useRayhanahPage() {
     return daysBetween(today, ns);
   }, [summary, active, today]);
   const pmsAlert = daysUntilNext !== null && daysUntilNext >= 0 && daysUntilNext <= 7;
+  // The expected start has passed and no period is logged: say so, instead of showing a
+  // past date as "expected" with a fertile window that has also passed.
+  const predictionPassed = daysUntilNext !== null && daysUntilNext < 0;
 
   // Fasting makeup summary
   const qadaOwed = fastingSummary?.profile?.qadaOwed ?? 0;
@@ -209,6 +212,7 @@ export function useRayhanahPage() {
     isError,
     refetch,
     active,
+    predictionPassed,
     todayNote,
     viewDay,
     setViewDay,
