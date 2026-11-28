@@ -1062,4 +1062,4 @@
            <p class="text-brand-emerald font-black text-lg shrink-0">
             "200"
          <p class="text-white/70 text-[10px] leading-relaxed">
-          "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
+          "Counter sessions come from real taps and show their start and end. Each time you use Log counts, it is listed as its own row with the time you logged it. The tasbih the salat tracker adds for you isn't listed here."

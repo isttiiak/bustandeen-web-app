@@ -6,7 +6,10 @@
    "url": "/api/cycle/start",
    "body": {
     "date": "2026-10-10",
-    "type": "hayd"
+    "type": "hayd",
+    "startMark": {
+     "slot": "morning"
+    }
    },
    "owner": "demo-001"
   }

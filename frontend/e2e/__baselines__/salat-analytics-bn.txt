@@ -530,35 +530,35 @@
            <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
             <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
              <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
-            "নামাযের সময়"
-            <button aria-label="নামাযের সময়" class="shrink-0 w-6 h-6 -m-1 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald transition-colors" title="নামাযের সময়">
+            "কীভাবে নামায পড়েছেন"
+            <button aria-label="কীভাবে নামায পড়েছেন" class="shrink-0 w-6 h-6 -m-1 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald transition-colors" title="কীভাবে নামায পড়েছেন">
              <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="<152:ad11e729>" stroke-linecap="round" stroke-linejoin="round">
            <div class="w-full h-4 rounded-full overflow-hidden flex bg-track">
-            <div class="h-full bg-brand-emerald" style="width: 48.4848%">
-            <div class="h-full bg-brand-gold" style="width: 36.3636%">
-            <div class="h-full bg-data-none" style="width: 15.1515%">
+            <div class="h-full bg-brand-emerald" style="width: 76.9231%">
+            <div class="h-full bg-brand-gold" style="width: 7.69231%">
+            <div class="h-full bg-brand-info" style="width: 15.3846%">
            <div class="flex flex-wrap gap-3 text-xs">
             <div class="flex items-center gap-1.5">
              <span class="w-2.5 h-2.5 rounded-sm bg-brand-emerald">
              <span class="text-white/70">
-              "শুরুতে"
+              "সম্পন্ন"
              <span class="text-white font-bold">
-              "১৬"
+              "৩০"
             <div class="flex items-center gap-1.5">
              <span class="w-2.5 h-2.5 rounded-sm bg-brand-gold">
              <span class="text-white/70">
-              "মাঝামাঝি"
+              "কাযা"
              <span class="text-white font-bold">
-              "১২"
+              "৩"
             <div class="flex items-center gap-1.5">
-             <span class="w-2.5 h-2.5 rounded-sm bg-data-none">
+             <span class="w-2.5 h-2.5 rounded-sm bg-brand-info">
              <span class="text-white/70">
-              "শেষের দিকে"
+              "কাযা ঋণ পরিশোধ"
              <span class="text-white font-bold">
-              "৫"
+              "৬"
            <p class="text-white/70 text-[10px]">
-            "প্রতিটি নামায তার সময়ের মধ্যে কতটা দেরিতে আদায় চিহ্নিত হয়েছে। শুধুমাত্র তখনই গণনা করা হয় যখন আপনার অবস্থান সেট করা ছিল।"
+            "এই সময়ে সম্পন্ন চিহ্নিত নামায, কাযা চিহ্নিত নামায, আর কাযা ঋণ থেকে আদায় করা নামায।"
          <div class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2" style="opacity: 1; transform: none">
           <div class="p-5 space-y-3">
            <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
@@ -719,29 +719,33 @@
           <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
            <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path d="<448:d961d678>" stroke-linecap="round" stroke-linejoin="round">
-           "ইশা ও ফজরের সম্পর্ক"
-           <button aria-label="ইশা ও ফজরের সম্পর্ক" class="shrink-0 w-6 h-6 -m-1 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald transition-colors" title="ইশা ও ফজরের সম্পর্ক">
+           "কীভাবে ঘুরে দাঁড়ান"
+           <button aria-label="কীভাবে ঘুরে দাঁড়ান" class="shrink-0 w-6 h-6 -m-1 grid place-items-center rounded-full text-white/60 hover:text-brand-emerald transition-colors" title="কীভাবে ঘুরে দাঁড়ান">
             <svg aria-hidden="true" class="w-4 h-4" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
              <path d="<152:ad11e729>" stroke-linecap="round" stroke-linejoin="round">
           <p class="text-white/70 text-xs">
-           "রাতে ইশার সময় পরদিন সকালে ফজর ধরতে পারার সাথে কীভাবে সম্পর্কিত, তা দেখুন।"
+           "নামায ছুটে যাওয়া দিনের পরের দিন কতবার পাঁচ ওয়াক্তই সম্পন্ন হয়।"
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-           <div class="rounded-control border border-brand-emerald/25 bg-brand-emerald/10 p-3">
+           <div class="rounded-control border p-3 border-brand-gold/25 bg-brand-gold/10">
             <p class="text-white/70 text-[11px]">
-             "রাত ১১টার আগে ইশা"
-            <p class="text-brand-emerald font-bold text-lg mt-0.5">
-             "৮২%"
+             "নামায ছুটে যাওয়া দিনের পরে"
+            <p class="font-bold text-lg mt-0.5 text-brand-gold">
+             "৫৮%"
             <p class="text-white/70 text-[10px] mt-0.5">
-             "ফজর সময়মতো"
-           <div class="rounded-control border border-brand-gold/25 bg-brand-gold/10 p-3">
+             "পরদিন পাঁচ ওয়াক্তই সম্পন্ন"
+             "·"
+             "১৪ দিন"
+           <div class="rounded-control border p-3 border-brand-emerald/25 bg-brand-emerald/10">
             <p class="text-white/70 text-[11px]">
-             "রাত ১১টার পরে ইশা"
-            <p class="text-brand-gold font-bold text-lg mt-0.5">
-             "৫৪%"
+             "পাঁচ ওয়াক্তই সম্পন্ন দিনের পরে"
+            <p class="font-bold text-lg mt-0.5 text-brand-emerald">
+             "৮৪%"
             <p class="text-white/70 text-[10px] mt-0.5">
-             "ফজর সময়মতো"
+             "পরদিন পাঁচ ওয়াক্তই সম্পন্ন"
+             "·"
+             "৬১ দিন"
           <p class="text-white/70 text-[10px]">
-           "আপনার ইতিমধ্যে লগ করা গত ৯০ দিনের নামাযের সময়ের ভিত্তিতে।"
+           "গত ৯০ দিন, আপনার সম্পন্ন, কাযা ও ছুটে যাওয়ার চিহ্ন থেকে। বাটন চাপার সময় থেকে নয়।"
         <div class="space-y-3">
          <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
           <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
