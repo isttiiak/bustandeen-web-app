@@ -59,7 +59,7 @@ token → `req.user`, rejects disabled users on every request) or `requireAdminA
 Every write route is validated with Zod (`middleware/validate.ts` plus `validation/*.schemas.ts`).
 
 API route groups: `auth, zikr, ai, user, analytics, salat, stats, fasting, adhkar, quran, hifz, social, cycle,
-insights, natural-log, naseeh, sadaqah, feedback, announcements, calendar, cron, csp-report, client-errors`,
+insights, sadaqah, feedback, announcements, calendar, cron, csp-report, client-errors`,
 and `admin/*` (sadaqah, zikr-requests, auth, users, accounts, audit-log, feedback + mailbox, stats, ops,
 announcements, moon-sighting, compose-email, update-emails).
 
@@ -86,7 +86,7 @@ suite (or a local database with `MONGO_AUTO_INDEX=1`): indexes reach Atlas only 
 | Fasting     | `FastingLog`, `FastingProfile`                                                                                                                                                | `{userId,date}` unique                                                                                                              |
 | Quran       | `QuranLog`, `QuranProfile`, `QuranReadingSession`, `HifzEntry`, `HifzLog`, `HifzProfile`                                                                                      | `{userId,date}` unique; `QuranReadingSession {userId,clientSessionId}` unique; `HifzEntry {userId,surah,ayah}` unique               |
 | Rayhanah    | `CycleDay`, `CycleLog`, `CycleProfile`                                                                                                                                        | `CycleDay {userId,date}` unique; one open cycle per user; sensitive fields AES-256-GCM (`utils/fieldCrypto.ts`)                     |
-| AI          | `NaseehPlan`                                                                                                                                                                  | `{userId,weekStart}` unique                                                                                                         |
+| Retired     | `NaseehPlan`                                                                                                                                                                  | `{userId,weekStart}` unique                                                                                                         |
 | Sadaqah     | `Donation`, `DonationStats`, `SadaqahExpense`                                                                                                                                 | `Donation.transactionId` unique while pending/verified; `{status,createdAt}`                                                        |
 | Calendar    | `MoonSighting`                                                                                                                                                                | one active sighting per country and Hijri month                                                                                     |
 | Admin / ops | `AdminAccount`, `AdminAuditLog`, `AdminSetting`, `Announcement`, `FeedbackMessage`, `MailboxMessage`, `MailboxSyncState`, `UpdateEmailCampaign`, `EmailFailureLog`, `CronRun` | `EmailFailureLog` TTL 90 days                                                                                                       |
@@ -178,8 +178,7 @@ qibla, ramadan, duas, adhkar, utilities. Also `robots.txt` and `llms.txt`.
 
 Fonts are self-hosted (`frontend/src/fonts.ts`, audit T2.7); no font requests leave the site.
 
-The backend talks to MongoDB Atlas, Firebase Admin, api.quran.com (tafsir proxy), Groq (Naseeh AI, English only; cycle data is
-never sent) and Zoho SMTP/IMAP. Every browser-facing origin is listed in the privacy page (`/privacy`); add one there
+The backend talks to MongoDB Atlas, Firebase Admin, api.quran.com (tafsir proxy), and Zoho SMTP/IMAP. Every browser-facing origin is listed in the privacy page (`/privacy`); add one there
 before adding it here.
 
 ## 7. Local development
@@ -195,7 +194,7 @@ npm run dev            # backend :5000 + frontend :5173 (the CORS allowlist expe
 ```
 
 - `backend/.env`: `MONGODB_URI`, `FIREBASE_PROJECT_ID`, `FIREBASE_CLIENT_EMAIL`, `FIREBASE_PRIVATE_KEY`,
-  `FIELD_ENCRYPTION_KEY`, optional `GROQ_API_KEY`. macOS: port 5000 is AirPlay, use `PORT=5001`.
+  `FIELD_ENCRYPTION_KEY`. macOS: port 5000 is AirPlay, use `PORT=5001`.
 - `frontend/.env`: `VITE_BACKEND_URL` (local dev only; production calls `/api` same-origin) and `VITE_FIREBASE_*`.
 - The `.env` files are gitignored; copy them to each machine. Claude Code worktrees copy only `frontend/.env*`
   (`.worktreeinclude`).
@@ -203,7 +202,7 @@ npm run dev            # backend :5000 + frontend :5173 (the CORS allowlist expe
   deploy uses the separate Atlas project `bustandeen-staging` (its own cluster, its own `readWrite` user, no real data).
   Set these for the **Preview scope only**: `MONGODB_URI` (staging), a different `FIELD_ENCRYPTION_KEY`,
   `DEV_AUTH_BYPASS=0`, and `PRODUCTION_MONGO_HOST` (the production host only, no credentials). Keep the mailbox/SMTP,
-  `GROQ_API_KEY`, `CRON_SECRET`, `VERCEL_DEPLOY_HOOK_URL` and bootstrap-password variables Production-only.
+  `CRON_SECRET`, `VERCEL_DEPLOY_HOOK_URL` and bootstrap-password variables Production-only.
   `config/database.ts` `assertNotProductionOnPreview` makes a preview refuse to start if its database host is the
   production host, or if `PRODUCTION_MONGO_HOST` is missing. A new staging cluster has no indexes: run
   `npm run sync-indexes --prefix backend` (dry run), then `-- --apply --production`, with its URI in `MONGODB_URI`.

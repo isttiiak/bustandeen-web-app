@@ -21,7 +21,6 @@ import { SettingsDayStartSection } from '../components/settings/SettingsDayStart
 import { SettingsDisplaySections } from '../components/settings/SettingsDisplaySections.js';
 import { SettingsLanguageSection } from '../components/settings/SettingsLanguageSection.js';
 import { SettingsMusafirSection } from '../components/settings/SettingsMusafirSection.js';
-import { SettingsNaseehSection } from '../components/settings/SettingsNaseehSection.js';
 import { SectionCard } from '../components/settings/settingsParts.js';
 
 export default function Settings() {
@@ -75,9 +74,6 @@ export default function Settings() {
 
           {/* Appearance, Home screen and Accessibility */}
           <SettingsDisplaySections />
-
-          {/* ── Naseeh AI companion ── */}
-          <SettingsNaseehSection />
 
           {/* ── Zikr library ── */}
           <SectionCard

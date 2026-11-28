@@ -23,7 +23,6 @@ interface ExcelSource {
   settings?: {
     dayStartMode?: string;
     hijriOffset?: number;
-    aiEnabled?: boolean;
     app?: Record<string, string>;
   };
   zikr?: {
@@ -121,7 +120,6 @@ export function buildExcelSheets(raw: Record<string, unknown>, t: T): Sheet[] {
   const settingsRows: Row[] = [
     [s('dayStart'), file.settings?.dayStartMode ?? ''],
     [s('hijriOffset'), file.settings?.hijriOffset ?? 0],
-    [s('naseeh'), file.settings?.aiEnabled ? s('on') : s('off')],
     [s('salatReset'), file.salat?.resetDate ?? ''],
     ...Object.entries(file.settings?.app ?? {})
       .sort(([a], [b]) => a.localeCompare(b))

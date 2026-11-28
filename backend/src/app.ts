@@ -4,7 +4,6 @@ import helmet from 'helmet';
 import authRoutes from './routes/auth.routes.js';
 import zikrRoutes from './routes/zikr.routes.js';
 import statsRoutes from './routes/stats.routes.js';
-import aiRoutes from './routes/ai.routes.js';
 import userRoutes from './routes/user.routes.js';
 import analyticsRoutes from './routes/analytics.routes.js';
 import salatRoutes from './routes/salat.routes.js';
@@ -15,8 +14,6 @@ import hifzRoutes from './routes/hifz.routes.js';
 import socialRoutes from './routes/social.routes.js';
 import cycleRoutes from './routes/cycle.routes.js';
 import insightsRoutes from './routes/insights.routes.js';
-import naturalLogRoutes from './routes/naturalLog.routes.js';
-import naseehRoutes from './routes/naseeh.routes.js';
 import connectPreviewRoutes from './routes/connectPreview.routes.js';
 import seoRedirectRoutes from './routes/seoRedirect.routes.js';
 import sadaqahRoutes from './routes/sadaqah.routes.js';
@@ -41,7 +38,7 @@ import cspReportRoutes from './routes/cspReport.routes.js';
 import clientErrorRoutes from './routes/clientError.routes.js';
 import cronRoutes from './routes/cron.routes.js';
 import * as healthController from './controllers/health.controller.js';
-import { generalLimiter, authLimiter, zikrLimiter, aiLimiter } from './middleware/rateLimiter.js';
+import { generalLimiter, authLimiter, zikrLimiter } from './middleware/rateLimiter.js';
 import { globalErrorHandler } from './middleware/errorHandler.js';
 import { requestLogger } from './lib/logger.js';
 import {
@@ -173,7 +170,6 @@ app.use(seoRedirectRoutes);
 // Routes with per-route rate limiters
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/zikr', zikrLimiter, zikrRoutes);
-app.use('/api/ai', aiLimiter, aiRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/analytics', analyticsRoutes);
 app.use('/api/salat', salatRoutes);
@@ -185,8 +181,11 @@ app.use('/api/hifz', hifzRoutes);
 app.use('/api/social', socialRoutes);
 app.use('/api/cycle', cycleRoutes);
 app.use('/api/insights', insightsRoutes);
-app.use('/api/natural-log', aiLimiter, naturalLogRoutes);
-app.use('/api/naseeh', naseehRoutes);
+// Naseeh (the Groq-based AI companion) was retired 2026-11-28. A cached PWA can still call
+// these paths, so answer 410 Gone with a plain message instead of a confusing 404.
+app.use(['/api/ai', '/api/naseeh', '/api/natural-log'], (_req, res) => {
+  res.status(410).json({ ok: false, error: 'Naseeh has been retired.' });
+});
 app.use('/api/sadaqah', sadaqahRoutes);
 app.use('/api/feedback', feedbackRoutes);
 app.use('/api/announcements', announcementRoutes);

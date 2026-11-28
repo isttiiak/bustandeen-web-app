@@ -26,7 +26,6 @@ import {
   ChartBarIcon,
   BookOpenIcon,
   HomeIcon,
-  SparklesIcon,
   BriefcaseIcon,
   ClockIcon,
   EnvelopeIcon,
@@ -71,7 +70,6 @@ const PAGE_KEYS: Record<string, string> = {
   '/settings': 'nav.settings',
   '/journey': 'nav.journey',
   '/profile': 'nav.myProfile',
-  '/naseeh': 'nav.naseeh',
   '/musafir': 'nav.musafir',
   '/library/duas': 'home.libraryDuaTitle',
   '/library/adhkar': 'home.libraryAdhkarTitle',
@@ -102,7 +100,6 @@ const PAGE_META: Record<
   '/feedback': { title: 'Feedback', Icon: ChatBubbleLeftRightIcon },
   '/contact': { title: 'Contact Us', Icon: EnvelopeIcon },
   '/profile': { title: 'My Profile', Icon: UserCircleIcon },
-  '/naseeh': { title: 'Naseeh', Icon: SparklesIcon },
   '/musafir': { title: 'Musafir Mode', Icon: BriefcaseIcon },
   '/library/duas': { title: "Du'a Library", Icon: DuaHandsIcon },
   '/library/adhkar': { title: 'Adhkar', Icon: SunriseIcon },
@@ -133,7 +130,6 @@ const PARENT_ROUTES: Record<string, string> = {
   '/feedback': '/',
   '/contact': '/',
   '/profile': '/',
-  '/naseeh': '/',
   '/musafir': '/salat',
   '/library/duas': '/',
   '/library/adhkar': '/',
@@ -181,7 +177,7 @@ export default function Navbar() {
   /** translated page title with English fallback */
   const pageTitle = (path: string, fallback: string) =>
     PAGE_KEYS[path] ? t(PAGE_KEYS[path]!, { defaultValue: fallback }) : fallback;
-  const { user, setUser, aiEnabled, isDemoMode } = useAuthStore();
+  const { user, setUser, isDemoMode } = useAuthStore();
   const resetAll = useZikrStore((s) => s.resetAll);
   const queryClient = useQueryClient();
   const [confirmLogout, setConfirmLogout] = useState(false);
@@ -423,16 +419,6 @@ export default function Navbar() {
                         <MapIcon className="w-4 h-4 text-brand-emerald/70" />
                         {t('nav.journey')}
                       </Link>
-                      {aiEnabled && !isDemoMode && (
-                        <Link
-                          to="/naseeh"
-                          onClick={() => setDropdownOpen(false)}
-                          className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-white/70 hover:text-white hover:bg-brand-emerald/10 text-sm transition-colors"
-                        >
-                          <SparklesIcon className="w-4 h-4" />
-                          {t('nav.naseeh', 'Naseeh')}
-                        </Link>
-                      )}
                       <Link
                         to="/about"
                         onClick={() => setDropdownOpen(false)}

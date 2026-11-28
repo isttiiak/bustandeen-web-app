@@ -5,9 +5,8 @@ import { rewrapAll } from './lib/rewrapFields.js';
 import { DB_NAME, assertWriteAllowed } from '../config/database.js';
 
 /**
- * Re-seals encrypted fields (Rayhanah notes and body stats, bring-your-own Groq
- * keys, admin authenticator secrets) under the current FIELD_ENCRYPTION_KEY in
- * the v2 format (audit 2026-11-16 P2-3). Key rotation, in order:
+ * Re-seals encrypted fields (Rayhanah notes and body stats, admin authenticator
+ * secrets) under the current FIELD_ENCRYPTION_KEY in the v2 format (audit 2026-11-16 P2-3). Key rotation, in order:
  *   1. set the NEW key as FIELD_ENCRYPTION_KEY and the old one as
  *      FIELD_ENCRYPTION_KEY_PREVIOUS (both deployed; everything still opens);
  *   2. npm run rotate:field-key              (dry run: counts only)

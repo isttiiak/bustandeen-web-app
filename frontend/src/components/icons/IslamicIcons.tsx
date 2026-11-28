@@ -268,7 +268,7 @@ export function CompassIcon(p: IconProps) {
 }
 
 /** A medallion: a ringed eight-point star, for the 99 Names (Asmāʾ al-Ḥusnā).
- *  Deliberately not a sparkle, which marks the Naseeh AI. */
+ *  Deliberately not a sparkle. */
 export function NamesMedallionIcon(p: IconProps) {
   return (
     <Svg {...p}>

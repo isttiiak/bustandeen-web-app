@@ -33,7 +33,6 @@ const ROUTES = [
   '/welcome',
   '/profile',
   '/special-day/ashura',
-  '/naseeh',
   '/sadaqah',
   '/sadaqah/donate',
   '/sadaqah/thank-you',

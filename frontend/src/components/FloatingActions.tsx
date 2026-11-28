@@ -7,12 +7,10 @@ import { useUiStore } from '../store/useUiStore.js';
 const GO_TOP_THRESHOLD = 400;
 
 /**
- * The bottom-right corner stack (U1). One flex column, so the "go to top"
- * button always sits ABOVE the Naseeh quick-log button and never on it;
- * when quick-log is absent (AI off, demo, zikr counter) it takes the corner.
+ * The bottom-right "go to top" button (U1), shown once the page is scrolled.
  * Safe-area aware for phones with a home indicator.
  */
-export default function FloatingActions({ quickLog }: { quickLog?: React.ReactNode }) {
+export default function FloatingActions() {
   const { t } = useTranslation();
   const reduceMotion = useUiStore((s) => s.reduceMotion);
   const [scrolled, setScrolled] = useState(false);
@@ -37,25 +35,22 @@ export default function FloatingActions({ quickLog }: { quickLog?: React.ReactNo
     document.body.scrollTo({ top: 0, behavior });
   };
 
-  if (!scrolled && !quickLog) return null;
+  if (!scrolled) return null;
 
   return (
     <div
       className="fixed right-4 z-40 flex flex-col items-center gap-3 pointer-events-none"
       style={{ bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px))' }}
     >
-      {scrolled && (
-        <button
-          type="button"
-          onClick={goTop}
-          aria-label={t('common.goToTop')}
-          title={t('common.goToTop')}
-          className="pointer-events-auto w-11 h-11 rounded-full grid place-items-center bg-brand-deep text-white border border-brand-border shadow-elev-2 hover:border-brand-emerald hover:text-brand-emerald transition-colors"
-        >
-          <ArrowUpIcon className="w-5 h-5" />
-        </button>
-      )}
-      {quickLog && <div className="pointer-events-auto">{quickLog}</div>}
+      <button
+        type="button"
+        onClick={goTop}
+        aria-label={t('common.goToTop')}
+        title={t('common.goToTop')}
+        className="pointer-events-auto w-11 h-11 rounded-full grid place-items-center bg-brand-deep text-white border border-brand-border shadow-elev-2 hover:border-brand-emerald hover:text-brand-emerald transition-colors"
+      >
+        <ArrowUpIcon className="w-5 h-5" />
+      </button>
     </div>
   );
 }

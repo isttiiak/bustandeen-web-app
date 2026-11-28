@@ -15,7 +15,6 @@ interface AdminUserListItem {
    *  sign-in, never by admin actions (see User.lastActiveAt's comment in the
    *  backend model). Null for accounts with no recorded activity yet. */
   lastActiveAt?: string | null;
-  aiEnabled: boolean;
   welcomeEmailSentAt?: string | null;
   disabled: boolean;
   /** Set when this uid is also a staff account (AdminAccount). Staff are

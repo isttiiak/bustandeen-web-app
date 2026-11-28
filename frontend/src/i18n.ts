@@ -21,8 +21,8 @@ export const LANGUAGES = [
 ] as const;
 
 /**
- * English is bundled: it is the fallback for every language (the admin and
- * Naseeh strings exist only in English). The Bangla strings (about 380 KB)
+ * English is bundled: it is the fallback for every language (the admin strings
+ * exist only in English). The Bangla strings (about 380 KB)
  * load as their own chunk, only when Bangla is used (audit PERF-01).
  */
 const lazyLocales: BackendModule = {

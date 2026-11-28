@@ -12,7 +12,6 @@ const file = {
   settings: {
     dayStartMode: 'fajr',
     hijriOffset: 0,
-    aiEnabled: false,
     app: { bustandeen_calc_method: 'Karachi' },
   },
   zikr: {

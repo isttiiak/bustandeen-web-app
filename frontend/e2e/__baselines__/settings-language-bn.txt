@@ -100,7 +100,7 @@
           <button aria-pressed="true" class="p-3 rounded-control border text-sm font-bold transition-colors bg-brand-emerald/10 border-brand-emerald text-white">
            "বাংলা (Bengali)"
          <p class="text-white/70 text-[11px] mt-3 leading-relaxed">
-          "পুরো অ্যাপটি English ও বাংলায় পাওয়া যায়, যেকোনো সময় বদলাতে পারেন। এআই সহচর নাসীহ শুধু ইংরেজিতে উত্তর দেয়। কুরআন ও হাদিসের রেফারেন্স কখনো মেশিন ট্রান্সলেট করা হয় না।"
+          "পুরো অ্যাপটি English ও বাংলায় পাওয়া যায়, যেকোনো সময় বদলাতে পারেন। কুরআন ও হাদিসের রেফারেন্স কখনো মেশিন ট্রান্সলেট করা হয় না।"
         <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 sm:p-6" style="opacity: 1; transform: none">
          <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
           <svg aria-hidden="true" class="w-5 h-5 text-brand-info" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -514,24 +514,6 @@
              "কম্পন প্রতিক্রিয়া"
             <p class="text-white/70 text-xs leading-snug mt-0.5">
              "প্রতিটি যিকির ট্যাপে হ্যাপটিক পালস (সমর্থিত মোবাইল ব্রাউজারে)"
-        <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 sm:p-6" style="opacity: 1; transform: none">
-         <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
-          <svg aria-hidden="true" class="w-5 h-5 text-brand-gold" data-slot="icon" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-           <path d="<611:a68d29de>" stroke-linecap="round" stroke-linejoin="round">
-          "নাসীহ AI সঙ্গী"
-         <p class="text-white/70 text-xs mt-1 mb-4 leading-relaxed">
-          "আপনার সাপ্তাহিক কার্যকলাপ থেকে ব্যক্তিগত উৎসাহ, কখনো ধর্মীয় প্রমাণের উৎস নয়"
-         <div class="space-y-3">
-          <label class="flex items-center gap-4 p-3 rounded-control border border-brand-border bg-brand-surface/50 cursor-pointer hover:border-brand-emerald/40 transition-colors">
-           <span class="relative inline-flex shrink-0 items-center w-11 h-6 ">
-            <input class="peer absolute left-1/2 top-1/2 z-10 m-0 h-11 w-11 -translate-x-1/2 -translate-y-1/2 cursor-pointer appearance-none opacity-0 disabled:cursor-not-allowed" role="switch" type="checkbox" checked=false>
-            <span aria-hidden="true" class="absolute inset-0 rounded-full border border-brand-border bg-brand-surface transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-brand-gold peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-brand-deep peer-disabled:opacity-50 peer-checked:bg-brand-gold peer-checked:border-brand-gold">
-            <span aria-hidden="true" class="absolute left-[3px] top-1/2 -translate-y-1/2 rounded-full bg-white/60 shadow-elev-1 transition-transform motion-reduce:transition-none peer-checked:bg-on-color peer-disabled:opacity-50 w-[18px] h-[18px] peer-checked:translate-x-5">
-           <div class="min-w-0">
-            <p class="font-semibold text-white text-sm">
-             "নাসীহ চালু করুন"
-            <p class="text-white/70 text-xs leading-snug mt-0.5">
-             "সাপ্তাহিক প্রতিফলন, ধারাবাহিকতা কোচিং ও রোযা সঙ্গী"
         <section class="rounded-card border border-brand-border bg-brand-deep shadow-elev-2 p-5 sm:p-6" style="opacity: 1; transform: none">
          <h2 class="font-display text-white font-bold text-base flex items-center gap-2">
           <svg aria-hidden="true" class="w-5 h-5 text-brand-emerald" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">

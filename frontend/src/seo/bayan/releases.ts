@@ -9,6 +9,7 @@ interface ReleaseText {
   title: string;
   added?: string[];
   fixed?: string[];
+  removed?: string[];
 }
 
 export interface Release {
@@ -19,6 +20,24 @@ export interface Release {
 }
 
 export const RELEASES: Release[] = [
+  {
+    version: '5.191.0',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Naseeh has been retired',
+        removed: [
+          'We removed Naseeh, the AI companion. It relied on an outside AI service that is not built for Islamic knowledge and sits outside our control, and we do not think your worship data should ever travel there. Nothing you record is sent to any AI service now. Your trackers, goals and data are unchanged.',
+        ],
+      },
+      bn: {
+        title: 'নাসীহ সরিয়ে দেওয়া হয়েছে',
+        removed: [
+          'আমরা এআই সহচর নাসীহ সরিয়ে দিয়েছি। এটি একটি বাইরের এআই সেবার ওপর নির্ভর করত, যা ইসলামী জ্ঞানের জন্য তৈরি নয় এবং আমাদের নিয়ন্ত্রণের বাইরে, আর আমরা মনে করি আপনার ইবাদতের তথ্য কখনো সেখানে যাওয়া উচিত নয়। আপনি যা লিখেন তা এখন কোনো এআই সেবায় পাঠানো হয় না। আপনার ট্র্যাকার, লক্ষ্য ও তথ্য আগের মতোই আছে।',
+        ],
+      },
+    },
+  },
   {
     version: '5.190.86',
     date: '2026-11-28',

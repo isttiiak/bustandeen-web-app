@@ -30,6 +30,7 @@ export interface BayanChrome {
   newsIntro: string;
   added: string;
   fixed: string;
+  removed: string;
   calcIntro: string;
   calcWhat: string;
   calcHow: string;
@@ -97,6 +98,7 @@ export const CHROME: Record<BayanLang, BayanChrome> = {
     newsIntro: 'Every release in plain words. Newest first.',
     added: 'New',
     fixed: 'Fixed',
+    removed: 'Removed',
     calcIntro: 'Everything below is worked out on your device. Your location never leaves it.',
     calcWhat: 'What',
     calcHow: 'How',
@@ -138,6 +140,7 @@ export const CHROME: Record<BayanLang, BayanChrome> = {
     newsIntro: 'প্রতিটি আপডেট সহজ ভাষায়। নতুনগুলো আগে।',
     added: 'নতুন',
     fixed: 'ঠিক করা হয়েছে',
+    removed: 'সরানো হয়েছে',
     calcIntro: 'নিচের সবকিছু আপনার ডিভাইসেই হিসাব হয়। আপনার অবস্থান ডিভাইসের বাইরে যায় না।',
     calcWhat: 'কী',
     calcHow: 'কীভাবে',

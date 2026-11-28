@@ -12,7 +12,6 @@ export const TERMS_SECTIONS = [
   { key: 'account', bodyCount: 4 },
   { key: 'use', bodyCount: 4 },
   { key: 'data', bodyCount: 3 },
-  { key: 'naseeh', bodyCount: 2 },
   { key: 'sadaqah', bodyCount: 2 },
   { key: 'availability', bodyCount: 3 },
   { key: 'ending', bodyCount: 2 },

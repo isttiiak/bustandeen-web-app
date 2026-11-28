@@ -2,6 +2,30 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.191.0 - Naseeh retired, no more third-party AI - 2026-11-28
+
+Owner's decision of 2026-11-28: Bustandeen no longer sends anything to a third-party AI service. Naseeh (the optional AI companion) was built entirely on Groq's hosted models, which are not Islamic models and run outside our control, so the whole feature is removed rather than hidden. The source before removal is kept as git tag `naseeh-final` and as a local zip (`archive/naseeh-backup-2026-11-28.zip`).
+
+### Removed
+
+- **Backend:** `/api/ai/*`, `/api/naseeh/*` and `/api/natural-log/*` (controllers, routes, services, schemas, per-user and per-IP AI rate limiters, and their tests). The three prefixes now answer `410 Gone` so a cached PWA gets a clear message. No code calls Groq any more; the API CSP never allowed it.
+- **Frontend:** the `/naseeh` page (now redirects to Home), the AI cards on Home and Fasting, the quick-log sparkle button and its modal, the Naseeh and Groq-key sections of Settings, the "AI companion enabled" row in admin user details, and the matching English and Bangla strings.
+- **Privacy, Terms, About:** the Naseeh sections, the Groq row in the data-flow table, and the "your own AI key" mentions. A line in "Changes" says the AI companion was removed (privacy page now dated November 2026).
+- **Config:** `GROQ_API_KEY` is no longer read or documented, the `groqKey` field-encryption context and the Groq key in the key-rotation script are gone, and the data export no longer lists a saved Groq key.
+
+### Added
+
+- **Migration `003-retire-naseeh`** (dry run by default): unsets `groqApiKeyEnc` / `groqApiKeySetAt` on every user and sets `aiEnabled` back to false. Run `npm run migrate --prefix backend`, then `-- --apply --production` (ask first). Idempotent.
+
+### Kept on purpose
+
+- The `NaseehPlan` model and its collection: saved weekly plans are the user's own data, still in their export and removed with their account. Dropping the collection is a separate owner decision.
+- `User.aiEnabled` stays in the schema (always false after the migration) so old clients and old backup files still validate.
+
+### Owner actions
+
+- Delete `GROQ_API_KEY` from Vercel (Production and Preview) and revoke it at console.groq.com. Run migration `003-retire-naseeh` so users' own saved Groq keys are removed from the database.
+
 ## v5.190.86 - Rayhanah: an expected period that has passed - 2026-11-28
 
 Part 3 of the 2026-11-28 work.

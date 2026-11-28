@@ -16,7 +16,6 @@ export interface DBUserProfile {
   bio?: string;
   city?: string;
   country?: string;
-  aiEnabled?: boolean;
   hijriOffset?: number;
   /** false = Automatic: the device follows its country's moon-sighting record (T4.1) */
   hijriManual?: boolean;
@@ -46,7 +45,6 @@ export type ProfilePatch = Partial<
     | 'bio'
     | 'city'
     | 'country'
-    | 'aiEnabled'
     | 'dayStartMode'
   >
 > & {

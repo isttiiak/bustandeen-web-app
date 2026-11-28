@@ -54,7 +54,6 @@ const Sadaqah = lazy(() => import('./pages/Sadaqah.js'));
 const SadaqahDonate = lazy(() => import('./pages/SadaqahDonate.js'));
 const SadaqahThankYou = lazy(() => import('./pages/SadaqahThankYou.js'));
 const SadaqahVerify = lazy(() => import('./pages/SadaqahVerify.js'));
-const NaseehPage = lazy(() => import('./pages/NaseehPage.js'));
 
 // Programmatic-SEO static pages (prayer-times/ramadan-calendar by
 // city, du'a library, adhkar, Hijri converter) — pre-rendered at build time
@@ -306,7 +305,8 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route path="/signup" element={<AuthSignUp />} />
       <Route path="/auth/action" element={<AuthAction />} />
       <Route path="/signup/complete" element={<AuthSignupComplete />} />
-      <Route path="/naseeh" element={<NaseehPage />} />
+      {/* Naseeh was retired 2026-11-28; old links and bookmarks land on Home. */}
+      <Route path="/naseeh" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
