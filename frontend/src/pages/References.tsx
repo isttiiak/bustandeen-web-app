@@ -51,7 +51,12 @@ export default function References() {
       if (status === 'weak' && r.desk !== 'weak') return false;
       if (status === 'unverified' && r.desk !== 'unverified') return false;
       if (!q) return true;
-      const pages = r.pages.map((p) => `${REF_PAGES[p].label} ${REF_PAGES[p].labelBn}`).join(' ');
+      const pages = r.places
+        .map((p) => {
+          const page = REF_PAGES[p.page];
+          return `${page.label} ${page.labelBn} ${p.section} ${p.sectionBn} ${p.item ?? ''}`;
+        })
+        .join(' ');
       return `${r.citation} ${r.purpose} ${r.grade ?? ''} ${r.id} ${pages}`
         .toLowerCase()
         .includes(q);

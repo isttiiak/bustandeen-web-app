@@ -21,6 +21,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.192.1',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'The reference map shows where',
+        fixed: [
+          'The Reference map now shows where each reference appears in the app, with a link to that screen and the card it is on, instead of code file names.',
+        ],
+      },
+      bn: {
+        title: 'রেফারেন্স ম্যাপে এখন কোথায় তা দেখায়',
+        fixed: [
+          'রেফারেন্স ম্যাপ এখন কোডের ফাইলের নামের বদলে দেখায় প্রতিটি রেফারেন্স অ্যাপের কোথায় আছে, সেই স্ক্রিনের লিংক ও কার্ডের নামসহ।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.192.0',
     date: '2026-11-28',
     text: {

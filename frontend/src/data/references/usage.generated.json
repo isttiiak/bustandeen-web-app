@@ -1,8 +1,20 @@
 {
   "abudawud:1047": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -10,9 +22,17 @@
     ]
   },
   "abudawud:1048": {
-    "pages": [
-      "home",
-      "salat"
+    "places": [
+      {
+        "page": "home",
+        "section": "Friday hour reminder",
+        "sectionBn": "জুমার সময়ের রিমাইন্ডার"
+      },
+      {
+        "page": "salat",
+        "section": "How it works (legend)",
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+      }
     ],
     "files": [
       "frontend/src/components/home/HomeSpecialBlock.tsx",
@@ -23,9 +43,21 @@
     ]
   },
   "abudawud:1052": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -33,11 +65,21 @@
     ]
   },
   "abudawud:1067": {
-    "pages": [
-      "calendar",
-      "home",
-      "salat",
-      "salatAnalytics"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "backend/src/services/salat.service.ts",
@@ -48,25 +90,31 @@
     ]
   },
   "abudawud:1220": {
-    "pages": [
-      "salat"
-    ],
+    "places": [],
     "files": [
       "frontend/src/components/salat/useSalatPrayerHandlers.tsx"
-    ]
+    ],
+    "codeNotes": 1
   },
   "abudawud:1235": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "abudawud:1501": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: counting on the fingertips",
+        "sectionBn": "কাউন্টার: আঙুলে গোনা"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/ZikrReferencePanel.tsx",
@@ -74,8 +122,12 @@
     ]
   },
   "abudawud:1502": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: counting on the fingertips",
+        "sectionBn": "কাউন্টার: আঙুলে গোনা"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/ZikrReferencePanel.tsx",
@@ -83,16 +135,43 @@
     ]
   },
   "abudawud:1517": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Astaghfirullah alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "abudawud:1523": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "After each prayer: “Read now”",
+        "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
+        "item": "Al-Falaq"
+      },
+      {
+        "page": "salat",
+        "section": "After each prayer: “Read now”",
+        "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
+        "item": "Al-Ikhlāṣ"
+      },
+      {
+        "page": "salat",
+        "section": "After each prayer: “Read now”",
+        "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
+        "item": "An-Nās"
+      },
+      {
+        "page": "salat",
+        "section": "How it works (legend)",
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+      }
     ],
     "files": [
       "frontend/src/components/salat/SalatLegend.tsx",
@@ -101,11 +180,20 @@
     ]
   },
   "abudawud:2449": {
-    "pages": [
-      "calendar",
-      "fasting",
-      "home",
-      "ramadan"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/ayyam_al_bid",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Ayyām al-Bīḍ"
+      },
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "13th, 14th, 15th of every Hijri month"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -114,17 +202,25 @@
     ]
   },
   "abudawud:2600": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Bidding farewell to family and friends"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "abudawud:311": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Server rule: cycle limits",
+        "sectionBn": "সার্ভারের নিয়ম: চক্রের সীমা"
+      }
     ],
     "files": [
       "backend/src/models/CycleProfile.ts",
@@ -132,33 +228,51 @@
     ]
   },
   "abudawud:3767": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Before Eating"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "abudawud:4023": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "After Eating"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "abudawud:5072": {
-    "pages": [
-      "adhkar"
-    ],
+    "places": [],
     "files": [
       "frontend/src/seo/content/adhkar.ts"
-    ]
+    ],
+    "codeNotes": 1
   },
   "abudawud:5088": {
-    "pages": [
-      "adhkar",
-      "rayhanah"
+    "places": [
+      {
+        "page": "adhkar",
+        "section": "Adhkar list",
+        "sectionBn": "যিকিরের তালিকা"
+      },
+      {
+        "page": "rayhanah",
+        "section": "Adhkar garden (duʿā you can recite now)",
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
+        "item": "Morning/evening protection"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/rayhanahShared.ts",
@@ -166,10 +280,19 @@
     ]
   },
   "abudawud:5095": {
-    "pages": [
-      "duas",
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Leaving the Home"
+      },
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Stepping out of the house"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts",
@@ -177,17 +300,34 @@
     ]
   },
   "abudawud:5096": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Entering the Home"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "abudawud:567": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -195,10 +335,13 @@
     ]
   },
   "bayhaqi-shuab:2269": {
-    "pages": [
-      "calendar",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "After each prayer: “Read now”",
+        "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
+        "item": "Al-Wāqiʿah"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx",
@@ -206,62 +349,95 @@
     ]
   },
   "bukhari:1000": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:1032": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Rain"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "bukhari:1080": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Staying somewhere: how long are you still a musafir?"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:1081": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Staying somewhere: how long are you still a musafir?"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:1089": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "When does it start and end?"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:1099": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Fard prayer in a vehicle"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:1111": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Jamʿ: joining two prayers"
+      },
+      {
+        "page": "salat",
+        "section": "Prayer card: join two prayers (jamʿ)",
+        "sectionBn": "নামাযের কার্ড: দুই নামায একসাথে (জমা)"
+      }
     ],
     "files": [
       "frontend/src/components/salat/SalatCardJoining.tsx",
@@ -269,19 +445,32 @@
     ]
   },
   "bukhari:1129": {
-    "pages": [
-      "ramadan"
-    ],
+    "places": [],
     "files": [
       "frontend/src/components/RamadanSalatCard.tsx"
-    ]
+    ],
+    "codeNotes": 1
   },
   "bukhari:1145": {
-    "pages": [
-      "calendar",
-      "prayerTimes",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/shab_e_barat",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Laylat al-Barā'ah"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Day timeline cards",
+        "sectionBn": "দিনের টাইমলাইন কার্ড"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Sources (bottom of the page)",
+        "sectionBn": "সূত্র (পাতার নিচে)",
+        "item": "Tahajjud"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx",
@@ -291,51 +480,96 @@
     ]
   },
   "bukhari:1149": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Tahiyyat al-Wudu'"
+      }
     ],
     "files": [
       "frontend/src/hooks/useSalatLog.ts"
     ]
   },
   "bukhari:1166": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Istikharah"
+      }
     ],
     "files": [
       "frontend/src/hooks/useSalatLog.ts"
     ]
   },
   "bukhari:1183": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Sunnah prayers guide",
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/sunnahGuide.ts"
     ]
   },
   "bukhari:1503": {
-    "pages": [
-      "ramadanCalendar"
+    "places": [
+      {
+        "page": "ramadanCalendar",
+        "section": "Printable Ramadan sheet notes",
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+      }
     ],
     "files": [
       "frontend/src/seo/locales/ramadanSheet.ts"
     ]
   },
   "bukhari:1804": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:1899": {
-    "pages": [
-      "calendar",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "ramadan",
+        "section": "Countdown to Ramadan",
+        "sectionBn": "রমজানের কাউন্টডাউন"
+      },
+      {
+        "page": "ramadan",
+        "section": "Month grid: the three ʿashras and Rayhanah days",
+        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন"
+      },
+      {
+        "page": "ramadan",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Nafl rewarded like farḍ"
+      },
+      {
+        "page": "ramadan",
+        "section": "Worship strip: the month’s virtue",
+        "sectionBn": "ইবাদতের সারি: মাসের ফযীলত"
+      },
+      {
+        "page": "ramadanAnalytics",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Nafl rewarded like farḍ"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx",
@@ -345,33 +579,55 @@
     ]
   },
   "bukhari:1901": {
-    "pages": [
-      "ramadan"
+    "places": [
+      {
+        "page": "ramadan",
+        "section": "Countdown to Ramadan",
+        "sectionBn": "রমজানের কাউন্টডাউন"
+      }
     ],
     "files": [
       "frontend/src/components/ramadan/RamadanCountdown.tsx"
     ]
   },
   "bukhari:1902": {
-    "pages": [
-      "sadaqah"
+    "places": [
+      {
+        "page": "sadaqah",
+        "section": "Blessed days to give",
+        "sectionBn": "দানের বরকতময় দিন",
+        "item": "It's Ramadan: the most generous month"
+      }
     ],
     "files": [
       "frontend/src/utils/sadaqahVirtueDays.ts"
     ]
   },
   "bukhari:1909": {
-    "pages": [
-      "ramadanCalendar"
+    "places": [
+      {
+        "page": "ramadanCalendar",
+        "section": "Printable Ramadan sheet notes",
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+      }
     ],
     "files": [
       "frontend/src/seo/locales/ramadanSheet.ts"
     ]
   },
   "bukhari:1923": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Wiṣāl (continuous, no ifṭār)"
+      },
+      {
+        "page": "ramadan",
+        "section": "Today: suḥūr and ifṭār",
+        "sectionBn": "আজ: সাহরি ও ইফতার"
+      }
     ],
     "files": [
       "frontend/src/components/ramadan/RamadanDayArch.tsx",
@@ -379,9 +635,18 @@
     ]
   },
   "bukhari:1936": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Kaffārah (Expiation)"
+      },
+      {
+        "page": "fasting",
+        "section": "Make-up fasts: qaḍāʾ, kaffārah, nadhr",
+        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা"
+      }
     ],
     "files": [
       "backend/src/services/fasting.service.ts",
@@ -391,9 +656,18 @@
     ]
   },
   "bukhari:1943": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Fasting on a journey"
+      },
+      {
+        "page": "salat",
+        "section": "Musafir banner (fasting while travelling)",
+        "sectionBn": "মুসাফির ব্যানার (সফরে রোজা)"
+      }
     ],
     "files": [
       "frontend/src/components/MusafirBanner.tsx",
@@ -401,18 +675,30 @@
     ]
   },
   "bukhari:1946": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:1957": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Wiṣāl (continuous, no ifṭār)"
+      },
+      {
+        "page": "ramadan",
+        "section": "Today: suḥūr and ifṭār",
+        "sectionBn": "আজ: সাহরি ও ইফতার"
+      }
     ],
     "files": [
       "frontend/src/components/ramadan/RamadanDayArch.tsx",
@@ -420,18 +706,31 @@
     ]
   },
   "bukhari:1965": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Wiṣāl (continuous, no ifṭār)"
+      }
     ],
     "files": [
       "frontend/src/utils/fastingRules.ts"
     ]
   },
   "bukhari:1969": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Especially the first half of Sha'bān"
+      },
+      {
+        "page": "ramadan",
+        "section": "Countdown to Ramadan",
+        "sectionBn": "রমজানের কাউন্টডাউন"
+      }
     ],
     "files": [
       "frontend/src/components/ramadan/RamadanCountdown.tsx",
@@ -439,9 +738,14 @@
     ]
   },
   "bukhari:1979": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/ayyam_al_bid",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Ayyām al-Bīḍ"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -449,8 +753,12 @@
     ]
   },
   "bukhari:1981": {
-    "pages": [
-      "prayerTimes"
+    "places": [
+      {
+        "page": "prayerTimes",
+        "section": "Day timeline cards",
+        "sectionBn": "দিনের টাইমলাইন কার্ড"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/timeline.ts",
@@ -458,19 +766,32 @@
     ]
   },
   "bukhari:1985": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Singling out Friday"
+      }
     ],
     "files": [
       "frontend/src/utils/fastingRules.ts"
     ]
   },
   "bukhari:1991": {
-    "pages": [
-      "calendar",
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Eid al-Aḍḥā (10 Dhul Ḥijjah)"
+      },
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Eid al-Fiṭr (1 Shawwāl)"
+      }
     ],
     "files": [
       "frontend/src/utils/fastingRules.ts",
@@ -478,13 +799,46 @@
     ]
   },
   "bukhari:2017": {
-    "pages": [
-      "calendar",
-      "home",
-      "ramadan",
-      "ramadanAnalytics",
-      "ramadanCalendar",
-      "salat"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/laylat_qadr",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Laylat al-Qadr"
+      },
+      {
+        "page": "ramadan",
+        "section": "Month grid: the three ʿashras and Rayhanah days",
+        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন"
+      },
+      {
+        "page": "ramadan",
+        "section": "The last ten nights",
+        "sectionBn": "শেষ দশ রাত"
+      },
+      {
+        "page": "ramadan",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "The three ʿashras"
+      },
+      {
+        "page": "ramadanAnalytics",
+        "section": "Last ten nights and Rayhanah days",
+        "sectionBn": "শেষ দশ রাত ও রায়হানাহর দিন"
+      },
+      {
+        "page": "ramadanAnalytics",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "The three ʿashras"
+      },
+      {
+        "page": "ramadanCalendar",
+        "section": "Printable Ramadan sheet notes",
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx",
@@ -498,16 +852,25 @@
     ]
   },
   "bukhari:2311": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Āyatul Kursī"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "bukhari:248": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Period ended: ghusl and welcome back to salat",
+        "sectionBn": "মাসিক শেষ: গোসল ও সালাতে ফেরা"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/RayhanahDialogs.tsx",
@@ -515,43 +878,63 @@
     ]
   },
   "bukhari:2736": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Calling on His Names"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "bukhari:2840": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Any permissible day"
+      }
     ],
     "files": [
       "frontend/src/utils/fastingRules.ts"
     ]
   },
   "bukhari:2993": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Going up (take-off, a hill) and coming down"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:2996": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:305": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Fiqh companion (what is excused, what stays open)",
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+      }
     ],
     "files": [
       "backend/src/services/cycle.service.ts",
@@ -559,8 +942,17 @@
     ]
   },
   "bukhari:306": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Day card: beyond the maximum (istiḥāḍah)",
+        "sectionBn": "দিনের কার্ড: সর্বোচ্চ সীমার পর (ইস্তিহাযা)"
+      },
+      {
+        "page": "rayhanah",
+        "section": "Fiqh companion (what is excused, what stays open)",
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+      }
     ],
     "files": [
       "backend/src/services/cycle.service.ts",
@@ -569,18 +961,47 @@
     ]
   },
   "bukhari:3088": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:324": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_adha",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Aḍḥā"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_adha",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Eid al-Aḍḥā"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_fitr",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Fiṭr"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_fitr",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Eid al-Fiṭr"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -588,25 +1009,45 @@
     ]
   },
   "bukhari:3282": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Anger"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "bukhari:3293": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "La ilaha illallahu wahdahu la sharika lah"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "bukhari:3370": {
-    "pages": [
-      "rayhanah",
-      "zikr"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Adhkar garden (duʿā you can recite now)",
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
+        "item": "Ṣalawāt upon the Prophet ﷺ"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Durud Ibrahim"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/rayhanahShared.ts",
@@ -614,25 +1055,44 @@
     ]
   },
   "bukhari:350": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Qaṣr: shorten the four-rak’ah prayers"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:37": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Tarawih"
+      }
     ],
     "files": [
       "frontend/src/hooks/useSalatLog.ts"
     ]
   },
   "bukhari:4205": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "La hawla wa la quwwata illa billah"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts",
@@ -640,64 +1100,95 @@
     ]
   },
   "bukhari:4563": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "HasbunAllahu wa ni'mal-wakil"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "bukhari:5009": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Last verses of al-Baqarah"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "bukhari:5027": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Virtue footer",
+        "sectionBn": "ফযীলতের নোট"
+      }
     ],
     "files": [
       "frontend/src/pages/QuranHabit.tsx"
     ]
   },
   "bukhari:5049": {
-    "pages": [
-      "quranListen"
-    ],
+    "places": [],
     "files": [
       "frontend/src/pages/QuranListen.tsx"
-    ]
+    ],
+    "codeNotes": 1
   },
   "bukhari:5641": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Today's note",
+        "sectionBn": "আজকের নোট"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/RayhanahTodayNote.tsx"
     ]
   },
   "bukhari:581": {
-    "pages": [
-      "prayerTimes"
+    "places": [
+      {
+        "page": "prayerTimes",
+        "section": "Sources (bottom of the page)",
+        "sectionBn": "সূত্র (পাতার নিচে)",
+        "item": "Forbidden times"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/PrayerSources.tsx"
     ]
   },
   "bukhari:585": {
-    "pages": [
-      "prayerTimes"
+    "places": [
+      {
+        "page": "prayerTimes",
+        "section": "Sources (bottom of the page)",
+        "sectionBn": "সূত্র (পাতার নিচে)",
+        "item": "Forbidden times"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/PrayerSources.tsx"
     ]
   },
   "bukhari:586": {
-    "pages": [
-      "prayerTimes"
+    "places": [
+      {
+        "page": "prayerTimes",
+        "section": "Day timeline cards",
+        "sectionBn": "দিনের টাইমলাইন কার্ড"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/timeline.ts",
@@ -705,29 +1196,60 @@
     ]
   },
   "bukhari:597": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "bukhari:627": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Sunnah prayers guide",
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/sunnahGuide.ts"
     ]
   },
   "bukhari:6306": {
-    "pages": [
-      "adhkar",
-      "admin",
-      "duas",
-      "rayhanah",
-      "zikr"
+    "places": [
+      {
+        "page": "adhkar",
+        "section": "Adhkar list",
+        "sectionBn": "যিকিরের তালিকা",
+        "item": "Sayyid al-Istighfār"
+      },
+      {
+        "page": "admin",
+        "section": "Zikr requests: example reference",
+        "sectionBn": "যিকিরের অনুরোধ: উদাহরণ রেফারেন্স"
+      },
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Seeking Forgiveness"
+      },
+      {
+        "page": "rayhanah",
+        "section": "Adhkar garden (duʿā you can recite now)",
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
+        "item": "Sayyid al-Istighfār"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Sayyidul-Istighfar"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/rayhanahShared.ts",
@@ -738,8 +1260,18 @@
     ]
   },
   "bukhari:6307": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Astaghfirullah wa atubu ilayh"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts",
@@ -747,40 +1279,76 @@
     ]
   },
   "bukhari:6324": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Before Sleep"
+      },
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Waking Up"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "bukhari:6346": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Hardship & Distress"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "bukhari:6369": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Anxiety & Grief"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "bukhari:6389": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Good in this world & the next"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "bukhari:6405": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "SubhanAllah wa bihamdihi"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts",
@@ -788,16 +1356,25 @@
     ]
   },
   "bukhari:6406": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Adhkar garden (duʿā you can recite now)",
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
+        "item": "SubḥānAllāh wa biḥamdih"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/rayhanahShared.ts"
     ]
   },
   "bukhari:645": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Prayer card: mosque toast",
+        "sectionBn": "নামাযের কার্ড: মসজিদের বার্তা"
+      }
     ],
     "files": [
       "frontend/src/components/salat/useSalatPrayerHandlers.tsx",
@@ -805,9 +1382,17 @@
     ]
   },
   "bukhari:6464": {
-    "pages": [
-      "about",
-      "friends"
+    "places": [
+      {
+        "page": "about",
+        "section": "Top of the page",
+        "sectionBn": "পাতার উপরে"
+      },
+      {
+        "page": "friends",
+        "section": "Noor circle: why Noor counts consistency",
+        "sectionBn": "নূর সার্কেল: নূর কেন ধারাবাহিকতা গোনে"
+      }
     ],
     "files": [
       "frontend/src/components/friends/FriendsCircleSection.tsx",
@@ -816,16 +1401,30 @@
     ]
   },
   "bukhari:6465": {
-    "pages": [
-      "email"
+    "places": [
+      {
+        "page": "email",
+        "section": "Closing hadith",
+        "sectionBn": "শেষের হাদিস"
+      }
     ],
     "files": [
       "backend/src/services/welcomeEmail.templates.ts"
     ]
   },
   "bukhari:6682": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "SubhanAllahil-Azim wa bihamdihi"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts",
@@ -833,9 +1432,18 @@
     ]
   },
   "bukhari:6696": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Nadhr (Vow)"
+      },
+      {
+        "page": "fasting",
+        "section": "Make-up fasts: qaḍāʾ, kaffārah, nadhr",
+        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা"
+      }
     ],
     "files": [
       "frontend/src/components/fasting/FastingSettingsSheet.tsx",
@@ -844,8 +1452,22 @@
     ]
   },
   "bukhari:7392": {
-    "pages": [
-      "asma"
+    "places": [
+      {
+        "page": "asma",
+        "section": "Page notes",
+        "sectionBn": "পাতার নোট"
+      },
+      {
+        "page": "asma",
+        "section": "Source note",
+        "sectionBn": "সূত্রের নোট"
+      },
+      {
+        "page": "ramadanCalendar",
+        "section": "Page notes",
+        "sectionBn": "পাতার নোট"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -854,9 +1476,14 @@
     ]
   },
   "bukhari:879": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -864,9 +1491,21 @@
     ]
   },
   "bukhari:881": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -874,9 +1513,14 @@
     ]
   },
   "bukhari:900": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -884,9 +1528,21 @@
     ]
   },
   "bukhari:934": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -894,17 +1550,21 @@
     ]
   },
   "bukhari:937": {
-    "pages": [
-      "salat"
-    ],
+    "places": [],
     "files": [
       "frontend/src/utils/sunnahGuide.ts"
-    ]
+    ],
+    "codeNotes": 1
   },
   "bukhari:953": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_fitr",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Fiṭr"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -912,9 +1572,14 @@
     ]
   },
   "bukhari:956": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_adha",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Aḍḥā"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -922,9 +1587,14 @@
     ]
   },
   "bukhari:963": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_fitr",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Fiṭr"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -932,10 +1602,40 @@
     ]
   },
   "bukhari:971": {
-    "pages": [
-      "calendar",
-      "home",
-      "rayhanah"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_adha",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Aḍḥā"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_adha",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Eid al-Aḍḥā"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_fitr",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Fiṭr"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_fitr",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Eid al-Fiṭr"
+      },
+      {
+        "page": "rayhanah",
+        "section": "Fiqh companion (what is excused, what stays open)",
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx",
@@ -944,9 +1644,21 @@
     ]
   },
   "bukhari:974": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_adha",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Aḍḥā"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_fitr",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Fiṭr"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -954,9 +1666,18 @@
     ]
   },
   "bukhari:998": {
-    "pages": [
-      "code",
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Witr"
+      },
+      {
+        "page": "salat",
+        "section": "Prayer card guidance (sunnah after a shortened prayer, Witr)",
+        "sectionBn": "নামাযের কার্ডের নির্দেশনা (কসরের পর সুন্নত, বিতর)"
+      }
     ],
     "files": [
       "frontend/src/components/salat/SalatCardGuidance.tsx",
@@ -965,17 +1686,29 @@
     ]
   },
   "data:adhan-js": {
-    "pages": [
-      "bayan"
+    "places": [
+      {
+        "page": "bayan",
+        "section": "Credits and How we calculate",
+        "sectionBn": "কৃতজ্ঞতা ও হিসাব পদ্ধতি"
+      }
     ],
     "files": [
       "frontend/src/seo/bayan/pages.ts"
     ]
   },
   "data:alquran-cloud": {
-    "pages": [
-      "code",
-      "quranReader"
+    "places": [
+      {
+        "page": "quranReader",
+        "section": "Offline cache of translations",
+        "sectionBn": "অনুবাদের অফলাইন ক্যাশ"
+      },
+      {
+        "page": "quranReader",
+        "section": "Translations and tafsīr",
+        "sectionBn": "অনুবাদ ও তাফসীর"
+      }
     ],
     "files": [
       "frontend/src/sw.ts",
@@ -983,9 +1716,17 @@
     ]
   },
   "data:islamic-foundation-bd": {
-    "pages": [
-      "prayerTimesPublic",
-      "ramadanCalendar"
+    "places": [
+      {
+        "page": "prayerTimesPublic",
+        "section": "Source line",
+        "sectionBn": "সূত্রের লাইন"
+      },
+      {
+        "page": "ramadanCalendar",
+        "section": "Printable Ramadan sheet notes",
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+      }
     ],
     "files": [
       "frontend/src/seo/locales/monthly.ts",
@@ -993,9 +1734,22 @@
     ]
   },
   "data:quran-audio": {
-    "pages": [
-      "quranListen",
-      "quranReader"
+    "places": [
+      {
+        "page": "quranListen",
+        "section": "Recitation audio",
+        "sectionBn": "তিলাওয়াতের অডিও"
+      },
+      {
+        "page": "quranReader",
+        "section": "Recitation audio",
+        "sectionBn": "তিলাওয়াতের অডিও"
+      },
+      {
+        "page": "quranReader",
+        "section": "Translations and tafsīr",
+        "sectionBn": "অনুবাদ ও তাফসীর"
+      }
     ],
     "files": [
       "frontend/src/components/QuranAudioPlayer.tsx",
@@ -1003,8 +1757,17 @@
     ]
   },
   "data:tafsir": {
-    "pages": [
-      "quranReader"
+    "places": [
+      {
+        "page": "quranReader",
+        "section": "Tafsīr panel",
+        "sectionBn": "তাফসীর প্যানেল"
+      },
+      {
+        "page": "quranReader",
+        "section": "Translations and tafsīr",
+        "sectionBn": "অনুবাদ ও তাফসীর"
+      }
     ],
     "files": [
       "backend/src/services/quran.service.ts",
@@ -1012,11 +1775,32 @@
     ]
   },
   "data:tanzil": {
-    "pages": [
-      "about",
-      "adhkar",
-      "bayan",
-      "quranReader"
+    "places": [
+      {
+        "page": "about",
+        "section": "Top of the page",
+        "sectionBn": "পাতার উপরে"
+      },
+      {
+        "page": "adhkar",
+        "section": "Adhkar routine: Quran text source",
+        "sectionBn": "যিকিরের রুটিন: কুরআনের পাঠের উৎস"
+      },
+      {
+        "page": "bayan",
+        "section": "Credits and How we calculate",
+        "sectionBn": "কৃতজ্ঞতা ও হিসাব পদ্ধতি"
+      },
+      {
+        "page": "quranReader",
+        "section": "Āyah panel: text source",
+        "sectionBn": "আয়াত প্যানেল: পাঠের উৎস"
+      },
+      {
+        "page": "quranReader",
+        "section": "Quran settings: text source",
+        "sectionBn": "কুরআন সেটিংস: পাঠের উৎস"
+      }
     ],
     "files": [
       "frontend/src/components/QuranSettings.tsx",
@@ -1027,13 +1811,49 @@
     ]
   },
   "data:umm-al-qura": {
-    "pages": [
-      "asma",
-      "bayan",
-      "prayerTimes",
-      "prayerTimesPublic",
-      "ramadanCalendar",
-      "salat"
+    "places": [
+      {
+        "page": "asma",
+        "section": "Page notes",
+        "sectionBn": "পাতার নোট"
+      },
+      {
+        "page": "bayan",
+        "section": "Credits and How we calculate",
+        "sectionBn": "কৃতজ্ঞতা ও হিসাব পদ্ধতি"
+      },
+      {
+        "page": "bayan",
+        "section": "What's new (release notes)",
+        "sectionBn": "নতুন কী (রিলিজ নোট)",
+        "item": "Clearer Ramadan calendars"
+      },
+      {
+        "page": "bayan",
+        "section": "What's new (release notes)",
+        "sectionBn": "নতুন কী (রিলিজ নোট)",
+        "item": "The Hijri date no longer repeats a day"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Calculation method by country",
+        "sectionBn": "দেশ অনুযায়ী হিসাব পদ্ধতি"
+      },
+      {
+        "page": "prayerTimesPublic",
+        "section": "Source line",
+        "sectionBn": "সূত্রের লাইন"
+      },
+      {
+        "page": "ramadanCalendar",
+        "section": "Page notes",
+        "sectionBn": "পাতার নোট"
+      },
+      {
+        "page": "ramadanCalendar",
+        "section": "Printable Ramadan sheet notes",
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+      }
     ],
     "files": [
       "frontend/src/seo/bayan/pages.ts",
@@ -1047,69 +1867,127 @@
     ]
   },
   "fiqh:asr-shadow": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Salat settings: tasbīḥ after prayer",
+        "sectionBn": "সালাত সেটিংস: নামাযের পর তাসবীহ"
+      }
     ],
     "files": [
       "frontend/src/utils/salatPrefs.ts"
     ]
   },
   "fiqh:hayd-max": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Server rule: cycle limits",
+        "sectionBn": "সার্ভারের নিয়ম: চক্রের সীমা"
+      }
     ],
     "files": [
       "backend/src/services/cycle.service.ts"
     ]
   },
   "fiqh:nifas-max": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Server rule: cycle limits",
+        "sectionBn": "সার্ভারের নিয়ম: চক্রের সীমা"
+      }
     ],
     "files": [
       "backend/src/services/cycle.service.ts"
     ]
   },
   "fiqh:qasr-distance": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "fiqh:residence-days": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Ḥanafī"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "hisn:77": {
-    "pages": [
-      "adhkar"
+    "places": [
+      {
+        "page": "adhkar",
+        "section": "Adhkar list",
+        "sectionBn": "যিকিরের তালিকা"
+      }
     ],
     "files": [
       "frontend/src/seo/content/adhkar.ts"
     ]
   },
   "hisn:98": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Allahumma salli wa sallim ala Nabiyyina Muhammad"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "ibnkhuzaymah:1887": {
-    "pages": [
-      "calendar",
-      "ramadan",
-      "ramadanAnalytics",
-      "salat"
+    "places": [
+      {
+        "page": "ramadan",
+        "section": "Month grid: the three ʿashras and Rayhanah days",
+        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন"
+      },
+      {
+        "page": "ramadan",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Nafl rewarded like farḍ"
+      },
+      {
+        "page": "ramadan",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "The three ʿashras"
+      },
+      {
+        "page": "ramadanAnalytics",
+        "section": "The three ʿashras",
+        "sectionBn": "তিন আশরা"
+      },
+      {
+        "page": "ramadanAnalytics",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Nafl rewarded like farḍ"
+      },
+      {
+        "page": "ramadanAnalytics",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "The three ʿashras"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx",
@@ -1118,9 +1996,24 @@
     ]
   },
   "ibnmajah:1167": {
-    "pages": [
-      "prayerTimes",
-      "salat"
+    "places": [
+      {
+        "page": "prayerTimes",
+        "section": "Day timeline cards",
+        "sectionBn": "দিনের টাইমলাইন কার্ড"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Sources (bottom of the page)",
+        "sectionBn": "সূত্র (পাতার নিচে)",
+        "item": "Awwabin"
+      },
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Awwabin"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/PrayerSources.tsx",
@@ -1130,19 +2023,34 @@
     ]
   },
   "ibnmajah:1384": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Ṣalāt al-Ḥājat"
+      }
     ],
     "files": [
       "frontend/src/hooks/useSalatLog.ts"
     ]
   },
   "ibnmajah:1390": {
-    "pages": [
-      "calendar",
-      "home",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/shab_e_barat",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Laylat al-Barā'ah"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/shab_e_barat",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Laylat al-Barā'ah"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx",
@@ -1151,11 +2059,21 @@
     ]
   },
   "ibnmajah:1753": {
-    "pages": [
-      "calendar",
-      "home",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/fast_mon_thu",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Sunnah Fast Day"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/fast_mon_thu",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Sunnah Fast Day"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx",
@@ -1164,17 +2082,26 @@
     ]
   },
   "ibnmajah:3850": {
-    "pages": [
-      "ramadanCalendar"
+    "places": [
+      {
+        "page": "ramadanCalendar",
+        "section": "Ramadan duʿās",
+        "sectionBn": "রমজানের দুআ"
+      }
     ],
     "files": [
       "frontend/src/seo/content/ramadanDuas.ts"
     ]
   },
   "muslim:1134": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/ashura",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "'Āshūrā"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1182,10 +2109,13 @@
     ]
   },
   "muslim:1141": {
-    "pages": [
-      "calendar",
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Days of Tashrīq (11–13 Dhul Ḥijjah)"
+      }
     ],
     "files": [
       "frontend/src/utils/fastingRules.ts",
@@ -1193,20 +2123,46 @@
     ]
   },
   "muslim:1159": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Alternate days — the strongest regular pattern"
+      }
     ],
     "files": [
       "frontend/src/utils/fastingRules.ts"
     ]
   },
   "muslim:1162": {
-    "pages": [
-      "calendar",
-      "fasting",
-      "home",
-      "ramadan"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/arafah",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Day of Arafah"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/ashura",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "'Āshūrā"
+      },
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "10 Muḥarram — add the 9th to differ from the People of the Book"
+      },
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "9 Dhul Ḥijjah (for those not on Ḥajj)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1215,13 +2171,37 @@
     ]
   },
   "muslim:1163": {
-    "pages": [
-      "calendar",
-      "fasting",
-      "home",
-      "prayerTimes",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/islamic_new_year",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Islamic New Year"
+      },
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Any days of Muḥarram (sacred month)"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Day timeline cards",
+        "sectionBn": "দিনের টাইমলাইন কার্ড"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Sources (bottom of the page)",
+        "sectionBn": "সূত্র (পাতার নিচে)",
+        "item": "Tahajjud"
+      },
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Tahajjud"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/PrayerSources.tsx",
@@ -1233,18 +2213,31 @@
     ]
   },
   "muslim:1164": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Any six days of Shawwāl (after Eid day)"
+      }
     ],
     "files": [
       "frontend/src/utils/fastingRules.ts"
     ]
   },
   "muslim:1218": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Friday on the road"
+      },
+      {
+        "page": "salat",
+        "section": "Friday while travelling",
+        "sectionBn": "সফরে শুক্রবার"
+      }
     ],
     "files": [
       "frontend/src/components/salat/SalatFridayTravel.tsx",
@@ -1253,10 +2246,25 @@
     ]
   },
   "muslim:1342": {
-    "pages": [
-      "duas",
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Travel"
+      },
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "On the way home (the riding du‘ā, then add this)"
+      },
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Once seated in the car, bus, train or plane"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts",
@@ -1264,9 +2272,14 @@
     ]
   },
   "muslim:1966": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/eid_adha",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Eid al-Aḍḥā"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1274,16 +2287,31 @@
     ]
   },
   "muslim:2018": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Entering the Home"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "muslim:2137": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Allahu Akbar"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts",
@@ -1291,16 +2319,31 @@
     ]
   },
   "muslim:2202": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Adhkar garden (duʿā you can recite now)",
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
+        "item": "When in pain or discomfort"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/rayhanahShared.ts"
     ]
   },
   "muslim:223": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Alhamdulillah"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts",
@@ -1308,16 +2351,35 @@
     ]
   },
   "muslim:2588": {
-    "pages": [
-      "sadaqah"
+    "places": [
+      {
+        "page": "sadaqah",
+        "section": "Blessed days to give",
+        "sectionBn": "দানের বরকতময় দিন",
+        "item": "It's Jumu'ah: a blessed day to give"
+      }
     ],
     "files": [
       "frontend/src/utils/sadaqahVirtueDays.ts"
     ]
   },
   "muslim:2677": {
-    "pages": [
-      "asma"
+    "places": [
+      {
+        "page": "asma",
+        "section": "Page notes",
+        "sectionBn": "পাতার নোট"
+      },
+      {
+        "page": "asma",
+        "section": "Source note",
+        "sectionBn": "সূত্রের নোট"
+      },
+      {
+        "page": "ramadanCalendar",
+        "section": "Page notes",
+        "sectionBn": "পাতার নোট"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1326,33 +2388,61 @@
     ]
   },
   "muslim:2692": {
-    "pages": [
-      "adhkar"
+    "places": [
+      {
+        "page": "adhkar",
+        "section": "Adhkar list",
+        "sectionBn": "যিকিরের তালিকা"
+      }
     ],
     "files": [
       "frontend/src/seo/content/adhkar.ts"
     ]
   },
   "muslim:2695": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts"
     ]
   },
   "muslim:2698": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "SubhanAllah"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "muslim:2702": {
-    "pages": [
-      "rayhanah",
-      "zikr"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Adhkar garden (duʿā you can recite now)",
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
+        "item": "Istighfār: constant forgiveness"
+      },
+      {
+        "page": "zikr",
+        "section": "Add or suggest a zikr form: example reference",
+        "sectionBn": "যিকির যোগ বা প্রস্তাবের ফর্ম: উদাহরণ রেফারেন্স"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Astaghfirullah"
+      }
     ],
     "files": [
       "frontend/src/components/EditZikrModal.tsx",
@@ -1361,10 +2451,19 @@
     ]
   },
   "muslim:2708": {
-    "pages": [
-      "musafir",
-      "salat",
-      "zikr"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Arriving at a hotel, rest stop or any new place"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "A'udhu bikalimatillahit-tammat"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts",
@@ -1372,17 +2471,29 @@
     ]
   },
   "muslim:2709": {
-    "pages": [
-      "adhkar"
+    "places": [
+      {
+        "page": "adhkar",
+        "section": "Adhkar list",
+        "sectionBn": "যিকিরের তালিকা"
+      }
     ],
     "files": [
       "frontend/src/seo/content/adhkar.ts"
     ]
   },
   "muslim:2723": {
-    "pages": [
-      "adhkar",
-      "home"
+    "places": [
+      {
+        "page": "adhkar",
+        "section": "Adhkar list",
+        "sectionBn": "যিকিরের তালিকা"
+      },
+      {
+        "page": "home",
+        "section": "Today timeline: adhkar times",
+        "sectionBn": "আজকের টাইমলাইন: যিকিরের সময়"
+      }
     ],
     "files": [
       "frontend/src/seo/content/adhkar.ts",
@@ -1390,38 +2501,86 @@
     ]
   },
   "muslim:2726": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "SubhanAllahi 'adada khalqihi"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "muslim:2730": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Hardship & Distress"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "muslim:276": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Wiping over socks: 3 days"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "muslim:335": {
-    "pages": [
-      "cycleAnalytics",
-      "fasting",
-      "ramadan",
-      "ramadanAnalytics",
-      "rayhanah",
-      "salat"
+    "places": [
+      {
+        "page": "cycleAnalytics",
+        "section": "Patterns",
+        "sectionBn": "প্যাটার্ন"
+      },
+      {
+        "page": "fasting",
+        "section": "Excused days card (Rayhanah)",
+        "sectionBn": "অব্যাহতির দিনের কার্ড (রায়হানাহ)"
+      },
+      {
+        "page": "ramadan",
+        "section": "Month grid: the three ʿashras and Rayhanah days",
+        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন"
+      },
+      {
+        "page": "ramadanAnalytics",
+        "section": "Last ten nights and Rayhanah days",
+        "sectionBn": "শেষ দশ রাত ও রায়হানাহর দিন"
+      },
+      {
+        "page": "rayhanah",
+        "section": "Fiqh companion (what is excused, what stays open)",
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+      },
+      {
+        "page": "rayhanah",
+        "section": "Period ended: ghusl and welcome back to salat",
+        "sectionBn": "মাসিক শেষ: গোসল ও সালাতে ফেরা"
+      },
+      {
+        "page": "rayhanah",
+        "section": "Ramadan fasts to make up",
+        "sectionBn": "রমজানের কাযা রোজা"
+      },
+      {
+        "page": "salat",
+        "section": "Excused days card (Rayhanah)",
+        "sectionBn": "অব্যাহতির দিনের কার্ড (রায়হানাহ)"
+      }
     ],
     "files": [
       "backend/src/services/cycle.service.ts",
@@ -1436,8 +2595,17 @@
     ]
   },
   "muslim:373": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Adhkar garden (duʿā you can recite now)",
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)"
+      },
+      {
+        "page": "rayhanah",
+        "section": "Fiqh companion (what is excused, what stays open)",
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+      }
     ],
     "files": [
       "backend/src/services/cycle.service.ts",
@@ -1447,17 +2615,34 @@
     ]
   },
   "muslim:408": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Ṣalawāt upon the Prophet ﷺ"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "muslim:443": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1465,8 +2650,18 @@
     ]
   },
   "muslim:596": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "How it works (legend)",
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+      },
+      {
+        "page": "salat",
+        "section": "Salat settings: tasbīḥ after prayer",
+        "sectionBn": "সালাত সেটিংস: নামাযের পর তাসবীহ",
+        "item": "33 · 33 · 34"
+      }
     ],
     "files": [
       "frontend/src/components/salat/SalatLegend.tsx",
@@ -1475,9 +2670,24 @@
     ]
   },
   "muslim:597": {
-    "pages": [
-      "salat",
-      "zikr"
+    "places": [
+      {
+        "page": "salat",
+        "section": "How it works (legend)",
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+      },
+      {
+        "page": "salat",
+        "section": "Salat settings: tasbīḥ after prayer",
+        "sectionBn": "সালাত সেটিংস: নামাযের পর তাসবীহ",
+        "item": "33 · 33 · 33 + tahlīl"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "La ilaha illallahu wahdahu la sharika lah"
+      }
     ],
     "files": [
       "frontend/src/components/salat/SalatLegend.tsx",
@@ -1487,55 +2697,80 @@
     ]
   },
   "muslim:612": {
-    "pages": [
-      "home",
-      "prayerTimes"
-    ],
+    "places": [],
     "files": [
       "frontend/src/components/home/HomePrayerHero.tsx",
       "frontend/src/utils/prayerTimes.ts"
-    ]
+    ],
+    "codeNotes": 3
   },
   "muslim:681": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "muslim:684": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "muslim:686": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "muslim:688": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Behind a local (resident) imam"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "muslim:689": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      },
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Sunnah prayers: lighten, but keep two"
+      },
+      {
+        "page": "salat",
+        "section": "Prayer card guidance (sunnah after a shortened prayer, Witr)",
+        "sectionBn": "নামাযের কার্ডের নির্দেশনা (কসরের পর সুন্নত, বিতর)"
+      }
     ],
     "files": [
       "frontend/src/components/salat/SalatCardGuidance.tsx",
@@ -1543,34 +2778,62 @@
     ]
   },
   "muslim:706": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "muslim:713": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Entering the Masjid"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "muslim:714": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Tahiyyat al-Masjid"
+      }
     ],
     "files": [
       "frontend/src/hooks/useSalatLog.ts"
     ]
   },
   "muslim:719": {
-    "pages": [
-      "prayerTimes",
-      "salat"
+    "places": [
+      {
+        "page": "prayerTimes",
+        "section": "Day timeline cards",
+        "sectionBn": "দিনের টাইমলাইন কার্ড"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Sources (bottom of the page)",
+        "sectionBn": "সূত্র (পাতার নিচে)",
+        "item": "Ishraq/Duha"
+      },
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Duha (Chasht)"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/PrayerSources.tsx",
@@ -1580,24 +2843,42 @@
     ]
   },
   "muslim:725": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Sunnah prayers guide",
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/sunnahGuide.ts"
     ]
   },
   "muslim:728": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Sunnah prayers guide",
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/sunnahGuide.ts"
     ]
   },
   "muslim:758": {
-    "pages": [
-      "prayerTimes"
+    "places": [
+      {
+        "page": "prayerTimes",
+        "section": "Day timeline cards",
+        "sectionBn": "দিনের টাইমলাইন কার্ড"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Sources (bottom of the page)",
+        "sectionBn": "সূত্র (পাতার নিচে)",
+        "item": "Tahajjud"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/PrayerSources.tsx",
@@ -1606,49 +2887,87 @@
     ]
   },
   "muslim:780": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Al-Baqarah"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "muslim:782": {
-    "pages": [
-      "email"
+    "places": [
+      {
+        "page": "email",
+        "section": "Closing hadith",
+        "sectionBn": "শেষের হাদিস"
+      }
     ],
     "files": [
       "backend/src/services/welcomeEmail.templates.ts"
     ]
   },
   "muslim:804": {
-    "pages": [
-      "quranKhatam"
+    "places": [
+      {
+        "page": "quranKhatam",
+        "section": "Khatam page note",
+        "sectionBn": "খতম পাতার নোট"
+      }
     ],
     "files": [
       "frontend/src/pages/QuranKhatam.tsx"
     ]
   },
   "muslim:809": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Al-Kahf"
+      },
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "First ten of al-Kahf"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "muslim:810": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Āyatul Kursī"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "muslim:831": {
-    "pages": [
-      "home",
-      "prayerTimes"
+    "places": [
+      {
+        "page": "prayerTimes",
+        "section": "Day timeline cards",
+        "sectionBn": "দিনের টাইমলাইন কার্ড"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Sources (bottom of the page)",
+        "sectionBn": "সূত্র (পাতার নিচে)",
+        "item": "Forbidden times"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/PrayerSources.tsx",
@@ -1658,9 +2977,14 @@
     ]
   },
   "muslim:852": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1668,9 +2992,14 @@
     ]
   },
   "muslim:854": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1678,9 +3007,21 @@
     ]
   },
   "muslim:873": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1688,25 +3029,41 @@
     ]
   },
   "muslim:881": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Sunnah prayers guide",
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/sunnahGuide.ts"
     ]
   },
   "muslim:882": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Sunnah prayers guide",
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/sunnahGuide.ts"
     ]
   },
   "nasai-kubra:9848": {
-    "pages": [
-      "salat",
-      "zikr"
+    "places": [
+      {
+        "page": "salat",
+        "section": "How it works (legend)",
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+      },
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      }
     ],
     "files": [
       "frontend/src/components/salat/SalatLegend.tsx",
@@ -1715,34 +3072,67 @@
     ]
   },
   "nasai:1297": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts"
     ]
   },
   "quran:14:35-41": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Make me steadfast in prayer"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:18:9-26": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "The cave companions — mercy & guidance"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:20:114": {
-    "pages": [
-      "duas",
-      "quran",
-      "zikr"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Anxiety & Grief"
+      },
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Rabbi zidnī ʿilmā — increase me in knowledge"
+      },
+      {
+        "page": "zikr",
+        "section": "Add a custom zikr: example reference",
+        "sectionBn": "নিজের যিকির যোগ: উদাহরণ রেফারেন্স"
+      },
+      {
+        "page": "zikr",
+        "section": "Add or suggest a zikr form: example reference",
+        "sectionBn": "যিকির যোগ বা প্রস্তাবের ফর্ম: উদাহরণ রেফারেন্স"
+      }
     ],
     "files": [
       "frontend/src/components/ZikrSuggestForm.tsx",
@@ -1752,42 +3142,72 @@
     ]
   },
   "quran:20:14": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "quran:20:24-36": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Mūsā — expand my chest, ease my task"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:23:118": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Forgive and have mercy — the best of the merciful"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:23:97-98": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Refuge from the whispers of devils"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:24:31": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1795,26 +3215,58 @@
     ]
   },
   "quran:25:63-77": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Spouses & children — coolness of eyes"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:28:22-28": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Mūsā — I am in need of whatever good You send"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:2:148": {
-    "pages": [
-      "friends",
-      "home",
-      "landing"
+    "places": [
+      {
+        "page": "friends",
+        "section": "Friend link preview",
+        "sectionBn": "বন্ধু লিংকের প্রিভিউ"
+      },
+      {
+        "page": "friends",
+        "section": "Invite a friend: share text",
+        "sectionBn": "বন্ধুকে আমন্ত্রণ: শেয়ারের লেখা"
+      },
+      {
+        "page": "friends",
+        "section": "Page heading",
+        "sectionBn": "পাতার শিরোনাম"
+      },
+      {
+        "page": "home",
+        "section": "Friends card",
+        "sectionBn": "বন্ধুদের কার্ড"
+      },
+      {
+        "page": "landing",
+        "section": "Features",
+        "sectionBn": "ফিচার"
+      }
     ],
     "files": [
       "backend/src/controllers/connectPreview.controller.ts",
@@ -1825,10 +3277,23 @@
     ]
   },
   "quran:2:184": {
-    "pages": [
-      "code",
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Qaḍā (Make-up)"
+      },
+      {
+        "page": "fasting",
+        "section": "Learn: missed fasts",
+        "sectionBn": "জানুন: ছুটে যাওয়া রোজা"
+      },
+      {
+        "page": "fasting",
+        "section": "Make-up fasts: qaḍāʾ, kaffārah, nadhr",
+        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা"
+      }
     ],
     "files": [
       "frontend/src/components/fasting/FastingLearn.tsx",
@@ -1839,10 +3304,18 @@
     ]
   },
   "quran:2:185": {
-    "pages": [
-      "fasting",
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Travelling while fasting",
+        "sectionBn": "সফরে রোজা"
+      },
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Fasting on a journey"
+      }
     ],
     "files": [
       "frontend/src/pages/FastingTracker.tsx",
@@ -1850,26 +3323,54 @@
     ]
   },
   "quran:2:222": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Fiqh companion (what is excused, what stays open)",
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx"
     ]
   },
   "quran:2:249-251": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Pour patience upon us, make our feet firm"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:2:255": {
-    "pages": [
-      "adhkar",
-      "salat",
-      "zikr"
+    "places": [
+      {
+        "page": "adhkar",
+        "section": "Adhkar list",
+        "sectionBn": "যিকিরের তালিকা",
+        "item": "Ayat al-Kursi"
+      },
+      {
+        "page": "salat",
+        "section": "After each prayer: “Read now”",
+        "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
+        "item": "Ayatul Kursi"
+      },
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      },
+      {
+        "page": "zikr",
+        "section": "Counter: Āyat al-Kursī card",
+        "sectionBn": "কাউন্টার: আয়াতুল কুরসি কার্ড"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts",
@@ -1879,66 +3380,103 @@
     ]
   },
   "quran:2:37": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "The duʿā of Ādam — forgive us"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:3:173": {
-    "pages": [
-      "zikrAnalytics"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Add a custom zikr: example reference",
+        "sectionBn": "নিজের যিকির যোগ: উদাহরণ রেফারেন্স"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json"
     ]
   },
   "quran:3:37-39": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Zakariyyā — grant me pure offspring"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:3:7-8": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Keep my heart firm after guidance"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:4:101": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Qaṣr: shorten the four-rak’ah prayers"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "quran:50:39": {
-    "pages": [
-      "home"
+    "places": [
+      {
+        "page": "home",
+        "section": "Today timeline: adhkar times",
+        "sectionBn": "আজকের টাইমলাইন: যিকিরের সময়"
+      }
     ],
     "files": [
       "frontend/src/utils/todayTimeline.ts"
     ]
   },
   "quran:56": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "After each prayer: “Read now”",
+        "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
+        "item": "Al-Wāqiʿah"
+      }
     ],
     "files": [
       "frontend/src/utils/postSalatQuran.ts"
     ]
   },
   "quran:5:3": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/arafah",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Day of Arafah"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1946,18 +3484,31 @@
     ]
   },
   "quran:5:6": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "No water? Tayammum"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "quran:5:89": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Kaffārah (Expiation)"
+      },
+      {
+        "page": "fasting",
+        "section": "Make-up fasts: qaḍāʾ, kaffārah, nadhr",
+        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা"
+      }
     ],
     "files": [
       "frontend/src/components/fasting/FastingSettingsSheet.tsx",
@@ -1966,9 +3517,14 @@
     ]
   },
   "quran:62:9": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -1976,53 +3532,80 @@
     ]
   },
   "quran:64:16": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "item": "Fard prayer in a vehicle"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "quran:73:4": {
-    "pages": [
-      "quran",
-      "quranKhatam"
-    ],
+    "places": [],
     "files": [
       "frontend/src/pages/QuranKhatam.tsx",
       "frontend/src/utils/quranMeta.ts"
-    ]
+    ],
+    "codeNotes": 2
   },
   "quran:76:7": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Nadhr (Vow)"
+      }
     ],
     "files": [
       "frontend/src/utils/fastingRules.ts"
     ]
   },
   "quran:7:204": {
-    "pages": [
-      "quranListen"
+    "places": [
+      {
+        "page": "quranListen",
+        "section": "Listening note",
+        "sectionBn": "শোনার নোট"
+      }
     ],
     "files": [
       "frontend/src/pages/QuranListen.tsx"
     ]
   },
   "quran:7:23": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "The duʿā of Ādam — forgive us"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "quran:89:1-2": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/dhul_hijjah_first10",
+        "section": "About the day",
+        "sectionBn": "দিনটি সম্পর্কে",
+        "item": "First 10 Days of Dhul Ḥijjah"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/dhul_hijjah_first10",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "First 10 Days of Dhul Ḥijjah"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -2030,11 +3613,37 @@
     ]
   },
   "quran:97:3": {
-    "pages": [
-      "calendar",
-      "home",
-      "ramadan",
-      "sadaqah"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/laylat_qadr",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Laylat al-Qadr"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/laylat_qadr",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Laylat al-Qadr"
+      },
+      {
+        "page": "ramadan",
+        "section": "Countdown to Ramadan",
+        "sectionBn": "রমজানের কাউন্টডাউন"
+      },
+      {
+        "page": "ramadan",
+        "section": "The last ten nights",
+        "sectionBn": "শেষ দশ রাত"
+      },
+      {
+        "page": "sadaqah",
+        "section": "Blessed days to give",
+        "sectionBn": "দানের বরকতময় দিন",
+        "item": "Laylat al-Qadr: a night better than 1,000 months"
+      }
     ],
     "files": [
       "frontend/src/components/ramadan/RamadanCountdown.tsx",
@@ -2045,9 +3654,21 @@
     ]
   },
   "quran:9:36": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/islamic_new_year",
+        "section": "About the day",
+        "sectionBn": "দিনটি সম্পর্কে",
+        "item": "Islamic New Year"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/islamic_new_year",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Islamic New Year"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -2055,44 +3676,85 @@
     ]
   },
   "scholar:ibn-al-mundhir-ijma": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Friday (Jumu'ah)"
+      }
     ],
     "files": [
       "frontend/src/utils/islamicCalendar.ts"
     ]
   },
   "scholar:ibn-al-qayyim-zad": {
-    "pages": [
-      "sadaqah"
+    "places": [
+      {
+        "page": "sadaqah",
+        "section": "Blessed days to give",
+        "sectionBn": "দানের বরকতময় দিন",
+        "item": "It's Jumu'ah: a blessed day to give"
+      }
     ],
     "files": [
       "frontend/src/utils/sadaqahVirtueDays.ts"
     ]
   },
   "scholar:ibn-rajab-lataif": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/shab_e_barat",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Laylat al-Barā'ah"
+      }
     ],
     "files": [
       "frontend/src/utils/islamicCalendar.ts"
     ]
   },
   "scholar:ibn-taymiyyah-menses-quran": {
-    "pages": [
-      "rayhanah"
+    "places": [
+      {
+        "page": "rayhanah",
+        "section": "Adhkar garden (duʿā you can recite now)",
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)"
+      }
     ],
     "files": [
       "frontend/src/components/cycle/RayhanahAdhkar.tsx"
     ]
   },
   "targhib:736": {
-    "pages": [
-      "calendar",
-      "home",
-      "salat"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/friday",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Friday (Jumu'ah)"
+      },
+      {
+        "page": "home",
+        "section": "Special day card (Friday hour, Sūrat al-Kahf)",
+        "sectionBn": "বিশেষ দিনের কার্ড (জুমার সময়, সূরা কাহফ)"
+      },
+      {
+        "page": "salat",
+        "section": "After each prayer: “Read now”",
+        "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
+        "item": "Al-Kahf"
+      }
     ],
     "files": [
       "frontend/src/components/home/HomeSpecialBlock.tsx",
@@ -2101,35 +3763,57 @@
     ]
   },
   "tirmidhi:1905": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/musafir.ts"
     ]
   },
   "tirmidhi:2083": {
-    "pages": [
-      "duas"
+    "places": [
+      {
+        "page": "duas",
+        "section": "Duʿā by situation",
+        "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
+        "item": "Illness"
+      }
     ],
     "files": [
       "frontend/src/seo/content/duas.ts"
     ]
   },
   "tirmidhi:2140": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Keep my heart firm after guidance"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "tirmidhi:2891": {
-    "pages": [
-      "code",
-      "quran",
-      "salat"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Al-Mulk"
+      },
+      {
+        "page": "salat",
+        "section": "After each prayer: “Read now”",
+        "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
+        "item": "Al-Mulk"
+      }
     ],
     "files": [
       "frontend/src/utils/localeReference.ts",
@@ -2138,32 +3822,56 @@
     ]
   },
   "tirmidhi:2892": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "As-Sajdah"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "tirmidhi:2910": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Virtue footer",
+        "sectionBn": "ফযীলতের নোট"
+      }
     ],
     "files": [
       "frontend/src/pages/QuranHabit.tsx"
     ]
   },
   "tirmidhi:2922": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Last three of al-Ḥashr"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "tirmidhi:3383": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Counter: “Full text & reference” card",
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+      },
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "La ilaha illallah"
+      }
     ],
     "files": [
       "frontend/src/components/zikr/zikrCounterData.ts",
@@ -2171,32 +3879,60 @@
     ]
   },
   "tirmidhi:3388": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Bismillahilladhi la yadurru"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "tirmidhi:3391": {
-    "pages": [
-      "adhkar"
+    "places": [
+      {
+        "page": "adhkar",
+        "section": "Adhkar list",
+        "sectionBn": "যিকিরের তালিকা"
+      }
     ],
     "files": [
       "frontend/src/seo/content/adhkar.ts"
     ]
   },
   "tirmidhi:3505": {
-    "pages": [
-      "quran"
+    "places": [
+      {
+        "page": "quran",
+        "section": "Suggested sūrahs, āyahs and Quranic duʿās",
+        "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
+        "item": "Yūnus in the darkness — lā ilāha illā anta"
+      }
     ],
     "files": [
       "frontend/src/utils/quranMeta.ts"
     ]
   },
   "tirmidhi:3507": {
-    "pages": [
-      "asma"
+    "places": [
+      {
+        "page": "asma",
+        "section": "Page notes",
+        "sectionBn": "পাতার নোট"
+      },
+      {
+        "page": "asma",
+        "section": "Source note",
+        "sectionBn": "সূত্রের নোট"
+      },
+      {
+        "page": "ramadanCalendar",
+        "section": "Page notes",
+        "sectionBn": "পাতার নোট"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -2204,11 +3940,31 @@
     ]
   },
   "tirmidhi:3513": {
-    "pages": [
-      "calendar",
-      "home",
-      "ramadan",
-      "ramadanCalendar"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/laylat_qadr",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Laylat al-Qadr"
+      },
+      {
+        "page": "calendar",
+        "path": "/special-day/laylat_qadr",
+        "section": "What to do",
+        "sectionBn": "যা করবেন",
+        "item": "Laylat al-Qadr"
+      },
+      {
+        "page": "ramadan",
+        "section": "The last ten nights",
+        "sectionBn": "শেষ দশ রাত"
+      },
+      {
+        "page": "ramadanCalendar",
+        "section": "Ramadan duʿās",
+        "sectionBn": "রমজানের দুআ"
+      }
     ],
     "files": [
       "frontend/src/components/ramadan/RamadanLastTen.tsx",
@@ -2218,41 +3974,66 @@
     ]
   },
   "tirmidhi:3524": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Ya Hayyu Ya Qayyum"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "tirmidhi:3525": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Ya Dhal-Jalali wal-Ikram"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "tirmidhi:3575": {
-    "pages": [
-      "adhkar"
+    "places": [
+      {
+        "page": "adhkar",
+        "section": "Adhkar list",
+        "sectionBn": "যিকিরের তালিকা",
+        "item": "The Three Quls"
+      }
     ],
     "files": [
       "frontend/src/seo/content/adhkar.ts"
     ]
   },
   "tirmidhi:3577": {
-    "pages": [
-      "zikr"
+    "places": [
+      {
+        "page": "zikr",
+        "section": "Zikr library",
+        "sectionBn": "যিকির লাইব্রেরি",
+        "item": "Astaghfirullahal-Azim alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh"
+      }
     ],
     "files": [
       "frontend/src/utils/zikrLibrary.ts"
     ]
   },
   "tirmidhi:3585": {
-    "pages": [
-      "calendar",
-      "home"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/arafah",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Day of Arafah"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -2260,25 +4041,36 @@
     ]
   },
   "tirmidhi:415": {
-    "pages": [
-      "salat"
-    ],
+    "places": [],
     "files": [
       "frontend/src/utils/sunnahGuide.ts"
-    ]
+    ],
+    "codeNotes": 1
   },
   "tirmidhi:430": {
-    "pages": [
-      "salat"
+    "places": [
+      {
+        "page": "salat",
+        "section": "Sunnah prayers guide",
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+      }
     ],
     "files": [
       "frontend/src/utils/sunnahGuide.ts"
     ]
   },
   "tirmidhi:553": {
-    "pages": [
-      "musafir",
-      "salat"
+    "places": [
+      {
+        "page": "musafir",
+        "section": "Musafir guide",
+        "sectionBn": "মুসাফির নির্দেশিকা"
+      },
+      {
+        "page": "salat",
+        "section": "Prayer card: join two prayers (jamʿ)",
+        "sectionBn": "নামাযের কার্ড: দুই নামায একসাথে (জমা)"
+      }
     ],
     "files": [
       "frontend/src/components/salat/SalatCardJoining.tsx",
@@ -2287,9 +4079,24 @@
     ]
   },
   "tirmidhi:586": {
-    "pages": [
-      "prayerTimes",
-      "salat"
+    "places": [
+      {
+        "page": "prayerTimes",
+        "section": "Day timeline cards",
+        "sectionBn": "দিনের টাইমলাইন কার্ড"
+      },
+      {
+        "page": "prayerTimes",
+        "section": "Sources (bottom of the page)",
+        "sectionBn": "সূত্র (পাতার নিচে)",
+        "item": "Ishraq/Duha"
+      },
+      {
+        "page": "salat",
+        "section": "Nafl prayers list",
+        "sectionBn": "নফল নামাযের তালিকা",
+        "item": "Ishraq"
+      }
     ],
     "files": [
       "frontend/src/components/prayerTimes/PrayerSources.tsx",
@@ -2299,18 +4106,26 @@
     ]
   },
   "tirmidhi:686": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Day of Doubt (30 Sha'bān)"
+      }
     ],
     "files": [
       "frontend/src/utils/fastingRules.ts"
     ]
   },
   "tirmidhi:744": {
-    "pages": [
-      "fasting",
-      "ramadan"
+    "places": [
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Singling out Saturday"
+      }
     ],
     "files": [
       "frontend/src/pages/FastingTracker.tsx",
@@ -2318,11 +4133,20 @@
     ]
   },
   "tirmidhi:747": {
-    "pages": [
-      "calendar",
-      "fasting",
-      "home",
-      "ramadan"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/fast_mon_thu",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "Sunnah Fast Day"
+      },
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "Every Monday and Thursday"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -2331,12 +4155,32 @@
     ]
   },
   "tirmidhi:757": {
-    "pages": [
-      "calendar",
-      "fasting",
-      "home",
-      "ramadan",
-      "sadaqah"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/dhul_hijjah_first10",
+        "section": "References",
+        "sectionBn": "রেফারেন্স",
+        "item": "First 10 Days of Dhul Ḥijjah"
+      },
+      {
+        "page": "fasting",
+        "section": "Fasting guide",
+        "sectionBn": "রোজার নির্দেশিকা",
+        "item": "1–9 Dhul Ḥijjah"
+      },
+      {
+        "page": "sadaqah",
+        "section": "Blessed days to give",
+        "sectionBn": "দানের বরকতময় দিন",
+        "item": "Day of Arafah: the best day of the year"
+      },
+      {
+        "page": "sadaqah",
+        "section": "Blessed days to give",
+        "sectionBn": "দানের বরকতময় দিন",
+        "item": "The first 10 days of Dhul Ḥijjah: give generously"
+      }
     ],
     "files": [
       "frontend/src/locales/en/common.json",
@@ -2346,20 +4190,43 @@
     ]
   },
   "web:hadithanswers-ramadan": {
-    "pages": [
-      "calendar",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "ramadan",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "The three ʿashras"
+      },
+      {
+        "page": "ramadanAnalytics",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "The three ʿashras"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx"
     ]
   },
   "web:islamqa-21364": {
-    "pages": [
-      "calendar",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "ramadan",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Nafl rewarded like farḍ"
+      },
+      {
+        "page": "ramadan",
+        "section": "Worship strip: the month’s virtue",
+        "sectionBn": "ইবাদতের সারি: মাসের ফযীলত"
+      },
+      {
+        "page": "ramadanAnalytics",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Nafl rewarded like farḍ"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx",
@@ -2367,30 +4234,34 @@
     ]
   },
   "web:islamqa-49678": {
-    "pages": [
-      "calendar",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/shab_e_barat",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Laylat al-Barā'ah"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx"
     ]
   },
   "web:islamweb-348835": {
-    "pages": [
-      "calendar",
-      "ramadan",
-      "salat"
-    ],
+    "places": [],
     "files": [
       "frontend/src/components/DaifExplainer.tsx"
     ]
   },
   "web:qandabenefits-688": {
-    "pages": [
-      "calendar",
-      "ramadan",
-      "salat"
+    "places": [
+      {
+        "page": "calendar",
+        "path": "/special-day/fast_mon_thu",
+        "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
+        "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
+        "item": "Sunnah Fast Day"
+      }
     ],
     "files": [
       "frontend/src/components/DaifExplainer.tsx"

@@ -2,6 +2,15 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.192.1 - The reference map shows where in the app - 2026-11-28
+
+### Changed
+
+- **`/references` now says where each reference appears in the app**, not which code files cite it. Each one lists the screens it shows on (linked), the section, and the card or item, for example "Salat tracker › Nafl prayers list › Istikharah". Calendar references link to their own day page (`/special-day/friday`).
+- A citation that only appears in a code comment (it explains a rule, such as Islamic midnight) is no longer listed as a place; the page says it is the basis of a rule the app follows.
+- The code file list moved to the admin checklist (Tools → Reference checks), with the places.
+- `usage.generated.json` and `/references.json` now carry `places` (screen, section, item, deep link) for each reference; `files` stays in the JSON for the native app. Tests pin a few known places (`references.test.ts`).
+
 ## v5.192.0 - Naseeh retired, no more third-party AI - 2026-11-28
 
 Owner's decision of 2026-11-28: Bustandeen no longer sends anything to a third-party AI service. Naseeh (the optional AI companion) was built entirely on Groq's hosted models, which are not Islamic models and run outside our control, so the whole feature is removed rather than hidden. The source before removal is kept as git tag `naseeh-final` and as a local zip (`archive/naseeh-backup-2026-11-28.zip`).

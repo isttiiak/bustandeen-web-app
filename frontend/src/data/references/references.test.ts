@@ -11,6 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { REFERENCES } from './registry.js';
+import { REF_PAGES, type RefPage } from './pages.js';
 import { buildUsage, citationIds, scanRepo } from './referenceScan.js';
 import { referencesDocument, type ManualCheck } from './referenceExport.js';
 
@@ -89,6 +90,39 @@ describe('reference registry', () => {
       expect(['source-verified', 'scholar-confirmed', 'needs-correction']).toContain(m.status);
       expect(m.by.trim().length, id).toBeGreaterThan(0);
       expect(m.date, id).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    }
+  });
+});
+
+describe('places in the app', () => {
+  const where = (id: string) =>
+    usage[id]?.places.map(
+      (p) => `${p.path ?? p.page} › ${p.section}${p.item ? ` › ${p.item}` : ''}`
+    );
+
+  it('names the screen, section and item a reference sits in', () => {
+    expect(where('bukhari:1166')).toEqual(['salat › Nafl prayers list › Istikharah']);
+    expect(where('abudawud:5096')).toEqual(['duas › Duʿā by situation › Entering the Home']);
+  });
+
+  it('links calendar references to their own special-day page', () => {
+    expect(where('abudawud:1067')).toEqual([
+      "/special-day/friday › References › Friday (Jumu'ah)",
+      "/special-day/friday › What to do › Friday (Jumu'ah)",
+    ]);
+  });
+
+  it('does not count a citation in a code comment as a place', () => {
+    expect(usage['muslim:612']?.places).toEqual([]);
+    expect(usage['muslim:612']?.codeNotes).toBeGreaterThan(0);
+  });
+
+  it('gives every visible place a screen people can open, except email and help pages', () => {
+    for (const [id, u] of Object.entries(usage)) {
+      for (const p of u.places) {
+        if (['admin', 'email', 'bayan'].includes(p.page)) continue;
+        expect(p.path ?? (REF_PAGES[p.page] as RefPage).path, `${id} ${p.page}`).toMatch(/^\//);
+      }
     }
   });
 });

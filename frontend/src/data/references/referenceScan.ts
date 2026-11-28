@@ -6,7 +6,14 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, sep } from 'node:path';
 import { REFERENCES } from './registry.js';
-import { pagesForFile, pagesForLocaleKey } from './pages.js';
+import {
+  REF_PAGES,
+  ruleForFile,
+  ruleForLocaleKey,
+  type RefPage,
+  type RefPageKey,
+  type RefPlace,
+} from './pages.js';
 
 /** A citation found in one file. */
 export interface Hit {
@@ -15,6 +22,16 @@ export interface Hit {
   line: number;
   /** For locales/en/common.json: the dotted key the citation sits in. */
   key?: string;
+  /** Inside a code comment: explains the code, not shown to anyone. */
+  comment?: boolean;
+  /** The card or item title nearest above the citation. */
+  item?: string;
+  /** A deep link more exact than the page (a special day). */
+  path?: string;
+  /** Pages decided by the line itself (the weak-narration explainer topics). */
+  pages?: RefPageKey[];
+  /** A locale-style key whose rule names the section (islamicCalendar.ts mirrors specialDays.*). */
+  ruleKey?: string;
 }
 
 const COLLECTIONS: [RegExp, string][] = [
@@ -98,17 +115,103 @@ function walk(dir: string, out: string[]): void {
 function localeHits(path: string, repo: string): Hit[] {
   const hits: Hit[] = [];
   const file = relative(repo, path).split(sep).join('/');
+  const root = JSON.parse(readFileSync(path, 'utf8').replace(/^\uFEFF/, '')) as Record<
+    string,
+    unknown
+  >;
+  const days = (root.specialDays ?? {}) as Record<string, { name?: string }>;
   const visit = (node: unknown, key: string): void => {
     if (typeof node === 'string') {
       // The reference map's own UI strings (search examples) are not citations.
       if (key.startsWith('references.')) return;
-      for (const id of citationIds(node)) hits.push({ id, file, line: 0, key });
+      const day = /^specialDays\.([^.]+)\./.exec(key)?.[1];
+      for (const id of citationIds(node)) {
+        hits.push({
+          id,
+          file,
+          line: 0,
+          key,
+          ...(day && days[day]?.name ? { item: days[day].name, path: `/special-day/${day}` } : {}),
+        });
+      }
     } else if (node && typeof node === 'object') {
       for (const [k, v] of Object.entries(node)) visit(v, key ? `${key}.${k}` : k);
     }
   };
-  visit(JSON.parse(readFileSync(path, 'utf8').replace(/^\uFEFF/, '')), '');
+  visit(root, '');
   return hits;
+}
+
+/** Title fields that name the card or item a citation belongs to. */
+const ITEM_RX =
+  /^\s*(?:name|title|label|labelFallback|when|situation|heading)\s*:\s*(?:\{\s*en:\s*)?(['"`])((?:(?!\1).)+)\1/;
+
+function itemAbove(lines: string[], i: number): string | undefined {
+  for (let j = i; j >= Math.max(0, i - 30); j--) {
+    const m = ITEM_RX.exec(lines[j]!);
+    if (m) return m[2]!.replace(/\\'/g, "'");
+  }
+  return undefined;
+}
+
+/** The special day (islamicCalendar.ts SPECIAL_DAYS) a line belongs to. */
+function dayAbove(lines: string[], i: number): { id: string; name?: string } | undefined {
+  for (let j = i; j >= 0; j--) {
+    const id = /^ {4}id: '([a-z0-9_]+)',/.exec(lines[j]!)?.[1];
+    if (id) {
+      const name = /^ {4}name: (['"])(.+)\1,/.exec(lines[j + 1] ?? '')?.[2];
+      return { id, ...(name ? { name: name.replace(/\\'/g, "'") } : {}) };
+    }
+  }
+  return undefined;
+}
+
+/** Weak-narration explainer topics and the screens that show them. */
+const DAIF_TOPIC_PLACES: Record<string, { pages: RefPageKey[]; path?: string; item: string }> = {
+  'ramadan-ashra': { pages: ['ramadan', 'ramadanAnalytics'], item: 'The three ʿashras' },
+  'nafl-fard-reward': { pages: ['ramadan', 'ramadanAnalytics'], item: 'Nafl rewarded like farḍ' },
+  'iftar-dua': { pages: ['calendar'], path: '/special-day/fast_mon_thu', item: 'Sunnah Fast Day' },
+  'mid-shaban': {
+    pages: ['calendar'],
+    path: '/special-day/shab_e_barat',
+    item: "Laylat al-Barā'ah",
+  },
+  'waqiah-poverty': { pages: [], item: 'Sūrat al-Wāqiʿah and poverty' },
+};
+
+function placeHints(file: string, lines: string[], i: number): Partial<Hit> {
+  if (file.endsWith('utils/islamicCalendar.ts')) {
+    const day = dayAbove(lines, i);
+    if (day) {
+      let part = 'significance';
+      for (let j = i; j >= 0; j--) {
+        const m = /^ {4}(references|todos|significance|shortDesc|id):/.exec(lines[j]!);
+        if (m) {
+          part = m[1] === 'id' ? 'significance' : m[1]!;
+          break;
+        }
+      }
+      return {
+        path: `/special-day/${day.id}`,
+        ruleKey: `specialDays.${day.id}.${part}`,
+        ...(day.name ? { item: day.name } : {}),
+      };
+    }
+  }
+  if (file.endsWith('components/DaifExplainer.tsx')) {
+    for (let j = i; j >= 0; j--) {
+      const topic = /^ {4}id: '([a-z-]+)',/.exec(lines[j]!)?.[1];
+      const place = topic ? DAIF_TOPIC_PLACES[topic] : undefined;
+      if (place)
+        return {
+          pages: place.pages,
+          item: place.item,
+          ...(place.path ? { path: place.path } : {}),
+        };
+    }
+  }
+  const item = itemAbove(lines, i);
+  return item ? { item } : {};
 }
 
 /** Scan the repo (frontend/src, en locale, backend/src). */
@@ -120,13 +223,23 @@ export function scanRepo(repo: string): Hit[] {
   const literals = REFERENCES.flatMap((r) => (r.match ?? []).map((m) => [m, r.id] as const));
   for (const path of files) {
     const file = relative(repo, path).split(sep).join('/');
-    readFileSync(path, 'utf8')
-      .split('\n')
-      .forEach((line, i) => {
-        for (const id of citationIds(line)) hits.push({ id, file, line: i + 1 });
-        for (const [lit, id] of literals)
-          if (line.includes(lit)) hits.push({ id, file, line: i + 1 });
-      });
+    const lines = readFileSync(path, 'utf8').split('\n');
+    let inBlock = false;
+    lines.forEach((line, i) => {
+      const t = line.trim();
+      const startsBlock = /^(\{\s*)?\/\*/.test(t);
+      const comment = inBlock || startsBlock || t.startsWith('//') || t.startsWith('*');
+      if (startsBlock && !t.includes('*/')) inBlock = true;
+      else if (inBlock && t.includes('*/')) inBlock = false;
+      const ids = [
+        ...citationIds(line),
+        ...literals.filter(([lit]) => line.includes(lit)).map(([, id]) => id),
+      ];
+      if (ids.length === 0) return;
+      const hints = comment ? {} : placeHints(file, lines, i);
+      for (const id of ids)
+        hits.push({ id, file, line: i + 1, ...(comment ? { comment } : {}), ...hints });
+    });
   }
   hits.push(...localeHits(join(repo, 'frontend/src/locales/en/common.json'), repo));
   return hits;
@@ -139,29 +252,61 @@ function resolveId(id: string): string | null {
 }
 
 export interface UsageMap {
-  [id: string]: { pages: string[]; files: string[] };
+  [id: string]: {
+    /** Where people see it: screen, section, item. */
+    places: RefPlace[];
+    /** Source files that cite it (shown in the admin checklist, not the public page). */
+    files: string[];
+    /** Code comments that cite it (explaining a rule), when there is no visible place. */
+    codeNotes?: number;
+  };
 }
 
-/** Group hits into per-reference usage: the pages and files that cite it. */
+const placeKey = (p: RefPlace) => `${p.page}|${p.path ?? ''}|${p.section}|${p.item ?? ''}`;
+
+/** Group hits into per-reference usage: the places people see it, and the files. */
 export function buildUsage(hits: Hit[]): { usage: UsageMap; unknown: Hit[]; unpaged: string[] } {
   const usage: UsageMap = {};
   const unknown: Hit[] = [];
   const unpaged = new Set<string>();
+  const notes: Record<string, number> = {};
   for (const h of hits) {
     const id = resolveId(h.id);
     if (!id) {
       unknown.push(h);
       continue;
     }
-    const pages = h.key ? pagesForLocaleKey(h.key) : pagesForFile(h.file);
-    if (pages.length === 0) unpaged.add(h.key ? `${h.file} (${h.key})` : h.file);
-    const u = (usage[id] ??= { pages: [], files: [] });
-    for (const p of pages) if (!u.pages.includes(p)) u.pages.push(p);
+    const u = (usage[id] ??= { places: [], files: [] });
     if (!u.files.includes(h.file)) u.files.push(h.file);
+    if (h.comment) {
+      notes[id] = (notes[id] ?? 0) + 1;
+      continue;
+    }
+    const lkey = h.key ?? h.ruleKey;
+    const rule = lkey ? ruleForLocaleKey(lkey) : ruleForFile(h.file);
+    if (!rule) {
+      unpaged.add(h.key ? `${h.file} (${h.key})` : h.file);
+      continue;
+    }
+    for (const page of h.pages ?? rule.pages) {
+      const place: RefPlace = {
+        page,
+        ...(h.path && h.path !== (REF_PAGES[page] as RefPage).path ? { path: h.path } : {}),
+        section: rule.section,
+        sectionBn: rule.sectionBn,
+        ...(h.item && !rule.noItem ? { item: h.item } : {}),
+      };
+      if (!u.places.some((p) => placeKey(p) === placeKey(place))) u.places.push(place);
+    }
   }
   const sorted: UsageMap = {};
   for (const id of Object.keys(usage).sort()) {
-    sorted[id] = { pages: usage[id]!.pages.sort(), files: usage[id]!.files.sort() };
+    const u = usage[id]!;
+    sorted[id] = {
+      places: u.places.sort((a, b) => placeKey(a).localeCompare(placeKey(b))),
+      files: u.files.sort(),
+      ...(u.places.length === 0 && notes[id] ? { codeNotes: notes[id] } : {}),
+    };
   }
   return { usage: sorted, unknown, unpaged: [...unpaged].sort() };
 }

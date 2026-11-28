@@ -218,6 +218,26 @@ export default function AdminReferences() {
                 </div>
                 <p className="text-white/80 text-xs leading-relaxed">{r.purpose}</p>
                 {r.deskNote && <p className="text-white/60 text-xs">{r.deskNote}</p>}
+                {r.places.length > 0 && (
+                  <p className="text-white/70 text-xs">
+                    Shown in:{' '}
+                    {r.places
+                      .map((p) => `${p.page} › ${p.section}${p.item ? ` › ${p.item}` : ''}`)
+                      .join(' · ')}
+                  </p>
+                )}
+                {r.files.length > 0 && (
+                  <details className="text-[11px] text-white/60">
+                    <summary className="cursor-pointer min-h-[44px] flex items-center">
+                      Code files ({r.files.length})
+                    </summary>
+                    <ul className="font-mono break-all space-y-0.5 pb-1">
+                      {r.files.map((f) => (
+                        <li key={f}>{f}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
                 {m && (
                   <input
                     defaultValue={m.note ?? ''}
