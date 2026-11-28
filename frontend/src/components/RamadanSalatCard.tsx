@@ -369,7 +369,7 @@ export default function RamadanSalatCard({
           </div>
 
           {/* Tarawih: sits directly under Isha because that is when it is
-              prayed ("he prayed it, then people gathered", Bukhārī 2010).
+              prayed ("he prayed it, then people gathered", Bukhārī 1129).
               Only rendered when the owning page supplies the handler, i.e.
               during Ramadan. */}
           {onToggleTarawih && (

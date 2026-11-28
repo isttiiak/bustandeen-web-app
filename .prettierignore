@@ -21,3 +21,5 @@ frontend/src/pages/ramadanRender.baselines
 frontend/src/pages/prayerTimeline.baselines
 frontend/src/pages/rayhanahRender.baselines
 frontend/src/pages/salatTrackerRender.baselines
+# Written by the reference scan (npm run refs:update), compared byte for byte.
+frontend/src/data/references/usage.generated.json

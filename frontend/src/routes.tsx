@@ -35,6 +35,7 @@ const AsmaUlHusnaLibrary = lazy(() => import('./pages/AsmaUlHusnaLibrary.js'));
 const ZakatCalculatorLibrary = lazy(() => import('./pages/ZakatCalculatorLibrary.js'));
 const IslamicCalendar = lazy(() => import('./pages/IslamicCalendar.js'));
 const Privacy = lazy(() => import('./pages/Privacy.js'));
+const References = lazy(() => import('./pages/References.js'));
 const Terms = lazy(() => import('./pages/Terms.js'));
 const Feedback = lazy(() => import('./pages/Feedback.js'));
 const Contact = lazy(() => import('./pages/Contact.js'));
@@ -299,6 +300,7 @@ export default function AppRoutes({ revision }: { revision: number }) {
       <Route path="/library/zakat-calculator" element={<ZakatCalculatorLibrary />} />
       <Route path="/library/calendar" element={<IslamicCalendar />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/references" element={<References />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/feedback" element={<Feedback />} />
       <Route path="/contact" element={<Contact />} />

@@ -31,16 +31,10 @@ interface MuhasabahHadithRef {
 
 export type MuhasabahRef = MuhasabahQuranRef | MuhasabahHadithRef;
 
+// 2026-11-28 (reference audit): Jāmiʿ at-Tirmidhī 2459 ("the wise one takes account
+// of himself") was removed. It was labelled ḥasan, but al-Albānī and Darussalam
+// grade it ḍaʿīf. Add a hadith here only with a verified ṣaḥīḥ or ḥasan grade.
 const MUHASABAH_CORPUS: MuhasabahRef[] = [
-  {
-    type: 'hadith',
-    textEn:
-      'The wise one is the one who takes account of himself and works for what comes after death.',
-    textBn: 'বুদ্ধিমান সেই ব্যক্তি, যে নিজের হিসাব নেয় এবং মৃত্যুর পরের জন্য আমল করে।',
-    source: 'Jāmiʿ at-Tirmidhī 2459',
-    sourceUrl: 'https://sunnah.com/tirmidhi:2459',
-    grade: 'Ḥasan (graded by al-Albānī)',
-  },
   { type: 'quran', surah: 59, ayahStart: 18, ayahEnd: 18, surahName: 'Al-Ḥashr' },
   { type: 'quran', surah: 13, ayahStart: 11, ayahEnd: 11, surahName: "Ar-Ra'd" },
   { type: 'quran', surah: 94, ayahStart: 5, ayahEnd: 6, surahName: 'Ash-Sharh' },

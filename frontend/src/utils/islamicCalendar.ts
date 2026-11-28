@@ -143,7 +143,7 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
         grade: 'Ṣaḥīḥ by al-Albānī',
       },
       {
-        text: '"On Friday there is a time in which a Muslim does not ask Allah for anything but He gives it to him." · Ṣaḥīḥ Muslim 852',
+        text: '"There is a time on Friday at which no Muslim servant would pray and ask Allah for a good thing but He would give it to him." · Ṣaḥīḥ Muslim 852',
         url: 'https://sunnah.com/muslim:852',
         grade: 'Ṣaḥīḥ',
       },
@@ -267,12 +267,12 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     ],
     references: [
       {
-        text: '"Fast three days of every month: the 13th, 14th, and 15th." · Sunan Abū Dāwūd 2449',
+        text: '"The Messenger of Allah ﷺ used to command us to fast the white days: the thirteenth, fourteenth and fifteenth." · Sunan Abū Dāwūd 2449',
         url: 'https://sunnah.com/abudawud:2449',
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: '"Fasting three days of every month is like fasting the whole year." · Ṣaḥīḥ al-Bukhārī 1979',
+        text: '"The fasting of three days a month is equal to the fasting of the whole year." · Ṣaḥīḥ al-Bukhārī 1979',
         url: 'https://sunnah.com/bukhari:1979',
         grade: 'Ṣaḥīḥ',
       },
@@ -351,8 +351,8 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     ],
     references: [
       {
-        text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." · Ṣaḥīḥ al-Bukhārī 969',
-        url: 'https://sunnah.com/bukhari:969',
+        text: '"There are no days in which righteous deeds are more beloved to Allah than these ten days." · Jāmiʿ al-Tirmidhī 757',
+        url: 'https://sunnah.com/tirmidhi:757',
         grade: 'Ṣaḥīḥ',
       },
       {
@@ -441,7 +441,7 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
         grade: 'Ṣaḥīḥ',
       },
       {
-        text: '"The Messenger of Allah ﷺ would eat an odd number of dates before going out on the morning of Eid al-Fiṭr." · Ṣaḥīḥ al-Bukhārī 953',
+        text: '"The Messenger of Allah ﷺ never went out on the day of Eid al-Fiṭr until he had eaten some dates, and he ate an odd number." · Ṣaḥīḥ al-Bukhārī 953',
         url: 'https://sunnah.com/bukhari:953',
         grade: 'Ṣaḥīḥ',
       },
@@ -476,8 +476,8 @@ export const SPECIAL_DAYS: SpecialDayInfo[] = [
     ],
     references: [
       {
-        text: 'Qurbānī (Uḍḥiyyah) · Ṣaḥīḥ Muslim 1977',
-        url: 'https://sunnah.com/muslim:1977',
+        text: 'Qurbānī (Uḍḥiyyah): the Prophet ﷺ sacrificed two horned rams with his own hand · Ṣaḥīḥ Muslim 1966',
+        url: 'https://sunnah.com/muslim:1966',
         grade: 'Ṣaḥīḥ',
       },
       {

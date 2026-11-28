@@ -1,0 +1,2383 @@
+{
+  "abudawud:1047": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "abudawud:1048": {
+    "pages": [
+      "home",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/home/HomeSpecialBlock.tsx",
+      "frontend/src/components/salat/SalatLegend.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/pages/SalatTracker.tsx",
+      "frontend/src/utils/fridayHour.ts"
+    ]
+  },
+  "abudawud:1052": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "abudawud:1067": {
+    "pages": [
+      "calendar",
+      "home",
+      "salat",
+      "salatAnalytics"
+    ],
+    "files": [
+      "backend/src/services/salat.service.ts",
+      "frontend/src/components/salat/SalatAnalyticsSummary.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/pages/SalatTracker.tsx",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "abudawud:1220": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/salat/useSalatPrayerHandlers.tsx"
+    ]
+  },
+  "abudawud:1235": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "abudawud:1501": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/ZikrReferencePanel.tsx",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "abudawud:1502": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/ZikrReferencePanel.tsx",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "abudawud:1517": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "abudawud:1523": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/salat/SalatLegend.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/postSalatQuran.ts"
+    ]
+  },
+  "abudawud:2449": {
+    "pages": [
+      "calendar",
+      "fasting",
+      "home",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/fastingRules.ts",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "abudawud:2600": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "abudawud:311": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "backend/src/models/CycleProfile.ts",
+      "backend/src/services/cycle.service.ts"
+    ]
+  },
+  "abudawud:3767": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "abudawud:4023": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "abudawud:5072": {
+    "pages": [
+      "adhkar"
+    ],
+    "files": [
+      "frontend/src/seo/content/adhkar.ts"
+    ]
+  },
+  "abudawud:5088": {
+    "pages": [
+      "adhkar",
+      "rayhanah"
+    ],
+    "files": [
+      "frontend/src/components/cycle/rayhanahShared.ts",
+      "frontend/src/seo/content/adhkar.ts"
+    ]
+  },
+  "abudawud:5095": {
+    "pages": [
+      "duas",
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts",
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "abudawud:5096": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "abudawud:567": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bayhaqi-shuab:2269": {
+    "pages": [
+      "calendar",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx",
+      "frontend/src/utils/postSalatQuran.ts"
+    ]
+  },
+  "bukhari:1000": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:1032": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "bukhari:1080": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:1081": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:1089": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:1099": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:1111": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/salat/SalatCardJoining.tsx",
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:1129": {
+    "pages": [
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/components/RamadanSalatCard.tsx"
+    ]
+  },
+  "bukhari:1145": {
+    "pages": [
+      "calendar",
+      "prayerTimes",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx",
+      "frontend/src/components/prayerTimes/PrayerSources.tsx",
+      "frontend/src/components/prayerTimes/timeline.ts",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "bukhari:1149": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/hooks/useSalatLog.ts"
+    ]
+  },
+  "bukhari:1166": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/hooks/useSalatLog.ts"
+    ]
+  },
+  "bukhari:1183": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/sunnahGuide.ts"
+    ]
+  },
+  "bukhari:1503": {
+    "pages": [
+      "ramadanCalendar"
+    ],
+    "files": [
+      "frontend/src/seo/locales/ramadanSheet.ts"
+    ]
+  },
+  "bukhari:1804": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:1899": {
+    "pages": [
+      "calendar",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx",
+      "frontend/src/components/ramadan/RamadanCountdown.tsx",
+      "frontend/src/components/ramadan/RamadanWorshipStrip.tsx",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "bukhari:1901": {
+    "pages": [
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/components/ramadan/RamadanCountdown.tsx"
+    ]
+  },
+  "bukhari:1902": {
+    "pages": [
+      "sadaqah"
+    ],
+    "files": [
+      "frontend/src/utils/sadaqahVirtueDays.ts"
+    ]
+  },
+  "bukhari:1909": {
+    "pages": [
+      "ramadanCalendar"
+    ],
+    "files": [
+      "frontend/src/seo/locales/ramadanSheet.ts"
+    ]
+  },
+  "bukhari:1923": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/components/ramadan/RamadanDayArch.tsx",
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "bukhari:1936": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "backend/src/services/fasting.service.ts",
+      "frontend/src/components/fasting/FastingSettingsSheet.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "bukhari:1943": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/MusafirBanner.tsx",
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:1946": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:1957": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/components/ramadan/RamadanDayArch.tsx",
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "bukhari:1965": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "bukhari:1969": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/components/ramadan/RamadanCountdown.tsx",
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "bukhari:1979": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bukhari:1981": {
+    "pages": [
+      "prayerTimes"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/timeline.ts",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "bukhari:1985": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "bukhari:1991": {
+    "pages": [
+      "calendar",
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/utils/fastingRules.ts",
+      "frontend/src/utils/specialDayRules.ts"
+    ]
+  },
+  "bukhari:2017": {
+    "pages": [
+      "calendar",
+      "home",
+      "ramadan",
+      "ramadanAnalytics",
+      "ramadanCalendar",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx",
+      "frontend/src/components/ramadan/RamadanLastTen.tsx",
+      "frontend/src/components/ramadan/ramadanShared.ts",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/pages/RamadanAnalytics.tsx",
+      "frontend/src/seo/locales/ramadanSheet.ts",
+      "frontend/src/utils/islamicCalendar.ts",
+      "frontend/src/utils/ramadan.ts"
+    ]
+  },
+  "bukhari:2311": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "bukhari:248": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "frontend/src/components/cycle/RayhanahDialogs.tsx",
+      "frontend/src/components/cycle/rayhanahShared.ts"
+    ]
+  },
+  "bukhari:2736": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "bukhari:2840": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "bukhari:2993": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:2996": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:305": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "backend/src/services/cycle.service.ts",
+      "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx"
+    ]
+  },
+  "bukhari:306": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "backend/src/services/cycle.service.ts",
+      "frontend/src/components/cycle/RayhanahArch.tsx",
+      "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx"
+    ]
+  },
+  "bukhari:3088": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:3282": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "bukhari:3293": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "bukhari:3370": {
+    "pages": [
+      "rayhanah",
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/cycle/rayhanahShared.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "bukhari:350": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:37": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/hooks/useSalatLog.ts"
+    ]
+  },
+  "bukhari:4205": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "bukhari:4563": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "bukhari:5009": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "bukhari:5027": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/pages/QuranHabit.tsx"
+    ]
+  },
+  "bukhari:5049": {
+    "pages": [
+      "quranListen"
+    ],
+    "files": [
+      "frontend/src/pages/QuranListen.tsx"
+    ]
+  },
+  "bukhari:5641": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "frontend/src/components/cycle/RayhanahTodayNote.tsx"
+    ]
+  },
+  "bukhari:581": {
+    "pages": [
+      "prayerTimes"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/PrayerSources.tsx"
+    ]
+  },
+  "bukhari:585": {
+    "pages": [
+      "prayerTimes"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/PrayerSources.tsx"
+    ]
+  },
+  "bukhari:586": {
+    "pages": [
+      "prayerTimes"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/timeline.ts",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "bukhari:597": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "bukhari:627": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/sunnahGuide.ts"
+    ]
+  },
+  "bukhari:6306": {
+    "pages": [
+      "adhkar",
+      "admin",
+      "duas",
+      "rayhanah",
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/cycle/rayhanahShared.ts",
+      "frontend/src/pages/AdminZikrRequests.tsx",
+      "frontend/src/seo/content/adhkar.ts",
+      "frontend/src/seo/content/duas.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "bukhari:6307": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "bukhari:6324": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "bukhari:6346": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "bukhari:6369": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "bukhari:6389": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "bukhari:6405": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "bukhari:6406": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "frontend/src/components/cycle/rayhanahShared.ts"
+    ]
+  },
+  "bukhari:645": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/salat/useSalatPrayerHandlers.tsx",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "bukhari:6464": {
+    "pages": [
+      "about",
+      "friends"
+    ],
+    "files": [
+      "frontend/src/components/friends/FriendsCircleSection.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/pages/About.tsx"
+    ]
+  },
+  "bukhari:6465": {
+    "pages": [
+      "email"
+    ],
+    "files": [
+      "backend/src/services/welcomeEmail.templates.ts"
+    ]
+  },
+  "bukhari:6682": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "bukhari:6696": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/components/fasting/FastingSettingsSheet.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "bukhari:7392": {
+    "pages": [
+      "asma"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/seo/content/asmaUlHusna.ts",
+      "frontend/src/seo/locales/chrome.ts"
+    ]
+  },
+  "bukhari:879": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bukhari:881": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bukhari:900": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bukhari:934": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bukhari:937": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/sunnahGuide.ts"
+    ]
+  },
+  "bukhari:953": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bukhari:956": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bukhari:963": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "bukhari:971": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx"
+    ]
+  },
+  "bukhari:998": {
+    "pages": [
+      "code",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/salat/SalatCardGuidance.tsx",
+      "frontend/src/hooks/useSalatLog.ts",
+      "frontend/src/utils/localeReference.ts"
+    ]
+  },
+  "data:adhan-js": {
+    "pages": [
+      "bayan"
+    ],
+    "files": [
+      "frontend/src/seo/bayan/pages.ts"
+    ]
+  },
+  "data:alquran-cloud": {
+    "pages": [
+      "code",
+      "quranReader"
+    ],
+    "files": [
+      "frontend/src/sw.ts",
+      "frontend/src/utils/quranData.ts"
+    ]
+  },
+  "data:islamic-foundation-bd": {
+    "pages": [
+      "prayerTimesPublic",
+      "ramadanCalendar"
+    ],
+    "files": [
+      "frontend/src/seo/locales/monthly.ts",
+      "frontend/src/seo/locales/ramadanSheet.ts"
+    ]
+  },
+  "data:quran-audio": {
+    "pages": [
+      "quranListen",
+      "quranReader"
+    ],
+    "files": [
+      "frontend/src/components/QuranAudioPlayer.tsx",
+      "frontend/src/utils/quranData.ts"
+    ]
+  },
+  "data:tafsir": {
+    "pages": [
+      "quranReader"
+    ],
+    "files": [
+      "backend/src/services/quran.service.ts",
+      "frontend/src/utils/tafsir.ts"
+    ]
+  },
+  "data:tanzil": {
+    "pages": [
+      "about",
+      "adhkar",
+      "bayan",
+      "quranReader"
+    ],
+    "files": [
+      "frontend/src/components/QuranSettings.tsx",
+      "frontend/src/components/library/adhkarParts.tsx",
+      "frontend/src/components/quran/ReaderAyahPane.tsx",
+      "frontend/src/pages/About.tsx",
+      "frontend/src/seo/bayan/pages.ts"
+    ]
+  },
+  "data:umm-al-qura": {
+    "pages": [
+      "asma",
+      "bayan",
+      "prayerTimes",
+      "prayerTimesPublic",
+      "ramadanCalendar",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/seo/bayan/pages.ts",
+      "frontend/src/seo/bayan/releases.ts",
+      "frontend/src/seo/locales/chrome.ts",
+      "frontend/src/seo/locales/monthly.ts",
+      "frontend/src/seo/locales/ramadanBd.ts",
+      "frontend/src/seo/locales/ramadanWorld.ts",
+      "frontend/src/seo/utils/calc.ts",
+      "frontend/src/utils/countryDefaults.ts"
+    ]
+  },
+  "fiqh:asr-shadow": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/salatPrefs.ts"
+    ]
+  },
+  "fiqh:hayd-max": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "backend/src/services/cycle.service.ts"
+    ]
+  },
+  "fiqh:nifas-max": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "backend/src/services/cycle.service.ts"
+    ]
+  },
+  "fiqh:qasr-distance": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "fiqh:residence-days": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "hisn:77": {
+    "pages": [
+      "adhkar"
+    ],
+    "files": [
+      "frontend/src/seo/content/adhkar.ts"
+    ]
+  },
+  "hisn:98": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "ibnkhuzaymah:1887": {
+    "pages": [
+      "calendar",
+      "ramadan",
+      "ramadanAnalytics",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx",
+      "frontend/src/components/ramadan/RamadanMonthGrid.tsx",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "ibnmajah:1167": {
+    "pages": [
+      "prayerTimes",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/PrayerSources.tsx",
+      "frontend/src/components/prayerTimes/timeline.ts",
+      "frontend/src/hooks/useSalatLog.ts",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "ibnmajah:1384": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/hooks/useSalatLog.ts"
+    ]
+  },
+  "ibnmajah:1390": {
+    "pages": [
+      "calendar",
+      "home",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "ibnmajah:1753": {
+    "pages": [
+      "calendar",
+      "home",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "ibnmajah:3850": {
+    "pages": [
+      "ramadanCalendar"
+    ],
+    "files": [
+      "frontend/src/seo/content/ramadanDuas.ts"
+    ]
+  },
+  "muslim:1134": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "muslim:1141": {
+    "pages": [
+      "calendar",
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/utils/fastingRules.ts",
+      "frontend/src/utils/specialDayRules.ts"
+    ]
+  },
+  "muslim:1159": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "muslim:1162": {
+    "pages": [
+      "calendar",
+      "fasting",
+      "home",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/fastingRules.ts",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "muslim:1163": {
+    "pages": [
+      "calendar",
+      "fasting",
+      "home",
+      "prayerTimes",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/PrayerSources.tsx",
+      "frontend/src/components/prayerTimes/timeline.ts",
+      "frontend/src/hooks/useSalatLog.ts",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/fastingRules.ts",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "muslim:1164": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "muslim:1218": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/salat/SalatFridayTravel.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "muslim:1342": {
+    "pages": [
+      "duas",
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts",
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "muslim:1966": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "muslim:2018": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "muslim:2137": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "muslim:2202": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "frontend/src/components/cycle/rayhanahShared.ts"
+    ]
+  },
+  "muslim:223": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "muslim:2588": {
+    "pages": [
+      "sadaqah"
+    ],
+    "files": [
+      "frontend/src/utils/sadaqahVirtueDays.ts"
+    ]
+  },
+  "muslim:2677": {
+    "pages": [
+      "asma"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/seo/content/asmaUlHusna.ts",
+      "frontend/src/seo/locales/chrome.ts"
+    ]
+  },
+  "muslim:2692": {
+    "pages": [
+      "adhkar"
+    ],
+    "files": [
+      "frontend/src/seo/content/adhkar.ts"
+    ]
+  },
+  "muslim:2695": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts"
+    ]
+  },
+  "muslim:2698": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "muslim:2702": {
+    "pages": [
+      "rayhanah",
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/EditZikrModal.tsx",
+      "frontend/src/components/cycle/rayhanahShared.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "muslim:2708": {
+    "pages": [
+      "musafir",
+      "salat",
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "muslim:2709": {
+    "pages": [
+      "adhkar"
+    ],
+    "files": [
+      "frontend/src/seo/content/adhkar.ts"
+    ]
+  },
+  "muslim:2723": {
+    "pages": [
+      "adhkar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/seo/content/adhkar.ts",
+      "frontend/src/utils/todayTimeline.ts"
+    ]
+  },
+  "muslim:2726": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "muslim:2730": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "muslim:276": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "muslim:335": {
+    "pages": [
+      "cycleAnalytics",
+      "fasting",
+      "ramadan",
+      "ramadanAnalytics",
+      "rayhanah",
+      "salat"
+    ],
+    "files": [
+      "backend/src/services/cycle.service.ts",
+      "frontend/src/components/ExcusedCard.tsx",
+      "frontend/src/components/cycle/CycleAnalyticsPatterns.tsx",
+      "frontend/src/components/cycle/RayhanahDialogs.tsx",
+      "frontend/src/components/cycle/RayhanahFastingMakeup.tsx",
+      "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx",
+      "frontend/src/components/ramadan/RamadanMonthGrid.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/pages/RamadanAnalytics.tsx"
+    ]
+  },
+  "muslim:373": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "backend/src/services/cycle.service.ts",
+      "frontend/src/components/cycle/RayhanahAdhkar.tsx",
+      "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx",
+      "frontend/src/components/cycle/RayhanahGarden.tsx"
+    ]
+  },
+  "muslim:408": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "muslim:443": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "muslim:596": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/salat/SalatLegend.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/salatPrefs.ts"
+    ]
+  },
+  "muslim:597": {
+    "pages": [
+      "salat",
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/salat/SalatLegend.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/salatPrefs.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "muslim:612": {
+    "pages": [
+      "home",
+      "prayerTimes"
+    ],
+    "files": [
+      "frontend/src/components/home/HomePrayerHero.tsx",
+      "frontend/src/utils/prayerTimes.ts"
+    ]
+  },
+  "muslim:681": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "muslim:684": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "muslim:686": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "muslim:688": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "muslim:689": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/salat/SalatCardGuidance.tsx",
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "muslim:706": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "muslim:713": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "muslim:714": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/hooks/useSalatLog.ts"
+    ]
+  },
+  "muslim:719": {
+    "pages": [
+      "prayerTimes",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/PrayerSources.tsx",
+      "frontend/src/components/prayerTimes/timeline.ts",
+      "frontend/src/hooks/useSalatLog.ts",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "muslim:725": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/sunnahGuide.ts"
+    ]
+  },
+  "muslim:728": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/sunnahGuide.ts"
+    ]
+  },
+  "muslim:758": {
+    "pages": [
+      "prayerTimes"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/PrayerSources.tsx",
+      "frontend/src/components/prayerTimes/timeline.ts",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "muslim:780": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "muslim:782": {
+    "pages": [
+      "email"
+    ],
+    "files": [
+      "backend/src/services/welcomeEmail.templates.ts"
+    ]
+  },
+  "muslim:804": {
+    "pages": [
+      "quranKhatam"
+    ],
+    "files": [
+      "frontend/src/pages/QuranKhatam.tsx"
+    ]
+  },
+  "muslim:809": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "muslim:810": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "muslim:831": {
+    "pages": [
+      "home",
+      "prayerTimes"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/PrayerSources.tsx",
+      "frontend/src/components/prayerTimes/timeline.ts",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/prayerTimes.ts"
+    ]
+  },
+  "muslim:852": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "muslim:854": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "muslim:873": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "muslim:881": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/sunnahGuide.ts"
+    ]
+  },
+  "muslim:882": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/sunnahGuide.ts"
+    ]
+  },
+  "nasai-kubra:9848": {
+    "pages": [
+      "salat",
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/salat/SalatLegend.tsx",
+      "frontend/src/components/zikr/zikrCounterData.ts",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "nasai:1297": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts"
+    ]
+  },
+  "quran:14:35-41": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:18:9-26": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:20:114": {
+    "pages": [
+      "duas",
+      "quran",
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/ZikrSuggestForm.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/seo/content/duas.ts",
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:20:14": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "quran:20:24-36": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:23:118": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:23:97-98": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:24:31": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "quran:25:63-77": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:28:22-28": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:2:148": {
+    "pages": [
+      "friends",
+      "home",
+      "landing"
+    ],
+    "files": [
+      "backend/src/controllers/connectPreview.controller.ts",
+      "frontend/src/components/friends/FriendsInviteSheet.tsx",
+      "frontend/src/components/landing/LandingBody.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/pages/Friends.tsx"
+    ]
+  },
+  "quran:2:184": {
+    "pages": [
+      "code",
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/components/fasting/FastingLearn.tsx",
+      "frontend/src/components/fasting/FastingSettingsSheet.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/fastingRules.ts",
+      "frontend/src/utils/localeReference.ts"
+    ]
+  },
+  "quran:2:185": {
+    "pages": [
+      "fasting",
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/pages/FastingTracker.tsx",
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "quran:2:222": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "frontend/src/components/cycle/RayhanahFiqhCompanion.tsx"
+    ]
+  },
+  "quran:2:249-251": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:2:255": {
+    "pages": [
+      "adhkar",
+      "salat",
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/seo/content/adhkar.ts",
+      "frontend/src/utils/postSalatQuran.ts"
+    ]
+  },
+  "quran:2:37": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:3:173": {
+    "pages": [
+      "zikrAnalytics"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "quran:3:37-39": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:3:7-8": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:4:101": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "quran:50:39": {
+    "pages": [
+      "home"
+    ],
+    "files": [
+      "frontend/src/utils/todayTimeline.ts"
+    ]
+  },
+  "quran:56": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/postSalatQuran.ts"
+    ]
+  },
+  "quran:5:3": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "quran:5:6": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "quran:5:89": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/components/fasting/FastingSettingsSheet.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "quran:62:9": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "quran:64:16": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "quran:73:4": {
+    "pages": [
+      "quran",
+      "quranKhatam"
+    ],
+    "files": [
+      "frontend/src/pages/QuranKhatam.tsx",
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:76:7": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "quran:7:204": {
+    "pages": [
+      "quranListen"
+    ],
+    "files": [
+      "frontend/src/pages/QuranListen.tsx"
+    ]
+  },
+  "quran:7:23": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "quran:89:1-2": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "quran:97:3": {
+    "pages": [
+      "calendar",
+      "home",
+      "ramadan",
+      "sadaqah"
+    ],
+    "files": [
+      "frontend/src/components/ramadan/RamadanCountdown.tsx",
+      "frontend/src/components/ramadan/RamadanLastTen.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts",
+      "frontend/src/utils/sadaqahVirtueDays.ts"
+    ]
+  },
+  "quran:9:36": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "scholar:ibn-al-mundhir-ijma": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "scholar:ibn-al-qayyim-zad": {
+    "pages": [
+      "sadaqah"
+    ],
+    "files": [
+      "frontend/src/utils/sadaqahVirtueDays.ts"
+    ]
+  },
+  "scholar:ibn-rajab-lataif": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "scholar:ibn-taymiyyah-menses-quran": {
+    "pages": [
+      "rayhanah"
+    ],
+    "files": [
+      "frontend/src/components/cycle/RayhanahAdhkar.tsx"
+    ]
+  },
+  "targhib:736": {
+    "pages": [
+      "calendar",
+      "home",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/home/HomeSpecialBlock.tsx",
+      "frontend/src/utils/islamicCalendar.ts",
+      "frontend/src/utils/postSalatQuran.ts"
+    ]
+  },
+  "tirmidhi:1905": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "tirmidhi:2083": {
+    "pages": [
+      "duas"
+    ],
+    "files": [
+      "frontend/src/seo/content/duas.ts"
+    ]
+  },
+  "tirmidhi:2140": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "tirmidhi:2459": {
+    "pages": [
+      "naseeh"
+    ],
+    "files": [
+      "frontend/src/utils/muhasabahCorpus.ts"
+    ]
+  },
+  "tirmidhi:2891": {
+    "pages": [
+      "code",
+      "quran",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/localeReference.ts",
+      "frontend/src/utils/postSalatQuran.ts",
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "tirmidhi:2892": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "tirmidhi:2910": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/pages/QuranHabit.tsx"
+    ]
+  },
+  "tirmidhi:2922": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "tirmidhi:3383": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/components/zikr/zikrCounterData.ts",
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "tirmidhi:3388": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "tirmidhi:3391": {
+    "pages": [
+      "adhkar"
+    ],
+    "files": [
+      "frontend/src/seo/content/adhkar.ts"
+    ]
+  },
+  "tirmidhi:3505": {
+    "pages": [
+      "quran"
+    ],
+    "files": [
+      "frontend/src/utils/quranMeta.ts"
+    ]
+  },
+  "tirmidhi:3507": {
+    "pages": [
+      "asma"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/seo/locales/chrome.ts"
+    ]
+  },
+  "tirmidhi:3513": {
+    "pages": [
+      "calendar",
+      "home",
+      "ramadan",
+      "ramadanCalendar"
+    ],
+    "files": [
+      "frontend/src/components/ramadan/RamadanLastTen.tsx",
+      "frontend/src/locales/en/common.json",
+      "frontend/src/seo/content/ramadanDuas.ts",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "tirmidhi:3524": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "tirmidhi:3525": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "tirmidhi:3575": {
+    "pages": [
+      "adhkar"
+    ],
+    "files": [
+      "frontend/src/seo/content/adhkar.ts"
+    ]
+  },
+  "tirmidhi:3577": {
+    "pages": [
+      "zikr"
+    ],
+    "files": [
+      "frontend/src/utils/zikrLibrary.ts"
+    ]
+  },
+  "tirmidhi:3585": {
+    "pages": [
+      "calendar",
+      "home"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "tirmidhi:415": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/sunnahGuide.ts"
+    ]
+  },
+  "tirmidhi:430": {
+    "pages": [
+      "salat"
+    ],
+    "files": [
+      "frontend/src/utils/sunnahGuide.ts"
+    ]
+  },
+  "tirmidhi:553": {
+    "pages": [
+      "musafir",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/salat/SalatCardJoining.tsx",
+      "frontend/src/components/salat/useSalatPrayerHandlers.tsx",
+      "frontend/src/utils/musafir.ts"
+    ]
+  },
+  "tirmidhi:586": {
+    "pages": [
+      "prayerTimes",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/prayerTimes/PrayerSources.tsx",
+      "frontend/src/components/prayerTimes/timeline.ts",
+      "frontend/src/hooks/useSalatLog.ts",
+      "frontend/src/locales/en/common.json"
+    ]
+  },
+  "tirmidhi:686": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "tirmidhi:744": {
+    "pages": [
+      "fasting",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/pages/FastingTracker.tsx",
+      "frontend/src/utils/fastingRules.ts"
+    ]
+  },
+  "tirmidhi:747": {
+    "pages": [
+      "calendar",
+      "fasting",
+      "home",
+      "ramadan"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/fastingRules.ts",
+      "frontend/src/utils/islamicCalendar.ts"
+    ]
+  },
+  "tirmidhi:757": {
+    "pages": [
+      "calendar",
+      "fasting",
+      "home",
+      "ramadan",
+      "sadaqah"
+    ],
+    "files": [
+      "frontend/src/locales/en/common.json",
+      "frontend/src/utils/fastingRules.ts",
+      "frontend/src/utils/islamicCalendar.ts",
+      "frontend/src/utils/sadaqahVirtueDays.ts"
+    ]
+  },
+  "web:hadithanswers-ramadan": {
+    "pages": [
+      "calendar",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx"
+    ]
+  },
+  "web:islamqa-21364": {
+    "pages": [
+      "calendar",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx",
+      "frontend/src/components/ramadan/RamadanWorshipStrip.tsx"
+    ]
+  },
+  "web:islamqa-49678": {
+    "pages": [
+      "calendar",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx"
+    ]
+  },
+  "web:islamweb-348835": {
+    "pages": [
+      "calendar",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx"
+    ]
+  },
+  "web:qandabenefits-688": {
+    "pages": [
+      "calendar",
+      "ramadan",
+      "salat"
+    ],
+    "files": [
+      "frontend/src/components/DaifExplainer.tsx"
+    ]
+  }
+}

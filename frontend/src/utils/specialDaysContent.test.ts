@@ -13,6 +13,9 @@ import { SPECIAL_DAYS } from './islamicCalendar.js';
 // Friday ṣalawāt note, Laylat al-Qadr ṣadaqah line from 97:3). Friday updated 2026-11-28:
 // brothers' and sisters' guidance (Abū Dāwūd 1067, 567, 1052; Bukhārī 879, 881, 900, 934;
 // Muslim 443b, 873a; Quran 24:31; Ibn al-Mundhir, al-Ijmāʿ), each checked on sunnah.com / quran.com.
+// Updated again 2026-11-28 (reference audit): quotes now in the cited hadith's own words
+// (Muslim 852, Abū Dāwūd 2449, Bukhārī 1979, 953), the Dhul Ḥijjah quote cites Tirmidhī 757,
+// and Qurbānī cites Muslim 1966 (the sacrifice) instead of 1977 (hair and nails).
 type Dict = Record<string, unknown>;
 
 const strings = (v: unknown): string[] =>
@@ -44,12 +47,12 @@ const FINGERPRINTS = {
   en: {
     arafah: '9aa794a7',
     ashura: '45f26ec3',
-    ayyam_al_bid: '6367346e',
-    dhul_hijjah_first10: 'ab0ac40d',
-    eid_adha: '45e163cc',
-    eid_fitr: 'fae33661',
+    ayyam_al_bid: '39a8efaf',
+    dhul_hijjah_first10: '09c6fe9f',
+    eid_adha: 'e394a10a',
+    eid_fitr: 'f0e6cf6d',
     fast_mon_thu: 'd5f918b7',
-    friday: '96283b96',
+    friday: '4a0760eb',
     islamic_new_year: 'b32b49f8',
     laylat_qadr: 'fa72e189',
     shab_e_barat: 'c4364e98',
@@ -58,12 +61,12 @@ const FINGERPRINTS = {
   bn: {
     arafah: '030c931b',
     ashura: 'f5a954ee',
-    ayyam_al_bid: 'c7270a69',
-    dhul_hijjah_first10: '30f585bf',
-    eid_adha: 'df65baf6',
-    eid_fitr: 'f8dd1b3b',
+    ayyam_al_bid: '94c14779',
+    dhul_hijjah_first10: '238d1f0f',
+    eid_adha: '3e5024cb',
+    eid_fitr: 'f1e36478',
     fast_mon_thu: 'b4698aeb',
-    friday: 'ec4571cb',
+    friday: '15b7e4d5',
     islamic_new_year: '32540f2b',
     laylat_qadr: '2b2c86cd',
     shab_e_barat: 'b8e7b46a',

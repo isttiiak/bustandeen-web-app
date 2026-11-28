@@ -66,7 +66,7 @@ export const SPECIAL_SURAHS: SpecialSurah[] = [
     emoji: '🌙',
     note: 'The Prophet ﷺ would not sleep until he recited it with al-Mulk.',
     noteBn: 'নবী ﷺ আল-মুলকের সাথে এটি তেলাওয়াত না করে ঘুমাতেন না।',
-    ref: { text: 'Tirmidhī 2892 (ḥasan)', url: 'https://sunnah.com/tirmidhi:2892' },
+    ref: { text: 'Tirmidhī 2892 (ṣaḥīḥ, al-Albānī)', url: 'https://sunnah.com/tirmidhi:2892' },
   },
 ];
 
@@ -129,9 +129,10 @@ export const AYAH_BUNDLES: AyahBundle[] = [
     surah: 59,
     fromAyah: 22,
     toAyah: 24,
-    virtue: 'The names of Allah gathered — recited morning and evening.',
-    virtueBn: 'আল্লাহর নামসমূহ একত্রিত — সকাল ও সন্ধ্যায় তেলাওয়াত করা হয়।',
-    ref: { text: 'Tirmidhī 2922 (gharīb — noted)', url: 'https://sunnah.com/tirmidhi:2922' },
+    virtue:
+      'The names of Allah gathered. The narration on reciting them morning and evening is weak.',
+    virtueBn: 'আল্লাহর নামসমূহ একত্রিত। সকাল ও সন্ধ্যায় তেলাওয়াতের বর্ণনাটি দুর্বল।',
+    ref: { text: 'Tirmidhī 2922 (ḍaʿīf)', url: 'https://sunnah.com/tirmidhi:2922' },
   },
 ];
 
@@ -180,9 +181,9 @@ export const QURANIC_DUAS: QuranicDua[] = [
     title: 'Keep my heart firm after guidance',
     titleBn: 'হিদায়াতের পর আমার হৃদয়কে অবিচল রাখুন',
     context: {
-      text: 'The duʿā of those firm in knowledge (ar-rāsikhūna fil-ʿilm) — asking Allah not to let the heart swerve after He has guided it. The Prophet ﷺ often swore "O Turner of the hearts…", the same meaning.',
+      text: 'The duʿā of those firm in knowledge (ar-rāsikhūna fil-ʿilm) — asking Allah not to let the heart swerve after He has guided it. The Prophet ﷺ often said "O Turner of the hearts, keep my heart firm upon Your religion", the same meaning.',
       textBn:
-        'জ্ঞানে দৃঢ়প্রতিষ্ঠিতদের (আর-রাসিখূনা ফিল-ইলম) দু\'আ — আল্লাহর কাছে প্রার্থনা যেন হিদায়াতের পর হৃদয় বিচ্যুত না হয়। নবী ﷺ প্রায়ই একই অর্থে শপথ করতেন, "হে অন্তরসমূহের পরিবর্তনকারী…"।',
+        'জ্ঞানে দৃঢ়প্রতিষ্ঠিতদের (আর-রাসিখূনা ফিল-ইলম) দু\'আ — আল্লাহর কাছে প্রার্থনা যেন হিদায়াতের পর হৃদয় বিচ্যুত না হয়। নবী ﷺ প্রায়ই একই অর্থে বলতেন, "হে অন্তরসমূহের পরিবর্তনকারী, আমার অন্তরকে তোমার দ্বীনের উপর দৃঢ় রাখো"।',
       ref: { text: 'Quran 3:7-8 · cf. Tirmidhī 2140', url: 'https://quran.com/3/8' },
     },
   },
@@ -344,9 +345,9 @@ export const QURANIC_DUAS: QuranicDua[] = [
     title: 'Zakariyyā — grant me pure offspring',
     titleBn: 'যাকারিয়া (আ) — আমাকে পবিত্র সন্তান দান করুন',
     context: {
-      text: 'Zakariyyā (as), moved by seeing Allah provide for Maryam, asked for a good child despite old age — and was given Yaḥyā while still standing in prayer.',
+      text: 'Zakariyyā (as), moved by seeing Allah provide for Maryam, asked for a good child despite old age — and the angels gave him the glad tidings of Yaḥyā while he stood in prayer.',
       textBn:
-        'যাকারিয়া (আ), আল্লাহ মারইয়ামের জন্য যেভাবে রিযিকের ব্যবস্থা করেছেন তা দেখে অনুপ্রাণিত হয়ে বার্ধক্য সত্ত্বেও একটি সৎ সন্তান কামনা করেন — এবং সালাতে দাঁড়িয়ে থাকা অবস্থাতেই তাকে ইয়াহইয়া দান করা হয়।',
+        'যাকারিয়া (আ), আল্লাহ মারইয়ামের জন্য যেভাবে রিযিকের ব্যবস্থা করেছেন তা দেখে অনুপ্রাণিত হয়ে বার্ধক্য সত্ত্বেও একটি সৎ সন্তান কামনা করেন — এবং তিনি সালাতে দাঁড়িয়ে থাকা অবস্থাতেই ফেরেশতারা তাকে ইয়াহইয়ার সুসংবাদ দেন।',
       ref: { text: 'Quran 3:37-39', url: 'https://quran.com/3/38' },
     },
   },

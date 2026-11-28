@@ -125,7 +125,11 @@ export const DUAS: DuaEntry[] = [
       bn: 'আল্লাহর নামে আমরা প্রবেশ করলাম, আল্লাহর নামে আমরা বের হলাম, আর আমাদের রব আল্লাহর উপরেই আমরা ভরসা করলাম।',
     },
     arabicNote: 'يُستحب ذكر اسم الله عند دخول البيت، وورد أن الشيطان لا يبيت مع من فعل ذلك.',
-    reference: { text: 'Sunan Abi Dawud', url: 'https://sunnah.com/abudawud:5096', grade: 'Ṣaḥīḥ' },
+    reference: {
+      text: 'Sunan Abi Dawud 5096',
+      url: 'https://sunnah.com/abudawud:5096',
+      grade: 'Ḍaʿīf (al-Albānī). Saying Bismillāh on entering is authentic: Ṣaḥīḥ Muslim 2018',
+    },
   },
   {
     id: 'leaving-home',
@@ -214,7 +218,11 @@ export const DUAS: DuaEntry[] = [
       bn: '(শুরুতে বিসমিল্লাহ বলতে ভুলে গেলে) আল্লাহর নামে, এর শুরুতেও এবং এর শেষেও।',
     },
     arabicNote: 'السنة أن يقول "بسم الله" قبل الأكل، فإن نسي في أوله قال هذا الدعاء عند تذكره.',
-    reference: { text: 'Sunan Abi Dawud', url: 'https://sunnah.com/abudawud:3767', grade: 'Ḥasan' },
+    reference: {
+      text: 'Sunan Abi Dawud',
+      url: 'https://sunnah.com/abudawud:3767',
+      grade: 'Ṣaḥīḥ (al-Albānī)',
+    },
   },
   {
     id: 'after-eating',
