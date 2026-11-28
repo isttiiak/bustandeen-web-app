@@ -73,13 +73,13 @@ function quranId(s: string, a?: string, b?: string): string | null {
 }
 
 /** One citation on a line: its id, and the text a reader sees (none for a bare link). */
-export interface Citation {
+interface Citation {
   id: string;
   text?: string;
 }
 
 /** Every citation written on one line of source, with its visible text. */
-export function citations(line: string): Citation[] {
+function citations(line: string): Citation[] {
   const out: Citation[] = [];
   let rest = line;
   rest = rest.replace(SUNNAH_URL, (_m, coll: string, n?: string, b?: string, h?: string) => {
