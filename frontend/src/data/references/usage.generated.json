@@ -6,14 +6,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Sunan Abū Dāwūd 1047"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Sunan Abū Dāwūd 1047"
       }
     ],
     "files": [
@@ -26,12 +28,14 @@
       {
         "page": "home",
         "section": "Friday hour reminder",
-        "sectionBn": "জুমার সময়ের রিমাইন্ডার"
+        "sectionBn": "জুমার সময়ের রিমাইন্ডার",
+        "text": "Sunan Abī Dāwūd 1048"
       },
       {
         "page": "salat",
         "section": "How it works (legend)",
-        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)",
+        "text": "Abū Dāwūd 1048"
       }
     ],
     "files": [
@@ -49,14 +53,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Sunan Abū Dāwūd 1052"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Sunan Abū Dāwūd 1052"
       }
     ],
     "files": [
@@ -71,14 +77,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Sunan Abū Dāwūd 1067"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Sunan Abū Dāwūd 1067, 567"
       }
     ],
     "files": [
@@ -101,7 +109,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Sunan Abī Dāwūd 1235"
       }
     ],
     "files": [
@@ -113,7 +122,8 @@
       {
         "page": "zikr",
         "section": "Counter: counting on the fingertips",
-        "sectionBn": "কাউন্টার: আঙুলে গোনা"
+        "sectionBn": "কাউন্টার: আঙুলে গোনা",
+        "text": "Sunan Abī Dāwūd 1501"
       }
     ],
     "files": [
@@ -126,7 +136,8 @@
       {
         "page": "zikr",
         "section": "Counter: counting on the fingertips",
-        "sectionBn": "কাউন্টার: আঙুলে গোনা"
+        "sectionBn": "কাউন্টার: আঙুলে গোনা",
+        "text": "Sunan Abī Dāwūd 1502"
       }
     ],
     "files": [
@@ -140,7 +151,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Astaghfirullah alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh"
+        "item": "Astaghfirullah alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh",
+        "text": "Abū Dāwūd 1517"
       }
     ],
     "files": [
@@ -153,24 +165,28 @@
         "page": "salat",
         "section": "After each prayer: “Read now”",
         "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
-        "item": "Al-Falaq"
+        "item": "Al-Falaq",
+        "text": "Sunan Abī Dāwūd 1523"
       },
       {
         "page": "salat",
         "section": "After each prayer: “Read now”",
         "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
-        "item": "Al-Ikhlāṣ"
+        "item": "Al-Ikhlāṣ",
+        "text": "Sunan Abī Dāwūd 1523"
       },
       {
         "page": "salat",
         "section": "After each prayer: “Read now”",
         "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
-        "item": "An-Nās"
+        "item": "An-Nās",
+        "text": "Sunan Abī Dāwūd 1523"
       },
       {
         "page": "salat",
         "section": "How it works (legend)",
-        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)",
+        "text": "Abū Dāwūd 1523"
       }
     ],
     "files": [
@@ -186,13 +202,15 @@
         "path": "/special-day/ayyam_al_bid",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Ayyām al-Bīḍ"
+        "item": "Ayyām al-Bīḍ",
+        "text": "Sunan Abū Dāwūd 2449"
       },
       {
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "13th, 14th, 15th of every Hijri month"
+        "item": "13th, 14th, 15th of every Hijri month",
+        "text": "Sunan Abī Dāwūd 2449"
       }
     ],
     "files": [
@@ -207,7 +225,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Bidding farewell to family and friends"
+        "item": "Bidding farewell to family and friends",
+        "text": "Sunan Abī Dāwūd 2600"
       }
     ],
     "files": [
@@ -219,7 +238,8 @@
       {
         "page": "rayhanah",
         "section": "Server rule: cycle limits",
-        "sectionBn": "সার্ভারের নিয়ম: চক্রের সীমা"
+        "sectionBn": "সার্ভারের নিয়ম: চক্রের সীমা",
+        "text": "Abu Dawud 311"
       }
     ],
     "files": [
@@ -233,7 +253,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Before Eating"
+        "item": "Before Eating",
+        "text": "Before Eating"
       }
     ],
     "files": [
@@ -246,7 +267,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "After Eating"
+        "item": "After Eating",
+        "text": "After Eating"
       }
     ],
     "files": [
@@ -265,13 +287,15 @@
       {
         "page": "adhkar",
         "section": "Adhkar list",
-        "sectionBn": "যিকিরের তালিকা"
+        "sectionBn": "যিকিরের তালিকা",
+        "text": "Sunan Abī Dāwūd 5088"
       },
       {
         "page": "rayhanah",
         "section": "Adhkar garden (duʿā you can recite now)",
         "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
-        "item": "Morning/evening protection"
+        "item": "Morning/evening protection",
+        "text": "Abū Dāwūd 5088"
       }
     ],
     "files": [
@@ -285,13 +309,15 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Leaving the Home"
+        "item": "Leaving the Home",
+        "text": "Leaving the Home"
       },
       {
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Stepping out of the house"
+        "item": "Stepping out of the house",
+        "text": "Sunan Abī Dāwūd 5095"
       }
     ],
     "files": [
@@ -305,7 +331,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Entering the Home"
+        "item": "Entering the Home",
+        "text": "Sunan Abi Dawud 5096"
       }
     ],
     "files": [
@@ -319,14 +346,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Sunan Abū Dāwūd 567"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Sunan Abū Dāwūd 1067, 567"
       }
     ],
     "files": [
@@ -340,7 +369,8 @@
         "page": "salat",
         "section": "After each prayer: “Read now”",
         "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
-        "item": "Al-Wāqiʿah"
+        "item": "Al-Wāqiʿah",
+        "text": "Shuʿab al-Īmān 2269"
       }
     ],
     "files": [
@@ -353,7 +383,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ al-Bukhārī 1000"
       }
     ],
     "files": [
@@ -366,7 +397,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Rain"
+        "item": "Rain",
+        "text": "Rain"
       }
     ],
     "files": [
@@ -379,7 +411,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Staying somewhere: how long are you still a musafir?"
+        "item": "Staying somewhere: how long are you still a musafir?",
+        "text": "Ṣaḥīḥ al-Bukhārī 1080"
       }
     ],
     "files": [
@@ -392,7 +425,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Staying somewhere: how long are you still a musafir?"
+        "item": "Staying somewhere: how long are you still a musafir?",
+        "text": "Ṣaḥīḥ al-Bukhārī 1081"
       }
     ],
     "files": [
@@ -405,7 +439,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "When does it start and end?"
+        "item": "When does it start and end?",
+        "text": "Ṣaḥīḥ al-Bukhārī 1089"
       }
     ],
     "files": [
@@ -418,7 +453,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Fard prayer in a vehicle"
+        "item": "Fard prayer in a vehicle",
+        "text": "Ṣaḥīḥ al-Bukhārī 1099"
       }
     ],
     "files": [
@@ -431,12 +467,14 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Jamʿ: joining two prayers"
+        "item": "Jamʿ: joining two prayers",
+        "text": "Ṣaḥīḥ al-Bukhārī 1111"
       },
       {
         "page": "salat",
         "section": "Prayer card: join two prayers (jamʿ)",
-        "sectionBn": "নামাযের কার্ড: দুই নামায একসাথে (জমা)"
+        "sectionBn": "নামাযের কার্ড: দুই নামায একসাথে (জমা)",
+        "text": "Ṣaḥīḥ al-Bukhārī 1111"
       }
     ],
     "files": [
@@ -458,18 +496,21 @@
         "path": "/special-day/shab_e_barat",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Laylat al-Barā'ah"
+        "item": "Laylat al-Barā'ah",
+        "text": "Ṣaḥīḥ al-Bukhārī 1145"
       },
       {
         "page": "prayerTimes",
         "section": "Day timeline cards",
-        "sectionBn": "দিনের টাইমলাইন কার্ড"
+        "sectionBn": "দিনের টাইমলাইন কার্ড",
+        "text": "Sahih al-Bukhari 1145"
       },
       {
         "page": "prayerTimes",
         "section": "Sources (bottom of the page)",
         "sectionBn": "সূত্র (পাতার নিচে)",
-        "item": "Tahajjud"
+        "item": "Tahajjud",
+        "text": "Ṣaḥīḥ al-Bukhārī 1145"
       }
     ],
     "files": [
@@ -485,7 +526,8 @@
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Tahiyyat al-Wudu'"
+        "item": "Tahiyyat al-Wudu'",
+        "text": "Ṣaḥīḥ al-Bukhārī 1149"
       }
     ],
     "files": [
@@ -498,7 +540,8 @@
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Istikharah"
+        "item": "Istikharah",
+        "text": "Ṣaḥīḥ al-Bukhārī 1166"
       }
     ],
     "files": [
@@ -510,7 +553,8 @@
       {
         "page": "salat",
         "section": "Sunnah prayers guide",
-        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা",
+        "text": "Ṣaḥīḥ al-Bukhārī 1183"
       }
     ],
     "files": [
@@ -522,7 +566,8 @@
       {
         "page": "ramadanCalendar",
         "section": "Printable Ramadan sheet notes",
-        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট",
+        "text": "Bukhari 1503"
       }
     ],
     "files": [
@@ -534,7 +579,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ al-Bukhārī 1804"
       }
     ],
     "files": [
@@ -546,18 +592,21 @@
       {
         "page": "ramadan",
         "section": "Countdown to Ramadan",
-        "sectionBn": "রমজানের কাউন্টডাউন"
+        "sectionBn": "রমজানের কাউন্টডাউন",
+        "text": "Bukhārī 1899"
       },
       {
         "page": "ramadan",
         "section": "Month grid: the three ʿashras and Rayhanah days",
-        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন"
+        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন",
+        "text": "Bukhārī 1899"
       },
       {
         "page": "ramadan",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Nafl rewarded like farḍ"
+        "item": "Nafl rewarded like farḍ",
+        "text": "Ṣaḥīḥ al-Bukhārī 1899"
       },
       {
         "page": "ramadan",
@@ -568,7 +617,8 @@
         "page": "ramadanAnalytics",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Nafl rewarded like farḍ"
+        "item": "Nafl rewarded like farḍ",
+        "text": "Ṣaḥīḥ al-Bukhārī 1899"
       }
     ],
     "files": [
@@ -583,7 +633,8 @@
       {
         "page": "ramadan",
         "section": "Countdown to Ramadan",
-        "sectionBn": "রমজানের কাউন্টডাউন"
+        "sectionBn": "রমজানের কাউন্টডাউন",
+        "text": "Bukhārī 1901"
       }
     ],
     "files": [
@@ -596,7 +647,8 @@
         "page": "sadaqah",
         "section": "Blessed days to give",
         "sectionBn": "দানের বরকতময় দিন",
-        "item": "It's Ramadan: the most generous month"
+        "item": "It's Ramadan: the most generous month",
+        "text": "Ṣaḥīḥ al-Bukhārī 1902"
       }
     ],
     "files": [
@@ -608,7 +660,8 @@
       {
         "page": "ramadanCalendar",
         "section": "Printable Ramadan sheet notes",
-        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট",
+        "text": "Bukhari 1909"
       }
     ],
     "files": [
@@ -621,12 +674,14 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Wiṣāl (continuous, no ifṭār)"
+        "item": "Wiṣāl (continuous, no ifṭār)",
+        "text": "Ṣaḥīḥ al-Bukhārī 1923"
       },
       {
         "page": "ramadan",
         "section": "Today: suḥūr and ifṭār",
-        "sectionBn": "আজ: সাহরি ও ইফতার"
+        "sectionBn": "আজ: সাহরি ও ইফতার",
+        "text": "Bukhārī 1923"
       }
     ],
     "files": [
@@ -640,12 +695,14 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Kaffārah (Expiation)"
+        "item": "Kaffārah (Expiation)",
+        "text": "Ṣaḥīḥ al-Bukhārī 1936"
       },
       {
         "page": "fasting",
         "section": "Make-up fasts: qaḍāʾ, kaffārah, nadhr",
-        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা"
+        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা",
+        "text": "Bukhārī 1936"
       }
     ],
     "files": [
@@ -661,12 +718,14 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Fasting on a journey"
+        "item": "Fasting on a journey",
+        "text": "Ṣaḥīḥ al-Bukhārī 1943"
       },
       {
         "page": "salat",
         "section": "Musafir banner (fasting while travelling)",
-        "sectionBn": "মুসাফির ব্যানার (সফরে রোজা)"
+        "sectionBn": "মুসাফির ব্যানার (সফরে রোজা)",
+        "text": "Ṣaḥīḥ al-Bukhārī 1943"
       }
     ],
     "files": [
@@ -679,7 +738,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ al-Bukhārī 1946"
       }
     ],
     "files": [
@@ -692,12 +752,14 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Wiṣāl (continuous, no ifṭār)"
+        "item": "Wiṣāl (continuous, no ifṭār)",
+        "text": "Ṣaḥīḥ al-Bukhārī 1957"
       },
       {
         "page": "ramadan",
         "section": "Today: suḥūr and ifṭār",
-        "sectionBn": "আজ: সাহরি ও ইফতার"
+        "sectionBn": "আজ: সাহরি ও ইফতার",
+        "text": "Bukhārī 1957"
       }
     ],
     "files": [
@@ -711,7 +773,8 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Wiṣāl (continuous, no ifṭār)"
+        "item": "Wiṣāl (continuous, no ifṭār)",
+        "text": "Ṣaḥīḥ al-Bukhārī 1965"
       }
     ],
     "files": [
@@ -724,12 +787,14 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Especially the first half of Sha'bān"
+        "item": "Especially the first half of Sha'bān",
+        "text": "Ṣaḥīḥ al-Bukhārī 1969"
       },
       {
         "page": "ramadan",
         "section": "Countdown to Ramadan",
-        "sectionBn": "রমজানের কাউন্টডাউন"
+        "sectionBn": "রমজানের কাউন্টডাউন",
+        "text": "Bukhārī 1969"
       }
     ],
     "files": [
@@ -744,7 +809,8 @@
         "path": "/special-day/ayyam_al_bid",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Ayyām al-Bīḍ"
+        "item": "Ayyām al-Bīḍ",
+        "text": "Ṣaḥīḥ al-Bukhārī 1979"
       }
     ],
     "files": [
@@ -757,7 +823,8 @@
       {
         "page": "prayerTimes",
         "section": "Day timeline cards",
-        "sectionBn": "দিনের টাইমলাইন কার্ড"
+        "sectionBn": "দিনের টাইমলাইন কার্ড",
+        "text": "Sahih al-Bukhari 1981"
       }
     ],
     "files": [
@@ -771,7 +838,8 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Singling out Friday"
+        "item": "Singling out Friday",
+        "text": "Ṣaḥīḥ al-Bukhārī 1985"
       }
     ],
     "files": [
@@ -784,13 +852,15 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Eid al-Aḍḥā (10 Dhul Ḥijjah)"
+        "item": "Eid al-Aḍḥā (10 Dhul Ḥijjah)",
+        "text": "Ṣaḥīḥ al-Bukhārī 1991"
       },
       {
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Eid al-Fiṭr (1 Shawwāl)"
+        "item": "Eid al-Fiṭr (1 Shawwāl)",
+        "text": "Ṣaḥīḥ al-Bukhārī 1991"
       }
     ],
     "files": [
@@ -805,39 +875,46 @@
         "path": "/special-day/laylat_qadr",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Laylat al-Qadr"
+        "item": "Laylat al-Qadr",
+        "text": "Ṣaḥīḥ al-Bukhārī 2017"
       },
       {
         "page": "ramadan",
         "section": "Month grid: the three ʿashras and Rayhanah days",
-        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন"
+        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন",
+        "text": "Bukhari 2017"
       },
       {
         "page": "ramadan",
         "section": "The last ten nights",
-        "sectionBn": "শেষ দশ রাত"
+        "sectionBn": "শেষ দশ রাত",
+        "text": "Bukhārī 2017"
       },
       {
         "page": "ramadan",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "The three ʿashras"
+        "item": "The three ʿashras",
+        "text": "Ṣaḥīḥ al-Bukhārī 2017"
       },
       {
         "page": "ramadanAnalytics",
         "section": "Last ten nights and Rayhanah days",
-        "sectionBn": "শেষ দশ রাত ও রায়হানাহর দিন"
+        "sectionBn": "শেষ দশ রাত ও রায়হানাহর দিন",
+        "text": "Ṣaḥīḥ al-Bukhārī 2017"
       },
       {
         "page": "ramadanAnalytics",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "The three ʿashras"
+        "item": "The three ʿashras",
+        "text": "Ṣaḥīḥ al-Bukhārī 2017"
       },
       {
         "page": "ramadanCalendar",
         "section": "Printable Ramadan sheet notes",
-        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট",
+        "text": "Bukhari 2017"
       }
     ],
     "files": [
@@ -857,7 +934,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Āyatul Kursī"
+        "item": "Āyatul Kursī",
+        "text": "Bukhārī 2311"
       }
     ],
     "files": [
@@ -869,7 +947,8 @@
       {
         "page": "rayhanah",
         "section": "Period ended: ghusl and welcome back to salat",
-        "sectionBn": "মাসিক শেষ: গোসল ও সালাতে ফেরা"
+        "sectionBn": "মাসিক শেষ: গোসল ও সালাতে ফেরা",
+        "text": "Bukhārī 248"
       }
     ],
     "files": [
@@ -883,7 +962,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Calling on His Names"
+        "item": "Calling on His Names",
+        "text": "Bukhārī 2736"
       }
     ],
     "files": [
@@ -896,7 +976,8 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Any permissible day"
+        "item": "Any permissible day",
+        "text": "Ṣaḥīḥ al-Bukhārī 2840"
       }
     ],
     "files": [
@@ -909,7 +990,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Going up (take-off, a hill) and coming down"
+        "item": "Going up (take-off, a hill) and coming down",
+        "text": "Ṣaḥīḥ al-Bukhārī 2993"
       }
     ],
     "files": [
@@ -921,7 +1003,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ al-Bukhārī 2996"
       }
     ],
     "files": [
@@ -933,7 +1016,8 @@
       {
         "page": "rayhanah",
         "section": "Fiqh companion (what is excused, what stays open)",
-        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)",
+        "text": "Bukhārī 305"
       }
     ],
     "files": [
@@ -946,12 +1030,14 @@
       {
         "page": "rayhanah",
         "section": "Day card: beyond the maximum (istiḥāḍah)",
-        "sectionBn": "দিনের কার্ড: সর্বোচ্চ সীমার পর (ইস্তিহাযা)"
+        "sectionBn": "দিনের কার্ড: সর্বোচ্চ সীমার পর (ইস্তিহাযা)",
+        "text": "Bukhārī 306"
       },
       {
         "page": "rayhanah",
         "section": "Fiqh companion (what is excused, what stays open)",
-        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)",
+        "text": "Bukhārī 306"
       }
     ],
     "files": [
@@ -965,7 +1051,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ al-Bukhārī 3088"
       }
     ],
     "files": [
@@ -979,28 +1066,32 @@
         "path": "/special-day/eid_adha",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Aḍḥā"
+        "item": "Eid al-Aḍḥā",
+        "text": "Ṣaḥīḥ al-Bukhārī 324, 974"
       },
       {
         "page": "calendar",
         "path": "/special-day/eid_adha",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Eid al-Aḍḥā"
+        "item": "Eid al-Aḍḥā",
+        "text": "Ṣaḥīḥ al-Bukhārī 324, 971"
       },
       {
         "page": "calendar",
         "path": "/special-day/eid_fitr",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Fiṭr"
+        "item": "Eid al-Fiṭr",
+        "text": "Ṣaḥīḥ al-Bukhārī 324, 974"
       },
       {
         "page": "calendar",
         "path": "/special-day/eid_fitr",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Eid al-Fiṭr"
+        "item": "Eid al-Fiṭr",
+        "text": "Ṣaḥīḥ al-Bukhārī 324, 971"
       }
     ],
     "files": [
@@ -1014,7 +1105,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Anger"
+        "item": "Anger",
+        "text": "Anger"
       }
     ],
     "files": [
@@ -1027,7 +1119,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "La ilaha illallahu wahdahu la sharika lah"
+        "item": "La ilaha illallahu wahdahu la sharika lah",
+        "text": "Bukhārī 3293"
       }
     ],
     "files": [
@@ -1040,13 +1133,15 @@
         "page": "rayhanah",
         "section": "Adhkar garden (duʿā you can recite now)",
         "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
-        "item": "Ṣalawāt upon the Prophet ﷺ"
+        "item": "Ṣalawāt upon the Prophet ﷺ",
+        "text": "Bukhārī 3370"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Durud Ibrahim"
+        "item": "Durud Ibrahim",
+        "text": "Bukhārī 3370"
       }
     ],
     "files": [
@@ -1060,7 +1155,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Qaṣr: shorten the four-rak’ah prayers"
+        "item": "Qaṣr: shorten the four-rak’ah prayers",
+        "text": "Ṣaḥīḥ al-Bukhārī 350"
       }
     ],
     "files": [
@@ -1073,7 +1169,8 @@
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Tarawih"
+        "item": "Tarawih",
+        "text": "Ṣaḥīḥ al-Bukhārī 37"
       }
     ],
     "files": [
@@ -1085,13 +1182,15 @@
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "Ṣaḥīḥ al-Bukhārī 4205"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "La hawla wa la quwwata illa billah"
+        "item": "La hawla wa la quwwata illa billah",
+        "text": "Bukhārī 4205"
       }
     ],
     "files": [
@@ -1105,7 +1204,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "HasbunAllahu wa ni'mal-wakil"
+        "item": "HasbunAllahu wa ni'mal-wakil",
+        "text": "Bukhārī 4563"
       }
     ],
     "files": [
@@ -1118,7 +1218,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Last verses of al-Baqarah"
+        "item": "Last verses of al-Baqarah",
+        "text": "Bukhārī 5009"
       }
     ],
     "files": [
@@ -1130,7 +1231,8 @@
       {
         "page": "quran",
         "section": "Virtue footer",
-        "sectionBn": "ফযীলতের নোট"
+        "sectionBn": "ফযীলতের নোট",
+        "text": "Bukhari 5027"
       }
     ],
     "files": [
@@ -1149,7 +1251,8 @@
       {
         "page": "rayhanah",
         "section": "Today's note",
-        "sectionBn": "আজকের নোট"
+        "sectionBn": "আজকের নোট",
+        "text": "Bukhārī 5641"
       }
     ],
     "files": [
@@ -1162,7 +1265,8 @@
         "page": "prayerTimes",
         "section": "Sources (bottom of the page)",
         "sectionBn": "সূত্র (পাতার নিচে)",
-        "item": "Forbidden times"
+        "item": "Forbidden times",
+        "text": "Ṣaḥīḥ al-Bukhārī 581, 585"
       }
     ],
     "files": [
@@ -1175,7 +1279,8 @@
         "page": "prayerTimes",
         "section": "Sources (bottom of the page)",
         "sectionBn": "সূত্র (পাতার নিচে)",
-        "item": "Forbidden times"
+        "item": "Forbidden times",
+        "text": "Ṣaḥīḥ al-Bukhārī 581, 585"
       }
     ],
     "files": [
@@ -1187,7 +1292,8 @@
       {
         "page": "prayerTimes",
         "section": "Day timeline cards",
-        "sectionBn": "দিনের টাইমলাইন কার্ড"
+        "sectionBn": "দিনের টাইমলাইন কার্ড",
+        "text": "Sahih al-Bukhari 586"
       }
     ],
     "files": [
@@ -1200,7 +1306,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ al-Bukhārī 597"
       }
     ],
     "files": [
@@ -1212,7 +1319,8 @@
       {
         "page": "salat",
         "section": "Sunnah prayers guide",
-        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা",
+        "text": "Ṣaḥīḥ al-Bukhārī 627"
       }
     ],
     "files": [
@@ -1225,30 +1333,35 @@
         "page": "adhkar",
         "section": "Adhkar list",
         "sectionBn": "যিকিরের তালিকা",
-        "item": "Sayyid al-Istighfār"
+        "item": "Sayyid al-Istighfār",
+        "text": "Ṣaḥīḥ al-Bukhārī 6306"
       },
       {
         "page": "admin",
         "section": "Zikr requests: example reference",
-        "sectionBn": "যিকিরের অনুরোধ: উদাহরণ রেফারেন্স"
+        "sectionBn": "যিকিরের অনুরোধ: উদাহরণ রেফারেন্স",
+        "text": "Bukhari 6306"
       },
       {
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Seeking Forgiveness"
+        "item": "Seeking Forgiveness",
+        "text": "Seeking Forgiveness"
       },
       {
         "page": "rayhanah",
         "section": "Adhkar garden (duʿā you can recite now)",
         "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
-        "item": "Sayyid al-Istighfār"
+        "item": "Sayyid al-Istighfār",
+        "text": "Bukhārī 6306"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Sayyidul-Istighfar"
+        "item": "Sayyidul-Istighfar",
+        "text": "Bukhārī 6306"
       }
     ],
     "files": [
@@ -1264,13 +1377,15 @@
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "Ṣaḥīḥ al-Bukhārī 6307"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Astaghfirullah wa atubu ilayh"
+        "item": "Astaghfirullah wa atubu ilayh",
+        "text": "Bukhārī 6307"
       }
     ],
     "files": [
@@ -1284,13 +1399,15 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Before Sleep"
+        "item": "Before Sleep",
+        "text": "Before Sleep"
       },
       {
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Waking Up"
+        "item": "Waking Up",
+        "text": "Waking Up"
       }
     ],
     "files": [
@@ -1303,7 +1420,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Hardship & Distress"
+        "item": "Hardship & Distress",
+        "text": "Hardship & Distress"
       }
     ],
     "files": [
@@ -1316,7 +1434,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Anxiety & Grief"
+        "item": "Anxiety & Grief",
+        "text": "Anxiety & Grief"
       }
     ],
     "files": [
@@ -1329,7 +1448,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Good in this world & the next"
+        "item": "Good in this world & the next",
+        "text": "Bukhārī 6389"
       }
     ],
     "files": [
@@ -1341,13 +1461,15 @@
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "Ṣaḥīḥ al-Bukhārī 6405"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "SubhanAllah wa bihamdihi"
+        "item": "SubhanAllah wa bihamdihi",
+        "text": "Bukhārī 6405"
       }
     ],
     "files": [
@@ -1361,7 +1483,8 @@
         "page": "rayhanah",
         "section": "Adhkar garden (duʿā you can recite now)",
         "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
-        "item": "SubḥānAllāh wa biḥamdih"
+        "item": "SubḥānAllāh wa biḥamdih",
+        "text": "Bukhārī 6406"
       }
     ],
     "files": [
@@ -1373,7 +1496,8 @@
       {
         "page": "salat",
         "section": "Prayer card: mosque toast",
-        "sectionBn": "নামাযের কার্ড: মসজিদের বার্তা"
+        "sectionBn": "নামাযের কার্ড: মসজিদের বার্তা",
+        "text": "Bukhari 645"
       }
     ],
     "files": [
@@ -1386,12 +1510,14 @@
       {
         "page": "about",
         "section": "Top of the page",
-        "sectionBn": "পাতার উপরে"
+        "sectionBn": "পাতার উপরে",
+        "text": "Ṣaḥīḥ al-Bukhārī 6464"
       },
       {
         "page": "friends",
         "section": "Noor circle: why Noor counts consistency",
-        "sectionBn": "নূর সার্কেল: নূর কেন ধারাবাহিকতা গোনে"
+        "sectionBn": "নূর সার্কেল: নূর কেন ধারাবাহিকতা গোনে",
+        "text": "Ṣaḥīḥ al-Bukhārī 6464"
       }
     ],
     "files": [
@@ -1405,7 +1531,8 @@
       {
         "page": "email",
         "section": "Closing hadith",
-        "sectionBn": "শেষের হাদিস"
+        "sectionBn": "শেষের হাদিস",
+        "text": "Ṣaḥīḥ al-Bukhārī 6465"
       }
     ],
     "files": [
@@ -1417,13 +1544,15 @@
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "Ṣaḥīḥ al-Bukhārī 6682"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "SubhanAllahil-Azim wa bihamdihi"
+        "item": "SubhanAllahil-Azim wa bihamdihi",
+        "text": "Bukhārī 6682"
       }
     ],
     "files": [
@@ -1437,12 +1566,14 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Nadhr (Vow)"
+        "item": "Nadhr (Vow)",
+        "text": "Ṣaḥīḥ al-Bukhārī 6696"
       },
       {
         "page": "fasting",
         "section": "Make-up fasts: qaḍāʾ, kaffārah, nadhr",
-        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা"
+        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা",
+        "text": "Bukhārī 6696"
       }
     ],
     "files": [
@@ -1456,17 +1587,20 @@
       {
         "page": "asma",
         "section": "Page notes",
-        "sectionBn": "পাতার নোট"
+        "sectionBn": "পাতার নোট",
+        "text": "Sahih al-Bukhari 7392"
       },
       {
         "page": "asma",
         "section": "Source note",
-        "sectionBn": "সূত্রের নোট"
+        "sectionBn": "সূত্রের নোট",
+        "text": "Sahih al-Bukhari 7392"
       },
       {
         "page": "ramadanCalendar",
         "section": "Page notes",
-        "sectionBn": "পাতার নোট"
+        "sectionBn": "পাতার নোট",
+        "text": "Sahih al-Bukhari 7392"
       }
     ],
     "files": [
@@ -1482,7 +1616,8 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ al-Bukhārī 879"
       }
     ],
     "files": [
@@ -1497,14 +1632,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ al-Bukhārī 881"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ al-Bukhārī 881"
       }
     ],
     "files": [
@@ -1519,7 +1656,8 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ al-Bukhārī 900"
       }
     ],
     "files": [
@@ -1534,14 +1672,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ al-Bukhārī 934"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ al-Bukhārī 934"
       }
     ],
     "files": [
@@ -1563,7 +1703,8 @@
         "path": "/special-day/eid_fitr",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Fiṭr"
+        "item": "Eid al-Fiṭr",
+        "text": "Ṣaḥīḥ al-Bukhārī 953"
       }
     ],
     "files": [
@@ -1578,7 +1719,8 @@
         "path": "/special-day/eid_adha",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Aḍḥā"
+        "item": "Eid al-Aḍḥā",
+        "text": "Ṣaḥīḥ al-Bukhārī 956"
       }
     ],
     "files": [
@@ -1593,7 +1735,8 @@
         "path": "/special-day/eid_fitr",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Fiṭr"
+        "item": "Eid al-Fiṭr",
+        "text": "Ṣaḥīḥ al-Bukhārī 963"
       }
     ],
     "files": [
@@ -1608,33 +1751,38 @@
         "path": "/special-day/eid_adha",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Aḍḥā"
+        "item": "Eid al-Aḍḥā",
+        "text": "Ṣaḥīḥ al-Bukhārī 971"
       },
       {
         "page": "calendar",
         "path": "/special-day/eid_adha",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Eid al-Aḍḥā"
+        "item": "Eid al-Aḍḥā",
+        "text": "Ṣaḥīḥ al-Bukhārī 324, 971"
       },
       {
         "page": "calendar",
         "path": "/special-day/eid_fitr",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Fiṭr"
+        "item": "Eid al-Fiṭr",
+        "text": "Ṣaḥīḥ al-Bukhārī 971"
       },
       {
         "page": "calendar",
         "path": "/special-day/eid_fitr",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Eid al-Fiṭr"
+        "item": "Eid al-Fiṭr",
+        "text": "Ṣaḥīḥ al-Bukhārī 324, 971"
       },
       {
         "page": "rayhanah",
         "section": "Fiqh companion (what is excused, what stays open)",
-        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)",
+        "text": "Bukhārī 971"
       }
     ],
     "files": [
@@ -1650,14 +1798,16 @@
         "path": "/special-day/eid_adha",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Aḍḥā"
+        "item": "Eid al-Aḍḥā",
+        "text": "Ṣaḥīḥ al-Bukhārī 324, 974"
       },
       {
         "page": "calendar",
         "path": "/special-day/eid_fitr",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Fiṭr"
+        "item": "Eid al-Fiṭr",
+        "text": "Ṣaḥīḥ al-Bukhārī 324, 974"
       }
     ],
     "files": [
@@ -1671,12 +1821,14 @@
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Witr"
+        "item": "Witr",
+        "text": "Ṣaḥīḥ al-Bukhārī 998"
       },
       {
         "page": "salat",
         "section": "Prayer card guidance (sunnah after a shortened prayer, Witr)",
-        "sectionBn": "নামাযের কার্ডের নির্দেশনা (কসরের পর সুন্নত, বিতর)"
+        "sectionBn": "নামাযের কার্ডের নির্দেশনা (কসরের পর সুন্নত, বিতর)",
+        "text": "Ṣaḥīḥ al-Bukhārī 998"
       }
     ],
     "files": [
@@ -1690,7 +1842,8 @@
       {
         "page": "bayan",
         "section": "Credits and How we calculate",
-        "sectionBn": "কৃতজ্ঞতা ও হিসাব পদ্ধতি"
+        "sectionBn": "কৃতজ্ঞতা ও হিসাব পদ্ধতি",
+        "text": "batoulapps/adhan-js"
       }
     ],
     "files": [
@@ -1702,12 +1855,14 @@
       {
         "page": "quranReader",
         "section": "Offline cache of translations",
-        "sectionBn": "অনুবাদের অফলাইন ক্যাশ"
+        "sectionBn": "অনুবাদের অফলাইন ক্যাশ",
+        "text": "api.alquran.cloud"
       },
       {
         "page": "quranReader",
         "section": "Translations and tafsīr",
-        "sectionBn": "অনুবাদ ও তাফসীর"
+        "sectionBn": "অনুবাদ ও তাফসীর",
+        "text": "api.alquran.cloud"
       }
     ],
     "files": [
@@ -1720,12 +1875,14 @@
       {
         "page": "prayerTimesPublic",
         "section": "Source line",
-        "sectionBn": "সূত্রের লাইন"
+        "sectionBn": "সূত্রের লাইন",
+        "text": "islamicfoundation.gov.bd"
       },
       {
         "page": "ramadanCalendar",
         "section": "Printable Ramadan sheet notes",
-        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট",
+        "text": "islamicfoundation.gov.bd"
       }
     ],
     "files": [
@@ -1738,17 +1895,20 @@
       {
         "page": "quranListen",
         "section": "Recitation audio",
-        "sectionBn": "তিলাওয়াতের অডিও"
+        "sectionBn": "তিলাওয়াতের অডিও",
+        "text": "mp3quran.net/"
       },
       {
         "page": "quranReader",
         "section": "Recitation audio",
-        "sectionBn": "তিলাওয়াতের অডিও"
+        "sectionBn": "তিলাওয়াতের অডিও",
+        "text": "mp3quran.net/"
       },
       {
         "page": "quranReader",
         "section": "Translations and tafsīr",
-        "sectionBn": "অনুবাদ ও তাফসীর"
+        "sectionBn": "অনুবাদ ও তাফসীর",
+        "text": "cdn.islamic.network"
       }
     ],
     "files": [
@@ -1779,27 +1939,32 @@
       {
         "page": "about",
         "section": "Top of the page",
-        "sectionBn": "পাতার উপরে"
+        "sectionBn": "পাতার উপরে",
+        "text": "tanzil.net"
       },
       {
         "page": "adhkar",
         "section": "Adhkar routine: Quran text source",
-        "sectionBn": "যিকিরের রুটিন: কুরআনের পাঠের উৎস"
+        "sectionBn": "যিকিরের রুটিন: কুরআনের পাঠের উৎস",
+        "text": "tanzil.net"
       },
       {
         "page": "bayan",
         "section": "Credits and How we calculate",
-        "sectionBn": "কৃতজ্ঞতা ও হিসাব পদ্ধতি"
+        "sectionBn": "কৃতজ্ঞতা ও হিসাব পদ্ধতি",
+        "text": "tanzil.net"
       },
       {
         "page": "quranReader",
         "section": "Āyah panel: text source",
-        "sectionBn": "আয়াত প্যানেল: পাঠের উৎস"
+        "sectionBn": "আয়াত প্যানেল: পাঠের উৎস",
+        "text": "tanzil.net"
       },
       {
         "page": "quranReader",
         "section": "Quran settings: text source",
-        "sectionBn": "কুরআন সেটিংস: পাঠের উৎস"
+        "sectionBn": "কুরআন সেটিংস: পাঠের উৎস",
+        "text": "tanzil.net"
       }
     ],
     "files": [
@@ -1815,44 +1980,52 @@
       {
         "page": "asma",
         "section": "Page notes",
-        "sectionBn": "পাতার নোট"
+        "sectionBn": "পাতার নোট",
+        "text": "Umm al-Qura calendar"
       },
       {
         "page": "bayan",
         "section": "Credits and How we calculate",
-        "sectionBn": "কৃতজ্ঞতা ও হিসাব পদ্ধতি"
+        "sectionBn": "কৃতজ্ঞতা ও হিসাব পদ্ধতি",
+        "text": "Umm al-Qura calendar"
       },
       {
         "page": "bayan",
         "section": "What's new (release notes)",
         "sectionBn": "নতুন কী (রিলিজ নোট)",
-        "item": "Clearer Ramadan calendars"
+        "item": "Clearer Ramadan calendars",
+        "text": "Umm al-Qura calendar"
       },
       {
         "page": "bayan",
         "section": "What's new (release notes)",
         "sectionBn": "নতুন কী (রিলিজ নোট)",
-        "item": "The Hijri date no longer repeats a day"
+        "item": "The Hijri date no longer repeats a day",
+        "text": "Umm al-Qura calendar"
       },
       {
         "page": "prayerTimes",
         "section": "Calculation method by country",
-        "sectionBn": "দেশ অনুযায়ী হিসাব পদ্ধতি"
+        "sectionBn": "দেশ অনুযায়ী হিসাব পদ্ধতি",
+        "text": "Umm al-Qura calendar"
       },
       {
         "page": "prayerTimesPublic",
         "section": "Source line",
-        "sectionBn": "সূত্রের লাইন"
+        "sectionBn": "সূত্রের লাইন",
+        "text": "Umm al-Qura calendar"
       },
       {
         "page": "ramadanCalendar",
         "section": "Page notes",
-        "sectionBn": "পাতার নোট"
+        "sectionBn": "পাতার নোট",
+        "text": "Umm al-Qura calendar"
       },
       {
         "page": "ramadanCalendar",
         "section": "Printable Ramadan sheet notes",
-        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট"
+        "sectionBn": "প্রিন্টযোগ্য রমজান শিটের নোট",
+        "text": "Umm al-Qura calendar"
       }
     ],
     "files": [
@@ -1920,7 +2093,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Ḥanafī"
+        "item": "Ḥanafī",
+        "text": "Ḥanafī"
       }
     ],
     "files": [
@@ -1932,7 +2106,8 @@
       {
         "page": "adhkar",
         "section": "Adhkar list",
-        "sectionBn": "যিকিরের তালিকা"
+        "sectionBn": "যিকিরের তালিকা",
+        "text": "Ḥiṣn al-Muslim 77"
       }
     ],
     "files": [
@@ -1945,7 +2120,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Allahumma salli wa sallim ala Nabiyyina Muhammad"
+        "item": "Allahumma salli wa sallim ala Nabiyyina Muhammad",
+        "text": "Ḥiṣn al-Muslim 98"
       }
     ],
     "files": [
@@ -1957,36 +2133,42 @@
       {
         "page": "ramadan",
         "section": "Month grid: the three ʿashras and Rayhanah days",
-        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন"
+        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন",
+        "text": "Ibn Khuzaymah 1887"
       },
       {
         "page": "ramadan",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Nafl rewarded like farḍ"
+        "item": "Nafl rewarded like farḍ",
+        "text": "Ṣaḥīḥ Ibn Khuzaymah 1887"
       },
       {
         "page": "ramadan",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "The three ʿashras"
+        "item": "The three ʿashras",
+        "text": "Ṣaḥīḥ Ibn Khuzaymah 1887"
       },
       {
         "page": "ramadanAnalytics",
         "section": "The three ʿashras",
-        "sectionBn": "তিন আশরা"
+        "sectionBn": "তিন আশরা",
+        "text": "Ibn Khuzaymah 1887"
       },
       {
         "page": "ramadanAnalytics",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Nafl rewarded like farḍ"
+        "item": "Nafl rewarded like farḍ",
+        "text": "Ṣaḥīḥ Ibn Khuzaymah 1887"
       },
       {
         "page": "ramadanAnalytics",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "The three ʿashras"
+        "item": "The three ʿashras",
+        "text": "Ṣaḥīḥ Ibn Khuzaymah 1887"
       }
     ],
     "files": [
@@ -2000,19 +2182,22 @@
       {
         "page": "prayerTimes",
         "section": "Day timeline cards",
-        "sectionBn": "দিনের টাইমলাইন কার্ড"
+        "sectionBn": "দিনের টাইমলাইন কার্ড",
+        "text": "Sunan Ibn Majah 1167"
       },
       {
         "page": "prayerTimes",
         "section": "Sources (bottom of the page)",
         "sectionBn": "সূত্র (পাতার নিচে)",
-        "item": "Awwabin"
+        "item": "Awwabin",
+        "text": "Ibn Mājah 1167"
       },
       {
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Awwabin"
+        "item": "Awwabin",
+        "text": "Ibn Mājah 1167"
       }
     ],
     "files": [
@@ -2028,7 +2213,8 @@
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Ṣalāt al-Ḥājat"
+        "item": "Ṣalāt al-Ḥājat",
+        "text": "Sunan Ibn Mājah 1384"
       }
     ],
     "files": [
@@ -2042,14 +2228,16 @@
         "path": "/special-day/shab_e_barat",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Laylat al-Barā'ah"
+        "item": "Laylat al-Barā'ah",
+        "text": "Sunan Ibn Mājah 1390"
       },
       {
         "page": "calendar",
         "path": "/special-day/shab_e_barat",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Laylat al-Barā'ah"
+        "item": "Laylat al-Barā'ah",
+        "text": "Sunan Ibn Mājah 1390"
       }
     ],
     "files": [
@@ -2065,14 +2253,16 @@
         "path": "/special-day/fast_mon_thu",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Sunnah Fast Day"
+        "item": "Sunnah Fast Day",
+        "text": "Sunan Ibn Mājah 1753"
       },
       {
         "page": "calendar",
         "path": "/special-day/fast_mon_thu",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Sunnah Fast Day"
+        "item": "Sunnah Fast Day",
+        "text": "Sunan Ibn Mājah 1753"
       }
     ],
     "files": [
@@ -2086,7 +2276,8 @@
       {
         "page": "ramadanCalendar",
         "section": "Ramadan duʿās",
-        "sectionBn": "রমজানের দুআ"
+        "sectionBn": "রমজানের দুআ",
+        "text": "Ibn Majah 3850"
       }
     ],
     "files": [
@@ -2100,7 +2291,8 @@
         "path": "/special-day/ashura",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "'Āshūrā"
+        "item": "'Āshūrā",
+        "text": "Ṣaḥīḥ Muslim 1134"
       }
     ],
     "files": [
@@ -2114,7 +2306,8 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Days of Tashrīq (11–13 Dhul Ḥijjah)"
+        "item": "Days of Tashrīq (11–13 Dhul Ḥijjah)",
+        "text": "Ṣaḥīḥ Muslim 1141"
       }
     ],
     "files": [
@@ -2128,7 +2321,8 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Alternate days — the strongest regular pattern"
+        "item": "Alternate days — the strongest regular pattern",
+        "text": "Ṣaḥīḥ Muslim 1159"
       }
     ],
     "files": [
@@ -2142,26 +2336,30 @@
         "path": "/special-day/arafah",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Day of Arafah"
+        "item": "Day of Arafah",
+        "text": "Ṣaḥīḥ Muslim 1162"
       },
       {
         "page": "calendar",
         "path": "/special-day/ashura",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "'Āshūrā"
+        "item": "'Āshūrā",
+        "text": "Ṣaḥīḥ Muslim 1162"
       },
       {
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "10 Muḥarram — add the 9th to differ from the People of the Book"
+        "item": "10 Muḥarram — add the 9th to differ from the People of the Book",
+        "text": "Ṣaḥīḥ Muslim 1162"
       },
       {
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "9 Dhul Ḥijjah (for those not on Ḥajj)"
+        "item": "9 Dhul Ḥijjah (for those not on Ḥajj)",
+        "text": "Ṣaḥīḥ Muslim 1162b"
       }
     ],
     "files": [
@@ -2177,30 +2375,35 @@
         "path": "/special-day/islamic_new_year",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Islamic New Year"
+        "item": "Islamic New Year",
+        "text": "Ṣaḥīḥ Muslim 1163"
       },
       {
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Any days of Muḥarram (sacred month)"
+        "item": "Any days of Muḥarram (sacred month)",
+        "text": "Ṣaḥīḥ Muslim 1163"
       },
       {
         "page": "prayerTimes",
         "section": "Day timeline cards",
-        "sectionBn": "দিনের টাইমলাইন কার্ড"
+        "sectionBn": "দিনের টাইমলাইন কার্ড",
+        "text": "Sahih Muslim 1163"
       },
       {
         "page": "prayerTimes",
         "section": "Sources (bottom of the page)",
         "sectionBn": "সূত্র (পাতার নিচে)",
-        "item": "Tahajjud"
+        "item": "Tahajjud",
+        "text": "Ṣaḥīḥ Muslim 758, 1163"
       },
       {
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Tahajjud"
+        "item": "Tahajjud",
+        "text": "Ṣaḥīḥ Muslim 1163"
       }
     ],
     "files": [
@@ -2218,7 +2421,8 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Any six days of Shawwāl (after Eid day)"
+        "item": "Any six days of Shawwāl (after Eid day)",
+        "text": "Ṣaḥīḥ Muslim 1164"
       }
     ],
     "files": [
@@ -2231,12 +2435,14 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Friday on the road"
+        "item": "Friday on the road",
+        "text": "Ṣaḥīḥ Muslim 1218a"
       },
       {
         "page": "salat",
         "section": "Friday while travelling",
-        "sectionBn": "সফরে শুক্রবার"
+        "sectionBn": "সফরে শুক্রবার",
+        "text": "Muslim 1218a"
       }
     ],
     "files": [
@@ -2251,19 +2457,22 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Travel"
+        "item": "Travel",
+        "text": "Travel"
       },
       {
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "On the way home (the riding du‘ā, then add this)"
+        "item": "On the way home (the riding du‘ā, then add this)",
+        "text": "Ṣaḥīḥ Muslim 1342"
       },
       {
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Once seated in the car, bus, train or plane"
+        "item": "Once seated in the car, bus, train or plane",
+        "text": "Ṣaḥīḥ Muslim 1342"
       }
     ],
     "files": [
@@ -2278,7 +2487,8 @@
         "path": "/special-day/eid_adha",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Eid al-Aḍḥā"
+        "item": "Eid al-Aḍḥā",
+        "text": "Ṣaḥīḥ Muslim 1966"
       }
     ],
     "files": [
@@ -2292,7 +2502,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Entering the Home"
+        "item": "Entering the Home",
+        "text": "Ṣaḥīḥ Muslim 2018"
       }
     ],
     "files": [
@@ -2304,13 +2515,15 @@
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "Ṣaḥīḥ Muslim 2137"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Allahu Akbar"
+        "item": "Allahu Akbar",
+        "text": "Muslim 2137"
       }
     ],
     "files": [
@@ -2324,7 +2537,8 @@
         "page": "rayhanah",
         "section": "Adhkar garden (duʿā you can recite now)",
         "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
-        "item": "When in pain or discomfort"
+        "item": "When in pain or discomfort",
+        "text": "Muslim 2202"
       }
     ],
     "files": [
@@ -2336,13 +2550,15 @@
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "Ṣaḥīḥ Muslim 223"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Alhamdulillah"
+        "item": "Alhamdulillah",
+        "text": "Muslim 223"
       }
     ],
     "files": [
@@ -2356,7 +2572,8 @@
         "page": "sadaqah",
         "section": "Blessed days to give",
         "sectionBn": "দানের বরকতময় দিন",
-        "item": "It's Jumu'ah: a blessed day to give"
+        "item": "It's Jumu'ah: a blessed day to give",
+        "text": "Ṣaḥīḥ Muslim 2588"
       }
     ],
     "files": [
@@ -2368,17 +2585,20 @@
       {
         "page": "asma",
         "section": "Page notes",
-        "sectionBn": "পাতার নোট"
+        "sectionBn": "পাতার নোট",
+        "text": "Sahih Muslim 2677"
       },
       {
         "page": "asma",
         "section": "Source note",
-        "sectionBn": "সূত্রের নোট"
+        "sectionBn": "সূত্রের নোট",
+        "text": "Sahih Muslim 2677"
       },
       {
         "page": "ramadanCalendar",
         "section": "Page notes",
-        "sectionBn": "পাতার নোট"
+        "sectionBn": "পাতার নোট",
+        "text": "Sahih Muslim 2677"
       }
     ],
     "files": [
@@ -2392,7 +2612,8 @@
       {
         "page": "adhkar",
         "section": "Adhkar list",
-        "sectionBn": "যিকিরের তালিকা"
+        "sectionBn": "যিকিরের তালিকা",
+        "text": "Ṣaḥīḥ Muslim 2692"
       }
     ],
     "files": [
@@ -2404,7 +2625,8 @@
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "Ṣaḥīḥ Muslim 2695"
       }
     ],
     "files": [
@@ -2417,7 +2639,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "SubhanAllah"
+        "item": "SubhanAllah",
+        "text": "Muslim 2698"
       }
     ],
     "files": [
@@ -2430,18 +2653,21 @@
         "page": "rayhanah",
         "section": "Adhkar garden (duʿā you can recite now)",
         "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
-        "item": "Istighfār: constant forgiveness"
+        "item": "Istighfār: constant forgiveness",
+        "text": "Muslim 2702"
       },
       {
         "page": "zikr",
         "section": "Add or suggest a zikr form: example reference",
-        "sectionBn": "যিকির যোগ বা প্রস্তাবের ফর্ম: উদাহরণ রেফারেন্স"
+        "sectionBn": "যিকির যোগ বা প্রস্তাবের ফর্ম: উদাহরণ রেফারেন্স",
+        "text": "Ṣaḥīḥ Muslim 2702"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Astaghfirullah"
+        "item": "Astaghfirullah",
+        "text": "Muslim 2702"
       }
     ],
     "files": [
@@ -2456,13 +2682,15 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Arriving at a hotel, rest stop or any new place"
+        "item": "Arriving at a hotel, rest stop or any new place",
+        "text": "Ṣaḥīḥ Muslim 2708"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "A'udhu bikalimatillahit-tammat"
+        "item": "A'udhu bikalimatillahit-tammat",
+        "text": "Muslim 2708"
       }
     ],
     "files": [
@@ -2475,7 +2703,8 @@
       {
         "page": "adhkar",
         "section": "Adhkar list",
-        "sectionBn": "যিকিরের তালিকা"
+        "sectionBn": "যিকিরের তালিকা",
+        "text": "Ṣaḥīḥ Muslim 2709"
       }
     ],
     "files": [
@@ -2487,12 +2716,14 @@
       {
         "page": "adhkar",
         "section": "Adhkar list",
-        "sectionBn": "যিকিরের তালিকা"
+        "sectionBn": "যিকিরের তালিকা",
+        "text": "Ṣaḥīḥ Muslim 2723"
       },
       {
         "page": "home",
         "section": "Today timeline: adhkar times",
-        "sectionBn": "আজকের টাইমলাইন: যিকিরের সময়"
+        "sectionBn": "আজকের টাইমলাইন: যিকিরের সময়",
+        "text": "Ṣaḥīḥ Muslim 2723"
       }
     ],
     "files": [
@@ -2506,7 +2737,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "SubhanAllahi 'adada khalqihi"
+        "item": "SubhanAllahi 'adada khalqihi",
+        "text": "Muslim 2726"
       }
     ],
     "files": [
@@ -2519,7 +2751,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Hardship & Distress"
+        "item": "Hardship & Distress",
+        "text": "Muslim 2730"
       }
     ],
     "files": [
@@ -2532,7 +2765,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Wiping over socks: 3 days"
+        "item": "Wiping over socks: 3 days",
+        "text": "Ṣaḥīḥ Muslim 276a"
       }
     ],
     "files": [
@@ -2544,42 +2778,50 @@
       {
         "page": "cycleAnalytics",
         "section": "Patterns",
-        "sectionBn": "প্যাটার্ন"
+        "sectionBn": "প্যাটার্ন",
+        "text": "Muslim 335"
       },
       {
         "page": "fasting",
         "section": "Excused days card (Rayhanah)",
-        "sectionBn": "অব্যাহতির দিনের কার্ড (রায়হানাহ)"
+        "sectionBn": "অব্যাহতির দিনের কার্ড (রায়হানাহ)",
+        "text": "Ṣaḥīḥ Muslim 335"
       },
       {
         "page": "ramadan",
         "section": "Month grid: the three ʿashras and Rayhanah days",
-        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন"
+        "sectionBn": "মাসের ছক: তিন আশরা ও রায়হানাহর দিন",
+        "text": "Muslim 335"
       },
       {
         "page": "ramadanAnalytics",
         "section": "Last ten nights and Rayhanah days",
-        "sectionBn": "শেষ দশ রাত ও রায়হানাহর দিন"
+        "sectionBn": "শেষ দশ রাত ও রায়হানাহর দিন",
+        "text": "Muslim 335"
       },
       {
         "page": "rayhanah",
         "section": "Fiqh companion (what is excused, what stays open)",
-        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)",
+        "text": "Muslim 335"
       },
       {
         "page": "rayhanah",
         "section": "Period ended: ghusl and welcome back to salat",
-        "sectionBn": "মাসিক শেষ: গোসল ও সালাতে ফেরা"
+        "sectionBn": "মাসিক শেষ: গোসল ও সালাতে ফেরা",
+        "text": "Muslim 335"
       },
       {
         "page": "rayhanah",
         "section": "Ramadan fasts to make up",
-        "sectionBn": "রমজানের কাযা রোজা"
+        "sectionBn": "রমজানের কাযা রোজা",
+        "text": "Muslim 335"
       },
       {
         "page": "salat",
         "section": "Excused days card (Rayhanah)",
-        "sectionBn": "অব্যাহতির দিনের কার্ড (রায়হানাহ)"
+        "sectionBn": "অব্যাহতির দিনের কার্ড (রায়হানাহ)",
+        "text": "Ṣaḥīḥ Muslim 335"
       }
     ],
     "files": [
@@ -2599,12 +2841,14 @@
       {
         "page": "rayhanah",
         "section": "Adhkar garden (duʿā you can recite now)",
-        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)"
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
+        "text": "Muslim 373"
       },
       {
         "page": "rayhanah",
         "section": "Fiqh companion (what is excused, what stays open)",
-        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)",
+        "text": "Muslim 373"
       }
     ],
     "files": [
@@ -2620,7 +2864,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Ṣalawāt upon the Prophet ﷺ"
+        "item": "Ṣalawāt upon the Prophet ﷺ",
+        "text": "Muslim 408"
       }
     ],
     "files": [
@@ -2634,14 +2879,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ Muslim 443b"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ Muslim 443b"
       }
     ],
     "files": [
@@ -2654,13 +2901,15 @@
       {
         "page": "salat",
         "section": "How it works (legend)",
-        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)",
+        "text": "Muslim 596a"
       },
       {
         "page": "salat",
         "section": "Salat settings: tasbīḥ after prayer",
         "sectionBn": "সালাত সেটিংস: নামাযের পর তাসবীহ",
-        "item": "33 · 33 · 34"
+        "item": "33 · 33 · 34",
+        "text": "Ṣaḥīḥ Muslim 596a"
       }
     ],
     "files": [
@@ -2674,19 +2923,22 @@
       {
         "page": "salat",
         "section": "How it works (legend)",
-        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)",
+        "text": "Muslim 597a"
       },
       {
         "page": "salat",
         "section": "Salat settings: tasbīḥ after prayer",
         "sectionBn": "সালাত সেটিংস: নামাযের পর তাসবীহ",
-        "item": "33 · 33 · 33 + tahlīl"
+        "item": "33 · 33 · 33 + tahlīl",
+        "text": "Ṣaḥīḥ Muslim 597a"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "La ilaha illallahu wahdahu la sharika lah"
+        "item": "La ilaha illallahu wahdahu la sharika lah",
+        "text": "Muslim 597a"
       }
     ],
     "files": [
@@ -2709,7 +2961,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ Muslim 681"
       }
     ],
     "files": [
@@ -2721,7 +2974,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ Muslim 684a"
       }
     ],
     "files": [
@@ -2733,7 +2987,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ Muslim 686a"
       }
     ],
     "files": [
@@ -2746,7 +3001,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Behind a local (resident) imam"
+        "item": "Behind a local (resident) imam",
+        "text": "Ṣaḥīḥ Muslim 688"
       }
     ],
     "files": [
@@ -2758,18 +3014,21 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ Muslim 689a"
       },
       {
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Sunnah prayers: lighten, but keep two"
+        "item": "Sunnah prayers: lighten, but keep two",
+        "text": "Ṣaḥīḥ Muslim 689a"
       },
       {
         "page": "salat",
         "section": "Prayer card guidance (sunnah after a shortened prayer, Witr)",
-        "sectionBn": "নামাযের কার্ডের নির্দেশনা (কসরের পর সুন্নত, বিতর)"
+        "sectionBn": "নামাযের কার্ডের নির্দেশনা (কসরের পর সুন্নত, বিতর)",
+        "text": "Ṣaḥīḥ Muslim 689a"
       }
     ],
     "files": [
@@ -2782,7 +3041,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Ṣaḥīḥ Muslim 706a"
       }
     ],
     "files": [
@@ -2795,7 +3055,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Entering the Masjid"
+        "item": "Entering the Masjid",
+        "text": "Entering the Masjid"
       }
     ],
     "files": [
@@ -2808,7 +3069,8 @@
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Tahiyyat al-Masjid"
+        "item": "Tahiyyat al-Masjid",
+        "text": "Ṣaḥīḥ Muslim 714"
       }
     ],
     "files": [
@@ -2820,19 +3082,22 @@
       {
         "page": "prayerTimes",
         "section": "Day timeline cards",
-        "sectionBn": "দিনের টাইমলাইন কার্ড"
+        "sectionBn": "দিনের টাইমলাইন কার্ড",
+        "text": "Sahih Muslim 719"
       },
       {
         "page": "prayerTimes",
         "section": "Sources (bottom of the page)",
         "sectionBn": "সূত্র (পাতার নিচে)",
-        "item": "Ishraq/Duha"
+        "item": "Ishraq/Duha",
+        "text": "Ṣaḥīḥ Muslim 719"
       },
       {
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Duha (Chasht)"
+        "item": "Duha (Chasht)",
+        "text": "Ṣaḥīḥ Muslim 719"
       }
     ],
     "files": [
@@ -2847,7 +3112,8 @@
       {
         "page": "salat",
         "section": "Sunnah prayers guide",
-        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা",
+        "text": "Ṣaḥīḥ Muslim 725"
       }
     ],
     "files": [
@@ -2859,7 +3125,8 @@
       {
         "page": "salat",
         "section": "Sunnah prayers guide",
-        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা",
+        "text": "Ṣaḥīḥ Muslim 728"
       }
     ],
     "files": [
@@ -2871,13 +3138,15 @@
       {
         "page": "prayerTimes",
         "section": "Day timeline cards",
-        "sectionBn": "দিনের টাইমলাইন কার্ড"
+        "sectionBn": "দিনের টাইমলাইন কার্ড",
+        "text": "Sahih Muslim 758"
       },
       {
         "page": "prayerTimes",
         "section": "Sources (bottom of the page)",
         "sectionBn": "সূত্র (পাতার নিচে)",
-        "item": "Tahajjud"
+        "item": "Tahajjud",
+        "text": "Ṣaḥīḥ Muslim 758, 1163"
       }
     ],
     "files": [
@@ -2892,7 +3161,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Al-Baqarah"
+        "item": "Al-Baqarah",
+        "text": "Muslim 780"
       }
     ],
     "files": [
@@ -2904,7 +3174,8 @@
       {
         "page": "email",
         "section": "Closing hadith",
-        "sectionBn": "শেষের হাদিস"
+        "sectionBn": "শেষের হাদিস",
+        "text": "Ṣaḥīḥ Muslim 782"
       }
     ],
     "files": [
@@ -2916,7 +3187,8 @@
       {
         "page": "quranKhatam",
         "section": "Khatam page note",
-        "sectionBn": "খতম পাতার নোট"
+        "sectionBn": "খতম পাতার নোট",
+        "text": "Ṣaḥīḥ Muslim 804"
       }
     ],
     "files": [
@@ -2929,13 +3201,15 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Al-Kahf"
+        "item": "Al-Kahf",
+        "text": "Muslim 809"
       },
       {
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "First ten of al-Kahf"
+        "item": "First ten of al-Kahf",
+        "text": "Muslim 809"
       }
     ],
     "files": [
@@ -2948,7 +3222,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Āyatul Kursī"
+        "item": "Āyatul Kursī",
+        "text": "Muslim 810"
       }
     ],
     "files": [
@@ -2960,13 +3235,15 @@
       {
         "page": "prayerTimes",
         "section": "Day timeline cards",
-        "sectionBn": "দিনের টাইমলাইন কার্ড"
+        "sectionBn": "দিনের টাইমলাইন কার্ড",
+        "text": "Sahih Muslim 831"
       },
       {
         "page": "prayerTimes",
         "section": "Sources (bottom of the page)",
         "sectionBn": "সূত্র (পাতার নিচে)",
-        "item": "Forbidden times"
+        "item": "Forbidden times",
+        "text": "Ṣaḥīḥ Muslim 831"
       }
     ],
     "files": [
@@ -2983,7 +3260,8 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ Muslim 852"
       }
     ],
     "files": [
@@ -2998,7 +3276,8 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ Muslim 854"
       }
     ],
     "files": [
@@ -3013,14 +3292,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ Muslim 873a"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ṣaḥīḥ Muslim 873a"
       }
     ],
     "files": [
@@ -3033,7 +3314,8 @@
       {
         "page": "salat",
         "section": "Sunnah prayers guide",
-        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা",
+        "text": "Muslim 881"
       }
     ],
     "files": [
@@ -3045,7 +3327,8 @@
       {
         "page": "salat",
         "section": "Sunnah prayers guide",
-        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা",
+        "text": "Ṣaḥīḥ Muslim 882"
       }
     ],
     "files": [
@@ -3057,12 +3340,14 @@
       {
         "page": "salat",
         "section": "How it works (legend)",
-        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)"
+        "sectionBn": "যেভাবে কাজ করে (ব্যাখ্যা)",
+        "text": "an-Nasāʾī, al-Kubrā 9848"
       },
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "an-Nasāʾī, al-Sunan al-Kubrā 9848"
       }
     ],
     "files": [
@@ -3076,7 +3361,8 @@
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "al-Nasā'ī 1297"
       }
     ],
     "files": [
@@ -3089,7 +3375,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Make me steadfast in prayer"
+        "item": "Make me steadfast in prayer",
+        "text": "Make me steadfast in prayer"
       }
     ],
     "files": [
@@ -3102,7 +3389,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "The cave companions — mercy & guidance"
+        "item": "The cave companions — mercy & guidance",
+        "text": "The cave companions — mercy & guidance"
       }
     ],
     "files": [
@@ -3115,23 +3403,27 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Anxiety & Grief"
+        "item": "Anxiety & Grief",
+        "text": "Quran 20:114"
       },
       {
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Rabbi zidnī ʿilmā — increase me in knowledge"
+        "item": "Rabbi zidnī ʿilmā — increase me in knowledge",
+        "text": "Quran 20:114"
       },
       {
         "page": "zikr",
         "section": "Add a custom zikr: example reference",
-        "sectionBn": "নিজের যিকির যোগ: উদাহরণ রেফারেন্স"
+        "sectionBn": "নিজের যিকির যোগ: উদাহরণ রেফারেন্স",
+        "text": "Quran 20:114"
       },
       {
         "page": "zikr",
         "section": "Add or suggest a zikr form: example reference",
-        "sectionBn": "যিকির যোগ বা প্রস্তাবের ফর্ম: উদাহরণ রেফারেন্স"
+        "sectionBn": "যিকির যোগ বা প্রস্তাবের ফর্ম: উদাহরণ রেফারেন্স",
+        "text": "Quran 20:114"
       }
     ],
     "files": [
@@ -3146,7 +3438,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Quran 20:14"
       }
     ],
     "files": [
@@ -3159,7 +3452,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Mūsā — expand my chest, ease my task"
+        "item": "Mūsā — expand my chest, ease my task",
+        "text": "Mūsā — expand my chest, ease my task"
       }
     ],
     "files": [
@@ -3172,7 +3466,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Forgive and have mercy — the best of the merciful"
+        "item": "Forgive and have mercy — the best of the merciful",
+        "text": "Quran 23:118"
       }
     ],
     "files": [
@@ -3185,7 +3480,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Refuge from the whispers of devils"
+        "item": "Refuge from the whispers of devils",
+        "text": "Refuge from the whispers of devils"
       }
     ],
     "files": [
@@ -3199,14 +3495,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Quran 24:31"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Quran 24:31"
       }
     ],
     "files": [
@@ -3220,7 +3518,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Spouses & children — coolness of eyes"
+        "item": "Spouses & children — coolness of eyes",
+        "text": "25:63-77"
       }
     ],
     "files": [
@@ -3233,7 +3532,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Mūsā — I am in need of whatever good You send"
+        "item": "Mūsā — I am in need of whatever good You send",
+        "text": "Mūsā — I am in need of whatever good You send"
       }
     ],
     "files": [
@@ -3245,7 +3545,8 @@
       {
         "page": "friends",
         "section": "Friend link preview",
-        "sectionBn": "বন্ধু লিংকের প্রিভিউ"
+        "sectionBn": "বন্ধু লিংকের প্রিভিউ",
+        "text": "Quran 2:148"
       },
       {
         "page": "friends",
@@ -3255,17 +3556,20 @@
       {
         "page": "friends",
         "section": "Page heading",
-        "sectionBn": "পাতার শিরোনাম"
+        "sectionBn": "পাতার শিরোনাম",
+        "text": "Quran 2:148"
       },
       {
         "page": "home",
         "section": "Friends card",
-        "sectionBn": "বন্ধুদের কার্ড"
+        "sectionBn": "বন্ধুদের কার্ড",
+        "text": "Quran 2:148"
       },
       {
         "page": "landing",
         "section": "Features",
-        "sectionBn": "ফিচার"
+        "sectionBn": "ফিচার",
+        "text": "Quran 2:148"
       }
     ],
     "files": [
@@ -3282,17 +3586,20 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Qaḍā (Make-up)"
+        "item": "Qaḍā (Make-up)",
+        "text": "Quran 2:184–185"
       },
       {
         "page": "fasting",
         "section": "Learn: missed fasts",
-        "sectionBn": "জানুন: ছুটে যাওয়া রোজা"
+        "sectionBn": "জানুন: ছুটে যাওয়া রোজা",
+        "text": "Quran 2:184"
       },
       {
         "page": "fasting",
         "section": "Make-up fasts: qaḍāʾ, kaffārah, nadhr",
-        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা"
+        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা",
+        "text": "Quran 2:184"
       }
     ],
     "files": [
@@ -3308,13 +3615,15 @@
       {
         "page": "fasting",
         "section": "Travelling while fasting",
-        "sectionBn": "সফরে রোজা"
+        "sectionBn": "সফরে রোজা",
+        "text": "Quran 2:185"
       },
       {
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Fasting on a journey"
+        "item": "Fasting on a journey",
+        "text": "Quran 2:185"
       }
     ],
     "files": [
@@ -3327,7 +3636,8 @@
       {
         "page": "rayhanah",
         "section": "Fiqh companion (what is excused, what stays open)",
-        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)"
+        "sectionBn": "ফিকহ সহায়িকা (কী মাফ, কী খোলা)",
+        "text": "Quran 2:222"
       }
     ],
     "files": [
@@ -3340,7 +3650,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Pour patience upon us, make our feet firm"
+        "item": "Pour patience upon us, make our feet firm",
+        "text": "Pour patience upon us, make our feet firm"
       }
     ],
     "files": [
@@ -3353,23 +3664,27 @@
         "page": "adhkar",
         "section": "Adhkar list",
         "sectionBn": "যিকিরের তালিকা",
-        "item": "Ayat al-Kursi"
+        "item": "Ayat al-Kursi",
+        "text": "Quran 2:255"
       },
       {
         "page": "salat",
         "section": "After each prayer: “Read now”",
         "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
-        "item": "Ayatul Kursi"
+        "item": "Ayatul Kursi",
+        "text": "Ayatul Kursi"
       },
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "Quran 2:255"
       },
       {
         "page": "zikr",
         "section": "Counter: Āyat al-Kursī card",
-        "sectionBn": "কাউন্টার: আয়াতুল কুরসি কার্ড"
+        "sectionBn": "কাউন্টার: আয়াতুল কুরসি কার্ড",
+        "text": "Quran 2:255"
       }
     ],
     "files": [
@@ -3385,7 +3700,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "The duʿā of Ādam — forgive us"
+        "item": "The duʿā of Ādam — forgive us",
+        "text": "2:37"
       }
     ],
     "files": [
@@ -3397,7 +3713,8 @@
       {
         "page": "zikr",
         "section": "Add a custom zikr: example reference",
-        "sectionBn": "নিজের যিকির যোগ: উদাহরণ রেফারেন্স"
+        "sectionBn": "নিজের যিকির যোগ: উদাহরণ রেফারেন্স",
+        "text": "Quran 3:173"
       }
     ],
     "files": [
@@ -3410,7 +3727,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Zakariyyā — grant me pure offspring"
+        "item": "Zakariyyā — grant me pure offspring",
+        "text": "Zakariyyā — grant me pure offspring"
       }
     ],
     "files": [
@@ -3423,7 +3741,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Keep my heart firm after guidance"
+        "item": "Keep my heart firm after guidance",
+        "text": "Keep my heart firm after guidance"
       }
     ],
     "files": [
@@ -3436,7 +3755,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Qaṣr: shorten the four-rak’ah prayers"
+        "item": "Qaṣr: shorten the four-rak’ah prayers",
+        "text": "Quran 4:101"
       }
     ],
     "files": [
@@ -3448,7 +3768,8 @@
       {
         "page": "home",
         "section": "Today timeline: adhkar times",
-        "sectionBn": "আজকের টাইমলাইন: যিকিরের সময়"
+        "sectionBn": "আজকের টাইমলাইন: যিকিরের সময়",
+        "text": "Quran 50:39"
       }
     ],
     "files": [
@@ -3461,7 +3782,8 @@
         "page": "salat",
         "section": "After each prayer: “Read now”",
         "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
-        "item": "Al-Wāqiʿah"
+        "item": "Al-Wāqiʿah",
+        "text": "Al-Wāqiʿah"
       }
     ],
     "files": [
@@ -3475,7 +3797,8 @@
         "path": "/special-day/arafah",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Day of Arafah"
+        "item": "Day of Arafah",
+        "text": "Quran 5:3"
       }
     ],
     "files": [
@@ -3489,7 +3812,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "No water? Tayammum"
+        "item": "No water? Tayammum",
+        "text": "Quran 5:6"
       }
     ],
     "files": [
@@ -3502,12 +3826,14 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Kaffārah (Expiation)"
+        "item": "Kaffārah (Expiation)",
+        "text": "Quran 5:89"
       },
       {
         "page": "fasting",
         "section": "Make-up fasts: qaḍāʾ, kaffārah, nadhr",
-        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা"
+        "sectionBn": "কাযা, কাফফারা ও মানতের রোজা",
+        "text": "Quran 5:89"
       }
     ],
     "files": [
@@ -3523,7 +3849,8 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Quran 62:9"
       }
     ],
     "files": [
@@ -3537,7 +3864,8 @@
         "page": "musafir",
         "section": "Musafir guide",
         "sectionBn": "মুসাফির নির্দেশিকা",
-        "item": "Fard prayer in a vehicle"
+        "item": "Fard prayer in a vehicle",
+        "text": "Quran 64:16"
       }
     ],
     "files": [
@@ -3558,7 +3886,8 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Nadhr (Vow)"
+        "item": "Nadhr (Vow)",
+        "text": "Quran 76:7"
       }
     ],
     "files": [
@@ -3570,7 +3899,8 @@
       {
         "page": "quranListen",
         "section": "Listening note",
-        "sectionBn": "শোনার নোট"
+        "sectionBn": "শোনার নোট",
+        "text": "Quran 7:204"
       }
     ],
     "files": [
@@ -3583,7 +3913,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "The duʿā of Ādam — forgive us"
+        "item": "The duʿā of Ādam — forgive us",
+        "text": "Quran 7:23"
       }
     ],
     "files": [
@@ -3597,14 +3928,16 @@
         "path": "/special-day/dhul_hijjah_first10",
         "section": "About the day",
         "sectionBn": "দিনটি সম্পর্কে",
-        "item": "First 10 Days of Dhul Ḥijjah"
+        "item": "First 10 Days of Dhul Ḥijjah",
+        "text": "89:2"
       },
       {
         "page": "calendar",
         "path": "/special-day/dhul_hijjah_first10",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "First 10 Days of Dhul Ḥijjah"
+        "item": "First 10 Days of Dhul Ḥijjah",
+        "text": "89:1-2"
       }
     ],
     "files": [
@@ -3619,30 +3952,35 @@
         "path": "/special-day/laylat_qadr",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Laylat al-Qadr"
+        "item": "Laylat al-Qadr",
+        "text": "Quran 97:3"
       },
       {
         "page": "calendar",
         "path": "/special-day/laylat_qadr",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Laylat al-Qadr"
+        "item": "Laylat al-Qadr",
+        "text": "Quran 97:3"
       },
       {
         "page": "ramadan",
         "section": "Countdown to Ramadan",
-        "sectionBn": "রমজানের কাউন্টডাউন"
+        "sectionBn": "রমজানের কাউন্টডাউন",
+        "text": "Quran 97:3"
       },
       {
         "page": "ramadan",
         "section": "The last ten nights",
-        "sectionBn": "শেষ দশ রাত"
+        "sectionBn": "শেষ দশ রাত",
+        "text": "Quran 97:3"
       },
       {
         "page": "sadaqah",
         "section": "Blessed days to give",
         "sectionBn": "দানের বরকতময় দিন",
-        "item": "Laylat al-Qadr: a night better than 1,000 months"
+        "item": "Laylat al-Qadr: a night better than 1,000 months",
+        "text": "Quran 97:3"
       }
     ],
     "files": [
@@ -3660,14 +3998,16 @@
         "path": "/special-day/islamic_new_year",
         "section": "About the day",
         "sectionBn": "দিনটি সম্পর্কে",
-        "item": "Islamic New Year"
+        "item": "Islamic New Year",
+        "text": "9:36"
       },
       {
         "page": "calendar",
         "path": "/special-day/islamic_new_year",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Islamic New Year"
+        "item": "Islamic New Year",
+        "text": "Quran 9:36"
       }
     ],
     "files": [
@@ -3682,14 +4022,16 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ibn al-Mundhir, al-Ijmāʿ"
       },
       {
         "page": "calendar",
         "path": "/special-day/friday",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "Ibn al-Mundhir, al-Ijmāʿ"
       }
     ],
     "files": [
@@ -3702,7 +4044,8 @@
         "page": "sadaqah",
         "section": "Blessed days to give",
         "sectionBn": "দানের বরকতময় দিন",
-        "item": "It's Jumu'ah: a blessed day to give"
+        "item": "It's Jumu'ah: a blessed day to give",
+        "text": "Zād al-Maʿād"
       }
     ],
     "files": [
@@ -3716,7 +4059,8 @@
         "path": "/special-day/shab_e_barat",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Laylat al-Barā'ah"
+        "item": "Laylat al-Barā'ah",
+        "text": "Laṭā'if al-Ma'ārif"
       }
     ],
     "files": [
@@ -3728,7 +4072,8 @@
       {
         "page": "rayhanah",
         "section": "Adhkar garden (duʿā you can recite now)",
-        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)"
+        "sectionBn": "যিকিরের বাগান (এখন পড়ার দুআ)",
+        "text": "Mālikī school and Ibn Taymiyyah"
       }
     ],
     "files": [
@@ -3742,18 +4087,21 @@
         "path": "/special-day/friday",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Friday (Jumu'ah)"
+        "item": "Friday (Jumu'ah)",
+        "text": "al-Mustadrak 2/399"
       },
       {
         "page": "home",
         "section": "Special day card (Friday hour, Sūrat al-Kahf)",
-        "sectionBn": "বিশেষ দিনের কার্ড (জুমার সময়, সূরা কাহফ)"
+        "sectionBn": "বিশেষ দিনের কার্ড (জুমার সময়, সূরা কাহফ)",
+        "text": "Ṣaḥīḥ at-Targhīb 736"
       },
       {
         "page": "salat",
         "section": "After each prayer: “Read now”",
         "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
-        "item": "Al-Kahf"
+        "item": "Al-Kahf",
+        "text": "Ṣaḥīḥ at-Targhīb 736"
       }
     ],
     "files": [
@@ -3767,7 +4115,8 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Jāmiʿ al-Tirmidhī 1905"
       }
     ],
     "files": [
@@ -3780,7 +4129,8 @@
         "page": "duas",
         "section": "Duʿā by situation",
         "sectionBn": "পরিস্থিতি অনুযায়ী দুআ",
-        "item": "Illness"
+        "item": "Illness",
+        "text": "Illness"
       }
     ],
     "files": [
@@ -3793,7 +4143,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Keep my heart firm after guidance"
+        "item": "Keep my heart firm after guidance",
+        "text": "Tirmidhī 2140"
       }
     ],
     "files": [
@@ -3806,13 +4157,15 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Al-Mulk"
+        "item": "Al-Mulk",
+        "text": "Tirmidhī 2891"
       },
       {
         "page": "salat",
         "section": "After each prayer: “Read now”",
         "sectionBn": "প্রতি নামাযের পর: “এখন পড়ুন”",
-        "item": "Al-Mulk"
+        "item": "Al-Mulk",
+        "text": "Jāmiʿ at-Tirmidhī 2891"
       }
     ],
     "files": [
@@ -3827,7 +4180,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "As-Sajdah"
+        "item": "As-Sajdah",
+        "text": "Tirmidhī 2892"
       }
     ],
     "files": [
@@ -3839,7 +4193,8 @@
       {
         "page": "quran",
         "section": "Virtue footer",
-        "sectionBn": "ফযীলতের নোট"
+        "sectionBn": "ফযীলতের নোট",
+        "text": "Tirmidhi 2910"
       }
     ],
     "files": [
@@ -3852,7 +4207,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Last three of al-Ḥashr"
+        "item": "Last three of al-Ḥashr",
+        "text": "Tirmidhī 2922"
       }
     ],
     "files": [
@@ -3864,13 +4220,15 @@
       {
         "page": "zikr",
         "section": "Counter: “Full text & reference” card",
-        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড"
+        "sectionBn": "কাউন্টার: “পূর্ণ পাঠ ও রেফারেন্স” কার্ড",
+        "text": "Jāmiʿ al-Tirmidhī 3383"
       },
       {
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "La ilaha illallah"
+        "item": "La ilaha illallah",
+        "text": "Tirmidhī 3383"
       }
     ],
     "files": [
@@ -3884,7 +4242,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Bismillahilladhi la yadurru"
+        "item": "Bismillahilladhi la yadurru",
+        "text": "Tirmidhī 3388"
       }
     ],
     "files": [
@@ -3896,7 +4255,8 @@
       {
         "page": "adhkar",
         "section": "Adhkar list",
-        "sectionBn": "যিকিরের তালিকা"
+        "sectionBn": "যিকিরের তালিকা",
+        "text": "Jāmiʿ al-Tirmidhī 3391"
       }
     ],
     "files": [
@@ -3909,7 +4269,8 @@
         "page": "quran",
         "section": "Suggested sūrahs, āyahs and Quranic duʿās",
         "sectionBn": "প্রস্তাবিত সূরা, আয়াত ও কুরআনের দুআ",
-        "item": "Yūnus in the darkness — lā ilāha illā anta"
+        "item": "Yūnus in the darkness — lā ilāha illā anta",
+        "text": "Tirmidhī 3505"
       }
     ],
     "files": [
@@ -3921,17 +4282,20 @@
       {
         "page": "asma",
         "section": "Page notes",
-        "sectionBn": "পাতার নোট"
+        "sectionBn": "পাতার নোট",
+        "text": "Jami' at-Tirmidhi 3507"
       },
       {
         "page": "asma",
         "section": "Source note",
-        "sectionBn": "সূত্রের নোট"
+        "sectionBn": "সূত্রের নোট",
+        "text": "Jami' at-Tirmidhi 3507"
       },
       {
         "page": "ramadanCalendar",
         "section": "Page notes",
-        "sectionBn": "পাতার নোট"
+        "sectionBn": "পাতার নোট",
+        "text": "Jami' at-Tirmidhi 3507"
       }
     ],
     "files": [
@@ -3946,24 +4310,28 @@
         "path": "/special-day/laylat_qadr",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Laylat al-Qadr"
+        "item": "Laylat al-Qadr",
+        "text": "Sunan al-Tirmidhī 3513"
       },
       {
         "page": "calendar",
         "path": "/special-day/laylat_qadr",
         "section": "What to do",
         "sectionBn": "যা করবেন",
-        "item": "Laylat al-Qadr"
+        "item": "Laylat al-Qadr",
+        "text": "Tirmidhī 3513"
       },
       {
         "page": "ramadan",
         "section": "The last ten nights",
-        "sectionBn": "শেষ দশ রাত"
+        "sectionBn": "শেষ দশ রাত",
+        "text": "Tirmidhī 3513"
       },
       {
         "page": "ramadanCalendar",
         "section": "Ramadan duʿās",
-        "sectionBn": "রমজানের দুআ"
+        "sectionBn": "রমজানের দুআ",
+        "text": "Tirmidhi 3513"
       }
     ],
     "files": [
@@ -3979,7 +4347,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Ya Hayyu Ya Qayyum"
+        "item": "Ya Hayyu Ya Qayyum",
+        "text": "Tirmidhī 3524"
       }
     ],
     "files": [
@@ -3992,7 +4361,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Ya Dhal-Jalali wal-Ikram"
+        "item": "Ya Dhal-Jalali wal-Ikram",
+        "text": "Tirmidhī 3525"
       }
     ],
     "files": [
@@ -4005,7 +4375,8 @@
         "page": "adhkar",
         "section": "Adhkar list",
         "sectionBn": "যিকিরের তালিকা",
-        "item": "The Three Quls"
+        "item": "The Three Quls",
+        "text": "Jāmiʿ al-Tirmidhī 3575"
       }
     ],
     "files": [
@@ -4018,7 +4389,8 @@
         "page": "zikr",
         "section": "Zikr library",
         "sectionBn": "যিকির লাইব্রেরি",
-        "item": "Astaghfirullahal-Azim alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh"
+        "item": "Astaghfirullahal-Azim alladhi la ilaha illa huwal-Hayyul-Qayyum wa atubu ilayh",
+        "text": "Tirmidhī 3577"
       }
     ],
     "files": [
@@ -4032,7 +4404,8 @@
         "path": "/special-day/arafah",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Day of Arafah"
+        "item": "Day of Arafah",
+        "text": "Tirmidhī 3585"
       }
     ],
     "files": [
@@ -4052,7 +4425,8 @@
       {
         "page": "salat",
         "section": "Sunnah prayers guide",
-        "sectionBn": "সুন্নত নামাযের নির্দেশিকা"
+        "sectionBn": "সুন্নত নামাযের নির্দেশিকা",
+        "text": "Jāmiʿ at-Tirmidhī 430"
       }
     ],
     "files": [
@@ -4064,12 +4438,14 @@
       {
         "page": "musafir",
         "section": "Musafir guide",
-        "sectionBn": "মুসাফির নির্দেশিকা"
+        "sectionBn": "মুসাফির নির্দেশিকা",
+        "text": "Jāmiʿ al-Tirmidhī 553"
       },
       {
         "page": "salat",
         "section": "Prayer card: join two prayers (jamʿ)",
-        "sectionBn": "নামাযের কার্ড: দুই নামায একসাথে (জমা)"
+        "sectionBn": "নামাযের কার্ড: দুই নামায একসাথে (জমা)",
+        "text": "Jāmiʿ al-Tirmidhī 553"
       }
     ],
     "files": [
@@ -4083,19 +4459,22 @@
       {
         "page": "prayerTimes",
         "section": "Day timeline cards",
-        "sectionBn": "দিনের টাইমলাইন কার্ড"
+        "sectionBn": "দিনের টাইমলাইন কার্ড",
+        "text": "Tirmidhi 586"
       },
       {
         "page": "prayerTimes",
         "section": "Sources (bottom of the page)",
         "sectionBn": "সূত্র (পাতার নিচে)",
-        "item": "Ishraq/Duha"
+        "item": "Ishraq/Duha",
+        "text": "Tirmidhī 586"
       },
       {
         "page": "salat",
         "section": "Nafl prayers list",
         "sectionBn": "নফল নামাযের তালিকা",
-        "item": "Ishraq"
+        "item": "Ishraq",
+        "text": "Tirmidhī 586"
       }
     ],
     "files": [
@@ -4111,7 +4490,8 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Day of Doubt (30 Sha'bān)"
+        "item": "Day of Doubt (30 Sha'bān)",
+        "text": "Jāmiʿ al-Tirmidhī 686"
       }
     ],
     "files": [
@@ -4124,7 +4504,8 @@
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Singling out Saturday"
+        "item": "Singling out Saturday",
+        "text": "Jāmiʿ al-Tirmidhī 744"
       }
     ],
     "files": [
@@ -4139,13 +4520,15 @@
         "path": "/special-day/fast_mon_thu",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "Sunnah Fast Day"
+        "item": "Sunnah Fast Day",
+        "text": "Sunan al-Tirmidhī 747"
       },
       {
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "Every Monday and Thursday"
+        "item": "Every Monday and Thursday",
+        "text": "Jāmiʿ al-Tirmidhī 747"
       }
     ],
     "files": [
@@ -4161,25 +4544,29 @@
         "path": "/special-day/dhul_hijjah_first10",
         "section": "References",
         "sectionBn": "রেফারেন্স",
-        "item": "First 10 Days of Dhul Ḥijjah"
+        "item": "First 10 Days of Dhul Ḥijjah",
+        "text": "Jāmiʿ al-Tirmidhī 757"
       },
       {
         "page": "fasting",
         "section": "Fasting guide",
         "sectionBn": "রোজার নির্দেশিকা",
-        "item": "1–9 Dhul Ḥijjah"
+        "item": "1–9 Dhul Ḥijjah",
+        "text": "Jāmiʿ al-Tirmidhī 757"
       },
       {
         "page": "sadaqah",
         "section": "Blessed days to give",
         "sectionBn": "দানের বরকতময় দিন",
-        "item": "Day of Arafah: the best day of the year"
+        "item": "Day of Arafah: the best day of the year",
+        "text": "Jāmiʿ al-Tirmidhī 757"
       },
       {
         "page": "sadaqah",
         "section": "Blessed days to give",
         "sectionBn": "দানের বরকতময় দিন",
-        "item": "The first 10 days of Dhul Ḥijjah: give generously"
+        "item": "The first 10 days of Dhul Ḥijjah: give generously",
+        "text": "Jāmiʿ al-Tirmidhī 757"
       }
     ],
     "files": [
@@ -4195,13 +4582,15 @@
         "page": "ramadan",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "The three ʿashras"
+        "item": "The three ʿashras",
+        "text": "hadithanswers.com/the-famous-hadith"
       },
       {
         "page": "ramadanAnalytics",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "The three ʿashras"
+        "item": "The three ʿashras",
+        "text": "hadithanswers.com/the-famous-hadith"
       }
     ],
     "files": [
@@ -4214,7 +4603,8 @@
         "page": "ramadan",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Nafl rewarded like farḍ"
+        "item": "Nafl rewarded like farḍ",
+        "text": "Nafl rewarded like farḍ"
       },
       {
         "page": "ramadan",
@@ -4225,7 +4615,8 @@
         "page": "ramadanAnalytics",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Nafl rewarded like farḍ"
+        "item": "Nafl rewarded like farḍ",
+        "text": "Nafl rewarded like farḍ"
       }
     ],
     "files": [
@@ -4240,7 +4631,8 @@
         "path": "/special-day/shab_e_barat",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Laylat al-Barā'ah"
+        "item": "Laylat al-Barā'ah",
+        "text": "Laylat al-Barā'ah"
       }
     ],
     "files": [
@@ -4260,7 +4652,8 @@
         "path": "/special-day/fast_mon_thu",
         "section": "Weak-narration explainer (“Why is this marked ḍaʿīf?”)",
         "sectionBn": "দুর্বল বর্ণনার ব্যাখ্যা (“কেন যঈফ?”)",
-        "item": "Sunnah Fast Day"
+        "item": "Sunnah Fast Day",
+        "text": "qandabenefits.com/688"
       }
     ],
     "files": [

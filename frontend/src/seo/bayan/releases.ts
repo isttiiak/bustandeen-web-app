@@ -21,6 +21,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.193.1',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Reference links point to the exact line',
+        fixed: [
+          'On the Reference map, tapping where a reference appears now opens that screen with the reference highlighted, so you see the exact line at once.',
+        ],
+      },
+      bn: {
+        title: 'রেফারেন্সের লিংক এখন সঠিক লাইনে নিয়ে যায়',
+        fixed: [
+          'রেফারেন্স ম্যাপে কোনো রেফারেন্স কোথায় আছে তাতে ট্যাপ করলে এখন সেই স্ক্রিন খুলে রেফারেন্সটি হাইলাইট করে দেখায়, তাই সঠিক লাইনটি সাথে সাথে চোখে পড়ে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.193.0',
     date: '2026-11-28',
     text: {

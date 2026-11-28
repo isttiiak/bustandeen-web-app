@@ -11,7 +11,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { REFERENCES } from './registry.js';
-import { REF_PAGES, type RefPage } from './pages.js';
+import { REF_PAGES, encodeTextFragment, placeHref, type RefPage } from './pages.js';
 import { buildUsage, citationIds, scanRepo } from './referenceScan.js';
 import { referencesDocument } from './referenceExport.js';
 
@@ -120,6 +120,35 @@ describe('places in the app', () => {
         expect(p.path ?? (REF_PAGES[p.page] as RefPage).path, `${id} ${p.page}`).toMatch(/^\//);
       }
     }
+  });
+});
+
+describe('highlight links', () => {
+  it('encodes a text fragment, including the characters the directive reserves', () => {
+    expect(encodeTextFragment('Quran 2:148')).toBe('Quran%202%3A148');
+    expect(encodeTextFragment('al-Bukhārī 1166')).toBe('al%2DBukh%C4%81r%C4%AB%201166');
+    expect(encodeTextFragment('Sunan Abū Dāwūd 1067, 567')).toContain('%2C');
+  });
+
+  it('opens the screen with the citation highlighted', () => {
+    const friends = usage['quran:2:148']!.places.find((p) => p.section === 'Page heading')!;
+    expect(placeHref(friends)).toBe('/friends#:~:text=Quran%202%3A148');
+    const friday = usage['abudawud:1067']!.places[0]!;
+    expect(placeHref(friday)).toMatch(/^\/special-day\/friday#:~:text=Sunan%20Ab/);
+  });
+
+  it('adds the Bangla form as a second directive, and drops a duplicate', () => {
+    const p = { page: 'friends' as const, section: 's', sectionBn: 's', text: 'Quran 2:148' };
+    expect(placeHref(p, 'কুরআন ২:১৪৮')).toBe(
+      `/friends#:~:text=${encodeURIComponent('কুরআন ২:১৪৮')}&text=Quran%202%3A148`
+    );
+    expect(placeHref(p, 'Quran 2:148')).toBe('/friends#:~:text=Quran%202%3A148');
+  });
+
+  it('gives nearly every place something to highlight', () => {
+    const places = Object.values(usage).flatMap((u) => u.places);
+    const withText = places.filter((p) => p.text).length;
+    expect(withText / places.length).toBeGreaterThan(0.95);
   });
 });
 

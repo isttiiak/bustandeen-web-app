@@ -22,6 +22,8 @@ export interface Hit {
   line: number;
   /** For locales/en/common.json: the dotted key the citation sits in. */
   key?: string;
+  /** The citation as a reader sees it (none for a bare link or a literal match). */
+  text?: string;
   /** Inside a code comment: explains the code, not shown to anyone. */
   comment?: boolean;
   /** The card or item title nearest above the citation. */
@@ -70,34 +72,52 @@ function quranId(s: string, a?: string, b?: string): string | null {
   return b ? `quran:${surah}:${a}-${b}` : `quran:${surah}:${a}`;
 }
 
-/** Every citation id written on one line of source. */
-export function citationIds(line: string): string[] {
-  const ids: string[] = [];
+/** One citation on a line: its id, and the text a reader sees (none for a bare link). */
+interface Citation {
+  id: string;
+  text?: string;
+}
+
+/** Every citation written on one line of source, with its visible text. */
+function citations(line: string): Citation[] {
+  const out: Citation[] = [];
   let rest = line;
   rest = rest.replace(SUNNAH_URL, (_m, coll: string, n?: string, b?: string, h?: string) => {
-    ids.push(n ? `${coll}:${n}` : `${coll}/${b}/${h}`);
+    out.push({ id: n ? `${coll}:${n}` : `${coll}/${b}/${h}` });
     return ' ';
   });
   rest = rest.replace(QURAN_URL, (_m, s: string, a?: string, b?: string) => {
     const id = quranId(s, a, b);
-    if (id) ids.push(id);
+    if (id) out.push({ id });
     return ' ';
   });
   for (const [rx, coll] of HADITH_RX) {
-    rest = rest.replace(rx, (_m, n1: string, n2?: string) => {
-      ids.push(`${coll}:${n1}`);
-      if (n2) ids.push(`${coll}:${n2}`);
+    rest = rest.replace(rx, (m: string, n1: string, n2?: string) => {
+      const text = m.trim();
+      out.push({ id: `${coll}:${n1}`, text });
+      if (n2) out.push({ id: `${coll}:${n2}`, text });
       return ' ';
     });
   }
   for (const rx of [QURAN_TEXT, QURAN_PAREN, QURAN_AFTER_DOT]) {
-    rest = rest.replace(rx, (_m, s: string, a: string, b?: string) => {
+    rest = rest.replace(rx, (m: string, s: string, a: string, b?: string) => {
       const id = quranId(s, a, b);
-      if (id) ids.push(id);
+      // "(2:37)" and "· 2:37" show the numbers only; "Quran 2:37" shows it all.
+      if (id) out.push({ id, text: m.replace(/^[(·\s]+|[)\s]+$/g, '') });
       return ' ';
     });
   }
-  return ids;
+  return out;
+}
+
+/** Literal match text a reader would see, not a code identifier. */
+function isShownWords(lit: string): boolean {
+  return !/[_=(){}:]|^(const|export) |\/answers\/|\/fatwa\//.test(lit) && /[a-z]/.test(lit);
+}
+
+/** Every citation id written on one line of source. */
+export function citationIds(line: string): string[] {
+  return citations(line).map((c) => c.id);
 }
 
 const SKIP =
@@ -125,12 +145,13 @@ function localeHits(path: string, repo: string): Hit[] {
       // The reference map's own UI strings (search examples) are not citations.
       if (key.startsWith('references.')) return;
       const day = /^specialDays\.([^.]+)\./.exec(key)?.[1];
-      for (const id of citationIds(node)) {
+      for (const { id, text } of citations(node)) {
         hits.push({
           id,
           file,
           line: 0,
           key,
+          ...(text ? { text } : {}),
           ...(day && days[day]?.name ? { item: days[day].name, path: `/special-day/${day}` } : {}),
         });
       }
@@ -231,14 +252,26 @@ export function scanRepo(repo: string): Hit[] {
       const comment = inBlock || startsBlock || t.startsWith('//') || t.startsWith('*');
       if (startsBlock && !t.includes('*/')) inBlock = true;
       else if (inBlock && t.includes('*/')) inBlock = false;
-      const ids = [
-        ...citationIds(line),
-        ...literals.filter(([lit]) => line.includes(lit)).map(([, id]) => id),
+      const found: Citation[] = [
+        ...citations(line),
+        ...literals
+          .filter(([lit]) => line.includes(lit))
+          // A literal that reads as words ("tanzil.net", "Umm al-Qura calendar") is
+          // what the screen shows; a code name (QASR_DISTANCE_KM) is not.
+          .map(([lit, id]) => ({ id, ...(isShownWords(lit) ? { text: lit } : {}) })),
       ];
-      if (ids.length === 0) return;
+      if (found.length === 0) return;
       const hints = comment ? {} : placeHints(file, lines, i);
-      for (const id of ids)
-        hits.push({ id, file, line: i + 1, ...(comment ? { comment } : {}), ...hints });
+      for (const { id, text } of found) {
+        hits.push({
+          id,
+          file,
+          line: i + 1,
+          ...(text ? { text } : {}),
+          ...(comment ? { comment } : {}),
+          ...hints,
+        });
+      }
     });
   }
   hits.push(...localeHits(join(repo, 'frontend/src/locales/en/common.json'), repo));
@@ -270,6 +303,13 @@ export function buildUsage(hits: Hit[]): { usage: UsageMap; unknown: Hit[]; unpa
   const unknown: Hit[] = [];
   const unpaged = new Set<string>();
   const notes: Record<string, number> = {};
+  // The visible citation per reference and file: a link line (href) borrows
+  // the text written next to it, such as the label under the same link.
+  const shownText = new Map<string, string>();
+  for (const h of hits) {
+    const key = `${h.id}|${h.file}`;
+    if (h.text && !h.comment && !shownText.has(key)) shownText.set(key, h.text);
+  }
   for (const h of hits) {
     const id = resolveId(h.id);
     if (!id) {
@@ -296,7 +336,11 @@ export function buildUsage(hits: Hit[]): { usage: UsageMap; unknown: Hit[]; unpa
         sectionBn: rule.sectionBn,
         ...(h.item && !rule.noItem ? { item: h.item } : {}),
       };
-      if (!u.places.some((p) => placeKey(p) === placeKey(place))) u.places.push(place);
+      // Highlight the citation; failing that, the card's own title.
+      const text = h.text ?? shownText.get(`${h.id}|${h.file}`) ?? place.item;
+      const same = u.places.find((p) => placeKey(p) === placeKey(place));
+      if (!same) u.places.push({ ...place, ...(text ? { text } : {}) });
+      else if (!same.text && text) same.text = text;
     }
   }
   const sorted: UsageMap = {};

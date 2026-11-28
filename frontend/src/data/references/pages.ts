@@ -91,6 +91,8 @@ export interface RefPlace {
   sectionBn: string;
   /** The card or item the citation sits in, as the app names it. */
   item?: string;
+  /** The citation as written there ("Quran 2:148"): the link highlights it. */
+  text?: string;
 }
 
 interface Rule {
@@ -392,4 +394,29 @@ export function ruleForFile(file: string): Rule | null {
 export function ruleForLocaleKey(key: string): Rule | null {
   for (const [rx, rule] of LOCALE_RULES) if (rx.test(key)) return rule;
   return null;
+}
+
+/** Percent-encode text for a URL text fragment (`#:~:text=`): `-`, `,` and `&`
+ * have their own meaning inside the directive, so they are encoded too. */
+export function encodeTextFragment(text: string): string {
+  return encodeURIComponent(text.replace(/\s+/g, ' ').trim()).replace(/-/g, '%2D');
+}
+
+/**
+ * The link for one place: the screen (or the deeper special-day page), with a
+ * text fragment so the browser scrolls to the citation and highlights it, as
+ * `https://bustandeen.com/friends#:~:text=Quran%202%3A148` does. Text
+ * fragments work on a full page load, so render it as a plain <a>, not a
+ * router Link. `shownBn` is the Bangla form when the page is in Bangla; the
+ * English form is kept as a second directive, and the browser highlights the
+ * ones it finds.
+ */
+export function placeHref(place: RefPlace, shownBn?: string): string | undefined {
+  const base = place.path ?? (REF_PAGES[place.page] as RefPage).path;
+  if (!base) return undefined;
+  if (!place.text) return base;
+  const texts = [shownBn, place.text].filter(
+    (t, i, all): t is string => !!t && all.indexOf(t) === i
+  );
+  return `${base}#:~:${texts.map((t) => `text=${encodeTextFragment(t)}`).join('&')}`;
 }
