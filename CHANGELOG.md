@@ -2,6 +2,23 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.194.1 - A fuller privacy page (WEB-01) - 2026-11-28
+
+Text-only: no behaviour change. Answers the privacy review (`C2`, items A1 to A12) with the parts that are true today.
+
+### Added
+
+- **Privacy:** new sections "Your worship records are sensitive" (A1 acknowledgement; the sign-up consent step is WEB-02), "Where your data lives" (Singapore, transfers outside the user's country, providers' Standard Contractual Clauses), "Your rights" (access, correct, delete, change choices, complain to a data protection authority) and "Age" (13 and over). "What we never do" adds no advertising profiles and nothing sent to or used to train AI; "How it's protected" adds the separate, logged admin sign-in; "Changes" says how users are told.
+- **Privacy, who handles your data:** a "Privacy policy" link per service that publishes one (opens in a new tab, `rel="noopener noreferrer"`). Rows with no policy we could find (sunnah.com, IRD Foundation, flagcdn, and the alquran.cloud / Islamic Network / mp3quran row) have no link rather than a guessed one.
+
+### Changed
+
+- **Terms:** accounts are for people aged 13 and over (was "under 13 with a parent's permission"); guests and the open tools stay available to everyone; an account found to belong to someone under 13 is closed and its data deleted.
+
+### Not claimed yet (waiting on the owner)
+
+Data protection agreements with each provider, Atlas encryption at rest and backup retention (so no "backups within N days"), a key-rotation cadence, and the 24-hour incident-response promise. Each is one line to add once true.
+
 ## v5.194.0 - Friend nudges, quick dhikr confirmation, honest analytics - 2026-11-28
 
 A batch from daily use.

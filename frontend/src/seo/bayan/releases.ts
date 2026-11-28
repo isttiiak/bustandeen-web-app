@@ -21,6 +21,32 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.194.1',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'A fuller privacy page',
+        added: [
+          'The Privacy page now says where your data lives, that your worship records are sensitive and are never used for ads or sent to any AI service, what rights you have, and how we tell you about changes.',
+          'Each service in the Privacy list now links to its own privacy policy, where it has one.',
+        ],
+        fixed: [
+          'Bustandeen accounts are now for people aged 13 and over. Guests and the open tools stay available to everyone. The Terms and the Privacy page say so.',
+        ],
+      },
+      bn: {
+        title: 'আরও পূর্ণাঙ্গ গোপনীয়তা পাতা',
+        added: [
+          'গোপনীয়তা পাতায় এখন লেখা আছে আপনার ডেটা কোথায় থাকে, আপনার ইবাদতের রেকর্ড সংবেদনশীল এবং তা কখনো বিজ্ঞাপনে ব্যবহার হয় না বা কোনো এআই সেবায় যায় না, আপনার কী কী অধিকার আছে, এবং পরিবর্তনের কথা আমরা কীভাবে জানাই।',
+          'গোপনীয়তা তালিকার প্রতিটি সেবার পাশে এখন তার নিজের গোপনীয়তা নীতির লিংক আছে, যেখানে তা আছে।',
+        ],
+        fixed: [
+          'Bustandeen অ্যাকাউন্ট এখন ১৩ বছর বা তার বেশি বয়সীদের জন্য। অতিথি হিসেবে ব্যবহার এবং খোলা টুলগুলো সবার জন্য উপলব্ধ থাকে। শর্তাবলি ও গোপনীয়তা পাতায় এটি লেখা আছে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.194.0',
     date: '2026-11-28',
     text: {

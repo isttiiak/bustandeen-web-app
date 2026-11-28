@@ -1503,6 +1503,8 @@
       "intro": "Every service that receives anything from you, and exactly what it receives.",
       "colWhy": "What for",
       "colReceives": "What it receives",
+      "policyLink": "Privacy policy",
+      "policyNewTab": "(opens in a new tab)",
       "rows": {
         "vercel": {
           "name": "Vercel",
@@ -1566,11 +1568,22 @@
         }
       }
     },
+    "whereData": {
+      "title": "Where your data lives",
+      "body0": "Our server runs in Singapore (Vercel) and our database is in Singapore (MongoDB Atlas, on AWS).",
+      "body1": "If you live somewhere else, your data is handled outside your country. We follow the data protection laws that apply where our users live, and our providers publish their own safeguards for international transfers, such as the European Union's Standard Contractual Clauses. Each provider's privacy policy is linked in the table above."
+    },
+    "sensitive": {
+      "title": "Your worship records are sensitive",
+      "body0": "Your worship records show your religion, which many privacy laws treat as sensitive information. We protect them that way: they are used only to run Bustandeen for you and, if you allow it, to show your friends what you chose to share. They are never used for ads, never sold and never sent to any AI service."
+    },
     "neverDo": {
       "title": "What we never do",
       "body0": "Sell, share, or monetise your data. There are no ads, no trackers beyond Google Analytics, and no affiliate links.",
       "body1": "Store passwords. Sign-in is handled entirely by Firebase (Google).",
-      "body2": "Show your worship details to anyone, or turn your dīn into a competition where a quiet day is shamed. Noor is only ever encouragement."
+      "body2": "Show your worship details to anyone, or turn your dīn into a competition where a quiet day is shamed. Noor is only ever encouragement.",
+      "body3": "Build advertising profiles from your data.",
+      "body4": "Send what you record to any AI service, or use it to train AI."
     },
     "yourControl": {
       "title": "Your control",
@@ -1579,16 +1592,28 @@
       "body2": "Delete your entire account from your Profile page. Everything you logged is removed, and your login with it. Messages you sent us (feedback and zikr requests) are kept as anonymous notes without your name or email. Sadaqah donation records are kept for accountability, with the details you entered on the form, but no longer linked to your account; the network address saved with a donation is removed. Anyone who had added you as their partner no longer points to you. Rate-limit records keep your account ID until they expire after 30 days, and a log of admin actions keeps only that ID.",
       "body3": "Hide from friends or keep deeds secret, remove your saved height and weight, or use discreet mode, each with a tap."
     },
+    "rights": {
+      "title": "Your rights",
+      "body0": "You can see and download your data (Settings, export), correct it (Profile), delete any part of it or all of it, and change your choices at any time, for example analytics in Settings.",
+      "body1": "If you think we have mishandled your data, you can complain to the data protection authority where you live, and you do not need to contact us first."
+    },
     "protected": {
       "title": "How it's protected",
       "body0": "All data in transit is encrypted (HTTPS/TLS).",
       "body1": "Access is restricted by Firebase Auth tokens, so only your own requests can read or write your data.",
       "body2": "Rayhanah notes and body stats are encrypted at rest with AES-256-GCM before they are stored.",
-      "body3": "The server runs on Vercel's infrastructure (SOC 2 Type II compliant), with the database on MongoDB Atlas."
+      "body3": "The server runs on Vercel's infrastructure (SOC 2 Type II compliant), with the database on MongoDB Atlas.",
+      "body4": "Administrative tools need a separate admin sign-in, and every admin action is logged."
+    },
+    "children": {
+      "title": "Age",
+      "body0": "Bustandeen accounts are for people aged 13 and over. Guests and the open tools stay available to everyone. If we learn that an account belongs to someone under 13, we close it and delete its data."
     },
     "changes": {
       "title": "Changes to this page",
-      "body0": "We update this page whenever a feature changes what we collect, and refresh the date above. In November 2026 we removed the Naseeh AI companion, so nothing you record is sent to any AI service. This version replaces the one from July 2025, written before Rayhanah encryption, session history and hifz existed."
+      "body0": "We update this page whenever a feature changes what we collect, and refresh the date above. In November 2026 we removed the Naseeh AI companion, so nothing you record is sent to any AI service. This version replaces the one from July 2025, written before Rayhanah encryption, session history and hifz existed.",
+      "body1": "When a change matters for you, we tell you with a notice on the website and in the app, and the date above changes.",
+      "body2": "This update (28 November 2026) adds where your data lives, your rights, the age rule and a link to each service's privacy policy."
     }
   },
   "profile": {
@@ -4231,7 +4256,7 @@
       "title": "Your account",
       "body0": "Give accurate details when you sign up, and keep your password private. You are responsible for what happens in your account.",
       "body1": "One account is for one person. Please do not share it or sign in as someone else.",
-      "body2": "If you are under 13, please use Bustandeen with a parent's or guardian's permission.",
+      "body2": "Bustandeen accounts are for people aged 13 and over. Guests and the open tools stay available to everyone. If we learn that an account belongs to someone under 13, we close it and delete its data.",
       "body3": "Tell us at ansar@bustandeen.com if you think someone else has used your account."
     },
     "use": {
