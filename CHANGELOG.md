@@ -38,6 +38,13 @@ Owner's ruling of 2026-11-28: Jumu'ah is not obligatory for women. A sister pray
   - **Sisters:** pray Ẓuhr at home; Jumu'ah is not obligatory, and the home is better (Abū Dāwūd 1067, 567). Or attend Jumu'ah if you wish: women heard the Prophet's ﷺ khutbah (Muslim 873a), and prayed with the imam it replaces Ẓuhr (Ibn al-Mundhir, al-Ijmāʿ 52-53, quoted by IslamQA 73339 and listed with the grade "Reference", as the project does for sources outside quran.com and sunnah.com). If you go, dress modestly and fully covered, without perfume (Quran 24:31, Muslim 443b).
   - Eleven references added (also Bukhārī 879, 900). The short description no longer tells everyone to attend Jumu'ah, and the significance text adds that it is not obligatory for women. English and Bangla.
 
+### Security
+
+- **The dev and test sign-in now accepts only a plain string user ID.** With `DEV_AUTH_BYPASS` the token is read without verification, and its `uid` went into `req.user` unchecked. A token whose `uid` was an object such as `{"$ne": null}` reached every MongoDB query as an operator ("any user"). Now `requireAuth` and `/api/auth/verify` refuse anything but a non-empty string (401), and `uid` is set last so nothing else in the token can replace it.
+  - Production verifies tokens with Firebase and never allows the bypass, so it was not exposed there.
+  - This is the source CodeQL traced into its `js/sql-injection` alerts, including the new #370 on this PR.
+  - Test `tests/devAuthUid.e2e.test.js`: five of its cases fail on the old code.
+
 ## v5.190.83 - CodeQL triage: two real fixes - 2026-11-27
 
 CodeQL was switched on in audit P3-4 (2026-11-25) and left 355 alerts open. All were triaged: two are real and fixed here; the rest are false positives, tests, or a design file that is not deployed (the full list and reasons are in the PR).

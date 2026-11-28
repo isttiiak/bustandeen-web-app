@@ -48,7 +48,8 @@ export const verifyHandler = async (req: Request, res: Response): Promise<void> 
       }
     } else if (devAuthBypassAllowed()) {
       const payload = decodeUnverifiedJwt(idToken);
-      if (!payload?.['uid']) {
+      // A plain, non-empty string only (see requireAuth's dev bypass).
+      if (typeof payload?.['uid'] !== 'string' || !payload['uid']) {
         res.status(401).json({ ok: false, error: 'Invalid token' });
         return;
       }
