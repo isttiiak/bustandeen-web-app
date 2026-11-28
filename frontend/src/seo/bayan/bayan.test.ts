@@ -54,6 +54,7 @@ describe('Bayan content', () => {
     for (const r of RELEASES) {
       expect(Boolean(r.text.en.added) === Boolean(r.text.bn.added)).toBe(true);
       expect(Boolean(r.text.en.fixed) === Boolean(r.text.bn.fixed)).toBe(true);
+      expect(Boolean(r.text.en.removed) === Boolean(r.text.bn.removed)).toBe(true);
     }
     expect(CALC_ROWS.bn).toHaveLength(CALC_ROWS.en.length);
     expect(CREDITS.bn).toHaveLength(CREDITS.en.length);

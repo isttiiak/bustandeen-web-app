@@ -2,7 +2,7 @@
 //
 // GA only ever sees a REDACTED location:
 //   - private areas (cycle, friend invites, sadaqah flows, admin, auth links,
-//     Musafir, Naseeh, personal settings/profile) are never reported. No
+//     Musafir, personal settings/profile) are never reported. No
 //     page_view is sent, and GA's automatic events (e.g. scroll) that still
 //     fire there carry the placeholder "/private" instead of the real URL;
 //   - dynamic app segments are collapsed to the route pattern

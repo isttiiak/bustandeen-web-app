@@ -1,5 +1,4 @@
 import { useTranslation } from 'react-i18next';
-import ComebackNudge from '../components/ComebackNudge.js';
 import ZoneMismatchCard from '../components/home/ZoneMismatchCard.js';
 import TodayHighlights from '../components/home/TodayHighlights.js';
 import TodayTimeline from '../components/home/TodayTimeline.js';
@@ -51,11 +50,6 @@ export default function Home() {
     <div className="min-h-screen bg-brand-void">
       <h1 className="sr-only">{t('home.srTitle', 'Bustandeen, Islamic Productivity')}</h1>
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-        {/* Welcome back after a quiet stretch, the gentlest possible restart */}
-        <div className="mb-5 empty:mb-0">
-          <ComebackNudge />
-        </div>
-
         <HomeSetupCard setupMode={setupMode} dismissSetup={dismissSetup} />
 
         <HomeCycleBanners

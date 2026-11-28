@@ -10,7 +10,6 @@ import {
   LockClosedIcon,
   QuestionMarkCircleIcon,
   SignalIcon,
-  SparklesIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
 import { translateReference } from '../utils/localeReference.js';
@@ -37,7 +36,6 @@ const FEATURE_KEYS: { Icon: (p: IconProps) => React.ReactNode; key: string }[] =
   { Icon: BookOpenIcon, key: 'quranHabit' },
   { Icon: AcademicCapIcon, key: 'hifzTracker' },
   { Icon: FlowerIcon, key: 'rayhanah' },
-  { Icon: SparklesIcon, key: 'naseeh' },
   { Icon: UsersIcon, key: 'friends' },
 ];
 

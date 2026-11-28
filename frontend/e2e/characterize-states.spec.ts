@@ -1641,12 +1641,6 @@ test('settings: Musafir mode on from Settings', async ({ page }) => {
   await expectBaseline(page, 'settings.musafir-on');
 });
 
-test('settings: Naseeh on shows the key box', async ({ page }) => {
-  await open(page, { as: 'brother' }, '/settings');
-  await toggle(page, /Enable Naseeh/);
-  await expectBaseline(page, 'settings.naseeh-on');
-});
-
 test('settings: the saved location is cleared', async ({ page }) => {
   await open(page, { as: 'brother' }, '/settings');
   await press(page, 'Clear');

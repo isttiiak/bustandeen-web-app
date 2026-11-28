@@ -2125,14 +2125,6 @@
       "frontend/src/utils/quranMeta.ts"
     ]
   },
-  "tirmidhi:2459": {
-    "pages": [
-      "naseeh"
-    ],
-    "files": [
-      "frontend/src/utils/muhasabahCorpus.ts"
-    ]
-  },
   "tirmidhi:2891": {
     "pages": [
       "code",

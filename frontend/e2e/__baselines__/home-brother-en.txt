@@ -63,7 +63,6 @@
      <h1 class="sr-only">
       "Bustandeen - Nourish Your Deen"
      <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8">
-      <div class="mb-5 empty:mb-0">
       <section aria-labelledby="id5" class="mb-5 rounded-card border border-brand-emerald/30 bg-brand-deep shadow-elev-2 p-4" data-testid="home-setup-card">
        <div class="flex items-start gap-3">
         <svg aria-hidden="true" class="w-6 h-6 shrink-0 text-brand-emerald mt-0.5" fill="none" focusable="false" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewBox="0 0 24 24">

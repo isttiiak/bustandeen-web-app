@@ -39,7 +39,7 @@ const sizes = (dir: string): Record<string, number> =>
 
 /** Pages over the limit (none of them part of P4-1), at their length today. */
 const PAGE_CAPS: Record<string, number> = {
-  'pages/FastingTracker.tsx': 960,
+  'pages/FastingTracker.tsx': 944,
   'pages/ZikrCounter.tsx': 873,
   'pages/IslamicCalendar.tsx': 692,
   'pages/AdminZikrRequests.tsx': 672,
@@ -51,7 +51,7 @@ const PAGE_CAPS: Record<string, number> = {
 const PART_CAPS: Record<string, number> = {
   'hooks/useSalatLog.ts': 843,
   'components/calendar/DownloadSheet.tsx': 806,
-  'components/Navbar.tsx': 636,
+  'components/Navbar.tsx': 622,
   'components/QuranSettings.tsx': 623,
   'components/ZikrLibrarySection.tsx': 580,
   'components/ShareAyahModal.tsx': 523,

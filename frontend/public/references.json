@@ -130,11 +130,6 @@
       "labelBn": "সদকা",
       "path": "/sadaqah"
     },
-    "naseeh": {
-      "label": "Naseeh (weekly muḥāsabah)",
-      "labelBn": "নাসীহ (সাপ্তাহিক মুহাসাবা)",
-      "path": "/naseeh"
-    },
     "about": {
       "label": "About",
       "labelBn": "আমাদের সম্পর্কে",
@@ -3781,22 +3776,6 @@
       ],
       "files": [
         "frontend/src/utils/quranMeta.ts"
-      ]
-    },
-    {
-      "id": "tirmidhi:2459",
-      "kind": "hadith",
-      "citation": "Jāmiʿ at-Tirmidhī 2459",
-      "url": "https://sunnah.com/tirmidhi:2459",
-      "grade": "Ḍaʿīf (al-Albānī)",
-      "purpose": "Removed from the weekly muḥāsabah card (\"the wise one takes account of himself\").",
-      "desk": "corrected",
-      "deskNote": "Was labelled ḥasan (al-Albānī); al-Albānī and Darussalam grade it ḍaʿīf. Removed; only a code note remains.",
-      "pages": [
-        "naseeh"
-      ],
-      "files": [
-        "frontend/src/utils/muhasabahCorpus.ts"
       ]
     },
     {

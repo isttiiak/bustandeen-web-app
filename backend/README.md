@@ -30,7 +30,7 @@ src/
 
 ## Domains
 
-Ten route modules, each following the same routes → controllers → services layering: `auth`, `zikr`, `salat`, `fasting`, `quran`, `cycle` (Rayhanah), `social` (friends/Noor), `analytics`, `ai` (Naseeh, Groq-backed), `user`.
+Nine route modules, each following the same routes → controllers → services layering: `auth`, `zikr`, `salat`, `fasting`, `quran`, `cycle` (Rayhanah), `social` (friends/Noor), `analytics`, `user`.
 
 ## Tests
 

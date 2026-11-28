@@ -73,22 +73,14 @@ export interface IUser extends Document {
    * offline-first client calc. Fasting and salat kaza-debt history always
    * use civil midnight regardless of this setting. */
   dayStartMode: 'fajr' | 'midnight' | 'maghrib';
+  /** Retired with Naseeh (2026-11-28): always false after migration 003. Kept only so old
+   * clients and old backup files that still send it keep validating. */
   aiEnabled: boolean;
   /** Cross-device app preferences (see services/userPrefs.service.ts). Keyed by
    * the whitelisted localStorage key; each entry carries the raw string value
    * and the client-side timestamp of the change, so the newest edit wins per
    * key. `select: false` — never leaks through /me or the admin views. */
   prefs?: Record<string, { v: string; t: number }>;
-  /** User's own Groq API key (AES-256-GCM, see utils/fieldCrypto.ts) — opt-in
-   * alternative to the app's shared GROQ_API_KEY. Write-only from the API's
-   * perspective: never decrypted back out to a client, only used server-side
-   * in ai.service.ts. Null/unset means "use the shared key". */
-  groqApiKeyEnc?: string | null;
-  /** When the current groqApiKeyEnc was saved — surfaced read-only in
-   * Settings ("added on ...") so the user has some confirmation the key is
-   * actually stored, without ever re-exposing the key itself. Cleared
-   * alongside groqApiKeyEnc. */
-  groqApiKeySetAt?: Date | null;
   /** Set once the one-time welcome email has been attempted for this account
    * (auth.controller.ts, on the very first /api/auth/verify). Unset on every
    * account that existed before that feature shipped — used to find
@@ -189,8 +181,6 @@ const userSchema = new Schema(
     },
     aiEnabled: { type: Boolean, default: false },
     prefs: { type: Schema.Types.Mixed, default: {}, select: false },
-    groqApiKeyEnc: { type: String, default: null },
-    groqApiKeySetAt: { type: Date, default: null },
     welcomeEmailSentAt: { type: Date, default: null },
     lastActiveAt: { type: Date, default: null },
     activeDay: { type: String, default: null },

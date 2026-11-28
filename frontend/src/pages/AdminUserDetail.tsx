@@ -203,12 +203,6 @@ export default function AdminUserDetail() {
                 }
               />
               <Field
-                label={t('adminUserDetail.aiEnabled', 'AI companion enabled')}
-                value={
-                  user.aiEnabled ? t('adminUserDetail.yes', 'Yes') : t('adminUserDetail.no', 'No')
-                }
-              />
-              <Field
                 label={t('adminUserDetail.uid', 'UID')}
                 value={<span className="font-mono text-xs break-all">{user.uid}</span>}
               />

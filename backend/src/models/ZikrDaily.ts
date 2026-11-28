@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
-export interface IZikrDaily extends Document {
+interface IZikrDaily extends Document {
   userId: string;
   date: Date;
   zikrType: string;

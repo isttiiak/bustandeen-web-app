@@ -27,7 +27,7 @@ function shiftDateStr(dateStr: string, delta: number): string {
   return dt.toISOString().substring(0, 10);
 }
 
-export async function getOrCreateProfile(userId: string): Promise<IQuranProfile> {
+async function getOrCreateProfile(userId: string): Promise<IQuranProfile> {
   let profile = await QuranProfile.findOne({ userId });
   if (!profile) profile = await QuranProfile.create({ userId });
   return profile;

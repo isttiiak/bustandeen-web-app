@@ -10,7 +10,6 @@ import {
   NoSymbolIcon,
   PencilSquareIcon,
   ShieldCheckIcon,
-  SparklesIcon,
   TrashIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
@@ -24,7 +23,6 @@ const SECTION_KEYS: { Icon: HeroIcon; key: string; bodyCount: number }[] = [
   { Icon: ArrowDownTrayIcon, key: 'whatWeStore', bodyCount: 8 },
   { Icon: DevicePhoneMobileIcon, key: 'deviceOnly', bodyCount: 4 },
   { Icon: UsersIcon, key: 'friendsSee', bodyCount: 5 },
-  { Icon: SparklesIcon, key: 'naseeh', bodyCount: 4 },
   { Icon: GlobeAltIcon, key: 'thirdParty', bodyCount: 3 },
   { Icon: NoSymbolIcon, key: 'neverDo', bodyCount: 3 },
   { Icon: TrashIcon, key: 'yourControl', bodyCount: 4 },
@@ -43,7 +41,6 @@ const DATA_FLOW_ROWS = [
   'atlas',
   'firebase',
   'ga',
-  'groq',
   'zoho',
   'quran',
   'flagcdn',

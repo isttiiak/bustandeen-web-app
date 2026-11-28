@@ -49,7 +49,7 @@ function isValidPhotoUrl(url: string): boolean {
  * blacklist: every field added to the schema stays server-only until it is
  * listed here. Readers: pages/Profile.tsx (DBUser), hooks/useUserProfile.ts,
  * Settings (export overview), App.tsx (auth/verify reconcile). Server-only
- * fields (groqApiKeyEnc, admin email bookkeeping, disabled*, zikrTotals, ...)
+ * fields (admin email bookkeeping, disabled*, zikrTotals, ...)
  * must never be added. */
 export interface ClientUser {
   uid: string;

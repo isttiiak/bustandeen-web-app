@@ -10,7 +10,6 @@ import { celebrateFast } from '../utils/celebrate.js';
 import { useCycleActive } from '../hooks/useCycle.js';
 import { getRamadanWindow } from '../utils/ramadan.js';
 import ExcusedCard from '../components/ExcusedCard.js';
-import FastingCompanion from '../components/ai/FastingCompanion.js';
 import ConfirmDialog from '../components/ConfirmDialog.js';
 import Seo from '../components/Seo.js';
 import {
@@ -55,7 +54,7 @@ import {
   DayCaution,
 } from '../utils/fastingRules.js';
 import { calcPrayerTimesForDay, formatTime } from '../utils/prayerTimes.js';
-import { isPostMaghrib, getHijriToday } from '../utils/islamicCalendar.js';
+import { getHijriToday } from '../utils/islamicCalendar.js';
 import { formatLocaleDate } from '../utils/localeDate.js';
 import { translateReference } from '../utils/localeReference.js';
 import MusafirBanner from '../components/MusafirBanner.js';
@@ -742,21 +741,6 @@ export default function FastingTracker() {
                   </div>
                 )}
               </motion.section>
-
-              {/* ── AI fasting companion ── */}
-              {log?.status === 'completed' && selectedDate === today && (
-                <FastingCompanion
-                  fastType={
-                    log.category === 'voluntary'
-                      ? (log.voluntaryKind ?? 'voluntary')
-                      : (log.category ?? 'obligatory')
-                  }
-                  dayNumber={
-                    log.category === 'ramadan' ? (summary?.stats?.thisMonth ?? 1) : undefined
-                  }
-                  isPostMaghrib={isPostMaghrib()}
-                />
-              )}
 
               {/* ── Recommended today ── */}
               {ruling.level === 'normal' && ruling.recommended.length > 0 && (

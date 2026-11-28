@@ -1,4 +1,4 @@
-﻿import { Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
+﻿import { Suspense, useEffect, useRef, type ReactNode } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate, useLocation } from 'react-router';
 import { useQueryClient } from '@tanstack/react-query';
@@ -31,7 +31,6 @@ import DemoBanner from './components/DemoBanner.js';
 import AnnouncementBanner from './components/AnnouncementBanner.js';
 import MoonSightingSync, { useHijriInputsVersion } from './components/MoonSightingSync.js';
 import { syncHijriFromServer } from './utils/islamicCalendar.js';
-import NaturalLogModal from './components/ai/NaturalLogModal.js';
 import FloatingActions from './components/FloatingActions.js';
 import type { AuthUser } from './types/api.js';
 import { trackPageView } from './utils/analytics.js';
@@ -464,12 +463,11 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps -- subscribe to Firebase auth once: t changes with the language and a re-subscribe would replay the sign-in sync; queryClient is stable
   }, [setUser, init, resetAll, hydrate, setAuthLoading]);
 
-  const { authLoading, aiEnabled, isDemoMode } = useAuthStore();
+  const { authLoading } = useAuthStore();
   // Bumped when a sign-in sync changed settings, so screens re-read them.
   const prefsRevision = useUiStore((s) => s.prefsRevision);
   // A new moon-sighting record or country redraws every Hijri date (no remount)
   useHijriInputsVersion();
-  const [quickLogOpen, setQuickLogOpen] = useState(false);
   const isAuthPage = ['/login', '/signup', '/signup/complete', '/auth/action'].includes(
     location.pathname
   );
@@ -541,29 +539,11 @@ export default function App() {
                 <AppRoutes revision={prefsRevision} />
               </Suspense>
             </RouteErrorBoundary>
-            {/* Bottom-right stack (U1): "go to top" above the ✨ quick-log button.
-                Neither shows on /naseeh (its own chat UI) or the zikr counter: a
+            {/* Bottom-right "go to top" button (U1). Not on the zikr counter: a
                 tap-anywhere surface where a corner button gets hit mid-count. */}
-            {!isAdminPage &&
-              !isSeoPage &&
-              !isAuthPage &&
-              location.pathname !== '/naseeh' &&
-              location.pathname !== '/zikr' && (
-                <FloatingActions
-                  quickLog={
-                    aiEnabled && !isDemoMode ? (
-                      <button
-                        onClick={() => setQuickLogOpen(true)}
-                        aria-label="Quick log with a sentence"
-                        className="w-12 h-12 rounded-full bg-brand-emerald shadow-lg shadow-brand-emerald/30 flex items-center justify-center text-xl hover:scale-110 active:scale-95 transition-transform"
-                      >
-                        ✨
-                      </button>
-                    ) : undefined
-                  }
-                />
-              )}
-            {quickLogOpen && <NaturalLogModal onClose={() => setQuickLogOpen(false)} />}
+            {!isAdminPage && !isSeoPage && !isAuthPage && location.pathname !== '/zikr' && (
+              <FloatingActions />
+            )}
           </MainLandmark>
           {showFooter && <Footer />}
         </>

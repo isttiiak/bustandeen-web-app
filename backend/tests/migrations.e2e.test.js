@@ -62,13 +62,18 @@ describe('runMigrations', () => {
         status: 'would-apply',
         counts: { droppedDocuments: 2, libraryItems: 1 },
       },
+      {
+        id: '003-retire-naseeh',
+        status: 'would-apply',
+        counts: { usersWithGroqKey: 0, usersWithKeyFields: 0, usersWithAiOn: 0 },
+      },
     ]);
   });
 
   it('apply encrypts legacy cycle days, drops the audio data, and records both', async () => {
     await seed();
     const results = await runMigrations(db, MIGRATIONS, { apply: true });
-    expect(results.map((r) => r.status)).toEqual(['applied', 'applied']);
+    expect(results.map((r) => r.status)).toEqual(['applied', 'applied', 'applied']);
 
     const days = await db.collection('cycledays').find().sort({ date: 1 }).toArray();
     expect(days[0].flow).toBeUndefined();
@@ -96,13 +101,18 @@ describe('runMigrations', () => {
     expect(recorded.map((r) => r._id)).toEqual([
       '001-cycle-day-encryption',
       '002-remove-zikr-audio-links',
+      '003-retire-naseeh',
     ]);
   });
 
   it('a second run skips what was applied and changes nothing', async () => {
     const before = await dump();
     const results = await runMigrations(db, MIGRATIONS, { apply: true });
-    expect(results.map((r) => r.status)).toEqual(['already-applied', 'already-applied']);
+    expect(results.map((r) => r.status)).toEqual([
+      'already-applied',
+      'already-applied',
+      'already-applied',
+    ]);
     expect(await dump()).toBe(before);
   });
 
@@ -112,6 +122,7 @@ describe('runMigrations', () => {
     const results = await runMigrations(db, MIGRATIONS, { apply: true });
     expect(results[0].counts).toEqual({ encrypted: 0, stamped: 0 });
     expect(results[1].counts).toEqual({ droppedDocuments: 0, libraryItems: 0 });
+    expect(results[2].counts).toEqual({ keyFieldsRemoved: 0, aiTurnedOff: 0 });
     expect(await db.collection('cycledays').find().sort({ date: 1 }).toArray()).toEqual(before);
   });
 

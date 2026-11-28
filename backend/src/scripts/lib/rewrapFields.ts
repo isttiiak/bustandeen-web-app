@@ -1,7 +1,6 @@
 import type { ScannableModel } from '../../utils/modelShapes.js';
 import CycleDay from '../../models/CycleDay.js';
 import CycleProfile from '../../models/CycleProfile.js';
-import User from '../../models/User.js';
 import AdminAccount from '../../models/AdminAccount.js';
 import {
   decryptJson,
@@ -55,12 +54,6 @@ const SPECS: FieldSpec[] = [
     model: CycleProfile,
     path: 'bodyStatsEncrypted',
     context: (d) => fieldContexts.bodyStats(str(d.userId)),
-  },
-  {
-    name: 'User.groqApiKeyEnc',
-    model: User,
-    path: 'groqApiKeyEnc',
-    context: (d) => fieldContexts.groqKey(str(d.uid)),
   },
   {
     name: 'AdminAccount.totpSecretEnc',

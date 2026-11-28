@@ -249,10 +249,6 @@ export async function exportBackup(uid: string): Promise<PlainDoc> {
             lastActiveAt: u.lastActiveAt ?? null,
           }
         : null,
-      // Presence only. The key itself is never exported.
-      ownGroqKey: u?.groqApiKeyEnc
-        ? { saved: true, addedOn: u.groqApiKeySetAt ?? null }
-        : { saved: false },
       // Other people appear only as counts, never by id, name or email.
       friendCounts: s
         ? {

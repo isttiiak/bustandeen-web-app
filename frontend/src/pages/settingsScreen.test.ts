@@ -42,9 +42,9 @@ const usedKeys = [
 
 describe('Settings screen', () => {
   it('finds the Settings files', () => {
-    // The page, eight other screens' files and the seventeen files of components/settings/
+    // The page, eight other screens' files and the fifteen files of components/settings/
     // (audit P4-1 split the page into them).
-    expect(Object.keys(files).length).toBe(26);
+    expect(Object.keys(files).length).toBe(24);
     expect(usedKeys.length).toBeGreaterThan(100);
   });
 
@@ -64,13 +64,6 @@ describe('Settings screen', () => {
     const missing = usedKeys.filter((k) => typeof lookup(dict, k) !== 'string');
     const bad = usedKeys.filter((k) => DASH_OR_EMOJI.test(String(lookup(dict, k) ?? '')));
     expect({ missing, bad }).toEqual({ missing: [], bad: [] });
-  });
-
-  it('the Naseeh toggle saves through useUpdateProfile, not api.patch', () => {
-    // A direct api.patch left the cached profile stale (same fix as #141).
-    const code = stripComments(files['../components/settings/SettingsNaseehSection.tsx'] ?? '');
-    expect(code).not.toMatch(/api\.patch\([^)]*aiEnabled/);
-    expect(code).toMatch(/updateProfile\.mutateAsync\(\{ aiEnabled: v \}\)/);
   });
 
   it('the Hijri offset and day-start mode save through useUpdateProfile, not api.patch', () => {

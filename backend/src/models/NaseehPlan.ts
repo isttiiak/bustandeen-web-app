@@ -12,7 +12,7 @@ import { PRAYER_IDS, type PrayerId } from './SalatLog.js';
  */
 type PlanKind = 'zikr' | 'quran' | 'salat';
 
-export interface IPlanTarget {
+interface IPlanTarget {
   kind: PlanKind;
   /** zikr: dhikr per day; quran: ayat per day. Not used for salat. */
   dailyAmount?: number;

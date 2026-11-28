@@ -68,11 +68,6 @@ export const REF_PAGES = {
     path: '/library/asma-ul-husna',
   },
   sadaqah: { label: 'Sadaqah', labelBn: 'সদকা', path: '/sadaqah' },
-  naseeh: {
-    label: 'Naseeh (weekly muḥāsabah)',
-    labelBn: 'নাসীহ (সাপ্তাহিক মুহাসাবা)',
-    path: '/naseeh',
-  },
   about: { label: 'About', labelBn: 'আমাদের সম্পর্কে', path: '/about' },
   bayan: {
     label: 'Bayān help site (Credits, How we calculate)',
@@ -133,7 +128,6 @@ const FILE_RULES: [RegExp, RefPageKey[]][] = [
   [/utils\/fridayHour\.ts$/, ['salat', 'home']],
   [/utils\/islamicCalendar\.ts$/, ['calendar', 'home']],
   [/utils\/localeReference\.ts$/, ['code']],
-  [/utils\/muhasabahCorpus\.ts$/, ['naseeh']],
   [/utils\/musafir\.ts$/, ['musafir', 'salat']],
   [/utils\/postSalatQuran\.ts$/, ['salat']],
   [/utils\/prayerTimes\.ts$/, ['prayerTimes', 'home']],

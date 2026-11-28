@@ -61,8 +61,8 @@ export interface UserListResult {
 /**
  * Servant-only user directory — a simple paginated list with an optional
  * email/name search, not a full analytics view (that's future work, see
- * TODO-v3.md). Never returns anything encrypted (groqApiKeyEnc) or otherwise
- * sensitive beyond what's already shown in this field list.
+ * TODO-v3.md). Never returns anything encrypted or
+ * otherwise sensitive beyond what's already shown in this field list.
  */
 const escapeRegex = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 

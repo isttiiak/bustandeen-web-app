@@ -76,15 +76,6 @@ export const zikrLimiter = makeLimit(
   'zikr'
 );
 
-/** AI suggestions: 10 per hour — expensive endpoint */
-export const aiLimiter = makeLimit(
-  60 * 60 * 1000,
-  10,
-  { ok: false, error: 'AI suggestion limit reached. Try again later.' },
-  'ai',
-  'shared'
-);
-
 // ── Per-UID limiters (applied AFTER requireAuth so req.user.uid is set) ──────
 // Keying off UID rather than IP prevents a single user from exhausting the
 // limit by rotating IPs, and prevents one IP (NAT/proxy) from blocking others.
@@ -109,39 +100,6 @@ const makeUidLimit = (
     message,
     handler: makeThrottledHandler(limiterName, message),
   });
-
-/** AI suggestions: 20 per day per UID — the IP-based `aiLimiter` above guards
- *  the endpoint before auth even runs; this catches one signed-in user
- *  burning the shared IP allowance across a NAT/proxy or many devices. */
-export const aiUserLimiter = makeUidLimit(
-  24 * 60 * 60 * 1000,
-  20,
-  { ok: false, error: 'Daily AI limit reached. Try again tomorrow.' },
-  'aiUser'
-);
-
-/** Naseeh data chat: 30 free-text questions per day per UID. Each one is a
- *  model request (it only picks which lookup to run), so it has its own cap
- *  instead of eating the shared 20/day AI allowance. */
-export const aiChatLimiter = makeUidLimit(
-  24 * 60 * 60 * 1000,
-  30,
-  {
-    ok: false,
-    error: 'Daily question limit reached. Try the quick questions, or come back tomorrow.',
-  },
-  'aiChat'
-);
-
-/** Saving a bring-your-own Groq key: 10 per hour per UID. Each save makes a call to
- *  Groq to test the key, so without a cap the endpoint would let anyone check
- *  stolen keys at our expense and from our address. */
-export const groqKeyLimiter = makeUidLimit(
-  60 * 60 * 1000,
-  10,
-  { ok: false, error: 'Too many key changes. Try again in an hour.' },
-  'groqKey'
-);
 
 /** Zikr/dua suggestions: 5 per day per UID. Each one emails the review inbox
  *  and the requester, so this is also an email-flood guard. Shared (Mongo) so

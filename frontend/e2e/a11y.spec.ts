@@ -108,7 +108,6 @@ const AXE_ROUTES = [
   '/qibla',
   '/ramadan',
   '/profile',
-  '/naseeh',
   '/about',
   '/privacy',
 ];
