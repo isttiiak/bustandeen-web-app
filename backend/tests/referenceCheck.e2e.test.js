@@ -4,6 +4,7 @@ import app from '../src/app.js';
 import AdminAccount from '../src/models/AdminAccount.js';
 import AdminAuditLog from '../src/models/AdminAuditLog.js';
 import ReferenceCheck from '../src/models/ReferenceCheck.js';
+import { clearCheck, saveCheck } from '../src/services/referenceCheck.service.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
 // v5.193.0: manual checks on the reference map (/references) are set by the
@@ -167,6 +168,15 @@ describe('Reference checks (manual marks on /references)', () => {
     const again = await asServant(request(app).delete('/api/admin/references/checks/bukhari:1166'));
     expect(again.status).toBe(404);
     expect((await request(app).get('/api/references/checks')).body.checks).toEqual({});
+  });
+
+  test('the service itself refuses an operator or malformed id (not only the route)', async () => {
+    await expect(clearCheck({ $ne: null })).rejects.toThrow('Not a reference id');
+    await expect(clearCheck('Bukhari 1166')).rejects.toThrow('Not a reference id');
+    await expect(saveCheck({ ...MARK, refId: { $gt: '' } }, SERVANT)).rejects.toThrow(
+      'Not a reference id'
+    );
+    expect(await ReferenceCheck.countDocuments()).toBe(0);
   });
 
   test('the audit log groups these under "references"', async () => {

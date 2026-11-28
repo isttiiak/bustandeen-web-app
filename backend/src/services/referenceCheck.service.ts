@@ -15,6 +15,26 @@ export interface ReferenceCheckInput extends PublicReferenceCheck {
   refId: string;
 }
 
+/** Registry ids, as the route validates them (validation/referenceCheck.schemas.ts). */
+const REF_ID_RE = /^[a-z][a-z0-9-]*:[a-z0-9:.-]+$/;
+
+class ReferenceCheckError extends Error {
+  statusCode = 400;
+}
+
+/**
+ * The query filter for one reference. The route already validated the id;
+ * this checks again here so the service is safe on its own, and `$eq` makes
+ * MongoDB read the value as a plain string, never as an operator (CodeQL
+ * js/sql-injection, PR 429).
+ */
+function byRefId(refId: unknown): { refId: { $eq: string } } {
+  if (typeof refId !== 'string' || refId.length > 80 || !REF_ID_RE.test(refId)) {
+    throw new ReferenceCheckError('Not a reference id');
+  }
+  return { refId: { $eq: refId } };
+}
+
 function toPublic(c: IReferenceCheck): PublicReferenceCheck {
   return {
     status: c.status,
@@ -35,12 +55,14 @@ export async function saveCheck(
   input: ReferenceCheckInput,
   adminEmail: string
 ): Promise<{ check: PublicReferenceCheck; before: PublicReferenceCheck | null }> {
-  const previous = await ReferenceCheck.findOne({ refId: input.refId });
+  const filter = byRefId(input.refId);
+  const previous = await ReferenceCheck.findOne(filter);
   const note = input.note?.trim();
   const saved = await ReferenceCheck.findOneAndUpdate(
-    { refId: input.refId },
+    filter,
     {
       $set: {
+        refId: input.refId,
         status: input.status,
         by: input.by.trim(),
         date: input.date,
@@ -56,6 +78,6 @@ export async function saveCheck(
 
 /** Remove the mark from one reference. Returns the mark that was removed. */
 export async function clearCheck(refId: string): Promise<PublicReferenceCheck | null> {
-  const removed = await ReferenceCheck.findOneAndDelete({ refId });
+  const removed = await ReferenceCheck.findOneAndDelete(byRefId(refId));
   return removed ? toPublic(removed) : null;
 }

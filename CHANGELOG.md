@@ -10,6 +10,10 @@ All notable changes to Ihsan are documented here. Format is loosely [Keep a Chan
 - **Server:** `ReferenceCheck` model (one per reference id, unique index on `refId`), `GET /api/references/checks` (public, cached 60 s), and Servant-only `GET`/`PUT /api/admin/references/checks` and `DELETE /api/admin/references/checks/:refId`. Every save and clear is in the admin audit log with the values before and after, under the new "Reference checks" area. Clearing a mark asks first. Tests: `tests/referenceCheck.e2e.test.js`.
 - **Native app:** `/references.json` keeps the references and where each is used; manual checks are live at `manualChecksUrl` (`/api/references/checks`).
 
+### Security
+
+- The reference-check service builds every query with `{ refId: { $eq: id } }` after checking the id is a string in the registry's id format, so a request value can never act as a MongoDB operator, even if the route's validation were bypassed (CodeQL `js/sql-injection` #373, #374 on PR 429). Test: the service refuses `{ $ne: null }` and malformed ids.
+
 ### Removed
 
 - `frontend/src/data/references/manualChecks.json` and the copy-and-paste flow (it held no marks yet). `npm run refs:update` is still needed only when a reference is added to or moved in the code.
