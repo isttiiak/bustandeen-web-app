@@ -36,7 +36,6 @@ reference: each Quran verse and hadith links to quran.com or sunnah.com with its
 | 🧳  | **Musafir**              | Travel mode: qaṣr and jamʿ on the tracker, both madhab positions, journey duʿās, every concession cited.                                                                         |
 | 🌸  | **Rayhanah**             | Cycle and nifās support for sisters. Salat and fasting pause without guilt, qaḍā days are counted for you. Encrypted, never shared, never sent to AI.                            |
 | 🤝  | **Friends & Noor**       | Invite friends with one link and encourage each other with **Noor**, a calm daily measure of good deeds (Quran 2:148).                                                           |
-| 💬  | **Naseeh**               | An optional AI companion for gentle encouragement. Never a source of rulings or evidence.                                                                                        |
 | 💚  | **Sadaqah**              | Support the project and keep it free for everyone.                                                                                                                               |
 | 📚  | **Library**              | Morning and evening adhkār, duʿās by situation, Asmāʾ ul-Ḥusnā, zakat calculator, Hijri converter and Ramadan calendars (English, বাংলা, العربية).                               |
 

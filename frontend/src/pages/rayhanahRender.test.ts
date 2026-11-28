@@ -32,7 +32,7 @@ const session = vi.hoisted(() => ({
   } | null,
 }));
 vi.mock('../store/useAuthStore.js', () => {
-  const state = () => ({ user: session.user, isDemoMode: false, aiEnabled: false });
+  const state = () => ({ user: session.user, isDemoMode: false });
   const useAuthStore = Object.assign((select: (s: unknown) => unknown) => select(state()), {
     getState: state,
     setState: () => undefined,

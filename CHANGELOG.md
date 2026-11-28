@@ -2,7 +2,7 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
-## v5.192.0 - Friend nudges, quick dhikr confirmation, honest analytics - 2026-11-28
+## v5.194.0 - Friend nudges, quick dhikr confirmation, honest analytics - 2026-11-28
 
 A batch from daily use.
 
@@ -23,6 +23,67 @@ A batch from daily use.
 - **Top surahs** no longer count surahs finished in the khatam journey (server and client), and a surah listened to the end on the Listen page now counts. Counts already recorded from khatam cannot be separated and stay.
 - **Friends:** the three-dot menu sat outside the arch's curve; it is now level with the icon, inside the arch.
 - The "Allāhu Akbar" card hadith was already fixed in v5.191.0.
+## v5.193.1 - Reference map links highlight the citation - 2026-11-28
+
+### Changed
+
+- **Every place on the reference map now opens the screen with the citation highlighted.** The links use URL text fragments (`/special-day/friday#:~:text=Sunan%20Abū%20Dāwūd%201052`): the browser scrolls to the citation and marks it, as on `/friends#:~:text=…`. 393 of 402 places carry the exact text shown there (the citation, or the card title where a card names its source only, such as the Duʿā library); the rest open the screen without a highlight.
+- In Bangla the link carries the Bangla form of the citation and the English one; the browser highlights the one it finds.
+- The links are plain page loads, since browsers apply text fragments only on a load. A citation inside a closed panel (such as a nafl card or the prayer-time Sources) opens the screen; the highlight shows once the panel is open only if the browser finds it on load.
+- The scan records the visible text per place (`places[].text` in `usage.generated.json` and `/references.json`). Tests check the encoding, the Bangla second directive, and that over 95% of places have text.
+
+## v5.193.0 - Mark references as checked from the admin panel - 2026-11-28
+
+### Added
+
+- **Manual reference checks are saved from the admin panel and show at once.** In **Tools → Reference checks** (Servant only), choose "Checked at the source", "Confirmed by a scholar" or "Needs correction" next to a reference, with who checked it and a note. It saves straight to the server and the public reference map (`/references`) shows it within a minute. No file to paste, no command, no deploy.
+- **Server:** `ReferenceCheck` model (one per reference id, unique index on `refId`), `GET /api/references/checks` (public, cached 60 s), and Servant-only `GET`/`PUT /api/admin/references/checks` and `DELETE /api/admin/references/checks/:refId`. Every save and clear is in the admin audit log with the values before and after, under the new "Reference checks" area. Clearing a mark asks first. Tests: `tests/referenceCheck.e2e.test.js`.
+- **Native app:** `/references.json` keeps the references and where each is used; manual checks are live at `manualChecksUrl` (`/api/references/checks`).
+
+### Security
+
+- The reference-check service builds every query with `{ refId: { $eq: id } }` after checking the id is a string in the registry's id format, so a request value can never act as a MongoDB operator, even if the route's validation were bypassed (CodeQL `js/sql-injection` #373, #374 on PR 429). Test: the service refuses `{ $ne: null }` and malformed ids.
+
+### Removed
+
+- `frontend/src/data/references/manualChecks.json` and the copy-and-paste flow (it held no marks yet). `npm run refs:update` is still needed only when a reference is added to or moved in the code.
+
+### Deploy note
+
+- The `refId` unique index is created with `npm run sync-indexes --prefix backend -- --apply --production` (staging first). Saving works without it; the index guards against a duplicate from two saves at the same moment.
+
+## v5.192.1 - The reference map shows where in the app - 2026-11-28
+
+### Changed
+
+- **`/references` now says where each reference appears in the app**, not which code files cite it. Each one lists the screens it shows on (linked), the section, and the card or item, for example "Salat tracker › Nafl prayers list › Istikharah". Calendar references link to their own day page (`/special-day/friday`).
+- A citation that only appears in a code comment (it explains a rule, such as Islamic midnight) is no longer listed as a place; the page says it is the basis of a rule the app follows.
+- The code file list moved to the admin checklist (Tools → Reference checks), with the places.
+- `usage.generated.json` and `/references.json` now carry `places` (screen, section, item, deep link) for each reference; `files` stays in the JSON for the native app. Tests pin a few known places (`references.test.ts`).
+
+## v5.192.0 - Naseeh retired, no more third-party AI - 2026-11-28
+
+Owner's decision of 2026-11-28: Bustandeen no longer sends anything to a third-party AI service. Naseeh (the optional AI companion) was built entirely on Groq's hosted models, which are not Islamic models and run outside our control, so the whole feature is removed rather than hidden. The source before removal is kept as git tag `naseeh-final` and as a local zip (`archive/naseeh-backup-2026-11-28.zip`).
+
+### Removed
+
+- **Backend:** `/api/ai/*`, `/api/naseeh/*` and `/api/natural-log/*` (controllers, routes, services, schemas, per-user and per-IP AI rate limiters, and their tests). The three prefixes now answer `410 Gone` so a cached PWA gets a clear message. No code calls Groq any more; the API CSP never allowed it.
+- **Frontend:** the `/naseeh` page (now redirects to Home), the AI cards on Home and Fasting, the quick-log sparkle button and its modal, the Naseeh and Groq-key sections of Settings, the "AI companion enabled" row in admin user details, and the matching English and Bangla strings.
+- **Privacy, Terms, About:** the Naseeh sections, the Groq row in the data-flow table, and the "your own AI key" mentions. A line in "Changes" says the AI companion was removed (privacy page now dated November 2026).
+- **Config:** `GROQ_API_KEY` is no longer read or documented, the `groqKey` field-encryption context and the Groq key in the key-rotation script are gone, and the data export no longer lists a saved Groq key.
+
+### Added
+
+- **Migration `003-retire-naseeh`** (dry run by default): unsets `groqApiKeyEnc` / `groqApiKeySetAt` on every user and sets `aiEnabled` back to false. Run `npm run migrate --prefix backend`, then `-- --apply --production` (ask first). Idempotent.
+
+### Kept on purpose
+
+- The `NaseehPlan` model and its collection: saved weekly plans are the user's own data, still in their export and removed with their account. Dropping the collection is a separate owner decision.
+- `User.aiEnabled` stays in the schema (always false after the migration) so old clients and old backup files still validate.
+
+### Owner actions
+
+- Delete `GROQ_API_KEY` from Vercel (Production and Preview) and revoke it at console.groq.com. Run migration `003-retire-naseeh` so users' own saved Groq keys are removed from the database.
 
 ## v5.191.0 - Reference audit and the reference map - 2026-11-28
 

@@ -20,7 +20,8 @@ interface AdminAuditLogResult {
 }
 
 /** The server's area filter (adminAudit.service AUDIT_AREAS); '' is all. */
-export type AuditArea = '' | 'sadaqah' | 'zikr' | 'users' | 'accounts' | 'messages' | 'broadcast';
+export type AuditArea =
+  '' | 'sadaqah' | 'zikr' | 'users' | 'accounts' | 'messages' | 'broadcast' | 'references';
 
 /** Servant-only trail of every mutating /api/admin/* action. */
 export function useAdminAuditLog(actor: string, page: number, limit = 50, area: AuditArea = '') {

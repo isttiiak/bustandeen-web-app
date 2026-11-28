@@ -2,8 +2,8 @@ import crypto from 'crypto';
 
 /**
  * Application-level field encryption for data that must stay unreadable even
- * to someone with raw DB/Atlas access (Rayhanah wellness notes, a user's own
- * Groq API key, admin TOTP secrets). AES-256-GCM, one random IV per value.
+ * to someone with raw DB/Atlas access (Rayhanah wellness notes, admin TOTP
+ * secrets). AES-256-GCM, one random IV per value.
  *
  * Stored format (audit P2-3):
  *   v2.<keyId>.<base64( iv(12) + authTag(16) + ciphertext )>
@@ -98,7 +98,6 @@ export function fieldContext(field: string, ...owner: string[]): string {
 export const fieldContexts = {
   cycleDay: (userId: string, date: string): string => fieldContext('cycleDay', userId, date),
   bodyStats: (userId: string): string => fieldContext('bodyStats', userId),
-  groqKey: (userId: string): string => fieldContext('groqKey', userId),
   adminTotp: (accountId: string): string => fieldContext('adminTotp', accountId),
   adminTotpPending: (accountId: string): string => fieldContext('adminTotpPending', accountId),
 };

@@ -9,6 +9,7 @@ interface ReleaseText {
   title: string;
   added?: string[];
   fixed?: string[];
+  removed?: string[];
 }
 
 export interface Release {
@@ -20,7 +21,7 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
-    version: '5.192.0',
+    version: '5.194.0',
     date: '2026-11-28',
     text: {
       en: {
@@ -37,7 +38,7 @@ export const RELEASES: Release[] = [
           'The Quran reading timer no longer runs while a surah is still loading.',
           'Your Quran settings, including your translation, now stay the same on every device. Changing the app language no longer changes the translation you picked.',
           'Top surahs no longer count surahs you read in the khatam journey, and a surah you listen to all the way through now counts.',
-          'The three-dot menu on Friends now sits properly inside the arch.',
+          'The menu on Friends now sits properly inside the arch.',
         ],
       },
       bn: {
@@ -54,7 +55,79 @@ export const RELEASES: Release[] = [
           'সূরা লোড হওয়ার সময় কুরআন পড়ার টাইমার আর চলে না।',
           'অনুবাদসহ আপনার কুরআন সেটিংস এখন সব ডিভাইসে একই থাকে। অ্যাপের ভাষা বদলালে আপনার বেছে নেওয়া অনুবাদ আর বদলায় না।',
           'খতম যাত্রায় পড়া সূরা আর শীর্ষ সূরার তালিকায় গোনা হয় না, আর শুরু থেকে শেষ পর্যন্ত শোনা সূরা এখন গোনা হয়।',
-          'বন্ধু পাতার তিন-ডট মেনু এখন আর্চের ভেতরে ঠিক জায়গায় বসে।',
+          'বন্ধু পাতার মেনু এখন আর্চের ভেতরে ঠিক জায়গায় বসে।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.193.1',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Reference links point to the exact line',
+        fixed: [
+          'On the Reference map, tapping where a reference appears now opens that screen with the reference highlighted, so you see the exact line at once.',
+        ],
+      },
+      bn: {
+        title: 'রেফারেন্সের লিংক এখন সঠিক লাইনে নিয়ে যায়',
+        fixed: [
+          'রেফারেন্স ম্যাপে কোনো রেফারেন্স কোথায় আছে তাতে ট্যাপ করলে এখন সেই স্ক্রিন খুলে রেফারেন্সটি হাইলাইট করে দেখায়, তাই সঠিক লাইনটি সাথে সাথে চোখে পড়ে।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.193.0',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'References checked by a person',
+        added: [
+          'When a reference has been checked by hand at its source, or confirmed by a scholar, the Reference map now shows it right away, with who checked it and when.',
+        ],
+      },
+      bn: {
+        title: 'মানুষের হাতে যাচাই করা রেফারেন্স',
+        added: [
+          'কোনো রেফারেন্স মূল সূত্রে নিজে যাচাই করা হলে, বা কোনো আলেম নিশ্চিত করলে, রেফারেন্স ম্যাপে এখন সাথে সাথে তা দেখায়, কে ও কবে যাচাই করেছেন সহ।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.192.1',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'The reference map shows where',
+        fixed: [
+          'The Reference map now shows where each reference appears in the app, with a link to that screen and the card it is on, instead of code file names.',
+        ],
+      },
+      bn: {
+        title: 'রেফারেন্স ম্যাপে এখন কোথায় তা দেখায়',
+        fixed: [
+          'রেফারেন্স ম্যাপ এখন কোডের ফাইলের নামের বদলে দেখায় প্রতিটি রেফারেন্স অ্যাপের কোথায় আছে, সেই স্ক্রিনের লিংক ও কার্ডের নামসহ।',
+        ],
+      },
+    },
+  },
+  {
+    version: '5.192.0',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Naseeh has been retired',
+        removed: [
+          'We removed Naseeh, the AI companion. It relied on an outside AI service that is not built for Islamic knowledge and sits outside our control, and we do not think your worship data should ever travel there. Nothing you record is sent to any AI service now. Your trackers, goals and data are unchanged.',
+        ],
+      },
+      bn: {
+        title: 'নাসীহ সরিয়ে দেওয়া হয়েছে',
+        removed: [
+          'আমরা এআই সহচর নাসীহ সরিয়ে দিয়েছি। এটি একটি বাইরের এআই সেবার ওপর নির্ভর করত, যা ইসলামী জ্ঞানের জন্য তৈরি নয় এবং আমাদের নিয়ন্ত্রণের বাইরে, আর আমরা মনে করি আপনার ইবাদতের তথ্য কখনো সেখানে যাওয়া উচিত নয়। আপনি যা লিখেন তা এখন কোনো এআই সেবায় পাঠানো হয় না। আপনার ট্র্যাকার, লক্ষ্য ও তথ্য আগের মতোই আছে।',
         ],
       },
     },

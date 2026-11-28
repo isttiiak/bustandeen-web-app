@@ -1,6 +1,7 @@
 import { jest } from '@jest/globals';
 import express from 'express';
 import request from 'supertest';
+import { z } from 'zod';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import app from '../src/app.js';
@@ -10,7 +11,6 @@ import SalatDebt from '../src/models/SalatDebt.js';
 import SalatLog from '../src/models/SalatLog.js';
 import { validate } from '../src/middleware/validate.js';
 import { devAuthBypassAllowed } from '../src/middleware/auth.js';
-import { naseehPatternSchema } from '../src/validation/naseeh.schemas.js';
 import { isPlausibleClientToday, latestPossibleToday } from '../src/validation/clientDay.js';
 import { sameSitePath } from '../src/routes/seoRedirect.routes.js';
 import { ensureCaughtUp } from '../src/services/salatDebt.service.js';
@@ -48,8 +48,18 @@ afterAll(async () => {
 });
 
 describe('P0-1 / P0-2: validate() hands parsed query values to the controller', () => {
+  // Same shape the retired Naseeh pattern schema had: a "0"/"1" flag, a defaulted number.
+  const flagSchema = z.object({
+    query: z.object({
+      timezoneOffset: z.coerce.number().int().min(-840).max(840).default(0),
+      phrase: z
+        .enum(['0', '1'])
+        .optional()
+        .transform((v) => v === '1'),
+    }),
+  });
   const mini = express();
-  mini.get('/q', validate(naseehPatternSchema), (req, res) => {
+  mini.get('/q', validate(flagSchema), (req, res) => {
     res.json({ phrase: req.query.phrase, timezoneOffset: req.query.timezoneOffset });
   });
 
@@ -68,7 +78,7 @@ describe('P0-1 / P0-2: validate() hands parsed query values to the controller', 
 
   test('a query key the schema does not name still reaches the controller', async () => {
     const echo = express();
-    echo.get('/q', validate(naseehPatternSchema), (req, res) => res.json(req.query));
+    echo.get('/q', validate(flagSchema), (req, res) => res.json(req.query));
     expect((await request(echo).get('/q?extra=kept')).body.extra).toBe('kept');
   });
 });

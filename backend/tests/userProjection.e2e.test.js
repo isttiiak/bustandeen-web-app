@@ -3,11 +3,11 @@ import mongoose from 'mongoose';
 import app from '../src/app.js';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import User from '../src/models/User.js';
-import { encryptJson, fieldContexts } from '../src/utils/fieldCrypto.js';
 
 // /api/user/me (and the other user routes + auth/verify) return a whitelisted
 // projection (services/user.service.ts toClientUser), never the raw document.
-// The encrypted BYO Groq key and admin bookkeeping must stay server-side.
+// Admin bookkeeping, and any leftover Groq key field from the retired Naseeh feature
+// (still on old documents until migration 003 runs), must stay server-side.
 
 const fakeJwt = (payload) => {
   const header = Buffer.from(JSON.stringify({ alg: 'none', typ: 'JWT' })).toString('base64url');
@@ -51,11 +51,12 @@ describe('User API response projection', () => {
 
     const verify = await request(app).post('/api/auth/verify').send({ idToken: token });
     expect(verify.status).toBe(200);
-    await User.updateOne(
+    // Raw write: the schema no longer has these fields, but old documents still do.
+    await User.collection.updateOne(
       { uid },
       {
         $set: {
-          groqApiKeyEnc: encryptJson('gsk_test_not_a_real_key', fieldContexts.groqKey(uid)),
+          groqApiKeyEnc: 'legacy-ciphertext',
           groqApiKeySetAt: new Date(),
           welcomeEmailSentAt: new Date(),
           reengagementEmailSentAt: new Date(),
@@ -97,10 +98,6 @@ describe('User API response projection', () => {
     expect(res.body.user.avatarId).toBe('olive');
     expectNoServerOnlyFields(res.body.user);
     expect(JSON.stringify(res.body)).not.toContain('groqApiKey');
-
-    // The key itself is untouched in the DB.
-    const doc = await User.findOne({ uid });
-    expect(doc.groqApiKeyEnc).toBeTruthy();
   });
 
   test('POST /api/auth/verify omits server-only fields', async () => {

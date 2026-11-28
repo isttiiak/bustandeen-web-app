@@ -11,7 +11,8 @@
 // (hadith: the sunnah.com English and grades via the hadith-api dataset, or
 // the sunnah.com page itself; Quran: quran.com Sahih International and the
 // bundled Tanzil text). It is not a scholar's review. Manual checks (you at
-// the source, or a scholar) live in manualChecks.json.
+// the source, or a scholar) are set in the admin panel (Tools, Reference
+// checks), stored on the server (ReferenceCheck) and shown at once.
 
 export type RefKind = 'quran' | 'hadith' | 'scholarly' | 'fiqh' | 'data';
 
@@ -2065,17 +2066,6 @@ export const REFERENCES: ReferenceEntry[] = [
     desk: 'corrected',
     deskNote:
       'The context line said he "swore" by it; Tirmidhī 2140 says he often said it as a duʿā. Wording fixed (en + bn).',
-  },
-  {
-    id: 'tirmidhi:2459',
-    kind: 'hadith',
-    citation: 'Jāmiʿ at-Tirmidhī 2459',
-    url: 'https://sunnah.com/tirmidhi:2459',
-    grade: 'Ḍaʿīf (al-Albānī)',
-    purpose: 'Removed from the weekly muḥāsabah card ("the wise one takes account of himself").',
-    desk: 'corrected',
-    deskNote:
-      'Was labelled ḥasan (al-Albānī); al-Albānī and Darussalam grade it ḍaʿīf. Removed; only a code note remains.',
   },
   {
     id: 'tirmidhi:2891',

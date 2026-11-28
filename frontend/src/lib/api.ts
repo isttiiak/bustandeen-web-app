@@ -52,8 +52,11 @@ api.interceptors.request.use((config) => {
   // for everyone, so the demo reads the real list: its Hijri dates stay right.
   // A country calendar request needs no account and comes from a real person,
   // so it is sent from the demo too.
+  // The reference map's manual checks (/references) are public too.
   const isPublicCalendar =
-    (config.url ?? '').startsWith('/api/calendar/') || config.url === '/api/feedback/calendar';
+    (config.url ?? '').startsWith('/api/calendar/') ||
+    config.url === '/api/feedback/calendar' ||
+    config.url === '/api/references/checks';
   if (useAuthStore.getState().isDemoMode && !isPublicCalendar) {
     const method = (config.method ?? 'get').toLowerCase();
     // Query params given separately (axios `params`) join the URL, so the

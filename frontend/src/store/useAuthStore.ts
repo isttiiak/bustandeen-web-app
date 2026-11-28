@@ -11,13 +11,11 @@ import {
 
 interface AuthState {
   user: AuthUser | null;
-  aiEnabled: boolean;
   redirectPath: string;
   authLoading: boolean;
   isDemoMode: boolean;
   setUser: (user: AuthUser | null) => void;
   setRedirectPath: (path: string) => void;
-  setAiEnabled: (aiEnabled: boolean) => void;
   setAuthLoading: (authLoading: boolean) => void;
   enterDemoMode: (gender: string) => void;
   exitDemoMode: () => void;
@@ -26,7 +24,6 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  aiEnabled: false,
   redirectPath: '/',
   // Starts true; overridden synchronously by the self-init call below so
   // returning users with a cached session never see the "Preparing…" spinner.
@@ -36,11 +33,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   setUser: (user) => set({ user }),
 
   setRedirectPath: (path) => set({ redirectPath: path || '/' }),
-
-  setAiEnabled: (aiEnabled) => {
-    localStorage.setItem('bustandeen_ai_enabled', aiEnabled ? '1' : '0');
-    set({ aiEnabled });
-  },
 
   setAuthLoading: (authLoading) => set({ authLoading }),
 
@@ -59,7 +51,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   init: () => {
-    const ai = localStorage.getItem('bustandeen_ai_enabled');
+    // Naseeh was retired 2026-11-28: drop the old opt-in flag.
+    localStorage.removeItem('bustandeen_ai_enabled');
 
     let cachedUser: AuthUser | null = null;
     try {
@@ -75,15 +68,15 @@ export const useAuthStore = create<AuthState>((set) => ({
         clearDemoSession();
         restoreDeviceSettings();
       }
-      set({ aiEnabled: ai === '1', user: cachedUser, authLoading: false });
+      set({ user: cachedUser, authLoading: false });
     } else if (demo && !hasToken) {
       // A refresh (or full page load) during the demo: carry on with it.
-      set({ aiEnabled: ai === '1', user: getDemoUser(demo), isDemoMode: true, authLoading: false });
+      set({ user: getDemoUser(demo), isDemoMode: true, authLoading: false });
     } else {
       // No cached session — if there is also no token on disk, the user is
       // definitely signed out: show the landing immediately instead of flashing
       // a black spinner screen while Firebase confirms.
-      set({ aiEnabled: ai === '1', ...(!hasToken && { authLoading: false }) });
+      set({ ...(!hasToken && { authLoading: false }) });
     }
   },
 }));

@@ -8,6 +8,7 @@ import accounts from './AdminAccounts.tsx?raw';
 import auditLog from './AdminAuditLog.tsx?raw';
 import feedback from './AdminFeedback.tsx?raw';
 import broadcast from './AdminBroadcast.tsx?raw';
+import references from './AdminReferences.tsx?raw';
 import compose from './AdminComposeEmail.tsx?raw';
 import zikrRequests from './AdminZikrRequests.tsx?raw';
 import sadaqah from './AdminSadaqah.tsx?raw';
@@ -43,6 +44,7 @@ const FILES: Record<string, string> = {
   AdminAuditLog: auditLog,
   AdminFeedback: feedback,
   AdminBroadcast: broadcast,
+  AdminReferences: references,
   AdminComposeEmail: compose,
   AdminZikrRequests: zikrRequests,
   AdminUpdateEmails: updateEmails,
@@ -70,6 +72,7 @@ const SCREENS: Record<string, string> = {
   AdminAuditLog: auditLog,
   AdminFeedback: feedback,
   AdminBroadcast: broadcast,
+  AdminReferences: references,
   AdminComposeEmail: compose,
   AdminZikrRequests: zikrRequests,
   AdminSadaqah: sadaqah,
@@ -103,6 +106,15 @@ describe('zikr request reject email', () => {
     expect(start).not.toMatch(/'rejected'/);
     expect(zikrRequests).toMatch(/onClick=\{\(\) => loadDraft\('rejected'\)\}/);
     expect(zikrRequests).toContain('Reject without email');
+  });
+});
+
+// Reference checks (v5.193.0): clearing a public mark asks first.
+describe('reference checks', () => {
+  it('Clear goes through the confirm dialog, never straight from the select', () => {
+    expect(references).toMatch(/else if \(m\) setToClear\(r\)/);
+    expect(references).not.toMatch(/onChange=\{[^}]*clear\.mutate/);
+    expect(references).toContain('<ConfirmDialog');
   });
 });
 

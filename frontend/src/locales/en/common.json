@@ -2,14 +2,6 @@
   "arabicKeyboard": {
     "space": "space"
   },
-  "restDays": {
-    "heading": "Take it gently",
-    "body": "These are rest days. Nothing here is a slip, and your streaks and goals are paused, not lost. Naseeh will not check your progress until you are back.",
-    "note": "You can still make dhikr or read Quran whenever your heart wants to. Anything you do counts, and nothing you skip is held against you.",
-    "dhikr": "Do some dhikr",
-    "quran": "Read Quran",
-    "privacy": "This card is worked out on your device. Nothing about your cycle is sent to an AI, ever."
-  },
   "sadaqah": {
     "seoTitle": "Sadaqah: Support Bustandeen",
     "seoDescription": "Support Bustandeen with sadaqah, ongoing charity that helps keep the app free and growing for the community.",
@@ -193,10 +185,6 @@
       "rayhanah": {
         "title": "Rayhanah Cycle",
         "desc": "A private, encrypted companion for sisters: predictions, gentle guidance for excused days, and fasting makeup, kept out of everyone else's sight."
-      },
-      "naseeh": {
-        "title": "Naseeh (optional AI)",
-        "desc": "Off by default. A kind companion for weekly reflections and quick logging from one sentence. It encourages, and never gives religious rulings."
       }
     },
     "founderNote": "Have a question only the founder can answer, or want to talk directly? Reach out any time.",
@@ -216,15 +204,6 @@
     "helpDesc": "Short guides, what is new in each release, and how prayer times and kaza are worked out.",
     "helpLink": "Open",
     "referencesLink": "See every reference and how it was checked"
-  },
-  "aiFlair": {
-    "whatIsSent": "What is sent?",
-    "fallbackNote": "Naseeh could not reach the AI just now, so this is a plain note worked out from your own numbers. No AI was used.",
-    "badgeLabel": "Naseeh · AI companion",
-    "disclaimerBold": "never a source of religious evidence",
-    "disclaimerPrefix": "AI-generated encouragement, a companion,",
-    "disclaimerSuffix": "For rulings or proofs, see the app's verified references or ask a qualified scholar.",
-    "thinkingLabel": "Naseeh is reflecting…"
   },
   "app": {
     "createFreeAccount": "Create Free Account",
@@ -357,13 +336,6 @@
     "verificationSentTo": "We sent a verification link to",
     "verifyClickHint": "Click the link in the email to verify your address. You can use the app now. Some features require a verified email.",
     "wrongEmail": "Wrong email?"
-  },
-  "comebackNudge": {
-    "fallback": "Welcome back. Begin again with something small: one āyah or one dhikr is a good start.",
-    "dismiss": "Not now",
-    "oneDhikr": "Start with one dhikr",
-    "readOneAyah": "Read one ayah",
-    "welcomeBack": "Welcome back — your journey continues"
   },
   "common": {
     "accountDisabled": "This account has been disabled. Contact {{email}} if you think this is a mistake.",
@@ -736,12 +708,6 @@
       "intended": "Intended",
       "broken": "Broken"
     }
-  },
-  "fastingCompanion": {
-    "fallbackEvening": "Iftar is close. May Allah accept your fast and your duʿāʾ.",
-    "fallbackMorning": "May Allah accept your fast today. Take the day gently, with your heart in remembrance.",
-    "fastingToday": "Naseeh · fasting today",
-    "nearIftar": "Naseeh · near iftar"
   },
   "feedback": {
     "seoTitle": "Feedback & Contact",
@@ -1260,8 +1226,6 @@
     "heroTitle1": "Worship,",
     "heroTitle2": "beautifully kept",
     "noAds": "No ads · no subscriptions · your data stays yours",
-    "privacyAiKeyDesc": "Naseeh runs on our shared Groq key by default. Or paste your own free key in Settings and keep that data on your own account entirely.",
-    "privacyAiKeyTitle": "Bring your own AI key",
     "privacyDesc": "Rayhanah tracks some of the most personal data a Muslim woman has, so we built it to stay that way, not just promise it.",
     "privacyEncryptedDesc": "Flow, symptoms and mood notes are AES-256 encrypted before they ever touch our database, unreadable even to us.",
     "privacyEncryptedTitle": "Encrypted at rest",
@@ -1285,133 +1249,6 @@
   "moodComfort": {
     "heading": "A word of comfort",
     "subtext": "From the words of Allah and His Messenger ﷺ"
-  },
-  "muhasabah": {
-    "fallbackZikr": "This week you counted {{total}} dhikr.",
-    "fallbackSalat": "You logged {{pct}}% of this week's prayers. Prayer streak: {{salat}} days. Quran streak: {{quran}} days. Fasts this month: {{fasts}}.",
-    "fallbackSuggestion": "Look at these quietly, then pick one small thing to keep steady next week.",
-    "badgeLabel": "Muhāsabah · this week",
-    "dismiss": "Dismiss",
-    "thinkingLabel": "Naseeh is reflecting on your week…",
-    "loadingVerse": "Loading verse…"
-  },
-  "naseeh": {
-    "disclaimer": "A companion's words, not medical or religious advice.",
-    "findingWords": "Finding the right words…",
-    "pageTitle": "Naseeh, AI Companion",
-    "pageHeading": "Naseeh",
-    "pageSubheading": "Your personal Islamic productivity companion",
-    "disabledTitle": "Naseeh AI is off",
-    "disabledDesc": "Turn on Naseeh in Settings to get personal weekly insights, muhāsabah reports and quick logging.",
-    "openSettings": "Open Settings"
-  },
-  "naseehInsights": {
-    "dismiss": "Dismiss"
-  },
-  "weeklyPlan": {
-    "title": "Your plan for this week",
-    "perDay": "Per day",
-    "onDays": "On",
-    "met": "Done for the week. Anything more is a bonus.",
-    "saving": "Saving…",
-    "accept": "Accept this plan",
-    "acceptNote": "Accepting also sets your daily dhikr and Quran goals to these amounts. You can change them any time in the app.",
-    "failed": "That did not save. Please try again in a moment.",
-    "basis": "Worked out on our server from your own logs. No AI is used for this card."
-  },
-  "naseehPatterns": {
-    "badge": "Naseeh · what I noticed",
-    "thinking": "Looking through your logs…",
-    "empty": "Not enough history yet to spot a real pattern. Keep logging for a couple of weeks and what Naseeh notices will show up here.",
-    "basis": "Worked out from your last 90 days of prayer and 30 days of dhikr and Quran time. Every number comes from your own logs."
-  },
-  "naseehKaza": {
-    "badge": "Naseeh · make-up prayer plan",
-    "owed": "Owed",
-    "oneADay": "One a day, done by",
-    "basis": "A pace you can choose to follow, worked out from the count on your Salat page. It changes as you pay them back or add more."
-  },
-  "naseehChat": {
-    "askError": "Naseeh couldn't answer that just now. The quick questions above still work: they don't use AI.",
-    "badge": "Naseeh · ask about my data",
-    "intro": "Ask about your own numbers: prayers, dhikr, Quran, fasting and make-up prayers. Answers come straight from your logs. This is not a place for rulings.",
-    "quick": "Quick questions",
-    "qMissedWeek": "How many prayers did I miss this week?",
-    "qFajrMonth": "How many Fajr did I miss this month?",
-    "qStreak": "What is my prayer streak?",
-    "qKaza": "How many make-up prayers do I owe?",
-    "qZikr": "How much dhikr did I count this week?",
-    "qQuran": "How much Quran did I read this month?",
-    "qFasts": "How many fasts did I complete this year?",
-    "thinking": "Checking your logs…",
-    "placeholder": "e.g. How many Asr did I miss this week?",
-    "inputLabel": "Ask a question about your own data",
-    "ask": "Ask",
-    "error": "That didn't load. Please try again in a moment.",
-    "privacy": "Only your question text goes to the AI, to choose which lookup to run. Your numbers never leave our server, and this chat is not saved."
-  },
-  "naseehPrivacy": {
-    "title": "AI usage and privacy",
-    "intro": "Naseeh only sees what is listed below. It never gets your journal notes, your name or your account details, and no cycle data of any kind is ever sent.",
-    "quickLog": "Quick log",
-    "quickLogSends": "The sentence you type, and the names of your dhikr types. Please keep cycle or health details out of it.",
-    "summary": "Weekly summary and muhāsabah",
-    "summarySends": "Counts only: dhikr total, streak lengths, prayer percentage, Quran ayat today, fasts this month.",
-    "patterns": "What I noticed",
-    "patternsSends": "Two short sentences we already worked out (a time of day, a weekday, a prayer name, a percentage). No raw logs.",
-    "kaza": "Make-up prayer plan",
-    "kazaSends": "One sentence with your owed count and a date.",
-    "plan": "Weekly plan",
-    "planSends": "Nothing. It is worked out on our server from your own logs, and no AI request is made.",
-    "chat": "Ask about my data",
-    "chatSends": "Only the question you type. The answer is worked out on our server from your logs.",
-    "coaching": "Streak coaching, fasting and welcome-back notes",
-    "coachingSends": "A streak length, the kind of fast and its day number, or how many days you were away.",
-    "cycle": "Cycle tracker (Rayhanah)",
-    "cycleSends": "Nothing. Cycle data is never sent to an AI. While you are on a rest day, Naseeh makes no progress-card AI requests at all.",
-    "ownKey": "You are using your own Groq key, so your requests do not touch the shared Naseeh allowance.",
-    "sharedKey": "You are using the shared Naseeh key. You can add your own Groq key in Settings.",
-    "limits": "Limits: up to 20 AI requests and 30 typed questions a day. Most cards are re-worded once a week and remembered on this device.",
-    "logs": "We keep a record that a request happened (which feature, and whether it worked), never its content.",
-    "turnOff": "Turn off Naseeh",
-    "confirm": "Turn Naseeh off? You can switch it back on any time in Settings.",
-    "confirmYes": "Yes, turn off",
-    "confirmNo": "Keep it on",
-    "failed": "Naseeh is off on this device, but we could not update your account. Open Settings to confirm."
-  },
-  "naturalLog": {
-    "unavailable": "Naseeh can't read notes just now. You can log the same things by hand:",
-    "manualSalat": "Salat",
-    "manualZikr": "Zikr",
-    "manualQuran": "Quran",
-    "entryTitle": "Quick log with a sentence",
-    "entryHint": "e.g. \"Prayed fajr in jamaah, read 5 pages, 100 istighfar\"",
-    "badgeLabel": "Naseeh · quick log",
-    "inputPrompt": "Describe what you did in one sentence. Naseeh will turn it into a log entry for you to review.",
-    "example1": "Prayed fajr in jamaah, read 5 pages, 100 istighfar",
-    "example2": "\"Asr and maghrib at the mosque, 33 subhanallah\"",
-    "examplesHint": "Try: ",
-    "parseButton": "Read my note",
-    "parsing": "Reading…",
-    "emptyResult": "Naseeh couldn't find anything to log in that note. Try mentioning a prayer, a dhikr count, or pages read.",
-    "tryAgain": "Try again",
-    "previewHint": "Here's what Naseeh understood. Remove anything that's wrong, then confirm.",
-    "salatSection": "Prayers",
-    "zikrSection": "Dhikr",
-    "quranSection": "Qur'an reading",
-    "quranAyatCount": "{{count, number}} ayat",
-    "approximate": "approximate",
-    "statusCompleted": "on time",
-    "statusKaza": "kaza",
-    "remove": "Remove",
-    "back": "Back",
-    "confirmButton": "Confirm & log",
-    "logging": "Logging…",
-    "successMessage": "Logged. Well done for keeping track.",
-    "dayLabel": "For",
-    "dayToday": "Today",
-    "dayYesterday": "Yesterday",
-    "newDhikr": "(new dhikr)"
   },
   "cycleSupport": {
     "label": "For you today",
@@ -1443,7 +1280,6 @@
     "friends": "Friends",
     "home": "Home",
     "myProfile": "My Profile",
-    "naseeh": "Naseeh",
     "prayerTimes": "Prayer Times",
     "privacy": "Privacy",
     "qibla": "Qibla Compass",
@@ -1603,7 +1439,7 @@
   },
   "privacy": {
     "seoTitle": "Privacy Policy",
-    "seoDescription": "How Bustandeen stores and protects your data: what we collect, what stays on your device, what friends can see, how the optional AI works, and your control over deletion.",
+    "seoDescription": "How Bustandeen stores and protects your data: what we collect, what stays on your device, what friends can see, and your control over deletion.",
     "aboutLink": "About Bustandeen",
     "contactText": "Have a question or concern about your privacy? We'd love to help.",
     "heading": "Privacy",
@@ -1646,16 +1482,9 @@
       "body4": "The one exception is opt-in: if you choose to share your cycle status with a friend, she sees only a yes or no (never a date, symptom or note), and her view of your row hides the prayer and fasting chips. You can turn this off at any moment.",
       "body5": "Nudge: if you have no active day this week, a connected friend who can see you may send you a nudge, once a day, with a short message if they wish. You see their name, how many times they have nudged you and their message until you dismiss it. Nudges are removed when you unfriend or block them, after 90 days, or when either account is deleted. Choose Nothing and no one can nudge you."
     },
-    "naseeh": {
-      "title": "Naseeh (optional AI)",
-      "body0": "Naseeh is off unless you turn it on in Settings. It uses an AI service (Groq) to phrase encouragement, weekly reflections, and to read the sentence you type in quick log.",
-      "body1": "What is sent: short summaries such as counts, streaks and percentages, and the sentence you type into quick log. Your name, email, Rayhanah notes, dates and body stats are never sent.",
-      "body2": "Two Rayhanah touches, only when Naseeh is on: the gentle comfort line may send the mood or symptom words you chose that day, and cycle guidance sends only the phase and day number.",
-      "body3": "We do not use your data to train any model, and Naseeh gives encouragement, never religious rulings. You can use your own Groq key (stored encrypted) and turn Naseeh off at any time."
-    },
     "thirdParty": {
       "title": "Services we rely on",
-      "body0": "Only if you allow it, Google Analytics 4 counts page views (with IP anonymised). It is off by default: a banner asks once, Settings lets you change your mind at any time, and until you say yes nothing is loaded from Google and no cookie is set. It only sees general page addresses: private areas such as Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, the sadaqah forms and sign-in links are never reported, and no worship data is ever sent to it.",
+      "body0": "Only if you allow it, Google Analytics 4 counts page views (with IP anonymised). It is off by default: a banner asks once, Settings lets you change your mind at any time, and until you say yes nothing is loaded from Google and no cookie is set. It only sees general page addresses: private areas such as Rayhanah, Friends, Settings, Profile, Musafir, the sadaqah forms and sign-in links are never reported, and no worship data is ever sent to it.",
       "body1": "Firebase (Google) handles sign-in, Vercel hosts the app, and MongoDB Atlas stores the database.",
       "body2": "The Arabic Quran text (from the Tanzil Project) is part of the app itself. Translations, tafsir and recitation audio come from quran.com, alquran.cloud, the Islamic Network and mp3quran; flags come from flagcdn. Fonts are part of the app itself, so loading them contacts no one. Like any website, those services can see your IP address when your device loads their files."
     },
@@ -1673,7 +1502,7 @@
         "atlas": {
           "name": "MongoDB Atlas",
           "why": "Our database, stored in Singapore (AWS).",
-          "receives": "Your account details and everything you log. Rayhanah notes, body stats and your own AI key are encrypted before they are stored."
+          "receives": "Your account details and everything you log. Rayhanah notes and body stats are encrypted before they are stored."
         },
         "firebase": {
           "name": "Firebase (Google)",
@@ -1683,12 +1512,7 @@
         "ga": {
           "name": "Google Analytics 4",
           "why": "Counting page views.",
-          "receives": "Only if you allow it: general page addresses with your IP address anonymised. Never private areas (Rayhanah, Friends, Settings, Profile, Musafir, Naseeh, sadaqah forms) and never worship data."
-        },
-        "groq": {
-          "name": "Groq",
-          "why": "Naseeh AI, only if you turn it on.",
-          "receives": "Short summaries (counts, streaks, percentages) and the sentence you type into quick log. Never your name, email, dates, Rayhanah notes or body stats."
+          "receives": "Only if you allow it: general page addresses with your IP address anonymised. Never private areas (Rayhanah, Friends, Settings, Profile, Musafir, sadaqah forms) and never worship data."
         },
         "zoho": {
           "name": "Zoho Mail",
@@ -1743,18 +1567,18 @@
       "body0": "Export everything as a JSON backup or Excel file from Settings.",
       "body1": "Delete any feature's data separately from the Settings danger zone.",
       "body2": "Delete your entire account from your Profile page. Everything you logged is removed, and your login with it. Messages you sent us (feedback and zikr requests) are kept as anonymous notes without your name or email. Sadaqah donation records are kept for accountability, with the details you entered on the form, but no longer linked to your account; the network address saved with a donation is removed. Anyone who had added you as their partner no longer points to you. Rate-limit records keep your account ID until they expire after 30 days, and a log of admin actions keeps only that ID.",
-      "body3": "Hide from friends or keep deeds secret, turn Naseeh off, remove your saved height and weight, or use discreet mode, each with a tap."
+      "body3": "Hide from friends or keep deeds secret, remove your saved height and weight, or use discreet mode, each with a tap."
     },
     "protected": {
       "title": "How it's protected",
       "body0": "All data in transit is encrypted (HTTPS/TLS).",
       "body1": "Access is restricted by Firebase Auth tokens, so only your own requests can read or write your data.",
-      "body2": "Rayhanah notes, body stats and your own AI key are encrypted at rest with AES-256-GCM before they are stored.",
+      "body2": "Rayhanah notes and body stats are encrypted at rest with AES-256-GCM before they are stored.",
       "body3": "The server runs on Vercel's infrastructure (SOC 2 Type II compliant), with the database on MongoDB Atlas."
     },
     "changes": {
       "title": "Changes to this page",
-      "body0": "We update this page whenever a feature changes what we collect, and refresh the date above. This version replaces the one from July 2025, written before Rayhanah encryption, session history, hifz and Naseeh existed."
+      "body0": "We update this page whenever a feature changes what we collect, and refresh the date above. In November 2026 we removed the Naseeh AI companion, so nothing you record is sent to any AI service. This version replaces the one from July 2025, written before Rayhanah encryption, session history and hifz existed."
     }
   },
   "profile": {
@@ -3019,23 +2843,8 @@
     "dayStartMidnightInfoBody": "Your tracking day flips at exactly 12:00 AM local time, the plain calendar-day boundary your phone's clock already uses. This is also what Fasting already tracks by, regardless of which option you pick here.\n\nNo location needed: this works immediately on any device.\n\nExample: if you pray Isha at 1:00 AM, that already counts as a brand-new day the moment the clock struck midnight, even though you haven't slept yet.",
     "dayStartMaghribInfoBody": "Follows the Islamic calendar's own day boundary: a new Hijri day begins at Maghrib (sunset), not at midnight, the same way the Hijri date shown elsewhere in the app already changes at sunset.\n\nLike Fajr-to-Fajr, this needs your saved prayer location to calculate Maghrib's exact time. Without one, it falls back to plain midnight too.\n\nExample: if Maghrib is at 6:30 PM on Tuesday, everything from 6:30 PM Tuesday through 6:29 PM Wednesday belongs to the same tracking day, matching how the Hijri date itself already works.",
     "dayStartInfoAppliesTo": "Applies to your Zikr counter, Salat tracker and Quran reading: their daily reset, streaks and \"today\" all follow whichever option you pick. Fasting and your salat kaza-debt history always use the plain calendar date no matter what, since a fast is dawn-to-sunset of one fixed date.",
-    "enableNaseeh": "Enable Naseeh",
-    "enableNaseehDetail": "Weekly reflections, streak coaching and fasting companion",
     "exportExcel": "Excel report (.xlsx)",
     "fullBackup": "Backup (.json)",
-    "groqKeyActive": "Using your own key",
-    "groqKeyAddedOn": "Added on",
-    "groqKeyChange": "Change",
-    "groqKeyDetail": "By default, Naseeh runs on Bustandeen's shared Groq key. Paste your own free key from",
-    "groqKeyGetOne": "console.groq.com/keys",
-    "groqKeyInvalid": "Couldn't verify that key. Please check it and try again.",
-    "groqKeyPlaceholder": "gsk_...",
-    "groqKeyRemove": "Remove",
-    "groqKeyRemoved": "Removed. Back to the shared key",
-    "groqKeySave": "Save",
-    "groqKeySaved": "Saved. Your key is encrypted and never shown again",
-    "groqKeySection": "Your own Groq API key (optional)",
-    "groqKeySyncNote": "Saved to your Bustandeen account, so it works automatically on any device you sign into.",
     "highContrast": "High contrast",
     "highContrastDetail": "Stronger text and focus outlines",
     "hijriDefault": "Umm al-Qura",
@@ -3048,12 +2857,10 @@
     "language": "Language",
     "languageBengali": "বাংলা (Bengali)",
     "languageEnglish": "English",
-    "languageNote": "The whole app is available in English and বাংলা, and you can switch at any time. Naseeh, the AI companion, replies in English only. Quran and hadith references are never machine-translated.",
+    "languageNote": "The whole app is available in English and বাংলা, and you can switch at any time. Quran and hadith references are never machine-translated.",
     "languageSubtitle": "Choose the app's language: English or বাংলা",
     "locationNotSet": "Not set. Choose one on the Prayer Times page",
     "locationSet": "{{name}}, stored only in this browser",
-    "naseehSection": "Naseeh AI companion",
-    "naseehSubtitle": "Personalised encouragement from your weekly activity, never a source of religious evidence",
     "prayerLocation": "Prayer times location",
     "reduceMotion": "Reduce animations",
     "reduceMotionDetail": "Tone down motion effects and celebrations. Auto follows your phone's setting.",
@@ -3157,7 +2964,6 @@
       "adhkarEvening": "Adhkar: evening days",
       "dayStart": "Day starts at",
       "hijriOffset": "Hijri date adjustment",
-      "naseeh": "Naseeh AI",
       "salatReset": "Salat stats counted from",
       "on": "On",
       "off": "Off",
@@ -3742,17 +3548,6 @@
     "streakActive": "{{streak}}-day streak, keep it burning!",
     "streakFrozen": "Streak frozen! Complete today's goal to keep your {{streak}}-day streak alive",
     "streakPaused": "Streak paused. Resume from analytics"
-  },
-  "streakCoaching": {
-    "fallbackMilestone": "{{days}} days of {{feature}} in a row. Alhamdulillah.",
-    "fallbackBreak": "Your {{feature}} streak paused after {{days}} days. Every day is a chance to begin again.",
-    "fallbackMilestoneTip": "Keep the same small, steady amount rather than adding a lot at once.",
-    "fallbackBreakTip": "Start with one small step today.",
-    "milestoneBadge": "{{days}}-day {{feature}} streak!",
-    "quran": "Quran",
-    "resetBadge": "{{feature}} streak reset",
-    "salat": "Salat",
-    "zikr": "Zikr"
   },
   "unsavedWarning": {
     "dismiss": "Leave without saving",
@@ -4418,11 +4213,6 @@
       "body1": "You can export your data, delete any part of it, or delete your whole account at any time from Settings and your Profile.",
       "body2": "We never sell your data or show your worship details to anyone."
     },
-    "naseeh": {
-      "title": "Naseeh (optional AI)",
-      "body0": "Naseeh is off unless you turn it on. Its words are encouragement written by an AI service and can be wrong; they are never a religious ruling.",
-      "body1": "If you use your own AI key, you are responsible for your use of that service."
-    },
     "sadaqah": {
       "title": "Sadaqah",
       "body0": "Supporting Bustandeen with sadaqah is fully voluntary and never unlocks extra features.",
@@ -4923,7 +4713,6 @@
     "showing": "Showing {{shown}} of {{total}}",
     "grade": "Grade",
     "purpose": "Used for",
-    "usedOn": "Shown on",
     "desk": {
       "verified": "Desk check: matches the source",
       "corrected": "Desk check: corrected in this audit",
@@ -4937,7 +4726,9 @@
       "needs-correction": "Needs correction"
     },
     "manualNote": "Manual note",
-    "inCode_one": "Where in the code ({{count}} file)",
-    "inCode_other": "Where in the code ({{count}} files)"
+    "whereTitle": "Where in the app",
+    "ruleOnly": "not quoted on a screen; it is the basis of a rule the app follows in its calculations.",
+    "notShown": "not shown on any screen right now.",
+    "highlightHint": "Opens the screen with “{{text}}” highlighted"
   }
 }

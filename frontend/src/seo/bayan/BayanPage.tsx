@@ -319,6 +319,12 @@ function ReleaseCard({ lang, release }: { lang: BayanLang; release: Release }) {
           {list(r.fixed)}
         </>
       )}
+      {r.removed && (
+        <>
+          <p className="text-xs font-bold text-white/70 mt-3 mb-1.5">{t.removed}</p>
+          {list(r.removed)}
+        </>
+      )}
     </article>
   );
 }

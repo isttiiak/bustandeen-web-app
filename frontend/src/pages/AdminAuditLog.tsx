@@ -58,6 +58,8 @@ const ACTION_LABELS: Record<string, string> = {
   'account.mfaReset': "Reset an admin's authenticator",
   'account.mfaPolicyOn': 'Turned two-step sign-in on',
   'account.mfaPolicyOff': 'Turned two-step sign-in off',
+  'reference.check': 'Marked a reference as checked',
+  'reference.clear': 'Cleared a reference check',
 };
 
 const AREAS: { value: AuditArea; label: string }[] = [
@@ -68,6 +70,7 @@ const AREAS: { value: AuditArea; label: string }[] = [
   { value: 'accounts', label: 'Admin accounts' },
   { value: 'messages', label: 'Feedback, mailbox and emails' },
   { value: 'broadcast', label: 'Announcements and moon sighting' },
+  { value: 'references', label: 'Reference checks' },
 ];
 
 export default function AdminAuditLog() {

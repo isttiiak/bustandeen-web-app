@@ -104,7 +104,6 @@ async function seedEverything(uid, email) {
       bustandeen_home_goals: { v: '{"on":true,"off":[],"badges":true}', t: 1000 },
       not_a_synced_key: { v: 'x', t: 1000 },
     },
-    groqApiKeyEnc: 'SECRET-CIPHERTEXT',
   });
   await ZikrGoal.create({ userId: uid, dailyTarget: 300, isActive: true });
   await ZikrStreak.create({
@@ -353,7 +352,6 @@ describe('Backup v3: export, wipe, import restores exactly', () => {
   test('never leaks secrets, internal notes or other people', async () => {
     const raw = JSON.stringify(await exportA());
     for (const s of [
-      'SECRET-CIPHERTEXT',
       'INTERNAL NOTE',
       '203.0.113.9',
       'internal@bustandeen.com',

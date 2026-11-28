@@ -20,19 +20,6 @@ const ENGLISH_ONLY = new Set([
   // Admin pages (Servant/Ansar only), and the notices only staff ever see.
   'adminNotices',
   'adminSadaqah',
-  // Naseeh AI is English only (decision 2026-09): hidden in Bangla mode.
-  'aiFlair',
-  'fastingCompanion',
-  'muhasabah',
-  'naseeh',
-  'naseehChat',
-  'naseehInsights',
-  'naseehKaza',
-  'naseehPatterns',
-  'naseehPrivacy',
-  'naturalLog',
-  'streakCoaching',
-  'weeklyPlan',
 ]);
 
 /** Placeholders that exist only for English grammar and may be left out of
