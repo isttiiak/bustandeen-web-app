@@ -13,6 +13,7 @@ import { SPECIAL_DAYS } from './islamicCalendar.js';
 // Friday ṣalawāt note, Laylat al-Qadr ṣadaqah line from 97:3). Friday updated 2026-11-28:
 // brothers' and sisters' guidance (Abū Dāwūd 1067, 567, 1052; Bukhārī 879, 881, 900, 934;
 // Muslim 443b, 873a; Quran 24:31; Ibn al-Mundhir, al-Ijmāʿ), each checked on sunnah.com / quran.com.
+// Eid al-Fiṭr, Eid al-Aḍḥā and Laylat al-Qadr: the sisters' items (Bukhārī 324, 971, 974).
 type Dict = Record<string, unknown>;
 
 const strings = (v: unknown): string[] =>
@@ -46,12 +47,12 @@ const FINGERPRINTS = {
     ashura: '45f26ec3',
     ayyam_al_bid: '6367346e',
     dhul_hijjah_first10: 'ab0ac40d',
-    eid_adha: '45e163cc',
-    eid_fitr: 'fae33661',
+    eid_adha: 'f60a711a',
+    eid_fitr: 'a1321d47',
     fast_mon_thu: 'd5f918b7',
     friday: '96283b96',
     islamic_new_year: 'b32b49f8',
-    laylat_qadr: 'fa72e189',
+    laylat_qadr: 'c1c14633',
     shab_e_barat: 'c4364e98',
     typeBadge: '5bfd8f7e',
   },
@@ -60,12 +61,12 @@ const FINGERPRINTS = {
     ashura: 'f5a954ee',
     ayyam_al_bid: 'c7270a69',
     dhul_hijjah_first10: '30f585bf',
-    eid_adha: 'df65baf6',
-    eid_fitr: 'f8dd1b3b',
+    eid_adha: '62925a8b',
+    eid_fitr: '41fc502c',
     fast_mon_thu: 'b4698aeb',
     friday: 'ec4571cb',
     islamic_new_year: '32540f2b',
-    laylat_qadr: '2b2c86cd',
+    laylat_qadr: 'ceb80c5b',
     shab_e_barat: 'b8e7b46a',
     typeBadge: '6ccd5a4d',
   },
