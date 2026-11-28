@@ -36,8 +36,8 @@ const usedKeys = [
 
 describe('Friends screen', () => {
   it('finds the Friends file', () => {
-    // The page plus the twelve files of components/friends/ (audit P4-1, and the nudge sheet and dialog).
-    expect(Object.keys(files).length).toBe(13);
+    // The page plus the thirteen files of components/friends/ (audit P4-1, and the nudge sheet and dialog).
+    expect(Object.keys(files).length).toBe(14);
     expect(usedKeys.length).toBeGreaterThan(60);
   });
 

@@ -6,7 +6,7 @@ export const NUDGE_COOLDOWN_MS = 24 * 60 * 60 * 1000;
 /** Uids the viewer nudged within the cooldown: their Nudge button waits. */
 export async function recentlyNudged(fromUid: string): Promise<Set<string>> {
   const cutoff = new Date(Date.now() - NUDGE_COOLDOWN_MS);
-  const rows = await Nudge.find({ fromUid, lastNudgedAt: { $gt: cutoff } }).select('toUid');
+  const rows = await Nudge.find({ fromUid, createdAt: { $gt: cutoff } }).select('toUid');
   return new Set(rows.map((r) => r.toUid));
 }
 

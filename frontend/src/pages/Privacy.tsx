@@ -150,6 +150,7 @@ export default function Privacy() {
                 ansar@bustandeen.com
               </a>
             </p>
+            <p className="text-white/75 text-xs">{t('privacy.contactAddress')}</p>
             <Link to="/about" className="text-white/70 text-xs underline hover:text-white">
               {t('privacy.aboutLink')}
             </Link>

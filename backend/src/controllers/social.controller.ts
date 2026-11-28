@@ -206,3 +206,42 @@ export const dismissNudges = async (
     next(err);
   }
 };
+
+export const getNudgeHistory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const history = await nudgeService.getNudgeHistory(req.user.uid);
+    res.json({ ok: true, history });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteNudge = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const deleted = await nudgeService.deleteNudge(req.user.uid, req.params['id'] as string);
+    res.status(deleted ? 200 : 404).json({ ok: deleted });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const clearNudgeHistory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const removed = await nudgeService.clearNudgeHistory(req.user.uid);
+    res.json({ ok: true, removed });
+  } catch (err) {
+    next(err);
+  }
+};

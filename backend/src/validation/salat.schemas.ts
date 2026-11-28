@@ -54,7 +54,7 @@ export const getSalatJourneySchema = z.object({
   body: z.object({}).optional(),
 });
 
-export const salatCorrelationsSchema = z.object({
+export const salatBounceBackSchema = z.object({
   query: z.object({
     today: clientToday.optional(),
     timezoneOffset: z.coerce.number().int().min(-720).max(840).optional(),

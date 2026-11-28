@@ -828,6 +828,15 @@
   },
   "friends": {
     "nudge": {
+      "historyTitle": "Nudge history",
+      "historySubtitle": "Nudges your friends sent you",
+      "historyEmpty": "No nudges yet.",
+      "deleteOne": "Delete this nudge from {{name}}",
+      "deleteAll": "Delete all history",
+      "deleteAllTitle": "Delete all nudge history?",
+      "deleteAllBody": "Every nudge in this list will be removed from your account. This cannot be undone.",
+      "deleteAllYes": "Yes, delete all",
+      "deleteFail": "Could not delete. Please try again.",
       "button": "Nudge",
       "buttonAria": "Nudge {{name}}",
       "sent": "Nudged",
@@ -1442,6 +1451,7 @@
     "seoDescription": "How Bustandeen stores and protects your data: what we collect, what stays on your device, what friends can see, and your control over deletion.",
     "aboutLink": "About Bustandeen",
     "contactText": "Have a question or concern about your privacy? We'd love to help.",
+    "contactAddress": "Postal address: Gazipur-1750, Dhaka, Bangladesh. We answer every privacy question within 30 days.",
     "heading": "Privacy",
     "sources": {
       "title": "Where the religious content comes from",
@@ -1450,7 +1460,7 @@
       "body2": "sunnah.com: hadith text and references from sunnah.com are fetched by our server where an API is used, and every hadith is credited with its collection, number and grade. sunnah.com receives nothing about you.",
       "body3": "Islamic Network (alquran.cloud) gives Quran translations, transliteration and audio. Where we use them, IRD Foundation (hadith and Islamic reference data), the King Fahd Glorious Quran Printing Complex (Quran text and fonts) and the Quranic Universal Library, QUL by Tarteel (Quran data sets) are credited on the References page. The Arabic Quran text built into the app is the Tanzil Project's Uthmani text.",
       "body4": "Your reading and worship records never go to these sources. Our server asks them for content only, with no account details, and the app keeps what it has loaded on your device. When your device loads a file straight from a source (such as audio), that source can see your IP address like any website, and its own privacy policy applies.",
-      "body5": "Your worship records are religious data. You choose what to log, you can export or delete any part of it or your whole account at any time, and we never sell or share it, including with these sources. For privacy questions write to ansar@bustandeen.com; we answer within 30 days."
+      "body5": "Your worship records are religious data. You choose what to log, you can export or delete any part of it or your whole account at any time, and we never sell or share it, including with these sources. For privacy questions write to ansar@bustandeen.com or to Gazipur-1750, Dhaka, Bangladesh; we answer within 30 days."
     },
     "lastUpdated": "Last updated: 28 November 2026",
     "srTitle": "Privacy Policy, Bustandeen",
@@ -1480,7 +1490,7 @@
       "body2": "Secret deeds: keep prayers, dhikr, Quran or fasting secret and friends never see that area, and it is left out of the Noor they see. Choose Nothing to leave every friend's circle, even current friends.",
       "body3": "Rayhanah data is never visible to friends. On your excused days the numbers are filled from what you actually did, so nothing reveals it.",
       "body4": "The one exception is opt-in: if you choose to share your cycle status with a friend, she sees only a yes or no (never a date, symptom or note), and her view of your row hides the prayer and fasting chips. You can turn this off at any moment.",
-      "body5": "Nudge: if you have no active day this week, a connected friend who can see you may send you a nudge, once a day, with a short message if they wish. You see their name, how many times they have nudged you and their message until you dismiss it. Nudges are removed when you unfriend or block them, after 90 days, or when either account is deleted. Choose Nothing and no one can nudge you."
+      "body5": "Nudge: if you have no active day this week, a connected friend who can see you may send you a nudge, once a day, with a short message if they wish. You see their name, how many times they have nudged you and their message until you dismiss it, and the Friends menu keeps a nudge history where you can delete any nudge or all of them. Nudges are removed when you unfriend or block them, after 90 days, or when either account is deleted. Choose Nothing and no one can nudge you."
     },
     "thirdParty": {
       "title": "Services we rely on",
@@ -2470,13 +2480,14 @@
     "kazaInsightsHint": "Based on prayers the tracker knows an exact missed date for. A rough estimate you added by hand may not be counted here.",
     "kazaPerPrayer": "By prayer",
     "kazaOwedCount": "{{n}} owed",
-    "correlationTitle": "Isha & Fajr connection",
-    "correlationDesc": "How your Isha time relates to whether you catch Fajr the next morning.",
-    "correlationEarly": "Isha before 11pm",
-    "correlationLate": "Isha after 11pm",
-    "correlationRate": "{{rate, number}}%",
-    "correlationFajrOnTime": "Fajr on time",
-    "correlationHint": "Based on the last 90 days of prayer times you already logged.",
+    "bounceBackTitle": "How you bounce back",
+    "bounceBackDesc": "After a day with a missed prayer, how often the next day has all five done.",
+    "bounceBackAfterSlip": "After a day with a missed prayer",
+    "bounceBackAfterFull": "After a day with all five done",
+    "bounceBackRate": "{{rate, number}}%",
+    "bounceBackNextFull": "next day all five done",
+    "bounceBackDays": "{{n}} days",
+    "bounceBackHint": "Last 90 days, from your Done, Kaza and Miss marks. Not from the time you tapped a button.",
     "byWeekday": "By Day of Week",
     "howPrayed": "How You Prayed",
     "howPrayedDone": "Done",
@@ -2532,8 +2543,8 @@
       "howPrayedBody": "How many prayers you marked Done, how many you marked Kaza, and how many you paid back from your kaza debt in this period. It does not look at the time you tapped the button, because many people fill in the whole day at night and that would say nothing true about when they prayed.",
       "kazaDebtChartTitle": "Kaza Debt Chart",
       "kazaDebtChartBody": "How many missed prayers you added to your kaza debt (red) vs paid back by completing a make-up prayer (green), grouped by day for a short window, or into up to 12 equal bars (weekly, wider for a year or all time) that together cover the whole period. The rightmost bar always ends on the last day of the period, and hovering any bar shows its exact date range.",
-      "correlationTitle": "Isha & Fajr Connection",
-      "correlationBody": "Compares how often you catch Fajr on time the morning after praying Isha before 11pm or after 11pm. It is a personal pattern from your own last 90 days, not a religious ruling. It only appears once there is enough data in both groups (at least 5 days each), because a 2-day sample would be noise, not a pattern.",
+      "bounceBackTitle": "How You Bounce Back",
+      "bounceBackBody": "Looks at your finished days from the last 90 days: how often the day after a day with a missed prayer has all five prayers done, next to how often the day after a day with all five done does. It uses only your Done, Kaza and Miss marks, not the time you tapped, because many people fill in the day at night. Rest days (Rayhanah) are left out. It is a personal pattern, not a religious ruling, and it only appears once there are at least 5 days on each side.",
       "mosqueTrendTitle": "Mosque Attendance Trend",
       "mosqueTrendBody": "What share of your prayers were prayed at the mosque (in jama’ah), tracked day by day for a short window, or in up to 12 equal steps (weekly, wider for a year or all time) that together cover the whole period. The rightmost point ends on the last day of the period, and its label shows the exact date range it covers.",
       "prayerCalendarTitle": "Prayer Calendar",
@@ -2586,6 +2597,8 @@
     "adhkarToggleDesc": "On Fajr until sunrise and on Maghrib until ʿIshāʾ, while their time is open"
   },
   "salatTracker": {
+    "excusedPrayer": "Excused",
+    "excusedPrayerNote": "Excused: its time ended before your Rayhanah days did. Nothing to log.",
     "seoTitle": "Salat Tracker: Log Your 5 Daily Prayers",
     "seoDescription": "Track Fajr, Dhuhr, Asr, Maghrib and Isha with on-time/late/kaza logging, Jumu'ah tracking, streaks and automatic missed-prayer (kaza) debt accrual.",
     "about": "about",

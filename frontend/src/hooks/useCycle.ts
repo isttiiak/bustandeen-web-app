@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import i18n from '../i18n.js';
@@ -5,6 +6,8 @@ import api from '../lib/api.js';
 import { OfflineQueuedError, sendOrQueue } from '../utils/syncOutbox.js';
 import { useAuthStore } from '../store/useAuthStore.js';
 import { getTrackingDay } from '../utils/trackingDay.js';
+import { excusedOnEndDay, type FardId } from '../utils/cycleEndDay.js';
+import { readSavedPlace } from '../utils/placeClock.js';
 
 export interface CycleActive {
   type: 'hayd' | 'nifas';
@@ -35,7 +38,14 @@ export interface CycleSummary {
     basedOnCycles: number;
   };
   madhab: 'hanafi' | 'majority';
-  logs: Array<{ _id: string; type: 'hayd' | 'nifas'; startDate: string; endDate: string | null }>;
+  logs: Array<{
+    _id: string;
+    type: 'hayd' | 'nifas';
+    startDate: string;
+    endDate: string | null;
+    /** When it was marked finished (ISO); null on older episodes */
+    endedAt?: string | null;
+  }>;
   days: CycleDayNote[];
   partnerSync: { enabled: boolean; partnerUid: string | null };
   pregnancy: { active: boolean; dueDate: string | null; weeksAlong: number | null };
@@ -62,6 +72,12 @@ export function useCycleSummary(enabled = true) {
     enabled: !!user && isFemale && enabled,
     staleTime: 60_000,
   });
+}
+
+/** The fard prayers excused on `date` because an episode was marked finished that day. */
+export function useEndDayExcused(date: string): FardId[] {
+  const logs = useCycleSummary().data?.logs;
+  return useMemo(() => excusedOnEndDay(logs, date, readSavedPlace()), [logs, date]);
 }
 
 /** Just the active state — for Salat/Fasting/Home excused checks. */
@@ -111,7 +127,14 @@ export function useEndCycle() {
   return useMutation({
     networkMode: 'always',
     mutationFn: (vars: { date: string }) =>
-      sendOrQueue({ tracker: 'cycle', method: 'post', url: '/api/cycle/end', body: vars }),
+      sendOrQueue({
+        tracker: 'cycle',
+        method: 'post',
+        url: '/api/cycle/end',
+        // The moment she marks it finished: prayers whose time had run out by
+        // then are excused on that day (utils/cycleEndDay.ts).
+        body: { ...vars, endedAt: new Date().toISOString() },
+      }),
     onSuccess: () => void qc.invalidateQueries({ queryKey: ['cycle'] }),
     onError: (err: unknown) => {
       if (err instanceof OfflineQueuedError) return cycleOfflineToast();

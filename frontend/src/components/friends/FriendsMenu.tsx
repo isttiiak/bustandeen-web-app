@@ -1,22 +1,25 @@
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-  EllipsisVerticalIcon,
+  Bars3Icon,
   EyeIcon,
+  HandRaisedIcon,
   UserPlusIcon,
   UsersIcon,
 } from '@heroicons/react/24/outline';
 import type { SvgIcon } from './friendsParts.js';
 
-/** The arch's top-right menu (U3): invite, see friends, what friends see. */
+/** The arch's top-right menu (U3, three horizontal lines since 2026-11-29): invite, see friends, what friends see. */
 export function FriendsMenu({
   onInvite,
   onSeeFriends,
   onPrivacy,
+  onNudgeHistory,
 }: {
   onInvite: () => void;
   onSeeFriends: () => void;
   onPrivacy: () => void;
+  onNudgeHistory: () => void;
 }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
@@ -42,6 +45,11 @@ export function FriendsMenu({
     { Icon: UserPlusIcon, label: t('friends.inviteFriend'), onClick: onInvite },
     { Icon: UsersIcon, label: t('friends.seeFriends'), onClick: onSeeFriends },
     { Icon: EyeIcon, label: t('friends.privacy.title'), onClick: onPrivacy },
+    {
+      Icon: HandRaisedIcon,
+      label: t('friends.nudge.historyTitle', 'Nudge history'),
+      onClick: onNudgeHistory,
+    },
   ];
 
   return (
@@ -57,7 +65,7 @@ export function FriendsMenu({
         aria-expanded={open}
         className="w-11 h-11 grid place-items-center rounded-full text-white/85 hover:text-white bg-brand-surface/50 hover:bg-brand-surface border border-brand-border transition-colors"
       >
-        <EllipsisVerticalIcon className="w-6 h-6" />
+        <Bars3Icon className="w-6 h-6" />
       </button>
       {open && (
         <div

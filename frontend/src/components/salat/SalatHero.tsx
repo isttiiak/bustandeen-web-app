@@ -4,7 +4,7 @@
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline';
-import { LeafIcon, PrayerGlyph } from '../icons/IslamicIcons.js';
+import { FlowerIcon, LeafIcon, PrayerGlyph } from '../icons/IslamicIcons.js';
 import { getHijriDate, formatHijriDate } from '../../utils/islamicCalendar.js';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
 import { translateSalatName } from '../../utils/prayerTimes.js';
@@ -18,7 +18,7 @@ export interface SalatHeroProps {
   onPrev: () => void;
   onNext: () => void;
   /** Display status per fard prayer, in order (past unlogged = 'missed'). */
-  marks: { id: string; name: string; status: PrayerStatus }[];
+  marks: { id: string; name: string; status: PrayerStatus | 'excused' }[];
   completedCount: number;
   /** Rayhanah days: salat is excused, so no marks or count. */
   excused: boolean;
@@ -44,14 +44,16 @@ export default function SalatHero({
   const { t } = useTranslation();
   const day = new Date(selectedDate + 'T12:00:00');
   const hijri = getHijriDate(day);
-  const statusLabel = (s: PrayerStatus) =>
-    s === 'completed'
-      ? t('salatTracker.legendDone', 'Done')
-      : s === 'kaza'
-        ? t('salatTracker.legendKaza', 'Kaza')
-        : s === 'missed'
-          ? t('salatTracker.legendMissed', 'Miss')
-          : t('salatTracker.notLogged', 'Not logged');
+  const statusLabel = (s: PrayerStatus | 'excused') =>
+    s === 'excused'
+      ? t('salatTracker.excusedPrayer', 'Excused')
+      : s === 'completed'
+        ? t('salatTracker.legendDone', 'Done')
+        : s === 'kaza'
+          ? t('salatTracker.legendKaza', 'Kaza')
+          : s === 'missed'
+            ? t('salatTracker.legendMissed', 'Miss')
+            : t('salatTracker.notLogged', 'Not logged');
   const navBtn =
     'p-2 rounded-control border border-brand-border bg-brand-deep/60 text-white/60 hover:text-white hover:border-brand-emerald/40 disabled:opacity-20 disabled:cursor-not-allowed transition-colors';
 
@@ -120,7 +122,12 @@ export default function SalatHero({
               return (
                 <li key={m.id} className="flex flex-col items-center gap-1 w-12">
                   <PrayerGlyph id={m.id} className="w-4 h-4 text-white/50" />
-                  <LeafIcon className={`w-6 h-6 ${LEAF_CLASS[m.status]}`} />
+                  {/* A prayer excused by Rayhanah is a flower, the same flower as on her page */}
+                  {m.status === 'excused' ? (
+                    <FlowerIcon className="w-6 h-6 text-brand-pink" />
+                  ) : (
+                    <LeafIcon className={`w-6 h-6 ${LEAF_CLASS[m.status]}`} />
+                  )}
                   <span className="text-[10px] text-white/60 leading-none truncate max-w-full">
                     {name}
                     <span className="sr-only">: {statusLabel(m.status)}</span>

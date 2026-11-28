@@ -15,6 +15,8 @@ import {
 import { formatTime, PRAYER_META, translateSalatName } from '../../utils/prayerTimes.js';
 import { formatLocaleDate, formatLocaleNumber } from '../../utils/localeDate.js';
 import { formatHijriDate, getHijriToday } from '../../utils/islamicCalendar.js';
+import { useEndDayExcused } from '../../hooks/useCycle.js';
+import { getTrackingDay } from '../../utils/trackingDay.js';
 import type { HomeState } from './useHomeData.js';
 
 /** The prayer arch links to /prayer-times as a stretched link: an overlay
@@ -59,6 +61,8 @@ function ArchNow() {
 /** The prayer window under the screen's one arch, or the invitation to set a place. */
 export function HomePrayerHero({ home }: { home: HomeState }) {
   const { t } = useTranslation();
+  // Prayers excused today because an episode was marked finished earlier today
+  const endDayExcused = useEndDayExcused(getTrackingDay());
   const {
     prayerWidgetData,
     prayerNow,
@@ -272,6 +276,7 @@ export function HomePrayerHero({ home }: { home: HomeState }) {
                 log={salatLog}
                 current={prayerWidgetData.currentMandatory}
                 excused={!!cycleActive}
+                excusedIds={endDayExcused}
                 name={prayerName}
               />
             )}

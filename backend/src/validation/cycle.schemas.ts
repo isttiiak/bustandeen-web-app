@@ -13,6 +13,8 @@ export const startCycleSchema = z.object({
 export const endCycleSchema = z.object({
   body: z.object({
     date: dateField,
+    /** When the user marked it finished (ISO). The server keeps it only when it is recent and not in the future. */
+    endedAt: z.string().datetime().optional(),
   }),
 });
 

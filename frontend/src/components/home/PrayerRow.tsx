@@ -1,10 +1,11 @@
 import { Link } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { CheckIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { FlowerIcon } from '../icons/IslamicIcons.js';
 import type { SalatLog } from '../../hooks/useSalatLog.js';
 import { TIMELINE_PRAYERS, type TimelinePrayer } from '../../utils/todayTimeline.js';
 
-type RowStatus = 'completed' | 'kaza' | 'missed' | 'pending';
+type RowStatus = 'completed' | 'kaza' | 'missed' | 'pending' | 'excused';
 
 // Opaque fills: the track runs behind the circles, into each one.
 const DOT: Record<RowStatus, string> = {
@@ -12,6 +13,7 @@ const DOT: Record<RowStatus, string> = {
   kaza: 'bg-brand-gold border-brand-gold',
   missed: 'bg-brand-deep border-red-300',
   pending: 'bg-brand-deep border-brand-border',
+  excused: 'bg-brand-deep border-brand-pink/60',
 };
 
 /** Column width and gap in px (w-11, gap-4): the track's geometry. */
@@ -32,28 +34,35 @@ export default function PrayerRow({
   log,
   current,
   excused,
+  excusedIds = [],
   name,
 }: {
   log: SalatLog;
   current: string | null;
   excused: boolean;
+  /** Prayers excused on the day a Rayhanah episode was marked finished: a flower, counted as done */
+  excusedIds?: string[];
   name: (id: string) => string;
 }) {
   const { t } = useTranslation();
-  const statuses = TIMELINE_PRAYERS.map((id) => normalise(log.prayers[id]?.status));
-  const prayed = (s: RowStatus) => s === 'completed' || s === 'kaza';
+  const statuses = TIMELINE_PRAYERS.map((id) =>
+    excusedIds.includes(id) ? 'excused' : normalise(log.prayers[id]?.status)
+  );
+  const prayed = (s: RowStatus) => s === 'completed' || s === 'kaza' || s === 'excused';
   const label = (id: TimelinePrayer, s: RowStatus) =>
-    s === 'completed'
-      ? t('home.timelineDone', 'Done')
-      : s === 'kaza'
-        ? t('home.timelineKaza', 'Kaza')
-        : s === 'missed'
-          ? t('home.timelineMiss', 'Miss')
-          : excused
-            ? t('home.excused')
-            : id === current
-              ? t('home.timelineNow', 'Now')
-              : '';
+    s === 'excused'
+      ? t('home.excused')
+      : s === 'completed'
+        ? t('home.timelineDone', 'Done')
+        : s === 'kaza'
+          ? t('home.timelineKaza', 'Kaza')
+          : s === 'missed'
+            ? t('home.timelineMiss', 'Miss')
+            : excused
+              ? t('home.excused')
+              : id === current
+                ? t('home.timelineNow', 'Now')
+                : '';
 
   return (
     <Link
@@ -92,7 +101,10 @@ export default function PrayerRow({
                       : DOT[st]
                   }`}
                 >
-                  {prayed(st) && <CheckIcon className="w-3.5 h-3.5 text-on-color" />}
+                  {prayed(st) && st !== 'excused' && (
+                    <CheckIcon className="w-3.5 h-3.5 text-on-color" />
+                  )}
+                  {st === 'excused' && <FlowerIcon className="w-3.5 h-3.5 text-brand-pink" />}
                   {st === 'missed' && <XMarkIcon className="w-3 h-3 text-red-300" />}
                 </span>
                 <span

@@ -74,4 +74,13 @@ router.post(
   socialController.dismissNudges
 );
 
+// GET /api/social/nudges/history — every nudge I have received and not deleted
+router.get('/nudges/history', requireAuth, socialController.getNudgeHistory);
+
+// DELETE /api/social/nudges/history — delete my whole nudge history
+router.delete('/nudges/history', requireAuth, socialController.clearNudgeHistory);
+
+// DELETE /api/social/nudges/history/:id — delete one nudge from my history
+router.delete('/nudges/history/:id', requireAuth, socialController.deleteNudge);
+
 export default router;

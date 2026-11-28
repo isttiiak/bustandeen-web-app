@@ -181,7 +181,13 @@ async function getStatus(userId: string, today: string): Promise<CycleStatus> {
 }
 
 export interface CycleSummary extends CycleStatus {
-  logs: Array<{ _id: string; type: string; startDate: string; endDate: string | null }>;
+  logs: Array<{
+    _id: string;
+    type: string;
+    startDate: string;
+    endDate: string | null;
+    endedAt: string | null;
+  }>;
   /** Wellness notes for the last ~60 days (flow/symptoms/moods/garden) */
   days: Array<{
     date: string;
@@ -196,7 +202,10 @@ export async function getSummary(userId: string, today: string): Promise<CycleSu
   const daysSince = shiftDateStr(today, -60);
   const [status, logs, days] = await Promise.all([
     getStatus(userId, today),
-    CycleLog.find({ userId }).sort({ startDate: -1 }).limit(24).select('type startDate endDate'),
+    CycleLog.find({ userId })
+      .sort({ startDate: -1 })
+      .limit(24)
+      .select('type startDate endDate endedAt'),
     CycleDay.find({ userId, date: { $gte: daysSince, $lte: today } }).select('date enc'),
   ]);
   return {
@@ -206,6 +215,7 @@ export async function getSummary(userId: string, today: string): Promise<CycleSu
       type: l.type,
       startDate: l.startDate,
       endDate: l.endDate,
+      endedAt: l.endedAt ? l.endedAt.toISOString() : null,
     })),
     days: days.map((d) => {
       // Display only: an unreadable note shows as empty here, and saving over it is refused (upsertDay).
@@ -331,9 +341,19 @@ export async function addPastCycle(
   return { ok: true, log };
 }
 
+/** The client's "marked finished" moment, kept only when it is believable: not in the future
+ * (5 minutes of clock drift allowed) and within the last 3 days (a queued offline write). */
+function believableEndedAt(raw: string | undefined, now = Date.now()): Date {
+  const t = raw ? Date.parse(raw) : NaN;
+  return Number.isFinite(t) && t <= now + 5 * 60_000 && t >= now - 3 * 86_400_000
+    ? new Date(t)
+    : new Date(now);
+}
+
 export async function endCycle(
   userId: string,
-  date: string
+  date: string,
+  endedAt?: string
 ): Promise<{ ok: boolean; error?: string; log?: ICycleLog }> {
   if (!DAY_STR_RE.test(date)) return { ok: false, error: 'Invalid date' };
 
@@ -342,6 +362,7 @@ export async function endCycle(
   if (date < open.startDate) return { ok: false, error: 'End date is before the start date.' };
 
   open.endDate = date;
+  open.endedAt = believableEndedAt(endedAt);
   await open.save();
   return { ok: true, log: open };
 }
@@ -399,6 +420,8 @@ export async function editCycleLog(
   });
   if (clash) return { ok: false, error: 'Those dates overlap another logged cycle.' };
 
+  // A different end date no longer matches the moment it was marked finished.
+  if (endDate !== log.endDate) log.endedAt = null;
   log.startDate = startDate;
   log.endDate = endDate;
   try {

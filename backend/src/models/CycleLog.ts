@@ -14,6 +14,10 @@ export interface ICycleLog extends Document {
   type: 'hayd' | 'nifas';
   startDate: string;
   endDate: string | null;
+  /** The moment the user marked the episode finished. On the end day, prayers whose
+   * time had already run out by then were not owed (the app shows them as excused).
+   * Absent on episodes ended before this field, or entered or edited by date only. */
+  endedAt?: Date | null;
   note?: string;
 }
 
@@ -23,6 +27,7 @@ const CycleLogSchema = new Schema<ICycleLog>(
     type: { type: String, enum: ['hayd', 'nifas'], default: 'hayd' },
     startDate: { type: String, required: true },
     endDate: { type: String, default: null },
+    endedAt: { type: Date, default: null },
     note: { type: String, maxlength: 500 },
   },
   { timestamps: true }

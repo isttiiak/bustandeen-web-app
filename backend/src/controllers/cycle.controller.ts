@@ -39,8 +39,8 @@ export const startCycle = async (
 
 export const endCycle = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { date } = req.body as { date: string };
-    const result = await cycleService.endCycle(req.user.uid, date);
+    const { date, endedAt } = req.body as { date: string; endedAt?: string };
+    const result = await cycleService.endCycle(req.user.uid, date, endedAt);
     if (!result.ok) {
       res.status(400).json({ ok: false, error: result.error });
       return;

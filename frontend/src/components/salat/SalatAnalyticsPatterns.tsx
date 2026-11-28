@@ -4,7 +4,7 @@ import { ChartBarIcon } from '@heroicons/react/24/outline';
 import { CARD, SECTION_TITLE } from '../bustanStyles.js';
 import { InfoButton } from '../ChartInfoModal.js';
 import MosqueTrendChart from '../analytics/MosqueTrendChart.js';
-import type { SalatAnalytics, useSalatCorrelation } from '../../hooks/useSalatLog.js';
+import type { SalatAnalytics, useSalatBounceBack } from '../../hooks/useSalatLog.js';
 import { formatLocaleNumber } from '../../utils/localeDate.js';
 import type { ChartInfo, SetInfoTopic } from './useSalatAnalyticsPage.js';
 
@@ -208,68 +208,75 @@ export function SalatTimingAndReasons({
   );
 }
 
-/** Isha time against catching Fajr the next morning. */
-export function SalatCorrelationCard({
-  correlation,
+/** How you recover: how often a full day follows a day with a missed prayer. */
+export function SalatBounceBackCard({
+  bounceBack,
   chartInfo,
   setInfoTopic,
 }: {
-  correlation: ReturnType<typeof useSalatCorrelation>['data'];
+  bounceBack: ReturnType<typeof useSalatBounceBack>['data'];
   chartInfo: ChartInfo;
   setInfoTopic: SetInfoTopic;
 }) {
   const { t } = useTranslation();
+  const cells = bounceBack
+    ? [
+        {
+          label: t('salatAnalytics.bounceBackAfterSlip', 'After a day with a missed prayer'),
+          rate: bounceBack.afterSlipRate ?? 0,
+          days: bounceBack.afterSlipDays,
+          box: 'border-brand-gold/25 bg-brand-gold/10',
+          text: 'text-brand-gold',
+        },
+        {
+          label: t('salatAnalytics.bounceBackAfterFull', 'After a day with all five done'),
+          rate: bounceBack.afterFullRate ?? 0,
+          days: bounceBack.afterFullDays,
+          box: 'border-brand-emerald/25 bg-brand-emerald/10',
+          text: 'text-brand-emerald',
+        },
+      ]
+    : [];
   return (
     <>
-      {correlation?.available && (
+      {bounceBack?.available && (
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={CARD}>
           <div className="p-5 space-y-3">
             <h2 className={SECTION_TITLE}>
               <ChartBarIcon className="w-5 h-5 text-brand-emerald" aria-hidden="true" />{' '}
-              {t('salatAnalytics.correlationTitle', 'Isha & Fajr connection')}
+              {t('salatAnalytics.bounceBackTitle', 'How you bounce back')}
               <InfoButton
-                onClick={() => setInfoTopic('correlation')}
-                label={chartInfo.correlation!.title}
+                onClick={() => setInfoTopic('bounceBack')}
+                label={chartInfo.bounceBack!.title}
               />
             </h2>
             <p className="text-white/70 text-xs">
               {t(
-                'salatAnalytics.correlationDesc',
-                'How your Isha time relates to whether you catch Fajr the next morning.'
+                'salatAnalytics.bounceBackDesc',
+                'After a day with a missed prayer, how often the next day has all five done.'
               )}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <div className="rounded-control border border-brand-emerald/25 bg-brand-emerald/10 p-3">
-                <p className="text-white/70 text-[11px]">
-                  {t('salatAnalytics.correlationEarly', 'Isha before 11pm')}
-                </p>
-                <p className="text-brand-emerald font-bold text-lg mt-0.5">
-                  {t('salatAnalytics.correlationRate', '{{rate, number}}%', {
-                    rate: correlation.earlyIshaFajrRate ?? 0,
-                  })}
-                </p>
-                <p className="text-white/70 text-[10px] mt-0.5">
-                  {t('salatAnalytics.correlationFajrOnTime', 'Fajr on time')}
-                </p>
-              </div>
-              <div className="rounded-control border border-brand-gold/25 bg-brand-gold/10 p-3">
-                <p className="text-white/70 text-[11px]">
-                  {t('salatAnalytics.correlationLate', 'Isha after 11pm')}
-                </p>
-                <p className="text-brand-gold font-bold text-lg mt-0.5">
-                  {t('salatAnalytics.correlationRate', '{{rate, number}}%', {
-                    rate: correlation.lateIshaFajrRate ?? 0,
-                  })}
-                </p>
-                <p className="text-white/70 text-[10px] mt-0.5">
-                  {t('salatAnalytics.correlationFajrOnTime', 'Fajr on time')}
-                </p>
-              </div>
+              {cells.map((c) => (
+                <div key={c.label} className={`rounded-control border p-3 ${c.box}`}>
+                  <p className="text-white/70 text-[11px]">{c.label}</p>
+                  <p className={`font-bold text-lg mt-0.5 ${c.text}`}>
+                    {t('salatAnalytics.bounceBackRate', '{{rate, number}}%', { rate: c.rate })}
+                  </p>
+                  <p className="text-white/70 text-[10px] mt-0.5">
+                    {t('salatAnalytics.bounceBackNextFull', 'next day all five done')}
+                    {' · '}
+                    {t('salatAnalytics.bounceBackDays', '{{n}} days', {
+                      n: formatLocaleNumber(c.days),
+                    })}
+                  </p>
+                </div>
+              ))}
             </div>
             <p className="text-white/70 text-[10px]">
               {t(
-                'salatAnalytics.correlationHint',
-                'Based on the last 90 days of prayer times you already logged.'
+                'salatAnalytics.bounceBackHint',
+                'Last 90 days, from your Done, Kaza and Miss marks. Not from the time you tapped a button.'
               )}
             </p>
           </div>

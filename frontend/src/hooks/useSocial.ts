@@ -162,7 +162,56 @@ export function useDismissNudges() {
     },
     onSuccess: () => {
       qc.setQueryData(['social', 'nudges'], []);
+      void qc.invalidateQueries({ queryKey: ['social', 'nudges', 'history'] });
     },
+  });
+}
+
+/** One nudge in my history (the ones I received and have not deleted). */
+export interface NudgeHistoryItem {
+  id: string;
+  fromUid: string;
+  displayName: string;
+  photoUrl?: string;
+  avatarId?: string;
+  message: string;
+  nudgedAt: string;
+  unseen: boolean;
+}
+
+/** My nudge history, newest first. Fetched while the history sheet is open. */
+export function useNudgeHistory(enabled: boolean) {
+  const user = useAuthStore((s) => s.user);
+  return useQuery({
+    queryKey: ['social', 'nudges', 'history'],
+    queryFn: async () => {
+      const { data } = await api.get<{ ok: boolean; history: NudgeHistoryItem[] }>(
+        '/api/social/nudges/history'
+      );
+      return data.history;
+    },
+    enabled: !!user && enabled,
+    staleTime: 0,
+  });
+}
+
+/** Delete one nudge from my history, or the whole history when no id is given. */
+export function useDeleteNudges() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id?: string) => {
+      await api.delete(
+        id ? `/api/social/nudges/history/${encodeURIComponent(id)}` : '/api/social/nudges/history'
+      );
+    },
+    onSuccess: () => {
+      qc.setQueryData(['social', 'nudges'], []);
+      void qc.invalidateQueries({ queryKey: ['social', 'nudges', 'history'] });
+    },
+    onError: () =>
+      toast.error(i18n.t('friends.nudge.deleteFail', 'Could not delete. Please try again.'), {
+        id: 'nudge-delete',
+      }),
   });
 }
 

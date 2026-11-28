@@ -656,14 +656,14 @@ function buildSalatJourney() {
   };
 }
 
-function buildSalatCorrelation() {
+function buildSalatBounceBack() {
   return {
     ok: true,
     available: true,
-    earlyIshaFajrRate: 82,
-    lateIshaFajrRate: 54,
-    earlySampleSize: 34,
-    lateSampleSize: 19,
+    afterSlipRate: 58,
+    afterFullRate: 84,
+    afterSlipDays: 14,
+    afterFullDays: 61,
   };
 }
 
@@ -940,7 +940,7 @@ export function getDemoResponse(
   if (url.includes('/api/salat/debt/history')) return buildSalatDebtHistory(parseDays(url));
   if (url.includes('/api/salat/debt/insights')) return buildSalatDebtInsights();
   if (url.includes('/api/salat/journey')) return buildSalatJourney();
-  if (url.includes('/api/salat/correlations')) return buildSalatCorrelation();
+  if (url.includes('/api/salat/bounce-back')) return buildSalatBounceBack();
   if (url.includes('/api/fasting/history')) return buildFastingHistory(parseDays(url));
   if (url.includes('/api/insights/worship-correlation'))
     return buildWorshipCorrelation(parseDays(url));

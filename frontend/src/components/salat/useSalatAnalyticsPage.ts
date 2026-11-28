@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useStatsResets } from '../../hooks/useStatsResets.js';
 import {
   useSalatAnalytics,
-  useSalatCorrelation,
+  useSalatBounceBack,
   useSalatDebt,
   useSalatDebtHistory,
   useSalatDebtInsights,
@@ -101,11 +101,11 @@ export function useSalatAnalyticsPage() {
         'How many missed prayers you added to your kaza debt (red) vs paid back by completing a make-up prayer (green), grouped by day for a short window, or into up to 12 equal bars (weekly, wider for a year or all time) that together cover the whole period. The rightmost bar always ends on the last day of the period, and hovering any bar shows its exact date range.'
       ),
     },
-    correlation: {
-      title: t('salatAnalytics.info.correlationTitle', 'Isha & Fajr Connection'),
+    bounceBack: {
+      title: t('salatAnalytics.info.bounceBackTitle', 'How You Bounce Back'),
       body: t(
-        'salatAnalytics.info.correlationBody',
-        'Compares how often you catch Fajr on time the morning after praying Isha before 11pm or after 11pm. It is a personal pattern from your own last 90 days, not a religious ruling. It only appears once there is enough data in both groups (at least 5 days each), because a 2-day sample would be noise, not a pattern.'
+        'salatAnalytics.info.bounceBackBody',
+        'Looks at your finished days from the last 90 days: how often the day after a day with a missed prayer has all five prayers done, next to how often the day after a day with all five done does. It uses only your Done, Kaza and Miss marks, not the time you tapped, because many people fill in the day at night. Rest days (Rayhanah) are left out. It is a personal pattern, not a religious ruling, and it only appears once there are at least 5 days on each side.'
       ),
     },
     mosqueTrend: {
@@ -144,7 +144,7 @@ export function useSalatAnalyticsPage() {
   const { data: debtHistory } = useSalatDebtHistory(analyticsDays, analyticsToday);
   const { data: kazaInsights } = useSalatDebtInsights();
   const { data: journeyPhases, isLoading: journeyLoading } = useSalatJourney(trackingToday);
-  const { data: correlation } = useSalatCorrelation();
+  const { data: bounceBack } = useSalatBounceBack();
 
   return {
     days,
@@ -170,6 +170,6 @@ export function useSalatAnalyticsPage() {
     kazaInsights,
     journeyPhases,
     journeyLoading,
-    correlation,
+    bounceBack,
   };
 }

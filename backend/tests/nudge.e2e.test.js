@@ -32,6 +32,7 @@ describe('Friend nudges', () => {
   const TODAY = new Date(Date.now() + 360 * 60 * 1000).toISOString().slice(0, 10);
   const summary = (uid) =>
     as(uid, request(app).get(`/api/social/summary?today=${TODAY}&timezoneOffset=360`));
+  const dayAgo = new Date(Date.now() - 25 * 60 * 60 * 1000);
   const nudge = (from, to, body = {}) =>
     as(from, request(app).post(`/api/social/nudge/${to}`)).send({ today: TODAY, ...body });
 
@@ -106,24 +107,78 @@ describe('Friend nudges', () => {
     expect(row.nudged).toBe(true);
   });
 
-  test('dismissing hides it; a nudge after the cooldown counts up and shows again', async () => {
+  test('dismissing hides the pop-up but keeps the history; a nudge after the cooldown counts up', async () => {
     await as('quiet', request(app).post('/api/social/nudges/dismiss')).send({});
     expect((await as('quiet', request(app).get('/api/social/nudges'))).body.nudges).toEqual([]);
+    const history = await as('quiet', request(app).get('/api/social/nudges/history'));
+    expect(history.body.history).toHaveLength(1);
+    expect(history.body.history[0]).toMatchObject({
+      fromUid: 'sender',
+      displayName: 'sender',
+      message: 'Come back soon',
+      unseen: false,
+    });
 
     // a day later
     await Nudge.updateOne(
       { fromUid: 'sender', toUid: 'quiet' },
-      { $set: { lastNudgedAt: new Date(Date.now() - 25 * 60 * 60 * 1000) } }
+      { $set: { createdAt: dayAgo, slot: Math.floor(dayAgo.getTime() / 86_400_000) } }
     );
-    const res = await nudge('sender', 'quiet');
+    const res = await nudge('sender', 'quiet', { message: 'Second one' });
     expect(res.status).toBe(200);
     const mine = await as('quiet', request(app).get('/api/social/nudges'));
-    expect(mine.body.nudges[0]).toMatchObject({ count: 2, message: '' });
+    expect(mine.body.nudges).toHaveLength(1);
+    expect(mine.body.nudges[0]).toMatchObject({ count: 2, message: 'Second one' });
+    const all = await as('quiet', request(app).get('/api/social/nudges/history'));
+    expect(all.body.history.map((h) => h.message)).toEqual(['Second one', 'Come back soon']);
+  });
+
+  test("deleting from history hides it for the recipient but not from the sender's daily limit", async () => {
+    const all = await as('quiet', request(app).get('/api/social/nudges/history'));
+    const newest = all.body.history[0].id;
+    // somebody else's id and rubbish ids are refused
+    expect(
+      (await as('sender', request(app).delete(`/api/social/nudges/history/${newest}`))).status
+    ).toBe(404);
+    expect(
+      (await as('quiet', request(app).delete('/api/social/nudges/history/not-an-id'))).status
+    ).toBe(404);
+
+    const del = await as('quiet', request(app).delete(`/api/social/nudges/history/${newest}`));
+    expect(del.status).toBe(200);
+    const left = await as('quiet', request(app).get('/api/social/nudges/history'));
+    expect(left.body.history.map((h) => h.message)).toEqual(['Come back soon']);
+    expect((await as('quiet', request(app).get('/api/social/nudges'))).body.nudges).toEqual([]);
+    // the sender still cannot nudge again today
+    const again = await nudge('sender', 'quiet');
+    expect(again.status).toBe(429);
+  });
+
+  test('clearing the whole history empties it', async () => {
+    const res = await as('quiet', request(app).delete('/api/social/nudges/history'));
+    expect(res.body).toMatchObject({ ok: true, removed: 1 });
+    const left = await as('quiet', request(app).get('/api/social/nudges/history'));
+    expect(left.body.history).toEqual([]);
+  });
+
+  test('history needs auth', async () => {
+    expect((await request(app).get('/api/social/nudges/history')).status).toBe(401);
+    expect((await request(app).delete('/api/social/nudges/history')).status).toBe(401);
   });
 
   test('a friend who leaves the circle takes the nudges with them', async () => {
+    await Nudge.deleteMany({});
+    await Nudge.create({
+      fromUid: 'sender',
+      toUid: 'quiet',
+      message: '',
+      createdAt: dayAgo,
+      slot: 1,
+    });
     await as('quiet', request(app).delete('/api/social/friends/sender'));
     expect(await Nudge.countDocuments({})).toBe(0);
-    expect((await as('quiet', request(app).get('/api/social/nudges'))).body.nudges).toEqual([]);
+    expect(
+      (await as('quiet', request(app).get('/api/social/nudges/history'))).body.history
+    ).toEqual([]);
   });
 });

@@ -9,6 +9,7 @@ import { FriendsMenu } from '../components/friends/FriendsMenu.js';
 import { ManageFriendsModal } from '../components/friends/ManageFriendsModal.js';
 import { NoorHowItWorks } from '../components/friends/NoorHowItWorks.js';
 import { PendingRequestsModal } from '../components/friends/PendingRequestsModal.js';
+import { NudgeHistorySheet } from '../components/friends/NudgeHistorySheet.js';
 import { NudgeSheet } from '../components/friends/NudgeSheet.js';
 import { PrivacySheet } from '../components/friends/PrivacySheet.js';
 import { useFriendsPage } from '../components/friends/useFriendsPage.js';
@@ -32,6 +33,8 @@ export default function Friends() {
     setRequestsOpen,
     nudgeTarget,
     setNudgeTarget,
+    nudgeHistoryOpen,
+    setNudgeHistoryOpen,
     copied,
     inviteLink,
     copyLink,
@@ -57,6 +60,7 @@ export default function Friends() {
                 onInvite={() => setInviteOpen(true)}
                 onSeeFriends={() => setManageOpen(true)}
                 onPrivacy={() => setPrivacyOpen(true)}
+                onNudgeHistory={() => setNudgeHistoryOpen(true)}
               />
             )}
             <div className="w-16 h-16 mx-auto rounded-full grid place-items-center bg-brand-emerald/10 border border-brand-emerald/30">
@@ -140,6 +144,10 @@ export default function Friends() {
 
       <AnimatePresence>
         {requestsOpen && <PendingRequestsModal onClose={() => setRequestsOpen(false)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {nudgeHistoryOpen && <NudgeHistorySheet onClose={() => setNudgeHistoryOpen(false)} />}
       </AnimatePresence>
 
       <AnimatePresence>

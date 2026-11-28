@@ -14,6 +14,7 @@ export function useFriendsPage() {
   const [manageOpen, setManageOpen] = useState(false);
   const [privacyOpen, setPrivacyOpen] = useState(false);
   const [requestsOpen, setRequestsOpen] = useState(false);
+  const [nudgeHistoryOpen, setNudgeHistoryOpen] = useState(false);
   // The quiet friend being nudged (the compose sheet is open while set)
   const [nudgeTarget, setNudgeTarget] = useState<FriendStats | null>(null);
   const [copied, setCopied] = useState(false);
@@ -64,6 +65,8 @@ export function useFriendsPage() {
     setRequestsOpen,
     nudgeTarget,
     setNudgeTarget,
+    nudgeHistoryOpen,
+    setNudgeHistoryOpen,
     copied,
     inviteLink,
     copyLink,
