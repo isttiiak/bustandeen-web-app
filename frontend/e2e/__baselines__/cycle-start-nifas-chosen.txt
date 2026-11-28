@@ -499,6 +499,25 @@
      "Period (hayd)"
     <button aria-pressed="true" class="flex-1 justify-center inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors rounded-control py-2 bg-brand-pink/15 border-brand-pink/60 text-brand-pink">
      "Post-natal (nifās)"
+   <div class="space-y-3">
+    <div aria-label="Which time of day?" class="space-y-1.5" role="radiogroup">
+     <p class="text-white/85 text-xs font-bold">
+      "Before or after which prayer did it start?"
+     <div class="grid grid-cols-1 gap-1.5">
+      <button aria-checked="false" class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors rounded-control py-2 px-3 text-left bg-brand-surface/50 border-brand-border text-white/75 hover:text-white hover:border-brand-pink/40" data-testid="moment-fajr" role="radio" type="button">
+       "In Fajr time (before sunrise)"
+      <button aria-checked="true" class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors rounded-control py-2 px-3 text-left bg-brand-pink/15 border-brand-pink/60 text-brand-pink" data-testid="moment-morning" role="radio" type="button">
+       "After sunrise, before Dhuhr"
+      <button aria-checked="false" class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors rounded-control py-2 px-3 text-left bg-brand-surface/50 border-brand-border text-white/75 hover:text-white hover:border-brand-pink/40" data-testid="moment-dhuhr" role="radio" type="button">
+       "In Dhuhr time"
+      <button aria-checked="false" class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors rounded-control py-2 px-3 text-left bg-brand-surface/50 border-brand-border text-white/75 hover:text-white hover:border-brand-pink/40" data-testid="moment-asr" role="radio" type="button">
+       "In Asr time"
+      <button aria-checked="false" class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors rounded-control py-2 px-3 text-left bg-brand-surface/50 border-brand-border text-white/75 hover:text-white hover:border-brand-pink/40" data-testid="moment-maghrib" role="radio" type="button">
+       "In Maghrib time"
+      <button aria-checked="false" class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold transition-colors rounded-control py-2 px-3 text-left bg-brand-surface/50 border-brand-border text-white/75 hover:text-white hover:border-brand-pink/40" data-testid="moment-isha" role="radio" type="button">
+       "In Isha time (night, until Fajr)"
+    <p class="text-white/70 text-[11px] leading-relaxed">
+     "Your answers decide which of that day’s prayers are not owed, following the school chosen in Rayhanah settings. The time you tap is not used."
    <button class="btn-solid inline-flex items-center justify-center gap-2 rounded-control px-4 py-2.5 text-sm font-bold text-on-color bg-brand-emerald-dim hover:bg-brand-emerald-dim hover:brightness-110 shadow-elev-1 transition disabled:opacity-50 disabled:cursor-not-allowed w-full">
     "Begin Rayhanah days"
    <p class="text-white/70 text-[11px] text-center leading-relaxed">

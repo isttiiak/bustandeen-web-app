@@ -108,21 +108,34 @@ test('Quran: Continue (khatam in the demo), Listen and Pick a surah', async ({ p
   );
 });
 
-test('Zikr: a chip opens the counter with its number as the target', async ({ page }) => {
+test('Zikr: a chip asks first, then opens the counter with its number as the target', async ({
+  page,
+}) => {
   await demoHomeAt(page, '2026-10-15T20:00:00+06:00');
-  const chip = page.getByRole('button', { name: 'Astaghfirullah 100 target, tap to count' });
+  const chip = page.getByRole('button', { name: 'Astaghfirullah 100, tap to choose' });
   await chip.click();
+  // Nothing happens until she chooses
+  await expect(page.getByTestId('zikr-quick-confirm')).toBeVisible();
+  await expect(page).not.toHaveURL(/\/zikr/);
+  await page.getByTestId('zikr-quick-open').click();
   await expect(page).toHaveURL(/\/zikr\?type=Astaghfirullah&target=100$/);
   await expect(page.getByText(/of 100/).first()).toBeVisible();
 });
 
-test('Zikr: with the "add" action a chip adds its number at once', async ({ page }) => {
-  await demoHomeAt(page, '2026-10-15T20:00:00+06:00', {
-    bustandeen_zikr_quick_action: 'add',
-  });
+test('Zikr: choosing "add" in the dialog adds the number to the list; Cancel adds nothing', async ({
+  page,
+}) => {
+  await demoHomeAt(page, '2026-10-15T20:00:00+06:00');
   const card = page.getByTestId('quick-zikr');
-  await card.getByRole('button', { name: 'La ilaha illallah +100, tap to add' }).click();
-  await expect(card).toContainText('100');
+  const count = card.getByTestId('habit-count');
+  await expect(count).toHaveText(/^0/);
+  await card.getByRole('button', { name: 'La ilaha illallah 100, tap to choose' }).click();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+  await expect(page.getByTestId('zikr-quick-confirm')).toHaveCount(0);
+  await expect(count).toHaveText(/^0/);
+  await card.getByRole('button', { name: 'La ilaha illallah 100, tap to choose' }).click();
+  await page.getByTestId('zikr-quick-add').click();
+  await expect(count).toHaveText(/^100/);
 });
 
 test('Zikr: "Log counts" beside "Open counter" adds to today in place (U4)', async ({ page }) => {

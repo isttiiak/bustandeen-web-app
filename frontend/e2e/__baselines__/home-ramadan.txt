@@ -92,6 +92,10 @@
          <path d="<59:a1c35ffe>">
         <p class="mt-2 text-[11px] uppercase tracking-widest font-bold text-white/60">
          "Current"
+         <span aria-hidden="true">
+          "·"
+         <span class="tabular-nums">
+          "04:00 PM"
         <p class="font-display text-3xl font-semibold text-white leading-tight mt-0.5">
          "Asr"
         <p class="text-white/60 text-sm mt-1">
@@ -211,17 +215,17 @@
        <div aria-hidden="true" class="mt-2.5 h-1.5 rounded-full bg-brand-border overflow-hidden">
         <div class="h-full rounded-full bg-brand-emerald" style="width: 0%">
        <div class="grid grid-cols-3 gap-2 mt-3">
-        <button aria-label="Astaghfirullah 100 target, tap to count" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
+        <button aria-haspopup="dialog" aria-label="Astaghfirullah 100, tap to choose" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
          <span class="block text-white text-[11px] font-bold line-clamp-2">
           "Astaghfirullah"
          <span class="block text-brand-emerald text-xs font-black tabular-nums mt-0.5">
           "100"
-        <button aria-label="La ilaha illallah 100 target, tap to count" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
+        <button aria-haspopup="dialog" aria-label="La ilaha illallah 100, tap to choose" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
          <span class="block text-white text-[11px] font-bold line-clamp-2">
           "La ilaha illallah"
          <span class="block text-brand-emerald text-xs font-black tabular-nums mt-0.5">
           "100"
-        <button aria-label="Durud Ibrahim 100 target, tap to count" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
+        <button aria-haspopup="dialog" aria-label="Durud Ibrahim 100, tap to choose" class="min-h-[52px] rounded-control border border-brand-border bg-brand-surface/60 hover:border-brand-emerald/60 hover:bg-brand-surface px-1.5 py-1.5 text-center leading-tight transition-colors" type="button">
          <span class="block text-white text-[11px] font-bold line-clamp-2">
           "Durud Ibrahim"
          <span class="block text-brand-emerald text-xs font-black tabular-nums mt-0.5">

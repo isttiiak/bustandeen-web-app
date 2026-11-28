@@ -1810,7 +1810,7 @@
            <p class="text-brand-emerald font-black text-lg shrink-0">
             "200"
          <p class="text-white/70 text-[10px] leading-relaxed">
-          "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
+          "Counter sessions come from real taps and show their start and end. Each time you use Log counts, it is listed as its own row with the time you logged it. The tasbih the salat tracker adds for you isn't listed here."
     <div class="fixed right-4 z-40 flex flex-col items-center gap-3 pointer-events-none" style="bottom: calc(5rem + env(safe-area-inset-bottom, 0px))">
      <button aria-label="Go to top" class="pointer-events-auto w-11 h-11 rounded-full grid place-items-center bg-brand-deep text-white border border-brand-border shadow-elev-2 hover:border-brand-emerald hover:text-brand-emerald transition-colors" title="Go to top" type="button">
       <svg aria-hidden="true" class="w-5 h-5" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

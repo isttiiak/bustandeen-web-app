@@ -1062,7 +1062,7 @@
            <p class="text-brand-emerald font-black text-lg shrink-0">
             "200"
          <p class="text-white/70 text-[10px] leading-relaxed">
-          "Sessions come from real taps on the counter. Counts you add with Log missed counts show as a manual log with no clock time, and the tasbih the salat tracker adds for you isn't listed here."
+          "Counter sessions come from real taps and show their start and end. Each time you use Log counts, it is listed as its own row with the time you logged it. The tasbih the salat tracker adds for you isn't listed here."
  <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-[70] p-4" style="opacity: 1">
   <div aria-labelledby="id6" aria-modal="true" class="bg-brand-deep rounded-card w-full max-w-md shadow-elev-3 border border-brand-border overflow-hidden max-h-[88vh] overflow-y-auto" data-testid="zikr-log-modal" role="dialog" style="opacity: 0; transform: none">
    <div class="flex items-center justify-between px-6 pt-6 pb-4 border-b border-brand-border/60">
