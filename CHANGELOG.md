@@ -33,6 +33,7 @@ Every Quran, hadith, scholarly and data reference in the web app was audited, an
 
 - Page or item numbers that could not be checked against a printed edition: Ibn al-Mundhir, al-Ijmāʿ 52–53; al-Mustadrak 2/399 (sources give 2/399 or 2/368); Ibn al-Qayyim, Zād al-Maʿād (no page cited).
 - Fiqh positions stated without a book citation: qaṣr distance, the stay that ends travel, the longest menses, nifās (Shāfiʿī 60 days), the ʿAṣr shadow; and the Mālikī / Ibn Taymiyyah view on reciting Quran during menses.
+
 ## v5.190.86 - Rayhanah: an expected period that has passed - 2026-11-28
 
 Part 3 of the 2026-11-28 work.

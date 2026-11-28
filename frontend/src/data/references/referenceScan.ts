@@ -133,7 +133,7 @@ export function scanRepo(repo: string): Hit[] {
 }
 
 /** Registry id for a scanned id (direct, or via an entry's aliases). */
-export function resolveId(id: string): string | null {
+function resolveId(id: string): string | null {
   for (const r of REFERENCES) if (r.id === id || r.aliases?.includes(id)) return r.id;
   return null;
 }
