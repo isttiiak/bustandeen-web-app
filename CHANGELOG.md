@@ -2,6 +2,18 @@
 
 All notable changes to Ihsan are documented here. Format is loosely [Keep a Changelog](https://keepachangelog.com/); versioning follows the project's existing convention (see ["Versioning — when to bump"](docs/README.md#versioning) in the architecture notes) rather than strict semver — patch = fixes, minor = a feature batch, major = a milestone.
 
+## v5.190.86 - Rayhanah: an expected period that has passed - 2026-11-28
+
+Part 3 of the 2026-11-28 work.
+
+### Fixed
+
+- **Rayhanah no longer shows a past date as "expected".** The prediction is the last start plus the average cycle length, and once that day had gone by the card still said "your next period is expected around" it, with a fertile window that had also passed (seen on 2026-11-27: "expected around Nov 8").
+  - Now, while no period is logged, it says "Your period was expected around {date}. Cycles vary, so log it when it starts." and hides the past fertile window.
+  - The PMS countdown already stopped after the date.
+  - No medical or pregnancy wording, as agreed. English and Bangla.
+  - New server render `quiet-expected-period-has-passed`; the other Rayhanah renders are unchanged. Cycle Analytics already drops windows that are well past.
+
 ## v5.190.85 - Eid and Laylat al-Qadr guidance for sisters - 2026-11-28
 
 Part 2 of the 2026-11-28 ruling work (part 1 is v5.190.84). References checked on sunnah.com.

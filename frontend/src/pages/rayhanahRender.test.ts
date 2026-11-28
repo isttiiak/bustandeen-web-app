@@ -214,6 +214,8 @@ const CASES: Array<[string, () => string]> = [
   ['quiet-period-may-start-today', () => withSummary(nextIn(0))],
   ['quiet-period-may-start-tomorrow', () => withSummary(nextIn(1))],
   ['quiet-period-in-three-days', () => withSummary(nextIn(3))],
+  // The expected start passed 19 days ago with no period logged (seen 2026-11-27).
+  ['quiet-expected-period-has-passed', () => withSummary(nextIn(-19))],
   [
     'quiet-ended-two-days-ago-offers-reopen',
     () =>

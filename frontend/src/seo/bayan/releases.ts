@@ -20,6 +20,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.190.86',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'Rayhanah: when an expected period has passed',
+        fixed: [
+          'When the date your period was expected has passed and nothing is logged yet, Rayhanah now says so gently instead of still showing that date as expected, and hides the fertile window that has passed.',
+        ],
+      },
+      bn: {
+        title: 'রায়হানাহ: প্রত্যাশিত মাসিকের তারিখ পেরিয়ে গেলে',
+        fixed: [
+          'মাসিকের প্রত্যাশিত তারিখ পেরিয়ে গেলে এবং এখনো কিছু লগ না হলে, রায়হানাহ এখন সেই তারিখকে প্রত্যাশিত হিসেবে না দেখিয়ে কোমলভাবে তা জানায়, আর পেরিয়ে যাওয়া উর্বর সময়টি লুকিয়ে রাখে।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.190.85',
     date: '2026-11-28',
     text: {
