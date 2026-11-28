@@ -13,19 +13,17 @@ import { describe, expect, it } from 'vitest';
 import { REFERENCES } from './registry.js';
 import { REF_PAGES, type RefPage } from './pages.js';
 import { buildUsage, citationIds, scanRepo } from './referenceScan.js';
-import { referencesDocument, type ManualCheck } from './referenceExport.js';
+import { referencesDocument } from './referenceExport.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = join(here, '../../../..');
 const USAGE_PATH = join(here, 'usage.generated.json');
-const MANUAL_PATH = join(here, 'manualChecks.json');
 const PUBLIC_PATH = join(repo, 'frontend/public/references.json');
 const UPDATE = process.env.UPDATE_REFS === '1';
 
 const { usage, unknown, unpaged } = buildUsage(scanRepo(repo));
-const manual = JSON.parse(readFileSync(MANUAL_PATH, 'utf8')) as Record<string, ManualCheck>;
 const usageText = JSON.stringify(usage, null, 2) + '\n';
-const publicText = JSON.stringify(referencesDocument(usage, manual), null, 2) + '\n';
+const publicText = JSON.stringify(referencesDocument(usage), null, 2) + '\n';
 
 if (UPDATE) {
   writeFileSync(USAGE_PATH, usageText);
@@ -83,13 +81,11 @@ describe('reference registry', () => {
     }
   });
 
-  it('keeps manual checks to known references and a fixed shape', () => {
-    const known = new Set(REFERENCES.map((r) => r.id));
-    for (const [id, m] of Object.entries(manual)) {
-      expect(known.has(id), `manualChecks.json: unknown id ${id}`).toBe(true);
-      expect(['source-verified', 'scholar-confirmed', 'needs-correction']).toContain(m.status);
-      expect(m.by.trim().length, id).toBeGreaterThan(0);
-      expect(m.date, id).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  it('gives every reference an id the admin API accepts for a manual check', () => {
+    // Same pattern as backend/src/validation/referenceCheck.schemas.ts
+    for (const r of REFERENCES) {
+      expect(r.id.length, r.id).toBeLessThanOrEqual(80);
+      expect(r.id).toMatch(/^[a-z][a-z0-9-]*:[a-z0-9:.-]+$/);
     }
   });
 });

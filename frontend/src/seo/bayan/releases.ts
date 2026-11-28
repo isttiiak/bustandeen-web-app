@@ -21,6 +21,24 @@ export interface Release {
 
 export const RELEASES: Release[] = [
   {
+    version: '5.193.0',
+    date: '2026-11-28',
+    text: {
+      en: {
+        title: 'References checked by a person',
+        added: [
+          'When a reference has been checked by hand at its source, or confirmed by a scholar, the Reference map now shows it right away, with who checked it and when.',
+        ],
+      },
+      bn: {
+        title: 'মানুষের হাতে যাচাই করা রেফারেন্স',
+        added: [
+          'কোনো রেফারেন্স মূল সূত্রে নিজে যাচাই করা হলে, বা কোনো আলেম নিশ্চিত করলে, রেফারেন্স ম্যাপে এখন সাথে সাথে তা দেখায়, কে ও কবে যাচাই করেছেন সহ।',
+        ],
+      },
+    },
+  },
+  {
     version: '5.192.1',
     date: '2026-11-28',
     text: {

@@ -11,7 +11,8 @@
 // (hadith: the sunnah.com English and grades via the hadith-api dataset, or
 // the sunnah.com page itself; Quran: quran.com Sahih International and the
 // bundled Tanzil text). It is not a scholar's review. Manual checks (you at
-// the source, or a scholar) live in manualChecks.json.
+// the source, or a scholar) are set in the admin panel (Tools, Reference
+// checks), stored on the server (ReferenceCheck) and shown at once.
 
 export type RefKind = 'quran' | 'hadith' | 'scholarly' | 'fiqh' | 'data';
 

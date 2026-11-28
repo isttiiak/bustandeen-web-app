@@ -5,7 +5,6 @@
 import { DESK_CHECK, REFERENCES, type ReferenceEntry } from './registry.js';
 import { REF_PAGES, type RefPlace } from './pages.js';
 import usageJson from './usage.generated.json';
-import manualJson from './manualChecks.json';
 
 export type ManualStatus = 'source-verified' | 'scholar-confirmed' | 'needs-correction';
 
@@ -30,11 +29,12 @@ export interface MappedReference extends ReferenceEntry {
 
 type Usage = Record<string, { places: RefPlace[]; files: string[]; codeNotes?: number }>;
 const USAGE = usageJson as Usage;
-const MANUAL = manualJson as Record<string, ManualCheck>;
 
+/** The registry with its places, and the manual checks when given (they come
+ * from the server: GET /api/references/checks). */
 export function mappedReferences(
-  usage: Usage = USAGE,
-  manual: Record<string, ManualCheck> = MANUAL
+  manual: Record<string, ManualCheck> = {},
+  usage: Usage = USAGE
 ): MappedReference[] {
   return REFERENCES.map((r) => {
     const u = usage[r.id];
@@ -49,16 +49,17 @@ export function mappedReferences(
   });
 }
 
-/** The /references.json document. Stable key order so diffs stay readable. */
-export function referencesDocument(
-  usage: Usage = USAGE,
-  manual: Record<string, ManualCheck> = MANUAL
-) {
+/** The /references.json document: the registry and where each reference is
+ * used. Manual checks change without a deploy, so they are not in this file:
+ * read them from GET /api/references/checks. Stable key order so diffs stay
+ * readable. */
+export function referencesDocument(usage: Usage = USAGE) {
   return {
     about:
-      'Bustandeen reference map: every Quran, hadith, scholarly, fiqh and data source the app cites, what it is used for, where, and how it was checked. Desk checks are not a scholar’s review; see manual for checks by a person at the source or a scholar.',
+      'Bustandeen reference map: every Quran, hadith, scholarly, fiqh and data source the app cites, what it is used for, where it appears, and how it was desk-checked. Desk checks are not a scholar’s review. Manual checks (a person at the source, or a scholar) are live at manualChecksUrl.',
     deskCheck: DESK_CHECK,
+    manualChecksUrl: 'https://bustandeen.com/api/references/checks',
     pages: REF_PAGES,
-    references: mappedReferences(usage, manual),
+    references: mappedReferences({}, usage).map(({ manual: _manual, ...r }) => r),
   };
 }
