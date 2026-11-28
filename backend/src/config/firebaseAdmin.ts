@@ -80,18 +80,5 @@ export const getFirebaseProviderData = async (uid: string): Promise<FirebaseProv
   }));
 };
 
-export const decodeUnverifiedJwt = (jwt: string): Record<string, unknown> | null => {
-  try {
-    const parts = jwt.split('.');
-    if (parts.length !== 3) return null;
-    const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString('utf8')) as Record<
-      string,
-      unknown
-    >;
-    // Normalize uid like Firebase Admin verifyIdToken output
-    if (!payload['uid'] && payload['user_id']) payload['uid'] = payload['user_id'];
-    return payload;
-  } catch {
-    return null;
-  }
-};
+// Dev / test only: reads a token without verifying it (see dev/unverifiedJwt.ts).
+export { decodeUnverifiedJwt } from '../dev/unverifiedJwt.js';
